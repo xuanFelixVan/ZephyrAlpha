@@ -35,6 +35,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 BASE_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture")
 OUTPUT_DIR = BASE_DIR / "00_overview_entry"
@@ -85,7 +87,7 @@ def get_db_stats(conn: sqlite3.Connection) -> dict:
     for layer_id, domain_id, domain_name in all_domains:
         if layer_id not in layer_domains:
             layer_domains[layer_id] = []
-        layer_domains[layer_id].append((domain_id, domain_name or domain_id))
+        layer_domains[layer_id].append((domain_id, get_domain_name_zh(domain_id, domain_name or domain_id)))
 
     stats["layer_domains"] = layer_domains
 
@@ -96,7 +98,7 @@ def get_db_stats(conn: sqlite3.Connection) -> dict:
            WHERE layer_id IS NULL OR layer_id = ''
            ORDER BY domain_id"""
     )
-    stats["unassigned_domains"] = [(r[0], r[1] or r[0]) for r in cur.fetchall()]
+    stats["unassigned_domains"] = [(r[0], get_domain_name_zh(r[0], r[1] or r[0])) for r in cur.fetchall()]
 
     return stats
 
@@ -127,9 +129,15 @@ def generate_navigation(stats: dict, global_files: list, domain_files: list, rep
     lines.append("| 文件夹 | 是什么 | 谁维护 | 什么时候变 |")
     lines.append("|--------|--------|--------|-----------|")
     lines.append("| `00_overview_entry/` | 你现在看的这个文件，整个文档库的导航地图 | 自动生成 | 全景图更新时 |")
-    lines.append(f"| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 {len(global_files)} 个文件 | 自动生成 | 全景图更新时 |")
-    lines.append(f"| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 {len(domain_files)} 个文件 | 自动生成 | 全景图更新时 |")
-    lines.append(f"| `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 {len(report_files)} 个文件 | 自动生成 | 全景图更新时 |")
+    lines.append(
+        f"| `01_global_architecture_diagram/` | 全局视图（路径树、跨域矩阵、集成拓扑图），共 {len(global_files)} 个文件 | 自动生成 | 全景图更新时 |"
+    )
+    lines.append(
+        f"| `02_domain_architecture_docs/` | 每个功能域的详细文档和依赖图，共 {len(domain_files)} 个文件 | 自动生成 | 全景图更新时 |"
+    )
+    lines.append(
+        f"| `03_governance_reports/` | 容量报告、约束违规报告、设计态vs运营态报告，共 {len(report_files)} 个文件 | 自动生成 | 全景图更新时 |"
+    )
     lines.append("")
     lines.append("---")
     lines.append("")

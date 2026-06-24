@@ -79,16 +79,18 @@ def generate_constraint_violations() -> str:
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append('doc_type: constraint_violations_report')
-    lines.append('title: 架构约束违规报告')
+    lines.append("doc_type: constraint_violations_report")
+    lines.append("title: 架构约束违规报告")
     lines.append('version: "1.0"')
-    lines.append('status: active')
-    lines.append(f'date: {now.split()[0]}')
-    lines.append('owner: auto-generator')
-    lines.append('ttl: permanent')
+    lines.append("status: active")
+    lines.append(f"date: {now.split()[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 架构约束违规报告")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。")
     lines.append("")
     lines.append("> 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -103,7 +105,7 @@ def generate_constraint_violations() -> str:
 
     lines.append("## 统计概览")
     lines.append("")
-    lines.append("| 指标 | 值 |")
+    lines.append("| 指标 / Metric | 值 / Value |")
     lines.append("|------|-----|")
     lines.append(f"| 约束总数 | {total} |")
     lines.append(f"| Open（未解决） | {len(open_violations)} |")
@@ -119,7 +121,7 @@ def generate_constraint_violations() -> str:
 
     lines.append("## 按严重程度分组")
     lines.append("")
-    lines.append("| 严重程度 | 数量 |")
+    lines.append("| 严重程度 / Severity | 数量 / Count |")
     lines.append("|---------|:---:|")
     for sev in sorted(severity_groups.keys()):
         lines.append(f"| {sev} | {len(severity_groups[sev])} |")
@@ -133,7 +135,7 @@ def generate_constraint_violations() -> str:
 
     lines.append("## 按约束类型分组")
     lines.append("")
-    lines.append("| 约束类型 | 数量 |")
+    lines.append("| 约束类型 / Constraint Type | 数量 / Count |")
     lines.append("|---------|:---:|")
     for ct in sorted(type_groups.keys()):
         lines.append(f"| {ct} | {len(type_groups[ct])} |")
@@ -143,7 +145,7 @@ def generate_constraint_violations() -> str:
     if open_violations:
         lines.append("## Open 违规清单（需处理）")
         lines.append("")
-        lines.append("| 约束ID | 名称 | 类型 | 源域 | 目标域 | 严重程度 | 执行方式 | 描述 |")
+        lines.append("| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 执行方式 / Enforcement | 描述 / Description |")
         lines.append("|--------|------|------|------|--------|---------|---------|------|")
         for c in open_violations:
             desc_short = c["description"][:60] + "..." if len(c["description"]) > 60 else c["description"]
@@ -157,7 +159,7 @@ def generate_constraint_violations() -> str:
     # 完整约束清单
     lines.append("## 完整约束清单")
     lines.append("")
-    lines.append("| 约束ID | 名称 | 类型 | 源域 | 目标域 | 严重程度 | 状态 |")
+    lines.append("| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 状态 / Status |")
     lines.append("|--------|------|------|------|--------|---------|------|")
     for c in constraints:
         lines.append(

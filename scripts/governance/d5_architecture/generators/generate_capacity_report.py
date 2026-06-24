@@ -34,6 +34,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance_reports/capacity_report.md")
 
@@ -75,16 +77,18 @@ def generate_capacity_report() -> str:
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append('doc_type: capacity_report')
-    lines.append('title: 域容量报告')
+    lines.append("doc_type: capacity_report")
+    lines.append("title: 域容量报告")
     lines.append('version: "1.0"')
-    lines.append('status: active')
-    lines.append(f'date: {now.split()[0]}')
-    lines.append('owner: auto-generator')
-    lines.append('ttl: permanent')
+    lines.append("status: active")
+    lines.append(f"date: {now.split()[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 域容量报告")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 展示各功能域的模块数量与容量上限对比，识别超容域和接近超容域，为域拆分决策提供依据。")
     lines.append("")
     lines.append("> 本文档由 generate_capacity_report.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -95,13 +99,15 @@ def generate_capacity_report() -> str:
     total_domains = len(domains)
     over_capacity = [d for d in domains if d["actual_nodes"] > d["max_modules"]]
     near_capacity = [
-        d for d in domains if d["max_modules"] > 0 and d["actual_nodes"] / d["max_modules"] > 0.8 and d["actual_nodes"] <= d["max_modules"]
+        d
+        for d in domains
+        if d["max_modules"] > 0 and d["actual_nodes"] / d["max_modules"] > 0.8 and d["actual_nodes"] <= d["max_modules"]
     ]
     empty_domains = [d for d in domains if d["actual_nodes"] == 0]
 
     lines.append("## 统计概览")
     lines.append("")
-    lines.append("| 指标 | 值 |")
+    lines.append("| 指标 / Metric | 值 / Value |")
     lines.append("|------|-----|")
     lines.append(f"| 域总数 | {total_domains} |")
     lines.append(f"| 超容域 | {len(over_capacity)} |")
@@ -113,12 +119,12 @@ def generate_capacity_report() -> str:
     if over_capacity:
         lines.append("## 超容域清单（需拆分）")
         lines.append("")
-        lines.append("| 域ID | 域名称 | 实际模块数 | 上限 | 超出 |")
+        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |")
         lines.append("|------|--------|:---:|:---:|:---:|")
         for d in over_capacity:
             over = d["actual_nodes"] - d["max_modules"]
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {d['actual_nodes']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['actual_nodes']} | "
                 f"{d['max_modules']} | +{over} |"
             )
         lines.append("")
@@ -127,12 +133,12 @@ def generate_capacity_report() -> str:
     if near_capacity:
         lines.append("## 接近超容域清单（>80%，需关注）")
         lines.append("")
-        lines.append("| 域ID | 域名称 | 实际模块数 | 上限 | 使用率 |")
+        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |")
         lines.append("|------|--------|:---:|:---:|:---:|")
         for d in near_capacity:
             usage = d["actual_nodes"] / d["max_modules"] * 100
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {d['actual_nodes']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['actual_nodes']} | "
                 f"{d['max_modules']} | {usage:.1f}% |"
             )
         lines.append("")
@@ -141,18 +147,16 @@ def generate_capacity_report() -> str:
     if empty_domains:
         lines.append("## 空域清单（0模块，待开发）")
         lines.append("")
-        lines.append("| 域ID | 域名称 | 架构层 | 上限 |")
+        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 架构层 / Layer | 上限 / Max |")
         lines.append("|------|--------|--------|:---:|")
         for d in empty_domains:
-            lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {d['layer_id']} | {d['max_modules']} |"
-            )
+            lines.append(f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['layer_id']} | {d['max_modules']} |")
         lines.append("")
 
     # 完整容量清单
     lines.append("## 完整域容量清单")
     lines.append("")
-    lines.append("| 域ID | 域名称 | 架构层 | 实际模块数 | 上限 | 使用率 | 状态 |")
+    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 架构层 / Layer | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage | 状态 / Status |")
     lines.append("|------|--------|--------|:---:|:---:|:---:|------|")
     for d in domains:
         if d["max_modules"] > 0:
@@ -169,7 +173,7 @@ def generate_capacity_report() -> str:
             usage = 0
             status = "无上限"
         lines.append(
-            f"| {d['domain_id']} | {d['domain_name']} | {d['layer_id']} | "
+            f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['layer_id']} | "
             f"{d['actual_nodes']} | {d['max_modules']} | {usage:.1f}% | {status} |"
         )
     lines.append("")

@@ -1,0 +1,770 @@
+%% D-INFRA_OPS 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:13
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 418, 依赖边数: 1134
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_INFRA_OPS[基础设施运维]
+        D_INFRA_OPS_12层架构与九大平台映射分析器_Analyzer["D-INFRA-OPS/12层架构与九大平台映射分析器 Analyzer [design]"]
+        D_INFRA_OPS_12层架构健康检查与故障隔离器_12___th_Check_and_Fault_Isolator["...cture Health Check and Fault Isolator [design]"]
+        D_INFRA_OPS_A_Share_Intraday_M___rd_Configurator_A股盘中监控看板配置器["...or Dashboard Configurator A股盘中监控看板配置器 [design]"]
+        D_INFRA_OPS_AI_API_Cost_Manager_AI_API成本管理器["...A-OPS/AI API Cost Manager AI API成本管理器 [design]"]
+        D_INFRA_OPS_API文档自动版本同步器["D-INFRA-OPS/API文档自动版本同步器 [design]"]
+        D_INFRA_OPS_Administrator_管理员["D-INFRA-OPS/Administrator 管理员 [design]"]
+        D_INFRA_OPS_Agent_365_OTel_Ent___ipeline_Agent_365_OTel企业级管道["...terprise Pipeline Agent 365 OTel企业级管道 [design]"]
+        D_INFRA_OPS_Agent_Communication_Protocol_Agent通信协议["...gent Communication Protocol Agent通信协议 [design]"]
+        D_INFRA_OPS_Agent_RBAC___Permission_Guard_Agent_RBAC_权限守卫器["...C / Permission Guard Agent RBAC/权限守卫器 [design]"]
+        D_INFRA_OPS_Agent_SRE_Formal_SLO_Agent_SRE正式SLO["...S/Agent SRE Formal SLO Agent SRE正式SLO [design]"]
+        D_INFRA_OPS_Agent_SRE_Reliability_Engineering_Agent_SRE可靠性工程["...eliability Engineering Agent SRE可靠性工程 [design]"]
+        D_INFRA_OPS_Agent调用审计日志器["D-INFRA-OPS/Agent调用审计日志器 [design]"]
+        D_INFRA_OPS_Alert_Manager_告警管理器["D-INFRA-OPS/Alert Manager 告警管理器 [design]"]
+        D_INFRA_OPS_AlertEscalated_告警升级事件["D-INFRA-OPS/AlertEscalated 告警升级事件 [design]"]
+        D_INFRA_OPS_AlertEscalation_告警升级契约["D-INFRA-OPS/AlertEscalation 告警升级契约 [design]"]
+        D_INFRA_OPS_AlertFired_告警触发事件["D-INFRA-OPS/AlertFired 告警触发事件 [design]"]
+        D_INFRA_OPS_Ant_Design+ECharts可视化组件集成器["D-INFRA-OPS/Ant Design+ECharts可视化组件集成器 [design]"]
+        D_INFRA_OPS_Backup_Manager_备份管理器["D-INFRA-OPS/Backup Manager 备份管理器 [design]"]
+        D_INFRA_OPS_Backup_Manager_自动备份管理器["D-INFRA-OPS/Backup Manager 自动备份管理器 [design]"]
+        D_INFRA_OPS_BackupCompleted_备份完成事件["D-INFRA-OPS/BackupCompleted 备份完成事件 [design]"]
+        D_INFRA_OPS_BackupConfirmation_备份确认契约["D-INFRA-OPS/BackupConfirmation 备份确认契约 [design]"]
+        D_INFRA_OPS_BackupFailed_备份失败事件["D-INFRA-OPS/BackupFailed 备份失败事件 [design]"]
+        D_INFRA_OPS_CI_CD_Pipeline_持续集成部署流水线["D-INFRA-OPS/CI/CD Pipeline 持续集成部署流水线 [design]"]
+        D_INFRA_OPS_CI_CD_Pipeline_管线["D-INFRA-OPS/CI/CD Pipeline 管线 [design]"]
+        D_INFRA_OPS_CI_CD流水线编排["D-INFRA-OPS/CI/CD流水线编排 [design]"]
+        D_INFRA_OPS_CI_CD流水线集成器["D-INFRA-OPS/CI/CD流水线集成器 [design]"]
+        D_INFRA_OPS_CI管道命令封装脚本["D-INFRA-OPS/CI管道命令封装脚本 [design]"]
+        D_INFRA_OPS_CQRS_Event_Sourcing模型_CQRS_Event_Sourcing_Model["... Sourcing模型 CQRS/Event Sourcing Model [design]"]
+        D_INFRA_OPS_CapabilityReport_能力报告["D-INFRA-OPS/CapabilityReport 能力报告 [design]"]
+        D_INFRA_OPS_Capacity_Assurance_&_SLI_SLO_容量保障与服务等级["...apacity Assurance & SLI/SLO 容量保障与服务等级 [design]"]
+        D_INFRA_OPS_Capacity_Planner_容量规划器["D-INFRA-OPS/Capacity Planner 容量规划器 [design]"]
+        D_INFRA_OPS_Cold_Data_Archive_Manager_冷数据归档管理器["...PS/Cold Data Archive Manager 冷数据归档管理器 [design]"]
+        D_INFRA_OPS_Communication_Encryption_Config_通信加密配置["...ommunication Encryption Config 通信加密配置 [design]"]
+        D_INFRA_OPS_Cost_Optimizer_成本优化器["D-INFRA-OPS/Cost Optimizer 成本优化器 [design]"]
+        D_INFRA_OPS_Cybersecurity_Shield_网络安全防护["D-INFRA-OPS/Cybersecurity Shield 网络安全防护 [design]"]
+        D_INFRA_OPS_D_Drive_Complete_Failure_D盘完全故障["...A-OPS/D Drive Complete Failure D盘完全故障 [design]"]
+        D_INFRA_OPS_D_INFRA_OPS["D-INFRA-OPS/D-INFRA-OPS [design]"]
+        D_INFRA_OPS_DR_Manager_灾备管理器["D-INFRA-OPS/DR Manager 灾备管理器 [design]"]
+        D_INFRA_OPS_DRDrillCompleted_灾备演练完成事件["D-INFRA-OPS/DRDrillCompleted 灾备演练完成事件 [design]"]
+        D_INFRA_OPS_Data_Mesh_数据网格["D-INFRA-OPS/Data Mesh 数据网格 [design]"]
+        D_INFRA_OPS_Deployment_Manager_部署管理器["D-INFRA-OPS/Deployment Manager 部署管理器 [design]"]
+        D_INFRA_OPS_DeploymentStageAdvanced_灰度发布阶段推进事件["...PS/DeploymentStageAdvanced 灰度发布阶段推进事件 [design]"]
+        D_INFRA_OPS_Disaster_Recovery_Level_L6_灾备分级L6日志审计["...Disaster Recovery Level L6 灾备分级L6日志审计 [design]"]
+        D_INFRA_OPS_Disaster_Recovery_灾难恢复["D-INFRA-OPS/Disaster Recovery 灾难恢复 [design]"]
+        D_INFRA_OPS_Docker_Docker容器["D-INFRA-OPS/Docker Docker容器 [design]"]
+        D_INFRA_OPS_Docker健康检查器["D-INFRA-OPS/Docker健康检查器 [design]"]
+        D_INFRA_OPS_Docker容器化研究环境管理器["D-INFRA-OPS/Docker容器化研究环境管理器 [design]"]
+        D_INFRA_OPS_D→E盘本地双副本_D→E_Dual_Copy["D-INFRA-OPS/D→E盘本地双副本 D→E Dual Copy [design]"]
+        D_INFRA_OPS_D到E盘双副本策略_双副本架构["D-INFRA-OPS/D到E盘双副本策略 双副本架构 [design]"]
+        D_INFRA_OPS_ECharts大规模数据渲染["D-INFRA-OPS/ECharts大规模数据渲染 [design]"]
+        D_INFRA_OPS_ELK日志管理器["D-INFRA-OPS/ELK日志管理器 [design]"]
+        D_INFRA_OPS_External_Instruction_Monitoring_外部指令盯盘["...xternal Instruction Monitoring 外部指令盯盘 [design]"]
+        D_INFRA_OPS_FPGA_Conditional_Gate_FPGA条件门禁["...RA-OPS/FPGA Conditional Gate FPGA条件门禁 [design]"]
+        D_INFRA_OPS_GATE_FPGA_FPGA硬件升级汇总["D-INFRA-OPS/GATE-FPGA FPGA硬件升级汇总 [design]"]
+        D_INFRA_OPS_GATE_FPGA_03_FPGA开发能力["D-INFRA-OPS/GATE-FPGA-03 FPGA开发能力 [design]"]
+        D_INFRA_OPS_HPC_Manager_HPC管理器["D-INFRA-OPS/HPC Manager HPC管理器 [design]"]
+        D_INFRA_OPS_Health_Dashboard_健康仪表盘["D-INFRA-OPS/Health Dashboard 健康仪表盘 [design]"]
+        D_INFRA_OPS_HealthDashboard_健康仪表板契约["D-INFRA-OPS/HealthDashboard 健康仪表板契约 [design]"]
+        D_INFRA_OPS_IaC_Manager_IaC管理器["D-INFRA-OPS/IaC Manager IaC管理器 [design]"]
+        D_INFRA_OPS_Infrastructure_Health_Patrol_Inspector_基础设施健康巡检器["...ure Health Patrol Inspector 基础设施健康巡检器 [design]"]
+        D_INFRA_OPS_Infrastructure_as_Code_基础设施即代码["...RA-OPS/Infrastructure as Code 基础设施即代码 [design]"]
+        D_INFRA_OPS_InfrastructureStatus_基础设施状态契约["...FRA-OPS/InfrastructureStatus 基础设施状态契约 [design]"]
+        D_INFRA_OPS_Key_Observability_Metrics_关键可观测性指标["...PS/Key Observability Metrics 关键可观测性指标 [design]"]
+        D_INFRA_OPS_KrakenD_Kong替代API网关评估["D-INFRA-OPS/KrakenD/Kong替代API网关评估 [design]"]
+        D_INFRA_OPS_LLM模型分级路由_LLM_Model_Tiered_Routing["...PS/LLM模型分级路由 LLM Model Tiered Routing [design]"]
+        D_INFRA_OPS_Layer文档位置索引与完整性检查器["D-INFRA-OPS/Layer文档位置索引与完整性检查器 [design]"]
+        D_INFRA_OPS_Log_Aggregator_日志聚合器["D-INFRA-OPS/Log Aggregator 日志聚合器 [design]"]
+        D_INFRA_OPS_LogAnomalyDetected_日志异常检测事件["D-INFRA-OPS/LogAnomalyDetected 日志异常检测事件 [design]"]
+        D_INFRA_OPS_Loki日志聚合_Loki_Log_Aggregation["...FRA-OPS/Loki日志聚合 Loki Log Aggregation [design]"]
+        D_INFRA_OPS_MLflow性能基准测试器["D-INFRA-OPS/MLflow性能基准测试器 [design]"]
+        D_INFRA_OPS_MOD_INF_024["D-INFRA-OPS/MOD-INF-024 [design]"]
+        D_INFRA_OPS_MOD_INF_026["D-INFRA-OPS/MOD-INF-026 [design]"]
+        D_INFRA_OPS_MOD_INF_033["D-INFRA-OPS/MOD-INF-033 [design]"]
+        D_INFRA_OPS_MOD_INF_034["D-INFRA-OPS/MOD-INF-034 [design]"]
+        D_INFRA_OPS_MOD_INF_035["D-INFRA-OPS/MOD-INF-035 [design]"]
+        D_INFRA_OPS_MOD_INF_036["D-INFRA-OPS/MOD-INF-036 [design]"]
+        D_INFRA_OPS_MOD_MASTER_001["D-INFRA-OPS/MOD-MASTER-001 [design]"]
+        D_INFRA_OPS_Markdown表格校验器["D-INFRA-OPS/Markdown表格校验器 [design]"]
+        D_INFRA_OPS_Mermaid流程图渲染器["D-INFRA-OPS/Mermaid流程图渲染器 [design]"]
+        D_INFRA_OPS_Microsoft_Agent_36____Microsoft_Agent_365_OTel管道["...t 365 OTel Microsoft Agent 365 OTel管道 [design]"]
+        D_INFRA_OPS_Microsoft_Cisco_Op___n_Microsoft_Cisco多Agent语义约定["... Convention Microsoft/Cisco多Agent语义约定 [design]"]
+        D_INFRA_OPS_Migration_Strategy_迁移策略["D-INFRA-OPS/Migration Strategy 迁移策略 [design]"]
+        D_INFRA_OPS_Model_Profiler_&_Capability_Exam_模型画像与能力考试["... Profiler & Capability Exam 模型画像与能力考试 [design]"]
+        D_INFRA_OPS_ModelProfile_模型画像["D-INFRA-OPS/ModelProfile 模型画像 [design]"]
+        D_INFRA_OPS_Monitoring_Stack_监控栈["D-INFRA-OPS/Monitoring Stack 监控栈 [design]"]
+        D_INFRA_OPS_Monitoring_System_监控系统["D-INFRA-OPS/Monitoring System 监控系统 [design]"]
+        D_INFRA_OPS_Network_Manager_网络管理器["D-INFRA-OPS/Network Manager 网络管理器 [design]"]
+        D_INFRA_OPS_NozyIO多语言代码编辑集成器["D-INFRA-OPS/NozyIO多语言代码编辑集成器 [design]"]
+        D_INFRA_OPS_Observability_Three_Pillars_可观测性三支柱["...S/Observability Three Pillars 可观测性三支柱 [design]"]
+        D_INFRA_OPS_Observability_可观测性["D-INFRA-OPS/Observability 可观测性 [design]"]
+        D_INFRA_OPS_OpenTelemetry["D-INFRA-OPS/OpenTelemetry [design]"]
+        D_INFRA_OPS_OpenTelemetry_Collector_OpenTelemetry收集器["...nTelemetry Collector OpenTelemetry收集器 [design]"]
+        D_INFRA_OPS_PIT_Manager_Point_in_Time管理器["D-INFRA-OPS/PIT Manager Point-in-Time管理器 [design]"]
+        D_INFRA_OPS_Pipeline吞吐量瓶颈分析器["D-INFRA-OPS/Pipeline吞吐量瓶颈分析器 [design]"]
+        D_INFRA_OPS_Pipeline编排器_Pipeline_Orchestrator["...OPS/Pipeline编排器 Pipeline Orchestrator [design]"]
+        D_INFRA_OPS_Pipeline节点健康度探针["D-INFRA-OPS/Pipeline节点健康度探针 [design]"]
+        D_INFRA_OPS_Prometheus_Prometheus监控系统["D-INFRA-OPS/Prometheus Prometheus监控系统 [design]"]
+        D_INFRA_OPS_Prometheus+Grafana___theus_Grafana_Monitor_Stack["...a监控栈 Prometheus Grafana Monitor Stack [design]"]
+        D_INFRA_OPS_PyQt5桌面GUI集成器["D-INFRA-OPS/PyQt5桌面GUI集成器 [design]"]
+        D_INFRA_OPS_Quantum_Classical____puting_Roadmap_量子_经典混合计算路线图["...Hybrid Computing Roadmap 量子-经典混合计算路线图 [design]"]
+        %% ... 还有 318 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_infra_ops_dashboard_app_py -->|import_depends| src_zephyr_infra_ops___init___py
+    src_zephyr_infra_ops_interface_base_py -->|config_depends| src_zephyr_infra_ops___init___py
+    src_zephyr_infra_ops_dashboard_components_gate_statistics_py -->|config_depends| src_zephyr_infra_ops_dashboard___onents_fitness_functions_py
+    src_zephyr_infra_ops_dashboard_components_task_progress_py -->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
+    src_zephyr_infra_ops_dashboard___nents_knowledge_overview_py -->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
+    src_zephyr_infra_ops_dashboard_components_olap_trend_py -->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
+    src_zephyr_infrastructure_roll___overnance_budget_tracker_py -->|config_depends| src_zephyr_infrastructure_rollback_governance___init___py
+    src_zephyr_infrastructure_rollback_governance_drift_fix_py -->|config_depends| src_zephyr_infrastructure_rollback_governance___init___py
+    src_zephyr_infrastructure_roll____governance_result_types_py -->|config_depends| src_zephyr_infrastructure_rollback_governance___init___py
+    D_INFRA_OPS_MOD_INF_034 -->|import_depends| D_INFRA_OPS_MOD_INF_036
+    D_INFRA_OPS_MOD_INF_036 -->|import_depends| D_INFRA_OPS_MOD_INF_033
+    D_INFRA_OPS_MOD_INF_033 -->|import_depends| D_INFRA_OPS_MOD_INF_024
+    D_INFRA_OPS_MOD_INF_024 -->|import_depends| D_INFRA_OPS_MOD_INF_035
+    D_INFRA_OPS_MOD_INF_035 -->|import_depends| D_INFRA_OPS_MOD_INF_026
+    D_INFRA_OPS_MOD_INF_026 -->|import_depends| D_INFRA_OPS_MOD_MASTER_001
+    D_INFRA_OPS_MOD_MASTER_001 -->|import_depends| D_INFRA_OPS_CI_CD_Pipeline_管线
+    D_INFRA_OPS_CI_CD_Pipeline_管线 -->|import_depends| D_INFRA_OPS_Monitoring_System_监控系统
+    D_INFRA_OPS_Monitoring_System_监控系统 -->|import_depends| D_INFRA_OPS_Backup_Manager_备份管理器
+    D_INFRA_OPS_Backup_Manager_备份管理器 -->|import_depends| D_INFRA_OPS_Disaster_Recovery_灾难恢复
+    D_INFRA_OPS_Disaster_Recovery_灾难恢复 -->|import_depends| D_INFRA_OPS_Health_Dashboard_健康仪表盘
+    D_INFRA_OPS_Health_Dashboard_健康仪表盘 -->|import_depends| D_INFRA_OPS_Log_Aggregator_日志聚合器
+    D_INFRA_OPS_Log_Aggregator_日志聚合器 -->|import_depends| D_INFRA_OPS_Resilience_Manager_弹性管理器
+    D_INFRA_OPS_Resilience_Manager_弹性管理器 -->|import_depends| D_INFRA_OPS_Network_Manager_网络管理器
+    D_INFRA_OPS_Network_Manager_网络管理器 -->|import_depends| D_INFRA_OPS_IaC_Manager_IaC管理器
+    D_INFRA_OPS_IaC_Manager_IaC管理器 -->|import_depends| D_INFRA_OPS_Security_Infra_Manager_安全基础设施管理器
+    D_INFRA_OPS_Security_Infra_Manager_安全基础设施管理器 -->|import_depends| D_INFRA_OPS_HPC_Manager_HPC管理器
+    D_INFRA_OPS_HPC_Manager_HPC管理器 -->|import_depends| D_INFRA_OPS_Deployment_Manager_部署管理器
+    D_INFRA_OPS_Deployment_Manager_部署管理器 -->|import_depends| D_INFRA_OPS_Alert_Manager_告警管理器
+    D_INFRA_OPS_Alert_Manager_告警管理器 -->|import_depends| D_INFRA_OPS_备份策略_Backup_Strategy
+    D_INFRA_OPS_备份策略_Backup_Strategy -->|import_depends| D_INFRA_OPS_Backup_Manager_自动备份管理器
+    D_INFRA_OPS_Backup_Manager_自动备份管理器 -->|import_depends| D_INFRA_OPS_Cold_Data_Archive_Manager_冷数据归档管理器
+    D_INFRA_OPS_Cold_Data_Archive_Manager_冷数据归档管理器 -->|import_depends| D_INFRA_OPS_数据源可用性SLA追踪器_Data____ce_Availability_SLA_Tracker
+    D_INFRA_OPS_数据源可用性SLA追踪器_Data____ce_Availability_SLA_Tracker -->|import_depends| D_INFRA_OPS_存储成本量化核算器_Storage_Cost_Calculator
+    D_INFRA_OPS_存储成本量化核算器_Storage_Cost_Calculator -->|import_depends| D_INFRA_OPS_日快照恢复演练_Daily_Snapshot_Recovery_Drill
+    D_INFRA_OPS_日快照恢复演练_Daily_Snapshot_Recovery_Drill -->|import_depends| D_INFRA_OPS_盘中恢复演练_Intraday_Recovery_Drill
+    D_INFRA_OPS_盘中恢复演练_Intraday_Recovery_Drill -->|import_depends| D_INFRA_OPS_全量恢复演练_Full_Recovery_Drill
+    D_INFRA_OPS_全量恢复演练_Full_Recovery_Drill -->|import_depends| D_INFRA_OPS_审计重建演练_Audit_Reconstruction_Drill
+    D_INFRA_OPS_审计重建演练_Audit_Reconstruction_Drill -->|import_depends| D_INFRA_OPS_Shared_Infrastructure_共享基础设施
+    D_INFRA_OPS_Shared_Infrastructure_共享基础设施 -->|import_depends| D_INFRA_OPS_Tool_Scripts_工具脚本
+    D_INFRA_OPS_Tool_Scripts_工具脚本 -->|import_depends| D_INFRA_OPS_Quantum_Classical____puting_Roadmap_量子_经典混合计算路线图
+    D_INFRA_OPS_Quantum_Classical____puting_Roadmap_量子_经典混合计算路线图 -->|import_depends| D_INFRA_OPS_Cost_Optimizer_成本优化器
+    D_INFRA_OPS_Cost_Optimizer_成本优化器 -->|import_depends| D_INFRA_OPS_Agent_RBAC___Permission_Guard_Agent_RBAC_权限守卫器
+    D_INFRA_OPS_Agent_RBAC___Permission_Guard_Agent_RBAC_权限守卫器 -->|import_depends| D_INFRA_OPS_Communication_Encryption_Config_通信加密配置
+    D_INFRA_OPS_Communication_Encryption_Config_通信加密配置 -->|import_depends| D_INFRA_OPS_数据血缘追踪_Data_Lineage_Tracking
+    D_INFRA_OPS_数据血缘追踪_Data_Lineage_Tracking -->|import_depends| D_INFRA_OPS_AI_API_Cost_Manager_AI_API成本管理器
+    D_INFRA_OPS_AI_API_Cost_Manager_AI_API成本管理器 -->|import_depends| D_INFRA_OPS_Agent_Communication_Protocol_Agent通信协议
+    D_INFRA_OPS_Agent_Communication_Protocol_Agent通信协议 -->|import_depends| D_INFRA_OPS_Capacity_Assurance_&_SLI_SLO_容量保障与服务等级
+    D_INFRA_OPS_Capacity_Assurance_&_SLI_SLO_容量保障与服务等级 -->|import_depends| D_INFRA_OPS_Model_Profiler_&_Capability_Exam_模型画像与能力考试
+    D_INFRA_OPS_Model_Profiler_&_Capability_Exam_模型画像与能力考试 -->|import_depends| D_INFRA_OPS_PIT_Manager_Point_in_Time管理器
+    D_INFRA_OPS_PIT_Manager_Point_in_Time管理器 -->|import_depends| D_INFRA_OPS_Pipeline编排器_Pipeline_Orchestrator
+    D_INFRA_OPS_Pipeline编排器_Pipeline_Orchestrator -->|import_depends| D_INFRA_OPS_Saga事务编排_Saga_Transaction_Orchestration
+    D_INFRA_OPS_Saga事务编排_Saga_Transaction_Orchestration -->|import_depends| D_INFRA_OPS_可配置规则引擎_Configurable_Rule_Engine
+    D_INFRA_OPS_可配置规则引擎_Configurable_Rule_Engine -->|import_depends| D_INFRA_OPS_数字孪生系列_Digital_Twin_Series
+    D_INFRA_OPS_数字孪生系列_Digital_Twin_Series -->|import_depends| D_INFRA_OPS_LLM模型分级路由_LLM_Model_Tiered_Routing
+    D_INFRA_OPS_LLM模型分级路由_LLM_Model_Tiered_Routing -->|import_depends| D_INFRA_OPS_Data_Mesh_数据网格
+    D_INFRA_OPS_Data_Mesh_数据网格 -->|import_depends| D_INFRA_OPS_CQRS_Event_Sourcing模型_CQRS_Event_Sourcing_Model
+    D_INFRA_OPS_CQRS_Event_Sourcing模型_CQRS_Event_Sourcing_Model -->|import_depends| D_INFRA_OPS_Observability_可观测性
+    D_INFRA_OPS_Observability_可观测性 -->|import_depends| D_INFRA_OPS_Agent_365_OTel_Ent___ipeline_Agent_365_OTel企业级管道
+    D_INFRA_OPS_Agent_365_OTel_Ent___ipeline_Agent_365_OTel企业级管道 -->|import_depends| D_INFRA_OPS_OpenTelemetry
+    D_INFRA_OPS_OpenTelemetry -->|import_depends| D_INFRA_OPS_Agent_SRE_Reliability_Engineering_Agent_SRE可靠性工程
+    D_INFRA_OPS_Agent_SRE_Reliability_Engineering_Agent_SRE可靠性工程 -->|import_depends| D_INFRA_OPS_Trace_Hierarchy_Model_Trace层级模型
+    D_INFRA_OPS_Trace_Hierarchy_Model_Trace层级模型 -->|import_depends| D_INFRA_OPS_Prometheus_Prometheus监控系统
+    D_INFRA_OPS_Prometheus_Prometheus监控系统 -->|import_depends| D_INFRA_OPS_eBPF_eBPF无侵入Span补全
+    D_INFRA_OPS_eBPF_eBPF无侵入Span补全 -->|import_depends| D_INFRA_OPS_Docker_Docker容器
+    D_INFRA_OPS_Docker_Docker容器 -->|import_depends| D_INFRA_OPS_W3C_TraceContext_W3C_TraceContext追踪标准
+    D_INFRA_OPS_W3C_TraceContext_W3C_TraceContext追踪标准 -->|import_depends| D_INFRA_OPS_Observability_Three_Pillars_可观测性三支柱
+    D_INFRA_OPS_Observability_Three_Pillars_可观测性三支柱 -->|import_depends| D_INFRA_OPS_Trace_Hierarchical_Model_Trace层级模型
+    D_INFRA_OPS_Trace_Hierarchical_Model_Trace层级模型 -->|import_depends| D_INFRA_OPS_Test_Automation_&____D_Integration_测试自动化与CI_CD集成
+    D_INFRA_OPS_Test_Automation_&____D_Integration_测试自动化与CI_CD集成 -->|import_depends| D_INFRA_OPS_Disaster_Recovery_Level_L6_灾备分级L6日志审计
+    D_INFRA_OPS_Disaster_Recovery_Level_L6_灾备分级L6日志审计 -->|import_depends| D_INFRA_OPS_Key_Observability_Metrics_关键可观测性指标
+    D_INFRA_OPS_Key_Observability_Metrics_关键可观测性指标 -->|import_depends| D_INFRA_OPS_灾备3_2_1_1_0+D到E_灾备架构
+    D_INFRA_OPS_灾备3_2_1_1_0+D到E_灾备架构 -->|import_depends| D_INFRA_OPS_灾备架构_灾备架构_Disaster_Recovery_Architecture
+    D_INFRA_OPS_灾备架构_灾备架构_Disaster_Recovery_Architecture -->|import_depends| D_INFRA_OPS_D到E盘双副本策略_双副本架构
+    D_INFRA_OPS_D到E盘双副本策略_双副本架构 -->|import_depends| D_INFRA_OPS_数据恢复流程_数据恢复_Workflow
+    D_INFRA_OPS_数据恢复流程_数据恢复_Workflow -->|import_depends| D_INFRA_OPS_灾备演练计划_灾备演练_Disaster_Recovery_Drill_Plan
+    D_INFRA_OPS_灾备演练计划_灾备演练_Disaster_Recovery_Drill_Plan -->|import_depends| D_INFRA_OPS_混沌工程实践_混沌工程_Chaos_Engineering_Practice
+    D_INFRA_OPS_混沌工程实践_混沌工程_Chaos_Engineering_Practice -->|import_depends| D_INFRA_OPS_变更管理_变更管理_Management
+    D_INFRA_OPS_变更管理_变更管理_Management -->|import_depends| D_INFRA_OPS_灰度发布流程_灰度发布_Workflow
+    D_INFRA_OPS_灰度发布流程_灰度发布_Workflow -->|import_depends| D_INFRA_OPS_金丝雀验证_金丝雀验证_Canary_Verification
+    D_INFRA_OPS_金丝雀验证_金丝雀验证_Canary_Verification -->|import_depends| D_INFRA_OPS_回滚策略_回滚策略_Strategy
+    %% ... 还有 337 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-COMPLIANCE -> D-INFRA_OPS (90 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_目录迁移影响预分析器_Analyzer_Directory
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_模块隔离部署编排器_Module_I___ion_Deployment_Orchestrator
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_AlertEscalated_告警升级事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_部署架构漂移检测器_Detector
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_里程碑健康检查_Milestone_Health_Check
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_全局快捷键管理_Management
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_响应式断点适配_Response
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_技术栈版本兼容性矩阵检查器_Tech___ompatibility_Matrix_Checker
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_接口性能监控_Monitoring_Interface_Performance
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_模块隔离部署编排器_Module_I___ion_Deployment_Orchestrator
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_OpenTelemetry
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_Pipeline编排器_Pipeline_Orchestrator
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_Capacity_Assurance_&_SLI_SLO_容量保障与服务等级
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_交互方式使用统计热力图_Intera___od_Usage_Statistics_Heatmap
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_桌面端专属交互优化器_Desktop___usive_Interaction_Optimizer
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_Monitoring_System_监控系统
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_OPS_Saga事务编排_Saga_Transaction_Orchestration
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_OPS_日志智能分析器_Analyzer_Logger
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_监控阈值自适应调整器_Monitoring
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_阶段交付物检查器_Phase_Deliverable_Checker
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_OPS_DeploymentStageAdvanced_灰度发布阶段推进事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_树状图版本差异可视化器_Tree_View_Version_Diff_Visualizer
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_OPS_动态韧性调整器_Dynamic_Resilience_Adjuster
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_CI管道命令封装脚本
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_阶段门禁自动验证器_Validator
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_OPS_Prometheus+Grafana___theus_Grafana_Monitor_Stack
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_OPS_Network_Manager_网络管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_开源组件评估器_Open_Source_Component_Evaluator
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_OPS_金丝雀验证_金丝雀验证_Canary_Verification
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_OPS_进度偏差分析器_Analyzer
+    %% D-CROSS_ASSET -> D-INFRA_OPS (5 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_INFRA_OPS_配置变更审计日志追踪器_Audit_Logger_Config
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_INFRA_OPS_MOD_INF_033
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_INFRA_OPS_复杂操作进度提示器_Complex_Operation_Progress_Prompter
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_INFRA_OPS_前端组件渲染性能监控器_Monitor_Frontend_Performance
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_INFRA_OPS_架构决策记录_Architecture_Decision_Record
+    %% D-DATA_GOV -> D-INFRA_OPS (2 条)
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_INFRA_OPS_Trace_Hierarchical_Model_Trace层级模型
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_INFRA_OPS_CI管道命令封装脚本
+    %% D-DATA_SEC -> D-INFRA_OPS (2 条)
+    D_DATA_SEC[D-DATA_SEC] -->|contract| D_INFRA_OPS_灾备3_2_1_1_0+D到E_灾备架构
+    D_DATA_SEC[D-DATA_SEC] -->|contract| D_INFRA_OPS_回滚策略_回滚策略_Strategy
+    %% D-FRONTEND -> D-INFRA_OPS (23 条)
+    D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_infra_ops___init___py
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_字段类型变更影响分析器_Analyzer_Field
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_依赖库升级流程_依赖库升级_Workflow
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_OPS_灾备方案管理器_Management
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_代码质量度量看板_Code_Quality_Metrics_Dashboard
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_Health_Dashboard_健康仪表盘
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_OPS_图表导出与分享_Table
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_OPS_个性化界面配置管理器_Management_Config
+    D_FRONTEND[D-FRONTEND] -->|event| D_INFRA_OPS_12层架构与九大平台映射分析器_Analyzer
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_交付物模板标准化器_Deliverable_Template_Standardizer
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_代码块语法校验器_Checker
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_部署架构漂移检测器_Detector
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_OPS_拖拽面板布局引擎_Engine
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_FPGA_Conditional_Gate_FPGA条件门禁
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_MOD_INF_026
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_五区域布局渲染引擎_Engine
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_INFRA_OPS_实验追踪方案切换触发器_Experi___cking_Scheme_Switch_Trigger
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_INFRA_OPS_技术选型加权评分器_Technology_Selection_Weighted_Scorer
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_OPS_前端组件渲染性能监控器_Monitor_Frontend_Performance
+    D_FRONTEND[D-FRONTEND] -->|event| D_INFRA_OPS_CI_CD流水线集成器
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_INFRA_OPS_MOD_INF_026
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_技术选型决策记录追踪器_Techno___ion_Decision_Record_Tracker
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_OPS_通知与告警_Alerting_Notification
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-INFRA_OPS -> D-ALT_DATA (11 条)
+    D_INFRA_OPS_前端组件渲染性能监控器_Monitor_Frontend_Performance -->|data| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_密钥轮换模块_Key_Rotation_Module -->|data| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_开源框架评估与集成器_Integration -->|data| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_图表导出与分享_Table -->|contract| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_性能指标SLA实时仪表板 -->|event| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_布局持久化_Layout_Persistence -->|contract| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_技术选型决策框架_Technology_Selection_Decision_Framework -->|contract| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_监控事件聚合器_Monitoring_Aggregator_Event -->|contract| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_优先级时间预算与延期预警器_Prio___ime_Budget_and_Delay_Warmer -->|contract| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_架构版本演进追踪器_Architecture_Version_Evolution_Tracker -->|config_depends| D_ALT_DATA[D-ALT_DATA]
+    D_INFRA_OPS_数据库备份与恢复方案器_Database -->|event| D_ALT_DATA[D-ALT_DATA]
+    %% D-INFRA_OPS -> D-AUTONOMY_CORE (43 条)
+    D_INFRA_OPS_文档一致性校验器_Checker -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_技术债务追踪_Technical_Debt_Tracking -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_OpenTelemetry_Collector_OpenTelemetry收集器 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_MOD_MASTER_001 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_12层架构健康检查与故障隔离器_12___th_Check_and_Fault_Isolator -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_系统版本兼容_System_Version_Compatibility -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_Administrator_管理员 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_审计报告自动生成器_Generator_Audit_Report -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_CI_CD流水线编排 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_数据质量监控桥接器_Data_Quality_Monitoring -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_pre_commit_git钩子自动配置器 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_InfrastructureStatus_基础设施状态契约 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_流水线执行延时统计分析器_Analyzer_Execution -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_新模块子模块脚手架自动生成器_Generator -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_Deployment_Manager_部署管理器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_性能指标SLA实时仪表板 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_项目目录结构生成器_Generator_Directory -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_流水线性能监控_Monitoring_Performance -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_统一交互入口管理器_Management -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_CI_CD_Pipeline_管线 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_优先级时间预算与延期预警器_Prio___ime_Budget_and_Delay_Warmer -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_Quantum_Classical____puting_Roadmap_量子_经典混合计算路线图 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_技术栈许可证合规检查器_Compliance -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_灾备方案管理器_Management -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_日志智能分析器_Analyzer_Logger -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_React组件库定制 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_阶段门禁自动验证器_Validator -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_依赖版本兼容性检查器_Depende___rsion_Compatibility_Checker -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_Cybersecurity_Shield_网络安全防护 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_INFRA_OPS_DRDrillCompleted_灾备演练完成事件 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-INFRA_OPS -> D-AUTONOMY_PERM (12 条)
+    D_INFRA_OPS_盘中恢复演练_Intraday_Recovery_Drill -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_PIT_Manager_Point_in_Time管理器 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_变更管理是灰度而非直接发布_Grayscale_Release -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_Cold_Data_Archive_Manager_冷数据归档管理器 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_多标签页管理器_Management_Tag -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_配置迁移工具_Config_Utils -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_表单自动保存_Table -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_节点关联分析器_Analyzer_Node -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_层间依赖与部署顺序编排器_Inter___ployment_Order_Orchestrator -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_Security_Infra_Manager_安全基础设施管理器 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_回滚策略_回滚策略_Strategy -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_INFRA_OPS_CI_CD流水线编排 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-INFRA_OPS -> D-DATA_ENG (6 条)
+    D_INFRA_OPS_验证流程定制化编辑器_Workflow -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_INFRA_OPS_灾备方案管理器_Management -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_INFRA_OPS_数据源可用性SLA追踪器_Data____ce_Availability_SLA_Tracker -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_INFRA_OPS_日志智能分析器_Analyzer_Logger -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_INFRA_OPS_BackupConfirmation_备份确认契约 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_INFRA_OPS_Infrastructure_as_Code_基础设施即代码 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    %% D-INFRA_OPS -> D-EX_CORE (7 条)
+    D_INFRA_OPS_架构性能瓶颈识别器_Performance -->|data| D_EX_CORE[D-EX_CORE]
+    D_INFRA_OPS_OpenTelemetry_Collector_OpenTelemetry收集器 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_INFRA_OPS_eBPF_eBPF无侵入Span补全 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_INFRA_OPS_审计报告自动生成器_Generator_Audit_Report -->|data| D_EX_CORE[D-EX_CORE]
+    D_INFRA_OPS_Migration_Strategy_迁移策略 -->|event| D_EX_CORE[D-EX_CORE]
+    D_INFRA_OPS_目录迁移影响预分析器_Analyzer_Directory -->|data| D_EX_CORE[D-EX_CORE]
+    D_INFRA_OPS_Test_Automation_&____D_Integration_测试自动化与CI_CD集成 -->|data| D_EX_CORE[D-EX_CORE]
+    %% D-INFRA_OPS -> D-EX_SOR (13 条)
+    D_INFRA_OPS_文档一致性校验器_Checker -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_技术栈废弃预警器_Tech_Stack_Deprecation_Warmer -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_交付物自动检查_Deliverable_Auto_Check -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_优先级动态调整器_Priority_Dynamic_Adjuster -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_可拖拽面板引擎_Engine -->|data| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_交互设计规范合规检查器_Compliance -->|data| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_SSL证书自动更新 -->|data| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_审计日志分析_Audit_Logger -->|data| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_树状图差异对比器_Tree_View_Diff_Comparator -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_层间依赖与部署顺序编排器_Inter___ployment_Order_Orchestrator -->|data| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_数字孪生系列_Digital_Twin_Series -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_自定义检查项_Custom_Check_Item -->|contract| D_EX_SOR[D-EX_SOR]
+    D_INFRA_OPS_文档结构导航地图自动生成器_Generator -->|config_depends| D_EX_SOR[D-EX_SOR]
+    %% D-INFRA_OPS -> D-FACTOR (27 条)
+    D_INFRA_OPS_图表主题动态切换_Table -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_MOD_INF_035 -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_灾备3_2_1_1_0+D到E_灾备架构 -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_LogAnomalyDetected_日志异常检测事件 -->|data| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_Cost_Optimizer_成本优化器 -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_委员会决策耗时监控器_Monitor -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_目录模板快速初始化脚手架_Directory -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_架构决策记录_Architecture_Decision_Record -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_面板拖拽状态同步_Sync_State -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_跨模块阶段协调器_Cross_Module_Phase_Coordinator -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_Docker健康检查器 -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_信号质量评估消费桥接器_Signal -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_MOD_INF_026 -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_多标签页管理器_Management_Tag -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_模块依赖分析器_Analyzer -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_CI_CD_Pipeline_持续集成部署流水线 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_ModelProfile_模型画像 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_Backup_Manager_自动备份管理器 -->|event| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_开源项目许可证兼容性检查器_Open___cense_Compatibility_Checker -->|config_depends| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_Observability_可观测性 -->|data| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_监控事件聚合器_Monitoring_Aggregator_Event -->|config_depends| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_Deployment_Manager_部署管理器 -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_API文档自动版本同步器 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_目录结构验证器_Validator_Directory -->|data| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_交互反馈系统_Interactive_Feedback_System -->|contract| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_LLM模型分级路由_LLM_Model_Tiered_Routing -->|data| D_FACTOR[D-FACTOR]
+    D_INFRA_OPS_交互方式使用统计热力图_Intera___od_Usage_Statistics_Heatmap -->|event| D_FACTOR[D-FACTOR]
+    %% D-INFRA_OPS -> D-GOVERNANCE (61 条)
+    src_zephyr_infra_ops_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infra_ops_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    tests_test_auto_rollback_trigger_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
+    tests_test_rollback_simulator_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
+    tests_test_rollback_wal_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_governance_auto_rollback_trigger_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_governance_rollback_simulator_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_governance_rollback_wal_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_优先级时间预算与延期预警器_Prio___ime_Budget_and_Delay_Warmer -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_文档状态变更通知与依赖影响分析器_Analyzer_Notification_State -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_MOD_INF_033 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_布局版本迁移转换器_Converter -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_导航状态持久化与恢复器_State -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_Pipeline吞吐量瓶颈分析器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_MOD_INF_024 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_阶段过渡触发器_Phase_Transition_Trigger -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_Microsoft_Agent_36____Microsoft_Agent_365_OTel管道 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_数据质量监控桥接器_Data_Quality_Monitoring -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_技术选型决策记录追踪器_Techno___ion_Decision_Record_Tracker -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_数据血缘追踪_Data_Lineage_Tracking -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_容器资源限制_Container_Resource_Limit -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_自定义监控面板_Monitoring -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_阶段资源分配与调度器_Scheduler -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_验证流程定制化编辑器_Workflow -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_自定义统计指标_Custom_Statistics_Metric -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_AlertFired_告警触发事件 -->|data| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_变更管理_变更管理_Management -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_表单自动保存_Table -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_Infrastructure_Health_Patrol_Inspector_基础设施健康巡检器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_INFRA_OPS_学习进度量化评估_Learning____ess_Quantitative_Assessment -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-INFRA_OPS -> D-GOV_AUDIT (2 条)
+    src_zephyr_infrastructure_rollback_governance_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_governance_contracts_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-INFRA_OPS -> D-INFRA_RUNTIME (31 条)
+    src_zephyr_infrastructure_rollback_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_五区域布局渲染引擎_Engine -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_内存泄漏检测器_Detector_Memory -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_系统级导航与功能入口管理器_Management -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_Alert_Manager_告警管理器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_变更必须灰度发布_Changes_Must_Be_Canary_Released -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_业务指标量化与追踪器_Busines___tric_Quantifier_and_Tracker -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_Observability_Three_Pillars_可观测性三支柱 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_Test_Automation_&____D_Integration_测试自动化与CI_CD集成 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_CI管道命令封装脚本 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_图表主题标准化导出导入器_Importer_Table -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_优雅降级规划器_Fallback -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_DR_Manager_灾备管理器 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_优先级自动评估器_Priority_Auto_Evaluator -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_开源项目许可证兼容性检查器_Open___cense_Compatibility_Checker -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_开源组件评估器_Open_Source_Component_Evaluator -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_DeploymentStageAdvanced_灰度发布阶段推进事件 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_日快照恢复演练_Daily_Snapshot_Recovery_Drill -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_技术选型决策框架_Technology_Selection_Decision_Framework -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_交互操作埋点_Interactive_Operation_Tracking -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_测试环境管理_Management_Environment -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_指标阈值动态调整与合理性评估器_Me___t_and_Rationality_Evaluator -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_OpenTelemetry -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_Prometheus+Grafana___theus_Grafana_Monitor_Stack -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_Agent_Communication_Protocol_Agent通信协议 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_A_Share_Intraday_M___rd_Configurator_A股盘中监控看板配置器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_系统级导航与功能入口管理器_Management -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_桌面端大屏优化器_Desktop_Large_Screen_Optimizer -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_阶段资源分配与调度器_Scheduler -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_INFRA_OPS_Mermaid流程图渲染器 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-INFRA_OPS -> D-INTEGRATION (38 条)
+    D_INFRA_OPS_业务指标量化与追踪器_Busines___tric_Quantifier_and_Tracker -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_存储成本量化核算器_Storage_Cost_Calculator -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_LLM模型分级路由_LLM_Model_Tiered_Routing -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_存储成本量化核算器_Storage_Cost_Calculator -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_指标阈值动态调整与合理性评估器_Me___t_and_Rationality_Evaluator -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_阶段资源分配与调度器_Scheduler -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_里程碑依赖图自动生成器_Generator -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_自动化运维变更影响预分析器_Analyzer_Operations -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_配置迁移工具_Config_Utils -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_CI_CD_Pipeline_持续集成部署流水线 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_GATE_FPGA_03_FPGA开发能力 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_密钥轮换模块_Key_Rotation_Module -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_Trace_Hierarchical_Model_Trace层级模型 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_模型推理性能基准测试器_Inference_Model_Performance -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_部署依赖顺序校验器_Checker -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_阶段门禁自动验证器_Validator -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_架构决策记录_Architecture_Decision_Record -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_MOD_INF_033 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_测试报告生成_Report -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_日志聚合模块_Aggregator_Logger -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_Health_Dashboard_健康仪表盘 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_阶段交付物检查器_Phase_Deliverable_Checker -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_交付物模板标准化器_Deliverable_Template_Standardizer -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_层间依赖与部署顺序编排器_Inter___ployment_Order_Orchestrator -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_可视化组件库_Visualization_Component_Library -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_知识来源质量评分器_Knowledge -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_Saga事务编排_Saga_Transaction_Orchestration -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_导航使用热力图生成器_Generator -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_监控方案迁移路径规划器_Monitoring_Path -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_INFRA_OPS_蓝绿部署策略_Strategy -->|data| D_INTEGRATION[D-INTEGRATION]
+    %% D-INFRA_OPS -> D-INTELLIGENCE (30 条)
+    D_INFRA_OPS_树状图自动生成器_Generator -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_容器安全扫描_Security -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_Communication_Encryption_Config_通信加密配置 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_韧性评分标准化器_Resilience_Score_Standardizer -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_交互方式使用统计热力图_Intera___od_Usage_Statistics_Heatmap -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_变更管理_变更管理_Management -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_文档结构导航地图自动生成器_Generator -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_跨模块阶段协调器_Cross_Module_Phase_Coordinator -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_系统级导航与功能入口管理器_Management -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_CI_CD流水线集成器 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_交互反馈系统_Interactive_Feedback_System -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_密钥轮换模块_Key_Rotation_Module -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_系统资源监控告警器_Monitoring_Alerting -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_Prometheus_Prometheus监控系统 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_Loki日志聚合_Loki_Log_Aggregation -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_自动化代码审查流水线_Automated_Code_Review_Pipeline -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_运维变更审批流_Operations -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_Observability_Three_Pillars_可观测性三支柱 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_HPC_Manager_HPC管理器 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_分阶段实施编排器_Phased_Implementation_Orchestrator -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_RED_Metrics_Specification_RED指标规格 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_前端性能基准测试_Frontend_Performance -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_Quantum_Classical____puting_Roadmap_量子_经典混合计算路线图 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_PyQt5桌面GUI集成器 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_接口性能监控_Monitoring_Interface_Performance -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_里程碑依赖图自动生成器_Generator -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_韧性评分标准化器_Resilience_Score_Standardizer -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_Security_Infra_Manager_安全基础设施管理器 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_流水线执行监控_Execution_Monitoring -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_INFRA_OPS_文档一致性校验器_Checker -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-INFRA_OPS -> D-KNOWLEDGE (18 条)
+    D_INFRA_OPS_学习进度量化评估_Learning____ess_Quantitative_Assessment -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_CI管道命令封装脚本 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_工作流健康检查_Workflow_Health_Check -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_审计报告自动生成器_Generator_Audit_Report -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_全量恢复演练_Full_Recovery_Drill -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_Health_Dashboard_健康仪表盘 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_依赖图韧性评分增强_Dependen___esilience_Score_Enhancement -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_交易时段依赖库不可自动升级_Trad___ncy_Library_No_Auto_Upgrade -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_Cost_Optimizer_成本优化器 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_Markdown表格校验器 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_Markdown表格校验器 -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_目录模板快速初始化脚手架_Directory -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_容器健康检查_Container_Health_Check -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_渐进式增强管理器_Management -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_流水线性能监控_Monitoring_Performance -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_容器健康检查_Container_Health_Check -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_盘中恢复演练_Intraday_Recovery_Drill -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_INFRA_OPS_大数据量图表优化_Table -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-INFRA_OPS -> D-MKT_DATA (21 条)
+    D_INFRA_OPS_Agent_SRE_Reliability_Engineering_Agent_SRE可靠性工程 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_PIT_Manager_Point_in_Time管理器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_D_Drive_Complete_Failure_D盘完全故障 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_字段类型变更影响分析器_Analyzer_Field -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_工作流健康检查_Workflow_Health_Check -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_性能测试Locust_JMeter集成器 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_代码质量度量看板_Code_Quality_Metrics_Dashboard -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_OpenTelemetry_Collector_OpenTelemetry收集器 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_流水线执行监控_Execution_Monitoring -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_Pipeline吞吐量瓶颈分析器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_MOD_INF_036 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_通知与告警_Alerting_Notification -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_AlertFired_告警触发事件 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_日快照恢复演练_Daily_Snapshot_Recovery_Drill -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_数据流断点调试器_Data_Flow_Breakpoint_Debugger -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_Model_Profiler_&_Capability_Exam_模型画像与能力考试 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_开源项目许可证兼容性检查器_Open___cense_Compatibility_Checker -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_数据恢复流程_数据恢复_Workflow -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_韧性评分标准化器_Resilience_Score_Standardizer -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_图表主题动态切换_Table -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_INFRA_OPS_CI管道命令封装脚本 -->|event| D_MKT_DATA[D-MKT_DATA]
+    %% D-INFRA_OPS -> D-ML_SERVE (6 条)
+    D_INFRA_OPS_可视化组件注册中心_Visualiz___n_Component_Registry_Center -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_INFRA_OPS_统一交互入口管理器_Management -->|data| D_ML_SERVE[D-ML_SERVE]
+    D_INFRA_OPS_Security_Infra_Manager_安全基础设施管理器 -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_INFRA_OPS_里程碑风险预警_Risk -->|contract| D_ML_SERVE[D-ML_SERVE]
+    D_INFRA_OPS_Trace_Hierarchy_Model_Trace层级模型 -->|event| D_ML_SERVE[D-ML_SERVE]
+    D_INFRA_OPS_韧性评分标准化器_Resilience_Score_Standardizer -->|contract| D_ML_SERVE[D-ML_SERVE]
+    %% D-INFRA_OPS -> D-ML_TRAIN (8 条)
+    D_INFRA_OPS_技术栈冗余检测与收敛建议器_Tech___ion_and_Convergence_Advisor -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_交互反馈系统_Interactive_Feedback_System -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_模块间集成测试计划器_Integration -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_技术债务追踪_Technical_Debt_Tracking -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_五区域布局管理器_Management -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_KrakenD_Kong替代API网关评估 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_DeploymentStageAdvanced_灰度发布阶段推进事件 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_INFRA_OPS_Cost_Optimizer_成本优化器 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-INFRA_OPS -> D-OPS (26 条)
+    src_zephyr_infra_ops_dashboard___onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
+    D_INFRA_OPS_日志保留与归档策略_Strategy_Logger -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_阶段交付物定义器_Phase_Deliverable_Definer -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_代码质量度量看板_Code_Quality_Metrics_Dashboard -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_金丝雀验证_金丝雀验证_Canary_Verification -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_阶段过渡触发器_Phase_Transition_Trigger -->|event| D_OPS[D-OPS]
+    D_INFRA_OPS_阶段交付物验收清单生成器_Generator -->|event| D_OPS[D-OPS]
+    D_INFRA_OPS_前端安全审计_Audit_Security_Frontend -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_层级深度校验器_Checker -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_External_Instruction_Monitoring_外部指令盯盘 -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_多数据库SLA监控与告警器 -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_NozyIO多语言代码编辑集成器 -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_Disaster_Recovery_灾难恢复 -->|event| D_OPS[D-OPS]
+    D_INFRA_OPS_里程碑健康检查_Milestone_Health_Check -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_灾备演练计划_灾备演练_Disaster_Recovery_Drill_Plan -->|config_depends| D_OPS[D-OPS]
+    D_INFRA_OPS_日志智能分析器_Analyzer_Logger -->|config_depends| D_OPS[D-OPS]
+    D_INFRA_OPS_接口健康探测_Interface -->|config_depends| D_OPS[D-OPS]
+    D_INFRA_OPS_AI_API_Cost_Manager_AI_API成本管理器 -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_CI_CD_Pipeline_持续集成部署流水线 -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_目录迁移回滚方案器_Directory -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_AlertEscalated_告警升级事件 -->|config_depends| D_OPS[D-OPS]
+    D_INFRA_OPS_Prometheus+Grafana___theus_Grafana_Monitor_Stack -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_Backup_Manager_自动备份管理器 -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_Log_Aggregator_日志聚合器 -->|contract| D_OPS[D-OPS]
+    D_INFRA_OPS_Cybersecurity_Shield_网络安全防护 -->|data| D_OPS[D-OPS]
+    D_INFRA_OPS_交易时段依赖库不可自动升级_Trad___ncy_Library_No_Auto_Upgrade -->|data| D_OPS[D-OPS]
+    %% D-INFRA_OPS -> D-PF_ALLOC (11 条)
+    D_INFRA_OPS_数据血缘追踪_Data_Lineage_Tracking -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_业务指标量化与追踪器_Busines___tric_Quantifier_and_Tracker -->|event| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_12层架构与九大平台映射分析器_Analyzer -->|event| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_模块间集成测试计划器_Integration -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_文档章节链接有效性批量检查器_Batch -->|event| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_DeploymentStageAdvanced_灰度发布阶段推进事件 -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_文件上传预览_File -->|contract| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_决策流节点耗时瓶颈分析器_Analyzer_Node -->|event| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_知识生命周期管理_Lifecycle_Knowledge_Management -->|config_depends| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_交互操作埋点_Interactive_Operation_Tracking -->|config_depends| D_PF_ALLOC[D-PF_ALLOC]
+    D_INFRA_OPS_Administrator_管理员 -->|event| D_PF_ALLOC[D-PF_ALLOC]
+    %% D-INFRA_OPS -> D-PF_CORE (19 条)
+    D_INFRA_OPS_数据延迟检测_Latency -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_文档单一信息源管理器_Management -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_流水线执行延时统计分析器_Analyzer_Execution -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_BackupConfirmation_备份确认契约 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_交付物自动检查_Deliverable_Auto_Check -->|event| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_交互界面迁移方案器_Interact___Interface_Migration_Planner -->|event| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_Disaster_Recovery_Level_L6_灾备分级L6日志审计 -->|data| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_MOD_INF_026 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_运维变更审批流_Operations -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_D→E盘本地双副本_D→E_Dual_Copy -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_Key_Observability_Metrics_关键可观测性指标 -->|data| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_数据血缘追踪_Data_Lineage_Tracking -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_目录结构规范校验器_Checker_Directory -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_AI_API_Cost_Manager_AI_API成本管理器 -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_命名规范自动修复建议器_Naming___vention_Auto_Repair_Advisor -->|event| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_字段类型变更影响分析器_Analyzer_Field -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_Mermaid流程图渲染器 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_技术栈版本兼容性矩阵自动检测器_Detector -->|config_depends| D_PF_CORE[D-PF_CORE]
+    D_INFRA_OPS_里程碑依赖图自动生成器_Generator -->|config_depends| D_PF_CORE[D-PF_CORE]
+    %% D-INFRA_OPS -> D-POSITION (8 条)
+    D_INFRA_OPS_GATE_FPGA_03_FPGA开发能力 -->|data| D_POSITION[D-POSITION]
+    D_INFRA_OPS_桌面端多显示器布局管理_Management -->|contract| D_POSITION[D-POSITION]
+    D_INFRA_OPS_表格列配置持久化器_Config_Table -->|event| D_POSITION[D-POSITION]
+    D_INFRA_OPS_LogAnomalyDetected_日志异常检测事件 -->|event| D_POSITION[D-POSITION]
+    D_INFRA_OPS_里程碑依赖图自动生成器_Generator -->|event| D_POSITION[D-POSITION]
+    D_INFRA_OPS_Microsoft_Cisco_Op___n_Microsoft_Cisco多Agent语义约定 -->|data| D_POSITION[D-POSITION]
+    D_INFRA_OPS_wandb使用成本追踪器 -->|data| D_POSITION[D-POSITION]
+    D_INFRA_OPS_交易日志不可自动清理_Logger -->|config_depends| D_POSITION[D-POSITION]
+    %% D-INFRA_OPS -> D-REPORTING (12 条)
+    D_INFRA_OPS_AlertEscalated_告警升级事件 -->|contract| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_KrakenD_Kong替代API网关评估 -->|event| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_灾备架构_灾备架构_Disaster_Recovery_Architecture -->|data| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_Data_Mesh_数据网格 -->|event| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_日志智能分析器_Analyzer_Logger -->|data| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_日快照恢复演练_Daily_Snapshot_Recovery_Drill -->|config_depends| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_阶段门禁自动验证器_Validator -->|config_depends| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_审计日志分析_Audit_Logger -->|data| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_优先级动态调整器_Priority_Dynamic_Adjuster -->|data| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_图表主题标准化导出导入器_Importer_Table -->|config_depends| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_预测性维护与自愈修复器_Predic___e_and_Self_Healing_Repairer -->|config_depends| D_REPORTING[D-REPORTING]
+    D_INFRA_OPS_数据质量监控桥接器_Data_Quality_Monitoring -->|contract| D_REPORTING[D-REPORTING]
+    %% D-INFRA_OPS -> D-RISK (68 条)
+    D_INFRA_OPS_eBPF_eBPF无侵入Span补全 -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_灰度发布与蓝绿部署框架_Canary____Green_Deployment_Framework -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_HPC_Manager_HPC管理器 -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_流水线执行时间偏差告警器_Execution_Alerting -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_日志聚合模块_Aggregator_Logger -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_实时数据流图表_Real_time_Table -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_交易日志不可自动清理_Logger -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_硬件资源优化建议器_Hardware_Resource_Optimization_Advisor -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_批量重命名脚手架生成器_Generator_Batch -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_渐进式增强管理器_Management -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_混沌工程实践_混沌工程_Chaos_Engineering_Practice -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_模块实现状态追踪器_State -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_交付物自动检查_Deliverable_Auto_Check -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_开源组件评估器_Open_Source_Component_Evaluator -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_数据迁移模块_Data_Migration_Module -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_进度偏差分析器_Analyzer -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_交付物自动检查_Deliverable_Auto_Check -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_Prometheus_Prometheus监控系统 -->|contract| D_RISK[D-RISK]
+    D_INFRA_OPS_SLA监控与保障器 -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_测试环境管理_Management_Environment -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_阶段交付物定义器_Phase_Deliverable_Definer -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_系统版本兼容_System_Version_Compatibility -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_依赖冲突检测_Dependency_Conflict_Detection -->|data| D_RISK[D-RISK]
+    D_INFRA_OPS_变更管理是灰度而非直接发布_Grayscale_Release -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_开源项目许可证兼容性检查器_Open___cense_Compatibility_Checker -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_流水线执行日报自动生成器_Generator_Execution -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_交易时段依赖库不可自动升级_Trad___ncy_Library_No_Auto_Upgrade -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_Observability_Three_Pillars_可观测性三支柱 -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_统一健康检查框架_Unified_Health_Check_Framework -->|event| D_RISK[D-RISK]
+    D_INFRA_OPS_Alert_Manager_告警管理器 -->|event| D_RISK[D-RISK]
+    %% D-INFRA_OPS -> D-SECURITY (53 条)
+    D_INFRA_OPS_Health_Dashboard_健康仪表盘 -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_交互界面迁移方案器_Interact___Interface_Migration_Planner -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_优先级动态调整器_Priority_Dynamic_Adjuster -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_蓝绿部署策略_Strategy -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_InfrastructureStatus_基础设施状态契约 -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_测试环境管理_Management_Environment -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_运维变更审批流_Operations -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_LogAnomalyDetected_日志异常检测事件 -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_导航使用热力图生成器_Generator -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_开源项目许可证兼容性检查器_Open___cense_Compatibility_Checker -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_KrakenD_Kong替代API网关评估 -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_阶段门禁检查器_Phase_Gate_Checker -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_阶段资源分配与调度器_Scheduler -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_配置漂移检测_Config -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_Communication_Encryption_Config_通信加密配置 -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_阶段过渡触发器_Phase_Transition_Trigger -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_目录迁移回滚方案器_Directory -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_测试报告生成_Report -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_决策流节点耗时瓶颈分析器_Analyzer_Node -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_Agent_RBAC___Permission_Guard_Agent_RBAC_权限守卫器 -->|event| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_阶段门禁自动验证器_Validator -->|event| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_新模块子模块脚手架自动生成器_Generator -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_Log_Aggregator_日志聚合器 -->|contract| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_目录模板快速初始化脚手架_Directory -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_流水线执行时间偏差告警器_Execution_Alerting -->|event| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_开源框架评估与集成器_Integration -->|event| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_Resilience_Testing_Engine_韧性测试引擎 -->|event| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_文档结构导航地图自动生成器_Generator -->|data| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_架构版本演进追踪器_Architecture_Version_Evolution_Tracker -->|config_depends| D_SECURITY[D-SECURITY]
+    D_INFRA_OPS_五区域布局管理器_Management -->|config_depends| D_SECURITY[D-SECURITY]
+    %% D-INFRA_OPS -> D-SELL_DECISION (6 条)
+    D_INFRA_OPS_Agent_SRE_Reliability_Engineering_Agent_SRE可靠性工程 -->|contract| D_SELL_DECISION[D-SELL_DECISION]
+    D_INFRA_OPS_BackupConfirmation_备份确认契约 -->|data| D_SELL_DECISION[D-SELL_DECISION]
+    D_INFRA_OPS_日快照恢复演练_Daily_Snapshot_Recovery_Drill -->|event| D_SELL_DECISION[D-SELL_DECISION]
+    D_INFRA_OPS_异常使用统计与热点分析器_Analyzer -->|event| D_SELL_DECISION[D-SELL_DECISION]
+    D_INFRA_OPS_部署监控优化器_Monitoring -->|event| D_SELL_DECISION[D-SELL_DECISION]
+    D_INFRA_OPS_MOD_INF_034 -->|event| D_SELL_DECISION[D-SELL_DECISION]
+    %% D-INFRA_OPS -> D-SHARED (1 条)
+    src_zephyr_infra_ops_dashboard_app_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-INFRA_OPS -> D-SIGNAL (39 条)
+    D_INFRA_OPS_金丝雀验证_金丝雀验证_Canary_Verification -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Microsoft_Agent_36____Microsoft_Agent_365_OTel管道 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Prometheus+Grafana___theus_Grafana_Monitor_Stack -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_MOD_INF_033 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_监控事件聚合器_Monitoring_Aggregator_Event -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_变更必须灰度发布_Changes_Must_Be_Canary_Released -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Observability_可观测性 -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_A_Share_Intraday_M___rd_Configurator_A股盘中监控看板配置器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_交互设计规范合规检查器_Compliance -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Monitoring_Stack_监控栈 -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Administrator_管理员 -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_BackupCompleted_备份完成事件 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_目录模板快速初始化脚手架_Directory -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_阶段资源分配与调度器_Scheduler -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_实时数据流图表_Real_time_Table -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Cold_Data_Archive_Manager_冷数据归档管理器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_全量恢复演练_Full_Recovery_Drill -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_OpenTelemetry_Collector_OpenTelemetry收集器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_交互操作埋点_Interactive_Operation_Tracking -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_日志智能分析器_Analyzer_Logger -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_日志保留与归档策略_Strategy_Logger -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Agent_365_OTel_Ent___ipeline_Agent_365_OTel企业级管道 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_优先级冲突解决器_Priority_Conflict_Resolver -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_交付物模板标准化器_Deliverable_Template_Standardizer -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_按钮状态机管理器_State_Machine_Management -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_配置变更审计_Audit_Config -->|data| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_开源框架评估与集成器_Integration -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_MOD_INF_034 -->|event| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_多数据库SLA监控与告警器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_INFRA_OPS_Cold_Data_Archive_Manager_冷数据归档管理器 -->|contract| D_SIGNAL[D-SIGNAL]
+    %% D-INFRA_OPS -> D-SIMULATION (6 条)
+    D_INFRA_OPS_Log_Aggregator_日志聚合器 -->|event| D_SIMULATION[D-SIMULATION]
+    D_INFRA_OPS_优先级自动评估器_Priority_Auto_Evaluator -->|contract| D_SIMULATION[D-SIMULATION]
+    D_INFRA_OPS_通知与告警_Alerting_Notification -->|contract| D_SIMULATION[D-SIMULATION]
+    D_INFRA_OPS_SSL证书自动更新 -->|data| D_SIMULATION[D-SIMULATION]
+    D_INFRA_OPS_灰度发布与蓝绿部署框架_Canary____Green_Deployment_Framework -->|contract| D_SIMULATION[D-SIMULATION]
+    D_INFRA_OPS_ELK日志管理器 -->|data| D_SIMULATION[D-SIMULATION]
+    %% D-INFRA_OPS -> D-TRADING (12 条)
+    D_INFRA_OPS_层级深度校验器_Checker -->|contract| D_TRADING[D-TRADING]
+    D_INFRA_OPS_部署架构漂移检测器_Detector -->|contract| D_TRADING[D-TRADING]
+    D_INFRA_OPS_交互操作埋点_Interactive_Operation_Tracking -->|data| D_TRADING[D-TRADING]
+    D_INFRA_OPS_流水线执行延时统计分析器_Analyzer_Execution -->|contract| D_TRADING[D-TRADING]
+    D_INFRA_OPS_流水线执行监控_Execution_Monitoring -->|contract| D_TRADING[D-TRADING]
+    D_INFRA_OPS_Docker容器化研究环境管理器 -->|event| D_TRADING[D-TRADING]
+    D_INFRA_OPS_Communication_Encryption_Config_通信加密配置 -->|contract| D_TRADING[D-TRADING]
+    D_INFRA_OPS_模块间集成测试计划器_Integration -->|event| D_TRADING[D-TRADING]
+    D_INFRA_OPS_MOD_INF_024 -->|contract| D_TRADING[D-TRADING]
+    D_INFRA_OPS_CI_CD流水线编排 -->|data| D_TRADING[D-TRADING]
+    D_INFRA_OPS_文件智能解析器_Parser_File -->|event| D_TRADING[D-TRADING]
+    D_INFRA_OPS_Pipeline吞吐量瓶颈分析器 -->|event| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 417 条
+    %% 跨域入边: 122 条
+    %% 跨域出边: 595 条

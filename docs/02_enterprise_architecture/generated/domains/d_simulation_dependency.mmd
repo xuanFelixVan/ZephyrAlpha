@@ -1,0 +1,464 @@
+%% D-SIMULATION 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:13
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 128, 依赖边数: 344
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_SIMULATION[仿真]
+        D_SIMULATION_ADR_Decision_Simulator_ADR决策仿真器["...ATION/ADR Decision Simulator ADR决策仿真器 [design]"]
+        D_SIMULATION_Agent_Based_Market_Model_基于Agent的市场模型["...Agent-Based Market Model 基于Agent的市场模型 [design]"]
+        D_SIMULATION_Approval_Gate_Dep___Extractor_Enhancer_审批门依赖提取器["...ependency Extractor Enhancer 审批门依赖提取器 [design]"]
+        D_SIMULATION_Approval_Gate_Dependency_Extractor_审批门依赖提取器["...al Gate Dependency Extractor 审批门依赖提取器 [design]"]
+        D_SIMULATION_Architecture_Anti___opology_Detector_架构反模式拓扑检测器["...-Pattern Topology Detector 架构反模式拓扑检测器 [design]"]
+        D_SIMULATION_Architecture_Anti___opology_Enhancer_架构反模式拓扑增强器["...-Pattern Topology Enhancer 架构反模式拓扑增强器 [design]"]
+        D_SIMULATION_Argus_Dependency____ation_Tester_Argus依赖优先变异测试器["...-First Mutation Tester Argus依赖优先变异测试器 [design]"]
+        D_SIMULATION_Argus_Mutation_Enhancer_Argus变异增强器["...ON/Argus Mutation Enhancer Argus变异增强器 [design]"]
+        D_SIMULATION_Auto_Backtest_Scheduler_自动回测调度器["...ATION/Auto Backtest Scheduler 自动回测调度器 [design]"]
+        D_SIMULATION_Automated_Overfitting_Detector_自动化过拟合检测["...tomated Overfitting Detector 自动化过拟合检测 [design]"]
+        D_SIMULATION_Backtest_Acceleration_Module_回测加速模块["...N/Backtest Acceleration Module 回测加速模块 [design]"]
+        D_SIMULATION_Backtest_Anomaly_Diagnoser_回测异常诊断["...ION/Backtest Anomaly Diagnoser 回测异常诊断 [design]"]
+        D_SIMULATION_Backtest_Cache_Manager_回测缓存管理器["...LATION/Backtest Cache Manager 回测缓存管理器 [design]"]
+        D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器["...cktest Data Quality Checker 回测数据质量检查器 [design]"]
+        D_SIMULATION_Backtest_Overfitting_Detector回测过拟合检测[".../Backtest Overfitting Detector回测过拟合检测 [design]"]
+        D_SIMULATION_Backtest_Pipeline_Orchestrator_回测流水线编排器["...cktest Pipeline Orchestrator 回测流水线编排器 [design]"]
+        D_SIMULATION_Backtest_Report_Auto_Generator_回测报告自动生成["...cktest Report Auto Generator 回测报告自动生成 [design]"]
+        D_SIMULATION_Backtest_Result_Comparator_回测结果对比["...ION/Backtest Result Comparator 回测结果对比 [design]"]
+        D_SIMULATION_Backtest_Result_One_Click_Deployer_回测结果一键部署["...st Result One-Click Deployer 回测结果一键部署 [design]"]
+        D_SIMULATION_Backtest_Result_S___ificance_Tester_回测结果统计显著性检验["...tical Significance Tester 回测结果统计显著性检验 [design]"]
+        D_SIMULATION_Capital_Group_Eco___me_Simulation_资金群体生态与多方博弈模拟["...i-Party Game Simulation 资金群体生态与多方博弈模拟 [design]"]
+        D_SIMULATION_Carbon_Intensity_Queryer_碳强度查询器["...ATION/Carbon Intensity Queryer 碳强度查询器 [design]"]
+        D_SIMULATION_Carbon_Aware_Scheduler_Optimizer_碳感知调度优化器["...on-Aware Scheduler Optimizer 碳感知调度优化器 [design]"]
+        D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境[".../Chaos Engineering Environment 混沌工程环境 [design]"]
+        D_SIMULATION_Chaos_Experiment_Auto_Generator_混沌实验自动生成器["...s Experiment Auto-Generator 混沌实验自动生成器 [design]"]
+        D_SIMULATION_Convexity_Budget_Framework_凸性预算框架["...ION/Convexity Budget Framework 凸性预算框架 [design]"]
+        D_SIMULATION_Correlation_Regime_Shift_相关性体制转换["...TION/Correlation Regime Shift 相关性体制转换 [design]"]
+        D_SIMULATION_Counterparty_Simulator_对手仿真器["...MULATION/Counterparty Simulator 对手仿真器 [design]"]
+        D_SIMULATION_Cross_Engine_Back___esult_Comparator_跨引擎回测结果比较器["...Backtest Result Comparator 跨引擎回测结果比较器 [design]"]
+        D_SIMULATION_Cross_Env_Dependency_Diff_Analyzer_跨环境依赖差异分析器["...v Dependency Diff Analyzer 跨环境依赖差异分析器 [design]"]
+        D_SIMULATION_D_SIMULATION_仿真["D-SIMULATION/D-SIMULATION 仿真 [design]"]
+        D_SIMULATION_DANTE_Dependency____st_Generator_DANTE依赖感知测试生成器["...y-Aware Test Generator DANTE依赖感知测试生成器 [design]"]
+        D_SIMULATION_DANTE_Test_Generation_Enhancer_DANTE测试生成增强器["...Test Generation Enhancer DANTE测试生成增强器 [design]"]
+        D_SIMULATION_Deflated_Sharpe_Ratio_Calculator_DSR计算器["...flated Sharpe Ratio Calculator DSR计算器 [design]"]
+        D_SIMULATION_Dependency_Chain____tprint_Attributor_依赖链碳足迹归因器["...Carbon Footprint Attributor 依赖链碳足迹归因器 [design]"]
+        D_SIMULATION_Dependency_Graph_Digital_Twin_依赖图数字孪生["...Dependency Graph Digital Twin 依赖图数字孪生 [design]"]
+        D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎["...Graph Real-time Twin Engine 依赖图实时孪生引擎 [design]"]
+        D_SIMULATION_Dependency_Hell_5___ection_Enhancer_依赖地狱5维检测增强器["...ension Detection Enhancer 依赖地狱5维检测增强器 [design]"]
+        D_SIMULATION_Digital_Twin_Market_Simulation_数字孪生市场仿真["...gital Twin Market Simulation 数字孪生市场仿真 [design]"]
+        D_SIMULATION_Dual_Mode_Backtest_Engine双模式回测引擎["...TION/Dual-Mode Backtest Engine双模式回测引擎 [design]"]
+        D_SIMULATION_Energy_Consumption_Collector_能耗采集器["...ON/Energy Consumption Collector 能耗采集器 [design]"]
+        D_SIMULATION_Event_Driven_Backtester_事件驱动回测器["...ATION/Event-Driven Backtester 事件驱动回测器 [design]"]
+        D_SIMULATION_Extreme_Event_Simulator_极端事件仿真器["...ATION/Extreme Event Simulator 极端事件仿真器 [design]"]
+        D_SIMULATION_FeatureStore_PIT_Feature_Store时点特征["...ON/FeatureStore PIT Feature Store时点特征 [design]"]
+        D_SIMULATION_Greek_Trilemma希腊三难困境["D-SIMULATION/Greek Trilemma希腊三难困境 [design]"]
+        D_SIMULATION_History_Replay_Engine历史重放引擎["D-SIMULATION/History Replay Engine历史重放引擎 [design]"]
+        D_SIMULATION_Indicator_NaN_Processor_指标NaN处理器["...TION/Indicator NaN Processor 指标NaN处理器 [design]"]
+        D_SIMULATION_Liquidity_Model_&___ppage_Simulator_流动性模型与滑点模拟器["...odel & Slippage Simulator 流动性模型与滑点模拟器 [design]"]
+        D_SIMULATION_Liquidity_Simulator_流动性仿真器["D-SIMULATION/Liquidity Simulator 流动性仿真器 [design]"]
+        D_SIMULATION_Live_Environment_Simulator实盘环境模拟["...TION/Live Environment Simulator实盘环境模拟 [design]"]
+        D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测["...TION/Look-Ahead Bias Detector未来函数风险检测 [design]"]
+        D_SIMULATION_Market_Simulator市场仿真器["D-SIMULATION/Market Simulator市场仿真器 [design]"]
+        D_SIMULATION_Monte_Carlo_Engine蒙特卡洛模拟["D-SIMULATION/Monte Carlo Engine蒙特卡洛模拟 [design]"]
+        D_SIMULATION_Multi_Strategy_Backtest_Comparator_多策略回测对比["...-Strategy Backtest Comparator 多策略回测对比 [design]"]
+        D_SIMULATION_Mutation_Score_Dependency_Gate_变异评分依赖门禁["...tation Score Dependency Gate 变异评分依赖门禁 [design]"]
+        D_SIMULATION_NozyIO_Backtest_Visual_Reporter_NozyIO回测可视化报告器["...cktest Visual Reporter NozyIO回测可视化报告器 [design]"]
+        D_SIMULATION_Order_Matching_Engine_订单撮合引擎["...MULATION/Order Matching Engine 订单撮合引擎 [design]"]
+        D_SIMULATION_Overfitting_Detector_过拟合检验器["D-SIMULATION/Overfitting Detector 过拟合检验器 [design]"]
+        D_SIMULATION_OverfittingDetected_过拟合检测触发["D-SIMULATION/OverfittingDetected 过拟合检测触发 [design]"]
+        D_SIMULATION_Parameter_Optimiz___n_Result_Analyzer_参数优化结果分析器["...ptimization Result Analyzer 参数优化结果分析器 [design]"]
+        D_SIMULATION_Parameter_Robustness_Tester_参数鲁棒性测试器[".../Parameter Robustness Tester 参数鲁棒性测试器 [design]"]
+        D_SIMULATION_Parameter_Sensitivity_Analyzer_参数灵敏度分析器["...rameter Sensitivity Analyzer 参数灵敏度分析器 [design]"]
+        D_SIMULATION_Performance_Regression_Dependency_Gate_性能回归依赖门禁["...e Regression Dependency Gate 性能回归依赖门禁 [design]"]
+        D_SIMULATION_Pipeline_DAG_Scheduler_管线DAG调度器["...ATION/Pipeline DAG Scheduler 管线DAG调度器 [design]"]
+        D_SIMULATION_Pipeline_DAG_Sche____Enhancer_Pipeline_DAG调度增强器["...Scheduling Enhancer Pipeline DAG调度增强器 [design]"]
+        D_SIMULATION_Qlib_Walk_Forward___tor_Qlib_Walk_Forward简化版集成器["...on Integrator Qlib Walk-Forward简化版集成器 [design]"]
+        D_SIMULATION_Real_time_DT_Synchronizer_实时数字孪生同步器["...N/Real-time DT Synchronizer 实时数字孪生同步器 [design]"]
+        D_SIMULATION_Risk_Simulator风控仿真器["D-SIMULATION/Risk Simulator风控仿真器 [design]"]
+        D_SIMULATION_SCI_Calculator_SCI计算器["D-SIMULATION/SCI Calculator SCI计算器 [design]"]
+        D_SIMULATION_Scenario_Generator场景生成器["D-SIMULATION/Scenario Generator场景生成器 [design]"]
+        D_SIMULATION_ScenarioGenerated_场景生成完成["D-SIMULATION/ScenarioGenerated 场景生成完成 [design]"]
+        D_SIMULATION_Semantic_Level_Diff_Understanding_语义级差异理解器["...tic-Level Diff Understanding 语义级差异理解器 [design]"]
+        D_SIMULATION_Sharpe_Calculator_Fixer_Sharpe计算修正器["...N/Sharpe Calculator Fixer Sharpe计算修正器 [design]"]
+        D_SIMULATION_Simulation_Profitability_Evaluator_模拟盘盈利评估器["...tion Profitability Evaluator 模拟盘盈利评估器 [design]"]
+        D_SIMULATION_Simulation_Result_Analyzer_仿真结果分析器["...ON/Simulation Result Analyzer 仿真结果分析器 [design]"]
+        D_SIMULATION_SimulationCompleted_仿真完成["D-SIMULATION/SimulationCompleted 仿真完成 [design]"]
+        D_SIMULATION_SimulationResult_Interface_仿真结果接口["...ION/SimulationResult Interface 仿真结果接口 [design]"]
+        D_SIMULATION_SimulationScenario_仿真场景["D-SIMULATION/SimulationScenario 仿真场景 [design]"]
+        D_SIMULATION_Strategy_Decay_Monitor_Alerter_策略衰减监控告警器["...ategy Decay Monitor Alerter 策略衰减监控告警器 [design]"]
+        D_SIMULATION_Strategy_Simulator策略仿真器["D-SIMULATION/Strategy Simulator策略仿真器 [design]"]
+        D_SIMULATION_StressTestResult_压力测试结果["D-SIMULATION/StressTestResult 压力测试结果 [design]"]
+        D_SIMULATION_Technical_Analysis_Backtest_Validator_技术分析回测验证器["...Analysis Backtest Validator 技术分析回测验证器 [design]"]
+        D_SIMULATION_Test_Data_Factory_测试数据工厂["D-SIMULATION/Test Data Factory 测试数据工厂 [design]"]
+        D_SIMULATION_Test_Environment_Orchestrator_测试环境编排器["...Test Environment Orchestrator 测试环境编排器 [design]"]
+        D_SIMULATION_Test_Impact_Analyzer_测试影响分析器["...MULATION/Test Impact Analyzer 测试影响分析器 [design]"]
+        D_SIMULATION_Validation_Automation_Pipeline验证自动化流水线["...alidation Automation Pipeline验证自动化流水线 [design]"]
+        D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析[".../Walk-Forward Analyzer Walk-Forward分析 [design]"]
+        D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎["...alk-Forward Optimization Engine WFO引擎 [design]"]
+        D_SIMULATION_empyrical_Integrator_empyrical集成器["...ION/empyrical Integrator empyrical集成器 [design]"]
+        D_SIMULATION_quantstats_Integrator_quantstats集成器["...N/quantstats Integrator quantstats集成器 [design]"]
+        D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器["... Backtest Integrator vectorbt向量化回测集成器 [design]"]
+        D_SIMULATION_仿真域监控指标采集适配器_Adapter_Monitoring_Simulation["...指标采集适配器 Adapter Monitoring Simulation [design]"]
+        D_SIMULATION_仿真域配置热更新适配器_Adapter_Simulation_Config["...仿真域配置热更新适配器 Adapter Simulation Config [design]"]
+        D_SIMULATION_参数优化结果分析器_Analyzer_Parameter["...MULATION/参数优化结果分析器 Analyzer Parameter [design]"]
+        D_SIMULATION_回测仿真_Walk_Forward回测["D-SIMULATION/回测仿真 Walk-Forward回测 [design]"]
+        D_SIMULATION_回测异常诊断_Backtest["D-SIMULATION/回测异常诊断 Backtest [design]"]
+        D_SIMULATION_回测数据质量检查器_Data_Quality_Backtest["...ATION/回测数据质量检查器 Data Quality Backtest [design]"]
+        D_SIMULATION_回测流水线执行记录查询与回放器_Execution_Backtest_Query["...水线执行记录查询与回放器 Execution Backtest Query [design]"]
+        D_SIMULATION_回测结果一键部署_Backtest["D-SIMULATION/回测结果一键部署 Backtest [design]"]
+        D_SIMULATION_回测结果对比_Backtest["D-SIMULATION/回测结果对比 Backtest [design]"]
+        %% ... 还有 28 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_simulation_default_backtest_engine_py -->|import_depends| src_zephyr_simulation___init___py
+    src_zephyr_simulation_default_backtest_engine_from_resear_py -->|import_depends| src_zephyr_simulation___init___py
+    src_zephyr_simulation___init___from_resear_py -->|import_depends| src_zephyr_simulation_backtest_base_py
+    src_zephyr_simulation___init___from_resear_py -->|import_depends| src_zephyr_simulation_pipeline_base_py
+    src_zephyr_simulation___init___from_resear_py -->|import_depends| src_zephyr_simulation_default_backtest_engine_py
+    src_zephyr_simulation_implemen___ent_pipeline_from_resear_py -->|import_depends| src_zephyr_simulation___init___py
+    src_zephyr_simulation_implemen___ault_experiment_pipeline_py -->|import_depends| src_zephyr_simulation___init___py
+    src_zephyr_simulation_backtest_base_from_resear_py -->|config_depends| src_zephyr_simulation___init___py
+    src_zephyr_simulation_implementations___init___py -->|config_depends| src_zephyr_simulation_implemen___ent_pipeline_from_resear_py
+    src_zephyr_simulation_implemen___ons___init___from_resear_py -->|config_depends| src_zephyr_simulation_implementations___init___py
+    D_SIMULATION_Market_Simulator市场仿真器 -->|import_depends| D_SIMULATION_Strategy_Simulator策略仿真器
+    D_SIMULATION_Strategy_Simulator策略仿真器 -->|import_depends| D_SIMULATION_Risk_Simulator风控仿真器
+    D_SIMULATION_Risk_Simulator风控仿真器 -->|import_depends| D_SIMULATION_Scenario_Generator场景生成器
+    D_SIMULATION_Scenario_Generator场景生成器 -->|import_depends| D_SIMULATION_Monte_Carlo_Engine蒙特卡洛模拟
+    D_SIMULATION_Monte_Carlo_Engine蒙特卡洛模拟 -->|import_depends| D_SIMULATION_History_Replay_Engine历史重放引擎
+    D_SIMULATION_History_Replay_Engine历史重放引擎 -->|import_depends| D_SIMULATION_Backtest_Overfitting_Detector回测过拟合检测
+    D_SIMULATION_Backtest_Overfitting_Detector回测过拟合检测 -->|import_depends| D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析
+    D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析 -->|import_depends| D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测
+    D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测 -->|import_depends| D_SIMULATION_Validation_Automation_Pipeline验证自动化流水线
+    D_SIMULATION_Validation_Automation_Pipeline验证自动化流水线 -->|import_depends| D_SIMULATION_Dual_Mode_Backtest_Engine双模式回测引擎
+    D_SIMULATION_Dual_Mode_Backtest_Engine双模式回测引擎 -->|import_depends| D_SIMULATION_Live_Environment_Simulator实盘环境模拟
+    D_SIMULATION_Live_Environment_Simulator实盘环境模拟 -->|import_depends| D_SIMULATION_Counterparty_Simulator_对手仿真器
+    D_SIMULATION_Counterparty_Simulator_对手仿真器 -->|import_depends| D_SIMULATION_Liquidity_Simulator_流动性仿真器
+    D_SIMULATION_Liquidity_Simulator_流动性仿真器 -->|import_depends| D_SIMULATION_Extreme_Event_Simulator_极端事件仿真器
+    D_SIMULATION_Extreme_Event_Simulator_极端事件仿真器 -->|import_depends| D_SIMULATION_Agent_Based_Market_Model_基于Agent的市场模型
+    D_SIMULATION_Agent_Based_Market_Model_基于Agent的市场模型 -->|import_depends| D_SIMULATION_Simulation_Result_Analyzer_仿真结果分析器
+    D_SIMULATION_Simulation_Result_Analyzer_仿真结果分析器 -->|import_depends| D_SIMULATION_Dependency_Graph_Digital_Twin_依赖图数字孪生
+    D_SIMULATION_Dependency_Graph_Digital_Twin_依赖图数字孪生 -->|import_depends| D_SIMULATION_Real_time_DT_Synchronizer_实时数字孪生同步器
+    D_SIMULATION_Real_time_DT_Synchronizer_实时数字孪生同步器 -->|import_depends| D_SIMULATION_Chaos_Experiment_Auto_Generator_混沌实验自动生成器
+    D_SIMULATION_Chaos_Experiment_Auto_Generator_混沌实验自动生成器 -->|import_depends| D_SIMULATION_ADR_Decision_Simulator_ADR决策仿真器
+    D_SIMULATION_ADR_Decision_Simulator_ADR决策仿真器 -->|import_depends| D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎
+    D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎 -->|import_depends| D_SIMULATION_Event_Driven_Backtester_事件驱动回测器
+    D_SIMULATION_Event_Driven_Backtester_事件驱动回测器 -->|import_depends| D_SIMULATION_Parameter_Robustness_Tester_参数鲁棒性测试器
+    D_SIMULATION_Parameter_Robustness_Tester_参数鲁棒性测试器 -->|import_depends| D_SIMULATION_Sharpe_Calculator_Fixer_Sharpe计算修正器
+    D_SIMULATION_Sharpe_Calculator_Fixer_Sharpe计算修正器 -->|import_depends| D_SIMULATION_Deflated_Sharpe_Ratio_Calculator_DSR计算器
+    D_SIMULATION_Deflated_Sharpe_Ratio_Calculator_DSR计算器 -->|import_depends| D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎
+    D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎 -->|import_depends| D_SIMULATION_Auto_Backtest_Scheduler_自动回测调度器
+    D_SIMULATION_Auto_Backtest_Scheduler_自动回测调度器 -->|import_depends| D_SIMULATION_Strategy_Decay_Monitor_Alerter_策略衰减监控告警器
+    D_SIMULATION_Strategy_Decay_Monitor_Alerter_策略衰减监控告警器 -->|import_depends| D_SIMULATION_empyrical_Integrator_empyrical集成器
+    D_SIMULATION_empyrical_Integrator_empyrical集成器 -->|import_depends| D_SIMULATION_quantstats_Integrator_quantstats集成器
+    D_SIMULATION_quantstats_Integrator_quantstats集成器 -->|import_depends| D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器
+    D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器 -->|import_depends| D_SIMULATION_Qlib_Walk_Forward___tor_Qlib_Walk_Forward简化版集成器
+    D_SIMULATION_Qlib_Walk_Forward___tor_Qlib_Walk_Forward简化版集成器 -->|import_depends| D_SIMULATION_Parameter_Sensitivity_Analyzer_参数灵敏度分析器
+    D_SIMULATION_Parameter_Sensitivity_Analyzer_参数灵敏度分析器 -->|import_depends| D_SIMULATION_Order_Matching_Engine_订单撮合引擎
+    D_SIMULATION_Order_Matching_Engine_订单撮合引擎 -->|import_depends| D_SIMULATION_Simulation_Profitability_Evaluator_模拟盘盈利评估器
+    D_SIMULATION_Simulation_Profitability_Evaluator_模拟盘盈利评估器 -->|import_depends| D_SIMULATION_NozyIO_Backtest_Visual_Reporter_NozyIO回测可视化报告器
+    D_SIMULATION_NozyIO_Backtest_Visual_Reporter_NozyIO回测可视化报告器 -->|import_depends| D_SIMULATION_Backtest_Pipeline_Orchestrator_回测流水线编排器
+    D_SIMULATION_Backtest_Pipeline_Orchestrator_回测流水线编排器 -->|import_depends| D_SIMULATION_Overfitting_Detector_过拟合检验器
+    D_SIMULATION_Overfitting_Detector_过拟合检验器 -->|import_depends| D_SIMULATION_Technical_Analysis_Backtest_Validator_技术分析回测验证器
+    D_SIMULATION_Technical_Analysis_Backtest_Validator_技术分析回测验证器 -->|import_depends| D_SIMULATION_Liquidity_Model_&___ppage_Simulator_流动性模型与滑点模拟器
+    D_SIMULATION_Liquidity_Model_&___ppage_Simulator_流动性模型与滑点模拟器 -->|import_depends| D_SIMULATION_Cross_Engine_Back___esult_Comparator_跨引擎回测结果比较器
+    D_SIMULATION_Cross_Engine_Back___esult_Comparator_跨引擎回测结果比较器 -->|import_depends| D_SIMULATION_Backtest_Acceleration_Module_回测加速模块
+    D_SIMULATION_Backtest_Acceleration_Module_回测加速模块 -->|import_depends| D_SIMULATION_Backtest_Result_S___ificance_Tester_回测结果统计显著性检验
+    D_SIMULATION_Backtest_Result_S___ificance_Tester_回测结果统计显著性检验 -->|import_depends| D_SIMULATION_Multi_Strategy_Backtest_Comparator_多策略回测对比
+    D_SIMULATION_Multi_Strategy_Backtest_Comparator_多策略回测对比 -->|import_depends| D_SIMULATION_Backtest_Report_Auto_Generator_回测报告自动生成
+    D_SIMULATION_Backtest_Report_Auto_Generator_回测报告自动生成 -->|import_depends| D_SIMULATION_Backtest_Cache_Manager_回测缓存管理器
+    D_SIMULATION_Backtest_Cache_Manager_回测缓存管理器 -->|import_depends| D_SIMULATION_Parameter_Optimiz___n_Result_Analyzer_参数优化结果分析器
+    D_SIMULATION_Parameter_Optimiz___n_Result_Analyzer_参数优化结果分析器 -->|import_depends| D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器
+    D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器 -->|import_depends| D_SIMULATION_Backtest_Anomaly_Diagnoser_回测异常诊断
+    D_SIMULATION_Backtest_Anomaly_Diagnoser_回测异常诊断 -->|import_depends| D_SIMULATION_Backtest_Result_Comparator_回测结果对比
+    D_SIMULATION_Backtest_Result_Comparator_回测结果对比 -->|import_depends| D_SIMULATION_Backtest_Result_One_Click_Deployer_回测结果一键部署
+    D_SIMULATION_Backtest_Result_One_Click_Deployer_回测结果一键部署 -->|import_depends| D_SIMULATION_Indicator_NaN_Processor_指标NaN处理器
+    D_SIMULATION_Indicator_NaN_Processor_指标NaN处理器 -->|import_depends| D_SIMULATION_Automated_Overfitting_Detector_自动化过拟合检测
+    D_SIMULATION_Automated_Overfitting_Detector_自动化过拟合检测 -->|import_depends| D_SIMULATION_Test_Data_Factory_测试数据工厂
+    D_SIMULATION_Test_Data_Factory_测试数据工厂 -->|import_depends| D_SIMULATION_Test_Environment_Orchestrator_测试环境编排器
+    D_SIMULATION_Test_Environment_Orchestrator_测试环境编排器 -->|import_depends| D_SIMULATION_回测流水线执行记录查询与回放器_Execution_Backtest_Query
+    D_SIMULATION_回测流水线执行记录查询与回放器_Execution_Backtest_Query -->|import_depends| D_SIMULATION_回测缓存管理器_Backtest_Management_Cache
+    D_SIMULATION_回测缓存管理器_Backtest_Management_Cache -->|import_depends| D_SIMULATION_参数优化结果分析器_Analyzer_Parameter
+    D_SIMULATION_参数优化结果分析器_Analyzer_Parameter -->|import_depends| D_SIMULATION_回测数据质量检查器_Data_Quality_Backtest
+    D_SIMULATION_回测数据质量检查器_Data_Quality_Backtest -->|import_depends| D_SIMULATION_回测异常诊断_Backtest
+    D_SIMULATION_回测异常诊断_Backtest -->|import_depends| D_SIMULATION_回测结果对比_Backtest
+    D_SIMULATION_回测结果对比_Backtest -->|import_depends| D_SIMULATION_回测结果一键部署_Backtest
+    D_SIMULATION_回测结果一键部署_Backtest -->|import_depends| D_SIMULATION_指标计算NaN处理器
+    D_SIMULATION_指标计算NaN处理器 -->|import_depends| D_SIMULATION_自动化过拟合检测_Automated_Overfitting_Detection
+    D_SIMULATION_自动化过拟合检测_Automated_Overfitting_Detection -->|import_depends| D_SIMULATION_验收标准自动化测试与判定器_Acc___utomated_Testing_and_Judger
+    D_SIMULATION_验收标准自动化测试与判定器_Acc___utomated_Testing_and_Judger -->|import_depends| D_SIMULATION_集成测试任务_Integration_Task
+    D_SIMULATION_集成测试任务_Integration_Task -->|import_depends| D_SIMULATION_仿真域配置热更新适配器_Adapter_Simulation_Config
+    D_SIMULATION_仿真域配置热更新适配器_Adapter_Simulation_Config -->|import_depends| D_SIMULATION_仿真域监控指标采集适配器_Adapter_Monitoring_Simulation
+    D_SIMULATION_仿真域监控指标采集适配器_Adapter_Monitoring_Simulation -->|import_depends| D_SIMULATION_Digital_Twin_Market_Simulation_数字孪生市场仿真
+    D_SIMULATION_Digital_Twin_Market_Simulation_数字孪生市场仿真 -->|import_depends| D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境
+    %% ... 还有 34 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-SIMULATION (2 条)
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎
+    D_ALT_DATA[D-ALT_DATA] -->|config_depends| D_SIMULATION_回测结果一键部署_Backtest
+    %% D-AUTONOMY_CORE -> D-SIMULATION (8 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_SIMULATION_StressTestResult_压力测试结果
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_SIMULATION_Deflated_Sharpe_Ratio_Calculator_DSR计算器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_SIMULATION_ScenarioGenerated_场景生成完成
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_SIMULATION_Market_Simulator市场仿真器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_SIMULATION_Cross_Env_Dependency_Diff_Analyzer_跨环境依赖差异分析器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_SIMULATION_Cross_Engine_Back___esult_Comparator_跨引擎回测结果比较器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_SIMULATION_Strategy_Simulator策略仿真器
+    %% D-BACKTEST -> D-SIMULATION (1 条)
+    D_BACKTEST[D-BACKTEST] -->|contract| D_SIMULATION_Test_Environment_Orchestrator_测试环境编排器
+    %% D-COMPLIANCE -> D-SIMULATION (20 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_Backtest_Acceleration_Module_回测加速模块
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_SIMULATION_回测缓存管理器_Backtest_Management_Cache
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_SIMULATION_SimulationScenario_仿真场景
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_Auto_Backtest_Scheduler_自动回测调度器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SIMULATION_Multi_Strategy_Backtest_Comparator_多策略回测对比
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_回测结果对比_Backtest
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SIMULATION_Dependency_Hell_5___ection_Enhancer_依赖地狱5维检测增强器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_Backtest_Pipeline_Orchestrator_回测流水线编排器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_SIMULATION_Scenario_Generator场景生成器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SIMULATION_FeatureStore_PIT_Feature_Store时点特征
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_SIMULATION_指标计算NaN处理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_SIMULATION_Liquidity_Simulator_流动性仿真器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_SIMULATION_Technical_Analysis_Backtest_Validator_技术分析回测验证器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_回测结果对比_Backtest
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_SIMULATION_回测结果一键部署_Backtest
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_SIMULATION_Backtest_Result_One_Click_Deployer_回测结果一键部署
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_SIMULATION_集成测试任务_Integration_Task
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_SIMULATION_Backtest_Anomaly_Diagnoser_回测异常诊断
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测
+    %% D-CROSS_ASSET -> D-SIMULATION (3 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_SIMULATION_Simulation_Profitability_Evaluator_模拟盘盈利评估器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_SIMULATION_自动化过拟合检测_Automated_Overfitting_Detection
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_SIMULATION_回测结果对比_Backtest
+    %% D-DATA_SEC -> D-SIMULATION (1 条)
+    D_DATA_SEC[D-DATA_SEC] -->|data| D_SIMULATION_Market_Simulator市场仿真器
+    %% D-FRONTEND -> D-SIMULATION (7 条)
+    D_FRONTEND[D-FRONTEND] -->|data| D_SIMULATION_验收标准自动化测试与判定器_Acc___utomated_Testing_and_Judger
+    D_FRONTEND[D-FRONTEND] -->|data| D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析
+    D_FRONTEND[D-FRONTEND] -->|data| D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎
+    D_FRONTEND[D-FRONTEND] -->|data| D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_SIMULATION_回测仿真_Walk_Forward回测
+    D_FRONTEND[D-FRONTEND] -->|data| D_SIMULATION_SimulationCompleted_仿真完成
+    D_FRONTEND[D-FRONTEND] -->|contract| D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析
+    %% D-GOVERNANCE -> D-SIMULATION (28 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_simulation___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_Backtest_Cache_Manager_回测缓存管理器
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_回测结果对比_Backtest
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_SIMULATION_Cross_Env_Dependency_Diff_Analyzer_跨环境依赖差异分析器
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_SIMULATION_Backtest_Result_S___ificance_Tester_回测结果统计显著性检验
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_Cross_Engine_Back___esult_Comparator_跨引擎回测结果比较器
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_Energy_Consumption_Collector_能耗采集器
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_SIMULATION_Energy_Consumption_Collector_能耗采集器
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_SIMULATION_Extreme_Event_Simulator_极端事件仿真器
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_SIMULATION_Backtest_Acceleration_Module_回测加速模块
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_Mutation_Score_Dependency_Gate_变异评分依赖门禁
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_SIMULATION_回测流水线执行记录查询与回放器_Execution_Backtest_Query
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎
+    %% D-INFRA_OPS -> D-SIMULATION (6 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_SIMULATION_Performance_Regression_Dependency_Gate_性能回归依赖门禁
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_SIMULATION_NozyIO_Backtest_Visual_Reporter_NozyIO回测可视化报告器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_SIMULATION_OverfittingDetected_过拟合检测触发
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_SIMULATION_Dependency_Hell_5___ection_Enhancer_依赖地狱5维检测增强器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_SIMULATION_Multi_Strategy_Backtest_Comparator_多策略回测对比
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_SIMULATION_Dual_Mode_Backtest_Engine双模式回测引擎
+    %% D-INTELLIGENCE -> D-SIMULATION (3 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
+    %% D-OPS -> D-SIMULATION (7 条)
+    D_OPS[D-OPS] -->|event| D_SIMULATION_Sharpe_Calculator_Fixer_Sharpe计算修正器
+    D_OPS[D-OPS] -->|event| D_SIMULATION_指标计算NaN处理器
+    D_OPS[D-OPS] -->|contract| D_SIMULATION_History_Replay_Engine历史重放引擎
+    D_OPS[D-OPS] -->|data| D_SIMULATION_OverfittingDetected_过拟合检测触发
+    D_OPS[D-OPS] -->|data| D_SIMULATION_Backtest_Report_Auto_Generator_回测报告自动生成
+    D_OPS[D-OPS] -->|data| D_SIMULATION_ScenarioGenerated_场景生成完成
+    D_OPS[D-OPS] -->|contract| D_SIMULATION_Scenario_Generator场景生成器
+    %% D-PF_ALLOC -> D-SIMULATION (3 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_SIMULATION_SimulationCompleted_仿真完成
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| D_SIMULATION_ScenarioGenerated_场景生成完成
+    %% D-REPORTING -> D-SIMULATION (2 条)
+    D_REPORTING[D-REPORTING] -->|data| D_SIMULATION_Market_Simulator市场仿真器
+    D_REPORTING[D-REPORTING] -->|event| D_SIMULATION_Backtest_Anomaly_Diagnoser_回测异常诊断
+    %% D-SHARED -> D-SIMULATION (1 条)
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_simulation___init___py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-SIMULATION -> D-AUTONOMY_PERM (7 条)
+    D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SIMULATION_回测结果对比_Backtest -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SIMULATION_Scenario_Generator场景生成器 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SIMULATION_Carbon_Aware_Scheduler_Optimizer_碳感知调度优化器 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SIMULATION_Backtest_Result_Comparator_回测结果对比 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SIMULATION_Parameter_Optimiz___n_Result_Analyzer_参数优化结果分析器 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_SIMULATION_Energy_Consumption_Collector_能耗采集器 -->|config_depends| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-SIMULATION -> D-DATA_ENG (4 条)
+    D_SIMULATION_Dependency_Graph_Digital_Twin_依赖图数字孪生 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_SIMULATION_Strategy_Decay_Monitor_Alerter_策略衰减监控告警器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_SIMULATION_quantstats_Integrator_quantstats集成器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_SIMULATION_Deflated_Sharpe_Ratio_Calculator_DSR计算器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    %% D-SIMULATION -> D-EX_CORE (7 条)
+    D_SIMULATION_FeatureStore_PIT_Feature_Store时点特征 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_SIMULATION_Carbon_Intensity_Queryer_碳强度查询器 -->|event| D_EX_CORE[D-EX_CORE]
+    D_SIMULATION_回测结果一键部署_Backtest -->|data| D_EX_CORE[D-EX_CORE]
+    D_SIMULATION_Mutation_Score_Dependency_Gate_变异评分依赖门禁 -->|data| D_EX_CORE[D-EX_CORE]
+    D_SIMULATION_ADR_Decision_Simulator_ADR决策仿真器 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_SIMULATION_Backtest_Report_Auto_Generator_回测报告自动生成 -->|event| D_EX_CORE[D-EX_CORE]
+    D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境 -->|contract| D_EX_CORE[D-EX_CORE]
+    %% D-SIMULATION -> D-EX_SOR (3 条)
+    D_SIMULATION_FeatureStore_PIT_Feature_Store时点特征 -->|data| D_EX_SOR[D-EX_SOR]
+    D_SIMULATION_Pipeline_DAG_Scheduler_管线DAG调度器 -->|data| D_EX_SOR[D-EX_SOR]
+    D_SIMULATION_Real_time_DT_Synchronizer_实时数字孪生同步器 -->|data| D_EX_SOR[D-EX_SOR]
+    %% D-SIMULATION -> D-FACTOR (14 条)
+    D_SIMULATION_Capital_Group_Eco___me_Simulation_资金群体生态与多方博弈模拟 -->|contract| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Scenario_Generator场景生成器 -->|contract| D_FACTOR[D-FACTOR]
+    D_SIMULATION_回测缓存管理器_Backtest_Management_Cache -->|contract| D_FACTOR[D-FACTOR]
+    D_SIMULATION_仿真域配置热更新适配器_Adapter_Simulation_Config -->|contract| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Liquidity_Model_&___ppage_Simulator_流动性模型与滑点模拟器 -->|contract| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Market_Simulator市场仿真器 -->|event| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Digital_Twin_Market_Simulation_数字孪生市场仿真 -->|contract| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Test_Environment_Orchestrator_测试环境编排器 -->|data| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Dependency_Hell_5___ection_Enhancer_依赖地狱5维检测增强器 -->|data| D_FACTOR[D-FACTOR]
+    D_SIMULATION_回测数据质量检查器_Data_Quality_Backtest -->|data| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Backtest_Cache_Manager_回测缓存管理器 -->|data| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Digital_Twin_Market_Simulation_数字孪生市场仿真 -->|data| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Mutation_Score_Dependency_Gate_变异评分依赖门禁 -->|event| D_FACTOR[D-FACTOR]
+    D_SIMULATION_Simulation_Profitability_Evaluator_模拟盘盈利评估器 -->|event| D_FACTOR[D-FACTOR]
+    %% D-SIMULATION -> D-INFRA_RUNTIME (6 条)
+    D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_SIMULATION_Cross_Env_Dependency_Diff_Analyzer_跨环境依赖差异分析器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_SIMULATION_Overfitting_Detector_过拟合检验器 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_SIMULATION_Agent_Based_Market_Model_基于Agent的市场模型 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_SIMULATION_Cross_Engine_Back___esult_Comparator_跨引擎回测结果比较器 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_SIMULATION_StressTestResult_压力测试结果 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-SIMULATION -> D-INTEGRATION (15 条)
+    src_zephyr_simulation_pipeline_base_from_resear_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_simulation_pipeline_base_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_simulation_ -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_SimulationCompleted_仿真完成 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Test_Data_Factory_测试数据工厂 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Strategy_Simulator策略仿真器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Test_Data_Factory_测试数据工厂 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_回测流水线执行记录查询与回放器_Execution_Backtest_Query -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Carbon_Intensity_Queryer_碳强度查询器 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Indicator_NaN_Processor_指标NaN处理器 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Simulation_Result_Analyzer_仿真结果分析器 -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_D_SIMULATION_仿真 -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_自动化过拟合检测_Automated_Overfitting_Detection -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_SIMULATION_Carbon_Intensity_Queryer_碳强度查询器 -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    %% D-SIMULATION -> D-INTELLIGENCE (9 条)
+    D_SIMULATION_回测结果对比_Backtest -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_Multi_Strategy_Backtest_Comparator_多策略回测对比 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_History_Replay_Engine历史重放引擎 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_Dependency_Graph_Digital_Twin_依赖图数字孪生 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_Parameter_Robustness_Tester_参数鲁棒性测试器 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_Indicator_NaN_Processor_指标NaN处理器 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_FeatureStore_PIT_Feature_Store时点特征 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_回测结果一键部署_Backtest -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎 -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-SIMULATION -> D-KNOWLEDGE (2 条)
+    D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎 -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_SIMULATION_Backtest_Result_Comparator_回测结果对比 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-SIMULATION -> D-MKT_DATA (10 条)
+    D_SIMULATION_Backtest_Result_One_Click_Deployer_回测结果一键部署 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Counterparty_Simulator_对手仿真器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Automated_Overfitting_Detector_自动化过拟合检测 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Backtest_Report_Auto_Generator_回测报告自动生成 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Walk_Forward_Analyzer_Walk_Forward分析 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Test_Data_Factory_测试数据工厂 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_Dependency_Chain____tprint_Attributor_依赖链碳足迹归因器 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_SIMULATION_D_SIMULATION_仿真 -->|domain_dependency| D_MKT_DATA[D-MKT_DATA]
+    %% D-SIMULATION -> D-ML_SERVE (1 条)
+    D_SIMULATION_回测结果一键部署_Backtest -->|contract| D_ML_SERVE[D-ML_SERVE]
+    %% D-SIMULATION -> D-ML_TRAIN (2 条)
+    D_SIMULATION_SimulationResult_Interface_仿真结果接口 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_SIMULATION_Order_Matching_Engine_订单撮合引擎 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-SIMULATION -> D-PF_CORE (4 条)
+    D_SIMULATION_自动化过拟合检测_Automated_Overfitting_Detection -->|contract| D_PF_CORE[D-PF_CORE]
+    D_SIMULATION_回测数据质量检查器_Data_Quality_Backtest -->|event| D_PF_CORE[D-PF_CORE]
+    D_SIMULATION_Backtest_Acceleration_Module_回测加速模块 -->|data| D_PF_CORE[D-PF_CORE]
+    D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境 -->|event| D_PF_CORE[D-PF_CORE]
+    %% D-SIMULATION -> D-RISK (19 条)
+    D_SIMULATION_Backtest_Result_S___ificance_Tester_回测结果统计显著性检验 -->|contract| D_RISK[D-RISK]
+    D_SIMULATION_Simulation_Profitability_Evaluator_模拟盘盈利评估器 -->|contract| D_RISK[D-RISK]
+    D_SIMULATION_Liquidity_Model_&___ppage_Simulator_流动性模型与滑点模拟器 -->|event| D_RISK[D-RISK]
+    D_SIMULATION_Deflated_Sharpe_Ratio_Calculator_DSR计算器 -->|data| D_RISK[D-RISK]
+    D_SIMULATION_Architecture_Anti___opology_Enhancer_架构反模式拓扑增强器 -->|contract| D_RISK[D-RISK]
+    D_SIMULATION_NozyIO_Backtest_Visual_Reporter_NozyIO回测可视化报告器 -->|data| D_RISK[D-RISK]
+    D_SIMULATION_Market_Simulator市场仿真器 -->|contract| D_RISK[D-RISK]
+    D_SIMULATION_Mutation_Score_Dependency_Gate_变异评分依赖门禁 -->|data| D_RISK[D-RISK]
+    D_SIMULATION_History_Replay_Engine历史重放引擎 -->|event| D_RISK[D-RISK]
+    D_SIMULATION_Cross_Env_Dependency_Diff_Analyzer_跨环境依赖差异分析器 -->|contract| D_RISK[D-RISK]
+    D_SIMULATION_ScenarioGenerated_场景生成完成 -->|event| D_RISK[D-RISK]
+    D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎 -->|event| D_RISK[D-RISK]
+    D_SIMULATION_Architecture_Anti___opology_Detector_架构反模式拓扑检测器 -->|config_depends| D_RISK[D-RISK]
+    D_SIMULATION_Agent_Based_Market_Model_基于Agent的市场模型 -->|event| D_RISK[D-RISK]
+    D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境 -->|config_depends| D_RISK[D-RISK]
+    D_SIMULATION_Liquidity_Simulator_流动性仿真器 -->|data| D_RISK[D-RISK]
+    D_SIMULATION_OverfittingDetected_过拟合检测触发 -->|config_depends| D_RISK[D-RISK]
+    D_SIMULATION_Monte_Carlo_Engine蒙特卡洛模拟 -->|contract| D_RISK[D-RISK]
+    D_SIMULATION_Dependency_Hell_5___ection_Enhancer_依赖地狱5维检测增强器 -->|contract| D_RISK[D-RISK]
+    %% D-SIMULATION -> D-SECURITY (16 条)
+    D_SIMULATION_SCI_Calculator_SCI计算器 -->|contract| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Backtest_Data_Quality_Checker_回测数据质量检查器 -->|contract| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Walk_Forward_Optimization_Engine_WFO引擎 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_自动化过拟合检测_Automated_Overfitting_Detection -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_回测仿真_Walk_Forward回测 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_DANTE_Dependency____st_Generator_DANTE依赖感知测试生成器 -->|contract| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Simulation_Result_Analyzer_仿真结果分析器 -->|config_depends| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Parameter_Optimiz___n_Result_Analyzer_参数优化结果分析器 -->|contract| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Test_Impact_Analyzer_测试影响分析器 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Liquidity_Simulator_流动性仿真器 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Counterparty_Simulator_对手仿真器 -->|contract| D_SECURITY[D-SECURITY]
+    D_SIMULATION_empyrical_Integrator_empyrical集成器 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Correlation_Regime_Shift_相关性体制转换 -->|config_depends| D_SECURITY[D-SECURITY]
+    D_SIMULATION_SimulationScenario_仿真场景 -->|data| D_SECURITY[D-SECURITY]
+    D_SIMULATION_Dependency_Graph_____time_Twin_Engine_依赖图实时孪生引擎 -->|config_depends| D_SECURITY[D-SECURITY]
+    %% D-SIMULATION -> D-SIGNAL (17 条)
+    D_SIMULATION_Simulation_Result_Analyzer_仿真结果分析器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_回测缓存管理器_Backtest_Management_Cache -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_DANTE_Test_Generation_Enhancer_DANTE测试生成增强器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Backtest_Cache_Manager_回测缓存管理器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Argus_Mutation_Enhancer_Argus变异增强器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Auto_Backtest_Scheduler_自动回测调度器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Correlation_Regime_Shift_相关性体制转换 -->|event| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Pipeline_DAG_Sche____Enhancer_Pipeline_DAG调度增强器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Approval_Gate_Dependency_Extractor_审批门依赖提取器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Look_Ahead_Bias_Detector未来函数风险检测 -->|data| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Monte_Carlo_Engine蒙特卡洛模拟 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Architecture_Anti___opology_Enhancer_架构反模式拓扑增强器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Chaos_Engineering_Environment_混沌工程环境 -->|data| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_参数优化结果分析器_Analyzer_Parameter -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_Strategy_Simulator策略仿真器 -->|data| D_SIGNAL[D-SIGNAL]
+    D_SIMULATION_vectorbt_Vectoriz___Integrator_vectorbt向量化回测集成器 -->|contract| D_SIGNAL[D-SIGNAL]
+    %% D-SIMULATION -> D-TRADING (2 条)
+    D_SIMULATION_仿真域监控指标采集适配器_Adapter_Monitoring_Simulation -->|data| D_TRADING[D-TRADING]
+    D_SIMULATION_回测仿真_Walk_Forward回测 -->|event| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 114 条
+    %% 跨域入边: 92 条
+    %% 跨域出边: 138 条

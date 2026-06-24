@@ -34,8 +34,12 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/runtime_plane_mapping.md")
+OUTPUT_PATH = Path(
+    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/runtime_plane_mapping.md"
+)
 
 # 运行平面中英文对照（数据库 runtime_plane 字段值 → 中文名/英文名/描述）
 PLANE_META = {
@@ -88,10 +92,7 @@ def get_plane_totals(conn: sqlite3.Connection) -> list[dict]:
            GROUP BY runtime_plane
            ORDER BY cnt DESC"""
     )
-    return [
-        {"runtime_plane": r[0], "count": r[1]}
-        for r in cur.fetchall()
-    ]
+    return [{"runtime_plane": r[0], "count": r[1]} for r in cur.fetchall()]
 
 
 def get_domain_layer_map(conn: sqlite3.Connection) -> dict[str, str]:
@@ -127,7 +128,7 @@ def generate_runtime_plane_mapping() -> str:
         plane = row["runtime_plane"]
         matrix.setdefault(did, {})
         matrix[did][plane] = matrix[did].get(plane, 0) + row["count"]
-        domain_names[did] = row["domain_name"]
+        domain_names[did] = get_domain_name_zh(did, row["domain_name"])
 
     # 收集所有出现过的平面（保持稳定顺序：data/control/management/None）
     plane_order = ["data_plane", "control_plane", "management_plane", None]
@@ -147,12 +148,14 @@ def generate_runtime_plane_mapping() -> str:
     lines.append("title: 运行平面映射图")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f'date: {now.split()[0]}')
+    lines.append(f"date: {now.split()[0]}")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 运行平面映射图 / Runtime Plane Mapping")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 展示各功能域模块在数据平面、控制平面、管理平面的分布，用于分析系统运行时职责划分。")
     lines.append("")
     lines.append("> 本文档由 generate_runtime_plane_mapping.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新 / Last updated: {now}")
@@ -195,7 +198,9 @@ def generate_runtime_plane_mapping() -> str:
             meta = PLANE_META[plane]
             lines.append(f"| {plane} | {meta['zh']} | {meta['en']} | {meta['desc']} |")
         else:
-            lines.append(f"| (null) | {UNASSIGNED_LABEL} | {UNASSIGNED_EN} | 未标注运行平面 / Runtime plane not assigned |")
+            lines.append(
+                f"| (null) | {UNASSIGNED_LABEL} | {UNASSIGNED_EN} | 未标注运行平面 / Runtime plane not assigned |"
+            )
     lines.append("")
 
     # 域×平面映射矩阵

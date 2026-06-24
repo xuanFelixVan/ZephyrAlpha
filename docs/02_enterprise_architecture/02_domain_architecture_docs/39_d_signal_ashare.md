@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 39_d_signal_ashare 域文档
+# 39_d_signal_ashare / A股特色信号
+
+> **文档作用 / Purpose**: 展示 A股特色信号（D-SIGNAL_ASHARE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:09
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -34,41 +36,41 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 27 个模块（按路径排序，最多显示前 200 个）
+共 27 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| src/zephyr/signal_ashare/__init__.py |  | prototype | orphan | src/zephyr/signal_ashare/__init__.py |  | prototype | orphan |
-| src/zephyr/signal_ashare/_extensions/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_ashare/_extensions/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_ashare/api/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_ashare/api/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_ashare/core/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_ashare/core/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_ashare/infrastructure/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_ashare/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_ashare/models/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_ashare/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_ashare/services/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_ashare/services/__init__.py |  | scaffold_placeholder | orphan |
-| 信号域-A股特色-主力资金/D-SIGNAL-21 | A-Share Institutional Behavior Analyzer | design | design_only | 信号域-A股特色-主力资金/D-SIGNAL-21 | A-Share Institutional Behavior Analyzer | design | design_only |
-| 信号域-A股特色-主力资金/D-SIGNAL-23 | A-Share Short-term Stock Selector | design | design_only | 信号域-A股特色-主力资金/D-SIGNAL-23 | A-Share Short-term Stock Selector | design | design_only |
-| 信号域-A股特色-主力资金/D-SIGNAL-36 | A-Share Capital-Force Conflict Observer | design | design_only | 信号域-A股特色-主力资金/D-SIGNAL-36 | A-Share Capital-Force Conflict Observer | design | design_only |
-| 信号域-A股特色-买卖点/D-SIGNAL-47 | A-Share Post-Buy Quick Diagnostician | design | design_only | 信号域-A股特色-买卖点/D-SIGNAL-47 | A-Share Post-Buy Quick Diagnostician | design | design_only |
-| 信号域-A股特色-决策评估/D-SIGNAL-27 | A-Share Decision Priority Engine | design | design_only | 信号域-A股特色-决策评估/D-SIGNAL-27 | A-Share Decision Priority Engine | design | design_only |
-| 信号域-A股特色-决策评估/D-SIGNAL-45 | A-Share Plan Conformity Evaluator | design | design_only | 信号域-A股特色-决策评估/D-SIGNAL-45 | A-Share Plan Conformity Evaluator | design | design_only |
-| 信号域-A股特色-分时技术/D-SIGNAL-29 | A-Share Intraday Pattern Analyzer | design | design_only | 信号域-A股特色-分时技术/D-SIGNAL-29 | A-Share Intraday Pattern Analyzer | design | design_only |
-| 信号域-A股特色-分时技术/D-SIGNAL-40 | A-Share KDJ-MACD Multi-Period Screener | design | design_only | 信号域-A股特色-分时技术/D-SIGNAL-40 | A-Share KDJ-MACD Multi-Period Screener | design | design_only |
-| 信号域-A股特色-分时技术/D-SIGNAL-51 | A-Share 4-Min Surge Anomaly Detector | design | design_only | 信号域-A股特色-分时技术/D-SIGNAL-51 | A-Share 4-Min Surge Anomaly Detector | design | design_only |
-| 信号域-A股特色-大盘阶段/D-SIGNAL-31 | A-Share Market Phase Threshold Classi... | design | design_only | 信号域-A股特色-大盘阶段/D-SIGNAL-31 | A-Share Market Phase Threshold Classi... | design | design_only |
-| 信号域-A股特色-大盘阶段/D-SIGNAL-49 | A-Share Contrarian Signal Sensitivity... | design | design_only | 信号域-A股特色-大盘阶段/D-SIGNAL-49 | A-Share Contrarian Signal Sensitivity... | design | design_only |
-| 信号域-A股特色-情绪周期/D-SIGNAL-25 | A-Share Market Sentiment Analyzer | design | design_only | 信号域-A股特色-情绪周期/D-SIGNAL-25 | A-Share Market Sentiment Analyzer | design | design_only |
-| 信号域-A股特色-情绪周期/D-SIGNAL-33 | A-Share Youzi Relay Emotion Engine | design | design_only | 信号域-A股特色-情绪周期/D-SIGNAL-33 | A-Share Youzi Relay Emotion Engine | design | design_only |
-| 信号域-A股特色-板块轮动/D-SIGNAL-63 | A-Share Rotation Warning Signaler | design | design_only | 信号域-A股特色-板块轮动/D-SIGNAL-63 | A-Share Rotation Warning Signaler | design | design_only |
-| 信号域-A股特色-涨停封单/D-SIGNAL-53 | A-Share Seal Order Level Jump Detector | design | design_only | 信号域-A股特色-涨停封单/D-SIGNAL-53 | A-Share Seal Order Level Jump Detector | design | design_only |
-| 信号域-A股特色-特殊信号/D-SIGNAL-38 | A-Share Contrarian Capital 5-Day Tracker | design | design_only | 信号域-A股特色-特殊信号/D-SIGNAL-38 | A-Share Contrarian Capital 5-Day Tracker | design | design_only |
-| 信号域-A股特色-特殊信号/D-SIGNAL-42 | A-Share Signal Post-Rise Filter | design | design_only | 信号域-A股特色-特殊信号/D-SIGNAL-42 | A-Share Signal Post-Rise Filter | design | design_only |
-| 信号域-A股特色-特殊信号/D-SIGNAL-55 | A-Share National Team Dual-Mode Ident... | design | design_only | 信号域-A股特色-特殊信号/D-SIGNAL-55 | A-Share National Team Dual-Mode Ident... | design | design_only |
-| 信号域-A股特色-特殊信号/D-SIGNAL-61 | A-Share Unexpected Strength/Weakness ... | design | design_only | 信号域-A股特色-特殊信号/D-SIGNAL-61 | A-Share Unexpected Strength/Weakness ... | design | design_only |
-| 信号域-A股特色-量化双引擎/D-SIGNAL-57 | A-Share Dual-Engine 5-Type Decision M... | design | design_only | 信号域-A股特色-量化双引擎/D-SIGNAL-57 | A-Share Dual-Engine 5-Type Decision M... | design | design_only |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/signal_ashare/__init__.py |  | prototype | orphan |
+| src/zephyr/signal_ashare/_extensions/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_ashare/api/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_ashare/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_ashare/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_ashare/models/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_ashare/services/__init__.py |  | scaffold_placeholder | orphan |
+| 信号域-A股特色-主力资金/D-SIGNAL-21 | A-Share Institutional Behavior Analyzer | design | design_only |
+| 信号域-A股特色-主力资金/D-SIGNAL-23 | A-Share Short-term Stock Selector | design | design_only |
+| 信号域-A股特色-主力资金/D-SIGNAL-36 | A-Share Capital-Force Conflict Observer | design | design_only |
+| 信号域-A股特色-买卖点/D-SIGNAL-47 | A-Share Post-Buy Quick Diagnostician | design | design_only |
+| 信号域-A股特色-决策评估/D-SIGNAL-27 | A-Share Decision Priority Engine | design | design_only |
+| 信号域-A股特色-决策评估/D-SIGNAL-45 | A-Share Plan Conformity Evaluator | design | design_only |
+| 信号域-A股特色-分时技术/D-SIGNAL-29 | A-Share Intraday Pattern Analyzer | design | design_only |
+| 信号域-A股特色-分时技术/D-SIGNAL-40 | A-Share KDJ-MACD Multi-Period Screener | design | design_only |
+| 信号域-A股特色-分时技术/D-SIGNAL-51 | A-Share 4-Min Surge Anomaly Detector | design | design_only |
+| 信号域-A股特色-大盘阶段/D-SIGNAL-31 | A-Share Market Phase Threshold Classi... | design | design_only |
+| 信号域-A股特色-大盘阶段/D-SIGNAL-49 | A-Share Contrarian Signal Sensitivity... | design | design_only |
+| 信号域-A股特色-情绪周期/D-SIGNAL-25 | A-Share Market Sentiment Analyzer | design | design_only |
+| 信号域-A股特色-情绪周期/D-SIGNAL-33 | A-Share Youzi Relay Emotion Engine | design | design_only |
+| 信号域-A股特色-板块轮动/D-SIGNAL-63 | A-Share Rotation Warning Signaler | design | design_only |
+| 信号域-A股特色-涨停封单/D-SIGNAL-53 | A-Share Seal Order Level Jump Detector | design | design_only |
+| 信号域-A股特色-特殊信号/D-SIGNAL-38 | A-Share Contrarian Capital 5-Day Tracker | design | design_only |
+| 信号域-A股特色-特殊信号/D-SIGNAL-42 | A-Share Signal Post-Rise Filter | design | design_only |
+| 信号域-A股特色-特殊信号/D-SIGNAL-55 | A-Share National Team Dual-Mode Ident... | design | design_only |
+| 信号域-A股特色-特殊信号/D-SIGNAL-61 | A-Share Unexpected Strength/Weakness ... | design | design_only |
+| 信号域-A股特色-量化双引擎/D-SIGNAL-57 | A-Share Dual-Engine 5-Type Decision M... | design | design_only |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）

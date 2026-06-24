@@ -35,6 +35,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram")
 
@@ -91,6 +93,8 @@ def generate_integration_topology(conn: sqlite3.Connection) -> str:
     # Markdown 头部
     lines.append("# 集成拓扑图")
     lines.append("")
+    lines.append("> **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。")
+    lines.append("")
     lines.append(f"> 自动生成时间: {now}")
     lines.append("> 数据源: depgraph.db edges表（跨域依赖）")
     lines.append(f"> 跨域依赖对数: {len(deps)}")
@@ -120,7 +124,7 @@ def generate_integration_topology(conn: sqlite3.Connection) -> str:
         lines.append(f"    subgraph {safe_layer}[{layer}]")
         for did in domains_in_layer:
             safe_id = did.replace("-", "_")
-            name = domain_map[did]["domain_name"]
+            name = get_domain_name_zh(did, domain_map[did]["domain_name"])
             mod_count = domain_map[did]["current_modules"]
             lines.append(f'        {safe_id}["{did}<br/>{name}<br/>({mod_count}模块)"]')
         lines.append("    end")

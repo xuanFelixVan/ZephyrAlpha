@@ -35,7 +35,9 @@ from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md")
+OUTPUT_PATH = Path(
+    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md"
+)
 
 
 def get_cross_domain_edges(conn: sqlite3.Connection) -> list[dict]:
@@ -89,16 +91,18 @@ def generate_cross_domain_matrix() -> str:
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append('doc_type: cross_domain_matrix')
-    lines.append('title: 域间依赖矩阵')
+    lines.append("doc_type: cross_domain_matrix")
+    lines.append("title: 域间依赖矩阵")
     lines.append('version: "1.0"')
-    lines.append('status: active')
-    lines.append(f'date: {now.split()[0]}')
-    lines.append('owner: auto-generator')
-    lines.append('ttl: permanent')
+    lines.append("status: active")
+    lines.append(f"date: {now.split()[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 域间依赖矩阵")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。")
     lines.append("")
     lines.append("> 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -109,7 +113,7 @@ def generate_cross_domain_matrix() -> str:
     total_edges = sum(e["edge_count"] for e in edges)
     lines.append("## 统计概览")
     lines.append("")
-    lines.append("| 指标 | 值 |")
+    lines.append("| 指标 / Metric | 值 / Value |")
     lines.append("|------|-----|")
     lines.append(f"| 域总数 | {len(domain_ids)} |")
     lines.append(f"| 跨域依赖对数 | {len(edges)} |")
@@ -119,23 +123,19 @@ def generate_cross_domain_matrix() -> str:
     # 依赖最多的域对（Top 20）
     lines.append("## 跨域依赖 Top 20（按边数降序）")
     lines.append("")
-    lines.append("| 源域 | 目标域 | 边数 | 依赖类型 |")
+    lines.append("| 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |")
     lines.append("|------|--------|:---:|---------|")
     for e in edges[:20]:
-        lines.append(
-            f"| {e['from_domain']} | {e['to_domain']} | {e['edge_count']} | {e['dep_types']} |"
-        )
+        lines.append(f"| {e['from_domain']} | {e['to_domain']} | {e['edge_count']} | {e['dep_types']} |")
     lines.append("")
 
     # 完整矩阵（简化版：只显示有依赖的域对）
     lines.append("## 完整跨域依赖清单")
     lines.append("")
-    lines.append("| # | 源域 | 目标域 | 边数 | 依赖类型 |")
+    lines.append("| # / No. | 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |")
     lines.append("|:---:|------|--------|:---:|---------|")
     for i, e in enumerate(edges, 1):
-        lines.append(
-            f"| {i} | {e['from_domain']} | {e['to_domain']} | {e['edge_count']} | {e['dep_types']} |"
-        )
+        lines.append(f"| {i} | {e['from_domain']} | {e['to_domain']} | {e['edge_count']} | {e['dep_types']} |")
     lines.append("")
 
     return "\n".join(lines)

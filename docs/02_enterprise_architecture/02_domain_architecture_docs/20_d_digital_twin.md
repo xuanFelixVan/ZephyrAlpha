@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 20_d_digital_twin 域文档
+# 20_d_digital_twin / 数字孪生
+
+> **文档作用 / Purpose**: 展示 数字孪生（D-DIGITAL_TWIN）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:08
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -34,27 +36,27 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 13 个模块（按路径排序，最多显示前 200 个）
+共 13 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| src/zephyr/digital_twin/ | 数字孪生 | design | design_only | src/zephyr/digital_twin/ | 数字孪生 | design | design_only |
-| src/zephyr/digital_twin/ | 数字孪生域 | design | design_only | src/zephyr/digital_twin/ | 数字孪生域 | design | design_only |
-| src/zephyr/digital_twin/__init__.py |  | prototype | orphan | src/zephyr/digital_twin/__init__.py |  | prototype | orphan |
-| src/zephyr/digital_twin/_extensions/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/digital_twin/_extensions/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/digital_twin/agent_sim/ | 智能体仿真 | design | design_only | src/zephyr/digital_twin/agent_sim/ | 智能体仿真 | design | design_only |
-| src/zephyr/digital_twin/api/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/digital_twin/api/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/digital_twin/core/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/digital_twin/core/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/digital_twin/infrastructure/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/digital_twin/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/digital_twin/market_sim/ | 虚拟市场仿真 | design | design_only | src/zephyr/digital_twin/market_sim/ | 虚拟市场仿真 | design | design_only |
-| src/zephyr/digital_twin/models/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/digital_twin/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/digital_twin/orderbook_sim/ | 订单簿仿真 | design | design_only | src/zephyr/digital_twin/orderbook_sim/ | 订单簿仿真 | design | design_only |
-| src/zephyr/digital_twin/scenario/ | 场景引擎 | design | design_only | src/zephyr/digital_twin/scenario/ | 场景引擎 | design | design_only |
-| src/zephyr/digital_twin/services/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/digital_twin/services/__init__.py |  | scaffold_placeholder | orphan |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/digital_twin/ | 数字孪生 | design | design_only |
+| src/zephyr/digital_twin/ | 数字孪生域 | design | design_only |
+| src/zephyr/digital_twin/__init__.py |  | prototype | orphan |
+| src/zephyr/digital_twin/_extensions/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/digital_twin/agent_sim/ | 智能体仿真 | design | design_only |
+| src/zephyr/digital_twin/api/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/digital_twin/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/digital_twin/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/digital_twin/market_sim/ | 虚拟市场仿真 | design | design_only |
+| src/zephyr/digital_twin/models/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/digital_twin/orderbook_sim/ | 订单簿仿真 | design | design_only |
+| src/zephyr/digital_twin/scenario/ | 场景引擎 | design | design_only |
+| src/zephyr/digital_twin/services/__init__.py |  | scaffold_placeholder | orphan |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）

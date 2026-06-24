@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 17_d_backtest 域文档
+# 17_d_backtest / 回测
+
+> **文档作用 / Purpose**: 展示 回测（D-BACKTEST）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:08
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -34,23 +36,23 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 9 个模块（按路径排序，最多显示前 200 个）
+共 9 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| D-BACKTEST/Backtest Pipeline Process 回测管线进程 | Backtest Pipeline Process 回测管线进程 | design | design_only | D-BACKTEST/Backtest Pipeline Process 回测管线进程 | Backtest Pipeline Process 回测管线进程 | design | design_only |
-| src/zephyr/backtest/ | 回测验证 | design | design_only | src/zephyr/backtest/ | 回测验证 | design | design_only |
-| src/zephyr/backtest/__init__.py |  | prototype | orphan | src/zephyr/backtest/__init__.py |  | prototype | orphan |
-| src/zephyr/backtest/_extensions/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/backtest/_extensions/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/backtest/api/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/backtest/api/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/backtest/core/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/backtest/core/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/backtest/infrastructure/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/backtest/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/backtest/models/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/backtest/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/backtest/services/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/backtest/services/__init__.py |  | scaffold_placeholder | orphan |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| D-BACKTEST/Backtest Pipeline Process 回测管线进程 | Backtest Pipeline Process 回测管线进程 | design | design_only |
+| src/zephyr/backtest/ | 回测验证 | design | design_only |
+| src/zephyr/backtest/__init__.py |  | prototype | orphan |
+| src/zephyr/backtest/_extensions/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/backtest/api/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/backtest/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/backtest/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/backtest/models/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/backtest/services/__init__.py |  | scaffold_placeholder | orphan |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -95,13 +97,13 @@ graph TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 | 依赖数 | 依赖类型 | Target Domain | Count | Type |
-|--------|:---:|---------|---------------|:---:|------|
-| D-RISK | 3 | data,event,contract | D-RISK | 3 | data,event,contract |
-| D-SIMULATION | 1 | contract | D-SIMULATION | 1 | contract |
-| D-SIGNAL | 1 | contract | D-SIGNAL | 1 | contract |
-| D-FACTOR | 1 | contract | D-FACTOR | 1 | contract |
-| D-COMPLIANCE | 1 | contract | D-COMPLIANCE | 1 | contract |
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-RISK | 3 | data,event,contract |
+| D-SIMULATION | 1 | contract |
+| D-SIGNAL | 1 | contract |
+| D-FACTOR | 1 | contract |
+| D-COMPLIANCE | 1 | contract |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

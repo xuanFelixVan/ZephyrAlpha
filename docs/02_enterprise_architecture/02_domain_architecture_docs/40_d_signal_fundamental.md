@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 40_d_signal_fundamental 域文档
+# 40_d_signal_fundamental / 基本面信号
+
+> **文档作用 / Purpose**: 展示 基本面信号（D-SIGNAL_FUNDAMENTAL）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:09
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -34,38 +36,38 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 24 个模块（按路径排序，最多显示前 200 个）
+共 24 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| src/zephyr/signal_fundamental/ | 基本面信号 | design | design_only | src/zephyr/signal_fundamental/ | 基本面信号 | design | design_only |
-| src/zephyr/signal_fundamental/_extensions/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_fundamental/_extensions/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_fundamental/api/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_fundamental/api/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_fundamental/capital/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/capital/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/capital/capital_allocation_result.py |  | prototype | draft | src/zephyr/signal_fundamental/capital/capital_allocation_result.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/capital/capital_allocator.py |  | prototype | draft | src/zephyr/signal_fundamental/capital/capital_allocator.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/capital/default_capital_allocator.py |  | prototype | draft | src/zephyr/signal_fundamental/capital/default_capital_allocator.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/combiner/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/combiner/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/combiner/impl/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/combiner/impl/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/combiner/synthesized_signal.py |  | prototype | draft | src/zephyr/signal_fundamental/combiner/synthesized_signal.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/core/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_fundamental/core/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_fundamental/gen/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/gen/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/gen/aggregator_base.py |  | prototype | draft | src/zephyr/signal_fundamental/gen/aggregator_base.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/gen/implementations/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/gen/implementations/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/gen/implementations/default_signal_aggregator.py |  | production | draft | src/zephyr/signal_fundamental/gen/implementations/default_signal_aggregator.py |  | production | draft |
-| src/zephyr/signal_fundamental/infrastructure/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_fundamental/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_fundamental/models/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_fundamental/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_fundamental/services/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_fundamental/services/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_fundamental/strategy/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/strategy/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/strategy/capital_allocator.py |  | prototype | draft | src/zephyr/signal_fundamental/strategy/capital_allocator.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/strategy/implementations/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/strategy/implementations/__init__.py |  | prototype | draft |
-| ...phyr/signal_fundamental/strategy/implementations/default_capital_allocator.py |  | production | draft | ...phyr/signal_fundamental/strategy/implementations/default_capital_allocator.py |  | production | draft |
-| src/zephyr/signal_fundamental/synth/__init__.py |  | prototype | draft | src/zephyr/signal_fundamental/synth/__init__.py |  | prototype | draft |
-| src/zephyr/signal_fundamental/synth/signal_synthesizer.py |  | production | draft | src/zephyr/signal_fundamental/synth/signal_synthesizer.py |  | production | draft |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/signal_fundamental/ | 基本面信号 | design | design_only |
+| src/zephyr/signal_fundamental/_extensions/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_fundamental/api/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_fundamental/capital/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/capital/capital_allocation_result.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/capital/capital_allocator.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/capital/default_capital_allocator.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/combiner/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/combiner/impl/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/combiner/synthesized_signal.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_fundamental/gen/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/gen/aggregator_base.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/gen/implementations/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/gen/implementations/default_signal_aggregator.py |  | production | draft |
+| src/zephyr/signal_fundamental/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_fundamental/models/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_fundamental/services/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_fundamental/strategy/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/strategy/capital_allocator.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/strategy/implementations/__init__.py |  | prototype | draft |
+| ...phyr/signal_fundamental/strategy/implementations/default_capital_allocator.py |  | production | draft |
+| src/zephyr/signal_fundamental/synth/__init__.py |  | prototype | draft |
+| src/zephyr/signal_fundamental/synth/signal_synthesizer.py |  | production | draft |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -159,16 +161,16 @@ graph TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 | 依赖数 | 依赖类型 | Target Domain | Count | Type |
-|--------|:---:|---------|---------------|:---:|------|
-| D-TRADING | 15 | import_depends | D-TRADING | 15 | import_depends |
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-TRADING | 15 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 | 依赖数 | 依赖类型 | Source Domain | Count | Type |
-|------|:---:|---------|---------------|:---:|------|
-| D-GOVERNANCE | 6 | test_depends | D-GOVERNANCE | 6 | test_depends |
-| D-SIGNAL | 1 | import_depends | D-SIGNAL | 1 | import_depends |
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D-GOVERNANCE | 6 | test_depends |
+| D-SIGNAL | 1 | import_depends |
 
 ## 说明 / Notes
 

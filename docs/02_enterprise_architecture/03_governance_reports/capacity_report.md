@@ -10,13 +10,15 @@ ttl: permanent
 
 # 域容量报告
 
+> **文档作用 / Purpose**: 展示各功能域的模块数量与容量上限对比，识别超容域和接近超容域，为域拆分决策提供依据。
+
 > 本文档由 generate_capacity_report.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:29:17
+> 最后更新: 2026-06-24 21:39:35
 > 数据源: depgraph.db domains表 + nodes表
 
 ## 统计概览
 
-| 指标 | 值 |
+| 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 53 |
 | 超容域 | 20 |
@@ -25,34 +27,34 @@ ttl: permanent
 
 ## 超容域清单（需拆分）
 
-| 域ID | 域名称 | 实际模块数 | 上限 | 超出 |
+| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
 | D-AUTONOMY_CORE | 自治核心 | 650 | 150 | +500 |
 | D-AUTONOMY_PERM | 自治保护 | 270 | 150 | +120 |
 | D-COMPLIANCE | 合规 | 916 | 150 | +766 |
 | D-FACTOR | 因子 | 320 | 150 | +170 |
 | D-FRONTEND | 前端 | 237 | 150 | +87 |
-| D-GOVERNANCE | lifecycle_management | 3908 | 200 | +3708 |
-| D-GOV_AUDIT | audit-trail | 268 | 200 | +68 |
+| D-GOVERNANCE | 生命周期管理 | 3908 | 200 | +3708 |
+| D-GOV_AUDIT | 审计追踪 | 268 | 200 | +68 |
 | D-INFRA_OPS | 基础设施运维 | 418 | 150 | +268 |
-| D-INFRA_RUNTIME | runtime_integration | 727 | 150 | +577 |
-| D-INTEGRATION | pipeline_routing | 706 | 150 | +556 |
-| D-INTELLIGENCE | context_management | 273 | 150 | +123 |
-| D-KNOWLEDGE | knowledge_management | 194 | 150 | +44 |
-| D-MKT_DATA | 行情数据(接入+存储) | 266 | 150 | +116 |
-| D-OPS | feedback-loop | 697 | 150 | +547 |
+| D-INFRA_RUNTIME | 运行时集成 | 727 | 150 | +577 |
+| D-INTEGRATION | 管线路由 | 706 | 150 | +556 |
+| D-INTELLIGENCE | 上下文管理 | 273 | 150 | +123 |
+| D-KNOWLEDGE | 知识管理 | 194 | 150 | +44 |
+| D-MKT_DATA | 行情数据 | 266 | 150 | +116 |
+| D-OPS | 反馈循环 | 697 | 150 | +547 |
 | D-PF_CORE | 组合核心 | 202 | 150 | +52 |
 | D-RISK | 风控 | 775 | 150 | +625 |
-| D-SECURITY | adversarial_validation | 849 | 200 | +649 |
-| D-SHARED | shared_services | 290 | 150 | +140 |
+| D-SECURITY | 对抗验证 | 849 | 200 | +649 |
+| D-SHARED | 共享服务 | 290 | 150 | +140 |
 | D-SIGNAL | 信号 | 476 | 150 | +326 |
 | D-TRADING | 交易运营 | 249 | 150 | +99 |
 
 ## 接近超容域清单（>80%，需关注）
 
-| 域ID | 域名称 | 实际模块数 | 上限 | 使用率 |
+| 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |
 |------|--------|:---:|:---:|:---:|
-| D-DATA_ENG | 数据工程(增值+融合+知识) | 147 | 150 | 98.0% |
+| D-DATA_ENG | 数据工程 | 147 | 150 | 98.0% |
 | D-EX_CORE | 执行核心 | 135 | 150 | 90.0% |
 | D-EX_SOR | 执行路由 | 131 | 150 | 87.3% |
 | D-GOV_RULE | 规则治理 | 178 | 200 | 89.0% |
@@ -61,7 +63,7 @@ ttl: permanent
 
 ## 空域清单（0模块，待开发）
 
-| 域ID | 域名称 | 架构层 | 上限 |
+| 域ID / Domain ID | 域名称 / Domain Name | 架构层 / Layer | 上限 / Max |
 |------|--------|--------|:---:|
 | D-T3-W0 | 测试域T3-0 | L2_domain | 50 |
 | D-T3-W1 | 测试域T3-1 | L2_domain | 50 |
@@ -76,7 +78,7 @@ ttl: permanent
 
 ## 完整域容量清单
 
-| 域ID | 域名称 | 架构层 | 实际模块数 | 上限 | 使用率 | 状态 |
+| 域ID / Domain ID | 域名称 / Domain Name | 架构层 / Layer | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage | 状态 / Status |
 |------|--------|--------|:---:|:---:|:---:|------|
 | D-ALT_DATA | 另类数据 | L1_foundation | 68 | 150 | 45.3% | 正常 |
 | D-AUTONOMY_CORE | 自治核心 | L1_platform | 650 | 150 | 433.3% | 超容 |
@@ -85,8 +87,8 @@ ttl: permanent
 | D-BEHAVIORAL_AUDIT | 行为审计 | L1_foundation | 60 | 150 | 40.0% | 正常 |
 | D-COMPLIANCE | 合规 | L2_domain | 916 | 150 | 610.7% | 超容 |
 | D-CROSS_ASSET | 跨资产 | L2_domain | 79 | 150 | 52.7% | 正常 |
-| D-DATA_ENG | 数据工程(增值+融合+知识) | L1_foundation | 147 | 150 | 98.0% | 接近超容 |
-| D-DATA_GOV | 数据治理(质量+血缘+参考) | L1_foundation | 38 | 150 | 25.3% | 正常 |
+| D-DATA_ENG | 数据工程 | L1_foundation | 147 | 150 | 98.0% | 接近超容 |
+| D-DATA_GOV | 数据治理 | L1_foundation | 38 | 150 | 25.3% | 正常 |
 | D-DATA_SEC | 数据安全与契约 | L1_foundation | 30 | 150 | 20.0% | 正常 |
 | D-DIGITAL_TWIN | 数字孪生 | L2_domain | 13 | 150 | 8.7% | 正常 |
 | D-EXEC_SIM | 执行仿真 | L2_domain | 8 | 150 | 5.3% | 正常 |
@@ -94,27 +96,27 @@ ttl: permanent
 | D-EX_SOR | 执行路由 | L2_domain | 131 | 150 | 87.3% | 接近超容 |
 | D-FACTOR | 因子 | L2_domain | 320 | 150 | 213.3% | 超容 |
 | D-FRONTEND | 前端 | L1_platform | 237 | 150 | 158.0% | 超容 |
-| D-GOVERNANCE | lifecycle_management | L2_domain | 3908 | 200 | 1954.0% | 超容 |
-| D-GOV_AUDIT | audit-trail | L2_domain | 268 | 200 | 134.0% | 超容 |
-| D-GOV_DRIFT | drift_detection | L2_domain | 38 | 200 | 19.0% | 正常 |
+| D-GOVERNANCE | 生命周期管理 | L2_domain | 3908 | 200 | 1954.0% | 超容 |
+| D-GOV_AUDIT | 审计追踪 | L2_domain | 268 | 200 | 134.0% | 超容 |
+| D-GOV_DRIFT | 漂移检测 | L2_domain | 38 | 200 | 19.0% | 正常 |
 | D-GOV_RULE | 规则治理 | L2_domain | 178 | 200 | 89.0% | 接近超容 |
 | D-INFRA_OPS | 基础设施运维 | L0_infrastructure | 418 | 150 | 278.7% | 超容 |
-| D-INFRA_RUNTIME | runtime_integration | L0_infrastructure | 727 | 150 | 484.7% | 超容 |
-| D-INTEGRATION | pipeline_routing | L1_platform | 706 | 150 | 470.7% | 超容 |
-| D-INTELLIGENCE | context_management | L2_domain | 273 | 150 | 182.0% | 超容 |
-| D-KNOWLEDGE | knowledge_management | L2_domain | 194 | 150 | 129.3% | 超容 |
-| D-MKT_DATA | 行情数据(接入+存储) | L1_foundation | 266 | 150 | 177.3% | 超容 |
+| D-INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 727 | 150 | 484.7% | 超容 |
+| D-INTEGRATION | 管线路由 | L1_platform | 706 | 150 | 470.7% | 超容 |
+| D-INTELLIGENCE | 上下文管理 | L2_domain | 273 | 150 | 182.0% | 超容 |
+| D-KNOWLEDGE | 知识管理 | L2_domain | 194 | 150 | 129.3% | 超容 |
+| D-MKT_DATA | 行情数据 | L1_foundation | 266 | 150 | 177.3% | 超容 |
 | D-ML_SERVE | 推理 | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D-ML_TRAIN | 训练 | L2_domain | 119 | 150 | 79.3% | 正常 |
-| D-OPS | feedback-loop | L1_platform | 697 | 150 | 464.7% | 超容 |
+| D-OPS | 反馈循环 | L1_platform | 697 | 150 | 464.7% | 超容 |
 | D-PF_ALLOC | 组合分配 | L2_domain | 114 | 150 | 76.0% | 正常 |
 | D-PF_CORE | 组合核心 | L2_domain | 202 | 150 | 134.7% | 超容 |
 | D-POSITION | 仓位管理 | L2_domain | 77 | 150 | 51.3% | 正常 |
 | D-REPORTING | 报告 | L1_platform | 132 | 150 | 88.0% | 接近超容 |
 | D-RISK | 风控 | L2_domain | 775 | 150 | 516.7% | 超容 |
-| D-SECURITY | adversarial_validation | L1_platform | 849 | 200 | 424.5% | 超容 |
+| D-SECURITY | 对抗验证 | L1_platform | 849 | 200 | 424.5% | 超容 |
 | D-SELL_DECISION | 卖出决策 | L2_domain | 64 | 150 | 42.7% | 正常 |
-| D-SHARED | shared_services | L1_platform | 290 | 150 | 193.3% | 超容 |
+| D-SHARED | 共享服务 | L1_platform | 290 | 150 | 193.3% | 超容 |
 | D-SIGNAL | 信号 | L2_domain | 476 | 150 | 317.3% | 超容 |
 | D-SIGNAL_ASHARE | A股特色信号 | L2_domain | 27 | 150 | 18.0% | 正常 |
 | D-SIGNAL_FUNDAMENTAL | 基本面信号 | L2_domain | 24 | 150 | 16.0% | 正常 |

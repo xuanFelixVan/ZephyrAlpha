@@ -34,8 +34,12 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/capability_heatmap.md")
+OUTPUT_PATH = Path(
+    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/capability_heatmap.md"
+)
 
 # 10 capability domains (能力域) - 7 business + 3 cross-cutting
 # Source: capability_heatmap.yaml v3.0.0 + capability_heatmap.md §3.1
@@ -95,8 +99,13 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name_en": "Governance & Compliance",
         "type": "横切",
         "domains": [
-            "D-GOVERNANCE", "D-GOV_RULE", "D-GOV_AUDIT", "D-GOV_DRIFT",
-            "D-GOV_ENFORCEMENT", "D-GOV_REPAIR", "D-GOV_SCRIPTS",
+            "D-GOVERNANCE",
+            "D-GOV_RULE",
+            "D-GOV_AUDIT",
+            "D-GOV_DRIFT",
+            "D-GOV_ENFORCEMENT",
+            "D-GOV_REPAIR",
+            "D-GOV_SCRIPTS",
         ],
     },
     {
@@ -112,22 +121,28 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name_en": "Infrastructure",
         "type": "横切",
         "domains": [
-            "D-INFRA_OPS", "D-INFRA_RUNTIME", "D-INTEGRATION", "D-INTEGRATION-GATEWAY",
-            "D-SHARED", "D-FRONTEND", "D-REPORTING", "D-KNOWLEDGE",
-            "D-INTELLIGENCE", "D-AUTONOMY_CORE", "D-OPS",
+            "D-INFRA_OPS",
+            "D-INFRA_RUNTIME",
+            "D-INTEGRATION",
+            "D-INTEGRATION-GATEWAY",
+            "D-SHARED",
+            "D-FRONTEND",
+            "D-REPORTING",
+            "D-KNOWLEDGE",
+            "D-INTELLIGENCE",
+            "D-AUTONOMY_CORE",
+            "D-OPS",
         ],
     },
 ]
 
-# Maturity levels (L0-L5) - Source: capability_heatmap.yaml v3.0.0
+# Maturity levels (L0-L3, 4-level simplified) - Source: capability_heatmap.yaml v3.0.0
 # symbol: maturity symbol; coverage: ✅/🟡/❌; name_en: English name
 MATURITY_LEVELS: dict[str, dict] = {
     "L0": {"symbol": "⚪", "coverage": "❌", "name_en": "Missing", "name_zh": "缺失", "score": 0},
-    "L1": {"symbol": "🔵", "coverage": "🟡", "name_en": "Designed", "name_zh": "设计", "score": 1},
-    "L2": {"symbol": "🟡", "coverage": "🟡", "name_en": "Drafted", "name_zh": "草稿", "score": 2},
-    "L3": {"symbol": "🟢", "coverage": "✅", "name_en": "Usable", "name_zh": "可用", "score": 3},
-    "L4": {"symbol": "🟣", "coverage": "✅", "name_en": "Production", "name_zh": "生产级", "score": 4},
-    "L5": {"symbol": "🔴", "coverage": "✅", "name_en": "Leading", "name_zh": "顶级对标", "score": 5},
+    "L1": {"symbol": "🔵", "coverage": "🟡", "name_en": "Designing", "name_zh": "设计中", "score": 1},
+    "L2": {"symbol": "🟡", "coverage": "🟡", "name_en": "Usable", "name_zh": "可用未验证", "score": 2},
+    "L3": {"symbol": "🟢", "coverage": "✅", "name_en": "Verified", "name_zh": "生产已验证", "score": 3},
 }
 
 # Test domain prefixes to exclude (not real architecture domains)
@@ -141,17 +156,13 @@ def normalize_domain_id(domain_id: str) -> str:
 
 def table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
     """Check if a table exists in the database."""
-    cur = conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,)
-    )
+    cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
     return cur.fetchone() is not None
 
 
 def get_all_domains(conn: sqlite3.Connection) -> list[dict]:
     """Query all domains from the domains table."""
-    cur = conn.execute(
-        "SELECT domain_id, domain_name, layer_id FROM domains ORDER BY domain_id"
-    )
+    cur = conn.execute("SELECT domain_id, domain_name, layer_id FROM domains ORDER BY domain_id")
     return [
         {
             "domain_id": r[0],
@@ -181,7 +192,7 @@ def get_domain_maturity_counts(conn: sqlite3.Connection) -> dict[str, dict[str, 
         result.setdefault(domain_id, {}).setdefault(maturity, 0)
         result[domain_id][maturity] += count
 
-    # Also query build_status='active' counts for L4 detection
+    # Also query build_status='active' counts for L3 detection
     cur = conn.execute(
         """SELECT domain_id, COUNT(*)
            FROM nodes
@@ -199,14 +210,12 @@ def get_domain_maturity_counts(conn: sqlite3.Connection) -> dict[str, dict[str, 
 
 
 def compute_maturity_level(counts: dict[str, int]) -> str:
-    """Compute maturity level (L0-L5) from node maturity counts.
+    """Compute maturity level (L0-L3, 4-level simplified) from node maturity counts.
 
-    L0: no nodes
-    L1: only design nodes (no production, no prototype)
-    L2: has prototype nodes (no production)
-    L3: has production nodes (build_status != active)
-    L4: has production nodes with build_status=active
-    L5: leading (not computable from depgraph.db, reserved)
+    L0: no nodes (Missing)
+    L1: only design or prototype nodes (Designing)
+    L2: has production nodes but build_status != active (Usable, unverified)
+    L3: has production nodes with build_status=active (Verified)
     """
     production = counts.get("production", 0)
     design = counts.get("design", 0)
@@ -217,12 +226,10 @@ def compute_maturity_level(counts: dict[str, int]) -> str:
     if total == 0:
         return "L0"
     if active > 0:
-        return "L4"
-    if production > 0:
         return "L3"
-    if prototype > 0:
+    if production > 0:
         return "L2"
-    if design > 0:
+    if design > 0 or prototype > 0:
         return "L1"
     return "L0"
 
@@ -249,10 +256,7 @@ def generate_heatmap() -> str:
             maturity_counts = get_domain_maturity_counts(conn)
         else:
             # Fallback: arch_domain_capacity merged into domains table in v6
-            data_source = (
-                "depgraph.db domains表 + nodes表 "
-                "(注: arch_domain_capacity表不存在，v6已合并入domains表)"
-            )
+            data_source = "depgraph.db domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)"
             domains = get_all_domains(conn)
             maturity_counts = get_domain_maturity_counts(conn)
     finally:
@@ -262,10 +266,7 @@ def generate_heatmap() -> str:
     domain_cap_map = build_domain_capability_map()
 
     # Filter out test domains
-    real_domains = [
-        d for d in domains
-        if not any(d["domain_id"].startswith(prefix) for prefix in TEST_DOMAIN_PREFIXES)
-    ]
+    real_domains = [d for d in domains if not any(d["domain_id"].startswith(prefix) for prefix in TEST_DOMAIN_PREFIXES)]
 
     # Compute maturity for each domain
     domain_data: list[dict] = []
@@ -274,22 +275,22 @@ def generate_heatmap() -> str:
         counts = maturity_counts.get(did, {})
         level = compute_maturity_level(counts)
         cap_id = domain_cap_map.get(normalize_domain_id(did))
-        domain_data.append({
-            **d,
-            "maturity_level": level,
-            "capability_id": cap_id,
-            "production": counts.get("production", 0),
-            "design": counts.get("design", 0),
-            "prototype": counts.get("prototype", 0),
-            "active": counts.get("active", 0),
-            "total_nodes": counts.get("production", 0) + counts.get("design", 0) + counts.get("prototype", 0),
-        })
+        domain_data.append(
+            {
+                **d,
+                "maturity_level": level,
+                "capability_id": cap_id,
+                "production": counts.get("production", 0),
+                "design": counts.get("design", 0),
+                "prototype": counts.get("prototype", 0),
+                "active": counts.get("active", 0),
+                "total_nodes": counts.get("production", 0) + counts.get("design", 0) + counts.get("prototype", 0),
+            }
+        )
 
     # Sort by capability domain, then by domain_id
     cap_order = {cap["id"]: i for i, cap in enumerate(CAPABILITY_DOMAINS)}
-    domain_data.sort(
-        key=lambda d: (cap_order.get(d["capability_id"], 999), d["domain_id"])
-    )
+    domain_data.sort(key=lambda d: (cap_order.get(d["capability_id"], 999), d["domain_id"]))
 
     lines: list[str] = []
     # frontmatter
@@ -298,12 +299,14 @@ def generate_heatmap() -> str:
     lines.append("title: 能力热力图")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f'date: {now.split()[0]}')
+    lines.append(f"date: {now.split()[0]}")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 能力热力图 / Capability Heatmap")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
     lines.append("")
     lines.append("> 本文档由 generate_capability_heatmap.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -316,18 +319,21 @@ def generate_heatmap() -> str:
     l1_count = sum(1 for d in domain_data if d["maturity_level"] == "L1")
     l2_count = sum(1 for d in domain_data if d["maturity_level"] == "L2")
     l3_count = sum(1 for d in domain_data if d["maturity_level"] == "L3")
-    l4_count = sum(1 for d in domain_data if d["maturity_level"] == "L4")
-    full_coverage = sum(1 for d in domain_data if d["maturity_level"] in ("L3", "L4", "L5"))
+    full_coverage = sum(1 for d in domain_data if d["maturity_level"] == "L3")
     partial_coverage = sum(1 for d in domain_data if d["maturity_level"] in ("L1", "L2"))
     no_coverage = sum(1 for d in domain_data if d["maturity_level"] == "L0")
 
     lines.append("## 统计概览 / Statistics Overview")
     lines.append("")
-    lines.append("| 指标 | 值 |")
+    lines.append("| 指标 / Metric | 值 / Value |")
     lines.append("|------|-----|")
     lines.append(f"| 域总数 / Total Domains | {total_domains} |")
     lines.append(f"| 能力域数 / Capability Domains | {len(CAPABILITY_DOMAINS)} |")
-    lines.append(f"| ✅ 完全覆盖 / Full Coverage (L3+) | {full_coverage} |")
+    lines.append(f"| L0 缺失 / Missing | {l0_count} |")
+    lines.append(f"| L1 设计中 / Designing | {l1_count} |")
+    lines.append(f"| L2 可用未验证 / Usable | {l2_count} |")
+    lines.append(f"| L3 生产已验证 / Verified | {l3_count} |")
+    lines.append(f"| ✅ 完全覆盖 / Full Coverage (L3) | {full_coverage} |")
     lines.append(f"| 🟡 部分覆盖 / Partial Coverage (L1-L2) | {partial_coverage} |")
     lines.append(f"| ❌ 无覆盖 / No Coverage (L0) | {no_coverage} |")
     lines.append("")
@@ -335,9 +341,9 @@ def generate_heatmap() -> str:
     # Maturity level legend
     lines.append("## 成熟度图例 / Maturity Legend")
     lines.append("")
-    lines.append("| 等级 | 符号 | 覆盖度 | 中文名 | 英文名 | 定义 |")
+    lines.append("| 等级 / Level | 符号 / Symbol | 覆盖度 / Coverage | 中文名 / Chinese | 英文名 / English | 定义 / Definition |")
     lines.append("|:---:|:---:|:---:|--------|--------|------|")
-    for level_id in ("L0", "L1", "L2", "L3", "L4", "L5"):
+    for level_id in ("L0", "L1", "L2", "L3"):
         info = MATURITY_LEVELS[level_id]
         lines.append(
             f"| {level_id} | {info['symbol']} | {info['coverage']} | "
@@ -349,7 +355,7 @@ def generate_heatmap() -> str:
     # Capability domain definitions
     lines.append("## 能力域定义 / Capability Domain Definitions")
     lines.append("")
-    lines.append("| 能力域ID | 中文名 | 英文名 | 类型 | 包含域数 | 包含域 |")
+    lines.append("| 能力域ID / Capability ID | 中文名 / Chinese | 英文名 / English | 类型 / Type | 包含域数 / Domain Count | 包含域 / Included Domains |")
     lines.append("|:---:|--------|--------|:---:|:---:|--------|")
     for cap in CAPABILITY_DOMAINS:
         domains_str = ", ".join(cap["domains"])
@@ -363,22 +369,24 @@ def generate_heatmap() -> str:
     lines.append("## 能力热力图矩阵 / Capability Heatmap Matrix")
     lines.append("")
     lines.append("> 行：架构域（43域） | 列：能力域（10能力域）")
+    lines.append("> Rows: Architecture Domains (43) | Columns: Capability Domains (10)")
     lines.append("> 单元格：成熟度符号（属于该能力域时显示，否则显示 —）")
+    lines.append("> Cell: Maturity symbol (shown when domain belongs to capability, otherwise —)")
     lines.append("")
 
     # Matrix header
-    header = "| 架构域 | 域名称 |"
+    header = "| 架构域 / Architecture Domain | 域名称 / Domain Name |"
     separator = "|--------|--------|"
     for cap in CAPABILITY_DOMAINS:
         header += f" {cap['id']} |"
         separator += ":---:|"
-    header += " 成熟度 |"
+    header += " 成熟度 / Maturity |"
     separator += ":---:|"
     lines.append(header)
     lines.append(separator)
 
     for d in domain_data:
-        row = f"| {d['domain_id']} | {d['domain_name']} |"
+        row = f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} |"
         for cap in CAPABILITY_DOMAINS:
             if d["capability_id"] == cap["id"]:
                 symbol = MATURITY_LEVELS[d["maturity_level"]]["symbol"]
@@ -392,14 +400,11 @@ def generate_heatmap() -> str:
     # Capability domain maturity summary
     lines.append("## 能力域成熟度汇总 / Capability Domain Maturity Summary")
     lines.append("")
-    lines.append("| 能力域 | 中文名 | 域数量 | 总节点 | production | design | prototype | 平均成熟度 | 覆盖度 |")
+    lines.append("| 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | prototype | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |")
     lines.append("|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
 
     for cap in CAPABILITY_DOMAINS:
-        cap_domains = [
-            d for d in domain_data
-            if d["capability_id"] == cap["id"]
-        ]
+        cap_domains = [d for d in domain_data if d["capability_id"] == cap["id"]]
         cap_count = len(cap_domains)
         total_nodes = sum(d["total_nodes"] for d in cap_domains)
         total_prod = sum(d["production"] for d in cap_domains)
@@ -407,21 +412,19 @@ def generate_heatmap() -> str:
         total_proto = sum(d["prototype"] for d in cap_domains)
 
         if cap_count > 0:
-            avg_score = sum(
-                MATURITY_LEVELS[d["maturity_level"]]["score"] for d in cap_domains
-            ) / cap_count
-            full = sum(1 for d in cap_domains if d["maturity_level"] in ("L3", "L4", "L5"))
+            avg_score = sum(MATURITY_LEVELS[d["maturity_level"]]["score"] for d in cap_domains) / cap_count
+            full = sum(1 for d in cap_domains if d["maturity_level"] == "L3")
             partial = sum(1 for d in cap_domains if d["maturity_level"] in ("L1", "L2"))
             none = sum(1 for d in cap_domains if d["maturity_level"] == "L0")
             if full == cap_count:
-                coverage = "✅ 完全覆盖"
+                coverage = "✅ 完全覆盖 / Full"
             elif full > 0 or partial > 0:
-                coverage = "🟡 部分覆盖"
+                coverage = "🟡 部分覆盖 / Partial"
             else:
-                coverage = "❌ 无覆盖"
+                coverage = "❌ 无覆盖 / None"
         else:
             avg_score = 0
-            coverage = "❌ 无覆盖"
+            coverage = "❌ 无覆盖 / None"
 
         lines.append(
             f"| {cap['id']} | {cap['name']} | {cap_count} | {total_nodes} | "
@@ -433,13 +436,15 @@ def generate_heatmap() -> str:
     # Detailed domain maturity list
     lines.append("## 域成熟度明细 / Domain Maturity Detail")
     lines.append("")
-    lines.append("| 架构域 | 域名称 | 能力域 | 架构层 | 节点数 | production | design | prototype | active | 成熟度 | 覆盖度 |")
+    lines.append(
+        "| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | prototype | active | 成熟度 / Maturity | 覆盖度 / Coverage |"
+    )
     lines.append("|--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for d in domain_data:
         info = MATURITY_LEVELS[d["maturity_level"]]
         cap_name = d["capability_id"] or "—"
         lines.append(
-            f"| {d['domain_id']} | {d['domain_name']} | {cap_name} | "
+            f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {cap_name} | "
             f"{d['layer_id']} | {d['total_nodes']} | "
             f"{d['production']} | {d['design']} | {d['prototype']} | {d['active']} | "
             f"{d['maturity_level']} {info['symbol']} | {info['coverage']} |"
@@ -449,52 +454,49 @@ def generate_heatmap() -> str:
     # Gap analysis
     lines.append("## 差距分析 / Gap Analysis")
     lines.append("")
-    lines.append("### P0 短板（L0-L1，需优先补齐）")
+    lines.append("### P0 短板（L0-L1，需优先补齐）/ P0 Gaps (L0-L1, priority)")
     lines.append("")
-    lines.append("| 架构域 | 域名称 | 能力域 | 当前成熟度 | 节点数 |")
+    lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
     lines.append("|--------|--------|:---:|:---:|:---:|")
     p0_domains = [d for d in domain_data if d["maturity_level"] in ("L0", "L1")]
     if p0_domains:
         for d in p0_domains:
             cap_name = d["capability_id"] or "—"
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {cap_name} | "
-                f"{d['maturity_level']} | {d['total_nodes']} |"
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {cap_name} | {d['maturity_level']} | {d['total_nodes']} |"
             )
     else:
-        lines.append("| — | 无P0短板 | — | — | — |")
+        lines.append("| — | 无P0短板 / No P0 gaps | — | — | — |")
     lines.append("")
 
-    lines.append("### P1 关注（L2，有原型待集成）")
+    lines.append("### P1 关注（L2，可用未验证）/ P1 Watch (L2, usable unverified)")
     lines.append("")
-    lines.append("| 架构域 | 域名称 | 能力域 | 当前成熟度 | 节点数 |")
+    lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
     lines.append("|--------|--------|:---:|:---:|:---:|")
     p1_domains = [d for d in domain_data if d["maturity_level"] == "L2"]
     if p1_domains:
         for d in p1_domains:
             cap_name = d["capability_id"] or "—"
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {cap_name} | "
-                f"{d['maturity_level']} | {d['total_nodes']} |"
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {cap_name} | {d['maturity_level']} | {d['total_nodes']} |"
             )
     else:
-        lines.append("| — | 无P1关注 | — | — | — |")
+        lines.append("| — | 无P1关注 / No P1 watch | — | — | — |")
     lines.append("")
 
-    lines.append("### 已就绪（L3+，可用/生产级）")
+    lines.append("### 已就绪（L3，生产已验证）/ Ready (L3, verified)")
     lines.append("")
-    lines.append("| 架构域 | 域名称 | 能力域 | 当前成熟度 | 节点数 |")
+    lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
     lines.append("|--------|--------|:---:|:---:|:---:|")
-    ready_domains = [d for d in domain_data if d["maturity_level"] in ("L3", "L4", "L5")]
+    ready_domains = [d for d in domain_data if d["maturity_level"] == "L3"]
     if ready_domains:
         for d in ready_domains:
             cap_name = d["capability_id"] or "—"
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {cap_name} | "
-                f"{d['maturity_level']} | {d['total_nodes']} |"
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {cap_name} | {d['maturity_level']} | {d['total_nodes']} |"
             )
     else:
-        lines.append("| — | 无L3+域 | — | — | — |")
+        lines.append("| — | 无L3域 / No L3 domains | — | — | — |")
     lines.append("")
 
     # Unmapped domains (not in any capability domain)
@@ -503,12 +505,13 @@ def generate_heatmap() -> str:
         lines.append("## 未映射域 / Unmapped Domains")
         lines.append("")
         lines.append("> 以下域未归属任何能力域，可能需要更新能力域定义")
+        lines.append("> The following domains are not mapped to any capability domain; capability definitions may need updating")
         lines.append("")
-        lines.append("| 架构域 | 域名称 | 架构层 | 节点数 | 成熟度 |")
+        lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 架构层 / Layer | 节点数 / Nodes | 成熟度 / Maturity |")
         lines.append("|--------|--------|--------|:---:|:---:|")
         for d in unmapped:
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {d['layer_id']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['layer_id']} | "
                 f"{d['total_nodes']} | {d['maturity_level']} |"
             )
         lines.append("")
@@ -517,14 +520,12 @@ def generate_heatmap() -> str:
 
 
 def _maturity_definition(level: str) -> str:
-    """Return the definition text for a maturity level."""
+    """Return the definition text for a maturity level (4-level simplified)."""
     definitions = {
         "L0": "能力完全不存在，无设计无代码 / No nodes in domain",
-        "L1": "仅有设计文档/蓝图，无代码 / design_maturity=design only",
-        "L2": "有原型代码，未集成 / design_maturity=prototype",
-        "L3": "代码可用但未生产验证 / design_maturity=production, build_status!=active",
-        "L4": "生产环境稳定运行 / design_maturity=production, build_status=active",
-        "L5": "达到Goldman/BlackRock水平 / Leading (manual assessment)",
+        "L1": "有设计文档或原型代码，未集成 / design_maturity=design or prototype",
+        "L2": "代码可用但未生产验证 / design_maturity=production, build_status!=active",
+        "L3": "生产环境稳定运行 / design_maturity=production, build_status=active",
     }
     return definitions.get(level, "")
 

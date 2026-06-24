@@ -35,6 +35,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/domains")
 
@@ -103,7 +105,7 @@ def generate_dependency_diagram(domain_id: str, conn: sqlite3.Connection) -> str
     if not row:
         print(f"ERROR: 域 '{domain_id}' 不存在", file=sys.stderr)
         return ""
-    domain_name = row[0] or domain_id
+    domain_name = get_domain_name_zh(domain_id, row[0] or domain_id)
 
     nodes = get_domain_nodes(conn, domain_id)
     edges = get_domain_edges(conn, domain_id)

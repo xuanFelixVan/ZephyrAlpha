@@ -1,0 +1,971 @@
+%% D-RISK 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:13
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 775, 依赖边数: 2121
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_RISK[风控]
+        D_RISK_4级风控决策_APPROVE_REDUCE_REJECT_FLATTEN[".../4级风控决策 APPROVE/REDUCE/REJECT/FLATTEN [design]"]
+        D_RISK_A_Share_Compliance_Rule_A股合规规则代管["D-RISK/A Share Compliance Rule A股合规规则代管 [design]"]
+        D_RISK_A_Share_5_Signal_Systemic_Risk_Scanner_A股5信号系统性风险扫描器["...l Systemic Risk Scanner A股5信号系统性风险扫描器 [design]"]
+        D_RISK_A_Share_Cascading_Circuit_Breaker_A股级联熔断器["...are Cascading Circuit Breaker A股级联熔断器 [design]"]
+        D_RISK_A_Share_Compliance_Custody_A股合规代管["D-RISK/A-Share Compliance Custody A股合规代管 [design]"]
+        D_RISK_A_Share_Contrarian_Dedicated_Stop_Loss_A股逆向专用止损["...ntrarian Dedicated Stop-Loss A股逆向专用止损 [design]"]
+        D_RISK_A_Share_Contrarian_Time_Based_Stop_Loss_A股逆向时间止损["...trarian Time-Based Stop-Loss A股逆向时间止损 [design]"]
+        D_RISK_A_Share_First_Minute_Stop_Loss_Executor_A股首分钟止损执行器["...-Minute Stop-Loss Executor A股首分钟止损执行器 [design]"]
+        D_RISK_A_Share_Loss_Limit_Enforcer_A股亏损限额强制执行["...-Share Loss Limit Enforcer A股亏损限额强制执行 [design]"]
+        D_RISK_A_Share_Multi_Level_Loss_Circuit_Breaker_A股多级亏损熔断器["...-Level Loss Circuit Breaker A股多级亏损熔断器 [design]"]
+        D_RISK_A_Share_PDF_Tail_Risk_Auto_Hedger_A股PDF尾部风险自动对冲器["... Tail Risk Auto-Hedger A股PDF尾部风险自动对冲器 [design]"]
+        D_RISK_A_Share_Stock_Blacklist_Manager_A股股票黑名单管理器["...re Stock Blacklist Manager A股股票黑名单管理器 [design]"]
+        D_RISK_A_Share_Stop_Loss_6_Patterns_A股特色止损6种模式["...Share Stop Loss 6 Patterns A股特色止损6种模式 [design]"]
+        D_RISK_A_Share_Stop_Loss_A股止损["D-RISK/A-Share Stop Loss A股止损 [design]"]
+        D_RISK_A_Share_Stop_Loss_Rule_Engine_A股止损规则引擎["...-Share Stop-Loss Rule Engine A股止损规则引擎 [design]"]
+        D_RISK_A_Share_Stop_Loss_Rule_Engine_A股特色止损[".../A-Share Stop-Loss Rule Engine A股特色止损 [design]"]
+        D_RISK_A_Share_Stop_Loss_Circuit_Breaker_Series_A股特色止损_熔断系列["...ss/Circuit Breaker Series A股特色止损/熔断系列 [design]"]
+        D_RISK_A_Share_Systemic_Risk_3_Level_Alerter_A股系统性风险三级告警器["...mic Risk 3-Level Alerter A股系统性风险三级告警器 [design]"]
+        D_RISK_A_Share_Systemic_Risk_5_Signals_A股系统性风险5信号["...re Systemic Risk 5 Signals A股系统性风险5信号 [design]"]
+        D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测["...hare Systemic Risk Detector A股系统性风险检测 [design]"]
+        D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测器["...are Systemic Risk Detector A股系统性风险检测器 [design]"]
+        D_RISK_A6合规架构何时激活_A6_Compliance_Activation["...K/A6合规架构何时激活 A6 Compliance Activation [design]"]
+        D_RISK_AI_Agent_Risk_AI_Agent风险["D-RISK/AI Agent Risk AI/Agent风险 [design]"]
+        D_RISK_AI_Agent_Risk_Governance_AI_Agent风险治理["...AI Agent Risk Governance AI/Agent风险治理 [design]"]
+        D_RISK_AI_Agent_Risk_Governanc___d_Autonomy_AI_Agent风险治理有界自治["...nce Bounded Autonomy AI/Agent风险治理有界自治 [design]"]
+        D_RISK_AI_Agent_Specific_Risk_AI_Agent特有风险["...K/AI Agent Specific Risk AI/Agent特有风险 [design]"]
+        D_RISK_AI_Cannot_Directly_Modi___isk_Parameters_AI不可直接修改风控参数["...y Modify Risk Parameters AI不可直接修改风控参数 [design]"]
+        D_RISK_AI_Risk_Engine_Implementer_AI风控引擎实现器[".../AI Risk Engine Implementer AI风控引擎实现器 [design]"]
+        D_RISK_AI_Enhanced_Risk_Engine_AI增强风控引擎["D-RISK/AI-Enhanced Risk Engine AI增强风控引擎 [design]"]
+        D_RISK_AI_Agent_Risk_AI_Agent风险["D-RISK/AI/Agent Risk AI/Agent风险 [design]"]
+        D_RISK_AI_Agent特有风险_AI_Agent_Specific_Risk["...K/AI/Agent特有风险 AI/Agent Specific Risk [design]"]
+        D_RISK_AISG_Regulatory_Compliance_Checker_AISG监管合规检查器["...latory Compliance Checker AISG监管合规检查器 [design]"]
+        D_RISK_AI自动触发_AI_Auto_Trigger["D-RISK/AI自动触发 AI Auto Trigger [design]"]
+        D_RISK_APPROVE_Risk_Decision_风险["D-RISK/APPROVE Risk Decision 风险 [design]"]
+        D_RISK_ARA五项原则_ARA_Five_Principles["D-RISK/ARA五项原则 ARA Five Principles [design]"]
+        D_RISK_ARA治理方程_ARA_Governance_Equation["D-RISK/ARA治理方程 ARA Governance Equation [design]"]
+        D_RISK_ARS双轨结算模型_ARS_Dual_Track_Settlement["...K/ARS双轨结算模型 ARS Dual-Track Settlement [design]"]
+        D_RISK_ARS状态机语义_ARS_State_Machine_Semantics[".../ARS状态机语义 ARS State Machine Semantics [design]"]
+        D_RISK_ATR_Dynamic_Stop_Loss_Calculator_ATR动态止损计算器["...namic Stop Loss Calculator ATR动态止损计算器 [design]"]
+        D_RISK_ATR动态止损与Bayesian参数优化模型_ATR_Dynamic_Stop_Loss_Model["...ian参数优化模型 ATR Dynamic Stop-Loss Model [design]"]
+        D_RISK_ATR动态止盈_ATR_Dynamic_Take_Profit["D-RISK/ATR动态止盈 ATR Dynamic Take Profit [design]"]
+        D_RISK_Abnormal_Trade_Detection_Interceptor_异常交易检测拦截器["...Trade Detection Interceptor 异常交易检测拦截器 [design]"]
+        D_RISK_Agent_Boundary_Violation_Agent越界行为["...SK/Agent Boundary Violation Agent越界行为 [design]"]
+        D_RISK_Agent_Strategy_Drift_Must_Be_Detected_Agent策略漂移必须被检测["...Drift Must Be Detected Agent策略漂移必须被检测 [design]"]
+        D_RISK_Agent失控_Agent_Out_of_Control["D-RISK/Agent失控 Agent Out-of-Control [design]"]
+        D_RISK_Agent红队测试_Agent_Red_Team_Testing["D-RISK/Agent红队测试 Agent Red Team Testing [design]"]
+        D_RISK_Agent行为日志_Agent_Behavior_Log["D-RISK/Agent行为日志 Agent Behavior Log [design]"]
+        D_RISK_Agent行为监控_Agent_Behavior_Monitor["D-RISK/Agent行为监控 Agent Behavior Monitor [design]"]
+        D_RISK_Agent行为监控_Agent_Behavior_Monitoring["...K/Agent行为监控 Agent Behavior Monitoring [design]"]
+        D_RISK_Almgren_Chriss_Impact_Model_Almgren_Chriss冲击模型["...hriss Impact Model Almgren-Chriss冲击模型 [design]"]
+        D_RISK_Almgren_Chriss_Optimal____mework_Almgren_Chriss最优执行框架["...cution Framework Almgren-Chriss最优执行框架 [design]"]
+        D_RISK_Almgren_Chriss最优执行框架_Al___Optimal_Execution_Framework["...en-Chriss Optimal Execution Framework [design]"]
+        D_RISK_Amihud_ILLIQ_Amihud非流动性指标["D-RISK/Amihud ILLIQ Amihud非流动性指标 [design]"]
+        D_RISK_Amihud_ILLIQ_非流动性指标["D-RISK/Amihud ILLIQ 非流动性指标 [design]"]
+        D_RISK_Amihud_Illiquidity_Amihud非流动性指标["D-RISK/Amihud Illiquidity Amihud非流动性指标 [design]"]
+        D_RISK_Autoencoder重构异常检测_Autoencoder_Anomaly_Detection["...r重构异常检测 Autoencoder Anomaly Detection [design]"]
+        D_RISK_A股风险日历_A_Share_Risk_Calendar["D-RISK/A股风险日历 A-Share Risk Calendar [design]"]
+        D_RISK_BFSI领域自适应红队_FinRedTeamBench["D-RISK/BFSI领域自适应红队 FinRedTeamBench [design]"]
+        D_RISK_Basel_III_Multiplier_Factor_Manager_Basel_III乘数因子管理器["...plier Factor Manager Basel III乘数因子管理器 [design]"]
+        D_RISK_Bayesian优化_Bayesian_Optimization["D-RISK/Bayesian优化 Bayesian Optimization [design]"]
+        D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库["D-RISK/Black Swan Pattern Library 黑天鹅模式库 [design]"]
+        D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库7种模式["...Black Swan Pattern Library 黑天鹅模式库7种模式 [design]"]
+        D_RISK_Brinson模型_Brinson_Model["D-RISK/Brinson模型 Brinson Model [design]"]
+        D_RISK_C_004_风控_Risk_Control["D-RISK/C-004 风控 Risk Control [design]"]
+        D_RISK_C_038_黑天鹅检测_Black_Swan_Detection["D-RISK/C-038 黑天鹅检测 Black Swan Detection [design]"]
+        D_RISK_C_S_Pattern_C_S关系模式["D-RISK/C/S Pattern C/S关系模式 [design]"]
+        D_RISK_CER_Cancellation_to_Execution_Ratio_撤单成交比["...Cancellation-to-Execution Ratio 撤单成交比 [design]"]
+        D_RISK_CTR_003_RiskLimits_Producer_CTR_003风险限额生产者["...03 RiskLimits Producer CTR-003风险限额生产者 [design]"]
+        D_RISK_CTR_004_Order_Consumer_CTR_004订单消费者["...K/CTR-004 Order Consumer CTR-004订单消费者 [design]"]
+        D_RISK_CTR_006_PositionSnapshot_Provider_CTR_006仓位快照提供者["...itionSnapshot Provider CTR-006仓位快照提供者 [design]"]
+        D_RISK_CTR_P1_008_Risk_Dashboa___pshot_CTR_P1_008风控仪表盘快照代码实现["...oard Snapshot CTR-P1-008风控仪表盘快照(代码实现) [design]"]
+        D_RISK_CTR_P1_008_RiskDashboar___008_RiskDashboardSnapshot契约["...ot CTR-P1-008 RiskDashboardSnapshot契约 [design]"]
+        D_RISK_CTR_P1_011_RiskMetricsR____P1_011_RiskMetricsReport契约["...Report CTR-P1-011 RiskMetricsReport契约 [design]"]
+        D_RISK_CUSUM控制图_CUSUM_Control_Chart["D-RISK/CUSUM控制图 CUSUM Control Chart [design]"]
+        D_RISK_CVaR_ES条件风险价值_Conditional_Value_at_Risk["...aR/ES条件风险价值 Conditional Value at Risk [design]"]
+        D_RISK_Carry持有成本_Carry["D-RISK/Carry持有成本 Carry [design]"]
+        D_RISK_CheckResult_CheckResult结构["D-RISK/CheckResult CheckResult结构 [design]"]
+        D_RISK_CheckResult_检查结果["D-RISK/CheckResult 检查结果 [design]"]
+        D_RISK_Circuit_Breaker_Trigger_熔断触发["D-RISK/Circuit Breaker Trigger 熔断触发 [design]"]
+        D_RISK_CircuitBreaker_熔断事件["D-RISK/CircuitBreaker 熔断事件 [design]"]
+        D_RISK_Climate_Risk_Engine_气候风险引擎["D-RISK/Climate Risk Engine 气候风险引擎 [design]"]
+        D_RISK_CoVaR_Cross_Market_Contagion_CoVaR跨市场传染["...VaR Cross-Market Contagion CoVaR跨市场传染 [design]"]
+        D_RISK_CoVaR跨市场传染["D-RISK/CoVaR跨市场传染 [design]"]
+        D_RISK_CoVaR跨市场传染_CoVaR_Cross_Market_Contagion["...VaR跨市场传染 CoVaR Cross-Market Contagion [design]"]
+        D_RISK_Collaborative_Trading_Behavior_Detector_协同交易行为检测器["...e Trading Behavior Detector 协同交易行为检测器 [design]"]
+        D_RISK_Compliance_Rule_合规规则代码实现["D-RISK/Compliance Rule 合规规则(代码实现) [design]"]
+        D_RISK_Concentration_Exceeds_Limit_集中度超限["D-RISK/Concentration Exceeds Limit 集中度超限 [design]"]
+        D_RISK_Concentration_Limit_Non_Breakable_集中度上限不可突破["...tration Limit Non-Breakable 集中度上限不可突破 [design]"]
+        D_RISK_Concentration_Risk_Monitor_集中度风险监控器["...K/Concentration Risk Monitor 集中度风险监控器 [design]"]
+        D_RISK_Concentration_Risk_Monitor集中度风险监控["D-RISK/Concentration Risk Monitor集中度风险监控 [design]"]
+        D_RISK_Configurable_Rule_Engine_可配置规则引擎["D-RISK/Configurable Rule Engine 可配置规则引擎 [design]"]
+        D_RISK_Convexity凸性收益_Convexity["D-RISK/Convexity凸性收益 Convexity [design]"]
+        D_RISK_Correlation_Collapse_相关性崩塌["D-RISK/Correlation Collapse 相关性崩塌 [design]"]
+        D_RISK_Counterfactual_Analyzer_反事实分析器["D-RISK/Counterfactual Analyzer 反事实分析器 [design]"]
+        D_RISK_Counterparty_Risk_Manager_交易对手风险管理器["...K/Counterparty Risk Manager 交易对手风险管理器 [design]"]
+        D_RISK_Counterparty_Risk_交易对手风险["D-RISK/Counterparty Risk 交易对手风险 [design]"]
+        D_RISK_Covariance_Matrix_Decomposer_协方差矩阵分解器["...Covariance Matrix Decomposer 协方差矩阵分解器 [design]"]
+        D_RISK_Credit_Risk_Engine信用风险引擎["D-RISK/Credit Risk Engine信用风险引擎 [design]"]
+        D_RISK_Credit_Risk_信用风险["D-RISK/Credit Risk 信用风险 [design]"]
+        D_RISK_Cross_Market_Contagion_跨市场传导["D-RISK/Cross-Market Contagion 跨市场传导 [design]"]
+        %% ... 还有 675 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_risk_cross_asset___init___py -->|import_depends| src_zephyr_risk_cross_asset_risk_manager_py
+    src_zephyr_risk_cross_asset___init___py -->|import_depends| src_zephyr_risk_cross_asset_risk_manager_base_py
+    src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_risk_limits_calculator_py
+    src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
+    src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
+    src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_cross_asset_cr___et_data_adapter___init___py -->|config_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
+    src_zephyr_risk_implementations___init___py -->|config_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
+    D_RISK_Risk_Policy_Manager风控策略管理 -->|import_depends| D_RISK_Pre_Trade_Checker盘前检查
+    D_RISK_Pre_Trade_Checker盘前检查 -->|import_depends| D_RISK_Portfolio_Risk_Monitor持仓实时监控
+    D_RISK_Portfolio_Risk_Monitor持仓实时监控 -->|import_depends| D_RISK_Stop_Loss_Engine止损引擎
+    D_RISK_Stop_Loss_Engine止损引擎 -->|import_depends| D_RISK_Stress_Test_Engine压力测试引擎
+    D_RISK_Stress_Test_Engine压力测试引擎 -->|import_depends| D_RISK_VaR_Calculator_VaR计算器
+    D_RISK_VaR_Calculator_VaR计算器 -->|import_depends| D_RISK_Risk_Budget_Allocator风险预算分配
+    D_RISK_Risk_Budget_Allocator风险预算分配 -->|import_depends| D_RISK_Risk_Decomposition_Engine风险分解引擎
+    D_RISK_Risk_Decomposition_Engine风险分解引擎 -->|import_depends| D_RISK_Concentration_Risk_Monitor集中度风险监控
+    D_RISK_Concentration_Risk_Monitor集中度风险监控 -->|import_depends| D_RISK_Risk_Limit_Manager风险限额管理
+    D_RISK_Risk_Limit_Manager风险限额管理 -->|import_depends| D_RISK_Credit_Risk_Engine信用风险引擎
+    D_RISK_Credit_Risk_Engine信用风险引擎 -->|import_depends| D_RISK_A_Share_Stop_Loss_Rule_Engine_A股特色止损
+    D_RISK_A_Share_Stop_Loss_Rule_Engine_A股特色止损 -->|import_depends| D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测
+    D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测 -->|import_depends| D_RISK_A_Share_Loss_Limit_Enforcer_A股亏损限额强制执行
+    D_RISK_A_Share_Loss_Limit_Enforcer_A股亏损限额强制执行 -->|import_depends| D_RISK_Stop_Loss_Engine止损引擎
+    D_RISK_Stop_Loss_Engine止损引擎 -->|import_depends| D_RISK_仓位限制预检器_Position
+    D_RISK_仓位限制预检器_Position -->|import_depends| D_RISK_保证金比例安全检查器_Security
+    D_RISK_保证金比例安全检查器_Security -->|import_depends| D_RISK_风险指标体系定义器_Risk
+    D_RISK_风险指标体系定义器_Risk -->|import_depends| D_RISK_紧急停止安全确认_Security
+    D_RISK_紧急停止安全确认_Security -->|import_depends| D_RISK_VaR_Compute_Data_Prefetcher_VaR计算数据预取器
+    D_RISK_VaR_Compute_Data_Prefetcher_VaR计算数据预取器 -->|import_depends| D_RISK_历史数据代表性验证器_Historical_D___epresentativeness_Validator
+    D_RISK_历史数据代表性验证器_Historical_D___epresentativeness_Validator -->|import_depends| D_RISK_Risk_Policy_Persister_风控策略持久化
+    D_RISK_Risk_Policy_Persister_风控策略持久化 -->|import_depends| D_RISK_双时态PositionSnapshot管理器____l_Position_Snapshot_Manager
+    D_RISK_双时态PositionSnapshot管理器____l_Position_Snapshot_Manager -->|import_depends| D_RISK_VaR_DuckDB历史模拟查询构建器_VaR_DuckDB_Query_Builder
+    D_RISK_VaR_DuckDB历史模拟查询构建器_VaR_DuckDB_Query_Builder -->|import_depends| D_RISK_风险指标计算数据源依赖管理器_Risk_Metric_Data_Dependency_Manager
+    D_RISK_风险指标计算数据源依赖管理器_Risk_Metric_Data_Dependency_Manager -->|import_depends| D_RISK_C_004_风控_Risk_Control
+    D_RISK_C_004_风控_Risk_Control -->|import_depends| D_RISK_C_038_黑天鹅检测_Black_Swan_Detection
+    D_RISK_C_038_黑天鹅检测_Black_Swan_Detection -->|import_depends| D_RISK_风控状态物化视图_Risk_Status_View
+    D_RISK_风控状态物化视图_Risk_Status_View -->|import_depends| D_RISK_Risk_Budget_Allocator_风险预算分配器
+    D_RISK_Risk_Budget_Allocator_风险预算分配器 -->|import_depends| D_RISK_Risk_Policy_Manager_风险策略管理器
+    D_RISK_Risk_Policy_Manager_风险策略管理器 -->|import_depends| D_RISK_Pre_Trade_Checker_盘前检查器
+    D_RISK_Pre_Trade_Checker_盘前检查器 -->|import_depends| D_RISK_Portfolio_Risk_Monitor_组合风险监控器
+    D_RISK_Portfolio_Risk_Monitor_组合风险监控器 -->|import_depends| D_RISK_Risk_Limit_Manager_风险限额管理器
+    D_RISK_Risk_Limit_Manager_风险限额管理器 -->|import_depends| D_RISK_Concentration_Risk_Monitor_集中度风险监控器
+    D_RISK_Concentration_Risk_Monitor_集中度风险监控器 -->|import_depends| D_RISK_A_Share_Stop_Loss_Rule_Engine_A股止损规则引擎
+    D_RISK_A_Share_Stop_Loss_Rule_Engine_A股止损规则引擎 -->|import_depends| D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测器
+    D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测器 -->|import_depends| D_RISK_Drawdown_Real_Time_Tracker_回撤实时跟踪器
+    D_RISK_Drawdown_Real_Time_Tracker_回撤实时跟踪器 -->|import_depends| D_RISK_Crowding_Risk_Monitor_拥挤风险监控器
+    D_RISK_Crowding_Risk_Monitor_拥挤风险监控器 -->|import_depends| D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库
+    D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库 -->|import_depends| D_RISK_Tail_Risk_Monitor_尾部风险监控器
+    D_RISK_Tail_Risk_Monitor_尾部风险监控器 -->|import_depends| D_RISK_Kill_Switch_Integration_Kill_Switch集成
+    D_RISK_Kill_Switch_Integration_Kill_Switch集成 -->|import_depends| D_RISK_Fail_Closed_Degradation_Handler_Fail_Closed降级处理器
+    D_RISK_Fail_Closed_Degradation_Handler_Fail_Closed降级处理器 -->|import_depends| D_RISK_Configurable_Rule_Engine_可配置规则引擎
+    D_RISK_Configurable_Rule_Engine_可配置规则引擎 -->|import_depends| D_RISK_Post_Trade_Daily_Auditor_盘后日终审计器
+    D_RISK_Post_Trade_Daily_Auditor_盘后日终审计器 -->|import_depends| D_RISK_Scenario_Analyzer_情景分析器
+    D_RISK_Scenario_Analyzer_情景分析器 -->|import_depends| D_RISK_Liquidity_Risk_Monitor_流动性风险监控器
+    D_RISK_Liquidity_Risk_Monitor_流动性风险监控器 -->|import_depends| D_RISK_Risk_Breach_Logger_风险违规日志
+    D_RISK_Risk_Breach_Logger_风险违规日志 -->|import_depends| D_RISK_Counterfactual_Analyzer_反事实分析器
+    D_RISK_Counterfactual_Analyzer_反事实分析器 -->|import_depends| D_RISK_Risk_Rule_DSL_Compiler_风控规则DSL编译器
+    D_RISK_Risk_Rule_DSL_Compiler_风控规则DSL编译器 -->|import_depends| D_RISK_Risk_Dashboard_Generator_风险仪表盘生成器
+    D_RISK_Risk_Dashboard_Generator_风险仪表盘生成器 -->|import_depends| D_RISK_Risk_Report_Auto_Generator_风险报告自动生成器
+    D_RISK_Risk_Report_Auto_Generator_风险报告自动生成器 -->|import_depends| D_RISK_Risk_Policy_Backtester_风控策略回测器
+    D_RISK_Risk_Policy_Backtester_风控策略回测器 -->|import_depends| D_RISK_Limit_Consumption_Predictor_限额消耗预测器
+    D_RISK_Limit_Consumption_Predictor_限额消耗预测器 -->|import_depends| D_RISK_Leverage_Dynamic_Manager_杠杆动态管理器
+    D_RISK_Leverage_Dynamic_Manager_杠杆动态管理器 -->|import_depends| D_RISK_A_Share_Stock_Blacklist_Manager_A股股票黑名单管理器
+    D_RISK_A_Share_Stock_Blacklist_Manager_A股股票黑名单管理器 -->|import_depends| D_RISK_A_Share_Stop_Loss_Circuit_Breaker_Series_A股特色止损_熔断系列
+    D_RISK_A_Share_Stop_Loss_Circuit_Breaker_Series_A股特色止损_熔断系列 -->|import_depends| D_RISK_VaR_Enhancement_Series_VaR增强系列
+    D_RISK_VaR_Enhancement_Series_VaR增强系列 -->|import_depends| D_RISK_Permission_Idempotency____ries_权限_幂等_Kill_Switch_审批系列
+    D_RISK_Permission_Idempotency____ries_权限_幂等_Kill_Switch_审批系列 -->|import_depends| D_RISK_VaR_Scheduling_Concentr___Series_VaR调度_集中度_ATR_蒙特卡洛系列
+    D_RISK_VaR_Scheduling_Concentr___Series_VaR调度_集中度_ATR_蒙特卡洛系列 -->|import_depends| D_RISK_YAML_SQLite_SLA_Contrac___s_YAML加载_SQLite_SLA_契约_迁移系列
+    D_RISK_YAML_SQLite_SLA_Contrac___s_YAML加载_SQLite_SLA_契约_迁移系列 -->|import_depends| D_RISK_Gate_Dashboard_Profile____e_Series_门禁_仪表盘_画像_DSL_仓储系列
+    D_RISK_Gate_Dashboard_Profile____e_Series_门禁_仪表盘_画像_DSL_仓储系列 -->|import_depends| D_RISK_Risk_Report_Engine_风险报告引擎
+    D_RISK_Risk_Report_Engine_风险报告引擎 -->|import_depends| D_RISK_Trading_Behavior_Compliance_Detector_交易行为合规检测器
+    D_RISK_Trading_Behavior_Compliance_Detector_交易行为合规检测器 -->|import_depends| D_RISK_Limit_Up_Down_Trading_Constraint_Executor_涨跌停交易约束执行器
+    D_RISK_Limit_Up_Down_Trading_Constraint_Executor_涨跌停交易约束执行器 -->|import_depends| D_RISK_Trading_Rate_Constraint_Executor_交易速率约束执行器
+    %% ... 还有 690 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-RISK (10 条)
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_RISK_L3_Post_Trade_L3盘后审计
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_RISK_自交易检测_Self_Trading_Detection
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_RISK_INV_001_Kill_Switch_Response_Time_Kill_Switch响应时间不变量
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_RISK_流动性危机模拟_Liquidity_Crisis_Simulation
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_RISK_LVaR价差模型
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_RISK_四级审批流_Four_Level_Approval_Flow
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_RISK_VaR_Phase_3_Basel_III_VaR_Phase_3_Basel_III三角验证
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_RISK_策略容量风险_Strategy_Capacity_Risk
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_RISK_KS_L3_通道断开_Kill_Switch
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_RISK_Kyle_Lambda_凯尔lambda
+    %% D-AUTONOMY_CORE -> D-RISK (87 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_Counterparty_Risk_Manager_交易对手风险管理器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_情景分析_Scenario_Analysis
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_A_Share_Stock_Blacklist_Manager_A股股票黑名单管理器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_政策黑天鹅_Policy_Black_Swan
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Risk_Manager_风控管理器代码实现
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_新增AI_Agent特有风险类别_AI_Agent_Risk_Category
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Drift_Exceeded_Model_Must_Degrade_漂移超限模型必须降级
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_模型组合风险_Model_Combination_Risk
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Model_Risk_SR_26_2_模型风险
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_托管_Escrow
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Amihud_Illiquidity_Amihud非流动性指标
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Industry_Deviation_Exceeds_Limit_行业偏离超限
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_RISK_凸性预算框架_Convexity_Budget_Framework
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_Risk_Report_Auto_Generator_风险报告自动生成器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Circuit_Breaker_Trigger_熔断触发
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_RISK_共形VaR回测_CP_VaR_Backtesting
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_Compliance_Rule_合规规则代码实现
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_信心传染_Confidence_Contagion
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_压力测试假设情景库扩充策略_Stress_Scenario_Expansion
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_风控有否决权但无修改权_Veto_Without_Modify
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Risk_Rule_Validation_and_Stress_Tester_风控规则验证与压力测试器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_VaR风险价值_Value_at_Risk
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_AI_Enhanced_Risk_Engine_AI增强风控引擎
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Fake_Support_Real_Lure_假护盘真诱多
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_RISK_Convexity凸性收益_Convexity
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_RISK_Risk_Policy_Backtester_风控策略回测器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_RISK_否决单笔订单_Reject_Single_Order
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_RISK_VaR_Phase_1_VaR三阶段Phase_1
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_RISK_速度_Speed
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_RISK_SR_26_2排除GenAI是否等RFI_SR_26_2_GenAI_Exclusion
+    %% D-AUTONOMY_PERM -> D-RISK (48 条)
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_Agent红队测试_Agent_Red_Team_Testing
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_ATR动态止盈_ATR_Dynamic_Take_Profit
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_Kill_Switch_紧急停止开关
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_系统故障_System_Failure
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_RiskDashboardSnapshot_C___uilder_风险仪表盘快照CTR_P1_008构建器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_人工一键触发_Manual_One_click_Trigger
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_VaR_Exceeds_Limit_VaR超限
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_ESRB互联性风险向量_ESRB_Interconnectedness
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_Phase_1参数化高斯混合_Phase_1_Parametric_Gaussian_Mixture
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_RISK_策略拥挤踩踏_Strategy_Crowding_Stampede
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_Spoof_Probability_Spoof概率
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_LVaR_EVT尾部模型_LVaR_EVT_Tail_Model
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_RISK_Concentration_Limit_Non_Breakable_集中度上限不可突破
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_A_Share_Compliance_Custody_A股合规代管
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_Configurable_Rule_Engine_可配置规则引擎
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_RISK_Single_Order_Amount_Exceeds_Limit_单笔金额超限
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_RISK_上游数据检测_Upstream_Data_Detection
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_RiskDashboardSnapshot_风险仪表盘快照
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_Kill_Switch_in_Infrastr___e_Layer_Kill_Switch在基础设施层实现
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_RISK_Risk_Rule_DSL_Compiler_风控规则DSL编译器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_风险数据流独立于交易数据流_Risk_Data_Flow_Independent
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_ARS状态机语义_ARS_State_Machine_Semantics
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_事件风险快报_Event_Risk_Bulletin
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_C_004_风控_Risk_Control
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_RISK_Risk_Parameters_Non_Reducible_风控参数不得降低至硬边界以下
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_RiskLimit_9_Type_Enum_Manager_风险限额9类枚举管理器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_分层操纵检测_Layering_Detection
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_RISK_L1_Pre_Trade_L1盘前拦截
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|config_depends| D_RISK_Concentration_Exceeds_Limit_集中度超限
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_RISK_AI_Risk_Engine_Implementer_AI风控引擎实现器
+    %% D-BACKTEST -> D-RISK (3 条)
+    D_BACKTEST[D-BACKTEST] -->|data| D_RISK_自动降权_Auto_De_weighting
+    D_BACKTEST[D-BACKTEST] -->|event| D_RISK_Concentration_Risk_Monitor_集中度风险监控器
+    D_BACKTEST[D-BACKTEST] -->|contract| D_RISK_不安全元数据_Insecure_Metadata
+    %% D-COMPLIANCE -> D-RISK (166 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Risk_Trigger_Cannot_Be____dden_by_Humans_风控触发后不可被人类否决
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_RISK_AI_Enhanced_Risk_Engine_AI增强风控引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_RISK_Compliance_Rule_合规规则代码实现
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_风险仪表盘_Risk_Dashboard
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Risk_Policy_DDD_Aggrega___anager_风险策略DDD聚合根AGG_007管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_买卖价差扩大模拟_Spread_Widening_Simulation
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_E_RK_03_DrawdownAlerted_E_RK_03_DrawdownAlerted事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_VaR_Precise_Confirmer_VaR精确确认器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_定义崩溃阈值_Define_Crash_Threshold
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Risk_Veto_Penetrates_Any_Layer_风控否决可穿透任意层
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Grinold_&_Kahn容量公式
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Pre_Trade_RiskCheckResult_Router_盘前风控结果路由器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Limit_Up_Down_Trading_涨跌停交易
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Risk_Rule_DSL_Engine_风控规则DSL引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_RISK_漂移检测日志_Drift_Detection_Log
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_人工一键触发_Manual_One_click_Trigger
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_RISK_相关性风险_Correlation_Risk
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Risk_Budget_Allocator风险预算分配
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_RISK_Pre_Trade_50ms_SLA_Monitor_盘前50ms_SLA监控器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_熔断器模式_Circuit_Breaker_Pattern
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Phase_2_QNN量子神经网络_Phase_2_QNN
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_REJECT_Risk_Decision_风险
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Risk_Rule_DSL_Compiler_风控规则DSL编译器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_RISK_模型设定风险_Model_Specification_Risk
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_RISK_Compliance_Rule_合规规则代码实现
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Concentration_Limit_Non_Breakable_集中度上限不可突破
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Real_time_Risk_Warning____port_Generator_实时风险预警与报告生成器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_L3_Post_Trade_L3盘后审计
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_Fail_Closed_Degradation_Handler_Fail_Closed降级处理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_RISK_决策正确性缺口_Decision_Correctness_Gap
+    %% D-CROSS_ASSET -> D-RISK (13 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_RISK_ESRB_Opacity_Vector_ESRB不透明性向量
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_RISK_Pre_Trade_Idempotency_Guarantor_盘前幂等保证器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_RISK_模型组合风险_Model_Combination_Risk
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_RISK_Crowding_Risk_Monitor_拥挤风险监控器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_RISK_流动性螺旋风险_Liquidity_Spiral_Risk
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_RISK_共形VaR回测_CP_VaR_Backtesting
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_RISK_压力测试_Stress_Testing
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_RISK_A_Share_Stop_Loss_Circuit_Breaker_Series_A股特色止损_熔断系列
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_RISK_Risk_Veto_风险否决权
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_RISK_Stop_Loss_Engine止损引擎
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_RISK_ARA治理方程_ARA_Governance_Equation
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_RISK_Market_Risk_市场风险
+    %% D-DATA_GOV -> D-RISK (6 条)
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_RISK_自动降权_Auto_De_weighting
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_RISK_AI_Enhanced_Risk_Engine_AI增强风控引擎
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_RISK_工具投毒_Tool_Poisoning
+    D_DATA_GOV[D-DATA_GOV] -->|data| D_RISK_Risk_Budget_Adjuster_风险预算调整器
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_RISK_Grid_Search_网格搜索
+    D_DATA_GOV[D-DATA_GOV] -->|data| D_RISK_Risk_Veto_Rule_风险否决权13条主规则
+    %% D-DATA_SEC -> D-RISK (1 条)
+    D_DATA_SEC[D-DATA_SEC] -->|event| D_RISK_Liquidity_Spiral_Risk_流动性螺旋风险
+    %% D-FRONTEND -> D-RISK (47 条)
+    D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_Concentration_Risk_Monitor_集中度风险监控器
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_Pastor_Stambaugh_Pastor_Stambaugh流动性因子
+    D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_程序化交易合规_Programmatic_Trading_Compliance
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_Pre_Trade_Idempotency_Guarantor_盘前幂等保证器
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_策略验证_Strategy_Validation
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_Volatility_Eruption_波动率爆发
+    D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_INV_001_Kill_Switch_Response_Time_Kill_Switch响应时间不变量
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_合成虚假信息注入_AutoRedTrader
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_Industry_Concentration_Compliance_Detector_行业集中度合规检测器
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_二阶效应与传染模型_Second_Order_Effect_Contagion_Model
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_ARA治理方程_ARA_Governance_Equation
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_Risk_Limit_Manager_风险限额管理器
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_RiskDashboardSnapshot_风险仪表盘快照
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_策略容量风险_Strategy_Capacity_Risk
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_Pastor_Stambaugh_Pastor_Stambaugh流动性因子
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_Fake_Rally_Real_Distribution_假拉升真出货
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_Brinson模型_Brinson_Model
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_CircuitBreaker_熔断事件
+    D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_Liquidity_Spiral_Model_流动性螺旋模型
+    D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_Liquidity_Spiral_Model_流动性螺旋模型
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_Agent_Strategy_Drift_Must_Be_Detected_Agent策略漂移必须被检测
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_PreTradeRejected_交易前拒绝
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_RiskLimit_9_Type_Enum_Manager_风险限额9类枚举管理器
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_VaR_Cross_Validation_Engine_VaR交叉验证引擎
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_人为错误_Human_Error
+    D_FRONTEND[D-FRONTEND] -->|data| D_RISK_Bayesian优化_Bayesian_Optimization
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_RISK_Daily_Loss_Exceeds_Limit_单日亏损超限
+    D_FRONTEND[D-FRONTEND] -->|contract| D_RISK_抵押_Collateral
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_RISK_Stop_Loss_Engine止损引擎
+    D_FRONTEND[D-FRONTEND] -->|event| D_RISK_L4审计隔离_L4_Audit_Isolation
+    %% D-GOVERNANCE -> D-RISK (128 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_risk___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_risk_stop_loss_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_base_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_validator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_stop_loss_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementation___t_risk_limits_calculator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementation___isk_manager_orchestrator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_stop_loss_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_risk_stop_loss_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Pastor_Stambaugh_流动性因子
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_ESRB_Opacity_Vector_ESRB不透明性向量
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Late_Session_Manipulation_尾盘操纵
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Grid_Search_网格搜索
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_IV_Parametric_VaR_to_Hi___on_Migrator_参数法VaR→历史模拟法迁移器
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Risk_Control_Agent_风险
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_A_Share_Systemic_Risk_3_Level_Alerter_A股系统性风险三级告警器
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_VaR_Concurrent_Compute_Orchestrator_VaR并发计算编排器
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_RISK_Fee_Track费用轨道_Fee_Track
+    %% D-GOV_AUDIT -> D-RISK (1 条)
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|data| D_RISK_D_FACTOR_Readiness_D_FACTOR就绪前提
+    %% D-INFRA_OPS -> D-RISK (68 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_交易对手风险_Counterparty_Risk
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_不操纵市场规则_No_Market_Manipulation_Rules
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_Pre_Trade_50ms_SLA_Monitor_盘前50ms_SLA监控器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_RiskDashboardSnapshot_C___uilder_风险仪表盘快照CTR_P1_008构建器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_Intraday_Time_Varying_Participation_Rate_日内时变参与率
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_Pre_Trade_RiskCheckResult_Router_盘前风控结果路由器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_D_DATA_Readiness_D_DATA就绪前提
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_Pre_Trade_RiskCheckResult_Router_盘前风控结果路由器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_风险指标计算引擎_Risk_Indicator_Computing_Engine
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_Default_Stop_Loss_Engine_默认止损引擎代码实现
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_L1共形校准更新_L1_Conformal_Calibration_Update
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_A_Share_Stop_Loss_Rule_Engine_A股止损规则引擎
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_A_Share_Multi_Level_Loss_Circuit_Breaker_A股多级亏损熔断器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_E_RK_03_DrawdownAlerted_E_RK_03_DrawdownAlerted事件
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_Default_Risk_Limits_Calculator_默认风险限额计算器代码实现
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_相关性传染_Correlation_Contagion
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_尾部风险_Tail_Risk
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_RISK_KS_L2_会话熔断_Kill_Switch
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_Convexity凸性收益_Convexity
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_资金曲线自诊断与结构预警_Capital_Cu___nosis_and_Structure_Warning
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_新增模型组合风险监控_Model_Combination_Risk
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_Industry_Deviation_Exceeds_Limit_行业偏离超限
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_RISK_相关性传染_Correlation_Contagion
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_缺乏治理_Insufficient_Governance
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_Late_Session_Manipulation_Detection_尾盘操纵检测
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_Margin_Call_Stampede_融资盘踩踏
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_Short_time_Large_Volume_短时间大额成交
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_Systematic_Stress_Testing_系统性压力测试
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_Fake_Support_Real_Lure_假护盘真诱多
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_RISK_协变量漂移_Covariate_Drift
+    %% D-INTEGRATION -> D-RISK (69 条)
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_风控域规则目录_Risk_Domain_Rule_Catalog
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_Operational_Risk_操作风险
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_CTR_006_PositionSnapshot_Provider_CTR_006仓位快照提供者
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_Spoofing_Detection_幌骗交易检测
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_ESRB法律地位未定风险向量_ESRB_Untested_Legal_Status
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_Risk_Metrics_风控指标代码实现
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_流动性螺旋模型_Liquidity_Spiral_Model
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_发行人体质恶化_Issuer_Deterioration
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_故障可恢复缺口_Failure_Recoverability_Gap
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_Non_Trading_Hours_Order_非交易时段下单
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_A_Share_Compliance_Rule_A股合规规则代管
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_VaR_Precise_Confirmer_VaR精确确认器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_IV_Parametric_VaR_to_Hi___on_Migrator_参数法VaR→历史模拟法迁移器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_PSI_KS_CUSUM_PSI_KS_CUSUM漂移检测指标
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_A_Share_Multi_Level_Loss_Circuit_Breaker_A股多级亏损熔断器
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_保证金比例安全检查器_Security
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_Daily_Loss_Limit_Invariant_日损失限额不变量
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_Kill_Switch日志_Kill_Switch_Log
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_Rule_Engine_Configurable_规则引擎可配置化
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_令牌管理不当_Token_Mismanagement
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_压力测试假设情景库扩充策略_Stress_Scenario_Expansion
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_Liquidity_Spiral_Risk_流动性螺旋风险
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_DefaultRiskValidator_to___ultRiskValidator→可配置规则引擎迁移器
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_汇率→A股传导_FX_to_A_Share_Transmission
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_A_Share_Stop_Loss_A股止损
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_L1_Pre_Trade_L1盘前拦截
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_CER_Cancellation_to_Execution_Ratio_撤单成交比
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_RISK_L1_Pre_Trade_L1盘前拦截
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_RISK_Wash_Trade_洗盘
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_RISK_P1_High_P1高优先级指令
+    %% D-INTELLIGENCE -> D-RISK (35 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_ESRB_Data_Dependency_Vector_ESRB数据依赖向量
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_Position_Limit_Compliance_Detector_持仓限额合规检测器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_Brinson模型_Brinson_Model
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_Liquidity_Limit_Filter_流动性限制过滤器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_违约风险_Default_Risk
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_VaR_Enhancement_Series_VaR增强系列
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_CheckResult_检查结果
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_Strategy_Correlation_Gate_Checker_策略相关性门禁检查器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_ESRB不透明性风险向量_ESRB_Opacity
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_Warning_警告
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_A_Share_Compliance_Custody_A股合规代管
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_Statistical_Engine_统计引擎双引擎
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_混淆代理_Confused_Deputy
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_ESRB集中风险向量_ESRB_Concentration_Risk
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_反向压力测试_Reverse_Stress_Testing
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_Scenario_Analyzer_情景分析器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_VaR_Method_Discrepancy_Analyzer_VaR方法差异分析器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_Risk_Trigger_Cannot_Be____dden_by_Humans_风控触发后不可被人类否决
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_Risk_Rule_DSL_Engine_风控规则DSL引擎
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_Kill_Switch_Multi_Domain_Notifier_Kill_Switch多域通知器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_Risk_Audit_Trail_Writer_风险审计轨迹写入器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_RISK_因子验证_Factor_Validation
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_Volatility_Eruption_波动率爆发
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_RISK_DPG七场景_DPG_Seven_Scenarios
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_RISK_更新漂移_Update_Drift
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_RISK_Emergent_Manipulation_涌现操纵模式
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_RISK_Pre_Trade_Checker_盘前检查器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_独立风险数据管道_Independent_Risk_Data_Pipeline
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_风险仪表盘_Risk_Dashboard
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_RISK_Market_Risk_市场风险
+    %% D-KNOWLEDGE -> D-RISK (29 条)
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_流动性危机模拟_Liquidity_Crisis_Simulation
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_Agent行为日志_Agent_Behavior_Log
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_RISK_Drift_Exceeded_Model_Must_Degrade_漂移超限模型必须降级
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_Risk_Rule_Engine_Upgrad___ation_Adapter_风控规则引擎升级迁移适配器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_Risk_Assessment_风险评估
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_RiskDashboardSnapshot_风险仪表盘快照
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_系统性风险分级预警与尾部风险管理模型_Tail_Risk_Management
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_评估情景合理性_Evaluate_Scenario_Plausibility
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_RISK_ESRB_Regulatory_Arbitrage_Vector_ESRB监管套利向量
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_RISK_影子MCP服务器_Shadow_MCP
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_Almgren_Chriss_Impact_Model_Almgren_Chriss冲击模型
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_GATE_FUT_03_期货风控参数
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_RISK_CTR_P1_008_RiskDashboar___008_RiskDashboardSnapshot契约
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_Kill_Switch_Multi_Domain_Notifier_Kill_Switch多域通知器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_VaR_Scheduling_Concentr___Series_VaR调度_集中度_ATR_蒙特卡洛系列
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_RISK_Grid_Search_网格搜索
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_Portfolio_CP_组合共形预测
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_ATR动态止损与Bayesian参数优化模型_ATR_Dynamic_Stop_Loss_Model
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_Sector_Concentration_Real_Time_Calculator_行业集中度实时计算器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_人为错误_Human_Error
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_双时态PositionSnapshot管理器____l_Position_Snapshot_Manager
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_ATR动态止损与Bayesian参数优化模型_ATR_Dynamic_Stop_Loss_Model
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|config_depends| D_RISK_Agent行为监控_Agent_Behavior_Monitoring
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_不安全元数据_Insecure_Metadata
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_月度风险治理_Monthly_Risk_Governance
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_RISK_ESRB_Opacity_Vector_ESRB不透明性向量
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_RISK_A_Share_Contrarian_Time_Based_Stop_Loss_A股逆向时间止损
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_RISK_DrawdownAlerted_回撤已告警
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|config_depends| D_RISK_Information_Asymmetry_Window_信息不对称空窗期
+    %% D-ML_SERVE -> D-RISK (4 条)
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_RISK_流动性调整VaR_LVaR_Liquidity_adjusted_VaR
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_RISK_策略拥挤踩踏_Strategy_Crowding_Stampede
+    D_ML_SERVE[D-ML_SERVE] -->|event| D_RISK_Kyle's_Lambda_Kyle_Lambda系数
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_RISK_抵押_Collateral
+    %% D-OPS -> D-RISK (51 条)
+    D_OPS[D-OPS] -->|contract| D_RISK_Daily_Loss_Exceeds_Limit_单日亏损超限
+    D_OPS[D-OPS] -->|contract| D_RISK_Kill_Switch_Trigger_Kill_Switch触发
+    D_OPS[D-OPS] -->|contract| D_RISK_强制减仓_Forced_Position_Reduction
+    D_OPS[D-OPS] -->|contract| D_RISK_Kill_Switch_Integration_Kill_Switch集成
+    D_OPS[D-OPS] -->|contract| D_RISK_AI_Agent_Risk_AI_Agent风险
+    D_OPS[D-OPS] -->|data| D_RISK_Kill_Switch基础设施层实现_Kill_Switch_Infrastructure
+    D_OPS[D-OPS] -->|contract| D_RISK_密度感知VaR_Density_Aware_VaR
+    D_OPS[D-OPS] -->|contract| D_RISK_Risk_Dashboard_Generator_风险仪表盘生成器
+    D_OPS[D-OPS] -->|contract| D_RISK_Veto_Flow_否决流
+    D_OPS[D-OPS] -->|data| D_RISK_情景分析_Scenario_Analysis
+    D_OPS[D-OPS] -->|data| D_RISK_Pod级止损日志_Pod_level_Stop_Loss_Log
+    D_OPS[D-OPS] -->|event| D_RISK_成交量骤降模拟_Volume_Drop_Simulation
+    D_OPS[D-OPS] -->|data| D_RISK_GATE_FUT_03_期货风控参数
+    D_OPS[D-OPS] -->|event| D_RISK_P0_Emergency_P0紧急指令
+    D_OPS[D-OPS] -->|event| D_RISK_缺乏治理_Insufficient_Governance
+    D_OPS[D-OPS] -->|data| D_RISK_Pod级止损日志_Pod_level_Stop_Loss_Log
+    D_OPS[D-OPS] -->|contract| D_RISK_Sequential_Evaluation_顺序评估
+    D_OPS[D-OPS] -->|event| D_RISK_参与率从固定值升级为日内时变_Time_Varying_Participation_Rate
+    D_OPS[D-OPS] -->|data| D_RISK_流动性调整VaR_LVaR_Liquidity_adjusted_VaR
+    D_OPS[D-OPS] -->|data| D_RISK_Stop_Loss_止损代码实现
+    D_OPS[D-OPS] -->|event| D_RISK_Phase_1参数化高斯混合_Phase_1_Parametric_Gaussian_Mixture
+    D_OPS[D-OPS] -->|data| D_RISK_信号验证_Signal_Validation
+    D_OPS[D-OPS] -->|contract| D_RISK_Pod级止损日志_Pod_level_Stop_Loss_Log
+    D_OPS[D-OPS] -->|data| D_RISK_TCP+Robbins_Monro偏移_TCP_RM
+    D_OPS[D-OPS] -->|data| D_RISK_Wash_Trade_洗盘
+    D_OPS[D-OPS] -->|data| D_RISK_Single_Order_Amount_Exceeds_Limit_单笔金额超限
+    D_OPS[D-OPS] -->|event| D_RISK_交易绩效归因与策略退化检测模型_Performance_Attribution_Model
+    D_OPS[D-OPS] -->|data| D_RISK_AI_Agent_Risk_Governanc___d_Autonomy_AI_Agent风险治理有界自治
+    D_OPS[D-OPS] -->|event| D_RISK_Kill_Switch_Trading_Sys___tegrator_Kill_Switch交易系统集成器
+    D_OPS[D-OPS] -->|event| D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库7种模式
+    %% D-PF_ALLOC -> D-RISK (26 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_Default_Risk_Validator_默认风控校验器代码实现
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_Default_Risk_Limits_Calculator_默认风险限额计算器代码实现
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_不安全反序列化_Unsafe_Deserialization
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_反向压力测试_Reverse_Stress_Testing
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_Cumulative_Drawdown_Exceeds_Limit_累计回撤超限
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_Single_Order_Amount_Exceeds_Limit_单笔金额超限
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_风险架构独立于交易架构_Risk_Architecture_Independent
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_Kill_Switch_Saga_Kill_Switch_Saga_紧急制动传奇
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_Real_time_Risk_Warning____port_Generator_实时风险预警与报告生成器
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_ESRB顺周期性风险向量_ESRB_Procyclicality
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_ESRB法律地位未定风险向量_ESRB_Untested_Legal_Status
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_Risk_Rule_YAML_Runtime_Loader_风险规则YAML运行时加载器
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_Pre_Trade_Checker_盘前检查器
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_Concentration_Exceeds_Limit_集中度超限
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_Layering_分层
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| D_RISK_Monte_Carlo_Precision_Level_Manager_蒙特卡洛精度级别管理器
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_Kill_Switch_Integration_Kill_Switch集成
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_Risk_Engine_Rule_DSL_风控引擎规则DSL
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_ESRB集中风险向量_ESRB_Concentration_Risk
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_Warning_警告
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_反向压力测试_Reverse_Stress_Testing
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_RISK_AI_Agent_Risk_Governanc___d_Autonomy_AI_Agent风险治理有界自治
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_RISK_Almgren_Chriss_Optimal____mework_Almgren_Chriss最优执行框架
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_概念漂移_Concept_Drift_Type
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_RISK_Spoofing_Detection_幌骗交易检测
+    D_PF_ALLOC[D-PF_ALLOC] -->|domain_dependency| D_RISK_D_RISK_风险
+    %% D-PF_CORE -> D-RISK (27 条)
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_KS_L4_硬停机_Kill_Switch
+    D_PF_CORE[D-PF_CORE] -->|event| D_RISK_流动性螺旋风险_Liquidity_Spiral_Risk
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_KS_L3_通道断开_Kill_Switch
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_Almgren_Chriss_Impact_Model_Almgren_Chriss冲击模型
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_Volatility_Eruption_波动率爆发
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_Credit_Risk_信用风险
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_ESRB过度信任风险向量_ESRB_Overreliance
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_A_Share_Systemic_Risk_3_Level_Alerter_A股系统性风险三级告警器
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_Normal_Liquidity_Mode_正常流动性模式
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_共形VaR默认使用TWC_Default_TWC_Conformal_VaR
+    D_PF_CORE[D-PF_CORE] -->|event| D_RISK_A_Share_First_Minute_Stop_Loss_Executor_A股首分钟止损执行器
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_Leverage_Limit_Gate_Checker_杠杆限额门禁检查器
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_Degraded_Liquidity_Mode_降级流动性模式
+    D_PF_CORE[D-PF_CORE] -->|event| D_RISK_Risk_Budget_Adjuster_风险预算调整器
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_Limit_Up_Down_Trading_涨跌停交易
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_Kill_Switch_Cooldown_Manager_Kill_Switch冷却期管理器
+    D_PF_CORE[D-PF_CORE] -->|data| D_RISK_期货→现货传导_Futures_to_Spot_Transmission
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_RISK_相关性风险_Correlation_Risk
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_RISK_Kyle's_Lambda_Kyle_Lambda系数
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_RISK_Drift_Detection_Risk_Closed_Loop_漂移检测与风险闭环
+    D_PF_CORE[D-PF_CORE] -->|event| D_RISK_Risk_Trigger_Cannot_Be____dden_by_Humans_风控触发后不可被人类否决
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_RISK_CheckResult_检查结果
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_L3权限隔离_L3_Permission_Isolation
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_RISK_系统故障_System_Failure
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_Temporary_Impact_η_临时冲击η
+    D_PF_CORE[D-PF_CORE] -->|contract| D_RISK_Kill_Switch_State_Machine_Manager_Kill_Switch状态机管理器
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_RISK_Agent红队测试_Agent_Red_Team_Testing
+    %% D-REPORTING -> D-RISK (22 条)
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_VaR_Phase_1_Parameter_Method_VaR_Phase_1参数法
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_Pastor_Stambaugh_Pastor_Stambaugh流动性因子
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_Risk_Audit_Log_Immutable_风险审计日志不可篡改
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_ESRB历史约束风险向量_ESRB_History_Constrained
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_D_FACTOR_Readiness_D_FACTOR就绪前提
+    D_REPORTING[D-REPORTING] -->|data| D_RISK_Risk_Audit_Trail_Writer_风险审计轨迹写入器
+    D_REPORTING[D-REPORTING] -->|data| D_RISK_市场深度风险_Market_Depth_Risk
+    D_REPORTING[D-REPORTING] -->|data| D_RISK_Liquidity_Evaporation_流动性蒸发
+    D_REPORTING[D-REPORTING] -->|event| D_RISK_Amihud_ILLIQ_Amihud非流动性指标
+    D_REPORTING[D-REPORTING] -->|data| D_RISK_D_AUTONOMY_Readiness_D_AUTONOMY就绪前提
+    D_REPORTING[D-REPORTING] -->|data| D_RISK_Trading_Behavior_Compliance_Detector_交易行为合规检测器
+    D_REPORTING[D-REPORTING] -->|event| D_RISK_Position_Limit_Compliance_Detector_持仓限额合规检测器
+    D_REPORTING[D-REPORTING] -->|data| D_RISK_风险传播建模_Risk_Propagation_Modeling
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_Monte_Carlo_Precision_Level_Manager_蒙特卡洛精度级别管理器
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_AI_Enhanced_Risk_Engine_AI增强风控引擎
+    D_REPORTING[D-REPORTING] -->|event| D_RISK_共形VaR默认使用TWC_Default_TWC_Conformal_VaR
+    D_REPORTING[D-REPORTING] -->|config_depends| D_RISK_过拟合风险_Overfitting_Risk
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_事件风险快报_Event_Risk_Bulletin
+    D_REPORTING[D-REPORTING] -->|event| D_RISK_Risk_Veto_风险否决权
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_C_038_黑天鹅检测_Black_Swan_Detection
+    D_REPORTING[D-REPORTING] -->|contract| D_RISK_美股→A股传导_US_to_A_Share_Transmission
+    D_REPORTING[D-REPORTING] -->|event| D_RISK_流动性风险_Liquidity_Risk
+    %% D-SELL_DECISION -> D-RISK (14 条)
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测器
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_RISK_ESRB_Model_Homogenization_Vector_ESRB模型同质化向量
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_RISK_缺乏治理_Insufficient_Governance
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_RISK_风险架构_Risk
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_RISK_密度感知VaR_Density_Aware_VaR
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_RISK_Agent红队测试_Agent_Red_Team_Testing
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_RISK_ESRB市场操纵风险向量_ESRB_Market_Manipulation
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_RISK_Almgren_Chriss最优执行框架_Al___Optimal_Execution_Framework
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_RISK_Portfolio_CP_组合共形预测
+    D_SELL_DECISION[D-SELL_DECISION] -->|config_depends| D_RISK_Stress_Test_Engine压力测试引擎
+    D_SELL_DECISION[D-SELL_DECISION] -->|contract| D_RISK_ESRB历史约束风险向量_ESRB_History_Constrained
+    D_SELL_DECISION[D-SELL_DECISION] -->|config_depends| D_RISK_ESRB_Operational_Risk_Vector_ESRB操作风险向量
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_RISK_Risk_Engine_Rule_DSL_风控引擎规则DSL
+    D_SELL_DECISION[D-SELL_DECISION] -->|domain_dependency| D_RISK_D_RISK_风险
+    %% D-SIMULATION -> D-RISK (19 条)
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_Risk_Veto_Rights_风险否决权
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_共形VaR回测_CP_VaR_Backtesting
+    D_SIMULATION[D-SIMULATION] -->|event| D_RISK_供应链妥协_Supply_Chain_AST
+    D_SIMULATION[D-SIMULATION] -->|data| D_RISK_ARA五项原则_ARA_Five_Principles
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_Leverage_Limit_Gate_Checker_杠杆限额门禁检查器
+    D_SIMULATION[D-SIMULATION] -->|data| D_RISK_P1_High_P1高优先级指令
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_D_FACTOR_Readiness_D_FACTOR就绪前提
+    D_SIMULATION[D-SIMULATION] -->|data| D_RISK_Pastor_Stambaugh_流动性因子
+    D_SIMULATION[D-SIMULATION] -->|event| D_RISK_评估情景合理性_Evaluate_Scenario_Plausibility
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_CoVaR跨市场传染_CoVaR_Cross_Market_Contagion
+    D_SIMULATION[D-SIMULATION] -->|event| D_RISK_Temporary_Impact_η_临时冲击η
+    D_SIMULATION[D-SIMULATION] -->|event| D_RISK_Volatility_Eruption_波动率爆发
+    D_SIMULATION[D-SIMULATION] -->|config_depends| D_RISK_漂移检测日志_Drift_Detection_Log
+    D_SIMULATION[D-SIMULATION] -->|event| D_RISK_新增AI_Agent特有风险类别_AI_Agent_Risk_Category
+    D_SIMULATION[D-SIMULATION] -->|config_depends| D_RISK_Exit_Time_Risk_退出时间风险
+    D_SIMULATION[D-SIMULATION] -->|data| D_RISK_RiskLimitType_Enum9_RiskLimitType九种限额类型枚举
+    D_SIMULATION[D-SIMULATION] -->|config_depends| D_RISK_Time_Based_Stop_Loss_Evaluator_时间止损评估器
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_ARS状态机语义_ARS_State_Machine_Semantics
+    D_SIMULATION[D-SIMULATION] -->|contract| D_RISK_Agent失控_Agent_Out_of_Control
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-RISK -> D-DATA_ENG (26 条)
+    D_RISK_AI_Agent_Specific_Risk_AI_Agent特有风险 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_ARS状态机语义_ARS_State_Machine_Semantics -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_E_RK_03_DrawdownAlerted_E_RK_03_DrawdownAlerted事件 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_审计可追溯缺口_Audit_Traceability_Gap -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_幌骗检测_Spoofing_Detection -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Market_Risk_市场风险 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Position_Limit_Decision_仓位上限决策 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Phase_3_Liquidity_Freeze_阶段3流动性冻结 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Credit_Risk_信用风险 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Kill_Switch_Integration_Kill_Switch集成 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Limit_Up_Down_Trading_Constraint_Executor_涨跌停交易约束执行器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_VaR_Phase_Independence_Guarantor_VaR阶段独立性保证器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Risk_Aversion_λ_风险厌恶λ -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_CircuitBreaker_熔断事件 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Pre_Trade_Checker盘前检查 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_TCP+Robbins_Monro偏移_TCP_RM -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Risk_Validator_Protocol_风控校验器协议代码实现 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Amihud_ILLIQ_Amihud非流动性指标 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_KS_L3_通道断开_Kill_Switch -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_ESRB市场操纵风险向量_ESRB_Market_Manipulation -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Risk_Trigger_Cannot_Be____dden_by_Humans_风控触发后不可被人类否决 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_体制加权共形风险控制_Regime_Weighted_Conformal -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_流动性螺旋风险_Liquidity_Spiral_Risk -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_Kill_Switch_Trigger_Kill_Switch触发 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_自适应共形推断_Adaptive_Conformal_Inference -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_RISK_压力测试_Stress_Testing -->|event| D_DATA_ENG[D-DATA_ENG]
+    %% D-RISK -> D-EX_CORE (20 条)
+    D_RISK_Single_Stock_Concentration_Limit_单票集中度上限 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_Cumulative_Drawdown_Exceeds_Limit_累计回撤超限 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_Dual_Engine_Routing_双引擎路由 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_ESRB_Data_Dependency_Vector_ESRB数据依赖向量 -->|data| D_EX_CORE[D-EX_CORE]
+    D_RISK_IV_Parametric_VaR_to_Hi___on_Migrator_参数法VaR→历史模拟法迁移器 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_LVaR_EVT尾部模型_LVaR_EVT_Tail_Model -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_Spoofing_Trade_Detection_幌骗交易检测操纵行为 -->|event| D_EX_CORE[D-EX_CORE]
+    D_RISK_Fee_Track费用轨道_Fee_Track -->|data| D_EX_CORE[D-EX_CORE]
+    D_RISK_Pastor_Stambaugh_Pastor_Stambaugh流动性因子 -->|event| D_EX_CORE[D-EX_CORE]
+    D_RISK_VaR_Phase_1_Parameter_Method_VaR_Phase_1参数法 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_CircuitBreaker_熔断事件 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_Distribution_Fitting_Engine_分布拟合引擎 -->|event| D_EX_CORE[D-EX_CORE]
+    D_RISK_新增模型组合风险监控_Model_Combination_Risk -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_RISK_定时熔断_Timer_Circuit_Breaker -->|event| D_EX_CORE[D-EX_CORE]
+    D_RISK_Concentration_Limit_Non_Breakable_集中度上限不可突破 -->|data| D_EX_CORE[D-EX_CORE]
+    D_RISK_Portfolio_CP_组合共形预测 -->|event| D_EX_CORE[D-EX_CORE]
+    D_RISK_C_004_风控_Risk_Control -->|event| D_EX_CORE[D-EX_CORE]
+    D_RISK_新增OWASP_MCP_Top_10协议层安全映射_OWASP_MCP_Top_10 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_QRF+Conformal_分位数回归森林+共形 -->|contract| D_EX_CORE[D-EX_CORE]
+    D_RISK_Risk_Trigger_Cannot_Be____dden_by_Humans_风控触发后不可被人类否决 -->|contract| D_EX_CORE[D-EX_CORE]
+    %% D-RISK -> D-EX_SOR (19 条)
+    D_RISK_Stop_Loss_止损代码实现 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_Liquidity_Evaporation_流动性蒸发 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_压力测试假设情景库扩充策略_Stress_Scenario_Expansion -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_VaR_Cross_Validation_Engine_VaR交叉验证引擎 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_共形VaR默认使用TWC_Default_TWC_Conformal_VaR -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_Position_Circuit_Breaker_持仓熔断 -->|data| D_EX_SOR[D-EX_SOR]
+    D_RISK_事件风险快报_Event_Risk_Bulletin -->|data| D_EX_SOR[D-EX_SOR]
+    D_RISK_政策黑天鹅_Policy_Black_Swan -->|event| D_EX_SOR[D-EX_SOR]
+    D_RISK_A股风险日历_A_Share_Risk_Calendar -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_Strategy_Correlation_Gate_Checker_策略相关性门禁检查器 -->|data| D_EX_SOR[D-EX_SOR]
+    D_RISK_VaR_Phase_Independence_Guarantor_VaR阶段独立性保证器 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_RISK_Limit_Up_Down_Trading_Constraint_Executor_涨跌停交易约束执行器 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_RISK_弱隔离_Weak_Isolation -->|event| D_EX_SOR[D-EX_SOR]
+    D_RISK_ARS状态机语义_ARS_State_Machine_Semantics -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_RISK_AISG_Regulatory_Compliance_Checker_AISG监管合规检查器 -->|data| D_EX_SOR[D-EX_SOR]
+    D_RISK_Risk_Policy_Manager风控策略管理 -->|event| D_EX_SOR[D-EX_SOR]
+    D_RISK_Risk_Control_Rule_Engine_风险控制规则引擎 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_RISK_风险否决权_Risk -->|config_depends| D_EX_SOR[D-EX_SOR]
+    D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库7种模式 -->|data| D_EX_SOR[D-EX_SOR]
+    %% D-RISK -> D-FACTOR (54 条)
+    D_RISK_AI_Agent_Risk_Governance_AI_Agent风险治理 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_RiskLimitType_Enum9_RiskLimitType九种限额类型枚举 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Distribution_Fitting_Engine_分布拟合引擎 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_审计可追溯缺口_Audit_Traceability_Gap -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Real_time_Risk_Warning____port_Generator_实时风险预警与报告生成器 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_融资盘强平_Margin_Call_Forced_Liquidation -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_AI_Agent_Specific_Risk_AI_Agent特有风险 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Kill_Switch_Saga_紧急制动传奇 -->|data| D_FACTOR[D-FACTOR]
+    D_RISK_相关性风险_Correlation_Risk -->|data| D_FACTOR[D-FACTOR]
+    D_RISK_EVT极值理论 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Risk_Rule_DSL_Engine_风控规则DSL引擎 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_供应链妥协_Supply_Chain_AST -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_ESRB集中风险向量_ESRB_Concentration_Risk -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_程序化交易合规_Programmatic_Trading_Compliance -->|data| D_FACTOR[D-FACTOR]
+    D_RISK_汇率→A股传导_FX_to_A_Share_Transmission -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_尾部风险_Tail_Risk -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Risk_Report_风险报告 -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_Brinson模型_Brinson_Model -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Dual_Engine_Routing_双引擎路由 -->|data| D_FACTOR[D-FACTOR]
+    D_RISK_风险架构_Risk -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_Key_Position_Support_Strength_关键点位护盘强度 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_仓位限制预检器_Position -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_模型风险_Model_Risk -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_自适应共形推断_Adaptive_Conformal_Inference -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_Risk_Validator_Protocol_风控校验器协议代码实现 -->|contract| D_FACTOR[D-FACTOR]
+    D_RISK_承保人_Underwriter -->|data| D_FACTOR[D-FACTOR]
+    D_RISK_信号验证_Signal_Validation -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_ESRB历史约束风险向量_ESRB_History_Constrained -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_Risk_Veto_Rights_风险否决权 -->|event| D_FACTOR[D-FACTOR]
+    D_RISK_Dual_Engine_Routing_双引擎路由 -->|data| D_FACTOR[D-FACTOR]
+    %% D-RISK -> D-GOVERNANCE (1 条)
+    src_zephyr_risk_oms_risk_engine_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-RISK -> D-INFRA_RUNTIME (63 条)
+    D_RISK_Drift_Exceeds_Limit_漂移超限 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Risk_Decomposition_Engine风险分解引擎 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Risk_Rule_Engine_Upgrad___ation_Adapter_风控规则引擎升级迁移适配器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_双时态PositionSnapshot管理器____l_Position_Snapshot_Manager -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Reverse_RST_反向RST指标 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Pre_Trade_Checker_盘前检查器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Pre_Trade_Check_Chain_Orchestrator_盘前检查链编排器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Leverage_Limit_Gate_Checker_杠杆限额门禁检查器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Agent_Strategy_Drift_Must_Be_Detected_Agent策略漂移必须被检测 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Risk_Manager_Agent_风控Agent -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Wash_Trade_Detection_对敲交易检测操纵行为 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Pre_Trade_Idempotency_Guarantor_盘前幂等保证器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_TCP+Robbins_Monro偏移_TCP_RM -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_ESRB_Operational_Risk_Vector_ESRB操作风险向量 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_否决新开仓_Reject_New_Position -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_订单风控_订单风控检查_Risk_Control_Order -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Wash_Trade_Detection_对敲交易检测操纵行为 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_上线验证_Go_Live_Validation -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_线性保护而非凸性对冲_Linear_Protection_Not_Convex_Hedge -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Spoofing_Detection_幌骗交易检测 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_线性保护而非凸性对冲_Linear_Protection_Not_Convex_Hedge -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_REJECT_Risk_Decision_风险 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_市场风险_Market_Risk -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Scenario_Analyzer_情景分析器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Kill_Switch_紧急制动 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_FLATTEN_Risk_Decision_风险 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_空窗期定义_Window_Period_Definition -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_追踪止损_Trailing_Stop -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Risk_Policy_Manager风控策略管理 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_RISK_Fail_Closed_Degradation_Handler_Fail_Closed降级处理器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-RISK -> D-MKT_DATA (53 条)
+    D_RISK_建议性告警_Advisory_Alert -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Pre_Trade_RiskCheckResult_Router_盘前风控结果路由器 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_ESRB_Data_Dependency_Vector_ESRB数据依赖向量 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_VaR_Precise_Confirmer_VaR精确确认器 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Default_Risk_Manager_Orchestrator_默认风控管理器编排器代码实现 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Time_Based_Stop_Loss_Evaluator_时间止损评估器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_定时熔断_Timer_Circuit_Breaker -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_二阶效应与传染模型_Second_Order_Effect_Contagion_Model -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_ESRB_Speed_Vector_ESRB速度向量 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Risk_Rule_DSL_Compiler_风控规则DSL编译器 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_CVaR_ES条件风险价值_Conditional_Value_at_Risk -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_RiskTriggered_风控触发事件 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Intraday_Time_Varying_Participation_Rate_日内时变参与率 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_幌骗检测_Spoofing_Detection -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Transformer时序异常_Transformer_Time_Series_Anomaly -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_交易管线扰动_TradeTrap -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Instant_Order_Rate_Anomaly_瞬时申报速率异常 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_C_038_黑天鹅检测_Black_Swan_Detection -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_三平面一致性_Three_Plane_Consistency -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Risk_Engine_Rule_DSL_风控引擎规则DSL -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Kill_Switch_Integration_Kill_Switch集成 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_保障缺口管理_Guarantee_Gap_Management -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_上下文注入_Context_Injection -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_信用事件冲击_Credit_Event_Shock -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_定义崩溃阈值_Define_Crash_Threshold -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Risk_Domain_Value_Object_Definition_风控域值对象定义 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Liquidity_Risk_流动性风险 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_Counterfactual_Analyzer_反事实分析器 -->|event| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_采用密度感知VaR_共形VaR_Density_Aware_Conformal_VaR -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_RISK_A_Share_Systemic_Risk_5_Signals_A股系统性风险5信号 -->|data| D_MKT_DATA[D-MKT_DATA]
+    %% D-RISK -> D-ML_TRAIN (23 条)
+    D_RISK_Risk_Rule_User_Configurator_风险规则用户配置器 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_定时熔断_Timer_Circuit_Breaker -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_DPG七场景_DPG_Seven_Scenarios -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_买入后即时验证与快速纠错模型_Post_Entry_Instant_Validation_Model -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Systemic_Risk_系统性风险 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Risk_Parameters_Non_Reducible_风控参数不得降低至硬边界以下 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Kill_Switch_Trading_Sys___tegrator_Kill_Switch交易系统集成器 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Order_Generation_Risk_Pre_Check_订单生成风控前置 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_买入后即时验证与快速纠错模型_Post_Entry_Instant_Validation_Model -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_漂移检测日志_Drift_Detection_Log -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Kill_Switch_New_Order_Rejector_Kill_Switch新订单拒绝器 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Strategy_Capacity_Risk_策略容量风险 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_A_Share_Stop_Loss_A股止损 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_风险仪表盘_Risk_Dashboard -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_记忆投毒_Memory_Poisoning_MCP -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Credit_Risk_Engine信用风险引擎 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Risk_Limit_Manager风险限额管理 -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Credit_Risk_Engine信用风险引擎 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_人工一键触发_Manual_One_click_Trigger -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_交易绩效归因与策略退化检测模型_Performance_Attribution_Model -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Risk_Audit_风控审计 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_Risk_Domain_Value_Object_Definition_风控域值对象定义 -->|config_depends| D_ML_TRAIN[D-ML_TRAIN]
+    D_RISK_令牌管理不当_Token_Mismanagement -->|contract| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-RISK -> D-POSITION (18 条)
+    D_RISK_Hedge_Execution_独立对冲执行 -->|contract| D_POSITION[D-POSITION]
+    D_RISK_Fee_Track费用轨道_Fee_Track -->|event| D_POSITION[D-POSITION]
+    D_RISK_协变量漂移_Covariate_Drift -->|data| D_POSITION[D-POSITION]
+    D_RISK_Drawdown_Real_Time_Tracker_回撤实时跟踪器 -->|data| D_POSITION[D-POSITION]
+    D_RISK_Systematic_Overfitting_Protection_过拟合系统性防护 -->|contract| D_POSITION[D-POSITION]
+    D_RISK_Market_Risk_市场风险 -->|data| D_POSITION[D-POSITION]
+    D_RISK_汇率→A股传导_FX_to_A_Share_Transmission -->|event| D_POSITION[D-POSITION]
+    D_RISK_ESRB速度风险向量_ESRB_Speed -->|data| D_POSITION[D-POSITION]
+    D_RISK_C_S_Pattern_C_S关系模式 -->|data| D_POSITION[D-POSITION]
+    D_RISK_A股风险日历_A_Share_Risk_Calendar -->|contract| D_POSITION[D-POSITION]
+    D_RISK_工具投毒_Tool_Poisoning -->|event| D_POSITION[D-POSITION]
+    D_RISK_收益归因_Return_Attribution -->|data| D_POSITION[D-POSITION]
+    D_RISK_缺乏治理_Insufficient_Governance -->|config_depends| D_POSITION[D-POSITION]
+    D_RISK_Market_Manipulation_Prevention_Detector_市场操纵防护检测器 -->|config_depends| D_POSITION[D-POSITION]
+    D_RISK_Risk_Veto_Penetrates_Any_Layer_风控否决可穿透任意层 -->|contract| D_POSITION[D-POSITION]
+    D_RISK_D_FACTOR_Readiness_D_FACTOR就绪前提 -->|event| D_POSITION[D-POSITION]
+    D_RISK_Black_Swan_Pattern_Library_黑天鹅模式库7种模式 -->|data| D_POSITION[D-POSITION]
+    D_RISK_D_RISK_风险 -->|domain_dependency| D_POSITION[D-POSITION]
+    %% D-RISK -> D-SECURITY (98 条)
+    D_RISK_Spoofing_Detection_幌骗交易检测 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_BFSI领域自适应红队_FinRedTeamBench -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_REJECT_Risk_Decision_风险 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_Portfolio_CP_组合共形预测 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_ESRB网络脆弱性风险向量_ESRB_Cyber_Vulnerability -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_VaR_Recalculation_Scheduler_VaR重算调度器 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_行为可预测缺口_Behavior_Predictability_Gap -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_Kill_Switch_Trading_Sys___tegrator_Kill_Switch交易系统集成器 -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_A_Share_Systemic_Risk_Detector_A股系统性风险检测器 -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_尾盘操纵检测_End_of_day_Manipulation_Detection -->|event| D_SECURITY[D-SECURITY]
+    D_RISK_模型设定风险_Model_Specification_Risk -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_事件风险快报_Event_Risk_Bulletin -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_流动性骤降_Liquidity_Sudden_Drop -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_Fake_Support_Real_Lure_假护盘真诱多 -->|event| D_SECURITY[D-SECURITY]
+    D_RISK_结算风险_Settlement_Risk -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_Trading_Rate_Constraint_Executor_交易速率约束执行器 -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_不安全反序列化_Unsafe_Deserialization -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_L2_Real_Time_L2盘中监控 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_保障缺口管理_Guarantee_Gap_Management -->|event| D_SECURITY[D-SECURITY]
+    D_RISK_LVaR_Amihud冲击模型 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_系统性风险分级预警与尾部风险管理模型_Tail_Risk_Management -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_绩效归因_Performance_Attribution -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_AI_Risk_Engine_Implementer_AI风控引擎实现器 -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_Position_Circuit_Breaker_持仓熔断 -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_Concentration_Limit_Non_Breakable_集中度上限不可突破 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_共形VaR默认使用TWC_Default_TWC_Conformal_VaR -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_Veto_Flow_否决流 -->|event| D_SECURITY[D-SECURITY]
+    D_RISK_Risk_Params_Three_Plane___ncy_Invariant_风控参数三平面一致性不变量 -->|contract| D_SECURITY[D-SECURITY]
+    D_RISK_Stop_Loss_Engine止损引擎 -->|data| D_SECURITY[D-SECURITY]
+    D_RISK_Sector_Concentration_Real_Time_Calculator_行业集中度实时计算器 -->|event| D_SECURITY[D-SECURITY]
+    %% D-RISK -> D-SHARED (1 条)
+    src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-RISK -> D-SIGNAL (71 条)
+    D_RISK_Compliance_Rule_合规规则代码实现 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_Leverage_Dynamic_Manager_杠杆动态管理器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_Risk_Params_Consistency_Check_风控参数一致性检查代码实现 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_对敲交易检测_Wash_Trade_Detection -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_ESRB速度风险向量_ESRB_Speed -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_否决单笔订单_Reject_Single_Order -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_ESRB_Interconnection_Vector_ESRB互联性向量 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_Wash_Trade_Detection_对敲交易检测操纵行为 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_速度_Speed -->|data| D_SIGNAL[D-SIGNAL]
+    D_RISK_Frequent_Push_Pull_频繁拉抬打压 -->|data| D_SIGNAL[D-SIGNAL]
+    D_RISK_日度风险摘要_Daily_Risk_Summary -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_策略验证_Strategy_Validation -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_Risk_Agent_Circuit_Break_风控Agent熔断 -->|data| D_SIGNAL[D-SIGNAL]
+    D_RISK_波动率风险_Volatility_Risk -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_VaR_Phase_3_VaR三阶段Phase_3 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_Temporary_Impact_η_临时冲击η -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_模型组合风险_Model_Combination_Risk -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_流动性调整VaR_LVaR_Liquidity_adjusted_VaR -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_Kill_Switch_Trigger_Kill_Switch触发 -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_Amihud_ILLIQ_非流动性指标 -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_Strategy_Crowding_策略拥挤 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_操作风险_Operational_Risk -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_VaR_Phase_1_VaR三阶段Phase_1 -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_实现风险_Implementation_Risk -->|data| D_SIGNAL[D-SIGNAL]
+    D_RISK_PSI_KS_CUSUM_PSI_KS_CUSUM漂移检测指标 -->|data| D_SIGNAL[D-SIGNAL]
+    D_RISK_风险指标计算数据源依赖管理器_Risk_Metric_Data_Dependency_Manager -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_L4审计隔离_L4_Audit_Isolation -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_ESG_Risk_ESG风险 -->|event| D_SIGNAL[D-SIGNAL]
+    D_RISK_LVaR_EVT_Tail_Model_LVaR_EVT尾部模型 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_RISK_PreTradeRejected_交易前拒绝 -->|data| D_SIGNAL[D-SIGNAL]
+    %% D-RISK -> D-TRADING (30 条)
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_risk_limits_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| D_TRADING[D-TRADING]
+    风控域_分析引擎_D_RISK_06 -->|contract| D_TRADING[D-TRADING]
+    D_RISK_Kyle_Lambda_凯尔lambda -->|contract| D_TRADING[D-TRADING]
+    D_RISK_模型输出检测_Model_Output_Detection -->|contract| D_TRADING[D-TRADING]
+    D_RISK_Veto_Flow_否决流 -->|contract| D_TRADING[D-TRADING]
+    D_RISK_CER_Cancellation_to_Execution_Ratio_撤单成交比 -->|data| D_TRADING[D-TRADING]
+    D_RISK_Risk_Audit_风控审计 -->|data| D_TRADING[D-TRADING]
+    D_RISK_Default_Stop_Loss_Engine_默认止损引擎代码实现 -->|data| D_TRADING[D-TRADING]
+    D_RISK_Portfolio_Risk_Monitor_组合风险监控器 -->|event| D_TRADING[D-TRADING]
+    D_RISK_Risk_Validator_Protocol_风控校验器协议代码实现 -->|data| D_TRADING[D-TRADING]
+    D_RISK_Risk_Veto_风险否决权 -->|contract| D_TRADING[D-TRADING]
+    D_RISK_建议性告警_Advisory_Alert -->|event| D_TRADING[D-TRADING]
+    D_RISK_L2数据隔离_L2_Data_Isolation -->|event| D_TRADING[D-TRADING]
+    D_RISK_Strategy_Crowding_策略拥挤 -->|event| D_TRADING[D-TRADING]
+    D_RISK_ESRB不透明性风险向量_ESRB_Opacity -->|event| D_TRADING[D-TRADING]
+    D_RISK_不安全反序列化_Unsafe_Deserialization -->|config_depends| D_TRADING[D-TRADING]
+    D_RISK_因子分布检测_Factor_Distribution_Detection -->|data| D_TRADING[D-TRADING]
+    D_RISK_LVaR_Amihud冲击模型_LVaR_Amihud_Impact_Model -->|data| D_TRADING[D-TRADING]
+    D_RISK_跨市场传导_Cross_Market_Transmission -->|contract| D_TRADING[D-TRADING]
+    D_RISK_Kill_Switch_Integration_Kill_Switch集成 -->|event| D_TRADING[D-TRADING]
+    D_RISK_风险数据流独立于交易数据流_Risk_Data_Flow_Independent -->|config_depends| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 770 条
+    %% 跨域入边: 874 条
+    %% 跨域出边: 477 条

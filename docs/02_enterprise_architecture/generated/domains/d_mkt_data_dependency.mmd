@@ -1,0 +1,699 @@
+%% D-MKT_DATA 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:13
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 266, 依赖边数: 798
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_MKT_DATA[行情数据]
+        D_MKT_DATA_4元组数据映射模型_4_tuple_Data_Mapping["...T-DATA/4元组数据映射模型 4-tuple Data Mapping [design]"]
+        D_MKT_DATA_A_Share_Alt_Data_Source_Manager_管理器["...A/A-Share Alt-Data Source Manager 管理器 [design]"]
+        D_MKT_DATA_A_Share_Auction_Data_Manager_管理器["...DATA/A-Share Auction Data Manager 管理器 [design]"]
+        D_MKT_DATA_A_Share_Intraday_Data_Manager_管理器["...ATA/A-Share Intraday Data Manager 管理器 [design]"]
+        D_MKT_DATA_A_Share_Order_Flow_Data_Manager_管理器订单["...A-Share Order Flow Data Manager 管理器订单 [design]"]
+        D_MKT_DATA_A_Share_Special_A股特色["D-MKT-DATA/A-Share Special A股特色 [design]"]
+        D_MKT_DATA_A3_Data_Architecture_A3数据架构["D-MKT-DATA/A3 Data Architecture A3数据架构 [design]"]
+        D_MKT_DATA_ADR记录架构决策_ADR_Records["D-MKT-DATA/ADR记录架构决策 ADR Records [design]"]
+        D_MKT_DATA_AI驱动异常检测_AI_Anomaly_Detection["D-MKT-DATA/AI驱动异常检测 AI Anomaly Detection [design]"]
+        D_MKT_DATA_AS_OF_JOIN实现_AS_OF_JOIN_Implementation["...S OF JOIN实现 AS OF JOIN Implementation [design]"]
+        D_MKT_DATA_AUM>200万后升级ClickHouse_ClickHouse_Upgrade_Gate["...后升级ClickHouse ClickHouse Upgrade Gate [design]"]
+        D_MKT_DATA_AUM驱动存储升级_AUM_driven_Storage_Upgrade[".../AUM驱动存储升级 AUM-driven Storage Upgrade [design]"]
+        D_MKT_DATA_AkShare_AkShare数据适配器["D-MKT-DATA/AkShare AkShare数据适配器 [design]"]
+        D_MKT_DATA_AkShare_Data_Source_Adapter_适配器["...-DATA/AkShare Data Source Adapter 适配器 [design]"]
+        D_MKT_DATA_AkShare_免费备用数据源["D-MKT-DATA/AkShare 免费备用数据源 [design]"]
+        D_MKT_DATA_Apache_Doris_4_x量化交易_Apache_Doris_4_x["...Apache Doris 4.x量化交易 Apache Doris 4.x [design]"]
+        D_MKT_DATA_AuctionUpdate_集合竞价更新事件["D-MKT-DATA/AuctionUpdate 集合竞价更新事件 [design]"]
+        D_MKT_DATA_Auto_Data_Source_Switch_数据源自动切换["...-DATA/Auto Data Source Switch 数据源自动切换 [design]"]
+        D_MKT_DATA_BCBS_239合规框架_BCBS_239_Framework["...-DATA/BCBS 239合规框架 BCBS 239 Framework [design]"]
+        D_MKT_DATA_BaoStock_历史数据补充["D-MKT-DATA/BaoStock 历史数据补充 [design]"]
+        D_MKT_DATA_Bi_Temporal_Modeling_双时态建模["D-MKT-DATA/Bi-Temporal Modeling 双时态建模 [design]"]
+        D_MKT_DATA_Bloomberg_PiT经济数据_Bloomberg_PiT_Economic_Data["...g PiT经济数据 Bloomberg PiT Economic Data [design]"]
+        D_MKT_DATA_CQRS_Command_Query____ty_Segregation_CQRS命令查询职责分离["...sponsibility Segregation CQRS命令查询职责分离 [design]"]
+        D_MKT_DATA_CQRS分离_CQRS_Separation["D-MKT-DATA/CQRS分离 CQRS Separation [design]"]
+        D_MKT_DATA_CQRS读写分离_CQRS_Read_Write_Split["...T-DATA/CQRS读写分离 CQRS Read-Write Split [design]"]
+        D_MKT_DATA_CTR_001_NormalizedMarketData_标准化市场数据[".../CTR-001 NormalizedMarketData 标准化市场数据 [design]"]
+        D_MKT_DATA_ClickHouse_Analyzer_ClickHouse分析器["...ATA/ClickHouse Analyzer ClickHouse分析器 [design]"]
+        D_MKT_DATA_ClickHouse_列存时序数据库["D-MKT-DATA/ClickHouse 列存时序数据库 [design]"]
+        D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD["D-MKT-DATA/Cold 冷存储层 Parquet on SSD [design]"]
+        D_MKT_DATA_Concept_Factor_Mapping_Engine_概念因子映射引擎["...oncept Factor Mapping Engine 概念因子映射引擎 [design]"]
+        D_MKT_DATA_Connector_连接器["D-MKT-DATA/Connector 连接器 [design]"]
+        D_MKT_DATA_Corporate_Actions_Processor_公司行为处理["...TA/Corporate Actions Processor 公司行为处理 [design]"]
+        D_MKT_DATA_CrossSourceReconciler_跨源对账器["D-MKT-DATA/CrossSourceReconciler 跨源对账器 [design]"]
+        D_MKT_DATA_D_ALT_DATA_MVP_Downgrade_D_ALT_DATA_MVP降级["...T-DATA MVP Downgrade D-ALT-DATA MVP降级 [design]"]
+        D_MKT_DATA_D_CROSS_ASSET_MVP_Downgrade_D_CROSS_ASSET_MVP降级["...SET MVP Downgrade D-CROSS-ASSET MVP降级 [design]"]
+        D_MKT_DATA_D_DATA["D-MKT-DATA/D-DATA [design]"]
+        D_MKT_DATA_D_DATA_ENG["D-MKT-DATA/D-DATA-ENG [design]"]
+        D_MKT_DATA_DDD_Aggregate_Root_&_Lifecycle_DDD聚合根与生命周期["...ggregate Root & Lifecycle DDD聚合根与生命周期 [design]"]
+        D_MKT_DATA_DDD_Aggregate_Root_Lifecycle_DDD聚合根与生命周期["... Aggregate Root Lifecycle DDD聚合根与生命周期 [design]"]
+        D_MKT_DATA_Data_Anomaly_Alerter_数据异常告警器["D-MKT-DATA/Data Anomaly Alerter 数据异常告警器 [design]"]
+        D_MKT_DATA_Data_Contract执行策略_D___Contract_Execution_Strategy["...执行策略 Data Contract Execution Strategy [design]"]
+        D_MKT_DATA_Data_Contract规范缺失_Data_Contract_Gap["...A/Data Contract规范缺失 Data Contract Gap [design]"]
+        D_MKT_DATA_Data_Cost_Tracker_数据成本追踪["D-MKT-DATA/Data Cost Tracker 数据成本追踪 [design]"]
+        D_MKT_DATA_Data_Ingestion_&_Management_数据接入与管理["...A/Data Ingestion & Management 数据接入与管理 [design]"]
+        D_MKT_DATA_Data_Ingestion_Process_数据接入进程["D-MKT-DATA/Data Ingestion Process 数据接入进程 [design]"]
+        D_MKT_DATA_Data_Isolation_Manager_数据隔离管理器["...T-DATA/Data Isolation Manager 数据隔离管理器 [design]"]
+        D_MKT_DATA_Data_Lakehouse架构_Data_Lakehouse["...-DATA/Data Lakehouse架构 Data Lakehouse [design]"]
+        D_MKT_DATA_Data_Mesh+Lakehouse___esh+Lakehouse_Complementary["...补架构 Data Mesh+Lakehouse Complementary [design]"]
+        D_MKT_DATA_Data_Mesh架构_Data_Mesh["D-MKT-DATA/Data Mesh架构 Data Mesh [design]"]
+        D_MKT_DATA_Data_Observability_Engine_可观测性引擎["...DATA/Data Observability Engine 可观测性引擎 [design]"]
+        D_MKT_DATA_Data_Observability_数据可观测性["D-MKT-DATA/Data Observability 数据可观测性 [design]"]
+        D_MKT_DATA_Data_Observability五___servability_Five_Dimensions["...框架 Data Observability Five Dimensions [design]"]
+        D_MKT_DATA_Data_Permission_Manager_管理器["D-MKT-DATA/Data Permission Manager 管理器 [design]"]
+        D_MKT_DATA_Data_Retention_Manager_数据保留策略["D-MKT-DATA/Data Retention Manager 数据保留策略 [design]"]
+        D_MKT_DATA_Data_Schema_Registry_数据Schema注册表["...DATA/Data Schema Registry 数据Schema注册表 [design]"]
+        D_MKT_DATA_Data_Source_Health_Monitor_数据源健康度监控器[".../Data Source Health Monitor 数据源健康度监控器 [design]"]
+        D_MKT_DATA_Data_Source_Management_数据源管理["D-MKT-DATA/Data Source Management 数据源管理 [design]"]
+        D_MKT_DATA_Data_Source_Panorama_数据源全景["D-MKT-DATA/Data Source Panorama 数据源全景 [design]"]
+        D_MKT_DATA_Data_Subscription_Manager_数据订阅管理器["...ATA/Data Subscription Manager 数据订阅管理器 [design]"]
+        D_MKT_DATA_Data_Version_Manager_数据版本管理["D-MKT-DATA/Data Version Manager 数据版本管理 [design]"]
+        D_MKT_DATA_DataGapDetected_数据缺口检测事件["D-MKT-DATA/DataGapDetected 数据缺口检测事件 [design]"]
+        D_MKT_DATA_DataSchemaChanged_数据Schema变更["D-MKT-DATA/DataSchemaChanged 数据Schema变更 [design]"]
+        D_MKT_DATA_Design_Decision_Summary_设计决策汇总["...T-DATA/Design Decision Summary 设计决策汇总 [design]"]
+        D_MKT_DATA_Dragon_Tiger_List_龙虎榜["D-MKT-DATA/Dragon-Tiger List 龙虎榜 [design]"]
+        D_MKT_DATA_Dual_Temporal_Modeling_双时态建模["D-MKT-DATA/Dual Temporal Modeling 双时态建模 [design]"]
+        D_MKT_DATA_Dual_Mode_Push_Architecture_双模式推送架构["...A/Dual-Mode Push Architecture 双模式推送架构 [design]"]
+        D_MKT_DATA_DuckDB_AS_OF_JOIN_PIT_Query_Engine_PIT查询引擎["...B AS OF JOIN PIT Query Engine PIT查询引擎 [design]"]
+        D_MKT_DATA_DuckDB_QUALIFY_ROW_NUMBER实现PIT_DuckDB_QUALIFY_PIT["... ROW_NUMBER()实现PIT DuckDB QUALIFY PIT [design]"]
+        D_MKT_DATA_DuckDB性能四区间_DuckDB_Performance_Tiers[".../DuckDB性能四区间 DuckDB Performance Tiers [design]"]
+        D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration["...DB性能校准 DuckDB Performance Calibration [design]"]
+        D_MKT_DATA_DuckDB替代ClickHouse作为温层_DuckDB_over_ClickHouse["...ClickHouse作为温层 DuckDB over ClickHouse [design]"]
+        D_MKT_DATA_DuckDB温层替代ClickHouse_DuckDB_over_ClickHouse["...温层替代ClickHouse DuckDB over ClickHouse [design]"]
+        D_MKT_DATA_Embargo期_Embargo_Period["D-MKT-DATA/Embargo期 Embargo Period [design]"]
+        D_MKT_DATA_Event_Sourcing_Architecture_事件溯源架构["...TA/Event Sourcing Architecture 事件溯源架构 [design]"]
+        D_MKT_DATA_Event_Store_事件存储["D-MKT-DATA/Event Store 事件存储 [design]"]
+        D_MKT_DATA_Event_Store用Parquet_Event_Store_via_Parquet["...Store用Parquet Event Store via Parquet [design]"]
+        D_MKT_DATA_Event_Store设计_Event_Store_Design["...DATA/Event Store设计 Event Store Design [design]"]
+        D_MKT_DATA_Exchange_交易所["D-MKT-DATA/Exchange 交易所 [design]"]
+        D_MKT_DATA_FWT_Retrieval_Augmented_Diffusion_FWT检索增强扩散["...trieval Augmented Diffusion FWT检索增强扩散 [design]"]
+        D_MKT_DATA_Financial_Knowledge_Graph_金融知识图谱["...DATA/Financial Knowledge Graph 金融知识图谱 [design]"]
+        D_MKT_DATA_Financial_Parser_财务报告解析器["D-MKT-DATA/Financial Parser 财务报告解析器 [design]"]
+        D_MKT_DATA_Five_Layer_Funnel_Data_Support_五层筛选漏斗数据支撑["...-Layer Funnel Data Support 五层筛选漏斗数据支撑 [design]"]
+        D_MKT_DATA_Flink_2_x_AI_Functi___AI_Functions_Flink_2_x_AI函数["...ons Flink AI Functions Flink 2.x AI函数 [design]"]
+        D_MKT_DATA_Governance_Market_Data_Isolation_治理行情数据隔离["...rnance Market Data Isolation 治理行情数据隔离 [design]"]
+        D_MKT_DATA_Great_Expectations____rnance_Great_Expectations治理["...tions Governance Great Expectations治理 [design]"]
+        D_MKT_DATA_HSTR_Snapshot+Delta_历史状态重构["D-MKT-DATA/HSTR Snapshot+Delta 历史状态重构 [design]"]
+        D_MKT_DATA_HSTR历史状态重构_Historical_State_Reconstruction["...史状态重构 Historical State Reconstruction [design]"]
+        D_MKT_DATA_High_Frequency_Signal_Enhancer_高频信号增强器["...igh-Frequency Signal Enhancer 高频信号增强器 [design]"]
+        D_MKT_DATA_Hot_热存储层_Redis["D-MKT-DATA/Hot 热存储层 Redis [design]"]
+        D_MKT_DATA_ISIN_国际证券识别码["D-MKT-DATA/ISIN 国际证券识别码 [design]"]
+        D_MKT_DATA_ISO_27001_Benchmark_ISO_27001对标["...-DATA/ISO 27001 Benchmark ISO 27001对标 [design]"]
+        D_MKT_DATA_Incremental_Update_Engine_增量更新引擎["...DATA/Incremental Update Engine 增量更新引擎 [design]"]
+        D_MKT_DATA_Industry_Best_Practice_Benchmark_行业最佳实践对标["...stry Best Practice Benchmark 行业最佳实践对标 [design]"]
+        D_MKT_DATA_InstrumentId_工具ID["D-MKT-DATA/InstrumentId 工具ID [design]"]
+        D_MKT_DATA_Knowledge_Distiller_知识蒸馏器["D-MKT-DATA/Knowledge Distiller 知识蒸馏器 [design]"]
+        D_MKT_DATA_Knowledge_Intelligence_知识与智能["D-MKT-DATA/Knowledge Intelligence 知识与智能 [design]"]
+        D_MKT_DATA_L0_数据接入与预处理层_Data_Ingestion_&_Preprocessing_Layer["... Data Ingestion & Preprocessing Layer [design]"]
+        D_MKT_DATA_L0→L1_标准化流水线_L0→L1_Normalization_Pipeline["...1 标准化流水线 L0→L1 Normalization Pipeline [design]"]
+        D_MKT_DATA_L0→L6全链路规格_L0→L6_Full_chain_Spec["...DATA/L0→L6全链路规格 L0→L6 Full-chain Spec [design]"]
+        D_MKT_DATA_L0不持久化原始推送_No_L0_Persistence["D-MKT-DATA/L0不持久化原始推送 No L0 Persistence [design]"]
+        %% ... 还有 166 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    D_MKT_DATA_Connector_连接器 -->|import_depends| D_MKT_DATA_Normalizer_归一化器
+    D_MKT_DATA_Normalizer_归一化器 -->|import_depends| D_MKT_DATA_Storage_存储
+    D_MKT_DATA_Storage_存储 -->|import_depends| D_MKT_DATA_Real_time_Feed_Manager_实时管理器
+    D_MKT_DATA_Real_time_Feed_Manager_实时管理器 -->|import_depends| D_MKT_DATA_PIT_Manager_管理器
+    D_MKT_DATA_PIT_Manager_管理器 -->|import_depends| D_MKT_DATA_Data_Permission_Manager_管理器
+    D_MKT_DATA_Data_Permission_Manager_管理器 -->|import_depends| D_MKT_DATA_Tick_Data_Manager_管理器
+    D_MKT_DATA_Tick_Data_Manager_管理器 -->|import_depends| D_MKT_DATA_Data_Observability_Engine_可观测性引擎
+    D_MKT_DATA_Data_Observability_Engine_可观测性引擎 -->|import_depends| D_MKT_DATA_A_Share_Intraday_Data_Manager_管理器
+    D_MKT_DATA_A_Share_Intraday_Data_Manager_管理器 -->|import_depends| D_MKT_DATA_A_Share_Auction_Data_Manager_管理器
+    D_MKT_DATA_A_Share_Auction_Data_Manager_管理器 -->|import_depends| D_MKT_DATA_A_Share_Alt_Data_Source_Manager_管理器
+    D_MKT_DATA_A_Share_Alt_Data_Source_Manager_管理器 -->|import_depends| D_MKT_DATA_A_Share_Order_Flow_Data_Manager_管理器订单
+    D_MKT_DATA_A_Share_Order_Flow_Data_Manager_管理器订单 -->|import_depends| D_MKT_DATA_AkShare_Data_Source_Adapter_适配器
+    D_MKT_DATA_AkShare_Data_Source_Adapter_适配器 -->|import_depends| D_MKT_DATA_LLM_API_Unified_Integration_集成
+    D_MKT_DATA_LLM_API_Unified_Integration_集成 -->|import_depends| D_MKT_DATA_M3_Code_Generation_Model_Adapter_适配器模型
+    D_MKT_DATA_M3_Code_Generation_Model_Adapter_适配器模型 -->|import_depends| D_MKT_DATA_M7_Deep_Review_Model_Adapter_适配器模型视图
+    D_MKT_DATA_M7_Deep_Review_Model_Adapter_适配器模型视图 -->|import_depends| D_MKT_DATA_M8_S01
+    D_MKT_DATA_M8_S01 -->|import_depends| D_MKT_DATA_M8_S02
+    D_MKT_DATA_M8_S02 -->|import_depends| D_MKT_DATA_M8_S03
+    D_MKT_DATA_M8_S03 -->|import_depends| D_MKT_DATA_M8_S04
+    D_MKT_DATA_M8_S04 -->|import_depends| D_MKT_DATA_M8_S05
+    D_MKT_DATA_M8_S05 -->|import_depends| D_MKT_DATA_M8_S06
+    D_MKT_DATA_M8_S06 -->|import_depends| D_MKT_DATA_M8_S07
+    D_MKT_DATA_M8_S07 -->|import_depends| D_MKT_DATA_M8_NEW_01
+    D_MKT_DATA_M8_NEW_01 -->|import_depends| D_MKT_DATA_M8_NEW_02
+    D_MKT_DATA_M8_NEW_02 -->|import_depends| D_MKT_DATA_M8_NEW_03
+    D_MKT_DATA_M8_NEW_03 -->|import_depends| D_MKT_DATA_M8_NEW_04
+    D_MKT_DATA_M8_NEW_04 -->|import_depends| D_MKT_DATA_M8_NEW_05
+    D_MKT_DATA_M8_NEW_05 -->|import_depends| D_MKT_DATA_M8_NEW_06
+    D_MKT_DATA_M8_NEW_06 -->|import_depends| D_MKT_DATA_M8_NEW_07
+    D_MKT_DATA_M8_NEW_07 -->|import_depends| D_MKT_DATA_M8_NEW_08
+    D_MKT_DATA_M8_NEW_08 -->|import_depends| D_MKT_DATA_M8_NEW_09
+    D_MKT_DATA_M8_NEW_09 -->|import_depends| D_MKT_DATA_M8_NEW_10
+    D_MKT_DATA_M8_NEW_10 -->|import_depends| D_MKT_DATA_miniQMT_主数据源
+    D_MKT_DATA_miniQMT_主数据源 -->|import_depends| D_MKT_DATA_iFind_补充数据源
+    D_MKT_DATA_iFind_补充数据源 -->|import_depends| D_MKT_DATA_AkShare_免费备用数据源
+    D_MKT_DATA_AkShare_免费备用数据源 -->|import_depends| D_MKT_DATA_BaoStock_历史数据补充
+    D_MKT_DATA_BaoStock_历史数据补充 -->|import_depends| D_MKT_DATA_tushare_新闻快讯数据源
+    D_MKT_DATA_tushare_新闻快讯数据源 -->|import_depends| D_MKT_DATA_L0_数据接入与预处理层_Data_Ingestion_&_Preprocessing_Layer
+    D_MKT_DATA_L0_数据接入与预处理层_Data_Ingestion_&_Preprocessing_Layer -->|import_depends| D_MKT_DATA_Hot_热存储层_Redis
+    D_MKT_DATA_Hot_热存储层_Redis -->|import_depends| D_MKT_DATA_Warm_温存储层_DuckDB+Parquet
+    D_MKT_DATA_Warm_温存储层_DuckDB+Parquet -->|import_depends| D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD
+    D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD -->|import_depends| D_MKT_DATA_Data_Observability_数据可观测性
+    D_MKT_DATA_Data_Observability_数据可观测性 -->|import_depends| D_MKT_DATA_AI驱动异常检测_AI_Anomaly_Detection
+    D_MKT_DATA_AI驱动异常检测_AI_Anomaly_Detection -->|import_depends| D_MKT_DATA_SQL_AST解析器_SQL_AST_Parser
+    D_MKT_DATA_SQL_AST解析器_SQL_AST_Parser -->|import_depends| D_MKT_DATA_PIT一致性_Point_in_Time_Consistency
+    D_MKT_DATA_PIT一致性_Point_in_Time_Consistency -->|import_depends| D_MKT_DATA_双时态建模_Bitemporal_Modeling
+    D_MKT_DATA_双时态建模_Bitemporal_Modeling -->|import_depends| D_MKT_DATA_HSTR_Snapshot+Delta_历史状态重构
+    D_MKT_DATA_HSTR_Snapshot+Delta_历史状态重构 -->|import_depends| D_MKT_DATA_pit_consistency_test_PIT验证测试框架
+    D_MKT_DATA_pit_consistency_test_PIT验证测试框架 -->|import_depends| D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration
+    D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration -->|import_depends| D_MKT_DATA_miniQMT_主数据源_A股全市场
+    D_MKT_DATA_miniQMT_主数据源_A股全市场 -->|import_depends| D_MKT_DATA_iFind_补充数据源_盘后日线
+    D_MKT_DATA_iFind_补充数据源_盘后日线 -->|import_depends| D_MKT_DATA_tushare_待开通数据源
+    D_MKT_DATA_tushare_待开通数据源 -->|import_depends| D_MKT_DATA_L0→L1_标准化流水线_L0→L1_Normalization_Pipeline
+    D_MKT_DATA_L0→L1_标准化流水线_L0→L1_Normalization_Pipeline -->|import_depends| D_MKT_DATA_格式校验_Schema_Validation
+    D_MKT_DATA_格式校验_Schema_Validation -->|import_depends| D_MKT_DATA_三层存储架构_Three_tier_Storage_Architecture
+    D_MKT_DATA_三层存储架构_Three_tier_Storage_Architecture -->|import_depends| D_MKT_DATA_容量规划_Capacity_Planning
+    D_MKT_DATA_容量规划_Capacity_Planning -->|import_depends| D_MKT_DATA_生命周期管理_Lifecycle_Management
+    D_MKT_DATA_生命周期管理_Lifecycle_Management -->|import_depends| D_MKT_DATA_Redis_RDB+AOF双开_Redis_RDB+AOF
+    D_MKT_DATA_Redis_RDB+AOF双开_Redis_RDB+AOF -->|import_depends| D_MKT_DATA_L0→L6全链路规格_L0→L6_Full_chain_Spec
+    D_MKT_DATA_L0→L6全链路规格_L0→L6_Full_chain_Spec -->|import_depends| D_MKT_DATA_批流分离设计_Batch_Stream_Separation
+    D_MKT_DATA_批流分离设计_Batch_Stream_Separation -->|import_depends| D_MKT_DATA_完整性_Completeness
+    D_MKT_DATA_完整性_Completeness -->|import_depends| D_MKT_DATA_Financial_Parser_财务报告解析器
+    D_MKT_DATA_Financial_Parser_财务报告解析器 -->|import_depends| D_MKT_DATA_准确性_Accuracy
+    D_MKT_DATA_准确性_Accuracy -->|import_depends| D_MKT_DATA_CrossSourceReconciler_跨源对账器
+    D_MKT_DATA_CrossSourceReconciler_跨源对账器 -->|import_depends| D_MKT_DATA_Corporate_Actions_Processor_公司行为处理
+    D_MKT_DATA_Corporate_Actions_Processor_公司行为处理 -->|import_depends| D_MKT_DATA_一致性_Consistency
+    D_MKT_DATA_一致性_Consistency -->|import_depends| D_MKT_DATA_Data_Schema_Registry_数据Schema注册表
+    D_MKT_DATA_Data_Schema_Registry_数据Schema注册表 -->|import_depends| D_MKT_DATA_及时性_Timeliness
+    D_MKT_DATA_及时性_Timeliness -->|import_depends| D_MKT_DATA_Macro_Data_Manager_宏观数据管理器
+    D_MKT_DATA_Macro_Data_Manager_宏观数据管理器 -->|import_depends| D_MKT_DATA_可用性_Availability
+    D_MKT_DATA_可用性_Availability -->|import_depends| D_MKT_DATA_SLA分级体系_SLA_Tiered_System
+    D_MKT_DATA_SLA分级体系_SLA_Tiered_System -->|import_depends| D_MKT_DATA_Data_Anomaly_Alerter_数据异常告警器
+    D_MKT_DATA_Data_Anomaly_Alerter_数据异常告警器 -->|import_depends| D_MKT_DATA_Trading_Calendar_Manager_交易日历管理
+    D_MKT_DATA_Trading_Calendar_Manager_交易日历管理 -->|import_depends| D_MKT_DATA_盘中实时监控_Intraday_Real_time_Monitoring
+    D_MKT_DATA_盘中实时监控_Intraday_Real_time_Monitoring -->|import_depends| D_MKT_DATA_盘后一致性校验_Post_market_Consistency_Check
+    D_MKT_DATA_盘后一致性校验_Post_market_Consistency_Check -->|import_depends| D_MKT_DATA_WAL_Checkpoint_Monitor_SQLite_WAL检查点监控器
+    D_MKT_DATA_WAL_Checkpoint_Monitor_SQLite_WAL检查点监控器 -->|import_depends| D_MKT_DATA_CQRS分离_CQRS_Separation
+    D_MKT_DATA_CQRS分离_CQRS_Separation -->|import_depends| D_MKT_DATA_快照策略_Snapshot_Strategy
+    D_MKT_DATA_快照策略_Snapshot_Strategy -->|import_depends| D_MKT_DATA_Point_in_Time一致性保证_PIT_Consistency
+    D_MKT_DATA_Point_in_Time一致性保证_PIT_Consistency -->|import_depends| D_MKT_DATA_PIT三条公理_PIT_Three_Axioms
+    %% ... 还有 178 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-MKT_DATA (4 条)
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_MKT_DATA_DDD_Aggregate_Root_Lifecycle_DDD聚合根与生命周期
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_MKT_DATA_M8_S07
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_MKT_DATA_M8_S01
+    D_ALT_DATA[D-ALT_DATA] -->|config_depends| D_MKT_DATA_盘后一致性校验_Post_market_Consistency_Check
+    %% D-AUTONOMY_CORE -> D-MKT_DATA (26 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_AkShare_AkShare数据适配器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_MKT_DATA_Connector_连接器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_M8_S02
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_iFind_补充数据源
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_MKT_DATA_Data_Source_Panorama_数据源全景
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_SLA按影响分级而非按数据源_SLA_by_Impact
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_MKT_DATA_PIT校验规则_PIT_Validation_Rules
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_Data_Version_Manager_数据版本管理
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_MKT_DATA_ISIN_国际证券识别码
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_MKT_DATA_跨源对账完成检查点_Cross_Sou___ation_Completion_Checkpoint
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_MKT_DATA_Data_Ingestion_Process_数据接入进程
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_MKT_DATA_物化视图优化_Materialized_View_Optimization
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_MKT_DATA_自适应异常检测阈值_Adaptive_Anomaly_Threshold
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_iFind为基本面主数据源_iFind_as_Fundamental_Source
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_MKT_DATA_FWT_Retrieval_Augmented_Diffusion_FWT检索增强扩散
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_Connector_连接器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_MKT_DATA_违约处理五步闭环_Five_step_Breach_Handling
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_MKT_DATA_Financial_Knowledge_Graph_金融知识图谱
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_MKT_DATA_违约处理五步闭环_Five_step_Breach_Handling
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_Microstructure_Analyzer_微观结构分析器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_MKT_DATA_数据存储方案_Data_Storage
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Cross_Source_Reconciliation
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_Concept_Factor_Mapping_Engine_概念因子映射引擎
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_MKT_DATA_事件回放场景_Event_Replay_Scenarios
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_MKT_DATA_A_Share_Order_Flow_Data_Manager_管理器订单
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_MKT_DATA_Pydantic_V2_Code_Generator_Pydantic_V2代码生成器
+    %% D-AUTONOMY_PERM -> D-MKT_DATA (15 条)
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_MKT_DATA_事件溯源架构_Event_Sourcing_Architecture
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_MKT_DATA_CQRS读写分离_CQRS_Read_Write_Split
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_MKT_DATA_Sina+Tencent_Real_Time_新浪+腾讯实时行情
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_MKT_DATA_VolumeSurge_成交量突增事件
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_MKT_DATA_yfinance_Adapter_yfinance适配器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_MKT_DATA_快照策略_Snapshot_Strategy
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_MKT_DATA_WAL_Checkpoint_Monitor_SQLite_WAL检查点监控器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|config_depends| D_MKT_DATA_批量路径90分钟时间预算_Batch_90min_Budget
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_MKT_DATA_Exchange_交易所
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_MKT_DATA_加权评分而非二元通过_失败_Weighted_Scoring
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_MKT_DATA_M8_S03
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_MKT_DATA_High_Frequency_Signal_Enhancer_高频信号增强器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_MKT_DATA_Tiered_Storage_分层存储
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_MKT_DATA_M8_S03
+    %% D-COMPLIANCE -> D-MKT_DATA (47 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_生命周期管理_Lifecycle_Management
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_iFind_补充数据源_盘后日线
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_D_DATA_ENG
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_DuckDB替代ClickHouse作为温层_DuckDB_over_ClickHouse
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_L4_Top_Secret_Data_L4绝密数据
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_MKT_DATA_M8_NEW_06
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_M8_NEW_07
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_MKT_DATA_iFind盘后数据→Parquet检查点
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_MKT_DATA_Data_Observability_数据可观测性
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_Saga模式_Saga_Pattern
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_A_Share_Alt_Data_Source_Manager_管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_MKT_DATA_事件Schema演进与版本化_Event_Schema_Evolution
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_M8_NEW_08
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_Bi_Temporal_Modeling_双时态建模
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_Money_货币
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_ClickHouse_Analyzer_ClickHouse分析器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_事件Schema演进与版本化_Event_Schema_Evolution
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_D_DATA
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Reconciliation_Scope
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_ODCS标准与工具链_ODCS_Standard_&_Toolchain
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_Data_Retention_Manager_数据保留策略
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_Vector_DB_Switch_Manager_向量数据库切换管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_Overseas_Market_Data_Adapter_外盘数据适配器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_High_Frequency_Signal_Enhancer_高频信号增强器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_MKT_DATA_SLA分级体系_SLA_Tiered_System
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_盘后一致性校验_Post_market_Consistency_Check
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_MKT_DATA_事件溯源架构_Event_Sourcing_Architecture
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_MKT_DATA_Macro_Data_Manager_宏观数据管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_MKT_DATA_M8_NEW_06
+    %% D-CROSS_ASSET -> D-MKT_DATA (5 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_MKT_DATA_批流分离设计_Batch_Stream_Separation
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_MKT_DATA_Trading_Calendar_Manager_交易日历管理
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_MKT_DATA_PriceChanged_价格变更事件
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_MKT_DATA_Tick仅保留近3个月_Tick_Retain_3_Months
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_MKT_DATA_PIT数据时点标记_PIT_Data_Point_in_time_Marking
+    %% D-DATA_GOV -> D-MKT_DATA (3 条)
+    D_DATA_GOV[D-DATA_GOV] -->|contract| D_MKT_DATA_宏观数据用iFind_Macro_Data_via_iFind
+    D_DATA_GOV[D-DATA_GOV] -->|config_depends| D_MKT_DATA_AkShare_免费备用数据源
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_MKT_DATA_M8_S04
+    %% D-DATA_SEC -> D-MKT_DATA (3 条)
+    D_DATA_SEC[D-DATA_SEC] -->|data| D_MKT_DATA_Dual_Temporal_Modeling_双时态建模
+    D_DATA_SEC[D-DATA_SEC] -->|data| D_MKT_DATA_Bloomberg_PiT经济数据_Bloomberg_PiT_Economic_Data
+    D_DATA_SEC[D-DATA_SEC] -->|event| D_MKT_DATA_InstrumentId_工具ID
+    %% D-EX_CORE -> D-MKT_DATA (9 条)
+    D_EX_CORE[D-EX_CORE] -->|data| D_MKT_DATA_Local_File_Auto_Parser_本地文件自动解析器
+    D_EX_CORE[D-EX_CORE] -->|data| D_MKT_DATA_Design_Decision_Summary_设计决策汇总
+    D_EX_CORE[D-EX_CORE] -->|contract| D_MKT_DATA_NormalizedMarketData_标准化行情数据
+    D_EX_CORE[D-EX_CORE] -->|event| D_MKT_DATA_Vector_DB_Switch_Manager_向量数据库切换管理器
+    D_EX_CORE[D-EX_CORE] -->|data| D_MKT_DATA_Data_Mesh+Lakehouse___esh+Lakehouse_Complementary
+    D_EX_CORE[D-EX_CORE] -->|data| D_MKT_DATA_Schema演进_Schema_Evolution
+    D_EX_CORE[D-EX_CORE] -->|contract| D_MKT_DATA_M8_S03
+    D_EX_CORE[D-EX_CORE] -->|data| D_MKT_DATA_Medallion架构_Medallion_Architecture
+    D_EX_CORE[D-EX_CORE] -->|data| D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Cross_Source_Reconciliation
+    %% D-FACTOR -> D-MKT_DATA (23 条)
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_M8_NEW_09
+    D_FACTOR[D-FACTOR] -->|event| D_MKT_DATA_批流分离设计_Batch_Stream_Separation
+    D_FACTOR[D-FACTOR] -->|data| D_MKT_DATA_Normalizer_归一化器
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_AUM>200万后升级ClickHouse_ClickHouse_Upgrade_Gate
+    D_FACTOR[D-FACTOR] -->|data| D_MKT_DATA_L0→L1_标准化流水线_L0→L1_Normalization_Pipeline
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_L2_Internal_Data_L2内部数据
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_Data_Retention_Manager_数据保留策略
+    D_FACTOR[D-FACTOR] -->|data| D_MKT_DATA_miniQMT_主数据源_A股全市场
+    D_FACTOR[D-FACTOR] -->|event| D_MKT_DATA_Exchange_交易所
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_ISIN_国际证券识别码
+    D_FACTOR[D-FACTOR] -->|config_depends| D_MKT_DATA_跨平面一致性校验_Cross_plane_Consistency_Check
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_L0→L6全链路规格_L0→L6_Full_chain_Spec
+    D_FACTOR[D-FACTOR] -->|data| D_MKT_DATA_盘后一致性校验_Post_market_Consistency_Check
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_ADR记录架构决策_ADR_Records
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_Microstructure_Analyzer_微观结构分析器
+    D_FACTOR[D-FACTOR] -->|data| D_MKT_DATA_一致性_Consistency
+    D_FACTOR[D-FACTOR] -->|event| D_MKT_DATA_P0_P1_P2三级优先级_Three_tier_Priority
+    D_FACTOR[D-FACTOR] -->|config_depends| D_MKT_DATA_iFind_补充数据源
+    D_FACTOR[D-FACTOR] -->|config_depends| D_MKT_DATA_Tick仅保留近3个月_Tick_Retain_3_Months
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_Trading_Decision_Annotation_Dataset_交易决策标注数据集
+    D_FACTOR[D-FACTOR] -->|contract| D_MKT_DATA_ClickHouse_列存时序数据库
+    D_FACTOR[D-FACTOR] -->|config_depends| D_MKT_DATA_Dual_Mode_Push_Architecture_双模式推送架构
+    D_FACTOR[D-FACTOR] -->|domain_dependency| D_MKT_DATA_Knowledge_Intelligence_知识与智能
+    %% D-FRONTEND -> D-MKT_DATA (15 条)
+    D_FRONTEND[D-FRONTEND] -->|event| D_MKT_DATA_可扩展性与演进性_Scalability_&_Evolution
+    D_FRONTEND[D-FRONTEND] -->|data| D_MKT_DATA_双时态建模_Bitemporal_Modeling
+    D_FRONTEND[D-FRONTEND] -->|data| D_MKT_DATA_§29_4_时序数据库与分层存储架构_TSDB_&_Tiered_Storage
+    D_FRONTEND[D-FRONTEND] -->|contract| D_MKT_DATA_SLA按影响分级而非按数据源_SLA_by_Impact
+    D_FRONTEND[D-FRONTEND] -->|data| D_MKT_DATA_Point_in_Time一致性保证_PIT_Consistency
+    D_FRONTEND[D-FRONTEND] -->|contract| D_MKT_DATA_事件Schema演进与版本化_Event_Schema_Evolution
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_MKT_DATA_ADR记录架构决策_ADR_Records
+    D_FRONTEND[D-FRONTEND] -->|event| D_MKT_DATA_yfinance_Adapter_yfinance适配器
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_MKT_DATA_跨平面一致性校验_Cross_plane_Consistency_Check
+    D_FRONTEND[D-FRONTEND] -->|contract| D_MKT_DATA_Parquet列式存储_Parquet_Columnar_Storage
+    D_FRONTEND[D-FRONTEND] -->|event| D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Reconciliation_Scope
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_MKT_DATA_Knowledge_Distiller_知识蒸馏器
+    D_FRONTEND[D-FRONTEND] -->|data| D_MKT_DATA_事件溯源架构_Event_Sourcing_Architecture
+    D_FRONTEND[D-FRONTEND] -->|event| D_MKT_DATA_InstrumentId_工具ID
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_MKT_DATA_Market_Data_Provider_行情数据提供商
+    %% D-GOVERNANCE -> D-MKT_DATA (49 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Reconciliation_Scope
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_MKT_DATA_ClickHouse_列存时序数据库
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_MKT_DATA_L4_Top_Secret_Data_L4绝密数据
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_MKT_DATA_Auto_Data_Source_Switch_数据源自动切换
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_MKT_DATA_DataGapDetected_数据缺口检测事件
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_MKT_DATA_M8_S04
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_MKT_DATA_Event_Store设计_Event_Store_Design
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_MKT_DATA_DuckDB_AS_OF_JOIN_PIT_Query_Engine_PIT查询引擎
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_MKT_DATA_存储扩展路径_Storage_Expansion_Path
+    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_MKT_DATA_Training_Dataset_Manager_训练数据集管理器
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_MKT_DATA_AkShare_免费备用数据源
+    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_MKT_DATA_CQRS分离_CQRS_Separation
+    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_MKT_DATA_批流分离而非纯流_Batch_Stream_over_Kappa
+    %% D-GOV_AUDIT -> D-MKT_DATA (1 条)
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|data| D_MKT_DATA_Survivorship_Bias零容___vorship_Bias_Zero_Tolerance
+    %% D-INFRA_OPS -> D-MKT_DATA (21 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_Sina+Tencent_Real_Time_新浪+腾讯实时行情
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_MKT_DATA_Real_time_Quote_实时行情
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_DDD_Aggregate_Root_Lifecycle_DDD聚合根与生命周期
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_准确性_Accuracy
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_Data_Source_Management_数据源管理
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_PIT一致性_Point_in_Time_Consistency
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_PIT验证与测试框架_PIT_Validation_Framework
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_Redis因子值→信号检查点
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_MKT_DATA_ISO_27001_Benchmark_ISO_27001对标
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_决策→风控→执行检查点_Risk_Control_Execution
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_Data_Source_Panorama_数据源全景
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_湖流一体_Lakehouse_Streaming
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_PIT_Consistency_Guard_PIT一致性守卫
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_Hot_热存储层_Redis
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_Tick仅保留3个月_Tick_Retain_3_Months
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_MKT_DATA_Survivorship_Bias零容___vorship_Bias_Zero_Tolerance
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_MKT_DATA_event_id用SHA_256_SHA_256_event_id
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_M8_NEW_10
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_MKT_DATA_iFind为基本面主数据源_iFind_as_Fundamental_Source
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_MKT_DATA_价值链主线_Value_Chain_Mainline
+    %% D-INTEGRATION -> D-MKT_DATA (34 条)
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_决策→风控→执行检查点_Risk_Control_Execution
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_AUM驱动存储升级_AUM_driven_Storage_Upgrade
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_Data_Version_Manager_数据版本管理
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_Data_Observability五___servability_Five_Dimensions
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_Text_Sentiment_Factor_Extractor_文本情感因子提取器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_快照策略_Snapshot_Strategy
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_三平面统一_Three_plane_Unification
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_Dragon_Tiger_List_龙虎榜
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_批流分离而非纯流_Batch_Stream_over_Kappa
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_L1_Public_Data_L1公开数据
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_AUM驱动存储升级_AUM_driven_Storage_Upgrade
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_Apache_Doris_4_x量化交易_Apache_Doris_4_x
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_CrossSourceReconciler_跨源对账器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_DataSchemaChanged_数据Schema变更
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_D_DATA_ENG
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_miniQMT_主数据源
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_ClickHouse_Analyzer_ClickHouse分析器
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_event_id用SHA_256_SHA_256_event_id
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_Connector_连接器
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_湖流一体_Lakehouse_Streaming
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_M8_NEW_03
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_SQL_AST解析器_SQL_AST_Parser
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_数据存储方案_Data_Storage
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_MKT_DATA_五维度对齐ISO_8000_ISO_8000_Alignment
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_MKT_DATA_Tick→信号≤15秒延迟预算_Tick→Signal_15s_Budget
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_财务数据5个交易日Embargo_5_day_Embargo
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_MKT_DATA_FWT_Retrieval_Augmented_Diffusion_FWT检索增强扩散
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_Warm_温存储层_DuckDB+Parquet
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_MKT_DATA_快照策略_Snapshot_Strategy
+    %% D-INTELLIGENCE -> D-MKT_DATA (13 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_MKT_DATA_Real_time_Feed_Manager_实时管理器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_MKT_DATA_Connector_连接器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_MKT_DATA_PIT验证与测试框架_PIT_Validation_Framework
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_MKT_DATA_Data_Retention_Manager_数据保留策略
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Cross_Source_Reconciliation
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_MKT_DATA_事件溯源而非CRUD_Event_Sourcing_over_CRUD
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_MKT_DATA_Bi_Temporal_Modeling_双时态建模
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_MKT_DATA_L1_Public_Data_L1公开数据
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_MKT_DATA_M8_S07
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_MKT_DATA_湖流一体_Lakehouse_Streaming
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_MKT_DATA_M8_S07
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_MKT_DATA_AkShare_Data_Source_Adapter_适配器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_MKT_DATA_PIT校验规则_PIT_Validation_Rules
+    %% D-KNOWLEDGE -> D-MKT_DATA (11 条)
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_MKT_DATA_BaoStock_历史数据补充
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_MKT_DATA_Event_Store用Parquet_Event_Store_via_Parquet
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_MKT_DATA_Pydantic_V2_Code_Generator_Pydantic_V2代码生成器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_MKT_DATA_M8_NEW_03
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_MKT_DATA_A_Share_Order_Flow_Data_Manager_管理器订单
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_MKT_DATA_M8_NEW_10
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_MKT_DATA_PIT_Consistency_Guard_PIT一致性守卫
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_MKT_DATA_Data_Permission_Manager_管理器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_MKT_DATA_tushare_新闻快讯数据源
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_MKT_DATA_Tick_Data_Manager_管理器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_MKT_DATA_Dual_Temporal_Modeling_双时态建模
+    %% D-ML_SERVE -> D-MKT_DATA (2 条)
+    D_ML_SERVE[D-ML_SERVE] -->|config_depends| D_MKT_DATA_AI驱动异常检测_AI_Anomaly_Detection
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_MKT_DATA_自适应异常检测阈值_Adaptive_Anomaly_Threshold
+    %% D-ML_TRAIN -> D-MKT_DATA (3 条)
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_MKT_DATA_M8_S02
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_MKT_DATA_HSTR_Snapshot+Delta_历史状态重构
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_MKT_DATA_双时态建模_Bitemporal_Modeling
+    %% D-OPS -> D-MKT_DATA (19 条)
+    D_OPS[D-OPS] -->|contract| D_MKT_DATA_DDD_Aggregate_Root_Lifecycle_DDD聚合根与生命周期
+    D_OPS[D-OPS] -->|contract| D_MKT_DATA_Apache_Doris_4_x量化交易_Apache_Doris_4_x
+    D_OPS[D-OPS] -->|contract| D_MKT_DATA_High_Frequency_Signal_Enhancer_高频信号增强器
+    D_OPS[D-OPS] -->|contract| D_MKT_DATA_Market_Data_Pipeline_行情数据管道
+    D_OPS[D-OPS] -->|event| D_MKT_DATA_Warm_温存储层_DuckDB+Parquet
+    D_OPS[D-OPS] -->|data| D_MKT_DATA_Real_time_Feed_Manager_实时管理器
+    D_OPS[D-OPS] -->|event| D_MKT_DATA_CQRS_Command_Query____ty_Segregation_CQRS命令查询职责分离
+    D_OPS[D-OPS] -->|contract| D_MKT_DATA_Concept_Factor_Mapping_Engine_概念因子映射引擎
+    D_OPS[D-OPS] -->|event| D_MKT_DATA_Training_Dataset_Manager_训练数据集管理器
+    D_OPS[D-OPS] -->|event| D_MKT_DATA_完整性_Completeness
+    D_OPS[D-OPS] -->|event| D_MKT_DATA_Temp_Query_P5_模板查询p5
+    D_OPS[D-OPS] -->|config_depends| D_MKT_DATA_Parquet列式存储替代SQLite行式_Parquet_over_SQLite
+    D_OPS[D-OPS] -->|config_depends| D_MKT_DATA_M8_NEW_09
+    D_OPS[D-OPS] -->|contract| D_MKT_DATA_Medallion架构_Medallion_Architecture
+    D_OPS[D-OPS] -->|config_depends| D_MKT_DATA_事件溯源而非CRUD_Event_Sourcing_over_CRUD
+    D_OPS[D-OPS] -->|data| D_MKT_DATA_事件回放场景_Event_Replay_Scenarios
+    D_OPS[D-OPS] -->|config_depends| D_MKT_DATA_价值链主线_Value_Chain_Mainline
+    D_OPS[D-OPS] -->|config_depends| D_MKT_DATA_自适应异常检测阈值_Adaptive_Anomaly_Threshold
+    D_OPS[D-OPS] -->|event| D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD
+    %% D-PF_ALLOC -> D-MKT_DATA (7 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_MKT_DATA_NormalizedMarketData_标准化行情数据
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_MKT_DATA_Parquet列式存储_Parquet_Columnar_Storage
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_MKT_DATA_M8_S06
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_MKT_DATA_M8_S03
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_MKT_DATA_价值链主线_Value_Chain_Mainline
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_MKT_DATA_iFind_补充数据源
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_MKT_DATA_HSTR_Snapshot+Delta_历史状态重构
+    %% D-PF_CORE -> D-MKT_DATA (8 条)
+    D_PF_CORE[D-PF_CORE] -->|contract| D_MKT_DATA_VolumeSurge_成交量突增事件
+    D_PF_CORE[D-PF_CORE] -->|event| D_MKT_DATA_Financial_Knowledge_Graph_金融知识图谱
+    D_PF_CORE[D-PF_CORE] -->|event| D_MKT_DATA_Embargo期_Embargo_Period
+    D_PF_CORE[D-PF_CORE] -->|data| D_MKT_DATA_Point_in_Time_Consistency_Point_in_Time一致性保证
+    D_PF_CORE[D-PF_CORE] -->|contract| D_MKT_DATA_Tiered_Storage_Architecture_分层存储架构
+    D_PF_CORE[D-PF_CORE] -->|data| D_MKT_DATA_加权评分而非二元通过_失败_Weighted_Scoring
+    D_PF_CORE[D-PF_CORE] -->|event| D_MKT_DATA_Saga模式_Saga_Pattern
+    D_PF_CORE[D-PF_CORE] -->|event| D_MKT_DATA_Data_Mesh架构_Data_Mesh
+    %% D-POSITION -> D-MKT_DATA (8 条)
+    D_POSITION[D-POSITION] -->|data| D_MKT_DATA_Dual_Mode_Push_Architecture_双模式推送架构
+    D_POSITION[D-POSITION] -->|contract| D_MKT_DATA_Tick→信号≤15秒延迟预算_Tick→Signal_15s_Budget
+    D_POSITION[D-POSITION] -->|data| D_MKT_DATA_D_DATA
+    D_POSITION[D-POSITION] -->|event| D_MKT_DATA_Data_Isolation_Manager_数据隔离管理器
+    D_POSITION[D-POSITION] -->|data| D_MKT_DATA_Data_Version_Manager_数据版本管理
+    D_POSITION[D-POSITION] -->|config_depends| D_MKT_DATA_数据源接入流程_Data_Source_Onboarding
+    D_POSITION[D-POSITION] -->|data| D_MKT_DATA_Event_Store用Parquet_Event_Store_via_Parquet
+    D_POSITION[D-POSITION] -->|contract| D_MKT_DATA_Data_Subscription_Manager_数据订阅管理器
+    %% D-REPORTING -> D-MKT_DATA (8 条)
+    D_REPORTING[D-REPORTING] -->|contract| D_MKT_DATA_BaoStock_历史数据补充
+    D_REPORTING[D-REPORTING] -->|data| D_MKT_DATA_Warm_温存储层_DuckDB+Parquet
+    D_REPORTING[D-REPORTING] -->|event| D_MKT_DATA_Vector_DB_Switch_Manager_向量数据库切换管理器
+    D_REPORTING[D-REPORTING] -->|contract| D_MKT_DATA_CQRS_Command_Query____ty_Segregation_CQRS命令查询职责分离
+    D_REPORTING[D-REPORTING] -->|contract| D_MKT_DATA_Data_Retention_Manager_数据保留策略
+    D_REPORTING[D-REPORTING] -->|event| D_MKT_DATA_批流分离设计_Batch_Stream_Separation
+    D_REPORTING[D-REPORTING] -->|contract| D_MKT_DATA_批量路径90分钟时间预算_Batch_90min_Budget
+    D_REPORTING[D-REPORTING] -->|event| D_MKT_DATA_ISIN_国际证券识别码
+    %% D-RISK -> D-MKT_DATA (53 条)
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_Trading_Calendar_Manager_交易日历管理
+    D_RISK[D-RISK] -->|event| D_MKT_DATA_Corporate_Actions_Processor_公司行为处理
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_A_Share_Alt_Data_Source_Manager_管理器
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_CQRS分离_CQRS_Separation
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_Data_Version_Manager_数据版本管理
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_Dual_Mode_Push_Architecture_双模式推送架构
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_完整性_Completeness
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_Microsoft_Qlib_PIT数据架构_Qlib_PIT_Architecture
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_完整性_Completeness
+    D_RISK[D-RISK] -->|event| D_MKT_DATA_存储扩展路径_Storage_Expansion_Path
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_PIT三条公理_PIT_Three_Axioms
+    D_RISK[D-RISK] -->|event| D_MKT_DATA_ClickHouse_列存时序数据库
+    D_RISK[D-RISK] -->|event| D_MKT_DATA_DuckDB_QUALIFY_ROW_NUMBER实现PIT_DuckDB_QUALIFY_PIT
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_Data_Anomaly_Alerter_数据异常告警器
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_M8_NEW_10
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_Temp_Query_P5_模板查询p5
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_可用性_Availability
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_VolumeSurge_成交量突增事件
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_InstrumentId_工具ID
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_批流分离而非纯流_Batch_Stream_over_Kappa
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_M8_NEW_10
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_Trading_Decision_Annotation_Dataset_交易决策标注数据集
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_Financial_Knowledge_Graph_金融知识图谱
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_DuckDB性能四区间_DuckDB_Performance_Tiers
+    D_RISK[D-RISK] -->|event| D_MKT_DATA_专用时序数据库_TSDB_Selection
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_三平面统一_Three_plane_Unification
+    D_RISK[D-RISK] -->|config_depends| D_MKT_DATA_Survivorship_Bias零容___vorship_Bias_Zero_Tolerance
+    D_RISK[D-RISK] -->|event| D_MKT_DATA_D_DATA_ENG
+    D_RISK[D-RISK] -->|contract| D_MKT_DATA_物化视图优化_Materialized_View_Optimization
+    D_RISK[D-RISK] -->|data| D_MKT_DATA_Real_time_Feed_Manager_实时管理器
+    %% D-SECURITY -> D-MKT_DATA (38 条)
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_LLM_API_Unified_Integration_集成
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_Normalizer_归一化器
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_Data_Source_Panorama_数据源全景
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_M8_S03
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_M8_S04
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_Research_Report_Collector_研究报告采集器
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_LLM_API_Unified_Integration_集成
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_格式校验_Schema_Validation
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_Bloomberg_PiT经济数据_Bloomberg_PiT_Economic_Data
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_AI驱动异常检测_AI_Anomaly_Detection
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_Parquet列式存储替代SQLite行式_Parquet_over_SQLite
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_Local_File_Auto_Parser_本地文件自动解析器
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_M8_NEW_05
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_记分卡加权评分_Weighted_Scorecard
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_D_CROSS_ASSET_MVP_Downgrade_D_CROSS_ASSET_MVP降级
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_iFind_补充数据源
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_tushare_新闻快讯数据源
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_LimitUp_Down_涨跌停事件
+    D_SECURITY[D-SECURITY] -->|contract| D_MKT_DATA_M8_NEW_08
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_Microsoft_Qlib_PIT数据架构_Qlib_PIT_Architecture
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_PIT一致性_Point_in_Time_Consistency
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_M8_S05
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_Web_Data_Crawler_网络数据爬虫
+    D_SECURITY[D-SECURITY] -->|config_depends| D_MKT_DATA_miniQMT+iFind双源互补_Dual_source_Complementary
+    D_SECURITY[D-SECURITY] -->|config_depends| D_MKT_DATA_三平面统一_Three_plane_Unification
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_DuckDB替代ClickHouse作为温层_DuckDB_over_ClickHouse
+    D_SECURITY[D-SECURITY] -->|data| D_MKT_DATA_批量路径90分钟时间预算_Batch_90min_Budget
+    D_SECURITY[D-SECURITY] -->|event| D_MKT_DATA_A_Share_Auction_Data_Manager_管理器
+    %% D-SELL_DECISION -> D-MKT_DATA (2 条)
+    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_MKT_DATA_Real_time_Feed_Manager_实时管理器
+    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_MKT_DATA_一致性_Consistency
+    %% D-SIGNAL -> D-MKT_DATA (37 条)
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_VolumeSurge_成交量突增事件
+    D_SIGNAL[D-SIGNAL] -->|event| D_MKT_DATA_Tiered_Storage_分层存储
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Pydantic_V2_Code_Generator_Pydantic_V2代码生成器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_Trading_Calendar_Manager_交易日历管理
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_事件溯源+CRUD混合模式_Event_Sourcing+CRUD_Hybrid
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Point_in_Time_Consistency_Point_in_Time一致性保证
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Data_Source_Management_数据源管理
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_Data_Lakehouse架构_Data_Lakehouse
+    D_SIGNAL[D-SIGNAL] -->|event| D_MKT_DATA_Sector_Factor_Data_Manager_板块因子数据管理器
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Financial_Parser_财务报告解析器
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Data_Contract规范缺失_Data_Contract_Gap
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Data_Permission_Manager_管理器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_HSTR历史状态重构_Historical_State_Reconstruction
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_加权评分而非二元通过_失败_Weighted_Scoring
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_Overseas_Market_Data_Adapter_外盘数据适配器
+    D_SIGNAL[D-SIGNAL] -->|event| D_MKT_DATA_iFind_补充数据源_盘后日线
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_Tiered_Storage_Architecture_分层存储架构
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_Microsoft_Qlib_PIT数据架构_Qlib_PIT_Architecture
+    D_SIGNAL[D-SIGNAL] -->|config_depends| D_MKT_DATA_M8_NEW_01
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_InstrumentId_工具ID
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_Text_Sentiment_Factor_Extractor_文本情感因子提取器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_L0→L6全链路规格_L0→L6_Full_chain_Spec
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Financial_Knowledge_Graph_金融知识图谱
+    D_SIGNAL[D-SIGNAL] -->|config_depends| D_MKT_DATA_Event_Store用Parquet_Event_Store_via_Parquet
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Incremental_Update_Engine_增量更新引擎
+    D_SIGNAL[D-SIGNAL] -->|event| D_MKT_DATA_Vector_DB_Switch_Manager_向量数据库切换管理器
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_SQL_AST解析器_SQL_AST_Parser
+    D_SIGNAL[D-SIGNAL] -->|config_depends| D_MKT_DATA_Overseas_Market_Data_Adapter_外盘数据适配器
+    D_SIGNAL[D-SIGNAL] -->|data| D_MKT_DATA_Financial_Knowledge_Graph_金融知识图谱
+    D_SIGNAL[D-SIGNAL] -->|contract| D_MKT_DATA_AUM驱动存储升级_AUM_driven_Storage_Upgrade
+    %% D-SIMULATION -> D-MKT_DATA (10 条)
+    D_SIMULATION[D-SIMULATION] -->|contract| D_MKT_DATA_Redis_RDB+AOF双开_Redis_RDB+AOF
+    D_SIMULATION[D-SIMULATION] -->|event| D_MKT_DATA_4元组数据映射模型_4_tuple_Data_Mapping
+    D_SIMULATION[D-SIMULATION] -->|data| D_MKT_DATA_湖流一体_Lakehouse_Streaming
+    D_SIMULATION[D-SIMULATION] -->|data| D_MKT_DATA_自适应异常检测阈值_Adaptive_Anomaly_Threshold
+    D_SIMULATION[D-SIMULATION] -->|event| D_MKT_DATA_加权评分而非二元通过_失败_Weighted_Scoring
+    D_SIMULATION[D-SIMULATION] -->|data| D_MKT_DATA_L1_Public_Data_L1公开数据
+    D_SIMULATION[D-SIMULATION] -->|contract| D_MKT_DATA_Data_Mesh+Lakehouse___esh+Lakehouse_Complementary
+    D_SIMULATION[D-SIMULATION] -->|data| D_MKT_DATA_Real_time_Feed_Manager_实时管理器
+    D_SIMULATION[D-SIMULATION] -->|event| D_MKT_DATA_M8_S04
+    D_SIMULATION[D-SIMULATION] -->|domain_dependency| D_MKT_DATA_Knowledge_Intelligence_知识与智能
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-MKT_DATA -> D-DATA_ENG (21 条)
+    D_MKT_DATA_记分卡加权评分_Weighted_Scorecard -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_DuckDB温层替代ClickHouse_DuckDB_over_ClickHouse -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Sina+Tencent_Real_Time_新浪+腾讯实时行情 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Trading_Calendar_Manager_交易日历管理 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_PIT数据时点标记_PIT_Data_Point_in_time_Marking -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_M8_S07 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_iFind为基本面主数据源_iFind_as_Fundamental_Source -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Text_Sentiment_Factor_Extractor_文本情感因子提取器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Event_Store用Parquet_Event_Store_via_Parquet -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_NormalizedMarketData_Interface_标准化市场数据接口 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Industry_Best_Practice_Benchmark_行业最佳实践对标 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_跨源对账仅覆盖收盘价和成交量_Cross_Source_Reconciliation -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Data_Source_Health_Monitor_数据源健康度监控器 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Pydantic_V2_Code_Generator_Pydantic_V2代码生成器 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_NormalizedMarketData_Interface_标准化市场数据接口 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_AkShare_AkShare数据适配器 -->|event| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_event_id用SHA_256_SHA_256_event_id -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_准确性_Accuracy -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_AS_OF_JOIN实现_AS_OF_JOIN_Implementation -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Embargo期_Embargo_Period -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_MKT_DATA_Knowledge_Intelligence_知识与智能 -->|domain_dependency| D_DATA_ENG[D-DATA_ENG]
+    %% D-MKT_DATA -> D-EX_SOR (8 条)
+    D_MKT_DATA_M8_S07 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_Money_货币 -->|data| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_Web_Data_Crawler_网络数据爬虫 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_PriceChanged_价格变更事件 -->|data| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_Vector_DB_Switch_Manager_向量数据库切换管理器 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_AuctionUpdate_集合竞价更新事件 -->|event| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_Event_Store_事件存储 -->|contract| D_EX_SOR[D-EX_SOR]
+    D_MKT_DATA_Pydantic_V2_Code_Generator_Pydantic_V2代码生成器 -->|config_depends| D_EX_SOR[D-EX_SOR]
+    %% D-MKT_DATA -> D-GOVERNANCE (2 条)
+    src_zephyr_market_data_market_data_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_market_data_market_data_pipeline_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-MKT_DATA -> D-INFRA_RUNTIME (24 条)
+    D_MKT_DATA_批量路径90分钟时间预算_Batch_90min_Budget -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_决策→风控→执行检查点_Risk_Control_Execution -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_LimitUp_Down_涨跌停事件 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_DataGapDetected_数据缺口检测事件 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Cold_冷存储层_Parquet_on_SSD -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Vector_DB_Switch_Manager_向量数据库切换管理器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Hot_热存储层_Redis -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_LLM_API_Unified_Integration_集成 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_DuckDB_AS_OF_JOIN_PIT_Query_Engine_PIT查询引擎 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_跨源对账完成检查点_Cross_Sou___ation_Completion_Checkpoint -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_快照策略_Snapshot_Strategy -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_BaoStock_历史数据补充 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_A_Share_Special_A股特色 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Data_Cost_Tracker_数据成本追踪 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Data_Anomaly_Alerter_数据异常告警器 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Parquet列式存储替代SQLite行式_Parquet_over_SQLite -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_PIT三条公理_PIT_Three_Axioms -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Policy_Event_Factor_Library_政策事件因子库 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_Market_Data_Pipeline_行情数据管道 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_格式校验_Schema_Validation -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_L4_Top_Secret_Data_L4绝密数据 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_M8_S03 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_InstrumentId_工具ID -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_MKT_DATA_事件Schema演进与版本化_Event_Schema_Evolution -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-MKT_DATA -> D-SHARED (3 条)
+    D_MKT_DATA_Unified_Data_Portal_统一数据门户 -->|contract| D_SHARED[D-SHARED]
+    D_MKT_DATA_Microsoft_Qlib_PIT数据架构_Qlib_PIT_Architecture -->|event| D_SHARED[D-SHARED]
+    D_MKT_DATA_Research_Report_Collector_研究报告采集器 -->|data| D_SHARED[D-SHARED]
+    %% D-MKT_DATA -> D-TRADING (8 条)
+    D_MKT_DATA_L0→L6全链路规格_L0→L6_Full_chain_Spec -->|data| D_TRADING[D-TRADING]
+    D_MKT_DATA_A_Share_Intraday_Data_Manager_管理器 -->|contract| D_TRADING[D-TRADING]
+    D_MKT_DATA_Data_Cost_Tracker_数据成本追踪 -->|contract| D_TRADING[D-TRADING]
+    D_MKT_DATA_AI驱动异常检测_AI_Anomaly_Detection -->|contract| D_TRADING[D-TRADING]
+    D_MKT_DATA_DuckDB性能校准_DuckDB_Performance_Calibration -->|config_depends| D_TRADING[D-TRADING]
+    D_MKT_DATA_数据源接入流程_Data_Source_Onboarding -->|data| D_TRADING[D-TRADING]
+    D_MKT_DATA_Personal_Informatio___ion_Law_Benchmark_个人信息保护法对标 -->|config_depends| D_TRADING[D-TRADING]
+    D_MKT_DATA_iFind盘后数据→Parquet检查点 -->|contract| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 258 条
+    %% 跨域入边: 474 条
+    %% 跨域出边: 66 条

@@ -10,13 +10,15 @@ ttl: permanent
 
 # 架构约束违规报告
 
+> **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。
+
 > 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:29:35
+> 最后更新: 2026-06-24 20:48:54
 > 数据源: depgraph.db arch_constraints表
 
 ## 统计概览
 
-| 指标 | 值 |
+| 指标 / Metric | 值 / Value |
 |------|-----|
 | 约束总数 | 59 |
 | Open（未解决） | 59 |
@@ -25,14 +27,14 @@ ttl: permanent
 
 ## 按严重程度分组
 
-| 严重程度 | 数量 |
+| 严重程度 / Severity | 数量 / Count |
 |---------|:---:|
 | error | 1 |
 | hard | 58 |
 
 ## 按约束类型分组
 
-| 约束类型 | 数量 |
+| 约束类型 / Constraint Type | 数量 / Count |
 |---------|:---:|
 | architecture_contract | 1 |
 | capacity_limit | 33 |
@@ -40,7 +42,7 @@ ttl: permanent
 
 ## Open 违规清单（需处理）
 
-| 约束ID | 名称 | 类型 | 源域 | 目标域 | 严重程度 | 执行方式 | 描述 |
+| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 执行方式 / Enforcement | 描述 / Description |
 |--------|------|------|------|--------|---------|---------|------|
 | CONSTRAINT_D-DATA-CAPACITY_ASSURANCE | capacity_assurance稳定性约束 | stability | D-DATA_ENG |  | hard | gate | 稳定性约束：capacity_assurance |
 | CONSTRAINT_D-DATA-KNOWLEDGE_MANAGEMENT | knowledge_management稳定性约束 | stability | D-DATA_ENG |  | hard | gate | 稳定性约束：knowledge_management |
@@ -104,7 +106,7 @@ ttl: permanent
 
 ## 完整约束清单
 
-| 约束ID | 名称 | 类型 | 源域 | 目标域 | 严重程度 | 状态 |
+| 约束ID / Constraint ID | 名称 / Name | 类型 / Type | 源域 / From Domain | 目标域 / To Domain | 严重程度 / Severity | 状态 / Status |
 |--------|------|------|------|--------|---------|------|
 | CONSTRAINT_D-DATA-CAPACITY_ASSURANCE | capacity_assurance稳定性约束 | stability | D-DATA_ENG |  | hard | open |
 | CONSTRAINT_D-DATA-KNOWLEDGE_MANAGEMENT | knowledge_management稳定性约束 | stability | D-DATA_ENG |  | hard | open |

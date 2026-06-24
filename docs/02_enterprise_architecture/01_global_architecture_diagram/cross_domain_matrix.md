@@ -10,13 +10,15 @@ ttl: permanent
 
 # 域间依赖矩阵
 
+> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。
+
 > 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:29:06
+> 最后更新: 2026-06-24 21:24:53
 > 数据源: depgraph.db edges表 + nodes表
 
 ## 统计概览
 
-| 指标 | 值 |
+| 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 53 |
 | 跨域依赖对数 | 603 |
@@ -24,7 +26,7 @@ ttl: permanent
 
 ## 跨域依赖 Top 20（按边数降序）
 
-| 源域 | 目标域 | 边数 | 依赖类型 |
+| 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |
 |------|--------|:---:|---------|
 | D-GOVERNANCE | D-OPS | 425 | import_depends,test_depends,config_depends,runtime |
 | D-GOVERNANCE | D-INTEGRATION | 326 | import_depends,test_depends,contract,data,event,config_depends |
@@ -49,7 +51,7 @@ ttl: permanent
 
 ## 完整跨域依赖清单
 
-| # | 源域 | 目标域 | 边数 | 依赖类型 |
+| # / No. | 源域 / From Domain | 目标域 / To Domain | 边数 / Edges | 依赖类型 / Dep Types |
 |:---:|------|--------|:---:|---------|
 | 1 | D-GOVERNANCE | D-OPS | 425 | import_depends,test_depends,config_depends,runtime |
 | 2 | D-GOVERNANCE | D-INTEGRATION | 326 | import_depends,test_depends,contract,data,event,config_depends |

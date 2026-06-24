@@ -1,13 +1,15 @@
 # 集成拓扑图
 
-> 自动生成时间: 2026-06-24 02:30:56
+> **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
+
+> 自动生成时间: 2026-06-24 21:39:37
 > 数据源: depgraph.db edges表（跨域依赖）
 > 跨域依赖对数: 603
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-06-24 02:30:56
+%% 生成时间: 2026-06-24 21:39:37
 %% 数据源: depgraph.db edges表（跨域依赖）
 %% 跨域依赖对数: 603
 
@@ -16,24 +18,24 @@ graph LR
     %% 功能域节点（按架构层分组）
     subgraph L0_infrastructure[L0_infrastructure]
         D_INFRA_OPS["D-INFRA_OPS<br/>基础设施运维<br/>(418模块)"]
-        D_INFRA_RUNTIME["D-INFRA_RUNTIME<br/>runtime_integration<br/>(726模块)"]
+        D_INFRA_RUNTIME["D-INFRA_RUNTIME<br/>运行时集成<br/>(726模块)"]
     end
     subgraph L1_foundation[L1_foundation]
         D_ALT_DATA["D-ALT_DATA<br/>另类数据<br/>(68模块)"]
         D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT<br/>行为审计<br/>(60模块)"]
-        D_DATA_ENG["D-DATA_ENG<br/>数据工程(增值+融合+知识)<br/>(147模块)"]
-        D_DATA_GOV["D-DATA_GOV<br/>数据治理(质量+血缘+参考)<br/>(38模块)"]
+        D_DATA_ENG["D-DATA_ENG<br/>数据工程<br/>(147模块)"]
+        D_DATA_GOV["D-DATA_GOV<br/>数据治理<br/>(38模块)"]
         D_DATA_SEC["D-DATA_SEC<br/>数据安全与契约<br/>(30模块)"]
-        D_MKT_DATA["D-MKT_DATA<br/>行情数据(接入+存储)<br/>(266模块)"]
+        D_MKT_DATA["D-MKT_DATA<br/>行情数据<br/>(266模块)"]
     end
     subgraph L1_platform[L1_platform]
         D_AUTONOMY_CORE["D-AUTONOMY_CORE<br/>自治核心<br/>(650模块)"]
         D_FRONTEND["D-FRONTEND<br/>前端<br/>(237模块)"]
-        D_INTEGRATION["D-INTEGRATION<br/>pipeline_routing<br/>(706模块)"]
-        D_OPS["D-OPS<br/>feedback-loop<br/>(697模块)"]
+        D_INTEGRATION["D-INTEGRATION<br/>管线路由<br/>(706模块)"]
+        D_OPS["D-OPS<br/>反馈循环<br/>(697模块)"]
         D_REPORTING["D-REPORTING<br/>报告<br/>(132模块)"]
-        D_SECURITY["D-SECURITY<br/>adversarial_validation<br/>(849模块)"]
-        D_SHARED["D-SHARED<br/>shared_services<br/>(290模块)"]
+        D_SECURITY["D-SECURITY<br/>对抗验证<br/>(849模块)"]
+        D_SHARED["D-SHARED<br/>共享服务<br/>(290模块)"]
     end
     subgraph L2_domain[L2_domain]
         D_AUTONOMY_PERM["D-AUTONOMY_PERM<br/>自治保护<br/>(270模块)"]
@@ -45,12 +47,12 @@ graph LR
         D_EX_CORE["D-EX_CORE<br/>执行核心<br/>(135模块)"]
         D_EX_SOR["D-EX_SOR<br/>执行路由<br/>(131模块)"]
         D_FACTOR["D-FACTOR<br/>因子<br/>(320模块)"]
-        D_GOVERNANCE["D-GOVERNANCE<br/>lifecycle_management<br/>(3904模块)"]
-        D_GOV_AUDIT["D-GOV_AUDIT<br/>audit-trail<br/>(268模块)"]
-        D_GOV_DRIFT["D-GOV_DRIFT<br/>drift_detection<br/>(38模块)"]
+        D_GOVERNANCE["D-GOVERNANCE<br/>生命周期管理<br/>(3904模块)"]
+        D_GOV_AUDIT["D-GOV_AUDIT<br/>审计追踪<br/>(268模块)"]
+        D_GOV_DRIFT["D-GOV_DRIFT<br/>漂移检测<br/>(38模块)"]
         D_GOV_RULE["D-GOV_RULE<br/>规则治理<br/>(178模块)"]
-        D_INTELLIGENCE["D-INTELLIGENCE<br/>context_management<br/>(273模块)"]
-        D_KNOWLEDGE["D-KNOWLEDGE<br/>knowledge_management<br/>(194模块)"]
+        D_INTELLIGENCE["D-INTELLIGENCE<br/>上下文管理<br/>(273模块)"]
+        D_KNOWLEDGE["D-KNOWLEDGE<br/>知识管理<br/>(194模块)"]
         D_ML_SERVE["D-ML_SERVE<br/>推理<br/>(69模块)"]
         D_ML_TRAIN["D-ML_TRAIN<br/>训练<br/>(119模块)"]
         D_PF_ALLOC["D-PF_ALLOC<br/>组合分配<br/>(114模块)"]

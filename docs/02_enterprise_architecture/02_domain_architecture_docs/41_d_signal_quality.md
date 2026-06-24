@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 41_d_signal_quality 域文档
+# 41_d_signal_quality / 信号质量
+
+> **文档作用 / Purpose**: 展示 信号质量（D-SIGNAL_QUALITY）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:09
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -34,32 +36,32 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 18 个模块（按路径排序，最多显示前 200 个）
+共 18 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| src/zephyr/signal_quality/ | 信号质量 | design | design_only | src/zephyr/signal_quality/ | 信号质量 | design | design_only |
-| src/zephyr/signal_quality/__init__.py |  | prototype | orphan | src/zephyr/signal_quality/__init__.py |  | prototype | orphan |
-| src/zephyr/signal_quality/_extensions/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_quality/_extensions/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_quality/api/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_quality/api/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_quality/core/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_quality/core/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_quality/infrastructure/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_quality/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_quality/models/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_quality/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/signal_quality/services/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/signal_quality/services/__init__.py |  | scaffold_placeholder | orphan |
-| 信号域-信号处理/D-SIGNAL-69 | Signal Normalizer | design | design_only | 信号域-信号处理/D-SIGNAL-69 | Signal Normalizer | design | design_only |
-| 信号域-信号处理/D-SIGNAL-71 | Signal TTL Timeout Manager | design | design_only | 信号域-信号处理/D-SIGNAL-71 | Signal TTL Timeout Manager | design | design_only |
-| 信号域-冲突融合/D-SIGNAL-130 | 信号去重模块 | design | design_only | 信号域-冲突融合/D-SIGNAL-130 | 信号去重模块 | design | design_only |
-| 信号域-冲突融合/D-SIGNAL-132 | 信号冲突解决 | design | design_only | 信号域-冲突融合/D-SIGNAL-132 | 信号冲突解决 | design | design_only |
-| 信号域-合成分配/D-SIGNAL-92 | Signal Revocation Executor | design | design_only | 信号域-合成分配/D-SIGNAL-92 | Signal Revocation Executor | design | design_only |
-| 信号域-技术指标/D-SIGNAL-118 | 实时模式检测与信号质量评估器 | design | design_only | 信号域-技术指标/D-SIGNAL-118 | 实时模式检测与信号质量评估器 | design | design_only |
-| 信号域-策略运行时/D-SIGNAL-156 | 信号质量退化监控 | design | design_only | 信号域-策略运行时/D-SIGNAL-156 | 信号质量退化监控 | design | design_only |
-| 信号域-质量降级/D-SIGNAL-77 | Factor Coverage Rate Calculator | design | design_only | 信号域-质量降级/D-SIGNAL-77 | Factor Coverage Rate Calculator | design | design_only |
-| 信号域-质量降级/D-SIGNAL-81 | Empty Signal NEUTRAL Strategy Manager | design | design_only | 信号域-质量降级/D-SIGNAL-81 | Empty Signal NEUTRAL Strategy Manager | design | design_only |
-| 信号域-质量降级/D-SIGNAL-83 | Signal Expired Unconsumed Detector | design | design_only | 信号域-质量降级/D-SIGNAL-83 | Signal Expired Unconsumed Detector | design | design_only |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/signal_quality/ | 信号质量 | design | design_only |
+| src/zephyr/signal_quality/__init__.py |  | prototype | orphan |
+| src/zephyr/signal_quality/_extensions/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_quality/api/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_quality/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_quality/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_quality/models/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/signal_quality/services/__init__.py |  | scaffold_placeholder | orphan |
+| 信号域-信号处理/D-SIGNAL-69 | Signal Normalizer | design | design_only |
+| 信号域-信号处理/D-SIGNAL-71 | Signal TTL Timeout Manager | design | design_only |
+| 信号域-冲突融合/D-SIGNAL-130 | 信号去重模块 | design | design_only |
+| 信号域-冲突融合/D-SIGNAL-132 | 信号冲突解决 | design | design_only |
+| 信号域-合成分配/D-SIGNAL-92 | Signal Revocation Executor | design | design_only |
+| 信号域-技术指标/D-SIGNAL-118 | 实时模式检测与信号质量评估器 | design | design_only |
+| 信号域-策略运行时/D-SIGNAL-156 | 信号质量退化监控 | design | design_only |
+| 信号域-质量降级/D-SIGNAL-77 | Factor Coverage Rate Calculator | design | design_only |
+| 信号域-质量降级/D-SIGNAL-81 | Empty Signal NEUTRAL Strategy Manager | design | design_only |
+| 信号域-质量降级/D-SIGNAL-83 | Signal Expired Unconsumed Detector | design | design_only |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）

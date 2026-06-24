@@ -34,6 +34,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md")
 
@@ -80,16 +82,18 @@ def generate_domain_index() -> str:
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append('doc_type: domain_index')
-    lines.append('title: 域总览索引')
+    lines.append("doc_type: domain_index")
+    lines.append("title: 域总览索引")
     lines.append('version: "1.0"')
-    lines.append('status: active')
-    lines.append(f'date: {now.split()[0]}')
-    lines.append('owner: auto-generator')
-    lines.append('ttl: permanent')
+    lines.append("status: active")
+    lines.append(f"date: {now.split()[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 域总览索引")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。")
     lines.append("")
     lines.append("> 本文档由 generate_domain_index.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -105,7 +109,7 @@ def generate_domain_index() -> str:
 
     lines.append("## 统计概览")
     lines.append("")
-    lines.append("| 指标 | 值 |")
+    lines.append("| 指标 / Metric | 值 / Value |")
     lines.append("|------|-----|")
     lines.append(f"| 域总数 | {total_domains} |")
     lines.append(f"| 模块总数 | {total_nodes} |")
@@ -127,7 +131,7 @@ def generate_domain_index() -> str:
         layer_domains = layers[layer]
         lines.append(f"### {layer} ({len(layer_domains)} 个域)")
         lines.append("")
-        lines.append("| 域ID | 域名称 | 模块数 | 生产态 | 设计态 | 原型态 | 容量 | 文档 |")
+        lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |")
         lines.append("|------|--------|:---:|:---:|:---:|:---:|------|------|")
         for d in layer_domains:
             capacity = f"{d['actual_nodes']}/{d['max_modules']}"
@@ -135,7 +139,7 @@ def generate_domain_index() -> str:
             safe_name = d["domain_id"].replace("-", "_").lower()
             doc_link = f"[{safe_name}.md](domains/{safe_name}.md)"
             lines.append(
-                f"| {d['domain_id']} | {d['domain_name']} | {d['actual_nodes']} | "
+                f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['actual_nodes']} | "
                 f"{d['production_count']} | {d['design_count']} | {d['prototype_count']} | "
                 f"{capacity} ({capacity_status}) | {doc_link} |"
             )

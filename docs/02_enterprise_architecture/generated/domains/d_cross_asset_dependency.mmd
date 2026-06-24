@@ -1,0 +1,326 @@
+%% D-CROSS_ASSET 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:12
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 79, 依赖边数: 198
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_CROSS_ASSET[跨资产]
+        D_CROSS_ASSET_AShareCrossMarketRiskMatrix_A股跨市场风险矩阵["...AShareCrossMarketRiskMatrix A股跨市场风险矩阵 [design]"]
+        D_CROSS_ASSET_AShareQMTMultiMarketAdapter_A股QMT多市场适配器["...hareQMTMultiMarketAdapter A股QMT多市场适配器 [design]"]
+        D_CROSS_ASSET_AutoSkill自动技能发现_AutoSkill_Discovery["...T/AutoSkill自动技能发现 AutoSkill Discovery [design]"]
+        D_CROSS_ASSET_CommodityAnalyzer_大宗商品分析器["D-CROSS-ASSET/CommodityAnalyzer 大宗商品分析器 [design]"]
+        D_CROSS_ASSET_Config_Center_配置中心["D-CROSS-ASSET/Config Center 配置中心 [design]"]
+        D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器["...ET/CorrelationRegimeDetector 相关性体制检测器 [design]"]
+        D_CROSS_ASSET_CorrelationRegimeDetector_相关性状态检测器["...ET/CorrelationRegimeDetector 相关性状态检测器 [design]"]
+        D_CROSS_ASSET_CorrelationRegimeShifted_相关性体制切换["...SSET/CorrelationRegimeShifted 相关性体制切换 [design]"]
+        D_CROSS_ASSET_CorrelationRegimeSignal_相关性体制信号["...ASSET/CorrelationRegimeSignal 相关性体制信号 [design]"]
+        D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器["D-CROSS-ASSET/CreditRiskAnalyzer 信用风险分析器 [design]"]
+        D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域["...oss Asset Cross Market Domain 跨资产跨市场域 [design]"]
+        D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器["...itrage Opportunity Scanner 跨市场套利机会扫描器 [design]"]
+        D_CROSS_ASSET_CrossAssetLiquidityMonitor_跨资产流动性监控器[".../CrossAssetLiquidityMonitor 跨资产流动性监控器 [design]"]
+        D_CROSS_ASSET_CrossAssetPosition_跨资产持仓["D-CROSS-ASSET/CrossAssetPosition 跨资产持仓 [design]"]
+        D_CROSS_ASSET_CrossAssetRisk_跨资产风险["D-CROSS-ASSET/CrossAssetRisk 跨资产风险 [design]"]
+        D_CROSS_ASSET_CrossBorderRegulatoryNavigator_跨境监管导航器["...rossBorderRegulatoryNavigator 跨境监管导航器 [design]"]
+        D_CROSS_ASSET_CrossMarketArbDetector_跨市场套利检测器["...ASSET/CrossMarketArbDetector 跨市场套利检测器 [design]"]
+        D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器["...-ASSET/CrossMarketArbScanner 跨市场套利扫描器 [design]"]
+        D_CROSS_ASSET_CrossMarketPropagationDetected_跨市场传导检测["...rossMarketPropagationDetected 跨市场传导检测 [design]"]
+        D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器["...ketRegimeDelayDetector 跨市场Regime延迟检测器 [design]"]
+        D_CROSS_ASSET_CrossMarketRiskPropagator_跨市场风险传导器["...ET/CrossMarketRiskPropagator 跨市场风险传导器 [design]"]
+        D_CROSS_ASSET_CurrencyExposureChanged_货币敞口变化["...-ASSET/CurrencyExposureChanged 货币敞口变化 [design]"]
+        D_CROSS_ASSET_CurrencyHedger_货币对冲器["D-CROSS-ASSET/CurrencyHedger 货币对冲器 [design]"]
+        D_CROSS_ASSET_D_CROSS_ASSET["D-CROSS-ASSET/D-CROSS-ASSET [design]"]
+        D_CROSS_ASSET_DigitalAssetAdapter_数字资产适配器["...OSS-ASSET/DigitalAssetAdapter 数字资产适配器 [design]"]
+        D_CROSS_ASSET_FixedIncomeAnalyzer_固收分析器["D-CROSS-ASSET/FixedIncomeAnalyzer 固收分析器 [design]"]
+        D_CROSS_ASSET_GlobalMacroScenarioGenerator_全球宏观情景生成器["...lobalMacroScenarioGenerator 全球宏观情景生成器 [design]"]
+        D_CROSS_ASSET_Health_Checker_健康检查器["D-CROSS-ASSET/Health Checker 健康检查器 [design]"]
+        D_CROSS_ASSET_HedgingRebalanceRequired_对冲再平衡触发["...SSET/HedgingRebalanceRequired 对冲再平衡触发 [design]"]
+        D_CROSS_ASSET_Logger_日志器["D-CROSS-ASSET/Logger 日志器 [design]"]
+        D_CROSS_ASSET_Metrics_Collector_指标采集器["D-CROSS-ASSET/Metrics Collector 指标采集器 [design]"]
+        D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎["...MicrostructureAnalysisEngine 微观结构分析引擎 [design]"]
+        D_CROSS_ASSET_Multi_Market_Data_Router_多市场数据路由["...SSET/Multi-Market Data Router 多市场数据路由 [design]"]
+        D_CROSS_ASSET_MultiMarketDataRouter_多市场数据路由器["...-ASSET/MultiMarketDataRouter 多市场数据路由器 [design]"]
+        D_CROSS_ASSET_OptionsPricingGreeks_期权定价与Greeks["...SSET/OptionsPricingGreeks 期权定价与Greeks [design]"]
+        D_CROSS_ASSET_RealEstateAnalyzer_房地产分析器["D-CROSS-ASSET/RealEstateAnalyzer 房地产分析器 [design]"]
+        D_CROSS_ASSET_Retry_&_Circuit_Breaker_重试与熔断器["...-ASSET/Retry & Circuit Breaker 重试与熔断器 [design]"]
+        D_CROSS_ASSET_Task_Scheduler_任务调度器["D-CROSS-ASSET/Task Scheduler 任务调度器 [design]"]
+        D_CROSS_ASSET_Tests_测试模块["D-CROSS-ASSET/Tests 测试模块 [design]"]
+        D_CROSS_ASSET_VolatilitySurfaceModeler_波动率曲面建模器["...SET/VolatilitySurfaceModeler 波动率曲面建模器 [design]"]
+        D_CROSS_ASSET_YieldCurveBuilder_收益率曲线构建器["D-CROSS-ASSET/YieldCurveBuilder 收益率曲线构建器 [design]"]
+        D_CROSS_ASSET_事件Schema版本管理_Event_Schema_Versioning[".../事件Schema版本管理 Event Schema Versioning [design]"]
+        D_CROSS_ASSET_在线EWC_Online_EWC["D-CROSS-ASSET/在线EWC Online EWC [design]"]
+        D_CROSS_ASSET_审计系统_Audit_System["D-CROSS-ASSET/审计系统 Audit System [design]"]
+        D_CROSS_ASSET_情感传导时滞建模_Sentiment_Propagation_Delay_Modeling["... Sentiment Propagation Delay Modeling [design]"]
+        D_CROSS_ASSET_时变传导延迟函数_Time_Varying_Propagation_Delay["...传导延迟函数 Time-Varying Propagation Delay [design]"]
+        D_CROSS_ASSET_期货现货传导_Futures_Spot_Propagation["...ASSET/期货现货传导 Futures Spot Propagation [design]"]
+        D_CROSS_ASSET_汇率A股传导_FX_A_Share_Propagation["...S-ASSET/汇率A股传导 FX A-Share Propagation [design]"]
+        D_CROSS_ASSET_港股A股传导_HK_A_Share_Propagation["...S-ASSET/港股A股传导 HK A-Share Propagation [design]"]
+        D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation["...S-ASSET/美股A股传导 US A-Share Propagation [design]"]
+        D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager["...ET/跨市场PIT管理器 Cross-Market PIT Manager [design]"]
+        D_CROSS_ASSET_跨市场公告NLP引擎_Cross_Market_Filing_NLP_Engine["...告NLP引擎 Cross-Market Filing NLP Engine [design]"]
+        D_CROSS_ASSET_跨市场制度知识_Cross_Market_Regime_Knowledge["...跨市场制度知识 Cross-Market Regime Knowledge [design]"]
+        D_CROSS_ASSET_跨市场多模态融合引擎_Cross___et_Multimodal_Fusion_Engine["...Cross-Market Multimodal Fusion Engine [design]"]
+        D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation["...检测 Cross-Market Sentiment Propagation [design]"]
+        D_CROSS_ASSET_跨市场情感引擎_Cross_Market_Sentiment_Engine["...跨市场情感引擎 Cross-Market Sentiment Engine [design]"]
+        D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store["...ature Store Cross-Asset Feature Store [design]"]
+        D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline["...跨资产MLOps管线 Cross-Asset MLOps Pipeline [design]"]
+        D_CROSS_ASSET_跨资产四层闭环架构_Cross_Asset_Four_Layer_Architecture["...构 Cross-Asset Four-Layer Architecture [design]"]
+        D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge["...性知识 Cross-Asset Correlation Knowledge [design]"]
+        D_CROSS_ASSET_适配器机制_Adapter_Mechanism["D-CROSS-ASSET/适配器机制 Adapter Mechanism [design]"]
+        src_zephyr_cross_asset_["src/zephyr/cross_asset/ [design]"]
+        src_zephyr_cross_asset___init___py["src/zephyr/cross_asset/__init__.py [prototype]"]
+        src_zephyr_cross_asset__extensions___init___py["...r/cross_asset/_extensions/__init__.py [scaffold_placeholder]"]
+        src_zephyr_cross_asset_allocator_["src/zephyr/cross_asset/allocator/ [design]"]
+        src_zephyr_cross_asset_api___init___py["src/zephyr/cross_asset/api/__init__.py [scaffold_placeholder]"]
+        src_zephyr_cross_asset_core___init___py["src/zephyr/cross_asset/core/__init__.py [scaffold_placeholder]"]
+        src_zephyr_cross_asset_correlation_["src/zephyr/cross_asset/correlation/ [design]"]
+        src_zephyr_cross_asset_cross_a___risk_decomposer___init___py["...oss_asset_risk_decomposer/__init__.py [prototype]"]
+        src_zephyr_cross_asset_cross_market_data_adapter___init___py["...cross_market_data_adapter/__init__.py [prototype]"]
+        src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [production]"]
+        src_zephyr_cross_asset_currenc___nd_fixed_income___init___py["...y_hedger_and_fixed_income/__init__.py [prototype]"]
+        src_zephyr_cross_asset_hedger_["src/zephyr/cross_asset/hedger/ [design]"]
+        src_zephyr_cross_asset_infrastructure___init___py["...ross_asset/infrastructure/__init__.py [scaffold_placeholder]"]
+        src_zephyr_cross_asset_models___init___py["...zephyr/cross_asset/models/__init__.py [scaffold_placeholder]"]
+        src_zephyr_cross_asset_risk_manager_py["src/zephyr/cross_asset/risk_manager.py [prototype]"]
+        src_zephyr_cross_asset_risk_manager_base_py["...phyr/cross_asset/risk_manager_base.py [prototype]"]
+        src_zephyr_cross_asset_services___init___py["...phyr/cross_asset/services/__init__.py [scaffold_placeholder]"]
+        src_zephyr_cross_asset_strategy_["src/zephyr/cross_asset/strategy/ [design]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_cross_asset_risk_manager_base_py -->|config_depends| src_zephyr_cross_asset___init___py
+    src_zephyr_cross_asset_cross_market_data_adapter___init___py -->|config_depends| src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py
+    D_CROSS_ASSET_Multi_Market_Data_Router_多市场数据路由 -->|import_depends| D_CROSS_ASSET_CurrencyHedger_货币对冲器
+    D_CROSS_ASSET_CurrencyHedger_货币对冲器 -->|import_depends| D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器 -->|import_depends| D_CROSS_ASSET_FixedIncomeAnalyzer_固收分析器
+    D_CROSS_ASSET_FixedIncomeAnalyzer_固收分析器 -->|import_depends| D_CROSS_ASSET_CrossMarketRiskPropagator_跨市场风险传导器
+    D_CROSS_ASSET_CrossMarketRiskPropagator_跨市场风险传导器 -->|import_depends| D_CROSS_ASSET_YieldCurveBuilder_收益率曲线构建器
+    D_CROSS_ASSET_YieldCurveBuilder_收益率曲线构建器 -->|import_depends| D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器
+    D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器 -->|import_depends| D_CROSS_ASSET_CommodityAnalyzer_大宗商品分析器
+    D_CROSS_ASSET_CommodityAnalyzer_大宗商品分析器 -->|import_depends| D_CROSS_ASSET_RealEstateAnalyzer_房地产分析器
+    D_CROSS_ASSET_RealEstateAnalyzer_房地产分析器 -->|import_depends| D_CROSS_ASSET_CrossMarketArbDetector_跨市场套利检测器
+    D_CROSS_ASSET_CrossMarketArbDetector_跨市场套利检测器 -->|import_depends| D_CROSS_ASSET_VolatilitySurfaceModeler_波动率曲面建模器
+    D_CROSS_ASSET_VolatilitySurfaceModeler_波动率曲面建模器 -->|import_depends| D_CROSS_ASSET_DigitalAssetAdapter_数字资产适配器
+    D_CROSS_ASSET_DigitalAssetAdapter_数字资产适配器 -->|import_depends| D_CROSS_ASSET_CrossAssetLiquidityMonitor_跨资产流动性监控器
+    D_CROSS_ASSET_CrossAssetLiquidityMonitor_跨资产流动性监控器 -->|import_depends| D_CROSS_ASSET_GlobalMacroScenarioGenerator_全球宏观情景生成器
+    D_CROSS_ASSET_GlobalMacroScenarioGenerator_全球宏观情景生成器 -->|import_depends| D_CROSS_ASSET_CrossBorderRegulatoryNavigator_跨境监管导航器
+    D_CROSS_ASSET_CrossBorderRegulatoryNavigator_跨境监管导航器 -->|import_depends| D_CROSS_ASSET_OptionsPricingGreeks_期权定价与Greeks
+    D_CROSS_ASSET_OptionsPricingGreeks_期权定价与Greeks -->|import_depends| D_CROSS_ASSET_AShareCrossMarketRiskMatrix_A股跨市场风险矩阵
+    D_CROSS_ASSET_AShareCrossMarketRiskMatrix_A股跨市场风险矩阵 -->|import_depends| D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器
+    D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器 -->|import_depends| D_CROSS_ASSET_AShareQMTMultiMarketAdapter_A股QMT多市场适配器
+    D_CROSS_ASSET_AShareQMTMultiMarketAdapter_A股QMT多市场适配器 -->|import_depends| D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎
+    D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎 -->|import_depends| D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器
+    D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器 -->|import_depends| D_CROSS_ASSET_Tests_测试模块
+    D_CROSS_ASSET_Tests_测试模块 -->|import_depends| D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器
+    D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器 -->|import_depends| D_CROSS_ASSET_CorrelationRegimeDetector_相关性状态检测器
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性状态检测器 -->|import_depends| D_CROSS_ASSET_适配器机制_Adapter_Mechanism
+    D_CROSS_ASSET_适配器机制_Adapter_Mechanism -->|import_depends| D_CROSS_ASSET_港股A股传导_HK_A_Share_Propagation
+    D_CROSS_ASSET_港股A股传导_HK_A_Share_Propagation -->|import_depends| D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation
+    D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation -->|import_depends| D_CROSS_ASSET_期货现货传导_Futures_Spot_Propagation
+    D_CROSS_ASSET_期货现货传导_Futures_Spot_Propagation -->|import_depends| D_CROSS_ASSET_汇率A股传导_FX_A_Share_Propagation
+    D_CROSS_ASSET_汇率A股传导_FX_A_Share_Propagation -->|import_depends| D_CROSS_ASSET_时变传导延迟函数_Time_Varying_Propagation_Delay
+    D_CROSS_ASSET_时变传导延迟函数_Time_Varying_Propagation_Delay -->|import_depends| D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store
+    D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store -->|import_depends| D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline
+    D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline -->|import_depends| D_CROSS_ASSET_跨资产四层闭环架构_Cross_Asset_Four_Layer_Architecture
+    D_CROSS_ASSET_跨资产四层闭环架构_Cross_Asset_Four_Layer_Architecture -->|import_depends| D_CROSS_ASSET_事件Schema版本管理_Event_Schema_Versioning
+    D_CROSS_ASSET_事件Schema版本管理_Event_Schema_Versioning -->|import_depends| D_CROSS_ASSET_跨市场制度知识_Cross_Market_Regime_Knowledge
+    D_CROSS_ASSET_跨市场制度知识_Cross_Market_Regime_Knowledge -->|import_depends| D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge
+    D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge -->|import_depends| D_CROSS_ASSET_在线EWC_Online_EWC
+    D_CROSS_ASSET_在线EWC_Online_EWC -->|import_depends| D_CROSS_ASSET_AutoSkill自动技能发现_AutoSkill_Discovery
+    D_CROSS_ASSET_AutoSkill自动技能发现_AutoSkill_Discovery -->|import_depends| D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager
+    D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager -->|import_depends| D_CROSS_ASSET_跨市场情感引擎_Cross_Market_Sentiment_Engine
+    D_CROSS_ASSET_跨市场情感引擎_Cross_Market_Sentiment_Engine -->|import_depends| D_CROSS_ASSET_跨市场公告NLP引擎_Cross_Market_Filing_NLP_Engine
+    D_CROSS_ASSET_跨市场公告NLP引擎_Cross_Market_Filing_NLP_Engine -->|import_depends| D_CROSS_ASSET_跨市场多模态融合引擎_Cross___et_Multimodal_Fusion_Engine
+    D_CROSS_ASSET_跨市场多模态融合引擎_Cross___et_Multimodal_Fusion_Engine -->|import_depends| D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation
+    D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation -->|import_depends| D_CROSS_ASSET_情感传导时滞建模_Sentiment_Propagation_Delay_Modeling
+    D_CROSS_ASSET_情感传导时滞建模_Sentiment_Propagation_Delay_Modeling -->|import_depends| D_CROSS_ASSET_MultiMarketDataRouter_多市场数据路由器
+    D_CROSS_ASSET_OptionsPricingGreeks_期权定价与Greeks -->|import_depends| D_CROSS_ASSET_Config_Center_配置中心
+    D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器 -->|import_depends| D_CROSS_ASSET_Health_Checker_健康检查器
+    D_CROSS_ASSET_Metrics_Collector_指标采集器 -->|import_depends| D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge
+    D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎 -->|import_depends| D_CROSS_ASSET_Logger_日志器
+    D_CROSS_ASSET_CrossBorderRegulatoryNavigator_跨境监管导航器 -->|import_depends| D_CROSS_ASSET_Retry_&_Circuit_Breaker_重试与熔断器
+    D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎 -->|import_depends| D_CROSS_ASSET_Task_Scheduler_任务调度器
+    D_CROSS_ASSET_AShareQMTMultiMarketAdapter_A股QMT多市场适配器 -->|import_depends| D_CROSS_ASSET_审计系统_Audit_System
+    D_CROSS_ASSET_GlobalMacroScenarioGenerator_全球宏观情景生成器 -->|import_depends| D_CROSS_ASSET_CrossAssetPosition_跨资产持仓
+    D_CROSS_ASSET_CurrencyExposureChanged_货币敞口变化 -->|event| D_CROSS_ASSET_MultiMarketDataRouter_多市场数据路由器
+    D_CROSS_ASSET_CorrelationRegimeShifted_相关性体制切换 -->|event| D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline
+    D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器 -->|event| D_CROSS_ASSET_CrossMarketPropagationDetected_跨市场传导检测
+    D_CROSS_ASSET_HedgingRebalanceRequired_对冲再平衡触发 -->|event| D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store
+    D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器 -->|contract| D_CROSS_ASSET_CrossAssetRisk_跨资产风险
+    D_CROSS_ASSET_CorrelationRegimeSignal_相关性体制信号 -->|contract| D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge
+    D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器 -->|import_depends| D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域
+    D_CROSS_ASSET_D_CROSS_ASSET -->|import_depends| D_CROSS_ASSET_Multi_Market_Data_Router_多市场数据路由
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器 -->|data| D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-COMPLIANCE -> D-CROSS_ASSET (14 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_CROSS_ASSET_跨市场情感引擎_Cross_Market_Sentiment_Engine
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_CROSS_ASSET_CorrelationRegimeShifted_相关性体制切换
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_CROSS_ASSET_CrossAssetPosition_跨资产持仓
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_CROSS_ASSET_Task_Scheduler_任务调度器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_CROSS_ASSET_CrossBorderRegulatoryNavigator_跨境监管导航器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_CROSS_ASSET_Tests_测试模块
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_CROSS_ASSET_跨市场多模态融合引擎_Cross___et_Multimodal_Fusion_Engine
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_CROSS_ASSET_Metrics_Collector_指标采集器
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_CROSS_ASSET_RealEstateAnalyzer_房地产分析器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_CROSS_ASSET_Health_Checker_健康检查器
+    %% D-GOVERNANCE -> D-CROSS_ASSET (2 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-CROSS_ASSET -> D-AUTONOMY_CORE (6 条)
+    D_CROSS_ASSET_DigitalAssetAdapter_数字资产适配器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_CROSS_ASSET_Logger_日志器 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_CROSS_ASSET_HedgingRebalanceRequired_对冲再平衡触发 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_CROSS_ASSET_CrossMarketArbDetector_跨市场套利检测器 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    D_CROSS_ASSET_AShareQMTMultiMarketAdapter_A股QMT多市场适配器 -->|event| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
+    %% D-CROSS_ASSET -> D-AUTONOMY_PERM (3 条)
+    D_CROSS_ASSET_CorrelationRegimeShifted_相关性体制切换 -->|data| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_CROSS_ASSET_Metrics_Collector_指标采集器 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    D_CROSS_ASSET_Logger_日志器 -->|event| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
+    %% D-CROSS_ASSET -> D-DATA_ENG (5 条)
+    D_CROSS_ASSET_Config_Center_配置中心 -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_CROSS_ASSET_Tests_测试模块 -->|data| D_DATA_ENG[D-DATA_ENG]
+    D_CROSS_ASSET_Metrics_Collector_指标采集器 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    D_CROSS_ASSET_OptionsPricingGreeks_期权定价与Greeks -->|contract| D_DATA_ENG[D-DATA_ENG]
+    D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
+    %% D-CROSS_ASSET -> D-EX_CORE (2 条)
+    D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store -->|config_depends| D_EX_CORE[D-EX_CORE]
+    D_CROSS_ASSET_时变传导延迟函数_Time_Varying_Propagation_Delay -->|contract| D_EX_CORE[D-EX_CORE]
+    %% D-CROSS_ASSET -> D-EX_SOR (3 条)
+    D_CROSS_ASSET_CurrencyExposureChanged_货币敞口变化 -->|event| D_EX_SOR[D-EX_SOR]
+    D_CROSS_ASSET_适配器机制_Adapter_Mechanism -->|data| D_EX_SOR[D-EX_SOR]
+    D_CROSS_ASSET_CrossAssetLiquidityMonitor_跨资产流动性监控器 -->|contract| D_EX_SOR[D-EX_SOR]
+    %% D-CROSS_ASSET -> D-FACTOR (4 条)
+    D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge -->|contract| D_FACTOR[D-FACTOR]
+    D_CROSS_ASSET_汇率A股传导_FX_A_Share_Propagation -->|event| D_FACTOR[D-FACTOR]
+    D_CROSS_ASSET_Metrics_Collector_指标采集器 -->|config_depends| D_FACTOR[D-FACTOR]
+    D_CROSS_ASSET_OptionsPricingGreeks_期权定价与Greeks -->|config_depends| D_FACTOR[D-FACTOR]
+    %% D-CROSS_ASSET -> D-FRONTEND (1 条)
+    D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline -->|contract| D_FRONTEND[D-FRONTEND]
+    %% D-CROSS_ASSET -> D-GOVERNANCE (6 条)
+    D_CROSS_ASSET_CurrencyExposureChanged_货币敞口变化 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_CROSS_ASSET_MultiMarketDataRouter_多市场数据路由器 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation -->|event| D_GOVERNANCE[D-GOVERNANCE]
+    D_CROSS_ASSET_Logger_日志器 -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
+    D_CROSS_ASSET_CorrelationRegimeSignal_相关性体制信号 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-CROSS_ASSET -> D-INFRA_OPS (5 条)
+    D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    D_CROSS_ASSET_Logger_日志器 -->|event| D_INFRA_OPS[D-INFRA_OPS]
+    D_CROSS_ASSET_时变传导延迟函数_Time_Varying_Propagation_Delay -->|event| D_INFRA_OPS[D-INFRA_OPS]
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器 -->|contract| D_INFRA_OPS[D-INFRA_OPS]
+    D_CROSS_ASSET_跨市场情感引擎_Cross_Market_Sentiment_Engine -->|data| D_INFRA_OPS[D-INFRA_OPS]
+    %% D-CROSS_ASSET -> D-INFRA_RUNTIME (9 条)
+    D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_D_CROSS_ASSET -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_跨资产Feature_Store_Cross_Asset_Feature_Store -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_Config_Center_配置中心 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_Config_Center_配置中心 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_情感传导时滞建模_Sentiment_Propagation_Delay_Modeling -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    D_CROSS_ASSET_汇率A股传导_FX_A_Share_Propagation -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-CROSS_ASSET -> D-INTEGRATION (9 条)
+    D_CROSS_ASSET_跨市场公告NLP引擎_Cross_Market_Filing_NLP_Engine -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_GlobalMacroScenarioGenerator_全球宏观情景生成器 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_期货现货传导_Futures_Spot_Propagation -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域 -->|contract| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器 -->|config_depends| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_跨市场公告NLP引擎_Cross_Market_Filing_NLP_Engine -->|data| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器 -->|event| D_INTEGRATION[D-INTEGRATION]
+    D_CROSS_ASSET_跨市场PIT管理器_Cross_Market_PIT_Manager -->|data| D_INTEGRATION[D-INTEGRATION]
+    %% D-CROSS_ASSET -> D-INTELLIGENCE (6 条)
+    D_CROSS_ASSET_跨市场制度知识_Cross_Market_Regime_Knowledge -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_CROSS_ASSET_CrossMarketRiskPropagator_跨市场风险传导器 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_CROSS_ASSET_情感传导时滞建模_Sentiment_Propagation_Delay_Modeling -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_CROSS_ASSET_Health_Checker_健康检查器 -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
+    D_CROSS_ASSET_CrossAssetLiquidityMonitor_跨资产流动性监控器 -->|config_depends| D_INTELLIGENCE[D-INTELLIGENCE]
+    %% D-CROSS_ASSET -> D-KNOWLEDGE (2 条)
+    D_CROSS_ASSET_事件Schema版本管理_Event_Schema_Versioning -->|event| D_KNOWLEDGE[D-KNOWLEDGE]
+    D_CROSS_ASSET_跨资产相关性知识_Cross_Asset_Correlation_Knowledge -->|config_depends| D_KNOWLEDGE[D-KNOWLEDGE]
+    %% D-CROSS_ASSET -> D-MKT_DATA (5 条)
+    D_CROSS_ASSET_在线EWC_Online_EWC -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_CROSS_ASSET_AShareCrossMarketRiskMatrix_A股跨市场风险矩阵 -->|contract| D_MKT_DATA[D-MKT_DATA]
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性体制检测器 -->|data| D_MKT_DATA[D-MKT_DATA]
+    D_CROSS_ASSET_Logger_日志器 -->|config_depends| D_MKT_DATA[D-MKT_DATA]
+    D_CROSS_ASSET_AutoSkill自动技能发现_AutoSkill_Discovery -->|event| D_MKT_DATA[D-MKT_DATA]
+    %% D-CROSS_ASSET -> D-ML_SERVE (1 条)
+    D_CROSS_ASSET_审计系统_Audit_System -->|data| D_ML_SERVE[D-ML_SERVE]
+    %% D-CROSS_ASSET -> D-ML_TRAIN (2 条)
+    D_CROSS_ASSET_MultiMarketDataRouter_多市场数据路由器 -->|data| D_ML_TRAIN[D-ML_TRAIN]
+    D_CROSS_ASSET_CurrencyExposureChanged_货币敞口变化 -->|event| D_ML_TRAIN[D-ML_TRAIN]
+    %% D-CROSS_ASSET -> D-OPS (2 条)
+    D_CROSS_ASSET_Health_Checker_健康检查器 -->|data| D_OPS[D-OPS]
+    D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器 -->|event| D_OPS[D-OPS]
+    %% D-CROSS_ASSET -> D-PF_ALLOC (2 条)
+    D_CROSS_ASSET_CrossMarketPropagationDetected_跨市场传导检测 -->|data| D_PF_ALLOC[D-PF_ALLOC]
+    D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation -->|event| D_PF_ALLOC[D-PF_ALLOC]
+    %% D-CROSS_ASSET -> D-PF_CORE (4 条)
+    D_CROSS_ASSET_CrossAssetLiquidityMonitor_跨资产流动性监控器 -->|contract| D_PF_CORE[D-PF_CORE]
+    D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器 -->|event| D_PF_CORE[D-PF_CORE]
+    D_CROSS_ASSET_跨市场情感引擎_Cross_Market_Sentiment_Engine -->|data| D_PF_CORE[D-PF_CORE]
+    D_CROSS_ASSET_AShareCrossMarketRiskMatrix_A股跨市场风险矩阵 -->|event| D_PF_CORE[D-PF_CORE]
+    %% D-CROSS_ASSET -> D-REPORTING (3 条)
+    D_CROSS_ASSET_CrossMarketArbScanner_跨市场套利扫描器 -->|contract| D_REPORTING[D-REPORTING]
+    D_CROSS_ASSET_CorrelationRegimeShifted_相关性体制切换 -->|event| D_REPORTING[D-REPORTING]
+    D_CROSS_ASSET_Retry_&_Circuit_Breaker_重试与熔断器 -->|event| D_REPORTING[D-REPORTING]
+    %% D-CROSS_ASSET -> D-RISK (13 条)
+    D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器 -->|contract| D_RISK[D-RISK]
+    D_CROSS_ASSET_CrossAssetRisk_跨资产风险 -->|contract| D_RISK[D-RISK]
+    D_CROSS_ASSET_审计系统_Audit_System -->|contract| D_RISK[D-RISK]
+    D_CROSS_ASSET_Multi_Market_Data_Router_多市场数据路由 -->|contract| D_RISK[D-RISK]
+    D_CROSS_ASSET_时变传导延迟函数_Time_Varying_Propagation_Delay -->|event| D_RISK[D-RISK]
+    D_CROSS_ASSET_AutoSkill自动技能发现_AutoSkill_Discovery -->|event| D_RISK[D-RISK]
+    D_CROSS_ASSET_FixedIncomeAnalyzer_固收分析器 -->|contract| D_RISK[D-RISK]
+    D_CROSS_ASSET_DigitalAssetAdapter_数字资产适配器 -->|data| D_RISK[D-RISK]
+    D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation -->|contract| D_RISK[D-RISK]
+    D_CROSS_ASSET_Tests_测试模块 -->|event| D_RISK[D-RISK]
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性状态检测器 -->|config_depends| D_RISK[D-RISK]
+    D_CROSS_ASSET_汇率A股传导_FX_A_Share_Propagation -->|config_depends| D_RISK[D-RISK]
+    D_CROSS_ASSET_CrossMarketRegimeDelayDetector_跨市场Regime延迟检测器 -->|config_depends| D_RISK[D-RISK]
+    %% D-CROSS_ASSET -> D-SECURITY (7 条)
+    D_CROSS_ASSET_RealEstateAnalyzer_房地产分析器 -->|event| D_SECURITY[D-SECURITY]
+    D_CROSS_ASSET_MicrostructureAnalysisEngine_微观结构分析引擎 -->|contract| D_SECURITY[D-SECURITY]
+    D_CROSS_ASSET_GlobalMacroScenarioGenerator_全球宏观情景生成器 -->|event| D_SECURITY[D-SECURITY]
+    D_CROSS_ASSET_Metrics_Collector_指标采集器 -->|data| D_SECURITY[D-SECURITY]
+    D_CROSS_ASSET_FixedIncomeAnalyzer_固收分析器 -->|contract| D_SECURITY[D-SECURITY]
+    D_CROSS_ASSET_跨市场情感传导检测_Cross_Market_Sentiment_Propagation -->|contract| D_SECURITY[D-SECURITY]
+    D_CROSS_ASSET_跨市场制度知识_Cross_Market_Regime_Knowledge -->|event| D_SECURITY[D-SECURITY]
+    %% D-CROSS_ASSET -> D-SHARED (1 条)
+    src_zephyr_cross_asset_cross_m___r_ml_experiment_pipeline_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-CROSS_ASSET -> D-SIGNAL (10 条)
+    D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_跨资产MLOps管线_Cross_Asset_MLOps_Pipeline -->|event| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_跨资产四层闭环架构_Cross_Asset_Four_Layer_Architecture -->|data| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_美股A股传导_US_A_Share_Propagation -->|event| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_Cross_Market_Arb___ortunity_Scanner_跨市场套利机会扫描器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_CorrelationRegimeDetector_相关性状态检测器 -->|contract| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_审计系统_Audit_System -->|contract| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器 -->|event| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_Cross_Asset_Cross_Market_Domain_跨资产跨市场域 -->|config_depends| D_SIGNAL[D-SIGNAL]
+    D_CROSS_ASSET_D_CROSS_ASSET -->|domain_dependency| D_SIGNAL[D-SIGNAL]
+    %% D-CROSS_ASSET -> D-SIMULATION (3 条)
+    D_CROSS_ASSET_事件Schema版本管理_Event_Schema_Versioning -->|contract| D_SIMULATION[D-SIMULATION]
+    D_CROSS_ASSET_港股A股传导_HK_A_Share_Propagation -->|contract| D_SIMULATION[D-SIMULATION]
+    D_CROSS_ASSET_CreditRiskAnalyzer_信用风险分析器 -->|data| D_SIMULATION[D-SIMULATION]
+    %% D-CROSS_ASSET -> D-TRADING (5 条)
+    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_cross_asset_risk_manager_py -->|import_depends| D_TRADING[D-TRADING]
+    src_zephyr_cross_asset_ -->|contract| D_TRADING[D-TRADING]
+
+    %% 统计
+    %% 域内依赖: 63 条
+    %% 跨域入边: 16 条
+    %% 跨域出边: 119 条

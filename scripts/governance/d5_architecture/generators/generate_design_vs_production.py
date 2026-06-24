@@ -34,6 +34,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_PATH = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance_reports/design_vs_production.md")
 
@@ -89,16 +91,18 @@ def generate_design_vs_production() -> str:
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append('doc_type: design_vs_production_report')
-    lines.append('title: 设计态vs运营态统计报告')
+    lines.append("doc_type: design_vs_production_report")
+    lines.append("title: 设计态vs运营态统计报告")
     lines.append('version: "1.0"')
-    lines.append('status: active')
-    lines.append(f'date: {now.split()[0]}')
-    lines.append('owner: auto-generator')
-    lines.append('ttl: permanent')
+    lines.append("status: active")
+    lines.append(f"date: {now.split()[0]}")
+    lines.append("owner: auto-generator")
+    lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
     lines.append("# 设计态vs运营态统计报告")
+    lines.append("")
+    lines.append("> **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。")
     lines.append("")
     lines.append("> 本文档由 generate_design_vs_production.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -114,20 +118,22 @@ def generate_design_vs_production() -> str:
 
     lines.append("## 全局统计")
     lines.append("")
-    lines.append("| 设计成熟度 | 模块数 | 占比 |")
+    lines.append("| 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |")
     lines.append("|-----------|:---:|:---:|")
     if total_nodes > 0:
-        lines.append(f"| production（生产态） | {total_production} | {total_production/total_nodes*100:.1f}% |")
-        lines.append(f"| design（设计态） | {total_design} | {total_design/total_nodes*100:.1f}% |")
-        lines.append(f"| prototype（原型态） | {total_prototype} | {total_prototype/total_nodes*100:.1f}% |")
-        lines.append(f"| scaffold_placeholder（脚手架） | {total_scaffold} | {total_scaffold/total_nodes*100:.1f}% |")
+        lines.append(f"| production（生产态） | {total_production} | {total_production / total_nodes * 100:.1f}% |")
+        lines.append(f"| design（设计态） | {total_design} | {total_design / total_nodes * 100:.1f}% |")
+        lines.append(f"| prototype（原型态） | {total_prototype} | {total_prototype / total_nodes * 100:.1f}% |")
+        lines.append(
+            f"| scaffold_placeholder（脚手架） | {total_scaffold} | {total_scaffold / total_nodes * 100:.1f}% |"
+        )
     lines.append(f"| **总计** | **{total_nodes}** | **100%** |")
     lines.append("")
 
     # build_status 统计
     lines.append("## 构建状态统计（build_status）")
     lines.append("")
-    lines.append("| 构建状态 | 模块数 | 占比 |")
+    lines.append("| 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |")
     lines.append("|---------|:---:|:---:|")
     for b in build_stats:
         pct = b["count"] / total_nodes * 100 if total_nodes > 0 else 0
@@ -137,12 +143,12 @@ def generate_design_vs_production() -> str:
     # 各域统计
     lines.append("## 各域设计成熟度统计")
     lines.append("")
-    lines.append("| 域ID | 域名称 | 总模块数 | 生产态 | 设计态 | 原型态 | 脚手架 | 生产化率 |")
+    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 脚手架 / Scaffold | 生产化率 / Production Rate |")
     lines.append("|------|--------|:---:|:---:|:---:|:---:|:---:|:---:|")
     for d in domain_stats:
         production_rate = f"{d['production']/d['total']*100:.1f}%" if d["total"] > 0 else "N/A"
         lines.append(
-            f"| {d['domain_id']} | {d['domain_name']} | {d['total']} | "
+            f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['total']} | "
             f"{d['production']} | {d['design']} | {d['prototype']} | {d['scaffold']} | "
             f"{production_rate} |"
         )
@@ -154,14 +160,11 @@ def generate_design_vs_production() -> str:
 
     lines.append("## 生产化率最低的域（Top 10，需优先推进）")
     lines.append("")
-    lines.append("| 域ID | 域名称 | 总模块数 | 生产态 | 生产化率 |")
+    lines.append("| 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 生产化率 / Production Rate |")
     lines.append("|------|--------|:---:|:---:|:---:|")
     for d in domains_with_nodes[:10]:
         rate = d["production"] / d["total"] * 100 if d["total"] > 0 else 0
-        lines.append(
-            f"| {d['domain_id']} | {d['domain_name']} | {d['total']} | "
-            f"{d['production']} | {rate:.1f}% |"
-        )
+        lines.append(f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} | {d['total']} | {d['production']} | {rate:.1f}% |")
     lines.append("")
 
     return "\n".join(lines)

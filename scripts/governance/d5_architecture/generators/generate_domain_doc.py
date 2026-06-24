@@ -36,6 +36,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from domain_name_mapping import get_domain_name_zh
+
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/02_domain_architecture_docs")
 
@@ -249,12 +251,7 @@ def _sanitize_mermaid_label(text: str) -> str:
     """清理 Mermaid 标签中的特殊字符（方括号/引号/管道符）。"""
     if not text:
         return ""
-    return (
-        text.replace("[", "(")
-        .replace("]", ")")
-        .replace('"', "'")
-        .replace("|", "/")
-    )
+    return text.replace("[", "(").replace("]", ")").replace('"', "'").replace("|", "/")
 
 
 def _sanitize_subgraph_label(text: str) -> str:
@@ -270,18 +267,16 @@ def generate_internal_mermaid(
     outgoing: list[dict],
     incoming: list[dict],
 ) -> str:
-    """生成内嵌 Mermaid 依赖图代码。
+    """生成内嵌 Mermaid 依赖图代码（单页，节点子集由调用方传入）。
 
     - graph TD 格式
     - subgraph 包裹本域模块
     - 实线箭头 --> = 运营态依赖（from和to都是production）
     - 虚线箭头 -.-> = 设计态依赖（任一方非production）
     - 跨域入边和出边用 external 节点表示
-    - 最多显示前30个节点
+    - nodes 参数即当前页的节点子集，由调用方分页传入
     """
-    MAX_NODES = 30
-    displayed_nodes = nodes[:MAX_NODES]
-    displayed_node_ids = {n["node_id"] for n in displayed_nodes}
+    displayed_node_ids = {n["node_id"] for n in nodes}
 
     lines = ["graph TD"]
 
@@ -294,7 +289,7 @@ def generate_internal_mermaid(
     node_id_map: dict[int, str] = {}
     path_to_mermaid: dict[str, str] = {}
     used_ids: set[str] = set()
-    for n in displayed_nodes:
+    for n in nodes:
         mermaid_id = sanitize_node_id(n["path"] or n["node_name"] or f"node{n['node_id']}")
         base_id = mermaid_id
         counter = 1
@@ -373,12 +368,14 @@ def generate_internal_mermaid(
     lines.append("    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000")
     lines.append("    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5")
     lines.append("    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000")
-    lines.append("    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5")
+    lines.append(
+        "    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+    )
 
     # 应用样式到内部节点
     prod_nodes = []
     design_nodes = []
-    for n in displayed_nodes:
+    for n in nodes:
         mermaid_id = node_id_map[n["node_id"]]
         if n["design_maturity"] == "production":
             prod_nodes.append(mermaid_id)
@@ -433,12 +430,6 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     edges = get_domain_edges(conn, domain_id)
     outgoing_agg, incoming_agg = get_cross_domain_deps(conn, domain_id)
 
-    # 跨域边详情（用于 Mermaid 图，仅涉及显示节点）
-    displayed_node_ids = [n["node_id"] for n in nodes[:30]]
-    outgoing_edges, incoming_edges = get_cross_domain_edges_detail(
-        conn, domain_id, displayed_node_ids
-    )
-
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # 统计
@@ -453,15 +444,17 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
     lines.append("doc_type: domain_architecture_doc")
-    lines.append(f"title: {domain_id} {info['domain_name']}架构文档")
-    lines.append("version: \"1.0\"")
+    lines.append(f"title: {domain_id} {get_domain_name_zh(domain_id, info['domain_name'])}架构文档")
+    lines.append('version: "1.0"')
     lines.append("status: active")
     lines.append(f"date: {now.split()[0]}")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} 域文档")
+    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {get_domain_name_zh(domain_id, info['domain_name'])}")
+    lines.append("")
+    lines.append(f"> **文档作用 / Purpose**: 展示 {get_domain_name_zh(domain_id, info['domain_name'])}（{domain_id}）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。")
     lines.append("")
     lines.append("> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -475,7 +468,7 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     lines.append("|------|------|-------|-------|")
     lines.append(f"| 编号 | {number:02d} | Number | {number:02d} |")
     lines.append(f"| 域ID | {domain_id} | Domain ID | {domain_id} |")
-    lines.append(f"| 域名称 | {info['domain_name']} | Domain Name | {info['domain_name']} |")
+    lines.append(f"| 域名称 | {get_domain_name_zh(domain_id, info['domain_name'])} | Domain Name | {info['domain_name']} |")
     lines.append(f"| 层级 | {info['layer_id']} | Layer | {info['layer_id']} |")
     lines.append(f"| 模块数 | {len(nodes)} | Module Count | {len(nodes)} |")
     lines.append(f"| 域内依赖 | {len(edges)} | Internal Dependencies | {len(edges)} |")
@@ -495,29 +488,24 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     # 模块清单（中英文对照）
     lines.append("## 模块清单 / Module List")
     lines.append("")
-    lines.append(f"共 {len(nodes)} 个模块（按路径排序，最多显示前 200 个）")
+    lines.append(f"共 {len(nodes)} 个模块（按路径排序，全部显示）")
     lines.append("")
-    lines.append("| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |")
-    lines.append("|---------|---------|-----------|---------|-------------|-------------|----------|--------------|")
-
-    MAX_NODES = 200
-    for n in nodes[:MAX_NODES]:
+    lines.append(
+        "| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |"
+    )
+    lines.append("|---------|---------|-----------|---------|")
+    for n in nodes:
         path_display = n["path"] if len(n["path"]) <= 80 else "..." + n["path"][-77:]
         name_display = n["node_name"] if len(n["node_name"]) <= 40 else n["node_name"][:37] + "..."
         lines.append(
-            f"| {path_display} | {name_display} | {n['design_maturity']} | "
-            f"{n['build_status']} | {path_display} | {name_display} | "
-            f"{n['design_maturity']} | {n['build_status']} |"
+            f"| {path_display} | {name_display} | {n['design_maturity']} | {n['build_status']} |"
         )
-
-    if len(nodes) > MAX_NODES:
-        lines.append(f"\n> (仅显示前 {MAX_NODES} 个模块，共 {len(nodes)} 个)")
     lines.append("")
 
-    # 域内依赖图（内嵌 Mermaid）
+    # 域内依赖图（内嵌 Mermaid，分页显示全部节点）
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
-    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。")
+    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append("> - **实线边框 = 运营态模块**（production，已上线运行）")
@@ -526,16 +514,26 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     lines.append("> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）")
     lines.append("")
 
-    mermaid_code = generate_internal_mermaid(
-        domain_id, info["domain_name"], nodes, edges, outgoing_edges, incoming_edges
-    )
-    lines.append("```mermaid")
-    lines.append(mermaid_code)
-    lines.append("```")
-    lines.append("")
+    PAGE_SIZE = 30
+    total_pages = (len(nodes) + PAGE_SIZE - 1) // PAGE_SIZE if nodes else 1
+    for page_idx in range(total_pages):
+        start = page_idx * PAGE_SIZE
+        end = start + PAGE_SIZE
+        page_nodes = nodes[start:end]
+        page_node_ids = {n["node_id"] for n in page_nodes}
+        # 跨域边详情（仅涉及当前页节点）
+        page_outgoing, page_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in page_nodes])
 
-    if len(nodes) > 30:
-        lines.append(f"> (依赖图最多显示前 30 个节点，共 {len(nodes)} 个)")
+        if total_pages > 1:
+            lines.append(f"### 第 {page_idx + 1} 页 / 共 {total_pages} 页 / Page {page_idx + 1} of {total_pages}")
+            lines.append("")
+
+        mermaid_code = generate_internal_mermaid(
+            domain_id, get_domain_name_zh(domain_id, info["domain_name"]), page_nodes, edges, page_outgoing, page_incoming
+        )
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
         lines.append("")
 
     # 跨域依赖（中英文对照）
@@ -546,13 +544,10 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     lines.append("### 本域依赖的其他域（出边）/ Depends On")
     lines.append("")
     if outgoing_agg:
-        lines.append("| 目标域 | 依赖数 | 依赖类型 | Target Domain | Count | Type |")
-        lines.append("|--------|:---:|---------|---------------|:---:|------|")
+        lines.append("| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |")
+        lines.append("|--------|:---:|---------|")
         for d in outgoing_agg:
-            lines.append(
-                f"| {d['target_domain']} | {d['count']} | {d['dep_types']} | "
-                f"{d['target_domain']} | {d['count']} | {d['dep_types']} |"
-            )
+            lines.append(f"| {d['target_domain']} | {d['count']} | {d['dep_types']} |")
     else:
         lines.append("无跨域出边依赖 / No cross-domain outgoing dependencies")
     lines.append("")
@@ -561,13 +556,10 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     lines.append("### 依赖本域的其他域（入边）/ Depended By")
     lines.append("")
     if incoming_agg:
-        lines.append("| 源域 | 依赖数 | 依赖类型 | Source Domain | Count | Type |")
-        lines.append("|------|:---:|---------|---------------|:---:|------|")
+        lines.append("| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |")
+        lines.append("|------|:---:|---------|")
         for d in incoming_agg:
-            lines.append(
-                f"| {d['source_domain']} | {d['count']} | {d['dep_types']} | "
-                f"{d['source_domain']} | {d['count']} | {d['dep_types']} |"
-            )
+            lines.append(f"| {d['source_domain']} | {d['count']} | {d['dep_types']} |")
     else:
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")
@@ -588,7 +580,10 @@ def main() -> None:
     """入口：生成指定域的 MD 文档。"""
     parser = argparse.ArgumentParser(description="G2: 生成域架构文档(含内嵌Mermaid依赖图)")
     parser.add_argument(
-        "domain_id", type=str, nargs="?", default=None,
+        "domain_id",
+        type=str,
+        nargs="?",
+        default=None,
         help="域ID (如 D-TRADING)。--all 模式下可省略",
     )
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")

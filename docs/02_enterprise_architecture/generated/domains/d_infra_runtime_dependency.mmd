@@ -1,0 +1,812 @@
+%% D-INFRA_RUNTIME 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:13
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 727, 依赖边数: 1562
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_INFRA_RUNTIME[运行时集成]
+        D_INFRA_RUNTIME_A_Share_Diffus___ata_Augmentation_A股扩散模型数据增强["...on Model Data Augmentation A股扩散模型数据增强 [design]"]
+        D_INFRA_RUNTIME_AB_Test_Dependency_Mapper_AB测试依赖映射器["...E/AB Test Dependency Mapper AB测试依赖映射器 [design]"]
+        D_INFRA_RUNTIME_API_Documentation_Synchronizer_API文档同步器["...I Documentation Synchronizer API文档同步器 [design]"]
+        D_INFRA_RUNTIME_API_Version_Co___ibility_Detector_API版本兼容检测器["...ion Compatibility Detector API版本兼容检测器 [design]"]
+        D_INFRA_RUNTIME_API_Version_Manager_API版本管理器["...-RUNTIME/API Version Manager API版本管理器 [design]"]
+        D_INFRA_RUNTIME_Alert_Escalation_Strategy_Engine_告警升级策略引擎["...t Escalation Strategy Engine 告警升级策略引擎 [design]"]
+        D_INFRA_RUNTIME_Alert_Silence_Manager_告警静默管理器["...RUNTIME/Alert Silence Manager 告警静默管理器 [design]"]
+        D_INFRA_RUNTIME_Alternative_Data_Source_Expansion_另类数据源扩展["...rnative Data Source Expansion 另类数据源扩展 [design]"]
+        D_INFRA_RUNTIME_App_包装器["D-INFRA-RUNTIME/App 包装器 [design]"]
+        D_INFRA_RUNTIME_Application_State_Snapshotter_应用状态快照器["...Application State Snapshotter 应用状态快照器 [design]"]
+        D_INFRA_RUNTIME_Architecture_Compliance_Checker_架构合规检查器["...chitecture Compliance Checker 架构合规检查器 [design]"]
+        D_INFRA_RUNTIME_Architecture_Evolution_Planner_架构演进规划器["...rchitecture Evolution Planner 架构演进规划器 [design]"]
+        D_INFRA_RUNTIME_Architecture_Recommendation_Engine_架构推荐引擎["...itecture Recommendation Engine 架构推荐引擎 [design]"]
+        D_INFRA_RUNTIME_Automated_Code_Reviewer_自动代码审查器["...NTIME/Automated Code Reviewer 自动代码审查器 [design]"]
+        D_INFRA_RUNTIME_Bandwidth_Optimizer_带宽优化["D-INFRA-RUNTIME/Bandwidth Optimizer 带宽优化 [design]"]
+        D_INFRA_RUNTIME_Base_基础["D-INFRA-RUNTIME/Base 基础 [design]"]
+        D_INFRA_RUNTIME_Batch_Data_Processor_批量数据处理器["...-RUNTIME/Batch Data Processor 批量数据处理器 [design]"]
+        D_INFRA_RUNTIME_Blue_Green_Dependency_Mapper_蓝绿依赖映射器[".../Blue-Green Dependency Mapper 蓝绿依赖映射器 [design]"]
+        D_INFRA_RUNTIME_Blueprint_Code_Sync_蓝图代码同步["...RA-RUNTIME/Blueprint Code Sync 蓝图代码同步 [design]"]
+        D_INFRA_RUNTIME_CPU_Core_Allocation_Manager_CPU核心分配管理器["...PU Core Allocation Manager CPU核心分配管理器 [design]"]
+        D_INFRA_RUNTIME_Cache_Data_Preloader_缓存数据预加载器["...RUNTIME/Cache Data Preloader 缓存数据预加载器 [design]"]
+        D_INFRA_RUNTIME_Cache_Warmup_Manager_缓存预热管理器["...-RUNTIME/Cache Warmup Manager 缓存预热管理器 [design]"]
+        D_INFRA_RUNTIME_Canary_Dependency_Mapper_金丝雀依赖映射器["...IME/Canary Dependency Mapper 金丝雀依赖映射器 [design]"]
+        D_INFRA_RUNTIME_Capacity_Alert_容量告警["D-INFRA-RUNTIME/Capacity Alert 容量告警 [design]"]
+        D_INFRA_RUNTIME_CapacityThresholdBreached_容量阈值突破事件["...ME/CapacityThresholdBreached 容量阈值突破事件 [design]"]
+        D_INFRA_RUNTIME_Causal_ML_深度补充_因果ML深度补充["D-INFRA-RUNTIME/Causal ML 深度补充 因果ML深度补充 [design]"]
+        D_INFRA_RUNTIME_ChromaDB_Vector_Database_ChromaDB向量数据库["...hromaDB Vector Database ChromaDB向量数据库 [design]"]
+        D_INFRA_RUNTIME_Circular_Dependency_Detector_循环依赖检测器[".../Circular Dependency Detector 循环依赖检测器 [design]"]
+        D_INFRA_RUNTIME_ClickHouse_Database_ClickHouse数据库["...IME/ClickHouse Database ClickHouse数据库 [design]"]
+        D_INFRA_RUNTIME_Clock_Sync_Service_时钟同步服务["...FRA-RUNTIME/Clock Sync Service 时钟同步服务 [design]"]
+        D_INFRA_RUNTIME_Code_Change_Impact_Analyzer_代码变更影响分析器["...Code Change Impact Analyzer 代码变更影响分析器 [design]"]
+        D_INFRA_RUNTIME_Code_Complexity_Analyzer_代码复杂度分析器["...IME/Code Complexity Analyzer 代码复杂度分析器 [design]"]
+        D_INFRA_RUNTIME_Code_Duplication_Detector_代码重复检测器["...IME/Code Duplication Detector 代码重复检测器 [design]"]
+        D_INFRA_RUNTIME_Code_Security_Static_Analyzer_代码安全静态分析器["...de Security Static Analyzer 代码安全静态分析器 [design]"]
+        D_INFRA_RUNTIME_Code_Standard_Enforcer_代码规范强制执行器["...TIME/Code Standard Enforcer 代码规范强制执行器 [design]"]
+        D_INFRA_RUNTIME_Code_Structure_Visualizer_代码结构可视化器["...ME/Code Structure Visualizer 代码结构可视化器 [design]"]
+        D_INFRA_RUNTIME_Code_Template_Engine_代码模板引擎["...A-RUNTIME/Code Template Engine 代码模板引擎 [design]"]
+        D_INFRA_RUNTIME_Cold_Start_Optimizer_冷启动优化器["...A-RUNTIME/Cold Start Optimizer 冷启动优化器 [design]"]
+        D_INFRA_RUNTIME_Cold_Storage_冷存储["D-INFRA-RUNTIME/Cold Storage 冷存储 [design]"]
+        D_INFRA_RUNTIME_Cold平面_冷平面["D-INFRA-RUNTIME/Cold平面 冷平面 [design]"]
+        D_INFRA_RUNTIME_Communication_Protocol_Adapter_通信协议适配器["...ommunication Protocol Adapter 通信协议适配器 [design]"]
+        D_INFRA_RUNTIME_ConfigManager_配置管理器["D-INFRA-RUNTIME/ConfigManager 配置管理器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Change_Notifier_配置变更通知器["...Configuration Change Notifier 配置变更通知器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Code_Generator_配置代码生成器[".../Configuration Code Generator 配置代码生成器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Dependency_Mapper_配置依赖映射器["...nfiguration Dependency Mapper 配置依赖映射器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Diff_Detector_配置差异检测器["...E/Configuration Diff Detector 配置差异检测器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Encryption_Manager_配置加密管理器["...figuration Encryption Manager 配置加密管理器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Hot_Update_Engine_配置热更新引擎["...nfiguration Hot Update Engine 配置热更新引擎 [design]"]
+        D_INFRA_RUNTIME_Configuration_Manager_配置管理器["...A-RUNTIME/Configuration Manager 配置管理器 [design]"]
+        D_INFRA_RUNTIME_Configuration_Merge_Engine_配置合并引擎["...IME/Configuration Merge Engine 配置合并引擎 [design]"]
+        D_INFRA_RUNTIME_Configuration_Validation_Engine_配置校验引擎["...onfiguration Validation Engine 配置校验引擎 [design]"]
+        D_INFRA_RUNTIME_Configuration____lback_Framework_配置版本管理与回滚框架["...ment & Rollback Framework 配置版本管理与回滚框架 [design]"]
+        D_INFRA_RUNTIME_Conformal_Prediction_共形预测["...FRA-RUNTIME/Conformal Prediction 共形预测 [design]"]
+        D_INFRA_RUNTIME_Connection_Pool_Manager_连接池管理器["...UNTIME/Connection Pool Manager 连接池管理器 [design]"]
+        D_INFRA_RUNTIME_Container_Image_Cache_Manager_容器镜像缓存管理器["...ntainer Image Cache Manager 容器镜像缓存管理器 [design]"]
+        D_INFRA_RUNTIME_Container_Orchestrator_容器编排器["...-RUNTIME/Container Orchestrator 容器编排器 [design]"]
+        D_INFRA_RUNTIME_Container_Resource_Isolator_容器资源隔离器["...E/Container Resource Isolator 容器资源隔离器 [design]"]
+        D_INFRA_RUNTIME_Continuous_Improvement_Engine_持续改进引擎[".../Continuous Improvement Engine 持续改进引擎 [design]"]
+        D_INFRA_RUNTIME_Conversation_Context_Compressor_对话上下文压缩["...nversation Context Compressor 对话上下文压缩 [design]"]
+        D_INFRA_RUNTIME_Cross_Module_Interface_Registry_跨模块接口注册中心["...s-Module Interface Registry 跨模块接口注册中心 [design]"]
+        D_INFRA_RUNTIME_Cross_Origin_R___e_Sharing_Manager_跨域资源共享管理器["...in Resource Sharing Manager 跨域资源共享管理器 [design]"]
+        D_INFRA_RUNTIME_Cross_Phase_State_Propagator_跨阶段状态传递器["...Cross-Phase State Propagator 跨阶段状态传递器 [design]"]
+        D_INFRA_RUNTIME_Cybersecurity_Shield_网络安全防护组件["...RUNTIME/Cybersecurity Shield 网络安全防护组件 [design]"]
+        D_INFRA_RUNTIME_D_INFRA["D-INFRA-RUNTIME/D-INFRA [design]"]
+        D_INFRA_RUNTIME_D_INFRA_RUNTIME["D-INFRA-RUNTIME/D-INFRA-RUNTIME [design]"]
+        D_INFRA_RUNTIME_DAO_Layer_Code_Generator_DAO层代码生成器["...ME/DAO Layer Code Generator DAO层代码生成器 [design]"]
+        D_INFRA_RUNTIME_Data_Aggregation_View_Manager_数据聚合视图管理器["...ta Aggregation View Manager 数据聚合视图管理器 [design]"]
+        D_INFRA_RUNTIME_Data_Buffer_Pool_Manager_数据缓冲池管理器["...IME/Data Buffer Pool Manager 数据缓冲池管理器 [design]"]
+        D_INFRA_RUNTIME_Data_Compression_Manager_数据压缩管理器["...TIME/Data Compression Manager 数据压缩管理器 [design]"]
+        D_INFRA_RUNTIME_Data_Format_Version_Coordinator_数据格式版本协调器["... Format Version Coordinator 数据格式版本协调器 [design]"]
+        D_INFRA_RUNTIME_Data_Migration_Script_Generator_数据迁移脚本生成器["... Migration Script Generator 数据迁移脚本生成器 [design]"]
+        D_INFRA_RUNTIME_Data_Model_Generator_数据模型生成器["...-RUNTIME/Data Model Generator 数据模型生成器 [design]"]
+        D_INFRA_RUNTIME_Data_Source_St___ynamic_Updater_数据源星级评分动态更新器["...r Rating Dynamic Updater 数据源星级评分动态更新器 [design]"]
+        D_INFRA_RUNTIME_Data_Sovereignty_Manager_数据主权管理器["...TIME/Data Sovereignty Manager 数据主权管理器 [design]"]
+        D_INFRA_RUNTIME_Data_Transfer_Validator_数据传输校验器["...NTIME/Data Transfer Validator 数据传输校验器 [design]"]
+        D_INFRA_RUNTIME_Data_Transform___ormance_Optimizer_数据转换性能优化器["...ation Performance Optimizer 数据转换性能优化器 [design]"]
+        D_INFRA_RUNTIME_Data_Transform___line_Orchestrator_数据转换管线编排器["...ation Pipeline Orchestrator 数据转换管线编排器 [design]"]
+        D_INFRA_RUNTIME_Database_Layer_数据库层["D-INFRA-RUNTIME/Database Layer 数据库层 [design]"]
+        D_INFRA_RUNTIME_Database_Schema_Synchronizer_数据库Schema同步器["...base Schema Synchronizer 数据库Schema同步器 [design]"]
+        D_INFRA_RUNTIME_DegradationTriggered_降级触发事件["...A-RUNTIME/DegradationTriggered 降级触发事件 [design]"]
+        D_INFRA_RUNTIME_Deliverable_Version_Tracker_交付物版本追踪器[".../Deliverable Version Tracker 交付物版本追踪器 [design]"]
+        D_INFRA_RUNTIME_Dependency_Conflict_Resolver_依赖冲突解决器[".../Dependency Conflict Resolver 依赖冲突解决器 [design]"]
+        D_INFRA_RUNTIME_Dependency_Gra___lization_Renderer_依赖图可视化渲染器["...raph Visualization Renderer 依赖图可视化渲染器 [design]"]
+        D_INFRA_RUNTIME_Dependency_Sec___erability_Scanner_依赖安全漏洞扫描器["...urity Vulnerability Scanner 依赖安全漏洞扫描器 [design]"]
+        D_INFRA_RUNTIME_Dependency_Upg___tibility_Checker_依赖升级兼容性检查器["...rade Compatibility Checker 依赖升级兼容性检查器 [design]"]
+        D_INFRA_RUNTIME_Dependency_Version_Lock_Manager_依赖版本锁定管理器["...ndency Version Lock Manager 依赖版本锁定管理器 [design]"]
+        D_INFRA_RUNTIME_Dependency_Visualizer_依赖可视化器["...-RUNTIME/Dependency Visualizer 依赖可视化器 [design]"]
+        D_INFRA_RUNTIME_Deployment_Topology_Manager_部署拓扑管理器["...E/Deployment Topology Manager 部署拓扑管理器 [design]"]
+        D_INFRA_RUNTIME_Development_Plan_Visualizer_开发计划可视化器[".../Development Plan Visualizer 开发计划可视化器 [design]"]
+        D_INFRA_RUNTIME_Distributed_Lock_Manager_分布式锁管理器["...TIME/Distributed Lock Manager 分布式锁管理器 [design]"]
+        D_INFRA_RUNTIME_Document_Link_Validator_文档链接验证器["...NTIME/Document Link Validator 文档链接验证器 [design]"]
+        D_INFRA_RUNTIME_Document_Search_Indexer_文档搜索索引器["...NTIME/Document Search Indexer 文档搜索索引器 [design]"]
+        D_INFRA_RUNTIME_Document_Template_Engine_文档模板引擎["...NTIME/Document Template Engine 文档模板引擎 [design]"]
+        D_INFRA_RUNTIME_Document_Version_Manager_文档版本管理器["...TIME/Document Version Manager 文档版本管理器 [design]"]
+        D_INFRA_RUNTIME_Domain_Driven_Design_Validator_领域驱动设计校验器["...ain-Driven Design Validator 领域驱动设计校验器 [design]"]
+        D_INFRA_RUNTIME_DuckDB_Database_DuckDB数据库["...FRA-RUNTIME/DuckDB Database DuckDB数据库 [design]"]
+        D_INFRA_RUNTIME_Elastic_Scaling_Manager_弹性伸缩管理器["...NTIME/Elastic Scaling Manager 弹性伸缩管理器 [design]"]
+        D_INFRA_RUNTIME_Endpoint_Response_Format_Validator_端点响应格式校验器["...t Response Format Validator 端点响应格式校验器 [design]"]
+        D_INFRA_RUNTIME_Environment_Co____Layering_Manager_环境配置分层管理器["...figuration Layering Manager 环境配置分层管理器 [design]"]
+        D_INFRA_RUNTIME_Environment_Manager_环境管理["D-INFRA-RUNTIME/Environment Manager 环境管理 [design]"]
+        %% ... 还有 627 个模块未显示
+    end
+
+    %% 域内依赖（最多显示 80 条）
+    src_zephyr_infrastructure_blueprint_search_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_gateway_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_knowledge_base_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_gate_engine_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_sentinel_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_vector_memory_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_sandbox_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_warm_hot_gate_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py -->|import_depends| src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py
+    src_zephyr_infrastructure__base_server_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ayer1_discovery___init___py
+    src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| src_zephyr_infrastructure_a2a____2_communication___init___py
+    src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py -->|import_depends| src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py
+    src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| src_zephyr_infrastructure_a2a____1_discovery_a2a_registry_py
+    src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| src_zephyr_infrastructure_a2a____covery_identity_verifier_py
+    src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py
+    src_zephyr_infrastructure_a2a____unication_message_router_py -->|import_depends| src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a_____communication_streaming_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____nication_context_package_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____nication_handoff_manager_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____munication_push_notifier_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____nication_trigger_monitor_py
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| src_zephyr_infrastructure_a2a____unication_message_router_py
+    src_zephyr_infrastructure_a2a____oordination_a2a_red_team_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_a2a_____coordination_supervisor_py -->|import_depends| src_zephyr_infrastructure_a2a_____communication_a2a_state_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_supervisor_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____on_construction_verifier_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____rdination_deadlock_guard_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____nation_livelock_detector_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_cascade_guard_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____nation_conflict_detector_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_arbitrator_py
+    src_zephyr_infrastructure_a2a____ation__core_coordination_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_semantic_diff_py
+    src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_a2a_debate_py
+    src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a_____coordination_a2a_voting_py
+    src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a____dination_a2a_negotiation_py
+    src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a____r3_coordination_a2a_saga_py
+    src_zephyr_infrastructure_a2a_____coordination__consensus_py -->|import_depends| src_zephyr_infrastructure_a2a____rdination_a2a_work_steal_py
+    src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_collusion_detector_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_blame_attribution_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____ination_a2a_causal_trace_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____a2a_behavior_fingerprint_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_knowledge_distill_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____dination_a2a_latent_comm_py
+    src_zephyr_infrastructure_a2a____ordination__intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a____ross_agent_semantic_flow_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ordination_a2a_economics_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____rdination_a2a_forgetting_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_delegation_chain_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____dination_a2a_idempotency_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_temporal_admission_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____rdination_a2a_idle_guard_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____oordination_a2a_red_team_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____oordination_a2a_security_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_anomaly_detector_py
+    src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ession_smuggling_defense_py
+    src_zephyr_infrastructure_adaptation___init___py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_classifier_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_dashboard_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_scanner_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asse___ventory_registry_adapter_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory_telemetry_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto____engine_alignment_syncer_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_asset_inventory___main___py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto___engine_dep_version_fixer_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| src_zephyr_infrastructure___init___py
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|import_depends| src_zephyr_infrastructure___init___py
+    %% ... 还有 594 条域内依赖未显示
+
+    %% 跨域依赖（入）- 最多显示 30 条
+    %% D-ALT_DATA -> D-INFRA_RUNTIME (3 条)
+    D_ALT_DATA[D-ALT_DATA] -->|contract| D_INFRA_RUNTIME_Faiss_GPU_Vector_Search_Faiss_GPU向量搜索
+    D_ALT_DATA[D-ALT_DATA] -->|event| D_INFRA_RUNTIME_数据质量监控器_Data_Quality_Monitor
+    D_ALT_DATA[D-ALT_DATA] -->|data| D_INFRA_RUNTIME_Survival_Analysis_生存分析
+    %% D-AUTONOMY_CORE -> D-INFRA_RUNTIME (31 条)
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_NSSM+自研Supervisor_进程守护层
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_交易时段核心进程不可自动重启_Core
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_Panel_Layout_Engine_面板布局引擎
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_WebSocket_Reconnection_WebSocket断线重连
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_INFRA_RUNTIME_Model_Registry___riment_Management_模型注册与实验管理
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_Module_Performance_Profiler_模块性能分析器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_Endpoint_Response_Format_Validator_端点响应格式校验器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_INFRA_RUNTIME_Container_Image_Cache_Manager_容器镜像缓存管理器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_Privacy_Preserving_Computation_隐私保护计算
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_INFRA_RUNTIME_Multi_Device_State_Coordinator_多端状态协调器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_Message_Queue_消息队列
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_Runtime_Infras___ure_Self_Checker_运行时基础设施自检器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_GPU_Resource_Monitor_GPU资源监控器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_Strategy_Portfolio_Simulator_策略组合模拟器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_Configuration_Merge_Engine_配置合并引擎
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_INFRA_RUNTIME_Redis_Manager_Redis管理器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_Parquet_Columnar_Storage_Parquet列式存储
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_Multi_Process____me_Architecture_多进程隔离与运行时架构
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_INFRA_RUNTIME_Redis_Pub_Sub_Redis发布订阅
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_Cache_Warmup_Manager_缓存预热管理器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_INFRA_RUNTIME_A_Share_Diffus___ata_Augmentation_A股扩散模型数据增强
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_INFRA_RUNTIME_Warm_Storage_温存储
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_INFRA_RUNTIME_Resource_Usage_Auditor_资源使用审计器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_INFRA_RUNTIME_GPU_Memory_Transfer_Optimizer_GPU内存传输优化器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_INFRA_RUNTIME_Code_Duplication_Detector_代码重复检测器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_INFRA_RUNTIME_Data_Format_Version_Coordinator_数据格式版本协调器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_INFRA_RUNTIME_CapacityThresholdBreached_容量阈值突破事件
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_交易时段核心进程不可自动重启_Core
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_INFRA_RUNTIME_GPU_Scheduler_GPU调度器
+    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_INFRA_RUNTIME_Plugin_System_Manager_插件系统管理器
+    %% D-AUTONOMY_PERM -> D-INFRA_RUNTIME (10 条)
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_INFRA_RUNTIME_Schedule_Conflict_Detector_时间表冲突检测器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_INFRA_RUNTIME_RTO_RPO_Specification_RTO_RPO规格
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_INFRA_RUNTIME_Dependency_Version_Lock_Manager_依赖版本锁定管理器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_INFRA_RUNTIME_FAISS_Vector_Search_FAISS向量检索
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_INFRA_RUNTIME_Distributed_Lock_Manager_分布式锁管理器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|data| D_INFRA_RUNTIME_Redis_Redis内存数据库
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_INFRA_RUNTIME_Policy_Conflict_Auto_Detector_策略冲突自动检测器
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_INFRA_RUNTIME_InfrastructureAlert_基础设施告警
+    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|config_depends| D_INFRA_RUNTIME_Dependency_Visualizer_依赖可视化器
+    %% D-COMPLIANCE -> D-INFRA_RUNTIME (62 条)
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Data_Transform___line_Orchestrator_数据转换管线编排器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_GPUOOMDetected_GPU_OOM检测事件
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Governance_Adapter_治理适配器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_ConfigManager_配置管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Document_Version_Manager_文档版本管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Qdrant_Vector_Database_Qdrant向量数据库
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Hot↔Warm必须通过IPC协议通信_Hot_Warm_IPC_Protocol
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Code_Complexity_Analyzer_代码复杂度分析器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_RUNTIME_Working_Memory_工作记忆
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_RUNTIME_Model_Registry___riment_Management_模型注册与实验管理
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Parquet_Parquet列式存储格式
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Node_Return_Type_Contractor_节点返回值类型契约器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Infrastructure___ology_Visualizer_基础设施拓扑可视化器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Resource_Scheduler_资源调度器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_SQLite_Database_SQLite数据库
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Redis读写熔断器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Data_Model_Generator_数据模型生成器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Factor_Warmup_Manager_因子预热管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Load_Balancing_Strategy_Engine_负载均衡策略引擎
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_RUNTIME_App_包装器
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_关键路径使用熔断器模式_Circuit_Breaker
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_RUNTIME_Model_Registry___riment_Management_模型注册与实验管理
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Serialization_Performance_Optimizer_序列化性能优化器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Deliverable_Version_Tracker_交付物版本追踪器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_RUNTIME_NAS_Storage_NAS存储
+    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_INFRA_RUNTIME_Workflow_Version_Management_工作流版本管理
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Configuration_Manager_配置管理器
+    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_INFRA_RUNTIME_ChromaDB_Vector_Database_ChromaDB向量数据库
+    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_INFRA_RUNTIME_Package_Dependency_Graph_Generator_包依赖图生成器
+    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_INFRA_RUNTIME_Redis_Hash_Redis哈希
+    %% D-CROSS_ASSET -> D-INFRA_RUNTIME (9 条)
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_INFRA_RUNTIME_Resource_Scheduler_资源调度器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_INFRA_RUNTIME_Data_Model_Generator_数据模型生成器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_INFRA_RUNTIME_ConfigManager_配置管理器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|event| D_INFRA_RUNTIME_Cache_Data_Preloader_缓存数据预加载器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|data| D_INFRA_RUNTIME_Module_Exception_Boundary_Manager_模块异常边界管理器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_INFRA_RUNTIME_Resource_Usage_Auditor_资源使用审计器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_INFRA_RUNTIME_Module_Feature_Toggle_Manager_模块功能开关管理器
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_INFRA_RUNTIME_Market_Microst___re_Deep_Modeling_市场微观结构深度建模
+    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_INFRA_RUNTIME_Faiss_GPU_Vector_Search_Faiss_GPU向量搜索
+    %% D-DATA_ENG -> D-INFRA_RUNTIME (20 条)
+    D_DATA_ENG[D-DATA_ENG] -->|event| D_INFRA_RUNTIME_Strategy_Execution_Plan_Optimizer_策略执行计划优化器
+    D_DATA_ENG[D-DATA_ENG] -->|data| D_INFRA_RUNTIME_SQLite_SQLite嵌入式数据库
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_GPU_Kernel_Launch_Optimizer_GPU内核启动优化器
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_Container_Orchestrator_容器编排器
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_Code_Complexity_Analyzer_代码复杂度分析器
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_Redis_In_Memory_Store_Redis内存存储
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_EventBus_事件总线
+    D_DATA_ENG[D-DATA_ENG] -->|event| D_INFRA_RUNTIME_Learning_System_Bridge_Declaration_学习系统桥接声明
+    D_DATA_ENG[D-DATA_ENG] -->|event| D_INFRA_RUNTIME_Configuration____lback_Framework_配置版本管理与回滚框架
+    D_DATA_ENG[D-DATA_ENG] -->|event| D_INFRA_RUNTIME_Hot_Storage_热存储
+    D_DATA_ENG[D-DATA_ENG] -->|event| D_INFRA_RUNTIME_Hot_Storage_热存储
+    D_DATA_ENG[D-DATA_ENG] -->|data| D_INFRA_RUNTIME_Configuration_Manager_配置管理器
+    D_DATA_ENG[D-DATA_ENG] -->|data| D_INFRA_RUNTIME_Hot↔Warm必须通过IPC协议通信_Hot_Warm_IPC_Protocol
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_交易时段核心进程不可自动重启_Core
+    D_DATA_ENG[D-DATA_ENG] -->|data| D_INFRA_RUNTIME_Load_Balancing_Strategy_Engine_负载均衡策略引擎
+    D_DATA_ENG[D-DATA_ENG] -->|event| D_INFRA_RUNTIME_Strategy_Corre___atrix_Calculator_策略相关性矩阵计算器
+    D_DATA_ENG[D-DATA_ENG] -->|contract| D_INFRA_RUNTIME_Container_Resource_Isolator_容器资源隔离器
+    D_DATA_ENG[D-DATA_ENG] -->|data| D_INFRA_RUNTIME_Hot平面_热平面
+    D_DATA_ENG[D-DATA_ENG] -->|config_depends| D_INFRA_RUNTIME_Node_Return_Type_Contractor_节点返回值类型契约器
+    D_DATA_ENG[D-DATA_ENG] -->|domain_dependency| D_INFRA_RUNTIME_D_INFRA
+    %% D-DATA_GOV -> D-INFRA_RUNTIME (2 条)
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_INFRA_RUNTIME_InfrastructureNode_基础设施节点
+    D_DATA_GOV[D-DATA_GOV] -->|event| D_INFRA_RUNTIME_Configuration_Merge_Engine_配置合并引擎
+    %% D-DATA_SEC -> D-INFRA_RUNTIME (2 条)
+    D_DATA_SEC[D-DATA_SEC] -->|data| D_INFRA_RUNTIME_Telemetry_Four___Unified_Collector_遥测四流统一采集器
+    D_DATA_SEC[D-DATA_SEC] -->|config_depends| D_INFRA_RUNTIME_Environment_Co____Layering_Manager_环境配置分层管理器
+    %% D-EX_CORE -> D-INFRA_RUNTIME (10 条)
+    D_EX_CORE[D-EX_CORE] -->|contract| D_INFRA_RUNTIME_Market_Microst___re_Deep_Modeling_市场微观结构深度建模
+    D_EX_CORE[D-EX_CORE] -->|data| D_INFRA_RUNTIME_Module_Configuration_Aggregator_模块配置聚合器
+    D_EX_CORE[D-EX_CORE] -->|event| D_INFRA_RUNTIME_Task_Priority_Scheduler_任务优先级调度器
+    D_EX_CORE[D-EX_CORE] -->|contract| D_INFRA_RUNTIME_EventBus_事件总线
+    D_EX_CORE[D-EX_CORE] -->|contract| D_INFRA_RUNTIME_WebSocket_Reconnection_WebSocket断线重连
+    D_EX_CORE[D-EX_CORE] -->|config_depends| D_INFRA_RUNTIME_Redis使用混合持久化RDB+AOF_Hybrid_Persistence
+    D_EX_CORE[D-EX_CORE] -->|event| D_INFRA_RUNTIME_Iteration_Cycle_Tracker_迭代周期追踪器
+    D_EX_CORE[D-EX_CORE] -->|config_depends| D_INFRA_RUNTIME_Application_State_Snapshotter_应用状态快照器
+    D_EX_CORE[D-EX_CORE] -->|contract| D_INFRA_RUNTIME_DAO_Layer_Code_Generator_DAO层代码生成器
+    D_EX_CORE[D-EX_CORE] -->|event| D_INFRA_RUNTIME_Code_Template_Engine_代码模板引擎
+    %% D-EX_SOR -> D-INFRA_RUNTIME (12 条)
+    D_EX_SOR[D-EX_SOR] -->|contract| D_INFRA_RUNTIME_Dependency_Version_Lock_Manager_依赖版本锁定管理器
+    D_EX_SOR[D-EX_SOR] -->|event| D_INFRA_RUNTIME_Service_Discovery_Registrar_服务发现注册器
+    D_EX_SOR[D-EX_SOR] -->|data| D_INFRA_RUNTIME_Runtime_Configuration_Validator_运行时配置校验器
+    D_EX_SOR[D-EX_SOR] -->|contract| D_INFRA_RUNTIME_Multi_Region_Collaboration_Manager_多区域协同管理器
+    D_EX_SOR[D-EX_SOR] -->|contract| D_INFRA_RUNTIME_关键路径使用熔断器模式_Circuit_Breaker
+    D_EX_SOR[D-EX_SOR] -->|contract| D_INFRA_RUNTIME_Real_Time_Data_Warmer_实时数据预热器
+    D_EX_SOR[D-EX_SOR] -->|contract| D_INFRA_RUNTIME_Service_Rate_Limiter_服务限流器
+    D_EX_SOR[D-EX_SOR] -->|data| D_INFRA_RUNTIME_Service_Registry_服务注册表
+    D_EX_SOR[D-EX_SOR] -->|contract| D_INFRA_RUNTIME_Unified_Feature_Toggle_Framework_统一功能开关框架
+    D_EX_SOR[D-EX_SOR] -->|event| D_INFRA_RUNTIME_Dependency_Gra___lization_Renderer_依赖图可视化渲染器
+    D_EX_SOR[D-EX_SOR] -->|data| D_INFRA_RUNTIME_EventStoreDB_Event_Store_EventStoreDB事件存储
+    D_EX_SOR[D-EX_SOR] -->|domain_dependency| D_INFRA_RUNTIME_D_INFRA
+    %% D-FACTOR -> D-INFRA_RUNTIME (19 条)
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_ConfigManager_配置管理器
+    D_FACTOR[D-FACTOR] -->|event| D_INFRA_RUNTIME_Interface_Mock_Generator_接口Mock生成器
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_ConfigManager_配置管理器
+    D_FACTOR[D-FACTOR] -->|event| D_INFRA_RUNTIME_LLM_Agent_for_____Analysis_大语言模型Agent用于基本面分析
+    D_FACTOR[D-FACTOR] -->|data| D_INFRA_RUNTIME_Transformer_Ti___rchitecture_Transformer时序架构
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_GPU_Memory_Transfer_Optimizer_GPU内存传输优化器
+    D_FACTOR[D-FACTOR] -->|data| D_INFRA_RUNTIME_Warm_Storage_温存储
+    D_FACTOR[D-FACTOR] -->|event| D_INFRA_RUNTIME_Task_Priority_Scheduler_任务优先级调度器
+    D_FACTOR[D-FACTOR] -->|event| D_INFRA_RUNTIME_Thread_Pool_Manager_线程池管理器
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_Configuration_Validation_Engine_配置校验引擎
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_Data_Compression_Manager_数据压缩管理器
+    D_FACTOR[D-FACTOR] -->|event| D_INFRA_RUNTIME_Data_Format_Version_Coordinator_数据格式版本协调器
+    D_FACTOR[D-FACTOR] -->|data| D_INFRA_RUNTIME_Runtime_Environment_运行时环境
+    D_FACTOR[D-FACTOR] -->|event| D_INFRA_RUNTIME_Node_Return_Type_Contractor_节点返回值类型契约器
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_Error_Handling_Code_Generator_错误处理代码生成器
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_Monitoring_Data_Aggregator_监控数据聚合器
+    D_FACTOR[D-FACTOR] -->|config_depends| D_INFRA_RUNTIME_Resource_Reservation_Manager_资源预约管理器
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_Request_Chain_Tracer_请求链追踪器
+    D_FACTOR[D-FACTOR] -->|contract| D_INFRA_RUNTIME_Schedule_Conflict_Detector_时间表冲突检测器
+    %% D-FRONTEND -> D-INFRA_RUNTIME (6 条)
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_RUNTIME_Test_Code_Generator_测试代码生成器
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_RUNTIME_Hot↔Warm必须通过IPC协议通信_Hot_Warm_IPC_Protocol
+    D_FRONTEND[D-FRONTEND] -->|contract| D_INFRA_RUNTIME_Module_Feature_Toggle_Manager_模块功能开关管理器
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_INFRA_RUNTIME_Architecture_Compliance_Checker_架构合规检查器
+    D_FRONTEND[D-FRONTEND] -->|data| D_INFRA_RUNTIME_Service_Rate_Limiter_服务限流器
+    D_FRONTEND[D-FRONTEND] -->|config_depends| D_INFRA_RUNTIME_Monitoring_Dashboard_Process_监控面板进程
+    %% D-GOVERNANCE -> D-INFRA_RUNTIME (194 条)
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_a2a____ordination_a2a_dashboard_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_a2a____coordination_a2a_tracing_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_a2a____ion_a2a_protocol_gateway_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_a2a____on_a2a_frame_negotiation_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_a2a____3_coordination_spec_sync_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure_a2a_____a2a_formal_verification_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
+    %% D-GOV_AUDIT -> D-INFRA_RUNTIME (5 条)
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
+    %% D-INFRA_OPS -> D-INFRA_RUNTIME (31 条)
+    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Cross_Origin_R___e_Sharing_Manager_跨域资源共享管理器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Load_Balancing_Strategy_Engine_负载均衡策略引擎
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_MinIO_Object_Storage_MinIO对象存储
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_InfrastructureNode_基础设施节点
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_Module_Test_Runner_模块测试运行器
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_INFRA_RUNTIME_ProcessHeartbeatLost_进程心跳丢失事件
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Bandwidth_Optimizer_带宽优化
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_GPU调度上岗+热交换_GPU调度
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Cold平面_冷平面
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_Data_Model_Generator_数据模型生成器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_Data_Aggregation_View_Manager_数据聚合视图管理器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_Runtime_运行时
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_INFRA_RUNTIME_GPU_MPS多进程并发_GPU_Multi_Process_Service
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_INFRA_RUNTIME_Data_Buffer_Pool_Manager_数据缓冲池管理器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_Configuration_Dependency_Mapper_配置依赖映射器
+    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_INFRA_RUNTIME_Failover_Coordinator_故障转移协调器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Interface_Mock_Generator_接口Mock生成器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Service_Dependency_Health_Checker_服务依赖健康检查器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Cold平面_冷平面
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_INFRA_RUNTIME_ProcessHeartbeatLost_进程心跳丢失事件
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Live_Data_to_R___edback_Channel_实盘数据→研究域反馈通道
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_INFRA_RUNTIME_Configuration_Code_Generator_配置代码生成器
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_INFRA_RUNTIME_Signal_Warmup_Manager_信号预热管理器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_数据完整性校验器_Data_Integrity_Validator
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Live_Data_to_R___edback_Channel_实盘数据→研究域反馈通道
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_INFRA_RUNTIME_MCP_Sentinel_System_Monitor_MCP哨兵系统监控器
+    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_INFRA_RUNTIME_Feature_Drift____Drift_Detection_特征漂移与概念漂移检测
+    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_INFRA_RUNTIME_GPU调度层_GPU调度
+    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| D_INFRA_RUNTIME_Service_Degradation_Manager_服务降级管理器
+    %% D-INTEGRATION -> D-INFRA_RUNTIME (31 条)
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Hot平面_热平面
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_INFRA_RUNTIME_Data_Sovereignty_Manager_数据主权管理器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Dependency_Sec___erability_Scanner_依赖安全漏洞扫描器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Redis共享状态_共享状态层
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Runtime_Configuration_Validator_运行时配置校验器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Environment_Manager_环境管理
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Conformal_Prediction_共形预测
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Module_Registry_模块注册中心
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Data_Migration_Script_Generator_数据迁移脚本生成器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Module_Dependency_Injector_模块依赖注入器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Redis_Pub_Sub_Redis发布订阅
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_ChromaDB_Vector_Database_ChromaDB向量数据库
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Strategy_Portfolio_Simulator_策略组合模拟器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Redis_Pub_Sub_Redis发布订阅
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Deliverable_Version_Tracker_交付物版本追踪器
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Cold_Start_Optimizer_冷启动优化器
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_INFRA_RUNTIME_Base_基础
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_数据验证规则引擎_Data_Validation_Rule_Engine
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Redis_In_Memory_Store_Redis内存存储
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Real_Time_Data_Warmer_实时数据预热器
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_INFRA_RUNTIME_Metric_Anomaly_Detector_指标异常检测器
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_INFRA_RUNTIME_Governance_Protocol_治理协议
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Alert_Silence_Manager_告警静默管理器
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_INFRA_RUNTIME_Automated_Code_Reviewer_自动代码审查器
+    D_INTEGRATION[D-INTEGRATION] -->|data| D_INFRA_RUNTIME_Redis使用混合持久化RDB+AOF_Hybrid_Persistence
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_INFRA_RUNTIME_Module_Exception_Boundary_Manager_模块异常边界管理器
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_INFRA_RUNTIME_Cold_Storage_冷存储
+    D_INTEGRATION[D-INTEGRATION] -->|event| D_INFRA_RUNTIME_GPU_Programming_Abstraction_Layer_GPU编程抽象层
+    D_INTEGRATION[D-INTEGRATION] -->|contract| D_INFRA_RUNTIME_Configuration_Hot_Update_Engine_配置热更新引擎
+    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_INFRA_RUNTIME_Redis_Pub_Sub_Redis发布订阅
+    %% D-INTELLIGENCE -> D-INFRA_RUNTIME (10 条)
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_INFRA_RUNTIME_Redis共享状态_共享状态层
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_INFRA_RUNTIME_Redis_Hash_Redis哈希
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_INFRA_RUNTIME_Module_Dependency_Injector_模块依赖注入器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_INFRA_RUNTIME_Strategy_Execution_Plan_Optimizer_策略执行计划优化器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_INFRA_RUNTIME_Conformal_Prediction_共形预测
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|event| D_INFRA_RUNTIME_Resource_Quota_Manager_资源配额管理器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_INFRA_RUNTIME_CPU_Core_Allocation_Manager_CPU核心分配管理器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_INFRA_RUNTIME_GPU_Inference____amic_Allocator_GPU推理训练动态分配器
+    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_INFRA_RUNTIME_User_Preference_Synchronizer_用户偏好同步器
+    %% D-KNOWLEDGE -> D-INFRA_RUNTIME (10 条)
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_INFRA_RUNTIME_Inter_Process_Communication_Manager_进程间通信管理器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_INFRA_RUNTIME_Blue_Green_Dependency_Mapper_蓝绿依赖映射器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_INFRA_RUNTIME_AB_Test_Dependency_Mapper_AB测试依赖映射器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_INFRA_RUNTIME_Governance_Adapter_治理适配器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_INFRA_RUNTIME_Inter_Layer_Da___er_&_Validator_层间数据格式转换与校验器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_INFRA_RUNTIME_DegradationTriggered_降级触发事件
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_INFRA_RUNTIME_Configuration_Dependency_Mapper_配置依赖映射器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_INFRA_RUNTIME_Module_Configuration_Aggregator_模块配置聚合器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_INFRA_RUNTIME_Failover_Coordinator_故障转移协调器
+    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_INFRA_RUNTIME_Time_Series_Co___nt_TCP_DDCI_CP_VaR_时序保形预测增强
+    %% D-MKT_DATA -> D-INFRA_RUNTIME (24 条)
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_INFRA_RUNTIME_Document_Link_Validator_文档链接验证器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Metric_Anomaly_Detector_指标异常检测器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_ConfigManager_配置管理器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Causal_ML_深度补充_因果ML深度补充
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_INFRA_RUNTIME_High_Performance_HA_Framework_高性能高可用保障框架
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Error_Handling_Code_Generator_错误处理代码生成器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Hardware_Accelerator_硬件加速器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Knowledge_Base_Indexer_知识库索引器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Resource_Scheduler_资源调度器
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_INFRA_RUNTIME_Dependency_Upg___tibility_Checker_依赖升级兼容性检查器
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_Graph_Neural_N___ock_Relations_图神经网络用于股票关系建模
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_CPU_Core_Allocation_Manager_CPU核心分配管理器
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_ConfigManager_配置管理器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_pywin32supervisor_pywin32监控器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Redis_Connection_Lost_Redis连接断开
+    D_MKT_DATA[D-MKT_DATA] -->|event| D_INFRA_RUNTIME_LLM_Agent_for_____Analysis_大语言模型Agent用于基本面分析
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_Module_Hot_Update_Manager_模块热更新管理器
+    D_MKT_DATA[D-MKT_DATA] -->|contract| D_INFRA_RUNTIME_DAO_Layer_Code_Generator_DAO层代码生成器
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_Cold_Start_Optimizer_冷启动优化器
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Process_Manager_进程管理器
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_GPU_Programming_Abstraction_Layer_GPU编程抽象层
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_Redis集群_哨兵_Redis_Cluster_Sentinel
+    D_MKT_DATA[D-MKT_DATA] -->|data| D_INFRA_RUNTIME_GPUOOMDetected_GPU_OOM检测事件
+    D_MKT_DATA[D-MKT_DATA] -->|config_depends| D_INFRA_RUNTIME_Knowledge_Base_Indexer_知识库索引器
+    %% D-ML_SERVE -> D-INFRA_RUNTIME (6 条)
+    D_ML_SERVE[D-ML_SERVE] -->|contract| D_INFRA_RUNTIME_Data_Transform___line_Orchestrator_数据转换管线编排器
+    D_ML_SERVE[D-ML_SERVE] -->|event| D_INFRA_RUNTIME_Conformal_Prediction_共形预测
+    D_ML_SERVE[D-ML_SERVE] -->|data| D_INFRA_RUNTIME_Module_Exception_Boundary_Manager_模块异常边界管理器
+    D_ML_SERVE[D-ML_SERVE] -->|data| D_INFRA_RUNTIME_Bandwidth_Optimizer_带宽优化
+    D_ML_SERVE[D-ML_SERVE] -->|event| D_INFRA_RUNTIME_GPU_Programming_Abstraction_Layer_GPU编程抽象层
+    D_ML_SERVE[D-ML_SERVE] -->|domain_dependency| D_INFRA_RUNTIME_D_INFRA
+    %% D-ML_TRAIN -> D-INFRA_RUNTIME (11 条)
+    D_ML_TRAIN[D-ML_TRAIN] -->|data| D_INFRA_RUNTIME_NSSM+自研Supervisor_进程守护层
+    D_ML_TRAIN[D-ML_TRAIN] -->|data| D_INFRA_RUNTIME_Cache_Data_Preloader_缓存数据预加载器
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_INFRA_RUNTIME_Module_Log_Aggregator_模块日志聚合器
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_INFRA_RUNTIME_Code_Template_Engine_代码模板引擎
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_INFRA_RUNTIME_Error_Handling_Code_Generator_错误处理代码生成器
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_INFRA_RUNTIME_REST_API_Code_Generator_REST_API代码生成器
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_INFRA_RUNTIME_Global_Dependency_Graph_Calculator_全局依赖图计算器
+    D_ML_TRAIN[D-ML_TRAIN] -->|event| D_INFRA_RUNTIME_Redis_Connection_Lost_Redis连接断开
+    D_ML_TRAIN[D-ML_TRAIN] -->|data| D_INFRA_RUNTIME_Network_Policy_Manager_网络策略管理器
+    D_ML_TRAIN[D-ML_TRAIN] -->|contract| D_INFRA_RUNTIME_Configuration_Encryption_Manager_配置加密管理器
+    D_ML_TRAIN[D-ML_TRAIN] -->|config_depends| D_INFRA_RUNTIME_Path_Resolver_路径解析
+    %% D-OPS -> D-INFRA_RUNTIME (58 条)
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|import_depends| src_zephyr_shared_lifecycle_hooks_py
+    D_OPS[D-OPS] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|test_depends| src_zephyr_infrastructure___init___py
+    D_OPS[D-OPS] -->|test_depends| src_zephyr_infrastructure___init___py
+    %% D-PF_ALLOC -> D-INFRA_RUNTIME (10 条)
+    D_PF_ALLOC[D-PF_ALLOC] -->|contract| D_INFRA_RUNTIME_Cache_Data_Preloader_缓存数据预加载器
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_INFRA_RUNTIME_Data_Transfer_Validator_数据传输校验器
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_INFRA_RUNTIME_Specification_Automation_Checker_规范自动化检查器
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_INFRA_RUNTIME_Service_Rate_Limiter_服务限流器
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_INFRA_RUNTIME_Multi_Process____me_Architecture_多进程隔离与运行时架构
+    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_INFRA_RUNTIME_Hot平面_热平面
+    D_PF_ALLOC[D-PF_ALLOC] -->|event| D_INFRA_RUNTIME_Redis_Hash_Redis哈希
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| D_INFRA_RUNTIME_DuckDB_Database_DuckDB数据库
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| D_INFRA_RUNTIME_Configuration_Merge_Engine_配置合并引擎
+    D_PF_ALLOC[D-PF_ALLOC] -->|config_depends| D_INFRA_RUNTIME_Global_Dependency_Graph_Calculator_全局依赖图计算器
+    %% D-PF_CORE -> D-INFRA_RUNTIME (15 条)
+    D_PF_CORE[D-PF_CORE] -->|contract| D_INFRA_RUNTIME_Configuration_Code_Generator_配置代码生成器
+    D_PF_CORE[D-PF_CORE] -->|data| D_INFRA_RUNTIME_Data_Source_St___ynamic_Updater_数据源星级评分动态更新器
+    D_PF_CORE[D-PF_CORE] -->|contract| D_INFRA_RUNTIME_Architecture_Compliance_Checker_架构合规检查器
+    D_PF_CORE[D-PF_CORE] -->|event| D_INFRA_RUNTIME_Redis_Hash_Redis哈希
+    D_PF_CORE[D-PF_CORE] -->|data| D_INFRA_RUNTIME_ClickHouse_Database_ClickHouse数据库
+    D_PF_CORE[D-PF_CORE] -->|event| D_INFRA_RUNTIME_Cybersecurity_Shield_网络安全防护组件
+    D_PF_CORE[D-PF_CORE] -->|contract| D_INFRA_RUNTIME_Mamba_SSM_State_Space_Model_Mamba_SSM状态空间模型
+    D_PF_CORE[D-PF_CORE] -->|data| D_INFRA_RUNTIME_Unified_Feature_Toggle_Framework_统一功能开关框架
+    D_PF_CORE[D-PF_CORE] -->|data| D_INFRA_RUNTIME_Alert_Escalation_Strategy_Engine_告警升级策略引擎
+    D_PF_CORE[D-PF_CORE] -->|data| D_INFRA_RUNTIME_Test_Coverage_Tracker_测试覆盖率追踪器
+    D_PF_CORE[D-PF_CORE] -->|contract| D_INFRA_RUNTIME_GPU_Programming_Abstraction_Layer_GPU编程抽象层
+    D_PF_CORE[D-PF_CORE] -->|contract| D_INFRA_RUNTIME_InfrastructureNode_基础设施节点
+    D_PF_CORE[D-PF_CORE] -->|data| D_INFRA_RUNTIME_Qdrant_Vector_Database_Qdrant向量数据库
+    D_PF_CORE[D-PF_CORE] -->|event| D_INFRA_RUNTIME_Dependency_Version_Lock_Manager_依赖版本锁定管理器
+    D_PF_CORE[D-PF_CORE] -->|config_depends| D_INFRA_RUNTIME_InfrastructureNode_基础设施节点
+    %% D-POSITION -> D-INFRA_RUNTIME (2 条)
+    D_POSITION[D-POSITION] -->|event| D_INFRA_RUNTIME_Module_Test_Runner_模块测试运行器
+    D_POSITION[D-POSITION] -->|contract| D_INFRA_RUNTIME_Redis_Pub_Sub_发布订阅
+    %% D-REPORTING -> D-INFRA_RUNTIME (10 条)
+    D_REPORTING[D-REPORTING] -->|contract| D_INFRA_RUNTIME_Governance_Adapter_治理适配器
+    D_REPORTING[D-REPORTING] -->|data| D_INFRA_RUNTIME_Return_Value_Performance_Monitor_返回值性能监控器
+    D_REPORTING[D-REPORTING] -->|data| D_INFRA_RUNTIME_Faiss_GPU_Vector_Search_Faiss_GPU向量搜索
+    D_REPORTING[D-REPORTING] -->|data| D_INFRA_RUNTIME_Strategy_Portfolio_Simulator_策略组合模拟器
+    D_REPORTING[D-REPORTING] -->|data| D_INFRA_RUNTIME_Qdrant_Vector_Database_Qdrant向量数据库
+    D_REPORTING[D-REPORTING] -->|event| D_INFRA_RUNTIME_NSSM注册Windows服务_NSSM_Windows_Service
+    D_REPORTING[D-REPORTING] -->|config_depends| D_INFRA_RUNTIME_Multi_Region_Collaboration_Manager_多区域协同管理器
+    D_REPORTING[D-REPORTING] -->|event| D_INFRA_RUNTIME_Market_Microst___re_Deep_Modeling_市场微观结构深度建模
+    D_REPORTING[D-REPORTING] -->|contract| D_INFRA_RUNTIME_Reinforcement____&_Execution_强化学习用于组合优化与订单执行
+    D_REPORTING[D-REPORTING] -->|config_depends| D_INFRA_RUNTIME_DegradationTriggered_降级触发事件
+    %% D-RISK -> D-INFRA_RUNTIME (63 条)
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Governance_Adapter_治理适配器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Validation_Rule_Generator_验证规则生成器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_API_Documentation_Synchronizer_API文档同步器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Experiment_and_Resilience_Testing_实验与韧性测试
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Configuration_Change_Notifier_配置变更通知器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Governance_Adapter_治理适配器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Process_Daemon_Monitor_进程守护监控器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Dependency_Gra___lization_Renderer_依赖图可视化渲染器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Real_Time_Data_Stream_Manager_实时数据流管理器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Request_Chain_Tracer_请求链追踪器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Code_Duplication_Detector_代码重复检测器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_GPU_Resource_Monitor_GPU资源监控器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_GPU_Inference____amic_Allocator_GPU推理训练动态分配器
+    D_RISK[D-RISK] -->|event| D_INFRA_RUNTIME_Progressive_De___e_check_Enhancer_渐进交付前置检查增强
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Schedule_Conflict_Detector_时间表冲突检测器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Code_Structure_Visualizer_代码结构可视化器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_缓存一致性管理器_Cache_Consistency_Manager
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Infrastructure_Status_基础设施状态
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Validation_Rule_Generator_验证规则生成器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Metric_Anomaly_Detector_指标异常检测器
+    D_RISK[D-RISK] -->|event| D_INFRA_RUNTIME_Multi_Protocol_Network_Adapter_多协议网络适配器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Single_Machine___cy_Mode_Optimizer_单机并发模式优化器
+    D_RISK[D-RISK] -->|event| D_INFRA_RUNTIME_Configuration_Dependency_Mapper_配置依赖映射器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_Parquet_Columnar_Storage_Parquet列式存储
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Module_Test_Runner_模块测试运行器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Test_Code_Generator_测试代码生成器
+    D_RISK[D-RISK] -->|event| D_INFRA_RUNTIME_Multi_Modal_Input_Router_多模态输入路由
+    D_RISK[D-RISK] -->|event| D_INFRA_RUNTIME_API_Documentation_Synchronizer_API文档同步器
+    D_RISK[D-RISK] -->|data| D_INFRA_RUNTIME_Request_Forwar____&_Load_Balancer_请求转发与负载均衡器
+    D_RISK[D-RISK] -->|contract| D_INFRA_RUNTIME_MCP_Sentinel_System_Monitor_MCP哨兵系统监控器
+    %% D-SECURITY -> D-INFRA_RUNTIME (50 条)
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Learning_System_Bridge_Declaration_学习系统桥接声明
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Base_基础
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Interface_Mock_Generator_接口Mock生成器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Load_Balancing_Strategy_Engine_负载均衡策略引擎
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_CapacityThresholdBreached_容量阈值突破事件
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_SQLite_Database_SQLite数据库
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_Failover_Coordinator_故障转移协调器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Governance_Adapter_治理适配器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_缓存一致性管理器_Cache_Consistency_Manager
+    D_SECURITY[D-SECURITY] -->|event| D_INFRA_RUNTIME_Package_Dependency_Graph_Generator_包依赖图生成器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Redis_Hash_Redis哈希
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_Code_Structure_Visualizer_代码结构可视化器
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_Document_Version_Manager_文档版本管理器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_High_Performance_HA_Framework_高性能高可用保障框架
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Development_Plan_Visualizer_开发计划可视化器
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_Cold_Start_Optimizer_冷启动优化器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Financial_Time____Data_Augmentation_金融时序数据增强
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Module_Version_Dependency_Resolver_模块版本依赖解析器
+    D_SECURITY[D-SECURITY] -->|event| D_INFRA_RUNTIME_Knowledge_Base_Indexer_知识库索引器
+    D_SECURITY[D-SECURITY] -->|event| D_INFRA_RUNTIME_Infrastructure_Status_基础设施状态
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Redis_In_Memory_Store_Redis内存存储
+    D_SECURITY[D-SECURITY] -->|event| D_INFRA_RUNTIME_Traffic_Mirror___Mapping_Enhancer_流量镜像依赖映射增强
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_Dependency_Version_Lock_Manager_依赖版本锁定管理器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Configuration_Encryption_Manager_配置加密管理器
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Communication_Protocol_Adapter_通信协议适配器
+    D_SECURITY[D-SECURITY] -->|event| D_INFRA_RUNTIME_Service_Discovery_Registrar_服务发现注册器
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_数据质量监控器_Data_Quality_Monitor
+    D_SECURITY[D-SECURITY] -->|data| D_INFRA_RUNTIME_Learning_System_Bridge_Declaration_学习系统桥接声明
+    D_SECURITY[D-SECURITY] -->|contract| D_INFRA_RUNTIME_Configuration_Hot_Update_Engine_配置热更新引擎
+    D_SECURITY[D-SECURITY] -->|config_depends| D_INFRA_RUNTIME_Application_State_Snapshotter_应用状态快照器
+    %% D-SHARED -> D-INFRA_RUNTIME (7 条)
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_infrastructure_life___e_task_lifecycle_manager_py
+    D_SHARED[D-SHARED] -->|import_depends| src_zephyr_infrastructure_queue_task_queue_py
+    %% D-SIGNAL -> D-INFRA_RUNTIME (27 条)
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Time_Series_Co___nt_TCP_DDCI_CP_VaR_时序保形预测增强
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_Live_Data_to_R___edback_Channel_实盘数据→研究域反馈通道
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_缓存一致性管理器_Cache_Consistency_Manager
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_System_Startup_Orchestrator_系统启动编排器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Financial_Time____Data_Augmentation_金融时序数据增强
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_InfrastructureAlert_基础设施告警
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_Validation_Rule_Generator_验证规则生成器
+    D_SIGNAL[D-SIGNAL] -->|event| D_INFRA_RUNTIME_Conversation_Context_Compressor_对话上下文压缩
+    D_SIGNAL[D-SIGNAL] -->|event| D_INFRA_RUNTIME_GPU_Resource_Monitor_GPU资源监控器
+    D_SIGNAL[D-SIGNAL] -->|event| D_INFRA_RUNTIME_Traffic_Shaper_流量整形器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_ClickHouse_Database_ClickHouse数据库
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_Module_Dependency_Injector_模块依赖注入器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Phase_Synchronization_Coordinator_阶段同步协调器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Phase_Synchronization_Coordinator_阶段同步协调器
+    D_SIGNAL[D-SIGNAL] -->|event| D_INFRA_RUNTIME_Module_Interface_Contract_Manager_模块接口契约管理器
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_FAISS_Vector_Search_FAISS向量检索
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Configuration_Hot_Update_Engine_配置热更新引擎
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_Module_Hot_Update_Manager_模块热更新管理器
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Test_Code_Generator_测试代码生成器
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_Live_Data_to_R___edback_Channel_实盘数据→研究域反馈通道
+    D_SIGNAL[D-SIGNAL] -->|contract| D_INFRA_RUNTIME_Cross_Origin_R___e_Sharing_Manager_跨域资源共享管理器
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_Dependency_Upg___tibility_Checker_依赖升级兼容性检查器
+    D_SIGNAL[D-SIGNAL] -->|event| D_INFRA_RUNTIME_Experiment_and_Resilience_Testing_实验与韧性测试
+    D_SIGNAL[D-SIGNAL] -->|event| D_INFRA_RUNTIME_Data_Migration_Script_Generator_数据迁移脚本生成器
+    D_SIGNAL[D-SIGNAL] -->|config_depends| D_INFRA_RUNTIME_Blue_Green_Dependency_Mapper_蓝绿依赖映射器
+    D_SIGNAL[D-SIGNAL] -->|data| D_INFRA_RUNTIME_NSSM注册Windows服务_NSSM_Windows_Service
+    D_SIGNAL[D-SIGNAL] -->|config_depends| D_INFRA_RUNTIME_Code_Structure_Visualizer_代码结构可视化器
+    %% D-SIMULATION -> D-INFRA_RUNTIME (6 条)
+    D_SIMULATION[D-SIMULATION] -->|contract| D_INFRA_RUNTIME_Transitive_Dependency_Analyzer_传递依赖分析器
+    D_SIMULATION[D-SIMULATION] -->|contract| D_INFRA_RUNTIME_Configuration_Hot_Update_Engine_配置热更新引擎
+    D_SIMULATION[D-SIMULATION] -->|event| D_INFRA_RUNTIME_数据库管理器_Database_Manager_16分片SQLite
+    D_SIMULATION[D-SIMULATION] -->|event| D_INFRA_RUNTIME_Multi_Protocol_Network_Adapter_多协议网络适配器
+    D_SIMULATION[D-SIMULATION] -->|event| D_INFRA_RUNTIME_Strategy_Execution_Plan_Optimizer_策略执行计划优化器
+    D_SIMULATION[D-SIMULATION] -->|contract| D_INFRA_RUNTIME_Service_Registry_服务注册表
+    %% D-TRADING -> D-INFRA_RUNTIME (7 条)
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_lifecycle_lazy_loader_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_TRADING[D-TRADING] -->|data| D_INFRA_RUNTIME_Progressive_De___e_check_Enhancer_渐进交付前置检查增强
+    D_TRADING[D-TRADING] -->|event| D_INFRA_RUNTIME_EventBus_事件总线
+    D_TRADING[D-TRADING] -->|data| D_INFRA_RUNTIME_SDK_Auto_Generator_SDK自动生成器
+    D_TRADING[D-TRADING] -->|contract| src_zephyr_infrastructure_audit_logger_py
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-INFRA_RUNTIME -> D-BEHAVIORAL_AUDIT (1 条)
+    src_zephyr_infrastructure_syst___lemetry_contract_metrics_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
+    %% D-INFRA_RUNTIME -> D-GOVERNANCE (17 条)
+    src_zephyr_infrastructure__base_server_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_db_audit_schema_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_db_olap_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_db_database_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_db_sqlite_schema_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_db_task_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_db_query_metrics_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_pipeline_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_pipeline_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_pipe___profiler_model_discovery_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-INFRA_RUNTIME -> D-GOV_AUDIT (12 条)
+    src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_a2a_protocol_legacy_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_pipeline_pipeline_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_contracts_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_roll____rollback_abuse_detector_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-INFRA_RUNTIME -> D-INTEGRATION (26 条)
+    src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_blueprint_search_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_gate_engine_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_gate_engine_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_resource_provider_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_a2a_____coordination_arbitrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_config_shared_config_loader_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_infra_06_cache_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_infra_06_process_pool_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_infr___rocess_lifecycle_gateway_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_observability_02_session_audit_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_pipeline_pipeline_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_pipeline_pipeline_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_pipeline_pipeline_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    %% D-INFRA_RUNTIME -> D-OPS (2 条)
+    src_zephyr___init___py -->|import_depends| D_OPS[D-OPS]
+    src_zephyr_infrastructure_syst___emetry_health_aggregator_py -->|import_depends| D_OPS[D-OPS]
+    %% D-INFRA_RUNTIME -> D-SHARED (67 条)
+    src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_gateway_server_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_knowledge_base_server_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_vector_memory_server_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a_protocol_legacy_protocol_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a_protocol_multi_agent_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a____er1_discovery_agent_card_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a____ayer1_discovery___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a____nication_context_package_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a____ommunication_a2a_schemas_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a_____communication_a2a_state_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a____nication_handoff_manager_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_a2a____2_communication___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_auto_fix_engine_state_machine_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_infrastructure_capa___surance_modules___init___py -->|import_depends| D_SHARED[D-SHARED]
+
+    %% 统计
+    %% 域内依赖: 674 条
+    %% 跨域入边: 763 条
+    %% 跨域出边: 125 条

@@ -1,0 +1,42 @@
+%% D-BACKTEST 域全景依赖图
+%% 生成时间: 2026-06-24 21:40:12
+%% 数据源: depgraph.db nodes表 + edges表
+%% 模块数: 9, 依赖边数: 7
+
+graph TD
+
+    %% 域内模块（最多显示 100 个）
+    subgraph D_BACKTEST[回测]
+        D_BACKTEST_Backtest_Pipeline_Process_回测管线进程["...TEST/Backtest Pipeline Process 回测管线进程 [design]"]
+        src_zephyr_backtest_["src/zephyr/backtest/ [design]"]
+        src_zephyr_backtest___init___py["src/zephyr/backtest/__init__.py [prototype]"]
+        src_zephyr_backtest__extensions___init___py["...phyr/backtest/_extensions/__init__.py [scaffold_placeholder]"]
+        src_zephyr_backtest_api___init___py["src/zephyr/backtest/api/__init__.py [scaffold_placeholder]"]
+        src_zephyr_backtest_core___init___py["src/zephyr/backtest/core/__init__.py [scaffold_placeholder]"]
+        src_zephyr_backtest_infrastructure___init___py["...r/backtest/infrastructure/__init__.py [scaffold_placeholder]"]
+        src_zephyr_backtest_models___init___py["src/zephyr/backtest/models/__init__.py [scaffold_placeholder]"]
+        src_zephyr_backtest_services___init___py["src/zephyr/backtest/services/__init__.py [scaffold_placeholder]"]
+    end
+
+    %% 域内依赖（最多显示 80 条）
+
+    %% 跨域依赖（入）- 最多显示 30 条
+
+    %% 跨域依赖（出）- 最多显示 30 条
+    %% D-BACKTEST -> D-COMPLIANCE (1 条)
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|contract| D_COMPLIANCE[D-COMPLIANCE]
+    %% D-BACKTEST -> D-FACTOR (1 条)
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|contract| D_FACTOR[D-FACTOR]
+    %% D-BACKTEST -> D-RISK (3 条)
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|data| D_RISK[D-RISK]
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|event| D_RISK[D-RISK]
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|contract| D_RISK[D-RISK]
+    %% D-BACKTEST -> D-SIGNAL (1 条)
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|contract| D_SIGNAL[D-SIGNAL]
+    %% D-BACKTEST -> D-SIMULATION (1 条)
+    D_BACKTEST_Backtest_Pipeline_Process_回测管线进程 -->|contract| D_SIMULATION[D-SIMULATION]
+
+    %% 统计
+    %% 域内依赖: 0 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 7 条

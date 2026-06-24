@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 07_d_data_sec 域文档
+# 07_d_data_sec / 数据安全与契约
+
+> **文档作用 / Purpose**: 展示 数据安全与契约（D-DATA_SEC）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:08
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -34,44 +36,44 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 30 个模块（按路径排序，最多显示前 200 个）
+共 30 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| D-DATA-SEC/AI Call Audit Log AI调用审计日志 | AI Call Audit Log AI调用审计日志 | design | design_only | D-DATA-SEC/AI Call Audit Log AI调用审计日志 | AI Call Audit Log AI调用审计日志 | design | design_only |
-| D-DATA-SEC/Audit Log 审计日志 | Audit Log 审计日志 | design | design_only | D-DATA-SEC/Audit Log 审计日志 | Audit Log 审计日志 | design | design_only |
-| D-DATA-SEC/CTR-001 System-Wide Data Contract Registry 数据契约注册中心 | CTR-001 System-Wide Data Contract Reg... | design | design_only | D-DATA-SEC/CTR-001 System-Wide Data Contract Registry 数据契约注册中心 | CTR-001 System-Wide Data Contract Reg... | design | design_only |
-| D-DATA-SEC/Contract DDD 契约与DDD | Contract DDD 契约与DDD | design | design_only | D-DATA-SEC/Contract DDD 契约与DDD | Contract DDD 契约与DDD | design | design_only |
-| D-DATA-SEC/Contract Enforcement 契约强制执行 | Contract Enforcement 契约强制执行 | design | design_only | D-DATA-SEC/Contract Enforcement 契约强制执行 | Contract Enforcement 契约强制执行 | design | design_only |
-| D-DATA-SEC/Data Access Audit Log 数据访问审计日志 | Data Access Audit Log 数据访问审计日志 | design | design_only | D-DATA-SEC/Data Access Audit Log 数据访问审计日志 | Data Access Audit Log 数据访问审计日志 | design | design_only |
-| D-DATA-SEC/Data Access Auditor 数据访问审计器 | Data Access Auditor 数据访问审计器 | design | design_only | D-DATA-SEC/Data Access Auditor 数据访问审计器 | Data Access Auditor 数据访问审计器 | design | design_only |
-| D-DATA-SEC/Data Contract YAML 数据契约YAML | Data Contract YAML 数据契约YAML | design | design_only | D-DATA-SEC/Data Contract YAML 数据契约YAML | Data Contract YAML 数据契约YAML | design | design_only |
-| D-DATA-SEC/Data Contract 数据契约 | Data Contract 数据契约 | design | design_only | D-DATA-SEC/Data Contract 数据契约 | Data Contract 数据契约 | design | design_only |
-| D-DATA-SEC/Data Masking Engine 数据脱敏引擎 | Data Masking Engine 数据脱敏引擎 | design | design_only | D-DATA-SEC/Data Masking Engine 数据脱敏引擎 | Data Masking Engine 数据脱敏引擎 | design | design_only |
-| D-DATA-SEC/Data Security Compliance Constraint 数据安全与合规约束 | Data Security Compliance Constraint 数... | design | design_only | D-DATA-SEC/Data Security Compliance Constraint 数据安全与合规约束 | Data Security Compliance Constraint 数... | design | design_only |
-| D-DATA-SEC/Data Security Law Benchmark 数据安全法对标 | Data Security Law Benchmark 数据安全法对标 | design | design_only | D-DATA-SEC/Data Security Law Benchmark 数据安全法对标 | Data Security Law Benchmark 数据安全法对标 | design | design_only |
-| D-DATA-SEC/Decision Audit Log 决策审计日志 | Decision Audit Log 决策审计日志 | design | design_only | D-DATA-SEC/Decision Audit Log 决策审计日志 | Decision Audit Log 决策审计日志 | design | design_only |
-| D-DATA-SEC/Financial Instrument Contract Library 金融工具契约库 | Financial Instrument Contract Library... | design | design_only | D-DATA-SEC/Financial Instrument Contract Library 金融工具契约库 | Financial Instrument Contract Library... | design | design_only |
-| D-DATA-SEC/JR/T 0197 Benchmark 金融数据安全分级指南对标 | JR/T 0197 Benchmark 金融数据安全分级指南对标 | design | design_only | D-DATA-SEC/JR/T 0197 Benchmark 金融数据安全分级指南对标 | JR/T 0197 Benchmark 金融数据安全分级指南对标 | design | design_only |
-| D-DATA-SEC/Security Compliance 安全与合规 | Security Compliance 安全与合规 | design | design_only | D-DATA-SEC/Security Compliance 安全与合规 | Security Compliance 安全与合规 | design | design_only |
-| D-DATA-SEC/System Change Audit Log 系统变更审计日志 | System Change Audit Log 系统变更审计日志 | design | design_only | D-DATA-SEC/System Change Audit Log 系统变更审计日志 | System Change Audit Log 系统变更审计日志 | design | design_only |
-| D-DATA-SEC/Trading Audit Log 交易审计日志 | Trading Audit Log 交易审计日志 | design | design_only | D-DATA-SEC/Trading Audit Log 交易审计日志 | Trading Audit Log 交易审计日志 | design | design_only |
-| D-DATA-SEC/可执行数据契约 Executable Data Contract | 可执行数据契约 Executable Data Contract | design | design_only | D-DATA-SEC/可执行数据契约 Executable Data Contract | 可执行数据契约 Executable Data Contract | design | design_only |
-| D-DATA-SEC/引入数据契约标准 Data Contract Standard | 引入数据契约标准 Data Contract Standard | design | design_only | D-DATA-SEC/引入数据契约标准 Data Contract Standard | 引入数据契约标准 Data Contract Standard | design | design_only |
-| src/zephyr/data/persistence/__init__.py |  | prototype | draft | src/zephyr/data/persistence/__init__.py |  | prototype | draft |
-| src/zephyr/data/persistence/circuit_breaker_types.py |  | prototype | draft | src/zephyr/data/persistence/circuit_breaker_types.py |  | prototype | draft |
-| src/zephyr/data/persistence/sqlite_schema.py |  | prototype | draft | src/zephyr/data/persistence/sqlite_schema.py |  | prototype | draft |
-| src/zephyr/data_security/__init__.py |  | prototype | orphan | src/zephyr/data_security/__init__.py |  | prototype | orphan |
-| src/zephyr/data_security/_extensions/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/data_security/_extensions/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/data_security/api/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/data_security/api/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/data_security/core/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/data_security/core/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/data_security/infrastructure/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/data_security/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/data_security/models/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/data_security/models/__init__.py |  | scaffold_placeholder | orphan |
-| src/zephyr/data_security/services/__init__.py |  | scaffold_placeholder | orphan | src/zephyr/data_security/services/__init__.py |  | scaffold_placeholder | orphan |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| D-DATA-SEC/AI Call Audit Log AI调用审计日志 | AI Call Audit Log AI调用审计日志 | design | design_only |
+| D-DATA-SEC/Audit Log 审计日志 | Audit Log 审计日志 | design | design_only |
+| D-DATA-SEC/CTR-001 System-Wide Data Contract Registry 数据契约注册中心 | CTR-001 System-Wide Data Contract Reg... | design | design_only |
+| D-DATA-SEC/Contract DDD 契约与DDD | Contract DDD 契约与DDD | design | design_only |
+| D-DATA-SEC/Contract Enforcement 契约强制执行 | Contract Enforcement 契约强制执行 | design | design_only |
+| D-DATA-SEC/Data Access Audit Log 数据访问审计日志 | Data Access Audit Log 数据访问审计日志 | design | design_only |
+| D-DATA-SEC/Data Access Auditor 数据访问审计器 | Data Access Auditor 数据访问审计器 | design | design_only |
+| D-DATA-SEC/Data Contract YAML 数据契约YAML | Data Contract YAML 数据契约YAML | design | design_only |
+| D-DATA-SEC/Data Contract 数据契约 | Data Contract 数据契约 | design | design_only |
+| D-DATA-SEC/Data Masking Engine 数据脱敏引擎 | Data Masking Engine 数据脱敏引擎 | design | design_only |
+| D-DATA-SEC/Data Security Compliance Constraint 数据安全与合规约束 | Data Security Compliance Constraint 数... | design | design_only |
+| D-DATA-SEC/Data Security Law Benchmark 数据安全法对标 | Data Security Law Benchmark 数据安全法对标 | design | design_only |
+| D-DATA-SEC/Decision Audit Log 决策审计日志 | Decision Audit Log 决策审计日志 | design | design_only |
+| D-DATA-SEC/Financial Instrument Contract Library 金融工具契约库 | Financial Instrument Contract Library... | design | design_only |
+| D-DATA-SEC/JR/T 0197 Benchmark 金融数据安全分级指南对标 | JR/T 0197 Benchmark 金融数据安全分级指南对标 | design | design_only |
+| D-DATA-SEC/Security Compliance 安全与合规 | Security Compliance 安全与合规 | design | design_only |
+| D-DATA-SEC/System Change Audit Log 系统变更审计日志 | System Change Audit Log 系统变更审计日志 | design | design_only |
+| D-DATA-SEC/Trading Audit Log 交易审计日志 | Trading Audit Log 交易审计日志 | design | design_only |
+| D-DATA-SEC/可执行数据契约 Executable Data Contract | 可执行数据契约 Executable Data Contract | design | design_only |
+| D-DATA-SEC/引入数据契约标准 Data Contract Standard | 引入数据契约标准 Data Contract Standard | design | design_only |
+| src/zephyr/data/persistence/__init__.py |  | prototype | draft |
+| src/zephyr/data/persistence/circuit_breaker_types.py |  | prototype | draft |
+| src/zephyr/data/persistence/sqlite_schema.py |  | prototype | draft |
+| src/zephyr/data_security/__init__.py |  | prototype | orphan |
+| src/zephyr/data_security/_extensions/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/data_security/api/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/data_security/core/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/data_security/infrastructure/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/data_security/models/__init__.py |  | scaffold_placeholder | orphan |
+| src/zephyr/data_security/services/__init__.py |  | scaffold_placeholder | orphan |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -174,35 +176,35 @@ graph TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 | 依赖数 | 依赖类型 | Target Domain | Count | Type |
-|--------|:---:|---------|---------------|:---:|------|
-| D-SECURITY | 7 | event,contract,data,domain_dependency | D-SECURITY | 7 | event,contract,data,domain_dependency |
-| D-GOVERNANCE | 6 | import_depends,contract,data,event | D-GOVERNANCE | 6 | import_depends,contract,data,event |
-| D-SIGNAL | 3 | contract,data,event | D-SIGNAL | 3 | contract,data,event |
-| D-MKT_DATA | 3 | data,event | D-MKT_DATA | 3 | data,event |
-| D-INTEGRATION | 2 | contract,event | D-INTEGRATION | 2 | contract,event |
-| D-INFRA_RUNTIME | 2 | data,config_depends | D-INFRA_RUNTIME | 2 | data,config_depends |
-| D-INFRA_OPS | 2 | contract | D-INFRA_OPS | 2 | contract |
-| D-AUTONOMY_CORE | 2 | data,contract | D-AUTONOMY_CORE | 2 | data,contract |
-| D-TRADING | 1 | event | D-TRADING | 1 | event |
-| D-SIMULATION | 1 | data | D-SIMULATION | 1 | data |
-| D-RISK | 1 | event | D-RISK | 1 | event |
-| D-REPORTING | 1 | config_depends | D-REPORTING | 1 | config_depends |
-| D-POSITION | 1 | event | D-POSITION | 1 | event |
-| D-OPS | 1 | import_depends | D-OPS | 1 | import_depends |
-| D-ML_TRAIN | 1 | config_depends | D-ML_TRAIN | 1 | config_depends |
-| D-KNOWLEDGE | 1 | data | D-KNOWLEDGE | 1 | data |
-| D-INTELLIGENCE | 1 | config_depends | D-INTELLIGENCE | 1 | config_depends |
-| D-FRONTEND | 1 | event | D-FRONTEND | 1 | event |
-| D-FACTOR | 1 | data | D-FACTOR | 1 | data |
-| D-EX_SOR | 1 | data | D-EX_SOR | 1 | data |
-| D-AUTONOMY_PERM | 1 | contract | D-AUTONOMY_PERM | 1 | contract |
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-SECURITY | 7 | event,contract,data,domain_dependency |
+| D-GOVERNANCE | 6 | import_depends,contract,data,event |
+| D-SIGNAL | 3 | contract,data,event |
+| D-MKT_DATA | 3 | data,event |
+| D-INTEGRATION | 2 | contract,event |
+| D-INFRA_RUNTIME | 2 | data,config_depends |
+| D-INFRA_OPS | 2 | contract |
+| D-AUTONOMY_CORE | 2 | data,contract |
+| D-TRADING | 1 | event |
+| D-SIMULATION | 1 | data |
+| D-RISK | 1 | event |
+| D-REPORTING | 1 | config_depends |
+| D-POSITION | 1 | event |
+| D-OPS | 1 | import_depends |
+| D-ML_TRAIN | 1 | config_depends |
+| D-KNOWLEDGE | 1 | data |
+| D-INTELLIGENCE | 1 | config_depends |
+| D-FRONTEND | 1 | event |
+| D-FACTOR | 1 | data |
+| D-EX_SOR | 1 | data |
+| D-AUTONOMY_PERM | 1 | contract |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 | 依赖数 | 依赖类型 | Source Domain | Count | Type |
-|------|:---:|---------|---------------|:---:|------|
-| D-COMPLIANCE | 3 | data | D-COMPLIANCE | 3 | data |
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D-COMPLIANCE | 3 | data |
 
 ## 说明 / Notes
 

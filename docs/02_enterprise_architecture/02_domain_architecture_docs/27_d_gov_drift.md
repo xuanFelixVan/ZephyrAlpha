@@ -1,6 +1,6 @@
 ---
 doc_type: domain_architecture_doc
-title: D-GOV_DRIFT drift_detection架构文档
+title: D-GOV_DRIFT 漂移检测架构文档
 version: "1.0"
 status: active
 date: 2026-06-24
@@ -8,10 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 27_d_gov_drift 域文档
+# 27_d_gov_drift / 漂移检测
+
+> **文档作用 / Purpose**: 展示 漂移检测（D-GOV_DRIFT）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 02:24:12
+> 最后更新: 2026-06-24 21:40:08
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -20,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 27 | Number | 27 |
 | 域ID | D-GOV_DRIFT | Domain ID | D-GOV_DRIFT |
-| 域名称 | drift_detection | Domain Name | drift_detection |
+| 域名称 | 漂移检测 | Domain Name | drift_detection |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 38 | Module Count | 38 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
@@ -34,52 +36,52 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 38 个模块（按路径排序，最多显示前 200 个）
+共 38 个模块（按路径排序，全部显示）
 
-| 模块路径 | 模块名称 | 设计成熟度 | 构建状态 | Module Path | Module Name | Maturity | Build Status |
-|---------|---------|-----------|---------|-------------|-------------|----------|--------------|
-| docs/01_policies_and_standards/_registry/catalogs/script_health_registry.yaml |  | production | orphan | docs/01_policies_and_standards/_registry/catalogs/script_health_registry.yaml |  | production | orphan |
-| docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml |  | production | orphan | docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml |  | production | orphan |
-| .../01_policies_and_standards/rules/trae_035_task_construction_verification.yaml |  | production | orphan | .../01_policies_and_standards/rules/trae_035_task_construction_verification.yaml |  | production | orphan |
-| docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml |  | production | orphan | docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml |  | production | orphan |
-| docs/03_modules/_domain_governance/drift_detector/blueprint.md | docs__03_modules___domain_governance_... | design | design_only | docs/03_modules/_domain_governance/drift_detector/blueprint.md | docs__03_modules___domain_governance_... | design | design_only |
-| scripts/governance/d11_compliance/validate_blueprint_overlap.py |  | production | draft | scripts/governance/d11_compliance/validate_blueprint_overlap.py |  | production | draft |
-| scripts/governance/d11_compliance/validate_truth_source_cascade.py |  | production | draft | scripts/governance/d11_compliance/validate_truth_source_cascade.py |  | production | draft |
-| scripts/governance/d5_architecture/validators/validate_authority_registry.py |  | production | draft | scripts/governance/d5_architecture/validators/validate_authority_registry.py |  | production | draft |
-| scripts/governance/d5_architecture/validators/validate_ssot.py |  | production | draft | scripts/governance/d5_architecture/validators/validate_ssot.py |  | production | draft |
-| src/zephyr/governance/artifact_scanner.py |  | production | draft | src/zephyr/governance/artifact_scanner.py |  | production | draft |
-| src/zephyr/governance/audit_orchestrator/integrity.py |  | production | draft | src/zephyr/governance/audit_orchestrator/integrity.py |  | production | draft |
-| src/zephyr/governance/audit_trail/drift_bridge.py |  | production | draft | src/zephyr/governance/audit_trail/drift_bridge.py |  | production | draft |
-| src/zephyr/governance/audit_trail/self_monitor.py |  | production | draft | src/zephyr/governance/audit_trail/self_monitor.py |  | production | draft |
-| src/zephyr/governance/drift_detection/_detector_registry.yaml |  | production | orphan | src/zephyr/governance/drift_detection/_detector_registry.yaml |  | production | orphan |
-| src/zephyr/governance/drift_detection/baseline_manager.py |  | prototype | draft | src/zephyr/governance/drift_detection/baseline_manager.py |  | prototype | draft |
-| src/zephyr/governance/drift_detection/chaos_injector.py |  | prototype | draft | src/zephyr/governance/drift_detection/chaos_injector.py |  | prototype | draft |
-| src/zephyr/governance/drift_detection/migration_plan.yaml |  | production | orphan | src/zephyr/governance/drift_detection/migration_plan.yaml |  | production | orphan |
-| src/zephyr/governance/drift_detector.py |  | prototype | draft | src/zephyr/governance/drift_detector.py |  | prototype | draft |
-| src/zephyr/governance/integrity.py |  | production | draft | src/zephyr/governance/integrity.py |  | production | draft |
-| src/zephyr/governance/red_blue_validator/ai_self_diagnosis.py |  | production | draft | src/zephyr/governance/red_blue_validator/ai_self_diagnosis.py |  | production | draft |
-| src/zephyr/governance/rule_enforcement/breaking_change_detector.py |  | production | draft | src/zephyr/governance/rule_enforcement/breaking_change_detector.py |  | production | draft |
-| src/zephyr/governance/rule_enforcement/drift_detector.py |  | prototype | draft | src/zephyr/governance/rule_enforcement/drift_detector.py |  | prototype | draft |
-| src/zephyr/governance/rule_enforcement/gate_health.py |  | production | draft | src/zephyr/governance/rule_enforcement/gate_health.py |  | production | draft |
-| src/zephyr/governance/rule_enforcement/gate_integrity_guard.py |  | production | draft | src/zephyr/governance/rule_enforcement/gate_integrity_guard.py |  | production | draft |
-| ...zephyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.py |  | production | draft | ...zephyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.py |  | production | draft |
-| ...phyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.yaml |  | production | orphan | ...phyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.yaml |  | production | orphan |
-| src/zephyr/governance/rule_enforcement/truth_source_validator.py |  | production | draft | src/zephyr/governance/rule_enforcement/truth_source_validator.py |  | production | draft |
-| tests/test_ba_chaos_injector.py |  | prototype | draft | tests/test_ba_chaos_injector.py |  | prototype | draft |
-| tests/test_baseline_manager.py |  | prototype | draft | tests/test_baseline_manager.py |  | prototype | draft |
-| tests/test_chaos_injector.py |  | prototype | draft | tests/test_chaos_injector.py |  | prototype | draft |
-| tests/test_context_drift_detector.py |  | prototype | draft | tests/test_context_drift_detector.py |  | prototype | draft |
-| tests/test_contract_drift_detector.py |  | prototype | draft | tests/test_contract_drift_detector.py |  | prototype | draft |
-| tests/test_drift_detector_ee.py |  | prototype | draft | tests/test_drift_detector_ee.py |  | prototype | draft |
-| tests/test_drift_detector_gate.py |  | prototype | draft | tests/test_drift_detector_gate.py |  | prototype | draft |
-| tests/test_model_drift_detector.py |  | prototype | draft | tests/test_model_drift_detector.py |  | prototype | draft |
-| tests/unit/drift_detector/__init__.py |  | prototype | draft | tests/unit/drift_detector/__init__.py |  | prototype | draft |
-| tests/unit/drift_detector/conftest.py |  | prototype | draft | tests/unit/drift_detector/conftest.py |  | prototype | draft |
-| tests/unit/drift_detector/test_drift_core.py |  | prototype | draft | tests/unit/drift_detector/test_drift_core.py |  | prototype | draft |
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| docs/01_policies_and_standards/_registry/catalogs/script_health_registry.yaml |  | production | orphan |
+| docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml |  | production | orphan |
+| .../01_policies_and_standards/rules/trae_035_task_construction_verification.yaml |  | production | orphan |
+| docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml |  | production | orphan |
+| docs/03_modules/_domain_governance/drift_detector/blueprint.md | docs__03_modules___domain_governance_... | design | design_only |
+| scripts/governance/d11_compliance/validate_blueprint_overlap.py |  | production | draft |
+| scripts/governance/d11_compliance/validate_truth_source_cascade.py |  | production | draft |
+| scripts/governance/d5_architecture/validators/validate_authority_registry.py |  | production | draft |
+| scripts/governance/d5_architecture/validators/validate_ssot.py |  | production | draft |
+| src/zephyr/governance/artifact_scanner.py |  | production | draft |
+| src/zephyr/governance/audit_orchestrator/integrity.py |  | production | draft |
+| src/zephyr/governance/audit_trail/drift_bridge.py |  | production | draft |
+| src/zephyr/governance/audit_trail/self_monitor.py |  | production | draft |
+| src/zephyr/governance/drift_detection/_detector_registry.yaml |  | production | orphan |
+| src/zephyr/governance/drift_detection/baseline_manager.py |  | prototype | draft |
+| src/zephyr/governance/drift_detection/chaos_injector.py |  | prototype | draft |
+| src/zephyr/governance/drift_detection/migration_plan.yaml |  | production | orphan |
+| src/zephyr/governance/drift_detector.py |  | prototype | draft |
+| src/zephyr/governance/integrity.py |  | production | draft |
+| src/zephyr/governance/red_blue_validator/ai_self_diagnosis.py |  | production | draft |
+| src/zephyr/governance/rule_enforcement/breaking_change_detector.py |  | production | draft |
+| src/zephyr/governance/rule_enforcement/drift_detector.py |  | prototype | draft |
+| src/zephyr/governance/rule_enforcement/gate_health.py |  | production | draft |
+| src/zephyr/governance/rule_enforcement/gate_integrity_guard.py |  | production | draft |
+| ...zephyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.py |  | production | draft |
+| ...phyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.yaml |  | production | orphan |
+| src/zephyr/governance/rule_enforcement/truth_source_validator.py |  | production | draft |
+| tests/test_ba_chaos_injector.py |  | prototype | draft |
+| tests/test_baseline_manager.py |  | prototype | draft |
+| tests/test_chaos_injector.py |  | prototype | draft |
+| tests/test_context_drift_detector.py |  | prototype | draft |
+| tests/test_contract_drift_detector.py |  | prototype | draft |
+| tests/test_drift_detector_ee.py |  | prototype | draft |
+| tests/test_drift_detector_gate.py |  | prototype | draft |
+| tests/test_model_drift_detector.py |  | prototype | draft |
+| tests/unit/drift_detector/__init__.py |  | prototype | draft |
+| tests/unit/drift_detector/conftest.py |  | prototype | draft |
+| tests/unit/drift_detector/test_drift_core.py |  | prototype | draft |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染显示。
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
 >
 > **图例说明 / Legend**：
 > - **实线边框 = 运营态模块**（production，已上线运行）
@@ -87,9 +89,11 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
+### 第 1 页 / 共 2 页 / Page 1 of 2
+
 ```mermaid
 graph TD
-    subgraph D_GOV_DRIFT["D-GOV_DRIFT drift_detection"]
+    subgraph D_GOV_DRIFT["D-GOV_DRIFT 漂移检测"]
         docs_01_policies_and_standards_registry_catalogs_script_health_registry_yaml["docs/01_policies_and_standards/_registry/catalo... production"]
         docs_01_policies_and_standards_rules_trae_016_arch_drift_detection_yaml["docs/01_policies_and_standards/rules/trae_016_a... production"]
         docs_01_policies_and_standards_rules_trae_035_task_construction_verification_yaml["docs/01_policies_and_standards/rules/trae_035_t... production"]
@@ -168,33 +172,66 @@ graph TD
     class D_GOVERNANCE,D_GOV_AUDIT,D_AUTONOMY_PERM,D_TRADING,D_COMPLIANCE external_design
 ```
 
-> (依赖图最多显示前 30 个节点，共 38 个)
+### 第 2 页 / 共 2 页 / Page 2 of 2
+
+```mermaid
+graph TD
+    subgraph D_GOV_DRIFT["D-GOV_DRIFT 漂移检测"]
+        tests_test_context_drift_detector_py["tests/test_context_drift_detector.py prototype"]
+        tests_test_contract_drift_detector_py["tests/test_contract_drift_detector.py prototype"]
+        tests_test_drift_detector_ee_py["tests/test_drift_detector_ee.py prototype"]
+        tests_test_drift_detector_gate_py["tests/test_drift_detector_gate.py prototype"]
+        tests_test_model_drift_detector_py["tests/test_model_drift_detector.py prototype"]
+        tests_unit_drift_detector_init_py["tests/unit/drift_detector/__init__.py prototype"]
+        tests_unit_drift_detector_conftest_py["tests/unit/drift_detector/conftest.py prototype"]
+        tests_unit_drift_detector_test_drift_core_py["tests/unit/drift_detector/test_drift_core.py prototype"]
+    end
+    tests_unit_drift_detector_conftest_py -.->|config_depends| tests_unit_drift_detector_init_py
+    D_SECURITY["D-SECURITY production"]
+    tests_test_context_drift_detector_py -.->|test_depends| D_SECURITY
+    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    tests_test_contract_drift_detector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    tests_test_drift_detector_gate_py -.->|test_depends| D_GOVERNANCE
+    tests_test_drift_detector_ee_py -.->|test_depends| D_GOVERNANCE
+    tests_test_model_drift_detector_py -.->|test_depends| D_GOVERNANCE
+    tests_unit_drift_detector_test_drift_core_py -.->|test_depends| D_BEHAVIORAL_AUDIT
+    tests_unit_drift_detector_test_drift_core_py -.->|test_depends| D_BEHAVIORAL_AUDIT
+    tests_unit_drift_detector_test_drift_core_py -.->|test_depends| D_BEHAVIORAL_AUDIT
+    tests_unit_drift_detector_test_drift_core_py -.->|test_depends| D_BEHAVIORAL_AUDIT
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class tests_test_context_drift_detector_py,tests_test_contract_drift_detector_py,tests_test_drift_detector_ee_py,tests_test_drift_detector_gate_py,tests_test_model_drift_detector_py,tests_unit_drift_detector_init_py,tests_unit_drift_detector_conftest_py,tests_unit_drift_detector_test_drift_core_py design
+    class D_SECURITY,D_BEHAVIORAL_AUDIT,D_GOVERNANCE external_prod
+```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 | 依赖数 | 依赖类型 | Target Domain | Count | Type |
-|--------|:---:|---------|---------------|:---:|------|
-| D-GOVERNANCE | 12 | runtime,config_depends,import_depends,test_depends | D-GOVERNANCE | 12 | runtime,config_depends,import_depends,test_depends |
-| D-BEHAVIORAL_AUDIT | 11 | import_depends,test_depends | D-BEHAVIORAL_AUDIT | 11 | import_depends,test_depends |
-| D-GOV_AUDIT | 8 | runtime,import_depends | D-GOV_AUDIT | 8 | runtime,import_depends |
-| D-SECURITY | 3 | import_depends,test_depends | D-SECURITY | 3 | import_depends,test_depends |
-| D-INTEGRATION | 3 | import_depends | D-INTEGRATION | 3 | import_depends |
-| D-GOV_RULE | 1 | runtime | D-GOV_RULE | 1 | runtime |
-| D-AUTONOMY_PERM | 1 | runtime | D-AUTONOMY_PERM | 1 | runtime |
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-GOVERNANCE | 12 | runtime,config_depends,import_depends,test_depends |
+| D-BEHAVIORAL_AUDIT | 11 | import_depends,test_depends |
+| D-GOV_AUDIT | 8 | runtime,import_depends |
+| D-SECURITY | 3 | import_depends,test_depends |
+| D-INTEGRATION | 3 | import_depends |
+| D-GOV_RULE | 1 | runtime |
+| D-AUTONOMY_PERM | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-| 源域 | 依赖数 | 依赖类型 | Source Domain | Count | Type |
-|------|:---:|---------|---------------|:---:|------|
-| D-GOVERNANCE | 36 | runtime,contract,test_depends,import_depends,config_depends | D-GOVERNANCE | 36 | runtime,contract,test_depends,import_depends,config_depends |
-| D-GOV_AUDIT | 16 | runtime,import_depends,test_depends | D-GOV_AUDIT | 16 | runtime,import_depends,test_depends |
-| D-TRADING | 5 | runtime,import_depends | D-TRADING | 5 | runtime,import_depends |
-| D-GOV_RULE | 4 | import_depends | D-GOV_RULE | 4 | import_depends |
-| D-COMPLIANCE | 2 | import_depends | D-COMPLIANCE | 2 | import_depends |
-| D-SECURITY | 1 | import_depends | D-SECURITY | 1 | import_depends |
-| D-OPS | 1 | import_depends | D-OPS | 1 | import_depends |
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D-GOVERNANCE | 36 | runtime,contract,test_depends,import_depends,config_depends |
+| D-GOV_AUDIT | 16 | runtime,import_depends,test_depends |
+| D-TRADING | 5 | runtime,import_depends |
+| D-GOV_RULE | 4 | import_depends |
+| D-COMPLIANCE | 2 | import_depends |
+| D-SECURITY | 1 | import_depends |
+| D-OPS | 1 | import_depends |
 
 ## 说明 / Notes
 
