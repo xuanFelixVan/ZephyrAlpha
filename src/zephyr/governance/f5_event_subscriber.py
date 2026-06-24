@@ -571,6 +571,72 @@ def create_f5_event_subscriber(
     return subscriber
 
 
+# ── §7.1 外部事件订阅 (DM-2507-C) ──────────────────────────────────────────
+
+_subscribed = False
+
+
+def subscribe_eventbus() -> None:
+    """订阅 EventBusBackpressure 的4个外部事件。
+
+    幂等：重复调用安全。供 boot_hooks 统一调用。
+    事件: budget_exceeded / drift_detected / fix_completed / fix_failed
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        bus = default_bus
+        bus.subscribe("budget_exceeded", _on_budget_exceeded)
+        bus.subscribe("drift_detected", _on_drift_detected)
+        bus.subscribe("fix_completed", _on_fix_completed)
+        bus.subscribe("fix_failed", _on_fix_failed)
+        _subscribed = True
+        logger.info(
+            "F5EventSubscriber: subscribed to 4 external events "
+            "(budget_exceeded/drift_detected/fix_completed/fix_failed)"
+        )
+    except Exception as e:
+        logger.warning("F5EventSubscriber: subscribe_eventbus failed: %s", e)
+
+
+def _on_budget_exceeded(payload: Any) -> None:
+    """budget_exceeded 事件：预算超限触发升级评估。轻量handler。"""
+    _dispatch_to_escalation(payload, "budget_exceeded")
+
+
+def _on_drift_detected(payload: Any) -> None:
+    """drift_detected 事件：漂移检测触发升级评估。轻量handler。"""
+    _dispatch_to_escalation(payload, "drift_detected")
+
+
+def _on_fix_completed(payload: Any) -> None:
+    """fix_completed 事件：修复完成触发验证/升级。轻量handler。"""
+    _dispatch_to_escalation(payload, "custom")
+
+
+def _on_fix_failed(payload: Any) -> None:
+    """fix_failed 事件：修复失败触发升级。轻量handler。"""
+    _dispatch_to_escalation(payload, "custom")
+
+
+def _dispatch_to_escalation(payload: Any, category: str) -> None:
+    """将外部事件派发到 escalate_if_needed（已有公开方法）。"""
+    try:
+        from zephyr.governance.adapter import escalate_if_needed
+
+        data = payload if isinstance(payload, dict) else {}
+        description = data.get("detail", f"external event: {category}")
+        owner_id = data.get("source_function", "")
+        escalate_if_needed(
+            operation_type=category,
+            description=description,
+            owner_id=owner_id,
+        )
+    except Exception:
+        pass
+
+
 __all__ = [
     "F5EventSubscriber",
     "SubscriptionResult",
@@ -582,4 +648,5 @@ __all__ = [
     "TOPIC_ESCALATION_NEEDED",
     "TOPIC_CONFLICT_DETECTED",
     "create_f5_event_subscriber",
+    "subscribe_eventbus",
 ]
