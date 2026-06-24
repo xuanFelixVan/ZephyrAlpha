@@ -70,6 +70,22 @@ def _kw_capped(kw_rate: float, cap: float = 0.5) -> float:
     """
     return min(kw_rate, cap)
 
+
+def _verify_code_syntax(code: str) -> bool:
+    """验证代码语法是否正确（AST解析）。
+
+    P3: 代码执行验证 — 使用AST解析验证生成的代码语法正确性。
+    比实际执行更安全，能捕获语法错误（缩进错误、括号不匹配等）。
+    """
+    import ast
+
+    try:
+        ast.parse(code)
+        return True
+    except (SyntaxError, ValueError):
+        return False
+
+
 _EXAM_CAPABILITY_NAMES = {
     "task_classification",
     "tag_completion",
@@ -320,6 +336,9 @@ class ExamOrchestrator:
                 struct_score += 0.25
             hits = sum(1 for kw in case.expected_contains if kw in content)
             rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
+            # P3: AST语法验证 — 语法正确加分
+            if _verify_code_syntax(content):
+                struct_score = min(struct_score + 0.2, 1.0)
             score = max(struct_score, _kw_capped(rate))
             return (score, score, 0.0, 1 if hits == len(case.expected_contains) else 0)
 
