@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.infrastructure.task_manager_server; scripts/lock_files.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash
+# [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash; cross-process lock via os.makedirs in .ailocks/ (threading.Lock is process-local only, ineffective for Trae multi-window multi-process)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -84,6 +84,77 @@ class CommitStatus(str, Enum):
 
 class StagingError(RuntimeError):
     pass
+
+
+class _CrossProcessLock:
+    """跨进程文件锁（os.open O_CREAT|O_EXCL 原子创建）。
+
+    根因: threading.Lock 只保护单进程内线程，多进程（Trae 多对话窗口）下无效。
+    本锁通过 os.open(O_CREAT|O_EXCL) 原子操作实现跨进程互斥。
+
+    用文件锁而非目录锁: Windows NTFS 目录删除（rmtree）有延迟，Defender 扫描期间
+    立即 mkdir 会失败；文件删除（os.remove）更可靠。
+
+    锁文件: .ailocks/staging_commit_{hash}.lock
+    TTL: 30 分钟（防进程崩溃死锁，与 lock_files.py 一致）
+    """
+
+    _TTL_SECONDS = 1800
+
+    def __init__(self, project_root: Path, file_path: str, timeout: float = 30.0, poll_interval: float = 0.05) -> None:
+        name_hash = hashlib.sha256(file_path.encode("utf-8")).hexdigest()[:16]
+        self._lock_file = project_root / ".ailocks" / f"staging_commit_{name_hash}.lock"
+        self._lock_file.parent.mkdir(parents=True, exist_ok=True)
+        self._file_path = file_path
+        self._timeout = timeout
+        self._poll_interval = poll_interval
+        self._acquired = False
+
+    def __enter__(self) -> _CrossProcessLock:
+        import json
+
+        deadline = time.monotonic() + self._timeout
+        while True:
+            try:
+                fd = os.open(str(self._lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                try:
+                    os.write(
+                        fd,
+                        json.dumps(
+                            {"pid": os.getpid(), "acquired_at": time.time(), "file": self._file_path},
+                            ensure_ascii=False,
+                        ).encode("utf-8"),
+                    )
+                finally:
+                    os.close(fd)
+                self._acquired = True
+                return self
+            except FileExistsError:
+                try:
+                    data = json.loads(self._lock_file.read_text(encoding="utf-8"))
+                    if time.time() - data.get("acquired_at", 0) > self._TTL_SECONDS:
+                        try:
+                            os.remove(self._lock_file)
+                        except OSError:
+                            pass
+                        continue
+                except (OSError, ValueError):
+                    pass
+                if time.monotonic() >= deadline:
+                    raise StagingError(
+                        f"Cannot acquire cross-process lock for {self._file_path} "
+                        f"(timeout {self._timeout}s)— another session is committing this file"
+                    )
+                time.sleep(self._poll_interval)
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        if self._acquired:
+            try:
+                os.remove(self._lock_file)
+            except OSError:
+                pass
+            self._acquired = False
+        return False
 
 
 @dataclass
@@ -314,7 +385,7 @@ class StagingArea:
         target.parent.mkdir(parents=True, exist_ok=True)
         draft_content = _read_file_robust(draft)
 
-        with _COMMIT_LOCK:
+        with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path):
             if _orig_mtime is not None:
                 pre_replace_mtime = _file_mtime(target)
                 pre_replace_hash = _file_hash(target)
@@ -375,7 +446,7 @@ class StagingArea:
 
         from difflib import SequenceMatcher
 
-        with _COMMIT_LOCK:
+        with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path):
             current_lines = _read_file_robust(target).splitlines(keepends=True)
 
             locked_mtime = _file_mtime(target)
