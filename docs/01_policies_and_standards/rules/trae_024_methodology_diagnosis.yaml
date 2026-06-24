@@ -1,6 +1,6 @@
 rule_id: TRAE-024
 title: 方法论-诊断与根因分析
-version: 1.0.0
+version: 1.2.0
 layer: L2
 module_id: TRAE-024
 depends_on:

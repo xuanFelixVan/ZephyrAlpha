@@ -1,6 +1,6 @@
 rule_id: TRAE-034
 title: 任务系统-卡片标准与生命周期
-version: 1.3.3
+version: 1.4.0
 layer: L1
 module_id: TRAE-034
 depends_on:
@@ -140,10 +140,10 @@ sections:
     - TASK-001
     - MTH-006
     conditions:
-    - type: trigger
-      check: 任务涉及Bug修复/漂移修复/异常状态/结构缺陷
-      pass: MUST执行深挖到底协议
-      fail: 可跳过
+    - type: pre_condition
+      check: 本次操作是否修改既有产物(代码/数据/规则/文档结构)
+      pass: MUST执行深挖到底协议完整七步
+      fail: 新增类操作可豁免深挖，但仍须诊断反转验证(step 6)
     actions:
     - type: mandatory
       step: 一直问到根——不是固定5个为什么，是问到不能再问为止
@@ -158,6 +158,7 @@ sections:
     - 禁止发现多个问题只修一个其余以后再建卡
     - 禁止根因是"代码写错了"就停
     - 禁止不写回description
+    - 禁止把"新增功能"当作豁免理由跳过对既有代码的根因分析
   task_001_closure:
     title: 关闭验证
     section_type: rule
@@ -779,6 +780,10 @@ sections:
       command: 文件锁+上下文就绪检查
       expected_exit: 0
       on_fail: 等待锁释放
+    - step: G2.5执行前(操作类型校验)
+      command: 判定本次操作是否修改既有产物(代码/数据/规则/文档结构)→是则强制MTH-006完整七步→否则仅须诊断反转验证
+      expected_exit: 0
+      on_fail: 暂停执行，补做MTH-006深挖到底协议
     - step: G3执行中
       command: 上下文装配清单校验
       expected_exit: 0
@@ -1354,9 +1359,14 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.3.3"
-  last_modified: "2026-06-21"
+  version: "1.4.0"
+  last_modified: "2026-06-25"
   change_history:
+  - version: 1.4.0
+    date: '2026-06-25'
+    by: OPS-2026062501
+    changes:
+    - 'MTH-006强制力升级——task_001_mth006 conditions由trigger升级为pre_condition(修改既有产物即强制完整七步)；task_004_gate_checklist新增G2.5门禁(操作类型校验)；prohibitions追加禁止把新增功能当豁免理由'
   - version: 1.3.3
     date: '2026-06-21'
     by: AI-Assistant

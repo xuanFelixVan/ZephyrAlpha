@@ -547,6 +547,11 @@ metadata:
   modification_permission: ai_modifiable
   superseded_by:
   change_history:
+  - version: 0.3.0
+    date: '2026-06-25'
+    by: OPS-2026062501
+    changes:
+    - MTH-006强制力升级——ops_vc_005_rules B4从"诊断反转验证已执行"升级为"操作类型已自检"，fail指向trae_024 MTH-006完整七步(非仅step 6)
   - version: 0.2.4
     date: '2026-06-21'
     by: AI-Assistant
