@@ -1428,6 +1428,10 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 81 | 外键约束方向 | **单向外键：nodes.path 必须在 arch_directory_tree 存在，反向不要求** | ✅ |
 | 149 | 两表覆盖范围 | **nodes 7,590 节点 vs arch_directory_tree 9,204 行**（差 1,614 个文档/数据/模板节点） | ✅ |
 | 173 | nodes 表节点准入边界 | **只收录有 import 依赖的代码节点（.py+.yaml），文档/规则/模板不进 nodes 表**（业界对标 dependency-cruiser/ArchUnit） | ✅ |
+| 174 | 规则文件归属 | **规则文件（trae_*.yaml）不进 nodes 表，归属 D-GOV-DOCS（文档域），在 arch_directory_tree 记录位置**。规则文件虽是 yaml 格式但本质是"规则文档"非"运行时配置"，无 import 依赖边，是孤岛节点。D-GOV-RULE 域 179 个规则文件节点应从 nodes 表清理。规则与业务域的逻辑约束通过 arch_constraints 表独立解决（from_domain/to_domain），不通过 nodes 表归属实现 | ✅ |
+| 175 | 测试域处理 | **删除 10 个并发测试域**（D-T3-W0~W3/D-T4-SAME/D-T5-W0~W3/D-T9-PREREQ）。这些是 concurrent_write_test.py 红蓝对抗测试残留，已泄漏到生产 depgraph.db（0 模块空壳），ssot_path 路径不存在代码，测试隔离机制失效。业界实践：测试用独立测试库，不污染生产 DB（JUnit/K8s kind/Google Bazel） | ✅ |
+| 176 | 设计态域处理 | **保留 5 个设计态域**（D-GOV_ENFORCEMENT/D-GOV_REPAIR/D-GOV_SCRIPTS/D-INTEGRATION_GATEWAY/D-SECURITY_LLM），标记为"计划中"。这些域为缓解超容父域而规划（D-GOVERNANCE 3860 模块超容 1930%、D-SECURITY 849、D-INTEGRATION 705、D-OPS 679），functional_domain_registry.yaml 已有完整 covers 规划。业界对标 DDD Bounded Context planned/TOGAF Transition Architecture | ✅ |
+| 177 | 域命名统一 | **统一为下划线风格**（D-XXX_YYY），符合 trae_028 GOV-DOC-003 §SSoT 规定。当前 15 个域违规（25.9%）：5 个功能域（D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT 等）+ 10 个测试域（如保留则 D-T3-W0→D-T3_W0）。连字符已导致域重复 bug（project_memory 记录），sync 脚本已打 normalize_domain_id 补丁。业界对标 PEP8/K8s 社区均用 snake_case | ✅ |
 
 ### 20.5 施工优先级与验收裁定（施工层）
 

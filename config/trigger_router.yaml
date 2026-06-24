@@ -104,10 +104,10 @@ triggers:
 
 # --- AUTO-GENERATED WIRING STATUS START ---
 # trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [experimental（T-V2-006）]
-# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.integration.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
-# trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.resilience.escalation.drift_detector.DriftDetector.trigger_recovery [experimentalf（T-V2-009）]
+# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
+# trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.gates.drift_detector.DriftDetector.trigger_recovery [experimentalf（T-V2-009）]
 # trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.archive_drafts_zone.archive_expired_drafts [experimentalg+]
-# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.observability.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
+# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
 #
 # 真实 handler 实施后:
 #   (1) 更新 trigger_router.yaml triggers.<type>.handler 为真实路径

@@ -1,7 +1,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-24'
-total_scripts: 521
+total_scripts: 522
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -4203,7 +4203,8 @@ scripts:
   dimensions: []
 - name: ops/upgrade_headers_to_14fields.py
   path: ops/upgrade_headers_to_14fields.py
-  description: Upgrade A_full file headers from 10 fields to 14 fields per TRAE-047 v1.1.0
+  description: Upgrade A_full file headers from 10 fields to 14 fields per TRAE-047
+    v1.1.0
   domain: ops
   execution_plane: warm-path
   status: registered
@@ -4211,6 +4212,11 @@ scripts:
   dimensions: []
 - path: governance/d5_architecture/generators/generate_runtime_plane_mapping.py
   description: G12 运行平面映射图生成器
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+- path: governance/migrate_arch_f_functions.py
+  description: governance/migrate_arch_f_functions 脚本
   domain: governance
   execution_plane: warm-path
   status: registered
