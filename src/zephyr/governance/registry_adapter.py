@@ -541,8 +541,8 @@ class RegistryManager:
         self._known["docs/03_modules/module-registry.yaml"] = YamlListAdapter(
             "REG-MOD-001", "module-registry.yaml", asset_key="module_id"
         )
-        self._known["docs/03_modules/blueprint-registry.yaml"] = YamlListAdapter(
-            "REG-BP-001", "blueprint-registry.yaml", asset_key="blueprint_id"
+        self._known["docs/03_modules/blueprint_registry.yaml"] = YamlListAdapter(
+            "REG-BP-001", "blueprint_registry.yaml", asset_key="blueprint_id"
         )
         self._known["src/zephyr/gates/_registry.yaml"] = YamlListAdapter(
             "REG-GATE-001", "_registry.yaml", asset_key="gate_id"
@@ -649,7 +649,7 @@ class RegistryManager:
             self._root / "src" / "zephyr" / "gates" / "_registry.yaml",
             self._root / "scripts" / "script-manifest.yaml",
             self._root / "docs" / "03_modules" / "module-registry.yaml",
-            self._root / "docs" / "03_modules" / "blueprint-registry.yaml",
+            self._root / "docs" / "03_modules" / "blueprint_registry.yaml",
             self._root / "config" / "capacity" / "risk-register.yaml",
             self._root / "config" / "capacity" / "asset-inventory.yaml",
         ]

@@ -467,7 +467,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | ~~l06_trade_execution.yaml~~ | 已删除（迁移至35域架构） | — | 旧14层架构YAML已废弃 |
-| 2 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
+| 2 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
 | 3 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\src\zephyr\shared\contracts\cross_layer_contracts.yaml` | 确认 CTR-005/CTR-006/CTR-ERR-005/CTR-P1-007 状态 | 契约状态同步 |
 
 ---
@@ -928,7 +928,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 L05 组合构建层产
 | L06 架构设计 | **本文档 §1-§10** | 旧版占位蓝图 |
 | L06 施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | L06 接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

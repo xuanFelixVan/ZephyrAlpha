@@ -606,7 +606,7 @@ class {DataModel}(BaseModel):
 
 | 产出物类型 | 存放完整路径（相对优先） | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `docs/03_modules/{layer}/{module-name}/blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint-registry.yaml |
+| 蓝图文件 | `docs/03_modules/{layer}/{module-name}/blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
 | 业务代码 | `src/zephyr/{pkg}/` | Python 源码 | ≥1 | `__init__.py` __all__ |
 | 测试代码 | `tests/{pkg}/` | 测试用例 | ≥0 | pytest 自动发现 |
 
@@ -638,7 +638,7 @@ class {DataModel}(BaseModel):
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
-| 2 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | {新增/修改什么} | {为什么} |
+| 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
 | 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
 | 4 | 依赖图 | `docs/02_enterprise_architecture/system-dependency-map.md` | {新增/修改什么} | {为什么} |
 
@@ -959,7 +959,7 @@ class {DataModel}(BaseModel):
 | 有独立 Phase 路线图和交付节奏 | 拆分 | 同上 |
 | 有独立依赖关系图（与主体 depends_on 交集<50%） | 拆分 | 同上 |
 | 内容超100行且与主体无直接数据流 | 拆分 | 同上 |
-| 拆分后 | MUST验证 | 子蓝图有独立frontmatter+概述+§0~§18；本蓝图§10新增引用；blueprint-registry.yaml同步更新 |
+| 拆分后 | MUST验证 | 子蓝图有独立frontmatter+概述+§0~§18；本蓝图§10新增引用；blueprint_registry.yaml同步更新 |
 
 ---
 
@@ -1043,7 +1043,7 @@ class {DataModel}(BaseModel):
 | {本蓝图的核心架构设计} | **本文档 §1-§10** | {已被取代的旧蓝图/旧文档} | {无/⚠️{文件}重复定义——以本蓝图为准} |
 | {本模块的施工步骤} | **本文档 §16** | {已废弃的旧施工图} | {无} |
 | {本模块的接口契约} | **本文档 §4** | — | {无} |
-| {代码文件清单与对齐状态} | **本文档 §0** | blueprint-registry.yaml（派生） | {无} |
+| {代码文件清单与对齐状态} | **本文档 §0** | blueprint_registry.yaml（派生） | {无} |
 | {容量升级方案} | **本文档 §17** | 独立升级文档（已废弃） | {无} |
 | {数据模型定义} | **{ssot_file}.py** | 其他文件中的同名模型=兼容层(待统一) | {无/⚠️{文件}定义同名模型} |
 

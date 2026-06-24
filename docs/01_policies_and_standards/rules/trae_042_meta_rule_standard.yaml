@@ -1498,7 +1498,7 @@ sections:
     - 蓝图ID命名体系——不同层级的蓝图前缀约定(MOD-MASTER/MOD-DOMAIN/MOD-{LAYER})
     - 蓝图归属声明——每份蓝图的frontmatter字段belongs_to(上级蓝图引用)
     - AI Agent蓝图定位规则——新session冷启动时按什么顺序读蓝图
-    - 注册表联动规则——blueprint-registry.yaml和module-registry.yaml需要增加的字段
+    - 注册表联动规则——blueprint_registry.yaml和module-registry.yaml需要增加的字段
     responsibility_boundary:
     - 单个蓝图的章节结构→以blueprint-construction-template.md为准
     - 蓝图内的技术决策内容→各蓝图独立定义
@@ -1686,9 +1686,9 @@ sections:
     section_type: rule
     original_rules:
     - PS-STD-005 §8
-    summary: blueprint-registry.yaml和module-registry.yaml需要增加的字段——blueprint_level字段(MUST)+parent_blueprint字段(SHOULD)
+    summary: blueprint_registry.yaml和module-registry.yaml需要增加的字段——blueprint_level字段(MUST)+parent_blueprint字段(SHOULD)
     registry_extensions:
-    - registry: blueprint-registry.yaml
+    - registry: blueprint_registry.yaml
       field: blueprint_level
       requirement: MUST
       values: system(SYSTEM级)/domain(DOMAIN级)/module(MODULE级)
@@ -1705,9 +1705,9 @@ sections:
       fail: 缺少扩展字段导致层级信息丢失
     actions:
     - type: mandatory
-      step: blueprint-registry.yaml每条blueprints[]记录MUST新增blueprint_level字段(SYSTEM/DOMAIN/MODULE)；module-registry.yaml每条modules[]记录的blueprint下SHOULD新增parent_blueprint字段
+      step: blueprint_registry.yaml每条blueprints[]记录MUST新增blueprint_level字段(SYSTEM/DOMAIN/MODULE)；module-registry.yaml每条modules[]记录的blueprint下SHOULD新增parent_blueprint字段
     prohibitions:
-    - blueprint-registry.yaml缺少blueprint_level字段
+    - blueprint_registry.yaml缺少blueprint_level字段
   ps_std_005_existing_mapping:
     title: 既存蓝图归属映射
     section_type: context
@@ -1851,9 +1851,9 @@ sections:
     - document: 03_modules/module-registry.yaml
       content: 模块生命周期登记
       arbitration: module-registry.yaml
-    - document: 03_modules/blueprint-registry.yaml
+    - document: 03_modules/blueprint_registry.yaml
       content: 蓝图深度评估
-      arbitration: 本标准+blueprint-registry.yaml(§8.1扩展字段以本标准为准)
+      arbitration: 本标准+blueprint_registry.yaml(§8.1扩展字段以本标准为准)
     informative_references:
     - document: Codified Context(arXiv 2602.20478)
       content: 三层记忆模型(设计参考)
@@ -1945,7 +1945,7 @@ sections:
       status: pass
     - item: §7 AI Agent蓝图定位规则——冷启动路径+Token预算+Codified Context对照
       status: pass
-    - item: §8注册表联动——blueprint-registry.yaml+module-registry.yaml新增字段
+    - item: §8注册表联动——blueprint_registry.yaml+module-registry.yaml新增字段
       status: pass
     - item: §9既存蓝图归属映射——19份既存蓝图→belongs_to映射
       status: pass

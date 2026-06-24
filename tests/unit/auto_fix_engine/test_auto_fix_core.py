@@ -36,7 +36,7 @@ from zephyr.security.access_control.auto_fix_engine_03.models import (
 
 @pytest.fixture
 def engine(tmp_path):
-    config_path = str(tmp_path / "auto-fix-config.yaml")
+    config_path = str(tmp_path / "auto_fix_config.yaml")
     with open(config_path, "w", encoding="utf-8") as f:
         f.write("safety:\n  safety_gate_enabled: true\nbudget:\n  daily_limit: 50\n  monthly_limit: 500\n")
     return AutoFixEngine(config_path=config_path)

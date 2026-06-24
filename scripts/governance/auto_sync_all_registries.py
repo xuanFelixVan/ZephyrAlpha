@@ -46,7 +46,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 REGISTRIES = {
     "module": PROJECT_ROOT / "docs/03_modules/module-registry.yaml",
-    "blueprint": PROJECT_ROOT / "docs/03_modules/blueprint-registry.yaml",
+    "blueprint": PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml",
     "gate": PROJECT_ROOT / "src/zephyr/gates/_registry.yaml",
     "cross_dep": PROJECT_ROOT
     / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",

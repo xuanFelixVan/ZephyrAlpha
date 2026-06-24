@@ -469,7 +469,7 @@ STEP 2: 职责域判定
 STEP 3: 拆分后验证
   - 独立 frontmatter + 概述 + §0~§18
   - belongs_to = MOD-MASTER-001
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### MOD-MASTER-001 拆分实例
@@ -642,6 +642,6 @@ Orc 是唯一能够"跨系统编排"的系统——但特权仅限于 CT-* 合�
 |-----------|------------|
 | CBAC 矩阵变更 | checksum + MOD-MASTER-002 §二 |
 | 新增 CT-* 契约 | capability_matrix |
-| construction_progress 变更 | blueprint-registry.yaml |
+| construction_progress 变更 | blueprint_registry.yaml |
 
 ---

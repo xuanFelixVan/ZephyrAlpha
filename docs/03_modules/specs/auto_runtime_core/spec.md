@@ -964,7 +964,7 @@ src/zephyr/runtime/
 data/
 ├── night_shift_queue.jsonl
 ├── capability_cards/              # 每组件一个 YAML
-├── circadian_tasks/schedule-state.json
+├── circadian_tasks/schedule_state.json
 ├── audit_logs/ai_audit_{date}.jsonl
 ├── dream_archive/episodic/ + semantic/
 ├── feedback_proposals/PROPOSAL-*.yaml

@@ -74,7 +74,7 @@ _schema:
     - id: "module_registry"
       description: "module-registry.yaml 的 modules[] 条目——module_id、priority 等的登记源"
     - id: "blueprint_registry"
-      description: "blueprint-registry.yaml 的 blueprints[] 条目——completeness_pct、generation 等的评估源"
+      description: "blueprint_registry.yaml 的 blueprints[] 条目——completeness_pct、generation 等的评估源"
 
 # ============================================================================
 # 登记表清单
@@ -100,7 +100,7 @@ registries:
   - id: "REG-002"
     name: "blueprint-registry"
     title: "蓝图登记表"
-    path: "docs/03_modules/blueprint-registry.yaml"
+    path: "docs/03_modules/blueprint_registry.yaml"
     version: "1.0.0"
     description: "蓝图维度的深度评估（施工进度%、完整度%、代际、标的价值）"
     ssoT_for:
@@ -332,7 +332,7 @@ cross_registry_rules:
     ssoT: "REG-001"
     ssoT_rationale: |
       module_id 由 module-registry.yaml 首次分配并作为主键。
-      blueprint.md frontmatter 和 blueprint-registry.yaml 中的 module_id 必须与主键一致。
+      blueprint.md frontmatter 和 blueprint_registry.yaml 中的 module_id 必须与主键一致。
     consistency: exact
     violation_action: block
 

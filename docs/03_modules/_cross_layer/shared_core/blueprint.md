@@ -658,7 +658,7 @@ depends_on:
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
 | 2 | models.py | `D:\ZephyrAlpha\src\zephyr\shared\models.py` | 新增 AgentIdentity/AuditEvent 模型 | MOD-INF-018/020 实现后需新增模型 |
 
 ---
@@ -1114,7 +1114,7 @@ logger = get_logger(__name__)
 
 | 资源 | 设计目标 | 测量方式 |
 |------|---------|---------|
-| 模块数 | 1,500 | blueprint-registry.yaml |
+| 模块数 | 1,500 | blueprint_registry.yaml |
 | 脚本数 | 10,000 | script-manifest.yaml |
 | AI 并发 | 100 Session | 运行时监控 |
 | 内存 | 64GB（单机 i7-12700KF） | psutil |
@@ -1258,7 +1258,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例

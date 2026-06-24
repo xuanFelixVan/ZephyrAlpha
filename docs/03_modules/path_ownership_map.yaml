@@ -870,7 +870,7 @@ ownership:
 
 
 
-  - path: 'src/zephyr/auto-fix-engine/auto-fix-config.yaml'
+  - path: 'src/zephyr/auto-fix-engine/auto_fix_config.yaml'
 
     owner_blueprint: '"MOD-INF-031"'
 

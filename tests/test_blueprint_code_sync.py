@@ -91,7 +91,7 @@ class TestBlueprintCodeSyncInit:
 
     def test_registry_path_constructed(self):
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
-        expected = PROJECT_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+        expected = PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
         assert sync._registry_path == expected
 
 
@@ -115,7 +115,7 @@ class TestVerifySync:
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         mock_entries = [
             SyncEntry(
-                blueprint_path="docs/03_modules/blueprint-registry.yaml",
+                blueprint_path="docs/03_modules/blueprint_registry.yaml",
                 code_path="src/zephyr/core/blueprint_code_sync.py",
                 status="PENDING",
             ),
@@ -125,7 +125,7 @@ class TestVerifySync:
                 status="PENDING",
             ),
             SyncEntry(
-                blueprint_path="docs/03_modules/blueprint-registry.yaml",
+                blueprint_path="docs/03_modules/blueprint_registry.yaml",
                 code_path="src/zephyr/core/nonexistent_code.py",
                 status="PENDING",
             ),
@@ -141,7 +141,7 @@ class TestVerifySync:
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         mock_entries = [
             SyncEntry(
-                blueprint_path="docs/03_modules/blueprint-registry.yaml",
+                blueprint_path="docs/03_modules/blueprint_registry.yaml",
                 code_path="src/zephyr/core/blueprint_code_sync.py",
                 status="PENDING",
             ),

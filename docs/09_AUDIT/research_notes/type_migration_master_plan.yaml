@@ -60,7 +60,7 @@ migrations:
     phase: "stable"
     status: completed
     acceptance: "docs/03_modules/ 下无 MOD-INF-003 目录"
-    note: "AUDIT-10 核实: MOD-INF-003 内容已合并至 MOD-INF-006，目录已删除。blueprint-registry.yaml 已记录"
+    note: "AUDIT-10 核实: MOD-INF-003 内容已合并至 MOD-INF-006，目录已删除。blueprint_registry.yaml 已记录"
 
   - item: "MOD-INF-004 vibe-coding-pipelines → 退役"
     owner: "已退役"

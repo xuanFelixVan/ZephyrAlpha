@@ -59,7 +59,7 @@
 
 - [架构原则详细文档](../target_architecture/architecture_principles.md)
 - [技术选型详细文档](../target_architecture/architecture_model/technology/technology_landscape.yaml)
-- [全景图能力定位书](../依赖与架构全景图能力定位书.md)
+- [全景图能力定位书](../dependency_architecture_panorama.md)
 
 ---
 

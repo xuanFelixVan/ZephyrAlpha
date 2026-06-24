@@ -23,5 +23,5 @@ In-Scope
   - `config/context-rules.yaml` (已存在，验证)
   - `config/compression/policy.yaml` (已存在，验证)
 - 创建 `architecture-context.json` 空结构
-- 更新 `blueprint-registry.yaml` 登记 MOD-INF-008
+- 更新 `blueprint_registry.yaml` 登记 MOD-INF-008
 - 更新蓝图 `construction_progress` → `phase_1_partial`（已完成部分）

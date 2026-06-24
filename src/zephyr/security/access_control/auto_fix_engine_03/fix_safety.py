@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] SafetyGate MUST check FixLevel+target;CascadeBreaker MUST熔断;SecretLeakGuard MUST 100%拦截
-# [MODIFY-GUARD] blueprint.md §5;auto-fix-config.yaml safety段
+# [MODIFY-GUARD] blueprint.md §5;auto_fix_config.yaml safety段
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

@@ -464,7 +464,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress更新; name统一为compliance-core | 进度更新+命名统一(ARB-21) |
+| 1 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress更新; name统一为compliance-core | 进度更新+命名统一(ARB-21) |
 | 2 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | 补充 artifact_scanner.py + implementations/ 子目录 | 消除孤儿文件 |
 
 ---
@@ -747,7 +747,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 5 | default_security_gateway.py（根目录） | `D:\ZephyrAlpha\src\zephyr\compliance\default_security_gateway.py` | 废弃 | 导出兼容层→迁移 |
 | 6 | implementations/default_security_gateway.py | `D:\ZephyrAlpha\src\zephyr\compliance\implementations\default_security_gateway.py` | 修改 | 完善三层防御实现 |
 | 7 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | 修改 | 补充artifact_scanner注册 |
-| 8 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | name统一为compliance-core |
+| 8 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | name统一为compliance-core |
 
 ---
 
@@ -760,7 +760,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 合规层架构设计 | **本文档 §1-§10** | — |
 | 合规层施工步骤 | **本文档 §16** | — |
 | 合规层接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

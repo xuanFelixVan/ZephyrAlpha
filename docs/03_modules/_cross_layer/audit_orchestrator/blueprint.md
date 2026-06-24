@@ -616,7 +616,7 @@ class GlobalAuditReport(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-027 版本更新 | 蓝图升级 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-027 版本更新 | 蓝图升级 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-027 版本更新 | 蓝图升级 |
 | 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增容量升级组件依赖 | 新组件 |
 | 4 | Skill 注册 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | audit-orchestrator skill | AI 发现 |
 | 5 | MCP Server | `D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py` | 新增 3 个 MCP Tool | API 集成 |
@@ -896,7 +896,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -971,7 +971,7 @@ STEP 3: 拆分后验证
 | 4 | 审计历史 | `D:\ZephyrAlpha\data\audit_history\` | 修改 | 新增趋势数据 |
 | 5 | MCP Server | `D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py` | 修改 | 新增 MCP Tool |
 | 6 | Skill 注册 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 新增 skill |
-| 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 版本更新 |
+| 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 版本更新 |
 | 8 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 修改 | 新增依赖 |
 
 ---
@@ -987,7 +987,7 @@ STEP 3: 拆分后验证
 | 本蓝图的核心架构设计 | **本文档 §1-§10** | 已废弃的旧蓝图 |
 | 本模块的施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 本模块的接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | Provider Table | **本文档蓝图特有章节** | 旧版静态列表 |
 

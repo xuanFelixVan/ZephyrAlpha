@@ -198,7 +198,7 @@ def check_dependency_registry_alignment(content: str) -> dict:
 def check_version_alignment(content: str) -> dict:
     fm = parse_frontmatter(content)
     blueprint_version = fm.get("version", "unknown")
-    registry_path = REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+    registry_path = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
     if not registry_path.exists():
         return {"check": "version_alignment", "status": "WARN", "detail": "registry not found"}
     registry_text = registry_path.read_text(encoding="utf-8")

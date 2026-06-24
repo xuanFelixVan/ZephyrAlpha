@@ -689,7 +689,7 @@ class StandaloneResult(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增MOD-INF-029 | 新模块注册 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 新增本蓝图 | 新蓝图注册 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增本蓝图 | 新蓝图注册 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 新增MOD-INF-029条目 | 资产可发现 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增6条依赖 | 依赖可追踪 |
 | 5 | MCP Server | `D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py` | 追加4个MCP Tool | MCP接口暴露 |
@@ -1295,7 +1295,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -1341,7 +1341,7 @@ STEP 3: 拆分后验证
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | 知道怎么治理 |
 | 4 | 项目规则 | — | `D:\ZephyrAlpha\.trae\rules\project_rules.md` | RULE-ZERO~NINE |
 | 5 | 模块注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 知道有哪些模块 |
-| 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 知道有哪些蓝图 |
+| 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 知道有哪些蓝图 |
 | 7 | 脚本清单 | — | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 知道有哪些脚本 |
 | 8 | 跨模块依赖 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 知道依赖关系 |
 | 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
@@ -1374,7 +1374,7 @@ STEP 3: 拆分后验证
 | 9 | Skill Registry | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 追加SKILL-DOM-ORP-001 |
 | 10 | scaffold.py | `D:\ZephyrAlpha\scripts\scaffold.py` | 修改 | 追加SWID Tag注入 |
 | 11 | 模块注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 修改 | 追加MOD-INF-029 |
-| 12 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 追加本蓝图 |
+| 12 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 追加本蓝图 |
 | 13 | 跨模块依赖 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 修改 | 追加6条依赖 |
 | 14 | 中央注册表 | `D:\ZephyrAlpha\docs\registry_of_registries.yaml` | 读取 | 只读 |
 | 15 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 读取 | 只读 |
@@ -1391,7 +1391,7 @@ STEP 3: 拆分后验证
 | 本蓝图核心架构设计 | **本文档 §1-§14** | 已被取代的旧蓝图 |
 | 本模块施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 本模块接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

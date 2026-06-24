@@ -14,7 +14,7 @@ category: governance
 1. **分配 module_id**：查 MOD-ID 登记表，取最后一个 ID 递增
 2. **创建物理目录和文件**：`{layer_dir}/{module_name}/` + `index.md` + `blueprint.md` + `delivery/index.md`
 3. **登记 MODULE**（module-registry.yaml）：新增 `modules[]` 条目
-4. **登记 BPR**（blueprint-registry.yaml）：新增 `blueprints[]` 条目
+4. **登记 BPR**（blueprint_registry.yaml）：新增 `blueprints[]` 条目
 5. **登记 DOC-INV**：新增文档条目
 6. **登记 MOD-ID**：注册新 id
 7. **登记 DIR**：注册新目录

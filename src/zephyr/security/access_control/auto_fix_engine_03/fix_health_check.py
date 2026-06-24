@@ -78,7 +78,7 @@ class FixHealthCheck:
 
     def _check_config(self) -> bool:
         try:
-            config_path = Path(__file__).parent / "auto-fix-config.yaml"
+            config_path = Path(__file__).parent / "auto_fix_config.yaml"
             if not config_path.exists():
                 return False
             content = config_path.read_text(encoding="utf-8")

@@ -48,7 +48,7 @@ from _shared.constants import EXIT_PASS
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _MODULE_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
-_BLUEPRINT_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+_BLUEPRINT_REGISTRY = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
 
 def _safe_read_yaml(path: Path) -> dict:

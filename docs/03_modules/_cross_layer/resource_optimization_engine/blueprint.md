@@ -782,7 +782,7 @@ class DegradationMatrix(BaseModel):
 | MCP Servers | 暴露 6 个资源优化 MCP 工具 | `mcp/gateway_server.py` | AI 通过 MCP 调用资源优化功能 |
 | Blueprint Routing | 新增 R030 路由规则 | `config/blueprint_routing.yaml` | AI 通过关键字自动定位到本蓝图 |
 | Trigger Routing | 新增 task_keywords 映射 | `src/zephyr/agent-spec/skill-registry.yaml` | AI 通过触发词路由到资源优化技能 |
-| Blueprint Registry | 新增 MOD-INF-032 条目 | `docs/03_modules/blueprint-registry.yaml` | 蓝图可被蓝图搜索 MCP 发现 |
+| Blueprint Registry | 新增 MOD-INF-032 条目 | `docs/03_modules/blueprint_registry.yaml` | 蓝图可被蓝图搜索 MCP 发现 |
 | Module Registry | 新增 MOD-INF-032 条目 | `docs/03_modules/module-registry.yaml` | 模块可被模块索引发现 |
 | Cross-Module Dependency | 新增依赖关系 | `cross-module-dependency-registry.yaml` | 依赖链可追溯 |
 | Module ID Registry | 新增 MOD-INF-032 ID | `module_id_registry.yaml` | ID 不冲突 |
@@ -801,7 +801,7 @@ class DegradationMatrix(BaseModel):
 | 4 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift-detector\resource_guard.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 5 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit-trail\self_monitor.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 6 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
-| 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 新增 MOD-INF-032 条目 | 蓝图可发现 |
+| 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 MOD-INF-032 条目 | 蓝图可发现 |
 | 8 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 新增 MOD-INF-032 条目 | 模块可发现 |
 | 9 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 新增 R030 路由规则 | AI 可路由 |
 | 10 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 新增 SKILL-DOM-ROE-001 + task_keywords | AI 可发现技能 |
@@ -982,7 +982,7 @@ class DegradationMatrix(BaseModel):
 **实施步骤**：
 
 1. **做**：
-   - 更新 `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml`：新增 MOD-INF-032 条目
+   - 更新 `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`：新增 MOD-INF-032 条目
    - 更新 `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml`：新增 MOD-INF-032 条目
    - 更新 `D:\ZephyrAlpha\config\blueprint_routing.yaml`：新增 R030 路由规则
    - 更新 `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml`：新增 SKILL-DOM-ROE-001 + task_keywords
@@ -1136,7 +1136,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 本蓝图判定
@@ -1173,7 +1173,7 @@ STEP 3: 拆分后验证
 | 16 | 元数据注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` |
 | 17 | 目录结构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` |
 | 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` |
-| 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+| 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 | 20 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` |
 | 21 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` |
 | 22 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` |
@@ -1217,7 +1217,7 @@ STEP 3: 拆分后验证
 | 13 | CircadianScheduler | `D:\ZephyrAlpha\src\zephyr\runtime\circadian_scheduler.py` | 修改 | 修改 |
 | 14 | AutoEvolution | `D:\ZephyrAlpha\src\zephyr\feedback-loop\auto_evolution.py` | 修改 | 修改 |
 | 15 | infra __init__ | `D:\ZephyrAlpha\src\zephyr\shared\infra\__init__.py` | 修改 | 修改 |
-| 16 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 修改 |
+| 16 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 修改 |
 | 17 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 修改 | 修改 |
 | 18 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 修改 | 修改 |
 | 19 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 修改 |
@@ -1253,7 +1253,7 @@ STEP 3: 拆分后验证
 | 降级矩阵 | **本文档 蓝图特有：优雅降级矩阵** | — |
 | AI 可发现性设计 | **本文档 蓝图特有：AI 可发现性设计** | — |
 | 高阶衍生项 | **本文档 蓝图特有：高阶衍生项** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
@@ -1589,7 +1589,7 @@ AGENTS.md → PS-STD-005 §7 → MOD-MASTER-001 → MOD-INF-032
 
 | # | 注册表 | 路径 | 登记内容 |
 |---|--------|------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-032 条目 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-032 条目 |
 | 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | MOD-INF-032 条目 |
 | 3 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | R030 路由规则 |
 | 4 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | SKILL-DOM-ROE-001 + keywords |

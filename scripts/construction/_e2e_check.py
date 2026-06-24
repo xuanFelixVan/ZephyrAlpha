@@ -22,7 +22,7 @@ import yaml
 ROOT = Path("D:/ZephyrAlpha")
 sys.path.insert(0, str(ROOT / "src"))
 
-with open(ROOT / "docs/03_modules/blueprint-registry.yaml", encoding="utf-8") as f:
+with open(ROOT / "docs/03_modules/blueprint_registry.yaml", encoding="utf-8") as f:
     reg = yaml.safe_load(f)
 
 results = []

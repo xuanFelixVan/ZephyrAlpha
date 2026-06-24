@@ -436,7 +436,7 @@ class WorkDAG(BaseModel):
 | 2 | WorkOrchestrator WIP 池满 | WIP > max_active_dag | 拒绝非P0 DAG submit | 新任务排队 |
 | 3 | CapabilityRegistry 缓存命中率 <95% | 监控指标 | 检查缓存失效原因 + 扩大缓存 | 路由决策延迟 |
 | 4 | DreamCycle 夜间窗口溢出 | 凌晨5:30未完成 | 提前截断 + 标记未完成模块下次优先 | 知识固化延迟 |
-| 5 | 大脑进程崩溃 | 进程监控 | 重启读 schedule-state.json + SQLite 恢复DAG状态 | 全部AI Session 暂停 |
+| 5 | 大脑进程崩溃 | 进程监控 | 重启读 schedule_state.json + SQLite 恢复DAG状态 | 全部AI Session 暂停 |
 | 6 | GPU VRAM 不足(<4GB) | VRAM 监控 | DreamCycle 跳过重计算环节，次日补跑 | 知识固化降级 |
 | 7 | 100 Session 并发审计写入 | 文件锁排队 | 切换环形内存缓冲+批量flush | 审计日志延迟 |
 | 8 | 冷启动超时(>10s) | boot_timeout_ms | CapabilityCard 预索引批量加载 | 启动延迟 |
@@ -559,7 +559,7 @@ class WorkDAG(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-INF-035 v6.0.0 | 版本升级 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 更新版本+generation+codification_level | 规格化完成 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新版本+generation+codification_level | 规格化完成 |
 | 3 | spec.md | `D:\ZephyrAlpha\specs\auto-runtime-core\spec.md` | 追加容量需求章节 | spec 未含容量设计 |
 | 4 | capacity_params.yaml | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 追加 brain_dream_cycle_memory_mb / boot_timeout_ms / recovery_timeout_ms | 容量升级参数 |
 
@@ -883,7 +883,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ## ⚠️ 安全删除协议
@@ -951,7 +951,7 @@ STEP 3: 拆分后验证
 | 大脑核心架构设计 | **本文档 §1-§10** | 已取代的旧蓝图 |
 | 大脑施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 大脑接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 详细规范 | [spec.md](file:///D:/ZephyrAlpha/specs/auto-runtime-core/spec.md) | — |
 

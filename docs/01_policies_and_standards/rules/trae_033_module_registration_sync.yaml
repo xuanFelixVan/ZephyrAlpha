@@ -62,7 +62,7 @@ sections:
         path: 03_modules/module-registry.yaml
       - code: BPR
         name: 蓝图
-        path: 03_modules/blueprint-registry.yaml
+        path: 03_modules/blueprint_registry.yaml
       - code: TASK-META
         name: 任务卡元数据
         path: _registry/catalogs/task-card-meta-registry.md
@@ -174,7 +174,7 @@ sections:
       checks:
       - script: check_registry_consistency.py
         scope: 注册表间字段一致性(CR-001~006)
-        run_when: 任何涉及module-registry.yaml / blueprint-registry.yaml / 各blueprint.md的操作后
+        run_when: 任何涉及module-registry.yaml / blueprint_registry.yaml / 各blueprint.md的操作后
       - script: check_frontmatter_metadata.py
         scope: frontmatter字段合法性
         run_when: 创建/修改任何文档后

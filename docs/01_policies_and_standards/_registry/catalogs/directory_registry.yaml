@@ -339,7 +339,7 @@ directories:
 
     status: active
 
-    note: "?blueprint-registry.yaml module-registry.yaml"
+    note: "?blueprint_registry.yaml module-registry.yaml"
 
 
 

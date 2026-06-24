@@ -15,7 +15,7 @@ category: governance
 |------|:---:|------|
 | governance_rule | 2 | document-metadata-index-registry.yaml |
 | document | 1 | document-metadata-index-registry.yaml（原 master-document-inventory-registry.md 已废弃） |
-| module | 4 | module-registry.yaml, blueprint-registry.yaml, module_id_registry.yaml, task-card-meta-registry.md |
+| module | 4 | module-registry.yaml, blueprint_registry.yaml, module_id_registry.yaml, task-card-meta-registry.md |
 | ai_asset | 4 | ai_autonomy_authority_registry.yaml, embedding_model_registry.yaml |
 | risk | 1 | ai-risk-registry.md |
 | infrastructure | 1 | infrastructure-registry.md |

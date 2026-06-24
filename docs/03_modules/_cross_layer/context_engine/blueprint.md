@@ -149,7 +149,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | LSG 蓝图 | MOD-INF-014 |
 | Orchestrator 蓝图 | MOD-INF-006 |
 | 知识库蓝图 | MOD-KB-001 |
-| 蓝图注册表 | [blueprint-registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint-registry.yaml) |
+| 蓝图注册表 | [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) |
 
 ---
 
@@ -166,8 +166,8 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 修改此文件 | MUST 同步更新 |
 |-----------|-------------|
 | 子蓝图文件清单 | 对应 §0 代码文件清单 |
-| child_modules | blueprint-registry.yaml |
-| frontmatter version | blueprint-registry.yaml |
+| child_modules | blueprint_registry.yaml |
+| frontmatter version | blueprint_registry.yaml |
 | 契约变更 | 对应 CT-* 契约文件 + 子蓝图 §4 |
 
 ## 1. 已实现代码完整路径索引

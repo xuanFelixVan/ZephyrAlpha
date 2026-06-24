@@ -16,12 +16,12 @@
 validate_ssot_construction_progress.py — G8 SSoT 一致性门禁强制执行脚本
 =========================================================================
 检查项：
-  G8-C01: frontmatter.construction_progress == blueprint-registry.yaml 同 module_id
+  G8-C01: frontmatter.construction_progress == blueprint_registry.yaml 同 module_id
   G8-C02: frontmatter.construction_progress == module-registry.yaml 同 module_id
   G8-C03: blueprint-registry == module-registry 交叉一致
   G8-C04: 所有 construction_progress 值在受控词表内
 
-受控词表（对齐 blueprint-registry.yaml _schema）：
+受控词表（对齐 blueprint_registry.yaml _schema）：
   not_started / phase_1_partial / phase_1_complete / phase_2_complete
   / blocked_by_infrastructure / completed / phase_production_complete
 
@@ -76,7 +76,7 @@ VALID_PROGRESS = frozenset(
     }
 )
 
-BLUEPRINT_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+BLUEPRINT_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 MODULE_REGISTRY_PATH = _REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 MODULES_ROOT = _REPO_ROOT / "docs" / "03_modules"
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)

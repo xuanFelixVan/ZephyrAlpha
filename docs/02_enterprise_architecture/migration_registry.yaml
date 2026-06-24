@@ -13561,8 +13561,8 @@ entries:
   subdomain_id: runtime_integration
 - domain_id: D-INFRA_RUNTIME
   file_type: config
-  new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/auto-fix-config.yaml
-  old_path: src/zephyr/infra_ops/auto-fix-engine/auto-fix-config.yaml
+  new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/auto_fix_config.yaml
+  old_path: src/zephyr/infra_ops/auto-fix-engine/auto_fix_config.yaml
   status: done
   subdomain_id: runtime_integration
 - domain_id: D-INFRA_RUNTIME

@@ -434,7 +434,7 @@ class ModelMetadata:
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress + version | 蓝图升级 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress + version | 蓝图升级 |
 | 2 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 版本信息 | 蓝图升级 |
 | 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` | 子模块声明 | 依赖图对齐 |
 
@@ -775,7 +775,7 @@ class ModelMetadata:
 | ML平台核心架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
 | ML平台施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | ML平台接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

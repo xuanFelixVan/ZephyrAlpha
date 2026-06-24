@@ -12,9 +12,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-"""sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprint-registry.yaml
+"""sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprint_registry.yaml
 
-对标: Problem IX -- blueprint-registry.yaml 大面积不同步
+对标: Problem IX -- blueprint_registry.yaml 大面积不同步
 职责: 扫描 03_modules/**/blueprint.md 的 frontmatter,与 registry 对账,生成 diff 或写入更新
 
 changelog: 默认在 --write 且相对当前文件 blueprints[] 有差异时，在 changelog 顶部自动插入一条
@@ -30,7 +30,7 @@ import os
 
 __manifest__ = {
     "args": ["--write", "--no-changelog"],
-    "description": "同步 blueprint-registry.yaml [从 blueprint.md frontmatter 驱动]",
+    "description": "同步 blueprint_registry.yaml [从 blueprint.md frontmatter 驱动]",
     "dimensions": ["D5"],
     "priority": "P0",
     "timeout_seconds": 60,
@@ -53,7 +53,7 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 MODULE_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 
 try:
@@ -450,12 +450,12 @@ def run_write(
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="同步 blueprint-registry.yaml 与磁盘 blueprint.md 文件")
+    parser = argparse.ArgumentParser(description="同步 blueprint_registry.yaml 与磁盘 blueprint.md 文件")
     parser.add_argument("--write", action="store_true", help="写入 registry (默认 dry-run)")
     parser.add_argument(
         "--no-changelog",
         action="store_true",
-        help="写入时不自动在 blueprint-registry.yaml 顶部 prepend changelog（CI/重复跑脚本时用）",
+        help="写入时不自动在 blueprint_registry.yaml 顶部 prepend changelog（CI/重复跑脚本时用）",
     )
     parser.add_argument("--warn-only", action="store_true", help="警告模式: 失败不阻塞 (exit 0)")
     args = parser.parse_args()
@@ -487,7 +487,7 @@ def main() -> None:
 
     registry = load_registry()
     if registry is None:
-        print("ERROR: blueprint-registry.yaml not found")
+        print("ERROR: blueprint_registry.yaml not found")
         sys.exit(EXIT_ERROR if not args.warn_only else EXIT_PASS)
 
     if args.write:

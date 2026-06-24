@@ -2011,7 +2011,7 @@ scaffold.py → asset.created
 | # | 登记位置 | 条目 | 状态 |
 |---|---------|------|:--:|
 | 1 | `module-registry.yaml` | `MOD-INF-026: asset-inventory` | ✅ 已登记 |
-| 2 | `blueprint-registry.yaml` | 自动同步自 blueprint.md frontmatter | ✅ 已同步 |
+| 2 | `blueprint_registry.yaml` | 自动同步自 blueprint.md frontmatter | ✅ 已同步 |
 | 3 | `registry_of_registries.yaml` | 新增 REG-INV-001 域（资产盘点注册表域） | ✅ 已登记 |
 | 4 | `project_rules.md` 冷启动序列 | STEP 4.5: 读 unified-asset-index.yaml | ✅ 已实施 |
 | 5 | `phase_manager.py` Phase 1 | `gate_asset_inventory` 检查 | ✅ 已实施 |
@@ -3693,7 +3693,7 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-INF-026 已注册 | 规格化同步 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 确认已注册 | 规格化同步 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 确认已注册 | 规格化同步 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 确认已注册 | 规格化同步 |
 
 ---

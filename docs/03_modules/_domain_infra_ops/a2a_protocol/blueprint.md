@@ -911,7 +911,7 @@ class A2ATask(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-025 版本+字段 | 蓝图升级 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本+路径更新 | 蓝图升级 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本+路径更新 | 蓝图升级 |
 | 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | A2A 依赖关系 | 新增依赖 |
 
 ---
@@ -1345,7 +1345,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ## 安全删除协议
@@ -1370,7 +1370,7 @@ STEP 3: 拆分后验证
 | 治理方法论 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` |
 | 脚本质量标准 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` |
-| 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+| 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 | Agent Spec | `D:\ZephyrAlpha\src\zephyr\agent-spec\` |
 
 ## 已有类似功能
@@ -1387,7 +1387,7 @@ STEP 3: 拆分后验证
 |------|---------|
 | 新建 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\script_*.py` (14 个容量扩展文件) |
 | 修改 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer1_discovery\agent_card.py` (容量参数扩展) |
-| 修改 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+| 修改 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 | 修改 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` |
 
 

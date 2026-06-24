@@ -9,7 +9,7 @@ import yaml
 ROOT = Path(r"d:\ZephyrAlpha")
 DEPGRAPH_PATH = ROOT / "data" / "databases" / "depgraph.db"
 MODULE_REGISTRY_PATH = ROOT / "docs" / "03_modules" / "module-registry.yaml"
-BLUEPRINT_REGISTRY_PATH = ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+BLUEPRINT_REGISTRY_PATH = ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 SRC_ZEPHYR = ROOT / "src" / "zephyr"
 
 

@@ -604,7 +604,7 @@ class EvidenceChain(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 代码头部 BLUEPRINT 引用 | `D:\ZephyrAlpha\src\zephyr\behavioral-auditor\*.py` | MOD-INF-023→MOD-INF-033 | 代码归属漂移修正 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本更新为 3.3.0 | 蓝图升级 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本更新为 3.3.0 | 蓝图升级 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 更新 frontmatter 字段 | 字段补全 |
 
 ---
@@ -1230,7 +1230,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -1300,7 +1300,7 @@ STEP 3: 拆分后验证
 | 2 | 测试目录 | `D:\ZephyrAlpha\tests\behavioral-auditor\` | 修改 | 新增测试用例 |
 | 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\behavioral-auditor\blueprint.md` | 修改 | 本文件 |
 | 4 | Agent Skill | `D:\ZephyrAlpha\src\zephyr\agent-spec\skills\domain\` | 读取 | SKILL-DOM-BEH-001 |
-| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 版本更新 |
+| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 版本更新 |
 
 ---
 
@@ -1313,7 +1313,7 @@ STEP 3: 拆分后验证
 | 行为审计核心架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
 | 行为审计施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 行为审计接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 触发器 BH-* 定义 | **本文档 蓝图特有：触发条件全清单** | — |
 | 渐进式响应 L0~L6 | **本文档 蓝图特有：渐进式响应梯度** | — |

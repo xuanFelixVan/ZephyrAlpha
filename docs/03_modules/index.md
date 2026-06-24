@@ -95,7 +95,7 @@ depends_on:
 | [path_ownership_map.yaml](file:///D:/ZephyrAlpha/docs/03_modules/path_ownership_map.yaml) | 路径归属映射 | YAML |
 | [system_pathway_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml) | 系统路径注册表 | YAML |
 
-> ⚠️ `blueprint-registry.yaml`（连字符）为遗留文件，待清理。真源为 `blueprint_registry.yaml`（下划线）。
+> ⚠️ `blueprint_registry.yaml`（连字符）为遗留文件，待清理。真源为 `blueprint_registry.yaml`（下划线）。
 
 ---
 
@@ -128,4 +128,4 @@ depends_on:
 
 - [上级目录](file:///D:/ZephyrAlpha/docs/index.md)
 - [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)
-- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/依赖与架构全景图能力定位书.md)
+- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/dependency_architecture_panorama.md)

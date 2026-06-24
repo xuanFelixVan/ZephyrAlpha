@@ -1979,7 +1979,7 @@ tests/
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 状态 |
 |---|------------|------------|---------|:---:|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号同步 + 完整度同步 | 待更新 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号同步 + 完整度同步 | 待更新 |
 | 2 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | GCT-026 LSG Security Gateway 门禁 | ✅ |
 | 3 | Phase Manager | `D:\ZephyrAlpha\src\zephyr\governance\phase_manager.py` | gate_lsg_security 到 Phase 1 | ✅ |
 | 4 | red_team_scanner | `D:\ZephyrAlpha\src\zephyr\llm-security\self_protection\red_team_scanner.py` | Red Team 对抗扫描器（271行） | ✅ |
@@ -5860,7 +5860,7 @@ Encoding Defense Layers — LSG + LLM 协作
 | LSG 九层纵深防御架构设计 | **本文档 §3-§11** | 已废弃的 b_llm_security.yaml |
 | LSG 接口契约 | **本文档 §4** | — |
 | LSG 施工步骤 | **本文档 §15** | 已废弃的旧施工图 |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（不存在） |
 | v2.0.0 信号总线设计 | **本文档 §0 升级计划** | — |
 
@@ -5911,7 +5911,7 @@ Encoding Defense Layers — LSG + LLM 协作
 
 ### 导航路径
 
-1. `docs/blueprint-registry.yaml` → MOD-INF-014 → 本文件
+1. `docs/blueprint_registry.yaml` → MOD-INF-014 → 本文件
 2. `python -m zephyr.agent_spec load SKILL-DOM-GAT-001` → 加载安全 Skill
 3. `src/zephyr/security/llm_defense/llm-security/gateway.py` → 代码入口
 
@@ -5987,7 +5987,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 依赖关系 新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 本蓝图拆分判定

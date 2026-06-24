@@ -627,7 +627,7 @@ class OverlapResult:
 
 | 产出物类型 | 存放完整路径（相对优先） | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `docs/03_modules/_domain-infra_ops/registry-governance/blueprint.md` | 本文件 | ≥0 | blueprint-registry.yaml |
+| 蓝图文件 | `docs/03_modules/_domain-infra_ops/registry-governance/blueprint.md` | 本文件 | ≥0 | blueprint_registry.yaml |
 | 功能域注册表 | `docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml` | 功能域条目数据 | ≥1 | registry_of_registries.yaml |
 | 物理路径树快照 | `docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml` | 磁盘目录树自动快照(REG-017) | ≥1 | registry_of_registries.yaml |
 | 路径归属声明 | `docs/03_modules/path-ownership-map.yaml` | 蓝图→路径映射+冲突检测(REG-018) | ≥1 | registry_of_registries.yaml |
@@ -662,7 +662,7 @@ class OverlapResult:
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块ID注册表 | `docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml` | 新增MOD-INF-037 | 新模块注册 |
-| 2 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | 新增registry-governance蓝图 | 蓝图注册 |
+| 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 新增registry-governance蓝图 | 蓝图注册 |
 | 3 | 注册表总索引 | `docs/registry_of_registries.yaml` | 新增REG-FUNC-DOMAIN-001条目 | 功能域注册表注册 |
 | 4 | scaffold.py | `scripts/scaffold.py` | 新增--domain参数+SSoTGate调用 | 门禁集成 |
 
@@ -969,7 +969,7 @@ class OverlapResult:
 | 有独立Phase路线图和交付节奏 | 拆分 | 同上 |
 | 有独立依赖关系图(与主体depends_on交集<50%) | 拆分 | 同上 |
 | 内容超100行且与主体无直接数据流 | 拆分 | 同上 |
-| 拆分后 | MUST验证 | 子蓝图有独立frontmatter+概述+§0~§18；本蓝图§10新增引用；blueprint-registry.yaml同步更新 |
+| 拆分后 | MUST验证 | 子蓝图有独立frontmatter+概述+§0~§18；本蓝图§10新增引用；blueprint_registry.yaml同步更新 |
 
 ---
 
@@ -1024,7 +1024,7 @@ class OverlapResult:
 | 5 | scaffold.py | `scripts/scaffold.py` | 修改 | 新增--domain参数+SSoTGate调用 |
 | 6 | 注册表总索引 | `docs/registry_of_registries.yaml` | 修改 | 新增REG-FUNC-DOMAIN-001条目 |
 | 7 | 模块ID注册表 | `docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml` | 修改 | 新增MOD-INF-037 |
-| 8 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | 修改 | 新增registry-governance蓝图条目 |
+| 8 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 新增registry-governance蓝图条目 |
 
 ---
 
@@ -1037,7 +1037,7 @@ class OverlapResult:
 | 功能域注册表数据 | **functional-domain-registry.yaml** | — | 无 |
 | 功能域查重逻辑 | **registry_governance.py** | — | 无 |
 | 注册表一致性校验规则 | **registry_governance.py** | — | 无 |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml(派生) | 无 |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml(派生) | 无 |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 

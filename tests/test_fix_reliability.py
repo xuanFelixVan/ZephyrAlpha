@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] tests.test_fix_reliability
 # [INVARIANTS] IdempotencyGuard 24h TTL; DeadLetterQueue max 3 retries; ConflictResolver serializes same-file fixes
-# [MODIFY-GUARD] blueprint.md §3; auto-fix-config.yaml reliability section
+# [MODIFY-GUARD] blueprint.md §3; auto_fix_config.yaml reliability section
 # [CONSUMERS] CI pipeline
 # [STABILITY] evolving
 # [SAFETY] M

@@ -26,7 +26,7 @@
 # AI 使用方式:
 #   1. 按 layer 过滤 → 找到目标层级的所有模块路径
 #   2. 按 module_id 定位 → 找到指定模块的全部文件路径
-#   3. 交叉引用 → 结合 module-registry.yaml 和 blueprint-registry.yaml 获取完整模块信息
+#   3. 交叉引用 → 结合 module-registry.yaml 和 blueprint_registry.yaml 获取完整模块信息
 # ============================================================================
 
 module_id: MOD-023

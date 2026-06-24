@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] SIGINT/SIGTERM MUST触发WAL恢复;零"半修复"状态
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.wal_enabled
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml engine.wal_enabled
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

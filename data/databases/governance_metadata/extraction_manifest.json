@@ -7951,7 +7951,7 @@
           "char_count": 941
         },
         {
-          "title": "8.1 `blueprint-registry.yaml` 扩展（MUST）",
+          "title": "8.1 `blueprint_registry.yaml` 扩展（MUST）",
           "start_line": 428,
           "end_line": 444,
           "sha256": "c632ea315949ba4692037a8df0352881278a6831e53116ab4a7dae5881478d45",

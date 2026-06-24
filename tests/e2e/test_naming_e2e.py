@@ -163,7 +163,7 @@ class TestWhitelistProtection:
         """白名单应只包含 AGENTS.md（其他已迁移为小写）。"""
         content = CHECK_SCRIPT.read_text(encoding="utf-8")
         assert '"README.md"' not in content, "README.md 应已从白名单移除"
-        assert '"INDEX.md"' not in content, "INDEX.md 应已从白名单移除"
+        assert '"index.md"' not in content, "index.md 应已从白名单移除"
         assert '"CHANGELOG.md"' not in content, "CHANGELOG.md 应已从白名单移除"
         assert '"AGENTS.md"' in content, "AGENTS.md 应保留在白名单中"
 

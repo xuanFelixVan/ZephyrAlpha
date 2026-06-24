@@ -10,7 +10,7 @@ category: module_blueprint
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号 0.3.0 + P0 | 蓝图 status → active |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号 0.3.0 + P0 | 蓝图 status → active |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | VMS 模块状态 active | 蓝图已定稿 |
 | 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\l01-infrastructure\context-engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
 | 4 | b_vector_memory.yaml SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 8 Collection + 双嵌入维度 + Phase 0-4 | 本蓝图已从 SSoT 派生，SSoT 需要反向同步 |

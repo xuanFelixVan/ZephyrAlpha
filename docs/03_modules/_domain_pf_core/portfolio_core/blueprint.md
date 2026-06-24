@@ -469,7 +469,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | (1) module id `l05-layer-ssot` → `portfolio-core`（ARB-20 统一）(2) files 列表应反映 `strategies/` 子目录 (3) source_layer 修正为 L03 | YAML 与蓝图/磁盘不一致 |
-| 2 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
+| 2 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
 | 3 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 确认 CTR-004/CTR-007/CTR-P1-006 状态 | 契约状态确认 |
 
 ---
@@ -899,7 +899,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 4 | __init__.py | `D:\ZephyrAlpha\src\zephyr\pf_core\__init__.py` | 读取 | 已存在 |
 | 5 | order.py（契约 SSoT） | `D:\ZephyrAlpha\src\zephyr\shared\contracts\execution\order.py` | 读取 | 已存在 |
 | 6 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | 修改 | ARB-20 统一 + source_layer 修正 |
-| 7 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | construction_progress 更新 |
+| 7 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 更新 |
 | 8 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认 CTR-004/CTR-007/CTR-P1-006 状态 |
 
 ---
@@ -913,7 +913,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 本蓝图的核心架构设计 | **本文档 §1-§10** | 已取代的旧蓝图 |
 | 本模块的施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 本模块的接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | YAML 架构定义 | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | — |
 

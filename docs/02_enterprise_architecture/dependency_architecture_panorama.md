@@ -1306,7 +1306,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 **修复文件**：`scripts/governance/generate_project_depgraph.py`（H1-H9, A1, V3.1/V3.2/V3.3/V3.4 裁定）
 **Schema修复**：`data/databases/depgraph.db`（J1-J4 ALTER TABLE，V3.4 施工时执行 P0-1 Schema 迁移）
-**文档合并**：原"依赖全景图能力定位书.md" → "依赖与架构全景图能力定位书.md"（V3.2）
+**文档合并**：原"依赖全景图能力定位书.md" → "dependency_architecture_panorama.md"（V3.2）
 
 **待施工**（V5.8 文档已就绪，按 §22 七批次施工）：
 - P0-1：Schema 迁移（node_id 改 INTEGER PK + edges 字段重命名 from_node/to_node→from_node_id/to_node_id + edges 新增 dep_maturity + arch_directory_tree 删 state 新增 node_id 外键 + nodes 新增 5 字段）

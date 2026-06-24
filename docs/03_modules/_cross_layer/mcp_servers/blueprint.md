@@ -816,7 +816,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | MCP Server 架构设计 | **本文档 §1-§3** | b_mcp.yaml（协议层真源，非蓝图层） |
 | MCP 施工步骤 | **本文档 §11** | — |
 | MCP 接口契约 | **本文档 §3** | tool-contracts.yaml（派生） |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | — |
 | 盲点全量清单 | **本文档 §16** | — |
 
@@ -930,7 +930,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 本蓝图拆分判定

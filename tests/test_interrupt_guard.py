@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] tests.test_interrupt_guard
 # [INVARIANTS] SIGINT/SIGTERM MUST触发WAL恢复;零"半修复"状态
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.wal_enabled
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml engine.wal_enabled
 # [CONSUMERS] CI/CD;pytest
 # [STABILITY] evolving
 # [SAFETY] L

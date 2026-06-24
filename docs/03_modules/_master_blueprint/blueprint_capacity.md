@@ -148,7 +148,7 @@ tags:
 | # | 缺口名称 | 严重度 | v1.0.0 升级章覆盖 | 缺失什么 |
 |---|---------|:---:|:---:|---------|
 | GAP-M01 | **模块间依赖图谱（Module→Module DAG）** | 🔴 P0 | 升级章二有 file→script DAG，但无 module→module | 模块 A 的 API 变更→影响哪些其他模块？1,500 模块间依赖不可手工维护 |
-| GAP-M02 | **蓝图注册表缩放（1,500 蓝图索引）** | 🔴 P0 | 升级章四有模块/脚本自动发现，但缺蓝图注册表本身的缩放 | blueprint-registry.yaml 现在已有 38 条，1,500 条如何管理？索引、缓存、分片？ |
+| GAP-M02 | **蓝图注册表缩放（1,500 蓝图索引）** | 🔴 P0 | 升级章四有模块/脚本自动发现，但缺蓝图注册表本身的缩放 | blueprint_registry.yaml 现在已有 38 条，1,500 条如何管理？索引、缓存、分片？ |
 | GAP-M03 | **知识库大规模查询性能保障** | 🔴 P0 | 完全缺失——升级章未涉及 KB/VMS 缩放 | ChromaDB 10M 向量→查询延迟、索引策略、collection 分区 |
 | GAP-M04 | **上下文引擎大规模选择性注入** | 🔴 P0 | 完全缺失——升级章未涉及 CE 缩放 | 1,500 蓝图→CE 如何在 20K token 预算内精准注入相关蓝图？ |
 | GAP-M05 | **治理脚本生命周期管理** | 🟡 P1 | 完全缺失 | 10,000 脚本的版本化、废弃标记、归档策略、质量分级（S0-S3） |
@@ -237,14 +237,14 @@ module_dependency_graph:
 
 **问题场景**：
 ```
-当前 blueprint-registry.yaml：38 条注册记录，手工维护
+当前 blueprint_registry.yaml：38 条注册记录，手工维护
 1,500 模块后：
 - 单个 YAML 文件 ~8MB——Git 每次变更都重写整个文件
 - AI session 读取注册表→注入全部 1,500 条→token 预算爆炸
 - 注册表与 1,500 个蓝图文件的一致性校验→O(1,500) 扫描
 ```
 
-**当前状态**：升级章四覆盖了模块/脚本的自动发现→SQLite 索引，但 `blueprint-registry.yaml` 本身的缩放完全没有设计。
+**当前状态**：升级章四覆盖了模块/脚本的自动发现→SQLite 索引，但 `blueprint_registry.yaml` 本身的缩放完全没有设计。
 
 **设计**：
 
@@ -256,7 +256,7 @@ priority: P0
 
 blueprint_registry_v2:
   storage_backend: "SQLite `blueprint_index` 表 + 每日 YAML 导出（人类可读快照）"
-  migration: "当前 blueprint-registry.yaml → 导入 SQLite → YAML 保留为只读历史快照"
+  migration: "当前 blueprint_registry.yaml → 导入 SQLite → YAML 保留为只读历史快照"
 
   sqlite_schema:
     blueprint_index:
@@ -1086,7 +1086,7 @@ master_capacity_slos_v1_1:
 | # | Anti-Pattern | 违反后果 | 正确做法 | 对应缺口 |
 |---|-------------|---------|---------|:---:|
 | AP25 | **忽略模块间依赖——只分析文件→脚本，不管模块→模块** | 模块 API 变更→下游模块静默失效→3天后才发现 | Module DAG BFS depth≤3 查询→G0 门禁自动提示影响范围 | GAP-M01 |
-| AP26 | **blueprint-registry.yaml 手工维护到 1,500 条** | YAML 文件 ~8MB→Git 每次重写→Merge Conflict 地狱 | SQLite auto-index + YAML 每日导出 | GAP-M02 |
+| AP26 | **blueprint_registry.yaml 手工维护到 1,500 条** | YAML 文件 ~8MB→Git 每次重写→Merge Conflict 地狱 | SQLite auto-index + YAML 每日导出 | GAP-M02 |
 | AP27 | **ChromaDB 单 collection 10M vectors——不分区不优化** | 查询延迟从 50ms 飙到 500ms→CE build 超时 | 按 layer 分区 + metadata 预过滤 + FTS5 混合搜索 | GAP-M03 |
 | AP28 | **CE 注入所有相关蓝图——token 预算永远不足** | 1,500 蓝图场景下 20K 预算被无关蓝图淹没 | blueprint tiering 四层分级→相关性排序→预算分配 | GAP-M04 |
 | AP29 | **脚本永远 active——从不废弃、从不归档** | 10,000 脚本中 30% 已是死脚本→全量扫描白跑 3,000 次 | 生命周期状态机→90 天零触发自动 DEPRECATED→再 90 天 ARCHIVED | GAP-M05 |
@@ -1849,7 +1849,7 @@ construction_sequence:
 | 容量约束变更 | SYS-MASTER-001 §〇 容量预算 |
 | 升级章设计变更 | MOD-MASTER-002 对应章节 |
 | 规模平面变更 | 本蓝图所有引用规模数字的章节 |
-| construction_progress 变更 | blueprint-registry.yaml |
+| construction_progress 变更 | blueprint_registry.yaml |
 
 ---
 
@@ -1897,7 +1897,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例

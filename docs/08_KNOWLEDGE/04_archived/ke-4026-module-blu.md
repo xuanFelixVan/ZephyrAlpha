@@ -13,7 +13,7 @@ category: module_blueprint
 | # | 登记位置 | 条目 | 状态 |
 |---|---------|------|:--:|
 | 1 | `module-registry.yaml` | `MOD-INF-026: asset-inventory` | ✅ 已登记 |
-| 2 | `blueprint-registry.yaml` | 自动同步自 blueprint.md frontmatter | ✅ 已同步 |
+| 2 | `blueprint_registry.yaml` | 自动同步自 blueprint.md frontmatter | ✅ 已同步 |
 | 3 | `registry_of_registries.yaml` | 新增 REG-INV-001 域（资产盘点注册表域） | ✅ 已登记 |
 | 4 | `project_rules.md` 冷启动序列 | STEP 4.5: 读 unified-asset-index.yaml | ✅ 已实施 |
 | 5 | `phase_manager.py` Phase 1 | `gate_asset_inventory` 检查 | ✅ 已实施 |

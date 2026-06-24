@@ -8,7 +8,7 @@ category: module_blueprint
 
 2.1 蓝图层级分布（PS-STD-005 分类）
 
-> **登记真源**：`docs/03_modules/blueprint-registry.yaml`（2026-05-06，v4.5.0）。
+> **登记真源**：`docs/03_modules/blueprint_registry.yaml`（2026-05-06，v4.5.0）。
 
 | 层级 | 数量 | 蓝图 |
 |:---|:--:|------|

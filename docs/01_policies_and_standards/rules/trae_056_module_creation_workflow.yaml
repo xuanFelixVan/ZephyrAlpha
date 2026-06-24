@@ -313,7 +313,7 @@ sections:
       fail: 不完整 → 补全
     - order: 4
       action: 蓝图注册
-      command: "注册到 blueprint-registry.yaml"
+      command: "注册到 blueprint_registry.yaml"
       pass: 注册成功
 
   phase_5_file_creation:
@@ -582,7 +582,7 @@ sections:
       registry: 03_modules/module-registry.yaml
     - order: 4
       action: 注册BPR
-      registry: 03_modules/blueprint-registry.yaml
+      registry: 03_modules/blueprint_registry.yaml
     - order: 5
       action: 注册DOC-INV
       registry: _registry/catalogs/document-metadata-index-registry.yaml

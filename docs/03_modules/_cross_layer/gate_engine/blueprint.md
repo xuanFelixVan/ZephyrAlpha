@@ -834,7 +834,7 @@ class ManualApprovalGate:
 
 | # | 目标 | 更新内容 |
 |---|------|---------|
-| 1 | `docs/03_modules/blueprint-registry.yaml` | 版本号和完整度 |
+| 1 | `docs/03_modules/blueprint_registry.yaml` | 版本号和完整度 |
 | 2 | `config/blueprint_routing.yaml` | R009路由项 keywords/path_patterns |
 | 3 | `src/zephyr/integration/mcp/gate_engine_server.py` | MCP工具描述引用本蓝图 |
 | 4 | `src/zephyr/integration/mcp/blueprint_search_server.py` | 若keyword变更 |
@@ -1287,7 +1287,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ---

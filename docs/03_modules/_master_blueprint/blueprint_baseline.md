@@ -3594,7 +3594,7 @@ AI每次被问"系统当前状态"时必须能在30秒~2分钟内输出摘要。
 | CT-* 契约变更 | MOD-MASTER-001-AGENT-SPEC (CBAC 矩阵) + 所有消费者模块蓝图 |
 | 共享 Schema 变更 | PS-STD-001 metadata_registry.yaml |
 | 架构原则变更 | SYS-MASTER-001 §四 + 所有模块蓝图 |
-| construction_progress 变更 | blueprint-registry.yaml |
+| construction_progress 变更 | blueprint_registry.yaml |
 
 ---
 
@@ -3641,5 +3641,5 @@ STEP 2: 职责域判定
 STEP 3: 拆分后验证
   - 独立 frontmatter + 概述 + §0~§18
   - belongs_to 指向父蓝图
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```

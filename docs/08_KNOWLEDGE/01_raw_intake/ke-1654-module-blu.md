@@ -14,7 +14,7 @@ category: module_blueprint
 | 2 | test_audit_schema.py | `D:\ZephyrAlpha\tests\unit\test_audit_schema.py` | ✅ | ✅ |
 | 3 | test_query_metrics.py | `D:\ZephyrAlpha\tests\unit\test_query_metrics.py` | ✅ | ✅ |
 | 4 | b_db.yaml SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | ✅ | ✅ |
-| 5 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | ✅ | ✅ |
+| 5 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | ✅ | ✅ |
 | 6 | verify_backup() in database_manager | `D:\ZephyrAlpha\src\zephyr\db\database_manager.py` | ✅ | ✅ |
 | 7 | dead_letter_queue() in database_manager | `D:\ZephyrAlpha\src\zephyr\db\database_manager.py` | ✅ | ✅ |
 | 8 | connection_leak_detector in database_manager | `D:\ZephyrAlpha\src\zephyr\db\database_manager.py` | ✅ | ✅ |

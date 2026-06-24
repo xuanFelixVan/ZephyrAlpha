@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 预演失败MUST阻止应用;沙箱目录MUST在验证后清理
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml shadow_workspace段
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml shadow_workspace段
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

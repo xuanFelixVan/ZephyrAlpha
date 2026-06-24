@@ -416,7 +416,7 @@ sections:
     - version: 1.0.2
       date: '2026-06-19'
       change: RQ审查STEP13修复：修复6处kebab-case引用违规(template-registry.yaml→template_registry.yaml×1,
-        blueprint-registry.yaml→blueprint_registry.yaml×3, module-registry.yaml→module_registry.yaml×4)，符合§2.2
+        blueprint_registry.yaml→blueprint_registry.yaml×3, module-registry.yaml→module_registry.yaml×4)，符合§2.2
         snake_case裁定(RQ-05)
     context:
       summary: GOV-ENG-002 v1.0.0从GOV-ENG-001§7独立；GOV-ENG-003 v1.0.0基于2026-05-19基线数据

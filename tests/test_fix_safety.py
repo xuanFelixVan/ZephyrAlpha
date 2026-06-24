@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §5
 # [MODULE] tests.test_fix_safety
 # [INVARIANTS] SafetyGate MUST check FixLevel+target; CascadeBreaker MUST circuit-break; SecretLeakGuard MUST 100% intercept
-# [MODIFY-GUARD] blueprint.md §5; auto-fix-config.yaml safety section
+# [MODIFY-GUARD] blueprint.md §5; auto_fix_config.yaml safety section
 # [CONSUMERS] CI pipeline
 # [STABILITY] evolving
 # [SAFETY] M

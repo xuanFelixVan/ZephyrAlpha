@@ -553,7 +553,7 @@ class DetectionResult(BaseModel):
 |------|------|--------|
 | Agent Orchestrator 架构设计 | **本文档 §1-§10** | MOD-INF-035 蓝图（已拆分） |
 | Agent Orchestrator 接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | B轨接口规范 | [agent-orchestrator-interface.md](file:///D:/ZephyrAlpha/docs/03_modules/_b_track_interfaces/agent-orchestrator-interface.md) | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

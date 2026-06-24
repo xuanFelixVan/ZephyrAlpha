@@ -13,7 +13,7 @@ import yaml
 
 BASE = r"D:\ZephyrAlpha"
 PANORAMA_PATH = os.path.join(BASE, "data", "databases", "depgraph.db")
-BLUEPRINT_REGISTRY_PATH = os.path.join(BASE, "docs", "03_modules", "blueprint-registry.yaml")
+BLUEPRINT_REGISTRY_PATH = os.path.join(BASE, "docs", "03_modules", "blueprint_registry.yaml")
 DEPGRAPH_PATH = os.path.join(BASE, "data", "databases", "depgraph.db")
 ZEPHYR_SRC = os.path.join(BASE, "src", "zephyr")
 OUTPUT_YAML = os.path.join(BASE, "data", "asset_index", "blueprint-domain-mapping.yaml")
@@ -358,7 +358,7 @@ def main():
             "description": "blueprint_id → domain 完整映射表",
             "source_files": [
                 "data/databases/depgraph.db",
-                "docs/03_modules/blueprint-registry.yaml",
+                "docs/03_modules/blueprint_registry.yaml",
             ],
             "total_blueprints": len(bp_domain_map),
             "total_subdomains": len(panorama_mapping),

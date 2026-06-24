@@ -10,7 +10,7 @@ category: module_blueprint
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号 2.1.0 + 完整度 95% + status phase_1_complete | v2.1 盲点补全 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号 2.1.0 + 完整度 95% + status phase_1_complete | v2.1 盲点补全 |
 | 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | 补全 3 个缺失 .py + 更新 schema_version + 修正 db_file_path | SSoT 漂移修复（§17） |
 | 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | DB 模块状态 active | 代码施工完成 |
 | 4 | KBG-0030 | KBG-0030 | 更新连接管理/备份策略引用 | v2.0 新增 database_manager |

@@ -953,7 +953,7 @@ class FeedbackEntry(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号 0.9.0 + P0 | 蓝图 status → active |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号 0.9.0 + P0 | 蓝图 status → active |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | VMS 模块状态 active | 蓝图已定稿 |
 | 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
 | 4 | b_vector_memory.yaml SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 8 Collection + 双嵌入维度 + Phase 0-4 | SSoT 反向同步 |
@@ -1387,7 +1387,7 @@ class FeedbackEntry(BaseModel):
 | 有独立 Phase 路线图和交付节奏 | 拆分 | 同上 |
 | 有独立依赖关系图（与主体 depends_on 交集<50%） | 拆分 | 同上 |
 | 内容超100行且与主体无直接数据流 | 拆分 | 同上 |
-| 拆分后 | MUST验证 | 子蓝图有独立frontmatter+概述+§0~§18；本蓝图§10新增引用；blueprint-registry.yaml同步更新 |
+| 拆分后 | MUST验证 | 子蓝图有独立frontmatter+概述+§0~§18；本蓝图§10新增引用；blueprint_registry.yaml同步更新 |
 
 **当前判定**：审计盲点 R1-R4 服务对象相同 + 变更频率同步 + 依赖关系完全重叠 → 原地保留（已压缩）。
 
@@ -1415,7 +1415,7 @@ class FeedbackEntry(BaseModel):
 | 3 | KBG-0031 ChromaDB选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 选型依据 |
 | 4 | CE 蓝图 | MOD-INF-008 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | 集成目标 |
 | 5 | KB 蓝图 | MOD-KB-001 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` | 整合目标 |
-| 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 注册 |
+| 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 注册 |
 | 7 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
 | 8 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
 | 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
@@ -1510,7 +1510,7 @@ class FeedbackEntry(BaseModel):
 | VMS 核心架构设计 | **本文档 §1-§10** | 旧蓝图/旧文档 |
 | VMS 接口契约 | **本文档 §4** | — |
 | VMS 施工步骤 | **本文档 §16** | 旧施工图 |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档 |
 | VMS YAML 规范 | **b_vector_memory.yaml** | 本蓝图（YAML 是本蓝图的派生格式） |
 

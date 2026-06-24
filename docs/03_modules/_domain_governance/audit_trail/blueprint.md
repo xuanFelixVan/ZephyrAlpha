@@ -945,7 +945,7 @@ class EvidencePackExporter:
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-020 条目 | 蓝图注册 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-020 条目 | 蓝图发现 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-020 条目 | 蓝图发现 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-020 元数据 | 资产索引 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 线3:治理闭环 + 线5:审计合规 | 依赖声明 |
 
@@ -1549,7 +1549,7 @@ class LamportClockV2:
 | 1 | 识别职责域 | 服务对象、变更频率、依赖关系是否与蓝图主体一致？ | — |
 | 2a | 职责相同→原地升级 | 服务对象相同 + 变更频率同步 + 依赖关系重叠 | §17 容量升级附录增量记录 |
 | 2b | 职责不同→拆分独立蓝图 | 满足任一：(a)独立module_id前缀 (b)独立Phase路线图 (c)独立依赖图(交集<50%) (d)内容>100行且无直接数据流 | 创建子蓝图；本蓝图§10引用子蓝图 |
-| 3 | 拆分后验证 | — | 子蓝图MUST有独立frontmatter+概述+§0~§18；belongs_to=本蓝图module_id；本蓝图§10新增子蓝图引用；blueprint-registry.yaml同步更新 |
+| 3 | 拆分后验证 | — | 子蓝图MUST有独立frontmatter+概述+§0~§18；belongs_to=本蓝图module_id；本蓝图§10新增子蓝图引用；blueprint_registry.yaml同步更新 |
 
 ### 判定示例
 
@@ -1631,7 +1631,7 @@ class LamportClockV2:
 | 审计追踪链架构设计 | **本文档 §1-§10** | 已废弃的 v1.4.0 蓝图 |
 | 审计模块施工步骤 | **本文档 §16** | — |
 | 审计接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

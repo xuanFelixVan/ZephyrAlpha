@@ -80,7 +80,7 @@ SERVER_DESCRIPTION = (
 # ---------------------------------------------------------------------------
 
 ROUTING_YAML_PATH = REPO_ROOT / "config" / "blueprint_routing.yaml"
-BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
 # ---------------------------------------------------------------------------
 # Server

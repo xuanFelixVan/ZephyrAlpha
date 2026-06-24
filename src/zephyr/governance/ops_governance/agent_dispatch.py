@@ -74,7 +74,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "architecture-review": DomainDispatch(
         domain="架构审查",
         pre_read="SYS-MASTER-001 全文",
-        re_read="PS-STD-005 + blueprint-registry.yaml",
+        re_read="PS-STD-005 + blueprint_registry.yaml",
         token_budget=4000,
         blueprint_section="全文",
     ),

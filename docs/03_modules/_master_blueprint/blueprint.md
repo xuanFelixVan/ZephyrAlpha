@@ -167,7 +167,7 @@ tags:
 | 1 | 识别职责域 | 该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？ |
 | 2a | 职责相同→原地升级 | 服务对象相同 + 变更频率同步 + 依赖关系重叠 → 在 §17 容量升级附录中增量记录 |
 | 2b | 职责不同→拆分独立蓝图 | 满足任一：a)独立 module_id 前缀 b)独立 Phase 路线图 c)独立依赖图（交集<50%）d)内容>100行且无直接数据流 → 创建子蓝图，本蓝图 §10 引用 |
-| 3 | 拆分后验证 | 子蓝图 MUST 有独立 frontmatter + 概述 + §0~§18；belongs_to = 本蓝图 module_id；本蓝图 §10 新增引用；blueprint-registry.yaml 同步更新 |
+| 3 | 拆分后验证 | 子蓝图 MUST 有独立 frontmatter + 概述 + §0~§18；belongs_to = 本蓝图 module_id；本蓝图 §10 新增引用；blueprint_registry.yaml 同步更新 |
 
 ### 本蓝图拆分状态
 
@@ -269,8 +269,8 @@ tags:
 
 | 变更类型 | Tier 1（下游蓝图） | Tier 2（集成系统） |
 |---------|------------------|------------------|
-| 拆分蓝图路径变更 | 更新导航表 | 更新 blueprint-registry.yaml |
-| 新增拆分蓝图 | 更新导航表+阅读顺序 | 更新 blueprint-registry.yaml |
+| 拆分蓝图路径变更 | 更新导航表 | 更新 blueprint_registry.yaml |
+| 新增拆分蓝图 | 更新导航表+阅读顺序 | 更新 blueprint_registry.yaml |
 
 ### 修改条件
 
@@ -307,6 +307,6 @@ tags:
 
 | 修改本文件 | 必须同步更新 |
 |-----------|------------|
-| 拆分蓝图路径变更 | 本索引导航表 + blueprint-registry.yaml |
-| 新增拆分蓝图 | 本索引全部导航表 + blueprint-registry.yaml |
+| 拆分蓝图路径变更 | 本索引导航表 + blueprint_registry.yaml |
+| 新增拆分蓝图 | 本索引全部导航表 + blueprint_registry.yaml |
 | 拆分蓝图内容重排 | 本索引阅读顺序 + 模板章节映射表 |

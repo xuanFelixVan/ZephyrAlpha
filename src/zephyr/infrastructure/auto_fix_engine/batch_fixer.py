@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] MUST使用ThreadPoolExecutor(max_workers=8);MUST通过冲突解决器
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml engine.max_concurrent_fixes
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml engine.max_concurrent_fixes
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

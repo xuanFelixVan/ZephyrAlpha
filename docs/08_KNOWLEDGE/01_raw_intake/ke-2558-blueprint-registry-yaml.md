@@ -1,13 +1,13 @@
 ---
 module_id: KE-2463---002
 status: active
-title: 8.1 `blueprint-registry.yaml` 扩展（MUST）
+title: 8.1 `blueprint_registry.yaml` 扩展（MUST）
 category: module_blueprint
 ---
 
-# 8.1 `blueprint-registry.yaml` 扩展（MUST）
+# 8.1 `blueprint_registry.yaml` 扩展（MUST）
 
-8.1 `blueprint-registry.yaml` 扩展（MUST）
+8.1 `blueprint_registry.yaml` 扩展（MUST）
 
 在每条 blueprints[] 记录中**新增** `blueprint_level` 字段：
 

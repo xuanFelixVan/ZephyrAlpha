@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只从成功修复学习;模式MUST持久化;频率MUST递增
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

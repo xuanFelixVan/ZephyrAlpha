@@ -328,7 +328,7 @@ path_facts:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
       - file: ".trae/rules/project_rules.md"
-        pattern: "blueprint-registry.yaml"
+        pattern: "blueprint_registry.yaml"
         reason: "连字符写法错误，实际文件名用下划线 blueprint_registry.yaml"
 
   - id: sys_master_underscore
@@ -551,7 +551,7 @@ path_facts:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:
       - file: "docs/registry_of_registries.yaml"
-        pattern: "blueprint-registry.yaml"
+        pattern: "blueprint_registry.yaml"
         reason: "连字符写法错误，实际文件名用下划线 blueprint_registry.yaml"
 
   - id: architecture_model_in_registry

@@ -219,7 +219,7 @@ PATH_PREFIX_HINTS = {
 EXACT_FILE_HINTS = {
     "scripts/script_manifest.yaml": ("MOD-INF-005", "D-GOV", "D-GOV-SCRIPT_GOVERNANCE"),
     "docs/03_modules/module-registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
-    "docs/03_modules/blueprint-registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
+    "docs/03_modules/blueprint_registry.yaml": ("MOD-INF-026", "D-OBS", "D-OBS-ASSET_INVENTORY"),
     "docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml": (
         "MOD-INF-005",
         "D-GOV",

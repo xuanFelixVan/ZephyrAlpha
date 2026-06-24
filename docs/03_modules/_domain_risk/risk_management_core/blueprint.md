@@ -520,7 +520,7 @@ class ViolationDetail(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | ~~YAML SSoT~~ | 已删除（迁移至35域架构） | — | 旧14层架构YAML已废弃 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
 | 3 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 确认 CTR-003/CTR-ERR-004/CTR-P1-008 状态 | 契约状态确认 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | §3.10 子模块定义与实际代码对齐 | 4子模块 vs 1模块差异 |
 
@@ -870,7 +870,7 @@ class ViolationDetail(BaseModel):
 | 2 | 默认实现目录 | `D:\ZephyrAlpha\src\zephyr\risk\implementations\` | 读取 | 确认文件存在 |
 | 3 | 契约 SSoT | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\` | 读取 | 确认契约状态 |
 | 4 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` | 读取 | 本蓝图即SSoT |
-| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | construction_progress 同步 |
+| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 同步 |
 | 6 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认契约状态 |
 | 7 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 修改 | §3.10 子模块对齐 |
 
@@ -885,7 +885,7 @@ class ViolationDetail(BaseModel):
 | L04 核心架构设计 | **本文档 §1-§10** | 旧蓝图 |
 | L04 施工步骤 | **本文档 §16** | 旧施工图 |
 | L04 接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

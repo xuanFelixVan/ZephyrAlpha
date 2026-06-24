@@ -135,7 +135,7 @@ def check_lock_protocol() -> GateResult:
 def check_blueprint_mandatory() -> GateResult:
     """验证 key blueprint 文件存在."""
     required = [
-        "docs/03_modules/blueprint-registry.yaml",
+        "docs/03_modules/blueprint_registry.yaml",
         "docs/03_modules/module-registry.yaml",
         "src/zephyr/gates/_registry.yaml",
     ]

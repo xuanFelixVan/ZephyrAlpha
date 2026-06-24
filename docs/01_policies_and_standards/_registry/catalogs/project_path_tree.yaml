@@ -3826,7 +3826,7 @@ tree:
         - _fixer-registry.yaml
         - alignment_syncer.py
         - all_completer.py
-        - auto-fix-config.yaml
+        - auto_fix_config.yaml
         - batch_fixer.py
         - compliance_auditor.py
         - config_fixer.py
@@ -14877,7 +14877,7 @@ tree:
       __target_path__: null
     03_modules/:
       __files__:
-      - blueprint-registry.yaml
+      - blueprint_registry.yaml
       - index.md
       - module-registry.yaml
       - path-ownership-map.yaml

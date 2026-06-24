@@ -12,7 +12,7 @@ category: documentation
 |------|------|:--:|
 | 模块ID注册表 | `02_enterprise_architecture/.../module_id_registry.yaml` | REG-MOD-001 |
 | 模块生命周期登记表 | `03_modules/module-registry.yaml` | REG-MOD-002 |
-| 蓝图深度评估登记表 | `03_modules/blueprint-registry.yaml` | REG-MOD-003 |
+| 蓝图深度评估登记表 | `03_modules/blueprint_registry.yaml` | REG-MOD-003 |
 | Embedding模型注册表 | `src/zephyr/config/embedding_model_registry.yaml` | REG-AI-002 |
 
 > **已迁入**（2026-05-03）：_index.yaml、registry_of_registries.yaml、ai_autonomy_authority_registry.yaml、model-capability-contract.yaml（→ `_registry/contracts/`）

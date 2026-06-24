@@ -612,13 +612,13 @@ sections:
       zephyralpha: Level 2模块蓝图§1-§12全文+02_enterprise_architecture/架构视图
     cold_start_checklist: 新AI session打开项目后MUST先读§2 SSoT声明的真源(§3蓝图金字塔+§4目录结构)再按§7.1逐级下钻
   s8_1_blueprint_registry:
-    title: blueprint-registry.yaml扩展
+    title: blueprint_registry.yaml扩展
     section_type: rule
     original_rules:
     - PS-STD-005 §8.1
     conditions:
     - type: constraint
-      check: 维护blueprint-registry.yaml时
+      check: 维护blueprint_registry.yaml时
       pass: 每条blueprints[]记录包含blueprint_level字段
       fail: 缺少blueprint_level导致层级不可机器读取
     actions:
@@ -798,9 +798,9 @@ sections:
     - document: 03_modules/module-registry.yaml
       content: 模块生命周期登记
       conflict_authority: module-registry.yaml
-    - document: 03_modules/blueprint-registry.yaml
+    - document: 03_modules/blueprint_registry.yaml
       content: 蓝图深度评估
-      conflict_authority: 本标准+blueprint-registry.yaml(§8.1扩展字段以本标准为准)
+      conflict_authority: 本标准+blueprint_registry.yaml(§8.1扩展字段以本标准为准)
     informative_references:
     - Codified Context(arXiv 2602.20478)——三层记忆模型(设计参考)
     - Microsoft Edge AI Blueprint Architecture——master-blueprint→domain-blueprint→component层级(设计参考)
@@ -877,7 +877,7 @@ sections:
       items: 冷启动路径+Token预算+Codified Context对照
       status: pass
     - section: §8注册表联动
-      items: blueprint-registry.yaml+module-registry.yaml新增字段
+      items: blueprint_registry.yaml+module-registry.yaml新增字段
       status: pass
     - section: §9既存蓝图归属映射
       items: 19份既存蓝图→belongs_to映射

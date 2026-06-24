@@ -1243,7 +1243,7 @@ def on_agent_health_changed(event: AgentHealthEvent):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
 | 2 | Budget Enforcer 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` | 容量预算联动 | 容量保障实现后更新 |
 
 ---
@@ -1339,7 +1339,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 本蓝图拆分判定结果
@@ -1440,7 +1440,7 @@ STEP 3: 拆分后验证
 | 容量保障体系架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
 | 容量保障施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 容量保障接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
@@ -1680,7 +1680,7 @@ STEP 3: 拆分后验证
 | ai-risk-registry.md | `docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md` | 8 项 AI 操作风险登记 | M-17（风险维度） |
 | cross-module-dependency-registry.yaml | `docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml` | 跨模块依赖登记（含 DEP-001: runtime-integration → capacity-assurance） | 全局引用 |
 | module-registry.yaml | `docs/03_modules/module-registry.yaml` | 模块生命周期登记表 SSoT | 全局引用 |
-| blueprint-registry.yaml | `docs/03_modules/blueprint-registry.yaml` | 蓝图深度评估登记表 | 全局引用 |
+| blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | 蓝图深度评估登记表 | 全局引用 |
 | domain_events.yaml | `docs/02_enterprise_architecture/target_architecture/architecture_model/events/domain_events.yaml` | 22 条领域事件（含 SystemDegraded / 容量扩展触发条件） | M-07 / M-19 |
 
 ### 19.6 蓝图自身文件

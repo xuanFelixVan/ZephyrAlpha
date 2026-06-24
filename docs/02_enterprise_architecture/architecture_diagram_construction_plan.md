@@ -45,11 +45,11 @@ docs/02_enterprise_architecture/
 │   ├── diagrams/                     # 28个.mmd图表(部分引用14层)
 │   └── *.md                          # 16个架构视图MD
 ├── architecture_upgrade_discussion.md  # 项目导航(172KB,活跃)
-├── 依赖与架构全景图能力定位书.md          # 能力定位(151KB,活跃)
+├── dependency_architecture_panorama.md          # 能力定位(151KB,活跃)
 ├── ssot_authority_map.md               # SSoT映射
 ├── t18_implementation_plan.md          # T18(暂缓转阶段8)
 ├── migration_registry.yaml             # 迁移注册表
-├── AI团队模式完整配置.md                # AI团队配置
+├── ai_team_mode_full_config.md                # AI团队配置
 └── index.md                            # 目录索引
 ```
 
@@ -320,12 +320,12 @@ docs/02_enterprise_architecture/
 | 文件 | 处置 | 原因 |
 |------|------|------|
 | architecture_upgrade_discussion.md | 保留,更新状态 | 项目导航图,核心文档 |
-| 依赖与架构全景图能力定位书.md | 保留 | 能力定位真源 |
+| dependency_architecture_panorama.md | 保留 | 能力定位真源 |
 | architecture_decisions_pending.md | 已归档到_archive/ | 决策记录(T6/T7/T17已裁定,T18暂缓) |
 | ssot_authority_map.md | 保留,更新 | SSoT映射,需对齐43域 |
 | t18_implementation_plan.md | 归档到archive | T18暂缓转阶段8 |
 | migration_registry.yaml | 保留 | 迁移注册表 |
-| AI团队模式完整配置.md | 保留 | AI团队配置 |
+| ai_team_mode_full_config.md | 保留 | AI团队配置 |
 | index.md | 保留,更新 | 目录索引,需对齐新结构 |
 
 ### 3.6 处置统计

@@ -49,7 +49,7 @@ class SyncReport:
 class BlueprintCodeSync:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
-        self._registry_path = self._project_root / "docs" / "03_modules" / "blueprint-registry.yaml"
+        self._registry_path = self._project_root / "docs" / "03_modules" / "blueprint_registry.yaml"
 
     def verify_sync(self) -> SyncReport:
         entries = self._collect_entries()

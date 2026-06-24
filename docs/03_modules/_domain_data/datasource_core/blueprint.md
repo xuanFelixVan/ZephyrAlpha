@@ -483,7 +483,7 @@ class QualityReport:
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress更新 | 进度变更 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress更新 | 进度变更 |
 | 2 | 架构层YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l00_data_source.yaml` | 补充implementations/子目录文件 | 文件清单同步 |
 
 ---
@@ -812,7 +812,7 @@ class QualityReport:
 | 本蓝图的核心架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
 | 本模块的施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 本模块的接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 子模块定义 | **架构层YAML** | 本蓝图（派生视图） |
 

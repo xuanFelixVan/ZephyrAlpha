@@ -651,8 +651,18 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
     for prefix in (".trae/", "config/", ".github/", "models/", "logs/"):
         if prefix in rel:
             return []
-    # 知识条目 ke-* 和 session-logs 豁免
-    if name.startswith("ke-") or name.startswith("session-"):
+    # 知识条目 ke-* / KE-* 和 session-logs 豁免（不区分大小写）
+    lower_name = name.lower()
+    if lower_name.startswith("ke-") or lower_name.startswith("session-"):
+        return []
+    # 任务ID文件豁免（TASK-OPS-2026062103.md 等格式）
+    if lower_name.startswith("task-"):
+        return []
+    # 决策记忆ID文件豁免（DM-100252.md 等格式）
+    if lower_name.startswith("dm-"):
+        return []
+    # docs/ 下双数字前缀域文档豁免（01_d_infra_ops.md 等架构域文档）
+    if (rel.startswith("docs/") or "/docs/" in rel) and re.match(r"^\d{2}_", name):
         return []
     stem = Path(filepath).stem
     if stem.startswith("_"):

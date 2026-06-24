@@ -10,7 +10,7 @@ category: module_blueprint
 
 | # | 产出物 | 路径 |
 |---|--------|------|
-| 1 | blueprint-registry.yaml 已更新 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+| 1 | blueprint_registry.yaml 已更新 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 | 2 | task-card-meta-registry.md 迁移追踪 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\task-card-meta-registry.md` |
 | 3 | core/models.py — TaskCard 继承 Task | `D:\ZephyrAlpha\src\zephyr\core\models.py` |
 | 4 | blueprint_decomposer.py — 对接 task_repo | `D:\ZephyrAlpha\src\zephyr\core\blueprint_decomposer.py` |

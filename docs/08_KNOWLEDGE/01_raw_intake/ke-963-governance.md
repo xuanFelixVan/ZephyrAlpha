@@ -17,7 +17,7 @@ category: governance
 | document-metadata-index-registry.yaml | `_registry/catalogs/` | 1 | MRS-001 规则行——创建/修改规则文档时的登记要求 |
 | document-metadata-index-registry.yaml（原 master-document-inventory-registry.md 已废弃） | `_registry/catalogs/` | 1 | MRS-001 文档行——创建任何文档时必须登记 |
 | module-registry.yaml | `03_modules/` | 1 | MRS-001 模块行——模块操作的登记要求 |
-| blueprint-registry.yaml | `03_modules/` | 1 | MRS-001 模块行 |
+| blueprint_registry.yaml | `03_modules/` | 1 | MRS-001 模块行 |
 | script-health-registry.md | `_registry/catalogs/` | 1 | MRS-001 脚本行 |
 | adr-status-registry.yaml（冻结壳） | `_registry/catalogs/` | 1 | MRS-001 ADR 行（占位对账；活跃决策不在此表逐条维护） |
 | directory-registry.md | `_registry/catalogs/` | 1 | MRS-001 目录行 |

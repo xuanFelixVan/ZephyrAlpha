@@ -385,7 +385,7 @@ class RestructureResult(BaseModel):
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| blueprint-registry.yaml | 注册 | GOV-FSTR-001 条目 | 条目存在 |
+| blueprint_registry.yaml | 注册 | GOV-FSTR-001 条目 | 条目存在 |
 | INF-020 Audit Trail | 审计事件 | 重组操作可追溯 | 审计日志存在 |
 | INF-021 Rollback | 回滚点 | 重组可回滚 | 回滚成功 |
 
@@ -395,7 +395,7 @@ class RestructureResult(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress 更新 | 重组进度变更 |
+| 1 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | construction_progress 更新 | 重组进度变更 |
 
 ---
 
@@ -635,7 +635,7 @@ STEP 2: 职责域判定
 STEP 3: 拆分后验证
   - 独立 frontmatter + 概述 + §0~§18
   - belongs_to 指向父蓝图
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ---
@@ -695,7 +695,7 @@ STEP 3: 拆分后验证
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | 重组蓝图 | `D:\ZephyrAlpha\docs\03_modules\_restructuring\blueprint.md` | 修改 | v3.3模板对齐 |
-| 2 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | construction_progress 更新 |
+| 2 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 更新 |
 
 ---
 
@@ -762,4 +762,4 @@ STEP 3: 拆分后验证
 |-----------|------------|
 | 重组规则变更 | INF-020 Audit Trail + INF-023 Drift Detector |
 | 文件移动 | import 链验证脚本 |
-| construction_progress 变更 | blueprint-registry.yaml |
+| construction_progress 变更 | blueprint_registry.yaml |

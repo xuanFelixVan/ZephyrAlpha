@@ -113,7 +113,7 @@ references:
 | 29 | `interrupt_guard.py` | §6 | 修复中断安全 | 未实现 | |
 | 30 | `event_hooks.py` | §3 | 修复事件钩子 | 未实现 | |
 | 31 | `_fixer-registry.yaml` | §4.2 | 修复器注册表 | 未实现 | |
-| 32 | `auto-fix-config.yaml` | §5 | 引擎配置 | 未实现 | |
+| 32 | `auto_fix_config.yaml` | §5 | 引擎配置 | 未实现 | |
 | 33 | `schema.sql` | §4.2 | SQLite Schema | 未实现 | |
 | `__main__.py` | § — | — | 已实现 | | 本模块 |
 | `__main__.py` | § — | — | 已实现 | | 本模块 |
@@ -642,7 +642,7 @@ class ComplianceEvidence(BaseModel):
 | 测试代码 | `D:\ZephyrAlpha\tests\auto-fix-engine\` | 测试用例 |
 | 修复器注册表 | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\_fixer-registry.yaml` | 修复器注册（REG-AFX-FIXER-001） |
 | 修复模式注册表 | `D:\ZephyrAlpha\data\fix_patterns\pattern_index.yaml` | 修复模式知识库索引（REG-AFX-PATTERN-001，draft） |
-| 配置文件 | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\auto-fix-config.yaml` | 引擎配置 |
+| 配置文件 | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\auto_fix_config.yaml` | 引擎配置 |
 | 数据库 Schema | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\schema.sql` | SQLite Schema |
 | Skill 文件 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skills\domain\auto-fix-engine.md` | Agent Skill |
 
@@ -677,7 +677,7 @@ class ComplianceEvidence(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-031 条目 | 新模块注册 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 新增 MOD-INF-031 条目 | 蓝图注册 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 MOD-INF-031 条目 | 蓝图注册 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 新增条目 | 文档注册 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增 MOD-INF-031 依赖关系 | 依赖注册 |
 | 5 | 修复器注册表 | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\_fixer-registry.yaml` | 创建 9 个 L1 修复器注册 | 修复器注册 |
@@ -758,7 +758,7 @@ class ComplianceEvidence(BaseModel):
 | MOD-INF-031 | `__init__.py` | code | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\__init__.py` |
 | MOD-INF-031 | `models.py` | code | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\models.py` |
 | MOD-INF-031 | `_fixer-registry.yaml` | config | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\_fixer-registry.yaml` |
-| MOD-INF-031 | `auto-fix-config.yaml` | config | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\auto-fix-config.yaml` |
+| MOD-INF-031 | `auto_fix_config.yaml` | config | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\auto_fix_config.yaml` |
 | MOD-INF-031 | `schema.sql` | config | `D:\ZephyrAlpha\src\zephyr\auto-fix-engine\schema.sql` |
 
 #### 步骤 2：9 个 L1 修复器 + 安全校验 + 可靠性 + 预算控制
@@ -1006,7 +1006,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -1184,7 +1184,7 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 | AutoFixEngine 架构设计 | **本文档 §1-§10** | 旧 FixDispatcher 文档 |
 | 修复执行施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 修复接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 三通道修复管道映射 | **本文档 蓝图特有** | v4.0.0 架构总图（引用） |
 

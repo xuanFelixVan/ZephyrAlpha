@@ -56,7 +56,7 @@ _REGISTRY_FILES: list[Path] = [
     _PROJECT_ROOT / "scripts" / "script_manifest.yaml",
     _PROJECT_ROOT / "src" / "zephyr" / "gates" / "_registry.yaml",
     _PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml",
-    _PROJECT_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml",
+    _PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml",
     _PROJECT_ROOT / "docs" / "03_modules" / "template-registry.yaml",
     _PROJECT_ROOT / "docs" / "03_modules" / "system-pathway-registry.yaml",
     _PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml",

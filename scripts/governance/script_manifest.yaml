@@ -1723,7 +1723,7 @@ scripts:
   - --write
   - --no-changelog
   warn_only: false
-  description: 同步 blueprint-registry.yaml [从 blueprint.md frontmatter 驱动]
+  description: 同步 blueprint_registry.yaml [从 blueprint.md frontmatter 驱动]
   tags:
   - Critical
 - name: d5_architecture/validators/blueprint/validate_blueprint_code_sync.py

@@ -758,7 +758,7 @@ class TaskLifecycleManager:
 
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | MOD-INF-006 条目更新 | 版本升级 |
+| 1 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | MOD-INF-006 条目更新 | 版本升级 |
 | 2 | 任务卡元注册表 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 迁移状态更新 | v0.2.0→v0.3.0 |
 | 3 | core/models.py | `src/zephyr/infrastructure/shared_services/models.py` | TaskCard 继承 Task | 基座对齐 |
 | 4 | blueprint_decomposer.py | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | 对接 task_repo | 数据层真源 |
@@ -850,11 +850,11 @@ class TaskLifecycleManager:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §13 |
-| 产出位置 | `docs/03_modules/blueprint-registry.yaml` |
+| 产出位置 | `docs/03_modules/blueprint_registry.yaml` |
 | 验收标准 | MOD-INF-006 条目 version→0.9.3，blueprint_status→approved |
 | AI 自治范围 | ai_modifiable |
-| 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/03_modules/blueprint-registry.yaml')); print(d['modules']['MOD-INF-006']['version'])"` |
-| 检查点 | blueprint-registry.yaml 可被 yaml.safe_load() 解析 |
+| 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/03_modules/blueprint_registry.yaml')); print(d['modules']['MOD-INF-006']['version'])"` |
+| 检查点 | blueprint_registry.yaml 可被 yaml.safe_load() 解析 |
 | G7 检查项 | 上游文件是否全部列出？下游产出物路径是否全部精确？ |
 
 #### 步骤 2：同步 task-card-meta-registry.md
@@ -953,7 +953,7 @@ class TaskLifecycleManager:
 
 | # | 产出物 | 存放完整路径（相对优先） | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
-| 1 | blueprint-registry.yaml | `docs/03_modules/blueprint-registry.yaml` | ☐ | ☐ | ☐ |
+| 1 | blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | ☐ | ☐ | ☐ |
 | 2 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | ☐ | ☐ | ☐ |
 | 3 | core/models.py | `src/zephyr/infrastructure/shared_services/models.py` | ☐ | ☐ | ☐ |
 | 4 | blueprint_decomposer.py | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | ☐ | ☐ | ☐ |
@@ -1318,7 +1318,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ---
@@ -1391,7 +1391,7 @@ STEP 3: 拆分后验证
 |---|---------|------------|------|---------|
 | 1 | 本蓝图 | `docs/03_modules/_domain-infra_ops/task-system/blueprint.md` | 真源 | 重写 v0.9.4 |
 | 2 | Change Folder | `docs/03_modules/_domain-infra_ops/task-system/changes/` | 新建 | 存放任务卡 .md 文件 |
-| 3 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | 修改 | 更新 MOD-INF-006 条目 |
+| 3 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 更新 MOD-INF-006 条目 |
 | 4 | Task 模型基座 | `src/zephyr/shared/schemas.py` | 依赖 | TaskCard 继承其 Task 类 |
 | 5 | task_repo.py | `src/zephyr/data/persistence/task_repo.py` | 依赖 | 数据层真源 |
 | 6 | core/models.py | `src/zephyr/infrastructure/shared_services/models.py` | 重写 | 对齐到 shared/schemas.py Task 继承 |

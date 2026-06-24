@@ -684,7 +684,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 
 | 产出物类型 | 存放完整绝对路径 | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint-registry.yaml |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\system-telemetry\` | Telemetry 源码 | ≥1 | `__init__.py` __all__ |
 | 遥测数据 | `D:\ZephyrAlpha\data\telemetry\` | 遥测数据存储 | ≥0 | — |
 | DLQ 数据 | `D:\ZephyrAlpha\data\telemetry\{environment}\dlq\` | DLQ 死信队列 | ≥0 | — |
@@ -718,7 +718,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图重构后更新 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图重构后更新 |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | Telemetry 模块状态 | 代码施工后更新 |
 | 3 | 跨层契约 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\contracts\cross_layer_contracts.yaml` | MCP 接口契约 | AI 可消费性设计落地 |
 
@@ -1097,7 +1097,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 | 核心架构设计 | **本文档 §1-§10** | 已取代的旧蓝图 |
 | 施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

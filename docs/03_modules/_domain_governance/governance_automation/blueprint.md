@@ -1315,7 +1315,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 本蓝图拆分判定
@@ -1373,7 +1373,7 @@ STEP 3: 拆分后验证
 | Finding Schema 字段变更 | finding.py + 所有输出 Finding 的脚本 |
 | §5 调度规范变更 | run_all.py + pre-commit-config.yaml |
 | §0 代码文件清单 | 代码文件 `[BLUEPRINT]` 字段 |
-| frontmatter version | blueprint-registry.yaml |
+| frontmatter version | blueprint_registry.yaml |
 
 ### 负向责任
 
@@ -1399,7 +1399,7 @@ STEP 3: 拆分后验证
 ### 导航路径
 
 ```
-registry_of_registries.yaml → blueprint-registry.yaml → MOD-INF-005 → 本蓝图
+registry_of_registries.yaml → blueprint_registry.yaml → MOD-INF-005 → 本蓝图
 scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 ```
 
@@ -1863,7 +1863,7 @@ Error Budget 耗尽 → `manage_error_budget.py` 自动：
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
 | 2 | script-manifest.yaml | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 新脚本注册 | 新治理脚本入库后更新 |
 
 ---

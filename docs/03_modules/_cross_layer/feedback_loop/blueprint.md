@@ -584,7 +584,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -653,7 +653,7 @@ STEP 3: 拆分后验证
 | 2 | FLE测试 | `D:\ZephyrAlpha\tests\unit\` | 修改 | 新增测试用例 |
 | 3 | FLE蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` | 修改 | 本文件 |
 | 4 | YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_feedback_loop.yaml` | 修改 | 同步更新 |
-| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 版本号更新 |
+| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 版本号更新 |
 
 ---
 
@@ -722,7 +722,7 @@ STEP 3: 拆分后验证
 
 | 变更本蓝图时 | 必须同步更新 |
 |-------------|------------|
-| 版本号变更 | `blueprint-registry.yaml` + `b_feedback_loop.yaml` |
+| 版本号变更 | `blueprint_registry.yaml` + `b_feedback_loop.yaml` |
 | 接口契约变更 | 消费者模块蓝图 + `SHARED-QUICKREF.yml` |
 | 新增/删除文件 | `module-registry.yaml` + `__init__.py` |
 | 安全层变更 | `quality-standard.md` + gate注册表 |

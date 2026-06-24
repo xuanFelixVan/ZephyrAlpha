@@ -499,7 +499,7 @@ class ExperimentMetric:
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | version: 2.1.0 + construction_progress 更新 | 蓝图升级 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | version: 2.1.0 + construction_progress 更新 | 蓝图升级 |
 | 2 | SSoT YAML | `D:\ZephyrAlpha\architecture_model\layers\l13_experimentation.yaml` | 新增 CTR-009~012 契约 | 契约扩展 |
 | 3 | 跨层契约 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\cross_layer_contracts.yaml` | 新增 CTR-009~012 契约定义 | 契约注册 |
 | 4 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-L13-001 注册 | 编号验证 |
@@ -895,7 +895,7 @@ class ExperimentMetric:
 | 实验层架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
 | 实验层施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 实验层接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**

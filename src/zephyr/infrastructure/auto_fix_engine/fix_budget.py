@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] FixBudget daily≤50;monthly≤500;LLM tokens≤500000;FixStormGuard MUST检测风暴
-# [MODIFY-GUARD] blueprint.md §5;auto-fix-config.yaml budget段
+# [MODIFY-GUARD] blueprint.md §5;auto_fix_config.yaml budget段
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

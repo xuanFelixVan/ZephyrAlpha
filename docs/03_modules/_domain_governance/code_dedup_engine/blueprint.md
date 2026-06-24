@@ -1173,7 +1173,7 @@ def process_v1(data: dict) -> Result: ...
 
 | # | 需更新的文件                    | 完整绝对路径                                                         | 更新内容                                              | 更新原因          |
 | - | ------------------------- | -------------------------------------------------------------- | ------------------------------------------------- | ------------- |
-| 1 | 蓝图注册表                     | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml`       | MOD-INF-017 version→0.11.0, generation→2          | 蓝图升级          |
+| 1 | 蓝图注册表                     | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`       | MOD-INF-017 version→0.11.0, generation→2          | 蓝图升级          |
 | 2 | script\manifest.yaml     | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml`       | 注册 CLI 入口 + exit code 4 + 特殊标志                    | Wave 1 产出 CLI |
 | 3 | AGENTS.md §5.1            | `D:\ZephyrAlpha\AGENTS.md`                                     | 影子清单锚点 + 三层记忆注入 + Deprecated 标记                   | 生成时预防落地       |
 | 4 | Gate Engine YAML          | `D:\ZephyrAlpha\src\zephyr\gates\g6-blueprint-compliance.yaml` | GATE-DEDUP 门禁规则                                   | Wave 1 门禁落地   |
@@ -1652,7 +1652,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ## 安全删除协议
@@ -1676,7 +1676,7 @@ STEP 3: 拆分后验证
 | 2 | 压缩工作流标准           | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml`  |
 | 3 | 代码构建标准            | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` |
 | 4 | 脚本质量标准            | `D:\ZephyrAlpha\scripts\governance\quality-standard.md`                                               |
-| 5 | 蓝图注册表             | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml`                                              |
+| 5 | 蓝图注册表             | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`                                              |
 | 6 | 依赖图               | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md`                             |
 | 7 | Gate Engine 蓝图    | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md`                          |
 | 8 | Context Engine 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md`                       |

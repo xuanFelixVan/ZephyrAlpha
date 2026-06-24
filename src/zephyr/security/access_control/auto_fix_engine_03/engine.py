@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 修复MUST通过SafetyGate+FixBudget+CascadeBreaker;行为审计RED永不自动修复
-# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml;auto-fix-config.yaml
+# [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml;auto_fix_config.yaml
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -119,7 +119,7 @@ class AutoFixEngine:
         self._load_fixers()
 
     def _load_config(self, config_path: str | None = None) -> dict[str, Any]:
-        default_path = Path(__file__).parent / "auto-fix-config.yaml"
+        default_path = Path(__file__).parent / "auto_fix_config.yaml"
         path = config_path or str(default_path)
         try:
             with open(path, encoding="utf-8") as f:

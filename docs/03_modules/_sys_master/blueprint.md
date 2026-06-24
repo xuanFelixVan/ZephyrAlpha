@@ -505,7 +505,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 跨系统集成 | 本蓝图 §1-§3 | MOD-MASTER-001 CT-* | ~2000 |
 | 新建模块 | PS-STD-005 §5 | blueprint-template.md | ~800 |
 | 权限管控/Agent RBAC | MOD-INF-018 blueprint §1-§2 | rbac_roles.yaml + PermissionGuard API | ~600 |
-| 架构审查 | 本文全文 | PS-STD-005 + blueprint-registry.yaml | ~4000 |
+| 架构审查 | 本文全文 | PS-STD-005 + blueprint_registry.yaml | ~4000 |
 | 成本管理/预算 | 本蓝图 §十二 | MOD-INF-024 + §12.3 | ~800 |
 | 数据分级/安全 | 本蓝图 §十三 | MOD-INF-014 + §13.3 | ~600 |
 | 启动/运维 | 本蓝图 §十四 | MOD-INF-012 + §14.1 | ~500 |
@@ -781,7 +781,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | MOD-MASTER-001 | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 | architecture_model/index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture_model\_index.yaml` |
-| blueprint-registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+| blueprint_registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 
 ### 5.2 依赖图对齐声明
 
@@ -798,14 +798,14 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
 |---------|---------|---------|---------|
-| blueprint-registry.yaml | blueprint_compliance_checker.py | 注册表是检查器的输入 | 检查注册表文件存在 |
+| blueprint_registry.yaml | blueprint_compliance_checker.py | 注册表是检查器的输入 | 检查注册表文件存在 |
 
 #### 数据流依赖
 
 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |--------|--------|---------|---------|
 | architecture_model/index.yaml | 本蓝图 §一 | 拓扑数据 | YAML文件读取 |
-| blueprint-registry.yaml | 本蓝图 §七 | 蓝图健康度 | YAML文件读取 |
+| blueprint_registry.yaml | 本蓝图 §七 | 蓝图健康度 | YAML文件读取 |
 
 ### 5.4 自动化规格
 
@@ -862,7 +862,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 ## 八、需要更新的相关内容
 
 当本文变更时，同步更新：
-1. `docs/03_modules/blueprint-registry.yaml` —— 新增 SYS-MASTER-001 登记行
+1. `docs/03_modules/blueprint_registry.yaml` —— 新增 SYS-MASTER-001 登记行
 2. `docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml` —— 若 Level 0 定义调整
 3. `architecture-rationale-log.md` —— 追加 beta 相关决策
 
@@ -889,7 +889,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 步骤 | 说明 | Phase |
 |------|------|:--:|
-| 1 | 在 blueprint-registry.yaml 中登记 SYS-MASTER-001 | beta |
+| 1 | 在 blueprint_registry.yaml 中登记 SYS-MASTER-001 | beta |
 | 2 | 补齐所有 70 章蓝图中的 skeleton→骨架 | beta |
 | 3 | 为 Gate/Context/Pipeline 创建 domain-expert agent spec | beta |
 | 4 | 运行 beta 30 session 验证 | beta |
@@ -3928,7 +3928,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §5 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -3967,7 +3967,7 @@ STEP 3: 拆分后验证
 
 | 变更类型 | Tier 1（下游蓝图） | Tier 2（集成系统） |
 |---------|------------------|------------------|
-| 系统拓扑变更 | 通知 MOD-MASTER-001 | 更新 blueprint-registry.yaml |
+| 系统拓扑变更 | 通知 MOD-MASTER-001 | 更新 blueprint_registry.yaml |
 | 架构原则变更 | 通知所有模块蓝图 | 更新 project_rules.md |
 | KB 决策记录 变更 | 通知相关模块蓝图 | 更新决策记录 |
 
@@ -4011,7 +4011,7 @@ STEP 3: 拆分后验证
 
 | 修改本文件 | 必须同步更新 |
 |-----------|------------|
-| 系统拓扑变更 | MOD-MASTER-001 (集成总蓝图) + blueprint-registry.yaml |
+| 系统拓扑变更 | MOD-MASTER-001 (集成总蓝图) + blueprint_registry.yaml |
 | 架构原则变更 | .trae/rules/project_rules.md + 所有模块蓝图 |
 | 分派表变更 | 对应子系统蓝图 §0 分派表 |
 | 门控检查变更 | src/zephyr/gates/_registry.yaml |

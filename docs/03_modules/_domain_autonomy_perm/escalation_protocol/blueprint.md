@@ -982,7 +982,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 
 | 产出物类型 | 存放完整绝对路径 | 职责 | consumer_min | 注册位置 |
 |----------|---------------|------|:-----------:|---------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint-registry.yaml |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` | 本文件（含设计和施工指引） | ≥0 | blueprint_registry.yaml |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\escalation-engine\` | Python 源码（104文件，清单见 §0.1） | ≥1 | `__init__.py` __all__ |
 | 测试代码 | `D:\ZephyrAlpha\tests\` | 测试用例 | ≥0 | pytest 自动发现 |
 
@@ -1312,7 +1312,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 当前判定

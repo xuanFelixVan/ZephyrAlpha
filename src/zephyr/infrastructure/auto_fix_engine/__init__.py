@@ -3,7 +3,7 @@
 
 # [MODULE] zephyr.infrastructure.auto_fix_engine
 # [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports
-# [MODIFY-GUARD] blueprint.md §0; _fixer-registry.yaml; auto-fix-config.yaml
+# [MODIFY-GUARD] blueprint.md §0; _fixer-registry.yaml; auto_fix_config.yaml
 # [CONSUMERS] MOD-INF-027;MOD-INF-023;MOD-INF-029;MOD-INF-028;MOD-INF-022
 # [STABILITY] evolving
 # [SAFETY] H

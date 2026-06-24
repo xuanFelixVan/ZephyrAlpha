@@ -816,7 +816,7 @@ class ConstructionStage(str, Enum):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-019 条目 | 模块存在 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-019 条目 | 蓝图存在 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-019 条目 | 蓝图存在 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-019 文档元数据 | 文档注册 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | MOD-INF-019 节点+依赖边 | 依赖关系 |
 | 4 | AGENTS.md | `D:\ZephyrAlpha\AGENTS.md` | Skill 触发表 | 路由入口 |
@@ -1360,7 +1360,7 @@ class ConstructionStage(str, Enum):
 | Agent Spec 核心架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
 | Agent Spec 施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | Agent Spec 接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 | 四层架构定义 | **本文档 蓝图特有** | ⚠️ AGENTS.md 重复定义——AGENTS.md 是运行时入口，架构定义以本蓝图为准 |
 | Domain Skill 列表 | **skill_registry.yaml** | ⚠️ AGENTS.md 硬编码列表——以 skill-registry.yaml 为准（当前 19 Domain + 3 Role） |

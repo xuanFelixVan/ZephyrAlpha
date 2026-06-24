@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
 # [MODULE] tests.test_shadow_workspace
 # [INVARIANTS] 预演失败MUST阻止应用;沙箱目录MUST在验证后清理
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml shadow_workspace段
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml shadow_workspace段
 # [CONSUMERS] CI/CD;pytest
 # [STABILITY] evolving
 # [SAFETY] L

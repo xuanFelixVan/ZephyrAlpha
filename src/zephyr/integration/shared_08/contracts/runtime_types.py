@@ -41,7 +41,7 @@ class RuntimeConfig(BaseModel):
     feedback_proposal_dir: Path = Field(default=DATA_DIR / "feedback_proposals", description="进化提案目录")
     health_snapshot_dir: Path = Field(default=DATA_DIR / "health_snapshots", description="健康快照目录")
     circadian_state_path: Path = Field(
-        default=DATA_DIR / "circadian_tasks" / "schedule-state.json", description="生物钟状态路径"
+        default=DATA_DIR / "circadian_tasks" / "schedule_state.json", description="生物钟状态路径"
     )
 
     auto_start_l2: bool = Field(default=True, description="启动时自动启动 L2 本地模型")

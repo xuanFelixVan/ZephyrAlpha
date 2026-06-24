@@ -43,7 +43,7 @@ INDEX_PATH = INDEX_DIR / "unified-asset-index.yaml"
 REGISTRY_DIRS = [
     (Path(__file__).resolve().parents[3] / "src" / "zephyr" / "gates", "_registry.yaml"),
     (Path(__file__).resolve().parents[3] / "docs" / "03_modules", "module-registry.yaml"),
-    (Path(__file__).resolve().parents[3] / "docs" / "03_modules", "blueprint-registry.yaml"),
+    (Path(__file__).resolve().parents[3] / "docs" / "03_modules", "blueprint_registry.yaml"),
 ]
 
 HEALTH_WEIGHTS = {"orphan": 0.35, "ghost": 0.35, "drift": 0.20, "recency": 0.10}

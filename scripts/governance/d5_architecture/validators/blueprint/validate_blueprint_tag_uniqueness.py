@@ -30,7 +30,7 @@ from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
 
-BLUEPRINT_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+BLUEPRINT_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
 TAG_ALLOWLIST: frozenset[str] = frozenset(
     {

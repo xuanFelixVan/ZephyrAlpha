@@ -129,7 +129,7 @@ def _verify_layer(layer_name: str) -> dict:
 def _verify_registries() -> list[str]:
     issues: list[str] = []
     registry_path = _PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
-    blueprint_registry_path = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+    blueprint_registry_path = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
     if not registry_path.exists():
         issues.append("module-registry.yaml not found")
@@ -139,11 +139,11 @@ def _verify_registries() -> list[str]:
             issues.append("MOD-INF-025 not registered in module-registry.yaml")
 
     if not blueprint_registry_path.exists():
-        issues.append("blueprint-registry.yaml not found")
+        issues.append("blueprint_registry.yaml not found")
     else:
         content = blueprint_registry_path.read_text(encoding="utf-8")
         if "MOD-INF-025" not in content:
-            issues.append("MOD-INF-025 not registered in blueprint-registry.yaml")
+            issues.append("MOD-INF-025 not registered in blueprint_registry.yaml")
 
     return issues
 

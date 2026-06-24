@@ -21,8 +21,8 @@
 #   2. 读 path → 定位到模板定义文件
 #   3. 按模板格式创建新文件
 #
-# 与 blueprint-registry.yaml 的关系:
-#   - blueprint-registry.yaml：追踪蓝图状态（施工进度/完整度/代际）
+# 与 blueprint_registry.yaml 的关系:
+#   - blueprint_registry.yaml：追踪蓝图状态（施工进度/完整度/代际）
 #   - 本文件 template-registry.yaml：追踪模板定义（格式/版本/使用者）
 #   两张表职责互补，不重叠。
 #

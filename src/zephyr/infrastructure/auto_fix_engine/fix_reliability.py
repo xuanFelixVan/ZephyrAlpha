@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] IdempotencyGuard 24h TTL;DeadLetterQueue max 3 retries;ConflictResolver串行化同文件修复
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml reliability段
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml reliability段
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

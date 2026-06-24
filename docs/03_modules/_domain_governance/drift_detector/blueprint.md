@@ -717,7 +717,7 @@ class BaselineSnapshot(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-023 版本更新 | 版本升级同步 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-023 条目更新 | 版本升级同步 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-023 条目更新 | 版本升级同步 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-023 元数据更新 | 版本升级同步 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 线3:治理闭环 MOD-INF-023 版本 | 版本升级同步 |
 
@@ -1001,7 +1001,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ### 判定示例
@@ -1081,7 +1081,7 @@ STEP 3: 拆分后验证
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
 | Drift 模块蓝图职责与架构 | **本文档 §1-§10** | — |
-| Drift 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| Drift 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 漂移检测核心策略 | **本文档 §3 蓝图特有** | — |
 
 ### 负向责任
@@ -1118,7 +1118,7 @@ STEP 3: 拆分后验证
 ### 导航路径
 
 ```
-registry_of_registries.yaml → blueprint-registry.yaml → MOD-023 → §2 → MOD-INF-023
+registry_of_registries.yaml → blueprint_registry.yaml → MOD-023 → §2 → MOD-INF-023
 ```
 
 ### 漂移防护
@@ -1127,7 +1127,7 @@ registry_of_registries.yaml → blueprint-registry.yaml → MOD-023 → §2 → 
 |-----------|------------|
 | §4 接口契约 | 下游检查接口兼容性 |
 | §5 约束条件 | construction_progress 字段 |
-| §10 依赖模块 | blueprint-registry.yaml MOD-INF-023 条目 |
+| §10 依赖模块 | blueprint_registry.yaml MOD-INF-023 条目 |
 
 ### 变更审批与同步规则
 

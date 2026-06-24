@@ -22,7 +22,7 @@ G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁
   2. 属性三方一致：stability/safety/ai_autonomy 蓝图 ↔ 代码头部 ↔ 依赖图
   3. 文件清单三方匹配：蓝图 §0.1 ↔ 磁盘文件 ↔ 依赖图 source_path
   4. 依赖声明三方一致：蓝图 depends_on ↔ 代码 import ↔ 依赖图 edges
-  5. 注册表覆盖：blueprint-registry.yaml ↔ module-registry.yaml ↔ 依赖图 §5
+  5. 注册表覆盖：blueprint_registry.yaml ↔ module-registry.yaml ↔ 依赖图 §5
 
 SSoT: MOD-INF-007 gate-engine
 Version: 0.1.0
@@ -42,7 +42,7 @@ import yaml
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path("D:/ZephyrAlpha")
-BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs/03_modules/blueprint-registry.yaml"
+BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml"
 MODULE_REGISTRY = PROJECT_ROOT / "docs/03_modules/module-registry.yaml"
 DEPENDENCY_MAP = PROJECT_ROOT / "docs/02_enterprise_architecture/system-dependency-map.md"
 GATES_REGISTRY = PROJECT_ROOT / "src/zephyr/governance/rule_enforcement/_registry.yaml"
@@ -156,7 +156,7 @@ def check_triple_alignment(
                 check="registry_load",
                 severity=Severity.ERROR,
                 module_id="*",
-                source="blueprint-registry.yaml",
+                source="blueprint_registry.yaml",
                 expected="valid YAML",
                 actual="load failed",
             )
@@ -260,7 +260,7 @@ def check_triple_alignment(
                         check="construction_progress_stale",
                         severity=Severity.ERROR,
                         module_id=mid,
-                        source="blueprint-registry.yaml",
+                        source="blueprint_registry.yaml",
                         expected="partially_implemented or implemented",
                         actual=f"not_started (but code exists: {code_size} bytes)",
                     )
@@ -273,7 +273,7 @@ def check_triple_alignment(
                     check="blueprint_file_missing",
                     severity=Severity.ERROR,
                     module_id=mid,
-                    source="blueprint-registry.yaml file_path",
+                    source="blueprint_registry.yaml file_path",
                     expected=bp_path_str,
                     actual="FILE NOT FOUND",
                 )
@@ -310,7 +310,7 @@ def check_triple_alignment(
                     severity=Severity.WARN,
                     module_id=dep_mid,
                     source="system-dependency-map.md §5",
-                    expected="in blueprint-registry.yaml",
+                    expected="in blueprint_registry.yaml",
                     actual="NOT FOUND",
                 )
             )

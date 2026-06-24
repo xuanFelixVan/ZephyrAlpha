@@ -632,7 +632,7 @@ class SemanticAuditReport(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-028 | 编号注册 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 更新 MOD-INF-028 条目 | 蓝图版本升级 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新 MOD-INF-028 条目 | 蓝图版本升级 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 新增本蓝图元数据 | 自动扫描 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增 MOD-INF-028 依赖 | 依赖注册 |
 | 5 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 新增 run_semantic_audit.py | 脚本注册 |
@@ -947,7 +947,7 @@ STEP 3: 拆分后验证
   - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
   - 拆分出的蓝图 belongs_to = 本蓝图 module_id
   - 本蓝图 §10 依赖关系新增子蓝图引用
-  - blueprint-registry.yaml 同步更新
+  - blueprint_registry.yaml 同步更新
 ```
 
 ---
@@ -1024,7 +1024,7 @@ STEP 3: 拆分后验证
 | 语义审计架构设计 | **本文档 §1-§10** | 已取代的旧版蓝图 |
 | 语义审计施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
 | 语义审计接口契约 | **本文档 §4** | — |
-| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
@@ -1158,7 +1158,7 @@ STEP 3: 拆分后验证
 | ALIGN-SCRIPT-001 | scripts/script-manifest.yaml | scripts/ | RED |
 | ALIGN-GATE-001 | src/zephyr/gates/_registry.yaml | src/zephyr/gates/ | RED |
 | ALIGN-MODULE-001 | docs/03_modules/module-registry.yaml | src/zephyr/ | RED |
-| ALIGN-BLUEPRINT-001 | docs/03_modules/blueprint-registry.yaml | docs/03_modules/ | YELLOW |
+| ALIGN-BLUEPRINT-001 | docs/03_modules/blueprint_registry.yaml | docs/03_modules/ | YELLOW |
 | ALIGN-DEPENDENCY-001 | cross-module-dependency-registry.yaml | src/zephyr/ | YELLOW |
 | ALIGN-SKILL-001 | src/zephyr/agent-spec/skill-registry.yaml | src/zephyr/agent-spec/ | YELLOW |
 

@@ -122,14 +122,14 @@ def attack_01_frontmatter() -> Attack:
 
 
 # ============================================================
-# Attack 2: blueprint-registry.yaml drift for SYS-MASTER-001
+# Attack 2: blueprint_registry.yaml drift for SYS-MASTER-001
 # ============================================================
 
 
 def attack_02_registry() -> Attack:
     """attack_02_registry implementation."""
     a = Attack("M02-registry_drift")
-    reg = PROJECT_ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
+    reg = PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
     def attack_fn():
         """attack_fn implementation."""

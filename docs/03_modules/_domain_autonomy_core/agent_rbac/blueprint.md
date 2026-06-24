@@ -7112,7 +7112,7 @@ class PermissionHooks:
 | 修改此文件 | 必须同步更新 |
 |-----------|------------|
 | §0 分派表 | MOD-023 §2 职责分派 |
-| §4 代码文件清单 | blueprint-registry.yaml MOD-INF-018 条目 |
+| §4 代码文件清单 | blueprint_registry.yaml MOD-INF-018 条目 |
 | §5 待施工项 | construction_progress 字段 |
 
 ### 修改条件

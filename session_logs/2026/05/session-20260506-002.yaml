@@ -55,7 +55,7 @@ files_modified:
   - path: "docs/03_modules/l12_system_telemetry/index.md"
     changes: "v1.0.0→v2.0.0: 裁定方案A，跳转至 MOD-INF-015"
 
-  - path: "docs/03_modules/blueprint-registry.yaml"
+  - path: "docs/03_modules/blueprint_registry.yaml"
     changes: "同步 39 blueprints（MOD-INF-010 version 0.32.0→0.34.0）"
 
   - path: "docs/03_modules/module-registry.yaml"

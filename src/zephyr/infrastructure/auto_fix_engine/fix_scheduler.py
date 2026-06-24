@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 双模式调度;批量模式MUST遵守间隔;事件驱动MUST即时响应
-# [MODIFY-GUARD] blueprint.md §3;auto-fix-config.yaml scheduler段
+# [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml scheduler段
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

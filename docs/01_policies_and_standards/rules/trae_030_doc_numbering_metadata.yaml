@@ -420,7 +420,7 @@ sections:
       expected_result: 满足任一触发条件→拆分独立蓝图
       on_failure: 不满足触发条件→原地升级
     - order: 4
-      action: 拆分后验证——子蓝图有独立frontmatter+概述+§0~§18;子蓝图belongs_to=本蓝图module_id;本蓝图§10依赖关系新增子蓝图引用;blueprint-registry.yaml同步更新
+      action: 拆分后验证——子蓝图有独立frontmatter+概述+§0~§18;子蓝图belongs_to=本蓝图module_id;本蓝图§10依赖关系新增子蓝图引用;blueprint_registry.yaml同步更新
       pre_condition: 拆分独立蓝图决定已做出
       expected_result: 四项验证全部通过
       on_failure: 任一验证未通过→补充后重新验证
