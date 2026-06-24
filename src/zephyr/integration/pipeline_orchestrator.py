@@ -2378,3 +2378,52 @@ class PipelineOrchestrator:
 
     def get_cost_summary(self) -> dict[str, Any]:
         return self._cost_tracker.summary()
+
+
+# ── EventBusBackpressure 订阅 (DM-2507-E) ──────────────────────────────
+
+_subscribed = False
+
+
+def subscribe_eventbus() -> None:
+    """订阅 EventBusBackpressure 的 pipeline_start 事件。
+
+    幂等：重复调用安全。Backpressure 总线不可用时静默跳过。
+    供 boot_hooks 统一调用。
+
+    说明: pipeline_start 事件到达时仅记录日志——
+    真正的 dispatch 需要完整 TaskCard，由调用方主动触发，
+    不从事件 payload 幻觉构造 TaskCard 以避免数据损坏。
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.subscribe("pipeline_start", _on_pipeline_start)
+        _subscribed = True
+        logger.info("PipelineOrchestrator: subscribed to pipeline_start event")
+    except Exception as e:
+        logger.warning("PipelineOrchestrator: subscribe_eventbus failed: %s", e)
+
+
+def _on_pipeline_start(payload: object) -> None:
+    """pipeline_start 事件：管线启动信号。轻量handler——仅日志记录。
+
+    payload 期望字段: {timestamp, source_function, severity, detail}
+    真正的 dispatch 由调用方主动触发（需完整 TaskCard）。
+    """
+    try:
+        data = payload if isinstance(payload, dict) else {}
+        detail = data.get("detail", str(payload))
+        source = data.get("source_function", "unknown")
+        logger.info(
+            "PipelineOrchestrator: pipeline_start event received "
+            "(source=%s, detail=%s) — dispatch deferred to caller",
+            source,
+            detail,
+        )
+    except Exception as e:
+        logger.error("PipelineOrchestrator: _on_pipeline_start failed: %s", e)

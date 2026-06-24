@@ -155,3 +155,101 @@ class RollbackBootIntegration:
     @property
     def is_initialized(self) -> bool:
         return self._initialized
+
+
+# ── EventBusBackpressure 订阅 (DM-2507-D) ──────────────────────────────
+
+_subscribed = False
+
+
+def subscribe_eventbus() -> None:
+    """订阅 EventBusBackpressure 的3个失败事件。
+
+    幂等：重复调用安全。Backpressure 总线不可用时静默跳过。
+    供 boot_hooks 统一调用。
+    事件: pipeline_failed / mcp_call_failed / kill_switch_triggered
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.subscribe("pipeline_failed", _on_pipeline_failed)
+        bus.subscribe("mcp_call_failed", _on_mcp_call_failed)
+        bus.subscribe("kill_switch_triggered", _on_kill_switch_triggered)
+        _subscribed = True
+        logger.info(
+            "RollbackBootIntegration: subscribed to 3 failure events "
+            "(pipeline_failed/mcp_call_failed/kill_switch_triggered)"
+        )
+    except Exception as e:
+        logger.warning("RollbackBootIntegration: subscribe_eventbus failed: %s", e)
+
+
+def _on_pipeline_failed(payload: object) -> None:
+    """pipeline_failed 事件：管线失败触发回滚评估。轻量handler。"""
+    _trigger_rollback(payload, "pipeline_failed")
+
+
+def _on_mcp_call_failed(payload: object) -> None:
+    """mcp_call_failed 事件：MCP调用失败触发回滚评估。轻量handler。"""
+    _trigger_rollback(payload, "mcp_call_failed")
+
+
+def _on_kill_switch_triggered(payload: object) -> None:
+    """kill_switch_triggered 事件：KillSwitch触发回滚。轻量handler。"""
+    _trigger_rollback(payload, "kill_switch")
+
+
+def _trigger_rollback(payload: object, source: str) -> None:
+    """触发回滚评估——日志+调用已有公开方法。
+
+    流程: 构造 AutoGuardResult → AutoRollbackTrigger.classify() →
+          若 should_rollback 且 payload 含 commit_sha → RollbackExecutor.full_revert()
+    """
+    try:
+        data = payload if isinstance(payload, dict) else {}
+        detail = data.get("detail", str(payload))
+        logger.warning("Rollback triggered by event '%s': %s", source, detail)
+
+        from zephyr.infrastructure.rollback.auto_rollback_trigger import (
+            AutoGuardResult,
+            AutoRollbackTrigger,
+        )
+
+        result = AutoGuardResult(
+            source=source,
+            gate_id=data.get("source_function", source),
+            task_id=data.get("task_id", ""),
+            passed=False,
+            error_message=detail,
+            error_code=int(data.get("error_code", 1)),
+        )
+        trigger = AutoRollbackTrigger()
+        decision = trigger.classify(result)
+        logger.info(
+            "Rollback decision for '%s': action=%s should_rollback=%s reason=%s",
+            source,
+            decision.action,
+            decision.should_rollback,
+            decision.reason,
+        )
+
+        if decision.should_rollback:
+            commit_sha = data.get("commit_sha", "")
+            if commit_sha:
+                from zephyr.infrastructure.rollback.rollback_executor import RollbackExecutor
+
+                executor = RollbackExecutor(project_root=Path.cwd())
+                executor.full_revert(commit_sha, audit_session=f"eventbus:{source}")
+                logger.warning("RollbackExecutor.full_revert completed for '%s'", source)
+            else:
+                logger.warning(
+                    "Rollback required for '%s' but no commit_sha in payload; "
+                    "manual intervention needed",
+                    source,
+                )
+    except Exception as e:
+        logger.error("Rollback trigger failed for '%s': %s", source, e)
