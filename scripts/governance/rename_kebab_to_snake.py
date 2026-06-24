@@ -25,7 +25,7 @@
   - .py 文件不改（已是 snake_case）
   - .git/ .venv/ node_modules/ __pycache__/ .ruff_cache/ models/ 目录跳过
   - TECH_VERSION_TOKENS 中的连字符保留（pydantic-v2 等）
-  - architecture_lock.yaml / shared_quickref.yaml 等大写白名单不改
+  - UPPERCASE_WHITELIST 中的文件不改（Dockerfile/LICENSE）
   - session-YYYYMMDD-NNN 格式保留
   - .github/ 目录不改
   - docker-compose.yml 不改
@@ -86,9 +86,6 @@ TECH_VERSION_TOKENS = [
 
 # 大写白名单文件名不改
 UPPERCASE_WHITELIST = {
-    "architecture_lock.yaml",
-    "shared_quickref.yaml",
-    "scope.yaml",
     "Dockerfile",
     "LICENSE",
 }

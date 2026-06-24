@@ -60,12 +60,9 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "architecture_lock.yaml",
-    "scope.yaml",
     "LICENSE",
     "PKG_INFO",
     "SOURCES.txt",
-    "shared_quickref.yaml",
 ]
 
 TECH_VERSION_TOKENS: list[str] = [
@@ -422,9 +419,7 @@ _DIR_EXEMPT_NAMES: set[str] = {
     ".aidrafts",
 }
 _DIR_MODULE_ID_RE = re.compile(r"^[A-Z]+-[A-Z]+[0-9]*-\d+(-[A-Z]+)?$|^[A-Z]+-\d+$|^[A-Z]+-[A-Z]+-\d+$")
-_DIR_ROOT_KEBAB_EXEMPT: set[str] = {
-    "session_logs",
-}
+_DIR_ROOT_KEBAB_EXEMPT: set[str] = set()
 _DIR_KEBAB_PATH_PREFIXES: list[str] = [
     "src/zephyr/",
     "tests/",
@@ -609,12 +604,9 @@ _DATA_FILE_EXEMPT_NAMES: set[str] = {
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "architecture_lock.yaml",
-    "scope.yaml",
     "LICENSE",
     "PKG-INFO",
     "SOURCES.txt",
-    "shared_quickref.yaml",
     ".pre_commit-config.yaml",
     "docker-compose.yml",
     "docker-compose.yaml",
