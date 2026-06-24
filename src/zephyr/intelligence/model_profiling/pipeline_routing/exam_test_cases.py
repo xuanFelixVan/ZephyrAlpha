@@ -334,7 +334,7 @@ EX_CF_001 = ExamTestCase(
     expected_structure_keys=["fixes"],
     expected_old_str="a - b",
     expected_new_str="a + b",
-    expected_contains=["a + b", "return"],
+    expected_contains=["a + b", "return a + b"],
 )
 
 EX_CF_002 = ExamTestCase(
@@ -410,7 +410,7 @@ EX_RF_003 = ExamTestCase(
         "    return html"
     ),
     expected_structure_keys=["changes"],
-    expected_contains=["join", "list", "append"],
+    expected_contains=["join", "append", "concat"],
 )
 
 # ══════════════════════════════════════════════════════════
@@ -425,7 +425,7 @@ EX_CG_001 = ExamTestCase(
         "generate: a function called is_prime that takes an integer n and returns True if n is prime, False otherwise."
     ),
     expected_structure_keys=["content"],
-    expected_contains=["def is_prime", "for", "return"],
+    expected_contains=["def is_prime", "for n", "return True"],
 )
 
 EX_CG_002 = ExamTestCase(
@@ -438,7 +438,7 @@ EX_CG_002 = ExamTestCase(
         "Include a docstring and type hints."
     ),
     expected_structure_keys=["content"],
-    expected_contains=["def fibonacci", "list", "docstring", "0, 1", "append"],
+    expected_contains=["def fibonacci", "docstring", "0, 1", "append"],
 )
 
 EX_CG_003 = ExamTestCase(
@@ -452,7 +452,7 @@ EX_CG_003 = ExamTestCase(
         "and type hints."
     ),
     expected_structure_keys=["content"],
-    expected_contains=["class", "OrderedDict", "get", "put", "capacity", "popitem"],
+    expected_contains=["class LRU", "OrderedDict", "get", "put", "capacity", "popitem"],
 )
 
 # ══════════════════════════════════════════════════════════
@@ -488,7 +488,7 @@ EX_DC_002 = ExamTestCase(
         "    print('done')  # unreachable code after return"
     ),
     expected_structure_keys=["dead_sections"],
-    expected_contains=["unreachable", "print", "after return"],
+    expected_contains=["unreachable", "print('done')", "after return"],
 )
 
 EX_DC_003 = ExamTestCase(
@@ -570,7 +570,7 @@ EX_AD_001 = ExamTestCase(
     difficulty=Difficulty.EASY,
     prompt="设计一个用户注册功能，需要：1.用户输入验证 2.数据库存储 3.发送欢迎邮件。请设计文件结构和依赖关系。",
     expected_structure_keys=["files", "dependencies"],
-    expected_contains=["validate", "database", "email", "user"],
+    expected_contains=["validate", "database", "email", "registration"],
 )
 
 EX_AD_002 = ExamTestCase(
@@ -681,7 +681,7 @@ EX_DT_003 = ExamTestCase(
         "db.py": "class Database:\n    def query(self, sql):\n        return sql\n",
     },
     expected_call_chain=["main", "run", "process", "fetch_a", "fetch_b", "query"],
-    expected_contains=["main", "run", "process", "fetch_a", "fetch_b", "query"],
+    expected_contains=["Controller", "ServiceA", "ServiceB", "fetch_a", "fetch_b", "query"],
 )
 
 
@@ -811,7 +811,7 @@ EX_LCR_002 = ExamTestCase(
     ),
     expected_structure_keys=["answer"],
     expected_answer="3",
-    expected_contains=["3"],
+    expected_contains=["3", "MAX_RETRIES"],
 )
 
 EX_LCR_003 = ExamTestCase(
@@ -993,7 +993,7 @@ EX_IE_001 = ExamTestCase(
     prompt="执行以下3步任务计划：\n1. 读取config.yaml\n2. 提取database_url字段\n3. 返回database_url的值\n请按顺序执行每一步。",
     expected_structure_keys=["steps"],
     expected_step_count=3,
-    expected_contains=["config", "database_url", "3"],
+    expected_contains=["config.yaml", "database_url", "3 steps"],
 )
 
 EX_IE_002 = ExamTestCase(
@@ -1003,7 +1003,7 @@ EX_IE_002 = ExamTestCase(
     prompt="执行以下5步任务计划：\n1. 搜索所有.py文件\n2. 过滤出包含'import os'的文件\n3. 统计文件数量\n4. 输出文件列表\n5. 生成报告\n请按顺序执行每一步。",
     expected_structure_keys=["steps"],
     expected_step_count=5,
-    expected_contains=["import os", "5", "report"],
+    expected_contains=["import os", "5 steps", "report"],
 )
 
 EX_IE_003 = ExamTestCase(
@@ -1013,7 +1013,7 @@ EX_IE_003 = ExamTestCase(
     prompt="执行以下4步任务计划：\n1. 读取用户输入的SQL\n2. 检查是否有DROP/DELETE语句\n3. 如果有则要求确认\n4. 执行SQL并返回结果\n请按顺序执行每一步，注意第3步是条件分支。",
     expected_structure_keys=["steps"],
     expected_step_count=4,
-    expected_contains=["DROP", "DELETE", "confirm", "4"],
+    expected_contains=["DROP", "DELETE", "confirm", "4 steps"],
 )
 
 
@@ -1039,7 +1039,7 @@ EX_ER_002 = ExamTestCase(
     prompt="执行 `import json; json.loads('invalid')` 时报错：`json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)`。请诊断根因并提供修复方案。",
     expected_structure_keys=["diagnosis", "root_cause", "fix"],
     expected_root_cause="JSON格式无效",
-    expected_contains=["JSON", "invalid", "parse", "format"],
+    expected_contains=["JSON", "invalid", "parse", "JSONDecodeError"],
 )
 
 EX_ER_003 = ExamTestCase(
@@ -1076,7 +1076,7 @@ EX_AMB_002 = ExamTestCase(
     prompt="指令：'修复bug'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
     expected_structure_keys=["ambiguous", "ambiguities"],
     expected_ambiguous=True,
-    expected_contains=["ambiguous", "bug", "which", "where"],
+    expected_contains=["ambiguous", "bug", "which bug", "where is"],
 )
 
 EX_AMB_003 = ExamTestCase(
@@ -1086,7 +1086,7 @@ EX_AMB_003 = ExamTestCase(
     prompt="指令：'重构代码并添加测试'。这个指令是否有歧义？如果有，指出哪些方面不明确。",
     expected_structure_keys=["ambiguous", "ambiguities"],
     expected_ambiguous=True,
-    expected_contains=["ambiguous", "refactor", "test", "scope", "which"],
+    expected_contains=["ambiguous", "refactor", "test", "scope", "which parts"],
 )
 
 
@@ -1102,7 +1102,7 @@ EX_TS_001 = ExamTestCase(
     prompt="任务：在项目中查找所有包含'TODO'的文件。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Grep",
-    expected_contains=["Grep", "grep", "search"],
+    expected_contains=["Grep", "grep", "TODO"],
 )
 
 EX_TS_002 = ExamTestCase(
@@ -1112,7 +1112,7 @@ EX_TS_002 = ExamTestCase(
     prompt="任务：读取config.yaml文件的内容。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Read",
-    expected_contains=["Read", "read", "file"],
+    expected_contains=["Read", "config.yaml", "content"],
 )
 
 EX_TS_003 = ExamTestCase(
@@ -1122,7 +1122,7 @@ EX_TS_003 = ExamTestCase(
     prompt="任务：在项目中查找所有名为'*.py'的文件。应该用什么工具？",
     expected_structure_keys=["tool", "reason"],
     expected_tool="Glob",
-    expected_contains=["Glob", "glob", "pattern"],
+    expected_contains=["Glob", "glob", "*.py"],
 )
 
 
@@ -1185,7 +1185,18 @@ EX_IA_003 = ExamTestCase(
         "List all affected files."
     ),
     expected_structure_keys=["affected_files"],
-    expected_affected_files_k=["interface.py", "impl1.py", "impl2.py", "impl3.py", "factory.py", "client1.py", "client2.py", "client3.py", "test_impl1.py", "test_impl2.py"],
+    expected_affected_files_k=[
+        "interface.py",
+        "impl1.py",
+        "impl2.py",
+        "impl3.py",
+        "factory.py",
+        "client1.py",
+        "client2.py",
+        "client3.py",
+        "test_impl1.py",
+        "test_impl2.py",
+    ],
     expected_contains=["impl1", "impl2", "factory", "client"],
 )
 
@@ -1209,8 +1220,19 @@ EX_IA_004 = ExamTestCase(
         "List all affected files."
     ),
     expected_structure_keys=["affected_files"],
-    expected_affected_files_k=["model.py", "dao1.py", "dao2.py", "dao3.py", "service1.py", "service2.py", "service3.py", "api1.py", "api2.py", "api3.py"],
-    expected_contains=["dao", "service", "api"],
+    expected_affected_files_k=[
+        "model.py",
+        "dao1.py",
+        "dao2.py",
+        "dao3.py",
+        "service1.py",
+        "service2.py",
+        "service3.py",
+        "api1.py",
+        "api2.py",
+        "api3.py",
+    ],
+    expected_contains=["dao1", "dao2", "service1", "api1"],
 )
 
 EX_IA_005 = ExamTestCase(
@@ -1229,8 +1251,35 @@ EX_IA_005 = ExamTestCase(
         "List all affected files."
     ),
     expected_structure_keys=["affected_files"],
-    expected_affected_files_k=["core_service.py", "adapter1.py", "adapter2.py", "adapter3.py", "adapter4.py", "adapter5.py", "handler1.py", "handler2.py", "handler3.py", "handler4.py", "handler5.py", "controller1.py", "controller2.py", "controller3.py", "controller4.py", "controller5.py", "view1.py", "view2.py", "view3.py", "view4.py", "view5.py", "route1.py", "route2.py", "route3.py", "route4.py", "route5.py"],
-    expected_contains=["adapter", "handler", "controller", "view", "route"],
+    expected_affected_files_k=[
+        "core_service.py",
+        "adapter1.py",
+        "adapter2.py",
+        "adapter3.py",
+        "adapter4.py",
+        "adapter5.py",
+        "handler1.py",
+        "handler2.py",
+        "handler3.py",
+        "handler4.py",
+        "handler5.py",
+        "controller1.py",
+        "controller2.py",
+        "controller3.py",
+        "controller4.py",
+        "controller5.py",
+        "view1.py",
+        "view2.py",
+        "view3.py",
+        "view4.py",
+        "view5.py",
+        "route1.py",
+        "route2.py",
+        "route3.py",
+        "route4.py",
+        "route5.py",
+    ],
+    expected_contains=["adapter1", "handler1", "controller1", "view1", "route1"],
 )
 
 # circular_dependency_detect (5 题) — 循环依赖检测
@@ -1264,7 +1313,7 @@ EX_CDD_002 = ExamTestCase(
     expected_structure_keys=["has_cycle", "cycle_path"],
     expected_has_cycle=True,
     expected_cycle_path=["a", "b", "c"],
-    expected_contains=["cycle", "a", "b", "c"],
+    expected_contains=["cycle", "a.py", "b.py", "c.py"],
 )
 
 EX_CDD_003 = ExamTestCase(
@@ -1367,7 +1416,7 @@ EX_RBD_001 = ExamTestCase(
     ),
     expected_structure_keys=["rollback_points", "boundaries"],
     expected_rollback_points=["database", "model", "api"],
-    expected_contains=["backup", "database", "model", "api"],
+    expected_contains=["backup", "database.py", "model.py", "api.py"],
 )
 
 EX_RBD_002 = ExamTestCase(
@@ -1452,7 +1501,7 @@ EX_TD_001 = ExamTestCase(
     ),
     expected_structure_keys=["tasks"],
     expected_tasks=["models", "views", "urls"],
-    expected_contains=["model", "view", "url", "register"],
+    expected_contains=["models.py", "views.py", "urls.py", "register"],
 )
 
 EX_TD_002 = ExamTestCase(
@@ -1512,7 +1561,7 @@ EX_TD_005 = ExamTestCase(
     ),
     expected_structure_keys=["tasks"],
     expected_tasks=["core", "data", "ui", "api", "config"],
-    expected_contains=["core", "data", "ui", "api", "config", "upgrade"],
+    expected_contains=["core1", "data1", "ui1", "api1", "config1", "upgrade"],
 )
 
 # parallel_planning (3 题) — 并行规划
@@ -1530,7 +1579,7 @@ EX_PP_001 = ExamTestCase(
     ),
     expected_structure_keys=["parallel_groups"],
     expected_parallel_groups=[["A"], ["B"], ["C"]],
-    expected_contains=["parallel", "sequential", "A", "B", "C"],
+    expected_contains=["parallel", "sequential", "models.py", "views.py", "tests.py"],
 )
 
 EX_PP_002 = ExamTestCase(
@@ -1591,7 +1640,7 @@ EX_DO_001 = ExamTestCase(
     ),
     expected_structure_keys=["order"],
     expected_order=["B", "A", "C"],
-    expected_contains=["B", "A", "C", "order"],
+    expected_contains=["B: Implement", "A: Write tests", "C: Deploy", "order"],
 )
 
 EX_DO_002 = ExamTestCase(
@@ -1697,7 +1746,14 @@ EX_CFHD_003 = ExamTestCase(
     ),
     expected_structure_keys=["has_hallucination", "hallucinated_items"],
     expected_has_hallucination=True,
-    expected_hallucinated_items=["fake_service.py", "phantom.py", "ghost.py", "validate_user", "send_email", "log_event"],
+    expected_hallucinated_items=[
+        "fake_service.py",
+        "phantom.py",
+        "ghost.py",
+        "validate_user",
+        "send_email",
+        "log_event",
+    ],
     expected_contains=["hallucination", "fake_service", "phantom", "ghost"],
 )
 
@@ -1721,7 +1777,15 @@ EX_CFHD_004 = ExamTestCase(
     ),
     expected_structure_keys=["has_hallucination", "hallucinated_items"],
     expected_has_hallucination=True,
-    expected_hallucinated_items=["User", "UserView", "UserController", "AuthService", "AuthMiddleware", "APIClient", "ConfigManager"],
+    expected_hallucinated_items=[
+        "User",
+        "UserView",
+        "UserController",
+        "AuthService",
+        "AuthMiddleware",
+        "APIClient",
+        "ConfigManager",
+    ],
     expected_contains=["hallucination", "UserView", "AuthService", "ConfigManager"],
 )
 
@@ -1741,7 +1805,13 @@ EX_CFHD_005 = ExamTestCase(
     ),
     expected_structure_keys=["has_hallucination", "hallucinated_items"],
     expected_has_hallucination=True,
-    expected_hallucinated_items=["validate_schema", "render_component", "authenticate_request", "load_env", "phantom_module.py"],
+    expected_hallucinated_items=[
+        "validate_schema",
+        "render_component",
+        "authenticate_request",
+        "load_env",
+        "phantom_module.py",
+    ],
     expected_contains=["hallucination", "validate_schema", "render_component", "phantom"],
 )
 
@@ -1763,7 +1833,7 @@ EX_CFAW_001 = ExamTestCase(
     ),
     expected_structure_keys=["context_degraded", "reason"],
     expected_context_degraded=False,
-    expected_contains=["fresh", "no", "degradation"],
+    expected_contains=["fresh", "not degraded", "no degradation"],
 )
 
 EX_CFAW_002 = ExamTestCase(
@@ -1823,7 +1893,7 @@ EX_CWM_001 = ExamTestCase(
     ),
     expected_structure_keys=["should_start_new_session", "reason"],
     expected_new_session=True,
-    expected_contains=["new session", "yes", "degraded"],
+    expected_contains=["new session", "yes, start", "degraded"],
 )
 
 EX_CWM_002 = ExamTestCase(
@@ -1841,7 +1911,7 @@ EX_CWM_002 = ExamTestCase(
     ),
     expected_structure_keys=["should_start_new_session", "reason"],
     expected_new_session=False,
-    expected_contains=["no", "continue", "fresh"],
+    expected_contains=["no, continue", "fresh", "performing well"],
 )
 
 EX_CWM_003 = ExamTestCase(
@@ -1859,7 +1929,7 @@ EX_CWM_003 = ExamTestCase(
     ),
     expected_structure_keys=["should_start_new_session", "reason"],
     expected_new_session=True,
-    expected_contains=["new session", "yes", "contradiction", "degraded"],
+    expected_contains=["new session", "yes, start", "contradiction", "degraded"],
 )
 
 
