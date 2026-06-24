@@ -52,6 +52,7 @@ from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport im
 )
 from zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases import (
     CASES_BY_CAPABILITY,
+    Difficulty,
     ExamTestCase,
 )
 
@@ -61,13 +62,13 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 CAPABILITIES = list(CASES_BY_CAPABILITY.keys())
 
 
-def _kw_capped(kw_rate: float, cap: float = 0.5) -> float:
+def _kw_capped(kw_rate: float, cap: float = 0.3) -> float:
     """限制关键词匹配分数上限，防止假阳性。
 
     kw_rate 只能作为辅助证据，不能单独决定分数。
-    cap=0.5 意味着即使关键词全匹配，最多也只能得 0.5 分。
+    cap=0.3 意味着即使关键词全匹配，最多也只能得 0.3 分。
     布尔判断/结构匹配正确时通过 max() 取较高分；
-    布尔判断/结构匹配错误时 kw_rate 最多贡献 0.5 分。
+    布尔判断/结构匹配错误时 kw_rate 最多贡献 0.3 分。
     """
     return min(kw_rate, cap)
 
@@ -259,6 +260,7 @@ class ExamOrchestrator:
         for idx, result in zip(remaining_indices, remaining_results, strict=True):
             all_results[idx] = result
 
+        weights: list[int] = []
         for case, result in zip(cases, all_results, strict=True):
             try:
                 if not result:
@@ -273,10 +275,14 @@ class ExamOrchestrator:
                 recalls.append(0.0)
                 edit_distances.append(1.0)
                 exact_matches.append(0)
+            # 加权: easy=1, medium=2, hard=3
+            w = {Difficulty.EASY: 1, Difficulty.MEDIUM: 2, Difficulty.HARD: 3}.get(case.difficulty, 1)
+            weights.append(w)
 
         n = len(cases)
-        avg_p = statistics.mean(precisions) if precisions else 0.0
-        avg_r = statistics.mean(recalls) if recalls else 0.0
+        total_w = sum(weights) if weights else 1
+        avg_p = sum(p * w for p, w in zip(precisions, weights, strict=True)) / total_w if precisions else 0.0
+        avg_r = sum(r * w for r, w in zip(recalls, weights, strict=True)) / total_w if recalls else 0.0
         f1 = 2 * avg_p * avg_r / (avg_p + avg_r) if (avg_p + avg_r) > 0 else 0.0
 
         return DepthCapabilityResult(
@@ -348,8 +354,8 @@ class ExamOrchestrator:
                 ed_val = _normalized_edit_distance(old_s, case.expected_old_str)
                 if ed_val < best_ed:
                     best_ed = ed_val
-                # FIX-3: 改精确匹配为子串包含（模型输出通常包含更多上下文）
-                if case.expected_old_str.strip() and case.expected_old_str.strip() in old_s.strip():
+                # 收紧: 编辑距离<0.15才算exact_match (替代子串包含)
+                if case.expected_old_str.strip() and ed_val < 0.15:
                     em = 1
                 # FIX-1: 增加 new_str 评分（之前只评 old_str 不评 new_str）
                 if case.expected_new_str and new_s:
@@ -507,11 +513,7 @@ class ExamOrchestrator:
             expected = case.expected_answer.lower()
             actual = answer.lower()
             em = 1 if expected.strip() in actual else 0
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(em, _kw_capped(kw_rate))
-            return (score, score, 0.0, em)
+            return (em, em, 0.0, em)
 
         # D类: 规则理解能力评分
         if cap in ("rule_comprehension",):
@@ -521,12 +523,7 @@ class ExamOrchestrator:
                 return (0.0, 0.0, 1.0, 0)
             expected_compliant = case.expected_compliant
             correct = 1 if compliant == expected_compliant else 0
-            violation_count = len(violations) if isinstance(violations, list) else 0
-            text = json.dumps(result)
-            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
-            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            score = max(correct, _kw_capped(kw_rate))
-            return (score, score, 0.0, correct)
+            return (correct, correct, 0.0, correct)
 
         if cap in ("safety_judgment",):
             modifiable = result.get("modifiable", [])
@@ -939,17 +936,17 @@ class ExamOrchestrator:
         d = passport.depth.overall_score
         h = 1.0 - passport.hallucination.overall_rate
         s = self._compute_speed_score(passport.speed)
-        return round(0.25 * b + 0.40 * d + 0.15 * h + 0.20 * s, 3)
+        return round(0.25 * b + 0.50 * d + 0.15 * h + 0.10 * s, 3)
 
     def _compute_speed_score(self, speed: SpeedResult) -> float:
         """将延迟转换为0-1分数。
 
-        评分标准（基于本地模型基准）:
-        - p95 < 3000ms: 1.0 (优秀)
-        - p95 < 8000ms: 0.8 (良好)
-        - p95 < 15000ms: 0.6 (一般)
-        - p95 < 30000ms: 0.4 (较差)
-        - p95 >= 30000ms: 0.2 (差)
+        评分标准（区分本地模型与API模型）:
+        - p95 < 3000ms: 1.0 (API级速度)
+        - p95 < 10000ms: 0.8 (优秀)
+        - p95 < 20000ms: 0.6 (良好)
+        - p95 < 40000ms: 0.4 (一般)
+        - p95 >= 40000ms: 0.2 (差)
         无延迟数据时返回0.5（中性）。
         """
         if not speed.latency_p95_ms:
@@ -957,11 +954,11 @@ class ExamOrchestrator:
         p95 = speed.latency_p95_ms
         if p95 < 3000:
             return 1.0
-        elif p95 < 8000:
+        elif p95 < 10000:
             return 0.8
-        elif p95 < 15000:
+        elif p95 < 20000:
             return 0.6
-        elif p95 < 30000:
+        elif p95 < 40000:
             return 0.4
         else:
             return 0.2

@@ -1934,8 +1934,75 @@ EX_CWM_003 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 61 题 (压缩自109题)
-# P0核心12个×3题 + P1重要8个×2题 + P2辅助9个×1题 = 61题
+# 高区分度hard题 (3题, 8B模型基本做不对, 顶级模型能做对)
+# ══════════════════════════════════════════════════════════
+
+EX_CDD_004 = ExamTestCase(
+    case_id="EX-CDD-004",
+    capability="circular_dependency_detect",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "detect circular dependency in these modules:\n"
+        "auth.py imports session.py\n"
+        "session.py imports user.py\n"
+        "user.py imports permission.py\n"
+        "permission.py imports role.py\n"
+        "role.py imports auth.py"
+    ),
+    expected_structure_keys=["has_cycle", "cycle_path"],
+    expected_has_cycle=True,
+    expected_cycle_path=["auth", "session", "user", "permission", "role"],
+    expected_contains=["auth", "session", "user", "permission", "role"],
+)
+
+EX_IA_004 = ExamTestCase(
+    case_id="EX-IA-004",
+    capability="impact_analysis",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "analyze impact of changing utils.py:\n"
+        "main.py imports utils.py\n"
+        "api.py imports utils.py\n"
+        "models.py imports utils.py\n"
+        "views.py imports utils.py\n"
+        "tests/test_main.py imports main.py\n"
+        "tests/test_api.py imports api.py\n"
+        "tests/test_models.py imports models.py\n"
+        "config.py imports utils.py\n"
+        "helpers.py imports utils.py\n"
+        "services.py imports utils.py"
+    ),
+    expected_structure_keys=["affected_files"],
+    expected_affected_files_k=["main.py", "api.py", "models.py", "views.py", "config.py", "helpers.py", "services.py"],
+    expected_contains=["main", "api", "models", "views", "config", "helpers", "services"],
+)
+
+EX_SR_004 = ExamTestCase(
+    case_id="EX-SR-004",
+    capability="self_review",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "review this code for bugs:\n"
+        "def process_items(items):\n"
+        "    result = []\n"
+        "    for i in range(len(items)):\n"
+        "        if items[i] > 0:\n"
+        "            result.append(items[i] * 2)\n"
+        "        if items[i] > 100:\n"
+        "            result.append(items[i] * 3)\n"
+        "    return result\n"
+        "# BUG: items[i] > 100 also triggers items[i] > 0, causing double append"
+    ),
+    expected_structure_keys=["has_bug", "bugs"],
+    expected_has_bug=True,
+    expected_bug_location="double append",
+    expected_contains=["double", "append", "overlap"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# 全集 — 64 题 (压缩自109题 + 3道高区分度hard题)
+# P0核心12个×3题 + P1重要8个×2题 + P2辅助9个×1题 + 3道hard区分题 = 64题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -1950,16 +2017,16 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_RC_001, EX_RC_002, EX_RC_003,
     # safety_judgment
     EX_SJ_001, EX_SJ_002, EX_SJ_003,
-    # self_review
-    EX_SR_001, EX_SR_002, EX_SR_003,
+    # self_review (3题 + 1道hard区分题)
+    EX_SR_001, EX_SR_002, EX_SR_003, EX_SR_004,
     # error_recovery
     EX_ER_001, EX_ER_002, EX_ER_003,
     # dependency_trace
     EX_DT_001, EX_DT_002, EX_DT_003,
-    # circular_dependency_detect (原5题保留前3题)
-    EX_CDD_001, EX_CDD_002, EX_CDD_003,
-    # impact_analysis (原5题保留前3题)
-    EX_IA_001, EX_IA_002, EX_IA_003,
+    # circular_dependency_detect (原5题保留前3题 + 1道hard区分题)
+    EX_CDD_001, EX_CDD_002, EX_CDD_003, EX_CDD_004,
+    # impact_analysis (原5题保留前3题 + 1道hard区分题)
+    EX_IA_001, EX_IA_002, EX_IA_003, EX_IA_004,
     # task_decomposition (原5题保留前3题)
     EX_TD_001, EX_TD_002, EX_TD_003,
     # incremental_execution

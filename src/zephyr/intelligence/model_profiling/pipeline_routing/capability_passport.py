@@ -44,46 +44,36 @@ PASSPORTS_DIR = PROJECT_ROOT / "data" / "brain" / "passports"
 
 # 各能力类型的精度及格线
 DEPTH_THRESHOLDS: dict[str, float] = {
-    "task_classification": 0.60,
-    "tag_completion": 0.55,
-    "summary_extraction": 0.55,
-    "naming_suggest": 0.50,
-    "anomaly_triage": 0.50,
-    "code_edit_precision": 0.60,
-    "refactor": 0.55,
-    "code_generate": 0.55,
-    "dead_code_removal": 0.55,
-    # B类: 多文件联动能力
-    "architecture_design": 0.50,
-    "cross_file_refactor": 0.55,
-    "dependency_trace": 0.55,
-    # C类: 漂移检测能力
-    "context_consistency": 0.55,
-    "hallucination_detect": 0.55,
-    "long_context_recall": 0.55,
-    # D类: 规则理解能力
-    "rule_comprehension": 0.55,
-    "safety_judgment": 0.60,
-    # F类: 自审自纠
-    "self_review": 0.55,
-    # G类: 增量执行
-    "incremental_execution": 0.55,
-    # H类: 错误恢复
-    "error_recovery": 0.50,
-    # I类: 歧义识别
-    "ambiguity_detect": 0.55,
-    # J类: 工具选择
-    "tool_selection": 0.60,
-    # K类: 影响分析能力
-    "impact_analysis": 0.55,
-    "circular_dependency_detect": 0.55,
-    "rollback_boundary_design": 0.50,
-    # L类: 任务规划能力
-    "task_decomposition": 0.55,
-    "parallel_planning": 0.50,
-    "dependency_ordering": 0.55,
-    # M类: 上下文管理能力
-    "context_management": 0.55,
+    # ── P0 核心12个能力 (阈值0.75) ──────────────────────
+    "code_generate": 0.75,
+    "code_edit_precision": 0.75,
+    "refactor": 0.75,
+    "rule_comprehension": 0.75,
+    "safety_judgment": 0.75,
+    "self_review": 0.75,
+    "error_recovery": 0.75,
+    "dependency_trace": 0.75,
+    "circular_dependency_detect": 0.75,
+    "impact_analysis": 0.75,
+    "task_decomposition": 0.75,
+    "incremental_execution": 0.75,
+    # ── P1 重要8个能力 (阈值0.70) ──────────────────────
+    "summary_extraction": 0.70,
+    "architecture_design": 0.70,
+    "context_consistency": 0.70,
+    "hallucination_detect": 0.70,
+    "ambiguity_detect": 0.70,
+    "tool_selection": 0.70,
+    "dependency_ordering": 0.70,
+    # ── P2 辅助9个能力 (阈值0.65) ──────────────────────
+    "task_classification": 0.65,
+    "tag_completion": 0.65,
+    "naming_suggest": 0.65,
+    "anomaly_triage": 0.65,
+    "dead_code_removal": 0.65,
+    "cross_file_refactor": 0.65,
+    "long_context_recall": 0.65,
+    "rollback_boundary_design": 0.65,
 }
 
 
