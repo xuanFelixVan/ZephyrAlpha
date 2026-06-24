@@ -136,6 +136,69 @@ def _init_shared_monitoring_modules() -> None:
         logger.warning("Shared monitoring: finalizer registration failed: %s", e)
 
 
+_eventbus_consumers_subscribed = False
+
+
+def _subscribe_eventbus_consumers() -> None:
+    """统一调用8个消费方模块的 subscribe_eventbus() — DM-2507-J.
+
+    混合注册模式：各模块提供模块级 subscribe_eventbus() 函数，
+    boot_hooks 统一调用。每个 subscribe_eventbus() 内部幂等。
+
+    消费方列表:
+      1. F4  budget_engine          — slo_violation
+      2. F5  f5_event_subscriber    — budget_exceeded/drift_detected/fix_completed/fix_failed
+      3. F9  rollback_boot_integration — pipeline_failed/mcp_call_failed/kill_switch_triggered
+      4. F14 pipeline_orchestrator  — pipeline_start
+      5. F15 auto_fix_engine.event_hooks — drift_detected/validation_result
+      6. F30 validator_event_bridge — fix_completed
+      7. F1  autopilot              — task_completed
+      8. F6  drift_bridge           — gate_blocked/task_completed
+    """
+    global _eventbus_consumers_subscribed
+    if _eventbus_consumers_subscribed:
+        logger.debug("EventBus consumers already subscribed, skipping (idempotent)")
+        return
+    _eventbus_consumers_subscribed = True
+
+    consumers = [
+        ("F4 budget_engine", "zephyr.governance.budget_engine"),
+        ("F5 f5_event_subscriber", "zephyr.governance.f5_event_subscriber"),
+        ("F9 rollback_boot_integration", "zephyr.infrastructure.rollback.rollback_boot_integration"),
+        ("F14 pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
+        ("F15 auto_fix_engine.event_hooks", "zephyr.infrastructure.auto_fix_engine.event_hooks"),
+        ("F30 validator_event_bridge", "zephyr.security.adversarial_validation.validator_event_bridge"),
+        ("F1 autopilot", "zephyr.trading.autopilot"),
+        ("F6 drift_bridge", "zephyr.governance.drift_detection.bridges.drift_bridge"),
+    ]
+
+    succeeded = 0
+    failed = 0
+    for label, module_path in consumers:
+        try:
+            import importlib
+
+            mod = importlib.import_module(module_path)
+            subscribe_fn = getattr(mod, "subscribe_eventbus", None)
+            if subscribe_fn is None:
+                logger.warning("EventBus consumer %s: no subscribe_eventbus() found", label)
+                failed += 1
+                continue
+            subscribe_fn()
+            succeeded += 1
+            logger.info("EventBus consumer %s: subscribed", label)
+        except Exception as e:
+            failed += 1
+            logger.warning("EventBus consumer %s: subscribe failed: %s", label, e)
+
+    logger.info(
+        "EventBus consumers subscription complete: %d succeeded, %d failed (total %d)",
+        succeeded,
+        failed,
+        len(consumers),
+    )
+
+
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
     try:
@@ -454,6 +517,7 @@ def register_boot_hooks() -> None:
     _subscribe_task_lifecycle_events()
     _register_rbac_hooks()
     _init_shared_monitoring_modules()
+    _subscribe_eventbus_consumers()
 
     # MCP 集群自动启动（daemon 线程，不阻塞主流程）
     def _start_mcp_cluster() -> None:

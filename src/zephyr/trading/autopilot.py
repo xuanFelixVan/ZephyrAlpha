@@ -180,3 +180,52 @@ class AutoPilot:
             logger.info("AutoPilot: 扫描到 READY 任务但认领失败（可能被其他 session 抢先）")
 
         return claimed
+
+
+# ── EventBusBackpressure 订阅 (DM-2507-H) ──────────────────────────────
+
+_subscribed = False
+
+
+def subscribe_eventbus() -> None:
+    """订阅 EventBusBackpressure 的 task_completed 事件。
+
+    幂等：重复调用安全。Backpressure 总线不可用时静默跳过。
+    供 boot_hooks 统一调用。
+
+    说明: task_completed 事件到达时仅记录日志——
+    AutoPilot 实例化需要 session_id，模块级无法获取实例，
+    真正的 run_cycle 由 AI session 主动触发。
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.subscribe("task_completed", _on_task_completed)
+        _subscribed = True
+        logger.info("AutoPilot: subscribed to task_completed event")
+    except Exception as e:
+        logger.warning("AutoPilot: subscribe_eventbus failed: %s", e)
+
+
+def _on_task_completed(payload: object) -> None:
+    """task_completed 事件：任务完成信号。轻量handler——仅日志记录。
+
+    payload 期望字段: {timestamp, source_function, severity, detail}
+    真正的 run_cycle 由 AI session 主动触发（需 session_id 实例化 AutoPilot）。
+    """
+    try:
+        data = payload if isinstance(payload, dict) else {}
+        detail = data.get("detail", str(payload))
+        source = data.get("source_function", "unknown")
+        logger.info(
+            "AutoPilot: task_completed event received "
+            "(source=%s, detail=%s) — run_cycle deferred to AI session",
+            source,
+            detail,
+        )
+    except Exception as e:
+        logger.error("AutoPilot: _on_task_completed failed: %s", e)
