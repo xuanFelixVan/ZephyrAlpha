@@ -22,21 +22,21 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 EXPECTED_FILES: list[str] = [
-    # §5.1 源码文件
-    "src/zephyr/mcp/_base_server.py",
-    "src/zephyr/mcp/error_codes.py",
-    "src/zephyr/mcp/__init__.py",
-    "src/zephyr/mcp/task_manager_server.py",
-    "src/zephyr/mcp/knowledge_base_server.py",
-    "src/zephyr/mcp/gate_engine_server.py",
-    "src/zephyr/mcp/doc_guard_server.py",
-    "src/zephyr/mcp/sentinel_server.py",
-    "src/zephyr/mcp/blueprint_search_server.py",
-    "src/zephyr/mcp/gateway_server.py",
-    "src/zephyr/mcp/rate_limiter.py",
-    "src/zephyr/mcp/audit_logger.py",
-    "src/zephyr/mcp/handoff_auto_loader.py",
-    "src/zephyr/mcp/tool-contracts.yaml",
+    # §5.1 源码文件（路径迁移: src/zephyr/mcp/ → src/zephyr/integration/mcp/）
+    "src/zephyr/integration/mcp/_base_server.py",
+    "src/zephyr/integration/mcp/error_codes.py",
+    "src/zephyr/integration/mcp/__init__.py",
+    "src/zephyr/integration/mcp/task_manager_server.py",
+    "src/zephyr/integration/mcp/knowledge_base_server.py",
+    "src/zephyr/integration/mcp/gate_engine_server.py",
+    "src/zephyr/integration/mcp/doc_guard_server.py",
+    "src/zephyr/integration/mcp/sentinel_server.py",
+    "src/zephyr/integration/mcp/blueprint_search_server.py",
+    "src/zephyr/integration/mcp/gateway_server.py",
+    "src/zephyr/integration/mcp/rate_limiter.py",
+    "src/zephyr/integration/mcp/audit_logger.py",
+    "src/zephyr/integration/mcp/handoff_auto_loader.py",
+    "src/zephyr/integration/mcp/tool_contracts.yaml",
     # §5.2 测试文件
     "tests/unit/test_mcp_servers.py",
     "tests/unit/test_task_manager_mcp.py",
@@ -56,10 +56,14 @@ EXPECTED_FILES: list[str] = [
     "requirements.txt",
     ".env.example",
     "docker-compose.yml",
-    ".pre_commit-config.yaml",
-    "docs/01_policies_and_standards/governance/ai/ai_autonomy_authority_registry.yaml",
-    "architecture-model/layers/b_mcp.yaml",
-    "docs/03_modules/_cross_layer/mcp-servers/blueprint.md",
+    # 命名规范: 连字符→下划线（.pre_commit → .pre-commit 为外部约定例外）
+    ".pre-commit-config.yaml",
+    # 路径迁移: governance/ai/ → _registry/catalogs/
+    "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml",
+    # 命名规范: architecture-model → architecture_model
+    "architecture_model/layers/b_mcp.yaml",
+    # 命名规范: mcp-servers → mcp_servers
+    "docs/03_modules/_cross_layer/mcp_servers/blueprint.md",
 ]
 
 
