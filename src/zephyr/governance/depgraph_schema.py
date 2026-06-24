@@ -377,6 +377,250 @@ def _apply_pragmas(conn: sqlite3.Connection) -> None:
 
 
 # ---------------------------------------------------------------------------
+# DDL — v5 重建表（node_id INTEGER PK + edges FK + arch_directory_tree node_id）
+# ---------------------------------------------------------------------------
+
+_DDL_NODES_V5 = """
+CREATE TABLE IF NOT EXISTS nodes (
+    node_id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    node_type                TEXT,
+    path                     TEXT,
+    granularity              TEXT,
+    domain_id                TEXT,
+    subdomain_id             TEXT,
+    blueprint_id             TEXT,
+    belongs_to               TEXT,
+    owner                    TEXT,
+    change_policy            TEXT,
+    impact_level             TEXT,
+    modification_permission  TEXT,
+    file_header_score        INTEGER DEFAULT 0,
+    tags                     TEXT,
+    architecture_layer       TEXT,
+    design_maturity          TEXT DEFAULT 'production',
+    deployment_lifecycle     TEXT DEFAULT 'stable',
+    trust_zone               TEXT DEFAULT 'trusted_core',
+    license                  TEXT DEFAULT 'Internal',
+    drive_direction          TEXT DEFAULT 'bottom_up',
+    type_specific_data       TEXT,
+    last_verified            TEXT,
+    node_name                TEXT DEFAULT '',
+    file_path                TEXT DEFAULT '',
+    build_status             TEXT DEFAULT 'unbuilt',
+    module_lifecycle_state   TEXT DEFAULT 'planned',
+    can_build                INTEGER DEFAULT 1,
+    gate_reason              TEXT DEFAULT '',
+    hard_boundary_ref        TEXT,
+    consumed_interfaces      TEXT,
+    implementation_ref       TEXT,
+    has_dynamic_import       INTEGER DEFAULT 0,
+    blueprint_id_invalid     INTEGER DEFAULT 0,
+    in_degree                INTEGER DEFAULT 0,
+    out_degree               INTEGER DEFAULT 0,
+    blueprint_path           TEXT,
+    business_stream          TEXT,
+    stream_role              TEXT,
+    runtime_plane            TEXT,
+    ddd_aggregate            TEXT,
+    provided_interfaces      TEXT
+)
+"""
+
+_DDL_EDGES_V5 = """
+CREATE TABLE IF NOT EXISTS edges (
+    edge_id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_node_id             INTEGER NOT NULL,
+    to_node_id               INTEGER NOT NULL,
+    dep_type                 TEXT,
+    architecture_direction   TEXT,
+    coupling_strength        TEXT,
+    used_symbol              TEXT,
+    invocation_method        TEXT,
+    api_contract_refs        TEXT,
+    event_ref                TEXT,
+    ddd_integration_pattern  TEXT,
+    failure_mode             TEXT,
+    fallback                 TEXT,
+    activation_condition     TEXT,
+    data_transfer_description TEXT,
+    resource_impact          TEXT,
+    relationship_type        TEXT,
+    cross_domain             INTEGER DEFAULT 0,
+    verified                 INTEGER DEFAULT 0,
+    dep_maturity             TEXT DEFAULT 'active',
+    valid_since              TEXT,
+    migration_status         TEXT DEFAULT 'active',
+    is_legal_cycle           INTEGER DEFAULT 0,
+    FOREIGN KEY (from_node_id) REFERENCES nodes(node_id),
+    FOREIGN KEY (to_node_id) REFERENCES nodes(node_id)
+)
+"""
+
+_DDL_ARCH_DIR_TREE_V5 = """
+CREATE TABLE IF NOT EXISTS arch_directory_tree (
+    path                     TEXT PRIMARY KEY,
+    parent_path              TEXT,
+    path_type                TEXT,
+    domain_id                TEXT,
+    node_id                  INTEGER,
+    blueprint_id             TEXT,
+    change_policy            TEXT,
+    modification_permission  TEXT,
+    last_scanned             TEXT,
+    build_status             TEXT,
+    design_maturity          TEXT,
+    FOREIGN KEY (node_id) REFERENCES nodes(node_id)
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — v7 新增表（gates + governance_audit_logs）
+# ---------------------------------------------------------------------------
+
+_DDL_GATES = """
+CREATE TABLE IF NOT EXISTS gates (
+    gate_id        TEXT PRIMARY KEY,
+    name           TEXT NOT NULL,
+    entry          TEXT NOT NULL,
+    description    TEXT,
+    files_trigger  TEXT,
+    always_run     INTEGER DEFAULT 0,
+    category       TEXT NOT NULL,
+    status         TEXT DEFAULT 'active',
+    source         TEXT DEFAULT '.pre-commit-config.yaml',
+    event_driven   TEXT DEFAULT '',
+    auto_start     INTEGER DEFAULT 1,
+    CHECK (status IN ('active', 'deprecated', 'disabled'))
+)
+"""
+
+_DDL_GOVERNANCE_AUDIT_LOGS = """
+CREATE TABLE IF NOT EXISTS governance_audit_logs (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp     TEXT NOT NULL,
+    total_gates   INTEGER DEFAULT 0,
+    passed_gates  INTEGER DEFAULT 0,
+    failed_gates  INTEGER DEFAULT 0,
+    skipped_gates INTEGER DEFAULT 0,
+    success       INTEGER DEFAULT 0,
+    errors        TEXT DEFAULT ''
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — v8 只读保护表 + domain_mapping（schema 盲区修复）
+# ---------------------------------------------------------------------------
+
+_DDL_BLUEPRINT_LINKS = """
+CREATE TABLE IF NOT EXISTS blueprint_links (
+    blueprint_id       TEXT PRIMARY KEY,
+    blueprint_path     TEXT NOT NULL,
+    alignment_verified INTEGER DEFAULT 0,
+    last_verified      TEXT
+)
+"""
+
+_DDL_BUSINESS_STREAMS = """
+CREATE TABLE IF NOT EXISTS business_streams (
+    stream_id      TEXT PRIMARY KEY,
+    name           TEXT NOT NULL,
+    goal           TEXT,
+    input          TEXT,
+    output         TEXT,
+    runtime_plane  TEXT,
+    CHECK (runtime_plane IN ('data_plane', 'control_plane', 'management_plane'))
+)
+"""
+
+_DDL_CROSS_REGISTRY_RULES = """
+CREATE TABLE IF NOT EXISTS cross_registry_rules (
+    rule_id          TEXT PRIMARY KEY,
+    title            TEXT NOT NULL,
+    fields           TEXT,
+    ssot             TEXT NOT NULL,
+    consistency      TEXT,
+    violation_action TEXT,
+    CHECK (consistency IN ('exact', 'derived', 'independent')),
+    CHECK (violation_action IN ('block', 'warn', 'log'))
+)
+"""
+
+_DDL_FIELD_VOCABULARIES = """
+CREATE TABLE IF NOT EXISTS field_vocabularies (
+    field_name     TEXT NOT NULL,
+    value          TEXT NOT NULL,
+    definition     TEXT,
+    ai_consumption TEXT,
+    source_yaml    TEXT,
+    PRIMARY KEY (field_name, value)
+)
+"""
+
+_DDL_HARD_BOUNDARIES = """
+CREATE TABLE IF NOT EXISTS hard_boundaries (
+    boundary_id    TEXT PRIMARY KEY,
+    category       TEXT NOT NULL,
+    constraint_def TEXT NOT NULL,
+    parameters     TEXT,
+    impact         TEXT,
+    CHECK (category IN ('architectural', 'domain', 'data', 'security', 'operational'))
+)
+"""
+
+_DDL_INFRASTRUCTURE_COMPONENTS = """
+CREATE TABLE IF NOT EXISTS infrastructure_components (
+    component_id    TEXT PRIMARY KEY,
+    component_type  TEXT NOT NULL,
+    address         TEXT,
+    health_check    TEXT,
+    dependencies    TEXT,
+    sla             TEXT,
+    status          TEXT DEFAULT 'active',
+    CHECK (component_type IN ('event_bus', 'message_queue', 'relational_db',
+                               'vector_db', 'cache', 'object_storage',
+                               'config_center', 'service_registry', 'ci_pipeline'))
+)
+"""
+
+_DDL_MODEL_CAPABILITIES = """
+CREATE TABLE IF NOT EXISTS model_capabilities (
+    model_name              TEXT PRIMARY KEY,
+    tier                    TEXT NOT NULL,
+    max_files_per_session   INTEGER,
+    allowed_paths           TEXT,
+    forbidden_paths         TEXT,
+    recommended_tasks       TEXT,
+    forbidden_tasks         TEXT,
+    CHECK (tier IN ('premium', 'standard', 'free', 'api'))
+)
+"""
+
+_DDL_REGISTRIES = """
+CREATE TABLE IF NOT EXISTS registries (
+    registry_id    TEXT PRIMARY KEY,
+    name           TEXT NOT NULL,
+    title          TEXT,
+    path           TEXT NOT NULL,
+    version        TEXT,
+    description    TEXT,
+    ssot_for       TEXT
+)
+"""
+
+_DDL_DOMAIN_MAPPING = """
+CREATE TABLE IF NOT EXISTS domain_mapping (
+    mapping_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    path_prefix  TEXT NOT NULL,
+    domain_id    TEXT NOT NULL,
+    subdomain_id TEXT,
+    mapping_type TEXT NOT NULL,
+    mapped_at    TEXT NOT NULL,
+    mapped_by    TEXT NOT NULL,
+    note         TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
 # 版本化迁移框架
 # ---------------------------------------------------------------------------
 
@@ -474,6 +718,58 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "CREATE UNIQUE INDEX IF NOT EXISTS idx_nodes_path ON nodes(path)",
         ],
     ),
+    (
+        5,
+        "v5: node_id INTEGER PK + edges from_node_id/to_node_id FK + dep_maturity + arch_directory_tree node_id + nodes 5 new fields",
+        [
+            # 重建 nodes 表（node_id TEXT → INTEGER PK AUTOINCREMENT）
+            "DROP TABLE IF EXISTS edges",
+            "DROP TABLE IF EXISTS nodes",
+            "DROP TABLE IF EXISTS arch_directory_tree",
+            _DDL_NODES_V5,
+            _DDL_EDGES_V5,
+            _DDL_ARCH_DIR_TREE_V5,
+            # 重建索引
+            *_DDL_INDEXES,
+        ],
+    ),
+    (
+        6,
+        "v6: domains 吸收 arch_domain_capacity + arch_domain_layers（6新字段）",
+        [
+            "ALTER TABLE domains ADD COLUMN layer_id TEXT",
+            "ALTER TABLE domains ADD COLUMN growth_pattern TEXT DEFAULT 'linear'",
+            "ALTER TABLE domains ADD COLUMN target_modules INTEGER",
+            "ALTER TABLE domains ADD COLUMN feasibility TEXT DEFAULT 'feasible'",
+            "ALTER TABLE domains ADD COLUMN bottleneck_description TEXT",
+            "ALTER TABLE domains ADD COLUMN last_capacity_check TEXT",
+            "DROP TABLE IF EXISTS arch_domain_capacity",
+            "DROP TABLE IF EXISTS arch_domain_layers",
+        ],
+    ),
+    (
+        7,
+        "v7: gates 表加 event_driven 和 auto_start 列 + 创建 governance_audit_logs 表",
+        [
+            _DDL_GATES,
+            _DDL_GOVERNANCE_AUDIT_LOGS,
+        ],
+    ),
+    (
+        8,
+        "v8: CREATE 9 readonly tables + domain_mapping（schema 盲区修复）",
+        [
+            _DDL_BLUEPRINT_LINKS,
+            _DDL_BUSINESS_STREAMS,
+            _DDL_CROSS_REGISTRY_RULES,
+            _DDL_FIELD_VOCABULARIES,
+            _DDL_HARD_BOUNDARIES,
+            _DDL_INFRASTRUCTURE_COMPONENTS,
+            _DDL_MODEL_CAPABILITIES,
+            _DDL_REGISTRIES,
+            _DDL_DOMAIN_MAPPING,
+        ],
+    ),
 ]
 
 
@@ -511,6 +807,7 @@ def _run_migration(
                 "duplicate column",
                 "already exists",
                 "duplicate key name:",
+                "no such column",
             )
             if any(p in msg for p in benign):
                 continue
