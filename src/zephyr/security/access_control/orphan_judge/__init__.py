@@ -66,7 +66,6 @@ from zephyr.security.access_control.orphan_judge.db import JudgmentDB as Db
 from zephyr.security.access_control.orphan_judge.decision_table import DecisionTable, LayerResult, Verdict
 from zephyr.security.access_control.orphan_judge.deprecation_tracker import DeprecationRecord, DeprecationTracker
 from zephyr.security.access_control.orphan_judge.duplicate_detector import DuplicateDetector
-from zephyr.security.access_control.orphan_judge.mcp_integration import ORPHAN_JUDGE_TOOLS, register_tools
 from zephyr.security.access_control.orphan_judge.models import JudgmentRecord
 from zephyr.security.access_control.orphan_judge.orphan_collector import CollectionResult, Judgment, OrphanCollector
 from zephyr.security.access_control.orphan_judge.orphan_detector import OrphanDetector, OrphanReport
@@ -97,7 +96,6 @@ __all__ = [
     "judgment_cache",
     "kb_bridge",
     "mcp_handler",
-    "mcp_integration",
     "models",
     "orphan_collector",
     "orphan_detector",
@@ -154,15 +152,12 @@ __all__.append("ConfigLoader")
 __all__.append("SwidTag")
 __all__.extend(
     [
-        "ORPHAN_JUDGE_TOOLS",
         "DriftBridge",
         "EscalationBridge",
         "FeedbackBridge",
         "KbBridge",
         "RbacBridge",
-        "mcp_integration",
         "models",
-        "register_tools",
         "unique_analyzer",
     ]
 )

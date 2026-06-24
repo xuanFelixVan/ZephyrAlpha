@@ -18,7 +18,6 @@ from zephyr.security.access_control.auto_fix_engine_03.config_fixer import Confi
 from zephyr.security.access_control.auto_fix_engine_03.dedup_extractor import DedupExtractor
 from zephyr.security.access_control.auto_fix_engine_03.dep_version_fixer import DepVersionFixer
 from zephyr.security.access_control.auto_fix_engine_03.drift_fixer import DriftFixer
-from zephyr.security.access_control.auto_fix_engine_03.escalation_bridge import EscalationBridge
 from zephyr.security.access_control.auto_fix_engine_03.event_hooks import EventHooks
 from zephyr.security.access_control.auto_fix_engine_03.fix_diff import FixDiff
 from zephyr.security.access_control.auto_fix_engine_03.fix_health_check import FixHealthCheck
@@ -83,7 +82,6 @@ __all__ = [
     "DedupExtractor",
     "DepVersionFixer",
     "DriftFixer",
-    "EscalationBridge",
     "EventHooks",
     "FixAction",
     "FixBudget",
@@ -122,7 +120,6 @@ __all__ = [
     "dep_version_fixer",
     "drift_fixer",
     "engine",
-    "escalation_bridge",
     "event_hooks",
     "fix_budget",
     "fix_diff",

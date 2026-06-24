@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.engine
 # [DOMAIN] D-SECURITY
-# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.batch_fixer; zephyr.security.access_control.auto_fix_engine_03.compliance_auditor; zephyr.security.access_control.auto_fix_engine_03.escalation_bridge; zephyr.security.access_control.auto_fix_engine_03.fix_budget; zephyr.security.access_control.auto_fix_engine_03.fix_diff; zephyr.security.access_control.auto_fix_engine_03.fix_health_check; zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner; zephyr.security.access_control.auto_fix_engine_03.fix_reliability; zephyr.security.access_control.auto_fix_engine_03.fix_report; zephyr.security.access_control.auto_fix_engine_03.fix_safety; zephyr.security.access_control.auto_fix_engine_03.models; zephyr.security.access_control.auto_fix_engine_03.shadow_workspace; zephyr.security.access_control.auto_fix_engine_03.state_machine; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__; zephyr.integration.shared_08.event_bus
+# [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.batch_fixer; zephyr.security.access_control.auto_fix_engine_03.compliance_auditor; zephyr.security.access_control.auto_fix_engine_03.fix_budget; zephyr.security.access_control.auto_fix_engine_03.fix_diff; zephyr.security.access_control.auto_fix_engine_03.fix_health_check; zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner; zephyr.security.access_control.auto_fix_engine_03.fix_reliability; zephyr.security.access_control.auto_fix_engine_03.fix_report; zephyr.security.access_control.auto_fix_engine_03.fix_safety; zephyr.security.access_control.auto_fix_engine_03.models; zephyr.security.access_control.auto_fix_engine_03.shadow_workspace; zephyr.security.access_control.auto_fix_engine_03.state_machine; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__; zephyr.integration.shared_08.event_bus
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-judge);__main__.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -24,7 +24,6 @@ import yaml
 
 from zephyr.security.access_control.auto_fix_engine_03.batch_fixer import BatchFixer
 from zephyr.security.access_control.auto_fix_engine_03.compliance_auditor import ComplianceAuditor
-from zephyr.security.access_control.auto_fix_engine_03.escalation_bridge import EscalationBridge
 from zephyr.security.access_control.auto_fix_engine_03.fix_budget import FixBudget, FixStormGuard
 from zephyr.security.access_control.auto_fix_engine_03.fix_health_check import FixHealthCheck
 from zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner import FixPatternMiner
@@ -105,6 +104,8 @@ class AutoFixEngine:
         self._write_safety = WriteSafety()
         self._shadow = ShadowWorkspace(self._config.get("shadow_workspace", {}))
         self._compliance = ComplianceAuditor()
+        # Lazy import to break F8→F5 circular dependency (§8.1)
+        from zephyr.security.access_control.auto_fix_engine_03.escalation_bridge import EscalationBridge
         self._escalation = EscalationBridge(self._config.get("escalation", {}))
         self._pattern_miner = FixPatternMiner()
         self._report_generator = FixReportGenerator()
