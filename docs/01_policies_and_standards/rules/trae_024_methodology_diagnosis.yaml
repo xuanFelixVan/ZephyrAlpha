@@ -135,6 +135,7 @@ sections:
     original_rules:
     - MTH-006
     methodology:
+    - 触发判定(修改既有产物即触发——代码/数据/规则/文档结构变更均属修改既有产物，新增文件不触发但须诊断反转验证)
     - 追问到底(持续问为什么直到不可再分的根源)
     - 根因判定(治根vs治标)
     - 结构前置检查(修复前先确认受影响目录完整文件清单)
@@ -434,6 +435,9 @@ sections:
     title: 修订记录
     section_type: examples
     items:
+    - version: "1.2.0"
+      date: "2026-06-25"
+      change: "OPS-2026062501——MTH-006强制力升级：methodology开头补触发判定步骤(修改既有产物即触发)，解决刚进项目AI不执行根因分析的问题"
     - version: "1.1.0"
       date: "2026-06-19"
       change: "RQ-01~RQ-14审查修复——移除3个错误context段(mr_scope/mr_normative_refs/mr_change_history，内容为元数据注册表非方法论诊断)；添加正确change_history段；修复provenance路径(下划线→连字符匹配meta/index.md)并添加note标注源文件已迁移；aliases补充PS-STD-011(文件含PS-STD-011总则和项目清爽原则)"

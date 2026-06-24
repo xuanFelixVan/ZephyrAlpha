@@ -1,6 +1,6 @@
 rule_id: TRAE-048
 title: 操作-Vibe Coding会话管理
-version: 0.2.4
+version: 0.3.0
 layer: L2
 module_id: TRAE-048
 depends_on: []
@@ -409,9 +409,9 @@ sections:
       pass: 规则确认B3通过
       fail: 读取trae_040_ai_model_routing.yaml双编辑器规则（GOV-AI-004）
     - type: pre_condition
-      check: B4-诊断反转验证已执行(深挖后回溯初始诊断，不一致时追问并更新症状-根因映射表)
+      check: B4-操作类型已自检(本次操作是否修改既有产物？是→MTH-006完整七步强制；否→仅须诊断反转验证)
       pass: 规则确认B4通过
-      fail: 读取PS-STD-011 MTH-006 step 6
+      fail: 读取trae_024 MTH-006完整七步(非仅step 6)
     actions: []
     prohibitions:
     - 任何一项未通过，禁止开始操作
