@@ -132,13 +132,17 @@ class _CrossProcessLock:
             except FileExistsError:
                 try:
                     data = json.loads(self._lock_file.read_text(encoding="utf-8"))
-                    if time.time() - data.get("acquired_at", 0) > self._TTL_SECONDS:
+                    # 红蓝对抗修复：类型检查，防止锁文件篡改导致 TypeError 崩溃
+                    acquired_at = data.get("acquired_at", 0)
+                    if not isinstance(acquired_at, (int, float)):
+                        acquired_at = 0
+                    if time.time() - acquired_at > self._TTL_SECONDS:
                         try:
                             os.remove(self._lock_file)
                         except OSError:
                             pass
                         continue
-                except (OSError, ValueError):
+                except (OSError, ValueError, TypeError):
                     pass
                 if time.monotonic() >= deadline:
                     raise StagingError(

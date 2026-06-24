@@ -182,6 +182,24 @@ def check_triple_alignment(
 
         bp_path_str = bp.get("file_path", "")
         bp_path = BLUEPRINTS_DIR / bp_path_str if bp_path_str else None
+        # 红蓝对抗修复：路径边界验证，防止路径穿越攻击
+        if bp_path:
+            try:
+                resolved_bp = bp_path.resolve()
+                if not resolved_bp.is_relative_to(BLUEPRINTS_DIR.resolve()):
+                    result.add_violation(
+                        AlignmentViolation(
+                            check="blueprint_path_traversal",
+                            severity=Severity.ERROR,
+                            module_id=mid,
+                            source="blueprint_registry.yaml file_path",
+                            expected="path within docs/03_modules/",
+                            actual=f"PATH TRAVERSAL: {bp_path_str}",
+                        )
+                    )
+                    bp_path = None
+            except (OSError, ValueError):
+                bp_path = None
         bp_frontmatter: dict[str, Any] = {}
         if bp_path and bp_path.exists():
             try:
@@ -286,6 +304,23 @@ def check_triple_alignment(
             paths_to_check = [p.strip() for p in source_path_str.split("+") if p.strip()]
             for p in paths_to_check:
                 resolved = PROJECT_ROOT / p
+                # 红蓝对抗修复：actual_disk_path 路径穿越检查
+                try:
+                    resolved_abs = resolved.resolve()
+                    if not resolved_abs.is_relative_to(PROJECT_ROOT.resolve()):
+                        result.add_violation(
+                            AlignmentViolation(
+                                check="code_path_traversal",
+                                severity=Severity.ERROR,
+                                module_id=mid,
+                                source="blueprint actual_disk_path",
+                                expected="path within PROJECT_ROOT",
+                                actual=f"PATH TRAVERSAL: {p}",
+                            )
+                        )
+                        continue
+                except (OSError, ValueError):
+                    continue
                 if not resolved.exists():
                     sev = Severity.WARN if early_stage else Severity.ERROR
                     result.add_violation(

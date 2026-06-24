@@ -183,7 +183,7 @@ class ExamOrchestrator:
 
         # 并行推理
         cases_to_infer = [case for _, case in cap_case_pairs]
-        batch_results = self._infer_batch(cases_to_infer, max_workers=8)
+        batch_results = self._infer_batch(cases_to_infer, max_workers=2)
 
         # 评估结果
         for (cap_name, case), result in zip(cap_case_pairs, batch_results, strict=True):
