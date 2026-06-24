@@ -742,7 +742,8 @@ class ExamOrchestrator:
             # FIX L3: 改为单词级匹配（旧逻辑用子串匹配太宽松）
             # 如 expected="grep", tool="grep tool" 应该匹配
             import re
-            word_match = bool(re.search(r'\b' + re.escape(expected) + r'\b', tool))
+
+            word_match = bool(re.search(r"\b" + re.escape(expected) + r"\b", tool))
             # FIX L3.5: 检查reason内容是否包含expected_contains关键词
             # 旧逻辑只检查tool名，模型只说"Grep"就得满分，不验证理由正确性
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in reason)

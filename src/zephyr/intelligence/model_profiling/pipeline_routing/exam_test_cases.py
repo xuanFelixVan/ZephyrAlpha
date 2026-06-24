@@ -488,15 +488,7 @@ EX_DC_001 = ExamTestCase(
     case_id="EX-DC-001",
     capability="dead_code_removal",
     difficulty=Difficulty.EASY,
-    prompt=(
-        "detect dead code: script\n"
-        "import os\n"
-        "import json\n"
-        "\n"
-        "def main():\n"
-        "    print(os.getcwd())\n"
-        "    return 0"
-    ),
+    prompt=("detect dead code: script\nimport os\nimport json\n\ndef main():\n    print(os.getcwd())\n    return 0"),
     expected_structure_keys=["dead_sections"],
     expected_contains=["json", "import json"],
 )
@@ -2047,63 +2039,111 @@ EX_SR_004 = ExamTestCase(
 ALL_EXAM_CASES: list[ExamTestCase] = [
     # ── P0 核心12个能力 (各3题) ──────────────────────────
     # code_generate
-    EX_CG_001, EX_CG_002, EX_CG_003,
+    EX_CG_001,
+    EX_CG_002,
+    EX_CG_003,
     # code_fix
-    EX_CF_001, EX_CF_002, EX_CF_003,
+    EX_CF_001,
+    EX_CF_002,
+    EX_CF_003,
     # refactor
-    EX_RF_001, EX_RF_002, EX_RF_003,
+    EX_RF_001,
+    EX_RF_002,
+    EX_RF_003,
     # rule_comprehension
-    EX_RC_001, EX_RC_002, EX_RC_003,
+    EX_RC_001,
+    EX_RC_002,
+    EX_RC_003,
     # safety_judgment
-    EX_SJ_001, EX_SJ_002, EX_SJ_003,
+    EX_SJ_001,
+    EX_SJ_002,
+    EX_SJ_003,
     # self_review (3题 + 1道hard区分题)
-    EX_SR_001, EX_SR_002, EX_SR_003, EX_SR_004,
+    EX_SR_001,
+    EX_SR_002,
+    EX_SR_003,
+    EX_SR_004,
     # error_recovery
-    EX_ER_001, EX_ER_002, EX_ER_003,
+    EX_ER_001,
+    EX_ER_002,
+    EX_ER_003,
     # dependency_trace
-    EX_DT_001, EX_DT_002, EX_DT_003,
+    EX_DT_001,
+    EX_DT_002,
+    EX_DT_003,
     # circular_dependency_detect (原5题保留前3题 + 1道hard区分题)
-    EX_CDD_001, EX_CDD_002, EX_CDD_003, EX_CDD_004,
+    EX_CDD_001,
+    EX_CDD_002,
+    EX_CDD_003,
+    EX_CDD_004,
     # impact_analysis (原5题保留前3题 + 1道hard区分题)
-    EX_IA_001, EX_IA_002, EX_IA_003, EX_IA_004,
+    EX_IA_001,
+    EX_IA_002,
+    EX_IA_003,
+    EX_IA_004,
     # task_decomposition (原5题保留前3题)
-    EX_TD_001, EX_TD_002, EX_TD_003,
+    EX_TD_001,
+    EX_TD_002,
+    EX_TD_003,
     # incremental_execution
-    EX_IE_001, EX_IE_002, EX_IE_003,
-
+    EX_IE_001,
+    EX_IE_002,
+    EX_IE_003,
     # ── P1 重要8个能力 (各2题) ──────────────────────────
     # summary_extraction
-    EX_SE_001, EX_SE_002, EX_SE_003,
+    EX_SE_001,
+    EX_SE_002,
+    EX_SE_003,
     # architecture_design
-    EX_AD_001, EX_AD_002, EX_AD_003,
+    EX_AD_001,
+    EX_AD_002,
+    EX_AD_003,
     # context_consistency
-    EX_CC_001, EX_CC_002, EX_CC_003,
+    EX_CC_001,
+    EX_CC_002,
+    EX_CC_003,
     # hallucination_detect
-    EX_HD_001, EX_HD_002, EX_HD_003,
+    EX_HD_001,
+    EX_HD_002,
+    EX_HD_003,
     # ambiguity_detect
-    EX_AMB_001, EX_AMB_002, EX_AMB_003,
+    EX_AMB_001,
+    EX_AMB_002,
+    EX_AMB_003,
     # tool_selection
-    EX_TS_001, EX_TS_002, EX_TS_003,
+    EX_TS_001,
+    EX_TS_002,
+    EX_TS_003,
     # dependency_ordering
-    EX_DO_001, EX_DO_002,
+    EX_DO_001,
+    EX_DO_002,
     # cross_file_analysis
-    EX_CFA_001, EX_CFA_002,
-
+    EX_CFA_001,
+    EX_CFA_002,
     # ── P2 辅助9个能力 (各1题) ──────────────────────────
     # task_classification
-    EX_CL_001, EX_CL_002, EX_CL_003,
+    EX_CL_001,
+    EX_CL_002,
+    EX_CL_003,
     # tag_completion
     EX_TG_001,
     # naming_suggest
-    EX_NS_001, EX_NS_002, EX_NS_003,
+    EX_NS_001,
+    EX_NS_002,
+    EX_NS_003,
     # anomaly_triage
-    EX_AT_001, EX_AT_002, EX_AT_003,
+    EX_AT_001,
+    EX_AT_002,
+    EX_AT_003,
     # dead_code_removal
-    EX_DC_001, EX_DC_002, EX_DC_003,
+    EX_DC_001,
+    EX_DC_002,
+    EX_DC_003,
     # cross_file_refactor
     EX_CFR_001,
     # long_context_recall
-    EX_LCR_001, EX_LCR_002,
+    EX_LCR_001,
+    EX_LCR_002,
     # file_edit_precision
     EX_FEP_001,
     # rollback_boundary_design (原5题保留前1题)
