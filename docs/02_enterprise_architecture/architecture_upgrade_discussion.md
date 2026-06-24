@@ -2,9 +2,9 @@
 module_id: GOV-036-ARCH-DISCUSSION
 doc_type: architecture_discussion
 status: Active
-version: 2.9.0
+version: 2.9.1
 created: '2026-06-12'
-last_updated: '2026-06-23'
+last_updated: '2026-06-24'
 owner: human
 purpose: 记录架构升级深度讨论的完整上下文、决策和待定项
 anti_hallucination: 本文件消除所有二元模糊地带，每个概念只有一个定义、一个归属、一个数字
@@ -20,7 +20,7 @@ anti_hallucination: 本文件消除所有二元模糊地带，每个概念只有
 > 本文件是架构升级讨论的唯一记录点。
 > 反幻觉原则：每个概念只有一个定义、一个归属、一个数字。不存在"或""待选""两种都可以"。
 
-> **当前执行状态（2026-06-23 更新）**：
+> **当前执行状态（2026-06-24 更新）**：
 >
 > - 阶段0 STEP 0a-0c：✅ 已完成（ide_health_service脚本存在+DM-100000/100001/100002+DM-408/386/90971/418/419/SRC-100022 全部COMPLETED）
 > - 阶段1 STEP 1-3：✅ 已完成（STEP 1-2架构+DB + STEP 3 CI/CD：pre-commit 30+ GATE + GitHub Actions 7层CI）
@@ -29,8 +29,9 @@ anti_hallucination: 本文件消除所有二元模糊地带，每个概念只有
 > - 阶段7b P0治理基础设施修复：✅ 已完成
 > - 节点 14,383 / 边 22,605 / 域 55 / 表 25（24业务+1系统）
 > - **全景图和生成器已完全符合能力定位书 V5.4 规格**
+> - 治理工具加固（2026-06-24）：extract_depgraph.py 新鲜度提示 + apply_depgraph.py git 备份门禁 + git_guard.py stash 拦截 + 前向引用 bug 批量修复（48 文件）
 >
-> **剩余架构债务（2026-06-23 更新）**：
+> **剩余架构债务（2026-06-24 更新）**：
 >
 > | 债务ID                                  | 类型            | 状态       | 说明                          | 阻塞条件            |
 > | ------------------------------------- | ------------- | -------- | --------------------------- | --------------- |
@@ -38,8 +39,9 @@ anti_hallucination: 本文件消除所有二元模糊地带，每个概念只有
 > | R7安全升级                                | 运行时升级         | 推迟到阶段7   | 依赖阶段5/6完成                    | 阶段5→6完成         |
 > | R8基础设施升级                              | 运行时升级         | 推迟到阶段7   | 依赖阶段5/6完成                    | 阶段5→6完成         |
 > | 全量功能测试                                | 测试            | 推迟到阶段7   | 需R3-R8升级完成                   | 阶段5→6→7完成       |
+> | 表头升级前向引用检测门禁                          | 门禁缺失          | 非阻塞      | 大规模表头升级（commit 40a35f2bbe/e14cbc46b4）引入 48 个前向引用 bug（已修复 2026-06-24）。根因：表头升级流程未检测 `class X` 内部引用 `X`。需添加扫描门禁 | 可在阶段7b P1添加 |
 >
-> **执行顺序更新（2026-06-23 Owner裁定）**：
+> **执行顺序更新（2026-06-24 Owner裁定）**：
 >
 > - 阶段7分两类：运行时升级类（R7/R8/测试，依赖阶段5/6）+ 规则文件优化类（§23.5全部完成或已过时）
 > - 盲点A（模型版本管理+按需加载LRU+Git LFS）✅已完成（DM-100197）
@@ -483,11 +485,16 @@ data/
 
 ### 5.2 阶段1详细步骤 —— ✅ 已完成（STEP 1-3 全部完成）
 
+<details>
+<summary>📋 STEP 1-3 施工详情（已完成）</summary>
+
 | STEP | 内容                                                                           |  状态 |
 | :--: | ---------------------------------------------------------------------------- | :-: |
 |   1  | 39域扩容max\_modules到3,000+ + 21个未映射目录裁定 + 命名标准化 + 14层降级为域属性                    |  ✅  |
 |   2  | governance.db合并9个SQLite + depgraph.db依赖图+全景图+设计态 + market.duckdb业务时序数据Schema |  ✅  |
 |   3  | GitHub Actions: lint + test + gate + pre-commit hooks                        | ✅ |
+
+</details>
 
 ### 5.3 20路AI分配
 
@@ -2139,7 +2146,7 @@ rule\_enforcement\_log移入governance.db（D61裁定），governance.db从25表
 
 ***
 
-## 十九、讨论进度（2026-06-23 更新）
+## 十九、讨论进度（2026-06-24 更新）
 
 | 阶段             |    状态    | 说明                                      |
 | -------------- | :------: | --------------------------------------- |
@@ -2152,6 +2159,17 @@ rule\_enforcement\_log移入governance.db（D61裁定），governance.db从25表
 | 阶段7 R7/R8+测试   |  部分完成  | §23.5规则文件优化✅已完成(第1/2/4/5项)；盲点A✅已完成(DM-100197)；运行时升级类(R7/R8/测试)依赖阶段5/6 |
 | 阶段7b 治理收敛期     |   P0已完成  | P1-P3依赖阶段4/7                            |
 | 阶段8 业务层        |    未开始   | 依赖阶段7b完成                                |
+
+### 19.1 治理工具加固（2026-06-24 完成）
+
+| 完成项 | 文件 | 说明 | commit |
+| ----- | ---- | ---- | ------ |
+| extract_depgraph.py 新鲜度提示 | scripts/governance/extract_depgraph.py | `_db_freshness()` 检查 DB mtime vs 最近 git commit，超过 24h 或 commit 比 DB 新则警告到 stderr；`--no-freshness` 跳过 | 87b5283539 |
+| apply_depgraph.py git 备份门禁 | scripts/governance/apply_depgraph.py | `_check_git_backup()` 写入前检查 DB 是否有 git 备份，有未提交修改则阻断（exit 4）；`ZEPHYR_SKIP_BACKUP_CHECK=1` 跳过 | 87b5283539 |
+| git_guard.py stash 拦截修复 | scripts/git_guard.py | `_handle_stash()` 阻断有未提交修改的 stash push（防止工作丢失）；`ZEPHYR_FORCE_STASH=1` 强制通道 | 7bc146fa6f |
+| 前向引用 bug 批量修复 | 48 个 src/zephyr/ 文件 | 扫描 `class X` 内部引用 `X` 的前向引用，批量添加 `from __future__ import annotations`；vibe_coding_enforcer.py 额外补充 `Callable` 导入（TypeVar bound 是运行时表达式） | 87b5283539 + 72c52cf6b3 |
+
+**验证**：pytest --collect-only 退出码 0，35455 tests collected，零 NameError。
 
 > 完整讨论时间线见 git log。决策结果已固化在 §15 D1-D78 + #151-172 决策清单和 §16 待定项中。
 
