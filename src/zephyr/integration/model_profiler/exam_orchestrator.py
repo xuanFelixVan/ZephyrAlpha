@@ -250,7 +250,7 @@ class ExamOrchestrator:
                 remaining_indices.append(i)
 
         # 并行推理剩余题目
-        remaining_results = self._infer_batch(remaining_cases, max_workers=8) if remaining_cases else []
+        remaining_results = self._infer_batch(remaining_cases, max_workers=2) if remaining_cases else []
 
         # 按原始顺序组装结果
         all_results: list[dict] = [{}] * len(cases)
@@ -1027,7 +1027,7 @@ class ExamOrchestrator:
 
         return raw
 
-    def _infer_batch(self, cases: list[ExamTestCase], max_workers: int = 8) -> list[dict]:
+    def _infer_batch(self, cases: list[ExamTestCase], max_workers: int = 2) -> list[dict]:
         """并行推理多个case。
 
         I/O密集型任务, GIL无影响, ThreadPoolExecutor优于multiprocessing。

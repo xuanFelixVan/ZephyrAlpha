@@ -1934,152 +1934,74 @@ EX_CWM_003 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 109 题
+# 全集 — 61 题 (压缩自109题)
+# P0核心12个×3题 + P1重要8个×2题 + P2辅助9个×1题 = 61题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
+    # ── P0 核心12个能力 (各3题) ──────────────────────────
+    # code_generate
+    EX_CG_001, EX_CG_002, EX_CG_003,
+    # code_fix
+    EX_CF_001, EX_CF_002, EX_CF_003,
+    # refactor
+    EX_RF_001, EX_RF_002, EX_RF_003,
+    # rule_comprehension
+    EX_RC_001, EX_RC_002, EX_RC_003,
+    # safety_judgment
+    EX_SJ_001, EX_SJ_002, EX_SJ_003,
+    # self_review
+    EX_SR_001, EX_SR_002, EX_SR_003,
+    # error_recovery
+    EX_ER_001, EX_ER_002, EX_ER_003,
+    # dependency_trace
+    EX_DT_001, EX_DT_002, EX_DT_003,
+    # circular_dependency_detect (原5题保留前3题)
+    EX_CDD_001, EX_CDD_002, EX_CDD_003,
+    # impact_analysis (原5题保留前3题)
+    EX_IA_001, EX_IA_002, EX_IA_003,
+    # task_decomposition (原5题保留前3题)
+    EX_TD_001, EX_TD_002, EX_TD_003,
+    # incremental_execution
+    EX_IE_001, EX_IE_002, EX_IE_003,
+
+    # ── P1 重要8个能力 (各2题) ──────────────────────────
+    # summary_extraction
+    EX_SE_001, EX_SE_002,
+    # architecture_design
+    EX_AD_001, EX_AD_002,
+    # context_consistency
+    EX_CC_001, EX_CC_002,
+    # hallucination_detect
+    EX_HD_001, EX_HD_002,
+    # ambiguity_detect
+    EX_AMB_001, EX_AMB_002,
+    # tool_selection
+    EX_TS_001, EX_TS_002,
+    # dependency_ordering
+    EX_DO_001, EX_DO_002,
+    # cross_file_analysis
+    EX_CFA_001, EX_CFA_002,
+
+    # ── P2 辅助9个能力 (各1题) ──────────────────────────
     # task_classification
     EX_CL_001,
-    EX_CL_002,
-    EX_CL_003,
     # tag_completion
     EX_TG_001,
-    EX_TG_002,
-    EX_TG_003,
-    # summary_extraction
-    EX_SE_001,
-    EX_SE_002,
-    EX_SE_003,
     # naming_suggest
     EX_NS_001,
-    EX_NS_002,
-    EX_NS_003,
     # anomaly_triage
     EX_AT_001,
-    EX_AT_002,
-    EX_AT_003,
-    # code_fix
-    EX_CF_001,
-    EX_CF_002,
-    EX_CF_003,
-    # refactor
-    EX_RF_001,
-    EX_RF_002,
-    EX_RF_003,
-    # code_generate
-    EX_CG_001,
-    EX_CG_002,
-    EX_CG_003,
     # dead_code_removal
     EX_DC_001,
-    EX_DC_002,
-    EX_DC_003,
-    # cross_file_analysis
-    EX_CFA_001,
-    EX_CFA_002,
-    EX_CFA_003,
-    # architecture_design
-    EX_AD_001,
-    EX_AD_002,
-    EX_AD_003,
     # cross_file_refactor
     EX_CFR_001,
-    EX_CFR_002,
-    EX_CFR_003,
-    # dependency_trace
-    EX_DT_001,
-    EX_DT_002,
-    EX_DT_003,
-    # context_consistency
-    EX_CC_001,
-    EX_CC_002,
-    EX_CC_003,
-    # hallucination_detect
-    EX_HD_001,
-    EX_HD_002,
-    EX_HD_003,
     # long_context_recall
     EX_LCR_001,
-    EX_LCR_002,
-    EX_LCR_003,
-    # rule_comprehension
-    EX_RC_001,
-    EX_RC_002,
-    EX_RC_003,
-    # safety_judgment
-    EX_SJ_001,
-    EX_SJ_002,
-    EX_SJ_003,
     # file_edit_precision
     EX_FEP_001,
-    EX_FEP_002,
-    EX_FEP_003,
-    # self_review
-    EX_SR_001,
-    EX_SR_002,
-    EX_SR_003,
-    # incremental_execution
-    EX_IE_001,
-    EX_IE_002,
-    EX_IE_003,
-    # error_recovery
-    EX_ER_001,
-    EX_ER_002,
-    EX_ER_003,
-    # ambiguity_detect
-    EX_AMB_001,
-    EX_AMB_002,
-    EX_AMB_003,
-    # tool_selection
-    EX_TS_001,
-    EX_TS_002,
-    EX_TS_003,
-    # impact_analysis
-    EX_IA_001,
-    EX_IA_002,
-    EX_IA_003,
-    EX_IA_004,
-    EX_IA_005,
-    # circular_dependency_detect
-    EX_CDD_001,
-    EX_CDD_002,
-    EX_CDD_003,
-    EX_CDD_004,
-    EX_CDD_005,
-    # rollback_boundary_design
+    # rollback_boundary_design (原5题保留前1题)
     EX_RBD_001,
-    EX_RBD_002,
-    EX_RBD_003,
-    EX_RBD_004,
-    EX_RBD_005,
-    # task_decomposition
-    EX_TD_001,
-    EX_TD_002,
-    EX_TD_003,
-    EX_TD_004,
-    EX_TD_005,
-    # parallel_planning
-    EX_PP_001,
-    EX_PP_002,
-    EX_PP_003,
-    # dependency_ordering
-    EX_DO_001,
-    EX_DO_002,
-    EX_DO_003,
-    # cross_file_hallucination_detect
-    EX_CFHD_001,
-    EX_CFHD_002,
-    EX_CFHD_003,
-    EX_CFHD_004,
-    EX_CFHD_005,
-    # context_freshness_awareness
-    EX_CFAW_001,
-    EX_CFAW_002,
-    EX_CFAW_003,
-    # context_window_management
-    EX_CWM_001,
-    EX_CWM_002,
-    EX_CWM_003,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}
