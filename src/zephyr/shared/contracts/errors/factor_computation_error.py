@@ -30,15 +30,16 @@ AI Prompt
 """
 
 # ==== BEGIN CODGEN:CTR-ERR-002 ====
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-05"
+# created: "2026-06-24"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -58,18 +59,19 @@ AI Prompt
     当 L02 中的因子 compute() 方法遇到不可恢复的错误时，MUST 抛出 FactorComputationError。 常见 failure_reason：input_missing（缺少所需行情）、division_by_zero（除零）、window_insufficient（历史窗口不足）、 memory_exceeded（内存超限）、invalid_parameter（参数非法）。 不要吞掉错误返回一个 is_valid=False 的 FactorSignal——后者用于逻辑判断（如低置信度），前者用于系统级故障。
 """
 
-
 @dataclass(frozen=True)
 class FactorComputationError:
     error_id: str
     factor_id: str
     failure_reason: str
     idempotency_key: str
+    idempotency_key: str
+    idempotency_key: str
     recovery_hint: str
     symbol: str
-    detail: str | None = None
+    detail: Optional[str] = None
     schema_version: str = "1.0"
-    trace_context: TraceContext | None = None
-
+    trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-ERR-002 ====
+

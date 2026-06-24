@@ -1,0 +1,46 @@
+# ==== BEGIN CODGEN:CTR-P1-008 ====
+from dataclasses import dataclass, field
+
+from typing import Dict
+from typing import List
+# ---
+# layer: cross_cutting
+# category: data_contract
+# status: auto_generated
+# created: "2026-06-24"
+# generated_by: codegen from cross_layer_contracts.yaml
+# ---
+"""
+ZephyrAlpha — shared/contracts/risk_dashboard_snapshot.py
+
+CTR-P1-008: RiskDashboardSnapshot / 风险仪表板快照
+
+L04 → L08 风险仪表板实时快照契约。
+
+SSoT: cross_layer_contracts.yaml -> CTR-P1-008
+Version: 1.0
+Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
+       Any manual changes will be overwritten by codegen.
+
+AI Prompt
+---------
+    
+"""
+
+@dataclass(frozen=True)
+class RiskDashboardSnapshot:
+    gross_leverage: float
+    idempotency_key: str
+    idempotency_key: str
+    idempotency_key: str
+    max_drawdown_current: float
+    overall_risk_score: float
+    portfolio_id: str
+    portfolio_var_1d: float
+    snapshot_time: str
+    top_position_concentration: float
+    active_alerts: List[str] = field(default_factory=list)
+    schema_version: str = "1.0"
+    sector_concentrations: Dict[str, float] = field(default_factory=dict)
+
+# ==== END CODGEN:CTR-P1-008 ====

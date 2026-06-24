@@ -30,15 +30,16 @@ AI Prompt
 """
 
 # ==== BEGIN CODGEN:CTR-ERR-001 ====
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+from typing import Optional
 
 from zephyr.shared.contracts.core.trace_context import TraceContext
-
 # ---
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-05-05"
+# created: "2026-06-24"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -58,19 +59,20 @@ AI Prompt
     当 L00 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。 每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。 禁止静默丢弃——必须显式抛出，让 L02 和 L12 Telemetry 感知。
 """
 
-
 @dataclass(frozen=True)
 class DataQualityError:
     error_id: str
     failure_reason: str
     idempotency_key: str
+    idempotency_key: str
+    idempotency_key: str
     quality_score: float
     recovery_hint: str
     symbol: str
-    failed_field: str | None = None
-    failed_value: str | None = None
+    failed_field: Optional[str] = None
+    failed_value: Optional[str] = None
     schema_version: str = "1.0"
-    trace_context: TraceContext | None = None
-
+    trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-ERR-001 ====
+

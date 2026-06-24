@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sqlite3
 import sys
 from collections import Counter
@@ -295,14 +296,67 @@ def _limit_files(files: list[str], lang: str) -> list[str]:
 
 # 文件折叠阈值：超过此数量的目录只显示统计，不逐个列出文件名
 COLLAPSE_THRESHOLD = 200
+# 同类文件折叠的最小数量（低于此数即使同类也不折叠，保留明细）
+SAME_PATTERN_MIN = 15
+# 临时文件扩展名（无独立查看价值）
+_TMP_EXTS = {".tmp", ".bak", ".cache", ".temp", ".swp"}
+# data/ 下的数据文件扩展名（自动生成的同类数据）
+_DATA_EXTS = {".json", ".jsonl", ".csv", ".log"}
+# 文件名数字归一化模式（用于检测时间戳/序号命名）
+_DIGIT_PATTERN = re.compile(r"\d+")
+
+
+def _normalize_filename(name: str) -> str:
+    """将文件名中的数字替换为 #，用于检测同类命名模式。"""
+    return _DIGIT_PATTERN.sub("#", name)
+
+
+def _majority_same_pattern(files: list[str], threshold: float = 0.6) -> bool:
+    """检测 > threshold 的文件名归一化后共享相同模板（时间戳/序号命名同类文件）。
+
+    例：benchmark_20260522.jsonl 与 benchmark_20260523.jsonl 归一化后均为 benchmark_#.jsonl。
+    """
+    if not files:
+        return False
+    patterns = [_normalize_filename(f) for f in files]
+    counter = Counter(patterns)
+    most_common_count = counter.most_common(1)[0][1]
+    return most_common_count / len(files) > threshold
+
+
+def _is_data_dir(dir_path: str, files: list[str], threshold: float = 0.7) -> bool:
+    """判断 data/ 下的同类数据文件目录（> threshold 同扩展名，>= 20 个）。
+
+    data/ 下的 .json/.jsonl/.csv/.log 文件通常是自动生成的同类数据，无独立查看价值。
+    排除 .db（数据库文件有独立意义）和 .yaml（配置/skill 文件有独立意义）。
+    """
+    if not dir_path.startswith("data/"):
+        return False
+    if len(files) < 20:
+        return False
+    exts = [Path(f).suffix.lower() for f in files]
+    ext_counter = Counter(exts)
+    most_common_ext, most_common_count = ext_counter.most_common(1)[0]
+    return most_common_count / len(files) > threshold and most_common_ext in _DATA_EXTS
+
+
+def _majority_tmp_files(files: list[str], threshold: float = 0.6) -> bool:
+    """检测 > threshold 的文件是临时文件（.tmp/.bak 等）。"""
+    if not files:
+        return False
+    tmp_count = sum(1 for f in files if Path(f).suffix.lower() in _TMP_EXTS)
+    return tmp_count / len(files) > threshold
 
 
 def _should_collapse_files(dir_path: str, files: list[str]) -> bool:
     """判断目录下的文件是否应折叠（只显示数量统计，不逐个列出）。
 
-    判定标准：
+    判定标准（任一满足即折叠）：
     1. __pycache__ 目录 → 总是折叠（.pyc 缓存文件无独立意义）
     2. 文件数量 > COLLAPSE_THRESHOLD → 折叠（大量同类数据文件）
+    3. 文件数 >= SAME_PATTERN_MIN 且多数文件名归一化后共享模板 → 折叠（时间戳/序号命名）
+    4. data/ 下同类数据文件（> 70% 同扩展名，>= 20 个）→ 折叠（自动生成数据）
+    5. 文件数 >= SAME_PATTERN_MIN 且多数是临时文件 → 折叠（.tmp/.bak 无独立意义）
     """
     if not files:
         return False
@@ -310,6 +364,12 @@ def _should_collapse_files(dir_path: str, files: list[str]) -> bool:
     if dir_name == "__pycache__":
         return True
     if len(files) > COLLAPSE_THRESHOLD:
+        return True
+    if len(files) >= SAME_PATTERN_MIN and _majority_same_pattern(files):
+        return True
+    if _is_data_dir(dir_path, files):
+        return True
+    if len(files) >= SAME_PATTERN_MIN and _majority_tmp_files(files):
         return True
     return False
 
