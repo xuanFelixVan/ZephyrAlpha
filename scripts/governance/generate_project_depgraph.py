@@ -60,9 +60,12 @@ _FALLBACK_EXEMPT_DIRS = {
     ".mypy_cache", ".pytest_cache", ".ruff_cache",
     "_backups", "_temp", ".audit_cache", "session_logs",
 }
-_FALLBACK_EXCLUDED_NODE_TYPES = {"doc", "policy", "standard", "template", "diagram", "data"}
+# 白名单准入（裁定#184）：nodes表只收录4种node_type
+# module(.py代码) / script(.py脚本) / test(.py测试) / config(.yaml运行时配置)
+# 新类型默认不进nodes，天然安全（对齐dependency-cruiser/madge/Bazel实践）
+NODES_WHITELIST = {"module", "script", "test", "config"}
 _FALLBACK_SCAN_DIRS = [
-    "src/zephyr", "scripts", "tests", "data/asset_index", "data/config",
+    "src/zephyr", "scripts", "data/asset_index", "data/config",
     "data/metrics", "config", "schemas", "docs/03_modules",
     "docs/01_policies_and_standards", "docs/02_enterprise_architecture",
     "frontend", "architecture_model", "infra", "tools", "specs",
@@ -119,7 +122,7 @@ EDGE_TYPES = [
 ]
 
 CODE_TYPES = {"module", "script", "test"}
-CONFIG_TYPES = {"config", "registry", "data", "contract", "schema", "gate"}
+CONFIG_TYPES = {"config", "registry", "contract", "schema", "gate"}
 DOC_TYPES = {"doc", "blueprint", "policy", "standard", "template", "diagram"}
 DOMAIN_TYPES = set(NODE_TYPES_DOMAIN)
 
@@ -128,11 +131,9 @@ EXEMPT_DIRS = set(_DEPGRAPH_CONFIG.get("exempt_dirs", list(_FALLBACK_EXEMPT_DIRS
 # EXCLUDED_SCAN_DIRS 已删除（死代码——定义但从未使用，实际排除靠白名单 SCAN_DIRS）
 # 如需查看排除路径清单，见 depgraph_scan_exclusions.yaml
 
-# Node types excluded from depgraph — zero import_depends edges, zero code dependency value.
-# These types only produce doc→blueprint references noise edges.
-# Rationale: depgraph answers "who depends on whom" for CODE. Non-code types belong in the
-# architecture panorama (which contains ALL files), not in the dependency graph.
-EXCLUDED_NODE_TYPES = set(_DEPGRAPH_CONFIG.get("excluded_node_types", list(_FALLBACK_EXCLUDED_NODE_TYPES)))
+# 裁定#184：黑名单已废弃，改为白名单准入（NODES_WHITELIST）
+# 旧黑名单 EXCLUDED_NODE_TYPES 已删除——黑名单天然漏防（已漏4种类型导致561个非代码节点污染）
+# 白名单天然安全：新类型默认不进 nodes 表
 
 # Knowledge doc paths — .md files under these paths are classified as knowledge_doc and skipped
 KNOWLEDGE_DOC_PATHS = _DEPGRAPH_CONFIG.get("knowledge_doc_paths", _FALLBACK_KNOWLEDGE_DOC_PATHS)
@@ -308,9 +309,8 @@ def merge_design_fields(new_node: dict, old_node: dict) -> dict:
             elif field == "lifecycle" and old_val == "design":
                 # lifecycle=design MUST always be preserved when set
                 new_node[field] = old_val
-            elif field == "build_status" and old_val == "design_only":
-                # build_status=design_only MUST always be preserved when set
-                new_node[field] = old_val
+            # 裁定#178：删除 build_status=design_only 保留逻辑
+            # design_only 是旧脏值，merge 不再保留——由 derive_build_status 重新推导
 
     # Preserve any custom fields present in old_node but absent in new_node
     # (e.g., _rb_test_mark, custom annotations, etc.)
@@ -761,8 +761,8 @@ def derive_architecture_layer(rel_path: str, blueprint_id: str, domain_derivatio
 
 
 def derive_design_maturity(node_type: str, has_test: bool) -> str:
-    if node_type == "blueprint":
-        return "design"
+    # 裁定#189：删除 blueprint→design 分支，生成器不得创建设计态节点
+    # 设计态节点只由人工通过 apply_depgraph.py 写入（§12.1 唯一来源规则）
     if node_type in CODE_TYPES:
         if has_test:
             return "production"
@@ -774,6 +774,28 @@ def derive_deployment_lifecycle(node_type: str) -> str:
     if node_type == "blueprint":
         return "design_only"
     return "stable"
+
+
+def derive_build_status(design_maturity: str, has_test: bool = False) -> str:
+    """从文件特征推导 build_status（裁定#180）。
+
+    推导规则（机械可执行，AI 零歧义）：
+    - design → planned      （设计态未实现）
+    - production + test → stable   （已验证）
+    - production 无 test → generated（AI已生成未验证）
+    - prototype → generated  （脚手架/占位符）
+
+    少数需手工标记的状态（deprecated）通过
+    apply_depgraph.py --transition-build-status 写入。
+    """
+    if design_maturity == "design":
+        return "planned"
+    if design_maturity == "prototype":
+        return "generated"
+    # production
+    if has_test:
+        return "stable"
+    return "generated"
 
 
 def derive_trust_zone(rel_path: str) -> str:
@@ -1381,8 +1403,9 @@ def build_depgraph(
 
         ntype = fd.get("type", "unknown")
 
-        # Skip non-code node types — zero import edges, only noise references
-        if ntype in EXCLUDED_NODE_TYPES:
+        # 白名单准入（裁定#184）：只收录 module/script/test/config 4种节点
+        # 非白名单类型（doc/blueprint/policy/gate/registry/contract/schema等）不进 nodes 表
+        if ntype not in NODES_WHITELIST:
             continue
         domain_id = fd.get("domain_id", "")
         has_blueprint = bool(bid_clean)
@@ -1408,7 +1431,8 @@ def build_depgraph(
             or derive_autonomy_fallback(ntype, norm_path),
             "file_header_score": fd.get("file_header_score", 0),
             "architecture_layer": architecture_layer,
-            "design_maturity": derive_design_maturity(ntype, False),
+            "design_maturity": (_dm := derive_design_maturity(ntype, False)),
+            "build_status": derive_build_status(_dm, False),  # 裁定#180：从文件特征推导
             "deployment_lifecycle": derive_deployment_lifecycle(ntype),
             "trust_zone": trust_zone,
             "drive_direction": drive_direction,
@@ -2632,8 +2656,8 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                     datetime.now().isoformat(),
                     node.get("node_name", ""),
                     node.get("file_path", node.get("path", "")),
-                    node.get("build_status", "draft"),
-                    node.get("module_lifecycle_state", "inactive"),
+                    node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
+                    node.get("module_lifecycle_state", ""),  # 裁定#183：字段废弃，停止写inactive默认值
                     can_build,  # H6 fix
                     node.get("gate_reason", ""),  # H6 fix
                     node.get("hard_boundary_ref", ""),  # H6 fix

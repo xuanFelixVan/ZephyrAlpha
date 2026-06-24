@@ -267,7 +267,7 @@ def _build_modules_view(dep: dict) -> dict:
                     "name": n.get("path", "").split("/")[-1] if n.get("path") else "",
                     "path": n.get("path", ""),
                     "physical_files": [n.get("path", "")] if n.get("path") else [],
-                    "build_status": n.get("deployment_lifecycle", "unknown"),
+                    "build_status": n.get("build_status", "unknown"),
                     "blueprint_status": n.get("blueprint_id", "unknown"),
                 }
             )
