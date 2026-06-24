@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF_trace_decorator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
+from __future__ import annotations
 """
 Trace Decorator — 可观测性追踪 @trace 装饰器。
 

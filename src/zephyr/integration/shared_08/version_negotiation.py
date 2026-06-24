@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_version_negotiation.py
 # [A_module] module_id=MOD-INT_version_negotiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import total_ordering

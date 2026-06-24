@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-ORC_prompt_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # AI-generated: YAML-driven prompt template registry with version management and token budget
+from __future__ import annotations
 """
 PromptRegistry: YAML-driven Prompt 模板注册表
 =============================================

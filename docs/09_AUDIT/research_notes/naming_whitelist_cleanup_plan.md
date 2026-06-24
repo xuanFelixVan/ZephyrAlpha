@@ -351,11 +351,11 @@ python d:/ZephyrAlpha/scripts/governance/rename_whitelist_cleanup.py --verify
 | `docs/02_enterprise_architecture/ssot_authority_map.md` | 274 | 修订记录 |
 | `architecture_model/technology_landscape.yaml` | 8 | 注释：参考 SCOPE.yaml |
 | `docs/03_modules/specs/auto_runtime_core/spec.md` | 270 | 表格行：SCOPE.yaml |
-| `docs/08_knowledge/01_raw_intake/ke-041-canonical-ssot-arc.md` | 12, 21 | 知识条目引用（不改） |
-| `docs/08_knowledge/01_raw_intake/ke-066-what-is-this-document-set.md` | 20, 32 | 架构描述集说明（不改） |
-| `docs/08_knowledge/01_raw_intake/ke-642-d-align-yaml.md` | 20 | B 轨对齐说明（不改） |
-| `docs/08_knowledge/01_raw_intake/ke-635-architecture-model.md` | 14 | 施工真源说明（不改） |
-| `docs/08_knowledge/01_raw_intake/ke-672-layer-authority.md` | 12, 19 | 双树声明对齐（不改） |
+| `docs/08_knowledge/01_raw_intake/ke-041-canonical_ssot_arc.md` | 12, 21 | 知识条目引用（不改） |
+| `docs/08_knowledge/01_raw_intake/ke-066-what_is_this_document_set.md` | 20, 32 | 架构描述集说明（不改） |
+| `docs/08_knowledge/01_raw_intake/ke-642-d_align_yaml.md` | 20 | B 轨对齐说明（不改） |
+| `docs/08_knowledge/01_raw_intake/ke-635-architecture_model.md` | 14 | 施工真源说明（不改） |
+| `docs/08_knowledge/01_raw_intake/ke-672-layer_authority.md` | 12, 19 | 双树声明对齐（不改） |
 
 **注意**: `docs/08_knowledge/01_raw_intake/` 下的引用不改（历史知识条目）。
 

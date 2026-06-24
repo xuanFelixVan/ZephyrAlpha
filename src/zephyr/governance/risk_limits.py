@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-PRT_risk_limits | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-003 ====
+from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 

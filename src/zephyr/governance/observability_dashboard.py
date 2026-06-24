@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
 # [A_module] module_id=MOD-UNK_observability_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 

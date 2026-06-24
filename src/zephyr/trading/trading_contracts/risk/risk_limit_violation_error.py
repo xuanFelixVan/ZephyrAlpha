@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-UNK_risk_limit_violation_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 
+from __future__ import annotations
 class RiskLimitViolationError(Exception):
     __slots__ = (
         "actual_value",

@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-DAT_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:OCP-001 ====
+from __future__ import annotations
 import abc
 from dataclasses import dataclass, field
 from typing import ClassVar

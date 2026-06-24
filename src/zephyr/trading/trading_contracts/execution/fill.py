@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_fill | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-005 ====
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] none
 # [TESTS] tests/unit/shared/test_evals.py
 # [A_module] module_id=MOD-INT_evals | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 

@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-ORC_agent_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # AI-generated: T-3-10 Agent Orchestrator (
+from __future__ import annotations
 """
 AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康监控
 ===========================================================

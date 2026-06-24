@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_execution_rejection_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ==== BEGIN CODGEN:CTR-ERR-005 ====
+from __future__ import annotations
 from dataclasses import dataclass
 
 

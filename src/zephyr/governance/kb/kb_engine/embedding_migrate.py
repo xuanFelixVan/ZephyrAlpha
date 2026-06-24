@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-DAT_embedding_migrate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # AI-generated: T-4-06 Embedding Upgrade BGE-M3
+from __future__ import annotations
 """
 EmbeddingMigrate · Embedding 版本管理 + 迁移管线
 =================================================

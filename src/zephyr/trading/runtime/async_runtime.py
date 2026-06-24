@@ -14,6 +14,7 @@
 # [TESTS] tests/trading/runtime/test_async_runtime.py
 # [A_module] module_id=MOD-TRADING-RUNTIME-ASYNC | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
+from __future__ import annotations
 """AsyncRuntime — 事件循环引导 + run_in_executor 桥接（R1-1）
 
 渐进式 async 化的入口：提供事件循环生命周期管理 + 同步→异步桥接，

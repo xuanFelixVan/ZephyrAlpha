@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-ORC_skill_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
+from __future__ import annotations
 import logging
 import re
 from enum import Enum
