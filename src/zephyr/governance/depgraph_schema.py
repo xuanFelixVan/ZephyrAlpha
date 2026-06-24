@@ -393,7 +393,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     file_header_score        INTEGER DEFAULT 0,
     tags                     TEXT,
     architecture_layer       TEXT,
-    design_maturity          TEXT DEFAULT 'production',
+    design_maturity          TEXT DEFAULT 'production' CHECK(design_maturity IN ('design','production','prototype')),
     deployment_lifecycle     TEXT DEFAULT 'stable',
     trust_zone               TEXT DEFAULT 'trusted_core',
     license                  TEXT DEFAULT 'Internal',
@@ -402,10 +402,9 @@ CREATE TABLE IF NOT EXISTS nodes (
     last_verified            TEXT,
     node_name                TEXT DEFAULT '',
     file_path                TEXT DEFAULT '',
-    build_status             TEXT DEFAULT 'unbuilt',
-    module_lifecycle_state   TEXT DEFAULT 'planned',
+    build_status             TEXT DEFAULT 'generated' CHECK(build_status IN ('planned','generated','testing','stable','deprecated')),
     can_build                INTEGER DEFAULT 1,
-    gate_reason              TEXT DEFAULT '',
+    gate_reason               TEXT DEFAULT '',
     hard_boundary_ref        TEXT,
     consumed_interfaces      TEXT,
     implementation_ref       TEXT,
@@ -787,6 +786,45 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "ALTER TABLE domains DROP COLUMN last_capacity_check",
         ],
     ),
+    (
+        11,
+        "v11: Add CHECK constraints to nodes (build_status 5 values, design_maturity 3 values) + archive module_lifecycle_state column (裁定#178-183)",
+        [
+            # 1. 创建归档表（保存module_lifecycle_state数据）
+            """CREATE TABLE IF NOT EXISTS nodes_archive_module_lifecycle (
+                node_id              INTEGER,
+                module_lifecycle_state TEXT,
+                archived_at         TEXT    NOT NULL
+            )""",
+            # 2. 复制module_lifecycle_state数据到归档表
+            "INSERT INTO nodes_archive_module_lifecycle (node_id, module_lifecycle_state, archived_at) SELECT node_id, module_lifecycle_state, datetime('now') FROM nodes WHERE module_lifecycle_state IS NOT NULL",
+            # 3. 创建新nodes表（带CHECK约束，无module_lifecycle_state列）
+            _DDL_NODES_V5.replace("CREATE TABLE IF NOT EXISTS nodes", "CREATE TABLE nodes_new"),
+            # 4. 从旧表复制数据到新表（排除module_lifecycle_state列）
+            """INSERT INTO nodes_new (
+                node_id, node_type, path, granularity, domain_id, subdomain_id, blueprint_id, belongs_to, owner,
+                change_policy, impact_level, modification_permission, file_header_score, tags, architecture_layer,
+                design_maturity, deployment_lifecycle, trust_zone, license, drive_direction, type_specific_data,
+                last_verified, node_name, file_path, build_status, can_build, gate_reason, hard_boundary_ref,
+                consumed_interfaces, implementation_ref, has_dynamic_import, blueprint_id_invalid, in_degree,
+                out_degree, blueprint_path, business_stream, stream_role, runtime_plane, ddd_aggregate, provided_interfaces
+            )
+            SELECT
+                node_id, node_type, path, granularity, domain_id, subdomain_id, blueprint_id, belongs_to, owner,
+                change_policy, impact_level, modification_permission, file_header_score, tags, architecture_layer,
+                design_maturity, deployment_lifecycle, trust_zone, license, drive_direction, type_specific_data,
+                last_verified, node_name, file_path, build_status, can_build, gate_reason, hard_boundary_ref,
+                consumed_interfaces, implementation_ref, has_dynamic_import, blueprint_id_invalid, in_degree,
+                out_degree, blueprint_path, business_stream, stream_role, runtime_plane, ddd_aggregate, provided_interfaces
+            FROM nodes""",
+            # 5. 删除旧nodes表（FK已禁用，不会触发edges/arch_directory_tree的FK检查）
+            "DROP TABLE nodes",
+            # 6. 重命名新表为nodes（SQLite会自动更新edges/arch_directory_tree的FK引用）
+            "ALTER TABLE nodes_new RENAME TO nodes",
+            # 7. 重建索引
+            *_DDL_INDEXES,
+        ],
+    ),
 ]
 
 
@@ -871,6 +909,13 @@ def init_db(
                     )
             current = bootstrapped
 
+        # 临时禁用FK用于迁移（PRAGMA foreign_keys在事务外设置）
+        # 原因：v11迁移需要重建nodes表（添加CHECK约束），DROP TABLE在FK=ON时会触发
+        # edges/arch_directory_tree的FK检查导致失败。迁移完成后重新启用。
+        has_pending_migrations = any(v > current for v, _, _ in _MIGRATIONS)
+        if has_pending_migrations:
+            conn.execute("PRAGMA foreign_keys = OFF")
+
         conn.execute("BEGIN")
         try:
             for version, description, statements in _MIGRATIONS:
@@ -883,6 +928,9 @@ def init_db(
         except Exception:
             conn.execute("ROLLBACK")
             raise
+        finally:
+            if has_pending_migrations:
+                conn.execute("PRAGMA foreign_keys = ON")
     finally:
         conn.close()
 
