@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.knowledge.kb.pipeline.ingest
 # [DOMAIN] D-GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.integration.shared_08.contracts.gate.__init__; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -48,7 +48,7 @@ import yaml
 
 from zephyr.governance.kb.kb_engine.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.integration.shared_08.contracts.gate import GateResult
+from zephyr.governance.rule_enforcement.gate_types import GateResult
 
 _KB_REPO_NAMES = {"KbRepo"}
 

@@ -156,8 +156,8 @@ utilities:
     entry_point: from zephyr.shared.time_utils import now_iso, utc_now
     note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃
   token_utils:
-    file: src/zephyr/shared/token_utils.py
-    entry_point: from zephyr.shared.token_utils import estimate_tokens
+    file: src/zephyr/autonomy_core/token_budget.py
+    entry_point: from zephyr.autonomy_core.token_budget import estimate_tokens
     note: Token 估算——上下文预算控制的基础
   frontmatter:
     file: src/zephyr/shared/frontmatter_utils.py
@@ -434,18 +434,16 @@ idempotency:
   anti_patterns:
   - 无幂等保护的 API 接收重复请求——外发支?写入必须?idempotency_key
 context:
-  file: src/zephyr/shared/context.py
-  entry_point: from zephyr.shared.context import RequestContext, set_request_context,
-    get_request_context
+  file: src/zephyr/shared/utils/context.py
+  entry_point: from zephyr.shared.utils.context import RequestContext, set_context,
+    current_context
   key_exports:
   - symbol: RequestContext
     note: 不可变请求上下文——trace_id/span_id/tenant_id/agent_id/priority
-  - symbol: set_request_context(ctx)
+  - symbol: set_context(ctx)
     note: 设置协程级上下文——contextvars 传播
-  - symbol: get_request_context()
-    note: 获取当前上下文——未设置时抛 ContextNotSetError
-  - symbol: ContextNotSetError
-    note: 上下文未初始化异
+  - symbol: current_context()
+    note: 获取当前上下文——未设置时返回 None
   anti_patterns:
   - 全局变量 ThreadLocal 传上下文——用 contextvars 保证 asyncio 正确传播
 metrics:

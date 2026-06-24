@@ -94,7 +94,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # token_utils.py — Token 估算 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.ops.observability.token_utils import ...
+# from zephyr.autonomy_core.token_budget import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │

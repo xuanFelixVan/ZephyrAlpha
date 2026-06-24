@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.transition
 # [DOMAIN] D-GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.governance.rule_enforcement.task_types; zephyr.integration.shared_08.contracts.gate.__init__; zephyr.governance.ops_governance.event_hook
+# [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] task_repo;pipeline
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -49,7 +49,7 @@ __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 
 # Re-export GateViolationError / GateResult for backward compat
 
-from zephyr.integration.shared_08.contracts.gate import GateResult, GateViolationError
+from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 
 # PENDING → IN_PROGRESS 转换时触发的门禁 ID
 

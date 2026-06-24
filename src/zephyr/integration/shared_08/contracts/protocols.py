@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-183 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.protocols
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.gate.gate_result
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_types
 # [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.governance.audit_trail;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -27,7 +27,7 @@ from typing import Protocol, runtime_checkable
 
 from pydantic import BaseModel
 
-from zephyr.integration.shared_08.contracts.gate.gate_result import GateResult
+from zephyr.governance.rule_enforcement.gate_types import GateResult
 
 # ── 7 Protocol interfaces ────────────────────────────────────────────
 

@@ -111,7 +111,7 @@ def test_00_import_shared_core():
         ("shared", "zephyr.shared"),
         ("shared.schemas", "zephyr.integration.shared.schema.schemas"),
         ("shared.errors", "zephyr.integration.shared_08.errors"),
-        ("shared.event_bus", "zephyr.infrastructure.shared_services.events.event_bus"),
+        ("shared.event_bus", "zephyr.shared.event_bus"),
         ("shared.ssot_guard", "zephyr.integration.shared_08.ssot_guard"),
         ("shared.resilience", "zephyr.integration.shared_08.resilience"),
         ("core.models", "zephyr.infrastructure.shared_services.models"),
@@ -524,7 +524,7 @@ class TestSharedCoreAdversarial:
         assert task.status != "__INVALID__", "Invalid status was silently accepted"
 
     def test_event_bus_event_dataclass(self):
-        from zephyr.shared.shared_services.events.event_bus import Event, EventPriority
+        from zephyr.shared.event_bus import Event, EventPriority
 
         evt = Event(
             topic="test.adversarial",

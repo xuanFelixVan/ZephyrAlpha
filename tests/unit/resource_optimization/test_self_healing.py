@@ -169,7 +169,7 @@ class TestEventBusIntegration:
         mock_bus = MagicMock()
         mock_get_bus.return_value = mock_bus
 
-        with patch.dict("sys.modules", {"zephyr.integration.shared_08.event_bus": MagicMock(get_bus=mock_get_bus)}):
+        with patch.dict("sys.modules", {"zephyr.shared.event_bus": MagicMock(get_bus=mock_get_bus)}):
             engine._emit_pressure_event(
                 ResourceSnapshot(
                     pressure=PressureLevel.WARNING,

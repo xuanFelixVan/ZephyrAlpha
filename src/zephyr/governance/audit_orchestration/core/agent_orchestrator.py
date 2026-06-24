@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.core.agent_orchestrator
 # [DOMAIN] D-GOV_AUDIT
-# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.ops.observability.token_utils
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -86,7 +86,7 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.ops.observability.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 

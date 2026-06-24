@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-098 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.events.hook_dispatcher
 # [DOMAIN] D-SHARED
-# [DEPENDENCIES] zephyr.shared.shared_services.events.event_bus
+# [DEPENDENCIES] zephyr.shared.event_bus
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -33,7 +33,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.shared.shared_services.events.event_bus import DomainEvent, EventBus, EventType
+from zephyr.shared.event_bus import DomainEvent, EventBus, EventType
 
 
 @dataclass

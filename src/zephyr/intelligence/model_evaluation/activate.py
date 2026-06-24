@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.activate
 # [DOMAIN] D-INTELLIGENCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.integration.shared_08.contracts.gate.__init__; zephyr.governance.__init__; zephyr.intelligence.model_evaluation.kb_repo
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__; zephyr.intelligence.model_evaluation.kb_repo
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -42,7 +42,7 @@ import yaml
 
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.integration.shared_08.contracts.gate import GateResult
+from zephyr.governance.rule_enforcement.gate_types import GateResult
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
 
 __all__ = [

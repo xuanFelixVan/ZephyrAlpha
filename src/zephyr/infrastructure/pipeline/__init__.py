@@ -111,7 +111,7 @@ from zephyr.infrastructure.pipeline.pipeline_lock import (
     MemoryLockBackend,
     PipelineLock,
 )
-from zephyr.infrastructure.pipeline.pipeline_orchestrator import PipelineOrchestrator
+from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 from zephyr.infrastructure.pipeline.pipeline_roadmap import (
     PIPELINE_DEPENDENCIES,
     PIPELINE_DEPENDENCIES_MAP,

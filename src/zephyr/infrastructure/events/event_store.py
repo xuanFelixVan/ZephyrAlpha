@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-097 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.events.event_store
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.shared_services.events.event_bus
+# [DEPENDENCIES] zephyr.shared.event_bus
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.shared_services.events.event_bus import DomainEvent
+from zephyr.shared.event_bus import DomainEvent
 
 
 @dataclass

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.infrastructure.db.transition
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.shared.contracts.gate.__init__
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.rule_enforcement.gate_types.__init__
 # [CONSUMERS] task_repo;pipeline
 # [STARTUP] imported
 # [MATURITY] production
@@ -49,7 +49,7 @@ __all__ = ["GateResult", "GateViolationError", "TransitionMixin"]
 
 # Re-export GateViolationError / GateResult for backward compat
 
-from zephyr.shared.contracts.gate import GateResult, GateViolationError
+from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 
 # PENDING → IN_PROGRESS 转换时触发的门禁 ID
 

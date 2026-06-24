@@ -38,7 +38,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from zephyr.infrastructure.pipeline.models import PipelineOrchestratorConfig
-from zephyr.infrastructure.pipeline.pipeline_orchestrator import PipelineOrchestrator
+from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 
 
 class _FakeProfile:

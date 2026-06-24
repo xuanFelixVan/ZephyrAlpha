@@ -22,7 +22,7 @@ GameDayScheduler = scheduler_mod.GameDayScheduler
 ScheduleConflictError = scheduler_mod.ScheduleConflictError
 
 event_bus_mod = pytest.importorskip(
-    "zephyr.integration.shared_08.event_bus",
+    "zephyr.shared.event_bus",
     reason="event_bus not available",
 )
 EventBus = event_bus_mod.EventBus

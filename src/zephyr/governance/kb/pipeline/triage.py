@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.pipeline.triage
 # [DOMAIN] D-GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.shared.contracts.gate.__init__; zephyr.governance.__init__; zephyr.shared.schema.schemas
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -44,7 +44,7 @@ import yaml
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.kb.storage.kb_repo import KbRepo, KeStatus
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
-from zephyr.shared.contracts.gate import GateResult
+from zephyr.governance.rule_enforcement.gate_types import GateResult
 from zephyr.shared.schema.schemas import Priority
 
 __all__ = [
