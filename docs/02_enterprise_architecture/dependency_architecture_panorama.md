@@ -1907,3 +1907,48 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 阶段4 | 容量门禁统一 production_nodes 口径 + 硬上限 200→150 | 575e51abe2 |
 | 阶段5 | v10 migration 清理 7 个装饰字段 | 9a06b0a8b2 |
 | 阶段6 | 文档对齐（本节） | — |
+
+#### 裁定#200：4 个超限域拆分完成（ARCH-CAP-002 v1.0.8 合规）
+
+- **执行日期**: 2026-06-25
+- **规则依据**: ARCH-CAP-002 v1.0.8（单域 production_nodes ≤ 150，> 150 必须拆分，无例外）
+- **拆分方案**: [domain_split_plan_4_oversized_domains.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md)（附录E+F）
+
+**拆分结果**:
+
+| 原域 | 原 prod 数 | → | 拆分后域 | prod 数 | 说明 |
+|------|--------:|---|---------|------:|------|
+| D-INFRA_RUNTIME (411) | | → | D-INFRA_RUNTIME (保留) | 139 | 运行时核心 |
+| | | → | **D-INFRA_A2A** (新建) | 114 | A2A 通信与管线 |
+| | | → | **D-INFRA_RECOVERY** (新建) | 107 | 回滚与自愈 |
+| | | → | **D-INFRA_TELEMETRY** (新建) | 51 | 可观测与画像 |
+| D-GOV_AUDIT (228) | | → | D-GOV_AUDIT (保留) | 54 | 审计核心 |
+| | | → | D-BEHAVIORAL_AUDIT (扩充) | 79 | 红蓝对抗测试 |
+| | | → | **D-GOV_AUDIT_TESTS** (新建) | 142 | 审计测试套件 |
+| D-GOVERNANCE (178) | | → | D-GOVERNANCE (保留) | 117 | 治理核心 |
+| | | → | **D-GOV-DOCS** (新建) | 100 | 架构文档 |
+| | | → | D-GOV-SCRIPTS (扩充) | 26 | 治理脚本 |
+| D-GOV_RULE (118) | | → | D-GOV_RULE (保留) | 11 | 规则配置 |
+| | | → | D-GOV-DOCS (共享) | (计入上方) | 规则文档 |
+| | | → | D-GOV-ENFORCEMENT (扩充) | 69 | 规则执行代码 |
+
+**新建域**: 5 个（D-INFRA_A2A, D-INFRA_RECOVERY, D-INFRA_TELEMETRY, D-GOV_AUDIT_TESTS, D-GOV-DOCS）
+**扩充域**: 3 个（D-BEHAVIORAL_AUDIT, D-GOV-SCRIPTS, D-GOV-ENFORCEMENT）
+
+**工具扩展**（apply_depgraph.py）:
+- `--migrate-nodes`: 按 node_id 列表精确迁移 domain_id（解决跨域共享 blueprint_id 误迁问题）
+- `--update-domain-ssot-path`: UPDATE domains 表的 ssot_path 字段
+- `--force-cross-domain`: 强制执行跨域匹配的 `--update-domain-id`
+
+**验证**: 全部 53 个域 production_nodes ≤ 150，ALL CACHE CONSISTENT，ARCH-CAP-002 v1.0.8 合规。
+
+**施工记录**:
+
+| 阶段 | 内容 | Commit |
+|------|------|--------|
+| 阶段0 | git 备份 + 刷新 4 域缓存 | da53f1cffd |
+| 阶段0.5 | 扩展 apply_depgraph.py（3 个新功能） | d8be4eade3 |
+| 阶段1 | 修正 674 个错位节点 | 681cab37b3 |
+| 阶段2 | 拆分 D-GOV_AUDIT（171 测试节点） | 7b3a9b1655, edce73646f |
+| 阶段3 | 拆分 D-INFRA_RUNTIME（411 节点→4 域） | cd85c37b10 |
+| 阶段4 | 刷新 15 域缓存 + 文档同步 | 02b3903ea6 |

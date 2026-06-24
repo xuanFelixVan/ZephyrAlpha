@@ -7,7 +7,7 @@ tier: tier_1_governance
 status: Active
 version: 0.4.0
 created: '2026-05-16'
-last_updated: '2026-06-19'
+last_updated: '2026-06-25'
 unique_key:
 - domain
 - subdomain
@@ -821,3 +821,116 @@ entries:
   - 重复检测
   stability: stable
   ai_autonomy: ai_modifiable
+- domain: D-INFRA_A2A
+  subdomain: a2a_communication
+  ssot_module: MOD-INF-025
+  ssot_path: src/zephyr/infrastructure/a2a_protocol/
+  covers:
+  - A2A Card注册与发现(card_registry)
+  - Agent间消息传递(A2AMessage)
+  - 冲突检测(ConflictDetector)
+  - 仲裁器(Arbitrator)
+  - 治理适配器(governance_adapter)
+  - 四级约束委托
+  - 管线(pipeline)
+  - 队列(queue)
+  - 同步(sync)
+  - 事件(events)
+  aliases:
+  - a2a
+  - Agent通信
+  - agent communication
+  - agent-to-agent
+  - 冲突解决
+  - pipeline
+  - 管线
+  stability: evolving
+  ai_autonomy: ai_modifiable
+- domain: D-INFRA_RECOVERY
+  subdomain: rollback_recovery
+  ssot_module: MOD-INF-021
+  ssot_path: src/zephyr/infrastructure/rollback/
+  covers:
+  - 双轨Checkpoint(git commit + SQLite JSONL dump)
+  - 四级回滚(full_revert/partial_revert/discard/hard_reset)
+  - 自动回滚触发器(auto_guard后验信号)
+  - 回滚验证器(G0门禁 + DB一致性自愈)
+  - Forward-Fix决策器
+  - 三级Kill Switch(L1 Session/L2 Skill/L3 Global)
+  - 回滚演练调度器(DiRT drill + 混沌注入)
+  - 回滚模拟器(rollback_simulator)
+  - 自动修复引擎(auto_fix_engine)
+  - 可靠性管理(reliability)
+  aliases:
+  - rollback
+  - 回滚
+  - 撤销
+  - checkpoint
+  - forward fix
+  - kill switch
+  - auto fix
+  - 自动修复
+  - reliability
+  - 可靠性
+  stability: stable
+  ai_autonomy: human_gated
+- domain: D-INFRA_TELEMETRY
+  subdomain: observability_profiling
+  ssot_module: MOD-INF-015
+  ssot_path: src/zephyr/infrastructure/system_telemetry/
+  covers:
+  - 系统遥测采集(system_telemetry)
+  - 模型性能画像(model_profiler)
+  - 模型能力考试(model_capability_exam)
+  - 可观测性(observability)
+  - 质量度量(quality)
+  - SLA管理(sla)
+  - 会话追踪(session)
+  aliases:
+  - telemetry
+  - 遥测
+  - system telemetry
+  - 系统遥测
+  - model profiler
+  - 模型画像
+  - observability
+  - 可观测性
+  stability: stable
+  ai_autonomy: ai_modifiable
+- domain: D-GOV_AUDIT_TESTS
+  subdomain: audit_test_suite
+  ssot_module: MOD-INF-027
+  ssot_path: tests/
+  covers:
+  - 审计单元测试(unit)
+  - 端到端测试(e2e)
+  - Agent RBAC测试(agent_rbac)
+  - 根级测试脚本(test_*.py)
+  aliases:
+  - audit tests
+  - 审计测试
+  - test suite
+  - 测试套件
+  - unit tests
+  - 单元测试
+  stability: evolving
+  ai_autonomy: ai_modifiable
+- domain: D-GOV-DOCS
+  subdomain: architecture_docs
+  ssot_module: MOD-INF-037
+  ssot_path: docs/02_enterprise_architecture/
+  covers:
+  - 架构模型文档(architecture_model)
+  - 模块文档(03_modules)
+  - 规则文档(01_policies_and_standards)
+  - 域架构文档(02_domain_architecture_docs)
+  - 治理报告(03_governance_reports)
+  aliases:
+  - architecture docs
+  - 架构文档
+  - docs
+  - 文档
+  - rules
+  - 规则文档
+  stability: stable
+  ai_autonomy: human_gated

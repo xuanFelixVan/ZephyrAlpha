@@ -119,3 +119,104 @@ class EventHooks:
 
     def clear_log(self) -> None:
         self._event_log.clear()
+
+
+# ── EventBusBackpressure 订阅 (DM-2507-F) ──────────────────────────────
+
+_subscribed = False
+_engine_instance: Any = None
+
+
+def subscribe_eventbus() -> None:
+    """订阅 EventBusBackpressure 的 drift_detected / validation_result 事件。
+
+    幂等：重复调用安全。Backpressure 总线不可用时静默跳过。
+    供 boot_hooks 统一调用。
+
+    事件:
+      - drift_detected: 漂移检测→触发自动修复（若 payload 含 target）
+      - validation_result: 验证结果→仅日志记录
+    """
+    global _subscribed
+    if _subscribed:
+        return
+    try:
+        from zephyr.shared.event_bus import EventBusBackpressure
+
+        bus = EventBusBackpressure()
+        bus.subscribe("drift_detected", _on_drift_detected)
+        bus.subscribe("validation_result", _on_validation_result)
+        _subscribed = True
+        logger.info(
+            "AutoFixEngine: subscribed to 2 external events "
+            "(drift_detected/validation_result)"
+        )
+    except Exception as e:
+        logger.warning("AutoFixEngine: subscribe_eventbus failed: %s", e)
+
+
+def _get_engine() -> Any:
+    """懒加载 AutoFixEngine 单例。"""
+    global _engine_instance
+    if _engine_instance is None:
+        try:
+            from zephyr.infrastructure.auto_fix_engine.engine import AutoFixEngine
+
+            _engine_instance = AutoFixEngine()
+        except Exception as e:
+            logger.warning("AutoFixEngine: failed to instantiate engine: %s", e)
+            return None
+    return _engine_instance
+
+
+def _on_drift_detected(payload: object) -> None:
+    """drift_detected 事件：漂移检测触发自动修复。轻量handler。
+
+    payload 期望字段: {timestamp, source_function, severity, detail}
+    若 detail 中含可识别的 target 路径，调用 engine.fix("drift_fix", target)。
+    """
+    try:
+        data = payload if isinstance(payload, dict) else {}
+        detail = data.get("detail", str(payload))
+        logger.info("AutoFixEngine: drift_detected event received: %s", detail)
+
+        target = data.get("target") or data.get("file_path") or ""
+        if not target:
+            logger.info("AutoFixEngine: no target in payload, skip auto-fix dispatch")
+            return
+
+        engine = _get_engine()
+        if engine is None:
+            logger.warning("AutoFixEngine: engine unavailable, skip fix for '%s'", target)
+            return
+
+        action = engine.fix("drift_fix", target)
+        logger.info(
+            "AutoFixEngine: fix dispatched (action_id=%s, status=%s) for target=%s",
+            getattr(action, "action_id", None),
+            getattr(action, "status", None),
+            target,
+        )
+    except Exception as e:
+        logger.error("AutoFixEngine: _on_drift_detected failed: %s", e)
+
+
+def _on_validation_result(payload: object) -> None:
+    """validation_result 事件：验证结果。轻量handler——仅日志记录。
+
+    payload 期望字段: {timestamp, source_function, severity, detail}
+    验证结果不触发修复（避免循环），仅记录用于审计。
+    """
+    try:
+        data = payload if isinstance(payload, dict) else {}
+        detail = data.get("detail", str(payload))
+        source = data.get("source_function", "unknown")
+        severity = data.get("severity", "info")
+        logger.info(
+            "AutoFixEngine: validation_result event (source=%s, severity=%s): %s",
+            source,
+            severity,
+            detail,
+        )
+    except Exception as e:
+        logger.error("AutoFixEngine: _on_validation_result failed: %s", e)

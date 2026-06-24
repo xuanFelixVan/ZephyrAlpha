@@ -71,13 +71,13 @@ F_FUNCTIONS = [
     ("F16", "孤儿审判", "F16-orphan-judge/", "", "D-SECURITY", "stable", "L5"),
     ("F18", "治理脚本", "F18-governance-scripts/", "", "D-GOVERNANCE", "stable", "L5"),
     ("F19", "系统遥测", "F19-telemetry/", "", "D-INFRA_OPS", "stable", "L5"),
-    ("F20", "监控统一", "F20-unified-monitor/", "", "D-OPS", "unbuilt", "L5"),
+    ("F20", "监控统一", "F20-unified-monitor/", "", "D-OPS", "planned", "L5"),
     ("F28", "资产盘点", "F28-asset-inventory/", "", "D-GOVERNANCE", "stable", "L5"),
     ("F29", "语义审计", "F29-semantic-audit/", "", "D-GOVERNANCE", "stable", "L5"),
     ("F30", "红蓝对抗", "F30-red-blue/", "", "D-SECURITY", "stable", "L5"),
     ("F31", "注册表治理", "F31-registry-gov/", "", "D-GOVERNANCE", "stable", "L5"),
-    ("F34", "代码去重", "F34-code-dedup/", "", "D-GOVERNANCE", "unbuilt", "L5"),
-    ("F35", "文件结构治理", "F35-file-structure/", "", "D-GOVERNANCE", "unbuilt", "L5"),
+    ("F34", "代码去重", "F34-code-dedup/", "", "D-GOVERNANCE", "planned", "L5"),
+    ("F35", "文件结构治理", "F35-file-structure/", "", "D-GOVERNANCE", "planned", "L5"),
     ("F36", "审计追踪链", "F36-audit-trail/", "", "D-GOV_AUDIT", "stable", "L5"),
     ("F37", "资源优化", "F37-resource-opt/", "", "D-INFRA_OPS", "stable", "L5"),
     # L6 应急层（入度0）
@@ -281,7 +281,7 @@ def run_migration(dry_run: bool = True) -> int:
                     # 更新
                     conn.execute(
                         """UPDATE nodes SET blueprint_id=?, domain_id=?, build_status=?,
-                        blueprint_path=?, module_lifecycle_state='inactive'
+                        blueprint_path=?
                         WHERE node_id=?""",
                         (bp_id, domain_id, build_status, blueprint_path, existing[0]),
                     )
@@ -291,8 +291,8 @@ def run_migration(dry_run: bool = True) -> int:
                     # 新建
                     cur = conn.execute(
                         """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
-                        build_status, design_maturity, blueprint_path, module_lifecycle_state, can_build)
-                        VALUES ('design_node', ?, 'directory', ?, ?, ?, 'design', ?, 'inactive', 1)""",
+                        build_status, design_maturity, blueprint_path, can_build)
+                        VALUES ('design_node', ?, 'directory', ?, ?, ?, 'design', ?, 1)""",
                         (path, domain_id, bp_id, build_status, blueprint_path),
                     )
                     f_node_map[f_id] = cur.lastrowid
