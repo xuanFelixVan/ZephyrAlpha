@@ -47,7 +47,7 @@ import sys
 from pathlib import Path
 
 # 危险子命令列表（与 git_guard.py DANGEROUS_SUBCOMMANDS 对齐）
-DANGEROUS_SUBCOMMANDS = ["reset", "checkout", "stash", "revert", "restore"]
+DANGEROUS_SUBCOMMANDS = ["reset", "checkout", "stash", "revert", "restore", "mv"]
 
 # git_guard.py 的相对路径（相对于仓库根目录）
 GIT_GUARD_SCRIPT = "scripts/git_guard.py"

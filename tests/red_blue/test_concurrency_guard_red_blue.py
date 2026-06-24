@@ -60,6 +60,9 @@ from zephyr.infrastructure.rollback.concurrency_guard import (
     scan_active_locks,
 )
 
+# mv 防护相关导入
+from scripts.git_guard import MV_STRATEGY_ENV, _scan_untracked_in_dir
+
 # ============================================================================
 # Fixtures
 # ============================================================================
@@ -665,3 +668,232 @@ class TestStashGuard:
                     with patch("scripts.git_guard._passthrough", return_value=0):
                         exit_code = check_and_execute(["stash", "apply"])
         assert exit_code == 1, "stash apply 有锁冲突应阻断"
+
+
+# ============================================================================
+# git mv 目录重命名防护验证（根因修复：git mv 只移动已跟踪文件，未跟踪文件丢失）
+# ============================================================================
+
+
+class TestMvGuardMock:
+    """git mv 防护 mock 测试：验证拦截逻辑（不执行真实 git 命令）。"""
+
+    def test_mv_dir_with_untracked_blocked(self, temp_git_repo):
+        """场景: 源目录存在未跟踪文件 → 默认策略 block → exit 1"""
+        from scripts.git_guard import check_and_execute
+
+        # 创建源目录（模拟目录存在）
+        (temp_git_repo / "old_dir").mkdir(exist_ok=True)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=["old_dir/untracked.md"]):
+                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+        assert exit_code == 1, "源目录有未跟踪文件时 git mv 应被阻断"
+        mock_pass.assert_not_called()
+
+    def test_mv_dir_no_untracked_passthrough(self, temp_git_repo):
+        """场景: 源目录无未跟踪文件 → 透传"""
+        from scripts.git_guard import check_and_execute
+
+        (temp_git_repo / "old_dir").mkdir(exist_ok=True)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=[]):
+                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+        assert exit_code == 0, "无未跟踪文件应透传"
+        mock_pass.assert_called_once()
+
+    def test_mv_file_not_dir_passthrough(self, temp_git_repo):
+        """场景: 源是文件（非目录）→ 透传（不检查未跟踪文件）"""
+        from scripts.git_guard import check_and_execute
+
+        # 创建文件（非目录）
+        (temp_git_repo / "tracked_file.py").write_text("# test\n", encoding="utf-8")
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._scan_untracked_in_dir") as mock_scan:
+                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    exit_code = check_and_execute(["mv", "tracked_file.py", "renamed.py"])
+        assert exit_code == 0, "源是文件应透传"
+        mock_pass.assert_called_once()
+        mock_scan.assert_not_called()
+
+    def test_mv_not_enough_args_passthrough(self, temp_git_repo):
+        """场景: git mv 参数不足（<2）→ 透传"""
+        from scripts.git_guard import check_and_execute
+
+        with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+            exit_code = check_and_execute(["mv", "only_one_arg"])
+        assert exit_code == 0, "参数不足应透传"
+        mock_pass.assert_called_once()
+
+    def test_mv_dir_strategy_force(self, temp_git_repo, monkeypatch):
+        """场景: ZEPHYR_MV_STRATEGY=force → 强制透传"""
+        from scripts.git_guard import check_and_execute
+
+        monkeypatch.setenv(MV_STRATEGY_ENV, "force")
+        (temp_git_repo / "old_dir").mkdir(exist_ok=True)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=["old_dir/untracked.md"]):
+                with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                    exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+        assert exit_code == 0, "force 策略应透传"
+        mock_pass.assert_called_once()
+
+    def test_mv_dir_blocked_reports_files(self, temp_git_repo, capsys):
+        """场景: block 策略报告未跟踪文件列表"""
+        from scripts.git_guard import check_and_execute
+
+        (temp_git_repo / "old_dir").mkdir(exist_ok=True)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._scan_untracked_in_dir", return_value=["old_dir/a.md", "old_dir/b.md"]):
+                with patch("scripts.git_guard._passthrough", return_value=0):
+                    exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+
+        assert exit_code == 1
+        captured = capsys.readouterr()
+        assert "old_dir/a.md" in captured.err
+        assert "old_dir/b.md" in captured.err
+        assert "ZEPHYR_MV_STRATEGY" in captured.err
+
+
+class TestMvGuardEndToEnd:
+    """git mv 防护端到端测试：真实文件系统操作。"""
+
+    def _setup_dir_with_tracked_and_untracked(self, repo_root: Path, dir_name: str):
+        """创建含已跟踪+未跟踪文件的目录。"""
+        dir_path = repo_root / dir_name
+        dir_path.mkdir(parents=True, exist_ok=True)
+        # 已跟踪文件
+        (dir_path / "tracked.py").write_text("# tracked\n", encoding="utf-8")
+        subprocess.run(["git", "add", f"{dir_name}/tracked.py"], cwd=repo_root, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "add tracked"], cwd=repo_root, capture_output=True, check=True)
+        # 未跟踪文件
+        (dir_path / "untracked.md").write_text("# untracked content\n", encoding="utf-8")
+        (dir_path / "subdir").mkdir(exist_ok=True)
+        (dir_path / "subdir" / "nested.md").write_text("# nested\n", encoding="utf-8")
+        return dir_path
+
+    def test_mv_dir_strategy_move_e2e(self, temp_git_repo, monkeypatch):
+        """端到端: strategy=move → 未跟踪文件移动到目标目录"""
+        from scripts.git_guard import check_and_execute
+
+        monkeypatch.setenv(MV_STRATEGY_ENV, "move")
+        self._setup_dir_with_tracked_and_untracked(temp_git_repo, "old_dir")
+
+        def _passthrough_in_temp(git_args):
+            return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+                exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+
+        assert exit_code == 0, "move 策略应成功执行"
+        # 未跟踪文件应在新目录中
+        assert (temp_git_repo / "new_dir" / "untracked.md").exists(), "未跟踪文件应移动到新目录"
+        assert (temp_git_repo / "new_dir" / "subdir" / "nested.md").exists(), "嵌套未跟踪文件应移动到新目录"
+        # 内容应保留
+        assert (temp_git_repo / "new_dir" / "untracked.md").read_text(encoding="utf-8") == "# untracked content\n"
+
+    def test_mv_dir_strategy_stage_e2e(self, temp_git_repo, monkeypatch):
+        """端到端: strategy=stage → 未跟踪文件暂存到 .aidrafts/"""
+        from scripts.git_guard import check_and_execute
+
+        monkeypatch.setenv(MV_STRATEGY_ENV, "stage")
+        monkeypatch.setenv("ZEPHYR_SESSION_ID", "session-test-mv")
+        self._setup_dir_with_tracked_and_untracked(temp_git_repo, "old_dir")
+
+        def _passthrough_in_temp(git_args):
+            return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._get_session_id", return_value="session-test-mv"):
+                with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+                    exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+
+        assert exit_code == 0, "stage 策略应成功执行"
+        # 未跟踪文件应在 .aidrafts/ 中
+        stage_base = temp_git_repo / ".aidrafts" / "session-test-mv" / "mv_rescue"
+        assert (stage_base / "old_dir" / "untracked.md").exists(), "未跟踪文件应暂存到 .aidrafts/"
+        assert (stage_base / "old_dir" / "subdir" / "nested.md").exists(), "嵌套未跟踪文件应暂存"
+        # 映射文件应存在
+        mapping_file = stage_base / "mapping.json"
+        assert mapping_file.exists(), "映射文件应存在"
+        import json as _json
+        mapping = _json.loads(mapping_file.read_text(encoding="utf-8"))
+        assert mapping["source_dir"] == "old_dir"
+        assert "old_dir/untracked.md" in mapping["files"]
+
+    def test_mv_dir_blocked_preserves_files(self, temp_git_repo):
+        """端到端: block 策略 → 文件不被移动，git mv 不执行"""
+        from scripts.git_guard import check_and_execute
+
+        self._setup_dir_with_tracked_and_untracked(temp_git_repo, "old_dir")
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._passthrough", return_value=0) as mock_pass:
+                exit_code = check_and_execute(["mv", "old_dir", "new_dir"])
+
+        assert exit_code == 1, "block 策略应阻断"
+        mock_pass.assert_not_called()
+        # 未跟踪文件应仍在原位
+        assert (temp_git_repo / "old_dir" / "untracked.md").exists(), "阻断时文件不应被移动"
+        assert (temp_git_repo / "old_dir" / "subdir" / "nested.md").exists(), "嵌套文件不应被移动"
+
+    def test_mv_dir_no_untracked_e2e(self, temp_git_repo):
+        """端到端: 目录无未跟踪文件 → 正常 git mv 执行"""
+        from scripts.git_guard import check_and_execute
+
+        # 创建仅含已跟踪文件的目录
+        dir_path = temp_git_repo / "clean_dir"
+        dir_path.mkdir(exist_ok=True)
+        (dir_path / "tracked.py").write_text("# tracked\n", encoding="utf-8")
+        subprocess.run(["git", "add", "clean_dir/tracked.py"], cwd=temp_git_repo, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "add clean"], cwd=temp_git_repo, capture_output=True, check=True)
+
+        def _passthrough_in_temp(git_args):
+            return subprocess.call(["git"] + git_args, cwd=temp_git_repo)
+
+        with patch("scripts.git_guard._get_project_root", return_value=temp_git_repo):
+            with patch("scripts.git_guard._passthrough", side_effect=_passthrough_in_temp):
+                exit_code = check_and_execute(["mv", "clean_dir", "renamed_dir"])
+
+        assert exit_code == 0, "无未跟踪文件应正常执行"
+        assert (temp_git_repo / "renamed_dir" / "tracked.py").exists(), "已跟踪文件应在新目录"
+
+
+class TestMvScanUntracked:
+    """_scan_untracked_in_dir 单元测试。"""
+
+    def test_scan_finds_untracked_files(self, temp_git_repo):
+        """扫描应发现目录中的未跟踪文件"""
+        dir_path = temp_git_repo / "test_dir"
+        dir_path.mkdir(exist_ok=True)
+        (dir_path / "untracked.md").write_text("# untracked\n", encoding="utf-8")
+        (dir_path / "sub").mkdir(exist_ok=True)
+        (dir_path / "sub" / "nested.md").write_text("# nested\n", encoding="utf-8")
+
+        result = _scan_untracked_in_dir("test_dir", temp_git_repo)
+        assert "test_dir/untracked.md" in result
+        assert "test_dir/sub/nested.md" in result
+
+    def test_scan_ignores_tracked_files(self, temp_git_repo):
+        """扫描应忽略已跟踪文件"""
+        dir_path = temp_git_repo / "test_dir"
+        dir_path.mkdir(exist_ok=True)
+        (dir_path / "tracked.py").write_text("# tracked\n", encoding="utf-8")
+        subprocess.run(["git", "add", "test_dir/tracked.py"], cwd=temp_git_repo, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "add"], cwd=temp_git_repo, capture_output=True, check=True)
+
+        result = _scan_untracked_in_dir("test_dir", temp_git_repo)
+        assert len(result) == 0, "已跟踪文件不应出现在未跟踪列表"
+
+    def test_scan_empty_dir(self, temp_git_repo):
+        """空目录 → 空列表"""
+        (temp_git_repo / "empty_dir").mkdir(exist_ok=True)
+        result = _scan_untracked_in_dir("empty_dir", temp_git_repo)
+        assert result == []
