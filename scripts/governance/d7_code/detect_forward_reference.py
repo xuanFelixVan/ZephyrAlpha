@@ -76,6 +76,7 @@ def find_self_references(class_node: ast.ClassDef) -> list[tuple[int, int, str]]
 
     前向引用 bug 发生在类定义时立即执行的代码中（类变量、基类、装饰器）。
     方法体内的引用是安全的——方法在类定义完成后才被调用。
+    方法装饰器在类定义时执行，需要检测。
 
     返回 [(line, col, context), ...]
     """
@@ -85,12 +86,6 @@ def find_self_references(class_node: ast.ClassDef) -> list[tuple[int, int, str]]
     def check_node(node):
         if isinstance(node, ast.Name) and node.id == class_name:
             results.append((node.lineno, node.col_offset, class_name))
-        if isinstance(node, ast.Attribute):
-            if isinstance(node.value, ast.Name) and node.value.id == class_name:
-                results.append((node.lineno, node.col_offset, f"{class_name}.{node.attr}"))
-        if isinstance(node, ast.Subscript):
-            if isinstance(node.value, ast.Name) and node.value.id == class_name:
-                results.append((node.lineno, node.col_offset, f"{class_name}[...]"))
 
     # 检查基类列表
     for base in class_node.bases:
@@ -102,7 +97,7 @@ def find_self_references(class_node: ast.ClassDef) -> list[tuple[int, int, str]]
         for node in ast.walk(kw):
             check_node(node)
 
-    # 检查装饰器
+    # 检查类装饰器
     for decorator in class_node.decorator_list:
         for node in ast.walk(decorator):
             check_node(node)
@@ -110,6 +105,10 @@ def find_self_references(class_node: ast.ClassDef) -> list[tuple[int, int, str]]
     # 检查 body 中的非方法节点（类变量、嵌套类等）
     for stmt in class_node.body:
         if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            # 方法：只检查装饰器，不检查方法体
+            for decorator in stmt.decorator_list:
+                for node in ast.walk(decorator):
+                    check_node(node)
             continue
         for node in ast.walk(stmt):
             check_node(node)
@@ -221,7 +220,10 @@ def main() -> int:
     if result.violations:
         print(f"\n[VIOLATION] {len(result.violations)} forward reference(s) found:")
         for v in result.violations[:50]:
-            rel_path = os.path.relpath(v.filepath, REPO_ROOT)
+            try:
+                rel_path = os.path.relpath(v.filepath, REPO_ROOT)
+            except ValueError:
+                rel_path = v.filepath
             print(f"  {rel_path}:{v.line}:{v.col} | class {v.class_name} | {v.context}")
         if len(result.violations) > 50:
             print(f"  ... and {len(result.violations) - 50} more")
