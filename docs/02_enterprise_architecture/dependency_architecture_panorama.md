@@ -1638,6 +1638,41 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ---
 
+### 20.10 V4.3 扫描范围白名单裁定（#184-188）
+
+> **背景**：DB nodes 表有 18 种 node_type，但只有 4 种（module/script/test/config）应进入 nodes 表。gate(210)/contract(284)/registry(65)/schema(2) 共 561 个非代码节点污染 nodes 表（违反裁定#173/#174）；9 种非标准 node_type（event/decision/boundary/capability/domain/value_object/aggregate/design_node/production_node/domain_root）共 966 个 DDD/域概念节点混入 nodes 表；"data"类型同时出现在 CONFIG_TYPES 和 EXCLUDED_NODE_TYPES 中（自相矛盾）；tests/ 在文档中标记废止但代码仍扫描。
+>
+> **业界对标**：dependency-cruiser/madge/Bazel/Backstage/K8s 无一例外用白名单准入，不用黑名单排除。黑名单天然漏防——每新增一种非代码类型就要手动加排除，已漏掉 4 种。白名单天然安全——新类型默认不进 nodes。
+>
+> **100% AI 开发场景**：AI 无法判断"这个节点该不该在 nodes 表"——准入规则必须机械可执行；DDD 概念节点容易与文件节点混淆——概念不应在 nodes 表；AI 需要知道所有文件位置——arch_directory_tree 必须全覆盖。
+
+| # | 裁定 | 理由 |
+|---|------|------|
+| 184 | **翻转为白名单准入**：删除 EXCLUDED_NODE_TYPES 黑名单，改为白名单。nodes 表只收录 4 种 node_type：`module`(.py 代码)/`script`(.py 脚本)/`test`(.py 测试)/`config`(.yaml 运行时配置)。gate/contract/registry/schema/blueprint 等不进 nodes，保留在 arch_directory_tree | 黑名单已证明不可靠（漏掉 4 种类型导致 561 个非代码节点污染）。白名单天然安全——新类型默认不进 nodes。对齐 dependency-cruiser/madge/Bazel 实践。精确实现裁定#173"nodes 表只包含.py 代码文件+.yaml 运行时配置文件" |
+| 185 | **清理 9 种非标准 node_type**：event(326)/decision(256)/boundary(189)/capability(87)/domain(69)/value_object(60)/design_node(45)/aggregate(33)/production_node(5)/domain_root(5) 共 966 个概念节点迁移到 arch_directory_tree 或 design_nodes 表；production_node/domain_root 删除（与 design_maturity/domains 表语义重复） | nodes 表是文件级依赖图，只存文件节点。DDD/域概念是设计概念，不是文件——混在一起导致 AI 混淆"这个节点是文件还是概念"。正交分离：文件→nodes 表，概念→design_nodes 表或 arch_directory_tree |
+| 186 | **移除 tests/从 SCAN_DIRS**：从 _FALLBACK_SCAN_DIRS 删除 tests/目录，与文档"已废止(2026-06-22)"对齐 | tests/已在文档标记废止但代码未同步。代码-文档不一致是 AI 幻觉来源。如未来需恢复需先更新文档再改代码 |
+| 187 | **arch_directory_tree 扫描范围保持全覆盖**：保持 15 个扫描目录（移除 tests/后），所有文件（含文档/规则/模板/数据）都记录在 arch_directory_tree 中，不缩减 | AI 需要知道所有文件位置——"放在哪"是全景图核心目的。arch_directory_tree 不产生依赖边——不会因包含文档而产生噪音边。path_tree 生成器依赖 arch_directory_tree |
+| 188 | **修复 CONFIG_TYPES 矛盾**：从 CONFIG_TYPES 中移除 data 类型。CONFIG_TYPES 保留 config/registry/contract/schema/gate（其中 registry/contract/schema/gate 按裁定#184 不进 nodes，但保留在 CONFIG_TYPES 定义中用于分类） | "data"类型是纯数据文件，无 import 依赖，不应与 config（运行时配置）混为一谈。移除后 CONFIG_TYPES 与白名单不再矛盾 |
+
+#### 治本施工方案（5 步）
+
+| 步骤 | 施工内容 | 修复问题 | 验证 |
+|:---:|---------|:---:|------|
+| 1 | 翻转白名单准入：删除 EXCLUDED_NODE_TYPES 黑名单逻辑，改为 `if node_type not in NODES_WHITELIST: skip`。白名单={module,script,test,config} | S1/S5 | `SELECT DISTINCT node_type FROM nodes` 只返回 4 种 |
+| 2 | 清理 966 个概念节点：迁移 event/decision/boundary/capability/domain/value_object/aggregate/design_node 到 arch_directory_tree 或 design_nodes 表；删除 production_node/domain_root | S2 | `SELECT COUNT(*) FROM nodes WHERE node_type NOT IN ('module','script','test','config')` = 0 |
+| 3 | 移除 tests/从 SCAN_DIRS + 同步 trae_058 | S4 | 代码与文档一致 |
+| 4 | 修复 CONFIG_TYPES：移除 data 类型 | S3 | CONFIG_TYPES 与白名单无矛盾 |
+| 5 | 更新 §14.8 文档：扫描范围从"16 目录+6 排除类型"改为"15 目录+4 准入类型" | 全部 | 文档与代码一致 |
+
+#### 为什么白名单治本
+
+| 策略 | 机制 | 风险 |
+|------|------|------|
+| 黑名单（当前） | 每新增一种非代码类型 → 必须手动加排除 → 漏加 = 污染 | 已漏 4 种（gate/contract/registry/schema），未来还会漏 |
+| 白名单（裁定后） | 每新增一种代码类型 → 显式声明准入 → 不声明 = 默认不进 | 天然安全，零漏防 |
+
+---
+
 ## 二十一、已知数据质量问题与教训
 
 > 详细问题清单见 `archive/depgraph_issue_registry.md`。生成器 9 个 Bug 已修复，数据质量已验证（2026-06-16）。
