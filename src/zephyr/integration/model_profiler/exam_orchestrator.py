@@ -299,7 +299,11 @@ class ExamOrchestrator:
         if cap == "code_edit_precision":
             cap = "file_edit_precision" if result.get("edits") else "code_fix"
         elif cap == "context_management":
-            cap = "context_window_management" if result.get("should_start_new_session") is not None else "context_freshness_awareness"
+            cap = (
+                "context_window_management"
+                if result.get("should_start_new_session") is not None
+                else "context_freshness_awareness"
+            )
         elif cap == "hallucination_detect" and result.get("has_hallucination") is not None:
             cap = "cross_file_hallucination_detect"
         elif cap == "impact_analysis" and case.expected_affected_files:
@@ -1015,7 +1019,9 @@ class ExamOrchestrator:
         if elapsed_ms > timeout_s * 1000:
             _log.warning(
                 "Inference timeout for %s: %.1fms > %dms",
-                case.capability, elapsed_ms, int(timeout_s * 1000),
+                case.capability,
+                elapsed_ms,
+                int(timeout_s * 1000),
             )
             return {"error": "timeout", "raw": raw}
 
@@ -1042,9 +1048,7 @@ class ExamOrchestrator:
                 return idx, {"error": str(e)}
 
         with ThreadPoolExecutor(max_workers=min(max_workers, len(cases))) as executor:
-            futures = [
-                executor.submit(_infer_with_index, i, c) for i, c in enumerate(cases)
-            ]
+            futures = [executor.submit(_infer_with_index, i, c) for i, c in enumerate(cases)]
             for future in as_completed(futures):
                 idx, result = future.result()
                 results[idx] = result
