@@ -51,7 +51,7 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
     if gw is None:
         return None
     try:
-        from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
         result = asyncio.run(
             gw.scan_agent_action(
@@ -76,7 +76,7 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
                     metadata={"source": "a2a_governance"},
                 )
             )
-            from zephyr.integration.shared_08.contracts.security.security_decision import SecurityDecision
+            from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
