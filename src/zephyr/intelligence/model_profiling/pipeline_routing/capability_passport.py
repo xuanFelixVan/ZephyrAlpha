@@ -58,6 +58,10 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "architecture_design": 0.50,
     "cross_file_refactor": 0.55,
     "dependency_trace": 0.55,
+    # C类: 漂移检测能力
+    "context_consistency": 0.55,
+    "hallucination_detect": 0.55,
+    "long_context_recall": 0.55,
 }
 
 

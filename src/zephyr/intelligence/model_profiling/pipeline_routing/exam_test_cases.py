@@ -67,6 +67,10 @@ class ExamTestCase:
     expected_affected_files: list[str] = field(default_factory=list)
     expected_call_chain: list[str] = field(default_factory=list)
 
+    # C类: 漂移检测能力
+    expected_hallucinations: list[str] = field(default_factory=list)
+    expected_answer: str = ""
+
 
 # ══════════════════════════════════════════════════════════
 # task_classification (3 题)
@@ -647,7 +651,155 @@ EX_DT_003 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 39 题
+# C类: 漂移检测能力 (9 题)
+# ══════════════════════════════════════════════════════════
+
+# context_consistency (3 题) — 上下文一致性检测
+EX_CC_001 = ExamTestCase(
+    case_id="EX-CC-001",
+    capability="context_consistency",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "检查以下两段描述是否一致：\n"
+        "描述1: 函数 add(a, b) 返回 int 类型。\n"
+        "描述2: 函数 add(a, b) 返回 string 类型。\n"
+        "判断两段描述是否存在矛盾。"
+    ),
+    expected_structure_keys=["consistent", "conflicts"],
+    expected_contains=["inconsistent", "int", "string"],
+)
+
+EX_CC_002 = ExamTestCase(
+    case_id="EX-CC-002",
+    capability="context_consistency",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "检查以下代码分析报告是否一致：\n"
+        "前文: 本项目使用 SQLite 数据库存储用户数据，配置在 db.sqlite3。\n"
+        "后文: 本项目使用 PostgreSQL 数据库存储用户数据，连接字符串为 postgres://localhost。\n"
+        "判断报告中是否存在矛盾。"
+    ),
+    expected_structure_keys=["consistent", "conflicts"],
+    expected_contains=["inconsistent", "SQLite", "PostgreSQL"],
+)
+
+EX_CC_003 = ExamTestCase(
+    case_id="EX-CC-003",
+    capability="context_consistency",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "检查以下架构描述是否存在矛盾（找出所有矛盾）：\n"
+        "1. 模块名称: 用户管理模块名为 user_manager。\n"
+        "2. 模块名称: 用户管理模块名为 account_service。\n"
+        "3. 依赖方向: service 层依赖 repository 层。\n"
+        "4. 依赖方向: repository 层依赖 service 层。\n"
+        "5. 数据类型: User.id 字段类型为 int。\n"
+        "6. 数据类型: User.id 字段类型为 str。\n"
+        "判断描述中是否存在矛盾。"
+    ),
+    expected_structure_keys=["consistent", "conflicts"],
+    expected_contains=["inconsistent"],
+)
+
+# hallucination_detect (3 题) — 幻觉检测
+EX_HD_001 = ExamTestCase(
+    case_id="EX-HD-001",
+    capability="hallucination_detect",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "以下代码分析报告引用了一些模块，请识别哪些是编造的（不存在的）：\n"
+        "报告: 本项目使用了 nonexistent_module.py 进行数据处理，"
+        "同时使用了标准的 os 模块进行系统操作。"
+    ),
+    expected_structure_keys=["hallucinations"],
+    expected_hallucinations=["nonexistent_module.py"],
+    expected_contains=["nonexistent_module"],
+)
+
+EX_HD_002 = ExamTestCase(
+    case_id="EX-HD-002",
+    capability="hallucination_detect",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "以下 API 文档引用了一些函数，请识别哪些是编造的：\n"
+        "文档: 本库提供了 fetch_all_users() 函数获取所有用户，"
+        "同时封装了 requests.get() 进行 HTTP 请求。"
+    ),
+    expected_structure_keys=["hallucinations"],
+    expected_hallucinations=["fetch_all_users"],
+    expected_contains=["fetch_all_users"],
+)
+
+EX_HD_003 = ExamTestCase(
+    case_id="EX-HD-003",
+    capability="hallucination_detect",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "以下架构分析引用了一些模块，请识别所有编造的模块：\n"
+        "分析: 系统由 phantom_service、ghost_repository、mirage_controller 三个核心模块组成，"
+        "同时依赖标准的 logging 和 json 模块。"
+    ),
+    expected_structure_keys=["hallucinations"],
+    expected_hallucinations=["phantom_service", "ghost_repository", "mirage_controller"],
+    expected_contains=["phantom_service", "ghost_repository", "mirage_controller"],
+)
+
+# long_context_recall (3 题) — 长上下文召回
+EX_LCR_001 = ExamTestCase(
+    case_id="EX-LCR-001",
+    capability="long_context_recall",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "请仔细阅读以下流程说明：\n"
+        "第一步：读取配置文件。\n"
+        "第二步：初始化数据库连接。\n"
+        "第三步：加载用户数据。\n"
+        "第四步：执行业务逻辑。\n"
+        "第五步：保存结果并关闭连接。\n"
+        "问题：第一步是什么？"
+    ),
+    expected_structure_keys=["answer"],
+    expected_answer="读取配置文件",
+    expected_contains=["读取配置文件", "配置"],
+)
+
+EX_LCR_002 = ExamTestCase(
+    case_id="EX-LCR-002",
+    capability="long_context_recall",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "请仔细阅读以下技术文档：\n"
+        "系统配置参数说明：MAX_RETRIES=3 表示最大重试次数。"
+        "TIMEOUT=30 表示请求超时秒数。BATCH_SIZE=100 表示批处理大小。"
+        "CACHE_TTL=3600 表示缓存存活时间秒数。LOG_LEVEL=INFO 表示日志级别。"
+        "问题：MAX_RETRIES 的值是多少？"
+    ),
+    expected_structure_keys=["answer"],
+    expected_answer="3",
+    expected_contains=["3"],
+)
+
+EX_LCR_003 = ExamTestCase(
+    case_id="EX-LCR-003",
+    capability="long_context_recall",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "请仔细阅读以下代码审查报告：\n"
+        "审查范围：认证模块在 auth/middleware.py，负责用户身份验证。"
+        "授权模块在 auth/permissions.py，负责权限检查。"
+        "日志模块在 utils/logger.py，负责记录操作日志。"
+        "缓存模块在 utils/cache.py，负责数据缓存。"
+        "数据库模块在 db/connection.py，负责数据库连接管理。"
+        "问题：认证模块在哪个文件？"
+    ),
+    expected_structure_keys=["answer"],
+    expected_answer="auth/middleware.py",
+    expected_contains=["auth/middleware.py", "middleware"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# 全集 — 48 题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -703,6 +855,18 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_DT_001,
     EX_DT_002,
     EX_DT_003,
+    # context_consistency
+    EX_CC_001,
+    EX_CC_002,
+    EX_CC_003,
+    # hallucination_detect
+    EX_HD_001,
+    EX_HD_002,
+    EX_HD_003,
+    # long_context_recall
+    EX_LCR_001,
+    EX_LCR_002,
+    EX_LCR_003,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}

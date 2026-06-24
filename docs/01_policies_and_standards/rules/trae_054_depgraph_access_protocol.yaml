@@ -1,6 +1,6 @@
 rule_id: TRAE-054
 title: depgraph 程序化访问协议
-version: 1.1.4
+version: 1.2.0
 layer: L0
 module_id: TRAE-054
 depends_on: []
@@ -51,6 +51,8 @@ sections:
     - type: mandatory
       step: '备份范围: 仅备份 data/databases/depgraph.db 单文件。脚本文件(extract_depgraph.py/apply_depgraph.py)通过 git 常规版本控制保护，不需要额外备份触发'
     - type: mandatory
+      step: '物理备份规范(STEP0 补充): apply_depgraph.py 每次非 dry-run 写操作前自动创建物理备份。存放位置: data/databases/backups/。命名格式: {db_name}.backup.{YYYYMMDD_HHMMSS}_{tag}.db。保留策略: 最多保留 10 个最新普通备份 + 所有 *_milestone.db 版本里程碑备份。AI 不需要手动创建物理备份——apply_depgraph.py _create_physical_backup() 自动执行。跳过方式: ZEPHYR_SKIP_BACKUP_CHECK=1（仅自动化场景）'
+    - type: mandatory
       step: 'extract_depgraph.py 命令清单: --summary(域数+模块数) / --domains D-FACTOR,D-RISK / --modules D-FACTOR-01 / --top(顶级元数据) / --paths(所有physical_files) / --stats(文件大小统计)'
     - type: mandatory
       step: '变更 JSON 格式: [{"op":"update","module_id":"D-FACTOR-01","field":"blueprint_status","value":"has_blueprint"}] / [{"op":"add_physical_file","module_id":"D-FACTOR-01","path":"src/zephyr/factor/new_file.py"}] / [{"op":"remove_physical_file",...}] / [{"op":"set_physical_files","module_id":"D-FACTOR-01","files":["path1.py","path2.py"]}]'
@@ -83,6 +85,10 @@ sections:
       date: '2026-06-21'
       by: AI-Assistant
       changes: '修复未来日期——v1.1.0的date从2026-06-22(未来日期)修正为2026-06-21(当天日期)'
+    - version: '1.2.0'
+      date: '2026-06-24'
+      by: session-20260624-backup
+      changes: '新增物理备份规范——apply_depgraph.py 每次非 dry-run 写操作前自动创建物理备份到 data/databases/backups/。命名格式: {db_name}.backup.{YYYYMMDD_HHMMSS}_{tag}.db。保留策略: 最多保留 10 个最新 + 所有里程碑备份。代码实现: _create_physical_backup() + _cleanup_old_backups()。同步更新 project_rules.md RULE-SIXTEEN STEP0 + onboarding_detail.md 强制集成对照表'
 references:
   rule_ids:
   - TRAE-054
@@ -105,6 +111,12 @@ metadata:
   modification_permission: immutable_core
   superseded_by:
   change_history:
+  - version: 1.2.0
+    date: '2026-06-24'
+    by: session-20260624-backup
+    changes:
+    - 新增物理备份规范——apply_depgraph.py 自动创建物理备份到 data/databases/backups/
+    - 同步更新 project_rules.md RULE-SIXTEEN STEP0 + onboarding_detail.md 强制集成对照表
   - version: 1.1.4
     date: '2026-06-21'
     by: AI-Assistant

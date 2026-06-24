@@ -160,6 +160,23 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "including the file where each function is defined."
         '\nOutput JSON: {"call_chain": [{"step": 1, "function": "func_name", "file": "filename.py", "calls": "next_func"}]}'
     ),
+    "context_consistency": (
+        "You are a consistency checker. Given two or more statements from a technical document, "
+        "determine if they are consistent with each other. Identify any contradictions."
+        '\nOutput JSON: {"consistent": false, "conflicts": [{"statement1": "...", "statement2": "...", "reason": "why they conflict"}]}'
+    ),
+    "hallucination_detect": (
+        "You are a hallucination detector for code analysis. Given a technical report that references "
+        "files, functions, and modules, identify which references appear to be fabricated (hallucinated) "
+        "vs which are likely real. Look for names that follow common patterns but don't match standard libraries."
+        '\nOutput JSON: {"hallucinations": [{"item": "fabricated_name", "reason": "why it appears fabricated"}], "verified": [{"item": "real_name", "reason": "why it appears real"}]}'
+    ),
+    "long_context_recall": (
+        "You are a long context recall tester. You will be given a long technical document. "
+        "After reading it, answer the specific question about information from the BEGINNING of the document. "
+        "Be precise and quote the exact value or name mentioned at the start."
+        '\nOutput JSON: {"answer": "exact answer from the beginning of the document", "source_location": "beginning"}'
+    ),
 }
 
 PRICING_RMB: dict[str, dict[str, float]] = {

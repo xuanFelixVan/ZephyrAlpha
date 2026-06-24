@@ -55,6 +55,7 @@ import contextlib
 import datetime
 import json
 import os
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -136,6 +137,49 @@ def _check_git_backup(db_path: Path = DEPGRAPH_PATH) -> bool:
     return True
 
 
+_BACKUP_DIR = DEPGRAPH_PATH.parent / "backups"
+_BACKUP_KEEP = 10  # 普通备份保留数量（里程碑备份不受此限制）
+
+
+def _create_physical_backup(db_path: Path = DEPGRAPH_PATH, tag: str = "auto") -> Path | None:
+    """创建数据库的物理备份到 data/databases/backups/ 目录。
+
+    规则（trae_054 STEP0 物理备份补充）：每次 apply_depgraph.py 写操作前自动创建物理备份。
+    命名格式: {db_name}.backup.{YYYYMMDD_HHMMSS}_{tag}.db
+    保留策略: 最多保留 10 个最新 + 所有 *_milestone.db（版本里程碑）
+
+    返回：备份文件路径，None=跳过（环境变量跳过）
+    """
+    if os.environ.get(SKIP_BACKUP_CHECK_ENV) == "1":
+        return None
+
+    _BACKUP_DIR.mkdir(exist_ok=True)
+
+    ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    db_name = db_path.stem  # "depgraph" 或 "governance"
+    backup_name = f"{db_name}.backup.{ts}_{tag}.db"
+    backup_path = _BACKUP_DIR / backup_name
+
+    shutil.copy2(str(db_path), str(backup_path))
+    print(f"[PHYSICAL BACKUP] {db_path.name} -> backups/{backup_name}", file=sys.stderr)
+
+    _cleanup_old_backups(db_name)
+    return backup_path
+
+
+def _cleanup_old_backups(db_name: str, keep: int = _BACKUP_KEEP) -> None:
+    """清理旧备份：保留最新 N 个普通备份 + 所有里程碑备份。"""
+    pattern = f"{db_name}.backup.*.db"
+    backups = sorted(_BACKUP_DIR.glob(pattern), key=lambda f: f.stat().st_mtime, reverse=True)
+
+    milestones = [f for f in backups if "milestone" in f.name]
+    regular = [f for f in backups if "milestone" not in f.name]
+
+    for f in regular[keep:]:
+        f.unlink()
+        print(f"[BACKUP CLEANUP] 删除旧备份: {f.name}", file=sys.stderr)
+
+
 # 集成 lock_files.py 文件锁——堵住并发写入漏洞
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
@@ -170,6 +214,9 @@ def _db_write_lock(
     _check_db_path = Path(db_path) if db_path is not None else DEPGRAPH_PATH
     if not _check_git_backup(_check_db_path):
         sys.exit(4)
+
+    # 物理备份门禁：写入前自动创建物理备份（trae_054 STEP0 物理备份补充）
+    _create_physical_backup(_check_db_path, tag=task)
 
     oid = owner_id or f"depgraph-{os.getpid()}"
     db_path_str = str(db_path if db_path is not None else DEPGRAPH_PATH)

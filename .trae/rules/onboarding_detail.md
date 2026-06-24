@@ -333,7 +333,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | **删除文件** | 见 L0 铁律 #3 | 禁止删除 |
 | **新建功能** | 见 L0 铁律 #4 | 重复造轮子 |
 | **遇到任何决策**（方案选择/范围裁定/触发条件判定/多选项权衡） | 读 trae_025 MTH-009 → 按"分析过程+裁定结果+确认请求"三段格式输出 → 引用 MTH-007 四问（埋雷/容量/对标/建议） | 裁定格式不全或只给选项不给推荐 → 禁止提交方案 |
-| **修改 depgraph.db**（通过 apply_depgraph.py） | 见 trae_054 STEP0：`git add data/databases/depgraph.db` → `git commit -m "backup: depgraph before <操作>"` → 验证 git log | 未备份 → 禁止执行 apply_depgraph.py |
+| **修改 depgraph.db**（通过 apply_depgraph.py） | 见 trae_054 STEP0：① git 备份 `git add data/databases/depgraph.db` → `git commit -m "backup: depgraph before <操作>"` → 验证 git log ② 物理备份 apply_depgraph.py 自动创建到 `data/databases/backups/`（无需手动） | 未备份 → 禁止执行 apply_depgraph.py |
 | 修改 `src/zephyr/` 下源码 | `python -m pytest tests/ --collect-only -q` | 语法错误 → 禁止提交 |
 | 修改 YAML 契约/配置 | `python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` | 契约断裂 → 禁止合并 |
 | 修改 AGENTS.md | `python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check` | LoadPath 断裂 → 禁止提交 |

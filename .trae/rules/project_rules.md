@@ -994,9 +994,10 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 
 修改 depgraph:
   STEP 0: 前置备份（MUST，每次 apply_depgraph.py 执行前）
-          git add data/databases/depgraph.db
-          git commit -m "backup: depgraph before <操作描述>"
-          git log -1 --oneline data/databases/depgraph.db   # 验证备份存在
+          ① git 备份: git add data/databases/depgraph.db
+             git commit -m "backup: depgraph before <操作描述>"
+             git log -1 --oneline data/databases/depgraph.db   # 验证备份存在
+          ② 物理备份: apply_depgraph.py 自动创建到 data/databases/backups/（无需手动操作）
           # 回滚: git checkout HEAD~1 -- data/databases/depgraph.db
   STEP 1: AI 生成变更 JSON 文件
   STEP 2: python scripts/governance/apply_depgraph.py --batch changes.json --dry-run  # 验证

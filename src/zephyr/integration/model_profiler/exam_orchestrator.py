@@ -361,6 +361,58 @@ class ExamOrchestrator:
             em = 1 if pred_funcs == gold_funcs else 0
             return (p, r, 0.0, em)
 
+        # C类: 漂移检测能力评分
+        if cap in ("context_consistency",):
+            consistent = result.get("consistent")
+            conflicts = result.get("conflicts", [])
+            if consistent is None:
+                return (0.0, 0.0, 1.0, 0)
+            # 期望不一致（有矛盾）
+            expected_inconsistent = len(case.expected_contains) > 0
+            if expected_inconsistent:
+                correct = 1 if not consistent else 0
+                conflict_count = len(conflicts) if isinstance(conflicts, list) else 0
+                score = max(correct, min(conflict_count / 2, 1.0))
+                return (score, score, 0.0, correct)
+            else:
+                correct = 1 if consistent else 0
+                return (correct, correct, 0.0, correct)
+
+        if cap in ("hallucination_detect",):
+            hallucinations = result.get("hallucinations", [])
+            if not hallucinations:
+                return (0.0, 0.0, 1.0, 0)
+            pred_items = set()
+            for h in hallucinations:
+                if isinstance(h, dict):
+                    pred_items.add(str(h.get("item", "")).lower())
+                elif isinstance(h, str):
+                    pred_items.add(h.lower())
+            gold_items = set(h.lower() for h in case.expected_hallucinations)
+            if not gold_items:
+                text = json.dumps(result)
+                kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+                rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+                return (rate, rate, 0.0, 1 if kw_hits == len(case.expected_contains) else 0)
+            tp = len(pred_items & gold_items)
+            p = tp / len(pred_items) if pred_items else 0.0
+            r = tp / len(gold_items) if gold_items else 0.0
+            em = 1 if pred_items == gold_items else 0
+            return (p, r, 0.0, em)
+
+        if cap in ("long_context_recall",):
+            answer = str(result.get("answer", ""))
+            if not answer:
+                return (0.0, 0.0, 1.0, 0)
+            expected = case.expected_answer.lower()
+            actual = answer.lower()
+            em = 1 if expected.strip() in actual else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(em, kw_rate)
+            return (score, score, 0.0, em)
+
         return (0.0, 0.0, 1.0, 0)
 
     # ── 速轴 ────────────────────────────────────────────
