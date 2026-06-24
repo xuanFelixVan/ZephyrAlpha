@@ -585,27 +585,27 @@ EX_AD_001 = ExamTestCase(
     case_id="EX-AD-001",
     capability="architecture_design",
     difficulty=Difficulty.EASY,
-    prompt="设计一个用户注册功能，需要：1.用户输入验证 2.数据库存储 3.发送欢迎邮件。请设计文件结构和依赖关系。",
+    prompt="设计一个用户注册功能，需要：1.用户输入验证 2.密码加密 3.数据库存储 4.发送欢迎邮件 5.记录注册日志。请设计文件结构和依赖关系。",
     expected_structure_keys=["files", "dependencies"],
-    expected_contains=["validate", "database", "email", "registration"],
+    expected_contains=["validate", "password", "database", "email", "logger"],
 )
 
 EX_AD_002 = ExamTestCase(
     case_id="EX-AD-002",
     capability="architecture_design",
     difficulty=Difficulty.MEDIUM,
-    prompt="设计一个API网关，需要：1.路由转发 2.认证中间件 3.限流 4.日志记录。请设计文件结构和依赖关系。",
+    prompt="设计一个API网关，需要：1.路由转发 2.认证中间件 3.限流 4.日志记录 5.错误处理 6.请求缓存。请设计文件结构和依赖关系。",
     expected_structure_keys=["files", "dependencies"],
-    expected_contains=["router", "auth", "rate_limit", "logger", "middleware"],
+    expected_contains=["router", "auth", "rate_limit", "logger", "error", "cache"],
 )
 
 EX_AD_003 = ExamTestCase(
     case_id="EX-AD-003",
     capability="architecture_design",
     difficulty=Difficulty.HARD,
-    prompt="设计一个事件驱动架构，需要：1.事件发布 2.事件订阅 3.事件存储 4.事件回放。请设计文件结构和依赖关系。",
+    prompt="设计一个事件驱动架构，需要：1.事件发布 2.事件订阅 3.事件存储 4.事件回放 5.事件版本管理 6.死信队列。请设计文件结构和依赖关系。",
     expected_structure_keys=["files", "dependencies"],
-    expected_contains=["publisher", "subscriber", "event_store", "replay", "event"],
+    expected_contains=["publisher", "subscriber", "event_store", "replay", "version", "dead_letter"],
 )
 
 # cross_file_refactor (3 题) — 跨文件重构
@@ -1014,7 +1014,7 @@ EX_IE_001 = ExamTestCase(
     prompt="任务：读取config.yaml文件，提取database_url字段的值并返回。\n请分解任务步骤并按顺序执行。",
     expected_structure_keys=["steps"],
     expected_step_count=3,
-    expected_contains=["config.yaml", "database_url"],
+    expected_contains=["read", "parse", "extract", "return"],
 )
 
 EX_IE_002 = ExamTestCase(
@@ -1024,7 +1024,7 @@ EX_IE_002 = ExamTestCase(
     prompt="任务：搜索项目中所有.py文件，过滤出包含'import os'的文件，统计数量并生成报告。\n请分解任务步骤并按顺序执行。",
     expected_structure_keys=["steps"],
     expected_step_count=5,
-    expected_contains=["import os", "report"],
+    expected_contains=["search", "filter", "count", "report", "glob"],
 )
 
 EX_IE_003 = ExamTestCase(
@@ -1034,7 +1034,7 @@ EX_IE_003 = ExamTestCase(
     prompt="任务：读取用户输入的SQL，检查是否有DROP/DELETE语句，如果有则要求确认，最后执行SQL并返回结果。\n请分解任务步骤并按顺序执行，注意条件分支。",
     expected_structure_keys=["steps"],
     expected_step_count=4,
-    expected_contains=["DROP", "DELETE", "confirm"],
+    expected_contains=["read", "check", "confirm", "execute", "condition"],
 )
 
 
@@ -2117,6 +2117,7 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     # dependency_ordering
     EX_DO_001,
     EX_DO_002,
+    EX_DO_003,
     # cross_file_analysis
     EX_CFA_001,
     EX_CFA_002,

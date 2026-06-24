@@ -492,19 +492,18 @@ class ExamOrchestrator:
             dependencies = result.get("dependencies", [])
             if not files:
                 return (0.0, 0.0, 1.0, 0)
-            # FIX L3: 检查文件数量、依赖数量、关键词匹配
-            # 旧逻辑只检查字段存在性，模型输出空列表就得满分
+            # FIX L3.6: 提高门槛+降低结构分权重（旧逻辑3文件2依赖+kw即满分太宽松）
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
             struct_score = 0.0
-            if len(files) >= 3:  # 至少3个文件
-                struct_score += 0.3
-            if len(dependencies) >= 2:  # 至少2个依赖关系
-                struct_score += 0.3
-            struct_score += kw_rate * 0.4  # 关键词匹配占40%
+            if len(files) >= 4:  # 至少4个文件（旧值3）
+                struct_score += 0.2
+            if len(dependencies) >= 3:  # 至少3个依赖关系（旧值2）
+                struct_score += 0.2
+            struct_score += kw_rate * 0.6  # 关键词匹配占60%（旧值40%）
             score = min(struct_score, 1.0)
-            em = 1 if kw_rate >= 0.8 and len(files) >= 3 and len(dependencies) >= 2 else 0
+            em = 1 if kw_rate >= 0.8 and len(files) >= 4 and len(dependencies) >= 3 else 0
             return (score, score, 0.0, em)
 
         if cap in ("cross_file_refactor",):
@@ -688,11 +687,13 @@ class ExamOrchestrator:
             actual_count = len(steps) if isinstance(steps, list) else 0
             expected_count = case.expected_step_count
             count_score = min(actual_count / expected_count, 1.0) if expected_count > 0 else 0.0
+            # FIX L3.6: 改为加权评分（旧逻辑max导致只检查数量不检查内容）
+            # 步骤数量40% + 步骤内容关键词60%
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
-            em = 1 if actual_count == expected_count else 0
-            score = max(count_score, _kw_capped(kw_rate))
+            score = count_score * 0.4 + kw_rate * 0.6
+            em = 1 if count_score >= 0.8 and kw_rate >= 0.8 else 0
             return (score, score, 0.0, em)
 
         # H类: 错误恢复评分
@@ -877,6 +878,7 @@ class ExamOrchestrator:
             order = result.get("order", [])
             if not order:
                 return (0.0, 0.0, 1.0, 0)
+            # FIX L3.6: 改为加权评分（旧逻辑max导致只检查排序不检查内容）
             text = json.dumps(result)
             kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
             kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
@@ -890,8 +892,10 @@ class ExamOrchestrator:
                     min_len = min(len(pred_order), len(gold_order))
                     matches = sum(1 for i in range(min_len) if pred_order[i] == gold_order[i])
                     order_score = matches / len(gold_order)
-            score = max(order_score, _kw_capped(kw_rate))
-            return (score, score, 0.0, 1 if order_score >= 0.8 else 0)
+            # 排序准确70% + 内容关键词30%
+            score = order_score * 0.7 + kw_rate * 0.3
+            em = 1 if order_score >= 1.0 and kw_rate >= 0.8 else 0
+            return (score, score, 0.0, em)
 
         # M类: 上下文管理能力评分
         if cap in ("cross_file_hallucination_detect",):
