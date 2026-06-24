@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.1
 # [MODULE] zephyr.security.access_control.orphan_judge.drift_bridge
 # [DOMAIN] D-SECURITY
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.drift_detector
+# [DEPENDENCIES]
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(starve/stale判定)
 # [STARTUP] imported
 # [MATURITY] prototype
