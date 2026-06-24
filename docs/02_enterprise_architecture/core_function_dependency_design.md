@@ -3,7 +3,7 @@ module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
 status: draft
-version: 0.3.5
+version: 0.3.6
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -515,20 +515,31 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 |  F7 | llm\_safety\_gateway 设计态        | D-SECURITY      |
 | F18 | governance\_script\_system 设计态  | D-GOVERNANCE    |
 | F20 | unified\_monitor 设计态            | D-OPS           |
-| F21 | ide\_health\_guardian 设计态       | D-INFRA-OPS     |
-| F23 | agent\_orchestrator 设计态         | D-AUTONOMY-CORE |
-| F24 | agent\_spec\_skill 设计态          | D-AUTONOMY-CORE |
-| F27 | capacity\_assurance 设计态         | D-INFRA-OPS     |
+| F21 | ide\_health\_guardian 设计态       | D-INFRA_OPS     |
+| F23 | agent\_orchestrator 设计态         | D-AUTONOMY_CORE |
+| F24 | agent\_spec\_skill 设计态          | D-AUTONOMY_CORE |
+| F27 | capacity\_assurance 设计态         | D-INFRA_OPS     |
 | F28 | asset\_inventory 设计态            | D-GOVERNANCE    |
 | F29 | semantic\_auditor 设计态           | D-GOVERNANCE    |
 | F30 | red\_blue\_validator 设计态        | D-SECURITY      |
 | F31 | registry\_governance 设计态        | D-GOVERNANCE    |
-| F32 | state\_machine\_engine 设计态      | D-AUTONOMY-CORE |
-| F33 | local\_model\_infra 设计态         | D-INFRA-OPS     |
+| F32 | state\_machine\_engine 设计态      | D-AUTONOMY_CORE |
+| F33 | local\_model\_infra 设计态         | D-INFRA_OPS     |
 | F34 | code\_dedup\_engine 设计态         | D-GOVERNANCE    |
 | F35 | file\_structure\_governance 设计态 | D-GOVERNANCE    |
-| F36 | audit\_trail\_chain 设计态         | D-GOV-AUDIT     |
-| F37 | resource\_optimization 设计态      | D-INFRA-OPS     |
+| F36 | audit\_trail\_chain 设计态         | D-GOV_AUDIT     |
+| F37 | resource\_optimization 设计态      | D-INFRA_OPS     |
+
+> **规划差异说明**（depgraph.db 现状 vs 本文档规划目标）：
+> 以下5个功能的设计域归属与 depgraph.db 现状不一致，本文档为规划目标，depgraph.db 需按本文档迁移：
+>
+> | 功能 | 本文档规划域 | depgraph现状域 | 迁移理由 |
+> |:---:|:---:|:---:|------|
+> | F28 | D-GOVERNANCE | D-OPS | "统一登记"偏治理，非运维 |
+> | F32 | D-AUTONOMY_CORE | D-GOVERNANCE | 通用框架非治理功能 |
+> | F33 | D-INFRA_OPS | D-AUTONOMY_CORE | 基础设施非自治逻辑 |
+> | F36 | D-GOV_AUDIT | D-SECURITY | 专用审计域更精确 |
+> | F37 | D-INFRA_OPS | D-AUTONOMY_CORE | 基础设施运维 |
 
 ***
 
@@ -591,4 +602,4 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.3 | 2026-06-24 | 第5轮审查修复8个问题：①F19入度4→5（实际5条入边）②§4.3规则3限定DIP范围（业务调度用contract/event，健康检查F1→F21和同层协作F1→F23允许runtime）③§7.1添加pipeline_start事件，事件总数11→12 ④§8新增§8.3类型变更记录 ⑤§7.2事件方向图修正（L6不发布事件）⑥§10第5项排除F26 ⑦F8说明删除"入度最高" ⑧§7.1添加event边说明 |
 | 0.3.4 | 2026-06-24 | 第6轮审查修复4个问题：①设计原则2与§4.3规则3同步（添加业务调度限定+健康检查/同层协作例外）②F12说明删除"入度最高"（F22入度11才是最高）③§10第4项F5/F9/F10入度=0→跨层入度=0（F9入度1来自L6内部F5→F9）④§7.2事件方向图添加L2（pipeline_start发布者F1在L2） |
 | 0.3.5 | 2026-06-24 | 第7轮审查修复4个问题：①frontmatter version 0.3.2→0.3.5（与变更历史同步）②§二末尾事件方向L4/L5→L2/L3/L4/L5（F1在L2、F4/F2/F27在L3发布事件）③§7.2事件方向图L1/L2/L3/L4/L5→L2/L3/L4/L5（L1的F21不发布事件）④§7.2禁止说明同步去除L1 |
-
+| 0.3.6 | 2026-06-24 | 功能域审查修复：①P1域ID命名格式统一为下划线（D-INFRA_OPS/D-AUTONOMY_CORE/D-GOV_AUDIT，共8处连字符→下划线，与depgraph.db真源对齐）②P2添加规划差异说明（F28/F32/F33/F36/F37共5个功能设计域归属与depgraph现状不一致，本文档为规划目标，depgraph需迁移） |
