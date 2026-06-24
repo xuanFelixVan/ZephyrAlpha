@@ -1160,8 +1160,8 @@ def cmd_update_domain_capacity(
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     返回：True=成功，False=失败
     """
-    ALLOWED_FIELDS = {"current_modules", "max_modules"}
-    FIELD_ALIASES = {"current": "current_modules", "max": "max_modules"}
+    ALLOWED_FIELDS = {"current_modules", "max_modules", "production_nodes"}
+    FIELD_ALIASES = {"current": "current_modules", "max": "max_modules", "prod": "production_nodes"}
     field = FIELD_ALIASES.get(field, field)
     if field not in ALLOWED_FIELDS:
         print(f"ERROR: field 必须是 {ALLOWED_FIELDS} 之一（或简写 current/max），实际: {field}", file=sys.stderr)
@@ -1177,13 +1177,14 @@ def cmd_update_domain_capacity(
             conn = sqlite3.connect(db_path)
         try:
             existing = conn.execute(
-                "SELECT domain_id, current_modules, max_modules FROM domains WHERE domain_id=?", (domain_id,)
+                "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=?", (domain_id,)
             ).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
 
-            old_value = existing[1] if field == "current_modules" else existing[2]
+            field_idx = {"current_modules": 1, "max_modules": 2, "production_nodes": 3}
+            old_value = existing[field_idx[field]]
             if dry_run:
                 print(f"[DRY RUN] 将 UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
                 return True

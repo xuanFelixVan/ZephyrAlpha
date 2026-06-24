@@ -770,6 +770,13 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             _DDL_DOMAIN_MAPPING,
         ],
     ),
+    (
+        9,
+        "v9: Add production_nodes column to domains（ARCH-CAP-001 口径修复）",
+        [
+            "ALTER TABLE domains ADD COLUMN production_nodes INTEGER DEFAULT 0",
+        ],
+    ),
 ]
 
 

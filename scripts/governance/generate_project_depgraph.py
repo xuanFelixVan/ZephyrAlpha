@@ -2841,22 +2841,26 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         except Exception as e:
             print(f"  [H4] Warning: fake blueprint_id cleanup failed: {e}")
 
-        # H7 fix: Sync current_modules to domains (v6: arch_domain_capacity已合并入domains)
-        # DM-100263: current_modules 按 production 节点口径统计（ARCH-CAP-001）
+        # H7 fix: Sync current_modules (all nodes) + production_nodes (production only) to domains
+        # ARCH-CAP-001: current_modules = 全节点数（含 design+prototype+production）
+        #                production_nodes = production 节点数（容量判定口径）
         try:
             cur = conn.cursor()
             cur.execute("SELECT domain_id FROM domains")
             domain_rows = cur.fetchall()
             updated = 0
             for (did,) in domain_rows:
+                cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=?", (did,))
+                all_count = cur.fetchone()[0]
+                cur.execute("UPDATE domains SET current_modules=? WHERE domain_id=?", (all_count, did))
                 cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=? AND design_maturity='production'", (did,))
-                actual = cur.fetchone()[0]
-                cur.execute("UPDATE domains SET current_modules=? WHERE domain_id=?", (actual, did))
+                prod_count = cur.fetchone()[0]
+                cur.execute("UPDATE domains SET production_nodes=? WHERE domain_id=?", (prod_count, did))
                 updated += 1
             conn.commit()
-            print(f"  [H7] Synced current_modules (production口径) for {updated} domains")
+            print(f"  [H7] Synced current_modules (all) + production_nodes (production) for {updated} domains")
         except Exception as e:
-            print(f"  [H7] Warning: current_modules sync failed: {e}")
+            print(f"  [H7] Warning: capacity sync failed: {e}")
 
         # DM-3011: 显式冲突解决（设计态优先）- 在restore_design_data之后调用
         try:
