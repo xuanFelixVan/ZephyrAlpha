@@ -69,9 +69,7 @@ PATTERN = re.compile(
 )
 
 # AI 归因 trailer 模式（git trailer convention: Key: Value）
-AI_TRAILER_PATTERN = re.compile(
-    r"^(Co-Authored-By|AI-Generated-By|Generated-By):\s*.+", re.MULTILINE
-)
+AI_TRAILER_PATTERN = re.compile(r"^(Co-Authored-By|AI-Generated-By|Generated-By):\s*.+", re.MULTILINE)
 
 
 def check_ai_attribution(full_msg: str) -> bool:
