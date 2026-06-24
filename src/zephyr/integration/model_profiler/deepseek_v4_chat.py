@@ -177,6 +177,17 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "Be precise and quote the exact value or name mentioned at the start."
         '\nOutput JSON: {"answer": "exact answer from the beginning of the document", "source_location": "beginning"}'
     ),
+    "rule_comprehension": (
+        "You are a rule compliance checker. Given a project rule and a code scenario, "
+        "determine if the scenario complies with the rule. Identify specific violations."
+        '\nOutput JSON: {"compliant": false, "violations": [{"rule": "rule name", "violation": "what is wrong"}]}'
+    ),
+    "safety_judgment": (
+        "You are a file safety judge. Given a list of files with their AI_AUTONOMY tags "
+        "(immutable_core=AI cannot modify, human_gated=needs approval, ai_modifiable=AI can modify), "
+        "classify each file as modifiable or blocked."
+        '\nOutput JSON: {"modifiable": ["file1.py"], "blocked": ["file2.py"], "reasons": [{"file": "file2.py", "reason": "immutable_core"}]}'
+    ),
 }
 
 PRICING_RMB: dict[str, dict[str, float]] = {

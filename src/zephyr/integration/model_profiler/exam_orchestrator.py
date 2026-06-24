@@ -413,6 +413,40 @@ class ExamOrchestrator:
             score = max(em, kw_rate)
             return (score, score, 0.0, em)
 
+        # D类: 规则理解能力评分
+        if cap in ("rule_comprehension",):
+            compliant = result.get("compliant")
+            violations = result.get("violations", [])
+            if compliant is None:
+                return (0.0, 0.0, 1.0, 0)
+            expected_compliant = case.expected_compliant
+            correct = 1 if compliant == expected_compliant else 0
+            violation_count = len(violations) if isinstance(violations, list) else 0
+            text = json.dumps(result)
+            kw_hits = sum(1 for kw in case.expected_contains if kw.lower() in text.lower())
+            kw_rate = kw_hits / len(case.expected_contains) if case.expected_contains else 0.0
+            score = max(correct, kw_rate)
+            return (score, score, 0.0, correct)
+
+        if cap in ("safety_judgment",):
+            modifiable = result.get("modifiable", [])
+            blocked = result.get("blocked", [])
+            if not modifiable and not blocked:
+                return (0.0, 0.0, 1.0, 0)
+            pred_modifiable = set(str(f).lower() for f in modifiable) if isinstance(modifiable, list) else set()
+            pred_blocked = set(str(f).lower() for f in blocked) if isinstance(blocked, list) else set()
+            gold_modifiable = set(f.lower() for f in case.expected_modifiable)
+            gold_blocked = set(f.lower() for f in case.expected_blocked)
+            tp_m = len(pred_modifiable & gold_modifiable)
+            tp_b = len(pred_blocked & gold_blocked)
+            total_pred = len(pred_modifiable) + len(pred_blocked)
+            total_gold = len(gold_modifiable) + len(gold_blocked)
+            tp = tp_m + tp_b
+            p = tp / total_pred if total_pred > 0 else 0.0
+            r = tp / total_gold if total_gold > 0 else 0.0
+            em = 1 if (pred_modifiable == gold_modifiable and pred_blocked == gold_blocked) else 0
+            return (p, r, 0.0, em)
+
         return (0.0, 0.0, 1.0, 0)
 
     # ── 速轴 ────────────────────────────────────────────

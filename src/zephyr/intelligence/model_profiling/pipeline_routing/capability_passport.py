@@ -62,6 +62,9 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "context_consistency": 0.55,
     "hallucination_detect": 0.55,
     "long_context_recall": 0.55,
+    # D类: 规则理解能力
+    "rule_comprehension": 0.55,
+    "safety_judgment": 0.60,
 }
 
 
