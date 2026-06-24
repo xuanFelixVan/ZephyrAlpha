@@ -1673,6 +1673,42 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 ---
 
+### 20.11 V4.3 设计态节点角色裁定（#189-193）
+
+> **背景**：DB 有 8064 个 design_maturity='design' 节点，但 95.3%（7682 个）无 blueprint_id——是生成器违规为.md 文件创建的"幽灵设计节点"（违反§12.1"唯一来源"规则）。仅 456 个有 blueprint_id（175 已实现 + 281 未实现）。关联机制（blueprint_id）对 95.3% 的节点失效。"单向不可逆迁移"描述误导——设计节点不会变成生产节点，只是被生产节点"伴随"。
+>
+> **业界对标**：K8s desired state（yaml manifest）vs actual state（pod status）分离存储，controller 做 reconciliation；Terraform desired（.tf）vs actual（tfstate）分离文件；Bazel BUILD 文件定义 target，代码实现 target——分离但关联。ZephyrAlpha 选择合并存储（用 design_maturity 字段区分）为 AI 便利，但需清晰的 realization detection 机制。
+>
+> **100% AI 开发场景**：AI 需要知道"还没造的模块有哪些"——设计态节点必须准确，幽灵节点会误导 AI 认为这些模块"已规划"；AI 需要知道"规划实现了没"——需要自动 realization detection。
+
+| # | 裁定 | 理由 |
+|---|------|------|
+| 189 | **设计态节点只由人工通过 apply_depgraph.py 写入，生成器不得创建**：重申§12.1"唯一来源"规则；删除 derive_design_maturity 的 `if node_type == "blueprint": return "design"` 分支；生成器扫描到的所有文件节点都是 production/prototype，不是 design | §12.1 已规定"不自动生成"，但代码违反此规则。7682 个幽灵设计节点是生成器违规产生的噪音。设计态节点代表"人工规划 intent"，自动生成的节点没有 intent |
+| 190 | **设计态节点 build_status 使用 3 态子集**：planned（规划中，未实现）/stable（已实现，规划已落地）/deprecated（已废弃）。不使用 generated/testing——这两个状态只适用于有代码文件的生产节点 | 设计态节点是规划占位符，不是代码文件。build_status 只表示"规划是否落地"。对齐 K8s reconciliation：desired state 的 status 是"已满足/未满足" |
+| 191 | **realization detection 由生成器自动执行**：生成器每次运行时，查询所有 design_maturity='design' 且有 blueprint_id 的节点，检测是否有同 blueprint_id 的 production 节点，有则设 build_status='stable'，无则设 build_status='planned' | 对齐 K8s reconciliation controller——自动对比 desired/actual。AI 无需写复杂 JOIN 查询——build_status 直接反映实现状态 |
+| 192 | **清理 7682 个幽灵设计节点**：删除无 blueprint_id 的 design_maturity='design' 节点；保留 281 个未实现设计节点（build_status='planned'）+ 175 个已实现设计节点（build_status='stable'） | 幽灵节点无人工 intent，不是规划——保留只会误导 AI。删除后设计态节点从 8064 降至 456，精确反映实际规划。裁定#184 白名单准入实施后，.md 文件不再进 nodes 表，幽灵节点不会再产生 |
+| 193 | **设计态→运营态不是"迁移"而是"实现"**：更新§12.6 和§17 文档，将"设计态升级为运营态"改为"设计态实现检测"。设计态节点不会变成运营态节点——它们是不同的行，通过 blueprint_id 关联。"实现"= 生成器扫描到代码文件，创建 production 节点，同时更新设计态节点 build_status='stable' | "迁移"暗示设计节点变成生产节点——这是误导。实际上它们是不同的行。"实现"准确描述了发生的事——规划被实现了，但规划记录本身不变。对齐 K8s：desired state manifest 不会变成 pod |
+
+#### 治本施工方案（4 步）
+
+| 步骤 | 施工内容 | 修复问题 | 验证 |
+|:---:|---------|:---:|------|
+| 1 | 删除 derive_design_maturity 的 blueprint 分支：生成器不再为.md 文件创建设计态节点 | P1/P5 | 生成器运行后 design_maturity='design' 节点数≤456 |
+| 2 | 清理 7682 个幽灵设计节点：删除无 blueprint_id 的 design_maturity='design' 节点 | P1 | `SELECT COUNT(*) FROM nodes WHERE design_maturity='design' AND (blueprint_id IS NULL OR blueprint_id='')` = 0 |
+| 3 | 实现 realization detection：生成器每次运行时自动检测设计态节点实现状态，更新 build_status | P3/P4 | `SELECT COUNT(*) FROM nodes WHERE design_maturity='design' AND build_status='stable'` ≈ 175 |
+| 4 | 更新§12.6 和§17 文档：将"设计态升级为运营态"改为"设计态实现检测"；更新 build_status 状态机表 | P2 | 文档与代码一致 |
+
+#### 为什么治本
+
+| 问题 | 治本措施 | 治本逻辑 |
+|------|---------|---------|
+| 7682 幽灵节点 | Step 1 堵源头 + Step 2 清存量 | 生成器不再违规创建 + 历史噪音清除 |
+| 关联机制失效 | 裁定#191 realization detection | 生成器自动检测，AI 无需手动 JOIN |
+| "迁移"误导 | 裁定#193 改为"实现" | 准确描述：设计节点不变成生产节点，只是被"伴随" |
+| build_status 混乱 | 裁定#190 3 态子集 | 设计态只用 planned/stable/deprecated，不用 generated/testing |
+
+---
+
 ## 二十一、已知数据质量问题与教训
 
 > 详细问题清单见 `archive/depgraph_issue_registry.md`。生成器 9 个 Bug 已修复，数据质量已验证（2026-06-16）。

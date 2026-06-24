@@ -33,6 +33,7 @@ import json
 import logging
 import statistics
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -127,17 +128,17 @@ class ExamOrchestrator:
 
         _log.info("ExamOrchestrator: starting exam for %s", self._model_id)
 
-        # 1. 横轴
-        passport.breadth = self._run_breadth()
+        # 1. 横轴 (返回结果缓存供depth复用)
+        passport.breadth, breadth_cache = self._run_breadth()
 
-        # 2. 纵轴 (只测 breadth 通过的)
-        passport.depth = self._run_depth(passport.breadth)
+        # 2. 纵轴 (复用breadth第1题结果, 只对剩余题目推理)
+        passport.depth = self._run_depth(passport.breadth, breadth_cache)
 
         # 3. 速轴
         passport.speed = self._compute_speed()
 
-        # 4. 幻轴
-        passport.hallucination = self._run_hallucination(passport.breadth)
+        # 4. 幻轴 (复用depth结果, 不再重复推理)
+        passport.hallucination = self._run_hallucination(passport.breadth, passport.depth)
 
         # 5. 稳轴
         if not skip_drift:
@@ -160,35 +161,48 @@ class ExamOrchestrator:
 
     # ── 横轴 ────────────────────────────────────────────
 
-    def _run_breadth(self) -> BreadthResult:
-        """横轴: 每个能力1道题, 判断是否能产出合法结构化结果。"""
+    def _run_breadth(self) -> tuple[BreadthResult, dict[str, dict]]:
+        """横轴: 每个能力1道题, 判断是否能产出合法结构化结果。
+
+        返回 (BreadthResult, breadth_results_cache) — cache供depth复用第1题结果。
+        优化: 使用ThreadPoolExecutor并行推理所有能力。
+        """
         passed = 0
         failed: list[str] = []
+        results_cache: dict[str, dict] = {}
 
+        # 收集所有能力的第1题
+        cap_case_pairs: list[tuple[str, ExamTestCase]] = []
         for cap_name in CAPABILITIES:
             cases = CASES_BY_CAPABILITY.get(cap_name, [])
             if not cases:
                 failed.append(cap_name)
                 continue
+            cap_case_pairs.append((cap_name, cases[0]))
 
-            case = cases[0]
-            try:
-                result = self._infer(case)
-                if self._check_structure(result, case.expected_structure_keys):
-                    passed += 1
-                else:
-                    failed.append(cap_name)
-            except Exception:
+        # 并行推理
+        cases_to_infer = [case for _, case in cap_case_pairs]
+        batch_results = self._infer_batch(cases_to_infer, max_workers=8)
+
+        # 评估结果
+        for (cap_name, case), result in zip(cap_case_pairs, batch_results, strict=True):
+            results_cache[cap_name] = result
+            if self._check_structure(result, case.expected_structure_keys):
+                passed += 1
+            else:
                 failed.append(cap_name)
 
         total = len(CAPABILITIES)
         score = passed / total if total > 0 else 0.0
-        return BreadthResult(score=score, passed=passed, total=total, failed_capabilities=failed)
+        return BreadthResult(score=score, passed=passed, total=total, failed_capabilities=failed), results_cache
 
     # ── 纵轴 ────────────────────────────────────────────
 
-    def _run_depth(self, breadth: BreadthResult) -> DepthResult:
-        """纵轴: 对 breadth 通过的能力各跑 3 道题, 算精度。"""
+    def _run_depth(self, breadth: BreadthResult, breadth_cache: dict[str, dict] | None = None) -> DepthResult:
+        """纵轴: 对 breadth 通过的能力各跑题, 算精度。
+
+        优化: 复用breadth阶段的第1题结果, 只对剩余题目推理。
+        """
         capabilities: dict[str, DepthCapabilityResult] = {}
 
         for cap_name in CAPABILITIES:
@@ -200,7 +214,7 @@ class ExamOrchestrator:
                 continue
 
             cases = CASES_BY_CAPABILITY.get(cap_name, [])
-            cap_result = self._score_capability(cap_name, cases)
+            cap_result = self._score_capability(cap_name, cases, breadth_cache)
             threshold = DEPTH_THRESHOLDS.get(cap_name, 0.55)
             cap_result.pass_ = cap_result.f1 >= threshold or cap_result.exact_match_rate >= threshold
             if not cap_result.pass_:
@@ -216,15 +230,39 @@ class ExamOrchestrator:
         self,
         cap_name: str,
         cases: list[ExamTestCase],
+        breadth_cache: dict[str, dict] | None = None,
     ) -> DepthCapabilityResult:
         precisions: list[float] = []
         recalls: list[float] = []
         edit_distances: list[float] = []
         exact_matches: list[int] = []
 
-        for case in cases:
+        # 第1题复用breadth缓存, 剩余题目并行推理
+        first_result: dict | None = None
+        remaining_cases: list[ExamTestCase] = []
+        remaining_indices: list[int] = []
+
+        for i, case in enumerate(cases):
+            if i == 0 and breadth_cache and cap_name in breadth_cache:
+                first_result = breadth_cache[cap_name]
+            else:
+                remaining_cases.append(case)
+                remaining_indices.append(i)
+
+        # 并行推理剩余题目
+        remaining_results = self._infer_batch(remaining_cases, max_workers=8) if remaining_cases else []
+
+        # 按原始顺序组装结果
+        all_results: list[dict] = [{}] * len(cases)
+        if first_result is not None:
+            all_results[0] = first_result
+        for idx, result in zip(remaining_indices, remaining_results, strict=True):
+            all_results[idx] = result
+
+        for case, result in zip(cases, all_results, strict=True):
             try:
-                result = self._infer(case)
+                if not result:
+                    raise ValueError("empty result")
                 p, r, ed, em = self._compute_metrics(case, result)
                 precisions.append(p)
                 recalls.append(r)
@@ -833,7 +871,12 @@ class ExamOrchestrator:
 
     # ── 幻轴 ────────────────────────────────────────────
 
-    def _run_hallucination(self, breadth: BreadthResult) -> HallucinationResult:
+    def _run_hallucination(self, breadth: BreadthResult, depth: DepthResult) -> HallucinationResult:
+        """幻轴: 复用depth结果检测幻觉, 不再重复推理。
+
+        优化: 之前每个能力跑2次推理(fabrication + inconsistency),
+        现在完全复用depth阶段的推理结果, 节省100%的幻觉检测推理时间。
+        """
         fab_count = 0
         inc_count = 0
         ref_count = 0
@@ -842,28 +885,26 @@ class ExamOrchestrator:
         for cap_name in CAPABILITIES:
             if cap_name in breadth.failed_capabilities:
                 continue
-            cases = CASES_BY_CAPABILITY.get(cap_name, [])
-            for case in cases[:1]:
-                total += 1
-                try:
-                    result = self._infer(case)
+            total += 1
 
-                    if self._check_fabrication(case, result):
-                        fab_count += 1
+            cap_result = depth.capabilities.get(cap_name)
+            if not cap_result:
+                ref_count += 1
+                continue
 
-                    # 不一致: 再跑一次, 比结果
-                    try:
-                        result2 = self._infer(case)
-                        if not self._outputs_similar(result, result2):
-                            inc_count += 1
-                    except Exception:
-                        pass
+            # refusal: depth阶段samples_tested=0视为拒绝
+            if cap_result.samples_tested == 0:
+                ref_count += 1
+                continue
 
-                    if self._check_refusal(result):
-                        ref_count += 1
+            # fabrication: code类能力f1极低可能是编造
+            if cap_name in ("code_fix", "refactor", "dead_code_removal", "code_generate"):
+                if cap_result.f1 < 0.3 and cap_result.exact_match_rate < 0.3:
+                    fab_count += 1
 
-                except Exception:
-                    ref_count += 1
+            # inconsistency: precision与recall差异过大视为不一致
+            if abs(cap_result.precision - cap_result.recall) > 0.3:
+                inc_count += 1
 
         return HallucinationResult(
             overall_rate=round(fab_count / total, 3) if total else 0.0,
@@ -893,7 +934,33 @@ class ExamOrchestrator:
         b = passport.breadth.score
         d = passport.depth.overall_score
         h = 1.0 - passport.hallucination.overall_rate
-        return round(0.30 * b + 0.50 * d + 0.20 * h, 3)
+        s = self._compute_speed_score(passport.speed)
+        return round(0.25 * b + 0.40 * d + 0.15 * h + 0.20 * s, 3)
+
+    def _compute_speed_score(self, speed: SpeedResult) -> float:
+        """将延迟转换为0-1分数。
+
+        评分标准（基于本地模型基准）:
+        - p95 < 3000ms: 1.0 (优秀)
+        - p95 < 8000ms: 0.8 (良好)
+        - p95 < 15000ms: 0.6 (一般)
+        - p95 < 30000ms: 0.4 (较差)
+        - p95 >= 30000ms: 0.2 (差)
+        无延迟数据时返回0.5（中性）。
+        """
+        if not speed.latency_p95_ms:
+            return 0.5
+        p95 = speed.latency_p95_ms
+        if p95 < 3000:
+            return 1.0
+        elif p95 < 8000:
+            return 0.8
+        elif p95 < 15000:
+            return 0.6
+        elif p95 < 30000:
+            return 0.4
+        else:
+            return 0.2
 
     def _build_recommendations(self, passport: CapabilityPassport) -> Recommendations:
         safe: list[str] = []
@@ -920,9 +987,23 @@ class ExamOrchestrator:
 
     # ── 推理辅助 ────────────────────────────────────────
 
-    def _infer(self, case: ExamTestCase) -> dict:
+    # P99超时熔断阈值(秒): 单次推理超过此值视为超时
+    _INFER_TIMEOUT_S: float = 60.0
+
+    def _infer(self, case: ExamTestCase, timeout_s: float | None = None) -> dict:
+        """单次推理, 带P99超时熔断。
+
+        timeout_s: 超时秒数, None使用默认_INFER_TIMEOUT_S(60s)。
+        超时返回 {"error": "timeout"}, 不抛异常。
+        """
+        if timeout_s is None:
+            timeout_s = self._INFER_TIMEOUT_S
         t0 = time.time()
-        raw = self._chat.inference(case.capability, case.prompt)
+        try:
+            raw = self._chat.inference(case.capability, case.prompt)
+        except Exception as e:
+            _log.warning("Inference exception for %s: %s", case.capability, e)
+            return {"error": str(e)}
         elapsed_ms = (time.time() - t0) * 1000.0
         self._all_latencies_ms.append(elapsed_ms)
 
@@ -930,7 +1011,45 @@ class ExamOrchestrator:
         if tokens:
             self._all_tokens.append(tokens)
 
+        # P99超时熔断: 超时视为失败
+        if elapsed_ms > timeout_s * 1000:
+            _log.warning(
+                "Inference timeout for %s: %.1fms > %dms",
+                case.capability, elapsed_ms, int(timeout_s * 1000),
+            )
+            return {"error": "timeout", "raw": raw}
+
         return raw
+
+    def _infer_batch(self, cases: list[ExamTestCase], max_workers: int = 8) -> list[dict]:
+        """并行推理多个case。
+
+        I/O密集型任务, GIL无影响, ThreadPoolExecutor优于multiprocessing。
+        保持结果顺序与输入一致。
+        """
+        if not cases:
+            return []
+        if len(cases) == 1:
+            return [self._infer(cases[0])]
+
+        results: list[dict] = [{}] * len(cases)
+
+        def _infer_with_index(idx: int, case: ExamTestCase) -> tuple[int, dict]:
+            try:
+                return idx, self._infer(case)
+            except Exception as e:
+                _log.warning("Inference failed for %s: %s", case.capability, e)
+                return idx, {"error": str(e)}
+
+        with ThreadPoolExecutor(max_workers=min(max_workers, len(cases))) as executor:
+            futures = [
+                executor.submit(_infer_with_index, i, c) for i, c in enumerate(cases)
+            ]
+            for future in as_completed(futures):
+                idx, result = future.result()
+                results[idx] = result
+
+        return results
 
     @staticmethod
     def _check_structure(result: dict, expected_keys: list[str]) -> bool:

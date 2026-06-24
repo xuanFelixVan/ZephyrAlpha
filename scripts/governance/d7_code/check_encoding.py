@@ -20,7 +20,11 @@
 - --file: 检查指定文件的编码合规性（UTF-8 BOM/无BOM、无 CRLF、无 autoGuessEncoding）
 - 包装 scripts/governance/d7_code/detect_missing_encoding.py 的功能
 
-exit codes: 0=pass, 1=findings, 2=error
+语义说明（2026-06-25, OPS-2026062501 修复）：
+- BOM/autoGuessEncoding/mojibake = FAIL 级（阻断提交）
+- CRLF = WARNING 级（不阻断提交，靠 .gitattributes + git add --renormalize 在仓库层解决）
+
+exit codes: 0=pass, 1=findings(FAIL级), 2=error
 """
 
 from __future__ import annotations
@@ -191,22 +195,34 @@ def _detect_mojibake(content: str) -> bool:
     return _detect_mojibake_bytes(content.encode("utf-8"))
 
 
-def check_file_encoding(filepath: str) -> list[str]:
-    """Check compliance and report findings."""
-    findings = []
+def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
+    """Check compliance and report findings and warnings separately.
+
+    Returns:
+        (findings, warnings) — findings are FAIL-level (block commit),
+        warnings are WARNING-level (do not block commit).
+
+    语义修复（2026-06-25, OPS-2026062501）：
+        原 CRLF 标记为 WARNING 文本但走 exit(1) 硬阻断，语义不一致。
+        现 CRLF 改为真正的 WARNING（不阻断），保留 BOM/mojibake 的硬阻断。
+        CRLF 应靠 .gitattributes + git add --renormalize 在仓库层解决，
+        不靠每次提交时检查阻断（对标 GitHub/Linux/Google 实践）。
+    """
+    findings = []  # FAIL 级别，阻断提交
+    warnings = []  # WARNING 级别，不阻断提交
     p = Path(filepath)
     if not p.exists():
         findings.append(f"INJ-007 FAIL: file '{filepath}' does not exist")
-        return findings
+        return findings, warnings
     if p.is_dir():
         findings.append(f"INJ-007 FAIL: '{filepath}' is a directory, use --dir instead")
-        return findings
+        return findings, warnings
     raw = p.read_bytes()
     if raw.startswith(BOM):
         findings.append(f"INJ-007 FAIL: file '{filepath}' has UTF-8 BOM — must be UTF-8 without BOM")
     if CRLF in raw:
         crlf_count = raw.count(CRLF)
-        findings.append(f"INJ-007 WARNING: file '{filepath}' has {crlf_count} CRLF line endings — should use LF")
+        warnings.append(f"INJ-007 WARNING: file '{filepath}' has {crlf_count} CRLF line endings — should use LF")
     for pattern in AUTO_GUESS_PATTERNS:
         if pattern in raw:
             findings.append(
@@ -220,20 +236,23 @@ def check_file_encoding(filepath: str) -> list[str]:
             )
     except UnicodeDecodeError:
         pass
-    return findings
+    return findings, warnings
 
 
-def check_dir_encoding(dirpath: str) -> list[str]:
-    """Check compliance and report findings."""
+def check_dir_encoding(dirpath: str) -> tuple[list[str], list[str]]:
+    """Check compliance and report findings and warnings separately."""
     findings = []
+    warnings = []
     p = Path(dirpath)
     if not p.exists():
         findings.append(f"INJ-007 FAIL: directory '{dirpath}' does not exist")
-        return findings
+        return findings, warnings
     for f in p.rglob("*"):
         if f.suffix in (".py", ".md", ".yaml", ".yml", ".json", ".toml"):
-            findings.extend(check_file_encoding(str(f)))
-    return findings
+            f_findings, f_warnings = check_file_encoding(str(f))
+            findings.extend(f_findings)
+            warnings.extend(f_warnings)
+    return findings, warnings
 
 
 def main() -> None:
@@ -245,13 +264,18 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true", help="Only warn, do not fail")
     args = parser.parse_args()
 
-    all_findings: list[str] = []
+    all_findings: list[str] = []  # FAIL 级别，阻断提交
+    all_warnings: list[str] = []  # WARNING 级别，不阻断提交
 
     if args.file:
-        all_findings.extend(check_file_encoding(args.file))
+        f_findings, f_warnings = check_file_encoding(args.file)
+        all_findings.extend(f_findings)
+        all_warnings.extend(f_warnings)
 
     if args.dir:
-        all_findings.extend(check_dir_encoding(args.dir))
+        d_findings, d_warnings = check_dir_encoding(args.dir)
+        all_findings.extend(d_findings)
+        all_warnings.extend(d_warnings)
 
     if args.scan:
         mojibake_count = 0
@@ -277,7 +301,10 @@ def main() -> None:
 
     for finding in all_findings:
         print(finding)
+    for warning in all_warnings:
+        print(warning)
 
+    # 只有 findings 阻断，warnings 不阻断（语义修复 OPS-2026062501）
     if all_findings and not args.warn_only:
         sys.exit(EXIT_FINDINGS)
     sys.exit(EXIT_PASS)
