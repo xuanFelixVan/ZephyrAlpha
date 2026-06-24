@@ -3,7 +3,7 @@ module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
 status: draft
-version: 0.3.7
+version: 0.3.8
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -597,7 +597,9 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 ### 11.1 流程总览
 
 ```
-阶段0：设计定稿（已完成 v0.3.7）
+阶段0：设计定稿（已完成 v0.3.8）
+    ↓
+阶段0.5：盘点37个功能实现状态（代码 vs 蓝图）
     ↓
 阶段1：修改全景图（depgraph.db）
     ↓
@@ -615,7 +617,11 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 阶段 | STEP | 操作 | 命令/工具 | 验证 | 失败处置 |
 |:---:|:---:|------|---------|------|---------|
 | **0 前置** | 0.1 | 备份 depgraph.db | `git add data/databases/depgraph.db` + `git commit -m "backup: depgraph before arch upgrade"` | `git log -1` 确认备份存在 | 禁止继续 |
-| | 0.2 | 确认设计文档版本 | Read frontmatter `version: 0.3.6` | 版本=0.3.6 | 回到设计审查 |
+| | 0.2 | 确认设计文档版本 | Read frontmatter `version: 0.3.7` | 版本=0.3.7 | 回到设计审查 |
+| **0.5 盘点** | 0.5.1 | 全项目搜索37个功能的代码实现 | SearchCodebase + Grep（按功能名称关键词搜索 `src/zephyr/`） | 每个功能找到对应代码文件或确认仅有蓝图 | 记录为"仅蓝图" |
+| | 0.5.2 | 标记每个功能实现状态 | 生成功能实现状态清单 | 37个功能全部标记完成 | 补全缺失功能 |
+| | 0.5.3 | 区分运营态/设计态节点 | 运营态=有代码实现；设计态=仅有蓝图 | 清单中每个功能标注 `运营态` 或 `设计态` | — |
+| | 0.5.4 | 确认depgraph.db节点granularity | 查询nodes表 `granularity` 字段 | 运营态节点=`runtime`，设计态节点=`design` | 修正节点granularity |
 | **1 全景图** | 1.1 | 删除循环依赖边（§8.1） | `python scripts/governance/apply_depgraph.py --delete-edges` | §10第1项：循环依赖=0 | 回滚depgraph.db |
 | | 1.2 | 新增依赖边（§8.2） | `python scripts/governance/apply_depgraph.py --add-edges` | §10第5项：孤立功能=0 | 回滚depgraph.db |
 | | 1.3 | 修改依赖类型（§8.3 DIP） | `python scripts/governance/apply_depgraph.py --update-types` | §10第9项：F1→F3=contract, F1→F14=event | 回滚depgraph.db |
@@ -647,6 +653,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 4 | 三方对齐是验证步骤，不是修改步骤 | 不一致则回到对应阶段修复 |
 | 5 | 每阶段完成后必须验证通过才进下一阶段 | 步骤验证门（防错误累积） |
 | 6 | 阶段1失败→回滚depgraph.db到阶段0备份 | `git checkout data/databases/depgraph.db` |
+| 7 | 阶段0.5盘点必须区分运营态/设计态 | 有代码=运营态（granularity=runtime），仅蓝图=设计态（granularity=design），影响阶段1节点创建策略 |
 
 ### 11.4 回滚方案
 
@@ -672,3 +679,4 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.5 | 2026-06-24 | 第7轮审查修复4个问题：①frontmatter version 0.3.2→0.3.5（与变更历史同步）②§二末尾事件方向L4/L5→L2/L3/L4/L5（F1在L2、F4/F2/F27在L3发布事件）③§7.2事件方向图L1/L2/L3/L4/L5→L2/L3/L4/L5（L1的F21不发布事件）④§7.2禁止说明同步去除L1 |
 | 0.3.6 | 2026-06-24 | 功能域审查修复：①P1域ID命名格式统一为下划线（D-INFRA_OPS/D-AUTONOMY_CORE/D-GOV_AUDIT，共8处连字符→下划线，与depgraph.db真源对齐）②P2添加规划差异说明（F28/F32/F33/F36/F37共5个功能设计域归属与depgraph现状不一致，本文档为规划目标，depgraph需迁移） |
 | 0.3.7 | 2026-06-24 | 新增§十一实施工作流程：6阶段（前置→全景图→蓝图→代码→三方对齐→测试验证），含详细步骤表、关键约束6项、回滚方案3类 |
+| 0.3.8 | 2026-06-24 | §十一新增阶段0.5：盘点37个功能实现状态（代码vs蓝图）。区分运营态（有代码，granularity=runtime）和设计态（仅蓝图，granularity=design），影响阶段1节点创建策略。新增4个盘点步骤+1项关键约束 |
