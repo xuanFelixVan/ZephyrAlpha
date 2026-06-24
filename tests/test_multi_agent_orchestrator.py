@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1298 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_multi_agent_orchestrator
 # [INVARIANTS] delegate returns True iff agent_id in agents
 # [MODIFY-GUARD] none

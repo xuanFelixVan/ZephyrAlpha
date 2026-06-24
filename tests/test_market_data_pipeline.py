@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1247 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-405 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-405 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_market_data_pipeline
 # [INVARIANTS] MarketDataPipeline.run returns (dict, ValidationReport); feature_store grows on write
 # [MODIFY-GUARD] none

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-FLE-ORC-001
+# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
 # [MODULE] zephyr.trading.orchestrator.alert_handler
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema

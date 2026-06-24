@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.core.task_queue
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol

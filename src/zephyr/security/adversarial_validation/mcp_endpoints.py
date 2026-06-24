@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §10.2 + §16 Phase 2c
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §10.2 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.mcp_endpoints
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.convergence_checker

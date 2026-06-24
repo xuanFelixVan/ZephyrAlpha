@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §DM-311
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §DM-311
 # [MODULE] scripts.migration.dm311_autonomy_core_split
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.migration.dm314_infra_ops_split

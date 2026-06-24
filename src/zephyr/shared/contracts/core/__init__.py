@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-SHR_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 """shared.contracts.core — auto-generated package init."""
 
 from . import base_event, gate_types

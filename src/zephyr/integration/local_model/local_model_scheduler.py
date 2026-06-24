@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.local_model_scheduler
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.resource_optimization_engine; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat

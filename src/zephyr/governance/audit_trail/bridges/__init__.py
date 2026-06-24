@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_bridges | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 """
 Audit Trail — MOD-INF-020
 

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1541 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_secrets_guard
 # [INVARIANTS] SecretsGuard.REQUIRED_KEYS=["OPENAI_API_KEY","ANTHROPIC_API_KEY","DEEPSEEK_API_KEY"]
 # [MODIFY-GUARD] source-change:re-read-secrets_guard

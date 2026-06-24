@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.adversarial_validation
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.adversarial_validation; zephyr.governance.rule_enforcement.adversarial_strategies; zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types

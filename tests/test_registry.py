@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1440 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §3
 # [MODULE] tests.test_registry
 # [INVARIANTS] register must be atomic; get returns None for unknown; list_all returns list of dicts
 # [MODIFY-GUARD] skill-registry.yaml; engine.py; __init__.py

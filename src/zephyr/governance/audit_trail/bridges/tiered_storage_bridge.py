@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] zephyr.governance.audit_trail.bridges.tiered_storage_bridge
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES]

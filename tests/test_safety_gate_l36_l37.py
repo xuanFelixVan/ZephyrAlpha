@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1505 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L36_L37
 # [INVARIANTS] context_rot>0.35+dilution>0.3 must observe; trust_decay>1.5*baseline must reject
 # [MODIFY-GUARD] none

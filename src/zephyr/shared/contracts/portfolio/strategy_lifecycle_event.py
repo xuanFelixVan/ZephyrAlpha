@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.portfolio.strategy_lifecycle_event
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0374 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §test
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §test
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source

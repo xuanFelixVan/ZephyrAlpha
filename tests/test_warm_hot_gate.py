@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1799 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §warm_hot_gate
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §warm_hot_gate
 # [MODULE] tests.test_warm_hot_gate
 # [INVARIANTS] WarmHotGate.check必须返回GateCheckResult; BLOCKING问题必须导致BLOCKED状态
 # [MODIFY-GUARD] 仅当warm_hot_gate公开API变更时修改

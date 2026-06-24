@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §8
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §8
 # [MODULE] zephyr.governance.evidence_pack
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES]

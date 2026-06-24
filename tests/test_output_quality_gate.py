@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1350 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | §
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_output_quality_gate
 # [INVARIANTS] evaluate returns QualityVerdict; hard violations block
 # [MODIFY-GUARD] none

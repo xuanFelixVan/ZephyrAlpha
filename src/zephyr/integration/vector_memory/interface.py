@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.interface
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] GOV-070 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-070 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.analyze_change_impact
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.__init__

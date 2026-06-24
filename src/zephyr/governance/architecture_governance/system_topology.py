@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-017 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-017 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.system_topology
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__

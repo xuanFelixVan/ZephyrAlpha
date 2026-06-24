@@ -23,6 +23,12 @@ depgraph 巨型文件按需提取工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/extract_depgraph.py --paths             # 所有physical_files按域分组
   python scripts/governance/extract_depgraph.py --stats             # 文件大小/行数统计
   python scripts/governance/extract_depgraph.py --output result.json  # 输出到文件（JSON格式）
+  python scripts/governance/extract_depgraph.py --summary --no-freshness  # 跳过DB新鲜度检查
+
+DB 新鲜度检查：
+  默认在提取前检查 depgraph.db 是否过时（mtime vs 最近 git commit）。
+  如果 DB 比最近 commit 旧，或超过 24 小时未更新，打印警告到 stderr。
+  --no-freshness 可跳过检查（不推荐，可能用过时数据）。
 """
 
 from __future__ import annotations
@@ -32,7 +38,9 @@ import datetime
 import json
 import os
 import sqlite3
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 
@@ -46,6 +54,107 @@ class _CustomEncoder(json.JSONEncoder):
 
 
 DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+
+# DB 新鲜度警告阈值（小时）——超过此时长未更新则警告
+STALE_HOURS_THRESHOLD = 24
+
+
+def _db_freshness(db_path: Path = DEPGRAPH_PATH) -> dict:
+    """检查 depgraph.db 新鲜度，提示数据库可能过时。
+
+    检查项：
+    1. DB 文件 mtime 距今时长（超过 STALE_HOURS_THRESHOLD 小时 → 警告）
+    2. 最近 git commit 时间 vs DB mtime（commit 比 DB 新 → DB 可能未反映最新代码结构）
+
+    返回 freshness 信息 dict：
+      - db_path: DB 路径
+      - db_mtime: DB mtime ISO 格式
+      - db_age_hours: DB 距今小时数
+      - latest_commit_time: 最近 git commit 时间
+      - stale_warning: 是否过时
+      - stale_reason: 过时原因
+    """
+    freshness: dict = {
+        "db_path": str(db_path),
+        "db_mtime": None,
+        "db_age_hours": None,
+        "latest_commit_time": None,
+        "stale_warning": False,
+        "stale_reason": "",
+    }
+
+    if not db_path.exists():
+        return freshness
+
+    db_mtime = os.path.getmtime(db_path)
+    freshness["db_mtime"] = datetime.datetime.fromtimestamp(db_mtime).isoformat()
+
+    now = time.time()
+    age_seconds = now - db_mtime
+    age_hours = age_seconds / 3600
+    freshness["db_age_hours"] = round(age_hours, 1)
+
+    # 检查最近 git commit 时间（项目根目录 = DB 上两级）
+    project_root = db_path.parent.parent
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cI"],
+            capture_output=True,
+            text=True,
+            check=False,
+            cwd=str(project_root),
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            commit_time_str = result.stdout.strip()
+            # 解析 ISO 8601 格式（git %cI 输出如 2026-06-24T10:30:00+08:00）
+            try:
+                commit_time = datetime.datetime.fromisoformat(commit_time_str)
+                commit_ts = commit_time.timestamp()
+                freshness["latest_commit_time"] = commit_time_str
+
+                # 如果 commit 比 DB 新 → DB 可能过时
+                if commit_ts > db_mtime:
+                    freshness["stale_warning"] = True
+                    freshness["stale_reason"] = (
+                        f"最近 git commit ({commit_time_str}) 比 depgraph.db mtime 新，"
+                        f"数据库可能未反映最新代码结构"
+                    )
+            except ValueError:
+                pass
+    except Exception:
+        pass
+
+    # DB 超过阈值小时未更新 → 警告
+    if age_hours > STALE_HOURS_THRESHOLD and not freshness["stale_warning"]:
+        freshness["stale_warning"] = True
+        freshness["stale_reason"] = (
+            f"depgraph.db 已 {round(age_hours, 1)} 小时未更新，建议重新生成"
+        )
+
+    return freshness
+
+
+def _print_freshness_warning(freshness: dict) -> None:
+    """打印新鲜度警告到 stderr（不影响 stdout 的 JSON 输出）。"""
+    if not freshness.get("stale_warning"):
+        return
+    print("", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+    print("[FRESHNESS WARNING] depgraph.db 可能过时", file=sys.stderr)
+    print(f"  DB 路径: {freshness.get('db_path', '')}", file=sys.stderr)
+    print(f"  DB mtime: {freshness.get('db_mtime', 'unknown')}", file=sys.stderr)
+    print(f"  DB 年龄: {freshness.get('db_age_hours', 'unknown')} 小时", file=sys.stderr)
+    if freshness.get("latest_commit_time"):
+        print(f"  最近 commit: {freshness.get('latest_commit_time', '')}", file=sys.stderr)
+    print(f"  原因: {freshness.get('stale_reason', '')}", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("  建议:", file=sys.stderr)
+    print("    1. 确认当前提取的数据是否仍有效", file=sys.stderr)
+    print("    2. 如需最新数据，运行:", file=sys.stderr)
+    print("       python scripts/governance/generate_project_depgraph.py --max-workers 8", file=sys.stderr)
+    print("       (注意: 架构升级期间禁止运行，会覆盖 depgraph.db)", file=sys.stderr)
+    print("    3. 本次跳过检查: --no-freshness", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
 
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
@@ -317,6 +426,9 @@ def main() -> None:
     parser.add_argument("--paths", action="store_true", help="所有 physical_files 按域分组")
     parser.add_argument("--stats", action="store_true", help="文件大小/行数统计")
     parser.add_argument("--output", type=str, help="输出到 JSON 文件（默认 stdout）")
+    parser.add_argument(
+        "--no-freshness", action="store_true", help="跳过 DB 新鲜度检查（不推荐，可能用过时数据）"
+    )
     args = parser.parse_args()
 
     # 至少选一个模式
@@ -324,6 +436,11 @@ def main() -> None:
         parser.print_help()
         print("\nERROR: Must specify at least one extraction mode.", file=sys.stderr)
         sys.exit(3)
+
+    # DB 新鲜度检查（--stats 模式也检查，让用户知道统计基于的 DB 是否过时）
+    if not args.no_freshness:
+        freshness = _db_freshness(DEPGRAPH_PATH)
+        _print_freshness_warning(freshness)
 
     if args.stats:
         cmd_stats(DEPGRAPH_PATH, args.output)

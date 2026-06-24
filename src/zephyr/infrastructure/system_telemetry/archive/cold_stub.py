@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | 蓝图特有§A
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] zephyr.infrastructure.system_telemetry.archive.cold_stub
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.archive.__init__

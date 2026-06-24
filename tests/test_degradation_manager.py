@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0726 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | §
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_degradation_manager
 # [INVARIANTS] DegradationLevel progression is monotonic; HALT at usage>=1.0
 # [MODIFY-GUARD] none

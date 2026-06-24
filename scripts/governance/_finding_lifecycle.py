@@ -1,4 +1,4 @@
-# [BLUEPRINT] GOV-068 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-068 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._finding_lifecycle
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__

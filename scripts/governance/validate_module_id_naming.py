@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] scripts.governance.validate_module_id_naming
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__

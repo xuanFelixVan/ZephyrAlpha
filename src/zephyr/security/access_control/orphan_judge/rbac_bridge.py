@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §6.3
+# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.3
 # [MODULE] zephyr.security.access_control.orphan_judge.rbac_bridge
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.permission_guard

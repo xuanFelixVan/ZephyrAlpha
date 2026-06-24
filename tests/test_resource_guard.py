@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1452 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_resource_guard
 # [INVARIANTS] hard_limits_immutable;degradation_monotonic;pool_size_non_negative
 # [MODIFY-GUARD] source-change-only

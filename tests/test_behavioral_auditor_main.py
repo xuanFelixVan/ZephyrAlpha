@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0421 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_behavioral_auditor_main
 # [INVARIANTS] test_cmd_scan_import_error;test_cmd_self_test_pass;test_cmd_budget_allowed
 # [MODIFY-GUARD] source-change-only

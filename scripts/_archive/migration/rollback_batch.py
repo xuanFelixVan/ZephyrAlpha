@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.3
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.rollback_batch
 # [INVARIANTS] 反向遍历migration_log搬回原路径; 回滚import更新; 原子操作
 # [MODIFY-GUARD] log格式变更需同步execute_move.py

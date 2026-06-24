@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1088 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_hallucination_guard
 # [INVARIANTS] HallucinationGuard.MAX_ROUNDS==3; EXIT_CODE_HALLUCINATION==11
 # [MODIFY-GUARD] none

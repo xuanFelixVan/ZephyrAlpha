@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0895 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_fault_tolerance
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/rollback-system/blueprint.md

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0414 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_baseline_poisoning_guard
 # [INVARIANTS] 投毒防护不可禁用
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__

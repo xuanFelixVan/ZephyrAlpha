@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0087 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-245 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-245 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.benchmarks.test_vms_full_e2e
 # [STABILITY] evolving
 # [SAFETY] L

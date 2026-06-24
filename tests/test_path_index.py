@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1360 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_path_index
 # [INVARIANTS] PathIndex uses module-level PATH_INDEX dict; tests must clean up global state
 # [MODIFY-GUARD] none

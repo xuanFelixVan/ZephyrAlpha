@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.core.system_configuration
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

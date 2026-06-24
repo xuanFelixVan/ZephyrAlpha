@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1206 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md | §test
+# [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain_risk/risk_management_core/blueprint.md | §test
 # [MODULE] zephyr.risk
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | §16.8
+[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §16.8
 [MODULE] scripts.governance.d5_architecture.check_budget_health
 [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析
 [MODIFY-GUARD] docs/03_modules/infrastructure_runtime_integration/budget-enforcer/blueprint.md

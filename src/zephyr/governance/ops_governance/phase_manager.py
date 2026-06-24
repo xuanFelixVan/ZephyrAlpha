@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-061 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-061 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.phase_manager
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.phase_check_registry

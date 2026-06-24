@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1594 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_shadow_workspace
 # [INVARIANTS] 预演失败MUST阻止应用;沙箱目录MUST在验证后清理
 # [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml shadow_workspace段

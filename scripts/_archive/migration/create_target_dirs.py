@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.3
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.create_target_dirs
 # [INVARIANTS] 只创建目录不移动文件; os.makedirs(exist_ok=True); 幂等
 # [MODIFY-GUARD] 目录结构变更需同步project-path-tree.yaml

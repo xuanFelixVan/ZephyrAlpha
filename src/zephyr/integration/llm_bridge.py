@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 6
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 6
 # [MODULE] zephyr.governance.semantic_audit.llm_bridge
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.governance.__init__

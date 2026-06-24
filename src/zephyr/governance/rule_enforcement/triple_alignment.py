@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §4
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
 # [MODULE] zephyr.governance.rule_enforcement.triple_alignment
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES]

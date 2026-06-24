@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] src.zephyr.shared.contracts.errors.risk_limit_violation_error
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.errors.__init__

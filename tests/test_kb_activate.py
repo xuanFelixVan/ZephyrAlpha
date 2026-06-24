@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1157 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] tests.test_kb_activate
 # [INVARIANTS] ActivateGate.activate must return ActivateResult; auto_activate when score >= 9.0 or force
 # [MODIFY-GUARD] none

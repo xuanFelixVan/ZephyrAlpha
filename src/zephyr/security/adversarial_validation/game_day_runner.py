@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §8.3 + §16 Phase 2b
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §8.3 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.game_day_runner
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.blast_radius; zephyr.security.adversarial_validation.convergence_checker

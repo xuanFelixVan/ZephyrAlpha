@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.4
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.4
 # [MODULE] scripts.migration.test_import_fix
 # [INVARIANTS] 磁盘索引+后缀剥离+后缀匹配; 最长前缀替换; 原子写入; 并行
 # [MODIFY-GUARD] 域目录结构变更需同步

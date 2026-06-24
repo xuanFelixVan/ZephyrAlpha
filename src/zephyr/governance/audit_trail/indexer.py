@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §3.1
 # [MODULE] zephyr.governance.audit_trail.indexer
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES]

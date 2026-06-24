@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 9
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 9
 # [MODULE] zephyr.governance.blast_radius
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__

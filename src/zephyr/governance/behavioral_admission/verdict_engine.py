@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
 # [MODULE] zephyr.governance.behavioral_admission.verdict_engine
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.audit_trail.models

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_project_path_tree
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__

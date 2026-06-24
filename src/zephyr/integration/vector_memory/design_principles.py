@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.design_principles
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.integration.vector_memory.collection_schemas; zephyr.integration.vector_memory.vms_errors; zephyr.integration.vector_memory.provenance_enforcer; zephyr.integration.vector_memory.vms_schemas

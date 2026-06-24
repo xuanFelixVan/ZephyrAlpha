@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0784 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §dry_run_simulator
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §dry_run_simulator
 # [MODULE] tests.test_dry_run_simulator
 # [INVARIANTS] DryRunSimulator.simulate必须返回SimulationResult; 危险操作必须BLOCKED
 # [MODIFY-GUARD] 仅当dry_run_simulator公开API变更时修改

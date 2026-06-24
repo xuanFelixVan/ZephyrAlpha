@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1676 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_stability_guard
 # [INVARIANTS] lock_api returns locked=True; check_breaking returns list of removed export messages
 # [MODIFY-GUARD] source-change-only

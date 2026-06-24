@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1135 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_integration_test_runner
 # [INVARIANTS] 集成测试不可跳过;测试必须覆盖空输入/None/异常边界
 # [MODIFY-GUARD] integration_test_runner.py变更时同步更新

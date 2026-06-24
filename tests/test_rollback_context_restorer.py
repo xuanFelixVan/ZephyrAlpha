@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1477 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_rollback_context_restorer
 # [INVARIANTS] generate_restore_prompt writes file and returns str; inject_for_session returns dict with session_id/prompt/prompt_file/generated_at
 # [MODIFY-GUARD] none

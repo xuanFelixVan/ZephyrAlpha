@@ -1,6 +1,6 @@
 # [A_test] module_id: SRC-TST-0019 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-214 | tests/adversarial/test_task_system_red_team.py | §
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_task_system_red_team
 # [STABILITY] evolving
 # [SAFETY] L

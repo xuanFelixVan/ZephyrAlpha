@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §chaos_engine
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §chaos_engine
 # [MODULE] zephyr.trading.orchestrator.chaos_engine
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.orchestrator.__init__

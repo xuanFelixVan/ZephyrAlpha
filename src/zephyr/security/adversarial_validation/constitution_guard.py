@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.1 + §16 Phase 2a
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §16 Phase 2a
 # [MODULE] zephyr.security.adversarial_validation.constitution_guard
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.governance.rule_enforcement.gate_engine

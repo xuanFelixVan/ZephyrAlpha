@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.audit_agent_spec
 [INVARIANTS] agent-spec 审计完整性
 [MODIFY-GUARD] __init__.py;script_manifest.yaml

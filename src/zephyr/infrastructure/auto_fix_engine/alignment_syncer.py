@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.auto_fix_engine.alignment_syncer
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__

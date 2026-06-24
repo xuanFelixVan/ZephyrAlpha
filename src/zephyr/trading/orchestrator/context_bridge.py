@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-ORC-CE-001
+# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.trading.orchestrator.context_bridge
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security_01.context_scanner

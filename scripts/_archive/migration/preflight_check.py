@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.3
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.preflight_check
 # [INVARIANTS] 检查4项: 目标无冲突/源文件存在/磁盘空间/无活跃锁; 任何失败->exit 1
 # [MODIFY-GUARD] 新增检查项需同步更新TC-6-2验收标准

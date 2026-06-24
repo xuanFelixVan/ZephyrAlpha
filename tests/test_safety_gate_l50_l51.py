@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1512 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L50_L51
 # [INVARIANTS] coherence<0.6 must reject; runtime integrity must reject; L55 depends on L52-L54
 # [MODIFY-GUARD] none

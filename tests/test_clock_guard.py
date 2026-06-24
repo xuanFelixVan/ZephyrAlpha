@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0528 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_clock_guard
 # [INVARIANTS] must test all public classes and methods of clock_guard
 # [MODIFY-GUARD] clock_guard.py changes require sync

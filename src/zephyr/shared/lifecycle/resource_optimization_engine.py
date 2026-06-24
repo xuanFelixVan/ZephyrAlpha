@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] src.zephyr.shared.lifecycle.resource_optimization_engine
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.lifecycle.__init__

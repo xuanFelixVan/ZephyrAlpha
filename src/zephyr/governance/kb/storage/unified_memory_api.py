@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.storage.unified_memory_api
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.security.capability

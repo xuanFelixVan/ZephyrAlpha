@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0872 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_evolution_engine
 # [INVARIANTS] Q-learning update: Q(s,a) += lr*(reward+gamma*max_Q(s')-Q(s,a)); EWC penalty applied when fisher>0
 # [MODIFY-GUARD] none

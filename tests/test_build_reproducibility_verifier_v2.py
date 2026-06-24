@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0472 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_build_reproducibility_verifier_v2
 # [INVARIANTS] max_drift_tolerance=0.05; build_retention=10
 # [MODIFY-GUARD] none

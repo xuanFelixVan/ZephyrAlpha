@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.ct_circular_dependency_scan
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency

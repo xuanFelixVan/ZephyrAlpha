@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 8
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 8
 # [MODULE] zephyr.governance.semantic_audit.fix_prioritizer
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models

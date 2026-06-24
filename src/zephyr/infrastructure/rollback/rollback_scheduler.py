@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §7 Phase 5.3
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §7 Phase 5.3
 # [MODULE] zephyr.infrastructure.rollback.rollback_scheduler
 # [DOMAIN]
 # [DEPENDENCIES]

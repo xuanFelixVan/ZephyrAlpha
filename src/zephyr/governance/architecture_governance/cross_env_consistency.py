@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-013 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-013 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.cross_env_consistency
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__

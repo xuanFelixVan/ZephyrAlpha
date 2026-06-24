@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0345 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §4
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
 
 # [MODULE] tests.test_audit_chain_verifier
 

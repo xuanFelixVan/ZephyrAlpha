@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0773 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_drift_detector_gate
 # [INVARIANTS] trigger_recovery always returns dict with 9 keys; hotfix_bypass only True when HotfixBypass.is_hotfix_commit returns True; scan_level invalid falls back to STANDARD
 # [MODIFY-GUARD] changes must preserve test coverage for trigger_recovery/hotfix_bypass/scan_level/empty_payload/ImportError paths

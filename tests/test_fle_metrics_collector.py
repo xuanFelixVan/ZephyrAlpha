@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1018 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_fle_metrics_collector
 # [INVARIANTS] MetricsCollector uses SQLite; record returns metric_id; query returns list[dict]
 # [MODIFY-GUARD] none

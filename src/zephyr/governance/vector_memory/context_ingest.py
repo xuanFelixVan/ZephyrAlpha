@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-VMS-001
+# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-CE-VMS-001
 # [MODULE] zephyr.data.knowledge_management.vector_memory.context_ingest
 # [DOMAIN] D-KNOWLEDGE
 # [DEPENDENCIES] zephyr.governance.__init__

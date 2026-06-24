@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0621 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_contract_registry
 # [INVARIANTS] contract_id min_length=1; AIReadOnlyHint four-level enum; CONTRACTS dict keyed by contract_id
 # [MODIFY-GUARD] source-change-only

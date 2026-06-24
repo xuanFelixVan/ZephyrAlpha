@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.2
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.2
 # [MODULE] zephyr.security.adversarial_validation.models
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]

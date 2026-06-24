@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.migration._migration_shared
 # [INVARIANTS] 所有搬家脚本共享的数据加载和批次筛选逻辑
 # [MODIFY-GUARD] mapping/import格式变更时需同步更新

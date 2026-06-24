@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0441 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_blueprint_reconciler
 # [INVARIANTS] must test all public classes and methods of blueprint_reconciler
 # [MODIFY-GUARD] blueprint_reconciler.py changes require sync

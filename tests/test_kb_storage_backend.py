@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1176 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] tests.test_kb_storage_backend
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

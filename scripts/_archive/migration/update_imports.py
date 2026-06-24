@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.3
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.update_imports
 # [INVARIANTS] 逐文件替换old->new import; 原子写入(RULE-ONE); 按批次筛选; 文件路径通过mapping解析
 # [MODIFY-GUARD] import manifest格式变更需同步

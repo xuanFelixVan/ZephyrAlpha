@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.foundation.constants
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.core.runtime_plane_tag; zephyr.shared.infra.observer; zephyr.shared.schema.schemas; zephyr.governance.__init__

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1375 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_pipeline_bridge
 # [INVARIANTS] SkillInjectionResult.loaded defaults False; to_context_string returns "" when not loaded
 # [MODIFY-GUARD] none

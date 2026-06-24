@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.api.api_client
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.resilience.circuit_breaker; zephyr.shared.resilience.retry; zephyr.shared.io.serialization

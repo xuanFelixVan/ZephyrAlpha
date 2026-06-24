@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-SEC_access_control | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §
 # [MODULE] zephyr.security.access_control
 # [INVARIANTS] re-export shim — authoritative implementation at zephyr.security.access_control
 # [MODIFY-GUARD] none

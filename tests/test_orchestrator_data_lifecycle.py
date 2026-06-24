@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1335 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_data_lifecycle
 # [INVARIANTS] 8 data types; should_purge only True when archive_policy=purge and age>cold_days; unknown type returns None/False
 # [MODIFY-GUARD] source-change-only

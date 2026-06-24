@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0514 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] tests.test_check_type_registry
 # [INVARIANTS] Handler import+instantiation+run return type; name attribute match
 # [MODIFY-GUARD] source handler changes require test updates

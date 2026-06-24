@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1458 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_results_writer
 # [INVARIANTS] write_benchmark_results;load_benchmark_history;detect_drift;DEFAULT_OUTPUT_DIR
 # [MODIFY-GUARD] src/zephyr/pipeline/model-profiler/results_writer.py

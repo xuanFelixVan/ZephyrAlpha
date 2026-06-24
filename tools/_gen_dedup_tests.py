@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §
 # [MODULE] tools._gen_dedup_tests
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

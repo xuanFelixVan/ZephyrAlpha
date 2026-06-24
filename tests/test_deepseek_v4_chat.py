@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0722 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_deepseek_v4_chat
 # [INVARIANTS] test_deepseek_v4_chat完整性
 # [MODIFY-GUARD] none

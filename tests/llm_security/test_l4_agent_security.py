@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0195 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
 # [MODULE] tests.llm_security.test_l4_agent_security
 # [STABILITY] evolving
 # [SAFETY] L

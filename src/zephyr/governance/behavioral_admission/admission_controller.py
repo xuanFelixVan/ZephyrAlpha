@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §17
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §17
 # [MODULE] zephyr.governance.behavioral_admission.admission_controller
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES]

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2092 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-709 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-709 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.verify_b54_b56_b59_deep
 # [STABILITY] evolving
 # [SAFETY] L

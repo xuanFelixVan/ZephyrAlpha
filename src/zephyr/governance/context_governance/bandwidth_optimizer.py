@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-026 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-026 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.bandwidth_optimizer
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.context_governance.__init__

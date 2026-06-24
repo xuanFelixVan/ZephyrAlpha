@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-071 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-071 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.incident_response
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__

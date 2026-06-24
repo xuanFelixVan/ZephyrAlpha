@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0834 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §2.10
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §2.10
 # [MODULE] tests.test_en_process_lifecycle_gateway
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

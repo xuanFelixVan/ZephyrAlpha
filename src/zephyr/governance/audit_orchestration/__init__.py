@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_audit_orchestration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 """Agent Orchestrator (Orc)
 =====================================
 

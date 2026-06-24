@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.4
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.4
 # [MODULE] scripts.migration.shared_import_fix
 # [INVARIANTS] 从磁盘实际文件构建zephyr.shared.*映射; 最长前缀匹配; 原子写入; 并行
 # [MODIFY-GUARD] shared目录结构变更需同步

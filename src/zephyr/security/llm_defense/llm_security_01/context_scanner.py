@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-LSG-001
+# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-CE-LSG-001
 # [MODULE] zephyr.security.llm_defense.llm_security_01.context_scanner
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway

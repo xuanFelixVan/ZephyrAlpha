@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0769 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_dream_cycle
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

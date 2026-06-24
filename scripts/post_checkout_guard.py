@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §concurrency_guard
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.post_checkout_guard
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard

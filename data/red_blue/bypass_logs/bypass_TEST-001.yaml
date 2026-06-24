@@ -1,0 +1,88 @@
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-d2955c8d
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-22T17:33:37.781336+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-5804095e
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-22T17:33:37.794224+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-5d5749a1
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-22T17:36:08.949495+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-67b615eb
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-22T17:36:08.965379+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-d17fb800
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-22T17:36:31.649286+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-51c8c26e
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-22T17:36:31.666211+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-5fcad21f
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-23T11:08:42.151932+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7
+- attack_payload: test_payload
+  count: 1
+  defense_response: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block
+    test_vector'
+  entry_id: BY-c48f82be
+  escalated: false
+  gate_id: G1
+  occurred_at: '2026-06-23T11:08:42.166106+00:00'
+  root_cause: 'BYPASSED G1 [simulated]: prompt_injection_filter failed to block test_vector'
+  scenario_id: TEST-001
+  tier: TIER_7

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.pipeline_runner
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_orchestrator.text_to_finding_adapter; zephyr.integration.shared.schema.base_config

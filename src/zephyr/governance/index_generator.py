@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infra_ops/asset_inventory/blueprint.md | §
 # [MODULE] zephyr.data.asset_inventory.index_generator
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__

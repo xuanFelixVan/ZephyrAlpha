@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0476 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | §5
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §5
 # [MODULE] tests.test_burn_rate_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

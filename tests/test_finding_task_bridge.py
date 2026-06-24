@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0917 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §finding_task_bridge
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §finding_task_bridge
 # [MODULE] tests.test_finding_task_bridge
 # [INVARIANTS] AuditFinding.severity必须在SEVERITY_TO_PRIORITY中; BridgeResult.success_rate计算正确
 # [MODIFY-GUARD] 仅当finding_task_bridge公开API变更时修改

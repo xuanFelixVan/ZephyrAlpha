@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0724 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_deferred_queue
 # [INVARIANTS] DeferredQueue uses in-memory SQLite; Observer must be fresh per test
 # [MODIFY-GUARD] none

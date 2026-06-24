@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1719 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_tamper_proof_audit
 # [INVARIANTS] append_only_triggers;event_hash_deterministic;anomaly_detection_thresholds
 # [MODIFY-GUARD] source-change-only

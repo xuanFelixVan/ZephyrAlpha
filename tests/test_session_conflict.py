@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1582 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_session_conflict
 # [INVARIANTS] file-level mutual exclusion across sessions; same session re-register overwrites
 # [MODIFY-GUARD] source-change-only

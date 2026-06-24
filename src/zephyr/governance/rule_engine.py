@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/governance/blueprint.md | §rule_engine
+# [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] zephyr.governance.rule_engine
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES]

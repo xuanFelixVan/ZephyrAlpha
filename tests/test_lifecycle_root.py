@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1227 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infra_ops/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_lifecycle
 # [INVARIANTS] Lifecycle.evaluate returns events and updated index; TIME_DECAY/ZERO_REF/DIR_CONVENTION rules fire
 # [MODIFY-GUARD] none

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0909 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_file_autorregister
 # [INVARIANTS] register must produce valid YAML; manifest_path must be Path or None
 # [MODIFY-GUARD] none

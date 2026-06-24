@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1342 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_wave_generator
 # [INVARIANTS] WaveGenerator uses real SQLite via db_utils; tests create in-memory DB with tasks schema
 # [MODIFY-GUARD] none

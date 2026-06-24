@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.4
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.4
 # [MODULE] scripts.migration.comprehensive_import_fix
 # [INVARIANTS] 从path-migration-mapping.yaml构建old->new模块路径映射; 最长前缀匹配; 排除根包zephyr; 原子写入(RULE-ONE); 并行(RULE-SEVEN)
 # [MODIFY-GUARD] 映射逻辑变更需同步mapping格式

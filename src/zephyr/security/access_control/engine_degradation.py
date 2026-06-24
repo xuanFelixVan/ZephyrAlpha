@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent_rbac/blueprint.md | §engine_degradation
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §engine_degradation
 # [MODULE] zephyr.security.access_control.engine_degradation
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]

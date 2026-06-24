@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-035 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-035 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.financial_compliance
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.financial_governance.__init__

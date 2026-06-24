@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0695 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md | §
+# [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infra_ops/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_dashboard
 # [INVARIANTS] Dashboard.generate must produce DashboardData from UnifiedAssetIndex; save must use atomic write
 # [MODIFY-GUARD] none

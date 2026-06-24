@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | S10.2
+[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | S10.2
 [MODULE] scripts.governance.d5_architecture.check_blueprint_code_alignment
 [INVARIANTS] blueprint-code alignment check cannot be skipped; drift must be reported
 [MODIFY-GUARD] docs/03_modules/infrastructure_runtime_integration/budget-enforcer/blueprint.md

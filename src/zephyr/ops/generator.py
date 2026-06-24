@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] zephyr.observability.feedback_loop.generator
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.__init__

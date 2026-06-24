@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INF_model_profiler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §
 """
 Model Profiler — 本地 + 远程模型性能基准测试
 ==============================================

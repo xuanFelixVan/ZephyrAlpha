@@ -1,0 +1,20 @@
+{
+  "consumption": {
+    "BP-TOKEN-001": {
+      "daily": 0.0,
+      "hourly": 0.0
+    },
+    "BP-COST-001": {
+      "daily": 0.0,
+      "hourly": 0.0
+    },
+    "BP-TIME-001": {
+      "daily": 0.0,
+      "hourly": 0.0
+    }
+  },
+  "degradation_level": 0,
+  "active_step_idx": 0,
+  "hash": "57bc23dc8f298e12c0ae9647dbe29975de479206454dcf4bd234da7aaf88b188",
+  "health": "HEALTHY"
+}

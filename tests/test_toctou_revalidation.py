@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1747 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_toctou_revalidation
 # [INVARIANTS] max_staleness_seconds=5.0; state_tolerance=0.1
 # [MODIFY-GUARD] none

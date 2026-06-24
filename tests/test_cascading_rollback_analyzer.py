@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0499 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_cascading_rollback_analyzer
 # [INVARIANTS] max_cascade_depth=5; min_dependency_confidence=0.5
 # [MODIFY-GUARD] none

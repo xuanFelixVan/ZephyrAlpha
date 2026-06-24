@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent_rbac/blueprint.md | §guard_layers
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §guard_layers
 # [MODULE] zephyr.security.access_control.guard_layers
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]

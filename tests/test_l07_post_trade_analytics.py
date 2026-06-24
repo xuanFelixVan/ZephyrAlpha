@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1209 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain-reporting/analytics-core/blueprint.md | §test
+# [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/analytics_core/blueprint.md | §test
 # [MODULE] zephyr.l07_post_trade_analytics
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source

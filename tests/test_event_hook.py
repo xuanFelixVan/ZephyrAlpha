@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0864 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 # [MODULE] tests.test_event_hook
 # [INVARIANTS] test_register_and_fire;test_priority_order;test_unregister;test_exception_isolation
 # [MODIFY-GUARD] source-change-only

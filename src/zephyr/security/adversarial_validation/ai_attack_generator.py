@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §5.2 + §16 Phase 2c
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §5.2 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.ai_attack_generator
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models

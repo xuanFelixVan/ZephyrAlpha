@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §ports
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ports
 # [MODULE] zephyr.trading.ports
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__

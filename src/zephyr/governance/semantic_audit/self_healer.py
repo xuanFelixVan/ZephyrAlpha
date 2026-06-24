@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 7
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 7
 # [MODULE] zephyr.governance.semantic_audit.self_healer
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES]

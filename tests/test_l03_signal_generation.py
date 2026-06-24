@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1205 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md | §test
+# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/signal_generation_core/blueprint.md | §test
 # [MODULE] zephyr.signal
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source

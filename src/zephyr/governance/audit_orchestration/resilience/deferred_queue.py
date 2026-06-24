@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.resilience.deferred_queue
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.infra.observer

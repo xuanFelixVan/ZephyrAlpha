@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1442 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §3
 # [MODULE] tests.test_registry_governance
 # [INVARIANTS] FunctionalDomainRegistry.register必须检测重叠; DomainEntry必须有domain+subdomain+ssot_module
 # [MODIFY-GUARD] 仅当registry_governance公开API变更时修改

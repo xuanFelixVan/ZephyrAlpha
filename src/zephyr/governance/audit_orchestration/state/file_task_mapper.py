@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.state.file_task_mapper
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.shared.io.paths; zephyr.governance.rule_enforcement.task_types; zephyr.shared.utils.time_utils

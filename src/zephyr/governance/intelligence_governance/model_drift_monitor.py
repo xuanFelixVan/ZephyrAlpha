@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-045 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-045 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.model_drift_monitor
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.__init__

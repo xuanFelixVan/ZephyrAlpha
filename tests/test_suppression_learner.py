@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1710 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_suppression_learner
 # [INVARIANTS] SUPPRESSION_THRESHOLD=3;pattern_hash_deterministic;suppress_only_when_active
 # [MODIFY-GUARD] source-change-only

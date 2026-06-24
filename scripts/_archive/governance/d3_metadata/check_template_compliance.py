@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 """
-[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 [MODULE] scripts.governance.d3_metadata.check_template_compliance
 [INVARIANTS] 模板合规检查必须覆盖所有模板
 [MODIFY-GUARD] __init__.py;script_manifest.yaml

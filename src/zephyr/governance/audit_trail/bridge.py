@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §12
 # [MODULE] zephyr.governance.audit_trail.bridge
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.drift_bridge; zephyr.governance.audit_trail.feedback_bridge; zephyr.governance.audit_trail.delegation_bridge; zephyr.governance.merkle_hourly; zephyr.governance.audit_trail.trust_bridge; zephyr.governance.audit_trail.tiered_storage_bridge

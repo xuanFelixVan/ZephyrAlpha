@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1189 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_kiss_enforcer
 # [INVARIANTS] KissEnforcer.MAX_CLASSES=3;MAX_METHOD_LINES=30;MAX_INHERITANCE=2
 # [MODIFY-GUARD] source-change:re-read-kiss_enforcer

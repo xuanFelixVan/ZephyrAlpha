@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §6.1
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.1
 # [MODULE] zephyr.integration.shared_08.contracts.runtime_types
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas

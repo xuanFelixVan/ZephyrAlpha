@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0294 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_agent_spec_registry
 # [INVARIANTS] SpecRegistry entries keyed by agent_id; register overwrites existing
 # [MODIFY-GUARD] Changes must sync with agent-spec/registry.py

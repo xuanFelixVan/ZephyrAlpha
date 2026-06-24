@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] zephyr.governance.drift_detection.brain_integration
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.drift_detection.cold_start; zephyr.governance.drift_detection.self_check; zephyr.governance.drift_detection.drift_engine; zephyr.governance.rule_enforcement.drift_detector; zephyr.governance.drift_detection.orphan_scanner; zephyr.governance.drift_detection.credibility_engine; zephyr.governance.drift_detection.correlation_engine; zephyr.governance.drift_detection.forensics_engine

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.trigger_router
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_orchestration.blueprint_scorer; zephyr.infrastructure.__init__; zephyr.governance.rule_enforcement.drift_detector

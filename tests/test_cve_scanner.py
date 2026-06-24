@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0691 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_cve_scanner
 # [INVARIANTS] CVE scan must return matching CVEs for given dependency
 # [MODIFY-GUARD] none

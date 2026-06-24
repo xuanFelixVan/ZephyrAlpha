@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1149 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_interrupt_guard
 # [INVARIANTS] SIGINT/SIGTERM MUST触发WAL恢复;零"半修复"状态
 # [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml engine.wal_enabled

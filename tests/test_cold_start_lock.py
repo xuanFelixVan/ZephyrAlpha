@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0546 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §
 # [MODULE] tests.test_cold_start_lock
 # [INVARIANTS] default_locked;unlock_requires_3_checks_plus_config;owner_bypass_unconditional
 # [MODIFY-GUARD] none

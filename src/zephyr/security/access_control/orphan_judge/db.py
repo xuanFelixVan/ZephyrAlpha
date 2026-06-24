@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §5.1
+# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §5.1
 # [MODULE] zephyr.security.access_control.orphan_judge.db
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.security.access_control.orphan_judge.models

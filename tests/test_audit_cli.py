@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0346 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §8
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §8
 # [MODULE] tests.test_audit_cli
 # [INVARIANTS] COMMANDS dict contains all subcommands; main exits on unknown
 # [MODIFY-GUARD] none

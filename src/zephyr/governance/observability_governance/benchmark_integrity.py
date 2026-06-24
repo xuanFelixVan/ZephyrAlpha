@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-051 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-051 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.benchmark_integrity
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.governance.observability_governance.__init__

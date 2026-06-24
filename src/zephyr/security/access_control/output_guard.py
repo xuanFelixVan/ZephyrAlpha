@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent-rbac/blueprint.md | §output_guard
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §output_guard
 # [MODULE] zephyr.security.access_control.output_guard
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]

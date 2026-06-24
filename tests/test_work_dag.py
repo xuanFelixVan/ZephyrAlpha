@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1805 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_work_dag
 # [INVARIANTS] WorkDAG/WorkNode/WorkEdge/WorkItem是Pydantic模型;测试序列化+验证
 # [MODIFY-GUARD] src/zephyr/runtime/work_dag.py

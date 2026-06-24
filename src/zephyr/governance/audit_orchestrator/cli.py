@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §4
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §4
 # [MODULE] zephyr.governance.audit_trail.cli
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_trail.audit_admission_controller; zephyr.governance.audit_trail.resource_aware_pool; zephyr.governance.integrity; zephyr.governance.audit_trail.kb_gate; zephyr.security.access_control.orphan_judge.judge; zephyr.security.adversarial_validation.validator; zephyr.behavioral_audit.drift_engine

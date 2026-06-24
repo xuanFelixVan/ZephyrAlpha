@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0440 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain-infra_ops/system-telemetry/blueprint.md | 蓝图特有§A
+# [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] tests.test_blueprint_metrics
 # [INVARIANTS] 蓝图读取事件MUST通过此模块记录;输出JSONL格式;RULE-ONE原子写入
 # [MODIFY-GUARD] metrics/blueprint_metrics.py

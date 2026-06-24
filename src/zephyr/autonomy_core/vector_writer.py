@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-CE-VMS-001
+# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-CE-VMS-001
 # [MODULE] zephyr.autonomy_core.vector_writer
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.governance.__init__

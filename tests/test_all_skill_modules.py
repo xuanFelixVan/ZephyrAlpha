@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0311 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_all_skill_modules
 # [INVARIANTS] MODULE_LIST is a non-empty list of strings; all_modules returns same list; count matches len
 # [MODIFY-GUARD] none

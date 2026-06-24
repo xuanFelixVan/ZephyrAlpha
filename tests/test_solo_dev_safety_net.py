@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1666 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_solo_dev_safety_net
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

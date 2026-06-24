@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1574 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §6.12
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §6.12
 # [MODULE] tests.test_semantic_rollback_tag
 # [INVARIANTS] tag format: rollback/{type}-{id}:{phase}; returns None on git failure
 # [MODIFY-GUARD] none

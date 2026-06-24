@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0242 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §layer1_discovery
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | §layer1_discovery
 # [MODULE] tests.test_a2a_layer1_discovery
 # [INVARIANTS] A2ARegistry.register/discover/get必须一致; IdentityVerifier.sign/verify必须可逆
 # [MODIFY-GUARD] 仅当layer1_discovery公开API变更时修改

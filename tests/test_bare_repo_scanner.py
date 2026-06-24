@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0411 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_bare_repo_scanner
 # [INVARIANTS] bare_repo_detected_when_HEAD_missing;non_bare_repo_not_detected;nonexistent_path_returns_empty
 # [MODIFY-GUARD] source-change-only

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0233 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md | §governance
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | §governance
 # [MODULE] tests.test_a2a_governance
 # [INVARIANTS] GovernanceAdapter.verify_pair必须返回A2AGovernanceRecord; Phase4Hold.can_proceed仅Phase4为True
 # [MODIFY-GUARD] 仅当a2a governance公开API变更时修改

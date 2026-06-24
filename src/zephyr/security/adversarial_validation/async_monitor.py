@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §8.1 + §16 Phase 2c
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §8.1 + §16 Phase 2c
 # [MODULE] zephyr.security.adversarial_validation.async_monitor
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.circuit_breaker; zephyr.security.adversarial_validation.bypass_recorder; zephyr.security.adversarial_validation.cleanup

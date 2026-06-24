@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1457 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_result_types
 # [INVARIANTS] RollbackResult字段不可删;status/validation_result枚举不可改值
 # [MODIFY-GUARD] contracts_blueprint.md §4;src/zephyr/rollback/__init__.py

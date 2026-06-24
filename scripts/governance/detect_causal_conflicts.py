@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] GOV-073 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-073 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.detect_causal_conflicts
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__

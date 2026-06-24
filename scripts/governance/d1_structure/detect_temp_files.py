@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 """
-[BLUEPRINT] DOM-GOV-001 | D:/ZephyrAlpha/docs/03_modules/_domain-governance/blueprint.md | S3
+[BLUEPRINT] DOM-GOV-001 | D:/ZephyrAlpha/docs/03_modules/_domain_governance/blueprint.md | S3
 [MODULE] scripts.governance.d1_structure.detect_temp_files
 [INVARIANTS] temp files must all be detected
 [MODIFY-GUARD] __init__.py;script_manifest.yaml

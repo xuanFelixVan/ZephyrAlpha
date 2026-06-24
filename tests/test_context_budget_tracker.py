@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0586 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_context_budget_tracker
 # [INVARIANTS] L1_80%;L2_90%;L3_95%;token_count_accumulates;session_isolation
 # [MODIFY-GUARD] source-change-only

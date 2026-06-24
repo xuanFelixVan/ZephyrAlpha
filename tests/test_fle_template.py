@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1023 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] tests.test_fle_template
 # [INVARIANTS] SKELETONS dict must be non-empty; all values must be non-empty strings
 # [MODIFY-GUARD] sync_with_source_on_refactor

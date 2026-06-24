@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] zephyr.governance.drift_detection.ai_context_injector
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES]

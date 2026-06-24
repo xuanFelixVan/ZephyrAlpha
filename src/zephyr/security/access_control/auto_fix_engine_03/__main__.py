@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §4.5
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §4.5
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.__main__
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.engine

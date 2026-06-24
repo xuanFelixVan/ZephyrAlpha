@@ -1,0 +1,46 @@
+{
+  "matrix": {},
+  "benchmark_baseline": {
+    "M3": {
+      "qwen3:8b": 0.216,
+      "deepseek-r1:8b": 0.227
+    },
+    "M4": {
+      "qwen3:8b": 0.1,
+      "deepseek-r1:8b": 0.05
+    },
+    "M1": {
+      "qwen3:8b": 0.6,
+      "deepseek-r1:8b": 0.2
+    },
+    "M2": {
+      "qwen3:8b": 0.6,
+      "deepseek-r1:8b": 0.2
+    },
+    "M6": {
+      "qwen3:8b": 0.76,
+      "deepseek-r1:8b": 0.2
+    },
+    "M7": {
+      "qwen3:8b": 0.367,
+      "deepseek-r1:8b": 0.367
+    },
+    "M8": {
+      "qwen3:8b": 0.433,
+      "deepseek-r1:8b": 0.433
+    },
+    "M9": {
+      "qwen3:8b": 0.433,
+      "deepseek-r1:8b": 0.433
+    },
+    "M10": {
+      "qwen3:8b": 0.433,
+      "deepseek-r1:8b": 0.433
+    },
+    "M11": {
+      "qwen3:8b": 0.367,
+      "deepseek-r1:8b": 0.367
+    }
+  },
+  "saved_at": "2026-06-23T17:33:38.396796+00:00"
+}

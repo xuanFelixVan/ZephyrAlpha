@@ -1,4 +1,4 @@
-# [BLUEPRINT] GOV-074 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §2.1
+# [BLUEPRINT] GOV-074 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §2.1
 # [MODULE] scripts.governance.generate_target_path_tree
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__

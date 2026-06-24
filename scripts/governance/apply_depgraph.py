@@ -25,6 +25,13 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/apply_depgraph.py --update-domain-id D-FACTOR-01 D-NEW_DOMAIN --dry-run
   python scripts/governance/apply_depgraph.py --update-path D-FACTOR-01 src/zephyr/new_domain/module.py --dry-run
   python scripts/governance/apply_depgraph.py --migrate-dependencies D-OLD D-TARGET --new-from-domain D-NEW --dry-run
+
+GIT 备份门禁（project_memory 强制规则）：
+  修改 depgraph.db 前必须先 git 备份当前状态，以便回滚：
+    git add data/databases/depgraph.db
+    git commit -m "backup: depgraph before <操作描述>"
+  如果 DB 有未提交修改（未备份），写入被阻断（exit 4）。
+  强制跳过（不推荐）: ZEPHYR_SKIP_BACKUP_CHECK=1
 """
 
 from __future__ import annotations
@@ -35,12 +42,85 @@ import datetime
 import json
 import os
 import sqlite3
+import subprocess
 import sys
 import threading
 import time
 from pathlib import Path
 
 DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+
+# 跳过 git 备份检查的环境变量（自动化场景）
+SKIP_BACKUP_CHECK_ENV = "ZEPHYR_SKIP_BACKUP_CHECK"
+
+
+def _check_git_backup(db_path: Path = DEPGRAPH_PATH) -> bool:
+    """检查 depgraph.db 修改前是否有 git 备份。
+
+    规则（project_memory）：修改全景图前必须先 git 备份当前状态：
+      git add data/databases/depgraph.db
+      git commit -m "backup: depgraph before <操作描述>"
+
+    检查逻辑：
+      1. ZEPHYR_SKIP_BACKUP_CHECK=1 → 跳过（自动化场景）
+      2. depgraph.db 未纳入 git 跟踪 → 跳过（无法备份）
+      3. depgraph.db 有未提交修改 → 阻断（当前状态未备份，无法回滚）
+
+    返回：True=已备份（允许写入），False=未备份（阻断写入）
+    """
+    # 1. 跳过检查的环境变量
+    if os.environ.get(SKIP_BACKUP_CHECK_ENV) == "1":
+        return True
+
+    # 2. 检查 depgraph.db 是否已纳入 git 跟踪
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", str(db_path)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            # DB 未纳入 git 跟踪，无法备份，跳过检查
+            return True
+    except Exception:
+        # git 命令执行失败，安全起见跳过检查（避免误阻断）
+        return True
+
+    # 3. 检查 depgraph.db 是否有未提交修改
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--quiet", "HEAD", "--", str(db_path)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        # exit 0 = 无修改（已备份），exit 1 = 有修改（未备份）
+        if result.returncode == 1:
+            print("", file=sys.stderr)
+            print("=" * 70, file=sys.stderr)
+            print("[GIT-BACKUP GATE] depgraph.db 写入被阻断——缺少 git 备份", file=sys.stderr)
+            print(f"  DB 路径: {db_path}", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("  规则：修改 depgraph.db 前必须先 git 备份当前状态（project_memory）", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("  解决方案:", file=sys.stderr)
+            print("    1. 创建备份:", file=sys.stderr)
+            print("       git add data/databases/depgraph.db", file=sys.stderr)
+            print('       git commit -m "backup: depgraph before <操作描述>"', file=sys.stderr)
+            print("    2. 验证备份:", file=sys.stderr)
+            print("       git log -1 --oneline -- data/databases/depgraph.db", file=sys.stderr)
+            print("    3. 重新执行本命令", file=sys.stderr)
+            print("", file=sys.stderr)
+            print(f"  强制跳过（不推荐）: {SKIP_BACKUP_CHECK_ENV}=1", file=sys.stderr)
+            print("=" * 70, file=sys.stderr)
+            return False
+    except Exception:
+        # 检查失败，安全起见允许（避免误阻断）
+        return True
+
+    return True
+
 
 # 集成 lock_files.py 文件锁——堵住并发写入漏洞
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
@@ -66,9 +146,17 @@ def _db_write_lock(
     1. threading.Lock() — 进程内多线程串行化（避免同进程线程竞争文件锁）
     2. lock_files.py 文件锁 — 跨进程互斥（原子目录创建，TTL 30分钟）
 
+    GIT 备份门禁：写入前检查 depgraph.db 是否有 git 备份（project_memory 强制规则）。
+    如果 DB 有未提交修改（未备份），阻断写入并 sys.exit(4)。
+
     重试机制：acquire 失败时等待 retry_interval 秒后重试，最多 max_retries 次。
     db_path: 指定要锁的数据库文件路径（默认 DEPGRAPH_PATH）。
     """
+    # GIT 备份门禁：写入前检查是否有 git 备份（在任何锁获取之前检查）
+    _check_db_path = Path(db_path) if db_path is not None else DEPGRAPH_PATH
+    if not _check_git_backup(_check_db_path):
+        sys.exit(4)
+
     oid = owner_id or f"depgraph-{os.getpid()}"
     db_path_str = str(db_path if db_path is not None else DEPGRAPH_PATH)
     _db_write_lock_lock.acquire()

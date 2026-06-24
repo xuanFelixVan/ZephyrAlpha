@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0636 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_credential_rotation_trigger
 # [INVARIANTS] scan_and_rotate exit_code=43 on leak; exit_code=0 on no leak; notify returns action key
 # [MODIFY-GUARD] blueprint.md §4

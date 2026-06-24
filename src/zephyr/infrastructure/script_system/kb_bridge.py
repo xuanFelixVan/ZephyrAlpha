@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master-blueprint/blueprint_baseline.md | CT-SCRIPT-KB-001
+# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-SCRIPT-KB-001
 # [MODULE] zephyr.infrastructure.script_system.kb_bridge
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.__init__

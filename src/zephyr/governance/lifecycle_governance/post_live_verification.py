@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-050 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-050 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.post_live_verification
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.lifecycle_governance.__init__

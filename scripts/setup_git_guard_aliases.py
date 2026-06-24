@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §concurrency_guard
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.setup_git_guard_aliases
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.git_guard

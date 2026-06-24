@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.batch_ingest
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__

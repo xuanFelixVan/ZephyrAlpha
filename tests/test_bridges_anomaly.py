@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0454 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_bridges_anomaly
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

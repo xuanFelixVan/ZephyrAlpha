@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-IDE
+# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.speed_baseline_checker
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__

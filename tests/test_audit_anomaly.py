@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0342 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md | §5
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §5
 # [MODULE] tests.test_audit_anomaly
 # [INVARIANTS] AnomalyDetector.scan returns list; AnomalyResult.to_dict serializable
 # [MODIFY-GUARD] none

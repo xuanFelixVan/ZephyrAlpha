@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1761 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_traffic_replay_validator
 # [INVARIANTS] deviation_rate = (deviations+errors)/replay_count*100; should_abort when rate>threshold
 # [MODIFY-GUARD] none

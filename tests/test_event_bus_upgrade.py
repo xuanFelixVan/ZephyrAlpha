@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0863 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §event_bus_upgrade
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §event_bus_upgrade
 # [MODULE] tests.test_event_bus_upgrade
 # [INVARIANTS] event_bus_upgrade是deprecated compat shim; import时必须发出DeprecationWarning
 # [MODIFY-GUARD] 仅当event_bus_upgrade公开API变更时修改

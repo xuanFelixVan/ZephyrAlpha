@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §2.10
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §2.10
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.process_lifecycle_gateway
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.shared.shared_services.infra_06.process_pool

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1355 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_parameterized_safety_gate
 # [INVARIANTS] HARD REJECT must short-circuit; is_blocked must reflect results
 # [MODIFY-GUARD] none

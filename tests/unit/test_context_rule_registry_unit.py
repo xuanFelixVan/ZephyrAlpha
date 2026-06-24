@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1998 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-XLR-003 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §
+# [BLUEPRINT] MOD-XLR-003 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 
 from __future__ import annotations
 

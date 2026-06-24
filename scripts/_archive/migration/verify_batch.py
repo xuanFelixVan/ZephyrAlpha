@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.3
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.verify_batch
 # [INVARIANTS] 5项检查: target存在/old不存在/语法通过/import目标存在/log状态; 任何失败->exit 1
 # [MODIFY-GUARD] 新增检查项需同步TC-6-3~6验收标准

@@ -1,7 +1,7 @@
 """
 depgraph_reader.py — 依赖图数据库查询工具模块
 
-[BLUEPRINT] DM-100030 | src/zephyr/data/depgraph_reader.py | §30
+[BLUEPRINT] DM-100030 | src/zephyr/governance/depgraph_reader.py | §30
 [MODULE] zephyr.data.depgraph_reader
 [INVARIANTS] 只读查询; 参数化防注入; 结果缓存
 [MODIFY-GUARD] 修改需同步更新 tests/test_depgraph_reader.py

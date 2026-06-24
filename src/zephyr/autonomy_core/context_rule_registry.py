@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §4.7
+# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §4.7
 # [MODULE] zephyr.autonomy_core.context_rule_registry
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__

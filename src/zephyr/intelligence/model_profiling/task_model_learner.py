@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] zephyr.intelligence.model_profiling.task_model_learner
 # [DOMAIN] D-INTELLIGENCE
 # [DEPENDENCIES]

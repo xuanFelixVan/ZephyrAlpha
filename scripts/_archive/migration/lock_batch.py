@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/domain-model-migration-plan.md | §6.3
+# [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.lock_batch
 # [INVARIANTS] 验证log中所有moves的verified/状态; 锁定后禁止回滚
 # [MODIFY-GUARD] log格式变更需同步rollback_batch.py

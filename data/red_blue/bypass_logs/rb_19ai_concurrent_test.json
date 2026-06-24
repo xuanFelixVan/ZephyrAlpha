@@ -1,0 +1,135 @@
+{
+  "test_name": "19 AI 并发极限测试",
+  "timestamp": "2026-06-23T12:53:13",
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "blocked": 0,
+    "total": 7
+  },
+  "results": {
+    "1": {
+      "test_name": "文件锁竞争",
+      "status": "PASS",
+      "details": {
+        "success_count": 1,
+        "fail_count": 18,
+        "expected": "1 success, 18 fail",
+        "outcomes": [
+          {
+            "ai_id": 1,
+            "acquired": false,
+            "stdout": "DENIED — tests/red_blue/_test_lock_target.py 已被 session-rb-test-003 锁定\n  对方任务: AI-3\n  请等待对方释放或协调后重试"
+          },
+          {
+            "ai_id": 5,
+            "acquired": false,
+            "stdout": "DENIED — tests/red_blue/_test_lock_target.py 已被 session-rb-test-003 锁定\n  对方任务: AI-3\n  请等待对方释放或协调后重试"
+          },
+          {
+            "ai_id": 3,
+            "acquired": true,
+            "stdout": "ACQUIRED — tests/red_blue/_test_lock_target.py 已锁定\n  持有者: session-rb-test-003\n  任务: AI-3"
+          },
+          {
+            "ai_id": 8,
+            "acquired": false,
+            "stdout": "DENIED — tests/red_blue/_test_lock_target.py 已被 session-rb-test-003 锁定\n  对方任务: AI-3\n  请等待对方释放或协调后重试"
+          },
+          {
+            "ai_id": 12,
+            "acquired": false,
+            "stdout": "DENIED — tests/red_blue/_test_lock_target.py 已被 session-rb-test-003 锁定\n  对方任务: AI-3\n  请等待对方释放或协调后重试"
+          }
+        ]
+      },
+      "timestamp": "2026-06-23T12:53:10"
+    },
+    "2": {
+      "test_name": "StagingArea 草稿隔离",
+      "status": "PASS",
+      "details": {
+        "success_count": 19,
+        "draft_sessions_found": 19,
+        "expected": "19 drafts in .aidrafts/"
+      },
+      "timestamp": "2026-06-23T12:53:10"
+    },
+    "3": {
+      "test_name": "StagingArea 提交竞争",
+      "status": "PASS",
+      "details": {
+        "ok_count": 1,
+        "conflict_count": 18,
+        "error_count": 0,
+        "expected": ">=1 OK, rest CONFLICT",
+        "error_details": [],
+        "non_standard_results": [
+          {
+            "ai_id": 1,
+            "result": "CommitStatus.CONFLICT"
+          },
+          {
+            "ai_id": 3,
+            "result": "CommitStatus.CONFLICT"
+          },
+          {
+            "ai_id": 2,
+            "result": "CommitStatus.CONFLICT"
+          }
+        ]
+      },
+      "timestamp": "2026-06-23T12:53:10"
+    },
+    "4": {
+      "test_name": "governance.db 并发写入",
+      "status": "PASS",
+      "details": {
+        "success_count": 19,
+        "fail_count": 0,
+        "expected": "19 tasks created",
+        "failed_errors_sample": []
+      },
+      "timestamp": "2026-06-23T12:53:12"
+    },
+    "5": {
+      "test_name": "git commit 竞争",
+      "status": "PASS",
+      "details": {
+        "success_count": 1,
+        "fail_count": 18,
+        "note": "git commit 串行化是预期行为，部分失败是正常的（nothing to commit）"
+      },
+      "timestamp": "2026-06-23T12:53:12"
+    },
+    "6": {
+      "test_name": "草稿+直接写入混合攻击",
+      "status": "PASS",
+      "details": {
+        "staging_ok": 1,
+        "staging_total": 10,
+        "direct_ok": 0,
+        "direct_total": 9,
+        "note": "混合模式下，StagingArea 和直接写入共存"
+      },
+      "timestamp": "2026-06-23T12:53:12"
+    },
+    "7": {
+      "test_name": "depgraph 并发读取",
+      "status": "PASS",
+      "details": {
+        "success_count": 19,
+        "fail_count": 0,
+        "output_lens_sample": [
+          30103,
+          30103,
+          30103,
+          30103,
+          30103
+        ],
+        "consistent": true
+      },
+      "timestamp": "2026-06-23T12:53:13"
+    }
+  }
+}

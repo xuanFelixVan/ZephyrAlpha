@@ -1,7 +1,7 @@
 # [A_test] module_id: SRC-TST-0160 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 """
-[BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §9
+[BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §9
 [MODULE] tests.infrastructure.test_registry_governance
 [INVARIANTS] 功能域注册表是功能域声明的唯一真源;SSoT门禁检查不可跳过
 [MODIFY-GUARD] docs/03_modules/_domain-governance/registry-governance/blueprint.md

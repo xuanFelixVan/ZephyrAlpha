@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0363 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §test-e2e
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §test-e2e
 # [MODULE] tests.test_audit_red_blue_e2e
 # [INVARIANTS] e2e tests MUST use real GateEngine/ConstitutionGuard/SteadyState; no mocking core logic; MUST NOT raise on defense failure
 # [MODIFY-GUARD] Adding e2e scenarios MUST update this file; do not modify source modules

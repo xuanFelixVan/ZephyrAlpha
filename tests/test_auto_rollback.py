@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0379 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_auto_rollback
 # [INVARIANTS] should_rollback returns True when post < pre * 0.7
 # [MODIFY-GUARD] none

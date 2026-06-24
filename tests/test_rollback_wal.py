@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1490 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §7
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §7
 # [MODULE] tests.test_rollback_wal
 # [INVARIANTS] EXIT_CODE_WAL_INCOMPLETE=45; WAL_FILE=.zephyr/rollback_wal.jsonl
 # [MODIFY-GUARD] Do not change test data without updating source module

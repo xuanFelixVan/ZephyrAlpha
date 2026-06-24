@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md | §
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §
 # [MODULE] zephyr.intelligence.model_profiling.pipeline.profiler
 # [DOMAIN] D-INTELLIGENCE
 # [DEPENDENCIES] zephyr.intelligence.model_profiling.pipeline.benchmark_suite; zephyr.intelligence.model_profiling.pipeline.model_discovery

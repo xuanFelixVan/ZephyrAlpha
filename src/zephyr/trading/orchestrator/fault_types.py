@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §fault_types
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §fault_types
 # [MODULE] zephyr.trading.orchestrator.fault_types
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.orchestrator.__init__

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1520 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L66_L67
 # [INVARIANTS] compliance fail must reject L66; upstream reject must reject L67
 # [MODIFY-GUARD] none

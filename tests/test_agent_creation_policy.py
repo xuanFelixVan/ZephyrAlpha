@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0283 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §
 # [MODULE] tests.test_agent_creation_policy
 # [INVARIANTS] test_coverage>=2_public_methods;boundary_tests_included
 # [MODIFY-GUARD] sync_with_source_on_refactor

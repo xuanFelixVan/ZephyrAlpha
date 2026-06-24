@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.registry_governance
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.__init__

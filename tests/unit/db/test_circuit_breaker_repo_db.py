@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1855 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-483 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-483 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_circuit_breaker_repo
 # [STABILITY] evolving
 # [SAFETY] L

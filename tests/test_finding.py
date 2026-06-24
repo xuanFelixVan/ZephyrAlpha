@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0915 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] tests.test_finding
 # [INVARIANTS] Finding ID deterministic from dimension+severity+target+description; LIFECYCLE_STATUS_VALUES SSoT
 # [MODIFY-GUARD] script_system/finding.py

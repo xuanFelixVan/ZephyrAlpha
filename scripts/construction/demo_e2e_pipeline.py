@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.construction.demo_e2e_pipeline
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.market_data.__init__; zephyr.governance.__init__; zephyr.signal_fundamental.__init__; zephyr.integration.contracts.__init__; zephyr.risk.__init__; zephyr.risk.risk_manager; zephyr.risk.stop_loss; zephyr.governance.core.__init__; zephyr.ex_core.__init__; zephyr.simulation.__init__; zephyr.security.llm_defense.llm_security.__init__; zephyr.intelligence.model_evaluation.implementations.default_inference_engine; zephyr.integration.__init__

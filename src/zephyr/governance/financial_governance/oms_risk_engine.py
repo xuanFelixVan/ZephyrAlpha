@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-039 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-039 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.oms_risk_engine
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.financial_governance.__init__

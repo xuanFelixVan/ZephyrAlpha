@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §chaos_hooks
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §chaos_hooks
 # [MODULE] zephyr.trading.orchestrator.chaos_hooks
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.contracts.orchestration_protocol

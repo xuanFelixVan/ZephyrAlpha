@@ -1,5 +1,5 @@
 # [A_test] module_id: DM-100053 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/governance/blueprint.md | §rule_engine
+# [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] tests.test_rule_e2e
 # [INVARIANTS] RuleLoader API 必须正确加载 YAML 规则; 缓存必须命中; 缺失操作返回空列表
 # [MODIFY-GUARD] rule_engine.py

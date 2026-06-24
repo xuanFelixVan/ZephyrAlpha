@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 r"""
-[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_automation_sync
 [INVARIANTS] 蓝图§5.5自动化触发机制状态列必须与代码实际实现一致; ⚠️待实现但代码已实现=DRIFT; ✅已实现但代码不存在=DRIFT
 [MODIFY-GUARD] script_manifest.yaml; blueprint-construction-template.md §0.2

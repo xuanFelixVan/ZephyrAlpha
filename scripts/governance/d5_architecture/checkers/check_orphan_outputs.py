@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.checkers.check_orphan_outputs
 [INVARIANTS] 扫描蓝图 §11 产出物 consumer_min; 检测零消费者孤儿产出物
 [MODIFY-GUARD] script_manifest.yaml; blueprint-construction-template.md

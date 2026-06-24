@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0771 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_drift_cron_scheduler
 # [INVARIANTS] 定期扫描不可禁用
 # [MODIFY-GUARD] src/zephyr/behavioral-auditor/drift_cron_scheduler.py

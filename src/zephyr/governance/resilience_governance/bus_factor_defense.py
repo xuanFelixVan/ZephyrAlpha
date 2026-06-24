@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-068 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-068 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.bus_factor_defense
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.resilience_governance.__init__

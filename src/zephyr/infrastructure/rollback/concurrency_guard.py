@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §concurrency_guard
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] zephyr.infrastructure.rollback.concurrency_guard
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES]

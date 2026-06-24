@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.io.io_cache
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.lifecycle.resource_optimization_models

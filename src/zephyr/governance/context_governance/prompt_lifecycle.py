@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-029 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-029 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.prompt_lifecycle
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.context_governance.__init__

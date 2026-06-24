@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # [A_test] module_id=T-GEN_test_work_orchestrator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_work_orchestrator
 # [INVARIANTS] WorkOrchestrator依赖CapabilityRegistry;测试使用mock;DAG加载使用tmp_path
 # [MODIFY-GUARD] src/zephyr/runtime/work_orchestrator.py

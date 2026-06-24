@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md | §3.1 Stage 3
+# [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §3.1 Stage 3
 # [MODULE] zephyr.governance.semantic_audit.safety_boundary
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.semantic_audit.models

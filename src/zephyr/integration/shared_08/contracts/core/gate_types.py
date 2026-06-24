@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md | §
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.core.gate_types
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES]

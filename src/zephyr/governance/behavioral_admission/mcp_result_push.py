@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-022 | docs/03_modules/_domain-governance/blueprint.md | §3.11
+# [BLUEPRINT] SRC-022 | docs/03_modules/_domain_governance/blueprint.md | §3.11
 # [MODULE] zephyr.governance.mcp_result_push
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES]

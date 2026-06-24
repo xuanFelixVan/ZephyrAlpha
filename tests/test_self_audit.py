@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1549 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_self_audit
 # [INVARIANTS] SelfAudit.policy_violations is list[dict]
 # [MODIFY-GUARD] none

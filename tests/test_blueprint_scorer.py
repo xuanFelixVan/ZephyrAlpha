@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0442 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_blueprint_scorer
 # [INVARIANTS] score_blueprint_route returns 0 for no match; score_and_rank_routes sorts desc by score
 # [MODIFY-GUARD] src/zephyr/orchestrator/blueprint_scorer.py

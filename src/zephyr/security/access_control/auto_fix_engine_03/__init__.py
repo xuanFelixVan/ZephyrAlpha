@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-SEC_auto_fix_engine_03 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03
 # [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports

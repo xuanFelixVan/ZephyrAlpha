@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.5
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.5
 # [MODULE] zephyr.integration.local_model.cache_layer
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.cache_layer

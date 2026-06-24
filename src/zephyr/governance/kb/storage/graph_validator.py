@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.storage.graph_validator
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.utils.db_utils; zephyr.governance.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.governance.drift_fix
 # [DOMAIN] D-INFRA_OPS
 # [DEPENDENCIES] zephyr.infrastructure.rollback.governance.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md | §new-GPU
+# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-GPU
 # [MODULE] zephyr.trading.gpu_monitor
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__

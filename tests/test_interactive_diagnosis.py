@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1146 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §test
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_interactive_diagnosis
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

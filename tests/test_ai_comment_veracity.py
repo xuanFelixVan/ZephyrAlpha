@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0299 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_ai_comment_veracity
 # [INVARIANTS] suspicious_patterns default=["always returns","never fails","guaranteed to","will never"]
 # [MODIFY-GUARD] none

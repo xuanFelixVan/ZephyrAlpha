@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1783 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §3.1
 # [MODULE] tests.test_verdict_engine
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

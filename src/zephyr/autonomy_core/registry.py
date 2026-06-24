@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §3
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §3
 # [MODULE] zephyr.autonomy_core.registry
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0439 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md | §
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_blueprint_health
 # [INVARIANTS] check_consistency returns dict with status key; validate_references returns list
 # [MODIFY-GUARD] src/zephyr/orchestrator/blueprint_health.py

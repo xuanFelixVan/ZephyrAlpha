@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1161 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md | §
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] tests.test_kb_chromadb_init
 # [INVARIANTS] init_chromadb must be idempotent; CollectionInfo is a pydantic model
 # [MODIFY-GUARD] none

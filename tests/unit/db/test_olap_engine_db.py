@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1859 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-486 | docs/03_modules/_domain-governance/blueprint.md | §
+# [BLUEPRINT] SRC-486 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_olap_engine
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.construction._e2e_deep
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.construction.check_statuses

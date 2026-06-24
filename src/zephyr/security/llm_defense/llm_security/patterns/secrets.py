@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.patterns.secrets
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.shared.security.secrets

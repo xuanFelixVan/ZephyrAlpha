@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1025 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_fle_validator
 # [INVARIANTS] validate_all returns dict[str, bool]; validate_one returns bool; missing_files returns list[str]
 # [MODIFY-GUARD] none

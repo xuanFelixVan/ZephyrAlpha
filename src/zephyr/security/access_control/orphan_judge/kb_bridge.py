@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md | §6.4
+# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.4
 # [MODULE] zephyr.security.access_control.orphan_judge.kb_bridge
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.intelligence.model_evaluation.unified_memory_api

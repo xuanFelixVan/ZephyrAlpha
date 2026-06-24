@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §4.3 + §16 Phase 1
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.3 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.validator
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.security.adversarial_validation.scenario_loader; zephyr.security.adversarial_validation.defense_runner; zephyr.security.adversarial_validation.bypass_recorder; zephyr.security.adversarial_validation.steady_state; zephyr.security.adversarial_validation.cleanup; zephyr.security.adversarial_validation.blast_radius

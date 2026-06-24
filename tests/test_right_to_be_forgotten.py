@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1463 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md | §
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_right_to_be_forgotten
 # [INVARIANTS] GDPR遗忘权;hash不可逆;exit_code_19=GDPR_BLOCKED
 # [MODIFY-GUARD] blueprint.md §4;src/zephyr/rollback/__init__.py

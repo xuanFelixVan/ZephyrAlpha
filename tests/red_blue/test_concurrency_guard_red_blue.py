@@ -1,5 +1,5 @@
 # [A_test] module_id: MOD-GOV_git_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback-system/blueprint.md | §concurrency_guard
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] tests.red_blue.test_concurrency_guard_red_blue
 # [STABILITY] volatile
 # [SAFETY] L
