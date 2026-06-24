@@ -28,7 +28,8 @@ verifiability: hybrid
 references: []
 codification_level: L2
 codification_at: "2026-05-15"
-submodule_path: src/zephyr/infrastructure/task_system/
+submodule_path: src/zephyr/governance/task_repo.py
+actual_disk_path: "src/zephyr/governance/task_repo.py"
 runtime_plane: hot
 ttl: permanent
 construction_progress: partially_implemented
@@ -46,7 +47,7 @@ depends_on:
   - {target: REG-LLM-001, at: "全篇", why: "模型基准排名——execution_model数据依据"}
   - {target: GOV-AI-002, at: "全篇", why: "模型路由策略——任务分配决策树、断路器、降级策略"}
   - {target: "src/zephyr/shared/schemas.py", at: "Task类", why: "Task模型基座——TaskCard继承其31字段"}
-  - {target: "src/zephyr/data/persistence/task_repo.py", at: "全篇", why: "Event Sourcing append_event+投影——数据层真源（v3.0 MOD-INF-012B）"}
+  - {target: "src/zephyr/governance/task_repo.py", at: "全篇", why: "Event Sourcing append_event+投影——数据层真源（v3.0 MOD-INF-012B）"}
   - {target: "MOD-INF-012B", at: "全篇", why: "Database v3.0 Event Sourcing——TaskRepo 底层架构"}
   - {target: KBG-0038, at: "全篇", why: "File-as-Task范式——文件与任务1:1双向映射"}
   - {target: KBG-0040, at: "全篇", why: "Pydantic V2强制——所有模型基座"}
@@ -58,7 +59,7 @@ runtime_plane: hot
 # Task System 蓝图 — 全链路任务卡生命周期管理
 
 > module_id: MOD-INF-006 | version: 0.9.5 | status: active | layer: L01
-> actual_disk_path: src/zephyr/task_system/ + src/zephyr/orchestrator/ | generation: 1 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/governance/task_repo.py | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
 
@@ -99,8 +100,8 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = partially_implemented → 代码文件清单100%存在 | `ls src/zephyr/task_system/` + `ls src/zephyr/orchestrator/` | ☐ |
-| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class/|def" src/zephyr/task_system/core/*.py` | ☐ |
+| construction_progress = partially_implemented → 代码文件清单100%存在 | `ls src/zephyr/governance/task_repo.py` + `ls src/zephyr/trading/orchestrator/` | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class/|def" src/zephyr/governance/task_repo.py` | ☐ |
 
 ### §0.3 版本-代码映射
 
@@ -124,11 +125,11 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 
 | 目录 | 归属蓝图 | 说明 |
 |------|---------|------|
-| src/zephyr/task_system/ | MOD-INF-006 | 主代码目录 |
-| src/zephyr/orchestrator/ | MOD-INF-006 + MOD-INF-009 | BatchOrchestrator/file_task_mapper 归 MOD-INF-006；PipelineOrchestrator 归 MOD-INF-009 |
-| src/zephyr/data/persistence/task_repo.py | MOD-INF-006（业务接口）/ MOD-INF-012（物理存储） | 业务接口定义权归 MOD-INF-006 |
-| src/zephyr/infrastructure/shared_services/models.py | MOD-INF-006 | TaskCard 模型 |
-| src/zephyr/infrastructure/shared_services/blueprint_decomposer.py | MOD-INF-006 | 蓝图拆解器 |
+| src/zephyr/governance/task_repo.py | MOD-INF-006 | 主代码目录 |
+| src/zephyr/trading/orchestrator/ | MOD-INF-006 + MOD-INF-009 | BatchOrchestrator/file_task_mapper 归 MOD-INF-006；PipelineOrchestrator 归 MOD-INF-009 |
+| src/zephyr/governance/task_repo.py | MOD-INF-006（业务接口）/ MOD-INF-012（物理存储） | 业务接口定义权归 MOD-INF-006 |
+| src/zephyr/shared/shared_services/models.py | MOD-INF-006 | TaskCard 模型 |
+| src/zephyr/shared/shared_services/blueprint_decomposer.py | MOD-INF-006 | 蓝图拆解器 |
 | src/zephyr/integration/mcp/task_manager_server.py | MOD-INF-006（业务逻辑）/ MOD-INF-013（协议层） | 见 §0.4 SSoT 声明 |
 | src/zephyr/pipeline/ | MOD-INF-009 | 管线调度 |
 | src/zephyr/gates/ | MOD-INF-007 | 门禁引擎 |
@@ -409,7 +410,7 @@ class TaskLifecycleManager:
 ### §4.5 MCP 接口
 
 > MCP Server 位置：[task_manager_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/task_manager_server.py)
-> 数据真源：[task_repo.py](file:///D:/ZephyrAlpha/src/zephyr/data/persistence/task_repo.py)（SQLite）——MCP Server 不得使用内存字典
+> 数据真源：[task_repo.py](file:///D:/ZephyrAlpha/src/zephyr/governance/task_repo.py)（SQLite）——MCP Server 不得使用内存字典
 
 | Tool | API | 输入 | 输出 |
 |------|-----|------|------|
@@ -639,7 +640,7 @@ class TaskLifecycleManager:
 | MOD-INF-007 | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate-engine/blueprint.md` |
 | MOD-INF-009 | 必须 | 管线调度 SSoT——任务管线 M1-M11 双管线路由 + Fast/Batch双通道 | ≥2.0.0 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
 | shared/schemas.py | 必须 | Task 31 字段 TaskCard 基座 | 现有代码 | `src/zephyr/shared/schemas.py` |
-| task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N + BatchCoordination | 现有代码 | `src/zephyr/data/persistence/task_repo.py` |
+| task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N + BatchCoordination | 现有代码 | `src/zephyr/governance/task_repo.py` |
 
 ### §10.2 依赖图对齐声明
 
@@ -721,11 +722,11 @@ class TaskLifecycleManager:
 | 产出物类型 | 存放完整路径（相对优先） | consumer_min | 说明 |
 |----------|---------------|:---:|------|
 | 蓝图文件 | `docs/03_modules/_domain-infra_ops/task-system/blueprint.md` | 0 | 本文件 |
-| 业务代码 | `src/zephyr/task_system/` | 1 | TaskSystem 包 |
-| 业务代码 | `src/zephyr/orchestrator/` | 1 | 管线调度器 |
-| 业务代码 | `src/zephyr/infrastructure/shared_services/models.py` | 1 | TaskCard 模型 |
-| 业务代码 | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | 1 | 蓝图拆解器 |
-| 数据层 | `src/zephyr/data/persistence/task_repo.py` | 5 | SQLite CRUD + 状态机 |
+| 业务代码 | `src/zephyr/governance/task_repo.py` | 1 | TaskSystem 包 |
+| 业务代码 | `src/zephyr/trading/orchestrator/` | 1 | 管线调度器 |
+| 业务代码 | `src/zephyr/shared/shared_services/models.py` | 1 | TaskCard 模型 |
+| 业务代码 | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 1 | 蓝图拆解器 |
+| 数据层 | `src/zephyr/governance/task_repo.py` | 5 | SQLite CRUD + 状态机 |
 | 数据层 | `src/zephyr/data/persistence/sqlite_schema.py` | 5 | Schema + 迁移链 |
 | MCP 接口 | `src/zephyr/integration/mcp/task_manager_server.py` | 2 | MCP 5 Tool |
 | MCP 契约 | `src/zephyr/mcp/tool-contracts.yaml` | 2 | Tool Schema |
@@ -760,8 +761,8 @@ class TaskLifecycleManager:
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | MOD-INF-006 条目更新 | 版本升级 |
 | 2 | 任务卡元注册表 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 迁移状态更新 | v0.2.0→v0.3.0 |
-| 3 | core/models.py | `src/zephyr/infrastructure/shared_services/models.py` | TaskCard 继承 Task | 基座对齐 |
-| 4 | blueprint_decomposer.py | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | 对接 task_repo | 数据层真源 |
+| 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | TaskCard 继承 Task | 基座对齐 |
+| 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 对接 task_repo | 数据层真源 |
 | 5 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | MCP 5 Tool | 接入 SQLite |
 | 6 | task_completion_gate.py | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | G7 门禁逻辑同步 | 约束对齐 |
 
@@ -874,7 +875,7 @@ class TaskLifecycleManager:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.2.1 |
-| 产出位置 | `src/zephyr/infrastructure/shared_services/models.py` |
+| 产出位置 | `src/zephyr/shared/shared_services/models.py` |
 | 内容变更 | ① TaskCard 从独立 BaseModel → 继承 `shared/schemas.py` Task；② task_id format 从 `TASK-INF-XXXX` → `{NAMESPACE}-{SEQ}`；③ TaskStatus 从 created/queued/.../closed → PENDING/IN_PROGRESS/.../CANCELLED（10态）；④ 删除 tags_fn/tags_ly/tags_md/tags_st/tags_mo 五轴字段→改用 Task 父类的 flat `tags[]`；⑤ 保留并追加 Vibe Coding 执行层字段（防漂移六维+门禁+管线+父子层级+自治五级+Prompt版本化+Saga补偿+SLA+模型快照+紧急模式+知识隔离+依赖指纹+取消残留+漂移校验+兼容冲击+重规划+范围蔓延+上下文缓存） |
 | 验收标准 | ① isinstance(TaskCard(...), Task) == True；② task_id pattern `^(KB 决策记录/|CP/|KE/|STD/|DW/|SRC/|OPS)-//d+$`；③ status ∈ TaskStatus enum |
 | AI 自治范围 | human_gated |
@@ -887,7 +888,7 @@ class TaskLifecycleManager:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1.1 |
-| 产出位置 | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` |
+| 产出位置 | `src/zephyr/shared/shared_services/blueprint_decomposer.py` |
 | 内容变更 | ① decompose() 不再写 .md 为主——改为 `task_repo.create(task)`（写 SQLite）为主，.md 同步生成为辅；② task_id 生成从 `TASK-INF-0001` 自增 → 按 `{NAMESPACE}-{SEQ}` 格式（解析蓝图所属域+查询 task_repo 当前最大 seq）；③ 每张任务卡执行 G0/G7 门禁；④ task_repo.create() 成功后同步生成 .md 副本 |
 | 验收标准 | ① decompose(本蓝图) → task_repo.list_tasks() 返回 N≥1 条记录；② task_id 格式正确 |
 | AI 自治范围 | human_gated |
@@ -955,8 +956,8 @@ class TaskLifecycleManager:
 |---|--------|---------------|:---:|:---:|:---:|
 | 1 | blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | ☐ | ☐ | ☐ |
 | 2 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | ☐ | ☐ | ☐ |
-| 3 | core/models.py | `src/zephyr/infrastructure/shared_services/models.py` | ☐ | ☐ | ☐ |
-| 4 | blueprint_decomposer.py | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | ☐ | ☐ | ☐ |
+| 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | ☐ | ☐ | ☐ |
+| 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | ☐ | ☐ | ☐ |
 | 5 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | ☐ | ☐ | ☐ |
 | 6 | context-engine + M1-M11 | `src/zephyr/context-engine/` + `pipeline/` | ☐ | ☐ | ☐ |
 
@@ -987,14 +988,14 @@ class TaskLifecycleManager:
 
 #### §16.7.1 Multi-Worker Batch Coordination Schema
 
-> B-20 铁律：已实现代码不在蓝图中重复。完整 SQL 见 `src/zephyr/data/persistence/task_repo.py`。
+> B-20 铁律：已实现代码不在蓝图中重复。完整 SQL 见 `src/zephyr/governance/task_repo.py`。
 
 新增列：`batch_id TEXT` / `claimed_by TEXT` / `claimed_at TEXT`
 索引：`idx_tasks_batch` / `idx_tasks_claimed`
 
 #### §16.7.2 原子认领 SQL
 
-> B-20 铁律：已实现代码不在蓝图中重复。完整 SQL 见 `src/zephyr/data/persistence/task_repo.py`。
+> B-20 铁律：已实现代码不在蓝图中重复。完整 SQL 见 `src/zephyr/governance/task_repo.py`。
 
 `UPDATE tasks SET status='IN_PROGRESS', claimed_by=?, claimed_at=? WHERE task_id=? AND claimed_by IS NULL` — SQLite WAL 模式下原子操作。
 
@@ -1255,7 +1256,7 @@ class TaskLifecycleManager:
 |---|--------|---------|---------|:----:|
 | 1 | frontmatter 字段完整 | 逐字段检查 | module_id/title/version/layer/owner/status/depends_on/stability 均有值 | ☐ |
 | 2 | §0 代码对齐验证与实际代码一致 | `ls` + `grep` 逐项核对 | §0.1 存在性标记与磁盘一致 | ☐ |
-| 3 | §4 接口签名与代码一致 | `grep "class/|def" src/zephyr/task_system/core/*.py` | 蓝图中的类名/方法名在代码中存在 | ☐ |
+| 3 | §4 接口签名与代码一致 | `grep "class/|def" src/zephyr/governance/task_repo.py` | 蓝图中的类名/方法名在代码中存在 | ☐ |
 | 4 | §10 依赖声明与 registry 对齐 | `validate_path_alignment.py` | 依赖项在 registry 中有对应条目 | ☐ |
 | 5 | §11 产出物路径与 GOV-DOC-002 一致 | 逐路径核对 | 所有路径符合目录结构标准 | ☐ |
 | 6 | §14 风险缓解策略可执行 | 逐项检查缓解策略 | 每个风险有具体缓解措施而非"待定" | ☐ |
@@ -1333,7 +1334,7 @@ STEP 3: 拆分后验证
 |---|---------------|------------|---------|---------|------------|
 | 1 | MOD-INF-003 任务卡KMS蓝图 | `docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
 | 2 | MOD-INF-004 双管线蓝图 | `docs/03_modules/_domain-infra_ops/vibe-coding-pipelines/blueprint.md` | 覆盖型 | 本蓝图 | 已标记 deprecated→物理删除 |
-| 3 | v0.2.0 TaskCard 模型 | `src/zephyr/infrastructure/shared_services/models.py` | 覆盖型 | v0.3.0 TaskCard | 重写对齐新契约 |
+| 3 | v0.2.0 TaskCard 模型 | `src/zephyr/shared/shared_services/models.py` | 覆盖型 | v0.3.0 TaskCard | 重写对齐新契约 |
 
 ### 删除铁律
 
@@ -1365,7 +1366,7 @@ STEP 3: 拆分后验证
 | 10 | 模型路由策略 | GOV-AI-002 | 2.0.0+ | `docs/01_policies_and_standards/governance/ai/model-routing-policy.md` | 任务分配决策树 |
 | 11 | AGENTS.md 项目基准 | — | 4.6.1+ | `AGENTS.md` | 项目全局规则 |
 | 12 | Task 模型基座 | shared/schemas.py | 现有代码 | `src/zephyr/shared/schemas.py` | Task 31 字段——TaskCard 继承 |
-| 13 | task_repo.py | — | 现有代码 | `src/zephyr/data/persistence/task_repo.py` | SQLite CRUD + 10状态机——数据层真源 |
+| 13 | task_repo.py | — | 现有代码 | `src/zephyr/governance/task_repo.py` | SQLite CRUD + 10状态机——数据层真源 |
 | 14 | 任务卡元注册表 | task-card-meta-registry | V-13 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 迁移状态追踪 |
 
 ---
@@ -1379,7 +1380,7 @@ STEP 3: 拆分后验证
 | 1 | MOD-INF-003（旧蓝图层） | `docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md` | 任务卡制度+KMS体系 | deprecated——已被本蓝图合并 |
 | 2 | MOD-INF-004（旧双管线） | `docs/03_modules/_domain-infra_ops/vibe-coding-pipelines/blueprint.md` | 双管线流程+M模块 | deprecated——已被本蓝图合并 |
 | 3 | Task 模型（shared/schemas.py） | `src/zephyr/shared/schemas.py` | 语义28+追踪3=31 字段 | ✅ 可复用——本蓝图 TaskCard 继承此模型 |
-| 4 | task_repo.py（SQLite CRUD） | `src/zephyr/data/persistence/task_repo.py` | 创建/查询/更新/删除/状态转换 | ✅ 可复用——本蓝图数据层使用此代码 |
+| 4 | task_repo.py（SQLite CRUD） | `src/zephyr/governance/task_repo.py` | 创建/查询/更新/删除/状态转换 | ✅ 可复用——本蓝图数据层使用此代码 |
 
 ---
 
@@ -1393,9 +1394,9 @@ STEP 3: 拆分后验证
 | 2 | Change Folder | `docs/03_modules/_domain-infra_ops/task-system/changes/` | 新建 | 存放任务卡 .md 文件 |
 | 3 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 更新 MOD-INF-006 条目 |
 | 4 | Task 模型基座 | `src/zephyr/shared/schemas.py` | 依赖 | TaskCard 继承其 Task 类 |
-| 5 | task_repo.py | `src/zephyr/data/persistence/task_repo.py` | 依赖 | 数据层真源 |
-| 6 | core/models.py | `src/zephyr/infrastructure/shared_services/models.py` | 重写 | 对齐到 shared/schemas.py Task 继承 |
-| 7 | blueprint_decomposer.py | `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | 重写 | 输出改为 task_repo(SQLite) + .md |
+| 5 | task_repo.py | `src/zephyr/governance/task_repo.py` | 依赖 | 数据层真源 |
+| 6 | core/models.py | `src/zephyr/shared/shared_services/models.py` | 重写 | 对齐到 shared/schemas.py Task 继承 |
+| 7 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 重写 | 输出改为 task_repo(SQLite) + .md |
 | 8 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | 重写 | 接入 task_repo(SQLite) 真源 |
 | 9 | task_completion_gate.py | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | 读取 | 需同步 G7 门禁 |
 | 10 | metadata_registry.yaml | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 读取 | §7 字段真源 |
@@ -1416,7 +1417,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/shared_services/adaptation/execution_tuner.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/adaptation/prompt_version_manager.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/blueprint_code_sync.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/blueprint_decomposer.py` | ✅ 已实现 | |
+| `src/zephyr/shared/shared_services/blueprint_decomposer.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/compensation/saga_compensator.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/context-engine.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/dependency/dependency-graph.py` | ✅ 已实现 | |
@@ -1437,7 +1438,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/shared_services/maintenance/dogfooding.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/maintenance/handbook.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/maintenance/zero_config.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/models.py` | ✅ 已实现 | |
+| `src/zephyr/shared/shared_services/models.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/observability/cli_summary.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/observability/cost_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/shared_services/observability/failure_matcher.py` | ✅ 已实现 | |
@@ -1483,7 +1484,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/pipeline/route-manifest.yaml` | ✅ 已实现 | |
 | `src/zephyr/pipeline/routemanifest.yaml` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py` | ✅ 已实现 | |
-| `src/zephyr/data/persistence/task_repo.py` | ✅ 已实现 | |
+| `src/zephyr/governance/task_repo.py` | ✅ 已实现 | |
 | `src/zephyr/data/persistence/sqlite_schema.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/task_manager_server.py` | ✅ 已实现 | |
 | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |

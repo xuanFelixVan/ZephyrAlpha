@@ -1,6 +1,6 @@
 rule_id: TRAE-058
 title: 全景图扫描排除规则
-version: '1.0.0'
+version: '1.1.0'
 layer: L1
 module_id: TRAE-058
 depends_on:
@@ -58,7 +58,7 @@ sections:
     rationale:
       whitelist: 'depgraph 用白名单扫描根(SCAN_DIRS)——不在白名单的路径根本不扫描。这是最主要的排除机制。'
       exempt_dir: 'os.walk 时按目录名跳过(如 __pycache__/.git)——通用缓存/锁/临时目录。'
-      node_type: '节点类型过滤(EXCLUDED_NODE_TYPES)——doc/policy/standard/template/diagram/data 类型不进入依赖图，因为它们零 import_depends 边，只有噪音引用。'
+      node_type_whitelist: '节点类型白名单准入(NODES_WHITELIST，裁定#184)——只有 module/script/test/config 4 种 node_type 进入依赖图 nodes 表，其余类型默认不进 nodes（保留在 arch_directory_tree）。白名单天然安全——新类型默认不进 nodes。已废除原 EXCLUDED_NODE_TYPES 黑名单（已证明不可靠，漏掉 gate/contract/registry/schema 共 561 个非代码节点污染）。'
       knowledge_doc: '知识文档类型跳过——docs/08_knowledge 和 docs/09_audit 的 .md 文件被分类为 knowledge_doc 并跳过，因为它们是经验积累/历史记录，无代码依赖。'
       skip_ext: 'path_tree 跳过二进制/编译产物扩展名(.pyc/.dll/.exe 等)。'
       max_depth: 'path_tree 最大扫描深度 8 层，防止无限递归。'
@@ -105,32 +105,44 @@ sections:
       reason: 共享内部工具，非 depgraph 相关
       exclusion_mechanism: whitelist
       in_path_tree: true
-  excluded_node_types:
+  nodes_whitelist:
     section_type: reference
-    title: 不纳入依赖图的节点类型
+    title: nodes 表节点类型白名单准入（裁定#184）
     description: |
-      以下类型的节点不进入 depgraph nodes 表。
-      这些类型零 import_depends 边，只有噪音引用边。
-      它们属于架构全景(含所有文件)，不属于依赖图(只含代码依赖)。
-    items:
-    - type: doc
-      reason: 文档文件，0 import edges
-      typical_paths: docs/02_enterprise_architecture/, docs/09_audit/, docs/08_knowledge/
-    - type: policy
-      reason: 政策文档，0 import edges
-      typical_paths: docs/01_policies_and_standards/governance/
-    - type: standard
-      reason: 标准文档，0 import edges
-      typical_paths: docs/01_policies_and_standards/rules/
-    - type: template
-      reason: 模板文档，0 import edges
-      typical_paths: docs/01_policies_and_standards/templates/
-    - type: diagram
-      reason: mermaid 图表，0 import edges
-      typical_paths: *.mmd 文件
-    - type: data
-      reason: 数据文件，0 import edges
-      typical_paths: data/ 下的 .json/.yaml 文件
+      nodes 表只收录 4 种 node_type（白名单准入），其余类型默认不进 nodes 表。
+      白名单机制天然安全——新类型默认不进 nodes，无需手动维护排除清单。
+      非白名单类型保留在架构全景图（arch_directory_tree 表），AI 仍可查询其位置。
+      已废除原 EXCLUDED_NODE_TYPES 黑名单（已证明不可靠，漏掉 4 种类型导致 561 个非代码节点污染）。
+    whitelist:
+    - type: module
+      reason: Python 代码模块，有 import 依赖
+      file_type: .py
+    - type: script
+      reason: Python 脚本，有 import 依赖
+      file_type: .py
+    - type: test
+      reason: Python 测试，有 import 依赖
+      file_type: .py
+    - type: config
+      reason: 运行时配置，有配置依赖
+      file_type: .yaml/.yml
+    non_whitelist_examples:
+      description: '以下类型不进 nodes 表（保留在 arch_directory_tree），举例非穷举：'
+      examples:
+      - type: doc
+        reason: 文档文件，0 import edges
+      - type: policy
+        reason: 政策文档，0 import edges
+      - type: standard
+        reason: 标准文档，0 import edges
+      - type: template
+        reason: 模板文档，0 import edges
+      - type: diagram
+        reason: mermaid 图表，0 import edges
+      - type: data
+        reason: 数据文件，0 import edges
+      - type: gate/contract/registry/schema/blueprint
+        reason: 治理/契约/注册表/Schema/蓝图节点，非代码依赖
   config_file_reference:
     section_type: reference
     title: 配置文件真源
@@ -141,7 +153,7 @@ sections:
     config_structure:
       depgraph.scan_dirs: depgraph 白名单扫描根
       depgraph.exempt_dirs: depgraph os.walk 跳过的目录名
-      depgraph.excluded_node_types: depgraph 不纳入的节点类型
+      depgraph.nodes_whitelist: depgraph nodes 表准入节点类型（裁定#184，4种：module/script/test/config）
       depgraph.knowledge_doc_paths: depgraph 知识文档跳过路径
       depgraph.type_prefixes: depgraph 类型分类前缀
       path_tree.scan_roots: path_tree 扫描根
@@ -153,10 +165,12 @@ sections:
     title: 代码实现
     description: |
       两个生成器从 depgraph_scan_exclusions.yaml 读取配置，不硬编码排除规则。
+      裁定#184 后，generate_project_depgraph.py 已从 EXCLUDED_NODE_TYPES 黑名单改为 NODES_WHITELIST 白名单准入。
     generators:
     - script: scripts/governance/generate_project_depgraph.py
-      reads_config: depgraph 段(scan_dirs + exempt_dirs + excluded_node_types + knowledge_doc_paths + type_prefixes)
-      cleaned_dead_code: EXCLUDED_SCAN_DIRS(定义但从未使用，已删除)
+      reads_config: depgraph 段(scan_dirs + exempt_dirs + nodes_whitelist + knowledge_doc_paths + type_prefixes)
+      whitelist_mechanism: 'NODES_WHITELIST = {module, script, test, config}（裁定#184），if node_type not in NODES_WHITELIST: skip'
+      cleaned_dead_code: EXCLUDED_SCAN_DIRS(定义但从未使用，已删除) + EXCLUDED_NODE_TYPES(黑名单已废除，改为白名单)
     - script: scripts/governance/generate_project_path_tree.py
       reads_config: path_tree 段(scan_roots + skip_dirs + skip_extensions + max_depth)
       note: path_tree 不排除 docs/08_knowledge、docs/09_audit(物理路径树保留所有文档)
@@ -164,6 +178,10 @@ sections:
     section_type: examples
     title: 修订记录
     items:
+    - version: '1.1.0'
+      date: '2026-06-25'
+      by: session-20260625-507
+      changes: '裁定#184-188治本对齐——废除 EXCLUDED_NODE_TYPES 黑名单，改为 NODES_WHITELIST 白名单准入（4种：module/script/test/config）；更新 exclusion_mechanism 从黑名单改为白名单机制；更新 config_structure 和 code_implementation 引用；同步 generate_project_depgraph.py 代码已实现白名单'
     - version: '1.0.0'
       date: '2026-06-22'
       by: session-20260622-001
@@ -192,6 +210,12 @@ metadata:
   modification_permission: ai_modifiable
   superseded_by: null
   change_history:
+  - version: 1.1.0
+    date: '2026-06-25'
+    by: session-20260625-507
+    changes:
+    - 裁定#184-188治本对齐——废除 EXCLUDED_NODE_TYPES 黑名单，改为 NODES_WHITELIST 白名单准入
+    - 更新 exclusion_mechanism/config_structure/code_implementation 从黑名单改为白名单机制
   - version: 1.0.0
     date: '2026-06-22'
     by: session-20260622-001

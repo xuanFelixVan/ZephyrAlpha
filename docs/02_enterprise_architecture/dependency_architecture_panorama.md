@@ -137,7 +137,7 @@
 1. 获取 depgraph.db 写锁（G-Blind-6 修复）
 2. 加载设计态数据（nodes WHERE design_maturity='design' + edges WHERE dep_maturity='design'）→ 存到内存
 3. DELETE 运营态数据（nodes WHERE design_maturity != 'design' OR design_maturity IS NULL + edges WHERE dep_maturity != 'design' OR dep_maturity IS NULL）
-4. 扫描 16 个白名单目录（§14.8）
+4. 扫描 15 个白名单目录（§14.8，裁定#186 移除 tests/）
 5. 生成运营态数据（nodes + edges 的 import 依赖）
 6. 合并设计态数据（从内存恢复），设计态字段保留不动
 7. 冲突时设计态优先（SSoT 分层：设计态全景图 > 代码）
