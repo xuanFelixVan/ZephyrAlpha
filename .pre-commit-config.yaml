@@ -465,6 +465,22 @@ repos:
         files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml)$"
         description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.16 静态清单自动生成铁律"
 
+      # ── GATE-GENERATE: vocabulary YAML → 派生文件一致性（#ARCH-008 阶段9 / 裁定#206-D）──
+      # 权威依据：vocabulary_sync_chain_repair_plan.md 阶段9 动作44
+      # SSoT：layer_vocabulary.yaml 等是规则数据唯一真源，派生文件（frontmatter_field_registry.yaml /
+      #        architecture_contract.yaml / frontmatter_schema.json）由 generate_derived_files.py 自动同步
+      # 触发条件：vocabulary YAML 变更时自动校验派生文件一致性
+      # 模式：--check --warn-only（骨架阶段仅警告不阻断，验证稳定后转硬阻断）
+      - id: gate-generate-derived
+        name: "GATE-GENERATE: vocabulary YAML → 派生文件一致性"
+        entry: python scripts/governance/d3_metadata/generate_derived_files.py
+        args: ["--check", "--warn-only"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml$"
+        description: "vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
+
       # ── GATE-22: AI加载路径完整性（AGENTS.md §6.18 自动化执行层）──
       # 权威依据：AGENTS.md §6.18 AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_load_path_integrity.py + 接入 pre-commit
