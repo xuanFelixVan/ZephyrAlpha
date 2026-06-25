@@ -764,66 +764,104 @@ class TaskRepository:
         非 .py 命令（echo/git 等壳命令）无法可靠内省，跳过。
         --help 自身失败或超时不阻断建卡（仅 flag 缺失与脚本不存在阻断）。
         """
+        cmds = getattr(task, "post_sync_standard", None) or []
+        self._validate_post_sync_commands(task.task_id, cmds)
+
+    def _validate_post_sync_commands(self, task_id: str, cmds: list[str]) -> None:
+        """校验一组 post_sync_standard 命令（create + update 复用）。
+
+        与 ``_validate_post_sync_executable`` 同语义，但接受 ``task_id + cmds``
+        而非完整 Task 对象——update() 修改 post_sync_standard 时无需加载完整 Task。
+        """
+        import re
+
+        for cmd in cmds:
+            # 0. 链式/多行命令（&&, ||, 换行）拆分为子命令逐条校验
+            sub_cmds = re.split(r"\s*(?:&&|\|\||\n)\s*", cmd.strip())
+            for sub_cmd in sub_cmds:
+                self._validate_post_sync_sub_cmd(task_id, sub_cmd)
+
+    def _validate_post_sync_sub_cmd(self, task_id: str, cmd: str) -> None:
+        """校验单条 post_sync_standard 子命令（不含 && / || 链式操作符）。"""
         import shlex
         import subprocess
         import sys
 
-        cmds = getattr(task, "post_sync_standard", None) or []
-        for cmd in cmds:
-            # 1. shell 解析（posix=False 保留 Windows 反斜杠路径；strip 引号）
-            try:
-                parts = [t.strip("'\"") for t in shlex.split(cmd, posix=False)]
-            except ValueError as exc:
-                raise PostSyncValidationError(task.task_id, cmd, f"shell 解析失败: {exc}")
-            if not parts:
-                continue
+        # 1. shell 解析（posix=False 保留 Windows 反斜杠路径；strip 引号）
+        try:
+            parts = [t.strip("'\"") for t in shlex.split(cmd, posix=False)]
+        except ValueError as exc:
+            raise PostSyncValidationError(task_id, cmd, f"shell 解析失败: {exc}")
+        if not parts:
+            return
 
-            # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）
-            script_path = next((t for t in parts if t.endswith(".py")), None)
-            if script_path is None:
-                # 非 .py 命令（echo/git 等），无法内省，跳过
-                continue
+        # 1.5 pytest / py_compile 命令跳过 flag 校验
+        # pytest 的 --tb/--timeout 等 flag 由 pytest 自身管理，不是 test 文件的 argparse flag
+        # py_compile 的目标 .py 是编译目标，不是可执行脚本
+        parts_lower = [p.lower() for p in parts]
+        if "-m" in parts_lower:
+            idx = parts_lower.index("-m")
+            if idx + 1 < len(parts_lower) and parts_lower[idx + 1] in ("pytest", "py_compile"):
+                # 仍校验 .py 文件存在性，但不校验 flag
+                script_path = next((t for t in parts if t.endswith(".py")), None)
+                if script_path is not None:
+                    p = Path(script_path)
+                    if not p.is_absolute():
+                        p = _REPO_ROOT / p
+                    if not p.exists():
+                        raise PostSyncValidationError(
+                            task_id,
+                            cmd,
+                            f"文件不存在: {script_path}（解析为 {p}）",
+                        )
+                return  # pytest/py_compile flag 由模块自身管理，跳过
 
-            # 3. 脚本存在性（相对路径基于 _REPO_ROOT 解析）
-            p = Path(script_path)
-            if not p.is_absolute():
-                p = _REPO_ROOT / p
-            if not p.exists():
-                raise PostSyncValidationError(
-                    task.task_id,
-                    cmd,
-                    f"脚本不存在: {script_path}（解析为 {p}）",
-                )
+        # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）
+        script_path = next((t for t in parts if t.endswith(".py")), None)
+        if script_path is None:
+            # 非 .py 命令（echo/git 等），无法内省，跳过
+            return
 
-            # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
-            flags = [t for t in parts if t.startswith("--")]
-            if not flags:
-                continue
+        # 3. 脚本存在性（相对路径基于 _REPO_ROOT 解析）
+        p = Path(script_path)
+        if not p.is_absolute():
+            p = _REPO_ROOT / p
+        if not p.exists():
+            raise PostSyncValidationError(
+                task_id,
+                cmd,
+                f"脚本不存在: {script_path}（解析为 {p}）",
+            )
 
-            try:
-                result = subprocess.run(
-                    [sys.executable, str(p), "--help"],
-                    capture_output=True,
-                    text=True,
-                    timeout=15,
-                )
-            except (subprocess.TimeoutExpired, Exception):
-                # --help 超时或异常无法校验，跳过（不阻断建卡）
-                continue
+        # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
+        flags = [t for t in parts if t.startswith("--")]
+        if not flags:
+            return
 
-            if result.returncode != 0:
-                # --help 自身失败（脚本可能有 import 错误等），跳过 flag 校验
-                continue
+        try:
+            result = subprocess.run(
+                [sys.executable, str(p), "--help"],
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+        except (subprocess.TimeoutExpired, Exception):
+            # --help 超时或异常无法校验，跳过（不阻断建卡）
+            return
 
-            help_text = result.stdout + result.stderr
-            missing = [f for f in flags if f not in help_text]
-            if missing:
-                raise PostSyncValidationError(
-                    task.task_id,
-                    cmd,
-                    f"argparse 未注册 flag {missing}（--help 输出中未找到；"
-                    f"疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
-                )
+        if result.returncode != 0:
+            # --help 自身失败（脚本可能有 import 错误等），跳过 flag 校验
+            return
+
+        help_text = result.stdout + result.stderr
+        missing = [f for f in flags if f not in help_text]
+        if missing:
+            raise PostSyncValidationError(
+                task_id,
+                cmd,
+                f"argparse 未注册 flag {missing}（--help 输出中未找到；"
+                f"疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
+            )
 
     @staticmethod
     def _count_construction_targets(description: str) -> int:
@@ -1073,16 +1111,29 @@ class TaskRepository:
         files_in_scope: list[str] | None = None,
         tags: list[str] | None = None,
         model_rationale: str | None = None,
+        post_sync_standard: list[str] | None = None,
     ) -> TaskCard:
         """
         更新非状态字段。不触发状态机校验，也不写 state_transition 事件。
         状态转换请使用 ``transition()`` 方法。
+
+        参数
+        ----
+        post_sync_standard:
+            新的 post_sync_standard 命令列表。传入时触发
+            ``_validate_post_sync_commands`` 机械校验（脚本存在 + argparse flag
+            已注册），拒绝臆造 CLI/flag 落库。用于批量修复历史 broken 命令。
 
         返回
         ----
         Task
             更新后重新读取的 Task 对象。
         """
+        # DM-210625: post_sync_standard 校验在 _write_tx 外执行（subprocess 调用
+        # --help 不应在事务内长占连接）。校验通过后才进入写事务。
+        if post_sync_standard is not None:
+            self._validate_post_sync_commands(task_id, post_sync_standard)
+
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
@@ -1109,6 +1160,10 @@ class TaskRepository:
                 updates.append(("tags", json.dumps(tags, ensure_ascii=False)))
             if model_rationale is not None:
                 updates.append(("model_rationale", model_rationale))
+            if post_sync_standard is not None:
+                updates.append(
+                    ("post_sync_standard", json.dumps(post_sync_standard, ensure_ascii=False))
+                )
 
             if not updates:
                 return _row_to_taskcard(row)
