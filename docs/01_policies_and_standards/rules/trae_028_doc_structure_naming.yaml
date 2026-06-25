@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.1.0
+version: 1.2.0
 layer: compliance
 module_id: TRAE-028
 depends_on:
@@ -1031,8 +1031,12 @@ sections:
       fail: 其他文件中存在命名规则定义(非引用)
     - type: constraint
       check: 域ID格式
-      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔子域);示例D-MKT_DATA/D-EX_CORE/D-AUTONOMY_CORE
+      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules.yaml NR-002);示例D-MKT_DATA/D-ASHARE_SIGNAL/D-AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
       fail: 连字符格式(D-EX-CORE)或小写格式(d-ex_core)
+    - type: constraint
+      check: 域ID语义完整性
+      pass: 域ID下划线后的第一段不得与任何已存在域ID匹配(无父子前缀,对应domain_naming_rules.yaml NR-001);域ID必须独立表达业务含义,不得依赖其他域ID才能理解(语义独立性,对应NR-003);domain_name必须与domain_id语义一致(中文名一致,对应NR-005);所有域平级无父子关系
+      fail: D-XXX_YYY形式中XXX是已存在域ID(如D-SIGNAL_ASHARE暗示ASHARE是SIGNAL子域,违反NR-001);或域ID是其他域ID加下划线后缀形式(如D-SIGNAL_QUALITY依赖D-SIGNAL上下文,违反NR-003);或domain_name与domain_id表达不同业务含义(违反NR-005)
     - type: constraint
       check: 模块ID格式
       pass: MOD-{LAYER_CODE}-{SEQ}(如MOD-L00-001);D-XXX-{SEQ}(如D-MKT_DATA-001);Shared为SH-{ABBR}-{NNN};Frontend为FE-L{N}-{ABBR}-{NNN}
@@ -1061,7 +1065,7 @@ sections:
     - type: mandatory
       step: 所有命名规则以本文件为唯一真源;修改命名规则必须先修改本文件
     - type: mandatory
-      step: 域ID保持大写D-XXX_YYY格式(标识符不是文件名);统一使用下划线分隔子域(禁止连字符)
+      step: 域ID保持大写D-XXX_YYY格式(标识符不是文件名);统一使用下划线分隔业务语义片段(禁止连字符);下划线不表示父子层级,所有域平级(见域ID语义完整性condition)
     - type: mandatory
       step: 文件名/目录名统一snake_case(全项目统一下划线,一条规则零例外)
     - type: mandatory
@@ -1072,6 +1076,51 @@ sections:
     - 禁止文件名使用kebab-case(连字符)
     - 禁止目录名使用kebab-case(连字符)
     - 禁止check_naming_convention.py的检测规则与本文件不一致
+  gov_doc_003_derived_identifiers:
+    title: 派生标识符规则 (GOV-DOC-003 §派生)
+    section_type: rule
+    original_rules:
+    - DOC-003
+    conditions:
+    - type: constraint
+      check: blueprint_id 派生关系
+      pass: blueprint_id 的域片段派生自 domain_id(如domain_id=D-ASHARE_SIGNAL则blueprint_id=MOD-ASHARE_SIGNAL-NNN或MOD-ASHARE_SIGNAL);派生关系记录在derived_identifier_registry.yaml;blueprint_id命名格式见模块ID格式condition
+      fail: blueprint_id 域片段与所属 domain_id 不一致(如domain_id=D-ASHARE_SIGNAL但blueprint_id=MOD-SIGNAL_ASHARE-旧名残留)
+    - type: constraint
+      check: 节点路径域片段派生关系
+      pass: nodes.path 中的域标识片段派生自 domain_id(如domain_id=D-ASHARE_SIGNAL则节点路径含D-ASHARE_SIGNAL-NNN);节点路径编号按域内顺序分配(D-XXX-01,-02...)
+      fail: nodes.path 域片段与所属 domain_id 不一致(如domain_id=D-ASHARE_SIGNAL但路径含D-SIGNAL-21旧名残留)
+    actions:
+    - type: mandatory
+      step: 派生标识符的域片段必须跟随 domain_id;domain_id 改名时派生标识符必须同步改名(见gov_doc_003_rename_propagation)
+    - type: mandatory
+      step: 派生标识符关系表 maintained in derived_identifier_registry.yaml;新增派生关系必须先登记
+    prohibitions:
+    - 禁止 blueprint_id/节点路径的域片段与 domain_id 不一致
+    - 禁止 blueprint_id 使用子串替换传播(SIGNAL_ASHARE含SIGNAL子串会误伤,必须用精确值映射)
+  gov_doc_003_rename_propagation:
+    title: 改名传播规则 (GOV-DOC-003 §传播)
+    section_type: rule
+    original_rules:
+    - DOC-003
+    conditions:
+    - type: constraint
+      check: 改名传播完整性
+      pass: domain_id 改名时所有引用旧ID的位置必须同步更新;覆盖范围由值扫描兜底(全表TEXT列扫描残留旧ID),非仅列名枚举;改名后必须通过audit_rename_completeness.py审计(0残留才通过)
+      fail: 改名后存在残留旧ID(如nodes.owner/business_stream/tags/invariants.invariant_id等列名不含domain但值含旧ID的列被遗漏)
+    - type: constraint
+      check: 派生标识符同步改名
+      pass: domain_id 改名时blueprint_id/节点路径的域片段同步改名(精确值映射,禁止子串REPLACE);edges不受影响(用node_id INTEGER引用,不引用path)
+      fail: domain_id 改名后blueprint_id或节点路径仍含旧域片段
+    actions:
+    - type: mandatory
+      step: domain_id 改名必须用apply_depgraph.py --rename-domain(含值扫描兜底)+--propagate-rename(派生标识符传播);禁止手动SQL改domain_id
+    - type: mandatory
+      step: 改名后必须运行audit_rename_completeness.py --check-all-text-columns;0残留才通过
+    prohibitions:
+    - 禁止改名后遗留任何残留旧ID(包括列名不含domain但值含旧ID的列)
+    - 禁止用SQLite LIKE '%OLD_ID%'子串替换传播blueprint_id(子串陷阱,必须精确值映射)
+    - 禁止跳过audit_rename_completeness.py审计直接结束改名
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1116,9 +1165,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.1.0"
-  last_modified: "2026-06-21"
+  version: "1.2.0"
+  last_modified: "2026-06-26"
   change_history:
+  - version: "1.2.0"
+    date: "2026-06-26"
+    author: "AI-Assistant"
+    change: "裁定#207 R3-1/R3-4: gov_doc_003_naming_ssot 补收录 NR-001/NR-002/NR-003/NR-005(域ID语义完整性condition)+修正'下划线分隔子域'矛盾;新增 gov_doc_003_derived_identifiers + gov_doc_003_rename_propagation section(裁定#206 B-5/B-6);check_naming_convention.py 新增 N-17(blueprint_id域片段与[DOMAIN]一致性校验);validate_ssot.py 修复空桩新增 SSoT覆盖范围一致性校验"
   - version: "1.1.0"
     date: "2026-06-21"
     author: "AI-Assistant"

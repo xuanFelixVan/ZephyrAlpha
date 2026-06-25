@@ -33,6 +33,7 @@
   N-14  __init__.py 必须定义 __all__
   N-15  BLUEPRINT 头部路径必须存在
   N-16  测试文件名项目内唯一性检测
+  N-17  blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
 """
 
 from __future__ import annotations
@@ -245,7 +246,7 @@ def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
 
 
 # ---------------------------------------------------------------------------
-# N-06: module_id scope 前缀检测
+# N-06: module_id scope 前缀检测（数字序号制 MOD-{LAYER}-{SEQ} 检测为阶段 E 议题，裁定#206 B-4 立议题不施工，当前仅校验 scope 前缀）
 # ---------------------------------------------------------------------------
 
 _MODULE_ID_SCOPE_RE = re.compile(
@@ -834,6 +835,79 @@ def _is_path_exempt(filepath: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# N-17: blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
+# ---------------------------------------------------------------------------
+
+# 数字序号制 module_id（层代码+纯数字序号，如 MOD-L00-001 / MOD-INF-005），不含域片段，跳过派生校验
+_MODULE_ID_NUMERIC_SEQ_RE = re.compile(r"^MOD-[A-Z]{2,4}-\d+$")
+
+_BP_HEADER_RE = re.compile(r"^\s*#\s*\[BLUEPRINT\]\s+(\S+)", re.MULTILINE)
+_DOMAIN_HEADER_RE = re.compile(r"^\s*#\s*\[DOMAIN\]\s+(\S+)", re.MULTILINE)
+
+
+def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
+    """N-17: blueprint_id 域片段必须与 [DOMAIN] domain_id 一致（裁定#206 B-5 派生范式）。
+
+    派生关系：blueprint_id 的域片段派生自 domain_id（去掉 D- 前缀）。
+    数字序号制 module_id（MOD-L00-001 / MOD-INF-005）不含域片段，跳过校验。
+    仅 .py 文件头部含 [BLUEPRINT]+[DOMAIN] 时校验。
+    """
+    name = Path(filepath).name
+    if not name.endswith(".py"):
+        return []
+    if abspath is None or not abspath.exists():
+        return []
+    try:
+        content = abspath.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return []
+
+    bp_match = _BP_HEADER_RE.search(content)
+    dom_match = _DOMAIN_HEADER_RE.search(content)
+    if not bp_match or not dom_match:
+        return []
+
+    blueprint_id = bp_match.group(1).strip()
+    domain_id = dom_match.group(1).strip()
+
+    # 提取 blueprint_id 的域片段：去掉 MOD- 前缀，去掉末尾 -{数字} 序号
+    bp_domain_fragment = blueprint_id
+    if bp_domain_fragment.startswith("MOD-"):
+        bp_domain_fragment = bp_domain_fragment[4:]
+    bp_domain_fragment = re.sub(r"-\d+$", "", bp_domain_fragment)
+
+    # 提取 domain_id 的域片段：去掉 D- 前缀
+    dom_domain_fragment = domain_id
+    if dom_domain_fragment.startswith("D-"):
+        dom_domain_fragment = dom_domain_fragment[2:]
+
+    # token 化（按 _ 和 - 分割），过滤短 token（长度<3，避免 L06/EX 等层代码误匹配）
+    bp_tokens = {t for t in re.split(r"[_-]", bp_domain_fragment) if len(t) >= 3}
+    dom_tokens = {t for t in re.split(r"[_-]", dom_domain_fragment) if len(t) >= 3}
+
+    # 只有当两者有共享 token 时才校验（说明 blueprint_id 包含域片段，是派生标识符）
+    # 数字序号制 module_id（MOD-L00-001/MOD-INF-005/MOD-MASTER-001）不包含域片段，
+    # 无共享 token，自动跳过（module_id 体系问题为阶段 E 议题，裁定#206 B-4）
+    if not (bp_tokens & dom_tokens):
+        return []
+
+    # 校验域片段一致性（检测改名残留，如 MOD-SIGNAL_ASHARE vs D-ASHARE_SIGNAL）
+    if bp_domain_fragment != dom_domain_fragment:
+        return [
+            NamingViolation(
+                rule="N-17",
+                message=(
+                    f"blueprint_id 域片段与 [DOMAIN] 不一致: blueprint_id={blueprint_id}"
+                    f"(域片段={bp_domain_fragment}) vs domain_id={domain_id}"
+                    f"(域片段={dom_domain_fragment})"
+                ),
+                filepath=filepath,
+            )
+        ]
+    return []
+
+
+# ---------------------------------------------------------------------------
 # 统一入口
 # ---------------------------------------------------------------------------
 
@@ -856,6 +930,7 @@ def check_file(filepath: str, abspath: Path | None = None, project_root: Path | 
     violations.extend(_check_n13_data_file_naming(filepath))
     violations.extend(_check_n14_init_has_all(filepath, abspath))
     violations.extend(_check_n15_blueprint_path_exists(filepath, abspath, project_root))
+    violations.extend(_check_n17_blueprint_domain_consistency(filepath, abspath))
     return violations
 
 
@@ -947,11 +1022,21 @@ def main() -> int:
                 filepath = target_path
                 all_violations.extend(check_file(filepath, target))
 
-    for v in all_violations:
+    # N-17 违规作为 warning（历史遗留 module_id 体系问题，裁定#206 B-4 阶段 E 议题，不阻断 pre-commit）
+    n17_violations = [v for v in all_violations if v.rule == "N-17"]
+    blocking_violations = [v for v in all_violations if v.rule != "N-17"]
+
+    for v in blocking_violations:
         print(f"[{v.rule}] {v.message}")
 
-    if all_violations:
-        print(f"\n总计 {len(all_violations)} 个命名违规")
+    if n17_violations:
+        print(f"\n[N-17 WARNING] 历史遗留 blueprint_id 域片段不一致（module_id 体系问题，阶段 E 议题，不阻断）:")
+        for v in n17_violations:
+            print(f"  [N-17] {v.message}")
+        print(f"  共 {len(n17_violations)} 个 N-17 warning")
+
+    if blocking_violations:
+        print(f"\n总计 {len(blocking_violations)} 个阻断性命名违规")
         return EXIT_FINDINGS if not args.warn_only else EXIT_PASS
     return EXIT_PASS
 

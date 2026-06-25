@@ -926,6 +926,54 @@ def sync_domain_naming_rules(cur):
     print(f"  同步 {synced} 条域命名规则（NR-001~NR-005）")
 
 
+def sync_derived_identifier_registry(cur):
+    """#174: 派生标识符关系 → derived_identifier_registry 表（裁定#206 B-5/B-6 + 裁定#207 R3-4）
+
+    SSoT: docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml
+    建表 + 同步派生标识符关系，apply_depgraph.py --propagate-rename 改名传播时依据本表。
+    """
+    print("同步 #174: 派生标识符关系 → derived_identifier_registry...")
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS derived_identifier_registry (
+        derived_type        TEXT NOT NULL,
+        source_field        TEXT NOT NULL,
+        derived_field       TEXT NOT NULL,
+        derivation_rule     TEXT NOT NULL,
+        propagation_method  TEXT NOT NULL DEFAULT 'exact_value_map',
+        source_doc          TEXT,
+        PRIMARY KEY (derived_type, derived_field)
+    )
+    """)
+
+    data = load_yaml("_registry/catalogs/derived_identifier_registry.yaml")
+    entries = data.get("entries", [])
+    if not entries:
+        print("  警告: derived_identifier_registry.yaml 无 entries，跳过")
+        return
+
+    synced = 0
+    for e in entries:
+        cur.execute(
+            """
+        INSERT INTO derived_identifier_registry
+            (derived_type, source_field, derived_field,
+             derivation_rule, propagation_method, source_doc)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(derived_type, derived_field) DO UPDATE SET
+            source_field=excluded.source_field,
+            derivation_rule=excluded.derivation_rule,
+            propagation_method=excluded.propagation_method,
+            source_doc=excluded.source_doc
+        """,
+            (e["derived_type"], e["source_field"], e["derived_field"],
+             e["derivation_rule"], e.get("propagation_method", "exact_value_map"),
+             e.get("source_doc", "")),
+        )
+        synced += 1
+
+    print(f"  同步 {synced} 条派生标识符关系")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -993,11 +1041,12 @@ def sync_all() -> bool:
             sync_business_streams(cur)  # #171
             sync_blueprint_links(cur)  # #172
 
-            # P5 优先级同步（裁定#204 预防根因）
+            # P5 优先级同步（裁定#204 预防根因 + 裁定#206/#207 派生标识符）
             sync_domain_naming_rules(cur)  # #173
+            sync_derived_identifier_registry(cur)  # #174 裁定#206 B-5/B-6 + #207 R3-4
 
             conn.commit()
-            print("\n[PASS] 18 项 YAML→DB 同步完成")
+            print("\n[PASS] 19 项 YAML→DB 同步完成")
             return True
 
         except Exception as e:

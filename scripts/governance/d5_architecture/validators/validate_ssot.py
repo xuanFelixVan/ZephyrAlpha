@@ -48,10 +48,15 @@ class SsotValidator:
         self.config = config or {}
 
     def validate(self, path=None):
-        return ScanReport()
+        violations = check_ssot_coverage_completeness()
+        return ScanReport(
+            total_files=1,
+            valid_files=1 if not violations else 0,
+            violations=violations,
+        )
 
     def check_ssot(self, files=None):
-        return []
+        return check_ssot_coverage_completeness()
 
 
 def _get_valid_layers() -> list[str]:
@@ -130,6 +135,95 @@ def check_p9_placeholder(files):
     return []
 
 
+def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
+    """裁定#207 R3-3: SSoT 覆盖范围一致性校验。
+
+    对比 trae_028 gov_doc_003_naming_ssot 的 conditions vs 规则注册表，
+    校验所有规则的 source_doc 有效且被 SSoT 收录。SSoT 必须满足 ALCOA+ Complete（无遗漏）。
+
+    当前覆盖：
+    - domain_naming_rules.yaml (NR-001~NR-005) vs trae_028 gov_doc_003_naming_ssot
+
+    校验项：
+    1. source_doc 指向的文件是否存在（防失效引用，裁定#207 R3-2）
+    2. 若 source_doc 指向 trae_028，rule_id 是否在 SSoT conditions 文本中出现（收录完整性，R3-3）
+    """
+    from pathlib import Path
+
+    import yaml
+
+    project_root = Path(__file__).resolve().parents[4]
+    trae_028_path = (
+        project_root
+        / "docs"
+        / "01_policies_and_standards"
+        / "rules"
+        / "trae_028_doc_structure_naming.yaml"
+    )
+    dnr_path = (
+        project_root
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "catalogs"
+        / "domain_naming_rules.yaml"
+    )
+
+    violations: list[Contradiction] = []
+
+    # 加载 trae_028 gov_doc_003_naming_ssot conditions 文本
+    ssot_text = ""
+    if trae_028_path.exists():
+        trae_data = yaml.safe_load(trae_028_path.read_text(encoding="utf-8")) or {}
+        sections = trae_data.get("sections", {}) or {}
+        naming_ssot = sections.get("gov_doc_003_naming_ssot", {}) or {}
+        conditions = naming_ssot.get("conditions", []) or []
+        parts = []
+        for c in conditions:
+            parts.append(str(c.get("check", "")))
+            parts.append(str(c.get("pass", "")))
+            parts.append(str(c.get("fail", "")))
+        ssot_text = " ".join(parts)
+
+    # 校验 domain_naming_rules.yaml 的每条规则
+    if dnr_path.exists():
+        dnr_data = yaml.safe_load(dnr_path.read_text(encoding="utf-8")) or {}
+        for entry in dnr_data.get("entries", []) or []:
+            rule_id = entry.get("rule_id", "")
+            source_doc = entry.get("source_doc", "")
+            # 提取 source_doc 中的文件路径（§ 之前的部分）
+            doc_path_str = source_doc.split("§")[0].strip() if source_doc else ""
+            doc_path = project_root / doc_path_str if doc_path_str else None
+
+            # 校验1: source_doc 指向的文件是否存在
+            if doc_path and not doc_path.exists():
+                violations.append(
+                    Contradiction(
+                        source=f"domain_naming_rules.yaml {rule_id}",
+                        target=source_doc,
+                        field="source_doc 有效性",
+                        source_value=source_doc,
+                        target_value="文件不存在",
+                    )
+                )
+                continue  # 文件不存在则跳过收录校验
+
+            # 校验2: 若 source_doc 指向 trae_028，rule_id 是否在 SSoT conditions 文本中出现
+            if doc_path_str and "trae_028" in doc_path_str:
+                if rule_id and rule_id not in ssot_text:
+                    violations.append(
+                        Contradiction(
+                            source=f"domain_naming_rules.yaml {rule_id}",
+                            target="trae_028 gov_doc_003_naming_ssot",
+                            field="SSoT 收录完整性",
+                            source_value=rule_id,
+                            target_value="SSoT conditions 未引用此 rule_id",
+                        )
+                    )
+
+    return violations
+
+
 def parse_file(filepath):
     from scripts.governance._shared.frontmatter import parse_frontmatter_from_file
 
@@ -142,3 +236,33 @@ def render_report(results, format="text"):
 
         return json.dumps(results, default=str)
     return str(results)
+
+
+def main() -> int:
+    """CLI 入口：运行 SSoT 覆盖范围一致性校验（裁定#207 R3-3）。
+
+    用法:
+      python scripts/governance/d5_architecture/validators/validate_ssot.py --scan
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(description="SSoT 完整性校验（裁定#207 R3-3）")
+    parser.add_argument("--scan", action="store_true", help="运行 SSoT 覆盖范围一致性校验")
+    args = parser.parse_args()
+
+    # 默认运行 scan（--scan 为显式标记，兼容无参调用）
+    violations = check_ssot_coverage_completeness()
+    if violations:
+        print(f"[FAIL] SSoT 覆盖范围一致性校验发现 {len(violations)} 个问题:")
+        for v in violations:
+            print(
+                f"  - {v.source} -> {v.target}: {v.field} "
+                f"({v.source_value} -> {v.target_value})"
+            )
+        return 1
+    print("[PASS] SSoT 覆盖范围一致性校验通过: 所有规则 source_doc 有效且被 SSoT 收录")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
