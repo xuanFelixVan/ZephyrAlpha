@@ -44,6 +44,11 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/apply_depgraph.py --insert-domain-mapping scripts/new_tool/ D-GOVERNANCE non_src --mapped-by session-xxx
   python scripts/governance/apply_depgraph.py --insert-domain-mapping src/zephyr/new/ D-NEW unregistered_src D-NEW-SUB --dry-run
 
+  # 裁定#204：D-SIGNAL* 4 域改名（D-SIGNAL 必须最后替换，避免 LIKE 误伤 D-SIGNAL_* 子域名）
+  python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL_ASHARE D-ASHARE_SIGNAL --dry-run
+  python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL D-SIGLEGACY  # 必须最后执行
+  python scripts/governance/apply_depgraph.py --update-domain-name D-SIGLEGACY "信号遗留设计态"
+
 GIT 备份门禁（project_memory 强制规则）：
   修改 depgraph.db 前必须先 git 备份当前状态，以便回滚：
     git add data/databases/depgraph.db
@@ -1190,6 +1195,162 @@ def cmd_update_domain_id(
                 conn.close()
 
 
+def cmd_rename_domain(
+    old_id: str,
+    new_id: str,
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> int:
+    """重命名域ID——18步UPDATE覆盖11表（裁定#204，方案§4.2）。
+
+    edges.cross_domain 为 boolean 不需改（第12张含domain相关列表，11张需UPDATE）。
+    step 8/17 用 REPLACE+LIKE：domain_events.target_domains 是 JSON/TEXT，
+      domain_mapping.subdomain_id 含 -FACTOR 后缀（如 D-SIGNAL_FUNDAMENTAL-FACTOR）
+      精确匹配会漏行，必须用 REPLACE+LIKE。
+    D-SIGNAL 含其他旧域名前缀（D-SIGNAL_ASHARE 等），应最后替换避免误伤。
+
+    dry_run 只读预览，不触发写锁/物理备份。返回受影响总行数，-1=失败。
+    """
+    own_conn = conn is None
+
+    def _run(c: sqlite3.Connection) -> int:
+        # 0. 校验 old 存在、new 不存在（禁止覆盖）
+        if not c.execute("SELECT 1 FROM domains WHERE domain_id=?", (old_id,)).fetchone():
+            print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
+            return -1
+        if c.execute("SELECT 1 FROM domains WHERE domain_id=?", (new_id,)).fetchone():
+            print(f"ERROR: new_id '{new_id}' 已存在 domains 表中（禁止覆盖）", file=sys.stderr)
+            return -1
+
+        # 18步UPDATE: (step, table, column, use_replace_like)
+        # step1 domains.domain_id; step2-4 nodes 三列; step5-6 domain_dependencies;
+        # step7-8 domain_events（target_domains用REPLACE）; step9-10 contracts;
+        # step11 invariants; step12-13 arch_constraints; step14 arch_directory_tree;
+        # step15 arch_path_mappings; step16-17 domain_mapping（subdomain_id用REPLACE+LIKE）;
+        # step18 rule_bindings
+        steps = [
+            (1, "domains", "domain_id", False),
+            (2, "nodes", "domain_id", False),
+            (3, "nodes", "subdomain_id", False),
+            (4, "nodes", "belongs_to", False),
+            (5, "domain_dependencies", "from_domain", False),
+            (6, "domain_dependencies", "to_domain", False),
+            (7, "domain_events", "source_domain", False),
+            (8, "domain_events", "target_domains", True),
+            (9, "contracts", "provider_domain", False),
+            (10, "contracts", "consumer_domain", False),
+            (11, "invariants", "domain_id", False),
+            (12, "arch_constraints", "from_domain", False),
+            (13, "arch_constraints", "to_domain", False),
+            (14, "arch_directory_tree", "domain_id", False),
+            (15, "arch_path_mappings", "domain_id", False),
+            (16, "domain_mapping", "domain_id", False),
+            (17, "domain_mapping", "subdomain_id", True),
+            (18, "rule_bindings", "domain_id", False),
+        ]
+        total = 0
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        for step, tbl, col, use_like in steps:
+            if use_like:
+                cnt = c.execute(
+                    f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE ?",
+                    (f"%{old_id}%",),
+                ).fetchone()[0]
+                if cnt > 0:
+                    print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE+LIKE '%{old_id}%': {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            f"UPDATE {tbl} SET {col}=REPLACE({col}, ?, ?) WHERE {col} LIKE ?",
+                            (old_id, new_id, f"%{old_id}%"),
+                        )
+            else:
+                cnt = c.execute(
+                    f"SELECT COUNT(*) FROM {tbl} WHERE {col}=?",
+                    (old_id,),
+                ).fetchone()[0]
+                if cnt > 0:
+                    print(f"  {mode} step{step:>2} {tbl}.{col}='{old_id}': {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            f"UPDATE {tbl} SET {col}=? WHERE {col}=?",
+                            (new_id, old_id),
+                        )
+            total += cnt
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_rename_domain({old_id} -> {new_id}): total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        # dry_run 只读预览，不加写锁不备份
+        c = sqlite3.connect(db_path) if own_conn else conn
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task=f"rename_domain_{old_id}", db_path=db_path):
+            c = sqlite3.connect(db_path) if own_conn else conn
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_rename_domain失败: {e}", file=sys.stderr)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
+def cmd_update_domain_name(
+    domain_id: str,
+    new_name: str,
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> int:
+    """更新 domains.domain_name（裁定#204 配套）。返回受影响行数，-1=失败。"""
+    own_conn = conn is None
+
+    def _run(c: sqlite3.Connection) -> int:
+        row = c.execute("SELECT domain_name FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+        if not row:
+            print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
+            return -1
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        print(f"  {mode} domains.domain_name: '{row[0]}' -> '{new_name}'", file=sys.stderr)
+        if dry_run:
+            return 1
+        cur = c.execute("UPDATE domains SET domain_name=? WHERE domain_id=?", (new_name, domain_id))
+        if own_conn:
+            c.commit()
+        return cur.rowcount
+
+    if dry_run:
+        c = sqlite3.connect(db_path) if own_conn else conn
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="update_domain_name", db_path=db_path):
+            c = sqlite3.connect(db_path) if own_conn else conn
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_update_domain_name失败: {e}", file=sys.stderr)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
 def cmd_migrate_nodes(
     node_ids: list[int], new_domain_id: str, dry_run: bool = False,
     db_path: str = str(DEPGRAPH_PATH), conn=None
@@ -1712,6 +1873,21 @@ def main() -> None:
         metavar=("DOMAIN_ID", "SSOT_PATH"),
         help="UPDATE domains ssot_path: DOMAIN_ID SSOT_PATH（必须以/结尾）",
     )
+    # 裁定#204：D-SIGNAL* 4 域改名——域ID重命名与中文名更新
+    parser.add_argument(
+        "--rename-domain",
+        type=str,
+        nargs=2,
+        metavar=("OLD_DOMAIN_ID", "NEW_DOMAIN_ID"),
+        help="重命名域ID（裁定#204）：18步UPDATE覆盖11表。注意 D-SIGNAL 必须最后替换（含其他旧域名前缀避免误伤）",
+    )
+    parser.add_argument(
+        "--update-domain-name",
+        type=str,
+        nargs=2,
+        metavar=("DOMAIN_ID", "NEW_NAME"),
+        help="UPDATE domains.domain_name（裁定#204 配套，改名后更新中文名）",
+    )
     parser.add_argument(
         "--force-cross-domain",
         action="store_true",
@@ -1916,6 +2092,23 @@ def main() -> None:
         )
         if not ok:
             sys.exit(4)
+        return
+
+    # 裁定#204：D-SIGNAL* 4 域改名——dispatch
+    if args.rename_domain:
+        old_id, new_id = args.rename_domain
+        n = cmd_rename_domain(old_id, new_id, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    if args.update_domain_name:
+        domain_id, new_name = args.update_domain_name
+        n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
         return
 
     if args.cleanup_orphan_edges:
