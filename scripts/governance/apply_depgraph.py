@@ -1436,6 +1436,72 @@ def cmd_update_domain_id(
                 conn.close()
 
 
+# 改名值扫描兜底排除表（裁定#207 R1）：规则示例/系统表/审计日志的 D-SIGNAL* 残留有意保留
+_RENAME_SCAN_EXCLUDE_TABLES = {"domain_naming_rules", "_schema_version", "governance_audit_logs"}
+
+# 裁定#204 改名的 4 个域映射（old_id → new_id）
+# D-SIGNAL 必须最后处理（它是其他3个旧ID的前缀）
+_RENAME_MAP_204 = {
+    "D-SIGNAL_ASHARE": "D-ASHARE_SIGNAL",
+    "D-SIGNAL_FUNDAMENTAL": "D-FUNDAMENTAL_SIGNAL",
+    "D-SIGNAL_QUALITY": "D-SIGQC",
+    "D-SIGNAL": "D-SIGLEGACY",
+}
+
+# 值扫描兜底排除列（裁定#207 R1）：由专门步骤处理的列不参与子串REPLACE
+# - blueprint_id: B6 --propagate-rename 精确值映射（禁止子串REPLACE，裁定#207 R1）
+# - path / blueprint_path: 阶段D 节点路径改名传播（重新编号，需保留原序号信息）
+_RENAME_SCAN_EXCLUDE_COLUMNS = {"blueprint_id", "path", "blueprint_path"}
+
+
+def _scan_replace_all_text_columns(
+    c: sqlite3.Connection,
+    old_id: str,
+    new_id: str,
+    dry_run: bool = False,
+    mode: str = "[OK]",
+    exclude_columns: set[str] | None = None,
+) -> int:
+    """值扫描兜底（裁定#207 R1 B1）：扫描所有表所有 TEXT 列，REPLACE old_id→new_id。
+
+    18步 UPDATE 只覆盖预定义列名枚举，本函数兜底扫描所有 TEXT 列，
+    替换未枚举列中的残留（如 nodes.owner/business_stream/tags/invariants.invariant_id 等）。
+    排除 _RENAME_SCAN_EXCLUDE_TABLES（规则示例有意保留）。
+    exclude_columns: 由专门步骤处理的列名集合（如 blueprint_id/path），不参与子串REPLACE。
+    返回受影响行数。
+    """
+    _exclude = exclude_columns or set()
+    total = 0
+    cur = c.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+    )
+    all_tables = [r[0] for r in cur.fetchall() if r[0] not in _RENAME_SCAN_EXCLUDE_TABLES]
+    for tbl in all_tables:
+        cur = c.execute(f"PRAGMA table_info({tbl})")
+        text_cols = [
+            r[1]
+            for r in cur.fetchall()
+            if r[2] and r[2].upper() == "TEXT" and r[1] not in _exclude
+        ]
+        for col in text_cols:
+            cnt = c.execute(
+                f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE ?",
+                (f"%{old_id}%",),
+            ).fetchone()[0]
+            if cnt > 0:
+                print(
+                    f"  {mode} 兜底 {tbl}.{col} REPLACE '{old_id}'->'{new_id}': {cnt} rows",
+                    file=sys.stderr,
+                )
+                if not dry_run:
+                    c.execute(
+                        f"UPDATE {tbl} SET {col}=REPLACE({col}, ?, ?) WHERE {col} LIKE ?",
+                        (old_id, new_id, f"%{old_id}%"),
+                    )
+                total += cnt
+    return total
+
+
 def cmd_rename_domain(
     old_id: str,
     new_id: str,
@@ -1518,6 +1584,12 @@ def cmd_rename_domain(
                             (new_id, old_id),
                         )
             total += cnt
+        # B1 值扫描兜底（裁定#207 R1）：18步枚举列之外的全表TEXT列残留替换
+        # 排除 blueprint_id/path（由 --propagate-rename 精确值映射 / 阶段D 路径传播专门处理）
+        total += _scan_replace_all_text_columns(
+            c, old_id, new_id, dry_run=dry_run, mode=mode,
+            exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
+        )
         if not dry_run and own_conn:
             c.commit()
         print(f"{mode} cmd_rename_domain({old_id} -> {new_id}): total {total} rows", file=sys.stderr)
@@ -1526,6 +1598,9 @@ def cmd_rename_domain(
     if dry_run:
         # dry_run 只读预览，不加写锁不备份
         c = sqlite3.connect(db_path) if own_conn else conn
+        if own_conn:
+            c.execute("PRAGMA journal_mode=WAL")
+            c.execute("PRAGMA busy_timeout=30000")
         try:
             return _run(c)
         finally:
@@ -1534,12 +1609,181 @@ def cmd_rename_domain(
     else:
         with _optional_db_lock(own_conn, task=f"rename_domain_{old_id}", db_path=db_path):
             c = sqlite3.connect(db_path) if own_conn else conn
+            if own_conn:
+                c.execute("PRAGMA journal_mode=WAL")
+                c.execute("PRAGMA busy_timeout=30000")
             try:
                 return _run(c)
             except Exception as e:
                 if own_conn:
                     c.rollback()
                 print(f"ERROR: cmd_rename_domain失败: {e}", file=sys.stderr)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
+def cmd_fix_rename_residual(
+    rename_map: dict[str, str],
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> int:
+    """修复存量改名残留（裁定#207 R1 B5）。
+
+    扫描所有表所有 TEXT 列，按 rename_map 顺序（先长后短，避免子串误匹配）
+    REPLACE 旧标识符→新标识符。不检查 domains 表（存量残留的 old_id 已改名）。
+    排除 _RENAME_SCAN_EXCLUDE_TABLES（规则示例有意保留）。
+
+    返回受影响总行数，-1=失败。
+    """
+    own_conn = conn is None
+    # 按旧ID长度降序排列（先长后短，避免 D-SIGNAL 先替换 D-SIGNAL_ASHARE 的子串）
+    sorted_map = sorted(rename_map.items(), key=lambda x: len(x[0]), reverse=True)
+
+    def _run(c: sqlite3.Connection) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        total = 0
+        for old_id, new_id in sorted_map:
+            print(f"  {mode} 修复残留: {old_id} -> {new_id}", file=sys.stderr)
+            total += _scan_replace_all_text_columns(
+                c, old_id, new_id, dry_run=dry_run, mode=mode,
+                exclude_columns=_RENAME_SCAN_EXCLUDE_COLUMNS,
+            )
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_fix_rename_residual: total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = sqlite3.connect(db_path) if own_conn else conn
+        if own_conn:
+            c.execute("PRAGMA journal_mode=WAL")
+            c.execute("PRAGMA busy_timeout=30000")
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="fix_rename_residual", db_path=db_path):
+            c = sqlite3.connect(db_path) if own_conn else conn
+            if own_conn:
+                c.execute("PRAGMA journal_mode=WAL")
+                c.execute("PRAGMA busy_timeout=30000")
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_fix_rename_residual失败: {e}", file=sys.stderr)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
+def cmd_propagate_rename(
+    rename_map: dict[str, str],
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> int:
+    """blueprint_id 派生标识符传播（裁定#206 B-5/B-6 + 裁定#207 R1 B2）。
+
+    根据 domain_id 改名映射，精确值映射 blueprint_id（禁止子串REPLACE）。
+    派生关系：blueprint_id 域片段派生自 domain_id（去 D- 前缀）。
+    传播表：nodes.blueprint_id, blueprint_links.blueprint_id。
+
+    返回受影响总行数，-1=失败。
+    """
+    own_conn = conn is None
+    sorted_map = sorted(rename_map.items(), key=lambda x: len(x[0]), reverse=True)
+
+    def _run(c: sqlite3.Connection) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        total = 0
+        for old_domain, new_domain in sorted_map:
+            # 推导 blueprint_id 旧/新域片段（去 D- 前缀）
+            old_frag = old_domain[2:] if old_domain.startswith("D-") else old_domain
+            new_frag = new_domain[2:] if new_domain.startswith("D-") else new_domain
+            # 查询所有旧 blueprint_id（MOD-{old_frag} 或 MOD-{old_frag}-*）
+            old_bp_ids = set()
+            for tbl, col in [("nodes", "blueprint_id"), ("blueprint_links", "blueprint_id")]:
+                try:
+                    rows = c.execute(
+                        f"SELECT DISTINCT {col} FROM {tbl} WHERE {col} LIKE ?",
+                        (f"MOD-{old_frag}%",),
+                    ).fetchall()
+                    old_bp_ids.update(r[0] for r in rows if r[0])
+                except sqlite3.OperationalError:
+                    pass
+
+            for old_bp_id in sorted(old_bp_ids):
+                # 精确值映射：MOD-{old_frag} -> MOD-{new_frag}（只替换域片段，保留序号）
+                prefix = f"MOD-{old_frag}"
+                if old_bp_id == prefix:
+                    new_bp_id = f"MOD-{new_frag}"
+                elif old_bp_id.startswith(prefix + "-"):
+                    suffix = old_bp_id[len(prefix):]  # 含 -{SEQ}
+                    new_bp_id = f"MOD-{new_frag}{suffix}"
+                else:
+                    continue  # 不匹配（如 MOD-SIGNAL_ASHARE_EXTRA），跳过
+
+                # nodes.blueprint_id 精确值映射
+                cnt = c.execute(
+                    "SELECT COUNT(*) FROM nodes WHERE blueprint_id=?", (old_bp_id,)
+                ).fetchone()[0]
+                if cnt > 0:
+                    print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            "UPDATE nodes SET blueprint_id=? WHERE blueprint_id=?",
+                            (new_bp_id, old_bp_id),
+                        )
+                    total += cnt
+
+                # blueprint_links.blueprint_id 精确值映射
+                cnt = c.execute(
+                    "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=?", (old_bp_id,)
+                ).fetchone()[0]
+                if cnt > 0:
+                    print(f"  {mode} blueprint_links.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
+                    if not dry_run:
+                        c.execute(
+                            "UPDATE blueprint_links SET blueprint_id=? WHERE blueprint_id=?",
+                            (new_bp_id, old_bp_id),
+                        )
+                    total += cnt
+
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_propagate_rename: total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = sqlite3.connect(db_path) if own_conn else conn
+        if own_conn:
+            c.execute("PRAGMA journal_mode=WAL")
+            c.execute("PRAGMA busy_timeout=30000")
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="propagate_rename", db_path=db_path):
+            c = sqlite3.connect(db_path) if own_conn else conn
+            if own_conn:
+                c.execute("PRAGMA journal_mode=WAL")
+                c.execute("PRAGMA busy_timeout=30000")
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_propagate_rename失败: {e}", file=sys.stderr)
                 return -1
             finally:
                 if own_conn:
@@ -2160,6 +2404,17 @@ def main() -> None:
         metavar=("DOMAIN_ID", "NEW_NAME"),
         help="UPDATE domains.domain_name（裁定#204 配套，改名后更新中文名）",
     )
+    # 裁定#207 R1：改名传播完整性修复——值扫描兜底 + blueprint_id 传播
+    parser.add_argument(
+        "--fix-residual",
+        action="store_true",
+        help="修复存量改名残留（裁定#207 R1 B5）：使用内置 _RENAME_MAP_204 全表TEXT列值扫描兜底",
+    )
+    parser.add_argument(
+        "--propagate-rename",
+        action="store_true",
+        help="blueprint_id 派生标识符传播（裁定#206 B-5/B-6 + 裁定#207 R1 B2）：精确值映射，禁止子串REPLACE",
+    )
     parser.add_argument(
         "--force-cross-domain",
         action="store_true",
@@ -2412,6 +2667,21 @@ def main() -> None:
     if args.update_domain_name:
         domain_id, new_name = args.update_domain_name
         n = cmd_update_domain_name(domain_id, new_name, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    # 裁定#207 R1：改名传播完整性修复——dispatch
+    if args.fix_residual:
+        n = cmd_fix_rename_residual(_RENAME_MAP_204, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    if args.propagate_rename:
+        n = cmd_propagate_rename(_RENAME_MAP_204, dry_run=args.dry_run)
         if n < 0:
             sys.exit(4)
         print(f"affected={n}")
