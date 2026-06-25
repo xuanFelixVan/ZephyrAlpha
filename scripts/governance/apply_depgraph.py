@@ -842,6 +842,117 @@ def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
     return False
 
 
+def add_edge(
+    from_node_id: int,
+    to_node_id: int,
+    dep_type: str = "import_depends",
+    dep_maturity: str = "active",
+    coupling_strength: str = "medium",
+    used_symbol: str = "",
+    invocation_method: str = "direct",
+    api_contract_refs: str = "",
+    event_ref: str = "",
+    ddd_integration_pattern: str = "",
+    failure_mode: str = "runtime_error",
+    fallback: str = "no_fallback",
+    activation_condition: str = "always",
+    data_transfer_description: str = "",
+    relationship_type: str = "",
+    resource_impact: str = "low",
+    db_path: str = str(DEPGRAPH_PATH),
+) -> int:
+    """
+    新增边（通用，不限 design_maturity，支持 production/prototype 节点）。
+    返回：新分配的 edge_id，-1=失败
+    与 add_design_edge 的差异：
+    - 不校验两端 design_maturity（允许 design/prototype/active 任意组合）
+    - dep_maturity 参数化（默认 'active'，可设 'design'）
+    - 增加重复边检查（同 from/to/dep_type 已存在则拒绝）
+    校验：
+    - from_node_id 和 to_node_id 必须在 nodes 表中存在
+    - dep_type 必须为合法值
+    - dep_maturity 必须为合法值（design|active）
+    - 写入前执行 DFS 循环检测，检测到循环则拒绝写入
+    用途：C集代码层接线（F1→F14/F21/F23 production 边）
+    """
+    valid_types = {
+        "contract", "event", "runtime", "data",
+        "import_depends", "test_depends", "config_depends",
+    }
+    valid_maturities = {"design", "active"}
+    if dep_type not in valid_types:
+        print(f"ERROR: dep_type '{dep_type}' 不合法（合法值: {valid_types}）", file=sys.stderr)
+        return -1
+    if dep_maturity not in valid_maturities:
+        print(f"ERROR: dep_maturity '{dep_maturity}' 不合法（合法值: {valid_maturities}）", file=sys.stderr)
+        return -1
+
+    with _db_write_lock(db_path=db_path, task="add_edge"):
+        conn = sqlite3.connect(db_path)
+        try:
+            # 校验节点存在性（不校验 design_maturity）
+            from_node = conn.execute(
+                "SELECT node_id FROM nodes WHERE node_id=?", (from_node_id,)
+            ).fetchone()
+            if not from_node:
+                print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
+                return -1
+            to_node = conn.execute(
+                "SELECT node_id FROM nodes WHERE node_id=?", (to_node_id,)
+            ).fetchone()
+            if not to_node:
+                print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
+                return -1
+
+            # 重复边检查
+            dup = conn.execute(
+                "SELECT edge_id FROM edges WHERE from_node_id=? AND to_node_id=? AND dep_type=?",
+                (from_node_id, to_node_id, dep_type),
+            ).fetchone()
+            if dup:
+                print(
+                    f"ERROR: 重复边已存在 edge_id={dup[0]} ({from_node_id}->{to_node_id} dep_type={dep_type})",
+                    file=sys.stderr,
+                )
+                return -1
+
+            # DFS循环检测
+            if _detect_cycle_dfs(conn, to_node_id, from_node_id):
+                print(f"ERROR: 检测到循环依赖: {to_node_id} -> ... -> {from_node_id}", file=sys.stderr)
+                return -1
+
+            # 插入边
+            cur = conn.execute(
+                """INSERT INTO edges (from_node_id, to_node_id, dep_type, architecture_direction,
+                   coupling_strength, used_symbol, invocation_method, api_contract_refs,
+                   event_ref, ddd_integration_pattern, failure_mode, fallback,
+                   activation_condition, data_transfer_description, resource_impact,
+                   relationship_type, cross_domain, verified, dep_maturity)
+                   VALUES (?, ?, ?, 'downstream', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)""",
+                (
+                    from_node_id, to_node_id, dep_type,
+                    coupling_strength, used_symbol, invocation_method, api_contract_refs,
+                    event_ref, ddd_integration_pattern, failure_mode, fallback,
+                    activation_condition, data_transfer_description, resource_impact,
+                    relationship_type, dep_maturity,
+                ),
+            )
+            edge_id = cur.lastrowid
+            conn.commit()
+            print(
+                f"[OK] 新增边 edge_id={edge_id} {from_node_id}->{to_node_id} "
+                f"dep_type={dep_type} dep_maturity={dep_maturity}",
+                file=sys.stderr,
+            )
+            return edge_id
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: add_edge失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            conn.close()
+
+
 def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     """
     转换 build_status 状态（5态单调推进）。
@@ -967,6 +1078,66 @@ def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
         except Exception as e:
             conn.rollback()
             print(f"ERROR: delete_design_edge失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
+def delete_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+    """
+    删除边（通用，不限 dep_maturity，支持删除任意边）。
+    返回：True=成功，False=失败
+    与 delete_design_edge 的差异：不校验 dep_maturity（允许删除 design/active 任意边）
+    用途：add_edge 的对偶命令，支持单条回滚（production 边无法用 --delete-design-edge 删除）
+    """
+    with _db_write_lock(db_path=db_path, task="delete_edge"):
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT edge_id, from_node_id, to_node_id, dep_type, dep_maturity FROM edges WHERE edge_id=?",
+                (edge_id,),
+            ).fetchone()
+            if not row:
+                print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
+                return False
+            conn.execute("DELETE FROM edges WHERE edge_id=?", (edge_id,))
+            conn.commit()
+            print(
+                f"[OK] 删除边 edge_id={edge_id} ({row[1]}->{row[2]} dep_type={row[3]} dep_maturity={row[4]})",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: delete_edge失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
+def delete_blueprint_link(blueprint_id: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+    """
+    删除 blueprint_links 表中的记录（用于清理悬空引用）。
+    返回：True=成功，False=失败
+    校验：blueprint_id 必须在 blueprint_links 中存在
+    用途：F35 蓝图悬空处理（GOV-FSTR-001 引用的蓝图文件实际不存在）
+    """
+    with _db_write_lock(db_path=db_path, task="delete_blueprint_link"):
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT blueprint_id FROM blueprint_links WHERE blueprint_id=?", (blueprint_id,)
+            ).fetchone()
+            if not row:
+                print(f"ERROR: blueprint_id={blueprint_id} 在 blueprint_links 中不存在", file=sys.stderr)
+                return False
+            conn.execute("DELETE FROM blueprint_links WHERE blueprint_id=?", (blueprint_id,))
+            conn.commit()
+            print(f"[OK] 删除 blueprint_link blueprint_id={blueprint_id}", file=sys.stderr)
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: delete_blueprint_link失败: {e}", file=sys.stderr)
             return False
         finally:
             conn.close()
@@ -1676,7 +1847,7 @@ def cmd_update_domain_layer(
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     返回：True=成功，False=失败
     """
-    ALLOWED_LAYERS = {"L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"}
+    ALLOWED_LAYERS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}
     if layer_id not in ALLOWED_LAYERS:
         print(f"ERROR: layer_id 必须是 {ALLOWED_LAYERS} 之一，实际: {layer_id}", file=sys.stderr)
         return False
@@ -1884,6 +2055,37 @@ def main() -> None:
         help="修改边dep_type: EDGE_ID NEW_TYPE(contract/event/runtime/data/import_depends/test_depends/config_depends)",
     )
     parser.add_argument(
+        "--add-edge",
+        type=int,
+        nargs=2,
+        metavar=("FROM_NODE_ID", "TO_NODE_ID"),
+        help="新增边（不限maturity，支持production/prototype节点）: FROM_NODE_ID TO_NODE_ID",
+    )
+    parser.add_argument(
+        "--delete-edge",
+        type=int,
+        metavar="EDGE_ID",
+        help="删除边（不限dep_maturity，支持删除任意边）: EDGE_ID",
+    )
+    parser.add_argument(
+        "--dep-type",
+        type=str,
+        default="import_depends",
+        help="--add-edge的dep_type（contract/event/runtime/data/import_depends/test_depends/config_depends，默认import_depends）",
+    )
+    parser.add_argument(
+        "--dep-maturity",
+        type=str,
+        default="active",
+        help="--add-edge的dep_maturity（design|active，默认active）",
+    )
+    parser.add_argument(
+        "--delete-blueprint-link",
+        type=str,
+        metavar="BLUEPRINT_ID",
+        help="删除blueprint_links记录（清理悬空引用）: BLUEPRINT_ID",
+    )
+    parser.add_argument(
         "--add-file-node",
         type=str,
         nargs="+",
@@ -2028,6 +2230,25 @@ def main() -> None:
         edge_id_str, new_type = args.update_edge_type
         edge_id = int(edge_id_str)
         ok = update_edge_type(edge_id, new_type)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.add_edge:
+        from_id, to_id = args.add_edge
+        edge_id = add_edge(from_id, to_id, dep_type=args.dep_type, dep_maturity=args.dep_maturity)
+        if edge_id < 0:
+            sys.exit(4)
+        return
+
+    if args.delete_edge is not None:
+        ok = delete_edge(args.delete_edge)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.delete_blueprint_link:
+        ok = delete_blueprint_link(args.delete_blueprint_link)
         if not ok:
             sys.exit(4)
         return
