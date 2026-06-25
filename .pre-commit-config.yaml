@@ -27,9 +27,9 @@
 #     依赖: 权限注册表完成三轮审计
 #     当前违规数: 待扫描确认
 #
-#   GATE-15 (Frontmatter元数据)  → 目标 2026-Q2 转硬阻断
-#     依赖: metadata_registry.md v3.0.0 全面推广
-#     当前违规数: 待扫描确认
+#   GATE-15 (Frontmatter ttl)    → ✅ 已转硬阻断（commit 阶段增量校验）
+#     依赖: ttl_vocabulary.yaml decision_tree 二元判定树
+#     当前违规数: 0（5137 files 全量扫描通过）
 #
 #   GATE-16 (架构合规)          → 目标 2026-Q3 转硬阻断
 #     依赖: architecture_contract.yaml 全覆盖验证
@@ -247,22 +247,20 @@ repos:
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py|docs/02_enterprise_architecture/system-dependency-map\\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\\.yaml)$"
 
-      # ── GATE-15: Frontmatter 元数据校验（metadata_registry.md v3.0.0）──
-      # 权威依据：docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml v3.0.0
-      # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter_schema.json R4
-      # 校验范围：docs/ 下所有 .md 和 .yaml 文件
-      # 校验内容：doc_type 合法值（17种）/ status 合法值（7种）/ 必填字段 / module_id 格式 / AI 生成文件标记
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
+      # ── GATE-15: Frontmatter ttl 校验（ttl_vocabulary.yaml v1.1.0）──
+      # 权威依据：docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
+      # 校验范围：docs/ 下所有 .md 文件（有 frontmatter 的文档）
+      # 校验内容：ttl 字段存在 + ttl 值合法（6 种合法值从 ttl_vocabulary.yaml 动态加载）
+      # 模式：增量校验（pass_filenames=true，只校验本次 commit 的 .md）；AI 创建无 ttl 文档时 commit 被阻断
       - id: gate-15-frontmatter-metadata
-        name: "GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT）"
+        name: "GATE-15: Frontmatter ttl 校验（增量）"
         entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
         args: ["--ci"]
         language: system
-        pass_filenames: false
+        pass_filenames: true
         always_run: false
-        files: "^docs/.*\\.(md|yaml|yml)$"
-        stages: [manual]
-        description: "Frontmatter 元数据校验（doc_type 17种合法值 / status 7种 / 必填字段 / module_id 格式 / AI 生成标记），骨架阶段 warn-only"
+        files: "^docs/.*\\.md$"
+        description: "Frontmatter ttl 字段校验（ttl 必填 + 合法值，从 ttl_vocabulary.yaml 动态加载；二元判定树见同文件 decision_tree）"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
@@ -586,6 +584,21 @@ repos:
         pass_filenames: false
         always_run: true
         description: "stash 堆积治理——检查 stash 数量，超过5个WARNING，超过10个建议清理。对标GitHub/Linux实践：stash是临时栈非备份"
+
+      # ── GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513 治本）──
+      # 权威依据：OPS-2026062513——多 AI session 共享 git index 导致幽灵提交
+      # 检测范围：每次提交时触发（always_run=true）
+      # 检测内容：环境变量 ZEPHYR_COMMIT_GATEWAY=1 或 commit message 含 [GW:...] 标记
+      # 模式：硬阻断（exit=1），强制所有 commit 走 GitCommitGateway
+      # 工作原理：GitCommitGateway 用 --no-verify 绕过本门禁（fast path）；
+      #          裸 git commit 触发本门禁 → env var 未设置 → 阻断
+      - id: gate-commit-gw
+        name: "GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513）"
+        entry: python scripts/governance/d11_compliance/validate_commit_gateway.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "裸 commit 检测——强制所有 commit 走 GitCommitGateway（串行锁+stash隔离），根治幽灵提交。经 gateway 的 commit 用 --no-verify 绕过本门禁"
 
       # ── GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023 §1.7 post-commit 自动化）──
       # 权威依据：MOD-INF-023 蓝图 §1.7 典型场景 + §10.4 自动化规格

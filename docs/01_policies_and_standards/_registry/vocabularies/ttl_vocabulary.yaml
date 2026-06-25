@@ -66,4 +66,61 @@ values:
     applies_to: [doc]
     ai_keywords: ["任务", "task", "完成即删", "条件", "task_bound"]
 
+# ── 二元判定树（AI 创建文档时 MUST 按此树判定 ttl，禁止靠关键词猜）──
+# 设计原则：
+#   1. 每个节点只能回答 是/否（二元）
+#   2. 每个节点有客观判定标准（路径/前缀/内容特征），不靠"感觉"
+#   3. match: any = 满足任一标准即为"是"
+#   4. 判定顺序从最严格（permanent）到最宽松（30d）
+#   5. 默认落点 30d（最保守的临时值），避免临时文档被误判为永久
+#   6. 同一文档，任何 AI 按此树判定，结果必须一致（可复现）
+decision_tree:
+  root: Q1
+  nodes:
+    Q1:
+      question: "文档是否为核心治理真源？"
+      criteria:
+        - "路径在 docs/01_policies_and_standards/"
+        - "路径在 docs/02_enterprise_architecture/"
+        - "路径在 docs/03_modules/（含 _manifests/）"
+        - "路径在 docs/08_knowledge/（知识库沉淀）"
+        - "frontmatter module_id 前缀为 PS-/MOD-/GOV-"
+      match: any
+      yes: permanent
+      no: Q2
+    Q2:
+      question: "文档是否绑定到具体任务卡？"
+      criteria:
+        - "正文或 frontmatter 引用任务卡 ID（前缀 OPS-/TRA-/ARCH-/FIX-）"
+        - "文档为该任务卡专属服务，任务完成后文档失效"
+      match: any
+      yes: task_bound
+      no: Q3
+    Q3:
+      question: "文档是否需要周期复查？"
+      criteria:
+        - "frontmatter status 为 draft 或 review"
+        - "正文显式声明'定期复查'或'周期审查'"
+      match: any
+      yes: periodic_review_90d
+      no: Q4
+    Q4:
+      question: "文档是否仅当前 AI session 有效？"
+      criteria:
+        - "文件名以 _tmp_ 开头"
+        - "路径在 .trae/sessions/"
+        - "内容显式标注'本次对话临时产出'"
+      match: any
+      yes: session
+      no: Q5
+    Q5:
+      question: "文档是否为自动生成的报告/日志？"
+      criteria:
+        - "文件头部含'自动生成'字样"
+        - "路径在 docs/09_audit/ 或路径含 generated/audit/log"
+        - "由脚本生成而非人工编写"
+      match: any
+      yes: 7d
+      no: 30d  # 默认：人工编写的临时讨论稿/计划稿
+
 deprecated_values: []

@@ -578,7 +578,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 
 | 不可删 | 举例 |
 |--------|------|
-| frontmatter 字段 | module_id, title, version, layer, depends_on, tags |
+| frontmatter 字段 | module_id, title, version, layer, depends_on, tags, **ttl（必填）** |
 | 路径 | 绝对路径 `d:/ZephyrAlpha/...` 和相对路径 |
 | module_id 引用 | MOD-INF-XXX, PS-STD-XXX |
 | 命令和代码模板 | `python scripts/...`、代码块 |

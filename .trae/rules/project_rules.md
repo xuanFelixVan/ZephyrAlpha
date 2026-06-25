@@ -270,6 +270,7 @@ except PermissionError:
 | ❌ | 写了新功能但不建立任何调用入口 | 死代码 |
 | ❌ | 新增 gate 只写名字不写实现 | 假门禁 |
 | ❌ | 完成任务卡后不检查"下游有没有人用" | 孤儿功能 |
+| ❌ | 创建 `.md` 文档但 frontmatter 不含 `ttl` 字段 | 文档无保留期，无法识别过期/清理。判定方法见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` 二元判定树 |
 
 ---
 
