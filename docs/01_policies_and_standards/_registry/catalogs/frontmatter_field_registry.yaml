@@ -255,7 +255,7 @@ fields:
 
   - field_name: ttl
     type: enum
-    required: optional
+    required: always
     stage: null
     derived_from: "_registry/vocabularies/ttl-vocabulary.yaml"
     enum_values:
@@ -264,10 +264,11 @@ fields:
       - {value: "30d", description: "30 天——月度数据/日志"}
       - {value: "7d", description: "7 天——周度数据/临时文件"}
       - {value: "session", description: "会话级——session 结束后可清理"}
+      - {value: "task_bound", description: "任务绑定——任务完成即可清理（人工判定）"}
     applicable_docs: []
     description: "文档保留期"
     source: "PS-STD-001 §6"
-    note: ""
+    note: "全量强制仅限 .md 文件（docs/**/*.md）。.yaml/.py 不强制——.yaml 基本为 permanent 无临时文件场景；.py 用 A_full 14 字段格式不含 [TTL]，扩展成本不合理"
 
   - field_name: summary
     type: string
@@ -883,9 +884,9 @@ fields:
 summary:
   total_fields: 54
   by_required:
-    always: 14
+    always: 15
     conditional: 12
-    optional: 26
+    optional: 25
   by_type:
     string: 7
     enum: 22
@@ -911,6 +912,14 @@ summary:
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.1.0"
+    date: "2026-06-25"
+    author: "AI-Trae-2026"
+    changes:
+      - "ttl 字段从 optional 升级为 always（全量强制）——仅限 .md 文件，.yaml/.py 不强制"
+      - "ttl enum_values 新增第 6 值 task_bound——任务绑定，任务完成即可清理（人工判定）"
+      - "summary.by_required 同步：optional 26→25, always 14→15"
+      - "对标 ttl_vocabulary.yaml v1.1.0 同步新增 task_bound"
   - version: "1.0.0"
     date: "2026-05-02"
     author: "AI-Trae-2026"

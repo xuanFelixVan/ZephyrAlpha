@@ -17,14 +17,19 @@ validate_document_ttl.py — 文档 TTL 过期检测
 
 
 
-对标：GOV-DOC-006 §一（4 种合法 TTL 值）/ §三（LATEST 命名规范）
+对标：GOV-DOC-006 §一（6 种合法 TTL 值）/ §三（LATEST 命名规范）
 
 检测内容：
-- TTL 合法值检查（permanent / 30d / 7d / session）
+- TTL 合法值检查（permanent / periodic_review_90d / 30d / 7d / session / task_bound）
 - ttl=30d 且 date 距今 >30 天的文件仍在活跃目录
 - ttl=7d 且 date 距今 >7 天的文件仍存在
 - ttl=session 的文件不应提交到 git
 - 状态快照文件应使用 LATEST 命名
+
+扫描模式（v1.1.0 新增，只输出清单不删除）：
+- --list-by-ttl <value>          按 ttl 值列出文件清单
+- --list-time-expired            列出 ttl=7d/30d/periodic_review_90d 中已到期文件
+- --list-all-non-permanent       列出所有 ttl != permanent 的文件（一键扫描）
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -59,7 +64,7 @@ ensure_utf8_stdout()
 import argparse
 from datetime import datetime
 
-VALID_TTL_VALUES = {"permanent", "periodic_review_90d", "30d", "7d", "session"}
+VALID_TTL_VALUES = {"permanent", "periodic_review_90d", "30d", "7d", "session", "task_bound"}
 DATED_SNAPSHOT_PATTERN = re.compile("-\\d{4}-\\d{2}-\\d{2}\\.(json|yaml|yml|md)$", re.IGNORECASE)
 
 

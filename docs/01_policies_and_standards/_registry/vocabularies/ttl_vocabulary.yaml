@@ -9,10 +9,10 @@
 # ttl 受控词表
 # ZephyrAlpha 2.0 文档保留期唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.0.0
+# 版本：1.1.0
 # 创建日期：2026-05-02
 #
-# 本词表定义 ttl 字段的所有合法值（5 种）。
+# 本词表定义 ttl 字段的所有合法值（6 种）。
 # 校验器 check_frontmatter_metadata.py 从本文件动态加载合法值。
 # 新增/删除 ttl 值只需修改本文件，校验器自动同步。
 #
@@ -23,12 +23,12 @@
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-004
-version: "1.0.0"
+version: "1.1.0"
 title: "ttl 受控词表"
 status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: ttl
-total_values: 5
+total_values: 6
 source: "PS-STD-001 §2.1 + §4.7（TTL 保留期定义真源）"
 depends_on:
   - target: PS-STD-001
@@ -60,5 +60,10 @@ values:
     definition: "定期审查（90 天周期）——需每 90 天人工审查是否需要更新。适用于相对稳定但仍需周期性确认的治理文件"
     applies_to: [standard, policy]
     ai_keywords: ["90天", "季度", "审查", "review", "periodic"]
+
+  - value: task_bound
+    definition: "任务绑定——文件与特定任务关联，当该任务完成时可清理。触发方式：用户喊 AI 扫描 ttl=task_bound 全项目文件，输出清单后人工判定关联任务是否完成。介于 session（会话结束即删）和 permanent（永不删）之间"
+    applies_to: [doc]
+    ai_keywords: ["任务", "task", "完成即删", "条件", "task_bound"]
 
 deprecated_values: []
