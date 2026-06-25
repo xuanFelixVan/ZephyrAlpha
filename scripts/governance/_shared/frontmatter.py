@@ -12,7 +12,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+import re
+
 import yaml
+
+# frontmatter 结束符正则：行首 --- 后跟可选空格和换行
+# 不能用 text.find("---", 3)，因为 frontmatter 值里可能包含 ---（如 module_id: KE-005---audit）
+_FM_END_PATTERN = re.compile(r"\n---[ \t]*\n?")
 
 
 def parse_frontmatter(text_or_path):
@@ -27,13 +33,15 @@ def parse_frontmatter(text_or_path):
     metadata = {}
     body = text
     if text.startswith("---"):
-        end = text.find("---", 3)
-        if end != -1:
+        # 查找行首 --- 作为 frontmatter 结束符
+        fm_match = _FM_END_PATTERN.search(text[3:])
+        if fm_match:
+            end = 3 + fm_match.start()
             try:
                 metadata = yaml.safe_load(text[3:end]) or {}
             except Exception:
                 metadata = {}
-            body = text[end + 3 :].lstrip("\n")
+            body = text[3 + fm_match.end() :].lstrip("\n")
     return metadata, body
 
 

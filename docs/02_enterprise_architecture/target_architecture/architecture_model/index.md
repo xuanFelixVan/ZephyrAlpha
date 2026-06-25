@@ -9,8 +9,8 @@ depends_on:
   at: §子目录
   why: 顶层EA索引——architecture_model为EA抽屉子目录
 title: Architecture Model
+ttl: permanent
 ---
-
 # Architecture Model — 目录索引
 
 ## 责任声明（Single Responsibility）
