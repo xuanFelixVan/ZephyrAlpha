@@ -63,10 +63,10 @@ _TYPE_IMPORTS: dict[str, str] = {
     "List": "from typing import List",
     "Dict": "from typing import Dict",
     "Any": "from typing import Any",
-    "TraceContext": "from zephyr.integration.events.trace_context import TraceContext",
-    "OrderSide": "from zephyr.integration.contracts.execution.order import OrderSide",
-    "OrderType": "from zephyr.integration.contracts.execution.order import OrderType",
-    "OrderStatus": "from zephyr.integration.contracts.execution.order import OrderStatus",
+    "TraceContext": "from zephyr.shared.contracts.core.trace_context import TraceContext",
+    "OrderSide": "from zephyr.trading.trading_contracts.execution.order import OrderSide",
+    "OrderType": "from zephyr.trading.trading_contracts.execution.order import OrderType",
+    "OrderStatus": "from zephyr.trading.trading_contracts.execution.order import OrderStatus",
 }
 
 _STANDARD_IMPORTS = [
@@ -472,6 +472,14 @@ def generate_directory_init(directory: Path, module_names: list[str], dry_run: b
     ]
     for name in sorted(module_names):
         init_lines.append(f"from .{name} import *  # noqa: F403")
+
+    # DM-367: 显式 __all__ 用模块名（snake_case），满足 audit_registration 的
+    # `module_name in registered[pkg]` 检查（PascalCase 推导在 system-telemetry 等命名不匹配场景会失败）
+    init_lines.append("")
+    init_lines.append("__all__ = [")
+    for name in sorted(module_names):
+        init_lines.append(f'    "{name}",')
+    init_lines.append("]")
 
     content = "\n".join(init_lines) + "\n"
     if not dry_run:

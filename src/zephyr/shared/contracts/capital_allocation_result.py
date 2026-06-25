@@ -6,7 +6,7 @@ from typing import Dict
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-06-24"
+# created: "2026-06-25"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -39,3 +39,6 @@ class CapitalAllocationResult:
     strategy_allocations: Dict[str, float] = field(default_factory=dict)
 
 # ==== END CODGEN:CTR-P1-003 ====
+
+
+
