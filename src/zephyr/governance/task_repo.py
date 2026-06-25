@@ -1181,6 +1181,73 @@ class TaskRepository:
         return _row_to_taskcard(updated_row)
 
     # ------------------------------------------------------------------
+    # 交付物验证（G7 交付门禁前置）
+    # ------------------------------------------------------------------
+
+    def verify(self, task_id: str, *, session_id: str | None = None) -> TaskCard:
+        """标记任务交付物已验证（verification_status=verified）。
+
+        G7 交付门禁（transition(COMPLETED) 时评估）要求
+        ``verification_status == "verified"``（g7_orc_gate_engine.yaml
+        G7-ORC-VERIFICATION, severity=error → P0）。本方法是设置该字段的
+        唯一合法生产路径——填补"门禁已接线但无验证入口"的设计缺口。
+
+        前置机械门禁：``batch_review`` 必须通过（``consecutive_zero >= 2``）。
+        通过后设置：
+          - ``verification_status = "verified"``（小写，匹配 G7 allowed_values）
+          - ``construction_status = "completed"``（DB 现有约定：pending → completed）
+
+        典型调用顺序::
+
+            repo.batch_review(task_id, reviewer="ai", session_id=sid)  # 循环至 0 问题
+            repo.verify(task_id, session_id=sid)                         # 标记已验证
+            repo.transition(task_id, TaskStatus.COMPLETED, ...)         # G7 通过
+
+        参数
+        ----
+        session_id : str | None
+            执行验证的 AI session 标识（预留审计字段）。
+
+        返回
+        ----
+        TaskCard
+            更新后重新读取的任务对象。
+
+        异常
+        ----
+        TaskNotFoundError: 任务不存在。
+        BatchReviewRequiredError: batch_review 未通过（consecutive_zero < 2）。
+        """
+        # 前置机械门禁：batch_review 必须通过（连续 2 轮 0 问题）
+        review_status = self.get_review_status(task_id)
+        if not review_status.get("reviewed", False):
+            raise BatchReviewRequiredError(
+                task_id,
+                "verify() 前置门禁失败：未执行任何审查(batch_review从未调用)",
+            )
+        if not review_status.get("review_complete", False):
+            raise BatchReviewRequiredError(
+                task_id,
+                f"verify() 前置门禁失败：审查未完成 "
+                f"consecutive_zero={review_status.get('consecutive_zero', 0)}/2",
+            )
+
+        with self._write_tx() as conn:
+            row = self._fetch_row(conn, task_id)
+            if row is None:
+                raise TaskNotFoundError(f"任务 {task_id!r} 不存在")
+
+            conn.execute(
+                "UPDATE tasks SET verification_status='verified', "
+                "construction_status='completed', updated_at=? WHERE task_id=?",
+                (now_iso(), task_id),
+            )
+            updated_row = self._fetch_row(conn, task_id)
+
+        assert updated_row is not None
+        return _row_to_taskcard(updated_row)
+
+    # ------------------------------------------------------------------
     # PRIORITY GOVERNANCE（GOV-TASK-004 §2.4+§2.5）
     # ------------------------------------------------------------------
 
