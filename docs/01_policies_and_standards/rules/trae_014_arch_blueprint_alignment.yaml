@@ -229,7 +229,7 @@ sections:
     levels:
     - level: Level 0
       name: SYSTEM-MASTER
-      id: MOD-MASTER-001
+      id: SYS-MASTER-001
       responsibility: 定义14层架构跨层数据契约和13个基础设施系统集成契约
     - level: Level 1
       name: DOMAIN

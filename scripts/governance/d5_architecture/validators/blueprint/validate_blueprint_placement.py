@@ -20,9 +20,11 @@ safety_level: M
 检查项（按严重性）
 -----------------
 P0-1  蓝图文件缺少 belongs_to 字段（PS-STD-005 §6 MUST 要求）
-P0-2  cross_layer 蓝图不在 _cross_layer/ 目录下
-P0-3  按层蓝图(L00-L13)的 layer 值与物理目录 l{NN}_ 不匹配
+P0-2  cross_layer 蓝图不在 _cross_layer/ 目录下（判据(c) 域归属豁免：functional_domain
+      非空且路径在域目录树下则放行，裁定 R3/#206）
+P0-3  按层蓝图的 layer 语义值与物理目录 dir_prefix 不匹配（判据(c) 域归属豁免同 P0-2）
 P0-4  域覆盖度漏洞——≥5个模块归属同一父节点，但该父节点不是 Level 0/1 域蓝图（PS-STD-005 §3.3）
+P0-5  layer 为废弃 L{NN} 格式（应为 layer_vocabulary.yaml 语义值，裁定 R6/#ARCH-011）
 P1-1  belongs_to 链不完整——无法追溯到金字塔顶点 SYS-MASTER-001
 P1-2  belongs_to 指向的目标 blueprint.md 文件不存在
 
@@ -48,6 +50,7 @@ warn_only: false
 """
 
 import argparse
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -94,6 +97,28 @@ def _layer_to_dir_prefix(layer: str) -> str:
     return _LAYER_DIR_PREFIX_MAP.get(layer, "")
 
 
+# 非域目录：_cross_layer 为横切合规位（判据(b) 合规位置），_restructuring 为临时迁移位
+# （GOV-FSTR-001 待迁回 _cross_layer/）。二者均不作为判据(c) 的域目录。
+NON_DOMAIN_DIRS: frozenset[str] = frozenset({"_cross_layer", "_restructuring"})
+
+# 废弃的 L{NN} layer 格式（裁定 R6：layer 须为 layer_vocabulary.yaml 语义值，不得为 L00-L13）
+_DEPRECATED_LAYER_RE = re.compile(r"^L\d{2}$")
+
+
+def _is_domain_owned(fm: dict, path_parts: tuple) -> bool:
+    """判据(c) 域归属豁免——functional_domain 非空且物理路径在某域目录树下。
+
+    域目录 = 以 ``_`` 开头但非 ``_cross_layer``（横切合规位）/ ``_restructuring``
+    （临时迁移位）的目录。依据裁定 R3（#206）：域归属组件豁免 cross_layer 物理位置
+    约束（P0-2）与 dir_prefix 约束（P0-3），避免域组件被强制迁入 _cross_layer/ 破坏域内聚。
+    与 project_memory「功能域平级→物理路径平级」一致。
+    """
+    fd = fm.get("functional_domain", "")
+    if not isinstance(fd, str) or not fd.strip():
+        return False
+    return any(p.startswith("_") and p not in NON_DOMAIN_DIRS for p in path_parts)
+
+
 def _collect_blueprints() -> dict[str, tuple[Path, dict]]:
     """_collect_blueprints implementation."""
     result: dict[str, tuple[Path, dict]] = {}
@@ -134,7 +159,10 @@ def main() -> int:
             violations_p0.append(f"[P0-1] 蓝图 {module_id} 缺少 belongs_to 字段 → {filepath.relative_to(REPO_ROOT)}")
 
     # ── P0-2: cross_layer 蓝图不在 _cross_layer/ 下 ──
-    # 已知特例: MOD-MASTER-001(_master-blueprint/) / SYS-MASTER-001(_sys-master/) / DOM-GOV-001(_domain-governance/) 是 Level 0/1 蓝图
+    # 合规条件（满足任一即放行，裁定 R3/#206）：
+    #   (a) module_id in KNOWN_LEVEL_01_IDS（Level 0/1 特例）
+    #   (b) 在 _cross_layer/ 目录下（无域归属横切组件）
+    #   (c) functional_domain 非空且物理路径在某域目录树下（域归属组件，_is_domain_owned）
     KNOWN_LEVEL_01_IDS = {"MOD-MASTER-001", "SYS-MASTER-001", "DOM-GOV-001"}
     for module_id, (filepath, fm) in sorted(blueprints.items()):
         layer = fm.get("layer", "")
@@ -142,28 +170,46 @@ def main() -> int:
             try:
                 filepath.relative_to(CROSS_LAYER_DIR)
             except ValueError:
+                rel = filepath.relative_to(REPO_ROOT)
+                if _is_domain_owned(fm, rel.parts):
+                    continue  # 判据(c) 域归属豁免
                 violations_p0.append(
-                    f"[P0-2] cross_layer 蓝图 {module_id} 不在 _cross_layer/ 下 → 当前: {filepath.relative_to(REPO_ROOT)}"
+                    f"[P0-2] cross_layer 蓝图 {module_id} 不在 _cross_layer/ 下 → 当前: {rel}"
                 )
 
-    # ── P0-3: 非cross_layer蓝图 layer L{NN} 与物理路径不匹配 ──
+    # ── P0-3: 非cross_layer蓝图 layer 语义值与物理路径 dir_prefix 不匹配 ──
+    # 放宽判据(c)（裁定 R3/#206）：域归属组件（functional_domain 非空且路径在域目录树下）
+    # 豁免 dir_prefix 检查——域内聚优先于层前缀机械对齐。
     for module_id, (filepath, fm) in sorted(blueprints.items()):
         layer = fm.get("layer", "")
         if layer in VALID_LAYERS:
-            # 检查完整路径中是否包含 l{NN}_ 前缀（适配 infrastructure_runtime_integration/task-system/ 这种嵌套结构）
+            # 检查完整路径中是否包含 dir_prefix 前缀（适配嵌套结构）
             prefix = _layer_to_dir_prefix(layer)
             if not prefix:
                 continue
             rel = filepath.relative_to(REPO_ROOT)
             path_parts = rel.parts
-            # 检查路径中任一部分是否以 l{NN}_ 开头
+            # 检查路径中任一部分是否以 dir_prefix 开头
             matched = any(p.startswith(prefix) for p in path_parts)
             if not matched:
                 doc_type = fm.get("doc_type", "")
-                if doc_type != "placeholder":
-                    violations_p0.append(
-                        f"[P0-3] 蓝图 {module_id} layer={layer} 但路径中找不到 '{prefix}' 前缀 → {rel}"
-                    )
+                if doc_type == "placeholder":
+                    continue
+                if _is_domain_owned(fm, path_parts):
+                    continue  # 判据(c) 域归属豁免
+                violations_p0.append(
+                    f"[P0-3] 蓝图 {module_id} layer={layer} 但路径中找不到 '{prefix}' 前缀 → {rel}"
+                )
+
+    # ── P0-5: layer 为废弃 L{NN} 格式（裁定 R6/#ARCH-011，填补 P0-3 漏洞） ──
+    # 原P0-3 仅检查 layer in VALID_LAYERS，废弃 L 值不在 VALID_LAYERS 中被跳过，
+    # 导致 #206-B 遗漏未被发现。P0-5 主动检测废弃格式防再发。
+    for module_id, (filepath, fm) in sorted(blueprints.items()):
+        layer = fm.get("layer", "")
+        if isinstance(layer, str) and _DEPRECATED_LAYER_RE.match(layer):
+            violations_p0.append(
+                f"[P0-5] 蓝图 {module_id} layer={layer} 为废弃 L 格式（应为 layer_vocabulary.yaml 语义值）→ {filepath.relative_to(REPO_ROOT)}"
+            )
 
     # ── P0-4: 域覆盖度——≥5模块的域是否缺少 Level 1 蓝图 ──
     # 先构建 module_bt（P1-1/P1-2 也复用此数据结构）
