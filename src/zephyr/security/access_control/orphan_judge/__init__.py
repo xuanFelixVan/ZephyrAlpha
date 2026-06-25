@@ -96,6 +96,7 @@ __all__ = [
     "judgment_cache",
     "kb_bridge",
     "mcp_handler",
+    "mcp_integration",
     "models",
     "orphan_collector",
     "orphan_detector",

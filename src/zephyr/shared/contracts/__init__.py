@@ -268,4 +268,9 @@ __all__ = [
     "llm_gateway_protocol",
     "orchestration_protocol",
     "skill_protocol",
+    "market_data",
+    "position",
+    "risk_metrics",
+    "factor_monitor_report",
+    "macro_factor_signal",
 ]
