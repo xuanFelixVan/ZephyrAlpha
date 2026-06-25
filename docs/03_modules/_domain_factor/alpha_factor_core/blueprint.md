@@ -5,7 +5,7 @@ title: "Alpha Factor Core 蓝图+施工图 — 因子计算引擎·OCP扩展点"
 doc_type: blueprint
 status: Active
 version: "3.0.0"
-layer: L02
+layer: factor
 layer_name: alpha_factor
 functional_domain: intelligence
 owner: ZephyrAlpha-Owner
@@ -17,7 +17,7 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/factor/"
-belongs_to: "ALPHA-SIGNAL-DOMAIN-001"
+belongs_to: "MOD-001"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
@@ -41,8 +41,8 @@ depends_on:
   - target: MOD-INF-015
     at: "§10"
     why: "因子计算监控"
-  - target: ALPHA-SIGNAL-DOMAIN-001
-    at: "§3"
+  - target: MOD-001
+    at: "§4,§3"
     why: "因子→信号域集成"
 priority: P0
 runtime_plane: hot
@@ -387,7 +387,7 @@ class FactorMeta(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 因子计算监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| ALPHA-SIGNAL-DOMAIN-001 | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
+| MOD-001 | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
 | MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明

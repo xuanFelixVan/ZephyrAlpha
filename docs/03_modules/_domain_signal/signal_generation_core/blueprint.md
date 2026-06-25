@@ -5,7 +5,7 @@ title: "Signal Generation Core 蓝图+施工图 — 信号生成层·C轨占位"
 doc_type: blueprint
 status: Active
 version: "2.2.0"
-layer: L03
+layer: signal
 layer_name: signal_generation
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -20,7 +20,7 @@ actual_disk_path: "src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + 
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2
-belongs_to: "ALPHA-SIGNAL-DOMAIN-001"
+belongs_to: "MOD-001"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
@@ -35,7 +35,7 @@ depends_on:
   - target: MOD-INF-015
     at: §10
     why: 信号生成监控
-  - target: ALPHA-SIGNAL-DOMAIN-001
+  - target: MOD-001
     at: §3
     why: Alpha信号域集成
 references:
@@ -385,7 +385,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` |
 | MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| ALPHA-SIGNAL-DOMAIN-001 | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
+| MOD-001 | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -441,7 +441,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | L02 Alpha Factor | 因子消费 | SignalAggregatorBase.aggregate() 消费 FactorSignal | 信号聚合可消费因子结果 |
 | L04 Portfolio Construction | 契约输出 | CTR-P1-015 SynthesizedSignal | 组合构建可消费合成信号 |
 | L05 Risk Management | 契约输出 | CTR-P1-003 + CTR-ERR-003 | 风险管理可消费分配结果和降级警告 |
-| ALPHA-SIGNAL-DOMAIN-001 | 域集成 | 因子→信号域内数据流 | 域内数据流端到端通过 |
+| MOD-001 | 域集成 | 因子→信号域内数据流 | 域内数据流端到端通过 |
 
 ---
 

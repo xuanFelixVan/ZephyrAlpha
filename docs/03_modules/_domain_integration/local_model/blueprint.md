@@ -5,7 +5,8 @@ title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BG
 summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
 version: 0.1.0
 status: Active
-layer: L01
+layer: infra_ops
+belongs_to: "MOD-MASTER-001"
 construction_progress: scaffold
 actual_disk_path: src/zephyr/integration/local_model/
 functional_domain: infra
