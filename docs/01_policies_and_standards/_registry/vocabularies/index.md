@@ -2,6 +2,7 @@
 doc_type: index
 title: "_registry/vocabularies/ 目录索引"
 status: Active
+ttl: permanent
 version: "1.0.1"
 module_id: GOV-007
 generated: '2026-05-02'

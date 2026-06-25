@@ -2,6 +2,7 @@
 doc_type: index
 title: "_registry/contracts/ 目录索引"
 status: Active
+ttl: permanent
 version: "1.0.1"
 module_id: GOV-004
 generated: '2026-05-02'

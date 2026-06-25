@@ -4,6 +4,7 @@ doc_type: index
 generated: '2026-05-02'
 module_id: GOV-006
 status: Active
+ttl: permanent
 title: _registry/schemas/ 目录索引
 version: 1.0.0
 updated: "2026-06-22"
