@@ -834,7 +834,8 @@ class TaskRepository:
             )
 
         # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
-        flags = [t for t in parts if t.startswith("--")]
+        # 处理 --flag=value 格式：只取 = 前面的 flag 名（argparse 合法语法）
+        flags = [t.split("=")[0] for t in parts if t.startswith("--")]
         if not flags:
             return
 
