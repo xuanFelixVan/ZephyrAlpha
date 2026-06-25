@@ -47,9 +47,27 @@ except ImportError:
     print("[ERROR] PyYAML 未安装，请运行: pip install pyyaml")
     sys.exit(1)
 
-# 绝对路径（RULE-EIGHT）
-DB_PATH = r"D:\ZephyrAlpha\data\databases\depgraph.db"
+# _shared.constants 统一路径引用（裁定#206 / Bug H 修复——禁止硬编码绝对路径）
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import DEPGRAPH_DB_PATH  # noqa: E402
+
+# 跨进程文件锁（裁定#206 / Bug G 修复——sync 是治理脚本中唯一缺锁的 DB 写入者）
+# 对标 apply_depgraph.py:193-197 的 lock_files 集成模式
+_SCRIPTS_DIR = str(_THIS_FILE.parent.parent)  # scripts/
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
+import lock_files as _lock_files  # noqa: E402
+
+# 绝对路径（RULE-EIGHT）——DB_PATH 通过 _shared.constants 统一引用（Bug H 修复）
+DB_PATH = str(DEPGRAPH_DB_PATH)
 RULES_DIR = r"D:\ZephyrAlpha\docs\01_policies_and_standards"
+
+# 跨进程锁常量（Bug G 修复）——相对 REPO_ROOT 路径，与 apply_depgraph.py 归一化后一致
+_DB_REL_PATH = "data/databases/depgraph.db"
+_LOCK_OWNER = "sync-yaml-depgraph"
 
 # V5.0 裁定：9 张表全部保护（与 P0-6 创建触发器列表一致）
 READONLY_TABLES = [
@@ -911,77 +929,98 @@ def sync_domain_naming_rules(cur):
 # ========== 主同步函数 ==========
 
 
-def sync_all():
-    """主同步函数：按优先级同步所有 YAML 源"""
+def sync_all() -> bool:
+    """主同步函数：按优先级同步所有 YAML 源。
+
+    返回 True=同步成功，False=锁竞争或 DB 缺失跳过（不抛异常）。
+
+    跨进程锁保护（裁定#206 / Bug G 修复）：
+      sync 是治理脚本中唯一缺锁的 DB 写入者。原实现仅依赖 sqlite3 事务 +
+      临时 DROP 只读触发器，与 apply_depgraph.py / generate_project_depgraph.py
+      并发可能竞争 depgraph.db 写入。现引入 lock_files.py 跨进程文件锁，
+      与 apply_depgraph.py 的 _db_write_lock 归一化后互斥（同一文件路径）。
+    """
     if not os.path.exists(DB_PATH):
         print(f"[ERROR] {DB_PATH} not found")
-        sys.exit(1)
+        return False
 
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-
-    print("=" * 60)
-    print("=== YAML→DB 同步开始 ===")
-    print(f"DB: {DB_PATH}")
-    print(f"RULES_DIR: {RULES_DIR}")
-    print("=" * 60)
-
+    # Bug G 修复：跨进程文件锁——防止与 apply_depgraph.py 并发写入 depgraph.db
+    # skip_naming_check=True 与 apply_depgraph.py:237 保持一致（depgraph.db 命名豁免）
+    if _lock_files.cmd_acquire(
+        _DB_REL_PATH, _LOCK_OWNER, task="sync_yaml_to_depgraph", skip_naming_check=True
+    ) != 0:
+        print("⚠️ 无法获取锁，另一进程正在写入 depgraph.db（已 hold）——本次同步跳过")
+        return False
     try:
-        # 临时禁用只读触发器
-        disable_readonly_triggers(cur)
-        conn.commit()
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
 
-        # P0 优先级同步
-        sync_cross_module_dependencies(cur)  # #152
-        sync_architecture_contract(cur)  # #153
-        sync_contract_mapping_table(cur)  # #154
+        print("=" * 60)
+        print("=== YAML→DB 同步开始 ===")
+        print(f"DB: {DB_PATH}")
+        print(f"RULES_DIR: {RULES_DIR}")
+        print("=" * 60)
 
-        # P1 优先级同步
-        sync_gate_registry(cur)  # #155
-        sync_functional_domain_registry(cur)  # #156
-        sync_vocabularies(cur)  # #157
-        sync_architecture_rules(cur)  # #158
-
-        # P2 优先级同步
-        sync_declarative_contract_tracker(cur)  # #159
-        sync_frontmatter_field_registry(cur)  # #160
-        sync_registry_of_registries(cur)  # #161
-        sync_directory_registry(cur)  # #162
-        sync_rule_catalog_registry(cur)  # #163
-
-        # P3 优先级同步
-        sync_infrastructure_registry(cur)  # #164
-        sync_model_capability_contract(cur)  # #164
-
-        # P4 优先级同步（V4.2 新增表）
-        sync_hard_boundaries(cur)  # #170
-        sync_business_streams(cur)  # #171
-        sync_blueprint_links(cur)  # #172
-
-        # P5 优先级同步（裁定#204 预防根因）
-        sync_domain_naming_rules(cur)  # #173
-
-        conn.commit()
-        print("\n[PASS] 18 项 YAML→DB 同步完成")
-
-    except Exception as e:
-        conn.rollback()
-        print(f"\n[SYNC ERROR] 同步失败，已回滚: {e}")
-        import traceback
-
-        traceback.print_exc()
-        raise  # DM-3010: 用raise替代sys.exit(1)，让调用方可捕获
-
-    finally:
-        # 恢复只读触发器（无论成功失败必须恢复）
         try:
-            restore_readonly_triggers(cur)
+            # 临时禁用只读触发器
+            disable_readonly_triggers(cur)
             conn.commit()
+
+            # P0 优先级同步
+            sync_cross_module_dependencies(cur)  # #152
+            sync_architecture_contract(cur)  # #153
+            sync_contract_mapping_table(cur)  # #154
+
+            # P1 优先级同步
+            sync_gate_registry(cur)  # #155
+            sync_functional_domain_registry(cur)  # #156
+            sync_vocabularies(cur)  # #157
+            sync_architecture_rules(cur)  # #158
+
+            # P2 优先级同步
+            sync_declarative_contract_tracker(cur)  # #159
+            sync_frontmatter_field_registry(cur)  # #160
+            sync_registry_of_registries(cur)  # #161
+            sync_directory_registry(cur)  # #162
+            sync_rule_catalog_registry(cur)  # #163
+
+            # P3 优先级同步
+            sync_infrastructure_registry(cur)  # #164
+            sync_model_capability_contract(cur)  # #164
+
+            # P4 优先级同步（V4.2 新增表）
+            sync_hard_boundaries(cur)  # #170
+            sync_business_streams(cur)  # #171
+            sync_blueprint_links(cur)  # #172
+
+            # P5 优先级同步（裁定#204 预防根因）
+            sync_domain_naming_rules(cur)  # #173
+
+            conn.commit()
+            print("\n[PASS] 18 项 YAML→DB 同步完成")
+            return True
+
         except Exception as e:
-            print(f"[WARNING] 触发器恢复失败: {e}")
+            conn.rollback()
+            print(f"\n[SYNC ERROR] 同步失败，已回滚: {e}")
+            import traceback
+
+            traceback.print_exc()
+            raise  # DM-3010: 用raise替代sys.exit(1)，让调用方可捕获
+
         finally:
-            conn.close()
-            print("=== YAML→DB 同步完成 ===")
+            # 恢复只读触发器（无论成功失败必须恢复）
+            try:
+                restore_readonly_triggers(cur)
+                conn.commit()
+            except Exception as e:
+                print(f"[WARNING] 触发器恢复失败: {e}")
+            finally:
+                conn.close()
+                print("=== YAML→DB 同步完成 ===")
+    finally:
+        # Bug G 修复：无论成功失败必须释放锁（避免死锁）
+        _lock_files.cmd_release(_DB_REL_PATH, _LOCK_OWNER)
 
 
 def main():
@@ -989,7 +1028,9 @@ def main():
         description="P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph.db"
     )
     parser.parse_args()
-    sync_all()
+    ok = sync_all()
+    if not ok:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

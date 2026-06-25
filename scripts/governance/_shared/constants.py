@@ -116,6 +116,11 @@ MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
 # 与 src/zephyr/shared/paths.DB_PATH 对齐（治理脚本不得各自硬编码库文件名）
 DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
 
+# depgraph.db 路径——供 sync_yaml_to_depgraph.py 等治理脚本引用（裁定#206 / Bug H 修复）
+# 历史：sync_yaml_to_depgraph.py 曾硬编码 r"D:\ZephyrAlpha\..." 绝对路径，违反可移植性；
+#       统一到此处常量后，所有治理脚本通过 _shared.constants 单一引用点获取路径。
+DEPGRAPH_DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"
+
 EXIT_PASS: int = 0
 EXIT_FINDINGS: int = 1
 EXIT_ERROR: int = 2
