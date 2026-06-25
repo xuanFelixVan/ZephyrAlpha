@@ -10,6 +10,7 @@ created: '2026-05-16'
 last_updated: '2026-06-25'
 # 裁定#201: 补写 D-SIGNAL_ASHARE/FUNDAMENTAL/QUALITY registry 条目
 # 裁定#202: 补写 D-GOV_RULE registry 条目
+# 裁定#204: D-SIGNAL* 4 域改名（D-SIGNAL_ASHARE→D-ASHARE_SIGNAL, D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL, D-SIGNAL_QUALITY→D-SIGQC, D-SIGNAL→D-SIGLEGACY）
 unique_key:
 - domain
 - subdomain
@@ -936,7 +937,7 @@ entries:
   - 规则文档
   stability: stable
   ai_autonomy: human_gated
-- domain: D-SIGNAL_ASHARE
+- domain: D-ASHARE_SIGNAL
   subdomain: ashare_signal
   ssot_module: MOD-INF-038
   ssot_path: src/zephyr/signal_ashare/
@@ -950,7 +951,7 @@ entries:
   - 信号-A股
   stability: planned
   ai_autonomy: ai_modifiable
-- domain: D-SIGNAL_FUNDAMENTAL
+- domain: D-FUNDAMENTAL_SIGNAL
   subdomain: fundamental_signal
   ssot_module: MOD-INF-039
   ssot_path: src/zephyr/signal_fundamental/
@@ -968,7 +969,7 @@ entries:
   - 信号-基本面
   stability: stable
   ai_autonomy: human_gated
-- domain: D-SIGNAL_QUALITY
+- domain: D-SIGQC
   subdomain: signal_quality
   ssot_module: MOD-INF-040
   ssot_path: src/zephyr/signal_quality/
@@ -983,6 +984,17 @@ entries:
   - 信号-质量
   stability: planned
   ai_autonomy: ai_modifiable
+- domain: D-SIGLEGACY
+  subdomain: siglegacy
+  ssot_module: MOD-INF-038
+  ssot_path: ''
+  covers:
+  - 信号遗留设计态节点（原 D-SIGNAL 拆分后遗留的设计态占位域）
+  aliases:
+  - signal legacy
+  - 信号遗留
+  stability: deprecated
+  ai_autonomy: human_gated
 - domain: D-GOV_RULE
   subdomain: rule_governance
   ssot_module: MOD-INF-041
