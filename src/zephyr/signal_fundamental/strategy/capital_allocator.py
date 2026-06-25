@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
 # [MODULE] zephyr.signal_fundamental.strategy.capital_allocator
-# [DOMAIN] D-SIGNAL_FUNDAMENTAL
+# [DOMAIN] D-FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.execution.capital_allocation_result
 # [CONSUMERS]
 # [STARTUP] imported
