@@ -1,3 +1,7 @@
+---
+ttl: permanent
+---
+
 # 依赖与架构全景图能力定位书
 
 > 版本：V5.8 | 2026-06-18（第16轮检查修复版）
@@ -2048,3 +2052,79 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 **为何采用触发器而非 ALTER TABLE ADD CHECK**：SQLite 的 `ALTER TABLE ADD CHECK` 在表已有数据时不会回溯校验，且不可与既有 DDL 合并。触发器方案支持 BEFORE INSERT/UPDATE 实时拦截 + 幂等创建（`CREATE TRIGGER IF NOT EXISTS`），更适合版本化迁移框架。
 
 **合并说明**: 本裁定整合了 6a3c179e 会话的 5 项发现，统一归并到 preexisting 调研报告（`preexisting_db_issues_investigation_report.md` 附录B）。原交接文档已删除，避免信息分散。
+
+---
+
+#### 议题 #ARCH-008：vocabulary 同步链路根因性失效
+
+- **发现日期**: 2026-06-25
+- **影响等级**: P1（SSoT 硬约束被违反，但当前无运行时功能阻断）
+- **关联议题**: #ARCH-005（layer_id 非法值）、#ARCH-007（CHECK 约束）、裁定#203-C
+- **根因**: vocabulary YAML → 派生文件 / DB 缓存自动同步链路自项目建立以来从未真正工作过
+
+**8 个 Bug（A~H）**:
+
+| Bug | 位置 | 严重性 | 描述 |
+|-----|------|:---:|------|
+| A | generate_derived_files.py:81-91 | P0 | 路径常量用连字符+错扩展名（.md），磁盘上实际是 snake_case+.yaml/.json，`_sync_*` 函数静默返回 False 形成虚假绿灯 |
+| B | sync_yaml_to_depgraph.py:441 | P0 | 键名错配（`field_name` vs `vocabulary_name`），DB `field_vocabularies` 表写入脏值 |
+| C | generate_derived_files.py:175-177 | P1 | `enum_values` apply 分支恒 False（只处理 `allowed_values`，不处理 `enum_values`） |
+| D | generate_derived_files.py:182/227/286 | P1 | `open()` 缺 `"w"` 模式，tmp 文件不存在时 `FileNotFoundError` 崩溃 |
+| E | generate_derived_files.py:280 | P1 | schema_json `oneOf` 重写逻辑错（写空 `enum` 键，不清理 `oneOf`） |
+| F | generate_derived_files.py:186/231/291 | P2 | 异常捕获太窄（仅 `PermissionError`，不捕获 `OSError`/`JSONDecodeError`/`YAMLError`） |
+| G | sync_yaml_to_depgraph.py 全文 | P3 | 无跨进程文件锁保护（治理脚本中唯一缺锁的 DB 写入者） |
+| H | sync_yaml_to_depgraph.py:51 | P3 | `DB_PATH` 硬编码绝对路径，与 `_shared/constants.py` 不一致 |
+
+**影响范围**: 7 个 Python 代码文件、8+ YAML/JSON 规则文件、6+ 文档/索引文件、3 个派生文件、1 个 DB 表（`field_vocabularies`）、2 个孤儿模块（`kb/triage.py`、`kb/pipeline/triage.py`）
+
+---
+
+#### 裁定#206：vocabulary 同步链路根因性修复
+
+- **执行日期**: 2026-06-25 ~ 2026-06-26
+- **背景**: 议题 #ARCH-008 浮现后，5 路并行深度调研综合编写修复方案（`vocabulary_sync_chain_repair_plan.md` v1.1），用户批准后执行
+
+**本裁定涵盖 4 项子裁定**:
+
+| 子裁定 | 对应议题 | 内容 | 状态 |
+|--------|---------|------|:---:|
+| #206-A | #ARCH-008 | 8 个 Bug 修复 + 派生文件重生成 + DB 脏值清理 + 孤儿模块删除 | ✅ 已执行 (commit 5326a70+764d425+03d2425+cc0fd08) |
+| #206-B | #ARCH-009 | layer 命名体系统一为 layer_vocabulary.yaml 16 值语义命名，废弃 L0/L1/L2/L3 旧格式（方案 A） | ✅ 已执行 (commit 9bc18706) |
+| #206-C | #ARCH-010 | apply_depgraph.py ALLOWED_LAYERS 与 DB CHECK 对齐 | ✅ 已执行 (commit 9bc18706) |
+| #206-D | #ARCH-011 | layer_vocabulary.yaml 新增 dir_prefix 字段（根本方案） | ⏳ 待用户批准 |
+
+**#206-A 详情（8 个 Bug 修复）**:
+
+修复链路分 6 个阶段（任务卡 OPS-2026062621~2626）：
+1. 阶段0：depgraph.db 备份 + field_vocabularies 主键验证（2621）
+2. 阶段1：修复 generate_derived_files.py Bug A/C/D/E/F（2622）
+3. 阶段2：修复 sync_yaml_to_depgraph.py Bug B + field_vocabularies 134 条脏值清理（2623, commit 5326a7038）
+4. 阶段3：重生成 3 个派生文件 + 重跑 sync（2624, commit 764d42591）
+5. 阶段4：修复 4 处 validator 硬编码 layer 改为 vocabulary 动态加载（2625, commit 03d2425f9）
+6. 阶段5：删除 2 个孤儿 triage.py + 修复主版 triage.py 硬编码（2626, commit cc0fd0830）
+
+**#206-B 详情（layer 命名体系统一）**:
+
+裁定采用方案 A：layer 字段统一用 layer_vocabulary.yaml 的 16 值语义命名（data/infra_ops/factor/signal/risk/pf_core/ex_core/reporting/frontend/research/compliance/ml_train/system/telemetry/simulation/shared/cross_layer），废弃 L0/L1/L2/L3 旧格式。
+
+理由：
+1. L0/L1/L2/L3 是 layer_vocabulary.yaml 注释中明确标记为"废弃"的旧格式
+2. 16 值语义命名是 SSoT（layer_vocabulary.yaml），自 2026-05-03 创建以来即为真源
+3. 所有治理规则文件（trae_*.yaml）的 layer 字段统一为 `compliance`（映射与旧 L 值无关）
+
+执行（任务卡 OPS-2026062627）：
+1. 修复 59 个 trae_*.yaml 的 layer 字段 L0/L1/L2/L3 → compliance（commit 9bc187061）
+2. 修复 g2_triage.yaml valid_layers（18→16）
+3. 修复 apply_depgraph.py ALLOWED_LAYERS（L1_platform→L3_application）
+
+**#206-C 详情（apply_depgraph.py 对齐）**:
+
+修复 apply_depgraph.py 的 ALLOWED_LAYERS 常量，从硬编码的 L1_platform 改为从 layer_vocabulary.yaml 动态加载，与 DB CHECK 约束对齐（commit 9bc187061）。
+
+**#206-D 详情（dir_prefix 字段——待执行）**:
+
+在 layer_vocabulary.yaml 每个 entry 中新增 `dir_prefix` 字段，由 validator 动态读取，消除映射表硬编码漂移风险。本子裁定待用户批准后执行。
+
+**kebab-case 路径引用清理（任务卡 OPS-2026062628）**:
+
+清理全项目 kebab-case 文件路径引用，统一为 snake_case（commit e3a3e821，54 个文件）。包括 18 个 vocabulary 文件名引用、module_id 注释头、BUG 修复（refresh_master_entries.py:85 stem 检查）。
