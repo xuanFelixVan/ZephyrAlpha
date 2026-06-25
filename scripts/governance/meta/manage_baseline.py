@@ -84,58 +84,98 @@ def _build_index(findings: list[dict]) -> dict[str, dict]:
     return {_finding_key(f): f for f in findings}
 
 
-def save_baseline(source: str | Path, label: str = "") -> dict:
-    """save_baseline implementation."""
-    _BASELINE_DIR.mkdir(parents=True, exist_ok=True)
+def _atomic_write(path: Path, content: str) -> None:
+    """原子写入：写 tmp(pid 后缀) → os.replace → PermissionError 时清理 tmp。
+
+    多 AI 并发安全：tmp 文件名带 pid 避免跨进程覆盖；os.replace 同文件系统原子。
+    """
+    tmp_path = f"{path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        os.replace(tmp_path, path)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+
+
+def _serialize_jsonl(findings: list[dict]) -> str:
+    """将 findings 列表序列化为 JSONL 字符串（每行一个 JSON 对象）。"""
+    return "".join(json.dumps(f, ensure_ascii=False) + "\n" for f in findings)
+
+
+def write_jsonl_baseline(
+    findings: list[dict],
+    *,
+    baseline_dir: Path,
+    versioned_prefix: str,
+    current_path: Path,
+    meta_path: Path | None = None,
+    source_label: str,
+    label: str,
+    ts_str: str | None = None,
+) -> dict:
+    """写入 JSONL 基线快照（SSoT helper，供 manage_baseline + audit_registration 复用）。
+
+    统一原子写入逻辑，消除 save_baseline 三份重复。写入：
+      1. 版本化备份 ``{baseline_dir}/{versioned_prefix}-{ts}.jsonl``
+      2. 当前指针 ``current_path``（覆盖，内容与版本化备份一致）
+      3.（可选）meta ``meta_path``（JSON 对象）；None 跳过
+
+    Args:
+        findings: Finding 列表（dict，至少含 dimension/target/description）。
+        baseline_dir: 基线目录（自动 mkdir）。
+        versioned_prefix: 版本化文件前缀（如 ``"baseline"`` / ``"audit_registration"``）。
+        current_path: 当前指针文件完整路径。
+        meta_path: 可选 meta 文件路径；None 表示不写 meta（audit_registration 不需要）。
+        source_label: meta.source 字段值。
+        label: meta.label 字段值。
+        ts_str: 可选时间戳；None 则自动生成 ``%Y%m%dT%H%M%SZ``。
+
+    Returns:
+        meta dict（saved_at / finding_count / source / label / file）。
+    """
+    baseline_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(UTC)
-    ts_str = timestamp.strftime("%Y%m%dT%H%M%SZ")
+    ts_str = ts_str or timestamp.strftime("%Y%m%dT%H%M%SZ")
 
-    findings = _load_findings(source)
-    output_path = _BASELINE_DIR / f"baseline-{ts_str}.jsonl"
+    output_path = baseline_dir / f"{versioned_prefix}-{ts_str}.jsonl"
+    jsonl_content = _serialize_jsonl(findings)
+    _atomic_write(output_path, jsonl_content)
+    _atomic_write(current_path, jsonl_content)
 
-    tmp_path = f"{output_path}.{os.getpid()}.tmp"
     try:
-        with open(tmp_path, encoding="utf-8") as f:
-            for finding in findings:
-                f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-
-        os.replace(tmp_path, output_path)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
-    tmp_path = f"{_CURRENT_BASELINE}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            for finding in findings:
-                f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-
-        os.replace(tmp_path, _CURRENT_BASELINE)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+        file_rel = str(output_path.relative_to(_REPO_ROOT))
+    except ValueError:
+        file_rel = str(output_path)
     meta = {
         "saved_at": timestamp.isoformat(),
         "finding_count": len(findings),
-        "source": str(source),
-        "label": label or f"baseline-{ts_str}",
-        "file": str(output_path.relative_to(_REPO_ROOT)),
+        "source": source_label,
+        "label": label,
+        "file": file_rel,
     }
-    tmp_path = f"{_BASELINE_META}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, encoding="utf-8") as f:
-            json.dump(meta, f, ensure_ascii=False, indent=2)
-
-        os.replace(tmp_path, _BASELINE_META)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
+    if meta_path is not None:
+        _atomic_write(meta_path, json.dumps(meta, ensure_ascii=False, indent=2))
     return meta
+
+
+def save_baseline(source: str | Path, label: str = "") -> dict:
+    """从文件加载 findings 并保存为基线快照（版本化备份 + 当前指针 + meta）。"""
+    findings = _load_findings(source)
+    ts_str = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    return write_jsonl_baseline(
+        findings,
+        baseline_dir=_BASELINE_DIR,
+        versioned_prefix="baseline",
+        current_path=_CURRENT_BASELINE,
+        meta_path=_BASELINE_META,
+        source_label=str(source),
+        label=label or f"baseline-{ts_str}",
+        ts_str=ts_str,
+    )
 
 
 def compare_with_baseline(

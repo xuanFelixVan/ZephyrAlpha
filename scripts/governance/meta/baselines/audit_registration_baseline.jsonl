@@ -1,0 +1,4 @@
+{"dimension": "D4_zombie_reference", "target": {"file_path": "governance/_tmp_probe_ops_max.py"}, "description": "僵尸引用: script_manifest.yaml → governance/_tmp_probe_ops_max.py", "severity": "P2"}
+{"dimension": "D4_zombie_reference", "target": {"file_path": "governance/_tmp_probe_tasks.py"}, "description": "僵尸引用: script_manifest.yaml → governance/_tmp_probe_tasks.py", "severity": "P2"}
+{"dimension": "D4_zombie_reference", "target": {"file_path": "governance/_tmp_test_shlex.py"}, "description": "僵尸引用: script_manifest.yaml → governance/_tmp_test_shlex.py", "severity": "P2"}
+{"dimension": "D4_zombie_reference", "target": {"file_path": "governance/create_blueprint_placement_repair_tasks.py"}, "description": "僵尸引用: script_manifest.yaml → governance/create_blueprint_placement_repair_tasks.py", "severity": "P2"}

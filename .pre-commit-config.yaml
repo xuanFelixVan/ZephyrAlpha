@@ -247,10 +247,10 @@ repos:
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py|docs/02_enterprise_architecture/system-dependency-map\\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\\.yaml)$"
 
-      # ── GATE-15: Frontmatter ttl 校验（ttl_vocabulary.yaml v1.1.0）──
+      # ── GATE-15: Frontmatter ttl 校验（ttl_vocabulary.yaml v2.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
       # 校验范围：docs/ 下所有 .md 文件（有 frontmatter 的文档）
-      # 校验内容：ttl 字段存在 + ttl 值合法（6 种合法值从 ttl_vocabulary.yaml 动态加载）
+      # 校验内容：ttl 字段存在 + ttl 值合法（2 种合法值从 ttl_vocabulary.yaml 动态加载）
       # 模式：增量校验（pass_filenames=true，只校验本次 commit 的 .md）；AI 创建无 ttl 文档时 commit 被阻断
       - id: gate-15-frontmatter-metadata
         name: "GATE-15: Frontmatter ttl 校验（增量）"
@@ -354,6 +354,22 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^docs/.*\\.md$"
+
+      # ── GATE-REG-BL: 注册审计基线差分（L4 止血 — 仅 NEW 孤儿阻断）──
+      # 权威依据：anti_hallucination 报告 W2-T1 + RULE-TWO 反孤儿防线 2
+      # 真源声明：2026-06-26 Wave 2 接线——audit_registration.py --baseline-aware 代码已存在但无触发者
+      # 检测范围：src/zephyr/ + scripts/governance/ 下 .py 变更 + 关键注册表 .yaml 变更时触发
+      # 检测内容：--incremental --baseline-aware → 仅变更新引入的 NEW 孤儿阻断(exit 1)
+      #           存量 PERSISTENT 孤儿不阻断(exit 0)；基线须先 --save-baseline 初始化（已入库）
+      # 模式：硬阻断（NEW 孤儿 exit 1）；基线文件 audit_registration_baseline.jsonl 已入库
+      - id: gate-reg-bl-baseline-aware
+        name: "GATE-REG-BL: 注册审计基线差分（L4 止血）"
+        entry: python scripts/governance/audit_registration.py --incremental --baseline-aware
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/.*\\.py|scripts/governance/.*\\.py|scripts/governance/script_manifest\\.yaml|src/zephyr/gates/_registry\\.yaml)$"
+        description: "增量注册审计——仅 NEW 孤儿阻断（PERSISTENT 存量不阻断），对标 RULE-TWO 防线 2 + anti_hallucination W2-T1"
 
       # ── GATE-RULE-FM: 规则文件 frontmatter 标准字段校验门禁 ──
       # 权威依据：trae_043 元数据四域架构 + scaffold.py rule 模式标准模板

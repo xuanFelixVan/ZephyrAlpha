@@ -203,43 +203,9 @@ def _to_findings(ar: AuditResult) -> list[dict]:
     return findings
 
 
-def _save_baseline(findings: list[dict]) -> dict:
-    """将 findings 保存为 audit_registration 专用基线。
-
-    使用 manage_baseline.save_baseline 的逻辑，但写入独立文件
-    audit_registration_baseline.jsonl（不覆盖 phase_e_full 基线）。
-    """
-    _BASELINE_DIR.mkdir(parents=True, exist_ok=True)
-    from datetime import UTC, datetime
-    import json
-
-    timestamp = datetime.now(UTC)
-    ts_str = timestamp.strftime("%Y%m%dT%H%M%SZ")
-
-    # 写入版本化备份
-    versioned_path = _BASELINE_DIR / f"audit_registration-{ts_str}.jsonl"
-    tmp_path = f"{versioned_path}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        for finding in findings:
-            f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-    import os
-    os.replace(tmp_path, versioned_path)
-
-    # 写入 current 指针
-    tmp_path = f"{_AUDIT_BASELINE}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        for finding in findings:
-            f.write(json.dumps(finding, ensure_ascii=False) + "\n")
-    os.replace(tmp_path, _AUDIT_BASELINE)
-
-    meta = {
-        "saved_at": timestamp.isoformat(),
-        "finding_count": len(findings),
-        "source": "audit_registration.py --save-baseline",
-        "label": f"audit_registration-{ts_str}",
-        "file": str(versioned_path.relative_to(PROJECT_ROOT)),
-    }
-    return meta
+# NOTE: _save_baseline（原 L206-242，manage_baseline.save_baseline 的逐行复制）已于
+# 2026-06-26 删除并委托 meta.manage_baseline.write_jsonl_baseline（SSoT helper），
+# 消除 save_baseline 三份重复。调用点见 main() 中 args.save_baseline 分支。
 
 
 def _compare_with_baseline(findings: list[dict]) -> dict | None:
@@ -833,9 +799,24 @@ def main() -> None:
         sys.exit(EXIT_ERROR)
 
     # ── --save-baseline 模式：保存基线后 exit 0 ──
+    # DRY：委托 meta.manage_baseline.write_jsonl_baseline（SSoT helper，原 _save_baseline 复制已删除）
     if args.save_baseline:
+        from datetime import UTC, datetime
+
+        from meta.manage_baseline import write_jsonl_baseline
+
         findings = _to_findings(ar)
-        meta = _save_baseline(findings)
+        ts_str = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+        meta = write_jsonl_baseline(
+            findings,
+            baseline_dir=_BASELINE_DIR,
+            versioned_prefix="audit_registration",
+            current_path=_AUDIT_BASELINE,
+            meta_path=None,
+            source_label="audit_registration.py --save-baseline",
+            label=f"audit_registration-{ts_str}",
+            ts_str=ts_str,
+        )
         print(f"[BASELINE] 已保存 {meta['finding_count']} 条 findings 为基线")
         print(f"  文件: {meta['file']}")
         print(f"  时间: {meta['saved_at']}")

@@ -139,8 +139,14 @@ def scan_full(scan_dir: Path | None = None) -> list[dict]:
     return all_findings
 
 
-def save_baseline(findings: list[dict]) -> Path:
-    """save_baseline implementation."""
+def save_secret_baseline(findings: list[dict]) -> Path:
+    """save_secret_baseline implementation.
+
+    重命名自 save_baseline（2026-06-26），消除与 manage_baseline.save_baseline 的
+    命名冲突——本函数使用 JSON 对象格式（非 JSONL）+ 元组键对比（非 sha256），
+    签名与用途均不同，保留为独立适配层而非强行统一（裁定见 anti_hallucination
+    报告 W2-T2）。
+    """
     BASELINE_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     baseline_path = BASELINE_DIR / f"secret_baseline_{ts}.json"
@@ -224,7 +230,7 @@ def main() -> int:
         baseline_path = Path(args.baseline)
         new_findings = compare_with_baseline(findings, baseline_path)
 
-    baseline_path = save_baseline(findings)
+    baseline_path = save_secret_baseline(findings)
 
     p0 = [f for f in findings if f.get("severity") == "P0"]
     p1 = [f for f in findings if f.get("severity") == "P1"]
