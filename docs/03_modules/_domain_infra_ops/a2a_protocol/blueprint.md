@@ -5,7 +5,7 @@ title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
 version: "0.12.0"
-layer: L01
+layer: infra_ops
 layer_name: infrastructure
 functional_domain: infra
 owner: ZephyrAlpha-Owner

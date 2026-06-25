@@ -5,7 +5,7 @@ title: "Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: L07
+layer: reporting
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

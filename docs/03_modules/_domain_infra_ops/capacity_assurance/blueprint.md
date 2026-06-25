@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 version: 3.1.0
-layer: L01
+layer: infra_ops
 layer_name: infrastructure
 functional_domain: capacity
 owner: ZephyrAlpha-Owner

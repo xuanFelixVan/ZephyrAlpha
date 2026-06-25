@@ -6,7 +6,7 @@ doc_type: blueprint
 status: Active
 version: "2.1.0"
 generation: 9
-layer: L01
+layer: infra_ops
 layer_name: infrastructure
 functional_domain: governance
 owner: ZephyrAlpha-Owner

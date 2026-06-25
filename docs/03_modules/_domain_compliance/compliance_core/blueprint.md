@@ -5,7 +5,7 @@ title: "Compliance Core 蓝图+施工图 — 合规引擎"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: L10
+layer: compliance
 layer_name: compliance
 functional_domain: compliance
 owner: ZephyrAlpha-Owner

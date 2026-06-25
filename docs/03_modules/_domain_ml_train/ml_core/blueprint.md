@@ -5,7 +5,7 @@ title: "ML Platform Core 蓝图+施工图 — 机器学习平台·C轨占位"
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: L11
+layer: ml_train
 functional_domain: research
 owner: ZephyrAlpha-Owner
 classification: confidential

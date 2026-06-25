@@ -5,7 +5,7 @@ title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: L01
+layer: infra_ops
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

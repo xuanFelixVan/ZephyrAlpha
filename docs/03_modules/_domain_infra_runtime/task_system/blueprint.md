@@ -5,7 +5,7 @@ doc_type: blueprint
 template_for: blueprint
 status: Active
 version: "0.9.5"
-layer: L01
+layer: infra_ops
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

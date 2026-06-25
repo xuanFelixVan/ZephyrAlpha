@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 version: "1.1.0"
-layer: L01
+layer: infra_ops
 domain: infra_ops
 owner: ZephyrAlpha-Owner
 classification: confidential

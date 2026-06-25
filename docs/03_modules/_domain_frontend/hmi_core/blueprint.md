@@ -5,7 +5,7 @@ title: "Human Machine Interface Core 蓝图 — 人机交互层（C轨·禁止�
 doc_type: blueprint
 status: Active
 version: "2.1.0"
-layer: L08
+layer: frontend
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh

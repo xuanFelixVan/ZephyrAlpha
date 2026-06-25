@@ -5,7 +5,7 @@ title: "注册表治理"
 doc_type: blueprint
 status: Draft
 version: "0.2.0"
-layer: L01
+layer: infra_ops
 owner: ZephyrAlpha-Owner
 classification: internal
 language: zh
