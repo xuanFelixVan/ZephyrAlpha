@@ -85,6 +85,16 @@ _LOCK_TIMEOUT_DEFAULT = 60.0  # 等待全局锁最长 60s（commit 串行化，�
 _POLL_INTERVAL = 0.1
 _MAX_INLINE_PATHS = 50  # 超过此数量时用 --pathspec-from-file 避免 Windows CLI 长度限制 (WinError 206)
 
+# 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
+# 真源：ttl_vocabulary.yaml decision_tree + project_rules.md RULE-TWO
+# 非永久区路径（如 docs/_working/）的文件不触发门禁
+_PERMANENT_ZONE_DIRS: tuple[str, ...] = (
+    "docs/01_policies_and_standards/",
+    "docs/02_enterprise_architecture/",
+    "docs/03_modules/",
+    "docs/08_knowledge/",
+)
+
 
 class CommitStatus(str, Enum):
     """commit 结果状态。"""
@@ -94,6 +104,7 @@ class CommitStatus(str, Enum):
     STASH_CONFLICT = "STASH_CONFLICT"  # commit 成功但 stash pop 失败（数据保留在 stash）
     COMMIT_FAILED = "COMMIT_FAILED"  # git commit 命令失败
     LOCK_TIMEOUT = "LOCK_TIMEOUT"  # 获取全局锁超时
+    PROMOTION_BLOCKED = "PROMOTION_BLOCKED"  # 永久区新文件未获 --allow-promote 批准
 
 
 class GatewayError(RuntimeError):
@@ -221,6 +232,7 @@ class GitCommitGateway:
         session_id: str,
         files: list[str],
         message: str,
+        allow_promote: bool = False,
     ) -> CommitResult:
         """串行化 commit 入口。
 
@@ -228,6 +240,8 @@ class GitCommitGateway:
             session_id: AI session 标识（用于 GW 标记 + stash message）。
             files: 本次 commit 的文件绝对路径列表。
             message: commit message（不含 GW 标记，自动追加）。
+            allow_promote: 是否允许新文件进入永久区。AI 不得设为 True——
+                永久区晋升须经用户终端确认（--allow-promote CLI flag）。
 
         Returns:
             CommitResult。
@@ -263,6 +277,23 @@ class GitCommitGateway:
                 message="no existing or tracked files to commit",
             )
 
+        # 永久区晋升门禁：检测新文件进入永久区，未获批准则阻断
+        if not allow_promote:
+            new_permanent = self._check_permanent_zone_new_files(existing)
+            if new_permanent:
+                rel_list = [
+                    os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                    for f in new_permanent
+                ]
+                return CommitResult(
+                    status=CommitStatus.PROMOTION_BLOCKED,
+                    message=(
+                        f"永久区新文件未获批准（{len(new_permanent)} 个）: {rel_list}. "
+                        f"用户须在终端用 --allow-promote 确认晋升。"
+                        f"AI 不得自行批准。"
+                    ),
+                )
+
         # 追加 GW 标记
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
@@ -272,6 +303,35 @@ class GitCommitGateway:
                 return self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=str(e))
+
+    def _check_permanent_zone_new_files(self, files: list[str]) -> list[str]:
+        """检测文件列表中是否有新文件（未 git 跟踪）进入永久区。
+
+        永久区目录见 _PERMANENT_ZONE_DIRS。AI 创建的过程文档应放 docs/_working/，
+        经用户批准后才能晋升到永久区。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            新文件（未跟踪 + 在永久区路径）的绝对路径列表。空列表 = 无需门禁。
+        """
+        new_in_zone: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            # 检查是否在永久区路径下
+            if not any(rel.startswith(prefix) for prefix in _PERMANENT_ZONE_DIRS):
+                continue
+            # 检查是否已被 git 跟踪（已跟踪 = 修改已有文件，不是晋升）
+            chk = subprocess.run(
+                ["git", "ls-files", "--error-unmatch", "--", rel],
+                capture_output=True,
+                cwd=str(self.project_root),
+            )
+            if chk.returncode != 0:
+                # 未跟踪 = 新文件进入永久区 → 需要门禁
+                new_in_zone.append(f)
+        return new_in_zone
 
     # ------------------------------------------------------------------
     # 内部实现

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_cli | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """git_commit.py — GitCommitGateway CLI 封装（OPS-2026062512）
@@ -68,7 +68,7 @@ def main() -> int:
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
             "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突"
+            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断"
         ),
     )
     parser.add_argument(
@@ -90,6 +90,13 @@ def main() -> int:
         "--project-root",
         default=str(_PROJECT_ROOT),
         help="项目根目录（默认: 脚本所在仓库根）",
+    )
+    parser.add_argument(
+        "--allow-promote",
+        action="store_true",
+        default=False,
+        help="批准新文件晋升到永久区（docs/01_policies/、02_enterprise_architecture/、"
+             "03_modules/、08_knowledge/）。AI 不得自行使用——须用户终端手动指定。",
     )
     args = parser.parse_args()
 
@@ -126,6 +133,7 @@ def main() -> int:
         session_id=args.session,
         files=files,
         message=args.message,
+        allow_promote=args.allow_promote,
     )
 
     if result.status == CommitStatus.OK:
@@ -141,6 +149,13 @@ def main() -> int:
         print(f"STASH_CONFLICT: {result.message}", file=sys.stderr)
         print(f"  stash_ref={result.stash_ref} (数据保留在 stash，未丢失)", file=sys.stderr)
         return 2
+    elif result.status == CommitStatus.PROMOTION_BLOCKED:
+        print(f"PROMOTION_BLOCKED: {result.message}", file=sys.stderr)
+        print(
+            "  如确认晋升到永久区，请在终端手动添加 --allow-promote 重新执行。",
+            file=sys.stderr,
+        )
+        return 3
     else:  # COMMIT_FAILED
         print(f"FAILED: {result.message}", file=sys.stderr)
         return 1
