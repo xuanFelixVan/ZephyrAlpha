@@ -463,7 +463,7 @@ modules:
   path: docs/03_modules/_cross_layer/model_capability_exam
   blueprint:
     status: Active
-    version: 2.2.0
+    version: 3.0.2
   construction_plan:
     status: partially_implemented
 - module_id: MOD-INF-037

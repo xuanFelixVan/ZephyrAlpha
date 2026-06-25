@@ -690,9 +690,9 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.2.0
+  version: 3.0.2
   generation: 2
-  last_updated: '2026-05-23'
+  last_updated: '2026-06-25'
   file_path: 03_modules/_cross_layer/model_capability_exam/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-037
@@ -741,7 +741,7 @@ blueprints:
 - module_id: MOD-INF-042
   name: local_model
   title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
-  summary: ''
+  summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
   layer: L01
   functional_domain: infra
   blueprint_status: Active
@@ -991,6 +991,13 @@ summary:
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
   last_recomputed: '2026-06-25'
 changelog:
+- version: 2.7.2
+  date: '2026-06-25'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 59 份 blueprint.md；登记项相对上一版有
+    2 条差异摘要'
+  - 'MOD-INF-036.version: [2.2.0] → [3.0.2]'
+  - 'MOD-INF-036.last_updated: [2026-05-23] → [2026-06-25]'
 - version: 2.7.1
   date: '2026-06-25'
   changes:

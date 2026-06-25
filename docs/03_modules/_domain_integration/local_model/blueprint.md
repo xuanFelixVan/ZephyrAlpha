@@ -2,6 +2,7 @@
 module_id: MOD-INF-042
 submodule_path: src/zephyr/integration/local_model
 title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
+summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推理+调度+缓存，为KB向量检索和LLM调用提供本地化推理能力。
 version: 0.1.0
 status: Active
 layer: L01
@@ -31,8 +32,8 @@ ssot_declarations:
 - content: Ollama API契约
   source: runtime_config.py ollama_base_url
   sync_rule: 运行时配置变更时MUST同步
+ttl: permanent
 ---
-
 ## §0 代码对齐验证 {temporal_type=permanent}
 
 > **架构归属SSoT**：`data/databases/depgraph.db`
