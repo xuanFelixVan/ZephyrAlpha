@@ -827,6 +827,16 @@ ARCH-CAP-007（新增）：占位域生命周期门禁
 ## 附录B：架构裁定议题（已决策）
 
 > 以下议题在 preexisting 阶段1-3 执行过程中发现，已于 2026-06-25 决策并落地。
+>
+> **合并说明（2026-06-25）**：本附录已合并另一个 AI 会话（6a3c179e）的 5 个独有发现。该会话的交接文档 `handover_to_session_6a3cacc8.md` 已按用户要求删除，其发现统一归并到本报告。
+>
+> | 发现 # | 来源 | 内容 | 处理 |
+> |--------|------|------|------|
+> | 发现1 | 6a3c179e 独有 | layer_id 非法值（L1_platform 不在 arch_layers 合法层表，9域） | 新增议题 #ARCH-005，已修复 |
+> | 发现2 | 6a3c179e 独有 | 孤儿边 148 条（预存问题） | 新增议题 #ARCH-006，留待阶段4 |
+> | 发现3 | 6a3c179e 独有 | 命名结构分析（36个域有疑似父子命名） | 已并入议题 #ARCH-002 统一裁定 |
+> | 发现4 | 6a3c179e 独有 | lifecycle 字段无 CHECK 约束（4值：operational/design_only/prototype/deprecated） | 新增议题 #ARCH-007，接受当前4值 |
+> | 发现5 | 6a3c179e 独有 | D-SIGNAL 状态（0 production，45 design，ssot_path空） | 已并入议题 #ARCH-004 统一裁定 |
 
 ### 议题#ARCH-001：域数量超标（53 vs 设计39）✅ 已决策
 
@@ -838,7 +848,9 @@ ARCH-CAP-007（新增）：占位域生命周期门禁
 
 **事实**：D-SIGNAL_ASHARE / D-SIGNAL_FUNDAMENTAL / D-SIGNAL_QUALITY 的命名带 `D-SIGNAL_` 前缀，暗示子域层级关系。
 
-**裁定**：不重命名。依据D38裁定原文"parent_domain仅作分组属性"——命名前缀不等于子域关系。这3个域在DB中是独立平级域（无parent_domain字段指向D-SIGNAL），数据结构上不违反"无子域"规则。重命名涉及105文件+301行DB更新，风险远大于收益。补写裁定#201明确平级关系。
+**6a3c179e 会话补充**：不止 D-SIGNAL 子域，**36个域**（连字符6 + 下划线30）都有命名上的"父子关系"嫌疑，违反"所有域平级"硬约束。其中 D-GOV 前缀同时有连字符（D-GOV-DOCS 等）和下划线（D-GOV_AUDIT 等）两种风格，**命名不统一**。
+
+**裁定**：不重命名。依据D38裁定原文"parent_domain仅作分组属性"——命名前缀不等于子域关系。这3个域在DB中是独立平级域（无parent_domain字段指向D-SIGNAL），数据结构上不违反"无子域"规则。扩展到36个域同理：命名前缀仅作分组属性，DB结构上均为独立平级域。重命名涉及105文件+301行DB更新，风险远大于收益。补写裁定#201明确平级关系。命名风格不统一问题（D-GOV- vs D-GOV_）留作后续命名规范治理，不在本次范围内。
 
 ### 议题#ARCH-003：D-SIGNAL拆分无正式裁定记录 ✅ 已决策
 
@@ -850,10 +862,126 @@ ARCH-CAP-007（新增）：占位域生命周期门禁
 
 **事实**：D-SIGNAL经过拆分后，代码已分散到3个独立域，本身有45个design节点（虚拟设计态路径），无production代码，ssot_path为空，production_nodes=0。
 
+**6a3c179e 会话补充**：确认 D-SIGNAL 当前状态——production_nodes=0，build_status=planned（本会话归一化后），lifecycle=design_only，ssot_path=空字符串。node 51005 已被本会话迁走，D-SIGNAL 现仅剩45个design节点。
+
 **裁定**：保留为设计态占位域（build_status=planned），45个design节点后续随架构演进重新分配到子域。ssot_path留空（无代码目录）。
+
+### 议题#ARCH-005：layer_id 非法值（L1_platform 不在 arch_layers 合法层表）✅ 已决策
+
+**来源**：6a3c179e 会话独有发现1。
+
+**事实**：`arch_layers` 表只定义了 4 个合法层，但 DB 中有 9 个域使用了 `L1_platform`（不在合法层表中）。
+
+**arch_layers 表合法层定义**（已验证）：
+
+| layer_id | layer_name | decision_type | parent_layer |
+|----------|-----------|---------------|--------------|
+| L0_infrastructure | 基础设施层 | infrastructure | NULL |
+| L1_foundation | 基础服务层 | foundation | L0_infrastructure |
+| L2_domain | 领域层 | domain | L1_foundation |
+| L3_application | 应用层 | application | L2_domain |
+
+**使用非法值 L1_platform 的 9 个域**：
+
+| 域 | 来源 | ssot_path | 说明 |
+|----|------|-----------|------|
+| D-AUTONOMY_CORE | 预存脏值 | src/zephyr/autonomy_core/ | 自主核心 |
+| D-FRONTEND | 预存脏值 | src/zephyr/frontend/ | 前端 |
+| D-INTEGRATION | 预存脏值 | src/zephyr/integration/ | 集成 |
+| D-OPS | 预存脏值 | src/zephyr/ops/ | 运维 |
+| D-REPORTING | 预存脏值 | src/zephyr/reporting/ | 报告 |
+| D-SECURITY | 预存脏值 | src/zephyr/security/ | 安全 |
+| D-SHARED | 预存脏值 | src/zephyr/shared/ | 共享 |
+| D-SECURITY-LLM | 本会话阶段1引入 | src/zephyr/security/llm_defense/ | LLM防御 |
+| D-INTEGRATION-GATEWAY | 本会话阶段1引入 | src/zephyr/integration/mcp/ | MCP网关 |
+
+**修复前 layer_id 值分布**：L2_domain 32 / L1_platform 9(非法) / L1_foundation 6 / L0_infrastructure 5 / NULL 1
+
+**待决策方案**：方案A（仅修2域 D-SECURITY-LLM/D-INTEGRATION-GATEWAY）/ 方案B（注册 L1_platform 为第5个合法层）/ 方案C（全部9域改为 L1_foundation）
+
+**裁定**：采用方案C——将全部 9 个使用 L1_platform 的域改为 L1_foundation（基础服务层）。
+
+**理由**：
+1. `L1_platform` 不是 arch_layers 表中的合法层，是预存脏值（7域）和本会话阶段1错误沿用（2域），无任何架构依据
+2. 这9个域的 ssot_path 都是 `src/zephyr/xxx/` 基础服务路径，归属 L1_foundation（基础服务层）语义正确
+3. 方案B（新增第5层）需修改 YAML + arch_layers 表 + 重新设计层间依赖规则，成本远大于收益
+4. 方案A（仅修2域）会留下7个预存脏值，治标不治本
+
+**执行结果**：commit fadd3fdc，9 域全部修改为 L1_foundation。修复后 layer_id 分布：L2_domain 32 / L1_foundation 15 / L0_infrastructure 5 / NULL 1（D-GOV-REPAIR，已 deprecated）。
+
+### 议题#ARCH-006：孤儿边 148 条（预存问题）✅ 已决策
+
+**来源**：6a3c179e 会话独有发现2。
+
+**事实**：edges 表有 148 条边引用了不存在的 node（from_node_id 或 to_node_id 在 nodes 表中不存在）。
+
+**关键验证**：
+- 孤儿边**不涉及** node 50999（6a3c179e 会话迁移的节点）
+- 孤儿边**不涉及** node 51005（本会话迁移的节点）
+- 这是**纯预存问题**，不是任一会话引入的
+
+**样本**（前5条）：
+
+| from_node_id | to_node_id | dep_type | dep_maturity |
+|---------------|------------|----------|--------------|
+| 48852 | 50843 | import_depends | active |
+| 48854 | 50843 | import_depends | active |
+| 48855 | 50843 | import_depends | active |
+| 48863 | 50843 | import_depends | active |
+| 48870 | 50843 | import_depends | active |
+
+**裁定**：留待阶段4（DB约束治理）统一清理。148条孤儿边不影响生产功能（无 production 节点引用），但污染依赖图完整性。阶段4将执行：
+1. 调研每条孤儿边的来源（哪些节点被删除时未清理边）
+2. 评估是否可安全删除
+3. 在 apply_depgraph.py 增加 `cmd_cleanup_orphan_edges()` 命令
+4. 执行清理 + 验证
+
+**不立即清理的理由**：preexisting 阶段1-3聚焦3空域+D-SIGNAL元数据修复，孤儿边是独立的预存问题，不在该范围内，避免范围蔓延。
+
+### 议题#ARCH-007：lifecycle 字段无 CHECK 约束 ✅ 已决策
+
+**来源**：6a3c179e 会话独有发现4。
+
+**事实**：domains 表 lifecycle 字段无 CHECK 约束，当前分布4值：
+
+| lifecycle | 域数 | 说明 |
+|-----------|------|------|
+| operational | 22 | 运行中 |
+| design_only | 19 | 设计态 |
+| prototype | 11 | 原型 |
+| deprecated | 1 | 已废弃 |
+
+**Schema 现状**（`src/zephyr/governance/depgraph_schema.py:158`）：
+```sql
+lifecycle        TEXT    DEFAULT 'design_only',   -- 无 CHECK 约束
+```
+
+**裁定**：接受当前4值为合法值集合，阶段4加 CHECK 约束。
+
+**理由**：
+1. 这4个值覆盖了域的完整生命周期：operational（生产运行）→ prototype（原型验证）→ design_only（纯设计态）→ deprecated（已废弃）
+2. 与 build_status 的5态（planned→generated→testing→stable→deprecated）互补：lifecycle 描述运行态，build_status 描述构建态
+3. 不接受新值：当前4值已满足需求，无需扩展
+
+**阶段4执行**：在 depgraph_schema.py 的 domains 表 DDL 中增加：
+```sql
+lifecycle TEXT DEFAULT 'design_only'
+    CHECK (lifecycle IN ('operational', 'design_only', 'prototype', 'deprecated')),
+```
+并在 apply_depgraph.py 的 cmd_insert_domain 中校验 lifecycle 值合法性。
 
 ---
 
 **文档结束**
 
-> 本报告记录 preexisting DB 问题的完整调研与修复过程。阶段1-3数据修复已完成，附录B的4个架构议题已于2026-06-25全部决策并落地（裁定#201/#202）。
+> 本报告记录 preexisting DB 问题的完整调研与修复过程。
+>
+> **阶段1-3 数据修复**：已完成（元数据补齐 / deprecated 标记 / 节点迁移 / build_status 归一化 / layer_id 非法值修复）。
+>
+> **附录B 架构议题**：7个议题全部决策并落地（#ARCH-001~007）。
+> - #ARCH-001~004：本会话发现，裁定#201/#202 落地
+> - #ARCH-005：合并 6a3c179e 发现1，裁定#203 落地（已修复）
+> - #ARCH-006：合并 6a3c179e 发现2，留待阶段4
+> - #ARCH-007：合并 6a3c179e 发现4，留待阶段4加 CHECK 约束
+>
+> **合并的 6a3c179e 发现3/5**：已分别并入 #ARCH-002 / #ARCH-004 统一裁定，不再单独立项。

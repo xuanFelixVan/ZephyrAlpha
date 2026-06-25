@@ -1985,3 +1985,48 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | D-INFRA_OPS | registry 有 3 条（asset-inventory/capacity-assurance/resource_optimization），但 panorama 无直接裁定 | 补写 panorama 裁定记录 |
 
 **D-INFRA_OPS 补记**: D-INFRA_OPS 在 domain_split_plan 附录 C.1 作为跨域共享 blueprint_id 引用域出现，但未作为拆分主体被裁定。该域有 7 个 production 节点，ssot_path=`src/zephyr/infra_ops/`，lifecycle=design_only，build_status=planned（已修正）。本裁定追溯确认其合法地位。
+
+#### 裁定#203：合并 6a3c179e 会话发现的 3 项预存 DB 问题裁定
+
+- **执行日期**: 2026-06-25
+- **背景**: preexisting DB 问题调研期间，另一 AI 会话（6a3c179e）独立发现 5 项问题。经用户裁定，5 项问题统一归并到本会话处理（发现 3/5 并入 #ARCH-002/#ARCH-004，发现 1/2/4 由本裁定处理）。交接文档 `handover_to_session_6a3cacc8.md` 已按用户要求删除。
+
+**本裁定涵盖 3 项子裁定**:
+
+| 子裁定 | 对应议题 | 内容 | 状态 |
+|--------|---------|------|:---:|
+| #203-A | #ARCH-005 | layer_id 非法值修复（9 域 L1_platform→L1_foundation） | ✅ 已执行 (commit fadd3fdc) |
+| #203-B | #ARCH-006 | 孤儿边 148 条留待阶段4清理 | ⏳ 阶段4 |
+| #203-C | #ARCH-007 | lifecycle 合法值定义（4 值）+ 阶段4加 CHECK 约束 | ⏳ 阶段4 |
+
+**#203-A 详情（layer_id 非法值修复）**:
+
+`arch_layers` 表仅定义 4 个合法层（L0_infrastructure / L1_foundation / L2_domain / L3_application），但 DB 中有 9 个域使用了非法值 `L1_platform`（不在合法层表中）。其中 7 个为预存脏值，2 个（D-SECURITY-LLM / D-INTEGRATION-GATEWAY）为本会话阶段1错误沿用。
+
+裁定采用方案C：将全部 9 个域的 layer_id 改为 `L1_foundation`（基础服务层）。
+
+理由：
+1. `L1_platform` 无任何架构依据，是预存脏值
+2. 这 9 个域的 ssot_path 都是 `src/zephyr/xxx/` 基础服务路径，归属 L1_foundation 语义正确
+3. 方案B（注册第5层）成本远大于收益；方案A（仅修2域）留下7个脏值治标不治本
+
+修复后 layer_id 分布：L2_domain 32 / L1_foundation 15 / L0_infrastructure 5 / NULL 1（D-GOV-REPAIR，已 deprecated）。
+
+**#203-B 详情（孤儿边留待阶段4）**:
+
+edges 表有 148 条边引用了不存在的 node（from_node_id 或 to_node_id 在 nodes 表中不存在）。经验证：不涉及 node 50999/51005（两会话迁移的节点），是纯预存问题。
+
+裁定：留待阶段4（DB约束治理）统一清理。preexisting 阶段1-3 聚焦元数据修复，孤儿边是独立预存问题，不在范围内，避免范围蔓延。阶段4将：调研每条孤儿边来源 → 评估可删除性 → apply_depgraph.py 增加 `cmd_cleanup_orphan_edges()` → 执行清理 + 验证。
+
+**#203-C 详情（lifecycle 合法值定义）**:
+
+domains 表 lifecycle 字段当前无 CHECK 约束，实际分布 4 值：operational(22) / design_only(19) / prototype(11) / deprecated(1)。
+
+裁定：接受当前 4 值为合法值集合，阶段4加 CHECK 约束。理由：
+1. 4 值覆盖域完整生命周期（生产运行→原型验证→纯设计态→已废弃）
+2. 与 build_status 5 态互补（lifecycle 描述运行态，build_status 描述构建态）
+3. 4 值已满足需求，不扩展
+
+阶段4执行：在 `depgraph_schema.py` domains 表 DDL 增加 `CHECK (lifecycle IN ('operational', 'design_only', 'prototype', 'deprecated'))`，并在 `apply_depgraph.py cmd_insert_domain` 校验合法性。
+
+**合并说明**: 本裁定整合了 6a3c179e 会话的 5 项发现，统一归并到 preexisting 调研报告（`preexisting_db_issues_investigation_report.md` 附录B）。原交接文档已删除，避免信息分散。
