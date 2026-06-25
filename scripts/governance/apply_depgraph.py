@@ -966,6 +966,55 @@ def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
             conn.close()
 
 
+def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH)) -> int:
+    """
+    清理孤儿边：删除 edges 表中引用了不存在 node 的边（from_node_id 或 to_node_id 在 nodes 表中不存在）。
+    返回：删除的边数，-1=失败
+    """
+    with _db_write_lock(db_path=db_path, task="cleanup_orphan_edges"):
+        conn = sqlite3.connect(db_path)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=30000")
+        try:
+            orphan_count = conn.execute(
+                """SELECT COUNT(*) FROM edges
+                   WHERE from_node_id NOT IN (SELECT node_id FROM nodes)
+                      OR to_node_id NOT IN (SELECT node_id FROM nodes)"""
+            ).fetchone()[0]
+
+            if orphan_count == 0:
+                print("[OK] 无孤儿边，无需清理")
+                return 0
+
+            if dry_run:
+                print(f"[DRY RUN] 将删除 {orphan_count} 条孤儿边")
+                samples = conn.execute(
+                    """SELECT edge_id, from_node_id, to_node_id, dep_type
+                       FROM edges
+                       WHERE from_node_id NOT IN (SELECT node_id FROM nodes)
+                          OR to_node_id NOT IN (SELECT node_id FROM nodes)
+                       LIMIT 10"""
+                ).fetchall()
+                for s in samples:
+                    print(f"  edge_id={s[0]}: {s[1]}->{s[2]} ({s[3]})")
+                return orphan_count
+
+            conn.execute(
+                """DELETE FROM edges
+                   WHERE from_node_id NOT IN (SELECT node_id FROM nodes)
+                      OR to_node_id NOT IN (SELECT node_id FROM nodes)"""
+            )
+            conn.commit()
+            print(f"[OK] 删除 {orphan_count} 条孤儿边")
+            return orphan_count
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: cleanup_orphan_edges失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            conn.close()
+
+
 def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     """
     修改边的 dep_type（依赖类型）。
@@ -1026,7 +1075,7 @@ def cmd_insert_domain(
     domain_group: str,
     layer_id: str,
     ssot_path: str,
-    max_modules: int = 200,
+    max_modules: int = 150,
     description: str = "",
     dry_run: bool = False,
     db_path: str = str(DEPGRAPH_PATH),
@@ -1059,7 +1108,7 @@ def cmd_insert_domain(
             conn.execute(
                 """INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
                    current_modules, max_modules, lifecycle, created_at, updated_at, build_status, layer_id)
-                   VALUES (?, ?, ?, ?, ?, 0, ?, 'design_only', ?, ?, 'unbuilt', ?)""",
+                   VALUES (?, ?, ?, ?, ?, 0, ?, 'design_only', ?, ?, 'planned', ?)""",
                 (domain_id, domain_name, domain_group, description, ssot_path, max_modules, now, now, layer_id),
             )
             if own_conn:
@@ -1677,10 +1726,15 @@ def main() -> None:
     )
     parser.add_argument("--new-from-domain", type=str, default="", help="migrate-dependencies 的新 from_domain")
     parser.add_argument("--new-to-domain", type=str, default="", help="migrate-dependencies 的新 to_domain")
-    parser.add_argument("--max-modules", type=int, default=200, help="insert-domain 的 max_modules（默认 200）")
+    parser.add_argument("--max-modules", type=int, default=150, help="insert-domain 的 max_modules（默认 150，裁定#194硬上限）")
     parser.add_argument("--description", type=str, default="", help="insert-domain 的 description")
     parser.add_argument("--mapped-by", type=str, default="", help="insert-domain-mapping 的 mapped_by 字段")
     parser.add_argument("--note", type=str, default="", help="insert-domain-mapping 的 note 字段")
+    parser.add_argument(
+        "--cleanup-orphan-edges",
+        action="store_true",
+        help="清理孤儿边：删除edges表中引用不存在node的边",
+    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -1689,7 +1743,7 @@ def main() -> None:
         path = parts[0]
         blueprint_id = parts[1] if len(parts) > 1 else ""
         domain_id = parts[2] if len(parts) > 2 else ""
-        build_status = parts[3] if len(parts) > 3 else "unbuilt"
+        build_status = parts[3] if len(parts) > 3 else "planned"
         node_id = add_design_node(path, blueprint_id, domain_id, build_status)
         if node_id < 0:
             sys.exit(4)
@@ -1863,6 +1917,10 @@ def main() -> None:
         if not ok:
             sys.exit(4)
         return
+
+    if args.cleanup_orphan_edges:
+        count = cmd_cleanup_orphan_edges(dry_run=args.dry_run)
+        sys.exit(0 if count >= 0 else 4)
 
     if not args.update_module and not args.batch:
         parser.print_help()

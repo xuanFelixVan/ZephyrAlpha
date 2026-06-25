@@ -855,6 +855,60 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         ORDER BY n.domain_id, n.node_id""",
         ],
     ),
+    (
+        12,
+        "v12: Add CHECK triggers to domains (lifecycle 4值, build_status 5值, layer_id 4值) + nodes DELETE cleanup trigger (裁定#203-B/#203-C, ARCH-006/007)",
+        [
+            # 1. nodes表DELETE触发器：删除节点时自动清理edges（防止孤儿边再产生，根因：FK无ON DELETE CASCADE）
+            """CREATE TRIGGER IF NOT EXISTS trg_nodes_delete_cleanup_edges
+            AFTER DELETE ON nodes
+            BEGIN
+                DELETE FROM edges WHERE from_node_id = OLD.node_id OR to_node_id = OLD.node_id;
+            END""",
+            # 2. domains lifecycle校验 (INSERT)
+            """CREATE TRIGGER IF NOT EXISTS chk_domains_lifecycle_insert
+            BEFORE INSERT ON domains
+            WHEN NEW.lifecycle NOT IN ('operational', 'design_only', 'prototype', 'deprecated')
+            BEGIN
+                SELECT RAISE(ABORT, 'domains.lifecycle illegal value (legal: operational/design_only/prototype/deprecated)');
+            END""",
+            # 3. domains lifecycle校验 (UPDATE)
+            """CREATE TRIGGER IF NOT EXISTS chk_domains_lifecycle_update
+            BEFORE UPDATE OF lifecycle ON domains
+            WHEN NEW.lifecycle NOT IN ('operational', 'design_only', 'prototype', 'deprecated')
+            BEGIN
+                SELECT RAISE(ABORT, 'domains.lifecycle illegal value (legal: operational/design_only/prototype/deprecated)');
+            END""",
+            # 4. domains build_status校验 (INSERT)
+            """CREATE TRIGGER IF NOT EXISTS chk_domains_build_status_insert
+            BEFORE INSERT ON domains
+            WHEN NEW.build_status NOT IN ('planned', 'generated', 'testing', 'stable', 'deprecated')
+            BEGIN
+                SELECT RAISE(ABORT, 'domains.build_status illegal value (legal: planned/generated/testing/stable/deprecated)');
+            END""",
+            # 5. domains build_status校验 (UPDATE)
+            """CREATE TRIGGER IF NOT EXISTS chk_domains_build_status_update
+            BEFORE UPDATE OF build_status ON domains
+            WHEN NEW.build_status NOT IN ('planned', 'generated', 'testing', 'stable', 'deprecated')
+            BEGIN
+                SELECT RAISE(ABORT, 'domains.build_status illegal value (legal: planned/generated/testing/stable/deprecated)');
+            END""",
+            # 6. domains layer_id校验 (INSERT，允许NULL)
+            """CREATE TRIGGER IF NOT EXISTS chk_domains_layer_id_insert
+            BEFORE INSERT ON domains
+            WHEN NEW.layer_id IS NOT NULL AND NEW.layer_id NOT IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')
+            BEGIN
+                SELECT RAISE(ABORT, 'domains.layer_id illegal value (legal: L0_infrastructure/L1_foundation/L2_domain/L3_application/NULL)');
+            END""",
+            # 7. domains layer_id校验 (UPDATE，允许NULL)
+            """CREATE TRIGGER IF NOT EXISTS chk_domains_layer_id_update
+            BEFORE UPDATE OF layer_id ON domains
+            WHEN NEW.layer_id IS NOT NULL AND NEW.layer_id NOT IN ('L0_infrastructure', 'L1_foundation', 'L2_domain', 'L3_application')
+            BEGIN
+                SELECT RAISE(ABORT, 'domains.layer_id illegal value (legal: L0_infrastructure/L1_foundation/L2_domain/L3_application/NULL)');
+            END""",
+        ],
+    ),
 ]
 
 
