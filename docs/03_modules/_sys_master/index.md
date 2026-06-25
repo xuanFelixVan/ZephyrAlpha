@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "_sys_master — 目录索引"
-module_id: "MOD-073"
-blueprint_id: "MOD-073"
+module_id: "SYS-MASTER-001"
+blueprint_id: "SYS-MASTER-001"
 version: "0.17.0"
 created: "2026-06-22"
 updated: "2026-06-22"
