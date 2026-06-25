@@ -54,7 +54,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 BLUEPRINT_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
-MODULE_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
+MODULE_REGISTRY_PATH = REPO_ROOT / "docs" / "03_modules" / "module_registry.yaml"
 
 try:
     import yaml
@@ -168,6 +168,7 @@ def build_registry_entry(filepath: Path, fm: dict[str, Any]) -> dict[str, Any]:
         "module_id": fm.get("module_id", ""),
         "name": filepath.parent.name,
         "title": fm.get("title", ""),
+        "summary": fm.get("summary", ""),
         "layer": fm.get("layer", ""),
         "functional_domain": fm.get("functional_domain", fm.get("domain", "")),
         "blueprint_status": fm.get("status", "Draft"),
