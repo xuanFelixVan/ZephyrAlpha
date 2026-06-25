@@ -438,7 +438,7 @@ def sync_vocabularies(cur):
     synced = 0
     for yaml_file in Path(vocab_dir).glob("*.yaml"):
         data = load_yaml(f"_registry/vocabularies/{yaml_file.name}")
-        field_name = data.get("field_name", yaml_file.stem)
+        field_name = data.get("vocabulary_name") or yaml_file.stem.removesuffix("_vocabulary")
         values = data.get("values", [])
 
         for value in values:
