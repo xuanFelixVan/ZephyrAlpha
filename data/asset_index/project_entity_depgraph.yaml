@@ -58480,7 +58480,8 @@ nodes:
     path: src/zephyr/signal/pipeline.py
     type: module
     blueprint_id: MOD-INF-002
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-INF-002
     change_policy: evolving
     impact_level: L
@@ -58519,7 +58520,8 @@ nodes:
     path: src/zephyr/signal/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58534,7 +58536,8 @@ nodes:
     id: src__zephyr__signal__api____init___py
     path: src/zephyr/signal/api/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58549,7 +58552,8 @@ nodes:
     path: src/zephyr/signal/capital/capital_allocation_result.py
     type: module
     blueprint_id: MOD-INF-016
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-INF-016
     change_policy: stable
     impact_level: M
@@ -58565,7 +58569,8 @@ nodes:
     path: src/zephyr/signal/capital/capital_allocator.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58583,7 +58588,8 @@ nodes:
     path: src/zephyr/signal/capital/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58602,7 +58608,8 @@ nodes:
     path: src/zephyr/signal/capital/default_capital_allocator.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58621,7 +58628,8 @@ nodes:
     path: src/zephyr/signal/combiner/synthesized_signal.py
     type: module
     blueprint_id: MOD-INF-016
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-INF-016
     change_policy: stable
     impact_level: M
@@ -58637,7 +58645,8 @@ nodes:
     path: src/zephyr/signal/combiner/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58656,7 +58665,8 @@ nodes:
     id: src__zephyr__signal__core____init___py
     path: src/zephyr/signal/core/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58671,7 +58681,8 @@ nodes:
     path: src/zephyr/signal/combiner/impl/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58689,7 +58700,8 @@ nodes:
     path: src/zephyr/signal/gen/aggregator_base.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: stable
     impact_level: M
@@ -58709,7 +58721,8 @@ nodes:
     path: src/zephyr/signal/gen/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58725,7 +58738,8 @@ nodes:
     path: src/zephyr/signal/gen/implementations/default_signal_aggregator.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58743,7 +58757,8 @@ nodes:
     id: src__zephyr__signal__infrastructure____init___py
     path: src/zephyr/signal/infrastructure/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58758,7 +58773,8 @@ nodes:
     path: src/zephyr/signal/gen/implementations/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58774,7 +58790,8 @@ nodes:
     id: src__zephyr__signal__models____init___py
     path: src/zephyr/signal/models/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58788,7 +58805,8 @@ nodes:
     id: src__zephyr__signal__services____init___py
     path: src/zephyr/signal/services/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58803,7 +58821,8 @@ nodes:
     path: src/zephyr/signal/strategy/capital_allocator.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58821,7 +58840,8 @@ nodes:
     path: src/zephyr/signal/strategy/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58838,7 +58858,8 @@ nodes:
     path: src/zephyr/signal/strategy/implementations/default_capital_allocator.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58857,7 +58878,8 @@ nodes:
     path: src/zephyr/signal/strategy/implementations/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58874,7 +58896,8 @@ nodes:
     path: src/zephyr/signal/synth/signal_synthesizer.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58892,7 +58915,8 @@ nodes:
     path: src/zephyr/signal/synth/__init__.py
     type: module
     blueprint_id: MOD-L03-001
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     belongs_to: MOD-L03-001
     change_policy: evolving
     impact_level: L
@@ -58908,7 +58932,8 @@ nodes:
     id: src__zephyr__signal___extensions____init___py
     path: src/zephyr/signal/_extensions/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58922,8 +58947,10 @@ nodes:
     id: src__zephyr__signal_ashare____init___py
     path: src/zephyr/signal_ashare/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58937,8 +58964,10 @@ nodes:
     id: src__zephyr__signal_ashare__api____init___py
     path: src/zephyr/signal_ashare/api/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58952,8 +58981,10 @@ nodes:
     id: src__zephyr__signal_ashare__core____init___py
     path: src/zephyr/signal_ashare/core/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58967,8 +58998,10 @@ nodes:
     id: src__zephyr__signal_ashare__models____init___py
     path: src/zephyr/signal_ashare/models/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58982,8 +59015,10 @@ nodes:
     id: src__zephyr__signal_ashare__infrastructure____init___py
     path: src/zephyr/signal_ashare/infrastructure/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -58997,8 +59032,10 @@ nodes:
     id: src__zephyr__signal_ashare__services____init___py
     path: src/zephyr/signal_ashare/services/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59012,8 +59049,10 @@ nodes:
     id: src__zephyr__signal_ashare___extensions____init___py
     path: src/zephyr/signal_ashare/_extensions/__init__.py
     type: module
-    domain_id: D-SIGNAL_ASHARE
-    subdomain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
+    subdomain_id: D-ASHARE_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59027,8 +59066,10 @@ nodes:
     id: src__zephyr__signal_fundamental____init___py
     path: src/zephyr/signal_fundamental/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59042,8 +59083,10 @@ nodes:
     id: src__zephyr__signal_fundamental__api____init___py
     path: src/zephyr/signal_fundamental/api/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59057,8 +59100,10 @@ nodes:
     id: src__zephyr__signal_fundamental__core____init___py
     path: src/zephyr/signal_fundamental/core/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59072,8 +59117,10 @@ nodes:
     id: src__zephyr__signal_fundamental__infrastructure____init___py
     path: src/zephyr/signal_fundamental/infrastructure/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59087,8 +59134,10 @@ nodes:
     id: src__zephyr__signal_fundamental__models____init___py
     path: src/zephyr/signal_fundamental/models/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59102,8 +59151,10 @@ nodes:
     id: src__zephyr__signal_fundamental__services____init___py
     path: src/zephyr/signal_fundamental/services/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59117,8 +59168,10 @@ nodes:
     id: src__zephyr__signal_fundamental___extensions____init___py
     path: src/zephyr/signal_fundamental/_extensions/__init__.py
     type: module
-    domain_id: D-SIGNAL_FUNDAMENTAL
-    subdomain_id: D-SIGNAL_FUNDAMENTAL
+    domain_id: D-FUNDAMENTAL_SIGNAL
+
+    subdomain_id: D-FUNDAMENTAL_SIGNAL
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59132,8 +59185,10 @@ nodes:
     id: src__zephyr__signal_quality____init___py
     path: src/zephyr/signal_quality/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59147,8 +59202,10 @@ nodes:
     id: src__zephyr__signal_quality__api____init___py
     path: src/zephyr/signal_quality/api/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59162,8 +59219,10 @@ nodes:
     id: src__zephyr__signal_quality__infrastructure____init___py
     path: src/zephyr/signal_quality/infrastructure/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59177,8 +59236,10 @@ nodes:
     id: src__zephyr__signal_quality__models____init___py
     path: src/zephyr/signal_quality/models/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59192,8 +59253,10 @@ nodes:
     id: src__zephyr__signal_quality__core____init___py
     path: src/zephyr/signal_quality/core/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59207,8 +59270,10 @@ nodes:
     id: src__zephyr__signal_quality__services____init___py
     path: src/zephyr/signal_quality/services/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -59222,8 +59287,10 @@ nodes:
     id: src__zephyr__signal_quality___extensions____init___py
     path: src/zephyr/signal_quality/_extensions/__init__.py
     type: module
-    domain_id: D-SIGNAL_QUALITY
-    subdomain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
+    subdomain_id: D-SIGQC
+
     change_policy: evolving
     impact_level: M
     modification_permission: ai_modifiable
@@ -117344,9 +117411,11 @@ nodes:
   信号域-审计__D-SIGNAL-06:
     path: 信号域-审计/D-SIGNAL-06
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -117359,9 +117428,11 @@ nodes:
   信号域-契约__D-SIGNAL-100:
     path: 信号域-契约/D-SIGNAL-100
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -117374,9 +117445,11 @@ nodes:
   信号域-契约__D-SIGNAL-158:
     path: 信号域-契约/D-SIGNAL-158
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -117539,9 +117612,11 @@ nodes:
   信号域__D-SIGNAL-20:
     path: 信号域/D-SIGNAL-20
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -118679,9 +118754,11 @@ nodes:
   信号域-降级__D-SIGNAL-80:
     path: 信号域-降级/D-SIGNAL-80
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119069,9 +119146,11 @@ nodes:
   信号域-策略发布__D-SIGNAL-140:
     path: 信号域-策略发布/D-SIGNAL-140
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119099,9 +119178,11 @@ nodes:
   信号域-核心基础设施__D-SIGNAL-12:
     path: 信号域-核心基础设施/D-SIGNAL-12
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119114,9 +119195,11 @@ nodes:
   信号域-核心基础设施__D-SIGNAL-14:
     path: 信号域-核心基础设施/D-SIGNAL-14
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119129,9 +119212,11 @@ nodes:
   信号域-核心基础设施__D-SIGNAL-16:
     path: 信号域-核心基础设施/D-SIGNAL-16
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119144,9 +119229,11 @@ nodes:
   信号域-核心基础设施__D-SIGNAL-18:
     path: 信号域-核心基础设施/D-SIGNAL-18
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119159,9 +119246,11 @@ nodes:
   信号域-A股特色-主力资金__D-SIGNAL-21:
     path: 信号域-A股特色-主力资金/D-SIGNAL-21
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119174,9 +119263,11 @@ nodes:
   信号域-A股特色-主力资金__D-SIGNAL-23:
     path: 信号域-A股特色-主力资金/D-SIGNAL-23
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119189,9 +119280,11 @@ nodes:
   信号域-A股特色-情绪周期__D-SIGNAL-25:
     path: 信号域-A股特色-情绪周期/D-SIGNAL-25
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119204,9 +119297,11 @@ nodes:
   信号域-A股特色-决策评估__D-SIGNAL-27:
     path: 信号域-A股特色-决策评估/D-SIGNAL-27
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119219,9 +119314,11 @@ nodes:
   信号域-A股特色-分时技术__D-SIGNAL-29:
     path: 信号域-A股特色-分时技术/D-SIGNAL-29
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119234,9 +119331,11 @@ nodes:
   信号域-A股特色-大盘阶段__D-SIGNAL-31:
     path: 信号域-A股特色-大盘阶段/D-SIGNAL-31
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119249,9 +119348,11 @@ nodes:
   信号域-A股特色-情绪周期__D-SIGNAL-33:
     path: 信号域-A股特色-情绪周期/D-SIGNAL-33
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119264,9 +119365,11 @@ nodes:
   信号域-A股特色-主力资金__D-SIGNAL-36:
     path: 信号域-A股特色-主力资金/D-SIGNAL-36
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119279,9 +119382,11 @@ nodes:
   信号域-A股特色-特殊信号__D-SIGNAL-38:
     path: 信号域-A股特色-特殊信号/D-SIGNAL-38
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119294,9 +119399,11 @@ nodes:
   信号域-A股特色-分时技术__D-SIGNAL-40:
     path: 信号域-A股特色-分时技术/D-SIGNAL-40
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119309,9 +119416,11 @@ nodes:
   信号域-A股特色-特殊信号__D-SIGNAL-42:
     path: 信号域-A股特色-特殊信号/D-SIGNAL-42
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119324,9 +119433,11 @@ nodes:
   信号域-A股特色-决策评估__D-SIGNAL-45:
     path: 信号域-A股特色-决策评估/D-SIGNAL-45
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119339,9 +119450,11 @@ nodes:
   信号域-A股特色-买卖点__D-SIGNAL-47:
     path: 信号域-A股特色-买卖点/D-SIGNAL-47
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119354,9 +119467,11 @@ nodes:
   信号域-A股特色-大盘阶段__D-SIGNAL-49:
     path: 信号域-A股特色-大盘阶段/D-SIGNAL-49
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119369,9 +119484,11 @@ nodes:
   信号域-A股特色-分时技术__D-SIGNAL-51:
     path: 信号域-A股特色-分时技术/D-SIGNAL-51
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119384,9 +119501,11 @@ nodes:
   信号域-A股特色-涨停封单__D-SIGNAL-53:
     path: 信号域-A股特色-涨停封单/D-SIGNAL-53
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119399,9 +119518,11 @@ nodes:
   信号域-A股特色-特殊信号__D-SIGNAL-55:
     path: 信号域-A股特色-特殊信号/D-SIGNAL-55
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119414,9 +119535,11 @@ nodes:
   信号域-A股特色-量化双引擎__D-SIGNAL-57:
     path: 信号域-A股特色-量化双引擎/D-SIGNAL-57
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119429,9 +119552,11 @@ nodes:
   信号域-A股特色-特殊信号__D-SIGNAL-61:
     path: 信号域-A股特色-特殊信号/D-SIGNAL-61
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119444,9 +119569,11 @@ nodes:
   信号域-A股特色-板块轮动__D-SIGNAL-63:
     path: 信号域-A股特色-板块轮动/D-SIGNAL-63
     type: module
-    domain_id: D-SIGNAL_ASHARE
+    domain_id: D-ASHARE_SIGNAL
+
     blueprint_id: MOD-SIGNAL_ASHARE
-    belongs_to: D-SIGNAL_ASHARE
+    belongs_to: D-ASHARE_SIGNAL
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119459,9 +119586,11 @@ nodes:
   信号域-Regime__D-SIGNAL-65:
     path: 信号域-Regime/D-SIGNAL-65
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119474,9 +119603,11 @@ nodes:
   信号域-Regime__D-SIGNAL-67:
     path: 信号域-Regime/D-SIGNAL-67
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119489,9 +119620,11 @@ nodes:
   信号域-Regime__D-SIGNAL-74:
     path: 信号域-Regime/D-SIGNAL-74
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119504,9 +119637,11 @@ nodes:
   信号域-Regime__D-SIGNAL-76:
     path: 信号域-Regime/D-SIGNAL-76
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119519,9 +119654,11 @@ nodes:
   信号域-信号处理__D-SIGNAL-69:
     path: 信号域-信号处理/D-SIGNAL-69
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119534,9 +119671,11 @@ nodes:
   信号域-信号处理__D-SIGNAL-71:
     path: 信号域-信号处理/D-SIGNAL-71
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119549,9 +119688,11 @@ nodes:
   信号域-质量降级__D-SIGNAL-77:
     path: 信号域-质量降级/D-SIGNAL-77
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119564,9 +119705,11 @@ nodes:
   信号域-质量降级__D-SIGNAL-79:
     path: 信号域-质量降级/D-SIGNAL-79
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119579,9 +119722,11 @@ nodes:
   信号域-质量降级__D-SIGNAL-81:
     path: 信号域-质量降级/D-SIGNAL-81
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119594,9 +119739,11 @@ nodes:
   信号域-质量降级__D-SIGNAL-83:
     path: 信号域-质量降级/D-SIGNAL-83
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119609,9 +119756,11 @@ nodes:
   信号域-合成分配__D-SIGNAL-85:
     path: 信号域-合成分配/D-SIGNAL-85
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119624,9 +119773,11 @@ nodes:
   信号域-合成分配__D-SIGNAL-87:
     path: 信号域-合成分配/D-SIGNAL-87
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119639,9 +119790,11 @@ nodes:
   信号域-合成分配__D-SIGNAL-90:
     path: 信号域-合成分配/D-SIGNAL-90
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119654,9 +119807,11 @@ nodes:
   信号域-合成分配__D-SIGNAL-92:
     path: 信号域-合成分配/D-SIGNAL-92
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119669,9 +119824,11 @@ nodes:
   信号域-合成分配__D-SIGNAL-94:
     path: 信号域-合成分配/D-SIGNAL-94
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119684,9 +119841,11 @@ nodes:
   信号域-合成分配__D-SIGNAL-96:
     path: 信号域-合成分配/D-SIGNAL-96
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119699,9 +119858,11 @@ nodes:
   信号域-事件追踪__D-SIGNAL-99:
     path: 信号域-事件追踪/D-SIGNAL-99
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119714,9 +119875,11 @@ nodes:
   信号域-事件追踪__D-SIGNAL-101:
     path: 信号域-事件追踪/D-SIGNAL-101
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119729,9 +119892,11 @@ nodes:
   信号域-事件追踪__D-SIGNAL-103:
     path: 信号域-事件追踪/D-SIGNAL-103
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119744,9 +119909,11 @@ nodes:
   信号域-策略可视化__D-SIGNAL-105:
     path: 信号域-策略可视化/D-SIGNAL-105
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119759,9 +119926,11 @@ nodes:
   信号域-策略可视化__D-SIGNAL-107:
     path: 信号域-策略可视化/D-SIGNAL-107
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119774,9 +119943,11 @@ nodes:
   信号域-策略可视化__D-SIGNAL-109:
     path: 信号域-策略可视化/D-SIGNAL-109
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119789,9 +119960,11 @@ nodes:
   信号域-策略可视化__D-SIGNAL-111:
     path: 信号域-策略可视化/D-SIGNAL-111
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119804,9 +119977,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-114:
     path: 信号域-技术指标/D-SIGNAL-114
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119819,9 +119994,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-116:
     path: 信号域-技术指标/D-SIGNAL-116
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119834,9 +120011,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-118:
     path: 信号域-技术指标/D-SIGNAL-118
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119849,9 +120028,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-120:
     path: 信号域-技术指标/D-SIGNAL-120
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119864,9 +120045,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-122:
     path: 信号域-技术指标/D-SIGNAL-122
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119879,9 +120062,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-124:
     path: 信号域-技术指标/D-SIGNAL-124
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119894,9 +120079,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-126:
     path: 信号域-技术指标/D-SIGNAL-126
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119909,9 +120096,11 @@ nodes:
   信号域-技术指标__D-SIGNAL-128:
     path: 信号域-技术指标/D-SIGNAL-128
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119924,9 +120113,11 @@ nodes:
   信号域-冲突融合__D-SIGNAL-130:
     path: 信号域-冲突融合/D-SIGNAL-130
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119939,9 +120130,11 @@ nodes:
   信号域-冲突融合__D-SIGNAL-132:
     path: 信号域-冲突融合/D-SIGNAL-132
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119954,9 +120147,11 @@ nodes:
   信号域-冲突融合__D-SIGNAL-134:
     path: 信号域-冲突融合/D-SIGNAL-134
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119969,9 +120164,11 @@ nodes:
   信号域-策略管理__D-SIGNAL-137:
     path: 信号域-策略管理/D-SIGNAL-137
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119984,9 +120181,11 @@ nodes:
   信号域-策略管理__D-SIGNAL-139:
     path: 信号域-策略管理/D-SIGNAL-139
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -119999,9 +120198,11 @@ nodes:
   信号域-策略管理__D-SIGNAL-141:
     path: 信号域-策略管理/D-SIGNAL-141
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120014,9 +120215,11 @@ nodes:
   信号域-策略管理__D-SIGNAL-143:
     path: 信号域-策略管理/D-SIGNAL-143
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120029,9 +120232,11 @@ nodes:
   信号域-策略质量__D-SIGNAL-145:
     path: 信号域-策略质量/D-SIGNAL-145
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120044,9 +120249,11 @@ nodes:
   信号域-策略质量__D-SIGNAL-147:
     path: 信号域-策略质量/D-SIGNAL-147
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120059,9 +120266,11 @@ nodes:
   信号域-策略运行时__D-SIGNAL-150:
     path: 信号域-策略运行时/D-SIGNAL-150
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120074,9 +120283,11 @@ nodes:
   信号域-策略运行时__D-SIGNAL-152:
     path: 信号域-策略运行时/D-SIGNAL-152
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120089,9 +120300,11 @@ nodes:
   信号域-策略运行时__D-SIGNAL-156:
     path: 信号域-策略运行时/D-SIGNAL-156
     type: module
-    domain_id: D-SIGNAL_QUALITY
+    domain_id: D-SIGQC
+
     blueprint_id: MOD-SIGNAL_QUALITY
-    belongs_to: D-SIGNAL_QUALITY
+    belongs_to: D-SIGQC
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120104,9 +120317,11 @@ nodes:
   信号域-DDD契约__D-SIGNAL-160:
     path: 信号域-DDD契约/D-SIGNAL-160
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -120119,9 +120334,11 @@ nodes:
   信号域-DDD契约__D-SIGNAL-162:
     path: 信号域-DDD契约/D-SIGNAL-162
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: MOD-SIGNAL
-    belongs_to: D-SIGNAL
+    belongs_to: D-SIGLEGACY
+
     architecture_layer: L2_domain
     design_maturity: design
     build_status: design_only
@@ -121154,7 +121371,8 @@ nodes:
   Signal Factory 信号工厂:
     path: Signal Factory 信号工厂
     type: capability
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -121199,7 +121417,8 @@ nodes:
   Market State Determination 市场状态判定:
     path: Market State Determination 市场状态判定
     type: capability
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -121844,7 +122063,8 @@ nodes:
   信号引擎 Signal Engine:
     path: 信号引擎 Signal Engine
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125402,7 +125622,8 @@ nodes:
   Synthesizer 合成器:
     path: Synthesizer 合成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125417,7 +125638,8 @@ nodes:
   Capital Allocator 资金分配器:
     path: Capital Allocator 资金分配器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125432,7 +125654,8 @@ nodes:
   Degradation Monitor 监控器:
     path: Degradation Monitor 监控器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125447,7 +125670,8 @@ nodes:
   Signal Audit Logger 信号审计:
     path: Signal Audit Logger 信号审计
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125462,7 +125686,8 @@ nodes:
   A-Share Institutional Behavior A股机构行为:
     path: A-Share Institutional Behavior A股机构行为
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125477,7 +125702,8 @@ nodes:
   A-Share Capital Flow Pattern A股资金流模式:
     path: A-Share Capital Flow Pattern A股资金流模式
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125492,7 +125718,8 @@ nodes:
   A-Share Short-term Stock Selector A股短线选股器:
     path: A-Share Short-term Stock Selector A股短线选股器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125507,7 +125734,8 @@ nodes:
   A-Share Intraday Buy__Sell Point A股日内买卖点:
     path: A-Share Intraday Buy/Sell Point A股日内买卖点
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125522,7 +125750,8 @@ nodes:
   A-Share Market Sentiment A股市场情绪:
     path: A-Share Market Sentiment A股市场情绪
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125537,7 +125766,8 @@ nodes:
   A-Share Sector Analyzer 分析器:
     path: A-Share Sector Analyzer 分析器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125552,7 +125782,8 @@ nodes:
   A-Share Youzi Relay Emotion A股游资接力情绪:
     path: A-Share Youzi Relay Emotion A股游资接力情绪
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125567,7 +125798,8 @@ nodes:
   A-Share Quant Short-term Strength A股量化短线强度:
     path: A-Share Quant Short-term Strength A股量化短线强度
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125582,7 +125814,8 @@ nodes:
   A-Share Dual-Engine Fusion 引擎:
     path: A-Share Dual-Engine Fusion 引擎
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -125597,7 +125830,8 @@ nodes:
   策略异常退出处理 Strategy:
     path: 策略异常退出处理 Strategy
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -128989,7 +129223,8 @@ nodes:
   L2-A 信号数据 Signal Data:
     path: L2-A 信号数据 Signal Data
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129004,7 +129239,8 @@ nodes:
   L2-B 主力行为 Main Force Behavior:
     path: L2-B 主力行为 Main Force Behavior
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129019,7 +129255,8 @@ nodes:
   L2-C 市场状态与宏观 Market State & Macro:
     path: L2-C 市场状态与宏观 Market State & Macro
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129589,7 +129826,8 @@ nodes:
   3秒级逆势资金流识别模块 Contrarian Flow Detector:
     path: 3秒级逆势资金流识别模块 Contrarian Flow Detector
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129604,7 +129842,8 @@ nodes:
   大盘下跌状态实时判定 Market Drop Detector:
     path: 大盘下跌状态实时判定 Market Drop Detector
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129619,7 +129858,8 @@ nodes:
   3秒级逆势资金流识别个股级 Stock Contrarian Flow:
     path: 3秒级逆势资金流识别个股级 Stock Contrarian Flow
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129634,7 +129874,8 @@ nodes:
   3秒级逆势资金流识别概念__板块级 Sector Contrarian Flow:
     path: 3秒级逆势资金流识别概念/板块级 Sector Contrarian Flow
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129649,7 +129890,8 @@ nodes:
   逆势资金流信号分级与过滤 Signal Grading & Filter:
     path: 逆势资金流信号分级与过滤 Signal Grading & Filter
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129724,7 +129966,8 @@ nodes:
   开盘竞价微结构分析模型 Opening Auction Microstructure Model:
     path: 开盘竞价微结构分析模型 Opening Auction Microstructure Model
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129739,7 +129982,8 @@ nodes:
   竞价信息提取 Auction Info Extraction:
     path: 竞价信息提取 Auction Info Extraction
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129754,7 +129998,8 @@ nodes:
   竞价行为分类 Auction Behavior Classification:
     path: 竞价行为分类 Auction Behavior Classification
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -129769,7 +130014,8 @@ nodes:
   竞价信号生成 Auction Signal Generation:
     path: 竞价信号生成 Auction Signal Generation
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -130624,7 +130870,8 @@ nodes:
   BuySignal 买入信号契约:
     path: BuySignal 买入信号契约
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131644,7 +131891,8 @@ nodes:
   TickEvent 行情事件:
     path: TickEvent 行情事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131659,7 +131907,8 @@ nodes:
   SignalEvent 信号事件:
     path: SignalEvent 信号事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131674,7 +131923,8 @@ nodes:
   DecisionEvent 决策事件:
     path: DecisionEvent 决策事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131689,7 +131939,8 @@ nodes:
   ExecutionEvent 执行事件:
     path: ExecutionEvent 执行事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131704,7 +131955,8 @@ nodes:
   RiskEvent 风控事件:
     path: RiskEvent 风控事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131719,7 +131971,8 @@ nodes:
   SystemEvent 系统事件:
     path: SystemEvent 系统事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131794,7 +132047,8 @@ nodes:
   SignalTriggered 信号触发事件:
     path: SignalTriggered 信号触发事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131809,7 +132063,8 @@ nodes:
   SignalRevoked 信号撤销事件:
     path: SignalRevoked 信号撤销事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131824,7 +132079,8 @@ nodes:
   SignalUpdated 信号更新事件:
     path: SignalUpdated 信号更新事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -131839,7 +132095,8 @@ nodes:
   SignalExpired 信号过期事件:
     path: SignalExpired 信号过期事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -133819,7 +134076,8 @@ nodes:
   因子可用性监控器 Factor Availability Monitor:
     path: 因子可用性监控器 Factor Availability Monitor
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -133834,7 +134092,8 @@ nodes:
   CTR-TRACE-001 TraceContext传播器:
     path: CTR-TRACE-001 TraceContext传播器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -133849,7 +134108,8 @@ nodes:
   因子计算结果消费桥接器 Factor Result Consumer Bridge:
     path: 因子计算结果消费桥接器 Factor Result Consumer Bridge
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -133864,7 +134124,8 @@ nodes:
   CTR-002消费契约适配器 CTR-002 Contract Adapter:
     path: CTR-002消费契约适配器 CTR-002 Contract Adapter
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -133879,7 +134140,8 @@ nodes:
   信号质量退化监控 Signal Quality Degradation Monitor:
     path: 信号质量退化监控 Signal Quality Degradation Monitor
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -134509,7 +134771,8 @@ nodes:
   C-011 主力行为识别 Main Force Behavior Recognition:
     path: C-011 主力行为识别 Main Force Behavior Recognition
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -134524,7 +134787,8 @@ nodes:
   C-034 主力画像 Main Force Profile:
     path: C-034 主力画像 Main Force Profile
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -134554,7 +134818,8 @@ nodes:
   C-021 市场状态 Market State:
     path: C-021 市场状态 Market State
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -134584,7 +134849,8 @@ nodes:
   C-014 大盘预测 Market Prediction:
     path: C-014 大盘预测 Market Prediction
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -134599,7 +134865,8 @@ nodes:
   C-039 跨市场传导 Cross-market Transmission:
     path: C-039 跨市场传导 Cross-market Transmission
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -134839,7 +135106,8 @@ nodes:
   活跃信号物化视图 Active Signal View:
     path: 活跃信号物化视图 Active Signal View
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -135019,7 +135287,8 @@ nodes:
   Sentiment Signal Generator 情绪信号生成器:
     path: Sentiment Signal Generator 情绪信号生成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -135034,7 +135303,8 @@ nodes:
   Technical Signal Generator 技术信号生成器:
     path: Technical Signal Generator 技术信号生成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -135049,7 +135319,8 @@ nodes:
   Macro Signal Generator 宏观信号生成器:
     path: Macro Signal Generator 宏观信号生成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -135064,7 +135335,8 @@ nodes:
   A-Share Market Microstructure Signal A股微观结构信号:
     path: A-Share Market Microstructure Signal A股微观结构信号
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -135079,7 +135351,8 @@ nodes:
   A-Share Policy Signal A股政策信号:
     path: A-Share Policy Signal A股政策信号
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -135094,7 +135367,8 @@ nodes:
   A-Share Capital Flow Signal A股资金流向信号:
     path: A-Share Capital Flow Signal A股资金流向信号
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -138679,7 +138953,8 @@ nodes:
   Strategy Convergence Fusion 多策略共振融合层:
     path: Strategy Convergence Fusion 多策略共振融合层
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -138694,7 +138969,8 @@ nodes:
   Model-Free Factor Fusion 因子直通层:
     path: Model-Free Factor Fusion 因子直通层
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -138724,7 +139000,8 @@ nodes:
   SignalAlgoBase Interface Contract SignalAlgoBase接口契约:
     path: SignalAlgoBase Interface Contract SignalAlgoBase接口契约
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -140134,7 +140411,8 @@ nodes:
   Signal Tail Risk Protector 信号尾部风险保护器:
     path: Signal Tail Risk Protector 信号尾部风险保护器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -141589,7 +141867,8 @@ nodes:
   Signal Generation 信号生成:
     path: Signal Generation 信号生成
     type: capability
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -143659,7 +143938,8 @@ nodes:
   Degradation Notification Downstream Manager 降级通知下游管理器:
     path: Degradation Notification Downstream Manager 降级通知下游管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -147784,7 +148064,8 @@ nodes:
   Strategy Grayscale Rollout 策略灰度发布:
     path: Strategy Grayscale Rollout 策略灰度发布
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -147799,7 +148080,8 @@ nodes:
   Signal Quality Baseline Comparison 信号质量基准对比:
     path: Signal Quality Baseline Comparison 信号质量基准对比
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150079,7 +150361,8 @@ nodes:
   Strategy Pool Capacity and Initialization Guider 策略池容量与初始化引导器:
     path: Strategy Pool Capacity and Initialization Guider 策略池容量与初始化引导器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150574,7 +150857,8 @@ nodes:
   Signal Version Manager 信号版本管理器:
     path: Signal Version Manager 信号版本管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150589,7 +150873,8 @@ nodes:
   LLM Strategy Agent LLM策略Agent:
     path: LLM Strategy Agent LLM策略Agent
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150604,7 +150889,8 @@ nodes:
   Strategy Lifecycle Manager 策略生命周期管理器:
     path: Strategy Lifecycle Manager 策略生命周期管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150619,7 +150905,8 @@ nodes:
   Behavioral Bias Engine 行为偏差引擎:
     path: Behavioral Bias Engine 行为偏差引擎
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150634,7 +150921,8 @@ nodes:
   Signal Conflict Resolution Engine 信号冲突消解器:
     path: Signal Conflict Resolution Engine 信号冲突消解器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150649,7 +150937,8 @@ nodes:
   Signal Confidence Calibrator 信号置信度校准器:
     path: Signal Confidence Calibrator 信号置信度校准器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150664,7 +150953,8 @@ nodes:
   Signal Out-of-Sample Validator 信号样本外验证器:
     path: Signal Out-of-Sample Validator 信号样本外验证器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150679,7 +150969,8 @@ nodes:
   Signal Dynamic Rebalancer 信号动态再平衡器:
     path: Signal Dynamic Rebalancer 信号动态再平衡器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150694,7 +150985,8 @@ nodes:
   A-Share Decision Priority Engine A股决策优先级引擎:
     path: A-Share Decision Priority Engine A股决策优先级引擎
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150709,7 +151001,8 @@ nodes:
   A-Share Auction Session Analyzer A股集合竞价分析器:
     path: A-Share Auction Session Analyzer A股集合竞价分析器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150724,7 +151017,8 @@ nodes:
   A-Share Intraday Pattern Analyzer A股分时形态分析器:
     path: A-Share Intraday Pattern Analyzer A股分时形态分析器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150739,7 +151033,8 @@ nodes:
   A-Share Market Direction Predictor A股大盘方向预测器:
     path: A-Share Market Direction Predictor A股大盘方向预测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150754,7 +151049,8 @@ nodes:
   A-Share Market Phase Threshold Classifier A股市场阶段阈值分类器:
     path: A-Share Market Phase Threshold Classifier A股市场阶段阈值分类器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150769,7 +151065,8 @@ nodes:
   A-Share Limit-Up Gene Evaluator A股涨停基因4维评估器:
     path: A-Share Limit-Up Gene Evaluator A股涨停基因4维评估器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150784,7 +151081,8 @@ nodes:
   A-Share Capital-Force Conflict Observer A股主力游资打架观察器:
     path: A-Share Capital-Force Conflict Observer A股主力游资打架观察器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150799,7 +151097,8 @@ nodes:
   A-Share Multi-Index Decline Period Detector A股多指数下跌时段识别器:
     path: A-Share Multi-Index Decline Period Detector A股多指数下跌时段识别器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150814,7 +151113,8 @@ nodes:
   A-Share Contrarian Capital 5-Day Tracker A股逆势资金5日连续跟踪排名器:
     path: A-Share Contrarian Capital 5-Day Tracker A股逆势资金5日连续跟踪排名器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150829,7 +151129,8 @@ nodes:
   A-Share Emotion Ladder Classifier A股情绪梯队自动分类器:
     path: A-Share Emotion Ladder Classifier A股情绪梯队自动分类器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150844,7 +151145,8 @@ nodes:
   A-Share KDJ-MACD Multi-Period Screener A股KDJ三周期+MACD多头确认筛选器:
     path: A-Share KDJ-MACD Multi-Period Screener A股KDJ三周期+MACD多头确认筛选器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150859,7 +151161,8 @@ nodes:
   A-Share Sector Capital Rotation Timeline A股板块资金轮动时间线生成器:
     path: A-Share Sector Capital Rotation Timeline A股板块资金轮动时间线生成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150874,7 +151177,8 @@ nodes:
   A-Share Signal Post-Rise Filter A股信号后涨幅过滤器:
     path: A-Share Signal Post-Rise Filter A股信号后涨幅过滤器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150889,7 +151193,8 @@ nodes:
   A-Share Contrarian Signal Phase Filter A股逆势信号市场阶段过滤器:
     path: A-Share Contrarian Signal Phase Filter A股逆势信号市场阶段过滤器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150904,7 +151209,8 @@ nodes:
   A-Share Market Breadth Monitor A股市场真实广度监控器:
     path: A-Share Market Breadth Monitor A股市场真实广度监控器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150919,7 +151225,8 @@ nodes:
   A-Share Plan Conformity Evaluator A股计划吻合度量化评估器:
     path: A-Share Plan Conformity Evaluator A股计划吻合度量化评估器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150934,7 +151241,8 @@ nodes:
   A-Share Emergency Opportunity Evaluator A股应急机会5分钟快速评估器:
     path: A-Share Emergency Opportunity Evaluator A股应急机会5分钟快速评估器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150949,7 +151257,8 @@ nodes:
   A-Share Post-Buy Quick Diagnostician A股买入后5-15分钟诊断器:
     path: A-Share Post-Buy Quick Diagnostician A股买入后5-15分钟诊断器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150964,7 +151273,8 @@ nodes:
   A-Share Gap Support-Pressure Converter A股跳空缺口支撑压力转换器:
     path: A-Share Gap Support-Pressure Converter A股跳空缺口支撑压力转换器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150979,7 +151289,8 @@ nodes:
   A-Share Contrarian Signal Sensitivity Configurator A股逆势信号灵敏度配置器:
     path: A-Share Contrarian Signal Sensitivity Configurator A股逆势信号灵敏度配置器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -150994,7 +151305,8 @@ nodes:
   A-Share Broken Board Definer A股烂板定义判定器:
     path: A-Share Broken Board Definer A股烂板定义判定器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151009,7 +151321,8 @@ nodes:
   A-Share 4-Min Surge Anomaly Detector A股4分钟涨速异常探测器:
     path: A-Share 4-Min Surge Anomaly Detector A股4分钟涨速异常探测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151024,7 +151337,8 @@ nodes:
   A-Share Multi-Day Breakdown Confirmer A股有效跌破多日确认器:
     path: A-Share Multi-Day Breakdown Confirmer A股有效跌破多日确认器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151039,7 +151353,8 @@ nodes:
   A-Share Seal Order Level Jump Detector A股封单级别跃变检测器:
     path: A-Share Seal Order Level Jump Detector A股封单级别跃变检测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151054,7 +151369,8 @@ nodes:
   A-Share Capital-Force Conflict Arbiter A股主力游资冲突仲裁器:
     path: A-Share Capital-Force Conflict Arbiter A股主力游资冲突仲裁器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151069,7 +151385,8 @@ nodes:
   A-Share National Team Dual-Mode Identifier A股国家队操纵双模式识别器:
     path: A-Share National Team Dual-Mode Identifier A股国家队操纵双模式识别器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151084,7 +151401,8 @@ nodes:
   A-Share Sector Dual-List Cross Filter A股板块双榜交叉筛选器:
     path: A-Share Sector Dual-List Cross Filter A股板块双榜交叉筛选器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151099,7 +151417,8 @@ nodes:
   A-Share Dual-Engine 5-Type Decision Mapper A股双引擎融合5类操作映射器:
     path: A-Share Dual-Engine 5-Type Decision Mapper A股双引擎融合5类操作映射器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151114,7 +151433,8 @@ nodes:
   A-Share Emotion Cycle 4+1 Stage Action Mapper A股情绪周期4+1阶段操作映射器:
     path: A-Share Emotion Cycle 4+1 Stage Action Mapper A股情绪周期4+1阶段操作映射器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151129,7 +151449,8 @@ nodes:
   A-Share Unexpected Strength__Weakness Detector A股该弱不弱__该强不强检测器:
     path: A-Share Unexpected Strength/Weakness Detector A股该弱不弱/该强不强检测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151144,7 +151465,8 @@ nodes:
   A-Share Auction Weak-to-Strong Detector A股竞价弱转强检测器:
     path: A-Share Auction Weak-to-Strong Detector A股竞价弱转强检测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151159,7 +151481,8 @@ nodes:
   A-Share Rotation Warning Signaler A股轮动预警信号器:
     path: A-Share Rotation Warning Signaler A股轮动预警信号器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151174,7 +151497,8 @@ nodes:
   A-Share Multi-Concept Overlay Bonus Calculator A股多概念叠加加分计算器:
     path: A-Share Multi-Concept Overlay Bonus Calculator A股多概念叠加加分计算器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151189,7 +151513,8 @@ nodes:
   Regime Sample Size Adequacy Checker Regime样本量充足性检验器:
     path: Regime Sample Size Adequacy Checker Regime样本量充足性检验器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151204,7 +151529,8 @@ nodes:
   Regime Classification System Extender Regime分类体系扩展器:
     path: Regime Classification System Extender Regime分类体系扩展器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151219,7 +151545,8 @@ nodes:
   Regime Signal Contextualizer Regime信号上下文化器:
     path: Regime Signal Contextualizer Regime信号上下文化器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151234,7 +151561,8 @@ nodes:
   Regime Special Override Priority Manager Regime特殊覆盖优先级管理器:
     path: Regime Special Override Priority Manager Regime特殊覆盖优先级管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151249,7 +151577,8 @@ nodes:
   Regime Failure Mode Diagnoser Regime失效模式诊断器:
     path: Regime Failure Mode Diagnoser Regime失效模式诊断器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151264,7 +151593,8 @@ nodes:
   Regime Trading Implication Distinguisher Regime交易含义区分器:
     path: Regime Trading Implication Distinguisher Regime交易含义区分器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151279,7 +151609,8 @@ nodes:
   Regime Macro Indicator Driver Regime宏观指标驱动器:
     path: Regime Macro Indicator Driver Regime宏观指标驱动器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151294,7 +151625,8 @@ nodes:
   Regime Architecture Correctness Validator Regime验证架构正确性检查器:
     path: Regime Architecture Correctness Validator Regime验证架构正确性检查器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151309,7 +151641,8 @@ nodes:
   Signal Normalizer 信号归一化器:
     path: Signal Normalizer 信号归一化器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151324,7 +151657,8 @@ nodes:
   Factor Consistency Confidence Calculator 因子一致性置信度计算器:
     path: Factor Consistency Confidence Calculator 因子一致性置信度计算器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151339,7 +151673,8 @@ nodes:
   Signal TTL Timeout Manager 信号TTL超时管理器:
     path: Signal TTL Timeout Manager 信号TTL超时管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151354,7 +151689,8 @@ nodes:
   Risk-Signal Interaction Sequencer 风控-信号交互时序管理器:
     path: Risk-Signal Interaction Sequencer 风控-信号交互时序管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151369,7 +151705,8 @@ nodes:
   Signal Direction Threshold Configurator 信号方向阈值配置器:
     path: Signal Direction Threshold Configurator 信号方向阈值配置器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151384,7 +151721,8 @@ nodes:
   Signal Confidence Trend Monitor 信号置信度趋势监控器:
     path: Signal Confidence Trend Monitor 信号置信度趋势监控器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151399,7 +151737,8 @@ nodes:
   Factor Decay Linkage Degradation Handler 因子衰减联动降级器:
     path: Factor Decay Linkage Degradation Handler 因子衰减联动降级器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151414,7 +151753,8 @@ nodes:
   Empty Signal NEUTRAL Strategy Manager 空信号NEUTRAL策略管理器:
     path: Empty Signal NEUTRAL Strategy Manager 空信号NEUTRAL策略管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151429,7 +151769,8 @@ nodes:
   Signal Lifecycle State Machine Manager 信号生命周期状态机管理器:
     path: Signal Lifecycle State Machine Manager 信号生命周期状态机管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151444,7 +151785,8 @@ nodes:
   Signal Expired Unconsumed Detector 信号超时未消费检测器:
     path: Signal Expired Unconsumed Detector 信号超时未消费检测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151459,7 +151801,8 @@ nodes:
   Signal Direction Inferrer 信号方向推断器:
     path: Signal Direction Inferrer 信号方向推断器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151474,7 +151817,8 @@ nodes:
   Capital Allocation Constraint Validator 资本分配约束校验器:
     path: Capital Allocation Constraint Validator 资本分配约束校验器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151489,7 +151833,8 @@ nodes:
   Signal Strength Allocation Strategist 信号强度分配策略器:
     path: Signal Strength Allocation Strategist 信号强度分配策略器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151504,7 +151849,8 @@ nodes:
   Regime-Aware Market State Adaptive Synthesizer Regime-aware市场状态自适应合成器:
     path: Regime-Aware Market State Adaptive Synthesizer Regime-aware市场状态自适应合成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151519,7 +151865,8 @@ nodes:
   Factor Validity Filter 因子有效性过滤器:
     path: Factor Validity Filter 因子有效性过滤器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151534,7 +151881,8 @@ nodes:
   ML Weight Synthesis Strategist ML权重合成策略器:
     path: ML Weight Synthesis Strategist ML权重合成策略器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151549,7 +151897,8 @@ nodes:
   Signal Downgrade Weight Executor 信号降权执行器:
     path: Signal Downgrade Weight Executor 信号降权执行器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151564,7 +151913,8 @@ nodes:
   Signal Revocation Executor 信号撤销执行器:
     path: Signal Revocation Executor 信号撤销执行器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151579,7 +151929,8 @@ nodes:
   Factor Missing Ratio Calculator 因子缺失比例计算器:
     path: Factor Missing Ratio Calculator 因子缺失比例计算器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151594,7 +151945,8 @@ nodes:
   SynthesizedSignal Event Publisher SynthesizedSignal事件发布器:
     path: SynthesizedSignal Event Publisher SynthesizedSignal事件发布器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151609,7 +151961,8 @@ nodes:
   IC Weighted Synthesis Strategist IC加权合成策略器:
     path: IC Weighted Synthesis Strategist IC加权合成策略器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151624,7 +151977,8 @@ nodes:
   Sharpe Ratio Allocation Strategist 夏普比率分配策略器:
     path: Sharpe Ratio Allocation Strategist 夏普比率分配策略器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151639,7 +151993,8 @@ nodes:
   Risk Parity Allocation Strategist 风险平价分配策略器:
     path: Risk Parity Allocation Strategist 风险平价分配策略器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151654,7 +152009,8 @@ nodes:
   Signal Consistency Calculator 信号一致性计算器:
     path: Signal Consistency Calculator 信号一致性计算器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151669,7 +152025,8 @@ nodes:
   Risk Event E-RK-01 Consumer Handler 风控事件E-RK-01消费处理器:
     path: Risk Event E-RK-01 Consumer Handler 风控事件E-RK-01消费处理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151684,7 +152041,8 @@ nodes:
   Strategy Shared Kernel Synchronizer Strategy共享内核同步器:
     path: Strategy Shared Kernel Synchronizer Strategy共享内核同步器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151699,7 +152057,8 @@ nodes:
   CapitalAllocationResult CTR-P1-003 Builder CapitalAllocationResult CTR-P1-003构建器:
     path: CapitalAllocationResult CTR-P1-003 Builder CapitalAllocationResult CTR-P1-003构建器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151714,7 +152073,8 @@ nodes:
   Strategy Historical Performance Data Provider 策略历史绩效数据提供者:
     path: Strategy Historical Performance Data Provider 策略历史绩效数据提供者
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151729,7 +152089,8 @@ nodes:
   Regime Level 3 Thinking Dimension Extender Regime Level 3 Thinking维度扩展器:
     path: Regime Level 3 Thinking Dimension Extender Regime Level 3 Thinking维度扩展器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151744,7 +152105,8 @@ nodes:
   Code Generation Flow Orchestrator 代码生成流程编排器:
     path: Code Generation Flow Orchestrator 代码生成流程编排器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151759,7 +152121,8 @@ nodes:
   Atomic Strategy Module Library 原子化策略模块库:
     path: Atomic Strategy Module Library 原子化策略模块库
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151774,7 +152137,8 @@ nodes:
   Canvas Drag-Connect Engine 画布拖拽连线引擎:
     path: Canvas Drag-Connect Engine 画布拖拽连线引擎
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151789,7 +152153,8 @@ nodes:
   K-Line Chart Interactive Toolset K线图交互工具集:
     path: K-Line Chart Interactive Toolset K线图交互工具集
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151804,7 +152169,8 @@ nodes:
   Strategy Flowchart Editor 策略流程图编辑器:
     path: Strategy Flowchart Editor 策略流程图编辑器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151819,7 +152185,8 @@ nodes:
   Natural Language Strategy Definer 自然语言策略定义器:
     path: Natural Language Strategy Definer 自然语言策略定义器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151834,7 +152201,8 @@ nodes:
   Strategy Interpretability Engine 策略可解释性引擎:
     path: Strategy Interpretability Engine 策略可解释性引擎
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151849,7 +152217,8 @@ nodes:
   36-Step Decision Framework Implementer 36环节决策框架实现器:
     path: 36-Step Decision Framework Implementer 36环节决策框架实现器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151864,7 +152233,8 @@ nodes:
   Interactive Time Series Annotation Tool 交互式时间序列标注工具:
     path: Interactive Time Series Annotation Tool 交互式时间序列标注工具
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151879,7 +152249,8 @@ nodes:
   Technical Indicator Signal Generator 技术指标信号生成器:
     path: Technical Indicator Signal Generator 技术指标信号生成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151894,7 +152265,8 @@ nodes:
   Strategy Template Library 策略模板库:
     path: Strategy Template Library 策略模板库
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151909,7 +152281,8 @@ nodes:
   Strategy Logic Flowchart Generator 策略逻辑流程图生成器:
     path: Strategy Logic Flowchart Generator 策略逻辑流程图生成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151924,7 +152297,8 @@ nodes:
   Real-time Pattern Detection and Signal Quality Evaluator 实时模式检测与信号质量评估器:
     path: Real-time Pattern Detection and Signal Quality Evaluator 实时模式检测与信号质量评估器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151939,7 +152313,8 @@ nodes:
   Strategy Replacement and Elimination Decision Maker 策略替换与淘汰决策器:
     path: Strategy Replacement and Elimination Decision Maker 策略替换与淘汰决策器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151954,7 +152329,8 @@ nodes:
   Unified Strategy Interface Definer 统一策略接口定义器:
     path: Unified Strategy Interface Definer 统一策略接口定义器
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151969,7 +152345,8 @@ nodes:
   Strategy Base Class and Interface Definer 策略基类与接口定义器:
     path: Strategy Base Class and Interface Definer 策略基类与接口定义器
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151984,7 +152361,8 @@ nodes:
   TA-Lib Technical Indicator Signal Calculator TA-Lib技术指标信号计算器:
     path: TA-Lib Technical Indicator Signal Calculator TA-Lib技术指标信号计算器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -151999,7 +152377,8 @@ nodes:
   Strategy State Manager 策略状态管理器:
     path: Strategy State Manager 策略状态管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152014,7 +152393,8 @@ nodes:
   Chart Pattern Recognition Algorithm Library 图形形态识别算法库:
     path: Chart Pattern Recognition Algorithm Library 图形形态识别算法库
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152029,7 +152409,8 @@ nodes:
   Chan Theory Pen-Segment-Pivot Recognizer 缠论笔段中枢识别器:
     path: Chan Theory Pen-Segment-Pivot Recognizer 缠论笔段中枢识别器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152044,7 +152425,8 @@ nodes:
   Candlestick Pattern Recognizer 蜡烛图模式识别器:
     path: Candlestick Pattern Recognizer 蜡烛图模式识别器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152059,7 +152441,8 @@ nodes:
   Trendline and Support-Resistance Auto Recognizer 趋势线与支撑阻力自动识别器:
     path: Trendline and Support-Resistance Auto Recognizer 趋势线与支撑阻力自动识别器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152074,7 +152457,8 @@ nodes:
   Gap Pattern Recognizer 缺口形态识别器:
     path: Gap Pattern Recognizer 缺口形态识别器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152089,7 +152473,8 @@ nodes:
   QUANTAXIS One-stop Quant Framework Integrator QUANTAXIS一站式量化框架集成器:
     path: QUANTAXIS One-stop Quant Framework Integrator QUANTAXIS一站式量化框架集成器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152104,7 +152489,8 @@ nodes:
   Signal Deduplication Module 信号去重模块:
     path: Signal Deduplication Module 信号去重模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152119,7 +152505,8 @@ nodes:
   Rule Conflict Detection Module 规则冲突检测模块:
     path: Rule Conflict Detection Module 规则冲突检测模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152134,7 +152521,8 @@ nodes:
   Signal Conflict Resolution 信号冲突解决:
     path: Signal Conflict Resolution 信号冲突解决
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152149,7 +152537,8 @@ nodes:
   Signal Fusion Module 信号融合模块:
     path: Signal Fusion Module 信号融合模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152164,7 +152553,8 @@ nodes:
   Strategy Engine Signal Aggregation 策略引擎信号聚合:
     path: Strategy Engine Signal Aggregation 策略引擎信号聚合
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152179,7 +152569,8 @@ nodes:
   Strategy Correlation Analysis 策略相关性分析:
     path: Strategy Correlation Analysis 策略相关性分析
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152194,7 +152585,8 @@ nodes:
   Strategy Capacity Assessment 策略容量评估:
     path: Strategy Capacity Assessment 策略容量评估
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152209,7 +152601,8 @@ nodes:
   Strategy Lifecycle Management 策略生命周期管理:
     path: Strategy Lifecycle Management 策略生命周期管理
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152224,7 +152617,8 @@ nodes:
   Strategy Configuration Validator 策略配置校验器:
     path: Strategy Configuration Validator 策略配置校验器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152239,7 +152633,8 @@ nodes:
   Strategy State Persistence 策略状态持久化:
     path: Strategy State Persistence 策略状态持久化
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152254,7 +152649,8 @@ nodes:
   Strategy Template Version Management 策略模板版本管理:
     path: Strategy Template Version Management 策略模板版本管理
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152269,7 +152665,8 @@ nodes:
   Strategy Template Extension Mechanism 策略模板扩展机制:
     path: Strategy Template Extension Mechanism 策略模板扩展机制
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152284,7 +152681,8 @@ nodes:
   Strategy Lifecycle Hooks 策略生命周期钩子:
     path: Strategy Lifecycle Hooks 策略生命周期钩子
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152299,7 +152697,8 @@ nodes:
   Decision Step Dependency Graph 决策环节依赖图:
     path: Decision Step Dependency Graph 决策环节依赖图
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152314,7 +152713,8 @@ nodes:
   Style Rotation Detector 风格轮动检测器:
     path: Style Rotation Detector 风格轮动检测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152329,7 +152729,8 @@ nodes:
   Dynamic Take-Profit Strategy Library 动态止盈策略库:
     path: Dynamic Take-Profit Strategy Library 动态止盈策略库
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152344,7 +152745,8 @@ nodes:
   Strategy Attribution Analyzer 策略归因分析器:
     path: Strategy Attribution Analyzer 策略归因分析器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152359,7 +152761,8 @@ nodes:
   Rule Library Conflict Detection 规则库冲突检测:
     path: Rule Library Conflict Detection 规则库冲突检测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152374,7 +152777,8 @@ nodes:
   Strategy Backtest Difference Diagnoser 策略回测差异诊断器:
     path: Strategy Backtest Difference Diagnoser 策略回测差异诊断器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152389,7 +152793,8 @@ nodes:
   Strategy Base Class Interface Compatibility Versioner 策略基类接口兼容性版本化器:
     path: Strategy Base Class Interface Compatibility Versioner 策略基类接口兼容性版本化器
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152404,7 +152809,8 @@ nodes:
   Strategy Runtime Exception Isolator 策略运行时异常隔离器:
     path: Strategy Runtime Exception Isolator 策略运行时异常隔离器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152419,7 +152825,8 @@ nodes:
   Signal Aggregate Root Manager 信号聚合根管理器:
     path: Signal Aggregate Root Manager 信号聚合根管理器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152434,7 +152841,8 @@ nodes:
   Signal Domain Repository Interface 信号域仓储接口:
     path: Signal Domain Repository Interface 信号域仓储接口
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152449,7 +152857,8 @@ nodes:
   Signal Domain Value Object Definition 信号域值对象定义:
     path: Signal Domain Value Object Definition 信号域值对象定义
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152464,7 +152873,8 @@ nodes:
   Strategy Framework Upgrade Migration Adapter 策略框架升级迁移适配器:
     path: Strategy Framework Upgrade Migration Adapter 策略框架升级迁移适配器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -152479,7 +152889,8 @@ nodes:
   A-Share Order Book Microstructure Analyzer A股盘口微观结构分析器:
     path: A-Share Order Book Microstructure Analyzer A股盘口微观结构分析器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -158614,7 +159025,8 @@ nodes:
   Signal Gen Agent 信号Agent:
     path: Signal Gen Agent 信号Agent
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -158644,7 +159056,8 @@ nodes:
   Regime Det Agent 市场状态Agent:
     path: Regime Det Agent 市场状态Agent
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -159469,7 +159882,8 @@ nodes:
   Signal Weight Adjust 信号权重调整:
     path: Signal Weight Adjust 信号权重调整
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -159484,7 +159898,8 @@ nodes:
   Signal Dedup 信号去重:
     path: Signal Dedup 信号去重
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -159529,7 +159944,8 @@ nodes:
   Regime Detection 市场状态判定:
     path: Regime Detection 市场状态判定
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -159544,7 +159960,8 @@ nodes:
   Regime Transition Alert 状态转换预警:
     path: Regime Transition Alert 状态转换预警
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -160354,7 +160771,8 @@ nodes:
   Agent Hallucination Output Agent输出异常幻觉:
     path: Agent Hallucination Output Agent输出异常幻觉
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -161344,7 +161762,8 @@ nodes:
   Dynamic Signal Weighting Model 动态信号权重模型:
     path: Dynamic Signal Weighting Model 动态信号权重模型
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -161359,7 +161778,8 @@ nodes:
   Signal Predictive Power Evaluation 信号预测力评估:
     path: Signal Predictive Power Evaluation 信号预测力评估
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -161374,7 +161794,8 @@ nodes:
   Dynamic Weight Allocation 动态权重分配:
     path: Dynamic Weight Allocation 动态权重分配
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -161389,7 +161810,8 @@ nodes:
   Contradictory Signal Processing 矛盾信号处理:
     path: Contradictory Signal Processing 矛盾信号处理
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -163354,7 +163776,8 @@ nodes:
   Hoeting Bayesian Model Averaging Hoeting贝叶斯模型平均:
     path: Hoeting Bayesian Model Averaging Hoeting贝叶斯模型平均
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -163369,7 +163792,8 @@ nodes:
   Rapach Zhou Forecasting Stock Returns Rapach Zhou股票收益预测:
     path: Rapach Zhou Forecasting Stock Returns Rapach Zhou股票收益预测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -163909,7 +164333,8 @@ nodes:
   BMA Bayesian Model Averaging BMA贝叶斯模型平均:
     path: BMA Bayesian Model Averaging BMA贝叶斯模型平均
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -163924,7 +164349,8 @@ nodes:
   Dynamic Conditional Correlation 动态条件相关:
     path: Dynamic Conditional Correlation 动态条件相关
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -181160,7 +181586,8 @@ nodes:
   Market State Agent 状态:
     path: Market State Agent 状态
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -187145,7 +187572,8 @@ nodes:
   E-SG-01 D-SIGNAL→PA-02事件:
     path: E-SG-01 D-SIGNAL→PA-02事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -197900,7 +198328,8 @@ nodes:
   L1 to L2-B Main Force Behavior L1→L2-B主力行为:
     path: L1 to L2-B Main Force Behavior L1→L2-B主力行为
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -197915,7 +198344,8 @@ nodes:
   L1 to L2-C Market State L1→L2-C市场状态:
     path: L1 to L2-C Market State L1→L2-C市场状态
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -200525,7 +200955,8 @@ nodes:
   Aggregator Base GRE基础:
     path: Aggregator Base GRE基础
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -203368,7 +203799,8 @@ nodes:
   信号生成 信号生成 Signal:
     path: 信号生成 信号生成 Signal
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -203383,7 +203815,8 @@ nodes:
   策略路由 仓位裁决 Strategy Position Routing:
     path: 策略路由 仓位裁决 Strategy Position Routing
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -203758,7 +204191,8 @@ nodes:
   信号生成熔断器 Signal Circuit Breaker:
     path: 信号生成熔断器 Signal Circuit Breaker
     type: gate
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -203818,7 +204252,8 @@ nodes:
   策略状态机断点恢复 状态机恢复 State Machine Strategy State:
     path: 策略状态机断点恢复 状态机恢复 State Machine Strategy State
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -210373,7 +210808,8 @@ nodes:
   Regime Detector 市场状态检测器:
     path: Regime Detector 市场状态检测器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212188,7 +212624,8 @@ nodes:
   CompositeSignal 复合信号聚合根:
     path: CompositeSignal 复合信号聚合根
     type: aggregate
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212203,7 +212640,8 @@ nodes:
   Strategy 策略聚合根:
     path: Strategy 策略聚合根
     type: aggregate
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212218,7 +212656,8 @@ nodes:
   SignalRevoked 信号已撤销:
     path: SignalRevoked 信号已撤销
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212233,7 +212672,8 @@ nodes:
   SignalExpired 信号已过期:
     path: SignalExpired 信号已过期
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212248,7 +212688,8 @@ nodes:
   Signal Performance Tracker 信号绩效追踪器:
     path: Signal Performance Tracker 信号绩效追踪器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212263,7 +212704,8 @@ nodes:
   核心合成子域 Core:
     path: 核心合成子域 Core
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212278,7 +212720,8 @@ nodes:
   市场状态子域 State:
     path: 市场状态子域 State
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212293,7 +212736,8 @@ nodes:
   A股信号子域:
     path: A股信号子域
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212308,7 +212752,8 @@ nodes:
   策略管理子域 Strategy Management:
     path: 策略管理子域 Strategy Management
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212323,7 +212768,8 @@ nodes:
   信号质量子域 Signal:
     path: 信号质量子域 Signal
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212338,7 +212784,8 @@ nodes:
   交易执行信号子域 Signal Execution:
     path: 交易执行信号子域 Signal Execution
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -212353,7 +212800,8 @@ nodes:
   DataIngestionFailed 数据接入失败事件:
     path: DataIngestionFailed 数据接入失败事件
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213718,7 +214166,8 @@ nodes:
   CompositeSignal 复合信号契约:
     path: CompositeSignal 复合信号契约
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213733,7 +214182,8 @@ nodes:
   SignalTriggered 信号已触发:
     path: SignalTriggered 信号已触发
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213748,7 +214198,8 @@ nodes:
   SignalUpdated 信号已更新:
     path: SignalUpdated 信号已更新
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213763,7 +214214,8 @@ nodes:
   Regime-Aware Weighted Synthesis Regime感知加权合成:
     path: Regime-Aware Weighted Synthesis Regime感知加权合成
     type: decision
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213778,7 +214230,8 @@ nodes:
   Progressive Degradation Three-Level Mechanism 渐进降级三级机制:
     path: Progressive Degradation Three-Level Mechanism 渐进降级三级机制
     type: decision
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213793,7 +214246,8 @@ nodes:
   Signal-Risk Interaction Timing 信号与风控交互时序:
     path: Signal-Risk Interaction Timing 信号与风控交互时序
     type: decision
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213808,7 +214262,8 @@ nodes:
   OCP-002 SignalAlgoBase Extension Point OCP-002信号算法基类扩展点:
     path: OCP-002 SignalAlgoBase Extension Point OCP-002信号算法基类扩展点
     type: decision
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213823,7 +214278,8 @@ nodes:
   Dual-Engine Fusion Decision 双引擎融合决策:
     path: Dual-Engine Fusion Decision 双引擎融合决策
     type: decision
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213838,7 +214294,8 @@ nodes:
   Signal Predictive Power Evaluator 信号预测力评估器:
     path: Signal Predictive Power Evaluator 信号预测力评估器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213853,7 +214310,8 @@ nodes:
   Dynamic Weight Allocator 动态权重分配器:
     path: Dynamic Weight Allocator 动态权重分配器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213868,7 +214326,8 @@ nodes:
   Contradictory Signal Resolver 矛盾信号解决器:
     path: Contradictory Signal Resolver 矛盾信号解决器
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213883,7 +214342,8 @@ nodes:
   Contrarian Capital Flow Signal Module 逆势资金流信号模块:
     path: Contrarian Capital Flow Signal Module 逆势资金流信号模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213898,7 +214358,8 @@ nodes:
   Auction Microstructure Signal Module 竞价微结构信号模块:
     path: Auction Microstructure Signal Module 竞价微结构信号模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213913,7 +214374,8 @@ nodes:
   L2-A Signal Layer 信号层:
     path: L2-A Signal Layer 信号层
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213928,7 +214390,8 @@ nodes:
   L2-B Main Force Behavior Layer 主力行为层:
     path: L2-B Main Force Behavior Layer 主力行为层
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213943,7 +214406,8 @@ nodes:
   L2-C Market State Layer 市场状态层:
     path: L2-C Market State Layer 市场状态层
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -213958,7 +214422,8 @@ nodes:
   L3_5 Position Management Layer 仓位管理层:
     path: L3.5 Position Management Layer 仓位管理层
     type: domain
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214138,7 +214603,8 @@ nodes:
   L03 Predictions L03预测子模块:
     path: L03 Predictions L03预测子模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214153,7 +214619,8 @@ nodes:
   L03 Signals Default L03默认信号子模块:
     path: L03 Signals Default L03默认信号子模块
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214168,7 +214635,8 @@ nodes:
   D-L0 Degradation Level 0 降级等级0:
     path: D-L0 Degradation Level 0 降级等级0
     type: boundary
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214183,7 +214651,8 @@ nodes:
   D-L1 Degradation Level 1 降级等级1:
     path: D-L1 Degradation Level 1 降级等级1
     type: boundary
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214198,7 +214667,8 @@ nodes:
   D-L2 Degradation Level 2 降级等级2:
     path: D-L2 Degradation Level 2 降级等级2
     type: boundary
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214213,7 +214683,8 @@ nodes:
   D-L3 Degradation Level 3 降级等级3:
     path: D-L3 Degradation Level 3 降级等级3
     type: boundary
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214228,7 +214699,8 @@ nodes:
   Institutional Retail Contrarian Flow IRCF因子:
     path: Institutional Retail Contrarian Flow IRCF因子
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214243,7 +214715,8 @@ nodes:
   Order Flow Imbalance OFI检测框架:
     path: Order Flow Imbalance OFI检测框架
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214258,7 +214731,8 @@ nodes:
   High Open Strength 高开强度:
     path: High Open Strength 高开强度
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214273,7 +214747,8 @@ nodes:
   Weak-to-Strong Detection 弱转强检测:
     path: Weak-to-Strong Detection 弱转强检测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214288,7 +214763,8 @@ nodes:
   Auction Trap 竞价陷阱:
     path: Auction Trap 竞价陷阱
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214618,7 +215094,8 @@ nodes:
   Strategy Knowledge 策略知识:
     path: Strategy Knowledge 策略知识
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214633,7 +215110,8 @@ nodes:
   Market State Knowledge 市场状态知识:
     path: Market State Knowledge 市场状态知识
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214648,7 +215126,8 @@ nodes:
   Sector Rotation Knowledge 板块轮动知识:
     path: Sector Rotation Knowledge 板块轮动知识
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214663,7 +215142,8 @@ nodes:
   Game Theory Knowledge 博弈知识:
     path: Game Theory Knowledge 博弈知识
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214678,7 +215158,8 @@ nodes:
   Regime Knowledge 制度知识:
     path: Regime Knowledge 制度知识
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214693,7 +215174,8 @@ nodes:
   Lesson Learned Knowledge 教训知识:
     path: Lesson Learned Knowledge 教训知识
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214708,7 +215190,8 @@ nodes:
   LLM Semantic Understanding LLM语义理解:
     path: LLM Semantic Understanding LLM语义理解
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214723,7 +215206,8 @@ nodes:
   Knowledge Type Classification 知识类型分类:
     path: Knowledge Type Classification 知识类型分类
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214738,7 +215222,8 @@ nodes:
   Trading Logic Extraction 交易逻辑提取:
     path: Trading Logic Extraction 交易逻辑提取
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214753,7 +215238,8 @@ nodes:
   Causal Relationship Extraction 因果关系提取:
     path: Causal Relationship Extraction 因果关系提取
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214768,7 +215254,8 @@ nodes:
   PC Algorithm PC算法:
     path: PC Algorithm PC算法
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214783,7 +215270,8 @@ nodes:
   TimePC TimePC时间主成分:
     path: TimePC TimePC时间主成分
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214798,7 +215286,8 @@ nodes:
   Neural Granger Causality 神经格兰杰因果:
     path: Neural Granger Causality 神经格兰杰因果
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214813,7 +215302,8 @@ nodes:
   Causal KG 因果知识图谱:
     path: Causal KG 因果知识图谱
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214828,7 +215318,8 @@ nodes:
   LLM Guided Causal Discovery LLM引导因果发现:
     path: LLM Guided Causal Discovery LLM引导因果发现
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214843,7 +215334,8 @@ nodes:
   Time-Lagged Causal Extension 时滞因果扩展:
     path: Time-Lagged Causal Extension 时滞因果扩展
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214858,7 +215350,8 @@ nodes:
   FactorMAD Debate FactorMAD双Agent辩论:
     path: FactorMAD Debate FactorMAD双Agent辩论
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214873,7 +215366,8 @@ nodes:
   Conflict Detection 矛盾检测:
     path: Conflict Detection 矛盾检测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214888,7 +215382,8 @@ nodes:
   GraphRAG 图谱:
     path: GraphRAG 图谱
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214903,7 +215398,8 @@ nodes:
   Module Registry 信号模块注册表:
     path: Module Registry 信号模块注册表
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214918,7 +215414,8 @@ nodes:
   Quality-Diversity Optimization 质量-多样性优化:
     path: Quality-Diversity Optimization 质量-多样性优化
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214933,7 +215430,8 @@ nodes:
   Module Factory Dependency Graph 模块工厂依赖图:
     path: Module Factory Dependency Graph 模块工厂依赖图
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214948,7 +215446,8 @@ nodes:
   Update Param 信号参数更新模式:
     path: Update Param 信号参数更新模式
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214963,7 +215462,8 @@ nodes:
   Extend Module 信号模块扩展模式:
     path: Extend Module 信号模块扩展模式
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214978,7 +215478,8 @@ nodes:
   Create New 新建信号模块模式:
     path: Create New 新建信号模块模式
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -214993,7 +215494,8 @@ nodes:
   Factor DSL 因子DSL约束:
     path: Factor DSL 因子DSL约束
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215008,7 +215510,8 @@ nodes:
   AST Sandbox AST沙箱三层安全:
     path: AST Sandbox AST沙箱三层安全
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215023,7 +215526,8 @@ nodes:
   Triple Semantic Consistency 三重语义一致性约束:
     path: Triple Semantic Consistency 三重语义一致性约束
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215038,7 +215542,8 @@ nodes:
   Evolutionary Code Generation 进化式代码生成:
     path: Evolutionary Code Generation 进化式代码生成
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215053,7 +215558,8 @@ nodes:
   Analyst Agent Feedback Loop 分析师Agent反馈循环:
     path: Analyst Agent Feedback Loop 分析师Agent反馈循环
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215068,7 +215574,8 @@ nodes:
   Explainable Design Constraint 可解释设计约束:
     path: Explainable Design Constraint 可解释设计约束
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215083,7 +215590,8 @@ nodes:
   NewModule 新模块输出契约:
     path: NewModule 新模块输出契约
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215098,7 +215606,8 @@ nodes:
   EvolutionRound 进化轮次:
     path: EvolutionRound 进化轮次
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215113,7 +215622,8 @@ nodes:
   AgentFeedbackRound Agent反馈轮次:
     path: AgentFeedbackRound Agent反馈轮次
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215128,7 +215638,8 @@ nodes:
   SemanticConsistencyResult 语义一致性结果:
     path: SemanticConsistencyResult 语义一致性结果
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215143,7 +215654,8 @@ nodes:
   Sector Net Inflow Aggregation 板块级资金净流入聚合:
     path: Sector Net Inflow Aggregation 板块级资金净流入聚合
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215158,7 +215670,8 @@ nodes:
   Concept Net Inflow Aggregation 概念级资金净流入聚合:
     path: Concept Net Inflow Aggregation 概念级资金净流入聚合
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215173,7 +215686,8 @@ nodes:
   Sector Contrarian Strength Ratio 板块逆势强度比:
     path: Sector Contrarian Strength Ratio 板块逆势强度比
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215188,7 +215702,8 @@ nodes:
   Sector Contrarian Coverage 板块逆势覆盖率:
     path: Sector Contrarian Coverage 板块逆势覆盖率
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215203,7 +215718,8 @@ nodes:
   Sector Contrarian Persistence 板块逆势持续性:
     path: Sector Contrarian Persistence 板块逆势持续性
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215218,7 +215734,8 @@ nodes:
   Three-Level Contrarian Ranking 三级逆势排行输出:
     path: Three-Level Contrarian Ranking 三级逆势排行输出
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215233,7 +215750,8 @@ nodes:
   Signal Strength Grading 信号强度分级:
     path: Signal Strength Grading 信号强度分级
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215248,7 +215766,8 @@ nodes:
   Noise Filtering 噪音过滤:
     path: Noise Filtering 噪音过滤
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215263,7 +215782,8 @@ nodes:
   Late Session Contrarian Filter 尾盘逆势过滤:
     path: Late Session Contrarian Filter 尾盘逆势过滤
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215278,7 +215798,8 @@ nodes:
   Opening Contrarian Filter 开盘逆势过滤:
     path: Opening Contrarian Filter 开盘逆势过滤
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215293,7 +215814,8 @@ nodes:
   Limit-Up Contrarian Filter 涨停板逆势过滤:
     path: Limit-Up Contrarian Filter 涨停板逆势过滤
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215308,7 +215830,8 @@ nodes:
   Market Crash Signal Enhancement 大盘急跌时信号增强:
     path: Market Crash Signal Enhancement 大盘急跌时信号增强
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215323,7 +215846,8 @@ nodes:
   Contrarian-L2B Linkage 逆势资金流与L2-B主力行为层联动:
     path: Contrarian-L2B Linkage 逆势资金流与L2-B主力行为层联动
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215338,7 +215862,8 @@ nodes:
   Contrarian-L2C Linkage 逆势资金流与L2-C市场状态层联动:
     path: Contrarian-L2C Linkage 逆势资金流与L2-C市场状态层联动
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215353,7 +215878,8 @@ nodes:
   Contrarian-Stock Selection Linkage 逆势资金流与选股决策流联动:
     path: Contrarian-Stock Selection Linkage 逆势资金流与选股决策流联动
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215368,7 +215894,8 @@ nodes:
   Contrarian-L3 Linkage 逆势资金流与L3策略工厂联动:
     path: Contrarian-L3 Linkage 逆势资金流与L3策略工厂联动
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215383,7 +215910,8 @@ nodes:
   Contrarian-L3_5 Linkage 逆势资金流与L3_5仓位管理联动:
     path: Contrarian-L3.5 Linkage 逆势资金流与L3.5仓位管理联动
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215398,7 +215926,8 @@ nodes:
   Contrarian-L4 Linkage 逆势资金流与L4风控层联动:
     path: Contrarian-L4 Linkage 逆势资金流与L4风控层联动
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215413,7 +215942,8 @@ nodes:
   IRCF Revision List IRCF因子补充修订清单:
     path: IRCF Revision List IRCF因子补充修订清单
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215428,7 +215958,8 @@ nodes:
   OFI Formula OFI标准化公式:
     path: OFI Formula OFI标准化公式
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215443,7 +215974,8 @@ nodes:
   Lee-Ready Algorithm Lee-Ready算法:
     path: Lee-Ready Algorithm Lee-Ready算法
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215458,7 +215990,8 @@ nodes:
   BVC Method BVC统计推断方法:
     path: BVC Method BVC统计推断方法
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215473,7 +216006,8 @@ nodes:
   ML Enhanced Classification ML增强分类:
     path: ML Enhanced Classification ML增强分类
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215488,7 +216022,8 @@ nodes:
   Book Imbalance 订单簿不平衡:
     path: Book Imbalance 订单簿不平衡
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215503,7 +216038,8 @@ nodes:
   Herd Effect Critical State 散户羊群效应临界态:
     path: Herd Effect Critical State 散户羊群效应临界态
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215518,7 +216054,8 @@ nodes:
   Click First or Last 早晚下单策略:
     path: Click First or Last 早晚下单策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215533,7 +216070,8 @@ nodes:
   Intraday Auction Strategy 日内竞价策略:
     path: Intraday Auction Strategy 日内竞价策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -215548,7 +216086,8 @@ nodes:
   Auction Direction Prediction 竞价方向预测:
     path: Auction Direction Prediction 竞价方向预测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216853,7 +217392,8 @@ nodes:
   Signal Decision Traceability 信号决策可追溯性:
     path: Signal Decision Traceability 信号决策可追溯性
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216868,7 +217408,8 @@ nodes:
   Signal Generation Audit Log 信号生成审计日志:
     path: Signal Generation Audit Log 信号生成审计日志
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216883,7 +217424,8 @@ nodes:
   Signal Fingerprint 信号指纹:
     path: Signal Fingerprint 信号指纹
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216898,7 +217440,8 @@ nodes:
   TraceCompleteness 追溯完整性:
     path: TraceCompleteness 追溯完整性
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216913,7 +217456,8 @@ nodes:
   Signal Event Integrity 信号事件完整性:
     path: Signal Event Integrity 信号事件完整性
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216928,7 +217472,8 @@ nodes:
   Signal Log Retention 信号日志保留:
     path: Signal Log Retention 信号日志保留
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216943,7 +217488,8 @@ nodes:
   Signal Merkle Proof 信号Merkle证明:
     path: Signal Merkle Proof 信号Merkle证明
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216958,7 +217504,8 @@ nodes:
   Signal Clock Sync 信号时钟同步:
     path: Signal Clock Sync 信号时钟同步
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216973,7 +217520,8 @@ nodes:
   Signal Attribution 信号归因:
     path: Signal Attribution 信号归因
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -216988,7 +217536,8 @@ nodes:
   Signal Confidence Assessment 信号置信度评估:
     path: Signal Confidence Assessment 信号置信度评估
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217003,7 +217552,8 @@ nodes:
   Tier Layered Explainability Tier分层可解释性:
     path: Tier Layered Explainability Tier分层可解释性
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217018,7 +217568,8 @@ nodes:
   Signal Explainability Gate 信号可解释性门控:
     path: Signal Explainability Gate 信号可解释性门控
     type: gate
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217033,7 +217584,8 @@ nodes:
   Volatility Risk Signal Dimension 波动率风险(信号维度):
     path: Volatility Risk Signal Dimension 波动率风险(信号维度)
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217048,7 +217600,8 @@ nodes:
   Tail Risk Signal Dimension 尾部风险(信号维度):
     path: Tail Risk Signal Dimension 尾部风险(信号维度)
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217063,7 +217616,8 @@ nodes:
   Signal Quality Degradation Risk 信号质量退化风险:
     path: Signal Quality Degradation Risk 信号质量退化风险
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217078,7 +217632,8 @@ nodes:
   Systemic Risk Grading Warning 系统性风险分级预警:
     path: Systemic Risk Grading Warning 系统性风险分级预警
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217093,7 +217648,8 @@ nodes:
   Volatility Spike Signal Failure 波动率飙升导致信号失效:
     path: Volatility Spike Signal Failure 波动率飙升导致信号失效
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217108,7 +217664,8 @@ nodes:
   Correlation Structure Collapse 相关性结构崩塌:
     path: Correlation Structure Collapse 相关性结构崩塌
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217123,7 +217680,8 @@ nodes:
   Factor IC Collective Decay 因子IC集体衰减:
     path: Factor IC Collective Decay 因子IC集体衰减
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217138,7 +217696,8 @@ nodes:
   Signal Lifecycle 信号生命周期:
     path: Signal Lifecycle 信号生命周期
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217153,7 +217712,8 @@ nodes:
   SignalStrategy SignalStrategy合成权重:
     path: SignalStrategy SignalStrategy合成权重
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217168,7 +217728,8 @@ nodes:
   PortfolioStrategy PortfolioStrategy目标权重:
     path: PortfolioStrategy PortfolioStrategy目标权重
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217183,7 +217744,8 @@ nodes:
   RegimeSnapshot Regime快照输出契约:
     path: RegimeSnapshot Regime快照输出契约
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217198,7 +217760,8 @@ nodes:
   Regime Detection Three-Stage Progression Regime检测三阶段递进:
     path: Regime Detection Three-Stage Progression Regime检测三阶段递进
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217213,7 +217776,8 @@ nodes:
   Signal Direction Three-State 信号方向三态:
     path: Signal Direction Three-State 信号方向三态
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217228,7 +217792,8 @@ nodes:
   Equal Weight Synthesis 等权合成策略:
     path: Equal Weight Synthesis 等权合成策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217243,7 +217808,8 @@ nodes:
   IC Weighted Synthesis IC加权合成策略:
     path: IC Weighted Synthesis IC加权合成策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217258,7 +217824,8 @@ nodes:
   Dynamic Weight Synthesis 动态权重合成策略:
     path: Dynamic Weight Synthesis 动态权重合成策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217273,7 +217840,8 @@ nodes:
   ML Weight Synthesis ML权重合成策略:
     path: ML Weight Synthesis ML权重合成策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217288,7 +217856,8 @@ nodes:
   Equal Weight Allocation 等权分配策略:
     path: Equal Weight Allocation 等权分配策略
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217303,7 +217872,8 @@ nodes:
   Signal Strength Weighted Allocation 信号强度加权分配:
     path: Signal Strength Weighted Allocation 信号强度加权分配
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217318,7 +217888,8 @@ nodes:
   Sharpe Ratio Weighted Allocation 夏普比率加权分配:
     path: Sharpe Ratio Weighted Allocation 夏普比率加权分配
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217333,7 +217904,8 @@ nodes:
   Risk Parity Allocation 风险平价分配:
     path: Risk Parity Allocation 风险平价分配
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217528,7 +218100,8 @@ nodes:
   P0 D-FACTOR Readiness P0 D-FACTOR就绪前提:
     path: P0 D-FACTOR Readiness P0 D-FACTOR就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217543,7 +218116,8 @@ nodes:
   P0 SIG-CORE Skeleton Readiness P0 SIG-CORE骨架就绪前提:
     path: P0 SIG-CORE Skeleton Readiness P0 SIG-CORE骨架就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217558,7 +218132,8 @@ nodes:
   P0 CTR-P1-015 Publishable P0 CTR-P1-015可发布前提:
     path: P0 CTR-P1-015 Publishable P0 CTR-P1-015可发布前提
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217573,7 +218148,8 @@ nodes:
   P0 CTR-P1-003 Publishable P0 CTR-P1-003可发布前提:
     path: P0 CTR-P1-003 Publishable P0 CTR-P1-003可发布前提
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217588,7 +218164,8 @@ nodes:
   P0 Signal Lifecycle Readiness P0信号生命周期就绪前提:
     path: P0 Signal Lifecycle Readiness P0信号生命周期就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217603,7 +218180,8 @@ nodes:
   P1 Regime Detector Readiness P1 Regime Detector就绪前提:
     path: P1 Regime Detector Readiness P1 Regime Detector就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217618,7 +218196,8 @@ nodes:
   P1 A-Share Signal 3+ Readiness P1 A股信号至少3个前提:
     path: P1 A-Share Signal 3+ Readiness P1 A股信号至少3个前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217633,7 +218212,8 @@ nodes:
   P1 Signal Degradation 3-Level Readiness P1信号降级三级就绪前提:
     path: P1 Signal Degradation 3-Level Readiness P1信号降级三级就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217648,7 +218228,8 @@ nodes:
   P1 D-RISK Partial Readiness P1 D-RISK部分就绪前提:
     path: P1 D-RISK Partial Readiness P1 D-RISK部分就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217663,7 +218244,8 @@ nodes:
   P2 Strategy Template Library Readiness P2策略模板库就绪前提:
     path: P2 Strategy Template Library Readiness P2策略模板库就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217678,7 +218260,8 @@ nodes:
   P2 Signal Backtest Readiness P2信号回测就绪前提:
     path: P2 Signal Backtest Readiness P2信号回测就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217693,7 +218276,8 @@ nodes:
   P2 DDD Aggregate Root Readiness P2 DDD聚合根就绪前提:
     path: P2 DDD Aggregate Root Readiness P2 DDD聚合根就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217708,7 +218292,8 @@ nodes:
   P2 NozyIO Visualization Readiness P2 NozyIO可视化就绪前提:
     path: P2 NozyIO Visualization Readiness P2 NozyIO可视化就绪前提
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217723,7 +218308,8 @@ nodes:
   SignalExpired 信号过期:
     path: SignalExpired 信号过期
     type: event
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217738,7 +218324,8 @@ nodes:
   Overnight Data Pipeline 隔夜数据流水线:
     path: Overnight Data Pipeline 隔夜数据流水线
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217753,7 +218340,8 @@ nodes:
   Pre-Market Baseline Pipeline 盘前基线流水线:
     path: Pre-Market Baseline Pipeline 盘前基线流水线
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217768,7 +218356,8 @@ nodes:
   Intraday Real-time Pipeline 盘中实时流水线:
     path: Intraday Real-time Pipeline 盘中实时流水线
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217783,7 +218372,8 @@ nodes:
   Post-Market Clearing Pipeline 盘后清算流水线:
     path: Post-Market Clearing Pipeline 盘后清算流水线
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217798,7 +218388,8 @@ nodes:
   Evening Research Pipeline 晚间研究流水线:
     path: Evening Research Pipeline 晚间研究流水线
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217978,7 +218569,8 @@ nodes:
   SubGraphContext GraphRAG图增强检索上下文:
     path: SubGraphContext GraphRAG图增强检索上下文
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -217993,7 +218585,8 @@ nodes:
   ReasoningHop KG引导多跳推理路径:
     path: ReasoningHop KG引导多跳推理路径
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218008,7 +218601,8 @@ nodes:
   SymbolicValidationResult 神经符号融合推理验证结果:
     path: SymbolicValidationResult 神经符号融合推理验证结果
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218023,7 +218617,8 @@ nodes:
   MacroCausalEdge 宏观因果传导路径:
     path: MacroCausalEdge 宏观因果传导路径
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218038,7 +218633,8 @@ nodes:
   TextCausalClaim CausalNLP文本因果声明:
     path: TextCausalClaim CausalNLP文本因果声明
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218053,7 +218649,8 @@ nodes:
   CausalKGEdge Causal KG因果方向标注:
     path: CausalKGEdge Causal KG因果方向标注
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218068,7 +218665,8 @@ nodes:
   SemanticDedupResult 因子语义去重结果:
     path: SemanticDedupResult 因子语义去重结果
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218083,7 +218681,8 @@ nodes:
   CausalPrior LLM引导因果发现先验:
     path: CausalPrior LLM引导因果发现先验
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218098,7 +218697,8 @@ nodes:
   InterventionCausalEdge 带干预的时序因果发现结果:
     path: InterventionCausalEdge 带干预的时序因果发现结果
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218113,7 +218713,8 @@ nodes:
   Incremental Factor Calculation 增量因子计算:
     path: Incremental Factor Calculation 增量因子计算
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218128,7 +218729,8 @@ nodes:
   Signal Generation Aggregation 信号生成聚合:
     path: Signal Generation Aggregation 信号生成聚合
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218143,7 +218745,8 @@ nodes:
   Strategy Routing Position Arbitration 策略路由仓位裁决:
     path: Strategy Routing Position Arbitration 策略路由仓位裁决
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218158,7 +218761,8 @@ nodes:
   Signal Degradation Lifeline 信号降级保命轨:
     path: Signal Degradation Lifeline 信号降级保命轨
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218173,7 +218777,8 @@ nodes:
   4-Min Aggregation vs 3-Sec Tick 4分钟聚合版本vs3秒Tick版:
     path: 4-Min Aggregation vs 3-Sec Tick 4分钟聚合版本vs3秒Tick版
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218188,7 +218793,8 @@ nodes:
   Fund Source Identification 资金来源识别:
     path: Fund Source Identification 资金来源识别
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -218203,7 +218809,8 @@ nodes:
   QuantEvolve 质量-多样性优化:
     path: QuantEvolve 质量-多样性优化
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -223528,7 +224135,8 @@ nodes:
   LineageRoot 血缘根:
     path: LineageRoot 血缘根
     type: value_object
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -223753,7 +224361,8 @@ nodes:
   SignalDegradationWarning 信号降级警告:
     path: SignalDegradationWarning 信号降级警告
     type: contract
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -223993,7 +224602,8 @@ nodes:
   市场状态识别系列 Market State Recognition Series:
     path: 市场状态识别系列 Market State Recognition Series
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -226860,7 +227470,8 @@ nodes:
   BayesianModelAveraging BMA贝叶斯模型平均:
     path: BayesianModelAveraging BMA贝叶斯模型平均
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -226875,7 +227486,8 @@ nodes:
   PELTChangePointDetection PELT变点检测:
     path: PELTChangePointDetection PELT变点检测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -226950,7 +227562,8 @@ nodes:
   GARCHVolatilityForecast GARCH波动率预测:
     path: GARCHVolatilityForecast GARCH波动率预测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -226965,7 +227578,8 @@ nodes:
   VolumeProfile 成交量分布:
     path: VolumeProfile 成交量分布
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -226980,7 +227594,8 @@ nodes:
   WyckoffAccumulationQuantification 威科夫吸筹量化:
     path: WyckoffAccumulationQuantification 威科夫吸筹量化
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -226995,7 +227610,8 @@ nodes:
   DivergenceDetection 背离检测:
     path: DivergenceDetection 背离检测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227010,7 +227626,8 @@ nodes:
   SectorFlowReallocation 板块资金流再分配:
     path: SectorFlowReallocation 板块资金流再分配
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227025,7 +227642,8 @@ nodes:
   MultiDimensionalRS 多维相对强弱:
     path: MultiDimensionalRS 多维相对强弱
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227040,7 +227658,8 @@ nodes:
   MomentumLeadership 动量领导力:
     path: MomentumLeadership 动量领导力
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227055,7 +227674,8 @@ nodes:
   MomentumBreadth 动量广度:
     path: MomentumBreadth 动量广度
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227070,7 +227690,8 @@ nodes:
   MomentumPersistenceScore 动量持续性评分:
     path: MomentumPersistenceScore 动量持续性评分
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227085,7 +227706,8 @@ nodes:
   SmartMoneyReallocation 聪明资金再分配:
     path: SmartMoneyReallocation 聪明资金再分配
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227100,7 +227722,8 @@ nodes:
   CapitulationBottom 投降底部:
     path: CapitulationBottom 投降底部
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227115,7 +227738,8 @@ nodes:
   BullTrapQuantified 诱多量化:
     path: BullTrapQuantified 诱多量化
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227130,7 +227754,8 @@ nodes:
   SentimentPriceDivergenceIndex 情绪价格背离指数:
     path: SentimentPriceDivergenceIndex 情绪价格背离指数
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227145,7 +227770,8 @@ nodes:
   WyckoffSecondaryTest 威科夫次级测试:
     path: WyckoffSecondaryTest 威科夫次级测试
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227160,7 +227786,8 @@ nodes:
   HMMGMMRegimeDetection HMM__GMM体制识别:
     path: HMMGMMRegimeDetection HMM/GMM体制识别
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227175,7 +227802,8 @@ nodes:
   WyckoffDistribution 威科夫派发:
     path: WyckoffDistribution 威科夫派发
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227190,7 +227818,8 @@ nodes:
   GlobalMarketContagion 全球市场传染:
     path: GlobalMarketContagion 全球市场传染
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227205,7 +227834,8 @@ nodes:
   SupplyChainMomentum 产业链动量:
     path: SupplyChainMomentum 产业链动量
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227220,7 +227850,8 @@ nodes:
   SevenMainForceProfiling 七类主力画像量化分类:
     path: SevenMainForceProfiling 七类主力画像量化分类
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227625,7 +228256,8 @@ nodes:
   Conditional Density Prediction 收益率条件密度预测:
     path: Conditional Density Prediction 收益率条件密度预测
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227640,7 +228272,8 @@ nodes:
   GNN Stock Relationship Modeling GNN股票关系建模:
     path: GNN Stock Relationship Modeling GNN股票关系建模
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227655,7 +228288,8 @@ nodes:
   CausalML 因果机器学习:
     path: CausalML 因果机器学习
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227670,7 +228304,8 @@ nodes:
   CausalRL CausalRL因果约束强化学习:
     path: CausalRL CausalRL因果约束强化学习
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227685,7 +228320,8 @@ nodes:
   Kronos TSFM Kronos时序基础模型:
     path: Kronos TSFM Kronos时序基础模型
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227700,7 +228336,8 @@ nodes:
   Transformer__Mamba__xLSTM Time Series Enhancement 时序增强:
     path: Transformer/Mamba/xLSTM Time Series Enhancement 时序增强
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227715,7 +228352,8 @@ nodes:
   Uncertainty Decomposition 不确定性分解:
     path: Uncertainty Decomposition 不确定性分解
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227730,7 +228368,8 @@ nodes:
   Supply Chain GNN 供应链传导GNN:
     path: Supply Chain GNN 供应链传导GNN
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227745,7 +228384,8 @@ nodes:
   Calendar Constraint Layer 日历约束层:
     path: Calendar Constraint Layer 日历约束层
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227760,7 +228400,8 @@ nodes:
   Volume Regime Layer 量能体制分层:
     path: Volume Regime Layer 量能体制分层
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227775,7 +228416,8 @@ nodes:
   Contrarian Fund Flow Identification 逆势资金流识别模型:
     path: Contrarian Fund Flow Identification 逆势资金流识别模型
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227790,7 +228432,8 @@ nodes:
   Opening Auction Microstructure Analysis 开盘竞价微结构分析模型:
     path: Opening Auction Microstructure Analysis 开盘竞价微结构分析模型
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227805,7 +228448,8 @@ nodes:
   Unified Technical Pattern Recognition Engine 统一技术图形识别引擎:
     path: Unified Technical Pattern Recognition Engine 统一技术图形识别引擎
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -227820,7 +228464,8 @@ nodes:
   Event-Driven Distribution Filter 事件驱动分布筛选:
     path: Event-Driven Distribution Filter 事件驱动分布筛选
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -229575,7 +230220,8 @@ nodes:
   Signal-Order-Fill Saga 信号→下单→成交Saga:
     path: Signal-Order-Fill Saga 信号→下单→成交Saga
     type: module
-    domain_id: D-SIGNAL
+    domain_id: D-SIGLEGACY
+
     blueprint_id: ''
     belongs_to: ''
     architecture_layer: ''
@@ -363102,9 +363748,12 @@ functional_domains:
   impact_level: M
   modification_permission: ''
 - domain: 业务
-  subdomain: D-SIGNAL
-  domain_id: D-SIGNAL
-  subdomain_id: D-SIGNAL
+  subdomain: D-SIGLEGACY
+
+  domain_id: D-SIGLEGACY
+
+  subdomain_id: D-SIGLEGACY
+
   ssot_module: ''
   ssot_path: docs/03_modules/_signal/blueprint.md
   covers:
@@ -363114,9 +363763,12 @@ functional_domains:
   impact_level: M
   modification_permission: ''
 - domain: 业务
-  subdomain: D-SIGNAL_ASHARE
-  domain_id: D-SIGNAL_ASHARE
-  subdomain_id: D-SIGNAL_ASHARE
+  subdomain: D-ASHARE_SIGNAL
+
+  domain_id: D-ASHARE_SIGNAL
+
+  subdomain_id: D-ASHARE_SIGNAL
+
   ssot_module: ''
   ssot_path: src/zephyr/signal_ashare/
   covers:
@@ -363126,9 +363778,12 @@ functional_domains:
   impact_level: M
   modification_permission: ''
 - domain: 业务
-  subdomain: D-SIGNAL_FUNDAMENTAL
-  domain_id: D-SIGNAL_FUNDAMENTAL
-  subdomain_id: D-SIGNAL_FUNDAMENTAL
+  subdomain: D-FUNDAMENTAL_SIGNAL
+
+  domain_id: D-FUNDAMENTAL_SIGNAL
+
+  subdomain_id: D-FUNDAMENTAL_SIGNAL
+
   ssot_module: ''
   ssot_path: src/zephyr/signal_fundamental/
   covers:
@@ -363138,9 +363793,12 @@ functional_domains:
   impact_level: M
   modification_permission: ''
 - domain: 业务
-  subdomain: D-SIGNAL_QUALITY
-  domain_id: D-SIGNAL_QUALITY
-  subdomain_id: D-SIGNAL_QUALITY
+  subdomain: D-SIGQC
+
+  domain_id: D-SIGQC
+
+  subdomain_id: D-SIGQC
+
   ssot_module: ''
   ssot_path: src/zephyr/signal_quality/
   covers:
