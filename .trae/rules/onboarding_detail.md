@@ -578,7 +578,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 
 | 不可删 | 举例 |
 |--------|------|
-| frontmatter 字段 | module_id, title, version, layer, depends_on, tags, **ttl（必填）** |
+| frontmatter 字段 | module_id, title, version, layer, depends_on, tags, **ttl（必填，2 值：permanent/task_bound）**。过程文档默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/README.md)（task_bound）；判定见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` |
 | 路径 | 绝对路径 `d:/ZephyrAlpha/...` 和相对路径 |
 | module_id 引用 | MOD-INF-XXX, PS-STD-XXX |
 | 命令和代码模板 | `python scripts/...`、代码块 |
