@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。
 
 > 本文档由 generate_design_vs_production.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 03:41:37
+> 最后更新: 2026-06-25 18:42:33
 > 数据源: depgraph.db nodes表
 
 ## 全局统计
@@ -40,6 +40,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 脚手架 / Scaffold | 生产化率 / Production Rate |
 |------|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D-ALT_DATA | 另类数据 | 8 | 1 | 0 | 7 | 0 | 12.5% |
+| D-ASHARE_SIGNAL | A股特色信号 | 27 | 0 | 20 | 7 | 0 | 0.0% |
 | D-AUTONOMY_CORE | 自治核心 | 181 | 2 | 5 | 174 | 0 | 1.1% |
 | D-AUTONOMY_PERM | 自治保护 | 88 | 2 | 19 | 67 | 0 | 2.3% |
 | D-BACKTEST | 回测 | 7 | 0 | 0 | 7 | 0 | 0.0% |
@@ -55,6 +56,7 @@ ttl: permanent
 | D-EX_SOR | 执行路由 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D-FACTOR | 因子 | 17 | 2 | 0 | 15 | 0 | 11.8% |
 | D-FRONTEND | 前端 | 33 | 7 | 10 | 16 | 0 | 21.2% |
+| D-FUNDAMENTAL_SIGNAL | 基本面信号 | 25 | 4 | 0 | 21 | 0 | 16.0% |
 | D-GOV-DOCS | architecture_docs | 151 | 100 | 0 | 51 | 0 | 66.2% |
 | D-GOV-ENFORCEMENT | rule_enforcement | 107 | 69 | 0 | 38 | 0 | 64.5% |
 | D-GOV-REPAIR | rollback | 0 | 0 | 0 | 0 | 0 | N/A |
@@ -86,10 +88,8 @@ ttl: permanent
 | D-SECURITY-LLM | llm_defense | 0 | 0 | 0 | 0 | 0 | N/A |
 | D-SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 0 | 0.0% |
 | D-SHARED | 共享服务 | 303 | 94 | 6 | 203 | 0 | 31.0% |
-| D-SIGNAL | 信号 | 47 | 1 | 45 | 1 | 0 | 2.1% |
-| D-SIGNAL_ASHARE | A股特色信号 | 27 | 0 | 20 | 7 | 0 | 0.0% |
-| D-SIGNAL_FUNDAMENTAL | 基本面信号 | 23 | 3 | 0 | 20 | 0 | 13.0% |
-| D-SIGNAL_QUALITY | 信号质量 | 17 | 0 | 10 | 7 | 0 | 0.0% |
+| D-SIGLEGACY | 信号遗留设计态 | 45 | 0 | 45 | 0 | 0 | 0.0% |
+| D-SIGQC | 信号质量控制 | 17 | 0 | 10 | 7 | 0 | 0.0% |
 | D-SIMULATION | 仿真 | 23 | 4 | 5 | 14 | 0 | 17.4% |
 | D-TRADING | 交易运营 | 169 | 20 | 6 | 143 | 0 | 11.8% |
 
@@ -97,6 +97,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 总模块数 / Total | 生产态 / Production | 生产化率 / Production Rate |
 |------|--------|:---:|:---:|:---:|
+| D-ASHARE_SIGNAL | A股特色信号 | 27 | 0 | 0.0% |
 | D-BACKTEST | 回测 | 7 | 0 | 0.0% |
 | D-COMPLIANCE | 合规 | 30 | 0 | 0.0% |
 | D-DATA_ENG | 数据工程 | 11 | 0 | 0.0% |
@@ -106,4 +107,3 @@ ttl: permanent
 | D-EX_SOR | 执行路由 | 7 | 0 | 0.0% |
 | D-ML_SERVE | 推理 | 8 | 0 | 0.0% |
 | D-ML_TRAIN | 训练 | 13 | 0 | 0.0% |
-| D-PF_ALLOC | 组合分配 | 15 | 0 | 0.0% |

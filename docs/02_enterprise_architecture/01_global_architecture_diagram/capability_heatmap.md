@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
 
 > 本文档由 generate_capability_heatmap.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 03:41:50
+> 最后更新: 2026-06-25 18:42:33
 > 数据源: depgraph.db domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)
 
 ## 统计概览 / Statistics Overview
@@ -23,8 +23,8 @@ ttl: permanent
 | 域总数 / Total Domains | 53 |
 | 能力域数 / Capability Domains | 10 |
 | L0 缺失 / Missing | 4 |
-| L1 设计中 / Designing | 14 |
-| L2 可用未验证 / Usable | 35 |
+| L1 设计中 / Designing | 15 |
+| L2 可用未验证 / Usable | 34 |
 | L3 生产已验证 / Verified | 0 |
 | ✅ 完全覆盖 / Full Coverage (L3) | 0 |
 | 🟡 部分覆盖 / Partial Coverage (L1-L2) | 49 |
@@ -44,7 +44,7 @@ ttl: permanent
 | 能力域ID / Capability ID | 中文名 / Chinese | 英文名 / English | 类型 / Type | 包含域数 / Domain Count | 包含域 / Included Domains |
 |:---:|--------|--------|:---:|:---:|--------|
 | C1 | 数据接入 | Data Ingestion | 业务 | 3 | D-MKT_DATA, D-ALT_DATA, D-DATA_ENG |
-| C2 | 因子研究 | Factor & Signal | 业务 | 5 | D-FACTOR, D-SIGNAL, D-SIGNAL_FUNDAMENTAL, D-SIGNAL_ASHARE, D-SIGNAL_QUALITY |
+| C2 | 因子研究 | Factor & Signal | 业务 | 5 | D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC |
 | C3 | 风险控制 | Risk Control | 业务 | 2 | D-RISK, D-COMPLIANCE |
 | C4 | 策略决策 | Strategy Decision | 业务 | 4 | D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET |
 | C5 | 执行交易 | Execution & Trading | 业务 | 4 | D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION |
@@ -66,11 +66,11 @@ ttl: permanent
 | D-ALT_DATA | 另类数据 | 🟡 | — | — | — | — | — | — | — | — | — | L2 |
 | D-DATA_ENG | 数据工程 | 🔵 | — | — | — | — | — | — | — | — | — | L1 |
 | D-MKT_DATA | 行情数据 | 🟡 | — | — | — | — | — | — | — | — | — | L2 |
+| D-ASHARE_SIGNAL | A股特色信号 | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
 | D-FACTOR | 因子 | — | 🟡 | — | — | — | — | — | — | — | — | L2 |
-| D-SIGNAL | 信号 | — | 🟡 | — | — | — | — | — | — | — | — | L2 |
-| D-SIGNAL_ASHARE | A股特色信号 | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
-| D-SIGNAL_FUNDAMENTAL | 基本面信号 | — | 🟡 | — | — | — | — | — | — | — | — | L2 |
-| D-SIGNAL_QUALITY | 信号质量 | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
+| D-FUNDAMENTAL_SIGNAL | 基本面信号 | — | 🟡 | — | — | — | — | — | — | — | — | L2 |
+| D-SIGLEGACY | 信号遗留设计态 | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
+| D-SIGQC | 信号质量控制 | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
 | D-COMPLIANCE | 合规 | — | — | 🔵 | — | — | — | — | — | — | — | L1 |
 | D-RISK | 风控 | — | — | 🟡 | — | — | — | — | — | — | — | L2 |
 | D-CROSS_ASSET | 跨资产 | — | — | — | 🟡 | — | — | — | — | — | — | L2 |
@@ -122,7 +122,7 @@ ttl: permanent
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | prototype | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | C1 | 数据接入 | 3 | 29 | 2 | 5 | 22 | 1.67 | 🟡 部分覆盖 / Partial |
-| C2 | 因子研究 | 5 | 131 | 6 | 75 | 50 | 1.60 | 🟡 部分覆盖 / Partial |
+| C2 | 因子研究 | 5 | 131 | 6 | 75 | 50 | 1.40 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 112 | 9 | 62 | 41 | 1.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 85 | 7 | 40 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 198 | 23 | 6 | 169 | 1.50 | 🟡 部分覆盖 / Partial |
@@ -139,11 +139,11 @@ ttl: permanent
 | D-ALT_DATA | 另类数据 | C1 | L1_foundation | 8 | 1 | 0 | 7 | 0 | L2 🟡 | 🟡 |
 | D-DATA_ENG | 数据工程 | C1 | L1_foundation | 11 | 0 | 4 | 7 | 0 | L1 🔵 | 🟡 |
 | D-MKT_DATA | 行情数据 | C1 | L1_foundation | 10 | 1 | 1 | 8 | 0 | L2 🟡 | 🟡 |
+| D-ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 27 | 0 | 20 | 7 | 0 | L1 🔵 | 🟡 |
 | D-FACTOR | 因子 | C2 | L2_domain | 17 | 2 | 0 | 15 | 0 | L2 🟡 | 🟡 |
-| D-SIGNAL | 信号 | C2 | L2_domain | 47 | 1 | 45 | 1 | 0 | L2 🟡 | 🟡 |
-| D-SIGNAL_ASHARE | A股特色信号 | C2 | L2_domain | 27 | 0 | 20 | 7 | 0 | L1 🔵 | 🟡 |
-| D-SIGNAL_FUNDAMENTAL | 基本面信号 | C2 | L2_domain | 23 | 3 | 0 | 20 | 0 | L2 🟡 | 🟡 |
-| D-SIGNAL_QUALITY | 信号质量 | C2 | L2_domain | 17 | 0 | 10 | 7 | 0 | L1 🔵 | 🟡 |
+| D-FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L2_domain | 25 | 4 | 0 | 21 | 0 | L2 🟡 | 🟡 |
+| D-SIGLEGACY | 信号遗留设计态 | C2 | L2_domain | 45 | 0 | 45 | 0 | 0 | L1 🔵 | 🟡 |
+| D-SIGQC | 信号质量控制 | C2 | L2_domain | 17 | 0 | 10 | 7 | 0 | L1 🔵 | 🟡 |
 | D-COMPLIANCE | 合规 | C3 | L2_domain | 30 | 0 | 5 | 25 | 0 | L1 🔵 | 🟡 |
 | D-RISK | 风控 | C3 | L2_domain | 82 | 9 | 57 | 16 | 0 | L2 🟡 | 🟡 |
 | D-CROSS_ASSET | 跨资产 | C4 | L2_domain | 15 | 1 | 5 | 9 | 0 | L2 🟡 | 🟡 |
@@ -170,19 +170,19 @@ ttl: permanent
 | D-AUTONOMY_PERM | 自治保护 | CC2 | L2_domain | 88 | 2 | 19 | 67 | 0 | L2 🟡 | 🟡 |
 | D-BEHAVIORAL_AUDIT | 行为审计 | CC2 | L1_foundation | 79 | 79 | 0 | 0 | 0 | L2 🟡 | 🟡 |
 | D-DATA_SEC | 数据安全与契约 | CC2 | L1_foundation | 10 | 0 | 0 | 10 | 0 | L1 🔵 | 🟡 |
-| D-SECURITY | 对抗验证 | CC2 | L1_platform | 276 | 132 | 32 | 112 | 0 | L2 🟡 | 🟡 |
-| D-SECURITY-LLM | llm_defense | CC2 |  | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D-AUTONOMY_CORE | 自治核心 | CC3 | L1_platform | 181 | 2 | 5 | 174 | 0 | L2 🟡 | 🟡 |
-| D-FRONTEND | 前端 | CC3 | L1_platform | 33 | 7 | 10 | 16 | 0 | L2 🟡 | 🟡 |
+| D-SECURITY | 对抗验证 | CC2 | L1_foundation | 276 | 132 | 32 | 112 | 0 | L2 🟡 | 🟡 |
+| D-SECURITY-LLM | llm_defense | CC2 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
+| D-AUTONOMY_CORE | 自治核心 | CC3 | L1_foundation | 181 | 2 | 5 | 174 | 0 | L2 🟡 | 🟡 |
+| D-FRONTEND | 前端 | CC3 | L1_foundation | 33 | 7 | 10 | 16 | 0 | L2 🟡 | 🟡 |
 | D-INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 46 | 7 | 13 | 26 | 0 | L2 🟡 | 🟡 |
 | D-INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 148 | 139 | 3 | 6 | 0 | L2 🟡 | 🟡 |
-| D-INTEGRATION | 管线路由 | CC3 | L1_platform | 314 | 71 | 17 | 226 | 0 | L2 🟡 | 🟡 |
-| D-INTEGRATION-GATEWAY | mcp_servers | CC3 |  | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
+| D-INTEGRATION | 管线路由 | CC3 | L1_foundation | 314 | 71 | 17 | 226 | 0 | L2 🟡 | 🟡 |
+| D-INTEGRATION-GATEWAY | mcp_servers | CC3 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D-INTELLIGENCE | 上下文管理 | CC3 | L2_domain | 57 | 18 | 1 | 38 | 0 | L2 🟡 | 🟡 |
 | D-KNOWLEDGE | 知识管理 | CC3 | L2_domain | 50 | 1 | 11 | 38 | 0 | L2 🟡 | 🟡 |
-| D-OPS | 反馈循环 | CC3 | L1_platform | 445 | 24 | 13 | 408 | 0 | L2 🟡 | 🟡 |
-| D-REPORTING | 报告 | CC3 | L1_platform | 19 | 1 | 4 | 14 | 0 | L2 🟡 | 🟡 |
-| D-SHARED | 共享服务 | CC3 | L1_platform | 303 | 94 | 6 | 203 | 0 | L2 🟡 | 🟡 |
+| D-OPS | 反馈循环 | CC3 | L1_foundation | 445 | 24 | 13 | 408 | 0 | L2 🟡 | 🟡 |
+| D-REPORTING | 报告 | CC3 | L1_foundation | 19 | 1 | 4 | 14 | 0 | L2 🟡 | 🟡 |
+| D-SHARED | 共享服务 | CC3 | L1_foundation | 303 | 94 | 6 | 203 | 0 | L2 🟡 | 🟡 |
 | D-DATA_GOV | 数据治理 | — | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D-GOV-DOCS | architecture_docs | — | L2_domain | 151 | 100 | 0 | 51 | 0 | L2 🟡 | 🟡 |
 | D-GOV_AUDIT_TESTS | audit_test_suite | — | L2_domain | 152 | 142 | 0 | 10 | 0 | L2 🟡 | 🟡 |
@@ -197,8 +197,9 @@ ttl: permanent
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
 | D-DATA_ENG | 数据工程 | C1 | L1 | 11 |
-| D-SIGNAL_ASHARE | A股特色信号 | C2 | L1 | 27 |
-| D-SIGNAL_QUALITY | 信号质量 | C2 | L1 | 17 |
+| D-ASHARE_SIGNAL | A股特色信号 | C2 | L1 | 27 |
+| D-SIGLEGACY | 信号遗留设计态 | C2 | L1 | 45 |
+| D-SIGQC | 信号质量控制 | C2 | L1 | 17 |
 | D-COMPLIANCE | 合规 | C3 | L1 | 30 |
 | D-PF_ALLOC | 组合分配 | C4 | L1 | 15 |
 | D-SELL_DECISION | 卖出决策 | C4 | L1 | 7 |
@@ -222,8 +223,7 @@ ttl: permanent
 | D-ALT_DATA | 另类数据 | C1 | L2 | 8 |
 | D-MKT_DATA | 行情数据 | C1 | L2 | 10 |
 | D-FACTOR | 因子 | C2 | L2 | 17 |
-| D-SIGNAL | 信号 | C2 | L2 | 47 |
-| D-SIGNAL_FUNDAMENTAL | 基本面信号 | C2 | L2 | 23 |
+| D-FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L2 | 25 |
 | D-RISK | 风控 | C3 | L2 | 82 |
 | D-CROSS_ASSET | 跨资产 | C4 | L2 | 15 |
 | D-PF_CORE | 组合核心 | C4 | L2 | 48 |

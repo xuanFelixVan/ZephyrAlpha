@@ -1,0 +1,168 @@
+---
+doc_type: domain_architecture_doc
+title: D-SIMULATION 仿真架构文档
+version: "1.0"
+status: active
+date: 2026-06-25
+owner: auto-generator
+ttl: permanent
+---
+
+# 51_d_simulation / 仿真
+
+> **文档作用 / Purpose**: 展示 仿真（D-SIMULATION）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+
+> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
+> 最后更新: 2026-06-25 18:42:45
+> 数据源: depgraph.db nodes表 + edges表
+
+## 域基本信息 / Domain Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 编号 | 51 | Number | 51 |
+| 域ID | D-SIMULATION | Domain ID | D-SIMULATION |
+| 域名称 | 仿真 | Domain Name | 仿真 |
+| 层级 | L2_domain | Layer | L2_domain |
+| 模块数 | 23 | Module Count | 23 |
+| 域内依赖 | 10 | Internal Dependencies | 10 |
+| 跨域入边 | 17 | Cross-domain Incoming | 17 |
+| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
+| 设计态模块 | 5 | Design Modules | 5 |
+| 原型态模块 | 14 | Prototype Modules | 14 |
+| 生产态模块 | 4 | Production Modules | 4 |
+| 容量 | 4/150 (正常) | Capacity | 4/150 (正常) |
+| 描述 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 | Description | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
+
+## 模块清单 / Module List
+
+共 23 个模块（按路径排序，全部显示）
+
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/simulation/ | 仿真核心域 | design | planned |
+| src/zephyr/simulation/__init__.py |  | prototype | generated |
+| src/zephyr/simulation/__init___from_resear.py |  | prototype | generated |
+| src/zephyr/simulation/_extensions/__init__.py |  | prototype | deprecated |
+| src/zephyr/simulation/api/__init__.py |  | prototype | deprecated |
+| src/zephyr/simulation/backtest_base.py |  | production | generated |
+| src/zephyr/simulation/backtest_base_from_resear.py |  | prototype | generated |
+| src/zephyr/simulation/core/__init__.py |  | prototype | deprecated |
+| src/zephyr/simulation/default_backtest_engine.py |  | production | generated |
+| src/zephyr/simulation/default_backtest_engine_from_resear.py |  | prototype | generated |
+| src/zephyr/simulation/engine/ | 仿真引擎 | design | planned |
+| src/zephyr/simulation/implementations/__init__.py |  | prototype | generated |
+| src/zephyr/simulation/implementations/__init___from_resear.py |  | prototype | generated |
+| src/zephyr/simulation/implementations/default_experiment_pipeline.py |  | production | generated |
+| src/zephyr/simulation/implementations/default_experiment_pipeline_from_resear.py |  | prototype | generated |
+| src/zephyr/simulation/infrastructure/__init__.py |  | prototype | deprecated |
+| src/zephyr/simulation/market_sim/ | 市场仿真器 | design | planned |
+| src/zephyr/simulation/models/__init__.py |  | prototype | deprecated |
+| src/zephyr/simulation/pipeline_base.py |  | production | generated |
+| src/zephyr/simulation/pipeline_base_from_resear.py |  | prototype | generated |
+| src/zephyr/simulation/result/ | 仿真结果分析 | design | planned |
+| src/zephyr/simulation/scenario/ | 场景管理器 | design | planned |
+| src/zephyr/simulation/services/__init__.py |  | prototype | deprecated |
+
+## 域内依赖图 / Internal Dependency Diagram
+
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
+>
+> **图例说明 / Legend**：
+> - **实线边框 = 运营态模块**（production，已上线运行）
+> - **虚线边框 = 设计态模块**（design，还在设计中）
+> - **实线箭头 = 运营态依赖**（已生效的依赖关系）
+> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
+
+```mermaid
+graph TD
+    subgraph D_SIMULATION["D-SIMULATION 仿真"]
+        src_zephyr_simulation["仿真核心域 design"]
+        src_zephyr_simulation_init_py["src/zephyr/simulation/__init__.py prototype"]
+        src_zephyr_simulation_init_from_resear_py["src/zephyr/simulation/__init___from_resear.py prototype"]
+        src_zephyr_simulation_extensions_init_py["src/zephyr/simulation/_extensions/__init__.py prototype"]
+        src_zephyr_simulation_api_init_py["src/zephyr/simulation/api/__init__.py prototype"]
+        src_zephyr_simulation_backtest_base_py["src/zephyr/simulation/backtest_base.py production"]
+        src_zephyr_simulation_backtest_base_from_resear_py["src/zephyr/simulation/backtest_base_from_resear.py prototype"]
+        src_zephyr_simulation_core_init_py["src/zephyr/simulation/core/__init__.py prototype"]
+        src_zephyr_simulation_default_backtest_engine_py["src/zephyr/simulation/default_backtest_engine.py production"]
+        src_zephyr_simulation_default_backtest_engine_from_resear_py["src/zephyr/simulation/default_backtest_engine_f... prototype"]
+        src_zephyr_simulation_engine["仿真引擎 design"]
+        src_zephyr_simulation_implementations_init_py["src/zephyr/simulation/implementations/__init__.py prototype"]
+        src_zephyr_simulation_implementations_init_from_resear_py["src/zephyr/simulation/implementations/__init___... prototype"]
+        src_zephyr_simulation_implementations_default_experiment_pipeline_py["src/zephyr/simulation/implementations/default_e... production"]
+        src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py["src/zephyr/simulation/implementations/default_e... prototype"]
+        src_zephyr_simulation_infrastructure_init_py["src/zephyr/simulation/infrastructure/__init__.py prototype"]
+        src_zephyr_simulation_market_sim["市场仿真器 design"]
+        src_zephyr_simulation_models_init_py["src/zephyr/simulation/models/__init__.py prototype"]
+        src_zephyr_simulation_pipeline_base_py["src/zephyr/simulation/pipeline_base.py production"]
+        src_zephyr_simulation_pipeline_base_from_resear_py["src/zephyr/simulation/pipeline_base_from_resear.py prototype"]
+        src_zephyr_simulation_result["仿真结果分析 design"]
+        src_zephyr_simulation_scenario["场景管理器 design"]
+        src_zephyr_simulation_services_init_py["src/zephyr/simulation/services/__init__.py prototype"]
+    end
+    src_zephyr_simulation_default_backtest_engine_py -.->|import_depends| src_zephyr_simulation_init_py
+    src_zephyr_simulation_backtest_base_from_resear_py -.->|config_depends| src_zephyr_simulation_init_py
+    src_zephyr_simulation_default_backtest_engine_from_resear_py -.->|import_depends| src_zephyr_simulation_init_py
+    src_zephyr_simulation_init_from_resear_py -.->|import_depends| src_zephyr_simulation_backtest_base_py
+    src_zephyr_simulation_init_from_resear_py -.->|import_depends| src_zephyr_simulation_default_backtest_engine_py
+    src_zephyr_simulation_init_from_resear_py -.->|import_depends| src_zephyr_simulation_pipeline_base_py
+    src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py -.->|import_depends| src_zephyr_simulation_init_py
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py -.->|import_depends| src_zephyr_simulation_init_py
+    src_zephyr_simulation_implementations_init_py -.->|config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py
+    src_zephyr_simulation_implementations_init_from_resear_py -.->|config_depends| src_zephyr_simulation_implementations_init_py
+    D_INTEGRATION["D-INTEGRATION design"]
+    src_zephyr_simulation -.->|contract| D_INTEGRATION
+    src_zephyr_simulation_pipeline_base_from_resear_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_simulation_pipeline_base_py -.->|import_depends| D_INTEGRATION
+    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_INTELLIGENCE["D-INTELLIGENCE prototype"]
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
+    D_SHARED["D-SHARED prototype"]
+    D_SHARED -.->|import_depends| src_zephyr_simulation_init_py
+    D_GOV_SCRIPTS["D-GOV-SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_simulation_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_simulation_backtest_base_py,src_zephyr_simulation_default_backtest_engine_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
+    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_init_from_resear_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_backtest_base_from_resear_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_default_backtest_engine_from_resear_py,src_zephyr_simulation_engine,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_init_from_resear_py,src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_market_sim,src_zephyr_simulation_models_init_py,src_zephyr_simulation_pipeline_base_from_resear_py,src_zephyr_simulation_result,src_zephyr_simulation_scenario,src_zephyr_simulation_services_init_py design
+    class D_INTEGRATION,D_GOVERNANCE,D_INTELLIGENCE,D_SHARED,D_GOV_SCRIPTS external_design
+```
+
+## 跨域依赖 / Cross-domain Dependencies
+
+### 本域依赖的其他域（出边）/ Depends On
+
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-INTEGRATION | 3 | contract,import_depends |
+
+### 依赖本域的其他域（入边）/ Depended By
+
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D-GOVERNANCE | 12 | test_depends |
+| D-INTELLIGENCE | 3 | import_depends |
+| D-SHARED | 1 | import_depends |
+| D-GOV-SCRIPTS | 1 | import_depends |
+
+## 说明 / Notes
+
+- **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
+- **生成器 / Generator**: `generate_domain_doc.py`
+- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
+- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`

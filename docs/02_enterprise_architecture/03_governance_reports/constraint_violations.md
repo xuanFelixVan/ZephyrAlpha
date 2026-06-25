@@ -3,7 +3,7 @@ doc_type: constraint_violations_report
 title: 架构约束违规报告
 version: "1.0"
 status: active
-date: 2026-06-24
+date: 2026-06-25
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。
 
 > 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-24 23:01:39
+> 最后更新: 2026-06-25 18:42:33
 > 数据源: depgraph.db arch_constraints表
 
 ## 统计概览
@@ -99,7 +99,7 @@ ttl: permanent
 | F1-CAPACITY-D-SECURITY | 容量超限告警: D-SECURITY | capacity_limit | D-SECURITY |  | hard | gate | 域D-SECURITY(安全)当前341模块超过上限320，需拆分或提升上限 |
 | F1-CAPACITY-D-SELL_DECISION | 容量超限告警: D-SELL_DECISION | capacity_limit | D-SELL_DECISION |  | hard | gate | 域D-SELL_DECISION(卖出决策)当前94模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-SHARED | 容量超限告警: D-SHARED | capacity_limit | D-SHARED |  | hard | gate | 域D-SHARED(共享)当前275模块超过上限210，需拆分或提升上限 |
-| F1-CAPACITY-D-SIGNAL | 容量超限告警: D-SIGNAL | capacity_limit | D-SIGNAL |  | hard | gate | 域D-SIGNAL(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-SIGNAL | 容量超限告警: D-SIGNAL | capacity_limit | D-SIGLEGACY |  | hard | gate | 域D-SIGNAL(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
 | F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D-SIMULATION |  | hard | gate | 域D-SIMULATION(仿真)当前92模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D-TRADING |  | hard | gate | 域D-TRADING(交易运营)当前163模块超过上限140，需拆分或提升上限 |
 |  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | code |  |
@@ -163,7 +163,7 @@ ttl: permanent
 | F1-CAPACITY-D-SECURITY | 容量超限告警: D-SECURITY | capacity_limit | D-SECURITY |  | hard | open |
 | F1-CAPACITY-D-SELL_DECISION | 容量超限告警: D-SELL_DECISION | capacity_limit | D-SELL_DECISION |  | hard | open |
 | F1-CAPACITY-D-SHARED | 容量超限告警: D-SHARED | capacity_limit | D-SHARED |  | hard | open |
-| F1-CAPACITY-D-SIGNAL | 容量超限告警: D-SIGNAL | capacity_limit | D-SIGNAL |  | hard | open |
+| F1-CAPACITY-D-SIGNAL | 容量超限告警: D-SIGNAL | capacity_limit | D-SIGLEGACY |  | hard | open |
 | F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D-SIMULATION |  | hard | open |
 | F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D-TRADING |  | hard | open |
 |  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | open |

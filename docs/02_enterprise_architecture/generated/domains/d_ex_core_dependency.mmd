@@ -1,439 +1,43 @@
 %% D-EX_CORE 域全景依赖图
-%% 生成时间: 2026-06-24 23:01:57
+%% 生成时间: 2026-06-25 18:42:45
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 134, 依赖边数: 367
+%% 模块数: 14, 依赖边数: 21
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_EX_CORE[执行核心]
-        [" [design]"]
-        D_EX_CORE_Agent_State_Inconsistency_Agent状态不一致[".../Agent State Inconsistency Agent状态不一致 [design]"]
-        D_EX_CORE_Arbitration_Priority_System_仲裁优先级体系["...E/Arbitration Priority System 仲裁优先级体系 [design]"]
-        D_EX_CORE_Auction_Deviation_Threshold_Executor_竞价偏离阈值执行器["...eviation Threshold Executor 竞价偏离阈值执行器 [design]"]
-        D_EX_CORE_Blueprint_Implementer_蓝图实现器["D-EX-CORE/Blueprint Implementer 蓝图实现器 [design]"]
-        D_EX_CORE_Broker_ACL_Broker访问控制列表["D-EX-CORE/Broker ACL Broker访问控制列表 [design]"]
-        D_EX_CORE_Broker_API_券商API["D-EX-CORE/Broker API 券商API [design]"]
-        D_EX_CORE_Broker_Interface_broker接口["D-EX-CORE/Broker Interface broker接口 [design]"]
-        D_EX_CORE_BrokerInterface_券商适配器接口["D-EX-CORE/BrokerInterface 券商适配器接口 [design]"]
-        D_EX_CORE_C_Track_L06_Layer_C轨L06层["D-EX-CORE/C Track L06 Layer C轨L06层 [design]"]
-        D_EX_CORE_CTR_005_Fill_CTR_005_Fill契约["D-EX-CORE/CTR-005 Fill CTR-005 Fill契约 [design]"]
-        D_EX_CORE_CTR_006_PositionSnap____CTR_006_PositionSnapshot契约["...onSnapshot CTR-006 PositionSnapshot契约 [design]"]
-        D_EX_CORE_CTR_ERR_005_Executio___5_ExecutionRejectionError契约["...CTR-ERR-005 ExecutionRejectionError契约 [design]"]
-        D_EX_CORE_CTR_P1_007_Execution___TR_P1_007_ExecutionReport契约["...onReport CTR-P1-007 ExecutionReport契约 [design]"]
-        D_EX_CORE_Circuit_Breaker_Pattern_熔断器模式["D-EX-CORE/Circuit Breaker Pattern 熔断器模式 [design]"]
-        D_EX_CORE_Conditional_Order_Manager_条件订单管理器["...ORE/Conditional Order Manager 条件订单管理器 [design]"]
-        D_EX_CORE_Day_Trade_Execution_做T执行["D-EX-CORE/Day Trade Execution 做T执行 [design]"]
-        D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估["D-EX-CORE/Day Trade PnL Estimate 做T盈亏预估 [design]"]
-        D_EX_CORE_Degradation_Constraint_Set_降级约束集["...CORE/Degradation Constraint Set 降级约束集 [design]"]
-        D_EX_CORE_Deployment_Consistency_Manager_部署一致性管理器["...ployment Consistency Manager 部署一致性管理器 [design]"]
-        D_EX_CORE_Design_Decision_Constraint_Set_设计决策约束集["...esign Decision Constraint Set 设计决策约束集 [design]"]
-        D_EX_CORE_E_EX_04_FillReceived_E_EX_04_FillReceived事件["...4 FillReceived E-EX-04 FillReceived事件 [design]"]
-        D_EX_CORE_E0_5_Integration_Path_Layer_E0_5集成路径层["...E0.5 Integration Path Layer E0.5集成路径层 [design]"]
-        D_EX_CORE_E1_Integration_Path_Layer_E1集成路径层["...ORE/E1 Integration Path Layer E1集成路径层 [design]"]
-        D_EX_CORE_E2_Integration_Path_Layer_E2集成路径层["...ORE/E2 Integration Path Layer E2集成路径层 [design]"]
-        D_EX_CORE_E3_Integration_Path_Layer_E3集成路径层["...ORE/E3 Integration Path Layer E3集成路径层 [design]"]
-        D_EX_CORE_Emergency_Execution_紧急执行["D-EX-CORE/Emergency Execution 紧急执行 [design]"]
-        D_EX_CORE_Execution_Aggregate_Root_Manager_执行聚合根管理器["...ution Aggregate Root Manager 执行聚合根管理器 [design]"]
-        D_EX_CORE_Execution_Auditor_执行审计["D-EX-CORE/Execution Auditor 执行审计 [design]"]
-        D_EX_CORE_Execution_Core_执行核心["D-EX-CORE/Execution Core 执行核心 [design]"]
-        D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法["...ecution Domain Factory Method 执行域工厂方法 [design]"]
-        D_EX_CORE_Execution_Domain_Repository_Interface_执行域仓储接口["...n Domain Repository Interface 执行域仓储接口 [design]"]
-        D_EX_CORE_Execution_Domain_Value_Object_Definition_执行域值对象定义["...main Value Object Definition 执行域值对象定义 [design]"]
-        D_EX_CORE_Execution_Engine_执行引擎["D-EX-CORE/Execution Engine 执行引擎 [design]"]
-        D_EX_CORE_Execution_Ops_Auto_Optimization_执行运营自优化["...ecution Ops Auto-Optimization 执行运营自优化 [design]"]
-        D_EX_CORE_Execution_Quality_Analysis_TCA_执行质量分析["...ecution Quality Analysis (TCA) 执行质量分析 [design]"]
-        D_EX_CORE_Execution_Risk_Gate_执行风险门禁["D-EX-CORE/Execution Risk Gate 执行风险门禁 [design]"]
-        D_EX_CORE_Execution_TCA_执行TCA["D-EX-CORE/Execution TCA 执行TCA [design]"]
-        D_EX_CORE_ExecutionModuleBase____s_ExecutionModuleBase代码生成基类["... Base Class ExecutionModuleBase代码生成基类 [design]"]
-        D_EX_CORE_ExecutionRejectionError_执行拒绝错误["D-EX-CORE/ExecutionRejectionError 执行拒绝错误 [design]"]
-        D_EX_CORE_ExecutionReport_交易执行报告["D-EX-CORE/ExecutionReport 交易执行报告 [design]"]
-        D_EX_CORE_ExecutionReport_执行报告["D-EX-CORE/ExecutionReport 执行报告 [design]"]
-        D_EX_CORE_Executor_Agent_执行Agent["D-EX-CORE/Executor Agent 执行Agent [design]"]
-        D_EX_CORE_Fill_Contract_成交契约["D-EX-CORE/Fill Contract 成交契约 [design]"]
-        D_EX_CORE_Fill_Processor_成交处理器["D-EX-CORE/Fill Processor 成交处理器 [design]"]
-        D_EX_CORE_Fill_Tracker_成交跟踪器["D-EX-CORE/Fill Tracker 成交跟踪器 [design]"]
-        D_EX_CORE_FillReceived_成交回报已接收["D-EX-CORE/FillReceived 成交回报已接收 [design]"]
-        D_EX_CORE_IdempotencyBlocked_幂等性拦截事件["D-EX-CORE/IdempotencyBlocked 幂等性拦截事件 [design]"]
-        D_EX_CORE_Integration_Path_Layer_集成路径层["D-EX-CORE/Integration Path Layer 集成路径层 [design]"]
-        D_EX_CORE_Intraday_Position_Reconciler_盘中持仓对账器[".../Intraday Position Reconciler 盘中持仓对账器 [design]"]
-        D_EX_CORE_Kill_Switch_紧急停机事件["D-EX-CORE/Kill Switch 紧急停机事件 [design]"]
-        D_EX_CORE_L1_Fixed_Slippage_Model_L1固定滑点模型["...CORE/L1 Fixed Slippage Model L1固定滑点模型 [design]"]
-        D_EX_CORE_L2_Square_Root_Impact_Slippage_Model_L2平方根冲击滑点模型["...oot Impact Slippage Model L2平方根冲击滑点模型 [design]"]
-        D_EX_CORE_L3_Order_Book_Simula____Slippage_Model_L3订单簿模拟滑点模型["...Simulation Slippage Model L3订单簿模拟滑点模型 [design]"]
-        D_EX_CORE_L4_to_Execution_Order_Submission_L4→执行订单提交["... Execution Order Submission L4→执行订单提交 [design]"]
-        D_EX_CORE_Live_Simulation_Switcher_实盘_模拟切换器["...ORE/Live/Simulation Switcher 实盘/模拟切换器 [design]"]
-        D_EX_CORE_Microstructure_Modeler_微观结构建模器["D-EX-CORE/Microstructure Modeler 微观结构建模器 [design]"]
-        D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器["...ond Critical Path Analyzer 纳秒级关键路径分析器 [design]"]
-        D_EX_CORE_Non_Trading_Hours_Order_Prohibition_非交易时段禁止下单["...ing Hours Order Prohibition 非交易时段禁止下单 [design]"]
-        D_EX_CORE_OMS_Risk_Engine_OMS风险引擎["D-EX-CORE/OMS Risk Engine OMS风险引擎 [design]"]
-        D_EX_CORE_Order_Aggregate_订单聚合根["D-EX-CORE/Order Aggregate 订单聚合根 [design]"]
-        D_EX_CORE_Order_Contract_订单契约["D-EX-CORE/Order Contract 订单契约 [design]"]
-        D_EX_CORE_Order_Execution_Saga_Orchestrator_下单执行Saga编排器["...ecution Saga Orchestrator 下单执行Saga编排器 [design]"]
-        D_EX_CORE_Order_Generation_订单生成["D-EX-CORE/Order Generation 订单生成 [design]"]
-        D_EX_CORE_Order_Manager_订单管理器["D-EX-CORE/Order Manager 订单管理器 [design]"]
-        D_EX_CORE_Order_Splitter_订单拆分器["D-EX-CORE/Order Splitter 订单拆分器 [design]"]
-        D_EX_CORE_Order_State_Machine_订单状态机["D-EX-CORE/Order State Machine 订单状态机 [design]"]
-        D_EX_CORE_Order_Submission_订单提交["D-EX-CORE/Order Submission 订单提交 [design]"]
-        D_EX_CORE_Order_Tracking_订单跟踪["D-EX-CORE/Order Tracking 订单跟踪 [design]"]
-        D_EX_CORE_Order_订单聚合根["D-EX-CORE/Order 订单聚合根 [design]"]
-        D_EX_CORE_OrderCancelled_订单撤销事件["D-EX-CORE/OrderCancelled 订单撤销事件 [design]"]
-        D_EX_CORE_OrderCreated_订单创建事件["D-EX-CORE/OrderCreated 订单创建事件 [design]"]
-        D_EX_CORE_OrderExpired_订单过期事件["D-EX-CORE/OrderExpired 订单过期事件 [design]"]
-        D_EX_CORE_OrderFilled_订单已成交["D-EX-CORE/OrderFilled 订单已成交 [design]"]
-        D_EX_CORE_OrderFilled_订单成交事件["D-EX-CORE/OrderFilled 订单成交事件 [design]"]
-        D_EX_CORE_OrderPlaced_订单已提交["D-EX-CORE/OrderPlaced 订单已提交 [design]"]
-        D_EX_CORE_OrderRejected_订单拒绝事件["D-EX-CORE/OrderRejected 订单拒绝事件 [design]"]
-        D_EX_CORE_OrderRejected_订单被拒事件["D-EX-CORE/OrderRejected 订单被拒事件 [design]"]
-        D_EX_CORE_OrderSubmitted_订单提交事件["D-EX-CORE/OrderSubmitted 订单提交事件 [design]"]
-        D_EX_CORE_OrderSubmitted_订单提交契约["D-EX-CORE/OrderSubmitted 订单提交契约 [design]"]
-        D_EX_CORE_P2_Medium_P2中优先级指令["D-EX-CORE/P2-Medium P2中优先级指令 [design]"]
-        D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警["...CORE/P3 Heartbeat Loss Alert P3心跳丢失告警 [design]"]
-        D_EX_CORE_Parameterized_Batch_Executor_参数化分批执行器["...Parameterized Batch Executor 参数化分批执行器 [design]"]
-        D_EX_CORE_Parameterized_Batch_____Profit_Executor_参数化分批止盈执行器["...Batch Take Profit Executor 参数化分批止盈执行器 [design]"]
-        D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器["... Loss/Take Profit Executor 参数化止损止盈执行器 [design]"]
-        D_EX_CORE_Partial_Fill_Processor_部分成交处理器["D-EX-CORE/Partial Fill Processor 部分成交处理器 [design]"]
-        D_EX_CORE_Performance_Monitor_性能监控器["D-EX-CORE/Performance Monitor 性能监控器 [design]"]
-        D_EX_CORE_Position_Aggregate_持仓聚合根["D-EX-CORE/Position Aggregate 持仓聚合根 [design]"]
-        D_EX_CORE_Position_Tracker_持仓追踪["D-EX-CORE/Position Tracker 持仓追踪 [design]"]
-        D_EX_CORE_Pre_Execution_Checker_执行前检查器["D-EX-CORE/Pre-Execution Checker 执行前检查器 [design]"]
-        D_EX_CORE_Price_价格["D-EX-CORE/Price 价格 [design]"]
-        D_EX_CORE_Quantity_数量["D-EX-CORE/Quantity 数量 [design]"]
-        D_EX_CORE_RL_Optimal_Executor_RL最优执行器["D-EX-CORE/RL Optimal Executor RL最优执行器 [design]"]
-        D_EX_CORE_Sell_Priority_Scheduler_卖出优先级调度器["...CORE/Sell Priority Scheduler 卖出优先级调度器 [design]"]
-        D_EX_CORE_Side_方向["D-EX-CORE/Side 方向 [design]"]
-        D_EX_CORE_Simulation_Broker_模拟Broker["D-EX-CORE/Simulation Broker 模拟Broker [design]"]
-        D_EX_CORE_Single_Large_Order_Non_Auto_Execute_单笔大额下单不可自动执行["...e Order Non-Auto-Execute 单笔大额下单不可自动执行 [design]"]
-        D_EX_CORE_Slippage_Model_3_Level_Progressive_滑点模型3级渐进["...ge Model 3 Level Progressive 滑点模型3级渐进 [design]"]
-        D_EX_CORE_Subjective_Trading_E___Transformation_主观交易经验量化框架转化["...Framework Transformation 主观交易经验量化框架转化 [design]"]
-        D_EX_CORE_Subjective_to_Quanti___sformation_Record_主观到量化转化记录["...ative Transformation Record 主观到量化转化记录 [design]"]
-        %% ... 还有 34 个模块未显示
+        src_zephyr_ex_core___init___py["src/zephyr/ex_core/__init__.py [production]"]
+        src_zephyr_ex_core__extensions___init___py["...ephyr/ex_core/_extensions/__init__.py [prototype]"]
+        src_zephyr_ex_core_adapters___init___py["src/zephyr/ex_core/adapters/__init__.py [prototype]"]
+        src_zephyr_ex_core_adapters_broker_interface_py[".../ex_core/adapters/broker_interface.py [production]"]
+        src_zephyr_ex_core_adapters_risk_validation_bridge_py["...re/adapters/risk_validation_bridge.py [prototype]"]
+        src_zephyr_ex_core_adapters_simulation_broker_py["...ex_core/adapters/simulation_broker.py [production]"]
+        src_zephyr_ex_core_api___init___py["src/zephyr/ex_core/api/__init__.py [prototype]"]
+        src_zephyr_ex_core_broker_interface_py["src/zephyr/ex_core/broker_interface.py [prototype]"]
+        src_zephyr_ex_core_core___init___py["src/zephyr/ex_core/core/__init__.py [prototype]"]
+        src_zephyr_ex_core_execution_engine_py["src/zephyr/ex_core/execution_engine.py [prototype]"]
+        src_zephyr_ex_core_infrastructure___init___py["...yr/ex_core/infrastructure/__init__.py [prototype]"]
+        src_zephyr_ex_core_order_manager_py["src/zephyr/ex_core/order_manager.py [prototype]"]
+        src_zephyr_ex_core_order_state_escalator_py["...phyr/ex_core/order_state_escalator.py [prototype]"]
+        src_zephyr_ex_core_services___init___py["src/zephyr/ex_core/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_ex_core_execution_engine_py -->|import_depends| src_zephyr_ex_core_order_manager_py
-    D_EX_CORE_Position_Tracker_持仓追踪 -->|import_depends| D_EX_CORE_Execution_Auditor_执行审计
-    D_EX_CORE_Execution_Auditor_执行审计 -->|import_depends| D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter
-    D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter -->|import_depends| D_EX_CORE_当前持仓物化视图_Current_Position_View
-    D_EX_CORE_当前持仓物化视图_Current_Position_View -->|import_depends| D_EX_CORE_当日交易物化视图_Today's_Trade_View
-    D_EX_CORE_当日交易物化视图_Today's_Trade_View -->|import_depends| D_EX_CORE_Order_Manager_订单管理器
-    D_EX_CORE_Order_Manager_订单管理器 -->|import_depends| D_EX_CORE_Execution_Engine_执行引擎
-    D_EX_CORE_Execution_Engine_执行引擎 -->|import_depends| D_EX_CORE_Fill_Tracker_成交跟踪器
-    D_EX_CORE_Fill_Tracker_成交跟踪器 -->|import_depends| D_EX_CORE_Fill_Processor_成交处理器
-    D_EX_CORE_Fill_Processor_成交处理器 -->|import_depends| D_EX_CORE_Order_State_Machine_订单状态机
-    D_EX_CORE_Order_State_Machine_订单状态机 -->|import_depends| D_EX_CORE_Execution_TCA_执行TCA
-    D_EX_CORE_Execution_TCA_执行TCA -->|import_depends| D_EX_CORE_Order_Splitter_订单拆分器
-    D_EX_CORE_Order_Splitter_订单拆分器 -->|import_depends| D_EX_CORE_Deployment_Consistency_Manager_部署一致性管理器
-    D_EX_CORE_Deployment_Consistency_Manager_部署一致性管理器 -->|import_depends| D_EX_CORE_Pre_Execution_Checker_执行前检查器
-    D_EX_CORE_Pre_Execution_Checker_执行前检查器 -->|import_depends| D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器
-    D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器 -->|import_depends| D_EX_CORE_Parameterized_Batch_Executor_参数化分批执行器
-    D_EX_CORE_Parameterized_Batch_Executor_参数化分批执行器 -->|import_depends| D_EX_CORE_Parameterized_Batch_____Profit_Executor_参数化分批止盈执行器
-    D_EX_CORE_Parameterized_Batch_____Profit_Executor_参数化分批止盈执行器 -->|import_depends| D_EX_CORE_Auction_Deviation_Threshold_Executor_竞价偏离阈值执行器
-    D_EX_CORE_Auction_Deviation_Threshold_Executor_竞价偏离阈值执行器 -->|import_depends| D_EX_CORE_Sell_Priority_Scheduler_卖出优先级调度器
-    D_EX_CORE_Sell_Priority_Scheduler_卖出优先级调度器 -->|import_depends| D_EX_CORE_Live_Simulation_Switcher_实盘_模拟切换器
-    D_EX_CORE_Live_Simulation_Switcher_实盘_模拟切换器 -->|import_depends| D_EX_CORE_Performance_Monitor_性能监控器
-    D_EX_CORE_Performance_Monitor_性能监控器 -->|import_depends| D_EX_CORE_Blueprint_Implementer_蓝图实现器
-    D_EX_CORE_Blueprint_Implementer_蓝图实现器 -->|import_depends| D_EX_CORE_Conditional_Order_Manager_条件订单管理器
-    D_EX_CORE_Conditional_Order_Manager_条件订单管理器 -->|import_depends| D_EX_CORE_Partial_Fill_Processor_部分成交处理器
-    D_EX_CORE_Partial_Fill_Processor_部分成交处理器 -->|import_depends| D_EX_CORE_Execution_Aggregate_Root_Manager_执行聚合根管理器
-    D_EX_CORE_Execution_Aggregate_Root_Manager_执行聚合根管理器 -->|import_depends| D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法
-    D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法 -->|import_depends| D_EX_CORE_Intraday_Position_Reconciler_盘中持仓对账器
-    D_EX_CORE_Intraday_Position_Reconciler_盘中持仓对账器 -->|import_depends| D_EX_CORE_Order_Execution_Saga_Orchestrator_下单执行Saga编排器
-    D_EX_CORE_Order_Execution_Saga_Orchestrator_下单执行Saga编排器 -->|import_depends| D_EX_CORE_miniQMT_Trading_Channel_Manager_miniQMT交易通道管理器
-    D_EX_CORE_miniQMT_Trading_Channel_Manager_miniQMT交易通道管理器 -->|import_depends| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
-    D_EX_CORE_RL_Optimal_Executor_RL最优执行器 -->|import_depends| D_EX_CORE_Microstructure_Modeler_微观结构建模器
-    D_EX_CORE_Microstructure_Modeler_微观结构建模器 -->|import_depends| D_EX_CORE_Timer_Agent_择时Agent
-    D_EX_CORE_Timer_Agent_择时Agent -->|import_depends| D_EX_CORE_Executor_Agent_执行Agent
-    D_EX_CORE_Executor_Agent_执行Agent -->|import_depends| D_EX_CORE_miniQMT_Trading_Channel_miniQMT交易通道
-    D_EX_CORE_miniQMT_Trading_Channel_miniQMT交易通道 -->|import_depends| D_EX_CORE_Timing_Decision_择时决策
-    D_EX_CORE_Timing_Decision_择时决策 -->|import_depends| D_EX_CORE_Trigger_Evaluation_触发评估
-    D_EX_CORE_Trigger_Evaluation_触发评估 -->|import_depends| D_EX_CORE_Day_Trade_Execution_做T执行
-    D_EX_CORE_Day_Trade_Execution_做T执行 -->|import_depends| D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估
-    D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估 -->|import_depends| D_EX_CORE_Order_Submission_订单提交
-    D_EX_CORE_Order_Submission_订单提交 -->|import_depends| D_EX_CORE_Order_Tracking_订单跟踪
-    D_EX_CORE_Order_Tracking_订单跟踪 -->|import_depends| D_EX_CORE_P2_Medium_P2中优先级指令
-    D_EX_CORE_P2_Medium_P2中优先级指令 -->|import_depends| D_EX_CORE_Order_Generation_订单生成
-    D_EX_CORE_Order_Generation_订单生成 -->|import_depends| D_EX_CORE_Trade_Execution_Core_交易执行核心
-    D_EX_CORE_Trade_Execution_Core_交易执行核心 -->|import_depends| D_EX_CORE_下单执行_下单执行_Execution
-    D_EX_CORE_下单执行_下单执行_Execution -->|import_depends| D_EX_CORE_Trading_Pipeline_Process_交易流水线进程
-    D_EX_CORE_Trading_Pipeline_Process_交易流水线进程 -->|import_depends| D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警
-    D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警 -->|import_depends| D_EX_CORE_Simulation_Broker_模拟Broker
-    D_EX_CORE_Simulation_Broker_模拟Broker -->|import_depends| D_EX_CORE_OMS_Risk_Engine_OMS风险引擎
-    D_EX_CORE_OMS_Risk_Engine_OMS风险引擎 -->|import_depends| D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch
-    D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch -->|import_depends| D_EX_CORE_l06_oms_C轨L06层订单管理系统子模块
-    D_EX_CORE_l06_oms_C轨L06层订单管理系统子模块 -->|import_depends| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块 -->|import_depends| D_EX_CORE_ExecutionModuleBase____s_ExecutionModuleBase代码生成基类
-    D_EX_CORE_ExecutionModuleBase____s_ExecutionModuleBase代码生成基类 -->|import_depends| D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器
-    D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器 -->|import_depends| D_EX_CORE_Trading_Channel_Auto_Recovery_交易通道熔断自动恢复
-    D_EX_CORE_Trading_Channel_Auto_Recovery_交易通道熔断自动恢复 -->|import_depends| D_EX_CORE_Emergency_Execution_紧急执行
-    D_EX_CORE_做T日内套利 -->|import_depends| D_EX_CORE_Day_Trade_Execution_做T执行
-    D_EX_CORE_Execution_Quality_Analysis_TCA_执行质量分析 -->|import_depends| D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警
-    D_EX_CORE_Execution_Ops_Auto_Optimization_执行运营自优化 -->|import_depends| D_EX_CORE_Fill_Tracker_成交跟踪器
-    D_EX_CORE_Order_订单聚合根 -->|import_depends| D_EX_CORE_Simulation_Broker_模拟Broker
-    D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法 -->|import_depends| D_EX_CORE_Order_Aggregate_订单聚合根
-    D_EX_CORE_Execution_TCA_执行TCA -->|import_depends| D_EX_CORE_Position_Aggregate_持仓聚合根
-    D_EX_CORE_Order_Splitter_订单拆分器 -->|import_depends| D_EX_CORE_Execution_Domain_Value_Object_Definition_执行域值对象定义
-    D_EX_CORE_Fill_Tracker_成交跟踪器 -->|import_depends| D_EX_CORE_Price_价格
-    D_EX_CORE_l06_oms_C轨L06层订单管理系统子模块 -->|import_depends| D_EX_CORE_Quantity_数量
-    D_EX_CORE_miniQMT_Trading_Channel_miniQMT交易通道 -->|import_depends| D_EX_CORE_Side_方向
-    D_EX_CORE_OrderSubmitted_订单提交事件 -->|event| D_EX_CORE_Conditional_Order_Manager_条件订单管理器
-    D_EX_CORE_OrderFilled_订单成交事件 -->|event| D_EX_CORE_Executor_Agent_执行Agent
-    D_EX_CORE_OrderRejected_订单拒绝事件 -->|event| D_EX_CORE_Timer_Agent_择时Agent
-    D_EX_CORE_OrderCancelled_订单撤销事件 -->|event| D_EX_CORE_Parameterized_Batch_____Profit_Executor_参数化分批止盈执行器
-    D_EX_CORE_FillReceived_成交回报已接收 -->|event| D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器
-    D_EX_CORE_Order_State_Machine_订单状态机 -->|event| D_EX_CORE_E_EX_04_FillReceived_E_EX_04_FillReceived事件
-    D_EX_CORE_Parameterized_Batch_Executor_参数化分批执行器 -->|event| D_EX_CORE_ExecutionReport_交易执行报告
-    D_EX_CORE_OrderPlaced_订单已提交 -->|event| D_EX_CORE_ExecutionModuleBase____s_ExecutionModuleBase代码生成基类
-    D_EX_CORE_RL_Optimal_Executor_RL最优执行器 -->|event| D_EX_CORE_OrderFilled_订单已成交
-    D_EX_CORE_OrderCreated_订单创建事件 -->|event| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    D_EX_CORE_Auction_Deviation_Threshold_Executor_竞价偏离阈值执行器 -->|event| D_EX_CORE_OrderRejected_订单被拒事件
-    D_EX_CORE_OrderExpired_订单过期事件 -->|event| D_EX_CORE_Simulation_Broker_模拟Broker
-    D_EX_CORE_IdempotencyBlocked_幂等性拦截事件 -->|event| D_EX_CORE_Emergency_Execution_紧急执行
-    D_EX_CORE_Performance_Monitor_性能监控器 -->|event| D_EX_CORE_Kill_Switch_紧急停机事件
-    D_EX_CORE_OrderSubmitted_订单提交契约 -->|contract| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    %% ... 还有 36 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-AUTONOMY_CORE -> D-EX_CORE (15 条)
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_EX_CORE_Order_Manager_订单管理器
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_EX_CORE_Order_Tracking_订单跟踪
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_EX_CORE_Emergency_Execution_紧急执行
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_EX_CORE_Trading_Channel_Auto_Recovery_交易通道熔断自动恢复
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_EX_CORE_Order_Tracking_订单跟踪
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_EX_CORE_OrderRejected_订单拒绝事件
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_EX_CORE_ExecutionReport_交易执行报告
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_EX_CORE_Degradation_Constraint_Set_降级约束集
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_EX_CORE_Emergency_Execution_紧急执行
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|event| D_EX_CORE_ExecutionModuleBase____s_ExecutionModuleBase代码生成基类
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|contract| D_EX_CORE_Position_Tracker_持仓追踪
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|data| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_EX_CORE_Fill_Processor_成交处理器
-    D_AUTONOMY_CORE[D-AUTONOMY_CORE] -->|config_depends| D_EX_CORE_Integration_Path_Layer_集成路径层
-    %% D-AUTONOMY_PERM -> D-EX_CORE (4 条)
-    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|contract| D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估
-    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_EX_CORE_IdempotencyBlocked_幂等性拦截事件
-    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_EX_CORE_Auction_Deviation_Threshold_Executor_竞价偏离阈值执行器
-    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|event| D_EX_CORE_Quantity_数量
-    %% D-COMPLIANCE -> D-EX_CORE (23 条)
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_EX_CORE_Simulation_Broker_模拟Broker
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_Agent_State_Inconsistency_Agent状态不一致
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_EX_CORE_IdempotencyBlocked_幂等性拦截事件
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_Integration_Path_Layer_集成路径层
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_Fill_Processor_成交处理器
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_EX_CORE_Trading_Channel_Auto_Recovery_交易通道熔断自动恢复
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_Blueprint_Implementer_蓝图实现器
-    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_Degradation_Constraint_Set_降级约束集
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_Day_Trade_Execution_做T执行
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_BrokerInterface_券商适配器接口
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_Agent_State_Inconsistency_Agent状态不一致
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_Intraday_Position_Reconciler_盘中持仓对账器
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_IdempotencyBlocked_幂等性拦截事件
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_Execution_Ops_Auto_Optimization_执行运营自优化
-    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_EX_CORE_Sell_Priority_Scheduler_卖出优先级调度器
-    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_EX_CORE_E3_Integration_Path_Layer_E3集成路径层
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_Subjective_to_Quanti___sformation_Record_主观到量化转化记录
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_EX_CORE_下单执行_下单执行_Execution
-    %% D-CROSS_ASSET -> D-EX_CORE (2 条)
-    D_CROSS_ASSET[D-CROSS_ASSET] -->|config_depends| D_EX_CORE_ExecutionReport_执行报告
-    D_CROSS_ASSET[D-CROSS_ASSET] -->|contract| D_EX_CORE_Order_Submission_订单提交
-    %% D-FRONTEND -> D-EX_CORE (5 条)
-    D_FRONTEND[D-FRONTEND] -->|event| D_EX_CORE_miniQMT_API_Unavailable_miniQMT_API不可用
-    D_FRONTEND[D-FRONTEND] -->|data| D_EX_CORE_Design_Decision_Constraint_Set_设计决策约束集
-    D_FRONTEND[D-FRONTEND] -->|event| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
-    D_FRONTEND[D-FRONTEND] -->|event| D_EX_CORE_miniQMT_Trading_Channel_miniQMT交易通道
-    D_FRONTEND[D-FRONTEND] -->|config_depends| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    %% D-GOVERNANCE -> D-EX_CORE (21 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_ex_core___init___py
+    %% D-GOV-SCRIPTS -> D-EX_CORE (1 条)
+    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_ex_core___init___py
+    %% D-GOVERNANCE -> D-EX_CORE (6 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_EX_CORE_OrderRejected_订单被拒事件
-    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_EX_CORE_Order_Manager_订单管理器
-    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_EX_CORE_Simulation_Broker_模拟Broker
-    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_EX_CORE_OMS_Risk_Engine_OMS风险引擎
-    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器
-    D_GOVERNANCE[D-GOVERNANCE] -->|config_depends| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
-    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_EX_CORE_Parameterized_Batch_____Profit_Executor_参数化分批止盈执行器
-    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter
-    D_GOVERNANCE[D-GOVERNANCE] -->|data| D_EX_CORE_Broker_ACL_Broker访问控制列表
-    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    D_GOVERNANCE[D-GOVERNANCE] -->|contract| D_EX_CORE_Microstructure_Modeler_微观结构建模器
-    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_EX_CORE_Order_Execution_Saga_Orchestrator_下单执行Saga编排器
-    D_GOVERNANCE[D-GOVERNANCE] -->|event| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
-    D_GOVERNANCE[D-GOVERNANCE] -->|config_depends| D_EX_CORE_OrderRejected_订单拒绝事件
-    %% D-INFRA_OPS -> D-EX_CORE (7 条)
-    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_EX_CORE_C_Track_L06_Layer_C轨L06层
-    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_EX_CORE_Order_Submission_订单提交
-    D_INFRA_OPS[D-INFRA_OPS] -->|contract| D_EX_CORE_Position_Aggregate_持仓聚合根
-    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_EX_CORE_OrderCancelled_订单撤销事件
-    D_INFRA_OPS[D-INFRA_OPS] -->|event| D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警
-    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_EX_CORE_E_EX_04_FillReceived_E_EX_04_FillReceived事件
-    D_INFRA_OPS[D-INFRA_OPS] -->|data| D_EX_CORE_当前持仓物化视图_Current_Position_View
-    %% D-INTEGRATION -> D-EX_CORE (15 条)
-    D_INTEGRATION[D-INTEGRATION] -->|data| D_EX_CORE_OrderRejected_订单拒绝事件
-    D_INTEGRATION[D-INTEGRATION] -->|data| D_EX_CORE_Order_Contract_订单契约
-    D_INTEGRATION[D-INTEGRATION] -->|contract| D_EX_CORE_Pre_Execution_Checker_执行前检查器
-    D_INTEGRATION[D-INTEGRATION] -->|contract| D_EX_CORE_Blueprint_Implementer_蓝图实现器
-    D_INTEGRATION[D-INTEGRATION] -->|data| D_EX_CORE_Side_方向
-    D_INTEGRATION[D-INTEGRATION] -->|contract| D_EX_CORE_Emergency_Execution_紧急执行
-    D_INTEGRATION[D-INTEGRATION] -->|event| D_EX_CORE_Fill_Tracker_成交跟踪器
-    D_INTEGRATION[D-INTEGRATION] -->|data| D_EX_CORE_Position_Tracker_持仓追踪
-    D_INTEGRATION[D-INTEGRATION] -->|data| D_EX_CORE_Price_价格
-    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_EX_CORE_当日交易物化视图_Today's_Trade_View
-    D_INTEGRATION[D-INTEGRATION] -->|event| D_EX_CORE_CTR_ERR_005_Executio___5_ExecutionRejectionError契约
-    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_EX_CORE_miniQMT_Trading_Channel_Manager_miniQMT交易通道管理器
-    D_INTEGRATION[D-INTEGRATION] -->|event| D_EX_CORE_l06_pre_trade_C轨L06层Pre_Trade子模块
-    D_INTEGRATION[D-INTEGRATION] -->|data| D_EX_CORE_当前持仓物化视图_Current_Position_View
-    D_INTEGRATION[D-INTEGRATION] -->|config_depends| D_EX_CORE_Timer_Agent_择时Agent
-    %% D-INTELLIGENCE -> D-EX_CORE (6 条)
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_EX_CORE_Execution_Auditor_执行审计
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|contract| D_EX_CORE_L4_to_Execution_Order_Submission_L4→执行订单提交
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_EX_CORE_Order_Execution_Saga_Orchestrator_下单执行Saga编排器
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|config_depends| D_EX_CORE_Broker_API_券商API
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|data| D_EX_CORE_ExecutionRejectionError_执行拒绝错误
-    %% D-KNOWLEDGE -> D-EX_CORE (3 条)
-    D_KNOWLEDGE[D-KNOWLEDGE] -->|contract| D_EX_CORE_Degradation_Constraint_Set_降级约束集
-    D_KNOWLEDGE[D-KNOWLEDGE] -->|event| D_EX_CORE_Agent_State_Inconsistency_Agent状态不一致
-    D_KNOWLEDGE[D-KNOWLEDGE] -->|data| D_EX_CORE_Emergency_Execution_紧急执行
-    %% D-OPS -> D-EX_CORE (10 条)
-    D_OPS[D-OPS] -->|contract| D_EX_CORE_Fill_Tracker_成交跟踪器
-    D_OPS[D-OPS] -->|contract| D_EX_CORE_FillReceived_成交回报已接收
-    D_OPS[D-OPS] -->|event| D_EX_CORE_l06_oms_C轨L06层订单管理系统子模块
-    D_OPS[D-OPS] -->|contract| D_EX_CORE_OrderFilled_订单已成交
-    D_OPS[D-OPS] -->|event| D_EX_CORE_CTR_P1_007_Execution___TR_P1_007_ExecutionReport契约
-    D_OPS[D-OPS] -->|event| D_EX_CORE_T+1_Rule_Non_Violable_T+1规则不可违反
-    D_OPS[D-OPS] -->|data| D_EX_CORE_L1_Fixed_Slippage_Model_L1固定滑点模型
-    D_OPS[D-OPS] -->|data| D_EX_CORE_CTR_005_Fill_CTR_005_Fill契约
-    D_OPS[D-OPS] -->|data| D_EX_CORE_Fill_Contract_成交契约
-    D_OPS[D-OPS] -->|data| D_EX_CORE_Order_Manager_订单管理器
-    %% D-PF_ALLOC -> D-EX_CORE (1 条)
-    D_PF_ALLOC[D-PF_ALLOC] -->|data| D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter
-    %% D-PF_CORE -> D-EX_CORE (9 条)
-    D_PF_CORE[D-PF_CORE] -->|event| D_EX_CORE_OrderFilled_订单成交事件
-    D_PF_CORE[D-PF_CORE] -->|config_depends| D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法
-    D_PF_CORE[D-PF_CORE] -->|config_depends| D_EX_CORE_Live_Simulation_Switcher_实盘_模拟切换器
-    D_PF_CORE[D-PF_CORE] -->|config_depends| D_EX_CORE_ExecutionReport_执行报告
-    D_PF_CORE[D-PF_CORE] -->|config_depends| D_EX_CORE_ExecutionRejectionError_执行拒绝错误
-    D_PF_CORE[D-PF_CORE] -->|event| D_EX_CORE_L3_Order_Book_Simula____Slippage_Model_L3订单簿模拟滑点模型
-    D_PF_CORE[D-PF_CORE] -->|contract| D_EX_CORE_Emergency_Execution_紧急执行
-    D_PF_CORE[D-PF_CORE] -->|event| D_EX_CORE_ExecutionModuleBase____s_ExecutionModuleBase代码生成基类
-    D_PF_CORE[D-PF_CORE] -->|contract| D_EX_CORE_L2_Square_Root_Impact_Slippage_Model_L2平方根冲击滑点模型
-    %% D-POSITION -> D-EX_CORE (3 条)
-    D_POSITION[D-POSITION] -->|contract| D_EX_CORE_ExecutionReport_执行报告
-    D_POSITION[D-POSITION] -->|event| D_EX_CORE_当前持仓物化视图_Current_Position_View
-    D_POSITION[D-POSITION] -->|data| D_EX_CORE_Fill_Tracker_成交跟踪器
-    %% D-REPORTING -> D-EX_CORE (5 条)
-    D_REPORTING[D-REPORTING] -->|event| D_EX_CORE_CTR_006_PositionSnap____CTR_006_PositionSnapshot契约
-    D_REPORTING[D-REPORTING] -->|contract| D_EX_CORE_FillReceived_成交回报已接收
-    D_REPORTING[D-REPORTING] -->|data| D_EX_CORE_l06_oms_C轨L06层订单管理系统子模块
-    D_REPORTING[D-REPORTING] -->|data| D_EX_CORE_L4_to_Execution_Order_Submission_L4→执行订单提交
-    D_REPORTING[D-REPORTING] -->|data| D_EX_CORE_Fill_Tracker_成交跟踪器
-    %% D-RISK -> D-EX_CORE (20 条)
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Emergency_Execution_紧急执行
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Order_Tracking_订单跟踪
-    D_RISK[D-RISK] -->|data| D_EX_CORE_P2_Medium_P2中优先级指令
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_OrderFilled_订单已成交
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_IdempotencyBlocked_幂等性拦截事件
-    D_RISK[D-RISK] -->|event| D_EX_CORE_Execution_Engine_执行引擎
-    D_RISK[D-RISK] -->|data| D_EX_CORE_OrderRejected_订单拒绝事件
-    D_RISK[D-RISK] -->|event| D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Pre_Execution_Checker_执行前检查器
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Trigger_Evaluation_触发评估
-    D_RISK[D-RISK] -->|event| D_EX_CORE_Price_价格
-    D_RISK[D-RISK] -->|config_depends| D_EX_CORE_Trigger_Evaluation_触发评估
-    D_RISK[D-RISK] -->|event| D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter
-    D_RISK[D-RISK] -->|data| D_EX_CORE_Execution_Engine_执行引擎
-    D_RISK[D-RISK] -->|event| D_EX_CORE_Subjective_Trading_E___Transformation_主观交易经验量化框架转化
-    D_RISK[D-RISK] -->|event| D_EX_CORE_Execution_TCA_执行TCA
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_Microstructure_Modeler_微观结构建模器
-    D_RISK[D-RISK] -->|contract| D_EX_CORE_L4_to_Execution_Order_Submission_L4→执行订单提交
-    %% D-SECURITY -> D-EX_CORE (16 条)
-    D_SECURITY[D-SECURITY] -->|data| D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch
-    D_SECURITY[D-SECURITY] -->|data| D_EX_CORE_Timing_Decision_择时决策
-    D_SECURITY[D-SECURITY] -->|contract| D_EX_CORE_下单执行_下单执行_Execution
-    D_SECURITY[D-SECURITY] -->|contract| D_EX_CORE_Sell_Priority_Scheduler_卖出优先级调度器
-    D_SECURITY[D-SECURITY] -->|contract| D_EX_CORE_OrderRejected_订单拒绝事件
-    D_SECURITY[D-SECURITY] -->|event| D_EX_CORE_Blueprint_Implementer_蓝图实现器
-    D_SECURITY[D-SECURITY] -->|data| D_EX_CORE_Circuit_Breaker_Pattern_熔断器模式
-    D_SECURITY[D-SECURITY] -->|data| D_EX_CORE_Parameterized_Batch_Executor_参数化分批执行器
-    D_SECURITY[D-SECURITY] -->|event| D_EX_CORE_Timing_Decision_择时决策
-    D_SECURITY[D-SECURITY] -->|event| D_EX_CORE_Order_订单聚合根
-    D_SECURITY[D-SECURITY] -->|config_depends| D_EX_CORE_Microstructure_Modeler_微观结构建模器
-    D_SECURITY[D-SECURITY] -->|event| D_EX_CORE_E2_Integration_Path_Layer_E2集成路径层
-    D_SECURITY[D-SECURITY] -->|config_depends| D_EX_CORE_C_Track_L06_Layer_C轨L06层
-    D_SECURITY[D-SECURITY] -->|event| D_EX_CORE_RL_Optimal_Executor_RL最优执行器
-    D_SECURITY[D-SECURITY] -->|contract| D_EX_CORE_Trigger_Evaluation_触发评估
-    D_SECURITY[D-SECURITY] -->|contract| D_EX_CORE_OrderCreated_订单创建事件
-    %% D-SELL_DECISION -> D-EX_CORE (2 条)
-    D_SELL_DECISION[D-SELL_DECISION] -->|data| D_EX_CORE_当前持仓物化视图_Current_Position_View
-    D_SELL_DECISION[D-SELL_DECISION] -->|event| D_EX_CORE_ExecutionReport_交易执行报告
-    %% D-SIGNAL -> D-EX_CORE (15 条)
-    D_SIGNAL[D-SIGNAL] -->|contract| D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器
-    D_SIGNAL[D-SIGNAL] -->|contract| D_EX_CORE_Order_Generation_订单生成
-    D_SIGNAL[D-SIGNAL] -->|data| D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter
-    D_SIGNAL[D-SIGNAL] -->|event| D_EX_CORE_FillReceived_成交回报已接收
-    D_SIGNAL[D-SIGNAL] -->|contract| D_EX_CORE_Trading_Pipeline_Process_交易流水线进程
-    D_SIGNAL[D-SIGNAL] -->|data| D_EX_CORE_Trade_Execution_Core_交易执行核心
-    D_SIGNAL[D-SIGNAL] -->|contract| D_EX_CORE_P3_Heartbeat_Loss_Alert_P3心跳丢失告警
-    D_SIGNAL[D-SIGNAL] -->|contract| D_EX_CORE_Deployment_Consistency_Manager_部署一致性管理器
-    D_SIGNAL[D-SIGNAL] -->|event| D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器
-    D_SIGNAL[D-SIGNAL] -->|config_depends| D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估
-    D_SIGNAL[D-SIGNAL] -->|config_depends| D_EX_CORE_Degradation_Constraint_Set_降级约束集
-    D_SIGNAL[D-SIGNAL] -->|data| D_EX_CORE_OrderExpired_订单过期事件
-    D_SIGNAL[D-SIGNAL] -->|config_depends| D_EX_CORE_Nanosecond_Critical_Path_Analyzer_纳秒级关键路径分析器
-    D_SIGNAL[D-SIGNAL] -->|config_depends| D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估
-    D_SIGNAL[D-SIGNAL] -->|data| D_EX_CORE_Intraday_Position_Reconciler_盘中持仓对账器
-    %% D-SIMULATION -> D-EX_CORE (7 条)
-    D_SIMULATION[D-SIMULATION] -->|contract| D_EX_CORE_Fill_Processor_成交处理器
-    D_SIMULATION[D-SIMULATION] -->|event| D_EX_CORE_Timer_Agent_择时Agent
-    D_SIMULATION[D-SIMULATION] -->|data| D_EX_CORE_Execution_Ops_Auto_Optimization_执行运营自优化
-    D_SIMULATION[D-SIMULATION] -->|data| D_EX_CORE_Broker_Interface_broker接口
-    D_SIMULATION[D-SIMULATION] -->|contract| D_EX_CORE_Execution_TCA_执行TCA
-    D_SIMULATION[D-SIMULATION] -->|event| D_EX_CORE_Day_Trade_PnL_Estimate_做T盈亏预估
-    D_SIMULATION[D-SIMULATION] -->|contract| D_EX_CORE_Slippage_Model_3_Level_Progressive_滑点模型3级渐进
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-EX_CORE -> D-DATA_ENG (4 条)
-    D_EX_CORE_OMS_Risk_Engine_OMS风险引擎 -->|contract| D_DATA_ENG[D-DATA_ENG]
-    D_EX_CORE_当日交易物化视图_Today's_Trade_View -->|contract| D_DATA_ENG[D-DATA_ENG]
-    D_EX_CORE_Subjective_Trading_E___Transformation_主观交易经验量化框架转化 -->|contract| D_DATA_ENG[D-DATA_ENG]
-    D_EX_CORE_当前持仓物化视图_Current_Position_View -->|data| D_DATA_ENG[D-DATA_ENG]
-    %% D-EX_CORE -> D-EX_SOR (7 条)
-    D_EX_CORE_Sell_Priority_Scheduler_卖出优先级调度器 -->|contract| D_EX_SOR[D-EX_SOR]
-    D_EX_CORE_Single_Large_Order_Non_Auto_Execute_单笔大额下单不可自动执行 -->|event| D_EX_SOR[D-EX_SOR]
-    D_EX_CORE_Order_State_Machine_订单状态机 -->|data| D_EX_SOR[D-EX_SOR]
-    D_EX_CORE_Kill_Switch_紧急停机事件 -->|contract| D_EX_SOR[D-EX_SOR]
-    D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch -->|contract| D_EX_SOR[D-EX_SOR]
-    D_EX_CORE_ExecutionReport_执行报告 -->|event| D_EX_SOR[D-EX_SOR]
-    D_EX_CORE_E2_Integration_Path_Layer_E2集成路径层 -->|event| D_EX_SOR[D-EX_SOR]
-    %% D-EX_CORE -> D-FACTOR (15 条)
-    D_EX_CORE_L2_Square_Root_Impact_Slippage_Model_L2平方根冲击滑点模型 -->|contract| D_FACTOR[D-FACTOR]
-    D_EX_CORE_Execution_Aggregate_Root_Manager_执行聚合根管理器 -->|contract| D_FACTOR[D-FACTOR]
-    D_EX_CORE_多契约生产适配器_Multi_contract_Production_Adapter -->|data| D_FACTOR[D-FACTOR]
-    D_EX_CORE_当前持仓物化视图_Current_Position_View -->|data| D_FACTOR[D-FACTOR]
-    D_EX_CORE_任务执行流_Task_Execution_Stream -->|contract| D_FACTOR[D-FACTOR]
-    D_EX_CORE_Fill_Processor_成交处理器 -->|contract| D_FACTOR[D-FACTOR]
-    D_EX_CORE_Order_Generation_订单生成 -->|data| D_FACTOR[D-FACTOR]
-    D_EX_CORE_OrderCancelled_订单撤销事件 -->|data| D_FACTOR[D-FACTOR]
-    D_EX_CORE_Broker_Interface_broker接口 -->|contract| D_FACTOR[D-FACTOR]
-    D_EX_CORE_任务执行流_Task_Execution_Stream -->|event| D_FACTOR[D-FACTOR]
-    D_EX_CORE_OrderFilled_订单成交事件 -->|config_depends| D_FACTOR[D-FACTOR]
-    D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法 -->|data| D_FACTOR[D-FACTOR]
-    D_EX_CORE_Trading_Kill_Switch_交易Kill_Switch -->|data| D_FACTOR[D-FACTOR]
-    D_EX_CORE_OrderCreated_订单创建事件 -->|event| D_FACTOR[D-FACTOR]
-    D_EX_CORE_E0_5_Integration_Path_Layer_E0_5集成路径层 -->|contract| D_FACTOR[D-FACTOR]
     %% D-EX_CORE -> D-GOVERNANCE (10 条)
     src_zephyr_ex_core_broker_interface_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -445,37 +49,12 @@ graph TD
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_ex_core_order_state_escalator_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-EX_CORE -> D-INFRA_RUNTIME (10 条)
-    D_EX_CORE_BrokerInterface_券商适配器接口 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Kill_Switch_紧急停机事件 -->|data| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Execution_Domain_Repository_Interface_执行域仓储接口 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_OrderSubmitted_订单提交契约 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Parameterized_Stop_L____Profit_Executor_参数化止损止盈执行器 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Live_Simulation_Switcher_实盘_模拟切换器 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Kill_Switch_紧急停机事件 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Degradation_Constraint_Set_降级约束集 -->|config_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法 -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_EX_CORE_OrderFilled_订单成交事件 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    %% D-EX_CORE -> D-MKT_DATA (9 条)
-    D_EX_CORE_E3_Integration_Path_Layer_E3集成路径层 -->|data| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_OrderFilled_订单已成交 -->|data| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_Trigger_Evaluation_触发评估 -->|contract| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_Price_价格 -->|event| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_Execution_Engine_执行引擎 -->|data| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_OrderSubmitted_订单提交事件 -->|data| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_Arbitration_Priority_System_仲裁优先级体系 -->|contract| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_Emergency_Execution_紧急执行 -->|data| D_MKT_DATA[D-MKT_DATA]
-    D_EX_CORE_Pre_Execution_Checker_执行前检查器 -->|data| D_MKT_DATA[D-MKT_DATA]
-    %% D-EX_CORE -> D-TRADING (7 条)
+    %% D-EX_CORE -> D-TRADING (3 条)
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING[D-TRADING]
-    D_EX_CORE_Microstructure_Modeler_微观结构建模器 -->|contract| D_TRADING[D-TRADING]
-    D_EX_CORE_l06_oms_C轨L06层订单管理系统子模块 -->|data| D_TRADING[D-TRADING]
-    D_EX_CORE_Execution_Domain_Factory_Method_执行域工厂方法 -->|contract| D_TRADING[D-TRADING]
-    D_EX_CORE_L2_Square_Root_Impact_Slippage_Model_L2平方根冲击滑点模型 -->|data| D_TRADING[D-TRADING]
 
     %% 统计
-    %% 域内依赖: 116 条
-    %% 跨域入边: 189 条
-    %% 跨域出边: 62 条
+    %% 域内依赖: 1 条
+    %% 跨域入边: 7 条
+    %% 跨域出边: 13 条

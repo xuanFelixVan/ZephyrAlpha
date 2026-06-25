@@ -1,0 +1,127 @@
+---
+doc_type: domain_architecture_doc
+title: D-MKT_DATA 行情数据架构文档
+version: "1.0"
+status: active
+date: 2026-06-25
+owner: auto-generator
+ttl: permanent
+---
+
+# 15_d_mkt_data / 行情数据
+
+> **文档作用 / Purpose**: 展示 行情数据（D-MKT_DATA）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+
+> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
+> 最后更新: 2026-06-25 18:42:45
+> 数据源: depgraph.db nodes表 + edges表
+
+## 域基本信息 / Domain Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 编号 | 15 | Number | 15 |
+| 域ID | D-MKT_DATA | Domain ID | D-MKT_DATA |
+| 域名称 | 行情数据 | Domain Name | 行情数据(接入+存储) |
+| 层级 | L1_foundation | Layer | L1_foundation |
+| 模块数 | 10 | Module Count | 10 |
+| 域内依赖 | 0 | Internal Dependencies | 0 |
+| 跨域入边 | 17 | Cross-domain Incoming | 17 |
+| 跨域出边 | 2 | Cross-domain Outgoing | 2 |
+| 设计态模块 | 1 | Design Modules | 1 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
+| 生产态模块 | 1 | Production Modules | 1 |
+| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
+| 描述 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 | Description | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 |
+
+## 模块清单 / Module List
+
+共 10 个模块（按路径排序，全部显示）
+
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/market_data/__init__.py |  | production | generated |
+| src/zephyr/market_data/_extensions/__init__.py |  | prototype | deprecated |
+| src/zephyr/market_data/api/__init__.py |  | prototype | deprecated |
+| src/zephyr/market_data/core/__init__.py |  | prototype | deprecated |
+| src/zephyr/market_data/infrastructure/__init__.py |  | prototype | deprecated |
+| src/zephyr/market_data/market_data.py |  | prototype | generated |
+| src/zephyr/market_data/market_data_pipeline.py |  | prototype | generated |
+| src/zephyr/market_data/models/__init__.py |  | prototype | deprecated |
+| src/zephyr/market_data/services/__init__.py |  | prototype | deprecated |
+| 交易日历引擎(交易所日历/假日管理/T+N计算)/D-TRADING-07 | Trading Calendar Engine | design | planned |
+
+## 域内依赖图 / Internal Dependency Diagram
+
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
+>
+> **图例说明 / Legend**：
+> - **实线边框 = 运营态模块**（production，已上线运行）
+> - **虚线边框 = 设计态模块**（design，还在设计中）
+> - **实线箭头 = 运营态依赖**（已生效的依赖关系）
+> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
+
+```mermaid
+graph TD
+    subgraph D_MKT_DATA["D-MKT_DATA 行情数据"]
+        src_zephyr_market_data_init_py["src/zephyr/market_data/__init__.py production"]
+        src_zephyr_market_data_extensions_init_py["src/zephyr/market_data/_extensions/__init__.py prototype"]
+        src_zephyr_market_data_api_init_py["src/zephyr/market_data/api/__init__.py prototype"]
+        src_zephyr_market_data_core_init_py["src/zephyr/market_data/core/__init__.py prototype"]
+        src_zephyr_market_data_infrastructure_init_py["src/zephyr/market_data/infrastructure/__init__.py prototype"]
+        src_zephyr_market_data_market_data_py["src/zephyr/market_data/market_data.py prototype"]
+        src_zephyr_market_data_market_data_pipeline_py["src/zephyr/market_data/market_data_pipeline.py prototype"]
+        src_zephyr_market_data_models_init_py["src/zephyr/market_data/models/__init__.py prototype"]
+        src_zephyr_market_data_services_init_py["src/zephyr/market_data/services/__init__.py prototype"]
+        T_N_D_TRADING_07["Trading Calendar Engine design"]
+    end
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_market_data_market_data_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_market_data_market_data_pipeline_py -.->|config_depends| D_GOVERNANCE
+    D_GOV_SCRIPTS["D-GOV-SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_market_data_init_py production
+    class src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_market_data_py,src_zephyr_market_data_market_data_pipeline_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py,T_N_D_TRADING_07 design
+    class D_GOVERNANCE external_prod
+    class D_GOV_SCRIPTS external_design
+```
+
+## 跨域依赖 / Cross-domain Dependencies
+
+### 本域依赖的其他域（出边）/ Depends On
+
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-GOVERNANCE | 2 | config_depends |
+
+### 依赖本域的其他域（入边）/ Depended By
+
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D-GOVERNANCE | 16 | test_depends |
+| D-GOV-SCRIPTS | 1 | import_depends |
+
+## 说明 / Notes
+
+- **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
+- **生成器 / Generator**: `generate_domain_doc.py`
+- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
+- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`

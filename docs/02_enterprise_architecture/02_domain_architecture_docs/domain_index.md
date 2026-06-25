@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。
 
 > 本文档由 generate_domain_index.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 03:32:03
+> 最后更新: 2026-06-25 18:42:17
 > 数据源: depgraph.db domains表 + nodes表
 
 ## 统计概览
@@ -38,33 +38,31 @@ ttl: permanent
 | D-INFRA_RUNTIME | 运行时集成 | 148 | 139 | 3 | 6 | 148/150 (OK) | [d_infra_runtime.md](domains/d_infra_runtime.md) |
 | D-INFRA_TELEMETRY | observability_profiling | 51 | 51 | 0 | 0 | 51/150 (OK) | [d_infra_telemetry.md](domains/d_infra_telemetry.md) |
 
-### L1_foundation (6 个域)
+### L1_foundation (15 个域)
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D-ALT_DATA | 另类数据 | 8 | 1 | 0 | 7 | 8/150 (OK) | [d_alt_data.md](domains/d_alt_data.md) |
+| D-AUTONOMY_CORE | 自治核心 | 181 | 2 | 5 | 174 | 181/150 (超容) | [d_autonomy_core.md](domains/d_autonomy_core.md) |
 | D-BEHAVIORAL_AUDIT | 行为审计 | 79 | 79 | 0 | 0 | 79/150 (OK) | [d_behavioral_audit.md](domains/d_behavioral_audit.md) |
 | D-DATA_ENG | 数据工程 | 11 | 0 | 4 | 7 | 11/150 (OK) | [d_data_eng.md](domains/d_data_eng.md) |
 | D-DATA_GOV | 数据治理 | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_data_gov.md](domains/d_data_gov.md) |
 | D-DATA_SEC | 数据安全与契约 | 10 | 0 | 0 | 10 | 10/150 (OK) | [d_data_sec.md](domains/d_data_sec.md) |
-| D-MKT_DATA | 行情数据 | 10 | 1 | 1 | 8 | 10/150 (OK) | [d_mkt_data.md](domains/d_mkt_data.md) |
-
-### L1_platform (7 个域)
-
-| 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
-|------|--------|:---:|:---:|:---:|:---:|------|------|
-| D-AUTONOMY_CORE | 自治核心 | 181 | 2 | 5 | 174 | 181/150 (超容) | [d_autonomy_core.md](domains/d_autonomy_core.md) |
 | D-FRONTEND | 前端 | 33 | 7 | 10 | 16 | 33/150 (OK) | [d_frontend.md](domains/d_frontend.md) |
 | D-INTEGRATION | 管线路由 | 314 | 71 | 17 | 226 | 314/150 (超容) | [d_integration.md](domains/d_integration.md) |
+| D-INTEGRATION-GATEWAY | mcp_servers | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_integration_gateway.md](domains/d_integration_gateway.md) |
+| D-MKT_DATA | 行情数据 | 10 | 1 | 1 | 8 | 10/150 (OK) | [d_mkt_data.md](domains/d_mkt_data.md) |
 | D-OPS | 反馈循环 | 445 | 24 | 13 | 408 | 445/150 (超容) | [d_ops.md](domains/d_ops.md) |
 | D-REPORTING | 报告 | 19 | 1 | 4 | 14 | 19/150 (OK) | [d_reporting.md](domains/d_reporting.md) |
 | D-SECURITY | 对抗验证 | 276 | 132 | 32 | 112 | 276/150 (超容) | [d_security.md](domains/d_security.md) |
+| D-SECURITY-LLM | llm_defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_security_llm.md](domains/d_security_llm.md) |
 | D-SHARED | 共享服务 | 303 | 94 | 6 | 203 | 303/150 (超容) | [d_shared.md](domains/d_shared.md) |
 
 ### L2_domain (32 个域)
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
+| D-ASHARE_SIGNAL | A股特色信号 | 27 | 0 | 20 | 7 | 27/150 (OK) | [d_ashare_signal.md](domains/d_ashare_signal.md) |
 | D-AUTONOMY_PERM | 自治保护 | 88 | 2 | 19 | 67 | 88/150 (OK) | [d_autonomy_perm.md](domains/d_autonomy_perm.md) |
 | D-BACKTEST | 回测 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_backtest.md](domains/d_backtest.md) |
 | D-COMPLIANCE | 合规 | 30 | 0 | 5 | 25 | 30/150 (OK) | [d_compliance.md](domains/d_compliance.md) |
@@ -74,6 +72,7 @@ ttl: permanent
 | D-EX_CORE | 执行核心 | 14 | 3 | 0 | 11 | 14/150 (OK) | [d_ex_core.md](domains/d_ex_core.md) |
 | D-EX_SOR | 执行路由 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ex_sor.md](domains/d_ex_sor.md) |
 | D-FACTOR | 因子 | 17 | 2 | 0 | 15 | 17/150 (OK) | [d_factor.md](domains/d_factor.md) |
+| D-FUNDAMENTAL_SIGNAL | 基本面信号 | 25 | 4 | 0 | 21 | 25/150 (OK) | [d_fundamental_signal.md](domains/d_fundamental_signal.md) |
 | D-GOV-DOCS | architecture_docs | 151 | 100 | 0 | 51 | 151/150 (超容) | [d_gov_docs.md](domains/d_gov_docs.md) |
 | D-GOV-ENFORCEMENT | rule_enforcement | 107 | 69 | 0 | 38 | 107/150 (OK) | [d_gov_enforcement.md](domains/d_gov_enforcement.md) |
 | D-GOV-SCRIPTS | code_dedup | 416 | 26 | 0 | 390 | 416/150 (超容) | [d_gov_scripts.md](domains/d_gov_scripts.md) |
@@ -91,17 +90,13 @@ ttl: permanent
 | D-POSITION | 仓位管理 | 8 | 0 | 0 | 8 | 8/150 (OK) | [d_position.md](domains/d_position.md) |
 | D-RISK | 风控 | 82 | 9 | 57 | 16 | 82/150 (OK) | [d_risk.md](domains/d_risk.md) |
 | D-SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_sell_decision.md](domains/d_sell_decision.md) |
-| D-SIGNAL | 信号 | 47 | 1 | 45 | 1 | 47/150 (OK) | [d_signal.md](domains/d_signal.md) |
-| D-SIGNAL_ASHARE | A股特色信号 | 27 | 0 | 20 | 7 | 27/150 (OK) | [d_signal_ashare.md](domains/d_signal_ashare.md) |
-| D-SIGNAL_FUNDAMENTAL | 基本面信号 | 23 | 3 | 0 | 20 | 23/150 (OK) | [d_signal_fundamental.md](domains/d_signal_fundamental.md) |
-| D-SIGNAL_QUALITY | 信号质量 | 17 | 0 | 10 | 7 | 17/150 (OK) | [d_signal_quality.md](domains/d_signal_quality.md) |
+| D-SIGLEGACY | 信号遗留设计态 | 45 | 0 | 45 | 0 | 45/150 (OK) | [d_siglegacy.md](domains/d_siglegacy.md) |
+| D-SIGQC | 信号质量控制 | 17 | 0 | 10 | 7 | 17/150 (OK) | [d_sigqc.md](domains/d_sigqc.md) |
 | D-SIMULATION | 仿真 | 23 | 4 | 5 | 14 | 23/150 (OK) | [d_simulation.md](domains/d_simulation.md) |
 | D-TRADING | 交易运营 | 169 | 20 | 6 | 143 | 169/150 (超容) | [d_trading.md](domains/d_trading.md) |
 
-### 未分类 (3 个域)
+### 未分类 (1 个域)
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D-GOV-REPAIR | rollback | 0 | 0 | 0 | 0 | 0/200 (OK) | [d_gov_repair.md](domains/d_gov_repair.md) |
-| D-INTEGRATION-GATEWAY | mcp_servers | 0 | 0 | 0 | 0 | 0/200 (OK) | [d_integration_gateway.md](domains/d_integration_gateway.md) |
-| D-SECURITY-LLM | llm_defense | 0 | 0 | 0 | 0 | 0/200 (OK) | [d_security_llm.md](domains/d_security_llm.md) |
+| D-GOV-REPAIR | rollback | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_gov_repair.md](domains/d_gov_repair.md) |

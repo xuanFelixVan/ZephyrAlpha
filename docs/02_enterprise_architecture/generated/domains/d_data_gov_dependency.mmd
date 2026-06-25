@@ -1,209 +1,21 @@
 %% D-DATA_GOV 域全景依赖图
-%% 生成时间: 2026-06-24 23:01:57
+%% 生成时间: 2026-06-25 18:42:45
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 38, 依赖边数: 124
+%% 模块数: 0, 依赖边数: 0
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_DATA_GOV[数据治理]
-        D_DATA_GOV_AI治理血缘_AI_Governance_Lineage["D-DATA-GOV/AI治理血缘 AI Governance Lineage [design]"]
-        D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality["...GOV/AI驱动数据质量监控 AI-driven Data Quality [design]"]
-        D_DATA_GOV_Apache_Polaris目录_Apache_Polaris_Catalog["...ache Polaris目录 Apache Polaris Catalog [design]"]
-        D_DATA_GOV_BlackRock_AI数据质量三阶段_BlackRock_AI_Data_Quality["...k AI数据质量三阶段 BlackRock AI Data Quality [design]"]
-        D_DATA_GOV_C_022_数据质量自管理_Data_Quality_Self_management["... 数据质量自管理 Data Quality Self-management [design]"]
-        D_DATA_GOV_CTR_TRACE_001血缘ID贯穿全链路_Lineage_ID_End_to_end["...CE-001血缘ID贯穿全链路 Lineage ID End-to-end [design]"]
-        D_DATA_GOV_Data_Catalog_数据目录["D-DATA-GOV/Data Catalog 数据目录 [design]"]
-        D_DATA_GOV_Data_Lineage_数据血缘["D-DATA-GOV/Data Lineage 数据血缘 [design]"]
-        D_DATA_GOV_Data_Quality_Gate_数据质量门禁["D-DATA-GOV/Data Quality Gate 数据质量门禁 [design]"]
-        D_DATA_GOV_Data_Quality_SLA_数据质量SLA["D-DATA-GOV/Data Quality SLA 数据质量SLA [design]"]
-        D_DATA_GOV_DataQualityDegraded_数据质量降级["D-DATA-GOV/DataQualityDegraded 数据质量降级 [design]"]
-        D_DATA_GOV_DataQualityDegraded_数据质量降级事件["D-DATA-GOV/DataQualityDegraded 数据质量降级事件 [design]"]
-        D_DATA_GOV_DataQualityError_数据质量错误["D-DATA-GOV/DataQualityError 数据质量错误 [design]"]
-        D_DATA_GOV_MVP用SQLite存储血缘_SQLite_for_Lineage_MVP["...MVP用SQLite存储血缘 SQLite for Lineage MVP [design]"]
-        D_DATA_GOV_Market_Regime_Reference_Data_市场状态分类参考数据["...rket Regime Reference Data 市场状态分类参考数据 [design]"]
-        D_DATA_GOV_Metadata_Registry_MDM_元数据注册中心MDM["...-GOV/Metadata Registry MDM 元数据注册中心MDM [design]"]
-        D_DATA_GOV_OpenLineage标准适配_OpenLineage_Adaptation["...penLineage标准适配 OpenLineage Adaptation [design]"]
-        D_DATA_GOV_Quality_Gate_Four_Level_质量门禁四级贯穿["...-GOV/Quality Gate Four-Level 质量门禁四级贯穿 [design]"]
-        D_DATA_GOV_Quality_Gate_质量门禁["D-DATA-GOV/Quality Gate 质量门禁 [design]"]
-        D_DATA_GOV_Reference_Data_参考数据["D-DATA-GOV/Reference Data 参考数据 [design]"]
-        D_DATA_GOV_Security_Master_Manager_证券主数据管理器["...-GOV/Security Master Manager 证券主数据管理器 [design]"]
-        D_DATA_GOV_分阶段实现MVP→V2→V3→V4_Phased_Lineage["...-GOV/分阶段实现MVP→V2→V3→V4 Phased Lineage [design]"]
-        D_DATA_GOV_列级血缘_Column_level_Lineage["D-DATA-GOV/列级血缘 Column-level Lineage [design]"]
-        D_DATA_GOV_列级血缘而非表级_Column_level_over_Table_level["...级血缘而非表级 Column-level over Table-level [design]"]
-        D_DATA_GOV_列级血缘自动化_Column_level_Lineage_Automation["...血缘自动化 Column-level Lineage Automation [design]"]
-        D_DATA_GOV_数据域规则目录_Data_Domain_Rule_Catalog["...-GOV/数据域规则目录 Data Domain Rule Catalog [design]"]
-        D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring["...V/数据源质量评分 Data Source Quality Scoring [design]"]
-        D_DATA_GOV_数据血缘_Data_Lineage["D-DATA-GOV/数据血缘 Data Lineage [design]"]
-        D_DATA_GOV_数据质量_Data_Quality["D-DATA-GOV/数据质量 Data Quality [design]"]
-        D_DATA_GOV_数据质量五维度定义_ISO_8000_Five_Dimensions["...OV/数据质量五维度定义 ISO 8000 Five Dimensions [design]"]
-        D_DATA_GOV_数据质量记分卡_Data_Quality_Scorecard["...TA-GOV/数据质量记分卡 Data Quality Scorecard [design]"]
-        D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check["...A-GOV/盘前质量检查 Pre-market Quality Check [design]"]
-        D_DATA_GOV_血缘成熟度模型_Lineage_Maturity_Model["...TA-GOV/血缘成熟度模型 Lineage Maturity Model [design]"]
-        D_DATA_GOV_血缘追踪链_Lineage_Tracking_Chain["D-DATA-GOV/血缘追踪链 Lineage Tracking Chain [design]"]
-        D_DATA_GOV_血缘链全景_Lineage_Chain_Panorama["D-DATA-GOV/血缘链全景 Lineage Chain Panorama [design]"]
-        D_DATA_GOV_质量检查按交易时段分三阶段_Three_stage_Quality_Check["...检查按交易时段分三阶段 Three-stage Quality Check [design]"]
-        D_DATA_GOV_质量检查自建而非Great_Expec___ns_Self_built_Quality_Check["...Expectations Self-built Quality Check [design]"]
-        D_DATA_GOV_质量检查自建而非Great_Expectations_Self_built_over_GE["...Great Expectations Self-built over GE [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
-    D_DATA_GOV_Data_Catalog_数据目录 -->|import_depends| D_DATA_GOV_数据质量_Data_Quality
-    D_DATA_GOV_数据质量_Data_Quality -->|import_depends| D_DATA_GOV_数据血缘_Data_Lineage
-    D_DATA_GOV_数据血缘_Data_Lineage -->|import_depends| D_DATA_GOV_AI治理血缘_AI_Governance_Lineage
-    D_DATA_GOV_AI治理血缘_AI_Governance_Lineage -->|import_depends| D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring
-    D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring -->|import_depends| D_DATA_GOV_血缘链全景_Lineage_Chain_Panorama
-    D_DATA_GOV_血缘链全景_Lineage_Chain_Panorama -->|import_depends| D_DATA_GOV_列级血缘_Column_level_Lineage
-    D_DATA_GOV_列级血缘_Column_level_Lineage -->|import_depends| D_DATA_GOV_OpenLineage标准适配_OpenLineage_Adaptation
-    D_DATA_GOV_OpenLineage标准适配_OpenLineage_Adaptation -->|import_depends| D_DATA_GOV_数据质量五维度定义_ISO_8000_Five_Dimensions
-    D_DATA_GOV_数据质量五维度定义_ISO_8000_Five_Dimensions -->|import_depends| D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check
-    D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check -->|import_depends| D_DATA_GOV_数据质量记分卡_Data_Quality_Scorecard
-    D_DATA_GOV_数据质量记分卡_Data_Quality_Scorecard -->|import_depends| D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality
-    D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality -->|import_depends| D_DATA_GOV_Market_Regime_Reference_Data_市场状态分类参考数据
-    D_DATA_GOV_Market_Regime_Reference_Data_市场状态分类参考数据 -->|import_depends| D_DATA_GOV_C_022_数据质量自管理_Data_Quality_Self_management
-    D_DATA_GOV_C_022_数据质量自管理_Data_Quality_Self_management -->|import_depends| D_DATA_GOV_Metadata_Registry_MDM_元数据注册中心MDM
-    D_DATA_GOV_Metadata_Registry_MDM_元数据注册中心MDM -->|import_depends| D_DATA_GOV_Security_Master_Manager_证券主数据管理器
-    D_DATA_GOV_Security_Master_Manager_证券主数据管理器 -->|import_depends| D_DATA_GOV_Data_Lineage_数据血缘
-    D_DATA_GOV_Data_Lineage_数据血缘 -->|import_depends| D_DATA_GOV_Data_Quality_SLA_数据质量SLA
-    D_DATA_GOV_Data_Quality_SLA_数据质量SLA -->|import_depends| D_DATA_GOV_数据域规则目录_Data_Domain_Rule_Catalog
-    D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring -->|event| D_DATA_GOV_DataQualityDegraded_数据质量降级事件
-    D_DATA_GOV_Metadata_Registry_MDM_元数据注册中心MDM -->|event| D_DATA_GOV_DataQualityDegraded_数据质量降级
-    D_DATA_GOV_血缘追踪链_Lineage_Tracking_Chain -->|contract| D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality
-    D_DATA_GOV_C_022_数据质量自管理_Data_Quality_Self_management -->|contract| D_DATA_GOV_DataQualityError_数据质量错误
-    D_DATA_GOV_Quality_Gate_质量门禁 -->|config_depends| D_DATA_GOV_Data_Quality_SLA_数据质量SLA
-    D_DATA_GOV_Security_Master_Manager_证券主数据管理器 -->|config_depends| D_DATA_GOV_Data_Quality_Gate_数据质量门禁
-    D_DATA_GOV_质量检查自建而非Great_Expec___ns_Self_built_Quality_Check -->|runtime| D_DATA_GOV_Data_Quality_SLA_数据质量SLA
-    D_DATA_GOV_列级血缘_Column_level_Lineage -->|runtime| D_DATA_GOV_MVP用SQLite存储血缘_SQLite_for_Lineage_MVP
-    D_DATA_GOV_OpenLineage标准适配_OpenLineage_Adaptation -->|runtime| D_DATA_GOV_列级血缘而非表级_Column_level_over_Table_level
-    D_DATA_GOV_数据血缘_Data_Lineage -->|runtime| D_DATA_GOV_分阶段实现MVP→V2→V3→V4_Phased_Lineage
-    D_DATA_GOV_CTR_TRACE_001血缘ID贯穿全链路_Lineage_ID_End_to_end -->|runtime| D_DATA_GOV_Data_Lineage_数据血缘
-    D_DATA_GOV_质量检查按交易时段分三阶段_Three_stage_Quality_Check -->|runtime| D_DATA_GOV_Metadata_Registry_MDM_元数据注册中心MDM
-    D_DATA_GOV_质量检查自建而非Great_Expectations_Self_built_over_GE -->|runtime| D_DATA_GOV_Data_Lineage_数据血缘
-    D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality -->|runtime| D_DATA_GOV_Quality_Gate_Four_Level_质量门禁四级贯穿
-    D_DATA_GOV_数据血缘_Data_Lineage -->|import_depends| D_DATA_GOV_列级血缘自动化_Column_level_Lineage_Automation
-    D_DATA_GOV_血缘成熟度模型_Lineage_Maturity_Model -->|import_depends| D_DATA_GOV_数据域规则目录_Data_Domain_Rule_Catalog
-    D_DATA_GOV_AI治理血缘_AI_Governance_Lineage -->|import_depends| D_DATA_GOV_Apache_Polaris目录_Apache_Polaris_Catalog
-    D_DATA_GOV_数据质量_Data_Quality -->|import_depends| D_DATA_GOV_BlackRock_AI数据质量三阶段_BlackRock_AI_Data_Quality
-    D_DATA_GOV_Data_Catalog_数据目录 -->|import_depends| D_DATA_GOV_Reference_Data_参考数据
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-COMPLIANCE -> D-DATA_GOV (13 条)
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_GOV_Data_Catalog_数据目录
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_GOV_DataQualityDegraded_数据质量降级事件
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_GOV_Reference_Data_参考数据
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_GOV_CTR_TRACE_001血缘ID贯穿全链路_Lineage_ID_End_to_end
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_GOV_列级血缘而非表级_Column_level_over_Table_level
-    D_COMPLIANCE[D-COMPLIANCE] -->|contract| D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_GOV_BlackRock_AI数据质量三阶段_BlackRock_AI_Data_Quality
-    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_GOV_列级血缘_Column_level_Lineage
-    D_COMPLIANCE[D-COMPLIANCE] -->|data| D_DATA_GOV_DataQualityError_数据质量错误
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_GOV_Apache_Polaris目录_Apache_Polaris_Catalog
-    D_COMPLIANCE[D-COMPLIANCE] -->|config_depends| D_DATA_GOV_数据质量_Data_Quality
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_GOV_OpenLineage标准适配_OpenLineage_Adaptation
-    D_COMPLIANCE[D-COMPLIANCE] -->|event| D_DATA_GOV_数据质量_Data_Quality
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-DATA_GOV -> D-AUTONOMY_CORE (5 条)
-    D_DATA_GOV_Reference_Data_参考数据 -->|contract| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    D_DATA_GOV_Reference_Data_参考数据 -->|data| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    D_DATA_GOV_质量检查自建而非Great_Expectations_Self_built_over_GE -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    D_DATA_GOV_分阶段实现MVP→V2→V3→V4_Phased_Lineage -->|config_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    %% D-DATA_GOV -> D-AUTONOMY_PERM (1 条)
-    D_DATA_GOV_Quality_Gate_质量门禁 -->|contract| D_AUTONOMY_PERM[D-AUTONOMY_PERM]
-    %% D-DATA_GOV -> D-DATA_ENG (2 条)
-    D_DATA_GOV_DataQualityDegraded_数据质量降级事件 -->|config_depends| D_DATA_ENG[D-DATA_ENG]
-    D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check -->|contract| D_DATA_ENG[D-DATA_ENG]
-    %% D-DATA_GOV -> D-EX_SOR (1 条)
-    D_DATA_GOV_数据血缘_Data_Lineage -->|contract| D_EX_SOR[D-EX_SOR]
-    %% D-DATA_GOV -> D-FACTOR (4 条)
-    D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring -->|contract| D_FACTOR[D-FACTOR]
-    D_DATA_GOV_Quality_Gate_质量门禁 -->|contract| D_FACTOR[D-FACTOR]
-    D_DATA_GOV_MVP用SQLite存储血缘_SQLite_for_Lineage_MVP -->|event| D_FACTOR[D-FACTOR]
-    D_DATA_GOV_数据血缘_Data_Lineage -->|config_depends| D_FACTOR[D-FACTOR]
-    %% D-DATA_GOV -> D-FRONTEND (1 条)
-    D_DATA_GOV_数据质量记分卡_Data_Quality_Scorecard -->|data| D_FRONTEND[D-FRONTEND]
-    %% D-DATA_GOV -> D-GOVERNANCE (5 条)
-    D_DATA_GOV_血缘成熟度模型_Lineage_Maturity_Model -->|contract| D_GOVERNANCE[D-GOVERNANCE]
-    D_DATA_GOV_MVP用SQLite存储血缘_SQLite_for_Lineage_MVP -->|data| D_GOVERNANCE[D-GOVERNANCE]
-    D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality -->|data| D_GOVERNANCE[D-GOVERNANCE]
-    D_DATA_GOV_数据质量五维度定义_ISO_8000_Five_Dimensions -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    D_DATA_GOV_AI治理血缘_AI_Governance_Lineage -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-DATA_GOV -> D-INFRA_OPS (2 条)
-    D_DATA_GOV_分阶段实现MVP→V2→V3→V4_Phased_Lineage -->|config_depends| D_INFRA_OPS[D-INFRA_OPS]
-    D_DATA_GOV_Quality_Gate_Four_Level_质量门禁四级贯穿 -->|event| D_INFRA_OPS[D-INFRA_OPS]
-    %% D-DATA_GOV -> D-INFRA_RUNTIME (2 条)
-    D_DATA_GOV_Apache_Polaris目录_Apache_Polaris_Catalog -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    D_DATA_GOV_Market_Regime_Reference_Data_市场状态分类参考数据 -->|event| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    %% D-DATA_GOV -> D-INTEGRATION (4 条)
-    D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality -->|contract| D_INTEGRATION[D-INTEGRATION]
-    D_DATA_GOV_Quality_Gate_质量门禁 -->|data| D_INTEGRATION[D-INTEGRATION]
-    D_DATA_GOV_MVP用SQLite存储血缘_SQLite_for_Lineage_MVP -->|event| D_INTEGRATION[D-INTEGRATION]
-    D_DATA_GOV_分阶段实现MVP→V2→V3→V4_Phased_Lineage -->|data| D_INTEGRATION[D-INTEGRATION]
-    %% D-DATA_GOV -> D-INTELLIGENCE (7 条)
-    D_DATA_GOV_DataQualityDegraded_数据质量降级事件 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
-    D_DATA_GOV_Apache_Polaris目录_Apache_Polaris_Catalog -->|event| D_INTELLIGENCE[D-INTELLIGENCE]
-    D_DATA_GOV_质量检查按交易时段分三阶段_Three_stage_Quality_Check -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
-    D_DATA_GOV_BlackRock_AI数据质量三阶段_BlackRock_AI_Data_Quality -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
-    D_DATA_GOV_C_022_数据质量自管理_Data_Quality_Self_management -->|data| D_INTELLIGENCE[D-INTELLIGENCE]
-    D_DATA_GOV_Quality_Gate_Four_Level_质量门禁四级贯穿 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
-    D_DATA_GOV_Reference_Data_参考数据 -->|contract| D_INTELLIGENCE[D-INTELLIGENCE]
-    %% D-DATA_GOV -> D-KNOWLEDGE (3 条)
-    D_DATA_GOV_DataQualityDegraded_数据质量降级事件 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
-    D_DATA_GOV_血缘追踪链_Lineage_Tracking_Chain -->|data| D_KNOWLEDGE[D-KNOWLEDGE]
-    D_DATA_GOV_Data_Lineage_数据血缘 -->|contract| D_KNOWLEDGE[D-KNOWLEDGE]
-    %% D-DATA_GOV -> D-MKT_DATA (3 条)
-    D_DATA_GOV_Data_Quality_SLA_数据质量SLA -->|contract| D_MKT_DATA[D-MKT_DATA]
-    D_DATA_GOV_数据域规则目录_Data_Domain_Rule_Catalog -->|config_depends| D_MKT_DATA[D-MKT_DATA]
-    D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check -->|event| D_MKT_DATA[D-MKT_DATA]
-    %% D-DATA_GOV -> D-ML_SERVE (1 条)
-    D_DATA_GOV_数据域规则目录_Data_Domain_Rule_Catalog -->|contract| D_ML_SERVE[D-ML_SERVE]
-    %% D-DATA_GOV -> D-ML_TRAIN (1 条)
-    D_DATA_GOV_AI治理血缘_AI_Governance_Lineage -->|contract| D_ML_TRAIN[D-ML_TRAIN]
-    %% D-DATA_GOV -> D-OPS (6 条)
-    D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check -->|data| D_OPS[D-OPS]
-    D_DATA_GOV_数据源质量评分_Data_Source_Quality_Scoring -->|data| D_OPS[D-OPS]
-    D_DATA_GOV_数据质量记分卡_Data_Quality_Scorecard -->|contract| D_OPS[D-OPS]
-    D_DATA_GOV_列级血缘而非表级_Column_level_over_Table_level -->|config_depends| D_OPS[D-OPS]
-    D_DATA_GOV_列级血缘而非表级_Column_level_over_Table_level -->|data| D_OPS[D-OPS]
-    D_DATA_GOV_BlackRock_AI数据质量三阶段_BlackRock_AI_Data_Quality -->|contract| D_OPS[D-OPS]
-    %% D-DATA_GOV -> D-PF_CORE (3 条)
-    D_DATA_GOV_质量检查自建而非Great_Expec___ns_Self_built_Quality_Check -->|contract| D_PF_CORE[D-PF_CORE]
-    D_DATA_GOV_列级血缘_Column_level_Lineage -->|data| D_PF_CORE[D-PF_CORE]
-    D_DATA_GOV_MVP用SQLite存储血缘_SQLite_for_Lineage_MVP -->|event| D_PF_CORE[D-PF_CORE]
-    %% D-DATA_GOV -> D-POSITION (1 条)
-    D_DATA_GOV_Metadata_Registry_MDM_元数据注册中心MDM -->|event| D_POSITION[D-POSITION]
-    %% D-DATA_GOV -> D-REPORTING (1 条)
-    D_DATA_GOV_列级血缘而非表级_Column_level_over_Table_level -->|event| D_REPORTING[D-REPORTING]
-    %% D-DATA_GOV -> D-RISK (6 条)
-    D_DATA_GOV_DataQualityDegraded_数据质量降级 -->|contract| D_RISK[D-RISK]
-    D_DATA_GOV_DataQualityError_数据质量错误 -->|event| D_RISK[D-RISK]
-    D_DATA_GOV_列级血缘_Column_level_Lineage -->|contract| D_RISK[D-RISK]
-    D_DATA_GOV_数据血缘_Data_Lineage -->|data| D_RISK[D-RISK]
-    D_DATA_GOV_DataQualityError_数据质量错误 -->|event| D_RISK[D-RISK]
-    D_DATA_GOV_DataQualityError_数据质量错误 -->|data| D_RISK[D-RISK]
-    %% D-DATA_GOV -> D-SECURITY (5 条)
-    D_DATA_GOV_DataQualityDegraded_数据质量降级 -->|data| D_SECURITY[D-SECURITY]
-    D_DATA_GOV_CTR_TRACE_001血缘ID贯穿全链路_Lineage_ID_End_to_end -->|data| D_SECURITY[D-SECURITY]
-    D_DATA_GOV_盘前质量检查_Pre_market_Quality_Check -->|contract| D_SECURITY[D-SECURITY]
-    D_DATA_GOV_血缘追踪链_Lineage_Tracking_Chain -->|contract| D_SECURITY[D-SECURITY]
-    D_DATA_GOV_Quality_Gate_质量门禁 -->|config_depends| D_SECURITY[D-SECURITY]
-    %% D-DATA_GOV -> D-SELL_DECISION (1 条)
-    D_DATA_GOV_Apache_Polaris目录_Apache_Polaris_Catalog -->|event| D_SELL_DECISION[D-SELL_DECISION]
-    %% D-DATA_GOV -> D-SHARED (3 条)
-    D_DATA_GOV_列级血缘自动化_Column_level_Lineage_Automation -->|contract| D_SHARED[D-SHARED]
-    D_DATA_GOV_CTR_TRACE_001血缘ID贯穿全链路_Lineage_ID_End_to_end -->|event| D_SHARED[D-SHARED]
-    D_DATA_GOV_AI驱动数据质量监控_AI_driven_Data_Quality -->|data| D_SHARED[D-SHARED]
-    %% D-DATA_GOV -> D-SIGNAL (5 条)
-    D_DATA_GOV_数据血缘_Data_Lineage -->|contract| D_SIGNAL[D-SIGNAL]
-    D_DATA_GOV_Quality_Gate_Four_Level_质量门禁四级贯穿 -->|contract| D_SIGNAL[D-SIGNAL]
-    D_DATA_GOV_质量检查自建而非Great_Expectations_Self_built_over_GE -->|data| D_SIGNAL[D-SIGNAL]
-    D_DATA_GOV_C_022_数据质量自管理_Data_Quality_Self_management -->|data| D_SIGNAL[D-SIGNAL]
-    D_DATA_GOV_血缘链全景_Lineage_Chain_Panorama -->|data| D_SIGNAL[D-SIGNAL]
-    %% D-DATA_GOV -> D-TRADING (1 条)
-    D_DATA_GOV_列级血缘自动化_Column_level_Lineage_Automation -->|config_depends| D_TRADING[D-TRADING]
 
     %% 统计
-    %% 域内依赖: 37 条
-    %% 跨域入边: 13 条
-    %% 跨域出边: 74 条
+    %% 域内依赖: 0 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 0 条

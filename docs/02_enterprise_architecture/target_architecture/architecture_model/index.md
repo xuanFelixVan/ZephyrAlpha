@@ -15,9 +15,9 @@ title: Architecture Model
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**架构模型YAML**——`domains`（43域索引，真源depgraph.db）、`contracts/`（跨域契约）、`events/`（领域事件）、`cross_cutting/`（横切）、`domain/`（DDD）、`frontend/`（前端）、`scripts/`（脚本）、`technology/`（技术栈）、`infra/`（基础设施骨架，planned）。
+本目录只存放：**架构模型YAML**——`domains`（52域索引，真源depgraph.db）、`contracts/`（跨域契约）、`events/`（领域事件）、`cross_cutting/`（横切）、`domain/`（DDD）、`frontend/`（前端）、`scripts/`（脚本）、`technology/`（技术栈）、`infra/`（基础设施骨架，planned）。
 
-> **§2.1裁定（2026-06-22）**：43域是唯一物理分类体系，14层（L00-L13）降级为域的`layer_id`属性。旧的`layers/l00-l13-*.yaml`文件已废弃，信息合并入depgraph.db域定义。结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
+> **§2.1裁定（2026-06-22）**：52域是唯一物理分类体系，14层（L00-L13）降级为域的`layer_id`属性。旧的`layers/l00-l13-*.yaml`文件已废弃，信息合并入depgraph.db域定义。结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
 
 ## 分区管理约定
 
@@ -29,12 +29,12 @@ title: Architecture Model
 
 | 文件/目录 | 说明 |
 |-----------|------|
-| `index.yaml` | 全部分区的索引 + 43域清单 + 分区管理约定 + global_stats |
+| `index.yaml` | 全部分区的索引 + 52域清单 + 分区管理约定 + global_stats |
 | `module_id_registry.yaml` | 模块ID注册表 |
-| `domains` | **43域物理分类唯一真源**——depgraph.db domains表 |
+| `domains` | **52域物理分类唯一真源**——depgraph.db domains表 |
 | `contracts/` | 跨域数据契约CTR-001~006（P0）+ CTR-P1-001~013（P1）+ OCP + EXT + AI-GOV |
 | `events/` | 22条领域事件 |
-| `cross_cutting/` | 运行平面 + 不变量 + 能力热力图（43域×10能力域矩阵） |
+| `cross_cutting/` | 运行平面 + 不变量 + 能力热力图（52域×10能力域矩阵） |
 | `domain/` | DDD战术模式 |
 | `frontend/` | 前端模型FE-L1~L4 |
 | `scripts/` | 治理/审计脚本模型 |
