@@ -121,23 +121,28 @@ class VMSMemoryBackend:
                 return self._fallback.list_by_topic(topic, k)
             collection = self._resolve_collection(topic)
             try:
-                raw_results = self._vms.recall(collection_name=collection, k=k)
+                # 先按 topic where 过滤再取 k（与 ChromaMemoryBackend 一致）。
+                # 旧实现调 vms.recall(k=k) 取 collection 最近 k 条再过滤，
+                # topic 不在最近 k 条时返回空，导致 recall(topic, 小k) 误报数据丢失。
+                col = self._vms.get_collection(collection)
+                raw = col.get(where={"topic": topic}, include=["documents", "metadatas"])
                 records: list[MemoryRecord] = []
-                for item in raw_results:
-                    meta = item.get("metadata", {}) or {}
-                    rec_topic = meta.get("topic", topic)
-                    if rec_topic != topic:
-                        continue
+                ids = raw.get("ids") or []
+                docs = raw.get("documents") or []
+                metas = raw.get("metadatas") or []
+                for chunk_id, doc, meta in zip(ids, docs, metas, strict=False):
+                    meta = meta or {}
                     records.append(
                         MemoryRecord(
-                            chunk_id=item.get("id", ""),
-                            topic=rec_topic,
-                            content=item.get("content", item.get("document", "")),
+                            chunk_id=chunk_id,
+                            topic=str(meta.get("topic", topic)),
+                            content=doc or "",
                             score=1.0,
-                            written_at=meta.get("written_at", ""),
+                            written_at=str(meta.get("written_at", "")),
                             metadata={kk: vv for kk, vv in meta.items() if kk not in {"topic", "written_at"}},
                         )
                     )
+                records.sort(key=lambda r: r.written_at, reverse=True)
                 return records[: max(0, k)]
             except Exception as exc:
                 _logger.warning("VMSMemoryBackend.list_by_topic fallback: %s", exc)

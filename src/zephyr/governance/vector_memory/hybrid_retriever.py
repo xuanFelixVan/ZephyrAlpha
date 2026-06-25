@@ -299,6 +299,14 @@ class HybridRetriever:
 
         fused = self._rrf_fusion(dense_hits, sparse_hits, collection_name)
 
+        # 归一化 RRF score 到 0-1，使 DEFAULT_SCORE_THRESHOLD 语义正确。
+        # RRF 原始范围约 0-0.033（1/(60+rank)，双路 rank=0 也仅 ~0.033），
+        # 直接用 0.6 阈值会过滤全部结果 → search 永远返回空。
+        if fused:
+            _max_rrf = fused[0][1]  # fused 已按 score 降序，首元素即最大值
+            if _max_rrf > 0:
+                fused = [(doc_id, score / _max_rrf, breakdown, meta) for doc_id, score, breakdown, meta in fused]
+
         filtered: list[ScoredHit] = []
         for doc_id, score, breakdown, _ in fused:
             if score < DEFAULT_SCORE_THRESHOLD:

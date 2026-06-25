@@ -89,9 +89,13 @@ class TestVMSMemoryBackendListByTopic:
 
     def test_list_by_topic_vms(self):
         mock_vms = MagicMock()
-        mock_vms.recall.return_value = [
-            {"id": "v1", "content": "hello", "metadata": {"topic": "knowledge", "written_at": "2026-01-01T00:00:00"}},
-        ]
+        mock_col = MagicMock()
+        mock_col.get.return_value = {
+            "ids": ["v1"],
+            "documents": ["hello"],
+            "metadatas": [{"topic": "knowledge", "written_at": "2026-01-01T00:00:00"}],
+        }
+        mock_vms.get_collection.return_value = mock_col
         backend = VMSMemoryBackend(vms=mock_vms)
         results = backend.list_by_topic("knowledge", k=5)
         assert len(results) == 1
@@ -99,7 +103,7 @@ class TestVMSMemoryBackendListByTopic:
 
     def test_list_by_topic_vms_failure_fallback(self):
         mock_vms = MagicMock()
-        mock_vms.recall.side_effect = RuntimeError("VMS error")
+        mock_vms.get_collection.side_effect = RuntimeError("VMS error")
         backend = VMSMemoryBackend(vms=mock_vms)
         record = _make_record(topic="knowledge")
         backend._fallback.write(record)
