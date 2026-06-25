@@ -76,10 +76,15 @@ EXCLUDE_TABLES = {"domain_naming_rules", "_schema_version", "governance_audit_lo
 # 节点路径旧前缀（阶段D检查，路径格式如 信号域-审计/D-SIGNAL-06）
 NODE_PATH_OLD_PREFIXES = ["D-SIGNAL-"]
 
+# 阶段D专用列（节点路径改名传播，由 scan_node_paths 专门检查，不在 scan_residual 中扫描）
+# 与 apply_depgraph.py _RENAME_SCAN_EXCLUDE_COLUMNS 保持一致
+EXCLUDE_COLUMNS = {"path", "blueprint_path"}
+
 
 def _get_all_text_columns(conn: sqlite3.Connection) -> dict[str, list[str]]:
     """获取所有表（排除 EXCLUDE_TABLES）的 TEXT 类型列。
 
+    排除 path/blueprint_path 列（阶段D专用，由 scan_node_paths 专门检查）。
     返回 {table_name: [col1, col2, ...]}。
     """
     cur = conn.execute(
@@ -90,7 +95,11 @@ def _get_all_text_columns(conn: sqlite3.Connection) -> dict[str, list[str]]:
     result: dict[str, list[str]] = {}
     for tbl in tables:
         cur = conn.execute(f"PRAGMA table_info({tbl})")
-        text_cols = [r[1] for r in cur.fetchall() if r[2] and r[2].upper() == "TEXT"]
+        text_cols = [
+            r[1]
+            for r in cur.fetchall()
+            if r[2] and r[2].upper() == "TEXT" and r[1] not in EXCLUDE_COLUMNS
+        ]
         if text_cols:
             result[tbl] = text_cols
     return result

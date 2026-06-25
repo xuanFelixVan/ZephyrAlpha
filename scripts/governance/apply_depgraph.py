@@ -1684,6 +1684,20 @@ def cmd_fix_rename_residual(
                     c.close()
 
 
+def _restore_blueprint_links_readonly_trigger(c: sqlite3.Connection) -> None:
+    """恢复 blueprint_links 只读触发器（裁定#207 R1 B2 通行证恢复）。
+
+    cmd_propagate_rename 临时 DROP 该触发器以写入 blueprint_links.blueprint_id，
+    操作完成后必须恢复，保持"YAML 唯一真源"门禁激活。
+    """
+    c.execute(
+        "CREATE TRIGGER IF NOT EXISTS readonly_blueprint_links_update "
+        "BEFORE UPDATE ON blueprint_links FOR EACH ROW BEGIN "
+        "SELECT RAISE(ABORT, 'blueprint_links 表只读（唯一真源是 YAML），"
+        "请修改 YAML 后运行 sync_yaml_to_depgraph.py'); END;"
+    )
+
+
 def cmd_propagate_rename(
     rename_map: dict[str, str],
     dry_run: bool = False,
@@ -1778,12 +1792,26 @@ def cmd_propagate_rename(
             if own_conn:
                 c.execute("PRAGMA journal_mode=WAL")
                 c.execute("PRAGMA busy_timeout=30000")
+            # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制，仿 sync 脚本）
+            c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
             try:
-                return _run(c)
+                n = _run(c)
+                # 成功后恢复只读触发器并 commit
+                _restore_blueprint_links_readonly_trigger(c)
+                if own_conn:
+                    c.commit()
+                return n
             except Exception as e:
                 if own_conn:
                     c.rollback()
                 print(f"ERROR: cmd_propagate_rename失败: {e}", file=sys.stderr)
+                # 异常时也恢复只读触发器（保持门禁激活）
+                try:
+                    _restore_blueprint_links_readonly_trigger(c)
+                    if own_conn:
+                        c.commit()
+                except Exception:
+                    pass
                 return -1
             finally:
                 if own_conn:
