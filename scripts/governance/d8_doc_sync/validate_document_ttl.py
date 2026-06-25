@@ -55,7 +55,7 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
@@ -78,7 +78,7 @@ def scan_ttl_violations() -> list[dict]:
         docs_dir = REPO_ROOT / "docs"
     now = datetime.now()
     for filepath in iter_files(docs_dir, extensions=frozenset({".md", ".yaml", ".yml"})):
-        fm = parse_frontmatter_from_file(filepath)
+        fm, _body = parse_frontmatter_from_file(filepath)
         if not fm:
             continue
         ttl = fm.get("ttl", "")
@@ -158,11 +158,180 @@ def scan_dated_snapshots() -> list[dict]:
     "扫描过期快照."
 
 
+def _iter_md_files_with_frontmatter():
+    """迭代所有有 frontmatter 的 .md 文件（docs/**/*.md）。
+
+    返回 (filepath, fm) 元组迭代器，fm 为 frontmatter dict（空 dict 表示无 frontmatter）。
+    """
+    docs_dir = REPO_ROOT / "docs"
+    if not docs_dir.exists():
+        return
+    for filepath in iter_files(docs_dir, extensions=frozenset({".md"})):
+        fm, _body = parse_frontmatter_from_file(filepath)
+        yield filepath, fm
+
+
+def list_files_by_ttl(value: str) -> list[dict]:
+    """按 ttl 值列出文件清单（不删除，仅输出）。
+
+    Args:
+        value: ttl 枚举值（permanent/periodic_review_90d/30d/7d/session/task_bound）
+
+    Returns:
+        [{path, ttl, mtime, age_days, dir}] 列表，按 path 排序。
+    """
+    if value not in VALID_TTL_VALUES:
+        raise ValueError(f"非法 ttl 值: {value}（合法值: {sorted(VALID_TTL_VALUES)}）")
+    now = datetime.now()
+    results = []
+    for filepath, fm in _iter_md_files_with_frontmatter():
+        ttl = fm.get("ttl", "")
+        if ttl != value:
+            continue
+        stat = filepath.stat()
+        mtime = datetime.fromtimestamp(stat.st_mtime)
+        rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+        results.append({
+            "path": rel,
+            "ttl": ttl or "(空)",
+            "mtime": mtime.strftime("%Y-%m-%d"),
+            "age_days": (now - mtime).days,
+            "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
+        })
+    results.sort(key=lambda x: x["path"])
+    return results
+
+
+def list_time_expired_files() -> list[dict]:
+    """列出 ttl=7d/30d/periodic_review_90d 中已到期文件（mtime + 当前日期算术判定）。
+
+    判定口径：文件 mtime 距今天数 > ttl 阈值。
+    与 scan_ttl_violations() 的 date 字段判定互补——date 是文档声明日期，
+    mtime 是文件实际修改时间，取两者中较早的过期判定更保守。
+
+    Returns:
+        [{path, ttl, mtime, age_days, threshold_days, dir}] 列表。
+    """
+    ttl_thresholds = {"7d": 7, "30d": 30, "periodic_review_90d": 90}
+    now = datetime.now()
+    results = []
+    for filepath, fm in _iter_md_files_with_frontmatter():
+        ttl = fm.get("ttl", "")
+        if ttl not in ttl_thresholds:
+            continue
+        stat = filepath.stat()
+        mtime = datetime.fromtimestamp(stat.st_mtime)
+        age_days = (now - mtime).days
+        if age_days <= ttl_thresholds[ttl]:
+            continue
+        rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+        results.append({
+            "path": rel,
+            "ttl": ttl,
+            "mtime": mtime.strftime("%Y-%m-%d"),
+            "age_days": age_days,
+            "threshold_days": ttl_thresholds[ttl],
+            "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
+        })
+    results.sort(key=lambda x: x["path"])
+    return results
+
+
+def list_all_non_permanent() -> list[dict]:
+    """列出所有 ttl != permanent 的文件（一键扫描，含缺失 ttl 字段的文件）。
+
+    用于人工判定清理清单。ttl 为空的文件也列出（强制要求 .md 全量有 ttl 后，
+    缺失即违规，需补填）。
+
+    Returns:
+        [{path, ttl, mtime, age_days, dir}] 列表。
+    """
+    now = datetime.now()
+    results = []
+    for filepath, fm in _iter_md_files_with_frontmatter():
+        ttl = fm.get("ttl", "")
+        if ttl == "permanent":
+            continue
+        stat = filepath.stat()
+        mtime = datetime.fromtimestamp(stat.st_mtime)
+        rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+        results.append({
+            "path": rel,
+            "ttl": ttl or "(缺失)",
+            "mtime": mtime.strftime("%Y-%m-%d"),
+            "age_days": (now - mtime).days,
+            "dir": str(filepath.parent.relative_to(REPO_ROOT)).replace("\\", "/"),
+        })
+    results.sort(key=lambda x: x["path"])
+    return results
+
+
+def _print_table(results: list[dict], title: str) -> None:
+    """表格输出到 stdout（中文宽度友好，便于 AI 后续解析）。"""
+    print(f"\n{title}")
+    print(f"共 {len(results)} 条记录")
+    if not results:
+        print("（无匹配文件）")
+        return
+    import unicodedata
+
+    def _w(s: object) -> int:
+        return sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in str(s))
+
+    cols = list(results[0].keys())
+    widths = {c: max(_w(c), *(_w(str(r.get(c, ""))) for r in results)) for c in cols}
+
+    def _pad(s: object, w: int) -> str:
+        text = str(s)
+        return text + " " * (w - _w(text))
+
+    print("  ".join(_pad(c, widths[c]) for c in cols))
+    print("-" * (sum(widths.values()) + 2 * (len(cols) - 1)))
+    for r in results:
+        print("  ".join(_pad(r.get(c, ""), widths[c]) for c in cols))
+
+
 def main() -> None:
-    """入口函数."""
-    parser = argparse.ArgumentParser(description="文档 TTL 过期检测（GOV-DOC-006 §一/§三）")
+    """入口函数.
+
+    模式：
+      默认                    TTL/快照违规检测（阻断式，原行为）
+      --list-by-ttl <value>   按 ttl 值列出文件清单（stdout 表格，exit 1 if 有结果）
+      --list-time-expired     列出 ttl=7d/30d/periodic_review_90d 已到期文件
+      --list-all-non-permanent  列出所有 ttl != permanent 的文件（一键扫描）
+      --warn-only             警告模式（不阻断 exit 0）
+
+    exit codes: 0=pass, 1=findings, 2=error
+    """
+    parser = argparse.ArgumentParser(description="文档 TTL 过期检测（GOV-DOC-006 §一/§三）+ ttl 扫描清单")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")
+    parser.add_argument("--list-by-ttl", choices=sorted(VALID_TTL_VALUES),
+                        help="按 ttl 值列出文件清单（不删除，仅输出 stdout）")
+    parser.add_argument("--list-time-expired", action="store_true",
+                        help="列出 ttl=7d/30d/periodic_review_90d 中已到期文件（mtime 算术判定）")
+    parser.add_argument("--list-all-non-permanent", action="store_true",
+                        help="列出所有 ttl != permanent 的文件（一键扫描，含缺失 ttl 的文件）")
     args = parser.parse_args()
+
+    # 扫描模式分支（只输出清单，不删除）
+    try:
+        if args.list_by_ttl:
+            results = list_files_by_ttl(args.list_by_ttl)
+            _print_table(results, f"ttl={args.list_by_ttl} 文件清单")
+            sys.exit(EXIT_FINDINGS if results else EXIT_PASS)
+        if args.list_time_expired:
+            results = list_time_expired_files()
+            _print_table(results, "时间到期文件清单（ttl=7d/30d/periodic_review_90d）")
+            sys.exit(EXIT_FINDINGS if results else EXIT_PASS)
+        if args.list_all_non_permanent:
+            results = list_all_non_permanent()
+            _print_table(results, "所有非 permanent 文件清单（含缺失 ttl）")
+            sys.exit(EXIT_FINDINGS if results else EXIT_PASS)
+    except Exception as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(EXIT_ERROR)
+
+    # 默认模式：TTL/快照违规检测（原行为）
     ttl_findings = scan_ttl_violations()
     snapshot_findings = scan_dated_snapshots()
     all_findings = ttl_findings + snapshot_findings
