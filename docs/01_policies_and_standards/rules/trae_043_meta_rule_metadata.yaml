@@ -1,7 +1,7 @@
 rule_id: TRAE-043
 title: 元规则-元数据与度量
 version: '1.0.0'
-layer: L2
+layer: compliance
 module_id: TRAE-043
 depends_on:
 - TRAE-041
@@ -607,8 +607,8 @@ sections:
       values: 6值(architect/implementer/reviewer/governor/researcher/operator)
       code_source: agent_orchestrator.py
     - name: layer
-      values: 14值(l00-l11+shared+cross_layer)
-      code_source: triage.py VALID_LAYERS
+      values: 16值(data/infra_ops/factor/signal/risk/pf_core/ex_core/reporting/frontend/research/compliance/ml_train/system-telemetry/simulation/shared/cross_layer)
+      canonical_sso_t: _registry/vocabularies/layer_vocabulary.yaml
     - name: source_type
       values: 7值(知识来源类型)
       code_source: 无

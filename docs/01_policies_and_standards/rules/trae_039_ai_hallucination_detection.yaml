@@ -1,7 +1,7 @@
 rule_id: TRAE-039
 title: AI治理-幻觉检测与自检
 version: 1.2.2
-layer: L1
+layer: compliance
 module_id: TRAE-039
 depends_on: []
 tags:

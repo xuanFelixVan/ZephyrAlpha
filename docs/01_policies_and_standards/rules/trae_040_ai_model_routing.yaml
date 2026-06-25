@@ -1,7 +1,7 @@
 rule_id: TRAE-040
 title: AI治理-模型路由与协作
-version: 1.1.3
-layer: L1
+version: 1.2.0
+layer: compliance
 module_id: TRAE-040
 depends_on: []
 tags:
@@ -107,13 +107,13 @@ sections:
     - 禁止next_actions为空（至少1项）
   gov_ai_002_routing:
     section_type: rule
-    title: 模型路由策略（GOV-AI-002）
+    title: 模型路由策略-二元分层方案（GOV-AI-002 v3.0.0）
     original_rules:
     - GOV-AI-002
     conditions:
     - type: trigger
       check: 收到任务卡
-      pass: 按决策树分配模型
+      pass: 按二元分层决策树分配模型
       fail: 未分配模型禁止执行
     - type: constraint
       check: assigned_pipeline="C"（横切）
@@ -121,18 +121,25 @@ sections:
       fail: 不在本策略范围
     actions:
     - type: mandatory
-      step: 主力施工=DeepSeek V4 Pro（A区M1-M4、B区M6/M8/M9/M10/M11）
+      step: 二元分层方案——基于V4 Pro入职考试成绩(2026-06-25)裁定
     - type: mandatory
-      step: 深度审查=GLM-5.1（B区M7深度审查、A区M5产出物打包）
+      step: 深度推理层=DeepSeek V4 Pro（non-thinking优先，grade=B-/0.691，速度快3倍费用降65%）
+      step_detail: 适用能力（safe）=rule_comprehension(A)/safety_judgment(A+)/architecture_design(A+)/circular_dependency_detect(A+/B+)/dependency_ordering(A/A+)/self_review(A-)/error_recovery(A-/B+)/tag_completion(A/B-)/cross_file_refactor(B-,仅non-thinking)
     - type: mandatory
-      step: 特种救援=Claude Opus 4.7（仅DeepSeek+GLM都搞不定+Owner标记关键任务）
+      step: 基础任务层=GLM-5.1及其他模型
+      step_detail: V4 Pro unsafe能力交由其他模型或人工——code_generate/refactor/dead_code_removal/code_edit_precision/task_classification/summary_extraction等（V4 Pro均F或breadth_failed）
     - type: mandatory
-      step: 任务分配决策树：C管线→脚本系统→Claude关键任务清单→A管线M1-M4→DeepSeek/M5→GLM→B管线M7→GLM/其他→DeepSeek
+      step: 特种救援=Claude Opus 4.7（仅深度推理层+基础任务层都搞不定+Owner标记关键任务）
     - type: mandatory
-      step: Claude特种救援触发条件：DeepSeek执行失败连续3次/GLM审查驳回≥2次/Owner标记P0+关键/安全敏感任务/新领域探索
+      step: 任务分配决策树：C管线→脚本系统→Claude关键任务清单→推理/判断/架构类→V4 Pro(non-thinking)→代码编辑/重构类→GLM-5.1/其他→都不行→Claude特种救援
+    - type: mandatory
+      step: Claude特种救援触发条件：V4 Pro+GLM都搞不定连续3次/Owner标记P0+关键/安全敏感任务/新领域探索
+    - type: mandatory
+      step: V4 Pro模式选择规则——默认non-thinking（更快更省更好）；thinking仅用于需要深度推理链的复杂架构决策（p99延迟30s vs 8s）
     prohibitions:
     - 禁止日常使用Claude（太贵，仅特种救援）
-    - 禁止DeepSeek产出未经GLM审查直接合入（幻觉率94%）
+    - 禁止V4 Pro做代码编辑类任务（code_edit_precision/refactor/dead_code_removal均breadth_failed或F）
+    - 禁止V4 Pro产出未经GLM审查直接合入（幻觉率7.7%-8.3%）
   gov_ai_002_fallback:
     section_type: rule
     title: 模型降级与容灾（GOV-AI-002 §四）
@@ -140,8 +147,12 @@ sections:
     - GOV-AI-002
     conditions:
     - type: trigger
-      check: DeepSeek V4 Pro API不可用
-      pass: 降级到GLM-5.1（全部任务）
+      check: DeepSeek V4 Pro non-thinking不可用
+      pass: 降级到V4 Pro thinking模式（深度推理层内部降级）
+      fail: 继续降级链路
+    - type: trigger
+      check: DeepSeek V4 Pro API完全不可用
+      pass: 降级到GLM-5.1（深度推理层→基础任务层降级）
       fail: 继续降级链路
     - type: trigger
       check: GLM-5.1不可用（Trae CN故障）
@@ -157,9 +168,11 @@ sections:
       fail: 任务卡全部标记blocked
     actions:
     - type: mandatory
-      step: DeepSeek不可用→降级到GLM-5.1（免费fallback）
+      step: V4 Pro non-thinking不可用→先降级到V4 Pro thinking（同模型内部降级，grade C+仍可用）
     - type: mandatory
-      step: GLM不可用→降级到DeepSeek自行审查→Claude兜底
+      step: V4 Pro完全不可用→降级到GLM-5.1（基础任务层接管，深度推理能力下降）
+    - type: mandatory
+      step: GLM不可用→降级到DeepSeek V4 Pro自行审查→Claude兜底
     - type: mandatory
       step: Claude不可用→跳过Claude环节，标记需要人工复查，不阻塞任务
     - type: mandatory
@@ -277,13 +290,31 @@ sections:
       note: 初始版本
   gov_ai_002_benchmark:
     section_type: context
-    title: 模型角色决策依据(REG-LLM-001基准数据)
+    title: 模型角色决策依据-入职考试成绩（REG-LLM-001基准数据）
     original_rules:
     - GOV-AI-002-§一
-    summary: 5维度基准对比——代码能力/幻觉控制/中文能力/性价比/综合评分，以model_capability_contract.yaml实际测试数据为准
+    summary: 基于五轴入职考试成绩的二元分层决策依据。V4 Pro考试成绩(2026-06-25)：non-thinking B-/0.691优于thinking C+/0.640。护照文件见data/brain/passports/deepseek-v4-pro-{thinking,non-thinking}.json
     impact_on_rules:
-    - DeepSeek能力强但不可信(幻觉率高)→GLM审查纠错(幻觉率低)→Claude兜底(幻觉率最低)，具体评分以model_capability_contract.yaml为准
-    - 三层防御：主力施工(DeepSeek)→深度审查(GLM)→特种救援(Claude)
+    - V4 Pro non-thinking为深度推理层首选——rule_comprehension(A)/safety_judgment(A+)/architecture_design(A+)/circular_dependency_detect(A+/B+)/dependency_ordering(A/A+)/self_review(A-)/error_recovery(A-/B+)/tag_completion(A/B-)/cross_file_refactor(B-,仅non-thinking通过)
+    - V4 Pro代码能力不足——code_edit_precision(breadth_failed)/refactor(F)/dead_code_removal(F)/code_generate(B-但precision=0.5)/task_classification(F)/summary_extraction(F)，代码编辑类任务交由基础任务层(GLM-5.1等)
+    - 二元分层：深度推理层(V4 Pro)→基础任务层(GLM-5.1)→特种救援(Claude Opus)，以model_capability_contract.yaml编辑器级能力边界为准
+    exam_data:
+      deepseek-v4-pro-non-thinking:
+        grade: B-
+        overall_score: 0.691
+        breadth_passed: 26/27
+        avg_latency_ms: 3166
+        hallucination_rate: 0.077
+        api_cost_rmb: 0.1062
+        safe_capabilities_count: 9
+      deepseek-v4-pro-thinking:
+        grade: C+
+        overall_score: 0.640
+        breadth_passed: 24/27
+        avg_latency_ms: 10493
+        hallucination_rate: 0.083
+        api_cost_rmb: 0.3091
+        safe_capabilities_count: 8
     key_decisions: []
   gov_ai_002_change_history:
     section_type: examples
@@ -291,6 +322,12 @@ sections:
     original_rules:
     - GOV-AI-002-§五
     items:
+    - title: v3.0.0
+      code: 'date: 2026-06-25
+
+        change: 二元分层方案——基于V4 Pro入职考试成绩裁定。深度推理层=V4 Pro(non-thinking优先,B-/0.691)/基础任务层=GLM-5.1及其他/特种救援=Claude。V4 Pro代码能力不足(code_edit_precision/refactor/dead_code_removal均F)禁止做代码编辑类任务。新增V4 Pro模式选择规则(non-thinking默认)。幻觉率从94%修正为7.7%-8.3%(基于实际考试数据)'
+      language: yaml
+      note: 二元分层方案重大变更
     - title: v2.0.0
       code: 'date: 2026-05-02
 
@@ -309,6 +346,9 @@ sections:
     original_rules:
     - TRAE-040
     items:
+    - version: 1.2.0
+      date: '2026-06-25'
+      change: 二元分层方案——基于V4 Pro入职考试成绩(2026-06-25)更新gov_ai_002_routing为深度推理层(V4 Pro)+基础任务层(GLM-5.1)；更新gov_ai_002_fallback增加V4 Pro non-thinking→thinking内部降级；更新gov_ai_002_benchmark增加V4 Pro考试数据(grade/score/breadth/latency/hallucination/cost)；幻觉率从94%修正为7.7%-8.3%
     - version: 1.1.0
       date: '2026-06-19'
       change: RQ审查修复——references.scripts路径修正(scripts/hooks/check_encoding.py→scripts/governance/d7_code/check_encoding.py)；references.modules路径修正+snake_case化(model-capability-contract.yaml→docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml)；provenance源文件标注归档状态；新增文件级change_history(违反RQ-14)
@@ -331,6 +371,15 @@ metadata:
   modification_permission: human_gated
   superseded_by:
   change_history:
+  - version: 1.2.0
+    date: '2026-06-25'
+    by: AI-Assistant
+    changes:
+    - 重大变更——gov_ai_002_routing改为二元分层方案(深度推理层+基础任务层)，基于V4 Pro入职考试成绩裁定
+    - gov_ai_002_fallback增加V4 Pro non-thinking→thinking内部降级链路
+    - gov_ai_002_benchmark增加V4 Pro考试数据(grade/score/breadth/latency/hallucination/cost/safe_capabilities)
+    - 幻觉率从94%修正为7.7%-8.3%(基于2026-06-25实际考试数据)
+    - 新增禁止V4 Pro做代码编辑类任务prohibition
   - version: 1.1.3
     date: '2026-06-21'
     by: AI-Assistant

@@ -1,7 +1,7 @@
 rule_id: TRAE-045
 title: 数据治理-质量与血缘
 version: 1.1.1
-layer: L1
+layer: compliance
 module_id: TRAE-045
 depends_on: []
 tags:

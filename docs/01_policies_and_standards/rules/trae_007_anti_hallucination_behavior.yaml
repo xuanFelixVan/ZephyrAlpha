@@ -1,7 +1,7 @@
 rule_id: TRAE-007
 title: 防幻觉-行为约束层
 version: 1.0.0
-layer: L0
+layer: compliance
 module_id: TRAE-007
 depends_on: []
 tags:

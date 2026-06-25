@@ -124,12 +124,10 @@ approved_labels:
 valid_layers:
   - data
   - infra_ops
-  - infra_runtime
   - factor
   - signal
   - risk
   - pf_core
-  - pf_alloc
   - ex_core
   - reporting
   - frontend
