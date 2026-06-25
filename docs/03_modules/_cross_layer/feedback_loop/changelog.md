@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: feedback-loop Changelog
-module_id: MOD-009---
+module_id: MOD-009
+ttl: permanent
+---
 
 # MOD-INF-010 Feedback Loop Engine — CHANGELOG
 

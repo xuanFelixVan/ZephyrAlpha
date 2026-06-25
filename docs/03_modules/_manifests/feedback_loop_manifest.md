@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Feedback Loop.Manifest
-module_id: MOD-056---
+module_id: MOD-056
+ttl: permanent
+---
 
 # feedback-loop/ 文件清单（自动生成 2026-05-09）
 

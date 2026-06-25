@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: A2A.Manifest
-module_id: MOD-041---
+module_id: MOD-041
+ttl: permanent
+---
 
 # a2a/ 文件清单（自动生成 2026-05-09）
 

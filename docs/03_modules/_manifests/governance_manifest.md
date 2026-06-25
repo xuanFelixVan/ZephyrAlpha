@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Governance.Manifest
-module_id: MOD-058---
+module_id: MOD-058
+ttl: permanent
+---
 
 # governance/ 文件清单（自动生成 2026-05-09）
 

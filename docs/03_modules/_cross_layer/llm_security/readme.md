@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: llm-security README
-module_id: MOD-010---
+module_id: MOD-010
+ttl: permanent
+---
 
 # LLM Security Gateway (MOD-INF-014)
 
@@ -229,7 +231,6 @@ python src/zephyr/security/llm_defense/llm-security/self_protection/l7_validatio
 ## 📄 许可证
 
 本项目采用 Apache License 2.0 许可证。详细信息请参阅 [LICENSE](LICENSE) 文件。
-
+ttl: permanent
 ---
-
 **LLM Security Gateway** - 为 AI 应用提供企业级安全保障 🛡️

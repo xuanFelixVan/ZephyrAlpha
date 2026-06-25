@@ -1,16 +1,17 @@
 ---
 blueprint_id: MOD-023
 title: runtime-integration README
-module_id: MOD-032---
+module_id: MOD-032
+ttl: permanent
+---
 
 # Runtime Integration — MOD-INF-002
 
 > **真源**：`docs/03_modules/_domain-infra_ops/runtime-integration/blueprint.md` v5.0.1
 > **承载层**：L01 Infrastructure（横切能力集合）
 > **Phase**：Phase 1 完成 / Phase 2 backlog
-
+ttl: permanent
 ---
-
 ## 1. 模块定位
 
 Runtime Integration 是 ZephyrAlpha 基础设施层的横切能力集合，解决 14 层模块的跨层协同问题。它是 MOD-MASTER-001 系统总设中 L01 Infrastructure 的运行时侧。

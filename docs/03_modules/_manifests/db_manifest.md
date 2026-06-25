@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Db.Manifest
-module_id: MOD-053---
+module_id: MOD-053
+ttl: permanent
+---
 
 # db/ 文件清单（自动生成 2026-05-09）
 

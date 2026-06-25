@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Audit Trail.Manifest
-module_id: MOD-045---
+module_id: MOD-045
+ttl: permanent
+---
 
 # audit-trail/ 文件清单（自动生成 2026-05-09）
 

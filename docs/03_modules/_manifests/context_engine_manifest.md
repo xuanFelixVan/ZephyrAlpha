@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Context Engine.Manifest
-module_id: MOD-050---
+module_id: MOD-050
+ttl: permanent
+---
 
 # context-engine/ 文件清单（自动生成 2026-05-09）
 

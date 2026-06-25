@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Core.Manifest
-module_id: MOD-052---
+module_id: MOD-052
+ttl: permanent
+---
 
 # core/ 文件清单（自动生成 2026-05-09）
 

@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Kb.Manifest
-module_id: MOD-060---
+module_id: MOD-060
+ttl: permanent
+---
 
 # kb/ 文件清单（自动生成 2026-05-09）
 

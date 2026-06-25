@@ -5,6 +5,8 @@ generated: '2026-05-02'
 blueprint_id: MOD-023
 title: Events
 module_id: GOV-041
+ttl: permanent
+---
 
 # Events — 目录索引
 

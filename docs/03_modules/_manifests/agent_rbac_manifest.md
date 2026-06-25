@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Agent Rbac.Manifest
-module_id: MOD-042---
+module_id: MOD-042
+ttl: permanent
+---
 
 # agent-rbac/ 文件清单（自动生成 2026-05-09）
 

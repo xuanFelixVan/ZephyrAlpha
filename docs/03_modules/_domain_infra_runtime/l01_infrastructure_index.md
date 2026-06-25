@@ -5,7 +5,9 @@ generated: '2026-05-02'
 status: Active
 blueprint_id: DOM-INF-001
 title: Infra Runtime Domain Index
-module_id: MOD-030---
+module_id: MOD-030
+ttl: permanent
+---
 
 # L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?
 

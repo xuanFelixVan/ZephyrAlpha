@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Contracts.Manifest
-module_id: MOD-051---
+module_id: MOD-051
+ttl: permanent
+---
 
 # contracts/ 文件清单（自动生成 2026-05-09）
 

@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Mcp.Manifest
-module_id: MOD-062---
+module_id: MOD-062
+ttl: permanent
+---
 
 # mcp/ 文件清单（自动生成 2026-05-09）
 

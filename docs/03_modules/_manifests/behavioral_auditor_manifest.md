@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Behavioral Auditor.Manifest
-module_id: MOD-046---
+module_id: MOD-046
+ttl: permanent
+---
 
 # behavioral-auditor/ 文件清单（自动生成 2026-05-09）
 

@@ -5,6 +5,8 @@ generated: '2026-05-02'
 blueprint_id: MOD-023
 title: Domain
 module_id: GOV-040
+ttl: permanent
+---
 
 # Domain — 目录索引
 

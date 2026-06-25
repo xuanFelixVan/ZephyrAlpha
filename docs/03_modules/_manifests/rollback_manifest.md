@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Rollback.Manifest
-module_id: MOD-066---
+module_id: MOD-066
+ttl: permanent
+---
 
 # rollback/ 文件清单（自动生成 2026-05-09）
 

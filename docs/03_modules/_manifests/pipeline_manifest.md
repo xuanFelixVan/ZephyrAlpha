@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Pipeline.Manifest
-module_id: MOD-064---
+module_id: MOD-064
+ttl: permanent
+---
 
 # pipeline/ 文件清单（自动生成 2026-05-09）
 

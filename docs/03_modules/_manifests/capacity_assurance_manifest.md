@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Capacity Assurance.Manifest
-module_id: MOD-048---
+module_id: MOD-048
+ttl: permanent
+---
 
 # capacity-assurance/ 文件清单（自动生成 2026-05-09）
 

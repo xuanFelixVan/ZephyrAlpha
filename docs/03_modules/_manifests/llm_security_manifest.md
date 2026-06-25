@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Llm Security.Manifest
-module_id: MOD-061---
+module_id: MOD-061
+ttl: permanent
+---
 
 # llm-security/ 文件清单（自动生成 2026-05-09）
 

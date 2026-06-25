@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Orchestrator.Manifest
-module_id: MOD-063---
+module_id: MOD-063
+ttl: permanent
+---
 
 # orchestrator/ 文件清单（自动生成 2026-05-09）
 

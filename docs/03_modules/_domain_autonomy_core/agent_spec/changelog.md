@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: agent-spec Changelog
-module_id: MOD-016---
+module_id: MOD-016
+ttl: permanent
+---
 
 # MOD-INF-019 CHANGELOG (v0.1.0 → v0.17.0)
 

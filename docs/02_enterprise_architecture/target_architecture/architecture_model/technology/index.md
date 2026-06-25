@@ -5,6 +5,8 @@ generated: '2026-05-02'
 blueprint_id: MOD-023
 title: Technology
 module_id: GOV-048
+ttl: permanent
+---
 
 # Technology — 目录索引
 

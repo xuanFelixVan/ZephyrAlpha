@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Runbook
-module_id: MOD-011---
+module_id: MOD-011
+ttl: permanent
+---
 
 # MCP Runbook
 

@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Budget Enforcer.Manifest
-module_id: MOD-047---
+module_id: MOD-047
+ttl: permanent
+---
 
 # budget-enforcer/ 文件清单（自动生成 2026-05-09）
 

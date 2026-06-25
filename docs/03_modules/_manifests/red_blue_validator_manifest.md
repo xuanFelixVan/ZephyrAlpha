@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Red Blue Validator.Manifest
-module_id: MOD-065---
+module_id: MOD-065
+ttl: permanent
+---
 
 # red-blue-validator/ 文件清单（自动生成 2026-05-09）
 

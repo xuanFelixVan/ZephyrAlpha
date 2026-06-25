@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Shared.Manifest
-module_id: MOD-069---
+module_id: MOD-069
+ttl: permanent
+---
 
 # shared/ 文件清单（自动生成 2026-05-09）
 

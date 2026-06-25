@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Runtime.Manifest
-module_id: MOD-067---
+module_id: MOD-067
+ttl: permanent
+---
 
 # runtime/ 文件清单（自动生成 2026-05-09）
 

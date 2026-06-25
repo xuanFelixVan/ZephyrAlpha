@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Agent Spec.Manifest
-module_id: MOD-043---
+module_id: MOD-043
+ttl: permanent
+---
 
 # agent-spec/ 文件清单（自动生成 2026-05-09）
 

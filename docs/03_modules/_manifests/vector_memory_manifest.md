@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Vector Memory.Manifest
-module_id: MOD-070---
+module_id: MOD-070
+ttl: permanent
+---
 
 # vector-memory/ 文件清单（自动生成 2026-05-09）
 

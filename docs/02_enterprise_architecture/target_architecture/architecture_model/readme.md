@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: architecture_model README
-module_id: GOV-046---
+module_id: GOV-046
+ttl: permanent
+---
 
 # 企业架构树中的 architecture_model（镜像说明）
 

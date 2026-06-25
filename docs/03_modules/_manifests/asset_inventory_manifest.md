@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Asset Inventory.Manifest
-module_id: MOD-044---
+module_id: MOD-044
+ttl: permanent
+---
 
 # asset-inventory/ 文件清单（自动生成 2026-05-09）
 

@@ -1,7 +1,9 @@
 ---
 blueprint_id: MOD-023
 title: Integration Test Report
-module_id: MOD-028---
+module_id: MOD-028
+ttl: permanent
+---
 
 # MOD-INF-025 A2A Protocol 集成测试报告 (v0.10.0)
 # 测试时间: 2026-05-07
