@@ -419,8 +419,8 @@ def sync_functional_domain_registry(cur):
         cur.execute(
             """
         INSERT INTO domains (domain_id, domain_name, domain_group, description,
-                             modification_permission, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+                             modification_permission, build_status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, 'planned', ?, ?)
         ON CONFLICT(domain_id) DO UPDATE SET
             domain_name=excluded.domain_name,
             description=excluded.description,
