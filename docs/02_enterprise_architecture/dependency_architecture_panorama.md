@@ -2091,7 +2091,7 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 | #206-A | #ARCH-008 | 8 个 Bug 修复 + 派生文件重生成 + DB 脏值清理 + 孤儿模块删除 | ✅ 已执行 (commit 5326a70+764d425+03d2425+cc0fd08) |
 | #206-B | #ARCH-009 | layer 命名体系统一为 layer_vocabulary.yaml 16 值语义命名，废弃 L0/L1/L2/L3 旧格式（方案 A） | ✅ 已执行 (commit 9bc18706) |
 | #206-C | #ARCH-010 | apply_depgraph.py ALLOWED_LAYERS 与 DB CHECK 对齐 | ✅ 已执行 (commit 9bc18706) |
-| #206-D | #ARCH-011 | layer_vocabulary.yaml 新增 dir_prefix 字段（根本方案） | ⏳ 待用户批准 |
+| #206-D | #ARCH-011 | layer_vocabulary.yaml 新增 dir_prefix 字段（根本方案） | ✅ 已执行 (commit 9b14586e) |
 
 **#206-A 详情（8 个 Bug 修复）**:
 
@@ -2121,9 +2121,11 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 
 修复 apply_depgraph.py 的 ALLOWED_LAYERS 常量，从硬编码的 L1_platform 改为从 layer_vocabulary.yaml 动态加载，与 DB CHECK 约束对齐（commit 9bc187061）。
 
-**#206-D 详情（dir_prefix 字段——待执行）**:
+**#206-D 详情（dir_prefix 字段——已执行）**:
 
-在 layer_vocabulary.yaml 每个 entry 中新增 `dir_prefix` 字段，由 validator 动态读取，消除映射表硬编码漂移风险。本子裁定待用户批准后执行。
+在 layer_vocabulary.yaml 16 个 entry 中新增 `dir_prefix` 字段（data→l00_、infra_ops→l01_、factor→l02_、signal→l03_、risk→l04_、pf_core→l05_、ex_core→l06_、reporting→l07_、frontend→l08_、research→l09_、compliance→l10_、ml_train→l11_、system-telemetry→l12_、simulation→l13_，shared/cross_layer→空字符串），schema_version 1.0.0→1.1.0；`validate_blueprint_placement.py` 删除 `_LAYER_DIR_PREFIX_MAP` 硬编码映射表，`_layer_to_dir_prefix()` 改为从 `layer_vocabulary.yaml` 的 `dir_prefix` 字段动态读取，消除映射表硬编码漂移风险（任务卡 OPS-2026062646，commit 9b14586e2）。
+
+后续 GATE-GENERATE hook 接入（任务卡 OPS-2026062647，commit cfcf35be）：在 `.pre-commit-config.yaml` GATE-19 之后追加 `gate-generate-derived` hook，当 vocabulary YAML 变更时自动触发 `generate_derived_files.py --check --warn-only` 校验派生文件一致性（骨架阶段 warn-only，验证稳定后转硬阻断）。至此裁定#206 全部 4 项子裁定（A/B/C/D）均已执行完毕。
 
 **kebab-case 路径引用清理（任务卡 OPS-2026062628）**:
 
