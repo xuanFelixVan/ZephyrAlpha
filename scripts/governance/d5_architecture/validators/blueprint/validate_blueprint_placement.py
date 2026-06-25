@@ -82,16 +82,15 @@ def _is_blueprint(filepath: Path) -> bool:
     return filepath.suffix == ".md" and filepath.name == "blueprint.md"
 
 
-_LAYER_DIR_PREFIX_MAP = {
-    "data": "l00_", "infra_ops": "l01_", "factor": "l02_", "signal": "l03_",
-    "risk": "l04_", "pf_core": "l05_", "ex_core": "l06_", "reporting": "l07_",
-    "frontend": "l08_", "research": "l09_", "compliance": "l10_", "ml_train": "l11_",
-    "system-telemetry": "l12_", "simulation": "l13_", "shared": "", "cross_layer": "",
+_LAYER_DIR_PREFIX_MAP: dict[str, str] = {
+    str(v.get("value")): str(v.get("dir_prefix", ""))
+    for v in _LAYER_DATA.get("values", [])
+    if isinstance(v, dict) and v.get("value")
 }
 
 
 def _layer_to_dir_prefix(layer: str) -> str:
-    """语义 layer 值 → 物理目录前缀映射（暂行硬编码，待裁定 #ARCH-011 改为 vocabulary dir_prefix 字段动态读取）。"""
+    """语义 layer 值 → 物理目录前缀映射（裁定#206-D/#ARCH-011已落地：从 layer_vocabulary.yaml dir_prefix 字段动态读取）。"""
     return _LAYER_DIR_PREFIX_MAP.get(layer, "")
 
 
