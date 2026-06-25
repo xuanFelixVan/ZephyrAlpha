@@ -1916,7 +1916,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 - **执行日期**: 2026-06-25
 - **规则依据**: ARCH-CAP-002 v1.0.8（单域 production_nodes ≤ 150，> 150 必须拆分，无例外）
-- **拆分方案**: [domain_split_plan_4_oversized_domains.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md)（附录E+F）
+- **拆分方案**: [domain_split_plan_4_oversized_domains.md](file:///d:/ZephyrAlpha/docs/_working/domain_split_plan_4_oversized_domains.md)（附录E+F）
 
 **拆分结果**:
 

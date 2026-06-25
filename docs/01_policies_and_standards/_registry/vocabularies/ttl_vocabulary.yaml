@@ -9,26 +9,35 @@
 # ttl 受控词表
 # ZephyrAlpha 2.0 文档保留期唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.1.0
+# 版本：2.0.0（breaking：6 值→2 值二元裁定）
 # 创建日期：2026-05-02
+# 最后更新：2026-06-26
 #
-# 本词表定义 ttl 字段的所有合法值（6 种）。
+# v2.0.0 变更说明（2026-06-26）：
+#   - 删除 7d（0 使用，死代码）
+#   - 删除 30d（2 使用，本质 task_bound，已迁移）
+#   - 删除 periodic_review_90d（1 使用，LLM 排行榜转 permanent）
+#   - 删除 session（0 使用，是 task_bound 子集）
+#   - 只留 permanent / task_bound 二元
+#   - 判定树从 5 节点简化为 1 节点二元（永久区路径→permanent；否则→task_bound）
+#   - 设计依据：粒度越细，AI 判定越靠猜；二元判定消除歧义
+#
+# 本词表定义 ttl 字段的所有合法值（2 种）。
 # 校验器 check_frontmatter_metadata.py 从本文件动态加载合法值。
 # 新增/删除 ttl 值只需修改本文件，校验器自动同步。
 #
 # 对标标准：
 #   - metadata_registry.yaml §2.1 + §4.7（TTL 定义真源）
-#   - K8s well-known labels：label + value + meaning 三元组
 
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-004
-version: "1.1.0"
+version: "2.0.0"
 title: "ttl 受控词表"
 status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: ttl
-total_values: 6
+total_values: 2
 source: "PS-STD-001 §2.1 + §4.7（TTL 保留期定义真源）"
 depends_on:
   - target: PS-STD-001
@@ -37,90 +46,55 @@ depends_on:
 
 values:
   - value: permanent
-    definition: "永久保留——核心治理文件、元标准、宪章、蓝图。不可删除"
-    applies_to: [policy, standard, protocol, blueprint]
-    ai_keywords: ["永久", "permanent", "永不删除", "宪章"]
-
-  - value: 30d
-    definition: "30 天保留——临时施工文件、讨论稿。到期后可归档或删除"
-    applies_to: [plan, design]
-    ai_keywords: ["30天", "临时", "30d", "月度"]
-
-  - value: 7d
-    definition: "7 天保留——极短期会话产出物、自动生成报告"
-    applies_to: [audit_report, log]
-    ai_keywords: ["7天", "短期", "7d", "周"]
-
-  - value: session
-    definition: "会话生命周期——仅当前 AI session 有效，session 结束后失效"
-    applies_to: [log]
-    ai_keywords: ["session", "会话", "本次", "临时"]
-
-  - value: periodic_review_90d
-    definition: "定期审查（90 天周期）——需每 90 天人工审查是否需要更新。适用于相对稳定但仍需周期性确认的治理文件"
-    applies_to: [standard, policy]
-    ai_keywords: ["90天", "季度", "审查", "review", "periodic"]
+    definition: "永久保留——核心治理文件、元标准、宪章、蓝图、真源数据。不可删除"
+    applies_to: [policy, standard, protocol, blueprint, catalog, knowledge]
+    ai_keywords: ["永久", "permanent", "永不删除", "宪章", "真源"]
 
   - value: task_bound
-    definition: "任务绑定——文件与特定任务关联，当该任务完成时可清理。触发方式：用户喊 AI 扫描 ttl=task_bound 全项目文件，输出清单后人工判定关联任务是否完成。介于 session（会话结束即删）和 permanent（永不删）之间"
-    applies_to: [doc]
-    ai_keywords: ["任务", "task", "完成即删", "条件", "task_bound"]
+    definition: "任务绑定——文件与特定任务关联，任务完成后可清理。所有过程性文档（方案/评估/提案/调研报告/临时笔记）默认用此值。默认落点 docs/_working/"
+    applies_to: [plan, assessment, proposal, report, note, doc]
+    ai_keywords: ["任务", "task", "完成即删", "过程", "临时", "task_bound"]
 
-# ── 二元判定树（AI 创建文档时 MUST 按此树判定 ttl，禁止靠关键词猜）──
+# ── 二元判定树（AI 创建文档时 MUST 按此树判定 ttl）──
 # 设计原则：
-#   1. 每个节点只能回答 是/否（二元）
-#   2. 每个节点有客观判定标准（路径/前缀/内容特征），不靠"感觉"
-#   3. match: any = 满足任一标准即为"是"
-#   4. 判定顺序从最严格（permanent）到最宽松（30d）
-#   5. 默认落点 30d（最保守的临时值），避免临时文档被误判为永久
+#   1. 只有一个二元问题：是否在永久区路径
+#   2. 在永久区 → permanent（准入受控，必为永久文件）
+#   3. 不在永久区 → task_bound（过程性文档，默认落 docs/_working/）
+#   4. AI 创建文件默认落 docs/_working/，除非用户明确要求创建永久文件
+#   5. 永久区准入需用户同意（GitCommitGateway 门禁，后续实现）
 #   6. 同一文档，任何 AI 按此树判定，结果必须一致（可复现）
 decision_tree:
   root: Q1
   nodes:
     Q1:
-      question: "文档是否为核心治理真源？"
+      question: "文档是否在永久区路径？"
       criteria:
         - "路径在 docs/01_policies_and_standards/"
         - "路径在 docs/02_enterprise_architecture/"
-        - "路径在 docs/03_modules/（含 _manifests/）"
-        - "路径在 docs/08_knowledge/（知识库沉淀）"
-        - "frontmatter module_id 前缀为 PS-/MOD-/GOV-"
+        - "路径在 docs/03_modules/"
+        - "路径在 docs/08_knowledge/"
       match: any
       yes: permanent
-      no: Q2
-    Q2:
-      question: "文档是否绑定到具体任务卡？"
-      criteria:
-        - "正文或 frontmatter 引用任务卡 ID（前缀 OPS-/TRA-/ARCH-/FIX-）"
-        - "文档为该任务卡专属服务，任务完成后文档失效"
-      match: any
-      yes: task_bound
-      no: Q3
-    Q3:
-      question: "文档是否需要周期复查？"
-      criteria:
-        - "frontmatter status 为 draft 或 review"
-        - "正文显式声明'定期复查'或'周期审查'"
-      match: any
-      yes: periodic_review_90d
-      no: Q4
-    Q4:
-      question: "文档是否仅当前 AI session 有效？"
-      criteria:
-        - "文件名以 _tmp_ 开头"
-        - "路径在 .trae/sessions/"
-        - "内容显式标注'本次对话临时产出'"
-      match: any
-      yes: session
-      no: Q5
-    Q5:
-      question: "文档是否为自动生成的报告/日志？"
-      criteria:
-        - "文件头部含'自动生成'字样"
-        - "路径在 docs/09_audit/ 或路径含 generated/audit/log"
-        - "由脚本生成而非人工编写"
-      match: any
-      yes: 7d
-      no: 30d  # 默认：人工编写的临时讨论稿/计划稿
+      no: task_bound  # 默认落 docs/_working/ 临时区
 
-deprecated_values: []
+# ── 永久区准入机制（后续实现）──
+# 永久区新文件必须经用户同意才能进入：
+#   1. GitCommitGateway 检测新增永久区 .md 文件
+#   2. 未带 --allow-promote → 阻断
+#   3. 用户在终端带 --allow-promote → 交互确认后放行
+#   4. AI 自动化调用无法绕过（无法触发终端交互）
+# 不使用 frontmatter promoted_by 字段（审批人永远是用户，字段冗余且无法防伪造）
+
+deprecated_values:
+  - value: 7d
+    deprecated_in: "2.0.0"
+    reason: "0 使用，死代码。task_bound 覆盖'自动报告'语义"
+  - value: 30d
+    deprecated_in: "2.0.0"
+    reason: "本质 task_bound，已迁移。task_bound 覆盖'临时施工文件'语义"
+  - value: periodic_review_90d
+    deprecated_in: "2.0.0"
+    reason: "1 使用（LLM 排行榜）转 permanent。复查需求用 updated_date 字段表达"
+  - value: session
+    deprecated_in: "2.0.0"
+    reason: "0 使用，是 task_bound 子集。AI 产出必然为任务服务"

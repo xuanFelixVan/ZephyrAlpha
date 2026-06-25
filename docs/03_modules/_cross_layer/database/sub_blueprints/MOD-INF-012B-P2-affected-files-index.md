@@ -370,7 +370,7 @@ references:
 | | | L1241 | 将"depgraph.db（SQLite单库）"改为"PostgreSQL单库" | D50-PG裁定 |
 | 4 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | L289,807,1038,1039,1084,1298,1301,1335,1338 | 更新D50裁定为D50-PG；将"SQLite"改为"PostgreSQL" | D50-PG裁定 |
 | 5 | `docs/02_enterprise_architecture/core_function_dependency_design.md` | L114,732 | 将"PostgreSQL容量升级"更新为"已迁移" | D50-PG裁定 |
-| 6 | `docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md` | L1245,1254,1270,1277,1303,1332,1338 | 将`sqlite3.connect`命令改为PG连接方式 | D50-PG裁定 |
+| 6 | `docs/_working/domain_split_plan_4_oversized_domains.md` | L1245,1254,1270,1277,1303,1332,1338 | 将`sqlite3.connect`命令改为PG连接方式 | D50-PG裁定 |
 | 7 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md` | L203,274,391,773,859 | 将"SQLite锁"改为"PostgreSQL MVCC" | D50-PG裁定 |
 | 8 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md` | L1445,1473 | 将"从SQLite数据库加载"改为"从PostgreSQL加载" | D50-PG裁定 |
 | 9 | `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md` | 对应英文版行 | 同上（英文版） | D50-PG裁定 |
@@ -623,7 +623,7 @@ references:
 
 | # | 文件路径 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|
-| 136 | `docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md` | 30+处sqlite3.connect命令（L1245,1254,1270,1277,1303,1332,1422,1481,1808,1818-1819,1851,1870,1888,1906,1922,1939,1951-1952,2005-2006,2035,2054,2072,2091,2107,2189-2190,2228,2261,2327-2328） | 替换为psycopg2或extract_depgraph.py |
+| 136 | `docs/_working/domain_split_plan_4_oversized_domains.md` | 30+处sqlite3.connect命令（L1245,1254,1270,1277,1303,1332,1422,1481,1808,1818-1819,1851,1870,1888,1906,1922,1939,1951-1952,2005-2006,2035,2054,2072,2091,2107,2189-2190,2228,2261,2327-2328） | 替换为psycopg2或extract_depgraph.py |
 | 137 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md` | sqlite3.connect命令+SQLite锁竞争描述（L203,274,297,310,391,772-773,859） | 替换连接命令；更新锁竞争描述 |
 | 138 | `docs/02_enterprise_architecture/t18_implementation_plan.md` | sqlite3.connect+DROP TRIGGER命令（L553） | 替换为PG连接；TRIGGER语法适配 |
 | 139 | `docs/01_policies_and_standards/templates/dependency_graph_template.md` | 语法检查命令使用sqlite3（L961） | 更新为PG连接验证 |

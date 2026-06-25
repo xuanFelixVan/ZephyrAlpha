@@ -300,7 +300,7 @@ sections:
     gov_mod_003_scope:
       section_type: context
       applies_to: architecture_model/下所有模块 + 01_policies_and_standards/下所有doc_type文件 + 候选池中的模块
-      not_applies_to: '临时草稿(ttl: session) + 纯引用文件'
+      not_applies_to: '临时草稿(ttl: task_bound) + 纯引用文件'
     gov_mod_003_stage_details:
       section_type: context
       stages:
@@ -412,7 +412,7 @@ sections:
     gov_mod_004_scope:
       section_type: context
       applies_to: 所有P0模块的接口定义 + 跨层模块间的交互接口 + 模块对外暴露的API/事件/数据接口
-      not_applies_to: '临时草案(ttl: session) + 未注入的模块接口讨论稿'
+      not_applies_to: '临时草案(ttl: task_bound) + 未注入的模块接口讨论稿'
     gov_mod_004_ifc002_change:
       section_type: procedure
       rule: 'IFC-002: 任何frozen接口契约变更必须创建KB决策记录'

@@ -281,8 +281,8 @@ sections:
     conditions:
     - type: constraint
       check: TTL分级
-      pass: permanent(永久)/30d(30天过期)/7d(7天过期)/session(本session结束删除)
-      fail: 未指定TTL或TTL值不在四级分类中
+      pass: permanent(永久)/task_bound(任务绑定，完成即删)
+      fail: 未指定TTL或TTL值不在二元分类中
     - type: constraint
       check: 文档状态机
       pass: 只有draft/active/deprecated三种状态;draft→active需Owner批准+补齐14个必填字段;active→deprecated需填写superseded_by;deprecated→active需Owner审批
@@ -293,7 +293,7 @@ sections:
       fail: 按日期新建状态快照文件
     - type: trigger
       check: 归档流程触发
-      pass: 文件移动到archive/子目录+更新frontmatter status:deprecated ttl:30d+更新所有引用+重新生成document_metadata_index_registry.yaml+同一commit完成
+      pass: 文件移动到archive/子目录+更新frontmatter status:deprecated ttl:task_bound+更新所有引用+重新生成document_metadata_index_registry.yaml+同一commit完成
       fail: 未走归档流程直接处理
     - type: trigger
       check: 废弃流程触发
@@ -697,13 +697,9 @@ sections:
     - DOC-006
     items:
     - description: TTL=permanent(永久有效)
-      details: 适用治理规范/架构视图/KB决策记录/知识库条目;不过期需Owner明确废弃
-    - description: TTL=30d(30天后过期)
-      details: 适用审计报告/状态快照/迁移报告;过期后移入09_audit/archive/或直接删除
-    - description: TTL=7d(7天后过期)
-      details: 适用临时工作文件/草稿/中间产物;过期后直接删除
-    - description: TTL=session(本session结束后删除)
-      details: 适用临时脚本/一次性工具/session内草稿;session结束时必须删除不得提交到git
+      details: 适用治理规范/架构视图/KB决策记录/知识库条目/真源数据;不过期需Owner明确废弃
+    - description: TTL=task_bound(任务绑定，完成即删)
+      details: 适用施工方案/评估报告/提案/调研报告/临时笔记;任务完成后可清理;默认落 docs/_working/
     - description: 状态转换draft→active
       details: Owner批准;更新frontmatter status为active;补齐Active阶段14个必填字段(PS-STD-001 §2.2);更新document_metadata_index_registry.yaml
     - description: 状态转换active→deprecated

@@ -260,11 +260,7 @@ fields:
     derived_from: "_registry/vocabularies/ttl_vocabulary.yaml"
     enum_values:
       - {value: "permanent", description: "永久保留"}
-      - {value: "periodic_review_90d", description: "90 天周期复查——到期需人工复核后延续或废弃"}
-      - {value: "30d", description: "30 天——月度数据/日志"}
-      - {value: "7d", description: "7 天——周度数据/临时文件"}
-      - {value: "session", description: "会话级——session 结束后可清理"}
-      - {value: "task_bound", description: "任务绑定——任务完成即可清理（人工判定）"}
+      - {value: "task_bound", description: "任务绑定——任务完成即可清理。过程性文档默认落 docs/_working/"}
     applicable_docs: []
     description: "文档保留期"
     source: "PS-STD-001 §6"

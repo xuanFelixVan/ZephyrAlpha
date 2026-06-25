@@ -499,7 +499,7 @@ sections:
     - type: mandatory
       step: Step1产出物核验——所有产出文件在deliverables内/无未声明副产品/编码正确
     - type: mandatory
-      step: Step2临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:session文件
+      step: Step2临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:task_bound文件
     - type: mandatory
       step: Step3残留物检测——运行task_completion_gate.py扫描scope-paths，分类处置(ORPHAN_SHELL/STALE_SKELETON/DUPLICATE/LEGACY_TEST删除; VALID_FILE由Owner判定)
     prohibitions:
@@ -1138,7 +1138,7 @@ sections:
       expected_result: 100%在指定路径
       on_failure: 将文件移到正确路径或更新deliverables
     - order: 2
-      action: 临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:session文件
+      action: 临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:task_bound文件
       pre_condition: 产出物核验通过
       expected_result: 零临时文件
       on_failure: 继续删除

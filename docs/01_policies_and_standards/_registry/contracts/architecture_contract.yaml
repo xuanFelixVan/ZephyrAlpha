@@ -160,9 +160,9 @@ frontmatter_schema:
       stage: draft
 
     - name: ttl
-      allowed_values: [permanent, periodic_review_90d, 30d, 7d, session, task_bound]
+      allowed_values: [permanent, task_bound]
       derived_from: "_registry/vocabularies/ttl_vocabulary.yaml"
-      description: "文件保留期限（PS-STD-001 §6：6 值）"
+      description: "文件保留期限（PS-STD-001 §6：2 值二元 v2.0.0）"
       stage: active
 
     - name: summary

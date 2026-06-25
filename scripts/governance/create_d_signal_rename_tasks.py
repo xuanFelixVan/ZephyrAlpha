@@ -552,7 +552,7 @@ def _build_main_08_history_docs() -> Task:
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/dependency_architecture_panorama.md",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance_reports/preexisting_db_issues_investigation_report.md",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md",
-        "D:/ZephyrAlpha/docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md",
+        "D:/ZephyrAlpha/docs/_working/domain_split_plan_4_oversized_domains.md",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/t18_implementation_plan.md",
         "D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance_reports/d_signal_rename_plan.md",
         "D:/ZephyrAlpha/data/pending_manual_completion_list.md",

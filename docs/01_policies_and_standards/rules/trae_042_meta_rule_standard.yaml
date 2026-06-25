@@ -986,7 +986,7 @@ sections:
     - 'doc_type: register | contract | config'
     - 'title: 文档标题'
     - 'status: active | draft | deprecated'
-    - 'ttl: permanent | 30d | 7d | session'
+    - 'ttl: permanent | task_bound'
     naming_conventions:
     - 使用snake_case(下划线分隔)
     - 布尔值使用true/false(小写)

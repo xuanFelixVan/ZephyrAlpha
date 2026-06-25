@@ -70,7 +70,7 @@ ttl: permanent
 | 域总览索引 | 2026-06-25 03:32:03 | `docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md` |
 | 设计态vs运营态报告 | 2026-06-25 03:41:37 | `docs/02_enterprise_architecture/03_governance_reports/design_vs_production.md` |
 | 域架构文档 | 2026-06-24 23:56:40 | `docs/02_enterprise_architecture/02_domain_architecture_docs/4*.md` |
-| 含缓存SQL结果的拆分方案 | 2026-06-25 | `docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md`（附录C.3 含 domains 表实测快照） |
+| 含缓存SQL结果的拆分方案 | 2026-06-25 | `docs/_working/domain_split_plan_4_oversized_domains.md`（附录C.3 含 domains 表实测快照） |
 
 ### 1.2 domains 表 Schema 实测
 
@@ -822,7 +822,7 @@ ARCH-CAP-007（新增）：占位域生命周期门禁
 | 占位域允许 | 同上 | L1296 | "全景图允许占位" |
 | 设计态占位定义 | 同上 | L1306 | design+planned |
 | 生命周期状态机 | 同上 | L1290-1328 | §17 |
-| domains 表实测快照 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\domain_split_plan_4_oversized_domains.md` | 附录C.3 L668-675 | 6域 ssot_path/layer_id 为 NULL |
+| domains 表实测快照 | `D:\ZephyrAlpha\docs\_working\domain_split_plan_4_oversized_domains.md` | 附录C.3 L668-675 | 6域 ssot_path/layer_id 为 NULL |
 | D-SIGNAL 域文档 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\02_domain_architecture_docs\38_d_signal.md` | L24-34, L472-473, L1839, L1865-1870 | 476模块/1prod，ssot_path空 |
 | D-SIGNAL_FUNDAMENTAL 域文档 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\02_domain_architecture_docs\40_d_signal_fundamental.md` | L24-35, L43-66 | 24模块/3prod，拆分自D-SIGNAL |
 | 3空域文档 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\02_domain_architecture_docs\{45,47,48}_*.md` | — | 0模块空壳 |

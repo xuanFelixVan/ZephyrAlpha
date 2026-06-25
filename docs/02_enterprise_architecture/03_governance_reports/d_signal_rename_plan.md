@@ -192,7 +192,7 @@ D-SIGNAL 的本质是**信号域拆分后遗留的整体设计态规划**，不�
 | 23 | docs/02_enterprise_architecture/dependency_architecture_panorama.md | 9 | **追加裁定#204**（推翻#ARCH-002/#ARCH-004）+ 在#201记录处标注"已被#204推翻" |
 | 24 | docs/02_enterprise_architecture/03_governance_reports/preexisting_db_issues_investigation_report.md | ~45 | 在#ARCH-002/#ARCH-003/#ARCH-004议题处标注"已被#204推翻" + 追加#204执行记录 |
 | 25 | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | 12 | 历史讨论记录，追加"注：#204已推翻#ARCH-002/#ARCH-004，4域改名" |
-| 26 | docs/02_enterprise_architecture/domain_split_plan_4_oversized_domains.md | 1 | 历史拆分方案，追加推翻说明 |
+| 26 | docs/_working/domain_split_plan_4_oversized_domains.md | 1 | 历史拆分方案，追加推翻说明 |
 | 27 | docs/02_enterprise_architecture/t18_implementation_plan.md | 1 | 历史实施计划，追加推翻说明 |
 | 28 | docs/02_enterprise_architecture/03_governance_reports/d_signal_rename_plan.md | ~45 | 本方案文档自身，执行后更新为"已执行" |
 | 29 | data/pending_manual_completion_list.md | 3 | 待完成清单 |

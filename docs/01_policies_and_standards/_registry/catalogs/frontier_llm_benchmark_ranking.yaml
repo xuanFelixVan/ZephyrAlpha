@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: '2026-04-26'
 updated_date: '2026-05-02'
-ttl: periodic_review_90d
+ttl: permanent
 summary: 2026年4月前沿大模型综合能力排名——综合 LMSYS Chatbot Arena、Artificial Analysis、SWE-bench、GPQA Diamond、AIME 2026、Vectara HEF、SuperCLUE-Faith、KICS 等 18+ 独立评测源的最新公开数据，对 14 款模型进行多维度横向排名。本登记表是任务卡 assigned_model 字段分配的客观依据。2026-05-02 从场外草稿正式纳入项目真源。
 tags:
 - model-benchmark

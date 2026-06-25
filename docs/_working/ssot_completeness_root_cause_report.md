@@ -2,7 +2,7 @@
 title: SSoT 完整性与改名传播闭环病根调研与裁定报告
 doc_type: governance_report
 status: active
-ttl: 30d
+ttl: task_bound
 created_by: agent
 created: '2026-06-26'
 approved_by: owner
@@ -101,7 +101,7 @@ OR to_node_id NOT IN (SELECT node_id FROM nodes)
 
 #### 2.1.5 改名传播规则缺失
 
-[blueprint_id_naming_root_cause_report.md:74](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance_reports/blueprint_id_naming_root_cause_report.md) §2.3 病根#2 已识别：Grep `改名.*传播|传播.*改名|派生.*改名|rename.*propagat` 于 docs/01_policies_and_standards/ → **0 匹配**。项目无任何规则规定改名传播的完整性要求。
+[blueprint_id_naming_root_cause_report.md:74](file:///D:/ZephyrAlpha/docs/_working/blueprint_id_naming_root_cause_report.md) §2.3 病根#2 已识别：Grep `改名.*传播|传播.*改名|派生.*改名|rename.*propagat` 于 docs/01_policies_and_standards/ → **0 匹配**。项目无任何规则规定改名传播的完整性要求。
 
 AI 改名防护规则方面，trae_007/trae_012 反而是**禁止"顺便重命名"**（防幻觉），与"改名必须完整传播"方向相反——项目有"别乱改名"规则，却无"改名必须改全"规则。
 
