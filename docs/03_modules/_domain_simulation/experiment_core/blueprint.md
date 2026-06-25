@@ -12,7 +12,7 @@ classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
-ttl: evolving
+ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/simulation/"
 last_updated: "2026-05-15"

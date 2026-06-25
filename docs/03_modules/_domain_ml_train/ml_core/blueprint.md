@@ -13,7 +13,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-12"
-ttl: evolving
+ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/ml_train/"
 last_updated: "2026-05-15"
