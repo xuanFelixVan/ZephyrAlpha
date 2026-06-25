@@ -3164,6 +3164,7 @@ def load_design_state_from_db(db_path: str) -> dict:
 
 # Production-state fields that are manually maintained and MUST be preserved
 # across depgraph regeneration (they cannot be re-derived from disk scan).
+# 裁定#207 R2 C3：扩展至全量手工维护字段（原仅6字段，导致911节点数据丢失）
 PRODUCTION_PROTECTED_FIELDS = (
     "blueprint_id",
     "owner",
@@ -3171,6 +3172,17 @@ PRODUCTION_PROTECTED_FIELDS = (
     "change_policy",
     "modification_permission",
     "belongs_to",
+    # 裁定#207 R2 C3 新增：onboarding STEP 4.15 点名的 build_status 等
+    "build_status",
+    "gate_reason",
+    "hard_boundary_ref",
+    "consumed_interfaces",
+    "business_stream",
+    "stream_role",
+    "tags",
+    "trust_zone",
+    "deployment_lifecycle",
+    "architecture_layer",
 )
 
 
@@ -3191,12 +3203,13 @@ def load_production_state_from_db(db_path: str) -> dict:
     try:
         conn = sqlite3.connect(db_path)
         cur = conn.cursor()
+        # 裁定#207 R2 C3：使用 PRODUCTION_PROTECTED_FIELDS 动态构建查询（原硬编码6列）
+        cols = PRODUCTION_PROTECTED_FIELDS
+        col_list = ", ".join(cols)
         rows = cur.execute(
-            "SELECT path, blueprint_id, owner, impact_level, change_policy, "
-            "modification_permission, belongs_to "
+            f"SELECT path, {col_list} "
             "FROM nodes WHERE design_maturity = 'production'"
         ).fetchall()
-        cols = ("blueprint_id", "owner", "impact_level", "change_policy", "modification_permission", "belongs_to")
         for row in rows:
             path = row[0]
             if not path:
@@ -3304,6 +3317,12 @@ def main():
         help="Node granularity: 'file' = 1 file = 1 node (default), 'class' = 1 class = 1 node",
     )
     parser.add_argument("--dry-run", action="store_true", help="P0-3: dry-run模式，不修改任何文件，只输出执行报告")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="裁定#207 R2 C2：确认执行破坏性DB重建（DELETE运营态节点后从磁盘扫描重建）。"
+        "不加此flag时--output-db将被拒绝。制品重生请用 generate_project_depgraph_artifact.py --write",
+    )
     args = parser.parse_args()
 
     granularity = args.granularity
@@ -3583,6 +3602,23 @@ def main():
             print(f"\n... truncated ({len(md_section)} total chars)")
 
     if args.output_db:
+        # 裁定#207 R2 C2：--force 门禁——破坏性DB重建需显式确认
+        if not args.force:
+            print(
+                "\n" + "=" * 70 + "\n"
+                "[BLOCKED] 裁定#207 R2 C2：破坏性DB重建被阻断\n"
+                "  原因: --output-db 未搭配 --force\n"
+                "  风险: DELETE运营态节点后从磁盘扫描重建，手工维护数据可能丢失\n"
+                "  \n"
+                "  制品重生（推荐）:\n"
+                "    python scripts/governance/generate_project_depgraph_artifact.py --write\n"
+                "  \n"
+                "  确认破坏性重建（需人工评估）:\n"
+                "    python scripts/governance/generate_project_depgraph.py --output-db <path> --force\n"
+                + "=" * 70,
+                file=sys.stderr,
+            )
+            sys.exit(4)
         db_path = args.output_db
         if not os.path.isabs(db_path):
             db_path = str(PROJECT_ROOT / db_path)

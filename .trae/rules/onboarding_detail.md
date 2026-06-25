@@ -320,7 +320,7 @@ STEP 4.11 — Rollback System 激活: preflight + AutoTrigger + Kill Switch
 STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
-STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py（删除运营态节点后重建，但 build_status/module_lifecycle_state 不从文件头部解析，全用默认值 draft/inactive，导致911个节点手工维护数据丢失）。用 `python scripts/governance/extract_depgraph.py --summary` 替代
+STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py --output-db（裁定#207 R2 C2：破坏性DB重建需--force，DELETE运营态节点后从磁盘扫描重建，手工维护数据丢失）。制品重生用 `python scripts/governance/generate_project_depgraph_artifact.py --write`（只读DB，CQRS安全）。概览用 `python scripts/governance/extract_depgraph.py --summary`
 STEP 5  — 按需定位具体注册表 → 开工
 STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() → claim_next → 执行 → transition(COMPLETED) → 循环
            `from zephyr.trading.autopilot import AutoPilot; ap = AutoPilot(<session_id>); print(ap.status_report()); tasks = ap.run_cycle(max_tasks=3)`
