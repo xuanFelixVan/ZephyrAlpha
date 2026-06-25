@@ -232,9 +232,9 @@ sections:
     summary: 各类元数据定义的权威真源映射表
     ssot_mapping:
     - content: doc_type词表
-      source: doc_type-vocabulary.yaml
+      source: doc_type_vocabulary.yaml
     - content: 域A字段定义
-      source: frontmatter-field-registry.yaml(PS-REG-012)
+      source: frontmatter_field_registry.yaml(PS-REG-012)
     - content: 域B字段定义
       source: 本文档§7
     - content: 域C字段定义
@@ -244,9 +244,9 @@ sections:
     - content: module_id命名规范
       source: 本文档§5
     - content: status语义
-      source: status-vocabulary.yaml
+      source: status_vocabulary.yaml
     - content: ttl枚举
-      source: ttl-vocabulary.yaml
+      source: ttl_vocabulary.yaml
     rules:
     - 冲突时以本文件为准
     - 发现冲突提决策记录并修正
@@ -440,7 +440,7 @@ sections:
     section_type: rule
     original_rules:
     - PS-STD-001 §3
-    summary: 全项目27种doc_type canonical SSoT=doc_type-vocabulary.yaml
+    summary: 全项目27种doc_type canonical SSoT=doc_type_vocabulary.yaml
     conditions:
     - type: trigger
       check: 选择文档类型时
@@ -452,7 +452,7 @@ sections:
     - AI可记忆
     - 可扩展
     key_mapping: doc_type↔layer↔directory三向映射一一对应
-    new_doc_type_flow: 发现无法覆盖→提决策记录→仅更新vocabulary YAML→校验脚本动态加载→同步frontmatter-schema.json
+    new_doc_type_flow: 发现无法覆盖→提决策记录→仅更新vocabulary YAML→校验脚本动态加载→同步frontmatter_schema.json
     prohibitions:
     - 在governance/下使用operational_rule
     - 在operational/下使用policy或standard
@@ -527,7 +527,7 @@ sections:
     section_type: rule
     original_rules:
     - PS-STD-001 §6
-    summary: 5种合法ttl canonical SSoT=ttl-vocabulary.yaml
+    summary: 5种合法ttl canonical SSoT=ttl_vocabulary.yaml
     conditions:
     - type: trigger
       check: 设置文件保留期限时
@@ -782,7 +782,7 @@ sections:
       fail: 忽略漂移导致字段定义分裂
     protection_mechanisms:
     - 单一真源(本文件)
-    - 自动生成(frontmatter-schema.json禁止手写)
+    - 自动生成(frontmatter_schema.json禁止手写)
     - pre-commit校验
     - 新增值走ADR
     - 定期扫描(每月)
@@ -792,7 +792,7 @@ sections:
     - 判断类型(字段名漂移以本文件为准修正/新增值漂移判断是否需新增合法值/缺失字段漂移补齐)
     - 修正后运行全项目合规扫描确认
     prohibitions:
-    - 手写frontmatter-schema.json(必须自动生成)
+    - 手写frontmatter_schema.json(必须自动生成)
     - 新增doc_type不走ADR审批
     - 忽略漂移不修复
   ps_std_001_standards_mapping:
@@ -1077,7 +1077,7 @@ sections:
       source: 本表 + frontmatter校验
     - context: 域B Task.classification
       legal_values: public / internal / confidential(三值)
-      source: src/zephyr/shared/schemas.py Classification + _registry/vocabularies/classification-vocabulary.yaml 字段表见§7.1
+      source: src/zephyr/shared/schemas.py Classification + _registry/vocabularies/classification_vocabulary.yaml 字段表见§7.1
     domain_a_rationale: 推荐二分 降低Vibe Coding中AI决策成本
     domain_b_rationale: 使用三值 区分项目内默认可见(internal)与明确机密(confidential) 与代码枚举及SQLite对齐
     orthogonality: 与ai_autonomy_level正交(不变) classification管外传边界 ai_autonomy_level管谁能改

@@ -1,4 +1,4 @@
-# [A_config] module_id=CFG-verifiability-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-verifiability_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-023
@@ -15,9 +15,9 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: verifiability
 total_values: 3
-source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+source: "PS-STD-001 §2.4 + architecture_contract.yaml frontmatter_schema"
 derived_from:
-  - source: "_registry/vocabularies/rule_form-vocabulary.yaml"
+  - source: "_registry/vocabularies/rule_form_vocabulary.yaml"
     relationship: "verifiability 字段定义与 rule_form 体系对齐"
     at: "§2.5"
 depends_on:

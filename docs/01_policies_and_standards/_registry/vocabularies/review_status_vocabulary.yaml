@@ -1,4 +1,4 @@
-# [A_config] module_id=CFG-review-status-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-review_status_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-023

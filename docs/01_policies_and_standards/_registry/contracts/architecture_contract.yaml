@@ -1,4 +1,4 @@
-# [A_config] module_id=CFG-architecture-contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-architecture_contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-023
@@ -20,9 +20,9 @@
 #   - PS-STD-001 §2.6 + §2.8：全量 frontmatter 一致性约束
 #
 # 依赖（本契约引用的真源文件）：
-#   - vocabularies/doc_type-vocabulary.yaml   → doc_type 13 值（01_policies_and_standards/ 子集）
-#   - vocabularies/rule_form-vocabulary.yaml  → rule_form 4 值
-#   - vocabularies/status-vocabulary.yaml    → status 3 值
+#   - vocabularies/doc_type_vocabulary.yaml   → doc_type 13 值（01_policies_and_standards/ 子集）
+#   - vocabularies/rule_form_vocabulary.yaml  → rule_form 4 值
+#   - vocabularies/status_vocabulary.yaml    → status 3 值
 #   - PS-STD-001 §3.2                      → doc_type 全项目 27 值（完整词表）
 #   - PS-STD-001 metadata_registry.yaml        → 全量字段定义 + 约束真源
 # ============================================================
@@ -112,12 +112,12 @@ frontmatter_schema:
     - name: doc_type
       allowed_values: [policy, standard, operational_rule, register, index, protocol, template, terminology, vocabulary, contract, reference, gate, schema]
       description: "文档类型，受控词表（01_policies_and_standards 子集 13 值）"
-      derived_from: "_registry/vocabularies/doc_type-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/doc_type_vocabulary.yaml"
       stage: draft
 
     - name: status
       allowed_values: [draft, active, deprecated]
-      derived_from: "_registry/vocabularies/status-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/status_vocabulary.yaml"
       description: "文档状态，受控词表（PS-STD-001 §4.1：3 值，archived 已否决）"
       stage: draft
 
@@ -128,8 +128,8 @@ frontmatter_schema:
 
     - name: layer
       allowed_values: [data, infra_ops, factor, signal, risk, pf_core, ex_core, reporting, frontend, research, compliance, ml_train, system-telemetry, simulation, shared, cross_layer]
-      description: "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）"
-      derived_from: "_registry/vocabularies/layer-vocabulary.yaml"
+      description: "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）"
+      derived_from: "_registry/vocabularies/layer_vocabulary.yaml"
       stage: active
 
     - name: owner
@@ -139,19 +139,19 @@ frontmatter_schema:
     - name: classification
       allowed_values: [public, confidential]
       description: "文件密级（PS-STD-001 §4.6：二分法，internal 已废弃）"
-      derived_from: "_registry/vocabularies/classification-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/classification_vocabulary.yaml"
       stage: active
 
     - name: language
       allowed_values: [zh, en, zh_en]
       description: "文件语言"
-      derived_from: "_registry/vocabularies/language-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/language_vocabulary.yaml"
       stage: active
 
     - name: created_by
       allowed_values: [human_plus_agent, agent, human]
       description: "创建者类型"
-      derived_from: "_registry/vocabularies/created_by-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/created_by_vocabulary.yaml"
       stage: active
 
     - name: date
@@ -161,7 +161,7 @@ frontmatter_schema:
 
     - name: ttl
       allowed_values: [permanent, periodic_review_90d, 30d, 7d, session, task_bound]
-      derived_from: "_registry/vocabularies/ttl-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/ttl_vocabulary.yaml"
       description: "文件保留期限（PS-STD-001 §6：6 值）"
       stage: active
 
@@ -177,25 +177,25 @@ frontmatter_schema:
     - name: rule_form
       allowed_values: [declarative, procedural, data, structural]
       description: "规则表达形式"
-      derived_from: "_registry/vocabularies/rule_form-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/rule_form_vocabulary.yaml"
       stage: active
 
     - name: scope
       allowed_values: [global, domain, layer, module]
       description: "规则作用范围"
-      derived_from: "_registry/vocabularies/scope-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/scope_vocabulary.yaml"
       stage: active
 
     - name: stability
       allowed_values: [frozen, stable, evolving, volatile]
       description: "规则稳定性（PS-STD-001 §2.5：4 值）"
-      derived_from: "_registry/vocabularies/stability-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/stability_vocabulary.yaml"
       stage: active
 
     - name: verifiability
       allowed_values: [automated, manual, inspection]
       description: "规则可验证性"
-      derived_from: "_registry/vocabularies/verifiability-vocabulary.yaml"
+      derived_from: "_registry/vocabularies/verifiability_vocabulary.yaml"
       stage: active
 
   conditional_required:
@@ -223,7 +223,7 @@ validation_rules:
   - id: VR-002
     tier: directory_scoped
     name: "doc_type 在对应目录的受控词表中"
-    check: "doc_type in 01_policies_and_standards/:[policy,standard,operational_rule,register,index,protocol,template,terminology,vocabulary,contract,reference,gate,schema]; 全项目完整 27 值见 doc_type-vocabulary.yaml"
+    check: "doc_type in 01_policies_and_standards/:[policy,standard,operational_rule,register,index,protocol,template,terminology,vocabulary,contract,reference,gate,schema]; 全项目完整 27 值见 doc_type_vocabulary.yaml"
     severity: error
     source: "PS-STD-001 §3.2"
 

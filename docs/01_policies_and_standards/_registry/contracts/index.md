@@ -17,7 +17,7 @@ generated: '2026-05-02'
 
 | 文件 | 说明 |
 |------|------|
-| architecture-contract.yaml | 架构合规自动验证契约（VR-001~VR-011） |
+| architecture_contract.yaml | 架构合规自动验证契约（VR-001~VR-011） |
 | model-capability-contract.yaml | AI 模型能力矩阵契约（9 个模型） |
 | contract-mapping-table.yaml | 契约映射表——契约 ID 与文件路径双向索引 |
 

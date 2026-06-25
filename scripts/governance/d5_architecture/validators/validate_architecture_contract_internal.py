@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-"""GATE-CONTRACT: CI gate for architecture-contract.yaml internal consistency.
+"""GATE-CONTRACT: CI gate for architecture_contract.yaml internal consistency.
 Prevents internal inconsistencies (regex conflicts, doc_type gaps, VR skew)
 from reaching the codebase—closes the root cause of 3 CRITICAL issues in
 the third audit.
@@ -36,7 +36,7 @@ ensure_utf8_stdout()
 
 __manifest__ = """
 args: []
-description: GATE-CONTRACT — architecture-contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
+description: GATE-CONTRACT — architecture_contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
 dimensions:
 - D3
 - D5
@@ -63,8 +63,8 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-CONTRACT_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
-DOC_TYPE_VOCAB_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/vocabularies/doc_type-vocabulary.yaml"
+CONTRACT_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml"
+DOC_TYPE_VOCAB_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml"
 
 
 def load_contract() -> dict:
@@ -215,7 +215,7 @@ def check_dim7_doc_type_subset(contract) -> list[dict]:
     try:
         vocab_values = load_doc_type_vocab_values()
     except Exception as e:
-        return ("FAIL", f"cannot load doc_type-vocabulary.yaml: {e}")
+        return ("FAIL", f"cannot load doc_type_vocabulary.yaml: {e}")
     fms_fields = contract.get("frontmatter_schema", {}).get("required_fields", [])
     fms_doc_type = None
     for f in fms_fields:
@@ -259,7 +259,7 @@ def main() -> None:
     print()
     if fails > 0:
         print(f"BLOCKED: {fails}/{len(dimensions)} dimensions FAILED")
-        print("Fix architecture-contract.yaml before committing.")
+        print("Fix architecture_contract.yaml before committing.")
         sys.exit(EXIT_FINDINGS)
     else:
         print(f"ALL {len(dimensions)}/{len(dimensions)} dimensions PASS")

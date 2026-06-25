@@ -811,7 +811,7 @@ routes:
       - "scripts/governance/generate_path_ownership_map.py"
       - "src/zephyr/infra_ops/cicd_pipeline/registry_governance.py"
       - "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml"
-      - "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"
+      - "docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"
     task_keywords:
       - "路径树"
       - "path tree"

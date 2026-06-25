@@ -75,7 +75,7 @@ registries:
 - registry_id: PS-REG-012
   name: Frontmatter 字段定义登记�?
   category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 43

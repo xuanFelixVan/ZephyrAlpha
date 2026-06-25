@@ -1,4 +1,4 @@
-# [A_config] module_id=CFG-language-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-language_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-023
@@ -15,7 +15,7 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: language
 total_values: 3
-source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+source: "PS-STD-001 §2.4 + architecture_contract.yaml frontmatter_schema"
 derived_from:
   - source: "PS-STD-001"
     relationship: "language 合法值定义"

@@ -566,13 +566,13 @@ directories:
 
     status: active
 
-    note: "architecture-contract.yaml"
+    note: "architecture_contract.yaml"
 
 
 
   - path: "docs/01_policies_and_standards/_registry/schemas/"
 
-    responsibility: "校验 Schema——frontmatter-schema.json（自动生成不可手写）"
+    responsibility: "校验 Schema——frontmatter_schema.json（自动生成不可手写）"
 
     parent: "docs/01_policies_and_standards/_registry/"
 

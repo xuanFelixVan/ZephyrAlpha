@@ -637,7 +637,7 @@ class OverlapResult:
 | 归属图生成脚本 | `scripts/governance/generate_path_ownership_map.py` | 路径归属声明生成+冲突检测 | ≥0 | script-manifest.yaml |
 | 路径树刷新门禁 | `src/zephyr/gates/g6-path-tree-freshness.yaml` | GOV-DOC-004 §四-A 强制门禁(G6_PT) | ≥0 | gate _registry.yaml |
 | 测试代码 | `tests/infrastructure/test_registry_governance.py` | 测试用例 | ≥0 | pytest自动发现 |
-| Frontmatter字段注册表 | `docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md` | 40个Frontmatter字段定义（REG-FRONTMATTER-001） | ≥1 | registry_of_registries.yaml |
+| Frontmatter字段注册表 | `docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml` | 40个Frontmatter字段定义（REG-FRONTMATTER-001） | ≥1 | registry_of_registries.yaml |
 
 ---
 

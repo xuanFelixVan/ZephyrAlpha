@@ -180,7 +180,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "01_policies_and_standards/_registry/schemas": (
-        "脚本生成的 JSON Schema（如 frontmatter-schema.json）",
+        "脚本生成的 JSON Schema（如 frontmatter_schema.json）",
         [
             ("手动编辑的文件", "governance/"),
         ],

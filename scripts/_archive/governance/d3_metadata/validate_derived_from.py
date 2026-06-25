@@ -6,7 +6,7 @@ v1.0.0 — 2026-05-03
 
 
 AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Level 2 门禁 4/4：
-  根因：派生文件（frontmatter-field-registry、architecture-contract、frontmatter-schema.json）
+  根因：派生文件（frontmatter_field_registry、architecture_contract、frontmatter_schema.json）
         中有枚举列表但未标注 derived_from，导致无法追溯枚举值的 canonical SSoT。
         AI 修改枚举时不知道哪些文件需要同步，漏改必然发生。
 
@@ -14,9 +14,9 @@ AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Leve
           vocabulary YAML → 检测标注了但枚举值与 vocabulary 不一致。
 
 检查维度：
-  DIM-1: frontmatter-field-registry.md 中 enum 类型字段必须有 derived_from
-  DIM-2: architecture-contract.yaml 中 allowed_values 字段必须有 derived_from
-  DIM-3: frontmatter-schema.json 中 enum 属性应能追溯到 vocabulary（通过字段名映射）
+  DIM-1: frontmatter_field_registry.yaml 中 enum 类型字段必须有 derived_from
+  DIM-2: architecture_contract.yaml 中 allowed_values 字段必须有 derived_from
+  DIM-3: frontmatter_schema.json 中 enum 属性应能追溯到 vocabulary（通过字段名映射）
   DIM-4: derived_from 指向的 vocabulary YAML 文件必须存在
   DIM-5: derived_from 指向的 vocabulary YAML 中对应字段必须存在
 
@@ -64,16 +64,16 @@ CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 
-FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.md"
-ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture-contract.yaml"
-SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter-schema.json"
+FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter_field_registry.yaml"
+ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture_contract.yaml"
+SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter_schema.json"
 
 VOCAB_FIELD_MAP = {
-    "doc_type": "doc_type-vocabulary.yaml",
-    "status": "status-vocabulary.yaml",
-    "rule_form": "rule_form-vocabulary.yaml",
-    "ttl": "ttl-vocabulary.yaml",
-    "layer": "layer-vocabulary.yaml",
+    "doc_type": "doc_type_vocabulary.yaml",
+    "status": "status_vocabulary.yaml",
+    "rule_form": "rule_form_vocabulary.yaml",
+    "ttl": "ttl_vocabulary.yaml",
+    "layer": "layer_vocabulary.yaml",
 }
 
 _errors: list[str] = []
@@ -91,14 +91,14 @@ def _warn(msg: str) -> None:
 
 
 def check_dim1_field_registry() -> None:
-    """DIM-1: frontmatter-field-registry.md 中 enum 类型字段必须有 derived_from"""
+    """DIM-1: frontmatter_field_registry.yaml 中 enum 类型字段必须有 derived_from"""
     if not FIELD_REGISTRY_PATH.exists():
-        _warn("DIM-1: frontmatter-field-registry.md 不存在")
+        _warn("DIM-1: frontmatter_field_registry.yaml 不存在")
         return
     try:
         data = load_yaml(FIELD_REGISTRY_PATH)
     except Exception as e:
-        _err(f"DIM-1: 无法加载 frontmatter-field-registry.md: {e}")
+        _err(f"DIM-1: 无法加载 frontmatter_field_registry.yaml: {e}")
         return
     if not isinstance(data, dict):
         return
@@ -120,14 +120,14 @@ def check_dim1_field_registry() -> None:
 
 
 def check_dim2_arch_contract() -> None:
-    """DIM-2: architecture-contract.yaml 中 allowed_values 字段必须有 derived_from"""
+    """DIM-2: architecture_contract.yaml 中 allowed_values 字段必须有 derived_from"""
     if not ARCH_CONTRACT_PATH.exists():
-        _warn("DIM-2: architecture-contract.yaml 不存在")
+        _warn("DIM-2: architecture_contract.yaml 不存在")
         return
     try:
         data = load_yaml(ARCH_CONTRACT_PATH)
     except Exception as e:
-        _err(f"DIM-2: 无法加载 architecture-contract.yaml: {e}")
+        _err(f"DIM-2: 无法加载 architecture_contract.yaml: {e}")
         return
     if not isinstance(data, dict):
         return
@@ -150,20 +150,20 @@ def check_dim2_arch_contract() -> None:
 
 
 def check_dim3_schema_json() -> None:
-    """DIM-3: frontmatter-schema.json 中 enum 属性应能追溯到 vocabulary"""
+    """DIM-3: frontmatter_schema.json 中 enum 属性应能追溯到 vocabulary"""
     if not SCHEMA_JSON_PATH.exists():
-        _warn("DIM-3: frontmatter-schema.json 不存在")
+        _warn("DIM-3: frontmatter_schema.json 不存在")
         return
     try:
         with open(SCHEMA_JSON_PATH, encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
-        _err(f"DIM-3: 无法加载 frontmatter-schema.json: {e}")
+        _err(f"DIM-3: 无法加载 frontmatter_schema.json: {e}")
         return
     properties = data.get("properties", {})
     derived_from_prop = properties.get("derived_from", {})
     if not derived_from_prop:
-        _warn("DIM-3: frontmatter-schema.json 缺少 derived_from 属性定义")
+        _warn("DIM-3: frontmatter_schema.json 缺少 derived_from 属性定义")
     for fname in VOCAB_FIELD_MAP:
         prop = properties.get(fname, {})
         if not prop:

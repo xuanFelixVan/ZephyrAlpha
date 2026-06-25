@@ -454,7 +454,7 @@ sections:
     - description: GOV-DOC-007 v1.1.1 (2026-06-19)
       details: RQ-09修复;provenance.source_files标记status:archived+添加archive_note(源.md已合并入YAML)
     - description: GOV-DOC-007 v1.1.2 (2026-06-21)
-      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/architecture-contract.yaml→architecture_contract.yaml);不存在的rule_classification_and_arbitration_standard.yaml引用修正为trae_041_meta_rule_classification.yaml
+      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/architecture_contract.yaml→architecture_contract.yaml);不存在的rule_classification_and_arbitration_standard.yaml引用修正为trae_041_meta_rule_classification.yaml
     - description: GOV-DOC-009 v1.9.0 (2026-06-21)
       details: P1修复;aliases移除DOC-008(与trae_028冲突,DOC-008属trae_028);doc_008 section original_rules移除DOC-008(该section实际关于DOC-001~DOC-004,DOC-008是错误引用)
 references:

@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] module_id 必须符合 PS-STD-001 §5 命名规范; 禁止嵌套编号
-# [MODIFY-GUARD] PS-STD-001 §5; PS-REG-012 frontmatter-field-registry.md; module_id_registry.yaml
+# [MODIFY-GUARD] PS-STD-001 §5; PS-REG-012 frontmatter_field_registry.yaml; module_id_registry.yaml
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

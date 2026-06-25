@@ -93,7 +93,7 @@ gates:
   category: frontmatter_metadata
   status: active
 - gate_id: GATE-16
-  name: 'GATE-16: 架构合规校验（architecture-contract v1.0.0?'
+  name: 'GATE-16: 架构合规校验（architecture_contract v1.0.0?'
   entry: python scripts/governance/d3_metadata/validate_architecture.py
   description: 架构合规校验（目录合?/ frontmatter必填 / doc_type↔rule_form一致?/ governance无operational_rule
     / operational无policy），骨架阶段 warn-only

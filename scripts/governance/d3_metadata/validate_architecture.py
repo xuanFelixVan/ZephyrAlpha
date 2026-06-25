@@ -13,8 +13,8 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-validate_architecture.py - Validate rule files against architecture-contract.yaml
-Reads architecture-contract.yaml and validates all .md/.yaml files under
+validate_architecture.py - Validate rule files against architecture_contract.yaml
+Reads architecture_contract.yaml and validates all .md/.yaml files under
 docs/01_policies_and_standards/ for directory compliance, frontmatter fields,
 and doc_type / rule_form consistency.
 """
@@ -59,12 +59,12 @@ def main() -> int:
     import yaml
 
     contract_path = (
-        _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "architecture-contract.yaml"
+        _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "architecture_contract.yaml"
     )
     errors = 0
 
     if not contract_path.exists():
-        print("WARN: architecture-contract.yaml not found, baseline pass")
+        print("WARN: architecture_contract.yaml not found, baseline pass")
         return EXIT_PASS
 
     with open(contract_path, encoding="utf-8") as f:

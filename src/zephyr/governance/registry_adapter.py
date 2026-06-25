@@ -582,8 +582,8 @@ class RegistryManager:
         self._known["docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"] = YamlListAdapter(
             "REG-TASK-META-001", "task-card-meta-registry.md", asset_key="subsystem_id"
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"] = (
-            YamlListAdapter("REG-FRONTMATTER-001", "frontmatter-field-registry.md", asset_key="field_name")
+        self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"] = (
+            YamlListAdapter("REG-FRONTMATTER-001", "frontmatter_field_registry.yaml", asset_key="field_name")
         )
         self._known["docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"] = YamlListAdapter(
             "REG-SCRIPT-HEALTH-001", "script-health-registry.md", asset_key="script_id"

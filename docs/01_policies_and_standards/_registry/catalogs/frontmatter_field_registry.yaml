@@ -1,8 +1,8 @@
-# [A_config] module_id=CFG-frontmatter-field-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-frontmatter_field_registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 module_id: PS-REG-012
 blueprint_id: GOV-INF-001
 # 治理锚定
-# blueprint: PS-REG-012 | docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md
+# blueprint: PS-REG-012 | docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
 # stability: stable
 # safety_level: M
 # ai_autonomy: immutable_core
@@ -28,8 +28,8 @@ blueprint_id: GOV-INF-001
 #       修改本文件字段定义 → MUST 同步检查 PS-STD-001 对应章节。
 #       数据冲突 → 本文件优先。
 #
-# 与 frontmatter-schema.json 的关系:
-#   - frontmatter-schema.json 是机器可读的校验 Schema（自动生成，不可手写）
+# 与 frontmatter_schema.json 的关系:
+#   - frontmatter_schema.json 是机器可读的校验 Schema（自动生成，不可手写）
 #   - 本登记表是人工可读的字段定义真源（手动维护）
 #   - 两者必须一致——S1 validate_registry_master_index.py 会交叉验证
 #
@@ -57,7 +57,7 @@ depends_on:
     why: "字段规则真源（校验逻辑/一致性约束/违规检测）。YAML=数据真源, MD=规则真源。修改YAML→MUST检查MD。数据冲突→YAML优先"
     relationship: "dual_ssot"
     linked_version: "6.1.0"
-  - target: "frontmatter-schema.json"
+  - target: "frontmatter_schema.json"
     at: "$"
     why: "字段枚举值对标——本登记表与 schema 必须一致"
 
@@ -77,7 +77,7 @@ depends_on:
 # ============================================================================
 
 fields:
-  # ── 7 个必填字段（frontmatter-schema.json required）──
+  # ── 7 个必填字段（frontmatter_schema.json required）──
   - field_name: module_id
     type: string
     required: always
@@ -121,8 +121,8 @@ fields:
       - {value: "schema", description: "Schema 定义——JSON/YAML 格式的数据结构校验定义"}
     applicable_docs: []
     description: "文档品种——01_policies_and_standards/ 目录下 13 种"
-    source: "PS-STD-001 §3.2.1 + doc_type-vocabulary.yaml"
-    derived_from: "_registry/vocabularies/doc_type-vocabulary.yaml"
+    source: "PS-STD-001 §3.2.1 + doc_type_vocabulary.yaml"
+    derived_from: "_registry/vocabularies/doc_type_vocabulary.yaml"
     note: ""
 
   - field_name: status
@@ -135,8 +135,8 @@ fields:
       - {value: "deprecated", description: "已废弃，有替代品或已合并"}
     applicable_docs: []
     description: "文档状态——DocStatus 仅 3 值"
-    source: "PS-STD-001 §4.1 + status-vocabulary.yaml"
-    derived_from: "_registry/vocabularies/status-vocabulary.yaml"
+    source: "PS-STD-001 §4.1 + status_vocabulary.yaml"
+    derived_from: "_registry/vocabularies/status_vocabulary.yaml"
     note: "deprecated 时 superseded_by 条件必填"
 
   - field_name: version
@@ -195,9 +195,9 @@ fields:
       - {value: "shared", description: "跨层共享组件"}
       - {value: "cross_layer", description: "跨层治理"}
     applicable_docs: []
-    description: "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）"
-    source: "layer-vocabulary.yaml + architecture_model/layers/"
-    derived_from: "_registry/vocabularies/layer-vocabulary.yaml"
+    description: "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）"
+    source: "layer_vocabulary.yaml + architecture_model/layers/"
+    derived_from: "_registry/vocabularies/layer_vocabulary.yaml"
     note: ""
 
   - field_name: classification
@@ -211,7 +211,7 @@ fields:
     applicable_docs: []
     description: "机密等级——三分法"
     source: "PS-STD-001 §4.6"
-    derived_from: "_registry/vocabularies/classification-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/classification_vocabulary.yaml"
     note: ""
 
   - field_name: language
@@ -225,7 +225,7 @@ fields:
     applicable_docs: []
     description: "主语言"
     source: "PS-STD-001 §4.3"
-    derived_from: "_registry/vocabularies/language-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/language_vocabulary.yaml"
     note: ""
 
   - field_name: created_by
@@ -239,7 +239,7 @@ fields:
     applicable_docs: []
     description: "创建者类型"
     source: "PS-STD-001 §4.4"
-    derived_from: "_registry/vocabularies/created_by-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/created_by_vocabulary.yaml"
     note: ""
 
   - field_name: valid_from
@@ -257,7 +257,7 @@ fields:
     type: enum
     required: always
     stage: null
-    derived_from: "_registry/vocabularies/ttl-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/ttl_vocabulary.yaml"
     enum_values:
       - {value: "permanent", description: "永久保留"}
       - {value: "periodic_review_90d", description: "90 天周期复查——到期需人工复核后延续或废弃"}
@@ -315,8 +315,8 @@ fields:
       - {value: "structural", description: "结构式——定义格式/骨架"}
     applicable_docs: [policy, standard, operational_rule, register, protocol, template]
     description: "规则表达形式——4 值"
-    source: "PS-STD-001 §2.5 + rule_form-vocabulary.yaml"
-    derived_from: "_registry/vocabularies/rule_form-vocabulary.yaml"
+    source: "PS-STD-001 §2.5 + rule_form_vocabulary.yaml"
+    derived_from: "_registry/vocabularies/rule_form_vocabulary.yaml"
     note: "doc_type 与 rule_form 有约束关系: policy→declarative, register→data, template→structural"
 
   - field_name: scope
@@ -331,7 +331,7 @@ fields:
     applicable_docs: [policy, standard, operational_rule, protocol]
     description: "规则作用范围——4 值"
     source: "PS-STD-001 §2.5"
-    derived_from: "_registry/vocabularies/scope-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/scope_vocabulary.yaml"
     note: ""
 
   - field_name: stability
@@ -346,7 +346,7 @@ fields:
     applicable_docs: [policy, standard, operational_rule, protocol]
     description: "规则稳定性——4 值"
     source: "PS-STD-001 §2.5"
-    derived_from: "_registry/vocabularies/stability-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/stability_vocabulary.yaml"
     note: "frozen 时 ai_autonomy 必须为 immutable_core"
 
   - field_name: verifiability
@@ -360,7 +360,7 @@ fields:
     applicable_docs: [policy, standard, operational_rule, protocol]
     description: "规则可验证性——3 值"
     source: "PS-STD-001 §2.5"
-    derived_from: "_registry/vocabularies/verifiability-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/verifiability_vocabulary.yaml"
     note: ""
 
   - field_name: template_for
@@ -549,7 +549,7 @@ fields:
     applicable_docs: []
     description: "审核状态"
     source: "PS-STD-001 §10.16"
-    derived_from: "_registry/vocabularies/review-status-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/review-status_vocabulary.yaml"
     note: ""
 
   - field_name: last_reviewed_by
@@ -574,7 +574,7 @@ fields:
     applicable_docs: []
     description: "施工图引用的蓝图列表——[{path, status, decisions_used}]"
     source: "PS-STD-001 §10.12"
-    derived_from: "_registry/vocabularies/blueprint-refs-status-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/blueprint-refs-status_vocabulary.yaml"
     note: ""
 
   - field_name: compliance_tags
@@ -903,10 +903,10 @@ summary:
   enum_fields: 22
   referenced_standards:
     - PS-STD-001
-    - doc_type-vocabulary.yaml
-    - status-vocabulary.yaml
-    - rule_form-vocabulary.yaml
-    - frontmatter-schema.json
+    - doc_type_vocabulary.yaml
+    - status_vocabulary.yaml
+    - rule_form_vocabulary.yaml
+    - frontmatter_schema.json
 
 # ============================================================================
 # 变更记录
@@ -925,6 +925,6 @@ changelog:
     author: "AI-Trae-2026"
     changes:
       - "初始创建——登记 34 个 frontmatter 字段"
-      - "来源：frontmatter-schema.json + PS-STD-001 + 3 个 vocabulary/ 词表"
+      - "来源：frontmatter_schema.json + PS-STD-001 + 3 个 vocabulary/ 词表"
       - "按 5 组分类：7 必填 + 7 常用可选 + 4 规则特有 + 6 引用溯源 + 10 AI/蓝图/知识"
       - "每个 enum 类型的字段附完整枚举值列表 + 中文描述"

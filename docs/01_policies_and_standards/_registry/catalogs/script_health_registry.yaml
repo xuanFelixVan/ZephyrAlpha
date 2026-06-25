@@ -44,7 +44,7 @@ depends_on:
   - target: MOD-INF-005
     at: "blueprint.md §4.4"
     why: "脚本系统蓝图定义脚本编排架构"
-  - target: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+  - target: "docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml"
     at: "VR-001"
     why: "登记表 frontmatter 须通过契约 VR 规则校验"
 

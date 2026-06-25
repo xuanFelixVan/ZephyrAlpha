@@ -86,7 +86,7 @@ dependencies:
   description: '双轨审查阶段须消费 script-system 定义的 Finding Schema；审计维度须对齐。
 
     '
-  contract_anchor: architecture-contract.yaml §VR-005
+  contract_anchor: architecture_contract.yaml §VR-005
   direction: upstream
   valid_since: '2026-05-02'
 - dep_id: DEP-005

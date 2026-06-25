@@ -53,17 +53,17 @@ ensure_utf8_stdout()
 VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 
 VOCAB_FIELD_MAP = {
-    "doc_type": "doc_type-vocabulary.yaml",
-    "status": "status-vocabulary.yaml",
-    "rule_form": "rule_form-vocabulary.yaml",
-    "layer": "layer-vocabulary.yaml",
-    "ttl": "ttl-vocabulary.yaml",
-    "classification": "classification-vocabulary.yaml",
-    "language": "language-vocabulary.yaml",
-    "created_by": "created_by-vocabulary.yaml",
-    "scope": "scope-vocabulary.yaml",
-    "stability": "stability-vocabulary.yaml",
-    "verifiability": "verifiability-vocabulary.yaml",
+    "doc_type": "doc_type_vocabulary.yaml",
+    "status": "status_vocabulary.yaml",
+    "rule_form": "rule_form_vocabulary.yaml",
+    "layer": "layer_vocabulary.yaml",
+    "ttl": "ttl_vocabulary.yaml",
+    "classification": "classification_vocabulary.yaml",
+    "language": "language_vocabulary.yaml",
+    "created_by": "created_by_vocabulary.yaml",
+    "scope": "scope_vocabulary.yaml",
+    "stability": "stability_vocabulary.yaml",
+    "verifiability": "verifiability_vocabulary.yaml",
 }
 
 _errors: list[str] = []

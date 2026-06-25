@@ -17,9 +17,9 @@
 from __future__ import annotations
 
 #!/usr/bin/env python3
-"""验证 frontmatter-schema.json 中的枚举字段是否在 vocabularies/ 目录有对应词汇表。
+"""验证 frontmatter_schema.json 中的枚举字段是否在 vocabularies/ 目录有对应词汇表。
 
-扫描 frontmatter-schema.json 中的所有 oneOf+const 模式枚举字段，
+扫描 frontmatter_schema.json 中的所有 oneOf+const 模式枚举字段，
 检查每个枚举字段是否在 vocabularies/ 目录存在对应的 *-vocabulary.yaml 文件。
 
 CLI::
@@ -111,7 +111,7 @@ def find_vocabularies(vocab_dir: Path) -> set[str]:
 __manifest__ = """
 args: []
 description: >
-  验证 frontmatter-schema.json 枚举字段与 vocabularies/ 目录的覆盖度。
+  验证 frontmatter_schema.json 枚举字段与 vocabularies/ 目录的覆盖度。
   确保每个枚举字段都有独立词汇表文件（SSoT 原则）。
 dimensions:
   - D11

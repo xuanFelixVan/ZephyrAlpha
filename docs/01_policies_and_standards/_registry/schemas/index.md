@@ -20,7 +20,7 @@ updated: "2026-06-22"
 
 | 文件 | 说明 |
 |------|------|
-| frontmatter-schema.json | Frontmatter 字段 JSON Schema（自动生成） |
+| frontmatter_schema.json | Frontmatter 字段 JSON Schema（自动生成） |
 | session-log-schema.yaml | Session Log 标准 Schema 定义 |
 
 ## 排除规则（不应放入本目录的内容）

@@ -244,7 +244,7 @@ EXACT_FILE_HINTS = {
         "D-GOV",
         "D-GOV-SCRIPT_GOVERNANCE",
     ),
-    "docs/01_policies_and_standards/_registry/schemas/frontmatter-schema.json": (
+    "docs/01_policies_and_standards/_registry/schemas/frontmatter_schema.json": (
         "MOD-INF-005",
         "D-GOV",
         "D-GOV-SCRIPT_GOVERNANCE",

@@ -1,4 +1,4 @@
-# [A_config] module_id=CFG-classification-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-classification_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: MOD-023
@@ -16,7 +16,7 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: classification
 total_values: 3
-source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema；任务域三值对齐 metadata-registry §7.6"
+source: "PS-STD-001 §2.4 + architecture_contract.yaml frontmatter_schema；任务域三值对齐 metadata-registry §7.6"
 derived_from:
   - source: "PS-STD-001"
     relationship: "classification 合法值定义"

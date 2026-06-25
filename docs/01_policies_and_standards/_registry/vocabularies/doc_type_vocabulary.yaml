@@ -37,8 +37,8 @@ depends_on:
     at: "§3.2.1 + §3.2"
     why: "doc_type 受控词表定义真源"
 derived_from:
-  - source: "_registry/vocabularies/rule_form-vocabulary.yaml"
-    relationship: "每个 doc_type 值绑定一种 rule_form——rule_form 枚举由 rule_form-vocabulary.yaml 唯一定义"
+  - source: "_registry/vocabularies/rule_form_vocabulary.yaml"
+    relationship: "每个 doc_type 值绑定一种 rule_form——rule_form 枚举由 rule_form_vocabulary.yaml 唯一定义"
     fields: ["rule_form"]
 
 values:
@@ -141,7 +141,7 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled"]
-    examples: ["doc_type-vocabulary.yaml", "status-vocabulary.yaml"]
+    examples: ["doc_type_vocabulary.yaml", "status_vocabulary.yaml"]
 
   - value: contract
     definition: "验证契约——定义 VR 规则的结构化验证标准，供 pre-commit/CI 消费"
@@ -150,7 +150,7 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: ["contract_version", "total_vr_rules"]
     ai_keywords: ["契约", "验证", "VR", "contract", "rule"]
-    examples: ["architecture-contract.yaml"]
+    examples: ["architecture_contract.yaml"]
 
   - value: schema
     definition: "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费"
@@ -159,7 +159,7 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["Schema", "JSON Schema", "结构定义", "校验", "schema"]
-    examples: ["frontmatter-schema.json", "session-log-schema.yaml"]
+    examples: ["frontmatter_schema.json", "session-log-schema.yaml"]
 
   - value: blueprint
     definition: "蓝图——模块/子系统的完整设计文档，包含架构决策、数据模型、接口定义、部署视图"

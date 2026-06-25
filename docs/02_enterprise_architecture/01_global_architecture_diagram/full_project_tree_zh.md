@@ -1248,7 +1248,7 @@ scripts/  (包含30个文件: .py(27), .yaml(2), .csv(1))
 │   │   ├── check_registry_consistency.py  — check_registry_consistency — 跨登记表一致性校验。  
 │   │   ├── deep_content_scanner.py  — deep_content_scanner.py — 深度内容扫描器  
 │   │   ├── generate_derived_files.py  — generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御）  
-│   │   ├── validate_architecture.py  — validate_architecture.py - Validate rule files against architecture-contract.yaml  
+│   │   ├── validate_architecture.py  — validate_architecture.py - Validate rule files against architecture_contract.yaml  
 │   │   ├── validate_blueprint_provenance.py  — Blueprint Provenance Gate - V-12: validate provenance triples in blueprint frontmatter  
 │   │   ├── validate_module_id.py  — GATE-MODULEID: Validate module_id uniqueness and index/file consistency.  
 │   │   ├── validate_registry_master_index.py  — 登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18).  

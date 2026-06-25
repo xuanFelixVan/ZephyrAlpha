@@ -8,7 +8,7 @@
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] --dry-run MUST NOT modify any file; --apply MUST modify files atomically
-# [MODIFY-GUARD] file-header-standard.md; frontmatter-field-registry.md
+# [MODIFY-GUARD] file-header-standard.md; frontmatter_field_registry.yaml
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

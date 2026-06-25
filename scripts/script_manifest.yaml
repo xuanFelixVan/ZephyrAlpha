@@ -1,7 +1,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-06-24'
-total_scripts: 522
+generated_at: '2026-06-25'
+total_scripts: 525
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -603,30 +603,6 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_verify_fle_gates.py
-  path: governance/_verify_fle_gates.py
-  description: import importlib
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_verify_gate_loading.py
-  path: governance/_verify_gate_loading.py
-  description: import sys
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_verify_yaml.py
-  path: governance/_verify_yaml.py
-  description: import yaml
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1764,7 +1740,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/validate_architecture.py
   path: governance/d3_metadata/validate_architecture.py
-  description: validate_architecture.py - Validate rule files against architecture-contract.yaml
+  description: validate_architecture.py - Validate rule files against architecture_contract.yaml
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4217,6 +4193,21 @@ scripts:
   status: registered
 - path: governance/migrate_arch_f_functions.py
   description: governance/migrate_arch_f_functions 脚本
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+- path: git_commit.py
+  description: GitCommitGateway CLI封装全项目唯一合法git commit命令行入口
+  domain: root
+  execution_plane: warm-path
+  status: registered
+- path: governance/d11_compliance/validate_commit_gateway.py
+  description: GATE-COMMIT-GW门禁检测裸git commit强制走GitCommitGateway
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+- path: governance/repair/concurrent_commit_test.py
+  description: 幽灵提交红蓝对抗脚本10场景验证GitCommitGateway
   domain: governance
   execution_plane: warm-path
   status: registered

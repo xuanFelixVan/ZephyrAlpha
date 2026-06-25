@@ -6,17 +6,17 @@ v1.0.0 — 2026-05-03
 
 
 AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Level 2 门禁：
-  根因：vocabulary YAML 是枚举值的 canonical SSoT，但派生文件（frontmatter-field-registry、
-        architecture-contract、frontmatter-schema.json）中的枚举列表是手动硬编码的副本。
+  根因：vocabulary YAML 是枚举值的 canonical SSoT，但派生文件（frontmatter_field_registry、
+        architecture_contract、frontmatter_schema.json）中的枚举列表是手动硬编码的副本。
         每次新增/废弃枚举值需同时更新 5+ 处，Vibe Coding AI 上下文记忆极短，必然漏改。
 
   本闸门：扫描所有 vocabulary YAML → 提取枚举值 → 交叉比对所有 derived_from 标注的派生文件
           → 不一致即报错。"vocabulary 改了，派生文件必须同步。"
 
 检查维度：
-  DIM-1: vocabulary YAML 枚举值 ↔ frontmatter-field-registry.md 中 derived_from 字段的枚举列表
-  DIM-2: vocabulary YAML 枚举值 ↔ architecture-contract.yaml 中 derived_from 字段的枚举列表
-  DIM-3: vocabulary YAML 枚举值 ↔ frontmatter-schema.json 中对应 enum 数组
+  DIM-1: vocabulary YAML 枚举值 ↔ frontmatter_field_registry.yaml 中 derived_from 字段的枚举列表
+  DIM-2: vocabulary YAML 枚举值 ↔ architecture_contract.yaml 中 derived_from 字段的枚举列表
+  DIM-3: vocabulary YAML 枚举值 ↔ frontmatter_schema.json 中对应 enum 数组
   DIM-4: 派生文件中有枚举列表但缺少 derived_from 标注（漏标检测）
   DIM-5: vocabulary YAML 文件完整性——所有 vocabulary 必须在 registry-master-index.yaml 登记
 
@@ -77,9 +77,9 @@ CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 
-FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.md"
-ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture-contract.yaml"
-SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter-schema.json"
+FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter_field_registry.yaml"
+ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture_contract.yaml"
+SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter_schema.json"
 REGISTRY_MASTER_INDEX_PATH = CATALOGS_DIR / "registry-master-index.yaml"
 
 _errors: list[str] = []
@@ -139,7 +139,7 @@ def _load_vocabularies() -> dict[str, dict]:
 
 
 def _extract_enum_from_field_registry(field_name: str) -> tuple[set[str], str | None]:
-    """从 frontmatter-field-registry.md 提取指定字段的枚举值和 derived_from
+    """从 frontmatter_field_registry.yaml 提取指定字段的枚举值和 derived_from
     支持 allowed_values（简单列表）和 enum_values（对象列表）两种格式"""
     if not FIELD_REGISTRY_PATH.exists():
         return set(), None
@@ -172,7 +172,7 @@ def _extract_enum_from_field_registry(field_name: str) -> tuple[set[str], str | 
 
 
 def _extract_enum_from_arch_contract(field_name: str) -> tuple[set[str], str | None]:
-    """从 architecture-contract.yaml 提取指定字段的枚举值和 derived_from"""
+    """从 architecture_contract.yaml 提取指定字段的枚举值和 derived_from"""
     if not ARCH_CONTRACT_PATH.exists():
         return set(), None
     try:
@@ -191,7 +191,7 @@ def _extract_enum_from_arch_contract(field_name: str) -> tuple[set[str], str | N
 
 
 def _extract_enum_from_schema_json(field_name: str) -> set[str]:
-    """从 frontmatter-schema.json 提取指定字段的 enum 或 oneOf+const 值"""
+    """从 frontmatter_schema.json 提取指定字段的 enum 或 oneOf+const 值"""
     if not SCHEMA_JSON_PATH.exists():
         return set()
     try:
@@ -215,7 +215,7 @@ SUBSET_VOCABS = {"doc_type", "layer", "ttl"}
 
 
 def check_dim1_field_registry(vocabs: dict[str, dict]) -> None:
-    """DIM-1: vocabulary YAML ↔ frontmatter-field-registry.md
+    """DIM-1: vocabulary YAML ↔ frontmatter_field_registry.yaml
 
     For SUBSET_VOCABS (doc_type, layer, ttl), the field-registry only contains
     the 01_policies_and_standards/ subset — missing values are warnings, not errors.
@@ -249,9 +249,9 @@ def check_dim1_field_registry(vocabs: dict[str, dict]) -> None:
 
 
 def check_dim2_arch_contract(vocabs: dict[str, dict]) -> None:
-    """DIM-2: vocabulary YAML ↔ architecture-contract.yaml
+    """DIM-2: vocabulary YAML ↔ architecture_contract.yaml
 
-    architecture-contract.yaml 的 allowed_values 是 vocabulary 的子集
+    architecture_contract.yaml 的 allowed_values 是 vocabulary 的子集
     （仅包含 01_policies_and_standards/ 允许的值），子集关系合法。
     但 contract 中出现 vocabulary 没有的值 = 漂移（error）。
     """
@@ -275,7 +275,7 @@ def check_dim2_arch_contract(vocabs: dict[str, dict]) -> None:
 
 
 def check_dim3_schema_json(vocabs: dict[str, dict]) -> None:
-    """DIM-3: vocabulary YAML ↔ frontmatter-schema.json (enum + oneOf+const)
+    """DIM-3: vocabulary YAML ↔ frontmatter_schema.json (enum + oneOf+const)
 
     For SUBSET_VOCABS, schema.json only contains the PS subset — missing is OK.
     """
@@ -291,11 +291,11 @@ def check_dim3_schema_json(vocabs: dict[str, dict]) -> None:
         if missing_in_schema and vocab_name not in SUBSET_VOCABS:
             _err(
                 f"DIM-3 schema_json.{field_name}: vocabulary 有 {len(missing_in_schema)} 个值"
-                f"未同步到 frontmatter-schema.json: {sorted(missing_in_schema)[:5]}"
+                f"未同步到 frontmatter_schema.json: {sorted(missing_in_schema)[:5]}"
             )
         if extra_in_schema:
             _err(
-                f"DIM-3 schema_json.{field_name}: frontmatter-schema.json 有 {len(extra_in_schema)} 个值"
+                f"DIM-3 schema_json.{field_name}: frontmatter_schema.json 有 {len(extra_in_schema)} 个值"
                 f"不在 vocabulary 中: {sorted(extra_in_schema)[:5]}"
             )
 
@@ -368,7 +368,7 @@ def check_dim6_field_registry_enum_values(vocabs: dict[str, dict]) -> None:
 
 
 def check_dim7_schema_json_oneof(vocabs: dict[str, dict]) -> None:
-    """DIM-7: frontmatter-schema.json 中所有 oneOf+const 必须与对应 vocabulary 一致
+    """DIM-7: frontmatter_schema.json 中所有 oneOf+const 必须与对应 vocabulary 一致
     For SUBSET_VOCABS, missing values from vocabulary are OK (subset relationship)."""
     for vocab_name, field_name in VOCAB_TO_FIELD.items():
         if vocab_name not in vocabs:
@@ -381,7 +381,7 @@ def check_dim7_schema_json_oneof(vocabs: dict[str, dict]) -> None:
         if missing and vocab_name not in SUBSET_VOCABS:
             _err(
                 f"DIM-7 schema_json.{field_name}: vocabulary 有 {len(missing)} 个值"
-                f"未同步到 frontmatter-schema.json: {sorted(missing)[:5]}"
+                f"未同步到 frontmatter_schema.json: {sorted(missing)[:5]}"
             )
         extra = schema_values - vocab_values - vocabs[vocab_name]["deprecated_values"]
         if extra:
@@ -420,9 +420,9 @@ def main() -> None:
     print()
 
     checks = [
-        ("DIM-1: vocabulary ↔ frontmatter-field-registry.md", check_dim1_field_registry),
-        ("DIM-2: vocabulary ↔ architecture-contract.yaml", check_dim2_arch_contract),
-        ("DIM-3: vocabulary ↔ frontmatter-schema.json", check_dim3_schema_json),
+        ("DIM-1: vocabulary ↔ frontmatter_field_registry.yaml", check_dim1_field_registry),
+        ("DIM-2: vocabulary ↔ architecture_contract.yaml", check_dim2_arch_contract),
+        ("DIM-3: vocabulary ↔ frontmatter_schema.json", check_dim3_schema_json),
         ("DIM-4: 派生文件 derived_from 标注完整性", check_dim4_missing_derived_from),
         ("DIM-5: vocabulary YAML 登记完整性", check_dim5_vocab_registration),
         ("DIM-6: field-registry enum_values ↔ vocabulary", check_dim6_field_registry_enum_values),

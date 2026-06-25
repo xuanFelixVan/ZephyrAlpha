@@ -163,36 +163,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags:
   - Disruptive
-- name: _verify_fle_gates.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: _verify_gate_loading.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: _verify_yaml.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: add_file_headers.py
   owner: governance
   dimensions: []
@@ -646,7 +616,7 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: '验证 frontmatter-schema.json 枚举字段与 vocabularies/ 目录的覆盖度。 确保每个枚举字段都有独立词汇表文件（SSoT
+  description: '验证 frontmatter_schema.json 枚举字段与 vocabularies/ 目录的覆盖度。 确保每个枚举字段都有独立词汇表文件（SSoT
     原则）。
 
     '
@@ -1886,7 +1856,7 @@ scripts:
   timeout_seconds: 15
   args: []
   warn_only: false
-  description: GATE-CONTRACT — architecture-contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
+  description: GATE-CONTRACT — architecture_contract 内部一致性校验（7 维度：regex/doc_type/VR编号一致性等）
   tags:
   - Critical
   - Quick

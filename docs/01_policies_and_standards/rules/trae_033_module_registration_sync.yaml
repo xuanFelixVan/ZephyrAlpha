@@ -80,7 +80,7 @@ sections:
         path: _registry/catalogs/gate-registry.md
       - code: FIELD
         name: frontmatter字段
-        path: _registry/catalogs/frontmatter-field-registry.md
+        path: _registry/catalogs/frontmatter_field_registry.yaml
       - code: AI-AUTH
         name: AI自治权限
         path: governance/ai/ai_autonomy_authority_registry.yaml

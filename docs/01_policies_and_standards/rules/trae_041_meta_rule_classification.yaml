@@ -487,7 +487,7 @@ sections:
     - consumer: document-metadata-index.yaml
       tier: 1
       consumption: 新增domain scope stability字段
-    - consumer: frontmatter-schema.json
+    - consumer: frontmatter_schema.json
       tier: 1
       consumption: 新增scope stability字段Schema
     - consumer: check_frontmatter_metadata.py
@@ -572,7 +572,7 @@ sections:
       fail: 跳过审批或同步
     actions:
     - type: mandatory
-      step: 新增领域受控词表条目→Owner批准+同步PS-STD-001路径映射+创建目录；新增Scope/Stability值→Owner批准+ADR+同步PS-STD-001+frontmatter-schema.json；修改规则画像→领域负责人批准+同步document-metadata-index.yaml；修改维度定义→Owner批准+ADR+同步所有Tier1消费者；修改推导链步骤→Owner批准+ADR+同步PS-STD-009
+      step: 新增领域受控词表条目→Owner批准+同步PS-STD-001路径映射+创建目录；新增Scope/Stability值→Owner批准+ADR+同步PS-STD-001+frontmatter_schema.json；修改规则画像→领域负责人批准+同步document-metadata-index.yaml；修改维度定义→Owner批准+ADR+同步所有Tier1消费者；修改推导链步骤→Owner批准+ADR+同步PS-STD-009
   ps_std_004_no_field_duplication:
     title: 与PS-STD-001字段不重复声明
     section_type: context

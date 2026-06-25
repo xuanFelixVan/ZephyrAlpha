@@ -82,7 +82,7 @@ def _resolve_special_counts(reg_data: dict, stem: str) -> dict[str, int]:
     """_resolve_special_counts implementation."""
     extra: dict[str, int] = {}
 
-    if stem == "architecture-contract":
+    if stem == "architecture_contract":
         tvr = reg_data.get("total_vr_rules")
         if isinstance(tvr, int) and tvr > 0:
             extra["vr_rules"] = tvr

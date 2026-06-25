@@ -1236,7 +1236,7 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md
+- path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
   module_id: PS-REG-012
   title: Frontmatter 字段定义登记�?
   doc_type: register
@@ -1368,7 +1368,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml
+- path: docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
   module_id: PS-CTR-001
   title: Architecture Compliance Contract
   doc_type: contract
@@ -1456,7 +1456,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/blueprint-refs-status-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/blueprint-refs-status_vocabulary.yaml
   module_id: PS-VOC-022
   title: blueprint_refs.status 受控词表
   doc_type: vocabulary
@@ -1478,7 +1478,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/classification-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/classification_vocabulary.yaml
   module_id: PS-VOC-006
   title: classification 受控词表
   doc_type: vocabulary
@@ -1500,7 +1500,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/created_by-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/created_by_vocabulary.yaml
   module_id: PS-VOC-008
   title: created_by 受控词表
   doc_type: vocabulary
@@ -1522,7 +1522,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/doc_type-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
   module_id: PS-VOC-001
   title: doc_type 受控词表
   doc_type: vocabulary
@@ -1577,7 +1577,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/language-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/language_vocabulary.yaml
   module_id: PS-VOC-007
   title: language 受控词表
   doc_type: vocabulary
@@ -1588,7 +1588,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/layer-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
   module_id: PS-VOC-005
   title: layer 受控词表
   doc_type: vocabulary
@@ -1610,7 +1610,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/review-status-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/review-status_vocabulary.yaml
   module_id: PS-VOC-018
   title: review_status 受控词表
   doc_type: vocabulary
@@ -1621,7 +1621,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/rule_form-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/rule_form_vocabulary.yaml
   module_id: PS-VOC-002
   title: rule_form 受控词表
   doc_type: vocabulary
@@ -1643,7 +1643,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/scope-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/scope_vocabulary.yaml
   module_id: PS-VOC-009
   title: scope 受控词表
   doc_type: vocabulary
@@ -1654,7 +1654,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/stability-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/stability_vocabulary.yaml
   module_id: PS-VOC-010
   title: stability 受控词表
   doc_type: vocabulary
@@ -1665,7 +1665,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/status-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/status_vocabulary.yaml
   module_id: PS-VOC-003
   title: status 受控词表
   doc_type: vocabulary
@@ -1676,7 +1676,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/ttl-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
   module_id: PS-VOC-004
   title: ttl 受控词表
   doc_type: vocabulary
@@ -1687,7 +1687,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/verifiability-vocabulary.yaml
+- path: docs/01_policies_and_standards/_registry/vocabularies/verifiability_vocabulary.yaml
   module_id: PS-VOC-011
   title: verifiability 受控词表
   doc_type: vocabulary
