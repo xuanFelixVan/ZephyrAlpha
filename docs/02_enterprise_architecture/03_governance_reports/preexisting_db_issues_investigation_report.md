@@ -634,6 +634,49 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_domains_ssot_path_unique
 
 **验证**：尝试 INSERT 一个 max_modules=NULL 的域应失败；尝试 INSERT 重复 ssot_path 应失败。
 
+##### 阶段4执行结果（2026-06-25 完成）
+
+阶段4核心目标（防止问题再发）已达成，但实际执行与原方案有以下调整：
+
+| 项 | 原方案 | 实际执行 | 调整理由 |
+|---|---|---|---|
+| 迁移版本号 | v11 | v12 | v11 已被前序会话用于 nodes 表 CHECK 约束（裁定#178），不可重复使用 |
+| 实现机制 | ALTER TABLE 重建表 | 触发器 BEFORE INSERT/UPDATE | SQLite 的 ALTER TABLE ADD CHECK 不会回溯校验既有数据，触发器方案可幂等执行（CREATE TRIGGER IF NOT EXISTS），更适合版本化迁移 |
+| 约束范围 | max_modules + layer_id + ssot_path UNIQUE | lifecycle + build_status + layer_id + nodes DELETE 自动清理 edges | 扩展：lifecycle/build_status 也是裸字段需约束；ssot_path UNIQUE 因占位域过渡期暂缓；新增根治孤儿边的 DELETE 触发器 |
+
+**实际执行内容**（裁定 #203-B / #203-C，议题 #ARCH-006 / #ARCH-007）：
+
+1. **孤儿边清理**（commit 290df512）：
+   - 调研确认 148 条孤儿边均为预存问题（edges 表 FK 无 ON DELETE CASCADE 累积）
+   - 在 `apply_depgraph.py` 新增 `cmd_cleanup_orphan_edges()` 命令 + `--cleanup-orphan-edges` CLI 参数（commit 87e793ec）
+   - 执行清理：148 条全部删除
+   - 验证：`SELECT COUNT(*) FROM edges WHERE ...` 返回 0
+
+2. **v12 迁移**（commit 87e793ec + 0a69d345）：在 `depgraph_schema.py` `_MIGRATIONS` 列表新增 v12，创建 7 个触发器：
+   - `trg_nodes_delete_cleanup_edges`（AFTER DELETE ON nodes）：删除节点时自动清理引用它的 edges，**根治孤儿边再生**
+   - `chk_domains_lifecycle_insert` / `chk_domains_lifecycle_update`：校验 lifecycle ∈ ('operational','design_only','prototype','deprecated')
+   - `chk_domains_build_status_insert` / `chk_domains_build_status_update`：校验 build_status ∈ ('planned','generated','testing','stable','deprecated')
+   - `chk_domains_layer_id_insert` / `chk_domains_layer_id_update`：校验 layer_id ∈ 4 合法值或 NULL
+
+3. **配套修复**：
+   - `apply_depgraph.py cmd_insert_domain` 默认值 max_modules 200→150（裁定#194 硬上限），build_status 'unbuilt'→'planned'（避免被触发器拦截）
+   - `apply_depgraph.py add_design_node` build_status 默认值 'unbuilt'→'planned'
+   - D-GOV-REPAIR max_modules NULL → 150
+
+4. **验证全部通过**：
+   - `schema_version` = 12
+   - 7 个新触发器在 sqlite_master 中可见
+   - `orphan_edges` = 0
+   - `max_modules NULL` = 0
+   - `build_status='unbuilt'` = 0
+   - `layer_id='L1_platform'` = 0
+   - 非法值插入测试 5 项全 PASS
+
+**遗留事项（不在阶段4范围）**：
+- ssot_path UNIQUE 索引：占位域过渡期暂缓，待占位域全部转正后再加
+- domains 表 max_modules NOT NULL 约束：当前仍有触发器校验机制保护，DDL 级 NOT NULL 待后续 v13 迁移加入
+- sync_yaml_to_depgraph.py 写入路径修复（原方案阶段5）：仍待执行
+
 #### 阶段5：统一写入入口（裁定D，工具修复）
 
 | 文件 | 修改 | 验证 |

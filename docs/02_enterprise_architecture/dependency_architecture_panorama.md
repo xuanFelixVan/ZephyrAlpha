@@ -1996,8 +1996,8 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 子裁定 | 对应议题 | 内容 | 状态 |
 |--------|---------|------|:---:|
 | #203-A | #ARCH-005 | layer_id 非法值修复（9 域 L1_platform→L1_foundation） | ✅ 已执行 (commit fadd3fdc) |
-| #203-B | #ARCH-006 | 孤儿边 148 条留待阶段4清理 | ⏳ 阶段4 |
-| #203-C | #ARCH-007 | lifecycle 合法值定义（4 值）+ 阶段4加 CHECK 约束 | ⏳ 阶段4 |
+| #203-B | #ARCH-006 | 孤儿边 148 条清理 | ✅ 已执行 (commit 290df512 + 0a69d345) |
+| #203-C | #ARCH-007 | lifecycle/build_status/layer_id CHECK 约束 + nodes DELETE 自动清理 edges | ✅ 已执行 (commit 87e793ec + 0a69d345) |
 
 **#203-A 详情（layer_id 非法值修复）**:
 
@@ -2012,21 +2012,39 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 修复后 layer_id 分布：L2_domain 32 / L1_foundation 15 / L0_infrastructure 5 / NULL 1（D-GOV-REPAIR，已 deprecated）。
 
-**#203-B 详情（孤儿边留待阶段4）**:
+**#203-B 详情（孤儿边清理）**:
 
 edges 表有 148 条边引用了不存在的 node（from_node_id 或 to_node_id 在 nodes 表中不存在）。经验证：不涉及 node 50999/51005（两会话迁移的节点），是纯预存问题。
 
-裁定：留待阶段4（DB约束治理）统一清理。preexisting 阶段1-3 聚焦元数据修复，孤儿边是独立预存问题，不在范围内，避免范围蔓延。阶段4将：调研每条孤儿边来源 → 评估可删除性 → apply_depgraph.py 增加 `cmd_cleanup_orphan_edges()` → 执行清理 + 验证。
+根因：edges 表 FK 无 `ON DELETE CASCADE`，删除 node 时不会自动清理引用它的边，长期累积形成孤儿边。
 
-**#203-C 详情（lifecycle 合法值定义）**:
+阶段4执行结果（commit 290df512 + 0a69d345）：
+1. 在 `apply_depgraph.py` 新增 `cmd_cleanup_orphan_edges()` 命令 + `--cleanup-orphan-edges` CLI 参数（commit 87e793ec）
+2. 执行清理：148 条孤儿边全部删除（commit 290df512）
+3. 验证：`SELECT COUNT(*) FROM edges WHERE ...` 返回 0
+4. 同时在 v12 迁移中新增 `trg_nodes_delete_cleanup_edges` 触发器，从根源杜绝孤儿边再生（见 #203-C）
 
-domains 表 lifecycle 字段当前无 CHECK 约束，实际分布 4 值：operational(22) / design_only(19) / prototype(11) / deprecated(1)。
+**#203-C 详情（lifecycle/build_status/layer_id CHECK 约束）**:
 
-裁定：接受当前 4 值为合法值集合，阶段4加 CHECK 约束。理由：
+domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约束。lifecycle 实际分布 4 值：operational(22) / design_only(19) / prototype(11) / deprecated(1)；build_status 合法 5 态（裁定#178）：planned→generated→testing→stable→deprecated；layer_id 合法 4 层（arch_layers 表）：L0_infrastructure / L1_foundation / L2_domain / L3_application。
+
+裁定：接受当前 4 值为 lifecycle 合法值集合。理由：
 1. 4 值覆盖域完整生命周期（生产运行→原型验证→纯设计态→已废弃）
 2. 与 build_status 5 态互补（lifecycle 描述运行态，build_status 描述构建态）
 3. 4 值已满足需求，不扩展
 
-阶段4执行：在 `depgraph_schema.py` domains 表 DDL 增加 `CHECK (lifecycle IN ('operational', 'design_only', 'prototype', 'deprecated'))`，并在 `apply_depgraph.py cmd_insert_domain` 校验合法性。
+阶段4执行结果（commit 87e793ec + 0a69d345）：
+1. 在 `depgraph_schema.py` `_MIGRATIONS` 列表新增 v12 迁移（7 个触发器），DDL 幂等执行
+2. 7 个触发器：
+   - `trg_nodes_delete_cleanup_edges`（AFTER DELETE ON nodes）：自动清理被删节点引用的 edges（根治 #203-B 根因）
+   - `chk_domains_lifecycle_insert/update`：校验 lifecycle ∈ 4 值
+   - `chk_domains_build_status_insert/update`：校验 build_status ∈ 5 值
+   - `chk_domains_layer_id_insert/update`：校验 layer_id ∈ 4 值或 NULL
+3. 修复 `apply_depgraph.py` 中 `cmd_insert_domain` 的默认值：max_modules 200→150（裁定#194 硬上限），build_status 'unbuilt'→'planned'（避免被触发器拦截）；`add_design_node` build_status 默认值 'unbuilt'→'planned'
+4. 修复 D-GOV-REPAIR max_modules NULL → 150
+5. 执行 `init_db()` 完成 v12 迁移，`_schema_version` 表新增版本 12 记录
+6. 验证全部通过：schema_version=12，7 个新触发器存在，非法值插入测试 5 项全 PASS
+
+**为何采用触发器而非 ALTER TABLE ADD CHECK**：SQLite 的 `ALTER TABLE ADD CHECK` 在表已有数据时不会回溯校验，且不可与既有 DDL 合并。触发器方案支持 BEFORE INSERT/UPDATE 实时拦截 + 幂等创建（`CREATE TRIGGER IF NOT EXISTS`），更适合版本化迁移框架。
 
 **合并说明**: 本裁定整合了 6a3c179e 会话的 5 项发现，统一归并到 preexisting 调研报告（`preexisting_db_issues_investigation_report.md` 附录B）。原交接文档已删除，避免信息分散。
