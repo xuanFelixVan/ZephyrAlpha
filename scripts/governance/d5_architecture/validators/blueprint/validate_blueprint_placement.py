@@ -56,17 +56,23 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 
 ensure_utf8_stdout()
 
+import yaml
+
 BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 CROSS_LAYER_DIR = BLUEPRINTS_DIR / "_cross_layer"
 INFRA_DIR = BLUEPRINTS_DIR / "infrastructure_runtime_integration"
 
-VALID_LAYERS: frozenset[str] = frozenset({f"L{i:02d}" for i in range(0, 14)} | {"cross_layer"})
+_LAYER_VOCAB = GOV_DOCS_DIR / "_registry" / "vocabularies" / "layer_vocabulary.yaml"
+_LAYER_DATA = yaml.safe_load(_LAYER_VOCAB.read_text(encoding="utf-8")) if _LAYER_VOCAB.exists() else {"values": []}
+VALID_LAYERS: frozenset[str] = frozenset(
+    str(v.get("value")) for v in _LAYER_DATA.get("values", []) if isinstance(v, dict)
+)
 
 VALID_BELONGS_TO: frozenset[str] = frozenset({"SYS-MASTER-001", "MOD-MASTER-001", "DOM-GOV-001"})
 
@@ -76,15 +82,17 @@ def _is_blueprint(filepath: Path) -> bool:
     return filepath.suffix == ".md" and filepath.name == "blueprint.md"
 
 
-def _layer_to_dir_prefix(layer: str) -> str | None:
-    """_layer_to_dir_prefix implementation."""
-    if layer.startswith("L") and len(layer) == 3:
-        try:
-            nn = int(layer[1:])
-            return f"l{nn:02d}_"
-        except ValueError:
-            return None
-    return None
+_LAYER_DIR_PREFIX_MAP = {
+    "data": "l00_", "infra_ops": "l01_", "factor": "l02_", "signal": "l03_",
+    "risk": "l04_", "pf_core": "l05_", "ex_core": "l06_", "reporting": "l07_",
+    "frontend": "l08_", "research": "l09_", "compliance": "l10_", "ml_train": "l11_",
+    "system-telemetry": "l12_", "simulation": "l13_", "shared": "", "cross_layer": "",
+}
+
+
+def _layer_to_dir_prefix(layer: str) -> str:
+    """语义 layer 值 → 物理目录前缀映射（暂行硬编码，待裁定 #ARCH-011 改为 vocabulary dir_prefix 字段动态读取）。"""
+    return _LAYER_DIR_PREFIX_MAP.get(layer, "")
 
 
 def _collect_blueprints() -> dict[str, tuple[Path, dict]]:
@@ -142,10 +150,10 @@ def main() -> int:
     # ── P0-3: 非cross_layer蓝图 layer L{NN} 与物理路径不匹配 ──
     for module_id, (filepath, fm) in sorted(blueprints.items()):
         layer = fm.get("layer", "")
-        if layer.startswith("L") and layer != "cross_layer":
+        if layer in VALID_LAYERS:
             # 检查完整路径中是否包含 l{NN}_ 前缀（适配 infrastructure_runtime_integration/task-system/ 这种嵌套结构）
             prefix = _layer_to_dir_prefix(layer)
-            if prefix is None:
+            if not prefix:
                 continue
             rel = filepath.relative_to(REPO_ROOT)
             path_parts = rel.parts

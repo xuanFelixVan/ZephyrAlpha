@@ -51,10 +51,27 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+import yaml
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
+
+_VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
+
+
+def _load_valid_values(vocab_file: str) -> set[str]:
+    """从 vocabulary YAML 动态加载合法值（SSoT 唯一真源，禁止硬编码）。"""
+    p = _VOCAB_DIR / vocab_file
+    if not p.exists():
+        return set()
+    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    return {
+        str(entry.get("value") or entry.get("id"))
+        for entry in data.get("values", [])
+        if isinstance(entry, dict)
+    }
 
 # 规则文件目录
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -98,10 +115,10 @@ REQUIRED_FIELDS = [
     "provenance",
 ]
 
-VALID_LAYER = {"L0", "L1", "L2", "L3"}
-VALID_STABILITY = {"frozen", "stable", "evolving", "volatile"}
-VALID_SAFETY = {"H", "M", "L"}
-VALID_AUTONOMY = {"immutable_core", "human_gated", "ai_modifiable"}
+VALID_LAYER = _load_valid_values("layer_vocabulary.yaml")
+VALID_STABILITY = _load_valid_values("stability_vocabulary.yaml")
+VALID_SAFETY = _load_valid_values("safety_level_vocabulary.yaml")
+VALID_AUTONOMY = _load_valid_values("ai_autonomy_vocabulary.yaml")
 
 # 顶层字段行：行首不含空格的 key: 形式
 _TOP_KEY_RE = re.compile(r"^([a-z_][a-z0-9_]*)\s*:")

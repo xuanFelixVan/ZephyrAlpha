@@ -54,8 +54,24 @@ class SsotValidator:
         return []
 
 
-def _get_valid_layers():
-    return ["l01", "l02", "l03", "l04", "l05", "l06", "l07", "l08", "l09", "l10", "l11", "l12", "l13"]
+def _get_valid_layers() -> list[str]:
+    """从 layer_vocabulary.yaml 加载合法 layer 值（SSoT 唯一真源）。"""
+    from pathlib import Path
+
+    import yaml
+
+    vocab = (
+        Path(__file__).resolve().parents[4]
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "vocabularies"
+        / "layer_vocabulary.yaml"
+    )
+    if not vocab.exists():
+        return []
+    data = yaml.safe_load(vocab.read_text(encoding="utf-8")) or {}
+    return [str(v.get("value")) for v in data.get("values", []) if isinstance(v, dict)]
 
 
 def check_p0_duplicate_active_module_id(files):
