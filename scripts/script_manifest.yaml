@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 561
+total_scripts: 558
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -686,30 +686,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_probe_ops_max.py
-  path: governance/_tmp_probe_ops_max.py
-  description: 输出直接写文件（避免 PowerShell 中文/emoji 丢失）。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_probe_tasks.py
-  path: governance/_tmp_probe_tasks.py
-  description: import sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_test_shlex.py
-  path: governance/_tmp_test_shlex.py
-  description: import shlex
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/add_file_headers.py
   path: governance/add_file_headers.py
   description: import argparse
@@ -934,14 +910,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/create_blueprint_placement_repair_tasks.py
-  path: governance/create_blueprint_placement_repair_tasks.py
-  description: 依据：blueprint_placement_violations_root_cause_report.md（裁定 R1-R7，Owner 已确认）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/create_d_signal_rename_tasks.py
   path: governance/create_d_signal_rename_tasks.py
   description: 创建 D-SIGNAL* 4 域改名执行任务卡（10 张主卡 + 10 张元审查卡）。
@@ -1089,6 +1057,14 @@ scripts:
 - name: governance/generate_project_depgraph.py
   path: governance/generate_project_depgraph.py
   description: import argparse
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/generate_project_depgraph_artifact.py
+  path: governance/generate_project_depgraph_artifact.py
+  description: 将 depgraph.db 的数据导出为 project_entity_depgraph.yaml 制品。
   domain: governance
   execution_plane: warm-path
   status: registered
