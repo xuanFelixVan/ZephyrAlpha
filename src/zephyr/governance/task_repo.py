@@ -150,6 +150,42 @@ class SyncVerificationError(TaskRepositoryError):
         super().__init__(f"任务 {task_id!r} 的 post_sync_standard 验证失败: 命令 {command!r} 返回 exit={exit_code}")
 
 
+class PostSyncValidationError(TaskRepositoryError):
+    """建卡时 post_sync_standard 命令校验失败（臆造脚本/flag）。
+
+    拦截 AI 幻觉：在 create() 时即拒绝引用不存在脚本或未注册 flag 的命令，
+    避免臆造命令落库后在 transition(COMPLETED) 时触发 CircularAcceptanceError 死锁
+    （如 D-SIGNAL 改名 20 卡死锁事故：建卡 AI 臆造 apply_depgraph.py --diagnose，
+    argparse 从未注册该 flag，导致所有卡无法 transition）。
+    """
+
+    def __init__(self, task_id: str, command: str, reason: str) -> None:
+        self.command = command
+        self.reason = reason
+        super().__init__(
+            f"任务 {task_id!r} 的 post_sync_standard 校验失败: 命令 {command!r} — {reason}"
+        )
+
+
+class PostSyncConstructionError(TaskRepositoryError):
+    """transition 时发现 post_sync_standard 命令存在建卡缺陷（argparse 拒绝，exit=2）。
+
+    区分失败模式：exit=2 表明命令引用了不存在的 flag——是建卡时的幻觉缺陷，
+    而非当前工作质量问题。应修复任务卡的 post_sync_standard 字段，而非反复重试循环验收。
+    （DM-210625: 原 _run_circular_acceptance 将所有非零退出码一视同仁，
+    导致建卡缺陷被笼统报为 CircularAcceptanceError，掩盖根因。）
+    """
+
+    def __init__(self, task_id: str, command: str, stderr: str = "") -> None:
+        self.command = command
+        super().__init__(
+            f"任务 {task_id!r} 的 post_sync_standard 命令 {command!r} 存在建卡缺陷"
+            f"（argparse 返回 exit=2，疑似臆造 flag）。"
+            f"这是建卡时的幻觉缺陷，请修复 post_sync_standard 字段而非重试循环验收。"
+            f"{(' stderr: ' + stderr) if stderr else ''}"
+        )
+
+
 class CircularAcceptanceError(TaskRepositoryError):
     """循环验收未通过——验收命令未连续 2 次返回零错误。"""
 
@@ -196,6 +232,10 @@ class BatchReviewRequiredError(TaskRepositoryError):
 
 # 循环验收轮数：COMPLETED 转换时 post_sync_standard 命令必须连续 2 次返回 0
 CIRCULAR_ACCEPTANCE_ROUNDS = 2
+
+# 仓库根（用于解析 post_sync_standard 中的相对脚本路径）。
+# task_repo.py 位于 src/zephyr/governance/，parents[3] = 仓库根。
+_REPO_ROOT = Path(__file__).resolve().parents[3]
 
 _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
     TaskStatus.PENDING: frozenset(
@@ -713,6 +753,78 @@ class TaskRepository:
 
         return violations
 
+    def _validate_post_sync_executable(self, task: Task) -> None:
+        """建卡时机械校验 post_sync_standard 命令可解析、脚本存在、argparse flag 合法。
+
+        拦截 AI 幻觉（臆造 CLI/flag）：在 create() 时即拒绝引用不存在脚本或未注册
+        flag 的命令，避免臆造命令落库后在 transition(COMPLETED) 时触发
+        CircularAcceptanceError 死锁（D-SIGNAL 改名 20 卡死锁事故根因）。
+
+        校验范围：仅校验含 .py 脚本的命令（python scripts/x.py --flag）。
+        非 .py 命令（echo/git 等壳命令）无法可靠内省，跳过。
+        --help 自身失败或超时不阻断建卡（仅 flag 缺失与脚本不存在阻断）。
+        """
+        import shlex
+        import subprocess
+        import sys
+
+        cmds = getattr(task, "post_sync_standard", None) or []
+        for cmd in cmds:
+            # 1. shell 解析（posix=False 保留 Windows 反斜杠路径；strip 引号）
+            try:
+                parts = [t.strip("'\"") for t in shlex.split(cmd, posix=False)]
+            except ValueError as exc:
+                raise PostSyncValidationError(task.task_id, cmd, f"shell 解析失败: {exc}")
+            if not parts:
+                continue
+
+            # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）
+            script_path = next((t for t in parts if t.endswith(".py")), None)
+            if script_path is None:
+                # 非 .py 命令（echo/git 等），无法内省，跳过
+                continue
+
+            # 3. 脚本存在性（相对路径基于 _REPO_ROOT 解析）
+            p = Path(script_path)
+            if not p.is_absolute():
+                p = _REPO_ROOT / p
+            if not p.exists():
+                raise PostSyncValidationError(
+                    task.task_id,
+                    cmd,
+                    f"脚本不存在: {script_path}（解析为 {p}）",
+                )
+
+            # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
+            flags = [t for t in parts if t.startswith("--")]
+            if not flags:
+                continue
+
+            try:
+                result = subprocess.run(
+                    [sys.executable, str(p), "--help"],
+                    capture_output=True,
+                    text=True,
+                    timeout=15,
+                )
+            except (subprocess.TimeoutExpired, Exception):
+                # --help 超时或异常无法校验，跳过（不阻断建卡）
+                continue
+
+            if result.returncode != 0:
+                # --help 自身失败（脚本可能有 import 错误等），跳过 flag 校验
+                continue
+
+            help_text = result.stdout + result.stderr
+            missing = [f for f in flags if f not in help_text]
+            if missing:
+                raise PostSyncValidationError(
+                    task.task_id,
+                    cmd,
+                    f"argparse 未注册 flag {missing}（--help 输出中未找到；"
+                    f"疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
+                )
+
     @staticmethod
     def _count_construction_targets(description: str) -> int:
         """从 description 中计算施工步骤数量。"""
@@ -834,6 +946,8 @@ class TaskRepository:
                 f"RULE-THIRTEEN 粒度门禁违规（task_id={task.task_id!r}）:\n"
                 + "\n".join(f"  - {v}" for v in granularity_violations)
             )
+        # DM-210625: post_sync_standard 可执行性校验（拦截臆造脚本/flag 落库）
+        self._validate_post_sync_executable(task)
         with self._write_tx() as conn:
             self._check_files_in_scope_conflict(conn, task)
             if task.priority == Priority.P0:
@@ -1423,54 +1537,66 @@ class TaskRepository:
         return _row_to_taskcard(updated_row)
 
     def _auto_commit_on_completion(self, task_id: str, task_obj: TaskCard) -> None:
-        """DM-202918: transition(COMPLETED)后自动git commit files_in_scope中的文件。
+        """DM-202918 + OPS-2026062512: transition(COMPLETED)后经 GitCommitGateway 自动 commit files_in_scope。
 
-        策略:
-        1. git add files_in_scope 中存在的文件
-        2. git commit --no-verify -- <files> (只提交files_in_scope，不影响其他staged文件)
-        3. commit message 含 task_id
+        策略（治本升级）:
+        1. 原实现用 subprocess.run git commit，未防幽灵提交（多 session 共享 git index）
+        2. 改用 GitCommitGateway——全局串行锁 + 选择性 stash + 受限 commit
+        3. GitCommitGateway 自动追加 [GW:<session_id>] 标记 + 设置 ZEPHYR_COMMIT_GATEWAY=1
         4. 无文件可提交时跳过(不报错)
 
-        修复(2026-06-23): 原实现 git commit 不带文件参数会提交所有 staged 文件，
-        导致其他 session staged 的文件被意外提交。改为 git commit -- <files> 只提交指定文件。
+        修复历史:
+        - 2026-06-23: git commit 不带文件参数会提交所有 staged 文件 → 改为 git commit -- <files>
+        - 2026-06-25: 仍未防幽灵提交（pre-commit stash 冲突）→ 改用 GitCommitGateway 治本
         """
-        import subprocess
-
         files_in_scope = getattr(task_obj, "files_in_scope", None) or []
         if not files_in_scope:
             return
 
-        # 过滤出实际存在的文件
         import os
+
         existing_files = [f for f in files_in_scope if os.path.isfile(f)]
         if not existing_files:
             return
 
-        # git add
-        add_cmd = ["git", "add"] + existing_files
-        result = subprocess.run(add_cmd, capture_output=True, text=True, timeout=30)
-        if result.returncode != 0:
-            logger.warning("DM-202918: git add 失败 (task=%s): %s", task_id, result.stderr.strip())
-            return
+        # 使用 GitCommitGateway 串行化 commit（治本：防幽灵提交）
+        try:
+            from zephyr.governance.git_commit_gateway import (
+                CommitStatus,
+                GitCommitGateway,
+            )
 
-        # 检查 files_in_scope 中是否有 staged 变更（只检查这些文件，不检查其他 staged 文件）
-        diff_result = subprocess.run(
-            ["git", "diff", "--cached", "--quiet"] + existing_files,
-            capture_output=True, text=True, timeout=30
-        )
-        # exit 0 = 无变更, exit 1 = 有变更
-        if diff_result.returncode == 0:
-            logger.info("DM-202918: files_in_scope无staged变更，跳过commit (task=%s)", task_id)
-            return
-
-        # git commit --no-verify -- <files> (只提交 files_in_scope，不影响其他 staged 文件)
-        commit_msg = f"auto-commit(DM-202918): task {task_id} COMPLETED"
-        commit_cmd = ["git", "commit", "--no-verify", "-m", commit_msg, "--"] + existing_files
-        commit_result = subprocess.run(commit_cmd, capture_output=True, text=True, timeout=60)
-        if commit_result.returncode != 0:
-            logger.warning("DM-202918: git commit 失败 (task=%s): %s", task_id, commit_result.stderr.strip())
-        else:
-            logger.info("DM-202918: 自动commit成功 (task=%s): %s", task_id, commit_result.stdout.strip())
+            session_id = getattr(task_obj, "session_id", None) or f"task:{task_id}"
+            gw = GitCommitGateway()
+            commit_msg = f"auto-commit(DM-202918): task {task_id} COMPLETED"
+            result = gw.commit(
+                session_id=session_id,
+                files=existing_files,
+                message=commit_msg,
+            )
+            if result.status == CommitStatus.OK:
+                logger.info(
+                    "DM-202918: GitCommitGateway commit 成功 (task=%s hash=%s): %s",
+                    task_id, result.commit_hash[:8], result.message,
+                )
+            elif result.status == CommitStatus.NOTHING_TO_COMMIT:
+                logger.info(
+                    "DM-202918: files_in_scope 无 staged 变更，跳过 commit (task=%s)", task_id
+                )
+            elif result.status == CommitStatus.STASH_CONFLICT:
+                logger.warning(
+                    "DM-202918: commit 成功但 stash pop 失败，数据保留在 stash (task=%s): %s",
+                    task_id, result.message,
+                )
+            else:
+                logger.warning(
+                    "DM-202918: GitCommitGateway commit 失败 (task=%s status=%s): %s",
+                    task_id, result.status, result.message,
+                )
+        except Exception as e:
+            logger.warning(
+                "DM-202918: GitCommitGateway 异常，回退跳过 commit (task=%s): %s", task_id, e
+            )
 
     def _run_circular_acceptance(
         self,
@@ -1481,6 +1607,12 @@ class TaskRepository:
 
         CIRCULAR_ACCEPTANCE_ROUNDS=2: 所有命令必须连续 2 轮返回 exit=0。
         任一命令任一轮失败 → 抛出 CircularAcceptanceError。
+
+        失败模式区分（DM-210625）：
+          - exit=2：argparse 拒绝（flag 不存在）→ PostSyncConstructionError
+            （建卡缺陷，应修复 post_sync_standard 字段而非重试）
+          - exit≠0且≠2：真实工作质量问题 → CircularAcceptanceError
+          - 超时：计入 failures，按循环验收判定
         """
         import subprocess
 
@@ -1496,9 +1628,18 @@ class TaskRepository:
                         timeout=120,
                     )
                     if result.returncode != 0:
+                        # DM-210625: exit=2 为 argparse 拒绝（臆造 flag 建卡缺陷），
+                        # 立即抛 PostSyncConstructionError 而非计入循环验收失败——
+                        # 建卡缺陷不可通过重试解决，必须修复 post_sync_standard 字段。
+                        if result.returncode == 2:
+                            raise PostSyncConstructionError(
+                                task_id, cmd, (result.stderr or "")[:200]
+                            )
                         failures.append(f"命令 {cmd!r} 返回 exit={result.returncode}: {(result.stderr or '')[:200]}")
                 except subprocess.TimeoutExpired:
                     failures.append(f"命令 {cmd!r} 超时（120s）")
+                except PostSyncConstructionError:
+                    raise
                 except Exception as exc:
                     failures.append(f"命令 {cmd!r} 异常: {exc}")
 
