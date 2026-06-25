@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
-# [MODULE] zephyr.knowledge.kb.triage
+# [MODULE] zephyr.governance.triage
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__; zephyr.intelligence.model_evaluation.kb_repo
 # [CONSUMERS]
@@ -73,26 +73,30 @@ APPROVED_LABELS = [
 VALID_DOC_TYPES = [
     "policy",
     "standard",
-    "adr",
+    "operational_rule",
+    "register",
+    "index",
+    "protocol",
+    "template",
+    "terminology",
+    "reference",
+    "vocabulary",
+    "contract",
+    "schema",
     "blueprint",
     "construction_plan",
     "design",
     "plan",
     "roadmap",
-    "register",
-    "index",
     "readme",
     "log",
-    "checklist",
-    "template",
     "knowledge_entry",
     "audit_report",
-    "ai_governance",
-    "candidate_pool",
     "service_spec",
-    "discussion_draft",
-    "terminology",
-    "reference",
+    "architecture_view",
+    "declaration",
+    "gate",
+    "config",
 ]
 
 VALID_LAYERS = [
@@ -100,14 +104,16 @@ VALID_LAYERS = [
     "infra_ops",
     "factor",
     "signal",
-    "ml_train",
+    "risk",
     "pf_core",
     "ex_core",
-    "risk",
     "reporting",
+    "frontend",
     "research",
     "compliance",
-    "frontend",
+    "ml_train",
+    "system-telemetry",
+    "simulation",
     "shared",
     "cross_layer",
 ]
