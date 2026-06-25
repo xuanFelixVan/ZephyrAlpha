@@ -824,6 +824,71 @@ ARCH-CAP-007（新增）：占位域生命周期门禁
 
 ---
 
+## 附录B：新发现架构裁定议题（阶段1-3执行后发现）
+
+> 以下议题在 preexisting 阶段1-3 执行过程中发现，超出预存DB修复范围，记录为新架构裁定议题待后续处理。
+
+### 议题#ARCH-001：域数量超标（53 vs 设计39）
+
+**事实**：DB中有53个域，比 D38/D42 裁定的39个平铺域设计多14个。
+
+**规则依据**：
+- D38裁定：39个平铺域=场外30域+膨胀域拆分(D-SIGNAL/D-DATA/D-SIMULATION各拆4域)
+- D42裁定：30+3×3拆分=39平铺域
+
+**多出的14个域来源**（需逐一审查合法性）：
+- D-SIGNAL拆分产物：D-SIGNAL_ASHARE, D-SIGNAL_FUNDAMENTAL, D-SIGNAL_QUALITY（3个）
+- 治理域拆分产物：D-GOV_AUDIT_TESTS, D-GOV_DRIFT, D-GOV_RULE（可能3个）
+- 基础设施域拆分产物：D-INFRA_A2A, D-INFRA_OPS, D-INFRA_RECOVERY, D-INFRA_TELEMETRY（可能4个）
+- 设计态占位域：D-SECURITY-LLM, D-INTEGRATION-GATEWAY（2个）
+- deprecated域：D-GOV-REPAIR（1个）
+- 其他差值（1个）
+
+**待裁定**：14个多出域中哪些有合法裁定记录，哪些需要补裁定或合并。
+
+### 议题#ARCH-002：D-SIGNAL* 命名违反"无子域"规则
+
+**事实**：D-SIGNAL_ASHARE / D-SIGNAL_FUNDAMENTAL / D-SIGNAL_QUALITY 的命名带 `D-SIGNAL_` 前缀，暗示子域层级关系。
+
+**规则依据**：
+- D38裁定：无层级无子域
+- D41裁定：平铺，不做子域，不增加层级深度
+- phase4b_cleanup_construction_plan.md L43：平行域无子域
+
+**违反程度**：命名层面违反。这3个域在DB中是独立平级域（domain_id不同），但命名暗示了parent-child关系。
+
+**待裁定**：
+- 选项A：重命名为独立平级名称（如 D-ASHARE_SIGNAL / D-FUNDAMENTAL_SIGNAL / D-QUALITY_SIGNAL）
+- 选项B：保留命名但补写裁定记录明确其为平级域
+- 选项C：回滚拆分，合并回D-SIGNAL
+
+### 议题#ARCH-003：D-SIGNAL拆分无正式裁定记录
+
+**事实**：D-SIGNAL→3子域的拆分在 `dependency_architecture_panorama.md` 中无任何裁定记录，与裁定#200（D-INFRA_RUNTIME等4域拆分有完整裁定#199/#200）形成对比。同时D-SIGNAL/D-SIGNAL_FUNDAMENTAL/D-SIGNAL_ASHARE/D-SIGNAL_QUALITY 在 `functional_domain_registry.yaml` 中均无registry条目。
+
+**证据**：
+- Grep `dependency_architecture_panorama.md` 对"D-SIGNAL|signal_fundamental|signal_ashare|signal_quality|信号拆分"无任何命中
+- Grep `functional_domain_registry.yaml` 对"D-SIGNAL|signal|信号"仅命中2行无关文本
+
+**待裁定**：是否补写D-SIGNAL拆分裁定，或回滚拆分。
+
+### 议题#ARCH-004：D-SIGNAL 本身是否应deprecated
+
+**事实**：D-SIGNAL经过拆分后：
+- 代码已分散到3个独立域（D-SIGNAL_ASHARE/D-SIGNAL_FUNDAMENTAL/D-SIGNAL_QUALITY）
+- D-SIGNAL本身有45个design节点（虚拟设计态路径如"信号域-核心基础设施/D-SIGNAL-12"），无production代码
+- ssot_path为空（用户裁定留空），production_nodes=0
+- build_status已修正为planned（原design_only）
+
+**待裁定**：
+- 选项A：保留为设计态占位域（45个design节点需重新分配到子域）
+- 选项B：标记deprecated，45个design节点迁移到子域
+- 选项C：保留现状，后续随架构演进自然消化
+
+---
+
 **文档结束**
 
 > 本报告为只读调研产物，未修改任何项目文件。所有证据均来自代码静态分析与 DB 派生制品。治本施工方案待 Owner 批准后落地为任务卡执行。
+>
+> 附录B为阶段1-3执行后新发现的架构议题，待 Owner 决策后开启新裁定流程。
