@@ -19,27 +19,75 @@
     "doc_type": {
       "description": "文档品种——01_policies_and_standards/ 目录下 13 种。PS-STD-001 §3.2.1",
       "oneOf": [
-        { "const": "policy", "description": "策略——定义'必须/禁止'的声明式规则，AI 不可修改" },
-        { "const": "standard", "description": "标准——定义度量/格式/接口的声明式规范" },
-        { "const": "operational_rule", "description": "操作规则——定义'如何做'的步骤化流程，仅存在于 operational/ 目录" },
-        { "const": "register", "description": "注册表——结构化数据清单，AI 可修改" },
-        { "const": "index", "description": "索引入口——目录级导航文件，声明子域职责边界和文件清单" },
-        { "const": "protocol", "description": "协议——定义交互流程和消息时序" },
-        { "const": "template", "description": "模板——可复用的文档结构骨架" },
-        { "const": "terminology", "description": "术语表——核心术语的统一定义和仲裁源" },
-        { "const": "vocabulary", "description": "受控词表——定义枚举值、合法值域的机器可读清单" },
-        { "const": "contract", "description": "验证契约——定义 VR 规则的结构化验证标准" },
-        { "const": "reference", "description": "参考文件——术语映射表、模型排名等参考数据" },
-        { "const": "gate", "description": "门禁文件——定义质量门禁的触发条件、检查项和阻断规则" },
-        { "const": "schema", "description": "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费" }
+        {
+          "const": "policy",
+          "description": "策略——定义'必须/禁止'的声明式规则，AI 不可修改"
+        },
+        {
+          "const": "standard",
+          "description": "标准——定义度量/格式/接口的声明式规范"
+        },
+        {
+          "const": "operational_rule",
+          "description": "操作规则——定义'如何做'的步骤化流程，仅存在于 operational/ 目录"
+        },
+        {
+          "const": "register",
+          "description": "注册表——结构化数据清单，AI 可修改"
+        },
+        {
+          "const": "index",
+          "description": "索引入口——目录级导航文件，声明子域职责边界和文件清单"
+        },
+        {
+          "const": "protocol",
+          "description": "协议——定义交互流程和消息时序"
+        },
+        {
+          "const": "template",
+          "description": "模板——可复用的文档结构骨架"
+        },
+        {
+          "const": "terminology",
+          "description": "术语表——核心术语的统一定义和仲裁源"
+        },
+        {
+          "const": "vocabulary",
+          "description": "受控词表——定义枚举值、合法值域的机器可读清单"
+        },
+        {
+          "const": "contract",
+          "description": "验证契约——定义 VR 规则的结构化验证标准"
+        },
+        {
+          "const": "reference",
+          "description": "参考文件——术语映射表、模型排名等参考数据"
+        },
+        {
+          "const": "gate",
+          "description": "门禁文件——定义质量门禁的触发条件、检查项和阻断规则"
+        },
+        {
+          "const": "schema",
+          "description": "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费"
+        }
       ]
     },
     "status": {
       "description": "文档状态——DocStatus 仅 3 值（archived 已否决）。PS-STD-001 §4.1",
       "oneOf": [
-        { "const": "draft", "description": "草稿，正在编写中" },
-        { "const": "active", "description": "已生效，当前有效" },
-        { "const": "deprecated", "description": "已废弃，有替代品或已合并（需填写 superseded_by）" }
+        {
+          "const": "draft",
+          "description": "草稿，正在编写中"
+        },
+        {
+          "const": "active",
+          "description": "已生效，当前有效"
+        },
+        {
+          "const": "deprecated",
+          "description": "已废弃，有替代品或已合并（需填写 superseded_by）"
+        }
       ]
     },
     "version": {
@@ -50,22 +98,70 @@
     "layer": {
       "description": "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）",
       "oneOf": [
-        { "const": "l00-data-source", "description": "L00 数据源——外部数据接入和连接器管理" },
-        { "const": "l01-infrastructure", "description": "L01 基础设施——平台基础设施和共享服务" },
-        { "const": "l02-alpha-factor", "description": "L02 Alpha 因子——因子研究和信号生成" },
-        { "const": "l03-signal-generation", "description": "L03 信号生成——交易信号产生和组合" },
-        { "const": "l04-risk-management", "description": "L04 风险管理——风险监控和止损" },
-        { "const": "l05-portfolio-construction", "description": "L05 组合构建——投资组合优化和再平衡" },
-        { "const": "l06-trade-execution", "description": "L06 交易执行——订单路由和执行" },
-        { "const": "l07-post-trade-analytics", "description": "L07 盘后分析——绩效归因和报告" },
-        { "const": "l08-human-ai-interface", "description": "L08 人机交互——人机协作界面和审批流" },
-        { "const": "l09-research-innovation", "description": "L09 研究创新——策略研究和实验" },
-        { "const": "l10_governance_compliance", "description": "L10 治理合规——监管合规和审计" },
-        { "const": "l11-ml-platform", "description": "L11 机器学习平台——模型训练和推理" },
-        { "const": "system-telemetry", "description": "L12 系统遥测——监控和可观测性" },
-        { "const": "l13_experiment_pipeline", "description": "L13 实验管道——A/B 测试和实验管理" },
-        { "const": "shared", "description": "跨层共享——不属于单一层的共享组件" },
-        { "const": "cross_layer", "description": "跨层治理——横切关注点" }
+        {
+          "const": "data",
+          "description": "L00 数据源层——外部数据接入和连接器管理"
+        },
+        {
+          "const": "infra_ops",
+          "description": "L01 基础设施层——平台基础设施和共享服务"
+        },
+        {
+          "const": "factor",
+          "description": "L02 Alpha 因子层——因子研究和信号生成"
+        },
+        {
+          "const": "signal",
+          "description": "L03 信号生成层——交易信号产生和组合"
+        },
+        {
+          "const": "risk",
+          "description": "L04 风险管理层——风险监控和止损"
+        },
+        {
+          "const": "pf_core",
+          "description": "L05 组合构建层——投资组合优化和再平衡"
+        },
+        {
+          "const": "ex_core",
+          "description": "L06 交易执行层——订单路由和执行"
+        },
+        {
+          "const": "reporting",
+          "description": "L07 盘后分析层——绩效归因和报告"
+        },
+        {
+          "const": "frontend",
+          "description": "L08 人机交互层——人机协作界面和审批流"
+        },
+        {
+          "const": "research",
+          "description": "L09 研究创新层——策略研究和实验"
+        },
+        {
+          "const": "compliance",
+          "description": "L10 治理合规层——监管合规和审计"
+        },
+        {
+          "const": "ml_train",
+          "description": "L11 机器学习平台层——模型训练和推理"
+        },
+        {
+          "const": "system-telemetry",
+          "description": "L12 系统遥测层——监控和可观测性"
+        },
+        {
+          "const": "simulation",
+          "description": "L13 实验管道层——A/B 测试和实验管理"
+        },
+        {
+          "const": "shared",
+          "description": "跨层共享——不属于单一层的共享组件"
+        },
+        {
+          "const": "cross_layer",
+          "description": "跨层治理——横切关注点（如安全、合规、治理策略）"
+        }
       ]
     },
     "owner": {
@@ -76,25 +172,52 @@
     "classification": {
       "description": "机密等级——三分法（public / internal / confidential）。PS-STD-001 §4.6",
       "oneOf": [
-        { "const": "public", "description": "公开——可对外分享，无敏感信息" },
-        { "const": "internal", "description": "内部——仅项目成员可见" },
-        { "const": "confidential", "description": "保密——仅团队内部使用" }
+        {
+          "const": "public",
+          "description": "公开——可对外分享，无敏感信息"
+        },
+        {
+          "const": "internal",
+          "description": "内部——仅项目成员可见"
+        },
+        {
+          "const": "confidential",
+          "description": "保密——仅团队内部使用"
+        }
       ]
     },
     "language": {
       "description": "主语言",
       "oneOf": [
-        { "const": "zh", "description": "中文" },
-        { "const": "en", "description": "英文" },
-        { "const": "zh_en", "description": "中英双语" }
+        {
+          "const": "zh",
+          "description": "中文"
+        },
+        {
+          "const": "en",
+          "description": "英文"
+        },
+        {
+          "const": "zh_en",
+          "description": "中英双语"
+        }
       ]
     },
     "created_by": {
       "description": "创建者类型",
       "oneOf": [
-        { "const": "human", "description": "人类独立创建" },
-        { "const": "agent", "description": "AI Agent 独立生成" },
-        { "const": "human_plus_agent", "description": "人机协作创建" }
+        {
+          "const": "human",
+          "description": "人类独立创建"
+        },
+        {
+          "const": "agent",
+          "description": "AI Agent 独立生成"
+        },
+        {
+          "const": "human_plus_agent",
+          "description": "人机协作创建"
+        }
       ]
     },
     "date": {
@@ -112,12 +235,30 @@
     "ttl": {
       "description": "保留期。PS-STD-001 §6（6 值）",
       "oneOf": [
-        { "const": "permanent", "description": "永久保留——项目存续期内不删除" },
-        { "const": "30d", "description": "30 天——月度数据/日志" },
-        { "const": "7d", "description": "7 天——周度数据/临时文件" },
-        { "const": "session", "description": "会话级——session 结束后即可清理" },
-        { "const": "periodic_review_90d", "description": "定期审查（90天周期）——每90天人工审查是否需更新" },
-        { "const": "task_bound", "description": "任务绑定——任务完成即可清理（人工判定）" }
+        {
+          "const": "permanent",
+          "description": "永久保留——项目存续期内不删除"
+        },
+        {
+          "const": "30d",
+          "description": "30 天——月度数据/日志"
+        },
+        {
+          "const": "7d",
+          "description": "7 天——周度数据/临时文件"
+        },
+        {
+          "const": "session",
+          "description": "会话级——session 结束后即可清理"
+        },
+        {
+          "const": "periodic_review_90d",
+          "description": "定期审查（90天周期）——每90天人工审查是否需更新"
+        },
+        {
+          "const": "task_bound",
+          "description": "任务绑定——任务完成即可清理（人工判定）"
+        }
       ]
     },
     "summary": {
@@ -128,42 +269,89 @@
     "tags": {
       "type": "array",
       "description": "自由标签，补充 doc_type 细分类",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "uniqueItems": true
     },
     "rule_form": {
       "description": "规则表达形式。PS-STD-001 §2.5（4 值）",
       "oneOf": [
-        { "const": "declarative", "description": "声明式——定义'是什么'，不定义'怎么做'" },
-        { "const": "procedural", "description": "过程式——定义操作步骤和流程" },
-        { "const": "data", "description": "数据式——结构化数据清单/注册表" },
-        { "const": "structural", "description": "结构式——定义格式/骨架/模板" }
+        {
+          "const": "declarative",
+          "description": "声明式——定义'是什么'，不定义'怎么做'"
+        },
+        {
+          "const": "procedural",
+          "description": "过程式——定义操作步骤和流程"
+        },
+        {
+          "const": "data",
+          "description": "数据式——结构化数据清单/注册表"
+        },
+        {
+          "const": "structural",
+          "description": "结构式——定义格式/骨架/模板"
+        }
       ]
     },
     "scope": {
       "description": "规则作用范围。PS-STD-001 §2.5（4 值）",
       "oneOf": [
-        { "const": "global", "description": "全局——适用整个项目" },
-        { "const": "domain", "description": "领域级——适用特定业务域" },
-        { "const": "layer", "description": "层级——适用特定架构层" },
-        { "const": "module", "description": "模块级——适用特定功能模块" }
+        {
+          "const": "global",
+          "description": "全局——适用整个项目"
+        },
+        {
+          "const": "domain",
+          "description": "领域级——适用特定业务域"
+        },
+        {
+          "const": "layer",
+          "description": "层级——适用特定架构层"
+        },
+        {
+          "const": "module",
+          "description": "模块级——适用特定功能模块"
+        }
       ]
     },
     "stability": {
       "description": "规则稳定性。PS-STD-001 §2.5（4 值）",
       "oneOf": [
-        { "const": "frozen", "description": "冻结——不可变更，AI 必须原封不动遵守" },
-        { "const": "stable", "description": "稳定——通过变更门控可修改" },
-        { "const": "evolving", "description": "演进中——可频繁修改，但需记录原因" },
-        { "const": "volatile", "description": "易变——AI 可自主调整，无需审批" }
+        {
+          "const": "frozen",
+          "description": "冻结——不可变更，AI 必须原封不动遵守"
+        },
+        {
+          "const": "stable",
+          "description": "稳定——通过变更门控可修改"
+        },
+        {
+          "const": "evolving",
+          "description": "演进中——可频繁修改，但需记录原因"
+        },
+        {
+          "const": "volatile",
+          "description": "易变——AI 可自主调整，无需审批"
+        }
       ]
     },
     "verifiability": {
       "description": "规则可验证性。PS-STD-001 §2.5（3 值）",
       "oneOf": [
-        { "const": "automated", "description": "自动化验证——CI/脚本可 100% 验证" },
-        { "const": "manual", "description": "人工验证——需人类判断" },
-        { "const": "inspection", "description": "审查验证——需资深人员审查" }
+        {
+          "const": "automated",
+          "description": "自动化验证——CI/脚本可 100% 验证"
+        },
+        {
+          "const": "manual",
+          "description": "人工验证——需人类判断"
+        },
+        {
+          "const": "inspection",
+          "description": "审查验证——需资深人员审查"
+        }
       ]
     },
     "depends_on": {
@@ -171,7 +359,9 @@
       "oneOf": [
         {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "旧版格式：module_id 字符串列表"
         },
         {
@@ -179,11 +369,23 @@
           "items": {
             "type": "object",
             "properties": {
-              "target": { "type": "string", "description": "依赖的 module_id" },
-              "at": { "type": "string", "description": "引用的具体章节（如 §3.2.1）" },
-              "why": { "type": "string", "description": "为什么依赖此项" }
+              "target": {
+                "type": "string",
+                "description": "依赖的 module_id"
+              },
+              "at": {
+                "type": "string",
+                "description": "引用的具体章节（如 §3.2.1）"
+              },
+              "why": {
+                "type": "string",
+                "description": "为什么依赖此项"
+              }
             },
-            "required": ["target", "at"]
+            "required": [
+              "target",
+              "at"
+            ]
           },
           "description": "新版格式：结构化依赖对象列表"
         }
@@ -195,11 +397,21 @@
       "items": {
         "type": "object",
         "properties": {
-          "path": { "type": "string" },
-          "version": { "type": "string" },
-          "reason": { "type": "string" }
+          "path": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
         },
-        "required": ["path", "version", "reason"]
+        "required": [
+          "path",
+          "version",
+          "reason"
+        ]
       }
     },
     "superseded_by": {
@@ -212,50 +424,95 @@
       "items": {
         "type": "object",
         "properties": {
-          "path": { "type": "string" },
+          "path": {
+            "type": "string"
+          },
           "relationship": {
             "description": "知识关系类型",
             "oneOf": [
-              { "const": "synthesized", "description": "综合——从此来源提炼/归纳" },
-              { "const": "referenced", "description": "引用——直接引用此来源" },
-              { "const": "transformed", "description": "转换——从此来源改写得来" }
+              {
+                "const": "synthesized",
+                "description": "综合——从此来源提炼/归纳"
+              },
+              {
+                "const": "referenced",
+                "description": "引用——直接引用此来源"
+              },
+              {
+                "const": "transformed",
+                "description": "转换——从此来源改写得来"
+              }
             ]
           },
           "sections": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           }
         },
-        "required": ["path", "relationship"]
+        "required": [
+          "path",
+          "relationship"
+        ]
       }
     },
     "related_kb_ref": {
       "type": "array",
       "description": "关联的 KB 决策记录编号",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "safety_level": {
       "description": "安全风险等级。PS-STD-001 §10.10",
       "oneOf": [
-        { "const": "H", "description": "高风险——涉及资金/安全关键路径" },
-        { "const": "M", "description": "中风险——影响系统稳定性" },
-        { "const": "L", "description": "低风险——辅助功能" }
+        {
+          "const": "H",
+          "description": "高风险——涉及资金/安全关键路径"
+        },
+        {
+          "const": "M",
+          "description": "中风险——影响系统稳定性"
+        },
+        {
+          "const": "L",
+          "description": "低风险——辅助功能"
+        }
       ]
     },
     "evolution_policy": {
       "description": "文件演进策略。PS-STD-001 §10.11",
       "oneOf": [
-        { "const": "frozen", "description": "冻结——不可演进，等效删除" },
-        { "const": "extendable", "description": "可扩展——可新增内容，不删改已有内容" },
-        { "const": "rewritable", "description": "可重写——可增删改任意内容" }
+        {
+          "const": "frozen",
+          "description": "冻结——不可演进，等效删除"
+        },
+        {
+          "const": "extendable",
+          "description": "可扩展——可新增内容，不删改已有内容"
+        },
+        {
+          "const": "rewritable",
+          "description": "可重写——可增删改任意内容"
+        }
       ]
     },
     "ai_autonomy": {
       "description": "AI 自治权限。PS-STD-001 §4.5（全小写，3 值）",
       "oneOf": [
-        { "const": "immutable_core", "description": "不可变核心——AI 完全不能改，只能读" },
-        { "const": "human_gated", "description": "人工闸门——AI 可提议修改，需 Owner 批准后才生效" },
-        { "const": "ai_modifiable", "description": "AI 可修改——AI 可直接编辑，无需审批" }
+        {
+          "const": "immutable_core",
+          "description": "不可变核心——AI 完全不能改，只能读"
+        },
+        {
+          "const": "human_gated",
+          "description": "人工闸门——AI 可提议修改，需 Owner 批准后才生效"
+        },
+        {
+          "const": "ai_modifiable",
+          "description": "AI 可修改——AI 可直接编辑，无需审批"
+        }
       ]
     },
     "provenance": {
@@ -267,8 +524,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "path": { "type": "string" },
-              "model": { "type": "string" }
+              "path": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              }
             }
           }
         },
@@ -277,14 +538,28 @@
           "items": {
             "type": "object",
             "properties": {
-              "auditor": { "type": "string" },
-              "date": { "type": "string", "format": "date" },
+              "auditor": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
               "verdict": {
                 "description": "审计结论",
                 "oneOf": [
-                  { "const": "pass", "description": "通过" },
-                  { "const": "fail", "description": "不通过" },
-                  { "const": "conditional", "description": "有条件通过" }
+                  {
+                    "const": "pass",
+                    "description": "通过"
+                  },
+                  {
+                    "const": "fail",
+                    "description": "不通过"
+                  },
+                  {
+                    "const": "conditional",
+                    "description": "有条件通过"
+                  }
                 ]
               }
             }
@@ -293,9 +568,16 @@
         "arbitration": {
           "type": "object",
           "properties": {
-            "arbiter": { "type": "string" },
-            "date": { "type": "string", "format": "date" },
-            "decision": { "type": "string" }
+            "arbiter": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string",
+              "format": "date"
+            },
+            "decision": {
+              "type": "string"
+            }
           }
         }
       }
@@ -303,33 +585,73 @@
     "author_agent": {
       "type": "string",
       "description": "创作代理——编辑器/产品名。PS-STD-001 §10.5",
-      "examples": ["Cursor-Premium", "Trae-Free", "Claude-API"]
+      "examples": [
+        "Cursor-Premium",
+        "Trae-Free",
+        "Claude-API"
+      ]
     },
     "governance_family": {
       "description": "治理系统家族。PS-STD-001 §10.7",
       "oneOf": [
-        { "const": "A", "description": "家族 A——策略/标准类规则" },
-        { "const": "B", "description": "家族 B——操作性流程类规则" },
-        { "const": "C", "description": "家族 C——Schema/契约类规则" },
-        { "const": "D", "description": "家族 D——模板/骨架类规则" }
+        {
+          "const": "A",
+          "description": "家族 A——策略/标准类规则"
+        },
+        {
+          "const": "B",
+          "description": "家族 B——操作性流程类规则"
+        },
+        {
+          "const": "C",
+          "description": "家族 C——Schema/契约类规则"
+        },
+        {
+          "const": "D",
+          "description": "家族 D——模板/骨架类规则"
+        }
       ]
     },
     "ai_capability_slot": {
       "description": "AI 能力槽位。PS-STD-001 §10.7",
       "oneOf": [
-        { "const": "planned", "description": "已规划——尚未实现" },
-        { "const": "reserved", "description": "已预留——架构中留位，待开发" },
-        { "const": "active", "description": "已激活——当前在用" },
-        { "const": "none", "description": "无——不需要 AI 能力槽位" }
+        {
+          "const": "planned",
+          "description": "已规划——尚未实现"
+        },
+        {
+          "const": "reserved",
+          "description": "已预留——架构中留位，待开发"
+        },
+        {
+          "const": "active",
+          "description": "已激活——当前在用"
+        },
+        {
+          "const": "none",
+          "description": "无——不需要 AI 能力槽位"
+        }
       ]
     },
     "ai_autonomy_level_planned": {
       "description": "规划的 AI 自治等级。PS-STD-001 §10.7",
       "oneOf": [
-        { "const": "l0", "description": "L0 无自治——AI 仅辅助建议，不执行任何操作" },
-        { "const": "l1", "description": "L1 低自治——AI 可执行读操作，写操作需审批" },
-        { "const": "l2", "description": "L2 中自治——AI 可读写，关键操作需审批" },
-        { "const": "l3", "description": "L3 高自治——AI 全权自主操作" }
+        {
+          "const": "l0",
+          "description": "L0 无自治——AI 仅辅助建议，不执行任何操作"
+        },
+        {
+          "const": "l1",
+          "description": "L1 低自治——AI 可执行读操作，写操作需审批"
+        },
+        {
+          "const": "l2",
+          "description": "L2 中自治——AI 可读写，关键操作需审批"
+        },
+        {
+          "const": "l3",
+          "description": "L3 高自治——AI 全权自主操作"
+        }
       ]
     },
     "ai_employee_count_planned": {
@@ -344,21 +666,37 @@
       "items": {
         "type": "object",
         "properties": {
-          "path": { "type": "string" },
+          "path": {
+            "type": "string"
+          },
           "status": {
             "description": "蓝图状态",
             "oneOf": [
-              { "const": "active", "description": "当前有效" },
-              { "const": "draft", "description": "草稿中" },
-              { "const": "deprecated", "description": "已废弃" }
+              {
+                "const": "active",
+                "description": "当前有效"
+              },
+              {
+                "const": "draft",
+                "description": "草稿中"
+              },
+              {
+                "const": "deprecated",
+                "description": "已废弃"
+              }
             ]
           },
           "decisions_used": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           }
         },
-        "required": ["path", "status"]
+        "required": [
+          "path",
+          "status"
+        ]
       }
     },
     "compliance_tags": {
@@ -366,12 +704,30 @@
       "description": "合规标签。PS-STD-001 §10.13",
       "items": {
         "oneOf": [
-          { "const": "SR-11-7", "description": "中国证监会《证券期货业数据安全管理与保护指引》" },
-          { "const": "EU-AI-Act-Art12", "description": "欧盟 AI 法案第 12 条——记录保存" },
-          { "const": "EU-AI-Act-Art14", "description": "欧盟 AI 法案第 14 条——人工监督" },
-          { "const": "GDPR-Art22", "description": "GDPR 第 22 条——自动化决策的限制" },
-          { "const": "PCI-DSS", "description": "支付卡行业数据安全标准" },
-          { "const": "MiFID-II", "description": "欧盟金融工具市场指令 II" }
+          {
+            "const": "SR-11-7",
+            "description": "中国证监会《证券期货业数据安全管理与保护指引》"
+          },
+          {
+            "const": "EU-AI-Act-Art12",
+            "description": "欧盟 AI 法案第 12 条——记录保存"
+          },
+          {
+            "const": "EU-AI-Act-Art14",
+            "description": "欧盟 AI 法案第 14 条——人工监督"
+          },
+          {
+            "const": "GDPR-Art22",
+            "description": "GDPR 第 22 条——自动化决策的限制"
+          },
+          {
+            "const": "PCI-DSS",
+            "description": "支付卡行业数据安全标准"
+          },
+          {
+            "const": "MiFID-II",
+            "description": "欧盟金融工具市场指令 II"
+          }
         ]
       },
       "uniqueItems": true
@@ -380,91 +736,245 @@
       "type": "object",
       "description": "人工干预记录。PS-STD-001 §10.14",
       "properties": {
-        "operator_id": { "type": "string" },
-        "date": { "type": "string", "format": "date" },
-        "reason": { "type": "string" },
-        "original_action": { "type": "string" }
+        "operator_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "original_action": {
+          "type": "string"
+        }
       },
-      "required": ["operator_id", "date", "reason"]
+      "required": [
+        "operator_id",
+        "date",
+        "reason"
+      ]
     },
     "last_reviewed_by": {
       "type": "object",
       "description": "最后审核人/模型。PS-STD-001 §10.15",
       "properties": {
-        "reviewer": { "type": "string" },
-        "date": { "type": "string", "format": "date" },
-        "model_used": { "type": "string" }
+        "reviewer": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "model_used": {
+          "type": "string"
+        }
       },
-      "required": ["reviewer", "date"]
+      "required": [
+        "reviewer",
+        "date"
+      ]
     },
     "review_status": {
       "description": "审核状态。PS-STD-001 §10.16",
       "oneOf": [
-        { "const": "unreviewed", "description": "未审核" },
-        { "const": "reviewed", "description": "已审核" },
-        { "const": "approved", "description": "已批准" },
-        { "const": "rejected", "description": "已驳回" }
+        {
+          "const": "unreviewed",
+          "description": "未审核"
+        },
+        {
+          "const": "reviewed",
+          "description": "已审核"
+        },
+        {
+          "const": "approved",
+          "description": "已批准"
+        },
+        {
+          "const": "rejected",
+          "description": "已驳回"
+        }
       ]
     },
     "category": {
       "description": "知识条目内容类型。PS-STD-001 §9.1（10 值）",
       "oneOf": [
-        { "const": "blueprint_decision", "description": "蓝图决策——架构级别的设计选择与论证" },
-        { "const": "strategy", "description": "策略——交易/投资策略定义" },
-        { "const": "factor", "description": "因子——Alpha 因子定义与回测" },
-        { "const": "best_practice", "description": "最佳实践——经验总结与编码规范" },
-        { "const": "lesson_learned", "description": "经验教训——错误记录与改进措施" },
-        { "const": "architecture", "description": "架构——系统设计文档" },
-        { "const": "risk_control", "description": "风控——风险规则与熔断机制" },
-        { "const": "data_governance", "description": "数据治理——数据标准与质量规则" },
-        { "const": "operations", "description": "运维——部署/监控/告警" },
-        { "const": "compliance", "description": "合规——监管法律法规映射" }
+        {
+          "const": "blueprint_decision",
+          "description": "蓝图决策——架构级别的设计选择与论证"
+        },
+        {
+          "const": "strategy",
+          "description": "策略——交易/投资策略定义"
+        },
+        {
+          "const": "factor",
+          "description": "因子——Alpha 因子定义与回测"
+        },
+        {
+          "const": "best_practice",
+          "description": "最佳实践——经验总结与编码规范"
+        },
+        {
+          "const": "lesson_learned",
+          "description": "经验教训——错误记录与改进措施"
+        },
+        {
+          "const": "architecture",
+          "description": "架构——系统设计文档"
+        },
+        {
+          "const": "risk_control",
+          "description": "风控——风险规则与熔断机制"
+        },
+        {
+          "const": "data_governance",
+          "description": "数据治理——数据标准与质量规则"
+        },
+        {
+          "const": "operations",
+          "description": "运维——部署/监控/告警"
+        },
+        {
+          "const": "compliance",
+          "description": "合规——监管法律法规映射"
+        }
       ]
     },
     "domain": {
       "description": "知识条目业务领域。PS-STD-001 §9.2（10 值）",
       "oneOf": [
-        { "const": "data", "description": "数据——数据源/清洗/存储/管道" },
-        { "const": "feature", "description": "特征——特征工程/因子计算" },
-        { "const": "model", "description": "模型——ML 训练/推理/部署" },
-        { "const": "signal", "description": "信号——信号生成/合成/分發" },
-        { "const": "execution", "description": "执行——订单/交易/成交" },
-        { "const": "risk", "description": "风险——风控/限额/熔斷" },
-        { "const": "portfolio", "description": "组合——持仓/优化/再平衡" },
-        { "const": "reporting", "description": "报告——绩效/归因/监管报告" },
-        { "const": "infrastructure", "description": "基础设施——服务器/网络/存储" },
-        { "const": "other", "description": "其他——不属于上述任何领域" }
+        {
+          "const": "data",
+          "description": "数据——数据源/清洗/存储/管道"
+        },
+        {
+          "const": "feature",
+          "description": "特征——特征工程/因子计算"
+        },
+        {
+          "const": "model",
+          "description": "模型——ML 训练/推理/部署"
+        },
+        {
+          "const": "signal",
+          "description": "信号——信号生成/合成/分發"
+        },
+        {
+          "const": "execution",
+          "description": "执行——订单/交易/成交"
+        },
+        {
+          "const": "risk",
+          "description": "风险——风控/限额/熔斷"
+        },
+        {
+          "const": "portfolio",
+          "description": "组合——持仓/优化/再平衡"
+        },
+        {
+          "const": "reporting",
+          "description": "报告——绩效/归因/监管报告"
+        },
+        {
+          "const": "infrastructure",
+          "description": "基础设施——服务器/网络/存储"
+        },
+        {
+          "const": "other",
+          "description": "其他——不属于上述任何领域"
+        }
       ]
     },
     "header_format": {
       "description": "文件表头格式——7 值。GOV-ENG-002 §9.4 定义",
       "oneOf": [
-        { "const": "A_full", "description": ".py 十字段完整版——code, script 文件" },
-        { "const": "A_test", "description": ".py 六字段简化版——test 文件" },
-        { "const": "B_yaml", "description": "YAML 5 字段注释块——gate, registry, contract(yaml), config, data" },
-        { "const": "C_json", "description": "JSON _meta 字段——contract(json), schema(json)" },
-        { "const": "D_md", "description": ".md YAML frontmatter——doc 文件" },
-        { "const": "E_shell", "description": "Shell/Mermaid 注释头部——infra 文件" },
-        { "const": "exempt", "description": "豁免——不需要表头" }
+        {
+          "const": "A_full",
+          "description": ".py 十字段完整版——code, script 文件"
+        },
+        {
+          "const": "A_test",
+          "description": ".py 六字段简化版——test 文件"
+        },
+        {
+          "const": "B_yaml",
+          "description": "YAML 5 字段注释块——gate, registry, contract(yaml), config, data"
+        },
+        {
+          "const": "C_json",
+          "description": "JSON _meta 字段——contract(json), schema(json)"
+        },
+        {
+          "const": "D_md",
+          "description": ".md YAML frontmatter——doc 文件"
+        },
+        {
+          "const": "E_shell",
+          "description": "Shell/Mermaid 注释头部——infra 文件"
+        },
+        {
+          "const": "exempt",
+          "description": "豁免——不需要表头"
+        }
       ]
     },
     "file_category": {
       "description": "文件治理分类——10 值。GOV-ENG-002 §9.5 定义。决定文件应使用哪种 header_format",
       "oneOf": [
-        { "const": "code", "description": "生产代码——src/zephyr/**/*.py" },
-        { "const": "script", "description": "治理/工具脚本——scripts/**/*.py" },
-        { "const": "gate", "description": "门禁定义——src/zephyr/gates/*.yaml" },
-        { "const": "registry", "description": "注册表——*_registry.yaml, *manifest.yaml" },
-        { "const": "contract", "description": "契约定义——shared/contracts/*.py, contracts/*.yaml" },
-        { "const": "config", "description": "配置文件——config/*.yaml" },
-        { "const": "data", "description": "运行时数据——data/**/*.yaml" },
-        { "const": "doc", "description": "文档——docs/**/*.md" },
-        { "const": "test", "description": "测试——tests/**/*.py" },
-        { "const": "infra", "description": "基础设施——.sh, .ps1, .mmd" }
+        {
+          "const": "code",
+          "description": "生产代码——src/zephyr/**/*.py"
+        },
+        {
+          "const": "script",
+          "description": "治理/工具脚本——scripts/**/*.py"
+        },
+        {
+          "const": "gate",
+          "description": "门禁定义——src/zephyr/gates/*.yaml"
+        },
+        {
+          "const": "registry",
+          "description": "注册表——*_registry.yaml, *manifest.yaml"
+        },
+        {
+          "const": "contract",
+          "description": "契约定义——shared/contracts/*.py, contracts/*.yaml"
+        },
+        {
+          "const": "config",
+          "description": "配置文件——config/*.yaml"
+        },
+        {
+          "const": "data",
+          "description": "运行时数据——data/**/*.yaml"
+        },
+        {
+          "const": "doc",
+          "description": "文档——docs/**/*.md"
+        },
+        {
+          "const": "test",
+          "description": "测试——tests/**/*.py"
+        },
+        {
+          "const": "infra",
+          "description": "基础设施——.sh, .ps1, .mmd"
+        }
       ]
     }
   },
-  "required": ["module_id", "title", "doc_type", "status", "version", "date", "owner"],
+  "required": [
+    "module_id",
+    "title",
+    "doc_type",
+    "status",
+    "version",
+    "date",
+    "owner"
+  ],
   "additionalProperties": {
     "not": {},
     "pattern": "^custom_"
@@ -473,173 +983,339 @@
     {
       "description": "deprecated 状态时 superseded_by 必填",
       "if": {
-        "properties": { "status": { "const": "deprecated" } },
-        "required": ["status"]
+        "properties": {
+          "status": {
+            "const": "deprecated"
+          }
+        },
+        "required": [
+          "status"
+        ]
       },
       "then": {
-        "required": ["superseded_by"]
+        "required": [
+          "superseded_by"
+        ]
       }
     },
     {
       "description": "policy 类型的 rule_form 必须为 declarative",
       "if": {
-        "properties": { "doc_type": { "const": "policy" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "policy"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "declarative" } }
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
+          }
+        }
       }
     },
     {
       "description": "standard 类型的 rule_form 必须为 declarative",
       "if": {
-        "properties": { "doc_type": { "const": "standard" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "standard"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "declarative" } }
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
+          }
+        }
       }
     },
     {
       "description": "operational_rule 类型的 rule_form 必须为 procedural",
       "if": {
-        "properties": { "doc_type": { "const": "operational_rule" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "operational_rule"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "procedural" } }
+        "properties": {
+          "rule_form": {
+            "const": "procedural"
+          }
+        }
       }
     },
     {
       "description": "register 类型的 rule_form 必须为 data",
       "if": {
-        "properties": { "doc_type": { "const": "register" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "register"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "data" } }
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
       }
     },
     {
       "description": "protocol 类型的 rule_form 必须为 declarative",
       "if": {
-        "properties": { "doc_type": { "const": "protocol" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "protocol"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "declarative" } }
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
+          }
+        }
       }
     },
     {
       "description": "template 类型的 rule_form 必须为 structural",
       "if": {
-        "properties": { "doc_type": { "const": "template" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "template"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "structural" } }
+        "properties": {
+          "rule_form": {
+            "const": "structural"
+          }
+        }
       }
     },
     {
       "description": "terminology 类型的 rule_form 必须为 data",
       "if": {
-        "properties": { "doc_type": { "const": "terminology" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "terminology"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "data" } }
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
       }
     },
     {
       "description": "vocabulary 类型的 rule_form 必须为 data",
       "if": {
-        "properties": { "doc_type": { "const": "vocabulary" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "vocabulary"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "data" } }
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
       }
     },
     {
       "description": "contract 类型的 rule_form 必须为 data",
       "if": {
-        "properties": { "doc_type": { "const": "contract" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "contract"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "data" } }
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
       }
     },
     {
       "description": "reference 类型的 rule_form 必须为 data",
       "if": {
-        "properties": { "doc_type": { "const": "reference" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "reference"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "data" } }
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
       }
     },
     {
       "description": "gate 类型的 rule_form 必须为 declarative",
       "if": {
-        "properties": { "doc_type": { "const": "gate" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "gate"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "declarative" } }
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
+          }
+        }
       }
     },
     {
       "description": "schema 类型的 rule_form 必须为 data",
       "if": {
-        "properties": { "doc_type": { "const": "schema" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "schema"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "data" } }
+        "properties": {
+          "rule_form": {
+            "const": "data"
+          }
+        }
       }
     },
     {
       "description": "index 类型的 rule_form 必须为 declarative",
       "if": {
-        "properties": { "doc_type": { "const": "index" } },
-        "required": ["doc_type"]
+        "properties": {
+          "doc_type": {
+            "const": "index"
+          }
+        },
+        "required": [
+          "doc_type"
+        ]
       },
       "then": {
-        "properties": { "rule_form": { "const": "declarative" } }
+        "properties": {
+          "rule_form": {
+            "const": "declarative"
+          }
+        }
       }
     },
     {
       "description": "stability=frozen 时 ai_autonomy 必须为 immutable_core",
       "if": {
-        "properties": { "stability": { "const": "frozen" } },
-        "required": ["stability"]
+        "properties": {
+          "stability": {
+            "const": "frozen"
+          }
+        },
+        "required": [
+          "stability"
+        ]
       },
       "then": {
-        "properties": { "ai_autonomy": { "const": "immutable_core" } }
+        "properties": {
+          "ai_autonomy": {
+            "const": "immutable_core"
+          }
+        }
       }
     },
     {
       "description": "stability=frozen 时 evolution_policy 必须为 frozen（语义一致性约束）",
       "if": {
-        "properties": { "stability": { "const": "frozen" } },
-        "required": ["stability"]
+        "properties": {
+          "stability": {
+            "const": "frozen"
+          }
+        },
+        "required": [
+          "stability"
+        ]
       },
       "then": {
-        "properties": { "evolution_policy": { "const": "frozen" } }
+        "properties": {
+          "evolution_policy": {
+            "const": "frozen"
+          }
+        }
       }
     },
     {
       "description": "stability=volatile 时 ai_autonomy 不能是 immutable_core",
       "if": {
-        "properties": { "stability": { "const": "volatile" } },
-        "required": ["stability"]
+        "properties": {
+          "stability": {
+            "const": "volatile"
+          }
+        },
+        "required": [
+          "stability"
+        ]
       },
       "then": {
         "properties": {
           "ai_autonomy": {
-            "not": { "const": "immutable_core" }
+            "not": {
+              "const": "immutable_core"
+            }
           }
         }
       }
@@ -647,71 +1323,141 @@
     {
       "description": "file_category=code 时 header_format 必须为 A_full",
       "if": {
-        "properties": { "file_category": { "const": "code" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "code"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "A_full" } }
+        "properties": {
+          "header_format": {
+            "const": "A_full"
+          }
+        }
       }
     },
     {
       "description": "file_category=script 时 header_format 必须为 A_full",
       "if": {
-        "properties": { "file_category": { "const": "script" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "script"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "A_full" } }
+        "properties": {
+          "header_format": {
+            "const": "A_full"
+          }
+        }
       }
     },
     {
       "description": "file_category=test 时 header_format 必须为 A_test",
       "if": {
-        "properties": { "file_category": { "const": "test" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "test"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "A_test" } }
+        "properties": {
+          "header_format": {
+            "const": "A_test"
+          }
+        }
       }
     },
     {
       "description": "file_category=gate 时 header_format 必须为 B_yaml",
       "if": {
-        "properties": { "file_category": { "const": "gate" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "gate"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "B_yaml" } }
+        "properties": {
+          "header_format": {
+            "const": "B_yaml"
+          }
+        }
       }
     },
     {
       "description": "file_category=registry 时 header_format 必须为 B_yaml",
       "if": {
-        "properties": { "file_category": { "const": "registry" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "registry"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "B_yaml" } }
+        "properties": {
+          "header_format": {
+            "const": "B_yaml"
+          }
+        }
       }
     },
     {
       "description": "file_category=doc 时 header_format 必须为 D_md",
       "if": {
-        "properties": { "file_category": { "const": "doc" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "doc"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "D_md" } }
+        "properties": {
+          "header_format": {
+            "const": "D_md"
+          }
+        }
       }
     },
     {
       "description": "file_category=infra 时 header_format 必须为 E_shell",
       "if": {
-        "properties": { "file_category": { "const": "infra" } },
-        "required": ["file_category"]
+        "properties": {
+          "file_category": {
+            "const": "infra"
+          }
+        },
+        "required": [
+          "file_category"
+        ]
       },
       "then": {
-        "properties": { "header_format": { "const": "E_shell" } }
+        "properties": {
+          "header_format": {
+            "const": "E_shell"
+          }
+        }
       }
     }
   ]
