@@ -1,5 +1,5 @@
 ---
-module_id: MOD-073
+module_id: SYS-MASTER-001
 submodule_paths_scope: system-master
 title: "System Master 蓝图 — 三级金字塔架构·全部子系统拓扑"
 doc_type: blueprint
@@ -23,7 +23,7 @@ template_for: blueprint
 generation: 2
 functional_domain: system
 parent_module: ""
-belongs_to: "ROOT"
+belongs_to: "SYS-MASTER-001"
 rule_form: structural
 scope: global
 stability: stable

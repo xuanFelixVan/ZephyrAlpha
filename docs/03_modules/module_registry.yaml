@@ -81,7 +81,7 @@ modules:
     version: 0.4.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-073
+- module_id: SYS-MASTER-001
   name: _sys_master
   layer: cross_layer
   functional_domain: system

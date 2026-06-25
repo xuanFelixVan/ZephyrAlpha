@@ -173,7 +173,7 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_ml_experiment_domain/blueprint.md
   construction_progress: partially_implemented
-- module_id: MOD-073
+- module_id: SYS-MASTER-001
   name: _sys_master
   title: System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
   summary: 系统级总蓝图（Level 0 System Master）——三级金字塔顶点：102章全覆盖+§〇容量升级方案。AI agent冷启动第一站。
