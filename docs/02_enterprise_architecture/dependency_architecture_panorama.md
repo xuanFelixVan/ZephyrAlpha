@@ -1952,3 +1952,36 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 阶段2 | 拆分 D-GOV_AUDIT（171 测试节点） | 7b3a9b1655, edce73646f |
 | 阶段3 | 拆分 D-INFRA_RUNTIME（411 节点→4 域） | cd85c37b10 |
 | 阶段4 | 刷新 15 域缓存 + 文档同步 | 02b3903ea6 |
+
+#### 裁定#201：D-SIGNAL 拆分补裁定（追溯正式记录）
+
+- **执行日期**: 2026-06-25（补裁定，实际拆分发生在裁定#200前后但未记录）
+- **规则依据**: D38/D41（平铺域，无子域）、ARCH-CAP-002（单域 production_nodes ≤ 150）
+- **背景**: preexisting DB 问题调研发现 D-SIGNAL→3 子域拆分无任何裁定记录，无 registry 条目。本裁定追溯补记。
+
+**拆分结果**:
+
+| 原域 | 原 prod 数 | → | 拆分后域 | prod 数 | 说明 |
+|------|--------:|---|---------|------:|------|
+| D-SIGNAL (1) | | → | D-SIGNAL (保留) | 0 | 设计态占位域，45 个 design 节点待重新分配，ssot_path 留空 |
+| | | → | **D-SIGNAL_ASHARE** (新建) | 0 | A 股特色信号，ssot_path=`src/zephyr/signal_ashare/` |
+| | | → | **D-SIGNAL_FUNDAMENTAL** (新建) | 4 | 基本面信号，ssot_path=`src/zephyr/signal_fundamental/` |
+| | | → | **D-SIGNAL_QUALITY** (新建) | 0 | 信号质量，ssot_path=`src/zephyr/signal_quality/` |
+
+**命名说明**（裁定#ARCH-002）: D-SIGNAL_ASHARE/FUNDAMENTAL/QUALITY 的 `D-SIGNAL_` 前缀仅表示拆分来源关系，**不表示层级子域**。依据 D38 裁定（parent_domain 仅作分组属性），这 3 个域是独立平级域，无 parent_domain 字段指向 D-SIGNAL。重命名涉及 105 文件 + 301 行 DB 更新，风险远大于收益，故保留命名。
+
+**D-SIGNAL 保留说明**（裁定#ARCH-004）: D-SIGNAL 保留为设计态占位域（build_status=planned），45 个 design 节点（虚拟设计态路径如"信号域-核心基础设施/D-SIGNAL-12"）后续随架构演进重新分配到子域。ssot_path 留空（无代码目录）。
+
+**验证**: D-SIGNAL production_nodes=0，D-SIGNAL_FUNDAMENTAL production_nodes=4，全部 ≤ 150，ARCH-CAP-002 合规。
+
+#### 裁定#202：数据一致性修复（registry 与 panorama 对齐）
+
+- **执行日期**: 2026-06-25
+- **背景**: preexisting DB 问题调研发现 2 个域存在 registry 与 panorama 不一致问题。
+
+| 域 | 问题 | 修复 |
+|----|------|------|
+| D-GOV_RULE | panorama 有 4 条裁定（#174/#194/#199/#200），但 registry 无条目 | 补写 registry 条目 |
+| D-INFRA_OPS | registry 有 3 条（asset-inventory/capacity-assurance/resource_optimization），但 panorama 无直接裁定 | 补写 panorama 裁定记录 |
+
+**D-INFRA_OPS 补记**: D-INFRA_OPS 在 domain_split_plan 附录 C.1 作为跨域共享 blueprint_id 引用域出现，但未作为拆分主体被裁定。该域有 7 个 production 节点，ssot_path=`src/zephyr/infra_ops/`，lifecycle=design_only，build_status=planned（已修正）。本裁定追溯确认其合法地位。

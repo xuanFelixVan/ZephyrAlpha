@@ -8,6 +8,8 @@ status: Active
 version: 0.4.0
 created: '2026-05-16'
 last_updated: '2026-06-25'
+# 裁定#201: 补写 D-SIGNAL_ASHARE/FUNDAMENTAL/QUALITY registry 条目
+# 裁定#202: 补写 D-GOV_RULE registry 条目
 unique_key:
 - domain
 - subdomain
@@ -933,4 +935,66 @@ entries:
   - rules
   - 规则文档
   stability: stable
+  ai_autonomy: human_gated
+- domain: D-SIGNAL_ASHARE
+  subdomain: ashare_signal
+  ssot_module: MOD-INF-038
+  ssot_path: src/zephyr/signal_ashare/
+  covers:
+  - A股特色信号生成
+  - A股技术指标信号
+  - A股量价信号
+  aliases:
+  - ashare signal
+  - A股信号
+  - 信号-A股
+  stability: planned
+  ai_autonomy: ai_modifiable
+- domain: D-SIGNAL_FUNDAMENTAL
+  subdomain: fundamental_signal
+  ssot_module: MOD-INF-039
+  ssot_path: src/zephyr/signal_fundamental/
+  covers:
+  - 财务指标信号
+  - 估值信号
+  - 成长性信号
+  - 盈利能力信号
+  - 基本面信号组合(fundamental_signal_combiner)
+  - 资金分配器(capital_allocator)
+  - 信号合成器(signal_synthesizer)
+  aliases:
+  - fundamental signal
+  - 基本面信号
+  - 信号-基本面
+  stability: stable
+  ai_autonomy: human_gated
+- domain: D-SIGNAL_QUALITY
+  subdomain: signal_quality
+  ssot_module: MOD-INF-040
+  ssot_path: src/zephyr/signal_quality/
+  covers:
+  - 信号质量评估
+  - 信号过滤
+  - 信号降级
+  - 信号冲突检测
+  aliases:
+  - signal quality
+  - 信号质量
+  - 信号-质量
+  stability: planned
+  ai_autonomy: ai_modifiable
+- domain: D-GOV_RULE
+  subdomain: rule_governance
+  ssot_module: MOD-INF-041
+  ssot_path: src/zephyr/gov_rule/
+  covers:
+  - 规则配置管理
+  - 规则注册表
+  - 规则同步与分发
+  - 规则版本控制
+  aliases:
+  - rule governance
+  - 规则治理
+  - 规则配置
+  stability: planned
   ai_autonomy: human_gated
