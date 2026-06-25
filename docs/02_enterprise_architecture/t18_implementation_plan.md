@@ -107,7 +107,7 @@ edges表已有3个设计态保护触发器：
 | D-GOVERNANCE | 605 | 7.5% |
 | D-SECURITY | 603 | 7.5% |
 | D-AUTONOMY_CORE | 475 | 5.9% |
-| D-SIGNAL | 474 | 5.9% |
+| D-SIGLEGACY | 474 | 5.9% |
 | D-INTEGRATION | 416 | 5.2% |
 | D-INFRA_OPS | 387 | 4.8% |
 | D-INFRA_RUNTIME | 311 | 3.9% |

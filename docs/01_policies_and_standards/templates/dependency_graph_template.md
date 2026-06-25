@@ -605,7 +605,7 @@ granularity_hierarchy:
 | 应该有 | `config_depends` | 配置引用依赖 | gate 引用 rule-registry |
 | 应该有 | `data_depends` | 数据文件依赖 | 脚本读取 YAML 注册表 |
 | 应该有 | `blueprint_depends` | 蓝图契约依赖 | blueprint §4 引用另一个蓝图 |
-| 应该有 | `event_depends` | 事件驱动依赖 | D-SIGNAL 订阅 E-RS-01 |
+| 应该有 | `event_depends` | 事件驱动依赖 | D-SIGLEGACY 订阅 E-RS-01 |
 | 应该有 | `contract_depends` | 契约消费依赖 | D-FACTOR 消费 CTR-001 |
 | 应该有 | `shared_kernel` | 共享内核依赖 | D-EXECUTION + D-RISK 共享 Position |
 | 可选 | `script_depends` | 脚本调用依赖 | 脚本 import 另一个脚本 |

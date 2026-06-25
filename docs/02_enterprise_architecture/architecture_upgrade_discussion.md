@@ -187,7 +187,7 @@ L5  depgraph/全景图                ← DOC：以上所有层的表现形式
 | 14层信息保留方式      | 作为域的`logical_layer`属性  | 属性不是分类，不产生二元性         |
 | L00-L13层YAML文件 | 废弃，信息合并入depgraph.db域定义 | 避免SSoT分裂              |
 
-> 43域=39设计域+4个拆分域(D-GOV_RULE/D-GOV_AUDIT/D-BEHAVIORAL_AUDIT/D-GOV_DRIFT)+膨胀域拆分(D-SIGNAL→4域, D-DATA→4域, D-SIMULATION→4域)。详见§17.6。
+> 43域=39设计域+4个拆分域(D-GOV_RULE/D-GOV_AUDIT/D-BEHAVIORAL_AUDIT/D-GOV_DRIFT)+膨胀域拆分(D-SIGLEGACY→4域, D-DATA→4域, D-SIMULATION→4域)。详见§17.6。
 
 ```yaml
 # 唯一分类方式：按域找模块
@@ -229,9 +229,9 @@ D-FACTOR:
 | ------------------ | --------------------- | -------------------------------------- |
 | execution/         | D-EX-CORE             | src/zephyr/ex\_core/（合并）               |
 | factor/            | D-FACTOR              | src/zephyr/factor/（保留，补域定义）            |
-| signal/            | D-SIGNAL              | src/zephyr/signal/（保留，补域定义）            |
-| signal\_ashare/    | D-SIGNAL              | src/zephyr/signal/ashare/              |
-| signal\_quality/   | D-SIGNAL              | src/zephyr/signal/quality/             |
+| signal/            | D-SIGLEGACY              | src/zephyr/signal/（保留，补域定义）            |
+| signal\_ashare/    | D-SIGLEGACY              | src/zephyr/signal/ashare/              |
+| signal\_quality/   | D-SIGLEGACY              | src/zephyr/signal/quality/             |
 | risk/              | D-RISK                | src/zephyr/risk/（保留，补域定义）              |
 | portfolio/         | D-PF-CORE             | src/zephyr/pf\_core/（合并）               |
 | pf\_alloc/         | D-PF-ALLOC            | src/zephyr/pf\_alloc/（保留，补域定义）         |
@@ -1069,13 +1069,13 @@ STEP 3: 规则文件渐进加载 — 只加载相关规则子集
 | D35 | 回测数据源                                 | **akshare+miniQMT+iFind**                                                                                              | 免费+盘中+基本面三源                                                                |
 | D36 | 部署架构                                  | **先单进程多线程，后多服务docker-compose**                                                                                         | 渐进式(D12已裁定)                                                                |
 | D37 | D-DATA消歧                              | **场外D-DATA→D-MKT-DATA，全景保留D-DATA**                                                                                     | 同ID不同语义，必须消歧                                                               |
-| D38 | 域体系修正                                 | **39个平铺域=场外30域+膨胀域拆分(D-SIGNAL/D-DATA/D-SIMULATION各拆4域)，无层级无子域**                                                        | 9父域+35子域是漂移，parent\_domain仅作分组属性                                           |
+| D38 | 域体系修正                                 | **39个平铺域=场外30域+膨胀域拆分(D-SIGLEGACY/D-DATA/D-SIMULATION各拆4域)，无层级无子域**                                                        | 9父域+35子域是漂移，parent\_domain仅作分组属性                                           |
 | D39 | 漂移根因                                  | **全景图把35平铺域错误重组为9+35层级，且遗漏业务域**                                                                                        | 迁移计划§5.7 R7评估已指出但未修复                                                       |
 | D40 | 架构层级                                  | **6层：L0需求→L1域→L2技术→L3数据→L4物理→L5文档**                                                                                    | L1未定则L2-L5无法落地                                                             |
 | D41 | 域结构                                   | **平铺，不做子域**                                                                                                            | 之前已讨论裁定，不增加层级深度                                                            |
 | D42 | 35域来源                                 | **场外30域逐个提取模块，3个膨胀域各拆分为4域→39平铺域**                                                                                      | 不是9父域+35子域，是30+3×3拆分=39平铺域                                                 |
 | D43 | 域容量标准                                 | **80-150默认/150-200高度耦合/>200硬上限**（见 trae\_055 ARCH-CAP-002）                                                             | AI上下文可导航极限，200是硬上限                                                         |
-| D44 | 39平铺域方案（D45/D46追加拆分后）                 | **27业务域+12平台域，D-SIGNAL/D-DATA/D-SIMULATION各拆4域**                                                                       | 详见§17.6完整39平铺域方案                                                           |
+| D44 | 39平铺域方案（D45/D46追加拆分后）                 | **27业务域+12平台域，D-SIGLEGACY/D-DATA/D-SIMULATION各拆4域**                                                                       | 详见§17.6完整39平铺域方案                                                           |
 | D45 | D-DATA拆分                              | **D-DATA(71)→D-MKT\_DATA/D-DATA\_ENG/D-DATA\_GOV/D-DATA\_SEC**                                                         | 11子域4层功能边界清晰，必须拆                                                           |
 | D46 | D-SIMULATION拆分                        | **D-SIMULATION(71)→D-SIMULATION/D-BACKTEST/D-EXEC\_SIM/D-DIGITAL\_TWIN**                                               | 5功能集群，回测方法论最明显可独立                                                          |
 | D47 | 工作流                                   | **数据库先行→depgraph入库→域裁定→搬家**                                                                                            | depgraph 157MB YAML无法高效裁定，入库后SQL毫秒级查询                                      |
@@ -1196,7 +1196,7 @@ STEP 3: 规则文件渐进加载 — 只加载相关规则子集
 
 ### 17.3 域体系裁定结论
 
-**结论**：39个平铺域（场外30域+膨胀域拆分D-SIGNAL/D-DATA/D-SIMULATION各拆4域），无层级无子域。parent\_domain仅作分组属性标签。
+**结论**：39个平铺域（场外30域+膨胀域拆分D-SIGLEGACY/D-DATA/D-SIMULATION各拆4域），无层级无子域。parent\_domain仅作分组属性标签。
 
 **D-DATA消歧**：场外D-DATA(行情数据)→D-MKT-DATA，全景D-DATA保留(平台数据基础设施)。
 
@@ -1241,7 +1241,7 @@ STEP 5: 重新生成depgraph+全景图(MD格式)
 
 ### 17.6 域方案（v4，D44-D46裁定后）
 
-**拆分汇总**：D-SIGNAL(164)→4域，D-DATA(71)→4域，D-SIMULATION(71)→4域。30+3×3=39域。
+**拆分汇总**：D-SIGLEGACY(164)→4域，D-DATA(71)→4域，D-SIMULATION(71)→4域。30+3×3=39域。
 
 > 39 域是当前结果非最终结果。域数可无限拓展（见 trae\_055 ARCH-CAP-005 抽屉式扩展 / ARCH-CAP-007 项目总容量无固定上限）。新增域只需 INSERT 到 domains 表，不修改生成器代码。
 
@@ -1254,10 +1254,10 @@ STEP 5: 重新生成depgraph+全景图(MD格式)
 | 3  | D-DATA\_GOV           | 数据治理(质量+血缘+参考) | \~15 |  业务 | D-DATA拆                          |
 | 4  | D-DATA\_SEC           | 数据安全与契约        | \~17 |  业务 | D-DATA拆                          |
 | 5  | D-FACTOR              | 因子             |   7  |  业务 | —                                |
-| 6  | D-SIGNAL              | 信号(技术+通用)      | \~50 |  业务 | D-SIGNAL拆                        |
-| 7  | D-SIGNAL\_ASHARE      | A股特色信号         | \~44 |  业务 | D-SIGNAL拆                        |
-| 8  | D-SIGNAL\_FUNDAMENTAL | 基本面信号          | \~30 |  业务 | D-SIGNAL拆                        |
-| 9  | D-SIGNAL\_QUALITY     | 信号质量           | \~22 |  业务 | D-SIGNAL拆                        |
+| 6  | D-SIGLEGACY              | 信号(技术+通用)      | \~50 |  业务 | D-SIGLEGACY拆                        |
+| 7  | D-ASHARE\_SIGNAL      | A股特色信号         | \~44 |  业务 | D-SIGLEGACY拆                        |
+| 8  | D-FUNDAMENTAL\_SIGNAL | 基本面信号          | \~30 |  业务 | D-SIGLEGACY拆                        |
+| 9  | D-SIGQC     | 信号质量           | \~22 |  业务 | D-SIGLEGACY拆                        |
 | 10 | D-PF\_CORE            | 组合核心           |   6  |  业务 | —                                |
 | 11 | D-PF\_ALLOC           | 组合分配           |   4  |  业务 | —                                |
 | 12 | D-SELL\_DECISION      | 卖出决策           |  18  |  业务 | —                                |

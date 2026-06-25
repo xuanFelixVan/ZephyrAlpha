@@ -106,7 +106,7 @@ ttl: permanent
 | 能力域 | 类型 | 包含域 |
 |--------|:---:|--------|
 | 数据接入 | 业务 | D-MKT_DATA, D-ALT_DATA, D-DATA_ENG |
-| 因子研究 | 业务 | D-FACTOR, D-SIGNAL, D-SIGNAL_FUNDAMENTAL, D-SIGNAL_ASHARE, D-SIGNAL_QUALITY |
+| 因子研究 | 业务 | D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC |
 | 策略决策 | 业务 | D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET |
 | 执行交易 | 业务 | D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION |
 | 风险控制 | 业务 | D-RISK, D-COMPLIANCE |
@@ -176,10 +176,10 @@ ttl: permanent
 | `D-POSITION` | 仓位管理 | `L2_domain` | 77 | 0 | 69 | 2 | L2 |
 | `D-RISK` | 风控 | `L2_domain` | 775 | 9 | 749 | 11 | L3+ |
 | `D-SELL_DECISION` | 卖出决策 | `L2_domain` | 64 | 0 | 57 | 1 | L2 |
-| `D-SIGNAL` | 信号 | `L2_domain` | 476 | 1 | 474 | 1 | L3+ |
-| `D-SIGNAL_ASHARE` | A股特色信号 | `L2_domain` | 27 | 0 | 20 | 1 | L2 |
-| `D-SIGNAL_FUNDAMENTAL` | 基本面信号 | `L2_domain` | 24 | 3 | 1 | 14 | L3+ |
-| `D-SIGNAL_QUALITY` | 信号质量 | `L2_domain` | 18 | 0 | 11 | 1 | L2 |
+| `D-SIGLEGACY` | 信号 | `L2_domain` | 476 | 1 | 474 | 1 | L3+ |
+| `D-ASHARE_SIGNAL` | A股特色信号 | `L2_domain` | 27 | 0 | 20 | 1 | L2 |
+| `D-FUNDAMENTAL_SIGNAL` | 基本面信号 | `L2_domain` | 24 | 3 | 1 | 14 | L3+ |
+| `D-SIGQC` | 信号质量 | `L2_domain` | 18 | 0 | 11 | 1 | L2 |
 | `D-SIMULATION` | 仿真 | `L2_domain` | 128 | 4 | 110 | 8 | L3+ |
 | `D-TRADING` | 交易运营 | `L2_domain` | 249 | 16 | 89 | 138 | L3+ |
 

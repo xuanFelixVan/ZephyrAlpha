@@ -672,7 +672,7 @@ batch 模式与单命令模式使用**相同的匹配逻辑**（`WHERE belongs_t
 | D-GOV-SCRIPTS | code_dedup | NULL | 0 | 0 | NULL |
 | D-INTEGRATION-GATEWAY | mcp_servers | NULL | 0 | 0 | NULL |
 | D-SECURITY-LLM | llm_defense | NULL | 0 | 0 | NULL |
-| D-SIGNAL | 信号 | L2_domain | 476 | 1 | '' |
+| D-SIGLEGACY | 信号 | L2_domain | 476 | 1 | '' |
 
 > **结论**：6 个域 ssot_path 缺失，违反 ARCH-CAP-004（domain_id 语义与 ssot_path 语义 1:1 映射）。其中 D-GOV-ENFORCEMENT 和 D-GOV-SCRIPTS 是本方案要扩充的目标域，**必须补充 ssot_path 后才能合规**。
 

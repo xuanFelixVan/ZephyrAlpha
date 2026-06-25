@@ -6,6 +6,13 @@
 > **调研方法**：只读调研（未修改任何文件），证据来源为代码静态分析 + DB派生制品 + 项目文档 + 行业基准对标
 > **适用语境**：100% AI 开发项目
 
+> ⚠️ **裁定#204 追加说明（2026-06-25）**：本报告调研期间（2026-06-25）使用的域名 D-SIGNAL/D-SIGNAL_ASHARE/D-SIGNAL_FUNDAMENTAL/D-SIGNAL_QUALITY 已被裁定#204推翻并改名：
+> - D-SIGNAL_ASHARE → D-ASHARE_SIGNAL（A股特色信号）
+> - D-SIGNAL_FUNDAMENTAL → D-FUNDAMENTAL_SIGNAL（基本面信号）
+> - D-SIGNAL_QUALITY → D-SIGQC（信号质量控制）
+> - D-SIGNAL → D-SIGLEGACY（信号遗留设计态）
+> 本报告中出现的旧域名为历史调研上下文，保留不改。裁定#204 推翻了本报告中引用的#ARCH-002和#ARCH-004的"保留命名"结论，改为消除D-前缀暗示父子关系的幻觉根因。
+
 ---
 
 ## 目录

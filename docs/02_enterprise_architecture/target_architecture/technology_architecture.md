@@ -146,7 +146,7 @@ This view is **driven by** the Application Architecture (application characteris
 ## 4. Cross-domain core data flow / 跨域核心数据流
 
 ```
-D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGNAL 信号 → D-RISK 风控 → D-PF_CORE 组合构建 → D-EX_CORE 执行核心 → D-TRADING 交易运营
+D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK 风控 → D-PF_CORE 组合构建 → D-EX_CORE 执行核心 → D-TRADING 交易运营
 ```
 
 横向治理贯穿：`D-GOVERNANCE 治理` + `D-RISK 风控` + `D-FRONTEND 人机接口`
@@ -310,7 +310,7 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGNAL 信号 → D-RISK 风�
 
 ### 10.3 Traces / 分布式追踪
 
-端到端链路：D-FACTOR → D-SIGNAL → D-RISK → D-PF_CORE → D-EX_CORE → [Broker API] → D-TRADING
+端到端链路：D-FACTOR → D-SIGLEGACY → D-RISK → D-PF_CORE → D-EX_CORE → [Broker API] → D-TRADING
 
 **采样策略**：Dev/UAT 100% | Staging 20% + 错误 100% | Prod 尾部采样 10% + 错误/慢请求 100%
 
@@ -338,7 +338,7 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGNAL 信号 → D-RISK 风�
 | D-MKT_DATA 行情数据 | 2 | 1.5 | 20 | 300 |
 | D-INFRA_RUNTIME 基础设施 | 0.5 | 0.5 | 1 | 50 |
 | D-FACTOR 因子 | 6 | 3 | 15 | 500 |
-| D-SIGNAL 信号 | 3 | 1 | 5 | 100 |
+| D-SIGLEGACY 信号 | 3 | 1 | 5 | 100 |
 | D-RISK 风控 | 1 | 0.5 | 2 | 150 |
 | D-PF_CORE 组合核心 | 4 | 2 | 3 | 80 |
 | D-EX_CORE 执行核心 | 2 | 0.8 | 8 | 200 |

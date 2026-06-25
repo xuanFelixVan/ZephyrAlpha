@@ -212,10 +212,10 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 - **跨域源文件**: 00-总览与索引.md, 01-跨域交叉点与因果链.md, 交易决策架构.md
 - **状态**: 待执行
 
-### FA-002: D-SIGNAL 信号域
+### FA-002: D-SIGLEGACY 信号域
 
-- **域ID**: D-SIGNAL
-- **主要源文件**: 04-D-SIGNAL-信号域.md
+- **域ID**: D-SIGLEGACY
+- **主要源文件**: 04-D-SIGLEGACY-信号域.md
 - **跨域源文件**: 00-总览与索引.md, 01-跨域交叉点与因果链.md, 交易决策架构.md
 - **状态**: 待执行
 
@@ -456,10 +456,10 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 - **分层标注**: 待执行
 - **待执行**: STEP 1(标注) → STEP 3(核对) → STEP 5(验证)
 
-### RA-005: 04-D-SIGNAL-信号域.md
+### RA-005: 04-D-SIGLEGACY-信号域.md
 
-- **源文件**: `D:\ZephyrAlpha\临时工作区\依赖图\04-D-SIGNAL-信号域.md`
-- **域ID**: D-SIGNAL
+- **源文件**: `D:\ZephyrAlpha\临时工作区\依赖图\04-D-SIGLEGACY-信号域.md`
+- **域ID**: D-SIGLEGACY
 - **分层标注**: 待执行
 - **待执行**: STEP 1(标注) → STEP 3(核对) → STEP 5(验证)
 
@@ -677,7 +677,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 ### RA-036: 交易决策架构.md ✅ COMPLETED v5.0
 
 - **源文件**: `D:\ZephyrAlpha\临时工作区\架构图\交易决策架构.md`
-- **覆盖域**: D-DATA/D-FACTOR/D-SIGNAL/D-PF-CORE/D-PF-ALLOC/D-SELL-DECISION/D-POSITION/D-EX-CORE/D-EX-SOR/D-REPORTING/D-RISK/D-FRONTEND
+- **覆盖域**: D-DATA/D-FACTOR/D-SIGLEGACY/D-PF-CORE/D-PF-ALLOC/D-SELL-DECISION/D-POSITION/D-EX-CORE/D-EX-SOR/D-REPORTING/D-RISK/D-FRONTEND
 - **状态**: ✅ v5.0深度审查完成(26项遗漏+2项概念不一致修正)
 
 ### RA-037: 治理架构.md ✅ COMPLETED v5.0
@@ -772,7 +772,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 | 17 | RA-014 | D-ML-SERVE | 3 |
 | 18 | RA-018 | D-COMPLIANCE | 3 |
 | 19 | RA-021 | D-RESEARCH | 3 |
-| 20 | RA-005 | D-SIGNAL | 4 |
+| 20 | RA-005 | D-SIGLEGACY | 4 |
 | 21 | RA-020 | D-SIMULATION | 4 |
 | 22 | RA-006 | D-PF-CORE | 5 |
 | 23 | RA-007 | D-PF-ALLOC | 6 |
@@ -812,7 +812,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 | 17 | FA-012 | D-ML-SERVE | 3 |
 | 18 | FA-016 | D-COMPLIANCE | 3 |
 | 19 | FA-019 | D-RESEARCH | 3 |
-| 20 | FA-002 | D-SIGNAL | 4 |
+| 20 | FA-002 | D-SIGLEGACY | 4 |
 | 21 | FA-018 | D-SIMULATION | 4 |
 | 22 | FA-003 | D-PF-CORE | 5 |
 | 23 | FA-004 | D-PF-ALLOC | 6 |

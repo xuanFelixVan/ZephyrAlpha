@@ -39,14 +39,14 @@ depends_on:
 ## 二、架构分类体系（43域方案）
 
 > **裁定**：D19/D21 — 14层降级为域属性，43域为唯一分类体系。
-> **状态**：阶段4搬家基本完成；D-DATA/D-SIGNAL/D-SIMULATION 各拆4域（D44-D46）待阶段5-8执行。
+> **状态**：阶段4搬家基本完成；D-DATA/D-SIGLEGACY/D-SIMULATION 各拆4域（D44-D46）待阶段5-8执行。
 
 ### 2.1 业务域（27域，含3个待拆分域）
 
 | 域目录 | 域 ID | 责任 | 状态 |
 |--------|------|------|------|
 | [_domain_data/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_data/index.md) | D-DATA | 数据源（待拆分: D-MKT_DATA/D-DATA_ENG/D-DATA_GOV/D-DATA_SEC） | 待拆分 |
-| [_domain_signal/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_signal/index.md) | D-SIGNAL | 信号生成（待拆分: 4域） | 待拆分 |
+| [_domain_signal/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_signal/index.md) | D-SIGLEGACY | 信号生成（待拆分: 4域） | 待拆分 |
 | [_domain_simulation/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_simulation/index.md) | D-SIMULATION | 实验仿真（待拆分: 4域） | 待拆分 |
 | [_domain_factor/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_factor/index.md) | D-FACTOR | Alpha 因子 | 活跃 |
 | [_domain_pf_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_pf_core/index.md) | D-PF-CORE | 组合核心 | 活跃 |
@@ -80,7 +80,7 @@ depends_on:
 
 | 目录 | 说明 | 处置 |
 |------|------|------|
-| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 D-SIGNAL 取代） | 待 RULE-THREE 审判后删除或合并 |
+| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 D-SIGLEGACY 取代） | 待 RULE-THREE 审判后删除或合并 |
 | [_ml_experiment_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_ml_experiment_domain/blueprint.md) | 旧 ML Experiment 域（已被 D-SIMULATION 取代） | 待 RULE-THREE 审判后删除或合并 |
 
 ---
@@ -120,7 +120,7 @@ depends_on:
 | 阶段 4 | 物理搬家（连字符→下划线） | ✅ 基本完成 |
 | 阶段 5-8 | 业务层建设（R3-R6） | ⏳ 未开始 |
 
-> **本索引为过渡版本**：阶段 5-8 完成后，D-DATA/D-SIGNAL/D-SIMULATION 拆分落地，本索引需同步更新。
+> **本索引为过渡版本**：阶段 5-8 完成后，D-DATA/D-SIGLEGACY/D-SIMULATION 拆分落地，本索引需同步更新。
 
 ---
 
