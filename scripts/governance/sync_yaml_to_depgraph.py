@@ -852,6 +852,62 @@ def sync_blueprint_links(cur):
     print(f"  同步 {synced} 条蓝图→文件映射")
 
 
+def sync_domain_naming_rules(cur):
+    """#173: 域命名规则 → domain_naming_rules 表（裁定#204 / OPS-2026062610 预防根因）
+
+    SSoT: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+    建表 + 同步 5 条规则，apply_depgraph.py --insert-domain 建域时强制校验。
+    """
+    print("同步 #173: 域命名规则 → domain_naming_rules...")
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS domain_naming_rules (
+        rule_id      TEXT PRIMARY KEY,
+        rule_name    TEXT NOT NULL,
+        rule_text    TEXT NOT NULL,
+        applies_to   TEXT NOT NULL DEFAULT 'create',
+        severity     TEXT NOT NULL DEFAULT 'error',
+        example_bad  TEXT,
+        example_good TEXT,
+        created_at   TEXT NOT NULL,
+        source_doc   TEXT
+    )
+    """)
+
+    data = load_yaml("_registry/catalogs/domain_naming_rules.yaml")
+    entries = data.get("entries", [])
+    if not entries:
+        print("  警告: domain_naming_rules.yaml 无 entries，跳过")
+        return
+
+    from datetime import datetime
+    now = datetime.now(UTC).isoformat()
+    synced = 0
+    for e in entries:
+        cur.execute(
+            """
+        INSERT INTO domain_naming_rules
+            (rule_id, rule_name, rule_text, applies_to, severity,
+             example_bad, example_good, created_at, source_doc)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(rule_id) DO UPDATE SET
+            rule_name=excluded.rule_name,
+            rule_text=excluded.rule_text,
+            applies_to=excluded.applies_to,
+            severity=excluded.severity,
+            example_bad=excluded.example_bad,
+            example_good=excluded.example_good,
+            source_doc=excluded.source_doc
+        """,
+            (e["rule_id"], e["rule_name"], e["rule_text"],
+             e.get("applies_to", "create"), e.get("severity", "error"),
+             e.get("example_bad", ""), e.get("example_good", ""),
+             now, e.get("source_doc", "")),
+        )
+        synced += 1
+
+    print(f"  同步 {synced} 条域命名规则（NR-001~NR-005）")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -902,8 +958,11 @@ def sync_all():
         sync_business_streams(cur)  # #171
         sync_blueprint_links(cur)  # #172
 
+        # P5 优先级同步（裁定#204 预防根因）
+        sync_domain_naming_rules(cur)  # #173
+
         conn.commit()
-        print("\n[PASS] 17 项 YAML→DB 同步完成")
+        print("\n[PASS] 18 项 YAML→DB 同步完成")
 
     except Exception as e:
         conn.rollback()

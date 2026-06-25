@@ -1,0 +1,63 @@
+# [A_config] module_id=CFG-domain-naming-rules | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+registry_id: REG-DOMAIN-NAMING-001
+name: 域命名规则表
+description: 功能域ID命名规则的唯一真源（SSoT）。apply_depgraph.py --insert-domain 建域时强制校验 applies_to=create 的规则，severity=error 违反则阻断建域（exit 3），warning 则打印警告。裁定#204 预防根因：命名规则原仅存在于 Markdown 文档中，AI 建域/生成代码时不主动查阅，导致 D-SIGNAL_ASHARE 等 D-XXX_YYY 形式域名产生，暗示父子关系（违反"所有域平级"铁律）。
+owner: MOD-INF-037
+tier: tier_1_governance
+status: Active
+version: 1.0.0
+created: '2026-06-25'
+last_updated: '2026-06-25'
+# 裁定#204 / OPS-2026062610: 5条命名规则入库，防再产生 D-XXX_YYY 形式域名
+unique_key:
+- rule_id
+entry_schema:
+  rule_id: str
+  rule_name: str
+  rule_text: str
+  applies_to: str          # create | rename | both
+  severity: str            # error | warning
+  example_bad: str
+  example_good: str
+  source_doc: str
+entries:
+- rule_id: NR-001
+  rule_name: 无父子前缀
+  rule_text: 域ID禁止使用 D-XXX_YYY 形式暗示父子关系。若域ID含下划线，分割后第一段不得与任何已存在域ID匹配（如 D-SIGNAL_ASHARE 违规，因 D-SIGNAL 是已存在域）。所有域平级，无父子关系。
+  applies_to: create
+  severity: error
+  example_bad: D-SIGNAL_ASHARE（D-SIGNAL 为已存在域，暗示 ASHARE 是 SIGNAL 的子域）
+  example_good: D-ASHARE_SIGNAL（D-ASHARE 非已存在域，ASHARE_SIGNAL 独立表达业务含义）
+  source_doc: docs/01_policies_and_standards/rules/trae_011_domain_attribution.yaml §域归属铁律
+- rule_id: NR-002
+  rule_name: 全大写下划线命名
+  rule_text: 域ID格式必须为 D- 前缀 + 全大写字母+数字+下划线（^D-[A-Z][A-Z0-9_]*$），禁止使用连字符（- 在 D- 前缀后）或小写字母。连字符仅允许出现在 D- 前缀分隔符位置。
+  applies_to: create
+  severity: error
+  example_bad: D-Signal-Ashare（含小写和多余连字符）
+  example_good: D-ASHARE_SIGNAL（全大写+下划线）
+  source_doc: docs/01_policies_and_standards/rules/trae_011_domain_attribution.yaml §域命名规范
+- rule_id: NR-003
+  rule_name: 语义独立性
+  rule_text: 域ID必须独立表达业务含义，禁止依赖其他域ID才能理解。域ID不得是其他域ID加下划线后缀的形式（如 D-SIGNAL_QUALITY 违规，因依赖 D-SIGNAL 才能理解；应改为 D-SIGQC 独立表达"信号质量控制"）。
+  applies_to: create
+  severity: error
+  example_bad: D-SIGNAL_QUALITY（依赖 D-SIGNAL 上下文才能理解）
+  example_good: D-SIGQC（独立表达"信号质量控制"语义）
+  source_doc: docs/01_policies_and_standards/rules/trae_011_domain_attribution.yaml §域语义独立性
+- rule_id: NR-004
+  rule_name: 设计态标识
+  rule_text: 设计态占位域（build_status=planned 且 current_modules=0）应使用 LEGACY 后缀标识其遗留/占位性质（如 D-SIGLEGACY 而非 D-SIGNAL），避免与未来正式域混淆。
+  applies_to: create
+  severity: warning
+  example_bad: D-SIGNAL（设计态占位域未标识遗留性质）
+  example_good: D-SIGLEGACY（LEGACY 后缀明确标识遗留设计态）
+  source_doc: docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml §设计态域处理
+- rule_id: NR-005
+  rule_name: 中文名一致
+  rule_text: domain_name 必须与 domain_id 语义一致（如 D-SIGQC 对应"信号质量控制"），禁止中文名与英文ID表达不同业务含义。
+  applies_to: create
+  severity: warning
+  example_bad: D-SIGQC 对应 domain_name="数据质量"（中文名与ID语义不一致）
+  example_good: D-SIGQC 对应 domain_name="信号质量控制"（中文名与ID语义一致）
+  source_doc: docs/01_policies_and_standards/rules/trae_011_domain_attribution.yaml §域命名规范

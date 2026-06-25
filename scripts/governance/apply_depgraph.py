@@ -64,6 +64,7 @@ import contextlib
 import datetime
 import json
 import os
+import re
 import shutil
 import sqlite3
 import subprocess
@@ -1074,6 +1075,75 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = str(DEPGRAP
 # ===== F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005 抽屉式扩展）=====
 
 
+def _validate_domain_naming(
+    domain_id: str,
+    domain_name: str,
+    db_path: str = str(DEPGRAPH_PATH),
+) -> tuple[list[str], list[str]]:
+    """建域门禁：校验域ID是否符合 domain_naming_rules 表中的命名规则。
+
+    裁定#204 / OPS-2026062610 预防根因：命名规则原仅存 Markdown，AI 不查阅导致
+    D-XXX_YYY 形式域名产生。此函数从 DB 读取规则并程序化校验。
+
+    返回: (errors: list[str], warnings: list[str])
+    如果 domain_naming_rules 表不存在，返回 ([], [])（跳过校验，向后兼容）。
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    try:
+        conn = sqlite3.connect(db_path)
+        cur = conn.execute(
+            "SELECT rule_id, severity FROM domain_naming_rules "
+            "WHERE applies_to IN ('create', 'both')"
+        )
+        rules = {r[0]: r[1] for r in cur.fetchall()}
+        if not rules:
+            conn.close()
+            return errors, warnings
+
+        cur = conn.execute("SELECT domain_id FROM domains")
+        existing_ids = {r[0] for r in cur.fetchall()}
+        conn.close()
+    except sqlite3.OperationalError:
+        # domain_naming_rules 表不存在——跳过校验（向后兼容）
+        return errors, warnings
+
+    # NR-001: 无父子前缀——第一段匹配已存在域
+    if "NR-001" in rules and "_" in domain_id:
+        first_segment = domain_id.split("_")[0]
+        if first_segment != domain_id and first_segment in existing_ids:
+            msg = (
+                f"NR-001(无父子前缀): 域ID '{domain_id}' 第一段 '{first_segment}' "
+                f"匹配已存在域，暗示父子关系（违反'所有域平级'铁律）"
+            )
+            (errors if rules["NR-001"] == "error" else warnings).append(msg)
+
+    # NR-002: 全大写下划线命名——regex 校验
+    if "NR-002" in rules:
+        if not re.match(r"^D-[A-Z][A-Z0-9_]*$", domain_id):
+            msg = (
+                f"NR-002(全大写下划线命名): 域ID '{domain_id}' 不匹配 "
+                f"^D-[A-Z][A-Z0-9_]*$（禁止小写字母/多余连字符）"
+            )
+            (errors if rules["NR-002"] == "error" else warnings).append(msg)
+
+    # NR-003: 语义独立性——以已存在域+下划线为前缀
+    if "NR-003" in rules:
+        for existing_id in existing_ids:
+            if domain_id.startswith(existing_id + "_"):
+                msg = (
+                    f"NR-003(语义独立性): 域ID '{domain_id}' 以已存在域 "
+                    f"'{existing_id}_' 为前缀，依赖其他域才能理解"
+                )
+                (errors if rules["NR-003"] == "error" else warnings).append(msg)
+                break
+
+    # NR-004/NR-005: warning 级，无法程序化精确判定语义，留作人工审查参考
+
+    return errors, warnings
+
+
 def cmd_insert_domain(
     domain_id: str,
     domain_name: str,
@@ -1990,6 +2060,21 @@ def main() -> None:
         domain_group = parts[2]
         layer_id = parts[3]
         ssot_path = parts[4]
+
+        # 建域门禁：校验命名规则（裁定#204 / OPS-2026062610 预防根因）
+        errors, warnings = _validate_domain_naming(domain_id, domain_name)
+        for w in warnings:
+            print(f"[WARN] {w}", file=sys.stderr)
+        if errors:
+            for e in errors:
+                print(f"[BLOCK] {e}", file=sys.stderr)
+            print(
+                f"ERROR: 域ID '{domain_id}' 违反 {len(errors)} 条 error 级命名规则，"
+                f"建域阻断（exit 3）",
+                file=sys.stderr,
+            )
+            sys.exit(3)
+
         ok = cmd_insert_domain(
             domain_id,
             domain_name,
