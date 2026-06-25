@@ -56,7 +56,7 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name": "因子研究",
         "name_en": "Factor & Signal",
         "type": "业务",
-        "domains": ["D-FACTOR", "D-SIGNAL", "D-SIGNAL_FUNDAMENTAL", "D-SIGNAL_ASHARE", "D-SIGNAL_QUALITY"],
+        "domains": ["D-FACTOR", "D-SIGLEGACY", "D-FUNDAMENTAL_SIGNAL", "D-ASHARE_SIGNAL", "D-SIGQC"],
     },
     {
         "id": "C3",

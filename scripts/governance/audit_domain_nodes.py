@@ -313,7 +313,7 @@ domains_13 = [
     "D-GOVERNANCE",
     "D-COMPLIANCE",
     "D-FACTOR",
-    "D-SIGNAL",
+    "D-SIGLEGACY",
     "D-INFRA_RUNTIME",
 ]
 
@@ -360,8 +360,8 @@ def main():
             print(f"  {d}: total_fri={step3[d]['total']}, has_parent={step3[d]['has_parent']}")
 
         # STEP 4
-        print("STEP 4: D-SIGNAL / D-SIMULATION details")
-        for dom in ["D-SIGNAL", "D-SIMULATION"]:
+        print("STEP 4: D-SIGLEGACY / D-SIMULATION details")
+        for dom in ["D-SIGLEGACY", "D-SIMULATION"]:
             cur.execute(
                 "SELECT node_id, node_name, node_type FROM nodes WHERE domain_id=? AND design_maturity='design' ORDER BY node_id",
                 (dom,),

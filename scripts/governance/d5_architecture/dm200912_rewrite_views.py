@@ -816,7 +816,7 @@ def write_capability_heatmap(data: dict) -> None:
     # 能力域定义（7业务+3横切=10能力域）
     capability_domains = [
         ("数据接入", "D-MKT_DATA, D-ALT_DATA, D-DATA_ENG"),
-        ("因子研究", "D-FACTOR, D-SIGNAL, D-SIGNAL_FUNDAMENTAL, D-SIGNAL_ASHARE, D-SIGNAL_QUALITY"),
+        ("因子研究", "D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC"),
         ("策略决策", "D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET"),
         ("执行交易", "D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION"),
         ("风险控制", "D-RISK, D-COMPLIANCE"),

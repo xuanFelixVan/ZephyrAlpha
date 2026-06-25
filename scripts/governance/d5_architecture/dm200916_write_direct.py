@@ -311,10 +311,10 @@ capability_domains:
   description: Alpha factor / sentiment / signal extraction / factor registry / IC-IR
   primary_domains:
   - D-FACTOR
-  - D-SIGNAL
-  - D-SIGNAL_FUNDAMENTAL
-  - D-SIGNAL_ASHARE
-  - D-SIGNAL_QUALITY
+  - D-SIGLEGACY
+  - D-FUNDAMENTAL_SIGNAL
+  - D-ASHARE_SIGNAL
+  - D-SIGQC
   investment_intensity: Critical
   investment_rationale: '§2.1裁定后从14层迁移到52域体系'
 - id: C3
@@ -422,8 +422,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-004
-  name: D-SIGNAL × C2
-  domain: D-SIGNAL
+  name: D-SIGLEGACY × C2
+  domain: D-SIGLEGACY
   capability: C2
   maturity: L1
   maturity_symbol: 🔵

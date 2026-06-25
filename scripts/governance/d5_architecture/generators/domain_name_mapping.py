@@ -41,10 +41,10 @@ DOMAIN_NAME_ZH = {
 
     # L2 业务域层 - 因子信号
     "D-FACTOR": "因子",
-    "D-SIGNAL": "信号",
-    "D-SIGNAL_ASHARE": "A股特色信号",
-    "D-SIGNAL_FUNDAMENTAL": "基本面信号",
-    "D-SIGNAL_QUALITY": "信号质量",
+    "D-SIGLEGACY": "信号遗留设计态",
+    "D-ASHARE_SIGNAL": "A股特色信号",
+    "D-FUNDAMENTAL_SIGNAL": "基本面信号",
+    "D-SIGQC": "信号质量控制",
 
     # L2 业务域层 - 风险合规
     "D-RISK": "风控",

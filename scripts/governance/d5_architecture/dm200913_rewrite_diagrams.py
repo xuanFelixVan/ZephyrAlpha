@@ -75,7 +75,7 @@ graph LR
         D_MKT_DATA["D-MKT_DATA<br/>行情数据"]
         D_ALT_DATA["D-ALT_DATA<br/>另类数据"]
         D_FACTOR["D-FACTOR<br/>因子"]
-        D_SIGNAL["D-SIGNAL<br/>信号"]
+        D_SIGNAL["D-SIGLEGACY<br/>信号"]
         D_RISK["D-RISK<br/>风控"]
         D_PF_CORE["D-PF_CORE<br/>组合核心"]
         D_EX_CORE["D-EX_CORE<br/>执行核心"]
@@ -104,8 +104,8 @@ graph LR
     %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
     D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D-MKT_DATA → D-FACTOR" --> D_FACTOR
 
-    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGNAL/D-RISK/D-PF_CORE
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGNAL" --> D_SIGNAL
+    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGLEGACY" --> D_SIGNAL
     D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-RISK" --> D_RISK
     D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-PF_CORE" --> D_PF_CORE
 
@@ -153,8 +153,8 @@ flowchart TD
         D_FACTOR["D-FACTOR<br/>Factor Calculation · Evaluation · Engineering<br/>因子计算 · 评估 · 工程"]
     end
 
-    subgraph D_SIGNAL_Grp["D-SIGNAL · 信号 / Signal Generation"]
-        D_SIGNAL["D-SIGNAL<br/>Sentiment · Signal Extraction · Predictions<br/>舆情 · 信号提取 · 预测"]
+    subgraph D_SIGNAL_Grp["D-SIGLEGACY · 信号 / Signal Generation"]
+        D_SIGNAL["D-SIGLEGACY<br/>Sentiment · Signal Extraction · Predictions<br/>舆情 · 信号提取 · 预测"]
     end
 
     subgraph D_RISK_Grp["D-RISK · 风控 / Risk Management"]
@@ -187,7 +187,7 @@ flowchart TD
     %% D-MKT_DATA → D-FACTOR: CTR-001 NormalizedMarketData (frozen)
     D_MKT_DATA -->|"🔒 CTR-001<br/>NormalizedMarketData<br/>[frozen]"| D_FACTOR
 
-    %% D-FACTOR → D-SIGNAL: CTR-002 FactorSignal (frozen)
+    %% D-FACTOR → D-SIGLEGACY: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_SIGNAL
 
     %% D-FACTOR → D-RISK: CTR-002 FactorSignal (frozen)
@@ -196,7 +196,7 @@ flowchart TD
     %% D-FACTOR → D-PF_CORE: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_PF_CORE
 
-    %% D-SIGNAL → D-PF_CORE: 信号输入（非 P0 契约，内部调用）
+    %% D-SIGLEGACY → D-PF_CORE: 信号输入（非 P0 契约，内部调用）
     D_SIGNAL -->|"Signal<br/>预测信号"| D_PF_CORE
 
     %% D-RISK → D-PF_CORE: CTR-003 RiskLimits (frozen)
@@ -291,8 +291,8 @@ flowchart TD
         FAC_PIPE["pipeline/<br/>因子计算流水线"]
     end
 
-    %% ── D-SIGNAL 信号 ─────────────────────────────────────────────
-    subgraph D_SIGNAL["D-SIGNAL · 信号 / Signal Generation"]
+    %% ── D-SIGLEGACY 信号 ─────────────────────────────────────────────
+    subgraph D_SIGNAL["D-SIGLEGACY · 信号 / Signal Generation"]
         SIG_SENT["sentiment/<br/>舆情分析"]
         SIG_SIG["signals/<br/>复合信号构建"]
         SIG_PRED["predictions/<br/>预测模型推理"]
@@ -461,7 +461,7 @@ graph TD
         subgraph MAIN["ZephyrAlpha Main Process (Python)"]
             direction TB
             D_MKT_DATA["D-MKT_DATA<br/>行情数据"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| D_FACTOR["D-FACTOR<br/>因子"]
-            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D-SIGNAL<br/>信号"]
+            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D-SIGLEGACY<br/>信号"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_RISK["D-RISK<br/>风控"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_PF_CORE["D-PF_CORE<br/>组合"]
             D_RISK -->|"🔒 CTR-003<br/>RiskLimits"| D_PF_CORE
@@ -505,7 +505,7 @@ def write_capability_heatmap_visual(stats):
     # 10能力域定义
     capability_domains = [
         ("数据接入", ["D-MKT_DATA", "D-ALT_DATA", "D-DATA_ENG"]),
-        ("因子研究", ["D-FACTOR", "D-SIGNAL", "D-SIGNAL_FUNDAMENTAL", "D-SIGNAL_ASHARE", "D-SIGNAL_QUALITY"]),
+        ("因子研究", ["D-FACTOR", "D-SIGLEGACY", "D-FUNDAMENTAL_SIGNAL", "D-ASHARE_SIGNAL", "D-SIGQC"]),
         ("策略决策", ["D-PF_CORE", "D-PF_ALLOC", "D-SELL_DECISION", "D-CROSS_ASSET"]),
         ("执行交易", ["D-EX_CORE", "D-EX_SOR", "D-TRADING", "D-POSITION"]),
         ("风险控制", ["D-RISK", "D-COMPLIANCE"]),
@@ -582,7 +582,7 @@ C4Container
     System_Boundary(zephyr, "ZephyrAlpha 2.0") {
         Container(data_pipeline, "Data Pipeline", "Python / D-MKT_DATA", "Market data ingestion,<br/>standardization, quality gating<br/>行情数据接入、标准化、质量门禁")
 
-        Container(factor_engine, "Factor Engine", "Python / D-FACTOR+D-SIGNAL", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
+        Container(factor_engine, "Factor Engine", "Python / D-FACTOR+D-SIGLEGACY", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
 
         Container(risk_engine, "Risk Engine", "Python / D-RISK", "Risk measurement,<br/>limits enforcement<br/>风险度量、限额执行")
 
@@ -612,7 +612,7 @@ C4Container
     %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
     Rel(data_pipeline, factor_engine, "CTR-001<br/>NormalizedMarketData<br/>[frozen]", "标准化行情数据")
 
-    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGNAL/D-RISK/D-PF_CORE
+    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
     Rel(factor_engine, risk_engine, "CTR-002<br/>FactorSignal<br/>[frozen]", "因子信号")
     Rel(factor_engine, portfolio_engine, "CTR-002<br/>FactorSignal<br/>[frozen]", "因子信号")
 
@@ -825,7 +825,7 @@ C4Component
 
     Container_Ext(d_mkt_data, "D-MKT_DATA 行情数据", "Python / D-MKT_DATA/", "原始数据 via IDataSource")
 
-    Container_Ext(d_signal_pf, "D-SIGNAL/D-PF_CORE 信号&组合", "Python / D-SIGNAL + D-PF_CORE/", "下游推理消费者")
+    Container_Ext(d_signal_pf, "D-SIGLEGACY/D-PF_CORE 信号&组合", "Python / D-SIGLEGACY + D-PF_CORE/", "下游推理消费者")
 
     Container_Ext(d_intelligence, "D-INTELLIGENCE 战略决策", "Python / D-INTELLIGENCE/", "A/B 实验与批跑研究")
 
