@@ -239,13 +239,29 @@ class GitCommitGateway:
 
         # 归一化为绝对路径
         abs_files = [str(Path(f).resolve()) for f in files]
-        # 允许已删除但被 git 跟踪的文件（deletion commit）；
-        # os.path.isfile 过滤会排除 D 状态文件导致 deletion 无法提交
-        if not abs_files:
+        # 过滤不存在且未 git 跟踪的文件：
+        # - 存在的文件 → 保留
+        # - 不存在但 git 跟踪 → 保留（deletion commit 场景）
+        # - 不存在且未跟踪 → 丢弃（避免 git add 失败返回 COMMIT_FAILED）
+        # 对标 git_commit.py CLI 的 _check_missing 逻辑（line 101-117）
+        existing: list[str] = []
+        for f in abs_files:
+            if os.path.isfile(f):
+                existing.append(f)
+            else:
+                rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                chk = subprocess.run(
+                    ["git", "ls-files", "--error-unmatch", "--", rel],
+                    capture_output=True,
+                    cwd=str(self.project_root),
+                )
+                if chk.returncode == 0:
+                    existing.append(f)  # git 跟踪的已删除文件
+        if not existing:
             return CommitResult(
-                status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list"
+                status=CommitStatus.NOTHING_TO_COMMIT,
+                message="no existing or tracked files to commit",
             )
-        existing = abs_files
 
         # 追加 GW 标记
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
