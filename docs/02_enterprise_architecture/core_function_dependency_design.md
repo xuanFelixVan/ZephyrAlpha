@@ -3,7 +3,7 @@ module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
 doc_type: architecture_design
 status: draft
-version: 0.4.1
+version: 0.4.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -28,8 +28,8 @@ related_blueprints:
   - docs/02_enterprise_architecture/02_domain_architecture_docs/D-AUTONOMY_CORE_自治核心.md
 related_panorama:
   - data/databases/depgraph.db
+ttl: permanent
 ---
-
 # 核心功能(F1-F37)依赖与调度设计
 
 > 本文档是37个核心功能依赖关系和调度方式的**设计真源**。
@@ -622,9 +622,9 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | | 0.5.2 | 标记每个功能实现状态 | 生成功能实现状态清单 | 37个功能全部标记完成 | 补全缺失功能 |
 | | 0.5.3 | 区分运营态/设计态节点 | 运营态=有代码实现；设计态=仅有蓝图 | 清单中每个功能标注 `运营态` 或 `设计态` | — |
 | | 0.5.4 | 确认depgraph.db节点granularity | 查询nodes表 `granularity` 字段 | 运营态节点=`runtime`，设计态节点=`design` | 修正节点granularity |
-| **1 全景图** | 1.1 | 删除循环依赖边（§8.1） | `python scripts/governance/apply_depgraph.py --delete-edges` | §10第1项：循环依赖=0 | 回滚depgraph.db |
-| | 1.2 | 新增依赖边（§8.2） | `python scripts/governance/apply_depgraph.py --add-edges` | §10第5项：孤立功能=0 | 回滚depgraph.db |
-| | 1.3 | 修改依赖类型（§8.3 DIP） | `python scripts/governance/apply_depgraph.py --update-types` | §10第9项：F1→F3=contract, F1→F14=event | 回滚depgraph.db |
+| **1 全景图** | 1.1 | 删除循环依赖边（§8.1） | `python scripts/governance/apply_depgraph.py --delete-design-edge` | §10第1项：循环依赖=0 | 回滚depgraph.db |
+| | 1.2 | 新增依赖边（§8.2） | `python scripts/governance/apply_depgraph.py --add-edge`（通用，不限maturity） | §10第5项：孤立功能=0 | 回滚depgraph.db |
+| | 1.3 | 修改依赖类型（§8.3 DIP） | `python scripts/governance/apply_depgraph.py --update-edge-type` | §10第9项：F1→F3=contract, F1→F14=event | 回滚depgraph.db |
 | | 1.4 | 新建设计态节点（§8.4） | `python scripts/governance/apply_depgraph.py --add-nodes` | §10第8项：37个功能全覆盖 | 回滚depgraph.db |
 | | 1.5 | 迁移5个功能域归属（§8.4 P2） | `python scripts/governance/apply_depgraph.py --migrate-domains` | F28/F32/F33/F36/F37域ID正确 | 回滚depgraph.db |
 | | 1.6 | 诊断全景图 | `python scripts/governance/diagnose_depgraph.py` | exit 0 | 按诊断报告修复 |
@@ -663,7 +663,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 阶段3代码修改失败 | `git checkout <文件>`（恢复到修改前）或 `python scripts/rollback.py preflight` → `rollback.py <cmd>` |
 | 三方对齐不一致 | 定位不一致项→回到对应阶段修复→重新对齐 |
 
-### 11.5 功能实现状态盘点（v0.3.10）
+### 11.5 功能实现状态盘点（v0.3.10，v0.4.2 修正）
 
 > 阶段0.5盘点的完整结果。37个功能按实现状态分为：运营态33个（有代码）、设计态2个（仅蓝图）、未发现1个、已归档1个。
 
@@ -706,8 +706,8 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | F29 | 语义审计 | 运营态 | `src/zephyr/governance/semantic_audit/` | 18 |
 | F30 | 红蓝对抗 | 运营态 | `src/zephyr/security/adversarial_validation/` | 23 |
 | F31 | 注册表治理 | 运营态 ⚠️ | `src/zephyr/infrastructure/registry_governance.py`（蓝图声明`governance/registry_governance/`，实际在`infrastructure/`） | 1 |
-| F34 | 代码去重 | 运营态 ⚠️ | `src/zephyr/governance/`扁平存在70个代码文件（蓝图声明`code_dedup_engine/`子目录不存在，路径漂移） | 70 |
-| F35 | 文件结构治理 | 有蓝图 | 蓝图GOV-FSTR-001(v4.2.0)存在，代码实现待核实 | 待核实 |
+| F34 | 代码去重 | 设计态 | 蓝图声明`code_dedup_engine/`子目录不存在；`governance/`下379个.py分属F2/F3/F4/F6/F18等，无独立F34实现 | 0 |
+| F35 | 文件结构治理 | 设计态 | 蓝图GOV-FSTR-001(v4.2.0,design_only)实际存在于`docs/03_modules/_restructuring/blueprint.md`；代码未实现 | 0 |
 | F36 | 审计追踪链 | 运营态 | `src/zephyr/governance/audit_trail/` | 60+ |
 | F37 | 资源优化 | 运营态 | `src/zephyr/shared/lifecycle/resource_optimization_engine.py` | 11 |
 | **L6 应急层** | | | | |
@@ -717,8 +717,8 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | **已归档** | | | | |
 | F17 | 交易骨架清理 | 已归档 | 一次性任务已完成，骨架代码已删除，保留6个蓝图（MOD-L02~L07） | 0 |
 
-**统计**：运营态34个(F34修正为运营态) | 设计态0个 | 已吸收1个(F20) | 有蓝图待核实1个(F35) | 已归档1个(F17)
-> **v0.4.1修正**：F34原标记"设计态/0文件"为误判，实测70个代码文件；F35原标记"无蓝图"为误判，蓝图GOV-FSTR-001存在；F20原标记"未发现"修正为"已吸收进shared_core"
+**统计**：运营态33个 | 设计态2个(F34/F35) | 已吸收1个(F20) | 已归档1个(F17)
+> **v0.4.2修正**：F34经实测确认为设计态（`code_dedup_engine/`子目录不存在，governance/下379个.py分属其他功能，蓝图自身标注design_only）；F35蓝图GOV-FSTR-001实际存在于`docs/03_modules/_restructuring/blueprint.md`（非`GOV-FSTR-001/`目录，blueprint_links表path字段过期）；F20已吸收进shared_core
 
 #### 11.5.2 运营态功能代码文件清单
 
@@ -798,7 +798,8 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 |:---:|:---:|------|------|
 | F17 | 已归档 | 交易核心链路骨架代码清理（一次性任务），骨架代码已删除，保留6个蓝图（MOD-L02~L07） | 不参与依赖设计和调度，保留历史记录 |
 | F20 | 已吸收 | 已被吸收进shared_core蓝图(MOD-INF-016)，存在分散monitor文件但无独立统一聚合器 | 不需独立设计态节点，监控统一逻辑归入shared_core |
-| F35 | 有蓝图 | 蓝图GOV-FSTR-001(v4.2.0)存在，代码实现待核实 | 需核实代码是否存在，若存在则修正为运营态 |
+| F34 | 设计态 | 蓝图声明`code_dedup_engine/`子目录不存在；`governance/`下379个.py分属F2/F3/F4/F6/F18等，无独立F34实现 | 保留设计态，代码待施工 |
+| F35 | 设计态 | 蓝图GOV-FSTR-001(v4.2.0,design_only)实际存在于`docs/03_modules/_restructuring/blueprint.md`；代码未实现 | 保留设计态，代码待施工 |
 
 #### 11.5.4 路径漂移警示
 
@@ -811,7 +812,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 ***
 
-## 十一点五、调研发现与工具能力缺口（v0.4.1）
+## 十一点五、调研发现与工具能力缺口（v0.4.2）
 
 > 2026-06-25 三方对齐调研（全景图/蓝图/代码）的完整发现，以及实施阶段被工具能力阻塞的记录。
 
@@ -821,7 +822,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 | # | 验证项 | 设计要求 | 实测结果 | 判定 |
 |:-:|:------|:---------|:---------|:---:|
-| 1 | 循环依赖=0 | 0条 | 6条2节点环(design态蓝图节点间) | ❌ FAIL |
+| 1 | 循环依赖=0 | 0条 | B集3条2节点环+1条3节点环(共8脏边)，v0.4.2已清理→0；A集design_node本就0环 | ✅ PASS |
 | 2 | F1出度≥4 | 4(2runtime+1contract+1event) | 3(全import_depends) | ❌ FAIL |
 | 3 | F22/F25/F26出度=0 | 0 | F26=9 | ❌ FAIL |
 | 4 | F5/F9/F10跨层入度=0 | 0 | 代码节点=0✅ | ⚠️ PARTIAL |
@@ -830,11 +831,13 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 7 | L0层节点齐全 | F22/F25/F26设计态 | 仅运营态存在 | ⚠️ PARTIAL |
 | 8 | 37功能全覆盖 | 18个设计态节点 | 多数已运营态无需建 | ⚠️ 需重评 |
 | 9 | DIP边类型正确 | F1→F3=contract | F1→F3=import_depends | ❌ FAIL |
-| 10 | 同层无循环 | 0 | 6个2节点环 | ❌ FAIL |
+| 10 | 同层无循环 | 0 | B集3个2节点环+1个3节点环，v0.4.2已清理→0 | ✅ PASS |
+
+> **口径说明（v0.4.2）**：item1/item10 已重测为 PASS（B 集清理见 commit 89b0a946，diagnose_depgraph.py 确认循环=0）。item2-item9 的实测基于 B/C 集（遗留蓝图模块节点 35-94 + production 代码节点），**非 A 集**。A 集（design_node 65178-65214）为 §4.1 目标矩阵 SSoT，已完整落地 37 节点 56 边、0 环、F1 出度=4 类型齐。B/C 集对齐 A 集的工作由 §11.2 阶段 1-3 推进，不属本勘误范围。
 
 ### 11.6.2 §8.4设计态节点清单重评
 
-§8.4原列18个需新建设计态节点，基于v0.3.10状态盘点（有误判）。v0.4.1修正后重评：
+§8.4原列18个需新建设计态节点，基于v0.3.10状态盘点（有误判）。v0.4.2修正后重评（A集design_node 65178-65214已建全37个占位节点）：
 
 | 功能 | §8.4原判定 | v0.4.1修正 | 是否需建设计态节点 |
 |:---:|:---:|:---:|:---:|
@@ -847,12 +850,12 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | F24 | 需建 | 运营态(skill_*.py 60+文件) | ❌ 不需要 |
 | F27-F32 | 需建 | 运营态 | ❌ 不需要 |
 | F33 | 需建 | 运营态(local_model/) | ❌ 不需要 |
-| F34 | 需建 | 运营态⚠️(70文件，路径漂移) | ❌ 不需要 |
-| F35 | 需建 | 有蓝图(GOV-FSTR-001)，代码待核实 | ⚠️ 待核实 |
+| F34 | 需建 | 设计态(`code_dedup_engine/`不存在) | ✅ A集已建(design_node) |
+| F35 | 需建 | 设计态(蓝图在`_restructuring/blueprint.md`，代码未实现) | ✅ A集已建(design_node) |
 | F36 | 需建 | 运营态(audit_trail/ 60+文件) | ❌ 不需要 |
 | F37 | 需建 | 运营态(resource_optimization_engine.py) | ❌ 不需要 |
 
-**结论**：§8.4的18个设计态节点中，17个功能实际已运营态（有代码），无需建设计态节点。仅F35待核实。§8.4清单基于v0.3.10错误盘点，需以v0.4.1修正为准。
+**结论（v0.4.2 作废原判定）**：A集 design_node（id 65178-65214）已为全部 37 个功能建立占位节点并完整落地 §4.1 目标矩阵（37 节点 56 边、0 环、F1 出度=4 类型齐）。§8.4 的 18 个需建节点**全部已在 A 集建全**，原 v0.4.1"17 个已运营态无需建"结论作废——"运营态(有代码)"与"设计态节点(全景图占位)"是两个独立维度，运营态功能同样在 A 集建有 design_node。F34/F35 经 v0.4.2 实测确认为设计态（代码均未实现）。
 
 ### 11.6.3 工具能力缺口（apply_depgraph.py）
 
@@ -860,17 +863,18 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 | §11.2引用命令 | apply_depgraph.py实际 | 状态 | 影响 |
 |:------|:------|:---:|------|
-| `--delete-edges` | 不存在 | ❌ | §8.1删除23条循环边无法执行 |
-| `--add-edges` | `--add-design-edge`（仅限design→design） | ⚠️ | §8.2多数边涉及production节点，无法添加 |
-| `--update-types` | 不存在 | ❌ | §8.3 DIP边类型修改无法执行 |
-| `--add-nodes` | `--add-design-node`（需path/结尾+blueprint_id+domain_id） | ✅ | §8.4可执行，但v0.4.1重评后多数不需要 |
+| `--delete-design-edge` | ✅ 已实现 | ✅ | §8.1删除24条循环边；B集已用此删7条design边(commit 89b0a946) |
+| `--add-edge` | ✅ 已实现（通用，不限maturity，配合`--dep-type`/`--dep-maturity`） | ✅ | §8.2可执行；C集已用此加3条production边(commit c87d13e9) |
+| `--update-edge-type` | ✅ 已实现 | ✅ | §8.3 DIP边类型修改可执行；B集已用此改e70218为data |
+| `--delete-edge` | ✅ 已实现（不限maturity，--add-edge对偶） | ✅ | 加错边单条回滚 |
+| `--add-nodes` | `--add-design-node`（需path/结尾+blueprint_id+domain_id） | ✅ | §8.4可执行；A集已建全37个design_node |
 
-**阻塞项**：
-1. **§8.1删边**：apply_depgraph.py 无 `--delete-edge` 命令，23条循环边无法通过工具删除
-2. **§8.3 DIP改类型**：apply_depgraph.py 无 `--update-edge-type` 命令，F1→F3(contract)/F1→F14(event)无法修改
-3. **§8.2加边**：`--add-design-edge` 要求两端节点均为 design_maturity='design'，但F1等多数功能是production节点，无法添加design边
+**阻塞项（v0.4.2 全部解除）**：
+1. ~~§8.1删边~~：✅ `--delete-design-edge` 已实现，B集7条design边已删（commit 89b0a946）
+2. ~~§8.3 DIP改类型~~：✅ `--update-edge-type` 已实现，e70218 已改 data（commit 89b0a946）
+3. ~~§8.2加边~~：✅ `--add-edge` 已实现（不限 maturity），C集3条production边已加（commit c87d13e9）
 
-**待办**：需增强 apply_depgraph.py 支持：①删除design态边 ②修改边dep_type ③支持production→design混合边
+**待办（v0.4.2 已完成）**：✅ ①删除design态边 ②修改边dep_type ③支持production→design混合边。剩余 §8.1 全量 24 条边中未落地的部分由 §11.2 阶段 1-3 按计划推进。
 
 ***
 
@@ -893,3 +897,4 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.10 | 2026-06-24 | 循环审查§11.5功能实现状态盘点表修正7项：①F26文件数7→3（Glob验证boot*.py+lifecycle_manager.py=3文件）②F1文件数4→2（autopilot.py+start_brain.py，移除错误归属的orchestrator/目录，该目录属F23）③F5文件数8→7（Glob验证escalation*.py=7文件）④F8目录说明澄清（access_control/目录80+文件，其中RBAC相关11文件，非目录仅11文件）⑤F6目录说明澄清（drift_detection/目录51文件，其中7个核心文件，非目录仅7文件）⑥§11.5.2 F1路径修正（orchestrator/→start_brain.py）⑦§11.5.2 F5文件数8→7 |
 | 0.4.0 | 2026-06-24 | frontmatter标注status=implemented（v0.4.1调研发现为误标，实施未完成） |
 | 0.4.1 | 2026-06-25 | 三方对齐调研修正：①status: implemented→draft（§10验证清单6项FAIL，实施未完成）②F34: 设计态→运营态⚠️（实测70个代码文件，路径漂移）③F35: 设计态→有蓝图（GOV-FSTR-001 v4.2.0存在）④F20: 未发现→已吸收（吸收进shared_core MOD-INF-016）⑤§11.5.3同步修正⑥新增§11.6调研发现与工具能力缺口⑦标记phase_d_full_test_construction_plan.md为Superseded（F编号体系B过时）⑧phase_d_ai_prompts.md引用修正 |
+| 0.4.2 | 2026-06-25 | 三方对齐实施收口：①B集清理——删7条design边+e70218改data，打破4环(3×2节点+1×3节点)，commit 89b0a946 ②C集接线——F1(autopilot.py)补F1→F14(event)/F1→F21(runtime)/F1→F23(runtime)三条production边，commit c87d13e9 ③工具增强——apply_depgraph.py新增--add-edge/--delete-edge/--update-edge-type/--delete-blueprint-link/--dep-type/--dep-maturity，commit 2ac49ce9 ④F34修正为设计态(code_dedup_engine/不存在) ⑤F35修正为设计态(蓝图GOV-FSTR-001实际存在于_restructuring/blueprint.md，非悬空) ⑥§11.6.1环数修正(6条→3×2节点+1×3节点，已清理→0) ⑦§11.6.2结论作废(A集design_node 65178-65214已建全37个占位节点) ⑧§11.6.3工具缺口关闭 ⑨§8.1边数23→24(表格实列24行) ⑩diagnose_depgraph.py实测循环依赖=0 |
