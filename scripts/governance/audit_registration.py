@@ -26,10 +26,12 @@
     python scripts/governance/audit_registration.py --full    # 显式全量扫描
     python scripts/governance/audit_registration.py --incremental  # 仅扫描 git 变更文件
     python scripts/governance/audit_registration.py --fix     # 交互式修复
+    python scripts/governance/audit_registration.py --full --save-baseline  # 保存当前孤儿为基线
+    python scripts/governance/audit_registration.py --incremental --baseline-aware  # 基线差分：仅 NEW 阻断
 
 返回码:
-    0 = CLEAN（无孤儿）
-    1 = 发现孤儿
+    0 = CLEAN（无孤儿，或 --baseline-aware 模式下仅有 PERSISTENT 孤儿）
+    1 = 发现孤儿（--baseline-aware 模式下仅有 NEW 孤儿时）
     2 = 扫描错误
 
 设计基线:
@@ -56,7 +58,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
-from _shared.constants import EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
@@ -144,6 +146,158 @@ class ZombieEntry:
     reference: str
     registry: str
     detail: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Finding 转换（接入 manage_baseline.py 基线差分机制）
+# ---------------------------------------------------------------------------
+
+# 基线存储路径（与 manage_baseline.py 的 _BASELINE_DIR 一致）
+_BASELINE_DIR = PROJECT_ROOT / "scripts" / "governance" / "meta" / "baselines"
+_AUDIT_BASELINE = _BASELINE_DIR / "audit_registration_baseline.jsonl"
+
+
+def _to_findings(ar: AuditResult) -> list[dict]:
+    """将 AuditResult 转换为 manage_baseline.py 的 Finding 格式。
+
+    Finding schema: {dimension, target: {file_path}, description, severity}
+    _finding_key = SHA256(dimension|target.file_path|description) 去重。
+    """
+    findings: list[dict] = []
+    for oe in ar.orphan_modules:
+        findings.append({
+            "dimension": "D1_module_orphan",
+            "target": {"file_path": oe.relative},
+            "description": f"未注册模块: {oe.package}" if oe.package else f"未注册模块: {oe.relative}",
+            "severity": "P2",
+        })
+    for oe in ar.orphan_scripts:
+        findings.append({
+            "dimension": "D2_script_orphan",
+            "target": {"file_path": oe.relative},
+            "description": f"未注册脚本: {oe.relative}",
+            "severity": "P2",
+        })
+    for oe in ar.orphan_gates:
+        findings.append({
+            "dimension": "D3_gate_orphan",
+            "target": {"file_path": oe.relative},
+            "description": f"未注册门禁: {oe.relative}",
+            "severity": "P2",
+        })
+    for ze in ar.zombie_references:
+        findings.append({
+            "dimension": "D4_zombie_reference",
+            "target": {"file_path": ze.reference},
+            "description": f"僵尸引用: {ze.registry} → {ze.reference}",
+            "severity": "P2",
+        })
+    for p in ar.missing_all:
+        rel = p.relative_to(PROJECT_ROOT).as_posix() if p.is_absolute() else str(p)
+        findings.append({
+            "dimension": "D5_missing_all",
+            "target": {"file_path": rel},
+            "description": f"__init__.py 缺 __all__: {rel}",
+            "severity": "P2",
+        })
+    return findings
+
+
+def _save_baseline(findings: list[dict]) -> dict:
+    """将 findings 保存为 audit_registration 专用基线。
+
+    使用 manage_baseline.save_baseline 的逻辑，但写入独立文件
+    audit_registration_baseline.jsonl（不覆盖 phase_e_full 基线）。
+    """
+    _BASELINE_DIR.mkdir(parents=True, exist_ok=True)
+    from datetime import UTC, datetime
+    import json
+
+    timestamp = datetime.now(UTC)
+    ts_str = timestamp.strftime("%Y%m%dT%H%M%SZ")
+
+    # 写入版本化备份
+    versioned_path = _BASELINE_DIR / f"audit_registration-{ts_str}.jsonl"
+    tmp_path = f"{versioned_path}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        for finding in findings:
+            f.write(json.dumps(finding, ensure_ascii=False) + "\n")
+    import os
+    os.replace(tmp_path, versioned_path)
+
+    # 写入 current 指针
+    tmp_path = f"{_AUDIT_BASELINE}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        for finding in findings:
+            f.write(json.dumps(finding, ensure_ascii=False) + "\n")
+    os.replace(tmp_path, _AUDIT_BASELINE)
+
+    meta = {
+        "saved_at": timestamp.isoformat(),
+        "finding_count": len(findings),
+        "source": "audit_registration.py --save-baseline",
+        "label": f"audit_registration-{ts_str}",
+        "file": str(versioned_path.relative_to(PROJECT_ROOT)),
+    }
+    return meta
+
+
+def _compare_with_baseline(findings: list[dict]) -> dict | None:
+    """对比当前 findings 与基线，返回 NEW/RESOLVED/PERSISTENT 分类。
+
+    返回 None 表示基线不存在（调用方应回退为全量阻断模式）。
+    """
+    if not _AUDIT_BASELINE.exists():
+        return None
+
+    import hashlib
+    import json
+
+    def _finding_key(f: dict) -> str:
+        raw = f"{f.get('dimension', '')}|{f.get('target', {}).get('file_path', '')}|{f.get('description', '')}"
+        return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+    # 加载基线
+    baseline_findings: list[dict] = []
+    with open(_AUDIT_BASELINE, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                baseline_findings.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+
+    current_index = {_finding_key(f): f for f in findings}
+    baseline_index = {_finding_key(f): f for f in baseline_findings}
+
+    new_keys = set(current_index.keys()) - set(baseline_index.keys())
+    resolved_keys = set(baseline_index.keys()) - set(current_index.keys())
+    persistent_keys = set(current_index.keys()) & set(baseline_index.keys())
+
+    classified: list[dict] = []
+    for key in new_keys:
+        f = dict(current_index[key])
+        f["baseline_status"] = "NEW"
+        classified.append(f)
+    for key in resolved_keys:
+        f = dict(baseline_index[key])
+        f["baseline_status"] = "RESOLVED"
+        classified.append(f)
+    for key in persistent_keys:
+        f = dict(current_index[key])
+        f["baseline_status"] = "PERSISTENT"
+        classified.append(f)
+
+    return {
+        "current_total": len(findings),
+        "baseline_total": len(baseline_findings),
+        "new_count": len(new_keys),
+        "resolved_count": len(resolved_keys),
+        "persistent_count": len(persistent_keys),
+        "classified": classified,
+    }
 
 
 def audit(changed_files: set[Path] | None = None) -> AuditResult:
@@ -648,6 +802,16 @@ def main() -> None:
     parser.add_argument("--compact", action="store_true", help="紧凑输出")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出（供 AI/MCP 消费）")
     parser.add_argument("--fix", action="store_true", help="交互式修复孤儿")
+    parser.add_argument(
+        "--save-baseline",
+        action="store_true",
+        help="将当前 findings 保存为基线（用于初始化存量孤儿快照）",
+    )
+    parser.add_argument(
+        "--baseline-aware",
+        action="store_true",
+        help="增量模式下对比基线：仅 NEW 孤儿阻断(exit 1)，PERSISTENT 孤儿降级为告警(exit 0)",
+    )
     args = parser.parse_args()
 
     # 确定扫描模式
@@ -668,6 +832,74 @@ def main() -> None:
         print(f"ERROR: 审计失败: {e}", file=sys.stderr)
         sys.exit(EXIT_ERROR)
 
+    # ── --save-baseline 模式：保存基线后 exit 0 ──
+    if args.save_baseline:
+        findings = _to_findings(ar)
+        meta = _save_baseline(findings)
+        print(f"[BASELINE] 已保存 {meta['finding_count']} 条 findings 为基线")
+        print(f"  文件: {meta['file']}")
+        print(f"  时间: {meta['saved_at']}")
+        sys.exit(EXIT_PASS)
+
+    # ── --baseline-aware 模式：增量扫描对比基线 ──
+    if args.baseline_aware and args.incremental:
+        findings = _to_findings(ar)
+        comparison = _compare_with_baseline(findings)
+
+        if comparison is None:
+            # 基线不存在 → 回退为全量阻断 + 提示
+            if not ar.is_clean:
+                print(
+                    f"[WARN] 基线不存在，无法区分 NEW/PERSISTENT。"
+                    f"当前 {ar.total_issues} 条 findings 全部按阻断处理。"
+                    f"请运行 --save-baseline 初始化基线。",
+                    file=sys.stderr,
+                )
+            # 回退为当前行为（exit 1 if any findings）
+            print(print_report(ar, compact=args.compact))
+            sys.exit(EXIT_PASS if ar.is_clean else EXIT_FINDINGS)
+
+        # 基线存在 → 分类输出
+        new_findings = [f for f in comparison["classified"] if f["baseline_status"] == "NEW"]
+        persistent_findings = [f for f in comparison["classified"] if f["baseline_status"] == "PERSISTENT"]
+        resolved_findings = [f for f in comparison["classified"] if f["baseline_status"] == "RESOLVED"]
+
+        print(f"\n{'=' * 60}")
+        print(f"  RULE-TWO 注册审计（基线差分模式）")
+        print(f"{'=' * 60}")
+        print(f"  当前: {comparison['current_total']}, 基线: {comparison['baseline_total']}")
+        print(f"  🆕 NEW: {comparison['new_count']}（阻断）")
+        print(f"  ✅ RESOLVED: {comparison['resolved_count']}（已解决）")
+        print(f"  🔄 PERSISTENT: {comparison['persistent_count']}（存量，不阻断）")
+
+        if new_findings:
+            print(f"\n  [NEW] 本次变更新引入的孤儿（必须修复）:")
+            for f in new_findings:
+                fp = f.get("target", {}).get("file_path", "?")
+                desc = f.get("description", "")[:100]
+                print(f"    {fp}: {desc}")
+
+        if persistent_findings:
+            print(f"\n  [PERSISTENT] 存量孤儿（不阻断，需后续专项治理）:")
+            for f in persistent_findings[:20]:
+                fp = f.get("target", {}).get("file_path", "?")
+                print(f"    {fp}")
+            if len(persistent_findings) > 20:
+                print(f"    ...（共 {len(persistent_findings)} 个）")
+
+        if resolved_findings:
+            print(f"\n  [RESOLVED] 本次变更解决的存量孤儿:")
+            for f in resolved_findings[:10]:
+                fp = f.get("target", {}).get("file_path", "?")
+                print(f"    {fp}")
+            if len(resolved_findings) > 10:
+                print(f"    ...（共 {len(resolved_findings)} 个）")
+
+        print(f"\n{'=' * 60}")
+        # 仅 NEW > 0 时 exit 1；PERSISTENT only → exit 0
+        sys.exit(EXIT_FINDINGS if comparison["new_count"] > 0 else EXIT_PASS)
+
+    # ── 默认输出模式（无 baseline-aware）──
     if args.json:
         import json
 
@@ -688,7 +920,7 @@ def main() -> None:
     if args.fix and not ar.is_clean:
         _interactive_fix(ar)
 
-    sys.exit(0 if ar.is_clean else 1)
+    sys.exit(EXIT_PASS if ar.is_clean else EXIT_FINDINGS)
 
 
 def _interactive_fix(ar: AuditResult) -> None:
@@ -722,34 +954,60 @@ def _interactive_fix(ar: AuditResult) -> None:
 
 
 def _auto_register_module(oe: OrphanEntry) -> None:
-    """自动将模块注册到 __init__.py。"""
+    """自动将模块注册到 __init__.py（DM-367 约定：注册 module_name 而非 class_name）。
+
+    治本（OPS-A3）：
+      - 不再臆造 PascalCase class_name（原 L961 假设模块导出同名类，对纯模块注册错误）
+      - 注册 module_name 到 __all__（与 shared/contracts/__init__.py DM-367 段一致）
+      - 修复 regex（原 L971 `\\[__all__` 匹配字面量 `[__all__`，永远失败）
+      - __all__ 无法机械定位时降级为提示，不写坏文件
+    """
     pkg_path = SRC_ZEPHYR / oe.package.replace(".", "/")
     init_py = pkg_path / "__init__.py"
     module_name = oe.path.stem
-    class_name = "".join(p.capitalize() for p in module_name.split("_"))
 
-    import_line = f"from zephyr.{oe.package.replace('/', '.').replace('\\', '.')}.{module_name} import {class_name}"
+    if not init_py.exists():
+        print(f'    HINT: {init_py} 不存在，需手动创建并声明 __all__ 含 "{module_name}"')
+        return
 
-    if init_py.exists():
-        content = init_py.read_text(encoding="utf-8")
-        if import_line not in content:
-            content = import_line + "\n" + content
+    content = init_py.read_text(encoding="utf-8")
+    changed = False
+
+    # 1. 确保 `from . import <module_name>` 存在（DM-367 re-export 约定）
+    import_line = f"from . import {module_name}"
+    if import_line not in content:
         if "__all__" in content:
-            if class_name not in content:
-                pattern = r"(\[__all__\s*=\s*\[)(.*?)(\])"
-                match = re.search(pattern, content, re.DOTALL)
-                if match:
-                    mid = match.group(2)
-                    entries = [e.strip().strip('"').strip("'") for e in mid.split(",") if e.strip()]
-                    entries.append(class_name)
-                    new_mid = "\n    " + ",\n    ".join(f'"{e}"' for e in sorted(set(entries))) + ",\n"
-                    content = content[: match.start(2)] + new_mid + content[match.end(2) :]
-                else:
-                    content += f'\n__all__.append("{class_name}")\n'
+            idx = content.index("__all__")
+            content = content[:idx] + import_line + "\n" + content[idx:]
         else:
-            content += f'\n__all__ = [\n    "{class_name}",\n]\n'
+            content += f"\n{import_line}\n"
+        changed = True
+
+    # 2. 注册 module_name 到 __all__
+    if f'"{module_name}"' in content or f"'{module_name}'" in content:
+        pass  # 已注册
+    elif "__all__" in content:
+        # 修复后的 regex：匹配 __all__ = [...]（原 `\[__all__` 误匹配字面量 `[__all__`）
+        pattern = r"(__all__\s*=\s*\[)(.*?)(\])"
+        match = re.search(pattern, content, re.DOTALL)
+        if match:
+            mid = match.group(2)
+            entries = [e.strip().strip('"').strip("'") for e in mid.split(",") if e.strip()]
+            entries.append(module_name)
+            new_mid = "\n    " + ",\n    ".join(f'"{e}"' for e in entries) + ",\n"
+            content = content[: match.start(2)] + new_mid + content[match.end(2) :]
+            changed = True
+        else:
+            # __all__ 存在但无法机械定位（如 __all__.append 模式），追加 append
+            content += f'\n__all__.append("{module_name}")\n'
+            changed = True
     else:
-        content = f'{import_line}\n\n__all__ = [\n    "{class_name}",\n]\n'
+        content += f'\n__all__ = [\n    "{module_name}",\n]\n'
+        changed = True
+
+    if not changed:
+        print(f"    SKIP {module_name}（已注册于 {init_py}）")
+        return
 
     import os
 
@@ -760,32 +1018,24 @@ def _auto_register_module(oe: OrphanEntry) -> None:
 
 
 def _auto_register_script(oe: OrphanEntry) -> None:
-    """自动将脚本注册到 script_manifest.yaml（壳层注册，generate_manifest.py 可后续覆盖）。"""
-    if not SCRIPT_MANIFEST.exists():
-        print(f"    ERROR: {SCRIPT_MANIFEST} 不存在")
-        return
+    """自动将脚本注册到 script_manifest.yaml——委托 canonical generator。
 
-    import os
+    治本（OPS-A3）：不再手动 yaml.dump（会丢弃 # Auto-generated 头注释并重排格式，
+    与 generate_manifest.py 输出不一致），改为调用 generate_manifest.py 全量重生成，
+    保证 SSoT 一致性。
+    """
+    import subprocess
 
-    manifest = yaml.safe_load(SCRIPT_MANIFEST.read_text(encoding="utf-8")) or {}
-    scripts = manifest.get("scripts", [])
-
-    entry = {
-        "path": oe.relative,
-        "description": f"{oe.path.stem} 脚本",
-        "domain": oe.relative.split("/")[0] if "/" in oe.relative else "root",
-        "execution_plane": "warm-path",
-        "status": "registered",
-    }
-    scripts.append(entry)
-    manifest["scripts"] = scripts
-    manifest["total_scripts"] = len(scripts)
-
-    new_content = yaml.dump(manifest, default_flow_style=False, allow_unicode=True, sort_keys=False)
-    tmp_path = Path(str(SCRIPT_MANIFEST) + f".{os.getpid()}.tmp")
-    tmp_path.write_text(new_content, encoding="utf-8")
-    os.replace(str(tmp_path), str(SCRIPT_MANIFEST))
-    print(f"    REGISTERED {oe.relative} → script_manifest.yaml")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPTS_DIR / "generate_manifest.py")],
+        capture_output=True,
+        text=True,
+        cwd=str(PROJECT_ROOT),
+    )
+    if result.returncode == 0:
+        print(f"    REGISTERED {oe.relative} → script_manifest.yaml (via generate_manifest.py)")
+    else:
+        print(f"    ERROR: generate_manifest.py 失败: {result.stderr}", file=sys.stderr)
 
 
 if __name__ == "__main__":
