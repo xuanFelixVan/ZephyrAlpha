@@ -27,9 +27,9 @@ AGENTS.md §6.14 漂移免疫架构原则 Level 3：
         OpenAPI code generators（spec → 类型自动生成）
 
 派生链：
-  1. vocabularies/{field}-vocabulary.yaml → frontmatter-field-registry.md (allowed_values)
-  2. vocabularies/{field}-vocabulary.yaml → architecture-contract.yaml (allowed_values)
-  3. vocabularies/{field}-vocabulary.yaml → frontmatter-schema.json (enum)
+  1. vocabularies/{field}_vocabulary.yaml → frontmatter_field_registry.yaml (allowed_values/enum_values)
+  2. vocabularies/{field}_vocabulary.yaml → architecture_contract.yaml (allowed_values)
+  3. vocabularies/{field}_vocabulary.yaml → frontmatter_schema.json (oneOf+const)
 
 使用方式：
   python generate_derived_files.py --check    # 仅检查，不修改文件
@@ -78,16 +78,16 @@ CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 
-FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.md"
-ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture-contract.yaml"
-SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter-schema.json"
+FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter_field_registry.yaml"
+ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture_contract.yaml"
+SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter_schema.json"
 
 VOCAB_FIELD_MAP = {
-    "doc_type": "doc_type-vocabulary.yaml",
-    "status": "status-vocabulary.yaml",
-    "rule_form": "rule_form-vocabulary.yaml",
-    "ttl": "ttl-vocabulary.yaml",
-    "layer": "layer-vocabulary.yaml",
+    "doc_type": "doc_type_vocabulary.yaml",
+    "status": "status_vocabulary.yaml",
+    "rule_form": "rule_form_vocabulary.yaml",
+    "ttl": "ttl_vocabulary.yaml",
+    "layer": "layer_vocabulary.yaml",
 }
 
 _drifts: list[str] = []
@@ -132,7 +132,7 @@ def _load_vocab_values(vocab_name: str) -> tuple[list[str], list[str]]:
 
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
-    """同步 frontmatter-field-registry.md 中的 allowed_values
+    """同步 frontmatter_field_registry.yaml 中的 allowed_values/enum_values
 
     field_registry 有两种枚举表示：
     - allowed_values: 简单值列表（部分字段）
@@ -175,24 +175,34 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
             if apply and "allowed_values" in field:
                 field["allowed_values"] = [v for v in field.get("allowed_values", []) if str(v) in vocab_set]
                 changed = True
+            elif apply and "enum_values" in field:
+                field["enum_values"] = [
+                    ev for ev in field.get("enum_values", [])
+                    if (isinstance(ev, dict) and str(ev.get("value") or ev.get("id") or "") in vocab_set)
+                    or (isinstance(ev, str) and ev in vocab_set)
+                ]
+                changed = True
 
     if changed and apply:
         tmp_path = f"{FIELD_REGISTRY_PATH}.{os.getpid()}.tmp"
         try:
-            with open(tmp_path, encoding="utf-8") as f:
+            with open(tmp_path, "w", encoding="utf-8") as f:
                 yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
             os.replace(tmp_path, FIELD_REGISTRY_PATH)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        except (PermissionError, OSError):
+            pass
+        finally:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
     return changed
 
 
 def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -> bool:
-    """同步 architecture-contract.yaml 中的 allowed_values（仅同步 vocabulary 的子集）"""
+    """同步 architecture_contract.yaml 中的 allowed_values（仅同步 vocabulary 的子集）"""
     if not ARCH_CONTRACT_PATH.exists():
         return False
     try:
@@ -224,23 +234,26 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
     if changed and apply:
         tmp_path = f"{ARCH_CONTRACT_PATH}.{os.getpid()}.tmp"
         try:
-            with open(tmp_path, encoding="utf-8") as f:
+            with open(tmp_path, "w", encoding="utf-8") as f:
                 yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
             os.replace(tmp_path, ARCH_CONTRACT_PATH)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        except (PermissionError, OSError):
+            pass
+        finally:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
     return changed
 
 
 def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> bool:
-    """同步 frontmatter-schema.json 中的 enum 数组
+    """同步 frontmatter_schema.json 中的 oneOf+const（或 enum）数组
 
     schema_json 中 enum 可能是字符串数组或带描述的对象数组，
-    需要正确提取当前值进行比对。
+    oneOf+const 用于更结构化的枚举定义，需要正确提取当前值进行比对。
     """
     if not SCHEMA_JSON_PATH.exists():
         return False
@@ -277,22 +290,33 @@ def _sync_schema_json(field_name: str, vocab_values: list[str], apply: bool) -> 
     if extra:
         _drift(f"schema_json.{field_name}: 多出 {len(extra)} 个不在 vocabulary 中的值: {sorted(extra)[:5]}")
         if apply:
-            prop["enum"] = [v for v in current_enum if isinstance(v, str) and v in vocab_set]
+            if "oneOf" in prop:
+                prop["oneOf"] = [
+                    item for item in prop.get("oneOf", [])
+                    if isinstance(item, dict)
+                    and str(item.get("const", "")) in vocab_set
+                ]
+                prop.pop("enum", None)
+            elif "enum" in prop:
+                prop["enum"] = [v for v in current_enum if isinstance(v, str) and v in vocab_set]
             changed = True
 
     if changed and apply:
         tmp_path = f"{SCHEMA_JSON_PATH}.{os.getpid()}.tmp"
         try:
-            with open(tmp_path, encoding="utf-8") as f:
+            with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
                 f.write("\n")
 
             os.replace(tmp_path, SCHEMA_JSON_PATH)
-        except PermissionError:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
+        except (PermissionError, OSError):
+            pass
+        finally:
+            if os.path.exists(tmp_path):
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
     return changed
 
 
