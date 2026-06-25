@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。
 
 > 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 18:42:33
+> 最后更新: 2026-06-25 20:00:21
 > 数据源: depgraph.db arch_constraints表
 
 ## 统计概览

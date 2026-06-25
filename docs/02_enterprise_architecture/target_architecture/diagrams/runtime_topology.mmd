@@ -1,18 +1,18 @@
-%% 重写时间: 2026-06-23 (DM-200913 Phase4-B)
-%% 基于§2.1裁定: 14层降级为域属性，43域为唯一物理分类体系
+%% 重写时间: 2026-06-25 (DM-200913 Phase4-B)
+%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
 %% 数据源: depgraph.db
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
 %% Source: technology_architecture.md §3.2
-%% v2.0.0: 14层节点→43域节点，保留P0跨层契约标注
+%% v2.0.0: 14层节点→52域节点，保留P0跨层契约标注
 
 graph TD
     subgraph HOST["Host Machine（当前：Windows / 计划：Linux）"]
         subgraph MAIN["ZephyrAlpha Main Process (Python)"]
             direction TB
             D_MKT_DATA["D-MKT_DATA<br/>行情数据"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| D_FACTOR["D-FACTOR<br/>因子"]
-            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D-SIGNAL<br/>信号"]
+            D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D-SIGLEGACY<br/>信号"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_RISK["D-RISK<br/>风控"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_PF_CORE["D-PF_CORE<br/>组合"]
             D_RISK -->|"🔒 CTR-003<br/>RiskLimits"| D_PF_CORE

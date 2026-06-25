@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示各功能域模块在数据平面、控制平面、管理平面的分布，用于分析系统运行时职责划分。
 
 > 本文档由 generate_runtime_plane_mapping.py 从 depgraph.db 自动生成
-> 最后更新 / Last updated: 2026-06-25 18:42:33
+> 最后更新 / Last updated: 2026-06-25 20:00:21
 > 数据源 / Data source: depgraph.db nodes表 runtime_plane 字段
 
 > 注：数据库 runtime_plane 字段采用 SDN 风格三平面分类（data/control/management），

@@ -1,5 +1,5 @@
-%% 重写时间: 2026-06-23 (DM-200913 Phase4-B)
-%% 基于§2.1裁定: 14层降级为域属性，43域为唯一物理分类体系
+%% 重写时间: 2026-06-25 (DM-200913 Phase4-B)
+%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
 %% 数据源: depgraph.db
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
@@ -37,7 +37,7 @@ C4Component
 
     Container_Ext(d_mkt_data, "D-MKT_DATA 行情数据", "Python / D-MKT_DATA/", "原始数据 via IDataSource")
 
-    Container_Ext(d_signal_pf, "D-SIGNAL/D-PF_CORE 信号&组合", "Python / D-SIGNAL + D-PF_CORE/", "下游推理消费者")
+    Container_Ext(d_signal_pf, "D-SIGLEGACY/D-PF_CORE 信号&组合", "Python / D-SIGLEGACY + D-PF_CORE/", "下游推理消费者")
 
     Container_Ext(d_intelligence, "D-INTELLIGENCE 战略决策", "Python / D-INTELLIGENCE/", "A/B 实验与批跑研究")
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示各功能域的模块数量与容量上限对比，识别超容域和接近超容域，为域拆分决策提供依据。
 
 > 本文档由 generate_capacity_report.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 18:42:33
+> 最后更新: 2026-06-25 20:00:21
 > 数据源: depgraph.db domains表 + nodes表
 
 ## 统计概览

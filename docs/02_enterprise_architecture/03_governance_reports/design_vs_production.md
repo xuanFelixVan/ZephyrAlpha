@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。
 
 > 本文档由 generate_design_vs_production.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 18:42:33
+> 最后更新: 2026-06-25 20:00:21
 > 数据源: depgraph.db nodes表
 
 ## 全局统计

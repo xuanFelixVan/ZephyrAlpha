@@ -1,11 +1,11 @@
-%% 重写时间: 2026-06-23 (DM-200913 Phase4-B)
-%% 基于§2.1裁定: 14层降级为域属性，43域为唯一物理分类体系
+%% 重写时间: 2026-06-25 (DM-200913 Phase4-B)
+%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
 %% 数据源: depgraph.db
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
 %% Source: integration_architecture.md §3
-%% v2.0.0: 14层节点→43域节点，保留P0跨层契约标注
+%% v2.0.0: 14层节点→52域节点，保留P0跨层契约标注
 
 graph LR
     subgraph External["外部系统 External Systems"]
@@ -26,7 +26,7 @@ graph LR
         D_MKT_DATA["D-MKT_DATA<br/>行情数据"]
         D_ALT_DATA["D-ALT_DATA<br/>另类数据"]
         D_FACTOR["D-FACTOR<br/>因子"]
-        D_SIGNAL["D-SIGNAL<br/>信号"]
+        D_SIGNAL["D-SIGLEGACY<br/>信号"]
         D_RISK["D-RISK<br/>风控"]
         D_PF_CORE["D-PF_CORE<br/>组合核心"]
         D_EX_CORE["D-EX_CORE<br/>执行核心"]
@@ -55,8 +55,8 @@ graph LR
     %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
     D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D-MKT_DATA → D-FACTOR" --> D_FACTOR
 
-    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGNAL/D-RISK/D-PF_CORE
-    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGNAL" --> D_SIGNAL
+    %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
+    D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGLEGACY" --> D_SIGNAL
     D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-RISK" --> D_RISK
     D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-PF_CORE" --> D_PF_CORE
 

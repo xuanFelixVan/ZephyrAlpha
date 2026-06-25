@@ -30,14 +30,14 @@ consumers:
     registered_consumers:
       - {domain: D-MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-SIGNAL, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-RISK, module: "metrics_warm", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-SIMULATION, module: "research_innovation", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-002
     contract_name: FactorSignal
     registered_consumers:
-      - {domain: D-SIGNAL, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
@@ -79,7 +79,7 @@ consumers:
     contract_name: TraceContext
     registered_consumers:
       - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-SIGNAL, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
@@ -95,7 +95,7 @@ consumers:
   - contract_id: CTR-ERR-002
     contract_name: FactorComputationError
     registered_consumers:
-      - {domain: D-SIGNAL, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-ERR-003
@@ -142,7 +142,7 @@ consumers:
     contract_name: SystemConfiguration
     registered_consumers:
       - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-SIGNAL, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}

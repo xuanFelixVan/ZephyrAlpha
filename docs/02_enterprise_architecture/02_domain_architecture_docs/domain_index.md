@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 列出所有功能域的编号、ID、名称、层级、模块数等基本信息，是域架构文档的入口索引。
 
 > 本文档由 generate_domain_index.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 18:42:17
+> 最后更新: 2026-06-25 20:00:20
 > 数据源: depgraph.db domains表 + nodes表
 
 ## 统计概览

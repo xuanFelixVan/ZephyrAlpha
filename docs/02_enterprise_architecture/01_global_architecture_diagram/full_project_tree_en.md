@@ -1,3 +1,7 @@
+---
+ttl: permanent
+---
+
 # ZephyrAlpha Full Project Directory Tree / 全项目目录树
 
 > **Purpose**: Display all top-level directories and subdirectories of the entire project in a tree structure for quick location of code/scripts/docs/config/data.

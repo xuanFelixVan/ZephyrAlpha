@@ -1,3 +1,7 @@
+---
+ttl: permanent
+---
+
 # ZephyrAlpha 全项目目录树 / Full Project Directory Tree
 
 > **文档作用**: 以树状结构展示全项目的所有顶级目录及子目录，用于快速定位代码/脚本/文档/配置/数据。

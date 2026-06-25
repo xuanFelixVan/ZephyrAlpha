@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
 
 > 本文档由 generate_capability_heatmap.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 18:42:33
+> 最后更新: 2026-06-25 20:00:21
 > 数据源: depgraph.db domains表 + nodes表 (注: arch_domain_capacity表不存在，v6已合并入domains表)
 
 ## 统计概览 / Statistics Overview

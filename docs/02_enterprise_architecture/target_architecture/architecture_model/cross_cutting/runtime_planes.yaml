@@ -127,15 +127,15 @@ planes:
         submodule: evaluation/（real-time IC）
         note: 实时信息系数计算
       - id: l03-signals-default
-        domain: D-SIGNAL
+        domain: D-SIGLEGACY
         submodule: signals/（default）
         note: 默认信号输出
       - id: l03-sentiment
-        domain: D-SIGNAL
+        domain: D-SIGLEGACY
         submodule: sentiment/
         note: 情绪分析
       - id: l03-predictions
-        domain: D-SIGNAL
+        domain: D-SIGLEGACY
         submodule: predictions/（AI推理）
         note: AI 推理信号
       - id: l04-metrics-warm
@@ -300,7 +300,7 @@ planes:
         submodule: registry/
         note: 因子注册表持久化
       - id: l03-sentiment-batch
-        domain: D-SIGNAL
+        domain: D-SIGLEGACY
         submodule: sentiment/（历史批量分析）
         note: 情绪历史批量
       - id: l04-metrics-cold

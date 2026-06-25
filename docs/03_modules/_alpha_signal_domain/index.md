@@ -7,13 +7,13 @@ title: Alpha Signal Domain（遗留）
 module_id: MOD-002
 updated: '2026-06-22'
 version: 1.1.0
+ttl: permanent
 ---
-
 # Alpha Signal Domain — 目录索引（遗留）
 
-> ⚠️ **遗留目录**：本域已被 D-SIGNAL（信号生成域）取代。待 RULE-THREE 审判后删除或合并。
+> ⚠️ **遗留目录**：本域已被 D-SIGLEGACY（信号生成域）取代。待 RULE-THREE 审判后删除或合并。
 >
-> ⚠️ **裁定#204 追加说明（2026-06-25）**：上文提到的 D-SIGNAL 域已改名——D-SIGNAL → D-SIGLEGACY（信号遗留设计态），其 3 个子域亦同步改名：D-SIGNAL_ASHARE → D-ASHARE_SIGNAL，D-SIGNAL_FUNDAMENTAL → D-FUNDAMENTAL_SIGNAL，D-SIGNAL_QUALITY → D-SIGQC。本遗留文档中的旧名保留为历史上下文。
+> ⚠️ **裁定#204 追加说明（2026-06-25）**：上文提到的 D-SIGLEGACY 域已改名——D-SIGLEGACY → D-SIGLEGACY（信号遗留设计态），其 3 个子域亦同步改名：D-ASHARE_SIGNAL → D-ASHARE_SIGNAL，D-FUNDAMENTAL_SIGNAL → D-FUNDAMENTAL_SIGNAL，D-SIGQC → D-SIGQC。本遗留文档中的旧名保留为历史上下文。
 
 ## 责任声明（Single Responsibility）
 

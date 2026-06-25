@@ -1,12 +1,12 @@
-%% 重写时间: 2026-06-23 (DM-200913 Phase4-B)
-%% 基于§2.1裁定: 14层降级为域属性，43域为唯一物理分类体系
+%% 重写时间: 2026-06-25 (DM-200913 Phase4-B)
+%% 基于§2.1裁定: 14层降级为域属性，52域为唯一物理分类体系
 %% 数据源: depgraph.db
 %% 图例: 🔒 = frozen (不可变契约) | 🔓 = mutable (可变契约，状态机)
 %% 契约真源: architecture_model/contracts/cross_layer_contracts.yaml
 
 %%{init: {'theme': 'default'}}%%
 %% Data Flow Diagram — ZephyrAlpha 2.0 Core Pipeline
-%% v2.0.0: 14层节点→43域节点，保留P0跨层契约标注
+%% v2.0.0: 14层节点→52域节点，保留P0跨层契约标注
 
 flowchart TD
     subgraph External["外部系统 External Systems"]
@@ -22,8 +22,8 @@ flowchart TD
         D_FACTOR["D-FACTOR<br/>Factor Calculation · Evaluation · Engineering<br/>因子计算 · 评估 · 工程"]
     end
 
-    subgraph D_SIGNAL_Grp["D-SIGNAL · 信号 / Signal Generation"]
-        D_SIGNAL["D-SIGNAL<br/>Sentiment · Signal Extraction · Predictions<br/>舆情 · 信号提取 · 预测"]
+    subgraph D_SIGNAL_Grp["D-SIGLEGACY · 信号 / Signal Generation"]
+        D_SIGNAL["D-SIGLEGACY<br/>Sentiment · Signal Extraction · Predictions<br/>舆情 · 信号提取 · 预测"]
     end
 
     subgraph D_RISK_Grp["D-RISK · 风控 / Risk Management"]
@@ -56,7 +56,7 @@ flowchart TD
     %% D-MKT_DATA → D-FACTOR: CTR-001 NormalizedMarketData (frozen)
     D_MKT_DATA -->|"🔒 CTR-001<br/>NormalizedMarketData<br/>[frozen]"| D_FACTOR
 
-    %% D-FACTOR → D-SIGNAL: CTR-002 FactorSignal (frozen)
+    %% D-FACTOR → D-SIGLEGACY: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_SIGNAL
 
     %% D-FACTOR → D-RISK: CTR-002 FactorSignal (frozen)
@@ -65,7 +65,7 @@ flowchart TD
     %% D-FACTOR → D-PF_CORE: CTR-002 FactorSignal (frozen)
     D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal<br/>[frozen]"| D_PF_CORE
 
-    %% D-SIGNAL → D-PF_CORE: 信号输入（非 P0 契约，内部调用）
+    %% D-SIGLEGACY → D-PF_CORE: 信号输入（非 P0 契约，内部调用）
     D_SIGNAL -->|"Signal<br/>预测信号"| D_PF_CORE
 
     %% D-RISK → D-PF_CORE: CTR-003 RiskLimits (frozen)

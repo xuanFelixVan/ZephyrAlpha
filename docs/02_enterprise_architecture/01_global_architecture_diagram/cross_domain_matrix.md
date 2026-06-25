@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。
 
 > 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 18:42:33
+> 最后更新: 2026-06-25 20:00:21
 > 数据源: depgraph.db edges表 + nodes表
 
 ## 统计概览

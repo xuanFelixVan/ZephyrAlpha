@@ -79,7 +79,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-MKT_DATA
-    target_domains: [D-FACTOR, D-SIGNAL, D-SIMULATION]
+    target_domains: [D-FACTOR, D-SIGLEGACY, D-SIMULATION]
     flow: "L00 Data Source → L02 Alpha Factor"
     physical_path: src/zephyr/shared/contracts/market_data.py
     stability: locked-5yr
@@ -129,7 +129,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-FACTOR
-    target_domains: [D-SIGNAL, D-RISK, D-PF_CORE]
+    target_domains: [D-SIGLEGACY, D-RISK, D-PF_CORE]
     flow: "L02 Alpha Factor → L03/L04/L05"
     physical_path: src/zephyr/shared/contracts/factor_signal.py
     stability: locked-5yr
@@ -345,7 +345,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-MKT_DATA
-    target_domains: [D-FACTOR, D-SIGNAL, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-ML_TRAIN]
+    target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-ML_TRAIN]
     flow: "L00 → L02 → L03 → L05 → L06 → L07（贯穿全链路）"
     physical_path: src/zephyr/shared/contracts/trace_context.py
     stability: locked-5yr
@@ -411,7 +411,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-FACTOR
-    target_domains: [D-SIGNAL]
+    target_domains: [D-SIGLEGACY]
     flow: "L02 Alpha Factor → L03 Signal Generation（错误路径）"
     physical_path: src/zephyr/shared/contracts/errors/factor_computation_error.py
     stability: locked-5yr
@@ -440,7 +440,7 @@ contracts:
     name: "SignalDegradationWarning / 信号质量下降警告"
     priority: P0
     frozen: true
-    source_domain: D-SIGNAL
+    source_domain: D-SIGLEGACY
     target_domains: [D-RISK, D-PF_CORE]
     flow: "L03 Signal Generation → L04/L05（降级通知）"
     physical_path: src/zephyr/shared/contracts/errors/signal_degradation_warning.py
@@ -676,7 +676,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-FACTOR
-    target_domains: [D-SIGNAL, D-PF_CORE]
+    target_domains: [D-SIGLEGACY, D-PF_CORE]
     flow: "L02（宏观因子计算）→ L03/L05"
     physical_path: src/zephyr/shared/contracts/macro_factor_signal.py
     stability: upgradable
@@ -700,7 +700,7 @@ contracts:
     name: "CapitalAllocationResult / 资本配置结果"
     priority: P1
     frozen: true
-    source_domain: D-SIGNAL
+    source_domain: D-SIGLEGACY
     target_domains: [D-PF_CORE]
     flow: "L03 Signal Generation → L05 Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/capital_allocation_result.py
@@ -724,7 +724,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-ML_TRAIN
-    target_domains: [D-SIGNAL, D-PF_CORE]
+    target_domains: [D-SIGLEGACY, D-PF_CORE]
     flow: "L11 ML Platform → L03/L05"
     physical_path: src/zephyr/shared/contracts/model_serving_request.py
     stability: upgradable
@@ -743,7 +743,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-ML_TRAIN
-    target_domains: [D-SIGNAL, D-PF_CORE]
+    target_domains: [D-SIGLEGACY, D-PF_CORE]
     flow: "L11 ML Platform → L03/L05"
     physical_path: src/zephyr/shared/contracts/model_serving_response.py
     stability: upgradable
@@ -879,7 +879,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-INFRA_OPS
-    target_domains: [D-FACTOR, D-SIGNAL, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-FRONTEND, D-SIMULATION, D-COMPLIANCE, D-ML_TRAIN, D-OPS]
+    target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-FRONTEND, D-SIMULATION, D-COMPLIANCE, D-ML_TRAIN, D-OPS]
     flow: "L01 Configuration Management → 全系统"
     physical_path: src/zephyr/shared/contracts/system_configuration.py
     stability: upgradable
@@ -1094,7 +1094,7 @@ contracts:
     name: "SynthesizedSignal / 合成交易信号"
     priority: P1
     frozen: true
-    source_domain: D-SIGNAL
+    source_domain: D-SIGLEGACY
     target_domains: [D-RISK, D-PF_CORE]
     flow: "L03 Signal Generation → L04 Risk Management / L05 Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/synthesized_signal.py
