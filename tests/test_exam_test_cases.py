@@ -123,7 +123,7 @@ class TestExamTestCaseDefaults:
 
 class TestAllExamCases:
     def test_count(self):
-        assert len(ALL_EXAM_CASES) == 87
+        assert len(ALL_EXAM_CASES) == 90
 
     def test_all_are_exam_test_case(self):
         for tc in ALL_EXAM_CASES:
@@ -169,7 +169,7 @@ class TestCasesByCapability:
 
     def test_total_cases_in_dict(self):
         total = sum(len(cases) for cases in CASES_BY_CAPABILITY.values())
-        assert total == 87
+        assert total == 90
 
     def test_difficulties_per_capability(self):
         for cap, cases in CASES_BY_CAPABILITY.items():

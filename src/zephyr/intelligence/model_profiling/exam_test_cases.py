@@ -38,6 +38,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
+# v3.0.5 Phase 3: 真实多文件注入装配器（极限深度 OLYMPIAD 题）
+from .case_assembler import assemble_real_context
+
 
 class Difficulty(Enum):
     EASY = "easy"
@@ -2299,6 +2302,151 @@ EX_OLY_006 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
+# v3.0.5 Phase 3: 极限深度——真实多文件注入 OLYMPIAD 题
+# 从项目 src/scripts 下读取真实治理文件 + 埋针/埋错，测大型工业能力。
+# ══════════════════════════════════════════════════════════
+
+# EX_OLY_007: architecture_design OLYMPIAD — 5 真实治理文件 + 1 埋错文件
+_OLY_007_FILES = [
+    "src/zephyr/trading/task_gate.py",
+    "scripts/git_commit.py",
+    "scripts/governance/verify_schema_health.py",
+    "scripts/governance/diagnose_depgraph.py",
+    "scripts/governance/audit_registration.py",
+]
+_OLY_007_NEEDLES = [
+    {  # 在 task_gate.py 注入一条不存在的跨文件依赖
+        "file": "task_gate.py",
+        "content": "from zephyr.governance.ghost_router import route_ghost_request  # cross-file dep",
+        "after": "from zephyr.intelligence.model_profiling.capability_passport import CapabilityPassport",
+    },
+]
+_OLY_007_GHOST_FILE = (  # 完全伪造的文件（埋错文件）
+    "ghost_router.py",
+    (
+        '"""Ghost router module — fabricated for architecture review."""\n'
+        "from zephyr.security.phantom_lock import acquire_phantom_session\n\n"
+        "def route_ghost_request(task_id, capability):\n"
+        '    """Route task to ghost executor (hallucinated function)."""\n'
+        "    lock = acquire_phantom_session(task_id)\n"
+        "    return lock.dispatch(capability)\n"
+    ),
+)
+_OLY_007_CONTEXT = assemble_real_context(
+    _OLY_007_FILES,
+    _OLY_007_NEEDLES,
+    max_chars_per_file=8000,
+    extra_files={_OLY_007_GHOST_FILE[0]: _OLY_007_GHOST_FILE[1]},
+)
+
+EX_OLY_007 = ExamTestCase(
+    case_id="EX-OLY-007",
+    capability="architecture_design",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "审阅以下真实多文件架构（5 个治理文件 + 1 个埋错文件），完成架构审查：\n"
+        "1. 还原文件清单与跨文件依赖关系（输出 files + dependencies）\n"
+        "2. 找出依赖断裂（引用了不存在模块的 import）\n"
+        "3. 找出幻觉函数（伪造/不存在的方法）\n\n"
+        "输出 JSON: {\"files\": [...], \"dependencies\": [{\"from\":\"X\",\"to\":\"Y\"}], "
+        "\"broken_dependencies\": [...], \"hallucinated_items\": [...]}\n\n"
+        + _OLY_007_CONTEXT
+    ),
+    expected_structure_keys=["files", "dependencies"],
+    expected_contains=["ghost_router", "route_ghost_request", "phantom_lock"],
+    expected_hallucinations=["ghost_router", "route_ghost_request", "acquire_phantom_session"],
+)
+
+# EX_OLY_008: hallucination_detect OLYMPIAD — 长上下文埋针（8000+ 字真实代码 + 3 处针）
+_OLY_008_FILES = [
+    "src/zephyr/trading/task_gate.py",
+    "scripts/git_commit.py",
+    "scripts/governance/verify_schema_health.py",
+    "src/zephyr/governance/git_commit_gateway.py",
+]
+_OLY_008_NEEDLES = [
+    {  # 针1: 伪造的量子同步 import（git_commit.py）
+        "file": "git_commit.py",
+        "content": "from zephyr.governance.quantum_validator import validate_quantum_coherence  # quantum sync",
+        "after": "from zephyr.governance.git_commit_gateway import (",
+    },
+    {  # 针2: 伪造的 AI lint import（verify_schema_health.py）
+        "file": "verify_schema_health.py",
+        "content": "from zephyr.governance.neural_lint import neural_check  # AI-powered lint",
+        "after": "from zephyr.governance import depgraph_schema",
+    },
+    {  # 针3: 伪造的 phantom routing import（task_gate.py）
+        "file": "task_gate.py",
+        "content": "from zephyr.trading.phantom_router import route_phantom  # phantom routing",
+        "after": "from zephyr.intelligence.model_profiling.capability_passport import CapabilityPassport",
+    },
+]
+_OLY_008_CONTEXT = assemble_real_context(
+    _OLY_008_FILES,
+    _OLY_008_NEEDLES,
+    max_chars_per_file=6000,
+)
+
+EX_OLY_008 = ExamTestCase(
+    case_id="EX-OLY-008",
+    capability="hallucination_detect",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "审阅以下真实多文件代码（含 3 处埋入的伪造 import），找出所有幻觉（编造/不存在的依赖）。\n"
+        "每条幻觉需给出 item 与 reason。\n"
+        "输出 JSON: {\"hallucinations\": [{\"item\": \"幻觉内容\", \"reason\": \"为何是幻觉\"}, ...]}\n\n"
+        + _OLY_008_CONTEXT
+    ),
+    expected_structure_keys=["hallucinations"],
+    expected_hallucinations=[
+        "quantum_validator",
+        "validate_quantum_coherence",
+        "neural_lint",
+        "neural_check",
+        "phantom_router",
+        "route_phantom",
+    ],
+)
+
+# EX_OLY_009: dependency_trace OLYMPIAD — 跨文件依赖追溯 + 找出不存在导入
+_OLY_009_FILES = [
+    "src/zephyr/trading/task_gate.py",
+    "scripts/git_commit.py",
+    "src/zephyr/governance/git_commit_gateway.py",
+]
+_OLY_009_NEEDLES = [
+    {  # 注入一条不存在的 import（埋错）
+        "file": "git_commit.py",
+        "content": "from zephyr.governance.commit_orchestrator import orchestrate_pipeline  # pipeline orchestration",
+        "after": "from zephyr.governance.git_commit_gateway import (",
+    },
+]
+_OLY_009_CONTEXT = assemble_real_context(
+    _OLY_009_FILES,
+    _OLY_009_NEEDLES,
+    max_chars_per_file=8000,
+)
+
+EX_OLY_009 = ExamTestCase(
+    case_id="EX-OLY-009",
+    capability="dependency_trace",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "分析以下真实多文件代码的调用关系，给出从入口到最深层的完整调用链，"
+        "并找出埋入的「不存在导入」（phantom import）。\n"
+        "输出 JSON: {\"call_chain\": [\"func_a\", \"func_b\", ...], \"phantom_imports\": [...]}\n\n"
+        + _OLY_009_CONTEXT
+    ),
+    expected_structure_keys=["call_chain"],
+    expected_call_chain=[
+        "main", "GitCommitGateway", "commit", "_stash_other_files", "_run_git",
+    ],
+    expected_hallucinations=["commit_orchestrator", "orchestrate_pipeline"],
+    expected_contains=["commit_orchestrator", "orchestrate_pipeline"],
+)
+
+
+# ══════════════════════════════════════════════════════════
 # 全集 — 64 题 (压缩自109题 + 3道高区分度hard题)
 # P0核心12个×3题 + P1重要8个×2题 + P2辅助9个×1题 + 3道hard区分题 = 64题
 # ══════════════════════════════════════════════════════════
@@ -2424,6 +2572,10 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_OLY_004,
     EX_OLY_005,
     EX_OLY_006,
+    # ── v3.0.5 Phase 3: 极限深度真实多文件注入 ──────────
+    EX_OLY_007,
+    EX_OLY_008,
+    EX_OLY_009,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}
