@@ -79,7 +79,7 @@ completes_when: "scripts/governance/check_xxx.py 退出码 0 且 docs/_working/ 
 3. **幽灵引用处置**（目标已删除/改名/移动）：
    - **不要照文档执行**——过时信息当真 = 幻觉和漂移的源头
    - 在回复里告诉用户"这文档引用的 xxx 已不存在，内容可能过时"
-   - 去查当前真源：`python -m zephyr.governance.capability_lookup find <关键词>` 反查能力的 canonical 文件
+   - 去查当前真源：`python -m zephyr.governance.capability_lookup --find <关键词>` 反查能力的 canonical 文件
 4. **版本漂移处置**（目标还在但字段名/值域变了，如 ttl 词表从 6 值改 2 值）：
    - **以当前真源为准**，不以上述文档为准
    - 必要时提示用户文档内容与新真源不一致

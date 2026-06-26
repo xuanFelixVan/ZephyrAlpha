@@ -346,11 +346,19 @@ capabilities:
       - 豁免清单加载器
       - n16_exemption_names
       - exempt_names_loader
+      - yaml_loader_n16
+      - yaml_exemption_loader
+      - ssot_linkage_validator
+      - validate_ssot
+      - validate_ssot_n16
+      - fallback_consistency_check
+      - fallback一致性检查
+      - ssot一致性校验
     description: >-
       N-16 文件名项目内唯一性检测的豁免清单唯一 YAML 加载入口（治本：消除代码硬编码
       vs YAML 真源同步缺口）。真源：trae_028_doc_structure_naming.yaml v1.5.0
       §gov_doc_003_filename_uniqueness.n16_config（exempt_names_tests +
-      exempt_names_docs_extra + skip_dirs_docs 三个字段）。加载函数：
+      exempt_names_docs_extra + skip_dirs_docs + skip_dir_prefixes 四个字段）。加载函数：
       _load_n16_exemptions_from_yaml() 在模块 import 时读取一次（per-process 缓存，
       commit 每次启动新进程自动重载，YAML 改即生效）。fail-open 策略：YAML 缺失/
       解析失败/类型不合规（非 list 或含非 str 元素）→ 回退到 _N16_*_FALLBACK 硬编码
@@ -360,6 +368,8 @@ capabilities:
       过渡期影响。canonical_override 显式指向 d3_metadata 版（pre-commit 实际调用），
       因存在 3 个同名 check_naming_convention.py 副本，auto 派生会歧义。改豁免清单
       改 trae_028.yaml §n16_config，禁止改代码 _N16_*_FALLBACK（[MODIFY-GUARD] 保护）。
+      同文件内 _validate_ssot_linkage() 提供 N-16 fallback 4元组与 YAML 一致性校验
+      （--validate-ssot 触发，防 fallback 过时漂移），新AI写一致性检查前MUST反查此函数。
 
   # --------------------------------------------------------------------------
   - capability_id: precommit_id_uniqueness_check
@@ -381,6 +391,53 @@ capabilities:
       → warn（pre-commit 允许跨 repo 同 id，但本项目视为覆盖风险，提示人工裁定）。
       canonical 在 scripts/ 下（非 src/zephyr/），basename check_precommit_id_uniqueness
       不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明。
+
+  # --------------------------------------------------------------------------
+  - capability_id: working_docs_ghost_ref_archiver
+    canonical_override: src/zephyr/governance/reconciliation_registry.py
+    aliases:
+      - GATE-WORKING-DOCS
+      - working_docs_reconciler
+      - make_working_docs_reconciler
+      - scan_and_archive_working_docs
+      - ghost_ref_archiver
+      - 幽灵引用归档
+      - 工作文档归档
+      - _working 归档
+      - auto_archive_working_docs
+      - working_docs_auto_archive
+    description: >-
+      docs/_working/ 幽灵引用自动归档 reconciler（治 AI 工作文档堆积为漂移源）。
+      post-commit 事件驱动：当 commit 涉及文件删除（引用的脚本/YAML 被删/改名）时触发，
+      扫描 docs/_working/*.md 的 markdown 链接 ](path) 与反引号 `path` 引用，检测引用
+      路径是否仍存在于磁盘；有幽灵引用的文档归档到 .runtime/working_archive/<ts>/
+      （.runtime/ 已 .gitignore 不入库），并 auto-commit _working/ 的删除。真源函数
+      scan_and_archive_working_docs（reconciliation_registry.py:682）被 reconciler
+      与一次性 dry_run 归档共用（向内收——扫描+归档逻辑唯一真源）。canonical basename
+      reconciliation_registry 不匹配任何 alias，无法 auto 派生，故用 canonical_override
+      显式声明。对标向内收原则 2.2（自动事件触发+自动维护+自动关闭）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: completes_when_validator
+    canonical_override: src/zephyr/governance/git_commit_gateway.py
+    aliases:
+      - completes_when_check
+      - _check_working_docs_completes_when
+      - working_docs_completes_when
+      - 完成条件校验
+      - 文档完成条件
+      - GATE-WORKING-DOCS-prevention
+      - S6_prevention
+      - working_docs_prevention
+    description: >-
+      docs/_working/ 新文档 completes_when 字段强制声明校验（GATE-WORKING-DOCS 预防层）。
+      GitCommitGateway 在 commit 时拦截缺少 completes_when 字段的新增（未 git 跟踪）
+      _working/ .md 文件，强制 AI 在创建文档时声明可机械验证的完成条件（脚本退出码、
+      文件存在性、数据库状态等），使 GATE-WORKING-DOCS reconciler 能基于此条件判定
+      失效并自动归档，而非无限堆积。真源方法 _check_working_docs_completes_when
+      （git_commit_gateway.py:717），仅检查新增文件（已跟踪文件修改不阻断，不破坏
+      存量）。canonical basename git_commit_gateway 不匹配任何 alias，无法 auto 派生，
+      故用 canonical_override 显式声明。对标 trae_060 §2 + 向内收原则 2.2。
 
 # ============================================================================
 # 维护日志
