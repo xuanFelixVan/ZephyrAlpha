@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-RSC_pipeline_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing
 # [INVARIANTS] pipeline routing variant of model profiler
 # [MODIFY-GUARD] structural changes require owner approval

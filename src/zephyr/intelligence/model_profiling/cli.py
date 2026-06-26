@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] CLI入口;discover/quick/benchmark/drift/best/history六命令
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

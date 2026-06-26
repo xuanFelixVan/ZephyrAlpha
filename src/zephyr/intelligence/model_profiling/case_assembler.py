@@ -33,18 +33,17 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _logger = logging.getLogger(__name__)
 
-# 项目根：model_profiling -> intelligence -> zephyr -> src -> ZephyrAlpha
-_PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
 # 白名单基目录（仅这些目录下的文件可被读取）
 _WHITELIST_DIRS: tuple[Path, ...] = (
-    _PROJECT_ROOT / "scripts" / "governance",
-    _PROJECT_ROOT / "scripts",                 # scripts/git_commit.py 等顶层脚本
-    _PROJECT_ROOT / "src" / "zephyr" / "trading",
-    _PROJECT_ROOT / "src" / "zephyr" / "governance",
+    REPO_ROOT / "scripts" / "governance",
+    REPO_ROOT / "scripts",                 # scripts/git_commit.py 等顶层脚本
+    REPO_ROOT / "src" / "zephyr" / "trading",
+    REPO_ROOT / "src" / "zephyr" / "governance",
 )
 
 # 单文件默认截断阈值（字符数），避免 apply_depgraph.py(110k) 这类巨型文件撑爆上下文
@@ -68,7 +67,7 @@ def read_real_file(rel_path: str, max_chars: int = _DEFAULT_MAX_CHARS) -> str:
 
     缺失时返回占位符（不抛异常），保证模块可导入。
     """
-    full = _PROJECT_ROOT / rel_path
+    full = REPO_ROOT / rel_path
     try:
         _validate_whitelist(full)
     except PermissionError:

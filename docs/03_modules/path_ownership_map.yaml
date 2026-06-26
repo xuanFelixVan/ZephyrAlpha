@@ -6,11 +6,11 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-06-26T13:46:58Z'
+  generated_at: '2026-06-26T14:04:31Z'
   auto_generated_by: 'scripts/governance/generate_path_ownership_map.py'
   total_path_claims: 737
   total_ssot_claims: 18
-  total_conflicts: 0
+  total_conflicts: 1
   conflict_resolution: 'ssot_claims_priority'
 ownership:
   - path: 'src/zephyr/governance/audit_orchestrator/__init__.py'
@@ -1224,7 +1224,7 @@ ownership:
     existence: '未实现'
     ownership_judgment: '—'
 
-  - path: 'src/zephyr/infrastructure/model_profiler/__init__.py'
+  - path: 'src/zephyr/intelligence/model_profiling/__init__.py'
     owner_blueprint: 'MOD-INF-034'
     claim_type: 'section_0_1'
     declared_in: 'docs/03_modules/_cross_layer/model_profiler/blueprint.md'
@@ -5733,4 +5733,13 @@ Worker 内存上限（OOM 防护）：
     owner_blueprint: 'MOD-INF-038'
     declared_in: 'docs/03_modules/_domain_infra_runtime/state_machine_engine/blueprint.md'
 conflicts:
-  []
+  - path: 'src/zephyr/intelligence/model_profiling/__init__.py'
+    claimant:
+      blueprint: 'MOD-INF-036'
+      claim_type: 'section_0_1'
+      declared_in: 'docs/03_modules/_cross_layer/model_capability_exam/blueprint.md'
+    claimant:
+      blueprint: 'MOD-INF-034'
+      claim_type: 'section_0_1'
+      declared_in: 'docs/03_modules/_cross_layer/model_profiler/blueprint.md'
+    resolution: 'ssot_claims_priority'

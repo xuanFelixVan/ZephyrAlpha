@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 模型发现;Ollama本地模型;远程API模型
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

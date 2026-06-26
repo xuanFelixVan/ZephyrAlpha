@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 能力护照数据模型;五轴评测结果持久化
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
@@ -39,11 +39,11 @@ import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _log = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-PASSPORTS_DIR = PROJECT_ROOT / "data" / "brain" / "passports"
+PASSPORTS_DIR = REPO_ROOT / "data" / "brain" / "passports"
 
 # 默认开发环境签名密钥（生产环境应通过环境变量 ZEPHYR_PASSPORT_SIGNING_KEY 覆盖）
 _DEFAULT_SIGNING_KEY = b"zephyr-passport-dev-key-v1"

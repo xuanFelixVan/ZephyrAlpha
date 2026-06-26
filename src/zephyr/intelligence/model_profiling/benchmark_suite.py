@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 7维度26项标准化测试用例;BenchmarkCase数据模型
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated

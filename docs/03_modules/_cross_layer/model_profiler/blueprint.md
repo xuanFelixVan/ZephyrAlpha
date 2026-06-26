@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-034
-submodule_path: src/zephyr/infrastructure/model_profiler
+submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: src/zephyr/infrastructure/model_profiler/
+actual_disk_path: src/zephyr/intelligence/model_profiling/
 last_updated: "2026-05-23"
 last_verified: "2026-05-14"
 generation: 2
@@ -54,7 +54,7 @@ codification_level: L1
 > **自动化宿主**: CircadianScheduler `hour=6` → `_model_profiler_benchmark()` + FLE `_periodic_checks()` → `_model_performance_check()`
 
 > module_id: MOD-INF-034 | version: 2.1.0 | status: active | layer: cross_layer
-> actual_disk_path: src/zephyr/infrastructure/model_profiler/ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/intelligence/model_profiling/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 

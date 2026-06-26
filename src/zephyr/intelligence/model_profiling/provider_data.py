@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.provider_data
 # [DOMAIN] D-INTELLIGENCE
 # [DEPENDENCIES]
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] DEFAULT_PROVIDERS和TIER_MODEL_MAP是纯数据常量;修改MUST同步更新model_router和model_discovery
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/budget-enforcer/model_router.py;src/zephyr/integration/zephyr/model_discovery.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/budget-enforcer/model_router.py;src/zephyr/integration/zephyr/model_discovery.py
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

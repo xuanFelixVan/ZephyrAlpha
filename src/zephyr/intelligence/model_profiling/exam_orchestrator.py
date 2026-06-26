@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 五轴入职考试;横纵速幻稳;CapabilityPassport产出
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
@@ -61,7 +61,6 @@ from zephyr.intelligence.model_profiling.exam_judge import ExamJudge
 
 _log = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 CAPABILITIES = list(CASES_BY_CAPABILITY.keys())
 
 _EXAM_CAPABILITY_NAMES = {
