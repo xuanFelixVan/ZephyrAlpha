@@ -676,7 +676,7 @@ class CapabilityLookup:
           1. 精确子串匹配（保留原行为，大小写不敏感）——处理 alias 原样命中
           2. token 包含匹配（精确子串未命中时启用）：
              - ASCII 词 token：全部必须在 haystack 中（AND，如 "repo root" → repo + root）
-             - CJK 字符：query 的 CJK 字符序列与 haystack 须有 ≥2 字符公共子串
+             - CJK 字符：query 的 CJK 字符序列与 haystack 须有 ≥3 字符公共子串
                （捕获语义 core，如 "仓库根路径" 经 "仓库根" 命中 "仓库根目录"；
                避免"目录"单字 OR 误命中所有含"目"/"录"条目——公共子串要求连续）
              - 守卫：ASCII 词数 + CJK 字符数 ≥2，避免单 token 过宽匹配
@@ -703,7 +703,7 @@ class CapabilityLookup:
         - ASCII 词块：按非单词字符切分，整体小写（"REPO_ROOT" → ["repo_root"]，
           "repo root" → ["repo","root"]）
         - CJK 字符：合并为单一字符串（"仓库根路径" → "仓库根路径"），
-          交由 _token_match 做 ≥2 字符公共子串匹配
+          交由 _token_match 做 ≥3 字符公共子串匹配
         """
         ascii_tokens: list[str] = []
         cjk_chars: list[str] = []
