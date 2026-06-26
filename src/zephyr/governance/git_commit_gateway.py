@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §ghost-commit-gateway
 # [MODULE] zephyr.governance.git_commit_gateway
 # [DOMAIN] D-GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -70,9 +70,15 @@ import subprocess
 import sys
 import tempfile
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+
+from zephyr.governance.reconciliation_registry import (
+    ReconcileResult,
+    ReconcilerSpec,
+    ReconciliationRegistry,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +92,7 @@ _LOCK_TTL_SECONDS = 1800  # 30 分钟，防进程崩溃死锁（与 staging_area
 _LOCK_TIMEOUT_DEFAULT = 60.0  # 等待全局锁最长 60s（commit 串行化，比单文件锁久）
 _POLL_INTERVAL = 0.1
 _MAX_INLINE_PATHS = 50  # 超过此数量时用 --pathspec-from-file 避免 Windows CLI 长度限制 (WinError 206)
+_SESSION_AWARE_STASH_ENV = "ZEPHYR_SESSION_AWARE_STASH"  # "0" 强制禁用 session 隔离 stash
 
 # 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
 # 真源：ttl_vocabulary.yaml decision_tree + project_rules.md RULE-TWO
@@ -118,19 +125,8 @@ class StashConflictWarning(RuntimeWarning):
     """stash pop 失败警告——数据保留在 stash 中，不丢失。"""
 
 
-@dataclass
-class ReconcileResult:
-    """post-commit 真源对账结果（P0-DRC）。
-
-    action 含义：
-    - skip: 本次 commit 未涉及 scripts/*.py，跳过对账
-    - clean: manifest 重生成后无变更，真源一致
-    - auto_committed: 检测到 manifest 漂移并自动提交修复
-    - warn: 检测到漂移但自动修复失败（仅告警，不阻断）
-    """
-
-    action: str  # "skip" | "clean" | "auto_committed" | "warn"
-    detail: str = ""
+# ReconcileResult 已迁移至 reconciliation_registry.py（P2-T1），此处通过 import re-export
+# 保持 ``from zephyr.governance.git_commit_gateway import ReconcileResult`` 向后兼容。
 
 
 @dataclass
@@ -142,7 +138,8 @@ class CommitResult:
     commit_hash: str = ""
     stash_ref: str = ""  # stash pop 失败时保留的 stash 引用
     stash_kept: bool = False  # 是否保留了 stash（pop 失败）
-    reconcile: ReconcileResult | None = None  # post-commit 真源对账结果（P0-DRC）
+    # P2-T1：单值 ReconcileResult → list[ReconcileResult]，支持多 reconciler 并存
+    reconcile: list[ReconcileResult] = field(default_factory=list)
 
 
 class _GlobalCommitLock:
@@ -238,10 +235,73 @@ class GitCommitGateway:
     commit message 标记: [GW:<session_id>]（追加到 message 末尾）
     """
 
-    def __init__(self, project_root: str | Path | None = None) -> None:
+    def __init__(
+        self,
+        project_root: str | Path | None = None,
+        registry: "SessionRegistry | None" = None,
+    ) -> None:
         self.project_root = Path(project_root or Path.cwd()).resolve()
         if not (self.project_root / ".git").exists():
             raise GatewayError(f"Not a git repository: {self.project_root}")
+        # session 隔离 stash 依赖 SessionRegistry（延迟 import 与 task_repo.py 一致）
+        if registry is not None:
+            self._registry = registry
+        else:
+            from zephyr.security.access_control.session_concurrency import SessionRegistry
+            self._registry = SessionRegistry(self.project_root)
+        # post-commit 漂移对账注册表（P2-T1：声明式 reconciler 框架，替代硬编码 _post_commit_reconcile）
+        self._reconciliation_registry = ReconciliationRegistry()
+        self._register_default_reconcilers()
+
+    def claim_files(self, session_id: str, files: list[str]) -> list[str]:
+        """为 session 声明持有本次 commit 的文件（激活 session 隔离 stash）。
+
+        由调用方在 commit 前调用。claim 失败（被其他 session 持有）的文件从返回列表排除，
+        不阻断 commit（文件归属协调是 lock_files.py 的职责，gateway 不强制）。
+
+        Returns: 成功 claim 的文件列表。
+        """
+        claimed: list[str] = []
+        for f in files:
+            if self._registry.claim_file(session_id, f):
+                claimed.append(f)
+            else:
+                logger.warning(
+                    "GitCommitGateway: claim_files conflict — file=%s held by other session, "
+                    "skipped (session=%s)",
+                    f, session_id,
+                )
+        return claimed
+
+    def release_files(self, session_id: str, files: list[str]) -> None:
+        """释放 session 对文件的持有（commit 后调用，静默失败仅 warning）。"""
+        for f in files:
+            if not self._registry.release_file(session_id, f):
+                logger.debug(
+                    "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
+                    f, session_id,
+                )
+
+    def _register_default_reconcilers(self) -> None:
+        """注册默认 post-commit reconciler（P2-T1）。
+
+        P2-T1: manifest reconciler 委托给既有 ``_post_commit_reconcile`` 方法（过渡），
+        保持行为等价；P2-T2 将迁移为独立 manifest_reconciler 并删除旧方法。
+        P2-T3/T4/T5 将新增 baseline_aware / ttl / ghost reconciler。
+        """
+        def _manifest_trigger(committed_files: list[str]) -> bool:
+            for f in committed_files:
+                rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                if rel.startswith("scripts/") and rel.endswith(".py"):
+                    return True
+            return False
+
+        self._reconciliation_registry.register(ReconcilerSpec(
+            gate_id="GATE-19-manifest",
+            trigger=_manifest_trigger,
+            reconcile=lambda files, sid: self._post_commit_reconcile(files, sid),
+            priority=100,
+        ))
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -283,12 +343,7 @@ class GitCommitGateway:
                 existing.append(f)
             else:
                 rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                chk = subprocess.run(
-                    ["git", "ls-files", "--error-unmatch", "--", rel],
-                    capture_output=True,
-                    cwd=str(self.project_root),
-                )
-                if chk.returncode == 0:
+                if self._is_git_tracked(rel):
                     existing.append(f)  # git 跟踪的已删除文件
         if not existing:
             return CommitResult(
@@ -331,11 +386,32 @@ class GitCommitGateway:
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=str(e))
 
+    def _is_git_tracked(self, rel_path: str) -> bool:
+        """检查相对路径是否被 git 跟踪（case-insensitive pathspec）。
+
+        根因：Windows 文件系统大小写不敏感，但 git pathspec 默认大小写敏感。
+        当 on-disk 路径大小写（如 mod_inf_008）与 git index 大小写（如 MOD_INF_008）
+        不一致时，``git ls-files --error-unmatch -- <path>`` 会误报"未跟踪"，
+        导致 PROMOTION_BLOCKED 误杀已跟踪的修改文件。
+
+        解法：使用 ``:(icase)`` pathspec magic 强制大小写不敏感匹配
+        （git 2.x 内置特性，全平台可用）。
+        """
+        chk = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", "--", f":(icase){rel_path}"],
+            capture_output=True,
+            cwd=str(self.project_root),
+        )
+        return chk.returncode == 0
+
     def _check_permanent_zone_new_files(self, files: list[str]) -> list[str]:
         """检测文件列表中是否有新文件（未 git 跟踪）进入永久区。
 
         永久区目录见 _PERMANENT_ZONE_DIRS。AI 创建的过程文档应放 docs/_working/，
         经用户批准后才能晋升到永久区。
+
+        性能：单次 ``git ls-files`` 批量获取永久区所有已跟踪文件（:(icase) 大小写
+        不敏感），避免 N 次 per-file subprocess 调用（4800+ 文件时 ~6min → <1s）。
 
         Args:
             files: 绝对路径列表。
@@ -343,21 +419,32 @@ class GitCommitGateway:
         Returns:
             新文件（未跟踪 + 在永久区路径）的绝对路径列表。空列表 = 无需门禁。
         """
-        new_in_zone: list[str] = []
+        # 筛选 commit 列表中落在永久区路径下的文件（大小写不敏感前缀匹配）
+        zone_files: list[tuple[str, str]] = []  # (abs_path, rel_lower)
         for f in files:
             rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-            # 检查是否在永久区路径下
-            if not any(rel.startswith(prefix) for prefix in _PERMANENT_ZONE_DIRS):
-                continue
-            # 检查是否已被 git 跟踪（已跟踪 = 修改已有文件，不是晋升）
-            chk = subprocess.run(
-                ["git", "ls-files", "--error-unmatch", "--", rel],
-                capture_output=True,
-                cwd=str(self.project_root),
-            )
-            if chk.returncode != 0:
-                # 未跟踪 = 新文件进入永久区 → 需要门禁
-                new_in_zone.append(f)
+            rel_lower = rel.lower()
+            if any(rel_lower.startswith(prefix) for prefix in _PERMANENT_ZONE_DIRS):
+                zone_files.append((f, rel_lower))
+        if not zone_files:
+            return []
+
+        # 单次 git ls-files 批量获取永久区所有已跟踪文件（:(icase) 大小写不敏感）
+        # 根因：Windows on-disk 大小写（mod_inf_008）与 git index 大小写（MOD_INF_008）
+        # 不一致，:(icase) pathspec magic 强制大小写不敏感匹配
+        icase_specs = [f":(icase){d}" for d in _PERMANENT_ZONE_DIRS]
+        result = subprocess.run(
+            ["git", "ls-files", "--", *icase_specs],
+            capture_output=True, text=True, cwd=str(self.project_root),
+        )
+        tracked_lower: set[str] = set()
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if line:
+                tracked_lower.add(line.lower())
+
+        # commit 列表中永久区文件若不在已跟踪集合中 → 新文件 → 需门禁
+        new_in_zone = [f for f, rel_lower in zone_files if rel_lower not in tracked_lower]
         return new_in_zone
 
     def _check_frontmatter_ttl(self, files: list[str]) -> tuple[bool, str]:
@@ -590,23 +677,26 @@ class GitCommitGateway:
                             stash_ref=stash_ref,
                             stash_kept=True,
                         )
-            # Post-commit 真源对账（P0-DRC）：stash pop 后、释放锁前
-            # 斩断 --no-verify 导致的 drift 循环：commit 涉及 scripts/*.py 时
-            # 自动重生成 manifest + 检测僵尸引用 + 自动提交修复
+            # Post-commit 漂移对账（P2-T1：声明式 ReconciliationRegistry，替代硬编码 _post_commit_reconcile）
+            # 斩断 --no-verify 导致的 drift 循环：每个被绕过的 GATE 注册一个 reconciler，
+            # commit 完成后由 registry 统一调度（trigger 命中即执行，异常降级为 warn 不阻断）
             if result.status == CommitStatus.OK:
                 try:
-                    reconcile_result = self._post_commit_reconcile(files, session_id)
-                    result.reconcile = reconcile_result
-                    if reconcile_result.action == "auto_committed":
-                        logger.info(
-                            "GitCommitGateway: post-commit reconcile auto-committed manifest "
-                            "(session=%s): %s", session_id, reconcile_result.detail
-                        )
-                    elif reconcile_result.action == "warn":
-                        logger.warning(
-                            "GitCommitGateway: post-commit reconcile warning "
-                            "(session=%s): %s", session_id, reconcile_result.detail
-                        )
+                    reconcile_results = self._reconciliation_registry.reconcile_for(
+                        files, session_id
+                    )
+                    result.reconcile = reconcile_results
+                    for rr in reconcile_results:
+                        if rr.action == "auto_committed":
+                            logger.info(
+                                "GitCommitGateway: post-commit reconcile auto-committed "
+                                "(session=%s): %s", session_id, rr.detail
+                            )
+                        elif rr.action == "warn":
+                            logger.warning(
+                                "GitCommitGateway: post-commit reconcile warning "
+                                "(session=%s): %s", session_id, rr.detail
+                            )
                 except Exception as e:
                     logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
             # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 →
