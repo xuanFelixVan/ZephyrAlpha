@@ -760,11 +760,23 @@ def print_report(ar: AuditResult, compact: bool = False) -> str:
 # ===================================================================
 
 
+def _in_audit_scope(rel_str: str) -> bool:
+    """判断相对路径是否在审计范围内（单一真源，勿重复实现）。
+
+    审计范围：仅 ``src/zephyr/`` 与 ``scripts/`` 下文件。
+    ``tests/``、``docs/``、根级等其他目录不扫。
+
+    ``--incremental``、``--files``、post-commit reconciler 三处 scope 过滤
+    统一委托本函数，避免分散实现导致漂移。
+    """
+    return rel_str.startswith("src/zephyr/") or rel_str.startswith("scripts/")
+
+
 def _get_changed_files_from_git() -> set[Path]:
     """通过 git diff 获取相对于 HEAD 的变更文件集合。
 
     包含已暂存和未暂存的变更，以及未跟踪的新文件。
-    返回绝对路径集合，仅包含 src/zephyr/ 和 scripts/ 下的文件。
+    scope 过滤委托 ``_in_audit_scope()`` 单一真源。
     """
     changed: set[Path] = set()
     try:
@@ -805,13 +817,12 @@ def _get_changed_files_from_git() -> set[Path]:
         print(f"WARNING: git diff 失败，回退到全量扫描: {e}", file=sys.stderr)
         return set()
 
-    # 仅保留 src/zephyr/ 和 scripts/ 下的文件
+    # scope 过滤委托 _in_audit_scope() 单一真源
     filtered: set[Path] = set()
     for p in changed:
         try:
-            rel = p.relative_to(PROJECT_ROOT)
-            rel_str = rel.as_posix()
-            if rel_str.startswith("src/zephyr/") or rel_str.startswith("scripts/"):
+            rel_str = p.relative_to(PROJECT_ROOT).as_posix()
+            if _in_audit_scope(rel_str):
                 filtered.add(p)
         except ValueError:
             continue
@@ -826,8 +837,8 @@ def _build_changed_files_from_paths(paths: list[str]) -> set[Path]:
     changed_files，会扫到**工作树全部 WIP**而非本次 commit 的文件。post-commit
     reconciler 应改用本函数接收精确的 committed_files，避免对无关 WIP 误报 NEW orphan。
 
-    过滤规则与 ``_get_changed_files_from_git`` 一致：仅保留 ``src/zephyr/`` 和
-    ``scripts/`` 下的文件。接受绝对或相对路径（相对路径相对于 PROJECT_ROOT）。
+    过滤规则委托 ``_in_audit_scope()`` 单一真源。
+    接受绝对或相对路径（相对路径相对于 PROJECT_ROOT）。
 
     Args:
         paths: 文件路径列表（绝对或相对）。
@@ -843,9 +854,8 @@ def _build_changed_files_from_paths(paths: list[str]) -> set[Path]:
         if not path.exists():
             continue
         try:
-            rel = path.relative_to(PROJECT_ROOT)
-            rel_str = rel.as_posix()
-            if rel_str.startswith("src/zephyr/") or rel_str.startswith("scripts/"):
+            rel_str = path.relative_to(PROJECT_ROOT).as_posix()
+            if _in_audit_scope(rel_str):
                 changed.add(path)
         except ValueError:
             continue
