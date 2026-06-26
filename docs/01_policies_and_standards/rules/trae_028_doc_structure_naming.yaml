@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.3.0
+version: 1.5.0
 layer: compliance
 module_id: TRAE-028
 depends_on:
@@ -1118,6 +1118,75 @@ sections:
     - 禁止改名后遗留任何残留旧ID(包括列名不含domain但值含旧ID的列)
     - 禁止用SQLite LIKE '%OLD_ID%'子串替换传播blueprint_id(子串陷阱,必须精确值映射)
     - 禁止跳过audit_rename_completeness.py审计直接结束改名
+  gov_doc_003_filename_uniqueness:
+    title: 文件名项目内唯一性规则 (GOV-DOC-003 §N-16)
+    section_type: rule
+    original_rules:
+    - DOC-003
+    # N-16 结构化配置真源——check_naming_convention.py 直接消费本块(非同步复制)
+    # 设计: exempt_names_tests 为基线; exempt_names_docs_extra 为 docs 专属增量;
+    #       代码侧 _N16_DOCS_EXEMPT_NAMES = exempt_names_tests | exempt_names_docs_extra(继承关系在代码体现)
+    n16_config:
+      exempt_names_tests:
+      - conftest.py
+      - __init__.py
+      exempt_names_docs_extra:
+      - index.md
+      - blueprint.md
+      - readme.md
+      - changelog.md
+      - spec.md
+      - .gitkeep
+      - _index.yaml
+      skip_dirs_docs:
+      - _DO_NOT_USE_old_tree
+      - _archive
+      - _backups
+      - session_logs
+      # 临时沙箱目录前缀(目录名前缀匹配,os.walk剪枝);覆盖 tests/ 与 docs/ 下任意 _tmp_* 子目录
+      # 防并发红蓝对抗临时沙箱(如 tests/_tmp_redblue_f2/)与正式文件撞名误触发N-16硬阻断
+      skip_dir_prefixes:
+      - _tmp_
+    conditions:
+    - type: constraint
+      check: GATE-11检测规则N-16
+      pass: 文件名在项目内唯一——tests/目录下test_*.py文件basename不重复;docs/目录下所有文件(跳过_archive/_backups/_DO_NOT_USE_old_tree/session_logs)basename不重复
+      fail: 同一basename在项目内多处存在(如两个capability_heatmap.md漂移)
+      rationale: 同名文件导致AI无法确定真源,产生漂移和幻觉(如capability_heatmap.md曾存在19315字节vs11966字节两个不同内容同名文件)
+    - type: constraint
+      check: tests/豁免清单
+      pass: conftest.py和__init__.py允许跨目录同名(约定俗成的Python机制)
+      fail: 其他文件跨目录同名
+    - type: constraint
+      check: docs/豁免清单(继承tests/基线)
+      pass: 继承tests/豁免(conftest.py/__init__.py)+docs专属豁免(index.md/blueprint.md/readme.md/changelog.md/spec.md/.gitkeep/_index.yaml)
+      fail: 其他docs文件跨目录同名
+      rationale: 用继承关系消除__init__.py/conftest.py的同步复制(真源唯一原则)
+    - type: constraint
+      check: docs/跳过目录
+      pass: _archive/_backups/_DO_NOT_USE_old_tree/session_logs目录不纳入检查(运行时产物/归档/备份)
+      fail: 将这些目录纳入检查产生误报
+    - type: constraint
+      check: 临时沙箱目录前缀跳过(tests/ + docs/通用)
+      pass: _tmp_开头子目录(如 tests/_tmp_redblue_f2/)不纳入N-16检查(目录名前缀匹配,os.walk剪枝);用于并发红蓝对抗临时沙箱,其清理晚于commit
+      fail: 临时沙箱内文件与正式文件撞名误触发N-16硬阻断,卡死并发commit窗口
+      rationale: 2026-06-26 commit 7f27ab25被 tests/_tmp_redblue_f2/test_gate11_naming_convention_unit.py(与 tests/unit/ 同名)撞名硬阻断;沙箱由已自删的 scripts/_tmp_redblue_final.py 探针建在仓库内,正式红蓝测试 tests/test_f18_redblue.py 用 pytest tmp_path 无此问题
+    - type: constraint
+      check: 硬阻断特性
+      pass: N-16不受GATE-11的--warn-only过渡期影响,直接硬阻断commit
+      fail: N-16违规被warn-only放过
+      rationale: N-16是新激活规则,无历史违规包袱,必须硬阻断防止同名漂移再次发生
+    actions:
+    - type: mandatory
+      step: 创建新文件前必须检查项目内是否已存在同名文件(Grep basename)
+    - type: mandatory
+      step: N-16违规必须重命名其中一个文件(优先保留内容更完整的),禁止用版本号后缀区分
+    - type: mandatory
+      step: 重命名后必须更新所有引用(git mv + grep引用更新)
+    prohibitions:
+    - 禁止创建与项目内已有文件同名的文件(无论目录是否相同)
+    - 禁止用版本号后缀区分同名文件(如foo-v2.md),必须重命名为语义不同的名字
+    - 禁止将N-16豁免清单硬编码在代码中不记录在YAML真源(本section.n16_config是唯一结构化真源;代码必须从此动态加载,仅允许保留fail-open回退值)
   gov_doc_008_file_split_threshold:
     title: 规则文件拆分阈值协议 (GOV-DOC-008)
     section_type: rule
@@ -1162,9 +1231,17 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.3.0"
+  version: "1.5.0"
   last_modified: "2026-06-26"
   change_history:
+  - version: "1.5.0"
+    date: "2026-06-26"
+    author: "AI-Assistant"
+    change: "消除N-16豁免清单'代码硬编码vs YAML真源'同步缺口——gov_doc_003_filename_uniqueness新增结构化n16_config块(exempt_names_tests基线/exempt_names_docs_extra docs增量/skip_dirs_docs跳过目录);check_naming_convention.py的_N16_TESTS_EXEMPT_NAMES/_N16_DOCS_EXEMPT_NAMES/_N16_DOCS_SKIP_DIRS改为从n16_config动态加载(模块级缓存,commit每次不重复解析);保留硬编码值作fail-open回退(YAML缺失/解析失败/字段不完整时回退防破坏性故障);继承关系在代码侧体现(_N16_DOCS_EXEMPT_NAMES=tests|docs_extra);消除'一个真源(YAML描述)多处同步(代码硬编码)'违反真源唯一原则的缺口,AI改YAML即代码生效"
+  - version: "1.4.0"
+    date: "2026-06-26"
+    author: "AI-Assistant"
+    change: "新增 gov_doc_003_filename_uniqueness section——N-16规则真源定义(文件名项目内唯一性检测 tests/+docs/);补齐YAML真源缺失(N-16此前仅在check_naming_convention.py代码实现,未在YAML真源定义,违反'YAML文件是规则数据唯一真源'硬约束);含5条conditions(检测规则/tests豁免/docs豁免继承/docs跳过目录/硬阻断特性)+3条actions+3条prohibitions;消除AI可发现性缺口(AI读trae_028真源即可发现N-16)"
   - version: "1.3.0"
     date: "2026-06-26"
     author: "AI-Assistant"

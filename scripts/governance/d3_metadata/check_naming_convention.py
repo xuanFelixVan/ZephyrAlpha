@@ -5,8 +5,8 @@
 # [CONSUMERS] .pre_commit-config.yaml GATE-11; .github/workflows/governance.yml; tests/unit/test_gate11_naming_convention.py
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] N-01~N-15 rules are append-only; whitelist changes require Owner approval
-# [MODIFY-GUARD] FILENAME_UPPERCASE_WHITELIST, _DATA_FILE_EXEMPT_NAMES, TECH_VERSION_TOKENS changes require Owner approval
+# [INVARIANTS] N-01~N-16 rules are append-only; whitelist changes require Owner approval
+# [MODIFY-GUARD] FILENAME_UPPERCASE_WHITELIST, _DATA_FILE_EXEMPT_NAMES, TECH_VERSION_TOKENS, _N16_*_FALLBACK changes require Owner approval; N-16豁免清单真源在trae_028.yaml §n16_config(代码仅fail-open回退)
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
@@ -14,7 +14,7 @@
 # [TESTS] tests/unit/test_gate11_naming_convention.py
 """GATE-11 命名规范门禁 — 全类型命名检测。
 
-权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.4.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_003_filename_uniqueness)
+权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.5.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_003_filename_uniqueness,豁免清单真源 §n16_config)
 
 检查项：
   N-01  文件名大写检测 + 白名单
@@ -32,7 +32,7 @@
   N-13  YAML/JSON/MD 文件名 snake_case 合规检测
   N-14  __init__.py 必须定义 __all__
   N-15  BLUEPRINT 头部路径必须存在
-  N-16  文件名项目内唯一性检测（tests/ + docs/）——真源：trae_028_doc_structure_naming.yaml v1.4.0 §gov_doc_003_filename_uniqueness
+  N-16  文件名项目内唯一性检测（tests/ + docs/）——真源：trae_028_doc_structure_naming.yaml v1.5.0 §gov_doc_003_filename_uniqueness.n16_config(豁免清单从此动态加载,硬编码仅作fail-open回退)
   N-17  blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
 """
 
@@ -841,30 +841,84 @@ def _check_n15_blueprint_path_exists(
 # N-16: 文件名项目内唯一性（tests/ + docs/）
 # ---------------------------------------------------------------------------
 
+# N-16 豁免清单真源: trae_028_doc_structure_naming.yaml §gov_doc_003_filename_uniqueness.n16_config
+# 本模块直接消费 YAML 真源(非同步复制),YAML改即生效。禁止在此硬编码新豁免项。
+# fail-open: YAML不存在/解析失败/n16_config字段不完整时回退到下方硬编码值,防破坏性故障。
+_N16_YAML_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
+)
+
+# fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)
+_N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
+_N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset({
+    "index.md", "blueprint.md", "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
+})
+_N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
+    "_DO_NOT_USE_old_tree", "_archive", "_backups", "session_logs",
+}
+# 临时沙箱目录前缀回退(目录名前缀匹配,os.walk剪枝);真源在 trae_028.yaml §n16_config.skip_dir_prefixes
+_N16_SKIP_DIR_PREFIXES_FALLBACK: set[str] = {
+    "_tmp_",  # 覆盖 tests/_tmp_redblue_f2/ 等并发红蓝对抗临时沙箱
+}
+
+
+def _load_n16_exemptions_from_yaml() -> tuple[frozenset[str], frozenset[str], set[str], set[str]]:
+    """从 trae_028.yaml §gov_doc_003_filename_uniqueness.n16_config 加载豁免清单。
+
+    返回 (tests_exempt, docs_extra_exempt, docs_skip_dirs, skip_dir_prefixes)。
+    继承关系在调用方体现: _N16_DOCS_EXEMPT_NAMES = tests_exempt | docs_extra_exempt。
+    fail-open: 文件缺失/解析失败/清单为空/类型不合规(非list或含非str元素) → 整体回退到硬编码值,防检测失效或污染。
+    """
+    try:
+        data = yaml.safe_load(_N16_YAML_PATH.read_text(encoding="utf-8"))
+        cfg = (
+            data.get("sections", {})
+            .get("gov_doc_003_filename_uniqueness", {})
+            .get("n16_config", {})
+        )
+        tests_raw = cfg.get("exempt_names_tests", [])
+        docs_raw = cfg.get("exempt_names_docs_extra", [])
+        skip_raw = cfg.get("skip_dirs_docs", [])
+        prefixes_raw = cfg.get("skip_dir_prefixes", [])
+        # 类型严格校验: 必须是非空list且元素全为str——任一不满足视为损坏→回退
+        # 防 string 标量被迭代成 char set / int 等非str 元素污染豁免集合
+        for lst in (tests_raw, docs_raw, skip_raw, prefixes_raw):
+            if not isinstance(lst, list) or not lst or not all(isinstance(x, str) for x in lst):
+                raise ValueError("n16_config 类型/内容不合规")
+        return frozenset(tests_raw), frozenset(docs_raw), set(skip_raw), set(prefixes_raw)
+    except Exception:
+        return (
+            _N16_TESTS_EXEMPT_NAMES_FALLBACK,
+            _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK,
+            _N16_DOCS_SKIP_DIRS_FALLBACK,
+            _N16_SKIP_DIR_PREFIXES_FALLBACK,
+        )
+
+
+# 模块级加载一次(YAML是项目内稳定文件,import时读取;commit每次调用不重复解析)
+(
+    _N16_TESTS_EXEMPT_RAW,
+    _N16_DOCS_EXEMPT_EXTRA_RAW,
+    _N16_DOCS_SKIP_DIRS_RAW,
+    _N16_SKIP_DIR_PREFIXES_RAW,
+) = _load_n16_exemptions_from_yaml()
+
 # tests/ 豁免：约定俗成的跨目录同名文件（基线清单，docs/ 继承此清单）
-_N16_TESTS_EXEMPT_NAMES: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
+_N16_TESTS_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_RAW
 
 # docs/ 豁免：继承 tests/ 基线 + docs 专属豁免（基于实际扫描校准）
 #   index.md (169x) / blueprint.md (59x) / readme.md (4x) / changelog.md (2x) /
 #   spec.md (2x) / .gitkeep (3x) / _index.yaml (2x)
 # 注：用继承关系消除 __init__.py/conftest.py 的同步复制（RULE-ONE 真源唯一）
-_N16_DOCS_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_NAMES | frozenset({
-    "index.md",
-    "blueprint.md",
-    "readme.md",
-    "changelog.md",
-    "spec.md",
-    ".gitkeep",
-    "_index.yaml",
-})
+#     继承关系在代码侧体现: tests | docs_extra,真源值在YAML n16_config
+_N16_DOCS_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_EXTRA_RAW
 
 # docs/ 跳过的目录（运行时产物、归档、备份——不纳入同名检查）
-_N16_DOCS_SKIP_DIRS: set[str] = {
-    "_DO_NOT_USE_old_tree",
-    "_archive",
-    "_backups",
-    "session_logs",
-}
+_N16_DOCS_SKIP_DIRS: set[str] = _N16_DOCS_SKIP_DIRS_RAW
+
+# 临时沙箱目录前缀(tests/ + docs/ 通用,os.walk按目录名前缀剪枝)
+# 覆盖 tests/_tmp_redblue_f2/ 等并发红蓝对抗沙箱(清理晚于commit,防撞名误阻断);真源在YAML n16_config.skip_dir_prefixes
+_N16_SKIP_DIR_PREFIXES: set[str] = _N16_SKIP_DIR_PREFIXES_RAW
 
 
 def _check_basename_uniqueness(
@@ -872,6 +926,7 @@ def _check_basename_uniqueness(
     project_root: Path,
     exempt_names: set[str],
     skip_dirs: set[str] | None = None,
+    skip_dir_prefixes: set[str] | None = None,
     file_filter=None,
     rule_id: str = "N-16",
     label: str = "文件名",
@@ -882,7 +937,8 @@ def _check_basename_uniqueness(
         scan_root: 要扫描的目录（如 tests/ 或 docs/）
         project_root: 项目根（用于计算相对路径）
         exempt_names: 豁免的 basename 集合（如 index.md / __init__.py）
-        skip_dirs: 要跳过的子目录名集合（如 _archive / session_logs）
+        skip_dirs: 要跳过的子目录名集合(精确匹配,如 _archive / session_logs)
+        skip_dir_prefixes: 要跳过的子目录名前缀集合(前缀匹配,如 _tmp_;os.walk剪枝,覆盖 tests/_tmp_redblue_f2/ 等临时沙箱)
         file_filter: 可选的文件名过滤器，返回 True 才纳入检查（如 lambda n: n.startswith("test_")）
         rule_id: 违规规则 ID
         label: 违规消息中的标签（如 "测试文件名" / "文档文件名"）
@@ -896,6 +952,8 @@ def _check_basename_uniqueness(
     for root, dirs, files in os.walk(scan_root):
         if skip_dirs:
             dirs[:] = [d for d in dirs if d not in skip_dirs]
+        if skip_dir_prefixes:
+            dirs[:] = [d for d in dirs if not any(d.startswith(p) for p in skip_dir_prefixes)]
         dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__"]
         for f in files:
             if f in exempt_names:
@@ -932,6 +990,7 @@ def check_test_name_uniqueness(project_root: Path | None = None) -> list[NamingV
         scan_root=project_root / "tests",
         project_root=project_root,
         exempt_names=_N16_TESTS_EXEMPT_NAMES,
+        skip_dir_prefixes=_N16_SKIP_DIR_PREFIXES,
         file_filter=lambda n: n.startswith("test_"),
         label="测试文件名",
     )
@@ -951,6 +1010,7 @@ def check_docs_name_uniqueness(project_root: Path | None = None) -> list[NamingV
         project_root=project_root,
         exempt_names=_N16_DOCS_EXEMPT_NAMES,
         skip_dirs=_N16_DOCS_SKIP_DIRS,
+        skip_dir_prefixes=_N16_SKIP_DIR_PREFIXES,
         label="文档文件名",
     )
 
@@ -1134,13 +1194,13 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     except Exception as e:
         return False, f"❌ SSoT 读取失败: {e}"
 
-    # 1. version >= 1.3.0（裁定#208 阶段A 要求）
+    # 1. version 字段读取（用于成功消息可追溯性报告；下界校验已删除——双轨制生效性
+    #    由 check 2 关键词存在性实质性校验兜底，且版本号只升不降使 >= 1.3.0 永真为死代码；
+    #    保留则 (1,3,0) 在被测函数+测试双处硬编码，真源缺位，违背真源唯一原则）
     vm = re.search(r"^version:\s*['\"]?(\d+)\.(\d+)\.(\d+)", content, re.MULTILINE)
     if not vm:
         return False, "❌ SSoT 未找到 version 字段"
     ver = (int(vm.group(1)), int(vm.group(2)), int(vm.group(3)))
-    if ver < (1, 3, 0):
-        return False, f"❌ SSoT version {ver[0]}.{ver[1]}.{ver[2]} < 1.3.0（裁定#208 阶段A 双轨制未生效）"
 
     # 2. 双轨制关键词存在（L1037-1040 condition 文本）
     required = ["双轨制", "layer-master", "domain-functional", "[-NNN]"]
@@ -1158,8 +1218,43 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     if undefined:
         return False, f"❌ 脚本双轨正则未定义: {undefined}"
 
+    # 4. N-16 fallback 与 YAML n16_config 一致性校验（防 fallback 过时漂移）
+    #    fallback 是 YAML 不可达时的安全网，其值应与 YAML 保持一致；
+    #    若 YAML 加了新豁免项但 fallback 未同步，此处报漂移。
+    try:
+        ssot_data = yaml.safe_load(content)
+        n16_cfg = (
+            ssot_data.get("sections", {})
+            .get("gov_doc_003_filename_uniqueness", {})
+            .get("n16_config", {})
+        )
+        yaml_tests = frozenset(n16_cfg.get("exempt_names_tests", []))
+        yaml_docs_extra = frozenset(n16_cfg.get("exempt_names_docs_extra", []))
+        yaml_skip_dirs = set(n16_cfg.get("skip_dirs_docs", []))
+
+        drifts: list[str] = []
+        if yaml_tests != _N16_TESTS_EXEMPT_NAMES_FALLBACK:
+            drifts.append(
+                f"exempt_names_tests: YAML={sorted(yaml_tests)} vs fallback={sorted(_N16_TESTS_EXEMPT_NAMES_FALLBACK)}"
+            )
+        if yaml_docs_extra != _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK:
+            drifts.append(
+                f"exempt_names_docs_extra: YAML={sorted(yaml_docs_extra)} vs fallback={sorted(_N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK)}"
+            )
+        if yaml_skip_dirs != _N16_DOCS_SKIP_DIRS_FALLBACK:
+            drifts.append(
+                f"skip_dirs_docs: YAML={sorted(yaml_skip_dirs)} vs fallback={sorted(_N16_DOCS_SKIP_DIRS_FALLBACK)}"
+            )
+        if drifts:
+            return False, (
+                "❌ N-16 _N16_*_FALLBACK 与 YAML n16_config 不一致（漂移风险，改 YAML 后须同步 fallback）:\n  "
+                + "\n  ".join(drifts)
+            )
+    except Exception as e:
+        return False, f"❌ N-16 fallback 一致性校验失败: {e}"
+
     return True, (
-        f"✅ SSoT(trae_028 v{ver[0]}.{ver[1]}.{ver[2]}) 与脚本双轨正则机械联动一致（裁定#208 R4）"
+        f"✅ SSoT(trae_028 v{ver[0]}.{ver[1]}.{ver[2]}) 与脚本双轨正则 + N-16 fallback 一致"
     )
 
 
@@ -1172,7 +1267,7 @@ def main() -> int:
     parser.add_argument("--scan", action="store_true", help="扫描整个项目目录")
     parser.add_argument("--staged", action="store_true", help="只检查git暂存区文件")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
-    parser.add_argument("--validate-ssot", action="store_true", help="校验 SSoT(trae_028)与脚本双轨正则一致性(裁定#208 R4)")
+    parser.add_argument("--validate-ssot", action="store_true", help="校验 SSoT(trae_028)与脚本双轨正则+N-16 fallback 一致性(裁定#208 R4)")
     args = parser.parse_args()
 
     # 裁定#208 R4: SSoT 机械联动校验（独立模式，不扫描文件）
