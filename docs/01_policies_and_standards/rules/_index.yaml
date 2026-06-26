@@ -1,11 +1,11 @@
-version: 2.1.0
-generated_at: '2026-06-21T00:00:00'
-description: ZephyrAlpha规则YAML总索引（Phase E迁移产物；v2.1.0审查修复trae_029/031/034 aliases对齐）
+version: 2.2.0
+generated_at: '2026-06-26T00:00:00'
+description: ZephyrAlpha规则YAML总索引（v2.2.0：补登TRAE-058/059，对齐trae_060向内收原则§2索引真源唯一）
 schema_version: 2.0.0
-total_rules: 58
+total_rules: 60
 layer_distribution:
-  L0_critical: 19
-  L1_error: 28
+  L0_critical: 20
+  L1_error: 29
   L2_warning: 11
 
 schema:
@@ -947,6 +947,29 @@ rules:
   - AI-FIRST-001
   - AI-CONSUMER-FIRST
   section_count: 6
+- rule_id: TRAE-058
+  title: 全景图扫描排除规则
+  layer: L1
+  severity: error
+  scope: depgraph_scan_exclusions
+  file: trae_058_depgraph_scan_exclusions.yaml
+  aliases:
+  - 扫描排除规则
+  - depgraph排除
+  - 全景图排除
+  - SCAN-EXCLUDE
+  section_count: 7
+- rule_id: TRAE-059
+  title: _schema_version 写入保护规范
+  layer: L0
+  severity: critical
+  scope: schema_version_write_protection
+  file: trae_059_schema_version_write_protection.yaml
+  aliases:
+  - RULE-SCHEMA-VERSION-PROTECTION
+  - schema_version只读保护
+  - 迁移框架写入独占
+  section_count: 1
 - rule_id: TRAE-060
   title: 向内收原则（唯一真源·事件驱动·第一性原理）
   layer: L0

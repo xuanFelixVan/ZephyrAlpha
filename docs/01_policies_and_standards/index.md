@@ -3,15 +3,15 @@ module_id: PS-IDX-001
 title: 规则体系总索引
 doc_type: index
 status: active
-version: "2.0.0"
+version: "2.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-06-22"
+date: "2026-06-26"
 ttl: permanent
-summary: "01_policies_and_standards/ 的顶层导航入口。v2.0.0：对齐 meta/ 目录删除后的新结构（rules/ + _registry/ + templates/），移除14层引用，统一下划线命名。"
+summary: "01_policies_and_standards/ 的顶层导航入口。v2.1.0：P0 审查修复——§4.1 冷启动路径接入 trae_060 向内收三原则，目录树补全 058/059/060，修正规则计数 48→60。"
 tags: [index, root, navigation, policies-and-standards]
 rule_form: declarative
 scope: global
@@ -33,7 +33,7 @@ verifiability: manual
 
 ```
 01_policies_and_standards/
-├── rules/                       ← 规则文件唯一真源（48 个 trae_*.yaml）
+├── rules/                       ← 规则文件唯一真源（60 个 trae_*.yaml）
 │   ├── _index.yaml              ← 规则索引
 │   ├── trae_001_file_operation_security.yaml       ← 文件操作安全（RULE-ZERO~FOUR）
 │   ├── trae_002_anti_orphan_search_first.yaml      ← 搜索先行（RULE-EIGHT）
@@ -62,7 +62,10 @@ verifiability: manual
 │   ├── trae_054_depgraph_access_protocol.yaml      ← 全景图访问协议
 │   ├── trae_055_arch_domain_capacity.yaml          ← 架构域容量
 │   ├── trae_056_module_creation_workflow.yaml      ← 模块创建工作流
-│   └── trae_057_ai_consumer_first.yaml             ← AI消费优先原则
+│   ├── trae_057_ai_consumer_first.yaml             ← AI消费优先原则
+│   ├── trae_058_depgraph_scan_exclusions.yaml      ← 全景图扫描排除
+│   ├── trae_059_schema_version_write_protection.yaml ← schema_version写保护
+│   └── trae_060_inward_consolidation.yaml          ← 向内收三原则（顶层统辖）
 │
 ├── _registry/                   ← 注册表 + 验证契约（机器可读）
 │   ├── catalogs/                ← 集中注册表（24 个 YAML/MD）
@@ -108,7 +111,7 @@ verifiability: manual
 
 | 子目录 | 职责 | 管辖文件数 | 索引入口 |
 |--------|------|:---------:|---------|
-| `rules/` | 规则文件唯一真源——48 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 49 | [rules/_index.yaml](rules/_index.yaml) |
+| `rules/` | 规则文件唯一真源——60 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 61 | [rules/_index.yaml](rules/_index.yaml) |
 | `_registry/` | 注册表+契约+Schema+词表——4 个子目录 | 55 | [_registry/index.md](_registry/index.md) |
 | `templates/` | 文档模板——11 个标准模板 | 11 | [templates/index.md](templates/index.md) |
 
@@ -125,7 +128,7 @@ verifiability: manual
 
 | 类别 | 存放位置 | 说明 |
 |------|---------|------|
-| **规则文件** | `rules/` | 48 个 trae_*.yaml——文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略 |
+| **规则文件** | `rules/` | 60 个 trae_*.yaml——文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略 |
 | **机器注册表** | `_registry/` | 自动索引、受控词表、验证契约、Schema |
 | **文档模板** | `templates/` | 新建文件的起点 |
 
@@ -158,7 +161,7 @@ verifiability: manual
 | trae_028-030 | 文档治理 | 结构/操作/编号 |
 | trae_031-035 | 安全+模块+任务 | 密钥/生命周期/注册/任务卡 |
 | trae_036-039 | 架构门控+幻觉检测 | 门控/版本/注入/检测 |
-| trae_040-057 | AI路由+元规则+运维+域策略 | 18 个规则文件 |
+| trae_040-060 | AI路由+元规则+运维+域策略+向内收 | 21 个规则文件（含 058 扫描排除/059 schema保护/060 向内收三原则） |
 
 ---
 
@@ -168,10 +171,13 @@ verifiability: manual
 
 ```
 1. 本文件（index.md）                              ← 3 分钟了解全貌
-2. rules/_index.yaml                               ← 规则索引全貌
-3. _registry/vocabularies/glossary.yaml            ← 术语对齐
-4. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
+2. rules/trae_060_inward_consolidation.yaml        ← 向内收三原则（顶层统辖，必读真源）
+3. rules/_index.yaml                               ← 规则索引全貌
+4. _registry/vocabularies/glossary.yaml            ← 术语对齐
+5. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
 ```
+
+> **trae_060 接入说明**：本冷启动路径与 `.trae/rules/project_rules.md`「第二原则」均指向 `rules/trae_060_inward_consolidation.yaml` 真源，不复制内容（符合 trae_060 §2 唯一真源直读）。新 AI 经 IDE 入口或 docs 入口均能发现向内收三原则。
 
 ### 4.2 按任务类型定向阅读
 
@@ -203,7 +209,8 @@ verifiability: manual
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
-| 2.0.0 | 2026-06-22 | 架构升级对齐。(1) 删除 meta/ 目录引用（已物理删除，规则合并至 rules/）。(2) 删除 governance/、operational/、domains/ 目录引用（已删除，内容合并至 rules/）。(3) 新增 rules/ 目录（48 个 trae_*.yaml）。(4) 更新 _registry/ 文件数（catalogs 24 + contracts 3 + schemas 3 + vocabularies 25 = 55）。(5) 统一下划线命名（doc_type_vocabulary.yaml → doc_type_vocabulary.yaml 等）。(6) 移除14层引用（D19/D21 裁定：14层降级为域属性）。 |
+| 2.1.0 | 2026-06-26 | P0 审查修复。(1) §4.1 冷启动路径加入 trae_060（向内收三原则）作为第 2 步必读真源，与 `.trae/rules/project_rules.md` 第二原则对称接入。(2) 目录树补全 058/059/060。(3) 修正"48 个 trae_*.yaml"为"60 个"（3 处）+ 管辖文件数 49→61。(4) 分类体系表 040-057→040-060。对齐 trae_060 §2 唯一真源与 §4 新AI可发现性。 |
+| 2.0.0 | 2026-06-22 | 架构升级对齐。(1) 删除 meta/ 目录引用（已物理删除，规则合并至 rules/）。(2) 删除 governance/、operational/、domains/ 目录引用（已删除，内容合并至 rules/）。(3) 新增 rules/ 目录（60 个 trae_*.yaml）。(4) 更新 _registry/ 文件数（catalogs 24 + contracts 3 + schemas 3 + vocabularies 25 = 55）。(5) 统一下划线命名（doc_type_vocabulary.yaml → doc_type_vocabulary.yaml 等）。(6) 移除14层引用（D19/D21 裁定：14层降级为域属性）。 |
 | 1.4.0 | 2026-05-04 | 审计修复。meta/ 下已迁移文件注释行删除；文件数全面更新。 |
 | 1.2.0 | 2026-05-02 | 审计修复——全量文件数对账。 |
 | 1.1.0 | 2026-05-01 | 目录树全中文化 + 索引策略明确。 |
