@@ -1,5 +1,5 @@
 meta:
-  generated_at: '2026-06-25T14:44:42Z'
+  generated_at: '2026-06-26T07:50:06Z'
   auto_generated_by: scripts/governance/generate_target_path_tree.py
   task_id: DM-107
   source_depgraph: data/databases/depgraph.db
@@ -7,14 +7,14 @@ meta:
   source_migration_registry: docs/02_enterprise_architecture/migration_registry.yaml
   depgraph_version: ''
   depgraph_generated_at: ''
-  total_modules: 4722
-  total_subdomains: 111
+  total_modules: 4419
+  total_subdomains: 110
   expected_subdomains: 98
-  subdomain_coverage: 67
-  empty_subdomain_count: 798
+  subdomain_coverage: 66
+  empty_subdomain_count: 633
   needs_migration_count: 229
-  aligned_count: 4493
-  alignment_rate: 95.2%
+  aligned_count: 4190
+  alignment_rate: 94.8%
 domains:
   D-ALT_DATA:
     parent_domain: 业务
@@ -641,7 +641,7 @@ domains:
     ssot_path: src/zephyr/cross_asset/
     change_policy: evolving
     modification_permission: ai_modifiable
-    module_count: 12
+    module_count: 8
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/cross_asset/
@@ -662,12 +662,6 @@ domains:
       blueprint_id: MOD-CROSS_ASSET
       architecture_layer: L2_domain
       needs_migration: false
-    - current_path: src/zephyr/cross_asset/allocator/
-      target_path: src/zephyr/cross_asset/allocator/
-      type: module
-      blueprint_id: MOD-CROSS_ASSET
-      architecture_layer: L2_domain
-      needs_migration: false
     - current_path: src/zephyr/cross_asset/api/__init__.py
       target_path: src/zephyr/cross_asset/api/__init__.py
       type: module
@@ -676,18 +670,6 @@ domains:
       needs_migration: false
     - current_path: src/zephyr/cross_asset/core/__init__.py
       target_path: src/zephyr/cross_asset/core/__init__.py
-      type: module
-      blueprint_id: MOD-CROSS_ASSET
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/cross_asset/correlation/
-      target_path: src/zephyr/cross_asset/correlation/
-      type: module
-      blueprint_id: MOD-CROSS_ASSET
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/cross_asset/hedger/
-      target_path: src/zephyr/cross_asset/hedger/
       type: module
       blueprint_id: MOD-CROSS_ASSET
       architecture_layer: L2_domain
@@ -706,12 +688,6 @@ domains:
       needs_migration: false
     - current_path: src/zephyr/cross_asset/services/__init__.py
       target_path: src/zephyr/cross_asset/services/__init__.py
-      type: module
-      blueprint_id: MOD-CROSS_ASSET
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/cross_asset/strategy/
-      target_path: src/zephyr/cross_asset/strategy/
       type: module
       blueprint_id: MOD-CROSS_ASSET
       architecture_layer: L2_domain
@@ -829,7 +805,7 @@ domains:
     ssot_path: src/zephyr/digital_twin/
     change_policy: evolving
     modification_permission: ai_modifiable
-    module_count: 12
+    module_count: 8
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/digital_twin/
@@ -846,12 +822,6 @@ domains:
       needs_migration: false
     - current_path: src/zephyr/digital_twin/_extensions/__init__.py
       target_path: src/zephyr/digital_twin/_extensions/__init__.py
-      type: module
-      blueprint_id: MOD-DIGITAL_TWIN
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/digital_twin/agent_sim/
-      target_path: src/zephyr/digital_twin/agent_sim/
       type: module
       blueprint_id: MOD-DIGITAL_TWIN
       architecture_layer: L2_domain
@@ -874,26 +844,8 @@ domains:
       blueprint_id: MOD-DIGITAL_TWIN
       architecture_layer: L2_domain
       needs_migration: false
-    - current_path: src/zephyr/digital_twin/market_sim/
-      target_path: src/zephyr/digital_twin/market_sim/
-      type: module
-      blueprint_id: MOD-DIGITAL_TWIN
-      architecture_layer: L2_domain
-      needs_migration: false
     - current_path: src/zephyr/digital_twin/models/__init__.py
       target_path: src/zephyr/digital_twin/models/__init__.py
-      type: module
-      blueprint_id: MOD-DIGITAL_TWIN
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/digital_twin/orderbook_sim/
-      target_path: src/zephyr/digital_twin/orderbook_sim/
-      type: module
-      blueprint_id: MOD-DIGITAL_TWIN
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/digital_twin/scenario/
-      target_path: src/zephyr/digital_twin/scenario/
       type: module
       blueprint_id: MOD-DIGITAL_TWIN
       architecture_layer: L2_domain
@@ -1809,7 +1761,7 @@ domains:
     ssot_path: src/zephyr/shared/
     change_policy: evolving
     modification_permission: ai_modifiable
-    module_count: 277
+    module_count: 276
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/shared/__init__.py
@@ -3330,12 +3282,6 @@ domains:
       blueprint_id: SRC-140
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: src/zephyr/shared/shared_quickref.yaml
-      target_path: src/zephyr/shared/shared_quickref.yaml
-      type: config
-      blueprint_id: MOD-SHARED
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: src/zephyr/shared/shared_util/__init__.py
       target_path: src/zephyr/shared/shared_util/__init__.py
       type: module
@@ -3495,7 +3441,7 @@ domains:
     ssot_path: src/zephyr/simulation/
     change_policy: evolving
     modification_permission: ai_modifiable
-    module_count: 17
+    module_count: 13
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/simulation/
@@ -3540,12 +3486,6 @@ domains:
       blueprint_id: MOD-L09-001
       architecture_layer: L2_domain
       needs_migration: false
-    - current_path: src/zephyr/simulation/engine/
-      target_path: src/zephyr/simulation/engine/
-      type: module
-      blueprint_id: MOD-SIMULATION
-      architecture_layer: L2_domain
-      needs_migration: false
     - current_path: src/zephyr/simulation/implementations/__init___from_resear.py
       target_path: src/zephyr/simulation/implementations/__init___from_resear.py
       type: module
@@ -3564,12 +3504,6 @@ domains:
       blueprint_id: MOD-SIMULATION
       architecture_layer: L2_domain
       needs_migration: false
-    - current_path: src/zephyr/simulation/market_sim/
-      target_path: src/zephyr/simulation/market_sim/
-      type: module
-      blueprint_id: MOD-SIMULATION
-      architecture_layer: L2_domain
-      needs_migration: false
     - current_path: src/zephyr/simulation/models/__init__.py
       target_path: src/zephyr/simulation/models/__init__.py
       type: module
@@ -3580,18 +3514,6 @@ domains:
       target_path: src/zephyr/simulation/pipeline_base_from_resear.py
       type: module
       blueprint_id: MOD-L13-001
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/simulation/result/
-      target_path: src/zephyr/simulation/result/
-      type: module
-      blueprint_id: MOD-SIMULATION
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/simulation/scenario/
-      target_path: src/zephyr/simulation/scenario/
-      type: module
-      blueprint_id: MOD-SIMULATION
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/simulation/services/__init__.py
@@ -5151,7 +5073,7 @@ domains:
     ssot_path: src/zephyr/security/access_control/
     change_policy: stable
     modification_permission: immutable_core
-    module_count: 170
+    module_count: 142
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/security/access_control/__init__.py
@@ -6002,174 +5924,6 @@ domains:
       needs_migration: false
     - current_path: src/zephyr/security/access_control/vibe_coding_guard.py
       target_path: src/zephyr/security/access_control/vibe_coding_guard.py
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-Agent/D-SECURITY-18
-      target_path: 安全域-Agent/D-SECURITY-18
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-Agent/D-SECURITY-36
-      target_path: 安全域-Agent/D-SECURITY-36
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-Agent/D-SECURITY-38
-      target_path: 安全域-Agent/D-SECURITY-38
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-供应商/D-SECURITY-17
-      target_path: 安全域-供应商/D-SECURITY-17
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-供应链/D-SECURITY-28
-      target_path: 安全域-供应链/D-SECURITY-28
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-供应链/D-SECURITY-32
-      target_path: 安全域-供应链/D-SECURITY-32
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-培训/D-SECURITY-19
-      target_path: 安全域-培训/D-SECURITY-19
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-安全/D-SECURITY-06
-      target_path: 安全域-安全/D-SECURITY-06
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-安全/D-SECURITY-11
-      target_path: 安全域-安全/D-SECURITY-11
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-安全/D-SECURITY-14
-      target_path: 安全域-安全/D-SECURITY-14
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-安全/D-SECURITY-33
-      target_path: 安全域-安全/D-SECURITY-33
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-完整性/D-SECURITY-22
-      target_path: 安全域-完整性/D-SECURITY-22
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-审计/D-SECURITY-57
-      target_path: 安全域-审计/D-SECURITY-57
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-数据/D-SECURITY-04
-      target_path: 安全域-数据/D-SECURITY-04
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-数据/D-SECURITY-39
-      target_path: 安全域-数据/D-SECURITY-39
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-数据/D-SECURITY-43
-      target_path: 安全域-数据/D-SECURITY-43
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-日志安全/D-SECURITY-52
-      target_path: 安全域-日志安全/D-SECURITY-52
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-监控/D-SECURITY-59
-      target_path: 安全域-监控/D-SECURITY-59
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-策略/D-SECURITY-09
-      target_path: 安全域-策略/D-SECURITY-09
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-策略/D-SECURITY-27
-      target_path: 安全域-策略/D-SECURITY-27
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-网络/D-SECURITY-55
-      target_path: 安全域-网络/D-SECURITY-55
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-身份/D-SECURITY-02
-      target_path: 安全域-身份/D-SECURITY-02
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-身份/D-SECURITY-08
-      target_path: 安全域-身份/D-SECURITY-08
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-身份/D-SECURITY-41
-      target_path: 安全域-身份/D-SECURITY-41
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-身份/D-SECURITY-48
-      target_path: 安全域-身份/D-SECURITY-48
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-身份/D-SECURITY-50
-      target_path: 安全域-身份/D-SECURITY-50
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域-身份认证/D-SECURITY-45
-      target_path: 安全域-身份认证/D-SECURITY-45
-      type: module
-      blueprint_id: MOD-SECURITY
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 安全域/D-SECURITY-21
-      target_path: 安全域/D-SECURITY-21
       type: module
       blueprint_id: MOD-SECURITY
       architecture_layer: L1_foundation
@@ -7403,7 +7157,7 @@ domains:
     ssot_path: docs/02_enterprise_architecture/
     change_policy: stable
     modification_permission: human_gated
-    module_count: 31
+    module_count: 9
     needs_migration_count: 0
     modules:
     - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml
@@ -7442,140 +7196,8 @@ domains:
       blueprint_id: DOM-GOV-001
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/frontend/frontend_model.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/frontend/frontend_model.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml
       target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/infra/core_services.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/infra/core_services.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/infra/shared_infra.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/infra/shared_infra.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/b_mcp.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/b_mcp.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l00_data_source.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l00_data_source.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l01_infrastructure.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l01_infrastructure.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l02_alpha_factor.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l02_alpha_factor.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l03_signal_generation.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l03_signal_generation.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l04_risk_management.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l04_risk_management.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l05_portfolio_construction.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l05_portfolio_construction.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l06_trade_execution.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l06_trade_execution.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l07_post_trade_analytics.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l07_post_trade_analytics.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l08_human_ai_interface.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l08_human_ai_interface.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l09_research_innovation.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l09_research_innovation.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l10_compliance.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l10_compliance.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l11_ml_platform.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l11_ml_platform.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l12_system_telemetry.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l12_system_telemetry.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l13_experimentation.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l13_experimentation.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/schema.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/schema.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/shared.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/shared.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/mir_vxzd5an_.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/mir_vxzd5an_.yaml
-      type: config
-      blueprint_id: DOM-GOV-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/02_enterprise_architecture/target_architecture/architecture_model/scripts/scripts_model.yaml
-      target_path: docs/02_enterprise_architecture/target_architecture/architecture_model/scripts/scripts_model.yaml
       type: config
       blueprint_id: DOM-GOV-001
       architecture_layer: L1_foundation
@@ -7603,37 +7225,37 @@ domains:
     - current_path: src/zephyr/signal_ashare/_extensions/__init__.py
       target_path: src/zephyr/signal_ashare/_extensions/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_ashare/api/__init__.py
       target_path: src/zephyr/signal_ashare/api/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_ashare/core/__init__.py
       target_path: src/zephyr/signal_ashare/core/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_ashare/infrastructure/__init__.py
       target_path: src/zephyr/signal_ashare/infrastructure/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_ashare/models/__init__.py
       target_path: src/zephyr/signal_ashare/models/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_ashare/services/__init__.py
       target_path: src/zephyr/signal_ashare/services/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
   asset-inventory:
@@ -9543,7 +9165,7 @@ domains:
     ssot_path: src/zephyr/governance/
     change_policy: stable
     modification_permission: ai_modifiable
-    module_count: 663
+    module_count: 661
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/governance/__init__.py
@@ -11712,12 +11334,6 @@ domains:
       blueprint_id: MOD-INF-009
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: src/zephyr/governance/kb/pipeline/triage.py
-      target_path: src/zephyr/governance/kb/pipeline/triage.py
-      type: module
-      blueprint_id: MOD-INF-009
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: src/zephyr/governance/kb/quiet_period_monitor.py
       target_path: src/zephyr/governance/kb/quiet_period_monitor.py
       type: module
@@ -11798,12 +11414,6 @@ domains:
       needs_migration: false
     - current_path: src/zephyr/governance/kb/supply_chain_graph_engine/graph_validator.py
       target_path: src/zephyr/governance/kb/supply_chain_graph_engine/graph_validator.py
-      type: module
-      blueprint_id: MOD-KB-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: src/zephyr/governance/kb/triage.py
-      target_path: src/zephyr/governance/kb/triage.py
       type: module
       blueprint_id: MOD-KB-001
       architecture_layer: L1_foundation
@@ -16345,13 +15955,13 @@ domains:
     - current_path: src/zephyr/signal_fundamental/_extensions/__init__.py
       target_path: src/zephyr/signal_fundamental/_extensions/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_FUNDAMENTAL
+      blueprint_id: MOD-FUNDAMENTAL_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_fundamental/api/__init__.py
       target_path: src/zephyr/signal_fundamental/api/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_FUNDAMENTAL
+      blueprint_id: MOD-FUNDAMENTAL_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_fundamental/capital/__init__.py
@@ -16399,7 +16009,7 @@ domains:
     - current_path: src/zephyr/signal_fundamental/core/__init__.py
       target_path: src/zephyr/signal_fundamental/core/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_FUNDAMENTAL
+      blueprint_id: MOD-FUNDAMENTAL_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_fundamental/gen/__init__.py
@@ -16429,13 +16039,13 @@ domains:
     - current_path: src/zephyr/signal_fundamental/infrastructure/__init__.py
       target_path: src/zephyr/signal_fundamental/infrastructure/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_FUNDAMENTAL
+      blueprint_id: MOD-FUNDAMENTAL_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_fundamental/models/__init__.py
       target_path: src/zephyr/signal_fundamental/models/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_FUNDAMENTAL
+      blueprint_id: MOD-FUNDAMENTAL_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_fundamental/pipeline.py
@@ -16447,7 +16057,7 @@ domains:
     - current_path: src/zephyr/signal_fundamental/services/__init__.py
       target_path: src/zephyr/signal_fundamental/services/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_FUNDAMENTAL
+      blueprint_id: MOD-FUNDAMENTAL_SIGNAL
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_fundamental/strategy/__init__.py
@@ -17589,7 +17199,7 @@ domains:
     ssot_path: src/zephyr/integration/
     change_policy: evolving
     modification_permission: ai_modifiable
-    module_count: 284
+    module_count: 283
     needs_migration_count: 0
     modules:
     - current_path: src/zephyr/integration/__init__.py
@@ -18720,12 +18330,6 @@ domains:
       blueprint_id: SRC-188
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: src/zephyr/integration/shared_08/event_bus.py
-      target_path: src/zephyr/integration/shared_08/event_bus.py
-      type: module
-      blueprint_id: MOD-INF-016
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: src/zephyr/integration/shared_08/file_utils.py
       target_path: src/zephyr/integration/shared_08/file_utils.py
       type: module
@@ -19315,7 +18919,7 @@ domains:
     ssot_path: src/zephyr/infra_ops/
     change_policy: stable
     modification_permission: ai_modifiable
-    module_count: 22
+    module_count: 18
     needs_migration_count: 1
     modules:
     - current_path: src/zephyr/infra_ops/
@@ -19336,23 +18940,11 @@ domains:
       blueprint_id: MOD-INFRA_OPS
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: src/zephyr/infra_ops/alerting/
-      target_path: src/zephyr/infra_ops/alerting/
-      type: module
-      blueprint_id: MOD-INFRA_OPS
-      architecture_layer: L0_infrastructure
-      needs_migration: false
     - current_path: src/zephyr/infra_ops/api/__init__.py
       target_path: src/zephyr/infra_ops/api/__init__.py
       type: module
       blueprint_id: MOD-INFRA_OPS
       architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: src/zephyr/infra_ops/capacity/
-      target_path: src/zephyr/infra_ops/capacity/
-      type: module
-      blueprint_id: MOD-INFRA_OPS
-      architecture_layer: L0_infrastructure
       needs_migration: false
     - current_path: src/zephyr/infra_ops/core/__init__.py
       target_path: src/zephyr/infra_ops/core/__init__.py
@@ -19408,12 +19000,6 @@ domains:
       blueprint_id: MOD-L08-001
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: src/zephyr/infra_ops/deployment/
-      target_path: src/zephyr/infra_ops/deployment/
-      type: module
-      blueprint_id: MOD-INFRA_OPS
-      architecture_layer: L0_infrastructure
-      needs_migration: false
     - current_path: src/zephyr/infra_ops/infrastructure/__init__.py
       target_path: src/zephyr/infra_ops/infrastructure/__init__.py
       type: module
@@ -19431,12 +19017,6 @@ domains:
       type: module
       blueprint_id: MOD-INFRA_OPS
       architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: src/zephyr/infra_ops/monitoring/
-      target_path: src/zephyr/infra_ops/monitoring/
-      type: module
-      blueprint_id: MOD-INFRA_OPS
-      architecture_layer: L0_infrastructure
       needs_migration: false
     - current_path: src/zephyr/infra_ops/services/__init__.py
       target_path: src/zephyr/infra_ops/services/__init__.py
@@ -19951,15 +19531,9 @@ domains:
     ssot_path: src/zephyr/governance/rule_enforcement/
     change_policy: stable
     modification_permission: human_gated
-    module_count: 359
+    module_count: 355
     needs_migration_count: 6
     modules:
-    - current_path: 01-跨域交叉点 vs 29-D-GOVERNANCE/D-GOV-11
-      target_path: 01-跨域交叉点 vs 29-D-GOVERNANCE/D-GOV-11
-      type: module
-      blueprint_id: MOD-GOVERNANCE
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: architecture_model/architecture_lock.yaml
       target_path: architecture_model/architecture_lock.yaml
       type: config
@@ -20083,43 +19657,43 @@ domains:
     - current_path: config/capacity/asset_inventory.yaml
       target_path: config/capacity/asset_inventory.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/capacity_slo.yaml
       target_path: config/capacity/capacity_slo.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/degradation_chain.yaml
       target_path: config/capacity/degradation_chain.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/error_budget_config.yaml
       target_path: config/capacity/error_budget_config.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/external_watchdog.yaml
       target_path: config/capacity/external_watchdog.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/owner_offline_protocol.yaml
       target_path: config/capacity/owner_offline_protocol.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/risk_register.yaml
       target_path: config/capacity/risk_register.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity_params.yaml
@@ -20443,7 +20017,7 @@ domains:
     - current_path: docs/03_modules/_cross_layer/pipeline/blueprint.md
       target_path: docs/03_modules/_cross_layer/pipeline/blueprint.md
       type: module
-      blueprint_id: MOD_INF_009
+      blueprint_id: MOD-INF-009
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/red_blue_validator/blueprint.md
@@ -20458,6 +20032,12 @@ domains:
       blueprint_id: MOD_INF_032
       architecture_layer: L1_foundation
       needs_migration: false
+    - current_path: docs/03_modules/_cross_layer/restructuring/blueprint.md
+      target_path: docs/03_modules/_cross_layer/restructuring/blueprint.md
+      type: module
+      blueprint_id: GOV-FSTR-001
+      architecture_layer: L1_foundation
+      needs_migration: false
     - current_path: docs/03_modules/_cross_layer/semantic_auditor/blueprint.md
       target_path: docs/03_modules/_cross_layer/semantic_auditor/blueprint.md
       type: module
@@ -20467,7 +20047,7 @@ domains:
     - current_path: docs/03_modules/_cross_layer/shared_core/blueprint.md
       target_path: docs/03_modules/_cross_layer/shared_core/blueprint.md
       type: module
-      blueprint_id: MOD_INF_016
+      blueprint_id: MOD-INF-016
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
@@ -20504,12 +20084,6 @@ domains:
       target_path: docs/03_modules/_domain_data/datasource_core/blueprint.md
       type: module
       blueprint_id: MOD-L00-001
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: docs/03_modules/_domain_ex_core/ex_core/blueprint.md
-      target_path: docs/03_modules/_domain_ex_core/ex_core/blueprint.md
-      type: module
-      blueprint_id: MOD-L06-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md
@@ -20602,12 +20176,6 @@ domains:
       blueprint_id: MOD-L11-001
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: docs/03_modules/_domain_pf_core/pf_core/blueprint.md
-      target_path: docs/03_modules/_domain_pf_core/pf_core/blueprint.md
-      type: module
-      blueprint_id: MOD-L05-001
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: docs/03_modules/_domain_reporting/analytics_core/blueprint.md
       target_path: docs/03_modules/_domain_reporting/analytics_core/blueprint.md
       type: module
@@ -20656,16 +20224,10 @@ domains:
       blueprint_id: MOD-071
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: docs/03_modules/_restructuring/blueprint.md
-      target_path: docs/03_modules/_restructuring/blueprint.md
-      type: module
-      blueprint_id: GOV-FSTR-001
-      architecture_layer: L1_foundation
-      needs_migration: false
     - current_path: docs/03_modules/_sys_master/blueprint.md
       target_path: docs/03_modules/_sys_master/blueprint.md
       type: module
-      blueprint_id: MOD-073
+      blueprint_id: SYS-MASTER-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: scripts/governance/_audit_gate_registry.py
@@ -22102,12 +21664,6 @@ domains:
       blueprint_id: MOD-INF-007
       architecture_layer: L1_foundation
       needs_migration: false
-    - current_path: 治理域/D-GOVERNANCE-09
-      target_path: 治理域/D-GOVERNANCE-09
-      type: module
-      blueprint_id: MOD-GOVERNANCE
-      architecture_layer: L1_foundation
-      needs_migration: false
   rule_governance:
     parent_domain: D-GOV_RULE
     ssot_path: src/zephyr/gov_rule/
@@ -22129,7 +21685,7 @@ domains:
     ssot_path: src/zephyr/infra_runtime/
     change_policy: stable
     modification_permission: ai_modifiable
-    module_count: 138
+    module_count: 135
     needs_migration_count: 135
     modules:
     - current_path: src/zephyr/__init__.py
@@ -22942,24 +22498,6 @@ domains:
       blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: true
-    - current_path: 运维基础设施域/D-INFRA-03
-      target_path: 运维基础设施域/D-INFRA-03
-      type: module
-      blueprint_id: MOD-INFRA_RUNTIME
-      architecture_layer: L0_infrastructure
-      needs_migration: false
-    - current_path: 运维基础设施域/D-INFRA-321
-      target_path: 运维基础设施域/D-INFRA-321
-      type: module
-      blueprint_id: MOD-INFRA_RUNTIME
-      architecture_layer: L0_infrastructure
-      needs_migration: false
-    - current_path: 运行时基础设施域-配置管理/D-INFRA-06
-      target_path: 运行时基础设施域-配置管理/D-INFRA-06
-      type: module
-      blueprint_id: MOD-INFRA_RUNTIME
-      architecture_layer: L0_infrastructure
-      needs_migration: false
   script_governance:
     parent_domain: D-GOV-SCRIPTS
     ssot_path: src/zephyr/governance/script_governance/
@@ -23291,43 +22829,43 @@ domains:
     - current_path: src/zephyr/signal_quality/__init__.py
       target_path: src/zephyr/portfolio/signal_quality/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: true
     - current_path: src/zephyr/signal_quality/_extensions/__init__.py
       target_path: src/zephyr/signal_quality/_extensions/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_quality/api/__init__.py
       target_path: src/zephyr/signal_quality/api/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_quality/core/__init__.py
       target_path: src/zephyr/signal_quality/core/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_quality/infrastructure/__init__.py
       target_path: src/zephyr/signal_quality/infrastructure/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_quality/models/__init__.py
       target_path: src/zephyr/signal_quality/models/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: false
     - current_path: src/zephyr/signal_quality/services/__init__.py
       target_path: src/zephyr/signal_quality/services/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
+      blueprint_id: MOD-SIGQC
       architecture_layer: L2_domain
       needs_migration: false
   task_management:
@@ -23401,7 +22939,7 @@ domains:
     ssot_path: ''
     change_policy: evolving
     modification_permission: ai_modifiable
-    module_count: 13
+    module_count: 9
     needs_migration_count: 1
     modules:
     - current_path: src/zephyr/pf_alloc/
@@ -23428,12 +22966,6 @@ domains:
       blueprint_id: MOD-PF_ALLOC
       architecture_layer: L2_domain
       needs_migration: false
-    - current_path: src/zephyr/pf_alloc/constraint/
-      target_path: src/zephyr/pf_alloc/constraint/
-      type: module
-      blueprint_id: MOD-PF_ALLOC
-      architecture_layer: L2_domain
-      needs_migration: false
     - current_path: src/zephyr/pf_alloc/core/__init__.py
       target_path: src/zephyr/pf_alloc/core/__init__.py
       type: module
@@ -23448,24 +22980,6 @@ domains:
       needs_migration: false
     - current_path: src/zephyr/pf_alloc/models/__init__.py
       target_path: src/zephyr/pf_alloc/models/__init__.py
-      type: module
-      blueprint_id: MOD-PF_ALLOC
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/pf_alloc/optimizer/
-      target_path: src/zephyr/pf_alloc/optimizer/
-      type: module
-      blueprint_id: MOD-PF_ALLOC
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/pf_alloc/rebalance/
-      target_path: src/zephyr/pf_alloc/rebalance/
-      type: module
-      blueprint_id: MOD-PF_ALLOC
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: src/zephyr/pf_alloc/risk_budget/
-      target_path: src/zephyr/pf_alloc/risk_budget/
       type: module
       blueprint_id: MOD-PF_ALLOC
       architecture_layer: L2_domain
@@ -23708,356 +23222,6 @@ domains:
       blueprint_id: MOD-PF_CORE
       architecture_layer: L2_domain
       needs_migration: true
-  cross_asset:
-    parent_domain: ''
-    ssot_path: ''
-    change_policy: evolving
-    modification_permission: ai_modifiable
-    module_count: 57
-    needs_migration_count: 0
-    modules:
-    - current_path: 风控-策略管理/D-RISK-01
-      target_path: 风控-策略管理/D-RISK-01
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控-组合监控/D-RISK-03
-      target_path: 风控-组合监控/D-RISK-03
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-27
-      target_path: 风控域-A股特色/D-RISK-27
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-29
-      target_path: 风控域-A股特色/D-RISK-29
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-30
-      target_path: 风控域-A股特色/D-RISK-30
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-32
-      target_path: 风控域-A股特色/D-RISK-32
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-34
-      target_path: 风控域-A股特色/D-RISK-34
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-36
-      target_path: 风控域-A股特色/D-RISK-36
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-A股特色/D-RISK-39
-      target_path: 风控域-A股特色/D-RISK-39
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-Kill Switch/D-RISK-54
-      target_path: 风控域-Kill Switch/D-RISK-54
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-Kill Switch/D-RISK-66
-      target_path: 风控域-Kill Switch/D-RISK-66
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-Kill Switch/D-RISK-83
-      target_path: 风控域-Kill Switch/D-RISK-83
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-07
-      target_path: 风控域-VaR/D-RISK-07
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-41
-      target_path: 风控域-VaR/D-RISK-41
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-43
-      target_path: 风控域-VaR/D-RISK-43
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-45
-      target_path: 风控域-VaR/D-RISK-45
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-47
-      target_path: 风控域-VaR/D-RISK-47
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-71
-      target_path: 风控域-VaR/D-RISK-71
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-VaR/D-RISK-73
-      target_path: 风控域-VaR/D-RISK-73
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-分析引擎/D-RISK-06
-      target_path: 风控域-分析引擎/D-RISK-06
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-分析引擎/D-RISK-103
-      target_path: 风控域-分析引擎/D-RISK-103
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-分析引擎/D-RISK-16
-      target_path: 风控域-分析引擎/D-RISK-16
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-回测/D-RISK-24
-      target_path: 风控域-回测/D-RISK-24
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-基础设施/D-RISK-121
-      target_path: 风控域-基础设施/D-RISK-121
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-基础设施/D-RISK-21
-      target_path: 风控域-基础设施/D-RISK-21
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-基础设施/D-RISK-50
-      target_path: 风控域-基础设施/D-RISK-50
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-基础设施/D-RISK-56
-      target_path: 风控域-基础设施/D-RISK-56
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-基础设施/D-RISK-77
-      target_path: 风控域-基础设施/D-RISK-77
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-契约/D-RISK-80
-      target_path: 风控域-契约/D-RISK-80
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-契约/D-RISK-87
-      target_path: 风控域-契约/D-RISK-87
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-审计/D-RISK-15
-      target_path: 风控域-审计/D-RISK-15
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-报告/D-RISK-23
-      target_path: 风控域-报告/D-RISK-23
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-止损/D-RISK-64
-      target_path: 风控域-止损/D-RISK-64
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-08
-      target_path: 风控域-盘中监控/D-RISK-08
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-13
-      target_path: 风控域-盘中监控/D-RISK-13
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-18
-      target_path: 风控域-盘中监控/D-RISK-18
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-63
-      target_path: 风控域-盘中监控/D-RISK-63
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-70
-      target_path: 风控域-盘中监控/D-RISK-70
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-97
-      target_path: 风控域-盘中监控/D-RISK-97
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘中监控/D-RISK-99
-      target_path: 风控域-盘中监控/D-RISK-99
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘前拦截/D-RISK-53
-      target_path: 风控域-盘前拦截/D-RISK-53
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-盘前拦截/D-RISK-78
-      target_path: 风控域-盘前拦截/D-RISK-78
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-规则引擎/D-RISK-105
-      target_path: 风控域-规则引擎/D-RISK-105
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-规则引擎/D-RISK-109
-      target_path: 风控域-规则引擎/D-RISK-109
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-规则引擎/D-RISK-113
-      target_path: 风控域-规则引擎/D-RISK-113
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-规则引擎/D-RISK-117
-      target_path: 风控域-规则引擎/D-RISK-117
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-迁移/D-RISK-86
-      target_path: 风控域-迁移/D-RISK-86
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-远期❌/D-RISK-09
-      target_path: 风控域-远期❌/D-RISK-09
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-远期❌/D-RISK-19
-      target_path: 风控域-远期❌/D-RISK-19
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-远期❌/D-RISK-48
-      target_path: 风控域-远期❌/D-RISK-48
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-远期❌/D-RISK-95
-      target_path: 风控域-远期❌/D-RISK-95
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-门禁/D-RISK-92
-      target_path: 风控域-门禁/D-RISK-92
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-预测/D-RISK-25
-      target_path: 风控域-预测/D-RISK-25
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-风险报告/D-RISK-101
-      target_path: 风控域-风险报告/D-RISK-101
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-风险报告/D-RISK-22
-      target_path: 风控域-风险报告/D-RISK-22
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-风险报告/D-RISK-90
-      target_path: 风控域-风险报告/D-RISK-90
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 风控域-风险治理/D-RISK-49
-      target_path: 风控域-风险治理/D-RISK-49
-      type: module
-      blueprint_id: MOD-RISK
-      architecture_layer: L2_domain
-      needs_migration: false
   factor:
     parent_domain: ''
     ssot_path: ''
@@ -24379,7 +23543,7 @@ domains:
     - current_path: src/zephyr/signal_ashare/__init__.py
       target_path: src/zephyr/portfolio/signal_ashare/__init__.py
       type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
+      blueprint_id: MOD-ASHARE_SIGNAL
       architecture_layer: L2_domain
       needs_migration: true
   simulation:
@@ -24445,7 +23609,7 @@ domains:
     ssot_path: ''
     change_policy: volatile
     modification_permission: ai_modifiable
-    module_count: 798
+    module_count: 633
     needs_migration_count: 0
     modules:
     - current_path: architecture_model/layers/b_vector_memory.yaml
@@ -24475,19 +23639,19 @@ domains:
     - current_path: config/capacity/ai_context_policy.yaml
       target_path: config/capacity/ai_context_policy.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/sandbox_policy.yaml
       target_path: config/capacity/sandbox_policy.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/capacity/token_budget.yaml
       target_path: config/capacity/token_budget.yaml
       type: config
-      blueprint_id: MOD_INF_001
+      blueprint_id: MOD-INF-001
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/compression/policy.yaml
@@ -24511,7 +23675,7 @@ domains:
     - current_path: config/data/survivorship_policy.yaml
       target_path: config/data/survivorship_policy.yaml
       type: config
-      blueprint_id: MOD_INF_016
+      blueprint_id: MOD-INF-016
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: config/feature_activation_policy.yaml
@@ -28246,996 +27410,6 @@ domains:
       blueprint_id: MOD-INF-017
       architecture_layer: L3_application
       needs_migration: false
-    - current_path: ✅保留/D-INTEGRATION-11
-      target_path: ✅保留/D-INTEGRATION-11
-      type: module
-      blueprint_id: MOD-SHARED
-      architecture_layer: L0_infrastructure
-      needs_migration: false
-    - current_path: ✅已有
-      target_path: ✅已有
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: ✅能建/D-INTEGRATION-33
-      target_path: ✅能建/D-INTEGRATION-33
-      type: module
-      blueprint_id: MOD-SHARED
-      architecture_layer: L0_infrastructure
-      needs_migration: false
-    - current_path: ✅能建/D-INTEGRATION-43
-      target_path: ✅能建/D-INTEGRATION-43
-      type: module
-      blueprint_id: MOD-SHARED
-      architecture_layer: L0_infrastructure
-      needs_migration: false
-    - current_path: ✅部分在system-telemetry
-      target_path: ✅部分在system-telemetry
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: ❌
-      target_path: ❌
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 交易域-监控/D-TRADING-06
-      target_path: 交易域-监控/D-TRADING-06
-      type: module
-      blueprint_id: MOD-TRADING
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 交易域-资金/D-TRADING-12
-      target_path: 交易域-资金/D-TRADING-12
-      type: module
-      blueprint_id: MOD-TRADING
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 交易日历引擎(交易所日历/假日管理/T+N计算)/D-TRADING-07
-      target_path: 交易日历引擎(交易所日历/假日管理/T+N计算)/D-TRADING-07
-      type: module
-      blueprint_id: MOD-MKT_DATA
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 交易监控规则引擎+监管报告生成器+身份验证集成器+风险管理集成器+监管变更追踪器+合规工作流引擎+合规仪表盘/D-COMPLIANCE-14
-      target_path: 交易监控规则引擎+监管报告生成器+身份验证集成器+风险管理集成器+监管变更追踪器+合规工作流引擎+合规仪表盘/D-COMPLIANCE-14
-      type: module
-      blueprint_id: MOD-COMPLIANCE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 交易运营域/D-TRADING-04
-      target_path: 交易运营域/D-TRADING-04
-      type: module
-      blueprint_id: MOD-TRADING
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-主力资金/D-SIGNAL-21
-      target_path: 信号域-A股特色-主力资金/D-SIGNAL-21
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-主力资金/D-SIGNAL-23
-      target_path: 信号域-A股特色-主力资金/D-SIGNAL-23
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-主力资金/D-SIGNAL-36
-      target_path: 信号域-A股特色-主力资金/D-SIGNAL-36
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-买卖点/D-SIGNAL-47
-      target_path: 信号域-A股特色-买卖点/D-SIGNAL-47
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-决策评估/D-SIGNAL-27
-      target_path: 信号域-A股特色-决策评估/D-SIGNAL-27
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-决策评估/D-SIGNAL-45
-      target_path: 信号域-A股特色-决策评估/D-SIGNAL-45
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-分时技术/D-SIGNAL-29
-      target_path: 信号域-A股特色-分时技术/D-SIGNAL-29
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-分时技术/D-SIGNAL-40
-      target_path: 信号域-A股特色-分时技术/D-SIGNAL-40
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-分时技术/D-SIGNAL-51
-      target_path: 信号域-A股特色-分时技术/D-SIGNAL-51
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-大盘阶段/D-SIGNAL-31
-      target_path: 信号域-A股特色-大盘阶段/D-SIGNAL-31
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-大盘阶段/D-SIGNAL-49
-      target_path: 信号域-A股特色-大盘阶段/D-SIGNAL-49
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-情绪周期/D-SIGNAL-25
-      target_path: 信号域-A股特色-情绪周期/D-SIGNAL-25
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-情绪周期/D-SIGNAL-33
-      target_path: 信号域-A股特色-情绪周期/D-SIGNAL-33
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-板块轮动/D-SIGNAL-63
-      target_path: 信号域-A股特色-板块轮动/D-SIGNAL-63
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-涨停封单/D-SIGNAL-53
-      target_path: 信号域-A股特色-涨停封单/D-SIGNAL-53
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-特殊信号/D-SIGNAL-38
-      target_path: 信号域-A股特色-特殊信号/D-SIGNAL-38
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-特殊信号/D-SIGNAL-42
-      target_path: 信号域-A股特色-特殊信号/D-SIGNAL-42
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-特殊信号/D-SIGNAL-55
-      target_path: 信号域-A股特色-特殊信号/D-SIGNAL-55
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-特殊信号/D-SIGNAL-61
-      target_path: 信号域-A股特色-特殊信号/D-SIGNAL-61
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-A股特色-量化双引擎/D-SIGNAL-57
-      target_path: 信号域-A股特色-量化双引擎/D-SIGNAL-57
-      type: module
-      blueprint_id: MOD-SIGNAL_ASHARE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-DDD契约/D-SIGNAL-160
-      target_path: 信号域-DDD契约/D-SIGNAL-160
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-DDD契约/D-SIGNAL-162
-      target_path: 信号域-DDD契约/D-SIGNAL-162
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-Regime/D-SIGNAL-65
-      target_path: 信号域-Regime/D-SIGNAL-65
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-Regime/D-SIGNAL-67
-      target_path: 信号域-Regime/D-SIGNAL-67
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-Regime/D-SIGNAL-74
-      target_path: 信号域-Regime/D-SIGNAL-74
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-Regime/D-SIGNAL-76
-      target_path: 信号域-Regime/D-SIGNAL-76
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-事件追踪/D-SIGNAL-101
-      target_path: 信号域-事件追踪/D-SIGNAL-101
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-事件追踪/D-SIGNAL-103
-      target_path: 信号域-事件追踪/D-SIGNAL-103
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-事件追踪/D-SIGNAL-99
-      target_path: 信号域-事件追踪/D-SIGNAL-99
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-信号处理/D-SIGNAL-69
-      target_path: 信号域-信号处理/D-SIGNAL-69
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-信号处理/D-SIGNAL-71
-      target_path: 信号域-信号处理/D-SIGNAL-71
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-冲突融合/D-SIGNAL-130
-      target_path: 信号域-冲突融合/D-SIGNAL-130
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-冲突融合/D-SIGNAL-132
-      target_path: 信号域-冲突融合/D-SIGNAL-132
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-冲突融合/D-SIGNAL-134
-      target_path: 信号域-冲突融合/D-SIGNAL-134
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-合成分配/D-SIGNAL-85
-      target_path: 信号域-合成分配/D-SIGNAL-85
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-合成分配/D-SIGNAL-87
-      target_path: 信号域-合成分配/D-SIGNAL-87
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-合成分配/D-SIGNAL-90
-      target_path: 信号域-合成分配/D-SIGNAL-90
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-合成分配/D-SIGNAL-92
-      target_path: 信号域-合成分配/D-SIGNAL-92
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-合成分配/D-SIGNAL-94
-      target_path: 信号域-合成分配/D-SIGNAL-94
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-合成分配/D-SIGNAL-96
-      target_path: 信号域-合成分配/D-SIGNAL-96
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-契约/D-SIGNAL-100
-      target_path: 信号域-契约/D-SIGNAL-100
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-契约/D-SIGNAL-158
-      target_path: 信号域-契约/D-SIGNAL-158
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-审计/D-SIGNAL-06
-      target_path: 信号域-审计/D-SIGNAL-06
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-114
-      target_path: 信号域-技术指标/D-SIGNAL-114
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-116
-      target_path: 信号域-技术指标/D-SIGNAL-116
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-118
-      target_path: 信号域-技术指标/D-SIGNAL-118
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-120
-      target_path: 信号域-技术指标/D-SIGNAL-120
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-122
-      target_path: 信号域-技术指标/D-SIGNAL-122
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-124
-      target_path: 信号域-技术指标/D-SIGNAL-124
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-126
-      target_path: 信号域-技术指标/D-SIGNAL-126
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-技术指标/D-SIGNAL-128
-      target_path: 信号域-技术指标/D-SIGNAL-128
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-核心基础设施/D-SIGNAL-12
-      target_path: 信号域-核心基础设施/D-SIGNAL-12
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-核心基础设施/D-SIGNAL-14
-      target_path: 信号域-核心基础设施/D-SIGNAL-14
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-核心基础设施/D-SIGNAL-16
-      target_path: 信号域-核心基础设施/D-SIGNAL-16
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-核心基础设施/D-SIGNAL-18
-      target_path: 信号域-核心基础设施/D-SIGNAL-18
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略发布/D-SIGNAL-140
-      target_path: 信号域-策略发布/D-SIGNAL-140
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略可视化/D-SIGNAL-105
-      target_path: 信号域-策略可视化/D-SIGNAL-105
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略可视化/D-SIGNAL-107
-      target_path: 信号域-策略可视化/D-SIGNAL-107
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略可视化/D-SIGNAL-109
-      target_path: 信号域-策略可视化/D-SIGNAL-109
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略可视化/D-SIGNAL-111
-      target_path: 信号域-策略可视化/D-SIGNAL-111
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略管理/D-SIGNAL-137
-      target_path: 信号域-策略管理/D-SIGNAL-137
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略管理/D-SIGNAL-139
-      target_path: 信号域-策略管理/D-SIGNAL-139
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略管理/D-SIGNAL-141
-      target_path: 信号域-策略管理/D-SIGNAL-141
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略管理/D-SIGNAL-143
-      target_path: 信号域-策略管理/D-SIGNAL-143
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略质量/D-SIGNAL-145
-      target_path: 信号域-策略质量/D-SIGNAL-145
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略质量/D-SIGNAL-147
-      target_path: 信号域-策略质量/D-SIGNAL-147
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略运行时/D-SIGNAL-150
-      target_path: 信号域-策略运行时/D-SIGNAL-150
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略运行时/D-SIGNAL-152
-      target_path: 信号域-策略运行时/D-SIGNAL-152
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-策略运行时/D-SIGNAL-156
-      target_path: 信号域-策略运行时/D-SIGNAL-156
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-质量降级/D-SIGNAL-77
-      target_path: 信号域-质量降级/D-SIGNAL-77
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-质量降级/D-SIGNAL-79
-      target_path: 信号域-质量降级/D-SIGNAL-79
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-质量降级/D-SIGNAL-81
-      target_path: 信号域-质量降级/D-SIGNAL-81
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-质量降级/D-SIGNAL-83
-      target_path: 信号域-质量降级/D-SIGNAL-83
-      type: module
-      blueprint_id: MOD-SIGNAL_QUALITY
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域-降级/D-SIGNAL-80
-      target_path: 信号域-降级/D-SIGNAL-80
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 信号域/D-SIGNAL-20
-      target_path: 信号域/D-SIGNAL-20
-      type: module
-      blueprint_id: MOD-SIGNAL
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-06
-      target_path: 前端域/D-FRONTEND-06
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-08
-      target_path: 前端域/D-FRONTEND-08
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-10
-      target_path: 前端域/D-FRONTEND-10
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-12
-      target_path: 前端域/D-FRONTEND-12
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-14
-      target_path: 前端域/D-FRONTEND-14
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-16
-      target_path: 前端域/D-FRONTEND-16
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-18
-      target_path: 前端域/D-FRONTEND-18
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-20
-      target_path: 前端域/D-FRONTEND-20
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-22
-      target_path: 前端域/D-FRONTEND-22
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 前端域/D-FRONTEND-24
-      target_path: 前端域/D-FRONTEND-24
-      type: module
-      blueprint_id: MOD-FRONTEND
-      architecture_layer: L3_application
-      needs_migration: false
-    - current_path: 另类数据域缩写，D-ALT-02=SentimentEngine
-      target_path: 另类数据域缩写，D-ALT-02=SentimentEngine
-      type: module
-      blueprint_id: MOD-PF_CORE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 合规域-交易纪律/D-COMPLIANCE-23
-      target_path: 合规域-交易纪律/D-COMPLIANCE-23
-      type: module
-      blueprint_id: MOD-COMPLIANCE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 合规域-持续运营/D-COMPLIANCE-13
-      target_path: 合规域-持续运营/D-COMPLIANCE-13
-      type: module
-      blueprint_id: MOD-COMPLIANCE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 合规域-规则验证/D-COMPLIANCE-20
-      target_path: 合规域-规则验证/D-COMPLIANCE-20
-      type: module
-      blueprint_id: MOD-COMPLIANCE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 异常交易披露数据采集器(监管披露数据→统计因子)/D-DATA-89
-      target_path: 异常交易披露数据采集器(监管披露数据→统计因子)/D-DATA-89
-      type: module
-      blueprint_id: MOD-COMPLIANCE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 报告域-水印追踪/D-REPORTING-17
-      target_path: 报告域-水印追踪/D-REPORTING-17
-      type: module
-      blueprint_id: MOD-REPORTING
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 报告域/D-REPORTING-03
-      target_path: 报告域/D-REPORTING-03
-      type: module
-      blueprint_id: MOD-REPORTING
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 报告域/D-REPORTING-08
-      target_path: 报告域/D-REPORTING-08
-      type: module
-      blueprint_id: MOD-REPORTING
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 推理域/D-ML-136
-      target_path: 推理域/D-ML-136
-      type: module
-      blueprint_id: MOD-ML_SERVE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 推理域缩写，D-ML-02=ModelRegistry→归入MS-01
-      target_path: 推理域缩写，D-ML-02=ModelRegistry→归入MS-01
-      type: module
-      blueprint_id: MOD-PF_CORE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 数据域-L0数据接入/D-DATA-67
-      target_path: 数据域-L0数据接入/D-DATA-67
-      type: module
-      blueprint_id: MOD-DATA_ENG
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 数据域-L0数据接入/D-DATA-78
-      target_path: 数据域-L0数据接入/D-DATA-78
-      type: module
-      blueprint_id: MOD-DATA_ENG
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 数据域-L3存储优化/D-DATA-84
-      target_path: 数据域-L3存储优化/D-DATA-84
-      type: module
-      blueprint_id: MOD-DATA_ENG
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 数据域-参考数据/D-DATA-113
-      target_path: 数据域-参考数据/D-DATA-113
-      type: module
-      blueprint_id: MOD-DATA_ENG
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 监管报告生成器(证监会/交易所报告+数据完整性校验)/D-REPORTING-06
-      target_path: 监管报告生成器(证监会/交易所报告+数据完整性校验)/D-REPORTING-06
-      type: module
-      blueprint_id: MOD-REPORTING
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-AI提取/D-KNOWLEDGE-17
-      target_path: 知识域-AI提取/D-KNOWLEDGE-17
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-图谱浏览/D-KNOWLEDGE-15
-      target_path: 知识域-图谱浏览/D-KNOWLEDGE-15
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-推理/D-KNOWLEDGE-09
-      target_path: 知识域-推理/D-KNOWLEDGE-09
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-搜索/D-KNOWLEDGE-21
-      target_path: 知识域-搜索/D-KNOWLEDGE-21
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-案例管理/D-KNOWLEDGE-23
-      target_path: 知识域-案例管理/D-KNOWLEDGE-23
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-沉淀/D-KNOWLEDGE-25
-      target_path: 知识域-沉淀/D-KNOWLEDGE-25
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-质量评估/D-KNOWLEDGE-11
-      target_path: 知识域-质量评估/D-KNOWLEDGE-11
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-金融图谱/D-KNOWLEDGE-13
-      target_path: 知识域-金融图谱/D-KNOWLEDGE-13
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 知识域-集成/D-KNOWLEDGE-19
-      target_path: 知识域-集成/D-KNOWLEDGE-19
-      type: module
-      blueprint_id: MOD-KNOWLEDGE
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 移除/D-INTEGRATION-13
-      target_path: 移除/D-INTEGRATION-13
-      type: module
-      blueprint_id: MOD-SHARED
-      architecture_layer: L0_infrastructure
-      needs_migration: false
-    - current_path: 自治-向量库验证/D-AUTONOMY-125
-      target_path: 自治-向量库验证/D-AUTONOMY-125
-      type: module
-      blueprint_id: MOD-AUTONOMY_CORE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治-记忆溯源/D-AUTONOMY-73
-      target_path: 自治-记忆溯源/D-AUTONOMY-73
-      type: module
-      blueprint_id: MOD-AUTONOMY_CORE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-双写协调/D-AUTONOMY-166
-      target_path: 自治保护域-双写协调/D-AUTONOMY-166
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-反馈升级/D-AUTONOMY-184
-      target_path: 自治保护域-反馈升级/D-AUTONOMY-184
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-向量索引/D-AUTONOMY-74
-      target_path: 自治保护域-向量索引/D-AUTONOMY-74
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-回滚协调/D-AUTONOMY-106
-      target_path: 自治保护域-回滚协调/D-AUTONOMY-106
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-审计报告/D-AUTONOMY-203
-      target_path: 自治保护域-审计报告/D-AUTONOMY-203
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-成本/D-AUTONOMY-16
-      target_path: 自治保护域-成本/D-AUTONOMY-16
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-治理精简/D-AUTONOMY-128
-      target_path: 自治保护域-治理精简/D-AUTONOMY-128
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-理解成本/D-AUTONOMY-145
-      target_path: 自治保护域-理解成本/D-AUTONOMY-145
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-系统评分/D-AUTONOMY-151
-      target_path: 自治保护域-系统评分/D-AUTONOMY-151
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-链路监控/D-AUTONOMY-120
-      target_path: 自治保护域-链路监控/D-AUTONOMY-120
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域-风控通知/D-AUTONOMY-52
-      target_path: 自治保护域-风控通知/D-AUTONOMY-52
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-10
-      target_path: 自治保护域/D-AUTONOMY-10
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-104
-      target_path: 自治保护域/D-AUTONOMY-104
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-108
-      target_path: 自治保护域/D-AUTONOMY-108
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-161
-      target_path: 自治保护域/D-AUTONOMY-161
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-33
-      target_path: 自治保护域/D-AUTONOMY-33
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-47
-      target_path: 自治保护域/D-AUTONOMY-47
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 自治保护域/D-AUTONOMY-83
-      target_path: 自治保护域/D-AUTONOMY-83
-      type: module
-      blueprint_id: MOD-AUTONOMY_PERM
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 训练域/D-ML-106
-      target_path: 训练域/D-ML-106
-      type: module
-      blueprint_id: MOD-ML_TRAIN
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01
-      target_path: 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01
-      type: module
-      blueprint_id: MOD-PF_CORE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 跨资产域缩写，D-XA=D-CROSS-ASSET(CA)
-      target_path: 跨资产域缩写，D-XA=D-CROSS-ASSET(CA)
-      type: module
-      blueprint_id: MOD-PF_CORE
-      architecture_layer: L2_domain
-      needs_migration: false
-    - current_path: 运维域/D-OPS-07
-      target_path: 运维域/D-OPS-07
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 运维域/D-OPS-09
-      target_path: 运维域/D-OPS-09
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 运维域/D-OPS-11
-      target_path: 运维域/D-OPS-11
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 运维域/D-OPS-13
-      target_path: 运维域/D-OPS-13
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 运维域/D-OPS-15
-      target_path: 运维域/D-OPS-15
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 运维域/D-OPS-17
-      target_path: 运维域/D-OPS-17
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 运维域/D-OPS-19
-      target_path: 运维域/D-OPS-19
-      type: module
-      blueprint_id: MOD-OPS
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L0外部接入/D-INTEGRATION-39
-      target_path: 集成域-L0外部接入/D-INTEGRATION-39
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L1协议层/D-INTEGRATION-16
-      target_path: 集成域-L1协议层/D-INTEGRATION-16
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L1协议层/D-INTEGRATION-24
-      target_path: 集成域-L1协议层/D-INTEGRATION-24
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L2韧性/D-INTEGRATION-09
-      target_path: 集成域-L2韧性/D-INTEGRATION-09
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L2韧性/D-INTEGRATION-14
-      target_path: 集成域-L2韧性/D-INTEGRATION-14
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L2韧性/D-INTEGRATION-18
-      target_path: 集成域-L2韧性/D-INTEGRATION-18
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L2韧性/D-INTEGRATION-20
-      target_path: 集成域-L2韧性/D-INTEGRATION-20
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L2韧性/D-INTEGRATION-22
-      target_path: 集成域-L2韧性/D-INTEGRATION-22
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L2韧性/D-INTEGRATION-26
-      target_path: 集成域-L2韧性/D-INTEGRATION-26
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L3可观测/D-INTEGRATION-31
-      target_path: 集成域-L3可观测/D-INTEGRATION-31
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L3合规/D-INTEGRATION-37
-      target_path: 集成域-L3合规/D-INTEGRATION-37
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L3安全/D-INTEGRATION-29
-      target_path: 集成域-L3安全/D-INTEGRATION-29
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L3安全/D-INTEGRATION-41
-      target_path: 集成域-L3安全/D-INTEGRATION-41
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
-    - current_path: 集成域-L3治理/D-INTEGRATION-34
-      target_path: 集成域-L3治理/D-INTEGRATION-34
-      type: module
-      blueprint_id: MOD-INTEGRATION
-      architecture_layer: L1_foundation
-      needs_migration: false
 tree:
   src:
     zephyr:
@@ -29267,38 +27441,6 @@ tree:
             subdomain_id: D-SIMULATION
             type: module
             needs_migration: false
-        engine:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-SIMULATION
-              type: module
-              needs_migration: false
-        market_sim:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-SIMULATION
-              type: module
-              needs_migration: false
-        scenario:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-SIMULATION
-              type: module
-              needs_migration: false
-        result:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-SIMULATION
-              type: module
-              needs_migration: false
         core:
           __files__:
           - __init__.py
@@ -29373,38 +27515,6 @@ tree:
             subdomain_id: D-DIGITAL_TWIN
             type: module
             needs_migration: false
-        market_sim:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-DIGITAL_TWIN
-              type: module
-              needs_migration: false
-        orderbook_sim:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-DIGITAL_TWIN
-              type: module
-              needs_migration: false
-        agent_sim:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-DIGITAL_TWIN
-              type: module
-              needs_migration: false
-        scenario:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-DIGITAL_TWIN
-              type: module
-              needs_migration: false
         core:
           __files__:
           - __init__.py
@@ -29471,38 +27581,6 @@ tree:
             subdomain_id: resource_optimization
             type: module
             needs_migration: false
-        monitoring:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: resource_optimization
-              type: module
-              needs_migration: false
-        alerting:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: resource_optimization
-              type: module
-              needs_migration: false
-        deployment:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: resource_optimization
-              type: module
-              needs_migration: false
-        capacity:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: resource_optimization
-              type: module
-              needs_migration: false
         core:
           __files__:
           - __init__.py
@@ -29610,38 +27688,6 @@ tree:
             subdomain_id: allocation
             type: module
             needs_migration: false
-        optimizer:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: allocation
-              type: module
-              needs_migration: false
-        constraint:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: allocation
-              type: module
-              needs_migration: false
-        rebalance:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: allocation
-              type: module
-              needs_migration: false
-        risk_budget:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: allocation
-              type: module
-              needs_migration: false
         core:
           __files__:
           - __init__.py
@@ -29703,38 +27749,6 @@ tree:
             subdomain_id: D-CROSS_ASSET
             type: module
             needs_migration: false
-        strategy:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-CROSS_ASSET
-              type: module
-              needs_migration: false
-        allocator:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-CROSS_ASSET
-              type: module
-              needs_migration: false
-        hedger:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-CROSS_ASSET
-              type: module
-              needs_migration: false
-        correlation:
-          __files__:
-          - ''
-          __module_info__:
-            ? ''
-            : subdomain_id: D-CROSS_ASSET
-              type: module
-              needs_migration: false
         services:
           __files__:
           - __init__.py
@@ -35659,7 +33673,6 @@ tree:
           - reranker.py
           - safety_brake.py
           - self_test.py
-          - triage.py
           - unified_memory_api.py
           - verify.py
           - vms_memory_backend.py
@@ -35729,10 +33742,6 @@ tree:
               type: module
               needs_migration: false
             quiet_period_monitor.py:
-              subdomain_id: code_dedup
-              type: module
-              needs_migration: false
-            triage.py:
               subdomain_id: code_dedup
               type: module
               needs_migration: false
@@ -35826,7 +33835,6 @@ tree:
             - batch_ingest.py
             - extract.py
             - ingest.py
-            - triage.py
             __module_info__:
               activate.py:
                 subdomain_id: code_dedup
@@ -35849,10 +33857,6 @@ tree:
                 type: module
                 needs_migration: false
               batch_ingest.py:
-                subdomain_id: code_dedup
-                type: module
-                needs_migration: false
-              triage.py:
                 subdomain_id: code_dedup
                 type: module
                 needs_migration: false
@@ -41994,7 +39998,6 @@ tree:
           - env.py
           - errors.py
           - evals.py
-          - event_bus.py
           - file_utils.py
           - flags.py
           - frontmatter_utils.py
@@ -42121,10 +40124,6 @@ tree:
               type: module
               needs_migration: false
             limiter.py:
-              subdomain_id: pipeline_routing
-              type: module
-              needs_migration: false
-            event_bus.py:
               subdomain_id: pipeline_routing
               type: module
               needs_migration: false
@@ -43589,7 +41588,6 @@ tree:
         - serialization.py
         - session_audit.py
         - session_continuity.py
-        - shared_quickref.yaml
         - slo_review_assistant.py
         - ssot_guard.py
         - state_machine.py
@@ -43930,10 +41928,6 @@ tree:
           __version__.py:
             subdomain_id: D-SHARED
             type: module
-            needs_migration: false
-          shared_quickref.yaml:
-            subdomain_id: D-SHARED
-            type: config
             needs_migration: false
         adaptation:
           __files__:
@@ -48263,6 +46257,14 @@ tree:
               subdomain_id: rule_enforcement
               type: module
               needs_migration: false
+        restructuring:
+          __files__:
+          - blueprint.md
+          __module_info__:
+            blueprint.md:
+              subdomain_id: rule_enforcement
+              type: module
+              needs_migration: false
       _domain_autonomy_core:
         agent_rbac:
           __files__:
@@ -48341,15 +46343,6 @@ tree:
               needs_migration: false
       _domain_compliance:
         compliance_core:
-          __files__:
-          - blueprint.md
-          __module_info__:
-            blueprint.md:
-              subdomain_id: rule_enforcement
-              type: module
-              needs_migration: false
-      _domain_ex_core:
-        ex_core:
           __files__:
           - blueprint.md
           __module_info__:
@@ -48559,15 +46552,6 @@ tree:
               subdomain_id: rule_enforcement
               type: module
               needs_migration: false
-      _domain_pf_core:
-        pf_core:
-          __files__:
-          - blueprint.md
-          __module_info__:
-            blueprint.md:
-              subdomain_id: rule_enforcement
-              type: module
-              needs_migration: false
       _domain_reporting:
         analytics_core:
           __files__:
@@ -48622,14 +46606,6 @@ tree:
             subdomain_id: rule_enforcement
             type: module
             needs_migration: false
-          blueprint.md:
-            subdomain_id: rule_enforcement
-            type: module
-            needs_migration: false
-      _restructuring:
-        __files__:
-        - blueprint.md
-        __module_info__:
           blueprint.md:
             subdomain_id: rule_enforcement
             type: module
@@ -48945,13 +46921,8 @@ tree:
         architecture_model:
           __files__:
           - index.yaml
-          - mir_vxzd5an_.yaml
           __module_info__:
             index.yaml:
-              subdomain_id: architecture_docs
-              type: config
-              needs_migration: false
-            mir_vxzd5an_.yaml:
               subdomain_id: architecture_docs
               type: config
               needs_migration: false
@@ -48997,123 +46968,6 @@ tree:
                 subdomain_id: architecture_docs
                 type: config
                 needs_migration: false
-          infra:
-            __files__:
-            - core_services.yaml
-            - shared_infra.yaml
-            __module_info__:
-              core_services.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              shared_infra.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-          frontend:
-            __files__:
-            - frontend_model.yaml
-            __module_info__:
-              frontend_model.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-          layers:
-            __files__:
-            - b_mcp.yaml
-            - l00_data_source.yaml
-            - l01_infrastructure.yaml
-            - l02_alpha_factor.yaml
-            - l03_signal_generation.yaml
-            - l04_risk_management.yaml
-            - l05_portfolio_construction.yaml
-            - l06_trade_execution.yaml
-            - l07_post_trade_analytics.yaml
-            - l08_human_ai_interface.yaml
-            - l09_research_innovation.yaml
-            - l10_compliance.yaml
-            - l11_ml_platform.yaml
-            - l12_system_telemetry.yaml
-            - l13_experimentation.yaml
-            - schema.yaml
-            - shared.yaml
-            __module_info__:
-              b_mcp.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l01_infrastructure.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l03_signal_generation.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l04_risk_management.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l00_data_source.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l02_alpha_factor.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l05_portfolio_construction.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l07_post_trade_analytics.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l06_trade_execution.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l10_compliance.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l09_research_innovation.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l12_system_telemetry.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              shared.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l11_ml_platform.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l08_human_ai_interface.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              l13_experimentation.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-              schema.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
-          scripts:
-            __files__:
-            - scripts_model.yaml
-            __module_info__:
-              scripts_model.yaml:
-                subdomain_id: architecture_docs
-                type: config
-                needs_migration: false
           technology:
             __files__:
             - technology_landscape.yaml
@@ -49127,1646 +46981,6 @@ tree:
                 subdomain_id: architecture_docs
                 type: config
                 needs_migration: false
-  数据域-L0数据接入:
-    __files__:
-    - D-DATA-67
-    - D-DATA-78
-    __module_info__:
-      D-DATA-67:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-DATA-78:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  数据域-L3存储优化:
-    __files__:
-    - D-DATA-84
-    __module_info__:
-      D-DATA-84:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  数据域-参考数据:
-    __files__:
-    - D-DATA-113
-    __module_info__:
-      D-DATA-113:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-审计:
-    __files__:
-    - D-SIGNAL-06
-    __module_info__:
-      D-SIGNAL-06:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-契约:
-    __files__:
-    - D-SIGNAL-100
-    - D-SIGNAL-158
-    __module_info__:
-      D-SIGNAL-100:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-158:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  运维基础设施域:
-    __files__:
-    - D-INFRA-03
-    - D-INFRA-321
-    __module_info__:
-      D-INFRA-03:
-        subdomain_id: runtime_integration
-        type: module
-        needs_migration: false
-      D-INFRA-321:
-        subdomain_id: runtime_integration
-        type: module
-        needs_migration: false
-  风控域-分析引擎:
-    __files__:
-    - D-RISK-06
-    - D-RISK-103
-    - D-RISK-16
-    __module_info__:
-      D-RISK-06:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-16:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-103:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-审计:
-    __files__:
-    - D-RISK-15
-    __module_info__:
-      D-RISK-15:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-基础设施:
-    __files__:
-    - D-RISK-121
-    - D-RISK-21
-    - D-RISK-50
-    - D-RISK-56
-    - D-RISK-77
-    __module_info__:
-      D-RISK-21:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-50:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-56:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-77:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-121:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-报告:
-    __files__:
-    - D-RISK-23
-    __module_info__:
-      D-RISK-23:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-预测:
-    __files__:
-    - D-RISK-25
-    __module_info__:
-      D-RISK-25:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-A股特色:
-    __files__:
-    - D-RISK-27
-    - D-RISK-29
-    - D-RISK-30
-    - D-RISK-32
-    - D-RISK-34
-    - D-RISK-36
-    - D-RISK-39
-    __module_info__:
-      D-RISK-30:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-27:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-29:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-32:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-34:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-36:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-39:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  推理域:
-    __files__:
-    - D-ML-136
-    __module_info__:
-      D-ML-136:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  训练域:
-    __files__:
-    - D-ML-106
-    __module_info__:
-      D-ML-106:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域:
-    __files__:
-    - D-SIGNAL-20
-    __module_info__:
-      D-SIGNAL-20:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  报告域:
-    __files__:
-    - D-REPORTING-03
-    - D-REPORTING-08
-    __module_info__:
-      D-REPORTING-08:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-REPORTING-03:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  治理域:
-    __files__:
-    - D-GOVERNANCE-09
-    __module_info__:
-      D-GOVERNANCE-09:
-        subdomain_id: rule_enforcement
-        type: module
-        needs_migration: false
-  安全域:
-    __files__:
-    - D-SECURITY-21
-    __module_info__:
-      D-SECURITY-21:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-供应链:
-    __files__:
-    - D-SECURITY-28
-    - D-SECURITY-32
-    __module_info__:
-      D-SECURITY-28:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-32:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-供应商:
-    __files__:
-    - D-SECURITY-17
-    __module_info__:
-      D-SECURITY-17:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-策略:
-    __files__:
-    - D-SECURITY-09
-    - D-SECURITY-27
-    __module_info__:
-      D-SECURITY-09:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-27:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-Agent:
-    __files__:
-    - D-SECURITY-18
-    - D-SECURITY-36
-    - D-SECURITY-38
-    __module_info__:
-      D-SECURITY-18:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-36:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-38:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-身份:
-    __files__:
-    - D-SECURITY-02
-    - D-SECURITY-08
-    - D-SECURITY-41
-    - D-SECURITY-48
-    - D-SECURITY-50
-    __module_info__:
-      D-SECURITY-02:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-08:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-41:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-48:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-50:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-数据:
-    __files__:
-    - D-SECURITY-04
-    - D-SECURITY-39
-    - D-SECURITY-43
-    __module_info__:
-      D-SECURITY-04:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-39:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-43:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-安全:
-    __files__:
-    - D-SECURITY-06
-    - D-SECURITY-11
-    - D-SECURITY-14
-    - D-SECURITY-33
-    __module_info__:
-      D-SECURITY-06:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-11:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-14:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-      D-SECURITY-33:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  自治保护域:
-    __files__:
-    - D-AUTONOMY-10
-    - D-AUTONOMY-104
-    - D-AUTONOMY-108
-    - D-AUTONOMY-161
-    - D-AUTONOMY-33
-    - D-AUTONOMY-47
-    - D-AUTONOMY-83
-    __module_info__:
-      D-AUTONOMY-10:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-AUTONOMY-33:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-AUTONOMY-47:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-AUTONOMY-83:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-AUTONOMY-104:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-AUTONOMY-108:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-AUTONOMY-161:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  前端域:
-    __files__:
-    - D-FRONTEND-06
-    - D-FRONTEND-08
-    - D-FRONTEND-10
-    - D-FRONTEND-12
-    - D-FRONTEND-14
-    - D-FRONTEND-16
-    - D-FRONTEND-18
-    - D-FRONTEND-20
-    - D-FRONTEND-22
-    - D-FRONTEND-24
-    __module_info__:
-      D-FRONTEND-06:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-08:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-10:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-12:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-14:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-16:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-18:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-20:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-22:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-FRONTEND-24:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  运维域:
-    __files__:
-    - D-OPS-07
-    - D-OPS-09
-    - D-OPS-11
-    - D-OPS-13
-    - D-OPS-15
-    - D-OPS-17
-    - D-OPS-19
-    __module_info__:
-      D-OPS-07:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-OPS-09:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-OPS-11:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-OPS-13:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-OPS-15:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-OPS-17:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-OPS-19:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  交易运营域:
-    __files__:
-    - D-TRADING-04
-    __module_info__:
-      D-TRADING-04:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L2韧性:
-    __files__:
-    - D-INTEGRATION-09
-    - D-INTEGRATION-14
-    - D-INTEGRATION-18
-    - D-INTEGRATION-20
-    - D-INTEGRATION-22
-    - D-INTEGRATION-26
-    __module_info__:
-      D-INTEGRATION-09:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-14:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-18:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-20:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-22:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-26:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L1协议层:
-    __files__:
-    - D-INTEGRATION-16
-    - D-INTEGRATION-24
-    __module_info__:
-      D-INTEGRATION-16:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-24:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L3安全:
-    __files__:
-    - D-INTEGRATION-29
-    - D-INTEGRATION-41
-    __module_info__:
-      D-INTEGRATION-29:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-41:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L3可观测:
-    __files__:
-    - D-INTEGRATION-31
-    __module_info__:
-      D-INTEGRATION-31:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L3治理:
-    __files__:
-    - D-INTEGRATION-34
-    __module_info__:
-      D-INTEGRATION-34:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L3合规:
-    __files__:
-    - D-INTEGRATION-37
-    __module_info__:
-      D-INTEGRATION-37:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  集成域-L0外部接入:
-    __files__:
-    - D-INTEGRATION-39
-    __module_info__:
-      D-INTEGRATION-39:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  安全域-培训:
-    __files__:
-    - D-SECURITY-19
-    __module_info__:
-      D-SECURITY-19:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-完整性:
-    __files__:
-    - D-SECURITY-22
-    __module_info__:
-      D-SECURITY-22:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-身份认证:
-    __files__:
-    - D-SECURITY-45
-    __module_info__:
-      D-SECURITY-45:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-日志安全:
-    __files__:
-    - D-SECURITY-52
-    __module_info__:
-      D-SECURITY-52:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-网络:
-    __files__:
-    - D-SECURITY-55
-    __module_info__:
-      D-SECURITY-55:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-审计:
-    __files__:
-    - D-SECURITY-57
-    __module_info__:
-      D-SECURITY-57:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  安全域-监控:
-    __files__:
-    - D-SECURITY-59
-    __module_info__:
-      D-SECURITY-59:
-        subdomain_id: access_control
-        type: module
-        needs_migration: false
-  合规域-持续运营:
-    __files__:
-    - D-COMPLIANCE-13
-    __module_info__:
-      D-COMPLIANCE-13:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  合规域-规则验证:
-    __files__:
-    - D-COMPLIANCE-20
-    __module_info__:
-      D-COMPLIANCE-20:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  合规域-交易纪律:
-    __files__:
-    - D-COMPLIANCE-23
-    __module_info__:
-      D-COMPLIANCE-23:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  交易域-监控:
-    __files__:
-    - D-TRADING-06
-    __module_info__:
-      D-TRADING-06:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  交易域-资金:
-    __files__:
-    - D-TRADING-12
-    __module_info__:
-      D-TRADING-12:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-降级:
-    __files__:
-    - D-SIGNAL-80
-    __module_info__:
-      D-SIGNAL-80:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-推理:
-    __files__:
-    - D-KNOWLEDGE-09
-    __module_info__:
-      D-KNOWLEDGE-09:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-质量评估:
-    __files__:
-    - D-KNOWLEDGE-11
-    __module_info__:
-      D-KNOWLEDGE-11:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-金融图谱:
-    __files__:
-    - D-KNOWLEDGE-13
-    __module_info__:
-      D-KNOWLEDGE-13:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-图谱浏览:
-    __files__:
-    - D-KNOWLEDGE-15
-    __module_info__:
-      D-KNOWLEDGE-15:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-AI提取:
-    __files__:
-    - D-KNOWLEDGE-17
-    __module_info__:
-      D-KNOWLEDGE-17:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-集成:
-    __files__:
-    - D-KNOWLEDGE-19
-    __module_info__:
-      D-KNOWLEDGE-19:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-搜索:
-    __files__:
-    - D-KNOWLEDGE-21
-    __module_info__:
-      D-KNOWLEDGE-21:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-案例管理:
-    __files__:
-    - D-KNOWLEDGE-23
-    __module_info__:
-      D-KNOWLEDGE-23:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  知识域-沉淀:
-    __files__:
-    - D-KNOWLEDGE-25
-    __module_info__:
-      D-KNOWLEDGE-25:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-成本:
-    __files__:
-    - D-AUTONOMY-16
-    __module_info__:
-      D-AUTONOMY-16:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-风控通知:
-    __files__:
-    - D-AUTONOMY-52
-    __module_info__:
-      D-AUTONOMY-52:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-向量索引:
-    __files__:
-    - D-AUTONOMY-74
-    __module_info__:
-      D-AUTONOMY-74:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-回滚协调:
-    __files__:
-    - D-AUTONOMY-106
-    __module_info__:
-      D-AUTONOMY-106:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-链路监控:
-    __files__:
-    - D-AUTONOMY-120
-    __module_info__:
-      D-AUTONOMY-120:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-治理精简:
-    __files__:
-    - D-AUTONOMY-128
-    __module_info__:
-      D-AUTONOMY-128:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-理解成本:
-    __files__:
-    - D-AUTONOMY-145
-    __module_info__:
-      D-AUTONOMY-145:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-系统评分:
-    __files__:
-    - D-AUTONOMY-151
-    __module_info__:
-      D-AUTONOMY-151:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-双写协调:
-    __files__:
-    - D-AUTONOMY-166
-    __module_info__:
-      D-AUTONOMY-166:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-反馈升级:
-    __files__:
-    - D-AUTONOMY-184
-    __module_info__:
-      D-AUTONOMY-184:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治保护域-审计报告:
-    __files__:
-    - D-AUTONOMY-203
-    __module_info__:
-      D-AUTONOMY-203:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  风控-策略管理:
-    __files__:
-    - D-RISK-01
-    __module_info__:
-      D-RISK-01:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控-组合监控:
-    __files__:
-    - D-RISK-03
-    __module_info__:
-      D-RISK-03:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  自治-记忆溯源:
-    __files__:
-    - D-AUTONOMY-73
-    __module_info__:
-      D-AUTONOMY-73:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  自治-向量库验证:
-    __files__:
-    - D-AUTONOMY-125
-    __module_info__:
-      D-AUTONOMY-125:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  报告域-水印追踪:
-    __files__:
-    - D-REPORTING-17
-    __module_info__:
-      D-REPORTING-17:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-策略发布:
-    __files__:
-    - D-SIGNAL-140
-    __module_info__:
-      D-SIGNAL-140:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  运行时基础设施域-配置管理:
-    __files__:
-    - D-INFRA-06
-    __module_info__:
-      D-INFRA-06:
-        subdomain_id: runtime_integration
-        type: module
-        needs_migration: false
-  信号域-核心基础设施:
-    __files__:
-    - D-SIGNAL-12
-    - D-SIGNAL-14
-    - D-SIGNAL-16
-    - D-SIGNAL-18
-    __module_info__:
-      D-SIGNAL-12:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-14:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-16:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-18:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-主力资金:
-    __files__:
-    - D-SIGNAL-21
-    - D-SIGNAL-23
-    - D-SIGNAL-36
-    __module_info__:
-      D-SIGNAL-21:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-23:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-36:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-情绪周期:
-    __files__:
-    - D-SIGNAL-25
-    - D-SIGNAL-33
-    __module_info__:
-      D-SIGNAL-25:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-33:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-决策评估:
-    __files__:
-    - D-SIGNAL-27
-    - D-SIGNAL-45
-    __module_info__:
-      D-SIGNAL-27:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-45:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-分时技术:
-    __files__:
-    - D-SIGNAL-29
-    - D-SIGNAL-40
-    - D-SIGNAL-51
-    __module_info__:
-      D-SIGNAL-29:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-40:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-51:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-大盘阶段:
-    __files__:
-    - D-SIGNAL-31
-    - D-SIGNAL-49
-    __module_info__:
-      D-SIGNAL-31:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-49:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-特殊信号:
-    __files__:
-    - D-SIGNAL-38
-    - D-SIGNAL-42
-    - D-SIGNAL-55
-    - D-SIGNAL-61
-    __module_info__:
-      D-SIGNAL-38:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-42:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-55:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-61:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-买卖点:
-    __files__:
-    - D-SIGNAL-47
-    __module_info__:
-      D-SIGNAL-47:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-涨停封单:
-    __files__:
-    - D-SIGNAL-53
-    __module_info__:
-      D-SIGNAL-53:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-量化双引擎:
-    __files__:
-    - D-SIGNAL-57
-    __module_info__:
-      D-SIGNAL-57:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-A股特色-板块轮动:
-    __files__:
-    - D-SIGNAL-63
-    __module_info__:
-      D-SIGNAL-63:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-Regime:
-    __files__:
-    - D-SIGNAL-65
-    - D-SIGNAL-67
-    - D-SIGNAL-74
-    - D-SIGNAL-76
-    __module_info__:
-      D-SIGNAL-65:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-67:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-74:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-76:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-信号处理:
-    __files__:
-    - D-SIGNAL-69
-    - D-SIGNAL-71
-    __module_info__:
-      D-SIGNAL-69:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-71:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-质量降级:
-    __files__:
-    - D-SIGNAL-77
-    - D-SIGNAL-79
-    - D-SIGNAL-81
-    - D-SIGNAL-83
-    __module_info__:
-      D-SIGNAL-77:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-79:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-81:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-83:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-合成分配:
-    __files__:
-    - D-SIGNAL-85
-    - D-SIGNAL-87
-    - D-SIGNAL-90
-    - D-SIGNAL-92
-    - D-SIGNAL-94
-    - D-SIGNAL-96
-    __module_info__:
-      D-SIGNAL-85:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-87:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-90:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-92:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-94:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-96:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-事件追踪:
-    __files__:
-    - D-SIGNAL-101
-    - D-SIGNAL-103
-    - D-SIGNAL-99
-    __module_info__:
-      D-SIGNAL-99:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-101:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-103:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-策略可视化:
-    __files__:
-    - D-SIGNAL-105
-    - D-SIGNAL-107
-    - D-SIGNAL-109
-    - D-SIGNAL-111
-    __module_info__:
-      D-SIGNAL-105:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-107:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-109:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-111:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-技术指标:
-    __files__:
-    - D-SIGNAL-114
-    - D-SIGNAL-116
-    - D-SIGNAL-118
-    - D-SIGNAL-120
-    - D-SIGNAL-122
-    - D-SIGNAL-124
-    - D-SIGNAL-126
-    - D-SIGNAL-128
-    __module_info__:
-      D-SIGNAL-114:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-116:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-118:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-120:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-122:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-124:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-126:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-128:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-冲突融合:
-    __files__:
-    - D-SIGNAL-130
-    - D-SIGNAL-132
-    - D-SIGNAL-134
-    __module_info__:
-      D-SIGNAL-130:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-132:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-134:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-策略管理:
-    __files__:
-    - D-SIGNAL-137
-    - D-SIGNAL-139
-    - D-SIGNAL-141
-    - D-SIGNAL-143
-    __module_info__:
-      D-SIGNAL-137:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-139:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-141:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-143:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-策略质量:
-    __files__:
-    - D-SIGNAL-145
-    - D-SIGNAL-147
-    __module_info__:
-      D-SIGNAL-145:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-147:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-策略运行时:
-    __files__:
-    - D-SIGNAL-150
-    - D-SIGNAL-152
-    - D-SIGNAL-156
-    __module_info__:
-      D-SIGNAL-150:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-152:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-156:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  信号域-DDD契约:
-    __files__:
-    - D-SIGNAL-160
-    - D-SIGNAL-162
-    __module_info__:
-      D-SIGNAL-160:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-SIGNAL-162:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  交易监控规则引擎+监管报告生成器+身份验证集成器+风险管理集成器+监管变更追踪器+合规工作流引擎+合规仪表盘:
-    __files__:
-    - D-COMPLIANCE-14
-    __module_info__:
-      D-COMPLIANCE-14:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  __files__:
-  - ✅已有
-  - ✅部分在system-telemetry
-  - ❌
-  - 另类数据域缩写，D-ALT-02=SentimentEngine
-  - 推理域缩写，D-ML-02=ModelRegistry→归入MS-01
-  - 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01
-  - 跨资产域缩写，D-XA=D-CROSS-ASSET(CA)
-  __module_info__:
-    ✅部分在system-telemetry:
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-    ❌:
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-    ✅已有:
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-    训练域缩写，D-ML-01=TrainingPipeline→归入MT-01:
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-    推理域缩写，D-ML-02=ModelRegistry→归入MS-01:
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-    另类数据域缩写，D-ALT-02=SentimentEngine:
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-    跨资产域缩写，D-XA=D-CROSS-ASSET(CA):
-      subdomain_id: ''
-      type: module
-      needs_migration: false
-  ✅保留:
-    __files__:
-    - D-INTEGRATION-11
-    __module_info__:
-      D-INTEGRATION-11:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  移除:
-    __files__:
-    - D-INTEGRATION-13
-    __module_info__:
-      D-INTEGRATION-13:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  ✅能建:
-    __files__:
-    - D-INTEGRATION-33
-    - D-INTEGRATION-43
-    __module_info__:
-      D-INTEGRATION-33:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-      D-INTEGRATION-43:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  交易日历引擎(交易所日历:
-    假日管理:
-      T+N计算):
-        __files__:
-        - D-TRADING-07
-        __module_info__:
-          D-TRADING-07:
-            subdomain_id: ''
-            type: module
-            needs_migration: false
-  异常交易披露数据采集器(监管披露数据→统计因子):
-    __files__:
-    - D-DATA-89
-    __module_info__:
-      D-DATA-89:
-        subdomain_id: ''
-        type: module
-        needs_migration: false
-  监管报告生成器(证监会:
-    交易所报告+数据完整性校验):
-      __files__:
-      - D-REPORTING-06
-      __module_info__:
-        D-REPORTING-06:
-          subdomain_id: ''
-          type: module
-          needs_migration: false
-  风控域-盘前拦截:
-    __files__:
-    - D-RISK-53
-    - D-RISK-78
-    __module_info__:
-      D-RISK-53:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-78:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-盘中监控:
-    __files__:
-    - D-RISK-08
-    - D-RISK-13
-    - D-RISK-18
-    - D-RISK-63
-    - D-RISK-70
-    - D-RISK-97
-    - D-RISK-99
-    __module_info__:
-      D-RISK-08:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-13:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-18:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-63:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-70:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-97:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-99:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-VaR:
-    __files__:
-    - D-RISK-07
-    - D-RISK-41
-    - D-RISK-43
-    - D-RISK-45
-    - D-RISK-47
-    - D-RISK-71
-    - D-RISK-73
-    __module_info__:
-      D-RISK-07:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-41:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-43:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-45:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-47:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-71:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-73:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-Kill Switch:
-    __files__:
-    - D-RISK-54
-    - D-RISK-66
-    - D-RISK-83
-    __module_info__:
-      D-RISK-54:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-66:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-83:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-止损:
-    __files__:
-    - D-RISK-64
-    __module_info__:
-      D-RISK-64:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-风险治理:
-    __files__:
-    - D-RISK-49
-    __module_info__:
-      D-RISK-49:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-风险报告:
-    __files__:
-    - D-RISK-101
-    - D-RISK-22
-    - D-RISK-90
-    __module_info__:
-      D-RISK-22:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-90:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-101:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-门禁:
-    __files__:
-    - D-RISK-92
-    __module_info__:
-      D-RISK-92:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-规则引擎:
-    __files__:
-    - D-RISK-105
-    - D-RISK-109
-    - D-RISK-113
-    - D-RISK-117
-    __module_info__:
-      D-RISK-105:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-109:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-113:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-117:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-契约:
-    __files__:
-    - D-RISK-80
-    - D-RISK-87
-    __module_info__:
-      D-RISK-80:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-87:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-迁移:
-    __files__:
-    - D-RISK-86
-    __module_info__:
-      D-RISK-86:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-回测:
-    __files__:
-    - D-RISK-24
-    __module_info__:
-      D-RISK-24:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  风控域-远期❌:
-    __files__:
-    - D-RISK-09
-    - D-RISK-19
-    - D-RISK-48
-    - D-RISK-95
-    __module_info__:
-      D-RISK-09:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-19:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-48:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-      D-RISK-95:
-        subdomain_id: cross_asset
-        type: module
-        needs_migration: false
-  01-跨域交叉点 vs 29-D-GOVERNANCE:
-    __files__:
-    - D-GOV-11
-    __module_info__:
-      D-GOV-11:
-        subdomain_id: rule_enforcement
-        type: module
-        needs_migration: false
   scripts:
     __files__:
     - __init__.py
