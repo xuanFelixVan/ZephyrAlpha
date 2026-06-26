@@ -899,8 +899,11 @@ def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail=f"working_docs scan clean ({scanned} .md, 0 ghost), report={report_path.name}",
             )
 
-        # 3. 归档后自动 commit _working/ 的删除（参考 make_manifest_reconciler 模式）
-        add_result = gateway._run_git(["git", "add", "-A", "docs/_working/"])
+        # 3. 归档后自动 commit _working/ 的删除
+        # 只 stage 归档产生的删除文件（不用 -A，避免捡拾其他 session 在 _working/ 的 WIP）
+        # 违反 session 隔离强不变量的修复：原 git add -A docs/_working/ 会把其他 session 的 WIP 一并 commit
+        archived_rel = [f"docs/_working/{name}" for name in archived]
+        add_result = gateway._run_git(["git", "add", "--"] + archived_rel)
         if add_result.returncode != 0:
             return ReconcileResult(
                 action="warn",
@@ -912,7 +915,7 @@ def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
             f"GitCommitGateway post-commit [GW:{session_id}:auto]"
         )
         commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg, "--", "docs/_working/"]
+            ["git", "commit", "--no-verify", "-m", auto_msg, "--"] + archived_rel
         )
         if commit_result.returncode == 0:
             return ReconcileResult(
