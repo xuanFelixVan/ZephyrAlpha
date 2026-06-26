@@ -18,8 +18,8 @@ import argparse
 import ast
 import sys
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_TEST_DIR = REPO_ROOT / "tests"
 
 # 已知"脚本伪装测试"——待逐步修复（每个加 def test_* 包装后从此集合删除）。
