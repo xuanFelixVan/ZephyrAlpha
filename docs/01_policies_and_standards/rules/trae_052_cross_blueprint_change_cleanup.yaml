@@ -78,7 +78,10 @@ references:
   blueprints: []
 enforcement:
   type: hook
-  executors: []
+  executors:
+  - scripts/governance/audit_registration.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/generate_project_depgraph.py
   bypass_allowed: false
 metadata:
   change_policy: frozen

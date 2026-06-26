@@ -73,7 +73,8 @@ references:
   blueprints: []
 enforcement:
   type: hook
-  executors: []
+  executors:
+  - scripts/governance/audit_registration.py
   bypass_allowed: false
 metadata:
   change_policy: frozen

@@ -358,7 +358,9 @@ references:
   blueprints: []
 enforcement:
   type: doc
-  executors: []
+  executors:
+  - scripts/governance/audit_domain_nodes.py
+  - scripts/governance/apply_depgraph.py
   bypass_allowed: false
 metadata:
   change_policy: stable
