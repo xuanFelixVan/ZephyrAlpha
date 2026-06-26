@@ -107,6 +107,9 @@ class AuditResult:
     orphan_gates: list[OrphanEntry] = field(default_factory=list)
     zombie_references: list[ZombieEntry] = field(default_factory=list)
     missing_all: list[Path] = field(default_factory=list)
+    # 消费者地图：{full_module: [consumer_rel_paths]}，供下游消费者（如
+    # analyze_orphan_consumers.py）复用，避免重复构建（向内收：单一真源）
+    import_map: dict[str, list[str]] = field(default_factory=dict)
 
     @property
     def is_clean(self) -> bool:
@@ -281,10 +284,10 @@ def audit(changed_files: set[Path] | None = None) -> AuditResult:
 
     # ── 1.5 批量收集所有 import 语句（消费者地图）──
     # RULE-TWO 豁免原则：已有自然发现机制（被其他模块 import）的模块不报为 ORPHAN
-    import_map = _batch_collect_imports()
+    result.import_map = _batch_collect_imports()
 
     # ── 2. 扫描 src/zephyr/ 模块孤儿 ──
-    _scan_module_orphans(registered_modules, import_map, result, changed_files)
+    _scan_module_orphans(registered_modules, result.import_map, result, changed_files)
 
     # ── 3. 扫描 scripts/ 脚本孤儿 ──
     _scan_script_orphans(registered_scripts, result, changed_files)
@@ -909,20 +912,20 @@ def main() -> None:
             changed_files = _build_changed_files_from_paths(args.files)
             differential = True
             if not changed_files:
-                print("[FILES] 传入文件均不在 src/zephyr/ 或 scripts/ 下，扫描结果为空（CLEAN）")
+                print("[FILES] 传入文件均不在 src/zephyr/ 或 scripts/ 下，扫描结果为空（CLEAN）", file=sys.stderr)
                 ar = AuditResult()
             else:
-                print(f"[FILES] 显式指定 {len(changed_files)} 个变更文件，仅扫描这些文件")
+                print(f"[FILES] 显式指定 {len(changed_files)} 个变更文件，仅扫描这些文件", file=sys.stderr)
                 ar = audit(changed_files=changed_files)
         elif args.incremental:
             changed_files = _get_changed_files_from_git()
             differential = True
             if not changed_files:
-                print("[INCREMENTAL] 无变更文件或 git 不可用，扫描结果为空（CLEAN）")
+                print("[INCREMENTAL] 无变更文件或 git 不可用，扫描结果为空（CLEAN）", file=sys.stderr)
                 # 无变更文件 = 无新增孤儿 = CLEAN
                 ar = AuditResult()
             else:
-                print(f"[INCREMENTAL] 检测到 {len(changed_files)} 个变更文件，仅扫描这些文件")
+                print(f"[INCREMENTAL] 检测到 {len(changed_files)} 个变更文件，仅扫描这些文件", file=sys.stderr)
                 ar = audit(changed_files=changed_files)
         else:
             ar = audit()
@@ -1025,6 +1028,8 @@ def main() -> None:
                 {"reference": ze.reference, "registry": ze.registry, "detail": ze.detail} for ze in ar.zombie_references
             ],
             "total_issues": ar.total_issues,
+            # 消费者地图：供下游复用，避免重复构建（analyze_orphan_consumers.py 等）
+            "import_map": ar.import_map,
         }
         print(json.dumps(output, indent=2, ensure_ascii=False))
     else:

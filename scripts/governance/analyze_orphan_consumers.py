@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # [BLUEPRINT]
 # [MODULE] scripts.governance.analyze_orphan_consumers
 # [DOMAIN]
@@ -33,25 +35,32 @@ __manifest__ = {
     "warn_only": False,
 }
 
-from __future__ import annotations
-
 import argparse
 import json
 import re
 import subprocess
 import sys
-from collections import defaultdict
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
+# bootstrap: 一次性 sys.path 注入（仅用于需要 REPO_ROOT 的极简场景）
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _SCRIPT_DIR.parents[1]
+if str(_REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT / "src"))
+from zephyr.shared.io.paths import REPO_ROOT
+
+SRC_ZEPHYR = REPO_ROOT / "src" / "zephyr"
 
 
-def get_orphan_modules() -> list[dict]:
-    """调用 audit_registration.py --json 获取孤儿模块清单。"""
+def get_orphan_modules() -> tuple[list[dict], dict[str, list[str]]]:
+    """调用 audit_registration.py --json 获取孤儿模块清单 + 消费者地图。
+    
+    Returns:
+        (orphan_modules, import_map): 孤儿模块列表和消费者地图
+    """
     result = subprocess.run(
         ["python", "scripts/governance/audit_registration.py", "--json"],
-        cwd=str(PROJECT_ROOT),
+        cwd=str(REPO_ROOT),
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -61,51 +70,7 @@ def get_orphan_modules() -> list[dict]:
         print(f"ERROR: audit_registration.py 失败: {result.stderr}", file=sys.stderr)
         sys.exit(2)
     data = json.loads(result.stdout)
-    return data.get("orphan_modules", [])
-
-
-def batch_collect_imports() -> dict[str, list[str]]:
-    """一次性 Grep 所有 import 语句，构建 {module: [consumers]} 映射。
-
-    匹配模式:
-        from zephyr.X.Y.Z import ...
-        from zephyr.X.Y.Z import (...)  # 多行
-        import zephyr.X.Y.Z
-    """
-    # 使用 ripgrep 一次性搜索所有 zephyr import
-    # 模式: from zephyr.<something> import  或  import zephyr.<something>
-    pattern = r"(?:from\s+(zephyr[\w.]*))\s+import|(?:import\s+(zephyr[\w.]*))"
-
-    consumers: dict[str, list[str]] = defaultdict(list)
-
-    try:
-        result = subprocess.run(
-            ["rg", "--no-heading", "-n", "-e", pattern, "src/", "scripts/", "tests/"],
-            cwd=str(PROJECT_ROOT),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            timeout=60,
-        )
-        if result.returncode == 0:
-            for line in result.stdout.splitlines():
-                # 格式: file:line:content
-                parts = line.split(":", 2)
-                if len(parts) < 3:
-                    continue
-                consumer_file = parts[0]
-                content = parts[2]
-
-                # 提取模块名
-                match = re.search(pattern, content)
-                if match:
-                    module = match.group(1) or match.group(2)
-                    if module:
-                        consumers[module].append(consumer_file)
-    except (subprocess.SubprocessError, FileNotFoundError) as e:
-        print(f"WARNING: Grep 失败: {e}", file=sys.stderr)
-
-    return consumers
+    return data.get("orphan_modules", []), data.get("import_map", {})
 
 
 def check_module(module_relative: str, import_map: dict[str, list[str]]) -> dict:
@@ -172,12 +137,9 @@ def main() -> None:
     parser.add_argument("--output", type=str, help="输出 JSON 文件路径")
     args = parser.parse_args()
 
-    orphans = get_orphan_modules()
+    orphans, import_map = get_orphan_modules()
     print(f"TOTAL ORPHAN MODULES: {len(orphans)}")
-
-    print("批量收集所有 import 语句...")
-    import_map = batch_collect_imports()
-    print(f"  收集到 {len(import_map)} 个被 import 的模块")
+    print(f"  消费者地图已由 audit_registration.py 构建（单一真源，{len(import_map)} 个被 import 的模块）")
 
     print("逐个分析 ORPHAN MODULES...")
     results = []
