@@ -47,10 +47,13 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     DepthCapabilityResult,
     DepthResult,
     DriftResult,
+    HallucinationBreakdown,
     HallucinationResult,
+    QuickProfile,
     Recommendations,
     SpeedResult,
     compute_grade,
+    compute_grade_simple,
 )
 from zephyr.intelligence.model_profiling.exam_test_cases import (
     CASES_BY_CAPABILITY,
@@ -912,8 +915,11 @@ class ExamOrchestrator:
 
     @staticmethod
     def _outputs_similar(a: dict, b: dict) -> bool:
-        a_str = json.dumps(a, sort_keys=True, ensure_ascii=False)
-        b_str = json.dumps(b, sort_keys=True, ensure_ascii=False)
+        # 过滤 _ 前缀的内部注入字段 (如 _elapsed_ms), 避免元数据干扰相似度判断
+        a_clean = {k: v for k, v in a.items() if not k.startswith("_")} if isinstance(a, dict) else a
+        b_clean = {k: v for k, v in b.items() if not k.startswith("_")} if isinstance(b, dict) else b
+        a_str = json.dumps(a_clean, sort_keys=True, ensure_ascii=False)
+        b_str = json.dumps(b_clean, sort_keys=True, ensure_ascii=False)
         if a_str == b_str:
             return True
         shared = set(a_str.split()) & set(b_str.split())
@@ -986,6 +992,395 @@ class ExamOrchestrator:
             self._optimization_suspicions += 1
 
         return suspicious
+
+    # ══════════════════════════════════════════════════════════
+    # P2: 三级考试模式 (Quick / Standard / Deep) + 六维幻觉
+    # ══════════════════════════════════════════════════════════
+
+    # Quick Mode 幻觉检测的关键能力 (5 项, 每项 2 次推断 = 10 次)
+    _QUICK_HALLU_CAPS: tuple[str, ...] = (
+        "hallucination_detect",
+        "rule_comprehension",
+        "safety_judgment",
+        "summary_extraction",
+        "code_generate",
+    )
+
+    @staticmethod
+    def _check_overclaim(case: ExamTestCase, result: dict) -> bool:
+        """P2: 检查过度声称 — 声称做了但实际未做。
+
+        启发式: 输出含"已完成/已修复/已创建"等动词, 但对应字段为空。
+        """
+        if not isinstance(result, dict):
+            return False
+        claim_keywords = [
+            "已完成", "已修复", "已创建", "已删除", "已重构", "已实现",
+            "completed", "fixed", "created", "removed", "refactored", "implemented",
+        ]
+        text = json.dumps(result, ensure_ascii=False).lower()
+        has_claim = any(kw in text for kw in claim_keywords)
+        if not has_claim:
+            return False
+        # 检查对应字段是否为空
+        field_kws = {
+            "fixes": ["已修复", "fixed"],
+            "changes": ["已重构", "refactored"],
+            "dead_sections": ["已删除", "removed"],
+            "tags": ["已完成", "completed"],
+            "generated_code": ["已实现", "implemented"],
+        }
+        for field, kws in field_kws.items():
+            if any(kw in text for kw in kws):
+                val = result.get(field, None)
+                if val is None:
+                    return True
+                if isinstance(val, (list, str)) and len(val) == 0:
+                    return True
+        return False
+
+    @staticmethod
+    def _check_source_confusion(case: ExamTestCase, result: dict) -> bool:
+        """P2: 检查来源混淆 — 引用了 prompt/input_files 中不存在的文件名。
+
+        启发式: result 中引用的 xxx.py 不在 case.prompt 或 input_files 中。
+        """
+        if not isinstance(result, dict):
+            return False
+        import re as _re
+        result_text = json.dumps(result, ensure_ascii=False)
+        referenced = set(_re.findall(r'[\w/\\]+\.py', result_text))
+        if not referenced:
+            return False
+        prompt_files = set(_re.findall(r'[\w/\\]+\.py', case.prompt))
+        input_files = set(case.input_files.keys())
+        legit = prompt_files | input_files
+        # 通用文件名豁免 (常见但不视为混淆)
+        generic = {"__init__.py", "setup.py", "conftest.py", "main.py", "test.py"}
+        confused = referenced - legit - generic
+        return len(confused) > 0
+
+    @staticmethod
+    def _check_instruction_drift(case: ExamTestCase, result: dict) -> bool:
+        """P2: 检查指令偏离 — 输出结构不符合 expected_structure_keys。
+
+        启发式: 复用 _check_structure 判断输出是否包含指令要求的字段。
+        若 case 无 expected_structure_keys 则跳过 (无法判定)。
+        """
+        if not isinstance(result, dict) or not case.expected_structure_keys:
+            return False
+        return not ExamOrchestrator._check_structure(
+            result, case.expected_structure_keys
+        )
+
+    @staticmethod
+    def _check_format_hallucination(case: ExamTestCase, result: dict) -> bool:
+        """P2: 检查格式幻觉 — 字段值类型异常。
+
+        启发式检测:
+          1. list 字段被序列化为字符串 (如 "[\"a\",\"b\"]" 而非 ["a","b"])
+          2. 字段值类型与常见预期严重不符 (如要求 str 但给了 dict)
+        """
+        if not isinstance(result, dict) or not case.expected_structure_keys:
+            return False
+        for key in case.expected_structure_keys:
+            val = result.get(key)
+            if val is None:
+                continue  # instruction_drift 已处理缺失字段
+            # 检测: list 字段被序列化为 JSON 字符串
+            if isinstance(val, str) and val.strip().startswith("[") and val.strip().endswith("]"):
+                try:
+                    parsed = json.loads(val)
+                    if isinstance(parsed, list):
+                        return True  # 应该是 list 但给了 stringified JSON
+                except (json.JSONDecodeError, ValueError):
+                    pass
+            # 检测: dict 字段被序列化为 JSON 字符串
+            if isinstance(val, str) and val.strip().startswith("{") and val.strip().endswith("}"):
+                try:
+                    parsed = json.loads(val)
+                    if isinstance(parsed, dict):
+                        return True
+                except (json.JSONDecodeError, ValueError):
+                    pass
+        return False
+
+    @staticmethod
+    def _check_quantity_hallucination(case: ExamTestCase, result: dict) -> bool:
+        """P2: 检查数量幻觉 — 输出集合异常膨胀。
+
+        启发式: list/dict 字段长度超过阈值 (默认 20) 视为异常膨胀。
+        常见于模型"刷量"行为 (如编造大量虚假标签/文件)。
+        """
+        if not isinstance(result, dict):
+            return False
+        _QTY_THRESHOLD = 20
+        for val in result.values():
+            if isinstance(val, list) and len(val) > _QTY_THRESHOLD:
+                return True
+            if isinstance(val, dict) and len(val) > _QTY_THRESHOLD:
+                return True
+        return False
+
+    def _run_hallucination_six_dim(
+        self,
+        breadth: BreadthResult,
+        *,
+        quick: bool = False,
+    ) -> HallucinationBreakdown:
+        """P2: 九维幻觉检测 (参考 ChatGPT 建议 + 业界实践)。
+
+        九维:
+            fabrication          _check_fabrication (事实编造)
+            inconsistency        _outputs_similar (输出不一致, 2次推断值对比)
+            refusal              _check_refusal (过度拒绝)
+            overclaim            _check_overclaim (过度声称)
+            context_drift        独立检测 (2次输出键集不同 = 忘记指令结构)
+            source_confusion     _check_source_confusion (来源混淆)
+            instruction_drift    _check_instruction_drift (指令偏离)
+            format_hallucination _check_format_hallucination (格式幻觉)
+            quantity_hallucination _check_quantity_hallucination (数量幻觉)
+
+        Args:
+            breadth: breadth 结果 (跳过 failed 能力)
+            quick: True=只测 5 关键能力 (省时), False=测全部通过能力
+        """
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            HallucinationBreakdown,
+        )
+
+        if quick:
+            caps_to_test = self._QUICK_HALLU_CAPS
+        else:
+            caps_to_test = tuple(CAPABILITIES)
+
+        caps = [
+            c for c in caps_to_test
+            if c not in breadth.failed_capabilities and c in CASES_BY_CAPABILITY
+        ]
+        if not caps:
+            return HallucinationBreakdown()
+
+        fab = inc = ref = ovc = sc = cd = idr = fmh = qh = 0
+        total = 0
+
+        for cap_name in caps:
+            cases = CASES_BY_CAPABILITY.get(cap_name, [])
+            if not cases:
+                continue
+            case = cases[0]
+            total += 1
+            try:
+                result = self._infer(case)
+                if self._check_fabrication(case, result):
+                    fab += 1
+                if self._check_overclaim(case, result):
+                    ovc += 1
+                if self._check_source_confusion(case, result):
+                    sc += 1
+                if self._check_refusal(result):
+                    ref += 1
+                if self._check_instruction_drift(case, result):
+                    idr += 1
+                if self._check_format_hallucination(case, result):
+                    fmh += 1
+                if self._check_quantity_hallucination(case, result):
+                    qh += 1
+                # inconsistency + context_drift: 2次推断对比 (独立检测)
+                try:
+                    result2 = self._infer(case)
+                    # context_drift: 两次输出键集不同 = 忘记指令结构
+                    keys1 = set(k for k in (result.keys() if isinstance(result, dict) else [])
+                                if not k.startswith("_"))
+                    keys2 = set(k for k in (result2.keys() if isinstance(result2, dict) else [])
+                                if not k.startswith("_"))
+                    if keys1 != keys2:
+                        cd += 1  # 键集漂移
+                    elif not self._outputs_similar(result, result2):
+                        inc += 1  # 键集相同但值差异大
+                except Exception:
+                    pass
+            except Exception:
+                ref += 1
+
+        if total == 0:
+            return HallucinationBreakdown()
+
+        return HallucinationBreakdown(
+            fabrication=round(fab / total, 3),
+            inconsistency=round(inc / total, 3),
+            refusal=round(ref / total, 3),
+            overclaim=round(ovc / total, 3),
+            context_drift=round(cd / total, 3),
+            source_confusion=round(sc / total, 3),
+            instruction_drift=round(idr / total, 3),
+            format_hallucination=round(fmh / total, 3),
+            quantity_hallucination=round(qh / total, 3),
+        )
+
+    def _pick_representative_case(self, cap_name: str) -> ExamTestCase | None:
+        """P2 Quick Mode: 选代表题 (优先 medium, fallback easy)。"""
+        cases = CASES_BY_CAPABILITY.get(cap_name, [])
+        if not cases:
+            return None
+        for c in cases:
+            if c.difficulty == Difficulty.MEDIUM:
+                return c
+        for c in cases:
+            if c.difficulty == Difficulty.EASY:
+                return c
+        return cases[0]
+
+    def run_quick_exam(self) -> QuickProfile:
+        """P2 Quick Mode: 快速能力画像 (5-8 分钟)。
+
+        策略:
+            - 29 能力各跑 1 道 medium 代表题 (单次推断)
+            - 幻觉检测: 5 个关键能力各 2 次推断 (六维细分)
+            - 跳过 drift, olympiad
+            - 输出 QuickProfile (能力分级 + 六维幻觉 + Top3 岗位推荐)
+
+        总推断: 29 + 10 = 39 次 (本地模型 ~6 分钟)
+        """
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            BreadthResult,
+            HallucinationBreakdown,
+            QuickProfile,
+            compute_grade_simple,
+        )
+        from zephyr.intelligence.model_profiling.job_matcher import JobMatcher
+
+        self._start_ts = time.time()
+        self._olympiad_case_results = []
+
+        _log.info("ExamOrchestrator: starting QUICK exam for %s", self._model_id)
+
+        # 1. 每能力 1 道代表题
+        capability_scores: dict[str, float] = {}
+        capability_grades: dict[str, str] = {}
+        breadth_passed: list[str] = []
+        breadth_failed: list[str] = []
+
+        for cap_name in CAPABILITIES:
+            case = self._pick_representative_case(cap_name)
+            if case is None:
+                breadth_failed.append(cap_name)
+                capability_scores[cap_name] = 0.0
+                capability_grades[cap_name] = "F"
+                continue
+            try:
+                result = self._infer(case)
+                if self._check_structure(result, case.expected_structure_keys):
+                    breadth_passed.append(cap_name)
+                    p, r, ed, em = self._compute_metrics(case, result)
+                    score = max(p, r, float(em))
+                else:
+                    breadth_failed.append(cap_name)
+                    score = 0.0
+            except Exception:
+                breadth_failed.append(cap_name)
+                score = 0.0
+            capability_scores[cap_name] = round(score, 3)
+            capability_grades[cap_name] = compute_grade_simple(score)
+
+        # 2. 六维幻觉检测 (5 关键能力)
+        breadth = BreadthResult(
+            score=len(breadth_passed) / len(CAPABILITIES) if CAPABILITIES else 0.0,
+            passed=len(breadth_passed),
+            total=len(CAPABILITIES),
+            failed_capabilities=breadth_failed,
+        )
+        hallu = self._run_hallucination_six_dim(breadth, quick=True)
+
+        # 3. 综合分 (五轴简化: breadth 0.35 + depth 0.50 + hallu 0.15)
+        breadth_score = breadth.score
+        nonzero = [s for s in capability_scores.values() if s > 0]
+        depth_score = statistics.mean(nonzero) if nonzero else 0.0
+        hallu_score = hallu.hallucination_score
+        overall = 0.35 * breadth_score + 0.50 * depth_score + 0.15 * hallu_score
+
+        # 4. 构建 QuickProfile
+        profile = QuickProfile(
+            model_id=self._model_id,
+            exam_mode="quick",
+            exam_timestamp=datetime.now(UTC).isoformat(),
+            exam_duration_seconds=round(time.time() - self._start_ts, 2),
+            capability_grades=capability_grades,
+            capability_scores=capability_scores,
+            hallucination=hallu,
+            overall_score=round(overall, 3),
+            overall_grade=compute_grade_simple(overall),
+        )
+
+        # 5. 岗位推荐 Top3
+        try:
+            matcher = JobMatcher()
+            profile.recommendations = matcher.match_top(profile, n=3)
+        except Exception as e:
+            _log.warning("JobMatcher failed: %s", e)
+            profile.notes.append(f"job_match_failed: {e}")
+
+        _log.info(
+            "ExamOrchestrator: QUICK complete — grade=%s score=%.2f hallu=%.3f (%.1fs)",
+            profile.overall_grade, profile.overall_score,
+            hallu.overall_rate, profile.exam_duration_seconds,
+        )
+        return profile
+
+    def run_standard_exam(self, *, skip_drift: bool = True) -> CapabilityPassport:
+        """P2 Standard Mode: 标准评测 (20-30 分钟)。
+
+        = run_full_exam(skip_drift=True) 别名, n=1 单次采样。
+        适合正式入职评估, 输出完整 CapabilityPassport。
+        """
+        if self._depth_samples_per_case != 1:
+            _log.warning(
+                "Standard mode expects n=1, got n=%d", self._depth_samples_per_case
+            )
+        return self.run_full_exam(skip_drift=skip_drift)
+
+    def run_deep_exam(self, *, judge_chat: Any = None) -> CapabilityPassport:
+        """P2 Deep Mode: 旗舰深评 (2-3 小时)。
+
+        = run_full_exam(skip_drift=False) + 强制 n>=3 + 可选 LLM judge。
+        适合旗舰候选模型深度校准, 区分度拉满。
+        """
+        if self._depth_samples_per_case < 3:
+            _log.warning(
+                "Deep mode forces n>=3, got n=%d, bumping to 3",
+                self._depth_samples_per_case,
+            )
+            self._depth_samples_per_case = max(3, self._depth_samples_per_case)
+        if judge_chat is not None:
+            self._judge_chat = judge_chat
+            self._judge = ExamJudge(judge_chat)
+        return self.run_full_exam(skip_drift=False)
+
+    def run_exam(
+        self,
+        mode: str = "standard",
+        **kwargs: Any,
+    ) -> QuickProfile | CapabilityPassport:
+        """P2 统一考试入口。
+
+        Args:
+            mode: "quick" (5-8min) | "standard" (20-30min) | "deep" (2-3h)
+            **kwargs: 传给对应模式的参数 (如 judge_chat for deep)
+
+        Returns:
+            QuickProfile (quick) 或 CapabilityPassport (standard/deep)
+        """
+        mode = mode.lower().strip()
+        if mode == "quick":
+            return self.run_quick_exam()
+        elif mode == "standard":
+            return self.run_standard_exam(**kwargs)
+        elif mode == "deep":
+            return self.run_deep_exam(**kwargs)
+        else:
+            raise ValueError(
+                f"unknown exam mode: {mode!r} (expected: quick/standard/deep)"
+            )
 
 
 def _normalized_edit_distance(a: str, b: str) -> float:

@@ -291,3 +291,125 @@ def compute_grade(score: float) -> str:
         return "D"
     else:
         return "F"
+
+
+# ══════════════════════════════════════════════════════════
+# P2: 岗位匹配 + 快速画像数据结构
+# ══════════════════════════════════════════════════════════
+
+
+def compute_grade_simple(score: float) -> str:
+    """P2: 五级粗粒度能力分级 A/B/C/D/F，用于岗位匹配。
+
+    比 compute_grade 更粗，避免 0.612 vs 0.618 的过拟合：
+        A (>=0.75)  精通，可独立担当
+        B (>=0.60)  熟练，可主力
+        C (>=0.45)  合格，需监督
+        D (>=0.30)  初级，需指导
+        F (<0.30)   不胜任
+
+    设计原则: 岗位匹配用粗级足够，能力轮廓 > 每题精度。
+    """
+    if score >= 0.75:
+        return "A"
+    elif score >= 0.60:
+        return "B"
+    elif score >= 0.45:
+        return "C"
+    elif score >= 0.30:
+        return "D"
+    else:
+        return "F"
+
+
+# 能力分级 → 数值映射（用于 required 阈值比较，越高越好）
+GRADE_LEVEL: dict[str, int] = {"A": 4, "B": 3, "C": 2, "D": 1, "F": 0}
+
+
+@dataclass
+class JobRecommendation:
+    """P2: 岗位推荐结果。
+
+    一个模型对一个岗位的匹配评估。
+    """
+    job_id: str                            # 岗位标识 snake_case
+    job_title: str                         # 岗位中文名称
+    match_score: float = 0.0               # 匹配度 0-1
+    qualified: bool = False                # 是否满足全部 required 能力
+    hallucination_passed: bool = True      # 是否通过幻觉门
+    missing_required: list[str] = field(default_factory=list)  # 未达 required 的能力
+    bonus_summary: str = ""                # bonus 能力命中摘要
+    description: str = ""                  # 岗位职责描述
+
+
+@dataclass
+class HallucinationBreakdown:
+    """P2: 幻觉率多维细分（参考 ChatGPT 建议 + 业界实践）。
+
+    任何模型都有幻觉，Claude 也不例外，只是高低问题。
+    幻觉率正常评分（不硬门），但在岗位匹配时权重较高。
+
+    九维细分（每维 0-1，越高 = 越严重）：
+        fabrication          事实编造（编造不存在的 API/函数/文件）
+        inconsistency        输出不一致（同题两次回答差异大）
+        refusal              过度拒绝（能答的拒答）
+        overclaim            过度声称（声称做了没做的事）
+        context_drift        上下文漂移（两次输出键集不同 = 忘记指令结构）
+        source_confusion     来源混淆（把 A 文件内容归给 B）
+        instruction_drift    指令偏离（输出结构不符合 expected_structure_keys）
+        format_hallucination 格式幻觉（字段值类型异常，如 list 字段给了 stringified JSON）
+        quantity_hallucination 数量幻觉（输出集合异常膨胀，list/dict 长度超阈值）
+    """
+    fabrication: float = 0.0
+    inconsistency: float = 0.0
+    refusal: float = 0.0
+    overclaim: float = 0.0
+    context_drift: float = 0.0
+    source_confusion: float = 0.0
+    instruction_drift: float = 0.0
+    format_hallucination: float = 0.0
+    quantity_hallucination: float = 0.0
+
+    @property
+    def overall_rate(self) -> float:
+        """综合幻觉率 = 九维均值（0-1，越低越好）。"""
+        vals = [self.fabrication, self.inconsistency, self.refusal,
+                self.overclaim, self.context_drift, self.source_confusion,
+                self.instruction_drift, self.format_hallucination,
+                self.quantity_hallucination]
+        return round(sum(vals) / len(vals), 3) if vals else 0.0
+
+    @property
+    def hallucination_score(self) -> float:
+        """幻觉轴得分（0-1，越高越好 = 1 - overall_rate）。用于五轴综合分。"""
+        return round(1.0 - self.overall_rate, 3)
+
+
+@dataclass
+class QuickProfile:
+    """P2: 快速能力画像 — Quick Mode 输出。
+
+    比 CapabilityPassport 精简，面向"岗位匹配"而非"精确评分"：
+        - 29 能力的粗分级 A/B/C/D/F（雷达图轮廓）
+        - 幻觉率六维细分（正常评分，非硬门；岗位匹配时权重高）
+        - Top3 推荐岗位
+        - 考试耗时
+
+    设计原则: 幻觉率正常评分，任何模型都有幻觉，只是高低问题。
+              未来岗位匹配时幻觉率多考虑，但现在不做硬门槛。
+    """
+    model_id: str = ""
+    exam_mode: str = "quick"               # quick/standard/deep
+    exam_timestamp: str = ""
+    exam_duration_seconds: float = 0.0
+    # 能力轮廓（29 项）
+    capability_grades: dict[str, str] = field(default_factory=dict)   # {cap_name: "A"|"B"|...}
+    capability_scores: dict[str, float] = field(default_factory=dict)  # 原始分 0-1
+    # 幻觉轴（六维细分，正常评分）
+    hallucination: HallucinationBreakdown = field(default_factory=HallucinationBreakdown)
+    # 综合分级
+    overall_grade: str = "F"
+    overall_score: float = 0.0
+    # 岗位推荐（Top3，按 match_score 降序）
+    recommendations: list[JobRecommendation] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)

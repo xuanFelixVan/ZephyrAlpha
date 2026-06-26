@@ -25,6 +25,7 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     HallucinationResult,
 )
 from zephyr.intelligence.model_profiling.exam_orchestrator import (
+    CAPABILITIES,
     ExamOrchestrator,
     _normalized_edit_distance,
     _percentile,
@@ -681,6 +682,507 @@ class TestBuildRecommendations:
         assert len(recs.safe_capabilities) == 2
         assert len(recs.unsafe_capabilities) == 0
         assert recs.note == ""
+
+
+# ══════════════════════════════════════════════════════════
+# P2: 三级模式 + 六维幻觉测试
+# ══════════════════════════════════════════════════════════
+
+
+class TestComputeGradeSimple:
+    """P2: 五级粗分级 A/B/C/D/F。"""
+
+    def test_grade_a(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            compute_grade_simple,
+        )
+        assert compute_grade_simple(0.90) == "A"
+        assert compute_grade_simple(0.75) == "A"
+
+    def test_grade_b(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            compute_grade_simple,
+        )
+        assert compute_grade_simple(0.74) == "B"
+        assert compute_grade_simple(0.60) == "B"
+
+    def test_grade_c(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            compute_grade_simple,
+        )
+        assert compute_grade_simple(0.59) == "C"
+        assert compute_grade_simple(0.45) == "C"
+
+    def test_grade_d(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            compute_grade_simple,
+        )
+        assert compute_grade_simple(0.44) == "D"
+        assert compute_grade_simple(0.30) == "D"
+
+    def test_grade_f(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            compute_grade_simple,
+        )
+        assert compute_grade_simple(0.29) == "F"
+        assert compute_grade_simple(0.0) == "F"
+
+
+class TestHallucinationBreakdown:
+    """P2: 九维幻觉 breakdown property。"""
+
+    def test_default_all_zero(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            HallucinationBreakdown,
+        )
+        h = HallucinationBreakdown()
+        assert h.overall_rate == 0.0
+        assert h.hallucination_score == 1.0
+
+    def test_overall_rate_is_mean(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            HallucinationBreakdown,
+        )
+        h = HallucinationBreakdown(
+            fabrication=0.2, inconsistency=0.4,
+            refusal=0.0, overclaim=0.1,
+            context_drift=0.3, source_confusion=0.0,
+            instruction_drift=0.0, format_hallucination=0.0,
+            quantity_hallucination=0.0,
+        )
+        # mean(0.2,0.4,0.0,0.1,0.3,0.0,0.0,0.0,0.0) = 1.0/9 ≈ 0.111
+        assert h.overall_rate == round(1.0 / 9, 3)
+
+    def test_hallucination_score_inverse(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            HallucinationBreakdown,
+        )
+        h = HallucinationBreakdown(fabrication=0.5)
+        # mean(0.5,0,...,0)=0.5/9≈0.056, score=1-0.056
+        assert h.hallucination_score == round(1.0 - h.overall_rate, 3)
+
+    def test_all_max_hallucination(self):
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            HallucinationBreakdown,
+        )
+        h = HallucinationBreakdown(
+            fabrication=1.0, inconsistency=1.0, refusal=1.0,
+            overclaim=1.0, context_drift=1.0, source_confusion=1.0,
+            instruction_drift=1.0, format_hallucination=1.0,
+            quantity_hallucination=1.0,
+        )
+        assert h.overall_rate == 1.0
+        assert h.hallucination_score == 0.0
+
+    def test_new_dims_independent(self):
+        """新增 3 维独立计入 overall_rate。"""
+        from zephyr.intelligence.model_profiling.capability_passport import (
+            HallucinationBreakdown,
+        )
+        h = HallucinationBreakdown(
+            instruction_drift=0.9, format_hallucination=0.9,
+            quantity_hallucination=0.9,
+        )
+        # mean(0,0,0,0,0,0,0.9,0.9,0.9) = 2.7/9 = 0.3
+        assert h.overall_rate == round(2.7 / 9, 3)
+
+
+class TestCheckOverclaim:
+    """P2: overclaim 检测。"""
+
+    def _make_case(self, capability="refactor", prompt="refactor this code"):
+        return ExamTestCase(
+            case_id="T", capability=capability,
+            difficulty=Difficulty.EASY, prompt=prompt,
+        )
+
+    def test_claim_with_empty_field(self):
+        case = self._make_case()
+        result = {"changes": [], "note": "已重构完成"}
+        assert ExamOrchestrator._check_overclaim(case, result) is True
+
+    def test_claim_with_filled_field(self):
+        case = self._make_case()
+        result = {"changes": [{"old": "x", "new": "y"}], "note": "已重构完成"}
+        assert ExamOrchestrator._check_overclaim(case, result) is False
+
+    def test_no_claim(self):
+        case = self._make_case()
+        result = {"changes": [{"old": "x", "new": "y"}]}
+        assert ExamOrchestrator._check_overclaim(case, result) is False
+
+    def test_claim_fixes_empty(self):
+        case = self._make_case("code_edit_precision")
+        result = {"fixes": [], "msg": "已修复"}
+        assert ExamOrchestrator._check_overclaim(case, result) is True
+
+    def test_non_dict_returns_false(self):
+        case = self._make_case()
+        assert ExamOrchestrator._check_overclaim(case, "not a dict") is False  # type: ignore
+
+
+class TestCheckSourceConfusion:
+    """P2: source confusion 检测。"""
+
+    def _make_case(self, prompt="fix bug in auth.py"):
+        return ExamTestCase(
+            case_id="T", capability="code_edit_precision",
+            difficulty=Difficulty.EASY, prompt=prompt,
+        )
+
+    def test_referenced_file_in_prompt(self):
+        case = self._make_case("fix bug in auth.py")
+        result = {"fixes": [{"old_str": "x", "new_str": "y", "file": "auth.py"}]}
+        assert ExamOrchestrator._check_source_confusion(case, result) is False
+
+    def test_referenced_file_not_in_prompt(self):
+        case = self._make_case("fix bug in auth.py")
+        result = {"fixes": [{"file": "nonexistent.py"}]}
+        assert ExamOrchestrator._check_source_confusion(case, result) is True
+
+    def test_generic_file_exempt(self):
+        case = self._make_case("fix bug in auth.py")
+        result = {"fixes": [{"file": "__init__.py"}]}
+        assert ExamOrchestrator._check_source_confusion(case, result) is False
+
+    def test_no_file_referenced(self):
+        case = self._make_case("classify this module")
+        result = {"category": "web"}
+        assert ExamOrchestrator._check_source_confusion(case, result) is False
+
+    def test_input_files_are_legit(self):
+        case = ExamTestCase(
+            case_id="T", capability="cross_file_refactor",
+            difficulty=Difficulty.HARD, prompt="refactor",
+            input_files={"a.py": "content", "b.py": "content"},
+        )
+        result = {"changes": [{"file": "a.py"}, {"file": "b.py"}]}
+        assert ExamOrchestrator._check_source_confusion(case, result) is False
+
+
+class TestCheckInstructionDrift:
+    """P2: instruction_drift 检测 (指令偏离)。"""
+
+    def _make_case(self, keys: list[str]) -> ExamTestCase:
+        return ExamTestCase(
+            case_id="T", capability="task_classification",
+            difficulty=Difficulty.EASY, prompt="classify",
+            expected_structure_keys=keys,
+        )
+
+    def test_structure_matches(self):
+        """输出包含所有 required keys → 无偏离。"""
+        case = self._make_case(["category", "tags"])
+        result = {"category": "web", "tags": ["api"]}
+        assert ExamOrchestrator._check_instruction_drift(case, result) is False
+
+    def test_missing_key(self):
+        """缺一个 key → 指令偏离。"""
+        case = self._make_case(["category", "tags"])
+        result = {"category": "web"}  # 缺 tags
+        assert ExamOrchestrator._check_instruction_drift(case, result) is True
+
+    def test_empty_value(self):
+        """key 存在但值为空 → 指令偏离 (_check_structure 判空值无效)。"""
+        case = self._make_case(["category", "tags"])
+        result = {"category": "web", "tags": []}  # tags 为空 list
+        assert ExamOrchestrator._check_instruction_drift(case, result) is True
+
+    def test_no_expected_keys(self):
+        """case 无 expected_structure_keys → 无法判定, 返回 False。"""
+        case = ExamTestCase(
+            case_id="T", capability="task_classification",
+            difficulty=Difficulty.EASY, prompt="test",
+        )
+        assert ExamOrchestrator._check_instruction_drift(case, {"x": 1}) is False
+
+    def test_non_dict_result(self):
+        """非 dict 输出 → False (无法判定结构)。"""
+        case = self._make_case(["category"])
+        assert ExamOrchestrator._check_instruction_drift(case, "not a dict") is False
+
+
+class TestCheckFormatHallucination:
+    """P2: format_hallucination 检测 (格式幻觉)。"""
+
+    def _make_case(self, keys: list[str]) -> ExamTestCase:
+        return ExamTestCase(
+            case_id="T", capability="tag_completion",
+            difficulty=Difficulty.EASY, prompt="complete tags",
+            expected_structure_keys=keys,
+        )
+
+    def test_correct_list_type(self):
+        """list 字段给了真正的 list → 无格式幻觉。"""
+        case = self._make_case(["tags"])
+        result = {"tags": ["api", "web"]}
+        assert ExamOrchestrator._check_format_hallucination(case, result) is False
+
+    def test_list_stringified_as_json(self):
+        """list 字段给了 stringified JSON → 格式幻觉。"""
+        case = self._make_case(["tags"])
+        result = {"tags": '["api", "web"]'}  # 应该是 list 但给了 JSON 字符串
+        assert ExamOrchestrator._check_format_hallucination(case, result) is True
+
+    def test_dict_stringified_as_json(self):
+        """dict 字段给了 stringified JSON → 格式幻觉。"""
+        case = self._make_case(["config"])
+        result = {"config": '{"key": "value"}'}  # 应该是 dict 但给了 JSON 字符串
+        assert ExamOrchestrator._check_format_hallucination(case, result) is True
+
+    def test_normal_string_value(self):
+        """str 字段正常 → 无格式幻觉。"""
+        case = self._make_case(["category"])
+        result = {"category": "web"}
+        assert ExamOrchestrator._check_format_hallucination(case, result) is False
+
+    def test_no_expected_keys(self):
+        """case 无 expected_structure_keys → False。"""
+        case = ExamTestCase(
+            case_id="T", capability="tag_completion",
+            difficulty=Difficulty.EASY, prompt="test",
+        )
+        assert ExamOrchestrator._check_format_hallucination(case, {"x": 1}) is False
+
+
+class TestCheckQuantityHallucination:
+    """P2: quantity_hallucination 检测 (数量幻觉)。"""
+
+    def test_normal_list_size(self):
+        """正常大小 list → 无数量幻觉。"""
+        result = {"tags": ["a", "b", "c"]}
+        assert ExamOrchestrator._check_quantity_hallucination(
+            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+            result,
+        ) is False
+
+    def test_inflated_list(self):
+        """list 长度 > 20 → 数量幻觉。"""
+        result = {"tags": [f"tag_{i}" for i in range(25)]}
+        assert ExamOrchestrator._check_quantity_hallucination(
+            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+            result,
+        ) is True
+
+    def test_inflated_dict(self):
+        """dict 长度 > 20 → 数量幻觉。"""
+        result = {"mapping": {str(i): i for i in range(25)}}
+        assert ExamOrchestrator._check_quantity_hallucination(
+            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+            result,
+        ) is True
+
+    def test_boundary_exactly_20(self):
+        """list 长度 = 20 → 不触发 (阈值 > 20)。"""
+        result = {"tags": [f"t{i}" for i in range(20)]}
+        assert ExamOrchestrator._check_quantity_hallucination(
+            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+            result,
+        ) is False
+
+    def test_non_dict_result(self):
+        """非 dict 输出 → False。"""
+        assert ExamOrchestrator._check_quantity_hallucination(
+            ExamTestCase(case_id="T", capability="x", difficulty=Difficulty.EASY, prompt=""),
+            "not a dict",
+        ) is False
+
+
+class TestRunHallucinationSixDim:
+    """P2: 六维幻觉检测 (mock chat)。"""
+
+    def test_quick_mode_uses_5_caps(self):
+        """quick=True 只测 5 个关键能力。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "ok"}
+        orch = ExamOrchestrator(chat, model_id="t")
+        breadth = BreadthResult(
+            score=1.0, passed=29, total=29, failed_capabilities=[],
+        )
+        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        # 每个能力 2 次推断 (主+对比), 5 能力 = 10 次
+        assert chat.inference.call_count == 10
+        assert isinstance(h.fabrication, float)
+
+    def test_no_failed_caps_full_mode(self):
+        """quick=False 测全部通过的能力 (mock 返回相同结果, inconsistency=0)。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web"}
+        orch = ExamOrchestrator(chat, model_id="t")
+        breadth = BreadthResult(
+            score=1.0, passed=29, total=29, failed_capabilities=[],
+        )
+        h = orch._run_hallucination_six_dim(breadth, quick=False)
+        # 全部能力相同输出 → inconsistency=0
+        assert h.inconsistency == 0.0
+
+    def test_all_failed_caps_returns_empty(self):
+        """全部能力 failed → 返回默认 HallucinationBreakdown。"""
+        chat = MagicMock()
+        orch = ExamOrchestrator(chat, model_id="t")
+        breadth = BreadthResult(
+            score=0.0, passed=0, total=29,
+            failed_capabilities=list(CAPABILITIES),
+        )
+        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        assert h.overall_rate == 0.0
+
+    def test_inconsistency_detected(self):
+        """两次输出键集相同但值不同 → inconsistency > 0, context_drift == 0。"""
+        chat = MagicMock()
+        # 交替返回不同结果 (键集相同, 值不同)
+        chat.inference.side_effect = [
+            {"category": "web"},
+            {"category": "config"},
+        ] * 10  # 每能力 2 次, 5 能力
+        orch = ExamOrchestrator(chat, model_id="t")
+        breadth = BreadthResult(score=1.0, passed=29, total=29, failed_capabilities=[])
+        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        assert h.inconsistency > 0.0
+        # 键集相同 (都是 {"category"}) → 无 context_drift (独立检测)
+        assert h.context_drift == 0.0
+
+    def test_context_drift_detected(self):
+        """两次输出键集不同 → context_drift > 0 (忘记指令结构)。"""
+        chat = MagicMock()
+        # 第一次有 tags, 第二次没有 (键集漂移)
+        chat.inference.side_effect = [
+            {"category": "web", "tags": ["a"]},
+            {"category": "config"},
+        ] * 10
+        orch = ExamOrchestrator(chat, model_id="t")
+        breadth = BreadthResult(score=1.0, passed=29, total=29, failed_capabilities=[])
+        h = orch._run_hallucination_six_dim(breadth, quick=True)
+        assert h.context_drift > 0.0
+
+
+class TestRunQuickExam:
+    """P2: Quick 模式快速画像。"""
+
+    def test_quick_exam_returns_quick_profile(self):
+        """Quick 模式返回 QuickProfile, 不是 CapabilityPassport。"""
+        from zephyr.intelligence.model_profiling.capability_passport import QuickProfile
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web", "tags": ["x"]}
+        orch = ExamOrchestrator(chat, model_id="test-quick")
+        profile = orch.run_quick_exam()
+        assert isinstance(profile, QuickProfile)
+        assert profile.exam_mode == "quick"
+        assert profile.model_id == "test-quick"
+
+    def test_quick_exam_has_capability_grades(self):
+        """Quick 模式输出包含能力分级。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web", "tags": ["x"]}
+        orch = ExamOrchestrator(chat, model_id="t")
+        profile = orch.run_quick_exam()
+        assert len(profile.capability_grades) > 0
+        assert all(g in "ABCDF" for g in profile.capability_grades.values())
+
+    def test_quick_exam_has_hallucination_breakdown(self):
+        """Quick 模式输出包含六维幻觉。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web"}
+        orch = ExamOrchestrator(chat, model_id="t")
+        profile = orch.run_quick_exam()
+        # 六维字段都存在
+        assert hasattr(profile.hallucination, "fabrication")
+        assert hasattr(profile.hallucination, "overclaim")
+        assert hasattr(profile.hallucination, "source_confusion")
+
+    def test_quick_exam_has_recommendations(self):
+        """Quick 模式输出包含 Top3 岗位推荐。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web", "tags": ["x"]}
+        orch = ExamOrchestrator(chat, model_id="t")
+        profile = orch.run_quick_exam()
+        assert len(profile.recommendations) <= 3
+        if profile.recommendations:
+            assert profile.recommendations[0].match_score >= profile.recommendations[-1].match_score
+
+    def test_quick_exam_duration_positive(self):
+        """Quick 模式耗时 > 0。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web"}
+        orch = ExamOrchestrator(chat, model_id="t")
+        profile = orch.run_quick_exam()
+        assert profile.exam_duration_seconds >= 0.0
+
+
+class TestRunExamModes:
+    """P2: 三级模式统一入口路由。"""
+
+    def test_run_exam_quick(self):
+        """run_exam(mode='quick') 返回 QuickProfile。"""
+        from zephyr.intelligence.model_profiling.capability_passport import QuickProfile
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web"}
+        orch = ExamOrchestrator(chat, model_id="t")
+        result = orch.run_exam(mode="quick")
+        assert isinstance(result, QuickProfile)
+
+    def test_run_exam_unknown_mode_raises(self):
+        """未知 mode 抛 ValueError。"""
+        chat = MagicMock()
+        orch = ExamOrchestrator(chat, model_id="t")
+        with pytest.raises(ValueError, match="unknown exam mode"):
+            orch.run_exam(mode="invalid")
+
+    def test_run_exam_mode_case_insensitive(self):
+        """mode 大小写不敏感。"""
+        from zephyr.intelligence.model_profiling.capability_passport import QuickProfile
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web"}
+        orch = ExamOrchestrator(chat, model_id="t")
+        result = orch.run_exam(mode="QUICK")
+        assert isinstance(result, QuickProfile)
+
+    def test_run_standard_exam_skip_drift(self):
+        """run_standard_exam 默认 skip_drift=True。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web", "tags": ["x"]}
+        orch = ExamOrchestrator(chat, model_id="t")
+        # 应该不调用 drift (mock 会让 drift 内部跑, 但 skip_drift=True 跳过)
+        passport = orch.run_standard_exam()
+        assert passport is not None
+        # drift.tested 应为 False (skip_drift)
+        assert passport.drift.tested is False
+
+    def test_run_deep_exam_forces_n_ge_3(self):
+        """run_deep_exam 强制 n>=3。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "web", "tags": ["x"]}
+        orch = ExamOrchestrator(chat, model_id="t", depth_samples_per_case=1)
+        assert orch._depth_samples_per_case == 1
+        # run_deep_exam 会 bump 到 3, 但实际跑全量太慢, 只验证 bump 逻辑
+        # 用 mock 让 run_full_exam 快速返回
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(orch, "run_full_exam", lambda skip_drift=False: CapabilityPassport(model_id="t"))
+            orch.run_deep_exam()
+            assert orch._depth_samples_per_case >= 3
+
+
+class TestPickRepresentativeCase:
+    """P2: Quick 模式代表题选择。"""
+
+    def test_prefer_medium(self):
+        """优先选 medium 难度。"""
+        chat = MagicMock()
+        orch = ExamOrchestrator(chat, model_id="t")
+        case = orch._pick_representative_case("task_classification")
+        assert case is not None
+        assert case.difficulty == Difficulty.MEDIUM
+
+    def test_nonexistent_cap_returns_none(self):
+        """不存在的能力返回 None。"""
+        chat = MagicMock()
+        orch = ExamOrchestrator(chat, model_id="t")
+        case = orch._pick_representative_case("nonexistent_capability")
+        assert case is None
+
+
+class TestBuildRecommendationsContinued:
+    """原 TestBuildRecommendations 的后续测试 (P2 追加时类被分割)。"""
 
     def test_max_concurrent_tasks_capped_at_4(self):
         chat = MagicMock()

@@ -21,27 +21,37 @@
 version: "1.0.0"
 last_updated: "2026-06-27"
 
-# 幻觉率六维 (参考 ChatGPT 建议 + 业界实践)
+# 幻觉率九维 (参考 ChatGPT 建议 + 业界实践)
 # JobMatcher 用这些维度做岗位匹配时的幻觉权重计算
+# 权重总和 = 1.00, fabrication 仍为最重要维度
 hallucination_dimensions:
   fabrication:
     description: "事实编造 — 编造不存在的 API/函数/文件/事实"
-    weight: 0.25
+    weight: 0.20
   inconsistency:
     description: "输出不一致 — 同题两次回答差异大"
-    weight: 0.20
+    weight: 0.15
   refusal:
     description: "过度拒绝 — 能答的拒答"
-    weight: 0.10
+    weight: 0.08
   overclaim:
     description: "过度声称 — 声称做了没做的事"
-    weight: 0.15
+    weight: 0.12
   context_drift:
-    description: "上下文漂移 — 长对话中忘记前提"
-    weight: 0.15
+    description: "上下文漂移 — 两次输出键集不同 (忘记指令结构)"
+    weight: 0.12
   source_confusion:
     description: "来源混淆 — 把 A 文件内容归给 B"
-    weight: 0.15
+    weight: 0.12
+  instruction_drift:
+    description: "指令偏离 — 输出结构不符合 expected_structure_keys"
+    weight: 0.10
+  format_hallucination:
+    description: "格式幻觉 — 字段值类型异常 (如 list 字段给了 stringified JSON)"
+    weight: 0.06
+  quantity_hallucination:
+    description: "数量幻觉 — 输出集合异常膨胀 (list/dict 长度超阈值)"
+    weight: 0.05
 
 jobs:
   # ── 初级岗位 ──────────────────────────────────
