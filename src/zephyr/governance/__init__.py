@@ -70,6 +70,7 @@ from zephyr.governance.agent_signer import AgentSigner
 from zephyr.governance.akshare_provider import AkshareProvider
 from zephyr.governance.base import FactorMeta
 from zephyr.governance.blind_spot_tracker import BlindSpotStatus
+from zephyr.governance.capability_lookup import CapabilityLookup
 from zephyr.governance.canary_manager import CanaryFile
 from zephyr.governance.changelog_manager import ChangeImpact
 from zephyr.governance.classifier import Classifier
@@ -120,6 +121,7 @@ __all__ = [
     "BlameRecord",
     "BlindSpotStatus",
     "CanaryFile",
+    "CapabilityLookup",
     "ChangeImpact",
     "Classifier",
     "ComplexityReport",

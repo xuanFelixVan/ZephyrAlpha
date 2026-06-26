@@ -1,0 +1,153 @@
+# ============================================================================
+# capability_canonical_file_registry.yaml
+# 能力→真源文件反查注册表（capability → canonical_file reverse lookup）
+# ============================================================================
+# module_id: PS-REG-019
+# doc_type: contract
+# status: active
+# version: 1.0.0
+# date: 2026-06-26
+#
+# 用途:
+#   解决"AI 不知道某功能已存在、真源在哪"的信息不可达问题。
+#   声明每个能力（capability）的 canonical 文件、别名、已知重复。
+#   查询 API（zephyr.governance.capability_lookup.CapabilityLookup）读取本文件
+#   + 实时扫描磁盘代码头部，合并返回，无需手工跑扫描器。
+#
+# 真源性质:
+#   本文件是规则数据真源（人工裁定的 canonical 声明）。
+#   扫描结果是派生数据（查询时实时算，不持久化为独立 report，避免同步成本）。
+#
+# 对标:
+#   K8s Service（声明式 canonical）+ Endpoints 控制器（实时发现 pod）——
+#   Endpoints 不持久化为独立资源，是 Service 的实时投影。本注册表同构。
+#
+# AI 使用方式:
+#   1. from zephyr.governance.capability_lookup import CapabilityLookup
+#   2. reg = CapabilityLookup()
+#   3. reg.find("session handoff")  # 关键词搜索
+#   4. reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
+#   5. reg.list_ssot_conflicts()  # 列出同蓝图多实现冲突
+#
+# 维护规则:
+#   - 新增能力时加一条 capability 声明（低频）
+#   - canonical 文件迁移时更新 canonical_file 字段
+#   - 发现新重复时加到 duplicates[]（relation 标记 sibling/conflicting/legacy）
+#   - 删除重复时从 duplicates[] 移到 removed_duplicates[]（保留审计链）
+# ============================================================================
+
+schema_version: "1.0.0"
+module_id: PS-REG-019
+doc_type: contract
+title: "能力→真源文件反查注册表"
+status: active
+version: "1.0.0"
+date: "2026-06-26"
+summary: >-
+  capability → canonical_file 反查注册表，解决"AI 不知道某功能真源在哪"的信息不可达问题。
+  声明每个能力的 canonical 文件、别名、已知重复。查询 API（CapabilityLookup）读取本文件
+  + 实时扫描磁盘代码头部，合并返回。对标 K8s Service(声明) + Endpoints(实时发现) 模式。
+  本任务只建注册表（信息可达），不建 create-time 硬阻断门禁（另一个并行对话负责）。
+
+# 能力状态受控词表
+_status_vocabulary:
+  - alive       # canonical 文件存在于磁盘
+  - dead        # canonical 文件已删除（需迁移或归档）
+  - archived    # 能力已废弃，canonical 保留为历史参考
+
+# 重复关系受控词表
+_relation_vocabulary:
+  - sibling       # 同族不同语义实现（如交接本 vs 漂移修复 handoff，都叫 handoff 但语义不同）
+  - conflicting   # 同蓝图同能力多实现——SSoT 冲突，需 Owner 裁定去留
+  - legacy        # 旧版分叉，新版 canonical 已确立，旧版待删除
+
+# 扫描头部字段（CapabilityLookup 实时扫描时提取的代码头部字段，用于与 YAML 比对）
+_scan_fields:
+  - "[MODULE]        # 模块路径（如 zephyr.shared.session_continuity）"
+  - "[A_module]      # module_id=MOD-XXX_yyy"
+  - "[BLUEPRINT]     # 蓝图 ID"
+  - "[DOMAIN]        # 域 ID"
+  - "[MATURITY]      # design/prototype/production"
+
+# ============================================================================
+# 能力清单
+# ============================================================================
+capabilities:
+
+  # --------------------------------------------------------------------------
+  - capability_id: session_handoff_continuity
+    name: "Session 交接本/连续性"
+    canonical_file: src/zephyr/shared/session_continuity.py
+    module_id: MOD-INF_session_continuity
+    blueprint_id: SRC-140
+    domain: D-SHARED
+    maturity: prototype
+    status: alive
+    aliases:
+      - session_continuity
+      - handoff
+      - 交接本
+      - session_handoff
+      - session_continuity
+    description: >-
+      Session 交接包自动生成与恢复。解决"打开 IDE 不知道上回做到哪了"的零记忆重启痛点。
+      依据：MOD-TASK_SYSTEM v0.3.2 + AGENTS.md §5.1 零记忆重启。
+      12 importers，SQLite handoffs 表。
+    duplicates:
+      - path: src/zephyr/behavioral_audit/handoff_manager.py
+        module_id: MOD-SEC_handoff_manager
+        blueprint_id: MOD-INF-033
+        domain: D-BEHAVIORAL_AUDIT
+        maturity: production
+        relation: sibling
+        note: >-
+          漂移修复 handoff（Cross-Session Handoff Manager §6.14），与交接本语义不同
+          （交接本=AI session 状态持久化；漂移 handoff=修复上下文交接包）。非重复实现，
+          是同族不同语义子能力。
+    removed_duplicates:
+      - path: src/zephyr/governance/drift_detection/handoff_manager.py
+        removed_in_commit: d586cb25
+        note: "behavioral_audit 版的死副本，已删（commit d586cb25，402 行删除清理）"
+      - path: src/zephyr/governance/audit_orchestration/session_handoff.py
+        removed_in_commit: d586cb25
+        note: "返回硬编码 dict 的空壳 stub，已删"
+      - path: src/zephyr/trading/orchestrator/session_handoff.py
+        removed_in_commit: d586cb25
+        note: "与上面字节相同的 stub，已删"
+      - path: src/zephyr/shared/session/session_continuity.py
+        removed_in_commit: d586cb25
+        note: "shared/ 真源的死副本（原未被 git 跟踪），已删"
+
+  # --------------------------------------------------------------------------
+  - capability_id: rollback_executor
+    name: "回滚执行器"
+    canonical_file: src/zephyr/infrastructure/rollback/rollback_executor.py
+    module_id: MOD-INF_rollback_executor
+    blueprint_id: MOD-INF-021
+    domain: D-INFRA_RUNTIME
+    maturity: production
+    status: alive
+    aliases:
+      - rollback
+      - RollbackExecutor
+      - 回滚执行器
+      - rollback_executor
+    description: "回滚执行器核心封装。"
+    duplicates:
+      - path: src/zephyr/governance/rollback_executor.py
+        module_id: MOD-RES_rollback_executor
+        blueprint_id: MOD-INF-021
+        domain: D-GOVERNANCE
+        maturity: prototype
+        relation: conflicting
+        note: >-
+          同蓝图 MOD-INF-021 的 prototype 分叉，module_id 不同（MOD-RES vs MOD-INF）。
+          且 [MODULE] 字段错声明为 zephyr.infrastructure.rollback.rollback_executor（与
+          infrastructure 版相同），头部与实际路径不一致。需 Owner 裁定去留。
+
+# ============================================================================
+# 维护日志
+# ============================================================================
+# 2026-06-26 v1.0.0 初版。种子 2 条：session_handoff_continuity + rollback_executor。
+#   记录已删 4 个 session_handoff 重复（commit d586cb25）。
+#   标记 rollback_executor 同蓝图 MOD-INF-021 双实现为 conflicting，待 Owner 裁定。

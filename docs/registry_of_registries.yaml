@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-registry_of_registries | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 schema_version: "1.1.0"
-doc_type: registry_of_registries
+doc_type: register
 title: "ZephyrAlpha 中央注册表索引 — 全项目唯一真源总纲"
 status: active
 version: "1.1.0"
@@ -222,7 +222,7 @@ tiers:
 
       - registry_id: REG-CROSS-001
         name: 登记表的登记表（一致性契约）
-        physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
         format: yaml
         maintenance: manual
         entry_count: 16
@@ -389,6 +389,21 @@ tiers:
         status: active
         ssoT_for: architecture_issue_id, issue_status, issue_adjudication
 
+      - registry_id: REG-CAPCAN-001
+        name: 能力→真源文件反查注册表
+        description: "capability → canonical_file 反查注册表，解决'AI 不知道某功能真源在哪'的信息不可达问题。声明每个能力的 canonical 文件、别名、已知重复（含已删除重复的审计链）。查询 API（src/zephyr/governance/capability_lookup.py:CapabilityLookup）读取本文件 + 实时扫描磁盘代码头部合并返回。对标 K8s Service(声明) + Endpoints(实时发现) 模式。本注册表只治信息可达（注册表），不治 create-time 硬阻断门禁（另一个并行对话负责）。"
+        owner: MOD-GOVERNANCE
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+        format: yaml
+        tier: tier_1_governance
+        maintenance: semi-auto（canonical 声明=manual；扫描=auto via CapabilityLookup.__init__）
+        entry_count: 2
+        status: active
+        ssot_for: capability_canonical_file, capability_aliases, duplicate_status, removed_duplicates_audit
+        query_api: src/zephyr/governance/capability_lookup.py
+        query_api_class: CapabilityLookup
+        cli: "python -m zephyr.governance.capability_lookup --find <keyword> | --check-file <path> | --list-conflicts | --summary"
+
   - tier: 2
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
@@ -537,11 +552,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 49
+  total_registries: 50
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 10
-    tier_1_governance: 14
+    tier_1_governance: 15
     tier_2_runtime: 9
