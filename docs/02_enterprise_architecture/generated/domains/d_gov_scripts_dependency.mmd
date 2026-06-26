@@ -1,7 +1,7 @@
-%% D-GOV-SCRIPTS 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% D-GOV_SCRIPTS 域全景依赖图
+%% 生成时间: 2026-06-26 19:59:41
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 416, 依赖边数: 412
+%% 模块数: 415, 依赖边数: 411
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_construction_start_brain_py["scripts/construction/start_brain.py [prototype]"]
         scripts_construction_test_event_hook_py["scripts/construction/test_event_hook.py [prototype]"]
         scripts_context_generate_architecture_context_py["...text/generate_architecture_context.py [prototype]"]
-        %% ... 还有 316 个模块未显示
+        %% ... 还有 315 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -187,14 +187,14 @@ graph TD
     scripts_governance_generate_project_path_tree_py -->|config_depends| scripts_governance___init___py
     scripts_governance_governance_watchdog_py -->|config_depends| scripts_governance___init___py
     scripts_governance_generate_project_depgraph_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_generate_target_path_tree_py -->|config_depends| scripts_governance___init___py
     scripts__archive_governance_merge_domain_nodes_py -->|config_depends| scripts_governance___init___py
     scripts_governance_pre_delete_safety_check_py -->|config_depends| scripts_governance___init___py
     scripts_governance_list_phase0_tasks_py -->|config_depends| scripts_governance___init___py
-    %% ... 还有 238 条域内依赖未显示
+    scripts_governance_phase_a_backup_py -->|config_depends| scripts_governance___init___py
+    %% ... 还有 237 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D-GOV-SCRIPTS (12 条)
+    %% D-GOVERNANCE -> D-GOV_SCRIPTS (12 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| scripts_governance_dependency_graph_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| scripts_governance__shared_frontmatter_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| scripts_governance_d1_structure_archive_drafts_zone_py
@@ -207,26 +207,15 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| scripts_governance_d11_complia___lidate_blueprint_overlap_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| scripts_governance_d11_complia___ate_truth_source_cascade_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| scripts_governance__shared_frontmatter_py
-    %% D-GOV_DRIFT -> D-GOV-SCRIPTS (1 条)
+    %% D-GOV_DRIFT -> D-GOV_SCRIPTS (1 条)
     D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| scripts_governance__shared_frontmatter_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-GOV-SCRIPTS -> D-EX_CORE (1 条)
+    %% D-GOV_SCRIPTS -> D-EX_CORE (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_EX_CORE[D-EX_CORE]
-    %% D-GOV-SCRIPTS -> D-FUNDAMENTAL_SIGNAL (1 条)
+    %% D-GOV_SCRIPTS -> D-FUNDAMENTAL_SIGNAL (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D-FUNDAMENTAL_SIGNAL]
-    %% D-GOV-SCRIPTS -> D-GOV-ENFORCEMENT (10 条)
-    scripts_governance_adversarial_sys_master_test_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_gate_engine_selfcheck_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_gate_engine_selfcheck_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_pre_write_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance__e2e_verify_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_d1_structure_cbg_reset_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_d1_structure_reset_cbg_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    %% D-GOV-SCRIPTS -> D-GOVERNANCE (30 条)
+    %% D-GOV_SCRIPTS -> D-GOVERNANCE (30 条)
     scripts_rollback_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_scaffold_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_construction_check_statuses_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -257,10 +246,21 @@ graph TD
     scripts_governance_vms_migration_dry_run_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-GOV-SCRIPTS -> D-GOV_AUDIT (2 条)
+    %% D-GOV_SCRIPTS -> D-GOV_AUDIT (2 条)
     scripts_a2a_full_verification_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     scripts_governance_rebuild_audit_index_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-GOV-SCRIPTS -> D-INFRA_RUNTIME (11 条)
+    %% D-GOV_SCRIPTS -> D-GOV_ENFORCEMENT (10 条)
+    scripts_governance_adversarial_sys_master_test_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_gate_engine_selfcheck_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_gate_engine_selfcheck_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_pre_write_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance__e2e_verify_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_d1_structure_cbg_reset_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_d1_structure_reset_cbg_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    %% D-GOV_SCRIPTS -> D-INFRA_RUNTIME (11 条)
     scripts_a2a_full_verification_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     scripts_rollback_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     scripts_scaffold_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
@@ -272,7 +272,7 @@ graph TD
     scripts_governance_meta_finding_state_machine_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     scripts_governance__shared_base_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    %% D-GOV-SCRIPTS -> D-INTEGRATION (13 条)
+    %% D-GOV_SCRIPTS -> D-INTEGRATION (13 条)
     scripts_a2a_full_verification_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     scripts_scaffold_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -286,28 +286,28 @@ graph TD
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     scripts_mcp_launcher_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    %% D-GOV-SCRIPTS -> D-INTELLIGENCE (1 条)
+    %% D-GOV_SCRIPTS -> D-INTELLIGENCE (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
-    %% D-GOV-SCRIPTS -> D-MKT_DATA (1 条)
+    %% D-GOV_SCRIPTS -> D-MKT_DATA (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_MKT_DATA[D-MKT_DATA]
-    %% D-GOV-SCRIPTS -> D-OPS (2 条)
+    %% D-GOV_SCRIPTS -> D-OPS (2 条)
     scripts_governance_session_simulator_py -->|import_depends| D_OPS[D-OPS]
     scripts_governance__e2e_verify_py -->|import_depends| D_OPS[D-OPS]
-    %% D-GOV-SCRIPTS -> D-RISK (3 条)
+    %% D-GOV_SCRIPTS -> D-RISK (3 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D-RISK]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D-RISK]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D-RISK]
-    %% D-GOV-SCRIPTS -> D-SECURITY (2 条)
+    %% D-GOV_SCRIPTS -> D-SECURITY (2 条)
     scripts_a2a_full_verification_py -->|import_depends| D_SECURITY[D-SECURITY]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SECURITY[D-SECURITY]
-    %% D-GOV-SCRIPTS -> D-SHARED (3 条)
+    %% D-GOV_SCRIPTS -> D-SHARED (3 条)
     scripts_construction_d_init_task_system_py -->|import_depends| D_SHARED[D-SHARED]
     scripts_governance__e2e_verify_py -->|import_depends| D_SHARED[D-SHARED]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_SHARED[D-SHARED]
-    %% D-GOV-SCRIPTS -> D-SIMULATION (1 条)
+    %% D-GOV_SCRIPTS -> D-SIMULATION (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
 
     %% 统计
-    %% 域内依赖: 318 条
+    %% 域内依赖: 317 条
     %% 跨域入边: 13 条
     %% 跨域出边: 81 条
