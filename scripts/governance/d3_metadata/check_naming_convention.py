@@ -1039,7 +1039,7 @@ def check_filename_uniqueness_all(project_root: Path | None = None) -> list[Nami
 def check_new_files_naming(
     new_files: list[str],
     project_root: Path | None = None,
-    scopes: tuple[str, ...] = ("tests", "docs"),
+    scopes: tuple[str, ...] | None = ("tests", "docs"),
 ) -> list[NamingViolation]:
     """增量 N-16 检查（真源唯一）：只检查新文件是否与已跟踪文件同名冲突。
 
@@ -1047,7 +1047,7 @@ def check_new_files_naming(
         new_files: 新文件路径列表（相对 project_root 或绝对路径）。
         project_root: 项目根。
         scopes: N-16 覆盖的顶级目录元组。默认 ("tests", "docs") 向后兼容；
-            选项B 治本扩展为 ("tests", "docs", "src", "scripts") 覆盖全库。
+            None 表示全库覆盖（所有目录）。
             跨包合法同名（__init__.py/conftest.py）由豁免清单处理。
 
     用 ``git ls-files`` 构建已跟踪文件基线（避免 os.walk 扫描未跟踪 WIP，
@@ -1070,9 +1070,11 @@ def check_new_files_naming(
     if project_root is None:
         project_root = Path(__file__).resolve().parents[3]
 
-    # 只检查 scopes 覆盖目录下的文件（N-16 scope + 性能优化）
-    # 默认 tests+docs（向后兼容）；选项B 治本扩展含 src+scripts
-    scope_prefixes = tuple(f"{s}/" for s in scopes)
+    # scope 过滤：None=全库覆盖，tuple=只检查指定目录
+    if scopes is None:
+        scope_prefixes: tuple[str, ...] = ()  # 空 = 不过滤
+    else:
+        scope_prefixes = tuple(f"{s}/" for s in scopes)
     new_rel_files: list[str] = []
     for f in new_files:
         p = Path(f)
@@ -1082,7 +1084,7 @@ def check_new_files_naming(
             rel = p.resolve().relative_to(project_root.resolve()).as_posix()
         except ValueError:
             continue  # 不在项目内
-        if rel.startswith(scope_prefixes):
+        if not scope_prefixes or rel.startswith(scope_prefixes):
             new_rel_files.append(rel)
 
     if not new_rel_files:
@@ -1094,8 +1096,11 @@ def check_new_files_naming(
 
     # 用 git ls-files 构建已跟踪文件基线（只已跟踪文件，排除未跟踪 WIP）
     try:
+        ls_args = ["git", "ls-files"]
+        if scope_prefixes:
+            ls_args.extend(list(scope_prefixes))
         result = subprocess.run(
-            ["git", "ls-files"] + list(scope_prefixes),
+            ls_args,
             capture_output=True,
             text=True,
             check=True,
@@ -1194,7 +1199,7 @@ def check_new_files_full(
             return False
         return rel_path not in tracked_set
 
-    # 1. N-16 唯一性检查（仅新增文件，扩展覆盖 tests/+docs/+src/+scripts/）
+    # 1. N-16 唯一性检查（仅新增文件，全库覆盖 scopes=None）
     added_files_for_n16: list[str] = []
     for f in new_files:
         p = Path(f)
@@ -1208,7 +1213,7 @@ def check_new_files_full(
             added_files_for_n16.append(f)
     if added_files_for_n16:
         violations.extend(check_new_files_naming(
-            added_files_for_n16, project_root, scopes=("tests", "docs", "src", "scripts")
+            added_files_for_n16, project_root, scopes=None
         ))
 
     # 2. 对新增文件做 N-01~N-17 风格检查（修改文件不查，历史遗留豁免）

@@ -1043,15 +1043,14 @@ class GitCommitGateway:
     def _check_naming_uniqueness(self, files: list[str]) -> tuple[bool, str]:
         """全量命名硬阻断检查（治本·选项B：subprocess 调用 --check-new-full）。
 
-        治本（向内收 v2 + 选项B 扩展）：命名检查逻辑真源唯一在
+        治本（向内收 v2 + 全库覆盖）：命名检查逻辑真源唯一在
         ``check_naming_convention.py::check_new_files_full``，本方法仅 subprocess
         调用。覆盖三个治本闭环：
-        1. 全库覆盖：N-16 扩展到 src/+scripts/（跨包合法同名豁免）
-        2. 全维度检测：新增文件 N-01~N-17 风格 + 所有文件 N-16 唯一性
-        3. 绕不过：GitCommitGateway 内嵌，--no-verify 绕过 pre-commit 但绕不过此
+        1. 全库覆盖：所有目录的文件都查命名（无 scope 限制）
+        2. 全维度检测：新增文件 N-01~N-17 风格 + 新增文件 N-16 唯一性
+        3. 绕不过：GitCommitGateway 内嵌（commit + _commit_auto），--no-verify 绕过 pre-commit 但绕不过此
 
-        新增 vs 修改区分：新增文件查风格，修改文件不查（历史遗留豁免），
-        但 N-16 唯一性对所有文件查（防改名撞库）。
+        新增 vs 修改区分：新增文件查风格 + N-16 唯一性，修改文件不查（历史遗留豁免）。
 
         Args:
             files: 绝对路径列表。
@@ -1059,16 +1058,9 @@ class GitCommitGateway:
         Returns:
             (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
         """
-        # 治本·选项B：覆盖 tests/+docs/+src/+scripts/（全库命名硬阻断）
-        _NAMING_SCOPES = ("tests/", "docs/", "src/", "scripts/")
-        involves_naming_dirs = any(
-            os.path.relpath(f, str(self.project_root)).replace("\\", "/").startswith(
-                _NAMING_SCOPES
-            )
-            for f in files
-        )
-        if not involves_naming_dirs:
-            return True, "no files in naming scopes (tests/docs/src/scripts)"
+        # 治本·全库覆盖：所有目录的文件都查命名（无 scope 限制）
+        # N-16 唯一性 + N-01~N-17 风格检查均由 check_new_files_full 内部处理 scope 豁免
+        # （PATH_EXEMPT_PREFIXES 排除 archive/data/logs 等，_N16_*_EXEMPT_NAMES 排除 __init__.py 等）
 
         # subprocess 调用 check_naming_convention.py --check-new-full（全量命名硬阻断真源唯一）
         script = str(
@@ -1975,7 +1967,7 @@ class GitCommitGateway:
         保护（校验/锁/stash），是 TTL 防御的最大盲区。
 
         与 ``commit()`` 的区别：
-        - 只跑 ttl 校验（机器生成文件不需 completes_when/promote/ssot/naming 校验）
+        - 跑 ttl 校验 + 命名规范校验（不跑 completes_when/promote/ssot 校验）
         - 不触发 reconciler（避免递归：commit→reconciler→_commit_auto→reconciler）
         - 不做 stash 隔离（reconciler 在锁外运行，工作区只有机器生成文件）
         - message 自动追加 [GW:{session_id}:auto] 标记
@@ -2023,6 +2015,14 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.METADATA_VIOLATION,
                 message=f"frontmatter ttl 校验失败（auto-commit）: {ttl_detail}",
+            )
+
+        # 命名规范校验（治本：auto-commit 也查命名，防生成器输出违规文件名）
+        naming_passed, naming_detail = self._check_naming_uniqueness(existing)
+        if not naming_passed:
+            return CommitResult(
+                status=CommitStatus.NAMING_VIOLATION,
+                message=f"命名校验失败（auto-commit）: {naming_detail}",
             )
 
         # 追加 GW auto 标记
