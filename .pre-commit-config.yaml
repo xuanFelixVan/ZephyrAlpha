@@ -187,6 +187,23 @@ repos:
         files: "^.*"
         description: "全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律）。裁定#208 过渡期 --warn-only（N-17/N-06 历史违规不阻断，阶段 E 激活后移除转硬阻断）。多AI并发安全：pass_filenames只检查触发文件，不检查所有staged文件"
 
+      # ── GATE-ID-UNIQ: pre-commit hook id 唯一性门禁 ──
+      # 权威依据：commit a09e510ec 历史教训（两个 SSoT 门禁同用 id: gate-ssot，后者覆盖前者）
+      # 真源声明：本任务治本——加自动化门禁，防止未来 AI 再造一对重复 id
+      # 检测范围：.pre-commit-config.yaml 变更时触发（files 锚定该文件）
+      # 检测内容：扫描所有 repos[].hooks[].id，同一 repo 块内重复 → hard block (exit 1)；
+      #           跨 repo 块重复 → warn（pre-commit 允许跨 repo 同 id，但本项目视为覆盖风险）
+      # 模式：--ci 硬阻断（same-repo 重复 exit 1 拒绝提交）
+      - id: gate-id-uniq
+        name: "GATE-ID-UNIQ: pre-commit hook id 唯一性"
+        entry: python scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^\\.pre-commit-config\\.yaml$"
+        description: "检测 .pre-commit-config.yaml 内 hook id 唯一性，同一 repo 块内重复即阻断（历史教训：gate-ssot src/docs 重复导致覆盖）"
+
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
