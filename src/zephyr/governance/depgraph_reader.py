@@ -198,12 +198,6 @@ class DepgraphReader:
 
     # ── 架构全景图查询 ────────────────────────────────────────
 
-    def get_architecture_layers(self) -> list[dict[str, Any]]:
-        """获取所有架构层"""
-        conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM arch_layers")
-        return [dict(row) for row in cursor.fetchall()]
-
     def get_architecture_domains(self) -> list[dict[str, Any]]:
         """获取所有架构域"""
         conn = self._get_conn()

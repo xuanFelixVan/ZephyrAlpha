@@ -28,20 +28,19 @@ Safety  : M（DDL 定义，init_db 幂等执行）
  3. domains               — 域定义（15列，v10清理装饰字段后）
  4. domain_dependencies   — 域间依赖（5列）
  5. domain_events         — 域事件（6列）
- 6. contracts             — 域间契约（7列）
- 7. invariants            — 不变量（5列）
- 8. rule_bindings         — 规则绑定（6列）
- 9. arch_bottlenecks      — 架构瓶颈（9列）
-10. arch_constraints      — 架构约束（9列）
-11. arch_directory_tree   — 目录树（10列，v3新增build_status）
-12. arch_layers           — 层定义（5列）
-13. arch_path_mappings    — 路径映射（7列）
-14. _schema_version       — Schema 版本追踪
+ 6. contracts             — 域间契约（13列，v13扩展6列契约追踪字段）
+ 7. rule_bindings         — 规则绑定（6列）
+ 8. arch_constraints      — 架构约束（9列）
+ 9. arch_directory_tree   — 目录树（10列，v3新增build_status）
+10. arch_path_mappings    — 路径映射（7列）
+11. _schema_version       — Schema 版本追踪
 
 v6变更: arch_domain_capacity + arch_domain_layers 已合并入 domains 表
         domains 表新增6字段: layer_id/growth_pattern/target_modules/feasibility/bottleneck_description/last_capacity_check
 v9变更: domains 表新增 production_nodes 字段（ARCH-CAP-001 口径修复）
 v10变更: domains 表清理7个无区分度装饰字段（can_build/gate_reason/hard_boundary_ref/growth_pattern/feasibility/bottleneck_description/last_capacity_check）
+v14变更: 删除3张死表/漂移表（arch_bottlenecks/arch_layers/invariants）— fix #ARCH-013~015
+        保留 cross_registry_rules（健康sync缓存）与 governance_audit_logs（auto_runner活跃写入）
 
 PRAGMA 基线（与 governance.db 一致）
 -----------------------------------
@@ -203,27 +202,19 @@ CREATE TABLE IF NOT EXISTS domain_events (
 
 _DDL_CONTRACTS = """
 CREATE TABLE IF NOT EXISTS contracts (
-    contract_id      TEXT    PRIMARY KEY,
-    name             TEXT    NOT NULL,
-    provider_domain  TEXT    NOT NULL,
-    consumer_domain  TEXT    NOT NULL,
-    contract_type    TEXT    NOT NULL,
-    schema_definition TEXT,
-    version          TEXT
-)
-"""
-
-# ---------------------------------------------------------------------------
-# DDL — invariants 表
-# ---------------------------------------------------------------------------
-
-_DDL_INVARIANTS = """
-CREATE TABLE IF NOT EXISTS invariants (
-    invariant_id     TEXT    PRIMARY KEY,
-    domain_id        TEXT    NOT NULL,
-    description      TEXT    NOT NULL,
-    constraint_type  TEXT    NOT NULL,
-    enforcement      TEXT
+    contract_id        TEXT    PRIMARY KEY,
+    name               TEXT    NOT NULL,
+    provider_domain    TEXT    NOT NULL,
+    consumer_domain    TEXT    NOT NULL,
+    contract_type      TEXT    NOT NULL,
+    schema_definition  TEXT,
+    version            TEXT,
+    promise            TEXT,
+    actual_consumer    TEXT,
+    fulfillment_status TEXT,
+    gap                TEXT,
+    target_phase       TEXT,
+    last_reviewed      TEXT
 )
 """
 
@@ -246,20 +237,6 @@ CREATE TABLE IF NOT EXISTS rule_bindings (
 # ---------------------------------------------------------------------------
 # DDL — arch_* 表
 # ---------------------------------------------------------------------------
-
-_DDL_ARCH_BOTTLENECKS = """
-CREATE TABLE IF NOT EXISTS arch_bottlenecks (
-    bottleneck_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-    area             TEXT    NOT NULL,
-    description      TEXT    NOT NULL,
-    severity         TEXT    NOT NULL,
-    current_impact   TEXT,
-    proposed_solution TEXT,
-    status           TEXT    DEFAULT 'open',
-    detected_at      TEXT    NOT NULL,
-    resolved_at      TEXT
-)
-"""
 
 _DDL_ARCH_CONSTRAINTS = """
 CREATE TABLE IF NOT EXISTS arch_constraints (
@@ -288,16 +265,6 @@ CREATE TABLE IF NOT EXISTS arch_directory_tree (
     build_status     TEXT    DEFAULT 'unbuilt',
     design_maturity  TEXT    NOT NULL DEFAULT 'design',
     last_scanned     TEXT
-)
-"""
-
-_DDL_ARCH_LAYERS = """
-CREATE TABLE IF NOT EXISTS arch_layers (
-    layer_id         TEXT    PRIMARY KEY,
-    layer_name       TEXT    NOT NULL,
-    layer_description TEXT,
-    decision_type    TEXT    NOT NULL,
-    parent_layer     TEXT
 )
 """
 
@@ -629,12 +596,9 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             _DDL_DOMAIN_DEPS,
             _DDL_DOMAIN_EVENTS,
             _DDL_CONTRACTS,
-            _DDL_INVARIANTS,
             _DDL_RULE_BINDINGS,
-            _DDL_ARCH_BOTTLENECKS,
             _DDL_ARCH_CONSTRAINTS,
             _DDL_ARCH_DIRECTORY_TREE,
-            _DDL_ARCH_LAYERS,
             _DDL_ARCH_PATH_MAPPINGS,
             *_DDL_INDEXES,
         ],
@@ -907,6 +871,28 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             BEGIN
                 SELECT RAISE(ABORT, 'domains.layer_id illegal value (legal: L0_infrastructure/L1_foundation/L2_domain/L3_application/NULL)');
             END""",
+        ],
+    ),
+    (
+        13,
+        "v13: Add 6 extension columns to contracts (promise/actual_consumer/fulfillment_status/gap/target_phase/last_reviewed) — fix #ARCH-008 schema drift",
+        [
+            "ALTER TABLE contracts ADD COLUMN promise TEXT",
+            "ALTER TABLE contracts ADD COLUMN actual_consumer TEXT",
+            "ALTER TABLE contracts ADD COLUMN fulfillment_status TEXT",
+            "ALTER TABLE contracts ADD COLUMN gap TEXT",
+            "ALTER TABLE contracts ADD COLUMN target_phase TEXT",
+            "ALTER TABLE contracts ADD COLUMN last_reviewed TEXT",
+        ],
+    ),
+    (
+        14,
+        "v14: Drop 3 dead/drifted tables (arch_bottlenecks/arch_layers/invariants) — fix #ARCH-013~015. "
+        "KEEP cross_registry_rules (healthy sync) and governance_audit_logs (auto_runner active writer).",
+        [
+            "DROP TABLE IF EXISTS arch_bottlenecks",
+            "DROP TABLE IF EXISTS arch_layers",
+            "DROP TABLE IF EXISTS invariants",
         ],
     ),
 ]

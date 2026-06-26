@@ -1143,6 +1143,62 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = str(DEPGRAPH_PATH)) 
             conn.close()
 
 
+def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH)) -> int:
+    """
+    清理幽灵节点：删除 nodes 表中 path 在磁盘上不存在的 node（对称漂移修复，P1-DEP）。
+    对标 cmd_cleanup_orphan_edges（清理孤儿边）。
+    返回：删除的节点数，-1=失败。
+
+    注意：改 depgraph.db 前须 git commit 备份（trae_054 STEP0）。
+    """
+    project_root = DEPGRAPH_PATH.parent.parent.parent  # D:/ZephyrAlpha
+    with _db_write_lock(db_path=db_path, task="cleanup_orphan_nodes"):
+        conn = sqlite3.connect(db_path)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=30000")
+        try:
+            all_nodes = conn.execute(
+                "SELECT node_id, path FROM nodes WHERE path IS NOT NULL AND path != ''"
+            ).fetchall()
+
+            ghost_node_ids: list[tuple[str, str]] = []
+            for nid, path in all_nodes:
+                full_path = Path(project_root) / path
+                if not full_path.exists():
+                    ghost_node_ids.append((nid, path))
+
+            if not ghost_node_ids:
+                print("[OK] 无幽灵节点，无需清理")
+                return 0
+
+            if dry_run:
+                print(f"[DRY RUN] 将删除 {len(ghost_node_ids)} 个幽灵节点（磁盘不存在但 depgraph 保留）:")
+                for nid, path in ghost_node_ids[:10]:
+                    print(f"  node_id={nid}: {path}")
+                if len(ghost_node_ids) > 10:
+                    print(f"  ... 及其他 {len(ghost_node_ids) - 10} 个")
+                return len(ghost_node_ids)
+
+            # 先删除引用这些 node 的 edges（避免外键残留孤儿边）
+            for nid, _ in ghost_node_ids:
+                conn.execute(
+                    "DELETE FROM edges WHERE from_node_id = ? OR to_node_id = ?",
+                    (nid, nid),
+                )
+            # 再删除 ghost nodes
+            for nid, _ in ghost_node_ids:
+                conn.execute("DELETE FROM nodes WHERE node_id = ?", (nid,))
+            conn.commit()
+            print(f"[OK] 删除 {len(ghost_node_ids)} 个幽灵节点（及关联 edges）")
+            return len(ghost_node_ids)
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: cleanup_orphan_nodes失败: {e}", file=sys.stderr)
+            return -1
+        finally:
+            conn.close()
+
+
 def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH)) -> int:
     """
     清理孤儿边：删除 edges 表中引用了不存在 node 的边（from_node_id 或 to_node_id 在 nodes 表中不存在）。
@@ -1464,8 +1520,8 @@ def _scan_replace_all_text_columns(
 ) -> int:
     """值扫描兜底（裁定#207 R1 B1）：扫描所有表所有 TEXT 列，REPLACE old_id→new_id。
 
-    18步 UPDATE 只覆盖预定义列名枚举，本函数兜底扫描所有 TEXT 列，
-    替换未枚举列中的残留（如 nodes.owner/business_stream/tags/invariants.invariant_id 等）。
+    17步 UPDATE（v14删除invariants表后）只覆盖预定义列名枚举，本函数兜底扫描所有 TEXT 列，
+    替换未枚举列中的残留（如 nodes.owner/business_stream/tags 等）。
     排除 _RENAME_SCAN_EXCLUDE_TABLES（规则示例有意保留）。
     exclude_columns: 由专门步骤处理的列名集合（如 blueprint_id/path），不参与子串REPLACE。
     返回受影响行数。
@@ -1530,12 +1586,12 @@ def cmd_rename_domain(
             print(f"ERROR: new_id '{new_id}' 已存在 domains 表中（禁止覆盖）", file=sys.stderr)
             return -1
 
-        # 18步UPDATE: (step, table, column, use_replace_like)
+        # 17步UPDATE: (step, table, column, use_replace_like) — v14删除invariants表，原step11移除
         # step1 domains.domain_id; step2-4 nodes 三列; step5-6 domain_dependencies;
         # step7-8 domain_events（target_domains用REPLACE）; step9-10 contracts;
-        # step11 invariants; step12-13 arch_constraints; step14 arch_directory_tree;
-        # step15 arch_path_mappings; step16-17 domain_mapping（subdomain_id用REPLACE+LIKE）;
-        # step18 rule_bindings
+        # step11-12 arch_constraints; step13 arch_directory_tree;
+        # step14 arch_path_mappings; step15-16 domain_mapping（subdomain_id用REPLACE+LIKE）;
+        # step17 rule_bindings
         steps = [
             (1, "domains", "domain_id", False),
             (2, "nodes", "domain_id", False),
@@ -1547,14 +1603,13 @@ def cmd_rename_domain(
             (8, "domain_events", "target_domains", True),
             (9, "contracts", "provider_domain", False),
             (10, "contracts", "consumer_domain", False),
-            (11, "invariants", "domain_id", False),
-            (12, "arch_constraints", "from_domain", False),
-            (13, "arch_constraints", "to_domain", False),
-            (14, "arch_directory_tree", "domain_id", False),
-            (15, "arch_path_mappings", "domain_id", False),
-            (16, "domain_mapping", "domain_id", False),
-            (17, "domain_mapping", "subdomain_id", True),
-            (18, "rule_bindings", "domain_id", False),
+            (11, "arch_constraints", "from_domain", False),
+            (12, "arch_constraints", "to_domain", False),
+            (13, "arch_directory_tree", "domain_id", False),
+            (14, "arch_path_mappings", "domain_id", False),
+            (15, "domain_mapping", "domain_id", False),
+            (16, "domain_mapping", "subdomain_id", True),
+            (17, "rule_bindings", "domain_id", False),
         ]
         total = 0
         mode = "[DRY RUN]" if dry_run else "[OK]"
@@ -2580,6 +2635,11 @@ def main() -> None:
         action="store_true",
         help="清理孤儿边：删除edges表中引用不存在node的边",
     )
+    parser.add_argument(
+        "--cleanup-orphan-nodes",
+        action="store_true",
+        help="清理幽灵节点：删除nodes表中path在磁盘不存在的node（对称漂移修复，P1-DEP）",
+    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -2855,6 +2915,10 @@ def main() -> None:
 
     if args.cleanup_orphan_edges:
         count = cmd_cleanup_orphan_edges(dry_run=args.dry_run)
+        sys.exit(0 if count >= 0 else 4)
+
+    if args.cleanup_orphan_nodes:
+        count = cmd_cleanup_orphan_nodes(dry_run=args.dry_run)
         sys.exit(0 if count >= 0 else 4)
 
     if not args.update_module and not args.batch:

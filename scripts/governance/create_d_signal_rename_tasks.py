@@ -125,30 +125,30 @@ def _build_main_02_add_rename_cmd() -> Task:
     description = (
         "根因：depgraph.db含12表有domain相关列（11表需UPDATE+edges.cross_domain为boolean不需改），"
         "手动UPDATE易遗漏表/列（v1曾遗漏nodes.belongs_to 181行），需在apply_depgraph.py中新增"
-        "cmd_rename_domain(old_id, new_id, dry_run)命令实现18步UPDATE覆盖11表，确保无遗漏。\n"
-        "治根：在apply_depgraph.py中新增cmd_rename_domain命令，实现18步UPDATE逻辑："
+        "cmd_rename_domain(old_id, new_id, dry_run)命令实现17步UPDATE覆盖10表，确保无遗漏。\n"
+        "治根：在apply_depgraph.py中新增cmd_rename_domain命令，实现17步UPDATE逻辑："
         "domains.domain_id / nodes.domain_id / nodes.subdomain_id / nodes.belongs_to(v1遗漏已修正) / "
         "domain_dependencies.from_domain / domain_dependencies.to_domain / domain_events.source_domain / "
         "domain_events.target_domains(用REPLACE因JSON/TEXT) / contracts.provider_domain / "
-        "contracts.consumer_domain / invariants.domain_id / arch_constraints.from_domain / "
+        "contracts.consumer_domain / arch_constraints.from_domain / "
         "arch_constraints.to_domain(0行但保留) / arch_directory_tree.domain_id / "
         "arch_path_mappings.domain_id / domain_mapping.domain_id / domain_mapping.subdomain_id"
         "(用REPLACE+LIKE因值含-FACTOR后缀D-SIGNAL_FUNDAMENTAL-FACTOR精确匹配会漏行) / "
         "rule_bindings.domain_id。同时新增--update-domain-name命令更新domains.domain_name。\n"
         "施工步骤：\n"
         "【读取现有】读取apply_depgraph.py，了解现有命令注册机制和参数解析方式。\n"
-        "【实现cmd_rename_domain】新增函数实现18步UPDATE，每步打印影响行数，dry_run模式只打印不执行。\n"
+        "【实现cmd_rename_domain】新增函数实现17步UPDATE，每步打印影响行数，dry_run模式只打印不执行。\n"
         "【实现--update-domain-name】新增命令更新domains.domain_name列。\n"
         "【注册命令】在argparse中注册--rename-domain和--update-domain-name参数。\n"
-        "【dry-run测试】对4个改名各执行一次dry_run，确认18步UPDATE覆盖488行"
+        "【dry-run测试】对4个改名各执行一次dry_run，确认17步UPDATE覆盖488行"
         "(D-SIGNAL=235/ASHARE=84/FUND=105/QUAL=64)。\n"
-        "验收标准：cmd_rename_domain实现18步UPDATE覆盖11表488行，dry_run输出行数与方案§3.2统计表一致。"
+        "验收标准：cmd_rename_domain实现17步UPDATE覆盖10表488行，dry_run输出行数与方案§3.2统计表一致。"
     )
     return Task(
         task_id="OPS-2026062602",
         namespace=TaskNamespace.OPS,
         seq=2026062602,
-        title="阶段1a：apply_depgraph.py新增cmd_rename_domain命令（18步UPDATE覆盖11表488行）",
+        title="阶段1a：apply_depgraph.py新增cmd_rename_domain命令（17步UPDATE覆盖10表488行）",
         status=TaskStatus.PENDING,
         priority=Priority.P1,
         phase=1,
@@ -163,7 +163,7 @@ def _build_main_02_add_rename_cmd() -> Task:
         estimate_hours=2.0,
         files_in_scope=[PLAN_DOC, "D:/ZephyrAlpha/scripts/governance/apply_depgraph.py"],
         deliverables=["D:/ZephyrAlpha/scripts/governance/apply_depgraph.py（新增cmd_rename_domain+--update-domain-name）"],
-        acceptance=["dry_run输出18步UPDATE覆盖488行，行数与方案§3.2统计表一致(235+84+105+64=488)"],
+        acceptance=["dry_run输出17步UPDATE覆盖488行，行数与方案§3.2统计表一致(235+84+105+64=488)"],
         depends_on=["OPS-2026062601"],
         tags=["d-signal-rename", "apply_depgraph", "#204", "phase-1a", "cmd_rename_domain"],
         source_blueprint="D-SIGNAL-RENAME-001",
@@ -178,7 +178,7 @@ def _build_main_02_add_rename_cmd() -> Task:
         estimated_tokens=10000,
         timeout_minutes=60,
         ai_autonomy_level="human_gated",
-        autonomy_checklist=["18步UPDATE无遗漏表", "step4 belongs_to已纳入", "step8/17用REPLACE", "dry_run行数=488"],
+        autonomy_checklist=["17步UPDATE无遗漏表", "step4 belongs_to已纳入", "step8/17用REPLACE", "dry_run行数=488"],
         construction_status="pending",
         verification_status="unverified",
         created_at=NOW,
@@ -766,7 +766,7 @@ def _build_main_10_commit_prevention() -> Task:
 
 _META_REVIEW_SECTIONS = {
     11: ("OPS-2026062601", "§4.1", "阶段0备份", "GitCommitGateway备份+apply_depgraph.py物理备份"),
-    12: ("OPS-2026062602", "§4.2", "阶段1a cmd_rename_domain命令", "18步UPDATE覆盖11表488行"),
+    12: ("OPS-2026062602", "§4.2", "阶段1a cmd_rename_domain命令", "17步UPDATE覆盖10表488行"),
     13: ("OPS-2026062603", "§4.2+§3.2", "阶段1b 4域DB改名", "4×--rename-domain+4×--update-domain-name"),
     14: ("OPS-2026062604", "§3.3+§4.3", "阶段2 代码[DOMAIN]头部", "10文件L3修改"),
     15: ("OPS-2026062605", "§3.4+§4.4", "阶段3 YAML registry", "4行改+1条新增"),

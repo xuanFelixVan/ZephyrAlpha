@@ -2670,7 +2670,6 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 "can_build",
                 "gate_reason",
                 "hard_boundary_ref",
-                "module_lifecycle_state",
                 "runtime_plane",
                 "ddd_aggregate",
                 "consumed_interfaces",
@@ -2689,10 +2688,10 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 belongs_to, owner, change_policy, impact_level, modification_permission,
                 file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
                 trust_zone, license, drive_direction, type_specific_data, last_verified,
-                node_name, file_path, build_status, module_lifecycle_state,
+                node_name, file_path, build_status,
                 can_build, gate_reason, hard_boundary_ref, consumed_interfaces
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                      ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     node.get("type", "module"),
                     node.get("path", ""),
@@ -2718,7 +2717,6 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                     node.get("node_name", ""),
                     node.get("file_path", node.get("path", "")),
                     node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
-                    node.get("module_lifecycle_state", ""),  # 裁定#183：字段废弃，停止写inactive默认值
                     can_build,  # H6 fix
                     node.get("gate_reason", ""),  # H6 fix
                     node.get("hard_boundary_ref", ""),  # H6 fix

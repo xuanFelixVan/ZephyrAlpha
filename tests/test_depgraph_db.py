@@ -132,17 +132,6 @@ def test_all():
     evt = c.execute("SELECT * FROM domain_events WHERE event_id='EVT-TEST-001'").fetchone()
     check("domain_events INSERT+SELECT", evt is not None)
 
-    # === 7. invariants ===
-    print("\n=== 7. invariants ===")
-    c.execute(
-        """INSERT OR REPLACE INTO invariants (invariant_id, domain_id, description, constraint_type, enforcement)
-        VALUES (?, ?, ?, ?, ?)""",
-        ("INV-TEST-001", "D-DATA", "Test invariant", "hard", "gate"),
-    )
-    conn.commit()
-    inv = c.execute("SELECT * FROM invariants WHERE invariant_id='INV-TEST-001'").fetchone()
-    check("invariants INSERT+SELECT", inv is not None)
-
     # === 8. arch_ 表组 ===
     print("\n=== 8. arch_domain_capacity ===")
     cap = c.execute("SELECT COUNT(*) FROM arch_domain_capacity").fetchone()[0]
@@ -151,10 +140,6 @@ def test_all():
     print("\n=== 9. arch_path_mappings ===")
     pm = c.execute("SELECT COUNT(*) FROM arch_path_mappings").fetchone()[0]
     check("arch_path_mappings has data", pm > 0, f"got {pm}")
-
-    print("\n=== 10. arch_layers ===")
-    layers = c.execute("SELECT COUNT(*) FROM arch_layers").fetchone()[0]
-    check("arch_layers has data", layers > 0, f"got {layers}")
 
     print("\n=== 11. arch_domain_layers ===")
     dl = c.execute("SELECT COUNT(*) FROM arch_domain_layers").fetchone()[0]
@@ -167,10 +152,6 @@ def test_all():
     print("\n=== 13. arch_directory_tree ===")
     dt = c.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
     check("arch_directory_tree has data", dt > 0, f"got {dt}")
-
-    print("\n=== 14. arch_bottlenecks ===")
-    bn = c.execute("SELECT COUNT(*) FROM arch_bottlenecks").fetchone()[0]
-    check("arch_bottlenecks has data", bn > 0, f"got {bn}")
 
     # === 15. rule_bindings ===
     print("\n=== 15. rule_bindings ===")
@@ -200,7 +181,6 @@ def test_all():
     c.execute("DELETE FROM domain_dependencies WHERE from_domain='D-DATA' AND to_domain='D-GOV'")
     c.execute("DELETE FROM contracts WHERE contract_id='CTR-TEST-001'")
     c.execute("DELETE FROM domain_events WHERE event_id='EVT-TEST-001'")
-    c.execute("DELETE FROM invariants WHERE invariant_id='INV-TEST-001'")
     c.execute("DELETE FROM rule_bindings WHERE function_name='test_func'")
     conn.commit()
     check("cleanup", True)
