@@ -16,14 +16,24 @@
 r"""
 module_id 命名合规性校验门禁
 
-规则来源: PS-STD-001 §5 编号分配铁律
+规则来源: PS-STD-001 §5 编号分配铁律 + 裁定#208 三轨制
 校验内容:
-  1. 格式合规: module_id 必须匹配 ^[A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4}$
+  1. 格式合规: module_id 必须符合裁定#208 三轨制（layer-master/派生/跨域共享）
   2. 禁止嵌套编号: 不得出现 XXX-NNN-SUFFIX 模式（如 MOD-MASTER_BLUEPRINT-BASELINE）
   3. 父子关系靠字段: parent_module / belongs_to 表达，不靠编号后缀
 
+三轨正则真源（本文件是唯一真源，被 check_naming_convention.py 和 apply_depgraph.py 复用）:
+  - MODULE_ID_LAYER_MASTER_RE: MOD-{LAYER_CODE}-{SEQ}（如 MOD-INF-005）
+  - MODULE_ID_DOMAIN_DERIVED_RE: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）
+  - MODULE_ID_D_PREFIX_RE: D-{DOMAIN}-NNN（如 D-GOVERNANCE-001）
+  - MODULE_ID_SHARED_RE: SH-{ABBR}-{NNN}（如 SH-DB-001）
+
 用法:
   python scripts/governance/validate_module_id_naming.py [--warn-only] [--blueprint-dir DIR]
+
+程序化校验（供其他脚本 import）:
+  from validate_module_id_naming import is_valid_module_id
+  ok, reason = is_valid_module_id("MOD-INF-005")  # (True, "")
 """
 
 import argparse
@@ -31,11 +41,53 @@ import re
 import sys
 from pathlib import Path
 
+# 旧式单轨正则（向后兼容保留；新代码请用 is_valid_module_id 三轨校验）
 VALID_MODULE_ID_PATTERN = re.compile(r"^[A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4}$")
 
 NESTED_ID_PATTERN = re.compile(r"^([A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4})-[A-Z]")
 
+# ---------------------------------------------------------------------------
+# 裁定#208 三轨制正则（真源：本文件）
+# 被 check_naming_convention.py（N-06 GATE-11）和 apply_depgraph.py（V2 漏洞修复）复用
+# ---------------------------------------------------------------------------
+MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-\d+$")            # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填
+MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$")     # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
+MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]+(?:_[A-Z]+)*-\d+$")                  # 派生轨: D-{DOMAIN}-NNN
+MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]+-\d+$")                                # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+
+
+def is_valid_module_id(bp_id: str) -> tuple[bool, str]:
+    """校验 module_id/blueprint_id 格式是否符合裁定#208 三轨制。
+
+    真源：本函数是 module_id 格式校验的唯一责任点，被 check_naming_convention.py
+    和 apply_depgraph.py 复用，消除正则重复定义。
+
+    三轨：
+    - layer-master 轨: MOD-{LAYER_CODE}-{SEQ}（如 MOD-INF-005）
+    - 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）/ D-{DOMAIN}-NNN
+    - 跨域共享轨: SH-{ABBR}-{NNN}（如 SH-DB-001）
+
+    Args:
+        bp_id: 待校验的 module_id 或 blueprint_id 字符串
+
+    Returns:
+        (是否合规, 失败原因)：合规时原因为空字符串，不合规时给出格式说明
+    """
+    if bp_id.startswith("SH-"):
+        if MODULE_ID_SHARED_RE.match(bp_id):
+            return True, ""
+        return False, "SH- 前缀必须为 SH-{ABBR}-{NNN} 格式（如 SH-DB-001）"
+    if bp_id.startswith("MOD-"):
+        if MODULE_ID_LAYER_MASTER_RE.match(bp_id) or MODULE_ID_DOMAIN_DERIVED_RE.match(bp_id):
+            return True, ""
+        return False, "MOD- 前缀必须为 layer-master 轨 MOD-{LAYER}-NNN 或派生轨 MOD-{DOMAIN}[-NNN]"
+    if bp_id.startswith("D-"):
+        if MODULE_ID_D_PREFIX_RE.match(bp_id):
+            return True, ""
+        return False, "D- 前缀必须为 D-{DOMAIN}-NNN 格式"
+    return False, "module_id 必须以 MOD-/SH-/D- 开头"
 
 
 def extract_frontmatter_field(text: str, field: str) -> str | None:

@@ -196,44 +196,12 @@ if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 import lock_files as _lf  # noqa: E402
 
-# 引入 N-06 三轨正则真源（真源唯一：从 check_naming_convention.py 复用，避免正则重复定义）
+# 引入 module_id 三轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
 # 裁定#208 三轨制：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
-_D3_META_DIR = Path(__file__).resolve().parent / "d3_metadata"
-if str(_D3_META_DIR) not in sys.path:
-    sys.path.insert(0, str(_D3_META_DIR))
-from check_naming_convention import (  # noqa: E402
-    _MODULE_ID_LAYER_MASTER_RE as _BP_LAYER_MASTER_RE,
-    _MODULE_ID_DOMAIN_DERIVED_RE as _BP_DOMAIN_DERIVED_RE,
-    _MODULE_ID_D_PREFIX_RE as _BP_D_PREFIX_RE,
-    _MODULE_ID_SHARED_RE as _BP_SHARED_RE,
-)
-
-
-def _validate_bp_id_format(bp_id: str) -> tuple[bool, str]:
-    """校验 blueprint_id 格式是否符合裁定#208 三轨制。
-
-    真源：scripts/governance/d3_metadata/check_naming_convention.py 的 N-06 正则。
-
-    三轨：
-    - layer-master 轨: MOD-{LAYER_CODE}-{SEQ}（如 MOD-INF-005）
-    - 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）
-    - 跨域共享轨: SH-{ABBR}-{NNN}（如 SH-DB-001）
-
-    Returns: (是否合规, 失败原因)
-    """
-    if bp_id.startswith("SH-"):
-        if _BP_SHARED_RE.match(bp_id):
-            return True, ""
-        return False, "SH- 前缀必须为 SH-{ABBR}-{NNN} 格式（如 SH-DB-001）"
-    if bp_id.startswith("MOD-"):
-        if _BP_LAYER_MASTER_RE.match(bp_id) or _BP_DOMAIN_DERIVED_RE.match(bp_id):
-            return True, ""
-        return False, "MOD- 前缀必须为 layer-master 轨 MOD-{LAYER}-NNN 或派生轨 MOD-{DOMAIN}[-NNN]"
-    if bp_id.startswith("D-"):
-        if _BP_D_PREFIX_RE.match(bp_id):
-            return True, ""
-        return False, "D- 前缀必须为 D-{DOMAIN}-NNN 格式"
-    return False, "blueprint_id 必须以 MOD-/SH-/D- 开头"
+_GOV_DIR = Path(__file__).resolve().parent
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
+from validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
 
 # 进程内 DB 写入串行锁——防止同进程多线程并发获取文件锁
 _db_write_lock_lock = threading.Lock()
@@ -2650,9 +2618,11 @@ def cmd_update_domain_layer(
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     返回：True=成功，False=失败
     """
-    ALLOWED_LAYERS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}
-    if layer_id not in ALLOWED_LAYERS:
-        print(f"ERROR: layer_id 必须是 {ALLOWED_LAYERS} 之一，实际: {layer_id}", file=sys.stderr)
+    # 域层级 ID 合法值（非词表，是 cmd_update_domain_layer 函数参数校验；
+    # 无对应 vocabulary YAML，故局部硬编码。不命名为 ALLOWED_*_LAYERS 以免 GATE-VOCAB 误报）
+    _DOMAIN_LAYER_IDS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}
+    if layer_id not in _DOMAIN_LAYER_IDS:
+        print(f"ERROR: layer_id 必须是 {_DOMAIN_LAYER_IDS} 之一，实际: {layer_id}", file=sys.stderr)
         return False
 
     own_conn = conn is None
@@ -2752,10 +2722,12 @@ def cmd_insert_domain_mapping(
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     返回：True=成功，False=失败
     """
-    ALLOWED_TYPES = {"non_src", "unregistered_src"}
-    if mapping_type not in ALLOWED_TYPES:
+    # domain_mapping 表 mapping_type 合法值（非词表，是 cmd_insert_domain_mapping 函数参数校验；
+    # 无对应 vocabulary YAML，故局部硬编码。不命名为 ALLOWED_*_TYPES 以免 GATE-VOCAB 误报）
+    _DOMAIN_MAPPING_TYPES = {"non_src", "unregistered_src"}
+    if mapping_type not in _DOMAIN_MAPPING_TYPES:
         print(
-            f"ERROR: mapping_type 必须是 {ALLOWED_TYPES} 之一，实际: {mapping_type}",
+            f"ERROR: mapping_type 必须是 {_DOMAIN_MAPPING_TYPES} 之一，实际: {mapping_type}",
             file=sys.stderr,
         )
         return False

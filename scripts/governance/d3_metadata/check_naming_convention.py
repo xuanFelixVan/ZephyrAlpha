@@ -14,7 +14,7 @@
 # [TESTS] tests/unit/test_gate11_naming_convention.py
 """GATE-11 命名规范门禁 — 全类型命名检测。
 
-权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v2.5.0 §五
+权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.4.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_003_filename_uniqueness)
 
 检查项：
   N-01  文件名大写检测 + 白名单
@@ -32,7 +32,7 @@
   N-13  YAML/JSON/MD 文件名 snake_case 合规检测
   N-14  __init__.py 必须定义 __all__
   N-15  BLUEPRINT 头部路径必须存在
-  N-16  文件名项目内唯一性检测（tests/ + docs/）
+  N-16  文件名项目内唯一性检测（tests/ + docs/）——真源：trae_028_doc_structure_naming.yaml v1.4.0 §gov_doc_003_filename_uniqueness
   N-17  blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
 """
 
@@ -52,6 +52,14 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+
+# 三轨正则真源归位：从 validate_module_id_naming.py 复用（消除正则重复定义）
+from validate_module_id_naming import (
+    MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
+    MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
+    MODULE_ID_D_PREFIX_RE as _MODULE_ID_D_PREFIX_RE,
+    MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
+)
 
 # ---------------------------------------------------------------------------
 # 白名单与豁免配置
@@ -257,11 +265,8 @@ _MODULE_ID_SCOPE_RE = re.compile(
     r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM|SH)(?:[-_][A-Za-z0-9_]+)+[\"']?",
     re.MULTILINE,
 )
-# 裁定#208 R1/R4: 双轨制 module_id 格式正则（scope 前缀通过后，校验 MOD-*/D-*/SH-* 值的格式）
-_MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-\d+$")            # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填（LAYER_CODE 首位字母，允许 L00/L01 等含数字层码）
-_MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$")     # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
-_MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]+(?:_[A-Z]+)*-\d+$")                  # 派生轨: D-XXX-{SEQ}
-_MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]+-\d+$")                                # 跨域共享模块: SH-{ABBR}-{NNN} 序号必填（trae_028 L86/L466/L475）
+# 裁定#208 R1/R4: 双轨制 module_id 格式正则（真源已迁移至 validate_module_id_naming.py，
+# 本文件通过顶部 import 复用 _MODULE_ID_LAYER_MASTER_RE 等四个常量，消除正则重复定义）
 # 提取 module_id 值（兼容 YAML module_id: VALUE 和 .py 头部 module_id=VALUE 两种格式）
 _MODULE_ID_VALUE_RE = re.compile(r'module_id[:=]\s*["\']?([A-Za-z][A-Za-z0-9_-]+)', re.MULTILINE)
 # Relaxed regex for inline module_id: inside .py comment headers (e.g. "# [A_test] module_id: SRC-TST-0212 | ...")
