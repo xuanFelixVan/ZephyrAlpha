@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] permanent
 """
 constants.py — 审计脚本共享常量
 
@@ -30,6 +31,7 @@ from pathlib import Path
 
 # 一次性 bootstrap：算 sys.path（此 N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
 # 先例：scripts/git_commit.py、scripts/governance/check_ssot_gate.py 均已 bootstrap import src/。
+# 注意：不能用 REPO_ROOT（它要从 zephyr 导入，而 zephyr 需要 sys.path 已设置——鸡生蛋）。
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]  # scripts/governance/_shared/ -> root
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))

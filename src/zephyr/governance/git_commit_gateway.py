@@ -636,19 +636,26 @@ class GitCommitGateway:
         不加 ``--no-index`` 会漏检，导致后续 ``git add`` 整批失败。
 
         大小写不敏感比对（Windows on-disk vs git index 大小写可能不一）。
+
+        分批检测：避免大批量文件（如 4688 个 rename）触发 Windows CLI
+        长度限制（WinError 206）。每批 300 个路径（约 24000 字符 < 32767 限制）。
         """
         if not files:
             return []
         rels = [
             os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files
         ]
-        chk = self._run_git(["git", "check-ignore", "--no-index", "--"] + rels)
-        # returncode 0 = 有忽略项；1 = 无忽略；其他 = 异常（视为无忽略，不阻断）
-        if chk.returncode != 0 or not chk.stdout:
-            return []
-        ignored_rels = {
-            line.strip().lower() for line in chk.stdout.splitlines() if line.strip()
-        }
+        # 分批检测，避免 Windows CLI 长度限制 (WinError 206)
+        ignored_rels: set[str] = set()
+        _BATCH = 300
+        for i in range(0, len(rels), _BATCH):
+            batch = rels[i : i + _BATCH]
+            chk = self._run_git(["git", "check-ignore", "--no-index", "--"] + batch)
+            # returncode 0 = 有忽略项；1 = 无忽略；其他 = 异常（视为无忽略，不阻断）
+            if chk.returncode == 0 and chk.stdout:
+                for line in chk.stdout.splitlines():
+                    if line.strip():
+                        ignored_rels.add(line.strip().lower())
         return [f for f, rel in zip(files, rels) if rel.lower() in ignored_rels]
 
     def _stage_gitignored_tracked(
