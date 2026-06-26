@@ -16,20 +16,6 @@ from enum import Enum
 from typing import Any
 
 
-class _IntegrityAdapter:
-    """Adapter to provide gateway-compatible check_all() returning .passed objects."""
-
-    def __init__(self, guard):
-        self._guard = guard
-        self._guard.compute_full_baseline()
-
-    def check_all(self):
-        from types import SimpleNamespace
-
-        result = self._guard.verify_all()
-        return [SimpleNamespace(passed=(result["tampered"] == 0))]
-
-
 class ValidationLayer:
     _UNIT_TEST_THRESHOLD = 75.0
 
@@ -37,7 +23,8 @@ class ValidationLayer:
         self.config = config or {}
         self.regression_history: list[Any] = []
         from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import CodeIntegrityGuard
-        self.integrity_guard = _IntegrityAdapter(CodeIntegrityGuard())
+        self.integrity_guard = CodeIntegrityGuard()
+        self.integrity_guard.compute_full_baseline()
 
     def validate(self, data):
         return True

@@ -358,13 +358,13 @@ class LSGSecurityGateway:
             return {"integrity": "unknown", "reason": "L7 not available"}
 
         guard = l7.integrity_guard
-        checks = guard.check_all()
-        all_passed = all(c.passed for c in checks)
+        result = guard.verify_all()
+        all_passed = (result["tampered"] == 0)
         return {
             "integrity": "ok" if all_passed else "compromised",
-            "checks": len(checks),
-            "passed": sum(1 for c in checks if c.passed),
-            "failed": sum(1 for c in checks if not c.passed),
+            "total": result.get("total", 0),
+            "clean": result.get("clean", 0),
+            "tampered": result.get("tampered", 0),
         }
 
     async def trigger_regression(self) -> dict[str, Any]:
