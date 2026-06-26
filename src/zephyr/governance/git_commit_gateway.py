@@ -720,6 +720,9 @@ class GitCommitGateway:
         治 AI 工作文档堆积为漂移源：强制 AI 在创建 _working/ 文档时声明完成条件，
         使 GATE-WORKING-DOCS reconciler 能基于此条件判定失效并自动归档。
 
+        规则真源：docs/_working/README.md §五（人类/AI 可读描述）。
+        本方法是该规则的可执行实现——改规则先改 README，再同步本方法。
+
         仅检查新增文件（未 git 跟踪）——已跟踪文件不阻断（不破坏存量）。
         README.md 已跟踪，不受影响。
 
