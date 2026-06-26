@@ -350,14 +350,37 @@ class TestSessionAwareStash:
 
     @staticmethod
     def _attach_spy(gw: GitCommitGateway) -> list[str]:
-        """包装 _run_git，记录所有 `git stash push` 的 pathspec（'--' 之后的参数）。"""
+        """包装 _run_git，记录所有 `git stash push` 的 pathspec。
+
+        支持两种格式：
+        - 内联：``git stash push -- <paths>``（``--`` 之后的参数）
+        - pathspec 文件：``git stash push --pathspec-from-file=<file>``（读取文件内容）
+        """
         original = gw._run_git
         recorded: list[str] = []
 
         def spy(cmd: list[str]) -> object:
-            if "stash" in cmd and "push" in cmd and "--" in cmd:
-                idx = cmd.index("--")
-                recorded.extend(cmd[idx + 1:])
+            if "stash" in cmd and "push" in cmd:
+                # 格式 1：内联 pathspec（``--`` 分隔符）
+                if "--" in cmd:
+                    idx = cmd.index("--")
+                    recorded.extend(cmd[idx + 1:])
+                # 格式 2：pathspec 文件
+                for arg in cmd:
+                    if arg.startswith("--pathspec-from-file="):
+                        spec_path = arg.split("=", 1)[1]
+                        try:
+                            with open(spec_path, "r", encoding="utf-8") as sf:
+                                for line in sf:
+                                    line = line.strip()
+                                    if line:
+                                        # 去掉 :(icase) 前缀
+                                        if line.startswith(":(icase)"):
+                                            line = line[len(":(icase)"):]
+                                        recorded.append(line)
+                        except OSError:
+                            pass
+                        break
             return original(cmd)
 
         gw._run_git = spy  # type: ignore[assignment]

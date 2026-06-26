@@ -98,7 +98,7 @@ _GLOBAL_LOCK_FILE = "git_commit_global.lock"
 _LOCK_TTL_SECONDS = 1800  # 30 分钟，防进程崩溃死锁（与 staging_area.py 一致）
 _LOCK_TIMEOUT_DEFAULT = 60.0  # 等待全局锁最长 60s（commit 串行化，比单文件锁久）
 _POLL_INTERVAL = 0.1
-_MAX_INLINE_PATHS = 50  # 超过此数量时用 --pathspec-from-file 避免 Windows CLI 长度限制 (WinError 206)
+_MAX_INLINE_PATHS = 50  # 文件数阈值，超过时改用 --all-files 全量模式避免 Windows CLI 长度限制 (WinError 206)
 _SESSION_AWARE_STASH_ENV = "ZEPHYR_SESSION_AWARE_STASH"  # "0" 强制禁用 session 隔离 stash
 
 # 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
@@ -1029,7 +1029,7 @@ class GitCommitGateway:
                     else:
                         # 6. git commit --no-verify -F <msg> --pathspec-from-file=<file>
                         commit_hash, commit_err = self._commit_with_file_message(
-                            files, full_message, pathspec_file=pathspec_file
+                            pathspec_file, full_message
                         )
                         if commit_hash is None:
                             result = CommitResult(
@@ -1121,28 +1121,6 @@ class GitCommitGateway:
             os.environ.pop(_GATEWAY_ENV, None)
         return result
 
-    def _count_non_target_changed(self, target_files: list[str]) -> int:
-        """统计非目标的已修改已跟踪文件数。
-
-        用于判断是否需要切换到 pathspec-file 流程：原始流程的
-        ``_stash_other_files`` 会显式枚举非目标文件并传给
-        ``git stash push -- <files>``，数量过多时触发 WinError 206
-        (Windows CLI 长度限制 32767 字符)。
-        """
-        status_result = self._run_git(["git", "status", "--porcelain"])
-        if status_result.returncode != 0:
-            return 0
-        target_set = {str(Path(f).resolve()) for f in target_files}
-        count = 0
-        for line in status_result.stdout.splitlines():
-            if not line.strip() or line.startswith("??"):
-                continue
-            path = line[3:].strip().strip('"')
-            abs_path = str((self.project_root / path).resolve())
-            if abs_path not in target_set:
-                count += 1
-        return count
-
     def _stash_other_files(self, session_id: str, target_files: list[str]) -> tuple[bool, str]:
         """选择性 stash 非本次 files 的已修改文件（session 隔离版）。
 
@@ -1152,8 +1130,7 @@ class GitCommitGateway:
            - feature 禁用/未注册/held 空 → 回退原逻辑（stash 全部非目标）
            - 否则只 stash 当前 session 持有的非目标文件（其他 session 的 WIP 留在工作区）
         3. 候选为空 → 跳过 stash
-        4. 候选 > _MAX_INLINE_PATHS → --pathspec-from-file 避免 WinError 206；
-           否则 git stash push -m <session_id> -- <candidates>
+        4. 统一使用 --pathspec-from-file 避免 Windows CLI 长度限制 (WinError 206)
 
         Returns:
             (是否 stash 了文件, stash_ref)
@@ -1309,17 +1286,16 @@ class GitCommitGateway:
 
     def _commit_with_file_message(
         self,
-        files: list[str],
+        pathspec_file: str,
         message: str,
-        pathspec_file: str | None = None,
     ) -> tuple[str | None, str]:
         """用 -F <msg_file> 方式 commit（RULE-TWENTY 裁定2：避免 PowerShell 特殊字符问题）。
 
+        统一使用 --pathspec-from-file（避免 Windows CLI 长度限制 WinError 206）。
+
         Args:
-            files: 目标文件列表（pathspec_file 为 None 时用 ``--`` 内联传递）。
+            pathspec_file: pathspec 文件路径（由 _write_pathspec_file 生成）。
             message: commit message。
-            pathspec_file: pathspec 文件路径（大文件列表时用
-                ``--pathspec-from-file`` 避免 CLI 长度限制）。
 
         Returns:
             (commit_hash, error_message)。commit_hash 为 None 表示失败。
@@ -1332,13 +1308,10 @@ class GitCommitGateway:
             with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
                 f.write(message)
 
-            if pathspec_file:
-                commit_cmd = [
-                    "git", "commit", "--no-verify", "-F", msg_path,
-                    f"--pathspec-from-file={pathspec_file}",
-                ]
-            else:
-                commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path, "--"] + files
+            commit_cmd = [
+                "git", "commit", "--no-verify", "-F", msg_path,
+                f"--pathspec-from-file={pathspec_file}",
+            ]
             result = self._run_git(commit_cmd)
             if result.returncode != 0:
                 return None, result.stderr.strip()
