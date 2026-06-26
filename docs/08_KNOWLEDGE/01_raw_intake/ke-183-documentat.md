@@ -2,6 +2,7 @@
 module_id: KE-165
 title: 2.1 五档定义
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 五档定义

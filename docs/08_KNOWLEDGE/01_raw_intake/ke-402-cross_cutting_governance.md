@@ -3,6 +3,7 @@ module_id: KE-366
 status: active
 title: 4.5 Cross-cutting governance / 横向治理贯穿全链
 category: documentation
+ttl: permanent
 ---
 
 # 4.5 Cross-cutting governance / 横向治理贯穿全链

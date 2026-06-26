@@ -2,6 +2,7 @@
 module_id: KE-2041----4-003
 title: 3.1 Collection 概念（4 个预定义）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 Collection 概念（4 个预定义）

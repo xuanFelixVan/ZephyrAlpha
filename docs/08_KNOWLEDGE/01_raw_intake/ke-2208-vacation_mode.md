@@ -3,6 +3,7 @@ module_id: KE-2115
 status: active
 title: 3.4 #42: Vacation Mode
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 #42: Vacation Mode

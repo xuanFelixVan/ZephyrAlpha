@@ -2,6 +2,7 @@
 module_id: KE-3635
 title: 8.4 governance/task/ 文件夹
 category: governance_rule
+ttl: permanent
 ---
 
 # 8.4 governance/task/ 文件夹

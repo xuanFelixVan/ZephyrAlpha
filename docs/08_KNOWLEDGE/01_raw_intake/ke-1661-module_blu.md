@@ -3,6 +3,7 @@ module_id: KE-1571
 status: active
 title: 17.1 评估管线模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 17.1 评估管线模型

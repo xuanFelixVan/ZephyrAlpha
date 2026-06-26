@@ -3,6 +3,7 @@ module_id: KE-2908
 status: active
 title: === SQLite 完整性 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === SQLite 完整性 ===

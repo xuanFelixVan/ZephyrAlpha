@@ -3,6 +3,7 @@ module_id: KE-1686
 status: active
 title: 2.10 置信度驱动的升级判定
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.10 置信度驱动的升级判定

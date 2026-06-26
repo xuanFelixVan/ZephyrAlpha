@@ -2,6 +2,7 @@
 module_id: KE-3275
 title: 3.7 审计日志完整性
 category: documentation
+ttl: permanent
 ---
 
 # 3.7 审计日志完整性

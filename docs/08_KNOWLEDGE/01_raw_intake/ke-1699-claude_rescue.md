@@ -3,6 +3,7 @@ module_id: KE-1609-----5-000
 status: active
 title: 2. Claude Rescue 触发器（5条）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Claude Rescue 触发器（5条）

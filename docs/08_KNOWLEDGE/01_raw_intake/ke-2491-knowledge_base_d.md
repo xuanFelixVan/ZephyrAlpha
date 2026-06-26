@@ -3,6 +3,7 @@ module_id: KE-2396---------d-0-000
 status: active
 title: 6.5 Knowledge Base 投毒防护（决策 D-020-28）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.5 Knowledge Base 投毒防护（决策 D-020-28）

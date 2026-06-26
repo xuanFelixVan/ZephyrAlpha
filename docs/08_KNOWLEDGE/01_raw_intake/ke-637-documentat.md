@@ -2,6 +2,7 @@
 module_id: KE-574
 title: 六、未来待办标准（Backlog）
 category: documentation
+ttl: permanent
 ---
 
 # 六、未来待办标准（Backlog）

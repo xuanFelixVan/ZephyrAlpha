@@ -2,6 +2,7 @@
 module_id: KE-4414
 title: T类：渐进自治与运行时状态的结构性缺口
 category: module_blueprint
+ttl: permanent
 ---
 
 # T类：渐进自治与运行时状态的结构性缺口

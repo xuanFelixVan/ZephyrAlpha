@@ -3,6 +3,7 @@ module_id: KE-799
 status: active
 title: 2.2.2 frontmatter `module_id`
 category: governance
+ttl: permanent
 ---
 
 # 2.2.2 frontmatter `module_id`

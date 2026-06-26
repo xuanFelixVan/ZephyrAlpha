@@ -3,6 +3,7 @@ module_id: KE-2922
 status: active
 title: src/zephyr/llm-security/patterns/secrets.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/patterns/secrets.py

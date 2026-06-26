@@ -3,6 +3,7 @@ module_id: KE-1653--------token---cost---time-002
 status: active
 title: 2.1 五级预算体系（Token + Cost + Time 三维）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 五级预算体系（Token + Cost + Time 三维）

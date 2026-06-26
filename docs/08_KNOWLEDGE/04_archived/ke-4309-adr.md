@@ -2,6 +2,7 @@
 module_id: KE-4150---------adr-006
 title: 6. 关键架构决策（ADR 级）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 关键架构决策（ADR 级）

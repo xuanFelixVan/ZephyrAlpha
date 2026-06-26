@@ -3,6 +3,7 @@ module_id: KE-1729---------pre-post-onblocke-000
 status: active
 title: 2.17 权限钩子系统——Pre/Post/OnBlocked/OnKillSwitch 四类钩子（决策 D-018-15）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.17 权限钩子系统——Pre/Post/OnBlocked/OnKillSwitch 四类钩子（决策 D-018-15）

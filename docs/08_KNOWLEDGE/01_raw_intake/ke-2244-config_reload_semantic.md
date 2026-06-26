@@ -3,6 +3,7 @@ module_id: KE-2150
 status: active
 title: 3.8 #32: ConfigReloadSemantic
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.8 #32: ConfigReloadSemantic

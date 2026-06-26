@@ -3,6 +3,7 @@ module_id: KE-478
 status: active
 title: 7. Provenance / 来源说明
 category: documentation
+ttl: permanent
 ---
 
 # 7. Provenance / 来源说明

@@ -3,6 +3,7 @@ module_id: KE-510
 status: active
 title: 7.5 Contract versioning / 契约版本管理
 category: documentation
+ttl: permanent
 ---
 
 # 7.5 Contract versioning / 契约版本管理

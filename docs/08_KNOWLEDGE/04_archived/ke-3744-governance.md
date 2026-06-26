@@ -2,6 +2,7 @@
 module_id: KE-3594------39-45-000
 title: 4.6 分层汇总（39→45）
 category: governance
+ttl: permanent
 ---
 
 # 4.6 分层汇总（39→45）

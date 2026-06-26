@@ -2,6 +2,7 @@
 module_id: KE-3864
 title: 13.1 盲点总览
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.1 盲点总览

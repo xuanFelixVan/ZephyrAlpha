@@ -3,6 +3,7 @@ module_id: KE-DOCUMENTAT-J5-L00-ACL-OQ-001
 status: active
 title: 附记：J5 L00 ACL 显式化（非正式 OQ，补充落盘）
 category: documentation
+ttl: permanent
 ---
 
 # 附记：J5 L00 ACL 显式化（非正式 OQ，补充落盘）

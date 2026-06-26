@@ -2,6 +2,7 @@
 module_id: KE-1290
 title: 1. M→Role 映射表
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. M→Role 映射表

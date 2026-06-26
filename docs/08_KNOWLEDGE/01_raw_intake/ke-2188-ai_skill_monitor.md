@@ -3,6 +3,7 @@ module_id: KE-2095
 status: active
 title: 3.3 #23: AISkillMonitor (M-28)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 #23: AISkillMonitor (M-28)

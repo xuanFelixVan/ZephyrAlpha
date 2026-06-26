@@ -3,6 +3,7 @@ module_id: KE-2373
 status: active
 title: 6.2 四层输出验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.2 四层输出验证

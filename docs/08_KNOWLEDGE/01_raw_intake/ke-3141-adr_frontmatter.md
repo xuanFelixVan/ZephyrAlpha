@@ -3,6 +3,7 @@ module_id: KE-3039
 status: active
 title: 关键决策（从 ADR frontmatter 提取）
 category: session_log
+ttl: permanent
 ---
 
 # 关键决策（从 ADR frontmatter 提取）

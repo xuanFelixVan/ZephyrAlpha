@@ -2,6 +2,7 @@
 module_id: KE-3632
 title: 8.2 OpenSSF Best Practices Badge 对标
 category: governance
+ttl: permanent
 ---
 
 # 8.2 OpenSSF Best Practices Badge 对标

@@ -3,6 +3,7 @@ module_id: KE-848
 status: active
 title: §3 跨域依赖关系速览
 category: governance
+ttl: permanent
 ---
 
 # §3 跨域依赖关系速览

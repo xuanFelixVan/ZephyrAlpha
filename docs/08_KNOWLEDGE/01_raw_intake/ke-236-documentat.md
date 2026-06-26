@@ -3,6 +3,7 @@ module_id: KE-215
 status: active
 title: 2.7 实体上下游关系（一句话叙事）
 category: documentation
+ttl: permanent
 ---
 
 # 2.7 实体上下游关系（一句话叙事）

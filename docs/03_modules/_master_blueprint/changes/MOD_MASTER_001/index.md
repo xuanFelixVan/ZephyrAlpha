@@ -7,6 +7,7 @@ blueprint_id: "MOD-MASTER-001"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # mod_master_001

@@ -2,6 +2,7 @@
 module_id: KE-939
 title: 5.1 取消前检查
 category: governance
+ttl: permanent
 ---
 
 # 5.1 取消前检查

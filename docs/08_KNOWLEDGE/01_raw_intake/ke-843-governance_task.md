@@ -3,6 +3,7 @@ module_id: KE-843
 status: active
 title: §2 本目录的责任（governance/task/）
 category: governance
+ttl: permanent
 ---
 
 # §2 本目录的责任（governance/task/）

@@ -3,6 +3,7 @@ module_id: KE-2355
 status: active
 title: 6.1 EMA（指数移动平均）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 EMA（指数移动平均）

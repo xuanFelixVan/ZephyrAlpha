@@ -3,6 +3,7 @@ module_id: KE-1162
 status: active
 title: LFC-001：退役前必须完成依赖迁移
 category: governance_rule
+ttl: permanent
 ---
 
 # LFC-001：退役前必须完成依赖迁移

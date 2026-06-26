@@ -3,6 +3,7 @@ module_id: KE-1044
 status: active
 title: 9.1 豁免资格
 category: governance
+ttl: permanent
 ---
 
 # 9.1 豁免资格

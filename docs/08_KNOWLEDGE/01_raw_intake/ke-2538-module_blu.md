@@ -2,6 +2,7 @@
 module_id: KE-2443
 title: 7.4 自包含原则
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.4 自包含原则

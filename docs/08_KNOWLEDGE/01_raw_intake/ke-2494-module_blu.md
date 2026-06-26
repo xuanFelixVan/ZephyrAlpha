@@ -2,6 +2,7 @@
 module_id: KE-2399
 title: 6.6 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.6 施工状态

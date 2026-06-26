@@ -3,6 +3,7 @@ module_id: KE-1878--------prompt-reg-000
 status: active
 title: 2.3 Validate（安全校验）— prompt_registry.py + pattern_library.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 Validate（安全校验）— prompt_registry.py + pattern_library.py

@@ -3,6 +3,7 @@ module_id: KE-2243
 status: active
 title: 4.4 入库验证矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.4 入库验证矩阵

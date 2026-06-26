@@ -3,6 +3,7 @@ module_id: KE-1841---------agent---cascading-000
 status: active
 title: 2.26 级联故障隔离——Agent链中的Cascading Failure防护（决策 D-018-24）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.26 级联故障隔离——Agent链中的Cascading Failure防护（决策 D-018-24）

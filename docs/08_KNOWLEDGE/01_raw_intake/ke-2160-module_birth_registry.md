@@ -3,6 +3,7 @@ module_id: KE-2068
 status: active
 title: 3.16 #54: ModuleBirthRegistry
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.16 #54: ModuleBirthRegistry

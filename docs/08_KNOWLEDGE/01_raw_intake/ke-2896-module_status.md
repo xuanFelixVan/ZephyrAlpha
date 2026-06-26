@@ -2,6 +2,7 @@
 module_id: KE-2796
 title: Module Status
 category: module_blueprint
+ttl: permanent
 ---
 
 # Module Status

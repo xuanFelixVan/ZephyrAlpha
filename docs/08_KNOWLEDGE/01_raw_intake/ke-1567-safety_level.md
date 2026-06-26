@@ -2,6 +2,7 @@
 module_id: KE-1477-----safety-level-000
 title: 13.3 工具级 safety_level
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.3 工具级 safety_level

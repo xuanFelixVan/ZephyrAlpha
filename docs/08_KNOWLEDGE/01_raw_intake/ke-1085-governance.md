@@ -3,6 +3,7 @@ module_id: KE-1000------------7--5-000
 status: active
 title: 7.1 功能域重叠判定流程（§7 #5 执行细则）
 category: governance
+ttl: permanent
 ---
 
 # 7.1 功能域重叠判定流程（§7 #5 执行细则）

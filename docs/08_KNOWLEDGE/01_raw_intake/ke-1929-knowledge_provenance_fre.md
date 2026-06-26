@@ -3,6 +3,7 @@ module_id: KE-1838
 status: active
 title: 2.251 Knowledge Provenance Freshness Scorer - knowledge_provenance_freshness.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.251 Knowledge Provenance Freshness Scorer - knowledge_provenance_freshness.py

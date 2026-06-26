@@ -3,6 +3,7 @@ module_id: KE-1055
 status: active
 title: ABS-002：禁止硬编码连接凭据
 category: governance
+ttl: permanent
 ---
 
 # ABS-002：禁止硬编码连接凭据

@@ -2,6 +2,7 @@
 module_id: KE-3166
 title: 1.5.6 变更同步规则
 category: documentation
+ttl: permanent
 ---
 
 # 1.5.6 变更同步规则

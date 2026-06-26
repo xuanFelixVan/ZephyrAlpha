@@ -2,6 +2,7 @@
 module_id: KE-2021
 title: 3. 漂移维度完整清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 漂移维度完整清单

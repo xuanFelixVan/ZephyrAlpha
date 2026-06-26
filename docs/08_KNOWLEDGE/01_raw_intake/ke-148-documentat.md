@@ -2,6 +2,7 @@
 module_id: KE-135
 title: 12.3 成本优化策略
 category: documentation
+ttl: permanent
 ---
 
 # 12.3 成本优化策略

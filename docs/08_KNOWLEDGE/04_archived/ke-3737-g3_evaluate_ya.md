@@ -2,6 +2,7 @@
 module_id: KE-3587-----------g3-evaluate-ya-000
 title: 4.3.3 评分维度（定义于 `g3-evaluate.yaml:scoring_dimensions`）
 category: governance
+ttl: permanent
 ---
 
 # 4.3.3 评分维度（定义于 `g3-evaluate.yaml:scoring_dimensions`）

@@ -3,6 +3,7 @@ module_id: KE-2227
 status: active
 title: 4.2 四阶段预检
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 四阶段预检

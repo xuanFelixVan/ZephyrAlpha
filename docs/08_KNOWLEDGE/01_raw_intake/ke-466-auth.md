@@ -3,6 +3,7 @@ module_id: KE-418
 status: active
 title: 5.3 Auth / 权限注入路径
 category: documentation
+ttl: permanent
 ---
 
 # 5.3 Auth / 权限注入路径

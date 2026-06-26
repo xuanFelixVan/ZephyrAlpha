@@ -3,6 +3,7 @@ module_id: KE-2881------------ssot-000
 status: active
 title: 三、共享 Schema（多系统共用的数据结构 SSoT）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 三、共享 Schema（多系统共用的数据结构 SSoT）

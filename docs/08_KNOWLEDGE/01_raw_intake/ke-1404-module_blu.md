@@ -2,6 +2,7 @@
 module_id: KE-1315
 title: 1.2 核心职能（一句话 + 五支柱）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.2 核心职能（一句话 + 五支柱）

@@ -2,6 +2,7 @@
 module_id: KE-3170
 title: 活跃模型核心评分（10 分制）
 category: documentation
+ttl: permanent
 ---
 
 # 活跃模型核心评分（10 分制）

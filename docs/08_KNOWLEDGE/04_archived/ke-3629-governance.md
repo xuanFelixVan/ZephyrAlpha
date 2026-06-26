@@ -2,6 +2,7 @@
 module_id: KE-3484
 title: 11. 修改条件
 category: governance
+ttl: permanent
 ---
 
 # 11. 修改条件

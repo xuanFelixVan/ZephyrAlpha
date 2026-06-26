@@ -2,6 +2,7 @@
 module_id: KE-3851
 title: 12.5 Fail-closed P0（**关键**）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.5 Fail-closed P0（**关键**）

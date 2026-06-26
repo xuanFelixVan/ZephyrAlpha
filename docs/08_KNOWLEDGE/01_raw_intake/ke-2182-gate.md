@@ -3,6 +3,7 @@ module_id: KE-2089
 status: active
 title: 3.2 Gate 判定接口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 Gate 判定接口

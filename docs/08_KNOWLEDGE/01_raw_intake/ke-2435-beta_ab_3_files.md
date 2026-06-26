@@ -2,6 +2,7 @@
 module_id: KE-2340
 title: 6. beta ab (3 Files) — 氛围编程集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. beta ab (3 Files) — 氛围编程集成

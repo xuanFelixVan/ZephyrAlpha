@@ -3,6 +3,7 @@ module_id: KE-3134
 status: active
 title: SSoT 矛盾扫描报告
 category: test_coverage
+ttl: permanent
 ---
 
 # SSoT 矛盾扫描报告

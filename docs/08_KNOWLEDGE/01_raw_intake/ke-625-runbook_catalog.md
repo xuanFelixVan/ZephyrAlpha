@@ -2,6 +2,7 @@
 module_id: KE-563
 title: §9 Runbook Catalog / 操作手册目录
 category: documentation
+ttl: permanent
 ---
 
 # §9 Runbook Catalog / 操作手册目录

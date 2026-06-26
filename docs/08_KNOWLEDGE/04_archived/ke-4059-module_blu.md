@@ -2,6 +2,7 @@
 module_id: KE-3906
 title: 14.1 自动触发矩阵（什么时候盘点——不需要人决定）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.1 自动触发矩阵（什么时候盘点——不需要人决定）

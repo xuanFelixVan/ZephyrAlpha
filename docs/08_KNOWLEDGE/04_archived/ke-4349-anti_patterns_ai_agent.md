@@ -2,6 +2,7 @@
 module_id: KE-4189---ai-agent-003
 title: 7. Anti-Patterns — AI agent 绝对禁止的上下文操作
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. Anti-Patterns — AI agent 绝对禁止的上下文操作

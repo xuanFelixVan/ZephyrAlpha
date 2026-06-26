@@ -2,6 +2,7 @@
 module_id: KE-4078-----------17-003
 title: 4. 集成目标（蓝图 §17）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. 集成目标（蓝图 §17）

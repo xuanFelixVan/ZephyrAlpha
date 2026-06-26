@@ -3,6 +3,7 @@ module_id: KE-1805
 status: active
 title: 2.227 Action Atomicity Manager - action_atomicity_manager.py (🆕 v0.21.0 - 盲点276
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.227 Action Atomicity Manager - action_atomicity_manager.py (🆕 v0.21.0 - 盲点276

@@ -2,6 +2,7 @@
 module_id: KE-530-----------------04-ta-000
 title: 8.3 业界工具映射（建议，最终选型归 04-TA）
 category: documentation
+ttl: permanent
 ---
 
 # 8.3 业界工具映射（建议，最终选型归 04-TA）

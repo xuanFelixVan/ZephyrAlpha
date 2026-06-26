@@ -2,6 +2,7 @@
 module_id: KE-1551
 title: 16. 变更记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16. 变更记录

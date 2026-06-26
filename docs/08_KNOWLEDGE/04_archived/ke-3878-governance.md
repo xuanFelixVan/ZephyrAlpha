@@ -2,6 +2,7 @@
 module_id: KE-3727
 title: SIR-004：通知机制
 category: governance
+ttl: permanent
 ---
 
 # SIR-004：通知机制

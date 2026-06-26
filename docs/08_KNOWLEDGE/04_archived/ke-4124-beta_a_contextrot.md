@@ -2,6 +2,7 @@
 module_id: KE-3969---------contextrot---000
 title: 2. beta a — 核心缺失 (ContextRot + Provenance + Eviction)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. beta a — 核心缺失 (ContextRot + Provenance + Eviction)

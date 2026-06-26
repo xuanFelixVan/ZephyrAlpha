@@ -3,6 +3,7 @@ module_id: KE-1321
 status: active
 title: 1.3 在三线体系中的位置
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.3 在三线体系中的位置

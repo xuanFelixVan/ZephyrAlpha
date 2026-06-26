@@ -2,6 +2,7 @@
 module_id: KE-556
 title: 9.2 Informative 引用（参考性质）
 category: documentation
+ttl: permanent
 ---
 
 # 9.2 Informative 引用（参考性质）

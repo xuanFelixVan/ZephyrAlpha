@@ -3,6 +3,7 @@ module_id: KE-301---src-zephyr-----14-layer-co-001
 status: active
 title: 4. `src/zephyr/` — 14-layer code architecture / 14 层代码分层架构
 category: documentation
+ttl: permanent
 ---
 
 # 4. `src/zephyr/` — 14-layer code architecture / 14 层代码分层架构

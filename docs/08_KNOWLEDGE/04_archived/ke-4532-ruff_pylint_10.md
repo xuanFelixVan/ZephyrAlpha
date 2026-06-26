@@ -2,6 +2,7 @@
 module_id: KE-4367---pylint----10-100-000
 title: KE-042：ruff 选 pylint——快 10-100x + pyproject.toml 原生集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # KE-042：ruff 选 pylint——快 10-100x + pyproject.toml 原生集成

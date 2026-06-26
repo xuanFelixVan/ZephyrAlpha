@@ -3,6 +3,7 @@ module_id: KE-2707
 status: active
 title: degradation_chain.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # degradation_chain.yaml

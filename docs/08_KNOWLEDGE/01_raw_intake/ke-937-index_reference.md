@@ -3,6 +3,7 @@ module_id: KE-859----1-index-md-003
 status: active
 title: 3.2 路径 1：index.md 全局入口 [首选]
 category: governance
+ttl: permanent
 ---
 
 # 3.2 路径 1：index.md 全局入口 [首选]

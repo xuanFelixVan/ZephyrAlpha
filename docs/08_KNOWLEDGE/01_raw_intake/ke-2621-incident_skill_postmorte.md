@@ -3,6 +3,7 @@ module_id: KE-2526---skill-postmorte-003
 status: active
 title: 9.6 Incident → Skill Postmortem & Continuous Improvement
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.6 Incident → Skill Postmortem & Continuous Improvement

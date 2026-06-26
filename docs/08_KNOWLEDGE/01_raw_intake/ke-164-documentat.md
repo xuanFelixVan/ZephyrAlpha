@@ -3,6 +3,7 @@ module_id: KE-150
 status: active
 title: §18 完整性自检清单
 category: documentation
+ttl: permanent
 ---
 
 # §18 完整性自检清单

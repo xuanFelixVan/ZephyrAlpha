@@ -3,6 +3,7 @@ module_id: KE-2855
 status: active
 title: Plugin Contract v1.0 — 所有治理脚本必须满足的接口约定
 category: module_blueprint
+ttl: permanent
 ---
 
 # Plugin Contract v1.0 — 所有治理脚本必须满足的接口约定

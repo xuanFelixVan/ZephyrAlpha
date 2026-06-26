@@ -3,6 +3,7 @@ module_id: KE-1936--------d-022-06-005
 status: active
 title: 2.7 多Agent死锁防护（决策 D-022-06）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.7 多Agent死锁防护（决策 D-022-06）

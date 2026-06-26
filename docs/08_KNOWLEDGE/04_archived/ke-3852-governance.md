@@ -2,6 +2,7 @@
 module_id: KE-3701
 title: 三、状态快照管理（LATEST 覆盖写入模式）
 category: governance
+ttl: permanent
 ---
 
 # 三、状态快照管理（LATEST 覆盖写入模式）

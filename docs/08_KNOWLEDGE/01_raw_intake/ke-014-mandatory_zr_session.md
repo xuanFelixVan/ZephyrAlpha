@@ -3,6 +3,7 @@ module_id: KE-014---mandatory-zr---session-005
 status: active
 title: 5.3.5 🔴 MANDATORY-ZR — Session 终了强制自净（IRN-011 · ZR-008）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.3.5 🔴 MANDATORY-ZR — Session 终了强制自净（IRN-011 · ZR-008）

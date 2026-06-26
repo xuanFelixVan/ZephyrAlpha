@@ -3,6 +3,7 @@ module_id: KE-2044
 status: active
 title: 3.1 Slot 概念（上下文槽位）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 Slot 概念（上下文槽位）

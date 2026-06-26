@@ -3,6 +3,7 @@ module_id: KE-648
 status: active
 title: Step 6：上线验证
 category: documentation
+ttl: permanent
 ---
 
 # Step 6：上线验证

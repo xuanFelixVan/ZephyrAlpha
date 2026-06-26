@@ -3,6 +3,7 @@ module_id: KE-1914---------ide----------d-020-003
 status: active
 title: 2.5 逻辑时钟——多 IDE 时序一致性（决策 D-020-09）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 逻辑时钟——多 IDE 时序一致性（决策 D-020-09）

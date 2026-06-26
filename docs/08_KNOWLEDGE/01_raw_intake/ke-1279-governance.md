@@ -2,6 +2,7 @@
 module_id: KE-1192
 title: 强制五问（任何新功能产出后 MUST 自问）
 category: governance_rule
+ttl: permanent
 ---
 
 # 强制五问（任何新功能产出后 MUST 自问）

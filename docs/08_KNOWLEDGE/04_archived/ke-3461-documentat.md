@@ -2,6 +2,7 @@
 module_id: KE-3461
 title: 5. 修订记录
 category: documentation
+ttl: permanent
 ---
 
 # 5. 修订记录

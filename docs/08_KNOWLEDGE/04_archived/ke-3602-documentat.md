@@ -2,6 +2,7 @@
 module_id: KE-3458
 title: 根目录文件
 category: documentation
+ttl: permanent
 ---
 
 # 根目录文件

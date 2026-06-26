@@ -2,6 +2,7 @@
 module_id: KE-243
 title: 3.1 总览表（按业务层维度）
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 总览表（按业务层维度）

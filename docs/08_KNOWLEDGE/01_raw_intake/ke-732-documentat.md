@@ -3,6 +3,7 @@ module_id: KE-656
 status: active
 title: 三层模板对照表
 category: documentation
+ttl: permanent
 ---
 
 # 三层模板对照表

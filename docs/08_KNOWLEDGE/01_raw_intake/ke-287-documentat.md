@@ -3,6 +3,7 @@ module_id: KE-265
 status: active
 title: 3.2 完整受控词表
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 完整受控词表

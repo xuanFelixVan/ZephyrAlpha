@@ -3,6 +3,7 @@ module_id: KE-2307
 status: active
 title: 5.3 顺序依赖
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.3 顺序依赖

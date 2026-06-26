@@ -2,6 +2,7 @@
 module_id: KE-3760
 title: 1.1 模块身份
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.1 模块身份

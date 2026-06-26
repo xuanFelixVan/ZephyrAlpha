@@ -2,6 +2,7 @@
 module_id: KE-137
 title: §12 Revision history / 修订记录
 category: documentation
+ttl: permanent
 ---
 
 # §12 Revision history / 修订记录

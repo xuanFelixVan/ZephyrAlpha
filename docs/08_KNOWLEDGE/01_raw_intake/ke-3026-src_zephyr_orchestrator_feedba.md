@@ -3,6 +3,7 @@ module_id: KE-2926
 status: active
 title: src/zephyr/orchestrator/feedback_sink.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/orchestrator/feedback_sink.py

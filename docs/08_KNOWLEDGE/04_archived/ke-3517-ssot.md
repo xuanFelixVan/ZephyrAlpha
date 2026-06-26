@@ -2,6 +2,7 @@
 module_id: KE-3381
 title: 7. SSoT 声明
 category: documentation
+ttl: permanent
 ---
 
 # 7. SSoT 声明

@@ -3,6 +3,7 @@ module_id: KE-3047
 status: active
 title: G6 Violations 明细
 category: session_log
+ttl: permanent
 ---
 
 # G6 Violations 明细

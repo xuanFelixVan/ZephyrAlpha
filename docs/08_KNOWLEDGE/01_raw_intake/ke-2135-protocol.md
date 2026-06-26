@@ -3,6 +3,7 @@ module_id: KE-2043
 status: active
 title: 3.1 Protocol 签名
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 Protocol 签名

@@ -2,6 +2,7 @@
 module_id: KE-3659
 title: ARG-003：评审否决条件
 category: governance
+ttl: permanent
 ---
 
 # ARG-003：评审否决条件

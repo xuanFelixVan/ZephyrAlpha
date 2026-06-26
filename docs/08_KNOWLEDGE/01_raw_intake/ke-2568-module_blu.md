@@ -2,6 +2,7 @@
 module_id: KE-2473
 title: 8.2 容量上限设计
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.2 容量上限设计

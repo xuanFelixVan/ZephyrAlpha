@@ -2,6 +2,7 @@
 module_id: KE-2698---------18-4--yaml-000
 title: DB-025-0083：备份恢复演练 §18.4——YAML 6 步流程
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0083：备份恢复演练 §18.4——YAML 6 步流程

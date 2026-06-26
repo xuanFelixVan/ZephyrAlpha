@@ -2,6 +2,7 @@
 module_id: KE-3293
 title: 4.2 按任务类型定向阅读
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 按任务类型定向阅读

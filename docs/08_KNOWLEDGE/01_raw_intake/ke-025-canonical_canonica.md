@@ -3,6 +3,7 @@ module_id: KE-025--------canonica-002
 status: active
 title: 6.17 Canonical 物理位置铁律（Canonical Physical Location Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.17 Canonical 物理位置铁律（Canonical Physical Location Mandate）

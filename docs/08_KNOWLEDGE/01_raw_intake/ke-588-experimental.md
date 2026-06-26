@@ -3,6 +3,7 @@ module_id: KE-529
 status: active
 title: 8.2 experimental 关键约束
 category: documentation
+ttl: permanent
 ---
 
 # 8.2 experimental 关键约束

@@ -3,6 +3,7 @@ module_id: KE-2111----slo-003
 status: active
 title: 3.4 性能 SLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 性能 SLO

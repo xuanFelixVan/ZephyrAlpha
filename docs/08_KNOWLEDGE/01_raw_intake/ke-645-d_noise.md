@@ -2,6 +2,7 @@
 module_id: KE-645
 title: D-NOISE：噪音与冗余
 category: documentation
+ttl: permanent
 ---
 
 # D-NOISE：噪音与冗余

@@ -3,6 +3,7 @@ module_id: KE-2028----3--alertmanager-003
 status: active
 title: 3.1 #12 + #3: AlertManager + 告警收敛
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 #12 + #3: AlertManager + 告警收敛

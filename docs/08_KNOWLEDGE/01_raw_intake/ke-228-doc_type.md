@@ -3,6 +3,7 @@ module_id: KE-207---doc-type-005
 status: active
 title: 2.5 按 doc_type 分类的必填字段清单
 category: documentation
+ttl: permanent
 ---
 
 # 2.5 按 doc_type 分类的必填字段清单

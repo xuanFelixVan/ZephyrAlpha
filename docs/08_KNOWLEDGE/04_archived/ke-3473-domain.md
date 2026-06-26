@@ -2,6 +2,7 @@
 module_id: KE-3338
 title: 5.2.2 DOMAIN 命名规则
 category: documentation
+ttl: permanent
 ---
 
 # 5.2.2 DOMAIN 命名规则

@@ -3,6 +3,7 @@ module_id: KE-1810-------------000
 status: active
 title: 2.23 Context Drift 检测——操作链中的意图漂移（决策 D-018-21）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.23 Context Drift 检测——操作链中的意图漂移（决策 D-018-21）

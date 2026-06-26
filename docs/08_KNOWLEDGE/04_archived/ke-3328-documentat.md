@@ -2,6 +2,7 @@
 module_id: KE-3208
 title: 2.2 基线评分表
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 基线评分表

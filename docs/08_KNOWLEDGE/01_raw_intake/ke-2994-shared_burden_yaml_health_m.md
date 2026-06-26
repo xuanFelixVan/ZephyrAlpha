@@ -3,6 +3,7 @@ module_id: KE-2894----health-m-000
 status: active
 title: shared_burden.yaml —— health-monitor.py 产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # shared_burden.yaml —— health-monitor.py 产出

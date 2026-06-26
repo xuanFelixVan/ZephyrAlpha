@@ -3,6 +3,7 @@ module_id: KE-2078
 status: active
 title: 3.2 #40: BudgetAwarePromptMerger (M-37)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 #40: BudgetAwarePromptMerger (M-37)

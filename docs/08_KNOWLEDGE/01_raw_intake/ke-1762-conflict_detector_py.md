@@ -3,6 +3,7 @@ module_id: KE-1671
 status: active
 title: 2.1 conflict_detector.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 conflict_detector.py

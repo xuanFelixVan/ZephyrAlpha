@@ -3,6 +3,7 @@ module_id: KE-2916
 status: active
 title: src/zephyr/feedback-loop/adapters/context-engine.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/feedback-loop/adapters/context-engine.py

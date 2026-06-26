@@ -3,6 +3,7 @@ module_id: KE-2868
 status: active
 title: infra_ops
 category: module_blueprint
+ttl: permanent
 ---
 
 # infra_ops

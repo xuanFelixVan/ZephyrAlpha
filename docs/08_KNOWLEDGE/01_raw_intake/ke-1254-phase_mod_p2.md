@@ -3,6 +3,7 @@ module_id: KE-1167-----mod-p2-000
 status: active
 title: MAD-002：Phase 相关性（MOD-P2）
 category: governance
+ttl: permanent
 ---
 
 # MAD-002：Phase 相关性（MOD-P2）

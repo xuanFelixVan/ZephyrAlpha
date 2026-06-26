@@ -3,6 +3,7 @@ module_id: KE-1046
 status: active
 title: 9.2 豁免签发格式
 category: governance
+ttl: permanent
 ---
 
 # 9.2 豁免签发格式

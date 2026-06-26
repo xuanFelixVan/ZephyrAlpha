@@ -2,6 +2,7 @@
 module_id: KE-1049---lifecycle-guards-002
 title: 十、附录 A：与 Lifecycle Guards 的边界
 category: governance
+ttl: permanent
 ---
 
 # 十、附录 A：与 Lifecycle Guards 的边界

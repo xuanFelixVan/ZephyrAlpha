@@ -2,6 +2,7 @@
 module_id: KE-4205
 title: 任务卡总览 (70张)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 任务卡总览 (70张)

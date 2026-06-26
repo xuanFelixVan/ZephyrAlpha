@@ -2,6 +2,7 @@
 module_id: KE-3377
 title: 7. Master Data Management / 主数据管理
 category: documentation
+ttl: permanent
 ---
 
 # 7. Master Data Management / 主数据管理

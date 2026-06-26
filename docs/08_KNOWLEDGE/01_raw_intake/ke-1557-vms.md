@@ -2,6 +2,7 @@
 module_id: KE-1467
 title: 13.13 VMS 蓝图健康自评分
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.13 VMS 蓝图健康自评分

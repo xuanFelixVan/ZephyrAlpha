@@ -3,6 +3,7 @@ module_id: KE-2256----------protocol--------5-003
 status: active
 title: 5. 反馈动作与下游 Protocol 引用（遗漏 #5 重点章节）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. 反馈动作与下游 Protocol 引用（遗漏 #5 重点章节）

@@ -3,6 +3,7 @@ module_id: KE-1830
 status: active
 title: 2.247 Adversarial Self-Test Engine - adversarial_self_test_engine.py (🆕 v0.23.0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.247 Adversarial Self-Test Engine - adversarial_self_test_engine.py (🆕 v0.23.0

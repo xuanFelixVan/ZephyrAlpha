@@ -2,6 +2,7 @@
 module_id: KE-3143--------thinking-pattern-qu-006
 title: 7.5 思维模式速查（Thinking Pattern Quick Reference）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 7.5 思维模式速查（Thinking Pattern Quick Reference）

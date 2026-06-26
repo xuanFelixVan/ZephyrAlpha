@@ -3,6 +3,7 @@ module_id: KE-378
 status: active
 title: 4.3 指标采集拓扑
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 指标采集拓扑

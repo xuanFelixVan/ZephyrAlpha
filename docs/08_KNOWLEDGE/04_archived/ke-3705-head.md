@@ -2,6 +2,7 @@
 module_id: KE-3558---head-000
 title: 步骤 3：若 HEAD 也已损坏，找干净版本
 category: governance
+ttl: permanent
 ---
 
 # 步骤 3：若 HEAD 也已损坏，找干净版本

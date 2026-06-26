@@ -2,6 +2,7 @@
 module_id: KE-4307-----schema-000
 title: DB-025-0042：R03 缓解——Schema 迁移手动高风险
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0042：R03 缓解——Schema 迁移手动高风险

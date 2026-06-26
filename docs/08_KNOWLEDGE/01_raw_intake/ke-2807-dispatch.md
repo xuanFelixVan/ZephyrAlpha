@@ -3,6 +3,7 @@ module_id: KE-2710
 status: active
 title: dispatch 过程中记录每个模块的副作用
 category: module_blueprint
+ttl: permanent
 ---
 
 # dispatch 过程中记录每个模块的副作用

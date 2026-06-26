@@ -3,6 +3,7 @@ module_id: KE-448
 status: active
 title: 6.1 PS-STD-003 行为边界标准
 category: documentation
+ttl: permanent
 ---
 
 # 6.1 PS-STD-003 行为边界标准

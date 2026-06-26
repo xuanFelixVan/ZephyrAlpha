@@ -3,6 +3,7 @@ module_id: KE-667
 status: active
 title: ZephyrAlpha 2.0 架构图与规则合规性审计报告
 category: documentation
+ttl: permanent
 ---
 
 # ZephyrAlpha 2.0 架构图与规则合规性审计报告

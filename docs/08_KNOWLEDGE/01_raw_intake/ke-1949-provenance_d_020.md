@@ -3,6 +3,7 @@ module_id: KE-1858----provenance----d-020-03-005
 status: active
 title: 2.3 分级 Provenance（决策 D-020-03）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 分级 Provenance（决策 D-020-03）

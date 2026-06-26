@@ -3,6 +3,7 @@ module_id: KE-677
 status: active
 title: 09. Governance Architecture / 治理架构视图
 category: governance
+ttl: permanent
 ---
 
 # 09. Governance Architecture / 治理架构视图

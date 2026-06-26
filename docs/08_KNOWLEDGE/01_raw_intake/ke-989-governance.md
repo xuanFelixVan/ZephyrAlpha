@@ -3,6 +3,7 @@ module_id: KE-911
 status: active
 title: 4.3.1 触发条件
 category: governance
+ttl: permanent
 ---
 
 # 4.3.1 触发条件

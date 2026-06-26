@@ -3,6 +3,7 @@ module_id: KE-2206-----------data-------------000
 status: active
 title: 4.0 数据引擎物理布局（`data/`）——数据库文件独立于 Markdown 文档
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.0 数据引擎物理布局（`data/`）——数据库文件独立于 Markdown 文档

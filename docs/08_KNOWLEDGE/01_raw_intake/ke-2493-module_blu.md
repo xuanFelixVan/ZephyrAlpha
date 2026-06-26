@@ -3,6 +3,7 @@ module_id: KE-2398-----000
 status: active
 title: 6.6 文档-代码共演化
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.6 文档-代码共演化

@@ -3,6 +3,7 @@ module_id: KE-2846
 status: active
 title: phase_gate_check.py 逻辑
 category: module_blueprint
+ttl: permanent
 ---
 
 # phase_gate_check.py 逻辑

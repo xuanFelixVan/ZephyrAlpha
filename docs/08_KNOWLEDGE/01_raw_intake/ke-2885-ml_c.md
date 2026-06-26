@@ -3,6 +3,7 @@ module_id: KE-2785--------------c-000
 status: active
 title: ⛔ ML 平台层 — 禁止施工 · C 轨占位蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # ⛔ ML 平台层 — 禁止施工 · C 轨占位蓝图

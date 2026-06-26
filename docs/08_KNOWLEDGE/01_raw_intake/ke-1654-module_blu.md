@@ -2,6 +2,7 @@
 module_id: KE-1564
 title: 16.7 施工完成标准
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.7 施工完成标准

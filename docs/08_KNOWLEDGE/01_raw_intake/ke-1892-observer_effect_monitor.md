@@ -3,6 +3,7 @@ module_id: KE-1801
 status: active
 title: 2.223 Observer Effect Monitor - observer_effect_monitor.py (🆕 v0.21.0 - 盲点272 —
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.223 Observer Effect Monitor - observer_effect_monitor.py (🆕 v0.21.0 - 盲点272 —

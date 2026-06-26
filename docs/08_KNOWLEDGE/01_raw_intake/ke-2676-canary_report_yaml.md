@@ -3,6 +3,7 @@ module_id: KE-2581
 status: active
 title: canary_report.yaml —— 每次全量扫描自动生成
 category: module_blueprint
+ttl: permanent
 ---
 
 # canary_report.yaml —— 每次全量扫描自动生成

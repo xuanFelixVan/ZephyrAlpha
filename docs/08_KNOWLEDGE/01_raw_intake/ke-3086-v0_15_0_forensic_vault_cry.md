@@ -3,6 +3,7 @@ module_id: KE-2985---forensic-vault---cry-000
 status: active
 title: v0.15.0 — Forensic Vault + Cryptographic Trust (TASK-0005, R203-R220)
 category: module_blueprint
+ttl: permanent
 ---
 
 # v0.15.0 — Forensic Vault + Cryptographic Trust (TASK-0005, R203-R220)

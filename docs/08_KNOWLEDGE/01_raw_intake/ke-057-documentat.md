@@ -3,6 +3,7 @@ module_id: KE-056
 status: active
 title: 0.1 本文档是什么
 category: documentation
+ttl: permanent
 ---
 
 # 0.1 本文档是什么

@@ -3,6 +3,7 @@ module_id: KE-1773
 status: active
 title: 2.2 SkillFactory 类实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 SkillFactory 类实现

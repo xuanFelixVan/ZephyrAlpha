@@ -3,6 +3,7 @@ module_id: KE-1629---context-budg-003
 status: active
 title: 2. Token Budget — context_budget_tracker.py (§2.2 + DD2 + DD6)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Token Budget — context_budget_tracker.py (§2.2 + DD2 + DD6)

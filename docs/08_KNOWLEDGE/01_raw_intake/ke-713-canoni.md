@@ -3,6 +3,7 @@ module_id: KE-638-----------------canoni-005
 status: active
 title: Stage 9：从"脚本位置未决"到"记忆系统 canonical 落位确定"
 category: documentation
+ttl: permanent
 ---
 
 # Stage 9：从"脚本位置未决"到"记忆系统 canonical 落位确定"

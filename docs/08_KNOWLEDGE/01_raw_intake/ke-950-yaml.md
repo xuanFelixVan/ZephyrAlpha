@@ -3,6 +3,7 @@ module_id: KE-872
 status: active
 title: §3 YAML 模板（直接复制填写）
 category: governance
+ttl: permanent
 ---
 
 # §3 YAML 模板（直接复制填写）

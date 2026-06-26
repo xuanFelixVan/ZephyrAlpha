@@ -3,6 +3,7 @@ module_id: KE-1585
 status: active
 title: 18.3 门禁模拟器
 category: module_blueprint
+ttl: permanent
 ---
 
 # 18.3 门禁模拟器

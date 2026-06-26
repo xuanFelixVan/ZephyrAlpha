@@ -2,6 +2,7 @@
 module_id: KE-4309-----duckdb-sql-000
 title: DB-025-0044：R05 缓解——DuckDB sqlite_scanner 依赖
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0044：R05 缓解——DuckDB sqlite_scanner 依赖

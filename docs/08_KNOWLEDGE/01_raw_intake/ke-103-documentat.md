@@ -2,6 +2,7 @@
 module_id: KE-094
 title: 1.5 术语
 category: documentation
+ttl: permanent
 ---
 
 # 1.5 术语

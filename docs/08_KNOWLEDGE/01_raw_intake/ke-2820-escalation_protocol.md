@@ -3,6 +3,7 @@ module_id: KE-2723
 status: active
 title: escalation-protocol
 category: module_blueprint
+ttl: permanent
 ---
 
 # escalation-protocol

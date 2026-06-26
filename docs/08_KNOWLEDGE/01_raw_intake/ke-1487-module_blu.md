@@ -2,6 +2,7 @@
 module_id: KE-1397
 title: 11.3 降级条件速查表
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.3 降级条件速查表

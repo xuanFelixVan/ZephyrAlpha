@@ -3,6 +3,7 @@ module_id: KE-2300
 status: active
 title: 5.2.1 判定流程
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2.1 判定流程

@@ -3,6 +3,7 @@ module_id: KE-285
 status: active
 title: 3.3 Container diagram / 容器图
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 Container diagram / 容器图

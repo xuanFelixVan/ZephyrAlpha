@@ -3,6 +3,7 @@ module_id: KE-2591
 status: active
 title: config/capacity/error_budget_config.yaml 完整示例
 category: module_blueprint
+ttl: permanent
 ---
 
 # config/capacity/error_budget_config.yaml 完整示例

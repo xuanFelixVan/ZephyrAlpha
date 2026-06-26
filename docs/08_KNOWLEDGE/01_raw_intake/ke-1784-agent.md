@@ -3,6 +3,7 @@ module_id: KE-1693----------agent-002
 status: active
 title: 2.11 上下文管理——跨 Agent 传递
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.11 上下文管理——跨 Agent 传递

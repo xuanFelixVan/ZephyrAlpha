@@ -3,6 +3,7 @@ module_id: KE-1764---kill-switch---------d-000
 status: active
 title: 2.2 L0 — Kill Switch 全局熔断（决策 D-018-05）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 L0 — Kill Switch 全局熔断（决策 D-018-05）

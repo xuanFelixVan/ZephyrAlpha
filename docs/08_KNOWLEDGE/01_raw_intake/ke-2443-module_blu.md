@@ -2,6 +2,7 @@
 module_id: KE-2348
 title: 6. 产出物存放目录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 产出物存放目录

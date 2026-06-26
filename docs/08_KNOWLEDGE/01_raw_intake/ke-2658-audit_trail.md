@@ -3,6 +3,7 @@ module_id: KE-2563
 status: active
 title: audit-trail
 category: module_blueprint
+ttl: permanent
 ---
 
 # audit-trail

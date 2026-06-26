@@ -2,6 +2,7 @@
 module_id: KE-3065
 title: 门禁注册状态（_registry.yaml）
 category: session_log
+ttl: permanent
 ---
 
 # 门禁注册状态（_registry.yaml）

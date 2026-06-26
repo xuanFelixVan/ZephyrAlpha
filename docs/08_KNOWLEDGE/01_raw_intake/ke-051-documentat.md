@@ -2,6 +2,7 @@
 module_id: KE-051
 status: active
 title: Ke Documentat     000
+ttl: permanent
 ---
 
 --000

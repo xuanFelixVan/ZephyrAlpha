@@ -2,6 +2,7 @@
 module_id: KE-3386
 title: 7.1 Review 节奏
 category: documentation
+ttl: permanent
 ---
 
 # 7.1 Review 节奏

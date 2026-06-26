@@ -2,6 +2,7 @@
 module_id: KE-4297-----system-telemet-000
 title: DB-025-0031：集成——system-telemetry (MOD-INF-015) 集成验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0031：集成——system-telemetry (MOD-INF-015) 集成验证

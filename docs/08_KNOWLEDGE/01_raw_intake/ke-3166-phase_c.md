@@ -3,6 +3,7 @@ module_id: KE-3060
 status: active
 title: Phase C 测试结果
 category: session_log
+ttl: permanent
 ---
 
 # Phase C 测试结果

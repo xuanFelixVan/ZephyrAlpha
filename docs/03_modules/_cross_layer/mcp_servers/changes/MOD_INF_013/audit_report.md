@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-023
+ttl: permanent
 ---
 
 # MOD-INF-013 最终审计报告

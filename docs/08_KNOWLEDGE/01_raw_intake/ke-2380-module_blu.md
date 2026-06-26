@@ -3,6 +3,7 @@ module_id: KE-2285
 status: active
 title: 5.1 14 层扩展路线（新增）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.1 14 层扩展路线（新增）

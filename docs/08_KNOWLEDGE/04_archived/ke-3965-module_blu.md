@@ -2,6 +2,7 @@
 module_id: KE-3965
 title: 11.2 变更清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.2 变更清单

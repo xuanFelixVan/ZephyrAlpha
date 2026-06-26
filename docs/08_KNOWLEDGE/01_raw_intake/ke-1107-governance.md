@@ -3,6 +3,7 @@ module_id: KE-1022
 status: active
 title: 8. 破坏性变更处理
 category: governance
+ttl: permanent
 ---
 
 # 8. 破坏性变更处理

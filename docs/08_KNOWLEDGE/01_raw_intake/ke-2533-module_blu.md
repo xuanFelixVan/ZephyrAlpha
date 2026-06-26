@@ -3,6 +3,7 @@ module_id: KE-2438
 status: active
 title: 7.3 红白对抗编排
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.3 红白对抗编排

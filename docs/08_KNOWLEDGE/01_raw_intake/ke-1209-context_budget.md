@@ -3,6 +3,7 @@ module_id: KE-1123---------context-budget-003
 status: active
 title: DOC-008：上下文预算意识（Context Budget Awareness）
 category: governance
+ttl: permanent
 ---
 
 # DOC-008：上下文预算意识（Context Budget Awareness）

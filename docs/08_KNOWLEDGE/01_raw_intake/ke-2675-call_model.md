@@ -3,6 +3,7 @@ module_id: KE-2580
 status: active
 title: _call_model 入口
 category: module_blueprint
+ttl: permanent
 ---
 
 # _call_model 入口

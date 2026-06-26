@@ -2,6 +2,7 @@
 module_id: KE-1081
 title: AUD-001：必须审计的操作不可绕过
 category: governance
+ttl: permanent
 ---
 
 # AUD-001：必须审计的操作不可绕过

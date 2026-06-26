@@ -3,6 +3,7 @@ module_id: KE-2888
 status: active
 title: sensitivity_sweep_report.yaml —— Wave 2 health-monitor.py 产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # sensitivity_sweep_report.yaml —— Wave 2 health-monitor.py 产出

@@ -3,6 +3,7 @@ module_id: KE-139---ps-std-001-000
 status: active
 title: §13 与 PS-STD-001 的字段不重复声明
 category: documentation
+ttl: permanent
 ---
 
 # §13 与 PS-STD-001 的字段不重复声明

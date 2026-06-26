@@ -3,6 +3,7 @@ module_id: KE-2594------000
 status: active
 title: context_drift_detector.py — 新增文件（L2 ABAC 扩展）
 category: module_blueprint
+ttl: permanent
 ---
 
 # context_drift_detector.py — 新增文件（L2 ABAC 扩展）

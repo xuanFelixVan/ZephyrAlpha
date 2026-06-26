@@ -3,6 +3,7 @@ module_id: KE-543
 status: active
 title: 9. Drawer maturity status / 目录成熟度状态
 category: documentation
+ttl: permanent
 ---
 
 # 9. Drawer maturity status / 目录成熟度状态

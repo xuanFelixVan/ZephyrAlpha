@@ -2,6 +2,7 @@
 module_id: KE-3691
 title: DRP-003：合规例外
 category: governance
+ttl: permanent
 ---
 
 # DRP-003：合规例外

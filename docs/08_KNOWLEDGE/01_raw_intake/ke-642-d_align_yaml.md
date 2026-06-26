@@ -3,6 +3,7 @@ module_id: KE-DOCUMENTAT-D-ALIGN-YAML-006
 status: active
 title: D-ALIGN：架构文档 ↔ 模型 YAML 一致性
 category: documentation
+ttl: permanent
 ---
 
 # D-ALIGN：架构文档 ↔ 模型 YAML 一致性

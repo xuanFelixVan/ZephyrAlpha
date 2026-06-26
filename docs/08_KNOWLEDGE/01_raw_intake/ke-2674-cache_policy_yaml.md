@@ -3,6 +3,7 @@ module_id: KE-2579
 status: active
 title: cache_policy.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # cache_policy.yaml

@@ -3,6 +3,7 @@ module_id: KE-2540---a-003
 status: active
 title: agent_creation_policy.yaml — Agent 复制/派生规则
 category: module_blueprint
+ttl: permanent
 ---
 
 # agent_creation_policy.yaml — Agent 复制/派生规则

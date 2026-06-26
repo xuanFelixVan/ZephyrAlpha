@@ -3,6 +3,7 @@ module_id: KE-582
 status: active
 title: D-RULES：架构原则与不变量可验证性
 category: documentation
+ttl: permanent
 ---
 
 # D-RULES：架构原则与不变量可验证性

@@ -3,6 +3,7 @@ module_id: KE-486
 status: active
 title: 6. Future platform modules & evolution roadmap / 未来平台模块与演进路线
 category: documentation
+ttl: permanent
 ---
 
 # 6. Future platform modules & evolution roadmap / 未来平台模块与演进路线

@@ -3,6 +3,7 @@ module_id: KE-378
 status: active
 title: 原则 4：Contribute Back When Patched / 修改必反哺
 category: documentation
+ttl: permanent
 ---
 
 # 原则 4：Contribute Back When Patched / 修改必反哺

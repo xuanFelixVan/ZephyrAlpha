@@ -3,6 +3,7 @@ module_id: KE-2412
 status: active
 title: 7. Acceptance Criteria
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. Acceptance Criteria

@@ -3,6 +3,7 @@ module_id: KE-742
 status: active
 title: 15. AI 可消费性声明
 category: governance
+ttl: permanent
 ---
 
 # 15. AI 可消费性声明

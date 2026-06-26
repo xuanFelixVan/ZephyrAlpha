@@ -3,6 +3,7 @@ module_id: KE-1436
 status: active
 title: 12.4 盲点清单（系统设计易遗漏的审计死角）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.4 盲点清单（系统设计易遗漏的审计死角）

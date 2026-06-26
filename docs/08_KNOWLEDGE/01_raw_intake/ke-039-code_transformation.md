@@ -3,6 +3,7 @@ module_id: KE-039----------code-transformat-005
 status: active
 title: 6.7a 代码变换保真铁律（Code Transformation Fidelity Rule）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.7a 代码变换保真铁律（Code Transformation Fidelity Rule）

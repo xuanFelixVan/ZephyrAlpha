@@ -2,6 +2,7 @@
 module_id: KE-3084
 title: 架构模型 YAML
 category: session_log
+ttl: permanent
 ---
 
 # 架构模型 YAML

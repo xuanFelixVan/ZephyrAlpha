@@ -3,6 +3,7 @@ module_id: KE-2496-----------economics---lifecy-000
 status: active
 title: 9. 第四轮深度审计——Economics + Lifecycle + GitOps + Zero-Trust + Autonomy 层面的盲点补充
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9. 第四轮深度审计——Economics + Lifecycle + GitOps + Zero-Trust + Autonomy 层面的盲点补充

@@ -3,6 +3,7 @@ module_id: KE-084
 status: active
 title: 1.3 责任边界（本文档不管什么）
 category: documentation
+ttl: permanent
 ---
 
 # 1.3 责任边界（本文档不管什么）

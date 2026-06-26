@@ -3,6 +3,7 @@ module_id: KE-1839
 status: active
 title: 2.252 FLE Operational Ontology Model - fle_operational_ontology.py (🆕 v0.23.0 -
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.252 FLE Operational Ontology Model - fle_operational_ontology.py (🆕 v0.23.0 -

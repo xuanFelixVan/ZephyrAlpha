@@ -2,6 +2,7 @@
 module_id: KE-970
 title: 6. 废弃级联
 category: governance_rule
+ttl: permanent
 ---
 
 # 6. 废弃级联

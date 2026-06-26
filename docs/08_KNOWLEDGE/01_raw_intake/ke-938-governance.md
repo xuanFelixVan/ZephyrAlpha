@@ -2,6 +2,7 @@
 module_id: KE-860
 title: 3.2 手动检查工具
 category: governance
+ttl: permanent
 ---
 
 # 3.2 手动检查工具

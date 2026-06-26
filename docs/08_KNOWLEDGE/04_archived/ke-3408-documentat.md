@@ -2,6 +2,7 @@
 module_id: KE-3283
 title: 4.1 微前端拓扑
 category: documentation
+ttl: permanent
 ---
 
 # 4.1 微前端拓扑

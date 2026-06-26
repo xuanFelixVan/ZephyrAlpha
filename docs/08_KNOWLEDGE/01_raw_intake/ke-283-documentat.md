@@ -2,6 +2,7 @@
 module_id: KE-261
 title: 3.2 分类矩阵（按实体）
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 分类矩阵（按实体）

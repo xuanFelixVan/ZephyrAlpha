@@ -3,6 +3,7 @@ module_id: KE-958
 status: active
 title: 5.3 SLA 与格式要求
 category: governance_rule
+ttl: permanent
 ---
 
 # 5.3 SLA 与格式要求

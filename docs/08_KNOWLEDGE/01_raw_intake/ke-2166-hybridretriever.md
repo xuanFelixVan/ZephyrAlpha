@@ -3,6 +3,7 @@ module_id: KE-2074--------hybridretriever-001
 status: active
 title: 3.2 混合检索架构（HybridRetriever）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 混合检索架构（HybridRetriever）

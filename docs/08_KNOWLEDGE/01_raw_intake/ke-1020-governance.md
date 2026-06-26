@@ -2,6 +2,7 @@
 module_id: KE-941
 title: 5.1 受控词表
 category: governance_rule
+ttl: permanent
 ---
 
 # 5.1 受控词表

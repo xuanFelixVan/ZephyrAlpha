@@ -3,6 +3,7 @@ module_id: KE-643
 status: active
 title: Step 3：运行分析管线
 category: documentation
+ttl: permanent
 ---
 
 # Step 3：运行分析管线

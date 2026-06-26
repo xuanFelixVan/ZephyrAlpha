@@ -3,6 +3,7 @@ module_id: KE-041------canonical-ssot----arc-006
 status: active
 title: 6.9 架构数据 Canonical SSoT 铁律（Architecture Data Canonical SSoT Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.9 架构数据 Canonical SSoT 铁律（Architecture Data Canonical SSoT Mandate）

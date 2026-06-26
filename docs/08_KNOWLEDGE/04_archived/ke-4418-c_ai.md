@@ -2,6 +2,7 @@
 module_id: KE-4254
 title: C. AI 执行可靠性
 category: module_blueprint
+ttl: permanent
 ---
 
 # C. AI 执行可靠性

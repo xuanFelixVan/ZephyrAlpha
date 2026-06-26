@@ -3,6 +3,7 @@ module_id: KE-1104
 status: active
 title: COND-004：生产数据源异常时必须执行回退流程
 category: governance
+ttl: permanent
 ---
 
 # COND-004：生产数据源异常时必须执行回退流程

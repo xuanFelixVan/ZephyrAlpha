@@ -3,6 +3,7 @@ module_id: KE-1979----------------24-3--56-000
 status: active
 title: 3. 蓝图-实现漂移检测（蓝图 §24.3 #56）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 蓝图-实现漂移检测（蓝图 §24.3 #56）

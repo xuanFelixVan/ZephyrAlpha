@@ -3,6 +3,7 @@ module_id: KE-1622
 status: active
 title: 2. PipelineAgentBridge
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. PipelineAgentBridge

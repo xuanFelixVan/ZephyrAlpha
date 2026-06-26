@@ -3,6 +3,7 @@ module_id: KE-1861
 status: active
 title: 2.3 氛围编程社区
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 氛围编程社区

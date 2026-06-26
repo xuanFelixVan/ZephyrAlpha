@@ -3,6 +3,7 @@ module_id: KE-2643------------6-1-000
 status: active
 title: DB-025-0020：源码文件清单验证——§6.1 七份源码完整绝对路径确认
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0020：源码文件清单验证——§6.1 七份源码完整绝对路径确认

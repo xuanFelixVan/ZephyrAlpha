@@ -2,6 +2,7 @@
 module_id: KE-4206
 title: 盲点追溯 — 78/78 条
 category: module_blueprint
+ttl: permanent
 ---
 
 # 盲点追溯 — 78/78 条

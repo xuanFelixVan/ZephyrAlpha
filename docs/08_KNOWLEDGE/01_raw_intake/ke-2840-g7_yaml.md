@@ -3,6 +3,7 @@ module_id: KE-2742
 status: active
 title: G7 YAML 规则
 category: module_blueprint
+ttl: permanent
 ---
 
 # G7 YAML 规则

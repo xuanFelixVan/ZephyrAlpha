@@ -2,6 +2,7 @@
 module_id: KE-389------adr-002
 title: 5. Key ADR summary / 关键 ADR 汇总
 category: documentation
+ttl: permanent
 ---
 
 # 5. Key ADR summary / 关键 ADR 汇总

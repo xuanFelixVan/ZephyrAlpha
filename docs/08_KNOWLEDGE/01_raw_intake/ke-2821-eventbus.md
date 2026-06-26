@@ -3,6 +3,7 @@ module_id: KE-2724
 status: active
 title: EventBus 监听
 category: module_blueprint
+ttl: permanent
 ---
 
 # EventBus 监听

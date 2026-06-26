@@ -2,6 +2,7 @@
 module_id: KE-1437-----5-000
 title: 12.4 Adjust Strategy P0（遗漏 #5）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.4 Adjust Strategy P0（遗漏 #5）

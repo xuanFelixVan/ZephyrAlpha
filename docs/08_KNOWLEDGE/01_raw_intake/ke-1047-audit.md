@@ -3,6 +3,7 @@ module_id: KE-963
 status: active
 title: 5.6 `09_audit/`
 category: governance
+ttl: permanent
 ---
 
 # 5.6 `09_audit/`

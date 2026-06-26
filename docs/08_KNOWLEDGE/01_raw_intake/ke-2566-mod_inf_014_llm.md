@@ -3,6 +3,7 @@ module_id: KE-2471----------mod-inf-014-llm--000
 status: active
 title: 8.10 跨模块集成补充——MOD-INF-014 LLM Security
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.10 跨模块集成补充——MOD-INF-014 LLM Security

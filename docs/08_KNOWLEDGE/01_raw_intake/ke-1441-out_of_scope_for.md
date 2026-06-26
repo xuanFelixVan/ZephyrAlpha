@@ -2,6 +2,7 @@
 module_id: KE-1351------out-of-scope-for-v0--000
 title: 10.2 明确不做（Out of Scope for v0.1.0）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.2 明确不做（Out of Scope for v0.1.0）

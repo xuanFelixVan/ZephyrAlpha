@@ -3,6 +3,7 @@ module_id: KE-585
 status: active
 title: D-TEST：架构守卫与测试适配度
 category: documentation
+ttl: permanent
 ---
 
 # D-TEST：架构守卫与测试适配度

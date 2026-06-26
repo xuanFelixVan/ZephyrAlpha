@@ -2,6 +2,7 @@
 module_id: KE-2466
 title: 8.1 角色定义
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.1 角色定义

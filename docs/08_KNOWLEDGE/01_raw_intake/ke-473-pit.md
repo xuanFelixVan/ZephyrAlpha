@@ -2,6 +2,7 @@
 module_id: KE-425---pit-000
 title: 5.4 与 PIT 的关系
 category: documentation
+ttl: permanent
 ---
 
 # 5.4 与 PIT 的关系

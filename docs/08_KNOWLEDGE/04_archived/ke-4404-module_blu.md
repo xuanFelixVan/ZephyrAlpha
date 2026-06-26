@@ -2,6 +2,7 @@
 module_id: KE-4240
 title: 9.4 问题模式分析
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.4 问题模式分析

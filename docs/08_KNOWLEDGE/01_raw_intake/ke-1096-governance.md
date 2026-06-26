@@ -2,6 +2,7 @@
 module_id: KE-1011
 title: 7.2 审计判定速查表
 category: governance_rule
+ttl: permanent
 ---
 
 # 7.2 审计判定速查表

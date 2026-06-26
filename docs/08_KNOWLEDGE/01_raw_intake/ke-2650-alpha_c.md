@@ -3,6 +3,7 @@ module_id: KE-2555--------------c-004
 status: active
 title: ⛔ Alpha 因子层 — 禁止施工 · C 轨占位蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # ⛔ Alpha 因子层 — 禁止施工 · C 轨占位蓝图

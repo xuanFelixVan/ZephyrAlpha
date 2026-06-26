@@ -2,6 +2,7 @@
 module_id: KE-1452
 title: 13. 脚本系统运维与自我监控
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13. 脚本系统运维与自我监控

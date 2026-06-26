@@ -3,6 +3,7 @@ module_id: KE-2525
 status: active
 title: 9.5 Zero-Trust Skill Architecture
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.5 Zero-Trust Skill Architecture

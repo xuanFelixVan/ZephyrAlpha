@@ -3,6 +3,7 @@ module_id: KE-3062
 status: active
 title: Phase D 不变量回归
 category: session_log
+ttl: permanent
 ---
 
 # Phase D 不变量回归

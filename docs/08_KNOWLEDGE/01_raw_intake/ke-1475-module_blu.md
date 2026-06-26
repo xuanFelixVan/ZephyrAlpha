@@ -3,6 +3,7 @@ module_id: KE-1385
 status: active
 title: 11.1 异常层级
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.1 异常层级

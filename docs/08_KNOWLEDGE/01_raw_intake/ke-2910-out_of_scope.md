@@ -3,6 +3,7 @@ module_id: KE-2810
 status: active
 title: Out-of-Scope
 category: module_blueprint
+ttl: permanent
 ---
 
 # Out-of-Scope

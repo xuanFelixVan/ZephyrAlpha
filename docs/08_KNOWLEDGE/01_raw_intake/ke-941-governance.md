@@ -3,6 +3,7 @@ module_id: KE-863----2-003
 status: active
 title: 3.3 路径 2：注册表查询 [次选]
 category: governance
+ttl: permanent
 ---
 
 # 3.3 路径 2：注册表查询 [次选]

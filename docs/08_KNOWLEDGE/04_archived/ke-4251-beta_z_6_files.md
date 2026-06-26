@@ -2,6 +2,7 @@
 module_id: KE-4092
 title: 4. beta z (6 Files) — 原子性与自适应
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. beta z (6 Files) — 原子性与自适应

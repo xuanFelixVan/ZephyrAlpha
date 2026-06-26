@@ -3,6 +3,7 @@ module_id: KE-1824------------d-022-17-004
 status: active
 title: 2.24 VIGIL式自愈维护运行时（决策 D-022-17）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.24 VIGIL式自愈维护运行时（决策 D-022-17）

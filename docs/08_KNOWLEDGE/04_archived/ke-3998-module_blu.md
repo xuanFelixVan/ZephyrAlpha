@@ -2,6 +2,7 @@
 module_id: KE-3845
 title: 12.4 回滚方案
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.4 回滚方案

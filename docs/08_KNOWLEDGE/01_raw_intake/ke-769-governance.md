@@ -3,6 +3,7 @@ module_id: KE-692
 status: active
 title: 1.2 责任范围（本标准管什么）
 category: governance
+ttl: permanent
 ---
 
 # 1.2 责任范围（本标准管什么）

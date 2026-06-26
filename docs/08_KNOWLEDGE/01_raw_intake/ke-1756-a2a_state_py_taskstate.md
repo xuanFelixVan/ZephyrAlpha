@@ -3,6 +3,7 @@ module_id: KE-1665---taskstate-000
 status: active
 title: 2.1 a2a_state.py — TaskState 枚举
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 a2a_state.py — TaskState 枚举

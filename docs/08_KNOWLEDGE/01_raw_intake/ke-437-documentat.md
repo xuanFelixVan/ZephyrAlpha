@@ -3,6 +3,7 @@ module_id: KE-394
 status: active
 title: 5. 文件命名规范
 category: documentation
+ttl: permanent
 ---
 
 # 5. 文件命名规范

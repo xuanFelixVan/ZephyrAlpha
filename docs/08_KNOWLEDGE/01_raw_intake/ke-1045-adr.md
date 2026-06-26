@@ -3,6 +3,7 @@ module_id: KE-961
 status: active
 title: 5.5 ADR 引用
 category: governance
+ttl: permanent
 ---
 
 # 5.5 ADR 引用

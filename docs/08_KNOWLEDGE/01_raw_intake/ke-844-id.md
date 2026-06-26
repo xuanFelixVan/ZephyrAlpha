@@ -3,6 +3,7 @@ module_id: KE-766----id-000
 status: active
 title: 检查项 2：模块 ID 验证
 category: governance
+ttl: permanent
 ---
 
 # 检查项 2：模块 ID 验证

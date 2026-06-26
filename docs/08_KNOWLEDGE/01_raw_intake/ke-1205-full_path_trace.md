@@ -3,6 +3,7 @@ module_id: KE-1119--------full-path-trace-003
 status: active
 title: DOC-004：完整路径引用（Full Path Traceability）
 category: governance
+ttl: permanent
 ---
 
 # DOC-004：完整路径引用（Full Path Traceability）

@@ -3,6 +3,7 @@ module_id: KE-035---schema-version-001
 status: active
 title: 6.6.3 version 与 schema_version 规范
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.6.3 version 与 schema_version 规范

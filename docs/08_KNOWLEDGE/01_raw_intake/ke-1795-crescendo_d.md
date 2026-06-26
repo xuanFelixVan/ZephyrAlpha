@@ -3,6 +3,7 @@ module_id: KE-1704--------crescendo------d-0-005
 status: active
 title: 2.13 心理说服防御与Crescendo检测（决策 D-022-07）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.13 心理说服防御与Crescendo检测（决策 D-022-07）

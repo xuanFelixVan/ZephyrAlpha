@@ -3,6 +3,7 @@ module_id: KE-2295-----schema-003
 status: active
 title: 5.2 数据库 Schema
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 数据库 Schema

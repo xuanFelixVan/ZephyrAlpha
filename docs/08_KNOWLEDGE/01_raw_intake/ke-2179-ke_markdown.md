@@ -3,6 +3,7 @@ module_id: KE-2087--------markdown-004
 status: active
 title: 3.2.2 KE 物理存储格式（Markdown）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2.2 KE 物理存储格式（Markdown）

@@ -2,6 +2,7 @@
 module_id: KE-109
 title: 10.1 边界四象限
 category: documentation
+ttl: permanent
 ---
 
 # 10.1 边界四象限

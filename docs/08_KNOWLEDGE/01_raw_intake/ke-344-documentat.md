@@ -3,6 +3,7 @@ module_id: KE-344
 status: active
 title: 4.1 架构定位
 category: documentation
+ttl: permanent
 ---
 
 # 4.1 架构定位

@@ -3,6 +3,7 @@ module_id: KE-2860
 status: active
 title: Pydantic 严格模式示例
 category: module_blueprint
+ttl: permanent
 ---
 
 # Pydantic 严格模式示例

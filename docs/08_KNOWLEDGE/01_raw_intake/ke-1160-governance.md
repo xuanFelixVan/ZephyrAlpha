@@ -3,6 +3,7 @@ module_id: KE-1075
 status: active
 title: archived
 category: governance
+ttl: permanent
 ---
 
 # archived

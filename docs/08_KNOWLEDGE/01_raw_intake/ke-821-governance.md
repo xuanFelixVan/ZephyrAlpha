@@ -3,6 +3,7 @@ module_id: KE-744
 status: active
 title: 15. 完整性自检清单
 category: governance
+ttl: permanent
 ---
 
 # 15. 完整性自检清单

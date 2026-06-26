@@ -3,6 +3,7 @@ module_id: KE-2893---core-001
 status: active
 title: Shared + Core 蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # Shared + Core 蓝图

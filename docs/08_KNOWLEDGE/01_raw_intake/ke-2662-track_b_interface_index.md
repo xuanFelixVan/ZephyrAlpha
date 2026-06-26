@@ -3,6 +3,7 @@ module_id: KE-2567
 status: active
 title: B 轨接口规范 — 目录索引
 category: module_blueprint
+ttl: permanent
 ---
 
 # B 轨接口规范 — 目录索引

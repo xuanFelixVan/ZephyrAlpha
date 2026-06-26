@@ -2,6 +2,7 @@
 module_id: KE-598
 title: 资料性引用（Informative）
 category: documentation
+ttl: permanent
 ---
 
 # 资料性引用（Informative）

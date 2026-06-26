@@ -2,6 +2,7 @@
 module_id: KE-4357---------lines-26-39-000
 title: G-CT 契约下游锚点 (lines 26-39)
 category: module_blueprint
+ttl: permanent
 ---
 
 # G-CT 契约下游锚点 (lines 26-39)

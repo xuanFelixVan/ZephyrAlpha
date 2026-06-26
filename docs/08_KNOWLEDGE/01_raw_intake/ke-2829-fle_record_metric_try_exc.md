@@ -3,6 +3,7 @@ module_id: KE-2731---record-metric----try-exc-003
 status: active
 title: 调 FLE 的 record_metric 必须 try/except，不抛到业务层
 category: module_blueprint
+ttl: permanent
 ---
 
 # 调 FLE 的 record_metric 必须 try/except，不抛到业务层

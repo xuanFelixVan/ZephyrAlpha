@@ -3,6 +3,7 @@ module_id: KE-2897
 status: active
 title: Silent Failure Detection (D-019-24)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Silent Failure Detection (D-019-24)

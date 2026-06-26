@@ -3,6 +3,7 @@ module_id: KE-140
 status: active
 title: 13. 事故后复盘
 category: documentation
+ttl: permanent
 ---
 
 # 13. 事故后复盘

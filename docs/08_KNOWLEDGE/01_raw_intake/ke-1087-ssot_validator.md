@@ -3,6 +3,7 @@ module_id: KE-1002---ssot-validator-000
 status: active
 title: 7.1 与 SSoT Validator 的关系
 category: governance
+ttl: permanent
 ---
 
 # 7.1 与 SSoT Validator 的关系

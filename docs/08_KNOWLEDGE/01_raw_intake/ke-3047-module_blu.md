@@ -3,6 +3,7 @@ module_id: KE-2946
 status: active
 title: 模块骨架 (TASK-0001)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 模块骨架 (TASK-0001)

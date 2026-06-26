@@ -2,6 +2,7 @@
 module_id: KE-4033--------8-000
 title: 3. 集成目标（§8）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 集成目标（§8）

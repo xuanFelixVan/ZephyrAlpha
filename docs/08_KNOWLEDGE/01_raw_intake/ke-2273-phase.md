@@ -2,6 +2,7 @@
 module_id: KE-2179-----phase-003
 title: 4. 施工 Phase 规划
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. 施工 Phase 规划

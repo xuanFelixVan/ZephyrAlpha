@@ -2,6 +2,7 @@
 module_id: KE-3658
 title: ARG-002：评审必须使用清单
 category: governance
+ttl: permanent
 ---
 
 # ARG-002：评审必须使用清单

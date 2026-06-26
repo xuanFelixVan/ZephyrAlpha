@@ -3,6 +3,7 @@ module_id: KE-2439
 status: active
 title: 7.3 质量标准基线的变更控制
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.3 质量标准基线的变更控制

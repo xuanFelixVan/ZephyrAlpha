@@ -3,6 +3,7 @@ module_id: KE-568
 status: active
 title: 8. Architecture Runway / 架构预留通道
 category: documentation
+ttl: permanent
 ---
 
 # 8. Architecture Runway / 架构预留通道

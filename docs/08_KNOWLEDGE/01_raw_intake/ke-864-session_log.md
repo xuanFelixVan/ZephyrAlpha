@@ -3,6 +3,7 @@ module_id: KE-786
 status: active
 title: 2.1 Session Log
 category: governance
+ttl: permanent
 ---
 
 # 2.1 Session Log

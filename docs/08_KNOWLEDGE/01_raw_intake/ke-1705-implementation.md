@@ -3,6 +3,7 @@ module_id: KE-1615
 status: active
 title: 2. Implementation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Implementation

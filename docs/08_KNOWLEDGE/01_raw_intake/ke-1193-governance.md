@@ -3,6 +3,7 @@ module_id: KE-1107
 status: active
 title: Cursor 崩溃 / 无响应
 category: governance
+ttl: permanent
 ---
 
 # Cursor 崩溃 / 无响应

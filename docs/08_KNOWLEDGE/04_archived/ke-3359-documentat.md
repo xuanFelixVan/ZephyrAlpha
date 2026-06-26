@@ -2,6 +2,7 @@
 module_id: KE-3238
 title: 核心术语（21 个）
 category: documentation
+ttl: permanent
 ---
 
 # 核心术语（21 个）

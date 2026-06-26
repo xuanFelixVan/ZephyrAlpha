@@ -3,6 +3,7 @@ module_id: KE-1068
 status: active
 title: AI 幻觉自检清单
 category: governance
+ttl: permanent
 ---
 
 # AI 幻觉自检清单

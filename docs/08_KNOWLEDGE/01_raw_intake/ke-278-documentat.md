@@ -3,6 +3,7 @@ module_id: KE-256
 status: active
 title: 3.16 代码级强制规则
 category: documentation
+ttl: permanent
 ---
 
 # 3.16 代码级强制规则

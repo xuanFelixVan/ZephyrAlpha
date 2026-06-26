@@ -2,6 +2,7 @@
 module_id: KE-4177
 title: 6.5 关键决策建议
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.5 关键决策建议

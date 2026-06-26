@@ -3,6 +3,7 @@ module_id: KE-1344----a-trae-ide-000
 status: active
 title: 10.1 模式 A：Trae IDE 对话驱动
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.1 模式 A：Trae IDE 对话驱动

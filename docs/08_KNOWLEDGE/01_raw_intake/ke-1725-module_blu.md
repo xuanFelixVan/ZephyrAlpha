@@ -3,6 +3,7 @@ module_id: KE-1635
 status: active
 title: 2. 到需要做什么（回顾大盘 + 用户原意）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 到需要做什么（回顾大盘 + 用户原意）

@@ -2,6 +2,7 @@
 module_id: KE-4422
 title: 模块清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 模块清单

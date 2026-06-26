@@ -3,6 +3,7 @@ module_id: KE-1826
 status: active
 title: 2.241 Owner Causal Trace Query Interface - owner_why_query_interface.py (🆕 v0.22
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.241 Owner Causal Trace Query Interface - owner_why_query_interface.py (🆕 v0.22

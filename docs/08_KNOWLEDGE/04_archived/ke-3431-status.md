@@ -2,6 +2,7 @@
 module_id: KE-3303----status-000
 title: 4.4 三域 status 对照表
 category: documentation
+ttl: permanent
 ---
 
 # 4.4 三域 status 对照表

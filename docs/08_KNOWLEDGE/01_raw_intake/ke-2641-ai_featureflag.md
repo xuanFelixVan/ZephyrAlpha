@@ -3,6 +3,7 @@ module_id: KE-2546------featureflag-002
 status: active
 title: AI 施工约定（FeatureFlag）
 category: module_blueprint
+ttl: permanent
 ---
 
 # AI 施工约定（FeatureFlag）

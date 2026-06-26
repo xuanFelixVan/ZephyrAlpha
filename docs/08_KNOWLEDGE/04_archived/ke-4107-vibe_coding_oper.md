@@ -2,6 +2,7 @@
 module_id: KE-3953------------vibe-coding-oper-000
 title: 18. 氛围编程运营卓越性（Vibe Coding Operational Excellence）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 18. 氛围编程运营卓越性（Vibe Coding Operational Excellence）

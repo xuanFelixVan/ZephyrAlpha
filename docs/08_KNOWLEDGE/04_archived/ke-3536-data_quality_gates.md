@@ -2,6 +2,7 @@
 module_id: KE-3398
 title: 8. Data Quality Gates / 数据质量门禁
 category: documentation
+ttl: permanent
 ---
 
 # 8. Data Quality Gates / 数据质量门禁

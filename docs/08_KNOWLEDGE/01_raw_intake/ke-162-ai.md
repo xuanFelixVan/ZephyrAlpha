@@ -3,6 +3,7 @@ module_id: KE-148
 status: active
 title: §16 AI 自治权限标注
 category: documentation
+ttl: permanent
 ---
 
 # §16 AI 自治权限标注

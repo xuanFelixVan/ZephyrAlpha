@@ -3,6 +3,7 @@ module_id: KE-1829
 status: active
 title: 2.246 Data Pipeline Backpressure & Buffer Manager - data_pipeline_backpressure.p
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.246 Data Pipeline Backpressure & Buffer Manager - data_pipeline_backpressure.p

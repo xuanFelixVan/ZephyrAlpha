@@ -3,6 +3,7 @@ module_id: KE-1178
 status: active
 title: MTH-003：目标优先原则
 category: governance
+ttl: permanent
 ---
 
 # MTH-003：目标优先原则

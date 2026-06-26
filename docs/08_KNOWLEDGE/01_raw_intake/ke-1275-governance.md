@@ -3,6 +3,7 @@ module_id: KE-1188
 status: active
 title: 与 MTH-011（内容冗余审计）的关系
 category: governance
+ttl: permanent
 ---
 
 # 与 MTH-011（内容冗余审计）的关系

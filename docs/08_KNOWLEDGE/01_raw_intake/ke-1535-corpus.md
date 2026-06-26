@@ -2,6 +2,7 @@
 module_id: KE-1445----corpus-000
 title: 12.7 红队 corpus（独立目录，持续追加）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.7 红队 corpus（独立目录，持续追加）

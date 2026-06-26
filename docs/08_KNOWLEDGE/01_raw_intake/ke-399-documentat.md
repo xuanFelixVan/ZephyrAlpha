@@ -3,6 +3,7 @@ module_id: KE-363
 status: active
 title: 4.5.3 为什么标识符用大写？
 category: documentation
+ttl: permanent
 ---
 
 # 4.5.3 为什么标识符用大写？

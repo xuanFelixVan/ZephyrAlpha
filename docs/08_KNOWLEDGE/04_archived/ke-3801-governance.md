@@ -2,6 +2,7 @@
 module_id: KE-3650
 title: ACS-001：最小权限原则
 category: governance
+ttl: permanent
 ---
 
 # ACS-001：最小权限原则

@@ -3,6 +3,7 @@ module_id: KE-2896
 status: active
 title: signal-generation-core
 category: module_blueprint
+ttl: permanent
 ---
 
 # signal-generation-core

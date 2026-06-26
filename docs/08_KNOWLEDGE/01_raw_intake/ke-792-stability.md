@@ -2,6 +2,7 @@
 module_id: KE-715----stability-003
 title: 10.1 不同 stability
 category: governance_rule
+ttl: permanent
 ---
 
 # 10.1 不同 stability

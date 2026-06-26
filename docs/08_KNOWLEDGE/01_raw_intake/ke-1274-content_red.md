@@ -3,6 +3,7 @@ module_id: KE-1187------------content-red-003
 status: active
 title: MTH-011：内容冗余审计三分类法（Content Redundancy Audit）
 category: governance
+ttl: permanent
 ---
 
 # MTH-011：内容冗余审计三分类法（Content Redundancy Audit）

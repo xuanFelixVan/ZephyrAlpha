@@ -2,6 +2,7 @@
 module_id: KE-2690
 title: DB-025-0072：T-DB-006——dead_letter_queue
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0072：T-DB-006——dead_letter_queue

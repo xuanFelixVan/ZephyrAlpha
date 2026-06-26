@@ -3,6 +3,7 @@ module_id: KE-469
 status: active
 title: 6.4 beta 升级触发
 category: documentation
+ttl: permanent
 ---
 
 # 6.4 beta 升级触发

@@ -3,6 +3,7 @@ module_id: KE-2329-------------placeholder-003
 status: active
 title: 6. 文件清单与落位（不留 placeholder）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 文件清单与落位（不留 placeholder）

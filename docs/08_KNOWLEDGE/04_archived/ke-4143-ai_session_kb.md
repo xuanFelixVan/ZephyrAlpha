@@ -2,6 +2,7 @@
 module_id: KE-3988--------ai-session----kb-001
 title: 2.1 必读文档（新 AI session 接手 KB 模块时按此顺序）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 必读文档（新 AI session 接手 KB 模块时按此顺序）

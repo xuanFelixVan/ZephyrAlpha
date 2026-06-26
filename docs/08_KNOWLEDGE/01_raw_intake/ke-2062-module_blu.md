@@ -2,6 +2,7 @@
 module_id: KE-1971-------10-000
 title: §29 产出物目录（10行）
 category: module_blueprint
+ttl: permanent
 ---
 
 # §29 产出物目录（10行）

@@ -3,6 +3,7 @@ module_id: KE-747
 status: active
 title: 15.1 AI 可直接执行的规则
 category: governance
+ttl: permanent
 ---
 
 # 15.1 AI 可直接执行的规则

@@ -3,6 +3,7 @@ module_id: KE-1168--------mod-p3-003
 status: active
 title: MAD-003：依赖关系合规（MOD-P3）
 category: governance
+ttl: permanent
 ---
 
 # MAD-003：依赖关系合规（MOD-P3）

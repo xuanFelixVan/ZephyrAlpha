@@ -2,6 +2,7 @@
 module_id: KE-124---14-------experimental-000
 title: 11.1 按 14 层资源预算（experimental 单机）
 category: documentation
+ttl: permanent
 ---
 
 # 11.1 按 14 层资源预算（experimental 单机）

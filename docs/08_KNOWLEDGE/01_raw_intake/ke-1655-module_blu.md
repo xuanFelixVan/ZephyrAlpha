@@ -2,6 +2,7 @@
 module_id: KE-1565
 title: 16.8 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.8 施工状态

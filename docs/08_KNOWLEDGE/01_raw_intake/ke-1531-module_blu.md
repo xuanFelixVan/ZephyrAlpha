@@ -2,6 +2,7 @@
 module_id: KE-1441
 title: 12.5 施工完成标准
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.5 施工完成标准

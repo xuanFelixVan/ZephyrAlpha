@@ -3,6 +3,7 @@ module_id: KE-1430
 status: active
 title: 12.3 负面后果
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.3 负面后果

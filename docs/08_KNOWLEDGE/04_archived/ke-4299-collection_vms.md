@@ -2,6 +2,7 @@
 module_id: KE-4140-----collection---------vms-005
 title: 5.2 过渡期 Collection 映射（现有 → VMS 终态）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 过渡期 Collection 映射（现有 → VMS 终态）

@@ -2,6 +2,7 @@
 module_id: KE-3957--------chaos-engineering--000
 title: 18.5 故障注入测试（Chaos Engineering for SQLite）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 18.5 故障注入测试（Chaos Engineering for SQLite）

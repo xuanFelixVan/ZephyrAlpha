@@ -3,6 +3,7 @@ module_id: KE-1748----module-registry-yaml-000
 status: active
 title: 2.2 更新 module-registry.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 更新 module-registry.yaml

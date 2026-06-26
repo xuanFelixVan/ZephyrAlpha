@@ -98,3 +98,19 @@ deprecated_values:
   - value: session
     deprecated_in: "2.0.0"
     reason: "0 使用，是 task_bound 子集。AI 产出必然为任务服务"
+
+# ── ttl 与 KE status 的正交关系（防漂移文档）──
+# ttl（本词表）：文件级保留策略——文件该留多久。
+#   permanent = 永久保留（永久区文件）
+#   task_bound = 任务绑定（过程性文件，完成即删）
+#
+# KE status（kb_repo.py 状态机）：知识级生命周期——知识条目处于哪个阶段。
+#   DRAFT→SUBMITTED→REVIEWED→ACCEPTED→INDEXED→VERIFIED→DEPRECATED→SUPERSEDED→ARCHIVED
+#
+# 两者正交：
+#   - 一个 KE 文件 ttl=permanent（文件永久留），但 KE status=ARCHIVED（知识已归档）
+#   - 即：文件保留与知识生命周期是两个独立维度，不可互相替代
+#   - 文件即使 KE status=ARCHIVED，文件本身 ttl=permanent 仍永久保留（供审计追溯）
+#   - ttl 回答"文件留多久"；KE status 回答"知识处于什么阶段"
+#
+# 设计依据：ISO 15489（保留策略与业务生命周期分离）+ ARMA TR-02（正交元数据维度）

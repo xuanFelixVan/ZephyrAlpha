@@ -3,6 +3,7 @@ module_id: KE-1705-------stream-abort-guard-000
 status: active
 title: 2.13 事中控制——Stream Abort Guard
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.13 事中控制——Stream Abort Guard

@@ -3,6 +3,7 @@ module_id: KE-2506------python-000
 status: active
 title: 9.1 异常层级（Python 库）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.1 异常层级（Python 库）

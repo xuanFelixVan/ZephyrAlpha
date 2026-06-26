@@ -3,6 +3,7 @@ module_id: KE-2334--------vms-006
 status: active
 title: 6. 架构分层——VMS 内部模块分解
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 架构分层——VMS 内部模块分解

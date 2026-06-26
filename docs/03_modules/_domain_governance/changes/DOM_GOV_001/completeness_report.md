@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-023
+ttl: permanent
 ---
 
 # 蓝图分解完整性报告 · 二次审计版

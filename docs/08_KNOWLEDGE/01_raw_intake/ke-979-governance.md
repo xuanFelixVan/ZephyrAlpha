@@ -3,6 +3,7 @@ module_id: KE-901
 status: active
 title: 4.2 分类规则
 category: governance_rule
+ttl: permanent
 ---
 
 # 4.2 分类规则

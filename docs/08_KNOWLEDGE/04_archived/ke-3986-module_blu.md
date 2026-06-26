@@ -2,6 +2,7 @@
 module_id: KE-3833
 title: 12.1 源文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 源文件

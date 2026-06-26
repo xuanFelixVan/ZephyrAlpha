@@ -2,6 +2,7 @@
 module_id: KE-3834
 title: 12.1 风险矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 风险矩阵

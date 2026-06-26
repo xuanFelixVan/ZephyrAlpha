@@ -2,6 +2,7 @@
 module_id: KE-3394
 title: 7.5.1 前端模块三平面归属快查表
 category: documentation
+ttl: permanent
 ---
 
 # 7.5.1 前端模块三平面归属快查表

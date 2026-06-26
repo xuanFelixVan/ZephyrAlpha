@@ -3,6 +3,7 @@ module_id: KE-1796----------ibac------d------000
 status: active
 title: 2.22 意图绑定访问控制（IBAC + 横切面D——决策 D-018-20）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.22 意图绑定访问控制（IBAC + 横切面D——决策 D-018-20）

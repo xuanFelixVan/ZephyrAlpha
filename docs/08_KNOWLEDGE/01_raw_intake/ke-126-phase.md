@@ -3,6 +3,7 @@ module_id: KE-126
 status: active
 title: 10.2 Phase 门禁（不可越级）
 category: documentation
+ttl: permanent
 ---
 
 # 10.2 Phase 门禁（不可越级）

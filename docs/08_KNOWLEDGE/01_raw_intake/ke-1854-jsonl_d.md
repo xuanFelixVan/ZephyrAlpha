@@ -3,6 +3,7 @@ module_id: KE-1763-------------------d--003
 status: active
 title: 2.2 JSONL 为唯一真源 + 密码学完整性（决策 D-020-02 + D-020-04）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 JSONL 为唯一真源 + 密码学完整性（决策 D-020-02 + D-020-04）

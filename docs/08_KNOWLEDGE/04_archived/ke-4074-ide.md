@@ -2,6 +2,7 @@
 module_id: KE-3920
 title: 15.2 IDE 能力矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.2 IDE 能力矩阵

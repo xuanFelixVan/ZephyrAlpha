@@ -3,6 +3,7 @@ module_id: KE-491
 status: active
 title: 7.2 跨层数据流路径
 category: documentation
+ttl: permanent
 ---
 
 # 7.2 跨层数据流路径

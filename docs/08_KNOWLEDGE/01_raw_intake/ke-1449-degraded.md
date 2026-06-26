@@ -3,6 +3,7 @@ module_id: KE-1359------degraded-000
 status: active
 title: 10.3 允许的 "degraded" 情况（非安全相关）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.3 允许的 "degraded" 情况（非安全相关）

@@ -2,6 +2,7 @@
 module_id: KE-271
 title: 3.2.3 protocol vs policy 的区别
 category: documentation
+ttl: permanent
 ---
 
 # 3.2.3 protocol vs policy 的区别

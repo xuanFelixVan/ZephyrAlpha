@@ -3,6 +3,7 @@ module_id: KE-2155
 status: active
 title: 3.9 #33: CapacityTestingHarness
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.9 #33: CapacityTestingHarness

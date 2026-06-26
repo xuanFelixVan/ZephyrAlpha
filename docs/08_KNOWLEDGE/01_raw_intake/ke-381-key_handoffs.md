@@ -2,6 +2,7 @@
 module_id: KE-345
 title: 4.3 Key handoffs / 关键交接点
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 Key handoffs / 关键交接点

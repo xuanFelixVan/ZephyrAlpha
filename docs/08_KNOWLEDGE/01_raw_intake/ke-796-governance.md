@@ -2,6 +2,7 @@
 module_id: KE-719
 title: 11. 审查周期
 category: governance
+ttl: permanent
 ---
 
 # 11. 审查周期

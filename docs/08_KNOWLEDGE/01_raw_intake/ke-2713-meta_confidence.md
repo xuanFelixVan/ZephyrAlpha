@@ -2,6 +2,7 @@
 module_id: KE-2616
 title: D-022-10 Meta-Confidence实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-10 Meta-Confidence实现

@@ -3,6 +3,7 @@ module_id: KE-823
 status: active
 title: 2.5 知识库条目
 category: governance
+ttl: permanent
 ---
 
 # 2.5 知识库条目

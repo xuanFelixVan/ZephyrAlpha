@@ -3,6 +3,7 @@ module_id: KE-2298
 status: active
 title: 5.2 核心防御机制
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 核心防御机制

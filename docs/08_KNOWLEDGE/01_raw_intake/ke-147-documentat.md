@@ -2,6 +2,7 @@
 module_id: KE-134
 title: 12.2 成本预警机制
 category: documentation
+ttl: permanent
 ---
 
 # 12.2 成本预警机制

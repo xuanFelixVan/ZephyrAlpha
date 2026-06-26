@@ -3,6 +3,7 @@ module_id: KE-1747----defense-in-depth--d-019-000
 status: active
 title: 2.2 四层 Defense in Depth (D-019-07)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 四层 Defense in Depth (D-019-07)

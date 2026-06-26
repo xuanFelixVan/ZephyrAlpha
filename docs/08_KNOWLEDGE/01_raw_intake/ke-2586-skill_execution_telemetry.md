@@ -3,6 +3,7 @@ module_id: KE-2491
 status: active
 title: 8.5 Skill Execution Telemetry Standard
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.5 Skill Execution Telemetry Standard

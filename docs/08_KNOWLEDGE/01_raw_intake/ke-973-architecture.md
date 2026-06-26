@@ -2,6 +2,7 @@
 module_id: KE-895---------21-003
 title: 4.1 A 家族：机构标配（21 个）
 category: governance
+ttl: permanent
 ---
 
 # 4.1 A 家族：机构标配（21 个）

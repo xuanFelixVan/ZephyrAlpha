@@ -2,6 +2,7 @@
 module_id: KE-4397
 title: Phase 1：基础设施对齐
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase 1：基础设施对齐

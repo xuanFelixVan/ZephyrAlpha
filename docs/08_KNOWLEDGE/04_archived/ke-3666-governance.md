@@ -2,6 +2,7 @@
 module_id: KE-3521
 title: 2.1 三层定义速查
 category: governance
+ttl: permanent
 ---
 
 # 2.1 三层定义速查

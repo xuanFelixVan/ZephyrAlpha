@@ -3,6 +3,7 @@ module_id: KE-2535
 status: active
 title: Adversarial Robustness (D-019-46)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Adversarial Robustness (D-019-46)

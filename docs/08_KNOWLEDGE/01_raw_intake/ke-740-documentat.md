@@ -3,6 +3,7 @@ module_id: KE-664
 status: active
 title: ZephyrAlpha 标准文档模板
 category: documentation
+ttl: permanent
 ---
 
 # ZephyrAlpha 标准文档模板

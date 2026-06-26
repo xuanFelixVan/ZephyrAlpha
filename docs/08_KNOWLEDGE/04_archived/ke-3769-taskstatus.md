@@ -2,6 +2,7 @@
 module_id: KE-3618----taskstatus-000
 title: 6.4 与 `TaskStatus` 十状态的交互
 category: governance
+ttl: permanent
 ---
 
 # 6.4 与 `TaskStatus` 十状态的交互

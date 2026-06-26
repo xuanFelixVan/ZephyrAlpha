@@ -3,6 +3,7 @@ module_id: KE-1546
 status: active
 title: 鍏€佽妯￠獙璇侊紙1500 涓ā鍧楋級
 category: module_blueprint
+ttl: permanent
 ---
 
 # 鍏€佽妯￠獙璇侊紙1500 涓ā鍧楋級

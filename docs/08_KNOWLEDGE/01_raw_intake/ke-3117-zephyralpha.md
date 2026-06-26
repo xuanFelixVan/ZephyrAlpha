@@ -3,6 +3,7 @@ module_id: KE-3016
 status: active
 title: ZephyrAlpha 蓝图效能回顾报告
 category: module_blueprint
+ttl: permanent
 ---
 
 # ZephyrAlpha 蓝图效能回顾报告

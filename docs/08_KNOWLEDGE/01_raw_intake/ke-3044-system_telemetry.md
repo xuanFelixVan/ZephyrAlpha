@@ -3,6 +3,7 @@ module_id: KE-MODULE-BLU-SYSTEM-TELEMETRY-001
 status: active
 title: System Telemetry 蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # System Telemetry 蓝图

@@ -48,7 +48,7 @@ def _make_md(
     category: str = "best_practice",
 ) -> Path:
     body = "这是足够长的测试内容，用于通过最小内容长度检查。" * 5
-    content = f"---\nmodule_id: {module_id}\ntitle: {title}\ncategory: {category}\n---\n\n{body}\n"
+    content = f"---\nmodule_id: {module_id}\ntitle: {title}\ncategory: {category}\nttl: task_bound\n---\n\n{body}\n"
     p = tmp_path / name
     p.write_text(content, encoding="utf-8", newline="\n")
     return p

@@ -2,6 +2,7 @@
 module_id: KE-4374
 title: Module Status
 category: module_blueprint
+ttl: permanent
 ---
 
 # Module Status

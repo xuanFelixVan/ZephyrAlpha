@@ -3,6 +3,7 @@ module_id: KE-1160---------11-006
 status: active
 title: IRN-011：零残留原则（铁律11）
 category: governance
+ttl: permanent
 ---
 
 # IRN-011：零残留原则（铁律11）

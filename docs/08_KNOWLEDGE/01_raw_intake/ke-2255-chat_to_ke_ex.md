@@ -3,6 +3,7 @@ module_id: KE-2161------------chat-to-ke-ex-004
 status: active
 title: 3.9.3 聊天记录→知识提取器（Chat-to-KE Extractor）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.9.3 聊天记录→知识提取器（Chat-to-KE Extractor）

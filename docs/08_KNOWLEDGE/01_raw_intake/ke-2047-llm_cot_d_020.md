@@ -3,6 +3,7 @@ module_id: KE-1956-----cot-------d-020-15-000
 status: active
 title: 2.9 LLM 推理链（CoT）审计（决策 D-020-15）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.9 LLM 推理链（CoT）审计（决策 D-020-15）

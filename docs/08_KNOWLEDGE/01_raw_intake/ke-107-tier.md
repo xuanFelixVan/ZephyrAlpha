@@ -2,6 +2,7 @@
 module_id: KE-098
 title: 1.5.4 Tier 4：已废弃但仍有引用
 category: documentation
+ttl: permanent
 ---
 
 # 1.5.4 Tier 4：已废弃但仍有引用

@@ -3,6 +3,7 @@ module_id: KE-2147--------004
 status: active
 title: 3.7 Escalation Protocol 集成（对接 MOD-INF-022）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.7 Escalation Protocol 集成（对接 MOD-INF-022）

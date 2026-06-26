@@ -3,6 +3,7 @@ module_id: KE-1479
 status: active
 title: 13.3 氛围编程社区 — 五大上下文模式
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.3 氛围编程社区 — 五大上下文模式

@@ -3,6 +3,7 @@ module_id: KE-1738-------------------------d-000
 status: active
 title: 2.19 冷启动策略——零基线状态下的漂移检测引导（决策 D-023-33）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.19 冷启动策略——零基线状态下的漂移检测引导（决策 D-023-33）

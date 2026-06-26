@@ -3,6 +3,7 @@ module_id: KE-2903
 status: active
 title: Skill Topology DAG (D-019-63)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Skill Topology DAG (D-019-63)

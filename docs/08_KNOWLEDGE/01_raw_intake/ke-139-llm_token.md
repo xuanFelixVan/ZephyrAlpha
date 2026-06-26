@@ -2,6 +2,7 @@
 module_id: KE-126
 title: 11.2 LLM Token 预算
 category: documentation
+ttl: permanent
 ---
 
 # 11.2 LLM Token 预算

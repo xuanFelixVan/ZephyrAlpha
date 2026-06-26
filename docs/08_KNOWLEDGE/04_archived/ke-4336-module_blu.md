@@ -2,6 +2,7 @@
 module_id: KE-4176
 title: 6.4 治理脚本
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.4 治理脚本

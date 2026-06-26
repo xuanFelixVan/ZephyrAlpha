@@ -2,6 +2,7 @@
 module_id: KE-128
 title: 11.3 伸缩触发点
 category: documentation
+ttl: permanent
 ---
 
 # 11.3 伸缩触发点

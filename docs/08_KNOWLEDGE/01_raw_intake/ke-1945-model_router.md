@@ -3,6 +3,7 @@ module_id: KE-1854--------model-router-001
 status: active
 title: 2.3 模型路由升级（Model Router）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 模型路由升级（Model Router）

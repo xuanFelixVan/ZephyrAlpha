@@ -3,6 +3,7 @@ module_id: KE-1791
 status: active
 title: 2.216 FLE Self-Health Dashboard - fle_health_dashboard.py (🆕 v0.20.0 - 盲点266 — O
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.216 FLE Self-Health Dashboard - fle_health_dashboard.py (🆕 v0.20.0 - 盲点266 — O

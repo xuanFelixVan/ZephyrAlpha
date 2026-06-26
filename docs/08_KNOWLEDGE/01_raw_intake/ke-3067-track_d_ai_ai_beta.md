@@ -3,6 +3,7 @@ module_id: KE-2966------beta-005
 status: active
 title: Track D：AI-AI 协作知识（beta+ 预留接口）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Track D：AI-AI 协作知识（beta+ 预留接口）

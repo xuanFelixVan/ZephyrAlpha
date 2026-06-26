@@ -3,6 +3,7 @@ module_id: KE-2027----api-000
 status: active
 title: 3.1 公共 API
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 公共 API

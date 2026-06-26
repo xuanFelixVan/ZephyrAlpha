@@ -2,6 +2,7 @@
 module_id: KE-273
 title: 3.2 Container inventory / 容器清单
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 Container inventory / 容器清单

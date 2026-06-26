@@ -2,6 +2,7 @@
 module_id: KE-1242
 title: 核心原则
 category: governance
+ttl: permanent
 ---
 
 # 核心原则

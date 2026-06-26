@@ -3,6 +3,7 @@ module_id: KE-2420---------------shared-core-005
 status: active
 title: 7.1 反向依赖索引 —— 谁依赖 Shared+Core
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.1 反向依赖索引 —— 谁依赖 Shared+Core

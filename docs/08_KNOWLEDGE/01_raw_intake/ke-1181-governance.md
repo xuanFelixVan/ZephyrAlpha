@@ -2,6 +2,7 @@
 module_id: KE-1095
 title: 三、Claude 特种救援触发条件
 category: governance
+ttl: permanent
 ---
 
 # 三、Claude 特种救援触发条件

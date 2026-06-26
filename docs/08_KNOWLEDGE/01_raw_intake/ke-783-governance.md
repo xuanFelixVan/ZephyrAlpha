@@ -3,6 +3,7 @@ module_id: KE-706
 status: active
 title: 1.5 唯一真源声明
 category: governance
+ttl: permanent
 ---
 
 # 1.5 唯一真源声明

@@ -2,6 +2,7 @@
 module_id: KE-1342
 title: 10. 渐进路线
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10. 渐进路线

@@ -2,6 +2,7 @@
 module_id: KE-3413
 title: 9. Activation Triggers（升级触发条件）
 category: documentation
+ttl: permanent
 ---
 
 # 9. Activation Triggers（升级触发条件）

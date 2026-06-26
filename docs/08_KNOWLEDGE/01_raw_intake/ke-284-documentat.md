@@ -2,6 +2,7 @@
 module_id: KE-262
 title: 3.2 合规确认项
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 合规确认项

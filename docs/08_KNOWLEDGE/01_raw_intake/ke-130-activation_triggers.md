@@ -3,6 +3,7 @@ module_id: KE-117
 status: active
 title: §10 Activation Triggers / 激活触发条件
 category: documentation
+ttl: permanent
 ---
 
 # §10 Activation Triggers / 激活触发条件

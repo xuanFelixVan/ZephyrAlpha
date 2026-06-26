@@ -3,6 +3,7 @@ module_id: KE-016
 status: active
 title: 6. AI 施工执行原则
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6. AI 施工执行原则

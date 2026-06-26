@@ -2,6 +2,7 @@
 module_id: KE-4279
 title: D-022-23 系统代码完整性验证链
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-23 系统代码完整性验证链

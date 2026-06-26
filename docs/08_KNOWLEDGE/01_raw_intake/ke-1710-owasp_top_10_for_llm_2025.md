@@ -2,6 +2,7 @@
 module_id: KE-1620
 title: 2. OWASP Top 10 for LLM 2025 完整覆盖矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. OWASP Top 10 for LLM 2025 完整覆盖矩阵

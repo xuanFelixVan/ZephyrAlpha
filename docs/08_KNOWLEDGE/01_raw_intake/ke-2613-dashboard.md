@@ -3,6 +3,7 @@ module_id: KE-2518
 status: active
 title: 9.3 Dashboard
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.3 Dashboard

@@ -3,6 +3,7 @@ module_id: KE-1226
 status: active
 title: 你的 session_id 格式
 category: governance_rule
+ttl: permanent
 ---
 
 # 你的 session_id 格式

@@ -2,6 +2,7 @@
 module_id: KE-3040
 title: 关键里程碑（基于 architecture_model valid_from + git log 反推）
 category: session_log
+ttl: permanent
 ---
 
 # 关键里程碑（基于 architecture_model valid_from + git log 反推）

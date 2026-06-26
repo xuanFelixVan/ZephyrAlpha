@@ -3,6 +3,7 @@ module_id: KE-1021
 status: active
 title: 8. 紧急变更
 category: governance_rule
+ttl: permanent
 ---
 
 # 8. 紧急变更

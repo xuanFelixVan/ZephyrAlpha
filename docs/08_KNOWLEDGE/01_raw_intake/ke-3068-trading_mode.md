@@ -3,6 +3,7 @@ module_id: KE-2967
 status: active
 title: 交易模式切换（Trading Mode）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 交易模式切换（Trading Mode）

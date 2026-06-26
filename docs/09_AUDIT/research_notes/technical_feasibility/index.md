@@ -6,6 +6,7 @@ blueprint_id: GOV-063
 title: Technical Feasibility
 module_id: GOV-063
 updated: "2026-06-22"
+ttl: task_bound
 ---
 
 # Technical Feasibility — 目录索引

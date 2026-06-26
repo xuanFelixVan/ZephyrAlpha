@@ -3,6 +3,7 @@ module_id: KE-165
 status: active
 title: §1bis 门禁追溯（CI / 本地工件）
 category: documentation
+ttl: permanent
 ---
 
 # §1bis 门禁追溯（CI / 本地工件）

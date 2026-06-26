@@ -2,6 +2,7 @@
 module_id: KE-2186-----sessio-000
 title: 4. beta ad (3 Files) — 跨Session学习
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. beta ad (3 Files) — 跨Session学习

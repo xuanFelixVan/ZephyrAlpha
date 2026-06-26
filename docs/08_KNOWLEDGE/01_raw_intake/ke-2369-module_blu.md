@@ -3,6 +3,7 @@ module_id: KE-2274
 status: active
 title: 5. 关键设计决策
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. 关键设计决策

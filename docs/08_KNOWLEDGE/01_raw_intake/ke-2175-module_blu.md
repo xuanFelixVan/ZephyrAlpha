@@ -3,6 +3,7 @@ module_id: KE-2083
 status: active
 title: 3.2 增强版五阶段检测流水线（含降级运行）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 增强版五阶段检测流水线（含降级运行）

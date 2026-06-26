@@ -2,6 +2,7 @@
 module_id: KE-4378
 title: OTel GenAI Metrics 对齐
 category: module_blueprint
+ttl: permanent
 ---
 
 # OTel GenAI Metrics 对齐

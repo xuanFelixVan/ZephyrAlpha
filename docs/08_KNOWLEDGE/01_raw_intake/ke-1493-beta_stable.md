@@ -2,6 +2,7 @@
 module_id: KE-1403---stable-000
 title: 11.5 beta → stable 路径
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.5 beta → stable 路径

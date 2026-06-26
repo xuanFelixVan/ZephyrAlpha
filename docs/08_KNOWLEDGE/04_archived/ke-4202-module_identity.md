@@ -2,6 +2,7 @@
 module_id: KE-4045---1-000
 title: 3. Module Identity (§1)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Module Identity (§1)

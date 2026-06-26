@@ -2,6 +2,7 @@
 module_id: KE-2380-----should-000
 title: 6.3 `references` 字段（SHOULD）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 `references` 字段（SHOULD）

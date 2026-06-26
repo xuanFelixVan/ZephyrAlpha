@@ -2,6 +2,7 @@
 module_id: KE-3336
 title: 5.2 决策理由
 category: documentation
+ttl: permanent
 ---
 
 # 5.2 决策理由

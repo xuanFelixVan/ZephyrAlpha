@@ -3,6 +3,7 @@ module_id: KE-2475
 status: active
 title: 8.2 Skill Security Threat Model（决策 D-019-07）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.2 Skill Security Threat Model（决策 D-019-07）

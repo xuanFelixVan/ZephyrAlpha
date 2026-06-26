@@ -3,6 +3,7 @@ module_id: KE-2780
 status: active
 title: MCP Servers 蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # MCP Servers 蓝图

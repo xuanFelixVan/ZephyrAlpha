@@ -2,6 +2,7 @@
 module_id: KE-1608
 title: 2. Blindspots B39-B48
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Blindspots B39-B48

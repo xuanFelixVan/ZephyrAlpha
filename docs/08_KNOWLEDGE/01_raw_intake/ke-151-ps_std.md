@@ -3,6 +3,7 @@ module_id: KE-138----ps-std-001-000
 status: active
 title: 13. 与 PS-STD-001 字段不重复声明
 category: documentation
+ttl: permanent
 ---
 
 # 13. 与 PS-STD-001 字段不重复声明

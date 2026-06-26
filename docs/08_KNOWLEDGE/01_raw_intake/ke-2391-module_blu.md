@@ -2,6 +2,7 @@
 module_id: KE-2296
 title: 5.2 参数约定
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 参数约定

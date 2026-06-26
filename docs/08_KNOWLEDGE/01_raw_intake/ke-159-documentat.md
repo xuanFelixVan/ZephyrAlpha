@@ -3,6 +3,7 @@ module_id: KE-145
 status: active
 title: 15. 完整性自检清单
 category: documentation
+ttl: permanent
 ---
 
 # 15. 完整性自检清单

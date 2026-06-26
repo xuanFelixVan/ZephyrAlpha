@@ -2,6 +2,7 @@
 module_id: KE-3653
 title: ACS-004：权限审批流程
 category: governance
+ttl: permanent
 ---
 
 # ACS-004：权限审批流程

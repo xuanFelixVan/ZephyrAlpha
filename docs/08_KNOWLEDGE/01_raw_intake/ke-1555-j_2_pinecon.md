@@ -2,6 +2,7 @@
 module_id: KE-1465--------2-------pinecon-000
 title: 13.11 J. 测试与验证（2个）——对标 Pinecone Recall Evaluation + Qdrant Validation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.11 J. 测试与验证（2个）——对标 Pinecone Recall Evaluation + Qdrant Validation

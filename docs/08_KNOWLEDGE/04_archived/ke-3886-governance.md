@@ -2,6 +2,7 @@
 module_id: KE-3735
 title: 一、强制写入路径
 category: governance
+ttl: permanent
 ---
 
 # 一、强制写入路径

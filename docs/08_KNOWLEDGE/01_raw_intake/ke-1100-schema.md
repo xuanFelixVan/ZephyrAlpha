@@ -3,6 +3,7 @@ module_id: KE-1015
 status: active
 title: 7.4 Schema 校验（启动期强制）
 category: governance
+ttl: permanent
 ---
 
 # 7.4 Schema 校验（启动期强制）

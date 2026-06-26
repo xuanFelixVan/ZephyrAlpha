@@ -3,6 +3,7 @@ module_id: KE-752
 status: active
 title: 16. 完整性自检清单
 category: governance
+ttl: permanent
 ---
 
 # 16. 完整性自检清单

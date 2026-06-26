@@ -2,6 +2,7 @@
 module_id: KE-3273
 title: 3.6 密钥与凭证安全
 category: documentation
+ttl: permanent
 ---
 
 # 3.6 密钥与凭证安全

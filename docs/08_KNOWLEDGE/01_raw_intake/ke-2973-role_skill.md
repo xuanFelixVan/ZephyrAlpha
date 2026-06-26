@@ -3,6 +3,7 @@ module_id: KE-2873
 status: active
 title: 每个 Role Skill 的标准目录结构
 category: module_blueprint
+ttl: permanent
 ---
 
 # 每个 Role Skill 的标准目录结构

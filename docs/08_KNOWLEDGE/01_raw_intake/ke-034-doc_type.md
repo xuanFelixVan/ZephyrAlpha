@@ -3,6 +3,7 @@ module_id: KE-034
 status: active
 title: 6.6.2 doc_type 使用规范
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.6.2 doc_type 使用规范

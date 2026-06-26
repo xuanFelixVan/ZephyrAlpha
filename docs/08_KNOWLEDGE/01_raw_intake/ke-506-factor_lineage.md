@@ -3,6 +3,7 @@ module_id: KE-455
 status: active
 title: 6.2 Factor Lineage 端到端示例
 category: documentation
+ttl: permanent
 ---
 
 # 6.2 Factor Lineage 端到端示例

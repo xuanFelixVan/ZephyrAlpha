@@ -3,6 +3,7 @@ module_id: KE-2975
 status: active
 title: 检
 category: module_blueprint
+ttl: permanent
 ---
 
 # 检

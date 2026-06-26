@@ -3,6 +3,7 @@ module_id: KE-2359--------experim-003
 status: active
 title: 6.1 Windows ACL 沙箱实现要点（experimental 默认）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 Windows ACL 沙箱实现要点（experimental 默认）

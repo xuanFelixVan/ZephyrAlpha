@@ -3,6 +3,7 @@ module_id: KE-645
 status: active
 title: Step 3.5：幂等性检查
 category: documentation
+ttl: permanent
 ---
 
 # Step 3.5：幂等性检查

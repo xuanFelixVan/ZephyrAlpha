@@ -2,6 +2,7 @@
 module_id: KE-1125
 title: DQA-001：数据入库前必须通过质量检查
 category: governance
+ttl: permanent
 ---
 
 # DQA-001：数据入库前必须通过质量检查

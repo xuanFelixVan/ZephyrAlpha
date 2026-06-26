@@ -3,6 +3,7 @@ module_id: KE-992
 status: active
 title: 6.6 边界声明
 category: governance
+ttl: permanent
 ---
 
 # 6.6 边界声明

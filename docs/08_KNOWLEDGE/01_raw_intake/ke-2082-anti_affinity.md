@@ -3,6 +3,7 @@ module_id: KE-1991
 status: active
 title: 3. Anti-Affinity 校验
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Anti-Affinity 校验

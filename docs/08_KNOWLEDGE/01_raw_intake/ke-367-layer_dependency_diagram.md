@@ -3,6 +3,7 @@ module_id: KE-332
 status: active
 title: 4.2 Layer dependency diagram / 分层依赖图
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 Layer dependency diagram / 分层依赖图

@@ -3,6 +3,7 @@ module_id: KE-1598----init---py-000
 status: active
 title: 2. __init__.py 导出符号
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. __init__.py 导出符号

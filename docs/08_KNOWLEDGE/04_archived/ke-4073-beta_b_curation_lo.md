@@ -2,6 +2,7 @@
 module_id: KE-3919--------curation-lo-000
 title: 15.2 beta b — 多轮能力：Curation Loop + Effectiveness Eval
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.2 beta b — 多轮能力：Curation Loop + Effectiveness Eval

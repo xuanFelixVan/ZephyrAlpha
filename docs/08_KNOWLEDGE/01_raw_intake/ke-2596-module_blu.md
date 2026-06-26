@@ -2,6 +2,7 @@
 module_id: KE-2501
 title: 9. 对标清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9. 对标清单

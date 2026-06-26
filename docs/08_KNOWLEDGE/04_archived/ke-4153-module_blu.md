@@ -2,6 +2,7 @@
 module_id: KE-4153
 title: 2.2 关键路径速查
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 关键路径速查

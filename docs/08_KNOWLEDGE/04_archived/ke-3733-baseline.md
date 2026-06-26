@@ -2,6 +2,7 @@
 module_id: KE-3583--------1-003
 title: 4.2 B 家族：元治理（1 个）
 category: governance
+ttl: permanent
 ---
 
 # 4.2 B 家族：元治理（1 个）

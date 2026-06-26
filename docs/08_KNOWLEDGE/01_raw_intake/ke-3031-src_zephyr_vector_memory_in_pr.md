@@ -3,6 +3,7 @@ module_id: KE-2931
 status: active
 title: src/zephyr/vector-memory/in_process.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/vector-memory/in_process.py (experimental 产出)

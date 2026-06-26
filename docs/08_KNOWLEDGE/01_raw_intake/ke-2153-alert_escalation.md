@@ -3,6 +3,7 @@ module_id: KE-2061
 status: active
 title: 3.13 #51: AlertEscalation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.13 #51: AlertEscalation

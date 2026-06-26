@@ -3,6 +3,7 @@ module_id: KE-2907
 status: active
 title: Speculative Execution
 category: module_blueprint
+ttl: permanent
 ---
 
 # Speculative Execution

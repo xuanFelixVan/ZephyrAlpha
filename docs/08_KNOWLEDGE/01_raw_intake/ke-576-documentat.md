@@ -3,6 +3,7 @@ module_id: KE-519
 status: active
 title: 8. 变更记录
 category: documentation
+ttl: permanent
 ---
 
 # 8. 变更记录

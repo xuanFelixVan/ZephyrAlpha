@@ -2,6 +2,7 @@
 module_id: KE-3576----stage-taskbook---frontm-000
 title: 4.1 每个 stage taskbook 的 frontmatter 新增字段
 category: governance
+ttl: permanent
 ---
 
 # 4.1 每个 stage taskbook 的 frontmatter 新增字段

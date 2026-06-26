@@ -2,6 +2,7 @@
 module_id: KE-3481---stability----layer-003
 title: 10.2 同 stability，不同 layer
 category: governance_rule
+ttl: permanent
 ---
 
 # 10.2 同 stability，不同 layer

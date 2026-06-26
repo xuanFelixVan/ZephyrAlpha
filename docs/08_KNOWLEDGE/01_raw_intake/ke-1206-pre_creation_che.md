@@ -3,6 +3,7 @@ module_id: KE-1120-------pre-creation-che-004
 status: active
 title: DOC-005：创建前必查（Pre-Creation Check）
 category: governance
+ttl: permanent
 ---
 
 # DOC-005：创建前必查（Pre-Creation Check）

@@ -3,6 +3,7 @@ module_id: KE-2570
 status: active
 title: BackpressurePropagation（背压传导）
 category: module_blueprint
+ttl: permanent
 ---
 
 # BackpressurePropagation（背压传导）

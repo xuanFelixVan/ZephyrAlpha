@@ -2,6 +2,7 @@
 module_id: KE-1769
 title: 2.2 shared-infra（共享基础设施）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 shared-infra（共享基础设施）

@@ -2,6 +2,7 @@
 module_id: KE-2284
 title: 5.1 三级修复体系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.1 三级修复体系

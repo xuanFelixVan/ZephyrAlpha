@@ -3,6 +3,7 @@ module_id: KE-1735
 status: active
 title: 2.18 合规映射 —— 法律护栏
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.18 合规映射 —— 法律护栏

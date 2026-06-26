@@ -3,6 +3,7 @@ module_id: KE-1715----------000
 status: active
 title: 2.14 Permission Guard 七层+三横切面 运行时检查（核心 API）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.14 Permission Guard 七层+三横切面 运行时检查（核心 API）

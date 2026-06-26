@@ -3,6 +3,7 @@ module_id: KE-1677
 status: active
 title: 2.1 Phase 状态机
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 Phase 状态机

@@ -3,6 +3,7 @@ module_id: KE-2436------should-003
 status: active
 title: 7.2 Token 加载策略（SHOULD）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.2 Token 加载策略（SHOULD）

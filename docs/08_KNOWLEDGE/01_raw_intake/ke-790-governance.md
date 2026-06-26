@@ -3,6 +3,7 @@ module_id: KE-713
 status: active
 title: 10. 废弃流程
 category: governance
+ttl: permanent
 ---
 
 # 10. 废弃流程

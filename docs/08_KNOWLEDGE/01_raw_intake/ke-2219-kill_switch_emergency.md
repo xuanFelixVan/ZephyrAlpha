@@ -3,6 +3,7 @@ module_id: KE-2126
 status: active
 title: 3.5 #59: Kill Switch Emergency Pool
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 #59: Kill Switch Emergency Pool

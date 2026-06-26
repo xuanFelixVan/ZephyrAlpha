@@ -3,6 +3,7 @@ module_id: KE-652
 status: active
 title: 排除规则（不应放入本目录的内容）
 category: documentation
+ttl: permanent
 ---
 
 # 排除规则（不应放入本目录的内容）

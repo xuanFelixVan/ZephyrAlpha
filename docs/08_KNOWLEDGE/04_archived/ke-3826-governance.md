@@ -2,6 +2,7 @@
 module_id: KE-3675
 title: CMR-001：新市场准入必须完成合规评估
 category: governance
+ttl: permanent
 ---
 
 # CMR-001：新市场准入必须完成合规评估

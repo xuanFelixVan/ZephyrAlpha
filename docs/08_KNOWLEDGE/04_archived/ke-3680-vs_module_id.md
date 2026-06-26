@@ -2,6 +2,7 @@
 module_id: KE-3533-----vs-module-id-002
 title: 2.2.3 文件名 vs module_id 的正交性
 category: governance
+ttl: permanent
 ---
 
 # 2.2.3 文件名 vs module_id 的正交性

@@ -3,6 +3,7 @@ module_id: KE-1110
 status: active
 title: 决策流程总图（Decision Flow Map）
 category: governance
+ttl: permanent
 ---
 
 # 决策流程总图（Decision Flow Map）

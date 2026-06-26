@@ -2,6 +2,7 @@
 module_id: KE-3987--------4-000
 title: 2.1 快速取证补充（4项）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 快速取证补充（4项）

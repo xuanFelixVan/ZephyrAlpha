@@ -3,6 +3,7 @@ module_id: KE-1145
 status: active
 title: in_design
 category: governance
+ttl: permanent
 ---
 
 # in_design

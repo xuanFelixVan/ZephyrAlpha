@@ -3,6 +3,7 @@ module_id: KE-2956----healt-000
 status: active
 title: thematic_summary.yaml —— health-monitor.py + prioritizer.py 联合产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # thematic_summary.yaml —— health-monitor.py + prioritizer.py 联合产出

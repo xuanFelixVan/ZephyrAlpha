@@ -3,6 +3,7 @@ module_id: KE-2384
 status: active
 title: 6.3 Cold Start——历史操作回溯
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 Cold Start——历史操作回溯

@@ -2,6 +2,7 @@
 module_id: KE-1487--------3-------pinecone-003
 title: 13.5 D. 性能与扩展（3个）——对标 Pinecone Batch API + ChromaDB Concurrent Access
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.5 D. 性能与扩展（3个）——对标 Pinecone Batch API + ChromaDB Concurrent Access

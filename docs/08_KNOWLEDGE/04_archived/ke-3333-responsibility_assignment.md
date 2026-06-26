@@ -2,6 +2,7 @@
 module_id: KE-3213
 title: 2.2 Responsibility Assignment Matrix (RACI) / 责任分配矩阵
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 Responsibility Assignment Matrix (RACI) / 责任分配矩阵

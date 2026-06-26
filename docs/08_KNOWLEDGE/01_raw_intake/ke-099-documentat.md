@@ -3,6 +3,7 @@ module_id: KE-090
 status: active
 title: 1.4 决策溯源
 category: documentation
+ttl: permanent
 ---
 
 # 1.4 决策溯源

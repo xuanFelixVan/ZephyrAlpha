@@ -2,6 +2,7 @@
 module_id: KE-3509
 title: 18. 修改条件
 category: governance_rule
+ttl: permanent
 ---
 
 # 18. 修改条件

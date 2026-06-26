@@ -2,6 +2,7 @@
 module_id: KE-3966
 title: 2. Anthropic Context Engineering (§13.1)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Anthropic Context Engineering (§13.1)

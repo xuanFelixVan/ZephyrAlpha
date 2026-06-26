@@ -3,6 +3,7 @@ module_id: KE-2200
 status: active
 title: 4. M3↔M7 antiAffinity 硬约束影响链路
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. M3↔M7 antiAffinity 硬约束影响链路

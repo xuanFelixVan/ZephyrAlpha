@@ -3,6 +3,7 @@ module_id: KE-2605
 status: active
 title: CT-DB-004：运维管理契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # CT-DB-004：运维管理契约

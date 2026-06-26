@@ -3,6 +3,7 @@ module_id: KE-1246
 status: active
 title: 决策流程快捷索引
 category: governance
+ttl: permanent
 ---
 
 # 决策流程快捷索引

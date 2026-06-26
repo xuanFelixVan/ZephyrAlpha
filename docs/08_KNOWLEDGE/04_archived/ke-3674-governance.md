@@ -2,6 +2,7 @@
 module_id: KE-3529
 title: 2.2 禁止行为
 category: governance
+ttl: permanent
 ---
 
 # 2.2 禁止行为

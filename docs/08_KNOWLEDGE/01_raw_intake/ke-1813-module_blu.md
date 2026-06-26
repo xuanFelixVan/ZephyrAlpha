@@ -3,6 +3,7 @@ module_id: KE-1722---------------------------003
 status: active
 title: 2.16 孤儿资源检测——磁盘有、注册表无、代码不引用（决策 D-023-25）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.16 孤儿资源检测——磁盘有、注册表无、代码不引用（决策 D-023-25）

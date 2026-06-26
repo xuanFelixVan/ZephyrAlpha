@@ -3,6 +3,7 @@ module_id: KE-2024
 status: active
 title: 3. 接口契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 接口契约

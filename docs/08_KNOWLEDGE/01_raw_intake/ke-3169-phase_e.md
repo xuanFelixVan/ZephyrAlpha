@@ -3,6 +3,7 @@ module_id: KE-3063
 status: active
 title: Phase E 最终报告
 category: session_log
+ttl: permanent
 ---
 
 # Phase E 最终报告

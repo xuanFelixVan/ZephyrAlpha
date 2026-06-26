@@ -3,6 +3,7 @@ module_id: KE-905
 status: active
 title: 4.2.3 降级策略
 category: governance
+ttl: permanent
 ---
 
 # 4.2.3 降级策略

@@ -3,6 +3,7 @@ module_id: KE-694------v1-2-003
 status: active
 title: 1.2bis Runtime Plane 边界铁律（v1.2.0，R69 / J1 批次）
 category: governance
+ttl: permanent
 ---
 
 # 1.2bis Runtime Plane 边界铁律（v1.2.0，R69 / J1 批次）

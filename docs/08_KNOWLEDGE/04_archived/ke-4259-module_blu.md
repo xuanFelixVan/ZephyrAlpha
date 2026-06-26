@@ -2,6 +2,7 @@
 module_id: KE-4100
 title: 4. 五条元原则实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. 五条元原则实现

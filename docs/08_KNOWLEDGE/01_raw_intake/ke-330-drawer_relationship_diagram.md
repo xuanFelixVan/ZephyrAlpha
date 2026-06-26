@@ -3,6 +3,7 @@ module_id: KE-302
 status: active
 title: 4. Drawer relationship diagram / 抽屉关系图
 category: documentation
+ttl: permanent
 ---
 
 # 4. Drawer relationship diagram / 抽屉关系图

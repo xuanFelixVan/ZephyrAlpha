@@ -3,6 +3,7 @@ module_id: KE-3017
 status: active
 title: ZephyrAlpha 系统总蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # ZephyrAlpha 系统总蓝图

@@ -2,6 +2,7 @@
 module_id: KE-3671
 title: beta entry_criteria
 category: governance
+ttl: permanent
 ---
 
 # beta entry_criteria

@@ -2,6 +2,7 @@
 module_id: KE-414
 title: 5.2 src/zephyr/ 双轨结构
 category: documentation
+ttl: permanent
 ---
 
 # 5.2 src/zephyr/ 双轨结构

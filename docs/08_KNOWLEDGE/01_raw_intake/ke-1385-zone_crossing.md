@@ -3,6 +3,7 @@ module_id: KE-1296
 status: active
 title: 1. Zone Crossing 校验
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. Zone Crossing 校验

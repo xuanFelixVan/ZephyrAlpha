@@ -2,6 +2,7 @@
 module_id: KE-1504
 title: 14. 当前缺失清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14. 当前缺失清单

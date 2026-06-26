@@ -3,6 +3,7 @@ module_id: KE-3030
 status: active
 title: 5.2 读取流程
 category: session_log
+ttl: permanent
 ---
 
 # 5.2 读取流程

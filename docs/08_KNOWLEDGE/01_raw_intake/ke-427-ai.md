@@ -2,6 +2,7 @@
 module_id: KE-386
 title: 5. AI 自治权限标注
 category: documentation
+ttl: permanent
 ---
 
 # 5. AI 自治权限标注

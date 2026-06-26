@@ -2,6 +2,7 @@
 module_id: KE-3842
 title: 12.3 配置文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.3 配置文件

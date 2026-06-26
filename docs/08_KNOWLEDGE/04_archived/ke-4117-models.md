@@ -2,6 +2,7 @@
 module_id: KE-3962------models-000
 title: 步骤 2：按域拆分 models
 category: module_blueprint
+ttl: permanent
 ---
 
 # 步骤 2：按域拆分 models

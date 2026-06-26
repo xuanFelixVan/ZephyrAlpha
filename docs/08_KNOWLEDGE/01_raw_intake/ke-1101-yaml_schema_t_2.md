@@ -3,6 +3,7 @@ module_id: KE-1016------t-2-17-003
 status: active
 title: 7.5 YAML schema 校验工具（T-2-17 配套交付）
 category: governance
+ttl: permanent
 ---
 
 # 7.5 YAML schema 校验工具（T-2-17 配套交付）

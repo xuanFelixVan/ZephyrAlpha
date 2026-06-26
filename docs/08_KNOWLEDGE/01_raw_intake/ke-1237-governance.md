@@ -3,6 +3,7 @@ module_id: KE-1150--------1-000
 status: active
 title: IRN-001：编码扫描（铁律1）
 category: governance
+ttl: permanent
 ---
 
 # IRN-001：编码扫描（铁律1）

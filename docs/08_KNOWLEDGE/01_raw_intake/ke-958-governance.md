@@ -3,6 +3,7 @@ module_id: KE-880
 status: active
 title: 4. 违规响应流程
 category: governance_rule
+ttl: permanent
 ---
 
 # 4. 违规响应流程

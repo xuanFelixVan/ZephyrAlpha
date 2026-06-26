@@ -3,6 +3,7 @@ module_id: KE-2879
 status: active
 title: sandbox_policy.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # sandbox_policy.yaml

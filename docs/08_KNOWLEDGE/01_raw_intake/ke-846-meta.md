@@ -2,6 +2,7 @@
 module_id: KE-768
 title: 2. META 域（元规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 2. META 域（元规则）

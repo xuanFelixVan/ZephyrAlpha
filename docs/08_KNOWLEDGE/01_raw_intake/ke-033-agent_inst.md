@@ -3,6 +3,7 @@ module_id: KE-033
 status: active
 title: 6.6.1 中文命名铁律
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.6.1 中文命名铁律

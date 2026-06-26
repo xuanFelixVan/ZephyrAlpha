@@ -2,6 +2,7 @@
 module_id: KE-1630
 title: 2. Version History Audit
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Version History Audit

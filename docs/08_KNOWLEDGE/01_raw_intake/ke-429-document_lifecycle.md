@@ -3,6 +3,7 @@ module_id: KE-388
 status: active
 title: 5. Document lifecycle / 文档生命周期
 category: documentation
+ttl: permanent
 ---
 
 # 5. Document lifecycle / 文档生命周期

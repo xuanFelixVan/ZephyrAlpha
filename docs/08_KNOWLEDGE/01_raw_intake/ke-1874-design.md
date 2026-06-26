@@ -3,6 +3,7 @@ module_id: KE-1783----------------------d-02-006
 status: active
 title: 2.21 五层顶尖架构 —— 反应式→预防式（决策 D-022-11）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.21 五层顶尖架构 —— 反应式→预防式（决策 D-022-11）

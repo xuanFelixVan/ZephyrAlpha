@@ -3,6 +3,7 @@ module_id: KE-2557----ai-agent-003
 status: active
 title: 七、Anti-Patterns —— AI agent 绝对禁止的集成行为
 category: module_blueprint
+ttl: permanent
 ---
 
 # 七、Anti-Patterns —— AI agent 绝对禁止的集成行为

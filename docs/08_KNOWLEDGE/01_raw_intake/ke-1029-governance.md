@@ -3,6 +3,7 @@ module_id: KE-949
 status: active
 title: 5.2 创建各类型工件的通用步骤模板
 category: governance
+ttl: permanent
 ---
 
 # 5.2 创建各类型工件的通用步骤模板

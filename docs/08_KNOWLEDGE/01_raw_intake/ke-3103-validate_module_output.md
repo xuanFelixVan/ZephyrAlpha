@@ -3,6 +3,7 @@ module_id: KE-3002
 status: active
 title: validate_module_output
 category: module_blueprint
+ttl: permanent
 ---
 
 # validate_module_output

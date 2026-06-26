@@ -3,6 +3,7 @@ module_id: KE-2124
 status: active
 title: 3.5 #36: CliffDetector (M-34)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 #36: CliffDetector (M-34)

@@ -2,6 +2,7 @@
 module_id: KE-3572
 title: 4. 与其他文件的关系
 category: governance
+ttl: permanent
 ---
 
 # 4. 与其他文件的关系

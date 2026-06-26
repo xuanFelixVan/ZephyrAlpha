@@ -2,6 +2,7 @@
 module_id: KE-3074
 title: test_phase_c_import_chain.py（19 tests）
 category: session_log
+ttl: permanent
 ---
 
 # test_phase_c_import_chain.py（19 tests）

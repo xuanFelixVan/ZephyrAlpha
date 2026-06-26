@@ -3,6 +3,7 @@ module_id: KE-1687--------agent-000
 status: active
 title: 2.10 Budget Pool 弹性共享 + Agent 子池隔离
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.10 Budget Pool 弹性共享 + Agent 子池隔离

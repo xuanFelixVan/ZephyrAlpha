@@ -2,6 +2,7 @@
 module_id: KE-3655
 title: 六、AI 生成产物的特殊规则
 category: governance
+ttl: permanent
 ---
 
 # 六、AI 生成产物的特殊规则

@@ -3,6 +3,7 @@ module_id: KE-1654-----tech-stack-manifest-ya-003
 status: active
 title: 2.1 创建 `tech_stackmanifest.yaml`
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 创建 `tech_stackmanifest.yaml`

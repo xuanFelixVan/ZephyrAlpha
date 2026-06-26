@@ -3,6 +3,7 @@ module_id: KE-2872
 status: active
 title: === 成本/ROI 经济学 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === 成本/ROI 经济学 ===

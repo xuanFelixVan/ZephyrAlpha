@@ -2,6 +2,7 @@
 module_id: KE-153
 title: 13. Revision history / 修订记录
 category: documentation
+ttl: permanent
 ---
 
 # 13. Revision history / 修订记录

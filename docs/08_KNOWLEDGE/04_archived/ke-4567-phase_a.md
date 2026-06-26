@@ -2,6 +2,7 @@
 module_id: KE-4402---4-000
 title: Phase A — 4个高优先级契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase A — 4个高优先级契约

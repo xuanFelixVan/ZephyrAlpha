@@ -2,6 +2,7 @@
 module_id: KE-670
 status: active
 title: Ke Governance                 000
+ttl: permanent
 ---
 
 --_______-----000

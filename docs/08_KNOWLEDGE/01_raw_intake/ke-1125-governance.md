@@ -3,6 +3,7 @@ module_id: KE-1040
 status: active
 title: 9. 接口文档要求
 category: governance
+ttl: permanent
 ---
 
 # 9. 接口文档要求

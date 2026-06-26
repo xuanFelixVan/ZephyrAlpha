@@ -2,6 +2,7 @@
 module_id: KE-4007
 title: 2.7 shared-lifecycle（模块生命周期）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.7 shared-lifecycle（模块生命周期）

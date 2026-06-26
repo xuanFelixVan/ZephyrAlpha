@@ -3,6 +3,7 @@ module_id: KE-640
 status: active
 title: Step 0：安全审查
 category: documentation
+ttl: permanent
 ---
 
 # Step 0：安全审查

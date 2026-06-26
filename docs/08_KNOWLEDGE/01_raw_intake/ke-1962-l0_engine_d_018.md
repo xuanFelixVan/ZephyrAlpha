@@ -3,6 +3,7 @@ module_id: KE-1871---engine---------d-018--002
 status: active
 title: 2.3 L0 — Engine 降级策略（决策 D-018-06）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 L0 — Engine 降级策略（决策 D-018-06）

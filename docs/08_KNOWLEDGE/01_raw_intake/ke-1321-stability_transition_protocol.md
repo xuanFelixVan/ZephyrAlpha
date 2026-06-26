@@ -3,6 +3,7 @@ module_id: KE-1233
 status: active
 title: === Stability Transition Protocol 扩展字段（强制）===
 category: governance
+ttl: permanent
 ---
 
 # === Stability Transition Protocol 扩展字段（强制）===

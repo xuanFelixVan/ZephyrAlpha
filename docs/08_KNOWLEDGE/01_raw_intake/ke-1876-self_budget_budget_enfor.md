@@ -3,6 +3,7 @@ module_id: KE-1785
 status: active
 title: 2.21 Self-Budget——Budget Enforcer 自身运营成本管控
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.21 Self-Budget——Budget Enforcer 自身运营成本管控

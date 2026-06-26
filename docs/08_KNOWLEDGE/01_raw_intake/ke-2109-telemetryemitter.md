@@ -3,6 +3,7 @@ module_id: KE-2018
 status: active
 title: 3. TelemetryEmitter
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. TelemetryEmitter

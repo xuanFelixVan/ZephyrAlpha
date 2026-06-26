@@ -3,6 +3,7 @@ module_id: KE-075
 status: active
 title: 1.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）
 category: documentation
+ttl: permanent
 ---
 
 # 1.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）

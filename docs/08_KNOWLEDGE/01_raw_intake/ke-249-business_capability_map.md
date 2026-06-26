@@ -3,6 +3,7 @@ module_id: KE-228
 status: active
 title: 3. Business Capability Map / 业务能力地图
 category: documentation
+ttl: permanent
 ---
 
 # 3. Business Capability Map / 业务能力地图

@@ -2,6 +2,7 @@
 module_id: KE-1097
 title: CMR-002：合规检查必须覆盖所有适用维度
 category: governance
+ttl: permanent
 ---
 
 # CMR-002：合规检查必须覆盖所有适用维度

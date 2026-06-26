@@ -2,6 +2,7 @@
 module_id: KE-3579---------g1-ingest-yaml-000
 title: 4.1.2 检查项（对应 `g1-ingest.yaml`）
 category: governance
+ttl: permanent
 ---
 
 # 4.1.2 检查项（对应 `g1-ingest.yaml`）

@@ -2,6 +2,7 @@
 module_id: KE-2656-----gate-engine--m-000
 title: DB-025-0033：集成——gate-engine (MOD-INF-007) 集成验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0033：集成——gate-engine (MOD-INF-007) 集成验证

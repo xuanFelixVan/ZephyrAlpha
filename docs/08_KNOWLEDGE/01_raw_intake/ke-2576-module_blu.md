@@ -3,6 +3,7 @@ module_id: KE-2481
 status: active
 title: 8.3 扩展触发条件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.3 扩展触发条件

@@ -2,6 +2,7 @@
 module_id: KE-708
 title: §1 HandoffPackage 8 必填字段
 category: governance
+ttl: permanent
 ---
 
 # §1 HandoffPackage 8 必填字段

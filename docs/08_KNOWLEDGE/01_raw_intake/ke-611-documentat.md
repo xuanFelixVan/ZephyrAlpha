@@ -3,6 +3,7 @@ module_id: KE-549
 status: active
 title: 9.1 审计数据架构
 category: documentation
+ttl: permanent
 ---
 
 # 9.1 审计数据架构

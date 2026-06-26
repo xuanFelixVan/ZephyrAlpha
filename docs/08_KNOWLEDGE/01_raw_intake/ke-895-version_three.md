@@ -2,6 +2,7 @@
 module_id: KE-817
 title: 2.3 V3 人工审查
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.3 V3 人工审查

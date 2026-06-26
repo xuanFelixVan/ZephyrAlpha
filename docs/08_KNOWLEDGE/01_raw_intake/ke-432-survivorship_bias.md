@@ -2,6 +2,7 @@
 module_id: KE-391
 title: 5. Survivorship Bias 处理框架 / 幸存者偏差处理
 category: documentation
+ttl: permanent
 ---
 
 # 5. Survivorship Bias 处理框架 / 幸存者偏差处理

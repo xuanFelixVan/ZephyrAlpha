@@ -3,6 +3,7 @@ module_id: KE-2116
 status: active
 title: 3.4 #58: CombinatorialGate
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 #58: CombinatorialGate

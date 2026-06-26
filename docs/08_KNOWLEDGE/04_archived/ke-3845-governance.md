@@ -2,6 +2,7 @@
 module_id: KE-3694
 title: 维度评分（FULL 类型填写）
 category: governance
+ttl: permanent
 ---
 
 # 维度评分（FULL 类型填写）

@@ -3,6 +3,7 @@ module_id: KE-053
 status: active
 title: 0. Executive Summary / 高管摘要
 category: documentation
+ttl: permanent
 ---
 
 # 0. Executive Summary / 高管摘要

@@ -3,6 +3,7 @@ module_id: KE-1171
 status: active
 title: 新格式（必须）——结构化 map 数组
 category: governance
+ttl: permanent
 ---
 
 # 新格式（必须）——结构化 map 数组

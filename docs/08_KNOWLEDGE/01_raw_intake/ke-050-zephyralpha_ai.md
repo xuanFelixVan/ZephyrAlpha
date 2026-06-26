@@ -3,6 +3,7 @@ module_id: KE-050----ai-002
 status: active
 title: ZephyrAlpha 项目 AI 基准文件
 category: agent_instruction
+ttl: permanent
 ---
 
 # ZephyrAlpha 项目 AI 基准文件

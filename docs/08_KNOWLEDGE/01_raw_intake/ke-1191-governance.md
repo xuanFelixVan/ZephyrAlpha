@@ -3,6 +3,7 @@ module_id: KE-1105
 status: active
 title: config/ — 运行时配置目录
 category: governance
+ttl: permanent
 ---
 
 # config/ — 运行时配置目录

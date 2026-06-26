@@ -2,6 +2,7 @@
 module_id: KE-3901
 title: 14. 修订记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14. 修订记录

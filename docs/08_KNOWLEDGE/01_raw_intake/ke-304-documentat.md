@@ -3,6 +3,7 @@ module_id: KE-282
 status: active
 title: 3.3 内部层间数据流（事件驱动轨迹）
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 内部层间数据流（事件驱动轨迹）

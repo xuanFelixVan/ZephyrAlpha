@@ -3,6 +3,7 @@ module_id: KE-899
 status: active
 title: 4.2 禁止的导入
 category: governance
+ttl: permanent
 ---
 
 # 4.2 禁止的导入

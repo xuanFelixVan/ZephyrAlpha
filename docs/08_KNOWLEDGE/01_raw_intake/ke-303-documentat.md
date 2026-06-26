@@ -3,6 +3,7 @@ module_id: KE-281
 status: active
 title: 3.3 项目实际统计（参考）
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 项目实际统计（参考）

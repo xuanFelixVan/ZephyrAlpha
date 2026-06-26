@@ -3,6 +3,7 @@ module_id: KE-2201
 status: active
 title: 4. OTel 语义集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. OTel 语义集成

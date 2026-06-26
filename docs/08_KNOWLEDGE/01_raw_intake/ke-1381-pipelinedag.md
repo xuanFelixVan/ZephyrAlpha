@@ -3,6 +3,7 @@ module_id: KE-1292
 status: active
 title: 1. PipelineDAG 数据模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. PipelineDAG 数据模型

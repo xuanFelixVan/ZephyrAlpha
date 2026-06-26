@@ -3,6 +3,7 @@ module_id: KE-2898----healt-000
 status: active
 title: simplicity_audit.yaml —— health-monitor.py 每月产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # simplicity_audit.yaml —— health-monitor.py 每月产出

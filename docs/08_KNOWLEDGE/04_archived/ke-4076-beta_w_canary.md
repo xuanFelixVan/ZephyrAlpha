@@ -2,6 +2,7 @@
 module_id: KE-3922-----------canary--000
 title: 15.23 beta w -- 纵深与精炼 (Canary+Progressive+Adversarial+Classification+Distillatio
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.23 beta w -- 纵深与精炼 (Canary+Progressive+Adversarial+Classification+Distillatio

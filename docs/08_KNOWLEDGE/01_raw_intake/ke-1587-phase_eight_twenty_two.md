@@ -3,6 +3,7 @@ module_id: KE-1497--------------------8---22---000
 status: active
 title: 14. 第二轮深度交叉审计盲点全注入 —— 8大维度22盲点（R2 追加）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14. 第二轮深度交叉审计盲点全注入 —— 8大维度22盲点（R2 追加）

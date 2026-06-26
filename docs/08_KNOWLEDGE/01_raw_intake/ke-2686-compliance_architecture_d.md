@@ -3,6 +3,7 @@ module_id: KE-2589
 status: active
 title: Compliance Architecture (D-019-14)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Compliance Architecture (D-019-14)

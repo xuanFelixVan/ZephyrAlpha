@@ -2,6 +2,7 @@
 module_id: KE-3620
 title: 7. 违规处理
 category: governance
+ttl: permanent
 ---
 
 # 7. 违规处理

@@ -3,6 +3,7 @@ module_id: KE-1862
 status: active
 title: 2.3 14层扩展
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 14层扩展

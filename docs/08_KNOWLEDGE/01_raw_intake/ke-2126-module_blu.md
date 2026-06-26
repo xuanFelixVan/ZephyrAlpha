@@ -3,6 +3,7 @@ module_id: KE-2034
 status: active
 title: 3.1 按审计维度分类（主分类轴）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 按审计维度分类（主分类轴）

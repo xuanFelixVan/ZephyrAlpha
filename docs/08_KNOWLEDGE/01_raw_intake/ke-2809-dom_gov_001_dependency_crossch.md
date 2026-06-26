@@ -3,6 +3,7 @@ module_id: KE-2712
 status: active
 title: MOD-023 Dependency Crosscheck
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-023 Dependency Crosscheck

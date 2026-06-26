@@ -3,6 +3,7 @@ module_id: KE-634
 status: active
 title: Stage 5：从“记忆系统设计”到“先全貌后细颗粒”
 category: documentation
+ttl: permanent
 ---
 
 # Stage 5：从“记忆系统设计”到“先全貌后细颗粒”

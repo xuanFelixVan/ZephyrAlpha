@@ -2,6 +2,7 @@
 module_id: KE-3323---------rec-008
 title: 5. 推荐做法（🟢 REC）
 category: documentation
+ttl: permanent
 ---
 
 # 5. 推荐做法（🟢 REC）

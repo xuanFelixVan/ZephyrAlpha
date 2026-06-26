@@ -2,6 +2,7 @@
 module_id: KE-3785
 title: 10. 禁止行为
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10. 禁止行为

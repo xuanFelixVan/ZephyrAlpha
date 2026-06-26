@@ -3,6 +3,7 @@ module_id: KE-102
 status: active
 title: 10. AI 自治权限标注
 category: documentation
+ttl: permanent
 ---
 
 # 10. AI 自治权限标注

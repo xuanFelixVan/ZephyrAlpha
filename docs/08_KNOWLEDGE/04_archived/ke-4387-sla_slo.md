@@ -2,6 +2,7 @@
 module_id: KE-4225
 title: 8.4 SLA/SLO 度量指标
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.4 SLA/SLO 度量指标

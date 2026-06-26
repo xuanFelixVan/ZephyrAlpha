@@ -3,6 +3,7 @@ module_id: KE-2107
 status: active
 title: 3.3 KE（KB、CE、VMS、Script System 共用）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 KE（KB、CE、VMS、Script System 共用）

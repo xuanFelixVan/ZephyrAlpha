@@ -2,6 +2,7 @@
 module_id: KE-3350
 title: 6. Business constraints / 业务约束与政策红线
 category: documentation
+ttl: permanent
 ---
 
 # 6. Business constraints / 业务约束与政策红线

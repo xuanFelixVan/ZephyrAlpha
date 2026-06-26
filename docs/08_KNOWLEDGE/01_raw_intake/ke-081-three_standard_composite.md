@@ -3,6 +3,7 @@ module_id: KE-077
 status: active
 title: 1.1 Three-standard composite / 三标准合成方案
 category: documentation
+ttl: permanent
 ---
 
 # 1.1 Three-standard composite / 三标准合成方案

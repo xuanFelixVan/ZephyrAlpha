@@ -3,6 +3,7 @@ module_id: KE-1024
 status: active
 title: 8. 完整示例
 category: governance
+ttl: permanent
 ---
 
 # 8. 完整示例

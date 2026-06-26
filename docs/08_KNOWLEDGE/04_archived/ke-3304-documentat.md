@@ -2,6 +2,7 @@
 module_id: KE-3191
 title: 14. 可验证性标注
 category: documentation
+ttl: permanent
 ---
 
 # 14. 可验证性标注

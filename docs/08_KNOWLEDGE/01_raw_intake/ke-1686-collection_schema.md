@@ -3,6 +3,7 @@ module_id: KE-1596-----collection-schema-003
 status: active
 title: 2. 八大 Collection Schema
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 八大 Collection Schema

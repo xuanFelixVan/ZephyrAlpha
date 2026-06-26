@@ -3,6 +3,7 @@ module_id: KE-2305--------------policy----d-0-005
 status: active
 title: 5.3 三角闭环——审计反馈回写 Policy（决策 D-020-08）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.3 三角闭环——审计反馈回写 Policy（决策 D-020-08）

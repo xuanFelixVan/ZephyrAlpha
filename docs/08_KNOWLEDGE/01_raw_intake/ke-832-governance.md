@@ -3,6 +3,7 @@ module_id: KE-755
 status: active
 title: 16. 废弃流程
 category: governance_rule
+ttl: permanent
 ---
 
 # 16. 废弃流程

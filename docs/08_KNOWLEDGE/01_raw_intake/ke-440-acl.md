@@ -2,6 +2,7 @@
 module_id: KE-440
 title: 5.1 当前 ACL 落盘位置
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 当前 ACL 落盘位置

@@ -2,6 +2,7 @@
 module_id: KE-3407
 title: 8.2 门禁触发与失败处理
 category: documentation
+ttl: permanent
 ---
 
 # 8.2 门禁触发与失败处理

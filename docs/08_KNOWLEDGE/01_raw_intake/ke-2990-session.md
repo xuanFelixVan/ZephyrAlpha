@@ -3,6 +3,7 @@ module_id: KE-2890
 status: active
 title: 追加到 session 运行时
 category: module_blueprint
+ttl: permanent
 ---
 
 # 追加到 session 运行时

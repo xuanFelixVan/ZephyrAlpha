@@ -3,6 +3,7 @@ module_id: KE-344---c-000
 status: active
 title: 4.3 KeStatus（域 C：知识条目）
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 KeStatus（域 C：知识条目）

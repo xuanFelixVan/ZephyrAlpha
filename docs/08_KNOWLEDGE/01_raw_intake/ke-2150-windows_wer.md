@@ -2,6 +2,7 @@
 module_id: KE-2058
 title: 3.12 #66: Windows WER 禁用
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.12 #66: Windows WER 禁用

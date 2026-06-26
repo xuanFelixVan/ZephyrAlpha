@@ -3,6 +3,7 @@ module_id: KE-2940
 status: active
 title: StateGraph Workflow (D-019-31)
 category: module_blueprint
+ttl: permanent
 ---
 
 # StateGraph Workflow (D-019-31)

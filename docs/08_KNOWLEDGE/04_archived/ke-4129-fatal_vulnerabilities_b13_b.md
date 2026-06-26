@@ -2,6 +2,7 @@
 module_id: KE-3974
 title: 2. Fatal Vulnerabilities B13-B20
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Fatal Vulnerabilities B13-B20

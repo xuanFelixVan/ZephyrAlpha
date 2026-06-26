@@ -3,6 +3,7 @@ module_id: KE-1656----risk-register-yaml-000
 status: active
 title: 2.1 创建 risk-register.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 创建 risk-register.yaml

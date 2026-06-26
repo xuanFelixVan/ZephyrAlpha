@@ -3,6 +3,7 @@ module_id: KE-2909
 status: active
 title: SQS Marketplace (D-019-42)
 category: module_blueprint
+ttl: permanent
 ---
 
 # SQS Marketplace (D-019-42)

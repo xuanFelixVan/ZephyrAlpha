@@ -2,6 +2,7 @@
 module_id: KE-4156
 title: 6. beta af (4 Test Files) — 测试保真度修复
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. beta af (4 Test Files) — 测试保真度修复

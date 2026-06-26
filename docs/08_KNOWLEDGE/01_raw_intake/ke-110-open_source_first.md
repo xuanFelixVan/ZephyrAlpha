@@ -3,6 +3,7 @@ module_id: KE-101
 status: active
 title: 原则 1：Open Source First / 开源优先原则
 category: documentation
+ttl: permanent
 ---
 
 # 原则 1：Open Source First / 开源优先原则

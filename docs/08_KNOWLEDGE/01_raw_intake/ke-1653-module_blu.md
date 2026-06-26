@@ -2,6 +2,7 @@
 module_id: KE-1563
 title: 16.6 回滚方案
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.6 回滚方案

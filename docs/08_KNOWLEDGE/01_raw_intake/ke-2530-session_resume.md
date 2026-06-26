@@ -3,6 +3,7 @@ module_id: KE-2435
 status: active
 title: 7.2 Session Resume 协议模板
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.2 Session Resume 协议模板

@@ -3,6 +3,7 @@ module_id: KE-2602
 status: active
 title: CT-DB-001：task_repo CRUD 契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # CT-DB-001：task_repo CRUD 契约

@@ -2,6 +2,7 @@
 module_id: KE-339-------shared-contracts-run-000
 title: 4.3 契约预留：`shared/contracts/runtime_plane_tag.py`
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 契约预留：`shared/contracts/runtime_plane_tag.py`

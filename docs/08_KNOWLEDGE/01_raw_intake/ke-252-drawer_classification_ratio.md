@@ -3,6 +3,7 @@ module_id: KE-231
 status: active
 title: 3. Drawer classification rationale / 抽屉分类依据
 category: documentation
+ttl: permanent
 ---
 
 # 3. Drawer classification rationale / 抽屉分类依据

@@ -3,6 +3,7 @@ module_id: KE-417
 status: active
 title: 5.3 逃逸检测
 category: documentation
+ttl: permanent
 ---
 
 # 5.3 逃逸检测

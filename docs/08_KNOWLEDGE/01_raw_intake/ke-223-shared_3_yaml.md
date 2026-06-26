@@ -2,6 +2,7 @@
 module_id: KE-202----3--------yaml-000
 title: 2.4 shared/ 中 3 个文件未纳入 YAML
 category: documentation
+ttl: permanent
 ---
 
 # 2.4 shared/ 中 3 个文件未纳入 YAML

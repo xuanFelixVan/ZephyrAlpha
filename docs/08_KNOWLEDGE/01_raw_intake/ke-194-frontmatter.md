@@ -3,6 +3,7 @@ module_id: KE-174--------frontmatter-000
 status: active
 title: 2.2 可选但推荐的 frontmatter
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 可选但推荐的 frontmatter

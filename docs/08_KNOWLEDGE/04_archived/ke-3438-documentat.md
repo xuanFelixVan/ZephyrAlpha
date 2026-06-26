@@ -2,6 +2,7 @@
 module_id: KE-3438
 title: 4.5.4 完整字段分类表
 category: documentation
+ttl: permanent
 ---
 
 # 4.5.4 完整字段分类表

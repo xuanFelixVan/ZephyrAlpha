@@ -3,6 +3,7 @@ module_id: KE-1848
 status: active
 title: 2.28 IPI-Aware Budget Defense
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.28 IPI-Aware Budget Defense

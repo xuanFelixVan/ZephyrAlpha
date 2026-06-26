@@ -3,6 +3,7 @@ module_id: KE-2573
 status: active
 title: Bulkhead（舱壁隔离）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Bulkhead（舱壁隔离）

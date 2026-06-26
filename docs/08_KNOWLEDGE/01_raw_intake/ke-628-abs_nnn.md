@@ -2,6 +2,7 @@
 module_id: KE-566
 title: ABS-{NNN}（绝对约束）
 category: documentation
+ttl: permanent
 ---
 
 # ABS-{NNN}（绝对约束）

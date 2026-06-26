@@ -2,6 +2,7 @@
 module_id: KE-1054
 title: ABS-002：报告必须包含关键指标
 category: governance
+ttl: permanent
 ---
 
 # ABS-002：报告必须包含关键指标

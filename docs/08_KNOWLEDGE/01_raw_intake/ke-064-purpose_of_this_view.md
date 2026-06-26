@@ -3,6 +3,7 @@ module_id: KE-061
 status: active
 title: 1. Purpose of this view / 本视图的用途
 category: documentation
+ttl: permanent
 ---
 
 # 1. Purpose of this view / 本视图的用途

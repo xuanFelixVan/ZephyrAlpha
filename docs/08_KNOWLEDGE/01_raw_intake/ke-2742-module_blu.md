@@ -2,6 +2,7 @@
 module_id: KE-2645------------6-3-000
 title: DB-025-0022：数据目录清单验证——§6.3
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0022：数据目录清单验证——§6.3

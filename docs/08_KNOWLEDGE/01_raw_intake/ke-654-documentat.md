@@ -2,6 +2,7 @@
 module_id: KE-588
 title: Domains — 目录索引
 category: documentation
+ttl: permanent
 ---
 
 # Domains — 目录索引

@@ -3,6 +3,7 @@ module_id: KE-3021
 status: active
 title: 1.2 Session Carryover 的解决
 category: session_log
+ttl: permanent
 ---
 
 # 1.2 Session Carryover 的解决

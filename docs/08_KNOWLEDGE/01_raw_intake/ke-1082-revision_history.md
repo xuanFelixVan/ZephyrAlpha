@@ -2,6 +2,7 @@
 module_id: KE-997
 title: 7. Revision history / 修订记录
 category: governance
+ttl: permanent
 ---
 
 # 7. Revision history / 修订记录

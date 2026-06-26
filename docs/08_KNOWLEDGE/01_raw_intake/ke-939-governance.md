@@ -2,6 +2,7 @@
 module_id: KE-861
 title: 3.2 四条核心接口
 category: governance
+ttl: permanent
 ---
 
 # 3.2 四条核心接口

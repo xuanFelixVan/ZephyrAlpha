@@ -3,6 +3,7 @@ module_id: KE-333------activation-004
 status: active
 title: 4.2 MFE 技术选型（Activation 时定）
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 MFE 技术选型（Activation 时定）

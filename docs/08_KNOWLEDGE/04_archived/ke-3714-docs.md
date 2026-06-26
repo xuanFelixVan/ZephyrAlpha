@@ -2,6 +2,7 @@
 module_id: KE-3714
 title: 3.3 docs 目录编号保留规则
 category: governance
+ttl: permanent
 ---
 
 # 3.3 docs 目录编号保留规则

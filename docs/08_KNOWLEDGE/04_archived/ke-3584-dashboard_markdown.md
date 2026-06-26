@@ -2,6 +2,7 @@
 module_id: KE-3440----markdown-004
 title: 输出 dashboard（生成 markdown 看板）
 category: documentation
+ttl: permanent
 ---
 
 # 输出 dashboard（生成 markdown 看板）

@@ -2,6 +2,7 @@
 module_id: KE-2062
 title: 3.13 #67: 启动顺序强制执行
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.13 #67: 启动顺序强制执行

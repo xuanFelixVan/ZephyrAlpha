@@ -3,6 +3,7 @@ module_id: KE-1143
 status: active
 title: IFC-006：模块必须通过契约一致性检查
 category: governance
+ttl: permanent
 ---
 
 # IFC-006：模块必须通过契约一致性检查

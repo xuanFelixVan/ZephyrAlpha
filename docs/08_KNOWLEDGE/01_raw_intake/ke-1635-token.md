@@ -2,6 +2,7 @@
 module_id: KE-1545
 title: 15.6 Token 预算与成本追踪
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.6 Token 预算与成本追踪

@@ -2,6 +2,7 @@
 module_id: KE-2840
 title: Phase 2 — 集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase 2 — 集成

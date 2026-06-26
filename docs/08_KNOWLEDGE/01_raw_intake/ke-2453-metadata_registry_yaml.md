@@ -3,6 +3,7 @@ module_id: KE-2358
 status: active
 title: 6.1 metadata-registry.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 metadata-registry.yaml

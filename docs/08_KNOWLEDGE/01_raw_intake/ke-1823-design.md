@@ -3,6 +3,7 @@ module_id: KE-1732------------------------d--002
 status: active
 title: 2.18 文件底层属性漂移——编码、换行符、权限（决策 D-023-27）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.18 文件底层属性漂移——编码、换行符、权限（决策 D-023-27）

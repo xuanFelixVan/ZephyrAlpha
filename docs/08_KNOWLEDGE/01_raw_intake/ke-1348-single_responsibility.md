@@ -3,6 +3,7 @@ module_id: KE-1260
 status: active
 title: 责任声明（Single Responsibility）
 category: knowledge_base
+ttl: permanent
 ---
 
 # 责任声明（Single Responsibility）

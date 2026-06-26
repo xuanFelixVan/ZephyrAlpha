@@ -3,6 +3,7 @@ module_id: KE-1675
 status: active
 title: 2.1 IDE 热重载
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 IDE 热重载

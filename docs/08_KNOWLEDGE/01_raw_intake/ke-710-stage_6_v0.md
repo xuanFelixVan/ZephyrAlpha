@@ -3,6 +3,7 @@ module_id: KE-635---------------------v0-001
 status: active
 title: Stage 6：从“记忆系统讨论”到“简易决策记忆系统 v0”
 category: documentation
+ttl: permanent
 ---
 
 # Stage 6：从“记忆系统讨论”到“简易决策记忆系统 v0”

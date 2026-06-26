@@ -3,6 +3,7 @@ module_id: KE-1584---------database-as-code-000
 status: active
 title: 18.3 数据库作为代码（Database-as-Code）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 18.3 数据库作为代码（Database-as-Code）

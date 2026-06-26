@@ -3,6 +3,7 @@ module_id: KE-237------3-001
 status: active
 title: 3.1 违规文件（3 个）
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 违规文件（3 个）

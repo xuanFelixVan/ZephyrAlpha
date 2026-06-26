@@ -3,6 +3,7 @@ module_id: KE-1174
 status: active
 title: MLC-003：退役必须完成引用迁移
 category: governance
+ttl: permanent
 ---
 
 # MLC-003：退役必须完成引用迁移

@@ -3,6 +3,7 @@ module_id: KE-2236----api-003
 status: active
 title: 4.3 沙箱 API
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.3 沙箱 API

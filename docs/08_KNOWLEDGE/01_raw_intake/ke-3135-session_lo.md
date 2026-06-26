@@ -3,6 +3,7 @@ module_id: KE-3033
 status: active
 title: 6.3 文件系统契约
 category: session_log
+ttl: permanent
 ---
 
 # 6.3 文件系统契约

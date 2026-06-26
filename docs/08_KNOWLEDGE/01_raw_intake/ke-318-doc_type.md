@@ -3,6 +3,7 @@ module_id: KE-292----doc-type-000
 status: active
 title: 3.5 新增 doc_type 的流程
 category: documentation
+ttl: permanent
 ---
 
 # 3.5 新增 doc_type 的流程

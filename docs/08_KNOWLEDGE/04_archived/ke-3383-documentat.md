@@ -2,6 +2,7 @@
 module_id: KE-3261
 title: 3.2 决策规则
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 决策规则

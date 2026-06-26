@@ -3,6 +3,7 @@ module_id: KE-2085
 status: active
 title: 3.2.1 TaskCard（Vibe Coding 扩展任务模型）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2.1 TaskCard（Vibe Coding 扩展任务模型）

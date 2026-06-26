@@ -3,6 +3,7 @@ module_id: KE-2554
 status: active
 title: 新AI Session 读取顺序
 category: module_blueprint
+ttl: permanent
 ---
 
 # 新AI Session 读取顺序

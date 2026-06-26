@@ -3,6 +3,7 @@ module_id: KE-2960
 status: active
 title: 十二、成本架构与Token预算
 category: module_blueprint
+ttl: permanent
 ---
 
 # 十二、成本架构与Token预算

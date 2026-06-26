@@ -2,6 +2,7 @@
 module_id: KE-4458
 title: 上下文预算
 category: session_log
+ttl: permanent
 ---
 
 # 上下文预算

@@ -3,6 +3,7 @@ module_id: KE-2596
 status: active
 title: Context Engine Interface / 上下文引擎接口规范
 category: module_blueprint
+ttl: permanent
 ---
 
 # Context Engine Interface / 上下文引擎接口规范

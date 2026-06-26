@@ -2,6 +2,7 @@
 module_id: KE-3243
 title: 3. 执行频率与耗时
 category: documentation
+ttl: permanent
 ---
 
 # 3. 执行频率与耗时

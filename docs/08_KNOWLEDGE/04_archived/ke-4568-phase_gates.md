@@ -2,6 +2,7 @@
 module_id: KE-4403
 title: Phase Gates
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase Gates

@@ -3,6 +3,7 @@ module_id: KE-2094----------------creation-tr-005
 status: active
 title: 3.3 三级蓝图的存在条件与创建规则（Creation Triggers + Pre-Creation Gates）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 三级蓝图的存在条件与创建规则（Creation Triggers + Pre-Creation Gates）

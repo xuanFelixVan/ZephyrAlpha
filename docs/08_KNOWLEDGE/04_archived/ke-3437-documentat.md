@@ -2,6 +2,7 @@
 module_id: KE-3437
 title: 4.5.1 两条核心规则
 category: documentation
+ttl: permanent
 ---
 
 # 4.5.1 两条核心规则

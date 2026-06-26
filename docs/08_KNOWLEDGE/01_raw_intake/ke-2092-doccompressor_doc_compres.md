@@ -3,6 +3,7 @@ module_id: KE-2001---doc-compres-003
 status: active
 title: 3. DocCompressor — doc_compressor.py (§5.2 + DD3 + DD5)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. DocCompressor — doc_compressor.py (§5.2 + DD3 + DD5)

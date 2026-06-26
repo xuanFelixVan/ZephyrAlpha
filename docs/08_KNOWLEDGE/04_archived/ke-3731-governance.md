@@ -2,6 +2,7 @@
 module_id: KE-3582
 title: 4.2 前端编号使用规则
 category: governance
+ttl: permanent
 ---
 
 # 4.2 前端编号使用规则

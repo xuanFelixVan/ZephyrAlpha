@@ -2,6 +2,7 @@
 module_id: KE-2464
 title: 8.1 五级响应定义
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.1 五级响应定义

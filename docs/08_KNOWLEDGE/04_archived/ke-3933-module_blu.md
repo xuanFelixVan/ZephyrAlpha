@@ -2,6 +2,7 @@
 module_id: KE-3781
 title: 1.6 不包含的目标
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.6 不包含的目标

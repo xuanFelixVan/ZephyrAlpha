@@ -2,6 +2,7 @@
 module_id: KE-1193
 title: 强制集成清单（每项新功能产出后 MUST 执行）
 category: governance_rule
+ttl: permanent
 ---
 
 # 强制集成清单（每项新功能产出后 MUST 执行）

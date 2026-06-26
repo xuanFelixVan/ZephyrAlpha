@@ -3,6 +3,7 @@ module_id: KE-2133-----------suitability-scor-000
 status: active
 title: 3.6 安全提取适配性评估（Suitability Score —— v0.5.0 新增 — Wave 2 落地）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 安全提取适配性评估（Suitability Score —— v0.5.0 新增 — Wave 2 落地）

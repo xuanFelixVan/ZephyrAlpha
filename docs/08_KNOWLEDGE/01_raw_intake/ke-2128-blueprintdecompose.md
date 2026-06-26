@@ -3,6 +3,7 @@ module_id: KE-2036-------blueprintdecompose-002
 status: active
 title: 3.1.1 蓝图拆解器（BlueprintDecomposer）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1.1 蓝图拆解器（BlueprintDecomposer）

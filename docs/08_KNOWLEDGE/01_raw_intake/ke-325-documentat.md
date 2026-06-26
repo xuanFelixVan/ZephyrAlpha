@@ -2,6 +2,7 @@
 module_id: KE-299
 title: 3.9 代码执行安全
 category: documentation
+ttl: permanent
 ---
 
 # 3.9 代码执行安全

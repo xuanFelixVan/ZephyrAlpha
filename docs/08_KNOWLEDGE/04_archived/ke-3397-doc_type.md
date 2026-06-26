@@ -2,6 +2,7 @@
 module_id: KE-3274
 title: 3.6 doc_type 禁止行为
 category: documentation
+ttl: permanent
 ---
 
 # 3.6 doc_type 禁止行为

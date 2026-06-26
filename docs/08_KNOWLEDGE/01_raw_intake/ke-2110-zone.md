@@ -3,6 +3,7 @@ module_id: KE-2019
 status: active
 title: 3. Zone 常量定义
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Zone 常量定义

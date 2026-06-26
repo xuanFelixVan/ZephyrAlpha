@@ -2,6 +2,7 @@
 module_id: KE-1544
 title: 15.5 降级策略
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.5 降级策略

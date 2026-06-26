@@ -2,6 +2,7 @@
 module_id: KE-929
 title: 4.7 激活时间轴分布
 category: governance
+ttl: permanent
 ---
 
 # 4.7 激活时间轴分布

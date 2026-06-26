@@ -3,6 +3,7 @@ module_id: KE-802-------------append-only-002
 status: active
 title: 2.2.4 编号空间铁律（扁平 + append-only）
 category: governance
+ttl: permanent
 ---
 
 # 2.2.4 编号空间铁律（扁平 + append-only）

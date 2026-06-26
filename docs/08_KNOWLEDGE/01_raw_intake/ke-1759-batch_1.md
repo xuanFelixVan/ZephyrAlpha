@@ -3,6 +3,7 @@ module_id: KE-1668---------15-000
 status: active
 title: 2.1 Batch 1 — 基础设施层（15 条）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 Batch 1 — 基础设施层（15 条）

@@ -3,6 +3,7 @@ module_id: KE-835--------------n-02-005
 status: active
 title: 2.8 技术栈专有名词版本白名单（N-02 豁免）
 category: governance
+ttl: permanent
 ---
 
 # 2.8 技术栈专有名词版本白名单（N-02 豁免）

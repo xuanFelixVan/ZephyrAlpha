@@ -56,6 +56,31 @@ from _shared.frontmatter import parse_frontmatter
 
 ensure_utf8_stdout()
 
+# 永久区路径前缀——与 ttl_vocabulary.yaml decision_tree 保持一致
+# index.md 落在永久区 → ttl=permanent；否则 → ttl=task_bound
+_PERMANENT_ZONE_PREFIXES: tuple[str, ...] = (
+    "docs/01_policies_and_standards/",
+    "docs/02_enterprise_architecture/",
+    "docs/03_modules/",
+    "docs/08_knowledge/",
+)
+
+
+def _infer_ttl(parent: Path) -> str:
+    """按 ttl_vocabulary.yaml decision_tree 判定 index.md 的 ttl 值。
+
+    判定口径：父目录相对 REPO_ROOT 的路径在永久区 4 路径下 → permanent；否则 → task_bound。
+    """
+    try:
+        rel = str(parent.resolve().relative_to(REPO_ROOT)).replace("\\", "/") + "/"
+    except ValueError:
+        # parent 不在 REPO_ROOT 下（极端情况），保守判 task_bound
+        return "task_bound"
+    if any(rel.startswith(p) for p in _PERMANENT_ZONE_PREFIXES):
+        return "permanent"
+    return "task_bound"
+
+
 INDEX_TEMPLATE = (
     "---\n"
     "doc_type: index\n"
@@ -66,6 +91,7 @@ INDEX_TEMPLATE = (
     'version: "{version}"\n'
     'created: "{today}"\n'
     'updated: "{today}"\n'
+    'ttl: "{ttl}"\n'
     "---\n\n"
     "# {dir_name}\n\n"
     "> 本文件由 `generate_missing_index_md.py` 自动生成\n"
@@ -224,6 +250,7 @@ def generate_index(parent: Path, dry_run: bool = False, force_update: bool = Fal
         blueprint_id = module_id
     if not version:
         version = "1.0.0"
+    ttl = _infer_ttl(parent)
     content = INDEX_TEMPLATE.format(
         dir_name=dir_name,
         today=today,
@@ -231,6 +258,7 @@ def generate_index(parent: Path, dry_run: bool = False, force_update: bool = Fal
         module_id=module_id,
         blueprint_id=blueprint_id,
         version=version,
+        ttl=ttl,
     )
     if dry_run:
         print(f"  [DRY-RUN] 将创建: {index_path}")

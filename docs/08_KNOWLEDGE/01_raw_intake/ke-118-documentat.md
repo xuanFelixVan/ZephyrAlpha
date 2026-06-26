@@ -3,6 +3,7 @@ module_id: KE-107
 status: active
 title: 10. 废弃流程
 category: documentation
+ttl: permanent
 ---
 
 # 10. 废弃流程

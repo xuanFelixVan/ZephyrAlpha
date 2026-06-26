@@ -3,6 +3,7 @@ module_id: KE-1921-----003
 status: active
 title: 2.5 Supervisor/Coordinator 模式（决策 D-025-05）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 Supervisor/Coordinator 模式（决策 D-025-05）

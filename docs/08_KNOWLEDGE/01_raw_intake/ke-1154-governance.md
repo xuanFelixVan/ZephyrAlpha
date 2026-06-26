@@ -3,6 +3,7 @@ module_id: KE-1069
 status: active
 title: AI 意识植入
 category: governance_rule
+ttl: permanent
 ---
 
 # AI 意识植入

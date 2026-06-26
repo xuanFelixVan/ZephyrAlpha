@@ -3,6 +3,7 @@ module_id: KE-487
 status: active
 title: 7.1 experimental 简化模型（单人）
 category: documentation
+ttl: permanent
 ---
 
 # 7.1 experimental 简化模型（单人）

@@ -2,6 +2,7 @@
 module_id: KE-294
 title: 3.5 Git 操作安全
 category: documentation
+ttl: permanent
 ---
 
 # 3.5 Git 操作安全

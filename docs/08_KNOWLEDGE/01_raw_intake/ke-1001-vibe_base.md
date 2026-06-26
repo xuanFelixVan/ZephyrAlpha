@@ -2,6 +2,7 @@
 module_id: KE-923---------1-003
 title: 4.4 VIBE-BASE 家族：共享底座（1 个）
 category: governance
+ttl: permanent
 ---
 
 # 4.4 VIBE-BASE 家族：共享底座（1 个）

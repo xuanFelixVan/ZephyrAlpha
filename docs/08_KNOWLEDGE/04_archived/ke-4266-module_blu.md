@@ -2,6 +2,7 @@
 module_id: KE-4107--------8-003
 title: 4.2 结构审计维度（8 个核心维度）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 结构审计维度（8 个核心维度）

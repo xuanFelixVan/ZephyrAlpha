@@ -3,6 +3,7 @@ module_id: KE-803------adr-003
 status: active
 title: 2.2.5 状态字段（ADR 工作流语义）
 category: governance
+ttl: permanent
 ---
 
 # 2.2.5 状态字段（ADR 工作流语义）

@@ -3,6 +3,7 @@ module_id: KE-1779-------1-------------003
 status: active
 title: 2.20 Owner 缺席模式——1人维护的独特性挑战（决策 D-023-34）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.20 Owner 缺席模式——1人维护的独特性挑战（决策 D-023-34）

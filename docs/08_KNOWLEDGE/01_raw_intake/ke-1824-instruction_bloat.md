@@ -3,6 +3,7 @@ module_id: KE-1733--------instruction-bloat--003
 status: active
 title: 2.18 指令膨胀检测（Instruction Bloat Detector）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.18 指令膨胀检测（Instruction Bloat Detector）

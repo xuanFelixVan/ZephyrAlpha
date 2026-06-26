@@ -2,6 +2,7 @@
 module_id: KE-3925
 title: 15.4 Prompt Library
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.4 Prompt Library

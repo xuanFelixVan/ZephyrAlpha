@@ -2,6 +2,7 @@
 module_id: KE-3368
 title: 6.3 血缘标准与工具对位
 category: documentation
+ttl: permanent
 ---
 
 # 6.3 血缘标准与工具对位

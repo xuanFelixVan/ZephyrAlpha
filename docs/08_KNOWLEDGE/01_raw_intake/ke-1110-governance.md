@@ -3,6 +3,7 @@ module_id: KE-1025
 status: active
 title: 8. 新增规则登记流程
 category: governance_rule
+ttl: permanent
 ---
 
 # 8. 新增规则登记流程

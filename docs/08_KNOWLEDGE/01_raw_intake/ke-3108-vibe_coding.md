@@ -3,6 +3,7 @@ module_id: KE-3007
 status: active
 title: ⚠️ Vibe Coding 蓝图编写铁律
 category: module_blueprint
+ttl: permanent
 ---
 
 # ⚠️ Vibe Coding 蓝图编写铁律

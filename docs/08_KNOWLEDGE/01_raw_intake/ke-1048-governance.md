@@ -3,6 +3,7 @@ module_id: KE-964
 status: active
 title: 5.6 施工图命名
 category: governance
+ttl: permanent
 ---
 
 # 5.6 施工图命名

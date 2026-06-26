@@ -3,6 +3,7 @@ module_id: KE-022-------------blueprint-cod-006
 status: active
 title: 6.14 蓝图-代码同步强制约定（Blueprint-Code Synchronization Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.14 蓝图-代码同步强制约定（Blueprint-Code Synchronization Mandate）

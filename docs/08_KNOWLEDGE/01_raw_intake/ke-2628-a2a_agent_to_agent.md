@@ -3,6 +3,7 @@ module_id: KE-2533----------agent-to-agent-003
 status: active
 title: A2A 协调协议蓝图 — Agent-to-Agent 通信与冲突解决
 category: module_blueprint
+ttl: permanent
 ---
 
 # A2A 协调协议蓝图 — Agent-to-Agent 通信与冲突解决

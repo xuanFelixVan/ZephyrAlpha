@@ -3,6 +3,7 @@ module_id: KE-1918
 status: active
 title: 2.5 OTel 语义规范跨模块传播
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 OTel 语义规范跨模块传播

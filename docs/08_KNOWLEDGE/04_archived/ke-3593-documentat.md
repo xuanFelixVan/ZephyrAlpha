@@ -2,6 +2,7 @@
 module_id: KE-3449
 title: Migration — 目录索引
 category: documentation
+ttl: permanent
 ---
 
 # Migration — 目录索引

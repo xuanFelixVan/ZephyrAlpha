@@ -2,6 +2,7 @@
 module_id: KE-731
 title: 12.2 Token 预算
 category: governance
+ttl: permanent
 ---
 
 # 12.2 Token 预算

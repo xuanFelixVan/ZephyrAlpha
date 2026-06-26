@@ -2,6 +2,7 @@
 module_id: KE-423------defense-in-depth-005
 title: 5.4 纵深防御（Defense in Depth）
 category: documentation
+ttl: permanent
 ---
 
 # 5.4 纵深防御（Defense in Depth）

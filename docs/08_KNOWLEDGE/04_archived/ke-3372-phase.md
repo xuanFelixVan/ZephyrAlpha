@@ -2,6 +2,7 @@
 module_id: KE-3251
 title: 3.1 Phase 目标矩阵
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 Phase 目标矩阵

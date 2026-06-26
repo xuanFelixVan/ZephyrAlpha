@@ -2,6 +2,7 @@
 module_id: KE-2281
 title: 5.1 职责
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.1 职责

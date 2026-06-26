@@ -3,6 +3,7 @@ module_id: KE-2910
 status: active
 title: src/zephyr/bootstrap.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/bootstrap.py

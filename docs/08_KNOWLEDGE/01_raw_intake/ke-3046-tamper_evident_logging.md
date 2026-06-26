@@ -3,6 +3,7 @@ module_id: KE-2945
 status: active
 title: 防篡改日志（Tamper-Evident Logging）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 防篡改日志（Tamper-Evident Logging）

@@ -2,6 +2,7 @@
 module_id: KE-3322
 title: 2.1 Stakeholder Roster / 利益相关者清单
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 Stakeholder Roster / 利益相关者清单

@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-15; manual validation
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 从 ttl_vocabulary.yaml 动态加载合法 ttl 值；只校验有 frontmatter 的 .md；--ci 参数接受但当前等同于默认（全量校验）
+# [INVARIANTS] 从 ttl_vocabulary.yaml 动态加载合法 ttl 值；只校验有 frontmatter 的 .md；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -18,13 +18,16 @@
   2. ttl 值合法（从 ttl_vocabulary.yaml 动态加载）
 
 两种模式:
-  全量（无参数）: 扫描 docs/ 下所有 .md
-  增量（有文件参数，pre-commit pass_filenames=true 时用）: 只校验传入的 .md
+  全量（无参数或 --all-files）: 扫描 docs/ 下所有 .md
+  增量（有文件参数且无 --all-files，pre-commit pass_filenames=true 时用）: 只校验传入的 .md
 
 Usage::
 
-    # 全量扫描
+    # 全量扫描（无参数即全量）
     python scripts/governance/d3_metadata/check_frontmatter_metadata.py
+
+    # 全量扫描（显式 --all-files，即使传入文件参数也忽略）
+    python scripts/governance/d3_metadata/check_frontmatter_metadata.py --all-files
 
     # 增量校验（pre-commit 传入文件）
     python scripts/governance/d3_metadata/check_frontmatter_metadata.py --ci docs/foo.md docs/bar.md
@@ -97,14 +100,17 @@ def _check_file(fpath: Path, valid_ttl: set[str]) -> list[str]:
 def main() -> int:
     valid_ttl = _load_ttl_values()
 
-    # 过滤掉 -- 开头的参数（如 --ci），只保留文件路径
-    args = [a for a in sys.argv[1:] if not a.startswith("-")]
+    raw_args = sys.argv[1:]
+    all_files = "--all-files" in raw_args
 
-    if args:
+    # 过滤掉 -- 开头的参数（如 --ci, --all-files），只保留文件路径
+    args = [a for a in raw_args if not a.startswith("-")]
+
+    if args and not all_files:
         # 增量模式：只校验传入的 .md 文件
         files = [Path(a).resolve() for a in args if a.endswith(".md")]
     else:
-        # 全量模式：扫描 docs/ 下所有 .md
+        # 全量模式：扫描 docs/ 下所有 .md（--all-files 或无文件参数时）
         docs_dir = _PROJ / "docs"
         files = list(docs_dir.rglob("*.md"))
 

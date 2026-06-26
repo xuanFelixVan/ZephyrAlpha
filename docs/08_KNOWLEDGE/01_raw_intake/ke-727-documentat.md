@@ -3,6 +3,7 @@ module_id: KE-651
 status: active
 title: 五、变更记录
 category: documentation
+ttl: permanent
 ---
 
 # 五、变更记录

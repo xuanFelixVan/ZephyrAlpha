@@ -2,6 +2,7 @@
 module_id: KE-099
 title: 1.5.5 ADR 设计决策源头
 category: documentation
+ttl: permanent
 ---
 
 # 1.5.5 ADR 设计决策源头

@@ -3,6 +3,7 @@ module_id: KE-2134-------k8s-conformance-003
 status: active
 title: 3.6 按标签分类（K8s Conformance 对齐）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 按标签分类（K8s Conformance 对齐）

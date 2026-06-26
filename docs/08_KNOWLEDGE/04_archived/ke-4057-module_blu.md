@@ -2,6 +2,7 @@
 module_id: KE-3904------6-002
 title: 14.1 盲点总览（6 项）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.1 盲点总览（6 项）

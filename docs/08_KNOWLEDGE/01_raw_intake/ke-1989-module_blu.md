@@ -3,6 +3,7 @@ module_id: KE-1898
 status: active
 title: 2.4 六级自适应降级链
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 六级自适应降级链

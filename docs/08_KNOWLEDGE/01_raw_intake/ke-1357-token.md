@@ -2,6 +2,7 @@
 module_id: KE-1268
 title: 0.1 Token 预算
 category: module_blueprint
+ttl: permanent
 ---
 
 # 0.1 Token 预算

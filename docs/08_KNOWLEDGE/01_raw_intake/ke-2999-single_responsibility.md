@@ -2,6 +2,7 @@
 module_id: KE-2899
 title: 责任声明（Single Responsibility）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 责任声明（Single Responsibility）

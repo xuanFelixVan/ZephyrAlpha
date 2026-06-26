@@ -2,6 +2,7 @@
 module_id: KE-238-----constitution-005
 title: 3.1 宪法层（Constitution）
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 宪法层（Constitution）

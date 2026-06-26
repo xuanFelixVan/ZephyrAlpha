@@ -2,6 +2,7 @@
 module_id: KE-4446
 title: 9. 开放问题
 category: session_log
+ttl: permanent
 ---
 
 # 9. 开放问题

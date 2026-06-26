@@ -3,6 +3,7 @@ module_id: KE-1004
 status: active
 title: 7.1 审计流程（四步法）
 category: governance_rule
+ttl: permanent
 ---
 
 # 7.1 审计流程（四步法）

@@ -2,6 +2,7 @@
 module_id: KE-2387
 title: 6.3 Flatline 检测
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 Flatline 检测

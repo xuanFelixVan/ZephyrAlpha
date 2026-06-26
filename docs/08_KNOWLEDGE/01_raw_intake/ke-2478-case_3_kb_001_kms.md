@@ -3,6 +3,7 @@ module_id: KE-2383---------kms--003
 status: active
 title: 6.3 Case 3：KB-001 知识库蓝图 → KMS 五门禁（R72）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 Case 3：KB-001 知识库蓝图 → KMS 五门禁（R72）

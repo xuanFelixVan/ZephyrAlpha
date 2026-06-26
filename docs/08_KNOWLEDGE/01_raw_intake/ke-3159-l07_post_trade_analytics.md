@@ -2,6 +2,7 @@
 module_id: KE-3053
 title: L07 Post-Trade Analytics（3 个新文件）
 category: session_log
+ttl: permanent
 ---
 
 # L07 Post-Trade Analytics（3 个新文件）

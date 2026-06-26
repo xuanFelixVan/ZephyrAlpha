@@ -3,6 +3,7 @@ module_id: KE-112-------da-vs-ia-000
 status: active
 title: 10.2 一句话区分 DA vs IA（防止读者混淆）
 category: documentation
+ttl: permanent
 ---
 
 # 10.2 一句话区分 DA vs IA（防止读者混淆）

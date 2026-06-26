@@ -3,6 +3,7 @@ module_id: KE-2269----5-3-va-000
 status: active
 title: 5. Source Validation — §5.3 VALIDATE-C01
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. Source Validation — §5.3 VALIDATE-C01

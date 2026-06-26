@@ -3,6 +3,7 @@ module_id: KE-1680
 status: active
 title: 2.1 SkillLoader.progressive_load()
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 SkillLoader.progressive_load()

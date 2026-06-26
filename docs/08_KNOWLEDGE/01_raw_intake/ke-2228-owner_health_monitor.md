@@ -3,6 +3,7 @@ module_id: KE-2135
 status: active
 title: 3.6 #22: OwnerHealthMonitor
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 #22: OwnerHealthMonitor

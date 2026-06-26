@@ -2,6 +2,7 @@
 module_id: KE-3774
 title: 1.3 B-Track 基础设施层
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.3 B-Track 基础设施层

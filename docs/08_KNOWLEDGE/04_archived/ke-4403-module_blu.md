@@ -2,6 +2,7 @@
 module_id: KE-4239
 title: 9.4 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.4 施工状态

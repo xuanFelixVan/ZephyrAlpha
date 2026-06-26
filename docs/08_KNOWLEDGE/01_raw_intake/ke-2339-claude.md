@@ -3,6 +3,7 @@ module_id: KE-2244
 status: active
 title: 4.4 Claude 救援触发记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.4 Claude 救援触发记录

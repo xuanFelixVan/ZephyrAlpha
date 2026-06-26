@@ -3,6 +3,7 @@ module_id: KE-1945-----------------d-02-000
 status: active
 title: 2.8 Agent 级数字签名——不可否认性（决策 D-020-14）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 Agent 级数字签名——不可否认性（决策 D-020-14）

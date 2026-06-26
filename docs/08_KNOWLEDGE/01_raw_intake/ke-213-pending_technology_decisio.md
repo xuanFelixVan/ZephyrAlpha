@@ -2,6 +2,7 @@
 module_id: KE-193
 title: 2.3 Pending technology decisions / 待决定的技术决策
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 Pending technology decisions / 待决定的技术决策

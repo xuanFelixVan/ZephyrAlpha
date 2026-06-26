@@ -2,6 +2,7 @@
 module_id: KE-4015
 title: 第二轮 — 上下文与集成层（#21-#40）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 第二轮 — 上下文与集成层（#21-#40）

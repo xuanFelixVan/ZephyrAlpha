@@ -2,6 +2,7 @@
 module_id: KE-523----abs-003
 title: 8.1 AI 修改 ABS 规则
 category: documentation
+ttl: permanent
 ---
 
 # 8.1 AI 修改 ABS 规则

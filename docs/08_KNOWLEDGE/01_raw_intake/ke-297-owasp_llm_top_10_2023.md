@@ -3,6 +3,7 @@ module_id: KE-275----2023-2-002
 status: active
 title: 3.2 OWASP LLM Top 10 映射（2023/2024）
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 OWASP LLM Top 10 映射（2023/2024）

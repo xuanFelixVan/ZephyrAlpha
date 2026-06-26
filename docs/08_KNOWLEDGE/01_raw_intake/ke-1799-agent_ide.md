@@ -3,6 +3,7 @@ module_id: KE-1708--------ide-000
 status: active
 title: 2.13 Agent 身份模型（多 IDE 支持 + 成熟度 + 委托链）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.13 Agent 身份模型（多 IDE 支持 + 成熟度 + 委托链）

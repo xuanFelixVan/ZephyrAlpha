@@ -2,6 +2,7 @@
 module_id: KE-1561
 title: 16.4 Vibe Coder MCP（freshtechbro）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.4 Vibe Coder MCP（freshtechbro）

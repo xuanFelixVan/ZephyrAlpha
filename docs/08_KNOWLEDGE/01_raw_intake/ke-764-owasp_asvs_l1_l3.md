@@ -2,6 +2,7 @@
 module_id: KE-687---------owasp-asvs-l1-l3-000
 title: 1.2 审计等级（对标 OWASP ASVS L1-L3）
 category: governance
+ttl: permanent
 ---
 
 # 1.2 审计等级（对标 OWASP ASVS L1-L3）

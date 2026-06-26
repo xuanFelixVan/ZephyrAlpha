@@ -3,6 +3,7 @@ module_id: KE-2214
 status: active
 title: 4.1 查询接口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 查询接口

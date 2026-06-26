@@ -3,6 +3,7 @@ module_id: KE-1724------meta-confidence-003
 status: active
 title: 2.16 升级引擎 Meta-Confidence —— 判定自身的置信度（决策 D-022-10）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.16 升级引擎 Meta-Confidence —— 判定自身的置信度（决策 D-022-10）

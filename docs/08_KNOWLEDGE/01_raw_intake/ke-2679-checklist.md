@@ -3,6 +3,7 @@ module_id: KE-2584
 status: active
 title: Checklist
 category: module_blueprint
+ttl: permanent
 ---
 
 # Checklist

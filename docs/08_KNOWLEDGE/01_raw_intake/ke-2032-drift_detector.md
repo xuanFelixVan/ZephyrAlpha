@@ -3,6 +3,7 @@ module_id: KE-1941-----------drift-detector---003
 status: active
 title: 2.8 并发竞争与文件锁——Drift Detector 与 AI 施工的并发安全（决策 D-023-11）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 并发竞争与文件锁——Drift Detector 与 AI 施工的并发安全（决策 D-023-11）

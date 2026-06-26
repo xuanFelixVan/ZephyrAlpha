@@ -3,6 +3,7 @@ module_id: KE-2067
 status: active
 title: 3.15 #53: CodeEconomyAnalyzer
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.15 #53: CodeEconomyAnalyzer

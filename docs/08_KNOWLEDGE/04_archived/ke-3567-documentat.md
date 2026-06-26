@@ -2,6 +2,7 @@
 module_id: KE-3424
 title: 9.3 监管驱动的保留要求（占位）
 category: documentation
+ttl: permanent
 ---
 
 # 9.3 监管驱动的保留要求（占位）

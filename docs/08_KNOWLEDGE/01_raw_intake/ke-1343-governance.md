@@ -3,6 +3,7 @@ module_id: KE-1255
 status: active
 title: ZephyrAlpha 规则分类与冲突裁决标准
 category: governance_rule
+ttl: permanent
 ---
 
 # ZephyrAlpha 规则分类与冲突裁决标准

@@ -3,6 +3,7 @@ module_id: KE-618
 status: active
 title: shared/contracts/runtime_plane_tag.py (v1.0.0 contract-only, J1 批次 G 落盘)
 category: documentation
+ttl: permanent
 ---
 
 # shared/contracts/runtime_plane_tag.py (v1.0.0 contract-only, J1 批次 G 落盘)

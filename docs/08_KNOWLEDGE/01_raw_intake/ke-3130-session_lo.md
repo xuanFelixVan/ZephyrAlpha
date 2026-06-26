@@ -3,6 +3,7 @@ module_id: KE-3028
 status: active
 title: 4.3 写入频率
 category: session_log
+ttl: permanent
 ---
 
 # 4.3 写入频率

@@ -3,6 +3,7 @@ module_id: KE-2989---------------oracle-ru-000
 status: active
 title: ── v0.5.0 新增：额外的自适应干预动作（Oracle Runtime Budget Guardrails 对标）──
 category: module_blueprint
+ttl: permanent
 ---
 
 # ── v0.5.0 新增：额外的自适应干预动作（Oracle Runtime Budget Guardrails 对标）──

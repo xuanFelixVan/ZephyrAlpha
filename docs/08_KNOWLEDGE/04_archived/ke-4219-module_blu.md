@@ -2,6 +2,7 @@
 module_id: KE-4060
 title: 3.3 按触发方式分类
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 按触发方式分类

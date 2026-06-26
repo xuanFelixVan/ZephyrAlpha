@@ -2,6 +2,7 @@
 module_id: KE-4128
 title: 5. 风险与缓解
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. 风险与缓解

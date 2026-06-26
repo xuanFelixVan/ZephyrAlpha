@@ -3,6 +3,7 @@ module_id: KE-957
 status: active
 title: 5.3 Architecture Model YAML
 category: governance
+ttl: permanent
 ---
 
 # 5.3 Architecture Model YAML

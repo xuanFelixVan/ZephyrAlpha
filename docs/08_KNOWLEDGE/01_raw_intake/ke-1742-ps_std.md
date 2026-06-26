@@ -2,6 +2,7 @@
 module_id: KE-1652--------ps-std-005-000
 title: 2.1 蓝图层级分布（PS-STD-005 分类）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 蓝图层级分布（PS-STD-005 分类）

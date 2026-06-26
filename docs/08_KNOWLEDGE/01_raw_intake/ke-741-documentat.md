@@ -3,6 +3,7 @@ module_id: KE-665
 status: active
 title: 对 ZephyrAlpha 2.0 的特定价值
 category: documentation
+ttl: permanent
 ---
 
 # 对 ZephyrAlpha 2.0 的特定价值

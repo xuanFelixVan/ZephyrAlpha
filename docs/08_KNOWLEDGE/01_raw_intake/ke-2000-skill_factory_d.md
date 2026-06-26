@@ -3,6 +3,7 @@ module_id: KE-1909----------d-0-004
 status: active
 title: 2.4 Skill Factory 与自举机制（决策 D-019-05）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 Skill Factory 与自举机制（决策 D-019-05）

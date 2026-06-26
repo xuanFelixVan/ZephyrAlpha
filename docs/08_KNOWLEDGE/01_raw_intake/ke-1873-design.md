@@ -3,6 +3,7 @@ module_id: KE-1782-----------------------d-0-000
 status: active
 title: 2.21 告警可信度评分——防止"狼来了"效应（决策 D-023-35）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.21 告警可信度评分——防止"狼来了"效应（决策 D-023-35）

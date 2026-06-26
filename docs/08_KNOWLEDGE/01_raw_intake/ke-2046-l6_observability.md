@@ -3,6 +3,7 @@ module_id: KE-1955---observability---------003
 status: active
 title: 2.9 L6 — Observability 可观测性（决策 D-018-11）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.9 L6 — Observability 可观测性（决策 D-018-11）

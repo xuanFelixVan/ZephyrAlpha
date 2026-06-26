@@ -3,6 +3,7 @@ module_id: KE-2002-----b133-000
 status: active
 title: 3. FileLockBackend（跨进程，B133）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. FileLockBackend（跨进程，B133）

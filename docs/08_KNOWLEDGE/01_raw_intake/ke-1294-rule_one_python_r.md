@@ -3,6 +3,7 @@ module_id: KE-1207--------------r-003
 status: active
 title: 🔴 RULE-ONE：Python 脚本并发写入安全规范（与 RULE-ZERO 同级）
 category: governance_rule
+ttl: permanent
 ---
 
 # 🔴 RULE-ONE：Python 脚本并发写入安全规范（与 RULE-ZERO 同级）

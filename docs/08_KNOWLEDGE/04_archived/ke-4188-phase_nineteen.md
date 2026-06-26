@@ -2,6 +2,7 @@
 module_id: KE-4188
 title: 3. 蓝图外已有实现（§19.2 + §6.3）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 蓝图外已有实现（§19.2 + §6.3）

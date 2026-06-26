@@ -3,6 +3,7 @@ module_id: KE-636-------v0-003
 status: active
 title: Stage 7：从"工作区 v0"到"前置项目会话留痕机制迁移"
 category: documentation
+ttl: permanent
 ---
 
 # Stage 7：从"工作区 v0"到"前置项目会话留痕机制迁移"

@@ -2,6 +2,7 @@
 module_id: KE-1527
 title: 15. 关键关联
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15. 关键关联

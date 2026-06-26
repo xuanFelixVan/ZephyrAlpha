@@ -2,6 +2,7 @@
 module_id: KE-3469
 title: 1.3 术语
 category: governance
+ttl: permanent
 ---
 
 # 1.3 术语

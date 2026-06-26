@@ -3,6 +3,7 @@ module_id: KE-2301
 status: active
 title: 5.2.2 判定标准
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2.2 判定标准

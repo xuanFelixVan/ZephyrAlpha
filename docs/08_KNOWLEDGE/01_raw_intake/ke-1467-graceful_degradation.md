@@ -2,6 +2,7 @@
 module_id: KE-1377-------000
 title: 11. Graceful Degradation + 语义缓存（v2.0.0 新增）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11. Graceful Degradation + 语义缓存（v2.0.0 新增）

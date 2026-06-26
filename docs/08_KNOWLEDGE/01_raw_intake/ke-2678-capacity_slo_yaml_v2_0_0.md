@@ -3,6 +3,7 @@ module_id: KE-2583----v2-0-0----003
 status: active
 title: capacity_slo.yaml 示例（v2.0.0 含 Saturation 四黄金信号）
 category: module_blueprint
+ttl: permanent
 ---
 
 # capacity_slo.yaml 示例（v2.0.0 含 Saturation 四黄金信号）

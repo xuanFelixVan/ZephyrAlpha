@@ -3,6 +3,7 @@ module_id: KE-2131-------mod--003
 status: active
 title: 3.5 Budget Enforcer 集成（对接 MOD-INF-024）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 Budget Enforcer 集成（对接 MOD-INF-024）

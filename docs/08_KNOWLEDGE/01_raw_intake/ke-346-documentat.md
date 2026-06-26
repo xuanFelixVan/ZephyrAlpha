@@ -2,6 +2,7 @@
 module_id: KE-313
 title: 4.1 违规统计总览
 category: documentation
+ttl: permanent
 ---
 
 # 4.1 违规统计总览

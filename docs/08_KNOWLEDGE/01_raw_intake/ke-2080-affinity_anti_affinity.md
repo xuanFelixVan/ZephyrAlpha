@@ -3,6 +3,7 @@ module_id: KE-1989------000
 status: active
 title: 3. Affinity/Anti-Affinity 约束矩阵（5条）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Affinity/Anti-Affinity 约束矩阵（5条）

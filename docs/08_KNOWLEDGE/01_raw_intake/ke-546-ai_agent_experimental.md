@@ -3,6 +3,7 @@ module_id: KE-494------experimental-000
 status: active
 title: 7.2 AI Agent 身份模型（experimental P0）
 category: documentation
+ttl: permanent
 ---
 
 # 7.2 AI Agent 身份模型（experimental P0）

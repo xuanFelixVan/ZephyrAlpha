@@ -3,6 +3,7 @@ module_id: KE-878-----------v1-2-0---45----000
 status: active
 title: 4. 46 治理系统分层归属表（v1.2.0：原 45 + GATE-SUM 校正 1）
 category: governance
+ttl: permanent
 ---
 
 # 4. 46 治理系统分层归属表（v1.2.0：原 45 + GATE-SUM 校正 1）

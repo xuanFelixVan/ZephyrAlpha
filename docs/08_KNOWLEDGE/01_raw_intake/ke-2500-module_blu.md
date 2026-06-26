@@ -3,6 +3,7 @@ module_id: KE-2405
 status: active
 title: 6.9 漂移演练手册自动生成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.9 漂移演练手册自动生成

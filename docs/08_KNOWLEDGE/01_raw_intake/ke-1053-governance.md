@@ -3,6 +3,7 @@ module_id: KE-969
 status: active
 title: 6. 禁止行为
 category: governance
+ttl: permanent
 ---
 
 # 6. 禁止行为

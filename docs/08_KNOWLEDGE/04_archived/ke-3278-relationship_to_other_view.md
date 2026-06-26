@@ -2,6 +2,7 @@
 module_id: KE-3168
 title: 10. Relationship to Other Views / 与其他视图的边界
 category: documentation
+ttl: permanent
 ---
 
 # 10. Relationship to Other Views / 与其他视图的边界

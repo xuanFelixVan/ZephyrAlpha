@@ -2,6 +2,7 @@
 module_id: KE-3298
 title: 4.2 Stage-level metrics / 阶段级指标表
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 Stage-level metrics / 阶段级指标表

@@ -2,6 +2,7 @@
 module_id: KE-4409
 title: S类：量化交易特有升级场景（专业机构必建，本蓝图未覆盖）
 category: module_blueprint
+ttl: permanent
 ---
 
 # S类：量化交易特有升级场景（专业机构必建，本蓝图未覆盖）

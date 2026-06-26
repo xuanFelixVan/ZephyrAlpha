@@ -3,6 +3,7 @@ module_id: KE-1787
 status: active
 title: 2.212 Decision Justification Quality - decision_explanation_quality.py (🆕 v0.20.
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.212 Decision Justification Quality - decision_explanation_quality.py (🆕 v0.20.

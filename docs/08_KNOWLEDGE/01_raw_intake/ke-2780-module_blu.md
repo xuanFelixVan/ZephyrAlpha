@@ -2,6 +2,7 @@
 module_id: KE-2683----------15-000
 title: DB-025-0065：测试覆盖矩阵——§15
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0065：测试覆盖矩阵——§15

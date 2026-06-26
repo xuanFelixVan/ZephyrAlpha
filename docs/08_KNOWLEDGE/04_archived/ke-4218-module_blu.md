@@ -2,6 +2,7 @@
 module_id: KE-4059
 title: 3.3 输入契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 输入契约

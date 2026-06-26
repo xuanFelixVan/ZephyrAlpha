@@ -2,6 +2,7 @@
 module_id: KE-1045-------informative-003
 title: 9.2 信息性引用（Informative）
 category: governance
+ttl: permanent
 ---
 
 # 9.2 信息性引用（Informative）

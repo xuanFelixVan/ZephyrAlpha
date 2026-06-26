@@ -2,6 +2,7 @@
 module_id: KE-1526-----1-000
 title: 契约追溯 — 15 §9集成 + 1 补充集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 契约追溯 — 15 §9集成 + 1 补充集成

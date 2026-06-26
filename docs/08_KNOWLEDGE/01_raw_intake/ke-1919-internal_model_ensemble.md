@@ -3,6 +3,7 @@ module_id: KE-1828
 status: active
 title: 2.245 Internal Model Ensemble Diversity Monitor - model_ensemble_diversity.py (🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.245 Internal Model Ensemble Diversity Monitor - model_ensemble_diversity.py (🆕

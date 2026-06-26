@@ -3,6 +3,7 @@ module_id: KE-396-----0-10-000
 status: active
 title: 5.1 单维度 0-10 分制
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 单维度 0-10 分制

@@ -3,6 +3,7 @@ module_id: KE-590
 status: active
 title: 触发条件（何时引入 Event Backbone）
 category: documentation
+ttl: permanent
 ---
 
 # 触发条件（何时引入 Event Backbone）

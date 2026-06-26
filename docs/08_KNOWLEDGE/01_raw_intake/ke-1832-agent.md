@@ -3,6 +3,7 @@ module_id: KE-1741
 status: active
 title: 2.19 Agent 身份验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.19 Agent 身份验证

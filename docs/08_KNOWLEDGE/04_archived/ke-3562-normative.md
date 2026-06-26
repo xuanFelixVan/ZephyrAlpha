@@ -2,6 +2,7 @@
 module_id: KE-3419
 title: 9.1 Normative 引用（必须遵守）
 category: documentation
+ttl: permanent
 ---
 
 # 9.1 Normative 引用（必须遵守）

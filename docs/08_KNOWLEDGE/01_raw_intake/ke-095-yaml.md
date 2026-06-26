@@ -3,6 +3,7 @@ module_id: KE-087
 status: active
 title: 1.3.1 YAML 文件子类型
 category: documentation
+ttl: permanent
 ---
 
 # 1.3.1 YAML 文件子类型

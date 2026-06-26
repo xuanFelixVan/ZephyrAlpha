@@ -2,6 +2,7 @@
 module_id: KE-3979
 title: 2. SSoT 声明
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. SSoT 声明

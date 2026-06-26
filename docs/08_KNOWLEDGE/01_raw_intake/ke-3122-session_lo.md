@@ -3,6 +3,7 @@ module_id: KE-3020
 status: active
 title: 1.1 当前问题
 category: session_log
+ttl: permanent
 ---
 
 # 1.1 当前问题

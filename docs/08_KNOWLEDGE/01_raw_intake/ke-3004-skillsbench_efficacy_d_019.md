@@ -3,6 +3,7 @@ module_id: KE-2904
 status: active
 title: SkillsBench Efficacy (D-019-72)
 category: module_blueprint
+ttl: permanent
 ---
 
 # SkillsBench Efficacy (D-019-72)

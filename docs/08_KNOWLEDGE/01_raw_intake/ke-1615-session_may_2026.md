@@ -3,6 +3,7 @@ module_id: KE-1525--------------------2026-05--000
 status: active
 title: 15. 第七轮审计结论 —— 审计已达终点（2026-05-05）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15. 第七轮审计结论 —— 审计已达终点（2026-05-05）

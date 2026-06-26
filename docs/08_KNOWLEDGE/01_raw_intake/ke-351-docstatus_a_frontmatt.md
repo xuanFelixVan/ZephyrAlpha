@@ -3,6 +3,7 @@ module_id: KE-317---a----frontmatt-005
 status: active
 title: 4.1 DocStatus（域 A：文档 frontmatter）
 category: documentation
+ttl: permanent
 ---
 
 # 4.1 DocStatus（域 A：文档 frontmatter）

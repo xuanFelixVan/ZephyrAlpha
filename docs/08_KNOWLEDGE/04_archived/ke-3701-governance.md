@@ -2,6 +2,7 @@
 module_id: KE-3554
 title: 21. 审查周期
 category: governance
+ttl: permanent
 ---
 
 # 21. 审查周期

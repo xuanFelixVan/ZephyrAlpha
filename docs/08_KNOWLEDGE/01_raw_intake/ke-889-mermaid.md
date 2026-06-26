@@ -3,6 +3,7 @@ module_id: KE-811---------mermaid-004
 status: active
 title: 2.3 三层架构全景图（Mermaid）
 category: governance
+ttl: permanent
 ---
 
 # 2.3 三层架构全景图（Mermaid）

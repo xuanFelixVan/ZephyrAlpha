@@ -3,6 +3,7 @@ module_id: KE-1883
 status: active
 title: 2.31 升级协议自身的技术债务与规则腐化
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.31 升级协议自身的技术债务与规则腐化

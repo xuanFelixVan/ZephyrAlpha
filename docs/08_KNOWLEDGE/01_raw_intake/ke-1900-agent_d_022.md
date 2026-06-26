@@ -3,6 +3,7 @@ module_id: KE-1809----------d-022-16-003
 status: active
 title: 2.23 Agent行为漂移检测（决策 D-022-16）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.23 Agent行为漂移检测（决策 D-022-16）

@@ -3,6 +3,7 @@ module_id: KE-1831
 status: active
 title: 2.248 Cross-Version Performance Regression Detector - cross_version_regression.p
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.248 Cross-Version Performance Regression Detector - cross_version_regression.p

@@ -3,6 +3,7 @@ module_id: KE-3126------active-004
 status: active
 title: P1-46：status 字段值 `active` 不在有效状态集合中
 category: test_coverage
+ttl: permanent
 ---
 
 # P1-46：status 字段值 `active` 不在有效状态集合中

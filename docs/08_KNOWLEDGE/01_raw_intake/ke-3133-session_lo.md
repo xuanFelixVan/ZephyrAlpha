@@ -2,6 +2,7 @@
 module_id: KE-3031
 title: 5.3 降级路径
 category: session_log
+ttl: permanent
 ---
 
 # 5.3 降级路径

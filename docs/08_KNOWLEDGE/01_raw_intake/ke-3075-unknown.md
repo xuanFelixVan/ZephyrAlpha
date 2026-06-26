@@ -3,6 +3,7 @@ module_id: KE-2974
 status: active
 title: 核心职能
 category: module_blueprint
+ttl: permanent
 ---
 
 # 核心职能

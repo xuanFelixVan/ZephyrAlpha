@@ -2,6 +2,7 @@
 module_id: KE-4413
 title: SYS-MASTER-001 Consistency
 category: module_blueprint
+ttl: permanent
 ---
 
 # SYS-MASTER-001 Consistency

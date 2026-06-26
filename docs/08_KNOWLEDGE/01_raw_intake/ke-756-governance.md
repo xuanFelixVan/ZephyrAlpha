@@ -2,6 +2,7 @@
 module_id: KE-680
 title: 〇.1 目的
 category: governance
+ttl: permanent
 ---
 
 # 〇.1 目的

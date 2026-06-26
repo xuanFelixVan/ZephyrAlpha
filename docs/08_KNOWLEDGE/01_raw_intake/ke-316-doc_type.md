@@ -3,6 +3,7 @@ module_id: KE-291
 status: active
 title: 3.4 doc_type 与存放路径的映射
 category: documentation
+ttl: permanent
 ---
 
 # 3.4 doc_type 与存放路径的映射

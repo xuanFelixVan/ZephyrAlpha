@@ -2,6 +2,7 @@
 module_id: KE-185
 title: 2.1 架构与治理类
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 架构与治理类

@@ -2,6 +2,7 @@
 module_id: KE-673
 title: 0. 读者指南
 category: governance
+ttl: permanent
 ---
 
 # 0. 读者指南

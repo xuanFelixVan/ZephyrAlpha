@@ -3,6 +3,7 @@ module_id: KE-596
 status: active
 title: 管什么（In Scope）
 category: documentation
+ttl: permanent
 ---
 
 # 管什么（In Scope）

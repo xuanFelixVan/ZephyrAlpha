@@ -3,6 +3,7 @@ module_id: KE-2229
 status: active
 title: 4.2 HTTP API（beta 按需启用，预留骨架）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 HTTP API（beta 按需启用，预留骨架）

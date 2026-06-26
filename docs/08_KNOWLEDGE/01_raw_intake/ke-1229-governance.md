@@ -3,6 +3,7 @@ module_id: KE-1142
 status: active
 title: IFC-005：契约状态转换条件
 category: governance
+ttl: permanent
 ---
 
 # IFC-005：契约状态转换条件

@@ -3,6 +3,7 @@ module_id: KE-604-------adr--------doc-type-008
 status: active
 title: L3 基础模板（`adr` 及其他所有 doc_type）
 category: documentation
+ttl: permanent
 ---
 
 # L3 基础模板（`adr` 及其他所有 doc_type）

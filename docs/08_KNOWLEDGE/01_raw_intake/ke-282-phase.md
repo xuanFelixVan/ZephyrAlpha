@@ -2,6 +2,7 @@
 module_id: KE-260----phase-003
 title: 3.2 每个 Phase 的增量重点
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 每个 Phase 的增量重点

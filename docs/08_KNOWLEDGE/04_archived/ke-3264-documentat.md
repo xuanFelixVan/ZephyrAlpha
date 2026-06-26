@@ -2,6 +2,7 @@
 module_id: KE-3156
 title: 1.2 权重分配理由
 category: documentation
+ttl: permanent
 ---
 
 # 1.2 权重分配理由

@@ -2,6 +2,7 @@
 module_id: KE-517
 title: 8. 开放问题
 category: documentation
+ttl: permanent
 ---
 
 # 8. 开放问题

@@ -2,6 +2,7 @@
 module_id: KE-4281
 title: D-022-25 Vibe Coding安全鸿沟防御
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-25 Vibe Coding安全鸿沟防御

@@ -3,6 +3,7 @@ module_id: KE-1008----------002
 status: active
 title: 7.2 `entry_conditions` 数组项（每条 check）
 category: governance
+ttl: permanent
 ---
 
 # 7.2 `entry_conditions` 数组项（每条 check）

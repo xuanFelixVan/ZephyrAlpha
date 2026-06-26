@@ -2,6 +2,7 @@
 module_id: KE-2415
 title: 7. Key Design Decisions
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. Key Design Decisions

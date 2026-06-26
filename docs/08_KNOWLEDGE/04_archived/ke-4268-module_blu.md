@@ -2,6 +2,7 @@
 module_id: KE-4109
 title: 4.3 迁移/废弃方案
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.3 迁移/废弃方案

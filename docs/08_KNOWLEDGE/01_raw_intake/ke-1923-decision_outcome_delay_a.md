@@ -3,6 +3,7 @@ module_id: KE-1832
 status: active
 title: 2.249 Decision Outcome Delay Attribution Registry - outcome_delay_attribution.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.249 Decision Outcome Delay Attribution Registry - outcome_delay_attribution.py

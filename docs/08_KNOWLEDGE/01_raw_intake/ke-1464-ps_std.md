@@ -2,6 +2,7 @@
 module_id: KE-1374-----------ps-std-003
 title: 11. 与已有标准的关系（PS-STD 系列）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11. 与已有标准的关系（PS-STD 系列）

@@ -3,6 +3,7 @@ module_id: KE-1117-------clear-accountabi-003
 status: active
 title: DOC-002：责任二选一（Clear Accountability）
 category: governance
+ttl: permanent
 ---
 
 # DOC-002：责任二选一（Clear Accountability）

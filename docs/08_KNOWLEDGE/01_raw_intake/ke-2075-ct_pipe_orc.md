@@ -3,6 +3,7 @@ module_id: KE-1984--------ct-pipe-orc-001-003
 status: active
 title: 3. 路由决策树（CT-PIPE-ORC-001 落地）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 路由决策树（CT-PIPE-ORC-001 落地）

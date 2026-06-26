@@ -3,6 +3,7 @@ module_id: KE-2733
 status: active
 title: Four-Layer Intelligence (D-019-83)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Four-Layer Intelligence (D-019-83)

@@ -3,6 +3,7 @@ module_id: KE-564
 status: active
 title: 7.5 Runtime Plane 归属（v1.1.0 新增，R69 / J1 批次，正交视图引用）
 category: documentation
+ttl: permanent
 ---
 
 # 7.5 Runtime Plane 归属（v1.1.0 新增，R69 / J1 批次，正交视图引用）

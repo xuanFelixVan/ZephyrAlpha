@@ -2,6 +2,7 @@
 module_id: KE-1472----------4-------anthro-000
 title: 13.2 A. 检索质量与评估（4个）——对标 Anthropic RAG Evaluation + Qdrant Search Quality Metrics
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.2 A. 检索质量与评估（4个）——对标 Anthropic RAG Evaluation + Qdrant Search Quality Metrics

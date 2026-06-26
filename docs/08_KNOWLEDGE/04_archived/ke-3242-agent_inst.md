@@ -2,6 +2,7 @@
 module_id: KE-3136
 title: 4. 编码安全（唯一始终生效的硬规则）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 4. 编码安全（唯一始终生效的硬规则）

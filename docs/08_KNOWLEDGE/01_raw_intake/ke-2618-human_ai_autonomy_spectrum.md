@@ -3,6 +3,7 @@ module_id: KE-2523
 status: active
 title: 9.4 Human-AI Autonomy Spectrum & Skill Modification Authority（决策 D-019-12）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.4 Human-AI Autonomy Spectrum & Skill Modification Authority（决策 D-019-12）

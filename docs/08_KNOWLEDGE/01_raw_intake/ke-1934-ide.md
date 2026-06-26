@@ -3,6 +3,7 @@ module_id: KE-1843
 status: active
 title: 2.26 跨IDE/跨编码助手 + 微秒级延迟 + 策略范围隔离
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.26 跨IDE/跨编码助手 + 微秒级延迟 + 策略范围隔离

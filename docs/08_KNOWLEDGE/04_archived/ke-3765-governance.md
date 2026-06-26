@@ -2,6 +2,7 @@
 module_id: KE-3614
 title: 6.2 人工审查项
 category: governance
+ttl: permanent
 ---
 
 # 6.2 人工审查项

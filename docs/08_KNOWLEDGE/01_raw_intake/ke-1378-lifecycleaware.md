@@ -3,6 +3,7 @@ module_id: KE-1289
 status: active
 title: 1. LifecycleAware 实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. LifecycleAware 实现

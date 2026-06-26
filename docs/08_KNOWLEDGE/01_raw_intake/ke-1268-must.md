@@ -3,6 +3,7 @@ module_id: KE-1181---------must-006
 status: active
 title: MTH-006：根源分析原则 [MUST — 每次发现问题时强制执行]
 category: governance
+ttl: permanent
 ---
 
 # MTH-006：根源分析原则 [MUST — 每次发现问题时强制执行]

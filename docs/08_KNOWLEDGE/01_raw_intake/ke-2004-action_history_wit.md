@@ -3,6 +3,7 @@ module_id: KE-1913---------action-history-wit-003
 status: active
 title: 2.5 动作历史与去重（Action History with Dedup）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 动作历史与去重（Action History with Dedup）

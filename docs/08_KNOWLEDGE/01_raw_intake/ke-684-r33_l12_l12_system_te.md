@@ -3,6 +3,7 @@ module_id: KE-DOCUMENTAT-R33-L12-L12-SYSTEM-TE-001
 status: active
 title: 决策 R33：L12 命名最终锁定为 `infra_ops`（Closes OQ-030）
 category: documentation
+ttl: permanent
 ---
 
 # 决策 R33：L12 命名最终锁定为 `infra_ops`（Closes OQ-030）

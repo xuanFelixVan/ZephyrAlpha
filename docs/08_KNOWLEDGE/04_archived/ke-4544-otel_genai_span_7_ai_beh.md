@@ -2,6 +2,7 @@
 module_id: KE-4379-------7-ai-beh-000
 title: OTel GenAI Span 属性映射（§7 ai_behavior + §6 traces）
 category: module_blueprint
+ttl: permanent
 ---
 
 # OTel GenAI Span 属性映射（§7 ai_behavior + §6 traces）

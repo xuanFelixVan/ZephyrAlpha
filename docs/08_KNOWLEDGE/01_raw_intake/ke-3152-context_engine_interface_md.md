@@ -3,6 +3,7 @@ module_id: KE-3046
 status: active
 title: 由 context-engine-interface.md §3.5 约束
 category: session_log
+ttl: permanent
 ---
 
 # 由 context-engine-interface.md §3.5 约束

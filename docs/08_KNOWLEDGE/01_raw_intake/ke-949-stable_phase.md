@@ -2,6 +2,7 @@
 module_id: KE-871-----phase-000
 title: 3.5 stable（无下一 Phase）
 category: governance
+ttl: permanent
 ---
 
 # 3.5 stable（无下一 Phase）

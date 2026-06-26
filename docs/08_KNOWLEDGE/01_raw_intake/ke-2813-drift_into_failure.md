@@ -3,6 +3,7 @@ module_id: KE-2716
 status: active
 title: === 故障正常化漂移 Drift Into Failure ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === 故障正常化漂移 Drift Into Failure ===

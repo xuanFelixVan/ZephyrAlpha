@@ -3,6 +3,7 @@ module_id: KE-1709
 status: active
 title: 2.13 CT-FLE-DB-001：反馈环路 → 数据库 — 评估指标时序持久化
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.13 CT-FLE-DB-001：反馈环路 → 数据库 — 评估指标时序持久化

@@ -3,6 +3,7 @@ module_id: KE-2993--------llm-depend-000
 status: active
 title: ── v0.6.0 Guard 升级路径：从 LLM-dependent → LLM-free 的渐进优化 ──
 category: module_blueprint
+ttl: permanent
 ---
 
 # ── v0.6.0 Guard 升级路径：从 LLM-dependent → LLM-free 的渐进优化 ──

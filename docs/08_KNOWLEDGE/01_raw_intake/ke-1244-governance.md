@@ -3,6 +3,7 @@ module_id: KE-1157--------8-000
 status: active
 title: IRN-008：先读后写（铁律8）
 category: governance
+ttl: permanent
 ---
 
 # IRN-008：先读后写（铁律8）

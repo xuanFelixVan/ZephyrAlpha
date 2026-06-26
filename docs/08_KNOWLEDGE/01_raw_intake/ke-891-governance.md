@@ -2,6 +2,7 @@
 module_id: KE-813
 title: 2.3 编码合规
 category: governance
+ttl: permanent
 ---
 
 # 2.3 编码合规

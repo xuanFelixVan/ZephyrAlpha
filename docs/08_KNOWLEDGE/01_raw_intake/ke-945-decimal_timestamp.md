@@ -3,6 +3,7 @@ module_id: KE-867-----timestamp-----002
 status: active
 title: 3.4 `Decimal` / `Timestamp` / `Money` 强制
 category: governance
+ttl: permanent
 ---
 
 # 3.4 `Decimal` / `Timestamp` / `Money` 强制

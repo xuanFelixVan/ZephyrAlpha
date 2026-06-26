@@ -2,6 +2,7 @@
 module_id: KE-4187-------v2-1-000
 title: 7. 集成目标（v2.1 补全）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. 集成目标（v2.1 补全）

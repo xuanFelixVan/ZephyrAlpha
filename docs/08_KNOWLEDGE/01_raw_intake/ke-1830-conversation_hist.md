@@ -3,6 +3,7 @@ module_id: KE-1739---------conversation-hist-000
 status: active
 title: 2.19 对话历史税检测（Conversation History Tax Detector）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.19 对话历史税检测（Conversation History Tax Detector）

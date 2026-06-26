@@ -3,6 +3,7 @@ module_id: KE-573--------architecture-m-004
 status: active
 title: AUDIT-04：企业架构 + architecture_model 全量审计报告
 category: documentation
+ttl: permanent
 ---
 
 # AUDIT-04：企业架构 + architecture_model 全量审计报告

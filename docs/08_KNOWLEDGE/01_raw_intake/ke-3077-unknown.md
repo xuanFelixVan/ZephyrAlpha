@@ -3,6 +3,7 @@ module_id: KE-2976
 status: active
 title: 三层闭环架构
 category: module_blueprint
+ttl: permanent
 ---
 
 # 三层闭环架构

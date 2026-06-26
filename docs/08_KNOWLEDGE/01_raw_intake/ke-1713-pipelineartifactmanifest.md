@@ -3,6 +3,7 @@ module_id: KE-1623
 status: active
 title: 2. PipelineArtifactManifest
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. PipelineArtifactManifest

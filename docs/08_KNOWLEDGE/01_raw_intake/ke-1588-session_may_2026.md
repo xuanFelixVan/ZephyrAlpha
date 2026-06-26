@@ -3,6 +3,7 @@ module_id: KE-1498-------------------2026-05-0-002
 status: active
 title: 14. 已发现未修复盲点（第六轮审计 | 2026-05-05）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14. 已发现未修复盲点（第六轮审计 | 2026-05-05）

@@ -2,6 +2,7 @@
 module_id: KE-3758
 title: 1.1 模块标识
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.1 模块标识

@@ -3,6 +3,7 @@ module_id: KE-2105
 status: active
 title: 3.3 Gate Engine 集成（资产盘点门禁）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 Gate Engine 集成（资产盘点门禁）

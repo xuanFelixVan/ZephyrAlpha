@@ -2,6 +2,7 @@
 module_id: KE-3914
 title: 1.2 蓝图外已有实现（蓝图 §6.3）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.2 蓝图外已有实现（蓝图 §6.3）

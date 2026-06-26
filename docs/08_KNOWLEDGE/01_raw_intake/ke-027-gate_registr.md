@@ -3,6 +3,7 @@ module_id: KE-027--------------gate-registr-005
 status: active
 title: 6.19 门禁-登记表原子同步铁律（Gate-Registry Atomic Sync Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.19 门禁-登记表原子同步铁律（Gate-Registry Atomic Sync Mandate）

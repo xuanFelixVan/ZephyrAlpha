@@ -3,6 +3,7 @@ module_id: KE-2709---------001
 status: active
 title: _detector-registry.yaml — 声明式检测器注册表（机器 SSoT）
 category: module_blueprint
+ttl: permanent
 ---
 
 # _detector-registry.yaml — 声明式检测器注册表（机器 SSoT）

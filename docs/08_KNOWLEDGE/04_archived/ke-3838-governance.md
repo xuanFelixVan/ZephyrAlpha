@@ -2,6 +2,7 @@
 module_id: KE-3687
 title: DQA-002：质量告警必须响应
 category: governance
+ttl: permanent
 ---
 
 # DQA-002：质量告警必须响应

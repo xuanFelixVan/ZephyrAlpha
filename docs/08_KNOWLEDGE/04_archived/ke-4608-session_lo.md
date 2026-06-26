@@ -2,6 +2,7 @@
 module_id: KE-4442
 title: 5.1 触发点
 category: session_log
+ttl: permanent
 ---
 
 # 5.1 触发点

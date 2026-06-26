@@ -3,6 +3,7 @@ module_id: KE-340------deprecation-policy-001
 status: active
 title: 4.3 废弃政策（Deprecation Policy）
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 废弃政策（Deprecation Policy）

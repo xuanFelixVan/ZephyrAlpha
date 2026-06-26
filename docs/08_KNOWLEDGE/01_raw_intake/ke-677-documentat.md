@@ -2,6 +2,7 @@
 module_id: KE-609
 title: 规范性引用（Normative）
 category: documentation
+ttl: permanent
 ---
 
 # 规范性引用（Normative）

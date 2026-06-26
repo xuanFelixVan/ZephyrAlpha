@@ -3,6 +3,7 @@ module_id: KE-1935------1--ai-000
 status: active
 title: 2.7 自监控——1人+AI 维护的刚需
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.7 自监控——1人+AI 维护的刚需

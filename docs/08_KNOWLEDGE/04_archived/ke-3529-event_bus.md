@@ -2,6 +2,7 @@
 module_id: KE-3393
 title: 7.4 Event bus / 事件总线（当前状态）
 category: documentation
+ttl: permanent
 ---
 
 # 7.4 Event bus / 事件总线（当前状态）

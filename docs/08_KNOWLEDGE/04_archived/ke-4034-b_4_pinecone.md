@@ -2,6 +2,7 @@
 module_id: KE-3881-------4-------pinecone--004
 title: 13.3 B. 索引管理（4个）——对标 Pinecone Pod Architecture + Qdrant Quantization
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.3 B. 索引管理（4个）——对标 Pinecone Pod Architecture + Qdrant Quantization

@@ -2,6 +2,7 @@
 module_id: KE-3160
 title: 1.4 SSoT 声明
 category: documentation
+ttl: permanent
 ---
 
 # 1.4 SSoT 声明

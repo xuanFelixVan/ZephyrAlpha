@@ -3,6 +3,7 @@ module_id: KE-2306
 status: active
 title: 5.3 覆盖率仪表板
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.3 覆盖率仪表板

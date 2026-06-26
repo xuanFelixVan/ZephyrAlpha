@@ -2,6 +2,7 @@
 module_id: KE-3935
 title: 16.1 IBM ContextForge Gateway 模式
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.1 IBM ContextForge Gateway 模式

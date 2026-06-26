@@ -2,6 +2,7 @@
 module_id: KE-4319---------init-d-000
 title: DB-025-0055：AP3 防护——禁止绕过init_db()直接connect
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0055：AP3 防护——禁止绕过init_db()直接connect

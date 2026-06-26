@@ -3,6 +3,7 @@ module_id: KE-1283
 status: active
 title: 1. BlindReviewResult
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. BlindReviewResult

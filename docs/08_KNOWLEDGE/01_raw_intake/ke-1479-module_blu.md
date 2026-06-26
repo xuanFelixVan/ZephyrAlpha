@@ -2,6 +2,7 @@
 module_id: KE-1389
 title: 11.2 前置条件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.2 前置条件

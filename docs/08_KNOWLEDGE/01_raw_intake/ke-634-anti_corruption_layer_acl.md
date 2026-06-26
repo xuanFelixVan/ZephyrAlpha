@@ -3,6 +3,7 @@ module_id: KE-571---acl----001
 status: active
 title: Anti-Corruption Layer / ACL 三段结构（L00 数据接入）
 category: documentation
+ttl: permanent
 ---
 
 # Anti-Corruption Layer / ACL 三段结构（L00 数据接入）

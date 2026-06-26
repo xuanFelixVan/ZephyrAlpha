@@ -3,6 +3,7 @@ module_id: KE-2770--------system-master-b-003
 status: active
 title: Level 0：全系统总蓝图（System Master Blueprint）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Level 0：全系统总蓝图（System Master Blueprint）

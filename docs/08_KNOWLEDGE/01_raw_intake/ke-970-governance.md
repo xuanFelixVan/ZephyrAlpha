@@ -3,6 +3,7 @@ module_id: KE-892
 status: active
 title: 4.1.1 触发条件
 category: governance
+ttl: permanent
 ---
 
 # 4.1.1 触发条件

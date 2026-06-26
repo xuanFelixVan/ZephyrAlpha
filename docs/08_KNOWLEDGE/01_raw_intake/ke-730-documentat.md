@@ -3,6 +3,7 @@ module_id: KE-654
 status: active
 title: 受保护字段
 category: documentation
+ttl: permanent
 ---
 
 # 受保护字段

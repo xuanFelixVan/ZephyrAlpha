@@ -2,6 +2,7 @@
 module_id: KE-524---rpo-000
 title: 8.1 RTO / RPO 核心链路分层矩阵
 category: documentation
+ttl: permanent
 ---
 
 # 8.1 RTO / RPO 核心链路分层矩阵

@@ -2,6 +2,7 @@
 module_id: KE-4258
 title: D-022-01 三级升级策略实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-01 三级升级策略实现

@@ -2,6 +2,7 @@
 module_id: KE-334----------bom------front-000
 title: 4.2 P0 级：编码损坏 + BOM + 重复 frontmatter（3 个文件）
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 P0 级：编码损坏 + BOM + 重复 frontmatter（3 个文件）

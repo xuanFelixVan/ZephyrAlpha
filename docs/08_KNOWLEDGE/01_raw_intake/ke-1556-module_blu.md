@@ -2,6 +2,7 @@
 module_id: KE-1466
 title: 13.12 33盲点汇总与优先级
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.12 33盲点汇总与优先级

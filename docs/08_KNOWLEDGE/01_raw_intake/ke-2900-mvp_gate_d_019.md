@@ -3,6 +3,7 @@ module_id: KE-2800
 status: active
 title: MVP Gate (D-019-84)
 category: module_blueprint
+ttl: permanent
 ---
 
 # MVP Gate (D-019-84)

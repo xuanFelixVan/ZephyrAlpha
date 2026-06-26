@@ -3,6 +3,7 @@ module_id: KE-2771---------domain-integra-003
 status: active
 title: Level 1：功能域集成蓝图（Domain Integration Blueprint）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Level 1：功能域集成蓝图（Domain Integration Blueprint）

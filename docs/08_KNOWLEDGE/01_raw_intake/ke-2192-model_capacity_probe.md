@@ -3,6 +3,7 @@ module_id: KE-2099
 status: active
 title: 3.3 #57: ModelCapacityProbe (M-44)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 #57: ModelCapacityProbe (M-44)

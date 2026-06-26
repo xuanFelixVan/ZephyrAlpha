@@ -2,6 +2,7 @@
 module_id: KE-3294
 title: 4.2 规则层级条件禁止
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 规则层级条件禁止

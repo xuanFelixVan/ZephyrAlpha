@@ -3,6 +3,7 @@ module_id: KE-310---ai-session-003
 status: active
 title: 4.1 新 AI session 冷启动（所有任务通用）
 category: documentation
+ttl: permanent
 ---
 
 # 4.1 新 AI session 冷启动（所有任务通用）

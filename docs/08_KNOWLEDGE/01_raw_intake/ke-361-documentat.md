@@ -3,6 +3,7 @@ module_id: KE-326
 status: active
 title: 4.2 核心设计原则
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 核心设计原则

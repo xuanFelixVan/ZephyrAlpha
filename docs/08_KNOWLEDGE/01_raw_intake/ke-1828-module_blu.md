@@ -3,6 +3,7 @@ module_id: KE-1737---------------------------002
 status: active
 title: 2.19 缓存一致性——权限变更推送失效 + 降级攻击防护（决策 D-018-17）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.19 缓存一致性——权限变更推送失效 + 降级攻击防护（决策 D-018-17）

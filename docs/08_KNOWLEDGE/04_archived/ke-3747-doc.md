@@ -2,6 +2,7 @@
 module_id: KE-3597
 title: 5. DOC 域（文档治理规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 5. DOC 域（文档治理规则）

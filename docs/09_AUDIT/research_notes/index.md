@@ -3,6 +3,7 @@ blueprint_id: GOV-061
 title: Research Notes
 module_id: GOV-061
 updated: "2026-06-22"
+ttl: task_bound
 ---
 
 # Research Notes

@@ -3,6 +3,7 @@ module_id: KE-1153--------4-000
 status: active
 title: IRN-004：断链清零（铁律4）
 category: governance
+ttl: permanent
 ---
 
 # IRN-004：断链清零（铁律4）

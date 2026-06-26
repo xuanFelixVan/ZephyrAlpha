@@ -3,6 +3,7 @@ module_id: KE-1807
 status: active
 title: 2.229 Data Freshness-Weighted Confidence - data_freshness_weighting.py (🆕 v0.21.
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.229 Data Freshness-Weighted Confidence - data_freshness_weighting.py (🆕 v0.21.

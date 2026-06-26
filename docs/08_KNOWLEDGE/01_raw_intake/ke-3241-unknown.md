@@ -2,6 +2,7 @@
 module_id: KE-3135
 title: 摘要
 category: test_coverage
+ttl: permanent
 ---
 
 # 摘要

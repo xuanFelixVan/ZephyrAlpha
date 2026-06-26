@@ -3,6 +3,7 @@ module_id: KE-2924
 status: active
 title: src/zephyr/llm-security/sandbox/code_exec_sandbox.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/sandbox/code_exec_sandbox.py

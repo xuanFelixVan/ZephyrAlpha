@@ -3,6 +3,7 @@ module_id: KE-682
 status: active
 title: §1 本目录的责任
 category: governance
+ttl: permanent
 ---
 
 # §1 本目录的责任

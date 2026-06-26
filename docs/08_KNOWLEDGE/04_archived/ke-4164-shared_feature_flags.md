@@ -2,6 +2,7 @@
 module_id: KE-4008
 title: 2.8 shared-feature-flags（功能开关）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 shared-feature-flags（功能开关）

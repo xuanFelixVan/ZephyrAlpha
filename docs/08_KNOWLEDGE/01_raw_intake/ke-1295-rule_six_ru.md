@@ -3,6 +3,7 @@ module_id: KE-1208--------------------ru-003
 status: active
 title: 🔴 RULE-SIX：任务粒度边界——二元四指标机械门（与 RULE-ZERO~FIVE 同级）
 category: governance_rule
+ttl: permanent
 ---
 
 # 🔴 RULE-SIX：任务粒度边界——二元四指标机械门（与 RULE-ZERO~FIVE 同级）

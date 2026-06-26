@@ -2,6 +2,7 @@
 module_id: KE-714
 title: 10. 变更同步规则
 category: governance
+ttl: permanent
 ---
 
 # 10. 变更同步规则

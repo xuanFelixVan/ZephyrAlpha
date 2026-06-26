@@ -2,6 +2,7 @@
 module_id: KE-2406
 title: 目录内容（65 张任务卡）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 目录内容（65 张任务卡）

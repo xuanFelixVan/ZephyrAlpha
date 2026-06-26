@@ -3,6 +3,7 @@ module_id: KE-3083
 status: active
 title: Vibe Coding Session 状态机规则
 category: session_log
+ttl: permanent
 ---
 
 # Vibe Coding Session 状态机规则

@@ -3,6 +3,7 @@ module_id: KE-950
 status: active
 title: 5.2 修改数据结构的流程
 category: governance
+ttl: permanent
 ---
 
 # 5.2 修改数据结构的流程

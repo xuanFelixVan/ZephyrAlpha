@@ -2,6 +2,7 @@
 module_id: KE-3622----reorganization-master-p-001
 title: 7.2 与 `reorganization-master-plan.md` 的关系
 category: governance
+ttl: permanent
 ---
 
 # 7.2 与 `reorganization-master-plan.md` 的关系

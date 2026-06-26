@@ -3,6 +3,7 @@ module_id: KE-547
 status: active
 title: §9 标准间引用规范
 category: documentation
+ttl: permanent
 ---
 
 # §9 标准间引用规范

@@ -3,6 +3,7 @@ module_id: KE-2400
 status: active
 title: 6.7 测试覆盖漂移
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.7 测试覆盖漂移

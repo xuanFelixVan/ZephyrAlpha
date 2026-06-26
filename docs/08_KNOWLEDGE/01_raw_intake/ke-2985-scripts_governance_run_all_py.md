@@ -3,6 +3,7 @@ module_id: KE-2885
 status: active
 title: scripts/governance/run_all.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # scripts/governance/run_all.py

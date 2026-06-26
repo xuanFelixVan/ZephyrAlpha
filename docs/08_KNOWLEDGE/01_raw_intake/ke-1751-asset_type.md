@@ -3,6 +3,7 @@ module_id: KE-1661
 status: active
 title: 2.1.1 asset_type（资产类型——基于目录位置 + 扩展名）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1.1 asset_type（资产类型——基于目录位置 + 扩展名）

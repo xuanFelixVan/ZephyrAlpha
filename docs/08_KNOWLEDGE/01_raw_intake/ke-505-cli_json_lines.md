@@ -3,6 +3,7 @@ module_id: KE-454------json-lines-000
 status: active
 title: 6.2 CLI 输出格式（JSON lines）
 category: documentation
+ttl: permanent
 ---
 
 # 6.2 CLI 输出格式（JSON lines）

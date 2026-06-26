@@ -3,6 +3,7 @@ module_id: KE-409
 status: active
 title: 5.2.3 顶级域层级关系
 category: documentation
+ttl: permanent
 ---
 
 # 5.2.3 顶级域层级关系

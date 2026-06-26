@@ -3,6 +3,7 @@ module_id: KE-2326
 status: active
 title: §5 Circular Dependency Ruling
 category: module_blueprint
+ttl: permanent
 ---
 
 # §5 Circular Dependency Ruling

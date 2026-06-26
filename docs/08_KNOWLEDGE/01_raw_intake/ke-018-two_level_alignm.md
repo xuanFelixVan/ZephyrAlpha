@@ -3,6 +3,7 @@ module_id: KE-018----------two-level-alignm-006
 status: active
 title: 6.10 双层对齐闸门原则（Two-Level Alignment Gate Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.10 双层对齐闸门原则（Two-Level Alignment Gate Mandate）

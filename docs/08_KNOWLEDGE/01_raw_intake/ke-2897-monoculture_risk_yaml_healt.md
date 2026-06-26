@@ -3,6 +3,7 @@ module_id: KE-2797----healt-000
 status: active
 title: monoculture-risk.yaml —— health-monitor.py 产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # monoculture-risk.yaml —— health-monitor.py 产出

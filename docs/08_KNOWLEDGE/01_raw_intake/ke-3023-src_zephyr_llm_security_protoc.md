@@ -3,6 +3,7 @@ module_id: KE-2923
 status: active
 title: src/zephyr/llm-security/protocol.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/protocol.py (experimental 产出)

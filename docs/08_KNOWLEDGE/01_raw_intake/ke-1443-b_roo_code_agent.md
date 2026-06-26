@@ -3,6 +3,7 @@ module_id: KE-1353----b-roo-code------agent--000
 status: active
 title: 10.2 模式 B：Roo Code / 外部 Agent JSON API
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.2 模式 B：Roo Code / 外部 Agent JSON API

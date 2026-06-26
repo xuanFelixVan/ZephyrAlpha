@@ -2,6 +2,7 @@
 module_id: KE-3773
 title: 1.3 运行场景约束
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.3 运行场景约束

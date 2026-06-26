@@ -3,6 +3,7 @@ module_id: KE-1901
 status: active
 title: 2.4 CT-SCRIPT-KB-001：脚本系统 ↔ 知识库
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 CT-SCRIPT-KB-001：脚本系统 ↔ 知识库

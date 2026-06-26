@@ -2,6 +2,7 @@
 module_id: KE-819
 title: 2.4 优先级变更权限
 category: governance
+ttl: permanent
 ---
 
 # 2.4 优先级变更权限

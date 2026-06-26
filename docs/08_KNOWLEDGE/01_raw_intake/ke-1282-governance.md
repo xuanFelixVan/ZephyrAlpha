@@ -2,6 +2,7 @@
 module_id: KE-1195
 title: normative（必须遵守——修改这些引用源时本文档也须同步更新）
 category: governance
+ttl: permanent
 ---
 
 # normative（必须遵守——修改这些引用源时本文档也须同步更新）

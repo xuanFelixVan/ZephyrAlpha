@@ -3,6 +3,7 @@ module_id: KE-1719--------profile-000
 status: active
 title: 2.15 环境感知预算 Profile
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.15 环境感知预算 Profile

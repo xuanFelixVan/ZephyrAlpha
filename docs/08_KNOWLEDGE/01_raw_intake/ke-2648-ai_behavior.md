@@ -3,6 +3,7 @@ module_id: KE-2553
 status: active
 title: ai_behavior —— 记录每次模型调用
 category: module_blueprint
+ttl: permanent
 ---
 
 # ai_behavior —— 记录每次模型调用

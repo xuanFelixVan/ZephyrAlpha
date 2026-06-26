@@ -3,6 +3,7 @@ module_id: KE-2137
 status: active
 title: 3.6 #44: CapacityRunbookGenerator
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 #44: CapacityRunbookGenerator

@@ -3,6 +3,7 @@ module_id: KE-335
 status: active
 title: 4. Three trees / 三棵树的架构对应关系
 category: documentation
+ttl: permanent
 ---
 
 # 4. Three trees / 三棵树的架构对应关系

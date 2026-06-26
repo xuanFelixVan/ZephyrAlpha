@@ -3,6 +3,7 @@ module_id: KE-3066
 status: active
 title: 交接给下一个 Session
 category: session_log
+ttl: permanent
 ---
 
 # 交接给下一个 Session

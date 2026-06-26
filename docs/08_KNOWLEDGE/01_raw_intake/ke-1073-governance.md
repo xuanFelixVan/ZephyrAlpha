@@ -3,6 +3,7 @@ module_id: KE-988
 status: active
 title: 6.3 个人量化一人团队的特殊性
 category: governance
+ttl: permanent
 ---
 
 # 6.3 个人量化一人团队的特殊性

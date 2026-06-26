@@ -3,6 +3,7 @@ module_id: KE-841
 status: active
 title: 21. 完整性自检清单
 category: governance_rule
+ttl: permanent
 ---
 
 # 21. 完整性自检清单

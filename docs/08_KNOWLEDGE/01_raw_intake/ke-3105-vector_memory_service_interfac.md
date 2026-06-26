@@ -3,6 +3,7 @@ module_id: KE-3004
 status: active
 title: Vector Memory Service Interface / 向量记忆服务接口规范
 category: module_blueprint
+ttl: permanent
 ---
 
 # Vector Memory Service Interface / 向量记忆服务接口规范

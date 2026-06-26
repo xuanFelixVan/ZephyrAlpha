@@ -2,6 +2,7 @@
 module_id: KE-4436
 title: 0. 读者指南
 category: session_log
+ttl: permanent
 ---
 
 # 0. 读者指南

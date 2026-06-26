@@ -3,6 +3,7 @@ module_id: KE-2825
 status: active
 title: permission_hooks.yaml — 钩子配置文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # permission_hooks.yaml — 钩子配置文件

@@ -3,6 +3,7 @@ module_id: KE-2051
 status: active
 title: 3.11 #35: WinFSDefense
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.11 #35: WinFSDefense

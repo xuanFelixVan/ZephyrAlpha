@@ -3,6 +3,7 @@ module_id: KE-482
 status: active
 title: 7. 当前阶段的工作原则
 category: documentation
+ttl: permanent
 ---
 
 # 7. 当前阶段的工作原则

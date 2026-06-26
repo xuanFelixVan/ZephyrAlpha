@@ -3,6 +3,7 @@ module_id: KE-3078
 status: active
 title: 验证结果
 category: session_log
+ttl: permanent
 ---
 
 # 验证结果

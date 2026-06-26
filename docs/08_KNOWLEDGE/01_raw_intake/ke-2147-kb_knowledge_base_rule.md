@@ -3,6 +3,7 @@ module_id: KE-2055
 status: active
 title: 3.11 KB（Knowledge Base Rule）存储格式
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.11 KB（Knowledge Base Rule）存储格式

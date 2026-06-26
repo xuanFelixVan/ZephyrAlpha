@@ -3,6 +3,7 @@ module_id: KE-1215
 status: active
 title: SEC-001：禁止明文存储密钥
 category: governance
+ttl: permanent
 ---
 
 # SEC-001：禁止明文存储密钥

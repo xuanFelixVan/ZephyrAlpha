@@ -3,6 +3,7 @@ module_id: KE-458
 status: active
 title: 6.2 Versioning / 版本化惯例
 category: documentation
+ttl: permanent
 ---
 
 # 6.2 Versioning / 版本化惯例

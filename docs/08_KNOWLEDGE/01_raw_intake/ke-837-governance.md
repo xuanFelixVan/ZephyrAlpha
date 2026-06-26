@@ -3,6 +3,7 @@ module_id: KE-760
 status: active
 title: 18. 完整性自检清单
 category: governance
+ttl: permanent
 ---
 
 # 18. 完整性自检清单

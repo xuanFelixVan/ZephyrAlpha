@@ -3,6 +3,7 @@ module_id: KE-1035
 status: active
 title: 5.3 `03_modules/` (C 轨镜像)
 category: governance
+ttl: permanent
 ---
 
 # 5.3 `03_modules/` (C 轨镜像)

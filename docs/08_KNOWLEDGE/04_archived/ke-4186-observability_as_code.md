@@ -2,6 +2,7 @@
 module_id: KE-4030
 title: 2h. Observability-as-Code 声明 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2h. Observability-as-Code 声明 🆕

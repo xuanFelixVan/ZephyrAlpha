@@ -3,6 +3,7 @@ module_id: KE-2217
 status: active
 title: 4.1 设计原则
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 设计原则

@@ -3,6 +3,7 @@ module_id: KE-1106
 status: active
 title: ✅ 正确：引用 CTR 契约类型
 category: governance
+ttl: permanent
 ---
 
 # ✅ 正确：引用 CTR 契约类型

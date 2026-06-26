@@ -2,6 +2,7 @@
 module_id: KE-4359
 title: GCT Contract Crosscheck
 category: module_blueprint
+ttl: permanent
 ---
 
 # GCT Contract Crosscheck

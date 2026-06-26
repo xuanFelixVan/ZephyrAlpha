@@ -3,6 +3,7 @@ module_id: KE-2865
 status: active
 title: RAGEN EchoTrap Detector (D-019-73)
 category: module_blueprint
+ttl: permanent
 ---
 
 # RAGEN EchoTrap Detector (D-019-73)

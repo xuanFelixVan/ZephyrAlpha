@@ -3,6 +3,7 @@ module_id: KE-2638----v2-2-001
 status: active
 title: Database 蓝图 v2.2
 category: module_blueprint
+ttl: permanent
 ---
 
 # Database 蓝图 v2.2

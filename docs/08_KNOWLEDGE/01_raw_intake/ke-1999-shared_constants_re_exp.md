@@ -2,6 +2,7 @@
 module_id: KE-1908----re-exp-000
 title: 2.4 shared-constants（集中 re-export）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 shared-constants（集中 re-export）

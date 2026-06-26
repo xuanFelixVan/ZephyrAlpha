@@ -2,6 +2,7 @@
 module_id: KE-3741
 title: 激活条件
 category: knowledge_base
+ttl: permanent
 ---
 
 # 激活条件

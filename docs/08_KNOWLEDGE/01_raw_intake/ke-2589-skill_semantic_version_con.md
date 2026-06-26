@@ -3,6 +3,7 @@ module_id: KE-2494
 status: active
 title: 8.8 Skill Semantic Version Contract & Breakage Detection
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.8 Skill Semantic Version Contract & Breakage Detection

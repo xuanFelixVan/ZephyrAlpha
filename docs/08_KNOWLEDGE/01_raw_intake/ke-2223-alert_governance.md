@@ -3,6 +3,7 @@ module_id: KE-2130
 status: active
 title: 3.5 alert_governance 配置扩展
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 alert_governance 配置扩展

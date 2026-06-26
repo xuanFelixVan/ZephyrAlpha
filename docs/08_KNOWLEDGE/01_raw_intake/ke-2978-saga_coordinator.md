@@ -3,6 +3,7 @@ module_id: KE-2878
 status: active
 title: Saga Coordinator（触发式）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Saga Coordinator（触发式）

@@ -2,6 +2,7 @@
 module_id: KE-1638
 title: 2. 技术选型表（真源锁定）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 技术选型表（真源锁定）

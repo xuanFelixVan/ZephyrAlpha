@@ -2,6 +2,7 @@
 module_id: KE-4449
 title: 发现的 Bug 与修复
 category: session_log
+ttl: permanent
 ---
 
 # 发现的 Bug 与修复

@@ -47,6 +47,7 @@ def _valid_markdown(**fm_overrides: object) -> str:
         "module_id": "KE-001",
         "title": "Test Knowledge Entry",
         "category": "general",
+        "ttl": "permanent",
     }
     fm.update(fm_overrides)
     fm_yaml = yaml.dump(fm, allow_unicode=True, default_flow_style=False)
@@ -145,7 +146,7 @@ class TestIngestGate:
         gate = IngestGate(kb_root=kb_root, gate_engine=_mock_gate_engine())
         src = tmp_path / "source.md"
         src.write_text(
-            "---\nmodule_id: KE-001\ntitle: Short\ncategory: g\n---\n\nShort.\n",
+            "---\nmodule_id: KE-001\ntitle: Short\ncategory: g\nttl: permanent\n---\n\nShort.\n",
             encoding="utf-8",
         )
         result = gate.ingest(src)
@@ -191,6 +192,7 @@ class TestIngestGate:
             "module_id": "KE-002",
             "title": "YAML Entry",
             "category": "general",
+            "ttl": "permanent",
         }
         body = "This is the content of a YAML knowledge entry that is long enough to pass validation."
         data["content"] = body

@@ -3,6 +3,7 @@ module_id: KE-624
 status: active
 title: 八、活跃 SSoT 矛盾追踪清单
 category: documentation
+ttl: permanent
 ---
 
 # 八、活跃 SSoT 矛盾追踪清单

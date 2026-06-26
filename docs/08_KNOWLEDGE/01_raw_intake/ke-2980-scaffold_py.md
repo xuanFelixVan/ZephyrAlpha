@@ -3,6 +3,7 @@ module_id: KE-2880
 status: active
 title: scaffold.py 中追加
 category: module_blueprint
+ttl: permanent
 ---
 
 # scaffold.py 中追加

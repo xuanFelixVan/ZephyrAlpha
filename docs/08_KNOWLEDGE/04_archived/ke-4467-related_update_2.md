@@ -2,6 +2,7 @@
 module_id: KE-4302---000
 title: DB-025-0036：Related Update 2——DB YAML SSoT 同步状态验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0036：Related Update 2——DB YAML SSoT 同步状态验证

@@ -2,6 +2,7 @@
 module_id: KE-1531
 title: 15.1 三级指令体系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.1 三级指令体系

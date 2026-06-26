@@ -2,6 +2,7 @@
 module_id: KE-3250
 title: 3.1 Container categories / 容器分类
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 Container categories / 容器分类

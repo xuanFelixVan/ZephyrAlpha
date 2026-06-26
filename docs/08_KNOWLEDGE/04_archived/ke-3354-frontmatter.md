@@ -2,6 +2,7 @@
 module_id: KE-3233
 title: 2.8 frontmatter 禁止行为
 category: documentation
+ttl: permanent
 ---
 
 # 2.8 frontmatter 禁止行为

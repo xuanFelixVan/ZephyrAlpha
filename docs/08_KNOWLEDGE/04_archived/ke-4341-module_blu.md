@@ -2,6 +2,7 @@
 module_id: KE-4181
 title: 6.7 盲点总览（十一轮汇总）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.7 盲点总览（十一轮汇总）

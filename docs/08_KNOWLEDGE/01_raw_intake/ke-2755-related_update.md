@@ -2,6 +2,7 @@
 module_id: KE-2658
 title: DB-025-0035：Related Update 1——蓝图注册表更新验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0035：Related Update 1——蓝图注册表更新验证

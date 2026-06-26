@@ -3,6 +3,7 @@ module_id: KE-1371
 status: active
 title: 10.5 beta 30 Session 模拟结果
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.5 beta 30 Session 模拟结果

@@ -3,6 +3,7 @@ module_id: KE-1533-----ai-002
 status: active
 title: 15.1 AGENTS.md 硬约束（AI 冷启动零次理解成本）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.1 AGENTS.md 硬约束（AI 冷启动零次理解成本）

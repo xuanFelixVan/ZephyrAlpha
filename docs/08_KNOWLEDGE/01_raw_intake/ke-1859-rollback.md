@@ -3,6 +3,7 @@ module_id: KE-1768
 status: active
 title: 2.2 Rollback 集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 Rollback 集成

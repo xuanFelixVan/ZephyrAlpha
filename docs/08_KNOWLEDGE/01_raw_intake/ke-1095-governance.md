@@ -3,6 +3,7 @@ module_id: KE-1010
 status: active
 title: 7.2 分类规则
 category: governance_rule
+ttl: permanent
 ---
 
 # 7.2 分类规则

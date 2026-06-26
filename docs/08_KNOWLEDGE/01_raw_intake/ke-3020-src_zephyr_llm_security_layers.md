@@ -3,6 +3,7 @@ module_id: KE-2920
 status: active
 title: src/zephyr/llm-security/layers/l5_resource_protection.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/layers/l5_resource_protection.py

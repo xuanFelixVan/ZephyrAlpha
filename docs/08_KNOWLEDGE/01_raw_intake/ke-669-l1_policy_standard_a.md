@@ -3,6 +3,7 @@ module_id: KE-602-------policy---standard---a-005
 status: active
 title: L1 治理模板（`policy` `standard` `ai_governance`）
 category: documentation
+ttl: permanent
 ---
 
 # L1 治理模板（`policy` `standard` `ai_governance`）

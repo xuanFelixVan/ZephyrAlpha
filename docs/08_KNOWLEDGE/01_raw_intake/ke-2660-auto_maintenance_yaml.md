@@ -3,6 +3,7 @@ module_id: KE-2565
 status: active
 title: auto_maintenance.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # auto_maintenance.yaml

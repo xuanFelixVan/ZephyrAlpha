@@ -3,6 +3,7 @@ module_id: KE-2478-----burn-rate-000
 status: active
 title: 8.3 消耗率（Burn Rate）多窗口监控
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.3 消耗率（Burn Rate）多窗口监控

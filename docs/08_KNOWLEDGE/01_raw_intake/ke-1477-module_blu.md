@@ -3,6 +3,7 @@ module_id: KE-1387------1-000
 status: active
 title: 11.2 实现缺失的1个文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.2 实现缺失的1个文件

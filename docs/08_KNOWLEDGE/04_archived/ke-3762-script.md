@@ -2,6 +2,7 @@
 module_id: KE-3611
 title: 6.1 SCRIPT 域（脚本治理规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 6.1 SCRIPT 域（脚本治理规则）

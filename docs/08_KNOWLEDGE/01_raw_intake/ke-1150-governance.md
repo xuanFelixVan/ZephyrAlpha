@@ -3,6 +3,7 @@ module_id: KE-1065
 status: active
 title: 四、新模块归属判别决策树（锚定 KBG-0022 §3.2）
 category: governance
+ttl: permanent
 ---
 
 # 四、新模块归属判别决策树（锚定 KBG-0022 §3.2）

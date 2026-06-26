@@ -3,6 +3,7 @@ module_id: KE-1954
 status: active
 title: 2.9 CT-ORC-VMS-001：任务系统 → 向量记忆 — 任务输出写入向量库
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.9 CT-ORC-VMS-001：任务系统 → 向量记忆 — 任务输出写入向量库

@@ -2,6 +2,7 @@
 module_id: KE-156
 title: 2. 前置条件
 category: documentation
+ttl: permanent
 ---
 
 # 2. 前置条件

@@ -3,6 +3,7 @@ module_id: KE-938
 status: active
 title: 5.1 `01_policies_and_standards/`
 category: governance
+ttl: permanent
 ---
 
 # 5.1 `01_policies_and_standards/`

@@ -2,6 +2,7 @@
 module_id: KE-2205
 title: 4. Vibe Coding Community Patterns (§13.3)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Vibe Coding Community Patterns (§13.3)

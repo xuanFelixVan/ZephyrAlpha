@@ -2,6 +2,7 @@
 module_id: KE-4204-------------ap10-ap-000
 title: 7-EXPANDED. 第十二轮新增反模式 (AP10-AP21)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7-EXPANDED. 第十二轮新增反模式 (AP10-AP21)

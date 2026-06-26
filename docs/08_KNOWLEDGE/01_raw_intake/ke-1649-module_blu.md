@@ -2,6 +2,7 @@
 module_id: KE-1559
 title: 16.4 待施工任务
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.4 待施工任务

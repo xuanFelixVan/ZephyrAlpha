@@ -3,6 +3,7 @@ module_id: KE-1073
 status: active
 title: ✅ 正确（真正不确定类型时，用显式 Any 而非裸写）
 category: governance
+ttl: permanent
 ---
 
 # ✅ 正确（真正不确定类型时，用显式 Any 而非裸写）

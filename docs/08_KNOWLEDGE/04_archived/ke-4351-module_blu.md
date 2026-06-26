@@ -2,6 +2,7 @@
 module_id: KE-4351
 title: 7. 产出物存放目录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. 产出物存放目录

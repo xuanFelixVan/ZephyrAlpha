@@ -2,6 +2,7 @@
 module_id: KE-2649
 title: DB-025-0026：CT-DB-004 运维管理契约落地
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0026：CT-DB-004 运维管理契约落地

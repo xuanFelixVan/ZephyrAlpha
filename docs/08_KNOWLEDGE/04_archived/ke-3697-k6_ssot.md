@@ -2,6 +2,7 @@
 module_id: KE-3550
 title: 2.7 K6：SSoT 冲突数
 category: governance
+ttl: permanent
 ---
 
 # 2.7 K6：SSoT 冲突数

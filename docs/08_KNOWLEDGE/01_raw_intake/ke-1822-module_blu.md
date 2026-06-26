@@ -3,6 +3,7 @@ module_id: KE-1731
 status: active
 title: 2.17 非文件操作升级规则
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.17 非文件操作升级规则

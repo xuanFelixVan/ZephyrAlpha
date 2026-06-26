@@ -2,6 +2,7 @@
 module_id: KE-154
 title: 2. SSoT 声明
 category: documentation
+ttl: permanent
 ---
 
 # 2. SSoT 声明

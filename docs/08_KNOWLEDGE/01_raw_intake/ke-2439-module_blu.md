@@ -3,6 +3,7 @@ module_id: KE-2344
 status: active
 title: 6. 产出物存放目录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 产出物存放目录

@@ -3,6 +3,7 @@ module_id: KE-017----------professional-refe-001
 status: active
 title: 6.1 专业机构论证先行（Professional Reference-Validated Decision Making）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.1 专业机构论证先行（Professional Reference-Validated Decision Making）

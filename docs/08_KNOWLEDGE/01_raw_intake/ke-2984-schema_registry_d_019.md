@@ -3,6 +3,7 @@ module_id: KE-2884
 status: active
 title: Schema Registry (D-019-67)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Schema Registry (D-019-67)

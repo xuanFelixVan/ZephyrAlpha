@@ -2,6 +2,7 @@
 module_id: KE-3828
 title: 12. 修订记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12. 修订记录

@@ -3,6 +3,7 @@ module_id: KE-1232
 status: active
 title: 创建门禁（src/zephyr/gates/<id>.yaml）
 category: governance_rule
+ttl: permanent
 ---
 
 # 创建门禁（src/zephyr/gates/<id>.yaml）

@@ -2,6 +2,7 @@
 module_id: KE-1621
 title: 2. Phase-版本映射
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Phase-版本映射

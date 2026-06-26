@@ -3,6 +3,7 @@ module_id: KE-2084
 status: active
 title: 3.2.1 KE ID 格式裁决
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2.1 KE ID 格式裁决

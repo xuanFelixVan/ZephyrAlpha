@@ -3,6 +3,7 @@ module_id: KE-2948
 status: active
 title: 继承层扩展 (TASK-0003)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 继承层扩展 (TASK-0003)

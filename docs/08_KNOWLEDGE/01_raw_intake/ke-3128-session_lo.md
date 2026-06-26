@@ -2,6 +2,7 @@
 module_id: KE-3026
 title: 3.1 顶层字段
 category: session_log
+ttl: permanent
 ---
 
 # 3.1 顶层字段

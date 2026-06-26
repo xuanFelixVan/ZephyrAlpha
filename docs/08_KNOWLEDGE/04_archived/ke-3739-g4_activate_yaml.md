@@ -2,6 +2,7 @@
 module_id: KE-3589---------g4-activate-yaml-000
 title: 4.4.2 检查项（对应 `g4-activate.yaml`）
 category: governance
+ttl: permanent
 ---
 
 # 4.4.2 检查项（对应 `g4-activate.yaml`）

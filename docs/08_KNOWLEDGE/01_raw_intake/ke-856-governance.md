@@ -2,6 +2,7 @@
 module_id: KE-778
 title: §2 文件清单
 category: governance
+ttl: permanent
 ---
 
 # §2 文件清单

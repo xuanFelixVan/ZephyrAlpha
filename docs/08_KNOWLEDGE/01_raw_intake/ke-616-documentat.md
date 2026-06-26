@@ -2,6 +2,7 @@
 module_id: KE-554
 title: 9.2 不应激活的反信号
 category: documentation
+ttl: permanent
 ---
 
 # 9.2 不应激活的反信号

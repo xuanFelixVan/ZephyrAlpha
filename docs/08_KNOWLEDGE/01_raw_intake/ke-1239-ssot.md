@@ -3,6 +3,7 @@ module_id: KE-1152------3-001
 status: active
 title: IRN-003：SSoT 唯一（铁律3）
 category: governance
+ttl: permanent
 ---
 
 # IRN-003：SSoT 唯一（铁律3）

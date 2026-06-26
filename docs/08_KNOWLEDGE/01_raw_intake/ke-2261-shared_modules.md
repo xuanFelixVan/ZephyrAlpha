@@ -2,6 +2,7 @@
 module_id: KE-2167----shared-000
 title: 3b. 与 shared 基础设施的对接映射表 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3b. 与 shared 基础设施的对接映射表 🆕

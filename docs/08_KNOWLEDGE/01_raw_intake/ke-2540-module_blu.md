@@ -2,6 +2,7 @@
 module_id: KE-2445
 title: 7.5 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.5 施工状态

@@ -3,6 +3,7 @@ module_id: KE-642
 status: active
 title: Step 2：数据质量检查
 category: documentation
+ttl: permanent
 ---
 
 # Step 2：数据质量检查

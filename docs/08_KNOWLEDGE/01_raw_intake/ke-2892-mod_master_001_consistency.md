@@ -2,6 +2,7 @@
 module_id: KE-2792
 title: MOD-MASTER-001 Consistency
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-MASTER-001 Consistency

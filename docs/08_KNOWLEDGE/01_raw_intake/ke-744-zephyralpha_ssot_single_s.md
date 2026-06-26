@@ -3,6 +3,7 @@ module_id: KE-668------single-s-006
 status: active
 title: ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)
 category: documentation
+ttl: permanent
 ---
 
 # ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)

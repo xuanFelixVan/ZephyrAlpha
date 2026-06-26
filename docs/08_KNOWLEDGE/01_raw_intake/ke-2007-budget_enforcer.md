@@ -3,6 +3,7 @@ module_id: KE-1916
 status: active
 title: 2.5 Budget Enforcer 集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 Budget Enforcer 集成

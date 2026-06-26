@@ -2,6 +2,7 @@
 module_id: KE-3577
 title: 4.1 调度表
 category: governance
+ttl: permanent
 ---
 
 # 4.1 调度表

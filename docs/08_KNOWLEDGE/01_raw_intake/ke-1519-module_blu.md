@@ -2,6 +2,7 @@
 module_id: KE-1429-----001
 title: 12.3 成本-质量路由矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.3 成本-质量路由矩阵

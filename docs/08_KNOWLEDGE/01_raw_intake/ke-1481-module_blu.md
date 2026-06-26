@@ -3,6 +3,7 @@ module_id: KE-1391
 status: active
 title: 11.2 核心约束
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.2 核心约束

@@ -3,6 +3,7 @@ module_id: KE-1237
 status: active
 title: Trae 编辑器（必须配置）
 category: governance
+ttl: permanent
 ---
 
 # Trae 编辑器（必须配置）

@@ -3,6 +3,7 @@ module_id: KE-2149----18-004
 status: active
 title: 3.8 三轨 18 类知识分类体系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.8 三轨 18 类知识分类体系

@@ -2,6 +2,7 @@
 module_id: KE-3931
 title: 16. 上下文引擎新设计决策
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16. 上下文引擎新设计决策

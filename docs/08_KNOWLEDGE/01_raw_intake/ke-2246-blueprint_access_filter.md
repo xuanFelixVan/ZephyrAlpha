@@ -3,6 +3,7 @@ module_id: KE-2152
 status: active
 title: 3.8 #62: BlueprintAccessFilter
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.8 #62: BlueprintAccessFilter

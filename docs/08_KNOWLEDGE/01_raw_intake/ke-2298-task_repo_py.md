@@ -3,6 +3,7 @@ module_id: KE-2204
 status: active
 title: 4. task_repo.py v2.0 核心接口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. task_repo.py v2.0 核心接口

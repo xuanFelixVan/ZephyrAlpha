@@ -3,6 +3,7 @@ module_id: KE-462
 status: active
 title: 5.3 未来 ACL 扩展计划（H8 阶段）
 category: documentation
+ttl: permanent
 ---
 
 # 5.3 未来 ACL 扩展计划（H8 阶段）

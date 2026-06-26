@@ -2,6 +2,7 @@
 module_id: KE-4004
 title: 2.3 Autonomy Spectrum (D-019-12)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 Autonomy Spectrum (D-019-12)

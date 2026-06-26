@@ -3,6 +3,7 @@ module_id: KE-2392
 status: active
 title: 6.4 task_id 格式约定
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.4 task_id 格式约定

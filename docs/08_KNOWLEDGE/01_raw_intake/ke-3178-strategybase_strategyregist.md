@@ -3,6 +3,7 @@ module_id: KE-3072---strategyregist-000
 status: active
 title: 类名安全提取（处理 "StrategyBase + StrategyRegistry"）
 category: session_log
+ttl: permanent
 ---
 
 # 类名安全提取（处理 "StrategyBase + StrategyRegistry"）

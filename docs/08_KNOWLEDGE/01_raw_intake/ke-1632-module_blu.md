@@ -2,6 +2,7 @@
 module_id: KE-1542
 title: 15.4 文档同步策略
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.4 文档同步策略

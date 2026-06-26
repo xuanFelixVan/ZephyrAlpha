@@ -3,6 +3,7 @@ module_id: KE-2482---con-003
 status: active
 title: 8.3 Multi-Skill Chaining & Context Window Management（决策 D-019-08）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.3 Multi-Skill Chaining & Context Window Management（决策 D-019-08）

@@ -2,6 +2,7 @@
 module_id: KE-1483--------4-------shopify--000
 title: 13.4 C. 数据一致性（4个）——对标 Shopify Production RAG Data Pipeline
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.4 C. 数据一致性（4个）——对标 Shopify Production RAG Data Pipeline

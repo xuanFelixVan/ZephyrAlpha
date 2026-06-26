@@ -3,6 +3,7 @@ module_id: KE-157
 status: active
 title: 2. 讨论起点
 category: documentation
+ttl: permanent
 ---
 
 # 2. 讨论起点

@@ -2,6 +2,7 @@
 module_id: KE-3061
 title: Phase C 实现清单
 category: session_log
+ttl: permanent
 ---
 
 # Phase C 实现清单

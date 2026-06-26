@@ -3,6 +3,7 @@ module_id: KE-1818
 status: active
 title: 2.237 Execution Quality Impact Assessment - execution_quality_impact.py (🆕 v0.22
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.237 Execution Quality Impact Assessment - execution_quality_impact.py (🆕 v0.22

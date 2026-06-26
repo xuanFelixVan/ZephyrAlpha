@@ -2,6 +2,7 @@
 module_id: KE-525
 title: 8.2 `capability_heatmap.yaml` 联动
 category: documentation
+ttl: permanent
 ---
 
 # 8.2 `capability_heatmap.yaml` 联动

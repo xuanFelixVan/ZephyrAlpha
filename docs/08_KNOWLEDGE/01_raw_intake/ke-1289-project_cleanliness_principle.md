@@ -3,6 +3,7 @@ module_id: KE-1202
 status: active
 title: 项目清爽原则（Project Cleanliness Principle）
 category: governance
+ttl: permanent
 ---
 
 # 项目清爽原则（Project Cleanliness Principle）

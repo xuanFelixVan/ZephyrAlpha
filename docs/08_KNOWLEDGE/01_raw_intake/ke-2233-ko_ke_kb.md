@@ -3,6 +3,7 @@ module_id: KE-2140
 status: active
 title: 3.6 KO→KE→KB 三级知识漏斗
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 KO→KE→KB 三级知识漏斗

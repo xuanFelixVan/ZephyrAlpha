@@ -3,6 +3,7 @@ module_id: KE-1179
 status: active
 title: MTH-004：对标 = 架构标准，非机构冗余
 category: governance
+ttl: permanent
 ---
 
 # MTH-004：对标 = 架构标准，非机构冗余

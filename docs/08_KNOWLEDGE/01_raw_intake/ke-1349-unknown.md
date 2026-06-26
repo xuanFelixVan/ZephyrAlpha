@@ -2,6 +2,7 @@
 module_id: KE-1261
 title: 计划子目录结构
 category: knowledge_base
+ttl: permanent
 ---
 
 # 计划子目录结构

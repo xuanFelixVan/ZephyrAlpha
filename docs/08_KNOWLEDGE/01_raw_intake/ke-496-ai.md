@@ -2,6 +2,7 @@
 module_id: KE-445
 title: 6.1 AI 可理解性
 category: documentation
+ttl: permanent
 ---
 
 # 6.1 AI 可理解性

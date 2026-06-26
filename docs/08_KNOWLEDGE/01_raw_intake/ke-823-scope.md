@@ -2,6 +2,7 @@
 module_id: KE-746
 title: 15.1 `scope` 字段
 category: governance_rule
+ttl: permanent
 ---
 
 # 15.1 `scope` 字段

@@ -2,6 +2,7 @@
 module_id: KE-3809
 title: 11.1 施工策略
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.1 施工策略

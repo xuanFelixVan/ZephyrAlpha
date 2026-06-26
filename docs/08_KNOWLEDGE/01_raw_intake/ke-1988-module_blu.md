@@ -3,6 +3,7 @@ module_id: KE-1897
 status: active
 title: 2.4 回滚策略矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 回滚策略矩阵

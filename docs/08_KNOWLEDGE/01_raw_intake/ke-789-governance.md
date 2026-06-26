@@ -3,6 +3,7 @@ module_id: KE-712
 status: active
 title: 检查项 10：引用出处验证
 category: governance
+ttl: permanent
 ---
 
 # 检查项 10：引用出处验证

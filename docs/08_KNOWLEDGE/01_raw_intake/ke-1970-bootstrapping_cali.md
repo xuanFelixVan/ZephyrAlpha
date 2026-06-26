@@ -3,6 +3,7 @@ module_id: KE-1879--------bootstrapping-cali-000
 status: active
 title: 2.30 启动校准阶段（Bootstrapping Calibration Phase）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.30 启动校准阶段（Bootstrapping Calibration Phase）

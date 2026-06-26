@@ -2,6 +2,7 @@
 module_id: KE-4106
 title: 4.1 技术约束
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 技术约束

@@ -2,6 +2,7 @@
 module_id: KE-1920-----schema-000
 title: 2.5 shared-events（事件体 Schema）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 shared-events（事件体 Schema）

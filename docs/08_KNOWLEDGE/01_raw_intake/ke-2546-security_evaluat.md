@@ -3,6 +3,7 @@ module_id: KE-2451-----------security---evaluat-004
 status: active
 title: 8. 第三轮深度审计——Security + Evaluation + Multi-Agent + Deployment 层面的盲点补充
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8. 第三轮深度审计——Security + Evaluation + Multi-Agent + Deployment 层面的盲点补充

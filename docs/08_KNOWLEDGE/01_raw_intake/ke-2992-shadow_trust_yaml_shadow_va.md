@@ -3,6 +3,7 @@ module_id: KE-2892----shadow-va-000
 status: active
 title: shadow_trust.yaml —— shadow_validator.py 产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # shadow_trust.yaml —— shadow_validator.py 产出

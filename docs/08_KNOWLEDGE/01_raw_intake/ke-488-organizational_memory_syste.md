@@ -3,6 +3,7 @@ module_id: KE-437
 status: active
 title: 6. Organizational memory system position / 组织记忆系统在全貌中的位置
 category: documentation
+ttl: permanent
 ---
 
 # 6. Organizational memory system position / 组织记忆系统在全貌中的位置

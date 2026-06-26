@@ -2,6 +2,7 @@
 module_id: KE-4052
 title: 3. 文件组成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 文件组成

@@ -2,6 +2,7 @@
 module_id: KE-1859
 title: 2.3 不包含的职责
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 不包含的职责

@@ -3,6 +3,7 @@ module_id: KE-1513
 status: active
 title: 14.2 六轮审计全景
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.2 六轮审计全景

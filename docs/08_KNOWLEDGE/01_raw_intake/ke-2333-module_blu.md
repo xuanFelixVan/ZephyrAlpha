@@ -2,6 +2,7 @@
 module_id: KE-2238
 title: 4.3 治理脚本
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.3 治理脚本

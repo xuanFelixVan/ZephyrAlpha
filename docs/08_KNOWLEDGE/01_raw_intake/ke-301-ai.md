@@ -3,6 +3,7 @@ module_id: KE-279-----------ai-000
 status: active
 title: 3.3 三平面归属判定流程（AI / 开发者自助）
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 三平面归属判定流程（AI / 开发者自助）

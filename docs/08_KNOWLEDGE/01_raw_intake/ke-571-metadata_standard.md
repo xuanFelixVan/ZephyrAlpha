@@ -3,6 +3,7 @@ module_id: KE-515
 status: active
 title: 8. Metadata standard / 元数据标准
 category: documentation
+ttl: permanent
 ---
 
 # 8. Metadata standard / 元数据标准

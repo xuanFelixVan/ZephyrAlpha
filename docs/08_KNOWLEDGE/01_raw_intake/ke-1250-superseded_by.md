@@ -3,6 +3,7 @@ module_id: KE-1163--------superseded-by-003
 status: active
 title: LFC-002：退役必须填写 superseded_by
 category: governance_rule
+ttl: permanent
 ---
 
 # LFC-002：退役必须填写 superseded_by

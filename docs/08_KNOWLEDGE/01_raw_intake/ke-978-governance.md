@@ -2,6 +2,7 @@
 module_id: KE-900
 title: 4.2 分类表
 category: governance
+ttl: permanent
 ---
 
 # 4.2 分类表

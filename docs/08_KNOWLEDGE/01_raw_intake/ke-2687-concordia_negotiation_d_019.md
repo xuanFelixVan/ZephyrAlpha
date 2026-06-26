@@ -3,6 +3,7 @@ module_id: KE-2590
 status: active
 title: Concordia Negotiation (D-019-40)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Concordia Negotiation (D-019-40)

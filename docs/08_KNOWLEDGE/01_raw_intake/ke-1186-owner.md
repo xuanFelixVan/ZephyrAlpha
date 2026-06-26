@@ -3,6 +3,7 @@ module_id: KE-1100--------owner-002
 status: active
 title: COND-001：限额例外必须 Owner 审批
 category: governance
+ttl: permanent
 ---
 
 # COND-001：限额例外必须 Owner 审批

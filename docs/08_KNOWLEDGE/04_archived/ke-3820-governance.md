@@ -2,6 +2,7 @@
 module_id: KE-3669
 title: AVP-004：与代码版本的关系
 category: governance
+ttl: permanent
 ---
 
 # AVP-004：与代码版本的关系

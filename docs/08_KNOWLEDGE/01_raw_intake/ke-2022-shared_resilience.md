@@ -3,6 +3,7 @@ module_id: KE-1931
 status: active
 title: 2.6 shared-resilience（韧性基座）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.6 shared-resilience（韧性基座）

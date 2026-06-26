@@ -3,6 +3,7 @@ module_id: KE-2536--------------------------000
 status: active
 title: Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3
 category: module_blueprint
+ttl: permanent
 ---
 
 # Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3

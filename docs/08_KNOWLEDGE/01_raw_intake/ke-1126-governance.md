@@ -3,6 +3,7 @@ module_id: KE-1041
 status: active
 title: 9. 推导链
 category: governance_rule
+ttl: permanent
 ---
 
 # 9. 推导链

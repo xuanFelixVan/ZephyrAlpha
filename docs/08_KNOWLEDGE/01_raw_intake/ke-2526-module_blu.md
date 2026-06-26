@@ -3,6 +3,7 @@ module_id: KE-2431
 status: active
 title: 7.2 事件流
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.2 事件流

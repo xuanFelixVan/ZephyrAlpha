@@ -3,6 +3,7 @@ module_id: KE-1910
 status: active
 title: 2.4 skill-registry.yaml 初始注册表
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 skill-registry.yaml 初始注册表

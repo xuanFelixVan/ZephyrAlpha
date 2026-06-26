@@ -3,6 +3,7 @@ module_id: KE-1814
 status: active
 title: 2.233 FLE Self-SLO/SLA Definition & Monitoring - fle_self_slo.py (🆕 v0.22.0 - 盲点
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.233 FLE Self-SLO/SLA Definition & Monitoring - fle_self_slo.py (🆕 v0.22.0 - 盲点

@@ -3,6 +3,7 @@ module_id: KE-2848
 status: active
 title: phasemanifest.yaml 结构
 category: module_blueprint
+ttl: permanent
 ---
 
 # phasemanifest.yaml 结构

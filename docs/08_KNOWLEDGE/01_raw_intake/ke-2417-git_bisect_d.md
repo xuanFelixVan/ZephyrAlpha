@@ -3,6 +3,7 @@ module_id: KE-2322-------git-bisect-------d-0-000
 status: active
 title: 5.6 漂移溯源——Git Bisect 集成（决策 D-023-15）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.6 漂移溯源——Git Bisect 集成（决策 D-023-15）

@@ -3,6 +3,7 @@ module_id: KE-431---14-001
 status: active
 title: 5A.2 与 14 层量化架构的关系
 category: documentation
+ttl: permanent
 ---
 
 # 5A.2 与 14 层量化架构的关系

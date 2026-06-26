@@ -2,6 +2,7 @@
 module_id: KE-2807--------rfc-2025--002
 title: OTel AI Agent 语义约定对齐（RFC 2025-11）
 category: module_blueprint
+ttl: permanent
 ---
 
 # OTel AI Agent 语义约定对齐（RFC 2025-11）

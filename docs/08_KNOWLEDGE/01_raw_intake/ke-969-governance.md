@@ -2,6 +2,7 @@
 module_id: KE-891
 title: 4.1 受控词表
 category: governance_rule
+ttl: permanent
 ---
 
 # 4.1 受控词表

@@ -2,6 +2,7 @@
 module_id: KE-4077
 title: 3e. 指标命名空间与冲突预防 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3e. 指标命名空间与冲突预防 🆕

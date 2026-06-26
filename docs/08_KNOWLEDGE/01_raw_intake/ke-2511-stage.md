@@ -3,6 +3,7 @@ module_id: KE-2416
 status: active
 title: 7. Stage 5：问题聚合与去重
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. Stage 5：问题聚合与去重

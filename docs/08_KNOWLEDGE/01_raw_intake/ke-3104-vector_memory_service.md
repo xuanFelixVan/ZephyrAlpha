@@ -3,6 +3,7 @@ module_id: KE-3003
 status: active
 title: Vector Memory Service 蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # Vector Memory Service 蓝图

@@ -3,6 +3,7 @@ module_id: KE-1624
 status: active
 title: 2. Scheduling Profiles（三配置）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Scheduling Profiles（三配置）

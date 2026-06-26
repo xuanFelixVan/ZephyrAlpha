@@ -3,6 +3,7 @@ module_id: KE-1750
 status: active
 title: 2.2 #54: ModuleBirthRegistry——影子模块追踪
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 #54: ModuleBirthRegistry——影子模块追踪

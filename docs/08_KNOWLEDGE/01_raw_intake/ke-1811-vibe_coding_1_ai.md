@@ -3,6 +3,7 @@ module_id: KE-1720---1--ai-------005
 status: active
 title: 2.15 Vibe Coding / 1人+AI 专属优化（决策 D-025-12）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.15 Vibe Coding / 1人+AI 专属优化（决策 D-025-12）

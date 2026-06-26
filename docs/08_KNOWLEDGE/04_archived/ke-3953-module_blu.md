@@ -2,6 +2,7 @@
 module_id: KE-3801
 title: 10.5 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.5 施工状态

@@ -2,6 +2,7 @@
 module_id: KE-1039
 title: 9. 禁止行为
 category: governance_rule
+ttl: permanent
 ---
 
 # 9. 禁止行为

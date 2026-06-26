@@ -3,6 +3,7 @@ module_id: KE-2869
 status: active
 title: RetryBudget（重试配额）
 category: module_blueprint
+ttl: permanent
 ---
 
 # RetryBudget（重试配额）

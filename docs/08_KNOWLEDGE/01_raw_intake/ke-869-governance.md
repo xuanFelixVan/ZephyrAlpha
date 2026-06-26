@@ -3,6 +3,7 @@ module_id: KE-791
 status: active
 title: 2.13 跨维度脚本统计
 category: governance
+ttl: permanent
 ---
 
 # 2.13 跨维度脚本统计

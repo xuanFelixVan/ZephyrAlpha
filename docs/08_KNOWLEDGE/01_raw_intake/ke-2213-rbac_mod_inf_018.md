@@ -3,6 +3,7 @@ module_id: KE-2120-------mod-inf-018-----000
 status: active
 title: 3.4 RBAC 集成（对接 MOD-INF-018）——每 Skill 级权限
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 RBAC 集成（对接 MOD-INF-018）——每 Skill 级权限

@@ -3,6 +3,7 @@ module_id: KE-615---superseded-002
 status: active
 title: 关于 R15-R22 的 superseded 处理说明
 category: documentation
+ttl: permanent
 ---
 
 # 关于 R15-R22 的 superseded 处理说明

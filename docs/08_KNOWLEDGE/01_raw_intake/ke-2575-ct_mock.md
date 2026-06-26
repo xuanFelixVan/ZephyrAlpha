@@ -2,6 +2,7 @@
 module_id: KE-2480---ct-----mock-000
 title: 8.3 每个CT-*契约的mock策略
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.3 每个CT-*契约的mock策略

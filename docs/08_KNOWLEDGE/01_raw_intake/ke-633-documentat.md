@@ -3,6 +3,7 @@ module_id: KE-570
 status: active
 title: AI 使用指南
 category: documentation
+ttl: permanent
 ---
 
 # AI 使用指南

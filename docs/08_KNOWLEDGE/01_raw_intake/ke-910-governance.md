@@ -3,6 +3,7 @@ module_id: KE-832
 status: active
 title: 2.7 模板文件
 category: governance
+ttl: permanent
 ---
 
 # 2.7 模板文件

@@ -3,6 +3,7 @@ module_id: KE-1926
 status: active
 title: 2.6 多轮审计扩展风险
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.6 多轮审计扩展风险

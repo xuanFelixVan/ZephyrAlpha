@@ -2,6 +2,7 @@
 module_id: KE-3811-----slo-003
 title: 11.2 冷启动 SLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.2 冷启动 SLO

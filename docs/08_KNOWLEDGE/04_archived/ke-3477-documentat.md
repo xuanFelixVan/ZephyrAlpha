@@ -2,6 +2,7 @@
 module_id: KE-3342
 title: 5.3 分档标准
 category: documentation
+ttl: permanent
 ---
 
 # 5.3 分档标准

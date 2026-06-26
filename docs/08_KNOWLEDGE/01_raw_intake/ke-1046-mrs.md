@@ -3,6 +3,7 @@ module_id: KE-962
 status: active
 title: 5.5 MRS-003：同步后校验
 category: governance
+ttl: permanent
 ---
 
 # 5.5 MRS-003：同步后校验

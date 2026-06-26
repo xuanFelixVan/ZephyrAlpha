@@ -3,6 +3,7 @@ module_id: KE-2955
 status: active
 title: tests/integration/test_integration_contracts.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # tests/integration/test_integration_contracts.py

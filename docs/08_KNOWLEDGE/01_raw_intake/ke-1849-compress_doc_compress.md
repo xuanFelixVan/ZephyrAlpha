@@ -3,6 +3,7 @@ module_id: KE-1758------doc-compress-003
 status: active
 title: 2.2 Compress（压缩）— doc_compressor.py + context_budget_tracker.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 Compress（压缩）— doc_compressor.py + context_budget_tracker.py

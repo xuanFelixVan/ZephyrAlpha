@@ -3,6 +3,7 @@ module_id: KE-1890---------------------000
 status: active
 title: 2.36 Agent 失败归因与因果溯源——从"可观测"到"可归因"（决策 D-025-37~38）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.36 Agent 失败归因与因果溯源——从"可观测"到"可归因"（决策 D-025-37~38）

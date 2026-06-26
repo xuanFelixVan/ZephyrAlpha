@@ -3,6 +3,7 @@ module_id: KE-1726------------d--004
 status: active
 title: 2.16 Multi-Agent 共识与协商协议（决策 D-025-13）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.16 Multi-Agent 共识与协商协议（决策 D-025-13）

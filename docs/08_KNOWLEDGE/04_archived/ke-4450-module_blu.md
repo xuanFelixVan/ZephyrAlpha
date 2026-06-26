@@ -2,6 +2,7 @@
 module_id: KE-4285
 title: D-022-29 工具链深层漏洞防御
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-29 工具链深层漏洞防御

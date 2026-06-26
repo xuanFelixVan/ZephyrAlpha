@@ -2,6 +2,7 @@
 module_id: KE-2195
 title: 4. Key Design Decisions
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Key Design Decisions

@@ -3,6 +3,7 @@ module_id: KE-1285
 status: active
 title: 1. Decision Log（B101）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. Decision Log（B101）

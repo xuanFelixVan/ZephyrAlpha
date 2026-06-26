@@ -3,6 +3,7 @@ module_id: KE-2017
 status: active
 title: 3. Solo Maintainer 特异性设计
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Solo Maintainer 特异性设计

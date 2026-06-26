@@ -3,6 +3,7 @@ module_id: KE-1714-------output-quality-gate-003
 status: active
 title: 2.14 事中控制——Output Quality Gate
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.14 事中控制——Output Quality Gate

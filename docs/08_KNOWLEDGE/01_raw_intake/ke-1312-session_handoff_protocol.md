@@ -3,6 +3,7 @@ module_id: KE-1225
 status: active
 title: Session Handoff Protocol（会话交接协议）
 category: governance
+ttl: permanent
 ---
 
 # Session Handoff Protocol（会话交接协议）

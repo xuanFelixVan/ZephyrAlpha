@@ -2,6 +2,7 @@
 module_id: KE-3523
 title: 2.1 KPI 总览
 category: governance
+ttl: permanent
 ---
 
 # 2.1 KPI 总览

@@ -2,6 +2,7 @@
 module_id: KE-4009
 title: 2.9 shared-utilities（通用工具层）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.9 shared-utilities（通用工具层）

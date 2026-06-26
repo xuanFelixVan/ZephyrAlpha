@@ -2,6 +2,7 @@
 module_id: KE-2177-----phase----------7-000
 title: 4. 施工 Phase 规划（已迁移到 §7）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. 施工 Phase 规划（已迁移到 §7）

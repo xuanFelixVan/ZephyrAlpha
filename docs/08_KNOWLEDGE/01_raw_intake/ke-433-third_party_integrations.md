@@ -3,6 +3,7 @@ module_id: KE-392
 status: active
 title: 5. Third-party integrations / 第三方集成
 category: documentation
+ttl: permanent
 ---
 
 # 5. Third-party integrations / 第三方集成

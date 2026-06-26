@@ -3,6 +3,7 @@ module_id: KE-780
 status: active
 title: 2.1 维度总览
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.1 维度总览

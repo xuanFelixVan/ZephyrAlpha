@@ -3,6 +3,7 @@ module_id: KE-585
 status: active
 title: 8.2 本视图的保障机制
 category: documentation
+ttl: permanent
 ---
 
 # 8.2 本视图的保障机制

@@ -3,6 +3,7 @@ module_id: KE-869
 status: active
 title: 3.4 旧版编号废弃对照表
 category: governance
+ttl: permanent
 ---
 
 # 3.4 旧版编号废弃对照表

@@ -3,6 +3,7 @@ module_id: KE-2915
 status: active
 title: src/zephyr/feedback-loop/action_protocols.py (FLE 侧定义)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/feedback-loop/action_protocols.py (FLE 侧定义)

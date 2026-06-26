@@ -2,6 +2,7 @@
 module_id: KE-2611
 title: D-022-04 规则不可变保护实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-04 规则不可变保护实现

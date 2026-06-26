@@ -3,6 +3,7 @@ module_id: KE-666
 status: active
 title: ZephyrAlpha 2.0 架构推导与决策链
 category: documentation
+ttl: permanent
 ---
 
 # ZephyrAlpha 2.0 架构推导与决策链

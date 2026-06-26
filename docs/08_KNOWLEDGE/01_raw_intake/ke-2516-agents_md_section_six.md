@@ -3,6 +3,7 @@ module_id: KE-2421------3--agents-md--6-3-006
 status: active
 title: 7.1 正面影响（3项 AGENTS.md §6.3 强制要求）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.1 正面影响（3项 AGENTS.md §6.3 强制要求）

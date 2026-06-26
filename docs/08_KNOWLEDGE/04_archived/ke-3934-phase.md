@@ -2,6 +2,7 @@
 module_id: KE-3782-----phase-000
 title: 10. 施工 Phase 规划
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10. 施工 Phase 规划

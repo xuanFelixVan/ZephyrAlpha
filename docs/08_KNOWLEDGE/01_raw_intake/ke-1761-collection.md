@@ -2,6 +2,7 @@
 module_id: KE-1670
 title: 2.1 Collection 设计原则
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 Collection 设计原则

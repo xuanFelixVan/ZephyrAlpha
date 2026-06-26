@@ -2,6 +2,7 @@
 module_id: KE-3267
 title: 3.3 Network boundary / 网络边界
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 Network boundary / 网络边界

@@ -2,6 +2,7 @@
 module_id: KE-3666
 title: AVP-001：架构文档必须有版本号
 category: governance
+ttl: permanent
 ---
 
 # AVP-001：架构文档必须有版本号

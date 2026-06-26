@@ -3,6 +3,7 @@ module_id: KE-2841
 status: active
 title: Phase 2：8 Collection 落地
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase 2：8 Collection 落地

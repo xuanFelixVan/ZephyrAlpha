@@ -3,6 +3,7 @@ module_id: KE-467-----fitness-function-000
 status: active
 title: 6.4 血缘的 fitness function
 category: documentation
+ttl: permanent
 ---
 
 # 6.4 血缘的 fitness function

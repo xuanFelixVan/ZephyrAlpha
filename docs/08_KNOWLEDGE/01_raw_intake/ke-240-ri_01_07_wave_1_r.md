@@ -2,6 +2,7 @@
 module_id: KE-219--------ri-01-07---wave-1-r-003
 title: 2.9 运行时集成层（RI-01~07，**Wave 1 R83/R84 增补**）
 category: documentation
+ttl: permanent
 ---
 
 # 2.9 运行时集成层（RI-01~07，**Wave 1 R83/R84 增补**）

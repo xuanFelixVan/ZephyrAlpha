@@ -3,6 +3,7 @@ module_id: KE-1116----single-source--004
 status: active
 title: DOC-001：SSoT 唯一（Single Source of Truth）
 category: governance
+ttl: permanent
 ---
 
 # DOC-001：SSoT 唯一（Single Source of Truth）

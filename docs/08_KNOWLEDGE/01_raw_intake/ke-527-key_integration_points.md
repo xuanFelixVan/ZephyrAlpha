@@ -2,6 +2,7 @@
 module_id: KE-475
 title: 7. Key integration points / 关键集成点与接口契约
 category: documentation
+ttl: permanent
 ---
 
 # 7. Key integration points / 关键集成点与接口契约

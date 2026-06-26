@@ -3,6 +3,7 @@ module_id: KE-996----gov-mod-005-003
 status: active
 title: 7. 与 GOV-MOD-005 的分工
 category: governance
+ttl: permanent
 ---
 
 # 7. 与 GOV-MOD-005 的分工

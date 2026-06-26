@@ -3,6 +3,7 @@ module_id: KE-2812------------ai-003
 status: active
 title: 场景：Owner 发现治理脚本漏检 — AI 修复全流程
 category: module_blueprint
+ttl: permanent
 ---
 
 # 场景：Owner 发现治理脚本漏检 — AI 修复全流程

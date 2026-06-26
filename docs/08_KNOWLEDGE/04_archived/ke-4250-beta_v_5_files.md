@@ -2,6 +2,7 @@
 module_id: KE-4091
 title: 4. beta v (5 Files)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. beta v (5 Files)

@@ -3,6 +3,7 @@ module_id: KE-1869
 status: active
 title: 2.3 Feedback Loop 集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 Feedback Loop 集成

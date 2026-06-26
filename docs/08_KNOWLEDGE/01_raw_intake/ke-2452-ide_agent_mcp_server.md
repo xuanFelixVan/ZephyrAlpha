@@ -3,6 +3,7 @@ module_id: KE-2357---mcp-server-000
 status: active
 title: 6.1 IDE/Agent → MCP Server 典型交互
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 IDE/Agent → MCP Server 典型交互

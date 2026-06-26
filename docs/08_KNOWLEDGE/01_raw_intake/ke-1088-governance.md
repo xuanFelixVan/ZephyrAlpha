@@ -3,6 +3,7 @@ module_id: KE-1003
 status: active
 title: 7.1 迁移原则
 category: governance
+ttl: permanent
 ---
 
 # 7.1 迁移原则

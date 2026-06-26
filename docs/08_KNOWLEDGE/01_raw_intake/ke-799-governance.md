@@ -3,6 +3,7 @@ module_id: KE-722
 status: active
 title: 11. 变更同步规则
 category: governance
+ttl: permanent
 ---
 
 # 11. 变更同步规则

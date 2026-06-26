@@ -2,6 +2,7 @@
 module_id: KE-3333
 title: 5.1 格式
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 格式

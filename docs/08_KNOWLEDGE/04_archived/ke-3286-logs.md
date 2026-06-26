@@ -2,6 +2,7 @@
 module_id: KE-3174
 title: 10.2 Logs / 日志
 category: documentation
+ttl: permanent
 ---
 
 # 10.2 Logs / 日志

@@ -3,6 +3,7 @@ module_id: KE-2919
 status: active
 title: src/zephyr/llm-security/classifier.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/classifier.py

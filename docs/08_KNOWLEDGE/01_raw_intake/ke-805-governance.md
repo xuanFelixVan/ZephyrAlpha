@@ -2,6 +2,7 @@
 module_id: KE-728
 title: 12. 变更记录
 category: governance
+ttl: permanent
 ---
 
 # 12. 变更记录

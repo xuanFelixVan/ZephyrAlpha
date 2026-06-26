@@ -3,6 +3,7 @@ module_id: KE-797
 status: active
 title: 2.2.1 文件名
 category: governance
+ttl: permanent
 ---
 
 # 2.2.1 文件名

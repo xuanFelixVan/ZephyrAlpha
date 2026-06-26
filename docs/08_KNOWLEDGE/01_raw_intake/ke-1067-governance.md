@@ -3,6 +3,7 @@ module_id: KE-983
 status: active
 title: 6.2 分类规则
 category: governance_rule
+ttl: permanent
 ---
 
 # 6.2 分类规则

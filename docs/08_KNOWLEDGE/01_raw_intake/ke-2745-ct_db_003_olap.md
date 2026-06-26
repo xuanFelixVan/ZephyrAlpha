@@ -2,6 +2,7 @@
 module_id: KE-2648
 title: DB-025-0025：CT-DB-003 OLAP 查询契约落地
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0025：CT-DB-003 OLAP 查询契约落地

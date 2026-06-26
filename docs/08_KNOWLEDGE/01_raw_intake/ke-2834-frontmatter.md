@@ -3,6 +3,7 @@ module_id: KE-2736
 status: active
 title: 模块蓝图 frontmatter（示例）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 模块蓝图 frontmatter（示例）

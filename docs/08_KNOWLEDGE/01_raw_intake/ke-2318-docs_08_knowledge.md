@@ -3,6 +3,7 @@ module_id: KE-2224--------docs-08-knowledge---006
 status: active
 title: 4.2 知识数据层（`docs/08_knowledge/`）——KE 物理文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 知识数据层（`docs/08_knowledge/`）——KE 物理文件

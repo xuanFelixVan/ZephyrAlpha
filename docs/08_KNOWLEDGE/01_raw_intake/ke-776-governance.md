@@ -2,6 +2,7 @@
 module_id: KE-699
 title: 1.3 核心原则
 category: governance
+ttl: permanent
 ---
 
 # 1.3 核心原则

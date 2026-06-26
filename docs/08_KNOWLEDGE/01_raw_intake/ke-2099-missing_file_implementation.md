@@ -2,6 +2,7 @@
 module_id: KE-2008
 title: 3. Missing File Implementation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Missing File Implementation

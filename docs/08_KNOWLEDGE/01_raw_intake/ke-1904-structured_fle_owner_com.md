@@ -3,6 +3,7 @@ module_id: KE-1813
 status: active
 title: 2.231 Structured FLE-Owner Communication Protocol - fle_owner_comm_protocol.py (
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.231 Structured FLE-Owner Communication Protocol - fle_owner_comm_protocol.py (

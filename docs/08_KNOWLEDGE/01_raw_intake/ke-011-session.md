@@ -3,6 +3,7 @@ module_id: KE-011
 status: active
 title: 5.3.2 Session 开始时（恢复上下文）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.3.2 Session 开始时（恢复上下文）

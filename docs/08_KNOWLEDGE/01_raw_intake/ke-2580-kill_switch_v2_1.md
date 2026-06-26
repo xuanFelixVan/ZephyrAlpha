@@ -2,6 +2,7 @@
 module_id: KE-2485---kill-switch-----v2-1-0-000
 title: 8.4 与 Kill Switch 的联动（v2.1.0 细化）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.4 与 Kill Switch 的联动（v2.1.0 细化）

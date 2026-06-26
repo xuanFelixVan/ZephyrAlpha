@@ -2,6 +2,7 @@
 module_id: KE-2423----writers-000
 title: 7.1 上游 Writers
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.1 上游 Writers

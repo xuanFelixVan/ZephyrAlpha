@@ -3,6 +3,7 @@ module_id: KE-810
 status: active
 title: 2.2 Vibe Coding AI 检索策略映射
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.2 Vibe Coding AI 检索策略映射

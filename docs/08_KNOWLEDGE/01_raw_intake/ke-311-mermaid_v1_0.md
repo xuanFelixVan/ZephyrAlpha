@@ -2,6 +2,7 @@
 module_id: KE-288-----mermaid--------v1-0-0-000
 title: 3.4 热力图 Mermaid 可视化（当前 v1.0.0）
 category: documentation
+ttl: permanent
 ---
 
 # 3.4 热力图 Mermaid 可视化（当前 v1.0.0）

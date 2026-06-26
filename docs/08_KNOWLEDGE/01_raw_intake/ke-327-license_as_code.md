@@ -3,6 +3,7 @@ module_id: KE-300
 status: active
 title: 原则 3：License-as-Code / 许可证即代码
 category: documentation
+ttl: permanent
 ---
 
 # 原则 3：License-as-Code / 许可证即代码

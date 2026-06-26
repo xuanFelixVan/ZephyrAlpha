@@ -3,6 +3,7 @@ module_id: KE-2790
 status: active
 title: 知识库系统蓝图（MOD-KB-001）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 知识库系统蓝图（MOD-KB-001）

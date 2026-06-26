@@ -2,6 +2,7 @@
 module_id: KE-1276-----------6-1-004
 title: 1. 模块清单（蓝图 §6.1）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. 模块清单（蓝图 §6.1）

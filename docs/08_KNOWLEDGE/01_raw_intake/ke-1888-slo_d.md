@@ -3,6 +3,7 @@ module_id: KE-1797-------------------d-0-003
 status: active
 title: 2.22 SLO驱动升级合约 + 量化交易特化（决策 D-022-12）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.22 SLO驱动升级合约 + 量化交易特化（决策 D-022-12）

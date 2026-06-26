@@ -3,6 +3,7 @@ module_id: KE-2524---codified-context-002
 status: active
 title: 9.5 与 Codified Context 对比（第一次量化数据）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.5 与 Codified Context 对比（第一次量化数据）

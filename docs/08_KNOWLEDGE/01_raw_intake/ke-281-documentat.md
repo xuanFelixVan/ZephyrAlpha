@@ -3,6 +3,7 @@ module_id: KE-259-----14-003
 status: active
 title: 3.2 与后端 14 层的调用规则
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 与后端 14 层的调用规则

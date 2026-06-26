@@ -3,6 +3,7 @@ module_id: KE-2543---------skill-000
 status: active
 title: 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
 category: module_blueprint
+ttl: permanent
 ---
 
 # 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎

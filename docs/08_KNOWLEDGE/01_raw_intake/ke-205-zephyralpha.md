@@ -2,6 +2,7 @@
 module_id: KE-185
 title: 2.2 ZephyrAlpha 各集成风格采用情况
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 ZephyrAlpha 各集成风格采用情况

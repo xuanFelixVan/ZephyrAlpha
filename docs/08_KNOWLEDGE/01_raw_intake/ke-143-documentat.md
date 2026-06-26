@@ -2,6 +2,7 @@
 module_id: KE-130
 title: 12. 恢复操作
 category: documentation
+ttl: permanent
 ---
 
 # 12. 恢复操作

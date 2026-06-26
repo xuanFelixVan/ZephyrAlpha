@@ -3,6 +3,7 @@ module_id: KE-2520
 status: active
 title: 9.3 Skill-as-Code GitOps CI/CD Pipeline
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.3 Skill-as-Code GitOps CI/CD Pipeline

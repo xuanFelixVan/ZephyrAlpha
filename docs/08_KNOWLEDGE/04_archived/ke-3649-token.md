@@ -2,6 +2,7 @@
 module_id: KE-3504
 title: 15.4 Token 预算
 category: governance
+ttl: permanent
 ---
 
 # 15.4 Token 预算

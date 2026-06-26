@@ -3,6 +3,7 @@ module_id: KE-284
 status: active
 title: 3.3 层级关系与加载策略
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 层级关系与加载策略

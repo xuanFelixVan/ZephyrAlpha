@@ -2,6 +2,7 @@
 module_id: KE-1636
 title: 2. 盲点清单与关闭映射
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 盲点清单与关闭映射

@@ -72,7 +72,7 @@ __all__ = [
     "IngestResult",
 ]
 
-REQUIRED_FRONTMATTER_FIELDS = ["module_id", "title", "category"]
+REQUIRED_FRONTMATTER_FIELDS = ["module_id", "title", "category", "ttl"]
 ALLOWED_EXTENSIONS = {".md", ".yaml", ".yml"}
 MIN_CONTENT_CHARS = 100
 

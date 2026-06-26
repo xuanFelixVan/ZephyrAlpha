@@ -3,6 +3,7 @@ module_id: KE-2039-------pipelineorchestrat-000
 status: active
 title: 3.1.3 管线调度器（PipelineOrchestrator）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1.3 管线调度器（PipelineOrchestrator）

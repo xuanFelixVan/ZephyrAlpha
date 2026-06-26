@@ -2,6 +2,7 @@
 module_id: KE-3534
 title: §7 Link to Catalogs / 关联清单
 category: documentation
+ttl: permanent
 ---
 
 # §7 Link to Catalogs / 关联清单

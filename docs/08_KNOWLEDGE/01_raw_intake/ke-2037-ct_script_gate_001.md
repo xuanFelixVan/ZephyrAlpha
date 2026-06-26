@@ -3,6 +3,7 @@ module_id: KE-1946---------003
 status: active
 title: 2.8 CT-SCRIPT-GATE-001：脚本系统 ↔ Gates
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 CT-SCRIPT-GATE-001：脚本系统 ↔ Gates

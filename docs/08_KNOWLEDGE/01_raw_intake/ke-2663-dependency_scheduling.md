@@ -2,6 +2,7 @@
 module_id: KE-2568
 title: B. 依赖与调度
 category: module_blueprint
+ttl: permanent
 ---
 
 # B. 依赖与调度

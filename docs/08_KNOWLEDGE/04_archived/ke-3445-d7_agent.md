@@ -2,6 +2,7 @@
 module_id: KE-3315
 title: 4.7 D7 Agent 编排
 category: documentation
+ttl: permanent
 ---
 
 # 4.7 D7 Agent 编排

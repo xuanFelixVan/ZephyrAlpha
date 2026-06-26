@@ -2,6 +2,7 @@
 module_id: KE-3357
 title: §6 禁止行为
 category: documentation
+ttl: permanent
 ---
 
 # §6 禁止行为

@@ -2,6 +2,7 @@
 module_id: KE-2004
 title: 3. Frontmatter Fields to Verify
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Frontmatter Fields to Verify

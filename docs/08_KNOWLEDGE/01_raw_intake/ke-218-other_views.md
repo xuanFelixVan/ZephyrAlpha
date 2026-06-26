@@ -3,6 +3,7 @@ module_id: KE-218
 status: active
 title: 2.4 与 other views 的边界 / 与其他视图的边界
 category: documentation
+ttl: permanent
 ---
 
 # 2.4 与 other views 的边界 / 与其他视图的边界

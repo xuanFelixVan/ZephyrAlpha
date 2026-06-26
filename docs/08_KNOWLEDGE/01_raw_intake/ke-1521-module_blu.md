@@ -3,6 +3,7 @@ module_id: KE-1431
 status: active
 title: 12.3 能力成熟度阶梯
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.3 能力成熟度阶梯

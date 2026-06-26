@@ -2,6 +2,7 @@
 module_id: KE-3212---master-data-000
 title: 2.2 Reference & Master Data 域（参考与主数据）
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 Reference & Master Data 域（参考与主数据）

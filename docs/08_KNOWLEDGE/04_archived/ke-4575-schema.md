@@ -2,6 +2,7 @@
 module_id: KE-4410
 title: Schema 版本历史全景
 category: module_blueprint
+ttl: permanent
 ---
 
 # Schema 版本历史全景

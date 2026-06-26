@@ -3,6 +3,7 @@ module_id: KE-2572----src-zephyr-kb-agent-co-000
 status: active
 title: beta 新建：src/zephyr/kb/agent_collab.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # beta 新建：src/zephyr/kb/agent_collab.py

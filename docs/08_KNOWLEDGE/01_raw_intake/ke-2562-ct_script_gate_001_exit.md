@@ -3,6 +3,7 @@ module_id: KE-2467---exit--000
 status: active
 title: 8.1 CT-SCRIPT-GATE-001：脚本exit code → Gate判定
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.1 CT-SCRIPT-GATE-001：脚本exit code → Gate判定

@@ -2,6 +2,7 @@
 module_id: KE-3680
 title: 一、Cursor vs Trae 分工
 category: governance
+ttl: permanent
 ---
 
 # 一、Cursor vs Trae 分工

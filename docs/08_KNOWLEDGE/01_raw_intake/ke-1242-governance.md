@@ -3,6 +3,7 @@ module_id: KE-1155----------6-000
 status: active
 title: IRN-006：模型能力边界（铁律6）
 category: governance
+ttl: permanent
 ---
 
 # IRN-006：模型能力边界（铁律6）

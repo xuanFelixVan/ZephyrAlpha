@@ -3,6 +3,7 @@ module_id: KE-1363
 status: active
 title: 10.3 反向测试——"不动"的边界
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.3 反向测试——"不动"的边界

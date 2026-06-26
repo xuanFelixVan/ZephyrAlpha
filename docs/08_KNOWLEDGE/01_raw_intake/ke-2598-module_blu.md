@@ -2,6 +2,7 @@
 module_id: KE-2503
 title: 9. 需要更新的相关内容
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9. 需要更新的相关内容

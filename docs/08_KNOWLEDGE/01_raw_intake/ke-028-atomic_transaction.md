@@ -3,6 +3,7 @@ module_id: KE-028--------atomic-transaction--005
 status: active
 title: 6.2 原子事务模式（Atomic Transaction Mode）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.2 原子事务模式（Atomic Transaction Mode）

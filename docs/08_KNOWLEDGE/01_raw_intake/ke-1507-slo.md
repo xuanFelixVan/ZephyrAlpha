@@ -2,6 +2,7 @@
 module_id: KE-1417----slo-003
 title: 12.1 稳态 SLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 稳态 SLO

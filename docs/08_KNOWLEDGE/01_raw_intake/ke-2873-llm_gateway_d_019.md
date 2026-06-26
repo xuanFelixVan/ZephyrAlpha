@@ -3,6 +3,7 @@ module_id: KE-2773
 status: active
 title: LLM Gateway (D-019-78)
 category: module_blueprint
+ttl: permanent
 ---
 
 # LLM Gateway (D-019-78)

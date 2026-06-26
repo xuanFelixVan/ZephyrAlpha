@@ -3,6 +3,7 @@ module_id: KE-513
 status: active
 title: 8. Architecture Runway Index / 架构预留通道总览
 category: documentation
+ttl: permanent
 ---
 
 # 8. Architecture Runway Index / 架构预留通道总览

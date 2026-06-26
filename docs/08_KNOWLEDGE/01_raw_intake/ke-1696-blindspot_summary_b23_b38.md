@@ -2,6 +2,7 @@
 module_id: KE-1606
 title: 2. Blindspot Summary B23-B38
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Blindspot Summary B23-B38

@@ -3,6 +3,7 @@ module_id: KE-2936
 status: active
 title: ── Stage 2 ──
 category: module_blueprint
+ttl: permanent
 ---
 
 # ── Stage 2 ──

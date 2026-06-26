@@ -3,6 +3,7 @@ module_id: KE-1711---------------------d-023-003
 status: active
 title: 2.14 自动学习——假阳性模式识别与抑制（决策 D-023-21）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.14 自动学习——假阳性模式识别与抑制（决策 D-023-21）

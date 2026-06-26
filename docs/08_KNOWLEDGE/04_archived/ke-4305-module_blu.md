@@ -2,6 +2,7 @@
 module_id: KE-4146
 title: 5.5 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.5 施工状态

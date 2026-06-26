@@ -2,6 +2,7 @@
 module_id: KE-3967
 title: 2. AP Protection Implementation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. AP Protection Implementation

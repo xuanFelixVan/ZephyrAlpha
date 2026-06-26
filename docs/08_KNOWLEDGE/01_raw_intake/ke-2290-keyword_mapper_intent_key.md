@@ -3,6 +3,7 @@ module_id: KE-2196---intent-key-000
 status: active
 title: 4. Keyword Mapper — intent_keyword_mapper.py (§5.1 BUILD-C01)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Keyword Mapper — intent_keyword_mapper.py (§5.1 BUILD-C01)

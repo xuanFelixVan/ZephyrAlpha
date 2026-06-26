@@ -2,6 +2,7 @@
 module_id: KE-3141
 title: 6.6.4 健康检查脚本覆盖
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.6.4 健康检查脚本覆盖

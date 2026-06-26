@@ -2,6 +2,7 @@
 module_id: KE-1311
 title: 1.2 核心职责
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.2 核心职责

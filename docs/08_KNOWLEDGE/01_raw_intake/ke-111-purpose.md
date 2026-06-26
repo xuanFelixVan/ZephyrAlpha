@@ -3,6 +3,7 @@ module_id: KE-111
 status: active
 title: §1 Purpose / 目的
 category: documentation
+ttl: permanent
 ---
 
 # §1 Purpose / 目的

@@ -3,6 +3,7 @@ module_id: KE-1786---i-002
 status: active
 title: 2.211 Immutable Core Guard - immutable_core_guard.py (🆕 v0.20.0 - 盲点261 — FLE自修改
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.211 Immutable Core Guard - immutable_core_guard.py (🆕 v0.20.0 - 盲点261 — FLE自修改

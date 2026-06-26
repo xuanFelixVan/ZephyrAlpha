@@ -3,6 +3,7 @@ module_id: KE-180
 status: active
 title: 2.2 档位判定规则（防刷分）
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 档位判定规则（防刷分）

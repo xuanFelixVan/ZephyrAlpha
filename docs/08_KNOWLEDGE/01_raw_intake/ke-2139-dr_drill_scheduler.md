@@ -3,6 +3,7 @@ module_id: KE-2047
 status: active
 title: 3.10 #34: DRDrillScheduler
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.10 #34: DRDrillScheduler

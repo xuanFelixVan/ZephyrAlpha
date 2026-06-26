@@ -3,6 +3,7 @@ module_id: KE-1094
 status: active
 title: CBAC 自保规则
 category: governance
+ttl: permanent
 ---
 
 # CBAC 自保规则

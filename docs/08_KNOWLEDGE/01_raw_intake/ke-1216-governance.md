@@ -2,6 +2,7 @@
 module_id: KE-1129
 title: DRP-002：删除前确认
 category: governance
+ttl: permanent
 ---
 
 # DRP-002：删除前确认

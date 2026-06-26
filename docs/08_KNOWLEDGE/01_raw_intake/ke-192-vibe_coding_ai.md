@@ -3,6 +3,7 @@ module_id: KE-172--------006
 status: active
 title: 2.1B Vibe Coding 2.0 AI 基础设施技术选型（17 项聚焦视图）
 category: documentation
+ttl: permanent
 ---
 
 # 2.1B Vibe Coding 2.0 AI 基础设施技术选型（17 项聚焦视图）

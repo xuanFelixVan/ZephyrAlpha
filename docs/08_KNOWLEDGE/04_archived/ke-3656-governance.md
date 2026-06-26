@@ -2,6 +2,7 @@
 module_id: KE-3511
 title: 19. 变更记录
 category: governance
+ttl: permanent
 ---
 
 # 19. 变更记录

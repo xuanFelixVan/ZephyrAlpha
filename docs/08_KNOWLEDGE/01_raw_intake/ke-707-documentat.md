@@ -3,6 +3,7 @@ module_id: KE-632
 status: active
 title: Stage 3：从“组织协作”到“决策连续性”
 category: documentation
+ttl: permanent
 ---
 
 # Stage 3：从“组织协作”到“决策连续性”

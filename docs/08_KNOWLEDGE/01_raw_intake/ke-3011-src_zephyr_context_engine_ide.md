@@ -3,6 +3,7 @@ module_id: KE-2911
 status: active
 title: src/zephyr/context-engine/ide_capabilities.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/context-engine/ide_capabilities.py (experimental 产出)

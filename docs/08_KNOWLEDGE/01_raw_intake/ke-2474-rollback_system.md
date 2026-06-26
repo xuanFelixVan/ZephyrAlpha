@@ -3,6 +3,7 @@ module_id: KE-2379--------rollback-system-v8--000
 status: active
 title: 6.3 靶心设计 — Rollback System v8.0 (Adversarial-AI-Resilient Rollback Infrastructur
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 靶心设计 — Rollback System v8.0 (Adversarial-AI-Resilient Rollback Infrastructur

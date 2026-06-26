@@ -3,6 +3,7 @@ module_id: KE-2272
 status: active
 title: 5. 已实现代码完整路径索引
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. 已实现代码完整路径索引

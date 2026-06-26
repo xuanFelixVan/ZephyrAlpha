@@ -2,6 +2,7 @@
 module_id: KE-1175
 title: MRS-004：禁止行为清单
 category: governance
+ttl: permanent
 ---
 
 # MRS-004：禁止行为清单

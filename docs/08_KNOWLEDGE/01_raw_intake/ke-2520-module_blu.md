@@ -3,6 +3,7 @@ module_id: KE-2425
 status: active
 title: 7.1 核心事件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.1 核心事件

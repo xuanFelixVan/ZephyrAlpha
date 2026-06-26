@@ -3,6 +3,7 @@ module_id: KE-1998----d-000
 status: active
 title: 3. CE-Orc Precedence (B22) — DD96
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. CE-Orc Precedence (B22) — DD96

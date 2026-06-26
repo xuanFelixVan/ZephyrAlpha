@@ -2,6 +2,7 @@
 module_id: KE-4448---md-001
 title: architecture_model YAML → MD 视图对齐
 category: session_log
+ttl: permanent
 ---
 
 # architecture_model YAML → MD 视图对齐

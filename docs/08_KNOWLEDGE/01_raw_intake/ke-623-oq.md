@@ -3,6 +3,7 @@ module_id: KE-561--------oq-072-004
 status: active
 title: 9.4 下沉规则（与 OQ-072 双轨制协同）
 category: documentation
+ttl: permanent
 ---
 
 # 9.4 下沉规则（与 OQ-072 双轨制协同）

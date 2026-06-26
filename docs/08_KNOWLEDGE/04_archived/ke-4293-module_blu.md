@@ -2,6 +2,7 @@
 module_id: KE-4134
 title: 5.1 前置组件（必须先完成）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.1 前置组件（必须先完成）

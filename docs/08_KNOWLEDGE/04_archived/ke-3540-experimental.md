@@ -2,6 +2,7 @@
 module_id: KE-3401------experimental-002
 title: 8.1 数据分级（experimental 基线）
 category: documentation
+ttl: permanent
 ---
 
 # 8.1 数据分级（experimental 基线）

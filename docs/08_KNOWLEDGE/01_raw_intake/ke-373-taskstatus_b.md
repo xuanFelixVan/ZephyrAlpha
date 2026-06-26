@@ -3,6 +3,7 @@ module_id: KE-338---b-000
 status: active
 title: 4.2 TaskStatus（域 B：任务系统）
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 TaskStatus（域 B：任务系统）

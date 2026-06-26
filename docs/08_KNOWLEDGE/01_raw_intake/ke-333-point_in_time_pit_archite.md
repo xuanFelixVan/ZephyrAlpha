@@ -2,6 +2,7 @@
 module_id: KE-305
 title: 4. Point-in-Time (PIT) Architecture / PIT 数据架构
 category: documentation
+ttl: permanent
 ---
 
 # 4. Point-in-Time (PIT) Architecture / PIT 数据架构

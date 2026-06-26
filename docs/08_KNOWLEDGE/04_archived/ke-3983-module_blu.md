@@ -2,6 +2,7 @@
 module_id: KE-3830------15---4-005
 title: 12.1 盲点总览（15 项，4 个优先级）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 盲点总览（15 项，4 个优先级）

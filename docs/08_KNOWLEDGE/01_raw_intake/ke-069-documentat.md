@@ -3,6 +3,7 @@ module_id: KE-066
 status: active
 title: 1. 本文档的作用
 category: documentation
+ttl: permanent
 ---
 
 # 1. 本文档的作用

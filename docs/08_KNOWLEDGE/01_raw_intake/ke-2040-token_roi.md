@@ -3,6 +3,7 @@ module_id: KE-1949
 status: active
 title: 2.8 Token ROI 模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 Token ROI 模型

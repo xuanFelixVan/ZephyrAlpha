@@ -3,6 +3,7 @@ module_id: KE-2006
 status: active
 title: 3. Graceful Degradation 对齐
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Graceful Degradation 对齐

@@ -2,6 +2,7 @@
 module_id: KE-2216
 title: 4.1 盘点数据安全
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 盘点数据安全

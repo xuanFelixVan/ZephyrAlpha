@@ -3,6 +3,7 @@ module_id: KE-2342
 status: active
 title: 6. Rollback Instructions
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. Rollback Instructions

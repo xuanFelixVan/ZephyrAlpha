@@ -3,6 +3,7 @@ module_id: KE-1166-------mod-p1-001
 status: active
 title: MAD-001：架构必要性（MOD-P1）
 category: governance
+ttl: permanent
 ---
 
 # MAD-001：架构必要性（MOD-P1）

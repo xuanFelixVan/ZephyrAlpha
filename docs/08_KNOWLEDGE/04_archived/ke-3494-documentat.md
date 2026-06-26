@@ -2,6 +2,7 @@
 module_id: KE-3358
 title: 6.1 当前资产清单
 category: documentation
+ttl: permanent
 ---
 
 # 6.1 当前资产清单

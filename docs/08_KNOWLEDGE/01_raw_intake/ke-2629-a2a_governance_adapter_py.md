@@ -3,6 +3,7 @@ module_id: KE-2534
 status: active
 title: a2a_governance_adapter.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # a2a_governance_adapter.py

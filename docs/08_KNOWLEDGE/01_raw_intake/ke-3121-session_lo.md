@@ -3,6 +3,7 @@ module_id: KE-3019
 status: active
 title: 0.2 本文档不是
 category: session_log
+ttl: permanent
 ---
 
 # 0.2 本文档不是

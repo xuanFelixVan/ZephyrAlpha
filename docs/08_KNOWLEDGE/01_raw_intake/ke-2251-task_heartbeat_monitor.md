@@ -3,6 +3,7 @@ module_id: KE-2157
 status: active
 title: 3.9 #63: TaskHeartbeatMonitor (M-45)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.9 #63: TaskHeartbeatMonitor (M-45)

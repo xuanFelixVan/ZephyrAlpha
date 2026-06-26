@@ -3,6 +3,7 @@ module_id: KE-1213
 status: active
 title: 孤儿检测：`scripts/governance/audit_registration.py`
 category: governance_rule
+ttl: permanent
 ---
 
 # 孤儿检测：`scripts/governance/audit_registration.py`

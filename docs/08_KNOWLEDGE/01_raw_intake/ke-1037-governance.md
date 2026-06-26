@@ -3,6 +3,7 @@ module_id: KE-955
 status: active
 title: 5.3 跳级规则（明令禁止）
 category: governance
+ttl: permanent
 ---
 
 # 5.3 跳级规则（明令禁止）

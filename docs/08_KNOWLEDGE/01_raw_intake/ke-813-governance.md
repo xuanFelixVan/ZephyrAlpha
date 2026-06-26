@@ -3,6 +3,7 @@ module_id: KE-736
 status: active
 title: 13. 模块间交互规则
 category: governance
+ttl: permanent
 ---
 
 # 13. 模块间交互规则

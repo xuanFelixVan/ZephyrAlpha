@@ -2,6 +2,7 @@
 module_id: KE-2684-------16-1--16-8-000
 title: DB-025-0066：施工指引 §16.1-§16.8 全量
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0066：施工指引 §16.1-§16.8 全量

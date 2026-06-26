@@ -3,6 +3,7 @@ module_id: KE-1695---------llm-000
 status: active
 title: 2.11 CT-CE-LSG-001：上下文引擎 → LLM安全 — 上下文注入前安全校验
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.11 CT-CE-LSG-001：上下文引擎 → LLM安全 — 上下文注入前安全校验

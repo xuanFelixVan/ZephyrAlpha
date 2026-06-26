@@ -3,6 +3,7 @@ module_id: KE-888
 status: active
 title: 4.1 前端层级结构
 category: governance
+ttl: permanent
 ---
 
 # 4.1 前端层级结构

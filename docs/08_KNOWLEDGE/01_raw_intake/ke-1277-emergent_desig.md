@@ -3,6 +3,7 @@ module_id: KE-1190---------emergent-desig-001
 status: active
 title: MTH-012：涌现式设计原则（Emergent Design） [SHOULD — 创建/完善结构化文档时执行]
 category: governance
+ttl: permanent
 ---
 
 # MTH-012：涌现式设计原则（Emergent Design） [SHOULD — 创建/完善结构化文档时执行]

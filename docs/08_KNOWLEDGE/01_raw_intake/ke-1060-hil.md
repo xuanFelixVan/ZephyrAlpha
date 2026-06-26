@@ -3,6 +3,7 @@ module_id: KE-976
 status: active
 title: 6.1 HiL 触发点
 category: governance
+ttl: permanent
 ---
 
 # 6.1 HiL 触发点

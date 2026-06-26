@@ -3,6 +3,7 @@ module_id: KE-2746
 status: active
 title: Generation Process
 category: module_blueprint
+ttl: permanent
 ---
 
 # Generation Process

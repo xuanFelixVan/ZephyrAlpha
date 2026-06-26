@@ -3,6 +3,7 @@ module_id: KE-411-----------adapter-faca-000
 status: active
 title: 5.2 ACL 选型理由（为何不用 Adapter/Facade）
 category: documentation
+ttl: permanent
 ---
 
 # 5.2 ACL 选型理由（为何不用 Adapter/Facade）

@@ -3,6 +3,7 @@ module_id: KE-015
 status: active
 title: 5.3 Session Continuity — 自动交接协议
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.3 Session Continuity — 自动交接协议

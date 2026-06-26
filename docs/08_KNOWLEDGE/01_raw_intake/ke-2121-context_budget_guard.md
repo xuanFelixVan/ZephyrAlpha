@@ -3,6 +3,7 @@ module_id: KE-2029
 status: active
 title: 3.1 #17: ContextBudgetGuard
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 #17: ContextBudgetGuard

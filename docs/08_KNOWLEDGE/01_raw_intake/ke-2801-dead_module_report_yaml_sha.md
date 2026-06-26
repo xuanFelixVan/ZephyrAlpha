@@ -3,6 +3,7 @@ module_id: KE-2704----sha-000
 status: active
 title: dead_module_report.yaml —— shared_lifecycle_manager.py 产出
 category: module_blueprint
+ttl: permanent
 ---
 
 # dead_module_report.yaml —— shared_lifecycle_manager.py 产出

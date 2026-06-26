@@ -3,6 +3,7 @@ module_id: KE-091
 status: active
 title: 1.4 适用范围
 category: documentation
+ttl: permanent
 ---
 
 # 1.4 适用范围

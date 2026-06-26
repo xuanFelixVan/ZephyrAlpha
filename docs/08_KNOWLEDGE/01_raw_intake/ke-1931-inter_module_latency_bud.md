@@ -3,6 +3,7 @@ module_id: KE-1840
 status: active
 title: 2.253 Inter-Module Latency Budget & SLA Manager - inter_module_latency_budget.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.253 Inter-Module Latency Budget & SLA Manager - inter_module_latency_budget.py

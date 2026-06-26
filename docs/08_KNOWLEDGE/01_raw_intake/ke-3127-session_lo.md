@@ -2,6 +2,7 @@
 module_id: KE-3025
 title: 修复的 3 个关键问题
 category: session_log
+ttl: permanent
 ---
 
 # 修复的 3 个关键问题

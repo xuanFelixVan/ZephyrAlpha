@@ -2,6 +2,7 @@
 module_id: KE-1244
 title: 索引查询清单
 category: governance
+ttl: permanent
 ---
 
 # 索引查询清单

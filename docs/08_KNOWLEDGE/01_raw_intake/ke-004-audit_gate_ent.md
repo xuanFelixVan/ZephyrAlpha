@@ -3,6 +3,7 @@ module_id: KE-005-----------audit---gate-ent-003
 status: active
 title: 5.2 审计清单与门禁入口（Audit & Gate Entry）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.2 审计清单与门禁入口（Audit & Gate Entry）

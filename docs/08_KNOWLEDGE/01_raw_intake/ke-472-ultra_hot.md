@@ -3,6 +3,7 @@ module_id: KE-424----ultra-hot-000
 status: active
 title: 5.4 预留：Ultra-Hot 子档（未激活）
 category: documentation
+ttl: permanent
 ---
 
 # 5.4 预留：Ultra-Hot 子档（未激活）

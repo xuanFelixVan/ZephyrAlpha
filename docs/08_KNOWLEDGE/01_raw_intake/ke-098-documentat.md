@@ -2,6 +2,7 @@
 module_id: KE-089
 title: 1.4 专业对标
 category: documentation
+ttl: permanent
 ---
 
 # 1.4 专业对标

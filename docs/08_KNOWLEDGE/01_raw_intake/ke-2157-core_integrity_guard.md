@@ -3,6 +3,7 @@ module_id: KE-2065---000
 status: active
 title: 3.14 #52: CoreIntegrityGuard (M-41)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.14 #52: CoreIntegrityGuard (M-41)

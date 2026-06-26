@@ -2,6 +2,7 @@
 module_id: KE-3050
 title: L04 Risk Management（5 个新文件）
 category: session_log
+ttl: permanent
 ---
 
 # L04 Risk Management（5 个新文件）

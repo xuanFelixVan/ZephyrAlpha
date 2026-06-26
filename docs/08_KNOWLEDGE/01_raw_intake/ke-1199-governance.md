@@ -2,6 +2,7 @@
 module_id: KE-1113
 title: DLG-001：什么数据必须有血缘
 category: governance
+ttl: permanent
 ---
 
 # DLG-001：什么数据必须有血缘

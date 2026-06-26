@@ -3,6 +3,7 @@ module_id: KE-2842---optional-000
 status: active
 title: Phase 3 (P2, 2-3天, Optional)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase 3 (P2, 2-3天, Optional)

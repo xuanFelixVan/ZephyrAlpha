@@ -3,6 +3,7 @@ module_id: KE-2743------g0-g7-------g-001
 status: active
 title: Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门
 category: module_blueprint
+ttl: permanent
 ---
 
 # Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门

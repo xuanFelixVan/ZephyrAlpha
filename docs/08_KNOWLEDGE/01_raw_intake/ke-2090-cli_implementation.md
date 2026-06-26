@@ -2,6 +2,7 @@
 module_id: KE-1999
 title: 3. CLI Implementation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. CLI Implementation

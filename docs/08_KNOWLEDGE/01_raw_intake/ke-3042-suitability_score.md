@@ -3,6 +3,7 @@ module_id: KE-2942
 status: active
 title: suitability_score 评估维度
 category: module_blueprint
+ttl: permanent
 ---
 
 # suitability_score 评估维度

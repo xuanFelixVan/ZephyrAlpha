@@ -3,6 +3,7 @@ module_id: KE-355
 status: active
 title: 4.4 升格路径
 category: documentation
+ttl: permanent
 ---
 
 # 4.4 升格路径

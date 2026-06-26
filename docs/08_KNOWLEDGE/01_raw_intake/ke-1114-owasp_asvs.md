@@ -2,6 +2,7 @@
 module_id: KE-1029
 title: 8.1 OWASP ASVS 对标
 category: governance
+ttl: permanent
 ---
 
 # 8.1 OWASP ASVS 对标

@@ -2,6 +2,7 @@
 module_id: KE-2245
 title: 4.4 HTTP API（beta 预留骨架）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.4 HTTP API（beta 预留骨架）

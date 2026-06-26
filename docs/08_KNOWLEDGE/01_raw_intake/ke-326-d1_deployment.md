@@ -3,6 +3,7 @@ module_id: KE-326
 status: active
 title: §3 D1 — Deployment / 部署域
 category: documentation
+ttl: permanent
 ---
 
 # §3 D1 — Deployment / 部署域

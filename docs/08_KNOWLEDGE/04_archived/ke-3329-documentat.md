@@ -2,6 +2,7 @@
 module_id: KE-3209
 title: 2.2 决策与记忆类
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 决策与记忆类

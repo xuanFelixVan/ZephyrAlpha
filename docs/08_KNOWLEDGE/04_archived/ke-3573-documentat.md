@@ -2,6 +2,7 @@
 module_id: KE-3430
 title: 一、三层权限模型（来自 KBG-0010）
 category: documentation
+ttl: permanent
 ---
 
 # 一、三层权限模型（来自 KBG-0010）

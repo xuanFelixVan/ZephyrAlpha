@@ -3,6 +3,7 @@ module_id: KE-1730
 status: active
 title: 2.17 辅助能力——上下文浪费检测 + 冷启动豁免 + 自托管模型成本模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.17 辅助能力——上下文浪费检测 + 冷启动豁免 + 自托管模型成本模型

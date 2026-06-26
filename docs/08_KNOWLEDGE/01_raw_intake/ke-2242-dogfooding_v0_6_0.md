@@ -3,6 +3,7 @@ module_id: KE-2242
 status: active
 title: 3.8 引擎自保护与Dogfooding（v0.6.0 新增 — Wave 1 即落地自我扫描，Wave 2 落地Codegen防护）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.8 引擎自保护与Dogfooding（v0.6.0 新增 — Wave 1 即落地自我扫描，Wave 2 落地Codegen防护）

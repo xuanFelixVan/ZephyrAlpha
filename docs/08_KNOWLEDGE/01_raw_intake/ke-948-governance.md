@@ -3,6 +3,7 @@ module_id: KE-870
 status: active
 title: 3.5 "文件不存在"的三级判定
 category: governance
+ttl: permanent
 ---
 
 # 3.5 "文件不存在"的三级判定

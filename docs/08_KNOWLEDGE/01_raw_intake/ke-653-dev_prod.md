@@ -3,6 +3,7 @@ module_id: KE-587
 status: active
 title: 七、dev/prod 双模式权限表
 category: documentation
+ttl: permanent
 ---
 
 # 七、dev/prod 双模式权限表

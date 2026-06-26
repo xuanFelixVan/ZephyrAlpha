@@ -3,6 +3,7 @@ module_id: KE-1006-----src-zephyr-----c---or--003
 status: active
 title: 7.2 新增 `src/zephyr/` 包（C 轨 or B 轨）
 category: governance
+ttl: permanent
 ---
 
 # 7.2 新增 `src/zephyr/` 包（C 轨 or B 轨）

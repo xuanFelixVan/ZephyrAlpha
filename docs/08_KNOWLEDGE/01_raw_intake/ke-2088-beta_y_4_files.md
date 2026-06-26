@@ -2,6 +2,7 @@
 module_id: KE-1997
 title: 3. beta y (4 Files) — 生命线基座
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. beta y (4 Files) — 生命线基座

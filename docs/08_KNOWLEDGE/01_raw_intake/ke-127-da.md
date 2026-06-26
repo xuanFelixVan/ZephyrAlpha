@@ -3,6 +3,7 @@ module_id: KE-114
 status: active
 title: 10.3 DA 不做什么（防止越界）
 category: documentation
+ttl: permanent
 ---
 
 # 10.3 DA 不做什么（防止越界）

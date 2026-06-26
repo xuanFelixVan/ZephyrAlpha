@@ -2,6 +2,7 @@
 module_id: KE-2981
 title: V类：氛围编程基础设施的自我修改漏洞
 category: module_blueprint
+ttl: permanent
 ---
 
 # V类：氛围编程基础设施的自我修改漏洞

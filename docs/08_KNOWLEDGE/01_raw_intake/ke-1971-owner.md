@@ -3,6 +3,7 @@ module_id: KE-1880-------owner-000
 status: active
 title: 2.30 人因工程——Owner状态感知与决策质量监控
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.30 人因工程——Owner状态感知与决策质量监控

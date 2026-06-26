@@ -2,6 +2,7 @@
 module_id: KE-3185
 title: 12. 修改条件
 category: documentation
+ttl: permanent
 ---
 
 # 12. 修改条件

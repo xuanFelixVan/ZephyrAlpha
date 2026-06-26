@@ -3,6 +3,7 @@ module_id: KE-1933--------cost-attribution-000
 status: active
 title: 2.7 成本归因体系（Cost Attribution）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.7 成本归因体系（Cost Attribution）

@@ -2,6 +2,7 @@
 module_id: KE-3005-----ide-----41--55-006
 title: 第三轮 — Vibe Coding / 跨 IDE 特有（#41-#55）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 第三轮 — Vibe Coding / 跨 IDE 特有（#41-#55）

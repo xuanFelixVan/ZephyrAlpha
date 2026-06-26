@@ -3,6 +3,7 @@ module_id: KE-2813
 status: active
 title: === Owner 能力鸿沟 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === Owner 能力鸿沟 ===

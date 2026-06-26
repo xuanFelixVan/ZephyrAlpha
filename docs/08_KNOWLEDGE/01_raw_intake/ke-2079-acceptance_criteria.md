@@ -3,6 +3,7 @@ module_id: KE-1988
 status: active
 title: 3. Acceptance Criteria
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Acceptance Criteria

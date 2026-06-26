@@ -3,6 +3,7 @@ module_id: KE-1270
 status: active
 title: 0.2 本文档**不是**
 category: module_blueprint
+ttl: permanent
 ---
 
 # 0.2 本文档**不是**

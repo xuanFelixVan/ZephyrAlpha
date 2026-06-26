@@ -3,6 +3,7 @@ module_id: KE-2343
 status: active
 title: 6. 门禁植入
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 门禁植入

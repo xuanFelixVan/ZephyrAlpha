@@ -3,6 +3,7 @@ module_id: KE-2319
 status: active
 title: 4.2 目录命名规则（MUST）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 目录命名规则（MUST）

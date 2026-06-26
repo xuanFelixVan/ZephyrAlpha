@@ -3,6 +3,7 @@ module_id: KE-783
 status: active
 title: 2.1 exit_criteria（Stage 退出门）
 category: governance
+ttl: permanent
 ---
 
 # 2.1 exit_criteria（Stage 退出门）

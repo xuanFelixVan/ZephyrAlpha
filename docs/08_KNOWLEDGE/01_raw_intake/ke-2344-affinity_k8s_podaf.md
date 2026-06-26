@@ -3,6 +3,7 @@ module_id: KE-2249---------k8s-podaf-000
 status: active
 title: 4.5 Affinity 约束模型（对标 K8s PodAffinityTerm + WeightedPodAffinityTerm）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.5 Affinity 约束模型（对标 K8s PodAffinityTerm + WeightedPodAffinityTerm）

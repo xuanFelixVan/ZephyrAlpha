@@ -2,6 +2,7 @@
 module_id: KE-2118
 title: 3.4 脚本前缀约定（看名知义）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 脚本前缀约定（看名知义）

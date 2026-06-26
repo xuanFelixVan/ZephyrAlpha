@@ -3,6 +3,7 @@ module_id: KE-2592
 status: active
 title: config/db_config.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # config/db_config.yaml

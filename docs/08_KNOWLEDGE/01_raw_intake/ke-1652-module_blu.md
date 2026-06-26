@@ -3,6 +3,7 @@ module_id: KE-1562
 status: active
 title: 16.5 施工顺序
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.5 施工顺序

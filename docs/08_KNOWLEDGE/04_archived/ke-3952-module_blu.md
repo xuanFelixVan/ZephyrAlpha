@@ -2,6 +2,7 @@
 module_id: KE-3800
 title: 10.4 4 类问题模式修复对照
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.4 4 类问题模式修复对照

@@ -2,6 +2,7 @@
 module_id: KE-461---fle-001
 title: 6.3 与 FLE 集成
 category: documentation
+ttl: permanent
 ---
 
 # 6.3 与 FLE 集成

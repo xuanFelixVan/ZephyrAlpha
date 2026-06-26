@@ -3,6 +3,7 @@ module_id: KE-384
 status: active
 title: 4A.6 详细架构
 category: documentation
+ttl: permanent
 ---
 
 # 4A.6 详细架构

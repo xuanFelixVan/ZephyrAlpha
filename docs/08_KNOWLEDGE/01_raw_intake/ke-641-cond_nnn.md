@@ -2,6 +2,7 @@
 module_id: KE-578
 title: COND-{NNN}（条件约束）
 category: documentation
+ttl: permanent
 ---
 
 # COND-{NNN}（条件约束）

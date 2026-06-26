@@ -3,6 +3,7 @@ module_id: KE-2110------dim-discover-001-000
 status: active
 title: 3.4 发现维度（DIM-DISCOVER-001）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 发现维度（DIM-DISCOVER-001）

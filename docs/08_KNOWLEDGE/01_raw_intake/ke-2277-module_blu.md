@@ -3,6 +3,7 @@ module_id: KE-2183
 status: active
 title: 4大类18项盲点
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4大类18项盲点

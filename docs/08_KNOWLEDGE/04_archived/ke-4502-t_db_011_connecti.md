@@ -2,6 +2,7 @@
 module_id: KE-4337
 title: DB-025-0077：T-DB-011——connection_leak_detector
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0077：T-DB-011——connection_leak_detector

@@ -3,6 +3,7 @@ module_id: KE-1698---------agent----token-003
 status: active
 title: 2.12 经济护栏——跨 Agent 链的 Token 预算
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.12 经济护栏——跨 Agent 链的 Token 预算

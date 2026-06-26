@@ -3,6 +3,7 @@ module_id: KE-163
 status: active
 title: 2.1 基线数据源
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 基线数据源

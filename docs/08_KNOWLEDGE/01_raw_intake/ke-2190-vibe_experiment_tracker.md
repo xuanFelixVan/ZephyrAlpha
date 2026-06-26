@@ -3,6 +3,7 @@ module_id: KE-2097
 status: active
 title: 3.3 #41: VibeExperimentTracker (M-38)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 #41: VibeExperimentTracker (M-38)

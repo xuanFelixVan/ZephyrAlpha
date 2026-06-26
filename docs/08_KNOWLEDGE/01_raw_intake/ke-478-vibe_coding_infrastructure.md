@@ -2,6 +2,7 @@
 module_id: KE-429
 title: 5A. Vibe Coding 2.0 Infrastructure / Vibe Coding 2.0 基础设施架构
 category: documentation
+ttl: permanent
 ---
 
 # 5A. Vibe Coding 2.0 Infrastructure / Vibe Coding 2.0 基础设施架构

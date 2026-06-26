@@ -3,6 +3,7 @@ module_id: KE-2863
 status: active
 title: Python 实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # Python 实现

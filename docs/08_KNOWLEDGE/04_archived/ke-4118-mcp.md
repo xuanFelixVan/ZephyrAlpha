@@ -2,6 +2,7 @@
 module_id: KE-3963-----mcp-000
 title: 2. 七个 MCP 服务端
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 七个 MCP 服务端

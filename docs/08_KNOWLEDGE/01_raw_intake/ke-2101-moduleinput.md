@@ -3,6 +3,7 @@ module_id: KE-2010
 status: active
 title: 3. ModuleInput
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. ModuleInput

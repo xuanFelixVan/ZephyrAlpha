@@ -3,6 +3,7 @@ module_id: KE-2601
 status: active
 title: Crypto-Shredding
 category: module_blueprint
+ttl: permanent
 ---
 
 # Crypto-Shredding

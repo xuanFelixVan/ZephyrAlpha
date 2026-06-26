@@ -3,6 +3,7 @@ module_id: KE-118
 status: active
 title: 11. Architecture Runway / 架构预留通道
 category: documentation
+ttl: permanent
 ---
 
 # 11. Architecture Runway / 架构预留通道

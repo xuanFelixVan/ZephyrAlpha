@@ -3,6 +3,7 @@ module_id: KE-244
 status: active
 title: 3.1 7 核心能力域定义
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 7 核心能力域定义

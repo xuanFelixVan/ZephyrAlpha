@@ -3,6 +3,7 @@ module_id: KE-241
 status: active
 title: 3.1 章节清单（三层模板体系）
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 章节清单（三层模板体系）

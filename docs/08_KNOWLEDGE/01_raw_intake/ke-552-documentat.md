@@ -3,6 +3,7 @@ module_id: KE-500
 status: active
 title: 7.3 复合命名规则（当二者联合引用时）
 category: documentation
+ttl: permanent
 ---
 
 # 7.3 复合命名规则（当二者联合引用时）

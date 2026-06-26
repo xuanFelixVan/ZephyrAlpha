@@ -3,6 +3,7 @@ module_id: KE-068
 status: active
 title: 1. 登记规则
 category: documentation
+ttl: permanent
 ---
 
 # 1. 登记规则

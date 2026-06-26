@@ -3,6 +3,7 @@ module_id: KE-280---vs--operatio-004
 status: active
 title: 3.3 `governance/` vs `operational/` 边界判据
 category: documentation
+ttl: permanent
 ---
 
 # 3.3 `governance/` vs `operational/` 边界判据

@@ -2,6 +2,7 @@
 module_id: KE-3531
 title: 2.2.2 特殊分区
 category: governance
+ttl: permanent
 ---
 
 # 2.2.2 特殊分区

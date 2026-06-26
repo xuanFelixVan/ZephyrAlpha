@@ -3,6 +3,7 @@ module_id: KE-2782
 status: active
 title: Merkle Audit Trail (D-019-59)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Merkle Audit Trail (D-019-59)

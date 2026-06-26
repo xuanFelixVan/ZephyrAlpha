@@ -2,6 +2,7 @@
 module_id: KE-3732
 title: 规则验证标准
 category: governance_rule
+ttl: permanent
 ---
 
 # 规则验证标准

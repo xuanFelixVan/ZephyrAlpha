@@ -2,6 +2,7 @@
 module_id: KE-689
 title: 一.1.2 三种风格定义
 category: governance
+ttl: permanent
 ---
 
 # 一.1.2 三种风格定义

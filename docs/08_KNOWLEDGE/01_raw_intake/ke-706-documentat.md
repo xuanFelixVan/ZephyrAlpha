@@ -3,6 +3,7 @@ module_id: KE-631
 status: active
 title: Stage 2：从“新树目录”到“机构级治理视角”
 category: documentation
+ttl: permanent
 ---
 
 # Stage 2：从“新树目录”到“机构级治理视角”

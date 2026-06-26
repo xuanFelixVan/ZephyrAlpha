@@ -2,6 +2,7 @@
 module_id: KE-740
 title: 14.1 Normative 引用
 category: governance_rule
+ttl: permanent
 ---
 
 # 14.1 Normative 引用

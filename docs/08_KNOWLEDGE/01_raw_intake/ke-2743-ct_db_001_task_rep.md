@@ -3,6 +3,7 @@ module_id: KE-2646
 status: active
 title: DB-025-0023：CT-DB-001 task_repo CRUD 契约落地
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0023：CT-DB-001 task_repo CRUD 契约落地

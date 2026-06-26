@@ -3,6 +3,7 @@ module_id: KE-827
 status: active
 title: 2.6 超时豁免治理
 category: governance
+ttl: permanent
 ---
 
 # 2.6 超时豁免治理

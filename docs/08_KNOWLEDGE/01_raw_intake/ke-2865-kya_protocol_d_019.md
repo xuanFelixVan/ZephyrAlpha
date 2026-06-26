@@ -3,6 +3,7 @@ module_id: KE-2767
 status: active
 title: KYA Protocol (D-019-15)
 category: module_blueprint
+ttl: permanent
 ---
 
 # KYA Protocol (D-019-15)

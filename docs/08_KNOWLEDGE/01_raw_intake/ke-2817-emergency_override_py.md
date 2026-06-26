@@ -3,6 +3,7 @@ module_id: KE-2720
 status: active
 title: emergency_override.py — 新增文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # emergency_override.py — 新增文件

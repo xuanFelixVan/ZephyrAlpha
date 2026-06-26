@@ -3,6 +3,7 @@ module_id: KE-1725
 status: active
 title: 2.16 预算策略沙盘 + 策略版本管理
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.16 预算策略沙盘 + 策略版本管理

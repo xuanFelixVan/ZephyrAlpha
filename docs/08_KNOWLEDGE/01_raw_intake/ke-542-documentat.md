@@ -3,6 +3,7 @@ module_id: KE-490
 status: active
 title: 7.2 部署拓扑
 category: documentation
+ttl: permanent
 ---
 
 # 7.2 部署拓扑

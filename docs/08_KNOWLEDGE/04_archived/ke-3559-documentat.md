@@ -2,6 +2,7 @@
 module_id: KE-3559
 title: 9. 修订记录
 category: documentation
+ttl: permanent
 ---
 
 # 9. 修订记录

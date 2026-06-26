@@ -3,6 +3,7 @@ module_id: KE-1889
 status: active
 title: 2.36 升级协议自验证闭环 + 升级规则安全生产 + 量化交易特化升级（决策 D-022-26）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.36 升级协议自验证闭环 + 升级规则安全生产 + 量化交易特化升级（决策 D-022-26）

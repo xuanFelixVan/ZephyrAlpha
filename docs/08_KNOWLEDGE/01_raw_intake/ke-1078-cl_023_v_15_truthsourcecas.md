@@ -3,6 +3,7 @@ module_id: KE-993
 status: active
 title: 6.7 CL-023 V-15 TruthSourceCascadeValidator 启动记录
 category: governance
+ttl: permanent
 ---
 
 # 6.7 CL-023 V-15 TruthSourceCascadeValidator 启动记录

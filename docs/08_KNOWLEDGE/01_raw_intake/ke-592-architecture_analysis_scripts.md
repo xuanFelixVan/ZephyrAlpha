@@ -2,6 +2,7 @@
 module_id: KE-533---03-aa---scripts-000
 title: 8.4 与 03-AA / scripts/ 的边界
 category: documentation
+ttl: permanent
 ---
 
 # 8.4 与 03-AA / scripts/ 的边界

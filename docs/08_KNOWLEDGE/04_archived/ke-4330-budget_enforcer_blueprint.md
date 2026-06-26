@@ -2,6 +2,7 @@
 module_id: KE-4170
 title: 6.2 budget-enforcer/blueprint.md
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.2 budget-enforcer/blueprint.md

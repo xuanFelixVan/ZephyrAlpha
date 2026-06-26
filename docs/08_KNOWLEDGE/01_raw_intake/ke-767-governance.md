@@ -3,6 +3,7 @@ module_id: KE-690
 status: active
 title: 1.2 适用范围
 category: governance_rule
+ttl: permanent
 ---
 
 # 1.2 适用范围

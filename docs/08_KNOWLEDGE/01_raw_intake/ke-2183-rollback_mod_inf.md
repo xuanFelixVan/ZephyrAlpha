@@ -3,6 +3,7 @@ module_id: KE-2090-------mod-inf-021-003
 status: active
 title: 3.2 Rollback 集成（对接 MOD-INF-021）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 Rollback 集成（对接 MOD-INF-021）

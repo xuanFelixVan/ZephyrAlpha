@@ -3,6 +3,7 @@ module_id: KE-1868
 status: active
 title: 2.3 depends_on 声明
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 depends_on 声明

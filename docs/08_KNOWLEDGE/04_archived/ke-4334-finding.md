@@ -2,6 +2,7 @@
 module_id: KE-4174
 title: 6.3 Finding → 任务卡自动创建
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 Finding → 任务卡自动创建

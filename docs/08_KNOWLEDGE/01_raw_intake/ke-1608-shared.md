@@ -3,6 +3,7 @@ module_id: KE-1518
 status: active
 title: 14.3 Shared 层准入边界规则
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.3 Shared 层准入边界规则

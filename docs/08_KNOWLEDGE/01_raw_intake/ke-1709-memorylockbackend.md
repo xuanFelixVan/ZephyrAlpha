@@ -3,6 +3,7 @@ module_id: KE-1619
 status: active
 title: 2. MemoryLockBackend（进程内）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. MemoryLockBackend（进程内）

@@ -3,6 +3,7 @@ module_id: KE-605
 status: active
 title: 一、层架构权威 (Layer Authority)
 category: documentation
+ttl: permanent
 ---
 
 # 一、层架构权威 (Layer Authority)

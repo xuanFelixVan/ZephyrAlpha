@@ -2,6 +2,7 @@
 module_id: KE-3803---beta-000
 title: 10.6 beta → beta 路径
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.6 beta → beta 路径

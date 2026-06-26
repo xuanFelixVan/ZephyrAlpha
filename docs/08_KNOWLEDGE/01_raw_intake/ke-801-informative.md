@@ -2,6 +2,7 @@
 module_id: KE-724-------informative-001
 title: 11.2 信息性引用（Informative）
 category: governance
+ttl: permanent
 ---
 
 # 11.2 信息性引用（Informative）

@@ -3,6 +3,7 @@ module_id: KE-1118------safe-deletion-003
 status: active
 title: DOC-003：安全删除（Safe Deletion）
 category: governance
+ttl: permanent
 ---
 
 # DOC-003：安全删除（Safe Deletion）

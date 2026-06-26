@@ -3,6 +3,7 @@ module_id: KE-236
 status: active
 title: 3. 章节体系
 category: documentation
+ttl: permanent
 ---
 
 # 3. 章节体系

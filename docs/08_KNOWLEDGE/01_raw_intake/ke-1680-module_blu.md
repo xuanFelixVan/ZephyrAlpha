@@ -2,6 +2,7 @@
 module_id: KE-1590-------------15-003
 title: 2. 关键关联清单（蓝图 §15）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 关键关联清单（蓝图 §15）

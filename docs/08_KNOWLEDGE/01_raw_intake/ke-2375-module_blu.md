@@ -2,6 +2,7 @@
 module_id: KE-2280
 title: 5.1 源码文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.1 源码文件

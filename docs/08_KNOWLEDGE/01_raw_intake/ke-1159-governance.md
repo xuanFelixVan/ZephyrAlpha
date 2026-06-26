@@ -3,6 +3,7 @@ module_id: KE-1074
 status: active
 title: ✅ 正确：仅导出公开 API
 category: governance
+ttl: permanent
 ---
 
 # ✅ 正确：仅导出公开 API

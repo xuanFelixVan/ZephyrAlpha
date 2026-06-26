@@ -2,6 +2,7 @@
 module_id: KE-3688
 title: DQA-003：质量豁免
 category: governance
+ttl: permanent
 ---
 
 # DQA-003：质量豁免

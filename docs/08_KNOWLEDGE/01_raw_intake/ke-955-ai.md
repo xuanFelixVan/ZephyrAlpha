@@ -3,6 +3,7 @@ module_id: KE-877---ai-006
 status: active
 title: §4 对 AI 的使用指引
 category: governance
+ttl: permanent
 ---
 
 # §4 对 AI 的使用指引

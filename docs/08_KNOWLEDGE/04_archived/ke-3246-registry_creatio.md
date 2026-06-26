@@ -2,6 +2,7 @@
 module_id: KE-3140-----------registry-creatio-002
 title: 6.6 登记表创建强制约定（Registry Creation Mandatory Registration）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.6 登记表创建强制约定（Registry Creation Mandatory Registration）

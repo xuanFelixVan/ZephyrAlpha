@@ -2,6 +2,7 @@
 module_id: KE-4029
 title: 2g. Telemetry 数据安全与合规 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2g. Telemetry 数据安全与合规 🆕

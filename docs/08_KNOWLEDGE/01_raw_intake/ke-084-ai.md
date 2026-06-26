@@ -3,6 +3,7 @@ module_id: KE-078---ai-000
 status: active
 title: 1.2 对 AI
 category: documentation
+ttl: permanent
 ---
 
 # 1.2 对 AI

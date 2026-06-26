@@ -3,6 +3,7 @@ module_id: KE-1009
 status: active
 title: 7.2 闭环流程
 category: governance
+ttl: permanent
 ---
 
 # 7.2 闭环流程

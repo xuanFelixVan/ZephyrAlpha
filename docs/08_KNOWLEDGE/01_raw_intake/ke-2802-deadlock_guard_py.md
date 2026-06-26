@@ -3,6 +3,7 @@ module_id: KE-2705
 status: active
 title: deadlock_guard.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # deadlock_guard.py

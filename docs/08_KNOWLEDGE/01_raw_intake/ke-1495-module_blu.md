@@ -2,6 +2,7 @@
 module_id: KE-1405
 title: 11.6 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.6 施工状态

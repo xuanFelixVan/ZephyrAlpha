@@ -3,6 +3,7 @@ module_id: KE-1812---self-000
 status: active
 title: 2.230 FLE Survivability & Self-Reconstruction - fle_survivability.py (🆕 v0.21.0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.230 FLE Survivability & Self-Reconstruction - fle_survivability.py (🆕 v0.21.0

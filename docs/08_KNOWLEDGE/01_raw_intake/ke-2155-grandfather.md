@@ -3,6 +3,7 @@ module_id: KE-2063---------------001
 status: active
 title: 3.13 Grandfather 三定律——引擎安装前的古老纠缠（v0.7.0 终极审视 #2）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.13 Grandfather 三定律——引擎安装前的古老纠缠（v0.7.0 终极审视 #2）

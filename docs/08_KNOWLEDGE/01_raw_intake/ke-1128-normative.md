@@ -2,6 +2,7 @@
 module_id: KE-1043-------normative-003
 title: 9.1 规范性引用（Normative）
 category: governance
+ttl: permanent
 ---
 
 # 9.1 规范性引用（Normative）

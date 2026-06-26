@@ -3,6 +3,7 @@ module_id: KE-1306
 status: active
 title: 1.1 缺口 → 原因 → 解法
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.1 缺口 → 原因 → 解法

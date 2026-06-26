@@ -3,6 +3,7 @@ module_id: KE-1655----ddl-sql-003
 status: active
 title: 2.1 创建 DDL SQL 文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 创建 DDL SQL 文件

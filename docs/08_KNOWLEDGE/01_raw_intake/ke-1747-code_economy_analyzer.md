@@ -3,6 +3,7 @@ module_id: KE-1657
 status: active
 title: 2.1 #53: CodeEconomyAnalyzer——过度抽象检测
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 #53: CodeEconomyAnalyzer——过度抽象检测

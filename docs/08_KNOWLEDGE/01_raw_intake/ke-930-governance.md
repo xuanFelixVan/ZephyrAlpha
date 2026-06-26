@@ -2,6 +2,7 @@
 module_id: KE-852
 title: 3. 变更分级
 category: governance_rule
+ttl: permanent
 ---
 
 # 3. 变更分级

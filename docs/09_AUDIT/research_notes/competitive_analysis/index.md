@@ -6,6 +6,7 @@ blueprint_id: GOV-060
 title: Competitive Analysis
 module_id: GOV-060
 updated: "2026-06-22"
+ttl: task_bound
 ---
 
 # Competitive Analysis — 目录索引

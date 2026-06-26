@@ -2,6 +2,7 @@
 module_id: KE-387
 title: 5. AI 异常诊断
 category: documentation
+ttl: permanent
 ---
 
 # 5. AI 异常诊断

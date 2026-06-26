@@ -2,6 +2,7 @@
 module_id: KE-2853
 title: §三 实验Pipeline Gate节点
 category: module_blueprint
+ttl: permanent
 ---
 
 # §三 实验Pipeline Gate节点

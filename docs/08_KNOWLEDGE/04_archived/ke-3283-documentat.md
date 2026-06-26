@@ -2,6 +2,7 @@
 module_id: KE-3283
 title: 10. 修订记录
 category: documentation
+ttl: permanent
 ---
 
 # 10. 修订记录

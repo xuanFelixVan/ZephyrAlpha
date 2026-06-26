@@ -2,6 +2,7 @@
 module_id: KE-4051
 title: 3. 技术选型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 技术选型

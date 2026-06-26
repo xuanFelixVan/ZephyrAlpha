@@ -3,6 +3,7 @@ module_id: KE-751
 status: active
 title: 15.5 AI 执行清单
 category: governance
+ttl: permanent
 ---
 
 # 15.5 AI 执行清单

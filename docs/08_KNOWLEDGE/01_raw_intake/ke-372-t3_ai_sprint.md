@@ -3,6 +3,7 @@ module_id: KE-337---------sprint-14-000
 status: active
 title: 4.2 T3 AI 自治升格后目标（Sprint 14+ 左右）
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 T3 AI 自治升格后目标（Sprint 14+ 左右）

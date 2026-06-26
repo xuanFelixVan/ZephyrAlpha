@@ -2,6 +2,7 @@
 module_id: KE-2655-----audit-trail--m-000
 title: DB-025-0032：集成——audit-trail (MOD-INF-020) 集成验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0032：集成——audit-trail (MOD-INF-020) 集成验证

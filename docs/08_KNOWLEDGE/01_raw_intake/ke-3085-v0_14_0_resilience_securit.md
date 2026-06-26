@@ -3,6 +3,7 @@ module_id: KE-2984---resilience---securit-000
 status: active
 title: v0.14.0 — Resilience + Security + Drift (TASK-0004, R187-R202)
 category: module_blueprint
+ttl: permanent
 ---
 
 # v0.14.0 — Resilience + Security + Drift (TASK-0004, R187-R202)

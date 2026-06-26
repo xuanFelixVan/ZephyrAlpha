@@ -3,6 +3,7 @@ module_id: KE-1836------think-time--------ll-000
 status: active
 title: 2.25 推理模型 Think-Time 成本感知 + LLM-Free Guard 升级路径
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.25 推理模型 Think-Time 成本感知 + LLM-Free Guard 升级路径

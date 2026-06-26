@@ -3,6 +3,7 @@ module_id: KE-953---frontmatter-----scope-003
 status: active
 title: 5.3 新 frontmatter 字段：`scope`
 category: governance_rule
+ttl: permanent
 ---
 
 # 5.3 新 frontmatter 字段：`scope`

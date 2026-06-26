@@ -3,6 +3,7 @@ module_id: KE-2886
 status: active
 title: Self-Correction (D-019-45)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Self-Correction (D-019-45)

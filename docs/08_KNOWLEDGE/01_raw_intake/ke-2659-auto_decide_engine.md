@@ -3,6 +3,7 @@ module_id: KE-2564
 status: active
 title: Auto-Decide Engine（自动决策引擎）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Auto-Decide Engine（自动决策引擎）

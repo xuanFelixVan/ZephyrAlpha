@@ -3,6 +3,7 @@ module_id: KE-2708
 status: active
 title: DeliverySemantics（消息传递语义）
 category: module_blueprint
+ttl: permanent
 ---
 
 # DeliverySemantics（消息传递语义）

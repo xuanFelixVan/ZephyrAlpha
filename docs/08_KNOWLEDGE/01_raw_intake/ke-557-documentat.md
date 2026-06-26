@@ -3,6 +3,7 @@ module_id: KE-505
 status: active
 title: 7.4 一人开发场景的风险考量
 category: documentation
+ttl: permanent
 ---
 
 # 7.4 一人开发场景的风险考量

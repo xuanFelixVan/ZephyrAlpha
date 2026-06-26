@@ -3,6 +3,7 @@ module_id: KE-269
 status: active
 title: 3.2.2 policy vs standard vs operational_rule 判据
 category: documentation
+ttl: permanent
 ---
 
 # 3.2.2 policy vs standard vs operational_rule 判据

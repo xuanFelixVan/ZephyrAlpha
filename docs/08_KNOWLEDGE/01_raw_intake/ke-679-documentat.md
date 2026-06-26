@@ -2,6 +2,7 @@
 module_id: KE-611
 title: Operational — 目录索引
 category: documentation
+ttl: permanent
 ---
 
 # Operational — 目录索引

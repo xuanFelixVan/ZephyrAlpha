@@ -3,6 +3,7 @@ module_id: KE-1069
 status: active
 title: 6.2 TRAE 域（AI Session 强制注入规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 6.2 TRAE 域（AI Session 强制注入规则）

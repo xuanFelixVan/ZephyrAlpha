@@ -3,6 +3,7 @@ module_id: KE-007
 status: active
 title: 5.2.2 十维审计清单：每次施工后必须过一遍
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.2.2 十维审计清单：每次施工后必须过一遍

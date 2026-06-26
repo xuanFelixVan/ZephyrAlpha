@@ -3,6 +3,7 @@ module_id: KE-2854
 status: active
 title: === Pipeline-Orchestrator 双向状态漂移 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === Pipeline-Orchestrator 双向状态漂移 ===

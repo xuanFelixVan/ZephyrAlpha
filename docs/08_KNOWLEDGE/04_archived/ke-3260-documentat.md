@@ -2,6 +2,7 @@
 module_id: KE-3153
 title: 1.1.1 直接对标
 category: documentation
+ttl: permanent
 ---
 
 # 1.1.1 直接对标

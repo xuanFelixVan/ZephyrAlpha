@@ -3,6 +3,7 @@ module_id: KE-1293
 status: active
 title: 1. PipelineLock 接口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. PipelineLock 接口

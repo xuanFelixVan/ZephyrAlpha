@@ -2,6 +2,7 @@
 module_id: KE-1463
 title: 13.1 Sink P0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.1 Sink P0

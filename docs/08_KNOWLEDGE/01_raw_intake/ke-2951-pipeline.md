@@ -3,6 +3,7 @@ module_id: KE-2851
 status: active
 title: §一 模型生命周期 Pipeline
 category: module_blueprint
+ttl: permanent
 ---
 
 # §一 模型生命周期 Pipeline

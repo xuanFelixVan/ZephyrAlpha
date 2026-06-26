@@ -2,6 +2,7 @@
 module_id: KE-2871
 title: Risks
 category: module_blueprint
+ttl: permanent
 ---
 
 # Risks

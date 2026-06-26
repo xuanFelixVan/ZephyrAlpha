@@ -3,6 +3,7 @@ module_id: KE-648
 status: active
 title: D-SEC：安全架构与运行时隔离
 category: documentation
+ttl: permanent
 ---
 
 # D-SEC：安全架构与运行时隔离

@@ -3,6 +3,7 @@ module_id: KE-2371---server------agent-000
 status: active
 title: 6.2 跨 Server 编排流程（Agent 串联）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.2 跨 Server 编排流程（Agent 串联）

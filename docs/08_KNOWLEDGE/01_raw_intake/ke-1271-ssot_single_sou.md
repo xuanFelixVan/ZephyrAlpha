@@ -3,6 +3,7 @@ module_id: KE-1184--------single-sou-003
 status: active
 title: MTH-008：SSoT 冲突裁决协议（Single Source of Truth Conflict Arbitration）
 category: governance
+ttl: permanent
 ---
 
 # MTH-008：SSoT 冲突裁决协议（Single Source of Truth Conflict Arbitration）

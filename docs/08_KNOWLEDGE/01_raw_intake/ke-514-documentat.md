@@ -3,6 +3,7 @@ module_id: KE-463
 status: active
 title: 6.3 具体实施
 category: documentation
+ttl: permanent
 ---
 
 # 6.3 具体实施

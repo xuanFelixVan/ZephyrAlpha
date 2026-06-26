@@ -3,6 +3,7 @@ module_id: KE-2075------ke---knowledge-entry--006
 status: active
 title: 3.2 知识条目（KE — Knowledge Entry）Schema
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 知识条目（KE — Knowledge Entry）Schema

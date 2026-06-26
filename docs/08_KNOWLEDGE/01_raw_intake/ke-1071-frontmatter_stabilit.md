@@ -3,6 +3,7 @@ module_id: KE-986---frontmatter-----stabilit-006
 status: active
 title: 6.3 新 frontmatter 字段：`stability`
 category: governance_rule
+ttl: permanent
 ---
 
 # 6.3 新 frontmatter 字段：`stability`

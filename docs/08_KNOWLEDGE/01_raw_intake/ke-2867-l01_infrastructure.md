@@ -3,6 +3,7 @@ module_id: KE-MODULE-BLU-L01-INFRASTRUCTURE-000
 status: active
 title: L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?
 category: module_blueprint
+ttl: permanent
 ---
 
 # L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?

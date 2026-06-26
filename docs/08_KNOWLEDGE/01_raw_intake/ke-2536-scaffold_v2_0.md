@@ -2,6 +2,7 @@
 module_id: KE-2441------v2-0-0-004
 title: 7.3 scaffold 验收标准（v2.0.0 更新）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.3 scaffold 验收标准（v2.0.0 更新）

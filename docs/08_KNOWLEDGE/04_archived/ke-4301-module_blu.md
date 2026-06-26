@@ -2,6 +2,7 @@
 module_id: KE-4142
 title: 5.2 架构能力缺口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 架构能力缺口

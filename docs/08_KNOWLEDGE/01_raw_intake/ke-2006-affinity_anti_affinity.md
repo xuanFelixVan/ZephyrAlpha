@@ -3,6 +3,7 @@ module_id: KE-1915---anti-affinity---000
 status: active
 title: 2.5 Affinity / Anti-Affinity 约束矩阵（对标 K8s podAffinity/podAntiAffinity + Inter-Pod
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.5 Affinity / Anti-Affinity 约束矩阵（对标 K8s podAffinity/podAntiAffinity + Inter-Pod

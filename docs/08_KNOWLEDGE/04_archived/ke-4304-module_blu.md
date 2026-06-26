@@ -2,6 +2,7 @@
 module_id: KE-4145
 title: 5.4 超时策略
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.4 超时策略

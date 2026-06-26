@@ -2,6 +2,7 @@
 module_id: KE-2352
 title: 6.1 模块接口契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 模块接口契约

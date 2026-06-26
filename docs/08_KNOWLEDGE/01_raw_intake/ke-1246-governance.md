@@ -3,6 +3,7 @@ module_id: KE-1159------------10-001
 status: active
 title: IRN-010：受保护路径不可写（铁律10）
 category: governance
+ttl: permanent
 ---
 
 # IRN-010：受保护路径不可写（铁律10）

@@ -3,6 +3,7 @@ module_id: KE-2093-----------------50--------000
 status: active
 title: 3.22 噪声信号比·主题聚类摘要——当 50 组重复淹没 Owner（v0.8.0 #11）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.22 噪声信号比·主题聚类摘要——当 50 组重复淹没 Owner（v0.8.0 #11）

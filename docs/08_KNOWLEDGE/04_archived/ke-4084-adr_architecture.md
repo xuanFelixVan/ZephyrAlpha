@@ -2,6 +2,7 @@
 module_id: KE-3930----------architecture--003
 title: 16. ADR — 架构决策记录（Architecture Decision Records）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16. ADR — 架构决策记录（Architecture Decision Records）

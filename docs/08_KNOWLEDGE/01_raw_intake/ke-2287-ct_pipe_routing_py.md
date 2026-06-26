@@ -3,6 +3,7 @@ module_id: KE-2193
 status: active
 title: 4. ct_pipe_routing.py 核心函数
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. ct_pipe_routing.py 核心函数

@@ -2,6 +2,7 @@
 module_id: KE-1961
 title: 施工落盘确认（2026-05-08 审计修正）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 施工落盘确认（2026-05-08 审计修正）

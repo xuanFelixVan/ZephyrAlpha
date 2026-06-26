@@ -2,6 +2,7 @@
 module_id: KE-164
 title: 2.1 与业界对标原则的对应关系
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 与业界对标原则的对应关系

@@ -3,6 +3,7 @@ module_id: KE-1877
 status: active
 title: 2.3 skill_loader.py 加载器骨架
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 skill_loader.py 加载器骨架

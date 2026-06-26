@@ -3,6 +3,7 @@ module_id: KE-1990
 status: active
 title: 3. Affinity Enforcement（§2.5约束落地）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Affinity Enforcement（§2.5约束落地）

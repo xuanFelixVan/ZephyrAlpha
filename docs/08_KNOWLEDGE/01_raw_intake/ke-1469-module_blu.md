@@ -3,6 +3,7 @@ module_id: KE-1379
 status: active
 title: 11. 施工指引
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11. 施工指引

@@ -2,6 +2,7 @@
 module_id: KE-4227
 title: 8.5 自动恢复与手动恢复边界
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.5 自动恢复与手动恢复边界

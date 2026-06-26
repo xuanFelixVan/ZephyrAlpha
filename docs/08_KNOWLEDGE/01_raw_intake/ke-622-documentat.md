@@ -2,6 +2,7 @@
 module_id: KE-560
 title: 9.3 环境晋级门禁
 category: documentation
+ttl: permanent
 ---
 
 # 9.3 环境晋级门禁

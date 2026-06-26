@@ -3,6 +3,7 @@ module_id: KE-2970
 status: active
 title: 零之零、真源优先级宪章（Truth Source Precedence）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 零之零、真源优先级宪章（Truth Source Precedence）

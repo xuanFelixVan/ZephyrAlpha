@@ -2,6 +2,7 @@
 module_id: KE-3667
 title: AVP-002：版本号递增规则
 category: governance
+ttl: permanent
 ---
 
 # AVP-002：版本号递增规则

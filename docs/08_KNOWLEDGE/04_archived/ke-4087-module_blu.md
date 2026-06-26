@@ -2,6 +2,7 @@
 module_id: KE-3933
 title: 16.1 灾难场景分级
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.1 灾难场景分级

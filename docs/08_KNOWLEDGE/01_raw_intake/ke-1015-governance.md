@@ -2,6 +2,7 @@
 module_id: KE-936
 title: §5 变更记录
 category: governance
+ttl: permanent
 ---
 
 # §5 变更记录

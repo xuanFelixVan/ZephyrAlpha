@@ -2,6 +2,7 @@
 module_id: KE-3528
 title: 2.2 状态迁移与门控映射
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.2 状态迁移与门控映射

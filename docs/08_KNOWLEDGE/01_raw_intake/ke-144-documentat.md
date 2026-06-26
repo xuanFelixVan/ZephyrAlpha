@@ -3,6 +3,7 @@ module_id: KE-131
 status: active
 title: §12 异常豁免机制
 category: documentation
+ttl: permanent
 ---
 
 # §12 异常豁免机制

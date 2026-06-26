@@ -3,6 +3,7 @@ module_id: KE-082
 status: active
 title: 1.2 为什么要做成"正交视图"而不是 14 层业务之外再加一层
 category: documentation
+ttl: permanent
 ---
 
 # 1.2 为什么要做成"正交视图"而不是 14 层业务之外再加一层

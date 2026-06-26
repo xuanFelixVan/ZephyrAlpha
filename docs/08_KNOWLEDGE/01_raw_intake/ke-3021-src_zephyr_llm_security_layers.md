@@ -3,6 +3,7 @@ module_id: KE-2921
 status: active
 title: src/zephyr/llm-security/layers/l7_validation.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/layers/l7_validation.py

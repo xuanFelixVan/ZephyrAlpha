@@ -2,6 +2,7 @@
 module_id: KE-226-------ai-003
 title: 3. 反向索引：AI 术语 → 大白话
 category: documentation
+ttl: permanent
 ---
 
 # 3. 反向索引：AI 术语 → 大白话

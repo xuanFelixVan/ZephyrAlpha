@@ -2,6 +2,7 @@
 module_id: KE-2395------recomm-000
 title: 6.5 Finding Schema 新增字段：recommendation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.5 Finding Schema 新增字段：recommendation

@@ -3,6 +3,7 @@ module_id: KE-1907
 status: active
 title: 2.4 RBAC 集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 RBAC 集成

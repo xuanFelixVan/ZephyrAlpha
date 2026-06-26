@@ -3,6 +3,7 @@ module_id: KE-1903------context-inject-000
 status: active
 title: 2.4 Inject（注入）— context_injector.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 Inject（注入）— context_injector.py

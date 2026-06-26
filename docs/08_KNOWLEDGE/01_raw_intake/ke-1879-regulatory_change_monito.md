@@ -3,6 +3,7 @@ module_id: KE-1788
 status: active
 title: 2.213 Regulatory Change Monitor - regulatory_change_monitor.py (🆕 v0.20.0 - 盲点26
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.213 Regulatory Change Monitor - regulatory_change_monitor.py (🆕 v0.20.0 - 盲点26

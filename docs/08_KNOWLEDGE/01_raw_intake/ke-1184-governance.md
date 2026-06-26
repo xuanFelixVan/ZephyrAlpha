@@ -2,6 +2,7 @@
 module_id: KE-1098
 title: CMR-003：合规评估更新
 category: governance
+ttl: permanent
 ---
 
 # CMR-003：合规评估更新

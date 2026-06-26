@@ -2,6 +2,7 @@
 module_id: KE-4300-----capacity-assur-000
 title: DB-025-0034：集成——capacity-assurance (MOD-INF-001) 集成验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0034：集成——capacity-assurance (MOD-INF-001) 集成验证

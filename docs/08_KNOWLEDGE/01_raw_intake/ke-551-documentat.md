@@ -3,6 +3,7 @@ module_id: KE-499
 status: active
 title: 7.3 一人团队的简化
 category: documentation
+ttl: permanent
 ---
 
 # 7.3 一人团队的简化

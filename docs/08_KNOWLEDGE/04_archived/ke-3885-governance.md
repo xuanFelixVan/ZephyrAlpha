@@ -2,6 +2,7 @@
 module_id: KE-3734
 title: 九、变更记录
 category: governance
+ttl: permanent
 ---
 
 # 九、变更记录

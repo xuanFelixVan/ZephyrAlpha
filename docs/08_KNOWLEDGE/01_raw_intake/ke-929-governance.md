@@ -2,6 +2,7 @@
 module_id: KE-851
 title: 3. 验证方式
 category: governance
+ttl: permanent
 ---
 
 # 3. 验证方式

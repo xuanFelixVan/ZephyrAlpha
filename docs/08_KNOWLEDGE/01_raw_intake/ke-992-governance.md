@@ -3,6 +3,7 @@ module_id: KE-914
 status: active
 title: 4.3.4 降级策略
 category: governance
+ttl: permanent
 ---
 
 # 4.3.4 降级策略

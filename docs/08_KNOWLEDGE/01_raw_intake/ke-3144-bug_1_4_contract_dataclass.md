@@ -3,6 +3,7 @@ module_id: KE-3042---contract-dataclass-000
 status: active
 title: Bug #1: 4 个 contract dataclass 字段排序被 codegen 覆盖
 category: session_log
+ttl: permanent
 ---
 
 # Bug #1: 4 个 contract dataclass 字段排序被 codegen 覆盖

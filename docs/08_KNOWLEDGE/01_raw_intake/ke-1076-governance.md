@@ -3,6 +3,7 @@ module_id: KE-991
 status: active
 title: 6.5 6 大核心服务的治理归属
 category: governance
+ttl: permanent
 ---
 
 # 6.5 6 大核心服务的治理归属

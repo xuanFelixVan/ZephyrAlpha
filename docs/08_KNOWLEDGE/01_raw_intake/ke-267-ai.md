@@ -2,6 +2,7 @@
 module_id: KE-245
 title: 3.1 AI 自治边界
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 AI 自治边界

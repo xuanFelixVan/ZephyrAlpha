@@ -2,6 +2,7 @@
 module_id: KE-1557
 title: 16.3 前置条件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.3 前置条件

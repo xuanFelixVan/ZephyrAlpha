@@ -3,6 +3,7 @@ module_id: KE-2806
 status: active
 title: Orchestrator 侧的维度声明（调度契约）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Orchestrator 侧的维度声明（调度契约）

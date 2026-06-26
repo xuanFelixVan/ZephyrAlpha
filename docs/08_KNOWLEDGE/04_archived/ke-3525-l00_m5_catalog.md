@@ -2,6 +2,7 @@
 module_id: KE-3389-----l00-m5--catalog-000
 title: 7.3 与旧体系 L00-M5 `catalog/` 的关系
 category: documentation
+ttl: permanent
 ---
 
 # 7.3 与旧体系 L00-M5 `catalog/` 的关系

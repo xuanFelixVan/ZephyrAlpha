@@ -3,6 +3,7 @@ module_id: KE-2516---retire-000
 status: active
 title: 9.2 Skill Deprecation & Retirement Lifecycle（决策 D-019-11）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.2 Skill Deprecation & Retirement Lifecycle（决策 D-019-11）

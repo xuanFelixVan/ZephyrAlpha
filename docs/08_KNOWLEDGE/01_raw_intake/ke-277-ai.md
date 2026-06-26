@@ -3,6 +3,7 @@ module_id: KE-255
 status: active
 title: 3.15 AI 过度依赖与状态验证
 category: documentation
+ttl: permanent
 ---
 
 # 3.15 AI 过度依赖与状态验证

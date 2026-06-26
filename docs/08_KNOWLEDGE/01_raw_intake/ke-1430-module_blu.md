@@ -3,6 +3,7 @@ module_id: KE-1340
 status: active
 title: 10项盲点
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10项盲点

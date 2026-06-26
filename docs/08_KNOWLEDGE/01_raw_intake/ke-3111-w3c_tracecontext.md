@@ -3,6 +3,7 @@ module_id: KE-3010
 status: active
 title: W3C TraceContext
 category: module_blueprint
+ttl: permanent
 ---
 
 # W3C TraceContext

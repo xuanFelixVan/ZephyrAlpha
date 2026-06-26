@@ -3,6 +3,7 @@ module_id: KE-623
 status: active
 title: 责任声明（Single Responsibility）
 category: documentation
+ttl: permanent
 ---
 
 # 责任声明（Single Responsibility）

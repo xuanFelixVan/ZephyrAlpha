@@ -3,6 +3,7 @@ module_id: KE-351--------sprint-30-000
 status: active
 title: 4.3 T-ENDGAME 顶级机构对标（Sprint 30+ / ≥ 2 年）
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 T-ENDGAME 顶级机构对标（Sprint 30+ / ≥ 2 年）

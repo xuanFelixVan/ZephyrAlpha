@@ -2,6 +2,7 @@
 module_id: KE-1400
 title: 11.4 回滚方案
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.4 回滚方案

@@ -3,6 +3,7 @@ module_id: KE-943
 status: active
 title: 5.1.1 governance/operational 边界判据
 category: governance
+ttl: permanent
 ---
 
 # 5.1.1 governance/operational 边界判据

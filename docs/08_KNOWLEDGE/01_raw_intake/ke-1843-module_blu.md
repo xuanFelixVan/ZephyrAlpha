@@ -2,6 +2,7 @@
 module_id: KE-1752
 title: 2.2 职责范围
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 职责范围

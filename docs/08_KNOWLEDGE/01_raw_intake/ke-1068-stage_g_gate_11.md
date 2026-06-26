@@ -3,6 +3,7 @@ module_id: KE-984--------gate-11-----006
 status: active
 title: 6.2 Stage G 漏网清理 + GATE-11 引擎落地（2026-04-25）
 category: governance
+ttl: permanent
 ---
 
 # 6.2 Stage G 漏网清理 + GATE-11 引擎落地（2026-04-25）

@@ -3,6 +3,7 @@ module_id: KE-2947
 status: active
 title: 三相流水线核心 (TASK-0002)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 三相流水线核心 (TASK-0002)

@@ -3,6 +3,7 @@ module_id: KE-2104-------mod-in-000
 status: active
 title: 3.3 Feedback Loop 集成（对接 MOD-INF-010）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 Feedback Loop 集成（对接 MOD-INF-010）

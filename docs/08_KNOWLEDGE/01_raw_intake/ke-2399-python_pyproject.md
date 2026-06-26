@@ -3,6 +3,7 @@ module_id: KE-2304-----------pyproject-000
 status: active
 title: 5.2 Python 依赖（锁定版本写入 pyproject.toml）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 Python 依赖（锁定版本写入 pyproject.toml）

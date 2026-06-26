@@ -3,6 +3,7 @@ module_id: KE-661
 status: active
 title: VIEW-11 跳号说明
 category: documentation
+ttl: permanent
 ---
 
 # VIEW-11 跳号说明

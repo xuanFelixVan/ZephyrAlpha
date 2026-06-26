@@ -3,6 +3,7 @@ module_id: KE-959
 status: active
 title: 5.4 Mermaid 架构图
 category: governance
+ttl: permanent
 ---
 
 # 5.4 Mermaid 架构图

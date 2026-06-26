@@ -3,6 +3,7 @@ module_id: KE-718
 status: active
 title: 11. AI 可消费性声明
 category: governance
+ttl: permanent
 ---
 
 # 11. AI 可消费性声明

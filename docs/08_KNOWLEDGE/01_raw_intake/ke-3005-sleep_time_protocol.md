@@ -3,6 +3,7 @@ module_id: KE-2905
 status: active
 title: Sleep-Time Protocol（睡眠时段协议）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Sleep-Time Protocol（睡眠时段协议）

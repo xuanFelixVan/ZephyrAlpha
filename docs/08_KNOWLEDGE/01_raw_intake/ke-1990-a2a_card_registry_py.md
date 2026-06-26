@@ -3,6 +3,7 @@ module_id: KE-1899
 status: active
 title: 2.4 a2a_card_registry.py — 供应链完整性
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 a2a_card_registry.py — 供应链完整性

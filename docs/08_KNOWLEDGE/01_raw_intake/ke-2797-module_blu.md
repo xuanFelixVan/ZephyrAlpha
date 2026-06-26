@@ -2,6 +2,7 @@
 module_id: KE-2700----------19-10-002
 title: DB-025-0085：顶尖设计演进——§19 10 条方向
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0085：顶尖设计演进——§19 10 条方向

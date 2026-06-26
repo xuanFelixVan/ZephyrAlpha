@@ -3,6 +3,7 @@ module_id: KE-944
 status: active
 title: 5.1.2 子目录准入与防幻觉路径映射
 category: governance
+ttl: permanent
 ---
 
 # 5.1.2 子目录准入与防幻觉路径映射

@@ -2,6 +2,7 @@
 module_id: KE-3720
 title: SEC-004：密钥轮换周期
 category: governance
+ttl: permanent
 ---
 
 # SEC-004：密钥轮换周期

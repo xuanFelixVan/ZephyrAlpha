@@ -2,6 +2,7 @@
 module_id: KE-2509
 title: 9.1 四级限流体系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.1 四级限流体系

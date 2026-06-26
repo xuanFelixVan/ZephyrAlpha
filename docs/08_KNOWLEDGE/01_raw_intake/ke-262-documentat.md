@@ -2,6 +2,7 @@
 module_id: KE-240
 title: 3.1 决策框架
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 决策框架

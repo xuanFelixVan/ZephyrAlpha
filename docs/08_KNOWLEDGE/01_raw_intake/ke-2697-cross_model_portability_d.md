@@ -3,6 +3,7 @@ module_id: KE-2600
 status: active
 title: Cross-Model Portability (D-019-17)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Cross-Model Portability (D-019-17)

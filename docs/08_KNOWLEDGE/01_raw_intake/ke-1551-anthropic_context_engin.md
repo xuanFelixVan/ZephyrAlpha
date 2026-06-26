@@ -3,6 +3,7 @@ module_id: KE-1461---context-engin-002
 status: active
 title: 13.1 Anthropic — Context Engineering（上下文工程）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.1 Anthropic — Context Engineering（上下文工程）

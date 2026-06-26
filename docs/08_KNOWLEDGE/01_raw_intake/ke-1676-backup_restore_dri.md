@@ -3,6 +3,7 @@ module_id: KE-1586--------backup-restore-dri-000
 status: active
 title: 18.4 备份恢复演练（Backup Restore Drill）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 18.4 备份恢复演练（Backup Restore Drill）

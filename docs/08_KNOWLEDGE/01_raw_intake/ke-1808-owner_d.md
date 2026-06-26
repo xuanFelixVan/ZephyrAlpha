@@ -3,6 +3,7 @@ module_id: KE-1717-----------owner---------d-005
 status: active
 title: 2.15 反自动化偏见 —— Owner 审查保障（决策 D-022-09）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.15 反自动化偏见 —— Owner 审查保障（决策 D-022-09）

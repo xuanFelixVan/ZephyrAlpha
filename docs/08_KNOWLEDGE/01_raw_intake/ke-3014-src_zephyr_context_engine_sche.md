@@ -3,6 +3,7 @@ module_id: KE-2914
 status: active
 title: src/zephyr/context-engine/schemas.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/context-engine/schemas.py (experimental 产出)

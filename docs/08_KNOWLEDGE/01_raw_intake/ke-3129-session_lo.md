@@ -2,6 +2,7 @@
 module_id: KE-3027
 title: 4.1 触发点
 category: session_log
+ttl: permanent
 ---
 
 # 4.1 触发点

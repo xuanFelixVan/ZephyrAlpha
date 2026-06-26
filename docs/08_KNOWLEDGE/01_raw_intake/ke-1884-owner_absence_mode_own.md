@@ -3,6 +3,7 @@ module_id: KE-1793---own-000
 status: active
 title: 2.218 Owner Absence Mode - owner_absence_mode.py (🆕 v0.20.0 - 盲点268 — Owner假期/应急
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.218 Owner Absence Mode - owner_absence_mode.py (🆕 v0.20.0 - 盲点268 — Owner假期/应急

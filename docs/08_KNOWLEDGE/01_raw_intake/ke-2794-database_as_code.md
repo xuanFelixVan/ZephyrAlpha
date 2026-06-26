@@ -2,6 +2,7 @@
 module_id: KE-2697---003
 title: DB-025-0082：Database-as-Code 原则 §18.3——YAML 4 条规则
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0082：Database-as-Code 原则 §18.3——YAML 4 条规则

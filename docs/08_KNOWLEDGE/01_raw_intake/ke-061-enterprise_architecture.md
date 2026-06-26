@@ -2,6 +2,7 @@
 module_id: KE-059
 title: 02 Enterprise Architecture — 目录索引
 category: documentation
+ttl: permanent
 ---
 
 # 02 Enterprise Architecture — 目录索引

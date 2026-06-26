@@ -2,6 +2,7 @@
 module_id: KE-4144
 title: 5.3 VMS 代码文件（已实现）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.3 VMS 代码文件（已实现）

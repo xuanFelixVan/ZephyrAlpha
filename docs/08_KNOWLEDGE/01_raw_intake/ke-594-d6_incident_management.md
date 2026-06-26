@@ -3,6 +3,7 @@ module_id: KE-594
 status: active
 title: §8 D6 — Incident Management / 事件管理域
 category: documentation
+ttl: permanent
 ---
 
 # §8 D6 — Incident Management / 事件管理域

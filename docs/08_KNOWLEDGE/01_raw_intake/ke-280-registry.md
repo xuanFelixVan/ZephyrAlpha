@@ -2,6 +2,7 @@
 module_id: KE-258------registry-004
 title: 3.2 登记表层（Registry）
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 登记表层（Registry）

@@ -2,6 +2,7 @@
 module_id: KE-3383
 title: 7.1 构建管线
 category: documentation
+ttl: permanent
 ---
 
 # 7.1 构建管线

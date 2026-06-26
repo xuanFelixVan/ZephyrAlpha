@@ -3,6 +3,7 @@ module_id: KE-125
 status: active
 title: 11.1 experimental 最小响应流程
 category: documentation
+ttl: permanent
 ---
 
 # 11.1 experimental 最小响应流程

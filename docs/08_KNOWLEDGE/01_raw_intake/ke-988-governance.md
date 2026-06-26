@@ -3,6 +3,7 @@ module_id: KE-910
 status: active
 title: 4.3 前端与后端层的交互约定
 category: governance
+ttl: permanent
 ---
 
 # 4.3 前端与后端层的交互约定

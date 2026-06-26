@@ -2,6 +2,7 @@
 module_id: KE-4012
 title: 施工落盘确认（2026-05-07 审计）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 施工落盘确认（2026-05-07 审计）

@@ -3,6 +3,7 @@ module_id: KE-2048
 status: active
 title: 3.10 #48: DependencyCapacityGuard
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.10 #48: DependencyCapacityGuard

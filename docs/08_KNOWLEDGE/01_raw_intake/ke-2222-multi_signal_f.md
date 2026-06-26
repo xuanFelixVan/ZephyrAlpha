@@ -3,6 +3,7 @@ module_id: KE-2129-----------multi-signal-f-005
 status: active
 title: 3.5.1 多信号源新鲜度引擎（Multi-Signal Freshness Engine）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5.1 多信号源新鲜度引擎（Multi-Signal Freshness Engine）

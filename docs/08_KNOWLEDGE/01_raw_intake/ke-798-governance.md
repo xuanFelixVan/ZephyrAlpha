@@ -2,6 +2,7 @@
 module_id: KE-721
 title: 11. 消费者注册表
 category: governance_rule
+ttl: permanent
 ---
 
 # 11. 消费者注册表

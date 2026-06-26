@@ -3,6 +3,7 @@ module_id: KE-1944
 status: active
 title: 2.8 委托上下文包 —— 结构化状态传递
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 委托上下文包 —— 结构化状态传递

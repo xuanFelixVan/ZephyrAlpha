@@ -3,6 +3,7 @@ module_id: KE-2030
 status: active
 title: 3.1 #26: StartupGuard (M-31)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 #26: StartupGuard (M-31)

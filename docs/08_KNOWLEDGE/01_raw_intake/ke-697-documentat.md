@@ -3,6 +3,7 @@ module_id: KE-625
 status: active
 title: Stage 1：从“修补旧系统”到“建立新树”
 category: documentation
+ttl: permanent
 ---
 
 # Stage 1：从“修补旧系统”到“建立新树”

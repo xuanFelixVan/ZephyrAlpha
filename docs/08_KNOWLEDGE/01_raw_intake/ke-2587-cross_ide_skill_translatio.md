@@ -3,6 +3,7 @@ module_id: KE-2492
 status: active
 title: 8.6 Cross-IDE Skill Translation Layer
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.6 Cross-IDE Skill Translation Layer

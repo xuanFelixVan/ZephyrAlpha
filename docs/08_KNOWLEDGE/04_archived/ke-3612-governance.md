@@ -2,6 +2,7 @@
 module_id: KE-3467
 title: 1.2 与其他视图的边界
 category: governance
+ttl: permanent
 ---
 
 # 1.2 与其他视图的边界

@@ -2,6 +2,7 @@
 module_id: KE-2433
 title: 7.2 攻击场景设计
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.2 攻击场景设计

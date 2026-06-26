@@ -3,6 +3,7 @@ module_id: KE-608
 status: active
 title: 五、Module ID 跨文件一致性
 category: documentation
+ttl: permanent
 ---
 
 # 五、Module ID 跨文件一致性

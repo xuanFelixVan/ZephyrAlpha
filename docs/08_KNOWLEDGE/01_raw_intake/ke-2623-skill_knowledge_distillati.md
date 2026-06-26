@@ -3,6 +3,7 @@ module_id: KE-2528
 status: active
 title: 9.8 Skill Knowledge Distillation & Merge Detection
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.8 Skill Knowledge Distillation & Merge Detection

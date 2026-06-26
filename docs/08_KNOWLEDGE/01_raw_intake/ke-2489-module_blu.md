@@ -3,6 +3,7 @@ module_id: KE-2394
 status: active
 title: 6.5 路径索引使用指南
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.5 路径索引使用指南

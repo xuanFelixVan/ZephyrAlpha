@@ -2,6 +2,7 @@
 module_id: KE-1541-------------memory-000
 title: 15.3 beta c — 持久化 + 结构化：Memory Bank + XML Partitioning
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.3 beta c — 持久化 + 结构化：Memory Bank + XML Partitioning

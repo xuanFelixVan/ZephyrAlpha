@@ -3,6 +3,7 @@ module_id: KE-1352-----slo-000
 status: active
 title: 10.2 冷启动 SLO（首次启动 / 重启后首次调用，补充）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.2 冷启动 SLO（首次启动 / 重启后首次调用，补充）

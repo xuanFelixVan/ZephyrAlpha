@@ -3,6 +3,7 @@ module_id: KE-628------------------cano-003
 status: active
 title: Stage 12：从"脚本位置未决"到"异步流水线 canonical 落位确定"
 category: documentation
+ttl: permanent
 ---
 
 # Stage 12：从"脚本位置未决"到"异步流水线 canonical 落位确定"

@@ -3,6 +3,7 @@ module_id: KE-055
 status: active
 title: 0. 双轨制 + 双层对齐（规则引用）
 category: documentation
+ttl: permanent
 ---
 
 # 0. 双轨制 + 双层对齐（规则引用）

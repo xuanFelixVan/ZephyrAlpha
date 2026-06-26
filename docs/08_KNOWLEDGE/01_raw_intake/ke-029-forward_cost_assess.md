@@ -3,6 +3,7 @@ module_id: KE-029--------forward-cost-assess-001
 status: active
 title: 6.3 未来成本评估（Forward Cost Assessment）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.3 未来成本评估（Forward Cost Assessment）

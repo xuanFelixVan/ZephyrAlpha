@@ -3,6 +3,7 @@ module_id: KE-093
 status: active
 title: 1.5 消费者注册表
 category: documentation
+ttl: permanent
 ---
 
 # 1.5 消费者注册表

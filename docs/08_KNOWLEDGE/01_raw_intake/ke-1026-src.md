@@ -3,6 +3,7 @@ module_id: KE-1026
 status: active
 title: 5.1 src 代码目录
 category: governance
+ttl: permanent
 ---
 
 # 5.1 src 代码目录

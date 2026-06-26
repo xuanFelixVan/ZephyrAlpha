@@ -3,6 +3,7 @@ module_id: KE-2194---5--000
 status: active
 title: 4. Injection Verification (§5.4 INJECT-C01)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Injection Verification (§5.4 INJECT-C01)

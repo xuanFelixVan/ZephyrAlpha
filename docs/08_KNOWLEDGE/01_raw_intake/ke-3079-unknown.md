@@ -3,6 +3,7 @@ module_id: KE-2978
 status: active
 title: 正面后果
 category: module_blueprint
+ttl: permanent
 ---
 
 # 正面后果

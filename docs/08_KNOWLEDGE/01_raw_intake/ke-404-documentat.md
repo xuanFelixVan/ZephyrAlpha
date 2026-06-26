@@ -2,6 +2,7 @@
 module_id: KE-368
 title: 4.6 审计与可追溯性条件禁止
 category: documentation
+ttl: permanent
 ---
 
 # 4.6 审计与可追溯性条件禁止

@@ -3,6 +3,7 @@ module_id: KE-2228
 status: active
 title: 4.2 Agent API
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 Agent API

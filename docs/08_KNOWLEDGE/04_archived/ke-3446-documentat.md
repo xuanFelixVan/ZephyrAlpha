@@ -2,6 +2,7 @@
 module_id: KE-3316
 title: 4.8 部署与运行时条件禁止
 category: documentation
+ttl: permanent
 ---
 
 # 4.8 部署与运行时条件禁止

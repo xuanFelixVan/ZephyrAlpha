@@ -3,6 +3,7 @@ module_id: KE-2457--------v2-0-0--000
 status: active
 title: 8. Error Budget 五级响应机制（v2.0.0 新增，v2.1.0 三级→五级升级）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8. Error Budget 五级响应机制（v2.0.0 新增，v2.1.0 三级→五级升级）

@@ -2,6 +2,7 @@
 module_id: KE-3319
 title: 4A. Vibe Coding 2.0 Infrastructure / 6 大核心服务（跨层支撑）
 category: documentation
+ttl: permanent
 ---
 
 # 4A. Vibe Coding 2.0 Infrastructure / 6 大核心服务（跨层支撑）

@@ -3,6 +3,7 @@ module_id: KE-381-------dag-003
 status: active
 title: 4A.2 服务间依赖 DAG
 category: documentation
+ttl: permanent
 ---
 
 # 4A.2 服务间依赖 DAG

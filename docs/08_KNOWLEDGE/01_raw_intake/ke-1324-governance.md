@@ -3,6 +3,7 @@ module_id: KE-1236
 status: active
 title: suspended
 category: governance
+ttl: permanent
 ---
 
 # suspended

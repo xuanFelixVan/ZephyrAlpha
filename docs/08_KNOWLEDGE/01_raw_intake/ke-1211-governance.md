@@ -3,6 +3,7 @@ module_id: KE-1211
 status: active
 title: 二、`docs/` 目录结构
 category: governance
+ttl: permanent
 ---
 
 # 二、`docs/` 目录结构

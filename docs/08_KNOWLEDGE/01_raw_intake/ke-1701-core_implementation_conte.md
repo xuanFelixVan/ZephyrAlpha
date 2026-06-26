@@ -3,6 +3,7 @@ module_id: KE-1611---conte-004
 status: active
 title: 2. Core Implementation — context_assembler.py (§2.1)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Core Implementation — context_assembler.py (§2.1)

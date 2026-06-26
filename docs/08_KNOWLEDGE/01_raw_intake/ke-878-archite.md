@@ -2,6 +2,7 @@
 module_id: KE-800------------------archite-001
 title: 2.2.3 架构模型分区（非代码层，仅存在于 architecture_model/）
 category: governance
+ttl: permanent
 ---
 
 # 2.2.3 架构模型分区（非代码层，仅存在于 architecture_model/）

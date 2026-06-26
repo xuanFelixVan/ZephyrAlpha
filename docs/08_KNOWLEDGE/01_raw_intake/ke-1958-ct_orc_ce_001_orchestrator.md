@@ -3,6 +3,7 @@ module_id: KE-1867
 status: active
 title: 2.3 CT-ORC-CE-001：Orchestrator ↔ Context Engine
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 CT-ORC-CE-001：Orchestrator ↔ Context Engine

@@ -3,6 +3,7 @@ module_id: KE-1176
 status: active
 title: MTH-001：标准先行
 category: governance
+ttl: permanent
 ---
 
 # MTH-001：标准先行

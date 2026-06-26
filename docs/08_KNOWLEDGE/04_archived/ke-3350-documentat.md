@@ -2,6 +2,7 @@
 module_id: KE-3229
 title: 2.6 投资业务类（量化相关）
 category: documentation
+ttl: permanent
 ---
 
 # 2.6 投资业务类（量化相关）

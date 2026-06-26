@@ -3,6 +3,7 @@ module_id: KE-1103
 status: active
 title: COND-003：回测必须覆盖多种市场状态
 category: governance
+ttl: permanent
 ---
 
 # COND-003：回测必须覆盖多种市场状态

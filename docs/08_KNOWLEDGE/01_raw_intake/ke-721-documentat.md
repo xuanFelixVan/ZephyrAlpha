@@ -3,6 +3,7 @@ module_id: KE-646
 status: active
 title: Step 4：生成报告
 category: documentation
+ttl: permanent
 ---
 
 # Step 4：生成报告

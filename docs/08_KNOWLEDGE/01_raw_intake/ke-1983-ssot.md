@@ -3,6 +3,7 @@ module_id: KE-1892---------------ssot-000
 status: active
 title: 2.4 密码学完整性数据模型（新增 SSoT 条目体）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 密码学完整性数据模型（新增 SSoT 条目体）

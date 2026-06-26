@@ -2,6 +2,7 @@
 module_id: KE-196--------m1-m11-003
 title: 2.3 Vibe Coding 基础设施模块（M1-M11，本次终审产出）
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 Vibe Coding 基础设施模块（M1-M11，本次终审产出）

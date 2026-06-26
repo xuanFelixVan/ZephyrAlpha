@@ -2,6 +2,7 @@
 module_id: KE-2633
 title: D-022-27 升级协议人因动力学
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-27 升级协议人因动力学

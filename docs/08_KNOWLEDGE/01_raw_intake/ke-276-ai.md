@@ -3,6 +3,7 @@ module_id: KE-254
 status: active
 title: 3.14 AI 输出与数据边界
 category: documentation
+ttl: permanent
 ---
 
 # 3.14 AI 输出与数据边界

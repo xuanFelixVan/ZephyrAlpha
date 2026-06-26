@@ -2,6 +2,7 @@
 module_id: KE-4160-----must-002
 title: 6.1 `belongs_to` 字段（MUST）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 `belongs_to` 字段（MUST）

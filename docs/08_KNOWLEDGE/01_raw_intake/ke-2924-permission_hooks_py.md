@@ -3,6 +3,7 @@ module_id: KE-2824
 status: active
 title: permission_hooks.py — 新增文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # permission_hooks.py — 新增文件

@@ -2,6 +2,7 @@
 module_id: KE-3586---------g3-evaluate-yaml-003
 title: 4.3.2 检查项（对应 `g3-evaluate.yaml`）
 category: governance
+ttl: permanent
 ---
 
 # 4.3.2 检查项（对应 `g3-evaluate.yaml`）

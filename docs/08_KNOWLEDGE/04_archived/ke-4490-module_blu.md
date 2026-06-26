@@ -2,6 +2,7 @@
 module_id: KE-4325------------14-000
 title: DB-025-0064：消费者注册表维护——§14
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0064：消费者注册表维护——§14

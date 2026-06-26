@@ -3,6 +3,7 @@ module_id: KE-1721---------------------------000
 status: active
 title: 2.16 冷启动锁——启动时全局拒绝直到权限配置加载（决策 D-018-14）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.16 冷启动锁——启动时全局拒绝直到权限配置加载（决策 D-018-14）

@@ -3,6 +3,7 @@ module_id: KE-2866----security-000
 status: active
 title: rbac_roles.yaml 新增 security 维度的角色
 category: module_blueprint
+ttl: permanent
 ---
 
 # rbac_roles.yaml 新增 security 维度的角色

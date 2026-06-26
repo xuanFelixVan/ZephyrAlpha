@@ -3,6 +3,7 @@ module_id: KE-362
 status: active
 title: 4.5.2 为什么枚举值用小写？
 category: documentation
+ttl: permanent
 ---
 
 # 4.5.2 为什么枚举值用小写？

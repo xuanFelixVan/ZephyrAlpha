@@ -3,6 +3,7 @@ module_id: KE-2547------oac-005
 status: active
 title: AI 施工约定（OaC）
 category: module_blueprint
+ttl: permanent
 ---
 
 # AI 施工约定（OaC）

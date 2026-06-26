@@ -2,6 +2,7 @@
 module_id: KE-4623
 title: L09 Research & Innovation（2 个新文件）
 category: session_log
+ttl: permanent
 ---
 
 # L09 Research & Innovation（2 个新文件）

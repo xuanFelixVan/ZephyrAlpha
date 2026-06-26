@@ -3,6 +3,7 @@ module_id: KE-1071
 status: active
 title: AI 幻觉自动检测规则集
 category: governance_rule
+ttl: permanent
 ---
 
 # AI 幻觉自动检测规则集

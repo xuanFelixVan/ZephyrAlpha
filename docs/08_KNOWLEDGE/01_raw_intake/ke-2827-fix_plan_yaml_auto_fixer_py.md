@@ -3,6 +3,7 @@ module_id: KE-MODULE-BLU-FIX-PLAN-YAML-AUTO-FIXER-PY-000
 status: active
 title: fix_plan.yaml —— auto_fixer.py 生成，引擎崩溃后恢复的依据
 category: module_blueprint
+ttl: permanent
 ---
 
 # fix_plan.yaml —— auto_fixer.py 生成，引擎崩溃后恢复的依据

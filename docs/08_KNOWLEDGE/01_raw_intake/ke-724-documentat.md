@@ -3,6 +3,7 @@ module_id: KE-649
 status: active
 title: Step 6：注册与监控
 category: documentation
+ttl: permanent
 ---
 
 # Step 6：注册与监控

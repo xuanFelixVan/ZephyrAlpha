@@ -2,6 +2,7 @@
 module_id: KE-399
 title: 5.1 锚点声明
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 锚点声明

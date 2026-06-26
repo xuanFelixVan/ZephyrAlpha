@@ -3,6 +3,7 @@ module_id: KE-572
 status: active
 title: 企业架构树中的 architecture_model（镜像说明）
 category: documentation
+ttl: permanent
 ---
 
 # 企业架构树中的 architecture_model（镜像说明）

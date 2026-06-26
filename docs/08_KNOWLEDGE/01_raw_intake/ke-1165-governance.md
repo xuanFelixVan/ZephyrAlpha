@@ -2,6 +2,7 @@
 module_id: KE-1080
 title: ARG-005：评审记录格式
 category: governance
+ttl: permanent
 ---
 
 # ARG-005：评审记录格式

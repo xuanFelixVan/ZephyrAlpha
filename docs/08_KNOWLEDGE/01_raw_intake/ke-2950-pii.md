@@ -3,6 +3,7 @@ module_id: KE-2850
 status: active
 title: PII 字段级脱敏扩展
 category: module_blueprint
+ttl: permanent
 ---
 
 # PII 字段级脱敏扩展

@@ -2,6 +2,7 @@
 module_id: KE-2382
 title: 6.3 蓝图外已有实现（纳入蓝图管理）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 蓝图外已有实现（纳入蓝图管理）

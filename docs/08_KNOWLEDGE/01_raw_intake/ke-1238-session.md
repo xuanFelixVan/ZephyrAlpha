@@ -3,6 +3,7 @@ module_id: KE-1151------2-003
 status: active
 title: IRN-002：Session 预算（铁律2）
 category: governance
+ttl: permanent
 ---
 
 # IRN-002：Session 预算（铁律2）

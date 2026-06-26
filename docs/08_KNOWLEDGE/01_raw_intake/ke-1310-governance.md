@@ -3,6 +3,7 @@ module_id: KE-1223
 status: active
 title: Session 中期二次自检
 category: governance
+ttl: permanent
 ---
 
 # Session 中期二次自检

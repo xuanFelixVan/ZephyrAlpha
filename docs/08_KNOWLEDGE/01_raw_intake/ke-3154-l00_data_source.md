@@ -2,6 +2,7 @@
 module_id: KE-3048
 title: L00 Data Source（3 个新文件）
 category: session_log
+ttl: permanent
 ---
 
 # L00 Data Source（3 个新文件）

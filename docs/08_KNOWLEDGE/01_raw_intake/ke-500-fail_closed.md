@@ -3,6 +3,7 @@ module_id: KE-449------fail-closed-000
 status: active
 title: 6.2 三道防线（fail-closed）
 category: documentation
+ttl: permanent
 ---
 
 # 6.2 三道防线（fail-closed）

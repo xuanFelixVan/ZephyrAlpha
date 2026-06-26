@@ -2,6 +2,7 @@
 module_id: KE-1114
 title: DLG-002：血缘记录必须包含上下游
 category: governance
+ttl: permanent
 ---
 
 # DLG-002：血缘记录必须包含上下游

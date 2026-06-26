@@ -3,6 +3,7 @@ module_id: KE-186-------beta-002
 status: active
 title: 2.3 零信任原则（beta 起启用）
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 零信任原则（beta 起启用）

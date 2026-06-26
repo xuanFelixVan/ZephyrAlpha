@@ -3,6 +3,7 @@ module_id: KE-2361
 status: active
 title: 6.10 知识图谱实体化
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.10 知识图谱实体化

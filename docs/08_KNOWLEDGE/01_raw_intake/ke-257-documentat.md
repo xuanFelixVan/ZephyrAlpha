@@ -3,6 +3,7 @@ module_id: KE-235
 status: active
 title: §3 受控枚举定义
 category: documentation
+ttl: permanent
 ---
 
 # §3 受控枚举定义

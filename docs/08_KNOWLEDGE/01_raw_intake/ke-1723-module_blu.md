@@ -2,6 +2,7 @@
 module_id: KE-1633
 title: 2. 四大黄金信号
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 四大黄金信号

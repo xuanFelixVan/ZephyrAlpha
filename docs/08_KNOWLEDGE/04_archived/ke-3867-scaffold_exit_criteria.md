@@ -2,6 +2,7 @@
 module_id: KE-3716
 title: scaffold exit_criteria
 category: governance
+ttl: permanent
 ---
 
 # scaffold exit_criteria

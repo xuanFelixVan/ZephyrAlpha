@@ -2,6 +2,7 @@
 module_id: KE-2679----------10------3-000
 title: DB-025-0058：负面后果监控——§10 负面后果 3 项
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0058：负面后果监控——§10 负面后果 3 项

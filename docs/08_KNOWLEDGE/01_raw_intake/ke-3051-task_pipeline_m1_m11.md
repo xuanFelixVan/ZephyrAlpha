@@ -3,6 +3,7 @@ module_id: KE-2950------m1-m11-008
 status: active
 title: Task Pipeline 蓝图 — M1-M11 双管线路由
 category: module_blueprint
+ttl: permanent
 ---
 
 # Task Pipeline 蓝图 — M1-M11 双管线路由

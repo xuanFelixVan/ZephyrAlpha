@@ -3,6 +3,7 @@ module_id: KE-568
 status: active
 title: 四、技术决策权威 (ADR Authority)
 category: documentation
+ttl: permanent
 ---
 
 # 四、技术决策权威 (ADR Authority)

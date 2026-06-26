@@ -3,6 +3,7 @@ module_id: KE-2786
 status: active
 title: MOD-INF-013 最终审计报告
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-INF-013 最终审计报告

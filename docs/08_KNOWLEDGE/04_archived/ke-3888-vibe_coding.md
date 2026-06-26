@@ -2,6 +2,7 @@
 module_id: KE-3737
 title: Vibe Coding 会话门禁检查清单
 category: governance
+ttl: permanent
 ---
 
 # Vibe Coding 会话门禁检查清单

@@ -3,6 +3,7 @@ module_id: KE-406
 status: active
 title: 5.2 反幸存者偏差的查询契约
 category: documentation
+ttl: permanent
 ---
 
 # 5.2 反幸存者偏差的查询契约

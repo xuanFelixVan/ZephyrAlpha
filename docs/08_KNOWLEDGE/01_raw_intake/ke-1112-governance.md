@@ -3,6 +3,7 @@ module_id: KE-1027
 status: active
 title: 8.1 表结构（当前实装）
 category: governance
+ttl: permanent
 ---
 
 # 8.1 表结构（当前实装）

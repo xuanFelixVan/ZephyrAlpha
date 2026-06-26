@@ -3,6 +3,7 @@ module_id: KE-2390
 status: active
 title: 6.4 推荐施工路线（重排后）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.4 推荐施工路线（重排后）

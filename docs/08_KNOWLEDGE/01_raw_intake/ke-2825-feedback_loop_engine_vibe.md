@@ -3,6 +3,7 @@ module_id: KE-2728------vibe-001
 status: active
 title: Feedback Loop Engine 蓝图 — Vibe Coding原生自我改进闭环
 category: module_blueprint
+ttl: permanent
 ---
 
 # Feedback Loop Engine 蓝图 — Vibe Coding原生自我改进闭环

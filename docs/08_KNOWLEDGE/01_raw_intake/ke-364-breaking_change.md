@@ -3,6 +3,7 @@ module_id: KE-329
 status: active
 title: 4.2 Breaking Change 处理流程
 category: documentation
+ttl: permanent
 ---
 
 # 4.2 Breaking Change 处理流程

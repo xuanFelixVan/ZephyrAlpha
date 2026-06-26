@@ -3,6 +3,7 @@ module_id: KE-2007---intent-pars-000
 status: active
 title: 3. Intent Parser — intent_parser.py (§5.1 BUILD-C00)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Intent Parser — intent_parser.py (§5.1 BUILD-C00)

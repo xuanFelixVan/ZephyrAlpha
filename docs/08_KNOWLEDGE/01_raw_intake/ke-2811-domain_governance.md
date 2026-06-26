@@ -2,6 +2,7 @@
 module_id: KE-2714
 title: _domain-governance
 category: module_blueprint
+ttl: permanent
 ---
 
 # _domain-governance

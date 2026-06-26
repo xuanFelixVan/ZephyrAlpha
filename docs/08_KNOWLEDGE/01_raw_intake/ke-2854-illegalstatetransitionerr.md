@@ -3,6 +3,7 @@ module_id: KE-2756
 status: active
 title: 合法状态转移（非法转移直接抛 IllegalStateTransitionError）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 合法状态转移（非法转移直接抛 IllegalStateTransitionError）

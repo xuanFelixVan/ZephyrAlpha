@@ -3,6 +3,7 @@ module_id: KE-527
 status: active
 title: §8.2 激活监控机制
 category: documentation
+ttl: permanent
 ---
 
 # §8.2 激活监控机制

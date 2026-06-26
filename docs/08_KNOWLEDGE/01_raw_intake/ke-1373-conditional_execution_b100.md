@@ -3,6 +3,7 @@ module_id: KE-1284
 status: active
 title: 1. Conditional Execution（B100）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. Conditional Execution（B100）

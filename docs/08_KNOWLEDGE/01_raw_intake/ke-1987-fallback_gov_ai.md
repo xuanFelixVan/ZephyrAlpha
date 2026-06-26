@@ -3,6 +3,7 @@ module_id: KE-1896------fallback---gov-ai-002-000
 status: active
 title: 2.4 模型降级 Fallback 链（GOV-AI-002 §三）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 模型降级 Fallback 链（GOV-AI-002 §三）

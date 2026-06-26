@@ -3,6 +3,7 @@ module_id: KE-1156----------7-001
 status: active
 title: IRN-007：架构终局锁定（铁律7）
 category: governance
+ttl: permanent
 ---
 
 # IRN-007：架构终局锁定（铁律7）

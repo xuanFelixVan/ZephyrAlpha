@@ -2,6 +2,7 @@
 module_id: KE-3384
 title: 7.1 环境判定规则
 category: documentation
+ttl: permanent
 ---
 
 # 7.1 环境判定规则

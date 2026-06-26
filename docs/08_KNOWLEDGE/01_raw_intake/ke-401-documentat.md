@@ -3,6 +3,7 @@ module_id: KE-365
 status: active
 title: 4.5.5 否决方案
 category: documentation
+ttl: permanent
 ---
 
 # 4.5.5 否决方案

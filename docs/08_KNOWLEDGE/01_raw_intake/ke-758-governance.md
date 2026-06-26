@@ -3,6 +3,7 @@ module_id: KE-758
 status: active
 title: §1 任务系统的分层架构
 category: governance
+ttl: permanent
 ---
 
 # §1 任务系统的分层架构

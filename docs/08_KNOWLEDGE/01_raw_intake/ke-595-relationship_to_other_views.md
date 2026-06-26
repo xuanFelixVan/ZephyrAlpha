@@ -3,6 +3,7 @@ module_id: KE-535
 status: active
 title: §8 Relationship to Other Views / 与其他视图的关系
 category: documentation
+ttl: permanent
 ---
 
 # §8 Relationship to Other Views / 与其他视图的关系

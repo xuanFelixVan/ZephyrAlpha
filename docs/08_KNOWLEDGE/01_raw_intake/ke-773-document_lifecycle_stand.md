@@ -3,6 +3,7 @@ module_id: KE-696---document-lifecycle-stand-003
 status: active
 title: 1.3 与 trae_028_doc_structure_naming.yaml（GOV-DOC-006）的区别
 category: governance_rule
+ttl: permanent
 ---
 
 # 1.3 与 trae_028_doc_structure_naming.yaml（GOV-DOC-006）的区别

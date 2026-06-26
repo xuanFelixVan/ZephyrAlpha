@@ -3,6 +3,7 @@ module_id: KE-1482
 status: active
 title: 13.4 健康检查
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.4 健康检查

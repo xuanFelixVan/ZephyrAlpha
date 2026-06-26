@@ -2,6 +2,7 @@
 module_id: KE-2267
 title: 5. OWASP LLM Top 10（2026.03）对齐矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. OWASP LLM Top 10（2026.03）对齐矩阵

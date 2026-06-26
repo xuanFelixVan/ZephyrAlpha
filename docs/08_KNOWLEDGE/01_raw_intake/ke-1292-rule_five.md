@@ -3,6 +3,7 @@ module_id: KE-1205----------------------005
 status: active
 title: 🔴 RULE-FIVE：临时文件零残留铁律 — 建了必清，不清不能关 session（与 RULE-ZERO / RULE-ONE / RULE-TWO / R
 category: governance_rule
+ttl: permanent
 ---
 
 # 🔴 RULE-FIVE：临时文件零残留铁律 — 建了必清，不清不能关 session（与 RULE-ZERO / RULE-ONE / RULE-TWO / R

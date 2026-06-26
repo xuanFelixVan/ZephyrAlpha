@@ -2,6 +2,7 @@
 module_id: KE-3556
 title: 9. Revision history / 修订记录
 category: documentation
+ttl: permanent
 ---
 
 # 9. Revision history / 修订记录

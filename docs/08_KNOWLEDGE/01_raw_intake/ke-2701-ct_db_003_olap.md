@@ -3,6 +3,7 @@ module_id: KE-2604
 status: active
 title: CT-DB-003：OLAP 查询契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # CT-DB-003：OLAP 查询契约

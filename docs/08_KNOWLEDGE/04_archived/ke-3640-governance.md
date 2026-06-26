@@ -2,6 +2,7 @@
 module_id: KE-3495
 title: 13. 审查周期
 category: governance
+ttl: permanent
 ---
 
 # 13. 审查周期

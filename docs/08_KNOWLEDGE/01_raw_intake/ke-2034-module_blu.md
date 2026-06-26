@@ -3,6 +3,7 @@ module_id: KE-1943
 status: active
 title: 2.8 语义缓存集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.8 语义缓存集成

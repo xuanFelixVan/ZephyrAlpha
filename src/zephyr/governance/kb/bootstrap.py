@@ -312,11 +312,14 @@ class Bootstrap:
 
     def _build_frontmatter_text(self, ke_id: str, chunk: BootstrapChunk) -> str:
         head = chunk.heading.strip() or ke_id
+        # ttl=permanent: KE 文件全部落在 docs/08_knowledge/ 永久区（ttl_vocabulary.yaml decision_tree）
+        # 创建时注入 ttl（label-at-creation，ISO 15489 铁律），避免 GATE-15 存量违规
         return (
             f"---\n"
             f"module_id: {ke_id}\n"
             f"title: {head[:80]}\n"
             f"category: {chunk.category}\n"
+            f"ttl: permanent\n"
             f"---\n\n"
             f"# {head}\n\n"
             f"{chunk.content[:4000]}\n"

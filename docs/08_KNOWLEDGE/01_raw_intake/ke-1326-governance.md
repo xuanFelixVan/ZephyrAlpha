@@ -3,6 +3,7 @@ module_id: KE-1238
 status: active
 title: Trae 假死 / 卡住
 category: governance
+ttl: permanent
 ---
 
 # Trae 假死 / 卡住

@@ -3,6 +3,7 @@ module_id: KE-698
 status: active
 title: 一.1.3 选择决策树
 category: governance
+ttl: permanent
 ---
 
 # 一.1.3 选择决策树

@@ -2,6 +2,7 @@
 module_id: KE-3242
 title: 3. Runtime topology / 运行时拓扑
 category: documentation
+ttl: permanent
 ---
 
 # 3. Runtime topology / 运行时拓扑

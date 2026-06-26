@@ -3,6 +3,7 @@ module_id: KE-2164---session--------session-005
 status: active
 title: 3.9.6 跨 Session 异常中断恢复（Session Crash Recovery Protocol）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.9.6 跨 Session 异常中断恢复（Session Crash Recovery Protocol）

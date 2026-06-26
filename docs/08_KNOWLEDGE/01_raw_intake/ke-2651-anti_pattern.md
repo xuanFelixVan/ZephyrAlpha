@@ -3,6 +3,7 @@ module_id: KE-2556
 status: active
 title: Anti-Pattern 注册表
 category: module_blueprint
+ttl: permanent
 ---
 
 # Anti-Pattern 注册表

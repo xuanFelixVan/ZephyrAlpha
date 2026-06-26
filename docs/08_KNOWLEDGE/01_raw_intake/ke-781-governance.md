@@ -2,6 +2,7 @@
 module_id: KE-704
 title: 1.4 旧体系教训
 category: governance
+ttl: permanent
 ---
 
 # 1.4 旧体系教训

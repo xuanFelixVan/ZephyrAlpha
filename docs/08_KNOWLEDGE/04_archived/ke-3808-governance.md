@@ -2,6 +2,7 @@
 module_id: KE-3657
 title: ARG-001：触发条件内的变更必须经过架构评审
 category: governance
+ttl: permanent
 ---
 
 # ARG-001：触发条件内的变更必须经过架构评审

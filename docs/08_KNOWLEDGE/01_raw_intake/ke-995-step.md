@@ -3,6 +3,7 @@ module_id: KE-917
 status: active
 title: 4.3 Step 3：残留物检测
 category: governance
+ttl: permanent
 ---
 
 # 4.3 Step 3：残留物检测

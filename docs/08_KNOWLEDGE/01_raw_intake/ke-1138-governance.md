@@ -3,6 +3,7 @@ module_id: KE-1053
 status: active
 title: ABS-001：所有数据源连接必须认证
 category: governance
+ttl: permanent
 ---
 
 # ABS-001：所有数据源连接必须认证

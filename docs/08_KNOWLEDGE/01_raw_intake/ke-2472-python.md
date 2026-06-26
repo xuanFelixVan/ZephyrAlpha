@@ -3,6 +3,7 @@ module_id: KE-2377
 status: active
 title: 6.2 Python 依赖
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.2 Python 依赖

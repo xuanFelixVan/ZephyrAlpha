@@ -3,6 +3,7 @@ module_id: KE-1771
 status: active
 title: 2.2 SKILL.md 标准格式
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 SKILL.md 标准格式

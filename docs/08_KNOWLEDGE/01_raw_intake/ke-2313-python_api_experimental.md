@@ -3,6 +3,7 @@ module_id: KE-2219---api-experimental-003
 status: active
 title: 4.1 Python 库 API（experimental 主用）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 Python 库 API（experimental 主用）

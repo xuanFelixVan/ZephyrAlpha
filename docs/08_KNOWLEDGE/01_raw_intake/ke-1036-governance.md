@@ -3,6 +3,7 @@ module_id: KE-954
 status: active
 title: 5.3 创建模块时的完整步骤（最复杂场景）
 category: governance
+ttl: permanent
 ---
 
 # 5.3 创建模块时的完整步骤（最复杂场景）

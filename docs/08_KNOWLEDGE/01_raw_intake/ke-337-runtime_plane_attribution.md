@@ -3,6 +3,7 @@ module_id: KE-337
 status: active
 title: 4.0 Runtime Plane Attribution / 运行平面归属
 category: documentation
+ttl: permanent
 ---
 
 # 4.0 Runtime Plane Attribution / 运行平面归属

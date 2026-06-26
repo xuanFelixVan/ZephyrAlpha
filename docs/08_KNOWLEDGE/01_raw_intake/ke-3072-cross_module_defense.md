@@ -2,6 +2,7 @@
 module_id: KE-2971
 title: U类：跨模块防御与元可观测性
 category: module_blueprint
+ttl: permanent
 ---
 
 # U类：跨模块防御与元可观测性

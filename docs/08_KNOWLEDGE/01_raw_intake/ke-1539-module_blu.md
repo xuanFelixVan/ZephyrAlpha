@@ -3,6 +3,7 @@ module_id: KE-1449-----------------10---33-000
 status: active
 title: 13. 深度交叉审计盲点全注入 —— 10大维度33盲点
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13. 深度交叉审计盲点全注入 —— 10大维度33盲点

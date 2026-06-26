@@ -3,6 +3,7 @@ module_id: KE-1203
 status: active
 title: 快速判定清单（Quick Decision Checklist）
 category: governance
+ttl: permanent
 ---
 
 # 快速判定清单（Quick Decision Checklist）

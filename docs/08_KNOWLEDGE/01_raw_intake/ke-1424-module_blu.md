@@ -3,6 +3,7 @@ module_id: KE-1334
 status: active
 title: 1.7 自动化不可逾越的边界
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.7 自动化不可逾越的边界

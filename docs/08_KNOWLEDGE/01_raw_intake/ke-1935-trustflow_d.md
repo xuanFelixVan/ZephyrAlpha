@@ -3,6 +3,7 @@ module_id: KE-1844------------trustflow----d-000
 status: active
 title: 2.27 多维向量信誉模型 — TrustFlow（决策 D-025-24）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.27 多维向量信誉模型 — TrustFlow（决策 D-025-24）

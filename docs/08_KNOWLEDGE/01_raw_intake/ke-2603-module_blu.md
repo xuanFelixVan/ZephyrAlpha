@@ -3,6 +3,7 @@ module_id: KE-2508
 status: active
 title: 9.1 职责
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.1 职责

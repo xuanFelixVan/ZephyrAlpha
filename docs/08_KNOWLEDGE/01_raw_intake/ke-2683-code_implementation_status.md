@@ -2,6 +2,7 @@
 module_id: KE-2587
 title: 实际代码实现情况（Code Implementation Status）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 实际代码实现情况（Code Implementation Status）

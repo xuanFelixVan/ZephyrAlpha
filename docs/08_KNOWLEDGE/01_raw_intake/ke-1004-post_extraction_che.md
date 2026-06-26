@@ -2,6 +2,7 @@
 module_id: KE-926------post-extraction-che-000
 title: 4.5.3 后验检查（post_extraction_checks，写完后执行）
 category: governance
+ttl: permanent
 ---
 
 # 4.5.3 后验检查（post_extraction_checks，写完后执行）

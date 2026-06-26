@@ -3,6 +3,7 @@ module_id: KE-2858
 status: active
 title: PRS Reliability Gap (D-019-57)
 category: module_blueprint
+ttl: permanent
 ---
 
 # PRS Reliability Gap (D-019-57)

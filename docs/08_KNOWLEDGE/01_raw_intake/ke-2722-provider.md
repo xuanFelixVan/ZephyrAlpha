@@ -2,6 +2,7 @@
 module_id: KE-2625
 title: D-022-19 多Provider容灾
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-19 多Provider容灾

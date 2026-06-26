@@ -3,6 +3,7 @@ module_id: KE-693
 status: active
 title: §1.2 负向责任（本目录不管的事，去对应目录找）
 category: governance
+ttl: permanent
 ---
 
 # §1.2 负向责任（本目录不管的事，去对应目录找）

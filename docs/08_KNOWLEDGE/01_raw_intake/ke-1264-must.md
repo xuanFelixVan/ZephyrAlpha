@@ -3,6 +3,7 @@ module_id: KE-1177----------must-006
 status: active
 title: MTH-002：架构上下文自检 [MUST — 每次文件操作前强制执行]
 category: governance
+ttl: permanent
 ---
 
 # MTH-002：架构上下文自检 [MUST — 每次文件操作前强制执行]

@@ -2,6 +2,7 @@
 module_id: KE-3421------6-002
 title: 9.2 4 环境 × 6 维度矩阵
 category: documentation
+ttl: permanent
 ---
 
 # 9.2 4 环境 × 6 维度矩阵

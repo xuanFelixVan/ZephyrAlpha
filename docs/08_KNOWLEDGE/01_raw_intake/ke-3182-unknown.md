@@ -3,6 +3,7 @@ module_id: KE-3076
 status: active
 title: 关键决策
 category: session_log
+ttl: permanent
 ---
 
 # 关键决策

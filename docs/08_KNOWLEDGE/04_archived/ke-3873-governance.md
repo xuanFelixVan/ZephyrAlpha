@@ -2,6 +2,7 @@
 module_id: KE-3722
 title: SEC-006：密钥强度标准
 category: governance
+ttl: permanent
 ---
 
 # SEC-006：密钥强度标准

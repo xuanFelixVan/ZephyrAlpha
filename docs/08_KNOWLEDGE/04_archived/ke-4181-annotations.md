@@ -2,6 +2,7 @@
 module_id: KE-4025-------annotations-000
 title: 2c. 事件标注（Annotations）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2c. 事件标注（Annotations）

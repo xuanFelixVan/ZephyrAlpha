@@ -3,6 +3,7 @@ module_id: KE-2086
 status: active
 title: 3.2.2 其他模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2.2 其他模型

@@ -3,6 +3,7 @@ module_id: KE-2319
 status: active
 title: 5.5 编码铁律
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.5 编码铁律

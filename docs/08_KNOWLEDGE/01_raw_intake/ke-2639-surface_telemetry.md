@@ -3,6 +3,7 @@ module_id: KE-2544
 status: active
 title: AgentTrace 3-Surface Telemetry (D-019-71)
 category: module_blueprint
+ttl: permanent
 ---
 
 # AgentTrace 3-Surface Telemetry (D-019-71)

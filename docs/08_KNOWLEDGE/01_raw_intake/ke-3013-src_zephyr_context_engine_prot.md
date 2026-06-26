@@ -3,6 +3,7 @@ module_id: KE-2913
 status: active
 title: src/zephyr/context-engine/protocol.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/context-engine/protocol.py (experimental 产出)

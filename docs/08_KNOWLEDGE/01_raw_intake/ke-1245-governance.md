@@ -3,6 +3,7 @@ module_id: KE-1158---------9-000
 status: active
 title: IRN-009：双工具互斥（铁律9）
 category: governance
+ttl: permanent
 ---
 
 # IRN-009：双工具互斥（铁律9）

@@ -3,6 +3,7 @@ module_id: KE-3037
 status: active
 title: 8.3 破坏性变更规则
 category: session_log
+ttl: permanent
 ---
 
 # 8.3 破坏性变更规则

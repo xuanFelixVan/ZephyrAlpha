@@ -3,6 +3,7 @@ module_id: KE-1241
 status: active
 title: 四、归档流程
 category: governance
+ttl: permanent
 ---
 
 # 四、归档流程

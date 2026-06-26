@@ -3,6 +3,7 @@ module_id: KE-1637
 status: active
 title: 2. 核心管道架构
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 核心管道架构

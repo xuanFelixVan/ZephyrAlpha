@@ -3,6 +3,7 @@ module_id: KE-082----004
 status: active
 title: 1.2 ISO 42010 four elements / ISO 42010 四要素映射
 category: documentation
+ttl: permanent
 ---
 
 # 1.2 ISO 42010 four elements / ISO 42010 四要素映射

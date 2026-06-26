@@ -3,6 +3,7 @@ module_id: KE-3008
 status: active
 title: Vibe Coding Quality Gate (D-019-79)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Vibe Coding Quality Gate (D-019-79)

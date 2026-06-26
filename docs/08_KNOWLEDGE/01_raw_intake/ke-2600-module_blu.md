@@ -2,6 +2,7 @@
 module_id: KE-2505
 title: 9. 已知风险与缓解
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9. 已知风险与缓解

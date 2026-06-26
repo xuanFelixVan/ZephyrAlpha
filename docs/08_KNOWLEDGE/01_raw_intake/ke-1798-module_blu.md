@@ -3,6 +3,7 @@ module_id: KE-1707
 status: active
 title: 2.13 可观测性与分布式追踪
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.13 可观测性与分布式追踪

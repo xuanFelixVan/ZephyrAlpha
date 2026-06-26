@@ -3,6 +3,7 @@ module_id: KE-1632
 status: active
 title: 2.0 总览：七层纵深防御 + 四横切面模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.0 总览：七层纵深防御 + 四横切面模型

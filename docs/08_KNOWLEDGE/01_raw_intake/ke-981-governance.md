@@ -3,6 +3,7 @@ module_id: KE-903
 status: active
 title: 4.2.1 触发条件
 category: governance
+ttl: permanent
 ---
 
 # 4.2.1 触发条件

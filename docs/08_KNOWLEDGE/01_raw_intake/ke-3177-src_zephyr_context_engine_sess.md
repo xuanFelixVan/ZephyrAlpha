@@ -3,6 +3,7 @@ module_id: KE-3071
 status: active
 title: src/zephyr/context-engine/session_carryover.py
 category: session_log
+ttl: permanent
 ---
 
 # src/zephyr/context-engine/session_carryover.py

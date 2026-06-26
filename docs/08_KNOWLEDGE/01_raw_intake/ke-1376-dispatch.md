@@ -3,6 +3,7 @@ module_id: KE-1287
 status: active
 title: 1. dispatch 扩展
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. dispatch 扩展

@@ -3,6 +3,7 @@ module_id: KE-678
 status: active
 title: 1. 目的
 category: governance
+ttl: permanent
 ---
 
 # 1. 目的

@@ -2,6 +2,7 @@
 module_id: KE-2185
 title: 4. Anti-Patterns
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Anti-Patterns

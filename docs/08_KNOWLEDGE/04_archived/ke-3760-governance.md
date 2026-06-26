@@ -2,6 +2,7 @@
 module_id: KE-3609
 title: 6.1 自动检测项
 category: governance
+ttl: permanent
 ---
 
 # 6.1 自动检测项

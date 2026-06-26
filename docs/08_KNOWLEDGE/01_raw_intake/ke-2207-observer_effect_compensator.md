@@ -3,6 +3,7 @@ module_id: KE-2114
 status: active
 title: 3.4 #30: ObserverEffectCompensator (M-33)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 #30: ObserverEffectCompensator (M-33)

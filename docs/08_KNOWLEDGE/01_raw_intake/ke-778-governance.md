@@ -2,6 +2,7 @@
 module_id: KE-701
 title: 1.3 本视图的三层治理**管什么？**
 category: governance
+ttl: permanent
 ---
 
 # 1.3 本视图的三层治理**管什么？**

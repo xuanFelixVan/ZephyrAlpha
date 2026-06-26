@@ -3,6 +3,7 @@ module_id: KE-753
 status: active
 title: 16. 异常豁免机制
 category: governance
+ttl: permanent
 ---
 
 # 16. 异常豁免机制

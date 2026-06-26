@@ -3,6 +3,7 @@ module_id: KE-2273
 status: active
 title: 5. 验收标准
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. 验收标准

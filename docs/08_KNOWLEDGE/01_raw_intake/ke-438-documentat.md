@@ -2,6 +2,7 @@
 module_id: KE-395
 title: 5. 专业参考
 category: documentation
+ttl: permanent
 ---
 
 # 5. 专业参考

@@ -3,6 +3,7 @@ module_id: KE-1112
 status: active
 title: deprecated
 category: governance
+ttl: permanent
 ---
 
 # deprecated

@@ -2,6 +2,7 @@
 module_id: KE-4360
 title: GCT Contract Verification Status
 category: module_blueprint
+ttl: permanent
 ---
 
 # GCT Contract Verification Status

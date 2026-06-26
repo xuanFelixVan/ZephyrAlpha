@@ -2,6 +2,7 @@
 module_id: KE-3872
 title: 13.2 测试文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.2 测试文件

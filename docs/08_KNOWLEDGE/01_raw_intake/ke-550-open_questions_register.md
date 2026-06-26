@@ -2,6 +2,7 @@
 module_id: KE-498---open-questions-register-000
 title: 7.3 与 open-questions-register 联动
 category: documentation
+ttl: permanent
 ---
 
 # 7.3 与 open-questions-register 联动

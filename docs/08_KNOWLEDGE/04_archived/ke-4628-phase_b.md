@@ -2,6 +2,7 @@
 module_id: KE-4452
 title: Phase B 最终状态
 category: session_log
+ttl: permanent
 ---
 
 # Phase B 最终状态

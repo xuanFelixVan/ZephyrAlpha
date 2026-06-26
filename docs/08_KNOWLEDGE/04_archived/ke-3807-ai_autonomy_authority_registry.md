@@ -2,6 +2,7 @@
 module_id: KE-3656
 title: 权限层级（按 ai_autonomy_authority_registry.yaml）
 category: governance
+ttl: permanent
 ---
 
 # 权限层级（按 ai_autonomy_authority_registry.yaml）

@@ -3,6 +3,7 @@ module_id: KE-2327---context-engi-000
 status: active
 title: 遗漏 #5：Feedback Loop → Context Engine 反馈通道 schema
 category: module_blueprint
+ttl: permanent
 ---
 
 # 遗漏 #5：Feedback Loop → Context Engine 反馈通道 schema

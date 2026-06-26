@@ -3,6 +3,7 @@ module_id: KE-1929---input-guard---------d-003
 status: active
 title: 2.6 L3 — Input Guard 参数护栏（决策 D-018-08）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.6 L3 — Input Guard 参数护栏（决策 D-018-08）

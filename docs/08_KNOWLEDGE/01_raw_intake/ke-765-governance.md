@@ -3,6 +3,7 @@ module_id: KE-688
 status: active
 title: 1.2 适用范围
 category: governance
+ttl: permanent
 ---
 
 # 1.2 适用范围

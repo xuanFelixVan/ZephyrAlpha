@@ -2,6 +2,7 @@
 module_id: KE-2972
 title: 目录内容
 category: module_blueprint
+ttl: permanent
 ---
 
 # 目录内容

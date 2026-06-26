@@ -3,6 +3,7 @@ module_id: KE-1030
 status: active
 title: 8.2 `details` JSON schema
 category: governance
+ttl: permanent
 ---
 
 # 8.2 `details` JSON schema

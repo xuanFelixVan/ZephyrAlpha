@@ -3,6 +3,7 @@ module_id: KE-2477---------nonconvergencehand-000
 status: active
 title: 8.3 不收敛处置协议（NonConvergenceHandler）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.3 不收敛处置协议（NonConvergenceHandler）

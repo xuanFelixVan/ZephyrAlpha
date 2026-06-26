@@ -3,6 +3,7 @@ module_id: KE-2112
 status: active
 title: 3.4 #13: AIUnderstandabilityConstraint
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 #13: AIUnderstandabilityConstraint

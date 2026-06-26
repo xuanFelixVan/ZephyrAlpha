@@ -3,6 +3,7 @@ module_id: KE-2578
 status: active
 title: cache_invalidation.py — 新增文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # cache_invalidation.py — 新增文件

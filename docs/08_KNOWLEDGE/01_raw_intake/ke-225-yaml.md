@@ -3,6 +3,7 @@ module_id: KE-204
 status: active
 title: 2.4 YAML 文件特殊规则
 category: documentation
+ttl: permanent
 ---
 
 # 2.4 YAML 文件特殊规则

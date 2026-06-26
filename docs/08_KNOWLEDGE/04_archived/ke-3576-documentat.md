@@ -2,6 +2,7 @@
 module_id: KE-3433
 title: 外部登记表（不在本目录，由 catalog 索引引用）
 category: documentation
+ttl: permanent
 ---
 
 # 外部登记表（不在本目录，由 catalog 索引引用）

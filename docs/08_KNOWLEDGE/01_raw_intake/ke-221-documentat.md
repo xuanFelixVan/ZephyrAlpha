@@ -3,6 +3,7 @@ module_id: KE-200
 status: active
 title: 2.4 条件性不可逆
 category: documentation
+ttl: permanent
 ---
 
 # 2.4 条件性不可逆

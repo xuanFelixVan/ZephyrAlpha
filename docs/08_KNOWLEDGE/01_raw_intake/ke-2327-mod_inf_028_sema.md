@@ -3,6 +3,7 @@ module_id: KE-2232-----------mod-inf-028-sema-000
 status: active
 title: 4.3 语义审计 — 调度 MOD-INF-028 SemanticAuditor
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.3 语义审计 — 调度 MOD-INF-028 SemanticAuditor

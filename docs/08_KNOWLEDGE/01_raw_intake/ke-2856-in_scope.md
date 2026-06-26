@@ -3,6 +3,7 @@ module_id: KE-2758
 status: active
 title: In-Scope
 category: module_blueprint
+ttl: permanent
 ---
 
 # In-Scope

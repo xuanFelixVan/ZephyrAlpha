@@ -2,6 +2,7 @@
 module_id: KE-2561
 title: ATM v2.0 关键特性验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # ATM v2.0 关键特性验证

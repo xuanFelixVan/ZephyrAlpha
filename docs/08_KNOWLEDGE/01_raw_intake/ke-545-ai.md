@@ -2,6 +2,7 @@
 module_id: KE-493
 title: 7.2 AI 上下文预算
 category: documentation
+ttl: permanent
 ---
 
 # 7.2 AI 上下文预算

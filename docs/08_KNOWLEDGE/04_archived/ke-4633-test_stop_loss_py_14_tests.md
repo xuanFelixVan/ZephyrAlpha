@@ -2,6 +2,7 @@
 module_id: KE-4457
 title: test_stop_loss.py（14 tests）
 category: session_log
+ttl: permanent
 ---
 
 # test_stop_loss.py（14 tests）

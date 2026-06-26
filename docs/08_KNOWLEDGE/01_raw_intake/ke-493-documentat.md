@@ -3,6 +3,7 @@ module_id: KE-442
 status: active
 title: 6. 当前仍未完成的讨论
 category: documentation
+ttl: permanent
 ---
 
 # 6. 当前仍未完成的讨论

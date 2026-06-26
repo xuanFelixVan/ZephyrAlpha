@@ -3,6 +3,7 @@ module_id: KE-2530-------11-000
 status: active
 title: 95/4/1 分布监控（§11 目标分布）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 95/4/1 分布监控（§11 目标分布）

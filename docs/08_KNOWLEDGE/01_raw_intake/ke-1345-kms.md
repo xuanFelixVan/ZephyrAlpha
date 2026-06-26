@@ -3,6 +3,7 @@ module_id: KE-1257-------kms-004
 status: active
 title: ZephyrAlpha 5 级门禁策略（KMS 知识管道门禁体系）
 category: governance
+ttl: permanent
 ---
 
 # ZephyrAlpha 5 级门禁策略（KMS 知识管道门禁体系）

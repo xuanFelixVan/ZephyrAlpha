@@ -3,6 +3,7 @@ module_id: KE-2717----cache-m-000
 status: active
 title: drift_registry.yaml —— cache_manager.py 自动维护
 category: module_blueprint
+ttl: permanent
 ---
 
 # drift_registry.yaml —— cache_manager.py 自动维护

@@ -2,6 +2,7 @@
 module_id: KE-290
 title: 3.4 Communication protocol table / 通信协议表
 category: documentation
+ttl: permanent
 ---
 
 # 3.4 Communication protocol table / 通信协议表

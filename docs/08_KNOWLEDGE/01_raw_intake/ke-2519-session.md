@@ -3,6 +3,7 @@ module_id: KE-2424---session-000
 status: active
 title: 7.1 新 Session 冷启动定位路径
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.1 新 Session 冷启动定位路径

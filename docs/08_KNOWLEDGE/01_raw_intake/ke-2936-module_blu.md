@@ -2,6 +2,7 @@
 module_id: KE-2836
 title: Phase 1 — 功能
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase 1 — 功能

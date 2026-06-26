@@ -3,6 +3,7 @@ module_id: KE-2052
 status: active
 title: 3.11 #49: CapacityDigitalTwin (M-40)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.11 #49: CapacityDigitalTwin (M-40)

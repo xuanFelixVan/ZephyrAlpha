@@ -3,6 +3,7 @@ module_id: KE-446
 status: active
 title: 5.1 Qualitative NFR summary / 定性 NFR 概览
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 Qualitative NFR summary / 定性 NFR 概览

@@ -3,6 +3,7 @@ module_id: KE-1770-----trigger-table----004
 status: active
 title: 2.2 Skill 触发表（Trigger Table）——对接 ZephyrAlpha 全流程七阶段
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 Skill 触发表（Trigger Table）——对接 ZephyrAlpha 全流程七阶段

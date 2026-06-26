@@ -2,6 +2,7 @@
 module_id: KE-1265
 status: active
 title: Ke Module Blu   000
+ttl: permanent
 ---
 
 000

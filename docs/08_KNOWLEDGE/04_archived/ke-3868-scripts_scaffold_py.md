@@ -2,6 +2,7 @@
 module_id: KE-3717
 title: 强制创建入口：`scripts/scaffold.py`（不可绕过）
 category: governance_rule
+ttl: permanent
 ---
 
 # 强制创建入口：`scripts/scaffold.py`（不可绕过）

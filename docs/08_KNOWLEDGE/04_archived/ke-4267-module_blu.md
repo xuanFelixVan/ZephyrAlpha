@@ -2,6 +2,7 @@
 module_id: KE-4108
 title: 4.2 容量估算
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 容量估算

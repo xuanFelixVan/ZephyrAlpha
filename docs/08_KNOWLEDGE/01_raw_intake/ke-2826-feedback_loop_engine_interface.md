@@ -3,6 +3,7 @@ module_id: KE-2729
 status: active
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 category: module_blueprint
+ttl: permanent
 ---
 
 # Feedback Loop Engine Interface / 反馈闭环引擎接口规范

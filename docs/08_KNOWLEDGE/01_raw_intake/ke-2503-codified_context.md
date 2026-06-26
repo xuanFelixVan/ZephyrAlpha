@@ -2,6 +2,7 @@
 module_id: KE-2408-----------codified-context-000
 title: 7. 效能自评分（对标 Codified Context）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. 效能自评分（对标 Codified Context）

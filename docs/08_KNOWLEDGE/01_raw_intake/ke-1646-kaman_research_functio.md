@@ -2,6 +2,7 @@
 module_id: KE-1556----functio-000
 title: 16.2 Kaman Research 语义 Function Catalog（2026.03）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 16.2 Kaman Research 语义 Function Catalog（2026.03）

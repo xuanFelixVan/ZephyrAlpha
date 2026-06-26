@@ -3,6 +3,7 @@ module_id: KE-1749----sli-instrumentation-py-000
 status: active
 title: 2.2 创建 sli_instrumentation.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 创建 sli_instrumentation.py

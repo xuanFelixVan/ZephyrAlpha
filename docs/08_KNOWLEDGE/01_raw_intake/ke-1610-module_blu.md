@@ -2,6 +2,7 @@
 module_id: KE-1520
 title: 14.5 关键优化建议（针对当前实现）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.5 关键优化建议（针对当前实现）

@@ -2,6 +2,7 @@
 module_id: KE-2363
 title: 6.11 业界对标深化矩阵（第七轮追加）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.11 业界对标深化矩阵（第七轮追加）

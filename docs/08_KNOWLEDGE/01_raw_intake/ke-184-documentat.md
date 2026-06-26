@@ -3,6 +3,7 @@ module_id: KE-166
 status: active
 title: 2.1 全局字段总表
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 全局字段总表

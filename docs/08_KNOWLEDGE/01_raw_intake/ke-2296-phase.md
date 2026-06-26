@@ -2,6 +2,7 @@
 module_id: KE-2202
 title: 4. Phase 施工路线图
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Phase 施工路线图

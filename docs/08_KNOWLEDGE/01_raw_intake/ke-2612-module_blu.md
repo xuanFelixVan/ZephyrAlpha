@@ -3,6 +3,7 @@ module_id: KE-2517
 status: active
 title: 9.3 与已有实现的关系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.3 与已有实现的关系

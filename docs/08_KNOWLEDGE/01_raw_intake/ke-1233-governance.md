@@ -2,6 +2,7 @@
 module_id: KE-1146
 title: Informative 引用
 category: governance
+ttl: permanent
 ---
 
 # Informative 引用

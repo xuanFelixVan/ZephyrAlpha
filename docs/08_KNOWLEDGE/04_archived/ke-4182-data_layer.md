@@ -2,6 +2,7 @@
 module_id: KE-4026
 title: 2d. 多环境隔离 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2d. 多环境隔离 🆕

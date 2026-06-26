@@ -2,6 +2,7 @@
 module_id: KE-1415---------per-1m-token-003
 title: 12.1 模型价格基准 (per 1M token)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 模型价格基准 (per 1M token)

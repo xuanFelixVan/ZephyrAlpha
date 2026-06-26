@@ -3,6 +3,7 @@ module_id: KE-952------json-lines-000
 status: active
 title: 5.3 输出格式（JSON lines）
 category: governance
+ttl: permanent
 ---
 
 # 5.3 输出格式（JSON lines）

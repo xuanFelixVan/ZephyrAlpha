@@ -2,6 +2,7 @@
 module_id: KE-581
 title: D-OWNER：Owner 域与跨层契约
 category: documentation
+ttl: permanent
 ---
 
 # D-OWNER：Owner 域与跨层契约

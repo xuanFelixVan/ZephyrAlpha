@@ -3,6 +3,7 @@ module_id: KE-2962------------------trace--000
 status: active
 title: traces —— 上下文管理器风格，自动注入 trace_id
 category: module_blueprint
+ttl: permanent
 ---
 
 # traces —— 上下文管理器风格，自动注入 trace_id

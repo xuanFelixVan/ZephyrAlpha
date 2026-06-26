@@ -3,6 +3,7 @@ module_id: KE-062
 status: active
 title: 02_enterprise_architecture/target_architecture/ — 完整修订历史
 category: documentation
+ttl: permanent
 ---
 
 # 02_enterprise_architecture/target_architecture/ — 完整修订历史

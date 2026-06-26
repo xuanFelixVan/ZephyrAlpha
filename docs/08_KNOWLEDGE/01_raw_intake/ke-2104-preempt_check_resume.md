@@ -3,6 +3,7 @@ module_id: KE-2013---resume-000
 status: active
 title: 3. preempt_check / resume
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. preempt_check / resume

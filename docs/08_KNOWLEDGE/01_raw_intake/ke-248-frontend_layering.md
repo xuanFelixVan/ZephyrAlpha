@@ -3,6 +3,7 @@ module_id: KE-227-------frontend-layering-001
 status: active
 title: 3. 前端分层（Frontend Layering）
 category: documentation
+ttl: permanent
 ---
 
 # 3. 前端分层（Frontend Layering）

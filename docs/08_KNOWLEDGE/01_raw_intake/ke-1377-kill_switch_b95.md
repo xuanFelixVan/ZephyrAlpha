@@ -3,6 +3,7 @@ module_id: KE-1288------b95-000
 status: active
 title: 1. Kill Switch 前置检查（B95）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. Kill Switch 前置检查（B95）

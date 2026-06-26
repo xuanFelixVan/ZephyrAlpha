@@ -2,6 +2,7 @@
 module_id: KE-4273
 title: D-022-17 VIGIL维护运行时
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-17 VIGIL维护运行时

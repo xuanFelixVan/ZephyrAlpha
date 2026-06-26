@@ -2,6 +2,7 @@
 module_id: KE-1274
 title: 0.2 AI Agent 分派表 —— 你该读蓝图的哪部分
 category: module_blueprint
+ttl: permanent
 ---
 
 # 0.2 AI Agent 分派表 —— 你该读蓝图的哪部分

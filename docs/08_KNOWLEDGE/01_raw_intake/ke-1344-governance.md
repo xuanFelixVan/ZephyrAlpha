@@ -3,6 +3,7 @@ module_id: KE-1256
 status: active
 title: ZephyrAlpha 规则登记表
 category: governance_rule
+ttl: permanent
 ---
 
 # ZephyrAlpha 规则登记表

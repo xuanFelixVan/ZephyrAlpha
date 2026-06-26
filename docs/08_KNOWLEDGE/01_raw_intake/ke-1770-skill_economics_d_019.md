@@ -3,6 +3,7 @@ module_id: KE-1679
 status: active
 title: 2.1 Skill Economics (D-019-10)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 Skill Economics (D-019-10)

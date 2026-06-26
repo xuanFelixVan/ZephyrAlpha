@@ -2,6 +2,7 @@
 module_id: KE-054
 title: 0. 读者指南
 category: documentation
+ttl: permanent
 ---
 
 # 0. 读者指南

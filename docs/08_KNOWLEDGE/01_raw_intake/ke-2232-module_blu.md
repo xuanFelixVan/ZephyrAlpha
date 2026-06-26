@@ -2,6 +2,7 @@
 module_id: KE-2139
 title: 3.6 契约版本
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 契约版本

@@ -2,6 +2,7 @@
 module_id: KE-2160
 title: 3.9.2 Session Log 最小格式约定（自动提取的基础）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.9.2 Session Log 最小格式约定（自动提取的基础）

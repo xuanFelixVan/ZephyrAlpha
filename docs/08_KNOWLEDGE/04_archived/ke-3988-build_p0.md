@@ -2,6 +2,7 @@
 module_id: KE-3835
 title: 12.1 Build P0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 Build P0

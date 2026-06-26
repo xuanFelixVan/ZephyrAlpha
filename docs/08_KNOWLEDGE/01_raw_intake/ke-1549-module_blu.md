@@ -3,6 +3,7 @@ module_id: KE-1459
 status: active
 title: 13.1 完整文件清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.1 完整文件清单

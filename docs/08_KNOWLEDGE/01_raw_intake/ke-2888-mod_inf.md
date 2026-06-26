@@ -3,6 +3,7 @@ module_id: KE-2788
 status: active
 title: MOD-INF-021 任务卡索引
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-INF-021 任务卡索引

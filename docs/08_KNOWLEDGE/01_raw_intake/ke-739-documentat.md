@@ -3,6 +3,7 @@ module_id: KE-663
 status: active
 title: ZephyrAlpha 元数据登记表
 category: documentation
+ttl: permanent
 ---
 
 # ZephyrAlpha 元数据登记表

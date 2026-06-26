@@ -3,6 +3,7 @@ module_id: KE-569
 status: active
 title: ===== AI 自治 =====
 category: documentation
+ttl: permanent
 ---
 
 # ===== AI 自治 =====

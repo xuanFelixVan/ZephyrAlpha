@@ -2,6 +2,7 @@
 module_id: KE-621
 title: 责任声明（Single Responsibility）
 category: documentation
+ttl: permanent
 ---
 
 # 责任声明（Single Responsibility）

@@ -3,6 +3,7 @@ module_id: KE-2727
 status: active
 title: Failure Archetypes (D-019-53)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Failure Archetypes (D-019-53)

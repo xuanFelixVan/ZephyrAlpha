@@ -3,6 +3,7 @@ module_id: KE-003
 status: active
 title: 5. Owner 画像与沟通协议
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5. Owner 画像与沟通协议

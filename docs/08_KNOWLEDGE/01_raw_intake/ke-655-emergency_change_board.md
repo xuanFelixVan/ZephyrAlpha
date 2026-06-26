@@ -3,6 +3,7 @@ module_id: KE-589
 status: active
 title: 三、Emergency Change Board 协议
 category: documentation
+ttl: permanent
 ---
 
 # 三、Emergency Change Board 协议

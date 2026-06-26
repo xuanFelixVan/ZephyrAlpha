@@ -3,6 +3,7 @@ module_id: KE-2463---002
 status: active
 title: 8.1 `blueprint_registry.yaml` 扩展（MUST）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.1 `blueprint_registry.yaml` 扩展（MUST）

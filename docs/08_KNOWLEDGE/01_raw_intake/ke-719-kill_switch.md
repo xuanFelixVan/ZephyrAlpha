@@ -3,6 +3,7 @@ module_id: KE-644----kill-switch-000
 status: active
 title: Step 3.5：确认 Kill Switch 配置
 category: documentation
+ttl: permanent
 ---
 
 # Step 3.5：确认 Kill Switch 配置

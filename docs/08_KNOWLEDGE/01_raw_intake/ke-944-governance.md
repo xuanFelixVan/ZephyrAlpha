@@ -3,6 +3,7 @@ module_id: KE-866----3-000
 status: active
 title: 3.4 路径 3：工具搜索 [兜底]
 category: governance
+ttl: permanent
 ---
 
 # 3.4 路径 3：工具搜索 [兜底]

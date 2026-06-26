@@ -3,6 +3,7 @@ module_id: KE-402
 status: active
 title: 5.1 State 分域
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 State 分域

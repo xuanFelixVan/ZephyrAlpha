@@ -2,6 +2,7 @@
 module_id: KE-2011
 title: 3. Observer 模式
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Observer 模式

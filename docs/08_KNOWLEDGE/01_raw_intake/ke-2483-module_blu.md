@@ -3,6 +3,7 @@ module_id: KE-2388
 status: active
 title: 6.4 依赖版本漂移
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.4 依赖版本漂移

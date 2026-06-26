@@ -2,6 +2,7 @@
 module_id: KE-1042
 title: 9. 变更记录
 category: governance_rule
+ttl: permanent
 ---
 
 # 9. 变更记录

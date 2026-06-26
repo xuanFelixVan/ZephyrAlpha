@@ -3,6 +3,7 @@ module_id: KE-854
 status: active
 title: 3.1 清扫通过
 category: governance
+ttl: permanent
 ---
 
 # 3.1 清扫通过

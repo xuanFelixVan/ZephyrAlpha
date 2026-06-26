@@ -2,6 +2,7 @@
 module_id: KE-1314
 title: 1.2 目标
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.2 目标

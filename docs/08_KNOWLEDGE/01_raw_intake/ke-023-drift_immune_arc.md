@@ -3,6 +3,7 @@ module_id: KE-023----------drift-immune-arc-006
 status: active
 title: 6.15 漂移免疫架构原则（Drift-Immune Architecture Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.15 漂移免疫架构原则（Drift-Immune Architecture Mandate）

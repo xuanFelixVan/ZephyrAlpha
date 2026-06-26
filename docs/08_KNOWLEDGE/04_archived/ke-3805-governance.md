@@ -2,6 +2,7 @@
 module_id: KE-3654
 title: ACS-005：权限周期性审查
 category: governance
+ttl: permanent
 ---
 
 # ACS-005：权限周期性审查

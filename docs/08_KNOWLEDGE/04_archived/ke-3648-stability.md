@@ -2,6 +2,7 @@
 module_id: KE-3503
 title: 15.2 `stability` 字段
 category: governance_rule
+ttl: permanent
 ---
 
 # 15.2 `stability` 字段

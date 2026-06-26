@@ -3,6 +3,7 @@ module_id: KE-189
 status: active
 title: 2.3 三平面的部署拓扑
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 三平面的部署拓扑

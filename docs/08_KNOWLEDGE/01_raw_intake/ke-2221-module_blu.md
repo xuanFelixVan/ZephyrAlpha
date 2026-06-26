@@ -3,6 +3,7 @@ module_id: KE-2128
 status: active
 title: 3.5 知识衰减模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 知识衰减模型

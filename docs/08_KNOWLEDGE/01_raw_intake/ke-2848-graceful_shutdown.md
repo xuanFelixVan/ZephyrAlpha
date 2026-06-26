@@ -3,6 +3,7 @@ module_id: KE-2750
 status: active
 title: Graceful Shutdown 设计 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # Graceful Shutdown 设计 🆕

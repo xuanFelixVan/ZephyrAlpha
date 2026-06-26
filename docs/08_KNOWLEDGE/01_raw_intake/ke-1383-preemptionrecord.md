@@ -3,6 +3,7 @@ module_id: KE-1294
 status: active
 title: 1. PreemptionRecord
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. PreemptionRecord

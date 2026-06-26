@@ -2,6 +2,7 @@
 module_id: KE-1234
 title: stable entry_criteria
 category: governance
+ttl: permanent
 ---
 
 # stable entry_criteria

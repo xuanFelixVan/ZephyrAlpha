@@ -2,6 +2,7 @@
 module_id: KE-3980
 title: 2. Three-Tier Degradation Strategy (§3)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Three-Tier Degradation Strategy (§3)

@@ -3,6 +3,7 @@ module_id: KE-1201-------------------------005
 status: active
 title: 🔴 PRE-OP：任何操作前必须通过的强制检查（最高优先级 — 高于 FIRST-READ）
 category: governance_rule
+ttl: permanent
 ---
 
 # 🔴 PRE-OP：任何操作前必须通过的强制检查（最高优先级 — 高于 FIRST-READ）

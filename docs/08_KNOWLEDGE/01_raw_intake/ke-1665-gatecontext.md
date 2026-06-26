@@ -3,6 +3,7 @@ module_id: KE-1575
 status: active
 title: 17.3 GateContext — 上下文传播
 category: module_blueprint
+ttl: permanent
 ---
 
 # 17.3 GateContext — 上下文传播

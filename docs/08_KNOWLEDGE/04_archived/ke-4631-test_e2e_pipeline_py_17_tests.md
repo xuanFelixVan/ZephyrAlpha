@@ -2,6 +2,7 @@
 module_id: KE-4455
 title: test_e2e_pipeline.py（17 tests）
 category: session_log
+ttl: permanent
 ---
 
 # test_e2e_pipeline.py（17 tests）

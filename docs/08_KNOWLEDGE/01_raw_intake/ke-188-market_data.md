@@ -2,6 +2,7 @@
 module_id: KE-169
 title: 2.1 Market Data 域（行情数据）
 category: documentation
+ttl: permanent
 ---
 
 # 2.1 Market Data 域（行情数据）

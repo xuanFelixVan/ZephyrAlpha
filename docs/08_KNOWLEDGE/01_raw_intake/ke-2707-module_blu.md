@@ -2,6 +2,7 @@
 module_id: KE-2610
 title: D-022-03 经济护栏实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-03 经济护栏实现

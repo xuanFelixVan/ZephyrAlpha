@@ -2,6 +2,7 @@
 module_id: KE-SESSION-LO-UNKNOWN-004
 title: 变更的文件
 category: session_log
+ttl: permanent
 ---
 
 # 变更的文件

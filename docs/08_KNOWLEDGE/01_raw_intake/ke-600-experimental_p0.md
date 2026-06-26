@@ -3,6 +3,7 @@ module_id: KE-540--------experimental-p0-000
 status: active
 title: 8A.5 日常巡检清单（experimental P0）
 category: documentation
+ttl: permanent
 ---
 
 # 8A.5 日常巡检清单（experimental P0）

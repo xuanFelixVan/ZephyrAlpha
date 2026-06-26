@@ -3,6 +3,7 @@ module_id: KE-1348
 status: active
 title: 10.1 Kill Switch 全局熔断
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.1 Kill Switch 全局熔断

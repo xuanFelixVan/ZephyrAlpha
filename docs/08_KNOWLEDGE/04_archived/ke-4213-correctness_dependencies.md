@@ -2,6 +2,7 @@
 module_id: KE-4054
 title: 3.1 Correctness Dependencies（正确运行依赖）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 Correctness Dependencies（正确运行依赖）

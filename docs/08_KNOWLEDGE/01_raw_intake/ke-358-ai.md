@@ -2,6 +2,7 @@
 module_id: KE-323
 title: 4.12 AI 工程条件禁止
 category: documentation
+ttl: permanent
 ---
 
 # 4.12 AI 工程条件禁止

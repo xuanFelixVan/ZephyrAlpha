@@ -3,6 +3,7 @@ module_id: KE-2314
 status: active
 title: 5.4 依赖方向图
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.4 依赖方向图

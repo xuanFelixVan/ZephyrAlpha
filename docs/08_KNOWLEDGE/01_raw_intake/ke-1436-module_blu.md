@@ -3,6 +3,7 @@ module_id: KE-1346
 status: active
 title: 10.1 本模块职责完成后
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.1 本模块职责完成后

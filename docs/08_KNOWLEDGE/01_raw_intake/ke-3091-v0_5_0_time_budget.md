@@ -3,6 +3,7 @@ module_id: KE-2990----time-budget-000
 status: active
 title: ── v0.5.0 新增：Time Budget 三维预算体系 ──
 category: module_blueprint
+ttl: permanent
 ---
 
 # ── v0.5.0 新增：Time Budget 三维预算体系 ──

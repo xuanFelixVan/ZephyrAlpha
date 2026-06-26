@@ -3,6 +3,7 @@ module_id: KE-1514
 status: active
 title: 14.2 安全关机 (逆序)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.2 安全关机 (逆序)

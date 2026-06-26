@@ -3,6 +3,7 @@ module_id: KE-038----------audit-script-enco-005
 status: active
 title: 6.7 审计脚本编码铁律（Audit Script Encoding Rule）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.7 审计脚本编码铁律（Audit Script Encoding Rule）

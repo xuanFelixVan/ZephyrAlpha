@@ -3,6 +3,7 @@ module_id: KE-3034
 status: active
 title: 7. 完整示例
 category: session_log
+ttl: permanent
 ---
 
 # 7. 完整示例

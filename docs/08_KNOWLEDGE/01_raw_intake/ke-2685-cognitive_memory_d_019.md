@@ -3,6 +3,7 @@ module_id: KE-2588
 status: active
 title: Cognitive Memory (D-019-38)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Cognitive Memory (D-019-38)

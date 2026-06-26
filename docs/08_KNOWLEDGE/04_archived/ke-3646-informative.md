@@ -2,6 +2,7 @@
 module_id: KE-3501
 title: 14.2 Informative 引用
 category: governance_rule
+ttl: permanent
 ---
 
 # 14.2 Informative 引用

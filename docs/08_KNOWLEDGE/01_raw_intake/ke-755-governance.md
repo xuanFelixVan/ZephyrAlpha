@@ -3,6 +3,7 @@ module_id: KE-679
 status: active
 title: 1. 目的与范围
 category: governance
+ttl: permanent
 ---
 
 # 1. 目的与范围

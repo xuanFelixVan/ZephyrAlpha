@@ -3,6 +3,7 @@ module_id: KE-2644------------6-2-000
 status: active
 title: DB-025-0021：测试文件清单验证——§6.2 四份测试文件存在性确认
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0021：测试文件清单验证——§6.2 四份测试文件存在性确认

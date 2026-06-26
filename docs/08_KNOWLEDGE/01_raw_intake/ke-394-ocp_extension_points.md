@@ -3,6 +3,7 @@ module_id: KE-358
 status: active
 title: 4.4 OCP Extension points / 扩展点设计
 category: documentation
+ttl: permanent
 ---
 
 # 4.4 OCP Extension points / 扩展点设计

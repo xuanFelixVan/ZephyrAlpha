@@ -3,6 +3,7 @@ module_id: KE-1090
 status: active
 title: 总则：最优先行原则（Best-First Principle）
 category: governance
+ttl: permanent
 ---
 
 # 总则：最优先行原则（Best-First Principle）

@@ -2,6 +2,7 @@
 module_id: KE-3756
 title: 1. 任务概述
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. 任务概述

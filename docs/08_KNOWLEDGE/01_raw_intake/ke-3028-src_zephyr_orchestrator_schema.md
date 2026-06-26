@@ -3,6 +3,7 @@ module_id: KE-2928
 status: active
 title: src/zephyr/orchestrator/schemas.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/orchestrator/schemas.py

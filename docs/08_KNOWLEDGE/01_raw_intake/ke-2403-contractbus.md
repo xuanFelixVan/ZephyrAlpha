@@ -3,6 +3,7 @@ module_id: KE-2308
 status: active
 title: 5.3 ContractBus 分三批迁移
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.3 ContractBus 分三批迁移

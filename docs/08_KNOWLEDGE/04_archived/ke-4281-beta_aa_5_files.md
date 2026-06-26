@@ -2,6 +2,7 @@
 module_id: KE-4122
 title: 5. beta aa (5 Files) — 运维生存
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. beta aa (5 Files) — 运维生存

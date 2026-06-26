@@ -3,6 +3,7 @@ module_id: KE-2234--------17-000
 status: active
 title: §4.3 管线执行结果（17字段）
 category: module_blueprint
+ttl: permanent
 ---
 
 # §4.3 管线执行结果（17字段）

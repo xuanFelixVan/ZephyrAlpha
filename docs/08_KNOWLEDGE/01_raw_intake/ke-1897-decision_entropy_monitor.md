@@ -3,6 +3,7 @@ module_id: KE-1806
 status: active
 title: 2.228 Decision Entropy Monitor - decision_entropy_monitor.py (🆕 v0.21.0 - 盲点277
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.228 Decision Entropy Monitor - decision_entropy_monitor.py (🆕 v0.21.0 - 盲点277

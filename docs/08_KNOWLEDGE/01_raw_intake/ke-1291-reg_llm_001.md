@@ -2,6 +2,7 @@
 module_id: KE-1204
 title: 角色决策依据（基于 REG-LLM-001 基准数据）
 category: governance
+ttl: permanent
 ---
 
 # 角色决策依据（基于 REG-LLM-001 基准数据）

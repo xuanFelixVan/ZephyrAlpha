@@ -3,6 +3,7 @@ module_id: KE-2082
 status: active
 title: 3.2 契约定义
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 契约定义

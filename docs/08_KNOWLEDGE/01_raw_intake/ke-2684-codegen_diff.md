@@ -3,6 +3,7 @@ module_id: KE-MODULE-BLU-CODEGEN-DIFF-000
 status: active
 title: 记录所有被 codegen 覆盖但已手动修复的文件及修复 diff
 category: module_blueprint
+ttl: permanent
 ---
 
 # 记录所有被 codegen 覆盖但已手动修复的文件及修复 diff

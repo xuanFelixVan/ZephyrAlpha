@@ -2,6 +2,7 @@
 module_id: KE-484
 title: 7.1 构建管线
 category: documentation
+ttl: permanent
 ---
 
 # 7.1 构建管线

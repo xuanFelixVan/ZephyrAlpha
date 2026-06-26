@@ -3,6 +3,7 @@ module_id: KE-808
 status: active
 title: 2.2 next_stage_entry_criteria（Stage 准入门）
 category: governance
+ttl: permanent
 ---
 
 # 2.2 next_stage_entry_criteria（Stage 准入门）

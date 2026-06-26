@@ -3,6 +3,7 @@ module_id: KE-1660
 status: active
 title: 2.1 全链路架构视图
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 全链路架构视图

@@ -3,6 +3,7 @@ module_id: KE-2793
 status: active
 title: Model Evolution (D-019-23)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Model Evolution (D-019-23)

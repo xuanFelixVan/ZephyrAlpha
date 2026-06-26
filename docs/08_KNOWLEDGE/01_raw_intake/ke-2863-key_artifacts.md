@@ -3,6 +3,7 @@ module_id: KE-2765
 status: active
 title: Key Artifacts
 category: module_blueprint
+ttl: permanent
 ---
 
 # Key Artifacts

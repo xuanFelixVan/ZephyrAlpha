@@ -2,6 +2,7 @@
 module_id: KE-1092
 title: beta exit_criteria
 category: governance
+ttl: permanent
 ---
 
 # beta exit_criteria

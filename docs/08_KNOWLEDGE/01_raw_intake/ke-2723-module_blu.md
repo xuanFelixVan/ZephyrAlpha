@@ -2,6 +2,7 @@
 module_id: KE-2626
 title: D-022-20 密钥泄露防护
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-20 密钥泄露防护

@@ -3,6 +3,7 @@ module_id: KE-044------bidirectional-deep-di-001
 status: active
 title: 7.3 双向深挖（Bidirectional Deep Dive）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 7.3 双向深挖（Bidirectional Deep Dive）

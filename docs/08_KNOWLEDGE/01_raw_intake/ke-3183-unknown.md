@@ -2,6 +2,7 @@
 module_id: KE-3077
 title: 上下文预算
 category: session_log
+ttl: permanent
 ---
 
 # 上下文预算

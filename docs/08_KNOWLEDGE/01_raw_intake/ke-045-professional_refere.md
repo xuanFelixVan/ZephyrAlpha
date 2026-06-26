@@ -3,6 +3,7 @@ module_id: KE-045--------professional-refere-003
 status: active
 title: 7.4 专业对标驱动（Professional Reference Driven）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 7.4 专业对标驱动（Professional Reference Driven）

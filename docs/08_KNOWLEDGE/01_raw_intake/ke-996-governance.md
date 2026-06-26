@@ -3,6 +3,7 @@ module_id: KE-918
 status: active
 title: 4.4 脚本未就绪时的后备方案
 category: governance
+ttl: permanent
 ---
 
 # 4.4 脚本未就绪时的后备方案

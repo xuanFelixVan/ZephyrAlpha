@@ -3,6 +3,7 @@ module_id: KE-552------experimental-000
 status: active
 title: 9.2 关键字段（experimental 必采）
 category: documentation
+ttl: permanent
 ---
 
 # 9.2 关键字段（experimental 必采）

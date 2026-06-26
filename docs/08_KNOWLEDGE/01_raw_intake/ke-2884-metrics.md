@@ -3,6 +3,7 @@ module_id: KE-2784
 status: active
 title: metrics —— 四类指标，统一接口
 category: module_blueprint
+ttl: permanent
 ---
 
 # metrics —— 四类指标，统一接口

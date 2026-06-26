@@ -3,6 +3,7 @@ module_id: KE-143
 status: active
 title: §14 跨标准字段交叉引用
 category: documentation
+ttl: permanent
 ---
 
 # §14 跨标准字段交叉引用

@@ -2,6 +2,7 @@
 module_id: KE-1322
 title: 1.3 责任范围（管什么）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.3 责任范围（管什么）

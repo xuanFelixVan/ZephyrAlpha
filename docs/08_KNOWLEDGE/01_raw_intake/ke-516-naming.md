@@ -3,6 +3,7 @@ module_id: KE-465
 status: active
 title: 6.3 Naming / 命名惯例
 category: documentation
+ttl: permanent
 ---
 
 # 6.3 Naming / 命名惯例

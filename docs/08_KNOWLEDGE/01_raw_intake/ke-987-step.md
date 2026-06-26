@@ -2,6 +2,7 @@
 module_id: KE-909
 title: 4.2 Step 2：临时文件清除
 category: governance
+ttl: permanent
 ---
 
 # 4.2 Step 2：临时文件清除

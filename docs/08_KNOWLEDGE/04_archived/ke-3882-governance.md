@@ -2,6 +2,7 @@
 module_id: KE-3731
 title: 核心原则
 category: governance
+ttl: permanent
 ---
 
 # 核心原则

@@ -3,6 +3,7 @@ module_id: KE-2603
 status: active
 title: CT-DB-002：ATM 事务契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # CT-DB-002：ATM 事务契约

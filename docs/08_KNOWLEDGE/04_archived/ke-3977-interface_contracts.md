@@ -2,6 +2,7 @@
 module_id: KE-3824-------interface-contracts-000
 title: 12. 接口契约（Interface Contracts）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12. 接口契约（Interface Contracts）

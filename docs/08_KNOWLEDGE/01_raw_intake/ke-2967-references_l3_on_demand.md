@@ -3,6 +3,7 @@ module_id: KE-2867
 status: active
 title: References (L3, on-demand)
 category: module_blueprint
+ttl: permanent
 ---
 
 # References (L3, on-demand)

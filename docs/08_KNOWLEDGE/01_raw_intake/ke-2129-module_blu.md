@@ -3,6 +3,7 @@ module_id: KE-2037
 status: active
 title: 3.1.2 任务卡生命周期管理器
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1.2 任务卡生命周期管理器

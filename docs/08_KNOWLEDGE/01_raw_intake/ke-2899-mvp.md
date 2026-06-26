@@ -3,6 +3,7 @@ module_id: KE-2799
 status: active
 title: 最小闭环 MVP ✅ 已完成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 最小闭环 MVP ✅ 已完成

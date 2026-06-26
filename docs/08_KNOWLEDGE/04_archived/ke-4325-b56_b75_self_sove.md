@@ -2,6 +2,7 @@
 module_id: KE-4165-------b56-b75---self-sove-001
 title: 6.12 第八轮深挖（B56-B75）——Self-Sovereign Resilience & 自主回滚体系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.12 第八轮深挖（B56-B75）——Self-Sovereign Resilience & 自主回滚体系

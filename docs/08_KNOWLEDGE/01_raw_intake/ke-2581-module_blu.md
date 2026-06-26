@@ -3,6 +3,7 @@ module_id: KE-2486
 status: active
 title: 8.4 完整迭代伪代码
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.4 完整迭代伪代码

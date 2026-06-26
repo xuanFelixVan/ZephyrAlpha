@@ -3,6 +3,7 @@ module_id: KE-2642
 status: active
 title: DB-025-0019：v2.0 Phase 施工验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0019：v2.0 Phase 施工验证

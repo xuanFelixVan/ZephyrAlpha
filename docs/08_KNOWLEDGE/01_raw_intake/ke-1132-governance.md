@@ -3,6 +3,7 @@ module_id: KE-1047
 status: active
 title: 9.3 豁免副作用
 category: governance
+ttl: permanent
 ---
 
 # 9.3 豁免副作用

@@ -2,6 +2,7 @@
 module_id: KE-2328
 title: 第四轮 — 前沿安全（#56-#70+）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 第四轮 — 前沿安全（#56-#70+）

@@ -2,6 +2,7 @@
 module_id: KE-1860
 title: 2.3 与已有类似功能的区别
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 与已有类似功能的区别

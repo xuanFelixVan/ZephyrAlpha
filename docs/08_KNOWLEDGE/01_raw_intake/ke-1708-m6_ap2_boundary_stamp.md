@@ -3,6 +3,7 @@ module_id: KE-1618------ap2-boundary-stamp-000
 status: active
 title: 2. M6 边界标记（AP2 Boundary Stamp）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. M6 边界标记（AP2 Boundary Stamp）

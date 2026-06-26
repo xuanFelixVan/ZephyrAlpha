@@ -2,6 +2,7 @@
 module_id: KE-3082
 title: 变更的文件
 category: session_log
+ttl: permanent
 ---
 
 # 变更的文件

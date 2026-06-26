@@ -2,6 +2,7 @@
 module_id: KE-3776
 title: 1.4 当前痛点
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.4 当前痛点

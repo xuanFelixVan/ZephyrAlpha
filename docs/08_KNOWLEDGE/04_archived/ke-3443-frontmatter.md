@@ -2,6 +2,7 @@
 module_id: KE-3313------------frontmatter-5-000
 title: 4.7 额外发现：正文内嵌伪 frontmatter（5 个蓝图文件）
 category: documentation
+ttl: permanent
 ---
 
 # 4.7 额外发现：正文内嵌伪 frontmatter（5 个蓝图文件）

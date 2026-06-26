@@ -2,6 +2,7 @@
 module_id: KE-1976---ai-a-000
 title: 2f. OpenTelemetry GenAI + AI Agent 语义约定对齐 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2f. OpenTelemetry GenAI + AI Agent 语义约定对齐 🆕

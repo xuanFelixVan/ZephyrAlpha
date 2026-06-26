@@ -3,6 +3,7 @@ module_id: KE-422-------revision-trigger---s-003
 status: active
 title: 5.4 升级触发与 revision trigger / SLO 重写触发条件
 category: documentation
+ttl: permanent
 ---
 
 # 5.4 升级触发与 revision trigger / SLO 重写触发条件

@@ -3,6 +3,7 @@ module_id: KE-2474
 status: active
 title: 8.2 CT-ORC-GATE-001：任务系统 → 门控引擎
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.2 CT-ORC-GATE-001：任务系统 → 门控引擎

@@ -2,6 +2,7 @@
 module_id: KE-3222
 title: 2.4 Interface classification / 接口分类
 category: documentation
+ttl: permanent
 ---
 
 # 2.4 Interface classification / 接口分类

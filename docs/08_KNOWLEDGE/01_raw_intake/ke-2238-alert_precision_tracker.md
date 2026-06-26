@@ -3,6 +3,7 @@ module_id: KE-2145
 status: active
 title: 3.7 #45: AlertPrecisionTracker
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.7 #45: AlertPrecisionTracker

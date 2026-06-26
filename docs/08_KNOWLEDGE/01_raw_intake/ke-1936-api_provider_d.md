@@ -3,6 +3,7 @@ module_id: KE-1845---api-provider----------d-001
 status: active
 title: 2.27 模型API多Provider容灾与降级链（决策 D-022-19）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.27 模型API多Provider容灾与降级链（决策 D-022-19）

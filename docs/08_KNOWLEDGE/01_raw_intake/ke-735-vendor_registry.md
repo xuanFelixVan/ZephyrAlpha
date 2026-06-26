@@ -3,6 +3,7 @@ module_id: KE-659
 status: active
 title: Vendor Registry 配置片段
 category: documentation
+ttl: permanent
 ---
 
 # Vendor Registry 配置片段

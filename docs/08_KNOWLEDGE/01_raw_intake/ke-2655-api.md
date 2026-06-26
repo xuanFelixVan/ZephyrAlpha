@@ -3,6 +3,7 @@ module_id: KE-2560
 status: active
 title: === API 提供方灭绝风险 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === API 提供方灭绝风险 ===

@@ -3,6 +3,7 @@ module_id: KE-2413
 status: active
 title: 7. AI Agent 蓝图定位规则
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. AI Agent 蓝图定位规则

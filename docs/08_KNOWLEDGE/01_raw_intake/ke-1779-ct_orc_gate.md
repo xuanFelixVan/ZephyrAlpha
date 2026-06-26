@@ -3,6 +3,7 @@ module_id: KE-1688
 status: active
 title: 2.10 CT-ORC-GATE-001：任务系统 → 门控引擎 — 任务执行前后门禁判定
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.10 CT-ORC-GATE-001：任务系统 → 门控引擎 — 任务执行前后门禁判定

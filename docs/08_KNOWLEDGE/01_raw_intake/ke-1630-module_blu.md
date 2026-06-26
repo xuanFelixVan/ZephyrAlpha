@@ -3,6 +3,7 @@ module_id: KE-1540
 status: active
 title: 15.3 元盘点——谁盘点盘点器？（六阶自指递归）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.3 元盘点——谁盘点盘点器？（六阶自指递归）

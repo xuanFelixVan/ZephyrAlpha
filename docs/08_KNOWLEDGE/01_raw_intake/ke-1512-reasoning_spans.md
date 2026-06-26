@@ -3,6 +3,7 @@ module_id: KE-1422
 status: active
 title: 12.1 Reasoning Spans
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.1 Reasoning Spans

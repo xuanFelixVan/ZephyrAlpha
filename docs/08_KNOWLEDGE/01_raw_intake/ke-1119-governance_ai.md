@@ -2,6 +2,7 @@
 module_id: KE-1034
 title: 8.3 governance/ai/ 文件夹
 category: governance_rule
+ttl: permanent
 ---
 
 # 8.3 governance/ai/ 文件夹

@@ -3,6 +3,7 @@ module_id: KE-2213----api-000
 status: active
 title: 4.1 任务 API
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 任务 API

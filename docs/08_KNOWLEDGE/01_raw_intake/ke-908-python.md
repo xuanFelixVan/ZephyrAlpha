@@ -3,6 +3,7 @@ module_id: KE-830
 status: active
 title: 2.6 Python 源文件
 category: governance
+ttl: permanent
 ---
 
 # 2.6 Python 源文件

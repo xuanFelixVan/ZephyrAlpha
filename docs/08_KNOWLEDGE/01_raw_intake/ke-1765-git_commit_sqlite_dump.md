@@ -3,6 +3,7 @@ module_id: KE-1674---sqlite-dump---003
 status: active
 title: 2.1 Git Commit + SQLite Dump 双轨 Checkpoint（决策 D-021-01 + D-021-04）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 Git Commit + SQLite Dump 双轨 Checkpoint（决策 D-021-01 + D-021-04）

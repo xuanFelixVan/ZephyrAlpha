@@ -2,6 +2,7 @@
 module_id: KE-521
 title: 8.1 五类标准断言
 category: documentation
+ttl: permanent
 ---
 
 # 8.1 五类标准断言

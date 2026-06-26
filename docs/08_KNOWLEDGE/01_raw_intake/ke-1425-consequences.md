@@ -3,6 +3,7 @@ module_id: KE-1335-----consequences-000
 status: active
 title: 10. 后果（Consequences）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10. 后果（Consequences）

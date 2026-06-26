@@ -3,6 +3,7 @@ module_id: KE-1662
 status: active
 title: 2.1.3 status（资产状态——五态 + 三种偏移）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1.3 status（资产状态——五态 + 三种偏移）

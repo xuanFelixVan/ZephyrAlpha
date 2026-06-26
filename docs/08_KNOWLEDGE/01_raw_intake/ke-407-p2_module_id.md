@@ -2,6 +2,7 @@
 module_id: KE-371-------module-id--28-004
 title: 4.6 P2 级：缺少 `module_id`（28 个文件）
 category: documentation
+ttl: permanent
 ---
 
 # 4.6 P2 级：缺少 `module_id`（28 个文件）

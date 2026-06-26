@@ -3,6 +3,7 @@ module_id: KE-423
 status: active
 title: 4bis. View Status — 视图状态概览
 category: documentation
+ttl: permanent
 ---
 
 # 4bis. View Status — 视图状态概览

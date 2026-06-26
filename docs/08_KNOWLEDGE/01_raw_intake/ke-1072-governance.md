@@ -2,6 +2,7 @@
 module_id: KE-987
 title: 6.3 违规处置
 category: governance
+ttl: permanent
 ---
 
 # 6.3 违规处置

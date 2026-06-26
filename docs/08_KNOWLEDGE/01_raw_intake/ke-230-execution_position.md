@@ -2,6 +2,7 @@
 module_id: KE-209---position-000
 title: 2.5 Execution & Position 域（执行与持仓）
 category: documentation
+ttl: permanent
 ---
 
 # 2.5 Execution & Position 域（执行与持仓）

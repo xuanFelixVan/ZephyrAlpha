@@ -3,6 +3,7 @@ module_id: KE-115
 status: active
 title: 10.3 Traces / 分布式追踪
 category: documentation
+ttl: permanent
 ---
 
 # 10.3 Traces / 分布式追踪

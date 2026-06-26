@@ -3,6 +3,7 @@ module_id: KE-427---backup---data-recovery-000
 status: active
 title: §5 D3 — Backup & Data Recovery / 备份与数据恢复域
 category: documentation
+ttl: permanent
 ---
 
 # §5 D3 — Backup & Data Recovery / 备份与数据恢复域

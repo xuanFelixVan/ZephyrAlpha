@@ -3,6 +3,7 @@ module_id: KE-187---ai-005
 status: active
 title: 2.3 "Single operator + AI" 人机协同特例 / 单人 + AI 协同的 R/A 重合处理
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 "Single operator + AI" 人机协同特例 / 单人 + AI 协同的 R/A 重合处理

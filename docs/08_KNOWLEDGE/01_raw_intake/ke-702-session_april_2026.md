@@ -3,6 +3,7 @@ module_id: KE-630----------2026-04-17---006
 status: active
 title: Stage 14：骨架对齐机构终局（2026-04-17 下半段，Opus 4.7 收口）
 category: documentation
+ttl: permanent
 ---
 
 # Stage 14：骨架对齐机构终局（2026-04-17 下半段，Opus 4.7 收口）

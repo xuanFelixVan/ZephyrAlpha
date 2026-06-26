@@ -3,6 +3,7 @@ module_id: KE-152
 status: active
 title: 2. Data Entity Catalog / 数据实体清单
 category: documentation
+ttl: permanent
 ---
 
 # 2. Data Entity Catalog / 数据实体清单

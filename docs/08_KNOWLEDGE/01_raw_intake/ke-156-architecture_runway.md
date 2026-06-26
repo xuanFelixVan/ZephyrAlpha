@@ -3,6 +3,7 @@ module_id: KE-142
 status: active
 title: 14. Architecture Runway / 架构预留通道
 category: documentation
+ttl: permanent
 ---
 
 # 14. Architecture Runway / 架构预留通道

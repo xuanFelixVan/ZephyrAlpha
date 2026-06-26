@@ -3,6 +3,7 @@ module_id: KE-2941----1-0------000
 status: active
 title: strictness.current <  1.0（开发时放松）：警告 + allow=True + 记审计
 category: module_blueprint
+ttl: permanent
 ---
 
 # strictness.current <  1.0（开发时放松）：警告 + allow=True + 记审计

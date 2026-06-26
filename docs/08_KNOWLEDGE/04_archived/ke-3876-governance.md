@@ -2,6 +2,7 @@
 module_id: KE-3725
 title: SIR-002：全级别通用响应规则
 category: governance
+ttl: permanent
 ---
 
 # SIR-002：全级别通用响应规则

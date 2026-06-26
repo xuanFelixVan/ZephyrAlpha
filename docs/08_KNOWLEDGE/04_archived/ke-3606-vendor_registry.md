@@ -2,6 +2,7 @@
 module_id: KE-3461
 title: Vendor Registry / 厂商注册表设计原则
 category: documentation
+ttl: permanent
 ---
 
 # Vendor Registry / 厂商注册表设计原则

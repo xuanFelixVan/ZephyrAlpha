@@ -3,6 +3,7 @@ module_id: KE-318-----------schema-002
 status: active
 title: 4.1 PIT 三个核心字段（强制 schema）
 category: documentation
+ttl: permanent
 ---
 
 # 4.1 PIT 三个核心字段（强制 schema）

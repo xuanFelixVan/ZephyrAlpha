@@ -2,6 +2,7 @@
 module_id: KE-3660
 title: ARG-004：评审人资质
 category: governance
+ttl: permanent
 ---
 
 # ARG-004：评审人资质

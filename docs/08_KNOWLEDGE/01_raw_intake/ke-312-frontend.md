@@ -3,6 +3,7 @@ module_id: KE-312
 status: active
 title: 3.4 前端（10-FE）三平面归属（同步批次）
 category: documentation
+ttl: permanent
 ---
 
 # 3.4 前端（10-FE）三平面归属（同步批次）

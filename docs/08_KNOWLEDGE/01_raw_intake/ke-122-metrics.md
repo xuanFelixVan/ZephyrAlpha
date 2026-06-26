@@ -3,6 +3,7 @@ module_id: KE-110
 status: active
 title: 10.1 Metrics / 指标
 category: documentation
+ttl: permanent
 ---
 
 # 10.1 Metrics / 指标

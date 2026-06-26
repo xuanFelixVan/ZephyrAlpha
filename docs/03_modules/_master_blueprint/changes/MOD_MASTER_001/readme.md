@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-023
+ttl: permanent
 ---
 
 # MOD-MASTER-001 变更目录

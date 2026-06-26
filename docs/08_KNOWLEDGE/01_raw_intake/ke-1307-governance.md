@@ -2,6 +2,7 @@
 module_id: KE-1220
 title: SEC-006：密钥强度标准
 category: governance
+ttl: permanent
 ---
 
 # SEC-006：密钥强度标准

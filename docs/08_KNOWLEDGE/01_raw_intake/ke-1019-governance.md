@@ -3,6 +3,7 @@ module_id: KE-940
 status: active
 title: 5.1 流程决策树
 category: governance
+ttl: permanent
 ---
 
 # 5.1 流程决策树

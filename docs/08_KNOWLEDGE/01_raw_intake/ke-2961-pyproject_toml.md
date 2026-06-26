@@ -3,6 +3,7 @@ module_id: KE-2861
 status: active
 title: pyproject.toml
 category: module_blueprint
+ttl: permanent
 ---
 
 # pyproject.toml

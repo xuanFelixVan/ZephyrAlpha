@@ -3,6 +3,7 @@ module_id: KE-2479---agent-sandbox-adr-0018-002
 status: active
 title: 8.3 与 Agent Sandbox（KBG-0018）的双层关系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.3 与 Agent Sandbox（KBG-0018）的双层关系

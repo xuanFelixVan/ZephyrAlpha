@@ -3,6 +3,7 @@ module_id: KE-1774
 status: active
 title: 2.2 token_budget.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 token_budget.yaml

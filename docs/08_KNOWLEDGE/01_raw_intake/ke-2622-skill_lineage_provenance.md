@@ -3,6 +3,7 @@ module_id: KE-2527---provenance-001
 status: active
 title: 9.7 Skill Lineage & Provenance（决策 D-019-13）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.7 Skill Lineage & Provenance（决策 D-019-13）

@@ -3,6 +3,7 @@ module_id: KE-3013
 status: active
 title: XAI Decision Audit (D-019-25)
 category: module_blueprint
+ttl: permanent
 ---
 
 # XAI Decision Audit (D-019-25)

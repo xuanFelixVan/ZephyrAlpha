@@ -3,6 +3,7 @@ module_id: KE-1689---testing---dry-run----003
 status: active
 title: 2.10 L7 — Testing & Dry-Run（决策 D-018-12）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.10 L7 — Testing & Dry-Run（决策 D-018-12）

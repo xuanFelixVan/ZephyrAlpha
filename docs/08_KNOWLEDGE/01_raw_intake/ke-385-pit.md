@@ -3,6 +3,7 @@ module_id: KE-349
 status: active
 title: 4.3 PIT 查询的实现路径（架构原则，非具体技术）
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 PIT 查询的实现路径（架构原则，非具体技术）

@@ -3,6 +3,7 @@ module_id: KE-1410
 status: active
 title: 1.3 与 Shared Core (MOD-INF-016) 的承载关系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.3 与 Shared Core (MOD-INF-016) 的承载关系

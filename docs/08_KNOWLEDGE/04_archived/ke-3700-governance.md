@@ -2,6 +2,7 @@
 module_id: KE-3553
 title: 20. 可验证性标注
 category: governance_rule
+ttl: permanent
 ---
 
 # 20. 可验证性标注

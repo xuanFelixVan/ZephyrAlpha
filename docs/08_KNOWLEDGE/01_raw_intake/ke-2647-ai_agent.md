@@ -3,6 +3,7 @@ module_id: KE-2552
 status: active
 title: 八、施工指南 —— AI agent 编码入口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 八、施工指南 —— AI agent 编码入口

@@ -3,6 +3,7 @@ module_id: KE-765
 status: active
 title: 19. 异常豁免机制
 category: governance
+ttl: permanent
 ---
 
 # 19. 异常豁免机制

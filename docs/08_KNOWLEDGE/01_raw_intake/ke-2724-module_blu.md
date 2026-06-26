@@ -2,6 +2,7 @@
 module_id: KE-2627
 title: D-022-21 冷启动管理
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-21 冷启动管理

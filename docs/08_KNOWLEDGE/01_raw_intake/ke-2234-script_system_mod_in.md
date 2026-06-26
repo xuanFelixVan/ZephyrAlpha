@@ -2,6 +2,7 @@
 module_id: KE-2141-------mod-in-000
 title: 3.6 Script System 集成（对接 MOD-INF-005）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 Script System 集成（对接 MOD-INF-005）

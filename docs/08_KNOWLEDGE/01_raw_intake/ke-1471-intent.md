@@ -3,6 +3,7 @@ module_id: KE-1381----intent-000
 status: active
 title: 11.1 添加新intent类型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.1 添加新intent类型

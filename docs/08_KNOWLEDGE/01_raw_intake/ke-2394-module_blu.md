@@ -3,6 +3,7 @@ module_id: KE-2299
 status: active
 title: 5.2 禁碰规则列表（绝对不碰的东西）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.2 禁碰规则列表（绝对不碰的东西）

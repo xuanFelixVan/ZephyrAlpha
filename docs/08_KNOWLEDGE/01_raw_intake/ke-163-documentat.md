@@ -3,6 +3,7 @@ module_id: KE-149
 status: active
 title: §17 可验证性标注
 category: documentation
+ttl: permanent
 ---
 
 # §17 可验证性标注

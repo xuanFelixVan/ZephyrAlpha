@@ -3,6 +3,7 @@ module_id: KE-749-----------ai-session-000
 status: active
 title: 15.3 最小必读路径（全新 AI session）
 category: governance
+ttl: permanent
 ---
 
 # 15.3 最小必读路径（全新 AI session）

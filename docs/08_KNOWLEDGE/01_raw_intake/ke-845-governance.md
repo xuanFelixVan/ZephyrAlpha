@@ -3,6 +3,7 @@ module_id: KE-767
 status: active
 title: 2. 12 维度审计清单
 category: governance
+ttl: permanent
 ---
 
 # 2. 12 维度审计清单

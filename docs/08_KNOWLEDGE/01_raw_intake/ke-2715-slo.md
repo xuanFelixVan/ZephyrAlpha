@@ -2,6 +2,7 @@
 module_id: KE-2618
 title: D-022-12 SLO驱动升级合约实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-12 SLO驱动升级合约实现

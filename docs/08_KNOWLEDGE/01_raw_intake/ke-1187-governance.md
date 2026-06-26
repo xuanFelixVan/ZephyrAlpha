@@ -3,6 +3,7 @@ module_id: KE-1101
 status: active
 title: COND-001：报告数据必须可追溯
 category: governance
+ttl: permanent
 ---
 
 # COND-001：报告数据必须可追溯

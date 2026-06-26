@@ -2,6 +2,7 @@
 module_id: KE-1058
 title: 铁律与 ABS 映射表
 category: governance
+ttl: permanent
 ---
 
 # 铁律与 ABS 映射表

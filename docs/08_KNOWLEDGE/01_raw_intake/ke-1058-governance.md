@@ -2,6 +2,7 @@
 module_id: KE-974
 title: 6.1 受控词表
 category: governance_rule
+ttl: permanent
 ---
 
 # 6.1 受控词表

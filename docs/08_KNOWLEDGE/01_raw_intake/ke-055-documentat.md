@@ -3,6 +3,7 @@ module_id: KE-055
 status: active
 title: 0. 本文档定位
 category: documentation
+ttl: permanent
 ---
 
 # 0. 本文档定位

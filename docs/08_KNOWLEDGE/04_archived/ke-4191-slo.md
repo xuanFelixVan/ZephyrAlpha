@@ -2,6 +2,7 @@
 module_id: KE-4034-----slo-000
 title: 3. 七维自SLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 七维自SLO

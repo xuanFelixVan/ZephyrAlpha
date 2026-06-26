@@ -2,6 +2,7 @@
 module_id: KE-1612
 title: 2. Decision Checklist
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Decision Checklist

@@ -3,6 +3,7 @@ module_id: KE-2814
 status: active
 title: === 全状态防篡改 + 扩展 Owner 缺失 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === 全状态防篡改 + 扩展 Owner 缺失 ===

@@ -2,6 +2,7 @@
 module_id: KE-3951
 title: 17.3 告警阈值
 category: module_blueprint
+ttl: permanent
 ---
 
 # 17.3 告警阈值

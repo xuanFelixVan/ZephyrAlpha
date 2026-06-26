@@ -3,6 +3,7 @@ module_id: KE-2929
 status: active
 title: src/zephyr/orchestrator/state.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/orchestrator/state.py (experimental 产出)

@@ -3,6 +3,7 @@ module_id: KE-2500--------2026-05-0-003
 status: active
 title: 9. 30 Session 模拟运行结果（2026-05-04）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9. 30 Session 模拟运行结果（2026-05-04）

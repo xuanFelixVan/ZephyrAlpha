@@ -2,6 +2,7 @@
 module_id: KE-4035---7-000
 title: 3. Anti-Patterns AP10-AP21 (§7-EXPANDED)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Anti-Patterns AP10-AP21 (§7-EXPANDED)

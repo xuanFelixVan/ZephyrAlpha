@@ -3,6 +3,7 @@ module_id: KE-1376----mod-inf-027-auditorchest-003
 status: active
 title: 11. 与 MOD-INF-027 AuditOrchestrator 的集成契约
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11. 与 MOD-INF-027 AuditOrchestrator 的集成契约

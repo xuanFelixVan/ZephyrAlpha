@@ -3,6 +3,7 @@ module_id: KE-2144
 status: active
 title: 3.7 #31: HawthorneBlind
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.7 #31: HawthorneBlind

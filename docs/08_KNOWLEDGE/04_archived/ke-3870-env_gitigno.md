@@ -2,6 +2,7 @@
 module_id: KE-3719---env----------gitigno-003
 title: SEC-003：`.env` 文件必须在 `.gitignore` 中
 category: governance
+ttl: permanent
 ---
 
 # SEC-003：`.env` 文件必须在 `.gitignore` 中

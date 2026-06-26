@@ -791,8 +791,8 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | `priority` | enum | ✅ | 优先级：`P0`~`P3` |
 | `tags` | list[str] | ✅ | 标签列表（对齐 MOD-INF-006 5轴标签：fn/ly/md/st/mo） |
 | `audit_chain` | list[str] | ✅ | 审计链：记录经过的审计模型和结论 |
-| `ttl` | str | ✅ | 有效期：`permanent` / `30d` / `7d` / `session` |
-| `half_life_days` | int | SHOULD | 知识半衰期（天），用于衰减计算。0=永不过期 |
+| `ttl` | str | ✅ | 保留策略：`permanent` / `task_bound`（ttl_vocabulary.yaml v2.0.0 二元判定）。KE 文件恒为 `permanent`（落 docs/08_knowledge/ 永久区），由 `bootstrap.py` 创建时注入（label-at-creation 铁律，GATE-15 校验） |
+| `half_life_days` | int | SHOULD | 知识半衰期（天），用于衰减计算。0=永不过期。（v2.0.0 后 ttl 已转二元，此字段保留供衰减算法使用，不再决定保留策略） |
 | `created_at` | datetime | ✅ | 创建时间 |
 | `updated_at` | datetime | ✅ | 最后更新时间 |
 | `last_verified_at` | datetime | SHOULD | 最后验证时间 |
@@ -851,7 +851,7 @@ KE Schema 的 31 个字段同样需要稳定性承诺——beta/3 代码会依�
 | `quality_score` | frontmatter | G2 Triage 质量评分 |
 | `priority` | frontmatter | P0~P3 优先级 |
 | `tags` | frontmatter | 标签列表（YAML list） |
-| `ttl` | frontmatter | 有效期 |
+| `ttl` | frontmatter | 保留策略（permanent/task_bound 二元，KE 恒为 permanent，bootstrap 注入，GATE-15 校验） |
 | `half_life_days` | frontmatter | 半衰期（天）——0=永不过期 |
 | `created_at` | frontmatter | 创建时间（ISO 8601） |
 | `updated_at` | frontmatter | 最后更新时间 |

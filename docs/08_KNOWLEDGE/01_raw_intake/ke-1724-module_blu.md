@@ -2,6 +2,7 @@
 module_id: KE-1634
 title: 2. 版本演进概览
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 版本演进概览

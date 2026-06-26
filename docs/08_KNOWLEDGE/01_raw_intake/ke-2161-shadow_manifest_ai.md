@@ -3,6 +3,7 @@ module_id: KE-2069------ai---000
 status: active
 title: 3.16 Shadow Manifest 信任链——AI幻觉的ImportError防护回路（v0.7.0 终极审视 #5）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.16 Shadow Manifest 信任链——AI幻觉的ImportError防护回路（v0.7.0 终极审视 #5）

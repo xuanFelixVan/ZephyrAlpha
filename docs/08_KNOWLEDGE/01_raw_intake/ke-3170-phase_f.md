@@ -3,6 +3,7 @@ module_id: KE-3064
 status: active
 title: Phase F 测试结果
 category: session_log
+ttl: permanent
 ---
 
 # Phase F 测试结果

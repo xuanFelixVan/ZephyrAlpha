@@ -2,6 +2,7 @@
 module_id: KE-1355
 title: 10.2 本模块未完成时的连锁风险
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.2 本模块未完成时的连锁风险

@@ -3,6 +3,7 @@ module_id: KE-1713--------sandboxing----os---003
 status: active
 title: 2.14 升级引擎自身 Sandboxing —— OS 级隔离（决策 D-022-08）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.14 升级引擎自身 Sandboxing —— OS 级隔离（决策 D-022-08）

@@ -3,6 +3,7 @@ module_id: KE-253
 status: active
 title: 3.13 条件性不可逆禁止
 category: documentation
+ttl: permanent
 ---
 
 # 3.13 条件性不可逆禁止

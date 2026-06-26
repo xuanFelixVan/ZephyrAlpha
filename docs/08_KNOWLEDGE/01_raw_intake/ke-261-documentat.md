@@ -2,6 +2,7 @@
 module_id: KE-239
 title: 3.1 各层职责与边界
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 各层职责与边界

@@ -3,6 +3,7 @@ module_id: KE-1894---------token-----------d--003
 status: active
 title: 2.4 经济护栏 —— Token预算与成本控制（决策 D-022-03）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 经济护栏 —— Token预算与成本控制（决策 D-022-03）

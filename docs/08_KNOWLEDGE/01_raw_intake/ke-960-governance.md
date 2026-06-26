@@ -2,6 +2,7 @@
 module_id: KE-882
 title: 〇.4 专业对标
 category: governance
+ttl: permanent
 ---
 
 # 〇.4 专业对标

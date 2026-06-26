@@ -3,6 +3,7 @@ module_id: KE-603-------blueprint---design----006
 status: active
 title: L2 设计模板（`blueprint` `design` `service_spec`）
 category: documentation
+ttl: permanent
 ---
 
 # L2 设计模板（`blueprint` `design` `service_spec`）

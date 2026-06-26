@@ -3,6 +3,7 @@ module_id: KE-1648---------phase-000
 status: active
 title: 2.1 文件创建清单（按Phase分组）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 文件创建清单（按Phase分组）

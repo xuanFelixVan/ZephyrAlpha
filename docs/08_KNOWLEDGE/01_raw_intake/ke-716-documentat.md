@@ -3,6 +3,7 @@ module_id: KE-641
 status: active
 title: Step 1：确认数据就绪
 category: documentation
+ttl: permanent
 ---
 
 # Step 1：确认数据就绪

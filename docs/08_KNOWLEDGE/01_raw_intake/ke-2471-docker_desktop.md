@@ -3,6 +3,7 @@ module_id: KE-2376
 status: active
 title: 6.2 Docker Desktop 沙箱（升级路径）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.2 Docker Desktop 沙箱（升级路径）

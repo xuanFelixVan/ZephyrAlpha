@@ -3,6 +3,7 @@ module_id: KE-1666---pydantic-v-000
 status: active
 title: 2.1 agent_card.py — Pydantic V2 数据模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 agent_card.py — Pydantic V2 数据模型

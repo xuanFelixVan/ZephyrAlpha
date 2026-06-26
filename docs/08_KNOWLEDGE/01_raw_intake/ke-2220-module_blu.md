@@ -2,6 +2,7 @@
 module_id: KE-2127
 title: 3.5 施工状态
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 施工状态

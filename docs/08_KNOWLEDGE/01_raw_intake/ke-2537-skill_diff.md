@@ -3,6 +3,7 @@ module_id: KE-2442
 status: active
 title: 7.3 Skill Diff 基线
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.3 Skill Diff 基线

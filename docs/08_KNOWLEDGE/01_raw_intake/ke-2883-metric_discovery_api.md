@@ -3,6 +3,7 @@ module_id: KE-2783
 status: active
 title: Metric Discovery API 命名空间过滤
 category: module_blueprint
+ttl: permanent
 ---
 
 # Metric Discovery API 命名空间过滤

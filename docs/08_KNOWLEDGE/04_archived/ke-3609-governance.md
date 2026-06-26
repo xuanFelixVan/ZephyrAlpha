@@ -2,6 +2,7 @@
 module_id: KE-3464
 title: 1.1 本视图要回答的问题
 category: governance
+ttl: permanent
 ---
 
 # 1.1 本视图要回答的问题

@@ -3,6 +3,7 @@ module_id: KE-026------------ai-load-pat-005
 status: active
 title: 6.18 AI 加载路径不可漂移铁律（AI Load Path Anti-Drift Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.18 AI 加载路径不可漂移铁律（AI Load Path Anti-Drift Mandate）

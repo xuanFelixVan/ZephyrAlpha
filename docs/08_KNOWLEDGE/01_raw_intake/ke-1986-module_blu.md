@@ -3,6 +3,7 @@ module_id: KE-1895-------13-001
 status: active
 title: 2.4 蓝图金标准 13 节审计速览
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.4 蓝图金标准 13 节审计速览

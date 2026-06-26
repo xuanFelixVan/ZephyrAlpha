@@ -3,6 +3,7 @@ module_id: KE-579
 status: active
 title: D-DEPS：依赖与接口一致性
 category: documentation
+ttl: permanent
 ---
 
 # D-DEPS：依赖与接口一致性

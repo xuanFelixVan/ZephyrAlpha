@@ -2,6 +2,7 @@
 module_id: KE-4363
 title: 璐ｄ换澹版槑锛圫ingle Responsibility锛?
 category: module_blueprint
+ttl: permanent
 ---
 
 # 璐ｄ换澹版槑锛圫ingle Responsibility锛?

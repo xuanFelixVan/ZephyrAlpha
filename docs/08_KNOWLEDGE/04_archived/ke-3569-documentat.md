@@ -2,6 +2,7 @@
 module_id: KE-3426
 title: 9.4 日志消费者
 category: documentation
+ttl: permanent
 ---
 
 # 9.4 日志消费者

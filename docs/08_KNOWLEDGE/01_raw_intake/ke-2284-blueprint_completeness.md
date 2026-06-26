@@ -3,6 +3,7 @@ module_id: KE-2190
 status: active
 title: 4. Blueprint Completeness
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Blueprint Completeness

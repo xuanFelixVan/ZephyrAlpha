@@ -3,6 +3,7 @@ module_id: KE-1864
 status: active
 title: 2.3 Anti-Pattern 审计
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 Anti-Pattern 审计

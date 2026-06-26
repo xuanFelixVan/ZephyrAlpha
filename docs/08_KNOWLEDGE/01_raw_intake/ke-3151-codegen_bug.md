@@ -2,6 +2,7 @@
 module_id: KE-3045------bug-000
 title: 共享契约修复（codegen 字段顺序 bug）
 category: session_log
+ttl: permanent
 ---
 
 # 共享契约修复（codegen 字段顺序 bug）

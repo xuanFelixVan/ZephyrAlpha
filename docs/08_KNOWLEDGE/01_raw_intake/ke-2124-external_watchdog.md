@@ -3,6 +3,7 @@ module_id: KE-2032---h-005
 status: active
 title: 3.1 #55: External Watchdog + HeartbeatServer (M-42)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.1 #55: External Watchdog + HeartbeatServer (M-42)

@@ -3,6 +3,7 @@ module_id: KE-1291
 status: active
 title: 1. PipelineArtifact
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. PipelineArtifact

@@ -3,6 +3,7 @@ module_id: KE-073
 status: active
 title: 1.1 目的
 category: documentation
+ttl: permanent
 ---
 
 # 1.1 目的

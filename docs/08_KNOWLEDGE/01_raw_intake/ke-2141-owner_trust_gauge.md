@@ -3,6 +3,7 @@ module_id: KE-2049
 status: active
 title: 3.10 #64: OwnerTrustGauge (M-46)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.10 #64: OwnerTrustGauge (M-46)

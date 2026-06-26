@@ -2,6 +2,7 @@
 module_id: KE-3493
 title: 12.3 查找索引
 category: governance
+ttl: permanent
 ---
 
 # 12.3 查找索引

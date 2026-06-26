@@ -2,6 +2,7 @@
 module_id: KE-4111
 title: 4.3 三件套强制清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.3 三件套强制清单

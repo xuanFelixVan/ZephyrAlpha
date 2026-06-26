@@ -2,6 +2,7 @@
 module_id: KE-4041----1------2-000
 title: 3. Core 模块（1 子模块, 2 文件）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Core 模块（1 子模块, 2 文件）

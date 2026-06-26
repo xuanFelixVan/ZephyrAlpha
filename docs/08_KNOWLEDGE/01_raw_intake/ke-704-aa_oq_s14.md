@@ -3,6 +3,7 @@ module_id: KE-704
 status: active
 title: Stage 16：03-AA 微调 + OQ 收尾（S14 Phase 1，2026-04-19）
 category: documentation
+ttl: permanent
 ---
 
 # Stage 16：03-AA 微调 + OQ 收尾（S14 Phase 1，2026-04-19）

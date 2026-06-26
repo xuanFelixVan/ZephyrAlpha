@@ -3,6 +3,7 @@ module_id: KE-1368---owasp-llm10-000
 status: active
 title: 10.4 fail-closed 与 OWASP LLM10 的平衡
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.4 fail-closed 与 OWASP LLM10 的平衡

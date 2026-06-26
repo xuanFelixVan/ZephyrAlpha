@@ -3,6 +3,7 @@ module_id: KE-3036
 status: active
 title: 8.2 新增字段规则
 category: session_log
+ttl: permanent
 ---
 
 # 8.2 新增字段规则

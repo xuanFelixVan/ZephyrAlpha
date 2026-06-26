@@ -3,6 +3,7 @@ module_id: KE-537
 status: active
 title: 8A.2 健康检查合约（所有服务必须实现）
 category: documentation
+ttl: permanent
 ---
 
 # 8A.2 健康检查合约（所有服务必须实现）

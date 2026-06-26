@@ -3,6 +3,7 @@ module_id: KE-1751
 status: active
 title: 2.2 零上下文启动
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 零上下文启动

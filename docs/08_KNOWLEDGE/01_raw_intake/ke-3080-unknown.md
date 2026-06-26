@@ -2,6 +2,7 @@
 module_id: KE-2979
 title: 决策记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 决策记录

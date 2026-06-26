@@ -3,6 +3,7 @@ module_id: KE-763----ps-std-001-003
 status: active
 title: 19. 与 PS-STD-001 字段不重复声明
 category: governance_rule
+ttl: permanent
 ---
 
 # 19. 与 PS-STD-001 字段不重复声明

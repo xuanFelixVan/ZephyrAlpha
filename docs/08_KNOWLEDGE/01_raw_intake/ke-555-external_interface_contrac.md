@@ -2,6 +2,7 @@
 module_id: KE-503
 title: 7.3 External interface contracts / 外部接口契约
 category: documentation
+ttl: permanent
 ---
 
 # 7.3 External interface contracts / 外部接口契约

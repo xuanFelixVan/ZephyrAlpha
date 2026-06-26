@@ -3,6 +3,7 @@ module_id: KE-1169--------mod-p4-000
 status: active
 title: MAD-004：接口可定义性（MOD-P4）
 category: governance
+ttl: permanent
 ---
 
 # MAD-004：接口可定义性（MOD-P4）

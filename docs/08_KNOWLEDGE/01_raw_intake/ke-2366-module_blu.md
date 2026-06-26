@@ -2,6 +2,7 @@
 module_id: KE-2271
 title: 5. 依赖关系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. 依赖关系

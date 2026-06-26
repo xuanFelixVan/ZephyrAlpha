@@ -2,6 +2,7 @@
 module_id: KE-545
 title: 9. TTL 与生命周期
 category: documentation
+ttl: permanent
 ---
 
 # 9. TTL 与生命周期

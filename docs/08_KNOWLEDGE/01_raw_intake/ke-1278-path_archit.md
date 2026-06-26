@@ -3,6 +3,7 @@ module_id: KE-1191------------path-archit-003
 status: active
 title: MTH-013：路径架构合规创建原则（Path Architecture Compliance） [MUST — 所有文件/目录创建操作]
 category: governance
+ttl: permanent
 ---
 
 # MTH-013：路径架构合规创建原则（Path Architecture Compliance） [MUST — 所有文件/目录创建操作]

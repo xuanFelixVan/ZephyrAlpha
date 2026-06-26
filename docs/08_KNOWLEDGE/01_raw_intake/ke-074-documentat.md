@@ -3,6 +3,7 @@ module_id: KE-071
 status: active
 title: 1.1 本视图回答的问题
 category: documentation
+ttl: permanent
 ---
 
 # 1.1 本视图回答的问题

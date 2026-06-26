@@ -2,6 +2,7 @@
 module_id: KE-3827
 title: 12. 关联蓝图与文档
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12. 关联蓝图与文档

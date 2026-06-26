@@ -3,6 +3,7 @@ module_id: KE-2961
 status: active
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根
 category: module_blueprint
+ttl: permanent
 ---
 
 # Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根

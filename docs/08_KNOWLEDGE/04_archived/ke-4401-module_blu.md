@@ -2,6 +2,7 @@
 module_id: KE-4237
 title: 9.2 下游消费者
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.2 下游消费者

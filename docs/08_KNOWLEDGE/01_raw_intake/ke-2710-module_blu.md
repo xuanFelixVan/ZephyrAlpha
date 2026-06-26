@@ -2,6 +2,7 @@
 module_id: KE-2613
 title: D-022-07 心理说服防御实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-07 心理说服防御实现

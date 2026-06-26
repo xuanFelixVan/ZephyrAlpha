@@ -3,6 +3,7 @@ module_id: KE-934
 status: active
 title: 5. 禁止行为
 category: governance_rule
+ttl: permanent
 ---
 
 # 5. 禁止行为

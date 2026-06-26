@@ -3,6 +3,7 @@ module_id: KE-1224
 status: active
 title: 特别条款：临时文件（session garbage）
 category: governance_rule
+ttl: permanent
 ---
 
 # 特别条款：临时文件（session garbage）

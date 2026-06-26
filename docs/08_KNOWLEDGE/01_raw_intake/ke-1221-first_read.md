@@ -3,6 +3,7 @@ module_id: KE-1134---------------------004
 status: active
 title: 🔴 FIRST-READ：入项目第一步——中央注册表总纲（最高优先级，高于 RULE-ZERO）
 category: governance_rule
+ttl: permanent
 ---
 
 # 🔴 FIRST-READ：入项目第一步——中央注册表总纲（最高优先级，高于 RULE-ZERO）

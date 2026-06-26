@@ -3,6 +3,7 @@ module_id: KE-2283
 status: active
 title: 5.1 仪表盘数据结构
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.1 仪表盘数据结构

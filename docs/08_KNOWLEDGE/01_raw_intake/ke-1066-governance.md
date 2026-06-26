@@ -2,6 +2,7 @@
 module_id: KE-982
 title: 6.2 激活路径时间表
 category: governance
+ttl: permanent
 ---
 
 # 6.2 激活路径时间表

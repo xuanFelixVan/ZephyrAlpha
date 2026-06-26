@@ -2,6 +2,7 @@
 module_id: KE-2599
 title: cross_layer 模块蓝图索引
 category: module_blueprint
+ttl: permanent
 ---
 
 # cross_layer 模块蓝图索引

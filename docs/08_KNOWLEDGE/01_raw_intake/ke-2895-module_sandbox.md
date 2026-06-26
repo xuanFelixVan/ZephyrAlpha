@@ -3,6 +3,7 @@ module_id: KE-2795
 status: active
 title: Module Sandbox（模块级进程隔离）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Module Sandbox（模块级进程隔离）

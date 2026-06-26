@@ -3,6 +3,7 @@ module_id: KE-447
 status: active
 title: 6.1 Diagrams / 图的惯例
 category: documentation
+ttl: permanent
 ---
 
 # 6.1 Diagrams / 图的惯例

@@ -3,6 +3,7 @@ module_id: KE-647
 status: active
 title: Step 5：灰度发布
 category: documentation
+ttl: permanent
 ---
 
 # Step 5：灰度发布

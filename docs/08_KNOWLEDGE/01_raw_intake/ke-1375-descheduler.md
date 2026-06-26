@@ -3,6 +3,7 @@ module_id: KE-1286
 status: active
 title: 1. Descheduler（后台定时扫描）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. Descheduler（后台定时扫描）

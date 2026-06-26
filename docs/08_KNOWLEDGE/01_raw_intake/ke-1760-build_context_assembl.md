@@ -3,6 +3,7 @@ module_id: KE-1669------context-assembl-004
 status: active
 title: 2.1 Build（检索）— context_assembler.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 Build（检索）— context_assembler.py

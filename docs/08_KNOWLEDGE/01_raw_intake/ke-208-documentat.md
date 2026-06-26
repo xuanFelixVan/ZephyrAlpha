@@ -3,6 +3,7 @@ module_id: KE-188
 status: active
 title: 2.3 综合分计算
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 综合分计算

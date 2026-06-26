@@ -3,6 +3,7 @@ module_id: KE-1001-----docs-006
 status: active
 title: 7.1 新增 `docs/` 顶级目录
 category: governance
+ttl: permanent
 ---
 
 # 7.1 新增 `docs/` 顶级目录

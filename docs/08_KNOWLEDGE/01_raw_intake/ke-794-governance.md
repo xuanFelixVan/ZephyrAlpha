@@ -2,6 +2,7 @@
 module_id: KE-717
 title: 10.3 无法推导
 category: governance_rule
+ttl: permanent
 ---
 
 # 10.3 无法推导

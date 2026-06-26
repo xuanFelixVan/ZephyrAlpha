@@ -2,6 +2,7 @@
 module_id: KE-3183
 title: 12. Cost Architecture / 成本架构
 category: documentation
+ttl: permanent
 ---
 
 # 12. Cost Architecture / 成本架构

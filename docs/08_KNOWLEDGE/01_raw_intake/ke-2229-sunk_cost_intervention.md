@@ -3,6 +3,7 @@ module_id: KE-2136
 status: active
 title: 3.6 #37: SunkCostIntervention (M-35)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.6 #37: SunkCostIntervention (M-35)

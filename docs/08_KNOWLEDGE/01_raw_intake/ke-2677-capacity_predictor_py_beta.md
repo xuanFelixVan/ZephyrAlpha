@@ -3,6 +3,7 @@ module_id: KE-2582
 status: active
 title: capacity_predictor.py（beta 实现）
 category: module_blueprint
+ttl: permanent
 ---
 
 # capacity_predictor.py（beta 实现）

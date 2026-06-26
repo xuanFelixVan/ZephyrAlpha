@@ -3,6 +3,7 @@ module_id: KE-2381
 status: active
 title: 6.3 漂移严重度评估
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 漂移严重度评估

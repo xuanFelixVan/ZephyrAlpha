@@ -3,6 +3,7 @@ module_id: KE-864
 status: active
 title: 3.3 新增领域流程
 category: governance_rule
+ttl: permanent
 ---
 
 # 3.3 新增领域流程

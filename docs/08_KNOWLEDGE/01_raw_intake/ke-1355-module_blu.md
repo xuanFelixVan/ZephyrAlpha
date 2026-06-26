@@ -3,6 +3,7 @@ module_id: KE-1266
 status: active
 title: 0.1 导航链
 category: module_blueprint
+ttl: permanent
 ---
 
 # 0.1 导航链

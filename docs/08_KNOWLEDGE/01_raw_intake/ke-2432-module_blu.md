@@ -3,6 +3,7 @@ module_id: KE-2337
 status: active
 title: 6大类62项，每类核心实现：
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6大类62项，每类核心实现：

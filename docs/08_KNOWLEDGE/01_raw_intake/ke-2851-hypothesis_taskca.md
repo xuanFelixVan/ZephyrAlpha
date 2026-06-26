@@ -3,6 +3,7 @@ module_id: KE-2753--------------taskca-000
 status: active
 title: Hypothesis策略生成器——"给定任意合法TaskCard→Pipeline应产出有效PipelineResult"
 category: module_blueprint
+ttl: permanent
 ---
 
 # Hypothesis策略生成器——"给定任意合法TaskCard→Pipeline应产出有效PipelineResult"

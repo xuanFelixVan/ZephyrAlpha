@@ -3,6 +3,7 @@ module_id: KE-019-------------index-reality-003
 status: active
 title: 6.11 索引-实际同步强制约定（Index-Reality Synchronization Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.11 索引-实际同步强制约定（Index-Reality Synchronization Mandate）

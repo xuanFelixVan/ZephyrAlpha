@@ -3,6 +3,7 @@ module_id: KE-2098
 status: active
 title: 3.3 #5: SLOReviewAssistant
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 #5: SLOReviewAssistant

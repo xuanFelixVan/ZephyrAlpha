@@ -3,6 +3,7 @@ module_id: KE-263
 status: active
 title: 3.2 总览表（按运行平面维度 — 反查视图）
 category: documentation
+ttl: permanent
 ---
 
 # 3.2 总览表（按运行平面维度 — 反查视图）

@@ -3,6 +3,7 @@ module_id: KE-1361
 status: active
 title: 10.3 门禁模板本身升级流程
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.3 门禁模板本身升级流程

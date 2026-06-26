@@ -3,6 +3,7 @@ module_id: KE-2585
 status: active
 title: CI/CD 集成约束
 category: module_blueprint
+ttl: permanent
 ---
 
 # CI/CD 集成约束

@@ -3,6 +3,7 @@ module_id: KE-1189
 status: active
 title: 与 MTH-011/012 的关系
 category: governance
+ttl: permanent
 ---
 
 # 与 MTH-011/012 的关系

@@ -3,6 +3,7 @@ module_id: KE-083----03-aa-003
 status: active
 title: 1.3 与 `03-AA` 的边界铁律
 category: documentation
+ttl: permanent
 ---
 
 # 1.3 与 `03-AA` 的边界铁律

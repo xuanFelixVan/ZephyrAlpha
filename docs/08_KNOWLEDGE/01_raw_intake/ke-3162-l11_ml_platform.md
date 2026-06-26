@@ -2,6 +2,7 @@
 module_id: KE-3056
 title: L11 ML Platform（2 个新文件）
 category: session_log
+ttl: permanent
 ---
 
 # L11 ML Platform（2 个新文件）

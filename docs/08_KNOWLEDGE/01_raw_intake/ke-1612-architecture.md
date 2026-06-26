@@ -3,6 +3,7 @@ module_id: KE-1522
 status: active
 title: 14.A.2 七维交叉审计维度
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.A.2 七维交叉审计维度

@@ -3,6 +3,7 @@ module_id: KE-2906
 status: active
 title: Solo Triage (D-019-77)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Solo Triage (D-019-77)

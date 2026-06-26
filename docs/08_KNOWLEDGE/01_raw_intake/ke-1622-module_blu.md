@@ -2,6 +2,7 @@
 module_id: KE-1532
 title: 15.1 三个维度的诚实判断
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.1 三个维度的诚实判断

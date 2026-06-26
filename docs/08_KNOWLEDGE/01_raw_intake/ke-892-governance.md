@@ -3,6 +3,7 @@ module_id: KE-814
 status: active
 title: 2.3 优先级裁决规则
 category: governance
+ttl: permanent
 ---
 
 # 2.3 优先级裁决规则

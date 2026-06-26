@@ -2,6 +2,7 @@
 module_id: KE-2507----metric-sources-000
 title: 9.1 上游 Metric Sources
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.1 上游 Metric Sources

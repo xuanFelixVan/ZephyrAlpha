@@ -3,6 +3,7 @@ module_id: KE-1408
 status: active
 title: 12. fail-closed 原则（贯穿全链路）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12. fail-closed 原则（贯穿全链路）

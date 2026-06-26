@@ -3,6 +3,7 @@ module_id: KE-960
 status: active
 title: 5.4 MRS-002：同步原子性
 category: governance
+ttl: permanent
 ---
 
 # 5.4 MRS-002：同步原子性

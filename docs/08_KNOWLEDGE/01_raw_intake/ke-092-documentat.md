@@ -3,6 +3,7 @@ module_id: KE-085
 status: active
 title: 1.3 责任边界（本标准不管什么）
 category: documentation
+ttl: permanent
 ---
 
 # 1.3 责任边界（本标准不管什么）

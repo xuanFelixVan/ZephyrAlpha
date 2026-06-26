@@ -2,6 +2,7 @@
 module_id: KE-1211
 title: 与 RULE-ZERO 的关系
 category: governance_rule
+ttl: permanent
 ---
 
 # 与 RULE-ZERO 的关系

@@ -3,6 +3,7 @@ module_id: KE-1798--------token-002
 status: active
 title: 2.22 Token Spiral 早期预警系统（Token Spiral EWS）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.22 Token Spiral 早期预警系统（Token Spiral EWS）

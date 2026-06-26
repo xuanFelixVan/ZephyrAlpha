@@ -2,6 +2,7 @@
 module_id: KE-3023
 title: 10. 修订记录
 category: session_log
+ttl: permanent
 ---
 
 # 10. 修订记录

@@ -3,6 +3,7 @@ module_id: KE-2077
 status: active
 title: 3.2 #27: ColdStartEstimator
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 #27: ColdStartEstimator

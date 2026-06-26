@@ -3,6 +3,7 @@ module_id: KE-1775
 status: active
 title: 2.2 trigger_router.py 实现
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 trigger_router.py 实现

@@ -3,6 +3,7 @@ module_id: KE-2852----9-000
 status: active
 title: PIPELINE_COMPLETE 事件→9个下游联动
 category: module_blueprint
+ttl: permanent
 ---
 
 # PIPELINE_COMPLETE 事件→9个下游联动

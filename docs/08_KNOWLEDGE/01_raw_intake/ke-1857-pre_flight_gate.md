@@ -3,6 +3,7 @@ module_id: KE-1766
 status: active
 title: 2.2 Pre-flight Gate（事前拦截门）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 Pre-flight Gate（事前拦截门）

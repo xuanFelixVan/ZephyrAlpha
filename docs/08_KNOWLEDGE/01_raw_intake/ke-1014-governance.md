@@ -3,6 +3,7 @@ module_id: KE-935
 status: active
 title: 5. 告警响应流程
 category: governance
+ttl: permanent
 ---
 
 # 5. 告警响应流程

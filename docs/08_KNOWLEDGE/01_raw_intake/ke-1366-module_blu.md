@@ -3,6 +3,7 @@ module_id: KE-1277--------7-003
 status: active
 title: 1. 路由决策树（7条规则）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. 路由决策树（7条规则）

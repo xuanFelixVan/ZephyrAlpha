@@ -2,6 +2,7 @@
 module_id: KE-1496
 title: 盲点覆盖矩阵（130条全覆盖）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 盲点覆盖矩阵（130条全覆盖）

@@ -2,6 +2,7 @@
 module_id: KE-3768
 title: 1.2 Hold 决策记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.2 Hold 决策记录

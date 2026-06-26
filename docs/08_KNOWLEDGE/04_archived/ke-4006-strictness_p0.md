@@ -2,6 +2,7 @@
 module_id: KE-3853----p0-000
 title: 12.6 Strictness 管理 P0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.6 Strictness 管理 P0

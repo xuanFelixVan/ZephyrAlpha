@@ -3,6 +3,7 @@ module_id: KE-1320---auditorchestrator-003
 status: active
 title: 1.3 与 AuditOrchestrator 的关系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.3 与 AuditOrchestrator 的关系

@@ -3,6 +3,7 @@ module_id: KE-2493---m-004
 status: active
 title: 8.7 Skill Failure Recovery & Model-Skill Affinity
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.7 Skill Failure Recovery & Model-Skill Affinity

@@ -3,6 +3,7 @@ module_id: KE-1672
 status: active
 title: 2.1 error_budget_config.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 error_budget_config.yaml

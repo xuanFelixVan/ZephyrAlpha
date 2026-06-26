@@ -2,6 +2,7 @@
 module_id: KE-4031-------------7-001
 title: 3. 绑销责任追索（蓝图 §7 施工责任）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 绑销责任追索（蓝图 §7 施工责任）

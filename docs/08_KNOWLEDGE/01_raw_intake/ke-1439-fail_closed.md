@@ -3,6 +3,7 @@ module_id: KE-1349-------4--------fail-close-003
 status: active
 title: 10.2 **与其他 4 个服务相反——fail-closed 降级**
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.2 **与其他 4 个服务相反——fail-closed 降级**

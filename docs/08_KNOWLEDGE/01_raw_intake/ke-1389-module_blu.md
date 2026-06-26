@@ -3,6 +3,7 @@ module_id: KE-1300
 status: active
 title: 1. 问题概述
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1. 问题概述

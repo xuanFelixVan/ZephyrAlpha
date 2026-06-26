@@ -2,6 +2,7 @@
 module_id: KE-3453
 title: 三、优先级字段权威 (Priority Authority)
 category: documentation
+ttl: permanent
 ---
 
 # 三、优先级字段权威 (Priority Authority)

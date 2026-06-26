@@ -2,6 +2,7 @@
 module_id: KE-4000
 title: 2.2 Phase 全量清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 Phase 全量清单

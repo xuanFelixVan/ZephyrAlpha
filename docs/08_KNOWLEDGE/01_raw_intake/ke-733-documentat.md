@@ -3,6 +3,7 @@ module_id: KE-657
 status: active
 title: ===== 规则：必须遵守的治理规则 =====
 category: documentation
+ttl: permanent
 ---
 
 # ===== 规则：必须遵守的治理规则 =====

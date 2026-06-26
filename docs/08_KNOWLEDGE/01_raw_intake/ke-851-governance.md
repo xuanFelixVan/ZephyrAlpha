@@ -2,6 +2,7 @@
 module_id: KE-773
 title: §2 子域导航速览
 category: governance
+ttl: permanent
 ---
 
 # §2 子域导航速览

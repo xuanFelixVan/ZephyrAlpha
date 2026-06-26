@@ -3,6 +3,7 @@ module_id: KE-2096
 status: active
 title: 3.3 #28: GracefulShutdown (M-32)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 #28: GracefulShutdown (M-32)

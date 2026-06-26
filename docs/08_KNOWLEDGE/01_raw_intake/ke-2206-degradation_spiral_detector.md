@@ -3,6 +3,7 @@ module_id: KE-2113
 status: active
 title: 3.4 #19: DegradationSpiralDetector (M-29)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.4 #19: DegradationSpiralDetector (M-29)

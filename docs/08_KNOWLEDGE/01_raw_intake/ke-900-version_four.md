@@ -3,6 +3,7 @@ module_id: KE-822
 status: active
 title: 2.4 V4 审计抽样
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.4 V4 审计抽样

@@ -3,6 +3,7 @@ module_id: KE-2805
 status: active
 title: Orchestrator 侧
 category: module_blueprint
+ttl: permanent
 ---
 
 # Orchestrator 侧

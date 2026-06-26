@@ -3,6 +3,7 @@ module_id: KE-1776---------owner---jit-------000
 status: active
 title: 2.20 紧急覆盖令牌——Owner签发的JIT临时越权令牌（决策 D-018-18）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.20 紧急覆盖令牌——Owner签发的JIT临时越权令牌（决策 D-018-18）

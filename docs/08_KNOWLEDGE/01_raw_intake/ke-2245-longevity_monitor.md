@@ -3,6 +3,7 @@ module_id: KE-2151
 status: active
 title: 3.8 #46: LongevityMonitor (M-39)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.8 #46: LongevityMonitor (M-39)

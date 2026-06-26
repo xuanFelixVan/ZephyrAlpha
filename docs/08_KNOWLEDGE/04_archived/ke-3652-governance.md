@@ -2,6 +2,7 @@
 module_id: KE-3507
 title: 17. 审查周期
 category: governance_rule
+ttl: permanent
 ---
 
 # 17. 审查周期

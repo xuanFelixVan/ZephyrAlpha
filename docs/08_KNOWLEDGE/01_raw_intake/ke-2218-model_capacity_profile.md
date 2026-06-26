@@ -3,6 +3,7 @@ module_id: KE-2125
 status: active
 title: 3.5 #43: ModelCapacityProfile + ModelSwitchRecalibrator
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 #43: ModelCapacityProfile + ModelSwitchRecalibrator

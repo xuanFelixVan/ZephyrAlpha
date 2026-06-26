@@ -2,6 +2,7 @@
 module_id: KE-242
 title: 3.1 三轴定义
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 三轴定义

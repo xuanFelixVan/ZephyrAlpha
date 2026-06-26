@@ -3,6 +3,7 @@ module_id: KE-155---togaf-001
 status: active
 title: 2. TOGAF four layers / TOGAF 四层结构
 category: documentation
+ttl: permanent
 ---
 
 # 2. TOGAF four layers / TOGAF 四层结构

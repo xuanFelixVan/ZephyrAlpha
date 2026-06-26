@@ -3,6 +3,7 @@ module_id: KE-2356---------d-000
 status: active
 title: 6.1 Evolution Engine 反馈闭环（决策 D-023-10）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.1 Evolution Engine 反馈闭环（决策 D-023-10）

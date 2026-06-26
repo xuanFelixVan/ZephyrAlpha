@@ -3,6 +3,7 @@ module_id: KE-683
 status: active
 title: 1.1 目的
 category: governance
+ttl: permanent
 ---
 
 # 1.1 目的

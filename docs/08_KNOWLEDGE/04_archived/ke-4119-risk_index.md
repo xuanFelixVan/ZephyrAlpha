@@ -2,6 +2,7 @@
 module_id: KE-3964
 title: 2. 15 RI 模块清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. 15 RI 模块清单

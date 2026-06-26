@@ -3,6 +3,7 @@ module_id: KE-1873-----003
 status: active
 title: 2.3 Progressive Disclosure 加载策略（决策 D-019-04）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 Progressive Disclosure 加载策略（决策 D-019-04）

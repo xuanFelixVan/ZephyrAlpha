@@ -2,6 +2,7 @@
 module_id: KE-2270
 title: 5. Test Requirements
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5. Test Requirements

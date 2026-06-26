@@ -3,6 +3,7 @@ module_id: KE-2776
 status: active
 title: LLM Security Gateway Interface / LLM 安全网关接口规范
 category: module_blueprint
+ttl: permanent
 ---
 
 # LLM Security Gateway Interface / LLM 安全网关接口规范

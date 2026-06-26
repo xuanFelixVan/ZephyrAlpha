@@ -2,6 +2,7 @@
 module_id: KE-006
 title: 5.2.1 审计入口速查
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.2.1 审计入口速查

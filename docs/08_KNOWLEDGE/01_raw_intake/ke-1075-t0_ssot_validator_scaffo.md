@@ -3,6 +3,7 @@ module_id: KE-990---ssot-validator-scaffo-008
 status: active
 title: 6.4 T0 — SSoT Validator（scaffold 唯一治理任务）
 category: governance
+ttl: permanent
 ---
 
 # 6.4 T0 — SSoT Validator（scaffold 唯一治理任务）

@@ -2,6 +2,7 @@
 module_id: KE-3580
 title: 4.1 Step 1：产出物核验
 category: governance
+ttl: permanent
 ---
 
 # 4.1 Step 1：产出物核验

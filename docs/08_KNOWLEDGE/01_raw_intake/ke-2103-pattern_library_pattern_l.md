@@ -3,6 +3,7 @@ module_id: KE-2012---pattern-l-000
 status: active
 title: 3. Pattern Library — pattern_library.py (§2.3)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Pattern Library — pattern_library.py (§2.3)

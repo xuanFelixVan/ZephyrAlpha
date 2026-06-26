@@ -3,6 +3,7 @@ module_id: KE-534
 status: active
 title: 8.4 幂等设计 — 资金安全一级红线
 category: documentation
+ttl: permanent
 ---
 
 # 8.4 幂等设计 — 资金安全一级红线

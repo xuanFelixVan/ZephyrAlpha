@@ -3,6 +3,7 @@ module_id: KE-1141
 status: active
 title: IFC-004：cross_layer_contracts.yaml 为契约注册表
 category: governance
+ttl: permanent
 ---
 
 # IFC-004：cross_layer_contracts.yaml 为契约注册表

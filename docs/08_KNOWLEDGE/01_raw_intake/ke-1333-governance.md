@@ -3,6 +3,7 @@ module_id: KE-1245
 status: active
 title: 四步执行流程
 category: governance
+ttl: permanent
 ---
 
 # 四步执行流程

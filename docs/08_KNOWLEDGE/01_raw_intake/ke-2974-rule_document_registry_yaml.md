@@ -3,6 +3,7 @@ module_id: KE-2874
 status: active
 title: rule_document_registry.yaml
 category: module_blueprint
+ttl: permanent
 ---
 
 # rule_document_registry.yaml

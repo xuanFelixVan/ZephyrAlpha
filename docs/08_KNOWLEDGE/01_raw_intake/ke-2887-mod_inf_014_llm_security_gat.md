@@ -3,6 +3,7 @@ module_id: KE-2787---llm-security-gat-000
 status: active
 title: MOD-INF-014 — LLM Security Gateway 任务卡索引
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-INF-014 — LLM Security Gateway 任务卡索引

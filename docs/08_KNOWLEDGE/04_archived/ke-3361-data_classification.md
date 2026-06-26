@@ -2,6 +2,7 @@
 module_id: KE-3240
 title: 3. Data Classification / 数据分类（三维）
 category: documentation
+ttl: permanent
 ---
 
 # 3. Data Classification / 数据分类（三维）

@@ -3,6 +3,7 @@ module_id: KE-1140
 status: active
 title: IFC-003：语义化版本兼容性
 category: governance
+ttl: permanent
 ---
 
 # IFC-003：语义化版本兼容性

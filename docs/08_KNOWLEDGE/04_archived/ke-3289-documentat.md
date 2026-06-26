@@ -2,6 +2,7 @@
 module_id: KE-3177
 title: 11. 通用回滚方案
 category: documentation
+ttl: permanent
 ---
 
 # 11. 通用回滚方案

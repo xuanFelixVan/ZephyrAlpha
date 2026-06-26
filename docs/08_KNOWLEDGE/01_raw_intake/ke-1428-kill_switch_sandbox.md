@@ -2,6 +2,7 @@
 module_id: KE-1338---sandbox-v2-0-000
 title: 10. Kill Switch + Sandbox（v2.0.0 新增）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10. Kill Switch + Sandbox（v2.0.0 新增）

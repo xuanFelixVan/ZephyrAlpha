@@ -3,6 +3,7 @@ module_id: KE-2749
 status: active
 title: === Golden Test 自举悖论 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === Golden Test 自举悖论 ===

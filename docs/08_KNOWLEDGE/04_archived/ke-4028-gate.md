@@ -2,6 +2,7 @@
 module_id: KE-3875
 title: 13.2 Gate 级别硬合规
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.2 Gate 级别硬合规

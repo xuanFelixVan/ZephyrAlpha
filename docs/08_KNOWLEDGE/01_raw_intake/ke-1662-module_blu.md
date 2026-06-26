@@ -3,6 +3,7 @@ module_id: KE-1572
 status: active
 title: 17.2 门禁组合逻辑
 category: module_blueprint
+ttl: permanent
 ---
 
 # 17.2 门禁组合逻辑

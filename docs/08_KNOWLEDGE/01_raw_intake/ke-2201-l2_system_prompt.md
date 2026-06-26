@@ -3,6 +3,7 @@ module_id: KE-2108
 status: active
 title: 3.3 L2 System Prompt 隔离格式
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 L2 System Prompt 隔离格式

@@ -3,6 +3,7 @@ module_id: KE-2455----moduleoutput-000
 status: active
 title: 8个专用 ModuleOutput 子类
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8个专用 ModuleOutput 子类

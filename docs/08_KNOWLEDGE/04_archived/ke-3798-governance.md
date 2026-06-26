@@ -2,6 +2,7 @@
 module_id: KE-3647
 title: ABS-003：超常规事件必须触发即时报告
 category: governance
+ttl: permanent
 ---
 
 # ABS-003：超常规事件必须触发即时报告

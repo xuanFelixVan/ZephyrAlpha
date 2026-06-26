@@ -3,6 +3,7 @@ module_id: KE-001
 status: active
 title: 1. 项目根目录
 category: agent_instruction
+ttl: permanent
 ---
 
 # 1. 项目根目录

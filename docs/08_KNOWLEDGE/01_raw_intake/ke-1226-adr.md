@@ -3,6 +3,7 @@ module_id: KE-1139---------adr-002
 status: active
 title: IFC-002：接口变更必须走 ADR
 category: governance
+ttl: permanent
 ---
 
 # IFC-002：接口变更必须走 ADR

@@ -3,6 +3,7 @@ module_id: KE-1952----------owner-003
 status: active
 title: 2.9 硬中断协议 —— Owner的最终控制权
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.9 硬中断协议 —— Owner的最终控制权

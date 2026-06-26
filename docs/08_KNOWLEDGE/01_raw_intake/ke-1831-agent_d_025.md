@@ -3,6 +3,7 @@ module_id: KE-1740---agent------------d-025--005
 status: active
 title: 2.19 多 Agent 辩论/审议协议（决策 D-025-16）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.19 多 Agent 辩论/审议协议（决策 D-025-16）

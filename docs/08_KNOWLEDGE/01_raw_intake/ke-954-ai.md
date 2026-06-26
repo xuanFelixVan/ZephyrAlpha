@@ -3,6 +3,7 @@ module_id: KE-876---ai-003
 status: active
 title: §4 对 AI 的使用指引
 category: governance
+ttl: permanent
 ---
 
 # §4 对 AI 的使用指引

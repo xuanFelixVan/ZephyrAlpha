@@ -3,6 +3,7 @@ module_id: KE-2242------c-003
 status: active
 title: 4.4 触发条件 C：结构缺失
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.4 触发条件 C：结构缺失

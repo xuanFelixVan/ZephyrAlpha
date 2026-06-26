@@ -3,6 +3,7 @@ module_id: KE-849
 status: active
 title: 3. 受控枚举定义
 category: governance
+ttl: permanent
 ---
 
 # 3. 受控枚举定义

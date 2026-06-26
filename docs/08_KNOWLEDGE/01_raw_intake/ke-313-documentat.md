@@ -2,6 +2,7 @@
 module_id: KE-289
 title: 3.4 编码安全
 category: documentation
+ttl: permanent
 ---
 
 # 3.4 编码安全

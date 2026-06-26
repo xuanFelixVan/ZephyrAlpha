@@ -3,6 +3,7 @@ module_id: KE-2437--------------consequences-000
 status: active
 title: 7.3 简化后果速览（蓝图"后果（Consequences）"节）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.3 简化后果速览（蓝图"后果（Consequences）"节）

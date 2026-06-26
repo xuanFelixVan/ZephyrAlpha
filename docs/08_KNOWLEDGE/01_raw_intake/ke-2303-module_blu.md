@@ -2,6 +2,7 @@
 module_id: KE-2209
 title: 4. 输入 / 基于此设计
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. 输入 / 基于此设计

@@ -3,6 +3,7 @@ module_id: KE-1882-------critic-with-veto----006
 status: active
 title: 2.31 宪法治理与 Critic-with-veto（决策 D-025-28）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.31 宪法治理与 Critic-with-veto（决策 D-025-28）

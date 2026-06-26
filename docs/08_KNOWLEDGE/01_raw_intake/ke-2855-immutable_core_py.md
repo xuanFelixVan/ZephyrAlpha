@@ -3,6 +3,7 @@ module_id: KE-2757
 status: active
 title: immutable_core.py 新增
 category: module_blueprint
+ttl: permanent
 ---
 
 # immutable_core.py 新增

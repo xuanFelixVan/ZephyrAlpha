@@ -3,6 +3,7 @@ module_id: KE-1428
 status: active
 title: 12.2 W3C TraceContext 传播
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.2 W3C TraceContext 传播

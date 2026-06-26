@@ -3,6 +3,7 @@ module_id: KE-2153
 status: active
 title: 3.8 配置扩展
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.8 配置扩展

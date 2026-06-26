@@ -2,6 +2,7 @@
 module_id: KE-452
 title: 6.2 违反处置
 category: documentation
+ttl: permanent
 ---
 
 # 6.2 违反处置

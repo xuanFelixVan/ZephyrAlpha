@@ -2,6 +2,7 @@
 module_id: KE-1186------------rule-system-004
 title: MTH-010：规则体系架构审查原则（Rule System Architecture Review）
 category: governance
+ttl: permanent
 ---
 
 # MTH-010：规则体系架构审查原则（Rule System Architecture Review）

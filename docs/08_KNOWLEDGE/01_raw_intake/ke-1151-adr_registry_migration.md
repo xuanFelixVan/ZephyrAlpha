@@ -4,6 +4,7 @@ status: active
 title: Ke Governance Adr Registry Migration 000
 module_id: KE-1066---
 
+ttl: permanent
 ---
 ke_id: KE-governance-adr_registry_migration-000
 title: "L3 架构决策记录（ADR 迁移 · R72 三层模型）"

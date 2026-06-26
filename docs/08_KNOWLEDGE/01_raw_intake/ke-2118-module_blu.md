@@ -3,6 +3,7 @@ module_id: KE-2026------6-000
 status: active
 title: §3.1 覆盖范围（6 项）
 category: module_blueprint
+ttl: permanent
 ---
 
 # §3.1 覆盖范围（6 项）

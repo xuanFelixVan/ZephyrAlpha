@@ -3,6 +3,7 @@ module_id: KE-2225------a-003
 status: active
 title: 4.2 触发条件 A：文件失联
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.2 触发条件 A：文件失联

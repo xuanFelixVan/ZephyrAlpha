@@ -3,6 +3,7 @@ module_id: KE-2080
 status: active
 title: 3.2 #6: AdaptiveSampler
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 #6: AdaptiveSampler

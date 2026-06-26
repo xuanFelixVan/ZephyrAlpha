@@ -3,6 +3,7 @@ module_id: KE-675
 status: active
 title: 0.2 本文档不是
 category: governance
+ttl: permanent
 ---
 
 # 0.2 本文档不是

@@ -3,6 +3,7 @@ module_id: KE-2774
 status: active
 title: LLM Security Gateway (MOD-INF-014)
 category: module_blueprint
+ttl: permanent
 ---
 
 # LLM Security Gateway (MOD-INF-014)

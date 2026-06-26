@@ -2,6 +2,7 @@
 module_id: KE-3697
 title: Informative 引用
 category: governance
+ttl: permanent
 ---
 
 # Informative 引用

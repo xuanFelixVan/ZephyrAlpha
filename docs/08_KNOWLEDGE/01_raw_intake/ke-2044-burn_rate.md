@@ -3,6 +3,7 @@ module_id: KE-1953
 status: active
 title: 2.9 Burn Rate 多窗口监控
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.9 Burn Rate 多窗口监控

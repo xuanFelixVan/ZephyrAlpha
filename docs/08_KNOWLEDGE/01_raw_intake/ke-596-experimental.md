@@ -3,6 +3,7 @@ module_id: KE-536--------experimental-000
 status: active
 title: 8A.1 服务生命周期（experimental 单机单进程）
 category: documentation
+ttl: permanent
 ---
 
 # 8A.1 服务生命周期（experimental 单机单进程）

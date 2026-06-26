@@ -2,6 +2,7 @@
 module_id: KE-471
 title: 7. AI 越权响应
 category: documentation
+ttl: permanent
 ---
 
 # 7. AI 越权响应

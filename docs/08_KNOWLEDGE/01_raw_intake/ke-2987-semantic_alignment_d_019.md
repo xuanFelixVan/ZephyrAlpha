@@ -3,6 +3,7 @@ module_id: KE-2887
 status: active
 title: Semantic Alignment (D-019-52)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Semantic Alignment (D-019-52)

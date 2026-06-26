@@ -3,6 +3,7 @@ module_id: KE-838
 status: active
 title: 20. 字段不重复声明
 category: governance
+ttl: permanent
 ---
 
 # 20. 字段不重复声明

@@ -3,6 +3,7 @@ module_id: KE-890
 status: active
 title: 4.1 通用规则
 category: governance
+ttl: permanent
 ---
 
 # 4.1 通用规则

@@ -3,6 +3,7 @@ module_id: KE-2900
 status: active
 title: 涓€銆佹娊灞夎矗浠伙紙Single Responsibility锛?
 category: module_blueprint
+ttl: permanent
 ---
 
 # 涓€銆佹娊灞夎矗浠伙紙Single Responsibility锛?

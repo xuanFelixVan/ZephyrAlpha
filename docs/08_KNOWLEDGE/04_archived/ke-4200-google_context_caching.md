@@ -2,6 +2,7 @@
 module_id: KE-4043---13-000
 title: 3. Google Context Caching (§13.2)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Google Context Caching (§13.2)

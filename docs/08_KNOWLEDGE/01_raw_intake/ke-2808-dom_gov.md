@@ -2,6 +2,7 @@
 module_id: KE-2711
 title: MOD-023 集成契约锚点
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-023 集成契约锚点

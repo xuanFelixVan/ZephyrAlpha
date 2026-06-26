@@ -3,6 +3,7 @@ module_id: KE-451
 status: active
 title: 6.2 主题策略
 category: documentation
+ttl: permanent
 ---
 
 # 6.2 主题策略

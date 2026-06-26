@@ -3,6 +3,7 @@ module_id: KE-350
 status: active
 title: 4.3 Remote 间通信三条通道
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 Remote 间通信三条通道

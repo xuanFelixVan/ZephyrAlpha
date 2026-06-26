@@ -3,6 +3,7 @@ module_id: KE-518
 status: active
 title: 8. 双轨/下沉结构（已退役）
 category: documentation
+ttl: permanent
 ---
 
 # 8. 双轨/下沉结构（已退役）

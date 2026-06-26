@@ -3,6 +3,7 @@ module_id: KE-1772
 status: active
 title: 2.2 skill_model.py 核心数据模型
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 skill_model.py 核心数据模型

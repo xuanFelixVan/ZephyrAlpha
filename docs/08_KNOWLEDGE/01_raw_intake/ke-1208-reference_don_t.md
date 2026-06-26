@@ -3,6 +3,7 @@ module_id: KE-1122-------reference--don-t-003
 status: active
 title: DOC-007：引用不复制（Reference, Don't Duplicate）
 category: governance
+ttl: permanent
 ---
 
 # DOC-007：引用不复制（Reference, Don't Duplicate）

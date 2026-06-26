@@ -3,6 +3,7 @@ module_id: KE-1013
 status: active
 title: 7.3 废弃/合并目录
 category: governance
+ttl: permanent
 ---
 
 # 7.3 废弃/合并目录

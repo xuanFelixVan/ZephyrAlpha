@@ -3,6 +3,7 @@ module_id: KE-2706
 status: active
 title: dedup_report.yaml —— 完整检测报告
 category: module_blueprint
+ttl: permanent
 ---
 
 # dedup_report.yaml —— 完整检测报告

@@ -2,6 +2,7 @@
 module_id: KE-2636
 title: D-022-30 组合性不安全防御
 category: module_blueprint
+ttl: permanent
 ---
 
 # D-022-30 组合性不安全防御

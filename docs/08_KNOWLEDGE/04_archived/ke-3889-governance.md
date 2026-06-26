@@ -2,6 +2,7 @@
 module_id: KE-3738
 title: ZephyrAlpha 治理度量标准
 category: governance
+ttl: permanent
 ---
 
 # ZephyrAlpha 治理度量标准

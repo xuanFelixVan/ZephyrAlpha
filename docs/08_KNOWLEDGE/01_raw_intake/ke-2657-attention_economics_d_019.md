@@ -3,6 +3,7 @@ module_id: KE-2562
 status: active
 title: Attention Economics (D-019-20)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Attention Economics (D-019-20)

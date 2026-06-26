@@ -2,6 +2,7 @@
 module_id: KE-3574
 title: 4. 消费者注册表
 category: governance
+ttl: permanent
 ---
 
 # 4. 消费者注册表

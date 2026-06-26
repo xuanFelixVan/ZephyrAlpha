@@ -3,6 +3,7 @@ module_id: KE-1133
 status: active
 title: 附：文件退役原则（File Retirement Principle）
 category: governance
+ttl: permanent
 ---
 
 # 附：文件退役原则（File Retirement Principle）

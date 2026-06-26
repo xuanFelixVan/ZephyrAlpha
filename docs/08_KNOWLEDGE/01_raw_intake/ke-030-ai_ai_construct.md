@@ -3,6 +3,7 @@ module_id: KE-030------ai-------ai-construct-000
 status: active
 title: 6.4 最有利于 AI 施工的选择（AI-Construction-Friendliest Selection）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.4 最有利于 AI 施工的选择（AI-Construction-Friendliest Selection）

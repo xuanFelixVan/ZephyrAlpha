@@ -3,6 +3,7 @@ module_id: KE-2803----ato-000
 status: active
 title: observation_window.yaml —— atomic_fixer.py 自动维护
 category: module_blueprint
+ttl: permanent
 ---
 
 # observation_window.yaml —— atomic_fixer.py 自动维护

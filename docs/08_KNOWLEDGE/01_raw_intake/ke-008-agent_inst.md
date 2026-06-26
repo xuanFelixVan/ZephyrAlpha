@@ -3,6 +3,7 @@ module_id: KE-008
 status: active
 title: 5.2.3 快速自检口诀
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.2.3 快速自检口诀

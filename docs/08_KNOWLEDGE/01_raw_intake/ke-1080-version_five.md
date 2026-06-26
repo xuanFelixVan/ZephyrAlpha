@@ -3,6 +3,7 @@ module_id: KE-995-----------v5-003
 status: active
 title: 7. 深度内容审计方法（V5 级验证）
 category: governance_rule
+ttl: permanent
 ---
 
 # 7. 深度内容审计方法（V5 级验证）

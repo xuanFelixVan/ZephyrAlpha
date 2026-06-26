@@ -2,6 +2,7 @@
 module_id: KE-2519
 title: 9.3 GATE-16 违规分类
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.3 GATE-16 违规分类

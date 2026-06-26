@@ -3,6 +3,7 @@ module_id: KE-293---component-dia-001
 status: active
 title: 3.5 C4 Level 3 — Component diagrams for critical layers / 关键层组件图
 category: documentation
+ttl: permanent
 ---
 
 # 3.5 C4 Level 3 — Component diagrams for critical layers / 关键层组件图

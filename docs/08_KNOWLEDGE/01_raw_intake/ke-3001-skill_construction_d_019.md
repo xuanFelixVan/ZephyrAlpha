@@ -3,6 +3,7 @@ module_id: KE-2901
 status: active
 title: Skill Construction (D-019-80)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Skill Construction (D-019-80)

@@ -3,6 +3,7 @@ module_id: KE-1182
 status: active
 title: 与 MTH-006（根源分析）的关系
 category: governance
+ttl: permanent
 ---
 
 # 与 MTH-006（根源分析）的关系

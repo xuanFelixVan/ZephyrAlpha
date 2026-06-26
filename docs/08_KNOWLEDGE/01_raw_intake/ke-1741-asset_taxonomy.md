@@ -2,6 +2,7 @@
 module_id: KE-1651--------asset-taxonomy-003
 title: 2.1 资产分类体系（Asset Taxonomy）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 资产分类体系（Asset Taxonomy）

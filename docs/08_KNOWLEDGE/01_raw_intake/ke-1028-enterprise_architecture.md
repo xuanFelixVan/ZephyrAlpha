@@ -3,6 +3,7 @@ module_id: KE-948
 status: active
 title: 5.2 `02_enterprise_architecture/`
 category: governance
+ttl: permanent
 ---
 
 # 5.2 `02_enterprise_architecture/`

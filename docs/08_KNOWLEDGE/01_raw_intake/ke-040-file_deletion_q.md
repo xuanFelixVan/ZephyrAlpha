@@ -3,6 +3,7 @@ module_id: KE-040------------file-deletion-q-006
 status: active
 title: 6.8 文件删除质量对比预检（File Deletion Quality Comparison Gate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.8 文件删除质量对比预检（File Deletion Quality Comparison Gate）

@@ -2,6 +2,7 @@
 module_id: KE-3032
 title: 6.2 Context Engine 对其他服务的调用
 category: session_log
+ttl: permanent
 ---
 
 # 6.2 Context Engine 对其他服务的调用

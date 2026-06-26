@@ -3,6 +3,7 @@ module_id: KE-831
 status: active
 title: 2.7 升级治理
 category: governance
+ttl: permanent
 ---
 
 # 2.7 升级治理

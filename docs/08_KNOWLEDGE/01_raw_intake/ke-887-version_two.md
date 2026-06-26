@@ -3,6 +3,7 @@ module_id: KE-809
 status: active
 title: 2.2 V2 自动化警告
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.2 V2 自动化警告

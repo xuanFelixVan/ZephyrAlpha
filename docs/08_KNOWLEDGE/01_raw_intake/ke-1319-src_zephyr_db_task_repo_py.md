@@ -3,6 +3,7 @@ module_id: KE-1231
 status: active
 title: src/zephyr/db/task_repo.py:447-463
 category: governance
+ttl: permanent
 ---
 
 # src/zephyr/db/task_repo.py:447-463

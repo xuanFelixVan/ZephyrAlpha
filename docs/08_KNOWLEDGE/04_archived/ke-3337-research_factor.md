@@ -2,6 +2,7 @@
 module_id: KE-3217---factor-000
 title: 2.3 Research & Factor 域（研究与因子）
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 Research & Factor 域（研究与因子）

@@ -3,6 +3,7 @@ module_id: KE-1792
 status: active
 title: 2.217 Second-Order Impact Model - second_order_impact_model.py (🆕 v0.20.0 - 盲点26
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.217 Second-Order Impact Model - second_order_impact_model.py (🆕 v0.20.0 - 盲点26

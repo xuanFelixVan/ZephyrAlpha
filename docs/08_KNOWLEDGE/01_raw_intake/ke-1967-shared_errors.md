@@ -3,6 +3,7 @@ module_id: KE-1876
 status: active
 title: 2.3 shared-errors（统一错误层次）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 shared-errors（统一错误层次）

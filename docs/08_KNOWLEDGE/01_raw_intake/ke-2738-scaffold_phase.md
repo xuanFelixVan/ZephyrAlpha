@@ -3,6 +3,7 @@ module_id: KE-2641
 status: active
 title: DB-025-0018：Scaffold Phase 施工验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0018：Scaffold Phase 施工验证

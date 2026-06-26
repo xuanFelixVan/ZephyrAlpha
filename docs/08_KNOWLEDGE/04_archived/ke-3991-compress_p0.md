@@ -2,6 +2,7 @@
 module_id: KE-3838
 title: 12.2 Compress P0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.2 Compress P0

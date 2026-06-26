@@ -3,6 +3,7 @@ module_id: KE-1502----dag-000
 status: active
 title: 14. Server 依赖 DAG
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14. Server 依赖 DAG

@@ -2,6 +2,7 @@
 module_id: KE-1975
 title: 2e. FeatureFlag 控制矩阵 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2e. FeatureFlag 控制矩阵 🆕

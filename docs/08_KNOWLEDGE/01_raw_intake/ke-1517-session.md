@@ -2,6 +2,7 @@
 module_id: KE-1427
 title: 12.2 Session 成本估算
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.2 Session 成本估算

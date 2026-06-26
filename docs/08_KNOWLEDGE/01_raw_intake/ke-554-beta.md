@@ -3,6 +3,7 @@ module_id: KE-502
 status: active
 title: 7.3 beta+ 多用户演进
 category: documentation
+ttl: permanent
 ---
 
 # 7.3 beta+ 多用户演进

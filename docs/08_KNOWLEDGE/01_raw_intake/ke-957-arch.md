@@ -2,6 +2,7 @@
 module_id: KE-879
 title: 4. ARCH 域（架构规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 4. ARCH 域（架构规则）

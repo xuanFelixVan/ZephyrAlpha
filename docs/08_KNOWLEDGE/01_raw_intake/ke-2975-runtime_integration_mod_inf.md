@@ -3,6 +3,7 @@ module_id: KE-2875---mod-inf--000
 status: active
 title: Runtime Integration — MOD-INF-002
 category: module_blueprint
+ttl: permanent
 ---
 
 # Runtime Integration — MOD-INF-002

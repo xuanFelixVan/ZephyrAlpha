@@ -980,6 +980,11 @@ class GitCommitGateway:
         ``git commit --pathspec-from-file``，避免 Windows CLI 长度限制
         (WinError 206)。
 
+        每行加 ``:(icase)`` 前缀——兼容 Windows on-disk 大小写与 git index
+        大小写不一致（如 on-disk ``mod_inf_008`` vs git index ``MOD_INF_008``）。
+        无 ``:(icase)`` 时 ``git add`` pathspec 大小写敏感，会误报
+        "pathspec did not match any file(s) known to git"。
+
         Returns:
             临时文件路径（调用方负责删除）。
         """
@@ -990,7 +995,7 @@ class GitCommitGateway:
             for abs_path in abs_files:
                 rel = os.path.relpath(abs_path, str(self.project_root))
                 rel = rel.replace("\\", "/")  # git pathspec 用正斜杠
-                f.write(f"{rel}\n")
+                f.write(f":(icase){rel}\n")
         return path
 
     def _run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:

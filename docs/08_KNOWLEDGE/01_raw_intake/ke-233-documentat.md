@@ -3,6 +3,7 @@ module_id: KE-212
 status: active
 title: 2.6 一致性约束
 category: documentation
+ttl: permanent
 ---
 
 # 2.6 一致性约束

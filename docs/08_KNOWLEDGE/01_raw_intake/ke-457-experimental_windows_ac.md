@@ -3,6 +3,7 @@ module_id: KE-412----windows-ac-003
 status: active
 title: 5.2 experimental 实现：Windows ACL + 只读挂载
 category: documentation
+ttl: permanent
 ---
 
 # 5.2 experimental 实现：Windows ACL + 只读挂载

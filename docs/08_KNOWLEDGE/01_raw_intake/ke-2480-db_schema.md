@@ -3,6 +3,7 @@ module_id: KE-2385
 status: active
 title: 6.3 DB Schema 漂移
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.3 DB Schema 漂移

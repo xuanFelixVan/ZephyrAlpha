@@ -3,6 +3,7 @@ module_id: KE-459------ant-design-000
 status: active
 title: 6.3 组件库与 Ant Design 的关系
 category: documentation
+ttl: permanent
 ---
 
 # 6.3 组件库与 Ant Design 的关系

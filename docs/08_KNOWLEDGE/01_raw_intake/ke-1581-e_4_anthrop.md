@@ -2,6 +2,7 @@
 module_id: KE-1491---------4-------anthrop-003
 title: 13.6 E. 氛围编程适配（4个）——对标 Anthropic Context Engineering + Cursor Rules
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.6 E. 氛围编程适配（4个）——对标 Anthropic Context Engineering + Cursor Rules

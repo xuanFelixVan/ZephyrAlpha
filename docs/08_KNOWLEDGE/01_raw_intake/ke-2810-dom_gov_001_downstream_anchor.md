@@ -3,6 +3,7 @@ module_id: KE-2713
 status: active
 title: MOD-023 Downstream Anchor Report
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-023 Downstream Anchor Report

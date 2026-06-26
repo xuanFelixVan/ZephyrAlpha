@@ -3,6 +3,7 @@ module_id: KE-2769
 status: active
 title: Leader Election via SQLite Lease（多节点主选举）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Leader Election via SQLite Lease（多节点主选举）

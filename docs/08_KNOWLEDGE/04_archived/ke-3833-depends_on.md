@@ -2,6 +2,7 @@
 module_id: KE-3682
 title: depends_on 结构化格式规范（新增）
 category: governance
+ttl: permanent
 ---
 
 # depends_on 结构化格式规范（新增）

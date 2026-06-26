@@ -3,6 +3,7 @@ module_id: KE-2576
 status: active
 title: ⛔ 实验管线层 — 禁止施工 · C 轨占位蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # ⛔ 实验管线层 — 禁止施工 · C 轨占位蓝图

@@ -2,6 +2,7 @@
 module_id: KE-3524
 title: 2.1 V1 自动化阻断
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.1 V1 自动化阻断

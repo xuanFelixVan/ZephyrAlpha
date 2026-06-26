@@ -2,6 +2,7 @@
 module_id: KE-3410
 title: 8.3 数据保留与销毁
 category: documentation
+ttl: permanent
 ---
 
 # 8.3 数据保留与销毁

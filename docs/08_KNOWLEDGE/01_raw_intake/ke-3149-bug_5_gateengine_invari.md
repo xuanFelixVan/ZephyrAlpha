@@ -3,6 +3,7 @@ module_id: KE-3043------invari-003
 status: active
 title: Bug #5: GateEngine 自检漏掉 invariants/ 子目录
 category: session_log
+ttl: permanent
 ---
 
 # Bug #5: GateEngine 自检漏掉 invariants/ 子目录

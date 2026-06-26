@@ -2,6 +2,7 @@
 module_id: KE-1370
 title: 10.5 降级条件速查表
 category: module_blueprint
+ttl: permanent
 ---
 
 # 10.5 降级条件速查表

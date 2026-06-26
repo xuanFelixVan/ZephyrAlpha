@@ -3,6 +3,7 @@ module_id: KE-1302
 status: active
 title: 1.1 背景
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.1 背景

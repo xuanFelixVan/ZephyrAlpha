@@ -3,6 +3,7 @@ module_id: KE-2902
 status: active
 title: Skill Package (D-019-81)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Skill Package (D-019-81)

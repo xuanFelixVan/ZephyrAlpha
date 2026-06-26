@@ -3,6 +3,7 @@ module_id: KE-1681
 status: active
 title: 2.1 trigger_monitor.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.1 trigger_monitor.py

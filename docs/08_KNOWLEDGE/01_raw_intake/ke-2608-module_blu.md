@@ -3,6 +3,7 @@ module_id: KE-2513
 status: active
 title: 9.2 核心能力
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.2 核心能力

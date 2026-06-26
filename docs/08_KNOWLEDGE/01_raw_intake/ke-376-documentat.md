@@ -3,6 +3,7 @@ module_id: KE-341
 status: active
 title: 4.3 安全编排点
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 安全编排点

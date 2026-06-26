@@ -2,6 +2,7 @@
 module_id: KE-3256
 title: 3.12 废墟文件隔离
 category: documentation
+ttl: permanent
 ---
 
 # 3.12 废墟文件隔离

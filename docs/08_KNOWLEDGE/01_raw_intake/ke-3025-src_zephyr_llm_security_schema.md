@@ -3,6 +3,7 @@ module_id: KE-2925
 status: active
 title: src/zephyr/llm-security/schemas.py
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/llm-security/schemas.py

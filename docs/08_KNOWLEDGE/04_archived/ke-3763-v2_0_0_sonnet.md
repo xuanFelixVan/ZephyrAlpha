@@ -2,6 +2,7 @@
 module_id: KE-3612--------v2-0-0------sonnet-000
 title: 6.2 完整集成映射（v2.0.0 规范，供 Sonnet 后续扩展实现）
 category: governance
+ttl: permanent
 ---
 
 # 6.2 完整集成映射（v2.0.0 规范，供 Sonnet 后续扩展实现）

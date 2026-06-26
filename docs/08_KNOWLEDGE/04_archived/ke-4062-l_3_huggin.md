@@ -2,6 +2,7 @@
 module_id: KE-3909----------3-------huggin-000
 title: 14.3 L. 嵌入模型工程化（3个）——对标 HuggingFace ONNX Production + BGE-M3 Tokenizer Limits
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14.3 L. 嵌入模型工程化（3个）——对标 HuggingFace ONNX Production + BGE-M3 Tokenizer Limits

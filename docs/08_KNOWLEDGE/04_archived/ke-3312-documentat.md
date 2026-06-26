@@ -2,6 +2,7 @@
 module_id: KE-3197
 title: 2. 事故分级
 category: documentation
+ttl: permanent
 ---
 
 # 2. 事故分级

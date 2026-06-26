@@ -3,6 +3,7 @@ module_id: KE-190
 status: active
 title: 2.3 "必须自研"的五条硬约束
 category: documentation
+ttl: permanent
 ---
 
 # 2.3 "必须自研"的五条硬约束

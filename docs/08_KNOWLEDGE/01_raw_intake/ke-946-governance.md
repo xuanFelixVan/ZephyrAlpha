@@ -3,6 +3,7 @@ module_id: KE-868
 status: active
 title: 3.4 验证不通过
 category: governance
+ttl: permanent
 ---
 
 # 3.4 验证不通过

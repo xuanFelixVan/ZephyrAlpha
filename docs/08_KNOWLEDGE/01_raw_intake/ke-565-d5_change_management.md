@@ -3,6 +3,7 @@ module_id: KE-511---change-management-004
 status: active
 title: §7 D5 — Change Management / 变更管理域
 category: documentation
+ttl: permanent
 ---
 
 # §7 D5 — Change Management / 变更管理域

@@ -3,6 +3,7 @@ module_id: KE-2775
 status: active
 title: LLM Security Gateway 蓝图
 category: module_blueprint
+ttl: permanent
 ---
 
 # LLM Security Gateway 蓝图

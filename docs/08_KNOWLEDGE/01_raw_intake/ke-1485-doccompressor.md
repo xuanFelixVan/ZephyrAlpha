@@ -3,6 +3,7 @@ module_id: KE-1395---doccompressor-000
 status: active
 title: 11.3 修改DocCompressor
 category: module_blueprint
+ttl: permanent
 ---
 
 # 11.3 修改DocCompressor

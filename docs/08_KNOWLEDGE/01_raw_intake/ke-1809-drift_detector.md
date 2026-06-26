@@ -3,6 +3,7 @@ module_id: KE-1718--------drift-detector-----002
 status: active
 title: 2.15 多实例竞态——Drift Detector 自身并发安全（决策 D-023-24）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.15 多实例竞态——Drift Detector 自身并发安全（决策 D-023-24）

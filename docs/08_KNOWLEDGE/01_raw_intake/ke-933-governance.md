@@ -3,6 +3,7 @@ module_id: KE-855
 status: active
 title: 3.1 核心原则
 category: governance
+ttl: permanent
 ---
 
 # 3.1 核心原则

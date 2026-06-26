@@ -3,6 +3,7 @@ module_id: KE-2495---recommen-003
 status: active
 title: 8.9 Skill Discovery & Recommendation Engine
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.9 Skill Discovery & Recommendation Engine

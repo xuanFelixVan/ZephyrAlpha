@@ -3,6 +3,7 @@ module_id: KE-2132
 status: active
 title: 3.5 MCP 接口
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.5 MCP 接口

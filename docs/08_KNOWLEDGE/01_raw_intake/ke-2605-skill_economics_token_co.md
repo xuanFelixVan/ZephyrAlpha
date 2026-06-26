@@ -3,6 +3,7 @@ module_id: KE-2510---token-co-003
 status: active
 title: 9.1 Skill Economics & Token Cost Accounting（决策 D-019-10）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.1 Skill Economics & Token Cost Accounting（决策 D-019-10）

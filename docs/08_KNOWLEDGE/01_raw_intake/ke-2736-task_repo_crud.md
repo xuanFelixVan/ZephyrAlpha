@@ -2,6 +2,7 @@
 module_id: KE-2639-----000
 title: DB-025-0016：task_repo CRUD 接口契约实现——§4 Python 代码块落地验证
 category: module_blueprint
+ttl: permanent
 ---
 
 # DB-025-0016：task_repo CRUD 接口契约实现——§4 Python 代码块落地验证

@@ -2,6 +2,7 @@
 module_id: KE-1278------lines-48-52-000
 title: §1 域定位 (lines 48-52)
 category: module_blueprint
+ttl: permanent
 ---
 
 # §1 域定位 (lines 48-52)

@@ -2,6 +2,7 @@
 module_id: KE-3138
 title: 5.2.4 关键方法论文件速查
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.2.4 关键方法论文件速查

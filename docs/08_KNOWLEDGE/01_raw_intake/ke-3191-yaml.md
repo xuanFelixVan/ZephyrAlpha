@@ -3,6 +3,7 @@ module_id: KE-3085
 status: active
 title: 七、与 YAML 规则的对应
 category: session_log
+ttl: permanent
 ---
 
 # 七、与 YAML 规则的对应

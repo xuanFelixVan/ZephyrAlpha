@@ -3,6 +3,7 @@ module_id: KE-2468---evaluation-000
 status: active
 title: 8.1 Skill Testing & Evaluation Framework（决策 D-019-06）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.1 Skill Testing & Evaluation Framework（决策 D-019-06）

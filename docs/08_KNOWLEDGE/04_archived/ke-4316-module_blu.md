@@ -2,6 +2,7 @@
 module_id: KE-4157
 title: 6. 决策记录
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 决策记录

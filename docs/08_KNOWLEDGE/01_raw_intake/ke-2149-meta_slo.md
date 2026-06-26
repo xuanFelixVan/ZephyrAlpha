@@ -3,6 +3,7 @@ module_id: KE-2057
 status: active
 title: 3.12 #50: Meta-SLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.12 #50: Meta-SLO

@@ -3,6 +3,7 @@ module_id: KE-564
 status: active
 title: 附录 A：14 层架构对标证据
 category: documentation
+ttl: permanent
 ---
 
 # 附录 A：14 层架构对标证据

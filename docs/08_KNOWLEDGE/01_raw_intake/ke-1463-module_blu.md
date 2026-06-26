@@ -3,6 +3,7 @@ module_id: KE-1373------7-000
 status: active
 title: 最终判定 — [✓] 100% 覆盖（第7轮——全量归零确认·无残留）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 最终判定 — [✓] 100% 覆盖（第7轮——全量归零确认·无残留）

@@ -3,6 +3,7 @@ module_id: KE-2212------src-zephyr-kb-000
 status: active
 title: 4.1 代码层（`src/zephyr/kb/`）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 代码层（`src/zephyr/kb/`）

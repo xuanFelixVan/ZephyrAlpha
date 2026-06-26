@@ -3,6 +3,7 @@ module_id: KE-2003
 status: active
 title: 3. Four-Layer Structured Injection (§5.4 INJECT-C00)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. Four-Layer Structured Injection (§5.4 INJECT-C00)

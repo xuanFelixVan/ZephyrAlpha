@@ -3,6 +3,7 @@ module_id: KE-1165--------spine-and-wings-006
 status: active
 title: 一、LPC 双轨架构总则（Spine-and-Wings）
 category: governance
+ttl: permanent
 ---
 
 # 一、LPC 双轨架构总则（Spine-and-Wings）

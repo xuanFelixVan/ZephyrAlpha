@@ -3,6 +3,7 @@ module_id: KE-896
 status: active
 title: 4.1 module_id 即地址
 category: governance
+ttl: permanent
 ---
 
 # 4.1 module_id 即地址

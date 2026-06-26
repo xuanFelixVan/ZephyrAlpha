@@ -3,6 +3,7 @@ module_id: KE-2116
 status: active
 title: 3. 九子系统
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. 九子系统

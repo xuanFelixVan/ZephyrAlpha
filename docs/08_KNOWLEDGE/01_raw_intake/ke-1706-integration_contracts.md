@@ -2,6 +2,7 @@
 module_id: KE-1616
 title: 2. Integration Contracts
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. Integration Contracts

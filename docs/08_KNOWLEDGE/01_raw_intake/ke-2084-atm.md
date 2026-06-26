@@ -3,6 +3,7 @@ module_id: KE-1993
 status: active
 title: 3. ATM v2.0 原子事务管理器
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. ATM v2.0 原子事务管理器

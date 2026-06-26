@@ -3,6 +3,7 @@ module_id: KE-2777
 status: active
 title: LoadShedder（负载脱落）
 category: module_blueprint
+ttl: permanent
 ---
 
 # LoadShedder（负载脱落）

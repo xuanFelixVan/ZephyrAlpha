@@ -2,6 +2,7 @@
 module_id: KE-779
 title: 2.1 状态定义
 category: governance_rule
+ttl: permanent
 ---
 
 # 2.1 状态定义

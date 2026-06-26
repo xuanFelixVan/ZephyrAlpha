@@ -2,6 +2,7 @@
 module_id: KE-4192
 title: 7. 深度硬规则（蓝图隐含约束）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7. 深度硬规则（蓝图隐含约束）

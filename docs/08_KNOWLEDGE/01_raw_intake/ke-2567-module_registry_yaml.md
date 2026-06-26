@@ -3,6 +3,7 @@ module_id: KE-2472------000
 status: active
 title: 8.2 `module-registry.yaml` 扩展（SHOULD）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8.2 `module-registry.yaml` 扩展（SHOULD）

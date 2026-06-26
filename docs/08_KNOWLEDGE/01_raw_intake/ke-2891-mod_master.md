@@ -3,6 +3,7 @@ module_id: KE-2791
 status: active
 title: MOD-MASTER-001 跨系统集成契约注册中心
 category: module_blueprint
+ttl: permanent
 ---
 
 # MOD-MASTER-001 跨系统集成契约注册中心

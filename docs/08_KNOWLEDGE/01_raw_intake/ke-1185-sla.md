@@ -2,6 +2,7 @@
 module_id: KE-1099------------sla-000
 title: COND-001：超时配置必须与数据源 SLA 对齐
 category: governance
+ttl: permanent
 ---
 
 # COND-001：超时配置必须与数据源 SLA 对齐

@@ -2,6 +2,7 @@
 module_id: KE-4021------7-001
 title: §27 源码文件（7行）
 category: module_blueprint
+ttl: permanent
 ---
 
 # §27 源码文件（7行）

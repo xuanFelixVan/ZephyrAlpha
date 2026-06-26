@@ -2,6 +2,7 @@
 module_id: KE-404----tech-radar--------archi-001
 title: 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml
 category: documentation
+ttl: permanent
 ---
 
 # 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml

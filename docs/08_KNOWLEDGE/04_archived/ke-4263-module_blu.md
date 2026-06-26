@@ -2,6 +2,7 @@
 module_id: KE-4104
 title: 4.1 源码文件
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.1 源码文件

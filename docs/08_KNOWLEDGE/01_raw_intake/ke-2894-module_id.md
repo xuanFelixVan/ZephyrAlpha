@@ -3,6 +3,7 @@ module_id: KE-2794
 status: active
 title: 模块调用时不需要手动传 module_id
 category: module_blueprint
+ttl: permanent
 ---
 
 # 模块调用时不需要手动传 module_id

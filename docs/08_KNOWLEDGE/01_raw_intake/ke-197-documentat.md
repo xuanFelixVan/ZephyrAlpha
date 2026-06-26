@@ -3,6 +3,7 @@ module_id: KE-177
 status: active
 title: 2.2 域间信任流
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 域间信任流

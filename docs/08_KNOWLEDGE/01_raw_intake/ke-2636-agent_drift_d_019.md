@@ -3,6 +3,7 @@ module_id: KE-2541
 status: active
 title: Agent Drift (D-019-54)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Agent Drift (D-019-54)

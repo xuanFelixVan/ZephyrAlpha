@@ -3,6 +3,7 @@ module_id: KE-1409----phase-5-001
 status: active
 title: 12. MCP Gateway 架构（Phase 5）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12. MCP Gateway 架构（Phase 5）

@@ -2,6 +2,7 @@
 module_id: KE-548
 title: 9.1 激活档位表
 category: documentation
+ttl: permanent
 ---
 
 # 9.1 激活档位表

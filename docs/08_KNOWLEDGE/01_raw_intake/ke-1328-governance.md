@@ -3,6 +3,7 @@ module_id: KE-1240
 status: active
 title: 目录创建模板
 category: governance
+ttl: permanent
 ---
 
 # 目录创建模板

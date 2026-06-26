@@ -3,6 +3,7 @@ module_id: KE-1778--------------d-025--003
 status: active
 title: 2.20 Agent 经济与资源分配协议（决策 D-025-17）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.20 Agent 经济与资源分配协议（决策 D-025-17）

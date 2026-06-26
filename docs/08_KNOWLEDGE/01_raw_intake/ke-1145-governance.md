@@ -2,6 +2,7 @@
 module_id: KE-1060
 title: ACS-002：禁止共享账号
 category: governance
+ttl: permanent
 ---
 
 # ACS-002：禁止共享账号

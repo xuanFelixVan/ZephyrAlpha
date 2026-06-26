@@ -3,6 +3,7 @@ module_id: KE-2977
 status: active
 title: 命名空间策略
 category: module_blueprint
+ttl: permanent
 ---
 
 # 命名空间策略

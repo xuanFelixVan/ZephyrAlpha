@@ -3,6 +3,7 @@ module_id: KE-1881--------2026---004
 status: active
 title: 2.30 Vibe Coding 深度优化 — 2026 版（决策 D-025-27）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.30 Vibe Coding 深度优化 — 2026 版（决策 D-025-27）

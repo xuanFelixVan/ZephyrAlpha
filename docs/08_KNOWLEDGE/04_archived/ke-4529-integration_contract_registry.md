@@ -2,6 +2,7 @@
 module_id: KE-4364
 title: 二、集成契约登记表（Integration Contract Registry）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 二、集成契约登记表（Integration Contract Registry）

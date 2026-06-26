@@ -3,6 +3,7 @@ module_id: KE-1937
 status: active
 title: 2.7 容量预测模型集成
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.7 容量预测模型集成

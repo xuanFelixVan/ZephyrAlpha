@@ -3,6 +3,7 @@ module_id: KE-2721
 status: active
 title: Emergency Trading Kill Switch（紧急交易停止）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Emergency Trading Kill Switch（紧急交易停止）

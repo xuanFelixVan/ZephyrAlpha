@@ -3,6 +3,7 @@ module_id: KE-021----------enum-auto-deriva-006
 status: active
 title: 6.13 枚举自动派生铁律（Enum Auto-Derivation Mandate）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.13 枚举自动派生铁律（Enum Auto-Derivation Mandate）

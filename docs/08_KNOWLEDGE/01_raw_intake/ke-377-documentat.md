@@ -3,6 +3,7 @@ module_id: KE-342
 status: active
 title: 4.3 争议术语
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 争议术语

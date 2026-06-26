@@ -2,6 +2,7 @@
 module_id: KE-4232
 title: 9. 渐进路线
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9. 渐进路线

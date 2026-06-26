@@ -2,6 +2,7 @@
 module_id: KE-794
 title: 2.2 优先级定义
 category: governance
+ttl: permanent
 ---
 
 # 2.2 优先级定义

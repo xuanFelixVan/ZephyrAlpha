@@ -3,6 +3,7 @@ module_id: KE-1736-----------agent-000
 status: active
 title: 2.18 Agent 创建权与权限遗传——Agent 派生/复制的权限衰减继承（决策 D-018-16）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.18 Agent 创建权与权限遗传——Agent 派生/复制的权限衰减继承（决策 D-018-16）

@@ -3,6 +3,7 @@ module_id: KE-853
 status: active
 title: §3 依赖关系速览
 category: governance
+ttl: permanent
 ---
 
 # §3 依赖关系速览

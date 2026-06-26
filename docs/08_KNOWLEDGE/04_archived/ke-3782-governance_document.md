@@ -2,6 +2,7 @@
 module_id: KE-3631
 title: 8.2 governance/document/ 文件夹
 category: governance_rule
+ttl: permanent
 ---
 
 # 8.2 governance/document/ 文件夹

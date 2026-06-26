@@ -2,6 +2,7 @@
 module_id: KE-2015
 title: 3. script-manifest.yaml 注册
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. script-manifest.yaml 注册

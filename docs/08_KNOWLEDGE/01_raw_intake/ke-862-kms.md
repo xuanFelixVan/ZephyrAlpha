@@ -3,6 +3,7 @@ module_id: KE-784
 status: active
 title: 2.1 KMS 知识管道时间轴
 category: governance
+ttl: permanent
 ---
 
 # 2.1 KMS 知识管道时间轴

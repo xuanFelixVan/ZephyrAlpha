@@ -3,6 +3,7 @@ module_id: KE-2197------b167-000
 status: active
 title: 4. Lock TTL 过期机制（B167）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4. Lock TTL 过期机制（B167）

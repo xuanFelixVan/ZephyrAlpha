@@ -3,6 +3,7 @@ module_id: KE-136
 status: active
 title: 12.4 成本重建触发
 category: documentation
+ttl: permanent
 ---
 
 # 12.4 成本重建触发

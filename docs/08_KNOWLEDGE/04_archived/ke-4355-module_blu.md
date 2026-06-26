@@ -2,6 +2,7 @@
 module_id: KE-4194
 title: 7.1 指令格式要求
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.1 指令格式要求

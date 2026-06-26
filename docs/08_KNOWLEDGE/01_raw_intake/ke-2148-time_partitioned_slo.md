@@ -3,6 +3,7 @@ module_id: KE-2056
 status: active
 title: 3.12 #29: TimePartitionedSLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.12 #29: TimePartitionedSLO

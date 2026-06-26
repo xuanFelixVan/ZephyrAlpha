@@ -2,6 +2,7 @@
 module_id: KE-3371
 title: 6.4 图表引擎策略
 category: documentation
+ttl: permanent
 ---
 
 # 6.4 图表引擎策略

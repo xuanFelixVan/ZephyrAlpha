@@ -3,6 +3,7 @@ module_id: KE-426
 status: active
 title: 5. `scripts/` — Governance code topology / 治理代码拓扑
 category: documentation
+ttl: permanent
 ---
 
 # 5. `scripts/` — Governance code topology / 治理代码拓扑

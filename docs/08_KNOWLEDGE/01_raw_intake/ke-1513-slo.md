@@ -2,6 +2,7 @@
 module_id: KE-1423-----slo-000
 title: 12.2 冷启动 SLO
 category: module_blueprint
+ttl: permanent
 ---
 
 # 12.2 冷启动 SLO

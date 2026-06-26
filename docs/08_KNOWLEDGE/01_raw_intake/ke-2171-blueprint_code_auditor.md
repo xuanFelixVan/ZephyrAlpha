@@ -3,6 +3,7 @@ module_id: KE-2079
 status: active
 title: 3.2 #56: BlueprintCodeAuditor (M-43)
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 #56: BlueprintCodeAuditor (M-43)

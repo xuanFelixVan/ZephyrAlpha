@@ -2,6 +2,7 @@
 module_id: KE-3142
 title: 6.6.5 生成文件豁免
 category: agent_instruction
+ttl: permanent
 ---
 
 # 6.6.5 生成文件豁免

@@ -2,6 +2,7 @@
 module_id: KE-3535
 title: 2.2 Architecture Decision Record (ADR) — v2.0.0 铁律
 category: governance
+ttl: permanent
 ---
 
 # 2.2 Architecture Decision Record (ADR) — v2.0.0 铁律

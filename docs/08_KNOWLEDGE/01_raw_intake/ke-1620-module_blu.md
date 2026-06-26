@@ -3,6 +3,7 @@ module_id: KE-1530
 status: active
 title: 15.1 自举五阶（从最坏情况逐步恢复）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.1 自举五阶（从最坏情况逐步恢复）

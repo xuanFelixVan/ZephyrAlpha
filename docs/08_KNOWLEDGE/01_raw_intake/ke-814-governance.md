@@ -2,6 +2,7 @@
 module_id: KE-737
 title: 14. 跨标准字段交叉引用
 category: governance
+ttl: permanent
 ---
 
 # 14. 跨标准字段交叉引用

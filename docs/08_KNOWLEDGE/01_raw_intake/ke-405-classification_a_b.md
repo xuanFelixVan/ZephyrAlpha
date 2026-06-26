@@ -3,6 +3,7 @@ module_id: KE-369---a-------b-002
 status: active
 title: 4.6 classification：域 A（文档）与域 B（任务）分层
 category: documentation
+ttl: permanent
 ---
 
 # 4.6 classification：域 A（文档）与域 B（任务）分层

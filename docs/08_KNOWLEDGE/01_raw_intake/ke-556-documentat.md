@@ -3,6 +3,7 @@ module_id: KE-504
 status: active
 title: 7.4 版本化与回滚
 category: documentation
+ttl: permanent
 ---
 
 # 7.4 版本化与回滚

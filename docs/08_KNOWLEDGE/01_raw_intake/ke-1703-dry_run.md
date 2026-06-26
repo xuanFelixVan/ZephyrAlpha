@@ -3,6 +3,7 @@ module_id: KE-1613
 status: active
 title: 2. dry_run 产出的关键信息
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2. dry_run 产出的关键信息

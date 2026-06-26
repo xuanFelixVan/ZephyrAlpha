@@ -3,6 +3,7 @@ module_id: KE-1121------read-before-modif-003
 status: active
 title: DOC-006：先读后改（Read-Before-Modify）
 category: governance
+ttl: permanent
 ---
 
 # DOC-006：先读后改（Read-Before-Modify）

@@ -3,6 +3,7 @@ module_id: KE-1767----wal-002
 status: active
 title: 2.2 R1 缓解：WAL 模式 + 写缓冲
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 R1 缓解：WAL 模式 + 写缓冲

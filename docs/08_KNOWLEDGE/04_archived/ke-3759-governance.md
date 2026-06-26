@@ -2,6 +2,7 @@
 module_id: KE-3608
 title: 6.1 脚本功能
 category: governance
+ttl: permanent
 ---
 
 # 6.1 脚本功能

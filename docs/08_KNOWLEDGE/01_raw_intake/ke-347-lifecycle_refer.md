@@ -3,6 +3,7 @@ module_id: KE-314----------lifecycle-refer-005
 status: active
 title: 4.1.1 生命周期引用约束（Lifecycle Reference Constraint）——2026-05-02 新增
 category: documentation
+ttl: permanent
 ---
 
 # 4.1.1 生命周期引用约束（Lifecycle Reference Constraint）——2026-05-02 新增

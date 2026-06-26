@@ -3,6 +3,7 @@ module_id: KE-3081
 status: active
 title: 决策背景
 category: session_log
+ttl: permanent
 ---
 
 # 决策背景

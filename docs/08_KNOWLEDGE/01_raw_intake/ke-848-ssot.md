@@ -3,6 +3,7 @@ module_id: KE-770
 status: active
 title: 2. SSoT 声明
 category: governance
+ttl: permanent
 ---
 
 # 2. SSoT 声明

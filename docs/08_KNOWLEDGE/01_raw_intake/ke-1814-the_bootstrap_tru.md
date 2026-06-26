@@ -3,6 +3,7 @@ module_id: KE-1723---------the-bootstrap-tru-003
 status: active
 title: 2.16 信任锚初始化——The Bootstrap Trust Problem（决策 D-020-44）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.16 信任锚初始化——The Bootstrap Trust Problem（决策 D-020-44）

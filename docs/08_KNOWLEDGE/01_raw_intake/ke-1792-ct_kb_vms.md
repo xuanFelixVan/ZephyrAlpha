@@ -3,6 +3,7 @@ module_id: KE-1701
 status: active
 title: 2.12 CT-KB-VMS-001：知识库 → 向量记忆 — 知识条目向量化存储
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.12 CT-KB-VMS-001：知识库 → 向量记忆 — 知识条目向量化存储

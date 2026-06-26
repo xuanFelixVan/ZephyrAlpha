@@ -3,6 +3,7 @@ module_id: KE-2367
 status: active
 title: 6.13 混沌工程——主动漂移注入
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6.13 混沌工程——主动漂移注入

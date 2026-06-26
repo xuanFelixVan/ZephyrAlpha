@@ -3,6 +3,7 @@ module_id: KE-1755------------d-02-001
 status: active
 title: 2.2 Agent Card 与能力注册模型（决策 D-025-02）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.2 Agent Card 与能力注册模型（决策 D-025-02）

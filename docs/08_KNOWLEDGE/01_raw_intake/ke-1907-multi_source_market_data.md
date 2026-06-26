@@ -3,6 +3,7 @@ module_id: KE-1816
 status: active
 title: 2.235 Multi-Source Market Data Divergence Detector - market_data_divergence.py (
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.235 Multi-Source Market Data Divergence Detector - market_data_divergence.py (

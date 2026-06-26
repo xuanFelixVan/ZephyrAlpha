@@ -3,6 +3,7 @@ module_id: KE-043---------------root-cause-f-000
 status: active
 title: 7.2 根源分析优先——治根不治标（Root Cause First）
 category: agent_instruction
+ttl: permanent
 ---
 
 # 7.2 根源分析优先——治根不治标（Root Cause First）

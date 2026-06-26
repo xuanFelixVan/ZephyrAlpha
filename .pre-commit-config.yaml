@@ -27,9 +27,10 @@
 #     依赖: 权限注册表完成三轮审计
 #     当前违规数: 待扫描确认
 #
-#   GATE-15 (Frontmatter ttl)    → ✅ 已转硬阻断（commit 阶段增量校验）
+#   GATE-15 (Frontmatter ttl)    → ✅ 已转硬阻断（commit 阶段增量校验 + 全量审计）
 #     依赖: ttl_vocabulary.yaml decision_tree 二元判定树
-#     当前违规数: 0（5137 files 全量扫描通过）
+#     当前违规数: 0（5144 files 全量扫描通过，阶段2 回填 4815 文件后归零）
+#     全量审计: python scripts/governance/d3_metadata/check_frontmatter_metadata.py --all-files
 #
 #   GATE-16 (架构合规)          → 目标 2026-Q3 转硬阻断
 #     依赖: architecture_contract.yaml 全覆盖验证
@@ -252,6 +253,8 @@ repos:
       # 校验范围：docs/ 下所有 .md 文件（有 frontmatter 的文档）
       # 校验内容：ttl 字段存在 + ttl 值合法（2 种合法值从 ttl_vocabulary.yaml 动态加载）
       # 模式：增量校验（pass_filenames=true，只校验本次 commit 的 .md）；AI 创建无 ttl 文档时 commit 被阻断
+      # 全量审计：python scripts/governance/d3_metadata/check_frontmatter_metadata.py --all-files
+      # Gateway 等效校验：GitCommitGateway 内置 GATE-15 等效检查（弥补 --no-verify 副作用）
       - id: gate-15-frontmatter-metadata
         name: "GATE-15: Frontmatter ttl 校验（增量）"
         entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
@@ -260,7 +263,7 @@ repos:
         pass_filenames: true
         always_run: false
         files: "^docs/.*\\.md$"
-        description: "Frontmatter ttl 字段校验（ttl 必填 + 合法值，从 ttl_vocabulary.yaml 动态加载；二元判定树见同文件 decision_tree）"
+        description: "Frontmatter ttl 字段校验（ttl 必填 + 合法值，从 ttl_vocabulary.yaml 动态加载；二元判定树见同文件 decision_tree；全量审计用 --all-files）"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml

@@ -2,6 +2,7 @@
 module_id: KE-2844
 title: Phase 4：运维自动化
 category: module_blueprint
+ttl: permanent
 ---
 
 # Phase 4：运维自动化

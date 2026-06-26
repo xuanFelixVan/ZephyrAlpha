@@ -3,6 +3,7 @@ module_id: KE-1328
 status: active
 title: 1.4 设计背景
 category: module_blueprint
+ttl: permanent
 ---
 
 # 1.4 设计背景

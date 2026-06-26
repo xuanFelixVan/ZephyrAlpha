@@ -2,6 +2,7 @@
 module_id: KE-4058
 title: 3.3 十八维检测矩阵
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.3 十八维检测矩阵

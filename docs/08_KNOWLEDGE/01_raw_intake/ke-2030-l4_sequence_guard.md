@@ -3,6 +3,7 @@ module_id: KE-1939---sequence-guard--------005
 status: active
 title: 2.7 L4 — Sequence Guard 序列护栏（决策 D-018-09，**最关键的盲点补丁**）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.7 L4 — Sequence Guard 序列护栏（决策 D-018-09，**最关键的盲点补丁**）

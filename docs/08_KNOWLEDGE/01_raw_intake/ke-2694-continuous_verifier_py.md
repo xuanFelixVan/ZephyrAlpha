@@ -3,6 +3,7 @@ module_id: KE-2597---------000
 status: active
 title: continuous_verifier.py — 新增文件（横切面D组件）
 category: module_blueprint
+ttl: permanent
 ---
 
 # continuous_verifier.py — 新增文件（横切面D组件）

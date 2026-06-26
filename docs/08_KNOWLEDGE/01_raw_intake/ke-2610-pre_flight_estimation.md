@@ -3,6 +3,7 @@ module_id: KE-2515
 status: active
 title: 9.2 Pre-flight Estimation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 9.2 Pre-flight Estimation

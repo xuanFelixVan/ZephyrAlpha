@@ -3,6 +3,7 @@ module_id: KE-2586---pipeline-000
 status: active
 title: CI Hook：检测Pipeline蓝图变更→自动触发联动文件同步检查
 category: module_blueprint
+ttl: permanent
 ---
 
 # CI Hook：检测Pipeline蓝图变更→自动触发联动文件同步检查

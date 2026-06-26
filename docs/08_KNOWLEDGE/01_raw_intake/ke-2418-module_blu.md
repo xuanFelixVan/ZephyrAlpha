@@ -3,6 +3,7 @@ module_id: KE-2323
 status: active
 title: 5.6 产出物命名规范
 category: module_blueprint
+ttl: permanent
 ---
 
 # 5.6 产出物命名规范

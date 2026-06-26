@@ -3,6 +3,7 @@ module_id: KE-2959
 status: active
 title: === TOCTOU 原子化 ===
 category: module_blueprint
+ttl: permanent
 ---
 
 # === TOCTOU 原子化 ===

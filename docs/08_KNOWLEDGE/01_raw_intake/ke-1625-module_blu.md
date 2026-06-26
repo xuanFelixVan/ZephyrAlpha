@@ -3,6 +3,7 @@ module_id: KE-1535
 status: active
 title: 15.2 自举触发器（不需要人决定）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15.2 自举触发器（不需要人决定）

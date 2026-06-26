@@ -3,6 +3,7 @@ module_id: KE-013---handoff-protocol-md-003
 status: active
 title: 5.3.4 与 handoff-protocol.md 的关系
 category: agent_instruction
+ttl: permanent
 ---
 
 # 5.3.4 与 handoff-protocol.md 的关系

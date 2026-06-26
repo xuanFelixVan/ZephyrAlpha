@@ -3,6 +3,7 @@ module_id: KE-329
 status: active
 title: 4. Cross-domain core data flow / 跨域核心数据流
 category: documentation
+ttl: permanent
 ---
 
 # 4. Cross-domain core data flow / 跨域核心数据流

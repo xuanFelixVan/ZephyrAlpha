@@ -3,6 +3,7 @@ module_id: KE-2432
 status: active
 title: 7.2 核心防御机制
 category: module_blueprint
+ttl: permanent
 ---
 
 # 7.2 核心防御机制

@@ -2,6 +2,7 @@
 module_id: KE-3643
 title: 附录 A：与既有文档的对应关系
 category: governance
+ttl: permanent
 ---
 
 # 附录 A：与既有文档的对应关系

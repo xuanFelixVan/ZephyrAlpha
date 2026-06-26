@@ -3,6 +3,7 @@ module_id: KE-495----5-004
 status: active
 title: 7.2 Review 流程（5 步）
 category: documentation
+ttl: permanent
 ---
 
 # 7.2 Review 流程（5 步）

@@ -3,6 +3,7 @@ module_id: KE-532
 status: active
 title: 8.3 未来可能的扩展视图（不在本批次）
 category: documentation
+ttl: permanent
 ---
 
 # 8.3 未来可能的扩展视图（不在本批次）

@@ -2,6 +2,7 @@
 module_id: KE-3145
 title: 0.3 适用读者
 category: documentation
+ttl: permanent
 ---
 
 # 0.3 适用读者

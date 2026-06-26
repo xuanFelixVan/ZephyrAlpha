@@ -3,6 +3,7 @@ module_id: KE-2747
 status: active
 title: 回滚/撤销系统蓝图 — Git-native Checkpoint + 自动回滚 + 元认知回滚框架 + 运维治理持续性 + 对抗性AI安全
 category: module_blueprint
+ttl: permanent
 ---
 
 # 回滚/撤销系统蓝图 — Git-native Checkpoint + 自动回滚 + 元认知回滚框架 + 运维治理持续性 + 对抗性AI安全

@@ -2,6 +2,7 @@
 module_id: KE-220
 title: §2 Operations Domains / 运维域
 category: documentation
+ttl: permanent
 ---
 
 # §2 Operations Domains / 运维域

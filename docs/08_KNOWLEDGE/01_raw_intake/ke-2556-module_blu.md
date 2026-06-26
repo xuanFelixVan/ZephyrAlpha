@@ -2,6 +2,7 @@
 module_id: KE-2461
 title: 8. 文件落位标准
 category: module_blueprint
+ttl: permanent
 ---
 
 # 8. 文件落位标准

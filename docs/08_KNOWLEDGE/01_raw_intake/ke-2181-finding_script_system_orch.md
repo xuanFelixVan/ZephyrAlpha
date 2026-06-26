@@ -3,6 +3,7 @@ module_id: KE-2181
 status: active
 title: 3.2 Finding（Script System、Orchestrator、Gates、KB 共用）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 Finding（Script System、Orchestrator、Gates、KB 共用）

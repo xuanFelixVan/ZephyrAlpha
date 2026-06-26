@@ -3,6 +3,7 @@ module_id: KE-1200
 status: active
 title: 检查每个 Phase taskbook 必须有双门
 category: governance
+ttl: permanent
 ---
 
 # 检查每个 Phase taskbook 必须有双门

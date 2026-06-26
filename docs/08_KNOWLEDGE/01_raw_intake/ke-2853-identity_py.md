@@ -3,6 +3,7 @@ module_id: KE-2755
 status: active
 title: identity.py 中新增
 category: module_blueprint
+ttl: permanent
 ---
 
 # identity.py 中新增

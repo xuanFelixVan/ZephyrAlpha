@@ -3,6 +3,7 @@ module_id: KE-2969
 status: active
 title: Trust Tiers (D-019-82)
 category: module_blueprint
+ttl: permanent
 ---
 
 # Trust Tiers (D-019-82)

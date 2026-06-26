@@ -3,6 +3,7 @@ module_id: KE-1221-----must-002
 status: active
 title: 每日安检（每次新 session 启动时 MUST 执行）
 category: governance_rule
+ttl: permanent
 ---
 
 # 每日安检（每次新 session 启动时 MUST 执行）

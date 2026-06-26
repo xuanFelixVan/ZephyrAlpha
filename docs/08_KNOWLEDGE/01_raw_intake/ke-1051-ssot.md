@@ -3,6 +3,7 @@ module_id: KE-967
 status: active
 title: 检查项 5：SSoT 验证
 category: governance
+ttl: permanent
 ---
 
 # 检查项 5：SSoT 验证

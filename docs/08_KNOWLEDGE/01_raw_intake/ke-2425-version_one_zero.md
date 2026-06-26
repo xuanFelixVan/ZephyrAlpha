@@ -3,6 +3,7 @@ module_id: KE-2330------------v1-0-000
 status: active
 title: 6. 盲点发现与靶心设计 v1.0
 category: module_blueprint
+ttl: permanent
 ---
 
 # 6. 盲点发现与靶心设计 v1.0

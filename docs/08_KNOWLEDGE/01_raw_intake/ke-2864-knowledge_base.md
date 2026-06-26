@@ -2,6 +2,7 @@
 module_id: KE-2766
 title: Knowledge Base 模块索引
 category: module_blueprint
+ttl: permanent
 ---
 
 # Knowledge Base 模块索引

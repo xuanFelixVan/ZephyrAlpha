@@ -2,6 +2,7 @@
 module_id: KE-3729
 title: 五、违规检测规则（Stage G GATE-11 实施范围）
 category: governance
+ttl: permanent
 ---
 
 # 五、违规检测规则（Stage G GATE-11 实施范围）

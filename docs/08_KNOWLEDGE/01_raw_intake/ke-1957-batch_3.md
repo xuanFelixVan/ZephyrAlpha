@@ -3,6 +3,7 @@ module_id: KE-1866-------14-000
 status: active
 title: 2.3 Batch 3 — 集成层（14 条）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.3 Batch 3 — 集成层（14 条）

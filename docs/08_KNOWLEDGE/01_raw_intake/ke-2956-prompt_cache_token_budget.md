@@ -3,6 +3,7 @@ module_id: KE-2856---token-budget----000
 status: active
 title: Prompt Cache & Token Budget（提示缓存与Token预算）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Prompt Cache & Token Budget（提示缓存与Token预算）

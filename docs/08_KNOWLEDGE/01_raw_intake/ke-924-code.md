@@ -3,6 +3,7 @@ module_id: KE-846
 status: active
 title: 3. CODE 域（代码级强制规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 3. CODE 域（代码级强制规则）

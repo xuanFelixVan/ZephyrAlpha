@@ -2,6 +2,7 @@
 module_id: KE-3155
 title: 1.2 本标准管理以下内容
 category: documentation
+ttl: permanent
 ---
 
 # 1.2 本标准管理以下内容

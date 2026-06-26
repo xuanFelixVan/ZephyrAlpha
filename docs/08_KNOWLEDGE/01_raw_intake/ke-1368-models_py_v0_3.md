@@ -2,6 +2,7 @@
 module_id: KE-1279---models-py-v0-3-0-000
 title: 步骤 1：✅ models.py v0.3.0 升级（已完成）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 步骤 1：✅ models.py v0.3.0 升级（已完成）

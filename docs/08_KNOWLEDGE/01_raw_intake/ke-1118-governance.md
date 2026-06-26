@@ -3,6 +3,7 @@ module_id: KE-1033
 status: active
 title: 8.3 保留策略
 category: governance
+ttl: permanent
 ---
 
 # 8.3 保留策略

@@ -2,6 +2,7 @@
 module_id: KE-3665
 title: AUD-004：审计记录格式
 category: governance
+ttl: permanent
 ---
 
 # AUD-004：审计记录格式

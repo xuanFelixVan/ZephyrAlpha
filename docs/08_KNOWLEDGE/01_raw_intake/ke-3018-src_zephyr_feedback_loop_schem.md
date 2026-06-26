@@ -3,6 +3,7 @@ module_id: KE-2918
 status: active
 title: src/zephyr/feedback-loop/schemas.py (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # src/zephyr/feedback-loop/schemas.py (experimental 产出)

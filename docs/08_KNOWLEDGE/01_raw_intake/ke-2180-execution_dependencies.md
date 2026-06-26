@@ -2,6 +2,7 @@
 module_id: KE-2088
 title: 3.2 Execution Dependencies（执行依赖）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.2 Execution Dependencies（执行依赖）

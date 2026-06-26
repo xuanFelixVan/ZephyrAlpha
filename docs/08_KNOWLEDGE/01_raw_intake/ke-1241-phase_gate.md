@@ -3,6 +3,7 @@ module_id: KE-1154---5-000
 status: active
 title: IRN-005：Phase Gate（铁律5）
 category: governance
+ttl: permanent
 ---
 
 # IRN-005：Phase Gate（铁律5）

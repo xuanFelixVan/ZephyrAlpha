@@ -3,6 +3,7 @@ module_id: KE-1486
 status: active
 title: 13.5 路径索引使用指南
 category: module_blueprint
+ttl: permanent
 ---
 
 # 13.5 路径索引使用指南

@@ -2,6 +2,7 @@
 module_id: KE-4040
 title: 3. CLI Implementation
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3. CLI Implementation

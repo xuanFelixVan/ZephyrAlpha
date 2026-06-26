@@ -3,6 +3,7 @@ module_id: KE-2146
 status: active
 title: 3.7 #61: DualChannelAlertManager
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3.7 #61: DualChannelAlertManager

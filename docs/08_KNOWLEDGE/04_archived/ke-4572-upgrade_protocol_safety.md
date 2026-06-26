@@ -2,6 +2,7 @@
 module_id: KE-4407
 title: R类：升级协议的自我验证与安全生产
 category: module_blueprint
+ttl: permanent
 ---
 
 # R类：升级协议的自我验证与安全生产

@@ -3,6 +3,7 @@ module_id: KE-2965------3-005
 status: active
 title: Track C：Owner 决策画像（3 类）
 category: module_blueprint
+ttl: permanent
 ---
 
 # Track C：Owner 决策画像（3 类）

@@ -2,6 +2,7 @@
 module_id: KE-3489
 title: 12. 与相关文件联动
 category: governance_rule
+ttl: permanent
 ---
 
 # 12. 与相关文件联动

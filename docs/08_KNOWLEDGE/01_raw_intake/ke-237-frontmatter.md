@@ -3,6 +3,7 @@ module_id: KE-216
 status: active
 title: 2.7 frontmatter 模板
 category: documentation
+ttl: permanent
 ---
 
 # 2.7 frontmatter 模板

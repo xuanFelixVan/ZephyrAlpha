@@ -2,6 +2,7 @@
 module_id: KE-1051
 title: A.1 脚本覆盖交叉验证
 category: governance
+ttl: permanent
 ---
 
 # A.1 脚本覆盖交叉验证

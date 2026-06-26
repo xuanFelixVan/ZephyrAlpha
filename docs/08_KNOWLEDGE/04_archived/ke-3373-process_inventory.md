@@ -2,6 +2,7 @@
 module_id: KE-3252
 title: 3.1 Process inventory / 进程清单（单进程）
 category: documentation
+ttl: permanent
 ---
 
 # 3.1 Process inventory / 进程清单（单进程）

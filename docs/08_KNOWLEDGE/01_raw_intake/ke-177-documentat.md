@@ -2,6 +2,7 @@
 module_id: KE-159
 title: 2. 变更分级
 category: documentation
+ttl: permanent
 ---
 
 # 2. 变更分级

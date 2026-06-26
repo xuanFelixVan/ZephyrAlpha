@@ -3,6 +3,7 @@ module_id: KE-2954
 status: active
 title: Telemetry 内部实现约束
 category: module_blueprint
+ttl: permanent
 ---
 
 # Telemetry 内部实现约束

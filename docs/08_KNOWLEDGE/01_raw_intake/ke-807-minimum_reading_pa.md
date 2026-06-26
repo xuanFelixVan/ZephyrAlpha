@@ -3,6 +3,7 @@ module_id: KE-730--------minimum-reading-pa-000
 status: active
 title: 12.1 最低阅读路径（Minimum Reading Path）
 category: governance
+ttl: permanent
 ---
 
 # 12.1 最低阅读路径（Minimum Reading Path）

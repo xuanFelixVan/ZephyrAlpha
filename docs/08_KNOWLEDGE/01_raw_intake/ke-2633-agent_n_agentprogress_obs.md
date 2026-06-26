@@ -3,6 +3,7 @@ module_id: KE-2538----n---agentprogress-obs-003
 status: active
 title: 基础规则：Agent 连续 N 次 AgentProgress.observation_hash 相同 → 陷入循环
 category: module_blueprint
+ttl: permanent
 ---
 
 # 基础规则：Agent 连续 N 次 AgentProgress.observation_hash 相同 → 陷入循环

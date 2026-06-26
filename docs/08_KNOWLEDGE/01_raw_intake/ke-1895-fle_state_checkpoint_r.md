@@ -3,6 +3,7 @@ module_id: KE-1804---r-000
 status: active
 title: 2.226 FLE State Checkpoint & Rewind - fle_state_checkpoint.py (🆕 v0.21.0 - 盲点275
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.226 FLE State Checkpoint & Rewind - fle_state_checkpoint.py (🆕 v0.21.0 - 盲点275

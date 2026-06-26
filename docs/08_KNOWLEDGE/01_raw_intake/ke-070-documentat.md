@@ -3,6 +3,7 @@ module_id: KE-067
 status: active
 title: §1 目的与范围
 category: documentation
+ttl: permanent
 ---
 
 # §1 目的与范围

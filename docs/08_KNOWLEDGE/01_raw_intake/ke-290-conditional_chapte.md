@@ -2,6 +2,7 @@
 module_id: KE-268-------conditional-chapte-003
 title: 3.2.2 条件性章节（Conditional Chapters）
 category: documentation
+ttl: permanent
 ---
 
 # 3.2.2 条件性章节（Conditional Chapters）

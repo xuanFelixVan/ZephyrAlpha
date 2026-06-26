@@ -2,6 +2,7 @@
 module_id: KE-4076
 title: 3d. 配置热更新机制 🆕
 category: module_blueprint
+ttl: permanent
 ---
 
 # 3d. 配置热更新机制 🆕

@@ -3,6 +3,7 @@ module_id: KE-1794
 status: active
 title: 2.219 Edge Case Regression Testing - edge_case_regression.py (🆕 v0.20.0 - 盲点269
 category: module_blueprint
+ttl: permanent
 ---
 
 # 2.219 Edge Case Regression Testing - edge_case_regression.py (🆕 v0.20.0 - 盲点269

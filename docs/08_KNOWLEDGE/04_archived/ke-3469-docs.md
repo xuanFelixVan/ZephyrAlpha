@@ -2,6 +2,7 @@
 module_id: KE-3334
 title: 5.1 docs/ 目录结构对比
 category: documentation
+ttl: permanent
 ---
 
 # 5.1 docs/ 目录结构对比

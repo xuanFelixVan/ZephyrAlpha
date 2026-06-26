@@ -2,6 +2,7 @@
 module_id: KE-486
 title: 7.1 AI 可理解性
 category: documentation
+ttl: permanent
 ---
 
 # 7.1 AI 可理解性

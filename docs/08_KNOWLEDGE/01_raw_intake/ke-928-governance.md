@@ -3,6 +3,7 @@ module_id: KE-850
 status: active
 title: 3. 检查结果记录
 category: governance
+ttl: permanent
 ---
 
 # 3. 检查结果记录

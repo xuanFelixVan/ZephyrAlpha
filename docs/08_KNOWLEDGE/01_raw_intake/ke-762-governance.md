@@ -3,6 +3,7 @@ module_id: KE-685
 status: active
 title: 1.1 目的
 category: governance_rule
+ttl: permanent
 ---
 
 # 1.1 目的

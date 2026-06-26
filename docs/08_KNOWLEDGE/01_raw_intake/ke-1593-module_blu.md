@@ -3,6 +3,7 @@ module_id: KE-1503
 status: active
 title: 14项盲点
 category: module_blueprint
+ttl: permanent
 ---
 
 # 14项盲点

@@ -3,6 +3,7 @@ module_id: KE-1529
 status: active
 title: 15. 完整性自检清单
 category: module_blueprint
+ttl: permanent
 ---
 
 # 15. 完整性自检清单

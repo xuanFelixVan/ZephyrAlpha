@@ -2,6 +2,7 @@
 module_id: KE-3326
 title: 2.2 模块级对齐（56 个 YAML 模块 vs 代码实现）
 category: documentation
+ttl: permanent
 ---
 
 # 2.2 模块级对齐（56 个 YAML 模块 vs 代码实现）

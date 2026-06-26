@@ -3,6 +3,7 @@ module_id: KE-2233---------must-005
 status: active
 title: 4.3 蓝图文件名约定（MUST）
 category: module_blueprint
+ttl: permanent
 ---
 
 # 4.3 蓝图文件名约定（MUST）

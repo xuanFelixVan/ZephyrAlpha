@@ -3,6 +3,7 @@ module_id: KE-1582
 status: active
 title: 18.1 Shadow Mode 三级激活体系
 category: module_blueprint
+ttl: permanent
 ---
 
 # 18.1 Shadow Mode 三级激活体系

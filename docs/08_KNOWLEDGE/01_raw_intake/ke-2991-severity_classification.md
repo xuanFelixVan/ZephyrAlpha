@@ -2,6 +2,7 @@
 module_id: KE-2891
 title: Severity Classification
 category: module_blueprint
+ttl: permanent
 ---
 
 # Severity Classification

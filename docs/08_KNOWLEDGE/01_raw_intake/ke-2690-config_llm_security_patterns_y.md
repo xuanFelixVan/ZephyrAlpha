@@ -3,6 +3,7 @@ module_id: KE-2593
 status: active
 title: config/llm_security_patterns.yaml (experimental 产出)
 category: module_blueprint
+ttl: permanent
 ---
 
 # config/llm_security_patterns.yaml (experimental 产出)

@@ -2,6 +2,7 @@
 module_id: KE-1967
 title: 26.1 核心面板配置
 category: module_blueprint
+ttl: permanent
 ---
 
 # 26.1 核心面板配置
