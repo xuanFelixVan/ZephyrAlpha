@@ -126,10 +126,10 @@ class TestSchemaIntegrity:
         ver = schema_version(initialized_db)
         assert ver == len(_MIGRATIONS)
 
-    def test_schema_version_is_16(self, initialized_db):
-        # v16 是当前最新（v15 删11列 + v16 删 orphan trigger）
+    def test_schema_version_is_17(self, initialized_db):
+        # v17 是当前最新（v15 删11列 + v16 删 orphan trigger + v17 清理 stale 索引声明）
         ver = schema_version(initialized_db)
-        assert ver == 16
+        assert ver == 17
 
     def test_all_expected_tables_exist(self, initialized_db):
         tables = set(table_names(initialized_db))
@@ -178,17 +178,28 @@ class TestSchemaIntegrity:
         ghost = actual - declared
         assert not ghost, f"DB 有未声明的幽灵索引: {ghost}"
 
-    def test_stale_index_entries_known(self, initialized_db):
-        # 发现：_DDL_INDEXES 中 idx_domains_can_build 引用 v10 已删的 domains.can_build 列
-        # _run_migration 的 benign 错误处理（"no such column"）跳过了此索引创建
-        # 这是 _DDL_INDEXES 的 stale 条目，不影响功能但应清理
+    def test_stale_index_cleaned(self, initialized_db):
+        # v17 清理验证：_DDL_INDEXES 中 idx_domains_can_build stale 条目已删除
+        # 背景：domains.can_build 列在 v10 删除, 但 _DDL_INDEXES 中 idx_domains_can_build
+        # 声明未清理, init_db 执行时因 'no such column' 被 _run_migration benign 跳过.
+        # v17 通过 DROP INDEX IF EXISTS + 清理 _DDL_INDEXES 声明 完成治理.
+        # 三层一致性：真源声明 + DB 实例 + migration 版本
+
+        # 1. _DDL_INDEXES 真源中不再声明 stale 索引
+        stale_declarations = [s for s in _DDL_INDEXES if "idx_domains_can_build" in s]
+        assert not stale_declarations, f"_DDL_INDEXES 仍含 stale 条目: {stale_declarations}"
+
+        # 2. DB 中不存在此索引（v17 DROP INDEX IF EXISTS 已执行 + 全新库 v1~v17 不再创建）
         conn = sqlite3.connect(str(initialized_db))
         cursor = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_domains_can_build'"
         )
-        exists = cursor.fetchone() is not None
+        assert cursor.fetchone() is None, "idx_domains_can_build 不应存在（v17 已清理）"
+
+        # 3. v17 migration 已应用
+        cursor = conn.execute("SELECT MAX(version) FROM _schema_version")
+        assert cursor.fetchone()[0] >= 17, "v17 migration 未应用"
         conn.close()
-        assert not exists, "idx_domains_can_build 不应存在（domains.can_build 已在 v10 删除）"
 
     def test_nodes_has_no_dropped_columns(self, initialized_db):
         # v15 删除的 9 列不应存在

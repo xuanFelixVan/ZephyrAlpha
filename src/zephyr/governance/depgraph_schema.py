@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §depgraph
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §depgraph
 # [MODULE] zephyr.data.persistence.depgraph_schema
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES]
@@ -317,7 +317,6 @@ _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_edges_type         ON edges(dep_type)",
     "CREATE INDEX IF NOT EXISTS idx_edges_cross_domain ON edges(cross_domain)",
     "CREATE INDEX IF NOT EXISTS idx_domains_group      ON domains(domain_group)",
-    "CREATE INDEX IF NOT EXISTS idx_domains_can_build  ON domains(can_build)",
     "CREATE INDEX IF NOT EXISTS idx_domdeps_from       ON domain_dependencies(from_domain)",
     "CREATE INDEX IF NOT EXISTS idx_domdeps_to         ON domain_dependencies(to_domain)",
     "CREATE INDEX IF NOT EXISTS idx_arch_dir_domain    ON arch_directory_tree(domain_id)",
@@ -950,6 +949,16 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "该trigger引用dep_maturity(live列,不broken)但从未触发(全代码库无UPDATE edges SET dep_maturity).",
         [
             "DROP TRIGGER IF EXISTS chk_edges_design_immutable_update",
+        ],
+    ),
+    (
+        17,
+        "v17: Drop stale index idx_domains_can_build — _DDL_INDEXES cleanup (fix #ARCH-016 残留). "
+        "domains.can_build 列在 v10 已删除, 但 _DDL_INDEXES 中 idx_domains_can_build 声明未清理. "
+        "init_db 执行时因 'no such column' 被 _run_migration benign 跳过, DB 中实际不存在此索引. "
+        "清理 _DDL_INDEXES 声明 + DROP INDEX IF EXISTS 确保生产库与声明一致.",
+        [
+            "DROP INDEX IF EXISTS idx_domains_can_build",
         ],
     ),
 ]
