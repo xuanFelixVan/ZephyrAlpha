@@ -885,6 +885,9 @@ def _load_n16_exemptions_from_yaml() -> tuple[frozenset[str], frozenset[str], se
         for lst in (tests_raw, docs_raw, skip_raw, prefixes_raw):
             if not isinstance(lst, list) or not lst or not all(isinstance(x, str) for x in lst):
                 raise ValueError("n16_config 类型/内容不合规")
+        # skip_dir_prefixes 额外校验: 空串 "" 使 d.startswith("") 恒真 → 全剪枝 → N-16 静默失效(P1漏洞,红蓝R3)
+        if any(x == "" for x in prefixes_raw):
+            raise ValueError("n16_config.skip_dir_prefixes 含空字符串")
         return frozenset(tests_raw), frozenset(docs_raw), set(skip_raw), set(prefixes_raw)
     except Exception:
         return (
@@ -1231,6 +1234,7 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
         yaml_tests = frozenset(n16_cfg.get("exempt_names_tests", []))
         yaml_docs_extra = frozenset(n16_cfg.get("exempt_names_docs_extra", []))
         yaml_skip_dirs = set(n16_cfg.get("skip_dirs_docs", []))
+        yaml_skip_prefixes = set(n16_cfg.get("skip_dir_prefixes", []))
 
         drifts: list[str] = []
         if yaml_tests != _N16_TESTS_EXEMPT_NAMES_FALLBACK:
@@ -1244,6 +1248,10 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
         if yaml_skip_dirs != _N16_DOCS_SKIP_DIRS_FALLBACK:
             drifts.append(
                 f"skip_dirs_docs: YAML={sorted(yaml_skip_dirs)} vs fallback={sorted(_N16_DOCS_SKIP_DIRS_FALLBACK)}"
+            )
+        if yaml_skip_prefixes != _N16_SKIP_DIR_PREFIXES_FALLBACK:
+            drifts.append(
+                f"skip_dir_prefixes: YAML={sorted(yaml_skip_prefixes)} vs fallback={sorted(_N16_SKIP_DIR_PREFIXES_FALLBACK)}"
             )
         if drifts:
             return False, (

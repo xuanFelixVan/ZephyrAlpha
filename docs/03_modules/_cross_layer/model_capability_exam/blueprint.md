@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-036
-submodule_path: src/zephyr/infrastructure/model_capability_exam
+submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: src/zephyr/infrastructure/model_capability_exam/
+actual_disk_path: src/zephyr/intelligence/model_profiling/
 last_updated: "2026-05-23"
 last_verified: "2026-05-14"
 generation: 2
@@ -39,13 +39,13 @@ references:
   - {id: "MOD-INF-024", at: "§2", why: "Budget Enforcer——考试消耗Token需预算管控"}
   - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——考试LLM调用需过安全闸门"}
   - {id: "CFG-CAP-001", at: "全篇", why: "capacity_params.yaml——MCE所有并发/超时参数从该文件读取"}
-ssot_ref: "specs/model-capability-exam/spec.md"
+ssot_ref: "specs/model_capability_exam/spec.md"
 ---
 
 # Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估
 
 > module_id: MOD-INF-036 | version: 2.1.0 | status: active | layer: cross_layer
-> actual_disk_path: src/zephyr/model-capability-exam/ | generation: 2 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/intelligence/model_profiling/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
@@ -343,7 +343,7 @@ class ExamMode(str, Enum):
 
 | # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 |
 |---|-------------|---------|---------|---------|------------|
-| 1 | `@dataclass` 数据模型 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\capability_passport.py` | 同文件迁移至 Pydantic V2 | 渐进替换 | Grep 所有 import 并更新 |
+| 1 | `@dataclass` 数据模型 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\capability_passport.py` | 同文件迁移至 Pydantic V2 | 渐进替换 | Grep 所有 import 并更新 |
 
 ---
 
@@ -387,7 +387,7 @@ class ExamMode(str, Enum):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-034 (ModelProfiler) | 必须 | benchmark 基础设施、模型发现 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model-capability-exam\blueprint.md` |
+| MOD-INF-034 (ModelProfiler) | 必须 | benchmark 基础设施、模型发现 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model_capability_exam\blueprint.md` |
 | MOD-INF-009 (Pipeline) | 必须 | 考试任务调度 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-024 (BudgetEnforcer) | 可选 | Token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-005 (分布式执行) | 可选 | 并发考试调度（Phase 1） | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
@@ -453,15 +453,15 @@ class ExamMode(str, Enum):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model-capability-exam\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\` | Python 源码 |
-| 考试主控 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` | ExamOrchestrator |
-| 题库 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_test_cases.py` | ExamTestCases 27 题 |
-| 护照模型 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\capability_passport.py` | CapabilityPassport |
-| 包初始化 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\__init__.py` | 公共导出 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model_capability_exam\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\` | Python 源码 |
+| 考试主控 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` | ExamOrchestrator |
+| 题库 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_test_cases.py` | ExamTestCases 27 题 |
+| 护照模型 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\capability_passport.py` | CapabilityPassport |
+| 包初始化 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\__init__.py` | 公共导出 |
 | 任务门控 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | TaskGate（消费端） |
 | 护照数据 | `D:\ZephyrAlpha\data\brain\passports\` | JSON 护照文件 |
-| 测试代码 | `D:\ZephyrAlpha\tests\model-capability-exam\` | 测试用例（待创建） |
+| 测试代码 | `D:\ZephyrAlpha\tests\test_model_capability_exam.py` | 测试用例（待创建） |
 
 ---
 
@@ -544,25 +544,25 @@ class ExamMode(str, Enum):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §9 |
-| 产出位置 | `D:\ZephyrAlpha\tests\model-capability-exam\` |
+| 产出位置 | `D:\ZephyrAlpha\tests\test_model_capability_exam.py` |
 | 验收标准 | 覆盖率 ≥80%，所有测试通过 |
-| 验证命令 | `python -m pytest tests/model-capability-exam/ -v` |
+| 验证命令 | `python -m pytest tests/test_model_capability_exam.py -v` |
 | G7 检查项 | 测试覆盖所有 dataclass 模型 + ExamOrchestrator 各轴 + TaskGate 门控 |
 
 **创建文件清单**：
 
 | module_id | 文件名 | doc_type | 完整绝对路径 |
 |-----------|--------|----------|------------|
-| MOD-INF-036 | test_model_capability_exam.py | code | `D:\ZephyrAlpha\tests\model-capability-exam\test_model_capability_exam.py` |
+| MOD-INF-036 | test_model_capability_exam.py | code | `D:\ZephyrAlpha\tests\test_model_capability_exam.py` |
 
 #### 步骤 2：新增 ExamMode 枚举 + 增量考试
 
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.2 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` |
 | 验收标准 | ExamMode 四枚举值可用，run_incremental_exam() 可运行 |
-| 验证命令 | `python -m pytest tests/model-capability-exam/ -k exam_mode -v` |
+| 验证命令 | `python -m pytest tests/test_model_capability_exam.py -k exam_mode -v` |
 | G7 检查项 | ExamMode 枚举完整，增量考试只重考受影响轴 |
 
 #### 步骤 3：并发考试调度（Phase 1）
@@ -570,9 +570,9 @@ class ExamMode(str, Enum):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §5.2 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` |
 | 验收标准 | ThreadPoolExecutor 并发考试，上限可配 |
-| 验证命令 | `python -m pytest tests/model-capability-exam/ -k concurrent -v` |
+| 验证命令 | `python -m pytest tests/test_model_capability_exam.py -k concurrent -v` |
 | G7 检查项 | 并发上限从 capacity_params.yaml 读取，超时熔断生效 |
 
 #### 步骤 4：超时与熔断
@@ -580,9 +580,9 @@ class ExamMode(str, Enum):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §6 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` |
 | 验收标准 | 单轴超时 120s，全局超时 900s，3 次超时标记 blocked |
-| 验证命令 | `python -m pytest tests/model-capability-exam/ -k timeout -v` |
+| 验证命令 | `python -m pytest tests/test_model_capability_exam.py -k timeout -v` |
 | G7 检查项 | 超时参数从 capacity_params.yaml 读取，blocked 护照 TaskGate 拒绝 |
 
 ### 16.4 回滚方案
@@ -598,9 +598,9 @@ class ExamMode(str, Enum):
 
 | # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
-| 1 | 测试代码 | `D:\ZephyrAlpha\tests\model-capability-exam\` | ☐ | ☐ | ☐ |
-| 2 | ExamMode 枚举 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` | ✅ | ☐ | ☐ |
-| 3 | 并发调度 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` | ✅ | ☐ | ☐ |
+| 1 | 测试代码 | `D:\ZephyrAlpha\tests\test_model_capability_exam.py` | ☐ | ☐ | ☐ |
+| 2 | ExamMode 枚举 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` | ✅ | ☐ | ☐ |
+| 3 | 并发调度 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` | ✅ | ☐ | ☐ |
 
 ### 16.6 施工状态
 
@@ -806,10 +806,10 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model-capability-exam\blueprint.md` | 修改 | 升级至 v2.1.0 |
-| 2 | 考试主控 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_orchestrator.py` | 修改 | 新增 ExamMode + 并发 + 超时 |
-| 3 | 护照模型 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\capability_passport.py` | 修改 | 新增 PassportIndex |
-| 4 | 题库 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\exam_test_cases.py` | 读取 | 不变更 |
+| 1 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model_capability_exam\blueprint.md` | 修改 | 升级至 v2.1.0 |
+| 2 | 考试主控 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` | 修改 | 新增 ExamMode + 并发 + 超时 |
+| 3 | 护照模型 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\capability_passport.py` | 修改 | 新增 PassportIndex |
+| 4 | 题库 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_test_cases.py` | 读取 | 不变更 |
 | 5 | 任务门控 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | 修改 | 支持 blocked 状态 |
 | 6 | 护照数据目录 | `D:\ZephyrAlpha\data\brain\passports\` | 读取 | 不变更 |
 
@@ -834,7 +834,7 @@ STEP 3: 拆分后验证
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` | §4 接口契约 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | CapabilityPassport 数据模型 |
-| Tier 3 | `D:\ZephyrAlpha\src\zephyr\model-capability-exam\*.py` | §4 数据模型、§11 产出物路径 |
+| Tier 3 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\*.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
 

@@ -1,11 +1,11 @@
 # [A_module] module_id=MOD-INF_model_capability_exam | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
+"""[BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model_capability_exam/blueprint.md
 
-# [MODULE] zephyr.infrastructure.model_capability_exam
+# [MODULE] zephyr.intelligence.model_profiling
 
 [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐
 
-[MODIFY-GUARD] model-capability-exam/blueprint.md; model-capability-exam/__init__.py __all__
+[MODIFY-GUARD] model_capability_exam/blueprint.md; model-capability-exam/__init__.py __all__
 
 [CONSUMERS] 见蓝图 §4 接口契约
 
@@ -17,7 +17,7 @@
 
 [ERROR_CONTRACT] ExamError
 
-[TESTS] tests/model-capability-exam/
+[TESTS] tests/test_model_capability_exam.py
 
 ModelCapabilityExam — AI模型入职考试系统 (MOD-INF-036)
 

@@ -104,9 +104,9 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 8 文件 | ✅ |
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/model-profiler/` 逐文件核对 | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/intelligence/model_profiling/` 逐文件核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ✅ |
-| actual_disk_path 与 §11 一致 | 两者均为 src/zephyr/model-profiler/ | ✅ |
+| actual_disk_path 与 §11 一致 | 两者均为 src/zephyr/intelligence/model_profiling/ | ✅ |
 | __init__.py 导出符号与蓝图 §4 一致 | 读取 __init__.py __all__ | ✅ |
 
 ### §0.3 版本-代码映射
@@ -463,9 +463,9 @@ class BenchmarkCase(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model-profiler\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\model-profiler\` | Python 源码（8 文件） |
-| 测试代码 | `D:\ZephyrAlpha\tests\model-profiler\` | 测试用例 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model_profiler\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\` | Python 源码（8 文件） |
+| 测试代码 | `D:\ZephyrAlpha\tests\test_model_profiler\` | 测试用例 |
 | 评测结果 | `D:\ZephyrAlpha\data\model_profiles\` | JSONL 格式 benchmark 结果 |
 | 学习矩阵 | `D:\ZephyrAlpha\data\model_learning\` | JSON 格式 TaskModelMatrix |
 
@@ -562,7 +562,7 @@ class BenchmarkCase(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §5.2 容量估算 G-1/G-3/G-6 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\model-profiler\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\` |
 | 验收标准 | max_ollama_models=50；AsyncWriteQueue 500ms 合并；digest 变化自动重测 |
 | 验证命令 | `python -m pytest tests/test_model_profiler/ -k "async_write or digest" -v` |
 | G7 检查项 | 上游 ModuleResult 签名未变；下游 ModelRouter 加载兼容 |
@@ -571,9 +571,9 @@ class BenchmarkCase(BaseModel):
 
 | module_id | 文件名 | 完整绝对路径 |
 |-----------|--------|------------|
-| MOD-INF-034 | profiler.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\profiler.py` |
-| MOD-INF-034 | task_model_learner.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\task_model_learner.py` |
-| MOD-INF-034 | model_discovery.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\model_discovery.py` |
+| MOD-INF-034 | profiler.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\profiler.py` |
+| MOD-INF-034 | task_model_learner.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\task_model_learner.py` |
+| MOD-INF-034 | model_discovery.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\model_discovery.py` |
 
 **内容编写指引**：
 
@@ -588,7 +588,7 @@ class BenchmarkCase(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §5.2 容量估算 G-2/G-5 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\model-profiler\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\` |
 | 验收标准 | --parallel N 支持（默认 N=2，上限 4）；ProfileQueue 显存检查 |
 | 验证命令 | `python -m zephyr.model_profiler.cli benchmark --parallel 2` |
 | G7 检查项 | 并行评测不超显存；单模型超时不阻塞其他模型 |
@@ -597,8 +597,8 @@ class BenchmarkCase(BaseModel):
 
 | module_id | 文件名 | doc_type | 完整绝对路径 |
 |-----------|--------|----------|------------|
-| MOD-INF-034 | profiler.py | 修改 | `D:\ZephyrAlpha\src\zephyr\model-profiler\profiler.py` |
-| MOD-INF-034 | profile_queue.py | 新建 | `D:\ZephyrAlpha\src\zephyr\model-profiler\profile_queue.py` |
+| MOD-INF-034 | profiler.py | 修改 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\profiler.py` |
+| MOD-INF-034 | profile_queue.py | 新建 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\profile_queue.py` |
 
 **内容编写指引**：
 
@@ -612,7 +612,7 @@ class BenchmarkCase(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §5.2 容量估算 G-4/G-7 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\model-profiler\` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\` |
 | 验收标准 | TaskModelMatrix 可选 module_id 维度；record() 路径调用计数 + 延迟直方图 |
 | 验证命令 | `python -m pytest tests/test_model_profiler/ -k "module_id_partition or metrics" -v` |
 | G7 检查项 | 可选维度不破坏已有 API；metrics 不影响主流程性能 |
@@ -629,10 +629,10 @@ class BenchmarkCase(BaseModel):
 
 | # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
-| 1 | profiler.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\profiler.py` | ☐ | ☐ | ☐ |
-| 2 | task_model_learner.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\task_model_learner.py` | ☐ | ☐ | ☐ |
-| 3 | model_discovery.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\model_discovery.py` | ☐ | ☐ | ☐ |
-| 4 | profile_queue.py | `D:\ZephyrAlpha\src\zephyr\model-profiler\profile_queue.py` | ☐ | ☐ | ☐ |
+| 1 | profiler.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\profiler.py` | ☐ | ☐ | ☐ |
+| 2 | task_model_learner.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\task_model_learner.py` | ☐ | ☐ | ☐ |
+| 3 | model_discovery.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\model_discovery.py` | ☐ | ☐ | ☐ |
+| 4 | profile_queue.py | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\profile_queue.py` | ☐ | ☐ | ☐ |
 
 ### 16.6 施工状态
 
@@ -838,8 +838,8 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | model-profiler/ | `D:\ZephyrAlpha\src\zephyr\model-profiler\` | 修改 | Phase 1-3 代码变更 |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model-profiler\blueprint.md` | 修改 | 本文件 |
+| 1 | model-profiler/ | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\` | 修改 | Phase 1-3 代码变更 |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\model_profiler\blueprint.md` | 修改 | 本文件 |
 | 3 | 评测结果目录 | `D:\ZephyrAlpha\data\model_profiles\` | 读取 | benchmark 结果持久化 |
 | 4 | 学习矩阵目录 | `D:\ZephyrAlpha\data\model_learning\` | 读取 | TaskModelMatrix 持久化 |
 
@@ -943,7 +943,7 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 | Tier 1 | MOD-INF-024 ModelRouter | §4 接口契约、§10 依赖关系 |
 | Tier 1 | MOD-INF-009 PipelineOrchestrator | §4 接口契约、§12 集成点 |
 | Tier 2 | MOD-MASTER_BLUEPRINT AutoRuntimeCore | §12 集成点 |
-| Tier 3 | `src/zephyr/model-profiler/*.py` | §4 数据模型、§11 产出物路径 |
+| Tier 3 | `src/zephyr/intelligence/model_profiling/*.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
 

@@ -52,7 +52,7 @@ SUBDIR_TO_NEW_MODULE_PREFIX = {
     "capacity-assurance": "zephyr.infrastructure.capacity_assurance.",
     "health-monitor": "zephyr.infrastructure.health_monitor.",
     "model-profiler": "zephyr.intelligence.model_profiling.",
-    "model-capability-exam": "zephyr.infrastructure.model_capability_exam.",
+    "model-capability-exam": "zephyr.intelligence.model_profiling.",
     "observability": "zephyr.observability.telemetry.",
     # cicd_pipeline subdirs -> flattened into runtime_integration
     "cicd_pipeline/a2a_protocol": "zephyr.infrastructure.a2a_protocol.",
@@ -79,7 +79,7 @@ CROSS_REFS = {
     "zephyr.infrastructure.capacity_assurance.": "zephyr.infrastructure.capacity_assurance.",
     "zephyr.infrastructure.health_monitor.": "zephyr.infrastructure.health_monitor.",
     "zephyr.intelligence.model_profiling.": "zephyr.intelligence.model_profiling.",
-    "zephyr.infrastructure.model_capability_exam.": "zephyr.infrastructure.model_capability_exam.",
+    "zephyr.infrastructure.model_capability_exam.": "zephyr.intelligence.model_profiling.",
     "zephyr.observability.telemetry.": "zephyr.observability.telemetry.",
     "zephyr.infrastructure.shared_services.observability_02.": "zephyr.infrastructure.shared_services.observability_02.",
     "zephyr.infrastructure.shared_services.": "zephyr.infrastructure.shared_services.",

@@ -32,7 +32,7 @@ tests = [
     ("MOD-INF-011", "zephyr.integration.vector_memory", []),
     ("MOD-LLM_SECURITY", "zephyr.security.llm_defense.llm_security", []),
     ("MOD-INF-034", "zephyr.intelligence.model_profiling", []),
-    ("MOD-INF-036", "zephyr.infrastructure.model_capability_exam", []),
+    ("MOD-INF-036", "zephyr.intelligence.model_profiling", []),
     ("MOD-INF-018", "zephyr.security.access_control", ["PermissionGuard"]),
     ("MOD-INF-019", "zephyr.autonomy_core", []),
     ("MOD-INF-020", "zephyr.governance.audit_trail", []),

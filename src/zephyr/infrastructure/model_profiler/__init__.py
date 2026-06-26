@@ -1,8 +1,8 @@
 # [A_module] module_id=MOD-INF_model_profiler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model-profiler/blueprint.md
+# [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling
 # [INVARIANTS] 模型能力评测;能力护照;红蓝对抗评测
-# [MODIFY-GUARD] docs/03_modules/_cross_layer/model-profiler/blueprint.md;src/zephyr/model-profiler/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md;src/zephyr/intelligence/model_profiling/__init__.py
 # [CONSUMERS] MOD-INF-009;MOD-INF-036
 # [STABILITY] evolving
 # [SAFETY] M
