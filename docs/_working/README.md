@@ -49,7 +49,28 @@ AI 创建过程文件 → 默认落 docs/_working/（ttl=task_bound）
 
 AI 创建文档时，**默认放 `_working/`**，除非用户明确要求创建永久文件。
 
-## 五、AI 读取本目录文档前必须自查（防幽灵引用）
+## 五、新文档必须声明完成条件（completes_when）
+
+`_working/` 新增 `.md` 文件的 frontmatter **必须**包含 `completes_when` 字段，声明一个**可验证的完成条件**。GitCommitGateway 会在 commit 时拦截缺少该字段的新文档。
+
+**目的**：治 AI 工作文档堆积为漂移源——强制 AI 在创建文档时就想清楚"这份文档什么时候算完成可归档"，使 GATE-WORKING-DOCS reconciler 能基于此条件自动判定失效并归档，而非无限堆积。
+
+**示例**：
+
+```yaml
+---
+ttl: task_bound
+doc_type: design
+completes_when: "scripts/governance/check_xxx.py 退出码 0 且 docs/_working/ 无幽灵引用"
+---
+```
+
+**规则**：
+- `completes_when` 值为字符串，描述一个可机械验证的条件（脚本退出码、文件存在性、数据库状态等）
+- 仅检查**新增**文件（未 git 跟踪）；已跟踪文件修改不触发此校验
+- README.md 已跟踪，不受影响
+
+## 六、AI 读取本目录文档前必须自查（防幽灵引用）
 
 本目录是 task_bound 过程性文档堆积区，文档里引用的脚本路径、规则 YAML、blueprint_id 会随项目演进过时，变成"幽灵引用"。AI 读取本目录任何 .md 前，**必须**先验证文档提到的真源是否还在：
 

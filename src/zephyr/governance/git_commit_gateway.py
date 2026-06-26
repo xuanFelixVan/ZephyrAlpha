@@ -85,6 +85,7 @@ from zephyr.governance.reconciliation_registry import (
     make_working_docs_reconciler,
     make_domain_doc_reconciler,
 )
+from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
 
 logger = logging.getLogger(__name__)
 
@@ -465,6 +466,15 @@ class GitCommitGateway:
                 message=f"frontmatter ttl 校验失败: {ttl_detail}",
             )
 
+        # S6 预防层：_working/ 新 .md 必须声明 completes_when（完成条件）
+        # 治 AI 工作文档堆积：强制 AI 创建 _working/ 文档时声明可验证的完成条件
+        working_passed, working_detail = self._check_working_docs_completes_when(existing)
+        if not working_passed:
+            return CommitResult(
+                status=CommitStatus.METADATA_VIOLATION,
+                message=f"_working/ 新文档 completes_when 校验失败: {working_detail}",
+            )
+
         # 永久区晋升门禁：检测新文件进入永久区，未获批准则阻断
         if not allow_promote:
             new_permanent = self._check_permanent_zone_new_files(existing)
@@ -528,6 +538,88 @@ class GitCommitGateway:
             cwd=str(self.project_root),
         )
         return chk.returncode == 0
+
+    def _filter_gitignored(self, files: list[str]) -> list[str]:
+        """返回 ``files`` 中被 ``.gitignore`` 忽略的绝对路径子集。
+
+        用 ``git check-ignore`` 批量检测（exit 0=有忽略项，1=无）。
+        大小写不敏感比对（Windows on-disk vs git index 大小写可能不一）。
+        """
+        if not files:
+            return []
+        rels = [
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files
+        ]
+        chk = self._run_git(["git", "check-ignore", "--"] + rels)
+        # returncode 0 = 有忽略项；1 = 无忽略；其他 = 异常（视为无忽略，不阻断）
+        if chk.returncode != 0 or not chk.stdout:
+            return []
+        ignored_rels = {
+            line.strip().lower() for line in chk.stdout.splitlines() if line.strip()
+        }
+        return [f for f, rel in zip(files, rels) if rel.lower() in ignored_rels]
+
+    def _stage_gitignored_tracked(
+        self, files: list[str]
+    ) -> tuple[bool, str, list[str]]:
+        """暂存 gitignored 且已跟踪的文件，返回剩余可正常 ``git add`` 的文件列表。
+
+        根因：``git add`` 对 gitignored 路径（即使已跟踪且已删除）整批拒绝：
+        ``The following paths are ignored by one of your .gitignore files``。
+        解法：分离 gitignored 文件，按状态分别暂存——
+
+          - 已删除（不在磁盘）+ 已跟踪 → ``git rm --cached --ignore-unmatch``
+            （暂存删除；git rm 不检查 gitignore）
+          - 已修改（在磁盘）+ 已跟踪 → ``git add -f``（强制暂存修改）
+          - 未跟踪的 gitignored → 跳过（不应入库；从 normal_files 也排除）
+
+        剩余非 gitignored 文件由调用方走原 ``git add`` 逻辑。commit 的 pathspec
+        仍用完整 ``files``（含 gitignored），以便 ``git commit -- <path>`` 提交
+        上述已暂存的删除/修改（git commit pathspec 不检查 gitignore）。
+
+        Returns:
+            (success, error_message, normal_files) —— normal_files 供正常
+            ``git add`` 使用（已排除全部 gitignored 路径）。
+        """
+        ignored = self._filter_gitignored(files)
+        if not ignored:
+            return True, "", list(files)
+        ignored_set = {os.path.abspath(f) for f in ignored}
+        normal_files = [f for f in files if os.path.abspath(f) not in ignored_set]
+        # 分离已删除 vs 已存在
+        deleted: list[str] = []
+        existing: list[str] = []
+        for f in ignored:
+            (existing if os.path.isfile(f) else deleted).append(f)
+        # 已删除 + 已跟踪 → git rm --cached（暂存删除）
+        if deleted:
+            del_rels = [
+                os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                for f in deleted
+            ]
+            del_tracked = [
+                f for f, rel in zip(deleted, del_rels) if self._is_git_tracked(rel)
+            ]
+            if del_tracked:
+                r = self._run_git(
+                    ["git", "rm", "--cached", "--ignore-unmatch", "--"] + del_tracked
+                )
+                if r.returncode != 0:
+                    return False, f"git rm --cached failed: {r.stderr.strip()}", normal_files
+        # 已存在 + 已跟踪 → git add -f（强制暂存修改）
+        if existing:
+            ex_rels = [
+                os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                for f in existing
+            ]
+            ex_tracked = [
+                f for f, rel in zip(existing, ex_rels) if self._is_git_tracked(rel)
+            ]
+            if ex_tracked:
+                r = self._run_git(["git", "add", "-f", "--"] + ex_tracked)
+                if r.returncode != 0:
+                    return False, f"git add -f failed: {r.stderr.strip()}", normal_files
+        return True, "", normal_files
 
     def _check_permanent_zone_new_files(self, files: list[str]) -> list[str]:
         """检测文件列表中是否有新文件（未 git 跟踪）进入永久区。
@@ -621,6 +713,53 @@ class GitCommitGateway:
         # exit 1 = 有违规，exit 2 = 脚本异常
         detail = result.stderr.strip() or result.stdout.strip() or "unknown ttl validation error"
         return False, detail
+
+    def _check_working_docs_completes_when(self, files: list[str]) -> tuple[bool, str]:
+        """S6 预防层：检查 docs/_working/ 新 .md 文件必须含 completes_when 字段。
+
+        治 AI 工作文档堆积为漂移源：强制 AI 在创建 _working/ 文档时声明完成条件，
+        使 GATE-WORKING-DOCS reconciler 能基于此条件判定失效并自动归档。
+
+        仅检查新增文件（未 git 跟踪）——已跟踪文件不阻断（不破坏存量）。
+        README.md 已跟踪，不受影响。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        new_working_mds: list[str] = []
+        for f in files:
+            if not f.endswith(".md"):
+                continue
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if not rel.lower().startswith("docs/_working/"):
+                continue
+            # 只检查新文件（未 git 跟踪）——存量文件不阻断
+            if self._is_git_tracked(rel):
+                continue
+            new_working_mds.append(f)
+
+        if not new_working_mds:
+            return True, "no new _working/ .md files to check"
+
+        violations: list[str] = []
+        for f in new_working_mds:
+            metadata = parse_frontmatter_from_file(f)
+            if metadata is None:
+                violations.append(f"{os.path.basename(f)}: 缺少 frontmatter")
+                continue
+            completes_when = metadata.get("completes_when")
+            if not completes_when or not str(completes_when).strip():
+                violations.append(
+                    f"{os.path.basename(f)}: 缺少 completes_when 字段"
+                    "（_working/ 新文档必须声明可验证的完成条件）"
+                )
+
+        if violations:
+            return False, "; ".join(violations)
+        return True, f"completes_when validation passed ({len(new_working_mds)} new docs)"
 
     def _check_ssot_canonical(self, files: list[str]) -> tuple[bool, str]:
         """SSoT 兜底门禁（L2）：检测新增 .py 文件是否声明了已有 module_path。
@@ -762,6 +901,7 @@ class GitCommitGateway:
         stashed = False
         stash_ref = ""
         pathspec_file: str | None = None
+        add_pathspec_file: str | None = None  # 大路径专用：normal_files 的 pathspec
         result: CommitResult = CommitResult(
             status=CommitStatus.COMMIT_FAILED, message="unexpected: no result set"
         )
@@ -776,81 +916,112 @@ class GitCommitGateway:
         try:
             if use_pathspec_file:
                 # === 大文件列表流程（>50 文件）===
-                # 1. 写 pathspec 文件
-                pathspec_file = self._write_pathspec_file(files)
-
-                # 2. git add --pathspec-from-file=<file>（staged 目标文件）
-                add_result = self._run_git(
-                    ["git", "add", f"--pathspec-from-file={pathspec_file}"]
-                )
-                if add_result.returncode != 0:
-                    logger.warning(
-                        "GitCommitGateway: git add (pathspec-file) 失败: %s",
-                        add_result.stderr.strip(),
-                    )
+                # 1. 暂存 gitignored-tracked 文件，分离出 normal_files
+                #    根因：git add 对 gitignored 路径（即使已跟踪且已删除）整批拒绝：
+                #    "The following paths are ignored by one of your .gitignore files"。
+                #    解法：先 _stage_gitignored_tracked 用 git rm --cached / git add -f
+                #    暂存 gitignored 部分，剩余 normal_files 走正常 git add。
+                gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
+                if not gi_ok:
                     result = CommitResult(
                         status=CommitStatus.COMMIT_FAILED,
-                        message=f"git add failed: {add_result.stderr.strip()}",
+                        message=gi_err,
                     )
                 else:
-                    # 3. session 隔离 stash 非目标 unstaged 变更
-                    #    _stash_other_files 内部按 session held 过滤候选：
-                    #    - feature 禁用/未注册 → 回退 stash 全部非目标
-                    #      （等效原 --keep-index 语义：目标已 staged，非目标被 stash）
-                    #    - session 隔离生效 → 只 stash 当前 session held 的非目标
-                    #    - 候选为空 → 跳过 stash（其他 session WIP 留工作区）
-                    #    目标文件已通过 git add --pathspec-from-file 全量 staged，
-                    #    故 stash 非目标（显式 pathspec）不影响 staged 目标。
-                    stashed, stash_ref = self._stash_other_files(session_id, files)
-
-                    # 4. 检查 staged 变更
-                    diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
-                    if diff_result.returncode == 0:
-                        logger.info(
-                            "GitCommitGateway: files 无 staged 变更，跳过 commit"
+                    # 2. 写 commit pathspec 文件（ALL files，含 gitignored——
+                    #    git commit pathspec 不检查 gitignore，可安全提交已暂存的删除/修改）
+                    pathspec_file = self._write_pathspec_file(files)
+                    # 3. git add --pathspec-from-file=<file>（只暂存 normal_files，
+                    #    避免整批 git add 因 gitignored 路径失败）
+                    add_ok = True
+                    if normal_files:
+                        add_pathspec_file = self._write_pathspec_file(normal_files)
+                        add_result = self._run_git(
+                            ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
                         )
-                        result = CommitResult(
-                            status=CommitStatus.NOTHING_TO_COMMIT,
-                            message="no staged changes in files_in_scope",
-                        )
-                    else:
-                        # 5. git commit --no-verify -F <msg> --pathspec-from-file=<file>
-                        commit_hash, commit_err = self._commit_with_file_message(
-                            files, full_message, pathspec_file=pathspec_file
-                        )
-                        if commit_hash is None:
+                        add_ok = add_result.returncode == 0
+                        if not add_ok:
+                            logger.warning(
+                                "GitCommitGateway: git add (pathspec-file) 失败: %s",
+                                add_result.stderr.strip(),
+                            )
                             result = CommitResult(
                                 status=CommitStatus.COMMIT_FAILED,
-                                message=f"git commit failed: {commit_err}",
+                                message=f"git add failed: {add_result.stderr.strip()}",
                             )
-                        else:
-                            os.environ[_GATEWAY_ENV] = "1"
+                    # normal_files 为空（全部 gitignored）→ 跳过 git add
+                    # （gitignored 已由 _stage_gitignored_tracked 暂存）
+                    if add_ok:
+                        # 4. session 隔离 stash 非目标 unstaged 变更
+                        #    _stash_other_files 内部按 session held 过滤候选：
+                        #    - feature 禁用/未注册 → 回退 stash 全部非目标
+                        #      （等效原 --keep-index 语义：目标已 staged，非目标被 stash）
+                        #    - session 隔离生效 → 只 stash 当前 session held 的非目标
+                        #    - 候选为空 → 跳过 stash（其他 session WIP 留工作区）
+                        #    目标文件已通过 git add --pathspec-from-file 全量 staged，
+                        #    故 stash 非目标（显式 pathspec）不影响 staged 目标。
+                        stashed, stash_ref = self._stash_other_files(session_id, files)
+
+                        # 5. 检查 staged 变更
+                        diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+                        if diff_result.returncode == 0:
                             logger.info(
-                                "GitCommitGateway: commit 成功 hash=%s marker=%s "
-                                "files=%d (pathspec-file)",
-                                commit_hash, gw_marker, len(files),
+                                "GitCommitGateway: files 无 staged 变更，跳过 commit"
                             )
                             result = CommitResult(
-                                status=CommitStatus.OK,
-                                message=f"committed {len(files)} files",
-                                commit_hash=commit_hash,
+                                status=CommitStatus.NOTHING_TO_COMMIT,
+                                message="no staged changes in files_in_scope",
                             )
+                        else:
+                            # 6. git commit --no-verify -F <msg> --pathspec-from-file=<file>
+                            commit_hash, commit_err = self._commit_with_file_message(
+                                files, full_message, pathspec_file=pathspec_file
+                            )
+                            if commit_hash is None:
+                                result = CommitResult(
+                                    status=CommitStatus.COMMIT_FAILED,
+                                    message=f"git commit failed: {commit_err}",
+                                )
+                            else:
+                                os.environ[_GATEWAY_ENV] = "1"
+                                logger.info(
+                                    "GitCommitGateway: commit 成功 hash=%s marker=%s "
+                                    "files=%d (pathspec-file)",
+                                    commit_hash, gw_marker, len(files),
+                                )
+                                result = CommitResult(
+                                    status=CommitStatus.OK,
+                                    message=f"committed {len(files)} files",
+                                    commit_hash=commit_hash,
+                                )
             else:
                 # === 原流程（小文件列表 ≤50 文件）===
                 # 1. 选择性 stash 非本次 files 的已修改文件
                 stashed, stash_ref = self._stash_other_files(session_id, files)
 
-                # 2. git add -- <本次 files>
-                add_result = self._run_git(["git", "add", "--"] + files)
-                if add_result.returncode != 0:
-                    logger.warning(
-                        "GitCommitGateway: git add 失败: %s", add_result.stderr.strip()
-                    )
+                # 2. 暂存 gitignored-tracked 文件，分离出 normal_files
+                #    （gitignored-tracked 已由 _stage_gitignored_tracked 暂存；
+                #     normal_files 是非 gitignored 部分，走正常 git add）
+                add_ok = True
+                gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
+                if not gi_ok:
+                    add_ok = False
                     result = CommitResult(
                         status=CommitStatus.COMMIT_FAILED,
-                        message=f"git add failed: {add_result.stderr.strip()}",
+                        message=gi_err,
                     )
-                else:
+                if add_ok and normal_files:
+                    add_result = self._run_git(["git", "add", "--"] + normal_files)
+                    add_ok = add_result.returncode == 0
+                    if not add_ok:
+                        logger.warning(
+                            "GitCommitGateway: git add 失败: %s", add_result.stderr.strip()
+                        )
+                        result = CommitResult(
+                            status=CommitStatus.COMMIT_FAILED,
+                            message=f"git add failed: {add_result.stderr.strip()}",
+                        )
+                if add_ok:
                     # 3. 检查 files_in_scope 是否有 staged 变更
                     diff_result = self._run_git(
                         ["git", "diff", "--cached", "--quiet"] + files
@@ -954,6 +1125,12 @@ class GitCommitGateway:
             if pathspec_file:
                 try:
                     os.remove(pathspec_file)
+                except OSError:
+                    pass
+            # 清理 add_pathspec 临时文件（大路径专用：normal_files 的 pathspec）
+            if add_pathspec_file:
+                try:
+                    os.remove(add_pathspec_file)
                 except OSError:
                     pass
             # 清理环境变量标记
