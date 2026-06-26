@@ -440,6 +440,43 @@ capabilities:
       GATE-DOMAIN-DOC reconciler 在 commit depgraph.db 后自动触发
       generate_domain_doc.py 和 generate_domain_dependency_diagram.py。
 
+  # --------------------------------------------------------------------------
+  - capability_id: capability_lookup
+    aliases:
+      - CapabilityLookup
+      - check_capability_duplicates
+      - check_ssot_conflicts
+      - find_files_by_module_path
+      - capability_registry_query
+    description: >-
+      能力→真源文件反查注册表的查询 API + 扫描/派生/SSoT 门禁检测逻辑（合一）。
+      解决"AI 不知道某功能已存在、真源在哪"的信息不可达问题。提供查询 API
+      （find/get/check_file_canonical/list_ssot_conflicts）+ L2/L3 共享的 SSoT 门禁检测
+      （check_ssot_conflicts 同 module_path 硬碰撞 + check_capability_duplicates basename
+      撞 capability_id/alias）。canonical = src/zephyr/governance/capability_lookup.py
+      （basename 自动匹配 capability_id，auto 派生）。注册自指：capability_lookup 查询工具
+      注册到自己负责的索引里，消除"查询工具查不到自己"的元悖论（2d 可发现性治本）。
+      B 方案：check_capability_duplicates 所有信号皆阻断（去掉软层 advisory，软层 TP≈0）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: ssot_create_gate
+    canonical_override: scripts/governance/check_ssot_gate.py
+    aliases:
+      - check_ssot_gate
+      - GATE-SSOT
+      - ssot_gate
+      - ssot_precommit_hook
+    description: >-
+      SSoT 创建门禁 L3 pre-commit hook 双保险。检测 staged 新增 .py 文件是否违反 SSoT
+      （两层硬阻断）：硬层1 check_ssot_conflicts（同 module_path 精确碰撞）+ 硬层2
+      check_capability_duplicates（basename 撞 capability_id/alias）。GitCommitGateway.
+      _check_ssot_canonical 是主防线（gateway 用 --no-verify 绕过 pre-commit），本脚本是
+      双保险——当有人不用 GitCommitGateway 而是直接 git commit 时拦截。检测逻辑唯一真源：
+      check_capability_duplicates / check_ssot_conflicts（L2/L3 共用，避免两份实现漂移）。
+      canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，故用 canonical_override
+      显式声明。已知边界：git commit --no-verify 能绕过本 hook（git 固有设计），依赖
+      GATE-COMMIT-GW 规则约束。
+
 # ============================================================================
 # 维护日志
 # ============================================================================
@@ -471,3 +508,10 @@ capabilities:
 #   - 解决发现性：AI 搜 N-16 / 豁免清单加载器 / 文件名唯一性 可定位真源（原仅靠 AGENTS.md 文档链）
 #   - 解决防重建：check_file_canonical() 反查阻止重复创建 N-16 豁免清单加载器
 #   - 红蓝测试发现：此前 capability 反查 find("naming")/find("exemption") 全返回空，新AI可能重复造轮子
+# 2026-06-27 新增 capability_lookup + ssot_create_gate（红蓝对抗验收测试发现元悖论修复）：
+#   - capability_lookup: canonical = src/zephyr/governance/capability_lookup.py（auto 派生）
+#   - ssot_create_gate: canonical_override = scripts/governance/check_ssot_gate.py（scripts/ 不在扫描范围）
+#   - 治本（2d 可发现性）：消除"查询工具查不到自己负责的门禁"元悖论——
+#     新 AI 用 reg.find("ssot gate")/find("capability duplicate") 现在能定位真源
+#   - 治本（2c）：红蓝对抗发现 check_ssot_gate.py 漂移 bug（commit a1fffa4b 漏改，
+#     d.hard AttributeError），同步修复 + 对齐 B 方案 + 共享 CAPABILITY_DUPLICATE_FIX_HINT

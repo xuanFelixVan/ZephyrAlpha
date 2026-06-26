@@ -12,19 +12,21 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS, exit 1=BLOCK, exit 2=ERROR
 # [TESTS] tests/test_ssot_gate.py
+# [TTL] permanent
 """GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。
 
 检测 staged 新增 .py 文件是否违反 SSoT（两层硬阻断）：
   硬层 1（check_ssot_conflicts）：同 module_path 硬碰撞——[MODULE] 头字段精确匹配。
   硬层 2（check_capability_duplicates）：basename 撞 capability_id/alias →
-    conflicting duplicate（同蓝图多实现）。
+    conflicting/sibling duplicate（同能力多实现，B 方案：所有信号皆阻断）。
 
 真源是文件头部 [MODULE] 字段 + capability_lookup 派生的 duplicates 状态，
 反查通过 capability_lookup 实时扫描磁盘。
 
 L2/L3 共享检测逻辑（治本 2a）：检测核心收拢到 capability_lookup 的
 check_ssot_conflicts / check_capability_duplicates，本脚本只负责获取 staged
-新增 .py 和格式化输出。advisory（软层）由 L2 gateway 写报告，L3 只阻断 hard 信号。
+新增 .py 和格式化输出。B 方案去掉软层 advisory（软层 TP≈0 且 advisory 不阻断
+=死数据），L2/L3 行为一致——所有 check_capability_duplicates 返回的信号皆阻断。
 
 GitCommitGateway.commit() 内嵌的 _check_ssot_canonical 是主防线
 （GitCommitGateway 用 --no-verify 绕过 pre-commit）。
@@ -106,18 +108,17 @@ def main() -> int:
         print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
         return 1
 
-    # 硬层 2：能力重复（basename 撞 capability_id/alias → conflicting duplicate）
+    # 硬层 2：能力重复（basename 撞 capability_id/alias → duplicate）
     # 治本（2a 共享方法）：检测逻辑唯一真源收拢到
     # capability_lookup.check_capability_duplicates，L2 gateway 已调用同一方法。
-    # L3 只消费 hard 信号阻断；advisory 由 L2 gateway 写报告（L3 是双保险路径，保持精简）。
+    # B 方案：所有信号皆阻断（去掉软层 advisory），L3 与 L2 行为一致。
     dups = lookup.check_capability_duplicates(new_py_files)
-    hard_dups = [d for d in dups if d.hard]
-    if hard_dups:
-        print("GATE-SSOT: 能力重复——新增文件与已有能力构成同蓝图多实现:", file=sys.stderr)
-        for d in hard_dups:
+    if dups:
+        from zephyr.governance.capability_lookup import CAPABILITY_DUPLICATE_FIX_HINT
+        print("GATE-SSOT: 能力重复——新增文件与已有能力构成同能力多实现:", file=sys.stderr)
+        for d in dups:
             print(f"  {d.rel_path}: {d.detail}", file=sys.stderr)
-        print("  修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit", file=sys.stderr)
-        print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
+        print(f"  {CAPABILITY_DUPLICATE_FIX_HINT}", file=sys.stderr)
         return 1
 
     return 0
