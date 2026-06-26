@@ -108,8 +108,8 @@ ttl: permanent
 | **path_tree 管理** | arch_directory_tree（运营态） | 不碰（由 path_tree 脚本独立管理，V5.5 裁定） | ❌ 禁止，会被 path_tree 覆盖 |
 | | arch_directory_tree（设计态） | 不碰（`WHERE design_maturity='design'`） | ⚠️ 通过 sync 脚本写入（YAML 派生，如 sync_directory_registry） |
 | **脚本管理** | arch_constraints | 不碰（由audit_domain_nodes.py在生成器后写） | ⚠️ 只能通过脚本改 |
-| **P0-6 字段扩展（YAML→DB，约定保护）** | nodes（+5 字段：business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces，#165-169） | 生成器只填充运营态字段，不碰这 5 个扩展字段 | ❌ 禁止（YAML 真源，由 sync 脚本覆盖；无字段级只读触发器，依赖 sync 脚本每次运行覆盖） |
-| | edges（+3 字段：valid_since/migration_status/is_legal_cycle，#152） | 生成器只填充运营态字段，不碰这 3 个扩展字段 | ❌ 禁止（同上；migration_status 由 sync 脚本根据 YAML 迁移状态写入） |
+| **P0-6 字段扩展（YAML→DB，约定保护）** | nodes（+5 字段：business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces，#165-169；~~**v15已删此5字段**，见§迁移说明后v15裁定~~） | 生成器只填充运营态字段，不碰这 5 个扩展字段 | ❌ 禁止（YAML 真源，由 sync 脚本覆盖；无字段级只读触发器，依赖 sync 脚本每次运行覆盖） |
+| | edges（+3 字段：valid_since/migration_status/is_legal_cycle，#152；~~**migration_status v15已删**，见§迁移说明后v15裁定~~） | 生成器只填充运营态字段，不碰这 3 个扩展字段 | ❌ 禁止（同上；migration_status 由 sync 脚本根据 YAML 迁移状态写入） |
 | | domains（+1 字段：modification_permission，#156） | 生成器不碰此字段 | ❌ 禁止（同上；YAML ai_autonomy → DB modification_permission 映射） |
 | | contracts（基础字段 7 列：contract_id/name/provider_domain/consumer_domain/contract_type/schema_definition/version + P0-6 扩展 6 字段：promise/actual_consumer/fulfillment_status/gap/target_phase/last_reviewed，共 13 列） | 生成器不碰此表 | ❌ 禁止（YAML 真源，基础字段由 sync_contract_mapping_table 写入，扩展字段由 sync_declarative_contract_tracker 写入） |
 | **sync 脚本管理（P0-6 新增，YAML→DB 只读缓存）** | gates | 不碰（由sync_yaml_to_depgraph.py写入，只读触发器保护） | ❌ 禁止（只读触发器，YAML 是唯一真源） |
@@ -447,6 +447,18 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 > 迁移后：edges 用 `from_node_id`/`to_node_id`（INTEGER FK），有 `dep_maturity`；arch_directory_tree 删除 `state`，新增 `node_id`（列数不变，11→11）。
 >
 > **本文档其他章节引用上述字段时，不再重复此说明。**
+>
+> **⚠️ v15/v16 Schema 变更裁定说明（#ARCH-016 治本，2026-06）**
+>
+> V3.4 P0-1 新增的部分字段在 v15 migration 中被删除（dead column 清理），当前 schema 不再包含：
+> - `nodes.has_dynamic_import` / `nodes.in_degree` / `nodes.out_degree`（v15 删除；in/out_degree 改由生成器动态 COUNT 计算，不持久化）
+> - `nodes.business_stream` / `nodes.stream_role` / `nodes.runtime_plane` / `nodes.ddd_aggregate` / `nodes.provided_interfaces`（v15 删除；裁定#165-169 合并的字段经评估无业务读写）
+> - `nodes.implementation_ref`（v15 删除；无业务读写）
+> - `edges.migration_status`（v15 删除；无业务读写，连带删除 idx_edges_migration 索引 + chk_edges_migration_status* 触发器）
+> - `arch_directory_tree.node_id`（v15 删除；重建表模式移除 node_id FK + idx_arch_tree_node_id 索引）
+> - v16 删除 orphan trigger `chk_edges_design_immutable_update`（源码中不存在，仅 DB 实例遗留）
+>
+> v15 后 nodes 表 31 列（V3.4 后曾达 36 列，v15 删 9 dead 列回到 31，但列组成与 V3.3 的 31 列不同）。本文档上述章节（§V3.4 迁移策略、§14.7 字段清单、§20.3 裁定表、§22.9 P0-6 扩展）引用上述字段时，均为历史记录，反映 V3.4/V5 当时的 schema 状态。
 
 ### 12.4 机械判定规则（AI零歧义执行）
 
@@ -868,7 +880,7 @@ AI查询模式：
 
 **V3.3 E7 修复**：对齐数据库实际 schema（31 列）。当前 schema 没有 `from_node_id`/`to_node_id`/`has_dynamic_import`/`blueprint_id_invalid`/`blueprint_path`/`planned_path`/`cross_domain_count`/`in_degree`/`out_degree` 等字段——这些是 V3.3/V3.4 施工需新增的字段。
 
-**字段数**：当前 31 列，V3.4 后 36 列（+5 新增：1 共享 blueprint_path + 4 运营态 has_dynamic_import/blueprint_id_invalid/in_degree/out_degree）。
+**字段数**：当前 31 列，V3.4 后 36 列（+5 新增：1 共享 blueprint_path + 4 运营态 has_dynamic_import/blueprint_id_invalid/in_degree/out_degree）。~~**v15 后又回到 31 列**（删 9 dead 列：has_dynamic_import/in_degree/out_degree/business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces/implementation_ref，见§迁移说明后v15裁定）~~。
 
 **字段归属总览**（当前 31 列 = 1 主键 + 11 运营态 + 3 设计态 + 13 人工/脚本 + 3 共享）：
 
@@ -938,11 +950,11 @@ AI查询模式：
 | gate_reason | TEXT | 门禁原因 | 脚本 |
 | hard_boundary_ref | TEXT | 硬边界引用 | 人工 |
 | consumed_interfaces | TEXT | 消费接口 | 人工 |
-| implementation_ref | TEXT | 实现引用 | 人工 |
+| ~~implementation_ref（v15已删）~~ | TEXT | 实现引用 | 人工 |
 
-**字段数**：当前 31 列，V3.4 后 36 列。
+**字段数**：当前 31 列，V3.4 后 36 列。~~**v15 后 31 列**（删 9 dead 列，见§迁移说明后v15裁定）~~。
 
-**V3.4 施工需新增的字段（5 列 = 1 共享 + 4 新增）**：
+**V3.4 施工需新增的字段（5 列 = 1 共享 + 4 新增）**（~~has_dynamic_import/in_degree/out_degree v15已删；blueprint_path/blueprint_id_invalid 仍在~~，见§迁移说明后v15裁定）：
 
 | 字段 | 类型 | 含义 | 来源 | 归属 |
 |------|------|------|------|:---:|
@@ -1446,11 +1458,11 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 25 | edges 关联字段 | **from_node_id / to_node_id（INTEGER FK），不用 path**（V3.4 P0-1） | ⏳ |
 | 34 | 判定信号单一化 | **design_maturity 字段为唯一判定依据**，禁止 os.path.exists() 或 path 末尾 / | ✅ |
 | 37 | build_status 5 态 | **planned → generated → testing → stable → deprecated**（裁定#178） | ✅ |
-| 55 | 动态 import 标记 | **nodes 表加 has_dynamic_import 字段**（V3.4 新增） | ⏳ |
+| 55 | 动态 import 标记 | **nodes 表加 has_dynamic_import 字段**（V3.4 新增；~~v15已删，见§迁移说明后v15裁定~~） | ⏳ |
 | 67 | node_id 稳定性 | **node_id 改为 INTEGER PK AUTOINCREMENT，与 path 解耦**（V3.4 P0-1） | ⏳ |
 | 80 | 8 种 node_type | **module/package/script/test/config/schema/doc_template/data_template** | ✅ |
 | 82 | arch_directory_tree state | **删除 state 字段，统一用 design_maturity**（V3.4 P0-1） | ⏳ |
-| 87 | arch_layers 层级 | **清除后 7 条（L0-L6）** | ⏳ |
+| 87 | ~~arch_layers 层级~~ | **清除后 7 条（L0-L6）**（~~v14已删arch_layers表~~） | ⏳ |
 
 ### 20.4 架构全景图裁定（位置层）
 
@@ -1555,10 +1567,10 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 新建表 | `infrastructure_components` | 11 个基础设施组件 |
 | 新建表 | `model_capabilities` | 9 个 AI 模型能力 |
 | 扩展表 | `contracts` | +6 字段（promise/actual_consumer/fulfillment_status/gap/target_phase/last_reviewed） |
-| 扩展表 | `edges` | +3 字段（valid_since/migration_status/is_legal_cycle） |
+| 扩展表 | `edges` | +3 字段（valid_since/migration_status/is_legal_cycle；~~migration_status v15已删，见§迁移说明后v15裁定~~） |
 | 扩展表 | `domains` | +1 字段（modification_permission） |
 | 添加约束 | nodes | CHECK 约束（change_policy/impact_level/modification_permission 枚举校验，触发器方式实现） |
-| 添加约束 | edges | CHECK 约束（migration_status 枚举校验，触发器方式实现） |
+| 添加约束 | edges | CHECK 约束（migration_status 枚举校验，触发器方式实现；~~v15已删 migration_status + chk_触发器，见§迁移说明后v15裁定~~） |
 
 #### 减少漂移和幻觉的核心价值
 
@@ -1585,7 +1597,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | arch_directory_tree | 100% | 完全对齐 |
 | 顶层段→表映射 | 27% (6/22) | 6 段有对应表，16 段缺失（7 个计算字段无需建表，9 个业务数据建议建表） |
 
-#### 缺失字段裁定（#165-169，高优先级，影响 AI 防幻觉）
+#### 缺失字段裁定（#165-169，高优先级，影响 AI 防幻觉）（~~v15已删此5字段，见§迁移说明后v15裁定~~）
 
 | # | 缺失字段 | 所属模板段 | 裁定 | 理由 |
 |---|---------|-----------|------|------|
@@ -1619,7 +1631,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 操作 | 对象 | 说明 |
 |------|------|------|
-| 扩展表 | `nodes` | +5 字段（business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces） |
+| 扩展表 | `nodes` | +5 字段（business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces；~~v15已删，见§迁移说明后v15裁定~~） |
 | 新建表 | `hard_boundaries` | 8 条硬边界（id/category/constraint/parameters/impact） |
 | 新建表 | `business_streams` | 业务流定义（stream_id/name/goal/input/output/runtime_plane） |
 | 新建表 | `blueprint_links` | 蓝图→文件映射（blueprint_id/blueprint_path/alignment_verified） |

@@ -988,7 +988,7 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 ## RULE-SIXTEEN：depgraph 程序化访问协议
 **YAML真源**: → 参见 rules/trae_054_depgraph_access_protocol.yaml
 
-**核心**：depgraph 存储在 SQLite 数据库 `D:/ZephyrAlpha/data/databases/depgraph.db`（v4.0.0, 16张表）——禁止 AI 直接 Read/Write。必须通过提取/应用脚本操作。
+**核心**：depgraph 存储在 SQLite 数据库 `D:/ZephyrAlpha/data/databases/depgraph.db`（schema v16, 26张表含2系统表）——禁止 AI 直接 Read/Write。必须通过提取/应用脚本操作。
 
 ### Schema 变更协议（DDL-as-Code 铁律）
 
