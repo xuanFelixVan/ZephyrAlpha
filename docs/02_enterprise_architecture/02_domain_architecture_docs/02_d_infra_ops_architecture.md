@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-INFRA_OPS 基础设施运维架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,23 +13,19 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示基础设施运维（D-INFRA_OPS）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D-INFRA_OPS）的模块分布。共 46 个模块 / 46 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D-INFRA_OPS）的模块分布。共 34 个模块 / 34 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│         L0 基础设施层 / Infrastructure Layer (5 modules)         │
+│         L0 基础设施层 / Infrastructure Layer (1 modules)         │
 ├──────────────────────────────────────────────────────────────────┤
 │   基础设施运维域  [design]                                       │
-│   告警管理  [design]                                             │
-│   容量管理  [design]                                             │
-│   部署管理  [design]                                             │
-│   基础设施监控  [design]                                         │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -59,16 +55,8 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (12 modules)                │
+│                未分类 / Unclassified (4 modules)                 │
 ├──────────────────────────────────────────────────────────────────┤
-│   F15-auto-fix/  [design]                                        │
-│   F19-telemetry/  [design]                                       │
-│   F21-ide-health/  [design]                                      │
-│   F25-db-integration/  [design]                                  │
-│   F27-capacity/  [design]                                        │
-│   F33-local-model/  [design]                                     │
-│   F37-resource-opt/  [design]                                    │
-│   F9-rollback/  [design]                                         │
 │   scripts/construction/test_deepseek_api.py  [production]        │
 │   scripts/ide_health_service.py  [production]                    │
 │   src/zephyr/infra_ops/dashboard/__init__.py  [production]       │
@@ -79,17 +67,13 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 46 个模块 / 46 modules）。
+> 按 architecture_layer 分组的模块清单（共 34 个模块 / 34 modules）。
 
-### L0 基础设施层 / Infrastructure Layer (5 modules)
+### L0 基础设施层 / Infrastructure Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infra_ops/ | 基础设施运维域 | design | planned |
-| 2 | src/zephyr/infra_ops/alerting/ | 告警管理 | design | planned |
-| 3 | src/zephyr/infra_ops/capacity/ | 容量管理 | design | planned |
-| 4 | src/zephyr/infra_ops/deployment/ | 部署管理 | design | planned |
-| 5 | src/zephyr/infra_ops/monitoring/ | 基础设施监控 | design | planned |
 
 ### L1 基础层 / Foundation Layer (29 modules)
 
@@ -125,35 +109,26 @@ ttl: permanent
 | 28 | tests/test_rollback_simulator.py | tests/test_rollback_simulator.py | prototype | generated |
 | 29 | tests/test_rollback_wal.py | tests/test_rollback_wal.py | prototype | generated |
 
-### 未分类 / Unclassified (12 modules)
+### 未分类 / Unclassified (4 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | F15-auto-fix/ | F15-auto-fix/ | design | stable |
-| 2 | F19-telemetry/ | F19-telemetry/ | design | stable |
-| 3 | F21-ide-health/ | F21-ide-health/ | design | stable |
-| 4 | F25-db-integration/ | F25-db-integration/ | design | stable |
-| 5 | F27-capacity/ | F27-capacity/ | design | stable |
-| 6 | F33-local-model/ | F33-local-model/ | design | stable |
-| 7 | F37-resource-opt/ | F37-resource-opt/ | design | stable |
-| 8 | F9-rollback/ | F9-rollback/ | design | stable |
-| 9 | scripts/construction/test_deepseek_api.py | scripts/construction/test_deepseek_ap... | production | generated |
-| 10 | scripts/ide_health_service.py | scripts/ide_health_service.py | production | generated |
-| 11 | src/zephyr/infra_ops/dashboard/__init__.py | src/zephyr/infra_ops/dashboard/__init... | production | generated |
-| 12 | src/zephyr/infra_ops/dashboard/components/__init__.py | src/zephyr/infra_ops/dashboard/compon... | production | generated |
+| 1 | scripts/construction/test_deepseek_api.py | scripts/construction/test_deepseek_ap... | production | generated |
+| 2 | scripts/ide_health_service.py | scripts/ide_health_service.py | production | generated |
+| 3 | src/zephyr/infra_ops/dashboard/__init__.py | src/zephyr/infra_ops/dashboard/__init... | production | generated |
+| 4 | src/zephyr/infra_ops/dashboard/components/__init__.py | src/zephyr/infra_ops/dashboard/compon... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 11 条 / 11 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 9 条 / 9 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│       依赖关系图 / Dependency Graph (共 11 条 / 11 edges)        │
+│        依赖关系图 / Dependency Graph (共 9 条 / 9 edges)         │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 3                               │
+│   依赖类型数 / Dependency Types: 2                               │
 │   [config_depends]: 8 条 / edges                                 │
-│   [data]: 2 条 / edges                                           │
 │   [import_depends]: 1 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -168,13 +143,6 @@ ttl: permanent
 │   budget_tracker.py → __init__.py                                │
 │   drift_fix.py → __init__.py                                     │
 │   result_types.py → __init__.py                                  │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│                      [data] (2 条 / edges)                       │
-├──────────────────────────────────────────────────────────────────┤
-│    →                                                             │
-│    →                                                             │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐

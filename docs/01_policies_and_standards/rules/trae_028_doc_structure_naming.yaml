@@ -628,7 +628,7 @@ sections:
     - description: 知识库条目强制路径
       details: docs/08_knowledge/
     - description: 审计报告/状态强制路径
-      details: docs/09_audit/
+      details: docs/_working/audit/
     - description: 业务代码强制路径
       details: src/zephyr/{layer_id}/
     - description: 治理/审计脚本强制路径

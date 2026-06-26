@@ -168,7 +168,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 | `decisions` | 架构决策与合约 | **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`，`ke_id=ADR-*`）、`03_modules/_b_track_interfaces/*interface*.md` |
 | `code_context` | 代码与配置 | `src/**/*.py`、`src/**/*.yaml`、`docs/03_modules/**/*.md` |
 | `task_history` | 任务卡与执行历史 | `docs/03_modules/_domain-infra_ops/task-system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/data/persistence/task_repo.py` 持久化任务元数据（见 MOD-TASK_SYSTEM） |
-| `lessons` | 经验教训与审计 | `docs/09_audit/reports/`、`docs/09_audit/findings/` |
+| `lessons` | 经验教训与审计 | `docs/_working/audit/reports/`、`docs/_working/audit/findings/` |
 
 ### 3.2 Cascade 语义表（4 种场景）
 
@@ -579,7 +579,7 @@ vector-memory = [
 | `docs/03_modules/_b_track_interfaces/*interface*.md` | `decisions` |
 | `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
 | `docs/03_modules/_domain-infra_ops/task-system/changes/**` | `task_history` |
-| `docs/09_audit/reports/**`, `docs/09_audit/findings/**` | `lessons` |
+| `docs/_working/audit/reports/**`, `docs/_working/audit/findings/**` | `lessons` |
 | 其他 | `code_context`（保守默认） |
 
 ---

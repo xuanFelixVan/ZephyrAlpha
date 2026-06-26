@@ -30,7 +30,7 @@ solo_maintainer_optimizations:
 
     weekly_auto_summary:
       description: "每周自动生成自然语言摘要——Owner 不需要读 JSONL"
-      output: "docs/09_audit/cost_reports/weekly-{date}.md"
+      output: "docs/_working/audit/cost_reports/weekly-{date}.md"
       language: "zh"
       sections:
         - "总览：本周花了多少、比上周多还是少"

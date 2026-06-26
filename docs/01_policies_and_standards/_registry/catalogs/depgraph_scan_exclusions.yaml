@@ -69,7 +69,7 @@ depgraph:
   # 排除原因: knowledge_doc (零导入边，历史记录/知识条目非代码依赖)
   knowledge_doc_paths:
     - docs/08_knowledge/   # 知识库条目 — 无导入依赖
-    - docs/09_audit/       # 审计日志 — 历史记录，无代码依赖
+    - docs/_working/audit/       # 审计日志 — 历史记录，无代码依赖
 
   # 类型分类前缀 — 用于将 .md/.yaml/.json 文件分类为具体类型
   # 这些前缀决定了文件被分类为哪种类型(部分类型会被 excluded_node_types 过滤)
@@ -141,8 +141,8 @@ path_tree:
 # === 不纳入全景图的路径说明 ===
 # 以下路径不在 depgraph 中注册为 nodes，也不在 path_tree 中显示:
 #   - docs/08_knowledge/   — 知识库条目(4647+ 文件)，经验积累非代码，无导入依赖
-#   - docs/09_audit/       — 审计报告(36 文件)，事后评估非代码，历史记录
-#   - docs/decomposition/  — 任务卡(7 文件)，拆解产物非代码，临时性
+#   - docs/_working/audit/       — 审计报告(36 文件)，事后评估非代码，历史记录
+#   - docs/_working/decomposition/  — 任务卡(7 文件)，拆解产物非代码，临时性
 #   - data/cache/          — 运行时缓存，非代码
 #   - data/telemetry/      — 遥测数据，非代码
 #   - scripts/governance/_archive/  — 归档脚本，非活跃代码

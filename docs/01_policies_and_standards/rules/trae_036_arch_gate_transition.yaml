@@ -75,7 +75,7 @@ sections:
     - type: mandatory
       step: 评审记录必须包含：评审日期（ISO 8601 UTC）、评审人ID、变更描述、清单逐项检查结果、否决/通过决定、决定理由（ARG-005）
     - type: mandatory
-      step: 评审记录存放于 docs/09_audit/architecture-reviews/YYYY-MM-DD-变更简述.md（ARG-005）
+      step: 评审记录存放于 docs/_working/audit/architecture-reviews/YYYY-MM-DD-变更简述.md（ARG-005）
     prohibitions:
     - AI不得单独执行架构评审或代替Owner做出评审决定（ARG-004）
     - 触发条件内的变更未经架构评审不得实施（ARG-001）
@@ -121,7 +121,7 @@ sections:
     - type: mandatory
       step: exit_criteria中id格式EXIT-<stage>-<seq>，validator在machine_verifiable:true时必填
     - type: mandatory
-      step: HiL审核产出docs/09_audit/phase-N-acceptance.md，包含退出门校验结果、准入门校验结果、用户签字、日期、已知风险清单
+      step: HiL审核产出docs/_working/audit/phase-N-acceptance.md，包含退出门校验结果、准入门校验结果、用户签字、日期、已知风险清单
     - type: mandatory
       step: 校验脚本：validate_phase_exit.py --phase N / validate_phase_entry.py --phase N / validate_phase_transition.py --from N --to N+1（注：validate_phase_exit.py和validate_phase_entry.py为计划中脚本，当前由validate_phase_transition.py统一处理）
     prohibitions:
@@ -335,7 +335,7 @@ sections:
     - ARG-005
     checks:
     - step: 检查评审记录是否存在且完整
-      command: 检查 docs/09_audit/architecture-reviews/ 下对应日期文件
+      command: 检查 docs/_working/audit/architecture-reviews/ 下对应日期文件
       expected_exit: 文件存在且包含评审日期/评审人ID/变更描述/清单逐项结果/否决或通过决定/决定理由
       on_fail: 评审记录缺失或不完整，必须补充
     - step: 检查是否使用评审清单
@@ -480,7 +480,7 @@ sections:
     - order: 2
       action: 产出phase-N-acceptance.md——包含退出门校验结果/准入门校验结果/用户签字/日期/已知风险清单
       pre_condition: HiL审核节点激活
-      expected_result: 文件写入docs/09_audit/phase-N-acceptance.md
+      expected_result: 文件写入docs/_working/audit/phase-N-acceptance.md
       on_failure: 缺少必要字段
     - order: 3
       action: 一人团队不跳过HiL的4条理由——(1)签字=确认理解风险(2)签字=承诺维护责任(3)签字=审计追踪锚点(4)跳过=漂移失控的起点

@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-DATA_ENG 数据工程架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,25 +13,15 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示数据工程（D-DATA_ENG）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数据工程（D-DATA_ENG）的模块分布。共 11 个模块 / 11 modules。
+> 按 architecture_layer 分层显示 数据工程（D-DATA_ENG）的模块分布。共 7 个模块 / 7 modules。
 
 ```
 
-┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (4 modules)             │
-├──────────────────────────────────────────────────────────────────┤
-│   AkShare Data Source Adapter  [design]                          │
-│   Data Source Health Monitor  [design]                           │
-│   Smart Scheduler  [design]                                      │
-│   Market Regime Reference Data  [design]                         │
-└──────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │               L2 领域层 / Domain Layer (7 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
@@ -48,16 +38,7 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
-
-### L1 基础层 / Foundation Layer (4 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | 数据域-L0数据接入/D-DATA-67 | AkShare Data Source Adapter | design | planned |
-| 2 | 数据域-L0数据接入/D-DATA-78 | Data Source Health Monitor | design | planned |
-| 3 | 数据域-L3存储优化/D-DATA-84 | Smart Scheduler | design | planned |
-| 4 | 数据域-参考数据/D-DATA-113 | Market Regime Reference Data | design | planned |
+> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
 
 ### L2 领域层 / Domain Layer (7 modules)
 

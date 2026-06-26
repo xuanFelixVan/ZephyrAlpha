@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-PF_CORE 组合核心架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示组合核心（D-PF_CORE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合核心（D-PF_CORE）的模块分布。共 48 个模块 / 48 modules。
+> 按 architecture_layer 分层显示 组合核心（D-PF_CORE）的模块分布。共 44 个模块 / 44 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (48 modules)               │
+│              L2 领域层 / Domain Layer (44 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   A-001  [design]                                                │
 │   MS-02  [design]                                                │
@@ -43,16 +43,16 @@ ttl: permanent
 │   D-ALT-DATA-13  [design]                                        │
 │   D-ALT-DATA-15  [design]                                        │
 │   D-ALT-DATA-17  [design]                                        │
-│   ...还有 30 个模块 / 30 more modules                            │
+│   ...还有 26 个模块 / 26 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 48 个模块 / 48 modules）。
+> 按 architecture_layer 分组的模块清单（共 44 个模块 / 44 modules）。
 
-### L2 领域层 / Domain Layer (48 modules)
+### L2 领域层 / Domain Layer (44 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -100,10 +100,6 @@ ttl: permanent
 | 42 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
 | 43 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
 | 44 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
-| 45 | 另类数据域缩写，D-ALT-02=SentimentEngine | D-ALT-DATA-02 | design | planned |
-| 46 | 推理域缩写，D-ML-02=ModelRegistry→归入MS-01 | MS-01 | design | planned |
-| 47 | 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01 | MT-01 | design | planned |
-| 48 | 跨资产域缩写，D-XA=D-CROSS-ASSET(CA) | D-CROSS-ASSET-01 | design | planned |
 
 ## 依赖关系图 / Dependency Graph
 

@@ -68,14 +68,13 @@ verifiability: manual
 │   └── trae_060_inward_consolidation.yaml          ← 向内收三原则（顶层统辖）
 │
 ├── _registry/                   ← 注册表 + 验证契约（机器可读）
-│   ├── catalogs/                ← 集中注册表（24 个 YAML/MD）
-│   │   ├── registry_of_registries.yaml             ← 注册表之注册表（48 个注册表总索引）
+│   ├── catalogs/                ← 集中注册表（26 个 YAML/MD）
+│   │   ├── registry_master_index.yaml             ← 注册表总索引（自动生成）
 │   │   ├── gate_registry.yaml                      ← 门禁注册表
 │   │   ├── functional_domain_registry.yaml         ← 功能域注册表（43域）
 │   │   ├── frontmatter_field_registry.yaml         ← frontmatter 字段注册表
 │   │   ├── rule_catalog_registry.yaml              ← 规则目录注册表
-│   │   ├── project_path_tree.yaml                  ← 项目路径树
-│   │   └── ...（其余 18 个 catalog 文件）
+│   │   └── ...（其余 19 个 catalog 文件）
 │   ├── contracts/               ← 架构合规契约
 │   │   ├── architecture_contract.yaml              ← 架构合规自动验证契约
 │   │   ├── contract_mapping_table.yaml             ← 契约映射表
@@ -83,13 +82,17 @@ verifiability: manual
 │   ├── schemas/                 ← JSON Schema 定义
 │   │   ├── frontmatter_schema.json                 ← frontmatter 字段校验 Schema
 │   │   └── session_log_schema.yaml                 ← 会话日志 Schema
-│   └── vocabularies/            ← 受控词表（25 个）
+│   └── vocabularies/            ← 受控词表（29 个）
 │       ├── glossary.yaml                           ← 术语表（仲裁源）
 │       ├── terminology_mapping.yaml                ← 术语映射表
 │       ├── doc_type_vocabulary.yaml                ← 文档类型受控枚举
 │       ├── domain_vocabulary.yaml                  ← 域受控枚举
 │       ├── layer_vocabulary.yaml                   ← 层级受控枚举
 │       └── ...（其余 20 个 vocabulary 文件）
+│
+│
+├── policies/                   ← 策略文件
+│   └── parallel_session_coordination_policy.md     ← 并行 session 协调策略
 │
 └── templates/                   ← 文档模板（10 个标准模板，含 index.md）
     ├── blueprint_construction_template.md          ← 蓝图 + 施工指引统一模板
@@ -141,7 +144,7 @@ verifiability: manual
 | 架构决策记录（KB 决策记录） | 架构决策不是规则标准；凭证真源为 KB | **`KB:decisions`**（Git-backed） |
 | 模块生命周期文档 | 蓝图+施工图+交付 | `docs/03_modules/` |
 | 知识库条目 | 经验积累不是规则 | `docs/08_knowledge/` |
-| 审计报告 | 事后评估不是规则 | `docs/09_audit/` |
+| 审计报告 | 事后评估不是规则 | `docs/_working/audit/` |
 | 业务代码 | 可执行代码 | `src/zephyr/` |
 | 治理/审计脚本 | 工具不是规则 | `scripts/governance/` / `scripts/audit/` |
 

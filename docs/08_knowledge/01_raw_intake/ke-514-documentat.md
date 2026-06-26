@@ -31,4 +31,4 @@ doc_type: knowledge_entry
 **L3-Audit（experimental 每周）**：
 
 - `scripts/governance/scan_secret_leak.py` — 全库扫描 + 对比历史快照
-- Finding 写 `docs/09_audit/findings/secret-leak-*.md`
+- Finding 写 `docs/_working/audit/findings/secret-leak-*.md`

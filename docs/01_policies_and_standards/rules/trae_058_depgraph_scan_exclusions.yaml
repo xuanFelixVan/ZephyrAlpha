@@ -60,7 +60,7 @@ sections:
       whitelist: 'depgraph 用白名单扫描根(SCAN_DIRS)——不在白名单的路径根本不扫描。这是最主要的排除机制。'
       exempt_dir: 'os.walk 时按目录名跳过(如 __pycache__/.git)——通用缓存/锁/临时目录。'
       node_type_whitelist: '节点类型白名单准入(NODES_WHITELIST，裁定#184)——只有 module/script/test/config 4 种 node_type 进入依赖图 nodes 表，其余类型默认不进 nodes（保留在 arch_directory_tree）。白名单天然安全——新类型默认不进 nodes。已废除原 EXCLUDED_NODE_TYPES 黑名单（已证明不可靠，漏掉 gate/contract/registry/schema 共 561 个非代码节点污染）。'
-      knowledge_doc: '知识文档类型跳过——docs/08_knowledge 和 docs/09_audit 的 .md 文件被分类为 knowledge_doc 并跳过，因为它们是经验积累/历史记录，无代码依赖。'
+      knowledge_doc: '知识文档类型跳过——docs/08_knowledge 和 docs/_working 的 .md 文件被分类为 knowledge_doc 并跳过，因为它们是经验积累/历史记录，无代码依赖。'
       skip_ext: 'path_tree 跳过二进制/编译产物扩展名(.pyc/.dll/.exe 等)。'
       max_depth: 'path_tree 最大扫描深度 8 层，防止无限递归。'
   excluded_paths:
@@ -68,21 +68,21 @@ sections:
     title: 不纳入全景图的路径清单
     description: |
       以下路径不纳入 depgraph nodes 表(不可见)。
-      path_tree 中 docs/08_knowledge、docs/09_audit、docs/decomposition 仍可见(物理路径树保留)。
+      path_tree 中 docs/08_knowledge、docs/_working 仍可见(物理路径树保留)。
     items:
     - path: docs/08_knowledge/
       reason: 知识库条目(4647+ 文件)，经验积累非代码，无导入依赖
       exclusion_mechanism: whitelist + knowledge_doc
       in_path_tree: true
-    - path: docs/09_audit/
+    - path: docs/_working/audit/
       reason: 审计报告(36 文件)，事后评估非代码，历史记录
       exclusion_mechanism: whitelist + knowledge_doc
       in_path_tree: true
-    - path: docs/decomposition/
+    - path: docs/_working/decomposition/
       reason: 任务卡(7 文件)，拆解产物非代码，临时性
       exclusion_mechanism: whitelist
       in_path_tree: true
-    - path: docs/decomposition/tasks/
+    - path: docs/_working/decomposition/tasks/
       reason: 任务卡文件(DM-*.md)，拆解产物非代码
       exclusion_mechanism: whitelist
       in_path_tree: true
@@ -174,7 +174,7 @@ sections:
       cleaned_dead_code: EXCLUDED_SCAN_DIRS(定义但从未使用，已删除) + EXCLUDED_NODE_TYPES(黑名单已废除，改为白名单)
     - script: scripts/governance/generate_project_path_tree.py
       reads_config: path_tree 段(scan_roots + skip_dirs + skip_extensions + max_depth)
-      note: path_tree 不排除 docs/08_knowledge、docs/09_audit(物理路径树保留所有文档)
+      note: path_tree 不排除 docs/08_knowledge、docs/_working(物理路径树保留所有文档)
   change_history:
     section_type: examples
     title: 修订记录

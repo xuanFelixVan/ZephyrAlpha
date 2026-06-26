@@ -19,7 +19,7 @@ observability:
   tracing:
     correlation_id: "每条 A2A Message 携带 correlation_id——全链路唯一标识"
     span_context: "每次 Agent 间消息传递创建 Span（span_id + parent_span_id）"
-    storage: "docs/09_audit/A2A_TRACES/{correlation_id}.yaml——全链路事后回溯"
+    storage: "docs/_working/audit/A2A_TRACES/{correlation_id}.yaml——全链路事后回溯"
 
   # === A2A 专属指标 ===
   metrics:

@@ -31,5 +31,5 @@ token_roi:
   trend_alert:
     roi_drop_30_percent: "ROI 下降 30% 以上 → 告警 Owner '施工效率下降，建议检查 Prompt 质量'"
 
-  integration: "与 Session Log（docs/09_audit/session_logs/）联动，自动计算"
+  integration: "与 Session Log（docs/_working/audit/session_logs/）联动，自动计算"
 ```

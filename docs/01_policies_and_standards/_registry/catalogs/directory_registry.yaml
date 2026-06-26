@@ -179,7 +179,7 @@ directories:
 
     status: active
 
-    note: "v2.0 新增——DB ?docs/09_audit/state/ 迁移至此"
+    note: "v2.0 新增——DB ?docs/_working/audit/state/ 迁移至此"
 
 
 
@@ -386,7 +386,7 @@ directories:
 
 
 
-  - path: "docs/09_audit/"
+  - path: "docs/_working/audit/"
 
     responsibility: "审计报告与状态快?"
     parent: "docs/"
@@ -405,7 +405,7 @@ directories:
 
 
 
-  - path: "docs/decomposition/"
+  - path: "docs/_working/decomposition/"
 
     responsibility: "Decomposition task cards — DM-100252~100255 PENDING task cards (panorama rebuild / domain sync fix)"
 
@@ -1146,11 +1146,11 @@ directories:
 
   # ========================================
 
-  - path: "docs/09_audit/reports/"
+  - path: "docs/_working/audit/reports/"
 
     responsibility: "审计报告——架构对?/ SSoT 验证 / 月度报告"
 
-    parent: "docs/09_audit/"
+    parent: "docs/_working/audit/"
 
     has_index: true
 
@@ -1166,10 +1166,10 @@ directories:
 
 
 
-  - path: "docs/09_audit/findings/"
+  - path: "docs/_working/audit/findings/"
 
     responsibility: "安全与合?Finding、事件初?Markdown 落盘（对?target_architecture/06-security_architecture.md?"
-    parent: "docs/09_audit/"
+    parent: "docs/_working/audit/"
 
     has_index: true
 
@@ -1185,11 +1185,11 @@ directories:
 
 
 
-  - path: "docs/09_audit/state/"
+  - path: "docs/_working/audit/state/"
 
     responsibility: "审计状态快照——已废弃，DB 已迁移至 data/"
 
-    parent: "docs/09_audit/"
+    parent: "docs/_working/audit/"
 
     has_index: true
 
@@ -1961,7 +1961,7 @@ changelog:
 
     changes:
 
-      - "Add docs/decomposition/ directory registration (DM-100252~100255 PENDING task cards, track=D)"
+      - "Add docs/_working/decomposition/ directory registration (DM-100252~100255 PENDING task cards, track=D)"
 
       - "Update summary stats: total_directories 83->84, D_track 1->2, docs 45->46, total_registered 84->85, directories_with_index 35->36, directories_without_index 47->46"
 

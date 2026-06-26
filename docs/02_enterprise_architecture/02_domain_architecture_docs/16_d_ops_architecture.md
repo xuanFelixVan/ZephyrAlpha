@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-OPS 反馈循环架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示反馈循环（D-OPS）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 反馈循环（D-OPS）的模块分布。共 445 个模块 / 445 modules。
+> 按 architecture_layer 分层显示 反馈循环（D-OPS）的模块分布。共 433 个模块 / 433 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (423 modules)            │
+│            L1 基础层 / Foundation Layer (413 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   architecture_model/layers/system_telemetry.yaml  [production]  │
 │   config/capacity/token_budget.yaml  [production]                │
@@ -43,15 +43,13 @@ ttl: permanent
 │   src/zephyr/governance/observability_governance/provenance_t... │
 │   src/zephyr/governance/token_budget.py  [prototype]             │
 │   src/zephyr/ops/__init__.py  [production]                       │
-│   ...还有 405 个模块 / 405 more modules                          │
+│   ...还有 395 个模块 / 395 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (22 modules)                │
+│                未分类 / Unclassified (20 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
-│   F20-unified-monitor/  [design]                                 │
-│   F4-budget-engine/  [design]                                    │
 │   scripts/ops/auto_fix_cron.py  [production]                     │
 │   scripts/ops/upgrade_headers_to_14fields.py  [production]       │
 │   src/zephyr/ops/gates/safety_gate_l28_l29.py  [production]      │
@@ -68,16 +66,19 @@ ttl: permanent
 │   src/zephyr/ops/gates/safety_gate_l56_l57.py  [production]      │
 │   src/zephyr/ops/gates/safety_gate_l58_l59.py  [production]      │
 │   src/zephyr/ops/gates/safety_gate_l60_l61.py  [production]      │
-│   ...还有 4 个模块 / 4 more modules                              │
+│   src/zephyr/ops/gates/safety_gate_l62_l63.py  [production]      │
+│   src/zephyr/ops/gates/safety_gate_l64_l65.py  [production]      │
+│   src/zephyr/ops/gates/safety_gate_l66_l67.py  [production]      │
+│   src/zephyr/ops/observability/notifier.py  [production]         │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 445 个模块 / 445 modules）。
+> 按 architecture_layer 分组的模块清单（共 433 个模块 / 433 modules）。
 
-### L1 基础层 / Foundation Layer (423 modules)
+### L1 基础层 / Foundation Layer (413 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -282,34 +283,32 @@ ttl: permanent
 | 199 | src/zephyr/ops/diagnosers/operational_seasonality.py | src/zephyr/ops/diagnosers/operational... | prototype | generated |
 | 200 | src/zephyr/ops/diagnosers/prompt_fingerprint.py | src/zephyr/ops/diagnosers/prompt_fing... | prototype | generated |
 
-> (仅显示前 200 个模块，共 423 个)
+> (仅显示前 200 个模块，共 413 个)
 
-### 未分类 / Unclassified (22 modules)
+### 未分类 / Unclassified (20 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | F20-unified-monitor/ | F20-unified-monitor/ | design | planned |
-| 2 | F4-budget-engine/ | F4-budget-engine/ | design | stable |
-| 3 | scripts/ops/auto_fix_cron.py | scripts/ops/auto_fix_cron.py | production | generated |
-| 4 | scripts/ops/upgrade_headers_to_14fields.py | scripts/ops/upgrade_headers_to_14fiel... | production | generated |
-| 5 | src/zephyr/ops/gates/safety_gate_l28_l29.py | src/zephyr/ops/gates/safety_gate_l28_... | production | generated |
-| 6 | src/zephyr/ops/gates/safety_gate_l36_l37.py | src/zephyr/ops/gates/safety_gate_l36_... | production | generated |
-| 7 | src/zephyr/ops/gates/safety_gate_l38_l39.py | src/zephyr/ops/gates/safety_gate_l38_... | production | generated |
-| 8 | src/zephyr/ops/gates/safety_gate_l40_l41.py | src/zephyr/ops/gates/safety_gate_l40_... | production | generated |
-| 9 | src/zephyr/ops/gates/safety_gate_l42_l43.py | src/zephyr/ops/gates/safety_gate_l42_... | production | generated |
-| 10 | src/zephyr/ops/gates/safety_gate_l44_l45.py | src/zephyr/ops/gates/safety_gate_l44_... | production | generated |
-| 11 | src/zephyr/ops/gates/safety_gate_l46_l47.py | src/zephyr/ops/gates/safety_gate_l46_... | production | generated |
-| 12 | src/zephyr/ops/gates/safety_gate_l48_l49.py | src/zephyr/ops/gates/safety_gate_l48_... | production | generated |
-| 13 | src/zephyr/ops/gates/safety_gate_l50_l51.py | src/zephyr/ops/gates/safety_gate_l50_... | production | generated |
-| 14 | src/zephyr/ops/gates/safety_gate_l52_l53.py | src/zephyr/ops/gates/safety_gate_l52_... | production | generated |
-| 15 | src/zephyr/ops/gates/safety_gate_l54_l55.py | src/zephyr/ops/gates/safety_gate_l54_... | production | generated |
-| 16 | src/zephyr/ops/gates/safety_gate_l56_l57.py | src/zephyr/ops/gates/safety_gate_l56_... | production | generated |
-| 17 | src/zephyr/ops/gates/safety_gate_l58_l59.py | src/zephyr/ops/gates/safety_gate_l58_... | production | generated |
-| 18 | src/zephyr/ops/gates/safety_gate_l60_l61.py | src/zephyr/ops/gates/safety_gate_l60_... | production | generated |
-| 19 | src/zephyr/ops/gates/safety_gate_l62_l63.py | src/zephyr/ops/gates/safety_gate_l62_... | production | generated |
-| 20 | src/zephyr/ops/gates/safety_gate_l64_l65.py | src/zephyr/ops/gates/safety_gate_l64_... | production | generated |
-| 21 | src/zephyr/ops/gates/safety_gate_l66_l67.py | src/zephyr/ops/gates/safety_gate_l66_... | production | generated |
-| 22 | src/zephyr/ops/observability/notifier.py | src/zephyr/ops/observability/notifier.py | production | generated |
+| 1 | scripts/ops/auto_fix_cron.py | scripts/ops/auto_fix_cron.py | production | generated |
+| 2 | scripts/ops/upgrade_headers_to_14fields.py | scripts/ops/upgrade_headers_to_14fiel... | production | generated |
+| 3 | src/zephyr/ops/gates/safety_gate_l28_l29.py | src/zephyr/ops/gates/safety_gate_l28_... | production | generated |
+| 4 | src/zephyr/ops/gates/safety_gate_l36_l37.py | src/zephyr/ops/gates/safety_gate_l36_... | production | generated |
+| 5 | src/zephyr/ops/gates/safety_gate_l38_l39.py | src/zephyr/ops/gates/safety_gate_l38_... | production | generated |
+| 6 | src/zephyr/ops/gates/safety_gate_l40_l41.py | src/zephyr/ops/gates/safety_gate_l40_... | production | generated |
+| 7 | src/zephyr/ops/gates/safety_gate_l42_l43.py | src/zephyr/ops/gates/safety_gate_l42_... | production | generated |
+| 8 | src/zephyr/ops/gates/safety_gate_l44_l45.py | src/zephyr/ops/gates/safety_gate_l44_... | production | generated |
+| 9 | src/zephyr/ops/gates/safety_gate_l46_l47.py | src/zephyr/ops/gates/safety_gate_l46_... | production | generated |
+| 10 | src/zephyr/ops/gates/safety_gate_l48_l49.py | src/zephyr/ops/gates/safety_gate_l48_... | production | generated |
+| 11 | src/zephyr/ops/gates/safety_gate_l50_l51.py | src/zephyr/ops/gates/safety_gate_l50_... | production | generated |
+| 12 | src/zephyr/ops/gates/safety_gate_l52_l53.py | src/zephyr/ops/gates/safety_gate_l52_... | production | generated |
+| 13 | src/zephyr/ops/gates/safety_gate_l54_l55.py | src/zephyr/ops/gates/safety_gate_l54_... | production | generated |
+| 14 | src/zephyr/ops/gates/safety_gate_l56_l57.py | src/zephyr/ops/gates/safety_gate_l56_... | production | generated |
+| 15 | src/zephyr/ops/gates/safety_gate_l58_l59.py | src/zephyr/ops/gates/safety_gate_l58_... | production | generated |
+| 16 | src/zephyr/ops/gates/safety_gate_l60_l61.py | src/zephyr/ops/gates/safety_gate_l60_... | production | generated |
+| 17 | src/zephyr/ops/gates/safety_gate_l62_l63.py | src/zephyr/ops/gates/safety_gate_l62_... | production | generated |
+| 18 | src/zephyr/ops/gates/safety_gate_l64_l65.py | src/zephyr/ops/gates/safety_gate_l64_... | production | generated |
+| 19 | src/zephyr/ops/gates/safety_gate_l66_l67.py | src/zephyr/ops/gates/safety_gate_l66_... | production | generated |
+| 20 | src/zephyr/ops/observability/notifier.py | src/zephyr/ops/observability/notifier.py | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

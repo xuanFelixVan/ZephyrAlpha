@@ -24,7 +24,7 @@ escalation_engine_sandboxing:
       - "escalation_rules.yaml（只读 + hash校验）"
       - "rbac_roles.yaml（只读 + hash校验）"
     write_access:
-      - "docs/09_audit/escalation_audit.jsonl（追加写——唯一写入路径）"
+      - "docs/_working/audit/escalation_audit.jsonl（追加写——唯一写入路径）"
       - "/tmp/escalation-engine.pid（进程锁文件）"
     deny:
       - "src/ 下任何文件（引擎不写源码）"

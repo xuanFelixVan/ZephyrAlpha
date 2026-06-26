@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-SHARED 共享服务架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示共享服务（D-SHARED）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:21
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 共享服务（D-SHARED）的模块分布。共 303 个模块 / 303 modules。
+> 按 architecture_layer 分层显示 共享服务（D-SHARED）的模块分布。共 295 个模块 / 295 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│        L0 基础设施层 / Infrastructure Layer (72 modules)         │
+│        L0 基础设施层 / Infrastructure Layer (68 modules)         │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/integration/shared_08/contracts/gate/gate_result... │
 │   src/zephyr/shared/contracts/__init__.py  [prototype]           │
@@ -43,12 +43,12 @@ ttl: permanent
 │   src/zephyr/shared/contracts/core/telemetry_emitter.py  [pro... │
 │   src/zephyr/shared/contracts/core/timestamp.py  [prototype]     │
 │   src/zephyr/shared/contracts/core/trace_context.py  [prototype] │
-│   ...还有 54 个模块 / 54 more modules                            │
+│   ...还有 50 个模块 / 50 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (211 modules)            │
+│            L1 基础层 / Foundation Layer (209 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/integration/shared/api_03/api_index.py  [prototype] │
 │   src/zephyr/integration/shared_08/context.py  [prototype]       │
@@ -68,7 +68,7 @@ ttl: permanent
 │   src/zephyr/shared/api/api_client.py  [prototype]               │
 │   src/zephyr/shared/api/api_index.py  [prototype]                │
 │   src/zephyr/shared/api/dos_launcher.py  [prototype]             │
-│   ...还有 193 个模块 / 193 more modules                          │
+│   ...还有 191 个模块 / 191 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -80,10 +80,8 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (19 modules)                │
+│                未分类 / Unclassified (17 modules)                │
 ├──────────────────────────────────────────────────────────────────┤
-│   F11-context-engine/  [design]                                  │
-│   F22-event-bus/  [design]                                       │
 │   src/zephyr/shared/adaptation/__init__.py  [production]         │
 │   src/zephyr/shared/compensation/__init__.py  [production]       │
 │   src/zephyr/shared/dependency/__init__.py  [production]         │
@@ -107,9 +105,9 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 303 个模块 / 303 modules）。
+> 按 architecture_layer 分组的模块清单（共 295 个模块 / 295 modules）。
 
-### L0 基础设施层 / Infrastructure Layer (72 modules)
+### L0 基础设施层 / Infrastructure Layer (68 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -181,12 +179,8 @@ ttl: permanent
 | 66 | src/zephyr/shared/contracts/security/security_decision.py | src/zephyr/shared/contracts/security/... | prototype | generated |
 | 67 | src/zephyr/shared/contracts/skill_protocol.py | src/zephyr/shared/contracts/skill_pro... | prototype | generated |
 | 68 | src/zephyr/shared/contracts/task_repository_protocol.py | src/zephyr/shared/contracts/task_repo... | prototype | generated |
-| 69 | ✅保留/D-INTEGRATION-11 | Event Bus Manager | design | planned |
-| 70 | ✅能建/D-INTEGRATION-33 | Integration Config Manager | design | planned |
-| 71 | ✅能建/D-INTEGRATION-43 | Local Model Integration | design | planned |
-| 72 | 移除/D-INTEGRATION-13 | Integration Health Monitor | design | planned |
 
-### L1 基础层 / Foundation Layer (211 modules)
+### L1 基础层 / Foundation Layer (209 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -348,50 +342,50 @@ ttl: permanent
 | 156 | src/zephyr/shared/security/ssot_guard.py | src/zephyr/shared/security/ssot_guard.py | prototype | generated |
 | 157 | src/zephyr/shared/serialization.py | src/zephyr/shared/serialization.py | prototype | generated |
 | 158 | src/zephyr/shared/session/session_boundary.py | src/zephyr/shared/session/session_bou... | prototype | generated |
-| 159 | src/zephyr/shared/session/session_continuity.py | src/zephyr/shared/session/session_con... | prototype | generated |
-| 160 | src/zephyr/shared/session_audit.py | src/zephyr/shared/session_audit.py | prototype | generated |
-| 161 | src/zephyr/shared/session_continuity.py | src/zephyr/shared/session_continuity.py | prototype | generated |
-| 162 | src/zephyr/shared/shared_quickref.yaml | src/zephyr/shared/shared_quickref.yaml | production | deprecated |
-| 163 | src/zephyr/shared/shared_services/__init__.py | src/zephyr/shared/shared_services/__i... | production | generated |
-| 164 | src/zephyr/shared/shared_services/blueprint_decomposer.py | src/zephyr/shared/shared_services/blu... | production | generated |
-| 165 | src/zephyr/shared/shared_services/events/__init__.py | src/zephyr/shared/shared_services/eve... | production | generated |
-| 166 | src/zephyr/shared/shared_services/infra_06/__init__.py | src/zephyr/shared/shared_services/inf... | prototype | generated |
-| 167 | src/zephyr/shared/shared_services/infra_06/cache.py | src/zephyr/shared/shared_services/inf... | production | generated |
-| 168 | src/zephyr/shared/shared_services/infra_06/idempotency.py | src/zephyr/shared/shared_services/inf... | production | generated |
-| 169 | src/zephyr/shared/shared_services/infra_06/limiter.py | src/zephyr/shared/shared_services/inf... | prototype | generated |
-| 170 | src/zephyr/shared/shared_services/infra_06/lock.py | src/zephyr/shared/shared_services/inf... | production | generated |
-| 171 | src/zephyr/shared/shared_services/infra_06/observer.py | src/zephyr/shared/shared_services/inf... | production | generated |
-| 172 | src/zephyr/shared/shared_services/infra_06/outbox.py | src/zephyr/shared/shared_services/inf... | production | generated |
-| 173 | src/zephyr/shared/shared_services/infra_06/process_pool.py | src/zephyr/shared/shared_services/inf... | production | generated |
-| 174 | src/zephyr/shared/shared_services/lifecycle/__init__.py | src/zephyr/shared/shared_services/lif... | production | generated |
-| 175 | src/zephyr/shared/shared_services/lifecycle/daemon_regist... | src/zephyr/shared/shared_services/lif... | production | generated |
-| 176 | src/zephyr/shared/shared_services/lifecycle/task_lifecycl... | src/zephyr/shared/shared_services/lif... | production | generated |
-| 177 | src/zephyr/shared/shared_services/models.py | src/zephyr/shared/shared_services/mod... | production | generated |
-| 178 | src/zephyr/shared/shared_services/observability_02/__init... | src/zephyr/shared/shared_services/obs... | prototype | generated |
-| 179 | src/zephyr/shared/shared_services/observability_02/health.py | src/zephyr/shared/shared_services/obs... | production | stable |
-| 180 | src/zephyr/shared/shared_services/observability_02/loggin... | src/zephyr/shared/shared_services/obs... | production | generated |
-| 181 | src/zephyr/shared/shared_services/observability_02/metric... | src/zephyr/shared/shared_services/obs... | production | stable |
-| 182 | src/zephyr/shared/shared_services/observability_02/sessio... | src/zephyr/shared/shared_services/obs... | production | generated |
-| 183 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | generated |
-| 184 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | generated |
-| 185 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | production | generated |
-| 186 | src/zephyr/shared/shared_services/observability_02/tracin... | src/zephyr/shared/shared_services/obs... | production | generated |
-| 187 | src/zephyr/shared/shared_services/queue/__init__.py | src/zephyr/shared/shared_services/que... | production | generated |
-| 188 | src/zephyr/shared/shared_services/queue/task_queue.py | src/zephyr/shared/shared_services/que... | prototype | generated |
-| 189 | src/zephyr/shared/shared_services/session_continuity.py | src/zephyr/shared/shared_services/ses... | production | generated |
-| 190 | src/zephyr/shared/shared_util/__init__.py | src/zephyr/shared/shared_util/__init_... | prototype | deprecated |
-| 191 | src/zephyr/shared/sla/sla_monitor.py | sla_monitor | production | stable |
-| 192 | src/zephyr/shared/slo_review_assistant.py | src/zephyr/shared/slo_review_assistan... | production | generated |
-| 193 | src/zephyr/shared/ssot_guard.py | src/zephyr/shared/ssot_guard.py | prototype | generated |
-| 194 | src/zephyr/shared/state_machine.py | src/zephyr/shared/state_machine.py | prototype | generated |
-| 195 | src/zephyr/shared/task_heartbeat.py | src/zephyr/shared/task_heartbeat.py | production | generated |
-| 196 | src/zephyr/shared/task_types.py | src/zephyr/shared/task_types.py | prototype | generated |
-| 197 | src/zephyr/shared/testing.py | src/zephyr/shared/testing.py | prototype | generated |
-| 198 | src/zephyr/shared/time_utils.py | src/zephyr/shared/time_utils.py | prototype | generated |
-| 199 | src/zephyr/shared/tracing.py | src/zephyr/shared/tracing.py | prototype | generated |
-| 200 | src/zephyr/shared/ttl_cleanup_engine.py | src/zephyr/shared/ttl_cleanup_engine.py | production | generated |
+| 159 | src/zephyr/shared/session_audit.py | src/zephyr/shared/session_audit.py | prototype | generated |
+| 160 | src/zephyr/shared/session_continuity.py | src/zephyr/shared/session_continuity.py | prototype | generated |
+| 161 | src/zephyr/shared/shared_services/__init__.py | src/zephyr/shared/shared_services/__i... | production | generated |
+| 162 | src/zephyr/shared/shared_services/blueprint_decomposer.py | src/zephyr/shared/shared_services/blu... | production | generated |
+| 163 | src/zephyr/shared/shared_services/events/__init__.py | src/zephyr/shared/shared_services/eve... | production | generated |
+| 164 | src/zephyr/shared/shared_services/infra_06/__init__.py | src/zephyr/shared/shared_services/inf... | prototype | generated |
+| 165 | src/zephyr/shared/shared_services/infra_06/cache.py | src/zephyr/shared/shared_services/inf... | production | generated |
+| 166 | src/zephyr/shared/shared_services/infra_06/idempotency.py | src/zephyr/shared/shared_services/inf... | production | generated |
+| 167 | src/zephyr/shared/shared_services/infra_06/limiter.py | src/zephyr/shared/shared_services/inf... | prototype | generated |
+| 168 | src/zephyr/shared/shared_services/infra_06/lock.py | src/zephyr/shared/shared_services/inf... | production | generated |
+| 169 | src/zephyr/shared/shared_services/infra_06/observer.py | src/zephyr/shared/shared_services/inf... | production | generated |
+| 170 | src/zephyr/shared/shared_services/infra_06/outbox.py | src/zephyr/shared/shared_services/inf... | production | generated |
+| 171 | src/zephyr/shared/shared_services/infra_06/process_pool.py | src/zephyr/shared/shared_services/inf... | production | generated |
+| 172 | src/zephyr/shared/shared_services/lifecycle/__init__.py | src/zephyr/shared/shared_services/lif... | production | generated |
+| 173 | src/zephyr/shared/shared_services/lifecycle/daemon_regist... | src/zephyr/shared/shared_services/lif... | production | generated |
+| 174 | src/zephyr/shared/shared_services/lifecycle/task_lifecycl... | src/zephyr/shared/shared_services/lif... | production | generated |
+| 175 | src/zephyr/shared/shared_services/models.py | src/zephyr/shared/shared_services/mod... | production | generated |
+| 176 | src/zephyr/shared/shared_services/observability_02/__init... | src/zephyr/shared/shared_services/obs... | prototype | generated |
+| 177 | src/zephyr/shared/shared_services/observability_02/health.py | src/zephyr/shared/shared_services/obs... | production | stable |
+| 178 | src/zephyr/shared/shared_services/observability_02/loggin... | src/zephyr/shared/shared_services/obs... | production | generated |
+| 179 | src/zephyr/shared/shared_services/observability_02/metric... | src/zephyr/shared/shared_services/obs... | production | stable |
+| 180 | src/zephyr/shared/shared_services/observability_02/sessio... | src/zephyr/shared/shared_services/obs... | production | generated |
+| 181 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | generated |
+| 182 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | generated |
+| 183 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | production | generated |
+| 184 | src/zephyr/shared/shared_services/observability_02/tracin... | src/zephyr/shared/shared_services/obs... | production | generated |
+| 185 | src/zephyr/shared/shared_services/queue/__init__.py | src/zephyr/shared/shared_services/que... | production | generated |
+| 186 | src/zephyr/shared/shared_services/queue/task_queue.py | src/zephyr/shared/shared_services/que... | prototype | generated |
+| 187 | src/zephyr/shared/shared_services/session_continuity.py | src/zephyr/shared/shared_services/ses... | production | generated |
+| 188 | src/zephyr/shared/shared_util/__init__.py | src/zephyr/shared/shared_util/__init_... | prototype | deprecated |
+| 189 | src/zephyr/shared/sla/sla_monitor.py | sla_monitor | production | stable |
+| 190 | src/zephyr/shared/slo_review_assistant.py | src/zephyr/shared/slo_review_assistan... | production | generated |
+| 191 | src/zephyr/shared/ssot_guard.py | src/zephyr/shared/ssot_guard.py | prototype | generated |
+| 192 | src/zephyr/shared/state_machine.py | src/zephyr/shared/state_machine.py | prototype | generated |
+| 193 | src/zephyr/shared/task_heartbeat.py | src/zephyr/shared/task_heartbeat.py | production | generated |
+| 194 | src/zephyr/shared/task_types.py | src/zephyr/shared/task_types.py | prototype | generated |
+| 195 | src/zephyr/shared/testing.py | src/zephyr/shared/testing.py | prototype | generated |
+| 196 | src/zephyr/shared/time_utils.py | src/zephyr/shared/time_utils.py | prototype | generated |
+| 197 | src/zephyr/shared/tracing.py | src/zephyr/shared/tracing.py | prototype | generated |
+| 198 | src/zephyr/shared/ttl_cleanup_engine.py | src/zephyr/shared/ttl_cleanup_engine.py | production | generated |
+| 199 | src/zephyr/shared/types.py | src/zephyr/shared/types.py | prototype | generated |
+| 200 | src/zephyr/shared/utils/__init__.py | src/zephyr/shared/utils/__init__.py | prototype | generated |
 
-> (仅显示前 200 个模块，共 211 个)
+> (仅显示前 200 个模块，共 209 个)
 
 ### L3 应用层 / Application Layer (1 modules)
 
@@ -399,42 +393,40 @@ ttl: permanent
 |:--:|---------|---------|:---:|:---:|
 | 1 | tools/_gen_dedup_tests.py | tools/_gen_dedup_tests.py | prototype | deprecated |
 
-### 未分类 / Unclassified (19 modules)
+### 未分类 / Unclassified (17 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | F11-context-engine/ | F11-context-engine/ | design | stable |
-| 2 | F22-event-bus/ | F22-event-bus/ | design | stable |
-| 3 | src/zephyr/shared/adaptation/__init__.py | src/zephyr/shared/adaptation/__init__.py | production | generated |
-| 4 | src/zephyr/shared/compensation/__init__.py | src/zephyr/shared/compensation/__init... | production | generated |
-| 5 | src/zephyr/shared/dependency/__init__.py | src/zephyr/shared/dependency/__init__.py | production | generated |
-| 6 | src/zephyr/shared/draft/__init__.py | src/zephyr/shared/draft/__init__.py | production | generated |
-| 7 | src/zephyr/shared/infra_06/__init__.py | src/zephyr/shared/infra_06/__init__.py | production | generated |
-| 8 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | production | generated |
-| 9 | src/zephyr/shared/lifecycle/scope_guard.py | src/zephyr/shared/lifecycle/scope_gua... | production | generated |
-| 10 | src/zephyr/shared/lifecycle/task_lifecycle_manager.py | src/zephyr/shared/lifecycle/task_life... | production | generated |
-| 11 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | production | generated |
-| 12 | src/zephyr/shared/observability_02/__init__.py | src/zephyr/shared/observability_02/__... | production | generated |
-| 13 | src/zephyr/shared/quality/__init__.py | src/zephyr/shared/quality/__init__.py | production | generated |
-| 14 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py | production | generated |
-| 15 | src/zephyr/shared/queue/task_scheduler.py | src/zephyr/shared/queue/task_schedule... | production | generated |
-| 16 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | production | generated |
-| 17 | src/zephyr/shared/reliability/context_guard.py | src/zephyr/shared/reliability/context... | production | generated |
-| 18 | src/zephyr/shared/session/__init__.py | src/zephyr/shared/session/__init__.py | production | generated |
-| 19 | src/zephyr/shared/sla/__init__.py | src/zephyr/shared/sla/__init__.py | production | generated |
+| 1 | src/zephyr/shared/adaptation/__init__.py | src/zephyr/shared/adaptation/__init__.py | production | generated |
+| 2 | src/zephyr/shared/compensation/__init__.py | src/zephyr/shared/compensation/__init... | production | generated |
+| 3 | src/zephyr/shared/dependency/__init__.py | src/zephyr/shared/dependency/__init__.py | production | generated |
+| 4 | src/zephyr/shared/draft/__init__.py | src/zephyr/shared/draft/__init__.py | production | generated |
+| 5 | src/zephyr/shared/infra_06/__init__.py | src/zephyr/shared/infra_06/__init__.py | production | generated |
+| 6 | src/zephyr/shared/knowledge/__init__.py | src/zephyr/shared/knowledge/__init__.py | production | generated |
+| 7 | src/zephyr/shared/lifecycle/scope_guard.py | src/zephyr/shared/lifecycle/scope_gua... | production | generated |
+| 8 | src/zephyr/shared/lifecycle/task_lifecycle_manager.py | src/zephyr/shared/lifecycle/task_life... | production | generated |
+| 9 | src/zephyr/shared/maintenance/__init__.py | src/zephyr/shared/maintenance/__init_... | production | generated |
+| 10 | src/zephyr/shared/observability_02/__init__.py | src/zephyr/shared/observability_02/__... | production | generated |
+| 11 | src/zephyr/shared/quality/__init__.py | src/zephyr/shared/quality/__init__.py | production | generated |
+| 12 | src/zephyr/shared/queue/__init__.py | src/zephyr/shared/queue/__init__.py | production | generated |
+| 13 | src/zephyr/shared/queue/task_scheduler.py | src/zephyr/shared/queue/task_schedule... | production | generated |
+| 14 | src/zephyr/shared/reliability/__init__.py | src/zephyr/shared/reliability/__init_... | production | generated |
+| 15 | src/zephyr/shared/reliability/context_guard.py | src/zephyr/shared/reliability/context... | production | generated |
+| 16 | src/zephyr/shared/session/__init__.py | src/zephyr/shared/session/__init__.py | production | generated |
+| 17 | src/zephyr/shared/sla/__init__.py | src/zephyr/shared/sla/__init__.py | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 186 条 / 186 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 185 条 / 185 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 186 条 / 186 edges)       │
+│      依赖关系图 / Dependency Graph (共 185 条 / 185 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
 │   [import_depends]: 156 条 / edges                               │
-│   [config_depends]: 30 条 / edges                                │
+│   [config_depends]: 29 条 / edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -492,9 +484,9 @@ ttl: permanent
 │   ...还有 107 条 / 107 more edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (30 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (29 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 186 条)
+> (最多显示前 50 条依赖边，共 185 条)
 
 ```
 

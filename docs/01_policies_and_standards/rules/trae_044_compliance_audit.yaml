@@ -514,7 +514,7 @@ sections:
       expected_result: 复核结论已形成
       on_failure: P0违规必须修复
     - order: 4
-      action: 生成审计报告——填写审计报告模板→FULL类型额外运行score_architecture.py --quarterly --dashboard→归档报告到docs/09_audit/reports/
+      action: 生成审计报告——填写审计报告模板→FULL类型额外运行score_architecture.py --quarterly --dashboard→归档报告到docs/_working/audit/reports/
       pre_condition: 复核结论已形成
       expected_result: 审计报告已归档
       on_failure: 报告不完整则补全
@@ -563,9 +563,9 @@ sections:
     - GOV-CMP-003
     examples:
     - title: 审计报告文件命名
-      code: docs/09_audit/reports/<YYYY-MM-DD>-<审计类型>-audit_report.md
+      code: docs/_working/audit/reports/<YYYY-MM-DD>-<审计类型>-audit_report.md
       language: text
-      note: 示例docs/09_audit/reports/2026-05-04-FULL-audit_report.md
+      note: 示例docs/_working/audit/reports/2026-05-04-FULL-audit_report.md
     - title: 审计报告frontmatter
       code: '---
 

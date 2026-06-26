@@ -23,6 +23,6 @@ doc_type: knowledge_entry
 | `test_*.py` | `tests/asset-inventory/` | 对应测试文件 |
 | `raw_asset_scan.json` | `data/scans/` | 原始扫描结果 |
 | `unified_asset_index.yaml` | `data/asset_index/` | 统一资产索引 SSoT |
-| `reconciliation_report.md` | `docs/09_audit/reports/` | 对账报告 |
+| `reconciliation_report.md` | `docs/_working/audit/reports/` | 对账报告 |
 
 ---

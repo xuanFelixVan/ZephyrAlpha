@@ -1043,7 +1043,7 @@ sections:
     - type: mandatory
       step: 'PS-STD-003 §8 Tier 1 消费者清单——llm-security-gateway-interface.md 引用 ABS-35~37'
     - type: mandatory
-      step: 'PS-STD-003 §8 Tier 1 消费者清单——behavior_audit_logger.py 引用 ABS-33~34'
+      step: 'PS-STD-003 §8 Tier 1 消费者清单——src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py 引用 ABS-33~34'
     - type: mandatory
       step: 'PS-STD-003 §8 Tier 2 消费者清单——pre-commit hooks 校验 ABS-14~18, ABS-26~28, ABS-29'
     - type: mandatory
@@ -1133,13 +1133,13 @@ sections:
     summary: 每条 ABS 条目的可验证性（A 自动化/M 人工/S 自声明）和验证方式
     actions:
     - type: mandatory
-      step: ABS-01 由 file_operation_safety_gate.py 检查 immutable_core 标记
+      step: ABS-01 由 scripts/governance/d1_structure/validate_immutable_core.py 检查 immutable_core 标记
     - type: mandatory
-      step: ABS-02 由 file_operation_safety_gate.py 拦截 AI 删除操作
+      step: ABS-02 由 scripts/governance/d1_structure/validate_immutable_core.py 拦截 AI 删除操作
     - type: mandatory
       step: ABS-03~04 由 AI 自检 + Session Log 审计
     - type: mandatory
-      step: ABS-05~10 由 rule-lifecycle-and-change-protocol.py 检查变更级别
+      step: ABS-05~10 由 scripts/governance/d1_structure/validate_immutable_core.py 检查变更级别
     - type: mandatory
       step: ABS-11~13 由 AI 自检（onboarding 流程）
     - type: mandatory

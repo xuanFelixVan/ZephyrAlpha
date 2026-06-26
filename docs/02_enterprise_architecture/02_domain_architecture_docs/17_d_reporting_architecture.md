@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-REPORTING 报告架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,25 +13,15 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示报告（D-REPORTING）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 报告（D-REPORTING）的模块分布。共 19 个模块 / 19 modules。
+> 按 architecture_layer 分层显示 报告（D-REPORTING）的模块分布。共 15 个模块 / 15 modules。
 
 ```
 
-┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (4 modules)             │
-├──────────────────────────────────────────────────────────────────┤
-│   Report Watermark Tracker  [design]                             │
-│   Report Publisher  [design]                                     │
-│   Risk Report Engine  [design]                                   │
-│   Regulatory Report Generator  [design]                          │
-└──────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
 ┌──────────────────────────────────────────────────────────────────┐
 │              L2 领域层 / Domain Layer (14 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
@@ -62,16 +52,7 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 19 个模块 / 19 modules）。
-
-### L1 基础层 / Foundation Layer (4 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | 报告域-水印追踪/D-REPORTING-17 | Report Watermark Tracker | design | planned |
-| 2 | 报告域/D-REPORTING-03 | Report Publisher | design | planned |
-| 3 | 报告域/D-REPORTING-08 | Risk Report Engine | design | planned |
-| 4 | 监管报告生成器(证监会/交易所报告+数据完整性校验)/D-REPORT... | Regulatory Report Generator | design | planned |
+> 按 architecture_layer 分组的模块清单（共 15 个模块 / 15 modules）。
 
 ### L2 领域层 / Domain Layer (14 modules)
 

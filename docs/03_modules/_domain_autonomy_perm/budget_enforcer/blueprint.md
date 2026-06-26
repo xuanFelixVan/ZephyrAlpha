@@ -399,7 +399,7 @@ action_history:
 |------|-----|------|
 | dimensions | entity_level(agent_id/module_id/phase); tool_level(tool_name/call_count/api_cost/passthrough_cost); feature_level(activity_type/output_files/loc); outcome_level(success\|partial\|failed\|rejected, retry_count, error_category) | v0.4.0新增outcome+passthrough |
 | judge_cost | LLM-as-Judge独立子预算; 不计入Task预算; >总成本15%→告警 | v0.4.0新增 |
-| showback | 每周自动Markdown报告→docs/09_audit/cost_reports/; 含Top3 Agent/Tool/Activity/失败消耗/ROI/预测 | — |
+| showback | 每周自动Markdown报告→docs/_working/audit/cost_reports/; 含Top3 Agent/Tool/Activity/失败消耗/ROI/预测 | — |
 | data_retention | raw: 30天(JSONL); aggregated: 12个月(按周SQLite); archival: 年度gzip; cleanup: 每周日03:00 UTC | v0.4.0新增 |
 | storage | data/audit/cost-attribution.jsonl（按天切分） | — |
 
@@ -409,7 +409,7 @@ action_history:
 |------|-----|------|
 | outcome_metrics | lines_of_code_per_1k_tokens; files_completed_per_1k_tokens; blueprint_sections_per_1k_tokens; debug_rounds_per_task | Week 1 建立基线 |
 | trend_alert | ROI 下降 30% 以上→告警 Owner '施工效率下降，建议检查 Prompt 质量' | — |
-| integration | 与 Session Log（docs/09_audit/session_logs/）联动，自动计算 | — |
+| integration | 与 Session Log（docs/_working/audit/session_logs/）联动，自动计算 | — |
 
 ### 2.9 Burn Rate 多窗口监控
 
@@ -810,7 +810,7 @@ runtime_trust_rings:
 | per_level_fail_mode | L0 request: fail-closed; L1 turn: fail-closed; L2 task: fail-closed; L3 session: fail-open限流(tier_0+1/10上限); L3.5 workflow: fail-open限流; L4 global: fail-closed; L4.5 self: fail-open限流(仅统计不阻断) | — |
 | fail_mode_recovery | heartbeat: 每30s检查; 连续3次失败→触发fail_mode; 组件恢复→自动恢复 | — |
 | cold_start_anti_abuse | 1h内最多3个Session(超过→冷启动豁免降为1000token); 24h冷启动累计≤27500token(=5×5500) | — |
-| adversarial_testing | 5项: IPI注入policy修改 / cold start 10次快速重启 / parent-child无限委托 / stream_abort前恶意操作 / 多Provider race condition; gate: experimental→beta前必须全过 | 报告→docs/09_audit/adversarial_test_report.md |
+| adversarial_testing | 5项: IPI注入policy修改 / cold start 10次快速重启 / parent-child无限委托 / stream_abort前恶意操作 / 多Provider race condition; gate: experimental→beta前必须全过 | 报告→docs/_working/audit/adversarial_test_report.md |
 
 ### 2.30 启动校准阶段（Bootstrapping Calibration Phase）
 
@@ -846,7 +846,7 @@ solo_maintainer_optimizations:
 
     weekly_auto_summary:
       description: "每周自动生成自然语言摘要——Owner 不需要读 JSONL"
-      output: "docs/09_audit/cost_reports/weekly-{date}.md"
+      output: "docs/_working/audit/cost_reports/weekly-{date}.md"
       language: "zh"
       sections:
         - "总览：本周花了多少、比上周多还是少"

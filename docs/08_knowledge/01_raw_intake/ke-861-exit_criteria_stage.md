@@ -30,7 +30,7 @@ exit_criteria:
     blocking: true
 
   - id: EXIT-N-03
-    description: "用户验收会议纪要已写入 docs/09_audit/phase-N-acceptance.md"
+    description: "用户验收会议纪要已写入 docs/_working/audit/phase-N-acceptance.md"
     machine_verifiable: false
     manual: true
     blocking: true

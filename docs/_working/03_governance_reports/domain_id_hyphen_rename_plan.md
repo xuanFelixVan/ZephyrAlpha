@@ -180,7 +180,7 @@ D-GOV_AUDIT_TESTS 含两段下划线：GOV / AUDIT / TESTS。NR-001 仅检查第
 | 9 | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | ~3 | 追加说明 |
 | 10 | docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md | ~3 | 追加说明（归档的 phase4b 清理方案，L101 引用 3 个旧域名） |
 | 11 | docs/_working/domain_split_plan_4_oversized_domains.md | ~70 | 追加说明（原拆分方案引用大量旧域名，不逐一替换，仅顶部追加裁定说明） |
-| 12 | docs/decomposition/tasks/DM-100254.md | ~2 | 追加说明 |
+| 12 | docs/_working/decomposition/tasks/DM-100254.md | ~2 | 追加说明 |
 | 13 | data/archive/taskcards/DM-100257.md | ~1 | 归档任务卡，追加说明 |
 
 #### 3.6.4 生成制品（DB 改名后重新生成，不手动改）
@@ -444,7 +444,7 @@ python scripts/governance/sync_yaml_to_depgraph.py
 | 3 | architecture_diagram_construction_plan.md | 有（module_id/doc_type/status 等）| **缺失** ✗ | **阻断** |
 | 4 | _archive/phase4b_cleanup_construction_plan.md | 有 | `permanent` ✓ | 通过 |
 | 5 | _working/domain_split_plan_4_oversized_domains.md | 有 | `task_bound` ✓ | 通过 |
-| 6 | docs/decomposition/tasks/DM-100254.md | **无 frontmatter** | — | 跳过（不阻断） |
+| 6 | docs/_working/decomposition/tasks/DM-100254.md | **无 frontmatter** | — | 跳过（不阻断） |
 | 7 | data/archive/taskcards/DM-100257.md | **无 frontmatter** | — | 跳过（不阻断） |
 
 **结论**：仅 #3（architecture_diagram_construction_plan.md）需要在追加裁定说明前先补 `ttl:` 字段，否则动作 9.1 的 commit 会被 GATE-15 阻断。
@@ -458,7 +458,7 @@ python scripts/governance/sync_yaml_to_depgraph.py
 | 6.3 | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | 文档顶部 frontmatter 后 | **先补 `ttl: task_bound` 到 frontmatter**（见动作 6.3a） |
 | 6.4 | docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md | frontmatter 后 | 无需（ttl=permanent） |
 | 6.5 | docs/_working/domain_split_plan_4_oversized_domains.md | 文档顶部 | 无需（ttl=task_bound） |
-| 6.6 | docs/decomposition/tasks/DM-100254.md | 文档顶部（无 frontmatter） | 无需（无 frontmatter 跳过） |
+| 6.6 | docs/_working/decomposition/tasks/DM-100254.md | 文档顶部（无 frontmatter） | 无需（无 frontmatter 跳过） |
 | 6.7 | data/archive/taskcards/DM-100257.md | 文档顶部（无 frontmatter） | 无需（无 frontmatter 跳过） |
 
 **动作 6.3a（前置 ttl 补全，仅 architecture_diagram_construction_plan.md）**：
@@ -618,7 +618,7 @@ python scripts/governance/d3_metadata/check_frontmatter_metadata.py \
   docs/02_enterprise_architecture/architecture_diagram_construction_plan.md \
   docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md \
   docs/_working/domain_split_plan_4_oversized_domains.md \
-  docs/decomposition/tasks/DM-100254.md \
+  docs/_working/decomposition/tasks/DM-100254.md \
   data/archive/taskcards/DM-100257.md
 ```
 
@@ -639,7 +639,7 @@ python scripts/governance/d3_metadata/check_frontmatter_metadata.py \
 
 ```bash
 python scripts/git_commit.py --session rename-hyphen-files \
-  --files "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml,scripts/governance/sync_yaml_to_depgraph.py,scripts/governance/d5_architecture/dm200912_rewrite_views.py,scripts/governance/d5_architecture/generators/generate_capability_heatmap.py,docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml,docs/02_enterprise_architecture/target_architecture/capability_heatmap.md,docs/02_enterprise_architecture/target_architecture/index.md,docs/02_enterprise_architecture/target_architecture/overview.md,docs/02_enterprise_architecture/target_architecture/application_architecture.md,scripts/_t17_domain_suggestions.csv,docs/02_enterprise_architecture/03_governance_reports/preexisting_db_issues_investigation_report.md,docs/02_enterprise_architecture/dependency_architecture_panorama.md,docs/02_enterprise_architecture/architecture_diagram_construction_plan.md,docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md,docs/_working/domain_split_plan_4_oversized_domains.md,docs/decomposition/tasks/DM-100254.md,data/archive/taskcards/DM-100257.md" \
+  --files "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml,scripts/governance/sync_yaml_to_depgraph.py,scripts/governance/d5_architecture/dm200912_rewrite_views.py,scripts/governance/d5_architecture/generators/generate_capability_heatmap.py,docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml,docs/02_enterprise_architecture/target_architecture/capability_heatmap.md,docs/02_enterprise_architecture/target_architecture/index.md,docs/02_enterprise_architecture/target_architecture/overview.md,docs/02_enterprise_architecture/target_architecture/application_architecture.md,scripts/_t17_domain_suggestions.csv,docs/02_enterprise_architecture/03_governance_reports/preexisting_db_issues_investigation_report.md,docs/02_enterprise_architecture/dependency_architecture_panorama.md,docs/02_enterprise_architecture/architecture_diagram_construction_plan.md,docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md,docs/_working/domain_split_plan_4_oversized_domains.md,docs/_working/decomposition/tasks/DM-100254.md,data/archive/taskcards/DM-100257.md" \
   --message "rename: 6 domain IDs hyphen→underscore - file sync (17 files) [GW:rename-hyphen]"
 ```
 
@@ -701,7 +701,7 @@ git checkout -- \
     docs/02_enterprise_architecture/architecture_diagram_construction_plan.md \
     docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md \
     docs/_working/domain_split_plan_4_oversized_domains.md \
-    docs/decomposition/tasks/DM-100254.md \
+    docs/_working/decomposition/tasks/DM-100254.md \
     data/archive/taskcards/DM-100257.md
 ```
 
@@ -713,7 +713,7 @@ git checkout -- docs/02_enterprise_architecture/02_domain_architecture_docs/ doc
 git checkout -- docs/02_enterprise_architecture/01_global_architecture_diagram/ docs/02_enterprise_architecture/03_governance_reports/
 ```
 
-> **注意**：5.4 中 `git checkout -- docs/02_enterprise_architecture/03_governance_reports/` 会同时恢复历史文档（5.3 已含）和生成报告。为避免混淆，场景 A 下优先执行 5.4 目录级恢复，再执行 5.3 补充恢复 5.4 未覆盖的目录外文件（functional_domain_registry.yaml、scripts/、docs/_working/、docs/decomposition/、data/archive/）。
+> **注意**：5.4 中 `git checkout -- docs/02_enterprise_architecture/03_governance_reports/` 会同时恢复历史文档（5.3 已含）和生成报告。为避免混淆，场景 A 下优先执行 5.4 目录级恢复，再执行 5.3 补充恢复 5.4 未覆盖的目录外文件（functional_domain_registry.yaml、scripts/、docs/_working/、docs/_working/decomposition/、data/archive/）。
 
 ---
 
@@ -765,7 +765,7 @@ git checkout -- docs/02_enterprise_architecture/01_global_architecture_diagram/ 
 | 13 | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | 历史文档 | 追加说明 |
 | 14 | docs/02_enterprise_architecture/_archive/phase4b_cleanup_construction_plan.md | 历史文档 | 追加说明 |
 | 15 | docs/_working/domain_split_plan_4_oversized_domains.md | 历史文档 | 追加说明 |
-| 16 | docs/decomposition/tasks/DM-100254.md | 历史文档 | 追加说明 |
+| 16 | docs/_working/decomposition/tasks/DM-100254.md | 历史文档 | 追加说明 |
 | 17 | data/archive/taskcards/DM-100257.md | 归档 | 追加说明 |
 
 **另**：`data/asset_index/project_entity_depgraph.yaml`（13.8MB）+ `data/asset_index/target_path_tree.yaml` + 所有 domain docs + 全局架构图 + 治理报告均为生成制品，DB 改名后重新生成（见第 3.6.4 节）。

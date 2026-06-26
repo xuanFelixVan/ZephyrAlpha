@@ -874,7 +874,7 @@ sections:
       suggested_location: scripts/governance/check_index_integrity.py
     - check_item: 内容关键词vs doc_type(如content含Step但doc_type=policy)
       difficulty: 较难
-      suggested_location: scripts/governance/scan_deep_content.py(启发式需人工复核)
+      suggested_location: scripts/governance/d3_metadata/deep_content_scanner.py(启发式需人工复核)
     - check_item: 全文内容vs doc_type匹配
       difficulty: 困难
       suggested_location: 人工审查+AI辅助(V5)

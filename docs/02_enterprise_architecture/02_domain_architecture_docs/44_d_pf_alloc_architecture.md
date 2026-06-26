@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-PF_ALLOC 组合分配架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示组合分配（D-PF_ALLOC）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合分配（D-PF_ALLOC）的模块分布。共 15 个模块 / 15 modules。
+> 按 architecture_layer 分层显示 组合分配（D-PF_ALLOC）的模块分布。共 11 个模块 / 11 modules。
 
 ```
 
@@ -31,19 +31,15 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (13 modules)               │
+│               L2 领域层 / Domain Layer (9 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   组合分配域  [design]                                           │
 │   src/zephyr/pf_alloc/__init__.py  [prototype]                   │
 │   src/zephyr/pf_alloc/_extensions/__init__.py  [prototype]       │
 │   src/zephyr/pf_alloc/api/__init__.py  [prototype]               │
-│   约束求解  [design]                                             │
 │   src/zephyr/pf_alloc/core/__init__.py  [prototype]              │
 │   src/zephyr/pf_alloc/infrastructure/__init__.py  [prototype]    │
 │   src/zephyr/pf_alloc/models/__init__.py  [prototype]            │
-│   分配优化器  [design]                                           │
-│   再平衡引擎  [design]                                           │
-│   风险预算  [design]                                             │
 │   src/zephyr/pf_alloc/services/__init__.py  [prototype]          │
 │   src/zephyr/pf_alloc/strategy_lifecycle_event.py  [prototype]   │
 └──────────────────────────────────────────────────────────────────┘
@@ -52,7 +48,7 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 15 个模块 / 15 modules）。
+> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
 
 ### L1 基础层 / Foundation Layer (2 modules)
 
@@ -61,7 +57,7 @@ ttl: permanent
 | 1 | src/zephyr/pf_core/default_equity_strategy.py | src/zephyr/pf_core/default_equity_str... | prototype | generated |
 | 2 | src/zephyr/pf_core/strategy_portfolio.py | src/zephyr/pf_core/strategy_portfolio.py | prototype | generated |
 
-### L2 领域层 / Domain Layer (13 modules)
+### L2 领域层 / Domain Layer (9 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -69,15 +65,11 @@ ttl: permanent
 | 2 | src/zephyr/pf_alloc/__init__.py | src/zephyr/pf_alloc/__init__.py | prototype | generated |
 | 3 | src/zephyr/pf_alloc/_extensions/__init__.py | src/zephyr/pf_alloc/_extensions/__ini... | prototype | deprecated |
 | 4 | src/zephyr/pf_alloc/api/__init__.py | src/zephyr/pf_alloc/api/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/pf_alloc/constraint/ | 约束求解 | design | planned |
-| 6 | src/zephyr/pf_alloc/core/__init__.py | src/zephyr/pf_alloc/core/__init__.py | prototype | deprecated |
-| 7 | src/zephyr/pf_alloc/infrastructure/__init__.py | src/zephyr/pf_alloc/infrastructure/__... | prototype | deprecated |
-| 8 | src/zephyr/pf_alloc/models/__init__.py | src/zephyr/pf_alloc/models/__init__.py | prototype | deprecated |
-| 9 | src/zephyr/pf_alloc/optimizer/ | 分配优化器 | design | planned |
-| 10 | src/zephyr/pf_alloc/rebalance/ | 再平衡引擎 | design | planned |
-| 11 | src/zephyr/pf_alloc/risk_budget/ | 风险预算 | design | planned |
-| 12 | src/zephyr/pf_alloc/services/__init__.py | src/zephyr/pf_alloc/services/__init__.py | prototype | deprecated |
-| 13 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | src/zephyr/pf_alloc/strategy_lifecycl... | prototype | generated |
+| 5 | src/zephyr/pf_alloc/core/__init__.py | src/zephyr/pf_alloc/core/__init__.py | prototype | deprecated |
+| 6 | src/zephyr/pf_alloc/infrastructure/__init__.py | src/zephyr/pf_alloc/infrastructure/__... | prototype | deprecated |
+| 7 | src/zephyr/pf_alloc/models/__init__.py | src/zephyr/pf_alloc/models/__init__.py | prototype | deprecated |
+| 8 | src/zephyr/pf_alloc/services/__init__.py | src/zephyr/pf_alloc/services/__init__.py | prototype | deprecated |
+| 9 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | src/zephyr/pf_alloc/strategy_lifecycl... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

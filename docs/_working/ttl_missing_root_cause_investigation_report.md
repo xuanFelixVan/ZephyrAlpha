@@ -53,7 +53,7 @@ GATE-15（frontmatter ttl 校验门禁）全量扫描发现 **4821 个 `.md` 文
 | `docs/03_modules/` 其他子目录 | ~56 | 1.2% | 混合 |
 | `docs/02_enterprise_architecture/` | ~44 | 0.9% | index.md + 手工文档 |
 | `docs/01_policies_and_standards/` | ~7 | 0.1% | index.md |
-| `docs/09_audit/research_notes/` | 5 | 0.1% | 过程笔记 |
+| `docs/_working/research_notes/` | 5 | 0.1% | 过程笔记 |
 | **合计** | **4,821** | 100% | — |
 
 ### 2.3 区位分布

@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-TRADING 交易运营架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示交易运营（D-TRADING）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:21
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 交易运营（D-TRADING）的模块分布。共 169 个模块 / 169 modules。
+> 按 architecture_layer 分层显示 交易运营（D-TRADING）的模块分布。共 161 个模块 / 161 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (163 modules)              │
+│              L2 领域层 / Domain Layer (158 modules)              │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/trading/__init__.py  [production]                   │
 │   src/zephyr/trading/__init___from_orches.py  [prototype]        │
@@ -43,16 +43,13 @@ ttl: permanent
 │   src/zephyr/trading/capability_card.py  [prototype]             │
 │   src/zephyr/trading/capability_registry.py  [prototype]         │
 │   src/zephyr/trading/capability_sync.py  [prototype]             │
-│   ...还有 145 个模块 / 145 more modules                          │
+│   ...还有 140 个模块 / 140 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (6 modules)                 │
+│                未分类 / Unclassified (3 modules)                 │
 ├──────────────────────────────────────────────────────────────────┤
-│   F1-autopilot/  [design]                                        │
-│   F17-archived/  [design]                                        │
-│   F26-runtime-integration/  [design]                             │
 │   src/zephyr/trading/runtime/__init__.py  [production]           │
 │   src/zephyr/trading/runtime/async_runtime.py  [production]      │
 │   tests/trading/runtime/test_async_runtime.py  [production]      │
@@ -62,9 +59,9 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 169 个模块 / 169 modules）。
+> 按 architecture_layer 分组的模块清单（共 161 个模块 / 161 modules）。
 
-### L2 领域层 / Domain Layer (163 modules)
+### L2 领域层 / Domain Layer (158 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -165,83 +162,75 @@ ttl: permanent
 | 95 | src/zephyr/trading/orchestrator/schema_migration.py | src/zephyr/trading/orchestrator/schem... | prototype | generated |
 | 96 | src/zephyr/trading/orchestrator/script_runner.py | src/zephyr/trading/orchestrator/scrip... | prototype | generated |
 | 97 | src/zephyr/trading/orchestrator/session_conflict.py | src/zephyr/trading/orchestrator/sessi... | prototype | generated |
-| 98 | src/zephyr/trading/orchestrator/session_handoff.py | src/zephyr/trading/orchestrator/sessi... | prototype | generated |
-| 99 | src/zephyr/trading/orchestrator/session_manager.py | src/zephyr/trading/orchestrator/sessi... | prototype | generated |
-| 100 | src/zephyr/trading/orchestrator/stability_guard.py | src/zephyr/trading/orchestrator/stabi... | prototype | generated |
-| 101 | src/zephyr/trading/orchestrator/startup_sequencer.py | src/zephyr/trading/orchestrator/start... | prototype | generated |
-| 102 | src/zephyr/trading/orchestrator/state/__init__.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 103 | src/zephyr/trading/orchestrator/state/agent_health_monito... | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 104 | src/zephyr/trading/orchestrator/state/file_task_mapper.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 105 | src/zephyr/trading/orchestrator/state/session_manager.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 106 | src/zephyr/trading/orchestrator/state/state_synchronizer.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 107 | src/zephyr/trading/orchestrator/state_propagation.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 108 | src/zephyr/trading/orchestrator/state_synchronizer.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
-| 109 | src/zephyr/trading/orchestrator/system_transfer.py | src/zephyr/trading/orchestrator/syste... | prototype | generated |
-| 110 | src/zephyr/trading/orchestrator/task_queue.py | src/zephyr/trading/orchestrator/task_... | prototype | generated |
-| 111 | src/zephyr/trading/orchestrator/teardown_manager.py | src/zephyr/trading/orchestrator/teard... | prototype | generated |
-| 112 | src/zephyr/trading/orchestrator/trigger_router.py | src/zephyr/trading/orchestrator/trigg... | prototype | generated |
-| 113 | src/zephyr/trading/orchestrator/version_manifest.py | src/zephyr/trading/orchestrator/versi... | prototype | generated |
-| 114 | src/zephyr/trading/orchestrator/wave_generator.py | src/zephyr/trading/orchestrator/wave_... | prototype | generated |
-| 115 | src/zephyr/trading/orphan_detector.py | src/zephyr/trading/orphan_detector.py | prototype | generated |
-| 116 | src/zephyr/trading/ports.py | src/zephyr/trading/ports.py | prototype | generated |
-| 117 | src/zephyr/trading/protection_index.py | src/zephyr/trading/protection_index.py | prototype | generated |
-| 118 | src/zephyr/trading/resource_optimization.py | src/zephyr/trading/resource_optimizat... | prototype | generated |
-| 119 | src/zephyr/trading/runtime_config.py | src/zephyr/trading/runtime_config.py | prototype | generated |
-| 120 | src/zephyr/trading/services/__init__.py | src/zephyr/trading/services/__init__.py | prototype | deprecated |
-| 121 | src/zephyr/trading/session_lifecycle.py | src/zephyr/trading/session_lifecycle.py | prototype | generated |
-| 122 | src/zephyr/trading/speed_baseline_checker.py | src/zephyr/trading/speed_baseline_che... | prototype | generated |
-| 123 | src/zephyr/trading/staging_area.py | src/zephyr/trading/staging_area.py | prototype | generated |
-| 124 | src/zephyr/trading/status_dashboard.py | src/zephyr/trading/status_dashboard.py | prototype | generated |
-| 125 | src/zephyr/trading/stop_gate.py | src/zephyr/trading/stop_gate.py | prototype | generated |
-| 126 | src/zephyr/trading/task_gate.py | src/zephyr/trading/task_gate.py | prototype | generated |
-| 127 | src/zephyr/trading/trading_contracts/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 128 | src/zephyr/trading/trading_contracts/execution/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 129 | src/zephyr/trading/trading_contracts/execution/capital_al... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 130 | src/zephyr/trading/trading_contracts/execution/execution_... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 131 | src/zephyr/trading/trading_contracts/execution/execution_... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 132 | src/zephyr/trading/trading_contracts/execution/fill.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 133 | src/zephyr/trading/trading_contracts/execution/model_serv... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 134 | src/zephyr/trading/trading_contracts/execution/order.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 135 | src/zephyr/trading/trading_contracts/execution/position.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 136 | src/zephyr/trading/trading_contracts/factories.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 137 | src/zephyr/trading/trading_contracts/market/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 138 | src/zephyr/trading/trading_contracts/market/factor_monito... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 139 | src/zephyr/trading/trading_contracts/market/factor_signal.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 140 | src/zephyr/trading/trading_contracts/market/instrument.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 141 | src/zephyr/trading/trading_contracts/market/macro_factor_... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 142 | src/zephyr/trading/trading_contracts/market/market_data.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 143 | src/zephyr/trading/trading_contracts/market/signal_degrad... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 144 | src/zephyr/trading/trading_contracts/market/synthesized_s... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 98 | src/zephyr/trading/orchestrator/session_manager.py | src/zephyr/trading/orchestrator/sessi... | prototype | generated |
+| 99 | src/zephyr/trading/orchestrator/stability_guard.py | src/zephyr/trading/orchestrator/stabi... | prototype | generated |
+| 100 | src/zephyr/trading/orchestrator/startup_sequencer.py | src/zephyr/trading/orchestrator/start... | prototype | generated |
+| 101 | src/zephyr/trading/orchestrator/state/__init__.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
+| 102 | src/zephyr/trading/orchestrator/state/agent_health_monito... | src/zephyr/trading/orchestrator/state... | prototype | generated |
+| 103 | src/zephyr/trading/orchestrator/state/file_task_mapper.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
+| 104 | src/zephyr/trading/orchestrator/state/session_manager.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
+| 105 | src/zephyr/trading/orchestrator/state_propagation.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
+| 106 | src/zephyr/trading/orchestrator/state_synchronizer.py | src/zephyr/trading/orchestrator/state... | prototype | generated |
+| 107 | src/zephyr/trading/orchestrator/system_transfer.py | src/zephyr/trading/orchestrator/syste... | prototype | generated |
+| 108 | src/zephyr/trading/orchestrator/task_queue.py | src/zephyr/trading/orchestrator/task_... | prototype | generated |
+| 109 | src/zephyr/trading/orchestrator/teardown_manager.py | src/zephyr/trading/orchestrator/teard... | prototype | generated |
+| 110 | src/zephyr/trading/orchestrator/trigger_router.py | src/zephyr/trading/orchestrator/trigg... | prototype | generated |
+| 111 | src/zephyr/trading/orchestrator/version_manifest.py | src/zephyr/trading/orchestrator/versi... | prototype | generated |
+| 112 | src/zephyr/trading/orchestrator/wave_generator.py | src/zephyr/trading/orchestrator/wave_... | prototype | generated |
+| 113 | src/zephyr/trading/orphan_detector.py | src/zephyr/trading/orphan_detector.py | prototype | generated |
+| 114 | src/zephyr/trading/ports.py | src/zephyr/trading/ports.py | prototype | generated |
+| 115 | src/zephyr/trading/protection_index.py | src/zephyr/trading/protection_index.py | prototype | generated |
+| 116 | src/zephyr/trading/resource_optimization.py | src/zephyr/trading/resource_optimizat... | prototype | generated |
+| 117 | src/zephyr/trading/runtime_config.py | src/zephyr/trading/runtime_config.py | prototype | generated |
+| 118 | src/zephyr/trading/services/__init__.py | src/zephyr/trading/services/__init__.py | prototype | deprecated |
+| 119 | src/zephyr/trading/session_lifecycle.py | src/zephyr/trading/session_lifecycle.py | prototype | generated |
+| 120 | src/zephyr/trading/speed_baseline_checker.py | src/zephyr/trading/speed_baseline_che... | prototype | generated |
+| 121 | src/zephyr/trading/staging_area.py | src/zephyr/trading/staging_area.py | prototype | generated |
+| 122 | src/zephyr/trading/status_dashboard.py | src/zephyr/trading/status_dashboard.py | prototype | generated |
+| 123 | src/zephyr/trading/stop_gate.py | src/zephyr/trading/stop_gate.py | prototype | generated |
+| 124 | src/zephyr/trading/task_gate.py | src/zephyr/trading/task_gate.py | prototype | generated |
+| 125 | src/zephyr/trading/trading_contracts/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 126 | src/zephyr/trading/trading_contracts/execution/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 127 | src/zephyr/trading/trading_contracts/execution/capital_al... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 128 | src/zephyr/trading/trading_contracts/execution/execution_... | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 129 | src/zephyr/trading/trading_contracts/execution/execution_... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 130 | src/zephyr/trading/trading_contracts/execution/fill.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 131 | src/zephyr/trading/trading_contracts/execution/model_serv... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 132 | src/zephyr/trading/trading_contracts/execution/order.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 133 | src/zephyr/trading/trading_contracts/execution/position.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 134 | src/zephyr/trading/trading_contracts/factories.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 135 | src/zephyr/trading/trading_contracts/market/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 136 | src/zephyr/trading/trading_contracts/market/factor_monito... | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 137 | src/zephyr/trading/trading_contracts/market/factor_signal.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 138 | src/zephyr/trading/trading_contracts/market/instrument.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 139 | src/zephyr/trading/trading_contracts/market/macro_factor_... | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 140 | src/zephyr/trading/trading_contracts/market/market_data.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 141 | src/zephyr/trading/trading_contracts/market/signal_degrad... | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 142 | src/zephyr/trading/trading_contracts/market/synthesized_s... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 143 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 144 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | production | generated |
 | 145 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 146 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 147 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 148 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 149 | src/zephyr/trading/trading_contracts/risk/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 150 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
-| 151 | src/zephyr/trading/trading_contracts/risk/risk_dashboard_... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 152 | src/zephyr/trading/trading_contracts/risk/risk_limit_viol... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 153 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 154 | src/zephyr/trading/trading_contracts/risk/risk_metrics.py | src/zephyr/trading/trading_contracts/... | production | generated |
-| 155 | src/zephyr/trading/trading_contracts/risk/risk_validator_... | src/zephyr/trading/trading_contracts/... | production | generated |
-| 156 | src/zephyr/trading/verdict_engine.py | src/zephyr/trading/verdict_engine.py | prototype | generated |
-| 157 | src/zephyr/trading/windows_service.py | src/zephyr/trading/windows_service.py | prototype | generated |
-| 158 | src/zephyr/trading/work_dag.py | src/zephyr/trading/work_dag.py | prototype | generated |
-| 159 | src/zephyr/trading/work_orchestrator.py | src/zephyr/trading/work_orchestrator.py | prototype | generated |
-| 160 | src/zephyr/trading/zombie_scanner.py | src/zephyr/trading/zombie_scanner.py | prototype | generated |
-| 161 | 交易域-监控/D-TRADING-06 | Intraday P&L Monitor | design | planned |
-| 162 | 交易域-资金/D-TRADING-12 | Cash Flow Manager | design | planned |
-| 163 | 交易运营域/D-TRADING-04 | EOD Processor | design | planned |
+| 146 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 147 | src/zephyr/trading/trading_contracts/risk/__init__.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 148 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | src/zephyr/trading/trading_contracts/... | prototype | generated |
+| 149 | src/zephyr/trading/trading_contracts/risk/risk_dashboard_... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 150 | src/zephyr/trading/trading_contracts/risk/risk_limit_viol... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 151 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 152 | src/zephyr/trading/trading_contracts/risk/risk_metrics.py | src/zephyr/trading/trading_contracts/... | production | generated |
+| 153 | src/zephyr/trading/trading_contracts/risk/risk_validator_... | src/zephyr/trading/trading_contracts/... | production | generated |
+| 154 | src/zephyr/trading/verdict_engine.py | src/zephyr/trading/verdict_engine.py | prototype | generated |
+| 155 | src/zephyr/trading/windows_service.py | src/zephyr/trading/windows_service.py | prototype | generated |
+| 156 | src/zephyr/trading/work_dag.py | src/zephyr/trading/work_dag.py | prototype | generated |
+| 157 | src/zephyr/trading/work_orchestrator.py | src/zephyr/trading/work_orchestrator.py | prototype | generated |
+| 158 | src/zephyr/trading/zombie_scanner.py | src/zephyr/trading/zombie_scanner.py | prototype | generated |
 
-### 未分类 / Unclassified (6 modules)
+### 未分类 / Unclassified (3 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | F1-autopilot/ | F1-autopilot/ | design | stable |
-| 2 | F17-archived/ | F17-archived/ | design | deprecated |
-| 3 | F26-runtime-integration/ | F26-runtime-integration/ | design | stable |
-| 4 | src/zephyr/trading/runtime/__init__.py | src/zephyr/trading/runtime/__init__.py | production | generated |
-| 5 | src/zephyr/trading/runtime/async_runtime.py | src/zephyr/trading/runtime/async_runt... | production | generated |
-| 6 | tests/trading/runtime/test_async_runtime.py | tests/trading/runtime/test_async_runt... | production | generated |
+| 1 | src/zephyr/trading/runtime/__init__.py | src/zephyr/trading/runtime/__init__.py | production | generated |
+| 2 | src/zephyr/trading/runtime/async_runtime.py | src/zephyr/trading/runtime/async_runt... | production | generated |
+| 3 | tests/trading/runtime/test_async_runtime.py | tests/trading/runtime/test_async_runt... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
@@ -252,13 +241,14 @@ ttl: permanent
 ┌──────────────────────────────────────────────────────────────────┐
 │      依赖关系图 / Dependency Graph (共 140 条 / 140 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 2                               │
-│   [import_depends]: 83 条 / edges                                │
-│   [config_depends]: 57 条 / edges                                │
+│   依赖类型数 / Dependency Types: 3                               │
+│   [import_depends]: 82 条 / edges                                │
+│   [config_depends]: 56 条 / edges                                │
+│   [runtime]: 2 条 / edges                                        │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (83 条 / edges)                 │
+│                 [import_depends] (82 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   auto_dispatcher.py → __init__.py                               │
 │   auto_integrator.py → __init__.py                               │
@@ -291,7 +281,6 @@ ttl: permanent
 │   __init__.py → trigger_router.py                                │
 │   agent_health_monitor.py → __init__.py                          │
 │   __init__.py → session_manager.py                               │
-│   state_synchronizer.py → __init__.py                            │
 │   __init__.py → deferred_queue.py                                │
 │   __init__.py → failure_matcher.py                               │
 │   __init__.py → __init__.py                                      │
@@ -309,10 +298,13 @@ ttl: permanent
 │   __init__.py → signal_degradation_warnin...                     │
 │   __init__.py → synthesized_signal.py                            │
 │   __init__.py → macro_factor_signal.py                           │
-│   ...还有 34 条 / 34 more edges                                  │
+│   __init__.py → money.py                                         │
+│   ...还有 33 条 / 33 more edges                                  │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (57 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (56 条 / edges) — 已达显示上限，省略 / limit reached
+
+**[runtime]** (2 条 / edges) — 已达显示上限，省略 / limit reached
 
 > (最多显示前 50 条依赖边，共 140 条)
 

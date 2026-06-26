@@ -1,10 +1,13 @@
 # [A_config] module_id=CFG-functional-domain-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: REG-FUNC-DOMAIN-001
+title: 功能域注册表
+doc_type: register
 registry_id: REG-FUNC-DOMAIN-001
 name: 功能域注册表
 description: 模块/脚本功能域声明的唯一真源。以 D-XXX 域ID 为 domain 字段的子域描述表，创建新模块/脚本时SSoT门禁检查功能域重叠。
 owner: MOD-INF-037
 tier: tier_1_governance
-status: Active
+status: active
 version: 0.4.0
 created: '2026-05-16'
 last_updated: '2026-06-25'

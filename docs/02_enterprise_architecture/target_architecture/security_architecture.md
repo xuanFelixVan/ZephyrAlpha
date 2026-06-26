@@ -371,7 +371,7 @@ L1: .env + .gitignore   �?  L2: git-secrets    �?       L3: LSG Output Scann
 **L3-Audit（experimental 每周�?*�?
 
 - `scripts/governance/scan_secret_leak.py` –全库扫描 + 对比历史快照
-- Finding �?`docs/09_audit/findings/secret-leak-*.md`
+- Finding �?`docs/_working/audit/findings/secret-leak-*.md`
 
 ### 6.4 beta 升级触发
 
@@ -535,7 +535,7 @@ L1: .env + .gitignore   �?  L2: git-secrets    �?       L3: LSG Output Scann
 1. **自动**：LSG/Sandbox/Scanner 立即拦截 + �?audit 事件 + FLE 异常上报
 2. **10 分钟�?*：飞�?Bot 推送告警（优先�?P0 / P1�?
 3. **1 小时�?*：人工确�?+ 决定是否启动手动响应
-4. **24 小时�?*：写 `docs/09_audit/findings/incident-YYYYMMDD-<id>.md`（时间线 + 根因 + 缓解�?
+4. **24 小时�?*：写 `docs/_working/audit/findings/incident-YYYYMMDD-<id>.md`（时间线 + 根因 + 缓解�?
 5. **7 天内**：复�?+ 产出 KB 决策记录（如需要架构修改）
 
 ### 11.2 Runbook 清单（experimental P0�?

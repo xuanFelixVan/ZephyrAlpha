@@ -17,7 +17,7 @@ doc_type: knowledge_entry
  "remediation": "Fix violations in tasks/T-0-01/ before proceeding."}
 
 {"level": "INFO", "phase": 0, "criterion": "EXIT-0-05", "status": "PASS",
- "evidence": "docs/09_audit/-acceptance.md exists"}
+ "evidence": "docs/_working/audit/-acceptance.md exists"}
 ```
 
 ---

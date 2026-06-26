@@ -625,7 +625,7 @@ references:
 | 137 | `docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md` | sqlite3.connect命令+SQLite锁竞争描述（L203,274,297,310,391,772-773,859） | 替换连接命令；更新锁竞争描述 |
 | 138 | `docs/02_enterprise_architecture/t18_implementation_plan.md` | sqlite3.connect+DROP TRIGGER命令（L553） | 替换为PG连接；TRIGGER语法适配 |
 | 139 | `docs/01_policies_and_standards/templates/dependency_graph_template.md` | 语法检查命令使用sqlite3（L961） | 更新为PG连接验证 |
-| 140 | `docs/09_audit/research_notes/naming_whitelist_cleanup_plan.md` | sqlite3 CLI命令+SQLite描述（L108-122,235-249,740） | 更新数据库类型描述；替换CLI命令 |
+| 140 | `docs/_working/audit/research_notes/naming_whitelist_cleanup_plan.md` | sqlite3 CLI命令+SQLite描述（L108-122,235-249,740） | 更新数据库类型描述；替换CLI命令 |
 
 #### 第3轮新增：Blueprint文档（引用SSoT路径，20个）
 
@@ -697,9 +697,9 @@ references:
 | 189 | `docs/08_knowledge/04_archived/ke-3275-adr.md` | 同上 |
 | 190 | `docs/08_knowledge/04_archived/ke-3334-zephyralpha.md` | 同上 |
 | 191 | `docs/08_knowledge/04_archived/ke-3328-documentat.md` | 同上 |
-| 192 | `docs/decomposition/tasks/DM-100255.md` | 历史任务卡 |
-| 193 | `docs/decomposition/tasks/DM-100254.md` | 同上 |
-| 194 | `docs/decomposition/tasks/DM-100253.md` | 同上 |
+| 192 | `docs/_working/decomposition/tasks/DM-100255.md` | 历史任务卡 |
+| 193 | `docs/_working/decomposition/tasks/DM-100254.md` | 同上 |
+| 194 | `docs/_working/decomposition/tasks/DM-100253.md` | 同上 |
 | 195 | `data/archive/taskcards/DM-100258.md` | 归档任务卡 |
 | 196 | `data/archive/taskcards/DM-100257.md` | 同上 |
 | 197 | `data/reports/dm031_integration_verification_report.md` | 集成验证报告 |

@@ -52,7 +52,7 @@ delegation_context_package:
     fallback: "压缩失败 → 传完整包但标记 [BUDGET_CRITICAL]"
 
   # === 上下文包的存储与传递 ===
-  storage: "docs/09_audit/DELEGATION/{delegation_id}.yaml"
+  storage: "docs/_working/audit/DELEGATION/{delegation_id}.yaml"
   format: "YAML（与 GOV-AI-008 HandoffPackage 格式兼容）"
   audit: "每次委托上下文包写入 Audit Trail (MOD-INF-020)"
 ```

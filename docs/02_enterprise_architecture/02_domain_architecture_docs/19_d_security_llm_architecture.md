@@ -1,24 +1,24 @@
 ---
 doc_type: architecture_view
-title: D-SECURITY-LLM llm_defense架构图
+title: D-SECURITY_LLM llm_defense架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
 
 # 19_d_security_llm / llm_defense 架构图
 
-> **文档作用 / Purpose**: 以ASCII art可视化展示llm_defense（D-SECURITY-LLM）功能域的模块分层架构和依赖关系。
+> **文档作用 / Purpose**: 以ASCII art可视化展示llm_defense（D-SECURITY_LLM）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:21
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 llm_defense（D-SECURITY-LLM）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 llm_defense（D-SECURITY_LLM）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 

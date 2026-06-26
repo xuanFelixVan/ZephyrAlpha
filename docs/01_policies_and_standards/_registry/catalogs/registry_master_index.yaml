@@ -1,12 +1,20 @@
-# 自动生成于 2026-06-26T14:30:43Z
+# 自动生成于 2026-06-26T19:17:34Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-26T14:30:43Z'
+generated_at: '2026-06-26T19:17:34Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 21
+total_registries: 22
 registries:
+- registry_id: GOV-AI-001
+  name: AI 自治权限登记表（全模块权限终表）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: CFG-ai-risk-register
   name: AI 风险登记簿
   category: governance_rule
@@ -30,7 +38,7 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 12
-  status: Active
+  status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
   category: governance_rule
@@ -70,7 +78,7 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 4
-  status: Active
+  status: active
 - registry_id: CFG-directory-registry
   name: 项目目录登记?
   category: governance_rule
@@ -86,7 +94,7 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 5
-  status: Active
+  status: active
 - registry_id: GOV-001
   name: 前沿大模型综合能力排名登记表
   category: governance_rule
@@ -94,7 +102,7 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 0
-  status: Active
+  status: active
 - registry_id: PS-REG-012
   name: Frontmatter 字段定义登记表
   category: governance_rule
@@ -110,7 +118,7 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 45
-  status: Active
+  status: active
 - registry_id: PS-REG-014
   name: GATE 门禁登记?
   category: governance_rule
@@ -157,7 +165,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   format: yaml
   maintenance: manual
-  entry_count: 24
+  entry_count: 22
   status: active
 - registry_id: PS-REG-018
   name: 规则路径目录
@@ -165,7 +173,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 153
+  entry_count: 88
   status: active
 - registry_id: PS-REG-017
   name: 任务卡元层登记表

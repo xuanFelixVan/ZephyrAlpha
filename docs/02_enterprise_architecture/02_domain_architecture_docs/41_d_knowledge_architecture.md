@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-KNOWLEDGE 知识管理架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示知识管理（D-KNOWLEDGE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 知识管理（D-KNOWLEDGE）的模块分布。共 50 个模块 / 50 modules。
+> 按 architecture_layer 分层显示 知识管理（D-KNOWLEDGE）的模块分布。共 40 个模块 / 40 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (50 modules)             │
+│            L1 基础层 / Foundation Layer (40 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   architecture_model/layers/b_vector_memory.yaml  [production]   │
 │   docs__03_modules___domain_knowledge__knowledge_base__bluepr... │
@@ -43,16 +43,16 @@ ttl: permanent
 │   src/zephyr/governance/vector_memory/hybrid_retriever.py  [p... │
 │   src/zephyr/governance/vector_memory/in_memory_fake_vms.py  ... │
 │   src/zephyr/governance/vector_memory/in_memory_memory_backen... │
-│   ...还有 32 个模块 / 32 more modules                            │
+│   ...还有 22 个模块 / 22 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 50 个模块 / 50 modules）。
+> 按 architecture_layer 分组的模块清单（共 40 个模块 / 40 modules）。
 
-### L1 基础层 / Foundation Layer (50 modules)
+### L1 基础层 / Foundation Layer (40 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -77,35 +77,25 @@ ttl: permanent
 | 19 | src/zephyr/governance/vector_memory/in_process_vector_mem... | src/zephyr/governance/vector_memory/i... | prototype | generated |
 | 20 | src/zephyr/governance/vector_memory/index_health_monitor.py | src/zephyr/governance/vector_memory/i... | prototype | generated |
 | 21 | src/zephyr/governance/vector_memory/interface.py | src/zephyr/governance/vector_memory/i... | prototype | generated |
-| 22 | src/zephyr/governance/vector_memory/local_model_scheduler.py | src/zephyr/governance/vector_memory/l... | prototype | generated |
-| 23 | src/zephyr/governance/vector_memory/migrate_chroma_to_fai... | src/zephyr/governance/vector_memory/m... | prototype | generated |
-| 24 | src/zephyr/governance/vector_memory/ollama_chat.py | src/zephyr/governance/vector_memory/o... | prototype | generated |
-| 25 | src/zephyr/governance/vector_memory/ollama_embedding.py | src/zephyr/governance/vector_memory/o... | prototype | generated |
-| 26 | src/zephyr/governance/vector_memory/provenance_enforcer.py | src/zephyr/governance/vector_memory/p... | prototype | generated |
-| 27 | src/zephyr/governance/vector_memory/retrieval_feedback.py | src/zephyr/governance/vector_memory/r... | prototype | generated |
-| 28 | src/zephyr/governance/vector_memory/sqlite_metadata_store.py | src/zephyr/governance/vector_memory/s... | prototype | generated |
-| 29 | src/zephyr/governance/vector_memory/vms_errors.py | src/zephyr/governance/vector_memory/v... | prototype | generated |
-| 30 | src/zephyr/governance/vector_memory/vms_schemas.py | src/zephyr/governance/vector_memory/v... | prototype | generated |
-| 31 | src/zephyr/knowledge/__init__.py | src/zephyr/knowledge/__init__.py | prototype | deprecated |
-| 32 | src/zephyr/knowledge/_extensions/__init__.py | src/zephyr/knowledge/_extensions/__in... | prototype | deprecated |
-| 33 | src/zephyr/knowledge/api/__init__.py | src/zephyr/knowledge/api/__init__.py | prototype | deprecated |
-| 34 | src/zephyr/knowledge/core/__init__.py | src/zephyr/knowledge/core/__init__.py | prototype | deprecated |
-| 35 | src/zephyr/knowledge/infrastructure/__init__.py | src/zephyr/knowledge/infrastructure/_... | prototype | deprecated |
-| 36 | src/zephyr/knowledge/models/__init__.py | src/zephyr/knowledge/models/__init__.py | prototype | deprecated |
-| 37 | src/zephyr/knowledge/services/__init__.py | src/zephyr/knowledge/services/__init_... | prototype | deprecated |
-| 38 | tests/test_skill_knowledge_base.py | tests/test_skill_knowledge_base.py | prototype | generated |
-| 39 | tests/test_vector_memory_root.py | tests/test_vector_memory_root.py | prototype | deprecated |
-| 40 | tests/unit/vector_memory/__init__.py | tests/unit/vector_memory/__init__.py | prototype | deprecated |
-| 41 | tests/unit/vector_memory/test_vector_memory.py | tests/unit/vector_memory/test_vector_... | prototype | generated |
-| 42 | 知识域-AI提取/D-KNOWLEDGE-17 | AI Auto Knowledge Extractor | design | planned |
-| 43 | 知识域-图谱浏览/D-KNOWLEDGE-15 | Knowledge Graph Explorer | design | planned |
-| 44 | 知识域-推理/D-KNOWLEDGE-09 | Knowledge Reasoner | design | planned |
-| 45 | 知识域-搜索/D-KNOWLEDGE-21 | Knowledge Base Search Engine | design | planned |
-| 46 | 知识域-案例管理/D-KNOWLEDGE-23 | Case Library Tag System | design | planned |
-| 47 | 知识域-沉淀/D-KNOWLEDGE-25 | Research Knowledge Precipitator | design | planned |
-| 48 | 知识域-质量评估/D-KNOWLEDGE-11 | Knowledge Quality Assessor | design | planned |
-| 49 | 知识域-金融图谱/D-KNOWLEDGE-13 | Financial Knowledge Graph | design | planned |
-| 50 | 知识域-集成/D-KNOWLEDGE-19 | Obsidian Knowledge Base Integrator | design | planned |
+| 22 | src/zephyr/governance/vector_memory/migrate_chroma_to_fai... | src/zephyr/governance/vector_memory/m... | prototype | generated |
+| 23 | src/zephyr/governance/vector_memory/ollama_chat.py | src/zephyr/governance/vector_memory/o... | prototype | generated |
+| 24 | src/zephyr/governance/vector_memory/ollama_embedding.py | src/zephyr/governance/vector_memory/o... | prototype | generated |
+| 25 | src/zephyr/governance/vector_memory/provenance_enforcer.py | src/zephyr/governance/vector_memory/p... | prototype | generated |
+| 26 | src/zephyr/governance/vector_memory/retrieval_feedback.py | src/zephyr/governance/vector_memory/r... | prototype | generated |
+| 27 | src/zephyr/governance/vector_memory/sqlite_metadata_store.py | src/zephyr/governance/vector_memory/s... | prototype | generated |
+| 28 | src/zephyr/governance/vector_memory/vms_errors.py | src/zephyr/governance/vector_memory/v... | prototype | generated |
+| 29 | src/zephyr/governance/vector_memory/vms_schemas.py | src/zephyr/governance/vector_memory/v... | prototype | generated |
+| 30 | src/zephyr/knowledge/__init__.py | src/zephyr/knowledge/__init__.py | prototype | deprecated |
+| 31 | src/zephyr/knowledge/_extensions/__init__.py | src/zephyr/knowledge/_extensions/__in... | prototype | deprecated |
+| 32 | src/zephyr/knowledge/api/__init__.py | src/zephyr/knowledge/api/__init__.py | prototype | deprecated |
+| 33 | src/zephyr/knowledge/core/__init__.py | src/zephyr/knowledge/core/__init__.py | prototype | deprecated |
+| 34 | src/zephyr/knowledge/infrastructure/__init__.py | src/zephyr/knowledge/infrastructure/_... | prototype | deprecated |
+| 35 | src/zephyr/knowledge/models/__init__.py | src/zephyr/knowledge/models/__init__.py | prototype | deprecated |
+| 36 | src/zephyr/knowledge/services/__init__.py | src/zephyr/knowledge/services/__init_... | prototype | deprecated |
+| 37 | tests/test_skill_knowledge_base.py | tests/test_skill_knowledge_base.py | prototype | generated |
+| 38 | tests/test_vector_memory_root.py | tests/test_vector_memory_root.py | prototype | deprecated |
+| 39 | tests/unit/vector_memory/__init__.py | tests/unit/vector_memory/__init__.py | prototype | deprecated |
+| 40 | tests/unit/vector_memory/test_vector_memory.py | tests/unit/vector_memory/test_vector_... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

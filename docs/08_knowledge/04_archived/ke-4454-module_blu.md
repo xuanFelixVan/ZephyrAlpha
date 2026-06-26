@@ -10,4 +10,4 @@ doc_type: knowledge_entry
 
 DB-025-0022：数据目录清单验证——§6.3
 
-§6.3 路径: docs/09_audit/state/data/databases/governance.db, data/backups/, data/warehouse/。确认可创建/已存在。
+§6.3 路径: docs/_working/audit/state/data/databases/governance.db, data/backups/, data/warehouse/。确认可创建/已存在。

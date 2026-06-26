@@ -2,7 +2,7 @@
 module_id: GOV-030
 title: "文档模板目录索引"
 doc_type: index
-status: Active
+status: active
 version: "1.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner

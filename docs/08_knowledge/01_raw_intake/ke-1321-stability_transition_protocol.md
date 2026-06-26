@@ -31,6 +31,6 @@ next_phase_entry_criteria:
   # ... （见 §3 具体内容）
 
 rollback_snapshot_path: "_reorg_snapshots/snapshot--post/"  # 目录已物理删除，2026-05-06 AUDIT-10 确认
-phase_acceptance_doc: "docs/09_audit/-acceptance.md"
+phase_acceptance_doc: "docs/_working/audit/-acceptance.md"
 ---
 ```

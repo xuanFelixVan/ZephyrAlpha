@@ -22,7 +22,7 @@ doc_type: knowledge_entry
 | 架构快照 | `docs/02_enterprise_architecture/snapshots/` |
 | 模块生命周期文档 | `docs/03_modules/l{xx}_{layer}/{module}/` |
 | 知识库条目 | `docs/08_knowledge/` |
-| 审计报告/状态 | `docs/09_audit/` |
+| 审计报告/状态 | `docs/_working/audit/` |
 | Session Log | 已迁至项目外部独立目录（2026-05-02）。`docs/19_development_workspace/` 目录已删除。 |
 | 任务书 | 已迁至项目外部独立目录（2026-05-02）。`docs/19_development_workspace/` 目录已删除。 |
 | 业务代码 | `src/zephyr/{layer_id}/` |

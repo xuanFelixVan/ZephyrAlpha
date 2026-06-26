@@ -1850,7 +1850,7 @@ scaffold.py → asset.created
 | `test_*.py` | `tests/asset-inventory/` | 对应测试文件 |
 | `raw_asset_scan.json` | `data/scans/` | 原始扫描结果 |
 | `unified_asset_index.yaml` | `data/asset_index/` | 统一资产索引 SSoT |
-| `reconciliation_report.md` | `docs/09_audit/reports/` | 对账报告 |
+| `reconciliation_report.md` | `docs/_working/audit/reports/` | 对账报告 |
 
 ---
 
@@ -2910,7 +2910,7 @@ class BypassManager:
 | `raw_asset_scan.json` | 1 次/小时 | 保留最近 48 份（2 天），其余自动删除 | ~5 MB × 48 = 240 MB |
 | `classified_assets.json` | 1 次/小时 | 保留最近 24 份（1 天） | ~3 MB × 24 = 72 MB |
 | `unified_asset_index.yaml` | 1 次/小时 | 保留最近 30 份（1 个月），每次覆盖是原地更新 + 同时保留时间戳快照 `index_YYYYMMDD_HHMMSS.yaml` | ~2 MB × 30 = 60 MB |
-| `reconciliation_report.md` | 每次对账 | 永久保留（用于审计追溯），但在 `docs/09_audit/reports/` 中 | ~20 KB × N → 微不足道 |
+| `reconciliation_report.md` | 每次对账 | 永久保留（用于审计追溯），但在 `docs/_working/audit/reports/` 中 | ~20 KB × N → 微不足道 |
 | `security_access_log.jsonl` | 每次扫描 | 保留最近 90 天 | ~1 KB × 2160 = 2 MB |
 | `Git metadata cache` | 1 次/天 | 保留最近 7 份 | ~3 MB × 7 = 21 MB |
 

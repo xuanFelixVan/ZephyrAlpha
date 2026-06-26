@@ -118,7 +118,7 @@ sections:
     - type: mandatory
       step: 不再需要的权限须在复审后7天内收回
     - type: mandatory
-      step: 复审结果记录于docs/09_audit/access-reviews/YYYY-MM.md
+      step: 复审结果记录于docs/_working/audit/access-reviews/YYYY-MM.md
     prohibitions: []
   sec_001:
     title: 禁止明文存储密钥
@@ -307,7 +307,7 @@ sections:
     - type: mandatory
       step: 日志包含时间戳(ISO8601UTC)/级别/事件描述/响应措施/复盘总结
     - type: mandatory
-      step: 日志文件docs/09_audit/security-incident-log.md，每事件一条Markdown表格行
+      step: 日志文件docs/_working/audit/security-incident-log.md，每事件一条Markdown表格行
     prohibitions: []
   sir_003:
     title: P0事件必须复盘
@@ -525,7 +525,7 @@ sections:
     items:
     - date: '2026-05-04'
       version: 0.3.0
-      change: 审计修复。ACS-005审查记录路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
+      change: 审计修复。ACS-005审查记录路径更新：docs/19_development_workspace/ → docs/_working/audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
     - date: '2026-04-30'
       version: 0.1.0
       change: 初始版本
@@ -768,7 +768,7 @@ sections:
       change: RQ审查修复：provenance源文件标记status=migrated（3个.md已迁移为本规则文件）；enforcement.executors补充scan_secret_leak.py（type=code不应为空）
     - date: '2026-05-04'
       version: 0.3.0
-      change: 审计修复。SIR-002日志路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
+      change: 审计修复。SIR-002日志路径更新：docs/19_development_workspace/ → docs/_working/audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）
     - date: '2026-04-30'
       version: 0.1.0
       change: 初始版本

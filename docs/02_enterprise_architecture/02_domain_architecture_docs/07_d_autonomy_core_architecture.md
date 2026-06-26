@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-AUTONOMY_CORE 自治核心架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示自治核心（D-AUTONOMY_CORE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 自治核心（D-AUTONOMY_CORE）的模块分布。共 181 个模块 / 181 modules。
+> 按 architecture_layer 分层显示 自治核心（D-AUTONOMY_CORE）的模块分布。共 176 个模块 / 176 modules。
 
 ```
 
@@ -48,19 +48,8 @@ ttl: permanent
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (2 modules)               │
+│                未分类 / Unclassified (1 modules)                 │
 ├──────────────────────────────────────────────────────────────────┤
-│   ChromaDB Runtime Validator  [design]                           │
-│   Memory Provenance Enforcer  [design]                           │
-└──────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (4 modules)                 │
-├──────────────────────────────────────────────────────────────────┤
-│   F23-agent-orchestrator/  [design]                              │
-│   F24-agent-spec/  [design]                                      │
-│   F32-state-machine/  [design]                                   │
 │   src/zephyr/autonomy_core/context_pipeline_auto.py  [product... │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -68,7 +57,7 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 181 个模块 / 181 modules）。
+> 按 architecture_layer 分组的模块清单（共 176 个模块 / 176 modules）。
 
 ### L1 基础层 / Foundation Layer (175 modules)
 
@@ -250,35 +239,24 @@ ttl: permanent
 | 174 | src/zephyr/autonomy_core/verify_paths.py | src/zephyr/autonomy_core/verify_paths.py | prototype | generated |
 | 175 | src/zephyr/autonomy_core/vibe_coding_quality_gate.py | src/zephyr/autonomy_core/vibe_coding_... | prototype | generated |
 
-### L2 领域层 / Domain Layer (2 modules)
+### 未分类 / Unclassified (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | 自治-向量库验证/D-AUTONOMY-125 | ChromaDB Runtime Validator | design | planned |
-| 2 | 自治-记忆溯源/D-AUTONOMY-73 | Memory Provenance Enforcer | design | planned |
-
-### 未分类 / Unclassified (4 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | F23-agent-orchestrator/ | F23-agent-orchestrator/ | design | stable |
-| 2 | F24-agent-spec/ | F24-agent-spec/ | design | stable |
-| 3 | F32-state-machine/ | F32-state-machine/ | design | stable |
-| 4 | src/zephyr/autonomy_core/context_pipeline_auto.py | src/zephyr/autonomy_core/context_pipe... | production | generated |
+| 1 | src/zephyr/autonomy_core/context_pipeline_auto.py | src/zephyr/autonomy_core/context_pipe... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 153 条 / 153 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 152 条 / 152 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 153 条 / 153 edges)       │
+│      依赖关系图 / Dependency Graph (共 152 条 / 152 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 3                               │
+│   依赖类型数 / Dependency Types: 2                               │
 │   [config_depends]: 112 条 / edges                               │
 │   [import_depends]: 40 条 / edges                                │
-│   [runtime]: 1 条 / edges                                        │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -338,9 +316,7 @@ ttl: permanent
 
 **[import_depends]** (40 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[runtime]** (1 条 / edges) — 已达显示上限，省略 / limit reached
-
-> (最多显示前 50 条依赖边，共 153 条)
+> (最多显示前 50 条依赖边，共 152 条)
 
 ```
 

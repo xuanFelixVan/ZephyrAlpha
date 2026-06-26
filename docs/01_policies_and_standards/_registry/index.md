@@ -2,7 +2,7 @@
 module_id: GOV-005
 title: 登记表体系目录索引
 doc_type: index
-status: Active
+status: active
 version: "3.1.0"
 date: "2026-06-26"
 summary: "_registry/ 目录导航。v3.1.0：子目录文件数与 **不含各子目录 index.md** 的体系文件合计 **59** 对账。"

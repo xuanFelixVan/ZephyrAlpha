@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-SECURITY 对抗验证架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示对抗验证（D-SECURITY）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:21
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 对抗验证（D-SECURITY）的模块分布。共 276 个模块 / 276 modules。
+> 按 architecture_layer 分层显示 对抗验证（D-SECURITY）的模块分布。共 243 个模块 / 243 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (272 modules)            │
+│            L1 基础层 / Foundation Layer (243 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/behavioral_audit/__init__.py  [prototype]           │
 │   src/zephyr/behavioral_audit/__main__.py  [prototype]           │
@@ -43,26 +43,16 @@ ttl: permanent
 │   src/zephyr/security/__init__.py  [prototype]                   │
 │   src/zephyr/security/_extensions/__init__.py  [prototype]       │
 │   src/zephyr/security/access_control/__init__.py  [production]   │
-│   ...还有 254 个模块 / 254 more modules                          │
-└──────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                未分类 / Unclassified (4 modules)                 │
-├──────────────────────────────────────────────────────────────────┤
-│   F16-orphan-judge/  [design]                                    │
-│   F30-red-blue/  [design]                                        │
-│   F7-llm-gateway/  [design]                                      │
-│   F8-rbac/  [design]                                             │
+│   ...还有 225 个模块 / 225 more modules                          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 276 个模块 / 276 modules）。
+> 按 architecture_layer 分组的模块清单（共 243 个模块 / 243 modules）。
 
-### L1 基础层 / Foundation Layer (272 modules)
+### L1 基础层 / Foundation Layer (243 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -262,35 +252,25 @@ ttl: permanent
 | 194 | src/zephyr/security/llm_defense/llm_security/layers/l5_re... | src/zephyr/security/llm_defense/llm_s... | production | generated |
 | 195 | src/zephyr/security/llm_defense/llm_security/layers/l6_da... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
 | 196 | src/zephyr/security/llm_defense/llm_security/layers/l6_ob... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 197 | src/zephyr/security/llm_defense/llm_security/layers/l7_ru... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 198 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
-| 199 | src/zephyr/security/llm_defense/llm_security/layers/l8_mu... | src/zephyr/security/llm_defense/llm_s... | production | generated |
-| 200 | src/zephyr/security/llm_defense/llm_security/patterns/__i... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 197 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 198 | src/zephyr/security/llm_defense/llm_security/layers/l8_mu... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 199 | src/zephyr/security/llm_defense/llm_security/patterns/__i... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 200 | src/zephyr/security/llm_defense/llm_security/patterns/inj... | src/zephyr/security/llm_defense/llm_s... | production | generated |
 
-> (仅显示前 200 个模块，共 272 个)
-
-### 未分类 / Unclassified (4 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | F16-orphan-judge/ | F16-orphan-judge/ | design | stable |
-| 2 | F30-red-blue/ | F30-red-blue/ | design | stable |
-| 3 | F7-llm-gateway/ | F7-llm-gateway/ | design | stable |
-| 4 | F8-rbac/ | F8-rbac/ | design | stable |
+> (仅显示前 200 个模块，共 243 个)
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 245 条 / 245 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 243 条 / 243 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│      依赖关系图 / Dependency Graph (共 245 条 / 245 edges)       │
+│      依赖关系图 / Dependency Graph (共 243 条 / 243 edges)       │
 ├──────────────────────────────────────────────────────────────────┤
-│   依赖类型数 / Dependency Types: 3                               │
+│   依赖类型数 / Dependency Types: 2                               │
 │   [import_depends]: 238 条 / edges                               │
-│   [config_depends]: 6 条 / edges                                 │
-│   [contract]: 1 条 / edges                                       │
+│   [config_depends]: 5 条 / edges                                 │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
@@ -348,11 +328,9 @@ ttl: permanent
 │   ...还有 189 条 / 189 more edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (6 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (5 条 / edges) — 已达显示上限，省略 / limit reached
 
-**[contract]** (1 条 / edges) — 已达显示上限，省略 / limit reached
-
-> (最多显示前 50 条依赖边，共 245 条)
+> (最多显示前 50 条依赖边，共 243 条)
 
 ```
 

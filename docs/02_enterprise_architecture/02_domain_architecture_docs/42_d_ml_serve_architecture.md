@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-ML_SERVE 推理架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示推理（D-ML_SERVE）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 推理（D-ML_SERVE）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 推理（D-ML_SERVE）的模块分布。共 7 个模块 / 7 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (8 modules)               │
+│               L2 领域层 / Domain Layer (7 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/ml_serve/__init__.py  [prototype]                   │
 │   src/zephyr/ml_serve/_extensions/__init__.py  [prototype]       │
@@ -32,16 +32,15 @@ ttl: permanent
 │   src/zephyr/ml_serve/infrastructure/__init__.py  [prototype]    │
 │   src/zephyr/ml_serve/models/__init__.py  [prototype]            │
 │   src/zephyr/ml_serve/services/__init__.py  [prototype]          │
-│   推理熔断器  [design]                                           │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 8 个模块 / 8 modules）。
+> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
 
-### L2 领域层 / Domain Layer (8 modules)
+### L2 领域层 / Domain Layer (7 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -52,7 +51,6 @@ ttl: permanent
 | 5 | src/zephyr/ml_serve/infrastructure/__init__.py | src/zephyr/ml_serve/infrastructure/__... | prototype | deprecated |
 | 6 | src/zephyr/ml_serve/models/__init__.py | src/zephyr/ml_serve/models/__init__.py | prototype | deprecated |
 | 7 | src/zephyr/ml_serve/services/__init__.py | src/zephyr/ml_serve/services/__init__.py | prototype | deprecated |
-| 8 | 推理域/D-ML-136 | 推理熔断器 | design | planned |
 
 ## 依赖关系图 / Dependency Graph
 

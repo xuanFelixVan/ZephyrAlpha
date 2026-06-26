@@ -1,10 +1,13 @@
 # [A_config] module_id=CFG-domain-naming-rules | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: REG-DOMAIN-NAMING-001
+title: 域命名规则表
+doc_type: register
 registry_id: REG-DOMAIN-NAMING-001
 name: 域命名规则表
 description: 功能域ID命名规则的唯一真源（SSoT）。apply_depgraph.py --insert-domain 建域时强制校验 applies_to=create 的规则，severity=error 违反则阻断建域（exit 3），warning 则打印警告。裁定#204 预防根因：命名规则原仅存在于 Markdown 文档中，AI 建域/生成代码时不主动查阅，导致 D-SIGNAL_ASHARE 等 D-XXX_YYY 形式域名产生，暗示父子关系（违反"所有域平级"铁律）。
 owner: MOD-INF-037
 tier: tier_1_governance
-status: Active
+status: active
 version: 1.0.0
 created: '2026-06-25'
 last_updated: '2026-06-25'

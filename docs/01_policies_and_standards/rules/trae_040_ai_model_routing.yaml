@@ -101,7 +101,7 @@ sections:
     - type: mandatory
       step: context_summary不超过500字
     - type: mandatory
-      step: 文件命名：docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF
+      step: 文件命名：docs/_working/audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF
     prohibitions:
     - 禁止删除HandoffPackage中任一字段（删任一字段视为非法交接）
     - 禁止decisions_made中无rationale的决策
@@ -225,36 +225,36 @@ sections:
       on_fail: 重新从干净commit恢复
   psp_005_fallback_verification:
     section_type: procedure
-    title: check_encoding.py不存在时的fallback手动验证
+    title: check_encoding.py 编码验证
     original_rules:
     - PSP-005-§四
     steps:
     - order: 1
-      action: Read工具读取<文件路径>前5行验证编码
-      pre_condition: check_encoding.py脚本不存在
-      expected_result: 前5行内容正常显示
+      action: 调用 scripts/governance/d7_code/check_encoding.py 验证<文件路径>编码
+      pre_condition: 需要验证文件编码
+      expected_result: 脚本输出编码检测结果，前5行内容正常显示
       on_failure: 文件已损坏，走修复流程
     - order: 2
-      action: 对所有疑似损坏文件逐一验证
+      action: 对所有疑似损坏文件逐一执行脚本验证
       pre_condition: 第一个文件验证完成
-      expected_result: 所有文件前5行正常
+      expected_result: 所有文件编码检测正常
       on_failure: 损坏文件走git checkout恢复
   psp_005_file_locking:
     section_type: procedure
-    title: 文件锁定手动约定
+    title: 文件锁定工具化机制
     original_rules:
     - PSP-005-§五
     steps:
     - order: 1
-      action: Session Log中记录当前编辑文件列表
+      action: 调用 scripts/lock_files.py 对当前编辑文件加锁
       pre_condition: 开始编辑文件
-      expected_result: 文件列表已记录
-      on_failure: 补充记录
+      expected_result: 文件已加锁，锁记录已写入
+      on_failure: 检查锁状态并重试
     - order: 2
-      action: 切换编辑器前确认对方编辑器没有打开相同文件
+      action: 切换编辑器前调用 scripts/lock_files.py 确认目标文件未被对方编辑器锁定
       pre_condition: 需要切换编辑器
-      expected_result: 确认无冲突
-      on_failure: 等待对方关闭文件
+      expected_result: 确认无冲突锁
+      on_failure: 等待对方释放锁
   gov_ai_008_template:
     section_type: procedure
     title: HandoffPackage YAML模板
@@ -267,7 +267,7 @@ sections:
       expected_result: 完整的handoff文件已生成
       on_failure: 缺字段则非法交接，禁止关闭session
     - order: 2
-      action: 保存到docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml
+      action: 保存到docs/_working/audit/handoff/session-YYYYMMDD-NNN.yaml
       pre_condition: 模板已填写
       expected_result: 文件已保存(UTF-8/LF换行)
       on_failure: 检查路径和编码

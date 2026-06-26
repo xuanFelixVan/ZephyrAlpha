@@ -25,7 +25,7 @@ tags:
 priority: P1
 summary: 定义 D1-D12 十二个架构维度的评分标准、当前评分基线、按 Phase 递进的目标评分。作为架构质量量化追踪的权威看板，由 validate_ssot.py 扩展的 score_architecture.py 按季度自动生成评分报告。
 date: '2026-04-24'
-ttl: permanent
+ttl: task_bound
 ---
 
 # 12-Dimension Architecture Audit Matrix

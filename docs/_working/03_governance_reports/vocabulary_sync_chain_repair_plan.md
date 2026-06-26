@@ -312,7 +312,7 @@ doc_type: construction_plan
 | 62 | [data/asset_index/project_entity_depgraph_v3_domain_draft.yaml](file:///d:/ZephyrAlpha/data/asset_index/project_entity_depgraph_v3_domain_draft.yaml) | kebab 引用 | 草稿数据（评估是否保留） |
 | 63 | [data/security_baselines/scan_mtime_cache.json](file:///d:/ZephyrAlpha/data/security_baselines/scan_mtime_cache.json) | kebab 引用 | 扫描缓存（评估是否保留） |
 | 64 | [.trae/documents/ttl_task_bound_extension_plan.md](file:///d:/ZephyrAlpha/.trae/documents/ttl_task_bound_extension_plan.md) | kebab 引用 | 计划文档 |
-| 65 | [docs/09_audit/research_notes/blueprint_discussion_audit_division_plan.md](file:///d:/ZephyrAlpha/docs/09_audit/research_notes/blueprint_discussion_audit_division_plan.md) | kebab 引用 | 审计研究笔记 |
+| 65 | [docs/_working/research_notes/blueprint_discussion_audit_division_plan.md](file:///d:/ZephyrAlpha/docs/_working/research_notes/blueprint_discussion_audit_division_plan.md) | kebab 引用 | 审计研究笔记 |
 
 **执行建议**：上述 #48-#65 共 18 个文件为第 2 轮审查补充发现。执行时需用以下命令重新生成完整清单（因 Grep 结果可能随代码变更而变化）：
 

@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-FRONTEND 前端架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,12 +13,12 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示前端（D-FRONTEND）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 前端（D-FRONTEND）的模块分布。共 33 个模块 / 33 modules。
+> 按 architecture_layer 分层显示 前端（D-FRONTEND）的模块分布。共 23 个模块 / 23 modules。
 
 ```
 
@@ -55,28 +55,12 @@ ttl: permanent
 │   src/zephyr/frontend/models/__init__.py  [prototype]            │
 │   src/zephyr/frontend/services/__init__.py  [prototype]          │
 └──────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌──────────────────────────────────────────────────────────────────┐
-│            L3 应用层 / Application Layer (10 modules)            │
-├──────────────────────────────────────────────────────────────────┤
-│   Report Visualization  [design]                                 │
-│   Alert Visualization  [design]                                  │
-│   Custom Chart Builder  [design]                                 │
-│   Approval Workflow UI  [design]                                 │
-│   Mobile Dashboard  [design]                                     │
-│   Collaborative Workspace  [design]                              │
-│   Trading Chatbot  [design]                                      │
-│   One-Click Quant Interface  [design]                            │
-│   API Gateway Proxy  [design]                                    │
-│   Feishu Bot  [design]                                           │
-└──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 33 个模块 / 33 modules）。
+> 按 architecture_layer 分组的模块清单（共 23 个模块 / 23 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (7 modules)
 
@@ -110,21 +94,6 @@ ttl: permanent
 | 14 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | production | generated |
 | 15 | src/zephyr/frontend/models/__init__.py | src/zephyr/frontend/models/__init__.py | prototype | deprecated |
 | 16 | src/zephyr/frontend/services/__init__.py | src/zephyr/frontend/services/__init__.py | prototype | deprecated |
-
-### L3 应用层 / Application Layer (10 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
-|:--:|---------|---------|:---:|:---:|
-| 1 | 前端域/D-FRONTEND-06 | Report Visualization | design | planned |
-| 2 | 前端域/D-FRONTEND-08 | Alert Visualization | design | planned |
-| 3 | 前端域/D-FRONTEND-10 | Custom Chart Builder | design | planned |
-| 4 | 前端域/D-FRONTEND-12 | Approval Workflow UI | design | planned |
-| 5 | 前端域/D-FRONTEND-14 | Mobile Dashboard | design | planned |
-| 6 | 前端域/D-FRONTEND-16 | Collaborative Workspace | design | planned |
-| 7 | 前端域/D-FRONTEND-18 | Trading Chatbot | design | planned |
-| 8 | 前端域/D-FRONTEND-20 | One-Click Quant Interface | design | planned |
-| 9 | 前端域/D-FRONTEND-22 | API Gateway Proxy | design | planned |
-| 10 | 前端域/D-FRONTEND-24 | Feishu Bot | design | planned |
 
 ## 依赖关系图 / Dependency Graph
 

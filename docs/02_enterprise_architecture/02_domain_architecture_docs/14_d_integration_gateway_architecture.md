@@ -1,24 +1,24 @@
 ---
 doc_type: architecture_view
-title: D-INTEGRATION-GATEWAY mcp_servers架构图
+title: D-INTEGRATION_GATEWAY mcp_servers架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
 
 # 14_d_integration_gateway / mcp_servers 架构图
 
-> **文档作用 / Purpose**: 以ASCII art可视化展示mcp_servers（D-INTEGRATION-GATEWAY）功能域的模块分层架构和依赖关系。
+> **文档作用 / Purpose**: 以ASCII art可视化展示mcp_servers（D-INTEGRATION_GATEWAY）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 mcp_servers（D-INTEGRATION-GATEWAY）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 mcp_servers（D-INTEGRATION_GATEWAY）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 

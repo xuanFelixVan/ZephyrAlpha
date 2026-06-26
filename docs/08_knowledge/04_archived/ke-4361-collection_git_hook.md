@@ -16,7 +16,7 @@ doc_type: knowledge_entry
 | `docs/03_modules/_b_track_interfaces/*interface*.md` | `decisions` |
 | `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
 | `docs/03_modules/_domain-infra_ops/task-system/changes/**` | `task_history` |
-| `docs/09_audit/reports/**`, `docs/09_audit/findings/**` | `lessons` |
+| `docs/_working/audit/reports/**`, `docs/_working/audit/findings/**` | `lessons` |
 | 其他 | `code_context`（保守默认） |
 
 ---

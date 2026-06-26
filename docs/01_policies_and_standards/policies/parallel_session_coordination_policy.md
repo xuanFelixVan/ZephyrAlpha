@@ -3,7 +3,7 @@ module_id: POL-PARALLEL-SESSION-001
 title: Parallel Session Coordination Policy / 并行 Session 协作策略
 doc_type: policy
 ttl: permanent
-status: Active
+status: active
 version: 1.0.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner

@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-MKT_DATA 行情数据架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,21 +13,20 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示行情数据（D-MKT_DATA）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 03:08:24
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 行情数据（D-MKT_DATA）的模块分布。共 10 个模块 / 10 modules。
+> 按 architecture_layer 分层显示 行情数据（D-MKT_DATA）的模块分布。共 9 个模块 / 9 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│             L1 基础层 / Foundation Layer (3 modules)             │
+│             L1 基础层 / Foundation Layer (2 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/market_data/market_data.py  [prototype]             │
 │   src/zephyr/market_data/market_data_pipeline.py  [prototype]    │
-│   Trading Calendar Engine  [design]                              │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -47,15 +46,14 @@ ttl: permanent
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 10 个模块 / 10 modules）。
+> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
 
-### L1 基础层 / Foundation Layer (3 modules)
+### L1 基础层 / Foundation Layer (2 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/market_data/market_data.py | src/zephyr/market_data/market_data.py | prototype | generated |
 | 2 | src/zephyr/market_data/market_data_pipeline.py | src/zephyr/market_data/market_data_pi... | prototype | generated |
-| 3 | 交易日历引擎(交易所日历/假日管理/T+N计算)/D-TRADING-07 | Trading Calendar Engine | design | planned |
 
 ### L2 领域层 / Domain Layer (7 modules)
 

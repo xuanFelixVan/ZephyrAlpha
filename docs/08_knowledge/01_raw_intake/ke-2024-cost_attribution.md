@@ -61,7 +61,7 @@ cost_attribution:
 
   showback:
     description: "每周自动生成归因摘要"
-    format: "自然语言 Markdown 报告 → `docs/09_audit/cost_reports/weekly-{date}.md`"
+    format: "自然语言 Markdown 报告 → `docs/_working/audit/cost_reports/weekly-{date}.md`"
     content:
       - "本周总消耗：X tokens / $Y"
       - "Top 3 消耗 Agent：[agent_id] $X (占比%)"
