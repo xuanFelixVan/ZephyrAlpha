@@ -1,3 +1,14 @@
+---
+module_id: ARCH-SMP-006
+title: "物理路径树样板"
+doc_type: reference
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 物理路径树样板
 
 > 这是给人看的项目物理结构图——文件怎么组织的、每个目录是干什么的。

@@ -1,3 +1,14 @@
+---
+module_id: ARCH-ENT-003
+title: "合约去重分析报告 — shared + integration 双路重复（23文件）"
+doc_type: architecture_view
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 合约去重分析报告 — shared + integration 双路重复（23文件）
 
 > 任务卡: DM-202925-integration | 日期: 2026-06-24 | 状态: 分析完成

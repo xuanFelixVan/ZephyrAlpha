@@ -1,4 +1,15 @@
 ---
+module_id: AUD-REP-002
+title: "architecture blindspot analysis"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
+---
 blueprint_id: MOD-GOVERNANCE
 title: 2026 05 04 Architecture Blindspot Analysis
 module_id: GOV-057---

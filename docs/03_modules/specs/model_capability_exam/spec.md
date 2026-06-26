@@ -1,3 +1,14 @@
+---
+module_id: MOD-SPEC-004
+title: "ModelCapabilityExam — AI 模型入职考试系统"
+doc_type: service_spec
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # ModelCapabilityExam — AI 模型入职考试系统
 
 > **蓝图编号**: MCE-0001

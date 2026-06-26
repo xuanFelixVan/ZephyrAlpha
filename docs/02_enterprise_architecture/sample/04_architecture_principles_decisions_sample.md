@@ -1,3 +1,14 @@
+---
+module_id: ARCH-SMP-002
+title: "架构原则与决策样板"
+doc_type: reference
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 架构原则与决策样板
 
 > 这是架构原则的唯一真源——安全红线、核心原则、技术选型决策。

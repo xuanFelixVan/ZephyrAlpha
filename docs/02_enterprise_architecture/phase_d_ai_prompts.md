@@ -1,3 +1,14 @@
+---
+module_id: ARCH-ENT-004
+title: "阶段D：37个AI完整提示词"
+doc_type: plan
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 阶段D：37个AI完整提示词
 
 > 每个AI复制自己的提示词，在新对话中执行。

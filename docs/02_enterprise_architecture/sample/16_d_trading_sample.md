@@ -1,3 +1,14 @@
+---
+module_id: ARCH-SMP-004
+title: "16dtrading 域文档样板"
+doc_type: reference
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 16_d_trading 域文档样板
 
 > 这是给人看的功能域文档——这个域是干什么的、有哪些模块、模块之间怎么依赖。

@@ -1,3 +1,14 @@
+---
+module_id: MOD-SPEC-003
+title: "AutoRuntime Core — 实施任务"
+doc_type: service_spec
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # AutoRuntime Core — 实施任务
 
 > **蓝图**: ARC-0001 / spec.md

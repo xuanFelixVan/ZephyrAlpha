@@ -1,3 +1,14 @@
+---
+module_id: ARCH-SMP-003
+title: "业务架构视图样板"
+doc_type: reference
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 业务架构视图样板
 
 > 这是给人看的业务架构视图——系统服务谁、做什么、核心流程是什么。

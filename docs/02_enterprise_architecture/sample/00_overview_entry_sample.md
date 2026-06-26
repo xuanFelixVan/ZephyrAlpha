@@ -1,3 +1,14 @@
+---
+module_id: ARCH-SMP-001
+title: "架构文档库总览样板"
+doc_type: reference
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 架构文档库总览样板
 
 > 这是你查看 ZephyrAlpha 架构的入口。从这里出发，你能找到所有架构相关的文档和图。

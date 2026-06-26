@@ -1,4 +1,15 @@
 ---
+module_id: AUD-REP-001
+title: "blueprint discussion audit division plan"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
+---
 blueprint_id: MOD-GOVERNANCE
 title: Blueprint Discussion Audit Division Plan
 module_id: GOV-056---

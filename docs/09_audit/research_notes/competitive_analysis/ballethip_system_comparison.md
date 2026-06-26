@@ -1,4 +1,15 @@
 ---
+module_id: AUD-REP-004
+title: "ballethip system comparison"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
+---
 blueprint_id: MOD-GOVERNANCE
 title: 2026 05 04 Ballethip System Comparison
 module_id: GOV-059---

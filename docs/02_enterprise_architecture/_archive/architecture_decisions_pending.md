@@ -1,3 +1,14 @@
+---
+module_id: ARCH-ARC-001
+title: "待定架构决策文档"
+doc_type: reference
+status: deprecated
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
 # 待定架构决策文档
 
 > **文档ID**: ARCH-DECISIONS-PENDING-001

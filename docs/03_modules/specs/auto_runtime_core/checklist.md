@@ -1,3 +1,14 @@
+---
+module_id: MOD-SPEC-001
+title: "AutoRuntime Core — 验收清单"
+doc_type: service_spec
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # AutoRuntime Core — 验收清单
 
 > **蓝图**: ARC-0001 / spec.md

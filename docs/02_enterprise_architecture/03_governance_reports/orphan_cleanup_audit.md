@@ -1,3 +1,14 @@
+---
+module_id: ARCH-GRP-001
+title: "孤儿/僵尸清理统一审查文档"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
 # 孤儿/僵尸清理统一审查文档
 
 > 生成时间: 2026-06-24 21:27:24

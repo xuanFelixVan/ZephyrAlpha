@@ -1,4 +1,15 @@
 ---
+module_id: AUD-REP-006
+title: "physical structure 1500 module scalability fix"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
+---
 title: Physical Structure 1500 Module Scalability Fix
 module_id: GOV-062---
 

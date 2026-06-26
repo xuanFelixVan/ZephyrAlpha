@@ -1,3 +1,14 @@
+---
+module_id: ARCH-ENT-001
+title: "AI 团队模式完整配置 v3.5"
+doc_type: plan
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # AI 团队模式完整配置 v3.5
 
 > 基于基准测试数据的 10 模式 AI 团队，三级审查 + Safety Review 双保险，国产多轮防线 + Claude 仅作最后防线。

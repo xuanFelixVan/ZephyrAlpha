@@ -1,3 +1,14 @@
+---
+module_id: MOD-MSC-001
+title: "场外文档内容分层审计任务卡 v5.0"
+doc_type: plan
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 场外文档内容分层审计任务卡 v5.0
 
 > **创建**: 2026-05-29

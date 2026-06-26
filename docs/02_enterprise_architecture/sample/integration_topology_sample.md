@@ -1,3 +1,14 @@
+---
+module_id: ARCH-SMP-005
+title: "集成拓扑图样板 / Integration Topology Sample"
+doc_type: reference
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # 集成拓扑图样板 / Integration Topology Sample
 
 > 这是给人看的所有功能域集成依赖关系图，用 Mermaid 格式可视化。

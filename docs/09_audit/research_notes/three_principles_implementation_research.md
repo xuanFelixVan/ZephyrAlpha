@@ -1,4 +1,15 @@
 ---
+module_id: AUD-REP-008
+title: "three principles implementation research"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
+---
 title: Three Principles Implementation Research
 module_id: GOV-065---
 

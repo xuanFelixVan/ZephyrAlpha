@@ -1,3 +1,14 @@
+---
+module_id: AUD-REP-005
+title: "命名规范白名单清理施工方案"
+doc_type: audit_report
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: task_bound
+---
+
 # 命名规范白名单清理施工方案
 
 > 创建时间: 2026-06-24

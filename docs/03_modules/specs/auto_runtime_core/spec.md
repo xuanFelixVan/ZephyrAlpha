@@ -1,3 +1,14 @@
+---
+module_id: MOD-SPEC-002
+title: "AutoRuntime Core — 三层运行时运营中心（系统大脑）"
+doc_type: service_spec
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # AutoRuntime Core — 三层运行时运营中心（系统大脑）
 
 > **蓝图编号**: ARC-0001

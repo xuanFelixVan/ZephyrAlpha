@@ -1,3 +1,14 @@
+---
+module_id: ARCH-ENT-005
+title: "T18 设计态YAML化 — 施工方案"
+doc_type: architecture_view
+status: active
+version: 1.0.0
+date: 2026-06-27
+owner: ZephyrAlpha-Owner
+ttl: permanent
+---
+
 # T18 设计态YAML化 — 施工方案
 
 > **文档ID**: ARCH-T18-IMPL-001
