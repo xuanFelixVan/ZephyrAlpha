@@ -833,6 +833,10 @@ class GitCommitGateway:
         """加载 N-16 豁免 basename 集合（真源：trae_028_doc_structure_naming.yaml）。
 
         fail-open：YAML 不可达时回退硬编码值（与 check_naming_convention.py 回退值一致）。
+
+        同步提醒：YAML path/key 链式访问 + fallback 值与
+        check_naming_convention.py:_load_n16_exemptions_from_yaml() 必须保持一致，
+        改一处改两处（架构约束：scripts/ ↔ src/ 跨层无法 import，只能 subprocess）。
         """
         yaml_path = (
             self.project_root / "docs" / "01_policies_and_standards"
