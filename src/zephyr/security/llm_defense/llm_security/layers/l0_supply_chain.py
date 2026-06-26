@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l0_supply_chain
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]
@@ -24,14 +24,40 @@ class SupplyChainValidator:
 
 
 class SupplyChainGuard:
-    def __init__(self, config=None):
+    def __init__(
+        self,
+        config=None,
+        model_digest_registry: dict[str, str] | None = None,
+        rules_file_baselines: dict[str, str] | None = None,
+        project_root: str | None = None,
+    ):
         self.config = config or {}
+        self.model_digest_registry = model_digest_registry or {}
+        self.rules_file_baselines = rules_file_baselines or {}
+        self.project_root = project_root
 
     def check(self, component):
         return True
 
     def validate_supply_chain(self, component_id):
         return {"valid": True, "source": "unknown"}
+
+    async def evaluate(self, ctx):
+        """Pass-through evaluation — stub layer.
+
+        The gateway calls layer.evaluate(ctx) on each layer in the chain.
+        Until real supply-chain validation is implemented, this stub
+        returns ALLOW (pass-through) so downstream layers can execute.
+        """
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
+
+        return SecurityResult(
+            decision=SecurityDecision.ALLOW,
+            reason="l0_supply_chain — stub pass-through",
+            layer_name="l0_supply_chain",
+            score=1.0,
+        )
 
 
 from typing import Any

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l2a_process_sandbox
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]
@@ -32,6 +32,23 @@ class ProcessSandboxLayer:
 
     def validate_command(self, command):
         return True
+
+    async def evaluate(self, ctx):
+        """Pass-through evaluation — stub layer.
+
+        The gateway calls layer.evaluate(ctx) on each layer in the chain.
+        Until real process sandbox validation is implemented, this stub
+        returns ALLOW (pass-through) so downstream layers can execute.
+        """
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
+
+        return SecurityResult(
+            decision=SecurityDecision.ALLOW,
+            reason="l2a_process_sandbox — stub pass-through",
+            layer_name="l2a_process_sandbox",
+            score=1.0,
+        )
 
 
 from enum import Enum

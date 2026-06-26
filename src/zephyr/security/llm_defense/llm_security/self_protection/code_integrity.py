@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.self_protection.code_integrity
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]
@@ -147,3 +147,43 @@ class CodeIntegrityGuard:
     @property
     def baseline(self) -> dict[str, str]:
         return dict(self._baseline)
+
+    def register_baseline(self, file_path: str, sha256: str) -> None:
+        """Register an externally-computed baseline hash for a file path.
+
+        Supports both absolute and relative paths. Stores the expected
+        sha256 so ``check_integrity`` can later verify the current content.
+        """
+        with self._lock:
+            self._baseline[file_path] = sha256
+            self._records[file_path] = FileIntegrityRecord(
+                path=file_path,
+                sha256=sha256,
+                size_bytes=0,
+                status=IntegrityStatus.CLEAN,
+            )
+
+    def check_integrity(self, file_path: str) -> Any:
+        """Verify the current on-disk content hash against the registered baseline.
+
+        Returns an object with ``passed`` (bool) and ``actual_sha256`` (str)
+        attributes. A file is ``passed`` only if its current sha256 matches
+        the registered baseline. Missing baseline or tampered content yields
+        ``passed=False``.
+        """
+        import hashlib as _hashlib
+        from pathlib import Path as _Path
+        from types import SimpleNamespace as _NS
+
+        fp = _Path(file_path)
+        if not fp.exists():
+            return _NS(passed=False, actual_sha256="")
+        try:
+            content = fp.read_bytes()
+            actual = _hashlib.sha256(content).hexdigest()
+        except (OSError, PermissionError):
+            return _NS(passed=False, actual_sha256="")
+        with self._lock:
+            expected = self._baseline.get(file_path)
+        passed = bool(expected) and actual == expected
+        return _NS(passed=passed, actual_sha256=actual)

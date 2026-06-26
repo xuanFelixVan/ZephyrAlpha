@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l5_resource_protection
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]
@@ -13,8 +13,15 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 class ResourceProtectionLayer:
-    def __init__(self, config=None):
+    def __init__(
+        self,
+        config=None,
+        max_tokens: int = 100000,
+        max_cost_cents: float = 500.0,
+    ):
         self.config = config or {}
+        self.max_tokens = max_tokens
+        self.max_cost_cents = max_cost_cents
 
     def validate(self, resource_request):
         return True
@@ -24,6 +31,23 @@ class ResourceProtectionLayer:
 
     def enforce_limit(self, resource_id, limit):
         pass
+
+    async def evaluate(self, ctx):
+        """Pass-through evaluation — stub layer.
+
+        The gateway calls layer.evaluate(ctx) on each layer in the chain.
+        Until real resource protection validation is implemented, this stub
+        returns ALLOW (pass-through) so downstream layers can execute.
+        """
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
+
+        return SecurityResult(
+            decision=SecurityDecision.ALLOW,
+            reason="l5_resource_protection — stub pass-through",
+            layer_name="l5_resource_protection",
+            score=1.0,
+        )
 
 
 class ResourceGuard:

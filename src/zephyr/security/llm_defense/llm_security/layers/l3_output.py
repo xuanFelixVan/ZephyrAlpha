@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l3_output
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]
@@ -38,6 +38,23 @@ class OutputSecurityLayer:
 
     def detect_leak(self, text):
         return False
+
+    async def evaluate(self, ctx):
+        """Pass-through evaluation — stub layer.
+
+        The gateway calls layer.evaluate(ctx) on each layer in the chain.
+        Until real output security validation is implemented, this stub
+        returns ALLOW (pass-through) so downstream layers can execute.
+        """
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
+
+        return SecurityResult(
+            decision=SecurityDecision.ALLOW,
+            reason="l3_output — stub pass-through",
+            layer_name="l3_output",
+            score=1.0,
+        )
 
 
 from typing import Any
