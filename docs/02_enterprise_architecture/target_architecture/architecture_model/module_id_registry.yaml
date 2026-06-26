@@ -341,7 +341,7 @@ registered_ids:
     status: draft
   - module_id: GOV-FSTR-001
     title: "系统重组总蓝图"
-    path: "docs/03_modules/_restructuring/blueprint.md"
+    path: "docs/03_modules/_cross_layer/restructuring/blueprint.md"
     doc_type: blueprint
     status: active
 

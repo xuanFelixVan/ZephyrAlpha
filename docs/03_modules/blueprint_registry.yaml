@@ -88,7 +88,7 @@ _schema:
     '
 blueprints:
 - module_id: GOV-FSTR-001
-  name: _restructuring
+  name: restructuring
   title: File Structure Governance 蓝图 — 文件结构治理·大文件拆分·重复合并·安全搬家
   summary: 文件结构治理蓝图——大文件拆分、跨目录重复合并、安全搬家。覆盖全项目文件结构治理。
   layer: cross_layer
@@ -99,7 +99,7 @@ blueprints:
   version: 4.2.0
   generation: 3
   last_updated: '2026-05-15'
-  file_path: 03_modules/_restructuring/blueprint.md
+  file_path: 03_modules/_cross_layer/restructuring/blueprint.md
   construction_progress: design_only
 - module_id: MOD-001
   name: _alpha_signal_domain

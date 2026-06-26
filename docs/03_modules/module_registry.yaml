@@ -16,11 +16,11 @@ _schema:
   - completed
 modules:
 - module_id: GOV-FSTR-001
-  name: _restructuring
+  name: restructuring
   layer: cross_layer
   functional_domain: governance
   priority: P0
-  path: docs/03_modules/_restructuring
+  path: docs/03_modules/_cross_layer/restructuring
   blueprint:
     status: Active
     version: 4.2.0

@@ -74,7 +74,6 @@ depends_on:
 | [_master_blueprint/](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/index.md) | 集成总蓝图（MOD-MASTER-001） | blueprint.md |
 | [_sys_master/](file:///D:/ZephyrAlpha/docs/03_modules/_sys_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
 | [_manifests/](file:///D:/ZephyrAlpha/docs/03_modules/_manifests/index.md) | 模块清单（43 个 *_manifest.md） | index.md |
-| [_restructuring/](file:///D:/ZephyrAlpha/docs/03_modules/_restructuring/blueprint.md) | 架构重构蓝图 | blueprint.md |
 
 ### 2.3 遗留目录（待清理）
 
