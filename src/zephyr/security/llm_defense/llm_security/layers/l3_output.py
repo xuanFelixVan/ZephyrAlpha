@@ -82,7 +82,7 @@ _HALLUCINATION_MARKERS = [
 # 内容安全违规话题
 _UNSAFE_TOPICS = [
     "bomb", "weapon", "explosive", "drug", "kill", "poison",
-    "methamphetamine", "firearm", "grenade",
+    "methamphetamine", "firearm", "grenade", "hack",
 ]
 
 
