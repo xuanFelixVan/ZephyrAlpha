@@ -35,6 +35,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | AgentOrchestrator | `zephyr.trading.orchestrator` | Agent 生命周期管理 |
 | TaskRepository | `zephyr.governance.task_repo` | 任务状态机（10 状态） |
 | A2A Protocol | `zephyr.infra_runtime.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
+| LLM 安全网关（LSG） | `zephyr.security.llm_defense.llm_security.gateway` | L1-L8 十层纵深防御，所有 LLM 调用必经安检（RULE-LSG-001） |
 | MCP Servers（10 个） | [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json) | MCP 服务器注册表（含工具列表/安全等级/ACL/限流） |
 | Trigger Router（6 触发器） | [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml) | 事件驱动路由表（含 handler/优先级/重试策略） |
 
@@ -63,6 +64,34 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.conflict_detector imp
 from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arbitrator, AgentMeta, AgentRole
 ```
 
+### 4.2 LLM 安全网关（RULE-LSG-001：强制调用）
+
+> **铁律：所有 LLM 调用必须经过 LSGSecurityGateway。禁止裸调任何 LLM API。**
+> 违反此规则会被 GATE-20 pre-commit 门禁硬阻断。
+
+```python
+from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+
+gateway = LSGSecurityGateway()
+
+# 输入扫描：用户输入给 LLM 前先过安检
+result = await gateway.scan_input(user_text, metadata={"provider": "openai"})
+if result.decision == SecurityDecision.DENY:
+    raise ValueError(f"输入被拦截: {result.reason}")
+
+# 输出扫描：LLM 返回内容给用户前先过安检
+result = await gateway.scan_output(llm_response)
+if result.decision == SecurityDecision.DENY:
+    llm_response = "[内容被安全策略过滤]"
+
+# 全量扫描：输入+输出流水线
+result = await gateway.full_scan(user_text, llm_response)
+```
+
+**参考实现（带重试机制）**：`src/zephyr/autonomy_core/llm_gateway.py` 中的 `_lsg_scan_input_sync` / `_lsg_scan_output_sync` 模式。
+
+**GATE-20**：`python scripts/governance/d11_compliance/validate_llm_security_gateway.py --ci` — AST 扫描 src/zephyr/ 下所有裸调，已导入 LSG 的放行，未导入的阻断。
+
 ## 5. 三层 AI 工作分配
 
 - **L1 Trae**: 人在 IDE 交互时使用，免费，人在环
@@ -84,6 +113,7 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arb
 - 所有新组件**必须**注册 CapabilityCard 到 CapabilityRegistry
 - 所有 AI 行为**必须**写入 AiAuditLogger
 - 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)（GOV-ENG-001）
+- **文件命名规范真源见 [`trae_028_doc_structure_naming.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)（GOV-DOC-003 §N-16）**——创建新文件前 MUST 先 `Grep` 检查项目内是否已存在同名 basename；**N-16 文件名项目内唯一性检测为硬阻断**（不受 GATE-11 `--warn-only` 过渡期影响），覆盖 `tests/` + `docs/` 目录，commit 时 pre-commit 钩子自动检测；同名文件导致 AI 无法确定真源产生漂移（如 `capability_heatmap.md` 曾存在两个不同内容同名文件，19315 vs 11966 字节）
 - 治理决策方法论见 [`trae_024_methodology_diagnosis.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml)（PS-STD-011）——含MTH-006诊断反转验证：深挖后MUST回溯初始诊断，不一致时追问"为什么初始诊断错了？"
 - 审计脚本质量见 [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md)（SCRIPT-QUALITY-001）
 - 产出物规格化见 [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)（GOV-DOC-011）——`.md` 文档 frontmatter 标准字段：`module_id, title, version, layer, depends_on, tags, **ttl（GATE-15 强制校验）**`。字段定义和 doc_type 映射见 trae_030；frontmatter 不可删字段完整清单见 [`onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)「绝对不可删的 15 类」

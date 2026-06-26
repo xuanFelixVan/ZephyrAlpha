@@ -520,6 +520,24 @@ repos:
         files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml)$"
         description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.16 静态清单自动生成铁律"
 
+      # ── GATE-20: 裸调 LLM API 检测（RULE-LSG-001 强制执行层）──
+      # 权威依据：RULE-LSG-001 — 所有 LLM 调用必须经过 LSGSecurityGateway
+      # 真源声明：Session 20260626 — LSG 安全网关 L1-L8 十层纵深防御全覆盖
+      # 检测范围：src/zephyr/**/*.py 变更时触发
+      # 检测内容：AST 扫描裸调 openai/anthropic/langchain/litellm API
+      #           已导入 LSGSecurityGateway / llm_security 的文件自动放行
+      #           豁免：测试文件 / LSG 模块自身 / model_profiling 基础设施
+      # 模式：硬阻断（--ci）——发现裸调 exit(1) 拒绝提交
+      - id: gate-20-llm-security-gateway
+        name: "GATE-20: 裸调 LLM API 检测（RULE-LSG-001）"
+        entry: python scripts/governance/d11_compliance/validate_llm_security_gateway.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        description: "AST 扫描裸调 LLM API——强制所有 LLM 调用必须经过 LSGSecurityGateway。已导入 LSG 的放行，裸调阻断。对标 RULE-LSG-001"
+
       # ── GATE-GENERATE: vocabulary YAML → 派生文件一致性（#ARCH-008 阶段9 / 裁定#206-D）──
       # 权威依据：vocabulary_sync_chain_repair_plan.md 阶段9 动作44
       # SSoT：layer_vocabulary.yaml 等是规则数据唯一真源，派生文件（frontmatter_field_registry.yaml /
