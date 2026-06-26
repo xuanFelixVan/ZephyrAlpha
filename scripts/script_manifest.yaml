@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 590
+total_scripts: 592
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -190,6 +190,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_scan_dup_names.py
+  path: _tmp_scan_dup_names.py
+  description: import os
+  domain: scanner
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_verify_db_state.py
   path: _tmp_verify_db_state.py
   description: import sqlite3
@@ -200,7 +208,7 @@ scripts:
   dimensions: []
 - name: _tmp_verify_generic.py
   path: _tmp_verify_generic.py
-  description: No description
+  description: 构造"模型完美回答"的 result（用 case 的 expected_* 值填充），
   domain: _tmp_verify_generic.py
   execution_plane: warm-path
   status: registered
@@ -1083,6 +1091,14 @@ scripts:
   description: G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/check_ssot_gate.py
+  path: governance/check_ssot_gate.py
+  description: 检测 staged 新增 .py 文件是否声明了已有 module_path。
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
