@@ -670,9 +670,20 @@ class CapabilityLookup:
     # ---- 查询 API ----
 
     def find(self, query: str) -> list[dict]:
-        """关键词搜索：匹配 capability_id / description / canonical_file / module_id / aliases（大小写不敏感）。"""
+        """关键词搜索：匹配 capability_id / description / canonical_file / module_id / aliases（大小写不敏感）。
+
+        匹配策略（治本：token 包含匹配，消除中文变体 alias 堆砌反模式）：
+          1. 精确子串匹配（保留原行为，大小写不敏感）——处理 alias 原样命中
+          2. token 包含匹配（精确子串未命中时启用）：
+             - ASCII 词 token：全部必须在 haystack 中（AND，如 "repo root" → repo + root）
+             - CJK 字符：query 的 CJK 字符序列与 haystack 须有 ≥2 字符公共子串
+               （捕获语义 core，如 "仓库根路径" 经 "仓库根" 命中 "仓库根目录"；
+               避免"目录"单字 OR 误命中所有含"目"/"录"条目——公共子串要求连续）
+             - 守卫：ASCII 词数 + CJK 字符数 ≥2，避免单 token 过宽匹配
+        """
         q = query.lower()
         results: list[dict] = []
+        ascii_tokens, cjk_str = self._tokenize(query)
         for cap in self._capabilities:
             haystacks = [
                 cap.capability_id, cap.description,
@@ -681,7 +692,67 @@ class CapabilityLookup:
             haystack = " ".join(haystacks).lower()
             if q in haystack:
                 results.append(self._entry_to_dict(cap))
+            elif self._token_match(ascii_tokens, cjk_str, haystack):
+                results.append(self._entry_to_dict(cap))
         return results
+
+    @staticmethod
+    def _tokenize(text: str) -> tuple[list[str], str]:
+        """分词：返回 (ascii_tokens, cjk_str)。
+
+        - ASCII 词块：按非单词字符切分，整体小写（"REPO_ROOT" → ["repo_root"]，
+          "repo root" → ["repo","root"]）
+        - CJK 字符：合并为单一字符串（"仓库根路径" → "仓库根路径"），
+          交由 _token_match 做 ≥2 字符公共子串匹配
+        """
+        ascii_tokens: list[str] = []
+        cjk_chars: list[str] = []
+        for chunk in re.split(r"\W+", text, flags=re.UNICODE):
+            if not chunk:
+                continue
+            cur_ascii: list[str] = []
+            for ch in chunk:
+                if ch.isascii():
+                    cur_ascii.append(ch.lower())
+                else:
+                    if cur_ascii:
+                        ascii_tokens.append("".join(cur_ascii))
+                        cur_ascii = []
+                    cjk_chars.append(ch)
+            if cur_ascii:
+                ascii_tokens.append("".join(cur_ascii))
+        return ascii_tokens, "".join(cjk_chars)
+
+    @staticmethod
+    def _token_match(ascii_tokens: list[str], cjk_str: str, haystack: str) -> bool:
+        """token 包含匹配：ASCII 词全在 + CJK ≥3 字符公共子串。
+
+        守卫：ASCII 词数 + CJK 字符数 < 2 → 直接返回 False（避免单 token 过宽）。
+        CJK 阈值取 3：2 字符窗口（如"路径"）过宽会假阳性命中所有含"路径"的条目；
+        3 字符窗口（如"仓库根"/"蓝图磁"）才能捕获语义 core 又避免巧合命中。
+        """
+        total = len(ascii_tokens) + len(cjk_str)
+        if total < 2:
+            return False
+        # ASCII 词 token：AND
+        for tok in ascii_tokens:
+            if tok not in haystack:
+                return False
+        # CJK：要求 ≥3 字符公共子串（query 的某 3 字符窗口在 haystack 中）
+        if cjk_str:
+            if len(cjk_str) >= 3:
+                if not any(cjk_str[i:i + 3] in haystack for i in range(len(cjk_str) - 2)):
+                    return False
+            elif len(cjk_str) == 2:
+                # 2 字符：要求完整 2 字符在 haystack 中（纯 2 字符查询由精确子串兜底，
+                # 此分支仅在"2 字符 CJK + ASCII 词"混合查询时起作用）
+                if cjk_str not in haystack:
+                    return False
+            else:
+                # 单字符：须在 haystack 中（total≥2 守卫保证另有 ASCII token）
+                if cjk_str not in haystack:
+                    return False
+        return True
 
     def get(self, capability_id: str) -> dict | None:
         """按 capability_id 精确查询。"""

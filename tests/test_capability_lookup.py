@@ -135,6 +135,55 @@ def test_find_no_match(setup_registry):
     assert reg.find("nonexistent_xyz") == []
 
 
+def test_find_chinese_token_match(tmp_path: Path):
+    """token 包含匹配治本验证：中文变体不在 aliases 中也能命中（core 在 description 中）。
+
+    场景对标 project_root_resolution：alias 保留"仓库根"，description 含"仓库根目录"，
+    查询变体"仓库根路径"（已删 alias）经 core"仓库根"公共子串命中——不再靠堆 alias。
+    """
+    yaml_path = tmp_path / "registry.yaml"
+    yaml_path.write_text("""
+schema_version: "1.1.0"
+capabilities:
+  - capability_id: repo_root_resolver
+    aliases:
+      - 仓库根
+      - REPO_ROOT
+    description: "仓库根目录的权威解析入口"
+""", encoding="utf-8")
+    scan_root = tmp_path / "src" / "zephyr"
+    scan_root.mkdir(parents=True)
+    reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
+    # 变体"仓库根路径"不在 aliases，但 core"仓库根"在 description/alias → token 命中
+    results = reg.find("仓库根路径")
+    assert len(results) == 1
+    assert results[0]["capability_id"] == "repo_root_resolver"
+    # 原 alias 仍命中（精确子串）
+    assert len(reg.find("仓库根")) == 1
+    assert len(reg.find("REPO_ROOT")) == 1
+    # core 不在 haystack 的查询不命中（避免误匹配）
+    assert reg.find("完全无关的词") == []
+
+
+def test_find_ascii_multi_word(setup_registry):
+    """ASCII 多词短语查询：按空白分词后 AND 匹配（无需连续出现）。
+
+    回归 bug：'test canonical' 两词分别落在不同字段（capability_id 含 'test'，
+    canonical_file/alias 含 'canonical'），子串匹配因不连续返回空；
+    token AND 匹配应命中。对标 find("session handoff") 原失效场景。
+    """
+    yaml_path, scan_root = setup_registry
+    reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
+    results = reg.find("test canonical")
+    assert len(results) == 1
+    assert results[0]["capability_id"] == "test_cap"
+    # 单词行为不退化（守卫：保留原子串匹配语义）
+    assert len(reg.find("test")) == 1
+    assert len(reg.find("canonical")) == 1
+    # 含未命中词的多词查询不误命中
+    assert reg.find("test nonexistent_xyz") == []
+
+
 def test_get_existing(setup_registry):
     """get 返回派生的 canonical_file + 从头部派生的 module_id。"""
     yaml_path, scan_root = setup_registry
@@ -892,6 +941,27 @@ def test_real_registry_loads():
     cap_ids = {c["capability_id"] for c in caps}
     assert "session_handoff_continuity" in cap_ids
     assert "rollback_executor" in cap_ids
+
+
+def test_find_ascii_multi_word_real_registry():
+    """ASCII 多词短语回归测试（真注册表）——守护 _token_match 的 ASCII AND 分支。
+
+    回归 bug：注册表 YAML 自广告的示范用法 find("session handoff") 旧版返回空
+    （子串匹配无法跨 capability_id 的下划线），token AND 匹配后应命中。
+    scan=False 覆盖 YAML 加载字段（capability_id/aliases/description）即可触发，
+    避免扫全盘拖慢测试。
+    """
+    reg = CapabilityLookup(scan=False)
+    # YAML 文档示范用法（capability_canonical_file_registry.yaml §AI 使用方式）
+    results = reg.find("session handoff")
+    cap_ids = {r["capability_id"] for r in results}
+    assert "session_handoff_continuity" in cap_ids
+    # 原失效场景另一例
+    results = reg.find("vocabulary loader")
+    cap_ids = {r["capability_id"] for r in results}
+    assert "vocabulary_values_loader" in cap_ids
+    # vocab_hardcode_detector 含 'vocabulary' 但不含 'loader' → 不误命中（AND 语义）
+    assert "vocab_hardcode_detector" not in cap_ids
 
 
 def test_real_registry_has_ssot_conflict():

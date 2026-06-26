@@ -149,6 +149,30 @@ capabilities:
           故独立定义。src/ 代码用 zephyr.shared.io.paths，scripts/ 用 _shared.constants，两者平级。
 
   # --------------------------------------------------------------------------
+  - capability_id: find_repo_root
+    canonical_override: src/zephyr/shared/io/paths.py
+    aliases:
+      - find_repo_root
+      - repo_root_finder
+      - 仓库根查找函数
+      - 项目根定位
+      - find_project_root
+    description: >-
+      仓库根目录查找算法(向上遍历找 src/zephyr/__init__.py 标记文件)。
+      架构约束双真源:src/ 代码用 zephyr.shared.io.paths.find_repo_root,
+      scripts/ 脚本用 _shared.constants.find_repo_root——两者逐字相同,
+      因 scripts/ 不能 import src/zephyr/ 包(职责隔离),无法消除双真源。
+      一致性由 tests/test_find_repo_root_consistency.py 保证(改一处必须改另一处,
+      否则测试失败)。GATE-VOCAB 不扫描此函数(非词表合法值,是路径查找算法)。
+    duplicates_manual:
+      - path: scripts/governance/_shared/constants.py
+        relation: sibling
+        note: >-
+          scripts/ 下治理脚本的 find_repo_root() 真源,与 src/zephyr/shared/io/paths.py
+          逐字相同。架构约束(scripts/ 不能 import src/)导致无法消除双真源。
+          一致性由 tests/test_find_repo_root_consistency.py 保证。
+
+  # --------------------------------------------------------------------------
   - capability_id: vocabulary_values_loader
     canonical_override: src/zephyr/shared/io/yaml_utils.py
     aliases:
@@ -196,8 +220,6 @@ capabilities:
       - load_blueprint_path
       - blueprint_path
       - 蓝图路径
-      - 蓝图磁盘路径
-      - 蓝图路径查询
       - blueprint disk path
     description: >-
       蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（SSoT 派生）按 module_id 查询，
