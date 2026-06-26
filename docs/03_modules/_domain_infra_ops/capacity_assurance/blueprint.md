@@ -273,7 +273,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 | Owner 容量指示 | "1500 模块极限容量"约束 |
 | Wave 0 终审裁决 5 条 | Claude-Opus-4.7 终审（R-71, R-73, R-75）|
 | ContractBus 现状 | 44 份文件待迁移 |
-| 原始草稿 | `19_development_workspace/drafts-and-audits/vibe-coding-infrastructure/capacity-assurance-construction-plan.md` |
+| 原始草稿 | ~~`19_development_workspace/drafts-and-audits/vibe-coding-infrastructure/capacity-assurance-construction-plan.md`~~（目录 2026-06-26 退役；现落 `docs/_working/`）|
 
 ---
 
@@ -355,7 +355,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | 批 2 | 15 | 批 1 验收 + 7 天稳定 | 同上 + 集成测试 |
 | 批 3 | 14 | 批 2 验收 + 14 天稳定 | 同上 + 跨批契约一致性 |
 
-搬迁追踪器：`19_development_workspace/structure-and-mapping/contractbus-migration-tracker.yaml`，校验脚本：`scripts/governance/contractbus_migration_check.py`。
+搬迁追踪器：~~`19_development_workspace/structure-and-mapping/contractbus-migration-tracker.yaml`~~（目录 2026-06-26 退役；现落 `docs/_working/`），校验脚本：`scripts/governance/contractbus_migration_check.py`。
 
 ---
 
@@ -2355,9 +2355,9 @@ business_slis:
  golden_signal: "saturation (business)"
  governance_layer: GOV-P2
  - id: BIZ-005-temp-file-growth-rate
- description: "19_development_workspace/ 的增长速度——反映AI产生的中间产物"
+ description: "docs/_working/ 的增长速度——反映AI产生的中间产物"
  target: "< 10MB / week"
- measurement: du -sh 19_development_workspace/
+ measurement: du -sh docs/_working/
  golden_signal: "saturation (business)"
  governance_layer: GOV-P2
 ```

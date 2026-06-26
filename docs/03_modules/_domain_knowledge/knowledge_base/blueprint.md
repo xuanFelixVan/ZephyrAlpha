@@ -721,7 +721,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 上下文引擎 KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context-engine-architecture.md` |
 | VMS KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector-memory-chromadb-bge-m3.md` |
 | ChromaDB KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
-| Session Log | `D:\ZephyrAlpha\docs\19_development_workspace\session_logs\` |
+| Session Log | `D:\ZephyrAlpha\docs\_working\session_logs\` |
 
 ### 2.3 depends_on 声明
 
@@ -884,7 +884,7 @@ domain: "infra"
 layer: "L01"
 
 source_type: "session_log"
-source_path: "docs/19_development_workspace/session_logs/session-047.md"
+source_path: "docs/_working/session_logs/session-047.md"
 
 status: "VERIFIED"
 quality_score: 0.92
@@ -1342,7 +1342,7 @@ domain: "infra"
 layer: "L01"
 
 source_type: "session_log"
-source_path: "docs/19_development_workspace/session_logs/session-047.md"
+source_path: "docs/_working/session_logs/session-047.md"
 
 status: "OBSERVED"
 priority: "MID"
