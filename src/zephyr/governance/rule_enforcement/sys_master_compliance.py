@@ -38,15 +38,35 @@ if sys.stderr.encoding != "utf-8":
 
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[4]  # 仓库根 d:\ZephyrAlpha
 
-SYS_MASTER_PATH = PROJECT_ROOT / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
-MOD_MASTER_PATH = PROJECT_ROOT / "docs" / "03_modules" / "_master-blueprint" / "blueprint.md"
+SYS_MASTER_PATH = PROJECT_ROOT / "docs" / "03_modules" / "_sys_master" / "blueprint.md"
+MOD_MASTER_PATH = PROJECT_ROOT / "docs" / "03_modules" / "_master_blueprint" / "blueprint.md"
 PROJECT_RULES = PROJECT_ROOT / ".trae" / "rules" / "project_rules.md"
 BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 MODULE_REGISTRY = PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
 GATE_REGISTRY = PROJECT_ROOT / "src" / "zephyr" / "gates" / "_registry.yaml"
 CROSSCHECK_SCRIPT = PROJECT_ROOT / "scripts" / "governance" / "crosscheck_sys_master_deps.py"
+
+
+def _load_valid_progress_values() -> set[str]:
+    """从 progress_vocabulary.yaml 加载合法 construction_progress 值（SSoT 唯一真源）。
+
+    trae_060 §206 裁定 construction_progress 多真源 MUST 收敛到本词表。
+    注意：phase_0_complete（笔误）已迁移至 phase_0_completed，仅加载 values 不含 deprecated_values。
+    """
+    vocab = (
+        PROJECT_ROOT
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "vocabularies"
+        / "progress_vocabulary.yaml"
+    )
+    if not vocab.exists():
+        return set()
+    data = yaml.safe_load(vocab.read_text(encoding="utf-8")) or {}
+    return {str(v.get("value")) for v in data.get("values", []) if isinstance(v, dict)}
 
 
 def extract_frontmatter(filepath: Path) -> dict:
@@ -90,12 +110,12 @@ def check_cold_start_integration() -> list[dict]:
             }
         ]
     content = PROJECT_RULES.read_text(encoding="utf-8")
-    has_sys_master = "SYS-MASTER-001" in content or "_sys-master" in content
+    has_sys_master = "SYS-MASTER-001" in content or "_sys_master" in content
     in_cold_start = False
     cold_start_section = re.search(r"STEP 1.*?STEP 5", content, re.DOTALL)
     if cold_start_section:
         section_text = cold_start_section.group(0)
-        in_cold_start = "SYS-MASTER" in section_text or "_sys-master" in section_text
+        in_cold_start = "SYS-MASTER" in section_text or "_sys_master" in section_text
     status = "PASS" if in_cold_start else ("WARN" if has_sys_master else "FAIL")
     return [
         {
@@ -135,30 +155,7 @@ def check_depends_on_integrity() -> list[dict]:
 
 
 def check_construction_progress_consistency() -> list[dict]:
-    VALID_PROGRESS_VALUES = {
-        "not_started",
-        "in_progress",
-        "planning",
-        "design",
-        "phase_0_complete",
-        "phase_0_completed",
-        "phase_1_complete",
-        "phase_1_partial",
-        "phase_1_scaffold_partial",
-        "phase_2_complete",
-        "phase_3_complete",
-        "phase_4_complete",
-        "phase_9_complete",
-        "phase_14_early_bird",
-        "completed",
-        "active",
-        "operational",
-        "deprecated",
-        "backlog",
-        "blocked_by_infrastructure",
-        "blueprint_complete",
-        "design_complete",
-    }
+    VALID_PROGRESS_VALUES = _load_valid_progress_values()
     results = []
     for target_id, target_path, fm_key in [
         ("SYS-MASTER-001", SYS_MASTER_PATH, "construction_progress"),

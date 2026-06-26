@@ -1311,7 +1311,7 @@ def _check_blueprint_read_compliance(
     - 未读蓝图则返回 GateViolationError
     - AI 必须读蓝图后才能继续
     """
-    metrics_path = Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
+    metrics_path = Path(__file__).resolve().parents[4] / "data" / "telemetry" / "blueprint_reads.jsonl"
 
     if not metrics_path.exists():
         msg = (

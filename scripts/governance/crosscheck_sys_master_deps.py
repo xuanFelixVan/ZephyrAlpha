@@ -27,9 +27,9 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-SYS_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_sys-master" / "blueprint.md"
-MOD_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_master-blueprint" / "blueprint.md"
-DOM_GOV = PROJECT_ROOT / "docs" / "03_modules" / "_domain-governance" / "blueprint.md"
+SYS_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_sys_master" / "blueprint.md"
+MOD_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_master_blueprint" / "blueprint.md"
+DOM_GOV = PROJECT_ROOT / "docs" / "03_modules" / "_domain_governance" / "blueprint.md"
 
 EXPECTED_MODULES = [
     "MOD-INF-018",
