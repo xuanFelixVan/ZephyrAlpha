@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-27'
-total_scripts: 588
+total_scripts: 580
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,14 +38,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_batch_lowercase.py
-  path: _tmp_batch_lowercase.py
-  description: from __future__ import annotations
-  domain: _tmp_batch_lowercase.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: _tmp_check_depgraph.py
   path: _tmp_check_depgraph.py
   description: import sqlite3
@@ -54,50 +46,10 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_commit_bypass.py
-  path: _tmp_commit_bypass.py
-  description: from __future__ import annotations
-  domain: _tmp_commit_bypass.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_commit_data_fix.py
-  path: _tmp_commit_data_fix.py
-  description: 不使用 stash（避免之前的 rename 丢失问题），直接 git commit -- data/。
-  domain: _tmp_commit_data_fix.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_commit_data_rename.py
-  path: _tmp_commit_data_rename.py
-  description: 使用 GitCommitGateway 全局锁 + ttl 校验 + GW 标记，但 git commit 用 pathspec 限定 data/。
-  domain: _tmp_commit_data_rename.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_commit_data_rename2.py
-  path: _tmp_commit_data_rename2.py
-  description: 治本：用 scripts/git_commit.py CLI 入口（GitCommitGateway 的官方封装），
-  domain: _tmp_commit_data_rename2.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_commit_data_rename3.py
-  path: _tmp_commit_data_rename3.py
-  description: 根因：git commit --pathspec-from-file 对 staged rename（R100）无效——
-  domain: _tmp_commit_data_rename3.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_fix_data_rename.py
-  path: _tmp_fix_data_rename.py
-  description: 1. 删除 data/ 下所有被改名的物理文件（小写版本）
-  domain: _tmp_fix_data_rename.py
+- name: _tmp_commit.py
+  path: _tmp_commit.py
+  description: 提交内容：
+  domain: _tmp_commit.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -118,30 +70,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_restore_audit.py
-  path: _tmp_restore_audit.py
-  description: from __future__ import annotations
-  domain: audit
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_revert_timestamps.py
-  path: _tmp_revert_timestamps.py
-  description: 回滚条件（合法约定，不应改小写）：
-  domain: _tmp_revert_timestamps.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_test_pathspec.py
-  path: _tmp_test_pathspec.py
-  description: import subprocess
-  domain: test
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: _update_rbac_depgraph.py
   path: _update_rbac_depgraph.py
   description: import sqlite3
@@ -154,6 +82,14 @@ scripts:
   path: a2a_full_verification.py
   description: import sys
   domain: a2a
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: calibrate_model_diff.py
+  path: calibrate_model_diff.py
+  description: 模型能力差异校准脚本（P1-3 治本）。
+  domain: calibrate_model_diff.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -2064,7 +2000,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/backfill_ttl_metadata.py
   path: governance/d3_metadata/backfill_ttl_metadata.py
-  description: 对 docs/ 下所有有 frontmatter 的 .md 文件，按 ttl_vocabulary.yaml decision_tree
+  description: 对 docs/ + src/ + scripts/ + tests/ 下所有有头部的文件（6 格式），按
   domain: governance
   execution_plane: warm-path
   status: registered
