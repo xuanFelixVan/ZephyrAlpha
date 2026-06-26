@@ -25,6 +25,9 @@ sdist/
 var/
 wheels/
 *.egg-info/
+# Python setuptools 构建产物（下划线变体，如 src/zephyralpha.egg_info/）
+# 治本：原 *.egg-info/(连字符) 不匹配实际目录名 egg_info/(下划线)，导致构建产物被跟踪
+*.egg_info/
 .installed.cfg
 *.egg
 

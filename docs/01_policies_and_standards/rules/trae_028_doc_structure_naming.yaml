@@ -188,8 +188,8 @@ sections:
       fail: 后缀与doc_type不一致(V1阻断)
     - type: constraint
       check: 大写文件白名单
-      pass: 仅AGENTS.md允许保留;新建文件一律全小写
-      fail: 新建大写文件名
+      pass: AGENTS.md(Trae硬约束)/Dockerfile(Docker硬约束)/README.md/LICENSE/CONTRIBUTING.md/SECURITY.md(GitHub平台功能)允许保留;新建文件一律全小写;对齐L224根目录白名单
+      fail: 新建大写文件名或白名单外大写文件
     actions:
     - type: mandatory
       step: 文件名后缀必须匹配doc_type(GATE-11 N-08强制校验)

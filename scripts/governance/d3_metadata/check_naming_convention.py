@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] exit 0=clean; exit 1=violations found; exit 2=usage error
 # [TESTS] tests/unit/test_gate11_naming_convention.py
+# [TTL] task_bound
 """GATE-11 命名规范门禁 — 全类型命名检测。
 
 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.5.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_003_filename_uniqueness,豁免清单真源 §n16_config)
@@ -70,6 +71,10 @@ from validate_module_id_naming import (
 # 白名单与豁免配置
 # ---------------------------------------------------------------------------
 
+# 大写文件白名单（治本：对齐 trae_028.yaml L190 + L224 根目录白名单）
+# 硬约束：AGENTS.md(Trae IDE)、Dockerfile(Docker build)
+# GitHub平台功能：README.md/LICENSE/CONTRIBUTING.md/SECURITY.md（大小写不敏感识别，社区约定大写）
+# 已移除：PKG_INFO/SOURCES.txt（Python setuptools 构建产物，应 gitignore，不应入库）
 FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
@@ -77,8 +82,6 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "CONTRIBUTING.md",
     "SECURITY.md",
     "LICENSE",
-    "PKG_INFO",
-    "SOURCES.txt",
 ]
 
 TECH_VERSION_TOKENS: list[str] = [
