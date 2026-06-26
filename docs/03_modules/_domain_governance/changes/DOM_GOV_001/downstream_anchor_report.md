@@ -1,6 +1,7 @@
 ---
 blueprint_id: MOD-GOVERNANCE
 ttl: permanent
+doc_type: audit_report
 ---
 
 # MOD-GOVERNANCE Downstream Anchor Report

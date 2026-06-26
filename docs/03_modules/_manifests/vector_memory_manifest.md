@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Vector Memory.Manifest
 module_id: MOD-070
 ttl: permanent
+doc_type: register
 ---
 
 # vector-memory/ 文件清单（自动生成 2026-05-09）

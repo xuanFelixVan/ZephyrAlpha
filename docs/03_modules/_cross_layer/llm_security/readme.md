@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: llm-security README
 module_id: MOD-010
 ttl: permanent
+doc_type: readme
 ---
 
 # LLM Security Gateway (MOD-LLM_SECURITY)

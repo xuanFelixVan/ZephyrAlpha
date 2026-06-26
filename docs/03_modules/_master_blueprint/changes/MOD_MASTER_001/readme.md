@@ -1,6 +1,7 @@
 ---
 blueprint_id: MOD-GOVERNANCE
 ttl: permanent
+doc_type: readme
 ---
 
 # MOD-MASTER_BLUEPRINT 变更目录

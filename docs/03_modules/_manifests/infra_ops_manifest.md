@@ -9,6 +9,7 @@ conflict_note: |
   files (logs/, metrics_bridge.py) into observability/telemetry/, then delete
   this system-telemetry/ directory. See DM-248 for tracking.
 ttl: permanent
+doc_type: register
 ---
 
 # infra_ops/ 文件清单（自动生成 2026-06-10）

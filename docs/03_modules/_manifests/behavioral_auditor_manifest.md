@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Behavioral Auditor.Manifest
 module_id: MOD-046
 ttl: permanent
+doc_type: register
 ---
 
 # behavioral-auditor/ 文件清单（自动生成 2026-05-09）

@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: runtime-integration README
 module_id: MOD-032
 ttl: permanent
+doc_type: readme
 ---
 
 # Runtime Integration — MOD-INF-002

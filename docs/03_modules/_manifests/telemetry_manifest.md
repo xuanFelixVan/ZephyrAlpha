@@ -10,6 +10,7 @@ conflict_note: |
   observability/telemetry/, then delete infrastructure/system-telemetry/.
   See DM-248 for tracking.
 ttl: permanent
+doc_type: register
 ---
 
 # telemetry/ 文件清单（自动生成 2026-06-10）

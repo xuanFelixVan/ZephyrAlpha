@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Kb.Manifest
 module_id: MOD-060
 ttl: permanent
+doc_type: register
 ---
 
 # kb/ 文件清单（自动生成 2026-05-09）

@@ -1,6 +1,7 @@
 ---
 blueprint_id: MOD-GOVERNANCE
 ttl: permanent
+doc_type: audit_report
 ---
 
 # MOD-INF-013 最终审计报告

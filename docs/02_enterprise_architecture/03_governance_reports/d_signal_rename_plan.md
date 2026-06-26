@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: construction_plan
 ---
 
 # D-SIGNAL* 4 域改名执行方案（施工细节版 v2）

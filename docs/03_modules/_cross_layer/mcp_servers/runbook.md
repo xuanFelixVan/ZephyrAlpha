@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Runbook
 module_id: MOD-011
 ttl: permanent
+doc_type: operational_rule
 ---
 
 # MCP Runbook

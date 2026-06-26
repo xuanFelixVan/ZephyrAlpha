@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Integration Test Report
 module_id: MOD-028
 ttl: permanent
+doc_type: audit_report
 ---
 
 # MOD-INF-025 A2A Protocol 集成测试报告 (v0.10.0)

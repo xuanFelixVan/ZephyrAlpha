@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Agent Rbac.Manifest
 module_id: MOD-042
 ttl: permanent
+doc_type: register
 ---
 
 # agent-rbac/ 文件清单（自动生成 2026-05-09）

@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Rollback.Manifest
 module_id: MOD-066
 ttl: permanent
+doc_type: register
 ---
 
 # rollback/ 文件清单（自动生成 2026-05-09）

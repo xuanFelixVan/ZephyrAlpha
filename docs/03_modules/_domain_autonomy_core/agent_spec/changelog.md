@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: agent-spec Changelog
 module_id: MOD-016
 ttl: permanent
+doc_type: log
 ---
 
 # MOD-INF-019 CHANGELOG (v0.1.0 → v0.17.0)

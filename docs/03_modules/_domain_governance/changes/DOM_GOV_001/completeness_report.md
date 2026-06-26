@@ -1,6 +1,7 @@
 ---
 blueprint_id: MOD-GOVERNANCE
 ttl: permanent
+doc_type: audit_report
 ---
 
 # 蓝图分解完整性报告 · 二次审计版

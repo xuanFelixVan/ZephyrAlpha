@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: construction_plan
 ---
 
 > **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：

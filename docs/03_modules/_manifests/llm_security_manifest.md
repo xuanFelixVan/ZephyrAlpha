@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Llm Security.Manifest
 module_id: MOD-061
 ttl: permanent
+doc_type: register
 ---
 
 # llm-security/ 文件清单（自动生成 2026-05-09）

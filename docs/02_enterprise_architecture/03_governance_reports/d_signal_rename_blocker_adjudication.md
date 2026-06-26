@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: audit_report
 ---
 
 # D-SIGNAL 改名任务卡执行阻塞——病根调研与裁定报告

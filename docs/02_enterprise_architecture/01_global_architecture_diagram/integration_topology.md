@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: architecture_view
 ---
 
 # 集成拓扑图

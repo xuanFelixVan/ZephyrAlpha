@@ -34,6 +34,7 @@ ssot_declarations:
   source: runtime_config.py ollama_base_url
   sync_rule: 运行时配置变更时MUST同步
 ttl: permanent
+doc_type: blueprint
 ---
 ## §0 代码对齐验证 {temporal_type=permanent}
 

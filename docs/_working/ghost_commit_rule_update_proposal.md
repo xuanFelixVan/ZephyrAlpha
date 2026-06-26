@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: design
 ---
 
 # 幽灵提交（Ghost Commit）治本——规则更新提案

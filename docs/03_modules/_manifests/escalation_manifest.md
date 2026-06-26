@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Escalation.Manifest
 module_id: MOD-055
 ttl: permanent
+doc_type: register
 ---
 
 # escalation/ 文件清单（自动生成 2026-05-09）

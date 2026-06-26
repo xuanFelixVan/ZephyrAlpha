@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: construction_plan
 ---
 
 # Schema 健康度治本方案：depgraph.db 漂移修复与死表清理

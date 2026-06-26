@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: construction_plan
 ---
 
 # Schema 健康度治本：延续执行计划（v2 续作）

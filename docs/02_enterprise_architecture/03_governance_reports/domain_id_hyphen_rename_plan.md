@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: construction_plan
 ---
 
 # 6 域 ID 连字符→下划线改名执行方案（施工细节版 v1）

@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Core.Manifest
 module_id: MOD-052
 ttl: permanent
+doc_type: register
 ---
 
 # core/ 文件清单（自动生成 2026-05-09）

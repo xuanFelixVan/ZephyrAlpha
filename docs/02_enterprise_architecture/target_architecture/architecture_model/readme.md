@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: architecture_model README
 module_id: GOV-046
 ttl: permanent
+doc_type: readme
 ---
 
 # 企业架构树中的 architecture_model（镜像说明）

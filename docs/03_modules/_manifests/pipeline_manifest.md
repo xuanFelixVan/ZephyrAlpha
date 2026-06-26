@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Pipeline.Manifest
 module_id: MOD-064
 ttl: permanent
+doc_type: register
 ---
 
 # pipeline/ 文件清单（自动生成 2026-05-09）

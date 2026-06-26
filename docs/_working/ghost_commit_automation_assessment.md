@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: design
 ---
 
 # GitCommitGateway 自动化能力评估报告

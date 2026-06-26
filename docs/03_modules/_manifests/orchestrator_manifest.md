@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Orchestrator.Manifest
 module_id: MOD-063
 ttl: permanent
+doc_type: register
 ---
 
 # orchestrator/ 文件清单（自动生成 2026-05-09）

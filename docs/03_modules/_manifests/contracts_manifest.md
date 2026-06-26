@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Contracts.Manifest
 module_id: MOD-051
 ttl: permanent
+doc_type: register
 ---
 
 # contracts/ 文件清单（自动生成 2026-05-09）

@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Db.Manifest
 module_id: MOD-053
 ttl: permanent
+doc_type: register
 ---
 
 # db/ 文件清单（自动生成 2026-05-09）

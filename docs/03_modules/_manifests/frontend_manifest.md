@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 ssot_path: src/zephyr/frontend
 status: active
 ttl: permanent
+doc_type: register
 ---
 
 # frontend/ 文件清单（自动生成 2026-06-10）

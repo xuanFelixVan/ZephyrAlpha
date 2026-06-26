@@ -1,6 +1,6 @@
 ---
 module_id: GOV-036-ARCH-DISCUSSION
-doc_type: architecture_discussion
+doc_type: design
 status: Active
 version: 2.9.1
 created: '2026-06-12'

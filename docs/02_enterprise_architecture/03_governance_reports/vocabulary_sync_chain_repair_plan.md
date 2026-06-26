@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: construction_plan
 ---
 
 # Vocabulary 自动同步链路断裂修复方案（施工细节版 v1）
@@ -809,30 +810,21 @@ VALID_STABILITY = {"frozen", "stable", "evolving", "volatile"}
 VALID_SAFETY = {"H", "M", "L"}
 VALID_AUTONOMY = {"immutable_core", "human_gated", "ai_modifiable"}
 
-# 修改后（从 vocabulary YAML 动态加载）
+# 修改后（从 vocabulary YAML 动态加载 — 使用公共 loader，禁止复制局部 _load_valid_values）
 import sys
-_VOCAB_DIR = Path(__file__).resolve().parents[2] / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
-def _load_valid_values(vocab_file: str) -> set[str]:
-    p = _VOCAB_DIR / vocab_file
-    if not p.exists():
-        return set()
-    data = yaml.safe_load(p.read_text(encoding="utf-8"))
-    return {str(entry.get("value") or entry.get("id")) for entry in data.get("values", []) if isinstance(entry, dict)}
+from pathlib import Path
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.yaml_utils import load_vocabulary_values
 
-VALID_LAYER = _load_valid_values("layer_vocabulary.yaml")
-VALID_STABILITY = _load_valid_values("stability_vocabulary.yaml")
-VALID_SAFETY = _load_valid_values("safety_level_vocabulary.yaml")
-VALID_AUTONOMY = _load_valid_values("ai_autonomy_vocabulary.yaml")
+VALID_LAYER = load_vocabulary_values("layer_vocabulary.yaml", fallback_key="id")
+VALID_STABILITY = load_vocabulary_values("stability_vocabulary.yaml", fallback_key="id")
+VALID_SAFETY = load_vocabulary_values("safety_level_vocabulary.yaml", fallback_key="id")
+VALID_AUTONOMY = load_vocabulary_values("ai_autonomy_vocabulary.yaml", fallback_key="id")
 ```
 
-**注意**：`_VOCAB_DIR` 路径推导需根据脚本实际位置校验，可能需调整 `parents[N]` 的 N 值。建议改用 `_shared.constants.GOV_DOCS_DIR`：
-
-```python
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # scripts/governance/
-from _shared.constants import GOV_DOCS_DIR
-_VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
-```
+**注意**：自 v1.1.0 起，禁止各脚本复制 `_load_valid_values()` 局部函数——**MUST** 使用公共 `load_vocabulary_values()`（canonical = `scripts/governance/_shared/yaml_utils.py`，capability_id = `vocabulary_values_loader`）。理由：消除跨脚本复制粘贴（SCRIPT-QUALITY-001 D-D-05）+ 词表唯一真源（trae_060 §2）。配套门禁 GATE-VOCAB 会检测局部 loader 模式。详见 AGENTS.md §7「词表合法值加载规范」。
 
 #### 5.5.2 修复 validate_blueprint_placement.py（行 69 + 行 79-87）
 

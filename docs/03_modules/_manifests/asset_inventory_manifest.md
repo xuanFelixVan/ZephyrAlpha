@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Asset Inventory.Manifest
 module_id: MOD-044
 ttl: permanent
+doc_type: register
 ---
 
 # asset-inventory/ 文件清单（自动生成 2026-05-09）

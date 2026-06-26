@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Drift Detector.Manifest
 module_id: MOD-054
 ttl: permanent
+doc_type: register
 ---
 
 # drift-detector/ 文件清单（自动生成 2026-05-09）

@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Script System.Manifest
 module_id: MOD-068
 ttl: permanent
+doc_type: register
 ---
 
 # script_system/ 文件清单（自动生成 2026-05-09）

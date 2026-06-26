@@ -3,6 +3,7 @@ blueprint_id: MOD-GOVERNANCE
 title: feedback-loop Changelog
 module_id: MOD-009
 ttl: permanent
+doc_type: log
 ---
 
 # MOD-FEEDBACK_LOOP Feedback Loop Engine — CHANGELOG
