@@ -9,7 +9,7 @@
 GATE-11 module_id 双轨制单测（裁定#208 R1/R4）
 ================================================
 
-权威依据：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml`（版本号动态读取，≥ v1.3.0）
+权威依据：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml`（版本号动态读取并拼入消息；双轨制生效性由关键词实质性校验，不硬编码版本下界）
 （L1037-1040 模块ID格式 condition — layer-master 轨 + domain-functional 派生轨 scoped 适用）
 
 测试组：
@@ -176,8 +176,9 @@ class TestValidateSsotLinkage:
         """SSoT 双轨制 condition 已生效，联动校验应通过（版本号动态，不硬编码）。"""
         ok, msg = _validate_ssot_linkage()
         assert ok is True, msg
-        # 版本号由被测函数从 YAML 动态读取并拼入 msg；测试仅校验格式与下界，避免与真源版本号耦合
+        # 版本号由被测函数从 YAML 动态读取并拼入 msg；测试仅校验格式（下界校验已从被测函数
+        # 删除——版本号只升不降使 >= 1.3.0 永真为死代码；保留则 (1,3,0) 在被测函数+测试双处
+        # 硬编码，真源缺位，违背真源唯一原则。双轨制生效性由 check 2 关键词实质性校验兜底）
         m = re.search(r"v(\d+)\.(\d+)\.(\d+)", msg)
         assert m, f"msg 未含版本号模式: {msg}"
-        assert (int(m[1]), int(m[2]), int(m[3])) >= (1, 3, 0), f"版本号低于 1.3.0: {msg}"
         assert "一致" in msg
