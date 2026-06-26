@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 574
+total_scripts: 575
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,10 +38,10 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_debug_gi.py
-  path: _tmp_debug_gi.py
-  description: import os
-  domain: _tmp_debug_gi.py
+- name: _tmp_audit_doctype.py
+  path: _tmp_audit_doctype.py
+  description: import pathlib, re, yaml, collections
+  domain: audit
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -56,24 +56,8 @@ scripts:
   dimensions: []
 - name: _tmp_p62_commit.py
   path: _tmp_p62_commit.py
-  description: import sys, subprocess
+  description: '- 14 个删除的 .py 副本（infrastructure 垫片目录）'
   domain: _tmp_p62_commit.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_test_gitignored_commit.py
-  path: _tmp_test_gitignored_commit.py
-  description: 场景复现真实故障：.trae/documents/ 被 .gitignore 忽略，但其下文件仍被 git
-  domain: test
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_verify_audit.py
-  path: _tmp_verify_audit.py
-  description: import sys, ast
-  domain: audit
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -90,6 +74,14 @@ scripts:
   path: a2a_full_verification.py
   description: import sys
   domain: a2a
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: check_naming_convention.py
+  path: check_naming_convention.py
+  description: FILENAME_UPPERCASE_WHITELIST = [
+  domain: check_naming_convention.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -905,6 +897,14 @@ scripts:
 - name: governance/check_handoff_manifests.py
   path: governance/check_handoff_manifests.py
   description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/check_naming_convention.py
+  path: governance/check_naming_convention.py
+  description: FILENAME_UPPERCASE_WHITELIST = [
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2344,7 +2344,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/detectors/__init__.py
   path: governance/d5_architecture/detectors/__init__.py
-  description: __all__ = ["detect_depends_on_cycles", "detect_deprecated_adr_references", "analyze_same_name_module_relations"]
+  description: __all__ = ["detect_depends_on_cycles", "detect_deprecated_adr_references", "detect_duplicate_module_names"]
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2369,6 +2369,14 @@ scripts:
 - name: governance/d5_architecture/detectors/detect_deprecated_adr_references.py
   path: governance/d5_architecture/detectors/detect_deprecated_adr_references.py
   description: 对标：COND-38（引用 Deprecated ADR 作为当前决策依据为条件禁止）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/detectors/detect_duplicate_module_names.py
+  path: governance/d5_architecture/detectors/detect_duplicate_module_names.py
+  description: 对标：AGENTS.md §6.4（最有利于 AI 施工 --- 机器可读优于自然语言推理）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3928,7 +3936,7 @@ scripts:
   dimensions: []
 - name: governance/_shared/yaml_utils.py
   path: governance/_shared/yaml_utils.py
-  description: _shared/yaml_utils.py — YAML 文件加载共享工具（scripts 侧重新导出 + load_yaml 通用工具）
+  description: _shared/yaml_utils.py — YAML 文件加载共享工具
   domain: governance
   execution_plane: warm-path
   status: registered
