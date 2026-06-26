@@ -26,9 +26,10 @@ JobMatcher --- 模型岗位匹配器
     - required 是硬性: 不满足 required = qualified=False (但仍计算分数用于排序)
     - bonus 是加分: 命中越多 match_score 越高
 
-match_score 公式 (0-1):
-    qualified 时:  0.5 (required 基础) + bonus_ratio * 0.3 + hallu_score * 0.2
-    不 qualified:  bonus_ratio * 0.3 + hallu_score * 0.2  (无 required 基础分)
+match_score 公式 (0-1, 四维加权):
+    qualified 时:  0.45 (required) + bonus_ratio * 0.25 + hallu_score * 0.20 + cost_score * 0.10
+    不 qualified:  bonus_ratio * 0.25 + hallu_score * 0.20 + cost_score * 0.10  (无 required 基础分)
+    D-MCE-07: 成本是维度非硬门; claude 贵但必要时仍可用 (cost 仅占 10%)
 
 用法:
     matcher = JobMatcher()
@@ -47,6 +48,7 @@ import yaml
 
 from zephyr.intelligence.model_profiling.capability_passport import (
     GRADE_LEVEL,
+    CostBreakdown,
     HallucinationBreakdown,
     JobRecommendation,
     QuickProfile,
@@ -77,6 +79,10 @@ class JobMatcher:
         self._matrix_path = matrix_path or JOB_MATRIX_PATH
         self._jobs: dict[str, dict[str, Any]] = {}
         self._hallu_dims: dict[str, float] = {}
+        # P2 Cost 轴 (D-MCE-07: 成本是维度非硬门)
+        self._cost_weight: float = 0.10
+        self._cost_free: float = 0.01
+        self._cost_expensive: float = 1.0
         self._load_matrix()
 
     def _load_matrix(self) -> None:
@@ -98,9 +104,14 @@ class JobMatcher:
             name: float(d.get("weight", 0.0))
             for name, d in dims.items()
         }
+        # P2 Cost 轴配置 (D-MCE-07: 成本是维度非硬门)
+        cost_dim = data.get("cost_dimension", {}) or {}
+        self._cost_weight = float(cost_dim.get("weight", 0.10))
+        self._cost_free = float(cost_dim.get("free_threshold", 0.01))
+        self._cost_expensive = float(cost_dim.get("expensive_threshold", 1.0))
         _log.debug(
-            "JobMatcher: loaded %d jobs, %d hallu dims from %s",
-            len(self._jobs), len(self._hallu_dims), self._matrix_path,
+            "JobMatcher: loaded %d jobs, %d hallu dims, cost_weight=%.2f from %s",
+            len(self._jobs), len(self._hallu_dims), self._cost_weight, self._matrix_path,
         )
 
     # ── 公开 API ──────────────────────────────────────────
@@ -138,6 +149,7 @@ class JobMatcher:
         required = job_def.get("required", {}) or {}
         bonus = job_def.get("bonus", {}) or {}
         max_hallu = float(job_def.get("max_hallucination", 0.5))
+        max_cost = float(job_def.get("max_cost", 1.0))
 
         # 1. 检查 required
         qualified, missing = self._check_required(profile.capability_grades, required)
@@ -154,12 +166,17 @@ class JobMatcher:
         # 幻觉率是否低于岗位期望 (参考值, 非淘汰)
         hallu_passed = profile.hallucination.overall_rate <= max_hallu
 
-        # 4. match_score 加权
+        # 4. 计算成本得分 (D-MCE-07: 成本是维度非硬门)
+        cost_score = self._compute_cost_score(profile.cost, max_cost)
+
+        # 5. match_score 四维加权
+        #    qualified: 0.45(required) + 0.25(bonus) + 0.20(hallu) + 0.10(cost)
+        #    cost 仅占 10% — claude 贵但必要时仍可用
         if qualified:
-            score = 0.5 + bonus_ratio * 0.3 + hallu_score * 0.2
+            score = 0.45 + bonus_ratio * 0.25 + hallu_score * 0.20 + cost_score * 0.10
         else:
             # 不合格: 无 required 基础分, 但仍计算用于排序参考
-            score = bonus_ratio * 0.3 + hallu_score * 0.2
+            score = bonus_ratio * 0.25 + hallu_score * 0.20 + cost_score * 0.10
         score = max(0.0, min(1.0, score))
 
         return JobRecommendation(
@@ -234,6 +251,34 @@ class JobMatcher:
             return round(0.7 + 0.3 * (1.0 - rate / max_hallu), 3)
         # 超出期望: 0.7 ~ 0.0 线性衰减 (超 2 倍归零)
         excess = (rate - max_hallu) / max_hallu
+        return round(max(0.0, 0.7 - 0.7 * min(1.0, excess)), 3)
+
+    def _compute_cost_score(
+        self,
+        cost: CostBreakdown,
+        max_cost: float,
+    ) -> float:
+        """计算成本得分 (0-1, 越高越好 = 越便宜)。
+
+        策略 (D-MCE-07: 成本是维度非硬门):
+            - local 模型: 直接用 cost.cost_score (通常 1.0, 成本≈0)
+            - api 模型:
+                - cost <= max_cost: 满分区间, 0.7~1.0 线性 (越便宜越好)
+                - cost > max_cost: 衰减但归零下限 0.0 (超 2 倍归零)
+            - 任何模型都不因成本一票否决 (claude 贵但必要时仍可用)
+        """
+        if cost.deployment_mode == "local":
+            # 本地模型成本≈0, 直接返回 cost_score (通常 1.0)
+            return cost.cost_score
+        actual_cost = cost.estimated_cost_usd
+        if max_cost <= 0:
+            # 岗位要求零成本 (只接受本地), 用 cost.cost_score 绝对分
+            return cost.cost_score
+        if actual_cost <= max_cost:
+            # 满足期望: 0.7 ~ 1.0 线性 (越便宜越好)
+            return round(0.7 + 0.3 * (1.0 - actual_cost / max_cost), 3)
+        # 超出期望: 0.7 ~ 0.0 线性衰减 (超 2 倍归零)
+        excess = (actual_cost - max_cost) / max_cost
         return round(max(0.0, 0.7 - 0.7 * min(1.0, excess)), 3)
 
 

@@ -53,6 +53,15 @@ hallucination_dimensions:
     description: "数量幻觉 — 输出集合异常膨胀 (list/dict 长度超阈值)"
     weight: 0.05
 
+# 成本维度 (D-MCE-07: 成本是维度非硬门; claude 贵但必要时仍可用)
+# JobMatcher 用此配置计算 cost_score, 在 match_score 中占 10% 权重
+# 本地模型成本≈0; 云端按 provider_data.py 定价估算
+cost_dimension:
+  weight: 0.10
+  description: "成本是维度非硬门; 本地模型≈0, 云端按 API 定价"
+  free_threshold: 0.01      # cost <= 0.01 USD → cost_score=1.0 (近似免费, 如 zhipu)
+  expensive_threshold: 1.0  # cost >= 1.0 USD  → cost_score=0.0 (昂贵)
+
 jobs:
   # ── 初级岗位 ──────────────────────────────────
 
@@ -67,6 +76,7 @@ jobs:
       code_generate: "D"
       naming_suggest: "C"
     max_hallucination: 0.40
+    max_cost: 0.05
     category: "entry"
 
   doc_organizer:
@@ -80,6 +90,7 @@ jobs:
       task_classification: "C"
       long_context_recall: "C"
     max_hallucination: 0.30
+    max_cost: 0.05
     category: "entry"
 
   # ── 中级岗位 ──────────────────────────────────
@@ -96,6 +107,7 @@ jobs:
       cross_file_refactor: "C"
       dependency_trace: "C"
     max_hallucination: 0.25
+    max_cost: 0.20
     category: "mid"
 
   code_generator:
@@ -109,6 +121,7 @@ jobs:
       error_recovery: "C"
       incremental_execution: "C"
     max_hallucination: 0.30
+    max_cost: 0.20
     category: "mid"
 
   # ── 高级岗位 (要求低幻觉) ─────────────────────
@@ -139,6 +152,7 @@ jobs:
       hallucination_detect: "B"
       rollback_boundary_design: "C"
     max_hallucination: 0.15
+    max_cost: 1.00
     category: "senior"
     note: "岗位性质要求低幻觉, 但非硬门 — 正常评分, 权重较高"
 

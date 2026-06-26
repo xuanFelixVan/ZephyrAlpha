@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "2.3.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,8 +14,8 @@ date: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: src/zephyr/intelligence/model_profiling/
-last_updated: "2026-05-23"
-last_verified: "2026-05-14"
+last_updated: "2026-06-27"
+last_verified: "2026-06-27"
 generation: 2
 functional_domain: intelligence
 summary: "AI模型入职考试系统——五维评测产出CapabilityPassport能力护照，驱动TaskGate任务门控。"
@@ -49,7 +49,7 @@ ssot_ref: "specs/model_capability_exam/spec.md"
 
 ## 概述
 
-ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负责 AI 模型入职考试。每条 AI 进入系统时自动跑五维评测（横轴能力覆盖、纵轴精度深度、速轴延迟吞吐、幻轴幻觉率、稳轴长时间漂移），产出 CapabilityPassport 能力护照，驱动 TaskGate 只分配模型 pass=true 的能力。**v2.2.0新增**：护照新增 cost_efficiency 维度（本地vs云端API成本效率），支持下游 LLM 路由成本引擎（交易决策流水线 C-044⑤）的消费。当前规模 ~5 模型 / 9 能力类型 / 27 道标准题，目标容量 100 模型并发。上游依赖 ModelProfiler + Pipeline + BudgetEnforcer，下游被 AutoRuntime Core + Gate Engine + 交易决策流水线 C-044⑤ 消费。
+ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负责 AI 模型入职考试。每条 AI 进入系统时自动跑五维评测（横轴能力覆盖、纵轴精度深度、速轴延迟吞吐、幻轴幻觉率、稳轴长时间漂移），产出 CapabilityPassport 能力护照，驱动 TaskGate 只分配模型 pass=true 的能力。**v2.3.0新增**：三级考试模式（Quick 5-8min / Standard 20-30min / Deep 2-3h）+ 九维幻觉检测（fabrication/inconsistency/refusal/overclaim/context_drift/source_confusion/instruction_drift/format_hallucination/quantity_hallucination）+ 岗位匹配（JobMatcher 基于 required/bonus/max_hallucination 推荐适合岗位）。**设计原则**：幻觉率与成本均为正常评分维度（非一票否决、非硬门）——任何模型都有幻觉，只是高低问题；成本是岗位匹配考量维度之一，claude 贵但必要时仍可用。当前规模 ~5 模型 / 9 能力类型 / 29 道标准题，目标容量 100 模型并发。上游依赖 ModelProfiler + Pipeline + BudgetEnforcer，下游被 AutoRuntime Core + Gate Engine + 交易决策流水线 C-044⑤ 消费。
 
 ---
 
@@ -74,10 +74,19 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
 | 1 | `__init__.py` | §3.1 | 公共导出 | 已实现 | — |
-| 2 | `exam_orchestrator.py` | §3.1 / §4.1 | 五轴考试主控 | 已实现 | — |
-| 3 | `exam_test_cases.py` | §3.1 / §4.2 | 27 道标准题库 | 已实现 | — |
-| 4 | `capability_passport.py` | §3.1 / §4.2 | 护照数据模型+持久化 | 已实现 | — |
-| 7 | `test_model_capability_exam.py` | §9 | 测试用例 | 未实现 | — |
+| 2 | `exam_orchestrator.py` | §3.1 / §4.1 | 五轴考试主控 + 九维幻觉检测 + 三级模式 | 已实现 | — |
+| 3 | `exam_test_cases.py` | §3.1 / §4.2 | 29 道标准题库（9 能力 × 3 难度 + OLYMPIAD） | 已实现 | — |
+| 4 | `capability_passport.py` | §3.1 / §4.2 | 护照数据模型+持久化 + HallucinationBreakdown 九维 + QuickProfile | 已实现 | — |
+| 5 | `exam_rubric.py` | §3.1 | 三轨评分规则（rubric 轨） | 已实现 | — |
+| 6 | `exam_executor.py` | §3.1 | 三轨评分执行器（executor 轨，运行测试用例） | 已实现 | — |
+| 7 | `exam_judge.py` | §3.1 | 三轨评分裁判（judge 轨，LLM/确定性裁判） | 已实现 | — |
+| 8 | `job_matcher.py` | §3.1 / §4.1 | 岗位匹配（required/bonus/max_hallucination） | 已实现 | — |
+| 9 | `case_assembler.py` | §3.1 | 题目组装器 | 已实现 | — |
+| 10 | `provider_data.py` | §3.1 | 模型提供商数据 | 已实现 | — |
+| 11 | `scripts/quick_profile.py` | §4.1 | Quick 模式 CLI 入口（--from-passport/--model/--list） | 已实现 | — |
+| 12 | `data/brain/job_matrix.yaml` | §4.2 | 岗位匹配矩阵（9 维幻觉权重 + 岗位定义） | 已实现 | — |
+| 13 | `tests/test_exam_orchestrator.py` | §9 | ExamOrchestrator 测试（含九维幻觉检测） | 已实现 | — |
+| 14 | `tests/test_job_matcher.py` | §9 | JobMatcher 测试（36 tests） | 已实现 | — |
 
 ### §0.2 对齐验证矩阵
 
@@ -95,6 +104,7 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 | v1.0.0 (基线) | ExamOrchestrator, ExamTestCases, CapabilityPassport, TaskGate | benchmark_suite, 测试 | 待施工 |
 | v2.0.0 (容量升级) | 同 v1.0.0 | ExamMode, PassportIndex, ExamQueueItem | Phase 1-3 待施工 |
 | v2.2.0 (成本效率) | 同 v2.0.0 | CostEfficiencyResult 数据模型 | 待施工 |
+| v2.3.0 (三级模式+九维幻觉+岗位匹配) | ExamOrchestrator(九维+三级), capability_passport(HallucinationBreakdown 九维+QuickProfile), job_matcher, quick_profile.py, job_matrix.yaml, exam_rubric/executor/judge(三轨评分) | Cost 轴, Tool 轴 | 见 §17.4 未来路线图 |
 
 ---
 
@@ -141,9 +151,12 @@ AI 模型进入 ZephyrAlpha 系统后，大脑（AutoRuntime Core）需要知道
 | 1 | 五维评测 | 横轴（能力覆盖）/ 纵轴（精度深度）/ 速轴（延迟吞吐）/ 幻轴（幻觉率）/ 稳轴（漂移） |
 | 2 | 护照产出 | CapabilityPassport JSON 持久化到 data/brain/passports/ |
 | 3 | 考试调度 | ExamOrchestrator 编排五轴考试流程 |
-| 4 | 题库管理 | ExamTestCases 27 道标准题，9 能力 × 3 难度 |
+| 4 | 题库管理 | ExamTestCases 29 道标准题，9 能力 × 3 难度 + OLYMPIAD 题 |
 | 5 | 门控集成 | TaskGate 消费护照做任务分配判定 |
 | 6 | 成本效率评估 | 护照新增 cost_efficiency 维度，记录模型在本地GPU vs 云端API两种部署模式下的成本效率，供下游LLM路由成本引擎消费 |
+| 7 | 三级考试模式 | Quick（5-8min, 29题+5能力幻觉检测）/ Standard（20-30min, n=1+skip_drift）/ Deep（2-3h, n>=3+full drift+LLM judge） |
+| 8 | 九维幻觉检测 | fabrication/inconsistency/refusal/overclaim/context_drift/source_confusion/instruction_drift/format_hallucination/quantity_hallucination |
+| 9 | 岗位匹配 | JobMatcher 基于 required(硬性满足)+bonus(加分项)+max_hallucination(期望非硬门) 推荐适合岗位 |
 
 ### 2.2 不包含的职责
 
@@ -668,11 +681,61 @@ class ExamMode(str, Enum):
 
 | 阶段 | 触发条件 | 升级内容 | 预计工作量 |
 |------|:---:|------|:---:|
-| Phase 0（当前） | ~5 模型 | 五轴评测 + 护照 + TaskGate | ✅ 已完成 |
+| Phase 0（当前） | ~5 模型 | 五轴评测 + 护照 + TaskGate + 三级模式 + 九维幻觉 + 岗位匹配 | ✅ 已完成 |
 | Phase 1 | ≥20 模型 | 并发管理 + 超时熔断 + 资源量化 | ~3d |
 | Phase 2 | ≥50 模型 | 增量考试 + 重考触发 | ~2d |
 | Phase 3 | ≥200 模型 | Passport 分片存储 + 索引 | ~1d |
 | Phase 4 | ≥500 模型 | 跨模型对比排行 + 周检调度 | ~2d |
+
+### §17.4 未来工作路线图（v2.3.0+）
+
+> **时态属性**：本节属于**永久时态**——记录未来工作规划，AI 修改设计时必读，防止重复决策。
+> 路线图按优先级排序，每项标注状态（进行中/暂缓/按需推进）。
+
+#### 设计原则（适用于所有未来工作）
+
+| 原则 | 说明 |
+|------|------|
+| 幻觉率正常评分 | 幻觉率是正常评分维度，**非一票否决、非硬门**。任何模型都有幻觉（含 Claude），只是高低问题。考试维度可多，但评分正常参与排序。未来岗位匹配时幻觉率权重较高，但当前不做淘汰。 |
+| 成本是维度非硬门 | 成本是岗位匹配的考量维度之一，**非一票否决**。claude 贵但必要时仍可用。本地模型成本≈0，云端模型成本按 API 定价计算。 |
+| 能力轮廓 > 每题精度 | 岗位匹配用五级粗分级（A/B/C/D/F），能力轮廓比每题精度更重要——测出"擅长什么"比"每题多少分"更有岗位指导价值。 |
+| 向内收拢 | 优先扩展已有功能，不创造新文件；优先复用已有数据，不重复采集。 |
+
+#### 路线图清单
+
+| 路线图ID | 工作项 | 优先级 | 状态 | 依赖 | 说明 |
+|---------|--------|:---:|:---:|------|------|
+| ROADMAP-01 | P2 Cost 轴 | P0 | 进行中 | 无 | 从已有 `_all_latencies_ms`/`_all_tokens` 派生 token 成本，接入岗位匹配矩阵。本地模型成本≈0，云端模型按 API 定价（input/output token 价格）。成本是评分维度非硬门。 |
+| ROADMAP-02 | P2 Tool 轴 | P1 | 暂缓 | ROADMAP-01 | 设计工具调用能力测试题（function calling），扩展能力维度。很多岗位需要工具调用能力，是能力维度的真实扩展。工作量中等。 |
+| ROADMAP-03 | 真实本地模型 Quick 考试验证 | P1 | 暂缓 | ROADMAP-01, ROADMAP-02 | 用 quick_profile.py 对真实本地模型跑一次 Quick 考试，验证端到端流程，产出第一个真实护照。 |
+| ROADMAP-04 | P1-1 题目外置 YAML | P2 | 按需推进 | 无 | 把 exam_test_cases.py 中硬编码题目外置到 YAML，让题目可配置、可扩展。当前题目数（29）足够覆盖岗位匹配，等需要批量加题（每能力 20+ 题）时再做。避免过早工程化。 |
+| ROADMAP-05 | P2 Patch 轴 | P3 | 暂缓 | 无 | 补丁生成能力（生成可应用 diff/patch）。本质是代码能力细分，当前 `code_fix`/`refactor` 已部分覆盖。与现有代码能力重叠，优先级低。 |
+| ROADMAP-06 | P3 Agent Loop | P3 | 暂缓 | ROADMAP-03 | Agent 循环测试——模型在多轮对话/工具循环中的表现。高级岗位（自主 agent）需要。Quick 模式有真实数据后再推进。 |
+| ROADMAP-07 | P3 真实仓库测试 | P3 | 暂缓 | ROADMAP-06 | 在真实代码库上测试模型能力。最贴近实际岗位，但实现复杂度高。 |
+| ROADMAP-08 | P4 持续画像 | P4 | 暂缓 | ROADMAP-03 | 模型升级后重新考试，跟踪能力变化。运维需求，等有 3+ 个护照后才有意义。 |
+
+#### 路线图执行顺序
+
+```
+当前状态: v2.3.0 已完成（三级模式 + 九维幻觉 + 岗位匹配 + Quick CLI）
+    │
+    ▼
+ROADMAP-01: P2 Cost 轴 (进行中)
+    │  从已有 latency/token 数据派生成本，接入 job_matrix.yaml
+    ▼
+ROADMAP-02: P2 Tool 轴 (中工程)
+    │  设计工具调用测试题，扩展能力维度
+    ▼
+ROADMAP-03: 真实 Quick 考试验证
+    │  产出第一个真实护照，验证端到端流程
+    ▼
+按需推进:
+    ├ ROADMAP-04: P1-1 题目外置 YAML (当题库需要批量扩展时)
+    ├ ROADMAP-05: P2 Patch 轴 (当需要细分代码能力时)
+    ├ ROADMAP-06: P3 Agent Loop (当 Quick 有真实数据后)
+    ├ ROADMAP-07: P3 真实仓库测试 (当 Agent Loop 成熟后)
+    └ ROADMAP-08: P4 持续画像 (当有 3+ 护照后)
+```
 
 ---
 
@@ -689,6 +752,11 @@ class ExamMode(str, Enum):
 | 3 | D-MCE-03 | 稳轴默认跳过 | A:全跑 B:默认跳过 | B | 稳轴耗时过长，非每次必跑 | 2026-05-10 |
 | 4 | D-MCE-04 | 容量升级按规模触发器分阶段 | A:一次性 B:分阶段 | B | 模型慢慢加入，不提前过度工程 | 2026-05-12 |
 | 5 | D-MCE-05 | 护照新增 cost_efficiency 维度 | A:独立蓝图 B:护照内新增维度 | B | 成本效率是模型能力的固有属性，与护照其他维度变更频率同步，无需独立蓝图 | 2026-05-23 |
+| 6 | D-MCE-06 | 幻觉率正常评分（非一票否决） | A:一票否决(硬门) B:正常评分维度 C:不检测 | B | 任何模型都有幻觉（含 Claude），只是高低问题。幻觉率正常参与评分排序，非硬门淘汰。考试维度可多（九维），但评分正常。未来岗位匹配时幻觉率权重较高，但当前不做淘汰。 | 2026-06-27 |
+| 7 | D-MCE-07 | 成本是维度非硬门 | A:成本硬门(超阈值淘汰) B:成本是评分维度 C:不测成本 | B | 成本是岗位匹配考量维度之一，非一票否决。claude 贵但必要时仍可用。本地模型成本≈0，云端按 API 定价。成本与幻觉率同为正常评分维度。 | 2026-06-27 |
+| 8 | D-MCE-08 | 三级考试模式（Quick/Standard/Deep） | A:单一全量考 B:三级模式 C:仅 Quick | B | 不同场景需要不同精度：Quick 5-8min 快速画像适合岗位初筛；Standard 20-30min 适合正式评测；Deep 2-3h 适合深度认证。能力轮廓 > 每题精度。 | 2026-06-27 |
+| 9 | D-MCE-09 | 岗位匹配用五级粗分级 | A:细粒度分数 B:五级粗分级(A/B/C/D/F) C:二值(pass/fail) | B | 岗位匹配关注"擅长什么"而非"每题多少分"。五级粗分级降低噪声，能力轮廓清晰。match_score=0.5(required基础)+bonus_ratio×0.3+hallu_score×0.2。 | 2026-06-27 |
+| 10 | D-MCE-10 | 九维幻觉检测（参考 ChatGPT 建议扩展） | A:三维(fab/inc/ref) B:六维 C:九维 | C | 参考业界实践 + ChatGPT 建议，从 3 维扩展到 9 维：新增 context_drift(独立检测)、instruction_drift、format_hallucination、quantity_hallucination。权重总和 1.00，fabrication 仍最重要(0.20)。 | 2026-06-27 |
 
 ---
 
@@ -862,6 +930,7 @@ STEP 3: 拆分后验证
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
+| 2026-06-27 | 2.3.0 | 新增三级考试模式（Quick/Standard/Deep）+ 九维幻觉检测 + 岗位匹配（JobMatcher）。§0.1 代码文件清单新增 10 个文件（exam_rubric/executor/judge, job_matcher, quick_profile.py, job_matrix.yaml, 测试等）；§0.3 新增 v2.3.0 版本映射；§2.1 职责范围新增#7-#9（三级模式/九维幻觉/岗位匹配）；§17 分阶段升级路线 Phase 0 标记已完成；新增 §17.4 未来工作路线图（ROADMAP-01~08，含 P1-1 题目外置/P2 Cost轴/P2 Tool轴/P2 Patch轴/P3 Agent Loop/P3 真实仓库/P4 持续画像）；§18 新增决策 D-MCE-06~10（幻觉率正常评分/成本非硬门/三级模式/五级粗分级/九维幻觉）。设计原则：幻觉率与成本均为正常评分维度，非一票否决。 |
 | 2026-05-23 | 2.2.0 | 新增 cost_efficiency 维度：护照新增 CostEfficiencyResult 数据模型（local_cost_per_hour/api_cost_per_hour/cost_efficiency_score/deployment_mode）；§2.1 职责范围新增"成本效率评估"；§5.1 技术约束新增护照 cost_efficiency 维度；§10.1 新增交易决策流水线 C-044⑤ 被依赖声明；§14 新增风险#8/#9；§18 新增决策 D-MCE-05 |
 | 2026-05-14 | 2.1.0 | v3.5 模板对齐：§0前移至概述后；§7备选方案删除（由§18决策记录覆盖）；§15后果删除（负面合并到§14风险+增加类型列）；§0.1新增存在性列；§5.1去掉原因列；§10拆为§10.1~§10.4；铁律新增#13~#15；新增蓝图拆分判定标准；施工声明标注时态属性；§18增加覆盖说明+时态属性 |
 | 2026-05-14 | 2.0.0 | v3.3 模板对齐升级：H1标题格式+概述段+frontmatter补全+标准锚点+章节重排+补缺章节+容量升级内容合并至§17+construction_progress修正为partially_implemented+绝对路径+蓝图特有章节保留 |

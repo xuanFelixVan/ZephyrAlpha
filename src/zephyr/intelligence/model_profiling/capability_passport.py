@@ -177,6 +177,50 @@ class Recommendations:
 
 
 @dataclass
+class CostBreakdown:
+    """P2: 成本明细 — 从 _all_tokens/_all_latencies_ms 派生。
+
+    成本是岗位匹配的一个维度，不是一票否决 (D-MCE-07)。
+    claude 贵但必要时仍可用；本地模型成本≈0。
+
+    设计原则:
+        - 成本是维度非硬门 (D-MCE-07): claude 贵但必要时仍可用
+        - 本地模型 cost_usd ≈ 0 (硬件折旧另算)
+        - 云端模型按 API 定价 (provider_data.py DEFAULT_PROVIDERS)
+        - cost_score: 0-1, 越高越好 (越便宜); local 默认 1.0
+    """
+    deployment_mode: str = "local"      # local / api
+    provider: str = "local"             # zhipu/deepseek/openai_azure/anthropic/local
+    total_calls: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    total_tokens: int = 0
+    price_per_1k_input: float = 0.0     # USD per 1K input tokens
+    price_per_1k_output: float = 0.0    # USD per 1K output tokens
+    estimated_cost_usd: float = 0.0     # 总估算成本 (USD)
+
+    @property
+    def cost_score(self) -> float:
+        """成本得分 (0-1, 越高越好 = 越便宜)。
+
+        策略 (D-MCE-07: 成本是维度非硬门):
+            - local: 1.0 (成本≈0)
+            - api: 按 estimated_cost_usd 衰减
+              cost <= 0.01 USD → 1.0 (近似免费, 如 zhipu 免费档)
+              cost >= 1.0 USD  → 0.0 (昂贵)
+              中间线性
+        """
+        if self.deployment_mode == "local":
+            return 1.0
+        cost = self.estimated_cost_usd
+        if cost <= 0.01:
+            return 1.0
+        if cost >= 1.0:
+            return 0.0
+        return round(1.0 - (cost - 0.01) / 0.99, 3)
+
+
+@dataclass
 class CapabilityPassport:
     passport_version: str = "1.0.0"
     model_id: str = ""
@@ -190,6 +234,7 @@ class CapabilityPassport:
     speed: SpeedResult = field(default_factory=SpeedResult)
     hallucination: HallucinationResult = field(default_factory=HallucinationResult)
     drift: DriftResult = field(default_factory=DriftResult)
+    cost: CostBreakdown = field(default_factory=CostBreakdown)
     recommendations: Recommendations = field(default_factory=Recommendations)
 
     def to_dict(self) -> dict:
@@ -258,6 +303,7 @@ class CapabilityPassport:
             speed=SpeedResult(**data.get("speed", {})),
             hallucination=HallucinationResult(**data.get("hallucination", {})),
             drift=DriftResult(**data.get("drift", {})),
+            cost=CostBreakdown(**data.get("cost", {})),
             recommendations=Recommendations(**data.get("recommendations", {})),
         )
 
@@ -407,6 +453,8 @@ class QuickProfile:
     capability_scores: dict[str, float] = field(default_factory=dict)  # 原始分 0-1
     # 幻觉轴（六维细分，正常评分）
     hallucination: HallucinationBreakdown = field(default_factory=HallucinationBreakdown)
+    # 成本轴（D-MCE-07: 成本是维度非硬门）
+    cost: CostBreakdown = field(default_factory=CostBreakdown)
     # 综合分级
     overall_grade: str = "F"
     overall_score: float = 0.0

@@ -19,6 +19,7 @@ import pytest
 
 from zephyr.intelligence.model_profiling.capability_passport import (
     GRADE_LEVEL,
+    CostBreakdown,
     HallucinationBreakdown,
     JobRecommendation,
     QuickProfile,
@@ -97,11 +98,13 @@ def _make_profile(
     fmh: float = 0.0,
     qh: float = 0.0,
     model_id: str = "test-model",
+    cost: CostBreakdown | None = None,
 ) -> QuickProfile:
-    """构造 QuickProfile (默认零幻觉)。
+    """构造 QuickProfile (默认零幻觉, 本地模型成本≈0)。
 
     九维幻觉参数 (fab/idr/fmh/qh 等) 默认 0.0；
     调用方需显式设置全部 9 维才能保证 overall_rate 等于单一设定值。
+    cost 默认 None → CostBreakdown() (local, cost_score=1.0)。
     """
     return QuickProfile(
         model_id=model_id,
@@ -117,6 +120,7 @@ def _make_profile(
             format_hallucination=fmh,
             quantity_hallucination=qh,
         ),
+        cost=cost or CostBreakdown(),
     )
 
 
@@ -469,3 +473,145 @@ class TestEdgeCases:
         assert compute_grade_simple(0.30) == "D"
         assert compute_grade_simple(0.299) == "F"
         assert compute_grade_simple(0.0) == "F"
+
+
+# ── 9. Cost 轴: CostBreakdown (D-MCE-07) ──────────────────
+
+class TestCostBreakdown:
+    """CostBreakdown.cost_score property 测试。"""
+
+    def test_local_cost_score_is_1(self):
+        """本地模型成本≈0, cost_score=1.0。"""
+        c = CostBreakdown(deployment_mode="local")
+        assert c.cost_score == 1.0
+
+    def test_api_free_cost_score_is_1(self):
+        """API 模型 cost<=0.01 → cost_score=1.0 (近似免费, 如 zhipu)。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.005)
+        assert c.cost_score == 1.0
+
+    def test_api_zero_cost_score_is_1(self):
+        """API 模型 cost=0 → cost_score=1.0。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.0)
+        assert c.cost_score == 1.0
+
+    def test_api_expensive_cost_score_is_0(self):
+        """API 模型 cost>=1.0 → cost_score=0.0 (昂贵)。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=2.0)
+        assert c.cost_score == 0.0
+
+    def test_api_at_expensive_threshold(self):
+        """API 模型 cost=1.0 (刚好昂贵阈值) → cost_score=0.0。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=1.0)
+        assert c.cost_score == 0.0
+
+    def test_api_mid_cost_linear(self):
+        """API 模型 0.01<cost<1.0 → 线性衰减。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.5)
+        # 1.0 - (0.5-0.01)/0.99 = 1.0 - 0.495 = 0.505
+        assert c.cost_score == pytest.approx(0.505, abs=0.01)
+
+
+# ── 10. Cost 轴: _compute_cost_score (D-MCE-07) ───────────
+# 成本是维度非硬门: claude 贵但必要时仍可用
+
+class TestComputeCostScore:
+    """JobMatcher._compute_cost_score 测试。"""
+
+    def test_local_model_full_score(self, matcher: JobMatcher):
+        """本地模型 → cost_score=1.0 (成本≈0)。"""
+        c = CostBreakdown(deployment_mode="local")
+        score = matcher._compute_cost_score(c, max_cost=0.05)
+        assert score == 1.0
+
+    def test_api_within_budget(self, matcher: JobMatcher):
+        """API cost<=max_cost → 0.7~1.0 线性 (越便宜越好)。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.01)
+        # cost=0.01, max=0.05 → 0.7+0.3*(1-0.01/0.05)=0.7+0.3*0.8=0.94
+        score = matcher._compute_cost_score(c, max_cost=0.05)
+        assert score == pytest.approx(0.94, abs=0.02)
+
+    def test_api_at_threshold(self, matcher: JobMatcher):
+        """API cost=max_cost → 0.7 (刚好满足期望下限)。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.05)
+        score = matcher._compute_cost_score(c, max_cost=0.05)
+        assert score == pytest.approx(0.7, abs=0.02)
+
+    def test_api_exceed_budget_decay(self, matcher: JobMatcher):
+        """API cost>max_cost → 衰减但不一票否决。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.075)
+        # cost=0.075, max=0.05 → excess=(0.075-0.05)/0.05=0.5 → 0.7-0.7*0.5=0.35
+        score = matcher._compute_cost_score(c, max_cost=0.05)
+        assert score == pytest.approx(0.35, abs=0.02)
+
+    def test_api_double_exceed_zero(self, matcher: JobMatcher):
+        """API cost=2*max → 超出 100%, score=0.0 (但仍参与匹配)。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.10)
+        score = matcher._compute_cost_score(c, max_cost=0.05)
+        assert score == 0.0
+
+    def test_max_cost_zero_uses_absolute(self, matcher: JobMatcher):
+        """max_cost=0 (只接受本地) → 用 cost.cost_score 绝对分。"""
+        c = CostBreakdown(deployment_mode="api", estimated_cost_usd=0.5)
+        score = matcher._compute_cost_score(c, max_cost=0.0)
+        # cost_score = 1.0 - (0.5-0.01)/0.99 = 0.505
+        assert score == pytest.approx(0.505, abs=0.01)
+
+
+# ── 11. Cost 轴: 端到端场景 (D-MCE-07) ────────────────────
+
+class TestCostEndToEnd:
+    """成本轴端到端: claude 贵但必要时仍可用。"""
+
+    def test_expensive_model_still_matched(self, matcher: JobMatcher):
+        """claude 贵但必要时仍可用: cost_score=0 不淘汰, 仅降 10% match_score。"""
+        profile = _make_profile(
+            {"code_edit_precision": "A", "refactor": "A",
+             "dead_code_removal": "A", "code_generate": "A"},
+            cost=CostBreakdown(
+                deployment_mode="api", provider="anthropic",
+                estimated_cost_usd=2.0,  # 很贵, cost_score=0
+            ),
+        )
+        recs = matcher.match(profile)
+        junior = next(r for r in recs if r.job_id == "junior_code_worker")
+        # qualified, bonus=1.0, hallu=1.0, cost=0.0
+        # score = 0.45 + 0.25 + 0.20 + 0 = 0.90
+        assert junior.qualified is True
+        assert junior.match_score == pytest.approx(0.90, abs=0.02)
+        # 关键: 贵模型仍能匹配 (非一票否决)
+        assert junior.match_score > 0.0
+
+    def test_local_cheaper_than_api_scores_higher(self, matcher: JobMatcher):
+        """本地模型 (cost_score=1.0) 比昂贵 API (cost_score=0.0) match_score 高 0.10。"""
+        grades = {"code_edit_precision": "A", "refactor": "A",
+                  "dead_code_removal": "A", "code_generate": "A"}
+        local_profile = _make_profile(grades)  # 默认 local
+        api_profile = _make_profile(
+            grades,
+            cost=CostBreakdown(deployment_mode="api", estimated_cost_usd=2.0),
+        )
+        local_recs = matcher.match(local_profile)
+        api_recs = matcher.match(api_profile)
+        local_junior = next(r for r in local_recs if r.job_id == "junior_code_worker")
+        api_junior = next(r for r in api_recs if r.job_id == "junior_code_worker")
+        # cost 权重 0.10: local cost_score=1.0, api cost_score=0.0 → 差 0.10
+        assert local_junior.match_score - api_junior.match_score == pytest.approx(0.10, abs=0.02)
+
+    def test_free_api_same_as_local(self, matcher: JobMatcher):
+        """免费 API (如 zhipu, cost<=0.01) 与本地模型 cost_score 相同。"""
+        grades = {"code_edit_precision": "A", "refactor": "A"}
+        local_profile = _make_profile(grades)
+        free_api_profile = _make_profile(
+            grades,
+            cost=CostBreakdown(
+                deployment_mode="api", provider="zhipu",
+                estimated_cost_usd=0.005,  # 近似免费
+            ),
+        )
+        local_recs = matcher.match(local_profile)
+        free_recs = matcher.match(free_api_profile)
+        local_j = next(r for r in local_recs if r.job_id == "junior_code_worker")
+        free_j = next(r for r in free_recs if r.job_id == "junior_code_worker")
+        # 两者 cost_score 都是 1.0 → match_score 相同
+        assert local_j.match_score == pytest.approx(free_j.match_score, abs=0.01)

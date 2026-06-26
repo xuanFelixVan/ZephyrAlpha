@@ -44,6 +44,7 @@ from zephyr.intelligence.model_profiling.capability_passport import (
     DEPTH_THRESHOLDS,
     BreadthResult,
     CapabilityPassport,
+    CostBreakdown,
     DepthCapabilityResult,
     DepthResult,
     DriftResult,
@@ -166,6 +167,7 @@ class ExamOrchestrator:
         passport.breadth = self._run_breadth()
         passport.depth = self._run_depth(passport.breadth)
         passport.speed = self._compute_speed()
+        passport.cost = self._compute_cost()
         passport.hallucination = self._run_hallucination(passport.breadth)
 
         if not skip_drift:
@@ -700,6 +702,104 @@ class ExamOrchestrator:
             if self._all_ttft_ms
             else 0.0,
         )
+
+    # ── P2 Cost 轴 ───────────────────────────────────────
+    # D-MCE-07: 成本是维度非硬门; claude 贵但必要时仍可用
+    # 本地模型成本≈0; 云端按 provider_data.py 定价估算
+
+    def _compute_cost(self) -> CostBreakdown:
+        """P2 Cost 轴: 从 _all_tokens 派生考试成本。
+
+        本地模型 (OllamaChat): 成本≈0, deployment_mode=local
+        云端模型 (DeepSeekV4Chat 等): 按 provider_data.py 定价估算
+
+        token 估算策略:
+            - _all_tokens 记录每次推断的生成 token (output)
+            - input_tokens 用 output 近似 (无法精确区分时的合理近似)
+            - 本地模型无论多少 token, cost_usd=0
+        """
+        provider, mode = self._detect_deployment_mode()
+        price_in, price_out = self._lookup_cost_per_1k(provider)
+
+        output_tokens = sum(self._all_tokens) if self._all_tokens else 0
+        # 近似: input ≈ output (OllamaChat 仅返回 eval_count, 无法精确区分)
+        input_tokens = output_tokens
+        total_tokens = input_tokens + output_tokens
+        total_calls = len(self._all_tokens)
+
+        cost_usd = (
+            input_tokens / 1000.0 * price_in
+            + output_tokens / 1000.0 * price_out
+        )
+
+        return CostBreakdown(
+            deployment_mode=mode,
+            provider=provider,
+            total_calls=total_calls,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            total_tokens=total_tokens,
+            price_per_1k_input=price_in,
+            price_per_1k_output=price_out,
+            estimated_cost_usd=round(cost_usd, 6),
+        )
+
+    def _detect_deployment_mode(self) -> tuple[str, str]:
+        """检测部署模式 + 供应商标识。
+
+        优先从 chat 对象类名判断, 其次从 model_id 关键字匹配。
+
+        Returns:
+            (provider, mode): provider ∈ {local, zhipu, deepseek, openai_azure, anthropic}
+                              mode ∈ {local, api}
+        """
+        model_id = (self._model_id or "").lower()
+        chat_cls = type(self._chat).__name__.lower()
+
+        # 1. 优先从 chat 对象类名判断 (最可靠)
+        if "ollama" in chat_cls:
+            return ("local", "local")
+        if "deepseek" in chat_cls:
+            return ("deepseek", "api")
+        if "anthropic" in chat_cls or "claude" in chat_cls:
+            return ("anthropic", "api")
+        if "openai" in chat_cls:
+            return ("openai_azure", "api")
+        if "zhipu" in chat_cls or "glm" in chat_cls:
+            return ("zhipu", "api")
+
+        # 2. 从 model_id 关键字匹配
+        if "deepseek" in model_id:
+            return ("deepseek", "api")
+        if "claude" in model_id or "anthropic" in model_id:
+            return ("anthropic", "api")
+        if "gpt" in model_id or "openai" in model_id:
+            return ("openai_azure", "api")
+        if "glm" in model_id or "zhipu" in model_id:
+            return ("zhipu", "api")
+
+        # 3. 默认本地 (Ollama 等本地推理, 成本≈0)
+        return ("local", "local")
+
+    def _lookup_cost_per_1k(self, provider: str) -> tuple[float, float]:
+        """从 provider_data.py 查询供应商定价。
+
+        Returns:
+            (price_per_1k_input, price_per_1k_output) in USD
+            本地或未知供应商返回 (0.0, 0.0)
+        """
+        if provider == "local":
+            return (0.0, 0.0)
+        try:
+            from zephyr.intelligence.model_profiling.provider_data import DEFAULT_PROVIDERS
+            info = DEFAULT_PROVIDERS.get(provider, {})
+            return (
+                float(info.get("price_per_1k_input", 0.0)),
+                float(info.get("price_per_1k_output", 0.0)),
+            )
+        except Exception:
+            _log.warning("CostBreakdown: provider_data lookup failed for %s", provider)
+            return (0.0, 0.0)
 
     def _run_hallucination(self, breadth: BreadthResult) -> HallucinationResult:
         fab_count = 0
@@ -1308,6 +1408,7 @@ class ExamOrchestrator:
             capability_grades=capability_grades,
             capability_scores=capability_scores,
             hallucination=hallu,
+            cost=self._compute_cost(),
             overall_score=round(overall, 3),
             overall_grade=compute_grade_simple(overall),
         )

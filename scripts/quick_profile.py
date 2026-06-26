@@ -123,6 +123,7 @@ def _profile_from_passport(model_id: str, top_n: int) -> int:
         capability_grades=capability_grades,
         capability_scores=capability_scores,
         hallucination=hallu,
+        cost=passport.cost,
         overall_score=passport.overall_score,
         overall_grade=compute_grade_simple(passport.overall_score),
         notes=["converted from CapabilityPassport (6 new dims=0)"],
@@ -202,7 +203,17 @@ def _print_report(profile: QuickProfile) -> None:
     print(f"  format_hallucination 格式幻觉:     {h.format_hallucination:.3f}")
     print(f"  quantity_hallucination 数量幻觉:    {h.quantity_hallucination:.3f}")
 
-    # 3. 岗位推荐
+    # 3. 成本明细 (D-MCE-07: 成本是维度非硬门)
+    c = profile.cost
+    print(f"\n【成本明细】 模式: {c.deployment_mode}  供应商: {c.provider}  成本得分: {c.cost_score:.3f}")
+    print(f"  总调用: {c.total_calls}  总 token: {c.total_tokens} (in={c.input_tokens}, out={c.output_tokens})")
+    if c.deployment_mode == "api":
+        print(f"  单价: ${c.price_per_1k_input:.4f}/1K(in) + ${c.price_per_1k_output:.4f}/1K(out)")
+        print(f"  估算成本: ${c.estimated_cost_usd:.6f}")
+    else:
+        print(f"  估算成本: $0.000000 (本地模型)")
+
+    # 4. 岗位推荐
     if profile.recommendations:
         print(f"\n【岗位推荐 Top{len(profile.recommendations)}】")
         print(f"  {'岗位':<18} {'匹配度':>8} {'合格':>4} {'幻觉':>6} {'说明':<30}")
@@ -221,7 +232,7 @@ def _print_report(profile: QuickProfile) -> None:
     else:
         print("\n【岗位推荐】 (无 — JobMatcher 未运行或无匹配岗位)")
 
-    # 4. 备注
+    # 5. 备注
     if profile.notes:
         print("\n【备注】")
         for note in profile.notes:
