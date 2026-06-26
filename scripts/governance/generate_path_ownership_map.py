@@ -12,10 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-"""从蓝图§0.1聚合生成 path-ownership-map.yaml 路径归属声明。
+"""从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。
 
 对标: CODEOWNERS + Bazel visibility。
-生成物: docs/03_modules/path-ownership-map.yaml
+生成物: docs/03_modules/path_ownership_map.yaml
 
 用法:
     python scripts/governance/generate_path_ownership_map.py            # stdout
@@ -37,7 +37,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
-OUTPUT_FILE = MODULES_DIR / "path-ownership-map.yaml"
+OUTPUT_FILE = MODULES_DIR / "path_ownership_map.yaml"
 BLUEPRINT_PATTERN = "**/blueprint.md"
 
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+)$", re.MULTILINE)
@@ -266,18 +266,18 @@ def cmd_write() -> None:
 
 def cmd_check() -> None:
     if not OUTPUT_FILE.exists():
-        print("[FAIL] path-ownership-map.yaml does not exist. Run with --write first.")
+        print("[FAIL] path_ownership_map.yaml does not exist. Run with --write first.")
         sys.exit(1)
     generated = generate_yaml()
     current = OUTPUT_FILE.read_text(encoding="utf-8")
     gen_stripped = re.sub(r"generated_at: '[^']*'", "generated_at: ''", generated)
     cur_stripped = re.sub(r"generated_at: '[^']*'", "generated_at: ''", current)
     if cur_stripped.strip() != gen_stripped.strip():
-        print("[FAIL] path-ownership-map.yaml is OUT OF SYNC with blueprints.")
+        print("[FAIL] path_ownership_map.yaml is OUT OF SYNC with blueprints.")
         print("       Run: python scripts/governance/generate_path_ownership_map.py --write")
         sys.exit(1)
     else:
-        print("[OK] path-ownership-map.yaml is in sync with blueprints.")
+        print("[OK] path_ownership_map.yaml is in sync with blueprints.")
 
 
 def cmd_conflicts() -> None:

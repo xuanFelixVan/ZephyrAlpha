@@ -431,16 +431,23 @@ _run_cycle 修改:
 
 ## 10. 文件规划
 
+> **SSoT**：考试系统 + 模型画像器已合并至 `src/zephyr/intelligence/model_profiling/`（唯一真源 #3）。
+> `infrastructure/model_profiler/` 与 `infrastructure/model_capability_exam/` 仅保留 `__init__.py` 垫片转发。
+
 ```
-src/zephyr/runtime/
-    model-capability-exam/          ← 新目录
-        __init__.py
-        exam_orchestrator.py        ← 考试主控
-        breadth_exam.py             ← 横轴测试
-        depth_exam.py               ← 纵轴测试 + 测试用例库
-        stress_test.py              ← 速轴 + 幻轴 + 稳轴
-        capability_passport.py      ← 护照数据模型 + IO
-        task_gate.py                ← 任务门控
+src/zephyr/intelligence/model_profiling/   ← SSoT #3（考试系统 + 模型画像器）
+    __init__.py                ← 公共导出
+    exam_orchestrator.py       ← 五轴考试主控（横/纵/速/幻/稳轴合并实现）
+    exam_test_cases.py         ← 27 道标准题库（9 能力 × 3 难度）
+    capability_passport.py     ← 护照数据模型 + IO（TaskGate 消费）
+    benchmark_suite.py         ← 7 维 × 26 项 benchmark 用例（profiler）
+    profiler.py                ← 评测引擎（profiler）
+    model_discovery.py         ← 模型发现（profiler）
+    results_writer.py          ← 结果持久化 + 漂移检测（profiler）
+    task_model_learner.py       ← 任务×模型学习矩阵（profiler）
+    cli.py                     ← CLI 入口（profiler）
+    deepseek_v4_chat.py        ← DeepSeek V4 Chat 适配器（profiler）
+    provider_data.py           ← provider 数据（profiler）
 
 data/
     brain/
