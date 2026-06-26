@@ -95,24 +95,28 @@ def _load_doc_type_values() -> list[str]:
 # 模块级加载一次（词表是项目内稳定文件，import 时读取）
 VALID_DOC_TYPES: list[str] = _load_doc_type_values()
 
-VALID_LAYERS = [
-    "data",
-    "infra_ops",
-    "factor",
-    "signal",
-    "risk",
-    "pf_core",
-    "ex_core",
-    "reporting",
-    "frontend",
-    "research",
-    "compliance",
-    "ml_train",
-    "system-telemetry",
-    "simulation",
-    "shared",
-    "cross_layer",
-]
+# 真源单一化：layer 合法值由 layer_vocabulary.yaml 唯一维护（trae_060 §2）。
+_LAYER_VOCAB_PATH = (
+    _PROJECT_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "vocabularies"
+    / "layer_vocabulary.yaml"
+)
+
+
+def _load_layer_values() -> list[str]:
+    """从 layer_vocabulary.yaml 加载活跃的 layer 值列表。
+
+    读 ``values`` 列表（不含 ``deprecated_values``），天然排除废弃值。
+    """
+    data = yaml.safe_load(_LAYER_VOCAB_PATH.read_text(encoding="utf-8"))
+    return [v["value"] for v in data.get("values", [])]
+
+
+# 模块级加载一次（词表是项目内稳定文件，import 时读取）
+VALID_LAYERS: list[str] = _load_layer_values()
 
 HIGH_VALUE_THRESHOLD = 0.7
 REJECT_THRESHOLD = 0.3

@@ -91,7 +91,6 @@ __all__ = [
     "stability_guard",
     "startup_sequencer",
     "state_propagation",
-    "state_synchronizer",
     "system_transfer",
     "task_queue",
     "teardown_manager",

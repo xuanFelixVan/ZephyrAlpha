@@ -17,18 +17,15 @@ validate_document_ttl.py — 文档 TTL 过期检测
 
 
 
-对标：GOV-DOC-006 §一（6 种合法 TTL 值）/ §三（LATEST 命名规范）
+对标：GOV-DOC-006 §一（TTL 合法值从 ttl_vocabulary.yaml 动态加载）/ §三（LATEST 命名规范）
 
 检测内容：
-- TTL 合法值检查（permanent / periodic_review_90d / 30d / 7d / session / task_bound）
-- ttl=30d 且 date 距今 >30 天的文件仍在活跃目录
-- ttl=7d 且 date 距今 >7 天的文件仍存在
-- ttl=session 的文件不应提交到 git
+- TTL 合法值检查（v2.0.0 二元：permanent / task_bound，从词表动态加载）
 - 状态快照文件应使用 LATEST 命名
 
 扫描模式（v1.1.0 新增，只输出清单不删除）：
 - --list-by-ttl <value>          按 ttl 值列出文件清单
-- --list-time-expired            列出 ttl=7d/30d/periodic_review_90d 中已到期文件
+- --list-time-expired            列出已到期文件（v2.0.0 废弃时间阈值，结果恒为空）
 - --list-all-non-permanent       列出所有 ttl != permanent 的文件（一键扫描）
 
 exit codes: 0=pass, 1=findings, 2=error
@@ -64,7 +61,23 @@ ensure_utf8_stdout()
 import argparse
 from datetime import datetime
 
-VALID_TTL_VALUES = {"permanent", "periodic_review_90d", "30d", "7d", "session", "task_bound"}
+_TTL_VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "vocabularies" / "ttl_vocabulary.yaml"
+)
+
+
+def _load_ttl_values() -> set[str]:
+    """从 ttl_vocabulary.yaml 加载合法 ttl 值集合（v2.0.0 仅 permanent/task_bound）。
+
+    词表是规则数据唯一真源，直接消费不复制（trae_060 §2）。
+    """
+    import yaml
+    data = yaml.safe_load(_TTL_VOCAB_PATH.read_text(encoding="utf-8"))
+    return {v["value"] for v in data.get("values", [])}
+
+
+VALID_TTL_VALUES: set[str] = _load_ttl_values()
 DATED_SNAPSHOT_PATTERN = re.compile("-\\d{4}-\\d{2}-\\d{2}\\.(json|yaml|yml|md)$", re.IGNORECASE)
 
 
@@ -212,7 +225,10 @@ def list_time_expired_files() -> list[dict]:
     Returns:
         [{path, ttl, mtime, age_days, threshold_days, dir}] 列表。
     """
-    ttl_thresholds = {"7d": 7, "30d": 30, "periodic_review_90d": 90}
+    # v2.0.0 已废弃时间阈值 ttl（7d/30d/periodic_review_90d），
+    # 二元判定只有 permanent（永不过期）和 task_bound（完成即删）。
+    # 保留函数骨架供 --list-time-expired 参数兼容，但结果恒为空。
+    ttl_thresholds: dict[str, int] = {}
     now = datetime.now()
     results = []
     for filepath, fm in _iter_md_files_with_frontmatter():
@@ -250,7 +266,7 @@ def list_all_non_permanent() -> list[dict]:
     results = []
     for filepath, fm in _iter_md_files_with_frontmatter():
         ttl = fm.get("ttl", "")
-        if ttl == "permanent":
+        if ttl == "permanent":  # RENAME_REVIEW: 业务分支，词表改名时需人工复核
             continue
         stat = filepath.stat()
         mtime = datetime.fromtimestamp(stat.st_mtime)
@@ -297,7 +313,7 @@ def main() -> None:
     模式：
       默认                    TTL/快照违规检测（阻断式，原行为）
       --list-by-ttl <value>   按 ttl 值列出文件清单（stdout 表格，exit 1 if 有结果）
-      --list-time-expired     列出 ttl=7d/30d/periodic_review_90d 已到期文件
+      --list-time-expired     列出已到期文件（v2.0.0 废弃时间阈值，结果恒为空）
       --list-all-non-permanent  列出所有 ttl != permanent 的文件（一键扫描）
       --warn-only             警告模式（不阻断 exit 0）
 
@@ -308,7 +324,7 @@ def main() -> None:
     parser.add_argument("--list-by-ttl", choices=sorted(VALID_TTL_VALUES),
                         help="按 ttl 值列出文件清单（不删除，仅输出 stdout）")
     parser.add_argument("--list-time-expired", action="store_true",
-                        help="列出 ttl=7d/30d/periodic_review_90d 中已到期文件（mtime 算术判定）")
+                        help="列出已到期文件（v2.0.0 废弃时间阈值，结果恒为空）")
     parser.add_argument("--list-all-non-permanent", action="store_true",
                         help="列出所有 ttl != permanent 的文件（一键扫描，含缺失 ttl 的文件）")
     args = parser.parse_args()
@@ -321,7 +337,7 @@ def main() -> None:
             sys.exit(EXIT_FINDINGS if results else EXIT_PASS)
         if args.list_time_expired:
             results = list_time_expired_files()
-            _print_table(results, "时间到期文件清单（ttl=7d/30d/periodic_review_90d）")
+            _print_table(results, "时间到期文件清单（v2.0.0 废弃时间阈值，结果恒为空）")
             sys.exit(EXIT_FINDINGS if results else EXIT_PASS)
         if args.list_all_non_permanent:
             results = list_all_non_permanent()

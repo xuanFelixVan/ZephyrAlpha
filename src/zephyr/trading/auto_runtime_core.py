@@ -305,10 +305,11 @@ class AutoRuntimeCore:
             from zephyr.ops.scheduler import FeedbackLoopScheduler
 
             self._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
-            self._fle_scheduler.start()
-            logger.info("FLE Scheduler started (interval=30s, pipelines: FLE->Orc, FLE->DB)")
+            # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。
+            # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
+            logger.info("FLE Scheduler instantiated (daemon mode abolished per trae_053 v2.0.0)")
         except Exception as e:
-            logger.warning("Failed to start FLE Scheduler: %s", e)
+            logger.warning("Failed to instantiate FLE Scheduler: %s", e)
 
     def _run_boot_triple_alignment(self) -> None:
         try:

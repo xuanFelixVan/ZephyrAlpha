@@ -111,15 +111,15 @@ class TestStartFleSchedulerCreatesAndStarts:
             mock_fle_cls.assert_called_once_with(poll_interval=30.0)
             assert core._fle_scheduler is mock_instance
 
-    def test_start_fle_scheduler_calls_start(self, core):
-        """_start_fle_scheduler 调用 scheduler.start()。"""
+    def test_start_fle_scheduler_does_not_call_start(self, core):
+        """trae_053 v2.0.0: _start_fle_scheduler 不再调用 scheduler.start()（daemon 线程已废除）。"""
         with patch("zephyr.ops.scheduler.FeedbackLoopScheduler") as mock_fle_cls:
             mock_instance = MagicMock()
             mock_fle_cls.return_value = mock_instance
 
             core._start_fle_scheduler()
 
-            mock_instance.start.assert_called_once()
+            mock_instance.start.assert_not_called()
 
     def test_start_fle_scheduler_exception_does_not_crash(self, core):
         """_start_fle_scheduler 异常不崩溃 boot（try/except 保护）。"""
@@ -211,13 +211,13 @@ class TestShutdownStopsFle:
 
 
 class TestBootFleFullChain:
-    """boot → _start_fle_scheduler → FeedbackLoopScheduler.start() 全链路"""
+    """boot → _start_fle_scheduler → FeedbackLoopScheduler 实例化（trae_053 v2.0.0 无 start）全链路"""
 
     def test_boot_to_fle_start_full_chain(self, core):
-        """boot() 成功 → _start_fle_scheduler → FeedbackLoopScheduler.start()。
+        """boot() 成功 → _start_fle_scheduler → FeedbackLoopScheduler 实例化（不调用 start）。
 
         mock lifecycle + 其他 boot 步骤，但保留 _start_fle_scheduler 真实调用，
-        mock FeedbackLoopScheduler 类验证 start() 被调用。
+        mock FeedbackLoopScheduler 类验证 start() 不被调用（daemon 线程已废除）。
         """
         mock_report = _make_mock_report(success=True)
         with patch.object(core._lifecycle, "boot_sequence", return_value=mock_report):
@@ -238,7 +238,7 @@ class TestBootFleFullChain:
         assert report.success is True
         assert core._booted is True
         mock_fle_cls.assert_called_once_with(poll_interval=30.0)
-        mock_instance.start.assert_called_once()
+        mock_instance.start.assert_not_called()
         assert core._fle_scheduler is mock_instance
 
     def test_boot_then_shutdown_fle_lifecycle(self, core):

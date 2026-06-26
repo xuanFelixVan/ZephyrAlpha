@@ -485,11 +485,19 @@ class DeepSeekV4Chat:
                 "token_count": self.cumulative_output_tokens,
                 "eval_count": self.cumulative_output_tokens,
             }
-        return {
+        # v3.0.7: 通用 fallback——对所有有 SYSTEM_PROMPT 但无显式分支的 work_type，
+        # 调用模型并解析 JSON，展开到顶层以通过 _check_structure 的结构检查。
+        # 修复 breadth 暴跌：原 return error 导致 21 个能力 breadth 全失败。
+        raw = self._ask_with_retry(text, system, work_type, temperature=0.1)
+        parsed = self._parse_json(raw)
+        result: dict[str, Any] = {
             "work_type": work_type,
             "model": self.model,
-            "error": f"unknown work_type: {work_type}",
+            "token_count": self.cumulative_output_tokens,
+            "eval_count": self.cumulative_output_tokens,
         }
+        result.update(parsed)
+        return result
 
     def _ask_with_retry(
         self,
