@@ -312,6 +312,27 @@ related_rationale:
 
 **修复**：import 块添加 `make_rules_integrity_reconciler`（第89行后插入），gateway 初始化验证通过
 
+### P3-FIX-9: rule_catalog_registry stale 条目清理
+
+**问题**：`_registry/catalogs/rule_catalog_registry.yaml` 自 2026-05-07 后未重新生成，153 条目中 113 条（74%）指向已删除的 `domains/`、`governance/`、`operational/` 目录文件。生成器脚本 `generate_rule_catalog.py` 已归档至 `scripts/_archive/`。
+
+**修复**：手动清理 113 条 stale 条目（文件不存在的条目全部删除），`total_files` 154→40，`generated_at` 更新，添加 CHANGE-NOTE。清理后 0 stale，YAML 验证通过。
+
+**遗留**：生成器已归档，catalog 现为手动维护。如需恢复自动生成，需从 `scripts/_archive/` 恢复 `generate_rule_catalog.py` 并适配当前目录结构。
+
+### P3-验证扫描（V1-V4）
+
+提交后执行 4 项验证扫描确认修复落盘：
+- **V1 ttl 落盘**：60/60 规则文件 `ttl: permanent` 全部存在 ✓
+- **V2 protocol 残留**：`protocol_template.md` 已删除，无硬编码枚举副本残留 ✓
+- **V3 索引计数自洽**：9 模板+1 index=10（index.md ✓）、9 模板（templates/index.md ✓）、60 规则 ✓、_registry 计数全对 ✓
+- **V4 layer 硬编码**：4 文件含 10+ layer 值，经检查均为合法数据值（目录登记/映射表/命名规则引用），非硬编码枚举副本 ✓
+
+### P3 次要发现（未修复，记录备查）
+
+- **F1 可选字段缺失**：trae_056 缺顶层 `enforcement`/`references`/`metadata`（有嵌套 sections.references）；trae_059 缺 `provenance`/`enforcement`/`references`/`metadata`。均为可选字段，非违规，添加需理解规则执行模型，留待后续补全。
+- **F2 生成器归档**：`rule_catalog_registry.yaml` 的生成器 `generate_rule_catalog.py` 已归档，catalog 转为手动维护。新增规则文件时需手动添加 catalog 条目或恢复生成器。
+
 ---
 
 ## 审查统计
@@ -319,11 +340,11 @@ related_rationale:
 | 指标 | 数值 |
 |------|------|
 | 审查范围 | `docs/01_policies_and_standards/` 全树 |
-| 修复优先级 | P0-P2-4 + 遗留1-2 + P3 深入文档级治理 |
-| 总提交数 | 17+ 个相关 commit（含 P3 两个批次提交） |
-| 总文件变更 | 130+ 文件（P3 新增 66 文件：60规则ttl+4结构修复+registry修正+gateway修复） |
-| 总代码删除 | 3000+ 行（CircadianScheduler 废除）+ protocol_template.md 废弃删除 |
-| 验证方式 | git commit 历史 + import 验证 + post-commit auto-sync + frontmatter 字段扫描 |
+| 修复优先级 | P0-P2-4 + 遗留1-2 + P3 深入文档级治理 + 验证扫描 |
+| 总提交数 | 18+ 个相关 commit（含 P3 三个批次提交+catalog清理） |
+| 总文件变更 | 135+ 文件（P3: 66文件批次4-7 + catalog清理 + 审查报告） |
+| 总代码删除 | 3000+ 行（CircadianScheduler 废除）+ protocol_template.md 废弃 + 113条stale catalog条目 |
+| 验证方式 | git commit 历史 + import 验证 + post-commit auto-sync + frontmatter 字段扫描 + V1-V4 落盘验证 |
 
 ## 审查原则落地情况
 
