@@ -83,6 +83,7 @@ from zephyr.governance.reconciliation_registry import (
     make_ghost_reconciler,
     make_path_tree_reconciler,
     make_working_docs_reconciler,
+    make_domain_doc_reconciler,
 )
 
 logger = logging.getLogger(__name__)
@@ -392,6 +393,7 @@ class GitCommitGateway:
         P2-T4: ttl 兜底（GATE-15 post-compensation，增量校验 committed .md）。
         P2-T5: ghost 对账（depgraph 对称漂移检测，删除 commit 触发 diagnose_depgraph）。
         P2-T6: working_docs 对账（_working/ 幽灵引用检测，删除 commit 触发归档，治 AI 工作文档堆积）。
+        P2-T7: domain_doc 重生（commit depgraph.db 后自动重生域 .md/.mmd 制品，治手工生成漂移）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
@@ -399,6 +401,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_ttl_reconciler(self))
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
+        self._reconciliation_registry.register(make_domain_doc_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
