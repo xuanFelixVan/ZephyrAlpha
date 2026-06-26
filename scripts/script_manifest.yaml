@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 574
+total_scripts: 578
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -46,10 +46,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_analyze_v3.py
+  path: _tmp_analyze_v3.py
+  description: import json, sys
+  domain: _tmp_analyze_v3.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_check_db_pollution.py
   path: _tmp_check_db_pollution.py
   description: import sqlite3
   domain: _tmp_check_db_pollution.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d3_backup.py
+  path: _tmp_d3_backup.py
+  description: 前置条件：_db_write_lock 的 GIT 备份门禁要求 DB 无未提交修改。
+  domain: _tmp_d3_backup.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -78,10 +94,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_probe_tsd_bp.py
+  path: _tmp_probe_tsd_bp.py
+  description: import sqlite3
+  domain: _tmp_probe_tsd_bp.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_rename_check.py
   path: _tmp_rename_check.py
   description: import sqlite3
   domain: _tmp_rename_check.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_stage_d_merge.py
+  path: _tmp_stage_d_merge.py
+  description: 经 apply_depgraph._db_write_lock 执行（含 GIT 备份门禁 + 物理备份 + 跨进程锁）：
+  domain: _tmp_stage_d_merge.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
