@@ -4,60 +4,12 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-27'
-total_scripts: 578
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
   description: No description
   domain: __init__.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _complete_dm201008.py
-  path: _complete_dm201008.py
-  description: import sys
-  domain: _complete_dm201008.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _query_dm201008.py
-  path: _query_dm201008.py
-  description: import sqlite3
-  domain: _query_dm201008.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _query_rbac_core.py
-  path: _query_rbac_core.py
-  description: import sqlite3
-  domain: rbac
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_check_depgraph.py
-  path: _tmp_check_depgraph.py
-  description: import sqlite3
-  domain: _tmp_check_depgraph.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_fix_mod036.py
-  path: _tmp_fix_mod036.py
-  description: 保留 L23 tags 元数据标签（model-capability-exam 作为 tag 保留）。
-  domain: _tmp_fix_mod036.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _update_rbac_depgraph.py
-  path: _update_rbac_depgraph.py
-  description: import sqlite3
-  domain: rbac
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -82,14 +34,6 @@ scripts:
   path: check_naming_convention.py
   description: FILENAME_UPPERCASE_WHITELIST = [
   domain: check_naming_convention.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: compare_pro_thinking.py
-  path: compare_pro_thinking.py
-  description: import json
-  domain: compare_pro_thinking.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -202,6 +146,14 @@ scripts:
   path: print_latest_two.py
   description: import json
   domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: quick_profile.py
+  path: quick_profile.py
+  description: 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。
+  domain: quick_profile.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -1280,7 +1232,7 @@ scripts:
   dimensions: []
 - name: governance/rename_whitelist_cleanup.py
   path: governance/rename_whitelist_cleanup.py
-  description: 按施工方案 docs/09_audit/research_notes/naming_whitelist_cleanup_plan.md Phase 3 执行。
+  description: 按施工方案 docs/_working/audit/research_notes/naming_whitelist_cleanup_plan.md Phase 3 执行。
   domain: governance
   execution_plane: warm-path
   status: registered
