@@ -134,3 +134,19 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arb
 **示例**：用户要求 `git add src/x.py; git commit -F _tmp.txt --no-verify` 时，AI 应分两次执行：
 1. `python scripts/git_guard.py add src/x.py`
 2. `python scripts/git_guard.py commit -F _tmp.txt --no-verify`
+
+## 11. 派生产物同步铁律
+
+> **根因**：depgraph.db 是全景真源，`data/asset_index/` 下文件是 depgraph.db 的派生产物（CQRS 只读投影）。AI 改了 depgraph.db 后若不运行生成器，派生产物会与真源漂移，导致后续 AI 基于过期数据做决策。
+
+**派生产物清单**：见 [`derived_artifact_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/derived_artifact_registry.yaml)
+
+**AI 任务完成检查清单**（MUST 在 `transition(COMPLETED)` 前执行）：
+
+1. [ ] 本任务是否改了 `data/databases/depgraph.db`？
+2. [ ] 若是，是否运行了清单中所有 `has_check_mode: true` 的生成器 `--write` 命令？
+3. [ ] grep 验证旧路径/旧值在 `data/asset_index/` 中已清除？
+
+**GATE-DERIVED 门禁**：pre-commit hook 在 depgraph.db 变更时自动校验派生产物一致性（骨架阶段 warn-only，验证稳定后转硬阻断）。
+
+**派生产物标记**：所有派生产物文件头部含 `# @generated DO NOT EDIT` 标记，禁止手动编辑。

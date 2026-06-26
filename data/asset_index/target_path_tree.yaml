@@ -1,3 +1,9 @@
+# @generated DO NOT EDIT — 本文件由生成器自动生成
+# 真源：data/databases/depgraph.db
+# 生成器：scripts/governance/generate_target_path_tree.py
+# 重生成命令：python scripts/governance/generate_target_path_tree.py --write
+# 校验命令：python scripts/governance/generate_target_path_tree.py --check
+# 清单注册表：docs/01_policies_and_standards/_registry/catalogs/derived_artifact_registry.yaml
 meta:
   generated_at: '2026-06-26T09:42:18Z'
   auto_generated_by: scripts/governance/generate_target_path_tree.py

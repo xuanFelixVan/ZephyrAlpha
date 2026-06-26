@@ -1,3 +1,9 @@
+# @generated DO NOT EDIT — 本文件由生成器自动生成
+# 真源：data/databases/depgraph.db
+# 生成器：scripts/governance/generate_project_depgraph_artifact.py
+# 重生成命令：python scripts/governance/generate_project_depgraph_artifact.py --write
+# 校验命令：python scripts/governance/generate_project_depgraph_artifact.py --check
+# 清单注册表：docs/01_policies_and_standards/_registry/catalogs/derived_artifact_registry.yaml
 metadata:
   graph_id: PROJECT-ENTITY-DEPGRAPH-001
   version: 4.0.0
