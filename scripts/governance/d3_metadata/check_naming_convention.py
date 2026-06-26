@@ -836,13 +836,14 @@ def _check_n15_blueprint_path_exists(
 # N-16: 文件名项目内唯一性（tests/ + docs/）
 # ---------------------------------------------------------------------------
 
-# tests/ 豁免：约定俗成的跨目录同名文件
-_N16_TESTS_EXEMPT_NAMES: set[str] = {"conftest.py", "__init__.py"}
+# tests/ 豁免：约定俗成的跨目录同名文件（基线清单，docs/ 继承此清单）
+_N16_TESTS_EXEMPT_NAMES: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
 
-# docs/ 豁免：约定俗成的跨目录同名文件（基于实际扫描校准）
+# docs/ 豁免：继承 tests/ 基线 + docs 专属豁免（基于实际扫描校准）
 #   index.md (169x) / blueprint.md (59x) / readme.md (4x) / changelog.md (2x) /
 #   spec.md (2x) / .gitkeep (3x) / _index.yaml (2x)
-_N16_DOCS_EXEMPT_NAMES: set[str] = {
+# 注：用继承关系消除 __init__.py/conftest.py 的同步复制（RULE-ONE 真源唯一）
+_N16_DOCS_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_NAMES | frozenset({
     "index.md",
     "blueprint.md",
     "readme.md",
@@ -850,9 +851,7 @@ _N16_DOCS_EXEMPT_NAMES: set[str] = {
     "spec.md",
     ".gitkeep",
     "_index.yaml",
-    "__init__.py",
-    "conftest.py",
-}
+})
 
 # docs/ 跳过的目录（运行时产物、归档、备份——不纳入同名检查）
 _N16_DOCS_SKIP_DIRS: set[str] = {
@@ -1234,12 +1233,20 @@ def main() -> int:
                 filepath = target_path
                 all_violations.extend(check_file(filepath, target))
 
-    # 裁定#208 R4: N-17 升为阻断（过渡期 --warn-only 时仍 warning 不阻断，阶段 E 激活后默认阻断）
+    # N-16 是新激活规则（文件名唯一性），不受 --warn-only 影响——直接硬阻断
+    # N-17 过渡期 warn-only（裁定#208 阶段 E 激活后硬阻断）
+    n16_violations = [v for v in all_violations if v.rule == "N-16"]
     n17_violations = [v for v in all_violations if v.rule == "N-17"]
-    other_violations = [v for v in all_violations if v.rule != "N-17"]
+    other_violations = [v for v in all_violations if v.rule not in ("N-16", "N-17")]
 
     for v in other_violations:
         print(f"[{v.rule}] {v.message}")
+
+    if n16_violations:
+        print(f"\n[N-16 BLOCK] 文件名不唯一（硬阻断，不受 --warn-only 影响）:")
+        for v in n16_violations:
+            print(f"  [N-16] {v.message}")
+        print(f"  共 {len(n16_violations)} 个 N-16 阻断违规")
 
     if n17_violations:
         if args.warn_only:
@@ -1251,10 +1258,11 @@ def main() -> int:
             for v in n17_violations:
                 print(f"[N-17] {v.message}")
 
-    blocking_count = len(other_violations) + (len(n17_violations) if not args.warn_only else 0)
+    # N-16 直接硬阻断（不受 warn_only 影响）；N-17 过渡期 warn-only；其他规则受 warn_only 控制
+    blocking_count = len(n16_violations) + len(other_violations) + (len(n17_violations) if not args.warn_only else 0)
     if blocking_count:
         print(f"\n总计 {blocking_count} 个阻断性命名违规")
-        return EXIT_FINDINGS if not args.warn_only else EXIT_PASS
+        return EXIT_FINDINGS if (not args.warn_only or n16_violations) else EXIT_PASS
     return EXIT_PASS
 
 

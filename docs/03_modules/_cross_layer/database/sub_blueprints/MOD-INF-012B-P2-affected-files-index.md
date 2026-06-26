@@ -792,7 +792,7 @@ references:
 | 317 | `docs/02_enterprise_architecture/03_governance_reports/design_vs_production.md` | 自动生成 | 迁移后重新生成 |
 | 318 | `docs/02_enterprise_architecture/03_governance_reports/capacity_report.md` | 自动生成 | 同上 |
 | 319 | `docs/02_enterprise_architecture/target_architecture/capability_heatmap.md` | 手动+自动混合 | 更新描述+重新生成 |
-| 320 | `docs/02_enterprise_architecture/01_global_architecture_diagram/capability_heatmap.md` | 同上 | 同上 |
+| 320 | `docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md` | 同上 | 同上 |
 
 #### 第4轮新增：手动维护架构文档（2个，需更新）
 
