@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.data.persistence.sqlite_schema
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES]
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-DAT_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
-SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + MOD-DATABASE v2.0）
+SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + SH-DB-001 v2.0）
 ======================================================================
 依据：KBG-0030（SQLite 作为 experimental 元数据层）
 
@@ -30,9 +30,9 @@ Safety  : M（DDL 定义，init_db 幂等执行）
  4. knowledge             — KE 索引
  5. gates                 — 门禁运行记录
  6. circuit_breaker_state — CBG 模块间熔断状态（T-V2-005 experimental）
- 7. _schema_version       — Schema 版本追踪（MOD-DATABASE v2.0 新增）
- 8. slow_queries          — 慢查询记录（MOD-DATABASE v2.0 新增）
- 9. tx_idempotency        — ATM 事务幂等去重表（MOD-DATABASE v2.0 新增）
+ 7. _schema_version       — Schema 版本追踪（SH-DB-001 v2.0 新增）
+ 8. slow_queries          — 慢查询记录（SH-DB-001 v2.0 新增）
+ 9. tx_idempotency        — ATM 事务幂等去重表（SH-DB-001 v2.0 新增）
 10. task_events           — Event Sourcing 事件流（DW-0001，UUID PK + 灵活 event_type）
 11. task_snapshots        — Event Sourcing 快照（DW-0005，加速 replay）
 
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS task_files (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — _schema_version 表（MOD-DATABASE v2.0：Schema 版本追踪）
+# DDL — _schema_version 表（SH-DB-001 v2.0：Schema 版本追踪）
 # ---------------------------------------------------------------------------
 
 _DDL_SCHEMA_VERSION = """
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS _schema_version (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — slow_queries 表（MOD-DATABASE v2.0：慢查询记录）
+# DDL — slow_queries 表（SH-DB-001 v2.0：慢查询记录）
 # ---------------------------------------------------------------------------
 
 _DDL_SLOW_QUERIES = """
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS slow_queries (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — tx_idempotency 表（MOD-DATABASE v2.0：ATM 事务幂等去重）
+# DDL — tx_idempotency 表（SH-DB-001 v2.0：ATM 事务幂等去重）
 # ---------------------------------------------------------------------------
 
 _DDL_TX_IDEMPOTENCY = """
@@ -497,7 +497,7 @@ def get_db_connection(
 
 
 # ---------------------------------------------------------------------------
-# 版本化迁移框架（MOD-DATABASE v2.0）
+# 版本化迁移框架（SH-DB-001 v2.0）
 # ---------------------------------------------------------------------------
 
 # 迁移注册表：(version, description, [DDL_statements])
@@ -594,7 +594,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         7,
-        "MOD-DATABASE v2.0: _schema_version + slow_queries + tx_idempotency + wal_autocheckpoint",
+        "SH-DB-001 v2.0: _schema_version + slow_queries + tx_idempotency + wal_autocheckpoint",
         [
             _DDL_SCHEMA_VERSION,
             _DDL_SLOW_QUERIES,
@@ -604,7 +604,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         8,
-        "MOD-DATABASE v2.0: soft delete columns on tasks",
+        "SH-DB-001 v2.0: soft delete columns on tasks",
         [
             "ALTER TABLE tasks ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0 CHECK(is_deleted IN (0,1))",
             "ALTER TABLE tasks ADD COLUMN deleted_at TEXT",

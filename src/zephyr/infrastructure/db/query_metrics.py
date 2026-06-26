@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.query_metrics
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
@@ -15,9 +15,9 @@
 # [A_module] module_id=MOD-INF_query_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
-QueryMetrics — SQL 查询性能监控装饰器（MOD-DATABASE v2.0）
+QueryMetrics — SQL 查询性能监控装饰器（SH-DB-001 v2.0）
 ==========================================================
-Task       : MOD-DATABASE v2.0 | query_metrics
+Task       : SH-DB-001 v2.0 | query_metrics
 Safety     : M（监控组件，不影响主流程）
 
 设计要点

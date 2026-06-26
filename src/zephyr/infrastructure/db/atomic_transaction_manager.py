@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.atomic_transaction_manager
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.db.__init__
@@ -16,14 +16,14 @@
 
 """AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
 
-Task       : T-2-30 | MOD-DATABASE v2.0
+Task       : T-2-30 | SH-DB-001 v2.0
 Safety     : HIGH（涉及数据库事务 + 文件系统落盘 + 路径安全校验）
 Depends    : T-1-23 (InputSanitizer) ✅
 References :
     - ADR-0030 SQLite 元数据层决策（本文件是对 SQLite 元数据库的"写路径"唯一入口）
     - ADR-0041 Session Handoff Protocol（ATM 保证产物与元数据原子落盘）
 
-设计要点 v2.0（见 MOD-DATABASE blueprint v2.0）：
+设计要点 v2.0（见 SH-DB-001 blueprint v2.0）：
 
 1. **两阶段提交（2PC 简化版）**：
    - 阶段 1（in-transaction）：

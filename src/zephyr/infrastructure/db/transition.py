@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.infrastructure.db.transition
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.rule_enforcement.gate_types.__init__
@@ -14,7 +14,7 @@
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-INF_transition | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""[BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
+"""[BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 
 transition — 状态机转换 Mixin（从 task_repo.py 拆分，SRC-0066）
 

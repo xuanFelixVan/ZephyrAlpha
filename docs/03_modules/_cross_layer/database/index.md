@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "database — 目录索引"
-module_id: "MOD-DATABASE"
-blueprint_id: "MOD-DATABASE"
+module_id: "SH-DB-001"
+blueprint_id: "SH-DB-001"
 version: "4.0.1"
 created: "2026-06-22"
 updated: "2026-06-22"

@@ -1,5 +1,5 @@
 ---
-module_id: MOD-DATABASE
+module_id: SH-DB-001
 submodule_path: src/zephyr/data/persistence
 title: "Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级"
 doc_type: blueprint
@@ -47,14 +47,14 @@ references:
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: MOD-DATABASE | version: 4.0.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.0.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\data\persistence\` | generation: 3 | construction_progress: partially_implemented
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
 ## 概述
 
 > **架构归属SSoT**：`data/databases/depgraph.db`
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-DATABASE`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules SH-DB-001`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 ### §0.1 代码文件清单
@@ -180,7 +180,7 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新 MOD-DATABASE 版本至 4.0.0 + 新增 012A/012B 条目 | DW-045 拆分 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新 SH-DB-001 版本至 4.0.0 + 新增 012A/012B 条目 | DW-045 拆分 |
 | 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | 同步 code 文件 + schema_version | SSoT 漂移修复 |
 | 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B | 新模块 ID 注册 |
 

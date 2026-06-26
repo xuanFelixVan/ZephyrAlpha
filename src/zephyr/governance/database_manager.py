@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.database_manager
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.integration.shared_08.io.paths; zephyr.governance.persistence.audit_schema; zephyr.governance.persistence.query_metrics
@@ -15,9 +15,9 @@
 # [A_module] module_id=MOD-DAT_database_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
-DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL checkpoint（MOD-DATABASE v2.0）
+DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL checkpoint（SH-DB-001 v2.0）
 ==================================================================================
-Task       : MOD-DATABASE v2.0 | database_manager
+Task       : SH-DB-001 v2.0 | database_manager
 Safety     : HIGH（基础设施核心，管理所有 SQLite 连接的生命周期）
 Depends    : sqlite_schema.py
 

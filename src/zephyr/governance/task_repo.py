@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.governance.task_repo
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.sqlite_schema; zephyr.governance.event_store; zephyr.governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared_08.utils.time_utils; zephyr.governance.ops_governance.event_hook
@@ -2584,7 +2584,7 @@ class TaskRepository:
         return {row["status"]: row["cnt"] for row in cursor.fetchall()}
 
     # ------------------------------------------------------------------
-    # JSON1 查询（MOD-DATABASE v2.0）
+    # JSON1 查询（SH-DB-001 v2.0）
     # ------------------------------------------------------------------
 
     def list_by_dependency(self, dependency_task_id: str) -> list[TaskCard]:

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.olap_engine
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths
@@ -527,7 +527,7 @@ class OLAPEngine:
         }
 
     # ------------------------------------------------------------------
-    # 事件归档（MOD-DATABASE v2.0）
+    # 事件归档（SH-DB-001 v2.0）
     # ------------------------------------------------------------------
 
     def archive_events(

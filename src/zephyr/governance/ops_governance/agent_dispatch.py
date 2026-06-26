@@ -95,7 +95,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "startup-ops": DomainDispatch(
         domain="启动/运维",
         pre_read="SYS-MASTER-001 §十四",
-        re_read="MOD-DATABASE + §14.1",
+        re_read="SH-DB-001 + §14.1",
         token_budget=500,
         blueprint_section="§十四",
     ),
@@ -193,7 +193,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "data-quality": DomainDispatch(
         domain="数据质量治理",
         pre_read="SYS-MASTER-001 §二十九",
-        re_read="MOD-DATABASE + §13",
+        re_read="SH-DB-001 + §13",
         token_budget=400,
         blueprint_section="§二十九",
     ),
@@ -263,7 +263,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "market-data-pipeline": DomainDispatch(
         domain="市场数据管线",
         pre_read="SYS-MASTER-001 §四十",
-        re_read="MOD-DATABASE + §29",
+        re_read="SH-DB-001 + §29",
         token_budget=600,
         blueprint_section="§四十",
     ),

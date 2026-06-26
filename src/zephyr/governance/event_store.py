@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.event_store
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema

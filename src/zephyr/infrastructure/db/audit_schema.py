@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.audit_schema
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
@@ -15,9 +15,9 @@
 # [A_module] module_id=MOD-INF_audit_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
-audit_schema — 审计视图与查询入口（MOD-DATABASE v2.0）
+audit_schema — 审计视图与查询入口（SH-DB-001 v2.0）
 ======================================================
-Task       : MOD-DATABASE v2.0 | audit_schema
+Task       : SH-DB-001 v2.0 | audit_schema
 Safety     : M（只读查询，不修改数据）
 
 提供审计专用的预定义视图和查询函数，供 CLI 审计面板和 compliance 报告使用。

@@ -529,7 +529,7 @@ PIPELINE_DEPENDENCIES: list[Dependency] = [
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-DATABASE",
+        module_id="SH-DB-001",
         module_name="DeferredQueue",
         relation="downstream",
         description="dispatch LOCKED→DeferredQueue.enqueue→auto-retry",

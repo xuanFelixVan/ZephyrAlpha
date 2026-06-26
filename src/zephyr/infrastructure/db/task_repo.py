@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.infrastructure.db.task_repo
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo

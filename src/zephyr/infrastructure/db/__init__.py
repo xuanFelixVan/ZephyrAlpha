@@ -1,11 +1,11 @@
 # [A_module] module_id=MOD-INF_db | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §
+# [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 """zephyr.infrastructure.db — 元数据持久化层（SQLite + DuckDB 双引擎）与原子事务管理 v2.0。
 
 本包封装 experimental 元数据层（见 ADR-0030：SQLite 作为任务 / 事件 / 知识 / 门禁的
 本地元数据存储）的底层读写，并提供跨 SQLite + 文件系统的原子事务管理器（ATM）。
 
-模块清单（MOD-DATABASE v2.0）：
+模块清单（SH-DB-001 v2.0）：
 
 - ``atomic_transaction_manager``  —  ATM v2.0：SQLite BEGIN/COMMIT/ROLLBACK
   + 文件系统 "temp → fsync → rename" 两阶段提交 + tx_idempotency 幂等去重
