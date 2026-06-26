@@ -48,7 +48,9 @@ import sys
 import time
 from pathlib import Path
 
-DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 def _connect_ro(db_path: Path) -> sqlite3.Connection:

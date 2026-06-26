@@ -18,7 +18,9 @@ import sys
 import time
 from pathlib import Path
 
-DBDIR = Path(r"D:\ZephyrAlpha\data\databases")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DBDIR = REPO_ROOT / "data" / "databases"
 DBS = ["depgraph.db", "governance.db", "task_cards.db"]
 
 

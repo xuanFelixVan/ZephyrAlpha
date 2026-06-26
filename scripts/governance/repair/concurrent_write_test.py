@@ -51,9 +51,10 @@ import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
-PROD_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-TEST_DB = Path("D:/ZephyrAlpha/data/databases/_test_rb_depgraph.db")
-REPO_ROOT = Path("D:/ZephyrAlpha")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+PROD_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+TEST_DB = REPO_ROOT / "data" / "databases" / "_test_rb_depgraph.db"
 
 # 测试结果收集
 results = []

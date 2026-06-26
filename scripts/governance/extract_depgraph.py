@@ -67,7 +67,9 @@ class _CustomEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # DB 新鲜度警告阈值（小时）——超过此时长未更新则警告
 STALE_HOURS_THRESHOLD = 24

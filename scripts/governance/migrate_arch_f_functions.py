@@ -26,7 +26,9 @@ import sqlite3
 import sys
 from pathlib import Path
 
-DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # 导入 apply_depgraph 的写入锁（含 git 备份门禁 + 物理备份 + 文件锁）
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent

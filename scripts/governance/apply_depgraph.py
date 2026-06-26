@@ -73,7 +73,9 @@ import threading
 import time
 from pathlib import Path
 
-DEPGRAPH_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # 跳过 git 备份检查的环境变量（自动化场景）
 SKIP_BACKUP_CHECK_ENV = "ZEPHYR_SKIP_BACKUP_CHECK"

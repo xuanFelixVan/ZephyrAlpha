@@ -15,7 +15,9 @@
 import sys
 from pathlib import Path
 
-ROOT = Path("D:/ZephyrAlpha")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+ROOT = REPO_ROOT  # alias 真源
 sys.path.insert(0, str(ROOT / "src"))
 
 tests = [

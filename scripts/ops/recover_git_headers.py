@@ -16,8 +16,9 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-SRC_ROOT = Path(r"d:\ZephyrAlpha\src\zephyr")
+SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 FIELD_NAMES = [
     "BLUEPRINT",
@@ -55,14 +56,14 @@ def is_default_value(field_name, value):
 
 
 def extract_git_fields(filepath: Path):
-    rel = str(filepath.relative_to(Path(r"d:\ZephyrAlpha")))
+    rel = str(filepath.relative_to(REPO_ROOT))
     try:
         result = subprocess.run(
             ["git", "show", f"HEAD:{rel}"],
             capture_output=True,
             text=True,
             encoding="utf-8",
-            cwd=r"d:\ZephyrAlpha",
+            cwd=str(REPO_ROOT),
             timeout=10,
         )
         if result.returncode != 0:

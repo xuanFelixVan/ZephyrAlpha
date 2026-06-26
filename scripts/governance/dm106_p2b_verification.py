@@ -43,7 +43,9 @@ from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 
-PROJECT_ROOT = Path("D:/ZephyrAlpha")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+PROJECT_ROOT = REPO_ROOT  # alias 真源
 DEPGRAPH_DB_PATH = PROJECT_ROOT / "data/databases/depgraph.db"
 BP_MAPPING_PATH = PROJECT_ROOT / "data/asset_index/blueprint-domain-mapping.yaml"
 CSV_PATH = PROJECT_ROOT / "data/asset_index/module_domain_matching.csv"
