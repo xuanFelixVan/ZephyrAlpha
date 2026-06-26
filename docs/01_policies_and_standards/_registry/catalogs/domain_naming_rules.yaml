@@ -31,7 +31,7 @@ entries:
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_naming_ssot 域ID语义完整性condition
 - rule_id: NR-002
   rule_name: 全大写下划线命名
-  rule_text: 域ID格式必须为 D- 前缀 + 全大写字母+数字+下划线（^D-[A-Z][A-Z0-9_]*$），禁止使用连字符（- 在 D- 前缀后）或小写字母。连字符仅允许出现在 D- 前缀分隔符位置。
+  rule_text: 域ID格式必须为 D- 前缀 + 全大写字母+数字+下划线（语义正则 D-[A-Z][A-Z0-9_]*），禁止使用连字符（- 在 D- 前缀后）或小写字母。连字符仅允许出现在 D- 前缀分隔符位置。执行正则真源：scripts/governance/validate_module_id_naming.py 的 DOMAIN_ID_RE（含安全加固：\Z 换行安全 + {0,59} 长度限制）——AI 必须直接 import 复用 DOMAIN_ID_RE，禁止在代码中复制本 YAML 正则（防真源分裂）。
   applies_to: create
   severity: error
   example_bad: D-Signal-Ashare（含小写和多余连字符）
