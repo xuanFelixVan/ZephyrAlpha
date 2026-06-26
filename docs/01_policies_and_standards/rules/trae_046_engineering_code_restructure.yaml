@@ -307,8 +307,7 @@ sections:
     - description: DriftEngine拆分(2134行→5组件)
       details: 'DriftEngine: drift_detector/drift_engine.py | DriftInfrastructure: drift_detector/drift_infrastructure.py | AIConstructionDetectors: drift_detector/ai_construction_detectors.py | DriftResultTypes: drift_detector/drift_result_types.py | DriftTraining: drift_detector/drift_training.py'
 references:
-  rule_ids:
-  - TRAE-046
+  rule_ids: []
   scripts:
   - scripts/governance/audit_registration.py
   modules:

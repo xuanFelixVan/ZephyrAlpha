@@ -867,8 +867,7 @@ sections:
       - 37条depends_on覆盖全部规则文件——v1.2.0四重交叉验证确认
       - 每条引用包含target/at/why三元组
 references:
-  rule_ids:
-  - TRAE-044
+  rule_ids: []
   scripts:
   - scripts/governance/run_all.py
   - scripts/governance/env_check.py

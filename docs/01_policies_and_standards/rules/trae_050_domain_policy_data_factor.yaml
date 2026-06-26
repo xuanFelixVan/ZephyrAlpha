@@ -973,7 +973,6 @@ sections:
     key_decisions: []
 references:
   rule_ids:
-  - TRAE-050
   - TRAE-031
   - TRAE-025
   scripts: []

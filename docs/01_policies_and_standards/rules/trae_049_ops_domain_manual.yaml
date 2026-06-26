@@ -424,7 +424,6 @@ sections:
         change: RQ审查修复——ops_001~004区分标题+补充conditions/prohibitions+cross-ref到trae_050/051；references补充TRAE-050/051/GOV-ARCH-001/003；provenance源文件标记deprecated；change_history版本号去重
 references:
   rule_ids:
-  - TRAE-049
   - TRAE-050
   - TRAE-051
   scripts: []

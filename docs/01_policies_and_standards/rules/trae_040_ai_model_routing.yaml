@@ -354,8 +354,7 @@ sections:
       date: '2026-06-19'
       change: RQ审查修复——references.scripts路径修正(scripts/hooks/check_encoding.py→scripts/governance/d7_code/check_encoding.py)；references.modules路径修正+snake_case化(model-capability-contract.yaml→docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml)；provenance源文件标注归档状态；新增文件级change_history(违反RQ-14)
 references:
-  rule_ids:
-  - TRAE-040
+  rule_ids: []
   scripts:
   - scripts/governance/d7_code/check_encoding.py
   modules:

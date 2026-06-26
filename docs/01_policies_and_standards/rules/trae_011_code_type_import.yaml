@@ -225,10 +225,7 @@ sections:
     key_decisions:
     - §3类型注解、§4导入规范、§5 SSoT守卫从GOV-ENG-001独立提取
 references:
-  rule_ids:
-  - TRAE-011
-  - TRAE-011
-  - TRAE-011
+  rule_ids: []
   scripts:
   - scripts/governance/d5_architecture/checkers/check_dependency_direction.py
   - scripts/governance/d5_architecture/validators/validate_module_schema.py

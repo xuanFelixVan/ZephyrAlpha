@@ -465,8 +465,7 @@ sections:
       - GOV-DATA-002关键数据判定标准为v0.2.0新增
       - GOV-DATA-003删除前三项确认为v0.2.0新增
 references:
-  rule_ids:
-  - TRAE-045
+  rule_ids: []
   scripts: []
   modules: []
   blueprints: []

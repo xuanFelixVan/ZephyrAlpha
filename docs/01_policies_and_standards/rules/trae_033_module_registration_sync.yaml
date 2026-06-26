@@ -225,9 +225,7 @@ sections:
         date: '2026-05-02'
         change: '初始版本: MRS-002原子性+MRS-003校验+MRS-004禁止行为'
 references:
-  rule_ids:
-  - TRAE-033
-  - TRAE-033
+  rule_ids: []
   scripts:
   - scripts/governance/check_registry_consistency.py
   - scripts/governance/d3_metadata/check_frontmatter_metadata.py

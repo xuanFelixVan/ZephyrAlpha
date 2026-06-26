@@ -330,8 +330,7 @@ sections:
       language: text
       note: 第一轮YAML化仅提取A类规则
 references:
-  rule_ids:
-  - TRAE-035
+  rule_ids: []
   scripts:
   - scripts/governance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py

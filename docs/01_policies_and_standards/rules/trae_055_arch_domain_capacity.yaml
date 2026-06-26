@@ -348,8 +348,7 @@ sections:
       by: session-20260625-002
       changes: '废除高度耦合放宽——删除ARCH-CAP-003（高度耦合四标准+AB选择），aliases移除ARCH-CAP-003；ARCH-CAP-002改为二元规则（≤150通过，>150必须拆分，无例外）；ARCH-CAP-007单域上限200→150；ARCH-CAP-008集成同步引用更新。裁定依据：100%AI开发项目不应有模糊地带，AI无法可靠判断高度耦合，二元规则可机械执行。决策记录存KE（topic=arch_cap_adjudication::ARCH-CAP-003_abolish）。'
 references:
-  rule_ids:
-  - TRAE-055
+  rule_ids: []
   scripts:
   - scripts/governance/extract_depgraph.py
   - scripts/governance/apply_depgraph.py

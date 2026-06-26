@@ -965,7 +965,6 @@ sections:
     - 强行合并不同上下文有不同含义的争议术语
 references:
   rule_ids:
-  - TRAE-041
   - TRAE-018
   - TRAE-019
   - TRAE-020

@@ -533,8 +533,7 @@ sections:
     prohibitions:
     - 任何一项为fail时禁止开始操作
 references:
-  rule_ids:
-  - TRAE-048
+  rule_ids: []
   scripts: []
   modules: []
   blueprints: []

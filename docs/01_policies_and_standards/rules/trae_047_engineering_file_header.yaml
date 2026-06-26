@@ -505,8 +505,7 @@ sections:
     - GOV-DOC-011(压缩工作流标准)——规格化时STEP 5检查表头完整性
     - REG-FRONTMATTER-001(frontmatter字段注册表)——字段数据SSoT，新增枚举MUST同步
 references:
-  rule_ids:
-  - TRAE-047
+  rule_ids: []
   scripts:
   - scripts/ops/verify_header_completeness.py
   - scripts/governance/audit_registration.py

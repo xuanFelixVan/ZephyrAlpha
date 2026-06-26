@@ -511,8 +511,7 @@ sections:
     - description: v1.1.0 2026-06-19
       details: RQ审查修复——补充references.scripts和enforcement.executors(detect_depends_on_cycles.py)、provenance迁移状态标记(RQ-04/RQ-09)。
 references:
-  rule_ids:
-  - TRAE-037
+  rule_ids: []
   scripts:
   - scripts/governance/d5_architecture/detectors/detect_depends_on_cycles.py
   modules: []

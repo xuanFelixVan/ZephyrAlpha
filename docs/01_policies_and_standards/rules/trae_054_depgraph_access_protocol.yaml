@@ -97,8 +97,7 @@ sections:
       by: session-20260625-507
       changes: '裁定#178-193治本对齐——新增 build_status 5态合法值约束(planned/generated/testing/stable/deprecated，DB CHECK约束已生效)；声明 module_lifecycle_state 字段已删除(v11迁移归档)；更新 generate_project_depgraph.py 例外条款从"架构升级期间禁止"改为"治本后允许(需先执行OPS-2026062502-506)"'
 references:
-  rule_ids:
-  - TRAE-054
+  rule_ids: []
   scripts:
   - scripts/governance/extract_depgraph.py
   - scripts/governance/apply_depgraph.py

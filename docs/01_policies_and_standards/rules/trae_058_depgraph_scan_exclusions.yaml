@@ -190,7 +190,6 @@ sections:
 references:
   rule_ids:
   - TRAE-054
-  - TRAE-058
   scripts:
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
