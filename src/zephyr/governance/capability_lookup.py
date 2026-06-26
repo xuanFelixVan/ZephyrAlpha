@@ -688,6 +688,7 @@ class CapabilityLookup:
                （捕获语义 core，如 "仓库根路径" 经 "仓库根" 命中 "仓库根目录"；
                避免"目录"单字 OR 误命中所有含"目"/"录"条目——公共子串要求连续）
              - 守卫：ASCII 词数 + CJK 字符数 ≥2，避免单 token 过宽匹配
+           设计权衡（勿误判为 bug）：短词（如 ttl）会命中多个 ttl_* 能力——token 包含匹配的合理代价。精确查用 reg.get(capability_id)，宽搜用更长关键词（如 ttl_validation 而非 ttl）。
         """
         q = query.lower()
         if len(q.strip()) < 2:

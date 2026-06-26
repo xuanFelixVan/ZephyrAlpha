@@ -33,6 +33,7 @@
   N-14  __init__.py 必须定义 __all__
   N-15  BLUEPRINT 头部路径必须存在
   N-16  文件名项目内唯一性检测（tests/ + docs/）——真源：trae_028_doc_structure_naming.yaml v1.5.0 §gov_doc_003_filename_uniqueness.n16_config(豁免清单从此动态加载,硬编码仅作fail-open回退)
+        设计权衡（勿误判为 bug 扩展）：src/ 不覆盖——src/ 有模块化目录结构（包隔离）+ __all__ 注册 + RULE-TWO 孤儿检测兜底，同名冲突少；tests/docs/ 扁平堆积易撞名。扩展扫描到 src/ 会误报跨包同名（如多个 __init__.py/utils.py）。
   N-17  blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
 
 独立模式：

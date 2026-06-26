@@ -415,9 +415,6 @@ capabilities:
       - make_working_docs_reconciler
       - scan_and_archive_working_docs
       - ghost_ref_archiver
-      - 幽灵引用归档
-      - 工作文档归档
-      - _working 归档
       - auto_archive_working_docs
       - working_docs_auto_archive
     description: >-
@@ -438,8 +435,6 @@ capabilities:
       - completes_when_check
       - _check_working_docs_completes_when
       - working_docs_completes_when
-      - 完成条件校验
-      - 文档完成条件
       - GATE-WORKING-DOCS-prevention
       - S6_prevention
       - working_docs_prevention
@@ -452,6 +447,23 @@ capabilities:
       （git_commit_gateway.py:717），仅检查新增文件（已跟踪文件修改不阻断，不破坏
       存量）。canonical basename git_commit_gateway 不匹配任何 alias，无法 auto 派生，
       故用 canonical_override 显式声明。对标 trae_060 §2 + 向内收原则 2.2。
+
+# --------------------------------------------------------------------------
+  - capability_id: domain_architecture_generators
+    aliases:
+      - depgraph_generators
+      - architecture_generators
+      - 域架构生成器
+      - generator
+      - d5_generators
+      - 域文档生成器
+    description: >-
+      depgraph.db 驱动的域架构文档自动生成器集（14+ 生成器）。
+      全部位于 scripts/governance/d5_architecture/generators/ 目录下。
+      输出幂等（相同 DB 输入→相同输出），零时间戳（date: auto-generated，
+      最后更新以 git log 为准），禁止在生成器中使用 datetime.now()。
+      GATE-DOMAIN-DOC reconciler 在 commit depgraph.db 后自动触发
+      generate_domain_doc.py 和 generate_domain_dependency_diagram.py。
 
 # ============================================================================
 # 维护日志
