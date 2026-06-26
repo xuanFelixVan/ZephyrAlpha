@@ -380,6 +380,9 @@ def _batch_collect_imports() -> dict[str, list[str]]:
     用于 RULE-TWO 豁免判定：被其他模块 import 的模块视为"已有自然发现机制"，
     不报为 ORPHAN（即使未注册到 __all__）。
 
+    优先使用 rg（快速），rg 不可用时自动回退到 Python ast 解析（零外部依赖，
+    消除 rg 不在 PATH 时静默返回空 map → RULE-TWO 豁免失效 → 误报 orphan 的脆弱性）。
+
     匹配模式:
         from zephyr.X.Y.Z import ...
         import zephyr.X.Y.Z
@@ -393,6 +396,7 @@ def _batch_collect_imports() -> dict[str, list[str]]:
     pattern = r"(?:from\s+(zephyr[\w.]*))\s+import|(?:import\s+(zephyr[\w.]*))"
     consumers: dict[str, list[str]] = defaultdict(list)
 
+    # ── 快速路径：rg ──
     try:
         # 纳入项目根目录的 .py（如 sitecustomize.py）——这些是系统级消费者，
         # 仅扫 src/scripts/tests 会漏掉根级导入，导致 RULE-TWO 豁免误判（治本 Bug 2：
@@ -421,8 +425,64 @@ def _batch_collect_imports() -> dict[str, list[str]]:
                     module = match.group(1) or match.group(2)
                     if module:
                         consumers[module].append(consumer_file)
+        return dict(consumers)
     except (subprocess.SubprocessError, FileNotFoundError) as e:
-        print(f"WARNING: 批量收集 import 失败，消费者豁免将不生效: {e}", file=sys.stderr)
+        print(f"INFO: rg 不可用，回退到 Python ast 解析（零外部依赖）: {e}", file=sys.stderr)
+
+    # ── 回退路径：Python ast 解析 ──
+    return _collect_imports_via_ast()
+
+
+def _collect_imports_via_ast() -> dict[str, list[str]]:
+    """使用 Python ast 解析 .py 文件的 import 语句，构建消费者地图。
+
+    rg 不可用时的零外部依赖回退方案。扫描范围与 rg 路径一致：
+    src/、scripts/、tests/ 目录及根级 *.py 文件。
+
+    匹配模式（与 rg 正则一致）:
+        from zephyr.X.Y.Z import ...
+        import zephyr.X.Y.Z
+
+    Returns:
+        {full_module_path: [consumer_file_relative_paths]}
+    """
+    from collections import defaultdict
+
+    consumers: dict[str, list[str]] = defaultdict(list)
+
+    # 收集要扫描的 .py 文件（与 rg 扫描范围一致）
+    py_files: list[Path] = []
+    for dir_name in ("src", "scripts", "tests"):
+        d = PROJECT_ROOT / dir_name
+        if d.is_dir():
+            for py_file in d.rglob("*.py"):
+                if any(ex in py_file.parts for ex in EXCLUDE_PATTERNS):
+                    continue
+                py_files.append(py_file)
+    # 根级 .py 文件（如 sitecustomize.py）
+    for py_file in PROJECT_ROOT.glob("*.py"):
+        py_files.append(py_file)
+
+    for py_file in py_files:
+        try:
+            source = py_file.read_text(encoding="utf-8")
+            tree = ast.parse(source)
+        except (SyntaxError, UnicodeDecodeError, OSError):
+            continue
+
+        try:
+            rel_path = py_file.relative_to(PROJECT_ROOT).as_posix()
+        except ValueError:
+            rel_path = str(py_file)
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name.startswith("zephyr."):
+                        consumers[alias.name].append(rel_path)
+            elif isinstance(node, ast.ImportFrom):
+                if node.module and node.module.startswith("zephyr."):
+                    consumers[node.module].append(rel_path)
 
     return dict(consumers)
 
