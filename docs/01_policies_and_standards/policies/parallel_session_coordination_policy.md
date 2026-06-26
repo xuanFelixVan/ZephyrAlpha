@@ -2,6 +2,7 @@
 module_id: POL-PARALLEL-SESSION-001
 title: Parallel Session Coordination Policy / 并行 Session 协作策略
 doc_type: policy
+ttl: permanent
 status: Active
 version: 1.0.0
 layer: cross_layer
@@ -246,8 +247,8 @@ close-door 流程（`project_rules.md` Session 开关门）已新增 STEP 0：
 
 | 组件 | 状态 | 接入点 |
 |------|------|--------|
-| SessionRegistry | ✅ 已落地（P2-SES）| 待 P4-T1 接入 commit |
-| SessionHandoff | ✅ 已落地（P2-SES）| 待 P4-T2 接入 phase_manager |
-| SessionConflictDetector | ✅ 已落地（P2-SES）| 待 P4-T1 接入 commit |
-| close-door STEP 0 | ✅ 已落地（P1-T1）| project_rules.md |
+| SessionRegistry | ✅ 已落地（P2-SES）+ ✅ 已接入 commit path（P4-T1 commit 2a5ebe48）| GitCommitGateway.claim_files/release_files + session-aware stash 三级决策 |
+| SessionHandoff | ✅ 已落地（P2-SES）+ ✅ 已接入 phase_manager.session_shutdown（P4-T2 commit 01a99f1f+da66d3d0）| gateway commit() finally 每次 commit 写 .runtime/handoffs/handoff_\<sid\>.json |
+| SessionConflictDetector | ✅ 已落地（P2-SES）| P4-T1 用 claim_file 取代（更简洁，session 隔离 stash 内联实现） |
+| close-door STEP 0 | ✅ 已落地（P1-T1）| project_rules.md（P4-T1 落地后 registry 有数据，检查真正有效） |
 | 本策略文档 | ✅ 已落地（P1-T1）| 本文件 |
