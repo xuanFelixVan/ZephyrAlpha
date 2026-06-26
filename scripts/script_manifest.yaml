@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 571
+total_scripts: 573
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -697,6 +697,14 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_check_bp.py
+  path: governance/_tmp_check_bp.py
+  description: import sqlite3
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2302,6 +2310,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
+  path: governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
+  description: check_precommit_id_uniqueness.py — GATE-ID-UNIQ
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/checkers/check_ssot_uniqueness.py
   path: governance/d5_architecture/checkers/check_ssot_uniqueness.py
   description: '[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §'
@@ -2320,7 +2336,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/detectors/__init__.py
   path: governance/d5_architecture/detectors/__init__.py
-  description: __all__ = ["detect_depends_on_cycles", "detect_deprecated_adr_references", "detect_duplicate_module_names"]
+  description: __all__ = ["detect_depends_on_cycles", "detect_deprecated_adr_references", "analyze_same_name_module_relations"]
   domain: governance
   execution_plane: warm-path
   status: registered
