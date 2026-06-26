@@ -68,26 +68,19 @@ class SecurityEvent:
         self.timestamp = timestamp or datetime.now(UTC).isoformat()
 
 
-class DashboardMetrics:
+from pydantic import BaseModel
+
+
+class DashboardMetrics(BaseModel):
     """Metrics for security dashboard display."""
 
-    def __init__(
-        self,
-        total_events: int = 0,
-        critical_count: int = 0,
-        high_count: int = 0,
-        medium_count: int = 0,
-        low_count: int = 0,
-        total_prompts_processed: int = 0,
-        prompts_blocked: int = 0,
-    ):
-        self.total_events = total_events
-        self.critical_count = critical_count
-        self.high_count = high_count
-        self.medium_count = medium_count
-        self.low_count = low_count
-        self.total_prompts_processed = total_prompts_processed
-        self.prompts_blocked = prompts_blocked
+    total_events: int = 0
+    critical_count: int = 0
+    high_count: int = 0
+    medium_count: int = 0
+    low_count: int = 0
+    total_prompts_processed: int = 0
+    prompts_blocked: int = 0
 
 
 class FrequencyAnomalyDetector:
