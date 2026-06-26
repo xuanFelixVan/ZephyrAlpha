@@ -1,7 +1,7 @@
 ---
 title: 临时工作区（_working/）
 doc_type: index
-ttl: permanent
+ttl: task_bound
 ---
 
 # _working/ 临时工作区

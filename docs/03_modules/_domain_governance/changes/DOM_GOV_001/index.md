@@ -7,7 +7,7 @@ version: "1.1.0"
 created: "2026-05-06"
 updated: "2026-05-07"
 blueprint_id: MOD-GOVERNANCE
-ttl: permanent
+ttl: task_bound
 ---
 
 

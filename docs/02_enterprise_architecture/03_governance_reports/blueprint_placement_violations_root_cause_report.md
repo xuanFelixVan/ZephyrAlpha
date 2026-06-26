@@ -2,7 +2,7 @@
 title: 蓝图物理位置与 belongs_to 归属链违规——病根调研与裁定报告
 doc_type: audit_report
 status: active
-ttl: permanent
+ttl: task_bound
 created_by: agent
 created: '2026-06-26'
 approved_by: owner

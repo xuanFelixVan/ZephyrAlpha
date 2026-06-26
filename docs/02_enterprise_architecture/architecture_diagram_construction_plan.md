@@ -15,7 +15,7 @@ depends_on:
   - target: 依赖与架构全景图能力定位书
     at: §四 全景图组成
     why: depgraph.db是唯一真源,架构图应为派生物
-ttl: task_bound
+ttl: permanent
 ---
 
 > **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：

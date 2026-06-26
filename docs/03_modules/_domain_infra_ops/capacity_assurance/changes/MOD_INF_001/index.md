@@ -2,7 +2,7 @@
 doc_type: index
 status: active
 generated: '2026-05-28'
-ttl: permanent
+ttl: task_bound
 ---
 
 # Mod Inf 001 — 目录索引

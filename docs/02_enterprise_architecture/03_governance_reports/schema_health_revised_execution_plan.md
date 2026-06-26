@@ -1,5 +1,5 @@
 ---
-ttl: task_bound
+ttl: permanent
 doc_type: construction_plan
 ---
 

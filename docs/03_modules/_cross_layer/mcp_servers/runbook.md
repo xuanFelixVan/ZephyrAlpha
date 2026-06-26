@@ -2,7 +2,7 @@
 blueprint_id: MOD-GOVERNANCE
 title: Runbook
 module_id: MOD-011
-ttl: permanent
+ttl: task_bound
 doc_type: operational_rule
 ---
 

@@ -2,7 +2,7 @@
 blueprint_id: MOD-GOVERNANCE
 title: feedback-loop Changelog
 module_id: MOD-009
-ttl: permanent
+ttl: task_bound
 doc_type: log
 ---
 

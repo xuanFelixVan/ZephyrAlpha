@@ -7,7 +7,7 @@ status: Active
 version: "1.0.0"
 owner: ZephyrAlpha-Owner
 date: "2026-05-02"
-ttl: permanent
+ttl: task_bound
 ---
 
 # Reports — 目录索引

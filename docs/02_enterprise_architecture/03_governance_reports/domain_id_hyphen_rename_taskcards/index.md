@@ -7,7 +7,7 @@ blueprint_id: ""
 version: "1.0.0"
 created: "2026-06-26"
 updated: "2026-06-26"
-ttl: task_bound
+ttl: permanent
 ---
 
 # 6 域 ID 连字符→下划线改名 — 任务卡索引

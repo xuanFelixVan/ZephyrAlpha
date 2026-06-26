@@ -9,7 +9,7 @@ owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 date: "2026-05-06"
-ttl: permanent
+ttl: task_bound
 summary: "安全泄漏类与事件响应 Finding Markdown 落盘目录（对齐 06-security_architecture.md）"
 tags: [audit, findings, security-incident]
 ---

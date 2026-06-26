@@ -2,7 +2,7 @@
 blueprint_id: MOD-GOVERNANCE
 title: agent-spec Changelog
 module_id: MOD-016
-ttl: permanent
+ttl: task_bound
 doc_type: log
 ---
 

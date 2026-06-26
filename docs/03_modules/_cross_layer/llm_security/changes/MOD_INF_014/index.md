@@ -7,7 +7,7 @@ version: "2.0.0"
 created: "2026-05-06"
 updated: "2026-05-06"
 blueprint_id: MOD-LLM_SECURITY
-ttl: permanent
+ttl: task_bound
 ---
 
 

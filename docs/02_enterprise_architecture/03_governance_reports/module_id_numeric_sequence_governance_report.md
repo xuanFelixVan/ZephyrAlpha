@@ -2,7 +2,7 @@
 title: module_id 数字序号制双轨治理——病根调研与裁定报告
 doc_type: audit_report
 status: active
-ttl: permanent
+ttl: task_bound
 created_by: agent
 created: '2026-06-26'
 approved_by: owner

@@ -7,7 +7,7 @@ blueprint_id: "MOD-RESOURCE_OPTIMIZATION_ENGINE"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"
-ttl: permanent
+ttl: task_bound
 ---
 
 # mod_inf_032

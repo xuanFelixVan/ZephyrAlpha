@@ -18,7 +18,7 @@ summary: Playbook 创建模板——过程式操作规则，定义如何做的�
 tags: []
 template_for: operational_rule
 title: Playbook Template
-ttl: permanent
+ttl: task_bound
 verifiability: manual
 version: 0.1.0
 ---

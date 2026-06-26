@@ -2,7 +2,7 @@
 blueprint_id: MOD-GOVERNANCE
 title: Integration Test Report
 module_id: MOD-028
-ttl: permanent
+ttl: task_bound
 doc_type: audit_report
 ---
 
