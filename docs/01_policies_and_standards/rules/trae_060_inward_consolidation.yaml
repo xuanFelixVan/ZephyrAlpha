@@ -28,6 +28,7 @@ tags:
 - event_driven
 - first_principles
 - anti_drift
+ttl: permanent
 stability: frozen
 safety_level: H
 ai_autonomy: immutable_core

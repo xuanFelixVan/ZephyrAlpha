@@ -13,6 +13,7 @@ tags:
 - TRAE
 - doc_numbering_metadata
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated

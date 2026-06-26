@@ -89,6 +89,7 @@ from zephyr.governance.reconciliation_registry import (
     make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
 )
+from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
 
 logger = logging.getLogger(__name__)
@@ -1087,10 +1088,7 @@ class GitCommitGateway:
         fail-open：YAML 不可达时回退硬编码（覆盖当前已知受保护脚本）。
         与 _load_n16_exempt_names 一致的 fail-open 策略。
         """
-        yaml_path = (
-            self.project_root / "docs" / "01_policies_and_standards"
-            / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
-        )
+        yaml_path = REGISTRY_YAML  # 真源唯一：capability_lookup.REGISTRY_YAML
         try:
             import yaml
             data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
@@ -1294,14 +1292,7 @@ class GitCommitGateway:
             for f in files
         ):
             return True, "capability aliases check skipped (registry not in commit)"
-        registry_path = (
-            self.project_root
-            / "docs"
-            / "01_policies_and_standards"
-            / "_registry"
-            / "catalogs"
-            / "capability_canonical_file_registry.yaml"
-        )
+        registry_path = REGISTRY_YAML  # 真源唯一：capability_lookup.REGISTRY_YAML
         if not registry_path.exists():
             return True, "capability aliases check skipped (registry not found)"
         try:

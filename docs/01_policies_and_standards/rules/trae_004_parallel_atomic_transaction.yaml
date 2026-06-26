@@ -9,6 +9,7 @@ tags:
 - TRAE
 - script_execution
 - L0
+ttl: permanent
 stability: frozen
 safety_level: H
 ai_autonomy: immutable_core

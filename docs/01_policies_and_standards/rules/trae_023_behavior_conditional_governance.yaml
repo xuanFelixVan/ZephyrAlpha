@@ -9,6 +9,7 @@ tags:
 - TRAE
 - conditional_prohibition_governance_doc
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated

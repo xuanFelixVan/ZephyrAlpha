@@ -9,6 +9,7 @@ tags:
 - TRAE
 - architecture_governance_order
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated

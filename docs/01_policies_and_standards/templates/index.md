@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "templates/ 目录的导航入口。列出全部 10 个文档模板。"
+summary: "templates/ 目录的导航入口。列出全部 9 个文档模板。"
 tags: [index, templates, navigation]
 rule_form: declarative
 scope: global
@@ -26,15 +26,14 @@ ai_autonomy: human_gated
 
 本目录只存放：**文档模板 — policy/standard/runbook/playbook/KB 决策记录/blueprint/roadmap/risk-register 模板**。
 
-## 文件清单（本目录 **10** 个模板 + **本 index.md**）
+## 文件清单（本目录 **9** 个模板 + **本 index.md**）
 
 | 文件 | 说明 |
 |------|------|
 | `blueprint_construction_template.md` | 蓝图+施工图模板 |
 | `dependency_graph_template.md` | 依赖图数据结构模板 |
 | `playbook_runbook.md` | Playbook 模板 |
-| `policy_template.md` | Policy 模板 |
-| `protocol_template.md` | Protocol 模板 |
+| `policy_template.md` | Policy 模板（含已废弃 protocol 类型，protocol migrated_to policy） |
 | `register_template.md` | Register/Registry 模板 |
 | `risk_register_template.md` | 风险登记表模板 |
 | `roadmap_template.md` | Roadmap 模板 |

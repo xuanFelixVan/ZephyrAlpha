@@ -23,6 +23,7 @@ tags:
 - TRAE
 - ai_hallucination
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated

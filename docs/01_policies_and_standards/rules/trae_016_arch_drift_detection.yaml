@@ -9,6 +9,7 @@ tags:
 - TRAE
 - architecture_drift
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated

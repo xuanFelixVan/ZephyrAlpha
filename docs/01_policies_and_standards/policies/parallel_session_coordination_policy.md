@@ -24,7 +24,6 @@ tags:
   - conflict-detection
 summary: 定义 ZephyrAlpha 多 AI session 并发协作契约。session 注册/注销、held_files 协议、handoff 交接包格式、冲突升级路径、close-door 多 session 协调。是并行 session 漂移治理的战略层契约（病根第三层）。
 date: '2026-06-26'
-ttl: permanent
 ---
 
 # Parallel Session Coordination Policy

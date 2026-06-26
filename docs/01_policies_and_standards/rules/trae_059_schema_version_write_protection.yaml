@@ -11,6 +11,7 @@ tags:
 - L0
 - depgraph
 - migration_framework
+ttl: permanent
 stability: frozen
 safety_level: H
 ai_autonomy: immutable_core

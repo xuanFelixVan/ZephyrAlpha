@@ -91,12 +91,11 @@ verifiability: manual
 │       ├── layer_vocabulary.yaml                   ← 层级受控枚举
 │       └── ...（其余 20 个 vocabulary 文件）
 │
-└── templates/                   ← 文档模板（11 个标准模板）
+└── templates/                   ← 文档模板（10 个标准模板，含 index.md）
     ├── blueprint_construction_template.md          ← 蓝图 + 施工指引统一模板
     ├── dependency_graph_template.md                ← 依赖图模板
     ├── playbook_runbook.md                         ← 操作手册模板
-    ├── policy_template.md                          ← 策略模板
-    ├── protocol_template.md                        ← 协议模板
+    ├── policy_template.md                          ← 策略模板（含已废弃 protocol 类型）
     ├── register_template.md                        ← 注册表模板
     ├── risk_register_template.md                   ← 风险登记表模板
     ├── roadmap_template.md                         ← 路线图模板
@@ -113,7 +112,7 @@ verifiability: manual
 |--------|------|:---------:|---------|
 | `rules/` | 规则文件唯一真源——60 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 61 | [rules/_index.yaml](rules/_index.yaml) |
 | `_registry/` | 注册表+契约+Schema+词表——4 个子目录 | 55 | [_registry/index.md](_registry/index.md) |
-| `templates/` | 文档模板——11 个标准模板 | 11 | [templates/index.md](templates/index.md) |
+| `templates/` | 文档模板——9 个标准模板 + index.md | 10 | [templates/index.md](templates/index.md) |
 
 > **合计**：3 个子目录，115 个文件。
 > **历史变更**：`meta/` 目录已于 2026-06 删除，规则文件合并至 `rules/`；`governance/`、`operational/`、`domains/` 目录已删除，内容合并至 `rules/` 对应 trae_*.yaml 文件。

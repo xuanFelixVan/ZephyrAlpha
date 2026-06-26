@@ -8,6 +8,7 @@ tags:
 - TRAE
 - architecture_ctr_injection
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated

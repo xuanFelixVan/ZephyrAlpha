@@ -10,6 +10,7 @@ tags:
 - TRAE
 - meta_metadata_metrics
 - L2
+ttl: permanent
 stability: evolving
 safety_level: L
 ai_autonomy: ai_modifiable

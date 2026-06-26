@@ -8,6 +8,7 @@ tags:
 - TRAE
 - engineering_code_restructure
 - L1
+ttl: permanent
 stability: stable
 safety_level: H
 ai_autonomy: human_gated

@@ -8,6 +8,7 @@ tags:
 - TRAE
 - task_management
 - L0
+ttl: permanent
 stability: stable
 safety_level: H
 ai_autonomy: human_gated

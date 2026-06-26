@@ -56,6 +56,7 @@ tags:
 - design_state
 - event_driven
 - capacity_audit
+ttl: permanent
 stability: evolving
 safety_level: L
 ai_autonomy: ai_modifiable

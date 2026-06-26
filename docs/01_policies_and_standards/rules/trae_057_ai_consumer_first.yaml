@@ -29,6 +29,7 @@ tags:
 - principle
 - format_policy
 - anti_hallucination
+ttl: permanent
 stability: frozen
 safety_level: H
 ai_autonomy: immutable_core

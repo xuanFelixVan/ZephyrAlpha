@@ -8,6 +8,7 @@ tags:
 - TRAE
 - module_registry_sync
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: ai_modifiable

@@ -8,6 +8,7 @@ tags:
 - TRAE
 - code_type_import
 - L1
+ttl: permanent
 stability: stable
 safety_level: M
 ai_autonomy: human_gated
