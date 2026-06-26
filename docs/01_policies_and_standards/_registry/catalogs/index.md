@@ -3,9 +3,9 @@ module_id: GOV-002
 title: "登记表集中存储目录索引"
 doc_type: index
 status: Active
-version: "2.1.0"
-date: "2026-05-06"
-summary: "_registry/catalogs/ 导航入口。v2.1.0：**文件/条数与 `registry-master-index`、`rule-catalog`、各登记表 `total_*` 字段对账**；勿使用历史常数（如「38 张」）。"
+version: "2.2.0"
+date: "2026-06-26"
+summary: "_registry/catalogs/ 导航入口。v2.2.0：P0 审查修复——补全 5 个缺失 catalog（architecture_issue/capability_canonical/derived_identifier/domain_naming/_index），修正 2 个文件名（business_streams/hard_boundaries 缺 _registry 后缀），计数 24→28。对齐 trae_060 §4 新AI可发现性。"
 tags: [index, catalogs, registry, navigation]
 rule_form: declarative
 scope: global
@@ -26,11 +26,16 @@ ttl: permanent
 > 优于按"谁创建了它"分类（对标 Linux FHS——同性质文件放同一目录）。
 > 详见 PS-REG-005 registry-master-index.yaml §1。
 
-## 文件清单（本目录 **24** 个文件：**23** 份登记/契约类工件 + **本 index.md**）
+## 文件清单（本目录 **28** 个文件：**27** 份登记/契约类工件 + **本 index.md**）
 
 | 文件 | 类型 | 说明 | 维护方式 |
 |------|:---:|------|:---:|
-| `registry_master_index.yaml` | 总索引 | 登记表总索引——`total_registries` / `registries[]` 以本文件为准（**勿写死**） | manual |
+| `registry_master_index.yaml` | 总索引 | 登记表总索引——`total_registries` / `registries[]` 以本文件为准（**勿写死**）；由 `generate_registry_master_index.py` 自动生成 | auto |
+| `_index.yaml` | 别名表 | TRAE 规则高级别名表（PS-REG-001，RULE-ZERO..RULE-TWENTY） | manual |
+| `architecture_issue_registry.yaml` | 登记表 | 架构问题登记（#ARCH-XXX） | manual |
+| `capability_canonical_file_registry.yaml` | 登记表 | 能力-规范文件映射（capability_id → canonical_file） | semi_auto |
+| `derived_identifier_registry.yaml` | 登记表 | 派生标识符规则（blueprint_id/node_path 从 domain_id 派生） | manual |
+| `domain_naming_rules.yaml` | 登记表 | 域命名规则（NR-001..005，apply_depgraph --insert-domain 强制） | manual |
 | `document_metadata_index_registry.yaml` | 注册表 | 与 `rule_catalog_registry.yaml` 同步的规则树元数据索引（以生成器为准） | auto |
 | `task_card_meta_registry.yaml` | 注册表 | 三套任务卡系统元层管理 | manual |
 | `infrastructure_registry.yaml` | 登记表 | 运行时基础设施组件（以 `total_registered` 为准） | manual |
@@ -49,9 +54,9 @@ ttl: permanent
 | `rule_catalog_registry.yaml` | 登记表 | 规则目录——全部规则的分类索引与交叉引用 | manual |
 | `functional_domain_registry.yaml` | 登记表 | 功能域登记表——按功能域组织的模块注册 | manual |
 | `master_document_inventory_registry.yaml` | 注册表 | 主文档清单——全项目文档的集中索引 | manual |
-| `business_streams.yaml` | 登记表 | 业务流定义 | manual |
-| `depgraph_scan_exclusions.yaml` | 登记表 | depgraph 扫描排除规则 | manual |
-| `hard_boundaries.yaml` | 登记表 | 硬边界定义 | manual |
+| `business_streams_registry.yaml` | 登记表 | 业务流定义 | manual |
+| `depgraph_scan_exclusions.yaml` | 登记表 | depgraph 扫描排除规则（数据真源，规则定义见 trae_058） | manual |
+| `hard_boundaries_registry.yaml` | 登记表 | 硬边界定义 | manual |
 
 ## 外部登记表（不在本目录，由 catalog 索引引用）
 

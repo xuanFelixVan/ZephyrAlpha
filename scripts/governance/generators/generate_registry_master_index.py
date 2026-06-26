@@ -57,7 +57,7 @@ description: >
 """
 
 CATALOGS_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-DEFAULT_OUTPUT = CATALOGS_DIR / "registry-master-index.yaml"
+DEFAULT_OUTPUT = CATALOGS_DIR / "registry_master_index.yaml"
 
 # 真源单一化：registry_category 是 doc_type 的属性，由 doc_type_vocabulary.yaml 唯一维护。
 # 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名或分类。
@@ -122,6 +122,8 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
         return None
 
     fm = parse_frontmatter_from_file(yaml_path)
+    if isinstance(fm, tuple):
+        fm = fm[0] if fm else {}
     if fm is None:
         fm = {}
     if isinstance(data, dict):
@@ -209,7 +211,7 @@ def main() -> None:
 
     tmp_path = f"{args.output}.{os.getpid()}.tmp"
     try:
-        with open(tmp_path, encoding="utf-8") as f:
+        with open(tmp_path, "w", encoding="utf-8") as f:
             f.write(f"# 自动生成于 {result['generated_at']}\n")
             f.write("# 来源: _registry/catalogs/*.yaml frontmatter\n")
             f.write("# 手工编辑无效——修改请通过各登记表的 frontmatter\n\n")
