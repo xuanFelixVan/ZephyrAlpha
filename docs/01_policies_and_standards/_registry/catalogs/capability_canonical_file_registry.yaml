@@ -94,7 +94,6 @@ capabilities:
     aliases:
       - session_continuity
       - handoff
-      - 交接本
       - session_handoff
     description: >-
       Session 交接包自动生成与恢复。解决"打开 IDE 不知道上回做到哪了"的零记忆重启痛点。
@@ -120,7 +119,6 @@ capabilities:
     aliases:
       - rollback
       - RollbackExecutor
-      - 回滚执行器
     description: >-
       回滚执行器核心封装。canonical = src/zephyr/infrastructure/rollback/
       rollback_executor.py（auto 派生：basename rollback_executor 匹配 capability_id，
@@ -134,7 +132,6 @@ capabilities:
     aliases:
       - PROJECT_ROOT
       - REPO_ROOT
-      - 仓库根
       - project_root
       - repo_root
       - repo root
@@ -162,8 +159,6 @@ capabilities:
     aliases:
       - find_repo_root
       - repo_root_finder
-      - 仓库根查找函数
-      - 项目根定位
       - find_project_root
     description: >-
       仓库根目录查找算法(向上遍历找 src/zephyr/__init__.py 标记文件)。
@@ -188,7 +183,6 @@ capabilities:
       - load_vocabulary_values
       - load_vocabulary_deprecated_map
       - vocabulary_loader
-      - 词表加载器
       - vocab_loader
       - yaml_vocabulary_loader
     description: >-
@@ -207,7 +201,6 @@ capabilities:
     aliases:
       - GATE-VOCAB
       - check_vocab_hardcode
-      - 词表硬编码检测
       - vocabulary_hardcode_gate
       - gate_vocab
     description: >-
@@ -228,7 +221,6 @@ capabilities:
       - DOM_GOV
       - load_blueprint_path
       - blueprint_path
-      - 蓝图路径
       - blueprint disk path
     description: >-
       蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（SSoT 派生）按 module_id 查询，
@@ -246,7 +238,6 @@ capabilities:
       - frontmatter_check
       - frontmatter_metadata
       - frontmatter_ttl_check
-      - 元数据校验
       - frontmatter_metadata_check
     description: >-
       .md 文档 frontmatter 字段校验的唯一真源（GATE-15）。校验 ttl（必填+合法值，
@@ -263,9 +254,7 @@ capabilities:
       - LSG
       - LSGSecurityGateway
       - llm_security
-      - LLM安全网关
       - security_gateway
-      - 安全网关
     description: >-
       LLM 安全网关（L0-L8 十层纵深防御）。所有 LLM 调用必须经过 LSGSecurityGateway
       进行安全扫描（输入/输出/Agent 动作），禁止裸调 LLM API。对标 RULE-LSG-001。
@@ -279,7 +268,6 @@ capabilities:
     aliases:
       - GATE-20
       - llm_security_gateway_gate
-      - 裸调LLM检测
       - validate_llm_security_gateway
       - detect_direct_llm_calls
     description: >-
@@ -297,8 +285,6 @@ capabilities:
       - GATE-20-RUNTIME
       - runtime_gate
       - runtime_interceptor
-      - 运行时拦截器
-      - 运行时Gate
       - LSG_RUNTIME_BACKUP
       - BareLLMCallError
     description: >-
@@ -319,17 +305,8 @@ capabilities:
     canonical_override: scripts/governance/validate_module_id_naming.py
     aliases:
       - module_id_naming
-      - module_id 校验
-      - module_id格式校验
-      - blueprint_id 校验
-      - blueprint_id格式校验
-      - 三轨制校验
-      - 三轨正则
       - is_valid_module_id
       - is_valid_domain_id
-      - domain_id 校验
-      - domain_id格式校验
-      - 裁定#208校验
     description: >-
       module_id/blueprint_id/domain_id 格式校验真源（裁定#208 三轨制正则唯一责任点）。
       提供 is_valid_module_id(bp_id) 和 is_valid_domain_id(domain_id) 两个公共校验函数，
@@ -351,8 +328,6 @@ capabilities:
       - GATE-11_exemption
       - N-16
       - N16
-      - 文件名唯一性豁免
-      - 豁免清单加载器
       - n16_exemption_names
       - exempt_names_loader
       - yaml_loader_n16
@@ -361,8 +336,6 @@ capabilities:
       - validate_ssot
       - validate_ssot_n16
       - fallback_consistency_check
-      - fallback一致性检查
-      - ssot一致性校验
     description: >-
       N-16 文件名项目内唯一性检测的豁免清单唯一 YAML 加载入口（治本：消除代码硬编码
       vs YAML 真源同步缺口）。真源：trae_028_doc_structure_naming.yaml v1.5.0
@@ -388,11 +361,7 @@ capabilities:
       - gate-id-uniq
       - hook_id_uniqueness
       - precommit_id_check
-      - hook id 唯一性
-      - pre-commit id 唯一性
-      - hook id 重复检测
       - id_uniqueness_check
-      - 重复id检测
       - duplicate_id_detector
     description: >-
       .pre-commit-config.yaml 内 hook id 唯一性检测门禁（GATE-ID-UNIQ）。同一 repo 块
@@ -452,6 +421,9 @@ capabilities:
       （git_commit_gateway.py:717），仅检查新增文件（已跟踪文件修改不阻断，不破坏
       存量）。canonical basename git_commit_gateway 不匹配任何 alias，无法 auto 派生，
       故用 canonical_override 显式声明。对标 trae_060 §2 + 向内收原则 2.2。
+    integrity_anchors:
+      - _is_pid_alive              # 僵尸锁检测函数(红蓝对抗治本,删则进程崩溃后锁恢复失效)
+      - _check_capability_aliases  # 中文aliases门禁(红蓝对抗修复2,删则中文aliases可绕过)
 
 # --------------------------------------------------------------------------
   - capability_id: domain_architecture_generators

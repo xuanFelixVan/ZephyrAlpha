@@ -67,6 +67,7 @@ __all__ = [
 import json
 import logging
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -85,6 +86,7 @@ from zephyr.governance.reconciliation_registry import (
     make_working_docs_reconciler,
     make_domain_doc_reconciler,
     make_precommit_id_uniqueness_reconciler,
+    make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
 )
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
@@ -112,7 +114,10 @@ def _is_pid_alive(pid: int) -> bool:
     60s << 30min，僵尸锁在 60s 超时窗口内永远等不到 TTL 过期（实测阻塞 3min+）。
     本函数在 TTL 检查前先查 PID 存活，僵尸锁立即清理（零窗口期）。
     """
-    if pid <= 0:
+    # 治本（红蓝对抗修复4）：防御性类型检查——None/str/float 等非法类型直接返回 False。
+    # 实际调用路径 L243 已用 int() 转换 + 外层 try/except 兜底，但函数本身不健壮：
+    # 若被其他地方直接调用（非 int 入参），会抛 TypeError 中断流程。
+    if not isinstance(pid, int) or pid <= 0:
         return False
     try:
         if sys.platform == "win32":
@@ -436,7 +441,7 @@ class GitCommitGateway:
         return result
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change + 红蓝发现1 rules_integrity）。
 
         P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
@@ -445,11 +450,13 @@ class GitCommitGateway:
         P2-T7: domain_doc 重生（commit depgraph.db 后自动重生域 .md/.mmd 制品，治手工生成漂移）。
         P2-T8: id_uniqueness 兜底（GATE-ID-UNIQ post-compensation，commit .pre-commit-config.yaml 后重校 hook id 唯一性，非阻断报告落盘，兜底 --no-verify 绕过）。
         P2-T9: vocab_change 纠偏（GATE-VOCAB-CHANGE，commit ttl_vocabulary.yaml 后自动重判所有 docs/*.md 的 ttl，治词表变更后 ttl 漂移）。
+        红蓝发现1: rules_integrity 基线同步（GATE-RULES-INTEGRITY，commit RULES_MANIFEST 文件后自动 --register 重注册本地 golden hash 基线，治合法 commit 后 C 层误报 TAMPERED）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
+        self._reconciliation_registry.register(make_rules_integrity_reconciler(self))
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
@@ -570,6 +577,16 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.SCRIPT_INTEGRITY_VIOLATION,
                 message=f"受保护脚本完整性校验失败: {integrity_detail}",
+            )
+
+        # 中文 aliases 门禁（红蓝对抗修复2）：检测 capability_canonical_file_registry.yaml
+        # 的 aliases 字段是否含 CJK 字符——禁堆中文同义词 alias 裁定的代码强制。
+        # gateway 内嵌校验，--no-verify 绕不过（对标 _check_ssot_canonical 模式）。
+        aliases_passed, aliases_detail = self._check_capability_aliases(existing)
+        if not aliases_passed:
+            return CommitResult(
+                status=CommitStatus.NAMING_VIOLATION,
+                message=f"中文 aliases 违规: {aliases_detail}",
             )
 
         # 追加 GW 标记
@@ -1138,6 +1155,49 @@ class GitCommitGateway:
             return True, "no protected scripts in commit"
 
         import ast
+
+        def _has_substantial_body(func_node: ast.AST) -> bool:
+            """函数体是否含实质性语句（防空桩 def f(): pass / return []）。
+
+            红蓝对抗发现2治本：A 层原只校验模块级 name 存在，攻击者可保留 name 但
+            清空函数体（def _scan(): pass）绕过。本函数断言函数体含控制流/调用/
+            赋值/非空返回，空桩必被检出。真实检测函数（_scan_hook_ids 含 For，
+            _classify_duplicates 含 If，main 含 Assign+Call）均通过。
+            """
+            for stmt in func_node.body:
+                if isinstance(stmt, (ast.For, ast.While, ast.If, ast.With,
+                                     ast.Try, ast.AsyncFor, ast.AsyncWith)):
+                    return True
+                if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call):
+                    return True  # 函数调用语句
+                if isinstance(stmt, ast.Assign):
+                    return True  # 赋值语句
+                if isinstance(stmt, ast.Return) and stmt.value is not None:
+                    v = stmt.value
+                    if isinstance(v, ast.Constant) and v.value is None:
+                        continue  # return None 不算实质性
+                    if isinstance(v, (ast.List, ast.Tuple, ast.Set)):
+                        if len(getattr(v, "elts", [])) == 0:
+                            continue  # return [] / () / set() 不算实质性
+                        return True
+                    if isinstance(v, ast.Dict) and len(getattr(v, "keys", [])) == 0:
+                        continue  # return {} 不算实质性
+                    return True  # return result / return func() 算实质性
+            return False
+
+        def _assign_has_substantial_value(assign_node: ast.AST) -> bool:
+            """赋值是否含实质值（防空桩 _X = None / _X = ''）。
+
+            红蓝对抗发现2治本：_HOOK_ID_RE = None 保留 name 但正则被删空。
+            真实 _HOOK_ID_RE = re.compile(...) 的 value 是 Call，非 None，通过。
+            """
+            v = assign_node.value
+            if isinstance(v, ast.Constant) and v.value is None:
+                return False  # = None
+            if isinstance(v, ast.Constant) and v.value == "":
+                return False  # = ""
+            return True
+
         violations: list[str] = []
         for rel, anchors in to_check.items():
             script_path = self.project_root / rel
@@ -1157,18 +1217,28 @@ class GitCommitGateway:
                 )
                 continue
 
-            # 收集模块级定义的 name（FunctionDef/ClassDef/Assign/AnnAssign）
+            # 收集模块级 + 类内定义的 name（FunctionDef/ClassDef/Assign/AnnAssign）
+            # 红蓝对抗修复2 配套：integrity_anchors 现在保护类内方法（如
+            # GitCommitGateway._check_capability_aliases），原仅收集 tree.body
+            # 模块级 name，类内方法检测不到。扩展递归收集 ClassDef.body。
             defined_names: set[str] = set()
-            for node in tree.body:
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                    defined_names.add(node.name)
-                elif isinstance(node, ast.Assign):
-                    for tgt in node.targets:
-                        if isinstance(tgt, ast.Name):
-                            defined_names.add(tgt.id)
-                elif isinstance(node, ast.AnnAssign):
-                    if isinstance(node.target, ast.Name):
-                        defined_names.add(node.target.id)
+
+            def _collect_names(nodes: list) -> None:
+                for node in nodes:
+                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        defined_names.add(node.name)
+                    elif isinstance(node, ast.ClassDef):
+                        defined_names.add(node.name)
+                        _collect_names(node.body)  # 递归收集类内方法/常量
+                    elif isinstance(node, ast.Assign):
+                        for tgt in node.targets:
+                            if isinstance(tgt, ast.Name):
+                                defined_names.add(tgt.id)
+                    elif isinstance(node, ast.AnnAssign):
+                        if isinstance(node.target, ast.Name):
+                            defined_names.add(node.target.id)
+
+            _collect_names(tree.body)
 
             missing = [a for a in anchors if a not in defined_names]
             if missing:
@@ -1184,6 +1254,60 @@ class GitCommitGateway:
         return True, (
             f"protected script integrity check passed ({len(to_check)} scripts)"
         )
+
+    def _check_capability_aliases(self, files: list[str]) -> tuple[bool, str]:
+        """中文 aliases 门禁（红蓝对抗修复2）：检测 capability_canonical_file_registry.yaml
+        的 aliases 字段是否含 CJK 字符。
+
+        治本：禁堆中文同义词 alias 裁定（YAML 头部 alias 策略 + AGENTS.md）原本纯靠
+        文档约定，无代码强制——新 AI 可直接在 YAML 加中文 aliases，pre-commit/
+        GitCommitGateway 都不检测。本方法在 gateway 层内嵌 CJK 检测，--no-verify 绕不过。
+
+        仅当本次提交包含 registry YAML 时才检测（避免无关 commit 开销）。fail-open：
+        YAML 不可达/解析失败时跳过（不阻断 commit），与 _check_protected_script_integrity
+        的 fail-open 策略一致——避免 registry 文件损坏导致全项目 commit 瘫痪。
+        """
+        if not any(
+            f.replace("\\", "/").endswith("capability_canonical_file_registry.yaml")
+            for f in files
+        ):
+            return True, "capability aliases check skipped (registry not in commit)"
+        registry_path = (
+            self.project_root
+            / "docs"
+            / "01_policies_and_standards"
+            / "_registry"
+            / "catalogs"
+            / "capability_canonical_file_registry.yaml"
+        )
+        if not registry_path.exists():
+            return True, "capability aliases check skipped (registry not found)"
+        try:
+            import yaml
+
+            data = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            return True, f"capability aliases check skipped (YAML parse error: {e})"
+        if not isinstance(data, dict):
+            return True, "capability aliases check skipped (YAML not a dict)"
+        # CJK 检测正则：统一汉字 + 扩展A + 兼容汉字
+        cjk_re = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]")
+        violations: list[str] = []
+        for cap in data.get("capabilities", []) or []:
+            if not isinstance(cap, dict):
+                continue
+            cap_id = cap.get("capability_id", "<unknown>")
+            for alias in cap.get("aliases", []) or []:
+                if not isinstance(alias, str):
+                    continue
+                if cjk_re.search(alias):
+                    violations.append(
+                        f"capability '{cap_id}' alias '{alias}' 含 CJK 字符——"
+                        f"禁堆中文同义词 alias（见 YAML 头部 alias 策略）"
+                    )
+        if violations:
+            return False, "\n  ".join(violations)
+        return True, "capability aliases check passed (no CJK aliases)"
 
     # ------------------------------------------------------------------
     # 内部实现
