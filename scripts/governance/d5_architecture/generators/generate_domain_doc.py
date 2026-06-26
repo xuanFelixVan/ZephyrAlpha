@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G2: 从 depgraph.db nodes+edges 表生成指定域的 MD 文档(含模块清单+内嵌Mermaid依赖图)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -37,6 +38,7 @@ from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
+from _common import cleanup_stale_files
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
@@ -624,6 +626,16 @@ def main() -> None:
                     print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
                     success += 1
             print(f"\n共生成 {success}/{len(domain_ids)} 个域文档")
+            # 治本：清理残留文件（解决只增不删）
+            expected_docs = {
+                f"{numbering_map.get(did, 0):02d}_{did.replace('-', '_').lower()}.md"
+                for did in domain_ids if numbering_map.get(did, 0)
+            }
+            deleted = cleanup_stale_files(
+                output_dir, expected_docs, r'^\d{2}_d_(?!.*_architecture\.md$)[a-z0-9_]+\.md$'
+            )
+            if deleted:
+                print(f"[CLEANUP] 删除 {len(deleted)} 个残留文档: {deleted}")
         else:
             # 生成单个域的文档
             number = numbering_map.get(args.domain_id, 0)

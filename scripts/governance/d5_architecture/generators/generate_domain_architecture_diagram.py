@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph.db不存在→exit 1;域不存在→exit 2
 # [TESTS] tests/test_dm200910_generators.py
+# [TTL] task_bound
 """G10: 从 depgraph.db 为每个功能域生成ASCII架构图文档(可视化分层架构+依赖关系)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -37,6 +38,7 @@ from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
+from _common import cleanup_stale_files
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
@@ -638,6 +640,16 @@ def main() -> None:
                     print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
                     success += 1
             print(f"\n共生成 {success}/{len(domain_ids)} 个域架构图")
+            # 治本：清理残留文件（解决只增不删）
+            expected_arch = {
+                f"{numbering_map.get(did, 0):02d}_{did.replace('-', '_').lower()}_architecture.md"
+                for did in domain_ids if numbering_map.get(did, 0)
+            }
+            deleted = cleanup_stale_files(
+                output_dir, expected_arch, r'^\d{2}_d_[a-z0-9_]+_architecture\.md$'
+            )
+            if deleted:
+                print(f"[CLEANUP] 删除 {len(deleted)} 个残留架构图: {deleted}")
         else:
             number = numbering_map.get(args.domain_id, 0)
             content = generate_domain_architecture_diagram(args.domain_id, conn, number)
