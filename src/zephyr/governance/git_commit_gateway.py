@@ -79,7 +79,6 @@ from zephyr.governance.reconciliation_registry import (
     ReconciliationRegistry,
     make_manifest_reconciler,
     make_baseline_aware_reconciler,
-    make_ttl_reconciler,
     make_ghost_reconciler,
     make_path_tree_reconciler,
     make_working_docs_reconciler,
@@ -436,11 +435,10 @@ class GitCommitGateway:
         return result
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T4 ttl + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change）。
 
         P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
-        P2-T4: ttl 兜底（GATE-15 post-compensation，增量校验 committed .md）。
         P2-T5: ghost 对账（depgraph 对称漂移检测，删除 commit 触发 diagnose_depgraph）。
         P2-T6: working_docs 对账（_working/ 幽灵引用检测，删除 commit 触发归档，治 AI 工作文档堆积）。
         P2-T7: domain_doc 重生（commit depgraph.db 后自动重生域 .md/.mmd 制品，治手工生成漂移）。
@@ -452,7 +450,6 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
-        self._reconciliation_registry.register(make_ttl_reconciler(self))
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
         self._reconciliation_registry.register(make_domain_doc_reconciler(self))
@@ -564,15 +561,50 @@ class GitCommitGateway:
                 message=f"N-16 文件名唯一性校验失败: {naming_detail}",
             )
 
+        # 受保护脚本完整性校验（A 层纵深防御）：AST 锚点校验
+        # 治脚本自篡改缺口：检测脚本被改 → pre-commit + reconciler 两层防线同时失效
+        # gateway 内嵌校验，--no-verify 绕不过（对标 _check_ssot_canonical 模式）
+        integrity_passed, integrity_detail = self._check_protected_script_integrity(existing)
+        if not integrity_passed:
+            return CommitResult(
+                status=CommitStatus.SCRIPT_INTEGRITY_VIOLATION,
+                message=f"受保护脚本完整性校验失败: {integrity_detail}",
+            )
+
         # 追加 GW 标记
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
 
         try:
             with _GlobalCommitLock(self.project_root):
-                return self._commit_locked(session_id, existing, full_message, gw_marker)
+                result = self._commit_locked(session_id, existing, full_message, gw_marker)
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=str(e))
+
+        # Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）
+        # 治本：原设计在 _commit_locked.finally 内调度，reconciler 无法获取锁（死锁），
+        # 且 reconciler 裸调 _run_git commit 绕过 ttl 校验。移到锁外后 reconciler 经
+        # _commit_auto 统一入口，ttl 校验无法绕过。
+        if result.status == CommitStatus.OK:
+            try:
+                reconcile_results = self._reconciliation_registry.reconcile_for(
+                    existing, session_id
+                )
+                result.reconcile = reconcile_results
+                for rr in reconcile_results:
+                    if rr.action == "auto_committed":
+                        logger.info(
+                            "GitCommitGateway: post-commit reconcile auto-committed "
+                            "(session=%s): %s", session_id, rr.detail
+                        )
+                    elif rr.action == "warn":
+                        logger.warning(
+                            "GitCommitGateway: post-commit reconcile warning "
+                            "(session=%s): %s", session_id, rr.detail
+                        )
+            except Exception as e:
+                logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
+        return result
 
     def _is_git_tracked(self, rel_path: str) -> bool:
         """检查相对路径是否被 git 跟踪（case-insensitive pathspec）。
@@ -754,8 +786,10 @@ class GitCommitGateway:
             / "check_frontmatter_metadata.py"
         )
         if not check_script.exists():
-            # 校验脚本不存在时不阻断（防破坏性故障）
-            return True, f"check script not found: {check_script}"
+            # fail-closed：校验脚本缺失是异常状态，必须阻断
+            # 治本：原 fail-open 设计会让 ttl 校验在脚本缺失时完全失效，
+            # 违规 .md 可静默入库。脚本缺失说明环境损坏，应阻断而非放行。
+            return False, f"check script not found: {check_script}"
 
         cmd = [sys.executable, str(check_script)] + md_files
         # 文件数过多时用 --all-files 全量校验（避免 WinError 206 命令行过长）
@@ -1058,6 +1092,129 @@ class GitCommitGateway:
             return False, "\n".join(conflicts)
         return True, "naming uniqueness passed"
 
+    def _load_protected_scripts(self) -> dict[str, list[str]]:
+        """从 capability_canonical_file_registry.yaml 加载受保护脚本→锚点清单映射。
+
+        真源唯一：扫描所有 capability 条目，取有 integrity_anchors +
+        canonical_override 的，构建 rel_path → [anchor_names] 映射。
+        fail-open：YAML 不可达时回退硬编码（覆盖当前已知受保护脚本）。
+        与 _load_n16_exempt_names 一致的 fail-open 策略。
+        """
+        yaml_path = (
+            self.project_root / "docs" / "01_policies_and_standards"
+            / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
+        )
+        try:
+            import yaml
+            data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
+            result: dict[str, list[str]] = {}
+            for cap in data.get("capabilities", []) or []:
+                override = cap.get("canonical_override", "")
+                anchors = cap.get("integrity_anchors", [])
+                if override and isinstance(anchors, list) and anchors:
+                    cleaned = [
+                        str(a).strip() for a in anchors
+                        if isinstance(a, str) and str(a).strip()
+                    ]
+                    if cleaned:
+                        result[override] = cleaned
+            if result:
+                return result
+        except Exception:
+            pass
+        # fail-open 回退硬编码（当前唯一受保护脚本：GATE-ID-UNIQ 检测脚本）
+        # 同步提醒：新增受保护脚本时更新 YAML integrity_anchors + 此处回退值
+        return {
+            "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py": [
+                "_HOOK_ID_RE",
+                "_scan_hook_ids",
+                "_classify_duplicates",
+                "main",
+            ],
+        }
+
+    def _check_protected_script_integrity(self, files: list[str]) -> tuple[bool, str]:
+        """受保护脚本完整性校验（A 层纵深防御）：AST 锚点校验。
+
+        治脚本自篡改缺口：如果 AI 直接改检测脚本
+        (check_precommit_id_uniqueness.py)，把检测逻辑删掉——pre-commit hook 和
+        reconciler 共用同一脚本，两层防线会同时失效。本方法在 commit 前用 AST 校验
+        受保护脚本的关键结构锚点（函数/常量）是否仍在，--no-verify 绕不过
+        （gateway 内嵌校验，在 git commit 之前执行，对标 _check_ssot_canonical 模式）。
+
+        锚点清单真源：capability_canonical_file_registry.yaml 的 integrity_anchors
+        字段（_load_protected_scripts 读取）。fail-open：YAML 不可达时回退硬编码。
+
+        自指悖论（残留缺口，诚实记录）：gateway 本身能被改，但改 gateway 触发
+        gate-triple-align/gate-reg-bl 等门禁，且 [SAFETY] M 受保护。C 层
+        (validate_rules_integrity golden hash) 是第三道独立兜底，覆盖脚本全内容。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        protected_map = self._load_protected_scripts()
+
+        # 筛选本次 commit 涉及的受保护脚本
+        to_check: dict[str, list[str]] = {}
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if rel in protected_map:
+                to_check[rel] = protected_map[rel]
+
+        if not to_check:
+            return True, "no protected scripts in commit"
+
+        import ast
+        violations: list[str] = []
+        for rel, anchors in to_check.items():
+            script_path = self.project_root / rel
+            if not script_path.exists():
+                # 受保护脚本被删除 = 检测能力失效（pre-commit + reconciler 同时失效）
+                violations.append(
+                    f"{rel}: 受保护脚本被删除——pre-commit + reconciler 两层防线"
+                    f"将同时失效。修复：恢复脚本，或先迁移门禁到新脚本再删除。"
+                )
+                continue
+            try:
+                source = script_path.read_text(encoding="utf-8")
+                tree = ast.parse(source, filename=rel)
+            except (OSError, SyntaxError) as e:
+                violations.append(
+                    f"{rel}: 解析失败 ({e})——无法校验完整性锚点，禁止提交"
+                )
+                continue
+
+            # 收集模块级定义的 name（FunctionDef/ClassDef/Assign/AnnAssign）
+            defined_names: set[str] = set()
+            for node in tree.body:
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    defined_names.add(node.name)
+                elif isinstance(node, ast.Assign):
+                    for tgt in node.targets:
+                        if isinstance(tgt, ast.Name):
+                            defined_names.add(tgt.id)
+                elif isinstance(node, ast.AnnAssign):
+                    if isinstance(node.target, ast.Name):
+                        defined_names.add(node.target.id)
+
+            missing = [a for a in anchors if a not in defined_names]
+            if missing:
+                violations.append(
+                    f"{rel}: 缺失完整性锚点 {missing}——"
+                    f"检测脚本关键结构被删除/重命名，pre-commit + reconciler 两层防线"
+                    f"将同时失效。修复：恢复被删锚点，或同步更新 YAML integrity_anchors"
+                    f"（需人工裁定锚点变更合理性）。"
+                )
+
+        if violations:
+            return False, "\n  ".join(violations)
+        return True, (
+            f"protected script integrity check passed ({len(to_check)} scripts)"
+        )
+
     # ------------------------------------------------------------------
     # 内部实现
     # ------------------------------------------------------------------
@@ -1196,28 +1353,8 @@ class GitCommitGateway:
                             stash_ref=stash_ref,
                             stash_kept=True,
                         )
-            # Post-commit 漂移对账（P2-T1：声明式 ReconciliationRegistry，替代硬编码 _post_commit_reconcile）
-            # 斩断 --no-verify 导致的 drift 循环：每个被绕过的 GATE 注册一个 reconciler，
-            # commit 完成后由 registry 统一调度（trigger 命中即执行，异常降级为 warn 不阻断）
-            if result.status == CommitStatus.OK:
-                try:
-                    reconcile_results = self._reconciliation_registry.reconcile_for(
-                        files, session_id
-                    )
-                    result.reconcile = reconcile_results
-                    for rr in reconcile_results:
-                        if rr.action == "auto_committed":
-                            logger.info(
-                                "GitCommitGateway: post-commit reconcile auto-committed "
-                                "(session=%s): %s", session_id, rr.detail
-                            )
-                        elif rr.action == "warn":
-                            logger.warning(
-                                "GitCommitGateway: post-commit reconcile warning "
-                                "(session=%s): %s", session_id, rr.detail
-                            )
-                except Exception as e:
-                    logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
+            # Post-commit reconciler 调度已移至 commit() 锁释放后（见 commit() 方法末尾）
+            # 治本：reconciler 在锁内无法获取锁 auto-commit（死锁），移到锁外经 _commit_auto 统一入口
             # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 →
             # 写异步触发记录（毫秒级，锁内）→ 消费线程在锁外跑 TIER_1 对抗。
             # 就位+门禁激活：始终 emit；门禁在消费时检查。
@@ -1450,6 +1587,120 @@ class GitCommitGateway:
                 os.remove(msg_path)
             except OSError:
                 pass
+
+    def _commit_auto(
+        self,
+        session_id: str,
+        files: list[str],
+        message: str,
+    ) -> CommitResult:
+        """reconciler auto-commit 唯一入口（锁 + ttl 校验 + commit，不触发 reconciler）。
+
+        治本：5 个 reconciler 的 auto-commit 统一经此入口，ttl 校验无法绕过。
+        原设计 reconciler 裸调 ``_run_git(["git","commit",...])`` 绕过 commit() 全部
+        保护（校验/锁/stash），是 TTL 防御的最大盲区。
+
+        与 ``commit()`` 的区别：
+        - 只跑 ttl 校验（机器生成文件不需 completes_when/promote/ssot/naming 校验）
+        - 不触发 reconciler（避免递归：commit→reconciler→_commit_auto→reconciler）
+        - 不做 stash 隔离（reconciler 在锁外运行，工作区只有机器生成文件）
+        - message 自动追加 [GW:{session_id}:auto] 标记
+
+        真源：本方法是 reconciler auto-commit 的唯一合法入口（AGENTS.md 注册）。
+        禁止 reconciler 裸调 ``_run_git(["git","commit",...])``。
+
+        Args:
+            session_id: AI session 标识。
+            files: 本次 auto-commit 的文件绝对路径列表。
+            message: commit message（不含 GW 标记，自动追加 [GW:{sid}:auto]）。
+
+        Returns:
+            CommitResult。
+        """
+        if not files:
+            return CommitResult(
+                status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list"
+            )
+        if not session_id:
+            session_id = "unknown"
+
+        abs_files = [
+            os.path.abspath(f) if os.path.isabs(f) else str(self.project_root / f)
+            for f in files
+        ]
+        # 过滤不存在且未 git 跟踪的文件（与 commit() 一致）
+        existing: list[str] = []
+        for f in abs_files:
+            if os.path.isfile(f):
+                existing.append(f)
+            else:
+                rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                if self._is_git_tracked(rel):
+                    existing.append(f)
+        if not existing:
+            return CommitResult(
+                status=CommitStatus.NOTHING_TO_COMMIT,
+                message="no existing or tracked files to auto-commit",
+            )
+
+        # ttl 统一拦截点（机器生成的 .md 也要有合法 ttl）
+        ttl_passed, ttl_detail = self._check_frontmatter_ttl(existing)
+        if not ttl_passed:
+            return CommitResult(
+                status=CommitStatus.METADATA_VIOLATION,
+                message=f"frontmatter ttl 校验失败（auto-commit）: {ttl_detail}",
+            )
+
+        # 追加 GW auto 标记
+        gw_marker = f"[GW:{session_id}:auto]"
+        full_message = f"{message}\n\n{gw_marker}"
+
+        try:
+            with _GlobalCommitLock(self.project_root):
+                pathspec_file = self._write_pathspec_file(existing)
+                try:
+                    # git add（pathspec-from-file 避免 WinError 206）
+                    add_result = self._run_git(
+                        ["git", "add", f"--pathspec-from-file={pathspec_file}"]
+                    )
+                    if add_result.returncode != 0:
+                        return CommitResult(
+                            status=CommitStatus.COMMIT_FAILED,
+                            message=f"git add failed (auto-commit): {add_result.stderr.strip()}",
+                        )
+                    # 检查 staged 变更
+                    diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+                    if diff_result.returncode == 0:
+                        return CommitResult(
+                            status=CommitStatus.NOTHING_TO_COMMIT,
+                            message="no staged changes in auto-commit files",
+                        )
+                    # commit（复用 _commit_with_file_message，统一执行点）
+                    commit_hash, commit_err = self._commit_with_file_message(
+                        pathspec_file, full_message
+                    )
+                    if commit_hash is None:
+                        return CommitResult(
+                            status=CommitStatus.COMMIT_FAILED,
+                            message=f"git commit failed (auto-commit): {commit_err}",
+                        )
+                    os.environ[_GATEWAY_ENV] = "1"
+                    logger.info(
+                        "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
+                        commit_hash, gw_marker, len(existing),
+                    )
+                    return CommitResult(
+                        status=CommitStatus.OK,
+                        message=f"auto-committed {len(existing)} files",
+                        commit_hash=commit_hash,
+                    )
+                finally:
+                    try:
+                        os.remove(pathspec_file)
+                    except OSError:
+                        pass
+        except GatewayError as e:
+            return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=str(e))
 
     def _write_pathspec_file(self, abs_files: list[str]) -> str:
         """将文件路径写入临时 pathspec 文件（相对路径，每行一个）。

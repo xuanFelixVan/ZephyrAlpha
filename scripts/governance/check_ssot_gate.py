@@ -14,8 +14,17 @@
 # [TESTS] tests/test_ssot_gate.py
 """GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。
 
-检测 staged 新增 .py 文件是否声明了已有 module_path。
-真源是文件头部 [MODULE] 字段，反查通过 capability_lookup 实时扫描磁盘。
+检测 staged 新增 .py 文件是否违反 SSoT（两层硬阻断）：
+  硬层 1（check_ssot_conflicts）：同 module_path 硬碰撞——[MODULE] 头字段精确匹配。
+  硬层 2（check_capability_duplicates）：basename 撞 capability_id/alias →
+    conflicting duplicate（同蓝图多实现）。
+
+真源是文件头部 [MODULE] 字段 + capability_lookup 派生的 duplicates 状态，
+反查通过 capability_lookup 实时扫描磁盘。
+
+L2/L3 共享检测逻辑（治本 2a）：检测核心收拢到 capability_lookup 的
+check_ssot_conflicts / check_capability_duplicates，本脚本只负责获取 staged
+新增 .py 和格式化输出。advisory（软层）由 L2 gateway 写报告，L3 只阻断 hard 信号。
 
 GitCommitGateway.commit() 内嵌的 _check_ssot_canonical 是主防线
 （GitCommitGateway 用 --no-verify 绕过 pre-commit）。
@@ -29,7 +38,7 @@ GitCommitGateway.commit() 内嵌的 _check_ssot_canonical 是主防线
 
 Exit codes:
     0 = PASS（无冲突或无新增 .py 文件）
-    1 = BLOCK（检测到 module_path 冲突）
+    1 = BLOCK（检测到 module_path 冲突 或 能力重复）
     2 = ERROR（脚本异常）
 """
 from __future__ import annotations
@@ -94,6 +103,20 @@ def main() -> int:
                 file=sys.stderr,
             )
         print("  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）", file=sys.stderr)
+        print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
+        return 1
+
+    # 硬层 2：能力重复（basename 撞 capability_id/alias → conflicting duplicate）
+    # 治本（2a 共享方法）：检测逻辑唯一真源收拢到
+    # capability_lookup.check_capability_duplicates，L2 gateway 已调用同一方法。
+    # L3 只消费 hard 信号阻断；advisory 由 L2 gateway 写报告（L3 是双保险路径，保持精简）。
+    dups = lookup.check_capability_duplicates(new_py_files)
+    hard_dups = [d for d in dups if d.hard]
+    if hard_dups:
+        print("GATE-SSOT: 能力重复——新增文件与已有能力构成同蓝图多实现:", file=sys.stderr)
+        for d in hard_dups:
+            print(f"  {d.rel_path}: {d.detail}", file=sys.stderr)
+        print("  修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit", file=sys.stderr)
         print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
         return 1
 

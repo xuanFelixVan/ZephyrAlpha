@@ -156,6 +156,7 @@ result = await gateway.full_scan(user_text, llm_response)
 - 审计脚本质量见 [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md)（SCRIPT-QUALITY-001）
 - 产出物规格化见 [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)（GOV-DOC-011）——`.md` 文档 frontmatter 标准字段：`module_id, title, version, layer, depends_on, tags, **ttl（GATE-15 强制校验）**`。字段定义和 doc_type 映射见 trae_030；frontmatter 不可删字段完整清单见 [`onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)「绝对不可删的 15 类」
 - **所有 `.md` 文档 frontmatter MUST 含 `ttl` 字段**——2 个合法值：`permanent`（永久）/`task_bound`（任务绑定，完成即删）。判定方法：在永久区路径（`docs/01_policies/`、`docs/02_enterprise_architecture/`、`docs/03_modules/`、`docs/08_knowledge/`）→ `permanent`；否则 → `task_bound`（默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/README.md) 临时区）。详见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree`。
+- **TTL 校验统一拦截点（真源唯一 / 向内收）**——[`GitCommitGateway._check_frontmatter_ttl()`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 是 ttl 校验唯一真源方法（调用 [`check_frontmatter_metadata.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_frontmatter_metadata.py) subprocess）。两个合法调用入口：① [`commit()`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py)（用户/AI 发起提交，锁前 fail-fast）；② [`_commit_auto()`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py)（reconciler 自动提交，锁前 fail-fast）。**reconciler 禁止裸调 `_run_git(["git", "commit", ...])` 绕过 `_commit_auto`**——原 5 个 reconciler 的裸 commit 已全部改调 `_commit_auto`（锁 + ttl 校验 + GW 标记），ttl 校验无法绕过。原 `make_ttl_reconciler`（L3 post-commit 冗余层）已删除——它与 L2 调用同一脚本，非独立防线，违反"真源唯一"原则。
 - **`docs/_working/` 新增 .md 文件 MUST 在 frontmatter 声明 `completes_when` 字段**（可验证的完成条件），GitCommitGateway commit 时自动拦截缺失该字段的新文档；规则真源见 [_working/README.md §五](file:///d:/ZephyrAlpha/docs/_working/README.md)。
   - 自动归档由 [GATE-WORKING-DOCS reconciler](file:///d:/ZephyrAlpha/src/zephyr/governance/reconciliation_registry.py) post-commit 事件驱动（capability_id：`working_docs_ghost_ref_archiver`，反查用法见 §9）。
 - **读取 `docs/_working/` 下任何 .md 前 MUST 验证文档引用的脚本/YAML/blueprint_id 是否仍存在**（防幽灵引用漂移），细则见 [_working/README.md §六](file:///d:/ZephyrAlpha/docs/_working/README.md)。
@@ -192,6 +193,7 @@ result = await gateway.full_scan(user_text, llm_response)
 - 不要跳过 `CapabilityRegistry.register()`
 - 不要修改 `AiAuditLogger` 的已有日志
 - 不要创建新模块而不注册到大脑
+- **reconciler 不要裸调 `_run_git(["git", "commit", ...])`**——必须经 [`_commit_auto()`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 统一入口（锁 + ttl 校验 + GW 标记），否则 ttl 防御被绕过（详见 §7 TTL 校验统一拦截点）
 
 ## 9. 新模块接入规则
 
@@ -207,6 +209,12 @@ result = await gateway.full_scan(user_text, llm_response)
    ```
    真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（能力索引，仅声明 capability_id/aliases/description；canonical_file/duplicates/removed_duplicates 全部由 CapabilityLookup 从磁盘头部+git log 自动派生）。已存在的能力 → 扩展现有 canonical 文件，禁止新建重复实现。
    **aliases 只放英文标识符**（函数名/常量，如 `REPO_ROOT`/`load_blueprint_path`）；中文变体由 `find()` 的 token 包含匹配（CJK ≥3 字符公共子串）自然处理，**禁止在 YAML 堆中文同义词 alias**（反模式，见注册表顶部 alias 策略）。
+
+   **commit 时自动检测能力重复**（事件驱动兜底，治本 2b）：即使 AI 忘记执行上方手动查重，GitCommitGateway 在 commit 时会自动调用 [`check_capability_duplicates`](file:///d:/ZephyrAlpha/src/zephyr/governance/capability_lookup.py) 检测新增 `.py` 文件是否参与"同能力多实现"：
+   - **硬阻断**（hard）：新文件 basename 撞已有 capability_id/alias 且 relation=conflicting（同蓝图多实现）→ commit 被 BLOCK，修复指令见报错信息。
+   - **软提醒**（advisory）：sibling（异蓝图）/模块名语义相似 → 不阻断，写 JSON 报告至 `.runtime/reconcile_reports/cap_dup_advisory_*.json` 供周期审计。
+   - L3 pre-commit hook（[`check_ssot_gate.py`](file:///d:/ZephyrAlpha/scripts/governance/check_ssot_gate.py)）作为双保险，绕过 gateway 直接 `git commit` 时同样阻断 hard 信号。
+   - 检测逻辑唯一真源：`capability_lookup.check_capability_duplicates`（L2/L3 共用，避免两份实现漂移）。
 1. 构造 CapabilityCard 并注册到 CapabilityRegistry
 2. 在 `data/capability_cards/` 下创建对应的 YAML
 3. 如果有自动化工作，创建 WorkDAG 并注册到 WorkOrchestrator
