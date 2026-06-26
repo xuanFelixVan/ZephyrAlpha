@@ -82,6 +82,7 @@ from zephyr.governance.reconciliation_registry import (
     make_ttl_reconciler,
     make_ghost_reconciler,
     make_path_tree_reconciler,
+    make_working_docs_reconciler,
 )
 
 logger = logging.getLogger(__name__)
@@ -120,6 +121,7 @@ class CommitStatus(str, Enum):
     PROMOTION_BLOCKED = "PROMOTION_BLOCKED"  # 永久区新文件未获 --allow-promote 批准
     METADATA_VIOLATION = "METADATA_VIOLATION"  # .md 文件 frontmatter ttl 校验失败
     SSOT_VIOLATION = "SSOT_VIOLATION"  # 新增 .py 声明了已有 module_path（绕过 scaffold 创建）
+    NAMING_VIOLATION = "NAMING_VIOLATION"  # N-16 文件名唯一性校验失败（--no-verify 补偿）
 
 
 class GatewayError(RuntimeError):
@@ -383,18 +385,20 @@ class GitCommitGateway:
         return result
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T4 ttl + P2-T5 ghost）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T4 ttl + P2-T5 ghost + P2-T6 working_docs）。
 
         P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
         P2-T4: ttl 兜底（GATE-15 post-compensation，增量校验 committed .md）。
         P2-T5: ghost 对账（depgraph 对称漂移检测，删除 commit 触发 diagnose_depgraph）。
+        P2-T6: working_docs 对账（_working/ 幽灵引用检测，删除 commit 触发归档，治 AI 工作文档堆积）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_ttl_reconciler(self))
         self._reconciliation_registry.register(make_ghost_reconciler(self))
+        self._reconciliation_registry.register(make_working_docs_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -483,6 +487,15 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.SSOT_VIOLATION,
                 message=ssot_detail,
+            )
+
+        # GATE-11/N-16 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用
+        # N-16 是文件名项目内唯一性硬阻断，必须 commit 前拦截（防止同名漂移入历史）
+        naming_passed, naming_detail = self._check_naming_uniqueness(existing)
+        if not naming_passed:
+            return CommitResult(
+                status=CommitStatus.NAMING_VIOLATION,
+                message=f"N-16 文件名唯一性校验失败: {naming_detail}",
             )
 
         # 追加 GW 标记
@@ -660,7 +673,61 @@ class GitCommitGateway:
             "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
             + "\n  ".join(violation_lines)
             + "\n  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）"
+            + "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
+            + " 或 reg.get(\"capability_id\") 反查真源文件路径"
         )
+        return False, detail
+
+    def _check_naming_uniqueness(self, files: list[str]) -> tuple[bool, str]:
+        """GATE-11/N-16 等效校验：检查文件名项目内唯一性。
+
+        弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
+        N-16 是项目级唯一性检查——当本次 commit 涉及 tests/ 或 docs/ 下文件时，
+        调用 check_naming_convention.py --scan 做 N-16 检测。
+
+        真源：trae_028_doc_structure_naming.yaml v1.4.0 §gov_doc_003_filename_uniqueness
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        # 只在本次 commit 涉及 tests/ 或 docs/ 下文件时才检查（性能优化）
+        involves_naming_dirs = any(
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/").startswith(
+                ("tests/", "docs/")
+            )
+            for f in files
+        )
+        if not involves_naming_dirs:
+            return True, "no files in tests/ or docs/"
+
+        check_script = (
+            self.project_root
+            / "scripts"
+            / "governance"
+            / "d3_metadata"
+            / "check_naming_convention.py"
+        )
+        if not check_script.exists():
+            # 校验脚本不存在时不阻断（fail-open，防破坏性故障）
+            return True, f"check script not found: {check_script}"
+
+        # 调用 --scan 模式，N-16 不受 --warn-only 影响会硬阻断
+        cmd = [sys.executable, str(check_script), "--scan", "--warn-only"]
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=str(self.project_root),
+        )
+        if result.returncode == 0:
+            return True, "naming uniqueness passed"
+        # exit 1 = 有 N-16 违规（硬阻断，不受 --warn-only 影响）
+        output = result.stdout + result.stderr
+        n16_lines = [line for line in output.splitlines() if "N-16" in line]
+        detail = "\n".join(n16_lines) if n16_lines else output.strip() or "unknown naming violation"
         return False, detail
 
     # ------------------------------------------------------------------

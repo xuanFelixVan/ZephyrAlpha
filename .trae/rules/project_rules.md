@@ -72,6 +72,7 @@
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
 6. **创建任何代码/脚本/模块前** → MUST 读 [trae_056_module_creation_workflow.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml)（TRAE-056 完整工作流程：冷启动→搜索→设计态→准入→蓝图→创建→路径审查→头部锚定→启动设计→注册同步→对齐验证，11个阶段）
+7. **查 CapabilityLookup 确认能力是否已存在**（防重复造轮子）→ `from zephyr.governance.capability_lookup import CapabilityLookup; reg=CapabilityLookup(); reg.find("关键词")`（详见 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) §9；真源：[capability_canonical_file_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)）
 ```
 
 | # | 绝对禁止 | 后果 |

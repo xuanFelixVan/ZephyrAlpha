@@ -94,6 +94,7 @@ def main() -> int:
                 file=sys.stderr,
             )
         print("  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）", file=sys.stderr)
+        print("  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>", file=sys.stderr)
         return 1
 
     return 0

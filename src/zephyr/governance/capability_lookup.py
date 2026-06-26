@@ -70,22 +70,12 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 
 # ---------------------------------------------------------------------------
 # 路径常量
 # ---------------------------------------------------------------------------
-
-def _find_repo_root() -> Path:
-    """从本文件位置推导项目根目录（src/zephyr/governance/capability_lookup.py → 上溯）。"""
-    current = Path(__file__).resolve()
-    for parent in current.parents:
-        if (parent / "src" / "zephyr" / "__init__.py").exists():
-            return parent
-    # 兜底：本文件上溯 4 级（src/zephyr/governance/ → repo root）
-    return Path(__file__).resolve().parents[3]
-
-
-REPO_ROOT: Path = _find_repo_root()
 REGISTRY_YAML: Path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
 SCAN_ROOT: Path = REPO_ROOT / "src" / "zephyr"
 HEADER_SCAN_LIMIT = 30  # 头部字段都在前 30 行，只读这么多省时间
@@ -731,6 +721,8 @@ class CapabilityLookup:
         供未来 create-time 门禁调用：新建/修改文件前查询本方法，若返回 is_canonical=False
         且 relation=conflicting，门禁应阻断并要求 Owner 裁定。
         """
+        if not file_path or not isinstance(file_path, str):
+            return None
         norm = _normalize_path(file_path)
         for cap in self._capabilities:
             if cap.canonical_file == norm:
