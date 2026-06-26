@@ -91,8 +91,8 @@ capabilities:
     description: >-
       Session 交接包自动生成与恢复。解决"打开 IDE 不知道上回做到哪了"的零记忆重启痛点。
       依据：MOD-TASK_SYSTEM v0.3.2 + AGENTS.md §5.1 零记忆重启。12 importers，SQLite
-      handoffs 表。canonical = src/zephyr/shared/session_continuity.py（auto 派生：
-      basename session_continuity 匹配 alias，单候选）。
+      handoffs 表。canonical 由 auto 派生：basename session_continuity 匹配 alias，
+      多候选按成熟度排序（shared_services 版 production 胜）。
     # auto 派生漏掉的语义 sibling（basename handoff_manager 不匹配任何 alias）：
     duplicates_manual:
       - path: src/zephyr/behavioral_audit/handoff_manager.py
@@ -172,6 +172,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: llm_security_gateway
+    canonical_override: src/zephyr/security/llm_defense/llm_security/gateway.py
     aliases:
       - LSG
       - LSGSecurityGateway
@@ -182,7 +183,8 @@ capabilities:
     description: >-
       LLM 安全网关（L0-L8 十层纵深防御）。所有 LLM 调用必须经过 LSGSecurityGateway
       进行安全扫描（输入/输出/Agent 动作），禁止裸调 LLM API。对标 RULE-LSG-001。
-      canonical = src/zephyr/security/llm_defense/llm_security/gateway.py。
+      canonical = src/zephyr/security/llm_defense/llm_security/gateway.py（basename gateway
+      不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明）。
       412 个测试覆盖，100% 通过率。
 
   # --------------------------------------------------------------------------

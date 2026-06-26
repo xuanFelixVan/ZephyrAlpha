@@ -50,15 +50,19 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
-# ── 裸调 LLM API 方法签名 ──
-_BARE_LLM_METHODS = {
-    # OpenAI: client.chat.completions.create(...)
+# ── 裸调 LLM 方法签名（用于 exec/eval 字符串扫描） ──
+_BARE_LLM_SIGNATURES = [
     "chat.completions.create",
-    # Anthropic: client.messages.create(...)
     "messages.create",
-    # litellm: litellm.completion(...)
-    "completion",
-}
+    "litellm.completion",
+    "litellm.acompletion",
+    "openai.OpenAI",
+    "openai.AsyncOpenAI",
+    "anthropic.Anthropic",
+    "anthropic.AsyncAnthropic",
+    "ChatOpenAI",
+    "ChatAnthropic",
+]
 
 # ── 裸调 LLM 客户端创建（被视作"即将裸调"） ──
 _BARE_LLM_CLIENTS = {
@@ -123,14 +127,16 @@ def _find_bare_llm_calls(tree: ast.AST) -> list[tuple[int, str]]:
                 cur = cur.value
             if isinstance(cur, ast.Name):
                 chain.append(cur.id)
-            # 匹配 2 级后缀: xxx.chat.completions.create → ["create", "completions", "chat", "xxx"]
+            # 匹配 3 级后缀: xxx.chat.completions.create → ["create", "completions", "chat", "xxx"]
             if len(chain) >= 3:
-                suffix3 = ".".join(reversed(chain[:3]))  # e.g. "chat.completions.create"
-                if suffix3 in _BARE_LLM_METHODS:
+                suffix3 = ".".join(reversed(chain[:3]))
+                if suffix3 in ("chat.completions.create", "messages.create"):
                     violations.append((node.lineno, f"裸调 {suffix3}()"))
                     continue
-                suffix2 = ".".join(reversed(chain[:2]))  # e.g. "messages.create"
-                if suffix2 in _BARE_LLM_METHODS:
+            # 匹配 2 级后缀: xxx.messages.create
+            if len(chain) >= 2:
+                suffix2 = ".".join(reversed(chain[:2]))
+                if suffix2 == "messages.create":
                     violations.append((node.lineno, f"裸调 {suffix2}()"))
                     continue
 
@@ -151,7 +157,45 @@ def _find_bare_llm_calls(tree: ast.AST) -> list[tuple[int, str]]:
                         violations.append((node.lineno, f"裸调 litellm.{node.func.attr}()"))
                         continue
 
+            # 4. 检测 exec/eval/compile 字符串参数中的裸调 LLM API
+            if isinstance(node.func, ast.Name) and node.func.id in ("exec", "eval", "compile"):
+                if node.args:
+                    first_arg = node.args[0]
+                    arg_str = _get_string_value(first_arg)
+                    if arg_str:
+                        for sig in _BARE_LLM_SIGNATURES:
+                            if sig in arg_str:
+                                violations.append(
+                                    (node.lineno,
+                                     f"exec/eval/compile 包裹裸调 LLM API（检测到 {sig}）")
+                                )
+                                break
+                continue
+
+        # 5. 全局扫描：任何字符串常量中含裸调 LLM API → 疑似 exec 变量赋值
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            s = node.value
+            for sig in _BARE_LLM_SIGNATURES:
+                if sig in s:
+                    violations.append(
+                        (node.lineno,
+                         f"字符串常量含裸调 LLM API（检测到 {sig}）——疑似 exec/eval 变量赋值")
+                    )
+                    break
+
     return violations
+
+
+def _get_string_value(node: ast.expr) -> str | None:
+    """安全提取 AST 节点的字符串值（支持常量 + 简单拼接）."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = _get_string_value(node.left)
+        right = _get_string_value(node.right)
+        if left is not None and right is not None:
+            return left + right
+    return None
 
 
 def _is_exempted(file_path: Path) -> bool:
