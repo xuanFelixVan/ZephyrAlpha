@@ -59,6 +59,10 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, str(Path(_REPO_ROOT) / "src"))
 from zephyr.governance import depgraph_schema  # noqa: E402
 
+# READONLY_TABLES 真源在 sync_yaml_to_depgraph.py（创建只读触发器的地方），
+# 此处动态导入消除硬编码副本，防止真源变更后漂移（红蓝对抗修复-严重1）
+from sync_yaml_to_depgraph import READONLY_TABLES  # noqa: E402
+
 
 def parse_ddl_columns(ddl: str) -> list[str]:
     """从 CREATE TABLE DDL 文本中解析列名列表（跳过表级约束 PRIMARY/FOREIGN/CHECK/UNIQUE/CONSTRAINT）。"""
@@ -140,12 +144,7 @@ def check_ddl_columns(conn, issues: list) -> None:
 
 def check_readonly_triggers(conn, issues: list) -> None:
     """校验2：只读触发器存在性（READONLY_TABLES 9 张表 × 3 触发器）。"""
-    readonly_tables = [
-        "gates", "field_vocabularies", "registries", "cross_registry_rules",
-        "hard_boundaries", "business_streams", "infrastructure_components",
-        "model_capabilities", "blueprint_links",
-    ]
-    for table in readonly_tables:
+    for table in READONLY_TABLES:
         for action in ("insert", "update", "delete"):
             trig_name = f"readonly_{table}_{action}"
             cursor = conn.execute(

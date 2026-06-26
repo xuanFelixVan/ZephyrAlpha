@@ -38,35 +38,38 @@ if sys.stderr.encoding != "utf-8":
 
 import yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parents[4]  # 仓库根 d:\ZephyrAlpha
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-SYS_MASTER_PATH = PROJECT_ROOT / "docs" / "03_modules" / "_sys_master" / "blueprint.md"
-MOD_MASTER_PATH = PROJECT_ROOT / "docs" / "03_modules" / "_master_blueprint" / "blueprint.md"
-PROJECT_RULES = PROJECT_ROOT / ".trae" / "rules" / "project_rules.md"
-BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
-MODULE_REGISTRY = PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
-GATE_REGISTRY = PROJECT_ROOT / "src" / "zephyr" / "gates" / "_registry.yaml"
-CROSSCHECK_SCRIPT = PROJECT_ROOT / "scripts" / "governance" / "crosscheck_sys_master_deps.py"
+# 固定配置文件路径（非蓝图，不漂移）
+PROJECT_RULES = REPO_ROOT / ".trae" / "rules" / "project_rules.md"
+BLUEPRINT_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
+MODULE_REGISTRY = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
+GATE_REGISTRY = REPO_ROOT / "src" / "zephyr" / "gates" / "_registry.yaml"
+CROSSCHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "crosscheck_sys_master_deps.py"
 
 
-def _load_valid_progress_values() -> set[str]:
-    """从 progress_vocabulary.yaml 加载合法 construction_progress 值（SSoT 唯一真源）。
+def load_blueprint_path(module_id: str) -> Path | None:
+    """从 blueprint_registry.yaml（SSoT 派生）查询蓝图磁盘路径，不硬编码。
 
-    trae_060 §206 裁定 construction_progress 多真源 MUST 收敛到本词表。
-    注意：phase_0_complete（笔误）已迁移至 phase_0_completed，仅加载 values 不含 deprecated_values。
+    真源链：blueprint.md frontmatter → sync_registry_from_blueprints.py → blueprint_registry.yaml
+    蓝图改名只需改 frontmatter + 重新 sync，本模块自动跟随，消除连字符/下划线漂移。
     """
-    vocab = (
-        PROJECT_ROOT
-        / "docs"
-        / "01_policies_and_standards"
-        / "_registry"
-        / "vocabularies"
-        / "progress_vocabulary.yaml"
-    )
-    if not vocab.exists():
-        return set()
-    data = yaml.safe_load(vocab.read_text(encoding="utf-8")) or {}
-    return {str(v.get("value")) for v in data.get("values", []) if isinstance(v, dict)}
+    if not BLUEPRINT_REGISTRY.exists():
+        return None
+    try:
+        reg = yaml.safe_load(BLUEPRINT_REGISTRY.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return None
+    for bp in reg.get("blueprints", []):
+        if bp.get("module_id") == module_id and bp.get("file_path"):
+            # registry scope=03_modules/，物理在 docs/03_modules/，补 docs 前缀
+            return REPO_ROOT / "docs" / bp["file_path"]
+    return None
+
+
+# 蓝图路径从 registry 查询（SSoT），不硬编码——消除连字符/下划线漂移根因
+SYS_MASTER_PATH = load_blueprint_path("SYS-MASTER-001")
+MOD_MASTER_PATH = load_blueprint_path("MOD-MASTER_BLUEPRINT")
 
 
 def extract_frontmatter(filepath: Path) -> dict:
@@ -87,13 +90,16 @@ def extract_frontmatter(filepath: Path) -> dict:
 def check_blueprint_existence() -> list[dict]:
     results = []
     for label, path in [("SYS-MASTER-001", SYS_MASTER_PATH), ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH)]:
+        if path is None:
+            results.append({"check_id": "SYS-C00", "label": f"{label} blueprint_exists", "status": "FAIL", "detail": f"{label} not found in blueprint_registry.yaml"})
+            continue
         ok = path.exists() and path.is_file()
         results.append(
             {
                 "check_id": "SYS-C00",
                 "label": f"{label} blueprint_exists",
                 "status": "PASS" if ok else "FAIL",
-                "detail": str(path.relative_to(PROJECT_ROOT)) if ok else f"{label} MISSING",
+                "detail": str(path.relative_to(REPO_ROOT)) if ok else f"{label} MISSING",
             }
         )
     return results
@@ -132,6 +138,8 @@ def check_cold_start_integration() -> list[dict]:
 
 
 def check_depends_on_integrity() -> list[dict]:
+    if SYS_MASTER_PATH is None:
+        return [{"check_id": "SYS-C02", "label": "depends_on_integrity", "status": "FAIL", "detail": "SYS-MASTER-001 not found in blueprint_registry.yaml"}]
     fm = extract_frontmatter(SYS_MASTER_PATH)
     if not fm:
         return [
@@ -155,12 +163,17 @@ def check_depends_on_integrity() -> list[dict]:
 
 
 def check_construction_progress_consistency() -> list[dict]:
-    VALID_PROGRESS_VALUES = _load_valid_progress_values()
+    # 从 blueprint_registry.yaml 的 construction_progress_values 字段加载合法值（已有真源 v4.0.0，5值）
+    _bp_meta = yaml.safe_load(BLUEPRINT_REGISTRY.read_text(encoding="utf-8")) or {} if BLUEPRINT_REGISTRY.exists() else {}
+    VALID_PROGRESS_VALUES = set(_bp_meta.get("construction_progress_values", []))
     results = []
     for target_id, target_path, fm_key in [
         ("SYS-MASTER-001", SYS_MASTER_PATH, "construction_progress"),
         ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH, "construction_progress"),
     ]:
+        if target_path is None:
+            results.append({"check_id": "SYS-C03", "label": f"{target_id} construction_progress_consistency", "status": "FAIL", "detail": f"{target_id} not found in blueprint_registry.yaml"})
+            continue
         if not target_path.exists():
             results.append(
                 {
@@ -226,7 +239,7 @@ def check_construction_progress_consistency() -> list[dict]:
 
 
 def check_ai_rules_count() -> list[dict]:
-    rules_dir = PROJECT_ROOT / ".trae" / "rules"
+    rules_dir = REPO_ROOT / ".trae" / "rules"
     count = 0
     if rules_dir.exists():
         for rf in rules_dir.glob("*.md"):
@@ -271,6 +284,9 @@ def check_version_consistency() -> list[dict]:
         ("SYS-MASTER-001", SYS_MASTER_PATH),
         ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH),
     ]:
+        if target_path is None:
+            results.append({"check_id": "SYS-C07", "label": f"{target_id} version_consistency", "status": "FAIL", "detail": f"{target_id} not found in blueprint_registry.yaml"})
+            continue
         if not target_path.exists():
             results.append(
                 {
@@ -380,7 +396,7 @@ def check_crosscheck_script() -> list[dict]:
 
     try:
         result = subprocess.run(
-            [sys.executable, str(CROSSCHECK_SCRIPT)], capture_output=True, text=True, timeout=30, cwd=str(PROJECT_ROOT)
+            [sys.executable, str(CROSSCHECK_SCRIPT)], capture_output=True, text=True, timeout=30, cwd=str(REPO_ROOT)
         )
         ok = result.returncode == 0
         return [
@@ -461,4 +477,4 @@ class SysMasterCompliance:
 if __name__ == "__main__":
     sys.exit(main())
 
-__all__ = ["SysMasterCompliance", "extract_frontmatter"]
+__all__ = ["SysMasterCompliance", "extract_frontmatter", "load_blueprint_path"]

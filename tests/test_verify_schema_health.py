@@ -50,12 +50,9 @@ init_db = schema_mod.init_db
 _MIGRATIONS = schema_mod._MIGRATIONS
 _DDL_INDEXES = schema_mod._DDL_INDEXES
 
-# 只读触发器保护的 9 张表（与 verify_schema_health.py L143-147 一致）
-_READONLY_TABLES = [
-    "gates", "field_vocabularies", "registries", "cross_registry_rules",
-    "hard_boundaries", "business_streams", "infrastructure_components",
-    "model_capabilities", "blueprint_links",
-]
+# 只读触发器保护的表清单——从真源 sync_yaml_to_depgraph.py 动态获取
+# （经 verify_schema_health.py re-export，消除硬编码副本，红蓝对抗修复-严重1）
+_READONLY_TABLES = vsh.READONLY_TABLES
 
 
 def _create_readonly_triggers(conn: sqlite3.Connection) -> None:

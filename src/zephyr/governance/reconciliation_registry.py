@@ -593,7 +593,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel.endswith((".py", ".yaml")):
+            if rel.endswith((".py", ".yaml", ".yml")):
                 return True
         return False
 
