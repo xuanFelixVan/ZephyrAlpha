@@ -103,7 +103,7 @@ class TestMultiAgentSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_without_agents_allowed(self):
-        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityContext, SecurityDecision
 
         layer = MultiAgentSecurityLayer()
         ctx = SecurityContext(
@@ -118,7 +118,7 @@ class TestMultiAgentSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_with_authorized_agents(self):
-        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityContext, SecurityDecision
 
         layer = MultiAgentSecurityLayer()
         ctx = SecurityContext(
@@ -132,7 +132,7 @@ class TestMultiAgentSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_denies_unauthorized_cross_agent(self):
-        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
+        from zephyr.security.llm_defense.llm_security.protocol import SecurityContext, SecurityDecision
 
         layer = MultiAgentSecurityLayer()
         layer.authenticate_cross_agent = lambda *a, **kw: (False, "unauthorized")

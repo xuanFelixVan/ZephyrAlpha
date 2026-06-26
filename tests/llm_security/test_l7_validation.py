@@ -119,6 +119,6 @@ class TestValidationLayer:
         layer = ValidationLayer()
         ctx = type("ctx", (), {"metadata": {"coverage_pct": 50.0}})()
         result = await layer.evaluate(ctx)
-        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityDecision
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
         assert result.decision == SecurityDecision.DENY
