@@ -401,7 +401,7 @@ capabilities:
       为 gate-ssot-docs，但缺自动化门禁，未来 AI 可能再造一对重复 id）。本门禁治本：
       扫描所有 repos[].hooks[].id，same-repo 重复 → hard block (exit 1)；cross-repo 重复
       → warn（pre-commit 允许跨 repo 同 id，但本项目视为覆盖风险，提示人工裁定）。
-      canonical 在 scripts/下（非 src/zephyr/），basename check_precommit_id_uniqueness
+      canonical 在 scripts/ 下（非 src/zephyr/），basename check_precommit_id_uniqueness
       不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明。
       扩展提示：如需检测其他 YAML 文件的 id/key 唯一性，扩展本脚本（加 --target 参数），
       勿新建 checker（向内收原则1：能用现成的不创造）。
