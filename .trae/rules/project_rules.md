@@ -359,6 +359,20 @@ python scripts/governance/audit_registration.py --fix     # 交互式修复
 | ❌ | 跳过 SSoT 冲突检查直接创建 | 功能重复 → 命名混乱 |
 | ❌ | 对已有自然发现机制的文件类型强制要求注册表登记 | 注册表膨胀，维护成本 > 治理收益 |
 
+### 包名命名约束（防 governance 命名冲突 — 2026-06-26 裁定）
+
+> **`scripts/` 下禁止使用与 `src/zephyr/` 同名的顶层包名。**
+
+**根因**：`src/zephyr/governance/`（真源码包）与 `scripts/governance/`（脚本目录）同名，导致 Python import 时命名空间冲突——`test_detect_forward_reference.py` 报 `ModuleNotFoundError: No module named 'governance.d7_code'`，因为 Python 优先解析到 `scripts/governance/` 而非 `src/zephyr/governance/`。
+
+**规则**：
+- `scripts/` 下的子目录名不得与 `src/zephyr/` 下的顶层包名重复
+- 已存在的 `scripts/governance/` 为历史遗留，不改名（改造成本高），但**禁止新增同类冲突**
+- 新建脚本目录时，MUST 先检查 `src/zephyr/` 下是否已有同名包：`ls src/zephyr/ | grep <拟用名>`
+- 若冲突 → 改用功能描述性命名（如 `scripts/gov_tools/` 而非 `scripts/governance/`）
+
+**对标**：PEP 420 namespace packages 的歧义问题——同一 import 路径指向两个不同目录，Python 无法区分。
+
 ---
 
 ## RULE-FIVE：临时文件零残留
