@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 580
+total_scripts: 583
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -78,6 +78,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_d1_verify_sh.py
+  path: _tmp_d1_verify_sh.py
+  description: import sys
+  domain: _tmp_d1_verify_sh.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_diff_head_wt.py
   path: _tmp_diff_head_wt.py
   description: import sqlite3
@@ -94,10 +102,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_meta_review_ops24.py
+  path: _tmp_meta_review_ops24.py
+  description: 'Adaptation: V2 task card says L706, but actual D-GOV_DOCS is on L702 (line number'
+  domain: _tmp_meta_review_ops24.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_rename_check.py
   path: _tmp_rename_check.py
   description: 'Usage:'
   domain: _tmp_rename_check.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_replace_live_docs.py
+  path: _tmp_replace_live_docs.py
+  description: Uses regex with negative lookbehind (?<![A-Z]) to avoid matching module IDs
+  domain: _tmp_replace_live_docs.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -624,7 +648,7 @@ scripts:
   dimensions: []
 - name: construction/local_layer_daemon.py
   path: construction/local_layer_daemon.py
-  description: local_layer_daemon.py — L2 本地模型层守护进程（薄包装）
+  description: local_layer_daemon.py — L2 本地模型层守护进程（薄包装，DEPRECATED）
   domain: construction
   execution_plane: warm-path
   status: registered
@@ -2048,7 +2072,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/check_registry_consistency.py
   path: governance/d3_metadata/check_registry_consistency.py
-  description: 读取 registry_of_registries.yaml，按 cross_registry_rules 比对多登记表共享字段。
+  description: 读取 registry_consistency_contract.yaml，按 cross_registry_rules 比对多登记表共享字段。
   domain: governance
   execution_plane: warm-path
   status: registered
