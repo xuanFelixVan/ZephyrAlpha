@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御）
 v1.0.0 — 2026-05-03
@@ -156,6 +157,10 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         if fname != field_name:
             continue
 
+        # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，派生同步应跳过
+        if field.get("allowed_values") == "DYNAMIC_FROM_SSOT" or field.get("enum_values") == "DYNAMIC_FROM_SSOT":
+            continue
+
         current_values: set[str] = set()
         if "allowed_values" in field:
             current_values = set(str(v) for v in field.get("allowed_values", []))
@@ -219,6 +224,9 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
     for field in fm_schema.get("required_fields", []):
         fname = field.get("name", "")
         if fname != field_name:
+            continue
+        # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，派生同步应跳过
+        if field.get("allowed_values") == "DYNAMIC_FROM_SSOT":
             continue
         current = field.get("allowed_values", [])
         current_set = set(str(v) for v in current)

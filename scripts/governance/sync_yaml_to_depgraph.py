@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/sync_yaml_to_depgraph.py | §22.10
 [MODULE] 无（独立脚本）
@@ -576,6 +577,10 @@ def sync_frontmatter_field_registry(cur):
     for field in fields:
         field_name = field.get("field_name", "")
         enum_values = field.get("enum_values", [])
+
+        # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，不写入 DB
+        if isinstance(enum_values, str):
+            continue
 
         for value in enum_values:
             # enum_values 元素可能是 dict {value: ..., description: ...} 或 str

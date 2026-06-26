@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 Vocabulary 同步链路回归测试（议题 #ARCH-008 / 裁定#206）
 
@@ -413,7 +414,11 @@ class TestDerivedFileConsistency:
         for field in registry.get("fields", []):
             if (field.get("field_name") or field.get("name")) != "layer":
                 continue
-            for ev in field.get("enum_values", []) or field.get("allowed_values", []) or []:
+            # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，不参与子集断言
+            ev_raw = field.get("enum_values") or field.get("allowed_values")
+            if isinstance(ev_raw, str):
+                break
+            for ev in ev_raw or []:
                 if isinstance(ev, dict):
                     val = ev.get("value") or ev.get("id")
                     if val:
