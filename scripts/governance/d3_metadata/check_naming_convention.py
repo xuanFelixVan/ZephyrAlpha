@@ -1151,19 +1151,22 @@ def check_new_files_full(
     new_files: list[str],
     project_root: Path | None = None,
 ) -> list[NamingViolation]:
-    """增量全量命名硬阻断检查（治本·选项B）：GitCommitGateway 内嵌，绕不过 --no-verify。
+    """增量全量命名硬阻断检查（治本·全库覆盖）：GitCommitGateway 内嵌，绕不过 --no-verify。
 
-    对新增文件做 N-01~N-17 风格硬阻断 + N-16 唯一性硬阻断
-    （覆盖 tests/+docs/+src/+scripts/）。
+    对新增文件做 N-01~N-17 风格硬阻断 + N-16 唯一性硬阻断（全库覆盖）。
+    对修改文件做历史豁免检查（只阻断本次修改新引入的违规）。
 
     设计（三个治本闭环）：
-    1. 全库覆盖：N-16 扩展到 src/+scripts/（跨包合法同名 __init__.py/conftest.py 豁免）
-    2. 全维度检测：新增文件 N-01~N-17 风格 + 新增文件 N-16 唯一性
+    1. 全库覆盖：所有目录的文件都查命名（无 scope 限制）
+    2. 全维度检测：新增文件 N-01~N-17 风格 + 新增文件 N-16 唯一性 + 修改文件历史豁免
     3. 绕不过：GitCommitGateway 内嵌，--no-verify 绕过 pre-commit 但绕不过 gateway
 
-    新增 vs 修改区分（防历史违规阻断当前工作）：
-    - 新增文件（git diff --cached --diff-filter=A）：N-16 唯一性 + check_file 风格检查
-    - 修改文件：不查（历史遗留豁免）——修改不引入新文件名，N-16 仅对新文件名有意义
+    新增 vs 修改区分（历史豁免，只阻断新引入的违规）：
+    - 新增文件（git ls-files 未跟踪）：N-16 唯一性 + check_file 全量风格检查
+    - 修改文件（git ls-files 已跟踪）：历史豁免——对 HEAD 版本和工作区版本各跑
+      check_file，取差集（只阻断本次修改新引入的违规，HEAD 中已有的违规不阻断）
+      filename 级规则(N-01~N-05,N-08,N-11~N-13)对修改文件天然全豁免（文件名不变）；
+      content 级规则(N-06,N-07,N-14,N-15,N-17)只阻断修改引入的新违规
 
     Args:
         new_files: 本次 commit 的文件路径列表。
@@ -1216,7 +1219,13 @@ def check_new_files_full(
             added_files_for_n16, project_root, scopes=None
         ))
 
-    # 2. 对新增文件做 N-01~N-17 风格检查（修改文件不查，历史遗留豁免）
+    # 2. N-01~N-17 风格检查
+    # - 新增文件：全量检查
+    # - 修改文件：历史豁免——只阻断本次修改引入的新违规（HEAD 中已有的违规不阻断）
+    #   实现：对 HEAD 版本和工作区版本各跑一次 check_file，取差集（新增违规）
+    #   filename 级规则(N-01~N-05,N-08,N-11~N-13)对修改文件天然全豁免（文件名不变→HEAD 和工作区结果相同→差集为空）
+    #   content 级规则(N-06,N-07,N-14,N-15,N-17)只阻断修改引入的新违规
+    import tempfile
     for f in new_files:
         p = Path(f)
         if not p.is_absolute():
@@ -1225,13 +1234,44 @@ def check_new_files_full(
             rel = p.resolve().relative_to(project_root.resolve()).as_posix()
         except ValueError:
             continue
-        if not _is_new_file(rel):
-            continue  # 只查新增文件，修改文件跳过（历史遗留豁免）
         if _is_path_exempt(rel):
             continue
         abspath = project_root / rel
-        if abspath.exists() and abspath.is_file():
+        if not (abspath.exists() and abspath.is_file()):
+            continue
+
+        if _is_new_file(rel):
+            # 新增文件：全量检查
             violations.extend(check_file(rel, abspath, project_root))
+        else:
+            # 修改文件：历史豁免（只阻断新引入的违规）
+            try:
+                head_result = subprocess.run(
+                    ["git", "show", f"HEAD:{rel}"],
+                    capture_output=True, cwd=str(project_root),
+                )
+                if head_result.returncode != 0:
+                    continue  # HEAD 中无此文件（新增？），跳过
+                # 写 HEAD 内容到临时文件，跑 check_file 获取基线违规
+                with tempfile.NamedTemporaryFile(
+                    mode="wb", suffix=Path(rel).suffix, delete=False
+                ) as tmp:
+                    tmp.write(head_result.stdout)
+                    tmp_path = Path(tmp.name)
+                try:
+                    head_violations = check_file(rel, tmp_path, project_root)
+                finally:
+                    tmp_path.unlink(missing_ok=True)
+                # 工作区版本违规
+                current_violations = check_file(rel, abspath, project_root)
+                # 取差集：只报告 HEAD 中没有的违规（新引入的）
+                head_keys = {(v.rule, v.message) for v in head_violations}
+                for v in current_violations:
+                    if (v.rule, v.message) not in head_keys:
+                        violations.append(v)
+            except Exception:
+                # git show 失败或临时文件问题 → fail-open（不阻断修改）
+                pass
 
     return violations
 
