@@ -1,7 +1,7 @@
 %% D-GOV_SCRIPTS 域全景依赖图
 %% 生成时间: auto-generated
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 415, 依赖边数: 411
+%% 模块数: 413, 依赖边数: 409
 
 graph TD
 
@@ -92,7 +92,6 @@ graph TD
         scripts_arch_guard_import_linter___init___py[".../arch_guard/import_linter/__init__.py [prototype]"]
         scripts_arch_guard_import_linter_layer_boundary_check_py["...import_linter/layer_boundary_check.py [prototype]"]
         scripts_arch_guard_run_all_py["scripts/arch_guard/run_all.py [prototype]"]
-        scripts_check_naming_convention_py["scripts/check_naming_convention.py [prototype]"]
         scripts_construction__e2e_check_py["scripts/construction/_e2e_check.py [prototype]"]
         scripts_construction__e2e_deep_py["scripts/construction/_e2e_deep.py [prototype]"]
         scripts_construction_check_statuses_py["scripts/construction/check_statuses.py [prototype]"]
@@ -107,12 +106,12 @@ graph TD
         scripts_construction_start_brain_py["scripts/construction/start_brain.py [prototype]"]
         scripts_construction_test_event_hook_py["scripts/construction/test_event_hook.py [prototype]"]
         scripts_context_generate_architecture_context_py["...text/generate_architecture_context.py [prototype]"]
-        %% ... 还有 315 个模块未显示
+        scripts_dm90971_add_test_headers_py["scripts/dm90971_add_test_headers.py [prototype]"]
+        %% ... 还有 313 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
     scripts_scaffold_py -->|import_depends| scripts_governance_d3_metadata_check_naming_convention_py
-    scripts_check_naming_convention_py -->|config_depends| scripts___init___py
     scripts_fix_freeze_manifest_py -->|config_depends| scripts___init___py
     scripts_generate_manifest_py -->|config_depends| scripts___init___py
     scripts_dm90971_add_test_headers_py -->|config_depends| scripts___init___py
@@ -169,7 +168,6 @@ graph TD
     scripts_governance_check_rule_four_way_alignment_py -->|config_depends| scripts_governance___init___py
     scripts_governance_check_handoff_manifests_py -->|config_depends| scripts_governance___init___py
     scripts_governance_check_blueprint_compliance_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_check_naming_convention_py -->|config_depends| scripts_governance___init___py
     scripts__archive_governance_create_depgraph_task_cards_py -->|config_depends| scripts_governance___init___py
     scripts_governance_detect_causal_conflicts_py -->|config_depends| scripts_governance___init___py
     scripts_governance_env_check_py -->|config_depends| scripts_governance___init___py
@@ -191,7 +189,9 @@ graph TD
     scripts_governance_pre_delete_safety_check_py -->|config_depends| scripts_governance___init___py
     scripts_governance_list_phase0_tasks_py -->|config_depends| scripts_governance___init___py
     scripts_governance_phase_a_backup_py -->|config_depends| scripts_governance___init___py
-    %% ... 还有 237 条域内依赖未显示
+    scripts_governance_rename_kebab_to_snake_py -->|config_depends| scripts_governance___init___py
+    scripts_governance_rebuild_progress_py -->|config_depends| scripts_governance___init___py
+    %% ... 还有 235 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-GOVERNANCE -> D-GOV_SCRIPTS (12 条)
@@ -308,6 +308,6 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
 
     %% 统计
-    %% 域内依赖: 317 条
+    %% 域内依赖: 315 条
     %% 跨域入边: 13 条
     %% 跨域出边: 81 条

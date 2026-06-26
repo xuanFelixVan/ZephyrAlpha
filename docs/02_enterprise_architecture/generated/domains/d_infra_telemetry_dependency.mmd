@@ -1,28 +1,14 @@
 %% D-INFRA_TELEMETRY 域全景依赖图
 %% 生成时间: auto-generated
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 51, 依赖边数: 45
+%% 模块数: 37, 依赖边数: 31
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_INFRA_TELEMETRY[observability_profiling]
         src_zephyr_infrastructure_model_capability_exam___init___py["...ure/model_capability_exam/__init__.py [production]"]
-        src_zephyr_infrastructure_mode___exam_capability_passport_py["...apability_exam/capability_passport.py [production]"]
-        src_zephyr_infrastructure_mode___y_exam_exam_orchestrator_py["..._capability_exam/exam_orchestrator.py [production]"]
-        src_zephyr_infrastructure_mode___ity_exam_exam_test_cases_py["...el_capability_exam/exam_test_cases.py [production]"]
         src_zephyr_infrastructure_model_profiler___init___py["...astructure/model_profiler/__init__.py [production]"]
-        src_zephyr_infrastructure_model_profiler_benchmark_suite_py["...ure/model_profiler/benchmark_suite.py [production]"]
-        src_zephyr_infrastructure_mode___iler_capability_passport_py["...model_profiler/capability_passport.py [production]"]
-        src_zephyr_infrastructure_model_profiler_cli_py[".../infrastructure/model_profiler/cli.py [production]"]
-        src_zephyr_infrastructure_model_profiler_deepseek_v4_chat_py["...re/model_profiler/deepseek_v4_chat.py [production]"]
-        src_zephyr_infrastructure_mode___ofiler_exam_orchestrator_py["...e/model_profiler/exam_orchestrator.py [production]"]
-        src_zephyr_infrastructure_model_profiler_exam_test_cases_py["...ure/model_profiler/exam_test_cases.py [production]"]
-        src_zephyr_infrastructure_model_profiler_model_discovery_py["...ure/model_profiler/model_discovery.py [production]"]
-        src_zephyr_infrastructure_model_profiler_profiler_py["...astructure/model_profiler/profiler.py [production]"]
-        src_zephyr_infrastructure_model_profiler_provider_data_py["...cture/model_profiler/provider_data.py [production]"]
-        src_zephyr_infrastructure_model_profiler_results_writer_py["...ture/model_profiler/results_writer.py [production]"]
-        src_zephyr_infrastructure_mode___filer_task_model_learner_py[".../model_profiler/task_model_learner.py [production]"]
         src_zephyr_infrastructure_observability___init___py["...rastructure/observability/__init__.py [production]"]
         src_zephyr_infrastructure_obse___lity___init___from_infra_py[".../observability/__init___from_infra.py [production]"]
         src_zephyr_infrastructure_observability_contract_metrics_py["...ure/observability/contract_metrics.py [production]"]
@@ -66,20 +52,6 @@ graph TD
     src_zephyr_infrastructure_obse___lity___init___from_infra_py -->|import_depends| src_zephyr_infrastructure_observability_trace_decorator_py
     src_zephyr_infrastructure_quality___init___py -->|import_depends| src_zephyr_infrastructure_quality_quality_monitor_py
     src_zephyr_infrastructure_sla___init___py -->|import_depends| src_zephyr_infrastructure_sla_sla_monitor_py
-    src_zephyr_infrastructure_mode___exam_capability_passport_py -->|config_depends| src_zephyr_infrastructure_model_capability_exam___init___py
-    src_zephyr_infrastructure_mode___y_exam_exam_orchestrator_py -->|config_depends| src_zephyr_infrastructure_model_capability_exam___init___py
-    src_zephyr_infrastructure_mode___ity_exam_exam_test_cases_py -->|config_depends| src_zephyr_infrastructure_model_capability_exam___init___py
-    src_zephyr_infrastructure_mode___iler_capability_passport_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_cli_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_benchmark_suite_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_deepseek_v4_chat_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_mode___ofiler_exam_orchestrator_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_model_discovery_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_exam_test_cases_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_profiler_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_mode___filer_task_model_learner_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_results_writer_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
-    src_zephyr_infrastructure_model_profiler_provider_data_py -->|config_depends| src_zephyr_infrastructure_model_profiler___init___py
     src_zephyr_infrastructure_observability_contract_metrics_py -->|config_depends| src_zephyr_infrastructure_observability___init___py
     src_zephyr_infrastructure_observability_health_probes_py -->|config_depends| src_zephyr_infrastructure_observability___init___py
     src_zephyr_infrastructure_system_telemetry__trace_bridge_py -->|config_depends| src_zephyr_infrastructure_system_telemetry___init___py
@@ -117,6 +89,6 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED[D-SHARED]
 
     %% 统计
-    %% 域内依赖: 27 条
+    %% 域内依赖: 13 条
     %% 跨域入边: 0 条
     %% 跨域出边: 18 条
