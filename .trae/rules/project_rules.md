@@ -13,6 +13,23 @@
 
 ---
 
+## 第二原则：向内收铁律（TRAE-060）
+
+> **100% AI 开发场景下的顶层收敛约束。动手前 MUST 直读真源，禁止同步复制。**
+> 真源：[trae_060_inward_consolidation.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml)（frozen, safety_level: H, ai_autonomy: immutable_core）
+
+| 原则 | 一句话 | 违反后果 |
+|------|--------|---------|
+| ① 能现成不创造 | 动手前先 Grep / 搜注册表 / 查 CapabilityLookup；能扩展不新建；禁止同步复制 | 造第二真源→漂移 |
+| ② 创造必全自动 | 永久脚本事件驱动 + 自动运行 + 自动维护 + 自动关闭；禁止手工触发，禁止时间触发（cron/Timer/CircadianScheduler） | 必然被遗忘→漂移 |
+| ③ 第一性原理治本 | 先问元问题该不该存在 / 能否删除或合并；治本不治标（MTH-006） | 症状反复 |
+
+**判定流程、禁止清单、已排查 evidence（硬编码副本 / 时间触发 / 手工触发 / 可合并簇）、GATE-VOCAB 门禁、例外清单** → 全部见真源 §1-§6。本节仅入口指向，不复制内容（复制=同步=违反原则①）。
+
+> 元约束：本原则同样约束规则自身的传播——规则的消费方（含本文件）必须直读 trae_060 真源，禁止摘抄片段充当第二真源。
+
+---
+
 ## 资产全景
 
 | 资产 | 数量 | 发现入口 |
