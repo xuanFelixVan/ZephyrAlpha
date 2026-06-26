@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-27'
-total_scripts: 580
+total_scripts: 579
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -42,14 +42,6 @@ scripts:
   path: _tmp_check_depgraph.py
   description: import sqlite3
   domain: _tmp_check_depgraph.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_commit.py
-  path: _tmp_commit.py
-  description: 提交内容：
-  domain: _tmp_commit.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
