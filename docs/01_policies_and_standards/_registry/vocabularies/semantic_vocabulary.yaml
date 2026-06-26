@@ -1,0 +1,57 @@
+# [A_config] module_id=CFG-semantic_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# semantic_type 受控词表
+# ZephyrAlpha 2.0 depgraph 语义类型唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-26
+#
+# 本词表定义 depgraph 边/节点 semantic_type 字段的所有合法值（4 种）。
+# diagnose_depgraph.py / generate_project_depgraph.py 等脚本必须从本词表动态加载，
+# 禁止硬编码 {"runtime","data","build","contract"} 字面量——同步=复制=多真源=必漂移。
+#
+# 对标标准：
+#   - PS-REG-007 _schema：semantic_type 枚举定义
+#   - C4 Model：Component 依赖类型分类
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-025
+version: "1.0.0"
+title: "semantic_type 受控词表"
+status: active
+vocabulary_name: semantic_type
+total_values: 4
+source: "PS-REG-007 _schema（depgraph 边 semantic_type 枚举）"
+depends_on:
+  - target: PS-REG-007
+    at: "_schema"
+    why: "semantic_type 枚举定义真源"
+
+values:
+  - value: runtime
+    definition: "运行时依赖——服务调用、运行时加载、动态链接"
+    ai_consumption: "AI 标注 depgraph 边时，运行时产生的依赖关系使用此值"
+    ai_keywords: ["运行时", "runtime", "服务调用", "动态加载"]
+
+  - value: data
+    definition: "数据依赖——共享数据模型、数据格式、数据流"
+    ai_consumption: "AI 标注 depgraph 边时，数据层面的依赖关系使用此值"
+    ai_keywords: ["数据", "data", "共享模型", "数据流"]
+
+  - value: build
+    definition: "构建依赖——编译时依赖、构建链、打包依赖"
+    ai_consumption: "AI 标注 depgraph 边时，构建阶段的依赖关系使用此值"
+    ai_keywords: ["构建", "build", "编译", "打包"]
+
+  - value: contract
+    definition: "契约依赖——接口契约、API 契约、协议约定"
+    ai_consumption: "AI 标注 depgraph 边时，契约层面的依赖关系使用此值"
+    ai_keywords: ["契约", "contract", "接口", "API", "协议"]

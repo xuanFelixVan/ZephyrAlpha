@@ -1,0 +1,54 @@
+# [A_config] module_id=CFG-contract_status_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# contract_status 受控词表
+# ZephyrAlpha 2.0 接口契约生命周期状态唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-26
+#
+# 本词表定义接口契约（interface contract）status 字段的所有合法值（3 种）。
+# validate_interface_contracts.py 必须从本词表动态加载，
+# 禁止硬编码 {"draft","frozen","deprecated"} 字面量。
+#
+# 注意：契约状态与文档状态（status_vocabulary.yaml）是不同词表：
+#   - 文档 status: draft/active/deprecated（文档生命周期）
+#   - 契约 status: draft/frozen/deprecated（合约生命周期，frozen=锁定不可变）
+# "frozen" 语义不同于 "active"——frozen 表示合约已冻结锁定，消费者可安全依赖；
+# "active" 表示文档当前有效但可走变更门控修改。
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-026
+version: "1.0.0"
+title: "contract_status 受控词表"
+status: active
+vocabulary_name: contract_status
+total_values: 3
+source: "validate_interface_contracts.py 契约生命周期定义"
+depends_on: []
+
+values:
+  - value: draft
+    definition: "草稿——合约设计中，尚未冻结，消费者不应依赖"
+    ai_consumption: "AI 标注合约状态时，设计中的合约使用此值"
+    ai_keywords: ["草稿", "draft", "设计中", "未冻结"]
+    next_states: ["frozen"]
+
+  - value: frozen
+    definition: "已冻结——合约锁定不可变，消费者可安全依赖"
+    ai_consumption: "AI 标注合约状态时，已锁定的合约使用此值。frozen 合约变更需版本升级而非原地修改"
+    ai_keywords: ["冻结", "frozen", "锁定", "不可变"]
+    next_states: ["deprecated"]
+
+  - value: deprecated
+    definition: "已废弃——有新版本替代，不应再使用"
+    ai_consumption: "AI 标注合约状态时，被替代的旧合约使用此值"
+    ai_keywords: ["废弃", "deprecated", "已替代", "旧版"]
+    next_states: []

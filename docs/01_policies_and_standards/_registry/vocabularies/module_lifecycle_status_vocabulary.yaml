@@ -1,0 +1,78 @@
+# [A_config] module_id=CFG-module_lifecycle_status_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# module_lifecycle_status 受控词表
+# ZephyrAlpha 2.0 模块生命周期状态唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-26
+#
+# 本词表定义模块（module）生命周期 status 字段的所有合法值（8 种）。
+# 对标 GOV-MOD-003 MLC-001/002/003（模块8阶段状态机）。
+# validate_module_lifecycle.py 必须从本词表动态加载，
+# 禁止硬编码 {"planned","in_design",...} 字面量。
+#
+# 注意：模块生命周期状态与文档状态（status_vocabulary.yaml）是不同词表：
+#   - 文档 status: draft/active/deprecated（文档3值生命周期）
+#   - 模块 status: planned/in_design/in_dev/testing/active/suspended/deprecated/archived（模块8阶段状态机）
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-027
+version: "1.0.0"
+title: "module_lifecycle_status 受控词表"
+status: active
+vocabulary_name: module_lifecycle_status
+total_values: 8
+source: "GOV-MOD-003 MLC-001/002/003（模块8阶段状态机）"
+depends_on:
+  - target: GOV-MOD-003
+    at: "MLC-001/002/003"
+    why: "模块8阶段状态机定义真源"
+
+values:
+  - value: planned
+    definition: "已规划——模块已登记但尚未开始设计"
+    ai_keywords: ["规划", "planned", "已登记", "未开始"]
+    next_states: ["in_design"]
+
+  - value: in_design
+    definition: "设计中——模块正在设计阶段"
+    ai_keywords: ["设计", "in_design", "设计阶段"]
+    next_states: ["in_dev", "planned"]
+
+  - value: in_dev
+    definition: "开发中——模块正在开发阶段"
+    ai_keywords: ["开发", "in_dev", "开发阶段"]
+    next_states: ["testing", "in_design"]
+
+  - value: testing
+    definition: "测试中——模块正在测试阶段"
+    ai_keywords: ["测试", "testing", "测试阶段"]
+    next_states: ["active", "in_dev"]
+
+  - value: active
+    definition: "已上线——模块活跃运行中"
+    ai_keywords: ["活跃", "active", "上线", "运行"]
+    next_states: ["suspended", "deprecated"]
+
+  - value: suspended
+    definition: "暂停——模块临时停止（P0 模块禁止此状态）"
+    ai_keywords: ["暂停", "suspended", "停止"]
+    next_states: ["active"]
+
+  - value: deprecated
+    definition: "已废弃——模块有替代品或已合并，保留期 >= 90 天"
+    ai_keywords: ["废弃", "deprecated", "已替代"]
+    next_states: ["archived"]
+
+  - value: archived
+    definition: "已归档——模块已从活跃代码库移除"
+    ai_keywords: ["归档", "archived", "已移除"]
+    next_states: []
