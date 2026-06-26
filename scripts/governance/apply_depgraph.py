@@ -1912,6 +1912,164 @@ def cmd_propagate_rename(
                     c.close()
 
 
+def _safe_bp_id_replace(text: str, old: str, new: str) -> str:
+    """安全替换 blueprint_id：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。"""
+    pattern = re.escape(old) + r"(?![A-Za-z0-9_-])"
+    return re.sub(pattern, new, text)
+
+
+def cmd_rename_blueprint_id(
+    old_bp_id: str,
+    new_bp_id: str,
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> int:
+    """blueprint_id 独立重命名（裁定#208 阶段D2：跨域共享模块 SH-* 改名专用）。
+
+    与 cmd_propagate_rename 的区别：
+    - cmd_propagate_rename 从 domain_id 派生 blueprint_id 映射（域改名专用，硬编码 _RENAME_MAP_204）
+    - cmd_rename_blueprint_id 直接接受 old/new blueprint_id（独立改名，不依赖域改名）
+
+    传播表（4 类）：
+    1. nodes.blueprint_id（精确值映射）
+    2. blueprint_links.blueprint_id（精确值映射，需触发器通行证）
+    3. nodes.type_specific_data（JSON 中 module_id 字段 + doc_references 数组，安全字符串替换）
+    4. nodes.blueprint_path（路径中的 ID 片段，安全字符串替换）
+
+    安全保证：_safe_bp_id_replace 使用负向前瞻 (?![A-Za-z0-9_-])，
+    确保 MOD-SHARED 不会误匹配 MOD-SHARED-001。
+
+    返回受影响总行数，-1=失败。
+    """
+    own_conn = conn is None
+
+    def _run(c: sqlite3.Connection) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        total = 0
+
+        # 1. nodes.blueprint_id 精确值映射
+        cnt = c.execute(
+            "SELECT COUNT(*) FROM nodes WHERE blueprint_id=?", (old_bp_id,)
+        ).fetchone()[0]
+        if cnt > 0:
+            print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
+            if not dry_run:
+                c.execute(
+                    "UPDATE nodes SET blueprint_id=? WHERE blueprint_id=?",
+                    (new_bp_id, old_bp_id),
+                )
+            total += cnt
+
+        # 2. blueprint_links.blueprint_id 精确值映射
+        try:
+            cnt = c.execute(
+                "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=?", (old_bp_id,)
+            ).fetchone()[0]
+        except sqlite3.OperationalError:
+            cnt = 0
+        if cnt > 0:
+            print(f"  {mode} blueprint_links.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
+            if not dry_run:
+                c.execute(
+                    "UPDATE blueprint_links SET blueprint_id=? WHERE blueprint_id=?",
+                    (new_bp_id, old_bp_id),
+                )
+            total += cnt
+
+        # 3. nodes.type_specific_data 级联清理（GLOB 精确 + 安全字符串替换）
+        tsd_rows = c.execute(
+            "SELECT node_id, type_specific_data FROM nodes WHERE type_specific_data GLOB ?",
+            (f"*{old_bp_id}*",),
+        ).fetchall()
+        tsd_cnt = 0
+        for row in tsd_rows:
+            node_id = row[0]
+            tsd = row[1]
+            if not tsd:
+                continue
+            new_tsd = _safe_bp_id_replace(tsd, old_bp_id, new_bp_id)
+            if new_tsd != tsd:
+                if not dry_run:
+                    c.execute(
+                        "UPDATE nodes SET type_specific_data=? WHERE node_id=?",
+                        (new_tsd, node_id),
+                    )
+                tsd_cnt += 1
+        if tsd_cnt > 0:
+            print(f"  {mode} nodes.type_specific_data: {old_bp_id} -> {new_bp_id}: {tsd_cnt} rows", file=sys.stderr)
+            total += tsd_cnt
+
+        # 4. nodes.blueprint_path 级联清理（GLOB 精确 + 安全字符串替换）
+        bp_path_rows = c.execute(
+            "SELECT node_id, blueprint_path FROM nodes WHERE blueprint_path GLOB ?",
+            (f"*{old_bp_id}*",),
+        ).fetchall()
+        bp_cnt = 0
+        for row in bp_path_rows:
+            node_id = row[0]
+            bp_path = row[1]
+            if not bp_path:
+                continue
+            new_path = _safe_bp_id_replace(bp_path, old_bp_id, new_bp_id)
+            if new_path != bp_path:
+                if not dry_run:
+                    c.execute(
+                        "UPDATE nodes SET blueprint_path=? WHERE node_id=?",
+                        (new_path, node_id),
+                    )
+                bp_cnt += 1
+        if bp_cnt > 0:
+            print(f"  {mode} nodes.blueprint_path: {old_bp_id} -> {new_bp_id}: {bp_cnt} rows", file=sys.stderr)
+            total += bp_cnt
+
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_rename_blueprint_id: total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = sqlite3.connect(db_path) if own_conn else conn
+        if own_conn:
+            c.execute("PRAGMA journal_mode=WAL")
+            c.execute("PRAGMA busy_timeout=30000")
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="rename_blueprint_id", db_path=db_path):
+            c = sqlite3.connect(db_path) if own_conn else conn
+            if own_conn:
+                c.execute("PRAGMA journal_mode=WAL")
+                c.execute("PRAGMA busy_timeout=30000")
+            # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制）
+            c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
+            try:
+                n = _run(c)
+                # 成功后恢复只读触发器并 commit
+                _restore_blueprint_links_readonly_trigger(c)
+                if own_conn:
+                    c.commit()
+                return n
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_rename_blueprint_id失败: {e}", file=sys.stderr)
+                # 异常时也恢复只读触发器（保持门禁激活）
+                try:
+                    _restore_blueprint_links_readonly_trigger(c)
+                    if own_conn:
+                        c.commit()
+                except Exception:
+                    pass
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
 def cmd_propagate_node_paths(
     path_mapping: dict[str, str],
     bl_mapping: dict[str, str] | None = None,
@@ -2686,6 +2844,15 @@ def main() -> None:
         metavar=("BLUEPRINT_ID", "REASON"),
         help="裁定#208 B5: 标记 blueprint_id 为 invalid（软标记不删节点，保留追溯链；阶段 C/D 重编号专用）",
     )
+    parser.add_argument(
+        "--rename-blueprint-id",
+        type=str,
+        nargs=2,
+        metavar=("OLD_BLUEPRINT_ID", "NEW_BLUEPRINT_ID"),
+        help="裁定#208 D2: blueprint_id 独立重命名（跨域共享模块 SH-* 改名专用）。"
+        "传播 nodes.blueprint_id + blueprint_links.blueprint_id + type_specific_data + blueprint_path。"
+        "安全保证：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。配 --dry-run 预览。",
+    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -2937,6 +3104,15 @@ def main() -> None:
 
     if args.propagate_rename:
         n = cmd_propagate_rename(_RENAME_MAP_204, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    # 裁定#208 D2：blueprint_id 独立重命名（跨域共享模块 SH-* 改名专用）——dispatch
+    if args.rename_blueprint_id:
+        old_bp, new_bp = args.rename_blueprint_id
+        n = cmd_rename_blueprint_id(old_bp, new_bp, dry_run=args.dry_run)
         if n < 0:
             sys.exit(4)
         print(f"affected={n}")
