@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 571
+total_scripts: 577
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -54,6 +54,38 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_d_confirm.py
+  path: _tmp_d_confirm.py
+  description: import sqlite3
+  domain: _tmp_d_confirm.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d_final_probe.py
+  path: _tmp_d_final_probe.py
+  description: import sqlite3
+  domain: _tmp_d_final_probe.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d_last_confirm.py
+  path: _tmp_d_last_confirm.py
+  description: import sqlite3
+  domain: _tmp_d_last_confirm.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d_master_check.py
+  path: _tmp_d_master_check.py
+  description: import sqlite3
+  domain: _tmp_d_master_check.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_d_path_verify.py
   path: _tmp_d_path_verify.py
   description: 1. 提取每个违规节点的路径关键词
@@ -66,6 +98,14 @@ scripts:
   path: _tmp_d_supp_check.py
   description: import sqlite3
   domain: _tmp_d_supp_check.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d_target_nodes.py
+  path: _tmp_d_target_nodes.py
+  description: 阶段 C 路径同名验证可能因样本不全面而误判"不同模块"。
+  domain: _tmp_d_target_nodes.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -721,6 +761,14 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_orphan_audit.py
+  path: governance/_tmp_orphan_audit.py
+  description: 治本目标：确保 v15 migration 后无遗留的 broken trigger/index。
   domain: governance
   execution_plane: warm-path
   status: registered
