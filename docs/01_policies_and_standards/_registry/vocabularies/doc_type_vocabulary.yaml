@@ -131,7 +131,7 @@ values:
     ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
     usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/glossary.yaml。术语的大白话翻译/映射表使用 doc_type: reference（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），reference 是翻译（对照表）。"
     examples: ["_registry/vocabularies/glossary.yaml"]
-    filename_suffixes: ["_registry/vocabularies/glossary.yaml", "_terminology.md", "_mapping.md", "_registry/vocabularies/terminology_mapping.yaml"]
+    filename_suffixes: ["_registry/vocabularies/glossary.yaml", "_terminology.md"]
 
   - value: reference
     definition: "参考文件——提供特定主题的结构化参考数据、映射表或排名，不定义规则本身"
@@ -256,6 +256,7 @@ values:
     required_fields: ["api_version"]
     ai_keywords: ["服务", "接口", "API", "spec", "服务规格"]
     examples: []
+    filename_suffixes: ["_interface.md"]
 
   - value: architecture_view
     definition: "架构视图——4+1 架构视图模型的特定视角文档"
@@ -339,9 +340,9 @@ values:
 #     → 规则（声明式）  → 看 Q2
 #     → 操作步骤（过程式）→ 必须用 operational_rule，放 operational/
 #
-# Q2: 你的规则是"红线"还是"推荐"？
-#     → 红线（违反了严重）→ 用 policy
-#     → 推荐（不违反也行）→ 用 standard
+# Q2: 你的规则约束"行为"还是"技术"？
+#     → 行为约束（必须做/禁止做）→ 用 policy
+#     → 技术规范（格式/接口/度量）→ 用 standard
 #
 # Q3: 你的文件是"导航入口"、"数据结构"、"交互约定"还是"结构骨架"？
 #     → 目录级导航入口  → 用 index
