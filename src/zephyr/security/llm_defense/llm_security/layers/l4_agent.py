@@ -210,12 +210,20 @@ class AgentSecurityLayer:
         self._auto_approve = enabled
 
     async def evaluate(self, ctx: Any) -> Any:
-        """评估 agent 工具调用：未知工具 → DENY，已知且授权 → ALLOW。"""
+        """评估 agent 工具调用：无工具调用 → ALLOW，未知工具 → DENY，已知且授权 → ALLOW。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
         meta = getattr(ctx, "metadata", {}) or {}
         tool_name = meta.get("tool_name", "")
+        # 无工具调用（benign text scan）→ ALLOW
+        if not tool_name:
+            return SecurityResult(
+                decision=SecurityDecision.ALLOW,
+                reason="no tool call — benign pass-through",
+                layer_name="l4_agent",
+                score=1.0,
+            )
         auth = self.authorize_tool_call(tool_name)
         if not auth.granted:
             return SecurityResult(
