@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-27'
-total_scripts: 585
+total_scripts: 588
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -78,6 +78,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_commit_data_rename2.py
+  path: _tmp_commit_data_rename2.py
+  description: 治本：用 scripts/git_commit.py CLI 入口（GitCommitGateway 的官方封装），
+  domain: _tmp_commit_data_rename2.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_commit_data_rename3.py
+  path: _tmp_commit_data_rename3.py
+  description: 根因：git commit --pathspec-from-file 对 staged rename（R100）无效——
+  domain: _tmp_commit_data_rename3.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_fix_data_rename.py
   path: _tmp_fix_data_rename.py
   description: 1. 删除 data/ 下所有被改名的物理文件（小写版本）
@@ -114,6 +130,14 @@ scripts:
   path: _tmp_revert_timestamps.py
   description: 回滚条件（合法约定，不应改小写）：
   domain: _tmp_revert_timestamps.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_test_pathspec.py
+  path: _tmp_test_pathspec.py
+  description: import subprocess
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -3976,7 +4000,7 @@ scripts:
   dimensions: []
 - name: governance/_shared/frontmatter.py
   path: governance/_shared/frontmatter.py
-  description: import re
+  description: 6 种文件头部格式的统一解析入口（对标 trae_047 GOV-ENG-002）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4200,7 +4224,7 @@ scripts:
   dimensions: []
 - name: ops/verify_header_completeness.py
   path: ops/verify_header_completeness.py
-  description: import re
+  description: 对标 trae_047 GOV-ENG-002：按扩展名路由到 SSoT 解析器，校验每种格式的必填字段。
   domain: ops
   execution_plane: warm-path
   status: registered
