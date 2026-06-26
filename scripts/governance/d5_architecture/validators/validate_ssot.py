@@ -106,6 +106,9 @@ def _get_valid_layers() -> list[str]:
 
 
 def check_p0_duplicate_active_module_id(files):
+    # stub——勿实现。module_path 冲突检测真源在
+    # capability_lookup.check_ssot_conflicts()（L2/L3 共享）。
+    # CLI: python -m zephyr.governance.capability_lookup --list-conflicts
     return []
 
 
