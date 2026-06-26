@@ -75,6 +75,7 @@ __all__ = [
     "make_ttl_reconciler",
     "make_ghost_reconciler",
     "make_path_tree_reconciler",
+    "make_rule_catalog_reconciler",
     "make_working_docs_reconciler",
     "make_domain_doc_reconciler",
     "make_precommit_id_uniqueness_reconciler",
@@ -685,6 +686,100 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=150,
+    )
+
+
+def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 rule_catalog_registry post-commit 自动同步 reconciler。
+
+    commit ``docs/01_policies_and_standards/rules/`` 下文件后，
+    ``rule_catalog_registry.yaml`` 可能过时（新增/修改/删除规则文件但 catalog
+    未重新生成）。本 reconciler 在 post-commit 跑
+    ``generate_rule_catalog.py`` 重新生成，如有变更自动提交。
+
+    对标 ``make_path_tree_reconciler`` 的"检测变更→自动提交"模式。
+    治 P3 审查发现的 catalog stale 问题（2026-05-07 至 2026-06-26 stale
+    1个月+，153条目74%死链）。catalog 是 ``sync_yaml_to_depgraph.py`` 的
+    数据源（同步到 depgraph.db 的 arch_directory_tree 表），stale 会导致
+    全景图数据污染。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-RULE-CATALOG", priority=160)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _CATALOG_REL = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
+    _RULES_PREFIX = "docs/01_policies_and_standards/rules/"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith(_RULES_PREFIX) and rel.endswith((".yaml", ".yml", ".md")):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重新生成 catalog（generate_rule_catalog.py 幂等）
+        gen_result = subprocess.run(
+            [sys.executable, "scripts/governance/d3_metadata/generate_rule_catalog.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"rule_catalog generation failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 catalog 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", _CATALOG_REL]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="rule_catalog_registry up to date")
+
+        # 3. 变更 → 自动提交（精确路径，禁 git add -A 防捡拾其他 session WIP）
+        add_result = gateway._run_git(["git", "add", "--", _CATALOG_REL])
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git add rule_catalog_registry failed: {add_result.stderr.strip()[:200]}",
+            )
+
+        auto_msg = (
+            f"chore(catalog): auto-sync rule_catalog_registry by GitCommitGateway post-commit "
+            f"[GW:{session_id}:auto]"
+        )
+        commit_result = gateway._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg,
+             "--", _CATALOG_REL]
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail="rule_catalog_registry drift detected and auto-reconciled",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"rule_catalog_registry drift detected, auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-RULE-CATALOG",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=160,
     )
 
 
