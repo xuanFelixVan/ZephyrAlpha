@@ -1839,31 +1839,8 @@ def cmd_propagate_rename(
                 else:
                     continue  # 不匹配（如 MOD-SIGNAL_ASHARE_EXTRA），跳过
 
-                # nodes.blueprint_id 精确值映射
-                cnt = c.execute(
-                    "SELECT COUNT(*) FROM nodes WHERE blueprint_id=?", (old_bp_id,)
-                ).fetchone()[0]
-                if cnt > 0:
-                    print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
-                    if not dry_run:
-                        c.execute(
-                            "UPDATE nodes SET blueprint_id=? WHERE blueprint_id=?",
-                            (new_bp_id, old_bp_id),
-                        )
-                    total += cnt
-
-                # blueprint_links.blueprint_id 精确值映射
-                cnt = c.execute(
-                    "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=?", (old_bp_id,)
-                ).fetchone()[0]
-                if cnt > 0:
-                    print(f"  {mode} blueprint_links.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
-                    if not dry_run:
-                        c.execute(
-                            "UPDATE blueprint_links SET blueprint_id=? WHERE blueprint_id=?",
-                            (new_bp_id, old_bp_id),
-                        )
-                    total += cnt
+                # 传播表 1+2（nodes + blueprint_links），复用公共传播逻辑
+                total += _propagate_bp_id_core(c, old_bp_id, new_bp_id, dry_run)
 
         if not dry_run and own_conn:
             c.commit()
@@ -1918,6 +1895,107 @@ def _safe_bp_id_replace(text: str, old: str, new: str) -> str:
     return re.sub(pattern, new, text)
 
 
+def _propagate_bp_id_core(
+    c: sqlite3.Connection,
+    old_bp_id: str,
+    new_bp_id: str,
+    dry_run: bool = False,
+    propagate_tsd: bool = False,
+    propagate_bp_path: bool = False,
+) -> int:
+    """blueprint_id 传播核心逻辑（公共，cmd_propagate_rename 和 cmd_rename_blueprint_id 共享）。
+
+    传播表：
+    1. nodes.blueprint_id（精确值映射）
+    2. blueprint_links.blueprint_id（精确值映射）
+    3. nodes.type_specific_data（可选，安全字符串替换）
+    4. nodes.blueprint_path（可选，安全字符串替换）
+
+    返回受影响总行数。
+    """
+    mode = "[DRY RUN]" if dry_run else "[OK]"
+    total = 0
+
+    # 1. nodes.blueprint_id 精确值映射
+    cnt = c.execute(
+        "SELECT COUNT(*) FROM nodes WHERE blueprint_id=?", (old_bp_id,)
+    ).fetchone()[0]
+    if cnt > 0:
+        print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
+        if not dry_run:
+            c.execute(
+                "UPDATE nodes SET blueprint_id=? WHERE blueprint_id=?",
+                (new_bp_id, old_bp_id),
+            )
+        total += cnt
+
+    # 2. blueprint_links.blueprint_id 精确值映射
+    try:
+        cnt = c.execute(
+            "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=?", (old_bp_id,)
+        ).fetchone()[0]
+    except sqlite3.OperationalError:
+        cnt = 0
+    if cnt > 0:
+        print(f"  {mode} blueprint_links.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
+        if not dry_run:
+            c.execute(
+                "UPDATE blueprint_links SET blueprint_id=? WHERE blueprint_id=?",
+                (new_bp_id, old_bp_id),
+            )
+        total += cnt
+
+    # 3. nodes.type_specific_data 级联清理（可选）
+    if propagate_tsd:
+        tsd_rows = c.execute(
+            "SELECT node_id, type_specific_data FROM nodes WHERE type_specific_data GLOB ?",
+            (f"*{old_bp_id}*",),
+        ).fetchall()
+        tsd_cnt = 0
+        for row in tsd_rows:
+            node_id = row[0]
+            tsd = row[1]
+            if not tsd:
+                continue
+            new_tsd = _safe_bp_id_replace(tsd, old_bp_id, new_bp_id)
+            if new_tsd != tsd:
+                if not dry_run:
+                    c.execute(
+                        "UPDATE nodes SET type_specific_data=? WHERE node_id=?",
+                        (new_tsd, node_id),
+                    )
+                tsd_cnt += 1
+        if tsd_cnt > 0:
+            print(f"  {mode} nodes.type_specific_data: {old_bp_id} -> {new_bp_id}: {tsd_cnt} rows", file=sys.stderr)
+            total += tsd_cnt
+
+    # 4. nodes.blueprint_path 级联清理（可选）
+    if propagate_bp_path:
+        bp_path_rows = c.execute(
+            "SELECT node_id, blueprint_path FROM nodes WHERE blueprint_path GLOB ?",
+            (f"*{old_bp_id}*",),
+        ).fetchall()
+        bp_cnt = 0
+        for row in bp_path_rows:
+            node_id = row[0]
+            bp_path = row[1]
+            if not bp_path:
+                continue
+            new_path = _safe_bp_id_replace(bp_path, old_bp_id, new_bp_id)
+            if new_path != bp_path:
+                if not dry_run:
+                    c.execute(
+                        "UPDATE nodes SET blueprint_path=? WHERE node_id=?",
+                        (new_path, node_id),
+                    )
+                bp_cnt += 1
+        if bp_cnt > 0:
+            print(f"  {mode} nodes.blueprint_path: {old_bp_id} -> {new_bp_id}: {bp_cnt} rows", file=sys.stderr)
+            total += bp_cnt
+
+    return total
+
+
 def cmd_rename_blueprint_id(
     old_bp_id: str,
     new_bp_id: str,
@@ -1946,83 +2024,10 @@ def cmd_rename_blueprint_id(
 
     def _run(c: sqlite3.Connection) -> int:
         mode = "[DRY RUN]" if dry_run else "[OK]"
-        total = 0
-
-        # 1. nodes.blueprint_id 精确值映射
-        cnt = c.execute(
-            "SELECT COUNT(*) FROM nodes WHERE blueprint_id=?", (old_bp_id,)
-        ).fetchone()[0]
-        if cnt > 0:
-            print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
-            if not dry_run:
-                c.execute(
-                    "UPDATE nodes SET blueprint_id=? WHERE blueprint_id=?",
-                    (new_bp_id, old_bp_id),
-                )
-            total += cnt
-
-        # 2. blueprint_links.blueprint_id 精确值映射
-        try:
-            cnt = c.execute(
-                "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=?", (old_bp_id,)
-            ).fetchone()[0]
-        except sqlite3.OperationalError:
-            cnt = 0
-        if cnt > 0:
-            print(f"  {mode} blueprint_links.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
-            if not dry_run:
-                c.execute(
-                    "UPDATE blueprint_links SET blueprint_id=? WHERE blueprint_id=?",
-                    (new_bp_id, old_bp_id),
-                )
-            total += cnt
-
-        # 3. nodes.type_specific_data 级联清理（GLOB 精确 + 安全字符串替换）
-        tsd_rows = c.execute(
-            "SELECT node_id, type_specific_data FROM nodes WHERE type_specific_data GLOB ?",
-            (f"*{old_bp_id}*",),
-        ).fetchall()
-        tsd_cnt = 0
-        for row in tsd_rows:
-            node_id = row[0]
-            tsd = row[1]
-            if not tsd:
-                continue
-            new_tsd = _safe_bp_id_replace(tsd, old_bp_id, new_bp_id)
-            if new_tsd != tsd:
-                if not dry_run:
-                    c.execute(
-                        "UPDATE nodes SET type_specific_data=? WHERE node_id=?",
-                        (new_tsd, node_id),
-                    )
-                tsd_cnt += 1
-        if tsd_cnt > 0:
-            print(f"  {mode} nodes.type_specific_data: {old_bp_id} -> {new_bp_id}: {tsd_cnt} rows", file=sys.stderr)
-            total += tsd_cnt
-
-        # 4. nodes.blueprint_path 级联清理（GLOB 精确 + 安全字符串替换）
-        bp_path_rows = c.execute(
-            "SELECT node_id, blueprint_path FROM nodes WHERE blueprint_path GLOB ?",
-            (f"*{old_bp_id}*",),
-        ).fetchall()
-        bp_cnt = 0
-        for row in bp_path_rows:
-            node_id = row[0]
-            bp_path = row[1]
-            if not bp_path:
-                continue
-            new_path = _safe_bp_id_replace(bp_path, old_bp_id, new_bp_id)
-            if new_path != bp_path:
-                if not dry_run:
-                    c.execute(
-                        "UPDATE nodes SET blueprint_path=? WHERE node_id=?",
-                        (new_path, node_id),
-                    )
-                bp_cnt += 1
-        if bp_cnt > 0:
-            print(f"  {mode} nodes.blueprint_path: {old_bp_id} -> {new_bp_id}: {bp_cnt} rows", file=sys.stderr)
-            total += bp_cnt
-
+        total = _propagate_bp_id_core(
+            c, old_bp_id, new_bp_id, dry_run,
+            propagate_tsd=True, propagate_bp_path=True,
+        )
         if not dry_run and own_conn:
             c.commit()
         print(f"{mode} cmd_rename_blueprint_id: total {total} rows", file=sys.stderr)
