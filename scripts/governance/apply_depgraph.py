@@ -196,6 +196,45 @@ if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 import lock_files as _lf  # noqa: E402
 
+# 引入 N-06 三轨正则真源（真源唯一：从 check_naming_convention.py 复用，避免正则重复定义）
+# 裁定#208 三轨制：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
+_D3_META_DIR = Path(__file__).resolve().parent / "d3_metadata"
+if str(_D3_META_DIR) not in sys.path:
+    sys.path.insert(0, str(_D3_META_DIR))
+from check_naming_convention import (  # noqa: E402
+    _MODULE_ID_LAYER_MASTER_RE as _BP_LAYER_MASTER_RE,
+    _MODULE_ID_DOMAIN_DERIVED_RE as _BP_DOMAIN_DERIVED_RE,
+    _MODULE_ID_D_PREFIX_RE as _BP_D_PREFIX_RE,
+    _MODULE_ID_SHARED_RE as _BP_SHARED_RE,
+)
+
+
+def _validate_bp_id_format(bp_id: str) -> tuple[bool, str]:
+    """校验 blueprint_id 格式是否符合裁定#208 三轨制。
+
+    真源：scripts/governance/d3_metadata/check_naming_convention.py 的 N-06 正则。
+
+    三轨：
+    - layer-master 轨: MOD-{LAYER_CODE}-{SEQ}（如 MOD-INF-005）
+    - 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）
+    - 跨域共享轨: SH-{ABBR}-{NNN}（如 SH-DB-001）
+
+    Returns: (是否合规, 失败原因)
+    """
+    if bp_id.startswith("SH-"):
+        if _BP_SHARED_RE.match(bp_id):
+            return True, ""
+        return False, "SH- 前缀必须为 SH-{ABBR}-{NNN} 格式（如 SH-DB-001）"
+    if bp_id.startswith("MOD-"):
+        if _BP_LAYER_MASTER_RE.match(bp_id) or _BP_DOMAIN_DERIVED_RE.match(bp_id):
+            return True, ""
+        return False, "MOD- 前缀必须为 layer-master 轨 MOD-{LAYER}-NNN 或派生轨 MOD-{DOMAIN}[-NNN]"
+    if bp_id.startswith("D-"):
+        if _BP_D_PREFIX_RE.match(bp_id):
+            return True, ""
+        return False, "D- 前缀必须为 D-{DOMAIN}-NNN 格式"
+    return False, "blueprint_id 必须以 MOD-/SH-/D- 开头"
+
 # 进程内 DB 写入串行锁——防止同进程多线程并发获取文件锁
 _db_write_lock_lock = threading.Lock()
 
@@ -342,6 +381,19 @@ def cmd_update_module(dep: dict, module_id: str, field: str, value: str) -> None
     module = _find_module(dep, module_id)
     if module is None:
         print(f"ERROR: Module '{module_id}' not found", file=sys.stderr)
+        sys.exit(3)
+
+    # 蓝图保护（V1 漏洞修复）：禁止用通用 --update-module 修改 blueprint_id
+    # 原因：会绕过 --rename-blueprint-id 的传播+YAML扫描+SYNC HINT+事务管理全部保护
+    # 治本：阻断入口，强制使用专用工具 --rename-blueprint-id
+    if field == "blueprint_id":
+        print(
+            f"ERROR: 禁止用 --update-module 修改 blueprint_id（会绕过传播+YAML扫描+SYNC HINT 全部保护）。\n"
+            f"请使用专用改名工具：\n"
+            f"  python scripts/governance/apply_depgraph.py --rename-blueprint-id {module_id} {value}\n"
+            f"该工具会自动处理 4 类传播表 + YAML 真源扫描 + SYNC HINT 提醒。",
+            file=sys.stderr,
+        )
         sys.exit(3)
 
     old_value = module.get(field, "<not set>")
@@ -2110,6 +2162,17 @@ def cmd_rename_blueprint_id(
 
     返回受影响总行数，-1=失败。
     """
+    # V2 漏洞修复：new_bp_id 必须符合裁定#208 三轨制格式
+    # old_bp_id 不校验（DB 中可能存在历史遗留的不合规 ID，需要允许改名到合规格式）
+    ok, reason = _validate_bp_id_format(new_bp_id)
+    if not ok:
+        print(
+            f"ERROR: new_bp_id '{new_bp_id}' 格式不合规：{reason}\n"
+            f"裁定#208 三轨制：layer-master 轨(MOD-{{LAYER}}-NNN) / 派生轨(MOD-{{DOMAIN}}[-NNN]) / 跨域共享轨(SH-{{ABBR}}-NNN)",
+            file=sys.stderr,
+        )
+        return -1
+
     own_conn = conn is None
 
     def _run(c: sqlite3.Connection) -> int:
