@@ -357,6 +357,25 @@ repos:
         files: "^tests/.*\\.py$"
         description: "test_*.py 必须含 def test_*（ERROR）；模块级副作用仅 WARN。8个既有文件豁免中。"
 
+      # ── GATE-MUT: 变异测试门禁（打破自指悖论——机械注入与 AI 盲区正交）──
+      # 权威依据：systemic_drift_root_cure_continuation_plan.md §5.3 P3-T3
+      # 真源声明：P3-T1 修复 validate_mutation_testing D2 盲区（yaml case 加载）+ 6 个 RR case；
+      #           P3-T2 落地 mutation_test_reconciliation_registry（机械注入 15 变异，score 80% PASS）
+      # 检测范围：手动触发（stages: [manual]，不卡顿常规 commit）
+      # 检测内容：加载 false_negative_cases/ 全量 case（json+yaml），跑各 case verifier，
+      #           expected_finding_id 未在 stdout = FALSE NEGATIVE（检测盲区）
+      # 模式：--warn-only（reporting/非阻断）——当前 6 个 pre-existing 死库存 case 产生
+      #       false negative（2 个 verifier 不存在 + 2 个 timeout + 2 个未检出），
+      #       须独立卡清理后方可移除 --warn-only 转硬阻断（沿用 plan §5.3 达标前手动裁定）
+      - id: gate-mut
+        name: "GATE-MUT: 变异测试门禁（false negative 检测，打破自指）"
+        entry: python scripts/governance/meta/validate_mutation_testing.py --warn-only
+        language: system
+        pass_filenames: false
+        always_run: false
+        stages: [manual]
+        description: "P3-T3：手动触发变异测试——加载 false_negative_cases 全量 case，跑 verifier 检测 false negative。当前 --warn-only（6 死库存待清理），达标后移除 --warn-only 转硬阻断"
+
       # ── GATE-SSOT: SSoT 唯一真源门禁（KBG-0001 + KBG-0021 强制执行层）──
       # 权威依据：KBG-0001（docs/ 为唯一 canonical 真源）+ KBG-0021（三级违规分级 + Phase 0 强制门禁）
       #  真源声明：Session 20260417 + 20260424 KB 决策记录拍板

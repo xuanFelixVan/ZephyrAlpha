@@ -71,6 +71,15 @@ gates:
   scope: global
   execution_plane: hot
   note: pre-commit钩子定义——非独立YAML，file字段为空（避免zombie检测误判）
+- gate_id: GATE_MUT
+  gate_name: mutation_testing
+  title: GATE-MUT Mutation Testing Gate
+  category: lifecycle
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: pre-commit钩子定义——非独立YAML，file字段为空（避免zombie检测误判）。P3-T3接线，stages:[manual]手动触发，当前--warn-only（6死库存待清理后转硬阻断）
 - gate_id: G10
   gate_name: position_limits
   title: G10 Position Limits Gate
