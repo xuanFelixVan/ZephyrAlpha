@@ -371,6 +371,22 @@ repos:
         files: "^.*\\.py$"
         description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §6.5 — .py只允许在合法三目录中）"
 
+      # ── GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（trae_047 §gov_eng_002_directory_mapping）──
+      # 权威依据：trae_047_engineering_file_header.yaml §gov_eng_002_directory_mapping 禁止规则
+      # 真源声明：数据真源唯一位置为 data/ 目录，src/ 仅放代码不放运行态数据
+      # 检测范围：staged 文件（新增/修改/重命名）
+      # 检测内容：src/data/ 路径前缀硬阻断（大小写不敏感）
+      # 模式：--ci 硬阻断（违规 = 拒绝提交）
+      # 历史教训：src/data/brain/ 与 data/brain/ 并存导致版本漂移（2026-06-27 清理 commit 36871193）
+      - id: gate-src-no-data
+        name: "GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（数据真源唯一 data/）"
+        entry: python scripts/governance/d5_architecture/checkers/check_src_no_data.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        description: "src/data/ 路径硬阻断——数据真源唯一位置为 data/，src/ 仅放代码（trae_047 §gov_eng_002_directory_mapping）"
+
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
       # 权威依据：IRN-011（ai_behavior_iron_policy.md）9 条零残留规则（ZR-001~009）
       # 真源声明：Session 20260505 零残留原则落地
