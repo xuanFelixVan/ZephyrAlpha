@@ -118,6 +118,9 @@ Thumbs.db
 
 # Temp and backup
 *.bak
+*.bak.*
+*.baseline
+*.baseline_content
 *.tmp
 *.temp
 *.log

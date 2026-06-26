@@ -1,3 +1,9 @@
+---
+ttl: task_bound
+doc_type: log
+completes_when: 历史任务报告归档完成（任务8+任务4 已结案）
+---
+
 # 任务8：业务域互依审查 - 执行完成报告
 ## 一、执行摘要
 修复项 状态 效果 P1: D-AUTONOMY_CORE 层级重评（L2→L1_platform） ✅ 已执行 hard向上依赖 1→0，向上依赖 29→19 P2: D-FRONTEND→D-AUTONOMY_CORE hard依赖 ✅ 自动解决 依赖P1，已变为同级互依 P3: D-INFRA→D-SHARED soft依赖 📋 输出建议 代码重构任务，需单独建卡 P4: D-REPORTING event_only向上依赖 📋 输出建议 代码重构任务，需单独建卡 P5: L2内部hard互依评估 ✅ 已评估 27条全部合理，无需修复
