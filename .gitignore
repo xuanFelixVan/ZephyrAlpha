@@ -151,6 +151,10 @@ data/drift_handoffs/*
 data/audit/
 data/audit_trail/
 
+# Secret leak scan results (runtime, regenerable, large files ~55-170MB each)
+# These are scan outputs from scan_secret_leak.py; must not be committed to git
+**/sec_leak_*.json
+
 # Runtime cache and state
 .audit_cache/
 .zephyr/

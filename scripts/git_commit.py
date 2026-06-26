@@ -55,7 +55,10 @@ def _parse_files(files_arg: str) -> list[str]:
         return []
     parts = [f.strip() for f in files_arg.split(",") if f.strip()]
     # 归一化为绝对路径（相对路径基于 cwd 解析）
-    return [str(Path(f).resolve()) for f in parts]
+    # 注意：用 abspath 而非 resolve()——resolve() 在 Windows 上会规范化为
+    # 物理目录的真实大小写，当 on-disk 与 git index 大小写不一致时（如 09_audit vs 09_AUDIT）
+    # 会导致后续 git add/commit 的 pathspec 不匹配。abspath 保留传入路径大小写。
+    return [os.path.abspath(f) for f in parts]
 
 
 def main() -> int:
@@ -112,8 +115,11 @@ def main() -> int:
         truly_missing = []
         for f in missing:
             rel = os.path.relpath(f, args.project_root)
+            # :(icase) 与 GitCommitGateway._is_git_tracked 保持一致——
+            # Windows 文件系统大小写不敏感但 git pathspec 默认大小写敏感，
+            # 不加 :(icase) 会导致 on-disk 路径大小写与 git index 不一致时误报"未跟踪"
             chk = _sp.run(
-                ["git", "ls-files", "--error-unmatch", "--", rel],
+                ["git", "ls-files", "--error-unmatch", "--", f":(icase){rel}"],
                 capture_output=True, cwd=args.project_root,
             )
             if chk.returncode != 0:

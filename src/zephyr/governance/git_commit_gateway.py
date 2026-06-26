@@ -421,7 +421,13 @@ class GitCommitGateway:
             session_id = "unknown"
 
         # 归一化为绝对路径
-        abs_files = [str(Path(f).resolve()) for f in files]
+        # 注意：用 os.path.abspath 而非 Path(f).resolve()——resolve() 在 Windows 上会
+        # 规范化为物理目录的真实大小写，当 on-disk 与 git index 大小写不一致时（如
+        # 09_audit vs 09_AUDIT）会导致 git add/commit 的 pathspec 不匹配。abspath
+        # 保留传入路径大小写，与 git index 一致。
+        # 内部比较逻辑（_collect_non_target_rel / _get_session_held_non_target 等）
+        # 仍用 resolve() 归一化双方，比较时一致匹配，不受影响。
+        abs_files = [os.path.abspath(f) for f in files]
         # 过滤不存在且未 git 跟踪的文件：
         # - 存在的文件 → 保留
         # - 不存在但 git 跟踪 → 保留（deletion commit 场景）
