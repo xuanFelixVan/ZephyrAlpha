@@ -264,7 +264,7 @@ repos:
         pass_filenames: true
         always_run: false
         files: "^docs/.*\\.md$"
-        description: "Frontmatter ttl 字段校验（ttl 必填 + 合法值，从 ttl_vocabulary.yaml 动态加载；二元判定树见同文件 decision_tree；全量审计用 --all-files）"
+        description: "Frontmatter ttl（必填+合法值，hard block）+ doc_type（必填+合法值，默认 warn-only）校验，从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载。capability: frontmatter_metadata_validation"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
