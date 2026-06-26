@@ -1,13 +1,13 @@
-# 自动生成于 2026-06-26T03:48:05Z
+# 自动生成于 2026-06-26T10:59:58Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-26T03:48:05Z'
+generated_at: '2026-06-26T10:59:58Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 369
+total_scripts: 374
 with_manifest: 218
-missing_manifest: 151
+missing_manifest: 156
 categories:
   governance: 115
   governance:_sync: 4
@@ -16,7 +16,7 @@ categories:
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 22
   governance:d2_links: 3
-  governance:d3_metadata: 11
+  governance:d3_metadata: 14
   governance:d4_paths: 4
   governance:d5_architecture: 90
   governance:d6_security: 14
@@ -24,7 +24,7 @@ categories:
   governance:d8_doc_sync: 4
   governance:d9_knowledge: 2
   governance:generators: 8
-  governance:meta: 39
+  governance:meta: 41
   governance:observability: 1
   governance:repair: 6
 scripts:
@@ -163,6 +163,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags:
   - Disruptive
+- name: _tmp_final_check.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: _verify_fle_gates.py
   owner: governance
   dimensions: []
@@ -450,6 +460,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: check_schema_version_writes.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: check_test_structure.py
   owner: governance
   dimensions: []
   priority: P2
@@ -1129,6 +1149,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d3_metadata/backfill_doctype_metadata.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/backfill_ttl_metadata.py
   owner: governance:d3_metadata
   dimensions: []
@@ -1174,6 +1204,16 @@ scripts:
   - Critical
   - Quick
   - Security
+- name: d3_metadata/check_vocab_hardcode.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/deep_content_scanner.py
   owner: governance:d3_metadata
   dimensions:
@@ -1198,6 +1238,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: d3_metadata/migrate_illegal_doctype.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/validate_architecture.py
   owner: governance:d3_metadata
   dimensions:
@@ -1509,7 +1559,8 @@ scripts:
     type: str
     description: 检查指定 module_id 的跨层依赖方向
   warn_only: false
-  description: '依赖方向校验（INJ-002/008）——依赖可解析性 + 跨层依赖方向。 对标 GOV-MOD-001 module-injection-rules-policy.md。
+  description: '依赖方向校验（INJ-002/008）——依赖可解析性 + 跨层依赖方向。 对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN
+    module-injection-rules-policy.md。
 
     '
   tags:
@@ -2282,7 +2333,7 @@ scripts:
     type: str
     description: 检查指定 module_id 的 KB 决策记录关联
   warn_only: false
-  description: '模块 Schema 校验（INJ-003/004/005/006）——契约定义、字段枚举、KB 决策记录关联。 对标 GOV-MOD-001
+  description: '模块 Schema 校验（INJ-003/004/005/006）——契约定义、字段枚举、KB 决策记录关联。 对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN
     module-injection-rules-policy.md。
 
     '
@@ -2619,7 +2670,7 @@ scripts:
     type: str
     description: 检查指定目录下所有文件的编码合规性
   warn_only: false
-  description: '编码合规校验（INJ-007）——UTF-8 编码、无 CRLF、无 autoGuessEncoding。 对标 GOV-MOD-001
+  description: '编码合规校验（INJ-007）——UTF-8 编码、无 CRLF、无 autoGuessEncoding。 对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN
     module-injection-rules-policy.md。
 
     '
@@ -3103,7 +3154,7 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 'Gate Engine Bootstrap 自检——验证 MOD-INF-007 Gate Engine 自身的完整性， 包括核心文件存在性、YAML/DB
+  description: 'Gate Engine Bootstrap 自检——验证 MOD-GATE_ENGINE Gate Engine 自身的完整性， 包括核心文件存在性、YAML/DB
     可用性、CheckType 覆盖率及熔断器验证。
 
     '
@@ -3155,27 +3206,7 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: generate_project_depgraph_artifact.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: generate_project_path_tree.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: generate_target_path_tree.py
   owner: governance
   dimensions: []
   priority: P2
@@ -3596,6 +3627,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: meta/mutation_test_reconciliation_registry.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: meta/phase_e_context_check.py
   owner: governance:meta
   dimensions: []
@@ -3870,6 +3911,16 @@ scripts:
   tags:
   - Quick
   - Security
+- name: meta/verify_reconciliation_registry.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: migrate_arch_f_functions.py
   owner: governance
   dimensions: []

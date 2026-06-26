@@ -135,6 +135,53 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arb
 1. `python scripts/git_guard.py add src/x.py`
 2. `python scripts/git_guard.py commit -F _tmp.txt --no-verify`
 
-## 11. depgraph.db 是唯一查询入口（已删除派生产物）
+## 11. depgraph.db 使用决策树（唯一全景真源）
 
-> **裁定**：depgraph.db 是全景真源。`data/asset_index/` 下原 depgraph.db 派生产物（project_entity_depgraph.yaml、target_path_tree.yaml 等 7 个文件）经调查全部零有效消费者（代码引用因连字符/下划线不匹配均为死引用），已于 2026-06-26 删除。AI 需要查询 depgraph 数据时，直接用 `sqlite3` 或 `apply_depgraph.py --query` 查询 depgraph.db，禁止重新创建派生 YAML 副本。
+> **裁定**：depgraph.db（`data/databases/depgraph.db`）是全景真源 + 唯一查询入口。`data/asset_index/` 下原派生产物（project_entity_depgraph.yaml、target_path_tree.yaml 等 7 个文件）经调查全部零有效消费者，已于 2026-06-26 删除。**禁止重新创建派生 YAML 副本**——需要 depgraph 数据时直接查 DB。
+
+### 11.1 什么时候查 DB（场景 → SQL/工具）
+
+| 我需要知道… | 查询方式 |
+|------------|---------|
+| 模块属于哪个域 | `SELECT belongs_to FROM nodes WHERE path LIKE '%filename%'` |
+| 域有哪些模块 | `SELECT blueprint_id, path FROM nodes WHERE belongs_to='D-XXX'` |
+| 模块的物理路径 | `SELECT path FROM nodes WHERE blueprint_id='MOD-XXX'` |
+| 项目全景摘要（域数+模块数+production_nodes） | `python scripts/governance/extract_depgraph.py --summary` |
+| 文件级依赖关系 | `python scripts/governance/extract_depgraph.py --paths` |
+| 指定域/模块详情 | `python scripts/governance/extract_depgraph.py --domains D-XXX` 或 `--modules MOD-XXX` |
+
+> ⚠️ 禁止直接 Read depgraph.db（二进制，OOM 风险）。查询走 `sqlite3` 命令行或 extract_depgraph.py。
+
+### 11.2 什么时候同步 DB（场景 → 工具，3 个写入路径）
+
+| 我做了什么 | 必须运行的同步命令 | 更新的表 |
+|-----------|-------------------|---------|
+| 创建/删除/移动 .py/.yaml 文件 | `python scripts/governance/generate_project_path_tree.py --write` | arch_directory_tree |
+| 改了模块的 blueprint_id/belongs_to | `python scripts/governance/apply_depgraph.py --update-module MODULE_ID FIELD=VALUE` | nodes |
+| 改了模块的物理路径 path | `python scripts/governance/apply_depgraph.py --update-path MODULE_ID NEW_PATH` | nodes |
+| 新增/删除/改名域 | `python scripts/governance/apply_depgraph.py --insert-domain ...` / `--rename-domain ...` | domains |
+| 改了 YAML 规则文件（`docs/01_policies_and_standards/` 下） | `python scripts/governance/sync_yaml_to_depgraph.py` | 9 张 readonly 表（见 11.3） |
+
+> 💡 pre-commit **GATE-SYNC-PATH-TREE** 会在 .py/.yaml 变更时自动运行 `generate_project_path_tree.py --write`（见 `.pre-commit-config.yaml`）。模块元数据（blueprint_id/belongs_to/path）变更无法自动推断，必须手动运行 apply_depgraph.py。
+
+### 11.3 哪些表不能手写（readonly 表，手写会被覆盖）
+
+以下 9 张表由 `sync_yaml_to_depgraph.py` 从 YAML 同步，**禁止手动 INSERT/UPDATE/DELETE**（DB 触发器会 ABORT 并提示"表只读，唯一真源是 YAML"）：
+
+```
+gates, field_vocabularies, registries, cross_registry_rules,
+hard_boundaries, business_streams, infrastructure_components,
+model_capabilities, blueprint_links
+```
+
+其他表（nodes, edges, domains, arch_path_mappings, arch_directory_tree, contracts, arch_constraints）通过 `apply_depgraph.py` 修改。
+
+### 11.4 三个工具职责边界（一张表说清楚）
+
+| 工具 | 数据流 | 目标表 | 触发场景 |
+|------|--------|--------|---------|
+| `sync_yaml_to_depgraph.py` | YAML 规则 → DB | 9 张 readonly 表 | 改了 `docs/01_policies_and_standards/` 下 YAML |
+| `apply_depgraph.py --update-module/--update-path 等` | 手动元数据 → DB | nodes/edges/domains 等可写表 | 改了模块 blueprint_id/belongs_to/path |
+| `generate_project_path_tree.py --write` | 磁盘扫描 → DB | arch_directory_tree | 创建/删除/移动文件 |
+
+> 改 depgraph.db 前必须 `git commit` 备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/diagnose_depgraph.py`。

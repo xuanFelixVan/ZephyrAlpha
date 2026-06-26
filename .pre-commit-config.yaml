@@ -313,20 +313,23 @@ repos:
         files: "\\.(py|yaml|md)$"
         description: "零残留强制门禁——违规即阻断commit。对标IRN-011（ZR-001~009），任何残留物不得入库。多AI并发优化：改为按文件触发，避免always_run卡死"
 
-      # ── GATE-DEDUP: 代码去重门禁（MOD-INF-017 §12 集成目标）──
-      # 权威依据：MOD-INF-017 蓝图 §12 集成目标 + §16.6 CLI 参数规格
+      # ── GATE-SSOT: SSoT 创建门禁（方案 E：零新真源，复用 [MODULE] 头）──
+      # 权威依据：方案 E 裁定（第一性原理推导）+ RULE-FOUR 创建即注册
       # 检测范围：src/zephyr/**/*.py 变更时触发
-      # 检测内容：增量去重扫描——exit 0=PASS, exit 1=WARN, exit 2=BLOCK(high/critical)
-      # 模式：--warn-only（骨架阶段，验证稳定后转 --fail-on-duplicates 硬阻断）
-      - id: gate-dedup-code-deduplication
-        name: "GATE-DEDUP: 代码去重门禁（MOD-INF-017）"
-        entry: python -m zephyr.testing.code_dedup.cli scan --incremental --warn-only
+      # 检测内容：staged 新增 .py 文件的 [MODULE] 头声明的 module_path 与已有文件冲突
+      # 模式：硬阻断（exit 1=BLOCK）——发现 module_path 冲突时拒绝提交
+      # 双保险：GitCommitGateway.commit() 内嵌 _check_ssot_canonical 是主防线
+      #         （GitCommitGateway 用 --no-verify 绕过 pre-commit）
+      #         本 hook 拦截不用 GitCommitGateway 而直接 git commit 的场景
+      - id: gate-ssot
+        name: "GATE-SSOT: SSoT 创建门禁（module_path 冲突检测）"
+        entry: python scripts/governance/check_ssot_gate.py
         language: system
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$"
-        stages: [manual]
-        description: "增量代码去重扫描——发现 high/critical 重复时 WARN（骨架阶段），稳定后转硬阻断。模块未实现，暂设manual阶段"
+        stages: [commit]
+        description: "SSoT 创建门禁——staged 新增 .py 声明已有 module_path 时硬阻断。真源是 [MODULE] 头，反查通过 capability_lookup 实时扫描磁盘。GitCommitGateway 内嵌门禁是主防线，本 hook 是双保险"
 
       # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
       # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
@@ -534,6 +537,22 @@ repos:
         description: "vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
 
       # ── GATE-DERIVED 已删除（派生产物已删除，depgraph.db 是唯一查询入口）──
+      # 取而代之：GATE-SYNC-PATH-TREE 自动同步 arch_directory_tree（文件结构变更时触发）
+
+      # ── GATE-SYNC-PATH-TREE: 文件结构变更自动同步 arch_directory_tree（AGENTS.md §11.2 配套）──
+      # 权威依据：AGENTS.md §11.2 depgraph.db 使用决策树
+      # 触发：.py/.yaml 文件变更时（pre-commit files 过滤器）
+      # 行为：扫描磁盘 → 写入 depgraph.db arch_directory_tree 表（幂等，重复运行无副作用）
+      # 模式：自动同步（--write）；depgraph.db 若被修改显示为 unstaged 变更，由后续 commit 拾取
+      # 设计选择：pre-commit（非 post-commit）以利用 files 过滤器，仅在 .py/.yaml 变更时触发
+      - id: gate-sync-path-tree
+        name: "GATE-SYNC-PATH-TREE: 文件结构变更自动同步 arch_directory_tree"
+        entry: python scripts/governance/generate_project_path_tree.py --write
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "\\.(py|yaml)$"
+        description: ".py/.yaml 变更后自动同步 depgraph.db arch_directory_tree（AGENTS.md §11.2 决策树配套，幂等）。depgraph.db 修改作为 unstaged 变更由后续 commit 拾取"
 
       # ── GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验（#ARCH-016 治本）──
       # 权威依据：schema_health_revised_execution_plan.md v2 §3 阶段5/6

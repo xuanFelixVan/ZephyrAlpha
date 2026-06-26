@@ -3319,7 +3319,7 @@ def main():
         "--force",
         action="store_true",
         help="裁定#207 R2 C2：确认执行破坏性DB重建（DELETE运营态节点后从磁盘扫描重建）。"
-        "不加此flag时--output-db将被拒绝。制品重生请用 generate_project_depgraph_artifact.py --write",
+        "不加此flag时--output-db将被拒绝。depgraph.db 是唯一真源，禁止重新创建派生 YAML 副本。",
     )
     args = parser.parse_args()
 
@@ -3608,9 +3608,7 @@ def main():
                 "  原因: --output-db 未搭配 --force\n"
                 "  风险: DELETE运营态节点后从磁盘扫描重建，手工维护数据可能丢失\n"
                 "  \n"
-                "  制品重生（推荐）:\n"
-                "    python scripts/governance/generate_project_depgraph_artifact.py --write\n"
-                "  \n"
+                "  depgraph.db 是唯一真源（禁止重新创建派生 YAML 副本）。\n"
                 "  确认破坏性重建（需人工评估）:\n"
                 "    python scripts/governance/generate_project_depgraph.py --output-db <path> --force\n"
                 + "=" * 70,
