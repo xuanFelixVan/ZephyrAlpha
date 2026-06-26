@@ -127,12 +127,28 @@ capabilities:
       - PROJECT_ROOT
       - REPO_ROOT
       - 仓库根
+      - 仓库根路径
+      - 仓库根目录
       - project_root
       - repo_root
+      - repo root
+      - project root
     description: >-
       仓库根目录的权威解析入口。所有需要仓库根的代码应 from zephyr.shared.io.paths import REPO_ROOT，
       禁止各自用 Path(__file__).parents[N] 推算（N 值散乱导致 bug，见 commit 1cd39ad5）。
-      src/zephyr/shared/io/paths.py 是 REPO_ROOT 真源；截至本次仍有 90+ 文件各自推算，彻底归一见独立任务。
+      src/zephyr/shared/io/paths.py 是 src/ 代码的 REPO_ROOT 真源；截至本次仍有 90+ 文件各自推算，
+      彻底归一见独立任务。GATE-DD07 已扩展检测 Path(__file__).parents[N] 模式（warn-only）。
+    duplicates_manual:
+      - path: src/zephyr/integration/shared_08/io/paths.py
+        relation: sibling
+        note: >-
+          shared_08 re-export wrapper（zephyr.integration.shared_08.io.paths），与 shared/io/paths.py
+          同属 MOD-INF-016。canonical 裁定为 src/zephyr/shared/io/paths.py（shared/ 是 src/ 代码真源）。
+      - path: scripts/governance/_shared/constants.py
+        relation: sibling
+        note: >-
+          scripts/ 下治理脚本的 REPO_ROOT 真源（find_repo_root()）。scripts/ 不能导入 src/zephyr/ 包，
+          故独立定义。src/ 代码用 zephyr.shared.io.paths，scripts/ 用 _shared.constants，两者平级。
 
   # --------------------------------------------------------------------------
   - capability_id: vocabulary_values_loader
@@ -163,6 +179,9 @@ capabilities:
       - load_blueprint_path
       - blueprint_path
       - 蓝图路径
+      - 蓝图磁盘路径
+      - 蓝图路径查询
+      - blueprint disk path
     description: >-
       蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（SSoT 派生）按 module_id 查询，
       不硬编码路径。真源链：blueprint.md frontmatter → sync_registry_from_blueprints.py
@@ -208,17 +227,20 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: bare_llm_call_detector
-    canonical_override: scripts/governance/d11_compliance/validate_llm_security_gateway.py
+    canonical_override: scripts/governance/d7_code/detect_direct_llm_calls.py
     aliases:
       - GATE-20
       - llm_security_gateway_gate
       - 裸调LLM检测
       - validate_llm_security_gateway
+      - detect_direct_llm_calls
     description: >-
-      GATE-20 裸调 LLM API 检测门禁。pre-commit 阶段自动触发，AST 扫描 src/zephyr/
-      下所有 Python 文件，检测未导入 LSG 的裸调 LLM API（openai/anthropic/langchain/
-      litellm）。对标 RULE-LSG-001 强制执行。canonical 在 scripts/ 下（非 src/zephyr/），
-      无法 auto 派生，故用 canonical_override 显式声明。
+      GATE-20 裸调 LLM API 检测门禁（合并 COND-30 + RULE-LSG-001）。pre-commit
+      阶段自动触发，AST 扫描 src/zephyr/ 下所有 Python 文件，检测未导入 LSG 的
+      裸调 LLM API（openai/anthropic/langchain/litellm）+ exec/eval/compile 绕过。
+      支持 --ci（硬阻断）/ --warn-only / --cond30（仅导入检测）三种模式。
+      canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，故用
+      canonical_override 显式声明。Session 20260626 合并自 validate_llm_security_gateway.py。
 
 # ============================================================================
 # 维护日志
