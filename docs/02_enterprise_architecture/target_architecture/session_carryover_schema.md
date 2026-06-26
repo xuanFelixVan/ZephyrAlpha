@@ -1,7 +1,7 @@
 ---
 module_id: STD-SESSION-CARRYOVER-001
 title: Session Carryover Schema / 会话接续 Schema
-doc_type: reference
+doc_type: contract
 status: Active
 version: 1.0.0
 layer: cross_layer

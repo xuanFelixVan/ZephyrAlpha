@@ -13,7 +13,7 @@
 
 schema_version: "2.2.0"
 module_id: GOV-AI-007
-doc_type: schema
+doc_type: contract
 title: "Session Log 标准 Schema"
 status: active
 version: "2.2.0"
@@ -254,7 +254,7 @@ optional_fields:
     type: list
     description: "本次 session 删除的文件列表"
     example:
-      - "删除: docs/09_audit/archive/obsolete-draft.md"
+      - "删除: docs/_working/audit/archive/obsolete-draft.md"
     usage: "删除不可逆。每条以'删除:'开头，后跟完整绝对路径。"
 
   - field: "owner_decisions_needed"

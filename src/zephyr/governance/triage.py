@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-DAT_triage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 G2 Triage 门禁 — 知识分类评分（T-2-13-B）
@@ -282,7 +283,7 @@ class TriageGate:
 
         # RENAME_REVIEW: 以下分支按值名分组——若词表改名（如 blueprint→xxx），
         # 需复核此分组映射。无法用词表属性（如 rule_form）替代，因为是业务分类逻辑。
-        if doc_type in ("blueprint", "design"):
+        if doc_type == "blueprint":
             return "BLUEPRINT"
         if doc_type in ("standard", "policy"):
             return "GOVERNANCE_STD"

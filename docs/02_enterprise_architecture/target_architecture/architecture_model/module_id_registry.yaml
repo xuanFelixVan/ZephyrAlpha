@@ -280,7 +280,7 @@ registered_ids:
   - module_id: GOV-AI-007
     title: "Session Log 标准 Schema"
     path: "docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml"
-    doc_type: schema
+    doc_type: contract
     status: active
 
   # === GOV 任务治理层 ===

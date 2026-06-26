@@ -10,12 +10,13 @@
 # doc_type 受控词表
 # ZephyrAlpha 2.0 文档类型唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.4.0
+# 版本：2.0.0
 # 创建日期：2026-04-30
 #
-# 本词表定义 doc_type 字段的全项目合法值（25 种）——涵盖 01_policies_and_standards/
-# 核心子集（13 种）+ 其他目录（03_blueprints/、02_enterprise_architecture/ 等）的
-# 项目级类型（12 种）。任何文件 frontmatter 中的 doc_type 必须是以下值之一。
+# 本词表定义 doc_type 字段的全项目合法值（19 种）——v2.0.0 精简：
+# 移除 design/plan/schema/reference/protocol/declaration 6 值（语义合并到
+# blueprint/construction_plan/contract/register/architecture_view/audit_report/config/policy）。
+# 任何文件 frontmatter 中的 doc_type 必须是以下值之一。
 # 新增 doc_type 必须先在此词表中注册，再在 PS-STD-001 中更新。
 #
 # 对标标准：
@@ -24,15 +25,15 @@
 #   - Cursor Rules：glob 自动触发 + 决策辅助
 #   - OpenAPI 3.1：enum + description + deprecated flag
 
-schema_version: "1.4.0"
+schema_version: "2.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-001
-version: "1.4.0"
+version: "2.0.0"
 title: "doc_type 受控词表"
 status: active
 vocabulary_name: doc_type
-total_values: 25
-source: "PS-STD-001 §3.2 + §3.2.1（全项目完整词表 25 值：01_policies_and_standards/ 子集 13 值 + 其他目录 12 值）"
+total_values: 19
+source: "PS-STD-001 §3.2 + §3.2.1（v2.0.0 精简至 19 值：移除 design/plan/schema/reference/protocol/declaration）"
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1 + §3.2"
@@ -95,16 +96,6 @@ values:
     examples: ["task/index.md", "governance/index.md", "meta/index.md"]
     filename_suffixes: ["index.md"]
 
-  - value: protocol
-    definition: "协议——定义多方交互的规则和流程"
-    rule_form: declarative
-    allowed_directories: ["governance/"]
-    forbidden_directories: ["operational/"]
-    required_fields: ["valid_from"]
-    ai_keywords: ["协议", "约定", "交互", "protocol", "handoff"]
-    examples: ["decision-record-protocol.md", "handoff-protocol.md"]
-    filename_suffixes: ["_protocol.md"]
-
   - value: template
     definition: "模板——可复用的文档结构骨架"
     rule_form: structural
@@ -130,20 +121,9 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
-    usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/glossary.yaml。术语的大白话翻译/映射表使用 doc_type: reference（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），reference 是翻译（对照表）。"
+    usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/glossary.yaml。术语的大白话翻译/映射表使用 doc_type: register（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），register 是数据清单（对照表）。"
     examples: ["_registry/vocabularies/glossary.yaml"]
     filename_suffixes: ["_registry/vocabularies/glossary.yaml", "_terminology.md"]
-
-  - value: reference
-    definition: "参考文件——提供特定主题的结构化参考数据、映射表或排名，不定义规则本身"
-    rule_form: data
-    allowed_directories: ["meta/", "_registry/catalogs/"]
-    forbidden_directories: ["governance/", "operational/"]
-    required_fields: ["summary"]
-    ai_keywords: ["参考", "映射", "排名", "reference", "速查", "对照表"]
-    usage_note: "用于术语映射表、模型排名等参考数据文件——这些文件提供信息但本身不定义规则。与 terminology 的区别：terminology 是术语定义的仲裁源；reference 是信息对照的翻译器/排名表。"
-    examples: ["_registry/vocabularies/terminology_mapping.yaml", "frontier_llm_benchmark_ranking.yaml"]
-    filename_suffixes: ["_reference.md", "_ref.md", "_reference.yaml", "_catalog.md", "_catalog.yaml", "_catalog.yml", "_ranking.md", "_ranking.yaml"]
 
   - value: vocabulary
     definition: "受控词表——定义枚举值、合法值域的机器可读清单，供 AI 和 CI 消费"
@@ -165,15 +145,6 @@ values:
     examples: ["architecture_contract.yaml"]
     registry_category: contract
 
-  - value: schema
-    definition: "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费"
-    rule_form: data
-    allowed_directories: ["_registry/schemas/"]
-    forbidden_directories: ["operational/", "governance/"]
-    required_fields: []
-    ai_keywords: ["Schema", "JSON Schema", "结构定义", "校验", "schema"]
-    examples: ["frontmatter_schema.json", "session-log-schema.yaml"]
-
   - value: blueprint
     definition: "蓝图——模块/子系统的完整设计文档，包含架构决策、数据模型、接口定义、部署视图"
     rule_form: declarative
@@ -192,24 +163,6 @@ values:
     required_fields: ["blueprint_refs"]
     ai_keywords: ["施工", "任务", "checklist", "construction", "plan"]
     examples: ["script-system-construction.md"]
-
-  - value: design
-    definition: "设计文档——技术方案详解"
-    rule_form: declarative
-    allowed_directories: ["03_blueprints/"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: []
-    ai_keywords: ["设计", "方案", "design", "技术"]
-    examples: []
-
-  - value: plan
-    definition: "计划——时间线、里程碑、资源分配规划"
-    rule_form: declarative
-    allowed_directories: ["01_policies_and_standards/"]
-    forbidden_directories: []
-    required_fields: []
-    ai_keywords: ["计划", "里程碑", "时间线", "plan", "roadmap"]
-    examples: []
 
   - value: readme
     definition: "自述文件——项目/目录级概况说明，面向人类阅读者"
@@ -268,15 +221,6 @@ values:
     ai_keywords: ["架构视图", "4+1", "view", "architecture_view"]
     examples: []
 
-  - value: declaration
-    definition: "声明文件——项目级正式声明，如迁移声明、废弃声明、兼容性承诺"
-    rule_form: declarative
-    allowed_directories: ["（项目根 docs/）"]
-    forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["valid_from"]
-    ai_keywords: ["声明", "迁移", "废弃", "declaration", "migration"]
-    examples: ["migration-declaration.md"]
-
   - value: gate
     definition: "门禁文件——定义质量门禁的触发条件、检查项和阻断规则"
     rule_form: declarative
@@ -318,7 +262,7 @@ values:
 #   未列入两者的目录       = 中性区（既不推荐也不禁止，临时工作区适用）
 #
 # 【临时工作区豁免】
-#   docs/_working/、docs/09_audit/ 等临时/过程性目录不出现在任何 doc_type 的
+#   docs/_working/、docs/_working/audit/ 等临时/过程性目录不出现在任何 doc_type 的
 #   forbidden_directories 中（by design）。这些目录可存放任意非禁止的 doc_type
 #   文件——临时工作区是"过渡态"，其文件的 doc_type 由内容决定，不受
 #   allowed_directories 偏好约束。当文件从 _working/ 迁入正式目录时，
@@ -345,17 +289,16 @@ values:
 #     → 行为约束（必须做/禁止做）→ 用 policy
 #     → 技术规范（格式/接口/度量）→ 用 standard
 #
-# Q3: 你的文件是"导航入口"、"数据结构"、"交互约定"还是"结构骨架"？
+# Q3: 你的文件是"导航入口"、"数据结构"还是"结构骨架"？
 #     → 目录级导航入口  → 用 index
 #     → 数据清单/注册表 → 用 register
-#     → 多方交互约定    → 用 protocol
 #     → 可复用的结构骨架 → 用 template
 #
 # Q4（项目级类型）: 你的文件不在 01_policies_and_standards/ 下吗？
-#     → 蓝图/架构 → adr / blueprint / construction_plan / architecture_view / service_spec
-#     → 开发工作区 → plan / design / log
+#     → 蓝图/架构 → blueprint / construction_plan / architecture_view / service_spec
 #     → 知识库     → knowledge_entry
 #     → 审计       → audit_report
+#     → 日志       → log
 
 # ============================================================
 # 文件名与 doc_type 的强制映射（便捷参考——canonical 规则见 PS-STD-001 §3.4）
@@ -366,7 +309,6 @@ values:
 # doc_type → 文件名后缀映射：
 #   policy           → {subject}-policy.md
 #   standard         → {subject}-standard.md
-#   protocol         → {subject}-protocol.md
 #   operational_rule → {subject}-runbook.md / -playbook.md / -procedure.md / -checklist.md
 #                       注：这些后缀均属过程式操作范畴，是 operational_rule 的合法表达
 #   register         → {subject}-registry.md / -register.md
@@ -450,5 +392,36 @@ deprecated_values:
 
   - value: roadmap
     reason: "与 plan 语义重叠（路线图是计划的一种），0 使用率，回填后按分布数据决策精简"
-    migrated_to: ["plan"]
+    migrated_to: ["construction_plan"]
     date: "2026-06-26"
+
+  # ── v2.0.0 精简：6 值语义合并（2026-06-27）──
+  - value: design
+    reason: "与 blueprint 语义重叠（设计文档是蓝图的一种），合并到 blueprint"
+    migrated_to: ["blueprint"]
+    date: "2026-06-27"
+
+  - value: plan
+    reason: "与 construction_plan 语义重叠（计划是施工计划的一种），合并到 construction_plan"
+    migrated_to: ["construction_plan"]
+    date: "2026-06-27"
+
+  - value: schema
+    reason: "与 contract 语义重叠（Schema 定义是验证契约的一种），合并到 contract"
+    migrated_to: ["contract"]
+    date: "2026-06-27"
+
+  - value: reference
+    reason: "语义过于宽泛（参考文件可拆分到 register/architecture_view/audit_report/contract/config），按文件实际内容拆分"
+    migrated_to: ["register", "architecture_view", "audit_report", "contract", "config"]
+    date: "2026-06-27"
+
+  - value: protocol
+    reason: "与 policy 语义重叠（协议是声明式规则的一种），0 使用率，合并到 policy"
+    migrated_to: ["policy"]
+    date: "2026-06-27"
+
+  - value: declaration
+    reason: "与 policy 语义重叠（声明文件是声明式规则的一种），0 使用率，合并到 policy"
+    migrated_to: ["policy"]
+    date: "2026-06-27"

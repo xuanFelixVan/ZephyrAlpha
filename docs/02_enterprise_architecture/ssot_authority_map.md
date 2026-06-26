@@ -1,7 +1,7 @@
 ---
 module_id: GOV-037
 title: ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)
-doc_type: reference
+doc_type: register
 version: 2.7.0
 status: Active
 date: "2026-06-23"
@@ -27,8 +27,8 @@ tags:
 > **用途**：定义跨文件受保护字段的权威来源（Authority Source）与合法值集合。
 > `scripts/governance/d5_architecture/validate_ssot.py` 使用本文件作为校验规则配置。
 > 每次修改本文件需同步更新上述脚本并重新运行验收测试。
-> **Stage H（2026-04-25）路径对齐完成**：全部 6 处旧体系 `docs/02_ARCHITECTURE/*` / `docs/09_audit/state/module_id_registry.json` 引用已替换为项目真源；`module_id` 从 `ARCH_SSOT_AUTHORITY_MAP` 迁移为 `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 `STD-*` 命名空间）。
-> **v2.0（2026-05-03）**：`docs/09_audit/state/` 已废弃——SQLite DB 迁移至 `data/databases/governance.db`（KBG-0030 §4.1）。上述 Stage H 引用中的 `docs/09_audit/state/module_id_registry.json` 的历史上下文保留于此作为审计追踪。
+> **Stage H（2026-04-25）路径对齐完成**：全部 6 处旧体系 `docs/02_ARCHITECTURE/*` / `docs/_working/audit/state/module_id_registry.json` 引用已替换为项目真源；`module_id` 从 `ARCH_SSOT_AUTHORITY_MAP` 迁移为 `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 `STD-*` 命名空间）。
+> **v2.0（2026-05-03）**：`docs/_working/audit/state/` 已废弃——SQLite DB 迁移至 `data/databases/governance.db`（KBG-0030 §4.1）。上述 Stage H 引用中的 `docs/_working/audit/state/module_id_registry.json` 的历史上下文保留于此作为审计追踪。
 
 ---
 
@@ -265,7 +265,7 @@ violation_severity: P2
 | 版本  | 日期       | 变更                          |
 |-------|------------|------------------------------|
 | 1.0.0 | 2026-04-24 | 初版；覆盖 Layer/Status/Priority/KB 决策记录/ModuleID/Version 六类检查 |
-| 2.0.0 | 2026-04-25 | **Stage H 路径对齐大版本**：(1) `module_id` `ARCH_SSOT_AUTHORITY_MAP` → `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 合法命名空间）；(2) Layer Authority 真源 `docs/02_ARCHITECTURE/module-inventory.md` → `architecture_model/index.yaml` + `layers/*.yaml`；(3) KB 决策记录 Authority 真源 `docs/02_ARCHITECTURE/tech-decision-records.md` → `docs/02_enterprise_architecture/adr/index.md`（41 条 KB 决策记录 扁平编号）；(4) Module ID Registry 真源 `docs/09_audit/state/module_id_registry.json` → `architecture_model/module_id_registry.yaml`（YAML SSoT 替代 JSON）；(5) Status 与 Priority 权威节点明确标注旧体系路径已归档 + Stage J 合并议程；(6) 第四节加入过渡说明，KBG-001~005 旧快照转为历史遗留表格，当前权威指向新索引。 |
+| 2.0.0 | 2026-04-25 | **Stage H 路径对齐大版本**：(1) `module_id` `ARCH_SSOT_AUTHORITY_MAP` → `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 合法命名空间）；(2) Layer Authority 真源 `docs/02_ARCHITECTURE/module-inventory.md` → `architecture_model/index.yaml` + `layers/*.yaml`；(3) KB 决策记录 Authority 真源 `docs/02_ARCHITECTURE/tech-decision-records.md` → `docs/02_enterprise_architecture/adr/index.md`（41 条 KB 决策记录 扁平编号）；(4) Module ID Registry 真源 `docs/_working/audit/state/module_id_registry.json` → `architecture_model/module_id_registry.yaml`（YAML SSoT 替代 JSON）；(5) Status 与 Priority 权威节点明确标注旧体系路径已归档 + Stage J 合并议程；(6) 第四节加入过渡说明，KBG-001~005 旧快照转为历史遗留表格，当前权威指向新索引。 |
 | 2.1.0 | 2026-04-28 | **14 层升级**：Layer 列表从 12 层（L00-L11 + cross_layer）升级到 14 层（L00-L13 + shared + cross_layer）；增补 L12 (System Telemetry)、L13 (Experiment Pipeline)、shared (Shared Concerns)；`valid_values` 同步更新；与 `validate_ssot.py` 的 `VALID_LAYERS` 对齐。原 Stage J 升级任务已完成。 |
 | 2.2.0 | 2026-05-01 | **融入清理**：§八 新增"已知 SSoT 矛盾追踪清单"，融入 `ssot-contradiction-fix-workorder.md` 的 7 条矛盾记录后删除该文件。 |
 | 2.3.0 | 2026-05-02 | **审计修复批次**：(1) §一 移除 `layer_01` 历史误标（旧体系过渡期已结束，不再需要保留错误值）；(2) §八 拆分为"活跃矛盾清单"（5 条未解决）+ "已解决归档"（2 条已修复），解决权威定义与审计报告混合的责任漂移问题；(3) frontmatter `date` 同步更新至 2026-05-02。 |

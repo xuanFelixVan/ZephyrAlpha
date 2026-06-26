@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
-doc_type: design
+doc_type: blueprint
+completes_when: doc_type 迁移完成且文档归档
 ---
 
 # 幽灵提交（Ghost Commit）治本——规则更新提案

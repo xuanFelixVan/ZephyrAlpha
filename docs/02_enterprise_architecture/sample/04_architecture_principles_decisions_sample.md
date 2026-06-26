@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-SMP-002
 title: "架构原则与决策样板"
-doc_type: reference
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

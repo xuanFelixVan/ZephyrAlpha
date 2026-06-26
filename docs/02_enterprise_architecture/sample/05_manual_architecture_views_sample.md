@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-SMP-003
 title: "业务架构视图样板"
-doc_type: reference
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

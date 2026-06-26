@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-SMP-005
 title: "集成拓扑图样板 / Integration Topology Sample"
-doc_type: reference
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

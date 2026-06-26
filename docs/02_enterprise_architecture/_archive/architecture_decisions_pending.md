@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-ARC-001
 title: "待定架构决策文档"
-doc_type: reference
+doc_type: register
 status: deprecated
 version: 1.0.0
 date: 2026-06-27

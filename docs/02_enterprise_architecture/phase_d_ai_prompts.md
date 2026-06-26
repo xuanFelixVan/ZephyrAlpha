@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-ENT-004
 title: "阶段D：37个AI完整提示词"
-doc_type: plan
+doc_type: construction_plan
 status: active
 version: 1.0.0
 date: 2026-06-27

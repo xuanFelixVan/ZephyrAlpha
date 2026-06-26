@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
-doc_type: design
+doc_type: blueprint
+completes_when: doc_type 迁移完成且文档归档
 ---
 
 # GitCommitGateway 自动化能力评估报告

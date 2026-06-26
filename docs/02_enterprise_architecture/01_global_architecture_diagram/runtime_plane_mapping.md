@@ -1,5 +1,5 @@
 ---
-doc_type: reference
+doc_type: register
 title: 运行平面映射图
 version: "1.0"
 status: active

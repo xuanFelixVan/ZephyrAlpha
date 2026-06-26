@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-SMP-001
 title: "架构文档库总览样板"
-doc_type: reference
+doc_type: architecture_view
 status: active
 version: 1.0.0
 date: 2026-06-27

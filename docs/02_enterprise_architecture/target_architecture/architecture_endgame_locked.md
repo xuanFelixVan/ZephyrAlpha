@@ -1,6 +1,6 @@
 ---
 module_id: ARCH-ENDGAME-001
-doc_type: reference
+doc_type: architecture_view
 title: 架构终局锁定声明
 version: 0.1.0
 status: Draft
@@ -23,7 +23,7 @@ ttl: permanent
 | 所�?P0/P1 模块已注�?| `module_id_registry.yaml` �?P0/P1 模块全部 status �?planned | �?待完�?|
 | 所�?P0 模块接口契约已定�?| `cross_layer_contracts.yaml` �?P0 模块契约全部 frozen | �?待完�?|
 | 依赖图完整且无环 | `detect_depends_on_cycles.py` 默认模式 exit 0；`depends_on` 有向图无�?| �?**已满�?*�?026-05-06�?01 节点扫描无环；松耦合集成边已收敛�?`references`�?|
-| SSoT 矛盾清零 | `validate_ssot.py` 报告 P0+P1+P2 = 0 | �?**已满�?frontmatter 扫描**�?026-05-06，报告见 `docs/09_audit/reports/ssot-validation-LATEST.md`�?|
+| SSoT 矛盾清零 | `validate_ssot.py` 报告 P0+P1+P2 = 0 | �?**已满�?frontmatter 扫描**�?026-05-06，报告见 `docs/_working/audit/reports/ssot-validation-LATEST.md`�?|
 | 五大目标全部 PASS | D1~D5 验收标准全部满足 | �?待完�?|
 | 基线指纹已生�?| `architecture-baseline-fingerprint.yaml` 存在 | �?待完�?|
 

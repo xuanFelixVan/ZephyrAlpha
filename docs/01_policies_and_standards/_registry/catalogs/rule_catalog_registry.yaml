@@ -3,9 +3,9 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-26T18:42:05Z'
+generated_at: '2026-06-26T19:04:26Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
-total_files: 84
+total_files: 88
 files:
 - path: docs/01_policies_and_standards/index.md
   module_id: PS-IDX-001
@@ -337,6 +337,17 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  module_id: REG-ARCH-ISSUE-001
+  title: 架构议题注册表
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
   module_id: CFG-business-streams
   title: 业务流定义登记表
@@ -392,6 +403,17 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml
+  module_id: REG-DERIVED-ID-001
+  title: 派生标识符关系表
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
   module_id: PS-REG-013
   title: 项目目录登记?
@@ -401,6 +423,17 @@ files:
   rule_form: ''
   scope: ''
   stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+  module_id: REG-DOMAIN-NAMING-001
+  title: 域命名规则表
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
@@ -420,6 +453,17 @@ files:
   doc_type: register
   status: active
   version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
+  module_id: REG-FUNC-DOMAIN-001
+  title: 功能域注册表
+  doc_type: register
+  status: active
+  version: 0.4.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -593,7 +637,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml
   module_id: GOV-AI-007
   title: Session Log 标准 Schema
-  doc_type: schema
+  doc_type: contract
   status: active
   version: 2.2.0
   rule_form: data

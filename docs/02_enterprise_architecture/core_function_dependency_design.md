@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
-doc_type: design
+doc_type: blueprint
 status: draft
 version: 0.4.2
 layer: cross_layer
