@@ -524,3 +524,130 @@ class TestEdgeCases:
         assert result.status == CommitStatus.OK
         msg = _last_commit_message(tmp_path)
         assert "[GW:unknown]" in msg, f"空 session_id 应默认 unknown: {msg}"
+
+
+class TestGitignoredTrackedDeleted:
+    """回归测试：tracked+gitignored+deleted 文件的 commit。
+
+    场景：文件先被 git 跟踪（已 commit），后被加入 .gitignore 并从磁盘删除。
+    裸 ``git add`` 会整批拒绝（gitignored 路径），GitCommitGateway 通过
+    ``_stage_gitignored_tracked``（git rm --cached / git add -f）分离暂存。
+
+    根因修复：``_filter_gitignored`` 必须用 ``check-ignore --no-index``
+    （默认 check-ignore 跳过已跟踪文件，不加 --no-index 会漏检→git add 整批失败）。
+
+    覆盖大小两条路径：
+    - small path：非目标文件 ≤50 → 内联 git add（else 分支）
+    - large path：非目标文件 >50 → --pathspec-from-file（use_pathspec_file 分支）
+
+    ⚠️ 大小路径都调用 ``_stage_gitignored_tracked``——任一处删除调用都会导致
+    tracked+gitignored 文件提交失败。此测试是双路径一致性的回归防线。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    @staticmethod
+    def _setup_tracked_gitignored_deleted(repo_dir: Path, n_wip: int = 0) -> list[str]:
+        """构造 tracked+gitignored+deleted 场景。
+
+        Args:
+            repo_dir: 临时 git 仓库根。
+            n_wip: 额外创建的非目标已修改已跟踪文件数（>50 触发大路径）。
+
+        Returns:
+            gateway commit 的目标文件列表（绝对路径）。
+        """
+        _init_git_repo(repo_dir)
+        env = TestGitignoredTrackedDeleted._git_env()
+        # 1. 创建将被 gitignore 的目录+文件，提交（使其被 tracked）
+        ig_dir = repo_dir / "ignored_dir"
+        ig_dir.mkdir()
+        foo = ig_dir / "foo.md"
+        foo.write_text("hello\n", encoding="utf-8")
+        normal = repo_dir / "normal.txt"
+        normal.write_text("v0\n", encoding="utf-8")
+        if n_wip > 0:
+            wip_dir = repo_dir / "wip"
+            wip_dir.mkdir()
+            for i in range(n_wip):
+                (wip_dir / f"f{i:02d}.txt").write_text(f"v0-{i}\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "add", "."], cwd=str(repo_dir), capture_output=True, env=env, check=True
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "init-content", "--no-verify"],
+            cwd=str(repo_dir), capture_output=True, env=env, check=True,
+        )
+        # 2. gitignore ignored_dir + 删除 foo.md + 修改 normal.txt + 修改 WIP
+        (repo_dir / ".gitignore").write_text("*.tmp\nignored_dir/\n", encoding="utf-8")
+        os.remove(foo)
+        normal.write_text("v1\n", encoding="utf-8")
+        if n_wip > 0:
+            wip_dir = repo_dir / "wip"
+            for i in range(n_wip):
+                (wip_dir / f"f{i:02d}.txt").write_text(f"v1-{i}\n", encoding="utf-8")
+        return [str(repo_dir / ".gitignore"), str(foo), str(normal)]
+
+    @staticmethod
+    def _assert_commit_contents(repo_dir: Path) -> None:
+        """验证 commit 含 foo.md 删除 + normal.txt 修改 + .gitignore。"""
+        env = TestGitignoredTrackedDeleted._git_env()
+        show = subprocess.run(
+            ["git", "show", "--stat", "--name-status", "HEAD"],
+            cwd=str(repo_dir), capture_output=True, text=True, env=env,
+        )
+        out = show.stdout
+        assert "ignored_dir/foo.md" in out, f"commit 未含 foo.md 删除:\n{out}"
+        assert "normal.txt" in out, f"commit 未含 normal.txt:\n{out}"
+        assert ".gitignore" in out, f"commit 未含 .gitignore:\n{out}"
+        assert (
+            "D\tignored_dir/foo.md" in out or "D  ignored_dir/foo.md" in out
+        ), f"foo.md 应标 D(删除):\n{out}"
+        tracked = subprocess.run(
+            ["git", "ls-files", "ignored_dir/"],
+            cwd=str(repo_dir), capture_output=True, text=True,
+        )
+        assert tracked.stdout.strip() == "", f"foo.md 仍被跟踪: {tracked.stdout}"
+
+    def test_small_path(self, tmp_path: Path) -> None:
+        """小路径（≤50 非目标文件）：tracked+gitignored+deleted commit。"""
+        files = self._setup_tracked_gitignored_deleted(tmp_path, n_wip=0)
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="test-gi-small",
+            files=files,
+            message="test: small-path gitignored-tracked-deleted",
+        )
+        assert result.status == CommitStatus.OK, (
+            f"小路径应成功: {result.status} {result.message}"
+        )
+        self._assert_commit_contents(tmp_path)
+
+    def test_large_path(self, tmp_path: Path) -> None:
+        """大路径（>50 非目标文件→--pathspec-from-file）：tracked+gitignored+deleted commit。"""
+        files = self._setup_tracked_gitignored_deleted(tmp_path, n_wip=55)
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="test-gi-large",
+            files=files,
+            message="test: large-path gitignored-tracked-deleted",
+        )
+        assert result.status == CommitStatus.OK, (
+            f"大路径应成功: {result.status} {result.message}"
+        )
+        self._assert_commit_contents(tmp_path)
+        # 非目标 WIP 修改应保留在工作区（stash pop 恢复）
+        diff = subprocess.run(
+            ["git", "diff", "--stat"],
+            cwd=str(tmp_path), capture_output=True, text=True,
+        )
+        assert "f00.txt" in diff.stdout, (
+            f"非目标 WIP 应保留工作区:\n{diff.stdout}"
+        )

@@ -930,6 +930,9 @@ class GitCommitGateway:
                 #    "The following paths are ignored by one of your .gitignore files"。
                 #    解法：先 _stage_gitignored_tracked 用 git rm --cached / git add -f
                 #    暂存 gitignored 部分，剩余 normal_files 走正常 git add。
+                #    ⚠️ 不变式：此调用必须与小路径（else 分支）保持一致——删除会导致
+                #    tracked+gitignored 文件（如已 gitignore 的历史遗留）提交整批失败。
+                #    回归测试：tests/test_git_commit_gateway.py::TestGitignoredTrackedDeleted
                 gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
                 if not gi_ok:
                     result = CommitResult(
@@ -1011,6 +1014,9 @@ class GitCommitGateway:
                 # 2. 暂存 gitignored-tracked 文件，分离出 normal_files
                 #    （gitignored-tracked 已由 _stage_gitignored_tracked 暂存；
                 #     normal_files 是非 gitignored 部分，走正常 git add）
+                #    ⚠️ 不变式：此调用必须与大路径（use_pathspec_file 分支）保持一致——
+                #    删除会导致 tracked+gitignored 文件提交整批失败。
+                #    回归测试：tests/test_git_commit_gateway.py::TestGitignoredTrackedDeleted
                 add_ok = True
                 gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
                 if not gi_ok:
