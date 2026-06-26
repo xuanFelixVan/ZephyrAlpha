@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 568
+total_scripts: 571
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -46,10 +46,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_stage_c_merge.py
-  path: _tmp_stage_c_merge.py
-  description: 一次性脚本，执行后立即删除（零残留）。
-  domain: _tmp_stage_c_merge.py
+- name: _tmp_check_tsd.py
+  path: _tmp_check_tsd.py
+  description: import sqlite3
+  domain: _tmp_check_tsd.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_fix_module_id.py
+  path: _tmp_fix_module_id.py
+  description: node 51 和 55 的 type_specific_data.module_id 仍是旧下划线格式（MOD_INF_009/016）。
+  domain: _tmp_fix_module_id.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_update_tsd.py
+  path: _tmp_update_tsd.py
+  description: 将 type_specific_data JSON 内 doc_references/yaml_references 数组中的
+  domain: _tmp_update_tsd.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -3529,6 +3545,14 @@ scripts:
 - name: governance/meta/mutation_test_post_sync_validator.py
   path: governance/meta/mutation_test_post_sync_validator.py
   description: mutation_test_post_sync_validator.py — SSoT 变异测试（独立 oracle）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/meta/mutation_test_reconciliation_registry.py
+  path: governance/meta/mutation_test_reconciliation_registry.py
+  description: 目的：机械注入源码变异到 ``reconciliation_registry.py`` 的副本，复用
   domain: governance
   execution_plane: warm-path
   status: registered
