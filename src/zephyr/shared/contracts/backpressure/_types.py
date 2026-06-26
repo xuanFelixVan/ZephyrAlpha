@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARECONTRACTS
+# [BLUEPRINT] MOD-SHARED-002
 # [MODULE] zephyr.shared.contracts.backpressure._types
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
