@@ -1,0 +1,429 @@
+# [A_test] module_id: SRC-TST-1750 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/verify_schema_health.py | §test
+# [MODULE] tests.test_verify_schema_health
+# [DOMAIN] D-GOVERNANCE
+# [INVARIANTS] 漂移必拦截; 只读触发器必齐全; 版本必一致
+# [MODIFY-GUARD] scripts/governance/verify_schema_health.py
+# [CONSUMERS] pytest
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] ImportError->skip_module
+# [TESTS] python -m pytest tests/test_verify_schema_health.py -q
+"""
+test_verify_schema_health.py — verify_schema_health.py 门禁可靠性单元测试
+
+覆盖三类校验：
+  1. parse_ddl_columns 纯函数（DDL 文本解析）
+  2. check_ddl_columns / check_readonly_triggers / check_schema_version 集成测试
+     （init_db 建健康 DB → 注入漂移 → 验证检测）
+  3. main() 端到端退出码（subprocess 子进程模拟 pre-commit 调用）
+
+只读触发器由 sync_yaml_to_depgraph.py 创建（非 init_db），测试 fixture 补建，
+模拟生产库真实状态（DDL 一致 + 触发器齐全 + 版本一致）。
+"""
+
+from __future__ import annotations
+
+import sqlite3
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+# ---------------------------------------------------------------------------
+# sys.path 设置（verify_schema_health 不是包模块，需手动加入 scripts/governance）
+# ---------------------------------------------------------------------------
+
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_GOV_DIR = _REPO_ROOT / "scripts" / "governance"
+_SRC_DIR = _REPO_ROOT / "src"
+for _p in (str(_GOV_DIR), str(_SRC_DIR)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+schema_mod = pytest.importorskip("zephyr.governance.depgraph_schema")
+vsh = pytest.importorskip("verify_schema_health")
+
+init_db = schema_mod.init_db
+_MIGRATIONS = schema_mod._MIGRATIONS
+_DDL_INDEXES = schema_mod._DDL_INDEXES
+
+# 只读触发器保护的 9 张表（与 verify_schema_health.py L143-147 一致）
+_READONLY_TABLES = [
+    "gates", "field_vocabularies", "registries", "cross_registry_rules",
+    "hard_boundaries", "business_streams", "infrastructure_components",
+    "model_capabilities", "blueprint_links",
+]
+
+
+def _create_readonly_triggers(conn: sqlite3.Connection) -> None:
+    """补建 9 表 × 3 只读触发器（复制 sync_yaml_to_depgraph.restore_readonly_triggers 逻辑）。
+
+    init_db 不创建只读触发器，需 fixture 补建以模拟生产库健康态。
+    """
+    for table in _READONLY_TABLES:
+        for action in ("insert", "update", "delete"):
+            conn.execute(
+                f"CREATE TRIGGER IF NOT EXISTS readonly_{table}_{action} "
+                f"BEFORE {action.upper()} ON {table} "
+                f"FOR EACH ROW "
+                f"BEGIN "
+                f"SELECT RAISE(ABORT, '{table} 表只读'); "
+                f"END;"
+            )
+
+
+# ---------------------------------------------------------------------------
+# Fixtures
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def healthy_db_path(tmp_path):
+    """创建一个 schema 健康的临时 depgraph.db（init_db 全量迁移 + 只读触发器齐全）。"""
+    db = tmp_path / "test_health.db"
+    init_db(db)
+    conn = sqlite3.connect(str(db))
+    try:
+        _create_readonly_triggers(conn)
+        conn.commit()
+    finally:
+        conn.close()
+    return db
+
+
+@pytest.fixture
+def healthy_db_conn(healthy_db_path):
+    """返回健康 DB 的 sqlite3 连接（测试结束自动关闭）。"""
+    conn = sqlite3.connect(str(healthy_db_path))
+    yield conn
+    conn.close()
+
+
+def _run_script(db_path: Path, *extra_args) -> subprocess.CompletedProcess:
+    """子进程运行 verify_schema_health.py，返回 CompletedProcess。"""
+    script = _GOV_DIR / "verify_schema_health.py"
+    return subprocess.run(
+        [sys.executable, str(script), "--db", str(db_path), *extra_args],
+        capture_output=True,
+        text=True,
+        cwd=str(_REPO_ROOT),
+    )
+
+
+# ---------------------------------------------------------------------------
+# 1. parse_ddl_columns 纯函数单元测试
+# ---------------------------------------------------------------------------
+
+class TestParseDdlColumns:
+    def test_simple_table(self):
+        ddl = "CREATE TABLE IF NOT EXISTS foo (id TEXT PRIMARY KEY, name TEXT)"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert "id" in cols
+        assert "name" in cols
+
+    def test_without_if_not_exists(self):
+        ddl = "CREATE TABLE bar (a TEXT, b INTEGER)"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert cols == ["a", "b"]
+
+    def test_skips_primary_key_constraint(self):
+        ddl = "CREATE TABLE foo (id TEXT, name TEXT, PRIMARY KEY (id))"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert "id" in cols
+        assert "name" in cols
+        assert "PRIMARY" not in cols
+
+    def test_skips_foreign_key_constraint(self):
+        ddl = "CREATE TABLE bar (id TEXT, foo_id TEXT, FOREIGN KEY (foo_id) REFERENCES foo(id))"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert "id" in cols
+        assert "foo_id" in cols
+        assert "FOREIGN" not in cols
+
+    def test_skips_check_constraint(self):
+        # CHECK 后带空格 → toks[0]=CHECK，被精确匹配跳过
+        ddl = "CREATE TABLE x (status TEXT, CHECK (status IN ('a','b')))"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert cols == ["status"]
+
+    def test_skips_unique_constraint(self):
+        # UNIQUE 后带空格 → toks[0]=UNIQUE，被精确匹配跳过
+        ddl = "CREATE TABLE x (id TEXT, name TEXT, UNIQUE (name))"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert cols == ["id", "name"]
+
+    def test_check_no_space_is_known_limitation(self):
+        # 紧贴括号的 CHECK(...) 不被识别（toks[0]=CHECK(status ≠ CHECK）
+        # 这是 parse_ddl_columns 的已知限制：仅精确匹配首 token
+        # 真实 DDL 中 CHECK 均为列级约束（跟在列定义后），不受此限制影响
+        ddl = "CREATE TABLE x (status TEXT, CHECK(status IN ('a','b')))"
+        cols = vsh.parse_ddl_columns(ddl)
+        # 紧贴时 CHECK(status 被误当作列名——记录此行为
+        assert "status" in cols
+        assert len(cols) == 2  # status + 误解析的 CHECK(status
+
+    def test_skips_constraint_keyword(self):
+        ddl = "CREATE TABLE x (id TEXT, CONSTRAINT chk1 CHECK(id != ''))"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert cols == ["id"]
+
+    def test_handles_nested_parens_in_check(self):
+        # CHECK 约束含嵌套括号和逗号，不应误分割
+        ddl = "CREATE TABLE nodes (id TEXT, status TEXT CHECK(status IN ('a', 'b', 'c')))"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert cols == ["id", "status"]
+
+    def test_column_named_like_constraint_prefix(self):
+        # constraint_id 首 token 为 CONSTRAINT_ID，不等于 CONSTRAINT，不应被跳过
+        ddl = "CREATE TABLE x (constraint_id TEXT, check_result TEXT, unique_hash TEXT)"
+        cols = vsh.parse_ddl_columns(ddl)
+        assert "constraint_id" in cols
+        assert "check_result" in cols
+        assert "unique_hash" in cols
+
+    def test_no_create_table_returns_empty(self):
+        assert vsh.parse_ddl_columns("SELECT 1 FROM dual") == []
+
+    def test_multiline_ddl(self):
+        ddl = """
+        CREATE TABLE IF NOT EXISTS domains (
+            domain_id    TEXT PRIMARY KEY,
+            domain_name  TEXT NOT NULL,
+            domain_group TEXT,
+            description  TEXT
+        )
+        """
+        cols = vsh.parse_ddl_columns(ddl)
+        assert cols == ["domain_id", "domain_name", "domain_group", "description"]
+
+    def test_real_nodes_ddl(self):
+        # 用真源 _DDL_NODES 验证解析正确性
+        cols = vsh.parse_ddl_columns(schema_mod._DDL_NODES)
+        assert "node_id" in cols
+        assert "tags" in cols
+        assert "owner" in cols
+        # 表级约束不应出现
+        assert "PRIMARY" not in cols
+        assert "FOREIGN" not in cols
+
+
+# ---------------------------------------------------------------------------
+# 2. check_ddl_columns 集成测试（注入漂移验证检测）
+# ---------------------------------------------------------------------------
+
+class TestCheckDdlColumns:
+    def test_healthy_db_no_issues(self, healthy_db_conn):
+        issues = []
+        vsh.check_ddl_columns(healthy_db_conn, issues)
+        assert issues == []
+
+    def test_detects_extra_column(self, healthy_db_conn):
+        healthy_db_conn.execute("ALTER TABLE nodes ADD COLUMN bogus_drift_col TEXT")
+        issues = []
+        vsh.check_ddl_columns(healthy_db_conn, issues)
+        assert len(issues) == 1
+        assert "nodes" in issues[0]
+        assert "bogus_drift_col" in issues[0]
+        assert "多出列" in issues[0]
+
+    def test_detects_missing_column(self, healthy_db_conn):
+        healthy_db_conn.execute("ALTER TABLE nodes DROP COLUMN tags")
+        issues = []
+        vsh.check_ddl_columns(healthy_db_conn, issues)
+        assert len(issues) == 1
+        assert "nodes" in issues[0]
+        assert "tags" in issues[0]
+        assert "缺少列" in issues[0]
+
+    def test_detects_missing_table(self, healthy_db_conn):
+        healthy_db_conn.execute("DROP TABLE business_streams")
+        issues = []
+        vsh.check_ddl_columns(healthy_db_conn, issues)
+        assert len(issues) == 1
+        assert "business_streams" in issues[0]
+        assert "不存在" in issues[0]
+
+    def test_detects_both_extra_and_missing(self, healthy_db_conn):
+        healthy_db_conn.execute("ALTER TABLE nodes ADD COLUMN extra_col TEXT")
+        healthy_db_conn.execute("ALTER TABLE nodes DROP COLUMN owner")
+        issues = []
+        vsh.check_ddl_columns(healthy_db_conn, issues)
+        assert len(issues) == 2
+        assert any("extra_col" in i for i in issues)
+        assert any("owner" in i for i in issues)
+
+    def test_detects_drift_in_multiple_tables(self, healthy_db_conn):
+        healthy_db_conn.execute("ALTER TABLE edges ADD COLUMN ghost TEXT")
+        healthy_db_conn.execute("ALTER TABLE domains ADD COLUMN phantom TEXT")
+        issues = []
+        vsh.check_ddl_columns(healthy_db_conn, issues)
+        assert len(issues) == 2
+        assert any("edges" in i for i in issues)
+        assert any("domains" in i for i in issues)
+
+
+# ---------------------------------------------------------------------------
+# 3. check_readonly_triggers 集成测试
+# ---------------------------------------------------------------------------
+
+class TestCheckReadonlyTriggers:
+    def test_healthy_db_no_issues(self, healthy_db_conn):
+        issues = []
+        vsh.check_readonly_triggers(healthy_db_conn, issues)
+        assert issues == []
+
+    def test_detects_missing_insert_trigger(self, healthy_db_conn):
+        healthy_db_conn.execute("DROP TRIGGER readonly_gates_insert")
+        issues = []
+        vsh.check_readonly_triggers(healthy_db_conn, issues)
+        assert len(issues) == 1
+        assert "readonly_gates_insert" in issues[0]
+        assert "TRIGGER-MISSING" in issues[0]
+
+    def test_detects_missing_update_trigger(self, healthy_db_conn):
+        healthy_db_conn.execute("DROP TRIGGER readonly_field_vocabularies_update")
+        issues = []
+        vsh.check_readonly_triggers(healthy_db_conn, issues)
+        assert any("readonly_field_vocabularies_update" in i for i in issues)
+
+    def test_detects_missing_delete_trigger(self, healthy_db_conn):
+        healthy_db_conn.execute("DROP TRIGGER readonly_registries_delete")
+        issues = []
+        vsh.check_readonly_triggers(healthy_db_conn, issues)
+        assert any("readonly_registries_delete" in i for i in issues)
+
+    def test_detects_all_three_triggers_for_one_table(self, healthy_db_conn):
+        healthy_db_conn.execute("DROP TRIGGER readonly_gates_insert")
+        healthy_db_conn.execute("DROP TRIGGER readonly_gates_update")
+        healthy_db_conn.execute("DROP TRIGGER readonly_gates_delete")
+        issues = []
+        vsh.check_readonly_triggers(healthy_db_conn, issues)
+        assert len(issues) == 3
+        assert all("gates" in i for i in issues)
+
+    def test_total_triggers_expected(self, healthy_db_conn):
+        # 9 表 × 3 动作 = 27 触发器
+        cursor = healthy_db_conn.execute(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'readonly_%'"
+        )
+        count = cursor.fetchone()[0]
+        assert count == 27
+
+
+# ---------------------------------------------------------------------------
+# 4. check_schema_version 集成测试
+# ---------------------------------------------------------------------------
+
+class TestCheckSchemaVersion:
+    def test_healthy_db_no_issues(self, healthy_db_conn):
+        issues = []
+        vsh.check_schema_version(healthy_db_conn, issues)
+        assert issues == []
+
+    def test_detects_version_behind(self, healthy_db_conn):
+        # 删除最新版本记录，模拟未执行迁移
+        healthy_db_conn.execute(
+            "DELETE FROM _schema_version WHERE version = (SELECT MAX(version) FROM _schema_version)"
+        )
+        issues = []
+        vsh.check_schema_version(healthy_db_conn, issues)
+        assert len(issues) == 1
+        assert "VERSION-DRIFT" in issues[0]
+        assert "未执行" in issues[0]
+
+    def test_detects_version_ahead(self, healthy_db_conn):
+        # 插入一个超前版本，模拟 DB 版本 > len(_MIGRATIONS)
+        expected = len(_MIGRATIONS)
+        healthy_db_conn.execute(
+            "INSERT INTO _schema_version (version, applied_at, description) VALUES (?, 'test', 'fake')",
+            (expected + 5,),
+        )
+        issues = []
+        vsh.check_schema_version(healthy_db_conn, issues)
+        assert len(issues) == 1
+        assert "VERSION-DRIFT" in issues[0]
+
+    def test_error_message_contains_diff_count(self, healthy_db_conn):
+        healthy_db_conn.execute(
+            "DELETE FROM _schema_version WHERE version = (SELECT MAX(version) FROM _schema_version)"
+        )
+        issues = []
+        vsh.check_schema_version(healthy_db_conn, issues)
+        assert "差 1 条" in issues[0]
+
+
+# ---------------------------------------------------------------------------
+# 5. main() 端到端退出码测试（subprocess 子进程模拟 pre-commit 调用）
+# ---------------------------------------------------------------------------
+
+class TestMainExitCodes:
+    def test_healthy_db_exit_zero(self, healthy_db_path):
+        result = _run_script(healthy_db_path)
+        assert result.returncode == 0
+        assert "[PASS]" in result.stdout
+
+    def test_drift_db_exit_one(self, healthy_db_path):
+        conn = sqlite3.connect(str(healthy_db_path))
+        conn.execute("ALTER TABLE nodes ADD COLUMN drift_col TEXT")
+        conn.commit()
+        conn.close()
+        result = _run_script(healthy_db_path)
+        assert result.returncode == 1
+        assert "[FAIL]" in result.stdout
+        assert "drift_col" in result.stdout
+
+    def test_warn_only_exit_zero_with_drift(self, healthy_db_path):
+        conn = sqlite3.connect(str(healthy_db_path))
+        conn.execute("ALTER TABLE nodes ADD COLUMN drift_col TEXT")
+        conn.commit()
+        conn.close()
+        result = _run_script(healthy_db_path, "--warn-only")
+        assert result.returncode == 0
+        assert "[FAIL]" in result.stdout  # 仍报告漂移但不阻断
+
+    def test_ci_flag_exit_one_with_drift(self, healthy_db_path):
+        conn = sqlite3.connect(str(healthy_db_path))
+        conn.execute("ALTER TABLE nodes ADD COLUMN drift_col TEXT")
+        conn.commit()
+        conn.close()
+        result = _run_script(healthy_db_path, "--ci")
+        assert result.returncode == 1
+
+    def test_missing_db_exit_two(self, tmp_path):
+        result = _run_script(tmp_path / "nonexistent.db")
+        assert result.returncode == 2
+        # verify_schema_health.py L182 用 print() 输出到 stdout（非 stderr）
+        assert "[ERROR]" in result.stdout
+
+    def test_trigger_drift_exit_one(self, healthy_db_path):
+        conn = sqlite3.connect(str(healthy_db_path))
+        conn.execute("DROP TRIGGER readonly_gates_insert")
+        conn.commit()
+        conn.close()
+        result = _run_script(healthy_db_path)
+        assert result.returncode == 1
+        assert "TRIGGER-MISSING" in result.stdout
+
+    def test_version_drift_exit_one(self, healthy_db_path):
+        conn = sqlite3.connect(str(healthy_db_path))
+        conn.execute(
+            "DELETE FROM _schema_version WHERE version = (SELECT MAX(version) FROM _schema_version)"
+        )
+        conn.commit()
+        conn.close()
+        result = _run_script(healthy_db_path)
+        assert result.returncode == 1
+        assert "VERSION-DRIFT" in result.stdout
+
+    def test_no_args_uses_default_db_path(self):
+        # 不传 --db，应使用 DEPGRAPH_DB_PATH（生产库），生产库应健康 exit 0
+        # 若生产库不存在则 exit 2——两种都接受，只要不崩溃
+        result = subprocess.run(
+            [sys.executable, str(_GOV_DIR / "verify_schema_health.py")],
+            capture_output=True,
+            text=True,
+            cwd=str(_REPO_ROOT),
+        )
+        assert result.returncode in (0, 2)
