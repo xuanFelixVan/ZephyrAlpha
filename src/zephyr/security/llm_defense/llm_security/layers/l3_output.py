@@ -66,6 +66,7 @@ class OutputFilterLayer:
 
 # 敏感数据正则
 _API_KEY_RE = re.compile(r"sk-[a-zA-Z0-9]{20,}")
+_AWS_KEY_RE = re.compile(r"AKIA[0-9A-Z]{16}")
 _EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
 _SECRET_KV_RE = re.compile(r"(?i)(secret|password|token|api[_-]?key|credential)\s*[:=]\s*\S+")
 # 危险沙箱关键字
@@ -121,6 +122,12 @@ class OutputSecurityLayer:
         if _API_KEY_RE.search(clean):
             clean = _API_KEY_RE.sub("[BLOCKED]", clean)
             count += 1
+        if _AWS_KEY_RE.search(clean):
+            clean = _AWS_KEY_RE.sub("[BLOCKED]", clean)
+            count += 1
+        if _SECRET_KV_RE.search(clean):
+            clean = _SECRET_KV_RE.sub(r"\1: [REDACTED]", clean)
+            count += 1
         if _EMAIL_RE.search(clean):
             clean = _EMAIL_RE.sub("[REDACTED]", clean)
             count += 1
@@ -146,11 +153,12 @@ class OutputSecurityLayer:
         return 3
 
     async def evaluate(self, ctx: Any) -> Any:
-        """评估输出安全：含密钥/敏感数据 → DENY。"""
+        """评估输出安全：含密钥/敏感数据/不安全内容 → DENY。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
         raw = getattr(ctx, "raw_input", "") or ""
+        # 1. 敏感数据脱敏检测
         red = self.redact_sensitive_data(raw)
         if red.redactions > 0:
             return SecurityResult(
@@ -159,6 +167,16 @@ class OutputSecurityLayer:
                 layer_name="l3_output",
                 score=0.0,
                 details={"redactions": red.redactions},
+            )
+        # 2. 内容安全检测（bomb/weapon 等）
+        safety = self.check_content_safety(raw)
+        if not safety.safe:
+            return SecurityResult(
+                decision=SecurityDecision.DENY,
+                reason="unsafe content detected",
+                layer_name="l3_output",
+                score=0.0,
+                details={"violations": safety.violations},
             )
         return SecurityResult(
             decision=SecurityDecision.ALLOW,
