@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+# [BLUEPRINT] MOD-GOV-SCRIPTS
+# [MODULE] scripts.governance.verify_schema_health
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES] scripts.governance._shared.constants
+# [CONSUMERS] .pre-commit-config.yaml gate-schema-health
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] depgraph_schema.py 是 DDL 真源; DB 物理状态必须与 DDL 声明一致
+# [MODIFY-GUARD] depgraph_schema.py
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 漂移→exit 1; 健康→exit 0; 脚本自身错误→exit 2
+# [TESTS] tests/test_verify_schema_health.py
+"""
+verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016 治本）
+
+校验内容：
+  1. DDL 列一致性：DB 实际列 vs _DDL_* 声明列（仅保留表）
+  2. 只读触发器存在性：READONLY_TABLES 的 9 张表 × 3 触发器
+  3. Schema 版本一致性：MAX(_schema_version) == len(_MIGRATIONS)
+
+退出码：
+  0 = 健康（PASS）
+  1 = 发现漂移（FAIL）
+  2 = 脚本错误（ERROR）
+
+模式：
+  --ci          硬阻断模式（默认行为，与其他 GATE 一致；显式传入便于阅读）
+  --warn-only   软警告模式（发现漂移仍 exit 0）——用于观察期
+"""
+import argparse
+import re
+import sqlite3
+import sys
+from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, DEPGRAPH_DB_PATH  # noqa: E402
+
+_REPO_ROOT = str(next(p for p in _THIS_FILE.parents if (p / "src" / "zephyr").exists()))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, str(Path(_REPO_ROOT) / "src"))
+from zephyr.governance import depgraph_schema  # noqa: E402
+
+
+def parse_ddl_columns(ddl: str) -> list[str]:
+    """从 CREATE TABLE DDL 文本中解析列名列表（跳过表级约束 PRIMARY/FOREIGN/CHECK/UNIQUE/CONSTRAINT）。"""
+    match = re.search(r"CREATE TABLE\s+(?:IF NOT EXISTS\s+)?(\w+)\s*\((.*)\)", ddl, re.DOTALL)
+    if not match:
+        return []
+    body = match.group(2)
+    columns = []
+    depth = 0
+    current = ""
+    for char in body:
+        if char == "(":
+            depth += 1
+            current += char
+        elif char == ")":
+            depth -= 1
+            current += char
+        elif char == "," and depth == 0:
+            col_def = current.strip()
+            if col_def and not col_def.upper().startswith(
+                ("PRIMARY", "FOREIGN", "CHECK", "UNIQUE", "CONSTRAINT")
+            ):
+                columns.append(col_def.split()[0])
+            current = ""
+        else:
+            current += char
+    col_def = current.strip()
+    if col_def and not col_def.upper().startswith(
+        ("PRIMARY", "FOREIGN", "CHECK", "UNIQUE", "CONSTRAINT")
+    ):
+        columns.append(col_def.split()[0])
+    return columns
+
+
+# 仅含 21 张保留表（已排除 v14 删除的 3 表 arch_bottlenecks/arch_layers/invariants）；
+# DDL 常量全部用非 _V5（v1 migration 真源）
+_DDL_MAP = {
+    "nodes": depgraph_schema._DDL_NODES,
+    "edges": depgraph_schema._DDL_EDGES,
+    "domains": depgraph_schema._DDL_DOMAINS,
+    "domain_dependencies": depgraph_schema._DDL_DOMAIN_DEPS,
+    "domain_events": depgraph_schema._DDL_DOMAIN_EVENTS,
+    "contracts": depgraph_schema._DDL_CONTRACTS,
+    "rule_bindings": depgraph_schema._DDL_RULE_BINDINGS,
+    "arch_constraints": depgraph_schema._DDL_ARCH_CONSTRAINTS,
+    "arch_directory_tree": depgraph_schema._DDL_ARCH_DIRECTORY_TREE,
+    "arch_path_mappings": depgraph_schema._DDL_ARCH_PATH_MAPPINGS,
+    "gates": depgraph_schema._DDL_GATES,
+    "governance_audit_logs": depgraph_schema._DDL_GOVERNANCE_AUDIT_LOGS,
+    "blueprint_links": depgraph_schema._DDL_BLUEPRINT_LINKS,
+    "business_streams": depgraph_schema._DDL_BUSINESS_STREAMS,
+    "cross_registry_rules": depgraph_schema._DDL_CROSS_REGISTRY_RULES,
+    "field_vocabularies": depgraph_schema._DDL_FIELD_VOCABULARIES,
+    "hard_boundaries": depgraph_schema._DDL_HARD_BOUNDARIES,
+    "infrastructure_components": depgraph_schema._DDL_INFRASTRUCTURE_COMPONENTS,
+    "model_capabilities": depgraph_schema._DDL_MODEL_CAPABILITIES,
+    "registries": depgraph_schema._DDL_REGISTRIES,
+    "domain_mapping": depgraph_schema._DDL_DOMAIN_MAPPING,
+}
+
+
+def check_ddl_columns(conn, issues: list) -> None:
+    """校验1：DB 实际列 vs DDL 声明列。"""
+    for table, ddl in _DDL_MAP.items():
+        declared = set(parse_ddl_columns(ddl))
+        cursor = conn.execute(f"PRAGMA table_info({table})")
+        actual = {row[1] for row in cursor.fetchall()}
+        if not actual:
+            issues.append(f"[DDL-DRIFT] 表 '{table}' 不存在于 DB 中")
+            continue
+        missing_in_db = declared - actual
+        extra_in_db = actual - declared
+        if missing_in_db:
+            issues.append(f"[DDL-DRIFT] 表 '{table}' DB 缺少列: {sorted(missing_in_db)}")
+        if extra_in_db:
+            issues.append(f"[DDL-DRIFT] 表 '{table}' DB 多出列（DDL 未声明）: {sorted(extra_in_db)}")
+
+
+def check_readonly_triggers(conn, issues: list) -> None:
+    """校验2：只读触发器存在性（READONLY_TABLES 9 张表 × 3 触发器）。"""
+    readonly_tables = [
+        "gates", "field_vocabularies", "registries", "cross_registry_rules",
+        "hard_boundaries", "business_streams", "infrastructure_components",
+        "model_capabilities", "blueprint_links",
+    ]
+    for table in readonly_tables:
+        for action in ("insert", "update", "delete"):
+            trig_name = f"readonly_{table}_{action}"
+            cursor = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='trigger' AND name=?",
+                (trig_name,),
+            )
+            if cursor.fetchone() is None:
+                issues.append(
+                    f"[TRIGGER-MISSING] 只读触发器 '{trig_name}' 不存在（表 {table} 未受只读保护）"
+                )
+
+
+def check_schema_version(conn, issues: list) -> None:
+    """校验3：Schema 版本一致性。"""
+    expected = len(depgraph_schema._MIGRATIONS)
+    cursor = conn.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
+    actual = cursor.fetchone()[0]
+    if actual != expected:
+        issues.append(
+            f"[VERSION-DRIFT] _schema_version MAX={actual} 但 _MIGRATIONS 有 {expected} 条迁移"
+            f"（差 {expected - actual} 条未执行）"
+        )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="depgraph.db Schema 健康度校验")
+    parser.add_argument("--db", default=str(DEPGRAPH_DB_PATH), help="depgraph.db 路径")
+    parser.add_argument("--ci", action="store_true", help="硬阻断模式（默认行为，显式传入便于阅读）")
+    parser.add_argument("--warn-only", action="store_true", help="软警告模式（发现漂移仍 exit 0）")
+    args = parser.parse_args()
+
+    db_path = Path(args.db)
+    if not db_path.exists():
+        print(f"[ERROR] DB 不存在: {db_path}")
+        return EXIT_ERROR
+
+    conn = sqlite3.connect(str(db_path))
+    issues: list[str] = []
+    try:
+        check_ddl_columns(conn, issues)
+        check_readonly_triggers(conn, issues)
+        check_schema_version(conn, issues)
+    except Exception as e:
+        print(f"[ERROR] 校验脚本异常: {e}")
+        return EXIT_ERROR
+    finally:
+        conn.close()
+
+    if issues:
+        print(f"[FAIL] 发现 {len(issues)} 项 Schema 健康度问题:")
+        for issue in issues:
+            print(f"  {issue}")
+        # --warn-only 优先；默认（无 flag 或 --ci）硬阻断
+        return EXIT_PASS if args.warn_only else EXIT_FINDINGS
+
+    print("[PASS] depgraph.db Schema 健康度校验通过")
+    return EXIT_PASS
+
+
+if __name__ == "__main__":
+    sys.exit(main())
