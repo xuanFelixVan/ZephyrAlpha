@@ -1347,6 +1347,15 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 进入项目后 MUST 按以下顺序执行（不可跳过、不可重排）：
 
 ```
+STEP 0.5 — Drift 健康检查（冷启动前置，P1-CLD；信息性不阻断，但 issue 须优先修复）:
+  0.5.1 python scripts/governance/audit_registration.py --full --compact
+        → 若 TOTAL > 0 → 记录 issue（orphan module / zombie ref），后续 session 须优先修复
+  0.5.2 git stash list | Measure-Object -Line
+        → 若 stash 数 > 5 → warning（建议先清理：python scripts/governance/cleanup_stash.py --cleanup）
+  0.5.3 git status --porcelain | Measure-Object -Line
+        → 若 worktree 变更量 > 50 → warning（建议先 commit 或 stash，防并行 session 漂移）
+  0.5.4 python scripts/governance/cleanup_stash.py --check
+        → 若 CRITICAL → warning（stash 堆积已达危险线）
 STEP 1   — 读 docs/registry_of_registries.yaml → 了解全项目注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板
 STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（唯一真源，禁止直接 Read 157MB 文件。详见 RULE-SIXTEEN）
