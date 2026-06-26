@@ -11,8 +11,8 @@
 
 module_id: MOD-INF-005
 registry_version: "1.0.0"
-total_scenarios: 44
-last_updated: "2026-06-11"
+total_scenarios: 50
+last_updated: "2026-06-26"
 
 scenarios:
   # === Existing 24 scenarios ===
@@ -510,15 +510,64 @@ scenarios:
     status: active
     test_file: "tests/adversarial/test_stale_task_adversarial.py::TestAdversarialStaleRecoveryBypass"
 
+  # === TTL Frontmatter Metadata Gate Adversarial Scenarios (GATE-15) ===
+  # 攻击面：ttl 字段全链路治理（止血→治标→治本→防漂移 4 阶段施工）
+  # 防御层：GATE-15 pre-commit 全量校验 + GitCommitGateway 等效校验 + 生成器源头注入
+  # 爆炸半径：FILE（单文件攻击）/ MODULE（Gateway/Generator 级攻击）
+  - scenario_id: RB-SCEN-047
+    name: "TTL Field Missing — GATE-15 Bypass Attempt"
+    tier: L1
+    severity: critical
+    injection_vector: "missing_ttl_field"
+    target_module: "check_frontmatter_metadata"
+    defense: "frontmatter_ttl.validate"
+    steady_state_verification: "check_frontmatter_metadata.py --all-files exit 0"
+    status: active
+    description: "攻击者提交无 ttl 字段的 .md 文件，试图绕过 GATE-15 pre-commit 门禁。GATE-15 应检测到 frontmatter 缺少 ttl 字段并阻断提交（exit 1）。"
+
+  - scenario_id: RB-SCEN-048
+    name: "TTL Value Forgery — Invalid Enum Bypass"
+    tier: L1
+    severity: high
+    injection_vector: "ttl_value_forgery"
+    target_module: "check_frontmatter_metadata"
+    defense: "frontmatter_ttl.validate"
+    steady_state_verification: "check_frontmatter_metadata.py --all-files exit 0"
+    status: active
+    description: "攻击者提交 ttl 值不合法的 .md 文件（如 ttl: forever / ttl: permanent_v2 / ttl: always），试图绕过 GATE-15 枚举校验。GATE-15 应检测到 ttl 值不在合法枚举 {permanent, task_bound} 内并阻断提交。"
+
+  - scenario_id: RB-SCEN-049
+    name: "Gateway --no-verify TTL Bypass"
+    tier: L1
+    severity: critical
+    injection_vector: "gateway_no_verify_ttl_bypass"
+    target_module: "git_commit_gateway"
+    defense: "gateway_metadata.validate"
+    steady_state_verification: "GitCommitGateway commit returns METADATA_VIOLATION on missing ttl"
+    status: active
+    description: "攻击者通过 GitCommitGateway（--no-verify 绕过 pre-commit）提交无 ttl 的 .md 文件。Gateway 内部等效校验应检测到 ttl 缺失并返回 CommitStatus.METADATA_VIOLATION 阻断提交。"
+
+  - scenario_id: RB-SCEN-050
+    name: "Generator TTL Injection Evasion"
+    tier: L2
+    severity: high
+    injection_vector: "generator_ttl_strip"
+    target_module: "kb_bootstrap_generator"
+    defense: "generator_ttl.verify"
+    steady_state_verification: "Generated .md files contain ttl field in frontmatter"
+    status: active
+    description: "攻击者篡改生成器（bootstrap.py/ingest.py/generate_missing_index_md.py），移除 ttl 注入逻辑，使新生成的 .md 文件不带 ttl。G1 frontmatter_required_fields 应检测到 ttl 字段缺失并阻断。GATE-15 全量校验兜底。"
+
 # Summary
 summary:
-  total: 46
+  total: 50
   by_tier:
-    L1_critical: 12
-    L2_high: 20
+    L1_critical: 14
+    L2_high: 21
     L3_medium: 6
     L6_advanced: 8
   rollback_specific: 10
   tier6_advanced: 8
+  ttl_metadata: 4
   test_coverage: full
-  last_updated: "2026-06-11"
+  last_updated: "2026-06-26"

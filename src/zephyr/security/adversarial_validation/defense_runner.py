@@ -69,6 +69,12 @@ GATE_MAP: dict[str, str] = {
     "mcp_auth.verify": "G1",
     "route_manifest.validate": "G2",
     "delegation_engine.depth_check": "G2",
+    # ttl frontmatter metadata 防御映射（RB-SCEN-047~050）
+    # GATE-15 = pre-commit check_frontmatter_metadata.py 全量 ttl 校验
+    # G1 = g1_ingest.yaml frontmatter_required_fields（含 ttl 字段存在性检查）
+    "frontmatter_ttl.validate": "GATE-15",
+    "gateway_metadata.validate": "GATE-15",
+    "generator_ttl.verify": "G1",
 }
 
 
