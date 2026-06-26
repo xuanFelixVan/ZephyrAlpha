@@ -27,15 +27,16 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-# 路径真源在 zephyr.governance.rule_enforcement.sys_master_compliance（SSoT）
-# 本脚本复用真源，不重复硬编码，避免多真源漂移
+# 蓝图路径真源：blueprint_registry.yaml（SSoT），经 sys_master_compliance.load_blueprint_path 查询
+# 不硬编码，消除连字符/下划线漂移
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 from zephyr.governance.rule_enforcement.sys_master_compliance import (  # noqa: E402
     MOD_MASTER_PATH,
     SYS_MASTER_PATH,
+    load_blueprint_path,
 )
 
-DOM_GOV = PROJECT_ROOT / "docs" / "03_modules" / "_domain_governance" / "blueprint.md"
+DOM_GOV = load_blueprint_path("MOD-GOVERNANCE")
 
 EXPECTED_MODULES = [
     "MOD-INF-018",
@@ -60,8 +61,10 @@ EXPECTED_CTS = [
 ]
 
 
-def check_exists(path: Path, label: str) -> dict:
+def check_exists(path: Path | None, label: str) -> dict:
     """Check compliance and report findings."""
+    if path is None:
+        return {"file": "<not in blueprint_registry.yaml>", "label": label, "status": "MISSING"}
     status = "OK" if path.exists() else "MISSING"
     return {"file": str(path.relative_to(PROJECT_ROOT)), "label": label, "status": status}
 

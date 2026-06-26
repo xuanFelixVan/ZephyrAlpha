@@ -5,69 +5,76 @@
 # module_id: PS-REG-019
 # doc_type: contract
 # status: active
-# version: 1.0.0
+# version: 1.1.0
 # date: 2026-06-26
 #
 # 用途:
 #   解决"AI 不知道某功能已存在、真源在哪"的信息不可达问题。
-#   声明每个能力（capability）的 canonical 文件、别名、已知重复。
-#   查询 API（zephyr.governance.capability_lookup.CapabilityLookup）读取本文件
-#   + 实时扫描磁盘代码头部，合并返回，无需手工跑扫描器。
+#   声明每个能力的 capability_id / aliases / description（能力索引）。
+#   canonical_file / module_id / blueprint_id / domain / maturity / duplicates /
+#   removed_duplicates 全部由 CapabilityLookup 运行时从磁盘头部 + git log 自动派生，
+#   不在本文件维护——消除 YAML↔代码头部同步漂移成本。
 #
-# 真源性质:
-#   本文件是规则数据真源（人工裁定的 canonical 声明）。
-#   扫描结果是派生数据（查询时实时算，不持久化为独立 report，避免同步成本）。
+# 真源性质（v1.1.0 治本重构）:
+#   本文件是"能力索引"真源：仅声明 capability_id / aliases / description（人工维护，
+#   低频）+ 可选的人工裁定字段（canonical_override / duplicates_manual /
+#   removed_duplicates_manual）。
+#   canonical/duplicates/removed_duplicates 是派生数据（查询时实时算，不持久化为
+#   独立 report，避免第二数据源漂移）。
+#
+#   注：本文件不是"规则数据真源"（那条铁律仅适用于 docs/01_policies_and_standards/
+#   下的规则文件，由 sync_yaml_to_depgraph.py 同步到 9 个 readonly DB 表）。
+#   本文件是能力索引，不被 sync_yaml_to_depgraph.py 同步——它是 CapabilityLookup
+#   的查询输入，与 depgraph.db 的 nodes 表是两个独立的数据面。
 #
 # 对标:
-#   K8s Service（声明式 canonical）+ Endpoints 控制器（实时发现 pod）——
+#   K8s Service（声明式 capability_id）+ Endpoints 控制器（实时发现 canonical）——
 #   Endpoints 不持久化为独立资源，是 Service 的实时投影。本注册表同构。
+#
+# 派生规则（CapabilityLookup._derive_* 实现）:
+#   - canonical 候选：磁盘文件 basename(无 .py) ∈ {capability_id} ∪ aliases（标准化）
+#   - canonical 选择优先级：canonical_override > 单候选 > 成熟度排序
+#     (production > prototype > design) > import 数 > 歧义(需 override)
+#   - duplicates (auto)：磁盘上同 basename 的其他候选（relation 由 blueprint 比对派生：
+#     同蓝图=conflicting，异蓝图=sibling）
+#   - duplicates_manual：语义 sibling（auto 无法发现，人工声明 relation + note）
+#   - removed_duplicates (auto)：git log --diff-filter=D 派生（basename 匹配 + 头部验证）
+#   - removed_duplicates_manual：未被 git 跟踪的历史文件（人工声明 path + note）
 #
 # AI 使用方式:
 #   1. from zephyr.governance.capability_lookup import CapabilityLookup
-#   2. reg = CapabilityLookup()
-#   3. reg.find("session handoff")  # 关键词搜索
-#   4. reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
-#   5. reg.list_ssot_conflicts()  # 列出同蓝图多实现冲突
+#   2. reg = CapabilityLookup()              # 自动加载本文件 + 扫磁盘 + 派生
+#   3. reg.find("session handoff")            # 关键词搜索
+#   4. reg.get("rollback_executor")           # 按 capability_id 精确查
+#   5. reg.check_file_canonical("src/...py")   # 反查某文件是哪个能力的 canonical
+#   6. reg.list_ssot_conflicts()              # 列出同蓝图多实现冲突
 #
 # 维护规则:
-#   - 新增能力时加一条 capability 声明（低频）
-#   - canonical 文件迁移时更新 canonical_file 字段
-#   - 发现新重复时加到 duplicates[]（relation 标记 sibling/conflicting/legacy）
-#   - 删除重复时从 duplicates[] 移到 removed_duplicates[]（保留审计链）
+#   - 新增能力：加 capability_id + aliases + description（3 个必填字段）
+#   - 派生选错 canonical：加 canonical_override（人工裁定真源路径）
+#   - auto 漏掉语义 sibling：加 duplicates_manual（relation + note）
+#   - 历史文件未被 git 跟踪：加 removed_duplicates_manual（path + note）
+#   - 其余字段（canonical_file / module_id / maturity / duplicates / removed_in_commit）
+#     全部自动派生，禁止手工维护
 # ============================================================================
 
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 module_id: PS-REG-019
 doc_type: contract
 title: "能力→真源文件反查注册表"
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: "2026-06-26"
 summary: >-
   capability → canonical_file 反查注册表，解决"AI 不知道某功能真源在哪"的信息不可达问题。
-  声明每个能力的 canonical 文件、别名、已知重复。查询 API（CapabilityLookup）读取本文件
-  + 实时扫描磁盘代码头部，合并返回。对标 K8s Service(声明) + Endpoints(实时发现) 模式。
-  本任务只建注册表（信息可达），不建 create-time 硬阻断门禁（另一个并行对话负责）。
+  v1.1.0 治本重构：YAML 仅声明能力索引（capability_id/aliases/description）+ 可选人工
+  裁定字段；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/
+  removed_duplicates 全部由 CapabilityLookup 从磁盘头部 + git log 自动派生，消除
+  YAML↔代码头部同步漂移成本。对标 K8s Service(声明) + Endpoints(实时发现) 模式。
 
-# 能力状态受控词表
-_status_vocabulary:
-  - alive       # canonical 文件存在于磁盘
-  - dead        # canonical 文件已删除（需迁移或归档）
-  - archived    # 能力已废弃，canonical 保留为历史参考
-
-# 重复关系受控词表
-_relation_vocabulary:
-  - sibling       # 同族不同语义实现（如交接本 vs 漂移修复 handoff，都叫 handoff 但语义不同）
-  - conflicting   # 同蓝图同能力多实现——SSoT 冲突，需 Owner 裁定去留
-  - legacy        # 旧版分叉，新版 canonical 已确立，旧版待删除
-
-# 扫描头部字段（CapabilityLookup 实时扫描时提取的代码头部字段，用于与 YAML 比对）
-_scan_fields:
-  - "[MODULE]        # 模块路径（如 zephyr.shared.session_continuity）"
-  - "[A_module]      # module_id=MOD-XXX_yyy"
-  - "[BLUEPRINT]     # 蓝图 ID"
-  - "[DOMAIN]        # 域 ID"
-  - "[MATURITY]      # design/prototype/production"
+# 能力状态（派生）：alive = canonical 文件存在于磁盘；dead = 不存在
+# 重复关系（duplicates[].relation 派生规则）：conflicting = 同蓝图；sibling = 异蓝图
+#   duplicates_manual 可覆盖 relation（语义判定 auto 无法派生）
 
 # ============================================================================
 # 能力清单
@@ -76,74 +83,121 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: session_handoff_continuity
-    name: "Session 交接本/连续性"
-    canonical_file: src/zephyr/shared/session_continuity.py
-    module_id: MOD-INF_session_continuity
-    blueprint_id: SRC-140
-    domain: D-SHARED
-    maturity: prototype
-    status: alive
     aliases:
       - session_continuity
       - handoff
       - 交接本
       - session_handoff
-      - session_continuity
     description: >-
       Session 交接包自动生成与恢复。解决"打开 IDE 不知道上回做到哪了"的零记忆重启痛点。
-      依据：MOD-TASK_SYSTEM v0.3.2 + AGENTS.md §5.1 零记忆重启。
-      12 importers，SQLite handoffs 表。
-    duplicates:
+      依据：MOD-TASK_SYSTEM v0.3.2 + AGENTS.md §5.1 零记忆重启。12 importers，SQLite
+      handoffs 表。canonical = src/zephyr/shared/session_continuity.py（auto 派生：
+      basename session_continuity 匹配 alias，单候选）。
+    # auto 派生漏掉的语义 sibling（basename handoff_manager 不匹配任何 alias）：
+    duplicates_manual:
       - path: src/zephyr/behavioral_audit/handoff_manager.py
-        module_id: MOD-SEC_handoff_manager
-        blueprint_id: MOD-INF-033
-        domain: D-BEHAVIORAL_AUDIT
-        maturity: production
         relation: sibling
         note: >-
           漂移修复 handoff（Cross-Session Handoff Manager §6.14），与交接本语义不同
           （交接本=AI session 状态持久化；漂移 handoff=修复上下文交接包）。非重复实现，
-          是同族不同语义子能力。
-    removed_duplicates:
-      - path: src/zephyr/governance/drift_detection/handoff_manager.py
-        removed_in_commit: d586cb25
-        note: "behavioral_audit 版的死副本，已删（commit d586cb25，402 行删除清理）"
-      - path: src/zephyr/governance/audit_orchestration/session_handoff.py
-        removed_in_commit: d586cb25
-        note: "返回硬编码 dict 的空壳 stub，已删"
-      - path: src/zephyr/trading/orchestrator/session_handoff.py
-        removed_in_commit: d586cb25
-        note: "与上面字节相同的 stub，已删"
+          是同族不同语义子能力。auto 派生按 basename 匹配会漏掉（handoff_manager 不在
+          aliases 中），故人工声明。
+    # 未被 git 跟踪的历史死副本（git log --diff-filter=D 无法派生）：
+    removed_duplicates_manual:
       - path: src/zephyr/shared/session/session_continuity.py
-        removed_in_commit: d586cb25
-        note: "shared/ 真源的死副本（原未被 git 跟踪），已删"
+        note: "shared/ 真源的死副本（原未被 git 跟踪），已删（commit d586cb25 清理）"
 
   # --------------------------------------------------------------------------
   - capability_id: rollback_executor
-    name: "回滚执行器"
-    canonical_file: src/zephyr/infrastructure/rollback/rollback_executor.py
-    module_id: MOD-INF_rollback_executor
-    blueprint_id: MOD-INF-021
-    domain: D-INFRA_RUNTIME
-    maturity: production
-    status: alive
     aliases:
       - rollback
       - RollbackExecutor
       - 回滚执行器
-      - rollback_executor
-    description: "回滚执行器核心封装。"
-    duplicates:
-      - path: src/zephyr/governance/rollback_executor.py
-        module_id: MOD-RES_rollback_executor
-        blueprint_id: MOD-INF-021
-        domain: D-GOVERNANCE
-        maturity: prototype
-        relation: conflicting
-        note: >-
-          同蓝图 MOD-INF-021 的 prototype 分叉，module_id 不同（MOD-RES vs MOD-INF）。
-          且 [MODULE] 字段错声明为 zephyr.infrastructure.rollback.rollback_executor（与
-          infrastructure 版相同），头部与实际路径不一致。需 Owner 裁定去留。
+    description: >-
+      回滚执行器核心封装。canonical = src/zephyr/infrastructure/rollback/
+      rollback_executor.py（auto 派生：basename rollback_executor 匹配 capability_id，
+      多候选按成熟度排序——infrastructure 版 production > governance 版 prototype）。
+      duplicates (auto): governance/rollback_executor.py（同蓝图 MOD-INF-021，
+      relation=conflicting，头部 [MODULE] 错声明为 infrastructure 路径——需 Owner 裁定）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: project_root_resolution
+    canonical_override: src/zephyr/shared/io/paths.py
+    aliases:
+      - PROJECT_ROOT
+      - REPO_ROOT
+      - 仓库根
+      - project_root
+      - repo_root
+    description: >-
+      仓库根目录的权威解析入口。所有需要仓库根的代码应 from zephyr.shared.io.paths import REPO_ROOT，
+      禁止各自用 Path(__file__).parents[N] 推算（N 值散乱导致 bug，见 commit 1cd39ad5）。
+      src/zephyr/shared/io/paths.py 是 REPO_ROOT 真源；截至本次仍有 90+ 文件各自推算，彻底归一见独立任务。
+
+  # --------------------------------------------------------------------------
+  - capability_id: blueprint_path_query
+    canonical_override: src/zephyr/governance/rule_enforcement/sys_master_compliance.py
+    aliases:
+      - SYS_MASTER_PATH
+      - MOD_MASTER_PATH
+      - DOM_GOV
+      - load_blueprint_path
+      - blueprint_path
+      - 蓝图路径
+    description: >-
+      蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（SSoT 派生）按 module_id 查询，
+      不硬编码路径。真源链：blueprint.md frontmatter → sync_registry_from_blueprints.py
+      → blueprint_registry.yaml → load_blueprint_path(module_id)。
+      消除连字符/下划线漂移根因。
+
+  # --------------------------------------------------------------------------
+  - capability_id: frontmatter_metadata_validation
+    canonical_override: scripts/governance/d3_metadata/check_frontmatter_metadata.py
+    aliases:
+      - doc_type_validation
+      - ttl_validation
+      - GATE-15
+      - frontmatter_check
+      - frontmatter_metadata
+      - frontmatter_ttl_check
+      - 元数据校验
+      - frontmatter_metadata_check
+    description: >-
+      .md 文档 frontmatter 字段校验的唯一真源（GATE-15）。校验 ttl（必填+合法值，
+      始终 hard block）+ doc_type（必填+合法值，默认 warn-only，--strict-doctype 或
+      ZEPHYR_DOCTYPE_STRICT=1 升级 hard block）。合法值从 ttl_vocabulary.yaml +
+      doc_type_vocabulary.yaml 动态加载（YAML 词表是唯一真源）。字段校验配置 _FIELD_RULES：
+      新增词表字段校验只需加一行配置。归档脚本 validate_frontmatter_values.py 是 legacy
+      副本，不复活——扩展字段校验扩展本文件。canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，故用 canonical_override 显式声明。
+
+  # --------------------------------------------------------------------------
+  - capability_id: llm_security_gateway
+    aliases:
+      - LSG
+      - LSGSecurityGateway
+      - llm_security
+      - LLM安全网关
+      - security_gateway
+      - 安全网关
+    description: >-
+      LLM 安全网关（L0-L8 十层纵深防御）。所有 LLM 调用必须经过 LSGSecurityGateway
+      进行安全扫描（输入/输出/Agent 动作），禁止裸调 LLM API。对标 RULE-LSG-001。
+      canonical = src/zephyr/security/llm_defense/llm_security/gateway.py。
+      412 个测试覆盖，100% 通过率。
+
+  # --------------------------------------------------------------------------
+  - capability_id: bare_llm_call_detector
+    canonical_override: scripts/governance/d11_compliance/validate_llm_security_gateway.py
+    aliases:
+      - GATE-20
+      - llm_security_gateway_gate
+      - 裸调LLM检测
+      - validate_llm_security_gateway
+    description: >-
+      GATE-20 裸调 LLM API 检测门禁。pre-commit 阶段自动触发，AST 扫描 src/zephyr/
+      下所有 Python 文件，检测未导入 LSG 的裸调 LLM API（openai/anthropic/langchain/
+      litellm）。对标 RULE-LSG-001 强制执行。canonical 在 scripts/ 下（非 src/zephyr/），
+      无法 auto 派生，故用 canonical_override 显式声明。
 
 # ============================================================================
 # 维护日志
@@ -151,3 +205,15 @@ capabilities:
 # 2026-06-26 v1.0.0 初版。种子 2 条：session_handoff_continuity + rollback_executor。
 #   记录已删 4 个 session_handoff 重复（commit d586cb25）。
 #   标记 rollback_executor 同蓝图 MOD-INF-021 双实现为 conflicting，待 Owner 裁定。
+# 2026-06-26 v1.1.0 治本重构（第一性原理审核）：
+#   - 精简为能力索引（capability_id/aliases/description）+ 3 个可选人工裁定字段
+#   - canonical_file/module_id/blueprint_id/domain/maturity 改为从磁盘头部 auto 派生
+#   - duplicates[] 改为从磁盘 basename 匹配 auto 派生（relation 由 blueprint 比对派生）
+#   - removed_duplicates[] 改为从 git log --diff-filter=D auto 派生
+#   - 语义 sibling 移至 duplicates_manual（auto 无法发现）
+#   - 未被 git 跟踪的历史文件移至 removed_duplicates_manual
+#   - 消除 YAML↔代码头部同步漂移成本（治本）
+# 2026-06-26 新增 frontmatter_metadata_validation（GATE-15，Stage 3 doc_type 门禁）：
+#   - canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，用 canonical_override 显式声明
+#   - 解决发现性：AI 搜 doc_type validation / ttl validation / GATE-15 可定位真源
+#   - 解决防重建：check_file_canonical() 反查阻止重复创建 frontmatter 校验脚本
