@@ -36,9 +36,11 @@ from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
     BareLLMCallError,
+    _ctx_allowance,
     _is_guarded,
     _make_async_guard,
     _make_guard,
+    _tls_get,
     allow_llm_call,
     allow_llm_call_async,
     grant_allowance,
@@ -141,6 +143,64 @@ class TestAllowanceToken:
             assert called["n"] == 1
 
         asyncio.run(scenario())
+
+
+# ============================================================================
+# 1b. 双存储不变量守卫（铁律2.3治本 + 铁律2.4两问）
+# ----------------------------------------------------------------------------
+# 双存储（contextvar + threading.local）是必要正确性，非真源违规：
+#  - 单存 contextvar：sync→asyncio.run→sync 路径令牌不回传 → 误拦合法调用
+#  - 单存 threading.local：并发 async 任务串扰 → 安全漏洞
+# 本测试锁死"双写属性"——grant 必须同时写两处，revoke/过期必须同时清两处。
+# 防止未来 AI 误优化成单存而引入安全漏洞（让 AI 在准备改时知道约束而不创造）。
+# 真源：runtime_interceptor.py 的 grant_allowance / revoke_allowance / is_allowance_active
+# ============================================================================
+
+class TestDualStoreInvariant:
+    """双存储不变量守卫。
+
+    锁死双写属性：grant 同写 ctx+tls（同对象），revoke/过期同清 ctx+tls。
+    任一不变量被破坏 → 单存优化引入安全漏洞 → 测试 fail。
+    """
+
+    def test_grant_writes_both_stores(self):
+        """grant_allowance 必须同时写入 contextvar 和 thread-local。"""
+        grant_allowance(request_id="invariant-grant")
+        assert _ctx_allowance.get() is not None
+        assert _tls_get() is not None
+        # 两处持有同一逻辑令牌（同一对象引用，非两个真源同步）
+        assert _ctx_allowance.get() is _tls_get()
+
+    def test_revoke_clears_both_stores(self):
+        """revoke_allowance 必须同时清空 contextvar 和 thread-local。"""
+        grant_allowance(request_id="invariant-revoke")
+        assert _ctx_allowance.get() is not None
+        assert _tls_get() is not None
+        revoke_allowance()
+        assert _ctx_allowance.get() is None
+        assert _tls_get() is None
+
+    def test_expiry_clears_both_stores(self):
+        """过期令牌惰性清除时，两处存储都必须被清空（防僵尸令牌残留）。"""
+        grant_allowance(request_id="invariant-expiry", ttl=0.02)
+        assert _ctx_allowance.get() is not None
+        assert _tls_get() is not None
+        time.sleep(0.05)
+        assert is_allowance_active() is False
+        assert _ctx_allowance.get() is None
+        assert _tls_get() is None
+
+    def test_grant_idempotent_overwrites_both(self):
+        """重复 grant 以最新令牌覆盖两处，保持双存储一致。"""
+        grant_allowance(request_id="first", ttl=60)
+        first_ctx = _ctx_allowance.get()
+        first_tls = _tls_get()
+        grant_allowance(request_id="second", ttl=60)
+        assert _ctx_allowance.get() is not None
+        assert _tls_get() is not None
+        assert _ctx_allowance.get() is not first_ctx
+        assert _tls_get() is not first_tls
+        assert _ctx_allowance.get() is _tls_get()
 
 
 # ============================================================================
