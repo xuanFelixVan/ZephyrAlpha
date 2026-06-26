@@ -23,11 +23,15 @@ ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import signal
 import subprocess
+import sys
 import threading
+from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -310,11 +314,13 @@ def cleanup_completed_tasks() -> list[dict[str, Any]]:
 
 
 class IdeHealthDaemon:
-    def __init__(self) -> None:
+    def __init__(self, project_root: str | Path | None = None) -> None:
         self._running = False
         self._thread: threading.Thread | None = None
         self._interval: float = _SCAN_INTERVAL_SECONDS
         self._ghost_count: int = 0
+        self._loop_count: int = 0  # P1-DAE: drift 指标采集节拍计数
+        self._project_root: Path = Path(project_root) if project_root else Path.cwd()
 
     def start(self) -> None:
         if self._running:
@@ -346,7 +352,54 @@ class IdeHealthDaemon:
                 self._ghost_count = len(ghosts)
             except Exception:
                 logger.exception("IdeHealthDaemon: scan tick failed")
+            # P1-DAE: 每 10 轮（~5min @30s interval）采集一次 drift 健康指标
+            self._loop_count += 1
+            if self._loop_count % 10 == 0:
+                try:
+                    self._collect_drift_metrics()
+                except Exception:
+                    logger.exception("IdeHealthDaemon: drift metrics collection failed")
             time.sleep(self._interval)
+
+    def _collect_drift_metrics(self) -> None:
+        """采集 drift 健康指标，写入 .runtime/drift_health.json（P1-DAE）。
+
+        指标：
+        - stash_count: git stash 数量（>5 → warning；P1-STH 时触发自动清理）
+        - worktree_changes: git status 变更文件数（>50 → warning，防并行 session 漂移）
+        - ghost_count: 幽灵窗口数（本轮回采）
+        - timestamp: 采集时间
+
+        设计对标 GitOps 社区：drift detection 是一等 SRE 指标（SLI/SLO）。
+        """
+        metrics: dict[str, Any] = {
+            "timestamp": datetime.now().isoformat(),
+            "ghost_count": self._ghost_count,
+        }
+        # stash 数量
+        r = subprocess.run(
+            ["git", "stash", "list"],
+            capture_output=True, text=True,
+            cwd=str(self._project_root),
+        )
+        metrics["stash_count"] = len([l for l in r.stdout.splitlines() if l.strip()])
+        # worktree 变更量
+        r = subprocess.run(
+            ["git", "status", "--porcelain"],
+            capture_output=True, text=True,
+            cwd=str(self._project_root),
+        )
+        metrics["worktree_changes"] = len([l for l in r.stdout.splitlines() if l.strip()])
+        # 写入 .runtime/drift_health.json
+        runtime_dir = self._project_root / ".runtime"
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+        health_path = runtime_dir / "drift_health.json"
+        health_path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
+        # 阈值告警
+        if metrics["stash_count"] > 5:
+            logger.warning("drift health: stash_count=%d > 5", metrics["stash_count"])
+        if metrics["worktree_changes"] > 50:
+            logger.warning("drift health: worktree_changes=%d > 50", metrics["worktree_changes"])
 
     @property
     def ghost_count(self) -> int:
