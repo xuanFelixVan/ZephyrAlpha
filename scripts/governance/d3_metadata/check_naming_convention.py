@@ -34,6 +34,10 @@
   N-15  BLUEPRINT 头部路径必须存在
   N-16  文件名项目内唯一性检测（tests/ + docs/）——真源：trae_028_doc_structure_naming.yaml v1.5.0 §gov_doc_003_filename_uniqueness.n16_config(豁免清单从此动态加载,硬编码仅作fail-open回退)
   N-17  blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
+
+独立模式：
+  --validate-ssot  SSoT(trae_028) 与脚本双轨正则 + N-16 fallback 联动一致性校验
+                    （pre-commit 自动触发，防规则改了脚本没跟上；能力反查 alias=ssot_linkage_validator）
 """
 
 from __future__ import annotations

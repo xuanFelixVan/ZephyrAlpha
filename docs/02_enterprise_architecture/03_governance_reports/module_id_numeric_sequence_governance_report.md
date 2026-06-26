@@ -349,7 +349,7 @@ blocking_count = len(other_violations) + (len(n17_violations) if not args.warn_o
 过渡期 `--warn-only` 时 N-17 warning 不阻断；阶段 E 移除 `--warn-only` 后 N-17 正式阻断。
 
 **SSoT 机械联动校验**（[L1019-1062](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_naming_convention.py#L1019-L1062)）：
-`_validate_ssot_linkage()` 函数校验 SSoT(trae_028)与脚本双轨正则一致性：version≥1.3.0 + 双轨制关键词存在 + 脚本双轨正则已定义。
+`_validate_ssot_linkage()` 函数校验 SSoT(trae_028)与脚本双轨正则一致性：version 字段动态读取（拼入消息，不硬编码下界）+ 脚本双轨正则已定义 + N-16 fallback 与 YAML n16_config 一致性校验。
 
 **apply_depgraph.py --mark-invalid**（[L1048-1084](file:///d:/ZephyrAlpha/scripts/governance/apply_depgraph.py#L1048-L1084)）：
 `mark_blueprint_invalid()` 函数将 blueprint_id 标记为 invalid（软标记，不删除节点，保留可追溯链），供阶段 C/D 重编号专用。
@@ -362,7 +362,7 @@ GATE-11 hook 添加 `args: ["--warn-only"]`，过渡期 N-17/N-06 历史违规�
 **SSoT 联动校验实测**：
 ```
 $ python scripts/governance/d3_metadata/check_naming_convention.py --validate-ssot
-✅ SSoT(trae_028 v1.3.0) 与脚本双轨正则机械联动一致（裁定#208 R4）
+✅ SSoT(trae_028 v1.5.0) 与脚本双轨正则 + N-16 fallback 一致
 EXIT=0
 ```
 
