@@ -2326,6 +2326,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/detectors/analyze_same_name_module_relations.py
+  path: governance/d5_architecture/detectors/analyze_same_name_module_relations.py
+  description: 对标：AGENTS.md §6.4（最有利于 AI 施工 --- 机器可读优于自然语言推理）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/detectors/detect_depends_on_cycles.py
   path: governance/d5_architecture/detectors/detect_depends_on_cycles.py
   description: from __future__ import annotations
@@ -2337,14 +2345,6 @@ scripts:
 - name: governance/d5_architecture/detectors/detect_deprecated_adr_references.py
   path: governance/d5_architecture/detectors/detect_deprecated_adr_references.py
   description: 对标：COND-38（引用 Deprecated ADR 作为当前决策依据为条件禁止）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/detectors/detect_duplicate_module_names.py
-  path: governance/d5_architecture/detectors/detect_duplicate_module_names.py
-  description: 对标：AGENTS.md §6.4（最有利于 AI 施工 --- 机器可读优于自然语言推理）
   domain: governance
   execution_plane: warm-path
   status: registered
