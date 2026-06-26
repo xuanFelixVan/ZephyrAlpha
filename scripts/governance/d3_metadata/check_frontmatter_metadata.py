@@ -2,20 +2,28 @@
 # [MODULE] governance.d3_metadata.check_frontmatter_metadata
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants
-# [CONSUMERS] pre-commit GATE-15; manual validation
+# [CONSUMERS] pre-commit GATE-15; GitCommitGateway._check_frontmatter_ttl; manual validation
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 从 ttl_vocabulary.yaml 动态加载合法 ttl 值；只校验有 frontmatter 的 .md；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
-# [STABILITY] stable
+# [INVARIANTS] 从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载合法值；ttl 始终 hard block；doc_type 默认 warn-only，--strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 升级 hard block；只校验有 frontmatter 的 .md；--all-files 强制全量扫描（忽略传入的文件参数）；--ci 参数接受但当前等同于默认（全量校验）
+# [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] EXIT_PASS=0（无违规）；EXIT_FINDINGS=1（有 ttl 缺失/非法）；EXIT_ERROR=2（脚本异常）
-# [TESTS] 手动测试：全量模式 EXIT=0；增量模式传入有/无 ttl 文件
-"""GATE-15: Frontmatter metadata validation（ttl 字段校验）
+# [ERROR_CONTRACT] EXIT_PASS=0（无 hard-block 违规）；EXIT_FINDINGS=1（ttl 缺失/非法 或 strict-doctype 下 doc_type 缺失/非法）；EXIT_ERROR=2（脚本异常）
+# [TESTS] tests/unit/governance/test_check_frontmatter_metadata.py
+"""GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验）
 
-校验 .md 文档 frontmatter 的 ttl 字段：
-  1. ttl 字段存在（有 frontmatter 的文档必填）
-  2. ttl 值合法（从 ttl_vocabulary.yaml 动态加载）
+校验 .md 文档 frontmatter 的词表字段：
+  1. ttl——必填 + 合法值（从 ttl_vocabulary.yaml 动态加载），始终 hard block
+  2. doc_type——必填 + 合法值（从 doc_type_vocabulary.yaml 动态加载），
+     默认 warn-only（93 文件仍缺 doc_type，Stage 2.3 完成后升级 strict）
+
+字段校验配置见 _FIELD_RULES——新增词表字段校验只需加一行配置，不改加载/校验逻辑。
+通用词表加载器 _load_vocab_values() 吸收归档脚本 validate_frontmatter_values.py 模式。
+
+capability registry: 本文件是 frontmatter metadata validation 的 canonical 真源
+（见 capability_canonical_file_registry.yaml capability_id=frontmatter_metadata_validation）。
+归档脚本 validate_frontmatter_values.py 是 legacy 副本，不复活——如需扩展字段校验，扩展本文件。
 
 两种模式:
   全量（无参数或 --all-files）: 扫描 docs/ 下所有 .md
@@ -32,11 +40,14 @@ Usage::
     # 增量校验（pre-commit 传入文件）
     python scripts/governance/d3_metadata/check_frontmatter_metadata.py --ci docs/foo.md docs/bar.md
 
-    # --ci 参数接受但等同于默认模式（当前不区分 ci/非 ci）
+    # strict doc_type（hard block on missing/invalid doc_type）
+    python scripts/governance/d3_metadata/check_frontmatter_metadata.py --strict-doctype
+    # 或 env: ZEPHYR_DOCTYPE_STRICT=1
 """
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -50,29 +61,84 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 from _shared.frontmatter import parse_frontmatter  # noqa: E402
 
 _PROJ = Path(__file__).resolve().parents[3]
-_TTL_VOCAB_PATH = (
-    _PROJ
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "vocabularies"
-    / "ttl_vocabulary.yaml"
+_VOCAB_DIR = (
+    _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 )
 
+# 字段校验配置——GATE-15 校验哪些字段的唯一声明
+# 吸收归档脚本 validate_frontmatter_values.py 的 VOCAB_FIELD_MAP 模式
+# 新增字段校验只需在此添加一行，不改 _load_vocab_values / _check_file 逻辑
+_FIELD_RULES: dict[str, dict] = {
+    "ttl": {
+        "vocab_file": "ttl_vocabulary.yaml",
+        "required": True,        # 缺失 → 始终 hard block
+        "always_strict": True,   # 非法值 → 始终 hard block（不可降级）
+    },
+    "doc_type": {
+        "vocab_file": "doc_type_vocabulary.yaml",
+        "required": True,         # 缺失 → issue（warn-only 或 strict）
+        "always_strict": False,  # 默认 warn-only；--strict-doctype/env 升级 hard block
+        "deprecated_key": "deprecated_values",  # 词表有废弃值节
+    },
+}
 
-def _load_ttl_values() -> set[str]:
-    """从 ttl_vocabulary.yaml 加载合法 ttl 值集合。"""
+
+def _load_vocab_values(vocab_file: str) -> set[str]:
+    """通用词表值加载（吸收归档脚本 validate_frontmatter_values.py:73-90 模式）。
+
+    单一加载函数服务 _FIELD_RULES 中所有字段，避免每字段写一个 _load_xxx_values()。
+    """
     import yaml
 
-    data = yaml.safe_load(_TTL_VOCAB_PATH.read_text(encoding="utf-8"))
-    return {v["value"] for v in data.get("values", [])}
+    path = _VOCAB_DIR / vocab_file
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    values: set[str] = set()
+    for entry in data.get("values", []):
+        if isinstance(entry, dict):
+            val = entry.get("value") or entry.get("id")
+            if val:
+                values.add(str(val))
+        elif isinstance(entry, str):
+            values.add(entry)
+    return values
 
 
-def _check_file(fpath: Path, valid_ttl: set[str]) -> list[str]:
-    """校验单个文件的 ttl 字段。
+def _load_deprecated_values(
+    vocab_file: str, deprecated_key: str
+) -> dict[str, str | None]:
+    """加载废弃值及迁移目标（单值→目标，多值/N/A→None 需人工判定）。"""
+    import yaml
+
+    path = _VOCAB_DIR / vocab_file
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    result: dict[str, str | None] = {}
+    for v in data.get(deprecated_key, []):
+        val = v.get("value", "")
+        mt = v.get("migrated_to", [])
+        if isinstance(mt, str) and mt and not mt.startswith("N/A"):
+            result[val] = mt
+        elif isinstance(mt, list) and len(mt) == 1 and mt[0] and not mt[0].startswith("N/A"):
+            result[val] = mt[0]
+        else:
+            result[val] = None  # 多值/N/A → 需人工判定
+    return result
+
+
+def _check_file(
+    fpath: Path,
+    field_rules: dict[str, dict],
+    vocab_cache: dict[str, set[str]],
+    deprecated_cache: dict[str, dict[str, str | None]],
+    strict_doctype: bool,
+) -> list[str]:
+    """校验单个文件的 frontmatter 字段。
+
+    ttl：始终 hard block（缺失/非法 → issues 列表 → EXIT_FINDINGS）
+    doc_type：默认 warn-only（缺失/非法 → print WARN，不计入 issues → EXIT_PASS）；
+              --strict-doctype 或 ZEPHYR_DOCTYPE_STRICT=1 → hard block
 
     Returns:
-        issues 列表（空列表 = 通过）。
+        issues 列表（空列表 = 无 hard-block 违规）。
     """
     issues: list[str] = []
     try:
@@ -82,28 +148,57 @@ def _check_file(fpath: Path, valid_ttl: set[str]) -> list[str]:
 
     metadata, _ = parse_frontmatter(text)
 
-    # 无 frontmatter 的文档跳过（不校验 ttl）
+    # 无 frontmatter 的文档跳过
     if not metadata:
         return issues
 
-    ttl = metadata.get("ttl")
-    if not ttl:
-        issues.append("missing required field 'ttl' (see ttl_vocabulary.yaml decision_tree)")
-    elif ttl not in valid_ttl:
-        issues.append(
-            f"invalid ttl='{ttl}' (valid values: {sorted(valid_ttl)})"
-        )
+    for field, rule in field_rules.items():
+        val = metadata.get(field)
+        is_strict = rule["always_strict"] or (field == "doc_type" and strict_doctype)
+        valid_values = vocab_cache[field]
+        deprecated = deprecated_cache.get(field, {})
 
+        if not val:
+            if rule["required"]:
+                issue = f"missing required field '{field}'"
+                if is_strict:
+                    issues.append(issue)
+                else:
+                    print(f"  WARN (doctype): {fpath.name} {issue}")
+        elif val not in valid_values:
+            if val in deprecated:
+                target = deprecated[val]
+                issue = f"deprecated {field}='{val}'" + (
+                    f", migrate to: {target}" if target else ", needs manual review"
+                )
+            else:
+                issue = f"invalid {field}='{val}' (valid: {sorted(valid_values)[:5]}...)"
+            if is_strict:
+                issues.append(issue)
+            else:
+                print(f"  WARN (doctype): {fpath.name} {issue}")
     return issues
 
 
 def main() -> int:
-    valid_ttl = _load_ttl_values()
-
     raw_args = sys.argv[1:]
     all_files = "--all-files" in raw_args
+    strict_doctype = (
+        "--strict-doctype" in raw_args
+        or os.environ.get("ZEPHYR_DOCTYPE_STRICT", "0") == "1"
+    )
 
-    # 过滤掉 -- 开头的参数（如 --ci, --all-files），只保留文件路径
+    # 加载所有字段的词表缓存（一次性加载，_check_file 复用）
+    vocab_cache: dict[str, set[str]] = {}
+    deprecated_cache: dict[str, dict[str, str | None]] = {}
+    for field, rule in _FIELD_RULES.items():
+        vocab_cache[field] = _load_vocab_values(rule["vocab_file"])
+        if "deprecated_key" in rule:
+            deprecated_cache[field] = _load_deprecated_values(
+                rule["vocab_file"], rule["deprecated_key"]
+            )
+
+    # 过滤掉 -- 开头的参数（如 --ci, --all-files, --strict-doctype），只保留文件路径
     args = [a for a in raw_args if not a.startswith("-")]
 
     if args and not all_files:
@@ -124,21 +219,25 @@ def main() -> int:
         if not fpath.exists():
             continue
         checked += 1
-        issues = _check_file(fpath, valid_ttl)
+        issues = _check_file(
+            fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype
+        )
         if issues:
             try:
                 rel = fpath.relative_to(_PROJ)
             except ValueError:
                 rel = fpath
             for issue in issues:
-                print(f"  WARN: {rel} {issue}")
+                print(f"  FAIL: {rel} {issue}")
             errors += 1
 
     if errors:
-        print(f"\nFAIL: {errors} frontmatter ttl issue(s) in {checked} files checked")
+        print(
+            f"\nFAIL: {errors} file(s) with hard-block issues in {checked} files checked"
+        )
         return EXIT_FINDINGS
 
-    print(f"OK: Frontmatter ttl validation passed ({checked} files checked)")
+    print(f"OK: Frontmatter validation passed ({checked} files checked)")
     return EXIT_PASS
 
 

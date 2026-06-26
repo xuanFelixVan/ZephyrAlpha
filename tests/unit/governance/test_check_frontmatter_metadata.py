@@ -1,0 +1,161 @@
+# [A_test] module_id: SRC-TST-GATE15 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | §gate-15
+# [MODULE] tests.unit.governance.test_check_frontmatter_metadata
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
+"""
+单元测试：scripts/governance/d3_metadata/check_frontmatter_metadata.py（GATE-15）
+
+测试矩阵
+--------
+test_ttl_valid            : 合法 ttl → 无 issues
+test_ttl_missing          : 缺 ttl → issues 含 "missing required field 'ttl'"
+test_ttl_invalid          : 非法 ttl → issues 含 "invalid ttl="
+test_doctype_valid        : 合法 doc_type → 无 issues
+test_doctype_missing_warn : 缺 doc_type, warn-only → 无 issues（WARN 输出）
+test_doctype_missing_strict : 缺 doc_type, strict → issues 含 "missing required field 'doc_type'"
+test_doctype_invalid_strict : 非法 doc_type, strict → issues 含 "invalid doc_type="
+test_doctype_deprecated_warn : 废弃值 warn-only → 无 issues（WARN 含迁移目标）
+test_generic_loader       : _load_vocab_values("ttl_vocabulary.yaml") 回归验证
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+
+from scripts.governance.d3_metadata.check_frontmatter_metadata import (
+    _FIELD_RULES,
+    _check_file,
+    _load_deprecated_values,
+    _load_vocab_values,
+)
+
+
+# ── fixtures ──
+
+@pytest.fixture
+def vocab_cache():
+    """预加载所有字段的词表缓存。"""
+    cache = {}
+    for field, rule in _FIELD_RULES.items():
+        cache[field] = _load_vocab_values(rule["vocab_file"])
+    return cache
+
+
+@pytest.fixture
+def deprecated_cache():
+    """预加载废弃值缓存。"""
+    cache = {}
+    for field, rule in _FIELD_RULES.items():
+        if "deprecated_key" in rule:
+            cache[field] = _load_deprecated_values(
+                rule["vocab_file"], rule["deprecated_key"]
+            )
+    return cache
+
+
+def _make_md(tmp_path: Path, frontmatter: str, body: str = "# test") -> Path:
+    """创建临时 .md 文件。"""
+    fpath = tmp_path / "test.md"
+    fpath.write_text(f"---\n{frontmatter}\n---\n\n{body}\n", encoding="utf-8")
+    return fpath
+
+
+# ── ttl 测试 ──
+
+def test_ttl_valid(tmp_path, vocab_cache, deprecated_cache):
+    """合法 ttl → 无 issues。"""
+    fpath = _make_md(tmp_path, "ttl: permanent\ndoc_type: policy")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert issues == []
+
+
+def test_ttl_missing(tmp_path, vocab_cache, deprecated_cache):
+    """缺 ttl → issues 含 missing required field 'ttl'。"""
+    fpath = _make_md(tmp_path, "doc_type: policy")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert len(issues) == 1
+    assert "missing required field 'ttl'" in issues[0]
+
+
+def test_ttl_invalid(tmp_path, vocab_cache, deprecated_cache):
+    """非法 ttl → issues 含 invalid ttl=。"""
+    fpath = _make_md(tmp_path, "ttl: forever\ndoc_type: policy")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert len(issues) == 1
+    assert "invalid ttl=" in issues[0]
+
+
+# ── doc_type 测试 ──
+
+def test_doctype_valid(tmp_path, vocab_cache, deprecated_cache):
+    """合法 doc_type → 无 issues。"""
+    fpath = _make_md(tmp_path, "ttl: permanent\ndoc_type: standard")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert issues == []
+
+
+def test_doctype_missing_warn(tmp_path, vocab_cache, deprecated_cache, capsys):
+    """缺 doc_type, warn-only → 无 issues（但 WARN 输出到 stdout）。"""
+    fpath = _make_md(tmp_path, "ttl: permanent")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert issues == []  # warn-only: 不计入 issues
+    captured = capsys.readouterr()
+    assert "missing required field 'doc_type'" in captured.out  # WARN 输出
+
+
+def test_doctype_missing_strict(tmp_path, vocab_cache, deprecated_cache):
+    """缺 doc_type, strict → issues 含 missing required field 'doc_type'。"""
+    fpath = _make_md(tmp_path, "ttl: permanent")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert len(issues) == 1
+    assert "missing required field 'doc_type'" in issues[0]
+
+
+def test_doctype_invalid_strict(tmp_path, vocab_cache, deprecated_cache):
+    """非法 doc_type, strict → issues 含 invalid doc_type=。"""
+    fpath = _make_md(tmp_path, "ttl: permanent\ndoc_type: not_a_real_type")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=True)
+    assert len(issues) == 1
+    assert "invalid doc_type=" in issues[0]
+
+
+def test_doctype_deprecated_warn(tmp_path, vocab_cache, deprecated_cache, capsys):
+    """废弃值 warn-only → 无 issues（WARN 含迁移目标提示）。"""
+    # governance_standard 是废弃值，migrated_to: ["policy", "standard"]
+    fpath = _make_md(tmp_path, "ttl: permanent\ndoc_type: governance_standard")
+    issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
+    assert issues == []  # warn-only
+    captured = capsys.readouterr()
+    assert "deprecated doc_type='governance_standard'" in captured.out
+
+
+# ── 通用加载器回归测试 ──
+
+def test_generic_loader_ttl_regression():
+    """_load_vocab_values("ttl_vocabulary.yaml") 返回与旧 _load_ttl_values() 相同的集合。
+
+    旧 _load_ttl_values(): {v["value"] for v in data.get("values", [])}
+    新 _load_vocab_values(): 支持 dict（entry.get("value")）和 str 两种格式
+    ttl_vocabulary.yaml 使用 dict 格式，两者结果应一致。
+    """
+    values = _load_vocab_values("ttl_vocabulary.yaml")
+    # ttl_vocabulary.yaml 的合法值至少包含 permanent 和 task_bound
+    assert "permanent" in values
+    assert "task_bound" in values
+    # 确保返回的是 set
+    assert isinstance(values, set)
+
+
+def test_generic_loader_doctype():
+    """_load_vocab_values("doc_type_vocabulary.yaml") 返回 doc_type 合法值。"""
+    values = _load_vocab_values("doc_type_vocabulary.yaml")
+    # 验证几个已知合法值
+    assert "policy" in values
+    assert "standard" in values
+    assert "knowledge_entry" in values
+    assert isinstance(values, set)

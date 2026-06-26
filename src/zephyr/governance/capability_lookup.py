@@ -2,38 +2,53 @@
 # [MODULE] zephyr.governance.capability_lookup
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] AI sessions (查询能力真源); future create-time gate (check_file_canonical)
+# [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts)
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] YAML 真源是规则数据；磁盘扫描结果不持久化（查询时实时算，避免同步成本）
-# [MODIFY-GUARD] capability_canonical_file_registry.yaml (canonical 声明真源); governance/__init__.py __all__
+# [INVARIANTS] YAML 真源是人工裁定的能力索引（capability_id/aliases/description + 可选 override/manual 条目）；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/removed_duplicates 均由磁盘扫描+git log 自动派生，不持久化为第二真源
+# [MODIFY-GUARD] capability_canonical_file_registry.yaml (能力索引真源); governance/__init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] raises FileNotFoundError if YAML 真源缺失; returns empty list on scan errors
+# [ERROR_CONTRACT] raises FileNotFoundError if YAML 真源缺失; returns empty list on scan errors; git 派生失败降级为空列表（不阻断查询）
 # [TESTS] tests/test_capability_lookup.py
 # [A_module] module_id=MOD-GOV_capability_lookup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
-CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描逻辑（合一）
+CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/派生逻辑（合一）
 ================================================================================
 
 解决"AI 不知道某功能已存在、真源在哪"的信息不可达问题。
 
-设计原则（第一性原理）：
-  1. 真源唯一：YAML（capability_canonical_file_registry.yaml）是规则数据真源，
-     人工声明 canonical + aliases + duplicates。
-  2. 责任唯一：本模块一个文件管扫描+查询+比对+CLI，不拆分扫描器脚本。
-  3. 自动维护：CapabilityLookup() 初始化时自动扫磁盘头部，无需手工跑脚本。
+设计原则（第一性原理 / 向内收）：
+  1. 真源唯一：YAML（capability_canonical_file_registry.yaml）是能力索引真源，
+     人工只声明 capability_id / aliases / description（+ 可选 override / manual 条目）。
+     canonical_file / module_id / blueprint_id / domain / maturity / duplicates /
+     removed_duplicates 全部由磁盘扫描 + git log 自动派生——避免与代码头部同步漂移。
+  2. 责任唯一：本模块一个文件管扫描+派生+查询+比对+CLI，不拆分扫描器脚本。
+  3. 自动维护：CapabilityLookup() 初始化时自动扫磁盘头部 + 派生 git 历史，
+     无需手工跑扫描器。canonical 文件迁移时自动跟随（basename 启发式 + 成熟度排序）。
   4. 无需同步：不持久化 @generated report，查询时实时算，避免第二数据源漂移。
 
-对标：K8s Service（声明式 canonical）+ Endpoints 控制器（实时发现 pod）——
+对标：K8s Service（声明式 capability_id）+ Endpoints 控制器（实时发现 canonical）——
       Endpoints 不持久化为独立资源，是 Service 的实时投影。本模块同构。
+
+派生规则（治本：消除 YAML↔代码头部同步成本）：
+  - canonical 候选：磁盘文件 basename(无 .py) ∈ {capability_id} ∪ aliases（标准化后）
+  - canonical 选择优先级：
+      1. canonical_override（人工裁定，最高优先级）
+      2. 单候选 → auto canonical
+      3. 多候选 → 成熟度排序(production > prototype > design) → import 数 → 歧义(需 override)
+  - duplicates (auto)：磁盘上同 basename 的其他候选
+      relation 由 blueprint 比对派生：同蓝图=conflicting；异蓝图=sibling
+  - duplicates_manual：语义 sibling（auto 按 basename 匹配会漏掉，人工声明 relation + note）
+  - removed_duplicates (auto)：git log --diff-filter=D 派生（basename 匹配 + 头部验证）
+  - removed_duplicates_manual：未被 git 跟踪的历史文件（人工声明 path + note）
 
 用法：
     from zephyr.governance.capability_lookup import CapabilityLookup
 
-    reg = CapabilityLookup()                  # 自动加载 YAML + 扫描磁盘
+    reg = CapabilityLookup()                  # 自动加载 YAML + 扫描磁盘 + 派生
     reg.find("session handoff")               # 关键词搜索
     reg.get("rollback_executor")              # 按 capability_id 精确查
     reg.list_ssot_conflicts()                 # 列出同蓝图多实现冲突
@@ -50,6 +65,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -74,6 +90,9 @@ REGISTRY_YAML: Path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_regis
 SCAN_ROOT: Path = REPO_ROOT / "src" / "zephyr"
 HEADER_SCAN_LIMIT = 30  # 头部字段都在前 30 行，只读这么多省时间
 
+# 成熟度排序权重（production > prototype > design）；未知成熟度=0
+_MATURITY_RANK: dict[str, int] = {"production": 3, "prototype": 2, "design": 1}
+
 
 # ---------------------------------------------------------------------------
 # 头部正则（代码文件十一字段头部）
@@ -84,6 +103,8 @@ _RE_BLUEPRINT = re.compile(r"^#\s*\[BLUEPRINT\]\s*(\S+)")
 _RE_DOMAIN = re.compile(r"^#\s*\[DOMAIN\]\s*(\S+)")
 _RE_MATURITY = re.compile(r"^#\s*\[MATURITY\]\s*(\S+)")
 _RE_MODULE_ID = re.compile(r"module_id=([^\s|]+)")
+# 40 字符 hex 小写 = git commit hash（用于解析 git log --format=%H 输出）
+_RE_GIT_HASH = re.compile(r"^[0-9a-f]{40}$")
 
 
 # ---------------------------------------------------------------------------
@@ -115,22 +136,36 @@ class SSoTConflict:
 
 @dataclass
 class CapabilityEntry:
-    """能力条目（从 YAML 真源加载，运行时补充磁盘状态）。"""
+    """能力条目。
+
+    YAML 声明字段（人工维护，低频）：
+      capability_id / aliases / description
+      + 可选 canonical_override / duplicates_manual / removed_duplicates_manual
+
+    派生字段（运行时算，不来自 YAML）：
+      canonical_file / module_id / blueprint_id / domain / maturity / status /
+      canonical_alive / duplicates / removed_duplicates / pending_candidates /
+      derivation_note（派生过程说明，供 debug/审计）
+    """
     capability_id: str
-    name: str
-    canonical_file: str
+    aliases: list[str] = field(default_factory=list)
+    description: str = ""
+    # 可选人工裁定（覆盖或补充派生）
+    canonical_override: str = ""
+    duplicates_manual: list[dict] = field(default_factory=list)
+    removed_duplicates_manual: list[dict] = field(default_factory=list)
+    # 派生字段
+    canonical_file: str = ""
     module_id: str = ""
     blueprint_id: str = ""
     domain: str = ""
     maturity: str = ""
     status: str = "alive"
-    aliases: list[str] = field(default_factory=list)
-    description: str = ""
+    canonical_alive: bool = True
     duplicates: list[dict] = field(default_factory=list)
     removed_duplicates: list[dict] = field(default_factory=list)
-    # 运行时补充字段（不来自 YAML）
-    canonical_alive: bool = True
     pending_candidates: list[dict] = field(default_factory=list)
+    derivation_note: str = ""
 
 
 # ---------------------------------------------------------------------------
@@ -138,12 +173,14 @@ class CapabilityEntry:
 # ---------------------------------------------------------------------------
 
 class CapabilityLookup:
-    """能力→真源文件反查注册表查询 API。
+    """能力→真源文件反查注册表查询 API + 派生逻辑。
 
     初始化时：
-      1. 加载 YAML 真源（capability_canonical_file_registry.yaml）
+      1. 加载 YAML 真源（capability_id / aliases / description + 可选 manual 字段）
       2. 扫描 src/zephyr/**/*.py 头部（前 30 行）
-      3. 合并两者（reconcile）：标记 canonical_alive + 发现 pending_candidates
+      3. 派生 canonical + duplicates（basename 启发式 + 成熟度排序）
+      4. 派生 removed_duplicates（git log --diff-filter=D，可选）
+      5. 合并（reconcile）：标记 canonical_alive + 合并 manual + 发现 pending_candidates
 
     查询时走内存缓存，不再次扫盘。session 内有效（AI session 生命周期内文件变化少）。
     """
@@ -154,6 +191,7 @@ class CapabilityLookup:
         scan_root: Path | str | None = None,
         *,
         scan: bool = True,
+        derive_removed: bool = True,
     ) -> None:
         self._yaml_path: Path = Path(yaml_path) if yaml_path is not None else REGISTRY_YAML
         self._scan_root: Path = Path(scan_root) if scan_root is not None else SCAN_ROOT
@@ -163,25 +201,31 @@ class CapabilityLookup:
         self._capabilities: list[CapabilityEntry] = []
         self._disk_headers: dict[str, HeaderInfo] = {}
         self._loaded = False
-        # YAML 真源必须加载（与 scan 解耦——scan=False 只跳过磁盘扫描，不跳过 YAML）
+        # git 派生缓存（惰性）：[(path, commit_hash), ...]，None=未加载
+        self._git_deletions: list[tuple[str, str]] | None = None
+        # import 数缓存（tiebreaker）：module_path → importer count
+        self._import_count_cache: dict[str, int] = {}
+        # git 派生仅在 scan=True 时有意义（scan=False 不派生任何派生字段）
+        self._derive_removed = derive_removed and scan
+        # YAML 真源必须加载（与 scan 解耦——scan=False 只跳过磁盘扫描+派生，不跳过 YAML）
         self._capabilities = self._load_yaml()
         if scan:
             self._disk_headers = self._scan_disk_headers()
+            self._derive_all()
             self._reconcile()
         self._loaded = True
 
     # ---- 加载 + 扫描 ----
 
-    def _load_and_scan(self) -> None:
-        """reload() 用：重读 YAML + 重扫磁盘。"""
+    def reload(self) -> None:
+        """重新加载 YAML + 重扫磁盘 + 重派生（YAML 更新后调用）。"""
         self._capabilities = self._load_yaml()
         self._disk_headers = self._scan_disk_headers()
+        self._git_deletions = None
+        self._import_count_cache.clear()
+        self._derive_all()
         self._reconcile()
         self._loaded = True
-
-    def reload(self) -> None:
-        """重新加载 YAML + 重扫磁盘（YAML 更新后调用）。"""
-        self._load_and_scan()
 
     def _load_yaml(self) -> list[CapabilityEntry]:
         if not self._yaml_path.exists():
@@ -194,17 +238,11 @@ class CapabilityLookup:
         for raw in data.get("capabilities", []):
             caps.append(CapabilityEntry(
                 capability_id=raw["capability_id"],
-                name=raw.get("name", ""),
-                canonical_file=raw["canonical_file"],
-                module_id=raw.get("module_id", ""),
-                blueprint_id=raw.get("blueprint_id", ""),
-                domain=raw.get("domain", ""),
-                maturity=raw.get("maturity", ""),
-                status=raw.get("status", "alive"),
                 aliases=list(raw.get("aliases", []) or []),
                 description=raw.get("description", ""),
-                duplicates=list(raw.get("duplicates", []) or []),
-                removed_duplicates=list(raw.get("removed_duplicates", []) or []),
+                canonical_override=(raw.get("canonical_override", "") or "").strip(),
+                duplicates_manual=list(raw.get("duplicates_manual", []) or []),
+                removed_duplicates_manual=list(raw.get("removed_duplicates_manual", []) or []),
             ))
         return caps
 
@@ -229,14 +267,23 @@ class CapabilityLookup:
 
     @staticmethod
     def _parse_header(py: Path, rel: str) -> HeaderInfo:
-        """解析单个 .py 文件的头部（前 HEADER_SCAN_LIMIT 行）。"""
-        info = HeaderInfo(path=rel)
+        """解析单个 .py 文件的头部（薄包装：读文件 → _parse_header_from_text）。"""
         try:
-            with py.open("r", encoding="utf-8") as f:
-                lines = [f.readline() for _ in range(HEADER_SCAN_LIMIT)]
+            text = py.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
-            return info
+            return HeaderInfo(path=rel)
+        return CapabilityLookup._parse_header_from_text(text, rel)
 
+    @staticmethod
+    def _parse_header_from_text(text: str, rel: str) -> HeaderInfo:
+        """解析文本头部（核心逻辑，供 _parse_header 和 git show 输出共用）。
+
+        与 _parse_header 的区别：输入是已加载的文本字符串，适用于
+        - 磁盘文件（_parse_header 读文件后调用本方法）
+        - git show {commit}^:{path} 输出（_git_show_header 调用本方法）
+        """
+        info = HeaderInfo(path=rel)
+        lines = text.splitlines()[:HEADER_SCAN_LIMIT]
         in_docstring = False
         docstring_collected: list[str] = []
         docstring_quote: str = ""
@@ -285,33 +332,323 @@ class CapabilityLookup:
             info.docstring = docstring_collected[0]
         return info
 
-    def _reconcile(self) -> None:
-        """合并 YAML 真源与磁盘扫描结果：标记 canonical_alive + 发现 pending_candidates。"""
+    # ---- 派生逻辑：canonical + duplicates ----
+
+    @staticmethod
+    def _normalize_token(s: str) -> str:
+        """标准化 token：lower + 连字符→下划线。用于 basename↔alias 匹配。"""
+        return s.strip().lower().replace("-", "_")
+
+    def _match_set(self, cap: CapabilityEntry) -> set[str]:
+        """能力的匹配 token 集合：{capability_id} ∪ aliases（标准化，去空）。"""
+        tokens: set[str] = set()
+        cid = self._normalize_token(cap.capability_id)
+        if cid:
+            tokens.add(cid)
+        for a in cap.aliases:
+            t = self._normalize_token(a)
+            if t:
+                tokens.add(t)
+        return tokens
+
+    def _derive_all(self) -> None:
+        """对每个能力派生 canonical / duplicates / removed_duplicates。"""
         for cap in self._capabilities:
-            # 1. 检查 canonical 文件是否存在于磁盘
+            self._derive_canonical_and_duplicates(cap)
+            # manual 条目是真源数据，必须始终合并（不依赖 derive_removed 标志）
+            cap.removed_duplicates = list(cap.removed_duplicates_manual)
+            if self._derive_removed:
+                self._derive_removed_duplicates(cap)
+
+    def _derive_canonical_and_duplicates(self, cap: CapabilityEntry) -> None:
+        """派生 canonical_file + duplicates（basename 启发式 + 成熟度排序）。"""
+        match_tokens = self._match_set(cap)
+        # 候选：磁盘上 basename(无 .py) ∈ match_tokens 的文件
+        candidates: list[tuple[str, HeaderInfo]] = []
+        for path, header in self._disk_headers.items():
+            basename = Path(path).stem
+            if self._normalize_token(basename) in match_tokens:
+                candidates.append((path, header))
+
+        # 优先级 1：canonical_override（人工裁定）
+        if cap.canonical_override:
+            norm_override = _normalize_path(cap.canonical_override)
+            cap.canonical_file = norm_override
+            cap.derivation_note = "canonical_override (人工裁定)"
+            override_header = self._disk_headers.get(norm_override)
+            if override_header:
+                self._fill_from_header(cap, override_header)
+            cap.duplicates = []
+            for path, header in candidates:
+                if path == norm_override:
+                    continue
+                cap.duplicates.append(
+                    self._make_duplicate_entry(path, header, override_header)
+                )
+            return
+
+        # 优先级 2/3：无候选 / 单候选 / 多候选排序
+        if not candidates:
+            cap.canonical_file = ""
+            cap.canonical_alive = False
+            cap.derivation_note = "no disk candidate matches capability_id/aliases"
+            cap.duplicates = []
+            return
+
+        sorted_cands = self._rank_candidates(candidates)
+        canonical_path, canonical_header = sorted_cands[0]
+        cap.canonical_file = canonical_path
+        self._fill_from_header(cap, canonical_header)
+
+        if len(candidates) == 1:
+            cap.derivation_note = "single candidate (auto canonical)"
+        else:
+            # 判断 top-2 是否打平（成熟度 + import 数都相同 → 歧义）
+            _, second_header = sorted_cands[1]
+            tied = (
+                self._maturity_rank(canonical_header) == self._maturity_rank(second_header)
+                and self._count_importers(canonical_header.module_path)
+                    == self._count_importers(second_header.module_path)
+            )
+            if tied:
+                cap.derivation_note = (
+                    f"AMBIGUOUS: {len(candidates)} candidates tie on maturity+imports; "
+                    f"picked {canonical_path} (first by path). Set canonical_override to force."
+                )
+            else:
+                cap.derivation_note = (
+                    f"derived from {len(candidates)} candidates by maturity+imports"
+                )
+
+        cap.duplicates = []
+        for path, header in sorted_cands[1:]:
+            cap.duplicates.append(
+                self._make_duplicate_entry(path, header, canonical_header)
+            )
+
+    def _rank_candidates(
+        self, candidates: list[tuple[str, HeaderInfo]]
+    ) -> list[tuple[str, HeaderInfo]]:
+        """排序候选：成熟度降序 → import 数降序 → 路径字典序（稳定 tiebreak）。"""
+        def sort_key(ch: tuple[str, HeaderInfo]):
+            _path, header = ch
+            return (
+                -self._maturity_rank(header),
+                -self._count_importers(header.module_path),
+                ch[0],
+            )
+        return sorted(candidates, key=sort_key)
+
+    @staticmethod
+    def _maturity_rank(header: HeaderInfo) -> int:
+        return _MATURITY_RANK.get(header.maturity, 0)
+
+    @staticmethod
+    def _fill_from_header(cap: CapabilityEntry, header: HeaderInfo) -> None:
+        """从 canonical 文件的 HeaderInfo 填充 cap 的派生字段。"""
+        cap.module_id = header.module_id
+        cap.blueprint_id = header.blueprint_id
+        cap.domain = header.domain
+        cap.maturity = header.maturity
+
+    def _make_duplicate_entry(
+        self, path: str, header: HeaderInfo, canonical_header: HeaderInfo | None
+    ) -> dict:
+        """构造 duplicate 条目。relation 由 blueprint 比对派生。"""
+        relation = "unknown"
+        if canonical_header and header.blueprint_id and canonical_header.blueprint_id:
+            relation = (
+                "conflicting"
+                if header.blueprint_id == canonical_header.blueprint_id
+                else "sibling"
+            )
+        return {
+            "path": path,
+            "module_id": header.module_id,
+            "module_path": header.module_path,
+            "blueprint_id": header.blueprint_id,
+            "domain": header.domain,
+            "maturity": header.maturity,
+            "relation": relation,
+            "note": "auto-derived from disk scan (basename match)",
+            "docstring": header.docstring,
+        }
+
+    def _count_importers(self, module_path: str) -> int:
+        """统计 import 该 module_path 的文件数（tiebreaker，惰性缓存）。
+
+        仅在 canonical 多候选成熟度打平时调用（rare），故扫全项目文件可接受。
+        匹配规则：文件含 `from {module_path}` 或 `import {module_path}`。
+        """
+        if not module_path:
+            return 0
+        if module_path in self._import_count_cache:
+            return self._import_count_cache[module_path]
+        needle_from = f"from {module_path}"
+        needle_import = f"import {module_path}"
+        count = 0
+        for path in self._disk_headers:
+            abs_path = self._base_root / path
+            try:
+                text = abs_path.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+            if needle_from in text or needle_import in text:
+                count += 1
+        self._import_count_cache[module_path] = count
+        return count
+
+    # ---- 派生逻辑：removed_duplicates（git log） ----
+
+    def _load_git_deletions(self) -> list[tuple[str, str]]:
+        """扫描 git 历史，返回 [(path, commit_hash), ...] 删除记录（src/zephyr/ 下）。
+
+        单次 subprocess，结果缓存到 self._git_deletions。
+        git 不可用 / 非 git 仓库 → 返回空列表（降级，不阻断查询）。
+        """
+        if self._git_deletions is not None:
+            return self._git_deletions
+        deletions: list[tuple[str, str]] = []
+        try:
+            result = subprocess.run(
+                [
+                    "git", "log", "--diff-filter=D", "--name-only",
+                    "--format=%H", "--", "src/zephyr/",
+                ],
+                cwd=str(self._base_root),
+                capture_output=True,
+                text=True,
+                timeout=30,
+                encoding="utf-8",
+                errors="replace",
+            )
+            if result.returncode == 0:
+                current_commit = ""
+                for line in result.stdout.splitlines():
+                    line = line.strip()
+                    if not line:
+                        continue
+                    if _RE_GIT_HASH.match(line):
+                        current_commit = line
+                    elif (
+                        line.startswith("src/zephyr/")
+                        and line.endswith(".py")
+                        and current_commit
+                    ):
+                        deletions.append((line, current_commit))
+        except (subprocess.SubprocessError, OSError):
+            # git 不可用或超时 → 降级为空（不阻断查询）
+            pass
+        self._git_deletions = deletions
+        return deletions
+
+    def _derive_removed_duplicates(self, cap: CapabilityEntry) -> None:
+        """从 git 历史派生 removed_duplicates（basename 匹配 + 头部验证）。
+
+        派生规则：
+          1. 遍历 git log 中 src/zephyr/ 下被删的 .py 文件
+          2. basename 匹配 capability_id 或 aliases
+          3. git show {commit}^:{path} 读取已删文件，验证头部 module_id/module_path 匹配
+             （避免 basename 巧合误报，如无关的 handoff.py 配置文件）
+          4. 排除 canonical / duplicates / removed_duplicates_manual 已声明的路径
+          5. 追加到 _derive_all 已合并的 manual 条目之后
+
+        注：manual 条目合并由 _derive_all 无条件执行（不依赖 derive_removed），
+        本方法只负责 git 派生部分。
+        """
+        match_tokens = self._match_set(cap)
+        deletions = self._load_git_deletions()
+
+        # git 派生（追加到 _derive_all 已合并的 manual 条目之后）
+        declared = {cap.canonical_file}
+        declared.update(d.get("path", "") for d in cap.duplicates)
+        declared.update(d.get("path", "") for d in cap.removed_duplicates_manual)
+
+        for path, commit in deletions:
+            if path in declared:
+                continue
+            basename = Path(path).stem
+            if self._normalize_token(basename) not in match_tokens:
+                continue
+            # 头部验证：从 commit 父节点读取已删文件内容
+            header = self._git_show_header(commit, path)
+            if header is None:
+                # 无法读取（二进制/编码错/路径含特殊字符），保守跳过
+                continue
+            if not self._header_matches_capability(header, match_tokens):
+                continue
+            cap.removed_duplicates.append({
+                "path": path,
+                "removed_in_commit": commit,
+                "module_id": header.module_id,
+                "module_path": header.module_path,
+                "note": "git-derived (auto from git log --diff-filter=D)",
+            })
+
+    def _git_show_header(self, commit: str, path: str) -> HeaderInfo | None:
+        """git show {commit}^:{path} 读取已删文件，解析头部。失败返回 None。"""
+        try:
+            result = subprocess.run(
+                ["git", "show", f"{commit}^:{path}"],
+                cwd=str(self._base_root),
+                capture_output=True,
+                text=True,
+                timeout=10,
+                encoding="utf-8",
+                errors="replace",
+            )
+            if result.returncode != 0:
+                return None
+            return self._parse_header_from_text(result.stdout, path)
+        except (subprocess.SubprocessError, OSError):
+            return None
+
+    @staticmethod
+    def _header_matches_capability(header: HeaderInfo, match_tokens: set[str]) -> bool:
+        """验证文件头部是否与能力匹配（module_id / module_path 含匹配 token）。
+
+        用于 removed_duplicates 派生时避免 basename 巧合误报。
+        """
+        if header.module_id:
+            norm_id = CapabilityLookup._normalize_token(header.module_id)
+            for tok in match_tokens:
+                if tok and tok in norm_id:
+                    return True
+        if header.module_path:
+            for seg in header.module_path.split("."):
+                if CapabilityLookup._normalize_token(seg) in match_tokens:
+                    return True
+        return False
+
+    # ---- reconcile ----
+
+    def _reconcile(self) -> None:
+        """合并派生结果与磁盘扫描：标记 canonical_alive + 合并 manual + 发现 pending。"""
+        for cap in self._capabilities:
+            # 1. canonical 文件是否存在于磁盘
             cap.canonical_alive = (
                 cap.canonical_file in self._disk_headers
-                or (self._base_root / cap.canonical_file).exists()
+                or (bool(cap.canonical_file) and (self._base_root / cap.canonical_file).exists())
             )
-            # 2. 补充磁盘头部信息（YAML 没填的字段从磁盘拿）
-            disk = self._disk_headers.get(cap.canonical_file)
-            if disk:
-                if not cap.module_id:
-                    cap.module_id = disk.module_id
-                if not cap.blueprint_id:
-                    cap.blueprint_id = disk.blueprint_id
-                if not cap.domain:
-                    cap.domain = disk.domain
-                if not cap.maturity:
-                    cap.maturity = disk.maturity
-            # 3. 发现 pending candidates：磁盘上有文件声明了与 canonical 相同的
-            #    module_id 或 module_path，但不在 YAML 声明里——确凿的重复信号。
+            cap.status = "alive" if cap.canonical_alive else "dead"
+
+            # 2. 合并 duplicates_manual（语义 sibling，auto 按 basename 匹配会漏掉）
+            existing_dup_paths = {d.get("path", "") for d in cap.duplicates}
+            for manual in cap.duplicates_manual:
+                if manual.get("path", "") not in existing_dup_paths:
+                    cap.duplicates.append(manual)
+
+            # 3. pending candidates：磁盘上有文件声明了与 canonical 相同的
+            #    module_id 或 module_path，但不在派生 canonical/duplicates/removed 里
+            #    ——确凿的重复信号，需人工裁定。
             #    注意：不使用 aliases 子串匹配（太宽泛，会命中大量无关文件产生噪音）。
-            #    aliases 仅用于 find() 查询，不用于磁盘 candidate 发现。
-            declared_paths = {cap.canonical_file}
-            declared_paths.update(d.get("path", "") for d in cap.duplicates)
+            #    aliases 仅用于 find() 查询和 basename 派生，不用于磁盘 candidate 发现。
+            disk = self._disk_headers.get(cap.canonical_file)
             canonical_module_id = (disk.module_id if disk else "") or cap.module_id
             canonical_module_path = disk.module_path if disk else ""
+            declared_paths = {cap.canonical_file}
+            declared_paths.update(d.get("path", "") for d in cap.duplicates)
+            declared_paths.update(d.get("path", "") for d in cap.removed_duplicates)
             for path, header in self._disk_headers.items():
                 if path in declared_paths:
                     continue
@@ -337,18 +674,18 @@ class CapabilityLookup:
                         "maturity": header.maturity,
                         "docstring": header.docstring,
                         "match_reason": match_reason,
-                        "note": "磁盘有但 YAML 未声明——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
+                        "note": "磁盘有但派生结果未收录——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
                     })
 
     # ---- 查询 API ----
 
     def find(self, query: str) -> list[dict]:
-        """关键词搜索：匹配 capability_id / name / aliases / description / canonical_file（大小写不敏感）。"""
+        """关键词搜索：匹配 capability_id / description / canonical_file / module_id / aliases（大小写不敏感）。"""
         q = query.lower()
         results: list[dict] = []
         for cap in self._capabilities:
             haystacks = [
-                cap.capability_id, cap.name, cap.description,
+                cap.capability_id, cap.description,
                 cap.canonical_file, cap.module_id,
             ] + list(cap.aliases)
             haystack = " ".join(haystacks).lower()
@@ -422,7 +759,7 @@ class CapabilityLookup:
         返回所有声明了相同 module_path 的文件相对路径列表。
 
         真源是文件头部 [MODULE] 字段（已存在，零新真源，零同步）。
-        不依赖 YAML registry——YAML 是人工裁定的补充信息，不是门禁的必需依赖。
+        不依赖 YAML registry——YAML 是人工裁定的能力索引，不是门禁的必需依赖。
 
         参数:
             module_path: 预期的 module path（如 "zephyr.shared.session_continuity"）
@@ -514,7 +851,7 @@ class CapabilityLookup:
     def _entry_to_dict(cap: CapabilityEntry) -> dict:
         return {
             "capability_id": cap.capability_id,
-            "name": cap.name,
+            "name": cap.capability_id,  # name 已弃用，输出 capability_id 保持向后兼容
             "canonical_file": cap.canonical_file,
             "module_id": cap.module_id,
             "blueprint_id": cap.blueprint_id,
@@ -527,6 +864,7 @@ class CapabilityLookup:
             "duplicates": list(cap.duplicates),
             "removed_duplicates": list(cap.removed_duplicates),
             "pending_candidates": list(cap.pending_candidates),
+            "derivation_note": cap.derivation_note,
         }
 
 
@@ -561,10 +899,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--check-file", metavar="PATH", help="反查某文件是哪个能力的 canonical")
     parser.add_argument("--summary", action="store_true", help="打印注册表汇总")
     parser.add_argument("--no-scan", action="store_true", help="跳过磁盘扫描（只读 YAML，快）")
+    parser.add_argument(
+        "--no-derive-removed",
+        action="store_true",
+        help="跳过 git log 派生 removed_duplicates（pre-commit 等高频场景加速）",
+    )
     args = parser.parse_args(argv)
 
     try:
-        reg = CapabilityLookup(scan=not args.no_scan)
+        reg = CapabilityLookup(
+            scan=not args.no_scan,
+            derive_removed=not args.no_derive_removed,
+        )
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2
