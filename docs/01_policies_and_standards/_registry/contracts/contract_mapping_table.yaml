@@ -103,67 +103,67 @@ domain_contracts:
 
 layer_contracts:
   - contract_id: CTR-001
-    layer: L00
+    layer: data
     role: producer
     description: "NormalizedMarketData → L02, L03, L09"
     domain_mapping: AS-CT-DATA-001
 
   - contract_id: CTR-TRACE-001
-    layer: L00
+    layer: data
     role: producer
     description: "TraceContext 链头"
     domain_mapping: null
 
   - contract_id: CTR-004
-    layer: L05
+    layer: pf_core
     role: producer
     description: "Order → L06"
     domain_mapping: null
 
   - contract_id: CTR-005
-    layer: L06
+    layer: ex_core
     role: producer
     description: "Fill → L07"
     domain_mapping: null
 
   - contract_id: CTR-006
-    layer: L06
+    layer: ex_core
     role: producer
     description: "PositionSnapshot → L04, L07, L11"
     domain_mapping: null
 
   - contract_id: CTR-008
-    layer: L03
+    layer: signal
     role: producer
     description: "SignalQualityMetrics → L04, L08"
     domain_mapping: AS-CT-SIGNAL-001
 
   - contract_id: CTR-009
-    layer: L13
+    layer: simulation
     role: producer
     description: "ExperimentConfig → L11 ML Platform"
     domain_mapping: ME-CT-AB-001
 
   - contract_id: CTR-010
-    layer: L13
+    layer: simulation
     role: producer
     description: "ExperimentMetric → L09 Research"
     domain_mapping: ME-CT-BACKTEST-001
 
   - contract_id: CTR-011
-    layer: L13
+    layer: simulation
     role: consumer
     description: "ModelCheckpoint ← L11 ML Platform"
     domain_mapping: ME-CT-CHECKPOINT-001
 
   - contract_id: CTR-012
-    layer: L13
+    layer: simulation
     role: producer
     description: "ExperimentArtifact → INF-012 Database"
     domain_mapping: null
 
   - contract_id: CTR-P1-003
-    layer: L03
+    layer: signal
     role: producer
     description: "CapitalAllocationResult → L05"
     domain_mapping: null
@@ -175,49 +175,49 @@ layer_contracts:
     domain_mapping: ME-CT-TRAIN-001
 
   - contract_id: CTR-P1-005
-    layer: L11
+    layer: ml_train
     role: producer
     description: "ModelServingResponse → 推理响应"
     domain_mapping: ME-CT-TRAIN-001
 
   - contract_id: CTR-P1-006
-    layer: L05
+    layer: pf_core
     role: producer
     description: "StrategyLifecycleEvent → L07, L10"
     domain_mapping: null
 
   - contract_id: CTR-P1-009
-    layer: L07
+    layer: reporting
     role: producer
     description: "PerformanceAttributionReport → L08, L10"
     domain_mapping: null
 
   - contract_id: CTR-P1-012
-    layer: L10
+    layer: compliance
     role: both
     description: "ComplianceRule → L04, L06, L10"
     domain_mapping: null
 
   - contract_id: CTR-P1-014
-    layer: L13
+    layer: simulation
     role: producer
     description: "ExperimentResult → L09, L11"
     domain_mapping: ME-CT-BACKTEST-001
 
   - contract_id: CTR-P1-015
-    layer: L03
+    layer: signal
     role: producer
     description: "SynthesizedSignal → L04, L05"
     domain_mapping: AS-CT-FACTOR-001
 
   - contract_id: CTR-ERR-003
-    layer: L03
+    layer: signal
     role: producer
     description: "SignalDegradationWarning → L04, L05"
     domain_mapping: null
 
   - contract_id: EXT-DASHBOARD-FLE-001
-    layer: L08
+    layer: frontend
     role: consumer
     description: "消费 FLE fitness Facade"
     domain_mapping: null

@@ -127,7 +127,7 @@ frontmatter_schema:
       stage: draft
 
     - name: layer
-      allowed_values: [data, infra_ops, factor, signal, risk, pf_core, ex_core, reporting, frontend, research, compliance, ml_train, system-telemetry, simulation, shared, cross_layer]
+      allowed_values: "DYNAMIC_FROM_SSOT"  # 禁止内联复制——值集从 layer_vocabulary.yaml 动态加载
       description: "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）"
       derived_from: "_registry/vocabularies/layer_vocabulary.yaml"
       stage: active

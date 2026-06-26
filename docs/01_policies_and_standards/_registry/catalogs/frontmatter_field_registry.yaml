@@ -84,10 +84,10 @@ fields:
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "模块唯一标识。格式：DOMAIN-TYPE-NNN（大写字母+连字符）"
+    description: "模块唯一标识（frontmatter 文档标识符，格式：DOMAIN-TYPE-NNN）。注意：此 pattern 仅用于 frontmatter 文档 module_id，不适用于 depgraph blueprint_id 三轨制格式。blueprint_id 格式校验真源见 scripts/governance/validate_module_id_naming.py（裁定#208）"
     source: "PS-STD-001 §5"
     pattern: "^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$"
-    note: "全项目唯一，不可重复"
+    note: "全项目唯一，不可重复。此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id 三轨制格式"
 
   - field_name: title
     type: string
@@ -177,23 +177,7 @@ fields:
     type: enum
     required: optional
     stage: null
-    enum_values:
-      - {value: "data", description: "L00 数据源"}
-      - {value: "infra_ops", description: "L01 基础设施"}
-      - {value: "factor", description: "L02 Alpha 因子"}
-      - {value: "signal", description: "L03 信号生成"}
-      - {value: "risk", description: "L04 风险管理"}
-      - {value: "pf_core", description: "L05 组合构建"}
-      - {value: "ex_core", description: "L06 交易执行"}
-      - {value: "reporting", description: "L07 盘后分析"}
-      - {value: "frontend", description: "L08 人机交互"}
-      - {value: "research", description: "L09 研究创新"}
-      - {value: "compliance", description: "L10 治理合规"}
-      - {value: "ml_train", description: "L11 机器学习平台"}
-      - {value: "system-telemetry", description: "L12 系统遥测"}
-      - {value: "simulation", description: "L13 实验管道"}
-      - {value: "shared", description: "跨层共享组件"}
-      - {value: "cross_layer", description: "跨层治理"}
+    enum_values: "DYNAMIC_FROM_SSOT"  # 禁止内联复制——值集从 layer_vocabulary.yaml 动态加载
     applicable_docs: []
     description: "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）"
     source: "layer_vocabulary.yaml + architecture_model/layers/"
@@ -264,7 +248,7 @@ fields:
     applicable_docs: []
     description: "文档保留期"
     source: "PS-STD-001 §6"
-    note: "全量强制仅限 .md 文件（docs/**/*.md）。.yaml/.py 不强制——.yaml 基本为 permanent 无临时文件场景；.py 用 A_full 14 字段格式不含 [TTL]，扩展成本不合理"
+    note: "全量强制覆盖 .md（docs/**/*.md，D_md frontmatter）+ .py（src/scripts/tests/**/*.py，A_full/A_test 注释行 [TTL]）。.yaml 暂不强制——基本为 permanent 无临时文件场景"
 
   - field_name: summary
     type: string
@@ -647,10 +631,10 @@ fields:
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如 MOD-MASTER_BLUEPRINT）"
+    description: "上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如 MOD-MASTER_BLUEPRINT）。注意：此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id 三轨制格式。blueprint_id 格式校验真源见 scripts/governance/validate_module_id_naming.py（裁定#208）"
     source: "PS-STD-005 §6.1"
     pattern: "^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$"
-    note: "Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）"
+    note: "Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）。此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id 三轨制格式"
 
   - field_name: blueprint_level
     type: enum
@@ -912,7 +896,7 @@ changelog:
     date: "2026-06-25"
     author: "AI-Trae-2026"
     changes:
-      - "ttl 字段从 optional 升级为 always（全量强制）——仅限 .md 文件，.yaml/.py 不强制"
+      - "ttl 字段从 optional 升级为 always（全量强制）——.md 文件（D_md frontmatter）+ .py 文件（A_full/A_test [TTL] 注释行）；.yaml 暂不强制"
       - "ttl enum_values 新增第 6 值 task_bound——任务绑定，任务完成即可清理（人工判定）"
       - "summary.by_required 同步：optional 26→25, always 14→15"
       - "对标 ttl_vocabulary.yaml v1.1.0 同步新增 task_bound"

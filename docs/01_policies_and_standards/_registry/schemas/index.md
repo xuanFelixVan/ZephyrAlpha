@@ -22,11 +22,11 @@ updated: "2026-06-22"
 | 文件 | 说明 |
 |------|------|
 | frontmatter_schema.json | Frontmatter 字段 JSON Schema（自动生成） |
-| session-log-schema.yaml | Session Log 标准 Schema 定义 |
+| session_log_schema.yaml | Session Log 标准 Schema 定义 |
 
 ## 排除规则（不应放入本目录的内容）
 
-- ❌ 手动编辑的文件 → `governance/`
+- ❌ 手动编辑的文件 → `docs/02_enterprise_architecture/` 或 `docs/08_knowledge/`
 
 ## 父级目录
 
