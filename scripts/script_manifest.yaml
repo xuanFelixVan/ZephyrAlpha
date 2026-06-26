@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 575
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,10 +38,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_check_nodes.py
-  path: _tmp_check_nodes.py
-  description: import sqlite3
-  domain: _tmp_check_nodes.py
+- name: _tmp_debug_gi.py
+  path: _tmp_debug_gi.py
+  description: import os
+  domain: _tmp_debug_gi.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_p62_commit.py
+  path: _tmp_p62_commit.py
+  description: import sys, subprocess
+  domain: _tmp_p62_commit.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_test_gitignored_commit.py
+  path: _tmp_test_gitignored_commit.py
+  description: 场景复现真实故障：.trae/documents/ 被 .gitignore 忽略，但其下文件仍被 git
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -58,14 +74,6 @@ scripts:
   path: a2a_full_verification.py
   description: import sys
   domain: a2a
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: check_naming_convention.py
-  path: check_naming_convention.py
-  description: FILENAME_UPPERCASE_WHITELIST = [
-  domain: check_naming_convention.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -710,30 +718,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_final_check.py
-  path: governance/_tmp_final_check.py
-  description: import sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_test_rename.py
-  path: governance/_tmp_test_rename.py
-  description: import sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_test_v18.py
-  path: governance/_tmp_test_v18.py
-  description: import sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/_verify_fle_gates.py
   path: governance/_verify_fle_gates.py
   description: import importlib
@@ -905,14 +889,6 @@ scripts:
 - name: governance/check_handoff_manifests.py
   path: governance/check_handoff_manifests.py
   description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/check_naming_convention.py
-  path: governance/check_naming_convention.py
-  description: FILENAME_UPPERCASE_WHITELIST = [
   domain: governance
   execution_plane: warm-path
   status: registered
