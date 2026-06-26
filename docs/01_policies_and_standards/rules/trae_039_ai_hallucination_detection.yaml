@@ -53,7 +53,7 @@ sections:
     - type: mandatory
       step: 检查项1-文件路径验证：引用任何文件路径前，必须通过 Glob/LS/Read 确认文件实际存在
     - type: mandatory
-      step: 检查项2-模块ID验证：使用的所有模块ID必须在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml 或 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml 中确认存在
+      step: 检查项2-模块ID验证：使用的所有模块ID必须在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml 或 docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml 中确认存在
     - type: mandatory
       step: 检查项3-接口定义验证：引用的接口必须在 src/zephyr/shared/contracts/ 中确认存在，禁止幻觉补全参数类型/超时值/异常类型
     - type: mandatory
@@ -67,7 +67,7 @@ sections:
     - type: mandatory
       step: 检查项8-编码安全验证：编辑器编码设置为UTF-8，files.autoGuessEncoding=false，无两个编辑器同时打开同一文件
     - type: mandatory
-      step: 检查项9-任务范围验证：任务在 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml 中有对应，前置条件已满足
+      step: 检查项9-任务范围验证：任务在 docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml 中有对应，前置条件已满足
     - type: mandatory
       step: 检查项10-引用出处验证：能指出信息的具体来源文件和行号，禁止从"记忆"中引用
     - type: mandatory
@@ -181,7 +181,7 @@ sections:
     - description: v1.1.0 2026-06-19
       details: RQ审查修复——修复内部矛盾(10条→12条HC规则)、HC-1 module_id_registry.json→.yaml、HC-6 invariant_check.py→arch_guard/run_all.py、references.modules使用完整路径+移除不存在的system-configuration.yaml、provenance迁移状态标记(RQ-04/RQ-09)、补充change_history(RQ-14)。
     - description: v1.2.0 2026-06-19
-      details: RQ全量审查修复——kebab-case文件名引用改为snake_case+完整路径(metadata_registry.yaml→frontmatter_field_registry.yaml、document-metadata-index-registry.yaml→document_metadata_index_registry.yaml、model-capability-contract.yaml→model_capability_contract.yaml)，落地§2.2命名裁定(RQ-05)。
+      details: RQ全量审查修复——kebab-case文件名引用改为snake_case+完整路径(metadata_registry.yaml→frontmatter_field_registry.yaml、document-metadata-index-registry.yaml→rule_catalog_registry.yaml、model-capability-contract.yaml→model_capability_contract.yaml)，落地§2.2命名裁定(RQ-05)。
 references:
   rule_ids:
   - TRAE-006

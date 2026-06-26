@@ -3,9 +3,9 @@ module_id: GOV-002
 title: "登记表集中存储目录索引"
 doc_type: index
 status: Active
-version: "2.2.0"
+version: "2.3.0"
 date: "2026-06-26"
-summary: "_registry/catalogs/ 导航入口。v2.2.0：P0 审查修复——补全 5 个缺失 catalog（architecture_issue/capability_canonical/derived_identifier/domain_naming/_index），修正 2 个文件名（business_streams/hard_boundaries 缺 _registry 后缀），计数 24→28。对齐 trae_060 §4 新AI可发现性。"
+summary: "_registry/catalogs/ 导航入口。v2.3.0：P2-1 向内收——删除 document_metadata_index_registry.yaml（与 rule_catalog_registry.yaml 同源同数据的真重复），所有引用重定向至 rule_catalog_registry.yaml（PS-REG-018）。计数 28→27→26。"
 tags: [index, catalogs, registry, navigation]
 rule_form: declarative
 scope: global
@@ -26,7 +26,7 @@ ttl: permanent
 > 优于按"谁创建了它"分类（对标 Linux FHS——同性质文件放同一目录）。
 > 详见 PS-REG-005 registry-master-index.yaml §1。
 
-## 文件清单（本目录 **27** 个文件：**26** 份登记/契约类工件 + **本 index.md**）
+## 文件清单（本目录 **26** 个文件：**25** 份登记/契约类工件 + **本 index.md**）
 
 | 文件 | 类型 | 说明 | 维护方式 |
 |------|:---:|------|:---:|
@@ -36,7 +36,6 @@ ttl: permanent
 | `capability_canonical_file_registry.yaml` | 登记表 | 能力-规范文件映射（capability_id → canonical_file） | semi_auto |
 | `derived_identifier_registry.yaml` | 登记表 | 派生标识符规则（blueprint_id/node_path 从 domain_id 派生） | manual |
 | `domain_naming_rules.yaml` | 登记表 | 域命名规则（NR-001..005，apply_depgraph --insert-domain 强制） | manual |
-| `document_metadata_index_registry.yaml` | 注册表 | 与 `rule_catalog_registry.yaml` 同步的规则树元数据索引（以生成器为准） | auto |
 | `task_card_meta_registry.yaml` | 注册表 | 三套任务卡系统元层管理 | manual |
 | `infrastructure_registry.yaml` | 登记表 | 运行时基础设施组件（以 `total_registered` 为准） | manual |
 | `cross_module_dependency_registry.yaml` | 登记表 | 跨模块依赖——含正反向双图 | semi_auto |

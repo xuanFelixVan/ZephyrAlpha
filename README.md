@@ -42,7 +42,7 @@ python demo_e2e_pipeline.py
 | 文档 | 路径 |
 |------|------|
 | 目录结构标准 | [directory_structure_standard.md](docs/01_policies_and_standards/rules/directory_structure_standard.md) |
-| 文档与规则元数据（SSoT） | [document_metadata_index_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml) |
+| 文档与规则元数据（SSoT） | [rule_catalog_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml) |
 | 登记表总索引 | [registry_of_registries.yaml](docs/registry_of_registries.yaml) |
 | 架构概览 | [00-overview.md](docs/02_enterprise_architecture/target_architecture/00-overview.md) |
 | ADR 索引 | 已迁入 KB decisions namespace（SQLite knowledge 表） |

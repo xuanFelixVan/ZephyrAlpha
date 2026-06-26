@@ -35,7 +35,7 @@ sections:
       fail: 任一问题回答不满足则禁止删除
     - type: constraint
       check: 不可触碰锚点文件
-      pass: 7个锚点文件(document_metadata_index_registry.yaml/architecture_contract.yaml/trae_041_meta_rule_classification.yaml/index.yaml/AGENTS.md/.pre-commit-config.yaml/.roomodes)禁止删除
+      pass: 7个锚点文件(rule_catalog_registry.yaml/architecture_contract.yaml/trae_041_meta_rule_classification.yaml/index.yaml/AGENTS.md/.pre-commit-config.yaml/.roomodes)禁止删除
       fail: 删除锚点文件
     - type: constraint
       check: 断链阈值
@@ -197,7 +197,7 @@ sections:
     - DOC-007
     items:
     - description: 文档元数据索引注册表
-      details: docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml
+      details: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
     - description: 架构合规契约
       details: docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
     - description: 规则分类与裁定标准
@@ -348,7 +348,7 @@ sections:
       impact_on_rules:
       - "修改GOV-DOC-007锚点文件清单→必须同步更新GOV-DOC-002 §5.1.2锚点文件表"
       - "修改GOV-DOC-009原则→必须同步更新所有governance/document/下文件的depends_on引用"
-      - "修改GOV-DOC-010发现路径→必须同步更新document_metadata_index_registry.yaml"
+      - "修改GOV-DOC-010发现路径→必须同步更新rule_catalog_registry.yaml"
       key_decisions:
       - "删除前必须通过强制三问(锚点/价值/引用)"
       - "移动前必须查询搬迁历史(≥2次停止)"
@@ -388,7 +388,7 @@ sections:
     - description: GOV-DOC-010不覆盖-目录结构定义
       details: trae_028_doc_structure_naming.yaml doc_002(GOV-DOC-002)
     - description: GOV-DOC-010不覆盖-注册表文件格式和生成方式
-      details: document_metadata_index_registry.yaml
+      details: rule_catalog_registry.yaml
     - description: GOV-DOC-010不覆盖-文档生命周期状态定义
       details: trae_028_doc_structure_naming.yaml doc_006(GOV-DOC-006)
     - description: GOV-DOC-010不覆盖-搜索工具具体用法
@@ -454,7 +454,7 @@ sections:
     - description: GOV-DOC-007 v1.1.1 (2026-06-19)
       details: RQ-09修复;provenance.source_files标记status:archived+添加archive_note(源.md已合并入YAML)
     - description: GOV-DOC-007 v1.1.2 (2026-06-21)
-      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/architecture_contract.yaml→architecture_contract.yaml);不存在的rule_classification_and_arbitration_standard.yaml引用修正为trae_041_meta_rule_classification.yaml
+      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→rule_catalog_registry.yaml/architecture_contract.yaml→architecture_contract.yaml);不存在的rule_classification_and_arbitration_standard.yaml引用修正为trae_041_meta_rule_classification.yaml
     - description: GOV-DOC-009 v1.9.0 (2026-06-21)
       details: P1修复;aliases移除DOC-008(与trae_028冲突,DOC-008属trae_028);doc_008 section original_rules移除DOC-008(该section实际关于DOC-001~DOC-004,DOC-008是错误引用)
 references:

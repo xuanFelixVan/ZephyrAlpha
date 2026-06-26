@@ -12,5 +12,5 @@
 ## PR 约定
 
 - **范围聚焦**：单 PR 解决一类问题
-- **文档登记**：新建受治理文档须在 `docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml` 中登记（以 [AGENTS.md](AGENTS.md) 路径为准）
+- **文档登记**：新建受治理文档须在 `docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml` 中登记（以 [AGENTS.md](AGENTS.md) 路径为准）
 - **SSoT 验证**：提交前运行 `python scripts/governance/d5_architecture/validators/validate_ssot.py`

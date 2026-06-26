@@ -251,7 +251,7 @@ sections:
       fail: 未经批准新增领域
     actions:
     - type: mandatory
-      step: 在PS-STD-004 §3.1新增受控词表条目→在01_policies_and_standards/下创建对应子目录→更新PS-STD-001的doc_type路径映射→更新document_metadata_index_registry.yaml；新增领域需Owner批准+KB决策记录
+      step: 在PS-STD-004 §3.1新增受控词表条目→在01_policies_and_standards/下创建对应子目录→更新PS-STD-001的doc_type路径映射→更新rule_catalog_registry.yaml；新增领域需Owner批准+KB决策记录
     prohibitions: []
   ps_std_004_scope:
     title: 规则分类与仲裁标准的目的与范围
@@ -420,7 +420,7 @@ sections:
       change: "RQ-03散布修复——从trae_025迁入ps_std_004_scope/normative_refs/change_history(PS-STD-004 scope/history)；从trae_027迁入ps_std_012_scope/normative_refs/change_history(PS-STD-012 scope/history)；aliases新增PS-STD-012(本文件已有ps_std_012_v1_v4/v5规则章节但alias缺失)；历史kebab-case文件名rule_priority_hierarchy.md snake_case化"
     - version: "1.1.0"
       date: "2026-06-19"
-      change: "RQ审查修复——tmr_scope/tmr_normative_refs/tmr_change_history补充original_rules(违反RQ-08)；tmr_normative_refs引用标注archived状态；provenance源文件标注archived+补充TMR源文件；新增文件级change_history(违反RQ-14)；全量审查修复document-metadata-index-registry.yaml→document_metadata_index_registry.yaml snake_case化(违反RQ-05/§2.2裁定)"
+      change: "RQ审查修复——tmr_scope/tmr_normative_refs/tmr_change_history补充original_rules(违反RQ-08)；tmr_normative_refs引用标注archived状态；provenance源文件标注archived+补充TMR源文件；新增文件级change_history(违反RQ-14)；全量审查修复document-metadata-index-registry.yaml→rule_catalog_registry.yaml snake_case化(违反RQ-05/§2.2裁定)"
   ps_std_004_rule_profiles:
     title: 规则画像示例
     section_type: examples

@@ -67,7 +67,7 @@ sections:
       fail: 跳过索引查询直接创建
     actions:
     - type: mandatory
-      step: 按顺序查询4个索引：1.GOV-DOC-002 §5.1.2路径映射表(该文件类型的标准存放路径)→2.registry_master_index.yaml(类似模块的目录结构先例)→3.document_metadata_index_registry.yaml(类似文件类型的存放路径先例)→4.module_id_registry.yaml(新目录对应新模块时module_id是否已注册)；任一有定义→按索引创建
+      step: 按顺序查询4个索引：1.GOV-DOC-002 §5.1.2路径映射表(该文件类型的标准存放路径)→2.registry_master_index.yaml(类似模块的目录结构先例)→3.rule_catalog_registry.yaml(类似文件类型的存放路径先例)→4.module_id_registry.yaml(新目录对应新模块时module_id是否已注册)；任一有定义→按索引创建
     prohibitions:
     - 跳过索引查询直接mkdir
     - 目录存在性前置检查未执行就写入

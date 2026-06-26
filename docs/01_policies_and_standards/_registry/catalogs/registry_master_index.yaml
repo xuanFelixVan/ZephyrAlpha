@@ -1,11 +1,11 @@
-# 自动生成于 2026-06-26T14:11:32Z
+# 自动生成于 2026-06-26T14:24:16Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-26T14:11:32Z'
+generated_at: '2026-06-26T14:24:16Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 15
+total_registries: 14
 registries:
 - registry_id: REG-ARCH-ISSUE-001
   name: 架构议题注册表
@@ -47,14 +47,6 @@ registries:
   maintenance: manual
   entry_count: 4
   status: Active
-- registry_id: PS-REG-002
-  name: 文档元数据索�?
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 155
-  status: active
 - registry_id: REG-DOMAIN-NAMING-001
   name: 域命名规则表
   category: governance_rule

@@ -122,7 +122,7 @@ sections:
       fail: 存在直铺blueprint.md(ERROR)
     - type: trigger
       check: 新增docs/顶级目录
-      pass: 在本文档提出+起草KB决策记录+Owner批准+创建目录+重新生成document_metadata_index_registry.yaml
+      pass: 在本文档提出+起草KB决策记录+Owner批准+创建目录+重新生成rule_catalog_registry.yaml
       fail: 未经审批新建顶级目录
     - type: trigger
       check: 新增src/zephyr/包
@@ -293,7 +293,7 @@ sections:
       fail: 按日期新建状态快照文件
     - type: trigger
       check: 归档流程触发
-      pass: 文件移动到archive/子目录+更新frontmatter status:deprecated ttl:task_bound+更新所有引用+重新生成document_metadata_index_registry.yaml+同一commit完成
+      pass: 文件移动到archive/子目录+更新frontmatter status:deprecated ttl:task_bound+更新所有引用+重新生成rule_catalog_registry.yaml+同一commit完成
       fail: 未走归档流程直接处理
     - type: trigger
       check: 废弃流程触发
@@ -312,7 +312,7 @@ sections:
     - 禁止按日期新建状态快照文件(使用LATEST覆盖写入)
     - 禁止文件名带版本号后缀(-v2/-v3)
     - 禁止AI生成产物直接写入docs/
-    - 禁止不更新document_metadata_index_registry.yaml就删除文件
+    - 禁止不更新rule_catalog_registry.yaml就删除文件
     - 禁止跳过废弃流程直接删除Active文档
   gov_doc_001_layer_registry:
     title: 完整层编号注册表 (GOV-DOC-001 §2.2)
@@ -701,9 +701,9 @@ sections:
     - description: TTL=task_bound(任务绑定，完成即删)
       details: 适用施工方案/评估报告/提案/调研报告/临时笔记;任务完成后可清理;默认落 docs/_working/
     - description: 状态转换draft→active
-      details: Owner批准;更新frontmatter status为active;补齐Active阶段14个必填字段(PS-STD-001 §2.2);更新document_metadata_index_registry.yaml
+      details: Owner批准;更新frontmatter status为active;补齐Active阶段14个必填字段(PS-STD-001 §2.2);更新rule_catalog_registry.yaml
     - description: 状态转换active→deprecated
-      details: 被新版本取代或内容过时;填写superseded_by字段;若被取代同时在新文件添加supersedes;更新document_metadata_index_registry.yaml
+      details: 被新版本取代或内容过时;填写superseded_by字段;若被取代同时在新文件添加supersedes;更新rule_catalog_registry.yaml
     - description: 状态转换deprecated→active
       details: Owner审批(重新启用);更新frontmatter status为active;清除superseded_by字段
     - description: 状态转换deprecated→删除
@@ -722,7 +722,7 @@ sections:
       expected_result: 文件已移至archive/目录
       on_failure: 目录不存在→先创建archive/目录
     - order: 2
-      action: 归档-更新文件frontmatter(status:deprecated;ttl:30d)+更新所有引用+重新生成document_metadata_index_registry.yaml
+      action: 归档-更新文件frontmatter(status:deprecated;ttl:30d)+更新所有引用+重新生成rule_catalog_registry.yaml
       pre_condition: 文件已移至archive/
       expected_result: frontmatter和引用已更新
       on_failure: 引用未全部更新→在同一commit中完成
@@ -879,7 +879,7 @@ sections:
       expected_result: KB决策记录已创建或GOV-DOC-002已修订
       on_failure: 架构性归属未确认→需Owner仲裁
     - order: 3
-      action: 新增docs/顶级目录-获得Owner批准+创建目录+重新生成document_metadata_index_registry.yaml
+      action: 新增docs/顶级目录-获得Owner批准+创建目录+重新生成rule_catalog_registry.yaml
       pre_condition: KB决策记录或修订完成
       expected_result: 目录已创建+注册表已更新
       on_failure: Owner未批准→禁止创建
@@ -1014,7 +1014,7 @@ sections:
     - description: GOV-DOC-008 v1.0.2 (2026-06-21)
       details: 编号冲突修复;GOV-DOC-007与trae_029的GOV-DOC-007(文件删除/移动安全门禁)冲突;本规则重编号为GOV-DOC-008
     - description: GOV-DOC-008 v1.0.3 (2026-06-21)
-      details: P1修复;aliases补充DOC-008(gov_doc_008_file_split_threshold section的original_rules已含DOC-008但aliases缺失);kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml);移除不存在的文件引用(open-questions-register.md/module-relocation-matrix.yaml);修正不存在的meta/rule_lifecycle_and_change_standard.yaml引用为trae_042_meta_rule_standard.yaml
+      details: P1修复;aliases补充DOC-008(gov_doc_008_file_split_threshold section的original_rules已含DOC-008但aliases缺失);kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→rule_catalog_registry.yaml/project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml);移除不存在的文件引用(open-questions-register.md/module-relocation-matrix.yaml);修正不存在的meta/rule_lifecycle_and_change_standard.yaml引用为trae_042_meta_rule_standard.yaml
   gov_doc_003_naming_ssot:
     title: 命名规则唯一真源声明 (GOV-DOC-003 §SSoT)
     section_type: rule

@@ -177,7 +177,7 @@ audit_dimensions:
     name: "内容无冲突"
     scope: "不同文件对同一事实的描述是否一致？"
     check_items:
-      - "frontmatter status=正文blockquote status=document_metadata_index_registry.yaml status（三方对齐）？"
+      - "frontmatter status=正文blockquote status=rule_catalog_registry.yaml status（三方对齐）？"
       - "YAML版本>MD引用版本（MD落后于YAML）？"
       - "跨登记表共享字段是否一致？"
       - "YAML Summary声称数字与实际是否一致？"

@@ -99,7 +99,7 @@ sections:
       change: 深度提取补充——添加section_type(17个)、新增5个sections(vc_scope/vc_normative_refs/vc_change_history/ops_vc_002_alignment/ops_vc_005_automation)
     - version: 0.2.1
       date: '2026-06-19'
-      change: RQ审查修复：填充空references.rule_ids(OPS-VC-002/004/005)和references.scripts(config/session_state_machine.yaml)；修复kebab-case引用document-metadata-index-registry.yaml为snake_case的document_metadata_index_registry.yaml(RQ-05裁定落地)；标准化change_history格式(changes/desc→items/change)
+      change: RQ审查修复：填充空references.rule_ids(OPS-VC-002/004/005)和references.scripts(config/session_state_machine.yaml)；修复kebab-case引用document-metadata-index-registry.yaml为snake_case的rule_catalog_registry.yaml(RQ-05裁定落地)；标准化change_history格式(changes/desc→items/change)
   ops_vc_002_states:
     title: Session状态定义与合法转换
     section_type: context
@@ -218,7 +218,7 @@ sections:
     - type: mandatory
       step: 修改本文档必须同时更新config/session_state_machine.yaml(机器可读版本)
     - type: mandatory
-      step: 修改本文档必须同时更新_registry/catalogs/document_metadata_index_registry.yaml(注册表)
+      step: 修改本文档必须同时更新_registry/catalogs/rule_catalog_registry.yaml(注册表)
     - type: mandatory
       step: 修改本文档必须同时更新任何引用状态机的KB决策记录文档
     - type: mandatory
