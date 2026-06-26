@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-blind-spot-tracker | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -11,7 +11,7 @@
 # 盲点总数: 157 (B1-B157) — 16轮审计累积
 # 最后更新: 2026-05-08 (P0-P3全线修复: B128→closed, B158→closed, B159→closed, B160→closed, B161→closed)
 
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 blind_spots:
   - id: B1
     round: 1

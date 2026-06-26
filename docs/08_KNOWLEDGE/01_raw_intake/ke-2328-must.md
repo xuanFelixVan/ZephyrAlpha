@@ -12,9 +12,9 @@ ttl: permanent
 
 | 蓝图类型 | 文件名 | 示例 |
 |------|------|------|
-| Level 0 总蓝图 | `system-master-blueprint.md` | `MOD-MASTER-001` |
+| Level 0 总蓝图 | `system-master-blueprint.md` | `MOD-MASTER_BLUEPRINT` |
 | Level 1 域蓝图 | `domain-integration-blueprint.md` | `MOD-DOMAIN-SIG-001` |
-| Level 2 模块蓝图 | `blueprint.md`（简洁——目录名已承载模块信息）| `MOD-INF-006/blueprint.md` |
+| Level 2 模块蓝图 | `blueprint.md`（简洁——目录名已承载模块信息）| `MOD-TASK_SYSTEM/blueprint.md` |
 
 **规则**：
 - Level 2 模块蓝图：文件名**统一是 `blueprint.md`**——模块名在目录名中，文件承载蓝图内容

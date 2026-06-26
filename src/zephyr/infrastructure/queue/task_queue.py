@@ -18,7 +18,7 @@
 Task Queue — 后台任务队列 + 自动 Dispatch。
 
 依据：
-    蓝图 MOD-INF-006 §13.3 路线图 #9 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §13.3 路线图 #9 + v0.6.0
     任务卡 TASK-INF-0132 (Part 2/4)
 
 功能：

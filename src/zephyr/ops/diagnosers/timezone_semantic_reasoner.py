@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.diagnosers.timezone_semantic_reasoner
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.diagnosers.__init__

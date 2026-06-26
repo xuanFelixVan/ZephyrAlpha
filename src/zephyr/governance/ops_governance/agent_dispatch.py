@@ -32,14 +32,14 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "gate-breaker": DomainDispatch(
         domain="门禁/断路器",
         pre_read="SYS-MASTER-001 §2",
-        re_read="MOD-INF-007 blueprint",
+        re_read="MOD-GATE_ENGINE blueprint",
         token_budget=600,
         blueprint_section="§2",
     ),
     "context-injection": DomainDispatch(
         domain="上下文注入",
         pre_read="SYS-MASTER-001 §2",
-        re_read="MOD-INF-008 blueprint",
+        re_read="MOD-CONTEXT_ENGINE blueprint",
         token_budget=500,
         blueprint_section="§2",
     ),
@@ -53,14 +53,14 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "feedback-loop": DomainDispatch(
         domain="反馈闭环",
         pre_read="SYS-MASTER-001 §2",
-        re_read="MOD-INF-010 blueprint",
+        re_read="MOD-FEEDBACK_LOOP blueprint",
         token_budget=500,
         blueprint_section="§2",
     ),
     "cross-system-integration": DomainDispatch(
         domain="跨系统集成",
         pre_read="SYS-MASTER-001 §1-§3",
-        re_read="MOD-MASTER-001 CT-*",
+        re_read="MOD-MASTER_BLUEPRINT CT-*",
         token_budget=2000,
         blueprint_section="§1-§3",
     ),
@@ -88,14 +88,14 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "data-classification": DomainDispatch(
         domain="数据分级/安全",
         pre_read="SYS-MASTER-001 §十三",
-        re_read="MOD-INF-014 + §13.3",
+        re_read="MOD-LLM_SECURITY + §13.3",
         token_budget=600,
         blueprint_section="§十三",
     ),
     "startup-ops": DomainDispatch(
         domain="启动/运维",
         pre_read="SYS-MASTER-001 §十四",
-        re_read="MOD-INF-012 + §14.1",
+        re_read="MOD-DATABASE + §14.1",
         token_budget=500,
         blueprint_section="§十四",
     ),
@@ -123,7 +123,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "model-risk": DomainDispatch(
         domain="模型风险管理",
         pre_read="SYS-MASTER-001 §十九",
-        re_read="MOD-INF-010 + SR11-7",
+        re_read="MOD-FEEDBACK_LOOP + SR11-7",
         token_budget=700,
         blueprint_section="§十九",
     ),
@@ -151,7 +151,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "security-defense": DomainDispatch(
         domain="安全纵深防御",
         pre_read="SYS-MASTER-001 §二十三",
-        re_read="MOD-INF-014 + §23.1",
+        re_read="MOD-LLM_SECURITY + §23.1",
         token_budget=600,
         blueprint_section="§二十三",
     ),
@@ -193,7 +193,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "data-quality": DomainDispatch(
         domain="数据质量治理",
         pre_read="SYS-MASTER-001 §二十九",
-        re_read="MOD-INF-012 + §13",
+        re_read="MOD-DATABASE + §13",
         token_budget=400,
         blueprint_section="§二十九",
     ),
@@ -263,14 +263,14 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "market-data-pipeline": DomainDispatch(
         domain="市场数据管线",
         pre_read="SYS-MASTER-001 §四十",
-        re_read="MOD-INF-012 + §29",
+        re_read="MOD-DATABASE + §29",
         token_budget=600,
         blueprint_section="§四十",
     ),
     "backtest-engine": DomainDispatch(
         domain="回测引擎",
         pre_read="SYS-MASTER-001 §四十",
-        re_read="MOD-INF-010 + §19",
+        re_read="MOD-FEEDBACK_LOOP + §19",
         token_budget=700,
         blueprint_section="§四十",
     ),
@@ -305,7 +305,7 @@ DISPATCH_TABLE: dict[str, DomainDispatch] = {
     "architecture-contracts": DomainDispatch(
         domain="架构基础契约",
         pre_read="SYS-MASTER-001 §四十五",
-        re_read="MOD-MASTER-001 + §4.1",
+        re_read="MOD-MASTER_BLUEPRINT + §4.1",
         token_budget=600,
         blueprint_section="§四十五",
     ),

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.verifiers.cross_blueprint_contract_drift
 # [DOMAIN] D-OPS
 # [DEPENDENCIES]
@@ -20,7 +20,7 @@ Blindspot: Blueprints define interface contracts (CT-FLE-* series), but actual
 implementations drift away from declared contracts. Import paths change, function
 signatures evolve, data schemas diverge — and FLE doesn't notice until runtime.
 
-Risk: R490 — MOD-INF-010 FLE depends on contracts from other blueprints that
+Risk: R490 — MOD-FEEDBACK_LOOP FLE depends on contracts from other blueprints that
 silently changed. FLE calls fail with cryptic errors; cascading failures across
 blueprint boundaries with no early warning.
 

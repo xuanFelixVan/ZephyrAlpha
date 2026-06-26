@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.gates.safety_gate_L1_L27
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.gates.__init__
@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK_safety_gate_l1_l27 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""Safety Gates L1-L27 — Unified Pipeline (MOD-INF-010 §3)
+"""Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOOP §3)
 
 Blindspot: No unified safety gate pipeline; scattered validation logic across subsystems.
 Risk: Individual safety checks pass but combined effect is dangerous.

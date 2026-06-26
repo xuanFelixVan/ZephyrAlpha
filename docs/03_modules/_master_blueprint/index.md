@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "_master_blueprint — 目录索引"
-module_id: "MOD-MASTER-001"
-blueprint_id: "MOD-MASTER-001"
+module_id: "MOD-MASTER_BLUEPRINT"
+blueprint_id: "MOD-MASTER_BLUEPRINT"
 version: "1.3.1"
 created: "2026-06-22"
 updated: "2026-06-22"

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm-security/blueprint.md
 # [MODULE] zephyr.security.llm_defense.llm_security.self_protection.isolation
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.governance.audit_trail.bridge

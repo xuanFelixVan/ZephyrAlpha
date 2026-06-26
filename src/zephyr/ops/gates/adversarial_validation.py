@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §adversarial_validation
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §adversarial_validation
 # [MODULE] zephyr.observability.feedback_loop.gates.adversarial_validation
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.security.adversarial_validation.__init__

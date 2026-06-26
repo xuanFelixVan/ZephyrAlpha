@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.diagnosers.e2e_integration_health
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.diagnosers.__init__

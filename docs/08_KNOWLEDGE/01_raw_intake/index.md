@@ -2108,10 +2108,10 @@ ttl: permanent
 | [ke-2805-deliverysemantics.md](ke-2805-deliverysemantics.md) | Markdown | DeliverySemantics（消息传递语义） |
 | [ke-2806-detector_registry_yaml.md](ke-2806-detector_registry_yaml.md) | Markdown | ke-2806-detector_registry_yaml.md |
 | [ke-2807-dispatch.md](ke-2807-dispatch.md) | Markdown | dispatch 过程中记录每个模块的副作用 |
-| [ke-2808-dom_gov.md](ke-2808-dom_gov.md) | Markdown | MOD-023 集成契约锚点 |
-| [ke-2809-dom_gov_001_dependency_crossch.md](ke-2809-dom_gov_001_dependency_crossch.md) | Markdown | MOD-023 Dependency Crosscheck |
+| [ke-2808-dom_gov.md](ke-2808-dom_gov.md) | Markdown | MOD-GOVERNANCE 集成契约锚点 |
+| [ke-2809-dom_gov_001_dependency_crossch.md](ke-2809-dom_gov_001_dependency_crossch.md) | Markdown | MOD-GOVERNANCE Dependency Crosscheck |
 | [ke-281-documentat.md](ke-281-documentat.md) | Markdown | ke-281-documentat.md |
-| [ke-2810-dom_gov_001_downstream_anchor.md](ke-2810-dom_gov_001_downstream_anchor.md) | Markdown | MOD-023 Downstream Anchor Report |
+| [ke-2810-dom_gov_001_downstream_anchor.md](ke-2810-dom_gov_001_downstream_anchor.md) | Markdown | MOD-GOVERNANCE Downstream Anchor Report |
 | [ke-2811-domain_governance.md](ke-2811-domain_governance.md) | Markdown | _domain-governance |
 | [ke-2812-domain_skill.md](ke-2812-domain_skill.md) | Markdown | 每个 Domain Skill 的标准目录结构 |
 | [ke-2813-drift_into_failure.md](ke-2813-drift_into_failure.md) | Markdown | === 故障正常化漂移 Drift Into Failure === |
@@ -2181,7 +2181,7 @@ ttl: permanent
 | [ke-2871-domain_integra.md](ke-2871-domain_integra.md) | Markdown | ke-2871-domain_integra.md |
 | [ke-2872-module_blueprint.md](ke-2872-module_blueprint.md) | Markdown | ke-2872-module_blueprint.md |
 | [ke-2873-llm_gateway_d_019.md](ke-2873-llm_gateway_d_019.md) | Markdown | LLM Gateway (D-019-78) |
-| [ke-2874-llm_security_gateway_mod_inf.md](ke-2874-llm_security_gateway_mod_inf.md) | Markdown | LLM Security Gateway (MOD-INF-014) |
+| [ke-2874-llm_security_gateway_mod_inf.md](ke-2874-llm_security_gateway_mod_inf.md) | Markdown | LLM Security Gateway (MOD-LLM_SECURITY) |
 | [ke-2875-llm_security_gateway.md](ke-2875-llm_security_gateway.md) | Markdown | LLM Security Gateway 蓝图 |
 | [ke-2876-llm_security_gateway_interface.md](ke-2876-llm_security_gateway_interface.md) | Markdown | LLM Security Gateway Interface / LLM 安全网关接口规范 |
 | [ke-2877-loadshedder.md](ke-2877-loadshedder.md) | Markdown | LoadShedder（负载脱落） |
@@ -2200,8 +2200,8 @@ ttl: permanent
 | [ke-2889-mod_inf_023_drift_detector.md](ke-2889-mod_inf_023_drift_detector.md) | Markdown | ke-2889-mod_inf_023_drift_detector.md |
 | [ke-289-policies_and_standards.md](ke-289-policies_and_standards.md) | Markdown | Ke Documentat 3 2 1  01 Policies And Standar 005 |
 | [ke-2890-mod_kb.md](ke-2890-mod_kb.md) | Markdown | 知识库系统蓝图（MOD-KB-001） |
-| [ke-2891-mod_master.md](ke-2891-mod_master.md) | Markdown | MOD-MASTER-001 跨系统集成契约注册中心 |
-| [ke-2892-mod_master_001_consistency.md](ke-2892-mod_master_001_consistency.md) | Markdown | MOD-MASTER-001 Consistency |
+| [ke-2891-mod_master.md](ke-2891-mod_master.md) | Markdown | MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心 |
+| [ke-2892-mod_master_001_consistency.md](ke-2892-mod_master_001_consistency.md) | Markdown | MOD-MASTER_BLUEPRINT Consistency |
 | [ke-2893-model_evolution_d_019.md](ke-2893-model_evolution_d_019.md) | Markdown | Model Evolution (D-019-23) |
 | [ke-2894-module_id.md](ke-2894-module_id.md) | Markdown | 模块调用时不需要手动传 module_id |
 | [ke-2895-module_sandbox.md](ke-2895-module_sandbox.md) | Markdown | Module Sandbox（模块级进程隔离） |

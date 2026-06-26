@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.gates.safety_gate_L28_L29
 # [DOMAIN]
 # [DEPENDENCIES]
@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK_safety_gate_l28_l29 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""Safety Gates L28-L29 — DR Readiness + Supply Chain (MOD-INF-010 §3 L28-L41)
+"""Safety Gates L28-L29 — DR Readiness + Supply Chain (MOD-FEEDBACK_LOOP §3 L28-L41)
 
 L28: DR Readiness — DR drill < 90d → allow REPAIR, overdue → block
 L29: Supply Chain — active CVE → only NOTIFY_OWNER; skill_trust < 0.5 → block all

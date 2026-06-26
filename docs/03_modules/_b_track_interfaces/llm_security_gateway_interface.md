@@ -14,7 +14,7 @@ last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/_cross_layer/llm-security/blueprint.md（MOD-INF-014 — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
+  - "03_modules/_cross_layer/llm-security/blueprint.md（MOD-LLM_SECURITY — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"
   - "architecture_model/layers/b_llm_security.yaml（LLM Security YAML SSoT）"
   - "OWASP LLM Applications Top 10 (2026.03)（外部威胁分类参考，非项目内 SSoT）"
 supersedes: []
@@ -33,14 +33,14 @@ tags:
   - fail-closed
   - owasp-llm-top10
   - vibe-coding-infrastructure
-mod_master_blueprint: "MOD-MASTER-001"
+mod_master_blueprint: "MOD-MASTER_BLUEPRINT"
 mod_master_contracts:
   - "CT-CE-LSG-001"
 ---
 
 # LLM Security Gateway Interface / LLM 安全网关接口规范
 
-> **定位**：LLM 安全网关（LSG）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-014` 蓝图 + `b_llm_security.yaml` + OWASP LLM Top 10 作外部威胁分类参考）。部署在 MCP Server 前端，对 **所有进出 LLM 的数据** 做 L1–L4 纵深防护并坚持 **fail-closed**。与 Agent Sandbox（KBG-0018）形成双层安全防线。
+> **定位**：LLM 安全网关（LSG）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-LLM_SECURITY` 蓝图 + `b_llm_security.yaml` + OWASP LLM Top 10 作外部威胁分类参考）。部署在 MCP Server 前端，对 **所有进出 LLM 的数据** 做 L1–L4 纵深防护并坚持 **fail-closed**。与 Agent Sandbox（KBG-0018）形成双层安全防线。
 >
 > **与其他 4 份规范的根本差异——fail-closed 原则**：
 >

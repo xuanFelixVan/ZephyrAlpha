@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-GOV_task | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.task
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

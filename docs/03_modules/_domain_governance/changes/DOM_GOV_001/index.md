@@ -2,16 +2,16 @@
 
 doc_type: index
 status: active
-title: "MOD-023 — 目录索引"
+title: "MOD-GOVERNANCE — 目录索引"
 version: "1.1.0"
 created: "2026-05-06"
 updated: "2026-05-07"
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ttl: permanent
 ---
 
 
-# MOD-023
+# MOD-GOVERNANCE
 
 ## 目录内容
 
@@ -31,17 +31,17 @@ ttl: permanent
 | [TASK-GOV-0012.md](TASK-GOV-0012.md) | Markdown | Phase 3 施工启动门禁：Drift Detector + Budget Enforcer——验证 G-CT-005/006 契约实现就绪 |
 | [TASK-GOV-0013.md](TASK-GOV-0013.md) | Markdown | Phase 4 施工启动门禁：Agent Spec + A2A Protocol——验证 G-CT-007/008 契约实现就绪 |
 | [TASK-GOV-0014.md](TASK-GOV-0014.md) | Markdown | 实现 §5 循环依赖裁决：Audit 不依赖 RBAC——仅 RBAC 单向调用 Audit |
-| [TASK-GOV-0015.md](TASK-GOV-0015.md) | Markdown | G-CT 下游锚点验证：检查 8 个 L01 模块均已落锚 MOD-023 契约 |
+| [TASK-GOV-0015.md](TASK-GOV-0015.md) | Markdown | G-CT 下游锚点验证：检查 8 个 L01 模块均已落锚 MOD-GOVERNANCE 契约 |
 | [TASK-GOV-0016.md](TASK-GOV-0016.md) | Markdown | 风险 R1 缓解：建立治理域 Phase 0——8 模块蓝图与契约落地为最小可用实现 |
 | [TASK-GOV-0017.md](TASK-GOV-0017.md) | Markdown | 风险 R2 缓解：RBAC/Audit 循环依赖打破验证——确保全链路单向依赖 |
 | [TASK-GOV-0018.md](TASK-GOV-0018.md) | Markdown | 风险 R3 缓解：A2A Protocol Phase 4 Hold 标记——确保 G-CT-007 先行、A2A 不提前 |
 | [TASK-GOV-0019.md](TASK-GOV-0019.md) | Markdown | 实现 §8 P0 测试用例：P0-U1 冒烟测试 + P0-U2 输入校验 + P0-I1 集成测试 + P0-I2 施工顺序验证 |
 | [TASK-GOV-0020.md](TASK-GOV-0020.md) | Markdown | §2 模块清单进度追踪 + §7 变更记录——治理域施工进度看板更新与变更管理 |
-| [TASK-GOV-0021.md](TASK-GOV-0021.md) | Markdown | 依赖验证：SYS-MASTER-001 系统总蓝图 + MOD-MASTER-001 基建域蓝图 CT 交叉检查 |
+| [TASK-GOV-0021.md](TASK-GOV-0021.md) | Markdown | 依赖验证：SYS-MASTER-001 系统总蓝图 + MOD-MASTER_BLUEPRINT 基建域蓝图 CT 交叉检查 |
 | [TASK-GOV-0022.md](TASK-GOV-0022.md) | Markdown | d5_architecture 根目录重复脚本清理 + test_all_scripts 分层改造 |
 | [completeness_report.md](completeness_report.md) | Markdown | 蓝图分解完整性报告 · 二次审计版 |
-| [dependency_crosscheck.md](dependency_crosscheck.md) | Markdown | MOD-023 依赖交叉检查（SYS-MASTER-001 + MOD-MASTER-001 vs MOD-023） |
-| [downstream_anchor_report.md](downstream_anchor_report.md) | Markdown | MOD-023 下游锚点报告（Phase 3 施工状态） |
+| [dependency_crosscheck.md](dependency_crosscheck.md) | Markdown | MOD-GOVERNANCE 依赖交叉检查（SYS-MASTER-001 + MOD-MASTER_BLUEPRINT vs MOD-GOVERNANCE） |
+| [downstream_anchor_report.md](downstream_anchor_report.md) | Markdown | MOD-GOVERNANCE 下游锚点报告（Phase 3 施工状态） |
 
 ## 导航
 

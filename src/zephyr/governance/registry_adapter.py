@@ -539,7 +539,7 @@ class RegistryManager:
         )
 
         self._known["docs/03_modules/module-registry.yaml"] = YamlListAdapter(
-            "REG-MOD-001", "module-registry.yaml", asset_key="module_id"
+            "REG-MOD-ALPHA_SIGNAL_DOMAIN", "module-registry.yaml", asset_key="module_id"
         )
         self._known["docs/03_modules/blueprint_registry.yaml"] = YamlListAdapter(
             "REG-BP-001", "blueprint_registry.yaml", asset_key="blueprint_id"

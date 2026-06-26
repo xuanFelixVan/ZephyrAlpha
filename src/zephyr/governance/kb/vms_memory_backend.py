@@ -17,7 +17,7 @@
 """
 VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器
 =====================================================
-MOD-INF-011 (vector-memory) ↔ MOD-INF-008 (kb) 统一桥接
+MOD-INF-011 (vector-memory) ↔ MOD-CONTEXT_ENGINE (kb) 统一桥接
 
 功能
 ----

@@ -17,7 +17,7 @@
 """
 ZephyrAlpha MCP Task Manager Server
 ===================================
-依据：MOD-INF-006 v0.3.0 §5.3 MCP 接口契约
+依据：MOD-TASK_SYSTEM v0.3.0 §5.3 MCP 接口契约
 注册：task_repo（SQLite） + BlueprintDecomposer（蓝图拆解）
 暴露：6 个 MCP Tool（create / get / list / update_status / decompose / register_from_triage；工具 ID 为 task_manager.*）
 """
@@ -143,7 +143,7 @@ class TaskManagerMCP:
             safety_level: str = "L",
             downstream_outputs: list = [],
         ) -> dict:
-            """创建 TaskCard——蓝图 MOD-INF-006 §3.5 Tool 1（idempotent）"""
+            """创建 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 1（idempotent）"""
             import hashlib
 
             mgr._rbac_guard("create_task")
@@ -245,7 +245,7 @@ class TaskManagerMCP:
 
         @mcp.tool(name="task_manager.get_task")
         async def get_task(task_id: str) -> dict:
-            """查询 TaskCard——蓝图 MOD-INF-006 §3.5 Tool 2"""
+            """查询 TaskCard——蓝图 MOD-TASK_SYSTEM §3.5 Tool 2"""
             mgr._rbac_guard("get_task", task_id)
             tc = mgr._load(task_id)
             if tc is None:
@@ -276,7 +276,7 @@ class TaskManagerMCP:
 
         @mcp.tool(name="task_manager.update_task_status")
         async def update_task_status(task_id: str, new_status: str) -> dict:
-            """更新任务状态——蓝图 MOD-INF-006 §3.5 Tool 3（使用状态机 transition）"""
+            """更新任务状态——蓝图 MOD-TASK_SYSTEM §3.5 Tool 3（使用状态机 transition）"""
             mgr._rbac_guard("update_task_status", task_id)
             if mgr.task_repo is None:
                 raise RuntimeError("update_task_status 需要注入 task_repo，当前为 None")
@@ -292,7 +292,7 @@ class TaskManagerMCP:
 
         @mcp.tool(name="task_manager.decompose_blueprint")
         async def decompose_blueprint(blueprint_path: str, namespace: str = "CP", phase: int = 1) -> dict:
-            """拆解蓝图→生成 TaskCard 列表——蓝图 MOD-INF-006 §3.5 Tool 4"""
+            """拆解蓝图→生成 TaskCard 列表——蓝图 MOD-TASK_SYSTEM §3.5 Tool 4"""
             mgr._rbac_guard("decompose_blueprint")
             result: DecompositionResult = mgr.decomposer.decompose_blueprint(
                 blueprint_path=blueprint_path,
@@ -314,7 +314,7 @@ class TaskManagerMCP:
             phase: int = 1,
             yaml_path: str = "",
         ) -> dict:
-            """从审阅池注册任务——蓝图 MOD-INF-006 §3.5 Tool 5（yaml_path 为契约兼容别名）。"""
+            """从审阅池注册任务——蓝图 MOD-TASK_SYSTEM §3.5 Tool 5（yaml_path 为契约兼容别名）。"""
             mgr._rbac_guard("register_from_triage")
             src = (triage_path or yaml_path).strip()
             if not src:
@@ -349,7 +349,7 @@ class TaskManagerMCP:
                 forbidden_touch=[],
                 applicable_rules=[
                     {
-                        "module_id": "MOD-INF-006",
+                        "module_id": "MOD-TASK_SYSTEM",
                         "section": "§5.3",
                         "reason": "审阅池注册",
                     }
@@ -970,7 +970,7 @@ autonomy_checklist:{_yaml_list(tc.autonomy_checklist)}
 
 ---
 *创建: {created} | 更新: {updated}*
-*本文件由 MOD-INF-006 task_manager_server 自动同步生成。*"""
+*本文件由 MOD-TASK_SYSTEM task_manager_server 自动同步生成。*"""
 
     return yaml_block
 

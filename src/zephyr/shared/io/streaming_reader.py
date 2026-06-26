@@ -18,7 +18,7 @@
 streaming_reader.py - Memory-efficient streaming file readers
 ==============================================================
 
-SSoT: MOD-INF-032 resource-optimization-engine/blueprint.md §11 Phase 2
+SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md §11 Phase 2
 
 Design:
   - tail_jsonl: read last N lines from JSONL without loading entire file

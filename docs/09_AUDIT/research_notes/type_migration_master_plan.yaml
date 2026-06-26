@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-type-migration-master-plan | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -21,7 +21,7 @@
 #   5 项迁移已全部核实完成。本文件使命结束，随临时工作区整体归档。
 # ============================================================================
 
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 registry:
   version: "1.1.0"
   created: "2026-05-04"
@@ -31,7 +31,7 @@ registry:
 
 migrations:
   - item: "TaskCard v0.2.0 → v0.3.0"
-    owner: "MOD-INF-006 task-system"
+    owner: "MOD-TASK_SYSTEM task-system"
     target: "继承 shared/schema/schemas.py Task (31字段)"
     phase: "stable"
     status: completed
@@ -55,16 +55,16 @@ migrations:
     note: "AUDIT-10 核实: src/zephyr/shared/contracts/ 下全部使用 Pydantic v2 BaseModel，无 v1 残留"
 
   - item: "MOD-INF-003 KMS 蓝图 → 废弃"
-    owner: "MOD-INF-006 task-system"
+    owner: "MOD-TASK_SYSTEM task-system"
     target: "已 mark deprecated，待 stable 物理删除"
     phase: "stable"
     status: completed
     acceptance: "docs/03_modules/ 下无 MOD-INF-003 目录"
-    note: "AUDIT-10 核实: MOD-INF-003 内容已合并至 MOD-INF-006，目录已删除。blueprint_registry.yaml 已记录"
+    note: "AUDIT-10 核实: MOD-INF-003 内容已合并至 MOD-TASK_SYSTEM，目录已删除。blueprint_registry.yaml 已记录"
 
   - item: "MOD-INF-004 vibe-coding-pipelines → 退役"
     owner: "已退役"
-    target: "设计已迁入 MOD-INF-006 task-system"
+    target: "设计已迁入 MOD-TASK_SYSTEM task-system"
     phase: "stable"
     status: completed
     acceptance: "蓝图已标记 retired"

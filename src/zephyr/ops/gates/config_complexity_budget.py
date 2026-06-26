@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.gates.config_complexity_budget
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.gates.__init__

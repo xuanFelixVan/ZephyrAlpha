@@ -89,9 +89,9 @@ class TestSupportedWorkTypes:
         chat = DeepSeekV4Chat()
         assert isinstance(chat.supported_work_types, frozenset)
 
-    def test_has_ten_types(self):
+    def test_supported_types_count(self):
         chat = DeepSeekV4Chat()
-        assert len(chat.supported_work_types) == 10
+        assert len(chat.supported_work_types) == 31
 
     def test_matches_system_prompts_keys(self):
         chat = DeepSeekV4Chat()
@@ -183,8 +183,8 @@ class TestPricingRmb:
 
 
 class TestSystemPrompts:
-    def test_has_ten_entries(self):
-        assert len(SYSTEM_PROMPTS) == 10
+    def test_prompts_count(self):
+        assert len(SYSTEM_PROMPTS) == 31
 
     def test_all_values_are_strings(self):
         for key, value in SYSTEM_PROMPTS.items():

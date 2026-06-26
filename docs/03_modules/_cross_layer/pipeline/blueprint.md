@@ -23,19 +23,19 @@ summary: "Pipeline管线编排器——M1-M11双管线架构(A区生产+B区审�
 tags: [pipeline, m1-m11, dual-pipeline, model-routing, pipeline-orchestrator, backpressure, capacity-upgrade, incremental-scan, circuit-breaker, dead-letter-queue, blind-review, fallback-chain, pipeline-lock, agent-bridge, zone-crossing, artifact-manifest, preemption, lsg, cost-tracking, data-lineage]
 priority: P0
 runtime_plane: hot
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 rule_form: structural
 scope: global
 stability: evolving
 verifiability: hybrid
 depends_on:
-  - {target: "MOD-MASTER-001", at: "§2.7", why: "CT-PIPE-ORC-001 集成契约——Pipeline→Orc路由决策"}
-  - {target: "MOD-INF-006", at: "§5", why: "任务系统——M1-M11节点的任务消费方"}
+  - {target: "MOD-MASTER_BLUEPRINT", at: "§2.7", why: "CT-PIPE-ORC-001 集成契约——Pipeline→Orc路由决策"}
+  - {target: "MOD-TASK_SYSTEM", at: "§5", why: "任务系统——M1-M11节点的任务消费方"}
   - {target: "GOV-AI-002", at: "全篇", why: "模型路由策略——Pipeline决策树依据"}
   - {target: "MOD-INF-016", at: "全篇", why: "共享基础设施——LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry 契约"}
-  - {target: "MOD-INF-014", at: "全篇", why: "LSG安全闸门——Pipeline L1/L3 输入输出检测"}
-  - {target: "MOD-INF-012", at: "全篇", why: "DeferredQueue——LOCKED任务自动重试"}
+  - {target: "MOD-LLM_SECURITY", at: "全篇", why: "LSG安全闸门——Pipeline L1/L3 输入输出检测"}
+  - {target: "MOD-DATABASE", at: "全篇", why: "DeferredQueue——LOCKED任务自动重试"}
   - {target: "MOD-INF-001", at: "§Kill Switch+§Token Budget", why: "Capacity Assurance——Kill Switch前置检查+Token Budget扣减"}
 references:
   - {id: "MOD-INF-020", at: "全篇", why: "Decision Log——仅存 references（打破 009↔020↔022 环）"}
@@ -50,7 +50,7 @@ references:
 
 ## 概述
 
-本蓝图描述 Pipeline 管线编排器——它解决了"AI 任务如何从创建到审计全链路受控执行"的核心问题。核心职责包括：M1-M11 双管线调度（A 区生产 + B 区审计）、三层模型路由（DeepSeek/GLM/Claude + Fallback 链）、并发锁与优先级抢占、容量升级至 1500 模块/10K 脚本/100 AI 并发。当前规模 51 模块/268 脚本/0 AI 并发，目标容量 1500/10000/100。上游依赖 Orchestrator（CT-PIPE-ORC-001）和 Task System（MOD-INF-006），下游被 Gate Engine、Feedback Loop、Audit Trail 消费。
+本蓝图描述 Pipeline 管线编排器——它解决了"AI 任务如何从创建到审计全链路受控执行"的核心问题。核心职责包括：M1-M11 双管线调度（A 区生产 + B 区审计）、三层模型路由（DeepSeek/GLM/Claude + Fallback 链）、并发锁与优先级抢占、容量升级至 1500 模块/10K 脚本/100 AI 并发。当前规模 51 模块/268 脚本/0 AI 并发，目标容量 1500/10000/100。上游依赖 Orchestrator（CT-PIPE-ORC-001）和 Task System（MOD-TASK_SYSTEM），下游被 Gate Engine、Feedback Loop、Audit Trail 消费。
 
 ---
 
@@ -179,10 +179,10 @@ ZephyrAlpha 的 AI 任务需要从创建到审计全链路受控执行。当前 
 
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
-| 1 | 任务创建与状态机 | MOD-INF-006 Task System |
-| 2 | 门禁规则评估 | MOD-INF-007 Gate Engine |
-| 3 | 上下文装配 | MOD-INF-008 Context Engine |
-| 4 | 反馈闭环 | MOD-INF-010 Feedback Loop |
+| 1 | 任务创建与状态机 | MOD-TASK_SYSTEM Task System |
+| 2 | 门禁规则评估 | MOD-GATE_ENGINE Gate Engine |
+| 3 | 上下文装配 | MOD-CONTEXT_ENGINE Context Engine |
+| 4 | 反馈闭环 | MOD-FEEDBACK_LOOP Feedback Loop |
 | 5 | Kill Switch / Token Budget | MOD-INF-001 Capacity Assurance |
 
 ---
@@ -386,7 +386,7 @@ class ArtifactClassification(str, Enum):
 |---|------|------|---------|---------|
 | 1 | M3/M7 同模型审查（双盲退化） | 高 | mandatoryAntiAffinity: M3≠M7 模型 | _verify_model_diversity Jaccard 检测 |
 | 2 | A 区产出物绕过 M6 直通 B 区 | 高 | Zone Crossing 防线 + _validate_zone_crossing | 单元测试 |
-| 3 | LLM 输入/输出注入 | 中 | LSG L1+L3 安全闸门（懒加载 MOD-INF-014） | _call_model 检测 |
+| 3 | LLM 输入/输出注入 | 中 | LSG L1+L3 安全闸门（懒加载 MOD-LLM_SECURITY） | _call_model 检测 |
 | 4 | 跨进程锁竞争 | 中 | FileLockBackend os.mkdir 原子锁 + stale PID 清理 | 多 IDE 并发测试 |
 | 5 | 数据血缘篡改 | 高 | PipelineLineageChain HMAC-SHA256 不可篡改链 | checksum 校验 |
 | 6 | Artifact 越权访问 | 中 | ArtifactClassification 四级标签 | 访问控制检查 |
@@ -412,12 +412,12 @@ class ArtifactClassification(str, Enum):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-006 | 必须 | TaskCard → dispatch() → PipelineResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task_system\blueprint.md` |
+| MOD-TASK_SYSTEM | 必须 | TaskCard → dispatch() → PipelineResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task_system\blueprint.md` |
 | MOD-INF-003 | 必须 | Orc.create_task() → Pipeline.dispatch() | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\orchestrator\blueprint.md` |
 | MOD-INF-016 | 必须 | LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared_infrastructure\blueprint.md` |
-| MOD-INF-014 | 必须 | LSG L1+L3 输入输出检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm_security_gateway\blueprint.md` |
-| MOD-INF-007 | 可选 | G6 检查——AI 是否已读蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate_engine\blueprint.md` |
-| MOD-INF-012 | 可选 | DeferredQueue LOCKED→auto-retry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\deferred_queue\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LSG L1+L3 输入输出检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm_security_gateway\blueprint.md` |
+| MOD-GATE_ENGINE | 可选 | G6 检查——AI 是否已读蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate_engine\blueprint.md` |
+| MOD-DATABASE | 可选 | DeferredQueue LOCKED→auto-retry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\deferred_queue\blueprint.md` |
 | GOV-AI-002 | 必须 | 模型路由策略决策树 | v2.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\ai-model-routing-policy.md` |
 
 ### 10.2 依赖图对齐声明
@@ -494,9 +494,9 @@ class ArtifactClassification(str, Enum):
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
 | Orchestrator (MOD-INF-003) | CT-PIPE-ORC-001 契约 | Pipeline.dispatch() | 端到端集成测试 |
-| Task System (MOD-INF-006) | runtime_call | TaskCard 读取 + PipelineResult 写回 | 单元测试 |
-| Gate Engine (MOD-INF-007) | pre_check | dispatch() 前 G6 检查 | beta session_simulator |
-| LSG (MOD-INF-014) | pre_check | _call_model L1+L3 检测 | 安全测试 |
+| Task System (MOD-TASK_SYSTEM) | runtime_call | TaskCard 读取 + PipelineResult 写回 | 单元测试 |
+| Gate Engine (MOD-GATE_ENGINE) | pre_check | dispatch() 前 G6 检查 | beta session_simulator |
+| LSG (MOD-LLM_SECURITY) | pre_check | _call_model L1+L3 检测 | 安全测试 |
 | Shared Infra (MOD-INF-016) | contract_consume | LifecycleAware + EventBus + Telemetry | 集成测试 |
 
 ---
@@ -552,7 +552,7 @@ class ArtifactClassification(str, Enum):
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
 | 1 | MOD-INF-016 LifecycleAware/EventBus 契约 | hard | ✅ | ☐ |
-| 2 | MOD-INF-014 LSG 安全闸门 | hard | ✅ | ☐ |
+| 2 | MOD-LLM_SECURITY LSG 安全闸门 | hard | ✅ | ☐ |
 | 3 | GOV-AI-002 v2.0.0 模型路由策略 | hard | ✅ | ☐ |
 | 4 | capacity_params.yaml 已创建 | soft | ✅ | ☐ |
 
@@ -1060,7 +1060,7 @@ STEP 3: 拆分后验证
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-003 Orchestrator | §4 接口契约、CT-PIPE-ORC-001 |
-| Tier 2 | MOD-INF-007 Gate Engine | §4 PipelineResult |
+| Tier 2 | MOD-GATE_ENGINE Gate Engine | §4 PipelineResult |
 | Tier 3 | `src/zephyr/integration/pipeline_orchestrator.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则

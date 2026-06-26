@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Behavioral Auditor.Manifest
 module_id: MOD-046
 ttl: permanent

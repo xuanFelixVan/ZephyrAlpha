@@ -51,7 +51,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-002
-  source: MOD-INF-006
+  source: MOD-TASK_SYSTEM
   source_name: task-system
   target: MOD-INF-001
   target_name: capacity-assurance
@@ -64,7 +64,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-003
-  source: MOD-INF-006
+  source: MOD-TASK_SYSTEM
   source_name: task-system
   target: MOD-INF-002
   target_name: runtime-integration
@@ -77,7 +77,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-004
-  source: MOD-INF-006
+  source: MOD-TASK_SYSTEM
   source_name: task-system
   target: MOD-INF-005
   target_name: script-system
@@ -90,7 +90,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-02'
 - dep_id: DEP-005
-  source: MOD-INF-006
+  source: MOD-TASK_SYSTEM
   source_name: task-system
   target: MOD-INF-001
   target_name: capacity-assurance
@@ -103,7 +103,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-005-SM
-  source: MOD-INF-006
+  source: MOD-TASK_SYSTEM
   source_name: task-system
   target: MOD-INF-038
   target_name: state-machine-engine
@@ -129,7 +129,7 @@ dependencies:
 - dep_id: DEP-007
   source: MOD-INF-005
   source_name: script-system
-  target: MOD-INF-006
+  target: MOD-TASK_SYSTEM
   target_name: task-system
   type: runtime
   strength: hard
@@ -139,7 +139,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-06'
 - dep_id: DEP-008
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-collectors
   target_name: collectors
@@ -149,7 +149,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-009
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-detectors
   target_name: detectors
@@ -159,7 +159,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-010
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-diagnosers
   target_name: diagnosers
@@ -169,7 +169,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-011
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-actors
   target_name: actors
@@ -179,7 +179,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-012
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-verifiers
   target_name: verifiers
@@ -189,7 +189,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-013
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-evolution
   target_name: evolution
@@ -199,7 +199,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-014
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-forensic
   target_name: forensic
@@ -209,7 +209,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-015
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-resilience
   target_name: resilience
@@ -219,7 +219,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-016
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-security
   target_name: security
@@ -229,7 +229,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-017
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-gates
   target_name: gates
@@ -239,7 +239,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-018
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-protocols
   target_name: protocols
@@ -251,11 +251,11 @@ dependencies:
 - dep_id: DEP-019
   source: SYS-MASTER-001
   source_name: system-master
-  target: MOD-MASTER-001
+  target: MOD-MASTER_BLUEPRINT
   target_name: master-blueprint
   type: contract
   strength: hard
-  description: SYS-MASTER-001 三级金字塔顶点——通过 §零 导航链向下分派到 MOD-MASTER-001 Level 1 集成契约，冷启动
+  description: SYS-MASTER-001 三级金字塔顶点——通过 §零 导航链向下分派到 MOD-MASTER_BLUEPRINT Level 1 集成契约，冷启动
     AI 通过此链定位子系统蓝图。
   contract_anchor: SYS-MASTER-001 §零 导航链
   direction: downstream
@@ -268,7 +268,7 @@ dependencies:
   type: contract
   strength: hard
   description: 回滚操作写入 Audit Trail（ProvenanceStandard + HMAC-SHA256 签名），G-CT-002 契约锚定。
-  contract_anchor: MOD-023 G-CT-002
+  contract_anchor: MOD-GOVERNANCE G-CT-002
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-021
@@ -284,7 +284,7 @@ dependencies:
 - dep_id: DEP-022
   source: MOD-INF-021
   source_name: rollback-system
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: runtime
   strength: hard
@@ -294,7 +294,7 @@ dependencies:
 - dep_id: DEP-023
   source: MOD-INF-021
   source_name: rollback-system
-  target: MOD-MASTER-001
+  target: MOD-MASTER_BLUEPRINT
   target_name: master-blueprint
   type: contract
   strength: hard
@@ -310,7 +310,7 @@ dependencies:
   type: contract
   strength: soft
   description: 回滚失败结果进入 Escalation——G-CT-003 契约锚定。
-  contract_anchor: MOD-023 G-CT-003
+  contract_anchor: MOD-GOVERNANCE G-CT-003
   direction: downstream
   valid_since: '2026-05-05'
 - dep_id: DEP-025
@@ -321,7 +321,7 @@ dependencies:
   type: runtime
   strength: hard
   description: 漂移检测触发回滚——DriftEvent → RollbackExecutor 消费，G-CT-005 契约锚定。
-  contract_anchor: MOD-023 G-CT-005
+  contract_anchor: MOD-GOVERNANCE G-CT-005
   direction: downstream
   valid_since: '2026-05-05'
 - dep_id: DEP-025a
@@ -332,7 +332,7 @@ dependencies:
   type: runtime
   strength: hard
   description: 漂移预算耗尽触发升级——G-CT-006 契约锚定。
-  contract_anchor: MOD-023 G-CT-006
+  contract_anchor: MOD-GOVERNANCE G-CT-006
   direction: downstream
   valid_since: '2026-05-15'
 - dep_id: DEP-025b
@@ -358,7 +358,7 @@ dependencies:
 - dep_id: DEP-025d
   source: MOD-INF-023
   source_name: drift-detector
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: runtime
   strength: hard
@@ -378,7 +378,7 @@ dependencies:
 - dep_id: DEP-025f
   source: MOD-INF-023
   source_name: drift-detector
-  target: MOD-INF-012
+  target: MOD-DATABASE
   target_name: database
   type: runtime
   strength: hard
@@ -388,7 +388,7 @@ dependencies:
 - dep_id: DEP-026
   source: MOD-INF-020
   source_name: audit-trail
-  target: MOD-INF-012
+  target: MOD-DATABASE
   target_name: database
   type: runtime
   strength: hard
@@ -398,12 +398,12 @@ dependencies:
 - dep_id: DEP-027
   source: MOD-INF-020
   source_name: audit-trail
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: runtime
   strength: hard
   description: Gate Audit Trail 检查——门禁决策写入审计日志，实时阻断联动。
-  contract_anchor: MOD-023 G-CT-006
+  contract_anchor: MOD-GOVERNANCE G-CT-006
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-028
@@ -424,13 +424,13 @@ dependencies:
   type: runtime
   strength: hard
   description: 审计追踪链 ↔ 漂移检测器双向桥接——DriftEvent 触发审计异常签名 + 审计对账。
-  contract_anchor: MOD-023 G-CT-007
+  contract_anchor: MOD-GOVERNANCE G-CT-007
   direction: peer
   valid_since: '2026-05-08'
 - dep_id: DEP-030
   source: MOD-INF-015
   source_name: system-telemetry
-  target: MOD-INF-012
+  target: MOD-DATABASE
   target_name: database
   type: data
   strength: hard
@@ -484,7 +484,7 @@ dependencies:
 - dep_id: DEP-035
   source: MOD-INF-017
   source_name: code-dedup-engine
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: runtime
   strength: hard
@@ -494,7 +494,7 @@ dependencies:
 - dep_id: DEP-036
   source: MOD-INF-017
   source_name: code-dedup-engine
-  target: MOD-INF-008
+  target: MOD-CONTEXT_ENGINE
   target_name: context-engine
   type: contract
   strength: hard
@@ -504,7 +504,7 @@ dependencies:
 - dep_id: DEP-037
   source: MOD-INF-017
   source_name: code-dedup-engine
-  target: MOD-INF-010
+  target: MOD-FEEDBACK_LOOP
   target_name: feedback-loop
   type: runtime
   strength: hard
@@ -524,7 +524,7 @@ dependencies:
 - dep_id: DEP-039
   source: MOD-INF-017
   source_name: code-dedup-engine
-  target: MOD-INF-012
+  target: MOD-DATABASE
   target_name: database
   type: data
   strength: hard
@@ -534,7 +534,7 @@ dependencies:
 - dep_id: DEP-040
   source: MOD-INF-030
   source_name: red-blue-validator
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: runtime
   strength: hard
@@ -638,7 +638,7 @@ dependencies:
 - dep_id: DEP-050
   source: MOD-INF-030
   source_name: red-blue-validator
-  target: MOD-INF-014
+  target: MOD-LLM_SECURITY
   target_name: llm-security
   type: contract
   strength: hard
@@ -667,7 +667,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-053
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-016
   target_name: shared-core
@@ -675,22 +675,22 @@ dependencies:
   strength: hard
   description: 资源优化引擎依赖 shared-core 的 DaemonRegistry/EventBus/ContractBus/API_INDEX
     基础设施。
-  contract_anchor: MOD-INF-032 §5
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §5
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-054
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-015
   target_name: system-telemetry
   type: runtime
   strength: hard
   description: 资源优化引擎依赖 system-telemetry 上报 SLI 指标和健康探针。
-  contract_anchor: MOD-INF-032 §15.5
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §15.5
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-055
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-009
   target_name: pipeline
@@ -700,62 +700,62 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-056
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
-  target: MOD-INF-010
+  target: MOD-FEEDBACK_LOOP
   target_name: feedback-loop
   type: runtime
   strength: hard
   description: 资源优化引擎将 FLE-Scheduler 注册为守护线程，接收资源异常检测器。
-  contract_anchor: MOD-INF-032 §7.1
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §7.1
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-057
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: contract
   strength: soft
   description: 资源优化引擎注册 G-RES 资源检查门禁规则，资源不足时门禁阻断。
-  contract_anchor: MOD-INF-032 §15.4
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §15.4
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-058
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-020
   target_name: audit-trail
   type: contract
   strength: soft
   description: 优化动作审计记录——每个优化动作写入 Audit Trail。
-  contract_anchor: MOD-INF-032 §15.2 CT-ROE-002
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §15.2 CT-ROE-002
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-059
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-023
   target_name: drift-detector
   type: runtime
   strength: soft
   description: 资源配置漂移检测——阈值被篡改时触发漂移告警。
-  contract_anchor: MOD-INF-032 §15.2 CT-ROE-006
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §15.2 CT-ROE-006
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-060
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-024
   target_name: budget-enforcer
   type: runtime
   strength: soft
   description: 资源成本预算联动——资源超支时触发预算降级。
-  contract_anchor: MOD-INF-032 §15.2 CT-ROE-003
+  contract_anchor: MOD-RESOURCE_OPTIMIZATION_ENGINE §15.2 CT-ROE-003
   direction: peer
   valid_since: '2026-05-08'
 - dep_id: DEP-061
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-019
   target_name: agent-spec
@@ -765,7 +765,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-062
-  source: MOD-INF-032
+  source: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_name: resource-optimization-engine
   target: MOD-INF-013
   target_name: mcp-servers
@@ -817,7 +817,7 @@ dependencies:
 - dep_id: DEP-067
   source: MOD-INF-024
   source_name: budget-enforcer
-  target: MOD-INF-012
+  target: MOD-DATABASE
   target_name: database
   type: data
   strength: soft
@@ -827,7 +827,7 @@ dependencies:
 - dep_id: DEP-068
   source: MOD-INF-024
   source_name: budget-enforcer
-  target: MOD-INF-014
+  target: MOD-LLM_SECURITY
   target_name: llm-security-gateway
   type: contract
   strength: soft
@@ -847,7 +847,7 @@ dependencies:
 - dep_id: DEP-070
   source: MOD-INF-024
   source_name: budget-enforcer
-  target: MOD-INF-008
+  target: MOD-CONTEXT_ENGINE
   target_name: context-engine
   type: runtime
   strength: soft
@@ -857,7 +857,7 @@ dependencies:
 - dep_id: DEP-071
   source: MOD-INF-024
   source_name: budget-enforcer
-  target: MOD-INF-006
+  target: MOD-TASK_SYSTEM
   target_name: task-system
   type: data
   strength: soft
@@ -867,7 +867,7 @@ dependencies:
 - dep_id: DEP-019-001
   source: MOD-INF-019
   source_name: agent-spec
-  target: MOD-INF-007
+  target: MOD-GATE_ENGINE
   target_name: gate-engine
   type: runtime
   strength: hard
@@ -877,7 +877,7 @@ dependencies:
 - dep_id: DEP-019-002
   source: MOD-INF-019
   source_name: agent-spec
-  target: MOD-INF-008
+  target: MOD-CONTEXT_ENGINE
   target_name: context-engine
   type: runtime
   strength: hard
@@ -947,7 +947,7 @@ dependencies:
 - dep_id: DEP-019-009
   source: MOD-INF-019
   source_name: agent-spec
-  target: MOD-INF-010
+  target: MOD-FEEDBACK_LOOP
   target_name: feedback-loop
   type: runtime
   strength: soft
@@ -957,7 +957,7 @@ dependencies:
 - dep_id: DEP-019-010
   source: MOD-INF-019
   source_name: agent-spec
-  target: MOD-INF-012
+  target: MOD-DATABASE
   target_name: database
   type: data
   strength: soft
@@ -967,7 +967,7 @@ dependencies:
 - dep_id: DEP-019-011
   source: MOD-INF-019
   source_name: agent-spec
-  target: MOD-INF-014
+  target: MOD-LLM_SECURITY
   target_name: llm-security-gateway
   type: runtime
   strength: soft
@@ -1027,7 +1027,7 @@ dependencies:
 - dep_id: DEP-073
   source: MOD-INF-015
   source_name: system-telemetry
-  target: MOD-INF-014
+  target: MOD-LLM_SECURITY
   target_name: llm-security-gateway
   type: runtime
   strength: hard
@@ -1047,7 +1047,7 @@ dependencies:
 - dep_id: DEP-075
   source: MOD-INF-015
   source_name: system-telemetry
-  target: MOD-INF-010
+  target: MOD-FEEDBACK_LOOP
   target_name: fle
   type: runtime
   strength: soft
@@ -1077,7 +1077,7 @@ dependencies:
 - dep_id: DEP-078
   source: MOD-INF-015
   source_name: system-telemetry
-  target: MOD-INF-008
+  target: MOD-CONTEXT_ENGINE
   target_name: context-engine
   type: runtime
   strength: soft
@@ -1155,7 +1155,7 @@ dependencies:
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-086
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-scheduler_act
   target_name: scheduler_act
@@ -1165,7 +1165,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-087
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-scheduler_collect_detect
   target_name: scheduler_collect_detect
@@ -1175,7 +1175,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-088
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-scheduler_health
   target_name: scheduler_health
@@ -1185,7 +1185,7 @@ dependencies:
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-089
-  source: MOD-INF-010
+  source: MOD-FEEDBACK_LOOP
   source_name: feedback-loop
   target: fle-scheduler_safety
   target_name: scheduler_safety
@@ -1197,15 +1197,15 @@ dependencies:
 dependency_graph:
   forward:
     SYS-MASTER-001:
-    - MOD-MASTER-001
+    - MOD-MASTER_BLUEPRINT
     MOD-INF-001: []
     MOD-INF-002:
     - MOD-INF-001
     - MOD-INF-039
     MOD-INF-005:
     - MOD-INF-001
-    - MOD-INF-006
-    MOD-INF-006:
+    - MOD-TASK_SYSTEM
+    MOD-TASK_SYSTEM:
     - MOD-INF-001
     - MOD-INF-002
     - MOD-INF-005
@@ -1214,32 +1214,32 @@ dependency_graph:
     MOD-INF-011:
     - MOD-INF-039
     MOD-INF-015:
-    - MOD-INF-012
+    - MOD-DATABASE
     - MOD-INF-024
     - MOD-INF-022
     - MOD-INF-018
     - MOD-INF-016
-    - MOD-INF-014
+    - MOD-LLM_SECURITY
     - MOD-INF-001
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     - MOD-INF-020
     - MOD-INF-023
-    - MOD-INF-008
+    - MOD-CONTEXT_ENGINE
     - MOD-INF-021
     MOD-INF-017:
     - MOD-INF-005
-    - MOD-INF-007
-    - MOD-INF-008
-    - MOD-INF-010
+    - MOD-GATE_ENGINE
+    - MOD-CONTEXT_ENGINE
+    - MOD-FEEDBACK_LOOP
     - MOD-INF-016
-    - MOD-INF-012
+    - MOD-DATABASE
     MOD-INF-020:
     - MOD-INF-021
     MOD-INF-021:
     - MOD-INF-020
     - MOD-INF-018
-    - MOD-INF-007
-    - MOD-MASTER-001
+    - MOD-GATE_ENGINE
+    - MOD-MASTER_BLUEPRINT
     MOD-INF-022:
     - MOD-INF-021
     MOD-INF-023:
@@ -1247,11 +1247,11 @@ dependency_graph:
     - MOD-INF-022
     - MOD-INF-020
     - MOD-INF-018
-    - MOD-INF-007
+    - MOD-GATE_ENGINE
     - MOD-INF-016
-    - MOD-INF-012
+    - MOD-DATABASE
     MOD-INF-030:
-    - MOD-INF-007
+    - MOD-GATE_ENGINE
     - MOD-INF-020
     - MOD-INF-028
     - MOD-INF-017
@@ -1260,32 +1260,32 @@ dependency_graph:
     - MOD-INF-022
     - MOD-INF-029
     - MOD-INF-031
-    - MOD-INF-014
+    - MOD-LLM_SECURITY
     - MOD-INF-013
     - MOD-INF-024
-    MOD-INF-032:
+    MOD-RESOURCE_OPTIMIZATION_ENGINE:
     - MOD-INF-016
     - MOD-INF-015
     - MOD-INF-009
-    - MOD-INF-010
-    - MOD-INF-007
+    - MOD-FEEDBACK_LOOP
+    - MOD-GATE_ENGINE
     - MOD-INF-020
     - MOD-INF-023
     - MOD-INF-024
     - MOD-INF-019
     - MOD-INF-013
     MOD-INF-019:
-    - MOD-INF-007
-    - MOD-INF-008
+    - MOD-GATE_ENGINE
+    - MOD-CONTEXT_ENGINE
     - MOD-INF-009
     - MOD-INF-018
     - MOD-INF-020
     - MOD-INF-023
     - MOD-INF-025
     - MOD-INF-005
-    - MOD-INF-010
-    - MOD-INF-012
-    - MOD-INF-014
+    - MOD-FEEDBACK_LOOP
+    - MOD-DATABASE
+    - MOD-LLM_SECURITY
     - MOD-INF-021
     - MOD-INF-022
     - MOD-INF-024
@@ -1296,11 +1296,11 @@ dependency_graph:
     - MOD-INF-020
     - MOD-INF-022
     - MOD-INF-016
-    - MOD-INF-012
-    - MOD-INF-014
+    - MOD-DATABASE
+    - MOD-LLM_SECURITY
     - MOD-INF-023
-    - MOD-INF-008
-    - MOD-INF-006
+    - MOD-CONTEXT_ENGINE
+    - MOD-TASK_SYSTEM
     - MOD-INF-015
     - MOD-INF-034
     MOD-INF-039: []
@@ -1308,70 +1308,70 @@ dependency_graph:
     MOD-INF-001:
     - MOD-INF-002
     - MOD-INF-005
-    - MOD-INF-006
+    - MOD-TASK_SYSTEM
     - MOD-INF-015
     MOD-INF-002:
-    - MOD-INF-006
+    - MOD-TASK_SYSTEM
     - MOD-INF-039
     MOD-INF-005:
-    - MOD-INF-006
+    - MOD-TASK_SYSTEM
     - MOD-INF-017
     - MOD-INF-019
-    MOD-INF-006:
+    MOD-TASK_SYSTEM:
     - MOD-INF-005
-    MOD-INF-007:
+    MOD-GATE_ENGINE:
     - MOD-INF-021
     - MOD-INF-017
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
-    MOD-INF-008:
+    MOD-CONTEXT_ENGINE:
     - MOD-INF-017
     - MOD-INF-019
     MOD-INF-009:
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
     - MOD-INF-039
     MOD-INF-011:
     - MOD-INF-039
-    MOD-INF-010:
+    MOD-FEEDBACK_LOOP:
     - MOD-INF-017
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
     - MOD-INF-015
-    MOD-INF-012:
+    MOD-DATABASE:
     - MOD-INF-015
     - MOD-INF-017
     - MOD-INF-019
     MOD-INF-013:
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     MOD-INF-015:
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-024
     MOD-INF-016:
     - MOD-INF-017
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-015
     MOD-INF-018:
     - MOD-INF-021
     - MOD-INF-015
     - MOD-INF-019
     MOD-INF-019:
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     MOD-INF-025:
     - MOD-INF-019
-    MOD-INF-014:
+    MOD-LLM_SECURITY:
     - MOD-INF-019
     - MOD-INF-015
     MOD-KB-001:
     - MOD-INF-019
     MOD-INF-020:
-    - MOD-INF-007
+    - MOD-GATE_ENGINE
     - MOD-INF-015
-    - MOD-INF-012
+    - MOD-DATABASE
     - MOD-INF-016
     - MOD-INF-023
     - MOD-INF-021
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
     MOD-INF-034:
     - MOD-INF-024
@@ -1388,45 +1388,45 @@ dependency_graph:
     - MOD-INF-015
     - MOD-INF-019
     MOD-INF-023:
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
     MOD-INF-024:
     - MOD-INF-001
     - MOD-INF-020
     - MOD-INF-023
-    - MOD-INF-014
+    - MOD-LLM_SECURITY
     - MOD-INF-022
-    - MOD-INF-008
-    - MOD-INF-006
+    - MOD-CONTEXT_ENGINE
+    - MOD-TASK_SYSTEM
     - MOD-INF-016
-    - MOD-INF-012
+    - MOD-DATABASE
     - MOD-INF-015
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
-    MOD-MASTER-001:
+    MOD-MASTER_BLUEPRINT:
     - MOD-INF-021
     fle-collectors:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-detectors:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-diagnosers:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-actors:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-verifiers:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-evolution:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-forensic:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-resilience:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-security:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-gates:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
     fle-protocols:
-    - MOD-INF-010
+    - MOD-FEEDBACK_LOOP
 summary:
   total_dependencies: 111
   by_type:
@@ -1461,11 +1461,11 @@ changelog:
 - version: 1.0.3
   date: '2026-05-08'
   changes:
-  - GAP-2：新增 DEP-019 SYS-MASTER-001→MOD-MASTER-001 合同依赖，登记三级金字塔顶点与集成契约的上下游关系
+  - GAP-2：新增 DEP-019 SYS-MASTER-001→MOD-MASTER_BLUEPRINT 合同依赖，登记三级金字塔顶点与集成契约的上下游关系
 - version: 1.0.2
   date: '2026-05-06'
   changes:
-  - AUDIT-02：DEP source_name 对齐 task-system；reverse(MOD-INF-006) 补齐 MOD-INF-005
+  - AUDIT-02：DEP source_name 对齐 task-system；reverse(MOD-TASK_SYSTEM) 补齐 MOD-INF-005
 - version: 1.0.1
   date: '2026-05-06'
   changes:

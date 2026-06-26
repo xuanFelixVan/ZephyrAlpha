@@ -11,7 +11,7 @@ ttl: permanent
 
 | 不管的内容 | 正确位置 |
 |-----------|---------|
-| 任务系统的 TaskCard 状态机和任务生命周期 | MOD-INF-006（任务系统蓝图） |
+| 任务系统的 TaskCard 状态机和任务生命周期 | MOD-TASK_SYSTEM（任务系统蓝图） |
 | 上下文引擎的 Token 预算追踪和注入策略 | `context_engine/` 模块（ADR-0015） |
 | VMS（Vector Memory Service）的 `InProcessVectorMemory` | `src/zephyr/vector-memory/`（beta 目标，当前空包） |
 | Session Log 的结构和交接协议 | `_registry/schemas/session-log-schema.yaml` |

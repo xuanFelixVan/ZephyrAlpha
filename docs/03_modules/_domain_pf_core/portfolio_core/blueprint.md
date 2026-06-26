@@ -16,7 +16,7 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/pf_core/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"

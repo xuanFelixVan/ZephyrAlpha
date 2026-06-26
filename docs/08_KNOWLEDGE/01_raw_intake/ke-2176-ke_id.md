@@ -14,4 +14,4 @@ ttl: permanent
 
 - **最终格式**：`KE-{NNN}`（NNN = 3位递增编号，如 KE-001、KE-042）
 - **裁决理由**：简短+机器可消费+与 `KMS-` 前缀冲突时已代码实现的事实为准（代码 = 最终仲裁者）
-- **与 task_id 格式的关系**：KE ID ≠ task_id。KE 有独立的 `KE-{NNN}` 格式；KB 施工任务用 MOD-INF-006 的 `{NAMESPACE}-{SEQ}` 格式（如 `KB-INF-0001`）。
+- **与 task_id 格式的关系**：KE ID ≠ task_id。KE 有独立的 `KE-{NNN}` 格式；KB 施工任务用 MOD-TASK_SYSTEM 的 `{NAMESPACE}-{SEQ}` 格式（如 `KB-INF-0001`）。

@@ -18,7 +18,7 @@
 Blueprint-Code Sync — 蓝图-代码索引同步验证。
 
 依据：
-    蓝图 MOD-INF-006 §6.4.2 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.4.2 + v0.6.0
     任务卡 TASK-INF-0111 (Part 2/2)
 """
 
@@ -94,7 +94,7 @@ class BlueprintCodeSync:
         entries: list[SyncEntry] = []
 
         task_dir = self._project_root / "docs" / "03_modules" / "infrastructure_runtime_integration" / "task-system"
-        changes_dir = task_dir / "changes" / "MOD-INF-006"
+        changes_dir = task_dir / "changes" / "MOD-TASK_SYSTEM"
 
         if not changes_dir.exists():
             return entries

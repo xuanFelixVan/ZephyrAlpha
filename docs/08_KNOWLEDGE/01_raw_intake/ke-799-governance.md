@@ -15,7 +15,7 @@ ttl: permanent
 | 变更类型 | 影响范围 | 同步动作 | 时机 |
 |---------|---------|---------|------|
 | 新增/删除生命周期阶段 | 全部 Tier 1 消费者 | 更新所有文件中的 `status` 枚举列表 + MLC-001 转换表 | 同 commit |
-| 修改 MLC-001 转换条件 | GOV-MOD-001（Tier 1） | 确保准入规则与前置条件一致 | 同 commit |
+| 修改 MLC-001 转换条件 | GOV-MOD-ALPHA_SIGNAL_DOMAIN（Tier 1） | 确保准入规则与前置条件一致 | 同 commit |
 | 修改 §3 受控枚举表 | GOV-MOD-005（Tier 1） | 更新 INJ-004 `valid_values` 列表 | 同 commit |
 | 修改 MLC-003 退役步骤 | GOV-MOD-004（Tier 1） | 更新 IFC-007 消费者迁移步骤引用 | 同 commit 或 24h 内 |
 | 修改 P0 特殊约束 | 全部 Tier 1 | 评估 P0 模块是否需重新审批 | 同 commit |

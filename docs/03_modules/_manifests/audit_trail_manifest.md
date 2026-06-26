@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Audit Trail.Manifest
 module_id: MOD-045
 ttl: permanent

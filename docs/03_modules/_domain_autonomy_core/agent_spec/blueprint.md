@@ -16,27 +16,27 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: src/zephyr/governance/agent_spec/
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "可执行 Agent Spec——将蓝图转化为 AI Agent 可执行操作手册，按领域+角色双维度组织，通过 AGENTS.md 路由 + Progressive Disclosure 按需加载。"
 tags: [agent-spec, skill, executable-blueprint, codified-context, progressive-disclosure, skill-security, canary-deployment, skill-lifecycle, kill-switch, skill-economics, compliance, kya, sandbox, cross-model, skill-ontology, prompt-engineering, attention-economics, idempotency, circuit-breaker, shadow-deploy, skill-contract, self-learning, feature-flags, model-evolution, silent-failure, xai-explainability, confidence-calibration, context-isolation, multi-skill-consensus, cognitive-preservation, workflow-orchestration, prompt-caching, skill-knowledge-base, dependency-injection, output-guardrails, team-composition, skill-discovery]
 priority: P0
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-007", at: "全篇", why: "Gate Engine——门禁验证"}
-  - {target: "MOD-INF-008", at: "全篇", why: "Context Engine——上下文注入"}
+  - {target: "MOD-GATE_ENGINE", at: "全篇", why: "Gate Engine——门禁验证"}
+  - {target: "MOD-CONTEXT_ENGINE", at: "全篇", why: "Context Engine——上下文注入"}
   - {target: "MOD-INF-009", at: "全篇", why: "Pipeline——多模型路由"}
   - {target: "MOD-INF-018", at: "§2", why: "Agent RBAC——Skill 加载权限检查"}
   - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——Skill 执行审计闭环"}
-  - {target: "MOD-INF-010", at: "§4", why: "Feedback Loop——预测-诊断-修复闭环"}
+  - {target: "MOD-FEEDBACK_LOOP", at: "§4", why: "Feedback Loop——预测-诊断-修复闭环"}
   - {target: "MOD-INF-021", at: "§3", why: "Rollback System——Skill 执行失败回滚"}
   - {target: "MOD-INF-022", at: "§3", why: "Escalation Protocol——升级/委托路线"}
   - {target: "MOD-INF-024", at: "§2", why: "Budget Enforcer——token 预算管控"}
   - {target: "MOD-INF-023", at: "全篇", why: "Drift Detector——漂移检测"}
   - {target: "MOD-INF-005", at: "§2", why: "Script System——审计管线整合"}
   - {target: "MOD-KB-001", at: "§4", why: "Knowledge Base——新模式沉淀为 KE"}
-  - {target: "MOD-INF-014", at: "§8", why: "LLM Security Gateway——注入攻击检测"}
+  - {target: "MOD-LLM_SECURITY", at: "§8", why: "LLM Security Gateway——注入攻击检测"}
   - {target: "MOD-INF-025", at: "§3", why: "A2A Protocol——Agent间协调后加载规格"}
-  - {target: "MOD-INF-012", at: "§10", why: "Database——间接依赖(019→018→007→005→012)"}
+  - {target: "MOD-DATABASE", at: "§10", why: "Database——间接依赖(019→018→007→005→012)"}
 ssot_claims:
   - {content: "Agent Spec 核心架构设计", source: "本蓝图 §1-§10"}
   - {content: "Agent Spec 接口契约", source: "本蓝图 §4"}
@@ -51,7 +51,7 @@ generation: 2
 functional_domain: intelligence
 value_stream: line3
 value_stream_role: Skill加载
-governance_domain: MOD-023
+governance_domain: MOD-GOVERNANCE
 parent_module: ""
 rule_form: structural
 scope: global
@@ -79,7 +79,7 @@ references: []
 
 ## 概述
 
-本蓝图描述 Agent Spec——ZephyrAlpha 的 AI 能力发现与路由系统，采用 L0/L1/L2/L3 四层渐进披露架构。L0 永久加载核心规则（~500 token），L1 触发加载领域 Skill，L2 按需组合，L3 动态发现。通过关键词匹配 + BGE-M3 语义路由实现 O(log N) 能力发现。当前管理 21 个 Domain Skill + 3 个 Role Skill，目标覆盖全项目 55 模块。上游依赖 MOD-INF-007/008/009/018，下游被 MOD-INF-020/026 消费。
+本蓝图描述 Agent Spec——ZephyrAlpha 的 AI 能力发现与路由系统，采用 L0/L1/L2/L3 四层渐进披露架构。L0 永久加载核心规则（~500 token），L1 触发加载领域 Skill，L2 按需组合，L3 动态发现。通过关键词匹配 + BGE-M3 语义路由实现 O(log N) 能力发现。当前管理 21 个 Domain Skill + 3 个 Role Skill，目标覆盖全项目 55 模块。上游依赖 MOD-GATE_ENGINE/008/009/018，下游被 MOD-INF-020/026 消费。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
@@ -218,7 +218,7 @@ references: []
 
 ---
 
-## MOD-023 集成契约锚点 {temporal_type=permanent}
+## MOD-GOVERNANCE 集成契约锚点 {temporal_type=permanent}
 
 > 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
 
@@ -294,7 +294,7 @@ references: []
 | # | 类型 | 职责 | 详情 | 负责方 | 与其他蓝图重叠？ |
 |---|:----:|------|------|--------|---------------|
 | 1 | ✅ 包含 | 蓝图→Skill 升级引擎 | SpecEngine 四阶段：discover→generate→validate→register | 本模块 | 无 |
-| 2 | ✅ 包含 | Skill 渐进加载 | Progressive Disclosure L1→L2→L3 | 本模块 | ⚠️ MOD-INF-008 Context Engine 概念重叠（上下文注入），但粒度不同 |
+| 2 | ✅ 包含 | Skill 渐进加载 | Progressive Disclosure L1→L2→L3 | 本模块 | ⚠️ MOD-CONTEXT_ENGINE Context Engine 概念重叠（上下文注入），但粒度不同 |
 | 3 | ✅ 包含 | Skill 路由 | 关键词 + 语义 fallback | 本模块 | 无 |
 | 4 | ✅ 包含 | Skill 生命周期管理 | 四阶段状态机 + 新鲜度 | 本模块 | 无 |
 | 5 | ✅ 包含 | Skill 安全防护 | 注入检测 + 沙箱 + 审计 | 本模块 | 无 |
@@ -308,8 +308,8 @@ references: []
 | 声明项 | 无重叠模块 | 验证方式 |
 |--------|-----------|---------|
 | 蓝图→Skill 升级引擎 | [MOD-INF-018, MOD-INF-035] | `python scripts/governance/check_ssot_uniqueness.py --blueprint MOD-INF-019` |
-| Skill 渐进加载 | [MOD-INF-008] | 同上 |
-| Skill 路由 | [MOD-MASTER-004] | 同上（MOD-MASTER-001 已声明委托） |
+| Skill 渐进加载 | [MOD-CONTEXT_ENGINE] | 同上 |
+| Skill 路由 | [MOD-MASTER_BLUEPRINT] | 同上（MOD-MASTER_BLUEPRINT 已声明委托） |
 | Skill 生命周期管理 | [MOD-INF-035] | 同上 |
 | Skill 安全防护 | [MOD-INF-018, MOD-INF-020] | 同上 |
 
@@ -321,7 +321,7 @@ references: []
 
 | # | 组件 | 职责 | 依赖 | 交互方式 |
 |---|------|------|------|---------|
-| 1 | SpecEngine | 蓝图→Skill 升级引擎 | MOD-INF-007, MOD-INF-008 | 同步调用 |
+| 1 | SpecEngine | 蓝图→Skill 升级引擎 | MOD-GATE_ENGINE, MOD-CONTEXT_ENGINE | 同步调用 |
 | 2 | SkillLoader | Skill 加载与缓存 | MOD-INF-018 (RBAC) | 同步调用 |
 | 3 | SkillRouter | 关键词/语义路由 | MOD-INF-011 (VectorMemory) | 同步调用 |
 | 4 | ProgressiveDisclosure | 三层递进加载 | — | 同步调用 |
@@ -699,17 +699,17 @@ class ConstructionStage(str, Enum):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-007 | 必须 | Gate Engine——门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
-| MOD-INF-008 | 必须 | Context Engine——上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-CONTEXT_ENGINE | 必须 | Context Engine——上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` |
 | MOD-INF-009 | 必须 | Pipeline——多模型路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC——权限检查 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
 | MOD-INF-020 | 必须 | Audit Trail——审计闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-023 | 必须 | Drift Detector——漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
 | MOD-INF-025 | 必须 | A2A Protocol——Agent间协调后加载规格 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\a2a-protocol\blueprint.md` |
 | MOD-INF-005 | 必须 | Governance Automation——审计管线整合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\governance-automation\blueprint.md` |
-| MOD-INF-010 | 可选 | Feedback Loop——预测-诊断-修复闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
-| MOD-INF-012 | 间接 | Database——间接依赖(019→018→007→005→012) | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
-| MOD-INF-014 | 可选 | LLM Security Gateway——注入攻击检测 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | Feedback Loop——预测-诊断-修复闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-DATABASE | 间接 | Database——间接依赖(019→018→007→005→012) | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
+| MOD-LLM_SECURITY | 可选 | LLM Security Gateway——注入攻击检测 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
 | MOD-INF-021 | 可选 | Rollback System——Skill 执行失败回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
 | MOD-INF-022 | 可选 | Escalation Protocol——升级/委托路线 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
 | MOD-INF-024 | 可选 | Budget Enforcer——token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
@@ -734,9 +734,9 @@ class ConstructionStage(str, Enum):
 | # | 重叠概念 | 重叠维度 | 对方模块 | 委托关系 | 处置状态 |
 |---|---------|---------|---------|---------|---------|
 | 1 | 能力注册/发现 | 注册Schema+发现接口 | MOD-INF-035 CapabilityRegistry | 共存（需协调） | 已处置——Spec=编译时蓝图→Skill，CR=运行时能力发现 |
-| 2 | 上下文注入 | 加载通知+上下文刷新 | MOD-INF-008 Context Engine | 共存（需协调） | 已处置——Spec=Skill内容加载，CE=上下文窗口装配 |
+| 2 | 上下文注入 | 加载通知+上下文刷新 | MOD-CONTEXT_ENGINE Context Engine | 共存（需协调） | 已处置——Spec=Skill内容加载，CE=上下文窗口装配 |
 | 3 | 触发路由 | 路由表+分派 | orchestrator.SkillRouter | 共存（需协调） | 已处置——命名已消除歧义：skill_router.py vs event_router |
-| 4 | Skill 路由接口 | CBAC授权矩阵+路由接口 | MOD-MASTER-004 | 对方委托本模块 | 已处置——MOD-MASTER-001 已声明委托 |
+| 4 | Skill 路由接口 | CBAC授权矩阵+路由接口 | MOD-MASTER_BLUEPRINT | 对方委托本模块 | 已处置——MOD-MASTER_BLUEPRINT 已声明委托 |
 
 ### 10.6 依赖链风险评级
 
@@ -796,7 +796,7 @@ class ConstructionStage(str, Enum):
 | Audit Trail (MOD-INF-020) | 事件写入 | `SkillExecutor._write_audit()` → AuditEvent | 集成测试 |
 | Agent RBAC (MOD-INF-018) | 权限检查 | `SkillLoader` 加载前检查 allowed-tools | 权限矩阵测试 |
 | Rollback (MOD-INF-021) | Checkpoint | `RollbackManager.create_checkpoint()` | 回滚测试 |
-| Feedback Loop (MOD-INF-010) | 五阶段闭环 | `SkillFeedbackLoop.predict→detect→diagnose→act→verify` | 闭环测试 |
+| Feedback Loop (MOD-FEEDBACK_LOOP) | 五阶段闭环 | `SkillFeedbackLoop.predict→detect→diagnose→act→verify` | 闭环测试 |
 | Budget Enforcer (MOD-INF-024) | 预算检查 | `BudgetEnforcer.check()` | 预算溢出测试 |
 | Escalation (MOD-INF-022) | 升级委托 | `EscalationHandler.escalate()` | 升级路径测试 |
 | Knowledge Base (MOD-KB-001) | 双向同步 | `KBIntegration.skill_to_kb()` / `kb_to_skill()` | 同步测试 |
@@ -869,7 +869,7 @@ class ConstructionStage(str, Enum):
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | MOD-INF-007 Gate Engine | hard | ✅ | ✅ |
+| 1 | MOD-GATE_ENGINE Gate Engine | hard | ✅ | ✅ |
 | 2 | MOD-INF-018 Agent RBAC | hard | ✅ | ✅ |
 | 3 | MOD-INF-020 Audit Trail | hard | ✅ | ✅ |
 | 4 | Domain Skill 目录结构 | soft | ❌ | ❌ |
@@ -1375,7 +1375,7 @@ class ConstructionStage(str, Enum):
 | Tier 1 | MOD-INF-018 Agent RBAC 蓝图 | §4 接口契约、G-CT-007 |
 | Tier 1 | MOD-INF-020 Audit Trail 蓝图 | §4 接口契约、G-CT-007 |
 | Tier 2 | MOD-INF-026 资产盘点 | Skill 注册事件 |
-| Tier 2 | MOD-INF-008 Context Engine | CE 刷新通知 |
+| Tier 2 | MOD-CONTEXT_ENGINE Context Engine | CE 刷新通知 |
 | Tier 3 | `src/zephyr/agent-spec/*.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则
@@ -1488,7 +1488,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 |---------|--------|---------|
 | MOD-INF-020 Audit Trail | skill_loaded/applied/drift_detected/unloaded 事件 | AuditEvent Dict |
 | MOD-INF-021 Rollback | Checkpoint per Skill 执行 | VersionCheckpoint |
-| MOD-INF-010 Feedback Loop | predict→detect→diagnose→act→verify 五阶段 | GateResult |
+| MOD-FEEDBACK_LOOP Feedback Loop | predict→detect→diagnose→act→verify 五阶段 | GateResult |
 | MOD-INF-018 RBAC | allowed-tools per Skill | PermissionLevel |
 | MOD-INF-024 Budget | token 消耗计入会话预算 | BudgetEnforcer |
 | MOD-INF-005 Script System | Skill 脚本 exit code→Finding | exit 0=pass,1=fail,2=warn,3=error |

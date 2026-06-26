@@ -79,7 +79,7 @@ DIMENSION_TO_MODULE_INFO: dict[str, dict[str, str]] = {
         "pipeline_modules": "M4,M5",
     },
     "compliance": {
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "assigned_pipeline": "B",
         "pipeline_modules": "M6,M7",
     },

@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Capacity Assurance.Manifest
 module_id: MOD-048
 ttl: permanent

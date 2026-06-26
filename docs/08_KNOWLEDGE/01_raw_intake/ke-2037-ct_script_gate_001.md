@@ -21,7 +21,7 @@ systems:
   - role: consumer
     name: gate_engine
     path: "src/zephyr/gates/"
-    blueprint: "MOD-INF-007"
+    blueprint: "MOD-GATE_ENGINE"
 
 mapping:
   script_exit_0: "GATE-n → PASS → 任务状态不变"

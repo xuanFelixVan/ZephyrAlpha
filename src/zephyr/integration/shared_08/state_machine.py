@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.shared_08.state_machine
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
-# [CONSUMERS] MOD-INF-006(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-INF-032(resource);MOD-INF-015(telemetry)
+# [CONSUMERS] MOD-TASK_SYSTEM(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-RESOURCE_OPTIMIZATION_ENGINE(resource);MOD-INF-015(telemetry)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 状态转换必须合法;转换守卫必须同步;命名冲突必须注册

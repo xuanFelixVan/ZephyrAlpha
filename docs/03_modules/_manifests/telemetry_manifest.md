@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ssot_path: src/zephyr/observability/telemetry
 status: active
 conflict_note: |

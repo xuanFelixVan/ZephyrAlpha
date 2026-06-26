@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.list_ce_files
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
@@ -17,7 +17,7 @@
 """
 list_ce_files.py — CE 文件清单生成器
 =====================================
-Task ID : MOD-INF-008-TASK-011
+Task ID : MOD-CONTEXT_ENGINE-TASK-011
 Priority: P2 (beta)
 """
 
@@ -49,7 +49,7 @@ def collect_files() -> dict[str, list[dict[str, str]]]:
 
 def generate_manifest() -> str:
     data = {
-        "module_id": "MOD-INF-008",
+        "module_id": "MOD-CONTEXT_ENGINE",
         "root": str(CE_ROOT),
         "files": collect_files(),
         "total_py_files": sum(1 for _ in CE_ROOT.glob("*.py") if not _.name.startswith("_")),

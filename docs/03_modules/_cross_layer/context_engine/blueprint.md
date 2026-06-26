@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-008
+module_id: MOD-CONTEXT_ENGINE
 submodule_path: src/zephyr/intelligence/context_management
 title: Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
 doc_type: blueprint
@@ -17,7 +17,7 @@ valid_from: 2026-05-07
 ttl: permanent
 construction_progress: design_only
 actual_disk_path: src/zephyr/intelligence/context_management/
-belongs_to: MOD-MASTER-001
+belongs_to: MOD-MASTER_BLUEPRINT
 parent_module:
 generation: 1
 functional_domain: intelligence
@@ -38,7 +38,7 @@ child_modules:
 
 # Context Engine 集成蓝图 — Core Pipeline + Governance & Operations 双蓝图索引
 
-> module_id: MOD-INF-008 | version: 1.0.0 | status: Active | layer: cross_layer
+> module_id: MOD-CONTEXT_ENGINE | version: 1.0.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orchestration/context_management/ | generation: 1 | construction_progress: completed
 > child_modules: MOD-INF-008A (Core Pipeline, 40文件) | MOD-INF-008B (Governance & Operations, 47文件)
 > 蓝图+施工图模板：[TPL-BLUEPRINT-001](file:///D:/ZephyrAlpha/docs/03_modules/template-registry.yaml)
@@ -46,14 +46,14 @@ child_modules:
 ## 概述
 
 > **架构归属SSoT**：`data/databases/depgraph.db`
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-008`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-CONTEXT_ENGINE`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 ### §0.1 代码文件清单
 
 > 本蓝图为集成索引，代码文件清单见子蓝图：MOD-INF-008A（Core Pipeline, 40文件）、MOD-INF-008B（Governance & Operations, 47文件）
 
-本蓝图是 Context Engine 的集成索引。MOD-INF-008 已拆分为两个职责单一的子蓝图，87 个 .py 文件全部已实现（含 assembly/management/parsing/support 5 子包 + config/2 yaml）。
+本蓝图是 Context Engine 的集成索引。MOD-CONTEXT_ENGINE 已拆分为两个职责单一的子蓝图，87 个 .py 文件全部已实现（含 assembly/management/parsing/support 5 子包 + config/2 yaml）。
 
 | 子蓝图 | 功能域 | 文件数 | 蓝图路径 |
 |--------|------|:---:|------|
@@ -97,8 +97,8 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 依赖模块 | 依赖类型 | 依赖内容 | 蓝图路径 |
 |---------|---------|---------|---------|
 | MOD-INF-011 VMS | 必须 | 知识检索 | `docs/03_modules/_domain-infra_ops/vector-memory/blueprint.md` |
-| MOD-INF-006 Task System | 必须 | 任务状态 | `docs/03_modules/_cross_layer/task-system/blueprint.md` |
-| MOD-INF-014 LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/llm-security/blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 必须 | 任务状态 | `docs/03_modules/_cross_layer/task-system/blueprint.md` |
+| MOD-LLM_SECURITY LSG | 必须 | 安全校验 | `docs/03_modules/_cross_layer/llm-security/blueprint.md` |
 | MOD-KB-001 | 必须 | 知识库检索源 | `docs/03_modules/_domain-infra_ops/knowledge-base/blueprint.md` |
 | MOD-INF-035 AutoRuntime Core | 可选 | 运行时调度 | `docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md` |
 
@@ -106,27 +106,27 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 消费者 | 消费方式 | 契约 |
 |--------|---------|------|
-| MOD-MASTER-001 (Orchestrator) | 调用 CE.build() | CT-ORC-CE-001 |
+| MOD-MASTER_BLUEPRINT (Orchestrator) | 调用 CE.build() | CT-ORC-CE-001 |
 | MOD-INF-011 (VMS) | 被 CE 检索 | CT-CE-VMS-001 |
-| MOD-INF-014 (LSG) | 被 CE 调用审查 | CT-CE-LSG-001 |
+| MOD-LLM_SECURITY (LSG) | 被 CE 调用审查 | CT-CE-LSG-001 |
 | AI Agent (via MCP) | 调用 /ce:fetch | DD113 |
 
 ## 项目中已有类似功能
 
 | 模块 | 覆盖范围 | 与 CE 的区别 |
 |------|---------|-------------|
-| MOD-INF-006 (Orchestrator) | Agent session 管理 | Orc 管理 Agent 生命周期；CE 管理上下文内容 |
+| MOD-TASK_SYSTEM (Orchestrator) | Agent session 管理 | Orc 管理 Agent 生命周期；CE 管理上下文内容 |
 | MOD-INF-011 (VMS) | 向量存储与检索 | VMS 是存储层；CE 是消费层 |
-| MOD-INF-014 (LSG) | 安全审查 | LSG 是安全门；CE 是上下文管道 |
+| MOD-LLM_SECURITY (LSG) | 安全审查 | LSG 是安全门；CE 是上下文管道 |
 | MOD-KB-001 (知识库) | KE CRUD | KB 是数据源；CE 是数据消费者 |
 
 ## 集成目标
 
 | # | 集成目标 | 对接模块 | 接口 | 状态 |
 |---|---------|---------|------|:---:|
-| 1 | Orchestrator 消费 CE 输出 | MOD-INF-006 | CE→Orc 优先级协议 | ✅ 已实现 |
+| 1 | Orchestrator 消费 CE 输出 | MOD-TASK_SYSTEM | CE→Orc 优先级协议 | ✅ 已实现 |
 | 2 | VMS 知识检索 | MOD-INF-011 | build 阶段查询 | ✅ 已实现 |
-| 3 | LSG 安全审查 | MOD-INF-014 | validate 阶段审查 | ✅ 已实现 |
+| 3 | LSG 安全审查 | MOD-LLM_SECURITY | validate 阶段审查 | ✅ 已实现 |
 
 ## 产出物存放目录
 
@@ -146,8 +146,8 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | 代码落位 | `src/zephyr/context-engine/` |
 | 总蓝图 | [MASTER-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) |
 | VMS 蓝图 | MOD-INF-011 |
-| LSG 蓝图 | MOD-INF-014 |
-| Orchestrator 蓝图 | MOD-INF-006 |
+| LSG 蓝图 | MOD-LLM_SECURITY |
+| Orchestrator 蓝图 | MOD-TASK_SYSTEM |
 | 知识库蓝图 | MOD-KB-001 |
 | 蓝图注册表 | [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) |
 
@@ -157,7 +157,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | # | 铁律 | 委托 |
 |---|------|------|
-| 1 | 代码文件 MUST 标注 `[BLUEPRINT] MOD-INF-008 \| 本蓝图 §N` | → 008A/008B §0 |
+| 1 | 代码文件 MUST 标注 `[BLUEPRINT] MOD-CONTEXT_ENGINE \| 本蓝图 §N` | → 008A/008B §0 |
 | 2 | 代码文件 MUST 标注 `[INVARIANTS]` 不变量 | → 008A §5 |
 | 3 | 蓝图 §4 文件清单 ↔ 代码 `[BLUEPRINT]` 字段 MUST 双向对齐 | → 008A/008B §0 |
 

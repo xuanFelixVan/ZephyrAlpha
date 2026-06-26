@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 status: active
 title: Ke Governance Adr Registry Migration 000
 module_id: KE-1066---

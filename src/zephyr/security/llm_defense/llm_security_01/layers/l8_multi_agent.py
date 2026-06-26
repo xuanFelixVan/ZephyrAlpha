@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security_01.layers.l8_multi_agent
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.l8_multi_agent

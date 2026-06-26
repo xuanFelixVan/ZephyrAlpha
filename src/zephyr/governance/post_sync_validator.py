@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.governance.post_sync_validator
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] (none — stdlib only: shlex/subprocess/sys/re/pathlib)

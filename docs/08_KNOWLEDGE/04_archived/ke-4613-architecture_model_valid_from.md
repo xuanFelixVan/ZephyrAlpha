@@ -17,4 +17,4 @@ ttl: permanent
 | 2026-04-25~28 | Gate Engine v2.0 设计 + 初步实现 |
 | 2026-04-29~30 | Agent Orchestrator + Context Engine + LSG 设计 |
 | 2026-05-01~02 | 架构原则文档（architecture-principles） + standards/strategy/standards |
-| 2026-05-03 | 集成总蓝图（MOD-MASTER-001）创建 + 50+ CT-* 契约定义 |
+| 2026-05-03 | 集成总蓝图（MOD-MASTER_BLUEPRINT）创建 + 50+ CT-* 契约定义 |

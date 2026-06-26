@@ -18,7 +18,7 @@
 Autonomy Monitor — AI 自主等级监控与降级。
 
 依据：
-    蓝图 MOD-INF-006 §6.5.3 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.5.3 + v0.6.0
     任务卡 TASK-INF-0110 (Part 3/4)
 """
 

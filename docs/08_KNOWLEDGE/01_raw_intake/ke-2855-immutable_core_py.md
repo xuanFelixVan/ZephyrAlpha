@@ -41,7 +41,7 @@ class ColdStartLock:
         """校验通过后释放锁"""
         # 1. rbac_roles.yaml hash校验
         # 2. L0 protected_paths 所有路径存在性验证
-        # 3. Gate Engine (MOD-INF-007) 就绪确认
+        # 3. Gate Engine (MOD-GATE_ENGINE) 就绪确认
         # 全部通过 → _state = RELEASED
 
     def status_indicator(self) -> str:

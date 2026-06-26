@@ -18,7 +18,7 @@
 models.py - Pydantic data models for resource optimization engine
 =================================================================
 
-SSoT: MOD-INF-032 resource-optimization-engine/blueprint.md §3.2
+SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md §3.2
 
 Separated from resource_optimization_engine.py to avoid circular imports.
 io_cache.py and streaming_reader.py import from here, not from the engine.

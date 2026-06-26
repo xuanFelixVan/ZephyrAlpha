@@ -15,8 +15,8 @@ date: "2026-06-25"
 valid_from: "2026-06-25"
 ttl: permanent
 rule_form: structural
-belongs_to: "MOD-INF-012"
-parent_module: "MOD-INF-012"
+belongs_to: "MOD-DATABASE"
+parent_module: "MOD-DATABASE"
 scope: global
 stability: evolving
 verifiability: automated

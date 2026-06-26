@@ -13,7 +13,7 @@ MLC-001：阶段转换必须满足前置条件
 
 | 转换 | 前置条件 |
 |------|---------|
-| planned → in_design | 通过 GOV-MOD-001 准入门控（含 §7 #5 功能域不重叠检查）|
+| planned → in_design | 通过 GOV-MOD-ALPHA_SIGNAL_DOMAIN 准入门控（含 §7 #5 功能域不重叠检查）|
 | in_design → in_dev | 接口契约草案完成；P0 模块需接口契约状态为 `frozen`（P0 约束详见 §8） |
 | in_dev → testing | 代码实现完成，单元测试通过 |
 | testing → active | 集成测试通过，Owner 审批（P0 额外约束详见 §8） |

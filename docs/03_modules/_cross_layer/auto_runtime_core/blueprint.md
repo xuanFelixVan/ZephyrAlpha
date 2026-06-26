@@ -39,9 +39,9 @@ depends_on:
   - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
   - {target: "MOD-INF-009", at: "全篇", why: "Pipeline——大脑调度管线任务"}
   - {target: "MOD-INF-034", at: "全篇", why: "Model Profiler——大脑消费 benchmark 结果做模型路由"}
-  - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——大脑执行结果需过门禁验证"}
+  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——大脑执行结果需过门禁验证"}
   - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——大脑操作写入审计日志"}
-  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——大脑异常上报反馈闭环"}
+  - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——大脑异常上报反馈闭环"}
 references:
   - {id: "MOD-INF-019", at: "§2", why: "Agent Spec——大脑通过 Skill 注册发现新能力"}
   - {id: "MOD-INF-013", at: "§2", why: "MCP Servers——大脑能力通过 MCP 暴露"}
@@ -51,8 +51,8 @@ references:
   - {id: "MOD-INF-018", at: "§2", why: "Agent RBAC——大脑操作权限校验"}
   - {id: "MOD-KB-001", at: "§4", why: "Knowledge Base——大脑 Dream Cycle 知识固化目标"}
   - {id: "MOD-INF-011", at: "§2", why: "Vector Memory——大脑检索向量知识"}
-  - {id: "MOD-INF-008", at: "§2", why: "Context Engine——大脑消费上下文注入"}
-  - {id: "MOD-INF-014", at: "§2", why: "LLM Security——大脑 LLM 调用的安全闸门"}
+  - {id: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——大脑消费上下文注入"}
+  - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——大脑 LLM 调用的安全闸门"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——大脑异常升级路径"}
 ssot_ref: "specs/auto-runtime-core/spec.md"
 ---
@@ -204,7 +204,7 @@ ZephyrAlpha 需要一个系统大脑统一编排所有模块的运行时行为�
 |---|--------|---------|
 | 1 | 脚本执行 | MOD-INF-009 Pipeline |
 | 2 | 进程池管理 | SYS-MASTER §〇 Worker Pool |
-| 3 | 门禁规则执行 | MOD-INF-007 Gate Engine |
+| 3 | 门禁规则执行 | MOD-GATE_ENGINE Gate Engine |
 | 4 | 审计日志持久化优化 | SYS-MASTER §〇 #10 KBG-0038 |
 | 5 | 拥塞控制算法 | SYS-MASTER §〇 #6 |
 | 6 | 知识库存储 | MOD-KB-001 |
@@ -221,7 +221,7 @@ ZephyrAlpha 需要一个系统大脑统一编排所有模块的运行时行为�
 | # | 组件 | 层级 | 职责 | 依赖 | 交互方式 |
 |---|------|:---:|------|------|---------|
 | 1 | AutoRuntimeCore | L1 | MAPE-K 调和循环主控 | HealthMonitor, CapabilityRegistry | 同步调用 |
-| 2 | AutoTaskGenerator | L2 | 自动扫描生成推理任务送 GPU（L2 本地推理队列任务，非 TaskCard/TaskRepository 任务卡。任务卡唯一合法入口 = MOD-INF-006 BlueprintDecomposer） | AutoRuntimeCore | 事件 |
+| 2 | AutoTaskGenerator | L2 | 自动扫描生成推理任务送 GPU（L2 本地推理队列任务，非 TaskCard/TaskRepository 任务卡。任务卡唯一合法入口 = MOD-TASK_SYSTEM BlueprintDecomposer） | AutoRuntimeCore | 事件 |
 | 3 | AutoIntegrator | L2 | 自动接入新模块 | ModuleOnboardingScanner | 同步调用 |
 | 4 | ModuleOnboardingScanner | L2 | 发现未接入模块 | IntegrationRegistry | 同步调用 |
 | 5 | OrphanDetector | L2 | 检测未被大脑管的模块 | IntegrationRegistry | 同步调用 |
@@ -478,9 +478,9 @@ class WorkDAG(BaseModel):
 | MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志/沙箱 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
 | MOD-INF-009 (Pipeline) | 必须 | 管线任务调度与状态 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\pipeline\blueprint.md` |
 | MOD-INF-034 (ModelProfiler) | 可选 | benchmark 结果用于路由决策 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\model-profiler\blueprint.md` |
-| MOD-INF-007 (Gate) | 必须 | 执行结果门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE (Gate) | 必须 | 执行结果门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
 | MOD-INF-020 (AuditTrail) | 必须 | 操作审计日志写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-010 (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop-engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP (FLE) | 必须 | 异常上报与反馈闭环 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop-engine\blueprint.md` |
 | MOD-INF-019 (AgentSpec) | 可选 | Skill 注册发现 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
 | MOD-KB-001 (KB) | 可选 | DreamCycle 知识固化目标 | — | `D:\ZephyrAlpha\docs\03_modules\l03_intelligence\knowledge-base\blueprint.md` |
 | MOD-INF-011 (VMS) | 可选 | 向量知识检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
@@ -550,7 +550,7 @@ class WorkDAG(BaseModel):
 | G-CT-035-01 | 治理域 | 调度方（大脑→管线任务分发） | MOD-INF-009 | 修改分发接口必须同步更新 Pipeline 蓝图 |
 | G-CT-035-02 | 治理域 | 消费方（benchmark→路由决策） | MOD-INF-034 | 修改路由逻辑必须同步更新 ModelProfiler 蓝图 |
 | G-CT-035-03 | 治理域 | 产出方（操作→审计日志） | MOD-INF-020 | 修改审计格式必须同步更新 AuditTrail 蓝图 |
-| G-CT-035-04 | 治理域 | 消费方（异常→反馈闭环） | MOD-INF-010 | 修改反馈协议必须同步更新 FLE 蓝图 |
+| G-CT-035-04 | 治理域 | 消费方（异常→反馈闭环） | MOD-FEEDBACK_LOOP | 修改反馈协议必须同步更新 FLE 蓝图 |
 
 ---
 
@@ -965,7 +965,7 @@ STEP 3: 拆分后验证
 | Tier 1 | MOD-INF-019 Agent Spec 蓝图 | §17 容量升级缺口 |
 | Tier 1 | SYS-MASTER-001 系统总蓝图 | §3 架构设计、§10 依赖关系 |
 | Tier 2 | MOD-INF-020 AuditTrail | §4.1 AiAuditLogger 接口 |
-| Tier 2 | MOD-INF-007 GateEngine | §4.1 TaskGate 接口 |
+| Tier 2 | MOD-GATE_ENGINE GateEngine | §4.1 TaskGate 接口 |
 | Tier 2 | MOD-INF-013 MCP Servers | §4.5 MCP 接口 |
 | Tier 3 | src/zephyr/trading/autopilot.py | §4 数据模型、§11 产出物路径 |
 
@@ -998,7 +998,7 @@ STEP 3: 拆分后验证
 |------|------|---------|
 | 2026-05-14 | 6.1.0 | v3.5模板升级：§0前移至概述后；§7备选方案删除；§15后果删除（负面合并到§14）；§0.1新增存在性列；§5.3标注临时时态；§10拆为4子节；§14新增类型列；铁律#13-#15；蓝图拆分判定标准；压缩工作流执行 |
 | 2026-05-14 | 6.1.0 | 蓝图模板 v3.5 合规重构：新增概述段；章节重排（§0 移至 §15 后，规则参考段移至 §18 后）；frontmatter 新增 template_for、移除 codification_level/codification_at；§5.3 表格格式更新 |
-| 2026-05-13 | 6.0.0 | 规格化 Layer 1（蓝图模板 v3.2 合规）+ Layer 2（砍对标/散文/设计过程）；新增 §0-§18 全部必需章节；容量升级内容映射到 §17；MOD-023 映射到 §12.1；frontmatter 新增 generation/functional_domain/codification_level |
+| 2026-05-13 | 6.0.0 | 规格化 Layer 1（蓝图模板 v3.2 合规）+ Layer 2（砍对标/散文/设计过程）；新增 §0-§18 全部必需章节；容量升级内容映射到 §17；MOD-GOVERNANCE 映射到 §12.1；frontmatter 新增 generation/functional_domain/codification_level |
 | 2026-05-12 | 5.2.0 | 容量补缺 7 项（GPU调度/RAM/I-O/自监控/冷启动/交互矩阵/降级链） |
 | 2026-05-10 | 5.1.0 | 容量升级方案 12 项压力测试 + 四拐点矩阵 + 下游接口衔接 |
 | 2026-05-10 | 5.0.0 | 基线蓝图——24 子组件完整实现 |

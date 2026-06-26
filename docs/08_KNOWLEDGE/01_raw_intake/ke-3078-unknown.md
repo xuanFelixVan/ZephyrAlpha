@@ -13,7 +13,7 @@ ttl: permanent
 ```
 指标全限定名 (FQMN, Fully Qualified Metric Name):
   {module_id}::{metric_name}
-  例: MOD-INF-008::llm_calls_total, MOD-INF-012::llm_calls_total
+  例: MOD-CONTEXT_ENGINE::llm_calls_total, MOD-DATABASE::llm_calls_total
 
   注册规则:
     - Schema Registry 以 FQMN 为唯一 key 存储 MetricSchema

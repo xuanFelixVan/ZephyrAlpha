@@ -1433,7 +1433,7 @@ scripts/  (包含31个文件: .py(28), .yaml(2), .csv(1))
 │   ├── _verify_yaml.py  — Module docstring — see module-level docstring for details.  
 │   ├── add_file_headers.py  — # [BLUEPRINT] MOD-INF-005 | scripts/governance/add_file_headers.py | §7  
 │   ├── adversarial_log.py  — 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪  
-│   ├── adversarial_sys_master_test.py  — Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER-001 Integration Hardening  
+│   ├── adversarial_sys_master_test.py  — Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Integration Hardening  
 │   ├── analyze_change_impact.py  — 从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。  
 │   ├── analyze_change_impact_warn_result.json  
 │   ├── analyze_orphan_consumers.py  — 分析 ORPHAN MODULES 的消费者情况 — 批量 Grep 优化版。  
@@ -1463,7 +1463,7 @@ scripts/  (包含31个文件: .py(28), .yaml(2), .csv(1))
 │   ├── create_d_signal_rename_tasks.py  — 创建 D-SIGNAL* 4 域改名执行任务卡（10 张主卡 + 10 张元审查卡）。  
 │   ├── create_f_func_task_cards.py  — 创建F1-F37依赖设计剩余缺口的4张任务卡。  
 │   ├── create_panorama_repair_tasks.py  — 创建治本施工方案任务卡（6张，对应5个批次）  
-│   ├── crosscheck_sys_master_deps.py  — crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER-001 与 DOM-GOV-001 一致.  
+│   ├── crosscheck_sys_master_deps.py  — crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER_BLUEPRINT 与 DOM-GOV-001 一致.  
 │   ├── dependency_graph.py  — 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图.  
 │   ├── detect_causal_conflicts.py  — 从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。  
 │   ├── detect_causal_conflicts_warn_result.json  
@@ -1708,7 +1708,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   ├── complexity_budget.py  — complexity_budget.py — Token 预算复杂度因子 (DD103, TASK-019)  
 │   ├── config_safety_guard.py  — config_safety_guard.py — 配置自毁防护 (B16, DD90, TASK-017)  
 │   ├── context_assembler.py  — ContextAssembler — 上下文装配、校验、影子留档  
-│   ├── context_budget.py  — [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §3-§8  
+│   ├── context_budget.py  — [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md | §3-§8  
 │   ├── context_budget_tracker.py  — ContextBudgetTracker: token budget management with 3-level thresholds.  
 │   ├── context_debt_score.py  — context_debt_score.py — 上下文债务评分 (B19, DD93, TASK-017)  
 │   ├── context_evaluator.py  — context_evaluator.py — AI 引用率评估 (TASK-014 beta b)  
@@ -2937,17 +2937,17 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   │   ├── __init__.py  — zephyr.infrastructure.db — 元数据持久化层（SQLite + DuckDB 双引擎）与原子事务管理 v2.0。  
 │   │   ├── atomic_transaction_manager.py  — AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。  
 │   │   ├── audit_schema.py  — audit_schema — 审计视图与查询入口  
-│   │   ├── base_repo.py  — [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md  
+│   │   ├── base_repo.py  — [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md  
 │   │   ├── circuit_breaker_repo.py  — circuit_breaker_repo.py — circuit_breaker_state 表持久化仓库（AUDIT-07 P1-5）  
 │   │   ├── circuit_breaker_types.py  — circuit_breaker_types.py - CircuitBreakerState enum for db package  
 │   │   ├── database_manager.py  — DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL checkpoint  
 │   │   ├── gate_repo.py  — gate_repo.py — gates 表持久化仓库（AUDIT-07 P1-5: 从 gate_engine.py 提取）  
 │   │   ├── olap_engine.py  — OLAPEngine — DuckDB OLAP 分析引擎  
-│   │   ├── query.py  — [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md  
+│   │   ├── query.py  — [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md  
 │   │   ├── query_metrics.py  — QueryMetrics — SQL 查询性能监控装饰器  
 │   │   ├── sqlite_schema.py  — Backward-compatible re-export wrapper.  
 │   │   ├── task_repo.py  — Backward-compatible re-export wrapper.  
-│   │   └── transition.py  — [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md  
+│   │   └── transition.py  — [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md  
 │   ├── dependency/  (包含1个文件: .py(1))  
 │   │   └── __init__.py  — core.dependency — auto-generated package init.  
 │   ├── draft/  (包含1个文件: .py(1))  
@@ -3820,9 +3820,9 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   │   ├── llm_cost_router.py  — LLM Cost Router — v0.3.0 R20  
 │   │   ├── merkle_audit_root.py  — Merkle Audit Root — v0.8.0 R104  
 │   │   ├── meta_performance_gate.py  — Meta Performance Gate — v0.11.0 R158  
-│   │   ├── parameterized_safety_gate.py  — [BLUEPRINT] MOD-INF-007 | 03_modules/_cross_layer/gate-engine/blueprint.md | §  
-│   │   ├── safety_gate_l1_l27.py  — Safety Gates L1-L27 — Unified Pipeline (MOD-INF-010 §3)  
-│   │   ├── safety_gate_l28_l29.py  — Safety Gates L28-L29 — DR Readiness + Supply Chain (MOD-INF-010 §3 L28-L41)  
+│   │   ├── parameterized_safety_gate.py  — [BLUEPRINT] MOD-GATE_ENGINE | 03_modules/_cross_layer/gate-engine/blueprint.md | §  
+│   │   ├── safety_gate_l1_l27.py  — Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOOP §3)  
+│   │   ├── safety_gate_l28_l29.py  — Safety Gates L28-L29 — DR Readiness + Supply Chain (MOD-FEEDBACK_LOOP §3 L28-L41)  
 │   │   ├── safety_gate_l36_l37.py  — Safety Gates L36-L37 — AI Code Integrity + Vibe Maintainability  
 │   │   ├── safety_gate_l38_l39.py  — Safety Gates L38-L39 — Deterministic Safety + Architectural Integrity  
 │   │   ├── safety_gate_l40_l41.py  — Safety Gates L40-L41 — Self-Integrity + Container Immutability  
@@ -3929,7 +3929,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   ├── __init___from_obs.py  — __init___from_obs脚本  
 │   ├── _budget_telemetry_bridge.py  — _budget_telemetry_bridge脚本  
 │   ├── _circuit_breaker.py  — _circuit_breaker脚本  
-│   ├── _gen_inherited.py  — One-shot skeleton generator for TASK-MOD-INF-010-0003 inherited subsystems.  
+│   ├── _gen_inherited.py  — One-shot skeleton generator for TASK-MOD-FEEDBACK_LOOP-0003 inherited subsystems.  
 │   ├── _trace_bridge.py  — _trace_bridge脚本  
 │   ├── alert_dispatcher.py  — FLE→Orc 告警分派器 — dispatch() 生产者  
 │   ├── analytics_base.py  — L07 — Post-Trade Analytics Layer  
@@ -3951,7 +3951,7 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   ├── facade.py  — facade脚本  
 │   ├── feedback_collector.py  — FeedbackCollector: collect task execution feedback  
 │   ├── fitness_functions.py  — fitness_functions脚本  
-│   ├── generator.py  — [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9  
+│   ├── generator.py  — [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9  
 │   ├── health_aggregator.py  — health_aggregator脚本  
 │   ├── health_probes.py  — health_probes脚本  
 │   ├── kill_switch.py  — KillSwitchManager — 三级 Kill Switch 管理器。  
@@ -3965,9 +3965,9 @@ zephyr/  (包含2个文件: .py(1), .yaml(1))
 │   ├── slo_manager.py  — SLO/SLI 管理器（CT-SLO-001）——14条CT-* p95/p99目标 + Error Budget。  
 │   ├── span_stub.py  — span_stub脚本  
 │   ├── telemetry.py  — AssetInventoryTelemetry — MOD-INF-026 自监控指标  
-│   ├── template.py  — [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9  
+│   ├── template.py  — [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9  
 │   ├── trading_kill_switch.py  — trading_kill_switch脚本  
-│   ├── validator.py  — [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9  
+│   ├── validator.py  — [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9  
 │   └── watchdog.py  — watchdog脚本  
 ├── pf_alloc/  (包含2个文件: .py(2))  
 │   ├── _extensions/  (包含1个文件: .py(1))  

@@ -50,9 +50,9 @@ RI_BOUNDARIES = {
 
 NON_COVERED_MODULES = {
     "audit_guard": "MOD-INF-001",
-    "security_gateway": "MOD-INF-014",
+    "security_gateway": "MOD-LLM_SECURITY",
     "vector-memory": "MOD-INF-011",
-    "knowledge_graph": "MOD-INF-012",
+    "knowledge_graph": "MOD-DATABASE",
     "script_system": "MOD-INF-013",
     "cicd_pipeline": "MOD-INF-015",
     "monitoring_alerting": "MOD-INF-016",

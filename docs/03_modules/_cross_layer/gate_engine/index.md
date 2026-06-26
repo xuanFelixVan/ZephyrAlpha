@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "gate_engine — 目录索引"
-module_id: "MOD-INF-007"
-blueprint_id: "MOD-INF-007"
+module_id: "MOD-GATE_ENGINE"
+blueprint_id: "MOD-GATE_ENGINE"
 version: "0.8.2"
 created: "2026-06-22"
 updated: "2026-06-22"

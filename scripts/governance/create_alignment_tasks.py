@@ -256,7 +256,7 @@ TASKS = [
         "title": "Phase1.3c: 打破llm_security↔self_protection循环依赖",
         "description": "llm-security/gateway.py与self_protection/l7_validation.py双向import。修复方案：提取公共接口到llm_security/protocol.py（已存在），gateway.py和l7_validation.py都只依赖protocol.py，不直接互相import。",
         "priority": "P1",
-        "source_blueprint": "MOD-INF-014",
+        "source_blueprint": "MOD-LLM_SECURITY",
         "source_section": "§19",
         "upstream_files": [
             str(PROJECT_ROOT / "src" / "zephyr" / "llm-security" / "gateway.py"),
@@ -304,7 +304,7 @@ TASKS = [
         "tags_ly": "L01",
         "tags_md": "deepseek",
         "tags_st": "evolving",
-        "tags_mo": ["MOD-INF-014"],
+        "tags_mo": ["MOD-LLM_SECURITY"],
     },
     {
         "task_id": "TASK-ALN-0006",

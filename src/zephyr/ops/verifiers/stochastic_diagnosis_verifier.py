@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.verifiers.stochastic_diagnosis_verifier
 # [DOMAIN] D-OPS
 # [DEPENDENCIES]

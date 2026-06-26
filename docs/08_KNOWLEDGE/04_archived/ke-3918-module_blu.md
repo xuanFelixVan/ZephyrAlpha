@@ -17,7 +17,7 @@ ttl: permanent
 | 4 | **task_id 格式统一为 `{NAMESPACE}-{SEQ}`** | KBG-001 / STD-005 / SRC-042——对标 Jira，自文档 |
 | 5 | **路径合规创建**：MTH-013 原则——AI 不得自主决定目录层级 | 所有路径可追溯到索引 |
 | 6 | **模型分工明确**：DeepSeek V4 Pro 主力 + GLM 深度审查 + Claude 特种救援 | 分工有基准数据支撑 |
-| 7 | **Dogfooding**：任务系统用自身管理自身维护——MOD-INF-006 自身任务是任务卡驱动的 | 本蓝图的施工任务全部通过 task_repo.create() 注册 |
+| 7 | **Dogfooding**：任务系统用自身管理自身维护——MOD-TASK_SYSTEM 自身任务是任务卡驱动的 | 本蓝图的施工任务全部通过 task_repo.create() 注册 |
 | 8 | **AI 自治边界五级**：定义 Owner 离线时 AI 的权限边界（supervised / semi_autonomous / autonomous / full_auto / emergency_only） | GOV-TASK-004 §AI自治 五级枚举 + 每级允许操作清单 |
 | 9 | **全链路可观测**：每个 M 模块执行耗时/Token/成本可追踪，`zalpha status` 一键摘要 | events 表含 module_id + duration_ms，CLI 命令可工作 |
 | 10 | **失败自愈**：失败模式自动匹配→应用已知 mitigation，避免同一问题失败两次 | FailurePattern 匹配引擎可用，匹配成功率 > 60% |

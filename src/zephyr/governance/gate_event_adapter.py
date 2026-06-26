@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
 # [MODULE] zephyr.data.persistence.gate_event_adapter
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema

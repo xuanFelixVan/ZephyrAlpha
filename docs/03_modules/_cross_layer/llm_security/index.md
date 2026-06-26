@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "llm_security — 目录索引"
-module_id: "MOD-INF-014"
-blueprint_id: "MOD-INF-014"
+module_id: "MOD-LLM_SECURITY"
+blueprint_id: "MOD-LLM_SECURITY"
 version: "2.0.1"
 created: "2026-06-22"
 updated: "2026-06-22"

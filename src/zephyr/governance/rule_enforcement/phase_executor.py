@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §phase-executor
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §phase-executor
 # [MODULE] zephyr.governance.rule_enforcement.phase_executor
 # [DOMAIN]
 # [DEPENDENCIES]

@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "context_engine — 目录索引"
-module_id: "MOD-INF-008"
-blueprint_id: "MOD-INF-008"
+module_id: "MOD-CONTEXT_ENGINE"
+blueprint_id: "MOD-CONTEXT_ENGINE"
 version: "1.0.1"
 created: "2026-06-22"
 updated: "2026-06-22"

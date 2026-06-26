@@ -14,7 +14,7 @@ last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/_cross_layer/context-engine/blueprint.md（MOD-INF-008 — 详细设计与 CT 锚点；Phase 5 真源）"
+  - "03_modules/_cross_layer/context-engine/blueprint.md（MOD-CONTEXT_ENGINE — 详细设计与 CT 锚点；Phase 5 真源）"
   - "architecture_model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
 supersedes:
   - "docs/03_modules/_b_track_interfaces/context-interface-contract.md (will archive in B-b)"
@@ -35,7 +35,7 @@ depends_on:
   - target: AI-ENG-VMS-001
     at: "§3"
     why: "Vector Memory Service — 上下文数据主源"
-mod_master_blueprint: "MOD-MASTER-001"
+mod_master_blueprint: "MOD-MASTER_BLUEPRINT"
 mod_master_contracts:
   - "CT-ORC-CE-001"
   - "CT-CE-VMS-001"

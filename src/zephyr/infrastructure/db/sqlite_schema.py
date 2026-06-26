@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.infrastructure.db.sqlite_schema
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema

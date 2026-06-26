@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.truth_source_validator
 # [DOMAIN] D-GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.audit_trail.bridge; zephyr.integration.shared_08.schemas
@@ -54,7 +54,7 @@ class TruthTier(IntEnum):
 
 
 TIER_LABELS: dict[TruthTier, str] = {
-    TruthTier.TIER_0: "本蓝图 MOD-MASTER-001（跨系统集成契约）",
+    TruthTier.TIER_0: "本蓝图 MOD-MASTER_BLUEPRINT（跨系统集成契约）",
     TruthTier.TIER_1: "architecture-model/layers/{module}.yaml（单模块结构定义）",
     TruthTier.TIER_2: "docs/03_modules/{layer}/blueprint.md（模块级实现指引）",
     TruthTier.TIER_3: "docs/01_policies_and_standards/（通用规范与策略）",

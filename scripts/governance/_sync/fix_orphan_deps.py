@@ -17,7 +17,7 @@ fix_orphan_deps.py — 一次性修复孤儿依赖引用
 =============================================
 3类修复：
 1. 范围记号展开: TASK-INF-0101~0130 → [INF-0101, INF-0102, ..., INF-0130]
-2. 蓝图模块引用清除: MOD-MASTER-001 / MOD-INF-011 / MOD-INF-014 不是 task_id
+2. 蓝图模块引用清除: MOD-MASTER_BLUEPRINT / MOD-INF-011 / MOD-LLM_SECURITY 不是 task_id
 3. COMPLETED 任务孤儿清理: 移除不存在的依赖
 """
 

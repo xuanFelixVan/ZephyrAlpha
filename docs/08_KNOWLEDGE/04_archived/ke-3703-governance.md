@@ -17,7 +17,7 @@ ttl: permanent
 | 2026-05-01 | 0.6.1 | 交叉引用漂移修复：17 处 stale ref（IFC-001 §3→§5·IFC-003 §4→§6·IFC-004 §7→§9·IFC-005 §7→§10·IFC-006/007 §9→§11·修改条件 §14→§16·MLC-003 引用 GOV-MOD-003 §5→§7，共 17 处）——Round 10 插入 §3/§4 后未同步的 self-ref + cross-file ref |
 | 2026-05-01 | 0.6.0 | 对齐 PS-STD-002 §3.2.4（行为规则型条件性章节）：新增 §3 受控枚举定义（3 契约状态）+ §4 消费者注册表（Tier 1/2）+ §15 变更同步规则 + §16 修改条件（L0~L3 分级）+ §17 废弃流程 + §18 异常豁免机制（3 场景）+ §19 字段不重复声明（contract_id/provider/consumers/interface_schema）+ §20 审查周期（ISO 11179）+ §21 完整性自检清单。修正 C9（性能约束占位符 Xms→TBD 待定标注）+ C10（保留原 IFC-001 7 字段表）。全文章节重编号 §3→§22。 |
 | 2026-05-01 | 0.5.2 | Common Core 对齐 PS-STD-002 §3.2.1：新增 §2 SSoT声明 + §11 标准间引用规范（normative/informative）+ §12 AI可消费性声明 + 全文章节重编号（§2~§10 → §3~§13） |
-| 2026-05-01 | 0.5.0 | 元规则对齐审计：frontmatter 添加 valid_from + 字段排序对齐 PS-STD-001 §2.3 + layer cross_layer→L1 + depends_on 移除 GOV-MOD-001/005/GOV-ARCH-001 同级引用对齐链深=1层死规则（PS-STD-001 §2.1） |
+| 2026-05-01 | 0.5.0 | 元规则对齐审计：frontmatter 添加 valid_from + 字段排序对齐 PS-STD-001 §2.3 + layer cross_layer→L1 + depends_on 移除 GOV-MOD-ALPHA_SIGNAL_DOMAIN/005/GOV-ARCH-001 同级引用对齐链深=1层死规则（PS-STD-001 §2.1） |
 | 2026-05-01 | 0.4.0 | 第三轮补缺：澄清契约注册表生消流程 + IFC-007（Provider 退役级联废弃）+ 术语统一（移除→archived）+ §9 模块间运行时交互规则 |
 | 2026-05-01 | 0.3.0 | 补齐 G6/G17/G18/G23 细颗粒审查缺漏：新增契约注册表（IFC-004）+ 契约生命周期（IFC-005）+ 一致性验证（IFC-006）+ P0 性能约束必填 |
 | 2026-05-01 | 0.2.0 | #24 审批修复：frontmatter 补齐 depends_on 结构化 + ai_autonomy: human_gated |

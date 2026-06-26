@@ -1,5 +1,5 @@
 ---
-module_id: MOD-MASTER-004
+module_id: MOD-MASTER_BLUEPRINT
 title: "Agent Spec 蓝图 — CBAC能力矩阵·Skill路由"
 doc_type: blueprint
 status: Active
@@ -20,8 +20,8 @@ actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\bluepri
 template_for: blueprint
 generation: 2
 functional_domain: infrastructure
-parent_module: "MOD-MASTER-001"
-belongs_to: "MOD-MASTER-001"
+parent_module: "MOD-MASTER_BLUEPRINT"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 rule_form: structural
 scope: global
 stability: stable
@@ -58,7 +58,7 @@ tags:
 
 # Agent Spec 蓝图 — CBAC能力矩阵·Skill路由
 
-> module_id: MOD-MASTER-004 | version: 1.3.0 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: MOD-MASTER_BLUEPRINT | version: 1.3.0 | status: active | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_agent_spec.md | generation: 2 | construction_progress: completed
 
 ---
@@ -75,7 +75,7 @@ tags:
 
 ## 概述
 
-本蓝图是 MOD-MASTER-001 的 Agent Spec 接口定义——定义了 ZephyrAlpha 12 个基础设施系统间的能力访问控制矩阵（CBAC）。核心职责：跨系统调用的授权关系定义、违规响应规则、离线更新流程、编排器特权声明、Skill 路由接口。上游依赖 baseline（CT-* 契约定义），下游被 gates/circuit_breaker.py 消费执行。
+本蓝图是 MOD-MASTER_BLUEPRINT 的 Agent Spec 接口定义——定义了 ZephyrAlpha 12 个基础设施系统间的能力访问控制矩阵（CBAC）。核心职责：跨系统调用的授权关系定义、违规响应规则、离线更新流程、编排器特权声明、Skill 路由接口。上游依赖 baseline（CT-* 契约定义），下游被 gates/circuit_breaker.py 消费执行。
 
 ---
 
@@ -258,7 +258,7 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-MASTER-004` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-MASTER_BLUEPRINT` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
 
 ### 10.3 内部依赖图
@@ -294,7 +294,7 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| CBAC 实现 | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | capability_check()（MOD-INF-007 所有） |
+| CBAC 实现 | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | capability_check()（MOD-GATE_ENGINE 所有） |
 
 ---
 
@@ -342,7 +342,7 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
-| v1.1.0 | CBAC 矩阵 + capability_check() | gates/circuit_breaker.py（MOD-INF-007 所有） | 外部实现 |
+| v1.1.0 | CBAC 矩阵 + capability_check() | gates/circuit_breaker.py（MOD-GATE_ENGINE 所有） | 外部实现 |
 
 ---
 
@@ -454,7 +454,7 @@ def capability_check(caller: str, target: str, action: str) -> bool:
 
 ## 蓝图拆分判定标准
 
-> 铁律 #15 的操作定义。本蓝图是 MOD-MASTER-001 拆分后的子蓝图（agent-spec），独立管理 CBAC 矩阵和 Skill 路由——拆分判定基于独立能力域。
+> 铁律 #15 的操作定义。本蓝图是 MOD-MASTER_BLUEPRINT 拆分后的子蓝图（agent-spec），独立管理 CBAC 矩阵和 Skill 路由——拆分判定基于独立能力域。
 
 ### 判定流程
 
@@ -468,11 +468,11 @@ STEP 2: 职责域判定
 
 STEP 3: 拆分后验证
   - 独立 frontmatter + 概述 + §0~§18
-  - belongs_to = MOD-MASTER-001
+  - belongs_to = MOD-MASTER_BLUEPRINT
   - blueprint_registry.yaml 同步更新
 ```
 
-### MOD-MASTER-001 拆分实例
+### MOD-MASTER_BLUEPRINT 拆分实例
 
 | 子蓝图 | 触发条件 | 判定理由 |
 |--------|---------|---------|
@@ -486,7 +486,7 @@ STEP 3: 拆分后验证
 |---|------|-----------|------|------------|----------|
 | 1 | 基线蓝图 | MOD-MASTER-002 | v1.3.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | CT-* 契约定义 |
 | 2 | Agent Spec 蓝图 | MOD-INF-019 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` | Skill 路由 |
-| 3 | circuit_breaker.py | MOD-INF-007 | — | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | CBAC 实现（MOD-INF-007 所有） |
+| 3 | circuit_breaker.py | MOD-GATE_ENGINE | — | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | CBAC 实现（MOD-GATE_ENGINE 所有） |
 
 ---
 
@@ -502,7 +502,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | gates/circuit_breaker.py | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | CBAC 实现（MOD-INF-007 所有） | 无变更 |
+| 1 | gates/circuit_breaker.py | `D:\ZephyrAlpha\src\zephyr\gates\circuit_breaker.py` | CBAC 实现（MOD-GATE_ENGINE 所有） | 无变更 |
 
 ---
 

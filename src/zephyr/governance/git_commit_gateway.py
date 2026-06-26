@@ -480,7 +480,7 @@ class GitCommitGateway:
         """检查相对路径是否被 git 跟踪（case-insensitive pathspec）。
 
         根因：Windows 文件系统大小写不敏感，但 git pathspec 默认大小写敏感。
-        当 on-disk 路径大小写（如 mod_inf_008）与 git index 大小写（如 MOD_INF_008）
+        当 on-disk 路径大小写（如 mod_inf_008）与 git index 大小写（如 MOD-CONTEXT_ENGINE）
         不一致时，``git ls-files --error-unmatch -- <path>`` 会误报"未跟踪"，
         导致 PROMOTION_BLOCKED 误杀已跟踪的修改文件。
 
@@ -520,7 +520,7 @@ class GitCommitGateway:
             return []
 
         # 单次 git ls-files 批量获取永久区所有已跟踪文件（:(icase) 大小写不敏感）
-        # 根因：Windows on-disk 大小写（mod_inf_008）与 git index 大小写（MOD_INF_008）
+        # 根因：Windows on-disk 大小写（mod_inf_008）与 git index 大小写（MOD-CONTEXT_ENGINE）
         # 不一致，:(icase) pathspec magic 强制大小写不敏感匹配
         icase_specs = [f":(icase){d}" for d in _PERMANENT_ZONE_DIRS]
         result = subprocess.run(
@@ -1002,7 +1002,7 @@ class GitCommitGateway:
         (WinError 206)。
 
         每行加 ``:(icase)`` 前缀——兼容 Windows on-disk 大小写与 git index
-        大小写不一致（如 on-disk ``mod_inf_008`` vs git index ``MOD_INF_008``）。
+        大小写不一致（如 on-disk ``mod_inf_008`` vs git index ``MOD-CONTEXT_ENGINE``）。
         无 ``:(icase)`` 时 ``git add`` pathspec 大小写敏感，会误报
         "pathspec did not match any file(s) known to git"。
 

@@ -1,9 +1,9 @@
 # [A_config] module_id=CFG-path-ownership-map | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
 
-# module_id: MOD-023
+# module_id: MOD-GOVERNANCE
 
 # stability: evolving
 
@@ -27,7 +27,7 @@
 
 
 
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 meta:
 
   generated_at: '2026-05-17T16:27:26Z'
@@ -1628,7 +1628,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/__init__.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1642,7 +1642,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/config.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1656,7 +1656,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/protocols.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1670,7 +1670,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/exceptions.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1684,7 +1684,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/auto_evolution.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1698,7 +1698,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/eval_harness.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1712,7 +1712,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/evolution_engine.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1726,7 +1726,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/feedback_collector.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1740,7 +1740,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/fitness_functions.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1754,7 +1754,7 @@ ownership:
 
   - path: 'src/zephyr/feedback-loop/metrics_collector.py'
 
-    owner_blueprint: '"MOD-INF-010"'
+    owner_blueprint: '"MOD-FEEDBACK_LOOP"'
 
     claim_type: 'section_0_1'
 
@@ -1768,7 +1768,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_engine.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1782,7 +1782,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_context.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1796,7 +1796,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_pipeline.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1810,7 +1810,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_simulator.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1824,7 +1824,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_override.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1838,7 +1838,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_health.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1852,7 +1852,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/task_completion_gate.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1866,7 +1866,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/circuit_breaker.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1880,7 +1880,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/contract_template_manager.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1894,7 +1894,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/adaptive_threshold.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1908,7 +1908,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/gate_integrity_guard.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1922,7 +1922,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/audit_chain_verifier.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1936,7 +1936,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/ai_capability_guard.py'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1950,7 +1950,7 @@ ownership:
 
   - path: 'invariants/en-001-circular-dependency.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1964,7 +1964,7 @@ ownership:
 
   - path: 'invariants/en-002-enforcement-validator.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1978,7 +1978,7 @@ ownership:
 
   - path: 'invariants/en-003-contract-compatibility.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -1992,7 +1992,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/zero_residue.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2006,7 +2006,7 @@ ownership:
 
   - path: 'governance/g9_cross_blueprint_integration.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2020,7 +2020,7 @@ ownership:
 
   - path: 'governance/gct_016_shared_core.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2034,7 +2034,7 @@ ownership:
 
   - path: 'governance/gct_018_rbac.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2048,7 +2048,7 @@ ownership:
 
   - path: 'governance/gct_021_rollback.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2062,7 +2062,7 @@ ownership:
 
   - path: 'governance/gct_022_escalation.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2076,7 +2076,7 @@ ownership:
 
   - path: 'governance/gct_023_drift.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2090,7 +2090,7 @@ ownership:
 
   - path: 'governance/gct_024_budget.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2104,7 +2104,7 @@ ownership:
 
   - path: 'governance/gct_025_a2a.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2118,7 +2118,7 @@ ownership:
 
   - path: 'infrastructure/g8_ssot.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2132,7 +2132,7 @@ ownership:
 
   - path: 'infrastructure/sys_master_cmp.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2146,7 +2146,7 @@ ownership:
 
   - path: 'infrastructure/vms_health.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2160,7 +2160,7 @@ ownership:
 
   - path: 'infrastructure/gate_observability.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2174,7 +2174,7 @@ ownership:
 
   - path: 'trading/g7-position-limits.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2188,7 +2188,7 @@ ownership:
 
   - path: 'trading/g8-leverage.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2202,7 +2202,7 @@ ownership:
 
   - path: 'trading/g9-strategy-correlation.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2216,7 +2216,7 @@ ownership:
 
   - path: 'fle/ (43个FLE门禁)'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2230,7 +2230,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/_registry.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2244,7 +2244,7 @@ ownership:
 
   - path: 'src/zephyr/gate_engine/_template.yaml'
 
-    owner_blueprint: '"MOD-INF-007"'
+    owner_blueprint: '"MOD-GATE_ENGINE"'
 
     claim_type: 'section_0_1'
 
@@ -2258,7 +2258,7 @@ ownership:
 
   - path: 'src/zephyr/llm-security/__init__.py'
 
-    owner_blueprint: '"MOD-INF-014"'
+    owner_blueprint: '"MOD-LLM_SECURITY"'
 
     claim_type: 'section_0_1'
 
@@ -2272,7 +2272,7 @@ ownership:
 
   - path: 'src/zephyr/llm-security/protocol.py'
 
-    owner_blueprint: '"MOD-INF-014"'
+    owner_blueprint: '"MOD-LLM_SECURITY"'
 
     claim_type: 'section_0_1'
 
@@ -2286,7 +2286,7 @@ ownership:
 
   - path: 'src/zephyr/llm-security/gateway.py'
 
-    owner_blueprint: '"MOD-INF-014"'
+    owner_blueprint: '"MOD-LLM_SECURITY"'
 
     claim_type: 'section_0_1'
 
@@ -2300,7 +2300,7 @@ ownership:
 
   - path: 'patterns/secrets.py'
 
-    owner_blueprint: '"MOD-INF-014"'
+    owner_blueprint: '"MOD-LLM_SECURITY"'
 
     claim_type: 'section_0_1'
 
@@ -2314,7 +2314,7 @@ ownership:
 
   - path: 'patterns/injection_patterns.py'
 
-    owner_blueprint: '"MOD-INF-014"'
+    owner_blueprint: '"MOD-LLM_SECURITY"'
 
     claim_type: 'section_0_1'
 
@@ -2328,7 +2328,7 @@ ownership:
 
   - path: 'dashboard/app.py'
 
-    owner_blueprint: '"MOD-INF-014"'
+    owner_blueprint: '"MOD-LLM_SECURITY"'
 
     claim_type: 'section_0_1'
 
@@ -3098,7 +3098,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/resource_optimization_models.py'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -3112,7 +3112,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/daemon_registry.py'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -3126,7 +3126,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/io_cache.py'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -3140,7 +3140,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/streaming_reader.py'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -3154,7 +3154,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/process_pool.py'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -3168,7 +3168,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/lazy_loader.py'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -3182,7 +3182,7 @@ ownership:
 
   - path: 'src/zephyr/lifecycle_manager/resource_optimization.yaml'
 
-    owner_blueprint: 'MOD-INF-032'
+    owner_blueprint: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     claim_type: 'section_0_1'
 
@@ -5372,7 +5372,7 @@ ownership:
 
     declared_in: 'docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md'
 
-    existence: 'MOD-INF-032'
+    existence: 'MOD-RESOURCE_OPTIMIZATION_ENGINE'
 
     ownership_judgment: '已实现'
 
@@ -7774,7 +7774,7 @@ ownership:
 
   - path: 'task_system/__init__.py'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 
@@ -7788,7 +7788,7 @@ ownership:
 
   - path: 'db/task_repo.py'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 
@@ -7802,7 +7802,7 @@ ownership:
 
   - path: 'shared/schemas.py'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 
@@ -7816,7 +7816,7 @@ ownership:
 
   - path: 'task_system/core/models.py'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 
@@ -7830,7 +7830,7 @@ ownership:
 
   - path: 'task_system/core/blueprint_decomposer.py'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 
@@ -7844,7 +7844,7 @@ ownership:
 
   - path: 'task_system/core/task_manager_server.py'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 
@@ -7858,7 +7858,7 @@ ownership:
 
   - path: 'orchestrator/'
 
-    owner_blueprint: '"MOD-INF-006"'
+    owner_blueprint: '"MOD-TASK_SYSTEM"'
 
     claim_type: 'section_0_1'
 

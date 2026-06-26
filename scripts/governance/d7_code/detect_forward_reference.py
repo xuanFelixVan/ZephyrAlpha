@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] scripts.governance.d7_code.detect_forward_reference
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] _shared.constants; _shared.encoding; _shared.walk

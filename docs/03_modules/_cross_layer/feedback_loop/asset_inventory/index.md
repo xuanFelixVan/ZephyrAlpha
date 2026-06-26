@@ -3,7 +3,7 @@ doc_type: index
 status: active
 title: "asset_inventory — 目录索引"
 module_id: ""
-blueprint_id: "MOD-INF-010"
+blueprint_id: "MOD-FEEDBACK_LOOP"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"

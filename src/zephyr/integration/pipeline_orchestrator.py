@@ -16,8 +16,8 @@
 """
 PipelineOrchestrator — M1-M11 管线协调器
 =========================================
-依据：MOD-INF-006 §3.1.3 + §3.1.1 dispatch() + GOV-AI-002 v2.0.0 决策树
-     + CT-PIPE-ORC-001（蓝图 MOD-MASTER-001 §2.7，见 ct_pipe_routing.py）
+依据：MOD-TASK_SYSTEM §3.1.3 + §3.1.1 dispatch() + GOV-AI-002 v2.0.0 决策树
+     + CT-PIPE-ORC-001（蓝图 MOD-MASTER_BLUEPRINT §2.7，见 ct_pipe_routing.py）
 
 **真源边界（AUDIT-08，与 route_manifest task_dual_pipeline 一致）**
   - **M1–M11 入口与模块切片**：``TaskCard``（含 ct_pipe 提示）+ ``ct_pipe_routing.resolve_ct_pipe_orc001``
@@ -1719,7 +1719,7 @@ class PipelineOrchestrator:
         return warnings
 
     # ------------------------------------------------------------------
-    # LSG 安全闸门集成 —— B131（MOD-INF-014 LLM Security Gateway）
+    # LSG 安全闸门集成 —— B131（MOD-LLM_SECURITY LLM Security Gateway）
     # ------------------------------------------------------------------
 
     @staticmethod
@@ -1803,7 +1803,7 @@ class PipelineOrchestrator:
             import logging
 
             logging.getLogger("pipeline.lsg").warning(
-                "LSG Security Gateway (MOD-INF-014) not available — output sanitization skipped (fail-open). "
+                "LSG Security Gateway (MOD-LLM_SECURITY) not available — output sanitization skipped (fail-open). "
                 "Install: pip install -e . or verify src/zephyr/llm-security/ exists."
             )
             return output
@@ -2021,7 +2021,7 @@ class PipelineOrchestrator:
         """SoD 检查桩——防止同一主体同时承担生成+审批角色。
 
         当前为桩实现：检查 author == reviewer 模式。
-        生产环境应接入 RBAC 系统（MOD-INF-008）验证角色分配。
+        生产环境应接入 RBAC 系统（MOD-CONTEXT_ENGINE）验证角色分配。
         """
         warnings: list[str] = []
         author = getattr(task_card, "author", None) or getattr(task_card, "created_by", None)

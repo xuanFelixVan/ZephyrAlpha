@@ -1,12 +1,12 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ttl: permanent
 ---
 
-# MOD-023 Downstream Anchor Report
+# MOD-GOVERNANCE Downstream Anchor Report
 
 **Generated:** 2026-05-07
-**Domain:** Governance Domain (MOD-023)
+**Domain:** Governance Domain (MOD-GOVERNANCE)
 **Status:** Phase 3 Construction — GCT Contracts Verified
 
 ## Module Status
@@ -55,7 +55,7 @@ ttl: permanent
 ## Key Artifacts
 
 - Blueprint: `docs/03_modules/_domain-governance/blueprint.md`
-- Task Cards: `docs/03_modules/_domain-governance/_domain-governance/changes/MOD-023/` (21 cards)
+- Task Cards: `docs/03_modules/_domain-governance/_domain-governance/changes/MOD-GOVERNANCE/` (21 cards)
 - Source: `src/zephyr/governance/` (115 .py files)
 - Tests: `tests/governance/` (46 tests)
 - Progress: `domain_progress.json`

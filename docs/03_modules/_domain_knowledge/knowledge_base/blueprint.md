@@ -20,9 +20,9 @@ tags: [knowledge-base, ke, embedding, vector-db, semantic-search, chromadb, mcp,
 priority: P0
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-006", at: "§3.2", why: "TaskCard模型 + task_id格式——知识库施工任务追踪"}
-  - {target: "MOD-INF-006", at: "§5.1", why: "context_assembler——知识注入接口"}
-  - {target: "MOD-INF-006", at: "§4.2", why: "10状态任务状态机——KB施工任务状态管理"}
+  - {target: "MOD-TASK_SYSTEM", at: "§3.2", why: "TaskCard模型 + task_id格式——知识库施工任务追踪"}
+  - {target: "MOD-TASK_SYSTEM", at: "§5.1", why: "context_assembler——知识注入接口"}
+  - {target: "MOD-TASK_SYSTEM", at: "§4.2", why: "10状态任务状态机——KB施工任务状态管理"}
   - {target: "MOD-INF-005", at: "§6.3", why: "脚本系统 MEDIUM Finding → KB 入库——知识库的审计数据来源"}
   - {target: "MOD-INF-005", at: "§3.6", why: "标签分类体系——KB 的 tags 字段对齐脚本系统标签"}
   - {target: "PS-STD-001", at: "§3", why: "doc_type受控词表——知识条目doc_type注册"}
@@ -39,7 +39,7 @@ verifiability: hybrid
 references: []
 codification_level: L2
 codification_at: "2026-05-13"
-belongs_to: MOD-MASTER-001
+belongs_to: MOD-MASTER_BLUEPRINT
 ---
 
 # Knowledge Base 蓝图 — 五门禁知识采集与检索系统
@@ -297,7 +297,7 @@ Knowledge Base 是 ZephyrAlpha 的知识库系统——解决"AI 不知道项目
 
 | 分片 | 模块范围 | 脚本数 | Worker Pool |
 |------|---------|:---:|:---:|
-| 分片1 | MOD-001~MOD-375 | 2,500 | 40 |
+| 分片1 | MOD-ALPHA_SIGNAL_DOMAIN~MOD-375 | 2,500 | 40 |
 | 分片2 | MOD-376~MOD-750 | 2,500 | 40 |
 | 分片3 | MOD-751~MOD-1125 | 2,500 | 40 |
 | 分片4 | MOD-1126~MOD-1500 | 2,500 | 40 |
@@ -632,7 +632,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 3 | ✅包含 | 知识衰减与新鲜度保障 | 多信号源新鲜度引擎 + 半衰期衰减 + 静默期监控 |
 | 4 | ✅包含 | 跨 Agent 知识互通 | MCP 4 Resource + 4 Tool，多模型共享 |
 | 5 | ✅包含 | 审计与质量保障 | 四模型审计流水线 + 知识溯源 PROV |
-| 6 | ❌排除 | 任务系统的 TaskCard 状态机 | MOD-INF-006（任务系统蓝图） |
+| 6 | ❌排除 | 任务系统的 TaskCard 状态机 | MOD-TASK_SYSTEM（任务系统蓝图） |
 | 7 | ❌排除 | 上下文引擎的 Token 预算追踪 | context-engine/ 模块（KBG-0015） |
 | 8 | ❌排除 | VMS 向量内存服务 | src/zephyr/vector-memory/（beta 目标） |
 | 9 | ❌排除 | 脚本系统审计执行 | MOD-INF-005（KB 只消费审计结果） |
@@ -686,8 +686,8 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 > ⚠️ 向量语义检索为过渡期保留职责，目标由 VMS (MOD-INF-011) 接管。迁移完成后 kb/chromadb_init.py 和 kb/unified_memory_api.py 标记 deprecated。
 | 4 | ✅包含 | 跨 Agent 知识互通 | MCP 协议：4 Resource + 4 Tool，多模型（Claude/Kimi/Qwen/GLM）共享知识 |
 | 5 | ✅包含 | 审计与质量保障 | 四模型审计流水线（GLM扫描→Kimi根因→Qwen落地→Opus终审）+ 知识衰减/新鲜度管理 |
-| 6 | ✅包含 | 上下文注入 | 与 MOD-INF-006 `context_assembler` 对接，AI session 启动时自动注入相关KE |
-| 7 | ❌排除 | 任务系统的 TaskCard 状态机和任务生命周期 | MOD-INF-006（任务系统蓝图） |
+| 6 | ✅包含 | 上下文注入 | 与 MOD-TASK_SYSTEM `context_assembler` 对接，AI session 启动时自动注入相关KE |
+| 7 | ❌排除 | 任务系统的 TaskCard 状态机和任务生命周期 | MOD-TASK_SYSTEM（任务系统蓝图） |
 | 8 | ❌排除 | 上下文引擎的 Token 预算追踪和注入策略 | context-engine/ 模块（KBG-0015） |
 | 9 | ❌排除 | VMS（Vector Memory Service）的 InProcessVectorMemory | src/zephyr/vector-memory/（beta 目标） |
 | 10 | ❌排除 | Session Log 的结构和交接协议 | _registry/schemas/session-log-schema.yaml |
@@ -708,7 +708,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 3 | `src/zephyr/data/knowledge_management/kb/unified_memory_api.py` | RI-02 统一内存 API——remember/learn/forget/recall (deprecated → VMS) |
 | 4 | `src/zephyr/data/knowledge_management/kb/chromadb_init.py` | ChromaDB 4 Collection 初始化 (deprecated → VMS) |
 | 5 | `architecture_model/layers/b_kb.yaml` | 架构 YAML SSoT——KB 模块登记 |
-| 6 | MOD-INF-006 `task-system/blueprint.md` | 任务系统——KB 施工任务追踪格式 |
+| 6 | MOD-TASK_SYSTEM `task-system/blueprint.md` | 任务系统——KB 施工任务追踪格式 |
 
 ### 2.2 关键路径速查
 
@@ -729,9 +729,9 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 
 | 依赖目标 | 引用位置 | 为什么依赖 | 耦合程度 |
 |---------|---------|-----------|:---:|
-| MOD-INF-006 | §3.2 + §4.2 | TaskCard 模型 + task_id 格式（`{NAMESPACE}-{SEQ}`）——KB 自己的施工任务用 TaskCard 追踪 | 强 |
-| MOD-INF-006 | §5.1 | `context_assembler` 的 KE 知识注入接口——上下文引擎通过此接口拉取 KB 知识 | 强 |
-| MOD-INF-006 | §4.2 | 10 状态任务状态机——KB 施工任务状态管理引用此状态机 | 中 |
+| MOD-TASK_SYSTEM | §3.2 + §4.2 | TaskCard 模型 + task_id 格式（`{NAMESPACE}-{SEQ}`）——KB 自己的施工任务用 TaskCard 追踪 | 强 |
+| MOD-TASK_SYSTEM | §5.1 | `context_assembler` 的 KE 知识注入接口——上下文引擎通过此接口拉取 KB 知识 | 强 |
+| MOD-TASK_SYSTEM | §4.2 | 10 状态任务状态机——KB 施工任务状态管理引用此状态机 | 中 |
 | MOD-INF-005 | §6.3 + §6.6 | 脚本系统 MEDIUM Finding → KB 入库（C4→G1）——Finding→KE 数据格式转换 | 强 |
 | MOD-INF-005 | §3.6 | 脚本系统标签体系（`[Quick]`/`[Security]` 等）——KB 的 tags 字段对齐脚本系统标签 | 中 |
 | PS-STD-001 | §3 | doc_type 受控词表——知识条目的 doc_type 注册 | 中 |
@@ -789,7 +789,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | `status` | enum | ✅ | KE 状态：10状态机（§3.3） |
 | `quality_score` | float [0.0-1.0] | ✅ | 质量评分（G2 Triage 产出） |
 | `priority` | enum | ✅ | 优先级：`P0`~`P3` |
-| `tags` | list[str] | ✅ | 标签列表（对齐 MOD-INF-006 5轴标签：fn/ly/md/st/mo） |
+| `tags` | list[str] | ✅ | 标签列表（对齐 MOD-TASK_SYSTEM 5轴标签：fn/ly/md/st/mo） |
 | `audit_chain` | list[str] | ✅ | 审计链：记录经过的审计模型和结论 |
 | `ttl` | str | ✅ | 保留策略：`permanent` / `task_bound`（ttl_vocabulary.yaml v2.0.0 二元判定）。KE 文件恒为 `permanent`（落 docs/08_knowledge/ 永久区），由 `bootstrap.py` 创建时注入（label-at-creation 铁律，GATE-15 校验） |
 | `half_life_days` | int | SHOULD | 知识半衰期（天），用于衰减计算。0=永不过期。（v2.0.0 后 ttl 已转二元，此字段保留供衰减算法使用，不再决定保留策略） |
@@ -826,7 +826,7 @@ KE Schema 的 31 个字段同样需要稳定性承诺——beta/3 代码会依�
 
 - **最终格式**：`KE-{NNN}`（NNN = 3位递增编号，如 KE-001、KE-042）
 - **裁决理由**：简短+机器可消费+与 `KMS-` 前缀冲突时已代码实现的事实为准（代码 = 最终仲裁者）
-- **与 task_id 格式的关系**：KE ID ≠ task_id。KE 有独立的 `KE-{NNN}` 格式；KB 施工任务用 MOD-INF-006 的 `{NAMESPACE}-{SEQ}` 格式（如 `KB-INF-0001`）。
+- **与 task_id 格式的关系**：KE ID ≠ task_id。KE 有独立的 `KE-{NNN}` 格式；KB 施工任务用 MOD-TASK_SYSTEM 的 `{NAMESPACE}-{SEQ}` 格式（如 `KB-INF-0001`）。
 
 #### 3.2.2 KE 物理存储格式（Markdown）
 
@@ -1747,7 +1747,7 @@ src/zephyr/db/chroma/
 | layer分配 | 14层枚举（对齐 `VALID_LAYERS`：L00~L13） | `layer` |
 | 优先级分配 | P0~P3 四级 | `priority` |
 | 质量评分 | 0.0~1.0（基于来源权威性+内容完整性+时效性加权） | `quality_score` |
-| 标签生成 | 5轴标签：fn/ly/md/st/mo（对齐 MOD-INF-006） | `tags` |
+| 标签生成 | 5轴标签：fn/ly/md/st/mo（对齐 MOD-TASK_SYSTEM） | `tags` |
 | 去重检测 | 与已有 KE 的向量相似度比较（>80% → 可能重复） | 去重建议 |
 | 知识有效期 | TTL 设定 + `half_life_days` | TTL |
 
@@ -1798,7 +1798,7 @@ src/zephyr/db/chroma/
 
 | 步骤 | 组件 | 操作 |
 |------|------|------|
-| 1 | context_assembler (MOD-INF-006 §5.1) | 解析当前任务（domain + layer + tags）→ 构建检索查询 |
+| 1 | context_assembler (MOD-TASK_SYSTEM §5.1) | 解析当前任务（domain + layer + tags）→ 构建检索查询 |
 | 2 | unified_memory_api.recall() | experimental 粗筛：向量语义检索(ChromaDB ke_entries) → Top 50 + 标签过滤(SQLite) |
 | 3 | reranker.py | beta 精排：Cross-Encoder(BGE-reranker-v2-m3) 逐一打分 → Top 10 + 新鲜度排序 |
 | 4 | context_injector | 注入到 AI 上下文，格式：`📚 知识库提醒（KE-042）：[标题] [正文摘要] 来源：... | 新鲜度：87% | TTL：30d` |
@@ -2115,7 +2115,7 @@ Owner 唯一动作：面对自动推送的审批提醒回复 yes/no。
 
 ### 6.2 KB 施工任务追踪
 
-KB 系统自己的施工任务使用 MOD-INF-006 的 TaskCard 格式追踪：
+KB 系统自己的施工任务使用 MOD-TASK_SYSTEM 的 TaskCard 格式追踪：
 
 ```yaml
 task_id: "KB-INF-0001"
@@ -2135,19 +2135,19 @@ tags:
 **task_id 格式对齐**：
 
 - KB 施工任务 = `KB-INF-{NNNN}`（4位序号）
-- 对齐 MOD-INF-006 的 `{NAMESPACE}-{SEQ}` 格式
+- 对齐 MOD-TASK_SYSTEM 的 `{NAMESPACE}-{SEQ}` 格式
 - NAMESPACE = `KB`（知识库），SEQ = 4位数字
 
 ### 6.3 状态机区分
 
 | 关注点 | 知识条目（KE）状态机 | 任务（TaskCard）状态机 | 说明 |
 |--------|-------------------|---------------------|------|
-| 定义位置 | 本蓝图 §3.3 | MOD-INF-006 §4.2 | KE有独立的状态机 |
+| 定义位置 | 本蓝图 §3.3 | MOD-TASK_SYSTEM §4.2 | KE有独立的状态机 |
 | 状态数 | 10 | 10 | 数量相同，语义不同 |
 | 终态 | REJECTED / ARCHIVED / SUPERSEDED | VERIFIED / CANCELLED | 知识终态≠任务终态 |
 | 关系 | KE 是"知识资产" | TaskCard 是"施工单元" | KE管理知识，TaskCard管理施工 |
 
-**规则**：KE 有自己的一致性状态机（KNOWLEDGE 域）；但 KB 施工任务（建设 KB 系统本身的工作）使用 MOD-INF-006 的 TaskCard 状态机。两者不混淆。
+**规则**：KE 有自己的一致性状态机（KNOWLEDGE 域）；但 KB 施工任务（建设 KB 系统本身的工作）使用 MOD-TASK_SYSTEM 的 TaskCard 状态机。两者不混淆。
 
 ### 6.4 从脚本系统接收 MEDIUM Finding（C4→G1 数据流）
 
@@ -3432,7 +3432,7 @@ KO→KE→KB 是知识内容漏斗，AI 运行时还需要记忆温度分层。
 
 | 退役内容 | 退役日期 | 迁移目标 | 状态 |
 |---------|---------|---------|:---:|
-| `task-card-kms/blueprint.md`（MOD-INF-003） | 2026-05-02 | KMS部分→本蓝图；任务卡部分→MOD-INF-006 | ✅ 已完成 |
+| `task-card-kms/blueprint.md`（MOD-INF-003） | 2026-05-02 | KMS部分→本蓝图；任务卡部分→MOD-TASK_SYSTEM | ✅ 已完成 |
 | `construction-plan-task-card-and-kms.md` | 2026-05-02 | 并入 MOD-INF-003→本蓝图 | ✅ 已完成 |
 | 候选池11个KB相关文件 | 本 session | 提取全部KB内容→本蓝图，源处留痕删除 | 🔄 本 session |
 
@@ -3620,7 +3620,7 @@ beta (🔄 当前)
     ├── KB-INF-0011 (Session Log 自动提取)
     │       └── 依赖：batch_ingest.py ✅
     ├── KB-INF-0012 (context_assembler 集成)
-    │       └── 依赖：unified_memory_api.py ✅ + MOD-INF-006 §5.1
+    │       └── 依赖：unified_memory_api.py ✅ + MOD-TASK_SYSTEM §5.1
     └── KB-INF-0013~0015 (反馈+索引+三记忆层)
             └── 依赖：KB-INF-0001~0010 完成后
     │
@@ -3951,10 +3951,10 @@ jobs:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| Context Engine (MOD-INF-008) | CE build 阶段从 KB 检索 KE | `context_assembler.py` → `kb_repo.query()` | CE 成功注入 KE 条目 |
+| Context Engine (MOD-CONTEXT_ENGINE) | CE build 阶段从 KB 检索 KE | `context_assembler.py` → `kb_repo.query()` | CE 成功注入 KE 条目 |
 | Vector Memory (MOD-INF-011) | KE 写入时同步向量化 | `kb_repo.create()` → `InProcessVectorMemory.add()` | ChromaDB 可检索 KE |
-| Gate Engine (MOD-INF-007) | G1-G5 KMS 决策门 | `gate_engine.py` → `kb_repo.check_quality()` | KE 质量门禁生效 |
-| Feedback Loop (MOD-INF-010) | 知识演化回路 | FLE detect → `kb_repo.evolve()` | 失败模式自动写入 KB |
+| Gate Engine (MOD-GATE_ENGINE) | G1-G5 KMS 决策门 | `gate_engine.py` → `kb_repo.check_quality()` | KE 质量门禁生效 |
+| Feedback Loop (MOD-FEEDBACK_LOOP) | 知识演化回路 | FLE detect → `kb_repo.evolve()` | 失败模式自动写入 KB |
 
 ---
 
@@ -3986,10 +3986,10 @@ jobs:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| Context Engine (MOD-INF-008) | CE build 阶段从 KB 检索 KE | `context_assembler.py` → `kb_repo.query()` | CE 成功注入 KE 条目 |
+| Context Engine (MOD-CONTEXT_ENGINE) | CE build 阶段从 KB 检索 KE | `context_assembler.py` → `kb_repo.query()` | CE 成功注入 KE 条目 |
 | Vector Memory (MOD-INF-011) | KE 写入时同步向量化 | `kb_repo.create()` → `InProcessVectorMemory.add()` | ChromaDB 可检索 KE |
-| Gate Engine (MOD-INF-007) | G1-G5 KMS 决策门 | `gate_engine.py` → `kb_repo.check_quality()` | KE 质量门禁生效 |
-| Feedback Loop (MOD-INF-010) | 知识演化回路 | FLE detect → `kb_repo.evolve()` | 失败模式自动写入 KB |
+| Gate Engine (MOD-GATE_ENGINE) | G1-G5 KMS 决策门 | `gate_engine.py` → `kb_repo.check_quality()` | KE 质量门禁生效 |
+| Feedback Loop (MOD-FEEDBACK_LOOP) | 知识演化回路 | FLE detect → `kb_repo.evolve()` | 失败模式自动写入 KB |
 
 ---
 
@@ -4167,7 +4167,7 @@ STEP 3: 拆分后验证
 
 | # | 允许 | 禁止 | 原因 |
 |---|------|------|------|
-| 1 | `zephyr.kb.*` | `zephyr.task_system.*` | 任务系统是独立模块(MOD-INF-006)，KB 不依赖 |
+| 1 | `zephyr.kb.*` | `zephyr.task_system.*` | 任务系统是独立模块(MOD-TASK_SYSTEM)，KB 不依赖 |
 | 2 | `zephyr.gates.*` | `zephyr.vector_memory.*` | VMS 是 beta 目标，KB 不依赖 |
 | 3 | `zephyr.infra_ops.a2a_protocol.*` | 直接 `import chromadb` | 通过 `kb_repo.py` 封装访问 |
 
@@ -4228,13 +4228,13 @@ STEP 3: 拆分后验证
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 Shared Core | 必须 | KB 模块代码承载基座 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-INF-006 Task System | 必须 | context_assembler 知识注入接口 + 任务状态机 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 必须 | context_assembler 知识注入接口 + 任务状态机 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` |
 | MOD-INF-005 Script System | 必须 | 审计数据来源 + 标签分类体系 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\script-system\blueprint.md` |
 | MOD-INF-026 Asset Inventory | 可选 | 资产盘点 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\asset-inventory\blueprint.md` |
-| MOD-INF-008 Context Engine | 可选 | CE build 阶段从 KB 检索 KE | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` |
+| MOD-CONTEXT_ENGINE Context Engine | 可选 | CE build 阶段从 KB 检索 KE | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` |
 | MOD-INF-011 Vector Memory | 可选 | KE 写入时同步向量化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
-| MOD-INF-007 Gate Engine | 可选 | G1-G5 KMS 决策门 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| MOD-INF-010 Feedback Loop | 可选 | 知识演化回路 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 可选 | G1-G5 KMS 决策门 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 知识演化回路 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 

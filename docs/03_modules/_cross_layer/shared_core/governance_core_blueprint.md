@@ -84,8 +84,8 @@ depends_on:
 |------|---------|------|
 | MOD-INF-035 (AutoRuntime) | SessionContinuity, EventBus | 大脑调度 |
 | MOD-INF-009 (Pipeline) | TaskLifecycleManager | 管线编排 |
-| MOD-INF-007 (Gate Engine) | BlueprintDecomposer | 蓝图门禁 |
-| MOD-INF-012 (Database) | models.py (Task) | 持久化 |
+| MOD-GATE_ENGINE (Gate Engine) | BlueprintDecomposer | 蓝图门禁 |
+| MOD-DATABASE (Database) | models.py (Task) | 持久化 |
 
 ## §3 关联
 

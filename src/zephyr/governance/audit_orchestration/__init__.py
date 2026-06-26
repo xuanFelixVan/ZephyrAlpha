@@ -87,7 +87,6 @@ __all__ = [
     "rolling_upgrade",
     "schema_migration",
     "session_conflict",
-    "session_handoff",
     "session_manager",
     "stability_guard",
     "startup_sequencer",

@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-UNK_diagnosers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.ops.diagnosers
 # [INVARIANTS] __all__列表不变; 公开API不变
 # [MODIFY-GUARD] 新增子模块须同步更新_SUBMODULES和__all__

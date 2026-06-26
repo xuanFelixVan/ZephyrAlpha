@@ -1,13 +1,13 @@
 ---
 module_id: KE-2711
-title: MOD-023 集成契约锚点
+title: MOD-GOVERNANCE 集成契约锚点
 category: module_blueprint
 ttl: permanent
 ---
 
-# MOD-023 集成契约锚点
+# MOD-GOVERNANCE 集成契约锚点
 
-MOD-023 集成契约锚点
+MOD-GOVERNANCE 集成契约锚点
 
 > 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
 

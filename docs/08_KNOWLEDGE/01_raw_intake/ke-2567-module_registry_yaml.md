@@ -14,11 +14,11 @@ ttl: permanent
 
 ```yaml
 modules:
-  - module_id: "MOD-INF-006"
+  - module_id: "MOD-TASK_SYSTEM"
     blueprint:
       status: approved
       file: "blueprint.md"
-      parent_blueprint: "MOD-MASTER-001"   # ← 新增
+      parent_blueprint: "MOD-MASTER_BLUEPRINT"   # ← 新增
 ```
 
 ---

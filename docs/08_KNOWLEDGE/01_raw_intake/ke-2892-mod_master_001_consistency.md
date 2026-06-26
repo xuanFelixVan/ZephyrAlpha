@@ -1,13 +1,13 @@
 ---
 module_id: KE-2792
-title: MOD-MASTER-001 Consistency
+title: MOD-MASTER_BLUEPRINT Consistency
 category: module_blueprint
 ttl: permanent
 ---
 
-# MOD-MASTER-001 Consistency
+# MOD-MASTER_BLUEPRINT Consistency
 
-MOD-MASTER-001 Consistency
+MOD-MASTER_BLUEPRINT Consistency
 
 | Check | Result |
 |-------|--------|

@@ -74,7 +74,7 @@ PATH_MUST_HAVE_DIR = re.compile(r"[/\\]")
 
 BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     "_master-blueprint": {
-        "module_id": "MOD-MASTER-001",
+        "module_id": "MOD-MASTER_BLUEPRINT",
         "source_dirs": [],
         "extra_source_files": [],
         "test_patterns": [],
@@ -104,7 +104,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "note": "代码去重引擎——蓝图已创建但尚无代码实现",
     },
     "context-engine": {
-        "module_id": "MOD-INF-008",
+        "module_id": "MOD-CONTEXT_ENGINE",
         "source_dirs": ["src/zephyr/context-engine"],
         "extra_source_files": [],
         "test_patterns": [
@@ -124,7 +124,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "note": "上下文引擎——9文件骨架+assembler+injector已实现",
     },
     "database": {
-        "module_id": "MOD-INF-012",
+        "module_id": "MOD-DATABASE",
         "source_dirs": ["src/zephyr/db"],
         "extra_source_files": [],
         "test_patterns": [
@@ -138,7 +138,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "note": "数据库——task_repo+sqlite_schema+ATM已实现，olap_engine待施工",
     },
     "feedback-loop": {
-        "module_id": "MOD-INF-010",
+        "module_id": "MOD-FEEDBACK_LOOP",
         "source_dirs": ["src/zephyr/feedback-loop"],
         "extra_source_files": [],
         "test_patterns": [
@@ -155,7 +155,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "note": "反馈闭环——6文件骨架+metrics_collector+fitness_functions已实现",
     },
     "gate-engine": {
-        "module_id": "MOD-INF-007",
+        "module_id": "MOD-GATE_ENGINE",
         "source_dirs": ["src/zephyr/gates"],
         "extra_source_files": [],
         "test_patterns": [
@@ -195,7 +195,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "note": "知识库——API骨架已实现，G1-G5门禁待beta",
     },
     "llm-security": {
-        "module_id": "MOD-INF-014",
+        "module_id": "MOD-LLM_SECURITY",
         "source_dirs": ["src/zephyr/llm-security"],
         "extra_source_files": [],
         "test_patterns": [
@@ -310,7 +310,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
         "note": "任务卡+KMS——experimental构建完成，已升级为MOD-INF-006",
     },
     "task-system": {
-        "module_id": "MOD-INF-006",
+        "module_id": "MOD-TASK_SYSTEM",
         "source_dirs": ["src/zephyr/core", "src/zephyr/pipeline"],
         "extra_source_files": [
             "src/zephyr/db/task_repo.py",

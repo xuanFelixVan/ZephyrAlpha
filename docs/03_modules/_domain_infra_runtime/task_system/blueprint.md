@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-006
+module_id: MOD-TASK_SYSTEM
 title: "Task System 蓝图 — 全链路任务卡生命周期管理"
 doc_type: blueprint
 template_for: blueprint
@@ -33,7 +33,7 @@ actual_disk_path: "src/zephyr/governance/task_repo.py"
 runtime_plane: hot
 ttl: permanent
 construction_progress: partially_implemented
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "Task System 全链路蓝图 v0.9.1。覆盖意图→草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的闭环工作流。TaskCard 62字段（31基座+31执行层）。v0.9.1 回填OCP扩展点+施工步骤内容变更+依赖对齐+规格化压缩。"
 tags: [task-system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, anti-drift, blind-spot-audit, dogfooding, ai-autonomy, circuit-breaker, diff-plan, saga-compensation, quality-regression-detection, model-snapshot-pinning, schema-migration, cancel-safety, atomic-write, adaptive-replanning, scope-creep-detection, context-cache-reuse]
 depends_on:
@@ -58,7 +58,7 @@ runtime_plane: hot
 
 # Task System 蓝图 — 全链路任务卡生命周期管理
 
-> module_id: MOD-INF-006 | version: 0.9.5 | status: active | layer: L01
+> module_id: MOD-TASK_SYSTEM | version: 0.9.5 | status: active | layer: L01
 > actual_disk_path: src/zephyr/governance/task_repo.py | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -84,7 +84,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > **存在性状态受控词表**：`未实现` / `已实现` / `已阻塞` / `已废弃`
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-006`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-TASK_SYSTEM`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -117,7 +117,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | Task 数据模型 | shared/schemas.py Task（31字段） | 本蓝图 TaskCard 继承 Task，不重复定义基座字段 |
 | 任务 CRUD + 状态机 | task_repo.py（SQLite） | 单源存储，.md 为伴读副本 |
 | 蓝图→任务卡拆解 | blueprint_decomposer.py | RULE-ZERO-TASK：建卡来源之一（蓝图拆解路径） |
-| 门禁判定 | MOD-INF-007 GateEngine | 本蓝图委托，不内嵌门禁逻辑 |
+| 门禁判定 | MOD-GATE_ENGINE GateEngine | 本蓝图委托，不内嵌门禁逻辑 |
 | 管线调度 | MOD-INF-009 PipelineOrchestrator | 本蓝图委托，不内嵌管线调度 |
 | MCP 协议层 | MOD-INF-013 MCP Servers | 业务逻辑归属本蓝图，协议层归属 MOD-INF-013 |
 
@@ -125,14 +125,14 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 
 | 目录 | 归属蓝图 | 说明 |
 |------|---------|------|
-| src/zephyr/governance/task_repo.py | MOD-INF-006 | 主代码目录 |
-| src/zephyr/trading/orchestrator/ | MOD-INF-006 + MOD-INF-009 | BatchOrchestrator/file_task_mapper 归 MOD-INF-006；PipelineOrchestrator 归 MOD-INF-009 |
-| src/zephyr/governance/task_repo.py | MOD-INF-006（业务接口）/ MOD-INF-012（物理存储） | 业务接口定义权归 MOD-INF-006 |
-| src/zephyr/shared/shared_services/models.py | MOD-INF-006 | TaskCard 模型 |
-| src/zephyr/shared/shared_services/blueprint_decomposer.py | MOD-INF-006 | 蓝图拆解器 |
-| src/zephyr/integration/mcp/task_manager_server.py | MOD-INF-006（业务逻辑）/ MOD-INF-013（协议层） | 见 §0.4 SSoT 声明 |
+| src/zephyr/governance/task_repo.py | MOD-TASK_SYSTEM | 主代码目录 |
+| src/zephyr/trading/orchestrator/ | MOD-TASK_SYSTEM + MOD-INF-009 | BatchOrchestrator/file_task_mapper 归 MOD-TASK_SYSTEM；PipelineOrchestrator 归 MOD-INF-009 |
+| src/zephyr/governance/task_repo.py | MOD-TASK_SYSTEM（业务接口）/ MOD-DATABASE（物理存储） | 业务接口定义权归 MOD-TASK_SYSTEM |
+| src/zephyr/shared/shared_services/models.py | MOD-TASK_SYSTEM | TaskCard 模型 |
+| src/zephyr/shared/shared_services/blueprint_decomposer.py | MOD-TASK_SYSTEM | 蓝图拆解器 |
+| src/zephyr/integration/mcp/task_manager_server.py | MOD-TASK_SYSTEM（业务逻辑）/ MOD-INF-013（协议层） | 见 §0.4 SSoT 声明 |
 | src/zephyr/pipeline/ | MOD-INF-009 | 管线调度 |
-| src/zephyr/gates/ | MOD-INF-007 | 门禁引擎 |
+| src/zephyr/gates/ | MOD-GATE_ENGINE | 门禁引擎 |
 
 ---
 
@@ -270,7 +270,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | 3 | TaskManagerServer | MCP 5 Tool 接口 | task_repo | MCP 协议 |
 | 4 | BatchOrchestrator | 10+ AI Session 并行认领 | task_repo | SQLite 原子 UPDATE |
 
-> 管线调度委托 → MOD-INF-009 PipelineOrchestrator（见 §10 依赖）。MOD-INF-006 不内嵌管线调度逻辑。
+> 管线调度委托 → MOD-INF-009 PipelineOrchestrator（见 §10 依赖）。MOD-TASK_SYSTEM 不内嵌管线调度逻辑。
 
 ### §3.2 数据流
 
@@ -337,19 +337,19 @@ class BlueprintDecomposer:
 
 ```python
 class TaskLifecycleManager:
-    """包装 task_repo.py 的 10 态状态机 + .md 同步。门禁判定委托 MOD-INF-007 GateEngine（见 §10 依赖）。"""
+    """包装 task_repo.py 的 10 态状态机 + .md 同步。门禁判定委托 MOD-GATE_ENGINE GateEngine（见 §10 依赖）。"""
 
     def create_task_card(self, task: "TaskCard") -> DecompositionResult: ...
     def transition(self, task_id: str, to_status: TaskStatus, gate_check: bool = True) -> "TransitionResult": ...
     def check_gate(self, task_id: str, gate_id: "GateLevel") -> "GateCheckResult":
-        """委托 GateEngine.evaluate()。MOD-INF-006 不内嵌门禁逻辑，门禁 SSoT = MOD-INF-007。"""
+        """委托 GateEngine.evaluate()。MOD-TASK_SYSTEM 不内嵌门禁逻辑，门禁 SSoT = MOD-GATE_ENGINE。"""
 ```
 
 #### §4.1.3 管线调度接口
 
-> 管线调度接口定义见 MOD-INF-009 §4.1 PipelineOrchestrator。MOD-INF-006 不重复定义已委托组件的接口。
+> 管线调度接口定义见 MOD-INF-009 §4.1 PipelineOrchestrator。MOD-TASK_SYSTEM 不重复定义已委托组件的接口。
 >
-> MOD-INF-006 消费方式：`from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator` → `dispatch(task_card)`
+> MOD-TASK_SYSTEM 消费方式：`from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator` → `dispatch(task_card)`
 
 ### §4.2 数据模型
 
@@ -637,7 +637,7 @@ class TaskLifecycleManager:
 | GOV-TASK-004 | 必须 | 取消权限、优先级裁决 | ≥2.0.0 | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` |
 | GOV-TASK-005 | 必须 | 关闭三步法 | ≥1.1.0 | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` |
 | MOD-INF-005 | 必须 | 脚本系统 12 维度 | ≥3.0.0 | `docs/03_modules/_domain-infra_ops/script_system/blueprint.md` |
-| MOD-INF-007 | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate-engine/blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate-engine/blueprint.md` |
 | MOD-INF-009 | 必须 | 管线调度 SSoT——任务管线 M1-M11 双管线路由 + Fast/Batch双通道 | ≥2.0.0 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
 | shared/schemas.py | 必须 | Task 31 字段 TaskCard 基座 | 现有代码 | `src/zephyr/shared/schemas.py` |
 | task_repo.py | 必须 | SQLite CRUD + 10状态机 + N:N + BatchCoordination | 现有代码 | `src/zephyr/governance/task_repo.py` |
@@ -646,7 +646,7 @@ class TaskLifecycleManager:
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-006` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-TASK_SYSTEM` |
 | 2 | §11 产出物路径 ↔ 依赖图 path_mappings | 路径一致 | 已对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -698,20 +698,20 @@ class TaskLifecycleManager:
 
 | 重叠维度 | 重叠蓝图 | 处置 | 依据 |
 |---------|---------|------|------|
-| 门禁判定逻辑 | MOD-INF-007 GateEngine | 委托——MOD-INF-006 调用 GateEngine.evaluate() | §0.4 SSoT 声明 |
-| 管线调度逻辑 | MOD-INF-009 Pipeline | 委托——MOD-INF-006 消费 PipelineOrchestrator.dispatch() | §0.4 SSoT 声明 |
-| MCP 协议层 | MOD-INF-013 MCP Servers | 分层——业务逻辑归 MOD-INF-006，协议层归 MOD-INF-013 | §0.4 SSoT 声明 |
+| 门禁判定逻辑 | MOD-GATE_ENGINE GateEngine | 委托——MOD-TASK_SYSTEM 调用 GateEngine.evaluate() | §0.4 SSoT 声明 |
+| 管线调度逻辑 | MOD-INF-009 Pipeline | 委托——MOD-TASK_SYSTEM 消费 PipelineOrchestrator.dispatch() | §0.4 SSoT 声明 |
+| MCP 协议层 | MOD-INF-013 MCP Servers | 分层——业务逻辑归 MOD-TASK_SYSTEM，协议层归 MOD-INF-013 | §0.4 SSoT 声明 |
 | 任务生成 | MOD-INF-035 AutoTaskGenerator | 无重叠——AutoTaskGenerator 生成 L2 推理任务，非 TaskCard | §0.4 SSoT 声明 |
-| task_repo 物理存储 | MOD-INF-012 Database | 分层——业务接口归 MOD-INF-006，物理存储归 MOD-INF-012 | §0.4 SSoT 声明 |
+| task_repo 物理存储 | MOD-DATABASE Database | 分层——业务接口归 MOD-TASK_SYSTEM，物理存储归 MOD-DATABASE | §0.4 SSoT 声明 |
 
 ### §10.6 依赖链风险评级
 
 | 依赖链 | 深度 | 风险等级 | 缓解措施 |
 |--------|:---:|---------|---------|
-| MOD-INF-006→MOD-INF-007→MOD-INF-009→MOD-INF-005 | 4 | L2(中) | 逐级超时+断路器+降级 |
-| MOD-INF-006→MOD-INF-008(X-02) | 2 | L1(低) | 上下文注入失败→降级为空上下文 |
-| MOD-INF-006→MOD-INF-018(X-01) | 2 | L1(低) | RBAC 查询失败→默认拒绝 |
-| MOD-INF-010→MOD-INF-006(X-04) | 2 | L2(中) | 自愈任务走 TaskRepository.create() 建卡（RULE-ZERO-TASK） |
+| MOD-TASK_SYSTEM→MOD-GATE_ENGINE→MOD-INF-009→MOD-INF-005 | 4 | L2(中) | 逐级超时+断路器+降级 |
+| MOD-TASK_SYSTEM→MOD-CONTEXT_ENGINE(X-02) | 2 | L1(低) | 上下文注入失败→降级为空上下文 |
+| MOD-TASK_SYSTEM→MOD-INF-018(X-01) | 2 | L1(低) | RBAC 查询失败→默认拒绝 |
+| MOD-FEEDBACK_LOOP→MOD-TASK_SYSTEM(X-04) | 2 | L2(中) | 自愈任务走 TaskRepository.create() 建卡（RULE-ZERO-TASK） |
 
 ---
 
@@ -759,7 +759,7 @@ class TaskLifecycleManager:
 
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | MOD-INF-006 条目更新 | 版本升级 |
+| 1 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | MOD-TASK_SYSTEM 条目更新 | 版本升级 |
 | 2 | 任务卡元注册表 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 迁移状态更新 | v0.2.0→v0.3.0 |
 | 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | TaskCard 继承 Task | 基座对齐 |
 | 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 对接 task_repo | 数据层真源 |
@@ -852,9 +852,9 @@ class TaskLifecycleManager:
 |------|------|
 | 对应蓝图契约 | §13 |
 | 产出位置 | `docs/03_modules/blueprint_registry.yaml` |
-| 验收标准 | MOD-INF-006 条目 version→0.9.3，blueprint_status→approved |
+| 验收标准 | MOD-TASK_SYSTEM 条目 version→0.9.3，blueprint_status→approved |
 | AI 自治范围 | ai_modifiable |
-| 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/03_modules/blueprint_registry.yaml')); print(d['modules']['MOD-INF-006']['version'])"` |
+| 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/03_modules/blueprint_registry.yaml')); print(d['modules']['MOD-TASK_SYSTEM']['version'])"` |
 | 检查点 | blueprint_registry.yaml 可被 yaml.safe_load() 解析 |
 | G7 检查项 | 上游文件是否全部列出？下游产出物路径是否全部精确？ |
 
@@ -864,10 +864,10 @@ class TaskLifecycleManager:
 |------|------|
 | 对应蓝图契约 | §13 |
 | 产出位置 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` |
-| 验收标准 | 记录 MOD-INF-006 v0.2.0→v0.9.3 迁移 |
+| 验收标准 | 记录 MOD-TASK_SYSTEM v0.2.0→v0.9.3 迁移 |
 | AI 自治范围 | ai_modifiable |
 | 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md')); print('OK')"` |
-| 检查点 | task-card-meta-registry.md 包含 MOD-INF-006 迁移记录 |
+| 检查点 | task-card-meta-registry.md 包含 MOD-TASK_SYSTEM 迁移记录 |
 | G7 检查项 | 迁移状态是否准确？ |
 
 #### 步骤 3：重写 core/models.py — TaskCard 继承 Task
@@ -1030,7 +1030,7 @@ class TaskLifecycleManager:
 | 数据库路径 | `data/databases/governance.db` |
 | 回滚验证 | `python scripts/rollback.py preflight` |
 | 蓝图-代码同步 | `python scripts/governance/d5_architecture/validate_blueprint_code_sync.py` |
-| 依赖对齐验证 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-006` |
+| 依赖对齐验证 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-TASK_SYSTEM` |
 
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
@@ -1249,7 +1249,7 @@ class TaskLifecycleManager:
 | 1 | 蓝图结构完整性 | 检查 §0-§18 + 术语表/已知问题/自检与闭合清单/成熟度/路线图 均存在 | 所有必需章节存在且非空 | ☐ |
 | 2 | 代码-蓝图双向对齐 | `validate_blueprint_code_sync.py` + §0 代码文件清单 | §0.1 所有已实现文件存在 + §4 接口签名与代码一致 | ☐ |
 | 3 | 盲点闭环率 | 统计盲点审计中"已解决"占比 | 已解决 ≥ 33%（16/48），未解决均有规划版本 | ☐ |
-| 4 | 依赖声明完整性 | `validate_path_alignment.py --blueprint MOD-INF-006` | §10.1 每个依赖在 registry 中有对应条目 | ☐ |
+| 4 | 依赖声明完整性 | `validate_path_alignment.py --blueprint MOD-TASK_SYSTEM` | §10.1 每个依赖在 registry 中有对应条目 | ☐ |
 | 5 | 施工完成度 | §16.5 施工完成标准逐项检查 | 所有产出物存在+非空+§0对齐 | ☐ |
 
 | # | 检查项 | 验证方式 | 通过标准 | 结果 |
@@ -1392,7 +1392,7 @@ STEP 3: 拆分后验证
 |---|---------|------------|------|---------|
 | 1 | 本蓝图 | `docs/03_modules/_domain-infra_ops/task-system/blueprint.md` | 真源 | 重写 v0.9.4 |
 | 2 | Change Folder | `docs/03_modules/_domain-infra_ops/task-system/changes/` | 新建 | 存放任务卡 .md 文件 |
-| 3 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 更新 MOD-INF-006 条目 |
+| 3 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | 修改 | 更新 MOD-TASK_SYSTEM 条目 |
 | 4 | Task 模型基座 | `src/zephyr/shared/schemas.py` | 依赖 | TaskCard 继承其 Task 类 |
 | 5 | task_repo.py | `src/zephyr/governance/task_repo.py` | 依赖 | 数据层真源 |
 | 6 | core/models.py | `src/zephyr/shared/shared_services/models.py` | 重写 | 对齐到 shared/schemas.py Task 继承 |
@@ -1871,7 +1871,7 @@ STEP 3: 拆分后验证
 | 属性 | 值 |
 |------|-----|
 | 严重性 | **极高** |
-| 当前状态 | MOD-INF-006 的 6 张任务卡 TASK-INF-0001~0006 状态全是 `created`，仍用旧标签格式（tags_fn...） |
+| 当前状态 | MOD-TASK_SYSTEM 的 6 张任务卡 TASK-INF-0001~0006 状态全是 `created`，仍用旧标签格式（tags_fn...） |
 | 为什么是盲点 | 设计最大缺陷——任务系统不能用自身管理自身维护。Dogfooding 应该贯穿始终：本蓝图的所有变更都应该是任务卡驱动的 |
 | 解决状态 | 🔲 **v0.5.0 施工**——① BlueprintDecomposer.decompose(本蓝图) → task_repo 中创建 TaskCard；② 本蓝图自身维护通过 `register_from_triage` 接入；③ TASK-INF-0001~0006 修复状态和标签格式 |
 | 约束编号 | 待新增 |
@@ -1934,7 +1934,7 @@ STEP 3: 拆分后验证
 |------|-----|
 | 严重性 | **中** |
 | 当前状态 | 一个 Blueprint → N 个 TaskCard，但无法跨模块聚合 |
-| 为什么是盲点 | 真实施工涉及多个 Blueprint（MOD-INF-005 + MOD-INF-006 联动）。Owner 需要"Phase 2 全部任务"的全局视图 |
+| 为什么是盲点 | 真实施工涉及多个 Blueprint（MOD-INF-005 + MOD-TASK_SYSTEM 联动）。Owner 需要"Phase 2 全部任务"的全局视图 |
 | 解决状态 | ✅ **已在本蓝图 §4.2.1 解决**——TaskCard 新增 `epic: str /| None`（如 `phase-2-infra-upgrade`）+ Phase 字段复用 |
 | 约束编号 | §2.2 #11 |
 

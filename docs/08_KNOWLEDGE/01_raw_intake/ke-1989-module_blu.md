@@ -43,7 +43,7 @@ degradation_strategy:
     trigger: "预算使用 > 85%"
     action: "强制压缩上下文——DocCompressor aggressive 模式"
     auto: true
-    integration: "Context Engine (MOD-INF-008)"
+    integration: "Context Engine (MOD-CONTEXT_ENGINE)"
 
   level_4_minimal:
     trigger: "预算使用 > 95%"

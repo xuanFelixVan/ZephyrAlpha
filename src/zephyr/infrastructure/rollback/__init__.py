@@ -23,8 +23,8 @@ MOD-INF-021 Rollback System — ZephyrAlpha 回滚/撤销基础设施。
 
 关联蓝图:
     - MOD-INF-020 (Drift Detector) — 失败信号来源
-    - MOD-INF-007 (Gate Engine) — 门禁失败信号来源
-    - MOD-MASTER-001 (集成契约 CT-RBK-GATE-001)
+    - MOD-GATE_ENGINE (Gate Engine) — 门禁失败信号来源
+    - MOD-MASTER_BLUEPRINT (集成契约 CT-RBK-GATE-001)
 """
 
 from . import (

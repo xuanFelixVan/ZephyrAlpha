@@ -144,16 +144,16 @@ _registration_timer.start()
 register_lazy(
     "vector-memory", "zephyr.data_governance_governance.knowledge_management.vector_memory"
 )  # MOD-INF-011 VMS
-register_lazy("llm-security", "zephyr.security.llm_defense.llm_security")  # MOD-INF-014 LSG — L0-L8 nine-layer defense
+register_lazy("llm-security", "zephyr.security.llm_defense.llm_security")  # MOD-LLM_SECURITY LSG — L0-L8 nine-layer defense
 register_lazy(
     "_cross_layer", "zephyr.cross_asset.cross_market_data_adapter"
-)  # MOD-INF-010 FLE cross-layer pipelines (AlphaSignal + MLExperiment)
+)  # MOD-FEEDBACK_LOOP FLE cross-layer pipelines (AlphaSignal + MLExperiment)
 register_lazy(
     "contract_registry", "zephyr.integration.runtime_core.orchestrator.contract_registry"
-)  # MOD-MASTER-001 CT-* contract registry
+)  # MOD-MASTER_BLUEPRINT CT-* contract registry
 register_lazy(
     "truth_source", "zephyr.governance.rule_enforcement.truth_source_validator"
-)  # MOD-MASTER-001 §0 truth source precedence
+)  # MOD-MASTER_BLUEPRINT §0 truth source precedence
 register_lazy("autopilot", "zephyr.integration.runtime_core.autopilot")  # MOD-INF-012B AutoPilot — AI session 自动驾驶
 register_lazy("signal", "zephyr.signal")  # MOD-L03-001 Signal domain
 register_lazy("ml_train", "zephyr.ml_train")  # MOD-L11-001 ML Training domain

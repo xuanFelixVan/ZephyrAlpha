@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.audit_trail
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-INF-010
+# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-FEEDBACK_LOOP
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 不可变审计记录;密码学完整性;只追加

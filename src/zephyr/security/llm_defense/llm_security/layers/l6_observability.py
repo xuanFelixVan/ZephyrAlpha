@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l6_observability
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.shared.alert_manager

@@ -12,4 +12,4 @@ TASK-DS-0004：datasource-core 蓝图未来扩展
 
 > ⚠️ **当前状态**：BLOCKED — `blocked_by: [infrastructure-not-ready]`
 >
-> 开工触发条件以主蓝图 MOD-MASTER-001 §零「基础设施就绪信号」为准。
+> 开工触发条件以主蓝图 MOD-MASTER_BLUEPRINT §零「基础设施就绪信号」为准。

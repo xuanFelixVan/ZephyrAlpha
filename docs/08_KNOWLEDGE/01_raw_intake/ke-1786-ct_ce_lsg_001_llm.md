@@ -17,11 +17,11 @@ systems:
   - role: producer
     name: context-engine
     path: "src/zephyr/context-engine/"
-    blueprint: "MOD-INF-008"
+    blueprint: "MOD-CONTEXT_ENGINE"
   - role: consumer
     name: llm_security_gate
     path: "src/zephyr/llm-security/"
-    blueprint: "MOD-INF-014"
+    blueprint: "MOD-LLM_SECURITY"
 
 data_flow:
   direction: producer_to_consumer

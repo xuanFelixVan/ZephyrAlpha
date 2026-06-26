@@ -36,10 +36,10 @@ last_updated: "2026-05-14"
 depends_on:
   - {target: "MOD-INF-020", at: "full", why: "AuditTrail——行为审计唯一数据源，所有AI操作MUST通过AuditTrail记录不可变日志"}
   - {target: "MOD-INF-023", at: "full", why: "DriftDetector——漂移信号作为行为审计触发线索"}
-  - {target: "MOD-INF-007", at: "full", why: "Gate Engine——授权边界定义的执行者，许可矩阵查询"}
+  - {target: "MOD-GATE_ENGINE", at: "full", why: "Gate Engine——授权边界定义的执行者，许可矩阵查询"}
   - {target: "MOD-INF-021", at: "§2", why: "Rollback——越界操作确认后的回滚执行器"}
-  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——行为审计误报/漏报回写规则演进"}
-  - {target: "MOD-INF-014", at: "§3", why: "LLM Security——多模型共识输入输出安全校验"}
+  - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——行为审计误报/漏报回写规则演进"}
+  - {target: "MOD-LLM_SECURITY", at: "§3", why: "LLM Security——多模型共识输入输出安全校验"}
   - {target: "MOD-INF-018", at: "§3", why: "Agent RBAC——审计操作权限校验"}
   - {target: "MOD-INF-019", at: "§3", why: "Agent Spec——SKILL-DOM-BEH-001技能注册与渐进式加载"}
   - {target: "MOD-INF-022", at: "§3", why: "Escalation Protocol——L4~L6自动升级通道"}
@@ -47,8 +47,8 @@ depends_on:
   - {target: "MOD-INF-025", at: "§2", why: "A2A Protocol——多Agent并发操作时的行为审计协调"}
   - {target: "MOD-INF-015", at: "§2", why: "System Telemetry——行为审计SLI/SLO指标推送"}
   - {target: "MOD-INF-026", at: "§1", why: "Asset Inventory——保护目标清单元数据来源"}
-  - {target: "MOD-INF-012", at: "§4", why: "Database System——Evidence Chain/Baseline/Session State底层存储"}
-  - {target: "MOD-MASTER-001", at: "§一", why: "集成总蓝图——CT-*集成契约登记"}
+  - {target: "MOD-DATABASE", at: "§4", why: "Database System——Evidence Chain/Baseline/Session State底层存储"}
+  - {target: "MOD-MASTER_BLUEPRINT", at: "§一", why: "集成总蓝图——CT-*集成契约登记"}
   - {target: "SYS-MASTER-001", at: "§〇", why: "系统总蓝图——容量升级方案上游依赖"}
   - {target: "MOD-INF-027", at: "section 4", why: "Audit Orchestrator (编排)"}
 references:
@@ -78,7 +78,7 @@ references:
 
 ## 概述
 
-BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做的操作"这一核心安全问题。核心职责：消费 AuditTrail 事件流 → 比对 Gate Engine 许可矩阵 → 输出 VERDICT（PASS/YELLOW/RED）→ 阻断+告警+回滚。当前规模 54 个 Python 模块已实现漂移检测/基线管理/熔断/混沌注入等基础能力，目标容量 100 AI 并发/10K 脚本。上游依赖 AuditTrail(MOD-INF-020)/DriftDetector(MOD-INF-023)/Gate Engine(MOD-INF-007)，下游被 AuditOrchestrator(MOD-INF-027)调度消费。
+BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做的操作"这一核心安全问题。核心职责：消费 AuditTrail 事件流 → 比对 Gate Engine 许可矩阵 → 输出 VERDICT（PASS/YELLOW/RED）→ 阻断+告警+回滚。当前规模 54 个 Python 模块已实现漂移检测/基线管理/熔断/混沌注入等基础能力，目标容量 100 AI 并发/10K 脚本。上游依赖 AuditTrail(MOD-INF-020)/DriftDetector(MOD-INF-023)/Gate Engine(MOD-GATE_ENGINE)，下游被 AuditOrchestrator(MOD-INF-027)调度消费。
 
 ---
 
@@ -221,7 +221,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 |---|---------|------|
 | 1 | 结构审计（文件是否存在/注册表是否完整） | MOD-INF-027 Orchestrator 结构审计子系统 |
 | 2 | 语义审计（规则文档语义一致性） | MOD-INF-028 SemanticAuditor |
-| 3 | 代码安全扫描 | MOD-INF-014 LLM Security |
+| 3 | 代码安全扫描 | MOD-LLM_SECURITY LLM Security |
 | 4 | AutoFix 修复 | MOD-INF-031 AutoFix Engine |
 | 5 | 权限管理 | MOD-INF-018 Agent RBAC |
 
@@ -259,7 +259,7 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 |---|--------|---------|
 | 1 | 记录不可变操作日志 | MOD-INF-020 AuditTrail |
 | 2 | 检测状态漂移 | MOD-INF-023 DriftDetector |
-| 3 | 执行授权判定 | MOD-INF-007 Gate Engine |
+| 3 | 执行授权判定 | MOD-GATE_ENGINE Gate Engine |
 | 4 | 执行操作回滚 | MOD-INF-021 Rollback |
 | 5 | 修复代码/文档 | MOD-INF-031 AutoFix Engine |
 | 6 | 管理权限配置 | MOD-INF-018 Agent RBAC |
@@ -273,14 +273,14 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 | # | 组件 | 职责 | 依赖 | 交互方式 |
 |---|------|------|------|---------|
 | 1 | EventConsumer | 消费 AuditTrail 事件流 | MOD-INF-020 | 事件流订阅 |
-| 2 | PermissionChecker | 查询 Gate Engine 许可矩阵 | MOD-INF-007 | 同步调用 |
+| 2 | PermissionChecker | 查询 Gate Engine 许可矩阵 | MOD-GATE_ENGINE | 同步调用 |
 | 3 | VerdictEngine | 操作×许可矩阵→VERDICT | PermissionChecker | 同步调用 |
-| 4 | GraduatedResponder | L0~L6 渐进响应 | MOD-INF-007/020/021/022 | 事件驱动 |
-| 5 | MultiModelConsensus | 高风险判定多模型辩论 | MOD-INF-014/024 | 异步调用 |
+| 4 | GraduatedResponder | L0~L6 渐进响应 | MOD-GATE_ENGINE/020/021/022 | 事件驱动 |
+| 5 | MultiModelConsensus | 高风险判定多模型辩论 | MOD-LLM_SECURITY/024 | 异步调用 |
 | 6 | BaselineProfiler | 行为基线画像+异常检测 | MOD-INF-020 | 定时+事件 |
 | 7 | MetaAuditor | 自审计判定行为 | VerdictEngine | 每次判定后 |
 | 8 | RedTeamEngine | 红队对抗压力测试 | VerdictEngine | 定时（每周） |
-| 9 | FLEAdapter | 反馈闭环规则自适应 | MOD-INF-010 | 事件驱动 |
+| 9 | FLEAdapter | 反馈闭环规则自适应 | MOD-FEEDBACK_LOOP | 事件驱动 |
 | 10 | AdmissionController | 事件摄入准入控制+Token Bucket | EventConsumer | 前置限流 |
 | 11 | ProtectionIndex | 文件保护等级 O(1)查询 | MOD-INF-026 | 内存索引 |
 | 12 | GPUConsensusScheduler | GPU 共识调度+API fallback | MultiModelConsensus | 排队调度 |
@@ -468,7 +468,7 @@ class EvidenceChain(BaseModel):
 | # | 威胁 | 影响 | 缓解措施 | 验证方式 |
 |---|------|------|---------|---------|
 | 1 | AI 修改许可矩阵使行为审计失效 | 高 | 许可矩阵属 anchor 保护→修改触发 BH-005→立即阻断 | 模拟修改 Gate 配置 |
-| 2 | CoT 推理链 Prompt 注入 | 高 | MOD-INF-014 LLM Security 输入过滤→SUSPICIOUS_INPUT→默认 BLOCK | 注入测试用例 |
+| 2 | CoT 推理链 Prompt 注入 | 高 | MOD-LLM_SECURITY LLM Security 输入过滤→SUSPICIOUS_INPUT→默认 BLOCK | 注入测试用例 |
 | 3 | BehavioralAuditor 自身越权 | 高 | Meta-Audit 自审计→降级模式→默认 BLOCK | 自审计清单检查 |
 | 4 | 多模型共识被操纵 | 中 | 2/2 共识+辩论记录+API fallback | 分歧场景测试 |
 | 5 | 基线投毒 | 中 | 多基线投票+哈希链验证+跨验证 | 投毒模拟测试 |
@@ -496,13 +496,13 @@ class EvidenceChain(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-INF-020 AuditTrail | 必须 | 事件流数据源 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-023 DriftDetector | 必须 | 漂移信号触发 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-007 Gate Engine | 必须 | 许可矩阵查询 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | 许可矩阵查询 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 | MOD-INF-021 Rollback | 必须 | 越界操作回滚 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
-| MOD-INF-010 Feedback Loop | 必须 | 误报/漏报反馈 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
-| MOD-INF-014 LLM Security | 必须 | Prompt 注入防御 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 必须 | 误报/漏报反馈 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-LLM_SECURITY LLM Security | 必须 | Prompt 注入防御 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
 | MOD-INF-018 Agent RBAC | 必须 | 审计权限校验 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
 | MOD-INF-022 Escalation | 必须 | L4~L6 升级通道 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
-| MOD-INF-012 Database | 可选 | SQLite 底层存储 | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
+| MOD-DATABASE Database | 可选 | SQLite 底层存储 | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
 | MOD-INF-027 AuditOrchestrator | 必须 | 调度路由 | v5.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
@@ -582,20 +582,20 @@ class EvidenceChain(BaseModel):
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
 | AuditOrchestrator (MOD-INF-027) | 事件订阅+dispatch | Phase 2 TRIAGE dispatch→033 | `python -m zephyr.behavioral_auditor status` |
-| Gate Engine (MOD-INF-007) | 同步调用 | `verify_operation()` | PermissionCheck 返回正确 |
+| Gate Engine (MOD-GATE_ENGINE) | 同步调用 | `verify_operation()` | PermissionCheck 返回正确 |
 | AuditTrail (MOD-INF-020) | 事件消费+写入 | 事件流订阅+CRITICAL 事件写入 | 事件流连通性检查 |
 | Rollback (MOD-INF-021) | 回滚调用 | RED 判定→rollback API | 回滚执行验证 |
 | Escalation (MOD-INF-022) | 升级通道 | L4+判定→escalation API | 升级通知到达 |
 | Agent Spec (MOD-INF-019) | Skill 注册 | SKILL-DOM-BEH-001 | `python -m zephyr.agent_spec list` |
-| Database (MOD-INF-012) | SQLite 读写 | CT-BEH-DB-001 | 表创建+查询验证 |
+| Database (MOD-DATABASE) | SQLite 读写 | CT-BEH-DB-001 | 表创建+查询验证 |
 
 ### 12.1 域契约锚点
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
-| CT-BEH-DB-001 | 数据库 | BehavioralAuditor→Database SQLite 读写路径/连接池/批量策略 | MOD-INF-012 | 修改此契约必须同步更新 Database 蓝图 §26 |
+| CT-BEH-DB-001 | 数据库 | BehavioralAuditor→Database SQLite 读写路径/连接池/批量策略 | MOD-DATABASE | 修改此契约必须同步更新 Database 蓝图 §26 |
 | CT-BEH-AT-001 | 审计 | BehavioralAuditor→AuditTrail 事件消费+CRITICAL 写入 | MOD-INF-020 | 修改事件格式必须同步更新 AuditTrail 蓝图 |
-| CT-BEH-GATE-001 | 门禁 | BehavioralAuditor→Gate Engine 许可矩阵查询 | MOD-INF-007 | 修改查询接口必须同步更新 Gate Engine 蓝图 |
+| CT-BEH-GATE-001 | 门禁 | BehavioralAuditor→Gate Engine 许可矩阵查询 | MOD-GATE_ENGINE | 修改查询接口必须同步更新 Gate Engine 蓝图 |
 
 ---
 
@@ -945,18 +945,18 @@ FLE 流程：BehavioralAuditor 判定→Owner 反馈（误报/漏报）→FLE �
 |---------|---------|---------|:---:|
 | AuditTrail (MOD-INF-020) | CT-BEH-AT-001 | 事件消费+CRITICAL 写入 | ✅ |
 | DriftDetector (MOD-INF-023) | CT-BEH-DRIFT-001 | 漂移信号触发 | ✅ |
-| Gate Engine (MOD-INF-007) | CT-BEH-GATE-001 | 许可矩阵查询 | ✅ |
+| Gate Engine (MOD-GATE_ENGINE) | CT-BEH-GATE-001 | 许可矩阵查询 | ✅ |
 | Rollback (MOD-INF-021) | CT-BEH-RB-001 | 回滚调用 | ✅ |
 | Escalation (MOD-INF-022) | CT-BEH-ESC-001 | L4+升级通道 | ✅ |
-| Feedback Loop (MOD-INF-010) | CT-BEH-FLE-001 | 误报/漏报反馈 | ✅ |
-| LLM Security (MOD-INF-014) | CT-BEH-LLM-001 | Prompt 注入防御 | ✅ |
+| Feedback Loop (MOD-FEEDBACK_LOOP) | CT-BEH-FLE-001 | 误报/漏报反馈 | ✅ |
+| LLM Security (MOD-LLM_SECURITY) | CT-BEH-LLM-001 | Prompt 注入防御 | ✅ |
 | Agent RBAC (MOD-INF-018) | CT-BEH-RBAC-001 | 审计权限校验 | ✅ |
 | Agent Spec (MOD-INF-019) | CT-BEH-SKILL-001 | SKILL-DOM-BEH-001 | ✅ |
 | Budget Enforcer (MOD-INF-024) | CT-BEH-BUDGET-001 | Token 配额管理 | ✅ |
 | A2A Protocol (MOD-INF-025) | CT-A2A-BEH-001 | 多 Agent 冲突仲裁 | ✅ |
 | System Telemetry (MOD-INF-015) | CT-BEH-TELE-001 | SLI/SLO 推送 | ✅ |
 | Asset Inventory (MOD-INF-026) | CT-BEH-ASSET-001 | 保护目标清单 | ✅ |
-| Database (MOD-INF-012) | CT-BEH-DB-001 | SQLite 读写 | ✅ |
+| Database (MOD-DATABASE) | CT-BEH-DB-001 | SQLite 读写 | ✅ |
 | AuditOrchestrator (MOD-INF-027) | CT-BEH-AO-001 | dispatch 路由 | ✅ |
 | SemanticAuditor (MOD-INF-028) | CT-SEM-BEH-001 | 平级协同 | ✅ |
 | RedBlue Validator (MOD-INF-030) | CT-BEH-RB-002 | 红蓝对抗协同 | ✅ |
@@ -1325,9 +1325,9 @@ STEP 3: 拆分后验证
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | AuditOrchestrator (MOD-INF-027) | §4 接口契约、§12 集成点 |
-| Tier 1 | Gate Engine (MOD-INF-007) | §4.3 输入契约 |
+| Tier 1 | Gate Engine (MOD-GATE_ENGINE) | §4.3 输入契约 |
 | Tier 2 | Escalation Protocol (MOD-INF-022) | 蓝图特有：渐进式响应梯度 |
-| Tier 2 | Feedback Loop (MOD-INF-010) | 蓝图特有：反馈闭环 |
+| Tier 2 | Feedback Loop (MOD-FEEDBACK_LOOP) | 蓝图特有：反馈闭环 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\behavioral-auditor\*.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则

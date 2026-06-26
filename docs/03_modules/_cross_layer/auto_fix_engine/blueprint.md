@@ -35,7 +35,7 @@ tags: [auto-fix, repair, zombie-cleanup, dedup-extract, scaffold-register, align
 depends_on:
   - {target: "MOD-INF-020", at: "full", why: "Audit Trail——每次修复 MUST 记录 before/after 快照"}
   - {target: "MOD-INF-017", at: "§2", why: "Code Dedup Engine——DedupExtractor 的语义相似度引擎 + AutoFixer 安全约束"}
-  - {target: "MOD-INF-014", at: "§3", why: "LLM Security——L2/L3 LLM 修复文本的安全校验"}
+  - {target: "MOD-LLM_SECURITY", at: "§3", why: "LLM Security——L2/L3 LLM 修复文本的安全校验"}
   - {target: "MOD-INF-005", at: "full", why: "Script System——script-manifest.yaml 的注册更新 + Finding AUTO_FIXABLE 枚举"}
   - {target: "MOD-INF-018", at: "full", why: "Agent RBAC——修复操作的七层+六横切面权限校验（G-CT-001）"}
   - {target: "MOD-INF-022", at: "§3", why: "Escalation Protocol——L1_AUTO_FIX 升级路由 + 熔断器 + 委托约束"}
@@ -556,7 +556,7 @@ class ComplianceEvidence(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-INF-020 | 必须 | Audit Trail——修复审计记录 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-017 | 必须 | Code Dedup Engine——DedupExtractor 语义引擎 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\code-dedup-engine\blueprint.md` |
-| MOD-INF-014 | 必须 | LLM Security——LLM 修复安全校验 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LLM Security——LLM 修复安全校验 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
 | MOD-INF-005 | 必须 | Script System——Finding AUTO_FIXABLE 枚举 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\script-system\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC——修复操作权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
 | MOD-INF-022 | 必须 | Escalation Protocol——L1_AUTO_FIX 升级路由 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |

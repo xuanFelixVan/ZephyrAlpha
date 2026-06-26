@@ -16,7 +16,7 @@ valid_from: 2026-05-01
 ttl: permanent
 actual_disk_path: "src/zephyr/infrastructure/capacity_assurance/"
 construction_progress: partially_implemented
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -30,7 +30,7 @@ verifiability: hybrid
 depends_on:
  - {target: MOD-INF-016, at: §10, why: "Shared Core 基础设施依赖"}
  - {target: MOD-INF-015, at: §4, why: "系统遥测消费容量指标"}
- - {target: MOD-INF-032, at: §4, why: "预算执行器消费预算策略"}
+ - {target: MOD-RESOURCE_OPTIMIZATION_ENGINE, at: §4, why: "预算执行器消费预算策略"}
 priority: P0
 runtime_plane: hot
 tags:
@@ -67,7 +67,7 @@ summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Sw
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 容量保障体系——它解决了 1人+AI 维护模式下系统容量可观测、可控制、可恢复的问题。核心职责包括：SLI/SLO 框架定义、Error Budget 五级响应、Token Budget 四级限流、Kill Switch 全局熔断、Graceful Degradation 降级链、灾难恢复策略、容量预测模型。当前规模 27 个模块，目标容量 10,000 脚本 / 1,500 模块 / 100 AI 并发。上游依赖 MOD-INF-016 Shared Core，下游被 MOD-INF-015 系统遥测和 MOD-INF-032 预算执行器消费。
+本蓝图描述 ZephyrAlpha 容量保障体系——它解决了 1人+AI 维护模式下系统容量可观测、可控制、可恢复的问题。核心职责包括：SLI/SLO 框架定义、Error Budget 五级响应、Token Budget 四级限流、Kill Switch 全局熔断、Graceful Degradation 降级链、灾难恢复策略、容量预测模型。当前规模 27 个模块，目标容量 10,000 脚本 / 1,500 模块 / 100 AI 并发。上游依赖 MOD-INF-016 Shared Core，下游被 MOD-INF-015 系统遥测和 MOD-RESOURCE_OPTIMIZATION_ENGINE 预算执行器消费。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
@@ -916,7 +916,7 @@ slo_registry:
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 | 必须 | Shared Core 基础设施依赖 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
 | MOD-INF-015 | 必须 | 系统遥测消费容量指标 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-INF-032 | 必须 | 预算执行器消费预算策略 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-executor\blueprint.md` |
+| MOD-RESOURCE_OPTIMIZATION_ENGINE | 必须 | 预算执行器消费预算策略 | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-executor\blueprint.md` |
 | MOD-INF-021 | 可选 | Kill Switch re-export wrapper | ≥1.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\kill-switch\blueprint.md` |
 | ai_autonomy_authority_registry.yaml | 必须 | 新组件权限的单一真源 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` |
 | infrastructure-registry.md | 可选 | 基础设施组件 SLA 声明 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` |
@@ -1388,7 +1388,7 @@ STEP 3: 拆分后验证
 | 模块 | module_id | 与本蓝图关系 |
 |------|-----------|------------|
 | 系统遥测 | MOD-INF-015 | 容量指标采集的下游消费者，本蓝图产出 metrics → MOD-INF-015 消费 |
-| 预算执行器 | MOD-INF-032 | Token/Cost 预算的强制执行层，本蓝图定义预算策略 → MOD-INF-032 执行 |
+| 预算执行器 | MOD-RESOURCE_OPTIMIZATION_ENGINE | Token/Cost 预算的强制执行层，本蓝图定义预算策略 → MOD-RESOURCE_OPTIMIZATION_ENGINE 执行 |
 
 ---
 
@@ -1450,7 +1450,7 @@ STEP 3: 拆分后验证
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-015 系统遥测蓝图 | §4 接口契约、§10 依赖关系 |
-| Tier 1 | MOD-INF-032 预算执行器蓝图 | §4 接口契约、§10 依赖关系 |
+| Tier 1 | MOD-RESOURCE_OPTIMIZATION_ENGINE 预算执行器蓝图 | §4 接口契约、§10 依赖关系 |
 | Tier 2 | `D:\ZephyrAlpha\src\zephyr\capacity-assurance\` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则

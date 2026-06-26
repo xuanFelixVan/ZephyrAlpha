@@ -2,5 +2,4 @@
 
 __all__ = [
     "session_boundary",
-    "session_continuity",
 ]

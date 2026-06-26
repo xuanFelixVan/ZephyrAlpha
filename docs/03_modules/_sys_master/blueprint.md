@@ -37,7 +37,7 @@ depends_on:
   - target: "PS-STD-005"
     at: "全篇"
     why: "蓝图架构标准——定义三级金字塔规范与本蓝图的合法位置"
-  - target: "MOD-MASTER-001"
+  - target: "MOD-MASTER_BLUEPRINT"
     at: "§一-§十二"
     why: "12基础设施系统集成蓝图——本蓝图的 Level 1 子蓝图"
   - target: "architecture_model/index.yaml"
@@ -63,7 +63,7 @@ tags: [system-master, blueprint, architecture, topology, cold-start, capacity-up
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔架构的顶点。核心职责：102 章全覆盖的系统拓扑定义、12 个基础设施系统的集成架构、46 个门控检查的全局管控、C-track 14 层 + B-track 12 系统的完整拓扑。AI agent 冷启动第一站——进入项目后必须先读本蓝图 §零（分派表）定位任务域。上游无依赖（ROOT 级），下游被 MOD-MASTER-001（集成闭环总蓝图）和全部 L1 子系统蓝图消费。
+本蓝图是 ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔架构的顶点。核心职责：102 章全覆盖的系统拓扑定义、12 个基础设施系统的集成架构、46 个门控检查的全局管控、C-track 14 层 + B-track 12 系统的完整拓扑。AI agent 冷启动第一站——进入项目后必须先读本蓝图 §零（分派表）定位任务域。上游无依赖（ROOT 级），下游被 MOD-MASTER_BLUEPRINT（集成闭环总蓝图）和全部 L1 子系统蓝图消费。
 
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -110,7 +110,7 @@ tags: [system-master, blueprint, architecture, topology, cold-start, capacity-up
 
 > **定位**: SYS-MASTER-001 蓝图层设计补全：当前(~51模块/~268脚本/单Session)→目标(1500模块/10000脚本/100 AI并发)。先定设计再施工，不涉及代码。
 
-> **原则**: 蓝图冲突裁决链仍然生效——PS-STD-005 > SYS-MASTER-001 > MOD-MASTER-001 > 模块蓝图。本方案是 SYS-MASTER-001 的内部扩展，优先级与 §一~§一百〇二 相同。
+> **原则**: 蓝图冲突裁决链仍然生效——PS-STD-005 > SYS-MASTER-001 > MOD-MASTER_BLUEPRINT > 模块蓝图。本方案是 SYS-MASTER-001 的内部扩展，优先级与 §一~§一百〇二 相同。
 
 
 ---
@@ -240,7 +240,7 @@ tags: [system-master, blueprint, architecture, topology, cold-start, capacity-up
 
 ### 缺失 #10：SQLite 在 100-AI 场景下的写入架构
 
-**当前状态**: MOD-INF-012 数据库系统用 SQLite+DuckDB 双引擎。蓝图 §0.0 SLI#10 监控 "SQLite WAL 深度 <1000 页"。但在 100 AI 并发、40–100 脚本并发、每个脚本都写 Finding 的场景下，SQLite 的单写者模型是天然瓶颈。
+**当前状态**: MOD-DATABASE 数据库系统用 SQLite+DuckDB 双引擎。蓝图 §0.0 SLI#10 监控 "SQLite WAL 深度 <1000 页"。但在 100 AI 并发、40–100 脚本并发、每个脚本都写 Finding 的场景下，SQLite 的单写者模型是天然瓶颈。
 
 **设计决策待定**:
 - 批量写入: Finding 先写内存 Buffer → 每 N 条/每秒 flush 到 SQLite？
@@ -410,8 +410,8 @@ Worker → GPU Worker: 独立队列 (串行化 GPU 访问)
 | §五十 多策略与容量管理 | 新增 §五十-A "系统容量管理"（非交易容量） | Phase 2 |
 | MOD-INF-001 容量保障蓝图 | 500→1500 单进程上限移除，新增 Worker Pool 设计 | Phase 1 |
 | MOD-INF-005 脚本系统蓝图 | 新增依赖图架构 + 分层索引 | Phase 2 |
-| MOD-INF-006 任务系统蓝图 | TaskQueue 从单线程→多 Worker Pool | Phase 1 |
-| MOD-INF-012 数据库蓝图 | SQLite 写入缓冲层设计 | Phase 2 |
+| MOD-TASK_SYSTEM 任务系统蓝图 | TaskQueue 从单线程→多 Worker Pool | Phase 1 |
+| MOD-DATABASE 数据库蓝图 | SQLite 写入缓冲层设计 | Phase 2 |
 
 ---
 
@@ -450,22 +450,22 @@ Worker → GPU Worker: 独立队列 (串行化 GPU 访问)
 | # | 黄金信号 | SLI 指标 | SLO 目标 | 数据源 |
 |:--:|------|------|:--:|------|
 | 1 | **延迟** | E2E AI 请求延迟 (P50) | <3s | Telemetry (MOD-INF-015) |
-| 2 | **延迟** | 蓝图读取耗时 (P95) | <500ms | Context Engine (MOD-INF-008) |
-| 3 | **延迟** | 门禁执行总延迟 (P99) | <2s | Gate Engine (MOD-INF-007) |
+| 2 | **延迟** | 蓝图读取耗时 (P95) | <500ms | Context Engine (MOD-CONTEXT_ENGINE) |
+| 3 | **延迟** | 门禁执行总延迟 (P99) | <2s | Gate Engine (MOD-GATE_ENGINE) |
 | 4 | **流量** | AI Session 启动数/天 | ≤100 | SessionContinuity (§二十四) |
 | 5 | **流量** | Script 执行吞吐量/min | ≥40 | Script System (MOD-INF-005) |
-| 6 | **错误** | Gate 失败率 (G0-G7) | <10% | Gate Engine (MOD-INF-007) |
+| 6 | **错误** | Gate 失败率 (G0-G7) | <10% | Gate Engine (MOD-GATE_ENGINE) |
 | 7 | **错误** | Script 执行错误率 | <5% | Script System (MOD-INF-005) |
 | 8 | **错误** | 契约漂移检出率 | >95% | Drift Detector (MOD-INF-023) |
 | 9 | **饱和度** | Token 预算利用率 | <80% | Budget Enforcer (MOD-INF-024) |
-| 10 | **饱和度** | SQLite WAL 深度 | <1000 页 | Database (MOD-INF-012) |
+| 10 | **饱和度** | SQLite WAL 深度 | <1000 页 | Database (MOD-DATABASE) |
 | 11 | **饱和度** | Session 锁争用率 | <5% | Lock Files 协议 (RULE-ZERO) |
 | 12 | **饱和度** | Worker Pool 利用率 | <80% | Worker Pool Controller (§〇-C) |
 | 13 | **延迟** | 增量扫描完成耗时 (P99) | <90s | Script System (MOD-INF-005) |
 | 14 | **饱和度** | 扫描队列深度 | <500 | Scheduler (§〇-C) |
 | 15 | **饱和度** | GPU 显存利用率 | <80% | GPU Worker (§〇-C) |
 | 16 | **饱和度** | 系统内存使用率 | <85% | System Telemetry (MOD-INF-015) |
-| 17 | **延迟** | Session 上下文加载耗时 (P95) | <2s | Context Engine (MOD-INF-008) |
+| 17 | **延迟** | Session 上下文加载耗时 (P95) | <2s | Context Engine (MOD-CONTEXT_ENGINE) |
 | 18 | **错误** | ZephyrLock 僵死锁数 | 0 | Lock Health Monitor (§九十三) |
 | 19 | **流量** | 全量扫描队列深度 | <200 | Batch Channel (§〇-C) |
 
@@ -483,11 +483,11 @@ Worker → GPU Worker: 独立队列 (串行化 GPU 访问)
 
 ```
 SYS-MASTER-001 (本蓝图, Level 0)
-  ├── MOD-023 (Agent治理八件套集成蓝图, Level 1 域蓝图)
+  ├── MOD-GOVERNANCE (Agent治理八件套集成蓝图, Level 1 域蓝图)
   │     ├── MOD-INF-018~025 (8个治理模块——agent_rbac/agent-spec/audit-trail/rollback/escalation-engine/behavioral-auditor/budget-enforcer/a2a)
   │     ├── G-CT-001~008 (8条跨模块集成契约)
   │     └── governance_server.py (MCP统一入口——8工具)
-  ├── MOD-MASTER-001 (12基础设施集成, Level 1)
+  ├── MOD-MASTER_BLUEPRINT (12基础设施集成, Level 1)
   │     ├── MOD-INF-001~028 基础设施系统 (29个,详见§1.3)
   │     ├── MOD-INF-013 (MCP Servers, 8 Server + Gateway, stdio协议)
   │     └── MOD-KB-001 知识库 (95%完整)
@@ -498,31 +498,31 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 任务域 | 先读 | 再读 | Token预算 |
 |--------|------|------|:--:|
-| 门禁/断路器 | 本蓝图 §2 | MOD-INF-007 blueprint | ~600 |
-| 上下文注入 | 本蓝图 §2 | MOD-INF-008 blueprint | ~500 |
+| 门禁/断路器 | 本蓝图 §2 | MOD-GATE_ENGINE blueprint | ~600 |
+| 上下文注入 | 本蓝图 §2 | MOD-CONTEXT_ENGINE blueprint | ~500 |
 | 任务管线 | 本蓝图 §2 | MOD-INF-009 blueprint | ~500 |
-| 反馈闭环 | 本蓝图 §2 | MOD-INF-010 blueprint | ~500 |
-| 跨系统集成 | 本蓝图 §1-§3 | MOD-MASTER-001 CT-* | ~2000 |
+| 反馈闭环 | 本蓝图 §2 | MOD-FEEDBACK_LOOP blueprint | ~500 |
+| 跨系统集成 | 本蓝图 §1-§3 | MOD-MASTER_BLUEPRINT CT-* | ~2000 |
 | 新建模块 | PS-STD-005 §5 | blueprint-template.md | ~800 |
 | 权限管控/Agent RBAC | MOD-INF-018 blueprint §1-§2 | rbac_roles.yaml + PermissionGuard API | ~600 |
 | 架构审查 | 本文全文 | PS-STD-005 + blueprint_registry.yaml | ~4000 |
 | 成本管理/预算 | 本蓝图 §十二 | MOD-INF-024 + §12.3 | ~800 |
-| 数据分级/安全 | 本蓝图 §十三 | MOD-INF-014 + §13.3 | ~600 |
-| 启动/运维 | 本蓝图 §十四 | MOD-INF-012 + §14.1 | ~500 |
+| 数据分级/安全 | 本蓝图 §十三 | MOD-LLM_SECURITY + §13.3 | ~600 |
+| 启动/运维 | 本蓝图 §十四 | MOD-DATABASE + §14.1 | ~500 |
 | 施工方法论 | 本蓝图 §十五 | §15.1 + §15.2 | ~400 |
 | 测试/质量保障 | 本蓝图 §十七 | MOD-INF-005 + §17.1 | ~800 |
 | 灾难恢复 | 本蓝图 §十八 | MOD-INF-001 + §18.3 | ~600 |
-| 模型风险管理 | 本蓝图 §十九 | MOD-INF-010 + SR11-7 | ~700 |
+| 模型风险管理 | 本蓝图 §十九 | MOD-FEEDBACK_LOOP + SR11-7 | ~700 |
 | 事故响应 | 本蓝图 §二十 | MOD-INF-022 + §20.3 | ~600 |
 | 部署/发布 | 本蓝图 §二十一 | MOD-INF-009 + §21.1 | ~500 |
 | 合规审查 | 本蓝图 §二十二 | MOD-INF-020 + §22.2 | ~700 |
-| 安全纵深防御 | 本蓝图 §二十三 | MOD-INF-014 + §23.1 | ~600 |
+| 安全纵深防御 | 本蓝图 §二十三 | MOD-LLM_SECURITY + §23.1 | ~600 |
 | Session生命周期 | 本蓝图 §二十四 | SessionContinuity (project_rules.md STEP 3) | ~400 |
 | 环境管理 | 本蓝图 §二十五 | IDE隔离 + 快捷键 | ~300 |
 | 可观测性/仪表板 | 本蓝图 §二十六 | MOD-INF-015 + §0.0 | ~400 |
 | 性能基线 | 本蓝图 §二十七 | MOD-INF-011 + §27.1 | ~400 |
 | 供应链安全 | 本蓝图 §二十八 | pip-lock + audit | ~300 |
-| 数据质量治理 | 本蓝图 §二十九 | MOD-INF-012 + §13 | ~400 |
+| 数据质量治理 | 本蓝图 §二十九 | MOD-DATABASE + §13 | ~400 |
 | 知识管理 | 本蓝图 §三十 | MOD-KB-001 + AUTO-KB(§67) | ~400 |
 | 迁移策略 | 本蓝图 §三十一 | MOD-INF-021 + §21 | ~300 |
 | 术语/反模式 | 本蓝图 §三十二 + §三十三 | §15.2 + AGENTS.md | ~300 |
@@ -532,15 +532,15 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 模型漂移监控 | 本蓝图 §三十七 | §六十 SPC + §42 ML | ~400 |
 | SPOF消除 | 本蓝图 §三十八 | §1.3 + §45.1 | ~300 |
 | 氛围编程质量 | 本蓝图 §三十九 | §六十 SPC + §15 | ~400 |
-| 市场数据管线 | 本蓝图 §四十 | MOD-INF-012 + §29 | ~600 |
-| 回测引擎 | 本蓝图 §四十 | MOD-INF-010 + §19 | ~700 |
+| 市场数据管线 | 本蓝图 §四十 | MOD-DATABASE + §29 | ~600 |
+| 回测引擎 | 本蓝图 §四十 | MOD-FEEDBACK_LOOP + §19 | ~700 |
 | 订单执行/风控 | 本蓝图 §四十一 | MOD-INF-005 + §19 | ~600 |
 | 量化ML工程 | 本蓝图 §四十二 | MOD-INF-011 + §27 | ~700 |
 | 运维成熟度 | 本蓝图 §四十三 | MOD-INF-001 + §0.0 | ~500 |
 | 氛围编程深层 | 本蓝图 §四十四 | §15.5 + MOD-INF-019 | ~600 |
 | Agent Spec / Skill系统 | MOD-INF-019 blueprint §1-§2 | skill-registry.yaml → `progressive_load(skill_id)` | ~600 |
-| Agent治理/八件套集成 | MOD-023 blueprint §1-§3 | 8模块G-CT-001~008八条跨模块契约 + governance_server.py MCP入口 | ~800 |
-| 架构基础契约 | 本蓝图 §四十五 | MOD-MASTER-001 + §4.1 | ~600 |
+| Agent治理/八件套集成 | MOD-GOVERNANCE blueprint §1-§3 | 8模块G-CT-001~008八条跨模块契约 + governance_server.py MCP入口 | ~800 |
+| 架构基础契约 | 本蓝图 §四十五 | MOD-MASTER_BLUEPRINT + §4.1 | ~600 |
 | 1人运营保障 | 本蓝图 §四十六 | §三十六 + §三十四 | ~400 |
 | 金融合规法律 | 本蓝图 §四十七 | §二十二 + §十九 | ~500 |
 | 策略验证/统计 | 本蓝图 §四十八 | §四十二 + §十九 | ~600 |
@@ -602,7 +602,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 红白对抗验证/安全纵深 | MOD-INF-030 blueprint §1-§7 | _scenario-registry.yaml + _constitution-registry.yaml + red-blue-adversarial skill | ~800 |
 | 孤儿判定/资产生死审判 | MOD-INF-029 blueprint §1-§4 | orphan-judge/judge.py + orphan-judge/*.py | ~600 |
 | 全链路自愈/自动修复 | MOD-INF-031 blueprint §1-§5 | code_dedup_engine/auto_fixer.py + auto-fix-engine skill | ~600 |
-| 资源优化/生命周期管理 | MOD-INF-032 blueprint §1-§4 | lifecycle_manager/resource_optimization_engine.py | ~500 |
+| 资源优化/生命周期管理 | MOD-RESOURCE_OPTIMIZATION_ENGINE blueprint §1-§4 | lifecycle_manager/resource_optimization_engine.py | ~500 |
 | 行为审计/AI边界检测 | MOD-INF-033 blueprint §1-§4 | behavioral-auditor skill + code_dedup_engine/behavioral_*.py | ~600 |
 | 模型评测/任务路由 | MOD-INF-034 blueprint §1-§5 | model-profiler/ + profiler.py | ~600 |
 | AutoRuntime/系统大脑 | MOD-INF-035 blueprint §1-§8 | runtime/ + auto_runtime_core.py + capability_registry.py | ~800 |
@@ -614,7 +614,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 |------|------|:--:|------|
 | 🔥 Hot Memory | AGENTS.md + 本蓝图 §0 | ~800 | 每个session |
 | 📋 Domain Triggers | 对应模块蓝图 §1-§5 | ~2000 | path_pattern匹配 |
-| 📚 Cold Memory | 模块蓝图全文 + MOD-MASTER-001 | ~8000 | 主动查询 |
+| 📚 Cold Memory | 模块蓝图全文 + MOD-MASTER_BLUEPRINT | ~8000 | 主动查询 |
 
 ---
 
@@ -653,15 +653,15 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 | `src/zephyr/capacity-assurance/` | 已实现 |
 | Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 | `src/zephyr/runtime/` | 已实现 |
 | Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 | `src/zephyr/script_system/` | 已实现 |
-| Task System | MOD-INF-006 | 95% | 任务卡全生命周期 | `src/zephyr/db/` | 已实现 |
-| Gate Engine | MOD-INF-007 | 35% | G0-G7门禁+断路器 | `src/zephyr/gates/` | 部分实现 |
-| Context Engine | MOD-INF-008 | 95% | 上下文四阶段流水线 | `src/zephyr/context-engine/` | 已实现 |
+| Task System | MOD-TASK_SYSTEM | 95% | 任务卡全生命周期 | `src/zephyr/db/` | 已实现 |
+| Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 | `src/zephyr/gates/` | 部分实现 |
+| Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 | `src/zephyr/context-engine/` | 已实现 |
 | Pipeline | MOD-INF-009 | 95% | M1-M11双管线 | `src/zephyr/pipeline/` | 已实现 |
-| Feedback Loop | MOD-INF-010 | 95% | 系统自调节闭环 | `src/zephyr/feedback-loop/` | 已实现 |
+| Feedback Loop | MOD-FEEDBACK_LOOP | 95% | 系统自调节闭环 | `src/zephyr/feedback-loop/` | 已实现 |
 | Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 | `src/zephyr/vector-memory/` | 已实现 |
-| Database | MOD-INF-012 | 95% | SQLite+DuckDB双引擎元数据 | `src/zephyr/db/` | 已实现 |
+| Database | MOD-DATABASE | 95% | SQLite+DuckDB双引擎元数据 | `src/zephyr/db/` | 已实现 |
 | MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 | `src/zephyr/integration/mcp/` | 已实现 |
-| LLM Security | MOD-INF-014 | 95% | L0-L8九层纵深防御 | `src/zephyr/llm-security/` | 部分实现 |
+| LLM Security | MOD-LLM_SECURITY | 95% | L0-L8九层纵深防御 | `src/zephyr/llm-security/` | 部分实现 |
 | System Telemetry | MOD-INF-015 | 95% | 全系统遥测采集 | `src/zephyr/system-telemetry/` | 已实现 |
 | Shared Core | MOD-INF-016 | **100%** | 跨层共享基础设施 | `src/zephyr/shared/` | 已实现 |
 | Code Dedup Engine | MOD-INF-017 | 95% | 爆炸半径防护+全生命周期去重 | `src/zephyr/infra_ops/code_dedup_engine/` | 已实现 |
@@ -680,7 +680,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Orphan Judge | MOD-INF-029 | 100% | 资产生死判定引擎 | src/zephyr/orphan-judge/ | 25/25 文件已实现 |
 | Red-Blue Validator | MOD-INF-030 | 0% | 治理规则混沌工程引擎 | `src/zephyr/red-blue-validator/` | 空壳 |
 | Auto Fix Engine | MOD-INF-031 | 0% | 全链路自愈执行系统 | —（代码在code_dedup_engine/） | 空壳 |
-| Resource Optimization Engine | MOD-INF-032 | 50% | 资源优化引擎 | `src/zephyr/lifecycle_manager/` | 部分实现 |
+| Resource Optimization Engine | MOD-RESOURCE_OPTIMIZATION_ENGINE | 50% | 资源优化引擎 | `src/zephyr/lifecycle_manager/` | 部分实现 |
 | Behavioral Auditor | MOD-INF-033 | 0% | AI行为边界审计引擎 | — | 空壳 |
 | Model Profiler | MOD-INF-034 | 50% | 7维评测+任务×模型路由 | `src/zephyr/model-profiler/` | 部分实现 |
 | AutoRuntime Core | MOD-INF-035 | 95% | 系统大脑·三层运行时运营中心 | `src/zephyr/runtime/` | 已实现 |
@@ -779,7 +779,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
-| MOD-MASTER-001 | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 | architecture_model/index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture_model\_index.yaml` |
 | blueprint_registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` |
 
@@ -1485,7 +1485,7 @@ AI Velocity:
 |------|------|
 | 数据格式 | JSON→所有跨模块; only σ within file |
 | 版本管理 | 所有 API→ version prefix (💻 v1/get_signal ) |
-| 契约存档 | 变化→ CT-### contract in MOD-MASTER-001 |
+| 契约存档 | 变化→ CT-### contract in MOD-MASTER_BLUEPRINT |
 
 ### 45.2 同步/异步边界
 
@@ -3871,7 +3871,7 @@ Point-in-Time Universe:
 | 5 | 蓝图模板 | — | v3.5/v3.6 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图编写模板 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 产出物规格化 |
 | 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
-| 8 | 集成总蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 12系统集成契约 |
+| 8 | 集成总蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 12系统集成契约 |
 | 9 | 代码构建标准 | GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码头部十字段标准 |
 
 ---
@@ -3950,7 +3950,7 @@ STEP 3: 拆分后验证
 | 架构原则 | **本文档 §四** | — |
 | KB 决策记录 索引 | **本文档 §三** | — |
 | 集成契约 | MOD-MASTER-002 §二 | — |
-| CBAC 矩阵 | MOD-MASTER-004 §十五 | — |
+| CBAC 矩阵 | MOD-MASTER_BLUEPRINT §十五 | — |
 | 容量升级 | MOD-MASTER-003 §-1/§-2 | — |
 
 **任何与本蓝图冲突的系统定义，以本蓝图为准。**
@@ -3959,7 +3959,7 @@ STEP 3: 拆分后验证
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | MOD-MASTER-001 | 系统拓扑+架构原则 |
+| Tier 1 | MOD-MASTER_BLUEPRINT | 系统拓扑+架构原则 |
 | Tier 1 | 所有模块蓝图 | §0 分派表+§一 系统拓扑 |
 | Tier 2 | PS-STD-005 | 三级金字塔规范 |
 
@@ -3967,7 +3967,7 @@ STEP 3: 拆分后验证
 
 | 变更类型 | Tier 1（下游蓝图） | Tier 2（集成系统） |
 |---------|------------------|------------------|
-| 系统拓扑变更 | 通知 MOD-MASTER-001 | 更新 blueprint_registry.yaml |
+| 系统拓扑变更 | 通知 MOD-MASTER_BLUEPRINT | 更新 blueprint_registry.yaml |
 | 架构原则变更 | 通知所有模块蓝图 | 更新 project_rules.md |
 | KB 决策记录 变更 | 通知相关模块蓝图 | 更新决策记录 |
 
@@ -4003,7 +4003,7 @@ STEP 3: 拆分后验证
 |:---:|------|
 | 1 | 读本蓝图 §零 分派表 → 定位你的任务域 |
 | 2 | 读 §一 系统全景拓扑 → 了解全系统结构 |
-| 3 | 按分派表跳转到下级蓝图（MOD-MASTER-001 或具体模块蓝图） |
+| 3 | 按分派表跳转到下级蓝图（MOD-MASTER_BLUEPRINT 或具体模块蓝图） |
 | 4 | 如需集成契约细节 → 读 baseline §二 CT-* 契约总表 |
 | 5 | 如需具体施工步骤 → 读对应模块蓝图 §16 |
 
@@ -4011,7 +4011,7 @@ STEP 3: 拆分后验证
 
 | 修改本文件 | 必须同步更新 |
 |-----------|------------|
-| 系统拓扑变更 | MOD-MASTER-001 (集成总蓝图) + blueprint_registry.yaml |
+| 系统拓扑变更 | MOD-MASTER_BLUEPRINT (集成总蓝图) + blueprint_registry.yaml |
 | 架构原则变更 | .trae/rules/project_rules.md + 所有模块蓝图 |
 | 分派表变更 | 对应子系统蓝图 §0 分派表 |
 | 门控检查变更 | src/zephyr/gates/_registry.yaml |

@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Observability Contract Todo
 module_id: GOV-071
 ttl: task_bound

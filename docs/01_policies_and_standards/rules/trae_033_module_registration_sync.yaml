@@ -44,7 +44,7 @@ sections:
       section_type: context
       applies_to: 创建/修改任何项目工件(模块/脚本/KB决策记录/文档/目录/门禁/知识/字段)时必须同步写入这些注册表
       not_applies_to: 不在registry-master-index.yaml中登记的注册表; _DO_NOT_USE_old_tree/下的任何文件(AGENTS.md §2禁止引用)
-      out_of_scope: 注册表字段的具体定义(→各注册表的_schema); 共享字段的SSoT归属(→registry_of_registries.yaml cross_registry_rules); 注册表清单(→registry-master-index.yaml); AI工具链的具体使用方式(→AGENTS.md); 各工种标准(准入=GOV-MOD-001/命名=PS-STD-004/KB决策记录=KB决策记录流程); 注册表物理迁移(→migration_plan)
+      out_of_scope: 注册表字段的具体定义(→各注册表的_schema); 共享字段的SSoT归属(→registry_of_registries.yaml cross_registry_rules); 注册表清单(→registry-master-index.yaml); AI工具链的具体使用方式(→AGENTS.md); 各工种标准(准入=GOV-MOD-ALPHA_SIGNAL_DOMAIN/命名=PS-STD-004/KB决策记录=KB决策记录流程); 注册表物理迁移(→migration_plan)
     gov_mod_006_registry_map:
       section_type: examples
       registries:
@@ -115,7 +115,7 @@ sections:
     gov_mod_006_cross_refs:
       section_type: context
       refs:
-      - target: GOV-MOD-001
+      - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN
         role: 模块准入门控——创建模块前的准入流程
       - target: GOV-MOD-003 §3
         role: status枚举值——module-registry.yaml和blueprint.status值来源
@@ -200,7 +200,7 @@ sections:
     gov_mod_007_cross_refs:
       section_type: context
       refs:
-      - target: GOV-MOD-001
+      - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN
         role: 模块准入门控——创建模块前的准入流程
       - target: GOV-MOD-003 §3
         role: status枚举值——module-registry.yaml和blueprint.status值来源

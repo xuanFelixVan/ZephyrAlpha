@@ -2,7 +2,7 @@
 # [MODULE] zephyr.behavioral_audit.data_quality
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.__init__
-# [CONSUMERS] MOD-INF-007;MOD-INF-021;MOD-INF-020
+# [CONSUMERS] MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算

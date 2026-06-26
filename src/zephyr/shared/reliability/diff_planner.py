@@ -18,7 +18,7 @@
 Diff Planner — 最小增量变更规划器。
 
 依据：
-    蓝图 MOD-INF-006 §6.2.3 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.2.3 + v0.6.0
     任务卡 TASK-INF-0108 (Part 3/4)
 
 功能：

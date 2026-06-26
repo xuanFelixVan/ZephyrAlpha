@@ -17,7 +17,7 @@
 """
 CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code 完整定义。
 
-依据: 蓝图 MOD-INF-021 §9 + MOD-MASTER-001 §4
+依据: 蓝图 MOD-INF-021 §9 + MOD-MASTER_BLUEPRINT §4
 
 全部 46 个 exit code 枚举 + Gate 判定映射 + Pipeline 行为映射。
 """

@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Agent Rbac.Manifest
 module_id: MOD-042
 ttl: permanent

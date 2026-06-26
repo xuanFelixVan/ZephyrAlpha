@@ -18,7 +18,7 @@
 SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。
 
 依据：
-    蓝图 MOD-INF-006 §6.10 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.10 + v0.6.0
     任务卡 TASK-INF-0115
 
 RTO: Recovery Time Objective ≤ 300s

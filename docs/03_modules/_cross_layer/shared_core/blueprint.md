@@ -16,7 +16,7 @@ valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: design_only
 actual_disk_path: "src/zephyr/shared/ + src/zephyr/core/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts) + F21 自动化集成(EventBus合并+自动启动+事件订阅+分钟级监控+Finalizer自动关闭)"
 tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.20.0, f21-automation]
 priority: P0
@@ -35,9 +35,9 @@ references: []
 depends_on:
   - {target: "architecture_model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
   - {target: "architecture_model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
-  - {target: "MOD-INF-008", at: "blueprint.md", why: "Context Engine 消费 Shared 模型"}
+  - {target: "MOD-CONTEXT_ENGINE", at: "blueprint.md", why: "Context Engine 消费 Shared 模型"}
   - {target: "MOD-INF-003", at: "blueprint.md", why: "Script System 消费 Shared ProcessPoolManager"}
-  - {target: "MOD-INF-007", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
+  - {target: "MOD-GATE_ENGINE", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
   - {target: "MOD-INF-009", at: "blueprint.md", why: "Pipeline 消费 Shared 分层限流+PriorityLock"}
 ---
 
@@ -48,13 +48,13 @@ depends_on:
 >
 > **SSoT 声明**: Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_shared.yaml)；Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_core.yaml)。Shared + Core 合并为单一蓝图（均为跨层基础设施，体积较小）。
 
-**负向责任**：不涉及应用层业务逻辑 / GUI 渲染 / 外部 API 集成 / 数据库 Schema 设计（→ MOD-INF-012）。
+**负向责任**：不涉及应用层业务逻辑 / GUI 渲染 / 外部 API 集成 / 数据库 Schema 设计（→ MOD-DATABASE）。
 
 **触发**：EventBus 集成 → §2.2；配置管理 → §2.6；缓存策略 → Phase 8；限流配置 → Phase 8；契约定义 → §2.1。
 
 ## 概述
 
-本蓝图描述 Shared Core——ZephyrAlpha 跨层共享基础设施层，为所有模块提供 EventBus、配置中心、缓存层、限流器、幂等守卫、契约总线等 18 项基础组件。通过 daemon_registry 统一管理守护线程生命周期。当前 115+ 文件覆盖 shared/ 和 core/ 两目录，目标支撑 1,500 模块规模。被 AutoRuntime Core（MOD-INF-035）和资源优化引擎（MOD-INF-032）等上游消费。
+本蓝图描述 Shared Core——ZephyrAlpha 跨层共享基础设施层，为所有模块提供 EventBus、配置中心、缓存层、限流器、幂等守卫、契约总线等 18 项基础组件。通过 daemon_registry 统一管理守护线程生命周期。当前 115+ 文件覆盖 shared/ 和 core/ 两目录，目标支撑 1,500 模块规模。被 AutoRuntime Core（MOD-INF-035）和资源优化引擎（MOD-RESOURCE_OPTIMIZATION_ENGINE）等上游消费。
 
 > **标准锚点**：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md) | [压缩工作流标准](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | [code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 
@@ -619,14 +619,14 @@ depends_on:
 
 | 消费方 module_id | 消费方名称 | 导入的 shared/core 文件 | 导入量 | 关键依赖点 |
 |------|------|------|:---:|------|
-| MOD-INF-012 | Database | `schemas.py` (Task/TaskStatus), `paths.py` (DB_PATH/REPO_ROOT) | 2 文件 | SQLite CRUD 继承 Task 模型；DB 路径从 paths SSoT 获取 |
-| MOD-INF-008 | Context Engine | `schemas.py`, `paths.py`, `token_utils.py`, `time_utils.py`, `frontmatter_utils.py` | 9 文件 | 上下文装配、Token 预算、时间戳、frontmatter 解析全链路依赖 |
+| MOD-DATABASE | Database | `schemas.py` (Task/TaskStatus), `paths.py` (DB_PATH/REPO_ROOT) | 2 文件 | SQLite CRUD 继承 Task 模型；DB 路径从 paths SSoT 获取 |
+| MOD-CONTEXT_ENGINE | Context Engine | `schemas.py`, `paths.py`, `token_utils.py`, `time_utils.py`, `frontmatter_utils.py` | 9 文件 | 上下文装配、Token 预算、时间戳、frontmatter 解析全链路依赖 |
 | MOD-INF-009 | Pipeline | `schemas.py`, `paths.py`, `time_utils.py` | 2 文件 | 管线调度器依赖 Task 状态模型 + 路由模型 |
-| MOD-INF-007 | Gate Engine | `schemas.py`, `paths.py`, `time_utils.py`, `frontmatter_utils.py` | 3 文件 | 门禁判决依赖 TaskStatus/CheckResult；熔断器依赖配置路径 |
-| MOD-INF-010 | Feedback Loop | `schemas.py`, `paths.py`, `time_utils.py`, `observer.py` | 3 文件 | 自进化引擎依赖事件总线 + 指标采集模型 |
+| MOD-GATE_ENGINE | Gate Engine | `schemas.py`, `paths.py`, `time_utils.py`, `frontmatter_utils.py` | 3 文件 | 门禁判决依赖 TaskStatus/CheckResult；熔断器依赖配置路径 |
+| MOD-FEEDBACK_LOOP | Feedback Loop | `schemas.py`, `paths.py`, `time_utils.py`, `observer.py` | 3 文件 | 自进化引擎依赖事件总线 + 指标采集模型 |
 | MOD-KB-001 | Knowledge Base | `schemas.py` (KnowledgeEntry/KeCategory), `paths.py`, `content_fingerprint.py`, `frontmatter_utils.py` | 10 文件 | KE 生命周期全链路——ingest/extract/activate/analyze 全部依赖 shared 模型 |
 | MOD-INF-013 | MCP Servers | `schemas.py`, `paths.py`, `time_utils.py` | 3 文件 | task_manager/doc_guard/gate_engine 三个 MCP Server 均对接 shared 模型 |
-| MOD-INF-014 | LLM Security | `schemas.py`, `paths.py`, `time_utils.py` | 1 文件 | 安全审计日志依赖 AuditEvent 模型 |
+| MOD-LLM_SECURITY | LLM Security | `schemas.py`, `paths.py`, `time_utils.py` | 1 文件 | 安全审计日志依赖 AuditEvent 模型 |
 | MOD-INF-002 | Runtime Integration | `schemas.py`, `paths.py`, `observer.py`, `capability.py`, `dos_launcher.py` | 5 文件 | 跨层集成——事件总线、能力管控、指令加载、任务调度全链路 |
 | MOD-INF-017 | Code Dedup Engine | `paths.py`, `content_fingerprint.py`, `frontmatter_utils.py` | — | 蓝图声明 `depends_on: MOD-INF-016` |
 | MOD-INF-019 | Agent Spec | `schemas.py`, `frontmatter_utils.py` | — | Skill 加载器依赖蓝图 frontmatter 解析 |
@@ -709,7 +709,7 @@ depends_on:
 ### 10.1 依赖声明
 
 > 详细消费者依赖索引见 [§7.1 反向依赖索引](#71-反向依赖索引--谁依赖-sharedcore)——12 消费者模块全部 traced。
-> 关键依赖：MOD-INF-008(Context Engine), MOD-INF-009(Pipeline), MOD-INF-007(Gate Engine), MOD-INF-012(Database), MOD-INF-002(Runtime Integration)。
+> 关键依赖：MOD-CONTEXT_ENGINE(Context Engine), MOD-INF-009(Pipeline), MOD-GATE_ENGINE(Gate Engine), MOD-DATABASE(Database), MOD-INF-002(Runtime Integration)。
 
 ### 10.2 依赖图对齐声明
 

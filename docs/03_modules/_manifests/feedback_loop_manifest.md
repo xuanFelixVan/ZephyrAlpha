@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Feedback Loop.Manifest
 module_id: MOD-056
 ttl: permanent

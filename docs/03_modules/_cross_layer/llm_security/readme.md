@@ -1,13 +1,13 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: llm-security README
 module_id: MOD-010
 ttl: permanent
 ---
 
-# LLM Security Gateway (MOD-INF-014)
+# LLM Security Gateway (MOD-LLM_SECURITY)
 
-> **模块标识**: MOD-INF-014 | **版本**: 0.10.0 | **状态**: 施工中 | **层级**: 跨层
+> **模块标识**: MOD-LLM_SECURITY | **版本**: 0.10.0 | **状态**: 施工中 | **层级**: 跨层
 
 > **真源声明**：本模块的 canonical SSoT 为 `src/zephyr/llm-security/` 代码目录。
 

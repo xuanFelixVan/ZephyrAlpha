@@ -12,9 +12,9 @@ CT-DB-003：OLAP 查询契约
 
 ```yaml
 contract_id: CT-DB-003
-provider: MOD-INF-012 (OLAPEngine)
+provider: MOD-DATABASE (OLAPEngine)
 consumers:
-  - MOD-INF-010 (feedback-loop)
+  - MOD-FEEDBACK_LOOP (feedback-loop)
   - MOD-INF-015 (system-telemetry)
 
 operations:

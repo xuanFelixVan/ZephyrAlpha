@@ -18,7 +18,7 @@
 Failure Matcher — 失败模式分类与根因匹配。
 
 依据：
-    蓝图 MOD-INF-006 §6.3.3 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.3.3 + v0.6.0
     任务卡 TASK-INF-0109 (Part 3/5)
 """
 

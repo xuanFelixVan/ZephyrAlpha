@@ -28,6 +28,6 @@ conversation_history_tax_detector:
       last_3_turns: 1.0                      # 全部保留
       turns_4_10: 0.3                        # 仅保留决策 + 异常
       turns_11_plus: 0.05                    # 仅保留摘要
-  synergy: "联动 Context Engine (MOD-INF-008) 的 DocCompressor 加权衰减策略"
+  synergy: "联动 Context Engine (MOD-CONTEXT_ENGINE) 的 DocCompressor 加权衰减策略"
   visual: "终端显示 '📜 历史: 12K/15K (80%) | 有效引用: 仅 22%'"
 ```

@@ -13,7 +13,7 @@ stability: stable
 safety_level: H
 ai_autonomy: human_gated
 aliases:
-- MOD-001
+- MOD-ALPHA_SIGNAL_DOMAIN
 - MOD-002
 - MOD-003
 - MOD-004
@@ -27,9 +27,9 @@ triggers:
 sections:
   mod_001:
     section_type: rule
-    title: 模块准入门控(GOV-MOD-001)
+    title: 模块准入门控(GOV-MOD-ALPHA_SIGNAL_DOMAIN)
     original_rules:
-    - MOD-001
+    - MOD-ALPHA_SIGNAL_DOMAIN
     conditions:
     - type: pre_condition
       check: MAD-001架构必要性
@@ -254,7 +254,7 @@ sections:
       refs:
       - target: GOV-MOD-005 §2
         role: 注入检查规则与行为铁律的互补关系
-      - target: GOV-MOD-001 §7
+      - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN §7
         role: 准入否决条件在操作层面落地IRN行为约束
       - target: governance/security/
         role: 安全操作基线的领域规范
@@ -354,7 +354,7 @@ sections:
         role: active/deprecated生命周期状态定义
       - target: PS-STD-003 §3 ABS-22
         role: 跨级降格禁止——deprecated不能直接标记为archived
-      - target: GOV-MOD-001 MOD-P4
+      - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN MOD-P4
         role: 接口可定义性筛选——决定模块是否能进入设计阶段
       - target: GOV-MOD-004 IFC-005
         role: 契约冻结时序——in_design阶段接口契约必须frozen
@@ -482,7 +482,7 @@ sections:
         role: doc_type/rule_form一致性约束——policy文件的元数据合法性
       - target: PS-STD-003 §3
         role: ABS级别约束——破坏性变更的流程合规基准
-      - target: GOV-MOD-001 MOD-P4
+      - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN MOD-P4
         role: 接口可定义性筛选——决定模块是否具备接口设计资格
       - target: GOV-MOD-003 MLC-003步骤7
         role: 退役触发契约级联废弃——是IFC-007规则的触发器
@@ -556,11 +556,11 @@ sections:
       - step: 1
         action: 提交注入请求(module_id + 文件路径)
       - step: 2
-        action: 'GOV-MOD-001 §7准入否决条件快速检查: INJ-001(ID重复)/INJ-002(依赖不存在)/INJ-004(状态非法)/INJ-005(无运行平面)→任一命中即立即否决'
+        action: 'GOV-MOD-ALPHA_SIGNAL_DOMAIN §7准入否决条件快速检查: INJ-001(ID重复)/INJ-002(依赖不存在)/INJ-004(状态非法)/INJ-005(无运行平面)→任一命中即立即否决'
       - step: 3
-        action: 'GOV-MOD-001 §5准入四级筛选: MOD-P1→MOD-P2→MOD-P3→MOD-P4'
+        action: 'GOV-MOD-ALPHA_SIGNAL_DOMAIN §5准入四级筛选: MOD-P1→MOD-P2→MOD-P3→MOD-P4'
       - step: 4
-        action: 四级筛选通过=准入临时通过(GOV-MOD-001 §8临届状态声明)
+        action: 四级筛选通过=准入临时通过(GOV-MOD-ALPHA_SIGNAL_DOMAIN §8临届状态声明)
       - step: 5
         action: 本规则execution.sequence顺序执行INJ-001~008全部检查
       - step: 6
@@ -587,7 +587,7 @@ sections:
     gov_mod_005_cross_refs:
       section_type: context
       refs:
-      - target: GOV-MOD-001 §5~§8
+      - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN §5~§8
         role: 模块准入门控——本规范的INJ检查在准入四级筛选通过后执行
       - target: GOV-MOD-002 §5
         role: AI行为铁律——INJ-007从IRN-001派生为注入级检查
@@ -656,7 +656,7 @@ metadata:
     date: '2026-06-21'
     by: AI-Assistant
     changes:
-    - 审查修复——references.rule_ids移除TRAE-032自引用，补充TRAE-034(任务卡相关)；references.modules将GOV-MOD-001~005模块ID改为模块路径(对应module-admission/ai-behavior-iron/module-lifecycle/module-interface-contract/module-injection-rules-policy.md)；enforcement.executors对齐references.scripts(从1个补充至6个)；line185 model-capability-contract.yaml修正为完整路径docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
+    - 审查修复——references.rule_ids移除TRAE-032自引用，补充TRAE-034(任务卡相关)；references.modules将GOV-MOD-ALPHA_SIGNAL_DOMAIN~005模块ID改为模块路径(对应module-admission/ai-behavior-iron/module-lifecycle/module-interface-contract/module-injection-rules-policy.md)；enforcement.executors对齐references.scripts(从1个补充至6个)；line185 model-capability-contract.yaml修正为完整路径docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
   - version: 1.0.1
     date: '2026-06-21'
     by: session-20260621-batch4

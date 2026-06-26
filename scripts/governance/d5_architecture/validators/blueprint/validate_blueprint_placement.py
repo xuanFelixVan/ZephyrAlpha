@@ -77,7 +77,7 @@ VALID_LAYERS: frozenset[str] = frozenset(
     str(v.get("value")) for v in _LAYER_DATA.get("values", []) if isinstance(v, dict)
 )
 
-VALID_BELONGS_TO: frozenset[str] = frozenset({"SYS-MASTER-001", "MOD-MASTER-001", "DOM-GOV-001"})
+VALID_BELONGS_TO: frozenset[str] = frozenset({"SYS-MASTER-001", "MOD-MASTER_BLUEPRINT", "DOM-GOV-001"})
 
 
 def _is_blueprint(filepath: Path) -> bool:
@@ -163,7 +163,7 @@ def main() -> int:
     #   (a) module_id in KNOWN_LEVEL_01_IDS（Level 0/1 特例）
     #   (b) 在 _cross_layer/ 目录下（无域归属横切组件）
     #   (c) functional_domain 非空且物理路径在某域目录树下（域归属组件，_is_domain_owned）
-    KNOWN_LEVEL_01_IDS = {"MOD-MASTER-001", "SYS-MASTER-001", "DOM-GOV-001"}
+    KNOWN_LEVEL_01_IDS = {"MOD-MASTER_BLUEPRINT", "SYS-MASTER-001", "DOM-GOV-001"}
     for module_id, (filepath, fm) in sorted(blueprints.items()):
         layer = fm.get("layer", "")
         if layer == "cross_layer" and module_id not in KNOWN_LEVEL_01_IDS:
@@ -219,7 +219,7 @@ def main() -> int:
         if isinstance(bt, str) and bt.strip():
             module_bt[module_id] = bt.strip()
 
-    KNOWN_LEVEL_0_AND_1_IDS = {"SYS-MASTER-001", "MOD-MASTER-001", "DOM-GOV-001"}
+    KNOWN_LEVEL_0_AND_1_IDS = {"SYS-MASTER-001", "MOD-MASTER_BLUEPRINT", "DOM-GOV-001"}
     parent_children: dict[str, list[str]] = defaultdict(list)
     for module_id, bt_target in module_bt.items():
         parent_children[bt_target].append(module_id)

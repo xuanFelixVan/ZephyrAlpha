@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Escalation.Manifest
 module_id: MOD-055
 ttl: permanent

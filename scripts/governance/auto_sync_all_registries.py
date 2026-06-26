@@ -57,7 +57,7 @@ FLE_BLUEPRINT = PROJECT_ROOT / "docs/03_modules/_cross_layer/feedback-loop/bluep
 FEEDBACK_LOOP_DIR = PROJECT_ROOT / "src/zephyr/feedback-loop"
 
 FLE_GATE_CATEGORY = "fle_self_defense"
-FLE_MODULE_ID = "MOD-INF-010"
+FLE_MODULE_ID = "MOD-FEEDBACK_LOOP"
 
 
 def _load_yaml(path: Path) -> dict | None:

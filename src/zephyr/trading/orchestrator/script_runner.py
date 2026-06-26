@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-SCRIPT-001
+# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-SCRIPT-001
 # [MODULE] zephyr.trading.orchestrator.script_runner
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.infrastructure.__init__

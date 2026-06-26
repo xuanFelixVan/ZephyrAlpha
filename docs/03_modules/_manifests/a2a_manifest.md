@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: A2A.Manifest
 module_id: MOD-041
 ttl: permanent

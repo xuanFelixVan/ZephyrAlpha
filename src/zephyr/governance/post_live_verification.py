@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.rollback.post_live_verification
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚

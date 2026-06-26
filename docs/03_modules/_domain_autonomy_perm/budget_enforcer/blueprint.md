@@ -15,13 +15,13 @@ date: 2026-05-05
 valid_from: 2026-05-05
 ttl: permanent
 construction_progress: partially_implemented
-belongs_to: MOD-MASTER-001
+belongs_to: MOD-MASTER_BLUEPRINT
 summary: ZephyrAlpha Token/Cost/Time 三维预算强制执行蓝图 v0.7.0——终极取证补丁。前6轮补齐68项功能性盲点，本轮补充3个结构面缺陷：①信任根——AI构建的Budget Enforcer谁来审计？引入Runtime Trust Rings（Ring 0-3）+ Tamper-Evident Audit Trail（append-only hash chain）+ Budget Policy Signing；②抗对抗——前6轮假设agents是合作的，Forcepoint X-Labs 2026披露10种IPI攻击载荷可在<300ms绕过guardrails。引入IPI-Aware Budget Defense + Cold Start Anti-Abuse + Adversarial Testing Mandate；③故障模式——Budget Enforcer崩溃时fail-open还是fail-closed？引入Formal Fail-Mode Specification + Bootstrapping Calibration Phase（Day 0→30渐进收紧）。对标补充：Forcepoint X-Labs IPI十大攻击载荷 (2026.4) + Oktsec Kill Chain (2026.3) + Okta Agent Bypass研究 (2026.5) + Microsoft Agent Governance Toolkit Runtime Rings + Gravitee AI Agent Security 2026。v0.3.0 20+v0.4.0 23+v0.5.0 13+v0.6.0 12+v0.7.0 10=78项盲点全量补齐。这并不是增加更多功能——而是补上'一个AI构建的系统如何可信地约束AI'这个根本性问题。
 tags: [budget, token, cost, time, enforcement, degradation, infrastructure, pre-flight, in-flight, self-budget, model-router, cache, burn-rate, roi, chargeback, loop-detection, pricing-sync, stream-abort, quality-gate, env-profile, agent-sub-pool, policy-sandbox, waste-detection, batch-routing, model-discovery, timeout-guard, instruction-bloat, history-tax, provider-tier, cost-spiral, cross-provider, narrow-reroute, spiral-ews, poison-cascade, parent-child-attribution, workflow-budget, resume-cost, think-time, guard-efficiency, trust-ring, tamper-evident, fail-mode, bootstrapping, ipi-defense, anti-abuse, adversarial-testing, supply-chain-isolation]
 priority: P2
 runtime_plane: hot
 depends_on:
-- {target: MOD-INF-014", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
+- {target: MOD-LLM_SECURITY", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
 ---
 ssot_claims:
   - claim: "Token/Cost/Time 三维预算策略唯一真源"
@@ -32,14 +32,14 @@ ssot_claims:
     negative: "其他模块不得自行实现降级逻辑"
   - claim: "模型成本路由唯一决策者"
     scope: "model_router.py + cost_router.py"
-    negative: "MOD-INF-032 Resource Optimization 管 CPU/Memory，不管 Token/Cost"
+    negative: "MOD-RESOURCE_OPTIMIZATION_ENGINE Resource Optimization 管 CPU/Memory，不管 Token/Cost"
 consumer_registry:
   - tier: "hard"
-    consumers: ["MOD-INF-022 Escalation", "MOD-INF-001 Capacity Assurance", "MOD-INF-014 LLM Security"]
+    consumers: ["MOD-INF-022 Escalation", "MOD-INF-001 Capacity Assurance", "MOD-LLM_SECURITY LLM Security"]
   - tier: "soft"
-    consumers: ["MOD-INF-008 Context Engine", "MOD-INF-006 Task System", "MOD-INF-015 System Telemetry"]
+    consumers: ["MOD-CONTEXT_ENGINE Context Engine", "MOD-TASK_SYSTEM Task System", "MOD-INF-015 System Telemetry"]
   - tier: "optional"
-    consumers: ["MOD-INF-032 Resource Optimization", "MOD-INF-034 Model Capability Exam"]
+    consumers: ["MOD-RESOURCE_OPTIMIZATION_ENGINE Resource Optimization", "MOD-INF-034 Model Capability Exam"]
 actual_disk_path: "src/zephyr/governance/budget_engine.py"
 last_updated: "2026-05-18"
 last_verified: "2026-05-18"
@@ -47,7 +47,7 @@ generation: 3
 stability: evolving
 ---
 
-## MOD-023 集成契约锚点
+## MOD-GOVERNANCE 集成契约锚点
 
 > 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
 
@@ -168,9 +168,9 @@ AI Agent 系统中，LLM API 调用是主要成本驱动因素。无预算控制
 |------|------|
 | Token/Cost/Time 三维预算策略定义与执行 | CPU/Memory/Disk 资源预算 |
 | 五级预算体系 + 七级降级链 | 容量规划（MOD-INF-001） |
-| Pre-flight Gate 事前拦截 | LLM 调用安全（MOD-INF-014） |
+| Pre-flight Gate 事前拦截 | LLM 调用安全（MOD-LLM_SECURITY） |
 | Model Router 成本路由 | 模型能力评测（MOD-INF-034） |
-| Stream Abort Guard 事中控制 | 上下文压缩策略（MOD-INF-008） |
+| Stream Abort Guard 事中控制 | 上下文压缩策略（MOD-CONTEXT_ENGINE） |
 | Trust Ring + Tamper-Evident Audit | RBAC 权限控制（MOD-INF-018） |
 
 ### §1.7 典型场景
@@ -191,12 +191,12 @@ AI Agent 系统中，LLM API 调用是主要成本驱动因素。无预算控制
 
 | 包含（本模块负责） | 排除（本模块不负责） | 归属 |
 |-------------------|---------------------|------|
-| Token/Cost/Time 三维预算策略定义与执行 | CPU/Memory/Disk/Process 资源预算 | MOD-INF-032 |
+| Token/Cost/Time 三维预算策略定义与执行 | CPU/Memory/Disk/Process 资源预算 | MOD-RESOURCE_OPTIMIZATION_ENGINE |
 | 五级预算体系 (Global→Session→Task→Turn→Request) | 容量规划与容量保障 | MOD-INF-001 |
 | 六级降级链 (L0→L6) 自动执行 | 升级/委托决策 | MOD-INF-022 |
-| Pre-flight Gate 事前拦截 | LLM 调用安全（注入检测/内容过滤） | MOD-INF-014 |
+| Pre-flight Gate 事前拦截 | LLM 调用安全（注入检测/内容过滤） | MOD-LLM_SECURITY |
 | Model Router 成本路由 | 模型能力评测 | MOD-INF-034 |
-| Stream Abort Guard 事中控制 | 上下文压缩策略 | MOD-INF-008 |
+| Stream Abort Guard 事中控制 | 上下文压缩策略 | MOD-CONTEXT_ENGINE |
 | Burn Rate 监控 | 系统遥测指标聚合 | MOD-INF-015 |
 | 成本归因 + ROI | 审计日志存储 | MOD-INF-020 |
 | Trust Ring 信任分级 | RBAC 权限控制 | MOD-INF-018 |
@@ -1135,12 +1135,12 @@ solo_maintainer_optimizations:
 | 联动模块 | 关系 | 触发条件 | 动作 |
 |---------|------|------|------|
 | MOD-INF-001 Capacity Assurance | Kill Switch 联动 + Degradation 联动 | L6 kill_switch 触发 / 降级链执行 | 调用全局熔断 / 调用 degradation_chain |
-| MOD-INF-008 Context Engine | 上下文压缩 + 浪费检测联动 | L3 compress + waste_ratio > 60% | DocCompressor aggressive 模式 / 优化选择策略 |
-| MOD-INF-006 Task System | 任务预算字段 + 状态机预算联动 | 任务预算/状态变更 | 读取任务预算 + 状态联动 |
+| MOD-CONTEXT_ENGINE Context Engine | 上下文压缩 + 浪费检测联动 | L3 compress + waste_ratio > 60% | DocCompressor aggressive 模式 / 优化选择策略 |
+| MOD-TASK_SYSTEM Task System | 任务预算字段 + 状态机预算联动 | 任务预算/状态变更 | 读取任务预算 + 状态联动 |
 | MOD-INF-020 Audit Trail | 审计写入 | 每次降级/熔断/Borrow/Abort | 写入审计事件 |
 | MOD-INF-022 Escalation | 升级 | 硬停止 + Kill Switch | 触发升级通知 Owner |
 | **MOD-INF-023 Drift Detector**（🆕 v0.4.0） | 漂移预算信号 | 配置漂移对预算的影响 | 调用漂移检测 + 预算影响评估 |
-| **MOD-MASTER-001 任务系统**（🆕 v0.4.0） | Batch 路由 | task.urgency=low | 自动标记走 Batch API |
+| **MOD-MASTER_BLUEPRINT 任务系统**（🆕 v0.4.0） | Batch 路由 | task.urgency=low | 自动标记走 Batch API |
 | **Git Pre-commit Hook**（🆕 v0.4.0） | 策略快照 | git commit | 自动快照 budget_policy.yaml 到版本历史 |
 | **LiteLLM Registry**（🆕 v0.4.0） | 新模型发现 + 定价同步 | daily sync 发现新 model_id | 评估 + 写摘要 + 通知 Owner |
 | **LiteLLM Pricing Strategy Sync**（🆕 v0.5.0） | 长上下文定价策略同步 | daily sync 检测 pricing strategy 变化 | 更新 non-linear pricing threshold |
@@ -1148,7 +1148,7 @@ solo_maintainer_optimizations:
 | **SUPERVISORAGENT LLM-Free Filter**（🆕 v0.6.0） | LLM-free 触发——仅在必要时升级 LLM-dependent | budget_policy LLM-free 阶段提升 | guard 类型从 LLM-dependent → LLM-free |
 | **Provenance DAG**（🆕 v0.6.0） | 幻觉信息源链追踪——dependency graph | agent output 包含 claim 时 | 追加到 observation provenance DAG |
 | **Agent Delegation Registry**（🆕 v0.6.0） | 记录 parent-child 委托关系 | 每次 agent-to-agent call | 记录 delegation edge + 写入 attribution |
-| **MOD-INF-014 LLM Security Gateway**（🆕 v0.7.0） | IPI 检测 + 策略文件签名验证 + Trust Ring 隔离 | IPI pattern detected / policy modification attempt | 签名验证网关 + Ring escalation |
+| **MOD-LLM_SECURITY LLM Security Gateway**（🆕 v0.7.0） | IPI 检测 + 策略文件签名验证 + Trust Ring 隔离 | IPI pattern detected / policy modification attempt | 签名验证网关 + Ring escalation |
 
 ---
 
@@ -1314,13 +1314,13 @@ solo_maintainer_optimizations:
 
 | 依赖 | 类型 | 方向 | 硬/软 |
 |------|------|------|-------|
-| MOD-INF-008 Context Engine | 数据消费 | 024→008 | soft |
+| MOD-CONTEXT_ENGINE Context Engine | 数据消费 | 024→008 | soft |
 | MOD-INF-020 Audit Trail | 事件写入 | 024→020 | hard |
 | MOD-INF-022 Escalation | 事件触发 | 024→022 | hard |
 | MOD-INF-001 Capacity Assurance | Kill Switch 联动 | 024↔001 | hard |
-| MOD-INF-006 Task System | 预算字段读取 | 024→006 | soft |
+| MOD-TASK_SYSTEM Task System | 预算字段读取 | 024→006 | soft |
 | MOD-INF-023 Drift Detector | 漂移信号 | 023→024 | soft |
-| MOD-INF-014 LLM Security | IPI 检测 | 014→024 | hard |
+| MOD-LLM_SECURITY LLM Security | IPI 检测 | 014→024 | hard |
 | MOD-INF-015 System Telemetry | metrics 聚合 | 024→015 | soft |
 | MOD-INF-016 Shared Core | BudgetEngine 基类 | 024→016 | hard |
 | MOD-INF-034 Model Exam | 评测数据 | 034→024 | soft |
@@ -1350,7 +1350,7 @@ solo_maintainer_optimizations:
 | 概念 | 本模块 | 重叠模块 | 边界 |
 |------|--------|---------|------|
 | Token Budget | 五级预算执行 | MOD-INF-001 容量规划 | 024 执行，001 规划 |
-| Cost Budget | 三维预算+降级 | MOD-INF-032 资源优化 | 024 管 Token/Cost/Time，032 管 CPU/Memory/Disk |
+| Cost Budget | 三维预算+降级 | MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化 | 024 管 Token/Cost/Time，032 管 CPU/Memory/Disk |
 | Kill Switch | L6 全局熔断 | MOD-INF-001 容量保障 | 024 触发，001 执行 |
 | Budget Alert | 预算告警模型 | MOD-INF-020 审计 | 024 产生告警，020 存储 |
 

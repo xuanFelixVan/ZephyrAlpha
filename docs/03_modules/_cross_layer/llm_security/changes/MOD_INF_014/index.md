@@ -2,16 +2,16 @@
 
 doc_type: index
 status: active
-title: "MOD-INF-014 — 任务卡目录索引"
+title: "MOD-LLM_SECURITY — 任务卡目录索引"
 version: "2.0.0"
 created: "2026-05-06"
 updated: "2026-05-06"
-blueprint_id: MOD-INF-014
+blueprint_id: MOD-LLM_SECURITY
 ttl: permanent
 ---
 
 
-# MOD-INF-014 — LLM Security Gateway 任务卡索引
+# MOD-LLM_SECURITY — LLM Security Gateway 任务卡索引
 
 > 蓝图分解产物目录。26 张任务卡覆盖蓝图全部 60 个章节，100% 无遗漏。
 > 分解日期：2026-05-06

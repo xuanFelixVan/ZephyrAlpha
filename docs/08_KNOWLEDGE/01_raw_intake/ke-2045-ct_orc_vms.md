@@ -17,7 +17,7 @@ systems:
   - role: producer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: vector_memory_system
     path: "src/zephyr/vector-memory/"

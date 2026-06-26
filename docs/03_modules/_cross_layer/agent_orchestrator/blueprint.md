@@ -35,12 +35,12 @@ responsibility_domain: "agent_orchestrator"
 depends_on:
   - {target: "MOD-INF-035", at: "§2", why: "AutoRuntime Core——大脑调度，Orchestrator 接收 WorkDAG 并执行"}
   - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——事件总线/生命周期/日志/沙箱等公共基座"}
-  - {target: "MOD-INF-008", at: "§2", why: "Context Engine——任务开始前拉上下文"}
-  - {target: "MOD-INF-014", at: "§2", why: "LLM Security——入参/出参 Schema 校验"}
+  - {target: "MOD-CONTEXT_ENGINE", at: "§2", why: "Context Engine——任务开始前拉上下文"}
+  - {target: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——入参/出参 Schema 校验"}
   - {target: "MOD-INF-011", at: "§2", why: "Vector Memory——任务完成写 task_history"}
-  - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——TaskGate 门禁验证"}
+  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——TaskGate 门禁验证"}
   - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——操作审计日志写入"}
-  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——质量数据上报"}
+  - {target: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——质量数据上报"}
   - {target: "MOD-INF-021", at: "§2", why: "Rollback——操作失败触发回滚"}
 references:
   - {id: "MOD-INF-009", at: "§2", why: "Pipeline——管线编排下游消费"}
@@ -216,9 +216,9 @@ ZephyrAlpha 需要一个 Agent 全生命周期编排引擎来管理 AI Agent 的
 | 2 | 节律调度 | MOD-INF-035 CircadianScheduler |
 | 3 | 能力注册 | MOD-INF-035 CapabilityRegistry |
 | 4 | 管线执行 | MOD-INF-009 Pipeline |
-| 5 | 门禁规则执行 | MOD-INF-007 Gate Engine |
+| 5 | 门禁规则执行 | MOD-GATE_ENGINE Gate Engine |
 | 6 | 审计日志持久化 | MOD-INF-020 Audit Trail |
-| 7 | LLM 安全网关 | MOD-INF-014 LLM Security |
+| 7 | LLM 安全网关 | MOD-LLM_SECURITY LLM Security |
 
 ---
 
@@ -426,12 +426,12 @@ class DetectionResult(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-INF-035 (AutoRuntime) | 必须 | WorkDAG 调度入口 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-016 (Shared) | 必须 | 事件总线/生命周期/日志 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-INF-008 (Context) | 必须 | 上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` |
-| MOD-INF-014 (LLM Security) | 必须 | 入参/出参校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security\blueprint.md` |
+| MOD-CONTEXT_ENGINE (Context) | 必须 | 上下文注入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\context-engine\blueprint.md` |
+| MOD-LLM_SECURITY (LLM Security) | 必须 | 入参/出参校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security\blueprint.md` |
 | MOD-INF-011 (VMS) | 必须 | task_history 写入 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
-| MOD-INF-007 (Gate) | 必须 | TaskGate 门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE (Gate) | 必须 | TaskGate 门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 | MOD-INF-020 (Audit) | 必须 | 审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-010 (FLE) | 必须 | 质量数据上报 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP (FLE) | 必须 | 质量数据上报 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
 | MOD-INF-021 (Rollback) | 必须 | 回滚触发 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
 
 ---
@@ -456,9 +456,9 @@ class DetectionResult(BaseModel):
 |------------|---------|--------|---------|
 | AutoRuntime Core (MOD-INF-035) | 输入接口 | WorkDAG 提交→Orchestrator.submit_task() | 端到端任务执行 |
 | Pipeline (MOD-INF-009) | 输出接口 | Orchestrator→Pipeline 任务执行 | 管线调度 |
-| Gate Engine (MOD-INF-007) | 门禁调用 | TaskGate 门禁验证 | 门禁通过率 |
-| Context Engine (MOD-INF-008) | 上游调用 | 任务开始前拉上下文 | 上下文注入验证 |
-| LLM Security (MOD-INF-014) | 上游调用 | 入参/出参 Schema 校验 | 安全测试 |
+| Gate Engine (MOD-GATE_ENGINE) | 门禁调用 | TaskGate 门禁验证 | 门禁通过率 |
+| Context Engine (MOD-CONTEXT_ENGINE) | 上游调用 | 任务开始前拉上下文 | 上下文注入验证 |
+| LLM Security (MOD-LLM_SECURITY) | 上游调用 | 入参/出参 Schema 校验 | 安全测试 |
 | Vector Memory (MOD-INF-011) | 写入接口 | 任务完成写 task_history | 数据完整性 |
 | Rollback (MOD-INF-021) | 联动调用 | 失败触发回滚 | 回滚成功 |
 

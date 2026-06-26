@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-infrastructure-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -28,7 +28,7 @@
 # 自检: （experimental — scan infrastructure connectivity）
 # ============================================================================
 
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
@@ -118,7 +118,7 @@ infrastructure:
     health_check: ping
     dependency_of:
       - "MOD-INF-005"
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
     sla: "99.5% uptime, < 5s task pickup delay"
     status: planned
     provisioned_at: null
@@ -133,7 +133,7 @@ infrastructure:
     host: ".runtime/db/data/databases/governance.db"
     health_check: query
     dependency_of:
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
       - "MOD-INF-005"
     sla: "persisted, ACID, < 30ms read p50"
     status: planned
@@ -149,7 +149,7 @@ infrastructure:
     host: null
     health_check: http
     dependency_of:
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
     sla: "< 200ms retrieval p95, index rebuild < 10 min"
     status: planned
     provisioned_at: null
@@ -165,7 +165,7 @@ infrastructure:
     health_check: ping
     dependency_of:
       - "MOD-INF-001"
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
     sla: "99.9% uptime, < 5ms GET p99"
     status: planned
     provisioned_at: null
@@ -181,7 +181,7 @@ infrastructure:
     health_check: http
     dependency_of:
       - "MOD-INF-005"
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
     sla: "99.9% durability, < 100MB/s write"
     status: planned
     provisioned_at: null
@@ -197,7 +197,7 @@ infrastructure:
     health_check: http
     dependency_of:
       - "MOD-INF-002"
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
     sla: "99.9% uptime, < 100ms config read"
     status: planned
     provisioned_at: null
@@ -227,13 +227,13 @@ infrastructure:
     host: ".github/workflows/governance.yml"
     health_check: http
     dependency_of:
-      - "MOD-INF-006"
+      - "MOD-TASK_SYSTEM"
     sla: "push/PR paths + workflow_dispatch；timeout 15m"
     status: connected
     provisioned_at: "2026-05-06"
     note: "paths 含 workflows/infra/config/architecture_model/tests/data/src/docs/scripts、requirements*、demo_e2e、docker-compose、门面文档、.editorconfig/.env.example/.gitignore/LICENSE、.trae、_patches；安装：pip+setuptools/wheel → requirements-dev → pip install -e .；pyproject 为 setuptools.build_meta + src"
 
-  # --- 资源优化引擎进程池（MOD-INF-032）---
+  # --- 资源优化引擎进程池（MOD-RESOURCE_OPTIMIZATION_ENGINE）---
   - infra_id: "INFRA-PROC-001"
     name: "zephyr-shared-process-pool"
     type: cache
@@ -242,13 +242,13 @@ infrastructure:
     host: "in-process"
     health_check: ping
     dependency_of:
-      - "MOD-INF-032"
+      - "MOD-RESOURCE_OPTIMIZATION_ENGINE"
     sla: "进程复用率 ≥ 80%，启动延迟 < 500ms"
     status: planned
     provisioned_at: null
-    note: "MOD-INF-032 资源优化引擎——MAPE-K 循环驱动，进程池共享架构"
+    note: "MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎——MAPE-K 循环驱动，进程池共享架构"
 
-  # --- 资源优化引擎 I/O 缓存（MOD-INF-032）---
+  # --- 资源优化引擎 I/O 缓存（MOD-RESOURCE_OPTIMIZATION_ENGINE）---
   - infra_id: "INFRA-CACHE-002"
     name: "zephyr-io-cache"
     type: cache
@@ -257,11 +257,11 @@ infrastructure:
     host: "in-process"
     health_check: ping
     dependency_of:
-      - "MOD-INF-032"
+      - "MOD-RESOURCE_OPTIMIZATION_ENGINE"
     sla: "缓存命中率 ≥ 90%，内存占用 < 512MB"
     status: planned
     provisioned_at: null
-    note: "MOD-INF-032 资源优化引擎——I/O 缓存 + 流式读取 + 懒加载"
+    note: "MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎——I/O 缓存 + 流式读取 + 懒加载"
 
 # ============================================================================
 # 汇总统计
@@ -289,7 +289,7 @@ summary:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
     MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
     MOD-INF-005: [INFRA-MQ-001, INFRA-DB-001, INFRA-STORE-001]
-    MOD-INF-006:
+    MOD-TASK_SYSTEM:
       - INFRA-MQ-001
       - INFRA-DB-001
       - INFRA-DB-002
@@ -297,7 +297,7 @@ summary:
       - INFRA-CACHE-001
       - INFRA-CFG-001
       - INFRA-CI-001
-    MOD-INF-032:
+    MOD-RESOURCE_OPTIMIZATION_ENGINE:
       - INFRA-PROC-001
       - INFRA-CACHE-002
 

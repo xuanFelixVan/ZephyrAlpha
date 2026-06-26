@@ -330,7 +330,7 @@ class OrchestratorIntegrationBridge(BaseModel):
     """CT-PIPE-ORC-001 集成契约桥接类。
 
     管线侧集成接口——Orchestrator 通过此桥接调用 Pipeline dispatch。
-    契约定义：MOD-MASTER-001 §2.7
+    契约定义：MOD-MASTER_BLUEPRINT §2.7
 
     调用链:
         Orc.create_task(task_card)
@@ -480,28 +480,28 @@ class Dependency(BaseModel):
 
 PIPELINE_DEPENDENCIES: list[Dependency] = [
     Dependency(
-        module_id="MOD-INF-006",
+        module_id="MOD-TASK_SYSTEM",
         module_name="Task System",
         relation="runtime_call",
         description="读取TaskCard→dispatch()→PipelineResult",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-007",
+        module_id="MOD-GATE_ENGINE",
         module_name="Gate Engine",
         relation="pre_check",
         description="dispatch()前G6检查——AI是否已读蓝图",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-008",
+        module_id="MOD-CONTEXT_ENGINE",
         module_name="Context Engine",
         relation="config_consume",
         description="blueprint_routing.yaml→触发路由匹配",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-010",
+        module_id="MOD-FEEDBACK_LOOP",
         module_name="Feedback Loop",
         relation="feedback_to",
         description="FLE反馈→调复杂度估计→重新路由",
@@ -522,14 +522,14 @@ PIPELINE_DEPENDENCIES: list[Dependency] = [
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-014",
+        module_id="MOD-LLM_SECURITY",
         module_name="LLM Security",
         relation="pre_check",
         description="LSG L1+L3输入输出检测(v0.8.0 B131已集成)",
         status="✅ implemented",
     ),
     Dependency(
-        module_id="MOD-INF-012",
+        module_id="MOD-DATABASE",
         module_name="DeferredQueue",
         relation="downstream",
         description="dispatch LOCKED→DeferredQueue.enqueue→auto-retry",
@@ -610,7 +610,7 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
     ),
     CrossModuleSyncEntry(
         file_path="D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint.md",
-        sync_content="MOD-MASTER-001 §2.7 CT-PIPE-ORC-001 集成契约",
+        sync_content="MOD-MASTER_BLUEPRINT §2.7 CT-PIPE-ORC-001 集成契约",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
@@ -630,12 +630,12 @@ CROSS_MODULE_SYNC: list[CrossModuleSyncEntry] = [
     ),
     CrossModuleSyncEntry(
         file_path="D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\llm-security\\blueprint.md",
-        sync_content="MOD-INF-014 LSG Pipeline 集成契约 v0.8.0 B131",
+        sync_content="MOD-LLM_SECURITY LSG Pipeline 集成契约 v0.8.0 B131",
         last_synced="2026-05-07",
     ),
     CrossModuleSyncEntry(
         file_path="D:\\ZephyrAlpha\\docs\\03_modules\\infrastructure_runtime_integration\\rbac\\blueprint.md",
-        sync_content="MOD-INF-008 RBAC SoD 集成契约 v0.8.0 B137",
+        sync_content="MOD-CONTEXT_ENGINE RBAC SoD 集成契约 v0.8.0 B137",
         last_synced="2026-05-07",
     ),
 ]

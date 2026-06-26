@@ -657,7 +657,7 @@ def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``cleanup_due`` — 周期性清理孤儿快照和过期审计日志。
 
     调用 scripts/governance/archive_drafts_zone 执行归档。
-    对标 MOD-INF-006 (task-system) §9。
+    对标 MOD-TASK_SYSTEM (task-system) §9。
     """
     try:
         import subprocess
@@ -684,7 +684,7 @@ def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     """``blueprint_published`` — 新蓝图发布后触发反思循环与 KE 索引。
 
     调用 zephyr.observability.feedback_loop.decision_engine 触发蓝图反思。
-    对标 MOD-INF-008 (feedback-loop) §4。
+    对标 MOD-CONTEXT_ENGINE (feedback-loop) §4。
     """
     try:
         _mod = importlib.import_module("zephyr.observability.feedback_loop.decision_engine")

@@ -122,7 +122,7 @@ class FlagRegistry:
         registry.register(FeatureFlag("use_gpt4o", FlagState.ALWAYS_OFF,
                                        description="启用 GPT-4o 替代 GPT-4o-mini"))
 
-        if registry.is_enabled("use_gpt4o", module_id="MOD-INF-008"):
+        if registry.is_enabled("use_gpt4o", module_id="MOD-CONTEXT_ENGINE"):
             model = "gpt-4o"
         else:
             model = "gpt-4o-mini"

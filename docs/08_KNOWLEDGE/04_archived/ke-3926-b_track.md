@@ -14,15 +14,15 @@ ttl: permanent
 | Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 |
 | Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 |
 | Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 |
-| Task System | MOD-INF-006 | 95% | 任务卡全生命周期 |
-| Gate Engine | MOD-INF-007 | 35% | G0-G7门禁+断路器 |
-| Context Engine | MOD-INF-008 | 95% | 上下文四阶段流水线 |
+| Task System | MOD-TASK_SYSTEM | 95% | 任务卡全生命周期 |
+| Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 |
+| Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 |
 | Pipeline | MOD-INF-009 | 95% | M1-M11双管线 |
-| Feedback Loop | MOD-INF-010 | 95% | 系统自调节闭环 |
+| Feedback Loop | MOD-FEEDBACK_LOOP | 95% | 系统自调节闭环 |
 | Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 |
-| Database | MOD-INF-012 | 95% | SQLite+DuckDB双引擎元数据 |
+| Database | MOD-DATABASE | 95% | SQLite+DuckDB双引擎元数据 |
 | MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 |
-| LLM Security | MOD-INF-014 | 95% | L0-L8九层纵深防御 |
+| LLM Security | MOD-LLM_SECURITY | 95% | L0-L8九层纵深防御 |
 | System Telemetry | MOD-INF-015 | 50% | 全系统遥测采集 |
 | Shared Core | MOD-INF-016 | **100%** | 跨层共享基础设施 |
 | Code Dedup Engine | MOD-INF-017 | 95% | Monoculture免疫+全生命周期去重 |

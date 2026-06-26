@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ssot_path: src/zephyr/pf_core
 status: active
 ttl: permanent

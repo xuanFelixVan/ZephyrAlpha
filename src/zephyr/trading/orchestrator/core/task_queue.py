@@ -17,7 +17,7 @@
 """
 ActiveTaskQueue — 后台任务轮询与自动分发
 ==========================================
-Blueprint: MOD-INF-006 盲点#9
+Blueprint: MOD-TASK_SYSTEM 盲点#9
 依赖: TaskRepository + Protocol:PipelineDispatcher + EventHook
 
 线程安全的后台调度器：定期扫描 READY 任务，自动 dispatch。

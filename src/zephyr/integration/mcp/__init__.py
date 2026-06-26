@@ -13,7 +13,7 @@
 - sandbox_server.py — SandboxServer: 安全代码执行沙箱（subprocess 隔离）
 - telemetry_server.py — TelemetryMCP: 系统遥测可观测性（MOD-INF-015 · health/metrics/alerts/profile/schema）
 
-设计基线：MOD-INF-006 §3.5 MCP 接口 + ADR-0040 Pydantic V2。
+设计基线：MOD-TASK_SYSTEM §3.5 MCP 接口 + ADR-0040 Pydantic V2。
 
 **双栈 MCP（病根说明）**：历史 ADR-0033 采用自研 JSON-RPC（``BaseMCPServer``）以便无 SDK
 依赖地跑 tools；任务管理 MCP 后因多工具注册冲突与 SDK 成熟度，改用官方 ``FastMCP``。
@@ -103,7 +103,7 @@ def search_blueprints(task_description: str, num_results: int = 3) -> list[dict[
 
     >>> results = search_blueprints("修复 gate_engine YAML parse bug")
     >>> print(results[0]["blueprint_id"])
-    'MOD-INF-007'
+    'MOD-GATE_ENGINE'
     """
     server = BlueprintSearchServer()
     result = server._find_relevant_blueprint(task_description, num_results=num_results)

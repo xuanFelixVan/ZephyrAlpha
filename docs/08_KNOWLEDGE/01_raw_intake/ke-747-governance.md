@@ -36,7 +36,7 @@ depends_on:
   - {target: PS-STD-001, at: "§2", why: "frontmatter 字段合法性——本文档所有 frontmatter 字段格式遵循其约束"}
   - {target: PS-REG-002, at: "cross_registry_rules", why: "`registry_of_registries.yaml` 中的 CR 规则（跨表共享字段与 SSoT 归属）——本标准是其在登记表同步操作上的落地规范"}
   - {target: PS-REG-005, at: "§2", why: "登记表总索引——`total_registries` 动态收录；本标准 MRS-001 覆盖全部可登记目标分类"}
-  - {target: GOV-MOD-001, at: "§8", why: "准入记录写入——创建模块时 MRS-001 引用其准入记录模板"}
+  - {target: GOV-MOD-ALPHA_SIGNAL_DOMAIN, at: "§8", why: "准入记录写入——创建模块时 MRS-001 引用其准入记录模板"}
   - {target: GOV-MOD-003, at: "§3", why: "status 受控枚举——module-registry.yaml 的 blueprint.status 值来源于此"}
 ai_autonomy: ai_modifiable
 ---

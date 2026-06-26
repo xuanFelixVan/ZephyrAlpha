@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-DB-001
 # [MODULE] zephyr.ops.db_bridge
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema

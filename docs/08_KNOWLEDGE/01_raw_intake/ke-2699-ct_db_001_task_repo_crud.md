@@ -12,9 +12,9 @@ CT-DB-001：task_repo CRUD 契约
 
 ```yaml
 contract_id: CT-DB-001
-provider: MOD-INF-012 (TaskRepository)
+provider: MOD-DATABASE (TaskRepository)
 consumers:
-  - MOD-INF-006 (task-system)
+  - MOD-TASK_SYSTEM (task-system)
   - MOD-INF-009 (pipeline)
   - MOD-INF-013 (mcp-servers)
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.drift_detector
 # [DOMAIN] D-GOV_DRIFT
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols; zephyr.behavioral_audit.drift_hotfix_bypass; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.cascade_detector; zephyr.behavioral_audit.reconciler; zephyr.governance.__init__; zephyr.behavioral_audit.events

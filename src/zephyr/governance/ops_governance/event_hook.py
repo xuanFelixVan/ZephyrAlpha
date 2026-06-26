@@ -17,7 +17,7 @@
 """
 EventHook — 声明式任务系统事件订阅
 =======================================
-Blueprint: MOD-INF-006 盲点#4
+Blueprint: MOD-TASK_SYSTEM 盲点#4
 依赖: 无外部依赖（纯内存事件总线）
 
 HookRegistry: 全局注册表，管理状态变更回调链。

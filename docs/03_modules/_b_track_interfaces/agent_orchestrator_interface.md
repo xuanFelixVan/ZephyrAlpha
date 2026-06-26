@@ -14,7 +14,7 @@ last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/infra_ops/task-system/blueprint.md（MOD-INF-006 — Agent Orchestrator / 任务生命周期与状态机真源）"
+  - "03_modules/infra_ops/task-system/blueprint.md（MOD-TASK_SYSTEM — Agent Orchestrator / 任务生命周期与状态机真源）"
   - "architecture_model/layers/b_orchestrator.yaml（Orchestrator YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md (archived 2026-04-24)"
@@ -37,7 +37,7 @@ depends_on:
   - target: AI-ENG-VMS-001
     at: "§4"
     why: "Vector Memory Service — 任务完成写 task_history"
-mod_master_blueprint: "MOD-MASTER-001"
+mod_master_blueprint: "MOD-MASTER_BLUEPRINT"
 mod_master_contracts:
   - "CT-ORC-SCRIPT-001"
   - "CT-ORC-CE-001"

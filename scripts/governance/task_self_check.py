@@ -15,7 +15,7 @@
 """
 task_self_check.py — 任务系统自身健康检查
 =============================================
-Blueprint: MOD-INF-006 盲点#31
+Blueprint: MOD-TASK_SYSTEM 盲点#31
 依赖: TaskRepository + SQLite
 
 

@@ -18,7 +18,7 @@
 process_pool.py - Shared process pool for MCP servers and subprocess tasks
 =============================================================================
 
-SSoT: MOD-INF-032 resource-optimization-engine/blueprint.md §7.2
+SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md §7.2
 
 Design:
   - Max process limit (default 30) to prevent resource exhaustion

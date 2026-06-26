@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.detectors.self_diagnosis_data_leak_detector
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.detectors.__init__

@@ -1,5 +1,5 @@
 ---
-module_id: MOD-001
+module_id: MOD-ALPHA_SIGNAL_DOMAIN
 title: "Alpha-Signal Domain 蓝图 — L02因子→L03信号跨层集成"
 doc_type: blueprint
 status: Active
@@ -597,7 +597,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | MOD-023 | `D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md` | 域集成模式 | DOM-GOV 定义治理域集成，本蓝图定义因子域集成 |
+| 1 | MOD-GOVERNANCE | `D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md` | 域集成模式 | DOM-GOV 定义治理域集成，本蓝图定义因子域集成 |
 
 ---
 

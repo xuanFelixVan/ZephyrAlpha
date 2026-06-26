@@ -1,13 +1,13 @@
 ---
 module_id: KE-4087----mod-master-001-000
-title: 4. 与 MOD-MASTER-001 契约对齐
+title: 4. 与 MOD-MASTER_BLUEPRINT 契约对齐
 category: module_blueprint
 ttl: permanent
 ---
 
-# 4. 与 MOD-MASTER-001 契约对齐
+# 4. 与 MOD-MASTER_BLUEPRINT 契约对齐
 
-4. 与 MOD-MASTER-001 契约对齐
+4. 与 MOD-MASTER_BLUEPRINT 契约对齐
 
 | 契约 / 引用 | 说明 |
 |-------------|------|

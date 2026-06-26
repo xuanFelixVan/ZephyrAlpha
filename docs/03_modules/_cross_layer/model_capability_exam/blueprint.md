@@ -33,11 +33,11 @@ depends_on:
   - {target: "MOD-INF-034", at: "全篇", why: "ModelProfiler——MCE是Profiler的子系统，扩展benchmark为入职考试"}
   - {target: "MOD-INF-009", at: "§2", why: "Pipeline——MCE通过管线调度考试任务"}
   - {target: "MOD-INF-035", at: "§2", why: "AutoRuntime Core——大脑消费CapabilityPassport做模型路由"}
-  - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——TaskGate消费护照做门控判定"}
+  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——TaskGate消费护照做门控判定"}
   - {target: "MOD-INF-005", at: "§35", why: "分布式执行架构——考试并发调度"}
 references:
   - {id: "MOD-INF-024", at: "§2", why: "Budget Enforcer——考试消耗Token需预算管控"}
-  - {id: "MOD-INF-014", at: "§2", why: "LLM Security——考试LLM调用需过安全闸门"}
+  - {id: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security——考试LLM调用需过安全闸门"}
   - {id: "CFG-CAP-001", at: "全篇", why: "capacity_params.yaml——MCE所有并发/超时参数从该文件读取"}
 ssot_ref: "specs/model-capability-exam/spec.md"
 ---
@@ -392,7 +392,7 @@ class ExamMode(str, Enum):
 | MOD-INF-024 (BudgetEnforcer) | 可选 | Token 预算管控 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-005 (分布式执行) | 可选 | 并发考试调度（Phase 1） | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 | MOD-INF-035 (AutoRuntime Core) | 被依赖 | 消费护照做模型路由 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-INF-007 (Gate Engine) | 被依赖 | TaskGate 消费护照 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE (Gate Engine) | 被依赖 | TaskGate 消费护照 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 | 交易决策流水线 C-044⑤ | 被依赖 | 消费护照 cost_efficiency 做LLM路由决策 | — | d:\临时工作区\交易决策流水线设计.md |
 
 ### 10.2 依赖图对齐声明

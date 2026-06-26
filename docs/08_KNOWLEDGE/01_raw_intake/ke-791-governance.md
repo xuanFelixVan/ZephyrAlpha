@@ -15,6 +15,6 @@ ttl: permanent
 |---------|---------|---------|------|
 | 新增/删除铁律（IRN 编号变更） | GOV-MOD-005（Tier 1） | 更新 INJ-007/INJ-008 的 `derived_from` 字段 | 同 commit |
 | 修改铁律内容措辞 | 全部消费者 | 通知 + 评估是否语义变更 | 判断：语义变更→同 commit；文字微调→24h 内 |
-| P0/P1/P2 严重度分级调整 | GOV-MOD-001（Tier 1） | 更新 §7 否决条件中的严重度映射 | 同 commit |
+| P0/P1/P2 严重度分级调整 | GOV-MOD-ALPHA_SIGNAL_DOMAIN（Tier 1） | 更新 §7 否决条件中的严重度映射 | 同 commit |
 | 修改 §7 与 GOV-MOD-005 分工边界 | GOV-MOD-005（Tier 1） | 协商边界 + 双文件同步 update | 同 branch，同 PR |
 | frontmatter 仅变更 | 无 | 不需同步 | — |

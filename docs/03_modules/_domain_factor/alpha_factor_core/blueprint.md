@@ -17,7 +17,7 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/factor/"
-belongs_to: "MOD-001"
+belongs_to: "MOD-ALPHA_SIGNAL_DOMAIN"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
@@ -29,7 +29,7 @@ scope: module
 stability: evolving
 verifiability: hybrid
 business_layer_status: blocked
-business_layer_blocked_reason: "C轨业务层未开放。基础设施(Gate/CE/VMS/Pipeline/FLE)尚未达到beta稳定态，业务实现将因缺乏架构约束而漂移。开工条件：(a)MOD-MASTER-001 construction_progress>=implementation_phase;(b)Gate Engine覆盖L02业务检查类型;(c)至少一个CT-*契约从规划→部分实现，打通因子→信号集成通路。"
+business_layer_blocked_reason: "C轨业务层未开放。基础设施(Gate/CE/VMS/Pipeline/FLE)尚未达到beta稳定态，业务实现将因缺乏架构约束而漂移。开工条件：(a)MOD-MASTER_BLUEPRINT construction_progress>=implementation_phase;(b)Gate Engine覆盖L02业务检查类型;(c)至少一个CT-*契约从规划→部分实现，打通因子→信号集成通路。"
 references:
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l02_alpha_factor.yaml"
     section: ""
@@ -41,7 +41,7 @@ depends_on:
   - target: MOD-INF-015
     at: "§10"
     why: "因子计算监控"
-  - target: MOD-001
+  - target: MOD-ALPHA_SIGNAL_DOMAIN
     at: "§4,§3"
     why: "因子→信号域集成"
 priority: P0
@@ -387,7 +387,7 @@ class FactorMeta(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 因子计算监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-001 | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
+| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | 因子→信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
 | MOD-L11-001 ML Platform | 可选 | ModelPrediction因子增强 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明

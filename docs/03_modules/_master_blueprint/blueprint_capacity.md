@@ -20,8 +20,8 @@ actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\bluepri
 template_for: blueprint
 generation: 3
 functional_domain: infrastructure
-parent_module: "MOD-MASTER-001"
-belongs_to: "MOD-MASTER-001"
+parent_module: "MOD-MASTER_BLUEPRINT"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 rule_form: structural
 scope: global
 stability: evolving
@@ -60,7 +60,7 @@ tags:
 
 ## 概述
 
-本蓝图是 MOD-MASTER-001 的容量升级设计文件。核心职责：§-2 二次容量审计识别 v1.0.0 的 12 个体系级缺口（GAP-M01~M12），§-1 给出十个升级章的完整设计方案（规模平面/增量扫描/多AI并发/注册发现v2/脚本执行v2/容量调度/可观测性/水平扩展/迁移路径/施工序列）。设计上限 10,000 治理脚本 / 1,500 模块 / 100 AI 并发。上游依赖 baseline（v0.9.2 现存设计），下游被 Agent Spec 蓝图和 Circuit Breaker 消费。
+本蓝图是 MOD-MASTER_BLUEPRINT 的容量升级设计文件。核心职责：§-2 二次容量审计识别 v1.0.0 的 12 个体系级缺口（GAP-M01~M12），§-1 给出十个升级章的完整设计方案（规模平面/增量扫描/多AI并发/注册发现v2/脚本执行v2/容量调度/可观测性/水平扩展/迁移路径/施工序列）。设计上限 10,000 治理脚本 / 1,500 模块 / 100 AI 并发。上游依赖 baseline（v0.9.2 现存设计），下游被 Agent Spec 蓝图和 Circuit Breaker 消费。
 
 ### 2.2 不包含的职责
 
@@ -83,7 +83,7 @@ tags:
 
 ## 模板章节映射表
 
-> 本文件为 MOD-MASTER-001 拆分蓝图，内容按容量升级逻辑组织（§-2/§-1）。
+> 本文件为 MOD-MASTER_BLUEPRINT 拆分蓝图，内容按容量升级逻辑组织（§-2/§-1）。
 > 以下映射表说明现有章节与蓝图模板 v3.5/v3.6 必需章节的对应关系。
 
 | 模板必需章节 | 本文件对应章节 | 状态 |
@@ -111,7 +111,7 @@ tags:
 
 ---
 
-## §-2 蓝图设计升级方案 — MOD-MASTER-001 v1.0.0 → v1.1.0 容量二次审计
+## §-2 蓝图设计升级方案 — MOD-MASTER_BLUEPRINT v1.0.0 → v1.1.0 容量二次审计
 
 > **阅读指南**：本章是施工前的必读前置章节。读完本章 → 向下滚动到"容量升级总蓝图"十个升级章（v1.0.0 新增设计）→ 继续向下到 §零起（v0.9.2 现存 37 节集成治理体系）。施工时参考本缺口清单逐项落地。
 
@@ -154,7 +154,7 @@ tags:
 | GAP-M05 | **治理脚本生命周期管理** | 🟡 P1 | 完全缺失 | 10,000 脚本的版本化、废弃标记、归档策略、质量分级（S0-S3） |
 | GAP-M06 | **系统级冷启动与依赖编排** | 🟡 P1 | 完全缺失 | 12 系统 + 10,000 脚本→启动顺序 DAG + 启动超时预算 + 可用性探针链 |
 | GAP-M07 | **LLM API 成本模型与预算硬强制** | 🟡 P1 | 升级章一提到 token 预算 2M，但无成本追踪 | 100 AI→每月 LLM API 费用？预算超支硬阻断？成本归因到模块/Agent？ |
-| GAP-M08 | **蓝图自身体系膨胀管控** | 🟡 P1 | 完全缺失 | MOD-MASTER-001 本身已 ~4000 行，1,500 模块后多长？分章策略？自动摘要？ |
+| GAP-M08 | **蓝图自身体系膨胀管控** | 🟡 P1 | 完全缺失 | MOD-MASTER_BLUEPRINT 本身已 ~4000 行，1,500 模块后多长？分章策略？自动摘要？ |
 | GAP-M09 | **跨系统操作事务一致性** | 🟡 P1 | 完全缺失 | Orc 创建任务 + Gate 评估 + Script 执行 + DB 写入→四者需要原子性保障 |
 | GAP-M10 | **容量数字孪生与预测** | 🟢 P2 | 升级章七有实时监控，但无预测 | 在模块数到达 800 之前，能否预测 1,500 时的瓶颈？需要仿真模型 |
 | GAP-M11 | **契约版本化与演化管理** | 🟢 P2 | 完全缺失 | 63 CT-* 契约已定义，1,500 模块后可能 100+ 契约→semver + 废弃流程 |
@@ -181,7 +181,7 @@ T=2: 三天后 module_B 的增量扫描才暴露问题——但已与 module_A �
 ```yaml
 contract: CT-MODULE-DEPS-001
 title: "模块间依赖图谱——1,500模块级联影响分析"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 status: NEW
 priority: P0
 
@@ -723,7 +723,7 @@ cost_model:
 
 **问题场景**：
 ```
-MOD-MASTER-001 当前版本：~4,000 行 / ~150KB
+MOD-MASTER_BLUEPRINT 当前版本：~4,000 行 / ~150KB
 1,500 模块后：
 - 升级章 + §-2 容量二次审计 + 章一~三十七 = 预估 ~8,000 行
 - AI session 冷启动读 §零分派表→需要遍历全文结构
@@ -731,13 +731,13 @@ MOD-MASTER-001 当前版本：~4,000 行 / ~150KB
 - 本蓝图自身也需要一致性校验（谁校验总蓝图？）
 ```
 
-**当前状态**：v0.9.2 §三十四有 CT-BLUEPRINT-HEALTH-001 蓝图自健康诊断，但那是针对模块蓝图的——不是针对 MOD-MASTER-001 自身的。
+**当前状态**：v0.9.2 §三十四有 CT-BLUEPRINT-HEALTH-001 蓝图自健康诊断，但那是针对模块蓝图的——不是针对 MOD-MASTER_BLUEPRINT 自身的。
 
 **设计**：
 
 ```yaml
 contract: CT-MASTER-BLUEPRINT-HEALTH-001
-title: "MOD-MASTER-001 自身健康诊断——总蓝图的缩放管控"
+title: "MOD-MASTER_BLUEPRINT 自身健康诊断——总蓝图的缩放管控"
 status: NEW
 priority: P1
 
@@ -769,10 +769,10 @@ master_blueprint_governance:
       本蓝图中所有 CT-* 契约编号→自动验证在 §二契约总表中已登记
 
   split_threshold:
-    condition: "MOD-MASTER-001 > 8000 行 OR 单节 > 800 行"
+    condition: "MOD-MASTER_BLUEPRINT > 8000 行 OR 单节 > 800 行"
     action: |
       拆分方案：
-        MOD-MASTER-001: 保留 frontmatter + §-2 + 升级章 + §零~§十二（核心集成契约）
+        MOD-MASTER_BLUEPRINT: 保留 frontmatter + §-2 + 升级章 + §零~§十二（核心集成契约）
         MOD-MASTER-002: §十三~§二十五（可观测性 + 健康检查 + CDC + 部署）
         MOD-MASTER-003: §二十六~§三十七（高级治理 + 盲点审计）
       三个蓝图通过 depends_on 链保持集成一致性
@@ -1069,7 +1069,7 @@ master_capacity_slos_v1_1:
     relates_to: "GAP-M07"
 
   - id: GATE-M-007-master-blueprint-size
-    description: "MOD-MASTER-001 总行数上限（超过触发分拆评估）"
+    description: "MOD-MASTER_BLUEPRINT 总行数上限（超过触发分拆评估）"
     target: 8000
     relates_to: "GAP-M08"
 
@@ -1157,7 +1157,7 @@ master_capacity_slos_v1_1:
 | GAP-M05 | 脚本生命周期：状态机 + SQLite 表 + 90 天自动流转 + 质量分级 cron | `src/zephyr/infrastructure/runtime_integration/script_system/script_lifecycle.py` | 标记 30% 脚本为 DEPRECATED → 验证 ARCHIVED 不参与全量扫描 |
 | GAP-M06 | 冷启动编排：四层 DAG + health probe 链 + warm-up 策略 | `src/zephyr/infrastructure/runtime_integration/runtime/startup_orchestrator.py` | 冷启动 → 95s 内 readyz=200 |
 | GAP-M07 | LLM 成本管控：cost tracker + daily/weekly/monthly 预算强制 + 归因 | `src/zephyr/shared/cost_enforcer.py` | 模拟超预算 → daily 硬阻断生效 |
-| GAP-M08 | 总蓝图自健康：行数监控 + 自引用校验 + 拆分阈值告警 | `scripts/governance/master_blueprint_health.py` | MOD-MASTER-001 > 6000 行 → P1 告警 |
+| GAP-M08 | 总蓝图自健康：行数监控 + 自引用校验 + 拆分阈值告警 | `scripts/governance/master_blueprint_health.py` | MOD-MASTER_BLUEPRINT > 6000 行 → P1 告警 |
 | GAP-M09 | Saga 协调器：SagaCoordinator + saga_state 表 + 崩溃恢复 | `src/zephyr/orchestration/runtime_core/orchestrator/saga_coordinator.py` | 模拟 step_3 崩溃 → 自动回滚 step_1+2 → 最终一致 |
 
 ### Phase C：生产级保障 — 目标 v1.1.0-rc
@@ -1185,7 +1185,7 @@ master_capacity_slos_v1_1:
 
 # 容量升级总蓝图 — 从 51 模块→1,500 模块的架构升级设计
 
-> **定位**：本章是对 MOD-MASTER-001 v0.9.2 的容量升级设计。v0.9.2 的定义了 12 系统间的集成关系（方向正确），
+> **定位**：本章是对 MOD-MASTER_BLUEPRINT v0.9.2 的容量升级设计。v0.9.2 的定义了 12 系统间的集成关系（方向正确），
 > 但其规模参数（24 workers、全局进程锁、L1=1 slot、手动 YAML 注册表）是针对 51 模块 / 268 脚本设计的。
 > 本章提供 **不改变架构骨架**的前提下，将容量从 51 模块扩展到 1,500 模块的完整设计方案。
 
@@ -1283,7 +1283,7 @@ scale_plane:
 ```yaml
 contract: CT-IMPACT-001
 title: "变更影响分析——文件改动→受影响脚本的DAG"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 status: NEW
 
 architecture:
@@ -1394,7 +1394,7 @@ full_scan:
 ```yaml
 contract: CT-CONCURRENCY-001
 title: "多AI并发许可证系统——替换全局进程锁"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 status: NEW
 priority: P0
 
@@ -1773,7 +1773,7 @@ construction_sequence:
 
 # 集成闭环总蓝图 — 任务系统·脚本系统·知识库及全部基础设施系统
 
-> **module_id**: MOD-MASTER-001 | **version**: 1.0.0 | **status**: active | **layer**: cross_layer
+> **module_id**: MOD-MASTER_BLUEPRINT | **version**: 1.0.0 | **status**: active | **layer**: cross_layer
 
 > **真源声明**：本蓝图是 ZephyrAlpha 全部基础设施系统之间集成关系的 canonical SSoT。
 > 各模块蓝图（MOD-INF-005/006、MOD-KB-001、以及即将创建的 Gates/CE/Pipeline/FLE/VMS/db/MCP/LSG/Telemetry 蓝图）引用本蓝图中的集成契约编号——
@@ -1925,7 +1925,7 @@ STEP 3: 拆分后验证
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 基线蓝图 | MOD-MASTER-002 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 现存设计 |
-| 6 | 索引蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 导航索引 |
+| 6 | 索引蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 导航索引 |
 
 ---
 

@@ -3,7 +3,7 @@ doc_type: index
 status: active
 title: "changes — 目录索引"
 module_id: ""
-blueprint_id: "MOD-023"
+blueprint_id: "MOD-GOVERNANCE"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"
@@ -19,7 +19,7 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [dom_gov_001/](dom_gov_001/index.md) | 目录 | MOD-023 — 目录索引 |
+| [dom_gov_001/](dom_gov_001/index.md) | 目录 | MOD-GOVERNANCE — 目录索引 |
 | [index.md](index.md) | Markdown | changes — 目录索引 |
 
 ## 导航

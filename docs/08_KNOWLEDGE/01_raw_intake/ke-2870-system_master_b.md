@@ -21,6 +21,6 @@ Level 0：全系统总蓝图（System Master Blueprint）
 | **对标** | TOGAF Architecture Vision + K8s Cluster Architecture + OpenAPI Root Spec |
 | **加载策略** | AI 新 session **MUST** 首先定位总蓝图，按需下钻到域蓝图 |
 
-**当前已完成**：`MOD-MASTER-001`（L01 基础设施层 12 系统集成总蓝图，[blueprint.md](03_modules/_master-blueprint/blueprint.md)）
+**当前已完成**：`MOD-MASTER_BLUEPRINT`（L01 基础设施层 12 系统集成总蓝图，[blueprint.md](03_modules/_master-blueprint/blueprint.md)）
 
 **未来需要新建**：`SYS-MASTER-001`（真正的全系统 14 层总蓝图——承载 AGENTS.md 中定义的 6 个 CTR-001~006 跨层契约的全系统叙事）

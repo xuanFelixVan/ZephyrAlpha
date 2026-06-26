@@ -103,7 +103,7 @@ r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|...|MOD|...|DM)(?:[-_][A-Za-z0-9_]+)+[\"'
 
 | 命名模式 | 行数 | 占比 | 合规性 | 样本 |
 |---|---|---|---|---|
-| 数字序号制 `MOD-XX-NNN`（真源规定） | 4810 | 71% | ✅ 合规 | MOD-INF-010, MOD-INF-005 |
+| 数字序号制 `MOD-XX-NNN`（真源规定） | 4810 | 71% | ✅ 合规 | MOD-FEEDBACK_LOOP, MOD-INF-005 |
 | 大写下划线 `MOD-XXX_YYY` | 897 | 13% | ❌ 违规（无序号） | MOD-SIGNAL_ASHARE, MOD-SECURITY, MOD-GOVERNANCE |
 | 混合描述名 `MOD-XX-xxx_yyy` | 1 | <1% | ❌ 违规 | MOD-GOV-git_commit_gateway |
 | 其他 | 1074 | 16% | ❓ 需细分 | — |

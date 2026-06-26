@@ -22,7 +22,7 @@ summary: "LLM 模型画像器——7 维评测 + 任务×模型增量学习 + �
 tags: [model-profiler, benchmark, performance, latency, throughput, hallucination, drift, task-learning, model-router, routing, ollama, model-discovery, task-model-matrix, composite-score, continuous-learning]
 priority: P1
 runtime_plane: warm
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-INF-009"
 rule_form: structural
 scope: module
@@ -31,11 +31,11 @@ verifiability: hybrid
 depends_on:
   - {target: "MOD-INF-009", at: "§B584/B212/B405", why: "Pipeline——ModelProfiler 是 Pipeline 子组件，复用 ModuleResult.duration_ms/tokens_used"}
   - {target: "MOD-INF-024", at: "§model-router", why: "Budget Enforcer——ModelRouter 消费 benchmark 结果实现性能感知路由"}
-  - {target: "MOD-MASTER-001", at: "§runtime", why: "AutoRuntimeCore——大脑 boot/reconcile/status_panel 全生命周期管理"}
+  - {target: "MOD-MASTER_BLUEPRINT", at: "§runtime", why: "AutoRuntimeCore——大脑 boot/reconcile/status_panel 全生命周期管理"}
   - {target: "MOD-INF-011", at: "§ollama", why: "Vector Memory——复用 OllamaChat 的 /api/chat 调用模式"}
 references:
   - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\auto-runtime-core\\blueprint.md", section: "§3", why: "AutoRuntimeCore 集成架构"}
-  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\blueprint.md", section: "§3", why: "MOD-023 集成契约定义"}
+  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\blueprint.md", section: "§3", why: "MOD-GOVERNANCE 集成契约定义"}
 codification_level: L1
 ---
 
@@ -394,7 +394,7 @@ class BenchmarkCase(BaseModel):
 |---------|---------|---------|---------|---------|
 | MOD-INF-009 | 必须 | Pipeline ModuleResult 数据 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-024 | 必须 | ModelRouter 消费 benchmark 结果 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-MASTER-001 | 必须 | AutoRuntimeCore 生命周期管理 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | AutoRuntimeCore 生命周期管理 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 | MOD-INF-011 | 可选 | OllamaChat /api/chat 调用模式 | ≥1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` |
 | 交易决策流水线 C-044⑤ | 被依赖 | 消费 TaskModelMatrix cost_efficiency 做LLM路由决策 | — | d:\\临时工作区\\交易决策流水线设计.md |
 
@@ -481,13 +481,13 @@ class BenchmarkCase(BaseModel):
 
 ### 12.1 域契约锚点
 
-> 权威定义见 [MOD-023 blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/blueprint.md) §3。
+> 权威定义见 [MOD-GOVERNANCE blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/blueprint.md) §3。
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
 | G-CT-034-01 | 治理域 | benchmark 结果 → ModelRouter | MOD-INF-024 | 修改输出格式必须同步更新 ModelRouter |
 | G-CT-034-02 | 治理域 | ModuleResult → 学习矩阵 | MOD-INF-009 | 修改 record() 签名必须同步更新 Pipeline |
-| G-CT-034-03 | 治理域 | 大脑 boot/reconcile 触发 | MOD-MASTER-001 | 修改集成点必须同步更新 AutoRuntimeCore |
+| G-CT-034-03 | 治理域 | 大脑 boot/reconcile 触发 | MOD-MASTER_BLUEPRINT | 修改集成点必须同步更新 AutoRuntimeCore |
 
 ---
 
@@ -942,7 +942,7 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-024 ModelRouter | §4 接口契约、§10 依赖关系 |
 | Tier 1 | MOD-INF-009 PipelineOrchestrator | §4 接口契约、§12 集成点 |
-| Tier 2 | MOD-MASTER-001 AutoRuntimeCore | §12 集成点 |
+| Tier 2 | MOD-MASTER_BLUEPRINT AutoRuntimeCore | §12 集成点 |
 | Tier 3 | `src/zephyr/model-profiler/*.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则

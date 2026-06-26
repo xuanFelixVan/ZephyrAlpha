@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Runtime.Manifest
 module_id: MOD-067
 ttl: permanent

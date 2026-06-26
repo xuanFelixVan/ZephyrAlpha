@@ -18,7 +18,7 @@
 Context Engine — AI 上下文组装与 Token 预算管理。
 
 依据：
-    蓝图 MOD-INF-006 §2.2.1 + v0.3.0
+    蓝图 MOD-TASK_SYSTEM §2.2.1 + v0.3.0
     任务卡 TASK-INF-0006 + TASK-INF-0105
 
 功能：

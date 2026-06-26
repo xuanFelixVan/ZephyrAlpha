@@ -16,4 +16,4 @@ ttl: permanent
 | **向量语义检索** | ChromaDB 4 Collection：ke_entries / vibe_rules / blueprints / failure_patterns |
 | **跨Agent知识互通** | MCP 协议：4 Resource + 4 Tool，多模型（Claude/Kimi/Qwen/GLM）共享知识 |
 | **审计与质量保障** | 四模型审计流水线（GLM扫描→Kimi根因→Qwen落地→Opus终审）+ 知识衰减/新鲜度管理 |
-| **上下文注入** | 与 MOD-INF-006 `context_assembler` 对接，AI session 启动时自动注入相关KE |
+| **上下文注入** | 与 MOD-TASK_SYSTEM `context_assembler` 对接，AI session 启动时自动注入相关KE |

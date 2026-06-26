@@ -1,5 +1,5 @@
 ---
-module_id: MOD-MASTER-001
+module_id: MOD-MASTER_BLUEPRINT
 submodule_paths_scope: all-modules
 title: "Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图"
 doc_type: blueprint
@@ -39,7 +39,7 @@ depends_on:
   - target: "MOD-MASTER-003"
     at: "全篇"
     why: "容量设计蓝图——v1.1.0 升级章"
-  - target: "MOD-MASTER-004"
+  - target: "MOD-MASTER_BLUEPRINT"
     at: "全篇"
     why: "Agent Spec接口蓝图——§十五CBAC+Skill路由"
 references:
@@ -67,12 +67,12 @@ tags:
 
 # Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图
 
-> module_id: MOD-MASTER-001 | version: 1.3.1 | status: active | layer: cross_layer | blueprint_level: domain
+> module_id: MOD-MASTER_BLUEPRINT | version: 1.3.1 | status: active | layer: cross_layer | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_master-blueprint\ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
-本文件是 MOD-MASTER-001 集成闭环总蓝图的索引导航文件。核心职责：提供 3 个拆分蓝图的路径导航、阅读顺序指引。新 AI session 应按场景按需读取对应的拆分蓝图——而非本索引文件。上游依赖 SYS-MASTER-001，下游被 3 个拆分蓝图消费。
+本文件是 MOD-MASTER_BLUEPRINT 集成闭环总蓝图的索引导航文件。核心职责：提供 3 个拆分蓝图的路径导航、阅读顺序指引。新 AI session 应按场景按需读取对应的拆分蓝图——而非本索引文件。上游依赖 SYS-MASTER-001，下游被 3 个拆分蓝图消费。
 
 ---
 
@@ -106,23 +106,23 @@ tags:
 |---------|-----------|------|------|
 | [blueprint_baseline.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_baseline.md) | MOD-MASTER-002 | v0.9.2 | §零~§十四+§十六~§三十七（12系统拓扑+63条CT-*契约+共享Schema+全局状态传播+容量预算+施工Phase+Anti-Patterns+设计决策+集成测试+风险+治理） |
 | [blueprint_capacity.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_capacity.md) | MOD-MASTER-003 | v1.1.0 | §-1/§-2（容量升级：二次审计12缺口+10个升级章） |
-| [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_agent_spec.md) | MOD-MASTER-004 | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
+| [blueprint_agent_spec.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint_agent_spec.md) | MOD-MASTER_BLUEPRINT | v1.1.0 | §十五（CBAC能力访问控制矩阵+违规响应+离线更新+编排器特权+Skill路由） |
 
 ## 12 个集成系统
 
 # | 系统 | 模块蓝图 | 关键 CT-* |
 |---|------|:---:|------|
-1 | Agent Orchestrator | MOD-INF-006 | CT-ORC-SCRIPT, CT-ORC-CE, CT-ORC-VMS, CT-ORC-GATE, CT-ORC-DB |
+1 | Agent Orchestrator | MOD-TASK_SYSTEM | CT-ORC-SCRIPT, CT-ORC-CE, CT-ORC-VMS, CT-ORC-GATE, CT-ORC-DB |
 2 | Script System | MOD-INF-005 | CT-ORC-SCRIPT, CT-SCRIPT-KB, CT-SCRIPT-GATE |
 3 | Knowledge Base | MOD-KB-001 | CT-SCRIPT-KB, CT-KB-VMS |
-4 | Gate Engine | MOD-INF-007 | CT-ORC-GATE, CT-SCRIPT-GATE |
-5 | Context Engine | MOD-INF-008 | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG |
+4 | Gate Engine | MOD-GATE_ENGINE | CT-ORC-GATE, CT-SCRIPT-GATE |
+5 | Context Engine | MOD-CONTEXT_ENGINE | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG |
 6 | Task Pipeline | MOD-INF-009 | CT-PIPE-ORC |
-7 | Feedback Loop Engine | MOD-INF-010 | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE |
+7 | Feedback Loop Engine | MOD-FEEDBACK_LOOP | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE |
 8 | Vector Memory Service | MOD-INF-011 | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS |
-9 | Database | MOD-INF-012 | CT-FLE-DB, CT-ORC-DB |
+9 | Database | MOD-DATABASE | CT-FLE-DB, CT-ORC-DB |
 10 | MCP Servers | MOD-INF-013 | — |
-11 | LLM Security Gateway | MOD-INF-014 | CT-CE-LSG |
+11 | LLM Security Gateway | MOD-LLM_SECURITY | CT-CE-LSG |
 12 | System Telemetry | MOD-INF-015 | CT-TELE-FLE |
 
 ## 阅读顺序
@@ -149,7 +149,7 @@ tags:
 | 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4） | 双源漂移 |
 
 > **架构归属SSoT**：`data/databases/depgraph.db`
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-MASTER-001`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-MASTER_BLUEPRINT`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 | 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案等临时内容一旦执行完毕即从蓝图删除 | 蓝图膨胀 |
 | 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级 | 职责不清 |
@@ -192,7 +192,7 @@ tags:
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 6 | 基线蓝图 | MOD-MASTER-002 | v0.9.2 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 现存设计 |
 | 7 | 容量蓝图 | MOD-MASTER-003 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md` | 升级设计 |
-| 8 | Agent Spec蓝图 | MOD-MASTER-004 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_agent_spec.md` | CBAC+Skill |
+| 8 | Agent Spec蓝图 | MOD-MASTER_BLUEPRINT | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_agent_spec.md` | CBAC+Skill |
 
 ---
 
@@ -252,7 +252,7 @@ tags:
 | 集成闭环总蓝图索引 | **本文档** | — |
 | 12系统拓扑+契约 | **MOD-MASTER-002** | — |
 | 容量升级设计 | **MOD-MASTER-003** | — |
-| CBAC+Skill路由 | **MOD-MASTER-004** | — |
+| CBAC+Skill路由 | **MOD-MASTER_BLUEPRINT** | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 
@@ -262,7 +262,7 @@ tags:
 |:----:|--------|---------|
 | Tier 1 | MOD-MASTER-002 | 索引导航 |
 | Tier 1 | MOD-MASTER-003 | 索引导航 |
-| Tier 1 | MOD-MASTER-004 | 索引导航 |
+| Tier 1 | MOD-MASTER_BLUEPRINT | 索引导航 |
 | Tier 2 | SYS-MASTER-001 | 子蓝图引用 |
 
 ### 变更同步规则
@@ -286,13 +286,13 @@ tags:
 |---|-------------|---------|
 | 1 | 12 系统集成契约定义 | MOD-MASTER-002 负责 |
 | 2 | 容量升级设计 | MOD-MASTER-003 负责 |
-| 3 | CBAC 矩阵定义 | MOD-MASTER-004 负责 |
+| 3 | CBAC 矩阵定义 | MOD-MASTER_BLUEPRINT 负责 |
 
 ### 触发条件
 
 | 场景 | AI 应读取本蓝图 |
 |------|---------------|
-| 首次进入 MOD-MASTER-001 体系 | 读本索引了解 3 个拆分蓝图的关系 |
+| 首次进入 MOD-MASTER_BLUEPRINT 体系 | 读本索引了解 3 个拆分蓝图的关系 |
 | 不确定该读哪个拆分蓝图 | 看拆分蓝图导航 + 阅读顺序 |
 
 ### 导航路径

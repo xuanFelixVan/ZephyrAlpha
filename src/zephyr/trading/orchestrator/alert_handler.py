@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
+# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
 # [MODULE] zephyr.trading.orchestrator.alert_handler
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
@@ -151,7 +151,7 @@ def _create_repair_task(
         session_id="system-fle-auto",
         created_at=now_iso,
         updated_at=now_iso,
-        source_blueprint="MOD-MASTER-001",
+        source_blueprint="MOD-MASTER_BLUEPRINT",
         source_section="CT-FLE-ORC-001",
         description=f"[FLE自动] {severity} 告警: {title[:200]}。根因: FLE detect 检测异常。治根: 自动创建修复任务。",
         upstream_files=[],

@@ -14,7 +14,7 @@
 # [TESTS]
 #!/usr/bin/env python
 """
-crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER-001 与 DOM-GOV-001 一致.
+crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER_BLUEPRINT 与 DOM-GOV-001 一致.
 
 DOM-GOV-001 §frontmatter depends_on — CT 交叉检查脚本.
 用法: python scripts/governance/crosscheck_sys_master_deps.py
@@ -77,7 +77,7 @@ def main() -> int:
     results = []
 
     results.append(check_exists(SYS_MASTER, "SYS-MASTER-001 blueprint"))
-    results.append(check_exists(MOD_MASTER, "MOD-MASTER-001 blueprint"))
+    results.append(check_exists(MOD_MASTER, "MOD-MASTER_BLUEPRINT blueprint"))
     results.append(check_exists(DOM_GOV, "DOM-GOV-001 blueprint"))
 
     if DOM_GOV.exists():
@@ -90,7 +90,7 @@ def main() -> int:
         print(r)
 
     if all_ok:
-        print("\nALL CHECKS PASSED: SYS-MASTER-001 + MOD-MASTER-001 与 DOM-GOV-001 一致")
+        print("\nALL CHECKS PASSED: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT 与 DOM-GOV-001 一致")
     else:
         print("\nSOME CHECKS FAILED", file=sys.stderr)
 

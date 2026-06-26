@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Code Dedup Engine.Manifest
 module_id: MOD-049
 ttl: permanent

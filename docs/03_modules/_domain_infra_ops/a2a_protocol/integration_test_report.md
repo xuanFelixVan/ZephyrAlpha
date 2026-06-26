@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Integration Test Report
 module_id: MOD-028
 ttl: permanent

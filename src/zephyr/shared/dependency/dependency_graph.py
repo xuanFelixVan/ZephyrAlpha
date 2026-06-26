@@ -18,7 +18,7 @@
 Dependency Graph — 任务卡依赖关系管理。
 
 依据：
-    蓝图 MOD-INF-006 §5 依赖项 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §5 依赖项 + v0.6.0
     任务卡 TASK-INF-0107
 
 功能：

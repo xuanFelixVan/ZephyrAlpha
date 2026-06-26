@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.circuit_breaker
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.integration.shared_08.security.capability

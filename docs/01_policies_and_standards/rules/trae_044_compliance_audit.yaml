@@ -804,7 +804,7 @@ sections:
     - description: v1.1.0 深度自审计修复
       details: 与script-manifest.yaml（91脚本）、gate-registry.md（34门禁）、registry-master-index.yaml（38登记表）完成三重交叉验证。新增30+遗漏脚本引用。新增GATE-13/G1-G5/ARG-001~005/MOD-ADMIT/FACTOR-QUALITY/FILE-OP-SAFE门禁覆盖。新增§2.13跨维度统计表。新增§A交叉验证记录。新增depends_on 9条规则引用。修正script总数从~90到91
     - description: v1.2.0 四重交叉验证修复
-      details: 与docs/01_policies_and_standards/下全部37个规则文件逐一核对。depends_on从10条扩展至37条（覆盖PS-STD-000~012、GOV-DOC-001~010、GOV-ARCH-001~005、GOV-MOD-001~004/007、GOV-AI-003~005、GOV-SEC-001~003、GOV-TASK-001/004/005、GOV-CMP-001/002等全部规则）。各维度审计规则栏补充完整路径链接。新增§B规则文件完整路径索引（13类60+文件），支持Vibe Coding场景下AI秒查文件路径
+      details: 与docs/01_policies_and_standards/下全部37个规则文件逐一核对。depends_on从10条扩展至37条（覆盖PS-STD-000~012、GOV-DOC-001~010、GOV-ARCH-001~005、GOV-MOD-ALPHA_SIGNAL_DOMAIN~004/007、GOV-AI-003~005、GOV-SEC-001~003、GOV-TASK-001/004/005、GOV-CMP-001/002等全部规则）。各维度审计规则栏补充完整路径链接。新增§B规则文件完整路径索引（13类60+文件），支持Vibe Coding场景下AI秒查文件路径
     - description: v1.3.0 内部矛盾修复
       details: RQ-01审查修复。(1)gov_cmp_003_gate_mapping summary从"32个门禁"改为引用SSoT（门禁数以gate-registry.md的total_gates为准），与gov_cmp_003_change_sync的total_gates:25对齐。(2)gov_cmp_003_cross_validation从"34个门禁"改为引用SSoT（所有门禁，门禁数以gate-registry.md为准）。(3)gov_cmp_003 actions和procedure的QUICK模式从"建议始终包含D3+D5"改为"必须包含D3+D5"，与gov_cmp_003_quick_reference的"必须包含"对齐。(4)全文件硬编码数字（177脚本/34门禁/38登记表）统一改为SSoT引用（script-manifest.yaml/gate-registry.md/registry-master-index.yaml），消除数字漂移风险
   gov_cmp_003_ai_consumability:
@@ -855,7 +855,7 @@ sections:
       - 元标准：PS-STD-000(full/根规则); PS-STD-003(§2/安全宪法); PS-STD-001(§3/frontmatter真源); PS-STD-002(full/文档结构); PS-STD-004(full/规则冲突); PS-STD-009(§2.2/§5/§7/§9/废弃归档版本); PS-STD-011(full/MTH方法论); PS-STD-012(§7.3/index完整性)
       - 文档治理：GOV-DOC-001(full/编号); GOV-DOC-002(§四/目录); GOV-DOC-003(full/命名); GOV-DOC-004(full/路径); GOV-DOC-005(full/编码); GOV-DOC-006(§一~§六/生命周期); GOV-DOC-007(§一~§三/文件安全); GOV-DOC-009(full/文档控制); GOV-DOC-010(full/可发现性)
       - 架构治理：GOV-ARCH-001(full/KB决策); GOV-ARCH-002(§2~§5/评审门禁); GOV-ARCH-003(full/版本化); GOV-ARCH-005(full/Phase过渡); GOV-ARCH-006(G1-G5/KMS管道); architecture_contract.yaml(VR-001~011/契约)
-      - 模块治理：GOV-MOD-001(full/准入); GOV-MOD-002(full/AI铁律); GOV-MOD-003(MLC-001~003/生命周期); GOV-MOD-004(IFC-001~007/接口契约); GOV-MOD-007(full/多注册表同步)
+      - 模块治理：GOV-MOD-ALPHA_SIGNAL_DOMAIN(full/准入); GOV-MOD-002(full/AI铁律); GOV-MOD-003(MLC-001~003/生命周期); GOV-MOD-004(IFC-001~007/接口契约); GOV-MOD-007(full/多注册表同步)
       - AI治理：GOV-AI-003(full/幻觉自检); GOV-AI-004(full/双编辑器); context-rules.yaml(CR-001~015/上下文管理)
       - 安全治理：GOV-SEC-001(full/密钥); GOV-SEC-002(full/访问控制); GOV-SEC-003(full/安全事件)
       - 任务治理：GOV-TASK-001(full/任务卡); GOV-TASK-004(full/生命周期); GOV-TASK-005(§4.2/§4.3/关闭标准)

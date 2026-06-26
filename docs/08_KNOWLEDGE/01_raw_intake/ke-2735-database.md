@@ -10,7 +10,7 @@ ttl: permanent
 
 Database 蓝图 v2.2
 
-> **module_id**: MOD-INF-012 | **version**: 2.2.0 | **status**: draft | **layer**: cross_layer | **belongs_to**: MOD-MASTER-001
+> **module_id**: MOD-DATABASE | **version**: 2.2.0 | **status**: draft | **layer**: cross_layer | **belongs_to**: MOD-MASTER_BLUEPRINT
 
 > **真源声明**：本蓝图的 canonical SSoT 为 [b_db.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_db.yaml)。
 > 代码落位：`src/zephyr/db/`（7 个 .py 文件）。v2.2 全部已实现。

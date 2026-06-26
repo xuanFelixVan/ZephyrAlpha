@@ -19,7 +19,7 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/risk/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -441,7 +441,7 @@ class ViolationDetail(BaseModel):
 | MOD-L05-001 | 必须 | CTR-004 Order（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-pf_core\portfolio-core\blueprint.md` |
 | MOD-L06-001 | 必须 | CTR-006 PositionSnapshot（消费） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` |
 | MOD-L08-001 | 可选 | CTR-P1-008 RiskDashboardSnapshot（产出） | v1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-frontend\hmi-core\blueprint.md` |
-| MOD-INF-010 | 可选 | CTR-P1-013 Telemetry（产出） | v1.0.0 | 风控告警→线4 |
+| MOD-FEEDBACK_LOOP | 可选 | CTR-P1-013 Telemetry（产出） | v1.0.0 | 风控告警→线4 |
 
 > **对齐说明**：system-dependency-map §3.10 列出 CTR-001/CTR-002/CTR-006 为输入，CTR-003/CTR-P1-011/CTR-P1-013 为输出。蓝图 §10.1 补充了 CTR-P1-015（代码 __init__.py 已声明消费）和 CTR-004（pre-trade 校验必需）。CTR-P1-011 RiskMetricsReport 产出待 Phase 2 实现。
 
@@ -489,7 +489,7 @@ class ViolationDetail(BaseModel):
 | 契约 SSoT | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\` | 风险相关契约定义 |
 | 错误类型 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\errors.py` | CTR-ERR-004 RiskLimitViolationError |
 | 测试代码 | `D:\ZephyrAlpha\tests\risk\` | 单元测试 + 集成测试（待创建） |
-| 交易门禁（规则真源） | `D:\ZephyrAlpha\src\zephyr\gates\g7-position-limits.yaml` + `g8-leverage.yaml` | G10持仓限制 + G11杠杆限制——消费 CTR-003 RiskLimits 契约（实现归属 MOD-INF-007） |
+| 交易门禁（规则真源） | `D:\ZephyrAlpha\src\zephyr\gates\g7-position-limits.yaml` + `g8-leverage.yaml` | G10持仓限制 + G11杠杆限制——消费 CTR-003 RiskLimits 契约（实现归属 MOD-GATE_ENGINE） |
 | 风险仪表盘快照契约 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\risk_dashboard_snapshot.py` | 风险仪表盘数据快照（归属 MOD-INF-016） |
 | 风险指标契约 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\risk_metrics.py` | 风险指标计算结果（归属 MOD-INF-016） |
 

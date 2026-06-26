@@ -14,7 +14,7 @@
 # [TESTS]
 """validate_module_schema.py — 模块 Schema 校验（INJ-003/004/005/006）
 
-对标：GOV-MOD-001 INJ-003（契约已定义）、INJ-004（生命周期状态合法）、
+对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-003（契约已定义）、INJ-004（生命周期状态合法）、
      INJ-005（运行平面已分配）、INJ-006（KB 决策记录已关联）
 
 检测内容：
@@ -35,7 +35,7 @@ args:
 - {flag: --check-adr, type: str, description: "检查指定 module_id 的 KB 决策记录关联"}
 description: >
   模块 Schema 校验（INJ-003/004/005/006）——契约定义、字段枚举、KB 决策记录关联。
-  对标 GOV-MOD-001 module-injection-rules-policy.md。
+  对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN module-injection-rules-policy.md。
 dimensions:
 - D5
 priority: P1

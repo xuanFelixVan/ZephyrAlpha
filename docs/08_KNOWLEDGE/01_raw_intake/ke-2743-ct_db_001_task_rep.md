@@ -10,6 +10,6 @@ ttl: permanent
 
 DB-025-0023：CT-DB-001 task_repo CRUD 契约落地
 
-Provider: MOD-INF-012 (TaskRepository). Consumers: MOD-INF-006, MOD-INF-009, MOD-INF-013.
+Provider: MOD-DATABASE (TaskRepository). Consumers: MOD-TASK_SYSTEM, MOD-INF-009, MOD-INF-013.
 
 验收: 6 operations 全部在代码中实现。

@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: agent-spec Changelog
 module_id: MOD-016
 ttl: permanent

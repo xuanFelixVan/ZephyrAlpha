@@ -14,9 +14,9 @@ ttl: permanent
 
 | 依赖目标 | 引用位置 | 为什么依赖 | 耦合程度 |
 |---------|---------|-----------|:---:|
-| MOD-INF-006 | §3.2 + §4.2 | TaskCard 模型 + task_id 格式（`{NAMESPACE}-{SEQ}`）——KB 自己的施工任务用 TaskCard 追踪 | 强 |
-| MOD-INF-006 | §5.1 | `context_assembler` 的 KE 知识注入接口——上下文引擎通过此接口拉取 KB 知识 | 强 |
-| MOD-INF-006 | §4.2 | 10 状态任务状态机——KB 施工任务状态管理引用此状态机 | 中 |
+| MOD-TASK_SYSTEM | §3.2 + §4.2 | TaskCard 模型 + task_id 格式（`{NAMESPACE}-{SEQ}`）——KB 自己的施工任务用 TaskCard 追踪 | 强 |
+| MOD-TASK_SYSTEM | §5.1 | `context_assembler` 的 KE 知识注入接口——上下文引擎通过此接口拉取 KB 知识 | 强 |
+| MOD-TASK_SYSTEM | §4.2 | 10 状态任务状态机——KB 施工任务状态管理引用此状态机 | 中 |
 | MOD-INF-005 | §6.3 + §6.6 | 脚本系统 MEDIUM Finding → KB 入库（C4→G1）——Finding→KE 数据格式转换 | 强 |
 | MOD-INF-005 | §3.6 | 脚本系统标签体系（`[Quick]`/`[Security]` 等）——KB 的 tags 字段对齐脚本系统标签 | 中 |
 | PS-STD-001 | §3 | doc_type 受控词表——知识条目的 doc_type 注册 | 中 |

@@ -149,7 +149,7 @@ PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
             # ── 数据库 ──
             "gate_db_integrity",
             "gate_query_metrics",
-            # ── 任务系统 (Task System MOD-INF-006) ──
+            # ── 任务系统 (Task System MOD-TASK_SYSTEM) ──
             "gate_task_system",
             # ── 架构合规 ──
             "gate_ssot_validator",

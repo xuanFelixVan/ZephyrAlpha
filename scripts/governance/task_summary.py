@@ -15,7 +15,7 @@
 """
 task_summary.py — 任务系统全局摘要 CLI
 =======================================
-Blueprint: MOD-INF-006 (infrastructure_runtime_integration/task-system) OPS-003
+Blueprint: MOD-TASK_SYSTEM (infrastructure_runtime_integration/task-system) OPS-003
 依赖: TaskRepository + SQLite metadata DB
 
 

@@ -1553,7 +1553,7 @@ sections:
     section_type: rule
     original_rules:
     - PS-STD-005 §3.3
-    summary: 不是任何时候都需要立即创建所有三级蓝图——以下条件触发对应级别的蓝图创建；Level 2创建前MUST通过GOV-MOD-001 §7 #5功能域重叠检查
+    summary: 不是任何时候都需要立即创建所有三级蓝图——以下条件触发对应级别的蓝图创建；Level 2创建前MUST通过GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5功能域重叠检查
     creation_triggers:
     - level: Level 0
       trigger: 系统≥3个功能域且出现跨域数据契约需求
@@ -1564,10 +1564,10 @@ sections:
       trigger: 某一域内模块≥5且出现≥3组跨模块交互
       pre_gate: 域蓝图声明的responsibility_domain必须不与任何已有域蓝图重叠
       example: L02/L03域内模块超过5个后因子和信号的集成需要独立域蓝图
-      current: 仅有L01域级(MOD-MASTER-001)缺L02-L03/L04-L07/L11-L13域蓝图
+      current: 仅有L01域级(MOD-MASTER_BLUEPRINT)缺L02-L03/L04-L07/L11-L13域蓝图
     - level: Level 2
       trigger: 每创建一个新的功能模块
-      pre_gate: 'GOV-MOD-001 §7 #5功能域重叠检查通过——新模块责任不被任何已有蓝图覆盖'
+      pre_gate: 'GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5功能域重叠检查通过——新模块责任不被任何已有蓝图覆盖'
       example: 当前已满足——各模块蓝图均已创建
       current: 已完成
     conditions:
@@ -1577,7 +1577,7 @@ sections:
       fail: 跳过创建条件判定或前置闸门
     actions:
     - type: mandatory
-      step: '当前阶段只创建Level 0 MOD-MASTER-001+已有的19个Level 2模块蓝图；SYS-MASTER-001(真正的全系统总蓝图)留待beta创建——触发条件为任一L02+模块蓝图开始创建时；Level 2创建前MUST通过GOV-MOD-001 §7 #5功能域重叠检查'
+      step: '当前阶段只创建Level 0 MOD-MASTER_BLUEPRINT+已有的19个Level 2模块蓝图；SYS-MASTER-001(真正的全系统总蓝图)留待beta创建——触发条件为任一L02+模块蓝图开始创建时；Level 2创建前MUST通过GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5功能域重叠检查'
     prohibitions:
     - 跳过功能域重叠检查创建平行蓝图
     - 为已被覆盖的功能域创建同级新蓝图(应升级原蓝图而非创建新蓝图)
@@ -1599,7 +1599,7 @@ sections:
     - level: Level 2模块蓝图
       prefix: MOD-{LAYER/DOMAIN}
       format: MOD-{LAYER}-NNN或MOD-{DOMAIN}-NNN
-      example: MOD-INF-006(任务系统模块蓝图)
+      example: MOD-TASK_SYSTEM(任务系统模块蓝图)
     - level: Level 2基础设施模块
       prefix: MOD-INF
       format: MOD-INF-NNN
@@ -1657,7 +1657,7 @@ sections:
       format: MOD-EXP-NNN
       example: MOD-EXP-001(A/B实验平台)
     existing_id_compatibility:
-    - id: MOD-MASTER-001
+    - id: MOD-MASTER_BLUEPRINT
       level: Level 1(当前)→Level 0(beta升级后)
       note: 当前承担L01域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
     - id: MOD-INF-001~017
@@ -1697,7 +1697,7 @@ sections:
       field: parent_blueprint
       requirement: SHOULD
       values: 上级蓝图module_id
-      example: 'parent_blueprint: "MOD-MASTER-001"'
+      example: 'parent_blueprint: "MOD-MASTER_BLUEPRINT"'
     conditions:
     - type: trigger
       check: 维护蓝图注册表时
@@ -1715,81 +1715,81 @@ sections:
     - PS-STD-005 §9
     summary: 1阶段既存的19份蓝图的归属映射——按§6.1规则声明belongs_to
     existing_blueprint_mapping:
-    - module_id: MOD-MASTER-001
+    - module_id: MOD-MASTER_BLUEPRINT
       title: 集成闭环总蓝图
       belongs_to: 无(域蓝图层)
       blueprint_level: domain
     - module_id: MOD-INF-001
       title: 容量保障体系
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-002
       title: 运行时集成
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-003
       title: 任务卡+KMS(deprecated)
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-004
       title: Vibe Coding双管线(deprecated)
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-005
       title: 脚本系统
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-006
+    - module_id: MOD-TASK_SYSTEM
       title: 任务系统
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-KB-001
       title: 知识库
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-007
+    - module_id: MOD-GATE_ENGINE
       title: Gate Engine
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-008
+    - module_id: MOD-CONTEXT_ENGINE
       title: Context Engine
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-009
       title: Pipeline
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-010
+    - module_id: MOD-FEEDBACK_LOOP
       title: Feedback Loop
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-011
       title: Vector Memory
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-012
+    - module_id: MOD-DATABASE
       title: Database
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-013
       title: MCP Servers
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-014
+    - module_id: MOD-LLM_SECURITY
       title: LLM Security
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-015
       title: System Telemetry
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-016
       title: Shared+Core
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-017
       title: Code Dedup Engine
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001(即L01基础设施域集成蓝图)；beta+时L02+的模块蓝图将归属到新建的对应Level 1域蓝图
     conditions:

@@ -17,7 +17,7 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/data/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
@@ -33,10 +33,10 @@ references:
     section: ""
     why: "架构层YAML真源"
 depends_on:
-  - target: MOD-INF-007
+  - target: MOD-GATE_ENGINE
     at: "§10"
     why: "数据质量门控联动"
-  - target: MOD-INF-012
+  - target: MOD-DATABASE
     at: "§10"
     why: "数据缓存"
   - target: MOD-INF-015
@@ -418,8 +418,8 @@ class QualityReport:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-007 Gatekeeper | 可选 | 数据质量门控联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
-| MOD-INF-012 Database | 可选 | 数据缓存 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
+| MOD-GATE_ENGINE Gatekeeper | 可选 | 数据质量门控联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-DATABASE Database | 可选 | 数据缓存 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
 | MOD-INF-015 Telemetry | 必须 | 数据摄取监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
 | MOD-INF-035 AutoRuntime | 可选 | 数据接入注册 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 

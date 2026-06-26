@@ -2,7 +2,7 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Delivery
 module_id: MOD-027
 updated: "2026-06-22"

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.sys_master_compliance
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.sys_master_compliance

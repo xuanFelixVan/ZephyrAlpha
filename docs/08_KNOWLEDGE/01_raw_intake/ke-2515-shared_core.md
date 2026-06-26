@@ -15,14 +15,14 @@ ttl: permanent
 
 | 消费方 module_id | 消费方名称 | 导入的 shared/core 文件 | 导入量 | 关键依赖点 |
 |------|------|------|:---:|------|
-| MOD-INF-012 | Database | `schemas.py` (Task/TaskStatus), `paths.py` (DB_PATH/REPO_ROOT) | 2 文件 | SQLite CRUD 继承 Task 模型；DB 路径从 paths SSoT 获取 |
-| MOD-INF-008 | Context Engine | `schemas.py`, `paths.py`, `token_utils.py`, `time_utils.py`, `frontmatter_utils.py` | 9 文件 | 上下文装配、Token 预算、时间戳、frontmatter 解析全链路依赖 |
+| MOD-DATABASE | Database | `schemas.py` (Task/TaskStatus), `paths.py` (DB_PATH/REPO_ROOT) | 2 文件 | SQLite CRUD 继承 Task 模型；DB 路径从 paths SSoT 获取 |
+| MOD-CONTEXT_ENGINE | Context Engine | `schemas.py`, `paths.py`, `token_utils.py`, `time_utils.py`, `frontmatter_utils.py` | 9 文件 | 上下文装配、Token 预算、时间戳、frontmatter 解析全链路依赖 |
 | MOD-INF-009 | Pipeline | `schemas.py`, `paths.py`, `time_utils.py` | 2 文件 | 管线调度器依赖 Task 状态模型 + 路由模型 |
-| MOD-INF-007 | Gate Engine | `schemas.py`, `paths.py`, `time_utils.py`, `frontmatter_utils.py` | 3 文件 | 门禁判决依赖 TaskStatus/CheckResult；熔断器依赖配置路径 |
-| MOD-INF-010 | Feedback Loop | `schemas.py`, `paths.py`, `time_utils.py`, `observer.py` | 3 文件 | 自进化引擎依赖事件总线 + 指标采集模型 |
+| MOD-GATE_ENGINE | Gate Engine | `schemas.py`, `paths.py`, `time_utils.py`, `frontmatter_utils.py` | 3 文件 | 门禁判决依赖 TaskStatus/CheckResult；熔断器依赖配置路径 |
+| MOD-FEEDBACK_LOOP | Feedback Loop | `schemas.py`, `paths.py`, `time_utils.py`, `observer.py` | 3 文件 | 自进化引擎依赖事件总线 + 指标采集模型 |
 | MOD-KB-001 | Knowledge Base | `schemas.py` (KnowledgeEntry/KeCategory), `paths.py`, `content_fingerprint.py`, `frontmatter_utils.py` | 10 文件 | KE 生命周期全链路——ingest/extract/activate/analyze 全部依赖 shared 模型 |
 | MOD-INF-013 | MCP Servers | `schemas.py`, `paths.py`, `time_utils.py` | 3 文件 | task_manager/doc_guard/gate_engine 三个 MCP Server 均对接 shared 模型 |
-| MOD-INF-014 | LLM Security | `schemas.py`, `paths.py`, `time_utils.py` | 1 文件 | 安全审计日志依赖 AuditEvent 模型 |
+| MOD-LLM_SECURITY | LLM Security | `schemas.py`, `paths.py`, `time_utils.py` | 1 文件 | 安全审计日志依赖 AuditEvent 模型 |
 | MOD-INF-002 | Runtime Integration | `schemas.py`, `paths.py`, `observer.py`, `capability.py`, `dos_launcher.py` | 5 文件 | 跨层集成——事件总线、能力管控、指令加载、任务调度全链路 |
 | MOD-INF-017 | Code Dedup Engine | `paths.py`, `content_fingerprint.py`, `frontmatter_utils.py` | — | 蓝图声明 `depends_on: MOD-INF-016` |
 | MOD-INF-019 | Agent Spec | `schemas.py`, `frontmatter_utils.py` | — | Skill 加载器依赖蓝图 frontmatter 解析 |

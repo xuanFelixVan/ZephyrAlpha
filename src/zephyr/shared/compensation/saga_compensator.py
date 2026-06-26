@@ -18,7 +18,7 @@
 Saga Compensator — 补偿事务：多步操作任一失败 → 反向补偿。
 
 依据：
-    蓝图 MOD-INF-006 §6.8 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.8 + v0.6.0
     任务卡 TASK-INF-0113
 """
 

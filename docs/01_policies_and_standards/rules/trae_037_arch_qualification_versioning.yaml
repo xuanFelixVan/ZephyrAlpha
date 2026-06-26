@@ -107,7 +107,7 @@ sections:
       pass: 允许存在，不触发循环告警
       fail: N/A
     - type: constraint
-      check: DEPTH_0边——database(MOD-INF-012)↔system-telemetry(MOD-INF-015)双向依赖
+      check: DEPTH_0边——database(MOD-DATABASE)↔system-telemetry(MOD-INF-015)双向依赖
       pass: 合法循环LEGAL-001，有限步长收敛，不触发循环告警
       fail: N/A
     - type: constraint
@@ -350,7 +350,7 @@ sections:
     original_rules:
     - GOV-ARCH-010
     - ILDR-002
-    summary: 合法循环LEGAL-001为database(MOD-INF-012)↔system-telemetry(MOD-INF-015)双向依赖，有限步长收敛，不触发循环告警
+    summary: 合法循环LEGAL-001为database(MOD-DATABASE)↔system-telemetry(MOD-INF-015)双向依赖，有限步长收敛，不触发循环告警
     impact_on_rules:
     - LEGAL-001是ILDR-002的核心实例
     - detect_depends_on_cycles.py对LEGAL-001不触发循环告警
@@ -359,7 +359,7 @@ sections:
     - telemetry写db走connection-pool直写不走ORM
     legal_cycles:
     - id: LEGAL-001
-      path: MOD-INF-012→MOD-INF-015→MOD-INF-012
+      path: MOD-DATABASE→MOD-INF-015→MOD-DATABASE
       justification: database↔system-telemetry运行时bootstrap对
       status: approved
       approved_by: owner
@@ -373,27 +373,27 @@ sections:
     - ILDR-003
     steps:
     - order: 1
-      action: 将feedback-loop(MOD-INF-010)→pipeline(MOD-INF-009)迁至EventBus Topic:action.execute
+      action: 将feedback-loop(MOD-FEEDBACK_LOOP)→pipeline(MOD-INF-009)迁至EventBus Topic:action.execute
       pre_condition: feedback-loop depends_on pipeline
       expected_result: depends_on移除，FLE向pipeline提交Action走EventBus
       on_failure: 维持pending_refactor状态，触发循环告警
     - order: 2
-      action: 将llm-security(MOD-INF-014)→feedback-loop(MOD-INF-010)迁至EventBus Topic:alert.security
+      action: 将llm-security(MOD-LLM_SECURITY)→feedback-loop(MOD-FEEDBACK_LOOP)迁至EventBus Topic:alert.security
       pre_condition: llm-security depends_on feedback-loop
       expected_result: depends_on已移除，LSG异常上送改用EventBus松耦合
       on_failure: N/A（已resolved）
     - order: 3
-      action: 将pipeline(MOD-INF-009)→llm-security(MOD-INF-014)迁至EventBus Topic:action.security_check
+      action: 将pipeline(MOD-INF-009)→llm-security(MOD-LLM_SECURITY)迁至EventBus Topic:action.security_check
       pre_condition: pipeline depends_on llm-security
       expected_result: depends_on移除，pipeline执行前安全检查走EventBus
       on_failure: 维持pending_refactor状态，触发循环告警
     - order: 4
-      action: 将audit-trail(MOD-INF-020)→database(MOD-INF-012)迁至database Contract接口
+      action: 将audit-trail(MOD-INF-020)→database(MOD-DATABASE)迁至database Contract接口
       pre_condition: audit-trail depends_on database
       expected_result: depends_on移除，审计记录写入走database Contract接口
       on_failure: 维持pending_refactor状态，可降级为DEPTH_0（audit必须持久化）
     - order: 5
-      action: 将feedback-loop(MOD-INF-010)→system-telemetry(MOD-INF-015)迁至Shared/EventBus松耦合
+      action: 将feedback-loop(MOD-FEEDBACK_LOOP)→system-telemetry(MOD-INF-015)迁至Shared/EventBus松耦合
       pre_condition: feedback-loop depends_on system-telemetry
       expected_result: depends_on已移除，FLE消费遥测改用Shared/EventBus松耦合
       on_failure: N/A（已resolved）
@@ -428,7 +428,7 @@ sections:
       expected_result: depends_on移除，升级记录走EventBus
       on_failure: 维持pending_refactor状态，触发循环告警
     - order: 12
-      action: 将vector-memory(MOD-INF-011)→llm-security(MOD-INF-014)迁至EventBus Topic:query.security_check
+      action: 将vector-memory(MOD-INF-011)→llm-security(MOD-LLM_SECURITY)迁至EventBus Topic:query.security_check
       pre_condition: vector-memory depends_on llm-security
       expected_result: depends_on移除，向量检索安全检查走EventBus
       on_failure: 维持pending_refactor状态，触发循环告警
@@ -440,9 +440,9 @@ sections:
     items:
     - description: BREAK-001 REG-LLM-001→GOV-AI-002
       details: 数据目录不应依赖策略文档。移除REG-LLM-001的depends_on:GOV-AI-002。
-    - description: BREAK-002 MOD-INF-014→MOD-INF-010
+    - description: BREAK-002 MOD-LLM_SECURITY→MOD-FEEDBACK_LOOP
       details: LSG异常通过EventBus松耦合上送，不依赖FLE直接调用。移除depends_on。
-    - description: BREAK-003 MOD-INF-010→MOD-INF-015
+    - description: BREAK-003 MOD-FEEDBACK_LOOP→MOD-INF-015
       details: FLE消费遥测通过Shared/EventBus松耦合。移除depends_on。
     - description: BREAK-004 MOD-INF-015→MOD-INF-015
       details: 自体监控不进入depends_on图。移除自引用。

@@ -20,7 +20,7 @@ actual_disk_path: "src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + 
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2
-belongs_to: "MOD-001"
+belongs_to: "MOD-ALPHA_SIGNAL_DOMAIN"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"
@@ -35,7 +35,7 @@ depends_on:
   - target: MOD-INF-015
     at: §10
     why: 信号生成监控
-  - target: MOD-001
+  - target: MOD-ALPHA_SIGNAL_DOMAIN
     at: §3
     why: Alpha信号域集成
 references:
@@ -51,7 +51,7 @@ runtime_plane: hot
 
 > ⛔ **业务层未开放——禁止施工**
 > 本蓝图属于 C 轨占位模块，业务层尚未开放。当前阶段 AI 不可自主施工。
-> 开工条件：Owner 明确解除 C 轨占位禁令 + 基础设施就绪（MOD-MASTER-001 §零）。
+> 开工条件：Owner 明确解除 C 轨占位禁令 + 基础设施就绪（MOD-MASTER_BLUEPRINT §零）。
 > 任何修改需 Owner 审批。
 
 > module_id: MOD-L03-001 | version: 2.2.0 | status: active | domain: signal
@@ -385,7 +385,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | MOD-L00-001 Data Source | 必须 | CTR-001 NormalizedMarketData | — | `D:\ZephyrAlpha\docs\03_modules\_domain-data\datasource-core\blueprint.md` |
 | MOD-L02-001 Alpha Factor | 必须 | CTR-002 FactorSignal + 因子计算结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-factor\alpha-factor-core\blueprint.md` |
 | MOD-INF-015 Telemetry | 可选 | 信号生成监控 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-001 | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
+| MOD-ALPHA_SIGNAL_DOMAIN | 必须 | Alpha信号域集成 | — | `D:\ZephyrAlpha\docs\03_modules\_alpha-signal-domain\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -441,7 +441,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | L02 Alpha Factor | 因子消费 | SignalAggregatorBase.aggregate() 消费 FactorSignal | 信号聚合可消费因子结果 |
 | L04 Portfolio Construction | 契约输出 | CTR-P1-015 SynthesizedSignal | 组合构建可消费合成信号 |
 | L05 Risk Management | 契约输出 | CTR-P1-003 + CTR-ERR-003 | 风险管理可消费分配结果和降级警告 |
-| MOD-001 | 域集成 | 因子→信号域内数据流 | 域内数据流端到端通过 |
+| MOD-ALPHA_SIGNAL_DOMAIN | 域集成 | 因子→信号域内数据流 | 域内数据流端到端通过 |
 
 ---
 

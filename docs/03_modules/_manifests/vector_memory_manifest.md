@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Vector Memory.Manifest
 module_id: MOD-070
 ttl: permanent

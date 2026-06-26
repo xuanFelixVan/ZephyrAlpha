@@ -24,7 +24,7 @@ MOD-INF-027 AuditOrchestrator         MOD-INF-028 SemanticAuditor
                                       │   ├─ 禁碰规则（白名单）    │
                                       │   └─ 置信度阈值            │
                                       │ LLMBridge                 │
-                                      │   ├─ 安全校验（MOD-INF-014)│
+                                      │   ├─ 安全校验（MOD-LLM_SECURITY)│
                                       │   ├─ 修复文本生成          │
                                       │   └─ 幻觉检测              │
                                       └──────────────────────────┘

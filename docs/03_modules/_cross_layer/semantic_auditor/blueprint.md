@@ -15,7 +15,7 @@ created_by: human_plus_agent
 valid_from: "2026-05-01"
 date: "2026-05-01"
 ttl: permanent
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -48,13 +48,13 @@ depends_on:
   - target: MOD-INF-020
     at: "writer.py + models.py"
     why: "AuditTrail"
-  - target: MOD-INF-014
+  - target: MOD-LLM_SECURITY
     at: "section 3"
     why: "LLM Security"
   - target: MOD-INF-026
     at: "section 1"
     why: "Asset Inventory"
-  - target: MOD-INF-010
+  - target: MOD-FEEDBACK_LOOP
     at: "section 2"
     why: "Feedback Loop"
   - target: MOD-INF-021
@@ -92,7 +92,7 @@ architecture_layer: "L1_分析引擎"
 
 ## 概述
 
-SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则文档中的引用和依赖是否仍然有效"这一核心问题。核心职责包括：F 类触发（跨文档引用语义断裂检测）、G 类触发（depends-on 治理意图链断裂检测）、LLM Bridge 修复文本生成、9 阶段审计管道。当前规模 ~51 模块/~268 脚本/单 Session 审计，目标容量 1,500 模块/10,000 脚本/100 AI 并发。上游依赖 AuditOrchestrator（MOD-INF-027）调度、AuditTrail（MOD-INF-020）记录、LLM Security（MOD-INF-014）校验；下游被 AuditOrchestrator 消费审计报告。
+SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则文档中的引用和依赖是否仍然有效"这一核心问题。核心职责包括：F 类触发（跨文档引用语义断裂检测）、G 类触发（depends-on 治理意图链断裂检测）、LLM Bridge 修复文本生成、9 阶段审计管道。当前规模 ~51 模块/~268 脚本/单 Session 审计，目标容量 1,500 模块/10,000 脚本/100 AI 并发。上游依赖 AuditOrchestrator（MOD-INF-027）调度、AuditTrail（MOD-INF-020）记录、LLM Security（MOD-LLM_SECURITY）校验；下游被 AuditOrchestrator 消费审计报告。
 
 ---
 
@@ -242,7 +242,7 @@ v3.0.0 本体论收敛：12 类触发（A~L）精简为 2 类纯语义触发（F
 | 3 | SafetyBoundary | 禁碰规则过滤 + 置信度阈值 | — | 同步调用 |
 | 4 | AlignmentEngine | 注册表↔磁盘双向对齐（6 对） | — | 同步调用 |
 | 5 | IssueAggregator | 去重聚合问题清单 | TriggerEngine, AlignmentEngine | 同步调用 |
-| 6 | LLMBridge | 修复文本生成（LLM 只润色，不做判断） | MOD-INF-014, MOD-INF-024 | 异步队列(v5) |
+| 6 | LLMBridge | 修复文本生成（LLM 只润色，不做判断） | MOD-LLM_SECURITY, MOD-INF-024 | 异步队列(v5) |
 | 7 | SelfHealer | 修复→自测→回滚闭环 | LLMBridge, MOD-INF-021, MOD-INF-020 | 同步调用 |
 | 8 | FixPrioritizer + DiffPreview | 修复优先级排序 + 干跑 diff 预览 | — | 同步调用 |
 | 9 | ImpactBlastRadius | 影响爆炸半径 + 级联过时检测 | ReferenceExtractor | 同步调用 |
@@ -485,7 +485,7 @@ class SemanticAuditReport(BaseModel):
 
 | # | 威胁 | 影响 | 缓解措施 | 验证方式 |
 |---|------|------|---------|---------|
-| 1 | Prompt 注入嵌入规则文档 | LLM 生成恶意修复文本 | PromptInjectionDefense 5 条正则 + MOD-INF-014 安全校验 | 对抗样本测试 |
+| 1 | Prompt 注入嵌入规则文档 | LLM 生成恶意修复文本 | PromptInjectionDefense 5 条正则 + MOD-LLM_SECURITY 安全校验 | 对抗样本测试 |
 | 2 | 路径遍历攻击 | 访问非预期文件 | 路径归一化 + 项目根目录边界检查 | `../../etc/passwd` 测试 |
 | 3 | 并发修复覆盖 | 数据丢失 | ZephyrLock + 修复队列 + 幂等性 | 100 并发压测 |
 | 4 | LLM 幻觉修复 | 错误修复写入 | 输出完整性校验 + 自测审计 + 自动回滚 | 黄金数据集回归 |
@@ -518,12 +518,12 @@ class SemanticAuditReport(BaseModel):
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-020 | 必须 | AuditTrail 记录修复操作 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
-| MOD-INF-014 | 必须 | LLM Security Gateway 校验 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LLM Security Gateway 校验 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
 | MOD-INF-026 | 必须 | Asset Inventory 文件存在性查询 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\asset-inventory\blueprint.md` |
 | MOD-INF-021 | 必须 | Rollback System checkpoint/restore | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
 | MOD-INF-024 | 必须 | Budget Enforcer Token 预算 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
 | MOD-INF-027 | 可选 | AuditOrchestrator 调度协调 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
-| MOD-INF-010 | 可选 | Feedback Loop 发现注入 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | Feedback Loop 发现注入 | v4+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -613,7 +613,7 @@ class SemanticAuditReport(BaseModel):
 |------------|---------|--------|---------|
 | AuditOrchestrator (MOD-INF-027) | 新增接口 | CT-SEM-001 `audit(rule_documents)→SemanticAuditReport` | 端到端调度测试 |
 | AuditTrail (MOD-INF-020) | 新增接口 | CT-SEM-002 `record(AuditEvent)` | 写入验证 |
-| LLM Security (MOD-INF-014) | 新增接口 | CT-SEM-003 `validate_prompt()/validate_response()` | 安全校验测试 |
+| LLM Security (MOD-LLM_SECURITY) | 新增接口 | CT-SEM-003 `validate_prompt()/validate_response()` | 安全校验测试 |
 | Asset Inventory (MOD-INF-026) | 新增接口 | CT-SEM-004 `file_exists(path)→bool` | 查询验证 |
 | Rollback System (MOD-INF-021) | 新增接口 | CT-SEM-006 `create_checkpoint()/restore_checkpoint()` | 回滚验证 |
 | Budget Enforcer (MOD-INF-024) | 新增接口 | CT-SEM-008 `check_token_budget(estimated)→bool` | 预算检查验证 |
@@ -652,7 +652,7 @@ class SemanticAuditReport(BaseModel):
 | 2 | LLM 修复文本质量不一致 | 中 | 中 | 固定 prompt 版本 + 人工 spot-check | 风险 |
 | 3 | 禁碰规则过于宽泛 | 低 | 中 | 精确匹配关键词，不做语义推断 | 风险 |
 | 4 | 并发审计导致数据竞态 | 中 | 高 | ZephyrLock + 修复队列 + 幂等性 | 风险 |
-| 5 | Prompt 注入导致错误修复 | 低 | 高 | PromptInjectionDefense + MOD-INF-014 | 风险 |
+| 5 | Prompt 注入导致错误修复 | 低 | 高 | PromptInjectionDefense + MOD-LLM_SECURITY | 风险 |
 | 6 | 审计系统自身退化未检测 | 低 | 高 | SelfHealthMonitor 黄金数据集回归 | 风险 |
 | 7 | Token 预算超支 | 中 | 中 | TokenBudgetManager + 每日/每周配额 | 风险 |
 | 8 | 自动修复引入新问题 | 中 | 高 | Stage 7 自测 + 失败自动回滚 | 风险 |
@@ -690,7 +690,7 @@ class SemanticAuditReport(BaseModel):
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
 | 1 | MOD-INF-020 AuditTrail 可用 | hard | 已施工 | ☐ |
-| 2 | MOD-INF-014 LLM Security 可用 | hard | 已施工 | ☐ |
+| 2 | MOD-LLM_SECURITY LLM Security 可用 | hard | 已施工 | ☐ |
 | 3 | MOD-INF-021 Rollback System 可用 | hard | 已施工 | ☐ |
 | 4 | MOD-INF-024 Budget Enforcer 可用 | hard | 已施工 | ☐ |
 | 5 | MOD-INF-026 Asset Inventory 可用 | hard | 已施工 | ☐ |
@@ -1172,11 +1172,11 @@ STEP 3: 拆分后验证
 |---------|--------|--------|---------|-----|
 | CT-SEM-001 | MOD-INF-028 | MOD-INF-027 | `audit(rule_documents)→SemanticAuditReport` | <30s/doc |
 | CT-SEM-002 | MOD-INF-020 | MOD-INF-028 | `record(AuditEvent)` | <100ms |
-| CT-SEM-003 | MOD-INF-014 | MOD-INF-028 | `validate_prompt()/validate_response()` | <500ms |
+| CT-SEM-003 | MOD-LLM_SECURITY | MOD-INF-028 | `validate_prompt()/validate_response()` | <500ms |
 | CT-SEM-004 | MOD-INF-026 | MOD-INF-028 | `file_exists(path)→bool` | <50ms |
-| CT-SEM-005 | MOD-INF-010 | MOD-INF-028 | `ingest_finding(SemanticAuditReport)` | <1s |
+| CT-SEM-005 | MOD-FEEDBACK_LOOP | MOD-INF-028 | `ingest_finding(SemanticAuditReport)` | <1s |
 | CT-SEM-006 | MOD-INF-021 | MOD-INF-028 | `create_checkpoint()/restore_checkpoint()` | <500ms |
-| CT-SEM-007 | MOD-INF-007 | MOD-INF-028 | `gate_exists(gate_id)→bool` | <50ms |
+| CT-SEM-007 | MOD-GATE_ENGINE | MOD-INF-028 | `gate_exists(gate_id)→bool` | <50ms |
 | CT-SEM-008 | MOD-INF-024 | MOD-INF-028 | `check_token_budget(estimated)→bool` | <50ms |
 | CT-SEM-009 | MOD-INF-005 | MOD-INF-028 | `list_registered_scripts()→list[str]` | <100ms |
 | CT-SEM-010 | MOD-INF-023 | MOD-INF-028 | `get_drift_signals(doc)→list[DriftSignal]` | <500ms |
@@ -1295,7 +1295,7 @@ STEP 3: 拆分后验证
 | 路径 | 发现方式 |
 |------|---------|
 | 路径 1 | SYS-MASTER-001 §0 分派表 → 任务域"语义审计"→ 导航 MOD-INF-028 |
-| 路径 2 | registry_of_registries.yaml → REG-MOD-001 → 搜索 "semantic"/"audit" → MOD-INF-028 |
+| 路径 2 | registry_of_registries.yaml → REG-MOD-ALPHA_SIGNAL_DOMAIN → 搜索 "semantic"/"audit" → MOD-INF-028 |
 | 路径 3 | skill-registry.yaml → task_keywords: "semantic"/"staleness"/"rule-audit" → SKILL-DOM-SEM-001 |
 | 路径 4 | project_rules.md 强制集成对照表 → "修改 YAML 契约/配置" → 触发语义审计 |
 | 路径 5 | CLI 入口自描述 → `python scripts/governance/run_semantic_audit.py --help` |

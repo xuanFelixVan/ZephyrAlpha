@@ -14,7 +14,7 @@
 # [TESTS]
 """check_dependency_direction.py — 依赖方向校验（INJ-002/008）
 
-对标：GOV-MOD-001 INJ-002（依赖可解析）、INJ-008（依赖方向合法）
+对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-002（依赖可解析）、INJ-008（依赖方向合法）
 
 检测内容：
 - --module: 检查指定模块的 depends_on 是否可解析（目标文件存在）
@@ -31,7 +31,7 @@ args:
 - {flag: --check-cross-layer, type: str, description: "检查指定 module_id 的跨层依赖方向"}
 description: >
   依赖方向校验（INJ-002/008）——依赖可解析性 + 跨层依赖方向。
-  对标 GOV-MOD-001 module-injection-rules-policy.md。
+  对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN module-injection-rules-policy.md。
 dimensions:
 - D5
 priority: P1

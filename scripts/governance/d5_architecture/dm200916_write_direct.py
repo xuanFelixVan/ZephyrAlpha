@@ -36,14 +36,14 @@ print(f"域总数: {len(domains)}")
 # 生成 index.yaml 内容
 yaml_content = """# [A_config] module_id=CFG-index | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain_governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
 # v3.0.0: §2.1裁定对齐——52域唯一物理分类体系，14层降级为域属性
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 schema_version: '3.0.0'
 system:
   name: ZephyrAlpha
@@ -237,14 +237,14 @@ print(f"✅ index.md 写入完成 ({len(md_content)} 字符)")
 # === 写入 capability_heatmap.yaml ===
 cap_content = """# [A_config] module_id=CFG-capability-heatmap | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain_governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
 # v3.0.0: §2.1裁定对齐——52域×10能力域矩阵，14层降级为域属性
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 schema_version: '3.0'
 partition:
   id: cross-cutting-capability-heatmap

@@ -17,11 +17,11 @@ systems:
   - role: producer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: gate_engine
     path: "src/zephyr/gates/"
-    blueprint: "MOD-INF-007"
+    blueprint: "MOD-GATE_ENGINE"
 
 data_flow:
   direction: bidirectional

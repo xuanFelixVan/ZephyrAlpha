@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
+# [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] scripts.ide_health_service
 # [DOMAIN]
 # [DEPENDENCIES]
@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] --status优先PID文件检测(跨进程),回退registry(进程内);--start检查已在运行后写PID文件+atexit清理+阻塞;--start-background后台分离子进程非阻塞启动;stale PID文件自动清理
-# [MODIFY-GUARD] MOD-INF-032 §new-IDE
+# [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

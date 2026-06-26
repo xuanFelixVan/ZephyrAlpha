@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.shared_services.session_continuity; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.shared.contracts.identity.agent_identity; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚

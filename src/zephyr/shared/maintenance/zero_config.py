@@ -18,7 +18,7 @@
 Zero Config — 零配置自检扫描器。
 
 依据：
-    蓝图 MOD-INF-006 §6.5.1 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.5.1 + v0.6.0
     任务卡 TASK-INF-0110 (Part 1/4)
 """
 

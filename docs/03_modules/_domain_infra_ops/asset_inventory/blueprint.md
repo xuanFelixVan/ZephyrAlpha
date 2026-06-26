@@ -22,7 +22,7 @@ functional_domain: operations
 summary: "资产盘点系统——五层架构（发现→分类→登记→对账→生命周期），支撑 75,000 资产 / 100 AI 并发"
 tags: [asset-inventory, asset-discovery, classification, registration, reconciliation, lifecycle, capacity-upgrade]
 priority: P1
-belongs_to: MOD-MASTER-001
+belongs_to: MOD-MASTER_BLUEPRINT
 parent_module: ""
 rule_form: structural
 scope: global
@@ -113,7 +113,7 @@ Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有�
 | # | 消费者模块 | 消费方式 | 依赖字段 |
 |---|----------|---------|---------|
 | 1 | MOD-INF-020 audit-trail | 资产事件写入审计日志 | asset_path, status |
-| 2 | MOD-INF-007 gate-engine | CI 门禁阻断孤儿超标 | orphan_rate |
+| 2 | MOD-GATE_ENGINE gate-engine | CI 门禁阻断孤儿超标 | orphan_rate |
 | 3 | MOD-INF-015 system-telemetry | 资产指标遥测上报 | health_score |
 | 4 | MOD-INF-022 escalation-engine | 孤儿率骤升升级 | orphan_rate_trend |
 | 5 | MOD-INF-005 governance-automation | 治理脚本调度 | scan_result |
@@ -1173,7 +1173,7 @@ class TripleTrustAnchorGate:
 |------------|---------|--------|---------|
 | scaffold.py | 新增接口 | `_atomic_write` 成功后调用 `AssetInventory.register()` | 创建文件后检查 unified-asset-index.yaml 包含新条目 |
 | MOD-INF-020 audit-trail | 事件订阅 | 每次对账/状态变更 → `AuditTrail.record(event)` | 审计日志包含资产事件 |
-| MOD-INF-007 gate-engine | 新增 Gate | `G_asset_inventory` 门禁（orphan_rate <2%, ghost_rate =0%） | CI Pipeline 通过/阻断 |
+| MOD-GATE_ENGINE gate-engine | 新增 Gate | `G_asset_inventory` 门禁（orphan_rate <2%, ghost_rate =0%） | CI Pipeline 通过/阻断 |
 | MOD-INF-015 telemetry | 数据上报 | asset_count / orphan_rate / drift_rate / health_score | 遥测数据包含资产指标 |
 | MOD-INF-022 escalation | 事件订阅 | orphan_rate 骤升 >10% 或 >50 ghost → `Escalation.trigger()` | 升级事件触发 |
 | Pipeline | 定时触发 | `run_full_scan` / `run_reconciliation` | 定时任务产出扫描结果 |
@@ -1876,7 +1876,7 @@ scaffold.py → asset.created
 
 | 不做 | 原因 |
 |------|------|
-| ❌ 内容级审计（代码质量/安全漏洞） | 已由 MOD-INF-014 (LLM Security) + MOD-INF-017 (Code Dedup) + Snyk/VAS 覆盖 |
+| ❌ 内容级审计（代码质量/安全漏洞） | 已由 MOD-LLM_SECURITY (LLM Security) + MOD-INF-017 (Code Dedup) + Snyk/VAS 覆盖 |
 | ❌ 外部 API/服务资产发现 | 项目当前无外部服务依赖——当有 MCP Server 对外暴露时再扩展 |
 | ❌ 资产财务估值（成本/折旧） | 个人项目不涉及财务核算 |
 | ❌ Web UI 仪表盘 | Phase 2 考虑——当前 YAML/JSON 输出已满足 AI 消费需求 |
@@ -1925,10 +1925,10 @@ scaffold.py → asset.created
 | 模块 | 关系 |
 |------|------|
 | [MOD-INF-020 audit-trail](../audit-trail/blueprint.md) | **兄弟模块**——本模块产出资产事件，MOD-INF-020 做不可变审计记录 |
-| [MOD-INF-012 database](../../_cross_layer/database/blueprint.md) | **存储依赖**——资产索引的对账结果写入 SQLite |
+| [MOD-DATABASE database](../../_cross_layer/database/blueprint.md) | **存储依赖**——资产索引的对账结果写入 SQLite |
 | [MOD-INF-016 shared-core](../../_cross_layer/shared-core/blueprint.md) | **Schema 依赖**——AssetEntry/AssetScan 等 Pydantic V2 模型 |
 | [MOD-INF-005 governance-automation](../governance-automation/blueprint.md) | **调度依赖**——`generate_asset_index.py` 作为治理脚本 |
-| [MOD-INF-007 gate-engine](../../_cross_layer/gate-engine/blueprint.md) | **门禁集成**——`G_asset_inventory` CI 阻断孤儿超标 |
+| [MOD-GATE_ENGINE gate-engine](../../_cross_layer/gate-engine/blueprint.md) | **门禁集成**——`G_asset_inventory` CI 阻断孤儿超标 |
 | [MOD-INF-015 system-telemetry](../system-telemetry/blueprint.md) | **遥测上报**——资产指标写入遥测通道 |
 | [GOV-CMP-003 审计协议](../../../01_policies_and_standards/governance/compliance/audit-protocol.md) | **治理依赖**——盘点结果纳入 12 维度审计清单 |
 
@@ -2695,12 +2695,12 @@ hooks:
 |---------|:--:|---------|---------|:--:|:--:|
 | `scaffold.py` | → | 文件创建 hook | `asset.created` event | 实时 | ⬜ Phase 2 |
 | `MOD-INF-020 audit-trail` | → | 每次资产状态变更 | `FileAuditDetail` / `TaskAuditSummary` | 每次 | ⬜ Phase 1 |
-| `MOD-INF-007 gate-engine` | → | Phase 1 gate_asset_inventory | exit code 0/1 | 每次 Phase 检查 | ✅ 已注册检查 ⬜ 实现逻辑 |
+| `MOD-GATE_ENGINE gate-engine` | → | Phase 1 gate_asset_inventory | exit code 0/1 | 每次 Phase 检查 | ✅ 已注册检查 ⬜ 实现逻辑 |
 | `MOD-INF-015 system-telemetry` | → | 每次 Dashboard 更新 | `{asset_count, orphan_rate, health_score}` | 每小时 | ⬜ Phase 2 |
 | `MOD-INF-023 drift-detector` | → | 对账发现 DRIFT | `DriftSignal(asset_path, sha256_expected, sha256_actual)` | 每次对账 | ⬜ Phase 2 |
 | `MOD-INF-022 escalation` | → | 孤儿率 > 20% 或 健康=F | `Escalation(level=P0, title="ASSET HEALTH CRITICAL")` | 事件触发 | ⬜ Phase 2 |
-| `MOD-INF-010 feedback-loop` | → | 资产健康趋势数据 | FLE metrics input | 每天 | ⬜ Phase 2 |
-| `MOD-INF-012 database` | → | 资产索引缓存写入 | SQLite `asset_index_cache` 表 | 每小时 | ⬜ Phase 1 |
+| `MOD-FEEDBACK_LOOP feedback-loop` | → | 资产健康趋势数据 | FLE metrics input | 每天 | ⬜ Phase 2 |
+| `MOD-DATABASE database` | → | 资产索引缓存写入 | SQLite `asset_index_cache` 表 | 每小时 | ⬜ Phase 1 |
 | `MOD-INF-013 MCP` | ← | AI Agent 查询资产 | `tools/call` JSON-RPC | 按需 | ⬜ Phase 2 |
 | `MOD-INF-016 shared-core` | ← | Schema 定义依赖 | import `AssetSchema` | import-time | ⬜ Phase 0 |
 | `MOD-INF-005 governance-automation` | ← | 定时扫描调度 | `run_all.py` 调用 | 每小时 | ⬜ Phase 1 |
@@ -3262,7 +3262,7 @@ unified-asset-index.yaml 中:
     layer: L01
     status: active
     priority: P0
-    registered_in: [REG-MOD-001, REG-BLUEPRINT-001, REG-DOC-001]
+    registered_in: [REG-MOD-ALPHA_SIGNAL_DOMAIN, REG-BLUEPRINT-001, REG-DOC-001]
   ✓ 盘点系统通过盘点自己来证明自己存在
 ```
 

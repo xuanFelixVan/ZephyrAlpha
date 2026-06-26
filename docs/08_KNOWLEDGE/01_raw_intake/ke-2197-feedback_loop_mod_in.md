@@ -1,14 +1,14 @@
 ---
 module_id: KE-2104-------mod-in-000
 status: active
-title: 3.3 Feedback Loop 集成（对接 MOD-INF-010）
+title: 3.3 Feedback Loop 集成（对接 MOD-FEEDBACK_LOOP）
 category: module_blueprint
 ttl: permanent
 ---
 
-# 3.3 Feedback Loop 集成（对接 MOD-INF-010）
+# 3.3 Feedback Loop 集成（对接 MOD-FEEDBACK_LOOP）
 
-3.3 Feedback Loop 集成（对接 MOD-INF-010）
+3.3 Feedback Loop 集成（对接 MOD-FEEDBACK_LOOP）
 
 ```yaml
 skill_feedback_loop:

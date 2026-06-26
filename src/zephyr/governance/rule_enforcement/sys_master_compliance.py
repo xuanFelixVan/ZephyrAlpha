@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.sys_master_compliance
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES]
@@ -66,7 +66,7 @@ def extract_frontmatter(filepath: Path) -> dict:
 
 def check_blueprint_existence() -> list[dict]:
     results = []
-    for label, path in [("SYS-MASTER-001", SYS_MASTER_PATH), ("MOD-MASTER-001", MOD_MASTER_PATH)]:
+    for label, path in [("SYS-MASTER-001", SYS_MASTER_PATH), ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH)]:
         ok = path.exists() and path.is_file()
         results.append(
             {
@@ -123,13 +123,13 @@ def check_depends_on_integrity() -> list[dict]:
             }
         ]
     deps = fm.get("depends_on", [])
-    has_mod_master = any(d.get("target", "") == "MOD-MASTER-001" for d in deps) if isinstance(deps, list) else False
+    has_mod_master = any(d.get("target", "") == "MOD-MASTER_BLUEPRINT" for d in deps) if isinstance(deps, list) else False
     return [
         {
             "check_id": "SYS-C02",
             "label": "depends_on_integrity",
             "status": "PASS" if has_mod_master else "FAIL",
-            "detail": "MOD-MASTER-001 found in depends_on" if has_mod_master else "MOD-MASTER-001 NOT in depends_on",
+            "detail": "MOD-MASTER_BLUEPRINT found in depends_on" if has_mod_master else "MOD-MASTER_BLUEPRINT NOT in depends_on",
         }
     ]
 
@@ -162,7 +162,7 @@ def check_construction_progress_consistency() -> list[dict]:
     results = []
     for target_id, target_path, fm_key in [
         ("SYS-MASTER-001", SYS_MASTER_PATH, "construction_progress"),
-        ("MOD-MASTER-001", MOD_MASTER_PATH, "construction_progress"),
+        ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH, "construction_progress"),
     ]:
         if not target_path.exists():
             results.append(
@@ -272,7 +272,7 @@ def check_version_consistency() -> list[dict]:
     results = []
     for target_id, target_path in [
         ("SYS-MASTER-001", SYS_MASTER_PATH),
-        ("MOD-MASTER-001", MOD_MASTER_PATH),
+        ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH),
     ]:
         if not target_path.exists():
             results.append(

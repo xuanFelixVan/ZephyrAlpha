@@ -979,7 +979,7 @@ sections:
       cross_references:
       - rule: PS-STD-001 §7
         relationship: TaskCard字段SSoT基座(PS-STD-001 §7定义31基座字段；本YAML速查表33字段=21必填+12选填；代码模型Task共70字段)
-      - rule: MOD-INF-006
+      - rule: MOD-TASK_SYSTEM
         relationship: TaskCard代码模型+BlueprintDecomposer
       - rule: GOV-TASK-004
         relationship: 任务生命周期治理(取消/优先级/升级)

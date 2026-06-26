@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-GPU
+# [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-GPU
 # [MODULE] zephyr.trading.gpu_monitor
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] collect_gpu_stats 必须在 nvidia-smi 不可用时优雅降级返回 available=False
-# [MODIFY-GUARD] MOD-INF-032 §new-GPU
+# [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-GPU
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

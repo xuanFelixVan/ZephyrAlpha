@@ -51,7 +51,7 @@ _logger = logging.getLogger(__name__)
 
 
 class EventType(str, Enum):
-    """任务生命周期事件类型（MOD-INF-006 §6.13.1）"""
+    """任务生命周期事件类型（MOD-TASK_SYSTEM §6.13.1）"""
 
     TASK_CREATED = "task.created"
     TASK_LOCKED = "task.locked"

@@ -25,7 +25,7 @@ ttl: permanent
 | `status` | enum | ✅ | KE 状态：10状态机（§3.3） |
 | `quality_score` | float [0.0-1.0] | ✅ | 质量评分（G2 Triage 产出） |
 | `priority` | enum | ✅ | 优先级：`P0`~`P3` |
-| `tags` | list[str] | ✅ | 标签列表（对齐 MOD-INF-006 5轴标签：fn/ly/md/st/mo） |
+| `tags` | list[str] | ✅ | 标签列表（对齐 MOD-TASK_SYSTEM 5轴标签：fn/ly/md/st/mo） |
 | `audit_chain` | list[str] | ✅ | 审计链：记录经过的审计模型和结论 |
 | `ttl` | str | ✅ | 有效期：`permanent` / `30d` / `7d` / `session` |
 | `half_life_days` | int | SHOULD | 知识半衰期（天），用于衰减计算。0=永不过期 |

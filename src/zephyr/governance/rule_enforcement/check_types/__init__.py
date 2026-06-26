@@ -1,9 +1,9 @@
 # [A_module] module_id=MOD-GOV_check_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-"""[BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
+"""[BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 
 [MODULE] zephyr.governance.rule_enforcement.check_types.__init__
 
-[INVARIANTS] MOD-INF-007 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
+[INVARIANTS] MOD-GATE_ENGINE 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
 
 [MODIFY-GUARD] blueprint.md §4; _registry.yaml; __init__.py __all__
 
@@ -21,7 +21,7 @@
 
 包初始化
 
-依据: 蓝图 MOD-INF-007 §3-§7
+依据: 蓝图 MOD-GATE_ENGINE §3-§7
 
 """
 

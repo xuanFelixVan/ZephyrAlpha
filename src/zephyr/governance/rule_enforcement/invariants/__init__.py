@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from zephyr.governance.rule_enforcement.invariants.post_doc_review_check import PostDocReviewScanner
 
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.invariants
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

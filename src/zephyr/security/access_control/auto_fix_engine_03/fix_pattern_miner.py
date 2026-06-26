@@ -2,7 +2,7 @@
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models
-# [CONSUMERS] engine.py;MOD-INF-010(feedback-loop)
+# [CONSUMERS] engine.py;MOD-FEEDBACK_LOOP(feedback-loop)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只从成功修复学习;模式MUST持久化;频率MUST递增

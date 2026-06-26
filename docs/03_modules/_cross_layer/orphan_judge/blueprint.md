@@ -15,7 +15,7 @@ created_by: human_plus_agent
 valid_from: "2026-05-01"
 date: "2026-05-01"
 ttl: permanent
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -44,10 +44,10 @@ depends_on:
 references:
   - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator——OrphanJudge作为Phase 3修复阶段的核心子系统"}
   - {id: "MOD-INF-031", at: "§2", why: "AutoFix Engine——提取融合和注册保留的最终执行由AutoFixEngine完成"}
-  - {id: "MOD-INF-010", at: "§2", why: "Feedback Loop——误判反馈回写优化判定规则"}
+  - {id: "MOD-FEEDBACK_LOOP", at: "§2", why: "Feedback Loop——误判反馈回写优化判定规则"}
   - {id: "MOD-INF-013", at: "full", why: "Governance MCP Server——orphan_judge MCP Tool暴露入口"}
   - {id: "MOD-INF-019", at: "full", why: "Agent Spec——SKILL-DOM-ORP-001技能注册与发现"}
-  - {id: "MOD-INF-007", at: "§2", why: "Phase Manager——gate_orphan_judge门禁检查注册"}
+  - {id: "MOD-GATE_ENGINE", at: "§2", why: "Phase Manager——gate_orphan_judge门禁检查注册"}
 ---
 
 <!--
@@ -668,9 +668,9 @@ class StandaloneResult(BaseModel):
 | MOD-INF-018 Agent RBAC | 调用方 | OrphanRbacBridge | 删除操作→RBAC校验 |
 | MOD-KB-001 KnowledgeBase | 双向桥接 | OrphanKbBridge | 判定→KB写入→查询闭环 |
 | MOD-INF-013 GovernanceServer | MCP Tool注册 | 4个MCP Tools | `governance.orphan_judge`可调用 |
-| MOD-INF-007 PhaseManager | Gate注册 | gate_orphan_judge | Phase 0门禁检查 |
+| MOD-GATE_ENGINE PhaseManager | Gate注册 | gate_orphan_judge | Phase 0门禁检查 |
 | MOD-INF-019 AgentSpec | Skill注册 | SKILL-DOM-ORP-001 | `python -m zephyr.agent_spec list`可见 |
-| MOD-INF-010 FeedbackLoop | 调用方 | OrphanFeedbackBridge | 误判反馈→阈值校准 |
+| MOD-FEEDBACK_LOOP FeedbackLoop | 调用方 | OrphanFeedbackBridge | 误判反馈→阈值校准 |
 | scripts/scaffold.py | SWID Tag注入 | _inject_swid_tag() | 新建文件自动含SWID Tag |
 
 ### 12.1 域契约锚点
@@ -1226,7 +1226,7 @@ python -m zephyr.orphan_judge --warn-only                   # 自测
 
 | # | 注册表 | 注册表ID | 登记内容 | 状态 |
 |---|--------|----------|---------|:---:|
-| 1 | 模块登记表 | REG-MOD-001 | MOD-INF-029 orphan-judge cross_layer | 待登记 |
+| 1 | 模块登记表 | REG-MOD-ALPHA_SIGNAL_DOMAIN | MOD-INF-029 orphan-judge cross_layer | 待登记 |
 | 2 | 蓝图注册表 | REG-BLUEPRINT-001 | 本蓝图文件 | 自动同步 |
 | 3 | 脚本清单 | REG-SCRIPT-001 | orphan_judge_cli | 待登记 |
 | 4 | Agent Skill注册表 | REG-SKILL-001 | SKILL-DOM-ORP-001 | 待登记 |

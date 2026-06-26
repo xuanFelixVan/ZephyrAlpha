@@ -20,7 +20,7 @@ last_verified: "2026-05-15"
 generation: 3
 functional_domain: governance
 parent_module: ""
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 rule_form: structural
 scope: global
 stability: evolving
@@ -50,7 +50,7 @@ runtime_plane: cold
 
 ## 概述
 
-本蓝图定义 ZephyrAlpha 系统重组治理规则——解决快速迭代中产生的大文件（>500行）、跨目录重复文件、未按需激活的模块等问题。核心职责：文件拆分（>500行按职责拆分）、重复合并（跨目录同功能合并为唯一真源）、按需激活（未使用模块延迟加载）、安全搬家（文件移动不破坏导入链）。当前规模 ~20 个大文件 + ~10 组跨目录重复，目标 LLM 友好上限 300 行/文件。上游被 MOD-MASTER-001 治理，下游消费 INF-020（审计）、INF-021（回滚）、INF-023（漂移检测）。
+本蓝图定义 ZephyrAlpha 系统重组治理规则——解决快速迭代中产生的大文件（>500行）、跨目录重复文件、未按需激活的模块等问题。核心职责：文件拆分（>500行按职责拆分）、重复合并（跨目录同功能合并为唯一真源）、按需激活（未使用模块延迟加载）、安全搬家（文件移动不破坏导入链）。当前规模 ~20 个大文件 + ~10 组跨目录重复，目标 LLM 友好上限 300 行/文件。上游被 MOD-MASTER_BLUEPRINT 治理，下游消费 INF-020（审计）、INF-021（回滚）、INF-023（漂移检测）。
 
 ---
 

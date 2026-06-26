@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "vibe_coding_pipelines — 目录索引"
-module_id: MOD-023
-blueprint_id: MOD-023
+module_id: MOD-GOVERNANCE
+blueprint_id: MOD-GOVERNANCE
 version: "0.13.0"
 created: "2026-05-02"
 updated: "2026-06-22"

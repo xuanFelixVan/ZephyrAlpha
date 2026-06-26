@@ -14,7 +14,7 @@ ttl: permanent
 
 ```yaml
 blueprints:
-  - module_id: "MOD-MASTER-001"
+  - module_id: "MOD-MASTER_BLUEPRINT"
     name: "master-blueprint"
     blueprint_level: "domain"     # ← 新增：SYSTEM / DOMAIN / MODULE
 ```

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.behavioral_audit.architecture_contracts
 # [DOMAIN] D-BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] MOD-INF-007;MOD-INF-021;MOD-INF-020
+# [CONSUMERS] MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算
@@ -37,7 +37,7 @@ class Contract(BaseModel):
 ARCH_BASE_CONTRACTS: dict[str, Contract] = {
     "C1_COMMUNICATION": Contract(
         name="模块间通信",
-        description="数据格式 JSON（跨模块）· 版本管理 v1/get_signal· 契约存档 CT-### in MOD-MASTER-001",
+        description="数据格式 JSON（跨模块）· 版本管理 v1/get_signal· 契约存档 CT-### in MOD-MASTER_BLUEPRINT",
     ),
     "C2_SYNC_ASYNC": Contract(
         name="同步/异步边界",

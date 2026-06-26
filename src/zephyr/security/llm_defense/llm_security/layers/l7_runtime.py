@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l7_runtime
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__

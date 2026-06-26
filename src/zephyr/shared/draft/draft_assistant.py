@@ -18,7 +18,7 @@
 Draft Assistant — 想法 → MTH-012 蓝图骨架生成。
 
 依据：
-    蓝图 MOD-INF-006 §13.3 路线图 #26 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §13.3 路线图 #26 + v0.6.0
     任务卡 TASK-INF-0132 (Part 3/4)
 
 功能：
@@ -125,13 +125,13 @@ class DraftAssistant:
 
         keywords = {
             "rollback": "MOD-INF-021",
-            "task": "MOD-INF-006",
-            "task-system": "MOD-INF-006",
-            "blueprint": "MOD-INF-006",
+            "task": "MOD-TASK_SYSTEM",
+            "task-system": "MOD-TASK_SYSTEM",
+            "blueprint": "MOD-TASK_SYSTEM",
             "pipeline": "MOD-INF-005",
-            "decompose": "MOD-INF-006",
-            "lifecycle": "MOD-INF-006",
-            "gate": "MOD-INF-006",
+            "decompose": "MOD-TASK_SYSTEM",
+            "lifecycle": "MOD-TASK_SYSTEM",
+            "gate": "MOD-TASK_SYSTEM",
         }
 
         text_lower = input_data.idea_text.lower()

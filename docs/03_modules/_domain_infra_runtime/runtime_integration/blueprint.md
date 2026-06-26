@@ -17,7 +17,7 @@ date: "2026-05-01"
 ttl: permanent
 construction_progress: completed
 actual_disk_path: "src/zephyr/shared/ + src/zephyr/infrastructure/ + src/zephyr/governance/lifecycle_governance/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L2
 codification_at: "2026-05-15"
@@ -269,11 +269,11 @@ summary: >
 | # | 明确排除 | 原因 |
 |---|---------|------|
 | 1 | AI 审计守卫实现 | → MOD-INF-001 |
-| 2 | 安全网关实现 | → MOD-INF-014 |
+| 2 | 安全网关实现 | → MOD-LLM_SECURITY |
 | 3 | 因子计算逻辑 | → L02-L03 业务层 |
 | 4 | 审计追踪链存储 | → MOD-INF-020 |
 | 5 | 回滚执行 | → MOD-INF-021 |
-| 6 | 任务门禁 | → MOD-INF-007 |
+| 6 | 任务门禁 | → MOD-GATE_ENGINE |
 | 7 | Shared Core 实现细节 | → MOD-INF-016 |
 
 ### 1.4 运行场景约束
@@ -306,11 +306,11 @@ summary: >
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
 | 1 | AI 审计守卫 | MOD-INF-001（capacity-assurance） |
-| 2 | 安全网关（LSG） | MOD-INF-014（llm-security） |
+| 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm-security） |
 | 3 | 因子计算逻辑 | L02-L03 业务层 |
 | 4 | 审计追踪链存储 | MOD-INF-020（audit-trail），RI-13 EventStore 提供事件级溯源 |
 | 5 | 回滚执行 | MOD-INF-021（rollback-system），RI-13 事件重放可配合回滚 |
-| 6 | 任务门禁（G0-G7） | MOD-INF-007（gate-engine） |
+| 6 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate-engine） |
 | 7 | Shared Core 实现细节 | MOD-INF-016（shared-core）——本蓝图定义需求，MOD-INF-016 承载实现 |
 
 ---
@@ -1391,11 +1391,11 @@ TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层�
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 Shared Core | 必须 | 10 个 RI 模块的代码承载基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
 | MOD-INF-001 Capacity Assurance | 必须 | 容量 SLO + Error Budget | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` |
-| MOD-INF-007 Gate Engine | 可选 | 任务门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 可选 | 任务门禁 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
 | MOD-INF-020 Audit Trail | 可选 | 审计追踪链 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-021 Rollback System | 可选 | 回滚系统 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
 | MOD-INF-023 Drift Detector | 可选 | 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-014 LLM Security | 可选 | LLM 安全网关 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security\blueprint.md` |
+| MOD-LLM_SECURITY LLM Security | 可选 | LLM 安全网关 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security\blueprint.md` |
 | MOD-INF-018 Agent RBAC | 可选 | Agent RBAC | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
 | MOD-INF-025 A2A Protocol | 可选 | Agent-to-Agent 协议 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\a2a-protocol\blueprint.md` |
 | MOD-KB-001 Knowledge Base | 可选 | AutoDiagnostics→修复成功→自动补充知识库 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge-base\blueprint.md` |
@@ -1503,7 +1503,7 @@ TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层�
 | MOD-INF-001 Capacity Assurance | 事件订阅 | HealthCheck→容量SLO→ErrorBudget | 容量约束事件正确传播 |
 | MOD-INF-020 Audit Trail | 事件生产 | RI-13 EventStore→审计追踪链消费 | 事件级溯源→审计报告导出 |
 | MOD-INF-021 Rollback System | 事件生产 | RI-13 事件重放→配合回滚 | 事件重放→状态恢复 |
-| MOD-INF-014 LLM Security | Fail-Closed对齐 | RI-07/RI-08安全组件→LLM安全网关 | 安全组件不可用时拒绝操作 |
+| MOD-LLM_SECURITY LLM Security | Fail-Closed对齐 | RI-07/RI-08安全组件→LLM安全网关 | 安全组件不可用时拒绝操作 |
 | MOD-KB-001 Knowledge Base | 知识写入 | AutoDiagnostics→修复成功→KB自动补充 | 修复后KB条目新增 |
 
 ---

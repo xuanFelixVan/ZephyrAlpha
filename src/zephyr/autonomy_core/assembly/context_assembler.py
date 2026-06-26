@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.assembly.context_assembler
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__
@@ -18,7 +18,7 @@ from typing import Self
 """
 ContextAssembler — 上下文装配、校验、影子留档
 =============================================
-依据：MOD-INF-006 G3 门禁（上下文装配完整度）+ §3.1 接口契约
+依据：MOD-TASK_SYSTEM G3 门禁（上下文装配完整度）+ §3.1 接口契约
 
 四阶段流水线：
   1. collect   — 读取 context_assembly_manifest 中所有文件

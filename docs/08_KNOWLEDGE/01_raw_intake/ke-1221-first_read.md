@@ -18,7 +18,7 @@ docs/registry_of_registries.yaml
 
 这是全项目的**中央神经系统中枢**——24 个注册表的唯一发现入口。它告诉你：
 - 项目有多少个 Gate？（REG-GATE-001）
-- 项目有多少个模块？每个模块的蓝图在哪？（REG-MOD-001）
+- 项目有多少个模块？每个模块的蓝图在哪？（REG-MOD-ALPHA_SIGNAL_DOMAIN）
 - 项目有多少个脚本？各自负责什么领域？（REG-SCRIPT-001）
 - Pipeline 怎么路由？契约在哪冻结？架构模型在哪？
 

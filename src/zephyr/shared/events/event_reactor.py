@@ -18,7 +18,7 @@
 Event Reactor — 事件反应器（自动响应事件）。
 
 依据：
-    蓝图 MOD-INF-006 §6.13.4 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.13.4 + v0.6.0
     任务卡 TASK-INF-0125
 """
 

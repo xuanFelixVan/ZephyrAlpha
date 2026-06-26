@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-script-health-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -28,7 +28,7 @@
 #   - 本登记表为独立 YAML 镜像——供 status.py 仪表盘和快速查询
 # ============================================================================
 
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 schema_version: "1.0.0"
 doc_type: register
 title: "脚本健康与清单登记表"

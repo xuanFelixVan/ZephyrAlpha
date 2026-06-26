@@ -10,7 +10,7 @@ ttl: permanent
 
 8.1 CT-SCRIPT-GATE-001：脚本exit code → Gate判定
 
-> 详见总蓝图 [MOD-MASTER-001 · CT-SCRIPT-GATE-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
+> 详见总蓝图 [MOD-MASTER_BLUEPRINT · CT-SCRIPT-GATE-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
 
 ```
 脚本 exit 0 → GATE-n PASS → 任务状态不变

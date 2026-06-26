@@ -22,7 +22,7 @@ actual_disk_path: "src/zephyr/governance/code_dedup_engine/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3
-belongs_to: "MOD-023"
+belongs_to: "MOD-GOVERNANCE"
 parent_module: ""
 codification_level: L2
 codification_at: "2026-05-14"
@@ -46,19 +46,19 @@ depends_on:
 - target: MOD-INF-005
   at: §6
   why: "退出码约定 0/1/2/3/4 + Finding Schema + manifest 注册契约"
-- target: MOD-INF-007
+- target: MOD-GATE_ENGINE
   at: §3
   why: "GATE-DEDUP pre-commit 门禁判定逻辑——Wave 1 即落地"
-- target: MOD-INF-008
+- target: MOD-CONTEXT_ENGINE
   at: "§2~§4"
   why: "生成时注入共享API影子清单——防重第一道防线 + 消费验证回环"
-- target: MOD-INF-010
+- target: MOD-FEEDBACK_LOOP
   at: "§3~§5"
   why: "重复模式→FLE→evolve()→EvolutionProposal 进化闭环"
 - target: MOD-INF-016
   at: §2
   why: "SSoT Guard + shared 目录结构——去重后的提取目标"
-- target: MOD-INF-012
+- target: MOD-DATABASE
   at: §3
   why: "发现的重复模式/健忘热点→KB持久化→未来AI session 主动查阅"
 - target: MOD-INF-027
@@ -233,10 +233,10 @@ tags:
 | Health Score       | 本蓝图（health\_monitor.py）                                              | **SSoT** | Session Log 写入+趋势追踪    |
 | BRS/SBS/SAS 评分     | 本蓝图（monoculture\_guard/import\_surface\_tracker/simplicity\_auditor） | **SSoT** | 月度计算+报告输出              |
 | 退出码约定 0/1/2/3/4    | MOD-INF-005                                                          | 消费者      | 遵循 script-system 退出码标准 |
-| GATE-DEDUP 门禁逻辑    | MOD-INF-007                                                          | 消费者      | 遵循 gate-engine 契约      |
+| GATE-DEDUP 门禁逻辑    | MOD-GATE_ENGINE                                                          | 消费者      | 遵循 gate-engine 契约      |
 | shared/ 目录结构       | MOD-INF-016                                                          | 消费者      | 提取目标遵循 SSoT Guard      |
 | AiAuditLogger 审计写入 | MOD-INF-027                                                          | 消费者      | 去重结果写入审计链              |
-| 影子清单注入             | MOD-INF-008                                                          | 消费者      | Context Engine 注入+消费验证 |
+| 影子清单注入             | MOD-CONTEXT_ENGINE                                                          | 消费者      | Context Engine 注入+消费验证 |
 
 ### §0.5 代码目录唯一性
 
@@ -365,11 +365,11 @@ tags:
 | # | 排除项                 | 由谁负责                        |
 | - | ------------------- | --------------------------- |
 | 1 | 退出码/脚本注册标准          | MOD-INF-005（Script System）  |
-| 2 | 门禁判定引擎              | MOD-INF-007（Gate Engine）    |
-| 3 | Context Engine 注入逻辑 | MOD-INF-008（Context Engine） |
-| 4 | 进化信号处理              | MOD-INF-010（Feedback Loop）  |
+| 2 | 门禁判定引擎              | MOD-GATE_ENGINE（Gate Engine）    |
+| 3 | Context Engine 注入逻辑 | MOD-CONTEXT_ENGINE（Context Engine） |
+| 4 | 进化信号处理              | MOD-FEEDBACK_LOOP（Feedback Loop）  |
 | 5 | Shared Core 目录结构    | MOD-INF-016（Shared+Core）    |
-| 6 | KB 持久化 API          | MOD-INF-012（Knowledge Base） |
+| 6 | KB 持久化 API          | MOD-DATABASE（Knowledge Base） |
 
 ***
 
@@ -916,9 +916,9 @@ class HealthScore(BaseModel):
 | 漏报盲审 | auto_scheduled | CircadianScheduler 月度 | **未接通** |
 | 引擎自审计 | auto_scheduled | CircadianScheduler 月度 | **未接通** |
 | 敏感性扫荡 | auto_scheduled | CircadianScheduler 月度 | **未接通** |
-| 影子清单注入 | auto_boot | AI session 启动时 Context Engine | 依赖 MOD-INF-008 |
+| 影子清单注入 | auto_boot | AI session 启动时 Context Engine | 依赖 MOD-CONTEXT_ENGINE |
 | GATE-DEDUP | auto_event | GateEngine.evaluate("GATE-DEDUP") | 全自动 |
-| 重复模式进化 | auto_event | FLE detect → dedup_pattern_report | 依赖 MOD-INF-010 |
+| 重复模式进化 | auto_event | FLE detect → dedup_pattern_report | 依赖 MOD-FEEDBACK_LOOP |
 
 ***
 
@@ -1048,11 +1048,11 @@ KNOWN_DUPLICATES = {
 | 依赖模块        | 依赖类型 | 依赖内容                             | 版本要求     | 蓝图路径                                                                            |
 | ----------- | ---- | -------------------------------- | -------- | ------------------------------------------------------------------------------- |
 | MOD-INF-005 | 必须   | 退出码约定 0/1/2/3/4 + Finding Schema | ≥ 0.5.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\script-system\blueprint.md`  |
-| MOD-INF-007 | 必须   | GATE-DEDUP 门禁判定逻辑                | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md`    |
-| MOD-INF-008 | 必须   | Context Engine 影子清单注入            | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` |
-| MOD-INF-010 | 可选   | FLE 进化闭环                         | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md`  |
+| MOD-GATE_ENGINE | 必须   | GATE-DEDUP 门禁判定逻辑                | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md`    |
+| MOD-CONTEXT_ENGINE | 必须   | Context Engine 影子清单注入            | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选   | FLE 进化闭环                         | ≥ 0.2.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md`  |
 | MOD-INF-016 | 必须   | SSoT Guard + shared 目录           | ≥ 0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md`    |
-| MOD-INF-012 | 可选   | KB 持久化 API                       | ≥ 0.1.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
+| MOD-DATABASE | 可选   | KB 持久化 API                       | ≥ 0.1.0  | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
 | MOD-INF-027 | 必须   | 审计总线（decision_auditor写入）        | ≥ 0.3.0  | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
@@ -1083,22 +1083,22 @@ KNOWN_DUPLICATES = {
 | 本模块概念         | 重叠模块        | 区别                  | 处置  |
 | ------------- | ----------- | ------------------- | --- |
 | 退出码 0/1/2/3/4 | MOD-INF-005 | 005定义标准，017遵循       | 消费者 |
-| GATE-DEDUP 门禁 | MOD-INF-007 | 007提供框架，017提供检查逻辑   | 消费者 |
-| 影子清单注入        | MOD-INF-008 | 008提供注入通道，017提供清单内容 | 消费者 |
+| GATE-DEDUP 门禁 | MOD-GATE_ENGINE | 007提供框架，017提供检查逻辑   | 消费者 |
+| 影子清单注入        | MOD-CONTEXT_ENGINE | 008提供注入通道，017提供清单内容 | 消费者 |
 | shared/ 提取目标  | MOD-INF-016 | 016保护目录，017是写入方     | 消费者 |
 | 原子修复          | MOD-INF-031 | 017保留去重专用修复，通用修复委托031 | 边界明确 |
 | "去重"命名        | MOD-INF-024 | 024去重AI操作动作，017去重代码文本 | 无功能重叠 |
 | 去重            | MOD-INF-037 | 017做Token级代码去重，037做语义级功能域去重 | 共存 |
-| blast_radius检测器 | MOD-INF-010 | FLE应委托017计算BRS | 待补充反向依赖 |
+| blast_radius检测器 | MOD-FEEDBACK_LOOP | FLE应委托017计算BRS | 待补充反向依赖 |
 
 ### 10.6 依赖链风险评级
 
 | 依赖          | 链深度 | 风险等级 | 缓解措施                       |
 | ----------- | :-: | :--: | -------------------------- |
 | MOD-INF-005 |  1  |   低  | 退出码枚举在 exit\_codes.py 独立定义 |
-| MOD-INF-007 |  1  |   中  | DeduplicationHandler 独立文件  |
-| MOD-INF-008 |  2  |   中  | 影子清单格式独立，注入通过 YAML         |
-| MOD-INF-010 |  1  |   低  | 去重作为独立 Stage               |
+| MOD-GATE_ENGINE |  1  |   中  | DeduplicationHandler 独立文件  |
+| MOD-CONTEXT_ENGINE |  2  |   中  | 影子清单格式独立，注入通过 YAML         |
+| MOD-FEEDBACK_LOOP |  1  |   低  | 去重作为独立 Stage               |
 | MOD-INF-016 |  1  |   低  | 提取目标路径从 config.py 读取       |
 | MOD-INF-027 |  2  |   低  | 审计写入格式独立                   |
 
@@ -1129,13 +1129,13 @@ KNOWN_DUPLICATES = {
 | 集成目标系统                       | 集成方式                                                             | 集成点                                                  | 验证方法                      |
 | ---------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------- | ------------------------- |
 | Script System (MOD-INF-005)  | 去重脚本注册到 manifest，遵循退出码约定                                         | `cli.py` → `script-manifest.yaml` | G4 入库验收 + exit code 映射    |
-| Gate Engine (MOD-INF-007)    | Pre-commit hook exit code → Gate PASS/FAIL/BLOCKED/SKIP/DEGRADED | CT-SCRIPT-GATE-001                                   | Gate 判定日志中 GATE-DEDUP 出现  |
-| Context Engine (MOD-INF-008) | 影子清单注入 system prompt + 渐进式三层记忆 + 消费验证回环                          | `shadow_apimanifest.yaml` → CE build → inject       | CE build log 包含影子清单       |
+| Gate Engine (MOD-GATE_ENGINE)    | Pre-commit hook exit code → Gate PASS/FAIL/BLOCKED/SKIP/DEGRADED | CT-SCRIPT-GATE-001                                   | Gate 判定日志中 GATE-DEDUP 出现  |
+| Context Engine (MOD-CONTEXT_ENGINE) | 影子清单注入 system prompt + 渐进式三层记忆 + 消费验证回环                          | `shadow_apimanifest.yaml` → CE build → inject       | CE build log 包含影子清单       |
 | Shared+Core (MOD-INF-016)    | 去重→提取→SSoT 注册三合一原子操作                                             | Auto Fixer → SSoT Guard → `b_shared.yaml`            | 提取的函数在 YAML SSoT 中可检索     |
-| Feedback Loop (MOD-INF-010)  | 重复模式→FLE→`dedup_pattern_report`                                  | FLE detect → `dedup_pattern_report`                  | 重复模式可被 FLE 检测并触发 evolve() |
-| Task System (MOD-INF-006)    | high/critical 重复 → TaskCard → AI pipeline 修复                     | TaskCard `source_blueprint: MOD-INF-017`             | TaskCard 状态可追踪            |
+| Feedback Loop (MOD-FEEDBACK_LOOP)  | 重复模式→FLE→`dedup_pattern_report`                                  | FLE detect → `dedup_pattern_report`                  | 重复模式可被 FLE 检测并触发 evolve() |
+| Task System (MOD-TASK_SYSTEM)    | high/critical 重复 → TaskCard → AI pipeline 修复                     | TaskCard `source_blueprint: MOD-INF-017`             | TaskCard 状态可追踪            |
 | Session Log                  | 扫描结果摘要写入 Session Log → next AI session                           | Scanner → health\_monitor.py → Session Log           | Next AI session 零推理读到去重发现 |
-| Knowledge Base (MOD-INF-012) | 重复模式/健忘热点 → KB 持久化                                               | health\_monitor.py → KB API → kb://dedup/insights    | KB 可查询 dedup 相关实体         |
+| Knowledge Base (MOD-DATABASE) | 重复模式/健忘热点 → KB 持久化                                               | health\_monitor.py → KB API → kb://dedup/insights    | KB 可查询 dedup 相关实体         |
 
 ### 共享 API 影子清单格式
 
@@ -1242,8 +1242,8 @@ def process_v1(data: dict) -> Result: ...
 | # | 依赖项                            | 依赖类型 | 当前状态 | 是否满足 |
 | - | ------------------------------ | ---- | :--: | :--: |
 | 1 | MOD-INF-005 退出码标准已定义           | hard |   ✅  |   ✅  |
-| 2 | MOD-INF-007 Gate Engine 已实现    | hard |   ✅  |   ✅  |
-| 3 | MOD-INF-008 Context Engine 已实现 | hard |   ✅  |   ✅  |
+| 2 | MOD-GATE_ENGINE Gate Engine 已实现    | hard |   ✅  |   ✅  |
+| 3 | MOD-CONTEXT_ENGINE Context Engine 已实现 | hard |   ✅  |   ✅  |
 | 4 | MOD-INF-016 Shared Core 已实现    | hard |   ✅  |   ✅  |
 
 ### 16.3 实施路线（三波递进）
@@ -1309,7 +1309,7 @@ def process_v1(data: dict) -> Result: ...
 | W3-5 | GATE-DEDUP 正式版              | DeduplicationHandler+_GATE_FILES+skip set移除 | ✅ 已完成 |
 | W3-6 | CI 集成                       | `.github/workflows/governance.yml` 新增 dedup step |
 | W3-7 | Self-Benchmark              | 5组KAT(KAT-01~05)+退化检测+benchmark子命令 | ✅ 已完成 |
-| W3-8 | 渐进式三层记忆注入(委托CE)             | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-INF-008 | ⏳ 委托MOD-INF-008 |
+| W3-8 | 渐进式三层记忆注入(委托CE)             | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-CONTEXT_ENGINE | ⏳ 委托MOD-INF-008 |
 
 ### 16.4 回滚方案
 
@@ -1355,14 +1355,14 @@ def process_v1(data: dict) -> Result: ...
 
 | # | 任务 | 交付物 | 状态 | 堵塞项 |
 |---|------|--------|:---:|--------|
-| W3-1 | semantic_verifier LLM 语义验证 | 置信度 0-100（仅用于 0.70-0.85 不确定区间） | 🔒 非本蓝图 | 堵塞: MOD-INF-008/034 LLM推理能力; 本蓝图仅提供0.70-0.85不确定区间接口 |
-| W3-2 | Feedback Loop 深度集成 | 重复模式→FLE→dedup_pattern_report | 🔒 非本蓝图 | 堵塞: MOD-INF-010 FLE未运行; 本蓝图仅输出dedup_pattern_report |
-| W3-3 | evolve() 进化信号 | 重复模式→EvolutionProposal | 🔒 非本蓝图 | 堵塞: MOD-INF-010 FLE未运行; 本蓝图仅输出进化信号 |
+| W3-1 | semantic_verifier LLM 语义验证 | 置信度 0-100（仅用于 0.70-0.85 不确定区间） | 🔒 非本蓝图 | 堵塞: MOD-CONTEXT_ENGINE/034 LLM推理能力; 本蓝图仅提供0.70-0.85不确定区间接口 |
+| W3-2 | Feedback Loop 深度集成 | 重复模式→FLE→dedup_pattern_report | 🔒 非本蓝图 | 堵塞: MOD-FEEDBACK_LOOP FLE未运行; 本蓝图仅输出dedup_pattern_report |
+| W3-3 | evolve() 进化信号 | 重复模式→EvolutionProposal | 🔒 非本蓝图 | 堵塞: MOD-FEEDBACK_LOOP FLE未运行; 本蓝图仅输出进化信号 |
 | W3-4 | 策略树 YAML 正式落地 | config/policy-tree.yaml 5条规则R001-R005 | ✅ 已完成 | — |
 | W3-5 | GATE-DEDUP 正式版 | DeduplicationHandler+_GATE_FILES+skip set移除 | ✅ 已完成 | — |
 | W3-6 | CI 集成 | .github/workflows/governance.yml | 🔒 非本蓝图 | 堵塞: DevOps/GitHub Actions配置; 本蓝图仅提供cli scan命令 |
 | W3-7 | Self-Benchmark | 5 组已知对自验证 | ⏳ 待施工 | — |
-| W3-8 | 渐进式三层记忆注入(委托CE) | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-INF-008 | ⏳ 委托MOD-INF-008 | MOD-INF-008 规则优先级注册API |
+| W3-8 | 渐进式三层记忆注入(委托CE) | 通过 CE.register_rules() 注册去重规则(HOT/DOMAIN/COLD) → MOD-CONTEXT_ENGINE | ⏳ 委托MOD-INF-008 | MOD-CONTEXT_ENGINE 规则优先级注册API |
 
 ### 16.7.2 v0.14.1 施工记录
 
@@ -1385,7 +1385,7 @@ def process_v1(data: dict) -> Result: ...
 |------|---------|:---:|---------|
 | MOD-INF-031 代码物理迁移 | auto-fix-engine/ 目录不存在 | P1 | MOD-INF-031 蓝图 Step 1-3 落地 |
 | LLM 语义验证 (W3-1) | LLM 基础设施 | P2 | Ollama/DeepSeek 可用 |
-| Feedback Loop (W3-2/3) | MOD-INF-010 FLE | P2 | FLE 运行 |
+| Feedback Loop (W3-2/3) | MOD-FEEDBACK_LOOP FLE | P2 | FLE 运行 |
 | CI 集成 (W3-6) | DevOps 配置 | P2 | GitHub Actions 配置权限 |
 | Self-Benchmark (W3-7) | 无 | P2 | 可立即施工 |
 | 三层记忆注入 (W3-8) | 无 | P2 | 可立即施工 |
@@ -1687,7 +1687,7 @@ STEP 3: 拆分后验证
 | # | 功能             | 位置                    | 与本蓝图关系                             |
 | - | -------------- | --------------------- | ---------------------------------- |
 | 1 | D-D-07 词法级精确匹配 | `scripts/governance/` | 互补——D-D-07 是 Type-1，本引擎是 Type-1\~4 |
-| 2 | GATE-DEDUP 门禁  | MOD-INF-007           | 本引擎提供 exit code → Gate 判定          |
+| 2 | GATE-DEDUP 门禁  | MOD-GATE_ENGINE           | 本引擎提供 exit code → Gate 判定          |
 
 ## 涉及的文件范围
 

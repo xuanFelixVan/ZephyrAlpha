@@ -21,7 +21,7 @@ last_updated: "2026-06-23"
 last_verified: "2026-06-23"
 generation: 3
 parent_module: ""
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 codification_level: L2
 codification_at: "2026-05-14"
 rule_form: structural
@@ -50,7 +50,7 @@ depends_on:
   - target: "MOD-INF-019"
     at: "§2.2"
     why: "Agent Spec / AGENTS.md——Skill Pack 路由是 A2A Agent Card 注册入口"
-  - target: "MOD-INF-007"
+  - target: "MOD-GATE_ENGINE"
     at: "§2"
     why: "Gate Engine——A2A 消息 schema 校验与安全门禁"
   - target: "KBG-0032"
@@ -240,8 +240,8 @@ ZephyrAlpha 在 1人+AI 场景下，多个 IDE（TRAE/Cursor/RooCode）中的 Ag
 | # | 明确排除 | 原因 |
 |---|---------|------|
 | 1 | AI 审计守卫实现 | → MOD-INF-001 |
-| 2 | 安全网关实现 | → MOD-INF-014 |
-| 3 | 任务门禁 | → MOD-INF-007 |
+| 2 | 安全网关实现 | → MOD-LLM_SECURITY |
+| 3 | 任务门禁 | → MOD-GATE_ENGINE |
 | 4 | 回滚执行 | → MOD-INF-021 |
 | 5 | Agent Spec 实现 | → MOD-INF-019 |
 
@@ -285,8 +285,8 @@ ZephyrAlpha 在 1人+AI 场景下，多个 IDE（TRAE/Cursor/RooCode）中的 Ag
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
 | 1 | AI 审计守卫 | MOD-INF-001 |
-| 2 | 安全网关 | MOD-INF-014 |
-| 3 | 任务门禁 | MOD-INF-007 |
+| 2 | 安全网关 | MOD-LLM_SECURITY |
+| 3 | 任务门禁 | MOD-GATE_ENGINE |
 | 4 | 回滚执行 | MOD-INF-021 |
 | 5 | Agent Spec / Skill Pack | MOD-INF-019 |
 | 6 | Shared Core 实现 | MOD-INF-016 |
@@ -845,7 +845,7 @@ class A2ATask(BaseModel):
 | MOD-INF-022 | 必须 | Escalation 升级 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
 | MOD-INF-020 | 必须 | Audit Trail | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-019 | 必须 | Agent Spec / AGENTS.md | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
-| MOD-INF-007 | 可选 | Gate Engine | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE | 可选 | Gate Engine | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
 | KBG-0032 | 可选 | AgentOrchestrator | `D:\ZephyrAlpha\docs\02_enterprise_architecture\` |
 | KBG-0041 | 可选 | Session Handoff | `D:\ZephyrAlpha\docs\02_enterprise_architecture\` |
 
@@ -896,13 +896,13 @@ class A2ATask(BaseModel):
 | MOD-INF-022 Escalation | 仲裁升级 | Arbitrator.escalate → EscalationProtocol | 三级仲裁端到端 |
 | MOD-INF-020 Audit Trail | 事件写入 | A2A 通信/冲突/仲裁 → audit_log | 审计日志完整 |
 | MOD-INF-019 Agent Spec | 发现入口 | AGENTS.md a2a_agents 字段 | Agent 注册可发现 |
-| MOD-INF-007 Gate Engine | 消息门禁 | MessageRouter → schema 校验 | 消息校验通过 |
+| MOD-GATE_ENGINE Gate Engine | 消息门禁 | MessageRouter → schema 校验 | 消息校验通过 |
 
 ### 12.1 域契约锚点
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
-| MOD-023 | 治理域 | A2A 协议安全规则纳入治理域 | MOD-INF-022 | 修改安全规则必须同步更新 |
+| MOD-GOVERNANCE | 治理域 | A2A 协议安全规则纳入治理域 | MOD-INF-022 | 修改安全规则必须同步更新 |
 
 ---
 

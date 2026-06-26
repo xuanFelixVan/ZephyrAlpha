@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/assign_module_id.py | §
 """assign_module_id.py — 模块 ID 唯一性校验（INJ-001）
 
-对标：GOV-MOD-001 INJ-001（ID 唯一性）
+对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-001（ID 唯一性）
 
 检测内容：
 - --check: 检查指定 module_id 是否在项目中唯一
@@ -18,7 +18,7 @@ args:
 - {flag: --assign, type: str, description: "为新文件建议下一个可用 module_id（格式: DOMAIN-TYPE）"}
 description: >
   模块 ID 唯一性校验（INJ-001）——检查 module_id 全局唯一性。
-  对标 GOV-MOD-001 module-injection-rules-policy.md。
+  对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN module-injection-rules-policy.md。
 dimensions:
 - D3
 priority: P1

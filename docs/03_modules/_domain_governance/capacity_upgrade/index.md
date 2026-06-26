@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "capacity_upgrade — 目录索引"
-module_id: "MOD-024"
-blueprint_id: "MOD-024"
+module_id: "MOD-GOVERNANCE"
+blueprint_id: "MOD-GOVERNANCE"
 version: "0.1.0"
 created: "2026-06-22"
 updated: "2026-06-22"

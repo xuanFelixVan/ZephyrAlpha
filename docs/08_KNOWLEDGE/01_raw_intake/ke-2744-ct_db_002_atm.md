@@ -9,4 +9,4 @@ ttl: permanent
 
 DB-025-0024：CT-DB-002 ATM 事务契约落地
 
-Provider: MOD-INF-012 (AtomicTransactionManager). Consumers: MOD-INF-006, MOD-INF-010.
+Provider: MOD-DATABASE (AtomicTransactionManager). Consumers: MOD-TASK_SYSTEM, MOD-FEEDBACK_LOOP.

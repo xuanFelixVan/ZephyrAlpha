@@ -10,7 +10,7 @@ ttl: permanent
 
 Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门
 
-> **module_id**: MOD-INF-007 | **version**: 0.1.0 | **status**: draft | **layer**: cross_layer
+> **module_id**: MOD-GATE_ENGINE | **version**: 0.1.0 | **status**: draft | **layer**: cross_layer
 
 > **真源声明**：本蓝图的 canonical SSoT 为 [b_gates.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_gates.yaml)。
 > 本蓝图是其人类可读翻译——发现不一致以 YAML 为准。

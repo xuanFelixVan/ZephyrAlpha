@@ -18,7 +18,7 @@ actual_disk_path: "src/zephyr/simulation/"
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-15"

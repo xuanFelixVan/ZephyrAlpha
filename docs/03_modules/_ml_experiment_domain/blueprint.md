@@ -1,5 +1,5 @@
 ---
-module_id: MOD-071
+module_id: MOD-ML_EXPERIMENT_DOMAIN
 title: "ML-Experiment Domain 蓝图 — L11平台→L13实验跨层集成"
 doc_type: blueprint
 status: Active
@@ -200,7 +200,7 @@ Feature Store (VMS/KB) → ML Core (L11) → Experiment Pipeline (L13)。子组�
 |---------|------|------|:---:|------|
 | ME-CT-FEATURE-001 | VMS/KB→L11 | 特征向量读取（ChromaDB collections: factor-signals, model-features） | Draft | MOD-INF-011 |
 | ME-CT-TRAIN-001 | L11 internal | 训练Pipeline Gate：数据→训练→验证→Sanity→发布 | Draft | — |
-| ME-CT-CHECKPOINT-001 | L11→L13 | 检查点导入（MODEL_CHECKPOINTS→AB/Backtest Experiment） | Draft | MOD-INF-012 |
+| ME-CT-CHECKPOINT-001 | L11→L13 | 检查点导入（MODEL_CHECKPOINTS→AB/Backtest Experiment） | Draft | MOD-DATABASE |
 | ME-CT-AB-001 | L13 internal | AB实验全流程：config→traffic_split→gate[eval]→analyst→deploy/rollback | Draft | — |
 | ME-CT-BACKTEST-001 | L13 internal | 回测实验：ckpt→historical→PnL→Attribution→Report | Draft | — |
 | ME-CT-SHADOW-001 | L13 | Shadow Mode：旁路预测→threshold→divergence alert→正式切流 | Draft | — |

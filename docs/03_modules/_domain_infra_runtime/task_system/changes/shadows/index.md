@@ -3,7 +3,7 @@ doc_type: index
 status: active
 title: "shadows — 目录索引"
 module_id: ""
-blueprint_id: "MOD-INF-006"
+blueprint_id: "MOD-TASK_SYSTEM"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"

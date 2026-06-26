@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
+# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
 # [MODULE] zephyr.observability.feedback_loop.alert_dispatcher
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.__init__

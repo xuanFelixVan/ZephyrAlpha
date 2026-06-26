@@ -18,7 +18,7 @@
 Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。
 
 依据：
-    蓝图 MOD-INF-006 §6.2.2 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.2.2 + v0.6.0
     任务卡 TASK-INF-0108 (Part 2/4)
 
 功能：

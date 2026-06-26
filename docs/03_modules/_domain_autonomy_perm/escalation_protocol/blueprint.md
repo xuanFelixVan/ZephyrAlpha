@@ -26,7 +26,7 @@ references:
   - D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md
 codification_level: blueprint
 codification_at: "2026-05-14"
-belongs_to: MOD-MASTER-001
+belongs_to: MOD-MASTER_BLUEPRINT
 summary: "AI操作安全升级与委托治理协议——五层架构（L0持久化→L1自愈→L2路由→L3通知→L4审计），30决策/104文件，量化交易特化升级，Vibe Coding安全防御"
 tags: [escalation, safety, delegation, guardrail, vibe-coding]
 priority: P1
@@ -63,7 +63,7 @@ stability: evolving
 verifiability: hybrid
 depends_on:
   - {target: MOD-INF-018, at: "$TODO", why: "TODO -- auto-converted"}
-  - {target: MOD-INF-007, at: "$TODO", why: "TODO -- auto-converted"}
+  - {target: MOD-GATE_ENGINE, at: "$TODO", why: "TODO -- auto-converted"}
   - {target: MOD-INF-019, at: "$TODO", why: "TODO -- auto-converted"}
   - {target: MOD-INF-020, at: "$TODO", why: "TODO -- auto-converted"}
   - {target: MOD-INF-021, at: "$TODO", why: "TODO -- auto-converted"}
@@ -71,7 +71,7 @@ depends_on:
   - {target: MOD-INF-025, at: "$TODO", why: "TODO -- auto-converted"}
 ---
 
-## MOD-023 集成契约锚点
+## MOD-GOVERNANCE 集成契约锚点
 
 | 契约 ID | 本模块角色 | 对端模块 | 集成点 |
 |---------|------------|----------|--------|
@@ -89,7 +89,7 @@ depends_on:
 
 ## 概述
 
-Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。五层架构（L0持久化→L1自愈→L2路由→L3通知→L4审计）覆盖升级判定+委托+Per-escalation成本门控。核心职责：规则驱动判定（autonomous/auto_guard/blocked）、委托链管理（四级约束+死锁防护）、Per-escalation成本门控。子蓝图MOD-INF-022-VC(Vibe Coding安全防御)和MOD-INF-022-QT(量化交易特化升级)已拆分。当前规模110文件/30决策，上游依赖RBAC(MOD-INF-018)/Gate(MOD-INF-007)/Audit(MOD-INF-020)/Pipeline(MOD-INF-021)，下游被Budget(MOD-INF-024,预算SSoT)/A2A(MOD-INF-025,消费本协议SSoT)/治理层消费。
+Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。五层架构（L0持久化→L1自愈→L2路由→L3通知→L4审计）覆盖升级判定+委托+Per-escalation成本门控。核心职责：规则驱动判定（autonomous/auto_guard/blocked）、委托链管理（四级约束+死锁防护）、Per-escalation成本门控。子蓝图MOD-INF-022-VC(Vibe Coding安全防御)和MOD-INF-022-QT(量化交易特化升级)已拆分。当前规模110文件/30决策，上游依赖RBAC(MOD-INF-018)/Gate(MOD-GATE_ENGINE)/Audit(MOD-INF-020)/Pipeline(MOD-INF-021)，下游被Budget(MOD-INF-024,预算SSoT)/A2A(MOD-INF-025,消费本协议SSoT)/治理层消费。
 
 **标准锚点**：本蓝图遵循 [blueprint-template.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md) v3.6 | AI 压缩工作流标准 [trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | 代码头部标准 [code-construction-standards.md §7](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 优化规则见 onboarding_detail.md §10.6
 
@@ -299,7 +299,7 @@ ZephyrAlpha 由 1 人+AI 维护，AI Agent 拥有自主操作能力（代码写�
 |------|--------|:-------:|
 | Owner（人类） | AI 操作安全+成本控制+最终控制权 | 致命 |
 | AI Agent | 自主操作范围+委托能力+升级判定 | 高 |
-| 治理层（MOD-023） | 跨模块契约一致性+审计完整性 | 高 |
+| 治理层（MOD-GOVERNANCE） | 跨模块契约一致性+审计完整性 | 高 |
 | 量化交易子系统 | 持仓安全+数据管道+订单状态 | 致命 |
 
 ### §1.6 差距
@@ -343,7 +343,7 @@ ZephyrAlpha 由 1 人+AI 维护，AI Agent 拥有自主操作能力（代码写�
 
 | 声明项 | 无重叠模块 | 验证方式 |
 |--------|-----------|---------|
-| 升级规则判定(autonomous/auto_guard/blocked) | [MOD-INF-018, MOD-INF-007] | `python scripts/governance/check_ssot_uniqueness.py --blueprint MOD-INF-022` |
+| 升级规则判定(autonomous/auto_guard/blocked) | [MOD-INF-018, MOD-GATE_ENGINE] | `python scripts/governance/check_ssot_uniqueness.py --blueprint MOD-INF-022` |
 | 委托链管理(四级约束+MAX_DEPTH=3) | [MOD-INF-025] | 同上 |
 | 死锁检测(Dijkstra+DFS+抢占) | [MOD-INF-025] | 同上 |
 | 三级决策枚举(EscalationLevel) | [MOD-INF-018] | 同上 |
@@ -888,7 +888,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 | 依赖模块 | module_id | 依赖类型 | 依赖内容 | 蓝图路径 |
 |---------|-----------|---------|---------|---------|
 | RBAC | MOD-INF-018 | 必须 | RBAC 违规→升级事件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rbac\blueprint.md` |
-| Gate Engine | MOD-INF-007 | 可选 | Gate DEFER→升级；熔断器状态读取 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| Gate Engine | MOD-GATE_ENGINE | 可选 | Gate DEFER→升级；熔断器状态读取 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
 | Audit Trail | MOD-INF-020 | 必须 | 升级/委托决策写入审计 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | Pipeline | MOD-INF-021 | 必须 | 共识破裂→升级事件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\pipeline\blueprint.md` |
 | A2A Protocol | MOD-INF-025 | references | A2A 冲突事件→升级(G-CT-008);Protocol接口解耦 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\a2a-protocol\blueprint.md` |
@@ -993,14 +993,14 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 | 集成点 | 目标模块 | 集成方式 | 状态 |
 |--------|---------|---------|:---:|
 | RBAC 违规→升级 | MOD-INF-018 | 事件消费 | ✅ |
-| Gate DEFER→升级 | MOD-INF-007 | 事件消费 | ✅ |
+| Gate DEFER→升级 | MOD-GATE_ENGINE | 事件消费 | ✅ |
 | 升级/委托决策→审计 | MOD-INF-020 | 写入审计 | ✅ |
 | Pipeline 共识破裂→升级 | MOD-INF-021 | 事件消费 | ✅ |
 | A2A 委托 | MOD-INF-025 | Protocol接口 | ✅ |
 | Budget Engine | MOD-INF-022-Sub | 提供预算判定 | ✅ |
 | 预算超支→升级 | MOD-INF-024 | 事件消费 | ✅ |
 | KB 反馈环 | SKILL-DOM-KNW-001 | 升级解决→KB 写入 | 🔄 |
-| MOD-023 契约 | 治理层 | 升级事件→治理审计 | ✅ |
+| MOD-GOVERNANCE 契约 | 治理层 | 升级事件→治理审计 | ✅ |
 
 ---
 
@@ -1055,7 +1055,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
 | 1 | MOD-INF-018 RBAC 已实现 | hard | ✅ | ✅ |
-| 2 | MOD-INF-007 Gate Engine 已实现 | soft | ✅ | ✅ |
+| 2 | MOD-GATE_ENGINE Gate Engine 已实现 | soft | ✅ | ✅ |
 | 3 | MOD-INF-020 Audit Trail 已实现 | hard | ✅ | ✅ |
 | 4 | MOD-INF-021 Pipeline 已实现 | hard | ✅ | ✅ |
 | 5 | MOD-INF-024 Budget Enforcer 已实现 | hard | ✅ | ✅ |
@@ -1480,7 +1480,7 @@ STEP 3: 拆分后验证
 | v2.2.0 | Phase 4 完成 | Vibe Coding 安全防御+配置注入+记忆投毒 | Phase 3 |
 | v3.0.0 | Phase 5 完成 | 量化交易特化+持仓对账+闪崩熔断 | Phase 4 |
 | v3.1.0 | 规则外部化 | escalation_rules.yaml 创建+热加载 | v3.0.0 |
-| v4.0.0 | 全模块集成 | 与 MOD-INF-007/018/020/024/025 双向对齐 | v3.1.0 |
+| v4.0.0 | 全模块集成 | 与 MOD-GATE_ENGINE/018/020/024/025 双向对齐 | v3.1.0 |
 
 
 ## Consumers

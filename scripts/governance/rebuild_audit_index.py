@@ -15,7 +15,7 @@
 """
 scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引
 ==============================================================================
-对标: MOD-INF-012 数据库 + MOD-INF-020 audit-trail
+对标: MOD-DATABASE 数据库 + MOD-INF-020 audit-trail
 
 用法:
     python scripts/governance/rebuild_audit_index.py              # 重建索引

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.infrastructure.db.query
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__
@@ -14,7 +14,7 @@
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-INF_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""[BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+"""[BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 
 query — 查询方法 Mixin（从 task_repo.py 拆分，SRC-0066）
 
@@ -231,7 +231,7 @@ class QueryMixin:
 
     # ------------------------------------------------------------------
 
-    # JSON1 查询（MOD-INF-012 v2.0）
+    # JSON1 查询（MOD-DATABASE v2.0）
 
     # ------------------------------------------------------------------
 

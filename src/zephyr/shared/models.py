@@ -61,7 +61,7 @@ def _lazy_import_governance(name: str):
 
 
 class DecompositionResult(BaseModel):
-    """蓝图拆解结果——蓝图 MOD-INF-006 §3.2.2"""
+    """蓝图拆解结果——蓝图 MOD-TASK_SYSTEM §3.2.2"""
 
     model_config = BaseModel.model_config
 
@@ -73,7 +73,7 @@ class DecompositionResult(BaseModel):
 
 
 class GateCheckResult(BaseModel):
-    """门禁检查结果——蓝图 MOD-INF-006 §3.2.2"""
+    """门禁检查结果——蓝图 MOD-TASK_SYSTEM §3.2.2"""
 
     model_config = BaseModel.model_config
 

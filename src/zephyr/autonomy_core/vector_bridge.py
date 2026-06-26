@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.vector_bridge
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
@@ -17,9 +17,9 @@
 """
 VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001)
 ========================================================
-Task ID    : MOD-INF-008-TASK-010
+Task ID    : MOD-CONTEXT_ENGINE-TASK-010
 Priority   : P1 (beta)
-Depends    : MOD-INF-008-TASK-002 (Build 阶段)
+Depends    : MOD-CONTEXT_ENGINE-TASK-002 (Build 阶段)
 
 职责
 ----

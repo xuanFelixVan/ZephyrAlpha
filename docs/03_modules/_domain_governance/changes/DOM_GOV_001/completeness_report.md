@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ttl: permanent
 ---
 
@@ -9,7 +9,7 @@ ttl: permanent
 
 | 字段 | 值 |
 |------|-----|
-| **蓝图** | MOD-023 — 治理域集成蓝图 |
+| **蓝图** | MOD-GOVERNANCE — 治理域集成蓝图 |
 | **路径** | D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md |
 | **分解日期** | 2026-05-06 |
 | **二次审计日期** | 2026-05-06 |
@@ -24,14 +24,14 @@ ttl: permanent
 
 | 字段 | 值 | 覆盖 task_id |
 |------|-----|------|
-| module_id | MOD-023 | 所有卡 source_blueprint |
+| module_id | MOD-GOVERNANCE | 所有卡 source_blueprint |
 | title | 治理域集成蓝图 | TASK-GOV-0001 |
 | version | 0.1.0 | TASK-GOV-0020 (§7) |
 | layer | cross_layer | TASK-GOV-0001 tags_ly |
 | construction_progress | not_started | TASK-GOV-0016 (R1), TASK-GOV-0020 |
 | belongs_to | SYS-MASTER-001 | TASK-GOV-0001, TASK-GOV-0021 |
 | submodule_path | src/zephyr/governance/ | TASK-GOV-0001 |
-| depends_on | SYS-MASTER-001 + MOD-MASTER-001 | TASK-GOV-0021 |
+| depends_on | SYS-MASTER-001 + MOD-MASTER_BLUEPRINT | TASK-GOV-0021 |
 
 ### G-CT 契约下游锚点 (lines 26-39)
 
@@ -117,7 +117,7 @@ ttl: permanent
 |------|----------|------|:---:|
 | P0-U1 | G-CT-001~008 e2e + RBAC→Audit + Audit→Rollback | TASK-GOV-0019 | ✓ 🔧 已修复 |
 | P0-U2 | 非法 module_id + 循环依赖检测 | TASK-GOV-0019 | ✓ 🔧 已修复 |
-| P0-I1 | SYS-MASTER-001 层级 + MOD-MASTER-001 契约冲突 | TASK-GOV-0019 | ✓ 🔧 已修复 |
+| P0-I1 | SYS-MASTER-001 层级 + MOD-MASTER_BLUEPRINT 契约冲突 | TASK-GOV-0019 | ✓ 🔧 已修复 |
 | P0-I2 | §4 拓扑排序 + 前置未开工禁止后续 | TASK-GOV-0019 | ✓ 🔧 已修复 |
 
 ---

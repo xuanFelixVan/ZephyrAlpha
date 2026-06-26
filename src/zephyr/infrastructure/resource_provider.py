@@ -57,10 +57,10 @@ class ResourceProvider:
             handler=self._blueprint_handler,
         )
         self.register(
-            uri="blueprint://MOD-INF-006",
+            uri="blueprint://MOD-TASK_SYSTEM",
             name="TaskCard Blueprint",
             mime_type="text/markdown",
-            description="MOD-INF-006 TaskCard schema blueprint",
+            description="MOD-TASK_SYSTEM TaskCard schema blueprint",
         )
         self.register(
             uri="blueprint://MOD-KB-001",

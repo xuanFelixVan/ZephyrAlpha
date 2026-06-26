@@ -64,7 +64,7 @@ model_tier_routing:
       - "ROI 计算"
     max_latency: "24h"            # Batch 任务最大延迟容忍
     cost_saving: "50%"            # Batch API 折扣
-    integration: "任务系统（MOD-MASTER-001）标记 task.urgency=low → 自动走 batch"
+    integration: "任务系统（MOD-MASTER_BLUEPRINT）标记 task.urgency=low → 自动走 batch"
 
   # ── 厂商风险对冲 ──
   vendor_fallback:

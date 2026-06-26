@@ -2,7 +2,7 @@
 doc_type: index
 status: Active
 generated: '2026-05-02'
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Domain
 module_id: GOV-040
 ttl: permanent

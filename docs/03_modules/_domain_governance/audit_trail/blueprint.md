@@ -18,7 +18,7 @@ valid_from: "2026-05-05"
 ttl: permanent
 actual_disk_path: "src/zephyr/governance/audit_trail/"
 construction_progress: partially_implemented
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -33,15 +33,15 @@ tags: [audit-trail, provenance, immutable-log, traceability, compliance, infrast
 priority: P0
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-012", at: "§3", why: "Database——events 表查询视图（不独立存储，C15/ARB-8 裁定）"}
-  - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——门禁决策的审计记录 + 实时阻断联动"}
+  - {target: "MOD-DATABASE", at: "§3", why: "Database——events 表查询视图（不独立存储，C15/ARB-8 裁定）"}
+  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——门禁决策的审计记录 + 实时阻断联动"}
   - {target: "MOD-INF-002", at: "§2", why: "Runtime Integration——RI-13 EventStore + RI-14 DryRunSimulator + RI-15 CostTracker 联动"}
   - {target: "MOD-INF-016", at: "§2.6", why: "Shared Core——EventType 枚举 + Task Schema + 韧性基座"}
   - {target: "GOV-CMP-002", at: "full", why: "审计追踪策略——AUD-001~004 审计操作留痕规则"}
   - {target: "GOV-CMP-003", at: "§2", why: "治理审计执行协议——12 维度审计清单"}
   - {target: "MOD-INF-018", at: "§2", why: "Agent RBAC——权限检查（G-CT-001 操作签名）"}
   - {target: "MOD-INF-019", at: "§2", why: "Agent Spec——Spec 审计（G-CT-007 Spec→审计）"}
-  - {target: "MOD-INF-006", at: "§2", why: "Task System——Agent 生命周期审计"}
+  - {target: "MOD-TASK_SYSTEM", at: "§2", why: "Task System——Agent 生命周期审计"}
   - {target: "MOD-INF-027", at: "§2", why: "Audit Orchestrator——审计记录→线5(线3→线5)跨线软依赖"}
   - {target: "MOD-INF-035", at: "§2", why: "Runtime——运行时注册跨线软依赖"}
   - {target: "MOD-INF-011", at: "§2", why: "Vector Memory——VM 嵌入结果→审计记录（线2→线5）"}
@@ -54,7 +54,7 @@ references:
   - {id: "MOD-INF-023", at: "§2", why: "漂移检测审计信号——仅存 references（DAG 无环）"}
   - {target: "MOD-INF-021", at: "§2", why: "Rollback——Checkpoint 触发（G-CT-002 异常事件触发 Rollback）——仅存 references（DAG 无环，避免与 rollback 双向依赖）"}
   - {id: "MOD-INF-015", at: "§2", why: "遥测发射通道——仅存 references"}
-  - {id: "MOD-INF-010", at: "§2", why: "FLE 消费审计事件／Policy 闭环——仅存 references"}
+  - {id: "MOD-FEEDBACK_LOOP", at: "§2", why: "FLE 消费审计事件／Policy 闭环——仅存 references"}
   - {target: "KBG-0010", at: "§4.4", why: "三层治理边界——Policy/Factory/Runtime 三角闭环接口协议"}
   - {target: "MOD-KB-001", at: "§2", why: "Knowledge Base——审计数据输入 KB 的投毒防护 + KB provenance 评分"}
   - {target: "MOD-INF-022", at: "§2", why: "Escalation Engine——异常检测升级路径 + 委托链终端判断"}
@@ -69,7 +69,7 @@ references:
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 审计追踪链——它解决了 AI 操作的不可变记录与密码学完整性保证问题。核心职责包括：JSONL 唯一真源写入、哈希链防篡改、HMAC 系统级签名、Agent 级 Ed25519 不可否认签名、CoT 推理链审计、13 种异常行为签名检测、蓝图漂移对账、三角闭环反馈驱动规则演进。当前规模 35 个代码文件（scaffold 阶段核心已实现），目标容量 100 AI 并发 × 10,000 脚本 × 峰值 120 条/秒写入。上游依赖 MOD-INF-016 Shared Core 承载层 + MOD-INF-007 Gate Engine，下游被所有 L02-L13 层模块消费审计数据。
+本蓝图描述 ZephyrAlpha 审计追踪链——它解决了 AI 操作的不可变记录与密码学完整性保证问题。核心职责包括：JSONL 唯一真源写入、哈希链防篡改、HMAC 系统级签名、Agent 级 Ed25519 不可否认签名、CoT 推理链审计、13 种异常行为签名检测、蓝图漂移对账、三角闭环反馈驱动规则演进。当前规模 35 个代码文件（scaffold 阶段核心已实现），目标容量 100 AI 并发 × 10,000 脚本 × 峰值 120 条/秒写入。上游依赖 MOD-INF-016 Shared Core 承载层 + MOD-GATE_ENGINE Gate Engine，下游被所有 L02-L13 层模块消费审计数据。
 
 ---
 
@@ -209,9 +209,9 @@ references:
 | # | 明确排除 | 原因 |
 |---|---------|------|
 | 1 | AI 审计守卫实现 | → MOD-INF-001 |
-| 2 | 安全网关实现 | → MOD-INF-014 |
+| 2 | 安全网关实现 | → MOD-LLM_SECURITY |
 | 3 | 回滚执行 | → MOD-INF-021 |
-| 4 | 任务门禁 | → MOD-INF-007 |
+| 4 | 任务门禁 | → MOD-GATE_ENGINE |
 | 5 | Shared Core 实现细节 | → MOD-INF-016 |
 | 6 | ML 行为基线模型 | 规则签名（13 种）足够，ML 基线不纳入 v2.0 |
 | 7 | Multi-Tenant 审计隔离 | 当前单租户 |
@@ -279,9 +279,9 @@ references:
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
 | 1 | AI 审计守卫 | MOD-INF-001（capacity-assurance） |
-| 2 | 安全网关（LSG） | MOD-INF-014（llm-security） |
+| 2 | 安全网关（LSG） | MOD-LLM_SECURITY（llm-security） |
 | 3 | 回滚执行 | MOD-INF-021（rollback-system） |
-| 4 | 任务门禁（G0-G7） | MOD-INF-007（gate-engine） |
+| 4 | 任务门禁（G0-G7） | MOD-GATE_ENGINE（gate-engine） |
 | 5 | Shared Core 实现 | MOD-INF-016（shared-core） |
 | 6 | 事件溯源存储 | MOD-INF-002 RI-13 EventStore |
 | 7 | Dry-Run 沙箱 | MOD-INF-002 RI-14 DryRunSimulator |
@@ -296,7 +296,7 @@ references:
 |------|--------|------|:----:|
 | 不可变写入器 | `AuditWriter` / `ShardedAuditWriter` | MOD-INF-016 | ✅ 已实现 |
 | 密码学验证器 | `IntegrityVerifier` | — | ✅ 已实现 |
-| 审计查询 | `AuditQuery` / `ShardedQueryRouter` | MOD-INF-012 | ✅ 已实现 |
+| 审计查询 | `AuditQuery` / `ShardedQueryRouter` | MOD-DATABASE | ✅ 已实现 |
 | 异常检测 | `AnomalyDetector` | — | ✅ 已实现 |
 | 漂移对账 | `DriftDetector` | MOD-INF-023 | ✅ 已实现 |
 | 自监控 | `SelfMonitor` | — | ✅ 已实现 |
@@ -809,13 +809,13 @@ class EvidencePackExporter:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-012 | 硬依赖 | events 表查询视图（不独立存储，C15/ARB-8 裁定） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
-| MOD-INF-007 | 硬依赖 | 门禁决策审计 + 实时阻断联动 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-DATABASE | 硬依赖 | events 表查询视图（不独立存储，C15/ARB-8 裁定） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
+| MOD-GATE_ENGINE | 硬依赖 | 门禁决策审计 + 实时阻断联动 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 | MOD-INF-016 | 硬依赖 | EventType 枚举 + Task Schema + AiAuditLogger | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
 | MOD-INF-018 | 硬依赖 | 权限检查（G-CT-001） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
 | MOD-INF-021 | 硬依赖 | Checkpoint 推送（G-CT-002 异常→Rollback） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
 | MOD-INF-019 | 硬依赖 | Spec 审计（G-CT-007） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-spec\blueprint.md` |
-| MOD-INF-006 | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
+| MOD-TASK_SYSTEM | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
 | MOD-INF-002 | 硬依赖 | RI-13 EventStore + RI-14 DryRun + RI-15 CostTracker | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\runtime-integration\blueprint.md` |
 | MOD-INF-011 | 跨线软依赖 | VM 嵌入结果→审计记录（线2→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector-memory\blueprint.md` |
 | MOD-INF-022 | 跨线软依赖 | Escalation 升级事件→审计记录（线3→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-engine\blueprint.md` |
@@ -920,7 +920,7 @@ class EvidencePackExporter:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| MOD-023 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 已更新 |
+| MOD-GOVERNANCE 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 已更新 |
 | zephyr.agent_rbac | 审计桥接(G-CT-001) | AuditWriter.log_event() | G-CT-001 契约验证 |
 | zephyr.rollback | Checkpoint 触发(G-CT-002) | AuditWriter.log_event() | G-CT-002 契约验证 |
 | zephyr.agent_spec | Spec 审计(G-CT-007) | AuditWriter.log_event() | G-CT-007 契约验证 |
@@ -1109,7 +1109,7 @@ class EvidencePackExporter:
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
 | 1 | MOD-INF-016 Shared Core 已就绪 | hard | ✅ | ✅ |
-| 2 | MOD-INF-012 Database 已就绪 | hard | ✅ | ✅ |
+| 2 | MOD-DATABASE Database 已就绪 | hard | ✅ | ✅ |
 | 3 | CFG-CAP-001 容量参数已设定 | hard | ✅ | ✅ |
 | 4 | MOD-INF-005 Script System 审计钩子接口已定义 | soft | ❌ | ⚠️ |
 

@@ -23,7 +23,7 @@ template_for: blueprint
 tags: [registry, governance, ssot, scaffold]
 priority: P1
 runtime_plane: warm
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 rule_form: structural
 scope: global
 stability: evolving
@@ -38,7 +38,7 @@ depends_on:
   - target: MOD-INF-026
     at: §4
     why: 资产盘点系统消费注册表数据
-  - target: MOD-INF-007
+  - target: MOD-GATE_ENGINE
     at: §3
     why: Gate Engine执行G6_PT路径树刷新门禁
 references:
@@ -305,11 +305,11 @@ END_REQUIRED_SECTIONS
 | 声明项 | 无重叠模块 | 验证方式 |
 |--------|-----------|---------|
 | 功能域注册表管理 | [MOD-INF-005, MOD-INF-017] | `python scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py --warn-only` |
-| SSoT门禁 | [MOD-INF-005, MOD-INF-007] | 同上 |
+| SSoT门禁 | [MOD-INF-005, MOD-GATE_ENGINE] | 同上 |
 | 注册表一致性校验 | [MOD-INF-026] | 同上 |
 | 物理路径树生成 | [MOD-INF-005, MOD-INF-026] | `python scripts/governance/generate_project_path_tree.py --check` |
 | 路径归属声明+冲突检测 | [MOD-INF-005] | `python scripts/governance/generate_path_ownership_map.py --conflicts` |
-| 路径树刷新门禁 | [MOD-INF-007] | `grep "G6_PT" src/zephyr/gates/_registry.yaml` |
+| 路径树刷新门禁 | [MOD-GATE_ENGINE] | `grep "G6_PT" src/zephyr/gates/_registry.yaml` |
 
 ---
 
@@ -653,7 +653,7 @@ class OverlapResult:
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
-| MOD-023 | 治理域 | 功能域注册表是治理域的功能域声明SSoT | MOD-INF-005 | 修改功能域注册表Schema必须同步更新scaffold |
+| MOD-GOVERNANCE | 治理域 | 功能域注册表是治理域的功能域声明SSoT | MOD-INF-005 | 修改功能域注册表Schema必须同步更新scaffold |
 
 ---
 

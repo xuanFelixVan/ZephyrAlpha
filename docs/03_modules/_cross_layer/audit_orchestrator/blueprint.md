@@ -16,7 +16,7 @@ created_by: human_plus_agent
 valid_from: "2026-05-01"
 date: "2026-05-01"
 ttl: permanent
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -34,7 +34,7 @@ priority: P1
 runtime_plane: hot
 tags: [audit, orchestrator, multi-dimensional, iterative, convergence, governance, self-healing, ai-driven, cross-cutting, orphan-judgment, semantic-audit, red-blue-adversarial, git-backup, chaos-engineering, mape-k, trae, roo-code, api-automation, incremental-audit, meta-audit, observability, telemetry, cron-scheduler, circuit-breaker, plugin-architecture, agent-skill, dora-metrics, compliance-mapping, disaster-recovery, capacity-upgrade, v3.5-template]
 depends_on:
-  - target: "MOD-INF-007"
+  - target: "MOD-GATE_ENGINE"
     at: "full"
     why: "Gate Engine"
   - target: "MOD-INF-017"
@@ -64,13 +64,13 @@ depends_on:
   - target: "MOD-INF-031"
     at: "full"
     why: "AutoFix Engine"
-  - target: "MOD-INF-010"
+  - target: "MOD-FEEDBACK_LOOP"
     at: "section 2"
     why: "Feedback Loop"
   - target: "MOD-INF-018"
     at: "section 3"
     why: "Agent RBAC"
-  - target: "MOD-INF-014"
+  - target: "MOD-LLM_SECURITY"
     at: "section 3"
     why: "LLM Security"
   - target: "MOD-INF-015"
@@ -80,7 +80,7 @@ references:
   - id: "MOD-INF-005"
     at: "full"
     why: "Script System"
-  - id: "MOD-INF-006"
+  - id: "MOD-TASK_SYSTEM"
     at: "section 1"
     why: "Task System"
   - id: "MOD-INF-009"
@@ -501,7 +501,7 @@ class GlobalAuditReport(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-007 Gate Engine | 必须 | G0 入口 + 蓝方判定 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | G0 入口 + 蓝方判定 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\gate-engine\blueprint.md` |
 | MOD-INF-020 Audit Trail | 必须 | 审计日志 + Merkle 根哈希 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-026 Asset Inventory | 必须 | Phase 1 发现目标清单 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\asset-inventory\blueprint.md` |
 | MOD-INF-028 SemanticAuditor | 必须 | 语义审计 peer 服务 | v4.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\semantic-auditor\blueprint.md` |
@@ -509,9 +509,9 @@ class GlobalAuditReport(BaseModel):
 | MOD-INF-029 OrphanJudge | 必须 | 孤儿判定三决策树 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\orphan-judge\blueprint.md` |
 | MOD-INF-030 RedBlue Validator | 必须 | 红白对抗验证 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` |
 | MOD-INF-031 AutoFix Engine | 必须 | 修复执行 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
-| MOD-INF-012 Database v3.0 | 必须 | DualDBRouter + WriteBatcher | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\database\blueprint.md` |
+| MOD-DATABASE Database v3.0 | 必须 | DualDBRouter + WriteBatcher | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\database\blueprint.md` |
 | MOD-INF-023 Drift Detector | 可选 | 漂移信号 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\drift-detector\blueprint.md` |
-| MOD-INF-010 Feedback Loop | 可选 | 审计发现回写规则演进 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 审计发现回写规则演进 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\feedback-loop\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -607,7 +607,7 @@ class GlobalAuditReport(BaseModel):
 | G-CT-001 | 治理域 | 读取 RBAC 策略校验审计权限 | MOD-INF-018 Agent RBAC | 修改 RBAC 策略必须同步审计权限 |
 | G-CT-007 | 治理域 | 读取 Agent Spec 校验审计行为规范 | MOD-INF-019 Agent Spec | 修改 Agent Spec 必须同步审计行为 |
 | G-CT-003 | 治理域 | 推送审计遥测数据 | MOD-INF-015 System Telemetry | 遥测格式变更必须同步 |
-| CT-AO-DB-001 | 数据域 | 审计总控→Database 双库路由集成 | MOD-INF-012 Database v3.0 | Database DDL 变更必须同步 |
+| CT-AO-DB-001 | 数据域 | 审计总控→Database 双库路由集成 | MOD-DATABASE Database v3.0 | Database DDL 变更必须同步 |
 
 ---
 
@@ -997,7 +997,7 @@ STEP 3: 拆分后验证
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | MOD-INF-010 Feedback Loop 蓝图 | §4 接口契约、§10 依赖关系 |
+| Tier 1 | MOD-FEEDBACK_LOOP Feedback Loop 蓝图 | §4 接口契约、§10 依赖关系 |
 | Tier 1 | MOD-INF-030 RedBlue Validator 蓝图 | §4 接口契约 |
 | Tier 2 | MCP Governance Server | §4.5 MCP 接口 |
 | Tier 2 | Pipeline Orchestrator | §12 集成点 |
@@ -1308,7 +1308,7 @@ STEP 3: 拆分后验证
 | 审计总控依赖 | 对端模块容量升级 | 接口契约 | 兼容性 |
 |-------------|----------------|---------|:---:|
 | ScriptScheduler (MOD-INF-005) | §〇-B 并发 | CT-AO-SS-001 | ✅ |
-| DualDBRouter (MOD-INF-012) | §23+§24 | CT-AO-DB-001 | ✅ |
+| DualDBRouter (MOD-DATABASE) | §23+§24 | CT-AO-DB-001 | ✅ |
 | BehavioralAuditor (MOD-INF-033) | §3.1 并行消费 | CT-BEH-* | ✅ |
 | SemanticAuditor (MOD-INF-028) | v5.0.0 完整方案 | CT-SEM-001 | ✅ |
 | AssetInventory (MOD-INF-026) | v3.0.0 容量升级 | CT-AO-AI-001 | ✅ |

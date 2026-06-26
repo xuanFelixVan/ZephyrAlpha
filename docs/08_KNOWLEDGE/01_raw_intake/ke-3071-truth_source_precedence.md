@@ -16,7 +16,7 @@ ttl: permanent
 
 | 优先级 | 文档源 | 裁决范围 | 说明 |
 |:---:|------|------|------|
-| **Tier 0** | 本蓝图（MOD-MASTER-001） | 跨系统集成契约 | 所有 CT-* 契约的最终权威——inter-system 的"how to connect"以我为准 |
+| **Tier 0** | 本蓝图（MOD-MASTER_BLUEPRINT） | 跨系统集成契约 | 所有 CT-* 契约的最终权威——inter-system 的"how to connect"以我为准 |
 | **Tier 1** | `architecture_model/layers/{module}.yaml` | 单模块结构定义 | 模块边界、组件清单、依赖声明的原子真源——intra-module 的"what exists"以此为准 |
 | **Tier 2** | `docs/03_modules/{layer}/blueprint.md` | 模块级实现指引 | 模块的"how to implement"由蓝图指引——但不得覆盖 Tier 0/1 的结构定义 |
 | **Tier 3** | `docs/01_policies_and_standards/` | 通用规范与策略 | 编码规范、命名约定、流程定义——仅在没有 Tier 0-2 覆盖时适用 |

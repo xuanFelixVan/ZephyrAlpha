@@ -13,6 +13,6 @@ ttl: permanent
 |------|------|:--:|------|
 | 🔥 Hot Memory | AGENTS.md + 本蓝图 §0 | ~800 | 每个session |
 | 📋 Domain Triggers | 对应模块蓝图 §1-§5 | ~2000 | path_pattern匹配 |
-| 📚 Cold Memory | 模块蓝图全文 + MOD-MASTER-001 | ~8000 | 主动查询 |
+| 📚 Cold Memory | 模块蓝图全文 + MOD-MASTER_BLUEPRINT | ~8000 | 主动查询 |
 
 ---

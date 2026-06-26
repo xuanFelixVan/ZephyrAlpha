@@ -249,7 +249,7 @@ r[4] or 150   # 同样的回退
 
 | 域 | 行号 | subdomain | ssot_module | ssot_path | 关键 covers |
 |---|---:|---|---|---|---|
-| D-SECURITY-LLM | L209-231 | llm_defense | MOD-INF-014 | `src/zephyr/security/llm_defense/` | L0~L8 九层防御 |
+| D-SECURITY-LLM | L209-231 | llm_defense | MOD-LLM_SECURITY | `src/zephyr/security/llm_defense/` | L0~L8 九层防御 |
 | D-GOV-REPAIR | L376-397 | rollback | MOD-INF-021 | `src/zephyr/governance/` | 双轨Checkpoint/四级回滚/Kill Switch |
 | D-INTEGRATION-GATEWAY | L754-776 | mcp_servers | MOD-INF-013 | `src/zephyr/integration/mcp/` | 11个MCP服务端+1Gateway |
 
@@ -269,7 +269,7 @@ r[4] or 150   # 同样的回退
 
 | 空域 | 对标域 | 关系 | 证据 |
 |---|---|---|---|
-| **D-SECURITY-LLM** | **D-SECURITY** | 同级拆分（sibling split）。D-SECURITY 含 access_control(MOD-INF-018) + adversarial_validation(MOD-INF-030)；D-SECURITY-LLM 专管 llm_defense(MOD-INF-014)。llm_defense 代码物理存在于 `src/zephyr/security/llm_defense/`，但当前归属 D-SECURITY（276 模块/132 prod），**尚未迁移**到 D-SECURITY-LLM | registry L185-256 (D-SECURITY) vs L209-231 (D-SECURITY-LLM)；裁定#176 列 D-SECURITY 849 超容 |
+| **D-SECURITY-LLM** | **D-SECURITY** | 同级拆分（sibling split）。D-SECURITY 含 access_control(MOD-INF-018) + adversarial_validation(MOD-INF-030)；D-SECURITY-LLM 专管 llm_defense(MOD-LLM_SECURITY)。llm_defense 代码物理存在于 `src/zephyr/security/llm_defense/`，但当前归属 D-SECURITY（276 模块/132 prod），**尚未迁移**到 D-SECURITY-LLM | registry L185-256 (D-SECURITY) vs L209-231 (D-SECURITY-LLM)；裁定#176 列 D-SECURITY 849 超容 |
 | **D-GOV-REPAIR** | 原计划对标 **D-GOV-ENFORCEMENT**，但**实际已被 D-INFRA_RECOVERY 取代/冗余** | D-GOV-REPAIR registry 声称覆盖 rollback(MOD-INF-021, `src/zephyr/governance/`)；但裁定#200 新建的 **D-INFRA_RECOVERY**（registry L849-876）**同样声称覆盖 rollback(MOD-INF-021)**，且 ssot_path 为 `src/zephyr/infrastructure/rollback/`，并已实际迁入 107 个 prod 节点。两者 covers 高度重叠，D-INFRA_RECOVERY 是 D-GOV-REPAIR 的超集 | registry L376-397 vs L849-876；裁定#200 拆分结果表 L1923 |
 | **D-INTEGRATION-GATEWAY** | **D-INTEGRATION** | 子域拆分。D-INTEGRATION 含 pipeline_routing(MOD-INF-009, `src/zephyr/integration/`)；D-INTEGRATION-GATEWAY 专管 mcp_servers(MOD-INF-013, `src/zephyr/integration/mcp/`)。MCP 代码当前归属 D-INTEGRATION（314 模块/71 prod），**尚未迁移**到 D-INTEGRATION-GATEWAY | registry L257-277 (D-INTEGRATION) vs L754-776 (D-INTEGRATION-GATEWAY)；裁定#176 列 D-INTEGRATION 705 超容 |
 

@@ -647,7 +647,7 @@ fields:
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如 MOD-MASTER-001）"
+    description: "上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如 MOD-MASTER_BLUEPRINT）"
     source: "PS-STD-005 §6.1"
     pattern: "^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$"
     note: "Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）"
@@ -671,7 +671,7 @@ fields:
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "功能职责域（全局唯一标识）——低 kebab-case 字符串，声明本蓝图覆盖的功能域。如 task_lifecycle_management / capacity_assurance。GOV-MOD-001 §7 #5 功能域重叠检查用此字段判定是否冲突"
+    description: "功能职责域（全局唯一标识）——低 kebab-case 字符串，声明本蓝图覆盖的功能域。如 task_lifecycle_management / capacity_assurance。GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5 功能域重叠检查用此字段判定是否冲突"
     source: "PS-STD-005 §10 (v1.1.0 新增)"
     pattern: "^[a-z][a-z0-9_]+$"
     note: "每个蓝图 responsibility_domain 全局唯一——禁止两个蓝图声明同一功能域。配合 covers[] 字段声明覆盖的子域范围"

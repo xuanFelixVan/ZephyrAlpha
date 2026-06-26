@@ -17,7 +17,7 @@
 """
 SessionContinuity — Session 交接包自动生成与恢复
 =================================================
-依据：MOD-INF-006 v0.3.2 +  AGENTS.md §5.1 零记忆重启
+依据：MOD-TASK_SYSTEM v0.3.2 +  AGENTS.md §5.1 零记忆重启
 
 Vibe Coding 最大痛点：AI 每次新 session 是零记忆的。
 本模块解决"打开 IDE 不知道上回做到哪了"的问题。

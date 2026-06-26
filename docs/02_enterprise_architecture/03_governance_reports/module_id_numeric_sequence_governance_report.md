@@ -133,7 +133,7 @@ fail: blueprint_id 域片段与所属 domain_id 不一致
 
 ### 3.3 单一格式无法同时满足两者
 
-- **纯序号（MOD-001）**：稳定但不可读——人类看到 MOD-001 无法推断归属
+- **纯序号（MOD-ALPHA_SIGNAL_DOMAIN）**：稳定但不可读——人类看到 MOD-ALPHA_SIGNAL_DOMAIN 无法推断归属
 - **纯语义（MOD-ASHARE_SIGNAL）**：可读但不稳定——域改名（D-SIGNAL_ASHARE→D-ASHARE_SIGNAL）则 ID 必须跟变，破坏引用链
 
 **这是 L1038（序号必填）与 L1083（序号可选）矛盾的根源**——两条规则各自只看到一个需求：

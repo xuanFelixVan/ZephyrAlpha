@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-012
+module_id: MOD-DATABASE
 submodule_path: src/zephyr/data/persistence
 title: "Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级"
 doc_type: blueprint
@@ -15,7 +15,7 @@ date: "2026-05-19"
 valid_from: "2026-05-19"
 ttl: permanent
 rule_form: structural
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 scope: global
 stability: evolving
@@ -33,28 +33,28 @@ child_modules:
   - {module_id: "MOD-INF-012A", title: "Database Core — SQLite+DuckDB 双引擎核心运营", status: "Active", construction_progress: "completed", path: "sub-blueprints/MOD-INF-012A-blueprint.md"}
   - {module_id: "MOD-INF-012B", title: "Database v3.0 Capacity Upgrade — PostgreSQL双库路由+批量写入+Worker Pool", status: "Draft", construction_progress: "planned", path: "sub-blueprints/MOD-INF-012B-blueprint.md"}
 depends_on:
-  - {target: "MOD-INF-006", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
-  - {target: "MOD-INF-007", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
+  - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
+  - {target: "MOD-GATE_ENGINE", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
   - {target: "architecture_model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——本蓝图真源"}
 references:
   - {id: "PS-STD-001", at: "§2~§7", why: "frontmatter字段合法值"}
   - {id: "PS-STD-005", at: "§6", why: "蓝图归属与引用链——belongs_to字段定义"}
   - {id: "GOV-AI-001", at: "全篇", why: "AI自治权限注册——数据库操作权限边界"}
-  - {id: "MOD-INF-010", at: "§2.1", why: "FLE 消费 olap_engine——集成关系"}
+  - {id: "MOD-FEEDBACK_LOOP", at: "§2.1", why: "FLE 消费 olap_engine——集成关系"}
   - {id: "MOD-INF-020", at: "全篇", why: "审计事件入库"}
   - {id: "MOD-INF-015", at: "全篇", why: "query_metrics 等遥测读写"}
 ---
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: MOD-INF-012 | version: 4.0.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER-001
+> module_id: MOD-DATABASE | version: 4.0.1 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\data\persistence\` | generation: 3 | construction_progress: partially_implemented
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
 ## 概述
 
 > **架构归属SSoT**：`data/databases/depgraph.db`
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-012`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-DATABASE`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 ### §0.1 代码文件清单
@@ -108,8 +108,8 @@ references:
 ### 数据流概览
 
 ```
-MOD-INF-006 (task-system) ──→ TaskRepository ──→ events 表 ──→ OLAPEngine ──→ MOD-INF-010 (FLE)
-MOD-INF-007 (gate-engine) ──→ TaskRepository ──→ gates 表   ──→ AuditSchema ──→ MOD-INF-020 (audit)
+MOD-TASK_SYSTEM (task-system) ──→ TaskRepository ──→ events 表 ──→ OLAPEngine ──→ MOD-FEEDBACK_LOOP (FLE)
+MOD-GATE_ENGINE (gate-engine) ──→ TaskRepository ──→ gates 表   ──→ AuditSchema ──→ MOD-INF-020 (audit)
 v3.0: 脚本执行器 ──→ WriteBatcher ──→ DualDBRouter ──→ PG/SQLite ──→ script_executions 表
 v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallback
 ```
@@ -118,22 +118,22 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 
 | 契约 ID | 提供方 | 消费方 | 状态 |
 |---------|--------|--------|:---:|
-| CT-DB-001 | 012A TaskRepository | MOD-INF-006/009/013 | ✅ 已实现 |
-| CT-DB-002 | 012A ATM | MOD-INF-006/010 | ✅ 已实现 |
-| CT-DB-003 | 012A OLAPEngine | MOD-INF-010/015 | ✅ 已实现 |
+| CT-DB-001 | 012A TaskRepository | MOD-TASK_SYSTEM/009/013 | ✅ 已实现 |
+| CT-DB-002 | 012A ATM | MOD-TASK_SYSTEM/010 | ✅ 已实现 |
+| CT-DB-003 | 012A OLAPEngine | MOD-FEEDBACK_LOOP/015 | ✅ 已实现 |
 | CT-DB-004 | 012A DatabaseManager | MOD-INF-015/001 | ✅ 已实现 |
-| CT-DB-005 | 012B ScriptRegistry | MOD-INF-006/009/010 | ☐ v3.0 设计阶段 |
-| CT-DB-006 | 012B ScriptExecutionLogger | MOD-INF-006/020/010 | ☐ v3.0 设计阶段 |
+| CT-DB-005 | 012B ScriptRegistry | MOD-TASK_SYSTEM/009/010 | ☐ v3.0 设计阶段 |
+| CT-DB-006 | 012B ScriptExecutionLogger | MOD-TASK_SYSTEM/020/010 | ☐ v3.0 设计阶段 |
 | CT-DB-007 | 012B DualDBRouter | ALL modules | ☐ v3.0 设计阶段 |
 
 ## 依赖关系
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 |
 |---------|---------|---------|---------|
-| MOD-INF-006 | 必须 | task_repo.py——TaskCard 数据层真源 | v0.3+ |
-| MOD-INF-007 | 必须 | GateEngine——门禁结果 SQLite 落盘消费方 | — |
+| MOD-TASK_SYSTEM | 必须 | task_repo.py——TaskCard 数据层真源 | v0.3+ |
+| MOD-GATE_ENGINE | 必须 | GateEngine——门禁结果 SQLite 落盘消费方 | — |
 | b_db.yaml | 必须 | DB YAML SSoT——本蓝图真源 | v2.2+ |
-| MOD-INF-010 | 可选 | FLE 消费 olap_engine | — |
+| MOD-FEEDBACK_LOOP | 可选 | FLE 消费 olap_engine | — |
 | MOD-INF-020 | 可选 | 审计事件入库 | — |
 | MOD-INF-015 | 可选 | query_metrics 等遥测读写 | — |
 
@@ -180,7 +180,7 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新 MOD-INF-012 版本至 4.0.0 + 新增 012A/012B 条目 | DW-045 拆分 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 更新 MOD-DATABASE 版本至 4.0.0 + 新增 012A/012B 条目 | DW-045 拆分 |
 | 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | 同步 code 文件 + schema_version | SSoT 漂移修复 |
 | 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B | 新模块 ID 注册 |
 

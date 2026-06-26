@@ -15,7 +15,7 @@
 """
 Gate Engine Bootstrap Self-Check — Quis custodiet ipsos custodes?
 ===================================================================
-独立脚本，验证 MOD-INF-007 Gate Engine 自身的完整性。
+独立脚本，验证 MOD-GATE_ENGINE Gate Engine 自身的完整性。
 
 Safety : M（治理层第一优先级——门禁失效 = 安全体系真空）
 Usage  : python scripts/governance/gate_engine_selfcheck.py [--json] [--verbose]
@@ -38,7 +38,7 @@ from __future__ import annotations
 __manifest__ = """
 args: []
 description: >
-  Gate Engine Bootstrap 自检——验证 MOD-INF-007 Gate Engine 自身的完整性，
+  Gate Engine Bootstrap 自检——验证 MOD-GATE_ENGINE Gate Engine 自身的完整性，
   包括核心文件存在性、YAML/DB 可用性、CheckType 覆盖率及熔断器验证。
 dimensions:
 - D1

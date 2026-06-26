@@ -18,7 +18,7 @@
 Notifier — 多渠道 Owner 通知。
 
 依据：
-    蓝图 MOD-INF-006 §6.3.5 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.3.5 + v0.6.0
     任务卡 TASK-INF-0109 (Part 5/5)
 """
 

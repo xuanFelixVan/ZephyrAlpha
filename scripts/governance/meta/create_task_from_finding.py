@@ -208,7 +208,7 @@ ai_autonomy_level: "{tc.ai_autonomy_level}"
 
 ---
 *创建: {created} | 更新: {updated}*
-*本文件由 create_task_from_finding.py 自动生成（MOD-INF-006 TaskCard 格式）。*
+*本文件由 create_task_from_finding.py 自动生成（MOD-TASK_SYSTEM TaskCard 格式）。*
 """
 
 

@@ -10,7 +10,7 @@ ttl: permanent
 
 LLM Security Gateway 蓝图
 
-> **module_id**: MOD-INF-014 | **version**: 0.9.1 | **status**: draft | **layer**: cross_layer
+> **module_id**: MOD-LLM_SECURITY | **version**: 0.9.1 | **status**: draft | **layer**: cross_layer
 
 > **真源声明**：本蓝图的 canonical SSoT 为 LPC B 轨 `llm_security/` 代码目录。
 > 代码落位：`src/zephyr/llm-security/`（3 个已实现 .py + 待施工模块）。

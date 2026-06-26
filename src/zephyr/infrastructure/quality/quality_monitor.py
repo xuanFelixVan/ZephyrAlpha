@@ -18,7 +18,7 @@
 Quality Monitor — 生成代码质量门禁。
 
 依据：
-    蓝图 MOD-INF-006 §6.9 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.9 + v0.6.0
     任务卡 TASK-INF-0114
 """
 

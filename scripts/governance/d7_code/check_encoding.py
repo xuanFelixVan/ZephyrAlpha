@@ -14,7 +14,7 @@
 # [TESTS]
 """check_encoding.py — 编码合规校验（INJ-007）
 
-对标：GOV-MOD-001 INJ-007（编码合规）
+对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-007（编码合规）
 
 检测内容：
 - --file: 检查指定文件的编码合规性（UTF-8 BOM/无BOM、无 CRLF、无 autoGuessEncoding）
@@ -35,7 +35,7 @@ args:
 - {flag: --dir, type: str, description: "检查指定目录下所有文件的编码合规性"}
 description: >
   编码合规校验（INJ-007）——UTF-8 编码、无 CRLF、无 autoGuessEncoding。
-  对标 GOV-MOD-001 module-injection-rules-policy.md。
+  对标 GOV-MOD-ALPHA_SIGNAL_DOMAIN module-injection-rules-policy.md。
 dimensions:
 - D7
 priority: P1

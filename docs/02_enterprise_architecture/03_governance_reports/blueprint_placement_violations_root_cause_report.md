@@ -74,7 +74,7 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 
 **否，标识符不是小写+下划线。** 用户"应该是小写"的直觉源于**文件名规则**（snake_case 小写），但标识符层（module_id / domain_id / blueprint_id）另有规则：
 
-- module_id 大写+连字符（MOD-INF-006）是合法格式（[trae_028:1036-1039](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml#L1036-L1039)）
+- module_id 大写+连字符（MOD-TASK_SYSTEM）是合法格式（[trae_028:1036-1039](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml#L1036-L1039)）
 - Level 0 总蓝图 ID 是 `SYS-MASTER-NNN`（大写+连字符，[trae_014:393-397](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L393-L397)）
 - "标识符不是文件名"是刻意设计边界（[trae_028:1064](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml#L1064)）
 
@@ -97,8 +97,8 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 | P1-2 | belongs_to 目标不在注册蓝图列表 | [L218-220](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L218-L220) |
 
 **关键常量**：
-- `KNOWN_LEVEL_01_IDS = {"MOD-MASTER-001", "SYS-MASTER-001", "DOM-GOV-001"}`（[L138](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L138)）——P0-2 豁免集，按 **frontmatter module_id** 匹配
-- `VALID_BELONGS_TO = {"SYS-MASTER-001", "MOD-MASTER-001", "DOM-GOV-001"}`（[L77](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L77)）
+- `KNOWN_LEVEL_01_IDS = {"MOD-MASTER_BLUEPRINT", "SYS-MASTER-001", "DOM-GOV-001"}`（[L138](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L138)）——P0-2 豁免集，按 **frontmatter module_id** 匹配
+- `VALID_BELONGS_TO = {"SYS-MASTER-001", "MOD-MASTER_BLUEPRINT", "DOM-GOV-001"}`（[L77](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L77)）
 - P1-1 链追溯遇 `SYS-MASTER-001` 即 `break`（[L203](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L203)）——SYS-MASTER-001 是金字塔顶点终止符
 
 ---
@@ -115,7 +115,7 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 - frontmatter：`module_id: MOD-073`、`belongs_to: "ROOT"`、`blueprint_level: system`（[L2,L10,L26](file:///d:/ZephyrAlpha/docs/03_modules/_sys_master/blueprint.md#L2)）
 - 正文自述：`> module_id: SYS-MASTER-001 | blueprint_level: system`（蓝图正文行 61，frontmatter 与正文不一致）
 - 真源 [trae_014 §5.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L393-L397)：Level 0 总蓝图 ID = `SYS-MASTER-NNN`，example `SYS-MASTER-001`
-- 5 个蓝图 belongs_to 指向 SYS-MASTER-001（MOD-001/MOD-023/MOD-MASTER-001/MOD-071/MOD-INF-035）
+- 5 个蓝图 belongs_to 指向 SYS-MASTER-001（MOD-ALPHA_SIGNAL_DOMAIN/MOD-GOVERNANCE/MOD-MASTER_BLUEPRINT/MOD-ML_EXPERIMENT_DOMAIN/MOD-INF-035）
 
 **连锁影响**：
 - 1× P0-2：MOD-073 不在 KNOWN_LEVEL_01_IDS → cross_layer 错位
@@ -129,18 +129,18 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 
 **现象**：`belongs_to: "ROOT"`（[L26](file:///d:/ZephyrAlpha/docs/03_modules/_sys_master/blueprint.md#L26)）。
 
-**真源**：[trae_014 §6.1 belongs_to_values](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L504-L516) 合法值仅 `MOD-MASTER-001`/`MOD-DOMAIN-SIG-001`/`MOD-DOMAIN-RISK-001`/`SYS-MASTER-001`，**无 ROOT**。校验器 `VALID_BELONGS_TO` 亦无 ROOT。
+**真源**：[trae_014 §6.1 belongs_to_values](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L504-L516) 合法值仅 `MOD-MASTER_BLUEPRINT`/`MOD-DOMAIN-SIG-001`/`MOD-DOMAIN-RISK-001`/`SYS-MASTER-001`，**无 ROOT**。校验器 `VALID_BELONGS_TO` 亦无 ROOT。
 
 **裁定方向**：金字塔顶点应自指 `belongs_to: SYS-MASTER-001`——校验器 P1-1 链追溯遇 SYS-MASTER-001 即 `break`（[L203](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L203)），自指能干净终止。
 
 ### 4.3 病根 #3：ALPHA-SIGNAL-DOMAIN-001 改名未传播（4 条违规）
 
-**现象**：[blueprint_registry.yaml 变更历史](file:///d:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml#L1005-L1015) 记录"移除 ALPHA-SIGNAL-DOMAIN-001 → 新增 MOD-001"，但 [MOD-L02-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md#L20) 和 [MOD-L03-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_signal/signal_generation_core/blueprint.md#L23) 的 belongs_to 仍指向旧 ID。
+**现象**：[blueprint_registry.yaml 变更历史](file:///d:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml#L1005-L1015) 记录"移除 ALPHA-SIGNAL-DOMAIN-001 → 新增 MOD-ALPHA_SIGNAL_DOMAIN"，但 [MOD-L02-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md#L20) 和 [MOD-L03-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_signal/signal_generation_core/blueprint.md#L23) 的 belongs_to 仍指向旧 ID。
 
 **证据**：
 - MOD-L02-001：`belongs_to: "ALPHA-SIGNAL-DOMAIN-001"`（[L20](file:///d:/ZephyrAlpha/docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md#L20)）
 - MOD-L03-001：`belongs_to: "ALPHA-SIGNAL-DOMAIN-001"`（[L23](file:///d:/ZephyrAlpha/docs/03_modules/_domain_signal/signal_generation_core/blueprint.md#L23)）
-- 新名 MOD-001 已在 [_alpha_signal_domain/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md#L2)（`module_id: MOD-001`, `belongs_to: SYS-MASTER-001`）
+- 新名 MOD-ALPHA_SIGNAL_DOMAIN 已在 [_alpha_signal_domain/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md#L2)（`module_id: MOD-ALPHA_SIGNAL_DOMAIN`, `belongs_to: SYS-MASTER-001`）
 
 **影响**：2× P1-1（链断裂）+ 2× P1-2（ALPHA-SIGNAL-DOMAIN-001 不在注册列表）
 
@@ -173,10 +173,10 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 
 | 蓝图 | 路径 | functional_domain |
 |---|---|---|
-| MOD-001 | _alpha_signal_domain/blueprint.md | alpha_signal |
-| MOD-023 | _domain_governance/blueprint.md | governance |
-| MOD-024 | _domain_governance/capacity_upgrade/blueprint.md | governance |
-| MOD-071 | _ml_experiment_domain/blueprint.md | ml_experiment |
+| MOD-ALPHA_SIGNAL_DOMAIN | _alpha_signal_domain/blueprint.md | alpha_signal |
+| MOD-GOVERNANCE | _domain_governance/blueprint.md | governance |
+| MOD-GOVERNANCE | _domain_governance/capacity_upgrade/blueprint.md | governance |
+| MOD-ML_EXPERIMENT_DOMAIN | _ml_experiment_domain/blueprint.md | ml_experiment |
 
 **B 组：5 个域内子模块**（`blueprint_level=''`，位于域子目录，有明确域归属）：
 
@@ -206,7 +206,7 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 
 ### 4.7 附带发现：真源 §3.1 内部矛盾
 
-[trae_014 §3.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L230-L233) 写 `Level 0 id: MOD-MASTER-001`，但 [§5.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L393-L397) 写 `Level 0 prefix: SYS-MASTER, example: SYS-MASTER-001`。现实：SYS-MASTER-001 是系统顶点（_sys_master/），MOD-MASTER-001 是域级集成索引（_master_blueprint/, belongs_to=SYS-MASTER-001）。**§3.1（information 段）陈旧，应改为 SYS-MASTER-001 与 §5.1 对齐。**
+[trae_014 §3.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L230-L233) 写 `Level 0 id: MOD-MASTER_BLUEPRINT`，但 [§5.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L393-L397) 写 `Level 0 prefix: SYS-MASTER, example: SYS-MASTER-001`。现实：SYS-MASTER-001 是系统顶点（_sys_master/），MOD-MASTER_BLUEPRINT 是域级集成索引（_master_blueprint/, belongs_to=SYS-MASTER-001）。**§3.1（information 段）陈旧，应改为 SYS-MASTER-001 与 §5.1 对齐。**
 
 ---
 
@@ -217,9 +217,9 @@ related_validator: 'validate_blueprint_placement.py (P0-1/P0-2/P0-3/P0-4/P1-1/P1
 | 裁定 | 病根 | 决定 | 依据 | 消除违规 |
 |---|---|---|---|---|
 | **R1** SYS-MASTER-001 正名 | #1+#2 | frontmatter `module_id: MOD-073` → `SYS-MASTER-001`；`belongs_to: ROOT` → `SYS-MASTER-001`（自指终止） | trae_014 §5.1（Level 0=SYS-MASTER）+ §6.1（SYS-MASTER-001 合法，ROOT 非法）+ 校验器 L203 自指 break | 8 |
-| **R2** ALPHA-SIGNAL 引用修正 | #3 | MOD-L02-001/L03-001 的 `belongs_to: ALPHA-SIGNAL-DOMAIN-001` → `MOD-001` | registry 变更历史已改名，派生引用须跟随（裁定#206 B-1 派生范式） | 4 |
+| **R2** ALPHA-SIGNAL 引用修正 | #3 | MOD-L02-001/L03-001 的 `belongs_to: ALPHA-SIGNAL-DOMAIN-001` → `MOD-ALPHA_SIGNAL_DOMAIN` | registry 变更历史已改名，派生引用须跟随（裁定#206 B-1 派生范式） | 4 |
 | **R3** P0-2 校验放宽 | #5 | 改造校验器：有 functional_domain 且在域目录树内的 cross_layer 豁免；仅无域归属的横切组件强制 _cross_layer/ | project_memory"域平级→物理平级"+ trae_014 §4.1 域目录约定；**Owner 已确认** | 8 |
-| **R4** MOD-INF-042 补 belongs_to | #6 | 补 `belongs_to`（指向 MOD-MASTER-001 或其域蓝图） | trae_014 §6.1 MUST | 1 |
+| **R4** MOD-INF-042 补 belongs_to | #6 | 补 `belongs_to`（指向 MOD-MASTER_BLUEPRINT 或其域蓝图） | trae_014 §6.1 MUST | 1 |
 | **R5** 废弃 L 值修正 | #4 | MOD-INF-042 L01→infra_ops、MOD-L02-001 L02→factor、MOD-L03-001 L03→signal | #206-B 裁定 + layer_vocabulary.yaml | 0（潜在，需新检查项暴露） |
 | **R6** P0-3 增强 + 真源 §3.1 修正 | #4+#7 | 校验器新增"layer 不得为废弃 L 格式"检查；trae_014 §3.1 Level 0 id → SYS-MASTER-001 | 填补校验漏洞 + 消除真源内部矛盾 | 防再发 |
 | **R7** GOV-FSTR-001 迁移 | #5 | `_restructuring/` → `_cross_layer/restructuring/`（横切治理组件归位，非域归属） | directory_registry 无 _restructuring；GOV-FSTR-001 scope=global 同 _cross_layer/ peers | 1 |
@@ -270,7 +270,7 @@ cross_layer 蓝图合规条件（满足任一即放行）：
 
 | 步骤 | 内容 | 验证 |
 |---|---|---|
-| A1 | 修复 [trae_014 §3.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L230-L233) Level 0 id `MOD-MASTER-001` → `SYS-MASTER-001`（消除真源内部矛盾，R6） | grep §3.1 无 MOD-MASTER-001 作为 Level 0 id |
+| A1 | 修复 [trae_014 §3.1](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml#L230-L233) Level 0 id `MOD-MASTER_BLUEPRINT` → `SYS-MASTER-001`（消除真源内部矛盾，R6） | grep §3.1 无 MOD-MASTER_BLUEPRINT 作为 Level 0 id |
 | A2 | 改造 [validate_blueprint_placement.py P0-2](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py#L139-L147)：增加判据 (c) 域归属豁免（R3） | 单测：9 条 P0-2 转合规 |
 | A3 | 新增 P0-5 检查：`layer` 值不得匹配 `^L\d{2}$` 废弃格式（R6，填补 P0-3 漏洞） | 单测：MOD-INF-042/L02-001/L03-001 报 P0-5 |
 
@@ -287,9 +287,9 @@ cross_layer 蓝图合规条件（满足任一即放行）：
 
 | 步骤 | 内容 | 影响 |
 |---|---|---|
-| C1 | [MOD-L02-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md#L20) `belongs_to: ALPHA-SIGNAL-DOMAIN-001` → `MOD-001`；`layer: L02` → `factor` | 1 文件 |
-| C2 | [MOD-L03-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_signal/signal_generation_core/blueprint.md#L8) `belongs_to: ALPHA-SIGNAL-DOMAIN-001` → `MOD-001`；`layer: L03` → `signal` | 1 文件 |
-| C3 | [MOD-INF-042](file:///d:/ZephyrAlpha/docs/03_modules/_domain_integration/local_model/blueprint.md) 补 `belongs_to: MOD-MASTER-001`（或域蓝图）；`layer: L01` → `infra_ops` | 1 文件 |
+| C1 | [MOD-L02-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_factor/alpha_factor_core/blueprint.md#L20) `belongs_to: ALPHA-SIGNAL-DOMAIN-001` → `MOD-ALPHA_SIGNAL_DOMAIN`；`layer: L02` → `factor` | 1 文件 |
+| C2 | [MOD-L03-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_signal/signal_generation_core/blueprint.md#L8) `belongs_to: ALPHA-SIGNAL-DOMAIN-001` → `MOD-ALPHA_SIGNAL_DOMAIN`；`layer: L03` → `signal` | 1 文件 |
+| C3 | [MOD-INF-042](file:///d:/ZephyrAlpha/docs/03_modules/_domain_integration/local_model/blueprint.md) 补 `belongs_to: MOD-MASTER_BLUEPRINT`（或域蓝图）；`layer: L01` → `infra_ops` | 1 文件 |
 | C4 | GOV-FSTR-001 迁移：`_restructuring/` → `_cross_layer/restructuring/`（blueprint.md + index.md），更新路径引用 | 2 文件 + 引用 |
 | C5 | 循环验收至全 0 违规 | — |
 
@@ -326,10 +326,10 @@ cross_layer 蓝图合规条件（满足任一即放行）：
 ```
 [P0-1] MOD-INF-042 缺 belongs_to -> _domain_integration/local_model/blueprint.md
 [P0-2] GOV-FSTR-001 不在 _cross_layer/ -> _restructuring/blueprint.md
-[P0-2] MOD-001 不在 _cross_layer/ -> _alpha_signal_domain/blueprint.md
-[P0-2] MOD-023 不在 _cross_layer/ -> _domain_governance/blueprint.md
-[P0-2] MOD-024 不在 _cross_layer/ -> _domain_governance/capacity_upgrade/blueprint.md
-[P0-2] MOD-071 不在 _cross_layer/ -> _ml_experiment_domain/blueprint.md
+[P0-2] MOD-ALPHA_SIGNAL_DOMAIN 不在 _cross_layer/ -> _alpha_signal_domain/blueprint.md
+[P0-2] MOD-GOVERNANCE 不在 _cross_layer/ -> _domain_governance/blueprint.md
+[P0-2] MOD-GOVERNANCE 不在 _cross_layer/ -> _domain_governance/capacity_upgrade/blueprint.md
+[P0-2] MOD-ML_EXPERIMENT_DOMAIN 不在 _cross_layer/ -> _ml_experiment_domain/blueprint.md
 [P0-2] MOD-073 不在 _cross_layer/ -> _sys_master/blueprint.md
 [P0-2] MOD-INF-011 不在 _cross_layer/ -> _domain_knowledge/vector_memory/blueprint.md
 [P0-2] MOD-INF-019 不在 _cross_layer/ -> _domain_autonomy_core/agent_spec/blueprint.md
@@ -342,10 +342,10 @@ cross_layer 蓝图合规条件（满足任一即放行）：
 [P1-1] MOD-073 链断裂: MOD-073 -> ROOT
 [P1-1] MOD-L02-001 链断裂: -> ALPHA-SIGNAL-DOMAIN-001
 [P1-1] MOD-L03-001 链断裂: -> ALPHA-SIGNAL-DOMAIN-001
-[P1-2] SYS-MASTER-001 (来自 MOD-001) 不在注册列表
-[P1-2] SYS-MASTER-001 (来自 MOD-023) 不在注册列表
-[P1-2] SYS-MASTER-001 (来自 MOD-MASTER-001) 不在注册列表
-[P1-2] SYS-MASTER-001 (来自 MOD-071) 不在注册列表
+[P1-2] SYS-MASTER-001 (来自 MOD-ALPHA_SIGNAL_DOMAIN) 不在注册列表
+[P1-2] SYS-MASTER-001 (来自 MOD-GOVERNANCE) 不在注册列表
+[P1-2] SYS-MASTER-001 (来自 MOD-MASTER_BLUEPRINT) 不在注册列表
+[P1-2] SYS-MASTER-001 (来自 MOD-ML_EXPERIMENT_DOMAIN) 不在注册列表
 [P1-2] SYS-MASTER-001 (来自 MOD-INF-035) 不在注册列表
 [P1-2] ROOT (来自 MOD-073) 不在注册列表
 [P1-2] ALPHA-SIGNAL-DOMAIN-001 (来自 MOD-L02-001) 不在注册列表

@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-014
+module_id: MOD-LLM_SECURITY
 submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
@@ -16,21 +16,21 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: src/zephyr/security/llm_defense/llm_security/
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "ZephyrAlpha LLM Security Gateway (LSG) 完整蓝图——九层纵深防御 + 自我防护体系 + 运维保障体系：L0 供应链安全（模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御）→ L1 输入防护（直接注入+间接注入+越狱检测+Spotlighting+RAG投毒防御+ToolResultTransform拦截）→ L2 Prompt保护（System Prompt隔离+防泄露+话题控制+长会话Drift检测+Promptware Kill Chain映射）→ L3 输出安全（Schema验证+沙箱执行+PII脱敏+幻觉检测+AI代码信任边界+Embedding Inversion防御）→ L4 Agent安全（权限最小化+HITL+操作审计+MCP Sampling防御+Tool Description Integrity+DeepSeek jailbreak已知漏洞补偿）→ L5 资源保护（速率限制+Token预算+成本熔断+并发限制+LSG性能预算+SLA）→ L6 可观测性（安全日志+异常告警+仪表板+审计报告+LSG自监控+延迟追踪）→ L7 持续验证（自动Red Team+安全回归测试+威胁情报+LSG自我回归测试）→ L8 多Agent安全（Agent间通信认证+跨Agent权限隔离+级联熔断+Rogue检测+Trust Anti-Abuse+Shadow Agent检测+NHI治理）+凭据全生命周期+数据层安全(RLS/默认安全)。fail-closed + 性能预算(SLO/SLA)贯穿全链路。"
 tags: [llm-security, lsg, security-gateway, fail-closed, defense-in-depth, supply-chain, prompt-injection, output-validation, agent-security, observability, red-team, infrastructure]
 priority: P0
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-008", at: "全篇", why: "Context Engine——LSG消费CE的prompt内容做注入检测"}
+  - {target: "MOD-CONTEXT_ENGINE", at: "全篇", why: "Context Engine——LSG消费CE的prompt内容做注入检测"}
   - {target: "_b_track_interfaces/llm-security-gateway-interface.md", at: "全篇", why: "LSG接口合同——输入/输出契约定义"}
-  - {target: "MOD-INF-007", at: "全篇", why: "Gate Engine——LSG的门禁判决由Gate Engine消费执行"}
+  - {target: "MOD-GATE_ENGINE", at: "全篇", why: "Gate Engine——LSG的门禁判决由Gate Engine消费执行"}
   - {target: "MOD-INF-011", at: "全篇", why: "Vector Memory——RAG注入检测需消费向量库检索结果"}
   - {target: "MOD-INF-013", at: "全篇", why: "MCP Servers——MCP服务器安全校验+工具描述审计"}
   - {target: "MOD-INF-018", at: "全篇", why: "Agent RBAC——LSG L4消费RBAC权限检查结果"}
   - {target: "MOD-INF-020", at: "全篇", why: "Audit Trail——LSG安全事件写入审计链"}
-# [Phase 6 循环治理] 已移除 MOD-INF-010 (Feedback Loop) — LSG异常通过EventBus松耦合上送,
-# 不依赖FLE直接调用. 原 depends_on: {target: MOD-INF-010, why: "异常事件上报FLE做模式学习"}
+# [Phase 6 循环治理] 已移除 MOD-FEEDBACK_LOOP (Feedback Loop) — LSG异常通过EventBus松耦合上送,
+# 不依赖FLE直接调用. 原 depends_on: {target: MOD-FEEDBACK_LOOP, why: "异常事件上报FLE做模式学习"}
 last_updated: "2026-05-15"
 codification_level: L1
 codification_at: "2026-05-15"
@@ -266,7 +266,7 @@ class CrossSignalCorrelator:
 
 ### 0.5 与 Gate Engine 的容量责任划分
 
-| 容量维度 | Gate Engine (MOD-INF-007) | LSG (MOD-INF-014) | 协同方式 |
+| 容量维度 | Gate Engine (MOD-GATE_ENGINE) | LSG (MOD-LLM_SECURITY) | 协同方式 |
 |------|------|------|------|
 | 脚本注册表 | ✅ 负责 | ✅ 消费 | manifest 文件系统共享 |
 | 依赖图谱 | ✅ 负责 | ❌ | Gate Engine → LSG: 脚本列表 |
@@ -304,7 +304,7 @@ class CrossSignalCorrelator:
 
 | 属性 | 值 |
 |------|-----|
-| module_id | MOD-INF-014 |
+| module_id | MOD-LLM_SECURITY |
 | 代码落位 | `src/zephyr/llm-security/` |
 | 核心职责 | 所有 LLM 交互的安全门禁——全生命周期全链路防护 |
 | 安全原则 | **fail-closed**：LSG 不可用 → 拒绝所有 LLM 流量，不 bypass |
@@ -348,7 +348,7 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 > **架构归属SSoT**：`data/databases/depgraph.db`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-014`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-LLM_SECURITY`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -1767,8 +1767,8 @@ LSG 健康检查失败
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-008 | 必须 | Context Engine——LSG消费CE的prompt内容做注入检测 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\context-engine\blueprint.md` |
-| MOD-INF-007 | 必须 | Gate Engine——LSG的门禁判决由Gate Engine消费执行 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\gate-engine\blueprint.md` |
+| MOD-CONTEXT_ENGINE | 必须 | Context Engine——LSG消费CE的prompt内容做注入检测 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\context-engine\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——LSG的门禁判决由Gate Engine消费执行 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\gate-engine\blueprint.md` |
 | MOD-INF-011 | 必须 | Vector Memory——RAG注入检测需消费向量库检索结果 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\vector-memory\blueprint.md` |
 | MOD-INF-013 | 必须 | MCP Servers——MCP服务器安全校验+工具描述审计 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\mcp-servers\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC——LSG L4消费RBAC权限检查结果 | — | `D:\ZephyrAlpha\docs\03_modules\_infrastructure\agent-rbac\blueprint.md` |
@@ -1783,7 +1783,7 @@ LSG 健康检查失败
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-014` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-LLM_SECURITY` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -1963,10 +1963,10 @@ tests/
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| Context Engine (MOD-INF-008) | L1输入检测 → CE注入前扫描 | `l1_input.check_direct_input()` | Prompt injection 被拦截 |
+| Context Engine (MOD-CONTEXT_ENGINE) | L1输入检测 → CE注入前扫描 | `l1_input.check_direct_input()` | Prompt injection 被拦截 |
 | Vector Memory (MOD-INF-011) | L1间接注入 → 向量库检索结果扫描 | `l1_input.check_indirect_content(source=RAG_DOC)` | RAG投毒内容被检测 |
-| Gate Engine (MOD-INF-007) | L0-L7判决结果 → Gate Engine门禁消费 | `GateEngine.consume(security_verdict)` | 安全违规触发门禁拒绝 |
-| Feedback Loop (MOD-INF-010) | L6异常事件 → FLE模式学习 | `FLE.ingest(security_anomaly_event)` | 异常模式写入FLE训练集 |
+| Gate Engine (MOD-GATE_ENGINE) | L0-L7判决结果 → Gate Engine门禁消费 | `GateEngine.consume(security_verdict)` | 安全违规触发门禁拒绝 |
+| Feedback Loop (MOD-FEEDBACK_LOOP) | L6异常事件 → FLE模式学习 | `FLE.ingest(security_anomaly_event)` | 异常模式写入FLE训练集 |
 | Agent RBAC (MOD-INF-018) | L4权限检查 → RBAC验证 | `l4_agent.authorize_tool_call()` | Agent越权被拒绝 |
 | Audit Trail (MOD-INF-020) | L6所有安全事件 → 审计链 | `behavior_audit_logger.log_security_event()` | 安全事件写入审计日志 |
 | MCP Servers (MOD-INF-013) | L0/L4 MCP服务器安全校验 | `l0_supply_chain.verify_mcp_server()` + `l4_agent.tool_descriptor_audit()` | MCP服务器身份/工具描述验证 |
@@ -5870,8 +5870,8 @@ Encoding Defense Layers — LSG + LLM 协作
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | MOD-INF-007 Gate Engine 蓝图 | §4 接口契约、§10 依赖关系 |
-| Tier 1 | MOD-INF-008 Context Engine 蓝图 | §4 L1 输入防护接口 |
+| Tier 1 | MOD-GATE_ENGINE Gate Engine 蓝图 | §4 接口契约、§10 依赖关系 |
+| Tier 1 | MOD-CONTEXT_ENGINE Context Engine 蓝图 | §4 L1 输入防护接口 |
 | Tier 1 | MOD-INF-013 MCP Servers 蓝图 | §4 L0 供应链验证接口 |
 | Tier 1 | MOD-INF-018 Agent RBAC 蓝图 | §4 L4 Agent 安全接口 |
 | Tier 2 | `src/zephyr/llm-security/` 代码 | §4 数据模型、§11 产出物路径 |
@@ -5911,7 +5911,7 @@ Encoding Defense Layers — LSG + LLM 协作
 
 ### 导航路径
 
-1. `docs/blueprint_registry.yaml` → MOD-INF-014 → 本文件
+1. `docs/blueprint_registry.yaml` → MOD-LLM_SECURITY → 本文件
 2. `python -m zephyr.agent_spec load SKILL-DOM-GAT-001` → 加载安全 Skill
 3. `src/zephyr/security/llm_defense/llm-security/gateway.py` → 代码入口
 

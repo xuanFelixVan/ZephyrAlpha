@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Pipeline.Manifest
 module_id: MOD-064
 ttl: permanent

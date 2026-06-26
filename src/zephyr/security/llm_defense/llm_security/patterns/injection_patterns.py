@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.patterns.injection_patterns
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]

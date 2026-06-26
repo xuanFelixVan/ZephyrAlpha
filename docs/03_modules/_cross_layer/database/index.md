@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "database — 目录索引"
-module_id: "MOD-INF-012"
-blueprint_id: "MOD-INF-012"
+module_id: "MOD-DATABASE"
+blueprint_id: "MOD-DATABASE"
 version: "4.0.1"
 created: "2026-06-22"
 updated: "2026-06-22"

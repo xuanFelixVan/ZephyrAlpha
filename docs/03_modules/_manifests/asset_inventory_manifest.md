@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Asset Inventory.Manifest
 module_id: MOD-044
 ttl: permanent

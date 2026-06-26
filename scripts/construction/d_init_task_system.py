@@ -15,7 +15,7 @@
 """
 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗粮）
 ===========================================================
-对应蓝图：MOD-INF-006 (infrastructure_runtime_integration/task-system)
+对应蓝图：MOD-TASK_SYSTEM (infrastructure_runtime_integration/task-system)
 施工进度：phase_1_complete → 建立剩余任务的 TaskCard
 """
 
@@ -100,7 +100,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#28 / §13.3",
         "description": (
             "TaskRepository 缺少 list_by_phase(phase: int) 方法。"
@@ -130,7 +130,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#1 / §3.2.3",
         "description": (
             "TaskCard.parent_task_id 已定义，但父任务状态不会自动从子任务推导。"
@@ -163,7 +163,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#28 / §13.3",
         "description": (
             "单一 CLI 入口查看全部任务进度。"
@@ -199,7 +199,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#28 / L08融合",
         "description": (
             "L08 dashboard 的 task_progress.py 是桩实现。"
@@ -237,7 +237,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#4 / §13.3",
         "description": (
             "盲点#4：状态变更后需 EventHook。"
@@ -268,7 +268,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "M",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#9 / §13.3",
         "description": (
             "盲点#9：ActiveTaskQueue — 后台线程扫描 READY 任务，"
@@ -300,7 +300,7 @@ specs = [
         "phase": 2,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "对全蓝图的自动拆卡流水线",
         "description": (
             "decompose_blueprint() 依赖特定格式（- [XXX-N] Module —），"
@@ -333,7 +333,7 @@ specs = [
         "phase": 3,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#22 / §13.3",
         "description": (
             "盲点#22：FailurePatternMatcher 识别常见失败模式"
@@ -367,7 +367,7 @@ specs = [
         "phase": 3,
         "execution_model": "deepseek",
         "safety_level": "L",
-        "source_blueprint": "MOD-INF-006",
+        "source_blueprint": "MOD-TASK_SYSTEM",
         "source_section": "盲点#31 / §13.3",
         "description": ("盲点#31：SQLite完整性+Hook链+Schema版本自检。zalpha task self-check [--repair]"),
         "files_in_scope": ["scripts/governance/"],

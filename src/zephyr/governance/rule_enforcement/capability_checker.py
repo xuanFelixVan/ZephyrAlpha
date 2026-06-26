@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.capability_checker
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES] zephyr.governance.audit_trail.bridge; zephyr.governance.rule_enforcement.cbac_matrix
@@ -17,7 +17,7 @@
 """
 能力检查器（Capability Checker）
 
-依据：MOD-MASTER-004 蓝图 §十五 CT-CBAC-001
+依据：MOD-MASTER_BLUEPRINT 蓝图 §十五 CT-CBAC-001
 Runtime capability_check() + checksum校验 + 离线更新流程 T。
 """
 

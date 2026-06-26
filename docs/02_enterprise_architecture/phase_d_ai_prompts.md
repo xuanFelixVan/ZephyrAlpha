@@ -215,7 +215,7 @@ STEP 14 报告: 报告功能恢复状态
 ## 你的元任务卡
 - task_id: DM-201002
 - 功能: F2 门禁引擎
-- 蓝图: MOD-INF-007
+- 蓝图: MOD-GATE_ENGINE
 - 源码包: src/zephyr/governance/rule_enforcement/
 - 包含子系统: PhaseManager + PhaseExecutor + 51门控检查 + GateEngine + G0-G7门禁
 
@@ -224,7 +224,7 @@ STEP 14 报告: 报告功能恢复状态
 1. 读取元任务卡:
    python -c "import sys; sys.path.insert(0,'src'); from zephyr.governance.task_repo import TaskRepository; tr=TaskRepository(); t=tr.get('DM-201002'); print(t.description)"
 
-2. 读蓝图: Grep "MOD-INF-007" docs/03_modules/ → Read蓝图
+2. 读蓝图: Grep "MOD-GATE_ENGINE" docs/03_modules/ → Read蓝图
 
 3. 拆分详细任务卡（序号从201201开始）:
    - DM-201201: PhaseManager恢复
@@ -264,14 +264,14 @@ STEP 1-14 按14步统一流程执行
 ## 你的元任务卡
 - task_id: DM-201003
 - 功能: F3 任务系统
-- 蓝图: MOD-INF-006
+- 蓝图: MOD-TASK_SYSTEM
 - 源码包: src/zephyr/governance/
 - 包含子系统: TaskRepo + TaskCard + BlueprintDecomposer + 10状态机 + 粒度门禁
 
 ## 阶段A：创建详细任务卡
 
 1. 读取元任务卡: tr.get('DM-201003')
-2. 读蓝图: Grep "MOD-INF-006" docs/03_modules/
+2. 读蓝图: Grep "MOD-TASK_SYSTEM" docs/03_modules/
 3. 拆分详细任务卡（序号从201301开始）:
    - DM-201301: TaskRepository恢复（CRUD+查询）
    - DM-201302: Task模型+10状态机恢复
@@ -416,14 +416,14 @@ STEP 1-14 按14步统一流程执行
 ## 你的元任务卡
 - task_id: DM-201007
 - 功能: F7 LLM安全网关
-- 蓝图: MOD-INF-014
+- 蓝图: MOD-LLM_SECURITY
 - 源码包: src/zephyr/security/
 - 包含子系统: L0-L8九层纵深防御 + InputSanitizer + ConstitutionEngine + RedBlueValidator
 
 ## 阶段A：创建详细任务卡
 
 1. 读取元任务卡: tr.get('DM-201007')
-2. 读蓝图: Grep "MOD-INF-014" docs/03_modules/
+2. 读蓝图: Grep "MOD-LLM_SECURITY" docs/03_modules/
 3. 拆分详细任务卡（序号从201701开始）:
    - DM-201701: L0-L3基础防御层恢复
    - DM-201702: L4-L6中间防御层恢复
@@ -565,14 +565,14 @@ STEP 1-14 按14步统一流程执行
 ## 你的元任务卡
 - task_id: DM-201011
 - 功能: F11 上下文引擎
-- 蓝图: MOD-INF-008
+- 蓝图: MOD-CONTEXT_ENGINE
 - 源码包: src/zephyr/autonomy_core/
 - 包含子系统: ContextPipeline四阶段 + 15个Context子模块 + Prompt注册表
 
 ## 阶段A：创建详细任务卡
 
 1. 读取元任务卡: tr.get('DM-201011')
-2. 读蓝图: Grep "MOD-INF-008" docs/03_modules/
+2. 读蓝图: Grep "MOD-CONTEXT_ENGINE" docs/03_modules/
 3. 拆分详细任务卡（序号从202101开始）:
    - DM-202101: ContextPipeline四阶段恢复
    - DM-202102: 15个Context子模块恢复
@@ -1055,7 +1055,7 @@ STEP 14 报告: 报告F20恢复状态 + F14/F19/F1/F11任务卡修复确认
 ## 你的元任务卡
 - task_id: DM-201021（已存在，状态COMPLETED）
 - 功能: F21 守护系统/IDE健康守护
-- 蓝图: MOD-INF-032 resource-optimization-engine
+- 蓝图: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine
 - 源码包: scripts/ide_health_service.py + src/zephyr/trading/ide_health_daemon.py + scripts/lock_files.py
 - 包含子系统: IDE健康守护进程 + 幽灵窗口扫描 + 过期锁清理 + RULE-GUARDIAN守护
 
@@ -1065,7 +1065,7 @@ STEP 14 报告: 报告F20恢复状态 + F14/F19/F1/F11任务卡修复确认
 ## 阶段A：创建详细任务卡
 
 1. 读取元任务卡: tr.get('DM-201021')
-2. 读蓝图: Grep "MOD-INF-032" docs/03_modules/
+2. 读蓝图: Grep "MOD-RESOURCE_OPTIMIZATION_ENGINE" docs/03_modules/
 3. 拆分详细任务卡（序号从202101开始）:
    - DM-202101: ide_health_service.py恢复（守护进程启动/状态查询/后台运行）
    - DM-202102: ide_health_daemon.py恢复（30s扫描循环+幽灵窗口kill）
@@ -1081,7 +1081,7 @@ STEP 14 报告: 报告F20恢复状态 + F14/F19/F1/F11任务卡修复确认
 
 ## 阶段D：执行任务卡
 按14步流程逐张执行:
-STEP 1  读蓝图: Read MOD-INF-032蓝图
+STEP 1  读蓝图: Read MOD-RESOURCE_OPTIMIZATION_ENGINE蓝图
 STEP 2  全量定位: Glob scripts/ide_health_service.py + Grep "ide_health_daemon" + Grep "lock_files" 全项目
 STEP 3  归属裁定: 判断守护进程归属（scripts/ vs src/zephyr/）
 STEP 4  蓝图设计: 设计守护进程启动方式+自动运行+自动结束
@@ -1250,7 +1250,7 @@ P0优先级。Agent入职认证系统（与F10模型考试不同维度）。Agen
 ## 你的元任务卡
 - task_id: DM-201025（已存在，状态COMPLETED）
 - 功能: F25 数据库集成层
-- 蓝图: MOD-INF-012 database
+- 蓝图: MOD-DATABASE database
 - 源码包: src/zephyr/infrastructure/db/（13文件）+ src/zephyr/governance/sqlite_schema.py
 - 包含子系统: SQLite核心运营 + DuckDB市场数据 + PostgreSQL容量升级 + 三库架构(governance.db/depgraph.db/market.duckdb)
 
@@ -1260,7 +1260,7 @@ P1优先级。三库架构是全项目数据持久化基础。
 ## 阶段A：创建详细任务卡
 
 1. 读取元任务卡: tr.get('DM-201025')
-2. 读蓝图: Grep "MOD-INF-012" docs/03_modules/
+2. 读蓝图: Grep "MOD-DATABASE" docs/03_modules/
 3. 拆分详细任务卡（序号从202501开始）:
    - DM-202501: SQLite核心运营层恢复（governance.db）
    - DM-202502: DuckDB市场数据层恢复（market.duckdb）
@@ -1795,7 +1795,7 @@ P2优先级。代码去重防止重复造轮子。
 ## 你的元任务卡
 - task_id: DM-201037
 - 功能: F37 资源优化引擎
-- 蓝图: MOD-INF-032
+- 蓝图: MOD-RESOURCE_OPTIMIZATION_ENGINE
 - 源码包: src/zephyr/infrastructure/lifecycle/resource_optimization_engine.py + src/zephyr/shared/lifecycle/resource_optimization_engine.py + src/zephyr/trading/lifecycle_manager.py + src/zephyr/trading/gpu_monitor.py
 - 蓝图路径: docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
 - 包含子系统: MAPE-K闭环(Monitor→Analyze→Plan→Execute) + 进程池化 + I/O零拷贝缓存(LRU淘汰) + 智能调度 + 内存水位管理 + 缓存复用 + 流式处理 + 自愈闭环 + GPU监控(nvidia-smi) + DefensiveStrategyEngine(应急保护) + OffensiveStrategyEngine(主动提效)

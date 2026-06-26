@@ -24,18 +24,18 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 1
 functional_domain: infrastructure
-summary: "MOD-MASTER-001 基线蓝图 v0.9.2。12 系统拓扑 + 63 条 CT-* 集成契约 + 共享 Schema + 全局状态传播 + 容量预算 + 施工 Phase + Anti-Patterns + 设计决策 + 集成测试 + 风险 + 治理信息 + 端到端场景 + HealthCheck + CDC/DLQ + SLO/SLI + Bulkhead + 配置管理 + 数据生命周期 + 外部依赖 + 时间腐烂 + 生产成熟度 + 边界防护 + 性能基准 + 滚动升级 + Schema演化 + 降级级联 + 自治运行 + Agent质量 + Prompt版本 + Session冲突 + 死代码清理 + 蓝图健康 + 系统移交 + KE质量 + 深度审计盲点。"
+summary: "MOD-MASTER_BLUEPRINT 基线蓝图 v0.9.2。12 系统拓扑 + 63 条 CT-* 集成契约 + 共享 Schema + 全局状态传播 + 容量预算 + 施工 Phase + Anti-Patterns + 设计决策 + 集成测试 + 风险 + 治理信息 + 端到端场景 + HealthCheck + CDC/DLQ + SLO/SLI + Bulkhead + 配置管理 + 数据生命周期 + 外部依赖 + 时间腐烂 + 生产成熟度 + 边界防护 + 性能基准 + 滚动升级 + Schema演化 + 降级级联 + 自治运行 + Agent质量 + Prompt版本 + Session冲突 + 死代码清理 + 蓝图健康 + 系统移交 + KE质量 + 深度审计盲点。"
 tags: [master-blueprint, integration-contracts, closed-loop, ssoT, cross-system, health-check, cbac, cdc, contract-testing, can-i-deploy, dlq, benchmark, deploy, schema-migrate, degrade-cascade, autonomy, agent-quality, prompt-version, session-conflict, lean, blueprint-health, transfer, ke-quality]
 priority: P0
-belongs_to: "MOD-MASTER-001"
-parent_module: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
+parent_module: "MOD-MASTER_BLUEPRINT"
 rule_form: structural
 scope: global
 stability: stable
 verifiability: automated
 depends_on:
   - {target: "MOD-INF-005", at: "全篇", why: "脚本系统蓝图——本总蓝图定义脚本系统与任务系统/知识库的集成契约"}
-  - {target: "MOD-INF-006", at: "全篇", why: "任务系统蓝图——本总蓝图定义任务系统与脚本系统/CE/FLE的集成契约"}
+  - {target: "MOD-TASK_SYSTEM", at: "全篇", why: "任务系统蓝图——本总蓝图定义任务系统与脚本系统/CE/FLE的集成契约"}
   - {target: "MOD-KB-001", at: "全篇", why: "知识库蓝图——本总蓝图定义知识库与CE/VMS/脚本系统的集成契约"}
   - {target: "architecture_model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——契约CT-GATE-*的真源"}
   - {target: "architecture_model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——契约CT-CE-*的真源"}
@@ -67,7 +67,7 @@ codification_at: "2026-05-15"
 
 ## 概述
 
-本蓝图是 MOD-MASTER-001 的基线设计文件——ZephyrAlpha 12 个基础设施系统的最完整集成蓝图。核心职责：12 系统拓扑全景、63 条 CT-* 跨系统集成契约（CT-GATE-*/CT-CE-*/CT-PIPE-*/CT-FLE-*/CT-VMS-*/CT-DB-*/CT-MCP-*/CT-LSG-*/CT-TELE-*）、共享 Schema 定义、全局状态传播协议、容量预算、施工 Phase、Anti-Patterns 与设计决策。覆盖端到端场景/HealthCheck/CDC+DLQ/SLO+SLI/Bulkhead/配置管理/数据生命周期/外部依赖/时间腐烂/生产成熟度/边界防护/性能基准/滚动升级/Schema演化/降级级联/自治运行/Agent质量/Prompt版本/Session冲突/死代码/蓝图健康/系统移交/KE质量/深度审计盲点等 24 个跨切面。上游被 SYS-MASTER-001 治理，下游被 Capactiy/Agent-Spec/Circuit Breaker 等蓝图消费。
+本蓝图是 MOD-MASTER_BLUEPRINT 的基线设计文件——ZephyrAlpha 12 个基础设施系统的最完整集成蓝图。核心职责：12 系统拓扑全景、63 条 CT-* 跨系统集成契约（CT-GATE-*/CT-CE-*/CT-PIPE-*/CT-FLE-*/CT-VMS-*/CT-DB-*/CT-MCP-*/CT-LSG-*/CT-TELE-*）、共享 Schema 定义、全局状态传播协议、容量预算、施工 Phase、Anti-Patterns 与设计决策。覆盖端到端场景/HealthCheck/CDC+DLQ/SLO+SLI/Bulkhead/配置管理/数据生命周期/外部依赖/时间腐烂/生产成熟度/边界防护/性能基准/滚动升级/Schema演化/降级级联/自治运行/Agent质量/Prompt版本/Session冲突/死代码/蓝图健康/系统移交/KE质量/深度审计盲点等 24 个跨切面。上游被 SYS-MASTER-001 治理，下游被 Capactiy/Agent-Spec/Circuit Breaker 等蓝图消费。
 
 ---
 
@@ -116,7 +116,7 @@ codification_at: "2026-05-15"
 
 | 优先级 | 文档源 | 裁决范围 | 说明 |
 |:---:|------|------|------|
-| **Tier 0** | 本蓝图（MOD-MASTER-001） | 跨系统集成契约 | 所有 CT-* 契约的最终权威——inter-system 的"how to connect"以我为准 |
+| **Tier 0** | 本蓝图（MOD-MASTER_BLUEPRINT） | 跨系统集成契约 | 所有 CT-* 契约的最终权威——inter-system 的"how to connect"以我为准 |
 | **Tier 1** | `architecture_model/layers/{module}.yaml` | 单模块结构定义 | 模块边界、组件清单、依赖声明的原子真源——intra-module 的"what exists"以此为准 |
 | **Tier 2** | `docs/03_modules/{layer}/blueprint.md` | 模块级实现指引 | 模块的"how to implement"由蓝图指引——但不得覆盖 Tier 0/1 的结构定义 |
 | **Tier 3** | `docs/01_policies_and_standards/` | 通用规范与策略 | 编码规范、命名约定、流程定义——仅在没有 Tier 0-2 覆盖时适用 |
@@ -190,17 +190,17 @@ codification_at: "2026-05-15"
 
 | 系统 | 代码落位 | 模块蓝图 | 核心职责（一句话） |
 |------|------|:---:|------|
-| **Agent Orchestrator (Orc)** | `src/zephyr/orchestrator/` | MOD-INF-006 任务系统蓝图 | 任务生命周期管理 + Agent 调度 + 沙箱执行 |
+| **Agent Orchestrator (Orc)** | `src/zephyr/orchestrator/` | MOD-TASK_SYSTEM 任务系统蓝图 | 任务生命周期管理 + Agent 调度 + 沙箱执行 |
 | **Script System** | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | MOD-INF-005 脚本系统蓝图 | 12维度治理审计 + pre-commit门禁 + Finding管理 |
 | **Knowledge Base (KB)** | `src/zephyr/kb/` | MOD-KB-001 知识库蓝图 | 知识全生命周期（G1→G5）+ KE管理 + ChromaDB |
-| **Gate Engine (Gates)** | `src/zephyr/gates/` | MOD-INF-007 gate-engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
-| **Context Engine (CE)** | `src/zephyr/context-engine/` | MOD-INF-008 context-engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
+| **Gate Engine (Gates)** | `src/zephyr/gates/` | MOD-GATE_ENGINE gate-engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
+| **Context Engine (CE)** | `src/zephyr/context-engine/` | MOD-CONTEXT_ENGINE context-engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
 | **Task Pipeline** | `src/zephyr/pipeline/` | MOD-INF-009 pipeline蓝图 | M1-M11双管线路由——决定任务用什么模型执行 |
-| **Feedback Loop Engine (FLE)** | `src/zephyr/feedback-loop/` | MOD-INF-010 feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
+| **Feedback Loop Engine (FLE)** | `src/zephyr/feedback-loop/` | MOD-FEEDBACK_LOOP feedback-loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
 | **Vector Memory Service (VMS)** | `src/zephyr/vector-memory/` | MOD-INF-011 vector-memory蓝图 | ChromaDB 8 Collection 统一向量持久化 |
-| **Database (db)** | `src/zephyr/db/` | MOD-INF-012 database蓝图 | SQLite元数据 + ATM原子事务管理器 |
+| **Database (db)** | `src/zephyr/db/` | MOD-DATABASE database蓝图 | SQLite元数据 + ATM原子事务管理器 |
 | **MCP Servers** | `src/zephyr/integration/mcp/` | MOD-INF-013 mcp_servers蓝图 | stdio协议——向外部IDE/Agent暴露系统能力 |
-| **LLM Security Gateway (LSG)** | `src/zephyr/llm-security/` | MOD-INF-014 llm-security蓝图 | 四层安全防御——输入/输出/上下文/工具调用校验 |
+| **LLM Security Gateway (LSG)** | `src/zephyr/llm-security/` | MOD-LLM_SECURITY llm-security蓝图 | 四层安全防御——输入/输出/上下文/工具调用校验 |
 | **System Telemetry (l12)** | `src/zephyr/system-telemetry/` | MOD-INF-015 telemetry蓝图 | metrics/logs/traces/ai_behavior 全系统可观测性 |
 
 ### 1.2 拓扑关系图
@@ -351,7 +351,7 @@ systems:
   - role: consumer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
 
 data_flow:
   direction: bidirectional
@@ -418,11 +418,11 @@ systems:
   - role: consumer
     name: context-engine
     path: "src/zephyr/context-engine/"
-    blueprint: "MOD-INF-008"
+    blueprint: "MOD-CONTEXT_ENGINE"
   - role: producer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
 
 interaction:
   trigger: "Orc.create_session(task_id)"
@@ -551,11 +551,11 @@ systems:
   - role: producer
     name: feedback-loop
     path: "src/zephyr/feedback-loop/"
-    blueprint: "MOD-INF-010"
+    blueprint: "MOD-FEEDBACK_LOOP"
   - role: consumer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
 
 interaction:
   trigger_1: "FLE.collect_metric → 周期性轮询（30s）"
@@ -627,7 +627,7 @@ systems:
   - role: consumer
     name: context-engine
     path: "src/zephyr/context-engine/"
-    blueprint: "MOD-INF-008"
+    blueprint: "MOD-CONTEXT_ENGINE"
   - role: provider
     name: vector-memory
     path: "src/zephyr/vector-memory/"
@@ -689,7 +689,7 @@ systems:
   - role: consumer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
 
 routing:
   input: "TaskCard { task_type, priority, target_layer, estimated_complexity }"
@@ -742,7 +742,7 @@ systems:
   - role: consumer
     name: gate_engine
     path: "src/zephyr/gates/"
-    blueprint: "MOD-INF-007"
+    blueprint: "MOD-GATE_ENGINE"
 
 mapping:
   script_exit_0: "GATE-n → PASS → 任务状态不变"
@@ -781,7 +781,7 @@ systems:
   - role: producer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: vector_memory_system
     path: "src/zephyr/vector-memory/"
@@ -837,11 +837,11 @@ systems:
   - role: producer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: gate_engine
     path: "src/zephyr/gates/"
-    blueprint: "MOD-INF-007"
+    blueprint: "MOD-GATE_ENGINE"
 
 data_flow:
   direction: bidirectional
@@ -899,11 +899,11 @@ systems:
   - role: producer
     name: context-engine
     path: "src/zephyr/context-engine/"
-    blueprint: "MOD-INF-008"
+    blueprint: "MOD-CONTEXT_ENGINE"
   - role: consumer
     name: llm_security_gate
     path: "src/zephyr/llm-security/"
-    blueprint: "MOD-INF-014"
+    blueprint: "MOD-LLM_SECURITY"
 
 data_flow:
   direction: producer_to_consumer
@@ -1015,11 +1015,11 @@ systems:
   - role: producer
     name: feedback_loop_engine
     path: "src/zephyr/feedback-loop/"
-    blueprint: "MOD-INF-010"
+    blueprint: "MOD-FEEDBACK_LOOP"
   - role: consumer
     name: database
     path: "src/zephyr/database/"
-    blueprint: "MOD-INF-012"
+    blueprint: "MOD-DATABASE"
 
 data_flow:
   direction: producer_to_consumer
@@ -1324,7 +1324,7 @@ fields:
 | 3个Shared Schema已在代码中实现 | ❌ | TaskCard / Finding / KE 三个数据类需要先定义 |
 | depends_on中的16个蓝图层文件已存在 | ✅ | architecture_model/layers/*.yaml全部存在 |
 | Python 3.11+ 环境就绪 | ✅ | 项目已有环境 |
-| module-registry.yaml已注册本蓝图 | ✅ | MOD-MASTER-001已注册 |
+| module-registry.yaml已注册本蓝图 | ✅ | MOD-MASTER_BLUEPRINT已注册 |
 
 ### 8.2 施工顺序（无依赖→有依赖→循环依赖）
 
@@ -1687,7 +1687,7 @@ validate_integration_consistency.py（待创建）
 ```yaml
 contract: CT-HEALTH-001
 title: "跨系统标准化三态健康探针协议"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 
 endpoint_pattern: "/_health/{system_name}"
 
@@ -1767,7 +1767,7 @@ health_check_cluster:
 ```yaml
 contract: CT-CDC-001
 title: "消费者驱动契约测试框架——Pact 简化版"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 
 broker:
   type: "local_sqlite"
@@ -1824,7 +1824,7 @@ checks:
 ```yaml
 contract: CT-DLQ-001
 title: "跨系统死信队列统一契约——故障期间的产出物不丢失"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 
 dlq_backend: "SQLite 表 `dlq_messages`"
 
@@ -1873,7 +1873,7 @@ invariants:
 ```yaml
 contract: CT-STARTUP-001
 title: "12 系统启动顺序与依赖就绪契约"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 
 boot_order:
   layer_0: {systems: [database, mcp_adapter], startup_timeout_s: 10}
@@ -1893,7 +1893,7 @@ startup_health_check:
 ```yaml
 contract: CT-TEARDOWN-001
 title: "TaskCard 取消/失败时的跨系统资源清理契约"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 
 trigger: "TaskCard.status → CANCELLED 或 FAILED"
 
@@ -1920,7 +1920,7 @@ cleanup_failure_action: "记录 audit_log + 不阻塞任务取消状态写入"
 ```yaml
 contract: CT-SLO-001
 title: "每条CT-*的服务等级目标(SLO)与指标(SLI)"
-owner: MOD-MASTER-001
+owner: MOD-MASTER_BLUEPRINT
 
 slo_matrix:
   - {ct_id: CT-ORC-SCRIPT-001, metric: "CRITICAL finding→task creation latency", slo: "p95 < 3600s", alert: "> 7200s"}
@@ -3528,8 +3528,8 @@ AI每次被问"系统当前状态"时必须能在30秒~2分钟内输出摘要。
 |------|------|--------|
 | 12 系统集成契约（CT-*） | **本文档 §二** | — |
 | 共享 Schema | **本文档 §二** | — |
-| CBAC 能力矩阵 | MOD-MASTER-001-AGENT-SPEC §十五 | — |
-| 容量升级设计 | MOD-MASTER-001-CAPACITY §-1/§-2 | — |
+| CBAC 能力矩阵 | MOD-MASTER_BLUEPRINT-AGENT-SPEC §十五 | — |
+| 容量升级设计 | MOD-MASTER_BLUEPRINT-CAPACITY §-1/§-2 | — |
 
 **任何与本蓝图冲突的集成定义，以本蓝图为准。**
 
@@ -3537,8 +3537,8 @@ AI每次被问"系统当前状态"时必须能在30秒~2分钟内输出摘要。
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | MOD-MASTER-001-CAPACITY | 基线设计+契约定义 |
-| Tier 1 | MOD-MASTER-001-AGENT-SPEC | CT-* 契约→CBAC 矩阵 |
+| Tier 1 | MOD-MASTER_BLUEPRINT-CAPACITY | 基线设计+契约定义 |
+| Tier 1 | MOD-MASTER_BLUEPRINT-AGENT-SPEC | CT-* 契约→CBAC 矩阵 |
 | Tier 1 | 各模块蓝图（MOD-INF-*） | CT-* 契约编号 |
 | Tier 2 | INF-020 Audit Trail | 审计事件 |
 | Tier 2 | INF-021 Rollback | 回滚点 |
@@ -3565,8 +3565,8 @@ AI每次被问"系统当前状态"时必须能在30秒~2分钟内输出摘要。
 | # | 本蓝图不涉及 | 由谁负责 |
 |---|-------------|---------|
 | 1 | 各模块的具体实现代码 | 各模块蓝图 (MOD-INF-*) 负责 |
-| 2 | 容量升级设计 | MOD-MASTER-001-CAPACITY 负责 |
-| 3 | CBAC 能力矩阵实现 | MOD-MASTER-001-AGENT-SPEC 负责 |
+| 2 | 容量升级设计 | MOD-MASTER_BLUEPRINT-CAPACITY 负责 |
+| 3 | CBAC 能力矩阵实现 | MOD-MASTER_BLUEPRINT-AGENT-SPEC 负责 |
 | 4 | 施工落地步骤 | 各模块蓝图 §16 负责 |
 
 ### 触发条件
@@ -3592,7 +3592,7 @@ AI每次被问"系统当前状态"时必须能在30秒~2分钟内输出摘要。
 
 | 修改本文件 | 必须同步更新 |
 |-----------|------------|
-| CT-* 契约变更 | MOD-MASTER-001-AGENT-SPEC (CBAC 矩阵) + 所有消费者模块蓝图 |
+| CT-* 契约变更 | MOD-MASTER_BLUEPRINT-AGENT-SPEC (CBAC 矩阵) + 所有消费者模块蓝图 |
 | 共享 Schema 变更 | PS-STD-001 metadata_registry.yaml |
 | 架构原则变更 | SYS-MASTER-001 §四 + 所有模块蓝图 |
 | construction_progress 变更 | blueprint_registry.yaml |
@@ -3625,7 +3625,7 @@ AI每次被问"系统当前状态"时必须能在30秒~2分钟内输出摘要。
 
 ## 蓝图拆分判定标准
 
-> 铁律 #15 的操作定义。本蓝图是 MOD-MASTER-001 拆分后的子蓝图（baseline），独立管理 12 系统集成契约——拆分判定基于独立职责域。
+> 铁律 #15 的操作定义。本蓝图是 MOD-MASTER_BLUEPRINT 拆分后的子蓝图（baseline），独立管理 12 系统集成契约——拆分判定基于独立职责域。
 
 ### 判定流程
 

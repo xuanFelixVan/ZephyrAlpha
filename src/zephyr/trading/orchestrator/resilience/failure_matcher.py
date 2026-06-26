@@ -17,7 +17,7 @@
 """
 FailurePatternMatcher — 任务失败模式识别与纠正建议
 =====================================================
-Blueprint: MOD-INF-006 盲点#22
+Blueprint: MOD-TASK_SYSTEM 盲点#22
 依赖: EventHook (订阅 FAILED 状态)
 
 通过 EventHook 订阅 task FAILED，分析失败原因并生成纠正建议。

@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Mcp.Manifest
 module_id: MOD-062
 ttl: permanent

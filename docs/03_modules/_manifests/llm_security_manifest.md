@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Llm Security.Manifest
 module_id: MOD-061
 ttl: permanent

@@ -12,10 +12,10 @@ CT-DB-002：ATM 事务契约
 
 ```yaml
 contract_id: CT-DB-002
-provider: MOD-INF-012 (AtomicTransactionManager)
+provider: MOD-DATABASE (AtomicTransactionManager)
 consumers:
-  - MOD-INF-006 (task-system)
-  - MOD-INF-010 (feedback-loop)
+  - MOD-TASK_SYSTEM (task-system)
+  - MOD-FEEDBACK_LOOP (feedback-loop)
 
 operations:
   transaction:

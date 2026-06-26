@@ -23,7 +23,7 @@ summary: "盘后分析层C轨占位。TCAEngineBase + AttributionEngineBase OCP�
 tags: [post-trade-analytics, l07, c-track, blocked-by-infrastructure, do-not-implement]
 priority: P1
 runtime_plane: warm
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 rule_form: structural
 scope: module
 stability: evolving
@@ -49,8 +49,8 @@ codification_at: "2026-05-15"
 # ⛔ Post Trade Analytics Core 蓝图 — 盘后分析层·C轨占位
 
 > **⛔ 业务层未开放，禁止施工**
-> C轨业务层当前处于 `not_started` 状态。开工触发条件（同 MOD-MASTER-001 §0）：
-> (a) MOD-MASTER-001 的 construction_progress >= implementation_phase；
+> C轨业务层当前处于 `not_started` 状态。开工触发条件（同 MOD-MASTER_BLUEPRINT §0）：
+> (a) MOD-MASTER_BLUEPRINT 的 construction_progress >= implementation_phase；
 > (b) Gate Engine 覆盖了本层相关的业务检查类型；
 > (c) 至少一个 CT-* 契约从规划到部分实现，打通了本层的集成通路。
 > 在此条件满足前，本蓝图仅供 AI 阅读以了解架构意图，**严禁生成业务代码或执行施工步骤**。
@@ -470,7 +470,7 @@ class PerformanceAttributionReport:
 | 1 | 已读取本蓝图全部内容（概述 + §1-§10 架构 + §0 对齐 + §16 施工指引） | 逐节确认 | ☐ |
 | 2 | 已读取必备链接中所有真源文件 | 逐个确认 | ☐ |
 | 3 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
-| 4 | C轨 blocked 状态已解除 | MOD-MASTER-001 construction_progress >= implementation_phase | ☐ |
+| 4 | C轨 blocked 状态已解除 | MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase | ☐ |
 
 ### 16.1 施工策略
 

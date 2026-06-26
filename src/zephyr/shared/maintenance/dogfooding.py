@@ -18,7 +18,7 @@
 Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。
 
 依据：
-    蓝图 MOD-INF-006 §6.5.2 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.5.2 + v0.6.0
     任务卡 TASK-INF-0110 (Part 2/4)
 """
 
@@ -48,10 +48,10 @@ class DogfoodReport:
 
 
 DOGFOOD_TASKS: list[DogfoodTask] = [
-    DogfoodTask("DOGFOOD-001", "TaskCard schema self-validation", "MOD-INF-006", "P0"),
-    DogfoodTask("DOGFOOD-002", "Blueprint decomposer self-test", "MOD-INF-006", "P1"),
-    DogfoodTask("DOGFOOD-003", "Task manager server self-test", "MOD-INF-006-MCP", "P1"),
-    DogfoodTask("DOGFOOD-004", "Lifecycle manager self-transition", "MOD-INF-006", "P2"),
+    DogfoodTask("DOGFOOD-001", "TaskCard schema self-validation", "MOD-TASK_SYSTEM", "P0"),
+    DogfoodTask("DOGFOOD-002", "Blueprint decomposer self-test", "MOD-TASK_SYSTEM", "P1"),
+    DogfoodTask("DOGFOOD-003", "Task manager server self-test", "MOD-TASK_SYSTEM-MCP", "P1"),
+    DogfoodTask("DOGFOOD-004", "Lifecycle manager self-transition", "MOD-TASK_SYSTEM", "P2"),
 ]
 
 

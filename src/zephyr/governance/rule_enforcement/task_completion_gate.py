@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.task_completion_gate
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES] zephyr.shared.shared_services.lifecycle.task_lifecycle_manager
@@ -107,7 +107,7 @@ class GateReport:
 
 
 class GateLevel(str, Enum):
-    """G0-G7 门禁级别——从蓝图 MOD-INF-006 §3.2.1"""
+    """G0-G7 门禁级别——从蓝图 MOD-TASK_SYSTEM §3.2.1"""
 
     G0 = "G0"
     G7 = "G7"

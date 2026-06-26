@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security_01.input_sanitizer
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer

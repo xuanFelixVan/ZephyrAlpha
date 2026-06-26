@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Core.Manifest
 module_id: MOD-052
 ttl: permanent

@@ -24,7 +24,7 @@ rule_form: structural
 scope: global
 stability: stable
 verifiability: hybrid
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -55,10 +55,10 @@ depends_on:
   - target: MOD-INF-018
     at: "§2.2"
     why: "Agent RBAC——auto_guard 后验失败触发自动回滚"
-  - target: MOD-INF-007
+  - target: MOD-GATE_ENGINE
     at: "§2.3"
     why: "Gate Engine——回滚后跑 G0 门禁验证"
-  - target: MOD-MASTER-001
+  - target: MOD-MASTER_BLUEPRINT
     at: "§4"
     why: "CT-RBK-GATE-001 集成契约"
 references:
@@ -81,7 +81,7 @@ summary: >
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 回滚/撤销系统——它解决了 AI 自主操作下的安全恢复问题。核心职责包括：git-native+SQLite dump 双轨 checkpoint、auto_guard 后验失败自动触发回滚、四级回滚操作（full_revert/partial_revert/discard/hard_reset）、失败信号三分类（hard/soft/transient）、8 层防御架构（从对抗性安全到取证审计）、130 项盲点覆盖。当前规模 62 个代码文件（completed），目标容量 1,500 模块/100 AI 并发。上游依赖 MOD-INF-020（Audit Trail）/MOD-INF-018（Agent RBAC）/MOD-INF-007（Gate Engine），下游被 MOD-MASTER-001（全局状态传播链）消费。
+本蓝图描述 ZephyrAlpha 回滚/撤销系统——它解决了 AI 自主操作下的安全恢复问题。核心职责包括：git-native+SQLite dump 双轨 checkpoint、auto_guard 后验失败自动触发回滚、四级回滚操作（full_revert/partial_revert/discard/hard_reset）、失败信号三分类（hard/soft/transient）、8 层防御架构（从对抗性安全到取证审计）、130 项盲点覆盖。当前规模 62 个代码文件（completed），目标容量 1,500 模块/100 AI 并发。上游依赖 MOD-INF-020（Audit Trail）/MOD-INF-018（Agent RBAC）/MOD-GATE_ENGINE（Gate Engine），下游被 MOD-MASTER_BLUEPRINT（全局状态传播链）消费。
 
 ---
 
@@ -302,7 +302,7 @@ summary: >
 | 2 | 漂移检测 | MOD-INF-020（Audit Trail）|
 | 3 | 升级决策 | MOD-INF-022（Escalation Engine）|
 | 4 | 任务生命周期 | zephyr.task_system |
-| 5 | 门禁评估 | MOD-INF-007（Gate Engine）|
+| 5 | 门禁评估 | MOD-GATE_ENGINE（Gate Engine）|
 
 ### 2.3 与已有代码的关系
 
@@ -594,7 +594,7 @@ auto_rollback_flow:
 | B13 | 不可逆操作保护缺失 | hard_reset 无技术 enforcement | require_token 参数类型绑定 |
 | B14 | Remote 同步冲突 | revert 后本地落后 remote | preflight git pull --rebase |
 | B16 | __pycache__ 缓存不一致 | 回滚后 bytecode 缓存未刷新 | G0 验证前清理 __pycache__ |
-| B17 | 缺集成契约 | 蓝图无 MOD-MASTER-001 契约 | CT-RBK-GATE-001 exit code 契约 |
+| B17 | 缺集成契约 | 蓝图无 MOD-MASTER_BLUEPRINT 契约 | CT-RBK-GATE-001 exit code 契约 |
 | B18 | 施工 Phase 粗糙 | 仅 3 行描述 | 按盲点优先级重构 |
 | B19 | 缺 Anti-Patterns | 无"不该触发回滚"的反面案例 | AP1-AP4 反模式 |
 | B20 | 无 BREAK_GLASS | Owner 无法取消自动回滚 | cancel_pending_rollback(task_id, token) |
@@ -976,10 +976,10 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 |---------|---------|---------|---------|---------|
 | MOD-INF-020 | 必须 | Audit Trail——回滚操作写入审计日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC——auto_guard 后验失败触发自动回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-007 | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| MOD-MASTER-001 | 必须 | CT-RBK-GATE-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine——回滚后跑 G0 门禁验证 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | CT-RBK-GATE-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 | MOD-INF-016 | 可选 | Shared Core 承载 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
-| MOD-INF-012 | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
+| MOD-DATABASE | 必须 | Shared Core 数据脊——rollback_metrics.db/JSONL 快照路径解析 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -1019,7 +1019,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 | G-CT-001 | RBAC→Audit | MOD-INF-018 | MOD-INF-020 | 间接（018→020→021）|
 | G-CT-002 | Audit→Rollback | MOD-INF-020 | **MOD-INF-021** | **直接消费者** |
 | G-CT-003 | Rollback→Escalation | **MOD-INF-021** | MOD-INF-022 | **直接生产者** |
-| G-CT-004 | Gate→RBAC | MOD-INF-007 | MOD-INF-018 | 间接 |
+| G-CT-004 | Gate→RBAC | MOD-GATE_ENGINE | MOD-INF-018 | 间接 |
 | G-CT-005 | Drift→Rollback | MOD-INF-023 | **MOD-INF-021** | **直接消费者** |
 | G-CT-006 | Escalation→A2A | MOD-INF-022 | MOD-INF-025 | 间接 |
 | G-CT-007 | A2A→Spec | MOD-INF-025 | MOD-INF-019 | 间接 |
@@ -1092,8 +1092,8 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 |------------|---------|--------|---------|
 | MOD-INF-020 Audit Trail | 事件写入 | AiAuditLogger | 审计日志包含回滚记录 |
 | MOD-INF-018 Agent RBAC | 信号监听 | auto_guard 后验结果 | 后验失败→自动触发回滚 |
-| MOD-INF-007 Gate Engine | 回调验证 | G0 门禁验证 | 回滚后 G0 通过 |
-| MOD-MASTER-001 | 集成契约 | CT-RBK-GATE-001 | exit code 契约对齐 |
+| MOD-GATE_ENGINE Gate Engine | 回调验证 | G0 门禁验证 | 回滚后 G0 通过 |
+| MOD-MASTER_BLUEPRINT | 集成契约 | CT-RBK-GATE-001 | exit code 契约对齐 |
 | MOD-INF-022 Escalation | 事件产出 | 回滚结果进入升级 | 回滚失败→升级触发 |
 
 ### 12.1 域契约锚点
@@ -1176,7 +1176,7 @@ CT-RBK-GATE-001 Exit Codes（46+7 容量相关）：
 |---|--------|---------|:---:|:---:|
 | 1 | MOD-INF-020 Audit Trail 已就绪 | hard | ✅ | ✅ |
 | 2 | MOD-INF-018 Agent RBAC 已就绪 | hard | ✅ | ✅ |
-| 3 | MOD-INF-007 Gate Engine 已就绪 | hard | ✅ | ✅ |
+| 3 | MOD-GATE_ENGINE Gate Engine 已就绪 | hard | ✅ | ✅ |
 | 4 | git 仓库可用 | hard | ✅ | ✅ |
 
 ### 16.3 实施步骤

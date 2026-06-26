@@ -15,20 +15,20 @@ valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: completed
 actual_disk_path: "src/zephyr/infrastructure/system_telemetry/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "ZephyrAlpha System Telemetry——全系统可观测性平台。9个子系统通过统一接入点 Telemetry 门面类暴露；覆盖三层信号(4 Golden Signals + USE + Annotations) + 多环境隔离；对接已有 shared 基础设施。三层闭环：AI开发闭环+运营闭环+治理闭环。"
 tags: [telemetry, system-telemetry, metrics, logs, traces, ai-behavior, observability, infrastructure, profiling, health-check, alerting, schema-registry, finops, opentelemetry-genai, observability-as-code, single-source-of-truth]
 priority: P1
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-012", at: "全篇", why: "Database——olap_engine持久化FLE时序分析结果"}
+  - {target: "MOD-DATABASE", at: "全篇", why: "Database——olap_engine持久化FLE时序分析结果"}
   - {target: "MOD-INF-024", at: "全篇", why: "Budget Enforcer——成本metrics聚合到预算追踪"}
   - {target: "MOD-INF-022", at: "全篇", why: "Escalation Protocol——告警升级到人工处理"}
   - {target: "MOD-INF-018", at: "全篇", why: "Agent RBAC——L6 Observability 以 Telemetry 为数据后端"}
   - {target: "MOD-INF-016", at: "全篇", why: "Shared Infrastructure——shared/logging / lifecycle / flags / observer 等基础组件"}
-  - {target: "MOD-INF-014", at: "全篇", why: "LLM Security——AI行为安全事件通过LSG gateway联动"}
+  - {target: "MOD-LLM_SECURITY", at: "全篇", why: "LLM Security——AI行为安全事件通过LSG gateway联动"}
 references:
-  - {id: "MOD-INF-010", at: "全篇", why: "FLE 消费 metrics/logs——仅存 references"}
+  - {id: "MOD-FEEDBACK_LOOP", at: "全篇", why: "FLE 消费 metrics/logs——仅存 references"}
   - {id: "MOD-INF-020", at: "全篇", why: "审计写入遥测-derived 事件——仅存 references"}
 ssot_claims:
   - claim: "全系统可观测性数据采集唯一真源"
@@ -73,7 +73,7 @@ verifiability: hybrid
 
 > **SSoT 声明**：本文件是 System Telemetry 模块的唯一设计真源。
 >
-> **负向责任**：本文件不涉及 GPU 监控 / 业务算法优化 / 安全策略执行（→ MOD-INF-018 Agent RBAC） / LLM 安全策略定义（→ MOD-INF-014）
+> **负向责任**：本文件不涉及 GPU 监控 / 业务算法优化 / 安全策略执行（→ MOD-INF-018 Agent RBAC） / LLM 安全策略定义（→ MOD-LLM_SECURITY）
 >
 > **触发**：AI 行为审计 / 性能诊断 / SLI 查询 / 告警配置 / 遥测数据上报 / AI Session 冷启动
 >
@@ -141,7 +141,7 @@ verifiability: hybrid
 | 5 | 健康探针与聚合 | ✅ | — | — |
 | 6 | SLI合规测量 | ✅ | — | —（采集/存储/查询；SLI框架定义→MOD-INF-001） |
 | 7 | 漂移诊断 | — | ✅ | MOD-INF-023 |
-| 8 | 异常检测与自愈 | — | ✅ | MOD-INF-010 |
+| 8 | 异常检测与自愈 | — | ✅ | MOD-FEEDBACK_LOOP |
 | 9 | 安全策略执行 | — | ✅ | MOD-INF-018 |
 | 10 | 预算执行与阻断 | — | ✅ | MOD-INF-024 |
 
@@ -160,7 +160,7 @@ verifiability: hybrid
 
 ### §1.1 背景
 
-Telemetry 负责全系统可观测性数据采集（"看见"），异常检测与自愈由 FLE (MOD-INF-010) 负责（"行动"）。
+Telemetry 负责全系统可观测性数据采集（"看见"），异常检测与自愈由 FLE (MOD-FEEDBACK_LOOP) 负责（"行动"）。
 
 ### §1.2 目标范围
 
@@ -172,7 +172,7 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 | 4 | ❌ 排除 | GPU 监控 | 无 GPU 计算场景 |
 | 5 | ❌ 排除 | 业务算法优化 | 业务模块职责 |
 | 6 | ❌ 排除 | 安全策略执行 | → MOD-INF-018 |
-| 7 | ❌ 排除 | LLM 安全策略定义 | → MOD-INF-014 |
+| 7 | ❌ 排除 | LLM 安全策略定义 | → MOD-LLM_SECURITY |
 
 ### §1.4 运行场景约束
 
@@ -226,12 +226,12 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 | 2 | ✅ 包含 | AI 可消费的运行时反馈 | MCP Server 暴露遥测查询接口 | 本模块 |
 | 3 | ✅ 包含 | 指标 Schema 治理 | Schema Registry + 运行时校验 + 漂移检测 | 本模块 |
 | 4 | ✅ 包含 | 告警规则引擎 | Multi-Window Burn Rate + 多通道通知 | 本模块 |
-| 5 | ❌ 排除 | 异常检测与自愈 | → MOD-INF-010 | MOD-INF-010 |
+| 5 | ❌ 排除 | 异常检测与自愈 | → MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP |
 | 6 | ❌ 排除 | 安全策略执行 | RBAC 权限判定 | MOD-INF-018 |
-| 7 | ❌ 排除 | LLM 安全策略定义 | LSG 防御层 | MOD-INF-014 |
+| 7 | ❌ 排除 | LLM 安全策略定义 | LSG 防御层 | MOD-LLM_SECURITY |
 | 8 | ❌ 排除 | 预算执行与阻断 | Budget Enforcer | MOD-INF-024 |
 | 9 | ❌ 排除 | 审计日志持久化 | Audit Trail | MOD-INF-020 |
-| 10 | ❌ 排除 | 根因诊断与自愈行动 | → MOD-INF-010 | MOD-INF-010 |
+| 10 | ❌ 排除 | 根因诊断与自愈行动 | → MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP |
 
 #### 职责唯一性声明
 
@@ -588,12 +588,12 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-016 | 必须 | shared/logging / lifecycle / flags / observer / contracts | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
-| MOD-INF-012 | 必须 | olap_engine 持久化 FLE 时序分析结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\database\blueprint.md` |
+| MOD-DATABASE | 必须 | olap_engine 持久化 FLE 时序分析结果 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\database\blueprint.md` |
 | MOD-INF-024 | 必须 | Budget Enforcer 成本 metrics 聚合 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\budget-enforcer\blueprint.md` |
 | MOD-INF-022 | 必须 | Escalation Protocol 告警升级 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC L6 Observability 消费 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-014 | 必须 | LLM Security AI 行为安全事件联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security-gateway\blueprint.md` |
-| MOD-INF-010 | 可选 | FLE 消费 metrics/logs | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
+| MOD-LLM_SECURITY | 必须 | LLM Security AI 行为安全事件联动 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm-security-gateway\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | FLE 消费 metrics/logs | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
 | MOD-INF-020 | 可选 | 审计写入遥测-derived 事件 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 
 ### §10.2 依赖图对齐声明
@@ -601,7 +601,7 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 > 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
 > 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
 
-MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。下游: MOD-INF-015 → MOD-INF-001(容量保障) → MOD-INF-032(资源优化) → MOD-INF-026(资产盘点)。交叉引用: V6_CAP→V4_FLE(容量告警), V3_BUD→V6_CAP(预算耗尽)。
+MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。下游: MOD-INF-015 → MOD-INF-001(容量保障) → MOD-RESOURCE_OPTIMIZATION_ENGINE(资源优化) → MOD-INF-026(资产盘点)。交叉引用: V6_CAP→V4_FLE(容量告警), V3_BUD→V6_CAP(预算耗尽)。
 
 **跨线交叉点**：
 
@@ -620,7 +620,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | CT-TEL-003 | MOD-INF-015 | MOD-INF-001/032 | 链路 | 采样率可配置 |
 | CT-TEL-004 | MOD-INF-015 | MOD-INF-001/032 | 健康检查 | 心跳间隔30s |
 
-**ARB-14 裁决结果**：MOD-INF-015 补 CT-TEL-001~004 契约注册。遥测消费者: MOD-INF-001 + MOD-INF-032。
+**ARB-14 裁决结果**：MOD-INF-015 补 CT-TEL-001~004 契约注册。遥测消费者: MOD-INF-001 + MOD-RESOURCE_OPTIMIZATION_ENGINE。
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -663,7 +663,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | # | 重叠概念 | 重叠维度 | 对方模块 | 委托关系 | 处置状态 |
 |---|---------|---------|---------|---------|---------|
 | 1 | SLI合规测量 | measure_sla功能 | MOD-INF-001 | 015采集原始指标，001定义SLO目标与合规判定 | ✅ 边界清晰 |
-| 2 | 异常检测 | 告警vs检测 | MOD-INF-010 | 015阈值告警(if metric>threshold→AlertSubsystem.fire) / 010智能检测(EMA+Z-score→FeedbackProtocolAdapter.dispatch_action) | ✅ 接口已明确 |
+| 2 | 异常检测 | 告警vs检测 | MOD-FEEDBACK_LOOP | 015阈值告警(if metric>threshold→AlertSubsystem.fire) / 010智能检测(EMA+Z-score→FeedbackProtocolAdapter.dispatch_action) | ✅ 接口已明确 |
 | 3 | 契约漂移检测 | detect_contract_drift | MOD-INF-023 | detect_contract_drift委托至behavioral_auditor.contract_drift_detector | ✅ 已迁移 |
 | 4 | AI行为监控 | ai_behavior vs behavioral_audit | MOD-INF-033 | 015采集行为数据，033做行为边界判定 | ✅ 边界清晰 |
 | 5 | 告警升级 | CRITICAL级告警触发 | MOD-INF-022 | 015触发告警，022处理升级。接口契约需明确 | ⚠️ 需明确接口 |
@@ -673,7 +673,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | # | 依赖链 | 链深度 | 风险等级 | 熔断机制 | 处置状态 |
 |---|--------|:-----:|:-------:|---------|---------|
 | 1 | MOD-INF-015→MOD-INF-016(Shared Core) | 1 | 高 | shared不可用→Telemetry降级为noop | ✅ 已实现 |
-| 2 | MOD-INF-015→MOD-INF-012(Database) | 1 | 中 | SQLite不可用→JSONL only模式 | ✅ 已实现 |
+| 2 | MOD-INF-015→MOD-DATABASE(Database) | 1 | 中 | SQLite不可用→JSONL only模式 | ✅ 已实现 |
 | 3 | MOD-INF-018→MOD-INF-015(8模块依赖) | 1 | 高 | 遥测崩溃→8模块无指标→容量盲区 | ✅ 本地缓存+降级模式 |
 
 ---
@@ -705,10 +705,10 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
 | Audit Trail (MOD-INF-020) | 遥测事件→审计日志 | telemetry_collector→audit_writer | 遥测事件写入审计 |
-| Feedback Loop (MOD-INF-010) | 遥测驱动的异常检测 | FLE detect→telemetry_anomaly_signal | 异常指标触发 FLE |
+| Feedback Loop (MOD-FEEDBACK_LOOP) | 遥测驱动的异常检测 | FLE detect→telemetry_anomaly_signal | 异常指标触发 FLE |
 | Budget Enforcer (MOD-INF-024) | 成本 metrics | cost_collector→budget_tracker | token 消耗可追踪 |
 | Escalation Protocol (MOD-INF-022) | 告警升级通知 | alert_router→escalation_handler | P0 告警触达人工 |
-| LLM Security (MOD-INF-014) | AI 行为安全事件 | ai_behavior→lsg_security_gateway | 异常 prompt/幻觉触发拦截 |
+| LLM Security (MOD-LLM_SECURITY) | AI 行为安全事件 | ai_behavior→lsg_security_gateway | 异常 prompt/幻觉触发拦截 |
 | AI Agent Session（MCP） | 运行时遥测反馈 | Telemetry MCP Server→AI Agent tools | AI 调用 get_alerts() 返回有效数据 |
 | 所有 L00-L13 模块 | metrics/logs/traces 采集 | 各模块→telemetry_exporter | 全系统可观测 |
 
@@ -1108,7 +1108,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 |:----:|--------|---------|
 | Tier 1 | MOD-INF-018 Agent RBAC 蓝图 | §4 接口契约、§10 依赖关系 |
 | Tier 1 | MOD-INF-024 Budget Enforcer 蓝图 | §4 接口契约、§10 依赖关系 |
-| Tier 2 | MOD-INF-010 FLE 集成点 | §12 集成点 |
+| Tier 2 | MOD-FEEDBACK_LOOP FLE 集成点 | §12 集成点 |
 | Tier 2 | MOD-INF-022 Escalation Protocol 集成点 | §12 集成点 |
 | Tier 3 | src/zephyr/system-telemetry/ 代码文件 | §4 数据模型、§11 产出物路径 |
 
@@ -1680,9 +1680,9 @@ MCP Server 暴露的遥测接口见 §4.5。
 
 FQMN = {module_id}::{metric_name}。Schema Registry 以 FQMN 为唯一 key。两个不同 module_id 可注册相同 metric_name——自动解歧。同一 module_id 内 metric_name MUST 唯一。
 
-module_id 自动注入：Telemetry("MOD-INF-008").metrics.counter("llm_calls_total", 1)→内部自动生成 "MOD-INF-008::llm_calls_total"。
+module_id 自动注入：Telemetry("MOD-CONTEXT_ENGINE").metrics.counter("llm_calls_total", 1)→内部自动生成 "MOD-CONTEXT_ENGINE::llm_calls_total"。
 
-Metric Discovery API 命名空间过滤：list_metrics(module="MOD-INF-008")→仅返回该模块指标 / search_metrics("llm_calls")→按 module_id 分组显示。
+Metric Discovery API 命名空间过滤：list_metrics(module="MOD-CONTEXT_ENGINE")→仅返回该模块指标 / search_metrics("llm_calls")→按 module_id 分组显示。
 
 ---
 

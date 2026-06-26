@@ -17,11 +17,11 @@ systems:
   - role: consumer
     name: context-engine
     path: "src/zephyr/context-engine/"
-    blueprint: "MOD-INF-008"
+    blueprint: "MOD-CONTEXT_ENGINE"
   - role: producer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
 
 interaction:
   trigger: "Orc.create_session(task_id)"

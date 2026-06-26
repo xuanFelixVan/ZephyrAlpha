@@ -23,7 +23,7 @@ template_for: blueprint
 tags: [state-machine, infrastructure, governance, naming-convention]
 priority: P1
 runtime_plane: warm
-belongs_to: MOD-MASTER-001
+belongs_to: MOD-MASTER_BLUEPRINT
 parent_module: ""
 rule_form: structural
 scope: global
@@ -33,7 +33,7 @@ depends_on:
   - target: MOD-INF-016
     at: §10
     why: 共享核心提供基类宿主目录(src/zephyr/shared/)和公共工具
-  - target: MOD-INF-012
+  - target: MOD-DATABASE
     at: §10
     why: 数据库层提供持久化支持
 references:
@@ -108,13 +108,13 @@ MOD-INF-038 提供通用状态机引擎，解决全项目 11+ 个独立状态机
 
 | 角色 | 关注点 |
 |------|--------|
-| MOD-INF-006 任务系统 | 10 状态 / 19 转换 / 7 绑定字段 |
+| MOD-TASK_SYSTEM 任务系统 | 10 状态 / 19 转换 / 7 绑定字段 |
 | MOD-INF-023 漂移检测器 | 10 状态 / 14 转换 |
 | MOD-INF-021 回滚系统 | 4 状态 + 6 状态验证器 |
 | MOD-INF-019 Agent规格 | 4 状态 / 5 转换 Skill 生命周期 |
 | MOD-INF-025 A2A协议 | 9 状态 / 8 转换 |
 | MOD-INF-018 Agent RBAC | 5 状态 / 9 转换 |
-| MOD-INF-032 资源优化引擎 | 4 状态 / 6 转换压力状态机 |
+| MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎 | 4 状态 / 6 转换压力状态机 |
 | MOD-INF-015 系统遥测 | CircuitBreaker 3 状态 / 4 转换 |
 
 ### §1.6 差距
@@ -276,13 +276,13 @@ class Transition(Generic[S]):
 | 依赖 | 方向 | 原因 |
 |------|------|------|
 | MOD-INF-016 共享核心 | 038→016 | 基类宿主目录+公共工具 |
-| MOD-INF-012 数据库 | 016→012 | 持久化(间接) |
+| MOD-DATABASE 数据库 | 016→012 | 持久化(间接) |
 
 依赖链：`038→016→012`，深度=1，风险=✅
 
 ### §10.5 概念重叠声明
 
-| 概念 | 本模块 | MOD-INF-006 | 关系 |
+| 概念 | 本模块 | MOD-TASK_SYSTEM | 关系 |
 |------|--------|-------------|------|
 | 任务状态机 | 通用基类 | 领域消费者 | 006 使用 038 基类 |
 | 状态转换副作用 | 框架接口 | 业务实现 | 006 实现具体副作用 |
@@ -303,13 +303,13 @@ class Transition(Generic[S]):
 
 | 消费者 | 集成方式 | 优先级 |
 |--------|---------|:------:|
-| MOD-INF-006 任务系统 | `StateMachine[TaskStatus]` 替换内建状态机 | P1 |
+| MOD-TASK_SYSTEM 任务系统 | `StateMachine[TaskStatus]` 替换内建状态机 | P1 |
 | MOD-INF-023 漂移检测器 | `StateMachine[DriftState]` | P1 |
 | MOD-INF-021 回滚系统 | `StateMachine[RollbackStepState]` + `StateMachine[OrderState]` | P1 |
 | MOD-INF-019 Agent规格 | `StateMachine[SkillState]` | P2 |
 | MOD-INF-025 A2A协议 | `StateMachine[A2ATaskState]` | P2 |
 | MOD-INF-018 Agent RBAC | `StateMachine[SessionState]` | P2 |
-| MOD-INF-032 资源优化引擎 | `StateMachine[PressureState]` | P2 |
+| MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎 | `StateMachine[PressureState]` | P2 |
 | MOD-INF-015 系统遥测 | `StateMachine[CircuitState]` | P2 |
 
 ## §13 需要更新
@@ -339,7 +339,7 @@ class Transition(Generic[S]):
 STEP 1: 创建 src/zephyr/shared/state_machine.py — StateMachine[S] 泛型基类
 STEP 2: 创建 src/zephyr/shared/_state-machine-registry.yaml — 注册表种子
 STEP 3: 创建 tests/test_state_machine.py — 单元测试
-STEP 4: 迁移 MOD-INF-006 任务系统状态机（最大消费者，验证基类可用性）
+STEP 4: 迁移 MOD-TASK_SYSTEM 任务系统状态机（最大消费者，验证基类可用性）
 STEP 5: 迁移 MOD-INF-023 漂移检测器状态机
 STEP 6: 迁移 MOD-INF-021 回滚系统状态机
 STEP 7: 迁移剩余 8 个状态机实例
@@ -377,7 +377,7 @@ STEP 9: 更新 REG-SM-001 entry_count
 - [x] 蓝图注册表已更新（blueprint_registry.yaml）
 - [x] 中央注册表已更新（registry_of_registries.yaml REG-SM-001）
 - [x] 通用基类代码已创建
-- [x] 至少一个消费者已迁移（MOD-INF-006 task_repo.py）
+- [x] 至少一个消费者已迁移（MOD-TASK_SYSTEM task_repo.py）
 - [x] REG-SM-001 已注册 task-lifecycle（entry_count: 1）
 - [ ] 单元测试已创建（tests/test_state_machine.py）
 - [ ] 剩余 10 个状态机实例迁移
@@ -396,5 +396,5 @@ STEP 9: 更新 REG-SM-001 entry_count
 | 版本 | 里程碑 | 关键交付 |
 |:----:|--------|---------|
 | v0.1.0 | 基类+注册表 | StateMachine[S] + REG-SM-001 |
-| v0.2.0 | 首批迁移 | MOD-INF-006/023/021 迁移完成 |
+| v0.2.0 | 首批迁移 | MOD-TASK_SYSTEM/023/021 迁移完成 |
 | v1.0.0 | 全量迁移 | 11+ 状态机迁移完成 + 命名冲突消除 |

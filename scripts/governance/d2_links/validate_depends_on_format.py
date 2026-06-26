@@ -38,7 +38,7 @@ def validate_depends_on(blueprint_path: str) -> tuple[bool, list[str]]:
     content = p.read_text(encoding="utf-8")
     errors: list[str] = []
     required_refs = [
-        "MOD-INF-006",
+        "MOD-TASK_SYSTEM",
         "MOD-KB-001",
         "PS-STD-001",
         "SCRIPT-QUALITY-001",

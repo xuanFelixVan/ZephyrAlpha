@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY-LLM
+# [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security_01.layers.l0_supply_chain
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.l0_supply_chain

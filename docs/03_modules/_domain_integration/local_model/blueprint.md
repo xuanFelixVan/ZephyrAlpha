@@ -6,7 +6,7 @@ summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推�
 version: 0.1.0
 status: Active
 layer: infra_ops
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 construction_progress: scaffold
 actual_disk_path: src/zephyr/integration/local_model/
 functional_domain: infra

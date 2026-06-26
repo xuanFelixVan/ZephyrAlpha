@@ -2,7 +2,7 @@
 doc_type: index
 status: Legacy
 generated: '2026-05-06'
-blueprint_id: MOD-071
+blueprint_id: MOD-ML_EXPERIMENT_DOMAIN
 title: Ml Experiment Domain（遗留）
 module_id: MOD-072
 updated: '2026-06-22'

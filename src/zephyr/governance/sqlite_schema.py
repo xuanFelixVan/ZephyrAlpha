@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.data.persistence.sqlite_schema
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES]
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-DAT_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 """
-SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + MOD-INF-012 v2.0）
+SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02 + MOD-DATABASE v2.0）
 ======================================================================
 依据：KBG-0030（SQLite 作为 experimental 元数据层）
 
@@ -30,9 +30,9 @@ Safety  : M（DDL 定义，init_db 幂等执行）
  4. knowledge             — KE 索引
  5. gates                 — 门禁运行记录
  6. circuit_breaker_state — CBG 模块间熔断状态（T-V2-005 experimental）
- 7. _schema_version       — Schema 版本追踪（MOD-INF-012 v2.0 新增）
- 8. slow_queries          — 慢查询记录（MOD-INF-012 v2.0 新增）
- 9. tx_idempotency        — ATM 事务幂等去重表（MOD-INF-012 v2.0 新增）
+ 7. _schema_version       — Schema 版本追踪（MOD-DATABASE v2.0 新增）
+ 8. slow_queries          — 慢查询记录（MOD-DATABASE v2.0 新增）
+ 9. tx_idempotency        — ATM 事务幂等去重表（MOD-DATABASE v2.0 新增）
 10. task_events           — Event Sourcing 事件流（DW-0001，UUID PK + 灵活 event_type）
 11. task_snapshots        — Event Sourcing 快照（DW-0005，加速 replay）
 
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS task_files (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — _schema_version 表（MOD-INF-012 v2.0：Schema 版本追踪）
+# DDL — _schema_version 表（MOD-DATABASE v2.0：Schema 版本追踪）
 # ---------------------------------------------------------------------------
 
 _DDL_SCHEMA_VERSION = """
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS _schema_version (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — slow_queries 表（MOD-INF-012 v2.0：慢查询记录）
+# DDL — slow_queries 表（MOD-DATABASE v2.0：慢查询记录）
 # ---------------------------------------------------------------------------
 
 _DDL_SLOW_QUERIES = """
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS slow_queries (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — tx_idempotency 表（MOD-INF-012 v2.0：ATM 事务幂等去重）
+# DDL — tx_idempotency 表（MOD-DATABASE v2.0：ATM 事务幂等去重）
 # ---------------------------------------------------------------------------
 
 _DDL_TX_IDEMPOTENCY = """
@@ -497,7 +497,7 @@ def get_db_connection(
 
 
 # ---------------------------------------------------------------------------
-# 版本化迁移框架（MOD-INF-012 v2.0）
+# 版本化迁移框架（MOD-DATABASE v2.0）
 # ---------------------------------------------------------------------------
 
 # 迁移注册表：(version, description, [DDL_statements])
@@ -564,7 +564,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         6,
-        "TaskCard 24 extension columns (MOD-INF-006 v0.3.0)",
+        "TaskCard 24 extension columns (MOD-TASK_SYSTEM v0.3.0)",
         [
             "ALTER TABLE tasks ADD COLUMN source_blueprint TEXT NOT NULL DEFAULT ''",
             "ALTER TABLE tasks ADD COLUMN source_section TEXT NOT NULL DEFAULT ''",
@@ -594,7 +594,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         7,
-        "MOD-INF-012 v2.0: _schema_version + slow_queries + tx_idempotency + wal_autocheckpoint",
+        "MOD-DATABASE v2.0: _schema_version + slow_queries + tx_idempotency + wal_autocheckpoint",
         [
             _DDL_SCHEMA_VERSION,
             _DDL_SLOW_QUERIES,
@@ -604,7 +604,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         8,
-        "MOD-INF-012 v2.0: soft delete columns on tasks",
+        "MOD-DATABASE v2.0: soft delete columns on tasks",
         [
             "ALTER TABLE tasks ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0 CHECK(is_deleted IN (0,1))",
             "ALTER TABLE tasks ADD COLUMN deleted_at TEXT",
@@ -612,7 +612,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         9,
-        "MOD-INF-006 v0.3.2: schema_version column + fix default value drift (B29+B35)",
+        "MOD-TASK_SYSTEM v0.3.2: schema_version column + fix default value drift (B29+B35)",
         [
             "ALTER TABLE tasks ADD COLUMN schema_version TEXT NOT NULL DEFAULT '0.3.2'",
             "UPDATE tasks SET estimated_tokens = 8000 WHERE estimated_tokens = 0 OR estimated_tokens < 500",
@@ -622,7 +622,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         10,
-        "MOD-INF-006 v0.3.3: P4 priority + approval_required/rejection_cooldown (B53+B55)",
+        "MOD-TASK_SYSTEM v0.3.3: P4 priority + approval_required/rejection_cooldown (B53+B55)",
         [
             "ALTER TABLE tasks ADD COLUMN approval_required INTEGER NOT NULL DEFAULT 0 CHECK(approval_required IN (0,1))",
             "ALTER TABLE tasks ADD COLUMN rejection_cooldown_until TEXT",
@@ -631,7 +631,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         11,
-        "MOD-INF-006 v0.3.4: block_sessions_count for escalation governance (B56)",
+        "MOD-TASK_SYSTEM v0.3.4: block_sessions_count for escalation governance (B56)",
         [
             "ALTER TABLE tasks ADD COLUMN block_sessions_count INTEGER NOT NULL DEFAULT 0",
         ],

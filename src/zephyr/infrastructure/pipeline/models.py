@@ -17,7 +17,7 @@
 """
 Pipeline 数据模型
 =================
-依据：MOD-INF-006 §3.2.2 + GOV-AI-002 v2.0.0 模型路由策略
+依据：MOD-TASK_SYSTEM §3.2.2 + GOV-AI-002 v2.0.0 模型路由策略
 """
 
 from __future__ import annotations

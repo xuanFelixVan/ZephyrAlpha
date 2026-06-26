@@ -17,7 +17,7 @@ valid_from: "2026-05-12"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/compliance/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-14"
@@ -41,7 +41,7 @@ references:
     section: "§5 模块归属表 + §2.7 线7 + §3.16 权限判定链"
     why: "全局依赖图对齐"
 depends_on:
-  - target: MOD-INF-012
+  - target: MOD-DATABASE
     at: "§10"
     why: "合规规则存储"
   - target: MOD-INF-020

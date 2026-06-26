@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Script System.Manifest
 module_id: MOD-068
 ttl: permanent

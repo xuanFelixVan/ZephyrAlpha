@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Contracts.Manifest
 module_id: MOD-051
 ttl: permanent

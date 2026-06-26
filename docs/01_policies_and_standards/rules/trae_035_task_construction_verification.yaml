@@ -306,7 +306,7 @@ sections:
       - target: GOV-TASK-004
         at: §1目的与范围
         why: 生命周期治理规则
-      - target: MOD-INF-006
+      - target: MOD-TASK_SYSTEM
         at: §5.2-§5.5
         why: 状态机实现+门禁检查逻辑+超时检测
       impact_on_rules: 施工和验证依赖任务系统其他标准的定义

@@ -12,7 +12,7 @@ PIPELINE_COMPLETE 事件→9个下游联动
 
 Pipeline 完成 dispatch 后 emit PIPELINE_COMPLETE 事件，触发：
 1. Orchestrator.assign_session()
-2. FeedbackLoopEngine(B10 MOD-INF-010)接收反馈
+2. FeedbackLoopEngine(B10 MOD-FEEDBACK_LOOP)接收反馈
 3. CapacityAssurance(MOD-INF-001)更新Token Budget
 4. SessionContinuity保存session状态
 5. DeadLetterQueue检查是否需要replay

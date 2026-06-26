@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop._gen_inherited
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.__init__
@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK__gen_inherited | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""One-shot skeleton generator for TASK-MOD-INF-010-0003 inherited subsystems."""
+"""One-shot skeleton generator for TASK-MOD-FEEDBACK_LOOP-0003 inherited subsystems."""
 
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed

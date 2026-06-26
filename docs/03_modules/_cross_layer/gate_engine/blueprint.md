@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-007
+module_id: MOD-GATE_ENGINE
 submodule_path: src/zephyr/ops/gates
 title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器"
 doc_type: blueprint
@@ -16,8 +16,8 @@ valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/ops/gates/"
-belongs_to: "MOD-MASTER-001"
-parent_module: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
+parent_module: "MOD-MASTER_BLUEPRINT"
 last_updated: "2026-05-18"
 last_verified: "2026-05-14"
 generation: 1
@@ -32,10 +32,10 @@ tags: [gate-engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-
 priority: P0
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-MASTER-001", at: "§2.8", why: "CT-SCRIPT-GATE-001 集成契约——脚本exit code→Gate判定"}
-  - {target: "MOD-MASTER-001", at: "§4", why: "全局状态传播链——Gate FAIL→Orc BLOCKED 传播"}
+  - {target: "MOD-MASTER_BLUEPRINT", at: "§2.8", why: "CT-SCRIPT-GATE-001 集成契约——脚本exit code→Gate判定"}
+  - {target: "MOD-MASTER_BLUEPRINT", at: "§4", why: "全局状态传播链——Gate FAIL→Orc BLOCKED 传播"}
   - {target: "MOD-INF-005", at: "§6", why: "脚本系统——Gate判定输入源（脚本exit code）"}
-  - {target: "MOD-INF-006", at: "§4", why: "任务系统——Gate判定输出目标（status→BLOCKED）"}
+  - {target: "MOD-TASK_SYSTEM", at: "§4", why: "任务系统——Gate判定输出目标（status→BLOCKED）"}
   - {target: "MOD-KB-001", at: "§3.2", why: "知识库——G1-G5 KMS门禁判定对象"}
   - {target: "architecture_model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——本蓝图真源"}
   - {target: "MOD-INF-030", at: "§2", why: "Red-Blue Validator——通过 DefenseRunner GATE_MAP 17门禁映射消费 Gate Engine 判定"}
@@ -58,9 +58,9 @@ ssot_claims:
 ## 概述
 <!-- temporal_type: permanent -->
 
-本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-INF-006)消费判定结果。
+本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-TASK_SYSTEM)消费判定结果。
 
-> module_id: MOD-INF-007 | version: 0.8.2 | status: Draft | layer: cross_layer
+> module_id: MOD-GATE_ENGINE | version: 0.8.2 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/gate_engine/ + src/zephyr/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
@@ -79,7 +79,7 @@ ssot_claims:
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-007`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-GATE_ENGINE`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） | 归属判定 |
 |---|--------|------------|------|:-----:|-------------------|---------|
@@ -229,7 +229,7 @@ ssot_claims:
 | 7 | 门禁判定的具体检测逻辑 | ❌ | 脚本系统 MOD-INF-005 |
 | 8 | 知识入库的具体规则 | ❌ | 知识库 MOD-KB-001 |
 | 9 | pre-commit钩子框架 | ❌ | `.pre-commit-config.yaml` |
-| 10 | 熔断后的修复执行 | ❌ | Orchestrator MOD-INF-006 |
+| 10 | 熔断后的修复执行 | ❌ | Orchestrator MOD-TASK_SYSTEM |
 | 11 | 容量SLO全局注册 | ❌ | MOD-INF-001 §13 |
 
 ### §1.4 运行场景约束
@@ -295,7 +295,7 @@ ssot_claims:
 
 | 声明项 | 无重叠模块 | 验证方式 |
 |--------|-----------|---------|
-| G0-G7任务门禁判定 | MOD-INF-006(消费方,非判定方) | Task System蓝图声明"门禁判定委托MOD-INF-007" |
+| G0-G7任务门禁判定 | MOD-TASK_SYSTEM(消费方,非判定方) | Task System蓝图声明"门禁判定委托MOD-INF-007" |
 | G1-G5 KMS决策门 | MOD-INF-013(消费方) | MCP Servers蓝图引用gate_engine_server.py |
 | 门禁域熔断器(特化版) | MOD-INF-016(基类SSoT) | §0.4声明委托关系+§10.5登记重叠 |
 | 门禁评估管线 | MOD-INF-009(执行流门控,非合规判定) | §10.5术语区分 |
@@ -308,7 +308,7 @@ ssot_claims:
 | 门禁判定的具体检测逻辑 | 脚本系统 MOD-INF-005 |
 | 知识入库的具体规则 | 知识库 MOD-KB-001 |
 | pre-commit钩子框架 | `.pre-commit-config.yaml` |
-| 熔断后的修复执行 | Orchestrator MOD-INF-006 |
+| 熔断后的修复执行 | Orchestrator MOD-TASK_SYSTEM |
 | 全局容量SLO注册 | MOD-INF-001 §13 |
 | 指标采集/聚合/Grafana | Telemetry MOD-INF-015 |
 
@@ -694,11 +694,11 @@ class ManualApprovalGate:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |------|------|------|------|------|
-| MOD-INF-006 (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task-system/blueprint.md |
+| MOD-TASK_SYSTEM (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task-system/blueprint.md |
 | MOD-INF-005 (Script System) | runtime_call | 脚本exit code→GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) | v1.0+ | docs/03_modules/_cross_layer/script_system/blueprint.md |
 | MOD-KB-001 (Knowledge Base) | data_flow | KE→G1-G5 KMS门禁管道 | v1.0+ | docs/03_modules/_cross_layer/knowledge-base/blueprint.md |
-| MOD-INF-008 (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context-engine/blueprint.md |
-| MOD-INF-014 (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/llm-security/blueprint.md |
+| MOD-CONTEXT_ENGINE (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context-engine/blueprint.md |
+| MOD-LLM_SECURITY (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/llm-security/blueprint.md |
 | MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
 | MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/session/blueprint.md |
 | MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master-blueprint/blueprint.md |
@@ -771,13 +771,13 @@ class ManualApprovalGate:
 | 1 | 熔断器状态机 | 基类实现 | MOD-INF-016 | 本模块委托对方提供基类；本模块在基类上叠加SQLite持久化+门禁集成 | 已处置 |
 | 2 | 门禁vs门控 | 术语重叠 | MOD-INF-009 | 本模块=合规判定门禁(G0-G7)；MOD-INF-009=执行流门控(M1-M11)——语义不同 | 已处置 |
 | 3 | Kill Switch vs 熔断器 | 术语重叠 | MOD-INF-001 | 本模块=门禁域熔断器(异常传播阻断)；MOD-INF-001=系统级紧急制动——不同概念 | 已处置 |
-| 4 | GateLevel枚举 | 枚举定义位置 | MOD-INF-006 | 枚举定义在Task System，门禁判定SSoT在本模块 | 已处置(Task System已声明委托) |
+| 4 | GateLevel枚举 | 枚举定义位置 | MOD-TASK_SYSTEM | 枚举定义在Task System，门禁判定SSoT在本模块 | 已处置(Task System已声明委托) |
 
 ### §10.6 依赖链风险评级
 
 | # | 依赖链 | 链深度 | 风险等级 | 熔断机制 | 处置状态 |
 |---|--------|:-----:|---------|---------|---------|
-| 1 | 本模块→MOD-INF-006→MOD-INF-012 | 3 | L2 | 有(circuit_breaker) | 已有熔断 |
+| 1 | 本模块→MOD-TASK_SYSTEM→MOD-DATABASE | 3 | L2 | 有(circuit_breaker) | 已有熔断 |
 | 2 | 本模块→MOD-INF-005→subprocess | 2 | L1 | 有(超时+SIGKILL) | 已有熔断 |
 | 3 | 本模块→MOD-INF-016→SQLite | 2 | L1 | 有(fail-closed) | 已有熔断 |
 | 4 | 本模块→MOD-INF-001→容量SLO | 2 | L1 | 无 | 不适用(只读) |
@@ -822,8 +822,8 @@ class ManualApprovalGate:
 
 | 契约ID | 方向 | 描述 |
 |--------|------|------|
-| CT-SCRIPT-GATE-001 | MOD-INF-005→MOD-INF-007 | 脚本exit code→Gate判定映射 |
-| CT-ORC-GATE-001 | MOD-INF-006↔MOD-INF-007 | TaskCard.status transition→Gate触发→PASS/FAIL→status迁移 |
+| CT-SCRIPT-GATE-001 | MOD-INF-005→MOD-GATE_ENGINE | 脚本exit code→Gate判定映射 |
+| CT-ORC-GATE-001 | MOD-TASK_SYSTEM↔MOD-GATE_ENGINE | TaskCard.status transition→Gate触发→PASS/FAIL→status迁移 |
 
 ---
 
@@ -838,7 +838,7 @@ class ManualApprovalGate:
 | 2 | `config/blueprint_routing.yaml` | R009路由项 keywords/path_patterns |
 | 3 | `src/zephyr/integration/mcp/gate_engine_server.py` | MCP工具描述引用本蓝图 |
 | 4 | `src/zephyr/integration/mcp/blueprint_search_server.py` | 若keyword变更 |
-| 5 | `docs/03_modules/_master-blueprint/blueprint.md` | MOD-MASTER-001 §2.8 CT-SCRIPT-GATE-001 |
+| 5 | `docs/03_modules/_master-blueprint/blueprint.md` | MOD-MASTER_BLUEPRINT §2.8 CT-SCRIPT-GATE-001 |
 | 6 | `config/known_good_hashes.yaml` | 门禁文件哈希变更 |
 
 ---
@@ -907,7 +907,7 @@ class ManualApprovalGate:
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | MOD-INF-006 TaskRepository.transition()可调用 | hard | ✅ | ✅ |
+| 1 | MOD-TASK_SYSTEM TaskRepository.transition()可调用 | hard | ✅ | ✅ |
 | 2 | MOD-INF-005 脚本exit code语义统一(0/1/2/3) | hard | ✅ | ✅ |
 | 3 | MOD-INF-016 shared/resilience/circuit_breaker.py可用 | soft | ✅ | ✅ |
 | 4 | 容量Phase A冷启动+缓存+增量更新完成 | hard | ❌ | ❌ |
@@ -1320,7 +1320,7 @@ STEP 3: 拆分后验证
 | [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 代码构建标准 GOV-ENG-001 |
 | [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
 | [b_gates.yaml](file:///d:/ZephyrAlpha/architecture_model/layers/b_gates.yaml) | Gates YAML SSoT |
-| [MOD-MASTER-001 blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
+| [MOD-MASTER_BLUEPRINT blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
 | [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/gate_engine.py) | 核心门禁引擎实现 |
 | [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/gates/_registry.yaml) | 全部门禁注册表 SSoT |
 
@@ -1516,11 +1516,11 @@ STEP 3: 拆分后验证
 
 | 消费者 | 消费内容 | 修改影响 |
 |--------|---------|---------|
-| MOD-INF-006 (Task System) | GateResult→TaskCard.status迁移 | 门禁判定结果格式变更→Task System需适配 |
+| MOD-TASK_SYSTEM (Task System) | GateResult→TaskCard.status迁移 | 门禁判定结果格式变更→Task System需适配 |
 | MOD-INF-005 (Script System) | CT-SCRIPT-GATE-001 exit code映射 | exit code语义变更→映射表需更新 |
 | MOD-KB-001 (Knowledge Base) | G1-G5 KMS门禁管道 | 门禁条件变更→知识入库流程受影响 |
 | MOD-INF-015 (Telemetry) | GATE-16 SLI指标 | 指标定义变更→监控告警需更新 |
-| MOD-MASTER-001 (总蓝图) | §2.8 CT-SCRIPT-GATE-001 | 集成契约变更→总蓝图需同步 |
+| MOD-MASTER_BLUEPRINT (总蓝图) | §2.8 CT-SCRIPT-GATE-001 | 集成契约变更→总蓝图需同步 |
 | `.pre-commit-config.yaml` | GATE-18 pre-commit钩子 | 钩子配置变更→pre-commit需更新 |
 | `src/zephyr/integration/mcp/gate_engine_server.py` | MCP工具描述 | 蓝图描述变更→MCP工具需更新 |
 
@@ -1529,9 +1529,9 @@ STEP 3: 拆分后验证
 | 修改此文件 | 必须同步更新 |
 |-----------|-------------|
 | 门禁YAML配置 | `_registry.yaml` + `validate_gate_discipline.py` |
-| GateResult schema | `gate_engine.py` + `MOD-INF-006` |
+| GateResult schema | `gate_engine.py` + `MOD-TASK_SYSTEM` |
 | 容量SLO | `MOD-INF-001 §13` |
-| 集成契约 | `MOD-MASTER-001 §2.8` |
+| 集成契约 | `MOD-MASTER_BLUEPRINT §2.8` |
 | 门禁文件哈希 | `config/known_good_hashes.yaml` |
 
 ### 修改条件
@@ -1572,7 +1572,7 @@ STEP 3: 拆分后验证
 | 2 | CT-ORC-GATE-001未落地——门禁非自动触发 | 高 | 集成契约在Backlog | 步骤1施工 | §12 | 待解决 |
 | 3 | CT-SCRIPT-GATE-001未落地——exit code未映射 | 高 | 集成契约在Backlog | 步骤2施工 | §12 | 待解决 |
 | 4 | §0.1与底部索引曾矛盾(8个文件标记未实现但已存在) | 中 | 压缩时未同步§0.1 | 已在本次审查中修正 | §0.1 | 已解决 |
-| 5 | 熔断器三重声明(MOD-INF-007/016/022) | 中 | 历史演进未声明关系 | 已在§10.5登记+§0.4声明委托 | §0.4 | 已处置 |
+| 5 | 熔断器三重声明(MOD-GATE_ENGINE/016/022) | 中 | 历史演进未声明关系 | 已在§10.5登记+§0.4声明委托 | §0.4 | 已处置 |
 
 ## 自检与闭合清单
 <!-- temporal_type: permanent -->
@@ -1795,7 +1795,7 @@ class GateEngineIntegrityGuard:
 
 **L1验证失败→禁止一切AI操作；L2验证失败→该门禁自动降级到FAIL**
 
-**GATE-18自指防护**：AI提交对gate_engine.py或circuit_breaker.py的修改时→检查①修改者引用了本蓝图(MOD-INF-007) ②附带Owner审批签名 ③同时更新known_good_hashes.yaml → ANY FAIL → 拒绝提交
+**GATE-18自指防护**：AI提交对gate_engine.py或circuit_breaker.py的修改时→检查①修改者引用了本蓝图(MOD-GATE_ENGINE) ②附带Owner审批签名 ③同时更新known_good_hashes.yaml → ANY FAIL → 拒绝提交
 
 **自升级协议**：step_1 deploy shadow(新旧双版本同时评估100次) → step_2 divergence check(不一致>1%→暂停+Owner审查) → step_3 cutover(IntegrityGuard验证新版本哈希+更新known_good_hashes+Owner PGP签名) → step_4 rollback(新版本错误率>旧版本×2→自动回退)
 

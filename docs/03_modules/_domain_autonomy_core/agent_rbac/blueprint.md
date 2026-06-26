@@ -21,7 +21,7 @@ last_verified: "2026-05-14"
 generation: 3
 functional_domain: governance
 parent_module: ""
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "Agent RBAC——七层纵深防御+六横切面运行时权限强制执行器。209项盲点全覆盖，94项决策记录，148个组件文件。"
 tags: [agent-rbac, rbac, abac, ibac, tbac, permission-guard, identity, access-control, governance, infrastructure, defense-in-depth, sequence-guard, kill-switch, permission-hooks, permission-topology, auto-maintenance, cold-start-lock, emergency-override, horizontal-escalation, context-drift, intent-binding, micro-verification, continuous-verification, cascading-failure, inference-detection, adversarial-resilience, incentive-alignment, collusion-detection, sandbox-self-disable, false-completion, prompt-injection-defense, memory-provenance, owasp-agentic-top10, maestro-threat-model, forensic-assurance, genesis-bootstrap, non-repudiation, path-parsing-safety, cross-platform-shell, artifact-hygiene]
 priority: P0
@@ -33,7 +33,7 @@ verifiability: hybrid
 codification_level: L1
 codification_at: "2026-05-14"
 depends_on:
-  - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——权限检查是门禁的一种特化"}
+  - {target: "MOD-GATE_ENGINE", at: "§2", why: "Gate Engine——权限检查是门禁的一种特化"}
   - {target: "MOD-INF-020", at: "§3", why: "审计追踪链——权限判定结果写入审计日志"}
   - {target: "GOV-AI-001", at: "全篇", why: "AI自治权限注册表——本蓝图的声明式权限真源，自动派生为 rbac_roles.yaml"}
   - {target: "MOD-INF-013", at: "§2", why: "MCP Servers——MCP Tool调用受七层权限约束 + 包安装白名单"}
@@ -241,11 +241,11 @@ references:
 
 | # | 明确排除 | 原因 |
 |---|---------|------|
-| 1 | 权限判定的触发时机 | → Gate Engine (MOD-INF-007) |
+| 1 | 权限判定的触发时机 | → Gate Engine (MOD-GATE_ENGINE) |
 | 2 | 权限审计日志的存储 | → Audit Trail (MOD-INF-020) |
 | 3 | 回滚的具体执行 | → Rollback System (MOD-INF-021) |
 | 4 | 熔断器的底层实现 | → Circuit Breaker (MOD-INF-022) |
-| 5 | Prompt Injection 检测 | → Input Sanitizer / LSG (MOD-INF-014) |
+| 5 | Prompt Injection 检测 | → Input Sanitizer / LSG (MOD-LLM_SECURITY) |
 | 6 | 生产环境的实际部署 | → CI/CD |
 
 ### §1.4 运行场景约束
@@ -288,12 +288,12 @@ references:
 
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
-| 1 | Agent 的具体执行逻辑 | Orchestrator (MOD-INF-006) |
-| 2 | 权限判定的触发时机 | Gate Engine (MOD-INF-007) |
+| 1 | Agent 的具体执行逻辑 | Orchestrator (MOD-TASK_SYSTEM) |
+| 2 | 权限判定的触发时机 | Gate Engine (MOD-GATE_ENGINE) |
 | 3 | 权限审计日志的存储 | Audit Trail (MOD-INF-020) |
 | 4 | 回滚的具体执行 | Rollback System (MOD-INF-021) |
 | 5 | 熔断器的底层实现 | Circuit Breaker (MOD-INF-022) |
-| 6 | Prompt Injection 检测 | Input Sanitizer / LSG (MOD-INF-014) |
+| 6 | Prompt Injection 检测 | Input Sanitizer / LSG (MOD-LLM_SECURITY) |
 | 7 | 生产环境的实际部署 | CI/CD |
 
 ---
@@ -1520,7 +1520,7 @@ class ColdStartLock:
         """校验通过后释放锁"""
         # 1. rbac_roles.yaml hash校验
         # 2. L0 protected_paths 所有路径存在性验证
-        # 3. Gate Engine (MOD-INF-007) 就绪确认
+        # 3. Gate Engine (MOD-GATE_ENGINE) 就绪确认
         # 全部通过 → _state = RELEASED
 
     def status_indicator(self) -> str:
@@ -5988,7 +5988,7 @@ class PermissionHooks:
 | 依赖 | module_id | 用途 | 失败影响 |
 |------|-----------|------|---------|
 | GOV-AI-001 | GOV-AI-001 | 权限声明真源 | 无法派生 rbac_roles.yaml |
-| Gate Engine | MOD-INF-007 | 权限检查作为门禁前置 | 权限检查不在执行路径上 |
+| Gate Engine | MOD-GATE_ENGINE | 权限检查作为门禁前置 | 权限检查不在执行路径上 |
 | Audit Trail | MOD-INF-020 | 审计日志写入 | 审计链断裂 |
 
 **下游依赖（其他模块读取/调用本模块）**
@@ -5998,7 +5998,7 @@ class PermissionHooks:
 | MCP Servers | MOD-INF-013 | MCP Tool 调用前权限检查 |
 | Rollback System | MOD-INF-021 | auto_guard 后验失败触发回滚 |
 | Escalation System | MOD-INF-022 | Kill Switch 联动 |
-| Pipeline Orchestrator | MOD-INF-006 | 任务创建时绑定 Agent 身份 |
+| Pipeline Orchestrator | MOD-TASK_SYSTEM | 任务创建时绑定 Agent 身份 |
 
 **依赖模块详情**
 
@@ -6008,10 +6008,10 @@ class PermissionHooks:
 | zephyr.escalation_engine | 硬依赖 | 升降级权限变更 | ≥0.1 | MOD-INF-022 | G-CT-004 |
 | zephyr.agent_spec | 硬依赖 | Skill 加载权限 | ≥0.1 | MOD-INF-019 | G-CT-007 |
 | zephyr.a2a_protocol | 硬依赖 | A2A 通信权限 | ≥0.1 | MOD-INF-025 | G-CT-008 |
-| zephyr.task_system | 硬依赖 | Agent 生命周期 | ≥0.1 | MOD-INF-006 | — |
+| zephyr.task_system | 硬依赖 | Agent 生命周期 | ≥0.1 | MOD-TASK_SYSTEM | — |
 | zephyr.shared | 硬依赖 | PermissionGuard/AbstractLock | ≥0.1 | MOD-INF-016 | — |
-| zephyr.db | 硬依赖 | 权限规则持久化 | ≥0.1 | MOD-INF-012 | — |
-| zephyr.gate_engine | 跨线软依赖 | 权限查询(线1→线3) | ≥0.1 | MOD-INF-007 | — |
+| zephyr.db | 硬依赖 | 权限规则持久化 | ≥0.1 | MOD-DATABASE | — |
+| zephyr.gate_engine | 跨线软依赖 | 权限查询(线1→线3) | ≥0.1 | MOD-GATE_ENGINE | — |
 | zephyr.runtime | 跨线软依赖 | 运行时注册 | ≥0.1 | MOD-INF-035 | — |
 | pydantic | 硬依赖 | BaseModel | V2 | — | — |
 
@@ -6099,14 +6099,14 @@ class PermissionHooks:
 
 | 集成目标 | 集成方式 | 集成点 |
 |---------|---------|--------|
-| Gate Engine (MOD-INF-007) | 权限检查作为 G0 门禁的前置检查 | `gate_engine.py` → `permission_guard.check()` |
-| Task System (MOD-INF-006) | 任务创建时绑定 Agent 身份 + 任务上下文注入 L2 ABAC | `task_repo.create()` → `identity.register()` + ABAC intent |
+| Gate Engine (MOD-GATE_ENGINE) | 权限检查作为 G0 门禁的前置检查 | `gate_engine.py` → `permission_guard.check()` |
+| Task System (MOD-TASK_SYSTEM) | 任务创建时绑定 Agent 身份 + 任务上下文注入 L2 ABAC | `task_repo.create()` → `identity.register()` + ABAC intent |
 | Audit Trail (MOD-INF-020) | 每层权限判定 + 序列违规 + Kill Switch 事件写入不可变审计日志 | `permission_guard.check()` → `audit_emitter.emit()` |
 | Rollback System (MOD-INF-021) | auto_guard 后验失败 + L4 序列违规后自动回滚 | CI 失败 / 序列阻断 → `rollback_executor.restore()` |
 | Circuit Breaker (MOD-INF-022) | L0 Kill Switch 复用熔断器基础设施 | `immutable_core.kill_switch()` → `circuit_breaker.open()` |
 | MCP Servers (MOD-INF-013) | MCP Tool 调用前七层权限检查 | `tool_call` → `permission_guard.check()` |
 | GOV-AI-001 | 自动派生 rbac_roles.yaml | `derive_rbac_roles.py` → GOV-AI-001 → rbac_roles.yaml |
-| Input Sanitizer / LSG（MOD-INF-014） | L3 Input Guard 复用 Prompt Injection 检测模式 | L3 危险模式检测 ↔ sanitizer 规则同步 |
+| Input Sanitizer / LSG（MOD-LLM_SECURITY） | L3 Input Guard 复用 Prompt Injection 检测模式 | L3 危险模式检测 ↔ sanitizer 规则同步 |
 | Pre-Commit Gate (GATE-18) | CI 中运行 L7 权限自动化测试 | `.pre-commit-config.yaml` → `test_permissions.py` |
 | OpenTelemetry Collector | L6 指标上报 | OTEL exporter → `d2.authz.decision.*` 指标 |
 | Hook Registry (NEW) | 横切面A 钩子注册表——pre/post/on_blocked/on_kill_switch 四类钩子 | 所有Guard层 → `permission_hooks.execute_*()` |
@@ -6121,7 +6121,7 @@ class PermissionHooks:
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| MOD-023 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §0 分派表与 MOD-023 §2 一致 |
+| MOD-GOVERNANCE 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §0 分派表与 MOD-GOVERNANCE §2 一致 |
 | zephyr.escalation_engine | 升降级权限变更(G-CT-004) | EscalationHandler 权限变更回调 | 集成测试覆盖升降级路径 |
 | zephyr.agent_spec | Skill 加载权限(G-CT-007) | SkillLoader 权限验证 | 集成测试覆盖 Skill 加载权限检查 |
 | zephyr.a2a_protocol | A2A 通信权限(G-CT-008) | A2ACheck 通信权限验证 | 集成测试覆盖 A2A 权限检查 |
@@ -6198,10 +6198,10 @@ class PermissionHooks:
       本段以下 = "v0.14.0 现有蓝图设计是什么"
   ▸ 施工顺序：先按本方案升级蓝图 → 蓝图评审通过 → 再施工代码。
   ▸ 本方案审阅完成后施工，施工时以本方案为最高优先级。
-  ▸ 本蓝图与"容量三塔"（MOD-INF-001 / MOD-INF-007 / MOD-INF-032）协同：
+  ▸ 本蓝图与"容量三塔"（MOD-INF-001 / MOD-GATE_ENGINE / MOD-RESOURCE_OPTIMIZATION_ENGINE）协同：
       ─ MOD-INF-001 v3.0.0  — 管"容量规则 + Error Budget + Token Budget + Kill Switch + 降级链 + SLO"
-      ─ MOD-INF-007 §0      — 管"脚本调度 + 依赖图谱 + 存储分片"
-      ─ MOD-INF-032 v5.0.0  — 管"系统资源 + 进程/内存/CPU/GPU/缓存/守护线程"
+      ─ MOD-GATE_ENGINE §0      — 管"脚本调度 + 依赖图谱 + 存储分片"
+      ─ MOD-RESOURCE_OPTIMIZATION_ENGINE v5.0.0  — 管"系统资源 + 进程/内存/CPU/GPU/缓存/守护线程"
       本蓝图（MOD-INF-018）   — 管"Agent身份 + 权限判定 + 权限配置可伸缩性 + 并发权限检查吞吐 + 脚本级资源授权"
       四者形成 v5.0.0 目标下的**容量四柱体系**：前三柱管"执行层的容量"，本柱管"安全层的容量"。
 
@@ -6584,7 +6584,7 @@ class PermissionHooks:
     │     ─ 脚本注册时 → 自动创建 RBAC script identity
     │     ─ 脚本执行前 → GateEngine 调用 RBAC check_script_permission()
     │     ─ 脚本默认最小权限: 新脚本注册 → 仅 read self → Owner 手动授权升权
-    ├ 集成点: MOD-INF-007 GateEngine §0 ScriptRegistry + MOD-INF-001 ScriptScheduler
+    ├ 集成点: MOD-GATE_ENGINE GateEngine §0 ScriptRegistry + MOD-INF-001 ScriptScheduler
     └ 对标: AWS Lambda execution role（每个 Lambda 有独立 IAM Role）
 
   ▶ CAP-R13: 权限复杂度预算——1,500 模块级的规则治理
@@ -6623,7 +6623,7 @@ class PermissionHooks:
     │     ─ RED: 清除所有非 L0-L1 缓存 + 强制 GC + 暂停新 Agent 注册
     │     ─ 缓存条目 TTL: warm_cache TTL=5min → YELLOW 时 TTL=1min
     │     ─ 内存指标: agent-rbac.memory.bytes (total/cache/index/audit)
-    ├ 集成点: MOD-INF-032 ResourceOptimizationEngine → 订阅内存水位告警
+    ├ 集成点: MOD-RESOURCE_OPTIMIZATION_ENGINE ResourceOptimizationEngine → 订阅内存水位告警
     └ 对标: JVM -Xmx + GC tuning + Redis maxmemory-policy
 
   ▶ CAP-R15: 与容量三塔的联动契约——Agent RBAC 在容量体系中的角色
@@ -6645,12 +6645,12 @@ class PermissionHooks:
     │       · 审计日志写入 < 0.5ms p99
     │     ─ 联动触发:
     │       · RBAC P99 > 10ms → 通知 MOD-INF-001 收紧 Token Budget（全局降级）
-    │       · RBAC 内存 YELLOW → 通知 MOD-INF-032 准备资源回收
+    │       · RBAC 内存 YELLOW → 通知 MOD-RESOURCE_OPTIMIZATION_ENGINE 准备资源回收
     │       · GateEngine 调度队列 > 500 → 通知 RBAC 启用 FastPath（跳过 L2-L7）
     │     ─ 联合告警链:
     │       · MOD-INF-018 → MOD-INF-001 → MOD-INF-022（Kill Switch）
     │       · 三层告警联动: RBAC 退 → 容量规则收紧 → 全局熔断
-    ├ 集成点: MOD-INF-001 §0 容量基线 + MOD-INF-032 资源水位
+    ├ 集成点: MOD-INF-001 §0 容量基线 + MOD-RESOURCE_OPTIMIZATION_ENGINE 资源水位
     └ 对标: AWS Well-Architected Pillar 间的依赖关系建模
 
   ▶ CAP-R16: RBAC 自身多级降级链——10K check/s 过载时的检查深度自适应削减
@@ -6882,7 +6882,7 @@ class PermissionHooks:
   | 🟡 P1    | CAP-R11   | IDE Registry + 配额 + 心跳 + 分布式预留                     | D-018-55 扩展      |
   | 🟡 P1    | CAP-R12   | Script 资源类型 + 脚本权限声明 + 最小权限默认                 | GateEngine 联动    |
   | 🟢 P2    | CAP-R13   | 分片复杂度评估 + Usage Counter + 僵尸规则检测               | CAP-R02 完成后     |
-  | 🟢 P2    | CAP-R14   | 内存水位线 + 三级告警 + 缓存退化策略                          | MOD-INF-032 联动   |
+  | 🟢 P2    | CAP-R14   | 内存水位线 + 三级告警 + 缓存退化策略                          | MOD-RESOURCE_OPTIMIZATION_ENGINE 联动   |
   | 🟢 P2    | CAP-R15   | 容量四柱联动契约文档 + 联合 SLA 定义 + 告警链                | 所有方案稳定后     |
   | 🟢 P2    | CAP-R19   | 脚本间权限调用链建模 + Taint Tracking + 循环检测             | CAP-R12 + CAP-G15  |
 
@@ -7056,7 +7056,7 @@ class PermissionHooks:
 
 ---
 
-## MOD-023 集成契约锚点
+## MOD-GOVERNANCE 集成契约锚点
 
 > 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
 
@@ -7077,7 +7077,7 @@ class PermissionHooks:
 
 ### 负向责任
 
-本文件**不涉及**：任务卡字段定义（→ GOV-TASK-001）、CI/CD 部署流程（→ CI/CD 文档）、Prompt Injection 检测算法（→ MOD-INF-014）。
+本文件**不涉及**：任务卡字段定义（→ GOV-TASK-001）、CI/CD 部署流程（→ CI/CD 文档）、Prompt Injection 检测算法（→ MOD-LLM_SECURITY）。
 
 ### 消费者注册表
 
@@ -7086,8 +7086,8 @@ class PermissionHooks:
 | MCP Servers (MOD-INF-013) | MCP Tool 调用前权限检查 |
 | Rollback System (MOD-INF-021) | auto_guard 后验失败触发回滚 |
 | Escalation System (MOD-INF-022) | Kill Switch 联动 |
-| Pipeline Orchestrator (MOD-INF-006) | 任务创建时绑定 Agent 身份 |
-| Gate Engine (MOD-INF-007) | 权限检查作为门禁前置 |
+| Pipeline Orchestrator (MOD-TASK_SYSTEM) | 任务创建时绑定 Agent 身份 |
+| Gate Engine (MOD-GATE_ENGINE) | 权限检查作为门禁前置 |
 | Pre-Commit Gate (GATE-18) | CI 中运行权限自动化测试 |
 
 ### 触发条件
@@ -7111,7 +7111,7 @@ class PermissionHooks:
 
 | 修改此文件 | 必须同步更新 |
 |-----------|------------|
-| §0 分派表 | MOD-023 §2 职责分派 |
+| §0 分派表 | MOD-GOVERNANCE §2 职责分派 |
 | §4 代码文件清单 | blueprint_registry.yaml MOD-INF-018 条目 |
 | §5 待施工项 | construction_progress 字段 |
 
@@ -7417,7 +7417,7 @@ class PermissionHooks:
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限真源 |
-| 9 | Gate Engine 蓝图 | MOD-INF-007 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` | 权限检查集成点 |
+| 9 | Gate Engine 蓝图 | MOD-GATE_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` | 权限检查集成点 |
 | 10 | 审计追踪蓝图 | MOD-INF-020 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` | 审计日志写入 |
 | 11 | MCP Servers 蓝图 | MOD-INF-013 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\mcp-servers\blueprint.md` | MCP Tool 权限约束 |
 | 12 | Rollback 蓝图 | MOD-INF-021 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback\blueprint.md` | auto_guard 回滚 |

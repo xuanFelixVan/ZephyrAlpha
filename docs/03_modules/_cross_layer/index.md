@@ -32,13 +32,13 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint |
 |-----------|--------|-----------|
-| MOD-INF-007 | Gate Engine | [blueprint](gate_engine/blueprint.md) |
-| MOD-INF-008 | Context Engine | [blueprint](context_engine/blueprint.md) |
+| MOD-GATE_ENGINE | Gate Engine | [blueprint](gate_engine/blueprint.md) |
+| MOD-CONTEXT_ENGINE | Context Engine | [blueprint](context_engine/blueprint.md) |
 | MOD-INF-009 | Pipeline | [blueprint](pipeline/blueprint.md) |
-| MOD-INF-010 | Feedback Loop | [blueprint](feedback_loop/blueprint.md) |
-| MOD-INF-012 | Database | [blueprint](database/blueprint.md) |
+| MOD-FEEDBACK_LOOP | Feedback Loop | [blueprint](feedback_loop/blueprint.md) |
+| MOD-DATABASE | Database | [blueprint](database/blueprint.md) |
 | MOD-INF-013 | MCP Servers | [blueprint](mcp_servers/blueprint.md) |
-| MOD-INF-014 | LLM Security | [blueprint](llm_security/blueprint.md) |
+| MOD-LLM_SECURITY | LLM Security | [blueprint](llm_security/blueprint.md) |
 | MOD-INF-016 | Shared + Core | [blueprint](shared_core/blueprint.md) |
 
 ### 治理与质量模块

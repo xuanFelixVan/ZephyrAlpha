@@ -1290,7 +1290,7 @@ ttl: permanent
 | [ke-4509-six_standards.md](ke-4509-six_standards.md) | Markdown | ke-4509-six_standards.md |
 | [ke-4510-v0_1_0.md](ke-4510-v0_1_0.md) | Markdown | ke-4510-v0_1_0.md |
 | [ke-4511-module_blu.md](ke-4511-module_blu.md) | Markdown | ke-4511-module_blu.md |
-| [ke-4512-dom_gov.md](ke-4512-dom_gov.md) | Markdown | MOD-023 集成契约锚点 |
+| [ke-4512-dom_gov.md](ke-4512-dom_gov.md) | Markdown | MOD-GOVERNANCE 集成契约锚点 |
 | [ke-4513-domain_governance.md](ke-4513-domain_governance.md) | Markdown | _domain-governance |
 | [ke-4514-e_ai_b4_e01_e12.md](ke-4514-e_ai_b4_e01_e12.md) | Markdown | ke-4514-e_ai_b4_e01_e12.md |
 | [ke-4515-encryption_at_rest.md](ke-4515-encryption_at_rest.md) | Markdown | 加密策略（Encryption at Rest） |
@@ -1316,7 +1316,7 @@ ttl: permanent
 | [ke-4535-module_blueprint.md](ke-4535-module_blueprint.md) | Markdown | ke-4535-module_blueprint.md |
 | [ke-4536-m_b5_m01_m06.md](ke-4536-m_b5_m01_m06.md) | Markdown | ke-4536-m_b5_m01_m06.md |
 | [ke-4537-mod_inf_023_drift_detector.md](ke-4537-mod_inf_023_drift_detector.md) | Markdown | ke-4537-mod_inf_023_drift_detector.md |
-| [ke-4538-mod_master_001_consistency.md](ke-4538-mod_master_001_consistency.md) | Markdown | MOD-MASTER-001 Consistency |
+| [ke-4538-mod_master_001_consistency.md](ke-4538-mod_master_001_consistency.md) | Markdown | MOD-MASTER_BLUEPRINT Consistency |
 | [ke-4539-module_status.md](ke-4539-module_status.md) | Markdown | Module Status |
 | [ke-4540-n_b5_n01_n06.md](ke-4540-n_b5_n01_n06.md) | Markdown | ke-4540-n_b5_n01_n06.md |
 | [ke-4541-o_ai_b5_o01_o08.md](ke-4541-o_ai_b5_o01_o08.md) | Markdown | ke-4541-o_ai_b5_o01_o08.md |

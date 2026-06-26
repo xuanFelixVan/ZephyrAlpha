@@ -12,7 +12,7 @@ CT-DB-004：运维管理契约
 
 ```yaml
 contract_id: CT-DB-004
-provider: MOD-INF-012 (DatabaseManager)
+provider: MOD-DATABASE (DatabaseManager)
 consumers:
   - MOD-INF-015 (system-telemetry)
   - MOD-INF-001 (capacity-assurance)

@@ -987,7 +987,7 @@ STEP 3: 规则文件渐进加载 — 只加载相关规则子集
 
 | 组件                                 | 层级  | 状态                        |
 | ---------------------------------- | --- | ------------------------- |
-| Feedback Loop Engine (MOD-INF-010) | 架构级 | 有蓝图+代码                    |
+| Feedback Loop Engine (MOD-FEEDBACK_LOOP) | 架构级 | 有蓝图+代码                    |
 | Agent Spec (MOD-INF-019)           | 架构级 | 有蓝图+代码                    |
 | SelfEvolutionFidelityGate          | 工程级 | 已实现(EchoTrap)             |
 | AutoEvolution                      | 工程级 | 已实现(自动触发)                 |

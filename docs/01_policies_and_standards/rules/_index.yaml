@@ -2,9 +2,9 @@ version: 2.1.0
 generated_at: '2026-06-21T00:00:00'
 description: ZephyrAlpha规则YAML总索引（Phase E迁移产物；v2.1.0审查修复trae_029/031/034 aliases对齐）
 schema_version: 2.0.0
-total_rules: 57
+total_rules: 58
 layer_distribution:
-  L0_critical: 18
+  L0_critical: 19
   L1_error: 28
   L2_warning: 11
 
@@ -667,7 +667,7 @@ rules:
   scope: module_governance
   file: trae_032_module_lifecycle.yaml
   aliases:
-  - MOD-001
+  - MOD-ALPHA_SIGNAL_DOMAIN
   - MOD-002
   - MOD-003
   - MOD-004
@@ -946,4 +946,16 @@ rules:
   - AICF-001
   - AI-FIRST-001
   - AI-CONSUMER-FIRST
+  section_count: 6
+- rule_id: TRAE-060
+  title: 向内收原则（唯一真源·事件驱动·第一性原理）
+  layer: L0
+  severity: critical
+  scope: global
+  file: trae_060_inward_consolidation.yaml
+  aliases:
+  - INWARD-001
+  - INWARD-CONSOLIDATION
+  - 向内收
+  - SSC-EVT-001
   section_count: 6

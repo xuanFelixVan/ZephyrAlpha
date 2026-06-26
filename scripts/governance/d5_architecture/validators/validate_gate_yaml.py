@@ -21,7 +21,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 # Gate Configuration Drift Detection — YAML ↔ Code 交叉校验
 # ==========================================================
-# 针对 MOD-INF-007 门禁体系，检测 YAML 配置文件与 gate_engine.py 代码之间的漂移。
+# 针对 MOD-GATE_ENGINE 门禁体系，检测 YAML 配置文件与 gate_engine.py 代码之间的漂移。
 # Safety: M | Usage: python scripts/governance/d5_architecture/validate_gate_yaml.py [--fix] [--json]
 
 import sys

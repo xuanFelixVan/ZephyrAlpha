@@ -18,7 +18,7 @@
 Task Lifecycle Manager — G0-G7 任务生命周期门禁。
 
 依据：
-    蓝图 MOD-INF-006 §3.1.2 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §3.1.2 + v0.6.0
     任务卡 TASK-INF-0106
 
 功能：

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §adversarial_strategies
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §adversarial_strategies
 # [MODULE] zephyr.governance.rule_enforcement.adversarial_strategies
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES]

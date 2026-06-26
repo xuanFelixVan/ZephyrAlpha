@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.check_type_registry
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] MOD-INF-007 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
+# [INVARIANTS] MOD-GATE_ENGINE 门禁 exit code 不可伪造; 原子写入 temp-file+os.replace()
 # [MODIFY-GUARD] blueprint.md §4; _registry.yaml; __init__.py __all__
 # [STABILITY] frozen
 # [SAFETY] M
@@ -14,11 +14,11 @@
 # [TESTS] tests/gates/
 # [A_module] module_id=MOD-GOV_check_type_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""[BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
+"""[BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md | §3-§7
 
 CheckTypeHandler — CheckTypeHandler
 
-依据: 蓝图 MOD-INF-007 §3-§7
+依据: 蓝图 MOD-GATE_ENGINE §3-§7
 
 """
 

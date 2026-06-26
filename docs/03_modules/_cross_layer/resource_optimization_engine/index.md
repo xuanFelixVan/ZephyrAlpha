@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "resource_optimization_engine — 目录索引"
-module_id: "MOD-INF-032"
-blueprint_id: "MOD-INF-032"
+module_id: "MOD-RESOURCE_OPTIMIZATION_ENGINE"
+blueprint_id: "MOD-RESOURCE_OPTIMIZATION_ENGINE"
 version: "5.4.0"
 created: "2026-06-22"
 updated: "2026-06-22"

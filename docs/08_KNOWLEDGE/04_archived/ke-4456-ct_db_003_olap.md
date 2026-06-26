@@ -9,4 +9,4 @@ ttl: permanent
 
 DB-025-0025：CT-DB-003 OLAP 查询契约落地
 
-Provider: MOD-INF-012 (OLAPEngine). Consumers: MOD-INF-010, MOD-INF-015.
+Provider: MOD-DATABASE (OLAPEngine). Consumers: MOD-FEEDBACK_LOOP, MOD-INF-015.

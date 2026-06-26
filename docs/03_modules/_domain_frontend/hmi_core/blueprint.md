@@ -22,7 +22,7 @@ summary: "⛔ C轨业务层未开放，禁止施工。人机交互层。Dashboar
 tags: [human-ai-interface, l08, dashboard, streamlit, notification, approval, blocked-by-infrastructure, do-not-implement]
 priority: P1
 runtime_plane: warm
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 rule_form: structural
 scope: module
@@ -32,7 +32,7 @@ depends_on:
   - target: MOD-INF-FLE
     at: "§10"
     why: "FitnessFunctionFramework + FitnessInputs"
-  - target: MOD-INF-012
+  - target: MOD-DATABASE
     at: "§10"
     why: "TaskRepository"
 references:
@@ -47,8 +47,8 @@ ai_read_only_hint: DO_NOT_IMPLEMENT
 > ⛔ **C轨业务层未开放，禁止施工**
 >
 > 本蓝图所属的C轨业务层当前处于 `not_started` 状态。
-> 开工触发条件（同 MOD-MASTER-001 §零）：
-> (a) MOD-MASTER-001 的 construction_progress >= implementation_phase；
+> 开工触发条件（同 MOD-MASTER_BLUEPRINT §零）：
+> (a) MOD-MASTER_BLUEPRINT 的 construction_progress >= implementation_phase；
 > (b) Gate Engine 覆盖了本层相关的业务检查类型；
 > (c) 至少一个 CT-* 契约从规划到部分实现，打通了本层的集成通路。
 > 在此条件满足前，本蓝图仅供 AI 阅读以了解架构意图，**严禁生成业务代码或执行施工步骤**。
@@ -183,7 +183,7 @@ C轨人机交互层是系统与用户之间的桥梁。当前B轨治理基础设
 | 8 | ✅ 包含 | OLAP 趋势 | OLAPTrendData + fetch_olap_trends | 本模块 |
 | 9 | ❌ 排除 | 风险计算 | L04 Risk Management | L04 |
 | 10 | ❌ 排除 | 绩效归因 | L07 Post-Trade Analytics | L07 |
-| 11 | ❌ 排除 | Fitness Functions 计算 | feedback-loop/fitness_functions.py | MOD-INF-010 |
+| 11 | ❌ 排除 | Fitness Functions 计算 | feedback-loop/fitness_functions.py | MOD-FEEDBACK_LOOP |
 
 ---
 
@@ -417,7 +417,7 @@ class FitnessDashboardData(BaseModel):
 | MOD-L07-001 Post-Trade Analytics | 可选 | CTR-P1-009 PerformanceAttributionReport | — | `D:\ZephyrAlpha\docs\03_modules\_domain-reporting\analytics-core\blueprint.md` |
 | MOD-INF-035 系统大脑 | 可选 | 运维可视化 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
 | MOD-INF-015 系统遥测 | 可选 | 告警通道 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\system-telemetry\blueprint.md` |
-| MOD-INF-007 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE 门禁引擎 | 可选 | 人机协同 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -470,7 +470,7 @@ class FitnessDashboardData(BaseModel):
 | L04 Risk Management | CTR-P1-008 消费 | 风险仪表盘可展示 | 风险面板可渲染 |
 | MOD-INF-035 系统大脑 | 运维可视化 | Dashboard 嵌入系统大脑 | Dashboard 可渲染 |
 | MOD-INF-015 系统遥测 | 告警通道 | 通知推送 | 通知可达 |
-| MOD-INF-007 门禁引擎 | 人机协同 | CLI 命令交互 | CLI 可执行 |
+| MOD-GATE_ENGINE 门禁引擎 | 人机协同 | CLI 命令交互 | CLI 可执行 |
 
 ### 12.1 域契约锚点
 
@@ -856,7 +856,7 @@ class FitnessDashboardData(BaseModel):
 | Tier 2 | L07 Post-Trade Analytics | CTR-P1-009 PerformanceAttributionReport |
 | Tier 2 | MOD-INF-035 系统大脑 | 运维可视化 |
 | Tier 2 | MOD-INF-015 系统遥测 | 告警通道 |
-| Tier 2 | MOD-INF-007 门禁引擎 | 人机协同 |
+| Tier 2 | MOD-GATE_ENGINE 门禁引擎 | 人机协同 |
 
 ### 变更审批与同步规则
 

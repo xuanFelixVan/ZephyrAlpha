@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.shared_services.session_continuity; zephyr.integration.shared_08.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.integration.shared_08.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_orchestrator.query; zephyr.integration.shared_08.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.persistence.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚

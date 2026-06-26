@@ -16,12 +16,12 @@ date: "2026-05-03"
 ttl: permanent
 construction_progress: completed
 actual_disk_path: "scripts/governance/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 dependencies:
   - MOD-INF-001
   - MOD-INF-003
   - MOD-INF-004
-  - MOD-INF-006
+  - MOD-TASK_SYSTEM
   - MOD-KB-001
 priority: P0
 runtime_plane: hot
@@ -210,7 +210,7 @@ references: []
 
 | # | 文件 | module_id | 完整绝对路径 | 用途 |
 |---|------|-----------|------------|------|
-| 1 | 任务系统蓝图 | MOD-INF-006 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` | 门禁体系 G0-G7 + 管线节点 M1-M11——脚本失败→任务状态转换的接口定义 |
+| 1 | 任务系统蓝图 | MOD-TASK_SYSTEM | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` | 门禁体系 G0-G7 + 管线节点 M1-M11——脚本失败→任务状态转换的接口定义 |
 | 2 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | frontmatter schema + META-V 验证规则 |
 | 3 | 规则验证标准 | PS-STD-012 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_041_meta_rule_classification.yaml` | V1~V4 四级验证体系 |
 | 4 | 脚本质量标准 | SCRIPT-QUALITY-001 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` | 8维度×38条款——脚本自身的质量约束 |
@@ -225,9 +225,9 @@ references: []
 
 | target | at | 用途 |
 |--------|-----|------|
-| MOD-INF-006 | §4 | G0-G7门禁体系 |
-| MOD-INF-006 | §5 | 管线M1-M11 |
-| MOD-INF-006 | §3.2.1 + §4.2 + §3.1.2 | TaskCard + 10状态机 + task_id |
+| MOD-TASK_SYSTEM | §4 | G0-G7门禁体系 |
+| MOD-TASK_SYSTEM | §5 | 管线M1-M11 |
+| MOD-TASK_SYSTEM | §3.2.1 + §4.2 + §3.1.2 | TaskCard + 10状态机 + task_id |
 | MOD-KB-001 | §3.2 + §6 | KE Schema + KB入库 |
 | PS-STD-001 | §7 | metadata注册表 |
 | SCRIPT-QUALITY-001 | §2 | 退出码约定（0/1/2/3） |
@@ -237,7 +237,7 @@ references: []
 | 已有模块 | 重叠点 | 区别 |
 |---------|--------|------|
 | MOD-INF-004 vibe-coding-pipelines | 脚本系统被提及 | MOD-INF-004 管管线编排，本系统管审计产出物 |
-| MOD-INF-006 task-system | 任务管线里有审计 | MOD-INF-006 是内嵌审计，本系统是系统级横切审计 |
+| MOD-TASK_SYSTEM task-system | 任务管线里有审计 | MOD-TASK_SYSTEM 是内嵌审计，本系统是系统级横切审计 |
 
 ---
 
@@ -366,7 +366,7 @@ Gen              生成器                   4个脚本
 | 2 | 各维度脚本 | 脚本执行扫描 → 产出 Finding JSONL | C2 分类阶段 | Finding JSONL |
 | 3 | C2 分类 | 按 severity 分级 → 去重 | C3 报告 | Finding dict |
 | 4 | C3 报告 | 生成结构化报告 + 退出码判定 | pre-commit / 人工 | exit code + report |
-| 5 | C4 跟踪 | Finding → 任务卡自动创建 | MOD-INF-006 任务系统 | TaskCard |
+| 5 | C4 跟踪 | Finding → 任务卡自动创建 | MOD-TASK_SYSTEM 任务系统 | TaskCard |
 
 ### 3.8 状态生命周期 (§3.3)
 
@@ -727,7 +727,7 @@ run_all.py 和独立脚本的产出物按以下格式命名，保证任何人看
 
 ### 6.1 集成模式：脚本失败 → 任务阻塞
 
-当脚本系统检测到违规时，通过任务系统 MOD-INF-006 的门禁体系（G0-G7）将关联任务置为 BLOCKED：
+当脚本系统检测到违规时，通过任务系统 MOD-TASK_SYSTEM 的门禁体系（G0-G7）将关联任务置为 BLOCKED：
 
 ```
 脚本系统                              任务系统
@@ -738,11 +738,11 @@ Finding.severity = CRITICAL/HIGH
   ↓
 GATE-n 判定 → FAIL                   ↓
   ↓
-关联任务的 status → BLOCKED           (MOD-INF-006 §4 G0-G7)
+关联任务的 status → BLOCKED           (MOD-TASK_SYSTEM §4 G0-G7)
   ↓
 修复 Finding → GATE-n 重跑 → PASS     ↓
   ↓
-关联任务的 status → TODO              (MOD-INF-006 §5 M1-M11)
+关联任务的 status → TODO              (MOD-TASK_SYSTEM §5 M1-M11)
 ```
 
 ### 6.2 状态转换映射
@@ -777,7 +777,7 @@ MEDIUM 及以上 Finding 应包含 `recommendation` 字段，给出修复建议�
 ---
 ### 6.4 task_id 格式约定
 
-脚本系统创建的追踪任务使用 `OPS-{SEQ}` 命名空间（对齐 MOD-INF-006 §3.2.1 task_id 的 `{NAMESPACE}-{SEQ}` 格式——脚本系统属 OPS 操作域）：
+脚本系统创建的追踪任务使用 `OPS-{SEQ}` 命名空间（对齐 MOD-TASK_SYSTEM §3.2.1 task_id 的 `{NAMESPACE}-{SEQ}` 格式——脚本系统属 OPS 操作域）：
 
 ```
 OPS-001: D1 维度脚本注册验证任务
@@ -1080,7 +1080,7 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 | MOD-INF-001 (capacity-assurance) | runtime | 容量预算检查 + SLO 监控 + Error Budget + Kill Switch | 2.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\capacity-assurance\blueprint.md` |
 | MOD-INF-003 (task-card-kms) | runtime | Finding → CRITICAL 自动创建任务卡 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-card-kms\blueprint.md` |
 | MOD-INF-004 (vibe-coding-pipelines) | contract | 脚本系统是双管线审计侧的脚本基础设施 | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vibe-coding-pipelines\blueprint.md` |
-| **MOD-INF-006 (task-system)** | **contract** | **G0-G7门禁体系 + M1-M11管线节点** | **0.3.0** | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
+| **MOD-TASK_SYSTEM (task-system)** | **contract** | **G0-G7门禁体系 + M1-M11管线节点** | **0.3.0** | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
 | PS-STD-012 (规则验证标准) | contract | V1~V4 验证分级 + 阻断/警告规则定义 | 1.1.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_041_meta_rule_classification.yaml` |
 | PS-STD-001 (元数据注册表) | contract | frontmatter schema + META-V 验证规则 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` |
 | SCRIPT-QUALITY-001 | contract | 脚本质量 8 维度 × 38 条款 | 1.0.0 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` |
@@ -1118,7 +1118,7 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 | 各维度脚本 | C2 分类阶段 | Finding JSONL | 文件写入 |
 | C2 分类 | C3 报告 | Finding dict（去重后） | 函数调用 |
 | C3 报告 | pre-commit / 人工 | exit code + report | 进程退出码 + stdout |
-| C4 跟踪 | MOD-INF-006 任务系统 | TaskCard | 函数调用 |
+| C4 跟踪 | MOD-TASK_SYSTEM 任务系统 | TaskCard | 函数调用 |
 | run_all.py | ScriptResultCache | 缓存条目 | SQLite |
 | run_all.py | CrossSessionDeduplicator | 执行注册 | SQLite |
 
@@ -1353,7 +1353,7 @@ STEP 3: 拆分后验证
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
 | Tier 1 | 施工图 | 本蓝图所有决策 |
-| Tier 2 | MOD-INF-006（task-system） | §6 集成接口——脚本失败↔任务状态 |
+| Tier 2 | MOD-TASK_SYSTEM（task-system） | §6 集成接口——脚本失败↔任务状态 |
 | Tier 3 | scripts/governance/*.py（全部脚本） | §3 分类体系 + §5 调度规范 + §7 质量标准 |
 
 ### 修改条件
@@ -1381,9 +1381,9 @@ STEP 3: 拆分后验证
 
 | 领域 | 真源 |
 |------|------|
-| 任务卡字段定义 | MOD-INF-006（task-system blueprint） |
+| 任务卡字段定义 | MOD-TASK_SYSTEM（task-system blueprint） |
 | 管线编排 | MOD-INF-004（vibe-coding-pipelines） |
-| 门禁引擎 | MOD-INF-007（gate-engine blueprint） |
+| 门禁引擎 | MOD-GATE_ENGINE（gate-engine blueprint） |
 | 代码命名/类型注解 | [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) |
 | 脚本质量 8 维度完整条款 | [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) |
 
@@ -1853,8 +1853,8 @@ Error Budget 耗尽 → `manage_error_budget.py` 自动：
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| Gate Engine (MOD-INF-007) | 治理脚本结果 → 门禁判定 | `run_all.py` → `gate_engine.evaluate()` | 脚本结果触发门禁 |
-| Task System (MOD-INF-006) | 脚本执行 → 任务状态变更 | 脚本完成 → `task_repo.update_status()` | 关联任务状态自动更新 |
+| Gate Engine (MOD-GATE_ENGINE) | 治理脚本结果 → 门禁判定 | `run_all.py` → `gate_engine.evaluate()` | 脚本结果触发门禁 |
+| Task System (MOD-TASK_SYSTEM) | 脚本执行 → 任务状态变更 | 脚本完成 → `task_repo.update_status()` | 关联任务状态自动更新 |
 | Drift Detector (MOD-INF-023) | 治理脚本 → 漂移检测器 | 80+ 脚本 → `drift_detector` 调度 | 脚本作为 drift detector 的检测器 |
 
 ---

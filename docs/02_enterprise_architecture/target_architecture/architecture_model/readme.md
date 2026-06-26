@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: architecture_model README
 module_id: GOV-046
 ttl: permanent

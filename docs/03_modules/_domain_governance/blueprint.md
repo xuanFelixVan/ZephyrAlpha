@@ -1,5 +1,5 @@
 ---
-module_id: MOD-023
+module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
@@ -36,10 +36,10 @@ depends_on:
   - target: "SYS-MASTER-001"
     at: "全篇"
     why: "Level 0系统总蓝图——治理域是金字塔Level 1节点"
-  - target: "MOD-MASTER-001"
+  - target: "MOD-MASTER_BLUEPRINT"
     at: "全篇"
     why: "基础设施域集成蓝图——治理域依赖基建域基础能力"
-  - target: "MOD-INF-007"
+  - target: "MOD-GATE_ENGINE"
     at: "§3"
     why: "Gate Engine——线3权限判定链第3步（ARB-9），G-CT契约隐含依赖"
   - target: "MOD-INF-016"
@@ -48,7 +48,7 @@ depends_on:
   - target: "DOM-GOV-CAP-001"
     at: "§0/§3.10~3.13/§9/§11"
     why: "容量升级设计独立蓝图——分层执行/熔断器/分片存储/GPU加速/施工路线图/测试矩阵权威来源"
-  - target: "MOD-INF-012"
+  - target: "MOD-DATABASE"
     at: "§9"
     why: "Database——ARB-8裁定events表为审计唯一权威存储，分片存储设计直接依赖"
 references:
@@ -95,12 +95,12 @@ ssot_claims:
 
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
 
-> module_id: MOD-023 | version: 0.5.1 | status: active | layer: domain | blueprint_level: domain
+> module_id: MOD-GOVERNANCE | version: 0.5.1 | status: active | layer: domain | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER-001（基础设施域），下游被 8 个治理模块消费。
+本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [DOM-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
 
 ---
 
@@ -179,14 +179,14 @@ ssot_claims:
 
 | SSoT 声明 | 真源蓝图 | 委托蓝图 | 判定 |
 |-----------|---------|---------|------|
-| Agent治理八件套跨模块集成契约(G-CT-001~022) | MOD-023 | — | 真源 |
-| 治理域循环依赖裁定(ARB-1~9) | MOD-023 | — | 真源 |
-| 治理域设计缺失追踪(D-GAP-01~12索引) | MOD-023 | DOM-GOV-CAP-001(设计真源) | 索引+引用 |
-| 治理域设计缺失追踪(D-GAP-13~29设计) | MOD-023 | — | 真源 |
-| 治理域Phase施工路线图与进度 | MOD-023 | — | 真源 |
+| Agent治理八件套跨模块集成契约(G-CT-001~022) | MOD-GOVERNANCE | — | 真源 |
+| 治理域循环依赖裁定(ARB-1~9) | MOD-GOVERNANCE | — | 真源 |
+| 治理域设计缺失追踪(D-GAP-01~12索引) | MOD-GOVERNANCE | DOM-GOV-CAP-001(设计真源) | 索引+引用 |
+| 治理域设计缺失追踪(D-GAP-13~29设计) | MOD-GOVERNANCE | — | 真源 |
+| 治理域Phase施工路线图与进度 | MOD-GOVERNANCE | — | 真源 |
 | 治理域容量升级架构 | DOM-GOV-CAP-001 | — | 真源 |
 | 容量升级D-GAP-01~12设计方案 | DOM-GOV-CAP-001 | — | 真源 |
-| G-CT-* 契约（非 CT-*） | MOD-023 | MOD-MASTER-002 仅引用 | 真源 |
+| G-CT-* 契约（非 CT-*） | MOD-GOVERNANCE | MOD-MASTER-002 仅引用 | 真源 |
 
 ### §0.5 代码目录唯一性
 
@@ -1204,7 +1204,7 @@ P2-RESILIENCE（韧性保障）:
 
 ## G-CT 契约下游锚点（验收）（条件可选——下游模块蓝图可选择是否包含锚点表）
 
-以下模块蓝图 **MUST** 在正文前部包含「MOD-023 集成契约锚点」表，列出本模块作为 **G-CT-*** 的消费方或产出方：**MOD-INF-018、019、020、021、022、023、024、025**。
+以下模块蓝图 **MUST** 在正文前部包含「MOD-GOVERNANCE 集成契约锚点」表，列出本模块作为 **G-CT-*** 的消费方或产出方：**MOD-INF-018、019、020、021、022、023、024、025**。
 
 | module_id | 已锚定 |
 |-----------|--------|
@@ -1219,7 +1219,7 @@ P2-RESILIENCE（韧性保障）:
 
 # 治理域集成蓝图 — Agent 治理八件套
 
-> **module_id**: MOD-023 | **Level**: 1 (域集成蓝图) | **version**: 0.2.0
+> **module_id**: MOD-GOVERNANCE | **Level**: 1 (域集成蓝图) | **version**: 0.2.0
 >
 > 本蓝图是 ZephyrAlpha 金字塔体系中的 **Level 1 治理域集成蓝图**。
 > 覆盖模块：MOD-INF-018 (RBAC) / 019 (Spec) / 020 (Audit) / 021 (Rollback) / 022 (Escalation) / 023 (Drift) / 024 (Budget) / 025 (A2A)
@@ -1854,7 +1854,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ### P0-I1: 与 depends_on 模块集成
 - SYS-MASTER-001 金字塔层级约束验证
-- MOD-MASTER-001 CT-* 契约与 G-CT-* 契约不冲突验证
+- MOD-MASTER_BLUEPRINT CT-* 契约与 G-CT-* 契约不冲突验证
 
 ### P0-I2: 域内施工顺序验证
 - §4 施工顺序的拓扑排序正确性
@@ -1876,13 +1876,13 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | SYS-MASTER-001 | 必须 | Level 0 系统总蓝图——治理域是金字塔 Level 1 节点 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-MASTER-001 | 必须 | 基础设施域集成蓝图——治理域依赖基建域基础能力 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| MOD-MASTER_BLUEPRINT | 必须 | 基础设施域集成蓝图——治理域依赖基建域基础能力 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-023` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-GOVERNANCE` |
 | 2 | §11 产出物路径 ↔ 依赖图 path_mappings | 路径一致 | 已对齐 | 同上 |
 
 ### 10.3 内部依赖图
@@ -2011,7 +2011,7 @@ STEP 3: 拆分后验证
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
-| 6 | 基础设施域蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施集成 |
+| 6 | 基础设施域蓝图 | MOD-MASTER_BLUEPRINT | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施集成 |
 | 7 | 治理方法论标准 | REG-STD-001 / PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-001~013 治理决策方法论 |
 | 8 | 代码构建标准 | REG-STD-002 / GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 命名/文件组织/类型注解/SSoT守卫 |
 | 9 | AI产出物压缩工作流标准 | REG-STD-004 / GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 转化优先/15不可删/6砍错模式 |
@@ -2026,7 +2026,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|---------|------------|----------|-------------|
-| 1 | MOD-MASTER-001 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施域集成 | MOD-MASTER 定义基础设施域，本蓝图定义治理域 |
+| 1 | MOD-MASTER_BLUEPRINT | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施域集成 | MOD-MASTER 定义基础设施域，本蓝图定义治理域 |
 
 ---
 
@@ -2155,7 +2155,7 @@ STEP 3: 拆分后验证
 | 异常恢复 | Git-native Rollback + Checkpoint | G-CT-002/005 |
 | 权限升级 | 五层防御 + 人工审批 | G-CT-004/006 |
 | 数据隔离 | 脚本沙箱 + RLIMIT | G-CT-019 |
-| 密钥管理 | LLM Security Gateway fail-closed | MOD-INF-014 |
+| 密钥管理 | LLM Security Gateway fail-closed | MOD-LLM_SECURITY |
 
 ---
 
@@ -2238,7 +2238,7 @@ STEP 3: 拆分后验证
 | 2 | §0 代码对齐验证可执行 | 命令 exit 0 |
 | 3 | §3 所有 G-CT-* 有方向+触发时机 | 无空定义 |
 | 4 | §11 产出物路径与磁盘一致 | 每个路径可 Grep 到 |
-| 5 | 蓝图 `[BLUEPRINT]` 标注与代码头部双向对齐 | 代码头部有 MOD-023 |
+| 5 | 蓝图 `[BLUEPRINT]` 标注与代码头部双向对齐 | 代码头部有 MOD-GOVERNANCE |
 | 6 | construction_progress 与代码实际状态一致 | 无虚标 |
 | 7 | system-dependency-map.md G-CT-* 描述与蓝图一致 | 无冲突 |
 | 8 | MTH-006 三向触发器完整 | sync_rule_registry.py PASS |

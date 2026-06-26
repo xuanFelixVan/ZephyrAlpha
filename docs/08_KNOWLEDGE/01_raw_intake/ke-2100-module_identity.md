@@ -11,7 +11,7 @@ ttl: permanent
 
 | 属性 | 值 |
 |------|-----|
-| module_id | MOD-INF-008 |
+| module_id | MOD-CONTEXT_ENGINE |
 | 代码落位 | `src/zephyr/context-engine/` |
 | 边界上下文 | bounded_context: true |
 | 伞盖层 | l12 (可观测层覆盖) |

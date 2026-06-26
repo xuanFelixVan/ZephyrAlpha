@@ -61,16 +61,16 @@ Phase 0 的产出将直接降低 Phase 1 的阻塞项——清单提取会发现
 | # | 功能ID | 大功能 | 包含的子系统 | 代码成熟度 | 对应蓝图 | 源码包 |
 |---|--------|--------|------------|:---:|---------|--------|
 | 1 | F1 | 自动驾驶/运行时大脑 | AutoPilot + AutoRuntimeCore + Conductor + SessionLifecycle + WorkOrchestrator + DreamCycle + CircadianScheduler + IdeHealthDaemon + StagingArea + AdmissionController + VerdictEngine | 高 | MOD-INF-035 | trading/ |
-| 2 | F2 | 门禁引擎 | PhaseManager + PhaseExecutor + 51门控检查 + GateEngine + G0-G7门禁 + 门禁域熔断器 | 高 | MOD-INF-007 | governance/rule_enforcement/ |
-| 3 | F3 | 任务系统 | TaskRepo + TaskCard + BlueprintDecomposer + 10状态机 + 粒度门禁(R1-R6) + 超粒度自动拆分 | 高 | MOD-INF-006 | governance/ |
+| 2 | F2 | 门禁引擎 | PhaseManager + PhaseExecutor + 51门控检查 + GateEngine + G0-G7门禁 + 门禁域熔断器 | 高 | MOD-GATE_ENGINE | governance/rule_enforcement/ |
+| 3 | F3 | 任务系统 | TaskRepo + TaskCard + BlueprintDecomposer + 10状态机 + 粒度门禁(R1-R6) + 超粒度自动拆分 | 高 | MOD-TASK_SYSTEM | governance/ |
 | 4 | F4 | 预算执行器 | BudgetEngine + TokenBudget + CostBudget + ContextBudget + IPI防御 + 螺旋预警 + pre_flight_check | 高 | MOD-INF-024 | governance/ |
 | 5 | F5 | 升级/委托/A2A协议 | EscalationAPI + DelegationEngine(四级约束) + A2A五层协议 + 死锁检测 + 仲裁器 + GovernanceAdapter | 高 | MOD-INF-022/025 | governance/ + infrastructure/a2a_protocol/ |
 | 6 | F6 | 漂移检测/行为审计 | DriftDetector(39检测器) + ChaosInjector + BaselineManager + ContractDriftDetector + 17维度审计 + DriftCronScheduler | 高 | MOD-INF-023/033 | behavioral_audit/ |
-| 7 | F7 | LLM安全网关 | L0-L8九层纵深防御 + InputSanitizer + ConstitutionEngine + RedBlueValidator + GameDayRunner + InjectionEngine + DeepSeekSpecialRiskManager | 高 | MOD-INF-014/030 | security/ |
+| 7 | F7 | LLM安全网关 | L0-L8九层纵深防御 + InputSanitizer + ConstitutionEngine + RedBlueValidator + GameDayRunner + InjectionEngine + DeepSeekSpecialRiskManager | 高 | MOD-LLM_SECURITY/030 | security/ |
 | 8 | F8 | Agent权限/RBAC | AgentRBAC七层纵深 + KillSwitch + PermissionGuard + AgentSigner + AgentCooldown + 55模块完整性 | 高 | MOD-INF-018 | security/access_control/ |
 | 9 | F9 | 回滚系统 | Git-native回滚 + AutoRollbackTrigger + RollbackSimulator + RollbackWAL + RollbackDrill + RollbackSandbox + CascadingRollbackAnalyzer | 高 | MOD-INF-021 | infrastructure/rollback/ |
 | 10 | F10 | AI模型入职考试/模型画像 | ExamOrchestrator(五轴考试:横/纵/速/幻/稳) + 27道标准题 + CapabilityPassport + ModelProfiler(7维画像) + ModelTaskMatrix + ModelDiscovery | 高 | MOD-INF-036/034 | intelligence/model_profiling/ |
-| 11 | F11 | 上下文引擎 | ContextPipeline四阶段 + 15个Context子模块 + Prompt注册表 | 高 | MOD-INF-008 | autonomy_core/ |
+| 11 | F11 | 上下文引擎 | ContextPipeline四阶段 + 15个Context子模块 + Prompt注册表 | 高 | MOD-CONTEXT_ENGINE | autonomy_core/ |
 | 12 | F12 | 向量记忆/知识库 | ChromaDB 8 Collection + BGE-M3嵌入 + HybridRetriever + CrossCollectionRetriever + 知识管线(ingest/triage/extract/activate/analyze) + UnifiedMemoryAPI | 高 | MOD-INF-011/KB-001 | integration/vector_memory/ + governance/kb/ |
 | 13 | F13 | MCP服务器集群 | 11个MCP Server + Gateway + 蓝图搜索/门禁/治理/知识库/向量记忆/哨兵/任务/遥测/文档守卫服务器 | 高 | MOD-INF-013 | integration/mcp/ |
 | 14 | F14 | 管线编排/反馈环 | Pipeline M1-M11双管线路由 + BackpressureManager + FeedbackLoop + SLOManager + ErrorBudgetManager + AutoEvolution + FitnessFunctionFramework | 高 | MOD-INF-009/010 | integration/ + ops/ |
@@ -660,7 +660,7 @@ files_in_scope:
   - "src/zephyr/governance/rule_enforcement/"
 deliverables:
   - "F2全部模块import成功且可独立运行"
-source_blueprint: "MOD-INF-007"
+source_blueprint: "MOD-GATE_ENGINE"
 safety_level: "M"
 ai_autonomy_level: "ai_modifiable"
 applicable_rules:
@@ -695,13 +695,13 @@ file_manifest:
     responsibility: "门禁阶段调度与执行"
     exists: true
     ownership: "F2"
-    blueprint_ref: "MOD-INF-007 §3"
+    blueprint_ref: "MOD-GATE_ENGINE §3"
   - path: "src/zephyr/governance/rule_enforcement/gate_engine.py"
     section: "§3.2"
     responsibility: "门禁规则评估引擎"
     exists: true
     ownership: "F2"
-    blueprint_ref: "MOD-INF-007 §3"
+    blueprint_ref: "MOD-GATE_ENGINE §3"
 
 # 新增：依赖图（从 §10 正文表格迁移，文件级 + symbols）
 dependency_graph:
@@ -717,7 +717,7 @@ dependency_graph:
   external:  # 对其他蓝图/域的依赖
     - from: "phase_manager.py"
       to: "zephyr.governance.task_repo"
-      blueprint: "MOD-INF-006"
+      blueprint: "MOD-TASK_SYSTEM"
       symbols: ["TaskRepository"]
       dep_type: "import"
     - from: "gate_engine.py"

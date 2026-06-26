@@ -11,7 +11,7 @@ ttl: permanent
 
 | 文件 | 位置 | registry_id |
 |------|------|:--:|
-| 模块ID注册表 | `02_enterprise_architecture/.../module_id_registry.yaml` | REG-MOD-001 |
+| 模块ID注册表 | `02_enterprise_architecture/.../module_id_registry.yaml` | REG-MOD-ALPHA_SIGNAL_DOMAIN |
 | 模块生命周期登记表 | `03_modules/module-registry.yaml` | REG-MOD-002 |
 | 蓝图深度评估登记表 | `03_modules/blueprint_registry.yaml` | REG-MOD-003 |
 | Embedding模型注册表 | `src/zephyr/config/embedding_model_registry.yaml` | REG-AI-002 |

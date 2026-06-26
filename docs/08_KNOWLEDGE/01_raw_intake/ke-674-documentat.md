@@ -16,7 +16,7 @@ D:\ZephyrAlpha\docs\03_modules\{layer}\{module}\changes\{feature-id}\{task_id}.m
 
 示例：
 ```
-D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\changes\MOD-INF-006\TASK-INF-0042.md
+D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\changes\MOD-TASK_SYSTEM\TASK-INF-0042.md
 ```
 
 > **规则**：任务卡 .md 文件必须放在对应蓝图模块的 `changes/` 子目录下。创建 `changes/` 目录前执行 MTH-013 路径合规检查。

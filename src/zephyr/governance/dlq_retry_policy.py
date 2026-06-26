@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.dlq_retry_policy
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema

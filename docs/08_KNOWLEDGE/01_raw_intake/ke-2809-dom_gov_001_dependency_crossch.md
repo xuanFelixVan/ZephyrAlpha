@@ -1,14 +1,14 @@
 ---
 module_id: KE-2712
 status: active
-title: MOD-023 Dependency Crosscheck
+title: MOD-GOVERNANCE Dependency Crosscheck
 category: module_blueprint
 ttl: permanent
 ---
 
-# MOD-023 Dependency Crosscheck
+# MOD-GOVERNANCE Dependency Crosscheck
 
-MOD-023 Dependency Crosscheck
+MOD-GOVERNANCE Dependency Crosscheck
 
 **Generated:** 2026-05-07
-**Crosscheck target:** SYS-MASTER-001 + MOD-MASTER-001 vs MOD-023
+**Crosscheck target:** SYS-MASTER-001 + MOD-MASTER_BLUEPRINT vs MOD-GOVERNANCE

@@ -1,17 +1,17 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: feedback-loop Changelog
 module_id: MOD-009
 ttl: permanent
 ---
 
-# MOD-INF-010 Feedback Loop Engine — CHANGELOG
+# MOD-FEEDBACK_LOOP Feedback Loop Engine — CHANGELOG
 
 ## v0.33.0 (2026-05-07)
 **执行计划 Layer 1 全量施工完成**
 
 ### 模块骨架 (TASK-0001)
-- `src/zephyr/observability/feedback-loop/__init__.py` — MODULE_ID=MOD-INF-010, VERSION=0.1.0, 46模块职责, 七维生命周期
+- `src/zephyr/observability/feedback-loop/__init__.py` — MODULE_ID=MOD-FEEDBACK_LOOP, VERSION=0.1.0, 46模块职责, 七维生命周期
 - `src/zephyr/observability/feedback-loop/config.py` — FLEConfig(7项配置)
 - `src/zephyr/observability/feedback-loop/protocols.py` — FeedbackProtocolAdapter + ActionType枚举, fire-and-forget防循环依赖
 - `src/zephyr/observability/feedback-loop/exceptions.py` — FLEBaseException + ForensicContext + 4种子类

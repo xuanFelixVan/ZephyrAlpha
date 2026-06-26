@@ -18,7 +18,7 @@
 Blueprint-Code Sync — §5 蓝图-代码同步验证。
 
 依据：
-    蓝图 MOD-INF-006 §6.4.2 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.4.2 + v0.6.0
     任务卡 TASK-INF-0119
     （与 0111 Part 2 互补——此为 sync/ 专用模块）
 """

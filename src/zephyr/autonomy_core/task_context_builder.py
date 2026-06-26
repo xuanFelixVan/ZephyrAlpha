@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-MASTER-001 | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
+# [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.autonomy_core.task_context_builder
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas

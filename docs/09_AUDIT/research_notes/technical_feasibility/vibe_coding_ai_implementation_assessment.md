@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Vibe Coding Ai Implementation Assessment
 module_id: GOV-064---
 

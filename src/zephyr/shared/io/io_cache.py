@@ -18,7 +18,7 @@
 io_cache.py - File-level I/O cache with LRU eviction
 =====================================================
 
-SSoT: MOD-INF-032 resource-optimization-engine/blueprint.md §11 Phase 2
+SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md §11 Phase 2
 
 Design:
   - Cache key = (file_path, mtime) → file changes auto-invalidate

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.ops.circuit_breaker_types
 # [DOMAIN] D-OPS
 # [DEPENDENCIES]

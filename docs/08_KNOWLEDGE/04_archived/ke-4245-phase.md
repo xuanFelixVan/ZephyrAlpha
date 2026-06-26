@@ -27,7 +27,7 @@ ttl: permanent
 | experimental | **涌现检测框架**：5 类异常分类学 + "Agents of Chaos" 11 模式 F07/F09 信号监测 + Behavior Fingerprint | 📋 Backlog |
 | experimental | **ML 异常检测**：Isolation Forest + Autoencoder pipeline + anomaly→throttle→freeze cascade（Phase 1 仅规则引擎） | 📋 Backlog |
 | experimental | **Saga 回滚（简化版）**：git revert CT + per-agent worktree checkpoint + git-level 幂等性 | 📋 Backlog |
-| experimental | 与 MOD-INF-007/018/020/022 集成 + 审计闭环 | 📋 Backlog |
+| experimental | 与 MOD-GATE_ENGINE/018/020/022 集成 + 审计闭环 | 📋 Backlog |
 | beta | **可观测性**：分布式追踪 + A2A 指标 + Agent 信誉评分 | 📋 Backlog |
 | beta | **性能优化**：消息批处理 + 上下文压缩算法优化 + Lazy Context Loading + Prompt Caching | 📋 Backlog |
 | beta | **跨 IDE 一致性**：TRAE/Cursor/RooCode Agent Card 同步协议 + 协议版本协商 | 📋 Backlog |

@@ -3,7 +3,7 @@ doc_type: index
 status: active
 title: "changes — 目录索引"
 module_id: ""
-blueprint_id: "MOD-MASTER-001"
+blueprint_id: "MOD-MASTER_BLUEPRINT"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"
@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [index.md](index.md) | Markdown | changes — 目录索引 |
-| [mod_master_001/](mod_master_001/index.md) | 目录 | MOD-MASTER-001 — 目录索引 |
+| [mod_master_001/](mod_master_001/index.md) | 目录 | MOD-MASTER_BLUEPRINT — 目录索引 |
 
 ## 导航
 

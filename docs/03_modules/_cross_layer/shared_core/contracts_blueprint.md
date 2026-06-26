@@ -65,9 +65,9 @@ depends_on:
 | 模块 | 消费的契约 | 用途 |
 |------|---------|------|
 | MOD-INF-011 (ML Platform) | ModelServingRequest/Response, ExperimentResult | ML 推理与实验 |
-| MOD-INF-012 (Signal Gen) | MarketData, FactorSignal, MacroFactorSignal, FactorMonitorReport | 信号生成 |
+| MOD-DATABASE (Signal Gen) | MarketData, FactorSignal, MacroFactorSignal, FactorMonitorReport | 信号生成 |
 | MOD-INF-013 (Risk Mgmt) | RiskMetrics, RiskLimits, RiskDashboardSnapshot | 风险管理 |
-| MOD-INF-014 (Portfolio) | Position, PerformanceAttributionReport, CapitalAllocationResult | 组合管理 |
+| MOD-LLM_SECURITY (Portfolio) | Position, PerformanceAttributionReport, CapitalAllocationResult | 组合管理 |
 | MOD-INF-015 (Execution) | Order, Fill, ExecutionReport, ExecutionRejectionError | 交易执行 |
 | MOD-INF-016 (Compliance) | ComplianceRule, ContractViolationError | 合规检查 |
 

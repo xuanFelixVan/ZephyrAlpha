@@ -22,7 +22,7 @@ summary: "研究创新层。BacktestEngineBase OCP扩展点 + BacktestResult/Fac
 tags: [research-innovation, l09, c-track, blocked-by-infrastructure, do-not-implement]
 priority: P2
 runtime_plane: warm
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 rule_form: structural
 scope: module

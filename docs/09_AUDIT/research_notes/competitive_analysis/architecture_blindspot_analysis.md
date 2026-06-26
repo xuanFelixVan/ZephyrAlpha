@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: 2026 05 04 Architecture Blindspot Analysis
 module_id: GOV-057---
 

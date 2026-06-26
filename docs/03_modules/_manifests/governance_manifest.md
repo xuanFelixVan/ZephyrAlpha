@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Governance.Manifest
 module_id: MOD-058
 ttl: permanent

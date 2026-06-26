@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Drift Detector.Manifest
 module_id: MOD-054
 ttl: permanent

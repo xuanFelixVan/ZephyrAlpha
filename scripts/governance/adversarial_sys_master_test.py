@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """
-Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER-001 Integration Hardening
+Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Integration Hardening
 
 Red Team: 模拟攻击——破坏 frontmatter / registry / cold start / crosscheck
 Blue Team: 系统防御——SYS-MASTER-CMP gate + crosscheck_sys_master_deps.py
@@ -92,7 +92,7 @@ def extract_fm_boundaries(text: str) -> tuple[str, str]:
 
 
 # ============================================================
-# Attack 1: MOD-MASTER-001 frontmatter construction_progress corruption
+# Attack 1: MOD-MASTER_BLUEPRINT frontmatter construction_progress corruption
 # ============================================================
 
 
@@ -117,7 +117,7 @@ def attack_01_frontmatter() -> Attack:
         """restore implementation."""
         bp.write_text(backup, encoding="utf-8")
 
-    a.execute(attack_fn, restore, "MOD-MASTER-001 construction_progress_consistency")
+    a.execute(attack_fn, restore, "MOD-MASTER_BLUEPRINT construction_progress_consistency")
     return a
 
 
@@ -154,9 +154,9 @@ def attack_02_registry() -> Attack:
 
 
 # ============================================================
-# Attack 3: SYS-MASTER-001 depends_on MOD-MASTER-001 broken
-# Attack：将 depends_on 中 MOD-MASTER-001 的 target 改为不存在值
-# Gate防御：check_depends_on_integrity() YAML解析 depends_on，检查 target=="MOD-MASTER-001"
+# Attack 3: SYS-MASTER-001 depends_on MOD-MASTER_BLUEPRINT broken
+# Attack：将 depends_on 中 MOD-MASTER_BLUEPRINT 的 target 改为不存在值
+# Gate防御：check_depends_on_integrity() YAML解析 depends_on，检查 target=="MOD-MASTER_BLUEPRINT"
 # ============================================================
 
 
@@ -169,7 +169,7 @@ def attack_03_depends_on() -> Attack:
         """attack_fn implementation."""
         original = bp.read_text(encoding="utf-8")
         fm_part, body = extract_fm_boundaries(original)
-        broken_fm = fm_part.replace('{target: "MOD-MASTER-001"', '{target: "ATTACK_DELETED_999"')
+        broken_fm = fm_part.replace('{target: "MOD-MASTER_BLUEPRINT"', '{target: "ATTACK_DELETED_999"')
         bp.write_text(broken_fm + body, encoding="utf-8")
         return original
 
@@ -237,8 +237,8 @@ def attack_05_crosscheck() -> Attack:
 
 
 # ============================================================
-# Attack 6: MOD-MASTER-001 blueprint deleted
-# Attack：物理删除 MOD-MASTER-001 蓝图文件
+# Attack 6: MOD-MASTER_BLUEPRINT blueprint deleted
+# Attack：物理删除 MOD-MASTER_BLUEPRINT 蓝图文件
 # Gate防御：check_blueprint_existence() 检查文件存在
 # ============================================================
 
@@ -258,7 +258,7 @@ def attack_06_missing() -> Attack:
         """restore implementation."""
         bp.write_text(backup, encoding="utf-8")
 
-    a.execute(attack_fn, restore, "MOD-MASTER-001 blueprint_exists")
+    a.execute(attack_fn, restore, "MOD-MASTER_BLUEPRINT blueprint_exists")
     return a
 
 
@@ -299,7 +299,7 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     banner = "=" * 60
     print(f"\n{banner}")
-    print("  Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER-001")
+    print("  Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT")
     print(banner)
 
     attacks = [
@@ -336,7 +336,7 @@ def main() -> int:
     report = {
         "test_type": "adversarial",
         "version": 3,
-        "target": ["SYS-MASTER-001", "MOD-MASTER-001"],
+        "target": ["SYS-MASTER-001", "MOD-MASTER_BLUEPRINT"],
         "defense_gate": "SYS-MASTER-CMP",
         "date": "2026-05-07",
         "executor": "session-20260507-999",

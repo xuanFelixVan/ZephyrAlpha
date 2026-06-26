@@ -17,7 +17,7 @@ depends_on:
     at: "governance_construction STEP5"
     why: "架构升级期depgraph保护"
   - target: TRAE-032
-    at: "GOV-MOD-001"
+    at: "GOV-MOD-ALPHA_SIGNAL_DOMAIN"
     why: "模块准入门控"
   - target: TRAE-014
     at: "ARCH-007~012"
@@ -250,7 +250,7 @@ sections:
     rule_ref:
       rule_id: TRAE-032
       section: mod_001
-      alias: GOV-MOD-001
+      alias: GOV-MOD-ALPHA_SIGNAL_DOMAIN
     purpose: 四级筛选确保模块有明确归属和合规依赖
     applies_when: 创建新模块（非脚本/非门禁）
     steps:
@@ -748,7 +748,7 @@ sections:
       role: "governance_construction STEP5 架构升级期depgraph保护"
     - target: TRAE-032
       file: trae_032_module_lifecycle.yaml
-      role: "GOV-MOD-001 模块准入门控"
+      role: "GOV-MOD-ALPHA_SIGNAL_DOMAIN 模块准入门控"
     - target: TRAE-014
       file: trae_014_arch_blueprint_alignment.yaml
       role: "ARCH-007~012 蓝图对齐"

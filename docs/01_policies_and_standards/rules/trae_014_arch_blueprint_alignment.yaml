@@ -234,7 +234,7 @@ sections:
     - level: Level 1
       name: DOMAIN
       examples:
-      - MOD-MASTER-001(L01基础设施层集成蓝图)
+      - MOD-MASTER_BLUEPRINT(L01基础设施层集成蓝图)
       - MOD-DOMAIN-SIG-001(L02因子+L03信号域)
       - MOD-DOMAIN-RISK-001(L04-L07执行域)
       - MOD-DOMAIN-ML-001(L11-L13 ML域)
@@ -288,9 +288,9 @@ sections:
       pre_gate: 域蓝图声明的responsibility_domain必须不与任何已有域蓝图重叠
     - level: Level 2
       condition: 每创建一个新的功能模块
-      pre_gate: 'GOV-MOD-001 §7 #5 功能域重叠检查通过'
+      pre_gate: 'GOV-MOD-ALPHA_SIGNAL_DOMAIN §7 #5 功能域重叠检查通过'
     prohibitions:
-    - Level 2创建前未通过GOV-MOD-001功能域重叠检查
+    - Level 2创建前未通过GOV-MOD-ALPHA_SIGNAL_DOMAIN功能域重叠检查
     - 为已被覆盖的功能域创建平行蓝图
   s4_1_directory_tree:
     title: 整体目录树
@@ -370,13 +370,13 @@ sections:
     filename_rules:
     - blueprint_type: Level 0总蓝图
       filename: system-master-blueprint.md
-      example: MOD-MASTER-001
+      example: MOD-MASTER_BLUEPRINT
     - blueprint_type: Level 1域蓝图
       filename: domain-integration-blueprint.md
       example: MOD-DOMAIN-SIG-001
     - blueprint_type: Level 2模块蓝图
       filename: blueprint.md
-      example: MOD-INF-006/blueprint.md
+      example: MOD-TASK_SYSTEM/blueprint.md
     rules:
     - Level 2模块蓝图文件名统一是blueprint.md——模块名在目录名中
     - Level 0/1蓝图文件名描述性命名——目录下只有一份独立蓝图文件
@@ -402,7 +402,7 @@ sections:
     - level: Level 2模块蓝图
       prefix: MOD-{LAYER/DOMAIN}
       format: MOD-{LAYER}-NNN或MOD-{DOMAIN}-NNN
-      example: MOD-INF-006
+      example: MOD-TASK_SYSTEM
     - level: Level 2基础设施模块
       prefix: MOD-INF
       format: MOD-INF-NNN
@@ -470,7 +470,7 @@ sections:
       pass: 既存蓝图ID保持不动遵循相容性规则
       fail: 强制改名导致引用断裂
     compatibility_table:
-    - existing_id: MOD-MASTER-001
+    - existing_id: MOD-MASTER_BLUEPRINT
       new_level: Level 1当前→Level 0 beta升级后
       note: 当前承担L01域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
     - existing_id: MOD-INF-001~017
@@ -503,7 +503,7 @@ sections:
       step: Level 2模块蓝图MUST在frontmatter中声明belongs_to字段指向其上级蓝图
     belongs_to_values:
     - condition: 1期创建的模块蓝图
-      value: MOD-MASTER-001
+      value: MOD-MASTER_BLUEPRINT
       reason: 当前只有这个域蓝图
     - condition: beta+创建的L02因子蓝图
       value: MOD-DOMAIN-SIG-001
@@ -514,7 +514,7 @@ sections:
     - condition: 跨层基础设施模块
       value: SYS-MASTER-001
       reason: 全系统总蓝图
-    example: 'module_id: MOD-INF-006; belongs_to: MOD-MASTER-001'
+    example: 'module_id: MOD-TASK_SYSTEM; belongs_to: MOD-MASTER_BLUEPRINT'
   s6_2_domain_belongs_to:
     title: 域蓝图的belongs_to
     section_type: rule
@@ -547,7 +547,7 @@ sections:
     - id: MOD-INF-005
       at: §3~§5
       why: Finding Schema和脚本system exit code约定
-    - id: MOD-INF-007
+    - id: MOD-GATE_ENGINE
       at: §1
       why: G0-G7门禁判决逻辑
   s6_4_traceability:
@@ -563,11 +563,11 @@ sections:
       id: MOD-DOMAIN-L01-001
       belongs_to: SYS-MASTER-001
     - level: Level 2
-      id: MOD-INF-006
+      id: MOD-TASK_SYSTEM
       belongs_to: MOD-DOMAIN-L01-001
       references:
       - MOD-INF-005
-      - MOD-INF-007
+      - MOD-GATE_ENGINE
   s7_1_cold_start:
     title: 新Session冷启动定位路径
     section_type: rule
@@ -670,81 +670,81 @@ sections:
     - PS-STD-005 §9
     summary: 1阶段既存的19份蓝图的归属映射——所有Level 2模块蓝图的上级都是MOD-MASTER-001
     legacy_mapping:
-    - module_id: MOD-MASTER-001
+    - module_id: MOD-MASTER_BLUEPRINT
       title: 集成闭环总蓝图
       belongs_to: 域蓝图层
       blueprint_level: domain
     - module_id: MOD-INF-001
       title: 容量保障体系
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-002
       title: 运行时集成
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-003
       title: 任务卡+KMS(deprecated)
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-004
       title: Vibe Coding双管线(deprecated)
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-005
       title: 脚本系统
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-006
+    - module_id: MOD-TASK_SYSTEM
       title: 任务系统
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-KB-001
       title: 知识库
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-007
+    - module_id: MOD-GATE_ENGINE
       title: Gate Engine
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-008
+    - module_id: MOD-CONTEXT_ENGINE
       title: Context Engine
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-009
       title: Pipeline
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-010
+    - module_id: MOD-FEEDBACK_LOOP
       title: Feedback Loop
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-011
       title: Vector Memory
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-012
+    - module_id: MOD-DATABASE
       title: Database
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-013
       title: MCP Servers
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-INF-014
+    - module_id: MOD-LLM_SECURITY
       title: LLM Security
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-015
       title: System Telemetry
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-016
       title: Shared+Core
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-INF-017
       title: Code Dedup Engine
-      belongs_to: MOD-MASTER-001
+      belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     note: 1阶段所有Level 2模块蓝图的上级都是MOD-MASTER-001即L01基础设施域集成蓝图beta+时L02+的模块蓝图将归属到新建的对应Level 1域蓝图
   s10_prohibitions:

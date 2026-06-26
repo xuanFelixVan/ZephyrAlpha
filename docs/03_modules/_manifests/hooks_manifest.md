@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Hooks.Manifest
 module_id: MOD-059
 ttl: permanent

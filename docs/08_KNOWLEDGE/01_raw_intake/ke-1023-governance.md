@@ -31,7 +31,7 @@ ttl: permanent
 | 6 | `docs/01_policies_and_standards/governance/compliance/` | 合规治理 | （experimental 新建）GOV-CMP-001~002 | 监管分类法/审计追踪策略 | 合规操作手册（→ #11）、L10 特定规则（→ #14 L10） |
 | 7 | `docs/01_policies_and_standards/governance/architecture/` | 架构治理 | （experimental 新建）GOV-ARCH-001~003 | ADR 协议/架构评审/架构版本化 | 架构视图（→ 02_enterprise_architecture/）、模块文档（→ 03_modules/） |
 | 8 | `docs/01_policies_and_standards/governance/data/` | 数据治理 | （experimental 新建）GOV-DATA-001~003 | 数据质量/血缘/保留策略 | 数据操作手册（→ #11）、L00 特定规则（→ #14 L00） |
-| 9 | `docs/01_policies_and_standards/governance/module/` | 模块治理 | （experimental 新建）GOV-MOD-001~005 | 模块准入/生命周期/接口契约/注入规则 | 模块文档（→ 03_modules/）、模块代码（→ src/zephyr/） |
+| 9 | `docs/01_policies_and_standards/governance/module/` | 模块治理 | （experimental 新建）GOV-MOD-ALPHA_SIGNAL_DOMAIN~005 | 模块准入/生命周期/接口契约/注入规则 | 模块文档（→ 03_modules/）、模块代码（→ src/zephyr/） |
 | 10 | `docs/01_policies_and_standards/operational/vibe_coding/` | VC 操作 | OPS-VC-001~003 | VC 上下文规则/session 状态机/可验证性操作 | VC 声明式约束（→ governance/ 对应子域） |
 | 11 | `docs/01_policies_and_standards/operational/devops/` | DevOps 操作 | OPS-DEV-001 | pre-commit/CI/部署流程 | DevOps 策略（→ governance/ 对应子域） |
 | 12 | `docs/01_policies_and_standards/operational/migration/` | 迁移操作 | OPS-MIG-001 | 迁移审计/迁移步骤 | 迁移策略（→ governance/ 对应子域） |

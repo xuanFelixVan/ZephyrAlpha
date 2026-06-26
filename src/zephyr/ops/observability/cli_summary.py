@@ -18,7 +18,7 @@
 CLI Summary — CLI 友好施工汇总。
 
 依据：
-    蓝图 MOD-INF-006 §6.3.4 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.3.4 + v0.6.0
     任务卡 TASK-INF-0109 (Part 4/5)
 """
 

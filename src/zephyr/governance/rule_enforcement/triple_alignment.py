@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
 # [MODULE] zephyr.governance.rule_enforcement.triple_alignment
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES]
@@ -24,7 +24,7 @@ G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁
   4. 依赖声明三方一致：蓝图 depends_on ↔ 代码 import ↔ 依赖图 edges
   5. 注册表覆盖：blueprint_registry.yaml ↔ module-registry.yaml ↔ 依赖图 §5
 
-SSoT: MOD-INF-007 gate-engine
+SSoT: MOD-GATE_ENGINE gate-engine
 Version: 0.1.0
 """
 

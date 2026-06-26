@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.gate_repo
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils

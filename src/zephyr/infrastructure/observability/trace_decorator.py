@@ -19,7 +19,7 @@ from __future__ import annotations
 Trace Decorator — 可观测性追踪 @trace 装饰器。
 
 依据：
-    蓝图 MOD-INF-006 §6.3.1 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.3.1 + v0.6.0
     任务卡 TASK-INF-0109 (Part 1/5)
 """
 

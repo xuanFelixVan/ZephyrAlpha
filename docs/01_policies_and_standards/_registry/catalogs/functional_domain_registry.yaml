@@ -26,7 +26,7 @@ entry_schema:
 entries:
 - domain: D-GOV-ENFORCEMENT
   subdomain: rule_enforcement
-  ssot_module: MOD-INF-007
+  ssot_module: MOD-GATE_ENGINE
   ssot_path: src/zephyr/governance/rule_enforcement/
   covers:
   - 门禁引擎流程编排(GatePipeline/GateEngine)
@@ -211,7 +211,7 @@ entries:
   ai_autonomy: immutable_core
 - domain: D-SECURITY-LLM
   subdomain: llm_defense
-  ssot_module: MOD-INF-014
+  ssot_module: MOD-LLM_SECURITY
   ssot_path: src/zephyr/security/llm_defense/
   covers:
   - L0供应链安全(模型验证/依赖扫描)
@@ -349,7 +349,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D-INTELLIGENCE
   subdomain: context_management
-  ssot_module: MOD-INF-008
+  ssot_module: MOD-CONTEXT_ENGINE
   ssot_path: src/zephyr/intelligence/
   covers:
   - 上下文预算管理(context_budget/token_budget)
@@ -522,7 +522,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D-OPS
   subdomain: feedback-loop
-  ssot_module: MOD-INF-010
+  ssot_module: MOD-FEEDBACK_LOOP
   ssot_path: src/zephyr/ops/
   covers:
   - 反馈收集器(collectors)
@@ -570,7 +570,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D-INFRA_RUNTIME
   subdomain: persistence
-  ssot_module: MOD-INF-012
+  ssot_module: MOD-DATABASE
   ssot_path: src/zephyr/data/persistence/
   covers:
   - SQLite DDL Schema(v1-v8迁移)
@@ -719,7 +719,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D-INFRA_OPS
   subdomain: resource_optimization
-  ssot_module: MOD-INF-032
+  ssot_module: MOD-RESOURCE_OPTIMIZATION_ENGINE
   ssot_path: src/zephyr/infra_ops/
   covers:
   - 资源优化引擎
@@ -779,7 +779,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D-GOVERNANCE
   subdomain: task_management
-  ssot_module: MOD-INF-006
+  ssot_module: MOD-TASK_SYSTEM
   ssot_path: src/zephyr/governance/
   covers:
   - 任务卡CRUD

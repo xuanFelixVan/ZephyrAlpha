@@ -33,14 +33,14 @@ scope: global
 stability: evolving
 verifiability: hybrid
 depends_on:
-  - {target: "MOD-INF-007", at: "§1", why: "Gate Engine——蓝方防御判定依赖 Gate Engine 执行门禁检查"}
+  - {target: "MOD-GATE_ENGINE", at: "§1", why: "Gate Engine——蓝方防御判定依赖 Gate Engine 执行门禁检查"}
   - {target: "MOD-INF-020", at: "full", why: "Audit Trail——每次攻击和防御结果 MUST 记录不可变日志"}
   - {target: "MOD-INF-028", at: "full", why: "Semantic Auditor——规则漂移攻击场景的检测器"}
   - {target: "MOD-INF-017", at: "§2", why: "Code Dedup Engine——重复注入场景的检测器"}
   - {target: "MOD-INF-018", at: "§2", why: "Agent RBAC——攻击注入操作需要权限校验与身份验证"}
   - {target: "MOD-INF-023", at: "§1", why: "Drift Detector——攻击场景基线快照与漂移对比"}
   - {target: "MOD-INF-022", at: "§1", why: "Escalation Protocol——重复绕过触发升级裁决"}
-  - {target: "MOD-INF-014", at: "§7", why: "LLM Security——AI 生成攻击场景的安全约束"}
+  - {target: "MOD-LLM_SECURITY", at: "§7", why: "LLM Security——AI 生成攻击场景的安全约束"}
   - {target: "MOD-INF-013", at: "§2", why: "MCP Servers——governance.red_blue_scan MCP 端点"}
   - {target: "MOD-INF-027", at: "section 4", why: "Audit Orchestrator (编排)"}
 references:
@@ -173,7 +173,7 @@ references:
 | 运行环境 | Windows (NTFS) | RULE-ONE 并发写入约束 |
 | 人工值守 | 零 | Game Day 全自动，人工仅做月度 SYSTEM 级确认 |
 | CI/CD | GitHub Actions | push/PR 自动触发 FILE 级对抗 |
-| 外部依赖 | 13 个模块 | MOD-INF-007/013/014/017/018/020/022/023/024/027/028/029/031 |
+| 外部依赖 | 13 个模块 | MOD-GATE_ENGINE/013/014/017/018/020/022/023/024/027/028/029/031 |
 | 运行时平面 | Warm（单次对抗 < 5min） | 不在热路径上 |
 
 ---
@@ -197,7 +197,7 @@ references:
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
 | 1 | 基础设施混沌测试 | Netflix Chaos Monkey / 外部工具 |
-| 2 | 模型安全对抗样本 | MOD-INF-014 LLM Security |
+| 2 | 模型安全对抗样本 | MOD-LLM_SECURITY LLM Security |
 | 3 | 审计发现与分类 | MOD-INF-027 Audit Orchestrator |
 | 4 | 修复执行 | MOD-INF-031 AutoFix Engine |
 
@@ -210,7 +210,7 @@ references:
 | # | 组件 | 职责 | 依赖 | 交互方式 |
 |---|------|------|------|---------|
 | 1 | AttackRegistry | 攻击场景加载与索引 | _scenario-registry.yaml | 同步调用 |
-| 2 | DefenseRunner | 蓝方防御验证（Gate/Check） | MOD-INF-007 Gate Engine | 同步调用 |
+| 2 | DefenseRunner | 蓝方防御验证（Gate/Check） | MOD-GATE_ENGINE Gate Engine | 同步调用 |
 | 3 | BypassRecorder | 绕过记录与自动入库 | data/red_blue/bypass_log.yaml | 文件写入 |
 | 4 | ConstitutionGuard | Constitution 条款管理与防御增强 | _constitution-registry.yaml | 同步调用 |
 | 5 | ConvergenceChecker | 收敛检测（CLOSED/CONTINUE/ESCALATED） | BypassRecorder | 同步调用 |
@@ -220,7 +220,7 @@ references:
 | 9 | CleanupProtocol | 攻击产物零残留清理 | 文件系统 | 同步调用 |
 | 10 | PreAttackBackupProtocol | 攻击前安全备份 | 文件系统 | 同步调用 |
 | 11 | RedBlueCircuitBreaker | 熔断保护 | ConvergenceChecker | 同步调用 |
-| 12 | AIAttackGenerator | AI 驱动攻击场景生成 | MOD-INF-014 LLM Security | 异步 LLM |
+| 12 | AIAttackGenerator | AI 驱动攻击场景生成 | MOD-LLM_SECURITY LLM Security | 异步 LLM |
 | 13 | AsyncAgentMonitor | 零信任 AI Agent 异步监控 | MOD-INF-020 Audit Trail | 异步审计 |
 | 14 | RepairVerificationPipeline | Phase 3→4 修复验证闭环 | DefenseRunner + ConvergenceChecker | 同步调用 |
 
@@ -694,14 +694,14 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-007 | 必须 | Gate Engine 门禁检查 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | Gate Engine 门禁检查 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 | MOD-INF-020 | 必须 | Audit Trail 不可变日志 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-028 | 必须 | Semantic Auditor 语义审计 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\semantic-auditor\blueprint.md` |
 | MOD-INF-017 | 必须 | Code Dedup Engine 重复检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\code-dedup-engine\blueprint.md` |
 | MOD-INF-018 | 必须 | Agent RBAC 权限校验 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
 | MOD-INF-023 | 必须 | Drift Detector 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
 | MOD-INF-022 | 必须 | Escalation Protocol 升级裁决 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-engine\blueprint.md` |
-| MOD-INF-014 | 可选 | LLM Security AI 攻击生成 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
+| MOD-LLM_SECURITY | 可选 | LLM Security AI 攻击生成 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
 | MOD-INF-013 | 可选 | MCP Servers 端点注册 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\mcp-servers\blueprint.md` |
 | MOD-INF-027 | 必须 | Audit Orchestrator Phase 4 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
 | MOD-INF-031 | 可选 | AutoFix Engine 修复执行 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
@@ -903,7 +903,7 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
 |---|--------|---------|:---:|:---:|
-| 1 | MOD-INF-007 Gate Engine 可用 | hard | ☐ | ☐ |
+| 1 | MOD-GATE_ENGINE Gate Engine 可用 | hard | ☐ | ☐ |
 | 2 | MOD-INF-020 Audit Trail 可用 | hard | ☐ | ☐ |
 | 3 | MOD-INF-018 Agent RBAC 可用 | hard | ☐ | ☐ |
 | 4 | scaffold.py 可用 | hard | ✅ | ✅ |
@@ -1296,7 +1296,7 @@ python -m zephyr.red_blue_validator [OPTIONS]
 | 空攻击库 | attack_scenarios.yaml 空 | 从内置 39 个场景恢复 |
 | 空绕过日志 | bypass_log.yaml 不存在 | 创建空日志 |
 | Constitution 为空 | constitution.yaml 空 | 从内置 23 条初始条款恢复 |
-| 依赖缺失 | MOD-INF-007/020 不可用 | 降级为"仅场景加载"模式 |
+| 依赖缺失 | MOD-GATE_ENGINE/020 不可用 | 降级为"仅场景加载"模式 |
 
 ### 告警可信度评分
 

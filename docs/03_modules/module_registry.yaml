@@ -26,7 +26,7 @@ modules:
     version: 4.2.0
   construction_plan:
     status: design_only
-- module_id: MOD-001
+- module_id: MOD-ALPHA_SIGNAL_DOMAIN
   name: _alpha_signal_domain
   layer: cross_layer
   functional_domain: alpha_signal
@@ -37,7 +37,7 @@ modules:
     version: 0.4.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-008
+- module_id: MOD-FEEDBACK_LOOP
   name: capacity_upgrade
   layer: cross_layer
   functional_domain: operations
@@ -48,7 +48,7 @@ modules:
     version: 0.1.0
   construction_plan:
     status: design_only
-- module_id: MOD-023
+- module_id: MOD-GOVERNANCE
   name: _domain_governance
   layer: cross_layer
   functional_domain: governance
@@ -59,7 +59,7 @@ modules:
     version: 0.13.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-024
+- module_id: MOD-GOVERNANCE
   name: capacity_upgrade
   layer: cross_layer
   functional_domain: governance
@@ -70,7 +70,7 @@ modules:
     version: 0.1.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-071
+- module_id: MOD-ML_EXPERIMENT_DOMAIN
   name: _ml_experiment_domain
   layer: cross_layer
   functional_domain: ml_experiment
@@ -125,7 +125,7 @@ modules:
     version: 5.5.0
   construction_plan:
     status: completed
-- module_id: MOD-INF-006
+- module_id: MOD-TASK_SYSTEM
   name: task_system
   layer: L01
   functional_domain: execution
@@ -136,7 +136,7 @@ modules:
     version: 0.9.5
   construction_plan:
     status: partially_implemented
-- module_id: MOD-INF-007
+- module_id: MOD-GATE_ENGINE
   name: gate_engine
   layer: cross_layer
   functional_domain: governance
@@ -147,7 +147,7 @@ modules:
     version: 0.8.2
   construction_plan:
     status: partially_implemented
-- module_id: MOD-INF-008
+- module_id: MOD-CONTEXT_ENGINE
   name: context_engine
   layer: cross_layer
   functional_domain: intelligence
@@ -169,7 +169,7 @@ modules:
     version: 0.39.1
   construction_plan:
     status: design_only
-- module_id: MOD-INF-010
+- module_id: MOD-FEEDBACK_LOOP
   name: feedback_loop
   layer: cross_layer
   functional_domain: operations
@@ -191,7 +191,7 @@ modules:
     version: 0.12.1
   construction_plan:
     status: partially_implemented
-- module_id: MOD-INF-012
+- module_id: MOD-DATABASE
   name: database
   layer: cross_layer
   functional_domain: data
@@ -213,7 +213,7 @@ modules:
     version: 0.3.39
   construction_plan:
     status: design_only
-- module_id: MOD-INF-014
+- module_id: MOD-LLM_SECURITY
   name: llm_security
   layer: cross_layer
   functional_domain: governance
@@ -411,7 +411,7 @@ modules:
     version: 5.1.0
   construction_plan:
     status: design_only
-- module_id: MOD-INF-032
+- module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   name: resource_optimization_engine
   layer: cross_layer
   functional_domain: operations
@@ -653,7 +653,7 @@ modules:
     version: 2.1.0
   construction_plan:
     status: partially_implemented
-- module_id: MOD-MASTER-001
+- module_id: MOD-MASTER_BLUEPRINT
   name: _master_blueprint
   layer: cross_layer
   functional_domain: infrastructure

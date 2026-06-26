@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.trading.feedback_loop.tests.e2e.integration_test_pipeline
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.__init__
@@ -14,9 +14,9 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK_integration_test_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""E2E Integration Test Pipeline — TASK-MOD-INF-010-0028 (Phase43-87)
+"""E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0028 (Phase43-87)
 
-验证 MOD-INF-010 全生命周期集成:
+验证 MOD-FEEDBACK_LOOP 全生命周期集成:
   1. 67层安全门L1-L67全量联动
   2. 16项集成目标逐一验证
   3. 三相流水线(MetricsCollect→AnomalyDetect→Diagnose→Action→Verify)端到端

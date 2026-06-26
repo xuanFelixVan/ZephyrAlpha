@@ -16,7 +16,7 @@ ttl: permanent
 skill_lineage:
   required_fields_per_skill:
     derived_from_blueprint:
-      blueprint_id: "MOD-INF-012"
+      blueprint_id: "MOD-DATABASE"
       blueprint_version: "1.0.0"
       derived_at: "2026-05-05T10:00:00Z"
       derived_by: "Skill Factory Agent v1.0.0"

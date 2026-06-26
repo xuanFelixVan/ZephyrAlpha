@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Context Engine.Manifest
 module_id: MOD-050
 ttl: permanent

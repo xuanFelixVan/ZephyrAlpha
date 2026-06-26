@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §3-§8
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §3-§8
 # [MODULE] zephyr.autonomy_core.context_budget
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.autonomy_core 内部模块; zephyr.trading.orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] MOD-INF-008 四阶段流水线不可绕过; Token 预算硬限制; 原子写入 temp-file+os.replace()
+# [INVARIANTS] MOD-CONTEXT_ENGINE 四阶段流水线不可绕过; Token 预算硬限制; 原子写入 temp-file+os.replace()
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] H
@@ -14,11 +14,11 @@
 # [TESTS] tests/context-engine/
 # [A_module] module_id=MOD-ORC_context_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""[BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md | §3-§8
+"""[BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md | §3-§8
 
 TruncationStrategy — TruncationStrategy
 
-依据: 蓝图 MOD-INF-008 §3-§8
+依据: 蓝图 MOD-CONTEXT_ENGINE §3-§8
 
 """
 

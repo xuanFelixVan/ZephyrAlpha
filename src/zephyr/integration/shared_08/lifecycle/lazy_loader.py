@@ -18,7 +18,7 @@
 lazy_loader.py - Lazy module loading registry
 ==============================================
 
-SSoT: MOD-INF-032 resource-optimization-engine/blueprint.md §7.3
+SSoT: MOD-RESOURCE_OPTIMIZATION_ENGINE resource-optimization-engine/blueprint.md §7.3
 
 Design:
   - Register modules with import paths and metadata

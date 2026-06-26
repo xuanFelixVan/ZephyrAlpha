@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.pipeline_orchestrator
 # [DOMAIN] D-AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.shared_services.infra_06.observer
@@ -17,9 +17,9 @@
 """
 PipelineOrchestrator — 多阶段流水线编排 (P3 beta)
 ===================================================
-Task ID    : MOD-INF-008-TASK-010
+Task ID    : MOD-CONTEXT_ENGINE-TASK-010
 Priority   : P3 (beta)
-Depends    : MOD-INF-008-TASK-002~005 (四阶段流水线完成)
+Depends    : MOD-CONTEXT_ENGINE-TASK-002~005 (四阶段流水线完成)
 
 职责
 ----

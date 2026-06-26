@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-032
+module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
 title: "资源优化引擎蓝图"
 doc_type: blueprint
 status: Active
@@ -13,7 +13,7 @@ date: "2026-05-08"
 ttl: permanent
 construction_progress: design_only
 actual_disk_path: "src/zephyr/orchestration/runtime_core/lifecycle_manager.py"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 submodule_path: src/zephyr/runtime/
 summary: "MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、GPU监控、IDE幽灵窗口检测、自愈闭环"
 tags: [resource-optimization, mape-k, process-pool, io-cache, lazy-loading, self-healing, backpressure, circuit-breaker, gpu-monitoring, ide-health]
@@ -40,7 +40,7 @@ references:
 
 # Resource Optimization Engine 蓝图 — MAPE-K 驱动的进程池化/I/O零拷贝/缓存复用/自愈闭环
 
-> module_id: MOD-INF-032 | version: 5.3.0 | status: Active | layer: cross_layer
+> module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE | version: 5.3.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/lifecycle_manager/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -65,7 +65,7 @@ references:
 > **架构归属SSoT**：`data/databases/depgraph.db`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-032`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-RESOURCE_OPTIMIZATION_ENGINE`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:---:|-------------------|
@@ -667,8 +667,8 @@ class DegradationMatrix(BaseModel):
 | MOD-INF-016 (shared-core) | 必须 | daemon_registry, event_bus, lifecycle, contract_bus, API_INDEX | ≥0.14.0 |
 | MOD-INF-015 (system-telemetry) | 必须 | metrics, health_probes, SLI 上报 | ≥0.9.0 |
 | MOD-INF-009 (pipeline) | 必须 | pipeline_lock, orchestration | ≥0.36.0 |
-| MOD-INF-010 (feedback-loop) | 必须 | scheduler (注册为守护线程), detectors | ≥0.32.0 |
-| MOD-INF-007 (gate-engine) | 可选 | 资源检查门禁规则 | ≥0.5.0 |
+| MOD-FEEDBACK_LOOP (feedback-loop) | 必须 | scheduler (注册为守护线程), detectors | ≥0.32.0 |
+| MOD-GATE_ENGINE (gate-engine) | 可选 | 资源检查门禁规则 | ≥0.5.0 |
 | MOD-INF-020 (audit-trail) | 可选 | 优化动作审计记录 | ≥1.4.0 |
 | MOD-INF-023 (drift-detector) | 可选 | 资源配置漂移检测 | ≥1.0.1 |
 | MOD-INF-024 (budget-enforcer) | 可选 | 资源成本预算集成 | ≥0.7.0 |
@@ -680,7 +680,7 @@ class DegradationMatrix(BaseModel):
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-032` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-RESOURCE_OPTIMIZATION_ENGINE` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
@@ -782,10 +782,10 @@ class DegradationMatrix(BaseModel):
 | MCP Servers | 暴露 6 个资源优化 MCP 工具 | `mcp/gateway_server.py` | AI 通过 MCP 调用资源优化功能 |
 | Blueprint Routing | 新增 R030 路由规则 | `config/blueprint_routing.yaml` | AI 通过关键字自动定位到本蓝图 |
 | Trigger Routing | 新增 task_keywords 映射 | `src/zephyr/agent-spec/skill-registry.yaml` | AI 通过触发词路由到资源优化技能 |
-| Blueprint Registry | 新增 MOD-INF-032 条目 | `docs/03_modules/blueprint_registry.yaml` | 蓝图可被蓝图搜索 MCP 发现 |
-| Module Registry | 新增 MOD-INF-032 条目 | `docs/03_modules/module-registry.yaml` | 模块可被模块索引发现 |
+| Blueprint Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/blueprint_registry.yaml` | 蓝图可被蓝图搜索 MCP 发现 |
+| Module Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/module-registry.yaml` | 模块可被模块索引发现 |
 | Cross-Module Dependency | 新增依赖关系 | `cross-module-dependency-registry.yaml` | 依赖链可追溯 |
-| Module ID Registry | 新增 MOD-INF-032 ID | `module_id_registry.yaml` | ID 不冲突 |
+| Module ID Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE ID | `module_id_registry.yaml` | ID 不冲突 |
 | AGENTS.md | 新增资源优化冷启动步骤 | `AGENTS.md` | 新 AI session 知道资源优化引擎存在 |
 | project_rules.md | 新增 STEP 引用 | `.trae/rules/project_rules.md` | Trae 自动加载规则中包含资源优化 |
 
@@ -801,12 +801,12 @@ class DegradationMatrix(BaseModel):
 | 4 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift-detector\resource_guard.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 5 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit-trail\self_monitor.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
 | 6 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` | 使用 DaemonRegistry.register() 注册 | 统一调度 |
-| 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 MOD-INF-032 条目 | 蓝图可发现 |
-| 8 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 新增 MOD-INF-032 条目 | 模块可发现 |
+| 7 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | 蓝图可发现 |
+| 8 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | 模块可发现 |
 | 9 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 新增 R030 路由规则 | AI 可路由 |
 | 10 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 新增 SKILL-DOM-ROE-001 + task_keywords | AI 可发现技能 |
-| 11 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 新增 MOD-INF-032 依赖关系 | 依赖链可追溯 |
-| 12 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-032 ID | ID 唯一性 |
+| 11 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 依赖关系 | 依赖链可追溯 |
+| 12 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE ID | ID 唯一性 |
 | 13 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 新增 G-RES 资源检查门禁 | 资源不足时门禁阻断 |
 | 14 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 新增资源优化 SLI 指标 | 可观测性 |
 | 15 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 新增 6 个资源优化工具契约 | MCP 可调用 |
@@ -982,8 +982,8 @@ class DegradationMatrix(BaseModel):
 **实施步骤**：
 
 1. **做**：
-   - 更新 `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`：新增 MOD-INF-032 条目
-   - 更新 `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml`：新增 MOD-INF-032 条目
+   - 更新 `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml`：新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目
+   - 更新 `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml`：新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目
    - 更新 `D:\ZephyrAlpha\config\blueprint_routing.yaml`：新增 R030 路由规则
    - 更新 `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml`：新增 SKILL-DOM-ROE-001 + task_keywords
    - 更新 `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml`：新增依赖
@@ -993,10 +993,10 @@ class DegradationMatrix(BaseModel):
    - 更新 `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml`：新增 6 个工具契约
    - 创建 `D:\ZephyrAlpha\src\zephyr\agent-spec\skills\domain\resource_optimization.md`：技能描述文件
 2. **产**：10+ 个注册表更新 + 1 个技能描述文件
-3. **检**：通过 blueprint_search MCP 可搜索到 MOD-INF-032
+3. **检**：通过 blueprint_search MCP 可搜索到 MOD-RESOURCE_OPTIMIZATION_ENGINE
 
 **完成标准**：
-- 所有注册表包含 MOD-INF-032 条目
+- 所有注册表包含 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目
 - 蓝图路由 R030 匹配关键字"资源优化"/"resource"/"内存"/"CPU"
 - 技能注册表包含 SKILL-DOM-ROE-001
 - MCP 工具契约包含 6 个资源优化工具
@@ -1484,7 +1484,7 @@ AI 通过 `config/blueprint_routing.yaml` R030 规则自动定位：
 
 ```yaml
 - route_id: "R030"
-  blueprint_id: "MOD-INF-032"
+  blueprint_id: "MOD-RESOURCE_OPTIMIZATION_ENGINE"
   blueprint_level: module
   path_patterns:
     - "src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_engine.py"
@@ -1531,12 +1531,12 @@ AI 通过 `config/blueprint_routing.yaml` R030 规则自动定位：
 ```yaml
 SKILL-DOM-ROE-001:
   name: resource-optimization
-  description: "Resource Optimization Engine (MOD-INF-032) MAPE-K 循环驱动的资源监控/分析/优化/自愈。双策略引擎（防御+优化），压力状态机（NORMAL/WARNING/CRITICAL/EMERGENCY），断路器，背压，优雅降级矩阵，进程池复用，I/O 缓存，流式读取，懒加载，自适应调度。入口 ResourceOptimizationEngine.snapshot()/optimize()/health_check()"
+  description: "Resource Optimization Engine (MOD-RESOURCE_OPTIMIZATION_ENGINE) MAPE-K 循环驱动的资源监控/分析/优化/自愈。双策略引擎（防御+优化），压力状态机（NORMAL/WARNING/CRITICAL/EMERGENCY），断路器，背压，优雅降级矩阵，进程池复用，I/O 缓存，流式读取，懒加载，自适应调度。入口 ResourceOptimizationEngine.snapshot()/optimize()/health_check()"
   skill_type: domain
   tier: L1
   path: resource_optimization.md
   references:
-    - MOD-INF-032
+    - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-016
     - MOD-INF-015
 ```
@@ -1576,7 +1576,7 @@ AI 通过 MCP 工具直接调用资源优化功能（见 §4.5）。
 新 AI session 冷启动时，通过以下路径发现资源优化引擎：
 
 ```
-AGENTS.md → PS-STD-005 §7 → MOD-MASTER-001 → MOD-INF-032
+AGENTS.md → PS-STD-005 §7 → MOD-MASTER_BLUEPRINT → MOD-RESOURCE_OPTIMIZATION_ENGINE
                                                      ↓
                               blueprint_routing.yaml R030（关键字匹配）
                                                      ↓
@@ -1589,16 +1589,16 @@ AGENTS.md → PS-STD-005 §7 → MOD-MASTER-001 → MOD-INF-032
 
 | # | 注册表 | 路径 | 登记内容 |
 |---|--------|------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-INF-032 条目 |
-| 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | MOD-INF-032 条目 |
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 |
+| 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 |
 | 3 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | R030 路由规则 |
 | 4 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | SKILL-DOM-ROE-001 + keywords |
-| 5 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | MOD-INF-032 依赖 |
-| 6 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-032 ID |
+| 5 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE 依赖 |
+| 6 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-RESOURCE_OPTIMIZATION_ENGINE ID |
 | 7 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | G-RES-001~003 |
 | 8 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 5 个资源 SLI |
 | 9 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 6 个工具契约 |
-| 10 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` | MOD-INF-032 基础设施条目 |
+| 10 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.md` | MOD-RESOURCE_OPTIMIZATION_ENGINE 基础设施条目 |
 | 11 | 文档元数据索引 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 蓝图文档元数据 |
 | 12 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.md` | 新增目录条目 |
 | 13 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 资源优化路径 |

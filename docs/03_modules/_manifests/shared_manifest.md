@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Shared.Manifest
 module_id: MOD-069
 ttl: permanent

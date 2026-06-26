@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.scheduler
 # [DOMAIN] D-OPS
 # [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.integrity; zephyr.behavioral_audit.drift_engine; zephyr.security.access_control.auto_fix_engine_03.__init__; zephyr.infrastructure.__init__; zephyr.integration.shared_08.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
@@ -16,7 +16,7 @@
 
 """FLE 全链路调度器 —— collect→detect→diagnose→act→verify 闭环。
 
-对接 MOD-INF-010 Feedback Loop Engine 蓝图 §4-§5:
+对接 MOD-FEEDBACK_LOOP Feedback Loop Engine 蓝图 §4-§5:
   - 30s 轮询指标 → EMA 异常检测 → 诊断 → 动作调度 → 事后验证
   - 动作优先级: NOTIFY_OWNER > ADJUST_THRESHOLD > REPAIR > DEPLOY > SELF_UPGRADE
   - 安全门: 67 层 (L1-L67) 在 action 执行前后
@@ -470,7 +470,7 @@ class FeedbackLoopScheduler:
                         record = json.loads(line)
                     except Exception:
                         continue
-                    if record.get("event") == "blueprint_read" and record.get("blueprint_id") == "MOD-INF-010":
+                    if record.get("event") == "blueprint_read" and record.get("blueprint_id") == "MOD-FEEDBACK_LOOP":
                         return True
             return False
         except Exception:

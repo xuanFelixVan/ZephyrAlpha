@@ -17,11 +17,11 @@ systems:
   - role: producer
     name: feedback_loop_engine
     path: "src/zephyr/feedback-loop/"
-    blueprint: "MOD-INF-010"
+    blueprint: "MOD-FEEDBACK_LOOP"
   - role: consumer
     name: database
     path: "src/zephyr/database/"
-    blueprint: "MOD-INF-012"
+    blueprint: "MOD-DATABASE"
 
 data_flow:
   direction: producer_to_consumer

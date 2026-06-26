@@ -18,7 +18,7 @@
 KMS Interface — KE 推送契约 + 生命周期关联。
 
 依据：
-    蓝图 MOD-INF-006 §13.3 路线图 #27 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §13.3 路线图 #27 + v0.6.0
     任务卡 TASK-INF-0132 (Part 4/4)
 
 功能：

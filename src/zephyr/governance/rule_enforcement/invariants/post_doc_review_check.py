@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
 # [MODULE] zephyr.governance.rule_enforcement.invariants.post_doc_review_check
 # [DOMAIN]
 # [DEPENDENCIES]

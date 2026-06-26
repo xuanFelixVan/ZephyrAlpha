@@ -18,7 +18,7 @@
 Onboarding Handbook — AI Agent 施工手册生成。
 
 依据：
-    蓝图 MOD-INF-006 §6.5.4 + v0.6.0
+    蓝图 MOD-TASK_SYSTEM §6.5.4 + v0.6.0
     任务卡 TASK-INF-0110 (Part 4/4)
 """
 
@@ -55,7 +55,7 @@ class Handbook:
             "- Source: `src/zephyr/`",
             "- Blueprints: `docs/03_modules/`",
             "- Journals: `_journals/`",
-            "- Tasks: `docs/03_modules/_domain-infra_ops/task-system/changes/MOD-INF-006/`",
+            "- Tasks: `docs/03_modules/_domain-infra_ops/task-system/changes/MOD-TASK_SYSTEM/`",
             "",
             "### State Machine",
             "CREATED → LOCKED → ASSIGNED → IN_PROGRESS → REVIEWING → COMPLETED",

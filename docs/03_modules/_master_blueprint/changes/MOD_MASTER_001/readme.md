@@ -1,11 +1,11 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ttl: permanent
 ---
 
-# MOD-MASTER-001 变更目录
+# MOD-MASTER_BLUEPRINT 变更目录
 
-> **蓝图**：MOD-MASTER-001 跨系统集成契约注册中心
+> **蓝图**：MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心
 > **施工阶段**：phase_2_active — 代码已落地，契约集成施工中
 > **卡片总数**：33
 
@@ -15,7 +15,7 @@ ttl: permanent
 |---|---------|------|:---:|:---:|
 | 1 | TASK-MST-0001 | 真源优先级宪章冲突检测与裁决机制 | P0 | ✅ |
 | 2 | TASK-MST-0002 | AI Agent冷启动分派表与三级Token预算管理器 | P0 | ✅ |
-| 3 | TASK-MST-0003 | MOD-MASTER-001模块骨架搭建 | P0 | ✅ |
+| 3 | TASK-MST-0003 | MOD-MASTER_BLUEPRINT模块骨架搭建 | P0 | ✅ |
 | 4 | TASK-MST-0004 | 56条核心跨系统集成契约注册与运行时调用路由（52条已路由，6条可路由） | P0 | 🔶 |
 | 5 | TASK-MST-0005 | 共享Schema版本协商机制 | P0 | 🔲 |
 | 6 | TASK-MST-0006 | 全局状态传播链与并发容量预算控制器 | P0 | 🔲 |

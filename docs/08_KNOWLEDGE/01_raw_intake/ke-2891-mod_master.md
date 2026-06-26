@@ -1,14 +1,14 @@
 ---
 module_id: KE-2791
 status: active
-title: MOD-MASTER-001 跨系统集成契约注册中心
+title: MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心
 category: module_blueprint
 ttl: permanent
 ---
 
-# MOD-MASTER-001 跨系统集成契约注册中心
+# MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心
 
-MOD-MASTER-001 跨系统集成契约注册中心
+MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心
 
 > **模块类型**：Master Blueprint（跨系统集成 SSoT）
 > **蓝图文件**：[blueprint.md](../blueprint.md)

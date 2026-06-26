@@ -30,7 +30,7 @@ ttl: permanent
 | 功能域 | infra |
 | 层级 | L01 infrastructure |
 | 施工进度 | completed |
-| 父模块 | MOD-MASTER-001 |
+| 父模块 | MOD-MASTER_BLUEPRINT |
 
 ## 15 核心 RI 模块（与 MOD-INF-016 Shared Core 承载关系）
 

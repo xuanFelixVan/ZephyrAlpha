@@ -17,7 +17,7 @@
 """
 ZephyrAlpha 蓝图拆解器
 =====================
-依据：MOD-INF-006 v0.3.0 §5 TaskCard 接口契约
+依据：MOD-TASK_SYSTEM v0.3.0 §5 TaskCard 接口契约
 输入：治理文档（KB 决策记录/TD/CS/CP 等 blueprint.yaml），可选 task_repo
 输出：双向存储——SQLite（task_repo.create）+ ``docs_dir/decomposition/`` 下
 ``decomposition_result.json`` 及逐任务 ``tasks/{task_id}.md``（human companion）。
@@ -339,7 +339,7 @@ class BlueprintDecomposer:
                 forbidden_touch=[],
                 applicable_rules=[
                     {
-                        "module_id": "MOD-INF-006",
+                        "module_id": "MOD-TASK_SYSTEM",
                         "section": "§3.2.1",
                         "reason": "TaskCard Schema——任务格式合规",
                     }

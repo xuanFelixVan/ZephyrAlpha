@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.governance.task_repo
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.sqlite_schema; zephyr.governance.event_store; zephyr.governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared_08.utils.time_utils; zephyr.governance.ops_governance.event_hook
@@ -999,7 +999,7 @@ class TaskRepository:
         if not allow_direct_create and (not source_bp.strip() or source_bp.strip().lower() == "unknown"):
             raise ValueError(
                 f"RULE-ZERO-TASK 违规: 任务 {task.task_id!r} 的 source_blueprint 为空或 'unknown'。"
-                f"蓝图任务建卡路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-INF-006）。"
+                f"蓝图任务建卡路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-TASK_SYSTEM）。"
                 f"非蓝图任务（Bug修复/架构债务/代码扫描/重构任务）请传 allow_direct_create=True。"
                 f"RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。"
             )
@@ -2010,7 +2010,7 @@ class TaskRepository:
     ) -> None:
         """当子任务状态变更时，重算依赖它的父任务状态。
 
-        规则（蓝图 MOD-INF-006 盲点#1）：
+        规则（蓝图 MOD-TASK_SYSTEM 盲点#1）：
         - 所有子任务 COMPLETED/VERIFIED → 父任务 READY（解锁继续施工）
         - 任一子任务 FAILED/CANCELLED → 父任务 BLOCKED
         - 否则不改变父任务状态
@@ -2584,7 +2584,7 @@ class TaskRepository:
         return {row["status"]: row["cnt"] for row in cursor.fetchall()}
 
     # ------------------------------------------------------------------
-    # JSON1 查询（MOD-INF-012 v2.0）
+    # JSON1 查询（MOD-DATABASE v2.0）
     # ------------------------------------------------------------------
 
     def list_by_dependency(self, dependency_task_id: str) -> list[TaskCard]:

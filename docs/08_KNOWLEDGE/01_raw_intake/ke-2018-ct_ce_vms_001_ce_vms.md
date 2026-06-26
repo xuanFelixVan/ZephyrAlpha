@@ -17,7 +17,7 @@ systems:
   - role: consumer
     name: context-engine
     path: "src/zephyr/context-engine/"
-    blueprint: "MOD-INF-008"
+    blueprint: "MOD-CONTEXT_ENGINE"
   - role: provider
     name: vector-memory
     path: "src/zephyr/vector-memory/"

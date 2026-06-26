@@ -54,7 +54,7 @@ tiers:
         status: active
         description: Governance 脚本子集（可能与 REG-SCRIPT-001 有重叠）
 
-      - registry_id: REG-MOD-001
+      - registry_id: REG-MOD-ALPHA_SIGNAL_DOMAIN
         name: 模块登记表
         physical_path: docs/03_modules/module_registry.yaml
         format: yaml
@@ -115,7 +115,7 @@ tiers:
         maintenance: manual
         entry_count: 8
         status: active
-        description: MOD-023 治理域集成蓝图——8模块(MOD-INF-018~025) + 8条G-CT跨模块契约 + MCP GovernanceServer统一入口
+        description: MOD-GOVERNANCE 治理域集成蓝图——8模块(MOD-INF-018~025) + 8条G-CT跨模块契约 + MCP GovernanceServer统一入口
 
       - registry_id: REG-AFX-FIXER-001
         name: 修复器注册表
@@ -411,8 +411,8 @@ tiers:
         status: active
         description: 三级金字塔顶点——102 章全覆盖，AI agent 冷启动第一站。version 0.13.0，construction_progress completed
 
-      - registry_id: REG-MOD-MASTER-001
-        name: 集成闭环总蓝图（MOD-MASTER-001）
+      - registry_id: REG-MOD-MASTER_BLUEPRINT
+        name: 集成闭环总蓝图（MOD-MASTER_BLUEPRINT）
         physical_path: docs/03_modules/_master_blueprint/blueprint.md
         format: yaml+markdown
         maintenance: manual

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
 # [MODULE] zephyr.autonomy_core.context_pipeline_auto
 # [DOMAIN] D-ORC
 # [DEPENDENCIES]

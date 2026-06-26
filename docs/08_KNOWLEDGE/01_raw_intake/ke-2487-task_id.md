@@ -10,7 +10,7 @@ ttl: permanent
 
 6.4 task_id 格式约定
 
-脚本系统创建的追踪任务使用 `OPS-{SEQ}` 命名空间（对齐 MOD-INF-006 §3.2.1 task_id 的 `{NAMESPACE}-{SEQ}` 格式——脚本系统属 OPS 操作域）：
+脚本系统创建的追踪任务使用 `OPS-{SEQ}` 命名空间（对齐 MOD-TASK_SYSTEM §3.2.1 task_id 的 `{NAMESPACE}-{SEQ}` 格式——脚本系统属 OPS 操作域）：
 
 ```
 OPS-001: D1 维度脚本注册验证任务

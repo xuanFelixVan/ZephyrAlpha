@@ -16,5 +16,5 @@ ttl: permanent
 | 每次 Phase 边界 | 8 阶段模型是否仍匹配当前架构节奏 |
 | 新模块类型引入 | 是否需要新增阶段（如 `security_review`） |
 | P0 模块列表变更 | P0 特殊生命周期约束是否需调整 |
-| GOV-MOD-001 准入门控变更 | MLC-001 planned→in_design 前置条件是否需要更新 |
+| GOV-MOD-ALPHA_SIGNAL_DOMAIN 准入门控变更 | MLC-001 planned→in_design 前置条件是否需要更新 |
 | 最低频率：每 6 个月 | 全量审查 |

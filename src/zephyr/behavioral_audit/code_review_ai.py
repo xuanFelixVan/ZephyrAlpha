@@ -2,7 +2,7 @@
 # [MODULE] zephyr.behavioral_audit.code_review_ai
 # [DOMAIN] D-BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] MOD-INF-007;MOD-INF-021;MOD-INF-020
+# [CONSUMERS] MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算

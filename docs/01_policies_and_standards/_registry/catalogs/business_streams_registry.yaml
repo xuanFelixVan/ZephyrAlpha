@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-business-streams | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # 治理锚定
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: CFG-business-streams
 # stability: stable
 # safety_level: L

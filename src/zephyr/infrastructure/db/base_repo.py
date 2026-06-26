@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.infrastructure.db.base_repo
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.shared.__init__; zephyr.shared.schema.severity_types
@@ -14,7 +14,7 @@
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-INF_base_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""[BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+"""[BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 
 base_repo — 异常类、状态机常量、工具函数（从 task_repo.py 拆分，SRC-0066）
 

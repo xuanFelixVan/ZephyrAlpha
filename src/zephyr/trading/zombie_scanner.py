@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-032 | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
+# [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.zombie_scanner
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 扫描只读无副作用；kill 操作必须日志记录；模式计数器原子读写；分类判定仅基于进程指标；SUSPICIOUS 只上报不 kill；进程归属判定 = cmdline 或 cwd 任一包含项目根路径
-# [MODIFY-GUARD] MOD-INF-032 §new-IDE
+# [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

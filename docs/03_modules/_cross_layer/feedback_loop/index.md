@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "feedback_loop — 目录索引"
-module_id: "MOD-INF-010"
-blueprint_id: "MOD-INF-010"
+module_id: "MOD-FEEDBACK_LOOP"
+blueprint_id: "MOD-FEEDBACK_LOOP"
 version: "0.35.1"
 created: "2026-06-22"
 updated: "2026-06-22"

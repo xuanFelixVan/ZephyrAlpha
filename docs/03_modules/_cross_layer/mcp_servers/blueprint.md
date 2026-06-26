@@ -25,15 +25,15 @@ rule_form: structural
 scope: global
 stability: evolving
 verifiability: hybrid
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "MCP Servers 蓝图——11 个 MCP 服务端 + 1 Gateway 通过 stdio 协议暴露内部系统能力。357 项盲点（B1-B357）十八维闭合。"
 tags: [mcp, mcp-servers, stdio, tool-contracts, model-context-protocol, external-api, infrastructure]
 priority: P1
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-006", at: "§3.2.1", why: "task_manager MCP——decompose_blueprint接口"}
+  - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task_manager MCP——decompose_blueprint接口"}
   - {target: "MOD-KB-001", at: "§4", why: "knowledge_base MCP——KE查询接口"}
-  - {target: "MOD-INF-007", at: "§3.2", why: "gate_engine MCP——Gate判定接口"}
+  - {target: "MOD-GATE_ENGINE", at: "§3.2", why: "gate_engine MCP——Gate判定接口"}
   - {target: "architecture_model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——本蓝图真源"}
 references: []
 last_updated: "2026-05-15"
@@ -144,7 +144,7 @@ END_REQUIRED_SECTIONS
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
-| 1 | `task_manager_server.py` | §2 | 蓝图→任务卡拆解、任务 CRUD | 已实现 | 业务逻辑归属 MOD-INF-006（任务系统），MOD-INF-013 仅负责 MCP 协议层（传输/序列化/注册） |
+| 1 | `task_manager_server.py` | §2 | 蓝图→任务卡拆解、任务 CRUD | 已实现 | 业务逻辑归属 MOD-TASK_SYSTEM（任务系统），MOD-INF-013 仅负责 MCP 协议层（传输/序列化/注册） |
 | 2 | `knowledge_base_server.py` | §2 | KE 查询/创建 | 未实现 | |
 | 3 | `gate_engine_server.py` | §2 | Gate 判定/熔断 | 未实现 | |
 | 4 | `doc_guard_server.py` | §2 | 文档安全校验（server_id=session_handoff） | 未实现 | |
@@ -203,7 +203,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 服务端 | 文件名 | server_id | 实现状态 | 暴露能力 |
 |------|------|------|:---:|------|
-| **task_manager** | `task_manager_server.py` | `task_manager` | ✅ 已实现 | 蓝图→任务卡拆解、任务 CRUD（业务逻辑归属 MOD-INF-006，MOD-INF-013 仅负责 MCP 协议层） |
+| **task_manager** | `task_manager_server.py` | `task_manager` | ✅ 已实现 | 蓝图→任务卡拆解、任务 CRUD（业务逻辑归属 MOD-TASK_SYSTEM，MOD-INF-013 仅负责 MCP 协议层） |
 | **knowledge_base** | `knowledge_base_server.py` | `knowledge_base` | 🔶 skeleton | KE 查询/创建、健康检查 |
 | **gate_engine** | `gate_engine_server.py` | `gate_engine` | 🔶 skeleton | Gate 判定/熔断状态 |
 | **session_handoff** | `doc_guard_server.py` | `session_handoff` | 🔶 skeleton | 文档安全校验（文件名与 server_id 不同！） |
@@ -221,10 +221,10 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | # | 排除项 | 由谁负责 |
 |---|--------|---------|
-| 1 | 脚本执行调度（Worker Pool） | MOD-INF-012 worker-pool |
-| 2 | 增量扫描匹配引擎 | MOD-INF-012 governance-automation |
+| 1 | 脚本执行调度（Worker Pool） | MOD-DATABASE worker-pool |
+| 2 | 增量扫描匹配引擎 | MOD-DATABASE governance-automation |
 | 3 | Agent 生命周期编排 | MOD-INF-005 agent-orchestrator |
-| 4 | 数据库 Schema 管理 | MOD-INF-006 task-repo |
+| 4 | 数据库 Schema 管理 | MOD-TASK_SYSTEM task-repo |
 | 5 | 向量数据库索引维护 | MOD-INF-011 VMS |
 
 ---
@@ -438,9 +438,9 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-006 | 必须 | task_manager MCP——decompose_blueprint接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-repo\blueprint.md` |
+| MOD-TASK_SYSTEM | 必须 | task_manager MCP——decompose_blueprint接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-repo\blueprint.md` |
 | MOD-KB-001 | 必须 | knowledge_base MCP——KE查询接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
-| MOD-INF-007 | 必须 | gate_engine MCP——Gate判定接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE | 必须 | gate_engine MCP——Gate判定接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
 | b_mcp.yaml | 必须 | MCP YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_mcp.yaml` |
 | mcp | 必须 | MCP SDK | ≥1.0.0 | — |
 
@@ -490,7 +490,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | # | 自动化项 | 是否需要 | 理由 |
 |---|---------|:-------:|------|
 | 1 | 依赖图自动生成 | 是 | 19 个 .py 文件 + 7 个 Server 间依赖 |
-| 2 | 依赖对齐自动验证 | 是 | 有外部依赖（MOD-INF-006/007, MOD-KB-001） |
+| 2 | 依赖对齐自动验证 | 是 | 有外部依赖（MOD-TASK_SYSTEM/007, MOD-KB-001） |
 | 3 | 临时时态内容自动清理 | 是 | §0 蓝图升级计划为临时时态 |
 | 4 | 施工步骤完成度自动检测 | 是 | construction_progress = completed |
 
@@ -826,7 +826,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | MOD-INF-006 task-repo 蓝图 | §3 接口契约 |
+| Tier 1 | MOD-TASK_SYSTEM task-repo 蓝图 | §3 接口契约 |
 | Tier 2 | MOD-INF-005 agent-orchestrator | §3 MCP 通信协议 |
 | Tier 3 | `src/zephyr/integration/mcp/*.py` 代码文件 | §3 数据模型、§11 产出物路径 |
 

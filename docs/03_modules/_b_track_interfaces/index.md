@@ -39,7 +39,7 @@ depends_on:
 
 ## 二、6 大服务清单
 
-各接口 frontmatter 已登记 `mod_master_blueprint: MOD-MASTER-001` 与 `mod_master_contracts`（CT-* 编号），与集成总蓝图 §2.1 契约总表对齐。
+各接口 frontmatter 已登记 `mod_master_blueprint: MOD-MASTER_BLUEPRINT` 与 `mod_master_contracts`（CT-* 编号），与集成总蓝图 §2.1 契约总表对齐。
 
 | # | 文件 | module_id | 职责（一句话） |
 |:-:|------|-----------|------|

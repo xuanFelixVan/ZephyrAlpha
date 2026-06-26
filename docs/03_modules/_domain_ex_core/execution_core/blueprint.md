@@ -19,7 +19,7 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/ex_core/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 generation: 2
 codification_level: L1
@@ -52,7 +52,7 @@ references:
 > module_id: MOD-L06-001 | version: 2.1.0 | status: Active | layer: l06
 > actual_disk_path: src/zephyr/ex_core/ | generation: 2 | construction_progress: partially_implemented
 
-> ⛔ **业务层未开放，禁止施工**：L06 属于 C 轨业务层，当前阶段基础设施尚未就绪。禁止以此蓝图为依据生成任何交易执行业务代码。开工触发条件：(a) MOD-MASTER-001 construction_progress >= implementation_phase；(b) Gate Engine 覆盖本层业务检查类型；(c) 至少一个 CT-* 契约从规划到部分实现。
+> ⛔ **业务层未开放，禁止施工**：L06 属于 C 轨业务层，当前阶段基础设施尚未就绪。禁止以此蓝图为依据生成任何交易执行业务代码。开工触发条件：(a) MOD-MASTER_BLUEPRINT construction_progress >= implementation_phase；(b) Gate Engine 覆盖本层业务检查类型；(c) 至少一个 CT-* 契约从规划到部分实现。
 
 # Trade Execution Core 蓝图+施工图 — 交易执行引擎
 

@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Ballethip Raw Material Visual Log
 module_id: GOV-058---
 

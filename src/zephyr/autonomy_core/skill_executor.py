@@ -148,7 +148,7 @@ class BudgetEnforcer:
 
 
 class SkillFeedbackLoop:
-    """对接 MOD-INF-010 反馈闭环——五阶段闭环"""
+    """对接 MOD-FEEDBACK_LOOP 反馈闭环——五阶段闭环"""
 
     @staticmethod
     def predict(skill_id: str) -> float:

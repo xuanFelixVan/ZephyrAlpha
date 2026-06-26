@@ -1,5 +1,5 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 title: Agent Spec.Manifest
 module_id: MOD-043
 ttl: permanent

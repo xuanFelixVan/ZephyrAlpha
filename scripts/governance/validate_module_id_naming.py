@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] scripts.governance.validate_module_id_naming
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
@@ -19,7 +19,7 @@ module_id 命名合规性校验门禁
 规则来源: PS-STD-001 §5 编号分配铁律
 校验内容:
   1. 格式合规: module_id 必须匹配 ^[A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4}$
-  2. 禁止嵌套编号: 不得出现 XXX-NNN-SUFFIX 模式（如 MOD-MASTER-001-BASELINE）
+  2. 禁止嵌套编号: 不得出现 XXX-NNN-SUFFIX 模式（如 MOD-MASTER_BLUEPRINT-BASELINE）
   3. 父子关系靠字段: parent_module / belongs_to 表达，不靠编号后缀
 
 用法:

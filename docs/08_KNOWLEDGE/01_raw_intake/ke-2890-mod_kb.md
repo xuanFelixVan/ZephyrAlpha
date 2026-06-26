@@ -13,7 +13,7 @@ ttl: permanent
 > **module_id**: MOD-KB-001 | **version**: 0.6.5 | **status**: draft
 >
 > **真源声明**：本蓝图是 ZephyrAlpha 知识库（KB/KMS）系统的唯一真源蓝图。
-> 取代了退役的 `task-card-kms/blueprint.md`（MOD-INF-003，deprecated，内容已并入 MOD-INF-006 任务系统）。
+> 取代了退役的 `task-card-kms/blueprint.md`（MOD-INF-003，deprecated，内容已并入 MOD-TASK_SYSTEM 任务系统）。
 > 候选池中所有知识库相关设计（`03-知识库架构.md`、`知识库升级方案.md`、`vibe-coding-task-card-and-knowledge-base-design.md`、
 > `知识库专题讨论文档.md`、D0-knowledge 四轮 prompt 指令等）已全部提取并经质量对比后择优纳入本蓝图。
 >

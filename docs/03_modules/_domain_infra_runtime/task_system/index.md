@@ -2,8 +2,8 @@
 doc_type: index
 status: active
 title: "task_system — 目录索引"
-module_id: "MOD-INF-006"
-blueprint_id: "MOD-INF-006"
+module_id: "MOD-TASK_SYSTEM"
+blueprint_id: "MOD-TASK_SYSTEM"
 version: "0.9.5"
 created: "2026-06-22"
 updated: "2026-06-22"

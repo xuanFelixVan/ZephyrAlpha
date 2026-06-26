@@ -10,7 +10,7 @@ ttl: permanent
 
 四、集成概览（CT-SCRIPT-GATE-001）
 
-> 详见总蓝图 [MOD-MASTER-001 §2.8](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
+> 详见总蓝图 [MOD-MASTER_BLUEPRINT §2.8](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
 
 ```
 脚本 exit 0 → GATE-n PASS → 任务状态不变

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+# [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.transition
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.governance.rule_enforcement.task_types; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.ops_governance.event_hook
@@ -14,7 +14,7 @@
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-DAT_transition | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
-"""[BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md
+"""[BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 
 transition — 状态机转换 Mixin（从 task_repo.py 拆分，SRC-0066）
 
@@ -268,7 +268,7 @@ class TransitionMixin:
 
 
 
-        规则（蓝图 MOD-INF-006 盲点#1）：
+        规则（蓝图 MOD-TASK_SYSTEM 盲点#1）：
 
         - 所有子任务 COMPLETED/VERIFIED → 父任务 READY（解锁继续施工）
 

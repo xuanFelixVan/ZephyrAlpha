@@ -17,7 +17,7 @@ date: "2026-05-05"
 ttl: permanent
 construction_progress: completed
 actual_disk_path: "src/zephyr/governance/drift_detection/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
 codification_at: "2026-05-13"
@@ -48,13 +48,13 @@ depends_on:
   - target: MOD-INF-018
     at: §10
     why: 检测器权限控制
-  - target: MOD-INF-007
+  - target: MOD-GATE_ENGINE
     at: §10
     why: 门禁持久化
   - target: MOD-INF-016
     at: §10
     why: AiAuditLogger + AbstractLock
-  - target: MOD-INF-012
+  - target: MOD-DATABASE
     at: §10
     why: 基线+漂移结果持久化
 priority: P1
@@ -83,7 +83,7 @@ summary: >
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 漂移检测体系——它解决了 100% AI 施工场景下的代码/配置/架构漂移无感知问题。核心职责包括：39 检测器并行调度、10 状态漂移生命周期管理、基线快照与自动对账、漂移预算与施工门禁、告警路由与疲劳管理、混沌注入与红白对抗验证。当前规模 54 文件 39 检测器，目标容量 1500 模块 DEEP scan。上游依赖 MOD-INF-021 Rollback（漂移→回滚桥接）和 MOD-INF-022 Escalation（预算耗尽升级），下游被 MOD-023 治理域蓝图和所有 AI 施工 session 消费。
+本蓝图描述 ZephyrAlpha 漂移检测体系——它解决了 100% AI 施工场景下的代码/配置/架构漂移无感知问题。核心职责包括：39 检测器并行调度、10 状态漂移生命周期管理、基线快照与自动对账、漂移预算与施工门禁、告警路由与疲劳管理、混沌注入与红白对抗验证。当前规模 54 文件 39 检测器，目标容量 1500 模块 DEEP scan。上游依赖 MOD-INF-021 Rollback（漂移→回滚桥接）和 MOD-INF-022 Escalation（预算耗尽升级），下游被 MOD-GOVERNANCE 治理域蓝图和所有 AI 施工 session 消费。
 
 ---
 
@@ -226,8 +226,8 @@ summary: >
 | 8 | ❌ 排除 | 升级决策 | → MOD-INF-022 Escalation Engine |
 | 9 | ❌ 排除 | 审计日志存储 | → MOD-INF-020 Audit Trail |
 | 10 | ❌ 排除 | 权限控制 | → MOD-INF-018 Agent RBAC |
-| 11 | ❌ 排除 | 门禁判定 | → MOD-INF-007 Gate Engine |
-| 12 | ❌ 排除 | 数据持久化基础设施 | → MOD-INF-012 DB |
+| 11 | ❌ 排除 | 门禁判定 | → MOD-GATE_ENGINE Gate Engine |
+| 12 | ❌ 排除 | 数据持久化基础设施 | → MOD-DATABASE DB |
 
 ### 1.4 运行场景约束
 
@@ -286,8 +286,8 @@ summary: >
 | 12 | ❌ 排除 | 升级决策 | 预算耗尽升级，不做升级决策 | MOD-INF-022 Escalation Engine |
 | 13 | ❌ 排除 | 审计日志存储 | 写入审计但不存储 | MOD-INF-020 Audit Trail |
 | 14 | ❌ 排除 | 权限控制 | 检测器权限检查但不控制 | MOD-INF-018 Agent RBAC |
-| 15 | ❌ 排除 | 门禁判定 | 漂移预算门禁但不判定 | MOD-INF-007 Gate Engine |
-| 16 | ❌ 排除 | 数据持久化基础设施 | 使用 DB 但不维护基础设施 | MOD-INF-012 DB |
+| 15 | ❌ 排除 | 门禁判定 | 漂移预算门禁但不判定 | MOD-GATE_ENGINE Gate Engine |
+| 16 | ❌ 排除 | 数据持久化基础设施 | 使用 DB 但不维护基础设施 | MOD-DATABASE DB |
 
 ---
 
@@ -581,9 +581,9 @@ class BaselineSnapshot(BaseModel):
 | MOD-INF-022 Escalation | 必须 | 漂移预算耗尽升级(G-CT-006) | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\escalation-protocol\blueprint.md` |
 | MOD-INF-020 Audit Trail | 必须 | 漂移事件审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
 | MOD-INF-018 Agent RBAC | 必须 | 检测器权限控制 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\agent-rbac\blueprint.md` |
-| MOD-INF-007 Gate Engine | 必须 | 门禁持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | 门禁持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
 | MOD-INF-016 Shared | 必须 | AiAuditLogger + AbstractLock | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
-| MOD-INF-012 DB | 必须 | 基线+漂移结果持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\db\blueprint.md` |
+| MOD-DATABASE DB | 必须 | 基线+漂移结果持久化 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\db\blueprint.md` |
 
 ### 10.5 概念重叠声明
 
@@ -694,14 +694,14 @@ class BaselineSnapshot(BaseModel):
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| MOD-023 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 条目存在 |
+| MOD-GOVERNANCE 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 条目存在 |
 | MOD-INF-021 Rollback | 漂移→回滚桥接(G-CT-005) | rollback_bridge.py | G-CT-005 契约可调用 |
 | MOD-INF-022 Escalation | 漂移预算耗尽升级(G-CT-006) | drift_engine.py | G-CT-006 契约可调用 |
 | MOD-INF-020 Audit Trail | 漂移事件审计 | tamper_proof_audit.py | AiAuditLogger 写入验证 |
 | MOD-INF-018 Agent RBAC | 检测器权限控制 | detector_dispatcher.py | 权限检查生效 |
-| MOD-INF-007 Gate Engine | 门禁持久化 | gate_persistence.py | 门禁状态可持久化 |
+| MOD-GATE_ENGINE Gate Engine | 门禁持久化 | gate_persistence.py | 门禁状态可持久化 |
 | MOD-INF-016 Shared | AiAuditLogger 唯一入口 | tamper_proof_audit.py | Logger 实例唯一 |
-| MOD-INF-012 DB | 基线+漂移结果持久化 | baseline_manager.py | DB 读写正常 |
+| MOD-DATABASE DB | 基线+漂移结果持久化 | baseline_manager.py | DB 读写正常 |
 
 ### 12.1 域契约锚点
 
@@ -1092,15 +1092,15 @@ STEP 3: 拆分后验证
 | 升级决策 | MOD-INF-022 Escalation Engine |
 | 审计日志存储 | MOD-INF-020 Audit Trail |
 | 权限控制 | MOD-INF-018 Agent RBAC |
-| 门禁判定 | MOD-INF-007 Gate Engine |
-| 数据持久化 | MOD-INF-012 DB |
+| 门禁判定 | MOD-GATE_ENGINE Gate Engine |
+| 数据持久化 | MOD-DATABASE DB |
 
 ### 消费者注册表
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | MOD-023 治理域蓝图 | §2 职责分派 |
-| Tier 1 | MOD-INF-007 Gate Engine | gates/drift-detector.py + gate_engine.py + ct_drift_budget.py |
+| Tier 1 | MOD-GOVERNANCE 治理域蓝图 | §2 职责分派 |
+| Tier 1 | MOD-GATE_ENGINE Gate Engine | gates/drift-detector.py + gate_engine.py + ct_drift_budget.py |
 | Tier 1 | MOD-INF-021 Rollback | rollback/drift_fix.py |
 | Tier 2 | MOD-INF-020 Audit Trail | audit-trail/drift_bridge.py |
 | Tier 2 | MOD-INF-013 MCP Server | mcp/governance_server.py |
@@ -1113,12 +1113,12 @@ STEP 3: 拆分后验证
 |------------|---------|
 | drift / 漂移 / 检测器 / 对账 | 加载本蓝图 |
 | drift_detection/ 文件迁移 | 读取 §5.3 孤儿文件清单 + §5 约束条件 |
-| 治理域子蓝图查询 | 从 MOD-023 §2 路由到本文件 |
+| 治理域子蓝图查询 | 从 MOD-GOVERNANCE §2 路由到本文件 |
 
 ### 导航路径
 
 ```
-registry_of_registries.yaml → blueprint_registry.yaml → MOD-023 → §2 → MOD-INF-023
+registry_of_registries.yaml → blueprint_registry.yaml → MOD-GOVERNANCE → §2 → MOD-INF-023
 ```
 
 ### 漂移防护

@@ -85,7 +85,7 @@ ttl: task_bound
 | **D-INFRA_A2A** | MOD-INF-025, MOD-INF-009, SRC-129/130/131, SRC-143/144, SRC-094/097 | 103 | a2a_protocol(79), pipeline(17), queue(3), sync(2), events(2) |
 | **D-INFRA_RECOVERY** | MOD-INF-021, MOD-INF-031, SRC-132/133/134 | 107 | rollback(74), auto_fix_engine(30), reliability(3) |
 | **D-INFRA_TELEMETRY** | MOD-INF-015, MOD-INF-034, MOD-INF-036, SRC-121/125/126, SRC-127/128, SRC-141/142, SRC-137 | 58 | system_telemetry(23), model_profiler(12)+pipeline(11), model_capability_exam(4), observability(3), quality(2), sla(2), session(1) |
-| **D-INFRA_RUNTIME** (保留) | MOD-INF-001/002/005/012/013/016/026/035/036, MOD-INFRA_RUNTIME, MOD-MASTER-001, MOD-L08-001, SRC-076/082/085/087/090/092/100-103/108-115 | 143 | capacity_assurance(31), asset_inventory(15), db(14), hooks/contract_tester(17), audit_logger等(17), shared/lifecycle+infra_06+config(14), observability+__init__(7), script_system(5+2), dashboard(2), lifecycle(1+4), impact(3), 其他(13) |
+| **D-INFRA_RUNTIME** (保留) | MOD-INF-001/002/005/012/013/016/026/035/036, MOD-INFRA_RUNTIME, MOD-MASTER_BLUEPRINT, MOD-L08-001, SRC-076/082/085/087/090/092/100-103/108-115 | 143 | capacity_assurance(31), asset_inventory(15), db(14), hooks/contract_tester(17), audit_logger等(17), shared/lifecycle+infra_06+config(14), observability+__init__(7), script_system(5+2), dashboard(2), lifecycle(1+4), impact(3), 其他(13) |
 
 **验证**: 103 + 107 + 58 + 143 = 411 ✓，全部 ≤150 ✓
 
@@ -643,7 +643,7 @@ batch 模式与单命令模式使用**相同的匹配逻辑**（`WHERE belongs_t
 | blueprint_id 为 MOD-INF-* 系列 | 120（43种） |
 | **node_id 可被 `WHERE belongs_to=? OR blueprint_id=?` 匹配** | **0 / 171** |
 
-**测试节点 blueprint_id 分布（前10）**：PENDING(51), MOD-INF-007(20), MOD-INF-010(19), MOD-INF-035(7), MOD-INF-014(6), MOD-INF-022(5), MOD-INF-005(5), MOD-INF-031(4), MOD-INF-030(4), MOD-INF-021(4)...
+**测试节点 blueprint_id 分布（前10）**：PENDING(51), MOD-GATE_ENGINE(20), MOD-FEEDBACK_LOOP(19), MOD-INF-035(7), MOD-LLM_SECURITY(6), MOD-INF-022(5), MOD-INF-005(5), MOD-INF-031(4), MOD-INF-030(4), MOD-INF-021(4)...
 
 > **结论**：171 个测试节点中 0 个可被现有命令匹配。且 MOD-INF-021/031 等正是跨域共享的（见 C.1），无法通过 batch 安全迁移。**现有命令完全无法迁移测试节点**。
 

@@ -3,7 +3,7 @@ doc_type: index
 status: active
 title: "changes — 目录索引"
 module_id: ""
-blueprint_id: "MOD-INF-008"
+blueprint_id: "MOD-CONTEXT_ENGINE"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"
@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [index.md](index.md) | Markdown | changes — 目录索引 |
-| [mod_inf_008/](mod_inf_008/index.md) | 目录 | MOD-INF-008 — 目录索引 |
+| [mod_inf_008/](mod_inf_008/index.md) | 目录 | MOD-CONTEXT_ENGINE — 目录索引 |
 
 ## 导航
 

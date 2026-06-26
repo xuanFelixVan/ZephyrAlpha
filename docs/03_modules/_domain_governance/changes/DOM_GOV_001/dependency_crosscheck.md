@@ -1,23 +1,23 @@
 ---
-blueprint_id: MOD-023
+blueprint_id: MOD-GOVERNANCE
 ttl: permanent
 ---
 
-# MOD-023 Dependency Crosscheck
+# MOD-GOVERNANCE Dependency Crosscheck
 
 **Generated:** 2026-05-07
-**Crosscheck target:** SYS-MASTER-001 + MOD-MASTER-001 vs MOD-023
+**Crosscheck target:** SYS-MASTER-001 + MOD-MASTER_BLUEPRINT vs MOD-GOVERNANCE
 
 ## SYS-MASTER-001 Consistency
 
 | Check | Result |
 |-------|--------|
-| MOD-023 appears in SYS-MASTER-001 | ✅ |
+| MOD-GOVERNANCE appears in SYS-MASTER-001 | ✅ |
 | All 8 MOD-INF-xxx IDs are consistent | ✅ |
 | Phase gate numbering matches | ✅ |
 | Depends_on chain respects hierarchy | ✅ |
 
-## MOD-MASTER-001 Consistency
+## MOD-MASTER_BLUEPRINT Consistency
 
 | Check | Result |
 |-------|--------|

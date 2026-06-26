@@ -1,5 +1,5 @@
 ---
-module_id: MOD-008
+module_id: MOD-FEEDBACK_LOOP
 submodule_path: src/zephyr/trading/feedback_loop
 title: "FLE 容量升级附录 — 从S级到L级扩容方案"
 doc_type: blueprint
@@ -16,8 +16,8 @@ valid_from: "2026-05-19"
 ttl: permanent
 construction_progress: design_only
 actual_disk_path: ""
-belongs_to: "MOD-INF-010"
-parent_module: "MOD-INF-010"
+belongs_to: "MOD-FEEDBACK_LOOP"
+parent_module: "MOD-FEEDBACK_LOOP"
 rule_form: structural
 scope: global
 stability: evolving
@@ -30,16 +30,16 @@ runtime_plane: warm
 generation: 1
 functional_domain: operations
 depends_on:
-  - {target: "MOD-INF-010", at: "all", why: "父蓝图——核心引擎设计"}
+  - {target: "MOD-FEEDBACK_LOOP", at: "all", why: "父蓝图——核心引擎设计"}
 last_updated: "2026-05-19"
 
 ---
 
 # FLE 容量升级附录 — 从S级到L级扩容方案
 
-> belongs_to: MOD-INF-010 | parent_module: MOD-INF-010
+> belongs_to: MOD-FEEDBACK_LOOP | parent_module: MOD-FEEDBACK_LOOP
 >
-> **本蓝图是从 MOD-INF-010 §17 拆分出的独立子蓝图。** MOD-INF-010 核心设计蓝图保留 §1-§16+§18+治理信息，容量升级内容由本蓝图独立管理。
+> **本蓝图是从 MOD-FEEDBACK_LOOP §17 拆分出的独立子蓝图。** MOD-FEEDBACK_LOOP 核心设计蓝图保留 §1-§16+§18+治理信息，容量升级内容由本蓝图独立管理。
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图模板 v3.5：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
@@ -51,14 +51,14 @@ last_updated: "2026-05-19"
 ## §0 代码对齐验证
 
 > ⚠️ 防止 construction_progress 与实际代码不符。
-> 本蓝图仅包含容量升级设计方案，无独立代码文件。所有代码变更在父蓝图 MOD-INF-010 的 `src/zephyr/feedback-loop/` 下。
+> 本蓝图仅包含容量升级设计方案，无独立代码文件。所有代码变更在父蓝图 MOD-FEEDBACK_LOOP 的 `src/zephyr/feedback-loop/` 下。
 
 ### §0.1 代码文件清单
 
 > **架构归属SSoT**：`data/databases/depgraph.db`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-010-CAPUP`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-FEEDBACK_LOOP-CAPUP`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因 |
 |---|--------|------------|------|:-----:|---------|
@@ -159,7 +159,7 @@ ZephyrAlpha 扩容至 100 AI 并发 Session → FLE 当前单线程 30s 轮询�
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-010 Feedback Loop | 必须 | 父蓝图——核心引擎设计 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-FEEDBACK_LOOP Feedback Loop | 必须 | 父蓝图——核心引擎设计 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
 
 ---
 

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.rollback.phase_manager
 # [DOMAIN] D-INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
-# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚

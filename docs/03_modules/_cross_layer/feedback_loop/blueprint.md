@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-010
+module_id: MOD-FEEDBACK_LOOP
 submodule_path: src/zephyr/trading/feedback_loop
 title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心"
 doc_type: blueprint
@@ -16,7 +16,7 @@ valid_from: "2026-05-06"
 ttl: permanent
 construction_progress: design_only
 actual_disk_path: "src/zephyr/trading/feedback_loop/"
-belongs_to: "MOD-MASTER-001"
+belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 rule_form: structural
 scope: global
@@ -31,9 +31,9 @@ generation: 1
 functional_domain: operations
 last_verified: "2026-05-13"
 depends_on:
-  - {target: "MOD-MASTER-001", at: "all", why: "FLE→Orc异常调度+联邦协调+自治边界"}
-  - {target: "MOD-INF-006", at: "all", why: "任务系统→检测输入"}
-  - {target: "MOD-INF-007", at: "all", why: "门禁引擎→ADJUST_GATE"}
+  - {target: "MOD-MASTER_BLUEPRINT", at: "all", why: "FLE→Orc异常调度+联邦协调+自治边界"}
+  - {target: "MOD-TASK_SYSTEM", at: "all", why: "任务系统→检测输入"}
+  - {target: "MOD-GATE_ENGINE", at: "all", why: "门禁引擎→ADJUST_GATE"}
   - {target: "MOD-INF-009", at: "all", why: "管线→动态路由反馈"}
   - {target: "MOD-INF-021", at: "all", why: "回滚→VERIFY+配置回滚联动"}
   - {target: "MOD-INF-023", at: "all", why: "漂移检测→HyperNetwork自适应联动"}
@@ -54,7 +54,7 @@ last_updated: "2026-05-19"
 
 本蓝图描述 Feedback Loop Engine——ZephyrAlpha 的自我改进闭环引擎。它解决了系统运行时异常检测、根因诊断、自动修复和自我进化的问题。核心职责包括：regime→predict→detect→diagnose→act→verify→self-heal→govern 全链路自治、67+ Detector 多模态检测、三级检测池并行化、32 代进化×429 盲点覆盖。当前规模单线程 30s 轮询，目标容量 100 AI Session 并发/500 findings/cycle/240 events/s。上游依赖 ScriptSystem(MOD-INF-005)提供扫描结果，下游被 AutoRuntime(MOD-INF-035)消费异常调度。
 
-> module_id: MOD-INF-010 | version: 0.35.1 | status: Draft | layer: cross_layer
+> module_id: MOD-FEEDBACK_LOOP | version: 0.35.1 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/feedback-loop/ | generation: 1 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -77,11 +77,11 @@ last_updated: "2026-05-19"
 > **架构归属SSoT**：`data/databases/depgraph.db`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-010`
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-FEEDBACK_LOOP`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|:-----:|-------------------|
-| 1 | `__init__.py` | §3 | 模块身份——MODULE_ID=MOD-INF-010 | 已实现 | — |
+| 1 | `__init__.py` | §3 | 模块身份——MODULE_ID=MOD-FEEDBACK_LOOP | 已实现 | — |
 | 2 | `config.py` | §4 | FLEConfig——7项配置 | 已实现 | — |
 | 3 | `protocols.py` | §4 | FeedbackProtocolAdapter——fire-and-forget防循环依赖 | 已实现 | — |
 | 4 | `exceptions.py` | §6 | FLEBaseException+ForensicContext——4种子类 | 已实现 | — |
@@ -180,8 +180,8 @@ ZephyrAlpha 扩容至 100 AI 并发 Session → FLE 当前单线程 30s 轮询�
 | # | 内容 | 归属 |
 |---|------|------|
 | 1 | 管线编排 | MOD-INF-009 Pipeline Orchestrator |
-| 2 | 任务状态机 | MOD-INF-006 TaskRepository |
-| 3 | 门禁规则定义 | MOD-INF-007 Gate Engine |
+| 2 | 任务状态机 | MOD-TASK_SYSTEM TaskRepository |
+| 3 | 门禁规则定义 | MOD-GATE_ENGINE Gate Engine |
 | 4 | 回滚执行 | MOD-INF-021 Rollback System |
 | 5 | 审计日志持久化 | MOD-INF-020 Audit Trail |
 
@@ -368,8 +368,8 @@ fire-and-forget 防循环依赖：FLE → Pipeline/Orchestrator/AuditTrail 单�
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-INF-035 AutoRuntime Core | 必须 | 异常调度+联邦协调+自治边界 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
-| MOD-INF-006 Task System | 必须 | 任务状态→检测输入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\task-system\blueprint.md` |
-| MOD-INF-007 Gate Engine | 必须 | ADJUST_GATE | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-TASK_SYSTEM Task System | 必须 | 任务状态→检测输入 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\task-system\blueprint.md` |
+| MOD-GATE_ENGINE Gate Engine | 必须 | ADJUST_GATE | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
 | MOD-INF-009 Pipeline | 必须 | 动态路由反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
 | MOD-INF-021 Rollback | 必须 | VERIFY+配置回滚联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\rollback\blueprint.md` |
 | MOD-INF-023 Drift Detector | 必须 | HyperNetwork 自适应联动 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\drift-detector\blueprint.md` |
@@ -382,7 +382,7 @@ fire-and-forget 防循环依赖：FLE → Pipeline/Orchestrator/AuditTrail 单�
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-010` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-FEEDBACK_LOOP` |
 | 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 未对齐 | 同上 |
 | 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 

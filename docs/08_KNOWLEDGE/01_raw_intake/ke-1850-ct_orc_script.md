@@ -21,7 +21,7 @@ systems:
   - role: consumer
     name: orchestrator
     path: "src/zephyr/orchestrator/"
-    blueprint: "MOD-INF-006"
+    blueprint: "MOD-TASK_SYSTEM"
 
 data_flow:
   direction: bidirectional
