@@ -21,6 +21,8 @@ from zephyr.security.access_control.session_concurrency import (
     ConcurrencyManager,
     ConflictType,
     LockLevel,
+    SessionConflictDetector,
+    SessionRegistry,
     ZephyrLock,
     detect_mtime_conflict,
 )
@@ -133,3 +135,85 @@ class TestLockTTL:
     def test_ttl_value(self):
         assert LOCK_TTL_SECONDS == 1800
         assert isinstance(LOCK_TTL_SECONDS, int)
+
+
+class TestSessionRegistryClaimRelease:
+    """SessionRegistry claim_file/release_file/get_session 测试（P2-SES 扩展）。"""
+
+    def test_claim_file_auto_registers_unknown_session(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        assert reg.claim_file("sess-A", str(tmp_path / "a.py")) is True
+        info = reg.get_session("sess-A")
+        assert info is not None and len(info.held_files) == 1
+
+    def test_claim_file_idempotent_same_session(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_file("sess-A", str(tmp_path / "a.py"))
+        assert reg.claim_file("sess-A", str(tmp_path / "a.py")) is True  # 幂等
+        info = reg.get_session("sess-A")
+        assert len(info.held_files) == 1  # 不重复
+
+    def test_claim_file_conflict_other_session_returns_false(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_file("sess-A", str(tmp_path / "a.py"))
+        assert reg.claim_file("sess-B", str(tmp_path / "a.py")) is False  # 不覆盖
+        # sess-B 应被懒注册但 held_files 为空
+        info_b = reg.get_session("sess-B")
+        assert info_b is not None and len(info_b.held_files) == 0
+
+    def test_claim_file_path_normalization(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_file("sess-A", "a.py")  # 相对路径
+        # 用绝对路径查应命中
+        holder = reg.find_session_by_file(str((tmp_path / "a.py").resolve()))
+        assert holder is not None and holder.session_id == "sess-A"
+
+    def test_release_file_success(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_file("sess-A", str(tmp_path / "a.py"))
+        assert reg.release_file("sess-A", str(tmp_path / "a.py")) is True
+        assert len(reg.get_session("sess-A").held_files) == 0
+
+    def test_release_file_not_held_returns_false(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-A")
+        assert reg.release_file("sess-A", str(tmp_path / "x.py")) is False
+
+    def test_release_file_unregistered_session_returns_false(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        assert reg.release_file("sess-ghost", str(tmp_path / "a.py")) is False
+
+    def test_get_session_unregistered_returns_none(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        assert reg.get_session("sess-x") is None
+
+    def test_get_session_expired_returns_none_no_write(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-A")
+        # 手动把 last_heartbeat 改老
+        data = reg._load()
+        data["sess-A"]["last_heartbeat"] = 0.0
+        reg._save(data)
+        assert reg.get_session("sess-A") is None
+        # 过期 session 仍留在文件里（get_session 不删除）
+        assert "sess-A" in reg._load()
+
+
+class TestSessionConflictDetectorAcquireWriteback:
+    """SessionConflictDetector.acquire_files 写回 registry 测试（修复验证）。"""
+
+    def test_acquire_files_writes_back_to_registry(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        det = SessionConflictDetector(reg)
+        allocated = det.acquire_files([str(tmp_path / "a.py")], "sess-A")
+        assert len(allocated) == 1
+        # 关键：写回了 registry
+        info = reg.get_session("sess-A")
+        assert info is not None and len(info.held_files) == 1
+
+    def test_acquire_files_skips_conflict(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_file("sess-A", str(tmp_path / "a.py"))
+        det = SessionConflictDetector(reg)
+        allocated = det.acquire_files([str(tmp_path / "a.py")], "sess-B")
+        assert len(allocated) == 0  # 冲突跳过

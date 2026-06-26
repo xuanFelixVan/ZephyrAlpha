@@ -129,12 +129,17 @@ def main() -> int:
         print(f"ERROR: GitCommitGateway 初始化失败: {e}", file=sys.stderr)
         return 2
 
-    result = gw.commit(
-        session_id=args.session,
-        files=files,
-        message=args.message,
-        allow_promote=args.allow_promote,
-    )
+    # Phase 2: claim files 激活 session 隔离 stash
+    claimed = gw.claim_files(args.session, files)
+    try:
+        result = gw.commit(
+            session_id=args.session,
+            files=files,
+            message=args.message,
+            allow_promote=args.allow_promote,
+        )
+    finally:
+        gw.release_files(args.session, claimed)
 
     if result.status == CommitStatus.OK:
         print(f"OK: {result.message} (hash={result.commit_hash[:8]})")

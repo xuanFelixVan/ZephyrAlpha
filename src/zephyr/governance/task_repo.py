@@ -1752,11 +1752,16 @@ class TaskRepository:
             session_id = getattr(task_obj, "session_id", None) or f"task:{task_id}"
             gw = GitCommitGateway()
             commit_msg = f"auto-commit(DM-202918): task {task_id} COMPLETED"
-            result = gw.commit(
-                session_id=session_id,
-                files=existing_files,
-                message=commit_msg,
-            )
+            # Phase 2: claim files 到 registry，激活 session 隔离 stash
+            claimed = gw.claim_files(session_id, existing_files)
+            try:
+                result = gw.commit(
+                    session_id=session_id,
+                    files=existing_files,
+                    message=commit_msg,
+                )
+            finally:
+                gw.release_files(session_id, claimed)
             if result.status == CommitStatus.OK:
                 logger.info(
                     "DM-202918: GitCommitGateway commit 成功 (task=%s hash=%s): %s",

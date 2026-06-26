@@ -285,6 +285,101 @@ class GitCommitGateway:
                     f, session_id,
                 )
 
+    # ------------------------------------------------------------------
+    # session 隔离 stash 辅助方法（Step 4-5：选择性 stash 核心）
+    # ------------------------------------------------------------------
+    def _session_aware_stash_enabled(self) -> bool:
+        """session 隔离 stash 是否启用（ZEPHYR_SESSION_AWARE_STASH != "0"）。
+
+        默认启用；设为 "0" 强制禁用（kill-switch），回退原 stash-all 逻辑。
+        """
+        return os.environ.get(_SESSION_AWARE_STASH_ENV, "1") != "0"
+
+    def _get_session_held_non_target(
+        self,
+        session_id: str,
+        target_files: list[str],
+        all_non_target_changed: list[str],
+    ) -> tuple[bool, list[str]]:
+        """从非目标变更文件中筛出可 stash 的候选（session 隔离 + 强保护）。
+
+        强不变量（红蓝对抗修正）：feature 启用时，始终排除其他活跃 session 持有的文件，
+        即使本 session 未注册（未 claim）——绝不 stash 别人的 WIP。
+        三级决策：
+        1. feature 禁用（kill-switch）→ 纯原 stash-all（无保护，向后兼容）
+        2. feature 启用 + 本 session 未注册/held 空 → stash 全部非保护文件
+           （排除他人持有，但本 session 无精确 held 范围）
+        3. feature 启用 + 本 session 已注册 → 只 stash 本 session held 的非保护文件
+           （精确最小集，既保护他人也只动自己的）
+
+        Args:
+            session_id: 当前 commit 的 session。
+            target_files: 本次 commit 的目标文件（绝对路径）。
+            all_non_target_changed: 所有非目标的已修改已跟踪文件（相对路径）。
+
+        Returns:
+            (isolation_active, candidates)
+            - (False, [...])：回退模式（feature 禁用 或 未注册），
+              candidates 已排除他人持有（feature 启用时）或全部（feature 禁用时）
+            - (True, [...])：session 隔离生效，只 stash candidates
+        """
+        # kill-switch 关闭 → 纯原逻辑（stash 全部非目标，无 session 保护）
+        if not self._session_aware_stash_enabled():
+            return False, all_non_target_changed
+
+        # 强不变量：feature 启用时，始终排除其他活跃 session 持有的文件
+        try:
+            other_held = self._registry.other_held_files(session_id)
+        except Exception:
+            # registry 读取异常 → 安全降级（不排除，但绝不阻断 commit）
+            other_held = set()
+
+        not_protected: list[str] = []
+        for rel_path in all_non_target_changed:
+            abs_p = str((self.project_root / rel_path).resolve())
+            if abs_p not in other_held:
+                not_protected.append(rel_path)
+
+        info = self._registry.get_session(session_id)
+        if info is None or not info.held_files:
+            # 未注册 / held 空 → stash 全部非保护文件（保护他人，回退本 session 范围）
+            return False, not_protected
+
+        # 已注册 → 只 stash 本 session held 的非保护文件（精确最小集）
+        held_abs = {str(Path(f).resolve()) for f in info.held_files}
+        target_abs = {str(Path(f).resolve()) for f in target_files}
+        candidates: list[str] = []
+        for rel_path in not_protected:
+            abs_p = str((self.project_root / rel_path).resolve())
+            if abs_p in target_abs:
+                continue
+            if abs_p in held_abs:
+                candidates.append(rel_path)
+        return True, candidates
+
+    def _collect_non_target_rel(self, target_files: list[str]) -> list[str]:
+        """收集非目标的已修改已跟踪文件（相对路径），跳过未跟踪文件（??）。
+
+        porcelain 格式: ``XY <path>``，X=staged, Y=工作区。``??`` 行为未跟踪，跳过。
+        target_files 用绝对路径归一化匹配（resolve），排除本次 commit 目标。
+        """
+        status_result = self._run_git(["git", "status", "--porcelain"])
+        if status_result.returncode != 0:
+            logger.warning(
+                "GitCommitGateway: git status 失败: %s", status_result.stderr.strip()
+            )
+            return []
+        target_set = {str(Path(f).resolve()) for f in target_files}
+        result: list[str] = []
+        for line in status_result.stdout.splitlines():
+            if not line.strip() or line.startswith("??"):
+                continue
+            path = line[3:].strip().strip('"')
+            abs_path = str((self.project_root / path).resolve())
+            if abs_path not in target_set:
+                result.append(path)
+        return result
+
     def _register_default_reconcilers(self) -> None:
         """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T4 ttl + P2-T5 ghost）。
 
@@ -544,25 +639,15 @@ class GitCommitGateway:
                         message=f"git add failed: {add_result.stderr.strip()}",
                     )
                 else:
-                    # 3. git stash push --keep-index（stash 非目标 unstaged 变更）
-                    #    --keep-index 保留已 staged 的目标文件，stash 其余工作区变更
-                    stash_result = self._run_git(
-                        ["git", "stash", "push", "--keep-index", "-m", f"gw:{session_id}"]
-                    )
-                    if stash_result.returncode == 0:
-                        stashed = True
-                        list_result = self._run_git(
-                            ["git", "stash", "list", "--format=%gd|%gs", "-1"]
-                        )
-                        if list_result.returncode == 0 and list_result.stdout.strip():
-                            stash_ref = list_result.stdout.strip().split("|", 1)[0]
-                    else:
-                        stderr = stash_result.stderr.strip()
-                        # "No local changes to save" = 无非目标变更，非错误
-                        if "No local changes" not in stderr and "no entry" not in stderr.lower():
-                            logger.warning(
-                                "GitCommitGateway: stash --keep-index 失败: %s", stderr
-                            )
+                    # 3. session 隔离 stash 非目标 unstaged 变更
+                    #    _stash_other_files 内部按 session held 过滤候选：
+                    #    - feature 禁用/未注册 → 回退 stash 全部非目标
+                    #      （等效原 --keep-index 语义：目标已 staged，非目标被 stash）
+                    #    - session 隔离生效 → 只 stash 当前 session held 的非目标
+                    #    - 候选为空 → 跳过 stash（其他 session WIP 留工作区）
+                    #    目标文件已通过 git add --pathspec-from-file 全量 staged，
+                    #    故 stash 非目标（显式 pathspec）不影响 staged 目标。
+                    stashed, stash_ref = self._stash_other_files(session_id, files)
 
                     # 4. 检查 staged 变更
                     diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
@@ -735,44 +820,65 @@ class GitCommitGateway:
         return count
 
     def _stash_other_files(self, session_id: str, target_files: list[str]) -> tuple[bool, str]:
-        """选择性 stash 非本次 files 的已修改文件。
+        """选择性 stash 非本次 files 的已修改文件（session 隔离版）。
 
         策略:
-        1. git status --porcelain 获取所有已修改文件
-        2. 过滤出不在 target_files 中的已跟踪文件
-        3. git stash push -m <session_id> -- <those files>
+        1. _collect_non_target_rel 收集非目标已跟踪变更（相对路径，跳过 ??）
+        2. _get_session_held_non_target 筛出 session 隔离候选：
+           - feature 禁用/未注册/held 空 → 回退原逻辑（stash 全部非目标）
+           - 否则只 stash 当前 session 持有的非目标文件（其他 session 的 WIP 留在工作区）
+        3. 候选为空 → 跳过 stash
+        4. 候选 > _MAX_INLINE_PATHS → --pathspec-from-file 避免 WinError 206；
+           否则 git stash push -m <session_id> -- <candidates>
 
         Returns:
             (是否 stash 了文件, stash_ref)
         """
-        # 获取工作区所有已修改文件（staged + unstaged，已跟踪）
-        status_result = self._run_git(["git", "status", "--porcelain"])
-        if status_result.returncode != 0:
-            logger.warning("GitCommitGateway: git status 失败: %s", status_result.stderr.strip())
+        all_non_target = self._collect_non_target_rel(target_files)
+        if not all_non_target:
             return False, ""
 
-        changed_files: list[str] = []
-        target_set = {str(Path(f).resolve()) for f in target_files}
-        for line in status_result.stdout.splitlines():
-            if not line.strip():
-                continue
-            # porcelain 格式: XY <path>，X=staged状态, Y=工作区状态
-            # 只处理已跟踪文件（X/Y 不是 ??）
-            if line.startswith("??"):
-                continue
-            path = line[3:].strip().strip('"')
-            abs_path = str((self.project_root / path).resolve())
-            if abs_path not in target_set:
-                changed_files.append(path)
-
-        if not changed_files:
-            return False, ""
-
-        # git stash push -- <非本次 files>
-        stash_msg = f"gw:{session_id}"
-        stash_result = self._run_git(
-            ["git", "stash", "push", "-m", stash_msg, "--"] + changed_files
+        isolation_active, candidates = self._get_session_held_non_target(
+            session_id, target_files, all_non_target
         )
+        if not candidates:
+            # 候选为空：session 隔离下无需 stash（其他 session WIP 留工作区），
+            # 或回退模式下无非目标变更
+            if isolation_active:
+                logger.info(
+                    "GitCommitGateway: session 隔离生效，无非目标候选需要 stash (session=%s)",
+                    session_id,
+                )
+            return False, ""
+
+        mode = "session-aware" if isolation_active else "fallback"
+        logger.info(
+            "GitCommitGateway: stash 模式=%s, 候选=%d 个非目标文件 (session=%s)",
+            mode, len(candidates), session_id,
+        )
+
+        stash_msg = f"gw:{session_id}"
+        spec_file: str | None = None
+        try:
+            if len(candidates) > _MAX_INLINE_PATHS:
+                # 大候选列表 → --pathspec-from-file 避免 Windows CLI 长度限制
+                spec_file = self._write_pathspec_file(
+                    [str(self.project_root / c) for c in candidates]
+                )
+                stash_result = self._run_git(
+                    ["git", "stash", "push", "-m", stash_msg, f"--pathspec-from-file={spec_file}"]
+                )
+            else:
+                stash_result = self._run_git(
+                    ["git", "stash", "push", "-m", stash_msg, "--"] + candidates
+                )
+        finally:
+            if spec_file:
+                try:
+                    os.remove(spec_file)
+                except OSError:
+                    pass
+
         if stash_result.returncode != 0:
             # stash 失败可能是"No local changes to save"——非错误
             stderr = stash_result.stderr.strip()
@@ -786,7 +892,7 @@ class GitCommitGateway:
         stash_ref = ""
         if list_result.returncode == 0 and list_result.stdout.strip():
             stash_ref = list_result.stdout.strip().split("|", 1)[0]
-        logger.info("GitCommitGateway: stash 了 %d 个非本次文件 ref=%s", len(changed_files), stash_ref)
+        logger.info("GitCommitGateway: stash 了 %d 个非本次文件 ref=%s", len(candidates), stash_ref)
         return True, stash_ref
 
     def _restore_stash(self) -> bool:

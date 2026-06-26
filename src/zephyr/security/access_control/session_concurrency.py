@@ -2,10 +2,10 @@
 # [MODULE] zephyr.security.access_control.session_concurrency
 # [DOMAIN] D-SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] tests.test_session_concurrency
+# [CONSUMERS] tests.test_session_concurrency; zephyr.governance.git_commit_gateway
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session TTL=3600s 自动过期；不替代 lock_files.py（文件级锁）
+# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session TTL=3600s 自动过期；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -47,6 +47,7 @@ __all__ = [
 import json
 import logging
 import os
+import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -139,6 +140,18 @@ _REGISTRY_PATH: str = ".runtime/session_registry.json"
 _HANDOFF_DIR: str = ".runtime/handoffs"
 
 
+def _normalize_file_path(file_path: str, project_root: Path | None = None) -> str:
+    """归一化为绝对路径字符串（与 gateway 的 str(Path(f).resolve()) 对齐）。
+
+    claim/release/find 内部统一用此 helper，避免相对路径与绝对路径不匹配。
+    Path.resolve() 默认 strict=False，对不存在路径也能解析（支持 deletion commit 场景）。
+    """
+    p = Path(file_path)
+    if not p.is_absolute() and project_root is not None:
+        p = project_root / p
+    return str(p.resolve())
+
+
 @dataclass
 class SessionInfo:
     """活跃 session 注册信息。"""
@@ -183,6 +196,11 @@ class SessionRegistry:
         self._project_root: Path = Path(project_root) if project_root else Path.cwd()
         self._registry_path: Path = self._project_root / _REGISTRY_PATH
         self._registry_path.parent.mkdir(parents=True, exist_ok=True)
+        # 进程内读写锁：串行化 _load→修改→_save 的 read-modify-write 序列，
+        # 消除 claim_file/release_file 等的 TOCTOU 竞态（两线程并发 claim 同一文件
+        # 都读到"无人持有"→都写回→双 claim）。跨进程并发由 gateway 全局锁 + 原子
+        # os.replace 兜底；此处只解决进程内多线程竞态（红蓝对抗 TestConcurrentClaimRace）。
+        self._lock = threading.RLock()
 
     def register(
         self,
@@ -191,64 +209,179 @@ class SessionRegistry:
         held_files: list[str] | None = None,
     ) -> SessionInfo:
         """注册一个活跃 session。"""
-        info = SessionInfo(
-            session_id=session_id,
-            pid=pid if pid is not None else os.getpid(),
-            start_time=time.time(),
-            held_files=held_files or [],
-            last_heartbeat=time.time(),
-        )
-        data = self._load()
-        data[session_id] = info.to_dict()
-        self._save(data)
-        logger.info("SessionRegistry: registered session=%s pid=%d", session_id, info.pid)
-        return info
+        with self._lock:
+            info = SessionInfo(
+                session_id=session_id,
+                pid=pid if pid is not None else os.getpid(),
+                start_time=time.time(),
+                held_files=held_files or [],
+                last_heartbeat=time.time(),
+            )
+            data = self._load()
+            data[session_id] = info.to_dict()
+            self._save(data)
+            logger.info("SessionRegistry: registered session=%s pid=%d", session_id, info.pid)
+            return info
 
     def unregister(self, session_id: str) -> bool:
         """注销一个 session。"""
-        data = self._load()
-        if session_id not in data:
-            return False
-        del data[session_id]
-        self._save(data)
-        logger.info("SessionRegistry: unregistered session=%s", session_id)
-        return True
+        with self._lock:
+            data = self._load()
+            if session_id not in data:
+                return False
+            del data[session_id]
+            self._save(data)
+            logger.info("SessionRegistry: unregistered session=%s", session_id)
+            return True
 
     def heartbeat(self, session_id: str) -> bool:
         """更新 session 心跳时间（防 TTL 过期）。"""
-        data = self._load()
-        if session_id not in data:
-            return False
-        data[session_id]["last_heartbeat"] = time.time()
-        self._save(data)
-        return True
+        with self._lock:
+            data = self._load()
+            if session_id not in data:
+                return False
+            data[session_id]["last_heartbeat"] = time.time()
+            self._save(data)
+            return True
 
     def list_active(self) -> list[SessionInfo]:
         """列出所有活跃 session（自动清理过期）。"""
-        data = self._load()
-        now = time.time()
-        active: list[SessionInfo] = []
-        expired: list[str] = []
-        for sid, d in data.items():
-            info = SessionInfo.from_dict(d)
-            if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
-                expired.append(sid)
-            else:
-                active.append(info)
-        # 清理过期 session
-        if expired:
-            for sid in expired:
-                del data[sid]
-            self._save(data)
-            logger.info("SessionRegistry: cleaned %d expired sessions", len(expired))
-        return active
+        with self._lock:
+            data = self._load()
+            now = time.time()
+            active: list[SessionInfo] = []
+            expired: list[str] = []
+            for sid, d in data.items():
+                info = SessionInfo.from_dict(d)
+                if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+                    expired.append(sid)
+                else:
+                    active.append(info)
+            # 清理过期 session
+            if expired:
+                for sid in expired:
+                    del data[sid]
+                self._save(data)
+                logger.info("SessionRegistry: cleaned %d expired sessions", len(expired))
+            return active
 
     def find_session_by_file(self, file_path: str) -> SessionInfo | None:
         """查找持有某文件的 session（用于冲突检测）。"""
+        norm = _normalize_file_path(file_path, self._project_root)
         for info in self.list_active():
-            if file_path in info.held_files:
+            held_norm = [_normalize_file_path(f, self._project_root) for f in info.held_files]
+            if norm in held_norm:
                 return info
         return None
+
+    def get_session(self, session_id: str) -> SessionInfo | None:
+        """只读查询某 session 信息（不做过期清理，不回写文件）。
+
+        过期 session 返回 None（但不删除——删除是 list_active 的职责）。
+        供 GitCommitGateway 等只读消费者使用，避免 list_active 的写副作用。
+        """
+        data = self._load()
+        if session_id not in data:
+            return None
+        info = SessionInfo.from_dict(data[session_id])
+        if time.time() - info.last_heartbeat > _SESSION_TTL_SECONDS:
+            return None  # 过期，视为不存在（不删除）
+        return info
+
+    def other_held_files(self, session_id: str) -> set[str]:
+        """返回其他活跃 session 持有的文件（归一化绝对路径集合），只读无写副作用。
+
+        用于 session 隔离 stash 的强不变量：commit 时始终排除其他 session 持有的文件，
+        即使本 session 未注册（未 claim）。过期 session 的持有被忽略。
+        供 GitCommitGateway._get_session_held_non_target 调用。
+        """
+        data = self._load()
+        now = time.time()
+        held: set[str] = set()
+        for sid, d in data.items():
+            if sid == session_id:
+                continue
+            info = SessionInfo.from_dict(d)
+            if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+                continue  # 过期 session，忽略其持有
+            for f in info.held_files:
+                held.add(_normalize_file_path(f, self._project_root))
+        return held
+
+    def claim_file(self, session_id: str, file_path: str) -> bool:
+        """为 session 声明持有某文件（动态 claim）。
+
+        - session 未注册/过期 → 懒注册（held_files=[]），记 warning
+        - 文件被其他活跃 session 持有 → 返回 False（冲突，调用方走 lock_files.py）
+        - 文件已被自己持有 → 幂等返回 True
+        - 文件无人持有 → 加入 held_files，顺带 heartbeat，原子写回，返回 True
+
+        Returns: True=claim 成功（含幂等），False=被其他 session 持有。
+        """
+        with self._lock:
+            norm = _normalize_file_path(file_path, self._project_root)
+            data = self._load()
+            now = time.time()
+
+            # 懒注册：session 不存在或过期
+            existing = data.get(session_id)
+            if existing is None or now - SessionInfo.from_dict(existing).last_heartbeat > _SESSION_TTL_SECONDS:
+                logger.warning(
+                    "SessionRegistry: claim_file auto-registering session=%s (not registered or expired)",
+                    session_id,
+                )
+                data[session_id] = SessionInfo(
+                    session_id=session_id, pid=os.getpid(), start_time=now,
+                    held_files=[], last_heartbeat=now,
+                ).to_dict()
+                self._save(data)  # 立即持久化懒注册（即使后续 claim 冲突，session 仍可查询）
+
+            # 检查是否被其他活跃 session 持有
+            for sid, d in data.items():
+                if sid == session_id:
+                    continue
+                other = SessionInfo.from_dict(d)
+                if now - other.last_heartbeat > _SESSION_TTL_SECONDS:
+                    continue  # 过期 session，忽略其 claim
+                other_held_norm = [_normalize_file_path(f, self._project_root) for f in other.held_files]
+                if norm in other_held_norm:
+                    logger.warning(
+                        "SessionRegistry: claim_file conflict — file=%s held by session=%s, requested by=%s",
+                        norm, sid, session_id,
+                    )
+                    return False
+
+            # 幂等 / 新增
+            own = SessionInfo.from_dict(data[session_id])
+            own.last_heartbeat = now  # claim 顺带心跳
+            own_norm = [_normalize_file_path(f, self._project_root) for f in own.held_files]
+            if norm not in own_norm:
+                own.held_files.append(norm)
+            data[session_id] = own.to_dict()
+            self._save(data)
+            return True
+
+    def release_file(self, session_id: str, file_path: str) -> bool:
+        """释放 session 对某文件的持有。
+
+        Returns: True=成功释放，False=session 未注册 或 文件未被持有。
+        """
+        with self._lock:
+            norm = _normalize_file_path(file_path, self._project_root)
+            data = self._load()
+            if session_id not in data:
+                return False
+            info = SessionInfo.from_dict(data[session_id])
+            held_norm = [_normalize_file_path(f, self._project_root) for f in info.held_files]
+            if norm not in held_norm:
+                return False
+            # 移除归一化匹配到的原始条目
+            for orig in list(info.held_files):
+                if _normalize_file_path(orig, self._project_root) == norm:
+                    info.held_files.remove(orig)
+            data[session_id] = info.to_dict()
+            self._save(data)
+            return True
 
     def _load(self) -> dict[str, dict]:
         """原子读取 registry（文件不存在/损坏返回空 dict）。"""
@@ -355,7 +488,7 @@ class SessionConflictDetector:
     def acquire_files(
         self, file_paths: list[str], session_id: str
     ) -> list[str]:
-        """为 session 预分配文件（冲突文件不会被分配）。
+        """为 session 预分配文件（冲突文件不会被分配，成功分配的写回 registry）。
 
         Returns:
             成功分配的文件列表（冲突文件被跳过）。
@@ -364,5 +497,7 @@ class SessionConflictDetector:
         for fp in file_paths:
             conflict = self.check_file_conflict(fp, session_id)
             if conflict is None:
-                allocated.append(fp)
+                # 写回 registry，使 claim 持久化（修复：原版只读不写回）
+                if self._registry.claim_file(session_id, fp):
+                    allocated.append(fp)
         return allocated
