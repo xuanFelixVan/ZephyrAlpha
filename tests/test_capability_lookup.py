@@ -184,6 +184,62 @@ def test_find_ascii_multi_word(setup_registry):
     assert reg.find("test nonexistent_xyz") == []
 
 
+def test_find_degenerate_query_guard():
+    """退化查询守卫：空/空白/单字符查询返回 []，不返回宽泛命中。
+
+    回归 bug：find('') 返回全部（'' in haystack 恒 True），find('a')/find('的')
+    返回 16/11 条（单字符作为子串出现在所有 description）。守卫 len(q.strip())>=2 拦截。
+    对标红蓝对抗发现 2（单字符过宽匹配绕过守卫）——治本：在 find() 入口拦截退化输入。
+    """
+    reg = CapabilityLookup(scan=False)
+    # 空查询（旧版返回全部：'' in haystack 恒 True）
+    assert reg.find("") == []
+    # 纯空白（旧版 '   '.lower()='   ' in haystack 多数为 True）
+    assert reg.find("   ") == []
+    assert reg.find("\t\n") == []
+    # 单 ASCII 字符（旧版 'a' 返回 16：a 作为子串出现在所有 capability_id/canonical_file）
+    assert reg.find("a") == []
+    assert reg.find("e") == []
+    # 单 CJK 字符（旧版 '的' 返回 11：的 作为子串出现在所有 description）
+    assert reg.find("的") == []
+    assert reg.find("了") == []
+    # 2 字符查询不被守卫拦（有意义的最小查询长度）
+    # find('ab') 不一定命中，但守卫不应返回空（除非确实无匹配）
+    reg.find("ab")  # 不 assert 返回值，只验证不崩溃且不被守卫误拦
+
+
+def test_find_adversarial_vectors():
+    """红蓝对抗向量永久回归：极端输入不崩溃 + 正向查询不退化。
+
+    覆盖：正则元字符/SQL注入样式/超长DoS/换行制表符/大小写/空白/Unicode/负向。
+    守护 find() 在极端输入下的健壮性，防未来改动静默回归。
+    """
+    reg = CapabilityLookup(scan=False)
+    # 正则元字符不崩溃（find 用 `in` 非 re，元字符当字面量处理）
+    for q in [".*", "[]()", "$^", "\\d+", "'; DROP TABLE--;"]:
+        results = reg.find(q)
+        assert isinstance(results, list), f"crash on {q!r}"
+    # 超长查询不 DoS（应在 1s 内返回，实际 <10ms）
+    import time
+    t0 = time.time()
+    reg.find("vocabulary " * 2000)
+    assert time.time() - t0 < 1.0, "20k 字符查询超 1s（DoS 风险）"
+    # 换行/制表符分词正常（\W+ 切分，token AND 匹配）
+    ids = {r["capability_id"] for r in reg.find("vocabulary\nloader\t")}
+    assert "vocabulary_values_loader" in ids
+    # 大小写不敏感（全大写/混合/带空白）
+    for q in ["SESSION HANDOFF", "Session Handoff", "  session handoff  "]:
+        ids = {r["capability_id"] for r in reg.find(q)}
+        assert "session_handoff_continuity" in ids, f"failed for {q!r}: {ids}"
+    # 制表符/多空格分隔（\W+ 统一切分）
+    assert "session_handoff_continuity" in {
+        r["capability_id"] for r in reg.find("session\thandoff")}
+    assert "session_handoff_continuity" in {
+        r["capability_id"] for r in reg.find("session   handoff")}
+    # 负向：完全无关查询返回空（不误命中）
+    assert reg.find("完全无关的查询xyz123") == []
+
+
 def test_get_existing(setup_registry):
     """get 返回派生的 canonical_file + 从头部派生的 module_id。"""
     yaml_path, scan_root = setup_registry

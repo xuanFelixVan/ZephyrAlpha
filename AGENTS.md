@@ -196,6 +196,7 @@ result = await gateway.full_scan(user_text, llm_response)
    from zephyr.governance.capability_lookup import CapabilityLookup
    reg = CapabilityLookup()              # 自动扫磁盘+派生 canonical
    hits = reg.find("rollback")            # 关键词搜（匹配 capability_id/aliases/description/canonical_file）
+   hits = reg.find("session handoff")     # 多词短语也支持（token AND 匹配，词无需连续出现）
    cap = reg.get("rollback_executor")     # 按 capability_id 精确查
    reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
    ```
@@ -247,3 +248,15 @@ result = await gateway.full_scan(user_text, llm_response)
 - **改了 YAML 规则文件** → `python scripts/governance/sync_yaml_to_depgraph.py`（覆盖 readonly 表）
 
 > 改 depgraph.db 前必须 `git commit` 备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/diagnose_depgraph.py`。
+
+### 11.1 生成器时间戳约定
+
+> 所有生成器（`scripts/governance/d5_architecture/generators/` 下的 `.py` 文件）输出的文档中，
+> 日期字段 MUST 使用 `auto-generated`，最后更新时间 MUST 标注"最后更新以 git log 为准"。
+> **禁止在生成器中使用 `datetime.now()` 或任何实时时间源**，否则每次 commit depgraph.db
+> 都会因时间戳变化产生非幂等噪音 auto-commit。
+
+- **真源实现**：所有生成器 docstring `[INVARIANTS]` 声明"输出幂等(相同输入→相同输出);零时间戳"
+- **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源
+- **检测**：`Select-String -Path "scripts/governance/d5_architecture/generators/*.py" -Pattern "datetime\.now\(\)"` 应返回零匹配
+- **自动触发**：GATE-DOMAIN-DOC reconciler 在 commit depgraph.db 后自动调用 generate_domain_doc.py 和 generate_domain_dependency_diagram.py 重生域文档，生成器幂等性确保无噪音 auto-commit

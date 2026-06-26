@@ -83,6 +83,11 @@ HEADER_SCAN_LIMIT = 30  # 头部字段都在前 30 行，只读这么多省时�
 # 成熟度排序权重（production > prototype > design）；未知成熟度=0
 _MATURITY_RANK: dict[str, int] = {"production": 3, "prototype": 2, "design": 1}
 
+# CJK 公共子串匹配最小窗口长度（治本：阈值真源唯一，改此处全跟随）
+# 取 3：2 字符窗口（如"路径"）过宽会假阳性命中所有含该子串的条目；
+# 3 字符窗口（如"仓库根"）才能捕获语义 core 又避免巧合命中
+_CJK_MIN_SUBSTRING: int = 3
+
 
 # ---------------------------------------------------------------------------
 # 头部正则（代码文件十一字段头部）
@@ -673,15 +678,20 @@ class CapabilityLookup:
         """关键词搜索：匹配 capability_id / description / canonical_file / module_id / aliases（大小写不敏感）。
 
         匹配策略（治本：token 包含匹配，消除中文变体 alias 堆砌反模式）：
+          0. 退化查询守卫：len(query.strip()) < 2 → 直接返回 []（空/空白/单字符
+             是噪声输入，旧版 find('a')/find('的') 因 '' in haystack 恒真或单字符
+             作为子串出现在所有 description 而命中全部——守卫拦截）
           1. 精确子串匹配（保留原行为，大小写不敏感）——处理 alias 原样命中
           2. token 包含匹配（精确子串未命中时启用）：
              - ASCII 词 token：全部必须在 haystack 中（AND，如 "repo root" → repo + root）
-             - CJK 字符：query 的 CJK 字符序列与 haystack 须有 ≥3 字符公共子串
+             - CJK 字符：query 的 CJK 字符序列与 haystack 须有 ≥_CJK_MIN_SUBSTRING 字符公共子串
                （捕获语义 core，如 "仓库根路径" 经 "仓库根" 命中 "仓库根目录"；
                避免"目录"单字 OR 误命中所有含"目"/"录"条目——公共子串要求连续）
              - 守卫：ASCII 词数 + CJK 字符数 ≥2，避免单 token 过宽匹配
         """
         q = query.lower()
+        if len(q.strip()) < 2:
+            return []  # 退化查询守卫：空/空白/单字符不返回宽泛命中
         results: list[dict] = []
         ascii_tokens, cjk_str = self._tokenize(query)
         for cap in self._capabilities:
@@ -703,7 +713,7 @@ class CapabilityLookup:
         - ASCII 词块：按非单词字符切分，整体小写（"REPO_ROOT" → ["repo_root"]，
           "repo root" → ["repo","root"]）
         - CJK 字符：合并为单一字符串（"仓库根路径" → "仓库根路径"），
-          交由 _token_match 做 ≥3 字符公共子串匹配
+          交由 _token_match 做 ≥_CJK_MIN_SUBSTRING 字符公共子串匹配
         """
         ascii_tokens: list[str] = []
         cjk_chars: list[str] = []
@@ -725,11 +735,12 @@ class CapabilityLookup:
 
     @staticmethod
     def _token_match(ascii_tokens: list[str], cjk_str: str, haystack: str) -> bool:
-        """token 包含匹配：ASCII 词全在 + CJK ≥3 字符公共子串。
+        """token 包含匹配：ASCII 词全在 + CJK ≥_CJK_MIN_SUBSTRING 字符公共子串。
 
         守卫：ASCII 词数 + CJK 字符数 < 2 → 直接返回 False（避免单 token 过宽）。
-        CJK 阈值取 3：2 字符窗口（如"路径"）过宽会假阳性命中所有含"路径"的条目；
-        3 字符窗口（如"仓库根"/"蓝图磁"）才能捕获语义 core 又避免巧合命中。
+        CJK 阈值见 _CJK_MIN_SUBSTRING 常量（治本：阈值真源唯一，改常量全跟随）。
+        短于阈值的 cjk_str：要求整体在 haystack 中（精确子串兜底，2 字符查询由 find()
+        第一分支精确子串覆盖，此处仅"短 CJK + ASCII 词"混合查询时起作用）。
         """
         total = len(ascii_tokens) + len(cjk_str)
         if total < 2:
@@ -738,20 +749,14 @@ class CapabilityLookup:
         for tok in ascii_tokens:
             if tok not in haystack:
                 return False
-        # CJK：要求 ≥3 字符公共子串（query 的某 3 字符窗口在 haystack 中）
+        # CJK：≥_CJK_MIN_SUBSTRING 字符走滑动窗口；短于阈值要求整体在 haystack 中
         if cjk_str:
-            if len(cjk_str) >= 3:
-                if not any(cjk_str[i:i + 3] in haystack for i in range(len(cjk_str) - 2)):
+            if len(cjk_str) >= _CJK_MIN_SUBSTRING:
+                if not any(cjk_str[i:i + _CJK_MIN_SUBSTRING] in haystack
+                           for i in range(len(cjk_str) - _CJK_MIN_SUBSTRING + 1)):
                     return False
-            elif len(cjk_str) == 2:
-                # 2 字符：要求完整 2 字符在 haystack 中（纯 2 字符查询由精确子串兜底，
-                # 此分支仅在"2 字符 CJK + ASCII 词"混合查询时起作用）
-                if cjk_str not in haystack:
-                    return False
-            else:
-                # 单字符：须在 haystack 中（total≥2 守卫保证另有 ASCII token）
-                if cjk_str not in haystack:
-                    return False
+            elif cjk_str not in haystack:
+                return False
         return True
 
     def get(self, capability_id: str) -> dict | None:
