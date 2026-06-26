@@ -38,6 +38,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_check_nodes.py
+  path: _tmp_check_nodes.py
+  description: import sqlite3
+  domain: _tmp_check_nodes.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _update_rbac_depgraph.py
   path: _update_rbac_depgraph.py
   description: import sqlite3
@@ -697,14 +705,6 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_check_bp.py
-  path: governance/_tmp_check_bp.py
-  description: import sqlite3
   domain: governance
   execution_plane: warm-path
   status: registered
