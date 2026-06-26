@@ -6,7 +6,7 @@ blueprint_id: MOD-GOVERNANCE
 title: Delivery
 module_id: MOD-027
 updated: "2026-06-22"
-ttl: permanent
+ttl: task_bound
 ---
 
 # Delivery — 目录索引

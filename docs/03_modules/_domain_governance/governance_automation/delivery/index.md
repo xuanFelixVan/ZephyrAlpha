@@ -6,7 +6,7 @@ blueprint_id: MOD-INF-005
 title: Delivery
 module_id: MOD-025
 updated: "2026-06-22"
-ttl: permanent
+ttl: task_bound
 ---
 
 # Delivery — 脚本系统交付记录

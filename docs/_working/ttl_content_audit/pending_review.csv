@@ -1,0 +1,3 @@
+relative_path,current_ttl,suggested_ttl,confidence,title,doc_type,key_signals,reason
+docs/02_enterprise_architecture/architecture_upgrade_discussion.md,permanent,pending,low,架构升级深度讨论记录,design,"目录=permanent | 标题临时: 记录 | 标题灰色: 讨论 | 正文永久: 规则,约束,门禁 | 正文临时: 记录,施工,临时",标题(task_bound)+目录(permanent)冲突，doc_type=design无法裁决——需人工确认是否误放
+docs/03_modules/content_layering_task_cards.md,permanent,pending,low,场外文档内容分层审计任务卡 v5.0,plan,"目录=permanent | 标题临时: 审计,任务卡 | 正文永久: 蓝图,规则,标准 | 正文临时: 记录,审计,audit",标题(task_bound)+目录(permanent)冲突，doc_type=plan无法裁决——需人工确认是否误放

@@ -5,7 +5,7 @@ version: "1.0"
 status: active
 date: 2026-06-26
 owner: auto-generator
-ttl: permanent
+ttl: task_bound
 ---
 
 # 架构约束违规报告

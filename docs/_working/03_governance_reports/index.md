@@ -1,5 +1,5 @@
 ---
-ttl: permanent
+ttl: task_bound
 doc_type: index
 ---
 
