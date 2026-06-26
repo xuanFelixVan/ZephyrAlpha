@@ -943,6 +943,15 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             *_DDL_INDEXES,
         ],
     ),
+    (
+        16,
+        "v16: Drop surviving orphan trigger chk_edges_design_immutable_update — fix #ARCH-016 残留. "
+        "源码中不存在(MOD-INF-012B-P2裁定: 3个chk_前缀orphan trigger仅DB实例中有), v15已清2个, 此为第3个. "
+        "该trigger引用dep_maturity(live列,不broken)但从未触发(全代码库无UPDATE edges SET dep_maturity).",
+        [
+            "DROP TRIGGER IF EXISTS chk_edges_design_immutable_update",
+        ],
+    ),
 ]
 
 
