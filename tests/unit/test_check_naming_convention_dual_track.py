@@ -9,7 +9,7 @@
 GATE-11 module_id 双轨制单测（裁定#208 R1/R4）
 ================================================
 
-权威依据：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` v1.3.0
+权威依据：`docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml`（版本号动态读取，≥ v1.3.0）
 （L1037-1040 模块ID格式 condition — layer-master 轨 + domain-functional 派生轨 scoped 适用）
 
 测试组：
@@ -20,6 +20,7 @@ GATE-11 module_id 双轨制单测（裁定#208 R1/R4）
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -172,8 +173,11 @@ class TestValidateSsotLinkage:
     """裁定#208 R4：SSoT(trae_028) 与脚本双轨正则机械联动一致。"""
 
     def test_linkage_returns_true(self):
-        """SSoT v1.3.0 双轨制 condition 已生效，联动校验应通过。"""
+        """SSoT 双轨制 condition 已生效，联动校验应通过（版本号动态，不硬编码）。"""
         ok, msg = _validate_ssot_linkage()
         assert ok is True, msg
-        assert "v1.3.0" in msg
+        # 版本号由被测函数从 YAML 动态读取并拼入 msg；测试仅校验格式与下界，避免与真源版本号耦合
+        m = re.search(r"v(\d+)\.(\d+)\.(\d+)", msg)
+        assert m, f"msg 未含版本号模式: {msg}"
+        assert (int(m[1]), int(m[2]), int(m[3])) >= (1, 3, 0), f"版本号低于 1.3.0: {msg}"
         assert "一致" in msg
