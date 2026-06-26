@@ -533,20 +533,7 @@ repos:
         files: "^docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml$"
         description: "vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
 
-      # ── GATE-DERIVED: 派生产物一致性（depgraph.db ↔ asset_index）（OPS-2026062655 治本）──
-      # 权威依据：derived_artifact_governance_report.md 裁定#4
-      # SSoT：depgraph.db 是全景真源，asset_index/ 下派生产物由生成器自动同步
-      # 触发条件：depgraph.db 变更时自动校验派生产物一致性
-      # 模式：--check --warn-only（转硬阻断条件：mutation testing≥80% + 实际触发≥10次零误报，事件驱动非时间触发）
-      - id: gate-derived-artifacts
-        name: "GATE-DERIVED: 派生产物一致性（depgraph.db ↔ asset_index）"
-        entry: python scripts/governance/d5_architecture/checkers/check_derived_artifacts.py
-        args: ["--check", "--warn-only"]
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "^data/databases/depgraph\\.db$"
-        description: "depgraph.db 变更时校验 asset_index 派生产物一致性（warn-only，mutation testing≥80%+触发≥10次后转硬阻断）"
+      # ── GATE-DERIVED 已删除（派生产物已删除，depgraph.db 是唯一查询入口）──
 
       # ── GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验（#ARCH-016 治本）──
       # 权威依据：schema_health_revised_execution_plan.md v2 §3 阶段5/6

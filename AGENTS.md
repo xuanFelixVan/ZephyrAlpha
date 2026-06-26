@@ -135,18 +135,6 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arb
 1. `python scripts/git_guard.py add src/x.py`
 2. `python scripts/git_guard.py commit -F _tmp.txt --no-verify`
 
-## 11. 派生产物同步铁律
+## 11. depgraph.db 是唯一查询入口（已删除派生产物）
 
-> **根因**：depgraph.db 是全景真源，`data/asset_index/` 下文件是 depgraph.db 的派生产物（CQRS 只读投影）。AI 改了 depgraph.db 后若不运行生成器，派生产物会与真源漂移，导致后续 AI 基于过期数据做决策。
-
-**派生产物清单**：见 [`derived_artifact_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/derived_artifact_registry.yaml)
-
-**AI 任务完成检查清单**（MUST 在 `transition(COMPLETED)` 前执行）：
-
-1. [ ] 本任务是否改了 `data/databases/depgraph.db`？
-2. [ ] 若是，是否运行了清单中所有 `has_check_mode: true` 的生成器 `--write` 命令？
-3. [ ] grep 验证旧路径/旧值在 `data/asset_index/` 中已清除？
-
-**GATE-DERIVED 门禁**：pre-commit hook 在 depgraph.db 变更时自动校验派生产物一致性。转硬阻断条件（全部满足后手动移除 `--warn-only`）：① mutation testing 注入漂移场景检出率≥80%；② 实际触发≥10次且零误报零漏报。对标 `mutation_test_post_sync_validator.py` 机制。
-
-**派生产物标记**：所有派生产物文件头部含 `# @generated DO NOT EDIT` 标记，禁止手动编辑。
+> **裁定**：depgraph.db 是全景真源。`data/asset_index/` 下原 depgraph.db 派生产物（project_entity_depgraph.yaml、target_path_tree.yaml 等 7 个文件）经调查全部零有效消费者（代码引用因连字符/下划线不匹配均为死引用），已于 2026-06-26 删除。AI 需要查询 depgraph 数据时，直接用 `sqlite3` 或 `apply_depgraph.py --query` 查询 depgraph.db，禁止重新创建派生 YAML 副本。
