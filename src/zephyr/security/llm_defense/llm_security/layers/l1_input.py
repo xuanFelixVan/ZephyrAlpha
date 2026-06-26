@@ -51,11 +51,13 @@ class SanitizeResult:
 _DIRECT_INJECTION_PATTERNS = [
     r"ignore\s+(all\s+)?previous\s+instructions?",
     r"disregard\s+(the\s+)?above",
+    r"disregard\s+(all\s+)?(previous\s+)?instructions",
     r"system\s+prompt",
     r"system\s+message",
     r"<\|im_start\|>",
     r"<\|im_end\|>",
     r"forget\s+(all|everything)",
+    r"forget\s+(your\s+)?(rules|instructions)",
     r"new\s+instructions?\s*:",
     r"you\s+are\s+now\s+in\s+maintenance",
 ]
@@ -67,13 +69,16 @@ _JAILBREAK_PATTERNS = [
     r"unfiltered\s+bot",
     r"unrestricted",
     r"developer\s+mode",
-    r"act\s+as\s+(a\s+)?(dark|evil|unfiltered)",
+    r"act\s+as\s+(an?\s+)?(dark|evil|unfiltered|unrestricted)",
     r"pretend\s+to\s+be",
     r"dark\s+persona",
     r"jailbreak",
     r"switch\s+to\s+(developer|admin)\s+mode",
     r"repeat\s+after\s+me",
     r"i\s+am\s+compromised",
+    r"no\s+restrictions?",
+    r"no\s+safety",
+    r"bypass\s+all\s+safety",
 ]
 
 # 间接注入模式（URL/工具结果）
@@ -171,7 +176,13 @@ class InputDefenseLayer:
 
         # 评分：每个 hit 扣分
         total_score = max(0.0, 1.0 - total_hits * 0.15)
-        blocked = total_hits >= 3 or total_score < 0.5
+        # jailbreak 或 direct_injection 任何命中即阻断（高危类别不应依赖阈值）
+        blocked = (
+            len(jailbreak_hits) > 0
+            or len(direct_hits) > 0
+            or total_hits >= 3
+            or total_score < 0.5
+        )
 
         all_hits = direct_hits + jailbreak_hits + indirect_hits
         return SanitizeResult(blocked=blocked, total_score=total_score, hits=all_hits)
