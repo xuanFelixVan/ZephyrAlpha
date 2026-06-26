@@ -212,7 +212,7 @@ grep -rn "docs/03_modules/_restructuring" data/asset_index/
   pass_filenames: false
   always_run: false
   files: "^data/databases/depgraph\\.db$"
-  description: "depgraph.db 变更时校验 asset_index 派生产物一致性，warn-only 骨架阶段"
+  description: "depgraph.db 变更时校验 asset_index 派生产物一致性，warn-only 骨架阶段（mutation testing≥80%+触发≥10次零误报后转硬阻断）"
 ```
 
 #### 2.2 扩展 post_sync_standard：任务完成时重生成
@@ -295,7 +295,7 @@ derived_artifacts:
 
 | 风险 | 缓解 |
 |---|---|
-| GATE-DERIVED 误阻断（生成器有 bug） | warn-only 骨架阶段，验证 30 天零误报后转硬阻断 |
+| GATE-DERIVED 误阻断（生成器有 bug） | warn-only 骨架阶段，mutation testing 检出率≥80% + 实际触发≥10次零误报后转硬阻断（事件驱动，非时间触发） |
 | post_sync_derived 延长任务完成时间 | 生成器 < 5s（CQRS 只读投影），可接受 |
 | 派生产物清单维护成本 | 清单本身是 YAML，由 GATE-19 漂移检测保护 |
 

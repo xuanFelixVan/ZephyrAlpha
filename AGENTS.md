@@ -147,6 +147,6 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arb
 2. [ ] 若是，是否运行了清单中所有 `has_check_mode: true` 的生成器 `--write` 命令？
 3. [ ] grep 验证旧路径/旧值在 `data/asset_index/` 中已清除？
 
-**GATE-DERIVED 门禁**：pre-commit hook 在 depgraph.db 变更时自动校验派生产物一致性（骨架阶段 warn-only，验证稳定后转硬阻断）。
+**GATE-DERIVED 门禁**：pre-commit hook 在 depgraph.db 变更时自动校验派生产物一致性。转硬阻断条件（全部满足后手动移除 `--warn-only`）：① mutation testing 注入漂移场景检出率≥80%；② 实际触发≥10次且零误报零漏报。对标 `mutation_test_post_sync_validator.py` 机制。
 
 **派生产物标记**：所有派生产物文件头部含 `# @generated DO NOT EDIT` 标记，禁止手动编辑。
