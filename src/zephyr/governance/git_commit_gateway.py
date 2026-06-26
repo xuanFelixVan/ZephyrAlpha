@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §ghost-commit-gateway
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ghost-commit-gateway
 # [MODULE] zephyr.governance.git_commit_gateway
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency
@@ -829,14 +829,41 @@ class GitCommitGateway:
         )
         return False, detail
 
+    def _load_n16_exempt_names(self) -> set[str]:
+        """加载 N-16 豁免 basename 集合（真源：trae_028_doc_structure_naming.yaml）。
+
+        fail-open：YAML 不可达时回退硬编码值（与 check_naming_convention.py 回退值一致）。
+        """
+        yaml_path = (
+            self.project_root / "docs" / "01_policies_and_standards"
+            / "rules" / "trae_028_doc_structure_naming.yaml"
+        )
+        try:
+            import yaml
+            data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
+            cfg = (
+                data.get("sections", {})
+                .get("gov_doc_003_filename_uniqueness", {})
+                .get("n16_config", {})
+            )
+            tests_raw = cfg.get("exempt_names_tests", [])
+            docs_raw = cfg.get("exempt_names_docs_extra", [])
+            if isinstance(tests_raw, list) and isinstance(docs_raw, list):
+                return set(tests_raw) | set(docs_raw)
+        except Exception:
+            pass
+        return {"conftest.py", "__init__.py", "index.md", "blueprint.md",
+                "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml"}
+
     def _check_naming_uniqueness(self, files: list[str]) -> tuple[bool, str]:
         """GATE-11/N-16 等效校验：检查文件名项目内唯一性。
 
         弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
-        N-16 是项目级唯一性检查——当本次 commit 涉及 tests/ 或 docs/ 下文件时，
-        调用 check_naming_convention.py --scan 做 N-16 检测。
+        第一性原理治本（v2）：N-16 设计意图是"防止同名漂移入 git 历史"。
+        用 git ls-files（已跟踪文件）构建基线，仅检查本次提交文件是否引入新冲突，
+        避免 os.walk 扫描未跟踪 WIP（并发 session 临时文件导致误阻断）。
 
-        真源：trae_028_doc_structure_naming.yaml v1.4.0 §gov_doc_003_filename_uniqueness
+        真源：trae_028_doc_structure_naming.yaml §gov_doc_003_filename_uniqueness
 
         Args:
             files: 绝对路径列表。
@@ -854,40 +881,58 @@ class GitCommitGateway:
         if not involves_naming_dirs:
             return True, "no files in tests/ or docs/"
 
-        check_script = (
-            self.project_root
-            / "scripts"
-            / "governance"
-            / "d3_metadata"
-            / "check_naming_convention.py"
-        )
-        if not check_script.exists():
-            # 校验脚本不存在时不阻断（fail-open，防破坏性故障）
-            return True, f"check script not found: {check_script}"
+        exempt = self._load_n16_exempt_names()
 
-        # 调用 --scan 模式，N-16 不受 --warn-only 影响会硬阻断
-        # timeout=120 防止脚本卡死导致 gateway 永久阻塞（S5 修复）
-        cmd = [sys.executable, str(check_script), "--scan", "--warn-only"]
-        try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                cwd=str(self.project_root),
-                timeout=120,
-            )
-        except subprocess.TimeoutExpired:
-            # N-16 扫描超时 → fail-open（不阻断 commit），仅 warning
+        # 用 git ls-files 构建已跟踪文件基线（仅已跟踪文件，排除未跟踪 WIP）
+        ls_result = self._run_git(["git", "ls-files", "tests/", "docs/"])
+        if ls_result.returncode != 0:
             logger.warning(
-                "GitCommitGateway: N-16 naming scan timed out (120s), fail-open")
-            return True, "naming uniqueness scan timed out (fail-open)"
-        if result.returncode == 0:
-            return True, "naming uniqueness passed"
-        # exit 1 = 有 N-16 违规（硬阻断，不受 --warn-only 影响）
-        output = result.stdout + result.stderr
-        n16_lines = [line for line in output.splitlines() if "N-16" in line]
-        detail = "\n".join(n16_lines) if n16_lines else output.strip() or "unknown naming violation"
-        return False, detail
+                "GitCommitGateway: git ls-files 失败: %s", ls_result.stderr.strip()
+            )
+            return True, "git ls-files failed (fail-open)"
+
+        from collections import defaultdict
+
+        tracked_basename_to_paths: dict[str, list[str]] = defaultdict(list)
+        for rel_path in ls_result.stdout.strip().splitlines():
+            if not rel_path:
+                continue
+            basename = os.path.basename(rel_path)
+            if basename in exempt:
+                continue
+            tracked_basename_to_paths[basename].append(rel_path.replace("\\", "/"))
+
+        # 检查本次提交文件是否引入新冲突
+        conflicts: list[str] = []
+        committed_basenames: dict[str, str] = {}  # basename → committed_rel_path
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if not rel.startswith(("tests/", "docs/")):
+                continue
+            basename = os.path.basename(f)
+            if basename in exempt:
+                continue
+
+            # 冲突检测 1：与已跟踪文件冲突
+            if basename in tracked_basename_to_paths:
+                existing = [p for p in tracked_basename_to_paths[basename] if p != rel]
+                if existing:
+                    conflicts.append(
+                        f"[N-16] 文件名不唯一: {basename} "
+                        f"(新增: {rel}, 已有: {', '.join(existing)})"
+                    )
+
+            # 冲突检测 2：本次提交内部冲突
+            if basename in committed_basenames:
+                conflicts.append(
+                    f"[N-16] 文件名不唯一: {basename} "
+                    f"(本次提交内冲突: {rel} vs {committed_basenames[basename]})"
+                )
+            committed_basenames[basename] = rel
+
+        if conflicts:
+            return False, "\n".join(conflicts)
+        return True, "naming uniqueness passed"
 
     # ------------------------------------------------------------------
     # 内部实现
@@ -906,48 +951,40 @@ class GitCommitGateway:
 
         注意：不在 try 块内 return——Python 中 return 会先捕获返回值再执行 finally，
         finally 内对同名变量重新赋值不会改变已捕获的返回值。故统一在末尾 return。
+
+        统一路径：始终使用 --pathspec-from-file，避免 Windows CLI 长度限制
+        (WinError 206)，消除大小双路径同步成本（历史事故：gitignored bug 修复
+        只修了小路径漏了大路径）。
         """
         stashed = False
         stash_ref = ""
         pathspec_file: str | None = None
-        add_pathspec_file: str | None = None  # 大路径专用：normal_files 的 pathspec
         result: CommitResult = CommitResult(
             status=CommitStatus.COMMIT_FAILED, message="unexpected: no result set"
         )
-        # 大文件列表时用 --pathspec-from-file 避免 Windows CLI 长度限制 (WinError 206)
-        # 同时检查非目标文件数：原始流程的 _stash_other_files 会显式枚举非目标文件
-        # 传给 `git stash push -- <files>`，数量过多时同样触发 WinError 206
-        non_target_count = self._count_non_target_changed(files)
-        use_pathspec_file = (
-            len(files) > _MAX_INLINE_PATHS
-            or non_target_count > _MAX_INLINE_PATHS
-        )
         try:
-            if use_pathspec_file:
-                # === 大文件列表流程（>50 文件）===
-                # 1. 暂存 gitignored-tracked 文件，分离出 normal_files
-                #    根因：git add 对 gitignored 路径（即使已跟踪且已删除）整批拒绝：
-                #    "The following paths are ignored by one of your .gitignore files"。
-                #    解法：先 _stage_gitignored_tracked 用 git rm --cached / git add -f
-                #    暂存 gitignored 部分，剩余 normal_files 走正常 git add。
-                #    ⚠️ 不变式：此调用必须与小路径（else 分支）保持一致——删除会导致
-                #    tracked+gitignored 文件（如已 gitignore 的历史遗留）提交整批失败。
-                #    回归测试：tests/test_git_commit_gateway.py::TestGitignoredTrackedDeleted
-                gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
-                if not gi_ok:
-                    result = CommitResult(
-                        status=CommitStatus.COMMIT_FAILED,
-                        message=gi_err,
-                    )
-                else:
-                    # 2. 写 commit pathspec 文件（ALL files，含 gitignored——
-                    #    git commit pathspec 不检查 gitignore，可安全提交已暂存的删除/修改）
-                    pathspec_file = self._write_pathspec_file(files)
-                    # 3. git add --pathspec-from-file=<file>（只暂存 normal_files，
-                    #    避免整批 git add 因 gitignored 路径失败）
-                    add_ok = True
-                    if normal_files:
-                        add_pathspec_file = self._write_pathspec_file(normal_files)
+            # 1. 暂存 gitignored-tracked 文件，分离出 normal_files
+            #    根因：git add 对 gitignored 路径（即使已跟踪且已删除）整批拒绝：
+            #    "The following paths are ignored by one of your .gitignore files"。
+            #    解法：先 _stage_gitignored_tracked 用 git rm --cached / git add -f
+            #    暂存 gitignored 部分，剩余 normal_files 走正常 git add。
+            #    回归测试：tests/test_git_commit_gateway.py::TestGitignoredTrackedDeleted
+            gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
+            if not gi_ok:
+                result = CommitResult(
+                    status=CommitStatus.COMMIT_FAILED,
+                    message=gi_err,
+                )
+            else:
+                # 2. 写 commit pathspec 文件（ALL files，含 gitignored——
+                #    git commit pathspec 不检查 gitignore，可安全提交已暂存的删除/修改）
+                pathspec_file = self._write_pathspec_file(files)
+                # 3. git add --pathspec-from-file=<file>（只暂存 normal_files，
+                #    避免整批 git add 因 gitignored 路径失败）
+                add_ok = True
+                if normal_files:
+                    add_pathspec_file = self._write_pathspec_file(normal_files)
+                    try:
                         add_result = self._run_git(
                             ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
                         )
@@ -961,88 +998,27 @@ class GitCommitGateway:
                                 status=CommitStatus.COMMIT_FAILED,
                                 message=f"git add failed: {add_result.stderr.strip()}",
                             )
-                    # normal_files 为空（全部 gitignored）→ 跳过 git add
-                    # （gitignored 已由 _stage_gitignored_tracked 暂存）
-                    if add_ok:
-                        # 4. session 隔离 stash 非目标 unstaged 变更
-                        #    _stash_other_files 内部按 session held 过滤候选：
-                        #    - feature 禁用/未注册 → 回退 stash 全部非目标
-                        #      （等效原 --keep-index 语义：目标已 staged，非目标被 stash）
-                        #    - session 隔离生效 → 只 stash 当前 session held 的非目标
-                        #    - 候选为空 → 跳过 stash（其他 session WIP 留工作区）
-                        #    目标文件已通过 git add --pathspec-from-file 全量 staged，
-                        #    故 stash 非目标（显式 pathspec）不影响 staged 目标。
-                        stashed, stash_ref = self._stash_other_files(session_id, files)
-
-                        # 5. 检查 staged 变更
-                        diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
-                        if diff_result.returncode == 0:
-                            logger.info(
-                                "GitCommitGateway: files 无 staged 变更，跳过 commit"
-                            )
-                            result = CommitResult(
-                                status=CommitStatus.NOTHING_TO_COMMIT,
-                                message="no staged changes in files_in_scope",
-                            )
-                        else:
-                            # 6. git commit --no-verify -F <msg> --pathspec-from-file=<file>
-                            commit_hash, commit_err = self._commit_with_file_message(
-                                files, full_message, pathspec_file=pathspec_file
-                            )
-                            if commit_hash is None:
-                                result = CommitResult(
-                                    status=CommitStatus.COMMIT_FAILED,
-                                    message=f"git commit failed: {commit_err}",
-                                )
-                            else:
-                                os.environ[_GATEWAY_ENV] = "1"
-                                logger.info(
-                                    "GitCommitGateway: commit 成功 hash=%s marker=%s "
-                                    "files=%d (pathspec-file)",
-                                    commit_hash, gw_marker, len(files),
-                                )
-                                result = CommitResult(
-                                    status=CommitStatus.OK,
-                                    message=f"committed {len(files)} files",
-                                    commit_hash=commit_hash,
-                                )
-            else:
-                # === 原流程（小文件列表 ≤50 文件）===
-                # 1. 选择性 stash 非本次 files 的已修改文件
-                stashed, stash_ref = self._stash_other_files(session_id, files)
-
-                # 2. 暂存 gitignored-tracked 文件，分离出 normal_files
-                #    （gitignored-tracked 已由 _stage_gitignored_tracked 暂存；
-                #     normal_files 是非 gitignored 部分，走正常 git add）
-                #    ⚠️ 不变式：此调用必须与大路径（use_pathspec_file 分支）保持一致——
-                #    删除会导致 tracked+gitignored 文件提交整批失败。
-                #    回归测试：tests/test_git_commit_gateway.py::TestGitignoredTrackedDeleted
-                add_ok = True
-                gi_ok, gi_err, normal_files = self._stage_gitignored_tracked(files)
-                if not gi_ok:
-                    add_ok = False
-                    result = CommitResult(
-                        status=CommitStatus.COMMIT_FAILED,
-                        message=gi_err,
-                    )
-                if add_ok and normal_files:
-                    add_result = self._run_git(["git", "add", "--"] + normal_files)
-                    add_ok = add_result.returncode == 0
-                    if not add_ok:
-                        logger.warning(
-                            "GitCommitGateway: git add 失败: %s", add_result.stderr.strip()
-                        )
-                        result = CommitResult(
-                            status=CommitStatus.COMMIT_FAILED,
-                            message=f"git add failed: {add_result.stderr.strip()}",
-                        )
+                    finally:
+                        try:
+                            os.remove(add_pathspec_file)
+                        except OSError:
+                            pass
+                # normal_files 为空（全部 gitignored）→ 跳过 git add
+                # （gitignored 已由 _stage_gitignored_tracked 暂存）
                 if add_ok:
-                    # 3. 检查 files_in_scope 是否有 staged 变更
-                    diff_result = self._run_git(
-                        ["git", "diff", "--cached", "--quiet"] + files
-                    )
+                    # 4. session 隔离 stash 非目标 unstaged 变更
+                    #    _stash_other_files 内部按 session held 过滤候选：
+                    #    - feature 禁用/未注册 → 回退 stash 全部非目标
+                    #      （等效原 --keep-index 语义：目标已 staged，非目标被 stash）
+                    #    - session 隔离生效 → 只 stash 当前 session held 的非目标
+                    #    - 候选为空 → 跳过 stash（其他 session WIP 留工作区）
+                    #    目标文件已通过 git add --pathspec-from-file 全量 staged，
+                    #    故 stash 非目标（显式 pathspec）不影响 staged 目标。
+                    stashed, stash_ref = self._stash_other_files(session_id, files)
+
+                    # 5. 检查 staged 变更（全量检查，保守策略：不误判 NOTHING_TO_COMMIT）
+                    diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
                     if diff_result.returncode == 0:
-                        # exit 0 = 无变更
                         logger.info(
                             "GitCommitGateway: files 无 staged 变更，跳过 commit"
                         )
@@ -1051,9 +1027,9 @@ class GitCommitGateway:
                             message="no staged changes in files_in_scope",
                         )
                     else:
-                        # 4. git commit --no-verify -F <msg_file> -- <本次 files>
+                        # 6. git commit --no-verify -F <msg> --pathspec-from-file=<file>
                         commit_hash, commit_err = self._commit_with_file_message(
-                            files, full_message
+                            files, full_message, pathspec_file=pathspec_file
                         )
                         if commit_hash is None:
                             result = CommitResult(
@@ -1061,7 +1037,6 @@ class GitCommitGateway:
                                 message=f"git commit failed: {commit_err}",
                             )
                         else:
-                            # 5. 设置环境变量标记
                             os.environ[_GATEWAY_ENV] = "1"
                             logger.info(
                                 "GitCommitGateway: commit 成功 hash=%s marker=%s "
@@ -1074,7 +1049,7 @@ class GitCommitGateway:
                                 commit_hash=commit_hash,
                             )
         finally:
-            # 6. 恢复 stash（无论 commit 成功失败都要恢复，不丢数据）
+            # 7. 恢复 stash（无论 commit 成功失败都要恢复，不丢数据）
             if stashed:
                 pop_ok = self._restore_stash(stash_ref)
                 if not pop_ok:
@@ -1142,12 +1117,6 @@ class GitCommitGateway:
                     os.remove(pathspec_file)
                 except OSError:
                     pass
-            # 清理 add_pathspec 临时文件（大路径专用：normal_files 的 pathspec）
-            if add_pathspec_file:
-                try:
-                    os.remove(add_pathspec_file)
-                except OSError:
-                    pass
             # 清理环境变量标记
             os.environ.pop(_GATEWAY_ENV, None)
         return result
@@ -1196,6 +1165,24 @@ class GitCommitGateway:
         isolation_active, candidates = self._get_session_held_non_target(
             session_id, target_files, all_non_target
         )
+
+        # 防御性检查（治本 Gap 2）：确保目标文件不在候选列表中。
+        # 目标文件绝不应被 stash——stash 会回滚工作区修改，导致 git add 时
+        # 丢失目标文件的修改（commit 空内容）。_collect_non_target_rel 已排除
+        # 目标文件，此检查是纵深防御的第二道防线，防止路径解析差异等边界情况。
+        target_rel_set = {
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            for f in target_files
+        }
+        tainted = [c for c in candidates if c in target_rel_set]
+        if tainted:
+            logger.warning(
+                "GitCommitGateway: 防御性拦截——目标文件被错误纳入 stash 候选，"
+                "已移除 (session=%s): %s",
+                session_id, tainted,
+            )
+            candidates = [c for c in candidates if c not in target_rel_set]
+
         if not candidates:
             # 候选为空：session 隔离下无需 stash（其他 session WIP 留工作区），
             # 或回退模式下无非目标变更
@@ -1213,20 +1200,16 @@ class GitCommitGateway:
         )
 
         stash_msg = f"gw:{session_id}"
+        # 统一使用 --pathspec-from-file（避免 Windows CLI 长度限制 WinError 206，
+        # 消除大小双路径同步成本）
         spec_file: str | None = None
         try:
-            if len(candidates) > _MAX_INLINE_PATHS:
-                # 大候选列表 → --pathspec-from-file 避免 Windows CLI 长度限制
-                spec_file = self._write_pathspec_file(
-                    [str(self.project_root / c) for c in candidates]
-                )
-                stash_result = self._run_git(
-                    ["git", "stash", "push", "-m", stash_msg, f"--pathspec-from-file={spec_file}"]
-                )
-            else:
-                stash_result = self._run_git(
-                    ["git", "stash", "push", "-m", stash_msg, "--"] + candidates
-                )
+            spec_file = self._write_pathspec_file(
+                [str(self.project_root / c) for c in candidates]
+            )
+            stash_result = self._run_git(
+                ["git", "stash", "push", "-m", stash_msg, f"--pathspec-from-file={spec_file}"]
+            )
         finally:
             if spec_file:
                 try:
@@ -1270,6 +1253,13 @@ class GitCommitGateway:
 
     def _restore_stash(self, stash_ref: str = "") -> bool:
         """恢复 stash（git stash pop）。
+
+        git stash pop 语义：冲突时 apply 但不 drop，数据保留在 stash 栈中。
+        调用方（_commit_locked）在返回 False 时将 result.status 设为 STASH_CONFLICT，
+        数据永不丢失——要么成功恢复到工作区，要么保留在 stash 栈可手动恢复。
+
+        治本 Gap 2 审查结论：git stash pop 冲突时数据保留在 stash 是正确行为，
+        不会丢数据。防御性检查已加到 _stash_other_files 防目标文件误入 stash。
 
         Args:
             stash_ref: 要恢复的 stash 引用（如 stash@{0}）。为空则 pop 栈顶。
