@@ -38,18 +38,18 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_check_depgraph.py
-  path: _tmp_check_depgraph.py
-  description: import sqlite3
-  domain: _tmp_check_depgraph.py
+- name: _tmp_add_frontmatter.py
+  path: _tmp_add_frontmatter.py
+  description: 1. 扫描 docs/**/*.md，检测是否有有效 frontmatter（---\n...\n---）
+  domain: _tmp_add_frontmatter.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_commit_modinf005.py
-  path: _tmp_commit_modinf005.py
-  description: 根因同 d8dc80fb19：GitCommitGateway pathspec 模式无法 commit 已 staged 的 rename，
-  domain: _tmp_commit_modinf005.py
+- name: _tmp_check_depgraph.py
+  path: _tmp_check_depgraph.py
+  description: import sqlite3
+  domain: _tmp_check_depgraph.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
