@@ -497,6 +497,23 @@ repos:
         files: "^docs/01_policies_and_standards/_registry/vocabularies/.*\\.yaml$"
         description: "vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
 
+      # ── GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验（#ARCH-016 治本）──
+      # 权威依据：schema_health_revised_execution_plan.md v2 §3 阶段5/6
+      # 真源声明：depgraph_schema.py 是 DDL 真源；DB 物理状态必须与 DDL 声明一致
+      # 检测范围：depgraph_schema.py / sync_yaml_to_depgraph.py / verify_schema_health.py 变更时触发
+      # 检测内容：DDL 列一致性（DB 实际列 vs _DDL_* 声明列）+ 只读触发器存在性 + Schema 版本一致性
+      # 模式：--ci 硬阻断（发现漂移 exit 1）；已知存在 7 处历史 DDL 漂移（v2-v13 累积，非 v14 引入），
+      #       待后续独立任务修复——触发本门禁的 schema 变更必须先清零历史漂移
+      - id: gate-schema-health
+        name: "GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验"
+        entry: python scripts/governance/verify_schema_health.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/governance/depgraph_schema\\.py|scripts/governance/sync_yaml_to_depgraph\\.py|scripts/governance/verify_schema_health\\.py)$"
+        description: "depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016 治本"
+
       # ── GATE-22: AI加载路径完整性（AGENTS.md §6.18 自动化执行层）──
       # 权威依据：AGENTS.md §6.18 AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_load_path_integrity.py + 接入 pre-commit
