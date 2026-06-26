@@ -249,6 +249,7 @@ class AutoRuntimeCore:
             logger.debug("Escalation EventBus auto-subscribe skipped")
 
     def _register_task_system_cron_jobs(self) -> None:
+        """已废弃：定时调度已废除（2026-06-26裁定）。保留调用兼容性，但 register_task 为 no-op。"""
         from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
 
         project_root = Path(__file__).resolve().parents[3]

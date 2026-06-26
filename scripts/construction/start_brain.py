@@ -15,13 +15,16 @@
 """
 start_brain.py — ZephyrAlpha 系统大脑一键启动
 ===============================================
+⚠️ 定时调度已废除（2026-06-26裁定）：CircadianScheduler.start()/register_task()/
+stop()/save_state() 已改为 no-op，_loop() 已删除。start_brain.py 现以 --once 单次
+执行模式为默认：执行 boot() → reconcile() → shutdown() → 退出，不再常驻循环。
+
 启动 AutoRuntime Core，运行 MAPE-K 调和循环，
-AutoTaskGenerator 持续扫描项目文件 → 生成推理任务 → 送进 GPU。
+AutoTaskGenerator 扫描项目文件 → 生成推理任务 → 送进 GPU。
 
 用法:
-    python scripts/construction/start_brain.py                  # 前台持续运行
-    python scripts/construction/start_brain.py --once           # 单次调和后退出
-    python scripts/construction/start_brain.py --interval 5     # 快速调和
+    python scripts/construction/start_brain.py                  # 单次 boot 后退出（默认 --once 模式）
+    python scripts/construction/start_brain.py --once           # 显式单次调和后退出
     python scripts/construction/start_brain.py --no-generate    # 跳过自动任务生成
 """
 
@@ -42,8 +45,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="ZephyrAlpha 系统大脑")
-    parser.add_argument("--once", action="store_true", help="单次调和后退出")
-    parser.add_argument("--interval", type=float, default=10.0, help="调和间隔(秒)")
+    parser.add_argument("--once", action="store_true", help="单次调和后退出（默认行为，保留以兼容旧调用）")
+    parser.add_argument("--interval", type=float, default=10.0, help="已废弃，调度机制已废除（保留以兼容旧调用）")
     parser.add_argument("--no-onboard", action="store_true", help="跳过自动接入扫描")
     parser.add_argument("--no-generate", action="store_true", help="跳过自动任务生成")
     parser.add_argument("--batch", type=int, default=12, help="每批推理任务数")
@@ -73,56 +76,21 @@ def main() -> None:
         print(f"     已启动: {', '.join(boot_report.components_started)}")
     print()
 
-    shutdown_requested = False
-
+    # 定时调度已废除（2026-06-26裁定）：默认 --once 单次执行模式，不再常驻循环。
+    # CircadianScheduler.start()/register_task()/stop()/save_state() 已改为 no-op。
+    # 保留 signal 处理（--once 模式也支持 Ctrl+C 中断）
     def _signal_handler(sig: int, frame: object) -> None:
-        nonlocal shutdown_requested
         print("\n正在安全关闭...")
-        shutdown_requested = True
+        raise KeyboardInterrupt
 
     signal.signal(signal.SIGINT, _signal_handler)
 
-    if args.once:
+    try:
         _run_cycle(core, generator, args, cycle=0)
         report = core.reconcile()
         _print_brief(core, generator, report, cycle=0)
-    else:
-        cycle = 0
-        while not shutdown_requested:
-            try:
-                cycle += 1
-                time.sleep(config.poll_interval)
-
-                report = core.reconcile()
-
-                if not args.no_onboard:
-                    _auto_onboard(core)
-
-                submitted = 0
-                if generator is not None and core._local_scheduler is not None:
-                    submitted = generator.generate_and_submit(core._local_scheduler)
-
-                ts = time.strftime("%H:%M:%S")
-                pending = core._local_scheduler.pending_count if core._local_scheduler else 0
-                sched_stats = core._local_scheduler.stats if core._local_scheduler else {}
-                orphan_pct = report.orphan_rate * 100 if hasattr(report, "orphan_rate") else 0
-
-                line = (
-                    f"[{ts}] c={cycle:>3} | "
-                    f"active={report.active} orphan={orphan_pct:.0f}% | "
-                    f"gen={submitted} pending={pending} | "
-                    f"done={sched_stats.get('completed', 0)} fail={sched_stats.get('failed', 0)}"
-                )
-                print(line)
-
-                if cycle % 6 == 0:
-                    print()
-                    print(core.status_panel())
-
-            except KeyboardInterrupt:
-                shutdown_requested = True
-            except Exception as e:
-                print(f"[WARN] {e}")
+    except KeyboardInterrupt:
+        pass
 
     core.shutdown()
     print("\n[OK] 关闭完成")

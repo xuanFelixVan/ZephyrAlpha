@@ -291,12 +291,14 @@ STEP 0  — 🛡️ RULE-GUARDIAN 守护进程启动 + 过期锁清理（非协�
            running=false → python scripts/ide_health_service.py --start-background
            running=true  → 继续
            ⚠️ 守护进程未运行 = 禁止执行任何后续步骤（含 STEP 1 及写操作）
-STEP 0.5 — 🧠 大脑系统启动（后台持续运行，Trae AI 进入项目时必做）:
+STEP 0.5 — 🧠 大脑系统启动（单次 boot 模式，Trae AI 进入项目时必做）:
            检查: 查看当前 terminal 列表 → 是否有 start_brain.py 在运行？
-           未运行 → RunCommand(blocking=false): python scripts/construction/start_brain.py --interval 10
+           未运行 → RunCommand(blocking=false): python scripts/construction/start_brain.py --once
            已运行 → 跳过（避免重复启动）
-           验证: 等待15秒 → 检查输出包含 "[OK] Boot" → 确认19步骤全部成功
-           ⚠️ 大脑系统未运行 = AutoPilot/MAPE-K调和循环/MCP集群自愈 全部不可用
+           验证: 等待15秒 → 检查输出包含 "[OK] Boot" → 确认boot步骤成功
+           ⚠️ 定时调度已废除（2026-06-26裁定）：CircadianScheduler 不再常驻运行。
+           所有审计/治理任务通过 pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）自动触发。
+           start_brain.py 现在以 --once 模式运行：执行 boot 后立即退出。
 STEP 1  — 读 docs/registry_of_registries.yaml → 了解全项目 48 个注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板（蓝图/任务卡/依赖图/策略/标准等）
 STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源 D:/ZephyrAlpha/data/databases/depgraph.db，禁止直接 Read）→ 项目域架构+模块归属+路径设计规则+capacity声明。⚠️ depgraph.db 对 LS/Glob 不可见（.db 过滤），存在性判断用 `python -c "import os; print(os.path.isfile(r'D:/ZephyrAlpha/data/databases/depgraph.db'))"`

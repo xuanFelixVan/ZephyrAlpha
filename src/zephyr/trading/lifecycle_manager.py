@@ -85,9 +85,10 @@ class LifecycleManager:
             ("03_audit_logger_start", lambda: None),
             ("04_registry_load", lambda: registry.load_from_dir()),
             ("05_work_orch_load_dags", lambda: work_orchestrator.load_dags()),
-            ("06_circadian_start", lambda: circadian_scheduler.start()),
+            ("06_circadian_start", lambda: circadian_scheduler.start()),  # no-op: 定时调度已废除 2026-06-26
             ("07_health_monitor_start", lambda: health_monitor.start()),
             ("08_integration_validate", lambda: integration_registry.validate_all()),
+            # 定时调度已废除：_register_audit_tasks 中的 register_task 调用为 no-op
             ("08a_audit_schedule_register", lambda: self._register_audit_tasks(circadian_scheduler)),
             ("08b_audit_event_hooks_register", lambda: self._register_audit_event_hooks(circadian_scheduler)),
             ("09_audit_self_monitor_start", lambda: self._start_self_monitor()),
@@ -106,7 +107,7 @@ class LifecycleManager:
         finalizer.register("night_shift_queue", night_shift_queue.flush_all)
         finalizer.register("capability_registry", lambda: registry.dump_snapshot())
         finalizer.register("health-monitor", lambda: health_monitor.dump_last_snapshot())
-        finalizer.register("circadian_scheduler", circadian_scheduler.save_state)
+        finalizer.register("circadian_scheduler", circadian_scheduler.save_state)  # no-op: 定时调度已废除
 
         return report
 

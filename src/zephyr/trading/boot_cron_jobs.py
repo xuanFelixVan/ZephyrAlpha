@@ -6,6 +6,9 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] register_boot_cron_jobs is idempotent; duplicate hour+name ignored by CircadianScheduler
+# [DEPRECATED] 定时调度已废除（2026-06-26裁定）：CircadianScheduler.register_task() 已改为 no-op。
+# 本函数保留签名兼容现有调用链，但所有 register_task 调用不再注册任何定时任务。
+# 审计/治理任务改由 pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）触发。
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L

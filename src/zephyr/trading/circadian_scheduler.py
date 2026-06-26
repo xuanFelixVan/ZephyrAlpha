@@ -88,7 +88,12 @@ class CircadianScheduler:
         self._thread: threading.Thread | None = None
 
     def register_task(self, hour: int, name: str, layer: str, callback: Callable[[], Any] | None = None) -> None:
-        self._tasks.append(ScheduledTask(hour=hour, name=name, layer=layer, callback=callback))
+        """已废弃：定时任务注册已废除。保留签名兼容现有调用链，但不再注册任何任务。
+
+        所有审计/治理任务应通过 pre-commit GATE 体系（commit 事件）或
+        boot_hooks 事件钩子（状态变更事件）触发。
+        """
+        # no-op: 定时调度已废除，参见架构裁定 2026-06-26
 
     def register_event_listener(self, event: str, callback: Callable) -> None:
         self._event_listeners.setdefault(event, []).append(callback)
@@ -120,21 +125,22 @@ class CircadianScheduler:
         return min(upcoming, key=lambda t: t.hour)
 
     def start(self) -> None:
-        self._register_default_tasks()
-        self._running = True
-        self._thread = threading.Thread(target=self._loop, daemon=True, name="CircadianScheduler")
-        self._thread.start()
-        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
+        """已废弃：定时调度机制已废除（载体错配，详见架构裁定 2026-06-26）。
 
-        try:
-            ResourceOptimizationEngine().register_daemon(
-                "circadian-scheduler",
-                self.start,
-                self.stop,
-                priority=5,
-            )
-        except Exception:
-            pass
+        定时触发在 100% AI 开发模式下是伪需求——所有审计任务已由
+        pre-commit GATE 体系（commit 事件触发）和 boot_hooks 事件钩子
+        （状态变更事件触发）覆盖。此方法保留为 no-op 以兼容现有调用链，
+        但不再启动任何守护线程。
+        """
+        import warnings
+
+        warnings.warn(
+            "CircadianScheduler.start() is a no-op; scheduled task dispatch has been "
+            "abolished. Use pre-commit GATE (commit events) or boot_hooks (state-change "
+            "events) instead. See architecture ruling 2026-06-26.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     def _register_default_tasks(self) -> None:
         if any(t.name == "deep_drift_scan" for t in self._tasks):
@@ -650,52 +656,9 @@ class CircadianScheduler:
             pass
 
     def stop(self) -> None:
-        self._running = False
-        self.save_state()
-
-    def _loop(self) -> None:
-        last_minute: int = -1
-        while self._running:
-            now = datetime.now()
-            # 每次都更新 last_minute，确保整点检测正确（否则连续两个整点无法触发）
-            if now.minute != last_minute:
-                last_minute = now.minute
-                if now.minute == 0:
-                    today = now.strftime("%Y-%m-%d")
-                    current_hour_key = now.strftime("%Y-%m-%d-%H")
-                    for task in self._tasks:
-                        should_run = False
-                        if task.hour == -1:
-                            # hour=-1: 每小时整点执行，用 last_run_hour 去重
-                            if task.last_run_hour != current_hour_key:
-                                should_run = True
-                                task.last_run_hour = current_hour_key
-                        else:
-                            # hour>=0: 每天指定小时执行，用 last_run_date 去重
-                            if task.hour == now.hour and task.last_run_date != today:
-                                should_run = True
-                                task.last_run_date = today
-                        if should_run and task.callback:
-                            try:
-                                task.callback()
-                            except Exception:
-                                pass
-            time.sleep(30)
+        """已废弃：no-op，定时调度机制已废除。"""
+        # no-op: 定时调度已废除，参见架构裁定 2026-06-26
 
     def save_state(self) -> None:
-        if self._state_path is None:
-            return
-        self._state_path.parent.mkdir(parents=True, exist_ok=True)
-        state = {
-            "tasks": [
-                {
-                    "hour": t.hour,
-                    "name": t.name,
-                    "layer": t.layer,
-                    "last_run_date": t.last_run_date,
-                    "last_run_hour": t.last_run_hour,
-                }
-                for t in self._tasks
-            ]
-        }
-        self._state_path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+        """已废弃：no-op，定时调度机制已废除，不再持久化调度状态。"""
+        # no-op: 定时调度已废除，参见架构裁定 2026-06-26
