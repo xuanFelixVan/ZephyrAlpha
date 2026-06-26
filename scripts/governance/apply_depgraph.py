@@ -202,6 +202,7 @@ _GOV_DIR = Path(__file__).resolve().parent
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 from validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
+from validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
 
 # 进程内 DB 写入串行锁——防止同进程多线程并发获取文件锁
 _db_write_lock_lock = threading.Lock()
@@ -1636,6 +1637,17 @@ def cmd_rename_domain(
     """
     own_conn = conn is None
 
+    # P1-2 红蓝对抗修复：new_id 必须符合 D-{DOMAIN} 格式（无序号）
+    # 与 V2 修复（cmd_rename_blueprint_id 校验 new_bp_id）对称，消除不对称漏洞
+    ok, reason = _validate_domain_id_format(new_id)
+    if not ok:
+        print(
+            f"ERROR: new_id '{new_id}' 格式不合规：{reason}\n"
+            f"domain_id 必须为 D-{{DOMAIN}} 格式（如 D-GOVERNANCE），DOMAIN 为大写+下划线，无序号",
+            file=sys.stderr,
+        )
+        return -1
+
     def _run(c: sqlite3.Connection) -> int:
         # 0. 校验 old 存在、new 不存在（禁止覆盖）
         if not c.execute("SELECT 1 FROM domains WHERE domain_id=?", (old_id,)).fetchone():
@@ -2619,10 +2631,10 @@ def cmd_update_domain_layer(
     返回：True=成功，False=失败
     """
     # 域层级 ID 合法值（非词表，是 cmd_update_domain_layer 函数参数校验；
-    # 无对应 vocabulary YAML，故局部硬编码。不命名为 ALLOWED_*_LAYERS 以免 GATE-VOCAB 误报）
-    _DOMAIN_LAYER_IDS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}
-    if layer_id not in _DOMAIN_LAYER_IDS:
-        print(f"ERROR: layer_id 必须是 {_DOMAIN_LAYER_IDS} 之一，实际: {layer_id}", file=sys.stderr)
+    # 无对应 vocabulary YAML，是架构层级概念而非受控词表。GATE-VOCAB noqa 豁免）
+    ALLOWED_LAYERS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}  # noqa: gate-vocab
+    if layer_id not in ALLOWED_LAYERS:
+        print(f"ERROR: layer_id 必须是 {ALLOWED_LAYERS} 之一，实际: {layer_id}", file=sys.stderr)
         return False
 
     own_conn = conn is None
@@ -2723,11 +2735,11 @@ def cmd_insert_domain_mapping(
     返回：True=成功，False=失败
     """
     # domain_mapping 表 mapping_type 合法值（非词表，是 cmd_insert_domain_mapping 函数参数校验；
-    # 无对应 vocabulary YAML，故局部硬编码。不命名为 ALLOWED_*_TYPES 以免 GATE-VOCAB 误报）
-    _DOMAIN_MAPPING_TYPES = {"non_src", "unregistered_src"}
-    if mapping_type not in _DOMAIN_MAPPING_TYPES:
+    # 无对应 vocabulary YAML，是 schema 字段类型而非受控词表。GATE-VOCAB noqa 豁免）
+    ALLOWED_TYPES = {"non_src", "unregistered_src"}  # noqa: gate-vocab
+    if mapping_type not in ALLOWED_TYPES:
         print(
-            f"ERROR: mapping_type 必须是 {_DOMAIN_MAPPING_TYPES} 之一，实际: {mapping_type}",
+            f"ERROR: mapping_type 必须是 {ALLOWED_TYPES} 之一，实际: {mapping_type}",
             file=sys.stderr,
         )
         return False

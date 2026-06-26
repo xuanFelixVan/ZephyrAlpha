@@ -127,8 +127,6 @@ capabilities:
       - PROJECT_ROOT
       - REPO_ROOT
       - 仓库根
-      - 仓库根路径
-      - 仓库根目录
       - project_root
       - repo_root
       - repo root
@@ -285,6 +283,83 @@ capabilities:
       ZEPHYR_RUNTIME_GATE=0。canonical basename=runtime_interceptor 不匹配 alias，
       无法 auto 派生，故用 canonical_override 显式声明。
 
+  # --------------------------------------------------------------------------
+  - capability_id: validate_module_id_naming
+    canonical_override: scripts/governance/validate_module_id_naming.py
+    aliases:
+      - module_id_naming
+      - module_id 校验
+      - module_id格式校验
+      - blueprint_id 校验
+      - blueprint_id格式校验
+      - 三轨制校验
+      - 三轨正则
+      - is_valid_module_id
+      - is_valid_domain_id
+      - domain_id 校验
+      - domain_id格式校验
+      - 裁定#208校验
+    description: >-
+      module_id/blueprint_id/domain_id 格式校验真源（裁定#208 三轨制正则唯一责任点）。
+      提供 is_valid_module_id(bp_id) 和 is_valid_domain_id(domain_id) 两个公共校验函数，
+      被 check_naming_convention.py（N-06 GATE-11）和 apply_depgraph.py（V1/V2 漏洞修复 +
+      P1-2 --rename-domain 校验）复用，消除正则重复定义。三轨制：layer-master 轨
+      MOD-{LAYER}-NNN / 派生轨 MOD-{DOMAIN}[-NNN] 或 D-{DOMAIN}-NNN / 跨域共享轨
+      SH-{ABBR}-NNN。canonical 在 scripts/governance/ 下（非 src/zephyr/），无法 auto
+      派生，故用 canonical_override 显式声明。
+
+  # --------------------------------------------------------------------------
+  - capability_id: n16_exemption_loader
+    canonical_override: scripts/governance/d3_metadata/check_naming_convention.py
+    aliases:
+      - N-16_exemption_loader
+      - n16_config_loader
+      - n16_exemption
+      - filename_uniqueness_exemption
+      - naming_convention_exemption
+      - GATE-11_exemption
+      - N-16
+      - N16
+      - 文件名唯一性豁免
+      - 豁免清单加载器
+      - n16_exemption_names
+      - exempt_names_loader
+    description: >-
+      N-16 文件名项目内唯一性检测的豁免清单唯一 YAML 加载入口（治本：消除代码硬编码
+      vs YAML 真源同步缺口）。真源：trae_028_doc_structure_naming.yaml v1.5.0
+      §gov_doc_003_filename_uniqueness.n16_config（exempt_names_tests +
+      exempt_names_docs_extra + skip_dirs_docs 三个字段）。加载函数：
+      _load_n16_exemptions_from_yaml() 在模块 import 时读取一次（per-process 缓存，
+      commit 每次启动新进程自动重载，YAML 改即生效）。fail-open 策略：YAML 缺失/
+      解析失败/类型不合规（非 list 或含非 str 元素）→ 回退到 _N16_*_FALLBACK 硬编码
+      安全值（防破坏性故障）。继承关系：_N16_DOCS_EXEMPT_NAMES = tests | docs_extra
+      （docs 豁免继承 tests 基线）。类型严格校验防 string 标量被迭代成 char set
+      绕过检测（红蓝测试 B5-B5e 修复）。N-16 为硬阻断规则，不受 GATE-11 --warn-only
+      过渡期影响。canonical_override 显式指向 d3_metadata 版（pre-commit 实际调用），
+      因存在 3 个同名 check_naming_convention.py 副本，auto 派生会歧义。改豁免清单
+      改 trae_028.yaml §n16_config，禁止改代码 _N16_*_FALLBACK（[MODIFY-GUARD] 保护）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: precommit_id_uniqueness_check
+    canonical_override: scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
+    aliases:
+      - GATE-ID-UNIQ
+      - gate-id-uniq
+      - hook_id_uniqueness
+      - precommit_id_check
+      - hook id 唯一性
+      - pre-commit id 唯一性
+      - hook id 重复检测
+    description: >-
+      .pre-commit-config.yaml 内 hook id 唯一性检测门禁（GATE-ID-UNIQ）。同一 repo 块
+      内重复 id 会导致后者覆盖前者（历史教训：commit a09e510ec 中两个 SSoT 门禁同用
+      id: gate-ssot，line 324 src/zephyr/*.py 被 line 388 docs/*.md 覆盖；已手动改第二个
+      为 gate-ssot-docs，但缺自动化门禁，未来 AI 可能再造一对重复 id）。本门禁治本：
+      扫描所有 repos[].hooks[].id，same-repo 重复 → hard block (exit 1)；cross-repo 重复
+      → warn（pre-commit 允许跨 repo 同 id，但本项目视为覆盖风险，提示人工裁定）。
+      canonical 在 scripts/ 下（非 src/zephyr/），basename check_precommit_id_uniqueness
+      不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明。
+
 # ============================================================================
 # 维护日志
 # ============================================================================
@@ -309,3 +384,10 @@ capabilities:
 #   - 补 GATE-20 静态分析上限（运行时代码生成 exec 不可见）
 #   - 解决发现性：AI 搜 GATE-20-RUNTIME / runtime_gate / 运行时拦截器 可定位真源
 #   - 解决防重建：check_file_canonical() 反查阻止重复创建运行时拦截器
+# 2026-06-26 新增 n16_exemption_loader（N-16 豁免清单 YAML 加载器，红蓝对抗测试发现缺口修复）：
+#   - canonical_override = scripts/governance/d3_metadata/check_naming_convention.py
+#   - 真源：trae_028.yaml v1.5.0 §gov_doc_003_filename_uniqueness.n16_config
+#   - 加载函数 _load_n16_exemptions_from_yaml()，模块级缓存 + fail-open + 类型严格校验
+#   - 解决发现性：AI 搜 N-16 / 豁免清单加载器 / 文件名唯一性 可定位真源（原仅靠 AGENTS.md 文档链）
+#   - 解决防重建：check_file_canonical() 反查阻止重复创建 N-16 豁免清单加载器
+#   - 红蓝测试发现：此前 capability 反查 find("naming")/find("exemption") 全返回空，新AI可能重复造轮子

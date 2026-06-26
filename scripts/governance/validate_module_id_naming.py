@@ -50,10 +50,15 @@ NESTED_ID_PATTERN = re.compile(r"^([A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4})-[A-Z]"
 # 裁定#208 三轨制正则（真源：本文件）
 # 被 check_naming_convention.py（N-06 GATE-11）和 apply_depgraph.py（V2 漏洞修复）复用
 # ---------------------------------------------------------------------------
-MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-\d+$")            # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填
-MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$")     # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
-MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]+(?:_[A-Z]+)*-\d+$")                  # 派生轨: D-{DOMAIN}-NNN
-MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]+-\d+$")                                # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填
+# 安全加固（红蓝对抗修复 P2-1~P2-4）：
+#   [0-9] 替代 \d（防止全角数字 U+FF10-FF19 被 \d 匹配）
+#   \Z 替代 $（防止尾部 \n 被 $ 匹配，$ 默认匹配换行前）
+#   {1,20} 限制（防止超长输入如 10000 个 A 导致存储/日志膨胀）
+#   SH- 轨支持 _ 下划线（与 D-/派生轨一致，如 SH-LLM_SEC-042）
+MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")              # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填
+MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]{1,20}(?:_[A-Z]{1,20})*(?:-[0-9]+)?\Z")  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
+MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")          # 派生轨: D-{DOMAIN}-NNN
+MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")           # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -88,6 +93,31 @@ def is_valid_module_id(bp_id: str) -> tuple[bool, str]:
             return True, ""
         return False, "D- 前缀必须为 D-{DOMAIN}-NNN 格式"
     return False, "module_id 必须以 MOD-/SH-/D- 开头"
+
+
+# domain_id 格式正则（D-{DOMAIN} 无序号，与 blueprint_id 的 D- 轨 D-{DOMAIN}-NNN 不同）
+# 真源：本常量是 domain_id 格式校验的唯一正则，被 apply_depgraph.py 的 cmd_rename_domain 复用
+DOMAIN_ID_RE = re.compile(r"^D-[A-Z]{1,20}(?:_[A-Z]{1,20})*\Z")
+
+
+def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
+    """校验 domain_id 格式是否符合 D-{DOMAIN} 规范（无序号）。
+
+    真源：本函数是 domain_id 格式校验的唯一责任点，被 apply_depgraph.py 复用。
+
+    与 is_valid_module_id 的 D- 轨区别：
+    - domain_id: D-{DOMAIN}（无序号，如 D-GOVERNANCE）
+    - blueprint_id D- 轨: D-{DOMAIN}-NNN（有序号，如 D-GOVERNANCE-001）
+
+    Args:
+        domain_id: 待校验的 domain_id 字符串
+
+    Returns:
+        (是否合规, 失败原因)
+    """
+    if DOMAIN_ID_RE.match(domain_id):
+        return True, ""
+    return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D-GOVERNANCE），DOMAIN 为大写+下划线，无序号"
 
 
 def extract_frontmatter_field(text: str, field: str) -> str | None:
