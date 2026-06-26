@@ -522,7 +522,6 @@ __all__ = [
     "detect_test_coverage_drift",
     "detector_dispatcher",
     "differential_detection",
-    "drift_cron_scheduler",
     "drift_engine",
     "drift_hotfix_bypass",
     "drift_infrastructure",

@@ -12,20 +12,17 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [DEPRECATED] trae_053 v2.0.0: 常驻 while 循环模式已废除。仅保留 --once 单次执行模式。
+# 原声明"已迁移到 zephyr.autonomy_core.runtime"——该目标模块实际不存在，声明作废。
+# 如需 AutoRuntime Core，直接使用 src/zephyr/trading/auto_runtime_core.py。
 """
-local_layer_daemon.py — L2 本地模型层守护进程（薄包装）
-========================================================
-已迁移到 AutoRuntime Core。本文件保留向后兼容。
+local_layer_daemon.py — L2 本地模型层守护进程（薄包装，DEPRECATED）
+================================================================
+trae_053 v2.0.0: 常驻 while 循环模式已废除，仅保留 --once 单次执行模式。
 
-用法（不变）:
-    python local_layer_daemon.py              # 前台运行
-    python local_layer_daemon.py --once       # 只跑一遍
-    python local_layer_daemon.py --no-demo    # 跳过演示
-    python local_layer_daemon.py --interval 30
-
-新方式（推荐）:
-    python -m zephyr.autonomy_core.runtime                  # 完整 AutoRuntime Core
-    python -m zephyr.autonomy_core.runtime --once           # 单次调和
+用法:
+    python local_layer_daemon.py --once       # 单次调和（合规）
+    python local_layer_daemon.py --no-demo    # 跳过演示（隐含 --once）
 """
 
 from __future__ import annotations
@@ -66,60 +63,22 @@ def main() -> None:
 
             scheduler = LocalModelScheduler()
             scheduler.ensure_models()
-            scheduler.start()
-            print("L2 demo: LocalModelScheduler started")
+            print("L2 demo: LocalModelScheduler models ensured (start() suppressed per trae_053 v2.0.0)")
         except Exception as e:
             print(f"L2 demo skipped: {e}")
 
-    import signal
-
-    shutdown = False
-
-    def _sig(sig: int, frame: object) -> None:
-        nonlocal shutdown
-        shutdown = True
-
-    signal.signal(signal.SIGINT, _sig)
-
-    if args.once:
-        report = core.reconcile()
-        print(f"Reconcile: active={report.active} degraded={report.degraded}")
-    else:
-        while not shutdown:
-            import time
-
-            time.sleep(config.poll_interval)
-            report = core.reconcile()
-            print(f"[{time.strftime('%H:%M:%S')}] active={report.active} orphan_rate={report.orphan_rate:.1%}")
+    # trae_053 v2.0.0: 常驻 while 循环已废除，仅执行单次 reconcile。
+    report = core.reconcile()
+    print(f"Reconcile: active={report.active} degraded={report.degraded}")
 
     shutdown_report = core.shutdown()
     print(f"Shutdown: {shutdown_report.steps_completed} steps")
 
 
 def _fallback() -> None:
-    import signal
-    import time
-
-    from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
-
-    print("Fallback: running LocalModelScheduler directly (AutoRuntime Core not available)")
-    scheduler = LocalModelScheduler()
-    scheduler.ensure_models()
-    scheduler.start()
-
-    running = True
-
-    def _sig(sig: int, frame: object) -> None:
-        nonlocal running
-        running = False
-
-    signal.signal(signal.SIGINT, _sig)
-
-    while running:
-        time.sleep(10)
-
-    scheduler.stop()
-    print("Stopped.")
+    # trae_053 v2.0.0: 常驻 daemon 模式已废除，fallback 不再启动后台线程。
+    print("Fallback: AutoRuntime Core not available; 常驻模式已废除 (trae_053 v2.0.0)，请使用 --once 单次执行。")
+    sys.exit(1)
 
 
 if __name__ == "__main__":

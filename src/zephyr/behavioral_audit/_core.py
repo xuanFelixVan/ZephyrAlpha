@@ -55,7 +55,6 @@ _SUBMODULES = [
     "brain_integration",
     "dashboard",
     "dependency_manager",
-    "drift_cron_scheduler",
     "integration_test_runner",
     "ml_engineering",
     "model_drift_monitor",
