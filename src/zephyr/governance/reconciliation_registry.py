@@ -77,6 +77,7 @@ __all__ = [
     "make_working_docs_reconciler",
     "make_domain_doc_reconciler",
     "make_precommit_id_uniqueness_reconciler",
+    "make_rules_integrity_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -1247,4 +1248,113 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=280,
+    )
+
+
+def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-RULES-INTEGRITY post-commit 基线自动同步 reconciler（红蓝发现1 治本）。
+
+    根因（红蓝发现1 P0）：
+    ``rules_integrity_db.json``（C 层 golden hash 基线）不被 git 跟踪，合法 commit
+    修改 RULES_MANIFEST 文件后本地基线不自动更新 → 下次 ``--check`` 误报 TAMPERED
+    → 阻断裸 git commit（pre-commit gate-rules-integrity hook 触发）。这是 C 层基线
+    与 commit 不同步的结构性缺陷。
+
+    治本（事件驱动自动同步）：
+    commit 涉及 RULES_MANIFEST 任一文件后，post-commit 自动跑
+    ``validate_rules_integrity.py --register`` 重算全部 RULES_MANIFEST 文件 hash
+    并写入本地基线。合法 commit 通过 gateway 时 A 层 AST 锚点校验已先行通过
+    （红蓝发现2 治本：空桩绕过已堵），故 post-commit 重注册的基线是"已验证合法"
+    的状态——消除 C 层误报，同时不削弱篡改检测能力。
+
+    RULES_MANIFEST 真源为 ``validate_rules_integrity.py`` 顶部的列表（SSoT）。本
+    reconciler 的 trigger 采用宽匹配（committed file == AGENTS.md 或前缀
+    ``scripts/governance/``）而非硬编码清单复制——避免双源漂移。宽匹配的假阳性
+    （commit 了 governance 下非 RULES_MANIFEST 文件）仅多跑一次 --register（9 个
+    文件 hash，毫秒级），无副作用；无假阴性（所有 RULES_MANIFEST 路径均被覆盖）。
+
+    非阻断设计：--register 仅写本地非跟踪文件，exit 0 即基线已更新；失败降级 warn
+    （报告落盘供追责）。priority 270（在 GATE-ID-UNIQ 250 之后、GATE-VOCAB-CHANGE
+    280 之前），确保其他可能修改 RULES_MANIFEST 文件的 reconciler（如 manifest pri 100
+    会 auto-commit script_manifest.yaml）先完成，再统一重注册基线。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
+            保持本纯 stdlib 模块不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-RULES-INTEGRITY", priority=270)。
+    """
+    import json
+    import os
+    import subprocess
+    import sys
+    import time
+
+    project_root = gateway.project_root
+    _VALIDATE_SCRIPT = "scripts/governance/meta/validate_rules_integrity.py"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 宽匹配：RULES_MANIFEST 全部 9 个文件均在 AGENTS.md 或 scripts/governance/ 下。
+        # 真源：validate_rules_integrity.py 顶部 RULES_MANIFEST 列表（SSoT）。
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel == "AGENTS.md" or rel.startswith("scripts/governance/"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. post-commit 重注册基线（--register 内部读 RULES_MANIFEST 真源，重算全部 hash）
+        reg_result = subprocess.run(
+            [sys.executable, _VALIDATE_SCRIPT, "--register"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        # 2. 报告落盘（无论 exit code，记录供追责）
+        reports_dir = project_root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        report_path = reports_dir / f"rules_integrity_{ts}.json"
+        report = {
+            "gate_id": "GATE-RULES-INTEGRITY",
+            "session_id": session_id,
+            "timestamp": ts,
+            "exit_code": reg_result.returncode,
+            "stdout_tail": reg_result.stdout.strip()[-500:],
+            "stderr_tail": reg_result.stderr.strip()[-500:],
+            "triggered_by": committed_files,
+        }
+        try:
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"rules_integrity --register done (exit={reg_result.returncode}) "
+                       f"but report write failed: {e}",
+            )
+        # 3. 判定（--register exit 0 = 基线已更新；非 0 = 脚本异常）
+        if reg_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"rules_integrity baseline re-registered post-commit "
+                       f"(C层基线已同步合法 commit), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"rules_integrity --register failed (exit={reg_result.returncode}), "
+                   f"report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-RULES-INTEGRITY",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=270,
     )

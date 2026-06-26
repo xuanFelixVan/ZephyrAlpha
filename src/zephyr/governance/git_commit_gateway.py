@@ -1217,36 +1217,58 @@ class GitCommitGateway:
                 )
                 continue
 
-            # 收集模块级 + 类内定义的 name（FunctionDef/ClassDef/Assign/AnnAssign）
-            # 红蓝对抗修复2 配套：integrity_anchors 现在保护类内方法（如
+            # 收集模块级 + 类内定义的 name → AST 节点对象（FunctionDef/ClassDef/Assign/AnnAssign）
+            # 红蓝对抗发现2治本：不只校验 name 存在，还校验节点实质性（防空桩绕过）。
+            # 方法锚点支持：integrity_anchors 现在保护类内方法（如
             # GitCommitGateway._check_capability_aliases），原仅收集 tree.body
             # 模块级 name，类内方法检测不到。扩展递归收集 ClassDef.body。
-            defined_names: set[str] = set()
+            defined_nodes: dict[str, ast.AST] = {}
 
-            def _collect_names(nodes: list) -> None:
+            def _collect_nodes(nodes: list) -> None:
                 for node in nodes:
                     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                        defined_names.add(node.name)
+                        defined_nodes[node.name] = node
                     elif isinstance(node, ast.ClassDef):
-                        defined_names.add(node.name)
-                        _collect_names(node.body)  # 递归收集类内方法/常量
+                        defined_nodes[node.name] = node
+                        _collect_nodes(node.body)  # 递归收集类内方法/常量
                     elif isinstance(node, ast.Assign):
                         for tgt in node.targets:
                             if isinstance(tgt, ast.Name):
-                                defined_names.add(tgt.id)
+                                defined_nodes[tgt.id] = node
                     elif isinstance(node, ast.AnnAssign):
                         if isinstance(node.target, ast.Name):
-                            defined_names.add(node.target.id)
+                            defined_nodes[node.target.id] = node
 
-            _collect_names(tree.body)
+            _collect_nodes(tree.body)
 
-            missing = [a for a in anchors if a not in defined_names]
+            missing = [a for a in anchors if a not in defined_nodes]
             if missing:
                 violations.append(
                     f"{rel}: 缺失完整性锚点 {missing}——"
                     f"检测脚本关键结构被删除/重命名，pre-commit + reconciler 两层防线"
                     f"将同时失效。修复：恢复被删锚点，或同步更新 YAML integrity_anchors"
                     f"（需人工裁定锚点变更合理性）。"
+                )
+                continue  # 锚点都缺了，不必再查实质性
+
+            # 红蓝对抗发现2治本：校验锚点节点实质性（防空桩保留 name 清空实现）。
+            stub_violations: list[str] = []
+            for a in anchors:
+                node = defined_nodes[a]
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    if not _has_substantial_body(node):
+                        stub_violations.append(
+                            f"{a}: 函数体无实质性语句（空桩 def {a}(): pass / "
+                            f"return [] 绕过）——检测逻辑被清空但锚点 name 保留"
+                        )
+                elif isinstance(node, ast.Assign):
+                    if not _assign_has_substantial_value(node):
+                        stub_violations.append(
+                            f"{a}: 赋值为空值（= None / = ''）——检测常量被清空"
+                        )
+            if stub_violations:
+                violations.append(
+                    f"{rel}: 锚点空桩绕过检测——{stub_violations}"
                 )
 
         if violations:
