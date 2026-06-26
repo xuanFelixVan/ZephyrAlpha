@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PASS=0；--warn-only 始终 0；非 warn-only 且有 FAIL=1；SSoT 加载失败=1（warn-only 时 0）
-# [TESTS] P3-T1 dry-run + 实际 run（6 case 全 detected）
+# [TESTS] P3-T1 dry-run + 实际 run（8 case 全 detected）
 # [A_module] module_id=MOD-GOV-verify_reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """verify_reconciliation_registry.py — ReconciliationRegistry 轻量结构 audit（P3-T1）
 
@@ -19,7 +19,7 @@
 ``false_negative_cases/reconciliation_registry_cases.yaml`` 作为 verifier 调用
 （``--warn-only``）。importlib 直接加载 SSoT
 ``src/zephyr/governance/reconciliation_registry.py``（绕过 ``zephyr.*`` import 链断裂，
-仿 ``post_sync_validator.py`` SSoT 解耦模式），检查 6 项结构/行为不变量，打印
+仿 ``post_sync_validator.py`` SSoT 解耦模式），检查 8 项结构/行为不变量，打印
 ``FN-RR-XXX: PASS/FAIL: <detail>`` 供 check_detection 子串匹配。
 
 设计裁定（P3-T1 scaffold vs P3-T2 rigorous，呼应 continuation plan §5.1/§5.2）
@@ -35,7 +35,7 @@
 - **P3-T2**：机械注入 ~15 个变异到 SSoT 副本，跑本 verifier 看 PASS/FAIL，
   统计 killed/survived，≥80% 达标，反馈环补变异
 
-6 项不变量（与 ``reconciliation_registry_cases.yaml`` 一一对应）
+8 项不变量（与 ``reconciliation_registry_cases.yaml`` 一一对应）
 --------------------------------------------------------------
 - FN-RR-001: ReconcilerSpec 必需字段齐全（gate_id/trigger/reconcile/priority）
 - FN-RR-002: register 同 gate_id 覆盖（幂等，不产生重复 spec）
@@ -43,6 +43,8 @@
 - FN-RR-004: reconcile_for 按 priority 升序执行命中 trigger 的 reconciler
 - FN-RR-005: 单 reconciler 异常降级为 warn，不中断后续
 - FN-RR-006: 空 registry / 无 trigger 命中 → reconcile_for 返回 []（非 None）
+- FN-RR-007: reconcile_for 收集所有命中 trigger 的结果（append 不可移除）——杀 M07
+- FN-RR-008: ReconcilerSpec 未传 priority 时默认 100——杀 M09
 
 seam：``RR_UNDER_TEST`` 环境变量重定向 SSoT 到变异副本（供 P3-T2 使用），
       缺省指向真源（正常 audit 不受影响）。
@@ -106,7 +108,7 @@ def _load_ssot():
     return mod, None
 
 
-# ── 6 项不变量检查 ─────────────────────────────────────────────────────
+# ── 8 项不变量检查 ─────────────────────────────────────────────────────
 
 
 def _check_001_spec_fields(mod) -> CheckResult:
@@ -172,8 +174,10 @@ def _check_004_priority_order(mod) -> CheckResult:
         return CheckResult("FN-RR-004", False, "registry/spec class missing")
     reg = reg_cls()
     order: list[str] = []
-    # 故意乱序注册（300/100/200），期望执行顺序 A(100)→B(200)→C(300)
-    for prio, gid in [(300, "C"), (100, "A"), (200, "B")]:
+    # 故意让 gate_id 字典序(A<B<C)与 priority 升序(B<A<C)不同——
+    # 杀灭 M13 盲区:若 sort key 被改为 gate_id，order=[A,B,C]≠[B,A,C] 即 FAIL。
+    # 同时仍杀灭 M02(reverse 降序→[C,A,B])与 M03(移除 sort→register 序[C,B,A])。
+    for prio, gid in [(300, "C"), (100, "B"), (200, "A")]:
 
         def _reconcile(files, sid, _gid=gid):
             order.append(_gid)
@@ -183,8 +187,8 @@ def _check_004_priority_order(mod) -> CheckResult:
             spec_cls(gate_id=gid, trigger=lambda files: True, reconcile=_reconcile, priority=prio)
         )
     reg.reconcile_for(["x.py"], "sess")
-    if order != ["A", "B", "C"]:
-        return CheckResult("FN-RR-004", False, f"priority order wrong: {order} (expected A,B,C)")
+    if order != ["B", "A", "C"]:
+        return CheckResult("FN-RR-004", False, f"priority order wrong: {order} (expected B,A,C)")
     return CheckResult("FN-RR-004", True, f"priority ascending: {order}")
 
 
@@ -243,6 +247,58 @@ def _check_006_empty_registry(mod) -> CheckResult:
     return CheckResult("FN-RR-006", True, "empty/no-match → [] (no silent None)")
 
 
+def _check_007_result_collection(mod) -> CheckResult:
+    """FN-RR-007: reconcile_for 收集所有命中 trigger 的结果（append 不可移除）。
+
+    M07 盲区: append 移除后返回空 list（仍是 list，过 FN-RR-003/006）。
+    本检查注册 2 个 trigger 命中的 spec，断言返回 len==2，确保 append 完整。
+    """
+    reg_cls = getattr(mod, "ReconciliationRegistry", None)
+    spec_cls = getattr(mod, "ReconcilerSpec", None)
+    if reg_cls is None or spec_cls is None:
+        return CheckResult("FN-RR-007", False, "registry/spec class missing")
+    reg = reg_cls()
+    for gid in ("G1", "G2"):
+        reg.register(
+            spec_cls(
+                gate_id=gid,
+                trigger=lambda files: True,
+                reconcile=lambda files, sid: mod.ReconcileResult(action="clean"),
+            )
+        )
+    results = reg.reconcile_for(["x.py"], "sess")
+    if len(results) != 2:
+        return CheckResult(
+            "FN-RR-007", False,
+            f"collected {len(results)} results, expected 2 (append removed?)",
+        )
+    return CheckResult("FN-RR-007", True, f"collected all {len(results)} results")
+
+
+def _check_008_default_priority(mod) -> CheckResult:
+    """FN-RR-008: ReconcilerSpec 未传 priority 时默认 100。
+
+    M09 盲区: priority 默认 100→999，字段仍在过 FN-RR-001。
+    本检查构造不传 priority 的 spec，断言 priority==100。
+    """
+    spec_cls = getattr(mod, "ReconcilerSpec", None)
+    if spec_cls is None:
+        return CheckResult("FN-RR-008", False, "ReconcilerSpec class missing")
+    try:
+        spec = spec_cls(
+            gate_id="DEF",
+            trigger=lambda files: False,
+            reconcile=lambda files, sid: mod.ReconcileResult(action="skip"),
+        )
+    except TypeError as e:
+        return CheckResult("FN-RR-008", False, f"cannot construct spec without priority: {e}")
+    if spec.priority != 100:
+        return CheckResult(
+            "FN-RR-008", False, f"default priority={spec.priority}, expected 100"
+        )
+    return CheckResult("FN-RR-008", True, "default priority=100")
+
+
 CHECKS = [
     _check_001_spec_fields,
     _check_002_register_idempotent,
@@ -250,11 +306,13 @@ CHECKS = [
     _check_004_priority_order,
     _check_005_exception_isolation,
     _check_006_empty_registry,
+    _check_007_result_collection,
+    _check_008_default_priority,
 ]
 
 
 def main() -> int:
-    """Entry point: parse args, run 6 invariant checks, print findings, return exit code."""
+    """Entry point: parse args, run 8 invariant checks, print findings, return exit code."""
     parser = argparse.ArgumentParser(
         description="ReconciliationRegistry 轻量结构 audit (P3-T1)"
     )
