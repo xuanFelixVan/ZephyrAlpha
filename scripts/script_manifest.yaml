@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 576
+total_scripts: 573
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -34,14 +34,6 @@ scripts:
   path: _query_rbac_core.py
   description: import sqlite3
   domain: rbac
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_adversarial_find_test.py
-  path: _tmp_adversarial_find_test.py
-  description: 覆盖 CapabilityLookup.find() 四维可达性 + 极限对抗。
-  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -82,14 +74,6 @@ scripts:
   path: a2a_full_verification.py
   description: import sys
   domain: a2a
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: check_naming_convention.py
-  path: check_naming_convention.py
-  description: FILENAME_UPPERCASE_WHITELIST = [
-  domain: check_naming_convention.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -905,14 +889,6 @@ scripts:
 - name: governance/check_handoff_manifests.py
   path: governance/check_handoff_manifests.py
   description: check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/check_naming_convention.py
-  path: governance/check_naming_convention.py
-  description: FILENAME_UPPERCASE_WHITELIST = [
   domain: governance
   execution_plane: warm-path
   status: registered
