@@ -585,9 +585,6 @@ class RegistryManager:
         self._known["docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"] = (
             YamlListAdapter("REG-FRONTMATTER-001", "frontmatter_field_registry.yaml", asset_key="field_name")
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"] = YamlListAdapter(
-            "REG-SCRIPT-HEALTH-001", "script-health-registry.md", asset_key="script_id"
-        )
         self._known["docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"] = YamlListAdapter(
             "REG-CROSS-001", "registry_consistency_contract.yaml", asset_key="field_name"
         )

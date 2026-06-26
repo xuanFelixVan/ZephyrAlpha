@@ -292,15 +292,6 @@ tiers:
         status: active
         description: 4 个子系统的 TaskCard 元信息
 
-      - registry_id: REG-SCRIPT-HEALTH-001
-        name: 脚本健康注册表
-        physical_path: docs/01_policies_and_standards/_registry/catalogs/script_health_registry.yaml
-        format: yaml
-        maintenance: manual
-        entry_count: 39
-        status: active
-        description: 39 个脚本的健康状态
-
       - registry_id: REG-FRONTMATTER-001
         name: Frontmatter 字段注册表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml

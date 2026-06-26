@@ -211,6 +211,11 @@ registered_ids:
     path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
     doc_type: register
     status: active
+  - module_id: PS-REG-021
+    title: "能力→真源文件反查注册表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
+    doc_type: contract
+    status: active
 
   # === GOV 文档治理层 ===
   - module_id: GOV-DOC-001

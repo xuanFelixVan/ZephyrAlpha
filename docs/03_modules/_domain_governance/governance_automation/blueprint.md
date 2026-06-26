@@ -218,8 +218,7 @@ references: []
 | 6 | AGENTS.md | — | `D:\ZephyrAlpha\AGENTS.md` | §6.5 脚本入库强制约定——蓝图的法律依据 |
 | 7 | 脚本治理入口 | index.md | `D:\ZephyrAlpha\scripts\governance\index.md` | AI 施工时查"已有哪些脚本" |
 | 8 | 模块登记表 | — | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 模块编号注册 |
-| 9 | 脚本健康注册表 | REG-SCRIPT-HEALTH-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\script-health-registry.md` | 39 个脚本健康状态 |
-| 10 | 脚本质量标准 | REG-STD-003 / SCRIPT-QUALITY-001 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` | 8维度×38条款——脚本自身的质量约束（同 #4，双注册） |
+| 9 | 脚本质量标准 | REG-STD-003 / SCRIPT-QUALITY-001 | `D:\ZephyrAlpha\scripts\governance\quality-standard.md` | 8维度×38条款——脚本自身的质量约束（同 #4，双注册） |
 
 ### 2.2 depends_on 声明
 
@@ -1845,7 +1844,6 @@ Error Budget 耗尽 → `manage_error_budget.py` 自动：
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\script_system\` | 脚本系统核心 |
 | 治理脚本 | `D:\ZephyrAlpha\scripts\governance\` | 80+ 治理脚本 |
 | 脚本注册表 | `D:\ZephyrAlpha\scripts\governance\script-manifest.yaml` | 脚本登记 SSoT（REG-SCRIPT-001 主清单 + REG-SCRIPT-002 Governance 子集） |
-| 脚本健康注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\script-health-registry.md` | 39 个脚本健康状态（REG-SCRIPT-HEALTH-001） |
 
 ---
 

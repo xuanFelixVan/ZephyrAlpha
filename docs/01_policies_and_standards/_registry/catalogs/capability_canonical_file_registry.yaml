@@ -67,11 +67,11 @@
 # ============================================================================
 
 schema_version: "1.1.0"
-module_id: PS-REG-019
+module_id: PS-REG-021
 doc_type: contract
 title: "能力→真源文件反查注册表"
 status: active
-version: "1.1.0"
+version: "1.1.1"
 date: "2026-06-26"
 summary: >-
   capability → canonical_file 反查注册表，解决"AI 不知道某功能真源在哪"的信息不可达问题。
@@ -391,6 +391,9 @@ capabilities:
       - hook id 唯一性
       - pre-commit id 唯一性
       - hook id 重复检测
+      - id_uniqueness_check
+      - 重复id检测
+      - duplicate_id_detector
     description: >-
       .pre-commit-config.yaml 内 hook id 唯一性检测门禁（GATE-ID-UNIQ）。同一 repo 块
       内重复 id 会导致后者覆盖前者（历史教训：commit a09e510ec 中两个 SSoT 门禁同用
@@ -398,8 +401,10 @@ capabilities:
       为 gate-ssot-docs，但缺自动化门禁，未来 AI 可能再造一对重复 id）。本门禁治本：
       扫描所有 repos[].hooks[].id，same-repo 重复 → hard block (exit 1)；cross-repo 重复
       → warn（pre-commit 允许跨 repo 同 id，但本项目视为覆盖风险，提示人工裁定）。
-      canonical 在 scripts/ 下（非 src/zephyr/），basename check_precommit_id_uniqueness
+      canonical 在 scripts/下（非 src/zephyr/），basename check_precommit_id_uniqueness
       不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明。
+      扩展提示：如需检测其他 YAML 文件的 id/key 唯一性，扩展本脚本（加 --target 参数），
+      勿新建 checker（向内收原则1：能用现成的不创造）。
 
   # --------------------------------------------------------------------------
   - capability_id: working_docs_ghost_ref_archiver

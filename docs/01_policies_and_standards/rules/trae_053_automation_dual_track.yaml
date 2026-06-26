@@ -63,7 +63,8 @@ sections:
     - 向 circadian_scheduler.register_task 注册任何任务(系统已废止)
     - 实现事件轨但不注册到hook_registry(触发条件满足了但钩子不响)
 references:
-  rule_ids: []
+  rule_ids:
+  - TRAE-060
   scripts:
   - scripts/ide_health_service.py
   modules:

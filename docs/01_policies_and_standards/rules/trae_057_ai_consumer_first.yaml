@@ -226,6 +226,7 @@ sections:
 
 references:
   rule_ids:
+  - TRAE-060
   - TRAE-030
   - TRAE-042
   - TRAE-043

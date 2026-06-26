@@ -1,9 +1,24 @@
 rule_id: TRAE-039
 title: AI治理-幻觉检测与自检
-version: 1.2.2
+version: 1.2.3
 layer: compliance
 module_id: TRAE-039
-depends_on: []
+depends_on:
+  - target: TRAE-006
+    at: anti_hallucination_structure
+    why: "结构追溯层——本规则自检项1/2/5/6/10的原理来源"
+  - target: TRAE-007
+    at: anti_hallucination_behavior
+    why: "行为层——本规则HC-3/HC-8跨层/分层依赖检测的原理来源"
+  - target: TRAE-008
+    at: anti_hallucination_output
+    why: "输出层——本规则自检项3/4接口/依赖验证的原理来源"
+  - target: TRAE-009
+    at: anti_hallucination_safety
+    why: "安全层——本规则HC-4 frozen契约/HC-10 PIT铁律的原理来源"
+  - target: TRAE-060
+    at: first_principles_review
+    why: "向内收三原则——本规则受其统辖,检测项是006-009原则的操作展开"
 tags:
 - TRAE
 - ai_hallucination
@@ -169,7 +184,11 @@ sections:
       details: RQ全量审查修复——kebab-case文件名引用改为snake_case+完整路径(metadata_registry.yaml→frontmatter_field_registry.yaml、document-metadata-index-registry.yaml→document_metadata_index_registry.yaml、model-capability-contract.yaml→model_capability_contract.yaml)，落地§2.2命名裁定(RQ-05)。
 references:
   rule_ids:
-  - TRAE-039
+  - TRAE-006
+  - TRAE-007
+  - TRAE-008
+  - TRAE-009
+  - TRAE-060
   scripts:
   - scripts/arch_guard/run_all.py
   modules:
@@ -188,6 +207,12 @@ metadata:
   modification_permission: human_gated
   superseded_by:
   change_history:
+  - version: 1.2.3
+    date: '2026-06-26'
+    by: session-20260626-inward-consolidation
+    changes:
+    - P1修复——depends_on从空[]补全为TRAE-006/007/008/009/060(本规则是006-009防幻觉四层的检测/操作展开,此前未声明依赖=新AI不可发现关系)
+    - P1修复——references.rule_ids从仅[TRAE-039](自引用)补全为[006/007/008/009/060],对齐trae_060 §4新AI可发现性
   - version: 1.2.2
     date: '2026-06-21'
     by: session-20260621-fix4

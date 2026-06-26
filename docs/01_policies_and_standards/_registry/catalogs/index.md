@@ -26,7 +26,7 @@ ttl: permanent
 > 优于按"谁创建了它"分类（对标 Linux FHS——同性质文件放同一目录）。
 > 详见 PS-REG-005 registry-master-index.yaml §1。
 
-## 文件清单（本目录 **28** 个文件：**27** 份登记/契约类工件 + **本 index.md**）
+## 文件清单（本目录 **27** 个文件：**26** 份登记/契约类工件 + **本 index.md**）
 
 | 文件 | 类型 | 说明 | 维护方式 |
 |------|:---:|------|:---:|
@@ -40,7 +40,6 @@ ttl: permanent
 | `task_card_meta_registry.yaml` | 注册表 | 三套任务卡系统元层管理 | manual |
 | `infrastructure_registry.yaml` | 登记表 | 运行时基础设施组件（以 `total_registered` 为准） | manual |
 | `cross_module_dependency_registry.yaml` | 登记表 | 跨模块依赖——含正反向双图 | semi_auto |
-| `script_health_registry.yaml` | 登记表 | 治理脚本维度/超时/健康评分 | semi_auto |
 | `ai_risk_register.yaml` | 登记表 | AI操作特有风险——含热力矩阵 | manual |
 | `knowledge_article_registry.yaml` | 登记表 | KMS知识条目索引 | semi_auto |
 | `ai_session_registry.yaml` | 登记表 | AI Session摘要记录 | semi_auto |
