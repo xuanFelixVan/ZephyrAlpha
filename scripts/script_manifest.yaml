@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 577
+total_scripts: 580
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -54,6 +54,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_d1_capacity_check.py
+  path: _tmp_d1_capacity_check.py
+  description: import sqlite3
+  domain: _tmp_d1_capacity_check.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_d1_extract.py
   path: _tmp_d1_extract.py
   description: 决策树（Plan §七 阶段 D D1）：
@@ -74,6 +82,14 @@ scripts:
   path: _tmp_diff_head_wt.py
   description: import sqlite3
   domain: _tmp_diff_head_wt.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_meta_review.py
+  path: _tmp_meta_review.py
+  description: import sqlite3
+  domain: _tmp_meta_review.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -2057,6 +2073,14 @@ scripts:
 - name: governance/d3_metadata/generate_derived_files.py
   path: governance/d3_metadata/generate_derived_files.py
   description: generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d3_metadata/migrate_illegal_doctype.py
+  path: governance/d3_metadata/migrate_illegal_doctype.py
+  description: 扫描全项目（docs/ + src/ + scripts/ + config/ + architecture_model/），
   domain: governance
   execution_plane: warm-path
   status: registered
