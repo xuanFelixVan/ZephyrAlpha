@@ -59,6 +59,7 @@ __all__ = [
     "CommitStatus",
     "GatewayError",
     "GitCommitGateway",
+    "ReconcileResult",
     "StashConflictWarning",
 ]
 
@@ -66,6 +67,7 @@ import json
 import logging
 import os
 import subprocess
+import sys
 import tempfile
 import time
 from dataclasses import dataclass
@@ -116,6 +118,21 @@ class StashConflictWarning(RuntimeWarning):
 
 
 @dataclass
+class ReconcileResult:
+    """post-commit 真源对账结果（P0-DRC）。
+
+    action 含义：
+    - skip: 本次 commit 未涉及 scripts/*.py，跳过对账
+    - clean: manifest 重生成后无变更，真源一致
+    - auto_committed: 检测到 manifest 漂移并自动提交修复
+    - warn: 检测到漂移但自动修复失败（仅告警，不阻断）
+    """
+
+    action: str  # "skip" | "clean" | "auto_committed" | "warn"
+    detail: str = ""
+
+
+@dataclass
 class CommitResult:
     """commit 结果。"""
 
@@ -124,6 +141,7 @@ class CommitResult:
     commit_hash: str = ""
     stash_ref: str = ""  # stash pop 失败时保留的 stash 引用
     stash_kept: bool = False  # 是否保留了 stash（pop 失败）
+    reconcile: ReconcileResult | None = None  # post-commit 真源对账结果（P0-DRC）
 
 
 class _GlobalCommitLock:
@@ -513,6 +531,25 @@ class GitCommitGateway:
                             stash_ref=stash_ref,
                             stash_kept=True,
                         )
+            # Post-commit 真源对账（P0-DRC）：stash pop 后、释放锁前
+            # 斩断 --no-verify 导致的 drift 循环：commit 涉及 scripts/*.py 时
+            # 自动重生成 manifest + 检测僵尸引用 + 自动提交修复
+            if result.status == CommitStatus.OK:
+                try:
+                    reconcile_result = self._post_commit_reconcile(files, session_id)
+                    result.reconcile = reconcile_result
+                    if reconcile_result.action == "auto_committed":
+                        logger.info(
+                            "GitCommitGateway: post-commit reconcile auto-committed manifest "
+                            "(session=%s): %s", session_id, reconcile_result.detail
+                        )
+                    elif reconcile_result.action == "warn":
+                        logger.warning(
+                            "GitCommitGateway: post-commit reconcile warning "
+                            "(session=%s): %s", session_id, reconcile_result.detail
+                        )
+                except Exception as e:
+                    logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
             # 清理 pathspec 临时文件
             if pathspec_file:
                 try:
@@ -616,6 +653,89 @@ class GitCommitGateway:
             logger.warning("GitCommitGateway: git stash pop 异常: %s", stderr)
             return False
         return True
+
+    def _post_commit_reconcile(
+        self, committed_files: list[str], session_id: str
+    ) -> ReconcileResult:
+        """Post-stash-pop 真源对账（P0-DRC）。
+
+        在 stash pop 之后、释放全局锁之前执行：
+        1. 若 committed_files 含 scripts/ 下的 .py → 重生成 script_manifest.yaml
+        2. 若 manifest 变更 → 自动提交（GW 标记，--no-verify fast-path）
+
+        设计理由：gateway 的 --no-verify 绕过了 pre-commit 漂移检测 GATE
+        （GATE-19 manifest 漂移等），导致删除 scripts/ 下文件后 manifest
+        仍含僵尸引用。本方法在 commit 完成后立即对账，斩断 drift 循环。
+
+        非阻断：commit 已入 git 历史，阻断无意义。改为 warning + auto-fix。
+
+        Args:
+            committed_files: 本次 commit 的文件绝对路径列表。
+            session_id: session 标识（用于 auto-commit message 标记）。
+
+        Returns:
+            ReconcileResult: action ∈ skip|clean|auto_committed|warn。
+        """
+        # 1. 检测是否有 scripts/ 下的 .py 文件被 commit
+        scripts_touched = False
+        for f in committed_files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if rel.startswith("scripts/") and rel.endswith(".py"):
+                scripts_touched = True
+                break
+
+        if not scripts_touched:
+            return ReconcileResult(action="skip", detail="no scripts/*.py committed")
+
+        # 2. 重生成 manifest（SSoT disk-scan，generate_manifest.py os.walk scripts/）
+        gen_result = subprocess.run(
+            [sys.executable, "scripts/generate_manifest.py"],
+            cwd=str(self.project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"manifest regeneration failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 3. 检测 manifest 是否变更（工作区 vs index）
+        diff_result = self._run_git(
+            ["git", "diff", "--name-only", "--", "scripts/script_manifest.yaml"]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="manifest up to date")
+
+        # 4. manifest 变更 → 自动提交修复（斩断 zombie 引用循环）
+        add_result = self._run_git(["git", "add", "scripts/script_manifest.yaml"])
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git add manifest failed: {add_result.stderr.strip()[:200]}",
+            )
+
+        auto_msg = (
+            f"chore(manifest): auto-reconcile by GitCommitGateway post-commit "
+            f"[GW:{session_id}:auto]"
+        )
+        commit_result = self._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg,
+             "--", "scripts/script_manifest.yaml"]
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail="manifest drift detected and auto-reconciled",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"manifest drift detected, auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
 
     def _commit_with_file_message(
         self,

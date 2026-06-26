@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 572
+total_scripts: 561
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -681,94 +681,6 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_commit_2652_phys.py
-  path: governance/_tmp_commit_2652_phys.py
-  description: 一次性脚本，用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_commit_remaining.py
-  path: governance/_tmp_commit_remaining.py
-  description: 一次性脚本，用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_complete_2651.py
-  path: governance/_tmp_complete_2651.py
-  description: 一次性脚本，用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_create_2653.py
-  path: governance/_tmp_create_2653.py
-  description: 一次性建卡脚本，task_id 占用后不可复用 → 用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_exec_2651.py
-  path: governance/_tmp_exec_2651.py
-  description: 一次性施工脚本，用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_exec_2653.py
-  path: governance/_tmp_exec_2653.py
-  description: 一次性施工脚本，用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_query_2649_template.py
-  path: governance/_tmp_query_2649_template.py
-  description: import sys
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_review_2651.py
-  path: governance/_tmp_review_2651.py
-  description: 一次性脚本，用完即删。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_schema.py
-  path: governance/_tmp_schema.py
-  description: import sys, sqlite3
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_show_2652.py
-  path: governance/_tmp_show_2652.py
-  description: import sys, json, re
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_show_cards_detail.py
-  path: governance/_tmp_show_cards_detail.py
-  description: 一次性查询，用完即删。
   domain: governance
   execution_plane: warm-path
   status: registered
