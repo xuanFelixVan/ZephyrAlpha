@@ -12,9 +12,10 @@
 
 """F1 CircadianScheduler 红蓝演练回调测试
 
-验证 CircadianScheduler 内置的每日 6:00 红蓝演练任务回调完整链路:
-  ① 回调注册: _register_default_tasks() 注册 red_blue_daily_drill (hour=6, layer=L1)
-  ② 回调触发: _red_blue_daily_drill() 调用 GameDayRunner.run_game_day(DAILY)
+NOTE: 定时调度已废除（2026-06-26 裁定），_register_default_tasks 是 no-op，
+不再将 red_blue_daily_drill 注册到 _tasks。以下测试中：
+  ① 回调注册: 验证 _register_default_tasks 是 no-op（不添加任务、不抛异常）
+  ② 回调触发: _red_blue_daily_drill() 仍可直接调用，调用 GameDayRunner.run_game_day(DAILY)
   ③ 审计日志: bypasses>0 记录 WARNING, bypasses=0 记录 INFO
   ④ 异常静默: GameDayRunner 异常不抛出, logger.debug 记录
 
@@ -37,53 +38,36 @@ from zephyr.trading.circadian_scheduler import CircadianScheduler
 
 
 class TestRedBlueDrillRegistration:
-    """验证 red_blue_daily_drill 回调被正确注册。"""
+    """验证 _register_default_tasks 是 no-op（定时调度已废除，不再注册任务）。"""
 
-    def test_red_blue_drill_registered_in_default_tasks(self) -> None:
-        """验证 start() 后 red_blue_daily_drill 被注册到 _tasks。"""
+    def test_register_default_tasks_is_noop(self) -> None:
+        """_register_default_tasks 是 no-op，不添加任何任务到 _tasks。"""
         scheduler = CircadianScheduler()
-        # start() 调用 _register_default_tasks()
         scheduler._register_default_tasks()
+        # no-op: _tasks 保持为空
+        assert scheduler._tasks == []
 
+    def test_register_default_tasks_no_red_blue_drill(self) -> None:
+        """_register_default_tasks 不再注册 red_blue_daily_drill。"""
+        scheduler = CircadianScheduler()
+        scheduler._register_default_tasks()
         task_names = [t.name for t in scheduler._tasks]
-        assert "red_blue_daily_drill" in task_names
+        assert "red_blue_daily_drill" not in task_names
 
-    def test_red_blue_drill_registered_at_hour_6(self) -> None:
-        """验证 red_blue_daily_drill 注册在 hour=6。"""
+    def test_register_default_tasks_does_not_raise(self) -> None:
+        """_register_default_tasks 多次调用不抛异常。"""
         scheduler = CircadianScheduler()
+        # 多次调用均不抛异常
         scheduler._register_default_tasks()
+        scheduler._register_default_tasks()
+        scheduler._register_default_tasks()
+        assert scheduler._tasks == []
 
-        drill_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        assert len(drill_tasks) == 1
-        assert drill_tasks[0].hour == 6
-
-    def test_red_blue_drill_layer_l1(self) -> None:
-        """验证 red_blue_daily_drill layer=L1。"""
+    def test_red_blue_daily_drill_method_still_exists(self) -> None:
+        """_red_blue_daily_drill 方法仍存在（可被事件驱动直接调用）。"""
         scheduler = CircadianScheduler()
-        scheduler._register_default_tasks()
-
-        drill_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        assert drill_tasks[0].layer == "L1"
-
-    def test_red_blue_drill_callback_is_bound_method(self) -> None:
-        """验证 red_blue_daily_drill 的 callback 是 _red_blue_daily_drill 方法。"""
-        scheduler = CircadianScheduler()
-        scheduler._register_default_tasks()
-
-        drill_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        callback = drill_tasks[0].callback
-        assert callback is not None
-        # callback 应该是 scheduler._red_blue_daily_drill 的绑定方法
-        assert callable(callback)
-
-    def test_default_tasks_not_duplicated_after_double_register(self) -> None:
-        """验证重复调用 _register_default_tasks 不重复注册。"""
-        scheduler = CircadianScheduler()
-        scheduler._register_default_tasks()
-        scheduler._register_default_tasks()  # 第二次调用
-
-        drill_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        assert len(drill_tasks) == 1
+        # 方法仍然可调用（虽然不再通过定时调度触发）
+        assert callable(getattr(scheduler, "_red_blue_daily_drill", None))
 
 
 # ---------------------------------------------------------------------------
@@ -382,13 +366,13 @@ class TestRedBlueDrillIntegration:
         return GameDayResult(total_attacks=total_attacks, bypasses=bypasses, passed=total_attacks - bypasses, report=report)
 
     def test_drill_via_registered_callback(self) -> None:
-        """验证通过 register_task 注册的 callback 可被调用并触发 GameDayRunner。"""
+        """register_task 是 no-op，不再通过 _tasks 取回调；验证直接调用 _red_blue_daily_drill 仍可触发 GameDayRunner。"""
         scheduler = CircadianScheduler()
+        # _register_default_tasks 是 no-op，不添加任务到 _tasks
         scheduler._register_default_tasks()
+        assert scheduler._tasks == []
 
-        drill_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        callback = drill_tasks[0].callback
-
+        # 直接调用 _red_blue_daily_drill 方法（事件驱动模式下由事件触发）
         mock_runner = MagicMock()
         mock_runner.run_game_day.return_value = self._make_result()
 
@@ -396,8 +380,7 @@ class TestRedBlueDrillIntegration:
             "zephyr.security.adversarial_validation.game_day_runner.GameDayRunner",
             return_value=mock_runner,
         ):
-            # 通过注册的 callback 调用
-            callback()
+            scheduler._red_blue_daily_drill()
 
         mock_runner.run_game_day.assert_called_once()
 

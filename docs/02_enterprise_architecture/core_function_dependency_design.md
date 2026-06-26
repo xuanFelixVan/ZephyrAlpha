@@ -1,7 +1,7 @@
 ---
 module_id: ARCH-FUNC-DEP-001
 title: 核心功能(F1-F37)依赖与调度设计
-doc_type: architecture_design
+doc_type: design
 status: draft
 version: 0.4.2
 layer: cross_layer
@@ -113,6 +113,8 @@ L6 应急层     │ F5 升级/A2A  F9 回滚系统  F10 模型考试
 | F22 | 事件总线+配置中心+契约总线+缓存+限流+锁+幂等性                | 不执行业务逻辑，只提供横切基础设施 |
 | F25 | SQLite核心运营+DuckDB市场数据+PostgreSQL容量升级      | 不管理业务数据，只管理数据库连接  |
 | F26 | boot\_hooks启动钩子+boot\_cron\_jobs定时任务+跨层协同 | 不执行业务，只编排启动顺序     |
+
+> **⚠️ 架构裁定（2026-06-26）**：boot_cron_jobs.py 中的定时任务注册（circadian_scheduler.register_task）已废除为 no-op，定时轨改为事件驱动+CI兜底。F26 的 boot_hooks 启动钩子仍保留。
 
 ### L1 守护层
 
@@ -317,7 +319,7 @@ L6 应急层     │ F5 升级/A2A  F9 回滚系统  F10 模型考试
 | F22 |  L0 | boot          | 系统启动时加载事件总线/配置/契约                                          | 常驻，会话结束持久化        |
 | F25 |  L0 | boot          | 系统启动时初始化三库连接                                               | 常驻，连接池管理          |
 | F26 |  L0 | boot          | boot\_hooks启动钩子按序拉起                                        | 所有钩子完成后结束         |
-| F21 |  L1 | boot          | 冷启动STEP 0强制启动，30s扫描循环                                      | 守护进程常驻            |
+| F21 |  L1 | boot          | 冷启动STEP 0强制启动，30s扫描循环                                      | 守护进程常驻（注：F21为HealthMonitor守护进程，非已废除的CircadianScheduler定时轨）            |
 |  F1 |  L2 | boot          | start\_brain.py拉起，AutoPilot claim\_next循环（混合模式：队列轮询+声明式调和） | 无READY任务时待机       |
 | F23 |  L2 | boot          | Agent编排器随AutoPilot启动                                       | DAG完成时结束本轮        |
 |  F2 |  L3 | event\_driven | 每次关键操作前自动触发门禁检查                                            | 校验完即返回结果          |
@@ -730,7 +732,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 |:---:|------|
 | F22 | `src/zephyr/shared/events/event_bus.py`（主入口）<br>`src/zephyr/shared/shared_services/`（目录：配置中心+契约总线+缓存+限流+锁+幂等性，35+文件） |
 | F25 | `src/zephyr/infrastructure/db/`（目录：SQLite核心运营+DuckDB市场数据+PostgreSQL容量升级，14文件） |
-| F26 | `src/zephyr/trading/boot_hooks.py`（启动钩子）<br>`src/zephyr/trading/boot_cron_jobs.py`（定时任务）<br>`src/zephyr/trading/lifecycle_manager.py`（跨层协同）<br>⚠️ **路径漂移**：蓝图声明`src/zephyr/governance/lifecycle_manager/`，实际在`src/zephyr/trading/` |
+| F26 | `src/zephyr/trading/boot_hooks.py`（启动钩子）<br>`src/zephyr/trading/boot_cron_jobs.py`（定时任务，**注：circadian_scheduler.register_task 已废除为 no-op，2026-06-26裁定**）<br>`src/zephyr/trading/lifecycle_manager.py`（跨层协同）<br>⚠️ **路径漂移**：蓝图声明`src/zephyr/governance/lifecycle_manager/`，实际在`src/zephyr/trading/` |
 
 **L1 守护层**
 

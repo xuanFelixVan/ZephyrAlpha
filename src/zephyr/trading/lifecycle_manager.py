@@ -112,89 +112,10 @@ class LifecycleManager:
         return report
 
     def _register_audit_tasks(self, circadian_scheduler: CircadianScheduler) -> None:
-        from zephyr.governance.audit_trail.log_rotation import LogRotationManager
-        from zephyr.governance.audit_trail.retention import RetentionEnforcer
-        from zephyr.governance.audit_trail.tiered_storage import TieredStorageManager
-        from zephyr.governance.merkle_hourly import HourlyMerkleAggregator
-
-        merkle = HourlyMerkleAggregator()
-        circadian_scheduler.register_task(hour=0, name="merkle_hourly_aggregate", layer="L1", callback=merkle.aggregate)
-
-        log_rot = LogRotationManager()
-        circadian_scheduler.register_task(hour=1, name="audit_log_rotation", layer="L1", callback=log_rot.rotate)
-
-        retention = RetentionEnforcer()
-        circadian_scheduler.register_task(
-            hour=2, name="audit_retention_dry_run", layer="L1", callback=lambda: retention.enforce(dry_run=True)
-        )
-
-        tiered = TieredStorageManager()
-        circadian_scheduler.register_task(
-            hour=3, name="audit_tiered_storage_migrate", layer="L1", callback=lambda: tiered.migrate(dry_run=False)
-        )
-
-        def _finding_lifecycle_cleanup() -> None:
-            import importlib as _importlib
-
-            _FindingLifecycleManager = _importlib.import_module(
-                "scripts.governance._finding_lifecycle"
-            ).FindingLifecycleManager
-            _FindingLifecycleManager().run_cleanup(dry_run=False)
-
-        circadian_scheduler.register_task(
-            hour=4, name="finding_lifecycle_cleanup", layer="L1", callback=_finding_lifecycle_cleanup
-        )
-
-        def _gate_cache_daily_invalidate() -> None:
-            import importlib as _importlib
-
-            _GateCache = _importlib.import_module("scripts.governance.observability.gate_cache").GateCache
-            _GateCache().invalidate_all("*")
-
-        circadian_scheduler.register_task(
-            hour=0, name="gate_cache_daily_invalidate", layer="L1", callback=_gate_cache_daily_invalidate
-        )
-
-        def _audit_trail_integrity_verify() -> None:
-            from zephyr.governance.integrity import IntegrityVerifier
-
-            verifier = IntegrityVerifier()
-            report = verifier.verify()
-            corrupted = getattr(report, "corrupted_count", 0) or getattr(report, "failed", 0)
-            if corrupted > 0:
-                logger.warning("Audit trail integrity verify: %d corrupted entries detected", corrupted)
-            else:
-                logger.info("Audit trail integrity verify: chain intact")
-
-        circadian_scheduler.register_task(
-            hour=5, name="audit_trail_integrity_verify", layer="L1", callback=_audit_trail_integrity_verify
-        )
-
-        def _auto_fix_engine_scan_and_fix() -> None:
-            from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine
-
-            engine = AutoFixEngine()
-            fixers = getattr(engine, "_fixers", {}) or getattr(engine, "fixers", {}) or {}
-            if not fixers:
-                fix_types = ["scaffold_registrar", "import_fixer", "alignment_syncer"]
-            else:
-                fix_types = list(fixers.keys())
-            fixed = 0
-            for ft in fix_types:
-                try:
-                    action = engine.fix(ft, "src/zephyr/", dry_run=False)
-                    if getattr(action, "status", None) and getattr(action.status, "value", None) == "COMPLETED":
-                        fixed += 1
-                except Exception:
-                    pass
-            if fixed > 0:
-                logger.info("Auto-fix engine scan+fix: %d/%d fixes applied", fixed, len(fix_types))
-            else:
-                logger.info("Auto-fix engine scan+fix: no fixes needed (%d fixers checked)", len(fix_types))
-
-        circadian_scheduler.register_task(
-            hour=6, name="auto_fix_engine_scan_and_fix", layer="L1", callback=_auto_fix_engine_scan_and_fix
-        )
+        """已废弃：定时审计任务注册已废除。保留签名兼容调用链，方法体为 no-op。"""
+        # 定时调度已废除（2026-06-26裁定），审计任务改由
+        # pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）触发。
+        pass
 
     def _register_audit_event_hooks(self, circadian_scheduler: CircadianScheduler) -> None:
         def _on_file_change_audit() -> None:

@@ -484,25 +484,23 @@ class TestCircadianSchedulerAnomaly:
         scheduler.trigger_event("nonexistent-event")
 
     def test_register_default_tasks_idempotent(self) -> None:
-        """验证 _register_default_tasks 幂等——多次调用不重复注册。"""
+        """验证 _register_default_tasks 多次调用不抛异常（定时调度已废除，该方法为 no-op）。"""
         scheduler = CircadianScheduler()
+        # no-op: 多次调用均不抛异常
         scheduler._register_default_tasks()
-        count_after_first = len(scheduler._tasks)
         scheduler._register_default_tasks()
-        count_after_second = len(scheduler._tasks)
-        assert count_after_first == count_after_second
-        # 默认注册 13 个任务
-        assert count_after_first == 13
+        # no-op: _tasks 始终为空
+        assert scheduler._tasks == []
 
     def test_red_blue_daily_drill_callback_registered(self) -> None:
-        """验证红蓝演练回调被注册到默认任务。"""
+        """验证 _register_default_tasks 是 no-op（不再注册 red_blue_daily_drill 到 _tasks）。"""
         scheduler = CircadianScheduler()
         scheduler._register_default_tasks()
+        # no-op: 不再注册任何任务
         rb_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        assert len(rb_tasks) == 1
-        assert rb_tasks[0].hour == 6
-        assert rb_tasks[0].layer == "L1"
-        assert rb_tasks[0].callback is not None
+        assert len(rb_tasks) == 0
+        # _red_blue_daily_drill 方法仍存在（事件驱动可直接调用）
+        assert callable(getattr(scheduler, "_red_blue_daily_drill", None))
 
     def test_red_blue_daily_drill_silent_on_failure(self) -> None:
         """验证 _red_blue_daily_drill 在 GameDayRunner 异常时静默失败。"""

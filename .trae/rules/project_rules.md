@@ -937,6 +937,10 @@ AIR-002: 任何系统生成根目录文件必须配套 TTL/上限/轮转策略�
 ## RULE-FIFTEEN：自动化双轨判定
 **YAML真源**: → 参见 rules/trae_053_automation_dual_track.yaml
 
+> **⚠️ 架构裁定（2026-06-26）**：定时轨（🕐 CircadianScheduler）已废除，改为事件驱动 + CI 批量兜底。
+> 以下分类表/施工步骤中关于"定时轨"的描述仅作历史参考，新建自动化系统禁止使用定时轨。
+> 原"定时轨"任务应迁移至事件驱动（boot_hooks）或 CI schedule（.github/workflows）。
+
 **核心**：任何新建/改造自动化系统，MUST 通过两轨分类 + 实现验证。单轨实现 = 未完成。
 
 ### 两轨分类表
@@ -958,19 +962,24 @@ STEP 1: 判定归属 → 对照分类表确定 🕐 / ⚡ / 🕐+⚡
 STEP 2: 实现
   ├─ 🕐 定时 → 在 boot_cron_jobs.py 中注册（circadian_scheduler.register_task）
   │             守护进程已挂载 circadian_scheduler，无需额外启动
+  │             【已废除 2026-06-26】定时轨已废除，register_task 为 no-op，禁止新建定时轨
   ├─ ⚡ 事件 → 在 boot_hooks.py 中注册 hook_registry.register 或 event_bus.subscribe
   │             守护进程已加载 boot_hooks，无需额外启动
-  └─ 🕐+⚡ 双轨 → 两条都要
+  └─ 🕐+⚡ 双轨 → 两条都要【注：定时轨已废除，原双轨任务改为事件轨+CI兜底】
 STEP 3: 验证 → python scripts/ide_health_service.py --status
   ├─ circadian.running=true + tasks_registered 正确计数 → 🕐 通过
+  │             【已废除 2026-06-26】circadian.running/tasks_registered 不再适用
   └─ 触发事件后 check 对应 hooks 执行 → ⚡ 通过
 ```
 
 ### 守护进程承载
 
+> **⚠️ 定时轨已废除（2026-06-26裁定）**：`CircadianScheduler` 的 register_task/start/stop/save_state 均为 no-op。
+> 下表中"定时轨"行仅作历史参考，定时任务应迁移至事件驱动或 CI schedule。
+
 | 轨 | 载体 | 位置 |
 |---|------|------|
-| 🕐 定时 | `CircadianScheduler`（守护进程中，每小时整点执行） | [ide_health_service.py](file:///d:/ZephyrAlpha/scripts/ide_health_service.py) |
+| 🕐 定时 | `CircadianScheduler`（守护进程中，每小时整点执行）**【已废除，no-op】** | [ide_health_service.py](file:///d:/ZephyrAlpha/scripts/ide_health_service.py) |
 | ⚡ 事件 | `HookRegistry`（TransitionEvent 触发）+ `EventBusBackpressure`（topic 触发） | [boot_hooks.py](file:///d:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py) |
 
 ### 绝对禁止
@@ -981,7 +990,7 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 | ❌ | 全项目重扫描挂在事件驱动上 | 每次文件变更扫全项目＝拖死 |
 | ❌ | 实时校验只靠定时（等到凌晨才跑） | 反馈延迟十几小时 |
 | ❌ | 关键校验只有一轨无兜底 | 事件丢了没补偿＝漏报 |
-| ❌ | 实现定时轨但不注册到 circadian_scheduler | 代码写好了但没人跑 |
+| ❌ | 实现定时轨但不注册到 circadian_scheduler | 代码写好了但没人跑（定时轨已废除，禁止新建定时轨本身） |
 | ❌ | 实现事件轨但不注册到 hook_registry | 触发条件满足了但钩子不响 |
 
 ---
@@ -1354,7 +1363,7 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 | 修改 project_rules.md | `python scripts/governance/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
 | 任何文件变更后 | `python scripts/governance/run_all.py --depth quick` | 有发现 → 先修再关 |
 | 修改蓝图§5.5自动化触发机制 / 修改代码实现 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint <蓝图路径>` | §5.5状态列与代码不一致 → 禁止关闭任务 |
-| **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨 | 单轨实现或未注册 → 禁止关闭任务 |
+| **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨（注：定时轨已废除 2026-06-26，新建系统仅用事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
 | **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN | 直接 Read 157MB → OOM 崩溃 |
 | **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db）。仅 depgraph.db 为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |

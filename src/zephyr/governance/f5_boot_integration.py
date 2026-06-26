@@ -192,39 +192,9 @@ class F5BootIntegration:
         )
 
     def register_with_circadian(self, scheduler: Any) -> None:
-        """注册 F5 定时巡检任务到 CircadianScheduler (幂等)。
-
-        注册两个任务:
-        - f5_deadlock_scan (hour=8): 死锁检测 + 超时锁破解
-        - f5_escalation_queue_scan (hour=9): 升级队列巡检 + 过期委托清理
-        """
-        if self._circadian_registered:
-            logger.info("F5: CircadianScheduler tasks already registered, skip")
-            return
-        try:
-            existing_names = {getattr(t, "name", "") for t in getattr(scheduler, "_tasks", [])}
-            if self.CIRCADIAN_TASK_DEADLOCK not in existing_names:
-                scheduler.register_task(
-                    hour=8,
-                    name=self.CIRCADIAN_TASK_DEADLOCK,
-                    layer="L1",
-                    callback=self.run_periodic_checks,
-                )
-            if self.CIRCADIAN_TASK_ESCALATION not in existing_names:
-                scheduler.register_task(
-                    hour=9,
-                    name=self.CIRCADIAN_TASK_ESCALATION,
-                    layer="L1",
-                    callback=self.run_periodic_checks,
-                )
-            self._circadian_registered = True
-            logger.info(
-                "F5: CircadianScheduler tasks registered: %s / %s",
-                self.CIRCADIAN_TASK_DEADLOCK,
-                self.CIRCADIAN_TASK_ESCALATION,
-            )
-        except Exception as e:
-            logger.warning("F5: Failed to register CircadianScheduler tasks: %s", e)
+        """已废弃：定时任务注册已废除。保留签名兼容调用链，方法体为 no-op。"""
+        # 定时调度已废除（2026-06-26裁定），F5 死锁/升级检查改由事件驱动触发。
+        self._circadian_registered = True  # 标记已注册，避免重复调用
 
     def run_periodic_checks(self) -> dict:
         """FLE _periodic_checks() 集成入口 — 巡检死锁/超时锁/升级队列/过期委托。

@@ -9,6 +9,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tests never raise; all assertions within pytest
 # [TESTS] this file
+#
+# NOTE: 定时调度已废除（2026-06-26 裁定），register_task/start/stop/save_state 均为 no-op。
+# 以下测试验证 no-op 行为而非定时触发行为。事件驱动机制（register_event_listener/
+# trigger_event）仍保留，相关测试继续验证其功能。
 
 from __future__ import annotations
 
@@ -55,26 +59,30 @@ class TestCircadianSchedulerInit:
 
 
 class TestRegisterTask:
-    def test_register_single_task(self) -> None:
-        scheduler = CircadianScheduler()
-        scheduler.register_task(hour=8, name="morning_scan", layer="L1")
-        assert len(scheduler._tasks) == 1
-        assert scheduler._tasks[0].hour == 8
-        assert scheduler._tasks[0].name == "morning_scan"
+    """register_task 已废除为 no-op，验证其不抛异常、不添加任务、不执行回调。"""
 
-    def test_register_multiple_tasks(self) -> None:
+    def test_register_single_task_is_noop(self) -> None:
+        scheduler = CircadianScheduler()
+        # no-op: 不抛异常即可
+        scheduler.register_task(hour=8, name="morning_scan", layer="L1")
+        # 不添加任何任务到 _tasks
+        assert scheduler._tasks == []
+
+    def test_register_multiple_tasks_is_noop(self) -> None:
         scheduler = CircadianScheduler()
         scheduler.register_task(hour=8, name="task1", layer="L1")
         scheduler.register_task(hour=12, name="task2", layer="L2")
-        assert len(scheduler._tasks) == 2
+        # 多次调用仍不添加任务
+        assert scheduler._tasks == []
 
-    def test_register_task_with_callback(self) -> None:
+    def test_register_task_with_callback_is_noop(self) -> None:
         called = []
         scheduler = CircadianScheduler()
+        # 传入 callback 也不应执行
         scheduler.register_task(hour=9, name="cb_task", layer="L1", callback=lambda: called.append(1))
-        assert scheduler._tasks[0].callback is not None
-        scheduler._tasks[0].callback()
-        assert called == [1]
+        # no-op: 不添加任务、不执行回调
+        assert scheduler._tasks == []
+        assert called == []
 
 
 class TestEventListener:
@@ -120,62 +128,65 @@ class TestGetNextTask:
         scheduler = CircadianScheduler()
         assert scheduler.get_next_task() is None
 
-    def test_returns_upcoming_task(self) -> None:
+    def test_returns_none_after_register_task_noop(self) -> None:
+        """register_task 是 no-op，_tasks 始终为空，get_next_task 始终返回 None。"""
         scheduler = CircadianScheduler()
         current_hour = datetime.now().hour
         future_hour = (current_hour + 5) % 24
         scheduler.register_task(hour=future_hour, name="future", layer="L1")
-        result = scheduler.get_next_task()
-        if future_hour > current_hour:
-            assert result is not None
-            assert result.name == "future"
-        else:
-            assert result is None
+        # no-op: 未注册任何任务，无下一任务
+        assert scheduler.get_next_task() is None
 
-    def test_already_run_today_excluded(self) -> None:
+    def test_already_run_today_excluded_is_noop(self) -> None:
+        """register_task 是 no-op，无法注册任务，get_next_task 返回 None。"""
         scheduler = CircadianScheduler()
         today = datetime.now().strftime("%Y-%m-%d")
         current_hour = datetime.now().hour
         future_hour = current_hour + 5
         scheduler.register_task(hour=future_hour, name="done_task", layer="L1")
-        scheduler._tasks[0].last_run_date = today
-        result = scheduler.get_next_task()
-        assert result is None
+        # no-op: _tasks 为空，无法设置 last_run_date，get_next_task 返回 None
+        assert scheduler.get_next_task() is None
 
 
 class TestSaveState:
-    def test_save_state_no_path(self) -> None:
+    """save_state 已废除为 no-op，验证其不抛异常、不创建文件。"""
+
+    def test_save_state_no_path_is_noop(self) -> None:
         scheduler = CircadianScheduler()
         scheduler.register_task(hour=8, name="test", layer="L1")
+        # no-op: 不抛异常
         scheduler.save_state()
 
-    def test_save_state_creates_file(self, tmp_path: Path) -> None:
+    def test_save_state_does_not_create_file(self, tmp_path: Path) -> None:
+        """save_state 是 no-op，不创建状态文件。"""
         state_path = tmp_path / "state.json"
         scheduler = CircadianScheduler(state_path=state_path)
         scheduler.register_task(hour=8, name="test", layer="L1")
         scheduler.save_state()
-        assert state_path.exists()
-        data = json.loads(state_path.read_text(encoding="utf-8"))
-        assert len(data["tasks"]) == 1
-        assert data["tasks"][0]["name"] == "test"
+        # no-op: 文件不应被创建
+        assert not state_path.exists()
 
-    def test_save_state_empty_tasks(self, tmp_path: Path) -> None:
+    def test_save_state_empty_tasks_is_noop(self, tmp_path: Path) -> None:
+        """save_state 是 no-op，即使无任务也不创建文件。"""
         state_path = tmp_path / "state.json"
         scheduler = CircadianScheduler(state_path=state_path)
         scheduler.save_state()
-        data = json.loads(state_path.read_text(encoding="utf-8"))
-        assert data["tasks"] == []
+        # no-op: 文件不应被创建
+        assert not state_path.exists()
 
 
 class TestStartStop:
-    def test_start_sets_running(self) -> None:
-        scheduler = CircadianScheduler()
-        scheduler.start()
-        assert scheduler._running is True
-        scheduler.stop()
+    """start/stop 已废除为 no-op，验证其不抛异常、不改变 _running 状态。"""
 
-    def test_stop_sets_not_running(self) -> None:
+    def test_start_is_noop(self) -> None:
         scheduler = CircadianScheduler()
+        # no-op: start 不设置 _running
+        scheduler.start()
+        assert scheduler._running is False
+
+    def test_stop_is_noop(self) -> None:
+        scheduler = CircadianScheduler()
+        # no-op: start/stop 都不改变 _running
         scheduler.start()
         scheduler.stop()
         assert scheduler._running is False

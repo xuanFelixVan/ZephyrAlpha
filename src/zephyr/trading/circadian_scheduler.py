@@ -143,25 +143,11 @@ class CircadianScheduler:
         )
 
     def _register_default_tasks(self) -> None:
-        if any(t.name == "deep_drift_scan" for t in self._tasks):
-            return
-        self.register_task(hour=22, name="deep_drift_scan", layer="L2", callback=self._deep_drift_scan)
-        self.register_task(
-            hour=23, name="dream_cycle_kb_consolidate", layer="L2", callback=self._dream_cycle_kb_consolidate
-        )
-        self.register_task(hour=0, name="orphan_scan_and_fix", layer="L2", callback=self._orphan_scan_and_fix)
-        self.register_task(hour=1, name="llm_security_scan", layer="L2", callback=self._llm_security_scan)
-        self.register_task(hour=2, name="asset_inventory_refresh", layer="L2", callback=self._asset_inventory_refresh)
-        self.register_task(hour=2, name="d6_security_daily_scan", layer="L1", callback=self._d6_security_daily_scan)
-        self.register_task(hour=3, name="code_dedup_scan", layer="L2", callback=self._code_dedup_scan)
-        self.register_task(hour=3, name="d7_code_quality_scan", layer="L1", callback=self._d7_code_quality_scan)
-        self.register_task(hour=4, name="orphan_judge_deep", layer="L2", callback=self._orphan_judge_deep)
-        self.register_task(hour=4, name="d8_doc_sync_check", layer="L1", callback=self._d8_doc_sync_check)
-        self.register_task(hour=5, name="semantic_audit_scan", layer="L1", callback=self._semantic_audit_scan)
-        self.register_task(hour=6, name="red_blue_daily_drill", layer="L1", callback=self._red_blue_daily_drill)
-        self.register_task(
-            hour=7, name="audit_orchestrator_health_check", layer="L1", callback=self._audit_orchestrator_health_check
-        )
+        """已废弃：定时任务注册已废除。保留签名兼容调用链，方法体为 no-op。"""
+        # 定时调度已废除（2026-06-26裁定），所有审计任务改由
+        # pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）触发。
+        # 业务逻辑函数（_deep_drift_scan 等）保留在下方供未来事件驱动复用。
+        pass
 
     def _deep_drift_scan(self) -> None:
         try:

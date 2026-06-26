@@ -115,7 +115,7 @@ class TestCircadianSchedulerAutoRun:
         assert cs is not None
 
     def test_circadian_scheduler_register_task(self) -> None:
-        """CircadianScheduler 可注册任务。"""
+        """CircadianScheduler register_task 是 no-op（定时调度已废除，不添加任务、不执行回调）。"""
         from zephyr.trading.circadian_scheduler import CircadianScheduler
         cs = CircadianScheduler()
 
@@ -123,33 +123,18 @@ class TestCircadianSchedulerAutoRun:
         def _test_task():
             called.append(True)
 
+        # no-op: register_task 不抛异常，但不添加任务也不执行回调
         cs.register_task(hour=-1, name="test_task", layer="L1", callback=_test_task)
-        assert True
+        assert cs._tasks == []
+        assert called == []
 
-    def test_sla_hourly_report_registered(self) -> None:
-        """SLA 每小时报告已注册到 CircadianScheduler。"""
+    def test_sla_hourly_report_not_registered(self) -> None:
+        """定时调度已废除：sla_hourly_report 不再通过 CircadianScheduler 定时触发。"""
         from zephyr.trading import boot_cron_jobs
         import inspect
         src = inspect.getsource(boot_cron_jobs)
-        assert "sla_hourly_report" in src, "boot_cron_jobs 缺少 sla_hourly_report"
-        assert "_sla_hourly_report" in src, "boot_cron_jobs 缺少 _sla_hourly_report 函数"
-
-    def test_sla_hourly_report_callable(self) -> None:
-        """SLA 每小时报告函数可调用（不抛异常）。
-
-        注：_sla_hourly_report 是 boot_cron_jobs 内的嵌套函数，
-        通过源码检查 + CircadianScheduler 注册验证。
-        """
-        from zephyr.trading import boot_cron_jobs
-        import inspect
-        src = inspect.getsource(boot_cron_jobs)
-
-        # 验证函数定义存在
-        assert "def _sla_hourly_report" in src, "boot_cron_jobs 缺少 _sla_hourly_report 定义"
-
-        # 验证注册到 CircadianScheduler
-        assert "sla_hourly_report" in src, "boot_cron_jobs 缺少 sla_hourly_report 注册"
-        assert "hour=-1" in src or "hour = -1" in src, "sla_hourly_report 应注册为 hour=-1（每小时）"
+        # 定时调度已废除，不应有 sla_hourly_report 的 register_task 调用
+        assert "sla_hourly_report" not in src or "register_task" not in src
 
     def test_circadian_scheduler_start_stop(self) -> None:
         """CircadianScheduler 可启动和停止。"""
