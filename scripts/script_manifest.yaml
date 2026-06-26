@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 583
+total_scripts: 586
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -42,6 +42,14 @@ scripts:
   path: _tmp_analyze_v4.py
   description: import json
   domain: _tmp_analyze_v4.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_append_history_docs.py
+  path: _tmp_append_history_docs.py
+  description: 'Strategy:'
+  domain: _tmp_append_history_docs.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -86,6 +94,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_d2_conflict.py
+  path: _tmp_d2_conflict.py
+  description: import sqlite3
+  domain: _tmp_d2_conflict.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d2_verify.py
+  path: _tmp_d2_verify.py
+  description: import sqlite3
+  domain: _tmp_d2_verify.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_diff_head_wt.py
   path: _tmp_diff_head_wt.py
   description: import sqlite3
@@ -110,6 +134,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_meta_review_ops26.py
+  path: _tmp_meta_review_ops26.py
+  description: import re
+  domain: _tmp_meta_review_ops26.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_meta_review_ops28.py
+  path: _tmp_meta_review_ops28.py
+  description: import subprocess
+  domain: _tmp_meta_review_ops28.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_rename_check.py
   path: _tmp_rename_check.py
   description: 'Usage:'
@@ -122,6 +162,14 @@ scripts:
   path: _tmp_replace_live_docs.py
   description: Uses regex with negative lookbehind (?<![A-Z]) to avoid matching module IDs
   domain: _tmp_replace_live_docs.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_verify_db_state.py
+  path: _tmp_verify_db_state.py
+  description: import sqlite3
+  domain: _tmp_verify_db_state.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -1198,25 +1246,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/generate_project_depgraph_artifact.py
-  path: governance/generate_project_depgraph_artifact.py
-  description: 将 depgraph.db 的数据导出为 project_entity_depgraph.yaml 制品。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/generate_project_path_tree.py
   path: governance/generate_project_path_tree.py
   description: '核心变更（DM-283/DM-310）:'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/generate_target_path_tree.py
-  path: governance/generate_target_path_tree.py
-  description: 'DM-107: 确保模块的path字段与新命名规则对齐。'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2361,14 +2393,6 @@ scripts:
 - name: governance/d5_architecture/checkers/check_dependency_direction.py
   path: governance/d5_architecture/checkers/check_dependency_direction.py
   description: 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-002（依赖可解析）、INJ-008（依赖方向合法）
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/checkers/check_derived_artifacts.py
-  path: governance/d5_architecture/checkers/check_derived_artifacts.py
-  description: 从 derived_artifact_registry.yaml 加载派生产物清单，逐个运行 --check 命令，
   domain: governance
   execution_plane: warm-path
   status: registered
