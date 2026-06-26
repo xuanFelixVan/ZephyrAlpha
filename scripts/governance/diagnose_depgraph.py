@@ -295,7 +295,21 @@ def find_empty_blueprint_nodes(nodes):
     return empty
 
 
-def find_orphan_nodes(nodes, adjacency_forward, adjacency_reverse):
+def find_orphan_nodes(nodes, adjacency_forward, adjacency_reverse, project_root=None):
+    """找出图拓扑孤儿节点（无入边无出边）。
+
+    P1-DEP 扩展：当 project_root 提供时，额外检查 node.path 是否在磁盘存在。
+    若不存在则标记 ghost=True（对称漂移：磁盘已删除但 depgraph 仍保留）。
+
+    Args:
+        nodes: {node_id: {path, type, blueprint_id, ...}}
+        adjacency_forward: {node_id: [to_node_id, ...]}
+        adjacency_reverse: {node_id: [from_node_id, ...]}
+        project_root: 可选，项目根目录 Path；提供时启用 ghost 检测
+
+    Returns:
+        list[dict]: 每个 dict 含 path/type/blueprint_id，project_root 提供时额外含 ghost 键
+    """
     orphans = []
     for nid in nodes:
         ntype = nodes[nid].get("type", "")
@@ -307,7 +321,13 @@ def find_orphan_nodes(nodes, adjacency_forward, adjacency_reverse):
         has_in = len(rev_neighbors) > 0
         if not has_out and not has_in:
             node = nodes[nid]
-            orphans.append({"path": node.get("path", nid), "type": ntype, "blueprint_id": node.get("blueprint_id", "")})
+            path = node.get("path", nid)
+            entry = {"path": path, "type": ntype, "blueprint_id": node.get("blueprint_id", "")}
+            # P1-DEP: 对称漂移检测——磁盘不存在的 node 标记为 ghost
+            if project_root is not None:
+                full_path = Path(project_root) / path
+                entry["ghost"] = not full_path.exists()
+            orphans.append(entry)
     return orphans
 
 
@@ -462,8 +482,9 @@ def main():
     print("[DIAG]   Found %d nodes with empty blueprint_id" % len(empty_bp))
 
     print("[DIAG] 2/10 Finding orphan nodes (excluding doc/policy/config types)...")
-    orphans = find_orphan_nodes(nodes, adj_fwd, adj_rev)
-    print("[DIAG]   Found %d orphan nodes" % len(orphans))
+    orphans = find_orphan_nodes(nodes, adj_fwd, adj_rev, project_root=PROJECT_ROOT)
+    ghost_count = sum(1 for o in orphans if o.get("ghost"))
+    print("[DIAG]   Found %d orphan nodes (%d ghost: disk-deleted but depgraph retains)" % (len(orphans), ghost_count))
 
     print("[DIAG] 3/10 Finding circular dependencies...")
     import_edges_fwd = defaultdict(list)
