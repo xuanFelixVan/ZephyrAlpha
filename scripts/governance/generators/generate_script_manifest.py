@@ -42,6 +42,15 @@ Usage:
     python scripts/governance/generators/generate_script_manifest.py
     python scripts/governance/generators/generate_script_manifest.py --check
 """
+# 双 manifest 体系说明（P1-T4 校正，2026-06-26）
+# 本生成器 → scripts/governance/script_manifest.yaml（governance 子集 369，
+#   __manifest__ 块提取，三引号 YAML / dict ast 多形态）
+# 兄弟生成器 scripts/generate_manifest.py
+#   → scripts/script_manifest.yaml（全树 563 脚本，简单 desc 提取）
+# 二者非冗余：消费链不同（本生成器供 GATE-19 validate_static_manifest_drift --check；
+#   兄弟供 GitCommitGateway _post_commit_reconcile + audit_registration）
+# 禁止以"统一 SSoT"为由废弃任一——会破坏对应消费链。
+# 详见 .trae/documents/systemic_drift_root_cure_continuation_plan.md §3
 
 from __future__ import annotations
 

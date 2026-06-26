@@ -107,6 +107,7 @@ class CommitStatus(str, Enum):
     COMMIT_FAILED = "COMMIT_FAILED"  # git commit 命令失败
     LOCK_TIMEOUT = "LOCK_TIMEOUT"  # 获取全局锁超时
     PROMOTION_BLOCKED = "PROMOTION_BLOCKED"  # 永久区新文件未获 --allow-promote 批准
+    METADATA_VIOLATION = "METADATA_VIOLATION"  # .md 文件 frontmatter ttl 校验失败
 
 
 class GatewayError(RuntimeError):
@@ -295,6 +296,14 @@ class GitCommitGateway:
                 message="no existing or tracked files to commit",
             )
 
+        # GATE-15 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用
+        ttl_passed, ttl_detail = self._check_frontmatter_ttl(existing)
+        if not ttl_passed:
+            return CommitResult(
+                status=CommitStatus.METADATA_VIOLATION,
+                message=f"frontmatter ttl 校验失败: {ttl_detail}",
+            )
+
         # 永久区晋升门禁：检测新文件进入永久区，未获批准则阻断
         if not allow_promote:
             new_permanent = self._check_permanent_zone_new_files(existing)
@@ -350,6 +359,56 @@ class GitCommitGateway:
                 # 未跟踪 = 新文件进入永久区 → 需要门禁
                 new_in_zone.append(f)
         return new_in_zone
+
+    def _check_frontmatter_ttl(self, files: list[str]) -> tuple[bool, str]:
+        """GATE-15 等效校验：检查 .md 文件 frontmatter ttl 字段。
+
+        弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
+        调用 check_frontmatter_metadata.py 做增量校验（只校验本次 commit 的 .md）。
+        当 .md 文件数 > _MAX_INLINE_PATHS 时，改用 --all-files 全量校验
+        （避免 Windows WinError 206 命令行过长）。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        # 只校验 docs/ 下的 .md 文件（与 pre-commit GATE-15 的 files 正则一致）
+        md_files = [
+            f for f in files
+            if f.endswith(".md")
+            and os.path.relpath(f, str(self.project_root)).replace("\\", "/").startswith("docs/")
+        ]
+        if not md_files:
+            return True, "no .md files to check"
+
+        check_script = (
+            self.project_root
+            / "scripts"
+            / "governance"
+            / "d3_metadata"
+            / "check_frontmatter_metadata.py"
+        )
+        if not check_script.exists():
+            # 校验脚本不存在时不阻断（防破坏性故障）
+            return True, f"check script not found: {check_script}"
+
+        cmd = [sys.executable, str(check_script)] + md_files
+        # 文件数过多时用 --all-files 全量校验（避免 WinError 206 命令行过长）
+        if len(md_files) > _MAX_INLINE_PATHS:
+            cmd = [sys.executable, str(check_script), "--all-files"]
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=str(self.project_root),
+        )
+        if result.returncode == 0:
+            return True, "ttl validation passed"
+        # exit 1 = 有违规，exit 2 = 脚本异常
+        detail = result.stderr.strip() or result.stdout.strip() or "unknown ttl validation error"
+        return False, detail
 
     # ------------------------------------------------------------------
     # 内部实现
@@ -550,6 +609,14 @@ class GitCommitGateway:
                         )
                 except Exception as e:
                     logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e)
+            # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 →
+            # 写异步触发记录（毫秒级，锁内）→ 消费线程在锁外跑 TIER_1 对抗。
+            # 就位+门禁激活：始终 emit；门禁在消费时检查。
+            if result.status == CommitStatus.OK:
+                try:
+                    self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
+                except Exception as e:
+                    logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e)
             # 清理 pathspec 临时文件
             if pathspec_file:
                 try:
@@ -654,6 +721,32 @@ class GitCommitGateway:
             return False
         return True
 
+    def _post_commit_red_blue_trigger(
+        self,
+        files: list[str],
+        session_id: str,
+        commit_hash: str,
+    ) -> None:
+        """事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 → 写异步触发记录。
+
+        锁内轻量操作（毫秒级）：扫描提交文件头是否含 [BLUEPRINT]/[MODULE]
+        标记，命中则写 trigger record 到 data/red_blue/trigger_queue/。
+        真实对抗由 commit_trigger.RedBlueTriggerConsumer 守护线程在锁外异步执行
+        （受 AUTOMATION-GATE 门禁 + CircuitBreaker 频率保护）。
+        """
+        from zephyr.security.adversarial_validation.commit_trigger import (
+            detect_formal_files,
+            write_trigger_record,
+        )
+        formal_files = detect_formal_files(files)
+        if not formal_files:
+            return
+        write_trigger_record(commit_hash, session_id, formal_files)
+        logger.info(
+            "GitCommitGateway: red-blue trigger emitted (session=%s hash=%s formal=%d)",
+            session_id, commit_hash[:8], len(formal_files),
+        )
+
     def _post_commit_reconcile(
         self, committed_files: list[str], session_id: str
     ) -> ReconcileResult:
@@ -668,6 +761,12 @@ class GitCommitGateway:
         仍含僵尸引用。本方法在 commit 完成后立即对账，斩断 drift 循环。
 
         非阻断：commit 已入 git 历史，阻断无意义。改为 warning + auto-fix。
+
+        manifest 体系区分（P1-T4 校正）：本方法重生成的是
+        ``scripts/script_manifest.yaml``（全树 manifest，由 generate_manifest.py
+        产出，供本 gateway + audit_registration 消费）；非
+        ``scripts/governance/script_manifest.yaml``（governance 子集，由
+        generate_script_manifest.py 产出，GATE-19 校验）。二者非冗余，禁止废弃任一。
 
         Args:
             committed_files: 本次 commit 的文件绝对路径列表。

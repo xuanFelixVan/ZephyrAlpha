@@ -13,6 +13,14 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
+# 双 manifest 体系说明（P1-T4 校正，2026-06-26）
+# 本生成器 → scripts/script_manifest.yaml（全树 563 脚本，简单 desc 提取）
+# 兄弟生成器 scripts/governance/generators/generate_script_manifest.py
+#   → scripts/governance/script_manifest.yaml（governance 子集 369，__manifest__ 块提取）
+# 二者非冗余：消费链不同（本生成器供 GitCommitGateway _post_commit_reconcile
+#   + audit_registration；兄弟供 GATE-19 validate_static_manifest_drift --check）
+# 禁止以"统一 SSoT"为由废弃任一——会破坏对应消费链。
+# 详见 .trae/documents/systemic_drift_root_cure_continuation_plan.md §3
 
 import os
 import sys
