@@ -150,10 +150,10 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_redblue_n16_extreme.py
-  path: _tmp_redblue_n16_extreme.py
-  description: 前两轮覆盖了基础场景，本轮测试极限/边界攻击：
-  domain: _tmp_redblue_n16_extreme.py
+- name: _tmp_ops34_meta_review.py
+  path: _tmp_ops34_meta_review.py
+  description: 'Adaptations from task card:'
+  domain: _tmp_ops34_meta_review.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
