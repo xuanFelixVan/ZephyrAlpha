@@ -2231,9 +2231,9 @@ def cmd_propagate_node_paths(
 ) -> int:
     """节点路径改名传播（裁定#206 节点路径派生 + 裁定#207 R1 阶段D）。
 
-    根据 D2 重新编号映射，精确值映射 nodes.path 与 blueprint_links.blueprint_path。
+    根据 D2 重新编号映射，精确值映射 nodes.path、nodes.file_path 与 blueprint_links.blueprint_path。
     派生关系：节点路径域片段派生自 domain_id，序号按域内 old_seq 升序连续编号（01起）。
-    传播表：nodes.path（无只读触发器），blueprint_links.blueprint_path（需触发器通行证）。
+    传播表：nodes.path + nodes.file_path（无只读触发器），blueprint_links.blueprint_path（需触发器通行证）。
 
     精确值映射：禁止子串REPLACE，避免误伤（如 D-SIGNAL-1 误匹配 D-SIGNAL-10）。
     返回受影响总行数，-1=失败。
@@ -2258,6 +2258,22 @@ def cmd_propagate_node_paths(
                 if not dry_run:
                     c.execute(
                         "UPDATE nodes SET path=? WHERE path=?", (new_path, old_path)
+                    )
+                total += cnt
+
+        # 1b. nodes.file_path 精确值映射（与 path 同步传播，避免改名后 file_path 残留）
+        for old_path, new_path in path_mapping.items():
+            cnt = c.execute(
+                "SELECT COUNT(*) FROM nodes WHERE file_path=?", (old_path,)
+            ).fetchone()[0]
+            if cnt > 0:
+                print(
+                    f"  {mode} nodes.file_path: {old_path} -> {new_path}: {cnt} rows",
+                    file=sys.stderr,
+                )
+                if not dry_run:
+                    c.execute(
+                        "UPDATE nodes SET file_path=? WHERE file_path=?", (new_path, old_path)
                     )
                 total += cnt
 
