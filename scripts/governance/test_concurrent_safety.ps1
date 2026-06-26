@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿# __manifest__:
+﻿﻿﻿﻿﻿﻿﻿# __manifest__:
 #   dimensions: [D11]
 #   priority: P2
 #   timeout_seconds: 300
@@ -62,7 +62,6 @@ $allScripts = @(
     @{Name="auto_generate_index_dash";     Cmd="python `"$projectDir/scripts/governance/d5_architecture/auto-generate-index.py`" --check"},
     @{Name="check_contract_code_drift";    Cmd="python `"$projectDir/scripts/governance/d5_architecture/check_contract_code_drift.py`""},
     @{Name="generate_contracts";           Cmd="python `"$projectDir/scripts/governance/d5_architecture/generate_contracts.py`""},
-    @{Name="generate_trigger_wiring";      Cmd="python `"$projectDir/scripts/governance/d5_architecture/generate_trigger_wiring_view.py`""},
     @{Name="merge_readme_to_index";        Cmd="python `"$projectDir/scripts/governance/d5_architecture/merge_readme_to_index.py`""},
     @{Name="sync_blueprint_code_index";    Cmd="python `"$projectDir/scripts/governance/d5_architecture/sync_blueprint_code_index.py`""},
     @{Name="sync_registry_blueprints";     Cmd="python `"$projectDir/scripts/governance/d5_architecture/sync_registry_from_blueprints.py`" --write --warn-only"},

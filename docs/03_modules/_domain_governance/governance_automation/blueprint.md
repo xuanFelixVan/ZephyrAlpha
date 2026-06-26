@@ -1438,7 +1438,6 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `scripts/governance/d5_architecture/validate_yaml_summaries.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_three_way_consistency.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_code_yaml_alignment.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/generate_trigger_wiring_view.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_b_track_packages.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_handoff_package.py` | ✅ 已实现 | |
 | `scripts/governance/d5_architecture/validate_session_log_updated.py` | ✅ 已实现 | |

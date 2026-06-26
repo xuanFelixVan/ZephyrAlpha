@@ -1868,19 +1868,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: d5_architecture/generators/generate_trigger_wiring_view.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P2
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: CT-005 → trigger_router.yaml 接线状态自动派生（OpenAPI/Terraform模式——YAML canonical
-    → MD视图自动生成）
-  tags:
-  - Critical
-  - Disruptive
 - name: d5_architecture/syncers/archive_rationale_log.py
   owner: governance:d5_architecture
   dimensions:
@@ -3228,16 +3215,6 @@ scripts:
   tags:
   - Disruptive
   - Quick
-- name: generators/generate_contracts.py
-  owner: governance:generators
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: generators/generate_gate_registry.py
   owner: governance:generators
   dimensions:

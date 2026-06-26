@@ -2164,7 +2164,7 @@ codegen:
     - "CT-* YAML → tests/contracts/protocols/{ct_id}_protocol.py (Python Protocol class)"
     - "SCHEMA-* YAML → src/zephyr/shared/schemas/{schema_id}.py (Python dataclass)"
   validation: "CI compare generated vs disk → diff → FAIL if不一致"
-  tool: "scripts/governance/generators/generate_contracts.py（待创建——Jinja2 + YAML parser）"
+  tool: "scripts/governance/d5_architecture/generators/generate_contracts.py"
 
 breaking_change_detector:
   script: "scripts/governance/d5_architecture/detect_breaking_changes.py"
