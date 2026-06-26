@@ -75,19 +75,17 @@ ttl: permanent
 
 **目前规模**：运营态 7,590 个节点 + 设计态 110 个 = 7,700 个节点，52 个功能域，运营态 8,095 条 + 设计态 230 条依赖边。（2026-06-16 Phase H+J 修复后）
 
-### 4.2 架构全景（arch_ 表组 7 张表）
+### 4.2 架构全景（arch_ 表组 5 张表，v14 删除 arch_layers/arch_bottlenecks 后）
 
 | 表 | 存什么 | 例子 |
 |----|--------|------|
 | `arch_directory_tree` | 目录树（所有文件/目录的物理位置） | src/zephyr/trading/order_center/main.py |
-| `arch_layers` | 架构分层（L0-L6） | L0 基础设施层、L1 基础服务层、L2 领域层 |
 | `arch_domain_layers` | 每个功能域属于哪一层 | D-TRADING（交易域）属于 L2 领域层 |
 | `arch_domain_capacity` | 域容量上限 | D-TRADING max_modules=80 |
 | `arch_path_mappings` | 路径→域映射规则 | src/zephyr/trading/ → D-TRADING |
 | `arch_constraints` | 架构约束（跨域违规等） | D-TRADING → D-INFRA 违规 |
-| `arch_bottlenecks` | 瓶颈追踪 | D-DATA 被依赖过多 |
 
-### 4.3 共享表（6 张表）
+### 4.3 共享表（5 张表，v14 删除 invariants 后）
 
 | 表 | 存什么 | 两个全景图怎么共享 |
 |----|--------|----------------|
@@ -95,10 +93,9 @@ ttl: permanent
 | `contracts` | 契约定义（基础字段共享，扩展字段 P0-6 管理） | edges.api_contract_refs 引用 |
 | `domain_events` | 领域事件 | edges.event_ref 引用 |
 | `domain_dependencies` | 域间依赖声明 | arch_constraints 跨域检测引用 |
-| `invariants` | 不变量 | 约束检查引用 |
 | `rule_bindings` | 规则绑定 | 门禁检查引用 |
 
-### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 + v6/v8 新增 domain_mapping/governance_audit_logs = 25 张；系统表 _schema_version 由迁移脚本管理 / sqlite_sequence 由 SQLite 自动管理）
+### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 + v6/v8 新增 domain_mapping/governance_audit_logs = 25 张，v14 删除 arch_layers/arch_bottlenecks/invariants 3 表后余 22 张；系统表 _schema_version 由迁移脚本管理 / sqlite_sequence 由 SQLite 自动管理）
 
 | 管理方 | 表 | 生成器每次运行会怎样 | AI能手动改吗 |
 |--------|---|---------------------|:---:|
@@ -114,7 +111,7 @@ ttl: permanent
 | **P0-6 字段扩展（YAML→DB，约定保护）** | nodes（+5 字段：business_stream/stream_role/runtime_plane/ddd_aggregate/provided_interfaces，#165-169） | 生成器只填充运营态字段，不碰这 5 个扩展字段 | ❌ 禁止（YAML 真源，由 sync 脚本覆盖；无字段级只读触发器，依赖 sync 脚本每次运行覆盖） |
 | | edges（+3 字段：valid_since/migration_status/is_legal_cycle，#152） | 生成器只填充运营态字段，不碰这 3 个扩展字段 | ❌ 禁止（同上；migration_status 由 sync 脚本根据 YAML 迁移状态写入） |
 | | domains（+1 字段：modification_permission，#156） | 生成器不碰此字段 | ❌ 禁止（同上；YAML ai_autonomy → DB modification_permission 映射） |
-| | contracts（基础字段：contract_id/name/provider_domain/consumer_domain/contract_type + P0-6 扩展 6 字段：promise/actual_consumer/fulfillment_status/gap/target_phase/last_reviewed） | 生成器不碰此表 | ❌ 禁止（YAML 真源，基础字段由 sync_contract_mapping_table 写入，扩展字段由 sync_declarative_contract_tracker 写入） |
+| | contracts（基础字段 7 列：contract_id/name/provider_domain/consumer_domain/contract_type/schema_definition/version + P0-6 扩展 6 字段：promise/actual_consumer/fulfillment_status/gap/target_phase/last_reviewed，共 13 列） | 生成器不碰此表 | ❌ 禁止（YAML 真源，基础字段由 sync_contract_mapping_table 写入，扩展字段由 sync_declarative_contract_tracker 写入） |
 | **sync 脚本管理（P0-6 新增，YAML→DB 只读缓存）** | gates | 不碰（由sync_yaml_to_depgraph.py写入，只读触发器保护） | ❌ 禁止（只读触发器，YAML 是唯一真源） |
 | | field_vocabularies | 不碰（同上） | ❌ 禁止 |
 | | registries | 不碰（同上） | ❌ 禁止 |
@@ -124,13 +121,10 @@ ttl: permanent
 | | hard_boundaries | 不碰（同上） | ❌ 禁止 |
 | | business_streams | 不碰（同上） | ❌ 禁止 |
 | | blueprint_links | 不碰（数据源为 nodes 表派生，非 YAML；由 sync_blueprint_links 从 nodes.blueprint_id 派生） | ❌ 禁止（只读触发器保护） |
-| **人工/蓝图管理** | arch_layers | 不碰 | ✅ 可以 |
-| | arch_domain_layers | 不碰 | ✅ 可以 |
+| **人工/蓝图管理** | arch_domain_layers | 不碰 | ✅ 可以 |
 | | arch_path_mappings | 不碰 | ✅ 可以 |
-| | arch_bottlenecks | 不碰 | ✅ 可以 |
 | | domain_events | 不碰 | ✅ 可以 |
 | | domain_dependencies | 不碰 | ✅ 可以 |
-| | invariants | 不碰 | ✅ 可以 |
 | | rule_bindings | 不碰 | ✅ 可以 |
 
 ### 4.5 生成器（generate_project_depgraph.py）
@@ -155,7 +149,7 @@ ttl: permanent
 - 不创造设计态模块（设计态必须来自用户输入，生成器不碰）
 - 不删除设计态节点和 design edge
 - 不修改蓝图（蓝图是设计态派生物，生成器只管运营态对齐）
-- 不碰人工管理的表（arch_layers/arch_domain_layers/arch_path_mappings 等）
+- 不碰人工管理的表（arch_domain_layers/arch_path_mappings 等）
 - 不处理 arch_directory_tree（由 path_tree 脚本独立管理，V5.5 裁定）
 
 ---
@@ -187,17 +181,15 @@ ttl: permanent
 
 ---
 
-## 六、架构全景图的 7 张表
+## 六、架构全景图的 5 张表（v14 删除 arch_layers/arch_bottlenecks 后）
 
 | # | 表名 | 职责 | 管理方 | 生成器行为 |
 |---|------|------|--------|-----------|
 | 1 | `arch_directory_tree` | 目录树（所有文件/目录的物理位置） | path_tree | 不碰（由 path_tree 脚本独立管理，V5.5 裁定） |
-| 2 | `arch_layers` | 架构分层定义（L0-L6） | 人工 | 不碰 |
-| 3 | `arch_domain_layers` | 域→层映射 | 人工 | 不碰 |
-| 4 | `arch_domain_capacity` | 域容量上限（max_modules） | 人工 | UPDATE current_modules |
-| 5 | `arch_path_mappings` | 路径→域映射规则 | 人工 | 不碰 |
-| 6 | `arch_constraints` | 架构约束（跨域违规等） | audit_domain_nodes.py | 不碰（脚本写） |
-| 7 | `arch_bottlenecks` | 瓶颈追踪 | 人工 | 不碰 |
+| 2 | `arch_domain_layers` | 域→层映射 | 人工 | 不碰 |
+| 3 | `arch_domain_capacity` | 域容量上限（max_modules） | 人工 | UPDATE current_modules |
+| 4 | `arch_path_mappings` | 路径→域映射规则 | 人工 | 不碰 |
+| 5 | `arch_constraints` | 架构约束（跨域违规等） | audit_domain_nodes.py | 不碰（脚本写） |
 
 ---
 

@@ -1103,7 +1103,7 @@ sections:
     - type: constraint
       check: 改名传播完整性
       pass: domain_id 改名时所有引用旧ID的位置必须同步更新;覆盖范围由值扫描兜底(全表TEXT列扫描残留旧ID),非仅列名枚举;改名后必须通过audit_rename_completeness.py审计(0残留才通过)
-      fail: 改名后存在残留旧ID(如nodes.owner/business_stream/tags/invariants.invariant_id等列名不含domain但值含旧ID的列被遗漏)
+      fail: 改名后存在残留旧ID(如nodes.owner/business_stream/tags等列名不含domain但值含旧ID的列被遗漏)
     - type: constraint
       check: 派生标识符同步改名
       pass: domain_id 改名时blueprint_id/节点路径的域片段同步改名(精确值映射,禁止子串REPLACE);edges不受影响(用node_id INTEGER引用,不引用path)
