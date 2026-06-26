@@ -84,20 +84,11 @@ decision_tree:
           value: "/reports/"
           operator: contains
         - signal: path
-          value: "docs/09_audit/"
-          operator: startswith
-        - signal: path
-          value: "docs/09_AUDIT/"
-          operator: startswith
-        - signal: path
           value: "/_archive/"
           operator: contains
         - signal: path
           value: "/delivery/"
           operator: contains
-        - signal: path
-          value: "docs/decomposition/"
-          operator: startswith
       match: any
       yes: task_bound
       no: Q2
