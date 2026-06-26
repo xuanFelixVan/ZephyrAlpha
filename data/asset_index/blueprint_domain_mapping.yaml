@@ -58,13 +58,13 @@ mappings:
     ssot_path: ''
     match_method: functional_domain_fallback
     confidence: medium
-  GOV-FSTR-001::_restructuring:
+  GOV-FSTR-001::restructuring:
     blueprint_id: GOV-FSTR-001
-    name: _restructuring
+    name: restructuring
     title: File Structure Governance 蓝图 — 文件结构治理·大文件拆分·重复合并·安全搬家
     layer: cross_layer
     functional_domain: governance
-    file_path: 03_modules/_restructuring/blueprint.md
+    file_path: 03_modules/_cross_layer/restructuring/blueprint.md
     parent_domain: governance
     domain_id: D-GOV
     subdomain_id: D-GOV-SCRIPT_GOVERNANCE

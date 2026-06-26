@@ -1,5 +1,5 @@
 meta:
-  generated_at: '2026-06-26T07:50:06Z'
+  generated_at: '2026-06-26T09:42:18Z'
   auto_generated_by: scripts/governance/generate_target_path_tree.py
   task_id: DM-107
   source_depgraph: data/databases/depgraph.db
@@ -1024,14 +1024,6 @@ domains:
     module_count: 0
     needs_migration_count: 0
     modules: []
-  D-GOV-DOCS:
-    parent_domain: 横切
-    ssot_path: docs/02_enterprise_architecture/
-    change_policy: evolving
-    modification_permission: ai_modifiable
-    module_count: 0
-    needs_migration_count: 0
-    modules: []
   D-GOV-ENFORCEMENT:
     parent_domain: governance
     ssot_path: src/zephyr/governance/rule_enforcement/
@@ -1075,6 +1067,14 @@ domains:
   D-GOV_AUDIT_TESTS:
     parent_domain: 横切
     ssot_path: tests/
+    change_policy: evolving
+    modification_permission: ai_modifiable
+    module_count: 0
+    needs_migration_count: 0
+    modules: []
+  D-GOV_DOCS:
+    parent_domain: 横切
+    ssot_path: docs/02_enterprise_architecture/
     change_policy: evolving
     modification_permission: ai_modifiable
     module_count: 0
@@ -9057,7 +9057,7 @@ domains:
     - current_path: tests/test_task_repo_auto_commit.py
       target_path: tests/test_task_repo_auto_commit.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: null
       needs_migration: false
     - current_path: tests/test_trading_session_lifecycle.py
@@ -9483,7 +9483,7 @@ domains:
     - current_path: src/zephyr/governance/atomic_transaction_manager.py
       target_path: src/zephyr/governance/atomic_transaction_manager.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/audit_orchestrator/__init__.py
@@ -9687,7 +9687,7 @@ domains:
     - current_path: src/zephyr/governance/audit_schema.py
       target_path: src/zephyr/governance/audit_schema.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/audit_write_failure_protector.py
@@ -9765,7 +9765,7 @@ domains:
     - current_path: src/zephyr/governance/base_repo.py
       target_path: src/zephyr/governance/base_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/batch_ingest.py
@@ -10389,7 +10389,7 @@ domains:
     - current_path: src/zephyr/governance/database_manager.py
       target_path: src/zephyr/governance/database_manager.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/database_service.py
@@ -10497,7 +10497,7 @@ domains:
     - current_path: src/zephyr/governance/depgraph_schema.py
       target_path: src/zephyr/governance/depgraph_schema.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/diff_detector.py
@@ -10617,7 +10617,7 @@ domains:
     - current_path: src/zephyr/governance/event_store.py
       target_path: src/zephyr/governance/event_store.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/evidence_pack.py
@@ -10851,13 +10851,13 @@ domains:
     - current_path: src/zephyr/governance/gate_event_adapter.py
       target_path: src/zephyr/governance/gate_event_adapter.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/gate_repo.py
       target_path: src/zephyr/governance/gate_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/ghost_scan.py
@@ -11943,7 +11943,7 @@ domains:
     - current_path: src/zephyr/governance/projection_engine.py
       target_path: src/zephyr/governance/projection_engine.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/protocol_self_context.py
@@ -11985,13 +11985,13 @@ domains:
     - current_path: src/zephyr/governance/query.py
       target_path: src/zephyr/governance/query.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/query_metrics.py
       target_path: src/zephyr/governance/query_metrics.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/question_tracker.py
@@ -12513,7 +12513,7 @@ domains:
     - current_path: src/zephyr/governance/snapshot_manager.py
       target_path: src/zephyr/governance/snapshot_manager.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/spec_auditor.py
@@ -12543,7 +12543,7 @@ domains:
     - current_path: src/zephyr/governance/sqlite_schema.py
       target_path: src/zephyr/governance/sqlite_schema.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/ssot_registrar.py
@@ -12657,7 +12657,7 @@ domains:
     - current_path: src/zephyr/governance/task_repo.py
       target_path: src/zephyr/governance/task_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/tco_model.py
@@ -12891,7 +12891,7 @@ domains:
     - current_path: src/zephyr/governance/transition.py
       target_path: src/zephyr/governance/transition.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/governance/triage.py
@@ -13823,13 +13823,13 @@ domains:
     - current_path: src/zephyr/ops/circuit_breaker_repo.py
       target_path: src/zephyr/ops/circuit_breaker_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/ops/circuit_breaker_types.py
       target_path: src/zephyr/ops/circuit_breaker_types.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/ops/collectors/__init__.py
@@ -16165,13 +16165,13 @@ domains:
     - current_path: src/zephyr/security/llm_defense/__init__.py
       target_path: src/zephyr/security/llm_defense/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py
@@ -16207,91 +16207,91 @@ domains:
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l1_input.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l1_input.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l7_runtime.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l7_runtime.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py
       target_path: src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/patterns/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security/patterns/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py
       target_path: src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
@@ -16303,7 +16303,7 @@ domains:
     - current_path: src/zephyr/security/llm_defense/llm_security/payloads/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security/payloads/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/payloads/injection_payloads.yaml
@@ -16357,7 +16357,7 @@ domains:
     - current_path: src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py
@@ -16381,7 +16381,7 @@ domains:
     - current_path: src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py
       target_path: src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py
@@ -16393,13 +16393,13 @@ domains:
     - current_path: src/zephyr/security/llm_defense/llm_security_01/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/behavior_audit_logger.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/behavior_audit_logger.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/context_scanner.py
@@ -16411,133 +16411,133 @@ domains:
     - current_path: src/zephyr/security/llm_defense/llm_security_01/gateway.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/gateway.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/input_sanitizer.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/input_sanitizer.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l0_supply_chain.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l0_supply_chain.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l1_input.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l1_input.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l2_prompt_protection.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l2_prompt_protection.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l2a_process_sandbox.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l2a_process_sandbox.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l3_output.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l3_output.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l4_agent.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l4_agent.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l5_resource_protection.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l5_resource_protection.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l6_observability.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l6_observability.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/layers/l8_multi_agent.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/layers/l8_multi_agent.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/patterns/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/patterns/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/patterns/injection_patterns.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/patterns/injection_patterns.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/patterns/secrets.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/patterns/secrets.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/process_sandbox.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/process_sandbox.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/__init__.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/__init__.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/adversarial_mutator.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/adversarial_mutator.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/code_integrity.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/code_integrity.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/isolation.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/isolation.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/l7_validation.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/l7_validation.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/red_team_scanner.py
       target_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/red_team_scanner.py
       type: module
-      blueprint_id: MOD-SECURITY-LLM
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
   mcp_servers:
@@ -19933,7 +19933,7 @@ domains:
     - current_path: docs/03_modules/_alpha_signal_domain/blueprint.md
       target_path: docs/03_modules/_alpha_signal_domain/blueprint.md
       type: module
-      blueprint_id: MOD-001
+      blueprint_id: MOD-ALPHA_SIGNAL_DOMAIN
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md
@@ -19963,37 +19963,37 @@ domains:
     - current_path: docs/03_modules/_cross_layer/context_engine/blueprint.md
       target_path: docs/03_modules/_cross_layer/context_engine/blueprint.md
       type: module
-      blueprint_id: MOD_INF_008
+      blueprint_id: MOD-CONTEXT_ENGINE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/database/blueprint.md
       target_path: docs/03_modules/_cross_layer/database/blueprint.md
       type: module
-      blueprint_id: MOD_INF_012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/feedback_loop/blueprint.md
       target_path: docs/03_modules/_cross_layer/feedback_loop/blueprint.md
       type: module
-      blueprint_id: MOD_INF_010
+      blueprint_id: MOD-FEEDBACK_LOOP
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/feedback_loop/capacity_upgrade/blueprint.md
       target_path: docs/03_modules/_cross_layer/feedback_loop/capacity_upgrade/blueprint.md
       type: module
-      blueprint_id: MOD-008
+      blueprint_id: MOD-FEEDBACK_LOOP
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/gate_engine/blueprint.md
       target_path: docs/03_modules/_cross_layer/gate_engine/blueprint.md
       type: module
-      blueprint_id: MOD_INF_007
+      blueprint_id: MOD-GATE_ENGINE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/llm_security/blueprint.md
       target_path: docs/03_modules/_cross_layer/llm_security/blueprint.md
       type: module
-      blueprint_id: MOD_INF_014
+      blueprint_id: MOD-LLM_SECURITY
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/mcp_servers/blueprint.md
@@ -20029,7 +20029,7 @@ domains:
     - current_path: docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
       target_path: docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
       type: module
-      blueprint_id: MOD_INF_032
+      blueprint_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_cross_layer/restructuring/blueprint.md
@@ -20101,13 +20101,13 @@ domains:
     - current_path: docs/03_modules/_domain_governance/blueprint.md
       target_path: docs/03_modules/_domain_governance/blueprint.md
       type: module
-      blueprint_id: MOD-023
+      blueprint_id: MOD-GOVERNANCE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_domain_governance/capacity_upgrade/blueprint.md
       target_path: docs/03_modules/_domain_governance/capacity_upgrade/blueprint.md
       type: module
-      blueprint_id: MOD-024
+      blueprint_id: MOD-GOVERNANCE
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
@@ -20161,7 +20161,7 @@ domains:
     - current_path: docs/03_modules/_domain_infra_runtime/task_system/blueprint.md
       target_path: docs/03_modules/_domain_infra_runtime/task_system/blueprint.md
       type: module
-      blueprint_id: MOD_INF_006
+      blueprint_id: MOD-TASK_SYSTEM
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_domain_integration/local_model/blueprint.md
@@ -20209,19 +20209,19 @@ domains:
     - current_path: docs/03_modules/_master_blueprint/blueprint.md
       target_path: docs/03_modules/_master_blueprint/blueprint.md
       type: module
-      blueprint_id: MOD_MASTER_001
+      blueprint_id: MOD-MASTER_BLUEPRINT
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_master_blueprint/blueprint_agent_spec.md
       target_path: docs/03_modules/_master_blueprint/blueprint_agent_spec.md
       type: module
-      blueprint_id: MOD-MASTER-004
+      blueprint_id: MOD-MASTER_BLUEPRINT
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_ml_experiment_domain/blueprint.md
       target_path: docs/03_modules/_ml_experiment_domain/blueprint.md
       type: module
-      blueprint_id: MOD-071
+      blueprint_id: MOD-ML_EXPERIMENT_DOMAIN
       architecture_layer: L1_foundation
       needs_migration: false
     - current_path: docs/03_modules/_sys_master/blueprint.md
@@ -21559,7 +21559,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/olap_engine.py
       target_path: src/zephyr/governance/rule_enforcement/olap_engine.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/db/olap_engine.py
@@ -21775,7 +21775,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/__init__.py
       target_path: src/zephyr/infra_runtime/__init__.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/draft/__init__.py
@@ -21901,7 +21901,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/atomic_transaction_manager.py
       target_path: src/zephyr/infra_runtime/atomic_transaction_manager.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/audit_logger.py
@@ -21913,7 +21913,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/audit_schema.py
       target_path: src/zephyr/infra_runtime/audit_schema.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/auto_diagnostics.py
@@ -21925,7 +21925,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/base_repo.py
       target_path: src/zephyr/infra_runtime/base_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py
@@ -21967,13 +21967,13 @@ domains:
     - current_path: src/zephyr/infrastructure/db/circuit_breaker_repo.py
       target_path: src/zephyr/infra_runtime/circuit_breaker_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/db/circuit_breaker_types.py
       target_path: src/zephyr/infra_runtime/circuit_breaker_types.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/asset_inventory/classifier.py
@@ -22045,7 +22045,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/database_manager.py
       target_path: src/zephyr/infra_runtime/database_manager.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/capacity_assurance/modules/degradation_spiral_detector.py
@@ -22135,7 +22135,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/gate_repo.py
       target_path: src/zephyr/infra_runtime/gate_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/gateway_server.py
@@ -22261,7 +22261,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/olap_engine.py
       target_path: src/zephyr/infra_runtime/olap_engine.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/capacity_assurance/modules/owner_health_monitor.py
@@ -22303,13 +22303,13 @@ domains:
     - current_path: src/zephyr/infrastructure/db/query.py
       target_path: src/zephyr/infra_runtime/query.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/db/query_metrics.py
       target_path: src/zephyr/infra_runtime/query_metrics.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/rate_limiter.py
@@ -22393,7 +22393,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/sqlite_schema.py
       target_path: src/zephyr/infra_runtime/sqlite_schema.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/capacity_assurance/modules/startup_guard.py
@@ -22429,7 +22429,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/task_repo.py
       target_path: src/zephyr/infra_runtime/task_repo.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/capacity_assurance/tech_stack.py
@@ -22471,7 +22471,7 @@ domains:
     - current_path: src/zephyr/infrastructure/db/transition.py
       target_path: src/zephyr/infra_runtime/transition.py
       type: module
-      blueprint_id: MOD-INF-012
+      blueprint_id: MOD-DATABASE
       architecture_layer: L1_foundation
       needs_migration: true
     - current_path: src/zephyr/infrastructure/asset_inventory/trust_anchor.py
