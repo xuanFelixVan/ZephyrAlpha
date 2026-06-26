@@ -141,3 +141,65 @@ entries:
   related_adjudication: '#208'
   created: '2026-06-26'
   last_updated: '2026-06-26'
+
+# --- #ARCH-020~026: 2026-06-27 规则体系向内收4原则审查发现的超范围已知问题 ---
+# 审查范围：docs/01_policies_and_standards/ 全目录（rules/_registry/policies/templates）
+# 审查结论：范围内 0 issues（连续3轮零问题确认）；以下7项为审查中发现的超范围问题
+# 真源：本轮审查对话摘要 + 本注册表条目（避免信息漂移）
+
+- issue_id: '#ARCH-020'
+  title: check_rule_four_way_alignment.py 四方对齐门禁静默失效
+  severity: P0致命
+  adjudication: 修复 scripts/governance/check_rule_four_way_alignment.py line 80/94/130 的过滤条件 `data.get("layer") != "L0"`——该条件读取规则文件 frontmatter 的 layer 字段（值为架构层名如 compliance），永不等于 "L0"，导致过滤条件恒为假、零规则被检查、四方对齐门禁静默失效。治本：改为按 tier 或 severity 过滤（tier 来自 _index.yaml，非 frontmatter layer）。
+  fix_phase: 待立项（超范围：scripts/governance/）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
+- issue_id: '#ARCH-021'
+  title: scaffold.py layer 默认值违反 SSoT 并持续生成非合规规则文件
+  severity: P1高
+  adjudication: 修复 scripts/scaffold.py line 425 `layer: str = "L1"`（默认值是 layer_vocabulary.yaml 标记的废弃值）+ line 443 `valid_layers = {"L0", "L1", "L2", "L3"}`（与 layer_vocabulary.yaml 的16个架构层名矛盾）。治本：layer 默认值改为合法架构层名（如 compliance）；valid_layers 改为从 layer_vocabulary.yaml 动态加载（DYNAMIC_FROM_SSOT）。
+  fix_phase: 待立项（超范围：scripts/）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
+- issue_id: '#ARCH-022'
+  title: _detector_registry.yaml 路径错误导致检测器被静默跳过
+  severity: P1高
+  adjudication: 修正 src/zephyr/governance/drift_detection/_detector_registry.yaml 和 src/zephyr/behavioral_audit/_detector_registry.yaml 中注册路径 `d5_architecture/validate_depends_on_format.py`——实际路径缺少 `validators/` 子目录，正确路径为 `d5_architecture/validators/validate_depends_on_format.py`。当前 os.path.exists() 静默跳过，检测器未执行。
+  fix_phase: 待立项（超范围：src/zephyr/）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
+- issue_id: '#ARCH-023'
+  title: contract_mapping_table.yaml dual-header 真源分裂
+  severity: P1高
+  adjudication: 统一 _registry/contracts/contract_mapping_table.yaml 的 dual-header——line 1 A_config 头 `stability=stable, ai_autonomy=human_gated` vs lines 2-8 治理锚定块 `stability: evolving, ai_autonomy: ai_modifiable`，两套头值不一致违反真源唯一。治本：统一为一套头（保留治理锚定块为 SSoT，A_config 头改为指针或删除）；系统性问题，需审查所有 dual-header 文件。
+  fix_phase: 待立项（需专门审查周期覆盖所有 dual-header 文件）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
+- issue_id: '#ARCH-024'
+  title: rules/_index.yaml 无自动生成器导致手工维护漂移
+  severity: P2中
+  adjudication: 为 rules/_index.yaml 创建自动生成机制——当前 60 条规则 + tier_distribution 头部 + version 全靠手工维护，任何规则增删都需手工同步，违反向内收原则②（自动维护）。治本：扩展 GATE-RULE-CATALOG reconciler（当前仅同步 rule_catalog_registry.yaml）或新建 reconciler，post-commit 自动从规则文件 frontmatter 派生 _index.yaml（含 tier/layer/severity/rule_id）。
+  fix_phase: 待立项（扩展现有 reconciler，不新建生成器）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
+- issue_id: '#ARCH-025'
+  title: d2_links/validate_depends_on_format.py 死代码
+  severity: P3低
+  adjudication: 删除 scripts/governance/d2_links/validate_depends_on_format.py（72行脚本，零实际调用方）+ 清理 _detector_registry.yaml 中对该文件的引用（若 ARCH-022 修复后仍引用）。属于技术债清理，非紧急。
+  fix_phase: 待立项（超范围：scripts/governance/d2_links/）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
+- issue_id: '#ARCH-026'
+  title: trae_041 §4.1 PS-STD-004 "Layer" 分类维度与架构层语义碰撞
+  severity: P2中
+  adjudication: 修订 rules/trae_041_meta_rule_classification.yaml §4.1 PS-STD-004 中 "Layer" 分类维度定义——当前定义为文档权威层级（L1/L2/L3/cross_layer），与 layer_vocabulary.yaml 的架构层名（data/compliance 等16值）同名字段两种语义，违反真源唯一。治本：将 trae_041 §4.1 的 "Layer" 改名为 "Authority Tier" 或类似，消除语义碰撞。属于标准文档修订范畴。
+  fix_phase: 待立项（标准文档修订周期）
+  status: open
+  created: '2026-06-27'
+  last_updated: '2026-06-27'
