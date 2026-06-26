@@ -25,7 +25,7 @@
 # 当前状态: planned——beta 落地。scaffold 仅创建 Schema 骨架。
 # ============================================================================
 
-module_id: MOD-GOVERNANCE
+module_id: CFG-knowledge-article-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "知识条目登记表"

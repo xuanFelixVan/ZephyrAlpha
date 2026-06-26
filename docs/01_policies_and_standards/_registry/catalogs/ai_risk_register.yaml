@@ -17,7 +17,7 @@
 # 对标: NIST AI RMF 1.0 / ISO 42001 §8 / OWASP LLM Top 10
 # ============================================================================
 
-module_id: MOD-GOVERNANCE
+module_id: CFG-ai-risk-register
 schema_version: "1.0.0"
 doc_type: register
 title: "AI 风险登记簿"

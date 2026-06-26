@@ -1,12 +1,28 @@
-# 自动生成于 2026-06-26T14:24:16Z
+# 自动生成于 2026-06-26T14:30:43Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-26T14:24:16Z'
+generated_at: '2026-06-26T14:30:43Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 14
+total_registries: 21
 registries:
+- registry_id: CFG-ai-risk-register
+  name: AI 风险登记簿
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 11
+  status: active
+- registry_id: CFG-ai-session-registry
+  name: AI Session/Agent 登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
 - registry_id: REG-ARCH-ISSUE-001
   name: 架构议题注册表
   category: governance_rule
@@ -15,6 +31,14 @@ registries:
   maintenance: manual
   entry_count: 12
   status: Active
+- registry_id: CFG-business-streams
+  name: 业务流定义登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
   category: contract
@@ -47,6 +71,14 @@ registries:
   maintenance: manual
   entry_count: 4
   status: Active
+- registry_id: CFG-directory-registry
+  name: 项目目录登记?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 89
+  status: active
 - registry_id: REG-DOMAIN-NAMING-001
   name: 域命名规则表
   category: governance_rule
@@ -87,6 +119,30 @@ registries:
   maintenance: manual
   entry_count: 73
   status: active
+- registry_id: CFG-hard-boundaries
+  name: 硬边界登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: CFG-infrastructure-registry
+  name: 运行时基础设施登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 11
+  status: active
+- registry_id: CFG-knowledge-article-registry
+  name: 知识条目登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
 - registry_id: PS-REG-020
   name: 主文档清单（Master Document Inventory）
   category: governance_rule

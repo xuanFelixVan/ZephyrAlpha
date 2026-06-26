@@ -26,7 +26,7 @@
 #          （已移出项目至外部工作区）。本登记表为未来结构化记录提供 Schema。
 # ============================================================================
 
-module_id: MOD-GOVERNANCE
+module_id: CFG-ai-session-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "AI Session/Agent 登记表"

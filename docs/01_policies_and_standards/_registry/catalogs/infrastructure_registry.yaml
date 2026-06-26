@@ -28,7 +28,7 @@
 # 自检: （experimental — scan infrastructure connectivity）
 # ============================================================================
 
-module_id: MOD-GOVERNANCE
+module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"

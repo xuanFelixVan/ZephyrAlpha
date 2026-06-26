@@ -79,6 +79,29 @@ def _load_registry_categories() -> dict[str, str]:
 CATEGORY_FROM_DOC_TYPE: dict[str, str] = _load_registry_categories()
 
 
+def _parse_code_header(first_line: str) -> dict:
+    """解析 trae_047 代码头格式: # [A_<type>] module_id=X | key=val | ...
+
+    该格式是项目代码文件的 canonical 头部(trae_047 §十一字段),
+    与 YAML frontmatter 并存。本函数提取 pipe-separated key=value 对。
+
+    返回 dict;若首行不是代码头格式则返回空 dict。
+    """
+    if not first_line.startswith("# [A_"):
+        return {}
+    header_body = first_line.lstrip("# ").strip()
+    # 去掉 [A_<type>] 前缀
+    if "]" in header_body:
+        header_body = header_body.split("]", 1)[1].strip()
+    result = {}
+    for pair in header_body.split("|"):
+        pair = pair.strip()
+        if "=" in pair:
+            k, _, v = pair.partition("=")
+            result[k.strip()] = v.strip()
+    return result
+
+
 def extract_registry_info(yaml_path: Path) -> dict | None:
     """extract_registry_info implementation."""
     content = yaml_path.read_text(encoding="utf-8")
@@ -86,6 +109,12 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
     # BOM 免疫：部分文件可能含 UTF-8 BOM — 导致注释解析器在首行就 break
     if content and content[0] == "\ufeff":
         content = content[1:]
+
+    # trae_047 代码头解析(优先级最高): # [A_config] module_id=CFG-xxx | layer=...
+    # 治理锚定块(# module_id: MOD-GOVERNANCE)是父蓝图引用,不是文件自身 module_id,
+    # 必须被代码头覆盖——否则会提取到错误的 MOD-GOVERNANCE 而非 CFG-xxx。
+    first_line = content.split("\n", 1)[0].strip() if content else ""
+    code_header_meta = _parse_code_header(first_line)
 
     comment_meta = {}
     for line in content.split("\n"):
@@ -97,6 +126,9 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
         if ":" in stripped[2:]:
             key, _, val = stripped[2:].partition(":")
             comment_meta[key.strip()] = val.strip()
+
+    # 代码头优先级高于治理锚定块(后者是父蓝图引用,非文件自身 module_id)
+    comment_meta = {**comment_meta, **code_header_meta}
 
     data: dict | None = None
     try:
@@ -118,6 +150,7 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
         or mid.startswith("PS-IDX-")
         or mid.startswith("DOM-")
         or mid.startswith("GOV-")
+        or mid.startswith("CFG-")
     ):
         return None
 
@@ -158,7 +191,9 @@ def scan_catalogs() -> list[dict]:
     registries = []
     skipped = []
     for yf in sorted(CATALOGS_DIR.glob("*.yaml")):
-        if yf.name == "registry-master-index.yaml":
+        # N-16 snake_case: 实际文件名是 registry_master_index.yaml(下划线),
+        # 此前误用连字符导致自跳过失效——生成器会处理自己的输出文件并误报警告。
+        if yf.name == "registry_master_index.yaml":
             continue
         info = extract_registry_info(yf)
         if info:
