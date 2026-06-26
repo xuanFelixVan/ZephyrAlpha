@@ -96,7 +96,11 @@ def _scan_hook_ids(text: str) -> list[tuple[int, str, str, int]]:
             continue
         m_id = _HOOK_ID_RE.match(raw_line)
         if m_id:
-            hook_id = m_id.group(2)
+            # 剥离 yaml 字符串引号('foo'/"foo" → foo),对齐 _REPO_RE L94 的引号处理。
+            # 防御引号绕过(红蓝对抗攻击3): id: foo 与 id: 'foo' 在 yaml 解析下是同一
+            # id,但正则 \S+ 会把引号当 id 一部分 → 视为不同 → 漏检。pre-commit id
+            # 规范是 bare word,但防御性处理引号避免人为绕过(第一性原理治本)。
+            hook_id = m_id.group(2).strip("'\"")
             repo_url = current_repo_url if current_repo_url is not None else "<orphan>"
             repo_line = current_repo_line if current_repo_url is not None else 0
             results.append((i, hook_id, repo_url, repo_line))
