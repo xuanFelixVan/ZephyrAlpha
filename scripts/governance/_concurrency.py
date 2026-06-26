@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 from __future__ import annotations
 
 """
@@ -67,6 +68,14 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+# 一次性 sys.path bootstrap（REPO_ROOT 规则允许 scripts/ 一次性极简 bootstrap）
+# _concurrency 被 run_all.py 以 bare module 导入（from _concurrency import ...），
+# 需自行确保 src/ 在 sys.path 以便 import zephyr.shared.infra.process_pool
+_SRC_ROOT = str(Path(__file__).resolve().parents[2] / "src")
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
+from zephyr.shared.infra.process_pool import is_pid_alive  # PID 存活检测真源唯一（红蓝对抗归一，曾三处分裂）
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -246,7 +255,7 @@ class ProcessLock:
                 continue
 
             pid = holder.get("pid")
-            if pid is not None and not _is_pid_alive(pid):
+            if pid is not None and not is_pid_alive(pid):
                 self._clear_stale_lock()
                 continue
 
@@ -305,25 +314,6 @@ class ProcessLock:
 
     def __exit__(self, *args):
         self.release()
-
-
-def _is_pid_alive(pid: int) -> bool:
-    """检查 PID 是否存活（跨平台）。"""
-    try:
-        if sys.platform == "win32":
-            import ctypes
-
-            kernel32 = ctypes.windll.kernel32
-            handle = kernel32.OpenProcess(0x0400, False, pid)
-            if handle:
-                kernel32.CloseHandle(handle)
-                return True
-            return False
-        else:
-            os.kill(pid, 0)
-            return True
-    except (OSError, ProcessLookupError):
-        return False
 
 
 # ---------------------------------------------------------------------------
@@ -754,7 +744,7 @@ class DimensionLock:
                 return LockResult(True, level="L1", key=dimension, waited_s=round(elapsed, 1))
 
             holder = self._read_lock(lock_path)
-            if holder and not _is_pid_alive(holder.get("pid", -1)):
+            if holder and not is_pid_alive(holder.get("pid", -1)):
                 lock_path.unlink(missing_ok=True)
                 continue
 
@@ -830,7 +820,7 @@ class FileLock:
                 return LockResult(True, level="L2", key=key, waited_s=round(elapsed, 1))
 
             holder = self._read_lock(lock_path)
-            if holder and not _is_pid_alive(holder.get("pid", -1)):
+            if holder and not is_pid_alive(holder.get("pid", -1)):
                 lock_path.unlink(missing_ok=True)
                 continue
 

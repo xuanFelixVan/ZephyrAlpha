@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] 导入失败时打印明确错误信息并exit 1;--status守护进程未运行时exit 0并打印stopped
 # [TESTS]
 # [A_module] module_id=MOD-SCR_ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """IDE健康守护进程CLI包装器
 
 包装 src/zephyr/trading/ide_health_daemon.py，提供 --status/--start CLI 接口。
@@ -34,10 +35,15 @@ import sys
 import time
 from pathlib import Path
 
-# 确保项目根目录在 sys.path 中
+# 确保项目根目录与 src/ 在 sys.path 中（src/ 用于 import zephyr.*）
+# 一次性 bootstrap（REPO_ROOT 规则允许 scripts/ 一次性 sys.path bootstrap）
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+_SRC_ROOT = _PROJECT_ROOT / "src"
+for _p in (str(_PROJECT_ROOT), str(_SRC_ROOT)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from zephyr.shared.infra.process_pool import is_pid_alive  # PID 存活检测真源唯一（红蓝对抗归一，曾三处分裂）
 
 logger = logging.getLogger(__name__)
 
@@ -82,21 +88,6 @@ def _remove_pid_file() -> None:
         pass
 
 
-def _is_pid_alive(pid: int) -> bool:
-    """检查 PID 对应的进程是否存活。"""
-    try:
-        import psutil
-
-        return psutil.pid_exists(pid)
-    except ImportError:
-        # 无 psutil 时用 os.kill(pid, 0) 探测
-        try:
-            os.kill(pid, 0)
-            return True
-        except OSError:
-            return False
-
-
 def _check_pid_status() -> dict[str, str] | None:
     """通过 PID 文件检测守护进程状态（跨进程）。
 
@@ -106,7 +97,7 @@ def _check_pid_status() -> dict[str, str] | None:
     pid = _read_pid_file()
     if pid is None:
         return None
-    alive = _is_pid_alive(pid)
+    alive = is_pid_alive(pid)
     if not alive:
         # stale PID 文件：进程已死但文件残留 → 清理
         _remove_pid_file()
@@ -177,7 +168,7 @@ def cmd_start() -> int:
     """--start: 注册并启动守护进程，然后阻塞保持运行。"""
     # 跨进程检测：是否已有守护进程在运行
     existing_pid = _read_pid_file()
-    if existing_pid is not None and _is_pid_alive(existing_pid):
+    if existing_pid is not None and is_pid_alive(existing_pid):
         print(f"IdeHealthDaemon 已在运行 (pid={existing_pid})，无需重复启动")
         return 0
     # stale PID 文件清理（进程已死但文件残留）
@@ -224,7 +215,7 @@ def cmd_start_background() -> int:
     """
     # 检查是否已有守护进程在运行
     existing_pid = _read_pid_file()
-    if existing_pid is not None and _is_pid_alive(existing_pid):
+    if existing_pid is not None and is_pid_alive(existing_pid):
         print(f"IdeHealthDaemon 已在运行 (pid={existing_pid})，无需重复启动")
         return 0
     if existing_pid is not None:
@@ -250,7 +241,7 @@ def cmd_start_background() -> int:
     for _ in range(50):
         time.sleep(0.1)
         pid = _read_pid_file()
-        if pid is not None and _is_pid_alive(pid):
+        if pid is not None and is_pid_alive(pid):
             print(f"IdeHealthDaemon 后台启动成功 (pid={pid})")
             return 0
 

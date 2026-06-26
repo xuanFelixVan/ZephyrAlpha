@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_process_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 process_pool.py - Shared process pool for MCP servers and subprocess tasks
@@ -32,15 +33,56 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
+import sys
 import threading
 import time
 from dataclasses import dataclass, field
 
 from zephyr.shared.lifecycle.resource_optimization_models import ProcessPoolStats
 
-__all__ = ["MCPProcessPool", "PooledProcess"]
+__all__ = ["MCPProcessPool", "PooledProcess", "is_pid_alive"]
 
 logger = logging.getLogger(__name__)
+
+
+def is_pid_alive(pid: int) -> bool:
+    """检查 PID 对应进程是否存活（跨平台，僵尸锁/PID 文件清理真源唯一）。
+
+    根因：进程崩溃（kill/异常退出）时锁文件/PID 文件残留。仅靠 TTL 过期太慢
+    （如 gateway 全局锁 TTL=1800s），僵尸锁在超时窗口内永远等不到 TTL 过期
+    （实测阻塞 3min+）。本函数在 TTL 检查前先查 PID 存活，僵尸锁立即清理
+    （零窗口期）。
+
+    调用方（真源唯一，禁止重复造轮子——曾三处分裂，红蓝对抗归一）：
+      - zephyr.governance.git_commit_gateway._GlobalCommitLock（僵尸锁检测）
+      - scripts.ide_health_service（daemon PID 文件 stale 清理）
+      - scripts.governance._concurrency.ProcessLock（L0 全局锁 stale 清理）
+
+    红蓝对抗修复：防御性类型检查——None/str/float 等非法类型直接返回 False
+    （_concurrency 调用点 holder.get("pid", -1) 可能返回非 int，无此检查会
+    TypeError 中断）。Win32 GetLastError 区分"进程不存在"
+    (ERROR_INVALID_PARAMETER 87) vs "权限不足"(ERROR_ACCESS_DENIED 5，
+    如 PID 4 System)→ 算存活。
+    """
+    if not isinstance(pid, int) or pid <= 0:
+        return False
+    try:
+        if sys.platform == "win32":
+            import ctypes
+
+            kernel32 = ctypes.windll.kernel32
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+            if handle:
+                kernel32.CloseHandle(handle)
+                return True
+            err = kernel32.GetLastError()
+            return err == 5  # ERROR_ACCESS_DENIED
+        else:
+            os.kill(pid, 0)
+            return True
+    except (ProcessLookupError, PermissionError, OSError, ValueError):
+        return False
 
 
 @dataclass

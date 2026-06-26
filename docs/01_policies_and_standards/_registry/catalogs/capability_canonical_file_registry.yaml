@@ -422,12 +422,43 @@ capabilities:
       存量）。canonical basename git_commit_gateway 不匹配任何 alias，无法 auto 派生，
       故用 canonical_override 显式声明。对标 trae_060 §2 + 向内收原则 2.2。
     integrity_anchors:
-      - _is_pid_alive              # 僵尸锁检测函数(红蓝对抗治本,删则进程崩溃后锁恢复失效)
+      # 注：_is_pid_alive 已归一到 process_pool.py（见 process_liveness_detection 条目），
+      # gateway 现通过 from zephyr.shared.infra.process_pool import is_pid_alive 复用，
+      # 僵尸锁调用点在 _GlobalCommitLock.__enter__（L229），由 test_lock_timeout_when_held_indefinitely 保护。
       - _check_capability_aliases  # 中文aliases门禁(红蓝对抗修复2,删则中文aliases可绕过)
       - _check_repo_root_usage     # REPO_ROOT门禁(删则parents[N]反模式可绕过SSoT)
       - _match_is_bootstrap        # bootstrap豁免检测(删则sys.path合法豁免失效→误杀或漏检)
       - _is_staged_delete          # staged delete识别(纵深防御,删则git add -f可能撤销用户的git rm --cached)
       - _should_use_no_pathspec    # no-pathspec决策(staged delete保护核心,删则gitignored staged delete静默丢失,commit 32ead90e教训)
+
+# --------------------------------------------------------------------------
+  - capability_id: process_liveness_detection
+    canonical_override: src/zephyr/shared/infra/process_pool.py
+    aliases:
+      - is_pid_alive
+      - pid_alive_check
+      - zombie_lock_detection
+      - stale_pid_cleanup
+      - pid_liveness
+    description: >-
+      PID 存活检测真源唯一（红蓝对抗归一）。检查任意 PID 是否存活（跨平台：
+      Win32 用 OpenProcess(0x1000) + GetLastError 区分"进程不存在"
+      (ERROR_INVALID_PARAMETER 87) vs "权限不足"(ERROR_ACCESS_DENIED 5，算存活)；
+      Unix 用 os.kill(pid, 0)）。含防御性 isinstance 类型检查（None/str/float
+      等非法类型直接返回 False）。用于僵尸锁/PID 文件 stale 清理——进程崩溃时
+      锁/PID 文件残留，本函数在 TTL 过期前先查 PID 存活，僵尸锁立即清理
+      （零窗口期，实测避免 3min+ 阻塞）。曾三处分裂（git_commit_gateway.py /
+      ide_health_service.py / _concurrency.py 各自定义，实现差异：gateway 版
+      最健壮含 isinstance+GetLastError，ide_health 版用 psutil，_concurrency 版
+      无类型检查），红蓝对抗归一到 process_pool.py（语义最匹配：与
+      PooledProcess.is_alive / _reap_zombies 同属进程存活检测；向内收原则：能
+      扩展不新增）。调用方 MUST from zephyr.shared.infra.process_pool import
+      is_pid_alive，禁止重复定义。scripts/ 调用方（ide_health_service.py /
+      _concurrency.py）需一次性 sys.path bootstrap（REPO_ROOT 规则允许）。
+      注：tests/ 下 4 处 _is_pid_alive（tasklist subprocess 实现）未归一，因测试
+      隔离原则 + 不同实现策略，后续独立处理。
+    integrity_anchors:
+      - is_pid_alive              # PID存活检测函数(红蓝对抗归一真源,删则僵尸锁/PID文件清理全部失效)
 
 # --------------------------------------------------------------------------
   - capability_id: domain_architecture_generators

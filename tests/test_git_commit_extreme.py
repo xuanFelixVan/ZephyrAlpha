@@ -385,11 +385,13 @@ class TestTimeoutAndResourceExhaustion:
         _init_repo(tmp_path)
         _commit_file(tmp_path, "a.py", "a = 0\n")
 
-        # 创建新鲜锁（未过期）
+        # 创建新鲜锁（未过期）——用当前进程 PID（存活），模拟"锁被存活进程持有"
+        # 治本：原 PID 99999 是死进程，被 _is_pid_alive 僵尸锁检测识别并清理，
+        # 导致 commit 成功而非 LOCK_TIMEOUT，与测试意图矛盾。
         lock_file = _lock_file_path(tmp_path)
         lock_file.parent.mkdir(parents=True, exist_ok=True)
         lock_file.write_text(
-            json.dumps({"pid": 99999, "acquired_at": time.time()}),
+            json.dumps({"pid": os.getpid(), "acquired_at": time.time()}),
             encoding="utf-8",
         )
 
