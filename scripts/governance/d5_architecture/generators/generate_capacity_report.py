@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import sqlite3
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
@@ -71,16 +70,14 @@ def generate_capacity_report() -> str:
     finally:
         conn.close()
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append("doc_type: capacity_report")
+    lines.append("doc_type: audit_report")
     lines.append("title: 域容量报告")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f"date: {now.split()[0]}")
+    lines.append("date: auto-generated")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
@@ -90,7 +87,7 @@ def generate_capacity_report() -> str:
     lines.append("> **文档作用 / Purpose**: 展示各功能域的模块数量与容量上限对比，识别超容域和接近超容域，为域拆分决策提供依据。")
     lines.append("")
     lines.append("> 本文档由 generate_capacity_report.py 从 depgraph.db 自动生成")
-    lines.append(f"> 最后更新: {now}")
+    lines.append("> 最后更新以 git log 为准")
     lines.append("> 数据源: depgraph.db domains表 + nodes表")
     lines.append("")
 

@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import sqlite3
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
@@ -118,8 +117,6 @@ def generate_runtime_plane_mapping() -> str:
     finally:
         conn.close()
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     # 构建域×平面矩阵: domain_id -> {plane -> count}
     matrix: dict[str, dict[str, int]] = {}
     domain_names: dict[str, str] = {}
@@ -144,11 +141,11 @@ def generate_runtime_plane_mapping() -> str:
     lines: list[str] = []
     # frontmatter
     lines.append("---")
-    lines.append("doc_type: runtime_plane_mapping")
+    lines.append("doc_type: register")
     lines.append("title: 运行平面映射图")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f"date: {now.split()[0]}")
+    lines.append("date: auto-generated")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
@@ -158,7 +155,7 @@ def generate_runtime_plane_mapping() -> str:
     lines.append("> **文档作用 / Purpose**: 展示各功能域模块在数据平面、控制平面、管理平面的分布，用于分析系统运行时职责划分。")
     lines.append("")
     lines.append("> 本文档由 generate_runtime_plane_mapping.py 从 depgraph.db 自动生成")
-    lines.append(f"> 最后更新 / Last updated: {now}")
+    lines.append("> 最后更新以 git log 为准")
     lines.append("> 数据源 / Data source: depgraph.db nodes表 runtime_plane 字段")
     lines.append("")
     lines.append("> 注：数据库 runtime_plane 字段采用 SDN 风格三平面分类（data/control/management），")

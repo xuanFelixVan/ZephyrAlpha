@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import sqlite3
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
@@ -262,7 +261,6 @@ def generate_heatmap() -> str:
     finally:
         conn.close()
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     domain_cap_map = build_domain_capability_map()
 
     # Filter out test domains
@@ -295,11 +293,11 @@ def generate_heatmap() -> str:
     lines: list[str] = []
     # frontmatter
     lines.append("---")
-    lines.append("doc_type: capability_heatmap")
+    lines.append("doc_type: architecture_view")
     lines.append("title: 能力热力图")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f"date: {now.split()[0]}")
+    lines.append("date: auto-generated")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
@@ -309,7 +307,7 @@ def generate_heatmap() -> str:
     lines.append("> **文档作用 / Purpose**: 以矩阵形式展示43个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。")
     lines.append("")
     lines.append("> 本文档由 generate_capability_heatmap.py 从 depgraph.db 自动生成")
-    lines.append(f"> 最后更新: {now}")
+    lines.append("> 最后更新以 git log 为准")
     lines.append(f"> 数据源: {data_source}")
     lines.append("")
 

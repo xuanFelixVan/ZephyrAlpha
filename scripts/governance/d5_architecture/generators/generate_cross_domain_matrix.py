@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import sqlite3
 import sys
-from datetime import datetime
 from pathlib import Path
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
@@ -81,8 +80,6 @@ def generate_cross_domain_matrix() -> str:
     finally:
         conn.close()
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     # 构建矩阵 from_domain -> to_domain -> count
     matrix: dict[str, dict[str, int]] = {}
     for e in edges:
@@ -91,11 +88,11 @@ def generate_cross_domain_matrix() -> str:
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append("doc_type: cross_domain_matrix")
+    lines.append("doc_type: register")
     lines.append("title: 域间依赖矩阵")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f"date: {now.split()[0]}")
+    lines.append("date: auto-generated")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
@@ -105,7 +102,7 @@ def generate_cross_domain_matrix() -> str:
     lines.append("> **文档作用 / Purpose**: 以矩阵形式展示所有功能域之间的依赖关系，识别高耦合域和独立域，为架构解耦提供依据。")
     lines.append("")
     lines.append("> 本文档由 generate_cross_domain_matrix.py 从 depgraph.db 自动生成")
-    lines.append(f"> 最后更新: {now}")
+    lines.append("> 最后更新以 git log 为准")
     lines.append("> 数据源: depgraph.db edges表 + nodes表")
     lines.append("")
 

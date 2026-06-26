@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import sqlite3
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
@@ -86,16 +85,14 @@ def generate_design_vs_production() -> str:
     finally:
         conn.close()
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     lines = []
     # frontmatter
     lines.append("---")
-    lines.append("doc_type: design_vs_production_report")
+    lines.append("doc_type: audit_report")
     lines.append("title: 设计态vs运营态统计报告")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f"date: {now.split()[0]}")
+    lines.append("date: auto-generated")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
@@ -105,7 +102,7 @@ def generate_design_vs_production() -> str:
     lines.append("> **文档作用 / Purpose**: 展示各域设计态模块与运营态模块的数量对比和迁移进度，跟踪从设计到落地的完成率。")
     lines.append("")
     lines.append("> 本文档由 generate_design_vs_production.py 从 depgraph.db 自动生成")
-    lines.append(f"> 最后更新: {now}")
+    lines.append("> 最后更新以 git log 为准")
     lines.append("> 数据源: depgraph.db nodes表")
     lines.append("")
 
