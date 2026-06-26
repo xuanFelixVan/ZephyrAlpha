@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 586
+total_scripts: 589
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -50,6 +50,14 @@ scripts:
   path: _tmp_append_history_docs.py
   description: 'Strategy:'
   domain: _tmp_append_history_docs.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_check_blueprint_residual.py
+  path: _tmp_check_blueprint_residual.py
+  description: import sqlite3
+  domain: _tmp_check_blueprint_residual.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -122,6 +130,14 @@ scripts:
   path: _tmp_meta_review_ops32.py
   description: 'V1: diagnose_depgraph.py 0 error (independent re-run)'
   domain: _tmp_meta_review_ops32.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_ops33_verify.py
+  path: _tmp_ops33_verify.py
+  description: 'V5: DB residual = 0 (old domain IDs absent from DB)'
+  domain: _tmp_ops33_verify.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -330,6 +346,14 @@ scripts:
   path: run_deepseek_v4_exam.py
   description: DeepSeek V4 入职考试运行脚本
   domain: run_deepseek_v4_exam.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: run_depth_only_v5c.py
+  path: run_depth_only_v5c.py
+  description: 验证 _compute_metrics_generic (v3.0.8, commit 448d7ffa) 修复：
+  domain: run_depth_only_v5c.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
