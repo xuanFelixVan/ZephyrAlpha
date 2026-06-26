@@ -29,18 +29,6 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-# Session 隔离：绕过其他 session 的 WIP bug（sys_master_compliance.py:66 误用
-# PROJECT_ROOT 而非 REPO_ROOT，触发 NameError 阻断 governance 包 import 链）。
-# 本测试只验证 SSoT 门禁，不依赖 sys_master_compliance，故注入 mock 隔离。
-# 待其他 session 修复后可移除。
-_WIP_BUG_MODULES = [
-    "zephyr.governance.rule_enforcement.sys_master_compliance",
-    "zephyr.integration.shared_08.contracts.sys_master_compliance",
-]
-for _mod in _WIP_BUG_MODULES:
-    if _mod not in sys.modules:
-        sys.modules[_mod] = MagicMock()
-
 from scripts.scaffold import ScaffoldError, _check_duplicate_functionality
 from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 from zephyr.governance.git_commit_gateway import CommitStatus, GitCommitGateway
@@ -276,6 +264,8 @@ class TestGitCommitGatewaySSoT:
         assert existing_mp in detail
         # 验证冲突文件路径出现在 detail 中
         assert "git_commit_gateway.py" in detail
+        # 验证阻断消息含"修复指令"（消息优化后明确指令化）
+        assert "修复指令" in detail
 
     def test_allow_on_new_py_with_new_module_path(self, gateway, monkeypatch):
         """L2-2：新增 .py 声明全新 module_path → 放行。"""
@@ -757,24 +747,6 @@ class TestRedBlueExtreme:
             assert header.module_path == "", "空文件应解析为空"
         finally:
             os.unlink(tmp)
-
-    # ---- 消息优化验证 ----
-
-    def test_red_l2_message_has_fix_instruction(self, gateway, monkeypatch):
-        """L2 阻断消息含'修复指令'（消息优化后验证）。"""
-        fake_new_rel = "src/zephyr/governance/fake_msg_l2.py"
-        fake_new_abs = str(_PROJECT_ROOT / fake_new_rel).replace("\\", "/")
-        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
-        existing_mp = "zephyr.governance.git_commit_gateway"
-        fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
-        monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: fake_header))
-        monkeypatch.setattr(
-            CapabilityLookup, "find_files_by_module_path",
-            lambda self, mp: ["src/zephyr/governance/git_commit_gateway.py"] if mp == existing_mp else [],
-        )
-        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
-        assert not passed
-        assert "修复指令" in detail, "L2 消息应含'修复指令'"
 
     # ---- 大小写敏感 ----
 

@@ -812,6 +812,16 @@ class CapabilityLookup:
         返回:
             冲突列表——空列表表示无冲突（门禁应 ALLOW）。
             非空列表的每一项含 rel_path/module_path/conflicts（已排除自己）。
+
+        已知限制（方案 E 固有边界，非缺陷）:
+            1. 同批次互冲漏检：本方法只反查磁盘已有文件（find_files_by_module_path），
+               不检查 new_py_files 列表内部互冲。若 AI 绕过 scaffold 批量 commit 两份
+               声明相同新 module_path 的文件，两者都查不到已有冲突 → 漏检。
+               缓解：L1 scaffold 单文件创建不会触发此问题（scaffold 逐个创建+检查）。
+            2. module_path 大小写敏感：find_files_by_module_path 精确匹配，AI 声明
+               Zephyr.Governance.X（大写）与已有 zephyr.governance.x（小写）不匹配 → 漏检。
+               缓解：写错 module_path 等于文件 import 不到，功能上等于不存在。
+            修改门禁前 MUST 读此段落，避免误判为 bug 或重新创造已有限制。
         """
         if not new_py_files:
             return []
@@ -873,8 +883,11 @@ class CapabilityLookup:
 # ---------------------------------------------------------------------------
 
 def _normalize_path(p: str) -> str:
-    """路径标准化：反斜杠→正斜杠，去掉前导 ./ """
-    return p.replace("\\", "/").lstrip("./")
+    """路径标准化：反斜杠→正斜杠，去掉前导 ./ （正确剥离前缀，非字符集）"""
+    p = p.replace("\\", "/")
+    while p.startswith("./"):
+        p = p[2:]
+    return p
 
 
 def yaml_safe_load(path: Path) -> dict:
