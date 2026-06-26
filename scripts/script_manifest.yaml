@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 574
+total_scripts: 575
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -50,6 +50,14 @@ scripts:
   path: _tmp_redblue_n16_extreme_v2.py
   description: 模拟刚进项目的AI，从5个维度攻击N-16防线：
   domain: _tmp_redblue_n16_extreme_v2.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_verify_exec_fix.py
+  path: _tmp_verify_exec_fix.py
+  description: import sys, tempfile, os, importlib.util, subprocess
+  domain: _tmp_verify_exec_fix.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
