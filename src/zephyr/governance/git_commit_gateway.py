@@ -152,6 +152,17 @@ _PERMANENT_ZONE_DIRS: tuple[str, ...] = (
     "docs/08_knowledge/",
 )
 
+# 生成器豁免子目录——落在此清单内的新文件跳过永久区晋升门禁（PROMOTION_BLOCKED）
+# 真源：capability_canonical_file_registry.yaml outputs 字段 + AGENTS.md §generator-exempt-zones
+# 约束：这些目录是生成器专用路径，生成器是唯一合法修改源（约定，非技术强制）
+# 不含 taskcards/ 子目录（手工任务卡）和 04_architecture_principles_decisions/（手工架构决策）
+_GENERATOR_EXEMPT_SUBDIRS: tuple[str, ...] = (
+    "docs/02_enterprise_architecture/00_overview_entry/",
+    "docs/02_enterprise_architecture/01_global_architecture_diagram/",
+    "docs/02_enterprise_architecture/02_domain_architecture_docs/",
+    "docs/02_enterprise_architecture/03_governance_reports/",
+)
+
 
 class CommitStatus(str, Enum):
     """commit 结果状态。"""
@@ -816,6 +827,10 @@ class GitCommitGateway:
         for f in files:
             rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
             rel_lower = rel.lower()
+            # 生成器豁免子目录内的文件跳过永久区晋升门禁
+            # （生成器专用路径，生成器可自由创建/删除，不受 PROMOTION_BLOCKED 阻断）
+            if any(rel_lower.startswith(exempt) for exempt in _GENERATOR_EXEMPT_SUBDIRS):
+                continue
             if any(rel_lower.startswith(prefix) for prefix in _PERMANENT_ZONE_DIRS):
                 zone_files.append((f, rel_lower))
         if not zone_files:
