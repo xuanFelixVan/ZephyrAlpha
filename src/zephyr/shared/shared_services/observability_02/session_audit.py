@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.shared_services.observability_02.session_audit
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.session_audit

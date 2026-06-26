@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.vibe_experiment_tracker
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

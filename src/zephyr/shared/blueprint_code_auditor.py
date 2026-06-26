@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.blueprint_code_auditor
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

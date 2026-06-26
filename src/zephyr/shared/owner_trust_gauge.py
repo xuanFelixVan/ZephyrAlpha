@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.owner_trust_gauge
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

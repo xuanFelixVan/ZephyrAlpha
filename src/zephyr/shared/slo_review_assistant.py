@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.slo_review_assistant
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

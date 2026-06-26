@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.dual_channel_alert
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

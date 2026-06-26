@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.shared_services.lifecycle.task_lifecycle_manager
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.infrastructure.lifecycle.task_lifecycle_manager

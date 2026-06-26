@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.shared_services.models
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.models

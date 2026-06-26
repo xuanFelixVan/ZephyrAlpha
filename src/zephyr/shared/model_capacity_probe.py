@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.model_capacity_probe
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

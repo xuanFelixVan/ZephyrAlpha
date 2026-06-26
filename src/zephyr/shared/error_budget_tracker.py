@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.error_budget_tracker
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

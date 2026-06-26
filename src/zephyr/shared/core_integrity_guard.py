@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.core_integrity_guard
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

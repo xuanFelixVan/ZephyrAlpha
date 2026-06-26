@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.shared_services.queue.task_queue
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.infrastructure.queue.task_queue

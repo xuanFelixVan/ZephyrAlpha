@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.dependency_capacity_guard
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

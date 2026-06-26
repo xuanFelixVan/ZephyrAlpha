@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.combinatorial_gate
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.ai_audit_guard
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

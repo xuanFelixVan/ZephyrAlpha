@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.heartbeat_server
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.degradation_chain
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

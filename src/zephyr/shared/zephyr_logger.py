@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.zephyr_logger
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.ops.observability.logging

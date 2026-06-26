@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.alert_manager
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

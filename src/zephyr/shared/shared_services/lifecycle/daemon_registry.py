@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.shared_services.lifecycle.daemon_registry
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.lifecycle.daemon_registry

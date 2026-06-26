@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.budget_aware_prompt
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

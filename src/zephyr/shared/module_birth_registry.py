@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.module_birth_registry
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

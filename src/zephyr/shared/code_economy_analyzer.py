@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.code_economy_analyzer
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

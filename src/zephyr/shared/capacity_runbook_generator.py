@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.capacity_runbook_generator
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

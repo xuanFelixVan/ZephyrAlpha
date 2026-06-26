@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.fault_isolator
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES]

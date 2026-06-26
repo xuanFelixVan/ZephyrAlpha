@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED
+# [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.shared_services.observability_02.health
 # [DOMAIN] D-SHARED
 # [DEPENDENCIES] zephyr.shared.observability_02.health
