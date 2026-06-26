@@ -394,8 +394,15 @@ def _batch_collect_imports() -> dict[str, list[str]]:
     consumers: dict[str, list[str]] = defaultdict(list)
 
     try:
+        # 纳入项目根目录的 .py（如 sitecustomize.py）——这些是系统级消费者，
+        # 仅扫 src/scripts/tests 会漏掉根级导入，导致 RULE-TWO 豁免误判（治本 Bug 2：
+        # 当某模块唯一消费者位于根级时，豁免失效 → 误报 orphan）。
+        # 用相对路径（posix）传给 rg：若传绝对路径 D:\...，rg 输出含盘符冒号，
+        # 下游 line.split(":", 2) 会把盘符冒号当首分隔符 → consumer_file 被截成 "D"。
+        root_py_files = [p.relative_to(PROJECT_ROOT).as_posix() for p in PROJECT_ROOT.glob("*.py")]
         result = subprocess.run(
-            ["rg", "--no-heading", "-n", "-e", pattern, "src/", "scripts/", "tests/"],
+            ["rg", "--no-heading", "-n", "-e", pattern, "src/", "scripts/", "tests/"]
+            + root_py_files,
             cwd=str(PROJECT_ROOT),
             capture_output=True,
             text=True,
@@ -752,6 +759,39 @@ def _get_changed_files_from_git() -> set[Path]:
     return filtered
 
 
+def _build_changed_files_from_paths(paths: list[str]) -> set[Path]:
+    """从显式路径列表构建变更文件集合（供 post-commit reconciler 传入 committed_files）。
+
+    治本 Bug 1：``--incremental`` 用 ``git diff HEAD`` + ``git ls-files --others`` 推导
+    changed_files，会扫到**工作树全部 WIP**而非本次 commit 的文件。post-commit
+    reconciler 应改用本函数接收精确的 committed_files，避免对无关 WIP 误报 NEW orphan。
+
+    过滤规则与 ``_get_changed_files_from_git`` 一致：仅保留 ``src/zephyr/`` 和
+    ``scripts/`` 下的文件。接受绝对或相对路径（相对路径相对于 PROJECT_ROOT）。
+
+    Args:
+        paths: 文件路径列表（绝对或相对）。
+
+    Returns:
+        绝对路径集合，仅含 src/zephyr/ 和 scripts/ 下且磁盘存在的文件。
+    """
+    changed: set[Path] = set()
+    for p in paths:
+        path = Path(p)
+        if not path.is_absolute():
+            path = PROJECT_ROOT / path
+        if not path.exists():
+            continue
+        try:
+            rel = path.relative_to(PROJECT_ROOT)
+            rel_str = rel.as_posix()
+            if rel_str.startswith("src/zephyr/") or rel_str.startswith("scripts/"):
+                changed.add(path)
+        except ValueError:
+            continue
+    return changed
+
+
 # ===================================================================
 # CLI
 # ===================================================================
@@ -764,7 +804,15 @@ def main() -> None:
     )
     scan_mode = parser.add_mutually_exclusive_group()
     scan_mode.add_argument("--full", action="store_true", help="全量扫描（默认）")
-    scan_mode.add_argument("--incremental", action="store_true", help="增量扫描：仅扫描 git 变更文件")
+    scan_mode.add_argument("--incremental", action="store_true", help="增量扫描：仅扫描 git 变更文件（git diff HEAD + 未跟踪）")
+    scan_mode.add_argument(
+        "--files",
+        nargs="+",
+        metavar="PATH",
+        help="显式指定变更文件集合（绝对或相对路径），替代 --incremental 的 git diff 推导。"
+        "供 post-commit reconciler 传入精确 committed_files，避免扫描无关 WIP（治本："
+        "--incremental 会扫到工作树全部 WIP 而非本次 commit 的文件）。",
+    )
     parser.add_argument("--compact", action="store_true", help="紧凑输出")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出（供 AI/MCP 消费）")
     parser.add_argument("--fix", action="store_true", help="交互式修复孤儿")
@@ -776,15 +824,29 @@ def main() -> None:
     parser.add_argument(
         "--baseline-aware",
         action="store_true",
-        help="增量模式下对比基线：仅 NEW 孤儿阻断(exit 1)，PERSISTENT 孤儿降级为告警(exit 0)",
+        help="差分模式（--incremental 或 --files）下对比基线：仅 NEW 孤儿阻断(exit 1)，"
+        "PERSISTENT 孤儿降级为告警(exit 0)",
     )
     args = parser.parse_args()
 
     # 确定扫描模式
     changed_files: set[Path] | None = None
+    differential = False  # 差分模式：--incremental 或 --files（用于 --baseline-aware 判定）
     try:
-        if args.incremental:
+        if args.files:
+            # 显式文件列表（供 post-commit reconciler 传入精确 committed_files，
+            # 避免 --incremental 的 git diff 扫到无关 WIP——治本 Bug 1）
+            changed_files = _build_changed_files_from_paths(args.files)
+            differential = True
+            if not changed_files:
+                print("[FILES] 传入文件均不在 src/zephyr/ 或 scripts/ 下，扫描结果为空（CLEAN）")
+                ar = AuditResult()
+            else:
+                print(f"[FILES] 显式指定 {len(changed_files)} 个变更文件，仅扫描这些文件")
+                ar = audit(changed_files=changed_files)
+        elif args.incremental:
             changed_files = _get_changed_files_from_git()
+            differential = True
             if not changed_files:
                 print("[INCREMENTAL] 无变更文件或 git 不可用，扫描结果为空（CLEAN）")
                 # 无变更文件 = 无新增孤儿 = CLEAN
@@ -822,8 +884,8 @@ def main() -> None:
         print(f"  时间: {meta['saved_at']}")
         sys.exit(EXIT_PASS)
 
-    # ── --baseline-aware 模式：增量扫描对比基线 ──
-    if args.baseline_aware and args.incremental:
+    # ── --baseline-aware 模式：差分扫描对比基线 ──
+    if args.baseline_aware and differential:
         findings = _to_findings(ar)
         comparison = _compare_with_baseline(findings)
 

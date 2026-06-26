@@ -74,6 +74,8 @@ __all__ = [
     "make_ttl_reconciler",
     "make_ghost_reconciler",
     "make_path_tree_reconciler",
+    "make_working_docs_reconciler",
+    "scan_and_archive_working_docs",
 ]
 
 
@@ -309,10 +311,29 @@ def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. post-commit 增量 baseline-aware 扫描（非阻断）
+        # 1. post-commit baseline-aware 扫描（非阻断）
+        # 治本 Bug 1：改用 --files 传入精确 committed_files，替代 --incremental。
+        # --incremental 用 git diff HEAD 扫描工作树全部 WIP，会把与本次 commit 无关的
+        # WIP 文件误判为 NEW orphan（例如 runtime_interceptor.py 是 WIP 未提交却被扫到，
+        # 而 commit 实际只含 fix_shared_bypass.py 等 4 个无关文件）。
+        # 仅传 src/zephyr/ 与 scripts/ 下的 .py（与 trigger 范围一致；audit 内部会再过滤）。
+        rel_py_files = [
+            os.path.relpath(f, str(project_root)).replace("\\", "/")
+            for f in committed_files
+            if f.endswith(".py")
+        ]
+        rel_py_files = [
+            rel for rel in rel_py_files
+            if rel.startswith("src/zephyr/") or rel.startswith("scripts/")
+        ]
+        if not rel_py_files:
+            return ReconcileResult(
+                action="skip",
+                detail="baseline_aware: no src/zephyr|scripts .py in committed files",
+            )
         scan_result = subprocess.run(
             [sys.executable, "scripts/governance/audit_registration.py",
-             "--incremental", "--baseline-aware"],
+             "--baseline-aware", "--files"] + rel_py_files,
             cwd=str(project_root),
             capture_output=True,
             text=True,
@@ -333,6 +354,7 @@ def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
             "stdout_tail": scan_result.stdout.strip()[-500:],
             "stderr_tail": scan_result.stderr.strip()[-500:],
             "committed_files": committed_files,
+            "scanned_files": rel_py_files,
         }
         try:
             report_path.write_text(
@@ -653,4 +675,259 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=150,
+    )
+
+
+def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False) -> dict:
+    """扫描 docs/_working/*.md 的幽灵引用并归档有幽灵引用的文档。
+
+    真源函数：``make_working_docs_reconciler`` 与一次性归档（S5/CLI）共用此逻辑
+    （向内收——扫描+归档逻辑唯一真源在此，两处复用，不另建脚本）。
+
+    扫描 docs/_working/*.md（排除 README.md permanent 定位说明），提取每个文档
+    引用的项目内文件路径（.py/.yaml/.yml/.md），检测引用路径是否仍存在于磁盘。
+    有幽灵引用的文档移动到 .runtime/working_archive/<ts>/<name>（可恢复，且
+    .runtime/ 已 .gitignore 不入库）。
+
+    路径引用提取（v1 保守，宁漏勿误）：
+    - markdown 链接 ``](path)`` → 提取 path
+    - 反引号代码 ``` `path` ``` → 提取 path
+    - file:/// 绝对路径 → 转项目相对路径
+    - 排除 http(s):// / mailto: / # 锚点等外部引用
+    - 不扫描裸文本路径（避免代码示例误判）
+
+    Args:
+        project_root: 项目根路径（Path 或 str）。
+        dry_run: True 只扫描不归档（返回候选列表）；False 归档（移动文件）。
+
+    Returns:
+        报告 dict：::
+
+            {
+              "scanned": int,
+              "archived": [filename, ...],   # dry_run 时为候选
+              "clean": [filename, ...],
+              "details": {filename: {"ghost_refs": [...], optional "archive_error": str}},
+              "archive_dir": str | None,
+            }
+    """
+    import re
+    import shutil
+    import time
+    from pathlib import Path
+
+    project_root = Path(project_root)
+    working_dir = project_root / "docs" / "_working"
+    if not working_dir.is_dir():
+        return {"scanned": 0, "archived": [], "clean": [], "details": {}, "archive_dir": None}
+
+    # 路径引用正则：markdown 链接 ](path) 与反引号 `path`（保守，只匹配明确引用语法）
+    _MD_LINK_RE = re.compile(r"\]\(([^)]+\.(?:py|yaml|yml|md))\)", re.IGNORECASE)
+    _BACKTICK_RE = re.compile(r"`([^`]+\.(?:py|yaml|yml|md))`", re.IGNORECASE)
+
+    def _looks_like_path(ref: str) -> bool:
+        """过滤非路径引用：必须含路径分隔符，不含空格/通配符/括号。
+
+        宁漏勿误——裸文件名（如 project_memory.md）可能指项目外文件；
+        含空格的多是命令行示例（如 ``python scripts/foo.py``）；
+        含通配符的是 glob（如 ``**/index.md``）。
+        """
+        if "/" not in ref and "\\" not in ref:
+            return False  # 裸文件名，可能指项目外，跳过
+        if any(c in ref for c in (" ", "*", "?", "[", "(", "{")):
+            return False  # 命令行示例或通配符，跳过
+        if "..." in ref:
+            return False  # 省略写法（如 docs/.../foo.md），跳过
+        return True
+
+    def _extract_refs(content: str) -> list[str]:
+        refs: list[str] = []
+        for m in _MD_LINK_RE.finditer(content):
+            r = m.group(1).replace("\\", "/")
+            if _looks_like_path(r):
+                refs.append(r)
+        for m in _BACKTICK_RE.finditer(content):
+            r = m.group(1).replace("\\", "/")
+            if _looks_like_path(r):
+                refs.append(r)
+        # 去重保序
+        seen: set[str] = set()
+        unique: list[str] = []
+        for r in refs:
+            if r not in seen:
+                seen.add(r)
+                unique.append(r)
+        return unique
+
+    def _is_external(ref: str) -> bool:
+        return ref.startswith(("http://", "https://", "mailto:", "#"))
+
+    def _is_ghost(ref: str) -> bool:
+        if _is_external(ref):
+            return False
+        # file:/// 绝对路径 → 直接作为绝对路径检查（不拼 project_root，避免前导/解析 bug）
+        if ref.startswith("file:///"):
+            abs_path = ref[len("file:///"):]
+            return not Path(abs_path).exists()
+        # 相对于 project_root
+        if (project_root / ref).exists():
+            return False
+        # 相对于 _working/（处理 ../ 相对路径，resolve 兜底 .. 折叠）
+        if (working_dir / ref).resolve().exists():
+            return False
+        return True
+
+    md_files = [f for f in working_dir.glob("*.md") if f.name != "README.md"]
+    archived: list[str] = []
+    clean: list[str] = []
+    details: dict = {}
+    archive_dir = None
+
+    for md in md_files:
+        try:
+            content = md.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        refs = _extract_refs(content)
+        ghosts = [r for r in refs if _is_ghost(r)]
+        if ghosts:
+            details[md.name] = {"ghost_refs": ghosts}
+            if not dry_run:
+                if archive_dir is None:
+                    archive_dir = project_root / ".runtime" / "working_archive" / str(int(time.time()))
+                    archive_dir.mkdir(parents=True, exist_ok=True)
+                dest = archive_dir / md.name
+                try:
+                    shutil.move(str(md), str(dest))
+                    archived.append(md.name)
+                except OSError as e:
+                    details[md.name]["archive_error"] = str(e)
+            else:
+                archived.append(md.name)  # dry_run 计入候选供审阅
+        else:
+            clean.append(md.name)
+
+    return {
+        "scanned": len(md_files),
+        "archived": archived,
+        "clean": clean,
+        "details": details,
+        "archive_dir": str(archive_dir) if archive_dir else None,
+    }
+
+
+def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 docs/_working/ 幽灵引用 post-commit 对账 reconciler（治本：AI 工作文档堆积治理）。
+
+    docs/_working/ 下的 task_bound 文档引用脚本/规则/状态，随项目演进这些引用会
+    过时变成"幽灵引用"，误导后续 AI 产生幻觉（违反"减少幻觉"核心原则）。本
+    reconciler 在 post-commit 扫描 _working/*.md 的文件路径引用，检测引用路径
+    是否仍存在；有幽灵引用的文档归档到 .runtime/working_archive/，并自动 commit
+    _working/ 的删除，防止幽灵引用持续误导。
+
+    向内收设计（三原则审核）：
+    - 责任唯一：扫描+归档逻辑只在 ``scan_and_archive_working_docs`` 一处，reconciler
+      与一次性归档（S5/CLI）共用，不另建脚本
+    - 真源唯一：复用 ReconciliationRegistry 框架（第6个 reconciler），不新建清理系统；
+      复用 make_ghost_reconciler 的"删除检测 trigger"模式；复用 make_manifest_reconciler
+      的"检测→git add→git commit --no-verify"自动提交模式
+    - 向内收：扩展 ``_register_default_reconcilers`` 一行，不改 gateway 方法体
+
+    非阻断设计：归档后自动 commit 删除；commit 失败降级为 warn（报告落盘供追责）。
+    .runtime/ 已 .gitignore，归档文件不入库，仅 _working/ 删除需 commit。
+
+    trigger 裁定：与 make_ghost_reconciler 一致——committed 文件不在磁盘 = 删除
+    commit。删除是产生幽灵引用的主要原因（引用的文件被删/改名）；改名 = 删除+新增，
+    删除部分会被检测。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git，类型注解
+            object 保持本纯 stdlib 模块不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-WORKING-DOCS", priority=500)。
+    """
+    import json
+    import os
+    import time
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 与 make_ghost_reconciler 一致：committed 文件不在磁盘 = 删除 commit
+        return any(not os.path.isfile(f) for f in committed_files)
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 扫描+归档（复用真源函数）
+        scan = scan_and_archive_working_docs(project_root, dry_run=False)
+        scanned = scan["scanned"]
+        archived = scan["archived"]
+        details = scan["details"]
+
+        # 2. 报告落盘
+        reports_dir = project_root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        report_path = reports_dir / f"working_docs_{ts}.json"
+        report = {
+            "gate_id": "GATE-WORKING-DOCS",
+            "session_id": session_id,
+            "timestamp": ts,
+            "scanned": scanned,
+            "archived": archived,
+            "clean": scan["clean"],
+            "details": details,
+            "archive_dir": scan["archive_dir"],
+        }
+        try:
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"working_docs scan done but report write failed: {e}",
+            )
+
+        if scanned == 0:
+            return ReconcileResult(action="skip", detail="no task_bound .md in _working/")
+        if not archived:
+            return ReconcileResult(
+                action="clean",
+                detail=f"working_docs scan clean ({scanned} .md, 0 ghost), report={report_path.name}",
+            )
+
+        # 3. 归档后自动 commit _working/ 的删除（参考 make_manifest_reconciler 模式）
+        add_result = gateway._run_git(["git", "add", "-A", "docs/_working/"])
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"working_docs archived {len(archived)} but git add failed: "
+                       f"{add_result.stderr.strip()[:200]}",
+            )
+        auto_msg = (
+            f"chore(working_docs): auto-archive {len(archived)} ghost-ref docs by "
+            f"GitCommitGateway post-commit [GW:{session_id}:auto]"
+        )
+        commit_result = gateway._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg, "--", "docs/_working/"]
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"working_docs archived {len(archived)} ghost-ref docs, "
+                       f"report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"working_docs archived {len(archived)} but auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-WORKING-DOCS",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=500,
     )
