@@ -2891,7 +2891,7 @@ def main() -> None:
         type=str,
         nargs=2,
         metavar=("OLD_DOMAIN_ID", "NEW_DOMAIN_ID"),
-        help="重命名域ID（裁定#204）：18步UPDATE覆盖11表。注意 D-SIGNAL 必须最后替换（含其他旧域名前缀避免误伤）",
+        help="重命名域ID（裁定#204）：18步UPDATE覆盖11表。完成后自动触发 scan_residual 后置校验（事件驱动，无需手工跑 audit_rename_completeness）。注意 D-SIGNAL 必须最后替换（含其他旧域名前缀避免误伤）",
     )
     parser.add_argument(
         "--update-domain-name",
