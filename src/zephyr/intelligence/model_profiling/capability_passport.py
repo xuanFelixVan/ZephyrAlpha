@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] PassportError;SerializationError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_capability_passport | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 CapabilityPassport --- AI 模型能力护照
@@ -85,7 +86,8 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "refactor": 0.55,
     "code_generate": 0.55,
     "dead_code_removal": 0.55,
-    # v3.0.5 新增 19 能力（code_edit_precision 与 code_fix 同阈值）
+    # v3.0.5 新增 21 能力（含 context_management；code_edit_precision 与 code_fix 同阈值；
+    # code_fix 为兼容保留——题库已统一用 code_edit_precision，但 _compute_metrics 仍引用）
     "code_edit_precision": 0.60,
     "ambiguity_detect": 0.65,
     "architecture_design": 0.55,
@@ -106,6 +108,7 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "self_review": 0.55,
     "task_decomposition": 0.55,
     "tool_selection": 0.55,
+    "context_management": 0.55,
 }
 
 
@@ -129,6 +132,7 @@ class DepthCapabilityResult:
     samples_tested: int = 0
     failure_reason: str = ""
     time_weight_avg: float = 1.0  # v3.0.5: 平均时间折扣系数（便于审计）
+    samples_per_case: int = 1  # P1-2: 每题采样次数（默认 1=单次, 5=统计显著性）
 
 
 @dataclass

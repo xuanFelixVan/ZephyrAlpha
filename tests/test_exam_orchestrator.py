@@ -9,9 +9,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 
+import pytest
 from unittest.mock import MagicMock
 
 # v3.0.5: import 统一到 #3 生产源（zephyr.intelligence.model_profiling）
@@ -193,6 +195,307 @@ class TestExamOrchestratorInit:
         chat._model = "inferred-model"
         orch = ExamOrchestrator(chat)
         assert orch._model_id == "inferred-model"
+
+
+class TestDepthMultiSampling:
+    """P1-2: depth 每题多次采样, 提升统计显著性。"""
+
+    def test_default_samples_per_case_is_1(self):
+        """默认 n=1, 保持向后兼容。"""
+        orch = ExamOrchestrator(MagicMock(), model_id="t")
+        assert orch._depth_samples_per_case == 1
+
+    def test_explicit_samples_per_case(self):
+        """显式参数优先于环境变量。"""
+        orch = ExamOrchestrator(MagicMock(), model_id="t", depth_samples_per_case=5)
+        assert orch._depth_samples_per_case == 5
+
+    def test_env_var_samples_per_case(self, monkeypatch):
+        """环境变量 ZEPHYR_DEPTH_SAMPLES 在未显式传参时生效。"""
+        monkeypatch.setenv("ZEPHYR_DEPTH_SAMPLES", "3")
+        orch = ExamOrchestrator(MagicMock(), model_id="t")
+        assert orch._depth_samples_per_case == 3
+
+    def test_invalid_env_var_falls_back_to_1(self, monkeypatch):
+        """非法环境变量值会抛 ValueError — 用户应提供合法值。"""
+        monkeypatch.setenv("ZEPHYR_DEPTH_SAMPLES", "not_a_number")
+        with pytest.raises(ValueError):
+            # int("not_a_number") 会抛 ValueError — 这是预期行为
+            ExamOrchestrator(MagicMock(), model_id="t")
+
+    def test_negative_samples_clamped_to_1(self):
+        """负数被 max(1, ...) 钳制为 1。"""
+        orch = ExamOrchestrator(MagicMock(), model_id="t", depth_samples_per_case=-5)
+        assert orch._depth_samples_per_case == 1
+
+    def test_score_capability_calls_infer_n_times(self):
+        """n=3 时, 每个 case 的 _infer 应被调用 3 次。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "test", "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t", depth_samples_per_case=3)
+        # 1 个 EASY case, 非 OLYMPIAD
+        case = ExamTestCase(
+            case_id="T-001",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="test prompt",
+            expected_structure_keys=["category"],
+            expected_category="test",
+        )
+        result = orch._score_capability("task_classification", [case])
+        # _infer 调用次数 = n_samples × n_cases = 3 × 1 = 3
+        assert chat.inference.call_count == 3
+        assert result.samples_per_case == 3
+        assert result.samples_tested == 1  # 仍然只有一个 case
+
+    def test_score_capability_n1_backward_compat(self):
+        """n=1 时行为与原单次采样一致。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"category": "test", "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t", depth_samples_per_case=1)
+        case = ExamTestCase(
+            case_id="T-002",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="test",
+            expected_structure_keys=["category"],
+            expected_category="test",
+        )
+        result = orch._score_capability("task_classification", [case])
+        assert chat.inference.call_count == 1
+        assert result.samples_per_case == 1
+
+    def test_majority_vote_exact_match(self):
+        """n=3 时, 2/3 采样 exact → exact_match_rate=1 (多数投票 ≥50%)。"""
+        chat = MagicMock()
+        # 3 次调用: 2 次正确, 1 次错误
+        chat.inference.side_effect = [
+            {"category": "test", "token_count": 10},  # 正确
+            {"category": "wrong", "token_count": 10},  # 错误
+            {"category": "test", "token_count": 10},  # 正确
+        ]
+        orch = ExamOrchestrator(chat, model_id="t", depth_samples_per_case=3)
+        case = ExamTestCase(
+            case_id="T-003",
+            capability="task_classification",
+            difficulty=Difficulty.EASY,
+            prompt="test",
+            expected_structure_keys=["category"],
+            expected_category="test",
+        )
+        result = orch._score_capability("task_classification", [case])
+        # 多数投票: 2/3 exact → em=1 → exact_match_rate=1.0
+        assert result.exact_match_rate == 1.0
+
+    def test_olympiad_appends_once_per_case(self):
+        """OLYMPIAD 题: n=3 时 _olympiad_case_results 仅 append 1 次 (不按采样次数膨胀)。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"code": "print(1)", "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t", depth_samples_per_case=3)
+        # 用一个 OLYMPIAD case (需要 expected_test_cases 才能走 executor 轨)
+        case = ExamTestCase(
+            case_id="EX-OLY-T1",
+            capability="code_generate",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="write a function",
+            expected_test_cases=["assert True"],
+        )
+        orch._score_capability("code_generate", [case])
+        # 仅 append 1 次 (而不是 3 次)
+        assert len(orch._olympiad_case_results) == 1
+
+
+class TestDeterministicJudge:
+    """P1-4: 确定性裁判 — 无 LLM judge_chat 时的 fallback。"""
+
+    def _make_judge(self):
+        from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge
+        return DeterministicJudge()
+
+    def test_keyword_coverage_full(self):
+        """所有关键词命中 → correctness=1.0。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T",
+            capability="architecture_design",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="test",
+            expected_contains=["microservice", "API", "database"],
+        )
+        result = judge.judge(case, "We use microservice with API and database patterns")
+        assert result.correctness == 1.0
+
+    def test_keyword_coverage_partial(self):
+        """部分关键词命中 → correctness=命中比例。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T",
+            capability="architecture_design",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="test",
+            expected_contains=["microservice", "API", "database"],
+        )
+        result = judge.judge(case, "We use microservice with API")
+        assert result.correctness == pytest.approx(2 / 3, abs=0.01)
+
+    def test_keyword_coverage_zero(self):
+        """无关键词命中 → correctness=0.0。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T",
+            capability="architecture_design",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="test",
+            expected_contains=["microservice", "API"],
+        )
+        result = judge.judge(case, "completely unrelated content with sufficient length " * 5)
+        assert result.correctness == 0.0
+
+    def test_length_too_short(self):
+        """太短 (<50字) → depth < 0.5。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="x", difficulty=Difficulty.OLYMPIAD, prompt="t",
+        )
+        result = judge.judge(case, "short answer")
+        assert result.depth < 0.5
+
+    def test_length_reasonable(self):
+        """合理长度 (50~10000字) → depth=1.0。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="x", difficulty=Difficulty.OLYMPIAD, prompt="t",
+        )
+        result = judge.judge(case, "x" * 100)
+        assert result.depth == 1.0
+
+    def test_no_requirements_neutral_score(self):
+        """无关键词/结构要求 → correctness/completeness=0.5 (中性分)。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="x", difficulty=Difficulty.OLYMPIAD, prompt="t",
+        )
+        result = judge.judge(case, "x" * 100)
+        assert result.correctness == 0.5
+        assert result.completeness == 0.5
+
+    def test_overall_in_range(self):
+        """overall 始终在 [0, 1] 区间。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T",
+            capability="x",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="t",
+            expected_contains=["a", "b", "c"],
+        )
+        for text in ["", "a", "abc", "x" * 20000, "a b c " * 20]:
+            result = judge.judge(case, text)
+            assert 0.0 <= result.overall <= 1.0
+            assert "deterministic:" in result.reasoning
+
+
+class TestOlympiadThreeTrackEnforcement:
+    """P1-4: 三轨强制 — judge_chat=None 时仍走三轨评分。"""
+
+    def test_judge_track_always_present(self):
+        """judge_chat=None 时, judge 轨用 DeterministicJudge, 不再缺失。"""
+        chat = MagicMock()
+        # 提供足够长的候选文本避免 length=0
+        chat.inference.return_value = {"content": "x" * 200, "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t")  # 无 judge_chat
+        assert orch._judge is None
+        assert orch._det_judge is not None
+
+        case = ExamTestCase(
+            case_id="EX-OLY-TJ",
+            capability="architecture_design",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="design a system",
+            expected_contains=["microservice"],
+        )
+        # 直接调用 _score_olympiad_case
+        score = orch._score_olympiad_case(case, {"content": "microservice " * 20})
+        # 三轨: rubric(0.3) + judge(0.4) = 0.7 总权重 (无 executor 轨)
+        # score 应该 > 0 (不是 0, 因为 judge 轨有分)
+        assert score > 0.0
+
+    def test_judge_chat_uses_llm_judge(self):
+        """judge_chat 可用时, 优先用 LLM judge (内部调用 chat.ask)。"""
+        # judge_chat 需返回可解析的 JSON 字符串, 否则 _parse_judge_json 会失败
+        llm_judge_chat = MagicMock()
+        llm_judge_chat.ask.return_value = (
+            '{"correctness": 0.9, "completeness": 0.9, "depth": 0.9, '
+            '"hallucination_detected": false, "overall": 0.95, "reasoning": "test"}'
+        )
+        chat = MagicMock()
+        chat.inference.return_value = {"content": "x" * 200, "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t", judge_chat=llm_judge_chat)
+        assert orch._judge is not None
+
+        case = ExamTestCase(
+            case_id="EX-OLY-TJ2",
+            capability="architecture_design",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="design",
+        )
+        orch._score_olympiad_case(case, {"content": "x" * 200})
+        # ExamJudge.judge() 内部调用 chat.ask() — 验证 LLM judge 路径被触发
+        llm_judge_chat.ask.assert_called_once()
+
+    def test_static_assertions_track(self):
+        """非 code_generate OLY 题 + expected_static_assertions → 走静态断言轨。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"content": "x" * 200, "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t")
+
+        case = ExamTestCase(
+            case_id="EX-OLY-SA",
+            capability="architecture_design",  # 非 code_generate
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="design microservice",
+            expected_static_assertions=["microservice", "API gateway"],
+        )
+        # 候选答案包含 2/2 断言 → pass_rate=1.0
+        score = orch._score_olympiad_case(
+            case,
+            {"content": "We should use microservice with API gateway pattern " * 5},
+        )
+        # 三轨全在: rubric(0.3) + static(0.3) + judge(0.4) = 1.0 总权重
+        # static 轨 pass_rate=1.0, 应对 score 有正贡献
+        assert score > 0.0
+
+    def test_static_assertions_partial_match(self):
+        """静态断言部分命中 → pass_rate=命中比例。"""
+        chat = MagicMock()
+        chat.inference.return_value = {"content": "x" * 200, "token_count": 10}
+        orch = ExamOrchestrator(chat, model_id="t")
+
+        case = ExamTestCase(
+            case_id="EX-OLY-SA2",
+            capability="architecture_design",
+            difficulty=Difficulty.OLYMPIAD,
+            prompt="design",
+            expected_static_assertions=["microservice", "API gateway", "database"],
+        )
+        # 仅命中 1/3
+        rate = ExamOrchestrator._check_static_assertions(
+            "We use microservice pattern " * 5,
+            case.expected_static_assertions,
+        )
+        assert rate == pytest.approx(1 / 3, abs=0.01)
+
+    def test_static_assertions_empty(self):
+        """空断言列表 → pass_rate=0.0。"""
+        rate = ExamOrchestrator._check_static_assertions("any text", [])
+        assert rate == 0.0
+
+    def test_expected_static_assertions_default_empty(self):
+        """新字段默认为空列表, 向后兼容。"""
+        case = ExamTestCase(
+            case_id="X", capability="c", difficulty=Difficulty.EASY, prompt="p",
+        )
+        assert case.expected_static_assertions == []
 
 
 class TestComputeOverall:

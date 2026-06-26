@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 86道v3.0.5扩展考试题;28能力×5难度
+# [INVARIANTS] 96道v3.0.5扩展考试题;29能力×5难度
 # [MODIFY-GUARD] docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [STABILITY] stable
 # [SAFETY] L
@@ -13,9 +13,10 @@
 # [ERROR_CONTRACT] TestCaseError
 # [TESTS] tests/test_exam_test_cases.py
 # [A_module] module_id=MOD-RSC_exam_test_cases | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
+# [TTL] task_bound
 
 """
-ExamTestCases --- v3.0.5 扩展考试题库（86 题 / 28 能力 / 5 难度）
+ExamTestCases --- v3.0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）
 
 5 难度: easy/medium/hard/extreme/olympiad
 命名空间: EX-{capability_abbr}-{序号}
@@ -30,7 +31,7 @@ ExamTestCases --- v3.0.5 扩展考试题库（86 题 / 28 能力 / 5 难度）
     refactor                → RF
     code_generate           → CG
     dead_code_removal       → DC
-    + v3.0.5 扩展能力（19 项）见各题定义
+    + v3.0.5 扩展能力（20 项）见各题定义
 """
 
 from __future__ import annotations
@@ -113,6 +114,10 @@ class ExamTestCase:
     expected_new_session: bool = False  # 预期是否需要新会话
     # N类: 执行式评测 — code_generate等能力用单元测试验证正确性（参考HumanEval pass@1）
     expected_test_cases: list[str] = field(default_factory=list)  # 可执行测试断言列表
+    # O类: 静态文本断言 (P1-4) — OLY 题用关键文本包含率补充 executor 轨
+    # 适用于非 code_generate 能力 (如 architecture_design/hallucination_detect 等)
+    # _score_olympiad_case 当无 expected_test_cases 时, 用此字段走静态断言轨
+    expected_static_assertions: list[str] = field(default_factory=list)
 
 
 # ══════════════════════════════════════════════════════════
@@ -2228,7 +2233,7 @@ EX_OLY_004 = ExamTestCase(
         "import threading\n@cached_decorator(ttl=10, maxsize=100)\ndef h(x):\n    return x\nresults = []\ndef worker():\n    results.append(h(42))\nthreads = [threading.Thread(target=worker) for _ in range(10)]\n[t.start() for t in threads]; [t.join() for t in threads]\nassert all(r==42 for r in results)",
         "import time\n@cached_decorator(ttl=1, maxsize=10)\ndef k(x):\n    return x\nk(1); time.sleep(1.1); assert k(1)==1",
         "import threading\n@cached_decorator(ttl=10, maxsize=1)\ndef m(x):\n    return x\nm(1); m(2); assert m(1)==1",
-        "def cached_decorator(ttl=60, maxsize=128):\n    pass\nassert callable(cached_decorator(1,1))",
+        "dec = cached_decorator(ttl=60, maxsize=128)\nassert callable(dec)",
     ],
 )
 
@@ -2447,8 +2452,8 @@ EX_OLY_009 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 64 题 (压缩自109题 + 3道高区分度hard题)
-# P0核心12个×3题 + P1重要8个×2题 + P2辅助9个×1题 + 3道hard区分题 = 64题
+# 全集 — 96 题 (90题原集 + 6道context_management死题激活; P0修复)
+# P0核心12能力 + P1重要8能力 + P2辅助9能力(含context_management) + OLYMPIAD 9题 = 96题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -2565,6 +2570,13 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_FEP_001,
     # rollback_boundary_design (原5题保留前1题)
     EX_RBD_001,
+    # context_management (6题) — P0修复：原定义漏入 ALL_EXAM_CASES，现激活
+    EX_CFAW_001,
+    EX_CFAW_002,
+    EX_CFAW_003,
+    EX_CWM_001,
+    EX_CWM_002,
+    EX_CWM_003,
     # ── v3.0.5 奥赛级附加题（参与奥赛封顶） ──────────────
     EX_OLY_001,
     EX_OLY_002,

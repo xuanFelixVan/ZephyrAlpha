@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ExamError;InferenceError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ExamOrchestrator --- 五轴入职考试主控
@@ -32,6 +33,7 @@ from __future__ import annotations
 import json
 import logging
 import math
+import os
 import statistics
 import time
 from datetime import UTC, datetime
@@ -57,7 +59,7 @@ from zephyr.intelligence.model_profiling.exam_test_cases import (
 )
 from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric
 from zephyr.intelligence.model_profiling.exam_executor import ExamExecutor
-from zephyr.intelligence.model_profiling.exam_judge import ExamJudge
+from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge, ExamJudge
 
 _log = logging.getLogger(__name__)
 
@@ -123,6 +125,7 @@ class ExamOrchestrator:
         model_id: str = "",
         randomize_order: bool = False,
         judge_chat: Any = None,
+        depth_samples_per_case: int | None = None,
     ) -> None:
         self._chat = chat
         self._model_id = model_id or getattr(chat, "_model", "unknown")
@@ -140,8 +143,15 @@ class ExamOrchestrator:
         self._rubric_scorer = ExamRubric()
         self._executor = ExamExecutor()
         self._judge: ExamJudge | None = ExamJudge(judge_chat) if judge_chat is not None else None
+        # P1-4: 确定性裁判 fallback — judge_chat=None 时避免 judge 轨缺失导致三轨退化为单轨
+        self._det_judge: DeterministicJudge = DeterministicJudge()
+        # P1-2: depth 每题采样次数（默认 1=单次保持向后兼容; 5=统计显著性校准）
+        # 优先级: 显式参数 > 环境变量 ZEPHYR_DEPTH_SAMPLES > 默认 1
+        if depth_samples_per_case is None:
+            depth_samples_per_case = int(os.environ.get("ZEPHYR_DEPTH_SAMPLES", "1"))
+        self._depth_samples_per_case = max(1, depth_samples_per_case)
 
-    def run_full_exam(self, *, skip_drift: bool = True) -> CapabilityPassport:
+    def run_full_exam(self, *, skip_drift: bool = False) -> CapabilityPassport:
         self._start_ts = time.time()
         self._olympiad_case_results = []  # v3.0.5: 重置奥赛题通过记录
 
@@ -237,40 +247,40 @@ class ExamOrchestrator:
         time_weights: list[float] = []  # v3.0.5: 每 case 时间折扣系数
         weights: list[int] = []       # v3.0.5: 难度加权
 
+        # P1-2: 每题多次采样, 提升统计显著性 (n=1 时退化为原单次行为)
+        n_samples = self._depth_samples_per_case
+
         for case in cases:
-            elapsed_ms = 0.0
-            try:
-                result = self._infer(case)
-                # v3.0.5: 取出耗时计算时间折扣（_infer 注入；不干扰 _compute_metrics）
-                if isinstance(result, dict):
-                    elapsed_ms = result.pop("_elapsed_ms", 0.0)
+            # 多次采样收集 per-sample 指标
+            sample_ps: list[float] = []
+            sample_rs: list[float] = []
+            sample_eds: list[float] = []
+            sample_ems: list[int] = []
+            sample_tws: list[float] = []
+            oly_overalls: list[float] = []  # OLYMPIAD 题每次采样的 overall 分
 
-                if case.difficulty == Difficulty.OLYMPIAD:
-                    # P1.5: OLYMPIAD 题走三轨评分
-                    overall = self._score_olympiad_case(case, result)
-                    passed = overall >= _OLYMPIAD_CASE_PASS_THRESHOLD
-                    self._olympiad_case_results.append(passed)
-                    precisions.append(overall)
-                    recalls.append(overall)
-                    edit_distances.append(round(1.0 - overall, 3))
-                    exact_matches.append(1 if passed else 0)
-                else:
-                    # 非 OLYMPIAD 题保持现有 _compute_metrics 路径不变
-                    p, r, ed, em = self._compute_metrics(case, result)
-                    precisions.append(p)
-                    recalls.append(r)
-                    edit_distances.append(ed)
-                    exact_matches.append(em)
-            except Exception:
-                precisions.append(0.0)
-                recalls.append(0.0)
-                edit_distances.append(1.0)
-                exact_matches.append(0)
-                if case.difficulty == Difficulty.OLYMPIAD:
-                    self._olympiad_case_results.append(False)
+            for _ in range(n_samples):
+                p, r, ed, em, tw, oly_ov = self._score_case_once(case)
+                sample_ps.append(p)
+                sample_rs.append(r)
+                sample_eds.append(ed)
+                sample_ems.append(em)
+                sample_tws.append(tw)
+                if oly_ov is not None:
+                    oly_overalls.append(oly_ov)
 
-            # v3.0.5: 时间折扣 + 难度加权
-            time_weights.append(_time_weight(elapsed_ms))
+            # 聚合: p/r/ed/tw 取均值; em 用多数投票 (>=50% 视为 exact)
+            precisions.append(statistics.mean(sample_ps) if sample_ps else 0.0)
+            recalls.append(statistics.mean(sample_rs) if sample_rs else 0.0)
+            edit_distances.append(statistics.mean(sample_eds) if sample_eds else 0.0)
+            time_weights.append(statistics.mean(sample_tws) if sample_tws else 1.0)
+            exact_matches.append(1 if (statistics.mean(sample_ems) >= 0.5) else 0)
+
+            # OLYMPIAD: 用均值 overall 判定 pass, 仅 append 一次 (不按采样次数膨胀)
+            if case.difficulty == Difficulty.OLYMPIAD:
+                mean_oly = statistics.mean(oly_overalls) if oly_overalls else 0.0
+                self._olympiad_case_results.append(mean_oly >= _OLYMPIAD_CASE_PASS_THRESHOLD)
+
             weights.append(_DIFFICULTY_WEIGHTS.get(case.difficulty, 1))
 
         n = len(cases)
@@ -291,17 +301,56 @@ class ExamOrchestrator:
             exact_match_rate=round(sum(exact_matches) / n, 3) if n > 0 else 0.0,
             samples_tested=n,
             time_weight_avg=round(avg_tw, 3),
+            samples_per_case=n_samples,
         )
+
+    def _score_case_once(
+        self,
+        case: ExamTestCase,
+    ) -> tuple[float, float, float, int, float, float | None]:
+        """P1-2: 单次采样一个 case, 返回 (p, r, ed, em, tw, oly_overall_or_None)。
+
+        oly_overall 为 None 表示非 OLYMPIAD 题; 否则为本次采样的三轨综合分。
+        异常时返回全 0 指标 (oly_overall=0.0 for OLYMPIAD)。
+        """
+        elapsed_ms = 0.0
+        oly_overall: float | None = None
+        try:
+            result = self._infer(case)
+            # v3.0.5: 取出耗时计算时间折扣（_infer 注入；不干扰 _compute_metrics）
+            if isinstance(result, dict):
+                elapsed_ms = result.pop("_elapsed_ms", 0.0)
+
+            if case.difficulty == Difficulty.OLYMPIAD:
+                # P1.5: OLYMPIAD 题走三轨评分
+                oly_overall = self._score_olympiad_case(case, result)
+                p = r = oly_overall
+                ed = round(1.0 - oly_overall, 3)
+                em = 1 if oly_overall >= _OLYMPIAD_CASE_PASS_THRESHOLD else 0
+            else:
+                # 非 OLYMPIAD 题保持现有 _compute_metrics 路径不变
+                p, r, ed, em = self._compute_metrics(case, result)
+        except Exception:
+            p, r, ed, em = 0.0, 0.0, 1.0, 0
+            if case.difficulty == Difficulty.OLYMPIAD:
+                oly_overall = 0.0
+
+        tw = _time_weight(elapsed_ms)
+        return p, r, ed, em, tw, oly_overall
 
     # ── P1.5: OLYMPIAD 三轨评分 ──────────────────────────
 
     def _score_olympiad_case(self, case: ExamTestCase, result: dict) -> float:
         """P1.5: OLYMPIAD 题三轨评分——judge*0.4 + executor*0.3 + rubric*0.3（归一化）。
 
-        权重重分配：
-          - judge_chat=None → 回退纯 rubric（rubric 权重=1.0）
-          - executor 仅对 code_generate 类题且有 expected_test_cases 时启用；
-            无 test_cases 时其 0.3 权重回退到可用轨道（归一化处理）
+        P1-4 升级: judge 轨始终存在 —
+          - judge_chat 可用 → LLM judge (语义级评分)
+          - judge_chat=None → DeterministicJudge (关键词+结构+长度, 零成本独立意见)
+
+        executor 轨:
+          - code_generate 类 + expected_test_cases → 可执行断言
+          - 其他能力 + expected_static_assertions → 静态文本断言 (P1-4 新增)
+          - 两者皆无 → executor 轨缺失, 权重回退到 rubric/judge (归一化)
 
         Returns:
             overall: float 0.0~1.0（三轨加权综合分）
@@ -325,21 +374,46 @@ class ExamOrchestrator:
         rubric_result = self._rubric_scorer.score(case.capability, rubric_input)
         tracks.append((0.3, rubric_result.score))
 
-        # Track 2: Executor（仅 code_generate 类且有可执行测试断言）
+        # Track 2: Executor
+        # 优先用可执行断言 (code_generate); 否则用静态文本断言 (P1-4 新增, 适用于非 code 能力)
         if case.capability == "code_generate" and case.expected_test_cases:
             exec_result = self._executor.execute(candidate, list(case.expected_test_cases))
             tracks.append((0.3, exec_result.pass_rate))
+        elif getattr(case, "expected_static_assertions", []):
+            # P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本
+            static_pass_rate = self._check_static_assertions(
+                candidate, case.expected_static_assertions
+            )
+            tracks.append((0.3, static_pass_rate))
 
-        # Track 3: Judge（仅 judge_chat 可用时）
+        # Track 3: Judge (P1-4: 始终存在, LLM judge 优先, 缺省用 DeterministicJudge)
         if self._judge is not None:
             judge_result = self._judge.judge(case, candidate)
-            tracks.append((0.4, judge_result.overall))
+        else:
+            judge_result = self._det_judge.judge(case, candidate)
+        tracks.append((0.4, judge_result.overall))
 
         # 归一化加权（自动处理权重重分配）
         total_w = sum(w for w, _ in tracks)
         if total_w <= 0:
             return 0.0
         return sum(w * s for w, s in tracks) / total_w
+
+    @staticmethod
+    def _check_static_assertions(candidate: str, assertions: list[str]) -> float:
+        """P1-4: 静态文本断言 — 检查候选答案是否包含期望的关键文本。
+
+        Args:
+            candidate: 被测模型的输出文本
+            assertions: 期望包含的文本片段列表 (大小写不敏感)
+        Returns:
+            pass_rate: 0.0~1.0 (命中断言数 / 总断言数)
+        """
+        if not assertions:
+            return 0.0
+        text_lower = candidate.lower()
+        hits = sum(1 for a in assertions if a.lower() in text_lower)
+        return hits / len(assertions)
 
     @staticmethod
     def _extract_candidate_text(result: dict) -> str:
