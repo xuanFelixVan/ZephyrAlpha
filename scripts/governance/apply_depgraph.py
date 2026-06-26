@@ -2133,6 +2133,8 @@ def cmd_rename_blueprint_id(
                 print("  注意: 历史记录（changelog/version history）中的旧 ID 保留不动，只改当前数据。", file=sys.stderr)
             else:
                 print(f"[YAML SYNC OK] 未发现 YAML 文件引用旧 ID '{old_bp_id}'，无需同步。", file=sys.stderr)
+            # 提醒 .md 和 .py 的同步（独立于 YAML，已有专用工具，避免 AI 遗漏）
+            print("[SYNC HINT] .md frontmatter 用 sync_registry_from_blueprints.py 同步；.py 头部 [BLUEPRINT] 标记用 check_blueprint_code_alignment.py 验证。", file=sys.stderr)
         return total
 
     if dry_run:
