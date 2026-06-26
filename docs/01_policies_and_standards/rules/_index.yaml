@@ -1,12 +1,12 @@
-version: 2.2.0
-generated_at: '2026-06-26T00:00:00'
-description: ZephyrAlpha规则YAML总索引（v2.2.0：补登TRAE-058/059，对齐trae_060向内收原则§2索引真源唯一）
+version: 2.3.0
+generated_at: '2026-06-27T00:00:00'
+description: ZephyrAlpha规则YAML总索引（v2.3.0：layer→tier改名消除与架构layer语义碰撞 + tier_distribution键修正；v2.2.0补登TRAE-058/059）
 schema_version: 2.0.0
 total_rules: 60
-layer_distribution:
-  L0_critical: 20
-  L1_error: 29
-  L2_warning: 11
+tier_distribution:
+  L0: 20
+  L1: 29
+  L2: 11
 
 schema:
   section_types:
@@ -230,7 +230,7 @@ schema:
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
-  layer: L0
+  tier: L0
   severity: critical
   scope: file_operation
   file: trae_001_file_operation_security.yaml
@@ -250,7 +250,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-002
   title: 反孤儿与搜索先行协议
-  layer: L0
+  tier: L0
   severity: critical
   scope: feature_creation
   file: trae_002_anti_orphan_search_first.yaml
@@ -262,7 +262,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-003
   title: 任务粒度与完成门槛协议
-  layer: L0
+  tier: L0
   severity: critical
   scope: task_management
   file: trae_003_task_granularity_threshold.yaml
@@ -274,7 +274,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-004
   title: 并行执行与原子事务协议
-  layer: L0
+  tier: L0
   severity: critical
   scope: script_execution
   file: trae_004_parallel_atomic_transaction.yaml
@@ -286,7 +286,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-005
   title: 修改原则与治理施工协议
-  layer: L0
+  tier: L0
   severity: critical
   scope: code_modification
   file: trae_005_modification_governance.yaml
@@ -298,7 +298,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-006
   title: 防幻觉-结构追溯层
-  layer: L0
+  tier: L0
   severity: critical
   scope: code_structure
   file: trae_006_anti_hallucination_structure.yaml
@@ -312,7 +312,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-007
   title: 防幻觉-行为约束层
-  layer: L0
+  tier: L0
   severity: critical
   scope: code_behavior
   file: trae_007_anti_hallucination_behavior.yaml
@@ -324,7 +324,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-008
   title: 防幻觉-输出验证层
-  layer: L0
+  tier: L0
   severity: critical
   scope: output_verification
   file: trae_008_anti_hallucination_output.yaml
@@ -336,7 +336,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-009
   title: 防幻觉-安全防护层
-  layer: L0
+  tier: L0
   severity: critical
   scope: security_guard
   file: trae_009_anti_hallucination_safety.yaml
@@ -348,7 +348,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-010
   title: 代码构建-命名与组织
-  layer: L1
+  tier: L1
   severity: error
   scope: code_naming
   file: trae_010_code_naming_organization.yaml
@@ -360,7 +360,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-011
   title: 代码构建-类型与导入
-  layer: L1
+  tier: L1
   severity: error
   scope: code_type_import
   file: trae_011_code_type_import.yaml
@@ -371,7 +371,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-012
   title: 代码构建-测试与安全
-  layer: L1
+  tier: L1
   severity: error
   scope: code_test_security
   file: trae_012_code_test_security.yaml
@@ -382,7 +382,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-013
   title: 架构约束-跨包依赖
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_dependency
   file: trae_013_arch_cross_package_dep.yaml
@@ -396,7 +396,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-014
   title: 架构约束-蓝图对齐
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_blueprint
   file: trae_014_arch_blueprint_alignment.yaml
@@ -410,7 +410,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-015
   title: 架构约束-路径与注册
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_path_registry
   file: trae_015_arch_path_registration.yaml
@@ -424,7 +424,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-016
   title: 架构约束-漂移检测
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_drift
   file: trae_016_arch_drift_detection.yaml
@@ -438,7 +438,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-017
   title: 架构约束-治理顺序
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_governance_order
   file: trae_017_arch_governance_order.yaml
@@ -449,7 +449,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-018
   title: 行为边界-代码操作绝对禁止
-  layer: L0
+  tier: L0
   severity: critical
   scope: code_operation_prohibition
   file: trae_018_behavior_code_prohibition.yaml
@@ -465,7 +465,7 @@ rules:
   section_count: 8
 - rule_id: TRAE-019
   title: 行为边界-系统安全绝对禁止
-  layer: L0
+  tier: L0
   severity: critical
   scope: security_prohibition
   file: trae_019_behavior_security_prohibition.yaml
@@ -481,7 +481,7 @@ rules:
   section_count: 8
 - rule_id: TRAE-020
   title: 行为边界-治理纪律绝对禁止
-  layer: L0
+  tier: L0
   severity: critical
   scope: governance_prohibition
   file: trae_020_behavior_governance_prohibition.yaml
@@ -497,7 +497,7 @@ rules:
   section_count: 8
 - rule_id: TRAE-021
   title: 行为边界-其余绝对禁止
-  layer: L0
+  tier: L0
   severity: critical
   scope: other_prohibition
   file: trae_021_behavior_other_prohibition.yaml
@@ -533,7 +533,7 @@ rules:
   section_count: 28
 - rule_id: TRAE-022
   title: 行为边界-条件禁止(代码与安全)
-  layer: L1
+  tier: L1
   severity: error
   scope: conditional_prohibition_code_security
   file: trae_022_behavior_conditional_code.yaml
@@ -542,7 +542,7 @@ rules:
   section_count: 8
 - rule_id: TRAE-023
   title: 行为边界-条件禁止(治理与文档)
-  layer: L1
+  tier: L1
   severity: error
   scope: conditional_prohibition_governance_doc
   file: trae_023_behavior_conditional_governance.yaml
@@ -551,7 +551,7 @@ rules:
   section_count: 10
 - rule_id: TRAE-024
   title: 方法论-诊断与根因分析
-  layer: L2
+  tier: L2
   severity: warning
   scope: methodology_diagnosis
   file: trae_024_methodology_diagnosis.yaml
@@ -564,7 +564,7 @@ rules:
   section_count: 9
 - rule_id: TRAE-025
   title: 方法论-决策与执行
-  layer: L2
+  tier: L2
   severity: warning
   scope: methodology_decision
   file: trae_025_methodology_decision.yaml
@@ -577,7 +577,7 @@ rules:
   section_count: 5
 - rule_id: TRAE-026
   title: 方法论-质量与度量
-  layer: L2
+  tier: L2
   severity: warning
   scope: methodology_quality
   file: trae_026_methodology_quality.yaml
@@ -588,7 +588,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-027
   title: 方法论-协作与演进
-  layer: L2
+  tier: L2
   severity: warning
   scope: methodology_collaboration
   file: trae_027_methodology_collaboration.yaml
@@ -598,7 +598,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-028
   title: 文档治理-结构与命名
-  layer: L1
+  tier: L1
   severity: error
   scope: doc_structure_naming
   file: trae_028_doc_structure_naming.yaml
@@ -613,7 +613,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-029
   title: 文档治理-操作安全
-  layer: L1
+  tier: L1
   severity: error
   scope: doc_operation_safety
   file: trae_029_doc_operation_security.yaml
@@ -624,7 +624,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-030
   title: 文档治理-编号与元数据
-  layer: L1
+  tier: L1
   severity: error
   scope: doc_numbering_metadata
   file: trae_030_doc_numbering_metadata.yaml
@@ -639,7 +639,7 @@ rules:
   section_count: 7
 - rule_id: TRAE-031
   title: 安全治理-密钥与访问控制
-  layer: L1
+  tier: L1
   severity: error
   scope: security_access
   file: trae_031_security_key_access.yaml
@@ -662,7 +662,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-032
   title: 模块治理-准入与生命周期
-  layer: L1
+  tier: L1
   severity: error
   scope: module_governance
   file: trae_032_module_lifecycle.yaml
@@ -675,7 +675,7 @@ rules:
   section_count: 5
 - rule_id: TRAE-033
   title: 模块治理-注册与同步
-  layer: L1
+  tier: L1
   severity: error
   scope: module_registry_sync
   file: trae_033_module_registration_sync.yaml
@@ -685,7 +685,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-034
   title: 任务系统-卡片标准与生命周期
-  layer: L1
+  tier: L1
   severity: error
   scope: task_card_lifecycle
   file: trae_034_task_card_standard.yaml
@@ -699,7 +699,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-035
   title: 任务系统-施工与验证
-  layer: L1
+  tier: L1
   severity: error
   scope: task_construction_verification
   file: trae_035_task_construction_verification.yaml
@@ -709,7 +709,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-036
   title: 架构治理-门禁与过渡
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_gate_transition
   file: trae_036_arch_gate_transition.yaml
@@ -720,7 +720,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-037
   title: 架构治理-合格与版本化
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_qualification
   file: trae_037_arch_qualification_versioning.yaml
@@ -731,7 +731,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-038
   title: 架构治理-CTR注入规则
-  layer: L1
+  tier: L1
   severity: error
   scope: architecture_ctr_injection
   file: trae_038_arch_ctr_injection.yaml
@@ -740,7 +740,7 @@ rules:
   section_count: 1
 - rule_id: TRAE-039
   title: AI治理-幻觉检测与自检
-  layer: L1
+  tier: L1
   severity: error
   scope: ai_hallucination
   file: trae_039_ai_hallucination_detection.yaml
@@ -750,7 +750,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-040
   title: AI治理-模型路由与协作
-  layer: L1
+  tier: L1
   severity: error
   scope: ai_model_routing
   file: trae_040_ai_model_routing.yaml
@@ -761,7 +761,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-041
   title: 元规则-规则分类与裁决
-  layer: L2
+  tier: L2
   severity: warning
   scope: meta_rule_classification
   file: trae_041_meta_rule_classification.yaml
@@ -773,7 +773,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-042
   title: 元规则-标准体系与模板
-  layer: L2
+  tier: L2
   severity: warning
   scope: meta_standard_template
   file: trae_042_meta_rule_standard.yaml
@@ -784,7 +784,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-043
   title: 元规则-元数据与度量
-  layer: L2
+  tier: L2
   severity: warning
   scope: meta_metadata_metrics
   file: trae_043_meta_rule_metadata.yaml
@@ -796,7 +796,7 @@ rules:
   section_count: 4
 - rule_id: TRAE-044
   title: 合规治理-审计与监管
-  layer: L1
+  tier: L1
   severity: error
   scope: compliance_audit
   file: trae_044_compliance_audit.yaml
@@ -807,7 +807,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-045
   title: 数据治理-质量与血缘
-  layer: L1
+  tier: L1
   severity: error
   scope: data_governance
   file: trae_045_data_quality_lineage.yaml
@@ -818,7 +818,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-046
   title: 工程治理-代码与重组安全
-  layer: L1
+  tier: L1
   severity: error
   scope: engineering_code_restructure
   file: trae_046_engineering_code_restructure.yaml
@@ -828,7 +828,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-047
   title: 工程治理-文件头部与扩展
-  layer: L1
+  tier: L1
   severity: error
   scope: engineering_header_expansion
   file: trae_047_engineering_file_header.yaml
@@ -838,7 +838,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-048
   title: 操作-Vibe Coding会话管理
-  layer: L2
+  tier: L2
   severity: warning
   scope: operational_vibe_coding
   file: trae_048_ops_vibe_coding_session.yaml
@@ -849,7 +849,7 @@ rules:
   section_count: 3
 - rule_id: TRAE-049
   title: 操作-领域操作手册
-  layer: L2
+  tier: L2
   severity: warning
   scope: operational_domain
   file: trae_049_ops_domain_manual.yaml
@@ -862,7 +862,7 @@ rules:
   section_count: 5
 - rule_id: TRAE-050
   title: 域策略-数据源与因子层
-  layer: L2
+  tier: L2
   severity: warning
   scope: domain_data_factor
   file: trae_050_domain_policy_data_factor.yaml
@@ -872,7 +872,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-051
   title: 域策略-风控与盘后层
-  layer: L2
+  tier: L2
   severity: warning
   scope: domain_risk_analytics
   file: trae_051_domain_policy_risk_backtest.yaml
@@ -882,7 +882,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-052
   title: 铁律补充-跨蓝图变更与项目瘦身
-  layer: L0
+  tier: L0
   severity: critical
   scope: cross_blueprint_change_cleanup
   file: trae_052_cross_blueprint_change_cleanup.yaml
@@ -892,7 +892,7 @@ rules:
   section_count: 2
 - rule_id: TRAE-053
   title: 铁律补充-自动化双轨判定
-  layer: L0
+  tier: L0
   severity: critical
   scope: automation_dual_track
   file: trae_053_automation_dual_track.yaml
@@ -901,7 +901,7 @@ rules:
   section_count: 1
 - rule_id: TRAE-054
   title: depgraph 程序化访问协议
-  layer: L0
+  tier: L0
   severity: critical
   scope: depgraph_access_protocol
   file: trae_054_depgraph_access_protocol.yaml
@@ -910,7 +910,7 @@ rules:
   section_count: 1
 - rule_id: TRAE-055
   title: 架构容量与域治理规则
-  layer: L0
+  tier: L0
   severity: critical
   scope: arch_domain_capacity_governance
   file: trae_055_arch_domain_capacity.yaml
@@ -928,7 +928,7 @@ rules:
   section_count: 11
 - rule_id: TRAE-056
   title: 操作-模块/蓝图/代码创建完整工作流程
-  layer: L1
+  tier: L1
   severity: error
   scope: module_creation_workflow
   file: trae_056_module_creation_workflow.yaml
@@ -938,7 +938,7 @@ rules:
   section_count: 15
 - rule_id: TRAE-057
   title: AI消费优先原则
-  layer: L0
+  tier: L0
   severity: error
   scope: global
   file: trae_057_ai_consumer_first.yaml
@@ -949,7 +949,7 @@ rules:
   section_count: 6
 - rule_id: TRAE-058
   title: 全景图扫描排除规则
-  layer: L1
+  tier: L1
   severity: error
   scope: depgraph_scan_exclusions
   file: trae_058_depgraph_scan_exclusions.yaml
@@ -961,7 +961,7 @@ rules:
   section_count: 7
 - rule_id: TRAE-059
   title: _schema_version 写入保护规范
-  layer: L0
+  tier: L0
   severity: critical
   scope: schema_version_write_protection
   file: trae_059_schema_version_write_protection.yaml
@@ -972,7 +972,7 @@ rules:
   section_count: 1
 - rule_id: TRAE-060
   title: 向内收原则（唯一真源·事件驱动·第一性原理）
-  layer: L0
+  tier: L0
   severity: critical
   scope: global
   file: trae_060_inward_consolidation.yaml
