@@ -85,6 +85,7 @@ from zephyr.governance.reconciliation_registry import (
     make_working_docs_reconciler,
     make_domain_doc_reconciler,
     make_precommit_id_uniqueness_reconciler,
+    make_vocab_change_reconciler,
 )
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
 
@@ -388,7 +389,7 @@ class GitCommitGateway:
         return result
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T4 ttl + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T4 ttl + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change）。
 
         P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
@@ -397,11 +398,13 @@ class GitCommitGateway:
         P2-T6: working_docs 对账（_working/ 幽灵引用检测，删除 commit 触发归档，治 AI 工作文档堆积）。
         P2-T7: domain_doc 重生（commit depgraph.db 后自动重生域 .md/.mmd 制品，治手工生成漂移）。
         P2-T8: id_uniqueness 兜底（GATE-ID-UNIQ post-compensation，commit .pre-commit-config.yaml 后重校 hook id 唯一性，非阻断报告落盘，兜底 --no-verify 绕过）。
+        P2-T9: vocab_change 纠偏（GATE-VOCAB-CHANGE，commit ttl_vocabulary.yaml 后自动重判所有 docs/*.md 的 ttl，治词表变更后 ttl 漂移）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_precommit_id_uniqueness_reconciler(self))
+        self._reconciliation_registry.register(make_vocab_change_reconciler(self))
         self._reconciliation_registry.register(make_ttl_reconciler(self))
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))

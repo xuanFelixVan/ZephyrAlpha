@@ -1137,3 +1137,114 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
         reconcile=_reconcile,
         priority=250,
     )
+
+
+def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-VOCAB-CHANGE post-commit reconciler（词表变更自动纠偏）。
+
+    当 ttl_vocabulary.yaml 的 decision_tree 变更时，自动重判所有 docs/*.md 的 ttl，
+    修正不一致的值并自动提交（治本：词表变更后 ttl 漂移自动纠偏，无需手动跑 backfill）。
+
+    对账链：
+    1. trigger: committed_files 含 ttl_vocabulary.yaml → 命中
+    2. 调用 backfill_ttl_metadata.py --rejudge 重判所有 docs/*.md 的 ttl
+    3. git diff 检测 docs/ 下 .md 变更 → 无变更返回 clean
+    4. 有变更 → git add + git commit --no-verify（斩断循环）
+
+    设计依据：trae_060 治本方案——decision_tree 机器可读化后，词表变更应自动传播到
+    所有 .md 文件的 ttl 字段，消除手动 backfill 漂移风险。reconciler 优先级 280
+    （在 GATE-15-ttl 300 之前执行，确保 ttl 校验前 ttl 值已纠偏）。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-VOCAB-CHANGE", priority=280)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    _VOCAB_REL = (
+        "docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml"
+    )
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel == _VOCAB_REL:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重判所有 docs/*.md 的 ttl（--rejudge 模式重判已有 ttl 的文件）
+        rejudge_result = subprocess.run(
+            [sys.executable,
+             "scripts/governance/d3_metadata/backfill_ttl_metadata.py", "--rejudge"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,  # 5175 文件重判需要较长时间
+        )
+        if rejudge_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"ttl rejudge failed (exit={rejudge_result.returncode}): "
+                       f"{rejudge_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 docs/ 下 .md 变更（reconciler 执行时工作区只有本次修改，
+        #    其他 session 修改已被 stash 隔离）
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", "docs/"]
+        )
+        if diff_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git diff failed: {diff_result.stderr.strip()[:200]}",
+            )
+        changed_files = [
+            f.strip() for f in diff_result.stdout.strip().splitlines() if f.strip()
+        ]
+        if not changed_files:
+            return ReconcileResult(
+                action="clean",
+                detail="ttl rejudge: no drift detected (all ttl consistent)",
+            )
+
+        # 3. 变更 → 自动提交修复（--no-verify 斩断 pre-commit 循环）
+        add_result = gateway._run_git(["git", "add", "--"] + changed_files)
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git add rejudge changes failed: "
+                       f"{add_result.stderr.strip()[:200]}",
+            )
+
+        auto_msg = (
+            f"chore(ttl): auto-rejudge by GATE-VOCAB-CHANGE post-commit "
+            f"(decision_tree changed) [GW:{session_id}:auto]"
+        )
+        commit_result = gateway._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg, "--"] + changed_files
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"ttl rejudge: {len(changed_files)} files auto-reconciled",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"ttl rejudge: auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-VOCAB-CHANGE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=280,
+    )

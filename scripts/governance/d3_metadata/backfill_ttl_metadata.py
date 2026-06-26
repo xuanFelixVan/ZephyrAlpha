@@ -11,28 +11,28 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无错误）；EXIT_FINDINGS=1（有文件未能回填）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：dry-run + 全量回填 + GATE-15 校验归零
-"""批量回填 frontmatter ttl 字段（GATE-15 存量治理）
+"""批量回填/重判 frontmatter ttl 字段（GATE-15 存量治理 + GATE-VOCAB-CHANGE 纠偏）
 
-对 docs/ 下所有有 frontmatter 但缺 ttl 字段的 .md 文件，
-按 ttl_vocabulary.yaml decision_tree 二元判定 ttl 值并注入。
+对 docs/ 下所有有 frontmatter 的 .md 文件，按 ttl_vocabulary.yaml decision_tree
+判定 ttl 值：
+  - 默认模式：只回填缺 ttl 字段的文件
+  - --rejudge 模式：重判已有 ttl 的文件（词表 decision_tree 变更后纠偏用）
 
-判定口径（与 ttl_vocabulary.yaml decision_tree 完全一致）：
-  - 路径在永久区 4 路径下 → permanent
-  - 否则 → task_bound
-
-永久区路径：
-  - docs/01_policies_and_standards/
-  - docs/02_enterprise_architecture/
-  - docs/03_modules/
-  - docs/08_knowledge/
+判定口径（与 ttl_vocabulary.yaml decision_tree 完全一致，机器可读 criteria 消费）：
+  - Q1: 过程性子目录（_working/changes/reports/09_audit/_archive）→ task_bound
+  - Q2: 过程性 doc_type（log/audit_report/operational_rule）→ task_bound
+  - Q3: 永久区路径 → permanent；否则 → task_bound
 
 Usage::
 
     # dry-run（只报告，不写入）
     python scripts/governance/d3_metadata/backfill_ttl_metadata.py --dry-run
 
-    # 全量回填
+    # 全量回填（缺 ttl 的文件）
     python scripts/governance/d3_metadata/backfill_ttl_metadata.py
+
+    # 重判模式（已有 ttl 的文件也重判，词表变更后纠偏）
+    python scripts/governance/d3_metadata/backfill_ttl_metadata.py --rejudge
 
     # 限定子目录
     python scripts/governance/d3_metadata/backfill_ttl_metadata.py docs/08_knowledge/01_raw_intake/
@@ -62,6 +62,10 @@ _DECISION_TREE = load_decision_tree("ttl_vocabulary.yaml")
 # frontmatter 结束符正则（与 _shared/frontmatter.py _FM_END_PATTERN 一致）
 _FM_END_PATTERN = re.compile(r"\n---[ \t]*\n?")
 
+# ttl 行正则（匹配 frontmatter 内的 ttl: value 行，用于 rejudge 模式替换）
+# 支持 ttl: permanent / ttl: "permanent" / ttl: 'permanent' 格式
+_TTL_LINE_PATTERN = re.compile(r'^ttl:\s*["\']?[\w]+["\']?\s*$', re.MULTILINE)
+
 
 def _infer_ttl(rel_path: str, frontmatter: dict | None = None) -> str:
     """按 ttl_vocabulary.yaml decision_tree 判定 ttl 值（机器可读 criteria 消费）。
@@ -79,15 +83,18 @@ def _infer_ttl(rel_path: str, frontmatter: dict | None = None) -> str:
     return evaluate_ttl(rel_path, frontmatter, _DECISION_TREE)
 
 
-def backfill_file(fpath: Path, dry_run: bool = False) -> str:
-    """回填单个文件的 ttl 字段。
+def backfill_file(fpath: Path, dry_run: bool = False, rejudge: bool = False) -> str:
+    """回填或重判单个文件的 ttl 字段。
 
     Args:
         fpath: .md 文件绝对路径。
         dry_run: True 则只报告不写入。
+        rejudge: True 则重判已有 ttl 的文件（词表 decision_tree 变更后纠偏用）。
 
     Returns:
-        "backfilled"（已回填）、"skip_has_ttl"（已有 ttl）、
+        "backfilled"（已回填缺 ttl）、"rejudged"（已重判 ttl）、
+        "skip_has_ttl"（已有 ttl 且 rejudge=False）、
+        "skip_unchanged"（rejudge=True 但 ttl 无变化）、
         "skip_no_fm"（无 frontmatter）、"error"（异常）。
     """
     try:
@@ -99,35 +106,47 @@ def backfill_file(fpath: Path, dry_run: bool = False) -> str:
     if not text.startswith("---"):
         return "skip_no_fm"
 
-    # 检查是否已有 ttl
     metadata, _ = parse_frontmatter(text)
     if not metadata:
         return "skip_no_fm"
-    if metadata.get("ttl"):
-        return "skip_has_ttl"
 
-    # 定位 frontmatter 结束符
-    fm_end_match = _FM_END_PATTERN.search(text[3:])
-    if not fm_end_match:
-        # frontmatter 未闭合，跳过（不修复格式问题）
-        return "skip_no_fm"
-
-    # 计算插入位置：在闭合 --- 前插入 ttl 行
-    # end_pos 指向 \n（最后一个字段行的换行符），end_pos+1 是 --- 的起始位置
-    # 在 end_pos+1 处插入 "ttl: <value>\n"，使其成为独立的一行
-    end_pos = 3 + fm_end_match.start()
     rel_path = str(fpath.relative_to(REPO_ROOT)).replace("\\", "/")
-    ttl_value = _infer_ttl(rel_path)
+    # 传 metadata 用于 Q2 doc_type 判定（修复原 bug：未传 frontmatter 导致 Q2 失效）
+    new_ttl = _infer_ttl(rel_path, metadata)
+    current_ttl = metadata.get("ttl")
+    current_ttl_str = str(current_ttl).strip().strip('"\'') if current_ttl else ""
 
-    # 在最后一个字段行的 \n 之后、--- 之前插入 ttl 行
-    new_text = text[: end_pos + 1] + f"ttl: {ttl_value}\n" + text[end_pos + 1 :]
+    if current_ttl_str:
+        # 已有 ttl
+        if not rejudge:
+            return "skip_has_ttl"
+        if current_ttl_str == new_ttl:
+            return "skip_unchanged"
+        # rejudge 模式：替换 frontmatter 内的 ttl 行（限制在 frontmatter 范围内）
+        fm_end_match = _FM_END_PATTERN.search(text[3:])
+        if not fm_end_match:
+            return "skip_no_fm"
+        fm_end = 3 + fm_end_match.start()
+        fm_text = text[:fm_end]
+        body = text[fm_end:]
+        new_fm = _TTL_LINE_PATTERN.sub(f"ttl: {new_ttl}", fm_text, count=1)
+        new_text = new_fm + body
+        action = "rejudged"
+    else:
+        # 缺 ttl：注入 ttl 行（在 frontmatter 闭合 --- 前插入）
+        fm_end_match = _FM_END_PATTERN.search(text[3:])
+        if not fm_end_match:
+            return "skip_no_fm"
+        end_pos = 3 + fm_end_match.start()
+        new_text = text[: end_pos + 1] + f"ttl: {new_ttl}\n" + text[end_pos + 1 :]
+        action = "backfilled"
 
     if dry_run:
-        return "backfilled"
+        return action
 
     # 原子写入（tmp + os.replace，RULE-ONE 并发安全）
     _atomic_write(fpath, new_text)
-    return "backfilled"
+    return action
 
 
 def _atomic_write(fpath: Path, content: str) -> None:
@@ -153,6 +172,7 @@ def main() -> int:
     # 解析参数
     args = sys.argv[1:]
     dry_run = "--dry-run" in args
+    rejudge = "--rejudge" in args
     path_args = [a for a in args if not a.startswith("-")]
 
     # 确定扫描范围
@@ -178,38 +198,48 @@ def main() -> int:
     # 统计
     stats = {
         "backfilled": 0,
+        "rejudged": 0,
         "skip_has_ttl": 0,
+        "skip_unchanged": 0,
         "skip_no_fm": 0,
         "error": 0,
     }
-    ttl_counts = {"permanent": 0, "task_bound": 0}
+    ttl_changes = {"permanent": 0, "task_bound": 0}
 
     for fpath in md_files:
-        result = backfill_file(fpath, dry_run=dry_run)
-        stats[result] += 1
-        if result == "backfilled":
+        result = backfill_file(fpath, dry_run=dry_run, rejudge=rejudge)
+        stats[result] = stats.get(result, 0) + 1
+        if result in ("backfilled", "rejudged"):
             rel_path = str(fpath.relative_to(REPO_ROOT)).replace("\\", "/")
-            ttl_value = _infer_ttl(rel_path)
-            ttl_counts[ttl_value] += 1
+            metadata, _ = parse_frontmatter(fpath.read_text(encoding="utf-8"))
+            ttl_value = _infer_ttl(rel_path, metadata)
+            ttl_changes[ttl_value] += 1
 
     # 输出统计报告
-    mode_label = "DRY-RUN" if dry_run else "APPLIED"
+    mode_parts = []
+    if dry_run:
+        mode_parts.append("DRY-RUN")
+    if rejudge:
+        mode_parts.append("REJUDGE")
+    mode_label = " + ".join(mode_parts) if mode_parts else "APPLIED"
     print(f"\n{'=' * 60}")
-    print(f"ttl Backfill Report ({mode_label})")
+    print(f"ttl Backfill/Rejudge Report ({mode_label})")
     print(f"{'=' * 60}")
-    print(f"  Total .md files scanned : {len(md_files)}")
-    print(f"  Backfilled              : {stats['backfilled']}")
-    print(f"    → permanent           : {ttl_counts['permanent']}")
-    print(f"    → task_bound          : {ttl_counts['task_bound']}")
-    print(f"  Skipped (already has ttl): {stats['skip_has_ttl']}")
-    print(f"  Skipped (no frontmatter) : {stats['skip_no_fm']}")
-    print(f"  Errors                   : {stats['error']}")
+    print(f"  Total .md files scanned    : {len(md_files)}")
+    print(f"  Backfilled (was missing)    : {stats['backfilled']}")
+    print(f"  Rejudged (ttl changed)      : {stats['rejudged']}")
+    print(f"    → permanent               : {ttl_changes['permanent']}")
+    print(f"    → task_bound              : {ttl_changes['task_bound']}")
+    print(f"  Skipped (has ttl, no rejudge): {stats['skip_has_ttl']}")
+    print(f"  Skipped (unchanged)          : {stats['skip_unchanged']}")
+    print(f"  Skipped (no frontmatter)     : {stats['skip_no_fm']}")
+    print(f"  Errors                       : {stats['error']}")
     print(f"{'=' * 60}")
 
     if dry_run:
         print("\nDry-run complete. Run without --dry-run to apply changes.")
     else:
-        print("\nBackfill complete. Run check_frontmatter_metadata.py to verify.")
+        print("\nBackfill/Rejudge complete. Run check_frontmatter_metadata.py to verify.")
 
     if stats["error"] > 0:
         return EXIT_FINDINGS
