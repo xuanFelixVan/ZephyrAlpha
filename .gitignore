@@ -160,6 +160,10 @@ data/audit_trail/
 .zephyr/
 .zephyr_secure/
 .trae/session_state/
+# .trae/documents/ 是 IDE 内部文档存储（AI scratchpad），非项目真源，
+# 不被任何代码/规则引用；整目录忽略，已跟踪文件用 git rm --cached 退回未跟踪
+# TEMPORARILY COMMENTED for commit-1 (deletion staging); re-enabled in commit-2
+# .trae/documents/
 logs/
 
 # Session and journal artifacts

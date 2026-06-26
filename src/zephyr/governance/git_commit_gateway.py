@@ -715,13 +715,21 @@ class GitCommitGateway:
             return True, f"check script not found: {check_script}"
 
         # 调用 --scan 模式，N-16 不受 --warn-only 影响会硬阻断
+        # timeout=120 防止脚本卡死导致 gateway 永久阻塞（S5 修复）
         cmd = [sys.executable, str(check_script), "--scan", "--warn-only"]
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            cwd=str(self.project_root),
-        )
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=str(self.project_root),
+                timeout=120,
+            )
+        except subprocess.TimeoutExpired:
+            # N-16 扫描超时 → fail-open（不阻断 commit），仅 warning
+            logger.warning(
+                "GitCommitGateway: N-16 naming scan timed out (120s), fail-open")
+            return True, "naming uniqueness scan timed out (fail-open)"
         if result.returncode == 0:
             return True, "naming uniqueness passed"
         # exit 1 = 有 N-16 违规（硬阻断，不受 --warn-only 影响）
