@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-26T20:07:36Z'
+generated_at: '2026-06-26T20:14:15Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 total_files: 88
 files:
