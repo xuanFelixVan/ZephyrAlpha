@@ -7,12 +7,12 @@
 # [TESTS] —
 import pytest
 
-from zephyr.infrastructure.a2a_protocol.governance.protocol import (
+from zephyr.security.llm_defense.llm_security.protocol import (
     LLMSecurityProtocol,
     SecurityContext,
-    SecurityDecision,
     SecurityResult,
 )
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
 
 class MockUncertainLayer(LLMSecurityProtocol):

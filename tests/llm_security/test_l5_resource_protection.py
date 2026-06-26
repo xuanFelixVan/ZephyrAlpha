@@ -8,10 +8,8 @@
 
 import pytest
 
-from zephyr.infrastructure.a2a_protocol.governance.protocol import (
-    SecurityContext,
-    SecurityDecision,
-)
+from zephyr.security.llm_defense.llm_security.protocol import SecurityContext
+from zephyr.shared.contracts.security.security_decision import SecurityDecision
 from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import (
     AgentExecutionProtector,
     AIRecursionGuard,
