@@ -14,7 +14,7 @@
 
 三层防护验证：
 1. transition(COMPLETED)后提醒剩余IN_PROGRESS任务（无论session_id是否为空）
-2. recover_stale_claims 方法（CircadianScheduler 废除后定时注册已移除，事件驱动迁移待定）
+2. recover_stale_claims 方法（Conductor.plan_cycle 事件驱动覆盖，CircadianScheduler 定时注册已废除）
 3. Session关门清单IN_PROGRESS=0检查
 """
 

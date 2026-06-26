@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.governance.auditor
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_protocol
-# [CONSUMERS] zephyr.integration.governance.__init___from_orches
+# [CONSUMERS] zephyr.integration.governance
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS]
