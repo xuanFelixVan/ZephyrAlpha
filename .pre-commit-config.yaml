@@ -386,6 +386,21 @@ repos:
         stages: [commit]
         description: "SSoT 创建门禁——staged 新增 .py 声明已有 module_path 时硬阻断。真源是 [MODULE] 头，反查通过 capability_lookup 实时扫描磁盘。GitCommitGateway 内嵌门禁是主防线，本 hook 是双保险"
 
+      # ── GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）──
+      # 病根：v5 调研——7 副本正是 AI「不搜索就新生成」的产物
+      # 检测：受保护文件名（exam_orchestrator 等）在非声明 SSoT 路径下出现 → exit 1
+      # 与 GATE-SSOT 区别：GATE-SSOT 基于 [MODULE] header module_path，本钩子基于文件名
+      # 覆盖盲区：无 [MODULE] header 的副本文件
+      - id: gate-ssot-singlesource
+        name: "GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（文件名级别检测）"
+        entry: python scripts/governance/check_module_singlesource.py --check
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        stages: [commit]
+        description: "Phase 7 治本门禁——扫描 src/zephyr/ 全量 .py，检测受保护文件名（exam_orchestrator/exam_test_cases/capability_passport/exam_judge/exam_rubric/exam_executor）是否出现在非声明 SSoT 路径（src/zephyr/intelligence/model_profiling/）下。基于文件名检测，覆盖 GATE-SSOT 的无 [MODULE] header 盲区"
+
       # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
       # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
       # 真源声明：Session 20260502-006 六环根因分析 → 根源：源码重构未同步测试 → 治根措施
