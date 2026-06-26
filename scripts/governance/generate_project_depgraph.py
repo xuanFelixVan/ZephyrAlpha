@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ParseError
 # [TESTS] tests/test_generate_project_depgraph.py
+# [TTL] task_bound
 """
 
 import argparse
@@ -31,6 +32,9 @@ from datetime import datetime
 from pathlib import Path
 
 import yaml
+
+# 复用真源连接器（禁裸 sqlite3.connect 绕过 WAL/busy_timeout 配置）
+from zephyr.governance.depgraph_schema import get_db_connection
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -89,7 +93,7 @@ _FALLBACK_SCAN_DIRS = [
     "tools",
     "specs",
 ]
-_FALLBACK_KNOWLEDGE_DOC_PATHS = ["docs/08_knowledge/", "docs/09_audit/"]
+_FALLBACK_KNOWLEDGE_DOC_PATHS = ["docs/08_knowledge/", "docs/_working/audit/"]
 _FALLBACK_TYPE_PREFIXES = {
     "policy": [
         "docs/01_policies_and_standards/governance/",
@@ -488,8 +492,7 @@ def _load_panorama_from_db(db_path):
     """
     import json as _json
 
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection(db_path)
     data = {"domains": {}, "tree": {}, "meta": {}}
 
     # Load domains — map to the same structure as the YAML panorama domains section
@@ -583,7 +586,7 @@ def _load_domain_mappings_from_db(db_path: Path):
         return domain_id_to_layer, non_src_mappings, unregistered_src_mappings
 
     try:
-        conn = sqlite3.connect(str(db_path))
+        conn = get_db_connection(db_path)
         cur = conn.cursor()
 
         # Tier 1: domain_id → layer_id from domains table (per-domain, more accurate than group-based)
@@ -2616,7 +2619,10 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         print("[LOCK] Warning: Could not acquire lock, proceeding without lock")
 
     try:
-        conn = sqlite3.connect(db_path)  # DM-3004: 移入try块
+        # WAL+busy_timeout 经 get_db_connection 配置（禁裸 sqlite3.connect）；
+        # autocommit=False 保持 deferred 事务（conn.commit/rollback 原子性）；
+        # apply_foreign_keys=False 保持历史 DELETE 顺序（先 nodes 再 edges，FK ON 会阻断）
+        conn = get_db_connection(db_path, autocommit=False, apply_foreign_keys=False)
         cursor = conn.cursor()
         # DM-012 Fix 4: Auto-cleanup old backup tables before writing
         backup_tables = cursor.execute(
@@ -3115,7 +3121,7 @@ def load_design_state_from_db(db_path: str) -> dict:
     design_edges = []
     design_arch = []
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         cur = conn.cursor()
         # 加载设计态节点
         rows = cur.execute("""
@@ -3199,7 +3205,7 @@ def load_production_state_from_db(db_path: str) -> dict:
     """
     production_meta = {}
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_db_connection(db_path)
         cur = conn.cursor()
         # 裁定#207 R2 C3：使用 PRODUCTION_PROTECTED_FIELDS 动态构建查询（原硬编码6列）
         cols = PRODUCTION_PROTECTED_FIELDS

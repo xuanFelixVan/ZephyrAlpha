@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on migration failure; OperationalError on DDL errors
 # [TESTS] tests/test_depgraph_schema.py
+# [TTL] task_bound
 
 """
 depgraph.db Schema DDL + 版本化迁移框架
@@ -1120,17 +1121,31 @@ def get_db_connection(
     *,
     check_same_thread: bool = False,
     timeout: float = 30.0,
+    autocommit: bool = True,
+    apply_foreign_keys: bool = True,
 ) -> sqlite3.Connection:
-    """返回配置好 PRAGMA 的 depgraph.db 连接。"""
+    """返回配置好 PRAGMA 的 depgraph.db 连接。
+
+    所有 depgraph.db 连接必须经此入口（禁止裸 sqlite3.connect 绕过 WAL/busy_timeout 配置）。
+
+    autocommit=True (默认): isolation_level=None，每条语句自动提交（适合只读/简单写）。
+    autocommit=False: isolation_level='' (deferred)，需显式 conn.commit()（适合原子批量写，
+        如 generate_project_depgraph.write_depgraph_to_db 的 DELETE+INSERT+UPDATE 序列）。
+    apply_foreign_keys=False: 关闭 FK 约束（用于需保持 FK OFF 的写路径，如先删 nodes 再删 edges
+        的历史 DELETE 顺序；FK ON 会阻断父行删除）。FK 仅在写时生效，只读连接无影响。
+    """
     resolved: Path = Path(db_path) if db_path is not None else DB_PATH
     conn = sqlite3.connect(
         str(resolved),
-        isolation_level=None,
+        isolation_level=None if autocommit else "",
         check_same_thread=check_same_thread,
         timeout=timeout,
     )
     conn.row_factory = sqlite3.Row
     _apply_pragmas(conn)
+    if not apply_foreign_keys:
+        # 历史写路径（先删 nodes 再删 edges）依赖 FK OFF；启用 FK 会阻断 DELETE
+        conn.execute("PRAGMA foreign_keys = OFF")
     return conn
 
 
