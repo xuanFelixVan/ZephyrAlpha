@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import statistics
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -70,6 +71,28 @@ def _kw_capped(kw_rate: float, cap: float = 0.3) -> float:
     保留函数签名以避免19处调用点报错，但返回0.0使所有兜底失效。
     """
     return 0.0
+
+
+def _time_weight(elapsed_ms: float, half_life_ms: float = 260_000.0) -> float:
+    """v3.0.5: 时间权重折扣——慢答案被折扣但不归零。
+
+    对齐 project_memory ``exp(-t/260s)``：参数 260s（注意此为 exp 衰减常数，
+    非"半衰期"——t=260s 时折扣至 1/e≈0.37，非 0.5）。
+    - 0ms   → 1.000（即时满分）
+    - 9s    → 0.966（本地模型单题，轻微折扣）
+    - 60s   → 0.794（thinking 模型单题，明显折扣）
+    - 260s  → 0.368
+    - 600s  → 0.099（防卡死上限，不归零）
+
+    用途：在 _score_capability 中对每 case 的 f1 折扣，
+    替代已废除的 60s 硬熔断——慢但正确的答案仍得分，仅被折扣。
+    """
+    if elapsed_ms <= 0:
+        return 1.0
+    return math.exp(-elapsed_ms / half_life_ms)
+
+
+_OLYMPIAD_CASE_PASS_THRESHOLD: float = 0.6  # v3.0.5: 奥赛单题通过线（precision ≥ 0.6 视为通过）
 
 
 def _verify_code_syntax(code: str) -> bool:
@@ -168,11 +191,13 @@ class ExamOrchestrator:
         self._all_latencies_ms: list[float] = []
         self._all_tokens: list[int] = []
         self._all_ttft_ms: list[float] = []
+        self._olympiad_case_results: list[bool] = []  # v3.0.5: 奥赛题逐题通过记录（供封顶）
 
     # ── 主入口 ──────────────────────────────────────────
 
     def run_full_exam(self, *, skip_drift: bool = True) -> CapabilityPassport:
         self._start_ts = time.time()
+        self._olympiad_case_results = []  # v3.0.5: 重置奥赛题通过记录
 
         passport = CapabilityPassport(model_id=self._model_id)
         passport.exam_timestamp = datetime.now(UTC).isoformat()
@@ -289,6 +314,7 @@ class ExamOrchestrator:
         recalls: list[float] = []
         edit_distances: list[float] = []
         exact_matches: list[int] = []
+        time_weights: list[float] = []  # v3.0.5: 每 case 时间折扣系数
 
         # 第1题复用breadth缓存, 剩余题目并行推理
         first_result: dict | None = None
@@ -327,15 +353,30 @@ class ExamOrchestrator:
                 recalls.append(0.0)
                 edit_distances.append(1.0)
                 exact_matches.append(0)
-            # 加权: easy=1, medium=2, hard=3
-            w = {Difficulty.EASY: 1, Difficulty.MEDIUM: 2, Difficulty.HARD: 3}.get(case.difficulty, 1)
+            # v3.0.5: 追踪奥赛题逐题通过情况（precision ≥ 0.6 视为通过，供奥赛封顶）
+            if case.difficulty == Difficulty.OLYMPIAD:
+                self._olympiad_case_results.append(precisions[-1] >= _OLYMPIAD_CASE_PASS_THRESHOLD)
+            # v3.0.5: 取出耗时计算时间折扣（_infer 注入；breadth 缓存复用也携带）
+            elapsed_ms = result.pop("_elapsed_ms", 0.0) if isinstance(result, dict) else 0.0
+            time_weights.append(_time_weight(elapsed_ms))
+            # 加权: easy=1, medium=2, hard=3, extreme=4, olympiad=5
+            w = {
+                Difficulty.EASY: 1,
+                Difficulty.MEDIUM: 2,
+                Difficulty.HARD: 3,
+                Difficulty.EXTREME: 4,
+                Difficulty.OLYMPIAD: 5,
+            }.get(case.difficulty, 1)
             weights.append(w)
 
         n = len(cases)
         total_w = sum(weights) if weights else 1
         avg_p = sum(p * w for p, w in zip(precisions, weights, strict=True)) / total_w if precisions else 0.0
         avg_r = sum(r * w for r, w in zip(recalls, weights, strict=True)) / total_w if recalls else 0.0
-        f1 = 2 * avg_p * avg_r / (avg_p + avg_r) if (avg_p + avg_r) > 0 else 0.0
+        f1_raw = 2 * avg_p * avg_r / (avg_p + avg_r) if (avg_p + avg_r) > 0 else 0.0
+        # v3.0.5: 慢 case 被时间折扣——替代已废除的 60s 硬熔断，慢但不归零
+        avg_tw = sum(tw * w for tw, w in zip(time_weights, weights, strict=True)) / total_w if time_weights else 1.0
+        f1 = f1_raw * avg_tw
 
         return DepthCapabilityResult(
             precision=round(avg_p, 3),
@@ -344,6 +385,7 @@ class ExamOrchestrator:
             edit_distance_avg=round(statistics.mean(edit_distances), 3) if edit_distances else 0.0,
             exact_match_rate=round(sum(exact_matches) / n, 3) if n > 0 else 0.0,
             samples_tested=n,
+            time_weight_avg=round(avg_tw, 3),
         )
 
     def _compute_metrics(
@@ -955,7 +997,7 @@ class ExamOrchestrator:
 
         sorted_lats = sorted(latencies)
 
-        return SpeedResult(
+        result = SpeedResult(
             avg_latency_ms=round(statistics.mean(latencies), 1),
             latency_p50_ms=round(_percentile(sorted_lats, 50), 1),
             latency_p95_ms=round(_percentile(sorted_lats, 95), 1),
@@ -973,6 +1015,9 @@ class ExamOrchestrator:
             if self._all_ttft_ms
             else 0.0,
         )
+        # v3.0.5: 速轴分数独立报告，不参与 overall 加权求和
+        result.score = self._compute_speed_score(result)
+        return result
 
     # ── 幻轴 ────────────────────────────────────────────
 
@@ -1035,12 +1080,38 @@ class ExamOrchestrator:
 
     # ── 汇总 ────────────────────────────────────────────
 
+    def _compute_olympiad_pass_rate(self) -> float:
+        """v3.0.5: 奥赛题通过率——用于奥赛封顶机制。
+
+        无奥赛题时返回 1.0（不封顶），保持向后兼容。
+        """
+        if not self._olympiad_case_results:
+            return 1.0
+        return sum(self._olympiad_case_results) / len(self._olympiad_case_results)
+
     def _compute_overall(self, passport: CapabilityPassport) -> float:
+        """v3.0.5: 综合分 = 加权原始分，经奥赛封顶。
+
+        - speed 轴独立报告，不再参与加权求和（避免快但差的模型虚高）
+        - 权重重分配：breadth 0.35 + depth 0.50 + (1-halluc) 0.15
+        - 奥赛封顶：通过率 <25%→封顶 B+(0.80)；<50%→A(0.85)；<75%→A-(0.88)；≥75%→解锁 A+(1.0)
+        """
         b = passport.breadth.score
         d = passport.depth.overall_score
         h = 1.0 - passport.hallucination.overall_rate
-        s = self._compute_speed_score(passport.speed)
-        return round(0.25 * b + 0.50 * d + 0.15 * h + 0.10 * s, 3)
+        raw = 0.35 * b + 0.50 * d + 0.15 * h
+
+        pass_rate = self._compute_olympiad_pass_rate()
+        if pass_rate < 0.25:
+            cap = 0.80  # B+
+        elif pass_rate < 0.50:
+            cap = 0.85  # A
+        elif pass_rate < 0.75:
+            cap = 0.88  # A-
+        else:
+            cap = 1.0   # A+ 解锁
+
+        return round(min(raw, cap), 3)
 
     def _compute_speed_score(self, speed: SpeedResult) -> float:
         """将延迟转换为0-1分数。
@@ -1092,20 +1163,27 @@ class ExamOrchestrator:
 
     # ── 推理辅助 ────────────────────────────────────────
 
-    # P99超时熔断阈值(秒): 单次推理超过此值视为超时
-    _INFER_TIMEOUT_S: float = 60.0
+    # v3.0.5: 废除60秒硬熔断——仅作防卡死安全网(600s)，评分由 time_weight 折扣
+    _INFER_TIMEOUT_S: float = 600.0
 
     def _infer(self, case: ExamTestCase, timeout_s: float | None = None) -> dict:
-        """单次推理, 带P99超时熔断。
+        """单次推理, 带防卡死安全网。
 
-        timeout_s: 超时秒数, None使用默认_INFER_TIMEOUT_S(60s)。
-        超时返回 {"error": "timeout"}, 不抛异常。
+        timeout_s: 超时秒数, None使用默认_INFER_TIMEOUT_S(600s)。
+        超时不再归零——返回已捕获的 raw，由 _time_weight 在 speed/depth 轴折扣。
+        v3.0.5: 注入 case.input_files（B类多文件联动能力）。
         """
         if timeout_s is None:
             timeout_s = self._INFER_TIMEOUT_S
         t0 = time.time()
         try:
-            raw = self._chat.inference(case.capability, case.prompt)
+            prompt = case.prompt
+            if case.input_files:
+                files_text = "\n\n".join(
+                    f"--- {name} ---\n{content}" for name, content in case.input_files.items()
+                )
+                prompt = f"{case.prompt}\n\nSource files:\n{files_text}"
+            raw = self._chat.inference(case.capability, prompt)
         except Exception as e:
             _log.warning("Inference exception for %s: %s", case.capability, e)
             return {"error": str(e)}
@@ -1116,15 +1194,18 @@ class ExamOrchestrator:
         if tokens:
             self._all_tokens.append(tokens)
 
-        # P99超时熔断: 超时视为失败
+        # v3.0.5: 超时不再归零——慢但正确的答案正常评分，由 time_weight 折扣
         if elapsed_ms > timeout_s * 1000:
             _log.warning(
-                "Inference timeout for %s: %.1fms > %dms",
+                "Inference slow for %s: %.1fms > %dms (will be time-weighted, not zeroed)",
                 case.capability,
                 elapsed_ms,
                 int(timeout_s * 1000),
             )
-            return {"error": "timeout", "raw": raw}
+
+        # v3.0.5: 注入耗时供 _score_capability 计算时间折扣
+        if isinstance(raw, dict):
+            raw["_elapsed_ms"] = elapsed_ms
 
         return raw
 

@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-036"
 version: "2.2.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # model_capability_exam

@@ -1,0 +1,57 @@
+[
+  {
+    "variant": "qwen2.5-coder:14b",
+    "model": "qwen2.5-coder:14b",
+    "exam_timestamp": "2026-06-26T01:24:30.336362+00:00",
+    "exam_duration_seconds": 236.4,
+    "overall_grade": "B",
+    "overall_score": 0.73,
+    "breadth_score": 0.9259259259259259,
+    "breadth_passed": 25,
+    "breadth_total": 27,
+    "breadth_failed": [
+      "code_edit_precision",
+      "dead_code_removal"
+    ],
+    "depth_score": 0.5891481481481482,
+    "hallucination_rate": 0.04,
+    "fabrication_rate": 0.04,
+    "inconsistency_rate": 0.0,
+    "refusal_rate": 0.0,
+    "speed_avg_latency_ms": 5364.6,
+    "speed_p50_ms": 4239.9,
+    "speed_p95_ms": 14446.6,
+    "safe_capabilities": [
+      "refactor",
+      "rule_comprehension",
+      "self_review",
+      "error_recovery",
+      "dependency_trace",
+      "circular_dependency_detect",
+      "impact_analysis",
+      "summary_extraction",
+      "architecture_design",
+      "hallucination_detect",
+      "dependency_ordering",
+      "task_classification",
+      "anomaly_triage",
+      "cross_file_refactor"
+    ],
+    "unsafe_capabilities": [
+      "code_generate",
+      "code_edit_precision",
+      "safety_judgment",
+      "task_decomposition",
+      "incremental_execution",
+      "context_consistency",
+      "ambiguity_detect",
+      "tool_selection",
+      "tag_completion",
+      "naming_suggest",
+      "dead_code_removal",
+      "long_context_recall",
+      "rollback_boundary_design"
+    ],
+    "recommendations_note": "code_generate, dead_code_removal 精度不足, 建议使用更强模型做代码修改类任务"
+  }
+]

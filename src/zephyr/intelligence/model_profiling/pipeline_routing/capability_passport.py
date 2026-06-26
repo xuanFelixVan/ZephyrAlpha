@@ -43,11 +43,13 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.paren
 PASSPORTS_DIR = PROJECT_ROOT / "data" / "brain" / "passports"
 
 # 各能力类型的精度及格线
+# v3.0.5: 对齐排行榜梯度——代码类 0.80(对标~12%差距), 推理类 0.70(对标8-10%差距)
+# 补全全部33能力，避免回退默认0.55导致推理类虚高
 DEPTH_THRESHOLDS: dict[str, float] = {
-    # ── P0 核心12个能力 (阈值0.75) ──────────────────────
-    "code_generate": 0.75,
-    "code_edit_precision": 0.75,
-    "refactor": 0.75,
+    # ── P0 核心12个能力 (代码类0.80, 其余0.75) ──────────
+    "code_generate": 0.80,
+    "code_edit_precision": 0.80,
+    "refactor": 0.80,
     "rule_comprehension": 0.75,
     "safety_judgment": 0.75,
     "self_review": 0.75,
@@ -57,7 +59,7 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "impact_analysis": 0.75,
     "task_decomposition": 0.75,
     "incremental_execution": 0.75,
-    # ── P1 重要8个能力 (阈值0.70) ──────────────────────
+    # ── P1 重要能力 (阈值0.70) ─────────────────────────
     "summary_extraction": 0.70,
     "architecture_design": 0.70,
     "context_consistency": 0.70,
@@ -65,7 +67,13 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "ambiguity_detect": 0.70,
     "tool_selection": 0.70,
     "dependency_ordering": 0.70,
-    # ── P2 辅助9个能力 (阈值0.65) ──────────────────────
+    "context_management": 0.70,
+    # ── D类推理4个能力 (阈值0.70, 对齐排行榜8-10%差距) ──
+    "multi_step_reasoning": 0.70,
+    "constraint_solving": 0.70,
+    "causal_analysis": 0.70,
+    "counterfactual_reasoning": 0.70,
+    # ── P2 辅助能力 (阈值0.65) ─────────────────────────
     "task_classification": 0.65,
     "tag_completion": 0.65,
     "naming_suggest": 0.65,
@@ -74,6 +82,7 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "cross_file_refactor": 0.65,
     "long_context_recall": 0.65,
     "rollback_boundary_design": 0.65,
+    "parallel_planning": 0.65,
 }
 
 
@@ -96,6 +105,7 @@ class DepthCapabilityResult:
     exact_match_rate: float = 0.0
     samples_tested: int = 0
     failure_reason: str = ""
+    time_weight_avg: float = 1.0  # v3.0.5: 平均时间折扣系数（便于审计）
 
 
 @dataclass
@@ -112,6 +122,7 @@ class SpeedResult:
     latency_p99_ms: float = 0.0
     tokens_per_second: float = 0.0
     time_to_first_token_ms: float = 0.0
+    score: float = 0.0  # v3.0.5: 速轴独立报告分数（不参与 overall 加权求和）
 
 
 @dataclass

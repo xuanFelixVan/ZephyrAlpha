@@ -14,19 +14,20 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.intelligence.model_profiling.capability_passport import (
+# v3.0.5: import 迁移到真源 #7(逻辑)+#1(数据)
+from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport import (
     BreadthResult,
     CapabilityPassport,
     DepthCapabilityResult,
     DepthResult,
     HallucinationResult,
 )
-from zephyr.intelligence.model_profiling.exam_orchestrator import (
+from zephyr.integration.model_profiler.exam_orchestrator import (
     ExamOrchestrator,
     _normalized_edit_distance,
     _percentile,
 )
-from zephyr.intelligence.model_profiling.exam_test_cases import Difficulty, ExamTestCase
+from zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases import Difficulty, ExamTestCase
 
 
 class TestNormalizedEditDistance:
@@ -195,7 +196,22 @@ class TestExamOrchestratorInit:
 
 
 class TestComputeOverall:
-    def test_compute_overall(self):
+    """v3.0.5: 综合分 = 0.35*breadth + 0.50*depth + 0.15*(1-halluc)，经奥赛封顶 min(raw, cap)。
+
+    无奥赛题时 pass_rate=1.0 → cap=1.0 → 不封顶（取 raw）。
+    """
+
+    def _make_perfect_passport(self) -> CapabilityPassport:
+        return CapabilityPassport(
+            model_id="test",
+            breadth=BreadthResult(score=1.0, passed=9, total=9, failed_capabilities=[]),
+            depth=DepthResult(overall_score=1.0, capabilities={}),
+            hallucination=HallucinationResult(
+                overall_rate=0.0, fabrication_rate=0.0, inconsistency_rate=0.0, refusal_rate=0.0
+            ),
+        )
+
+    def test_compute_overall_new_weights(self):
         chat = MagicMock()
         orch = ExamOrchestrator(chat, model_id="test")
         passport = CapabilityPassport(
@@ -206,23 +222,112 @@ class TestComputeOverall:
                 overall_rate=0.1, fabrication_rate=0.05, inconsistency_rate=0.03, refusal_rate=0.02
             ),
         )
-        expected = round(0.30 * 0.8 + 0.50 * 0.6 + 0.20 * (1.0 - 0.1), 3)
+        # 新权重 0.35/0.50/0.15，无奥赛题→不封顶
+        expected = round(0.35 * 0.8 + 0.50 * 0.6 + 0.15 * (1.0 - 0.1), 3)
         result = orch._compute_overall(passport)
-        assert result == expected
+        assert result == expected, f"expected {expected}, got {result}"
 
-    def test_compute_overall_perfect(self):
+    def test_compute_overall_perfect_no_cap(self):
         chat = MagicMock()
         orch = ExamOrchestrator(chat, model_id="test")
-        passport = CapabilityPassport(
+        passport = self._make_perfect_passport()
+        # raw=1.0, 无奥赛题→cap=1.0→min=1.0
+        result = orch._compute_overall(passport)
+        assert result == round(0.35 * 1.0 + 0.50 * 1.0 + 0.15 * 1.0, 3)
+        assert result == 1.0
+
+
+class TestOlympiadCapping:
+    """v3.0.5: 奥赛封顶机制——通过率决定综合分上限。
+
+    pass_rate<0.25→cap 0.80(B+)；<0.50→0.85(A)；<0.75→0.88(A-)；≥0.75→1.0(A+解锁)。
+    用完美 passport(raw=1.0)隔离封顶效果：result==cap。
+    """
+
+    def _make_orch_with_passes(self, passes: list[bool]) -> ExamOrchestrator:
+        orch = ExamOrchestrator(MagicMock(), model_id="test")
+        orch._olympiad_case_results = passes
+        return orch
+
+    def _perfect_passport(self) -> CapabilityPassport:
+        return CapabilityPassport(
             model_id="test",
             breadth=BreadthResult(score=1.0, passed=9, total=9, failed_capabilities=[]),
             depth=DepthResult(overall_score=1.0, capabilities={}),
-            hallucination=HallucinationResult(
-                overall_rate=0.0, fabrication_rate=0.0, inconsistency_rate=0.0, refusal_rate=0.0
-            ),
+            hallucination=HallucinationResult(),
         )
+
+    def test_no_olympiad_cases_no_cap(self):
+        """无奥赛题→pass_rate=1.0→cap=1.0→不封顶。"""
+        orch = self._make_orch_with_passes([])
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 1.0
+
+    def test_all_fail_capped_at_bplus(self):
+        """0/6 通过→pass_rate=0.0<0.25→cap=0.80。"""
+        orch = self._make_orch_with_passes([False] * 6)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 0.80, f"0% pass should cap at 0.80, got {result}"
+
+    def test_one_sixth_pass_capped_at_bplus(self):
+        """1/6≈0.167<0.25→cap=0.80。"""
+        orch = self._make_orch_with_passes([True] + [False] * 5)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 0.80
+
+    def test_two_sixths_pass_capped_at_a(self):
+        """2/6≈0.333∈[0.25,0.50)→cap=0.85。"""
+        orch = self._make_orch_with_passes([True, True] + [False] * 4)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 0.85, f"33% pass should cap at 0.85, got {result}"
+
+    def test_half_pass_capped_at_aminus(self):
+        """3/6=0.50∈[0.50,0.75)→cap=0.88。"""
+        orch = self._make_orch_with_passes([True, True, True] + [False] * 3)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 0.88
+
+    def test_four_sixths_pass_capped_at_aminus(self):
+        """4/6≈0.667∈[0.50,0.75)→cap=0.88。"""
+        orch = self._make_orch_with_passes([True] * 4 + [False] * 2)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 0.88
+
+    def test_five_sixths_pass_unlocked_aplus(self):
+        """5/6≈0.833≥0.75→cap=1.0→不封顶。"""
+        orch = self._make_orch_with_passes([True] * 5 + [False] * 1)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 1.0
+
+    def test_all_pass_unlocked_aplus(self):
+        """6/6=1.0≥0.75→cap=1.0→不封顶。"""
+        orch = self._make_orch_with_passes([True] * 6)
+        result = orch._compute_overall(self._perfect_passport())
+        assert result == 1.0
+
+    def test_raw_below_cap_returns_raw(self):
+        """raw<cap 时取 raw（封顶不抬分）。b=0.5,d=0.5,h=0.5→raw=0.425，全失败 cap=0.80→取0.425。"""
+        orch = self._make_orch_with_passes([False] * 6)
+        passport = CapabilityPassport(
+            model_id="test",
+            breadth=BreadthResult(score=0.5, passed=5, total=9, failed_capabilities=[]),
+            depth=DepthResult(overall_score=0.5, capabilities={}),
+            hallucination=HallucinationResult(overall_rate=0.5),
+        )
+        raw = round(0.35 * 0.5 + 0.50 * 0.5 + 0.15 * 0.5, 3)  # 0.425
         result = orch._compute_overall(passport)
-        assert result == round(0.30 * 1.0 + 0.50 * 1.0 + 0.20 * 1.0, 3)
+        assert result == raw, f"raw<cap should return raw {raw}, got {result}"
+
+    def test_pass_rate_boundary_values(self):
+        """_compute_olympiad_pass_rate 边界：空→1.0，全False→0.0，全True→1.0，半→0.5。"""
+        orch = self._make_orch_with_passes([])
+        assert orch._compute_olympiad_pass_rate() == 1.0
+        orch = self._make_orch_with_passes([False] * 6)
+        assert orch._compute_olympiad_pass_rate() == 0.0
+        orch = self._make_orch_with_passes([True] * 6)
+        assert orch._compute_olympiad_pass_rate() == 1.0
+        orch = self._make_orch_with_passes([True] * 3 + [False] * 3)
+        assert orch._compute_olympiad_pass_rate() == 0.5
 
 
 class TestBuildRecommendations:

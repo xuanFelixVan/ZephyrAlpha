@@ -12,7 +12,8 @@
 
 from __future__ import annotations
 
-from zephyr.intelligence.model_profiling.exam_test_cases import (
+# v3.0.5: import 迁移到真源 #1
+from zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases import (
     ALL_EXAM_CASES,
     CASES_BY_CAPABILITY,
     Difficulty,
@@ -30,12 +31,18 @@ class TestDifficultyEnum:
     def test_hard_value(self):
         assert Difficulty.HARD.value == "hard"
 
+    def test_extreme_value(self):
+        assert Difficulty.EXTREME.value == "extreme"
+
+    def test_olympiad_value(self):
+        assert Difficulty.OLYMPIAD.value == "olympiad"
+
     def test_member_count(self):
-        assert len(Difficulty) == 3
+        assert len(Difficulty) == 5
 
     def test_members_are_unique(self):
         values = [m.value for m in Difficulty]
-        assert len(set(values)) == 3
+        assert len(set(values)) == 5
 
 
 class TestExamTestCaseInstantiation:

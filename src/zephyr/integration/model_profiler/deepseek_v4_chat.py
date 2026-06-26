@@ -79,7 +79,8 @@ DEFAULT_BASE_URL = "https://api.deepseek.com"
 SYSTEM_PROMPTS: dict[str, str] = {
     "task_classification": (
         "You are a task classifier. Classify the input task into one of: "
-        "audit, compliance, cleanup, repair, codegen, review, analysis, other."
+        "audit, compliance, cleanup, repair, codegen, review, analysis, "
+        "web, config, data, other."
         "\nOutput only the classification label, no explanation."
     ),
     "tag_completion": (
@@ -305,7 +306,7 @@ class DeepSeekV4Chat:
         thinking: bool = True,
         temperature: float = 0.1,
         max_tokens: int = 4096,
-        timeout_s: float = 120.0,
+        timeout_s: float = 600.0,  # v3.0.5: 废除硬熔断，提升至600s防卡死；评分由 time_weight 折扣
     ) -> None:
         self._model = model
         self._api_key = api_key or os.getenv("DEEPSEEK_API_KEY", "")
@@ -422,15 +423,6 @@ class DeepSeekV4Chat:
         **kwargs: Any,
     ) -> dict[str, Any]:
         system = SYSTEM_PROMPTS.get(work_type, "Always output valid JSON.")
-        if work_type in ("summary_extraction", "anomaly_triage", "query_rewrite"):
-            result = self.ask_json(text, system=system)
-            return {
-                "work_type": work_type,
-                "model": self.model,
-                "result": result,
-                "token_count": self.cumulative_output_tokens,
-                "eval_count": self.cumulative_output_tokens,
-            }
         if work_type == "task_classification":
             raw = self._ask_with_retry(text, system, work_type, temperature=0.0)
             return {

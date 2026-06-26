@@ -42,6 +42,8 @@ class Difficulty(Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+    EXTREME = "extreme"        # v3.0.5: 超纲但不封顶
+    OLYMPIAD = "olympiad"      # v3.0.5: 奥赛级，参与奥赛封顶
 
 
 @dataclass
@@ -380,6 +382,8 @@ EX_RF_001 = ExamTestCase(
     difficulty=Difficulty.EASY,
     prompt=("refactor: calc\nx = 10\ny = 20\nz = 30\nresult = x + y + z  # magic numbers everywhere"),
     expected_structure_keys=["changes"],
+    expected_old_str="result = x + y + z",
+    expected_new_str="TEN = 10\nTWENTY = 20\nTHIRTY = 30\nresult = TEN + TWENTY + THIRTY",
     expected_contains=["constant", "TEN", "MAGIC"],
 )
 
@@ -395,6 +399,8 @@ EX_RF_002 = ExamTestCase(
         "    result.append(data[i] * 2)  # use list comprehension"
     ),
     expected_structure_keys=["changes"],
+    expected_old_str="result = []\nfor i in range(len(data)):\n    result.append(data[i] * 2)",
+    expected_new_str="result = [x * 2 for x in data]",
     expected_contains=["comprehension", "x * 2 for x in"],
 )
 
@@ -412,6 +418,8 @@ EX_RF_003 = ExamTestCase(
         "    return html"
     ),
     expected_structure_keys=["changes"],
+    expected_old_str="html += f'<li>{item}</li>'",
+    expected_new_str="items = [f'<li>{item}</li>' for item in data]\nhtml = ''.join(items)",
     expected_contains=["join", "append", "concat"],
 )
 
@@ -490,6 +498,8 @@ EX_DC_001 = ExamTestCase(
     difficulty=Difficulty.EASY,
     prompt=("detect dead code: script\nimport os\nimport json\n\ndef main():\n    print(os.getcwd())\n    return 0"),
     expected_structure_keys=["dead_sections"],
+    expected_old_str="import json",
+    expected_new_str="",
     expected_contains=["json", "import json"],
 )
 
@@ -505,6 +515,8 @@ EX_DC_002 = ExamTestCase(
         "    print('done')  # unreachable code after return"
     ),
     expected_structure_keys=["dead_sections"],
+    expected_old_str="    print('done')  # unreachable code after return",
+    expected_new_str="",
     expected_contains=["unreachable", "print('done')", "after return"],
 )
 
@@ -523,6 +535,8 @@ EX_DC_003 = ExamTestCase(
         "result = used_func(5)"
     ),
     expected_structure_keys=["dead_sections"],
+    expected_old_str="def dead_func(x):\n    return x ** 3\n\n",
+    expected_new_str="",
     expected_contains=["dead_func", "dead"],
 )
 
@@ -719,7 +733,7 @@ EX_CC_001 = ExamTestCase(
         "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
-    expected_contains=["stateless", "session", "in-memory", "memory"],
+    expected_contains=["stateless", "无状态", "session", "会话", "in-memory", "内存", "memory"],
 )
 
 EX_CC_002 = ExamTestCase(
@@ -749,7 +763,7 @@ EX_CC_003 = ExamTestCase(
         "请分析文档是否存在不一致。"
     ),
     expected_structure_keys=["consistent", "conflicts"],
-    expected_contains=["microservice", "shared", "database", "independent"],
+    expected_contains=["microservice", "微服务", "shared", "共享", "database", "数据库", "independent", "独立"],
 )
 
 # hallucination_detect (3 题) — 幻觉检测
@@ -1014,7 +1028,7 @@ EX_IE_001 = ExamTestCase(
     prompt="任务：读取config.yaml文件，提取database_url字段的值并返回。\n请分解任务步骤并按顺序执行。",
     expected_structure_keys=["steps"],
     expected_step_count=3,
-    expected_contains=["read", "parse", "extract", "return"],
+    expected_contains=["read", "读取", "parse", "解析", "extract", "提取", "return", "返回"],
 )
 
 EX_IE_002 = ExamTestCase(
@@ -1024,7 +1038,7 @@ EX_IE_002 = ExamTestCase(
     prompt="任务：搜索项目中所有.py文件，过滤出包含'import os'的文件，统计数量并生成报告。\n请分解任务步骤并按顺序执行。",
     expected_structure_keys=["steps"],
     expected_step_count=5,
-    expected_contains=["search", "filter", "count", "report", "glob"],
+    expected_contains=["search", "搜索", "filter", "过滤", "count", "计数", "report", "报告", "glob"],
 )
 
 EX_IE_003 = ExamTestCase(
@@ -1034,7 +1048,7 @@ EX_IE_003 = ExamTestCase(
     prompt="任务：读取用户输入的SQL，检查是否有DROP/DELETE语句，如果有则要求确认，最后执行SQL并返回结果。\n请分解任务步骤并按顺序执行，注意条件分支。",
     expected_structure_keys=["steps"],
     expected_step_count=4,
-    expected_contains=["read", "check", "confirm", "execute", "condition"],
+    expected_contains=["read", "读取", "check", "检查", "confirm", "确认", "execute", "执行", "condition", "条件"],
 )
 
 
@@ -2032,6 +2046,258 @@ EX_SR_004 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
+# v3.0.5 奥赛级附加题 (6 道) — 极限深度，参与奥赛封顶
+# 设计目标: deepseek-v4-pro-thinking 通过率<50%, Opus级 50-75%, 无人满分
+# ══════════════════════════════════════════════════════════
+
+# EX_OLY_001: architecture_design OLYMPIAD — 多租户微服务电商订单系统 (20+文件)
+EX_OLY_001 = ExamTestCase(
+    case_id="EX-OLY-001",
+    capability="architecture_design",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "设计一个支持多租户的微服务电商订单系统。要求拆分为 20 个以上独立微服务文件。\n\n"
+        "【8 个业务领域，每个至少 1 个服务文件】\n"
+        "1. 用户域(user): 账户/认证/画像\n"
+        "2. 商品域(product): 目录/SKU/库存\n"
+        "3. 订单域(order): 下单/履约/状态机\n"
+        "4. 支付域(payment): 渠道/对账/退款\n"
+        "5. 库存域(inventory): 占用/扣减/预占\n"
+        "6. 物流域(shipping): 发货/追踪/签收\n"
+        "7. 通知域(notification): 站内信/短信/推送\n"
+        "8. 分析域(analytics): 埋点/报表/漏斗\n\n"
+        "【6 个非功能需求，需有专门组件承载】\n"
+        "A. 多租户隔离(tenant isolation): 数据与配额隔离\n"
+        "B. 水平扩展(horizontal scale): 无状态+分片\n"
+        "C. 最终一致性(eventual consistency): 事件驱动+Saga\n"
+        "D. 幂等(idempotent): 重试安全\n"
+        "E. 可观测(observability): 链路追踪trace+指标\n"
+        "F. 灰度发布(gray release): 流量按比例切分\n\n"
+        "输出 JSON: {\"files\": [...文件名...], \"dependencies\": [{\"from\":\"X\",\"to\":\"Y\"}, ...]}"
+    ),
+    expected_structure_keys=["files", "dependencies"],
+    expected_contains=[
+        "user_service", "product_service", "order_service", "payment_service",
+        "inventory_service", "shipping_service", "notification_service", "analytics_service",
+        "tenant", "scale", "consistency", "idempotent", "observability", "trace", "gray",
+    ],
+)
+
+# EX_OLY_002: hallucination_detect OLYMPIAD — 30 条声称中 12 条幻觉
+EX_OLY_002 = ExamTestCase(
+    case_id="EX-OLY-002",
+    capability="hallucination_detect",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "审阅以下技术方案文档，找出所有幻觉(编造/不存在/错误)的声称。\n"
+        "输出 JSON: {\"hallucinations\": [{\"item\": \"幻觉内容\", \"reason\": \"为何是幻觉\"}, ...]}"
+    ),
+    expected_structure_keys=["hallucinations"],
+    expected_hallucinations=[
+        "fastjsonx 3.0", "redis-py-cluster-plus", "PyTTLCache",
+        "Ollama.function_call", "SQLAlchemy.atomic_batch",
+        "kombu_rpc", "psycopg3-async-pool", "uvicorn.experimental_workers",
+        "Pydantic.serial_validator", "httpx.retry_policy",
+        "aiohttp.thread_executor", "FastAPI.dependency_scope",
+    ],
+    input_files={
+        "proposal.md": (
+            "# 技术方案：异步订单处理服务\n\n"
+            "## 选型声称（共 30 条，请核查真伪）\n\n"
+            "1. 使用 fastjsonx 3.0 做高性能 JSON 序列化。\n"  # 幻觉：fastjsonx 不存在
+            "2. 使用 redis-py-cluster-plus 管理分布式缓存集群。\n"  # 幻觉：库不存在
+            "3. 使用 PyTTLCache 实现 TTL+LRU 内存缓存。\n"  # 幻觉：库不存在
+            "4. 使用 Ollama.function_call 做结构化输出。\n"  # 幻觉：方法不存在
+            "5. 使用 SQLAlchemy.atomic_batch 做原子批量提交。\n"  # 幻觉：方法不存在
+            "6. 使用 kombu_rpc 做异步任务队列。\n"  # 幻觉：库不存在
+            "7. 使用 psycopg3-async-pool 做异步连接池。\n"  # 幻觉：库不存在
+            "8. 使用 uvicorn.experimental_workers 提升并发。\n"  # 幻觉：参数不存在
+            "9. 使用 Pydantic.serial_validator 做字段校验。\n"  # 幻觉：方法不存在
+            "10. 使用 httpx.retry_policy 配置重试。\n"  # 幻觉：参数不存在
+            "11. 使用 aiohttp.thread_executor 做线程池。\n"  # 幻觉：参数不存在
+            "12. 使用 FastAPI.dependency_scope 管理依赖生命周期。\n"  # 幻觉：方法不存在
+            "13. 使用 Redis 做分布式锁（redlock 算法）。\n"  # 真实
+            "14. 使用 PostgreSQL 14 的 LISTEN/NOTIFY。\n"  # 真实
+            "15. 使用 RabbitMQ 做消息中间件（AMQP 协议）。\n"  # 真实
+            "16. 使用 Celery 做定时任务调度（beat 组件）。\n"  # 真实
+            "17. 使用 Kafka 做事件流（partition 机制）。\n"  # 真实
+            "18. 使用 Elasticsearch 做全文检索（倒排索引）。\n"  # 真实
+            "19. 使用 Prometheus + Grafana 做监控。\n"  # 真实
+            "20. 使用 OpenTelemetry 做链路追踪（trace context）。\n"  # 真实
+            "21. 使用 Docker 做容器化（cgroups 隔离）。\n"  # 真实
+            "22. 使用 Kubernetes 做编排（namespace 隔离）。\n"  # 真实
+            "23. 使用 Nginx 做反向代理（upstream 负载均衡）。\n"  # 真实
+            "24. 使用 gunicorn 做 WSGI 服务器（pre-fork 模型）。\n"  # 真实
+            "25. 使用 pytest 做单元测试（fixture 机制）。\n"  # 真实
+            "26. 使用 mypy 做静态类型检查。\n"  # 真实
+            "27. 使用 ruff 做代码 lint。\n"  # 真实
+            "28. 使用 GitHub Actions 做 CI（workflow 机制）。\n"  # 真实
+            "29. 使用 Vault 做密钥管理（secrets engine）。\n"  # 真实
+            "30. 使用 Sentry 做错误采集（DSN 配置）。\n"  # 真实
+        )
+    },
+)
+
+# EX_OLY_003: dependency_trace OLYMPIAD — 8 文件深度调用链
+EX_OLY_003 = ExamTestCase(
+    case_id="EX-OLY-003",
+    capability="dependency_trace",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "分析以下 8 个 Python 文件的调用关系，给出从入口到最深层的完整调用链。\n"
+        "输出 JSON: {\"call_chain\": [\"func_a\", \"func_b\", ...]}"
+    ),
+    expected_structure_keys=["call_chain"],
+    expected_call_chain=[
+        "handle_request", "route_api", "validate_input", "process_order",
+        "query_inventory", "map_record", "fetch_cache", "check_policy",
+    ],
+    input_files={
+        "a_handler.py": (
+            "from b_router import route_api\n"
+            "def handle_request(req):\n"
+            "    return route_api(req.path, req.body)\n"
+        ),
+        "b_router.py": (
+            "from c_validator import validate_input\n"
+            "def route_api(path, body):\n"
+            "    data = validate_input(body)\n"
+            "    return process_order(data)\n"
+            "from d_service import process_order\n"
+        ),
+        "c_validator.py": (
+            "def validate_input(body):\n"
+            "    if not body.get('sku'):\n"
+            "        raise ValueError('missing sku')\n"
+            "    return body\n"
+        ),
+        "d_service.py": (
+            "from e_repository import query_inventory\n"
+            "def process_order(data):\n"
+            "    stock = query_inventory(data['sku'])\n"
+            "    return {'ok': stock > 0}\n"
+        ),
+        "e_repository.py": (
+            "from f_mapper import map_record\n"
+            "def query_inventory(sku):\n"
+            "    row = db.fetch(sku)\n"
+            "    return map_record(row)\n"
+        ),
+        "f_mapper.py": (
+            "from g_cache import fetch_cache\n"
+            "def map_record(row):\n"
+            "    cached = fetch_cache(row.id)\n"
+            "    return cached or row.qty\n"
+        ),
+        "g_cache.py": (
+            "from h_policy import check_policy\n"
+            "def fetch_cache(key):\n"
+            "    if check_policy(key):\n"
+            "        return redis.get(key)\n"
+            "    return None\n"
+        ),
+        "h_policy.py": (
+            "def check_policy(key):\n"
+            "    return key.startswith('vip_')\n"
+        ),
+    },
+)
+
+# EX_OLY_004: code_generate EXTREME — TTL+LRU+并发安全缓存装饰器
+EX_OLY_004 = ExamTestCase(
+    case_id="EX-OLY-004",
+    capability="code_generate",
+    difficulty=Difficulty.EXTREME,
+    prompt=(
+        "实现一个缓存装饰器 cached_decorator，要求同时满足：\n"
+        "1. TTL 过期：超过 ttl 秒的缓存自动失效\n"
+        "2. LRU 淘汰：容量达到 maxsize 时淘汰最久未使用项\n"
+        "3. 并发安全：多线程下无竞态（用 threading.Lock）\n"
+        "4. 异步刷新：缓存命中但即将过期（剩余<TTL*0.2）时，后台线程刷新\n\n"
+        "签名: def cached_decorator(ttl=60, maxsize=128)\n"
+        "输出 JSON: {\"content\": \"<完整可执行Python代码>\"}"
+    ),
+    expected_structure_keys=["content"],
+    expected_test_cases=[
+        "import time, threading\nfrom functools import wraps\ncalls = []\n@cached_decorator(ttl=1, maxsize=2)\ndef f(x):\n    calls.append(x)\n    return x*2\nassert f(1)==2 and f(1)==2\nassert len(calls)==1",
+        "import time\n@cached_decorator(ttl=1, maxsize=2)\ndef g(x):\n    return x+1\ng(1); g(2); g(3)\nassert g(1)==2",
+        "import threading\n@cached_decorator(ttl=10, maxsize=100)\ndef h(x):\n    return x\nresults = []\ndef worker():\n    results.append(h(42))\nthreads = [threading.Thread(target=worker) for _ in range(10)]\n[t.start() for t in threads]; [t.join() for t in threads]\nassert all(r==42 for r in results)",
+        "import time\n@cached_decorator(ttl=1, maxsize=10)\ndef k(x):\n    return x\nk(1); time.sleep(1.1); assert k(1)==1",
+        "import threading\n@cached_decorator(ttl=10, maxsize=1)\ndef m(x):\n    return x\nm(1); m(2); assert m(1)==1",
+        "def cached_decorator(ttl=60, maxsize=128):\n    pass\nassert callable(cached_decorator(1,1))",
+    ],
+)
+
+# EX_OLY_005: parallel_planning OLYMPIAD — 15 任务 DAG
+EX_OLY_005 = ExamTestCase(
+    case_id="EX-OLY-005",
+    capability="parallel_planning",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "给定 15 个任务的依赖关系（DAG），按依赖拓扑分层，输出可并行执行的分组。\n"
+        "约束: 同层任务可并行；每层≥1任务；单任务也是组；遵守依赖（被依赖任务先执行）。\n"
+        "输出 JSON: {\"parallel_groups\": [[\"t1\",\"t2\"], [\"t3\"], ...]}"
+    ),
+    expected_structure_keys=["parallel_groups"],
+    expected_parallel_groups=[
+        ["T1", "T2", "T3"],
+        ["T4", "T5", "T6"],
+        ["T7", "T8", "T9"],
+        ["T10", "T11"],
+        ["T12", "T13"],
+        ["T14", "T15"],
+    ],
+    input_files={
+        "tasks.yaml": (
+            "tasks:\n"
+            "  T1: {deps: [], res: db}\n"
+            "  T2: {deps: [], res: db}\n"
+            "  T3: {deps: [], res: cache}\n"
+            "  T4: {deps: [T1], res: db}\n"
+            "  T5: {deps: [T2], res: mq}\n"
+            "  T6: {deps: [T3], res: cache}\n"
+            "  T7: {deps: [T4], res: db}\n"
+            "  T8: {deps: [T5], res: mq}\n"
+            "  T9: {deps: [T6], res: cache}\n"
+            "  T10: {deps: [T7, T8], res: db}\n"
+            "  T11: {deps: [T9], res: cache}\n"
+            "  T12: {deps: [T10], res: db}\n"
+            "  T13: {deps: [T11], res: cache}\n"
+            "  T14: {deps: [T12, T13], res: db}\n"
+            "  T15: {deps: [T14], res: db}\n"
+        )
+    },
+)
+
+# EX_OLY_006: context_consistency OLYMPIAD — 6 份矛盾文档
+EX_OLY_006 = ExamTestCase(
+    case_id="EX-OLY-006",
+    capability="context_consistency",
+    difficulty=Difficulty.OLYMPIAD,
+    prompt=(
+        "审阅以下 6 份设计文档，判断是否存在矛盾(consistent=false)，并列出所有冲突点。\n"
+        "输出 JSON: {\"consistent\": false, \"conflicts\": [\"冲突描述1\", ...]}"
+    ),
+    expected_structure_keys=["consistent", "conflicts"],
+    expected_contains=[
+        "order_id", "string", "integer",   # API vs DB 类型矛盾
+        "redis", "ttl", "3600", "900",       # 缓存策略矛盾
+        "rate_limit", "100", "500",          # 限流矛盾
+        "error_code", "4001", "40001",       # 错误码矛盾
+        "log_level", "DEBUG", "INFO",       # 日志矛盾
+    ],
+    input_files={
+        "api_spec.md": "订单接口 POST /orders\n字段: order_id (string), user_id (string), amount (float)\n返回: 201 Created",
+        "db_schema.md": "表 orders\n列: order_id (INTEGER PK), user_id (VARCHAR), amount (DECIMAL)\n索引: idx_user",
+        "cache_strategy.md": "缓存策略: 使用 Redis\norder 缓存 TTL = 900 秒\nkey 格式: order:{id}",
+        "rate_limit_policy.md": "限流策略: /orders 接口\n配额: 500 次/分钟 per user\n超限返回 429",
+        "logging_standard.md": "日志规范: 订单服务日志级别 = DEBUG\n格式: JSON structured\n输出: stdout",
+        "error_code_table.md": "错误码表:\n4001 = 订单不存在\n4002 = 库存不足\n40001 = 参数错误\n40002 = 鉴权失败",
+    },
+)
+
+
+# ══════════════════════════════════════════════════════════
 # 全集 — 64 题 (压缩自109题 + 3道高区分度hard题)
 # P0核心12个×3题 + P1重要8个×2题 + P2辅助9个×1题 + 3道hard区分题 = 64题
 # ══════════════════════════════════════════════════════════
@@ -2149,6 +2415,13 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_FEP_001,
     # rollback_boundary_design (原5题保留前1题)
     EX_RBD_001,
+    # ── v3.0.5 奥赛级附加题（参与奥赛封顶） ──────────────
+    EX_OLY_001,
+    EX_OLY_002,
+    EX_OLY_003,
+    EX_OLY_004,
+    EX_OLY_005,
+    EX_OLY_006,
 ]
 
 CASES_BY_CAPABILITY: dict[str, list[ExamTestCase]] = {}
