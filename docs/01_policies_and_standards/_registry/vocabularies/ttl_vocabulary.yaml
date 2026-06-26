@@ -55,24 +55,75 @@ values:
     applies_to: [plan, assessment, proposal, report, note, doc]
     ai_keywords: ["任务", "task", "完成即删", "过程", "临时", "task_bound"]
 
-# ── 二元判定树（AI 创建文档时 MUST 按此树判定 ttl）──
+# ── 内容判定树（AI 创建文档时 MUST 按此树判定 ttl）──
 # 设计原则：
-#   1. 只有一个二元问题：是否在永久区路径
-#   2. 在永久区 → permanent（准入受控，必为永久文件）
-#   3. 不在永久区 → task_bound（过程性文档，默认落 docs/_working/）
-#   4. AI 创建文件默认落 docs/_working/，除非用户明确要求创建永久文件
-#   5. 永久区准入需用户同意（GitCommitGateway 门禁，后续实现）
-#   6. 同一文档，任何 AI 按此树判定，结果必须一致（可复现）
+#   1. 优先用内容信号判定，路径作为辅助兜底（治本：changes/等过程文件不再误判 permanent）
+#   2. 过程性子目录（changes/reports/_working/09_audit/_archive）→ task_bound
+#   3. 过程性 doc_type（log/audit_report/operational_rule）→ task_bound
+#   4. 永久区路径 → permanent（准入受控，必为永久文件）
+#   5. 其他 → task_bound（默认落 docs/_working/）
+#   6. AI 创建文件默认落 docs/_working/，除非用户明确要求创建永久文件
+#   7. 永久区准入需用户同意（GitCommitGateway 门禁）
+#   8. 同一文档，任何 AI 按此树判定，结果必须一致（可复现）
+#   9. criteria 为机器可读结构（signal/value/operator），供脚本/gateway 直接消费
+#  10. v2.1.0 变更：从路径判定改为内容判定，解决 changes/ 等过程文件误标 permanent
 decision_tree:
   root: Q1
   nodes:
     Q1:
+      question: "文档是否在过程性子目录？"
+      criteria:
+        - signal: path
+          value: "docs/_working/"
+          operator: startswith
+        - signal: path
+          value: "/changes/"
+          operator: contains
+        - signal: path
+          value: "/reports/"
+          operator: contains
+        - signal: path
+          value: "docs/09_audit/"
+          operator: startswith
+        - signal: path
+          value: "docs/09_AUDIT/"
+          operator: startswith
+        - signal: path
+          value: "/_archive/"
+          operator: contains
+      match: any
+      yes: task_bound
+      no: Q2
+    Q2:
+      question: "文档 doc_type 是否为过程性类型？"
+      criteria:
+        - signal: frontmatter.doc_type
+          value: "log"
+          operator: equals
+        - signal: frontmatter.doc_type
+          value: "audit_report"
+          operator: equals
+        - signal: frontmatter.doc_type
+          value: "operational_rule"
+          operator: equals
+      match: any
+      yes: task_bound
+      no: Q3
+    Q3:
       question: "文档是否在永久区路径？"
       criteria:
-        - "路径在 docs/01_policies_and_standards/"
-        - "路径在 docs/02_enterprise_architecture/"
-        - "路径在 docs/03_modules/"
-        - "路径在 docs/08_knowledge/"
+        - signal: path
+          value: "docs/01_policies_and_standards/"
+          operator: startswith
+        - signal: path
+          value: "docs/02_enterprise_architecture/"
+          operator: startswith
+        - signal: path
+          value: "docs/03_modules/"
+          operator: startswith
+        - signal: path
+          value: "docs/08_knowledge/"
+          operator: startswith
       match: any
       yes: permanent
       no: task_bound  # 默认落 docs/_working/ 临时区

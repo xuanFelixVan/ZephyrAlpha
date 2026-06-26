@@ -53,32 +53,27 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter
+from _shared.yaml_utils import evaluate_ttl, load_decision_tree
 
 ensure_utf8_stdout()
 
-# 永久区路径前缀——与 ttl_vocabulary.yaml decision_tree 保持一致
-# index.md 落在永久区 → ttl=permanent；否则 → ttl=task_bound
-_PERMANENT_ZONE_PREFIXES: tuple[str, ...] = (
-    "docs/01_policies_and_standards/",
-    "docs/02_enterprise_architecture/",
-    "docs/03_modules/",
-    "docs/08_knowledge/",
-)
+# ttl 判定树——从 ttl_vocabulary.yaml 动态加载（SSoT 唯一真源，禁止硬编码路径前缀）
+# 约束：判定逻辑变更只需改 ttl_vocabulary.yaml decision_tree，本脚本自动同步
+_DECISION_TREE = load_decision_tree("ttl_vocabulary.yaml")
 
 
 def _infer_ttl(parent: Path) -> str:
     """按 ttl_vocabulary.yaml decision_tree 判定 index.md 的 ttl 值。
 
-    判定口径：父目录相对 REPO_ROOT 的路径在永久区 4 路径下 → permanent；否则 → task_bound。
+    向内收：判定逻辑唯一真源为 ttl_vocabulary.yaml decision_tree，本函数零硬编码。
+    用 parent/index.md 的相对路径判定（changes/等过程目录下的 index.md → task_bound）。
     """
     try:
-        rel = str(parent.resolve().relative_to(REPO_ROOT)).replace("\\", "/") + "/"
+        rel = str(parent.resolve().relative_to(REPO_ROOT)).replace("\\", "/") + "/index.md"
     except ValueError:
         # parent 不在 REPO_ROOT 下（极端情况），保守判 task_bound
         return "task_bound"
-    if any(rel.startswith(p) for p in _PERMANENT_ZONE_PREFIXES):
-        return "permanent"
-    return "task_bound"
+    return evaluate_ttl(rel, None, _DECISION_TREE)
 
 
 INDEX_TEMPLATE = (

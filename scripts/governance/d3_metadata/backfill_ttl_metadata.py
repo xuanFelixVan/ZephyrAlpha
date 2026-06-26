@@ -53,32 +53,30 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.frontmatter import parse_frontmatter  # noqa: E402
+from _shared.yaml_utils import evaluate_ttl, load_decision_tree  # noqa: E402
 
-# 永久区路径前缀——与 ttl_vocabulary.yaml decision_tree 保持一致
-_PERMANENT_ZONE_PREFIXES: tuple[str, ...] = (
-    "docs/01_policies_and_standards/",
-    "docs/02_enterprise_architecture/",
-    "docs/03_modules/",
-    "docs/08_knowledge/",
-)
+# ttl 判定树——从 ttl_vocabulary.yaml 动态加载（SSoT 唯一真源，禁止硬编码路径前缀）
+# 约束：判定逻辑变更只需改 ttl_vocabulary.yaml decision_tree，本脚本自动同步
+_DECISION_TREE = load_decision_tree("ttl_vocabulary.yaml")
 
 # frontmatter 结束符正则（与 _shared/frontmatter.py _FM_END_PATTERN 一致）
 _FM_END_PATTERN = re.compile(r"\n---[ \t]*\n?")
 
 
-def _infer_ttl(rel_path: str) -> str:
-    """按 ttl_vocabulary.yaml decision_tree 判定 ttl 值。
+def _infer_ttl(rel_path: str, frontmatter: dict | None = None) -> str:
+    """按 ttl_vocabulary.yaml decision_tree 判定 ttl 值（机器可读 criteria 消费）。
+
+    向内收：判定逻辑唯一真源为 ttl_vocabulary.yaml decision_tree，本函数零硬编码。
+    替换原 _PERMANENT_ZONE_PREFIXES 硬编码路径前缀（治本：changes/等过程文件不再误判 permanent）。
 
     Args:
         rel_path: 相对 REPO_ROOT 的路径（正斜杠）。
+        frontmatter: 文件 frontmatter dict（可选，用于 Q2 doc_type 判定）。
 
     Returns:
         "permanent" 或 "task_bound"。
     """
-    for prefix in _PERMANENT_ZONE_PREFIXES:
-        if rel_path.startswith(prefix):
-            return "permanent"
-    return "task_bound"
+    return evaluate_ttl(rel_path, frontmatter, _DECISION_TREE)
 
 
 def backfill_file(fpath: Path, dry_run: bool = False) -> str:
