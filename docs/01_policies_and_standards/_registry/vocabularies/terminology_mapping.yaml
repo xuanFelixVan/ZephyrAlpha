@@ -126,7 +126,7 @@ body: '
 
   | 正式文档区 / 正本区 | Canonical Domain / Canonical Area | 已拍板、长期维护、外部可信的正式文档存放区 | `docs/02_enterprise_architecture/` 等 |
 
-  | 讨论区 / 沙盒 / 草稿区 | Workspace / Sandbox / Scratch | 未定稿、可随时改、不作对外承诺的区域 | ~~`docs/19_development_workspace/`~~ 已删除（2026-05-02，迁至外部独立目录） |
+  | 讨论区 / 沙盒 / 草稿区 | Workspace / Sandbox / Scratch | 未定稿、可随时改、不作对外承诺的区域 | ~~`docs/19_development_workspace/`~~ 已退役删除（2026-06-26，过程区迁移至 `docs/_working/`） |
 
   | 真源迁移 / 搬家 | Migration / Canonicalization | 从旧结构搬到新结构，并统一规范 | ~~`taskbook.md`~~（已归档任务卡系统） 仓库搬迁章节 |
 
@@ -152,7 +152,7 @@ body: '
 
   | 可能出坏事的事 | Risk | 已识别的威胁，需要缓解或接受 | `_registry/catalogs/ai-risk-register.yaml` |
 
-  | 记笔记 / 会议纪要 | Session Log / Meeting Notes | 一次会话/会议的记录 | `governance/ai/handoff-protocol.md`、`docs/19_development_workspace/session_logs/` |
+  | 记笔记 / 会议纪要 | Session Log / Meeting Notes | 一次会话/会议的记录 | `governance/ai/handoff-protocol.md`、`docs/_working/session_logs/` |
 
   | 事后复盘 | Post-Mortem / Retrospective | 事件/阶段结束后的回顾 | （未启用） |
 

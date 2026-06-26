@@ -50,6 +50,7 @@ values:
     required_fields: ["valid_from"]
     ai_keywords: ["必须", "禁止", "红线", "不得", "强制"]
     examples: ["secret-management-policy.md", "access-control-policy.md"]
+    filename_suffixes: ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml"]
 
   - value: standard
     definition: "技术标准——定义度量、格式、接口等可量化规范"
@@ -59,6 +60,7 @@ values:
     required_fields: ["valid_from", "verifiability"]
     ai_keywords: ["推荐", "方案", "做法", "best practice", "应该"]
     examples: ["metadata_registry.yaml", "trae_028_doc_structure_naming.yaml doc_001"]
+    filename_suffixes: ["_standard.md", "_standard.yaml", "_standard.yml"]
 
   - value: operational_rule
     definition: "操作规程——定义'如何做'的步骤、检查清单、回滚方案"
@@ -68,6 +70,7 @@ values:
     required_fields: ["verifiability"]
     ai_keywords: ["步骤", "流程", "操作规程", "runbook", "Step 1"]
     examples: ["connector-onboarding-runbook.md", "factor-onboarding-runbook.md"]
+    filename_suffixes: ["_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"]
 
   - value: register
     definition: "注册表——结构化数据清单，用于发现和索引"
@@ -77,6 +80,8 @@ values:
     required_fields: ["summary"]
     ai_keywords: ["注册表", "登记表", "清单", "索引", "registry"]
     examples: ["_index.yaml", "document-metadata-index-registry.yaml"]
+    filename_suffixes: ["_registry.md", "_register.md", "_registry.yaml", "_registry.yml", "_register.yaml", "_register.yml"]
+    registry_category: governance_rule
 
   - value: index
     definition: "索引入口——目录级导航文件，声明子域的职责边界、文件清单和依赖关系。索引文件本身不制定规则，而是告诉 AI '这个目录里有什么、管什么、怎么用'"
@@ -87,6 +92,7 @@ values:
     ai_keywords: ["索引", "导航", "入口", "index", "README"]
     usage_note: "index.md 的 doc_type 是 index，不是 register。register 是结构化数据清单（机器解析为主的 YAML/JSON），index 是目录级导航（人+AI 读写为主的 Markdown）。对标 Linux FHS：/usr/share/doc/*/index.html vs /etc/apt/sources.list ——前者是索引入口，后者是注册表。"
     examples: ["task/index.md", "governance/index.md", "meta/index.md"]
+    filename_suffixes: ["index.md"]
 
   - value: protocol
     definition: "协议——定义多方交互的规则和流程"
@@ -96,6 +102,7 @@ values:
     required_fields: ["valid_from"]
     ai_keywords: ["协议", "约定", "交互", "protocol", "handoff"]
     examples: ["decision-record-protocol.md", "handoff-protocol.md"]
+    filename_suffixes: ["_protocol.md"]
 
   - value: template
     definition: "模板——可复用的文档结构骨架"
@@ -113,6 +120,7 @@ values:
       - "变更记录节"
     compliance_script: "python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template <类型>"
     examples: ["blueprint-construction-template.md", "dependency-graph-template.md"]
+    filename_suffixes: ["_template.md"]
 
   - value: terminology
     definition: "术语表——核心术语的统一定义和仲裁源，用于消除跨文件语义歧义"
@@ -123,6 +131,7 @@ values:
     ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
     usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/glossary.yaml。术语的大白话翻译/映射表使用 doc_type: reference（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），reference 是翻译（对照表）。"
     examples: ["_registry/vocabularies/glossary.yaml"]
+    filename_suffixes: ["_registry/vocabularies/glossary.yaml", "_terminology.md", "_mapping.md", "_registry/vocabularies/terminology_mapping.yaml"]
 
   - value: reference
     definition: "参考文件——提供特定主题的结构化参考数据、映射表或排名，不定义规则本身"
@@ -133,6 +142,7 @@ values:
     ai_keywords: ["参考", "映射", "排名", "reference", "速查", "对照表"]
     usage_note: "用于术语映射表、模型排名等参考数据文件——这些文件提供信息但本身不定义规则。与 terminology 的区别：terminology 是术语定义的仲裁源；reference 是信息对照的翻译器/排名表。"
     examples: ["_registry/vocabularies/terminology_mapping.yaml", "frontier_llm_benchmark_ranking.yaml"]
+    filename_suffixes: ["_reference.md", "_ref.md", "_reference.yaml", "_catalog.md", "_catalog.yaml", "_catalog.yml", "_ranking.md", "_ranking.yaml"]
 
   - value: vocabulary
     definition: "受控词表——定义枚举值、合法值域的机器可读清单，供 AI 和 CI 消费"
@@ -142,6 +152,7 @@ values:
     required_fields: []
     ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled"]
     examples: ["doc_type_vocabulary.yaml", "status_vocabulary.yaml"]
+    registry_category: vocabulary
 
   - value: contract
     definition: "验证契约——定义 VR 规则的结构化验证标准，供 pre-commit/CI 消费"
@@ -151,6 +162,7 @@ values:
     required_fields: ["contract_version", "total_vr_rules"]
     ai_keywords: ["契约", "验证", "VR", "contract", "rule"]
     examples: ["architecture_contract.yaml"]
+    registry_category: contract
 
   - value: schema
     definition: "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费"
@@ -169,6 +181,7 @@ values:
     required_fields: ["valid_from", "architecture_layers", "last_verified"]
     ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块"]
     examples: ["script-system-blueprint.md"]
+    filename_suffixes: ["blueprint.md"]
 
   - value: construction_plan
     definition: "施工计划——由蓝图派生的可执行施工方案，包含任务分解、Checklist 状态追踪"
@@ -223,6 +236,7 @@ values:
     required_fields: ["session_id"]
     ai_keywords: ["日志", "session", "记录", "log", "timestamp"]
     examples: ["session-20260502-001.md"]
+    filename_suffixes: ["_log.md"]
 
   - value: knowledge_entry
     definition: "知识条目——结构化知识库条目，供 AI 自动检索消费"
@@ -241,6 +255,7 @@ values:
     required_fields: ["generated_at"]
     ai_keywords: ["审计", "报告", "audit", "report"]
     examples: []
+    filename_suffixes: ["_report.md"]
 
   - value: service_spec
     definition: "服务规格——定义微服务/模块的外部接口契约"
@@ -395,7 +410,7 @@ deprecated_values:
     date: "2026-05-01"
 
   - value: candidate_pool
-    reason: "01_policies_and_standards/ 下不再使用——候选池概念由 02_enterprise_architecture/ 目录承担（`19_development_workspace/` 已于 2026-05-02 删除）"
+    reason: "01_policies_and_standards/ 下不再使用——候选池概念由 02_enterprise_architecture/ 目录承担（`19_development_workspace/` 已于 2026-06-26 退役删除）"
     migrated_to: ["N/A（非本目录 doc_type）"]
     date: "2026-05-01"
 

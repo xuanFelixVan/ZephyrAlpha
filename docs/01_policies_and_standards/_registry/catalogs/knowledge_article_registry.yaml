@@ -111,7 +111,7 @@ transition_period:
     - {type: blueprint, count: 5, path: "docs/03_modules/_domain-infra_ops/*/"}
     - {type: kb_decision, count: 39, path: "KB:decisions namespace（Git-backed KB 决策记录；原 docs/02_enterprise_architecture/adr/ 内容已迁移至 KB）"}
     - {type: rationale_log, count: 1, path: "docs/02_enterprise_architecture/architecture-rationale-log.md"}
-    - {type: session_log, count: 0, path: "已删除（`docs/19_development_workspace/` 已于 2026-05-02 迁出项目）"}
+    - {type: session_log, count: 0, path: "已退役（`docs/19_development_workspace/` 于 2026-06-26 退役；session_logs 迁至 `docs/_working/session_logs/`）"}
   migration_phase: "beta"
 
 # ============================================================================
