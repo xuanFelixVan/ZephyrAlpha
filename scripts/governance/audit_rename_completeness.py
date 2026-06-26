@@ -38,11 +38,19 @@
 
     # 循环审查2轮（连续2轮0残留才通过）
     python scripts/governance/audit_rename_completeness.py --rounds 2
+
+    # 检查手动修改文件中的旧标识符残留（活文档+脚本，排除历史文档和生成制品）
+    python scripts/governance/audit_rename_completeness.py --old-id D-GOV-DOCS \
+        --check-files "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml,scripts/governance/sync_yaml_to_depgraph.py"
+
+    # apply_depgraph.py --rename-domain 完成后会自动调用本工具的 scan_residual 做后置校验
+    # （事件驱动，无需手工触发；见 apply_depgraph.py _post_rename_residual_check）
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -76,9 +84,12 @@ EXCLUDE_TABLES = {"domain_naming_rules", "_schema_version", "governance_audit_lo
 # 节点路径旧前缀（阶段D检查，路径格式如 信号域-审计/D-SIGNAL-06）
 NODE_PATH_OLD_PREFIXES = ["D-SIGNAL-"]
 
-# 阶段D专用列（节点路径改名传播，由 scan_node_paths 专门检查，不在 scan_residual 中扫描）
-# 与 apply_depgraph.py _RENAME_SCAN_EXCLUDE_COLUMNS 保持一致
-EXCLUDE_COLUMNS = {"path", "blueprint_path"}
+# 排除列：由专门步骤处理的列不参与残留扫描（与 apply_depgraph.py _RENAME_SCAN_EXCLUDE_COLUMNS 保持一致）
+# - blueprint_id: 含 MODULE ID（MOD-GOV-DOCS），LIKE '%D-GOV-DOCS%' 会子串误匹配 MOD-GOV-DOCS
+#   由 cmd_propagate_rename 精确值映射处理（裁定#207 R1 B6，禁止子串REPLACE）
+# - path / blueprint_path: 阶段D 节点路径改名传播（重新编号，需保留原序号信息）
+# 不一致会导致误报：audit 漏排除 blueprint_id 时，MODULE ID 子串会被误判为 DOMAIN ID 残留
+EXCLUDE_COLUMNS = {"blueprint_id", "path", "blueprint_path"}
 
 
 def _get_all_text_columns(conn: sqlite3.Connection) -> dict[str, list[str]]:
@@ -178,6 +189,43 @@ def scan_node_paths(
     return residuals
 
 
+def scan_files_residual(
+    file_paths: list[str],
+    old_ids: list[str],
+) -> list[dict]:
+    """扫描指定文件中包含旧标识符的残留行（消除手工写 _tmp_find_residual.py 的必要性）。
+
+    用负向先行断言排除 MOD- 前缀误匹配：
+      - D-GOV-DOCS 在 MOD-GOV-DOCS 中是 MODULE ID 子串，不应判为 DOMAIN ID 残留
+      - (?<![A-Z]) 确保 old_id 前不是大写字母
+    排除 [BLUEPRINT] 行的模块 ID 声明（头部元数据，非业务内容）。
+
+    返回残留列表，每项: {file, line, old_id}。
+    """
+    pattern = re.compile('|'.join(r'(?<![A-Z])' + re.escape(d) for d in old_ids))
+    residuals: list[dict] = []
+    for fpath in file_paths:
+        p = Path(fpath)
+        if not p.exists():
+            continue
+        try:
+            content = p.read_text(encoding='utf-8', errors='ignore')
+        except OSError:
+            continue
+        for m in pattern.finditer(content):
+            start = m.start()
+            # 排除 [BLUEPRINT] 元数据行的模块 ID 声明
+            if '[BLUEPRINT]' in content[max(0, start - 50):start + 50]:
+                continue
+            line_num = content.count('\n', 0, start) + 1
+            residuals.append({
+                'file': fpath,
+                'line': line_num,
+                'old_id': m.group(),
+            })
+    return residuals
+
+
 def circular_review(
     db_path: str, old_ids: list[str], rounds: int = 2
 ) -> bool:
@@ -270,6 +318,12 @@ def main() -> int:
         default=str(DEPGRAPH_DB_PATH),
         help="depgraph.db 路径",
     )
+    parser.add_argument(
+        "--check-files",
+        help="扫描指定文件中的旧标识符残留（逗号分隔路径）。"
+        "用于检查手动修改的活文档/脚本（排除历史文档和生成制品）。"
+        "自动排除 MOD- 前缀的 MODULE ID 子串误匹配。",
+    )
     args = parser.parse_args()
 
     if not Path(args.db_path).exists():
@@ -281,6 +335,19 @@ def main() -> int:
         old_ids = [args.old_id]
     else:
         old_ids = list(RENAME_MAP_204.keys())
+
+    # 文件残留扫描模式（消除手工写 _tmp_find_residual.py 的必要性）
+    if args.check_files:
+        file_paths = [f.strip() for f in args.check_files.split(",") if f.strip()]
+        residuals = scan_files_residual(file_paths, old_ids)
+        total = len(residuals)
+        if total == 0:
+            print(f"[PASS] 0 文件残留——文件扫描通过（旧标识符: {old_ids}，扫描 {len(file_paths)} 文件）")
+            return 0
+        print(f"[FAIL] 发现 {total} 处文件残留:")
+        for r in residuals:
+            print(f"  {r['file']}:{r['line']}: {r['old_id']}")
+        return 1
 
     # 节点路径模式
     if args.check_node_paths:

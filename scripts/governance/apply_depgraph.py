@@ -1718,6 +1718,55 @@ def cmd_rename_domain(
                     c.close()
 
 
+def _post_rename_residual_check(old_id: str, db_path: str) -> None:
+    """改名后置残留校验钩子（治本：消除手工跑 audit 的必要性）。
+
+    事件驱动：cmd_rename_domain 完成后自动调用，扫描 DB 所有 TEXT 列检测 old_id 残留。
+    复用 audit_rename_completeness.scan_residual（真源唯一，禁止复制扫描逻辑）。
+    失败仅 WARNING（改名已成功 commit，不自动回滚），提示人工用
+    `audit_rename_completeness.py --old-id XXX --rounds 2` 复核。
+
+    设计原则（向内收）：
+      - 不复制扫描逻辑，复用 audit_rename_completeness 现成函数
+      - 延迟 import 避免启动时耦合
+      - import 失败 graceful 降级到提示手工跑
+    """
+    try:
+        from audit_rename_completeness import scan_residual
+    except ImportError as e:
+        print(
+            f"[POST-RENAME-CHECK] SKIP: audit_rename_completeness 不可导入 ({e})\n"
+            f"  手工复核: python scripts/governance/audit_rename_completeness.py --old-id {old_id} --rounds 2",
+            file=sys.stderr,
+        )
+        return
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=30000")
+        residuals = scan_residual(conn, [old_id], check_all_text_columns=True)
+        total = sum(r["count"] for r in residuals)
+        if total == 0:
+            print(f"[POST-RENAME-CHECK] OK: 0 residual for '{old_id}' (全表 TEXT 列扫描)")
+        else:
+            print(
+                f"[POST-RENAME-CHECK] WARNING: {total} residual rows for '{old_id}' "
+                f"(改名已成功，但检测到遗漏列需人工复核):",
+                file=sys.stderr,
+            )
+            for r in residuals:
+                print(
+                    f"  {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows",
+                    file=sys.stderr,
+                )
+            print(
+                f"  复核命令: python scripts/governance/audit_rename_completeness.py --old-id {old_id} --rounds 2",
+                file=sys.stderr,
+            )
+    finally:
+        conn.close()
+
+
 def cmd_fix_rename_residual(
     rename_map: dict[str, str],
     dry_run: bool = False,
@@ -1847,26 +1896,51 @@ def cmd_propagate_rename(
         print(f"{mode} cmd_propagate_rename: total {total} rows", file=sys.stderr)
         return total
 
+    return _with_bp_rename_tx(_run, own_conn, dry_run, db_path, "propagate_rename", conn)
+
+
+def _safe_bp_id_replace(text: str, old: str, new: str) -> str:
+    """安全替换 blueprint_id：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。"""
+    pattern = re.escape(old) + r"(?![A-Za-z0-9_-])"
+    return re.sub(pattern, new, text)
+
+
+def _with_bp_rename_tx(
+    run_fn,
+    own_conn: bool,
+    dry_run: bool,
+    db_path: str,
+    task: str,
+    conn=None,
+) -> int:
+    """blueprint_id 改名事务管理公共逻辑（cmd_propagate_rename 和 cmd_rename_blueprint_id 共享）。
+
+    封装：WAL 设置 + 文件锁 + blueprint_links 只读触发器通行证 + 异常恢复。
+    dry_run=True 时只读连接，不加锁，不 DROP 触发器。
+    dry_run=False 时加文件锁，DROP 触发器，执行后 RESTORE，异常时也 RESTORE。
+
+    返回 run_fn 的返回值，失败返回 -1。
+    """
     if dry_run:
         c = sqlite3.connect(db_path) if own_conn else conn
         if own_conn:
             c.execute("PRAGMA journal_mode=WAL")
             c.execute("PRAGMA busy_timeout=30000")
         try:
-            return _run(c)
+            return run_fn(c)
         finally:
             if own_conn:
                 c.close()
     else:
-        with _optional_db_lock(own_conn, task="propagate_rename", db_path=db_path):
+        with _optional_db_lock(own_conn, task=task, db_path=db_path):
             c = sqlite3.connect(db_path) if own_conn else conn
             if own_conn:
                 c.execute("PRAGMA journal_mode=WAL")
                 c.execute("PRAGMA busy_timeout=30000")
-            # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制，仿 sync 脚本）
+            # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制）
             c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
             try:
-                n = _run(c)
+                n = run_fn(c)
                 # 成功后恢复只读触发器并 commit
                 _restore_blueprint_links_readonly_trigger(c)
                 if own_conn:
@@ -1875,7 +1949,7 @@ def cmd_propagate_rename(
             except Exception as e:
                 if own_conn:
                     c.rollback()
-                print(f"ERROR: cmd_propagate_rename失败: {e}", file=sys.stderr)
+                print(f"ERROR: {task}失败: {e}", file=sys.stderr)
                 # 异常时也恢复只读触发器（保持门禁激活）
                 try:
                     _restore_blueprint_links_readonly_trigger(c)
@@ -1887,12 +1961,6 @@ def cmd_propagate_rename(
             finally:
                 if own_conn:
                     c.close()
-
-
-def _safe_bp_id_replace(text: str, old: str, new: str) -> str:
-    """安全替换 blueprint_id：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。"""
-    pattern = re.escape(old) + r"(?![A-Za-z0-9_-])"
-    return re.sub(pattern, new, text)
 
 
 def _propagate_bp_id_core(
@@ -2890,7 +2958,9 @@ def main() -> None:
         metavar=("OLD_BLUEPRINT_ID", "NEW_BLUEPRINT_ID"),
         help="裁定#208 D2: blueprint_id 独立重命名（跨域共享模块 SH-* 改名专用）。"
         "传播 nodes.blueprint_id + blueprint_links.blueprint_id + type_specific_data + blueprint_path。"
-        "安全保证：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。配 --dry-run 预览。",
+        "安全保证：负向前瞻防止 MOD-SHARED 误匹配 MOD-SHARED-001。"
+        "改名后自动扫描 docs/ 下 YAML 真源引用并输出 [YAML SYNC WARNING]（无需手动 grep）。"
+        "配 --dry-run 预览。",
     )
     args = parser.parse_args()
 
@@ -3123,6 +3193,11 @@ def main() -> None:
         if n < 0:
             sys.exit(4)
         print(f"affected={n}")
+        # 后置校验钩子（治本：消除手工跑 audit_rename_completeness 的必要性）
+        # 事件驱动——改名完成事件自动触发残留扫描，无需手工触发
+        # 失败不 sys.exit（改名已成功），仅 WARNING 提示人工复核
+        if not args.dry_run:
+            _post_rename_residual_check(old_id, str(DEPGRAPH_PATH))
         return
 
     if args.update_domain_name:
