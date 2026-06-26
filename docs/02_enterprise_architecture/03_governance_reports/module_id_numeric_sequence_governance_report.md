@@ -420,7 +420,7 @@ tests\unit\test_check_naming_convention_dual_track.py .................. [ 81%]
 **阶段 C**（高风险，首次改 DB）：
 - C1：ro SQL 实测确认 26 行技术违规全量清单
 - C2：重编号映射表（⚠️ 暂停确认点）
-- C3：apply_depgraph.py 执行重编号（改前 git commit 备份；制品用 `generate_project_depgraph_artifact.py --write`）
+- C3：apply_depgraph.py 执行重编号（改前 git commit 备份；⚠️ `generate_project_depgraph_artifact.py` 已删除，depgraph.db 是唯一真源，见 AGENTS.md §11）
 - C4：audit_rename_completeness.py 验证改名传播完整
 
 **阶段 D**（中高风险）：
@@ -498,7 +498,7 @@ blueprint_id_invalid=1 rows: 0
 - `D:\ZephyrAlpha\scripts\governance\d3_metadata\check_naming_convention.py` — N-06/N-17 实现
 - `D:\ZephyrAlpha\scripts\governance\apply_depgraph.py` — 全景图操作主工具
 - `D:\ZephyrAlpha\scripts\governance\audit_rename_completeness.py` — 改名完整性审计（裁定#207 R1）
-- `D:\ZephyrAlpha\scripts\governance\generate_project_depgraph_artifact.py` — 只读制品生成器（裁定#207 R2）
+- ~~`D:\ZephyrAlpha\scripts\governance\generate_project_depgraph_artifact.py`~~ ⚠️ 已删除（2026-06-26）— depgraph.db 是唯一真源，见 AGENTS.md §11
 
 **数据现状**：
 - `D:\ZephyrAlpha\data\databases\depgraph.db` — 量化数据真源
