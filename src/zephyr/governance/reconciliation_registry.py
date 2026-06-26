@@ -1277,6 +1277,7 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
         ReconcilerSpec(gate_id="GATE-RULES-INTEGRITY", priority=270)。
     """
     import json
+    import os
     import subprocess
     import sys
     import time
@@ -1293,6 +1294,10 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. post-commit 重注册基线（--register 内部读 RULES_MANIFEST 真源，重算全部 hash）
+        # 红蓝发现4 治本：设置 ZEPHYR_RECONCILER_MODE=1 门禁令牌，允许 --register。
+        # validate_rules_integrity.py --register 检查此变量，手动调用不设置 → 阻断。
+        _env = dict(os.environ)
+        _env["ZEPHYR_RECONCILER_MODE"] = "1"
         reg_result = subprocess.run(
             [sys.executable, _VALIDATE_SCRIPT, "--register"],
             cwd=str(project_root),
@@ -1301,6 +1306,7 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
             encoding="utf-8",
             errors="replace",
             timeout=30,
+            env=_env,
         )
         # 2. 报告落盘（无论 exit code，记录供追责）
         report = {

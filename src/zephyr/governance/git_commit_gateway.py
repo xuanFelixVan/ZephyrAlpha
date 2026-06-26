@@ -1085,7 +1085,7 @@ class GitCommitGateway:
 
         真源唯一：扫描所有 capability 条目，取有 integrity_anchors +
         canonical_override 的，构建 rel_path → [anchor_names] 映射。
-        fail-open：YAML 不可达时回退硬编码（覆盖当前已知受保护脚本）。
+        fail-open：YAML 不可达时回退硬编码并 log warning（红蓝发现6：不静默）。
         与 _load_n16_exempt_names 一致的 fail-open 策略。
         """
         yaml_path = REGISTRY_YAML  # 真源唯一：capability_lookup.REGISTRY_YAML
@@ -1105,8 +1105,13 @@ class GitCommitGateway:
                         result[override] = cleaned
             if result:
                 return result
-        except Exception:
-            pass
+        except Exception as e:
+            # 红蓝发现6 治本：不静默吞掉异常。fail-open 策略保留（回退硬编码，
+            # 避免 registry 损坏导致全项目 commit 瘫痪），但异常要可见——
+            # YAML 解析失败可能是篡改信号，应 log 供追责。
+            logger.warning(
+                "_load_protected_scripts: YAML 加载失败，回退硬编码: %s", e
+            )
         # fail-open 回退硬编码（当前唯一受保护脚本：GATE-ID-UNIQ 检测脚本）
         # 同步提醒：新增受保护脚本时更新 YAML integrity_anchors + 此处回退值
         return {
@@ -1128,7 +1133,8 @@ class GitCommitGateway:
         （gateway 内嵌校验，在 git commit 之前执行，对标 _check_ssot_canonical 模式）。
 
         锚点清单真源：capability_canonical_file_registry.yaml 的 integrity_anchors
-        字段（_load_protected_scripts 读取）。fail-open：YAML 不可达时回退硬编码。
+        字段（_load_protected_scripts 读取）。fail-open：YAML 不可达时回退硬编码并
+        log warning（红蓝发现6：不静默，异常可能是篡改信号）。
 
         自指悖论（残留缺口，诚实记录）：gateway 本身能被改，但改 gateway 触发
         gate-triple-align/gate-reg-bl 等门禁，且 [SAFETY] M 受保护。C 层

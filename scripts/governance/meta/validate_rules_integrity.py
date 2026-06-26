@@ -92,6 +92,28 @@ def _hash_file(file_path: Path) -> str:
     return hashlib.sha256(file_path.read_bytes()).hexdigest()[:16]
 
 
+def _hash_git_head(rel_path: str) -> str | None:
+    """基于 git HEAD 状态 hash（红蓝发现3 治本）。
+
+    register() 用此函数而非 _hash_file()，确保基线基于已 commit 状态，
+    不基于工作树 WIP——攻击者篡改受保护脚本后 commit 无关文件，
+    post-commit --register 不会把 WIP 篡改注册为基线（只注册 HEAD 状态）。
+    check() 仍用 _hash_file() 基于工作树状态（检测 WIP 篡改）。
+
+    Returns:
+        hash 字符串 | None（文件不在 git HEAD）
+    """
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{rel_path}"],
+        capture_output=True,
+        cwd=str(_REPO_ROOT),
+        timeout=5,
+    )
+    if result.returncode != 0:
+        return None
+    return hashlib.sha256(result.stdout).hexdigest()[:16]
+
+
 def _load_db() -> dict:
     """_load_db implementation."""
     if not _INTEGRITY_DB.exists():
@@ -121,13 +143,24 @@ def register() -> dict:
     now = datetime.now(UTC).isoformat()
     data = {"files": {}, "registered_at": now, "last_check_at": now}
     for entry in RULES_MANIFEST:
-        fp = _REPO_ROOT / entry["path"]
-        if fp.exists():
-            data["files"][entry["path"]] = {
-                "hash": _hash_file(fp),
+        rel = entry["path"]
+        # 红蓝发现3 治本：基于 git HEAD 状态 hash，不基于工作树 WIP。
+        git_hash = _hash_git_head(rel)
+        if git_hash is not None:
+            data["files"][rel] = {
+                "hash": git_hash,
                 "critical": entry["critical"],
                 "desc": entry["desc"],
             }
+        else:
+            # 文件不在 git HEAD（新文件/未跟踪）→ 回退到工作树状态
+            fp = _REPO_ROOT / rel
+            if fp.exists():
+                data["files"][rel] = {
+                    "hash": _hash_file(fp),
+                    "critical": entry["critical"],
+                    "desc": entry["desc"],
+                }
     _save_db(data)
     return {"status": "registered", "count": len(data["files"]), "at": now}
 
@@ -224,7 +257,11 @@ def show_diff() -> str:
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="规则文件完整性保护")
-    parser.add_argument("--register", action="store_true", help="注册当前文件状态为可信基线")
+    parser.add_argument(
+        "--register",
+        action="store_true",
+        help="注册当前文件状态为可信基线（需 ZEPHYR_RECONCILER_MODE=1 门禁）",
+    )
     parser.add_argument("--check", action="store_true", help="验证文件未被篡改")
     parser.add_argument("--diff", action="store_true", help="显示 git diff")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")
@@ -232,6 +269,17 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.register:
+        # 红蓝发现4 治本：--register 重置基线 = 合法化当前状态，是危险操作。
+        # 加环境变量门禁：只有 ZEPHYR_RECONCILER_MODE=1（reconciler 设置）才允许注册。
+        if os.environ.get("ZEPHYR_RECONCILER_MODE") != "1":
+            print(
+                "[INTEGRITY] 🔴 --register 被门禁阻断：未设置 ZEPHYR_RECONCILER_MODE=1。"
+                "基线重置只能由 GitCommitGateway post-commit reconciler 自动执行，"
+                "禁止手动重置（防止篡改合法化）。合法更新规则文件请通过 "
+                "GitCommitGateway commit（post-commit 自动注册基线）。",
+                file=sys.stderr,
+            )
+            sys.exit(1)
         result = register()
         print(f"[INTEGRITY] ✅ 已注册 {result['count']} 个规则文件的 Hash", file=sys.stderr)
     elif args.diff:
