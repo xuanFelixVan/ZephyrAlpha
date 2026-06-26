@@ -104,7 +104,7 @@ class TestExamCheatingAttack:
 
     def test_attack_leak_expected_old_str(self) -> None:
         """攻击: 模型在返回结果中泄露 expected_old_str 字段。"""
-        case = _find_case("code_fix")
+        case = _find_case("code_edit_precision")
         malicious_result = {
             "fixes": [{"old_str": case.expected_old_str, "new_str": "fixed"}],
             "expected_old_str": case.expected_old_str,  # 泄露答案
@@ -144,7 +144,7 @@ class TestExamCheatingAttack:
         防护: _detect_optimization() 检测到精确匹配 → 标记为可疑。
         """
         orch = ExamOrchestrator(_make_mock_chat())
-        case = _find_case("code_fix")
+        case = _find_case("code_edit_precision")
 
         # 攻击者返回的 old_str 与 expected_old_str 完全一致（无推理过程）
         malicious_result = {
@@ -515,7 +515,7 @@ class TestCombinedAttack:
         assert ExamOrchestrator._validate_result(leaky_result, case) is False
 
         # 层次3: 反优化检测
-        code_case = _find_case("code_fix")
+        code_case = _find_case("code_edit_precision")
         optimized_result = {
             "fixes": [{"old_str": code_case.expected_old_str, "new_str": "x"}]
         }

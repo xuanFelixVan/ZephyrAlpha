@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import statistics
 import time
 from datetime import UTC, datetime
@@ -51,8 +52,12 @@ from zephyr.intelligence.model_profiling.capability_passport import (
 )
 from zephyr.intelligence.model_profiling.exam_test_cases import (
     CASES_BY_CAPABILITY,
+    Difficulty,
     ExamTestCase,
 )
+from zephyr.intelligence.model_profiling.exam_rubric import ExamRubric
+from zephyr.intelligence.model_profiling.exam_executor import ExamExecutor
+from zephyr.intelligence.model_profiling.exam_judge import ExamJudge
 
 _log = logging.getLogger(__name__)
 
@@ -72,6 +77,37 @@ _EXAM_CAPABILITY_NAMES = {
 }
 
 
+# v3.0.5: 奥赛单题通过线（三轨综合分 ≥ 0.6 视为通过）
+_OLYMPIAD_CASE_PASS_THRESHOLD: float = 0.6
+
+# v3.0.5: 难度加权字典（加权平均替代简单平均）
+_DIFFICULTY_WEIGHTS: dict[Difficulty, int] = {
+    Difficulty.EASY: 1,
+    Difficulty.MEDIUM: 2,
+    Difficulty.HARD: 3,
+    Difficulty.EXTREME: 4,
+    Difficulty.OLYMPIAD: 5,
+}
+
+
+def _time_weight(elapsed_ms: float, decay_ms: float = 260_000.0) -> float:
+    """v3.0.5: 时间权重折扣——慢答案被折扣但不归零。
+
+    对齐 project_memory ``exp(-t/260s)``：参数 260s（exp 衰减常数，非半衰期）。
+    - 0ms   → 1.000（即时满分）
+    - 9s    → 0.966（本地模型单题，轻微折扣）
+    - 60s   → 0.794（thinking 模型单题，明显折扣）
+    - 260s  → 0.368
+    - 600s  → 0.099（防卡死上限，不归零）
+
+    用途：在 _score_capability 中对每 case 的 f1 折扣，
+    替代已废除的 60s 硬熔断——慢但正确的答案仍得分，仅被折扣。
+    """
+    if elapsed_ms <= 0:
+        return 1.0
+    return math.exp(-elapsed_ms / decay_ms)
+
+
 class ExamOrchestrator:
     """五轴入职考试主控。
 
@@ -82,7 +118,13 @@ class ExamOrchestrator:
         passport.save()
     """
 
-    def __init__(self, chat: Any, model_id: str = "", randomize_order: bool = False) -> None:
+    def __init__(
+        self,
+        chat: Any,
+        model_id: str = "",
+        randomize_order: bool = False,
+        judge_chat: Any = None,
+    ) -> None:
         self._chat = chat
         self._model_id = model_id or getattr(chat, "_model", "unknown")
         self._start_ts: float = 0.0
@@ -91,9 +133,18 @@ class ExamOrchestrator:
         self._all_ttft_ms: list[float] = []
         self._randomize_order = randomize_order
         self._optimization_suspicions = 0
+        # v3.0.5: 奥赛题逐题通过记录（供封顶）
+        self._olympiad_case_results: list[bool] = []
+        # v3.0.5: 三轨评分裁判模型（缺省回退纯 rubric 评分）
+        self._judge_chat = judge_chat
+        # v3.0.5: 三轨评分器实例（rubric/executor 自包含；judge 仅在有 chat 时创建）
+        self._rubric_scorer = ExamRubric()
+        self._executor = ExamExecutor()
+        self._judge: ExamJudge | None = ExamJudge(judge_chat) if judge_chat is not None else None
 
     def run_full_exam(self, *, skip_drift: bool = True) -> CapabilityPassport:
         self._start_ts = time.time()
+        self._olympiad_case_results = []  # v3.0.5: 重置奥赛题通过记录
 
         passport = CapabilityPassport(model_id=self._model_id)
         passport.exam_timestamp = datetime.now(UTC).isoformat()
@@ -184,25 +235,54 @@ class ExamOrchestrator:
         recalls: list[float] = []
         edit_distances: list[float] = []
         exact_matches: list[int] = []
+        time_weights: list[float] = []  # v3.0.5: 每 case 时间折扣系数
+        weights: list[int] = []       # v3.0.5: 难度加权
 
         for case in cases:
+            elapsed_ms = 0.0
             try:
                 result = self._infer(case)
-                p, r, ed, em = self._compute_metrics(case, result)
-                precisions.append(p)
-                recalls.append(r)
-                edit_distances.append(ed)
-                exact_matches.append(em)
+                # v3.0.5: 取出耗时计算时间折扣（_infer 注入；不干扰 _compute_metrics）
+                if isinstance(result, dict):
+                    elapsed_ms = result.pop("_elapsed_ms", 0.0)
+
+                if case.difficulty == Difficulty.OLYMPIAD:
+                    # P1.5: OLYMPIAD 题走三轨评分
+                    overall = self._score_olympiad_case(case, result)
+                    passed = overall >= _OLYMPIAD_CASE_PASS_THRESHOLD
+                    self._olympiad_case_results.append(passed)
+                    precisions.append(overall)
+                    recalls.append(overall)
+                    edit_distances.append(round(1.0 - overall, 3))
+                    exact_matches.append(1 if passed else 0)
+                else:
+                    # 非 OLYMPIAD 题保持现有 _compute_metrics 路径不变
+                    p, r, ed, em = self._compute_metrics(case, result)
+                    precisions.append(p)
+                    recalls.append(r)
+                    edit_distances.append(ed)
+                    exact_matches.append(em)
             except Exception:
                 precisions.append(0.0)
                 recalls.append(0.0)
                 edit_distances.append(1.0)
                 exact_matches.append(0)
+                if case.difficulty == Difficulty.OLYMPIAD:
+                    self._olympiad_case_results.append(False)
+
+            # v3.0.5: 时间折扣 + 难度加权
+            time_weights.append(_time_weight(elapsed_ms))
+            weights.append(_DIFFICULTY_WEIGHTS.get(case.difficulty, 1))
 
         n = len(cases)
-        avg_p = statistics.mean(precisions) if precisions else 0.0
-        avg_r = statistics.mean(recalls) if recalls else 0.0
-        f1 = 2 * avg_p * avg_r / (avg_p + avg_r) if (avg_p + avg_r) > 0 else 0.0
+        total_w = sum(weights) if weights else 1
+        # v3.0.5: 加权平均替代简单平均（难度越高权重越大）
+        avg_p = sum(p * w for p, w in zip(precisions, weights, strict=True)) / total_w if precisions else 0.0
+        avg_r = sum(r * w for r, w in zip(recalls, weights, strict=True)) / total_w if recalls else 0.0
+        f1_raw = 2 * avg_p * avg_r / (avg_p + avg_r) if (avg_p + avg_r) > 0 else 0.0
+        # v3.0.5: 慢 case 被时间折扣——替代已废除的 60s 硬熔断，慢但不归零
+        avg_tw = sum(tw * w for tw, w in zip(time_weights, weights, strict=True)) / total_w if time_weights else 1.0
+        f1 = f1_raw * avg_tw
 
         return DepthCapabilityResult(
             precision=round(avg_p, 3),
@@ -211,7 +291,72 @@ class ExamOrchestrator:
             edit_distance_avg=round(statistics.mean(edit_distances), 3) if edit_distances else 0.0,
             exact_match_rate=round(sum(exact_matches) / n, 3) if n > 0 else 0.0,
             samples_tested=n,
+            time_weight_avg=round(avg_tw, 3),
         )
+
+    # ── P1.5: OLYMPIAD 三轨评分 ──────────────────────────
+
+    def _score_olympiad_case(self, case: ExamTestCase, result: dict) -> float:
+        """P1.5: OLYMPIAD 题三轨评分——judge*0.4 + executor*0.3 + rubric*0.3（归一化）。
+
+        权重重分配：
+          - judge_chat=None → 回退纯 rubric（rubric 权重=1.0）
+          - executor 仅对 code_generate 类题且有 expected_test_cases 时启用；
+            无 test_cases 时其 0.3 权重回退到可用轨道（归一化处理）
+
+        Returns:
+            overall: float 0.0~1.0（三轨加权综合分）
+        """
+        candidate = self._extract_candidate_text(result)
+
+        # 注入 _expected_* 供 rubric checker 使用
+        rubric_input = dict(result) if isinstance(result, dict) else {"content": str(result)}
+        if case.expected_contains:
+            rubric_input["_expected_contains"] = list(case.expected_contains)
+        if case.expected_hallucinations:
+            rubric_input["_expected_hallucinations"] = list(case.expected_hallucinations)
+        if case.expected_call_chain:
+            rubric_input["_expected_call_chain"] = list(case.expected_call_chain)
+        if case.expected_parallel_groups:
+            rubric_input["_expected_parallel_groups"] = [list(g) for g in case.expected_parallel_groups]
+
+        tracks: list[tuple[float, float]] = []  # (weight, score)
+
+        # Track 1: Rubric（始终可用）
+        rubric_result = self._rubric_scorer.score(case.capability, rubric_input)
+        tracks.append((0.3, rubric_result.score))
+
+        # Track 2: Executor（仅 code_generate 类且有可执行测试断言）
+        if case.capability == "code_generate" and case.expected_test_cases:
+            exec_result = self._executor.execute(candidate, list(case.expected_test_cases))
+            tracks.append((0.3, exec_result.pass_rate))
+
+        # Track 3: Judge（仅 judge_chat 可用时）
+        if self._judge is not None:
+            judge_result = self._judge.judge(case, candidate)
+            tracks.append((0.4, judge_result.overall))
+
+        # 归一化加权（自动处理权重重分配）
+        total_w = sum(w for w, _ in tracks)
+        if total_w <= 0:
+            return 0.0
+        return sum(w * s for w, s in tracks) / total_w
+
+    @staticmethod
+    def _extract_candidate_text(result: dict) -> str:
+        """从推理结果中提取候选文本（供 judge/executor 使用）。"""
+        if not isinstance(result, dict):
+            return str(result) if result else ""
+        content = result.get("content", "")
+        if not content:
+            content = result.get("response", "")
+        if not content:
+            nested = result.get("codegen", {})
+            if isinstance(nested, dict):
+                content = nested.get("content", "")
+        if not content:
+            content = json.dumps(result, ensure_ascii=False, indent=2)
+        return content
 
     def _compute_metrics(
         self,
@@ -244,8 +389,8 @@ class ExamOrchestrator:
             em = 1 if nh == case.expected_needs_human else 0
             return (em, em, 0.0, em)
 
-        if cap in ("code_fix", "refactor", "dead_code_removal"):
-            field = "fixes" if cap == "code_fix" else ("changes" if cap == "refactor" else "dead_sections")
+        if cap in ("code_fix", "code_edit_precision", "refactor", "dead_code_removal"):
+            field = "fixes" if cap in ("code_fix", "code_edit_precision") else ("changes" if cap == "refactor" else "dead_sections")
             entries = result.get(field, [])
             if not entries:
                 return (0.0, 0.0, 1.0, 0)
@@ -294,7 +439,7 @@ class ExamOrchestrator:
                 sum(self._all_tokens) / (sum(latencies) / 1000.0),
                 1,
             )
-            if latencies and self._all_tokens
+            if latencies and self._all_tokens and sum(latencies) > 0
             else 0.0,
             time_to_first_token_ms=round(
                 statistics.mean(self._all_ttft_ms),
@@ -343,22 +488,105 @@ class ExamOrchestrator:
         )
 
     def _run_drift(self, breadth: BreadthResult) -> DriftResult:
+        """稳轴: cold → load → hot 三阶段漂移测试（v3.0.5 真实实现）。
+
+        cold:  单次冷启（首个 breadth 通过能力），记录基线输出 + 延迟 + 幻觉标志
+        load:  连续 N 次压载（轮换 breadth 通过的能力），施加热负载
+        hot:   复测冷启同题，对比输出漂移 + 速度漂移 + 幻觉漂移
+
+        判稳阈值：output_drift < 0.3 且 speed_drift_ratio < 1.0 且幻觉无恶化。
+        失败返回 DriftResult(tested=False) 不阻塞考试流程。
+        """
         try:
+            passed_caps = [c for c in CAPABILITIES if c not in breadth.failed_capabilities]
+            if not passed_caps:
+                return DriftResult(tested=False)
+
+            probe_case = CASES_BY_CAPABILITY[passed_caps[0]][0]
+
+            # Phase 1: cold — 单次冷启基线
+            cold_result = self._infer(probe_case)
+            cold_latency = self._all_latencies_ms[-1] if self._all_latencies_ms else 1.0
+            cold_fab = 1 if self._check_fabrication(probe_case, cold_result) else 0
+
+            # Phase 2: load — 连续 N 次压载
+            load_n = 5
+            for i in range(load_n):
+                cap = passed_caps[i % len(passed_caps)]
+                case = CASES_BY_CAPABILITY[cap][0]
+                self._infer(case)
+
+            # Phase 3: hot — 复测冷启同题
+            hot_result = self._infer(probe_case)
+            hot_latency = self._all_latencies_ms[-1] if self._all_latencies_ms else 1.0
+            hot_fab = 1 if self._check_fabrication(probe_case, hot_result) else 0
+
+            # 输出漂移（token 集合 Jaccard 距离）
+            cold_str = json.dumps(cold_result, sort_keys=True, ensure_ascii=False)
+            hot_str = json.dumps(hot_result, sort_keys=True, ensure_ascii=False)
+            cold_tokens = set(cold_str.split())
+            hot_tokens = set(hot_str.split())
+            union = cold_tokens | hot_tokens
+            output_drift = (
+                1.0 - len(cold_tokens & hot_tokens) / max(len(union), 1)
+                if union
+                else 0.0
+            )
+
+            # 速度漂移比（hot 相对 cold 的延迟变化率）
+            speed_drift_ratio = (hot_latency - cold_latency) / cold_latency if cold_latency > 0 else 0.0
+
+            # 幻觉漂移增量（恶化为正）
+            hallucination_drift_delta = float(hot_fab - cold_fab)
+
+            stable = (
+                output_drift < 0.3
+                and speed_drift_ratio < 1.0
+                and hallucination_drift_delta <= 0
+            )
+
             return DriftResult(
                 tested=True,
-                output_drift=0.0,
-                speed_drift_ratio=0.0,
-                hallucination_drift_delta=0.0,
-                stable=True,
+                output_drift=round(output_drift, 3),
+                speed_drift_ratio=round(speed_drift_ratio, 3),
+                hallucination_drift_delta=round(hallucination_drift_delta, 3),
+                stable=stable,
             )
-        except Exception:
+        except Exception as e:
+            _log.warning("ExamOrchestrator: drift test failed: %s", e)
             return DriftResult(tested=False)
 
+    def _compute_olympiad_pass_rate(self) -> float:
+        """v3.0.5: 奥赛题通过率——用于奥赛封顶机制。
+
+        无奥赛题时返回 1.0（不封顶），保持向后兼容。
+        """
+        if not self._olympiad_case_results:
+            return 1.0
+        return sum(self._olympiad_case_results) / len(self._olympiad_case_results)
+
     def _compute_overall(self, passport: CapabilityPassport) -> float:
+        """v3.0.5: 综合分 = 加权原始分，经奥赛封顶。
+
+        权重：breadth 0.35 + depth 0.50 + (1-halluc) 0.15
+        奥赛封顶：通过率 <25%→B+(0.80)；<50%→A(0.85)；<75%→A-(0.88)；≥75%→A+(1.0)
+        """
         b = passport.breadth.score
         d = passport.depth.overall_score
         h = 1.0 - passport.hallucination.overall_rate
-        return round(0.30 * b + 0.50 * d + 0.20 * h, 3)
+        raw = 0.35 * b + 0.50 * d + 0.15 * h
+
+        pass_rate = self._compute_olympiad_pass_rate()
+        if pass_rate < 0.25:
+            cap = 0.80  # B+
+        elif pass_rate < 0.50:
+            cap = 0.85  # A
+        elif pass_rate < 0.75:
+            cap = 0.88  # A-
+        else:
+            cap = 1.0   # A+ 解锁
+
+        return round(min(raw, cap), 3)
 
     def _build_recommendations(self, passport: CapabilityPassport) -> Recommendations:
         safe: list[str] = []
@@ -393,6 +621,9 @@ class ExamOrchestrator:
         if tokens:
             self._all_tokens.append(tokens)
 
+        # v3.0.5: 注入耗时供 _score_capability 时间折扣（下划线前缀不干扰 _compute_metrics）
+        if isinstance(raw, dict):
+            raw["_elapsed_ms"] = elapsed_ms
         return raw
 
     @staticmethod
@@ -415,10 +646,10 @@ class ExamOrchestrator:
 
     @staticmethod
     def _check_fabrication(case: ExamTestCase, result: dict) -> bool:
-        if case.capability in ("code_fix", "refactor", "dead_code_removal"):
+        if case.capability in ("code_fix", "code_edit_precision", "refactor", "dead_code_removal"):
             field = (
                 "fixes"
-                if case.capability == "code_fix"
+                if case.capability in ("code_fix", "code_edit_precision")
                 else "changes"
                 if case.capability == "refactor"
                 else "dead_sections"
@@ -489,7 +720,7 @@ class ExamOrchestrator:
         """
         suspicious = False
 
-        if case.capability == "code_fix":
+        if case.capability in ("code_fix", "code_edit_precision"):
             fixes = result.get("fixes", [])
             for entry in fixes:
                 old_str = entry.get("old_str", "")

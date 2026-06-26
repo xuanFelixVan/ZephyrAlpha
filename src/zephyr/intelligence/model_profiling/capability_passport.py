@@ -106,6 +106,7 @@ class DepthCapabilityResult:
     exact_match_rate: float = 0.0
     samples_tested: int = 0
     failure_reason: str = ""
+    time_weight_avg: float = 1.0  # v3.0.5: 平均时间折扣系数（便于审计）
 
 
 @dataclass
