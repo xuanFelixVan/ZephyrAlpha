@@ -41,8 +41,8 @@ class FileIntegrityRecord(BaseModel):
 
 class CodeIntegrityGuard:
     _CRITICAL_DIRS: tuple[str, ...] = (
-        "src/zephyr/llm-security/layers",
-        "src/zephyr/llm-security/self_protection",
+        "src/zephyr/security/llm_defense/llm_security/layers",
+        "src/zephyr/security/llm_defense/llm_security/self_protection",
     )
 
     def __init__(self, project_root: str = ""):
