@@ -570,7 +570,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D-INFRA_RUNTIME
   subdomain: persistence
-  ssot_module: MOD-DATABASE
+  ssot_module: SH-DB-001
   ssot_path: src/zephyr/data/persistence/
   covers:
   - SQLite DDL Schema(v1-v8迁移)

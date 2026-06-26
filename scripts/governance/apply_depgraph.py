@@ -1996,6 +1996,28 @@ def _propagate_bp_id_core(
     return total
 
 
+def _scan_yaml_bp_id_refs(bp_id: str, search_root: Path = Path("docs")) -> list[tuple[str, int]]:
+    """扫描 YAML 文件中的 blueprint_id 引用，返回 [(相对路径, 命中数), ...]。
+
+    用于 cmd_rename_blueprint_id 执行后检测 YAML 真源是否需要同步。
+    使用负向前瞻正则（同 _safe_bp_id_replace），避免误匹配
+    （如 MOD-SHARED 不匹配 MOD-SHARED-001）。
+    """
+    pattern = re.compile(re.escape(bp_id) + r"(?![A-Za-z0-9_-])")
+    refs: list[tuple[str, int]] = []
+    for ext in ("*.yaml", "*.yml"):
+        for yaml_path in search_root.rglob(ext):
+            try:
+                content = yaml_path.read_text(encoding="utf-8")
+                matches = len(pattern.findall(content))
+                if matches > 0:
+                    rel = str(yaml_path).replace("\\", "/")
+                    refs.append((rel, matches))
+            except (OSError, UnicodeDecodeError):
+                continue
+    return refs
+
+
 def cmd_rename_blueprint_id(
     old_bp_id: str,
     new_bp_id: str,
@@ -2031,6 +2053,18 @@ def cmd_rename_blueprint_id(
         if not dry_run and own_conn:
             c.commit()
         print(f"{mode} cmd_rename_blueprint_id: total {total} rows", file=sys.stderr)
+        # 治本：DB 改名后自动扫描 YAML 真源引用，防止 sync_yaml_to_depgraph.py 回滚
+        if not dry_run and total > 0:
+            yaml_refs = _scan_yaml_bp_id_refs(old_bp_id)
+            if yaml_refs:
+                total_refs = sum(cnt for _, cnt in yaml_refs)
+                print(f"\n[YAML SYNC WARNING] DB 改名已完成，但 {len(yaml_refs)} 个 YAML 文件仍引用旧 ID '{old_bp_id}'（共 {total_refs} 处）：", file=sys.stderr)
+                for f, cnt in yaml_refs:
+                    print(f"  {f}: {cnt} 处", file=sys.stderr)
+                print("  必须同步这些 YAML 文件，否则 sync_yaml_to_depgraph.py 会回滚 DB 改名成果。", file=sys.stderr)
+                print("  注意: 历史记录（changelog/version history）中的旧 ID 保留不动，只改当前数据。", file=sys.stderr)
+            else:
+                print(f"[YAML SYNC OK] 未发现 YAML 文件引用旧 ID '{old_bp_id}'，无需同步。", file=sys.stderr)
         return total
 
     if dry_run:
