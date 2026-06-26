@@ -187,6 +187,25 @@ repos:
         files: "^.*"
         description: "全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律）。裁定#208 过渡期 --warn-only（N-17/N-06 历史违规不阻断，阶段 E 激活后移除转硬阻断）。多AI并发安全：pass_filenames只检查触发文件，不检查所有staged文件"
 
+      # ── GATE-11-SSOT: N-16 fallback 与 YAML 一致性校验 ──
+      # 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml
+      #          §gov_doc_003_filename_uniqueness.n16_config
+      # 真源声明：trae_028 v1.5.0 §n16_config 是 N-16 豁免清单的唯一真源；
+      #          脚本侧 _N16_*_FALLBACK 是 fail-open 回退值（YAML 不可达时兜底）。
+      # 校验内容：_validate_ssot_linkage() 比对 fallback 4元组与 YAML n16_config，
+      #          防止 fallback 过时漂移（YAML 改了豁免项但 fallback 未同步 → fail-open 时用旧值导致检测失效）
+      # 触发条件：trae_028.yaml 或 check_naming_convention.py 变更时自动触发（非 always_run，节省每次 commit 成本）
+      # 模式：硬阻断（exit 1=BLOCK）—— fallback 漂移即拒绝提交
+      # 红蓝对抗：第二轮红蓝四维测试 ADV.7/ADV.8 验证 4 元组漂移全被检测
+      - id: gate-11-ssot
+        name: "GATE-11-SSOT: N-16 fallback 与 YAML 一致性校验"
+        entry: python scripts/governance/d3_metadata/check_naming_convention.py --validate-ssot
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(docs/01_policies_and_standards/rules/trae_028.*\\.yaml|scripts/governance/d3_metadata/check_naming_convention\\.py)$"
+        description: "N-16 fallback 4元组与 YAML n16_config 一致性校验（trae_028.yaml 或 check_naming_convention.py 变更时触发，防 fallback 过时漂移），硬阻断"
+
       # ── GATE-ID-UNIQ: pre-commit hook id 唯一性门禁 ──
       # 权威依据：commit a09e510ec 历史教训（两个 SSoT 门禁同用 id: gate-ssot，后者覆盖前者）
       # 真源声明：本任务治本——加自动化门禁，防止未来 AI 再造一对重复 id
@@ -282,6 +301,25 @@ repos:
         always_run: false
         files: "^docs/.*\\.md$"
         description: "Frontmatter ttl（必填+合法值，hard block）+ doc_type（必填+合法值，默认 warn-only）校验，从 ttl_vocabulary.yaml + doc_type_vocabulary.yaml 动态加载。capability: frontmatter_metadata_validation"
+
+      # ── GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2 强制执行层）──
+      # 权威依据：docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml §2
+      # 真源声明：trae_060 §2 唯一真源与直接消费——YAML 词表是规则数据唯一真源，.py 必须 yaml.safe_load 动态加载
+      # 检测范围：src/zephyr/ 与 scripts/ 下 .py 文件
+      # 检测内容：AST 扫描 VALID_*_VALUES/STATUSES/TYPES/LEVELS/LAYERS 等变量赋值为字面量集合 → 造第二真源嫌疑；
+      #           load_vocabulary_values("xxx.yaml") 引用文件存在性校验
+      # 例外：DDL 文件白名单（sqlite_schema.py / depgraph_schema.py / audit_post_sync_commands.py，走 DDL-as-Code 协议）；
+      #       行尾 `# noqa: gate-vocab` 内联豁免；_archive 排除
+      # 模式：--warn-only 起步（trae_060 §5 已排查 23 处硬编码违规待清零，清零后转 --ci 硬阻断）
+      - id: gate-vocab-hardcode
+        name: "GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）"
+        entry: python scripts/governance/d3_metadata/check_vocab_hardcode.py
+        args: ["--warn-only"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/.*\\.py|scripts/.*\\.py)$"
+        description: "AST 扫描 src/zephyr/ + scripts/ 下 .py 词表合法值硬编码（VALID_*_VALUES 字面量集合=造第二真源=漂移），warn-only 起步待 23 处违规清零后转 --ci。trae_060 §2 强制执行层"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml

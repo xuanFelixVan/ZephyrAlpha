@@ -1,0 +1,283 @@
+rule_id: TRAE-060
+title: 向内收原则（唯一真源·事件驱动·第一性原理）
+version: 1.0.0
+layer: compliance
+module_id: TRAE-060
+depends_on:
+  - target: TRAE-057
+    at: "format_division"
+    why: "AI消费优先——本原则§2直接消费的顶层依据（格式分工YAML侧）"
+  - target: TRAE-053
+    at: "rule_fifteen"
+    why: "自动化双轨（修法后事件轨+CI兜底）——本原则§3事件驱动的施工展开"
+  - target: TRAE-054
+    at: "depgraph_access_protocol"
+    why: "depgraph程序化访问协议——本原则§2唯一真源访问范式"
+  - target: TRAE-042
+    at: "section_yaml_rule_format"
+    why: "YAML规则文档格式——规则数据YAML侧格式铁律"
+  - target: TRAE-043
+    at: "ps_std_001_dual_source"
+    why: "双真源声明（YAML=数据真源）——本原则§2法源"
+tags:
+- TRAE
+- inward_consolidation
+- L0
+- principle
+- single_source_of_truth
+- event_driven
+- first_principles
+- anti_drift
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- INWARD-001
+- INWARD-CONSOLIDATION
+- 向内收
+- SSC-EVT-001
+severity: critical
+scope: global
+domain: TRAE
+rule_form: declarative
+triggers:
+- operation: create_automation_system
+- operation: create_code_file
+- operation: create_script
+- operation: create_rule
+- operation: create_vocabulary
+- operation: create_registry
+- operation: create_new_function_or_module
+- operation: modify_any_output
+
+sections:
+  principle_declaration:
+    section_type: rule
+    title: §1 原则声明（向内收三原则）
+    description: |
+      本原则是100%AI开发、上下文有限、靠trae对话触发工作的自治理项目的顶层收敛约束。
+      核心目标:确保唯一真源、唯一责任、自动维护自动运行甚至无需维护,使未来每个新进AI不漂移、不另造。
+      三原则互为支撑:原则①管"要不要造",原则②管"造了怎么活",原则③管"问题本身对不对"。
+    original_rules:
+    - "原则①能现成不创造:能用现成的不创造,创造是没办法才创建。工作前先查有没有能用的,能扩展/增加功能优先,不要同步复制"
+    - "原则②创造必全自动:创造的永久性系统/功能脚本必须自动事件触发、自动运行、自动维护、自动关闭、全自动。禁止手工触发(除非特殊情况),禁止时间触发(cron/Timer/sleep-loop/periodic)——时间触发等于要人指令触发,没达成自动"
+    - "原则③第一性原理治本:想问题解决问题都从第一性原理/治本原理出发,先质疑元问题是否合理、功能该不该存在、是否该删除或合并进已有功能"
+    - "三原则在100%AI开发场景下的落地目标:唯一真源、唯一责任、自动维护自动运行甚至无需维护,未来每个新进AI不漂移不另造"
+    conditions:
+    - type: must
+      check: "动手前是否先搜索现有脚本/模块/YAML词表/注册表,确认无可用现成?"
+      pass: "原则①通过"
+      fail: "停止创造,改用/扩展已有"
+    - type: must
+      check: "新创造的永久性脚本是否事件触发+自动运行+自动维护+自动关闭?"
+      pass: "原则②通过"
+      fail: "改为事件驱动,或合并进已有事件钩子;否则不得创建"
+    - type: must
+      check: "是否已质疑元问题合理性、功能该不该存在、能否删除或合并进已有功能?"
+      pass: "原则③通过"
+      fail: "回炉重审元问题,不得直接施工"
+    prohibitions:
+    - "跳过搜索直接创造(违反原则①)"
+    - "把'查不到'当结论——查不到时先质疑搜索方式与范围,再质疑是否该造"
+    - "把同步复制当扩展(复制一份再改=造第二真源,违反原则①)"
+
+  single_source_direct_consume:
+    section_type: rule
+    title: §2 唯一真源与直接消费（对应原则①）
+    description: |
+      YAML是规则数据(词表/注册表/配置/契约)唯一真源(根法源:project_memory YAML唯一真源铁律 + trae_043 双真源声明 + trae_057 §2格式分工)。
+      任何代码消费规则数据MUST直接读YAML词表动态加载,禁止在.py中硬编码合法值副本。
+      硬编码=造第二真源=必然漂移(已实证:validate_document_ttl.py:67 硬编码且接受4个词表已删值、validate_ssot.py:15-16 硬编码且漂移)。
+      引用区分三种,对应原则①"能扩展/增加功能优先,不要同步复制"。
+    original_rules:
+    - "规则数据YAML是唯一真源;.py消费MUST yaml.safe_load动态加载,禁止硬编码合法值列表/字典/frozenset/Enum副本"
+    - "(a)合法值集合:直接读词表values的value字段(范式见check_frontmatter_metadata.py:63-68 _load_ttl_values)"
+    - "(b)值属性:值的废弃标记/中文标签/排序权重等MUST入词表字段,代码读字段,禁止在代码里维护第二份属性表"
+    - "(c)业务分支:历史重命名/别名映射等业务语义分支MUST标# RENAME_REVIEW注释并在词表登记,禁止静默硬编码"
+    - "新增词表字段时,所有消费方MUST同步改读新字段,禁止遗留旧硬编码"
+    conditions:
+    - type: must
+      check: ".py中出现词表合法值(列表/字典/frozenset/Enum/集合字面量)时,是否通过yaml.safe_load从词表YAML加载?"
+      pass: "§2通过"
+      fail: "改为动态加载,或归入DDL-as-Code例外(见§5)"
+    - type: must
+      check: "值的属性(废弃/标签/排序)是否在词表YAML字段中,代码仅读不存?"
+      pass: "§2通过"
+      fail: "属性入词表,代码改读字段"
+    - type: must
+      check: "业务语义分支是否标RENAME_REVIEW并在词表登记?"
+      pass: "§2通过"
+      fail: "补登记+注释"
+    prohibitions:
+    - "在.py硬编码词表合法值(VALID_*_VALUES={...}/VALID_*=「...」/Enum/frozenset)——造第二真源,漂移必发"
+    - "同步复制YAML内容到另一个YAML/MD再消费——同步复制违反原则①"
+    - "用if/elif链隐式枚举合法值替代读词表"
+    - "改了词表不改消费代码(留旧硬编码)——静默漂移"
+
+  event_driven_full_auto:
+    section_type: rule
+    title: §3 事件驱动全自动（对应原则②）
+    description: |
+      永久性系统/功能脚本MUST自动事件触发+自动运行+自动维护+自动关闭。
+      时间触发(cron/Timer/sleep-loop/periodic/进程内调度器)等于要人指令触发,没达成自动,禁止。
+      CircadianScheduler系统已废止(project_memory MOD-INF-030,红蓝对抗已迁移事件驱动),禁止新建任何进程内定时调度器。
+      定时不全量兜底改由CI定期job(.github/workflows schedule)承担。
+      # 代码层面已落地(2026-06-26):register_task/start/stop/save_state 均为 no-op,_loop 已删除,定时轨已废除,改为事件驱动。
+    original_rules:
+    - "永久性脚本MUST事件触发(event/hook/push/文件变更/状态变更),自动运行+自动维护+自动关闭"
+    - "禁止时间触发:CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内调度器/进程内轮询守护"
+    - "CircadianScheduler系统废止(MOD-INF-030),禁止新建任何进程内定时调度器,禁止注册circadian_scheduler.register_task"
+    - "定时不全量兜底由CI定期job承担(.github/workflows schedule)——CI schedule属CI层批量兜底,非进程内Timer,不占运行时,无需人触发,可被push事件增量取代,允许"
+    - "事件轨注册:事件钩子MUST在boot_hooks.py注册(hook_registry.register/event_bus.subscribe),禁止游离钩子"
+    - "手工触发仅限特殊情况(一次性运维/诊断/迁移),永久性功能禁止manual-only"
+    conditions:
+    - type: must
+      check: "永久性脚本的触发方式是否事件驱动(event/hook/push/状态变更)?"
+      pass: "§3通过"
+      fail: "改为事件驱动或合并进CI兜底,否则不得创建"
+    - type: must
+      check: "是否含时间触发(CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内轮询)?"
+      pass: "改事件驱动;批量兜底走CI schedule"
+      fail: "§3通过"
+    - type: constraint
+      check: "是否仅manual触发(无事件注册)?"
+      pass: "§3通过(若属运维/诊断一次性例外)"
+      fail: "永久功能禁止manual-only,补事件注册"
+    exceptions:
+      backoff_retry: "退避重试(time.sleep+backoff)是同步原语,不算时间触发 ✅"
+      lock_polling: "锁轮询/忙等待是同步原语,不算时间触发 ✅"
+      startup_wait: "启动等待/就绪探针是同步原语,不算时间触发 ✅"
+      ci_schedule: "CI .github/workflows schedule作批量兜底,非进程内Timer,允许 ✅"
+      manual_ops: "一次性运维/诊断/迁移脚本允许manual(非永久功能) ✅"
+    prohibitions:
+    - "新建/使用CircadianScheduler或任何进程内定时调度器"
+    - "用cron/Timer/sleep-loop/periodic做永久功能的主触发"
+    - "实现定时轨但不注册(代码写好没人跑)——定时轨本身已废止"
+    - "永久性功能脚本仅manual触发(无事件注册)"
+    - "把CI schedule当主触发(它只做兜底,主触发必须事件)"
+
+  first_principles_review:
+    section_type: rule
+    title: §4 第一性原理元问题审查（对应原则③）
+    description: |
+      动手前MUST质疑元问题:功能该不该存在?能否删除?能否合并进已有功能?
+      在100%AI开发、上下文有限场景下,多造一个=多一份漂移源+多一份维护责任。治本优先于治标:根因不除,症状反复。
+    original_rules:
+    - "动手前MUST质疑元问题:这功能该不该存在?能否删除?能否合并进已有?"
+    - "治本优先:先找根因,根因不除症状反复;禁止只治标不治本"
+    - "重复簇MUST合并:已排查atomic_write散落22处、load_yaml 17处、parse_frontmatter 9处、apply_depgraph WAL重复10次、src侧forensic/metadata双份、scan_secret_leak同文件双份——这些MUST收敛为唯一实现"
+    - "新功能上线前MUST评估:能否不造(用已有)?能否合并?造了谁来全自动维护?"
+    conditions:
+    - type: must
+      check: "是否已问'这功能该不该存在'?"
+      pass: "§4通过"
+      fail: "回炉质疑元问题"
+    - type: must
+      check: "是否已问'能否删除或合并进已有'?"
+      pass: "§4通过"
+      fail: "优先删除/合并"
+    - type: must
+      check: "是否治本(根因)而非治标(症状)?"
+      pass: "§4通过"
+      fail: "重做根因分析(MTH-006)"
+    prohibitions:
+    - "不质疑元问题直接施工"
+    - "只治标不治本(根因不除症状反复)"
+    - "明知有重复簇仍新造(违反原则①+③)"
+    - "把'加个新脚本'当默认解(应先问能否不造)"
+
+  prohibition_list:
+    section_type: rule
+    title: §5 禁止清单（汇总与evidence）
+    description: |
+      本节汇总三原则的禁止项,并附已排查违反清单作evidence。违反清单是2026-06-26全项目排查结果,作为本原则的可验证锚点。
+    original_rules:
+    - "禁止硬编码词表合法值(造第二真源)"
+    - "禁止同步复制YAML/MD内容当第二真源"
+    - "禁止时间触发(CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内轮询)"
+    - "禁止新建进程内定时调度器"
+    - "禁止永久功能仅manual触发"
+    - "禁止不质疑元问题直接施工"
+    - "禁止只治标不治本"
+    - "禁止跳过搜索直接创造"
+    - "禁止把同步复制当扩展"
+    prohibitions:
+    - "硬编码词表合法值:validate_document_ttl.py:67、validate_ssot.py:15-16、triage.py:73/102、scaffold.py:440-444等23处.py硬编码副本(9词表),MUST动态加载"
+    - "sync多真源:construction_progress三真源(frontmatter+blueprint_registry.yaml+module_registry.yaml)+validate_ssot_construction_progress.py:19-22三向校验,MUST收敛"
+    - "时间触发14处:CircadianScheduler系统(circadian_scheduler.py/boot_cron_jobs.py/lifecycle_manager.py/f5_boot_integration.py/auto_runtime_core.py)、drift_cron_scheduler.py:48、ops/scheduler.py、ide_health_service.py:212、governance_watchdog.py:141、vms_cron_monitor.py:108、auto_fix_cron.py:108、dedup-watch.yml:4、red-blue-validator.yml:75死条件,MUST改事件驱动或CI兜底"
+    - "手工触发~25处:sync_yaml_to_depgraph.py、auto_sync_all_registries.py、diagnose_depgraph.py等永久治理功能仅manual,MUST补事件注册"
+    - "可合并6簇:atomic_write 22处、load_yaml 17处、parse_frontmatter 9处、apply_depgraph WAL 10次、src侧forensic/metadata双份、scan_secret_leak双份,MUST收敛为唯一实现"
+    exceptions:
+      ddl_as_code: "SQL DDL里的CHECK枚举(如sqlite_schema.py:84-107)无法yaml.safe_load动态化,走DDL-as-Code单独协议(见§6),GATE-VOCAB排除DDL文件"
+      ci_schedule_fallback: "CI .github/workflows schedule作批量兜底允许(非进程内Timer)"
+      sync_primitives: "退避重试/锁轮询/启动等待等同步原语不算时间触发"
+
+  cross_rule_relation:
+    section_type: context
+    title: §6 与既有铁律关系
+    description: |
+      本原则统辖并强化以下既有铁律,使其成为三原则的具体施工展开。既有条款不重复本原则声明,只引用。
+    applies_to:
+    - "trae_057 AI消费优先 → 本原则§2直接消费的顶层依据(格式分工YAML侧)"
+    - "trae_053 自动化双轨(修法后事件轨+CI兜底) → 本原则§3事件驱动的施工展开"
+    - "trae_054 depgraph程序化访问 → 本原则§2唯一真源访问范式(不直接Read大文件)"
+    - "trae_042/043 YAML规则格式+双真源声明 → 本原则§2法源(YAML=数据真源)"
+    - "project_memory YAML唯一真源铁律 → 本原则§2根法源"
+    - "project_memory MOD-INF-030废止CircadianScheduler → 本原则§3事件驱动依据"
+    - "DDL-as-Code协议(待建) → 本原则§5 SQL CHECK枚举例外处理"
+    not_applies_to:
+    - "一次性运维/诊断/迁移脚本——允许manual(非永久功能)"
+    - "测试夹具/常量——非规则数据,不强制动态加载"
+
+references:
+  rule_ids:
+  - TRAE-057
+  - TRAE-053
+  - TRAE-054
+  - TRAE-042
+  - TRAE-043
+  scripts:
+  - scripts/governance/d3_metadata/check_vocab_hardcode.py
+  - scripts/governance/d3_metadata/check_frontmatter_metadata.py
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/audit_registration.py
+  modules: []
+  blueprints: []
+  external:
+  - "SSoT(Single Source of Truth)原则"
+  - "Event-Driven Architecture(事件驱动架构)"
+  - "First Principles Thinking(第一性原理)"
+  - "DRY(Don't Repeat Yourself)"
+  - "K8s Admission Controller(准入控制器——创建前审查)"
+
+enforcement:
+  type: hook
+  executors:
+  - scripts/governance/d3_metadata/check_vocab_hardcode.py
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/audit_registration.py
+  bypass_allowed: false
+  gate_id: GATE-VOCAB
+
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  review_cycle: permanent
+  design_rationale: |
+    项目100%AI开发,上下文有限,靠trae对话触发工作。在此场景下:
+    多真源=漂移源,时间触发=人触发(未达自动),不质疑元问题=症状反复。
+    本原则将用户"向内收"三决策固化为frozen顶层规则,统辖trae_057/053/054既有铁律,
+    使新进AI有可机器执行的判定标准,而非依赖散文理解。
+    配套GATE-VOCAB门禁(warn-only起步)提供机械检测,打破自指盲区。
+
+provenance:
+  extracted_at: '2026-06-26'
+  extracted_by: session-20260626-inward-consolidation
+  source: "Owner裁定(2026-06-26)——用户'向内收'三原则固化;依据project_memory YAML唯一真源铁律+MOD-INF-030废止CircadianScheduler+红蓝对抗迁移事件驱动+trae_057 AI消费优先"
+
+change_history:
+- version: '1.0.0'
+  date: '2026-06-26'
+  change: '初始创建——固化用户向内收三原则(唯一真源·事件驱动·第一性原理);统辖trae_057/053/054;配套GATE-VOCAB门禁'
