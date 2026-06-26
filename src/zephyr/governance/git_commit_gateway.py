@@ -659,7 +659,7 @@ class GitCommitGateway:
         detail = (
             "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
             + "\n  ".join(violation_lines)
-            + "\n  复用决策（RULE-EIGHT）：扩展已有文件而非新建。"
+            + "\n  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）"
         )
         return False, detail
 

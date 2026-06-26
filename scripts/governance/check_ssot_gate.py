@@ -87,7 +87,7 @@ def main() -> int:
                 f" 与已有文件冲突: {', '.join(c.conflicts)}",
                 file=sys.stderr,
             )
-        print("  复用决策（RULE-EIGHT）：扩展已有文件而非新建。", file=sys.stderr)
+        print("  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）", file=sys.stderr)
         return 1
 
     return 0
