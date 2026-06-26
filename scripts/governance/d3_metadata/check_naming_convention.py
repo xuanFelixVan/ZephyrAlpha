@@ -32,7 +32,7 @@
   N-13  YAML/JSON/MD 文件名 snake_case 合规检测
   N-14  __init__.py 必须定义 __all__
   N-15  BLUEPRINT 头部路径必须存在
-  N-16  测试文件名项目内唯一性检测
+  N-16  文件名项目内唯一性检测（tests/ + docs/）
   N-17  blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
 """
 
@@ -254,27 +254,29 @@ def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
 # ---------------------------------------------------------------------------
 
 _MODULE_ID_SCOPE_RE = re.compile(
-    r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM)(?:[-_][A-Za-z0-9_]+)+[\"']?",
+    r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM|SH)(?:[-_][A-Za-z0-9_]+)+[\"']?",
     re.MULTILINE,
 )
-# 裁定#208 R1/R4: 双轨制 module_id 格式正则（scope 前缀通过后，校验 MOD-*/D-* 值的格式）
+# 裁定#208 R1/R4: 双轨制 module_id 格式正则（scope 前缀通过后，校验 MOD-*/D-*/SH-* 值的格式）
 _MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-\d+$")            # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填（LAYER_CODE 首位字母，允许 L00/L01 等含数字层码）
 _MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$")     # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
 _MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]+(?:_[A-Z]+)*-\d+$")                  # 派生轨: D-XXX-{SEQ}
+_MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]+-\d+$")                                # 跨域共享模块: SH-{ABBR}-{NNN} 序号必填（trae_028 L86/L466/L475）
 # 提取 module_id 值（兼容 YAML module_id: VALUE 和 .py 头部 module_id=VALUE 两种格式）
 _MODULE_ID_VALUE_RE = re.compile(r'module_id[:=]\s*["\']?([A-Za-z][A-Za-z0-9_-]+)', re.MULTILINE)
 # Relaxed regex for inline module_id: inside .py comment headers (e.g. "# [A_test] module_id: SRC-TST-0212 | ...")
 _INLINE_MODULE_ID_SCOPE_RE = re.compile(
-    r"module_id:\s*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM)(?:[-_][A-Za-z0-9_]+)+[\"']?\b"
+    r"module_id:\s*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM|SH)(?:[-_][A-Za-z0-9_]+)+[\"']?\b"
 )
 
 
 def _check_n06_dual_track_format(filepath: str, content: str) -> list[NamingViolation]:
-    """裁定#208 R4: scope 前缀通过后，校验 MOD-*/D-* module_id 值符合双轨制格式。
+    """裁定#208 R4: scope 前缀通过后，校验 MOD-*/D-*/SH-* module_id 值符合双轨制格式。
 
     layer-master 轨: MOD-{LAYER_CODE}-{SEQ}（序号必填）
     domain-functional 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（序号可选）/ D-XXX-{SEQ}
-    非 MOD-*/D-* 前缀（如 ADR/KBG/CFG/TRAE）跳过格式校验（由 scope 前缀检测覆盖）。
+    跨域共享模块: SH-{ABBR}-{NNN}（序号必填，trae_028 L86/L466/L475）
+    非 MOD-*/D-*/SH-* 前缀（如 ADR/KBG/CFG/TRAE）跳过格式校验（由 scope 前缀检测覆盖）。
     """
     violations: list[NamingViolation] = []
     # 跳过 markdown 代码块（避免文档示例误判）
@@ -315,6 +317,17 @@ def _check_n06_dual_track_format(filepath: str, content: str) -> list[NamingViol
                 message=f"module_id 格式不符合双轨制(裁定#208): {value}（D 前缀后必须用连字符 - 分隔，禁止下划线 _）",
                 filepath=filepath,
             ))
+        elif value.startswith("SH-"):
+            # 跨域共享模块: SH-{ABBR}-{NNN}（序号必填，trae_028 L86/L466/L475）
+            if not _MODULE_ID_SHARED_RE.match(value):
+                violations.append(NamingViolation(
+                    rule="N-06",
+                    message=(
+                        f"module_id SH-前缀格式不符合跨域共享模块规范(trae_028 L86/L466/L475): {value}"
+                        f"（应为 SH-{{ABBR}}-NNN，如 SH-DB-001）"
+                    ),
+                    filepath=filepath,
+                ))
     return violations
 
 
@@ -820,10 +833,87 @@ def _check_n15_blueprint_path_exists(
 
 
 # ---------------------------------------------------------------------------
-# N-16: 测试文件名项目内唯一性
+# N-16: 文件名项目内唯一性（tests/ + docs/）
 # ---------------------------------------------------------------------------
 
-_N16_EXEMPT_NAMES: set[str] = {"conftest.py", "__init__.py"}
+# tests/ 豁免：约定俗成的跨目录同名文件
+_N16_TESTS_EXEMPT_NAMES: set[str] = {"conftest.py", "__init__.py"}
+
+# docs/ 豁免：约定俗成的跨目录同名文件（基于实际扫描校准）
+#   index.md (169x) / blueprint.md (59x) / readme.md (4x) / changelog.md (2x) /
+#   spec.md (2x) / .gitkeep (3x) / _index.yaml (2x)
+_N16_DOCS_EXEMPT_NAMES: set[str] = {
+    "index.md",
+    "blueprint.md",
+    "readme.md",
+    "changelog.md",
+    "spec.md",
+    ".gitkeep",
+    "_index.yaml",
+    "__init__.py",
+    "conftest.py",
+}
+
+# docs/ 跳过的目录（运行时产物、归档、备份——不纳入同名检查）
+_N16_DOCS_SKIP_DIRS: set[str] = {
+    "_DO_NOT_USE_old_tree",
+    "_archive",
+    "_backups",
+    "session_logs",
+}
+
+
+def _check_basename_uniqueness(
+    scan_root: Path,
+    project_root: Path,
+    exempt_names: set[str],
+    skip_dirs: set[str] | None = None,
+    file_filter=None,
+    rule_id: str = "N-16",
+    label: str = "文件名",
+) -> list[NamingViolation]:
+    """通用 basename 唯一性检测——扫描 scan_root 下所有文件，basename 相同视为违规。
+
+    Args:
+        scan_root: 要扫描的目录（如 tests/ 或 docs/）
+        project_root: 项目根（用于计算相对路径）
+        exempt_names: 豁免的 basename 集合（如 index.md / __init__.py）
+        skip_dirs: 要跳过的子目录名集合（如 _archive / session_logs）
+        file_filter: 可选的文件名过滤器，返回 True 才纳入检查（如 lambda n: n.startswith("test_")）
+        rule_id: 违规规则 ID
+        label: 违规消息中的标签（如 "测试文件名" / "文档文件名"）
+    """
+    if not scan_root.is_dir():
+        return []
+
+    from collections import defaultdict
+
+    name_to_paths: dict[str, list[str]] = defaultdict(list)
+    for root, dirs, files in os.walk(scan_root):
+        if skip_dirs:
+            dirs[:] = [d for d in dirs if d not in skip_dirs]
+        dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__"]
+        for f in files:
+            if f in exempt_names:
+                continue
+            if file_filter and not file_filter(f):
+                continue
+            full = Path(root) / f
+            rel = str(full.relative_to(project_root)).replace("\\", "/")
+            name_to_paths[f].append(rel)
+
+    violations: list[NamingViolation] = []
+    for basename, paths in sorted(name_to_paths.items()):
+        if len(paths) > 1:
+            for p in paths:
+                violations.append(
+                    NamingViolation(
+                        rule=rule_id,
+                        message=f"{label}不唯一: {basename} (共{len(paths)}处: {', '.join(paths)})",
+                        filepath=p,
+                    )
+                )
+    return violations
 
 
 def check_test_name_uniqueness(project_root: Path | None = None) -> list[NamingViolation]:
@@ -834,33 +924,40 @@ def check_test_name_uniqueness(project_root: Path | None = None) -> list[NamingV
     """
     if project_root is None:
         project_root = Path.cwd()
-    tests_dir = project_root / "tests"
-    if not tests_dir.is_dir():
-        return []
+    return _check_basename_uniqueness(
+        scan_root=project_root / "tests",
+        project_root=project_root,
+        exempt_names=_N16_TESTS_EXEMPT_NAMES,
+        file_filter=lambda n: n.startswith("test_"),
+        label="测试文件名",
+    )
 
-    from collections import defaultdict
 
-    name_to_paths: dict[str, list[str]] = defaultdict(list)
-    for py_file in tests_dir.rglob("*.py"):
-        basename = py_file.name
-        if basename in _N16_EXEMPT_NAMES:
-            continue
-        if not basename.startswith("test_"):
-            continue
-        rel = str(py_file.relative_to(project_root)).replace("\\", "/")
-        name_to_paths[basename].append(rel)
+def check_docs_name_uniqueness(project_root: Path | None = None) -> list[NamingViolation]:
+    """扫描 docs/ 下所有文件，同名文件（basename 相同）视为违规。
 
+    豁免: 约定俗成的跨目录同名文件（index.md / blueprint.md / readme.md /
+    changelog.md / spec.md / .gitkeep / _index.yaml / __init__.py / conftest.py）。
+    跳过: _archive / _backups / session_logs / _DO_NOT_USE_old_tree（运行时产物/归档）。
+    """
+    if project_root is None:
+        project_root = Path.cwd()
+    return _check_basename_uniqueness(
+        scan_root=project_root / "docs",
+        project_root=project_root,
+        exempt_names=_N16_DOCS_EXEMPT_NAMES,
+        skip_dirs=_N16_DOCS_SKIP_DIRS,
+        label="文档文件名",
+    )
+
+
+def check_filename_uniqueness_all(project_root: Path | None = None) -> list[NamingViolation]:
+    """N-16 统一入口——检测 tests/ + docs/ 下的文件名唯一性。"""
+    if project_root is None:
+        project_root = Path.cwd()
     violations: list[NamingViolation] = []
-    for basename, paths in sorted(name_to_paths.items()):
-        if len(paths) > 1:
-            for p in paths:
-                violations.append(
-                    NamingViolation(
-                        rule="N-16",
-                        message=f"测试文件名不唯一: {basename} (共{len(paths)}处: {', '.join(paths)})",
-                        filepath=p,
-                    )
-                )
+    violations.extend(check_test_name_uniqueness(project_root))
+    violations.extend(check_docs_name_uniqueness(project_root))
     return violations
 
 
@@ -1113,11 +1210,15 @@ def main() -> int:
                 filepath = f"{rel_root}/{f}" if rel_root else f
                 abspath = Path(root) / f
                 all_violations.extend(check_file(filepath, abspath, project_root))
-        # N-16: 全局检测——测试文件名唯一性
-        all_violations.extend(check_test_name_uniqueness(project_root))
+        # N-16: 全局检测——文件名唯一性（tests/ + docs/）
+        all_violations.extend(check_filename_uniqueness_all(project_root))
     else:
         # 默认模式：检查传入的文件列表（pre-commit pass_filenames），或当前目录
         targets = args.paths if args.paths else ["."]
+        # N-16 全局检测不依赖传入文件列表——它是项目级唯一性检查，
+        # 在默认模式也必须运行（否则 pre-commit 钩子不会发现同名文件）
+        _project_root_for_n16 = Path(__file__).resolve().parents[3]
+        all_violations.extend(check_filename_uniqueness_all(_project_root_for_n16))
         for target_path in targets:
             target = Path(target_path)
             if target.is_dir():
