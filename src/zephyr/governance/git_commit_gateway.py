@@ -118,6 +118,7 @@ class CommitStatus(str, Enum):
     LOCK_TIMEOUT = "LOCK_TIMEOUT"  # 获取全局锁超时
     PROMOTION_BLOCKED = "PROMOTION_BLOCKED"  # 永久区新文件未获 --allow-promote 批准
     METADATA_VIOLATION = "METADATA_VIOLATION"  # .md 文件 frontmatter ttl 校验失败
+    SSOT_VIOLATION = "SSOT_VIOLATION"  # 新增 .py 声明了已有 module_path（绕过 scaffold 创建）
 
 
 class GatewayError(RuntimeError):
@@ -472,6 +473,16 @@ class GitCommitGateway:
                     ),
                 )
 
+        # SSoT 兜底门禁（L2）：检测新增 .py 文件是否声明了已有 module_path
+        # 防止 AI 绕过 scaffold 直接 Write 新文件后 commit
+        # 真源是文件头部 [MODULE] 字段，反查通过 capability_lookup 实时扫描磁盘
+        ssot_passed, ssot_detail = self._check_ssot_canonical(existing)
+        if not ssot_passed:
+            return CommitResult(
+                status=CommitStatus.SSOT_VIOLATION,
+                message=ssot_detail,
+            )
+
         # 追加 GW 标记
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
@@ -592,6 +603,73 @@ class GitCommitGateway:
         # exit 1 = 有违规，exit 2 = 脚本异常
         detail = result.stderr.strip() or result.stdout.strip() or "unknown ttl validation error"
         return False, detail
+
+    def _check_ssot_canonical(self, files: list[str]) -> tuple[bool, str]:
+        """SSoT 兜底门禁（L2）：检测新增 .py 文件是否声明了已有 module_path。
+
+        防止 AI 绕过 scaffold 直接 Write 新文件后 commit。
+        真源是文件头部 [MODULE] 字段，反查通过 capability_lookup 实时扫描磁盘。
+
+        只检查 src/zephyr/ 下的新增（未 git 跟踪）.py 文件。
+        对每个新增文件，解析其 [MODULE] 头，提取 module_path，
+        反查磁盘上是否有其他文件声明了相同 module_path。
+
+        fail-open 策略：capability_lookup 不可用时不阻断（L1 scaffold 是主防线）。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        # 筛选新增的 .py 文件（在 src/zephyr/ 下且未 git 跟踪）
+        new_py_files: list[tuple[str, str]] = []  # (abs_path, rel_path)
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if not rel.startswith("src/zephyr/") or not rel.endswith(".py"):
+                continue
+            if self._is_git_tracked(rel):
+                continue  # 已跟踪文件是修改不是新增，跳过
+            new_py_files.append((f, rel))
+
+        if not new_py_files:
+            return True, "no new .py files to check"
+
+        try:
+            from zephyr.governance.capability_lookup import CapabilityLookup
+            lookup = CapabilityLookup()
+        except Exception as e:
+            # fail-open：capability_lookup 不可用时不阻断
+            return True, f"capability_lookup 不可用，跳过 SSoT 兜底检查: {e}"
+
+        violations: list[str] = []
+        for abs_path, rel_path in new_py_files:
+            # 解析新文件的 [MODULE] 头
+            header = CapabilityLookup._parse_header(Path(abs_path), rel_path)
+            if not header.module_path:
+                continue  # 无 [MODULE] 头，跳过（无法判断）
+
+            # 反查磁盘上是否有其他文件声明了相同 module_path
+            conflicts = lookup.find_files_by_module_path(header.module_path)
+            # 排除新文件自己
+            conflicts = [c for c in conflicts if c != rel_path]
+
+            if conflicts:
+                conflict_list = ", ".join(conflicts)
+                violations.append(
+                    f"{rel_path} 声明 module_path={header.module_path}"
+                    f" 与已有文件冲突: {conflict_list}"
+                )
+
+        if violations:
+            detail = (
+                "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
+                + "\n  ".join(violations)
+                + "\n  复用决策（RULE-EIGHT）：扩展已有文件而非新建。"
+            )
+            return False, detail
+
+        return True, "ssot check passed"
 
     # ------------------------------------------------------------------
     # 内部实现
@@ -742,7 +820,7 @@ class GitCommitGateway:
         finally:
             # 6. 恢复 stash（无论 commit 成功失败都要恢复，不丢数据）
             if stashed:
-                pop_ok = self._restore_stash()
+                pop_ok = self._restore_stash(stash_ref)
                 if not pop_ok:
                     # stash pop 失败——保留 stash，报警，覆盖结果为 STASH_CONFLICT
                     logger.warning(
@@ -763,6 +841,23 @@ class GitCommitGateway:
                             stash_ref=stash_ref,
                             stash_kept=True,
                         )
+            elif not stash_ref:
+                # 防御：stash push 可能报错但 stash 实际已创建（Windows 上
+                # git stash push 可能因 "cannot spawn git: Filename too long"
+                # 报错但 stash 实际创建）。检查是否有本次 session 的孤儿 stash。
+                orphan = self._find_orphan_stash(session_id)
+                if orphan:
+                    logger.warning(
+                        "GitCommitGateway: 检测到孤儿 stash push 报错但 stash 实际创建 "
+                        "(session=%s ref=%s)，执行恢复", session_id, orphan
+                    )
+                    pop_ok = self._restore_stash(orphan)
+                    if not pop_ok:
+                        logger.warning(
+                            "GitCommitGateway: 孤儿 stash pop 失败，数据保留在 stash: %s", orphan
+                        )
+                    else:
+                        logger.info("GitCommitGateway: 孤儿 stash 已恢复 ref=%s", orphan)
             # Post-commit 漂移对账（P2-T1：声明式 ReconciliationRegistry，替代硬编码 _post_commit_reconcile）
             # 斩断 --no-verify 导致的 drift 循环：每个被绕过的 GATE 注册一个 reconciler，
             # commit 完成后由 registry 统一调度（trigger 命中即执行，异常降级为 warn 不阻断）
@@ -899,6 +994,24 @@ class GitCommitGateway:
             stderr = stash_result.stderr.strip()
             if "No local changes" in stderr or "no changes" in stderr.lower():
                 return False, ""
+
+            # 防御：Windows 上 git stash push 可能报错（如 "cannot spawn git:
+            # Filename too long"）但 stash 实际已创建。用 git stash list 验证
+            # 栈顶是否有本次 session 的 stash，有则视为成功。
+            verify_result = self._run_git(
+                ["git", "stash", "list", "--format=%gd|%gs", "-1"]
+            )
+            if verify_result.returncode == 0 and verify_result.stdout.strip():
+                ref_msg = verify_result.stdout.strip()
+                if stash_msg in ref_msg:
+                    stash_ref = ref_msg.split("|", 1)[0]
+                    logger.warning(
+                        "GitCommitGateway: git stash push 报错但 stash 已创建 "
+                        "(session=%s ref=%s, stderr=%s)",
+                        session_id, stash_ref, stderr[:200],
+                    )
+                    return True, stash_ref
+
             logger.warning("GitCommitGateway: git stash push 失败: %s", stderr)
             return False, ""
 
@@ -910,13 +1023,19 @@ class GitCommitGateway:
         logger.info("GitCommitGateway: stash 了 %d 个非本次文件 ref=%s", len(candidates), stash_ref)
         return True, stash_ref
 
-    def _restore_stash(self) -> bool:
+    def _restore_stash(self, stash_ref: str = "") -> bool:
         """恢复 stash（git stash pop）。
+
+        Args:
+            stash_ref: 要恢复的 stash 引用（如 stash@{0}）。为空则 pop 栈顶。
 
         Returns:
             True=成功恢复, False=pop 失败（数据保留在 stash）
         """
-        pop_result = self._run_git(["git", "stash", "pop"])
+        if stash_ref:
+            pop_result = self._run_git(["git", "stash", "pop", stash_ref])
+        else:
+            pop_result = self._run_git(["git", "stash", "pop"])
         if pop_result.returncode != 0:
             stderr = pop_result.stderr.strip()
             # 冲突时 stash 不会被删除，数据安全
@@ -926,6 +1045,29 @@ class GitCommitGateway:
             logger.warning("GitCommitGateway: git stash pop 异常: %s", stderr)
             return False
         return True
+
+    def _find_orphan_stash(self, session_id: str) -> str:
+        """查找是否有当前 session 的 stash 残留（防御性检查）。
+
+        用于处理 stash push 报错但 stash 实际创建的场景（Windows 上
+        git stash push 可能因 "cannot spawn git: Filename too long" 报错
+        但 stash 实际创建）。
+
+        Args:
+            session_id: AI session 标识。
+
+        Returns:
+            stash_ref（如 stash@{0}）或空字符串。
+        """
+        list_result = self._run_git(
+            ["git", "stash", "list", "--format=%gd|%gs"]
+        )
+        if list_result.returncode != 0:
+            return ""
+        for line in list_result.stdout.strip().splitlines():
+            if f"gw:{session_id}" in line:
+                return line.split("|", 1)[0]
+        return ""
 
     def _post_commit_red_blue_trigger(
         self,

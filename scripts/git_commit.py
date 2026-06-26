@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_cli | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 """git_commit.py — GitCommitGateway CLI 封装（OPS-2026062512）
@@ -71,7 +71,7 @@ def main() -> int:
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
             "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断"
+            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规"
         ),
     )
     parser.add_argument(
@@ -167,7 +167,14 @@ def main() -> int:
             file=sys.stderr,
         )
         return 3
-    else:  # COMMIT_FAILED
+    elif result.status == CommitStatus.SSOT_VIOLATION:
+        print(f"SSOT_VIOLATION: {result.message}", file=sys.stderr)
+        print(
+            "  新增文件声明了已有 module_path——请扩展已有文件而非新建。",
+            file=sys.stderr,
+        )
+        return 4
+    else:  # COMMIT_FAILED / METADATA_VIOLATION
         print(f"FAILED: {result.message}", file=sys.stderr)
         return 1
 

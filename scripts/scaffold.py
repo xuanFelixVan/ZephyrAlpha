@@ -247,7 +247,10 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(name, description, domain, subdomain)
+        _check_duplicate_functionality(
+            name, description, domain, subdomain,
+            expected_module_path=f"zephyr.{package}.{name}",
+        )
 
         # ── 检查 4: __init__.py 中无重复 ──
         if init_py.exists():
@@ -299,7 +302,11 @@ class ScaffoldEngine:
             raise ScaffoldError(f"文件已存在: {file_path}\n如果是功能重复，请复用已有文件而非新建。")
 
         # ── 检查 3: 功能重复 ──
-        _check_duplicate_functionality(rel_path, description, domain, subdomain, force_override=force_override)
+        _check_duplicate_functionality(
+            rel_path, description, domain, subdomain,
+            force_override=force_override,
+            expected_module_path=f"scripts.{rel_path.replace('/', '.')}",
+        )
 
         # ── 检查 4: manifest 中无重复 ──
         _check_manifest_duplicate(rel_path)
@@ -735,12 +742,48 @@ def _check_duplicate_functionality(
     domain: str = "",
     subdomain: str = "",
     force_override: bool = False,
+    expected_module_path: str = "",
 ) -> None:
-    """SSoT门禁：检查功能域重叠。硬阻断——重叠时禁止创建。
+    """SSoT门禁：检查功能域重叠 + module_path 冲突。硬阻断——重叠时禁止创建。
 
-    force_override=True 时跳过蓝图关键词匹配检查（功能域注册表检查仍执行）。
+    三个检测维度：
+      维度1: 功能域注册表重叠（force_override 不跳过——防止真重复）
+      维度2: 蓝图关键词匹配（force_override 跳过）
+      维度3: module_path 冲突（force_override 不跳过——同 module_path = 同文件身份 = 确凿重复）
+             方案 E：零新真源，复用 [MODULE] 头，通过 capability_lookup 实时扫描磁盘
+
+    force_override=True 时跳过维度2（蓝图关键词匹配），维度1和维度3仍执行。
     用于确认 SSoT 误报后强制创建。
     """
+    # ── 维度3: SSoT module_path 冲突检测（方案 E：零新真源，复用 [MODULE] 头）──
+    # force_override 不跳过——同 module_path = 同文件身份 = 确凿重复信号。
+    # 真源是文件头部 [MODULE] 字段（已存在），反查通过 capability_lookup 实时扫描磁盘。
+    # L1 fail-open（import 失败时降级放行），L2 兜底门禁（git_commit_gateway）补防线。
+    if expected_module_path:
+        try:
+            from zephyr.governance.capability_lookup import CapabilityLookup
+            lookup = CapabilityLookup()
+            conflicts = lookup.find_files_by_module_path(expected_module_path)
+            if conflicts:
+                conflict_list = "\n".join(f"    - {c}" for c in conflicts)
+                raise ScaffoldError(
+                    f"SSoT门禁阻断：module_path 冲突\n"
+                    f"  新文件预期 module_path: {expected_module_path}\n"
+                    f"  已有文件声明了相同 module_path:\n{conflict_list}\n"
+                    f"  → 这是确凿的重复信号（同 module_path = 同文件身份）\n"
+                    f"  复用决策（RULE-EIGHT）：\n"
+                    f"    完全覆盖 → 直接用已有文件\n"
+                    f"    80%覆盖 → 扩展已有文件（from zephyr.xxx import yyy 后加方法）\n"
+                    f"    50%覆盖 → 重构已有+扩展\n"
+                    f"    0%覆盖 → 确认 package/name 是否需要改名（module_path 必须唯一）"
+                )
+        except ScaffoldError:
+            raise
+        except ImportError:
+            print("  WARNING: capability_lookup 不可用，跳过 module_path 冲突检测（L2 兜底门禁补防线）")
+        except Exception as exc:
+            print(f"  WARNING: module_path 冲突检测失败: {exc}（L2 兜底门禁补防线）")
+
     if force_override:
         # 仅跳过蓝图关键词匹配；功能域注册表检查仍执行（防止真重复）
         pass
