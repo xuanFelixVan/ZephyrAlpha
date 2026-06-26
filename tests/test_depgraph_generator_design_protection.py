@@ -160,5 +160,10 @@ def main():
         return 1
 
 
+def test_depgraph_generator_design_protection():
+    """depgraph 生成器设计态保护验证——委托给 main()，pytest 收集入口。"""
+    assert main() == 0
+
+
 if __name__ == "__main__":
     sys.exit(main())

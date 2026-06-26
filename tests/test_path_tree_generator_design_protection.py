@@ -127,5 +127,10 @@ def main():
         return 1
 
 
+def test_path_tree_generator_design_protection():
+    """路径树生成器设计态保护验证——委托给 main()，pytest 收集入口。"""
+    assert main() == 0
+
+
 if __name__ == "__main__":
     sys.exit(main())

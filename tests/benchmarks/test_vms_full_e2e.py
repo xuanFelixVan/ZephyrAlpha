@@ -414,6 +414,11 @@ def main():
     return FAIL == 0
 
 
+def test_vms_full_e2e():
+    """FAISS+SQLite WAL 端到端完整测试——委托给 main()，pytest 收集入口。"""
+    assert main() is True
+
+
 if __name__ == "__main__":
     ok = main()
     sys.exit(0 if ok else 1)

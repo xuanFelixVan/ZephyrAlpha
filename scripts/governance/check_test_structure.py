@@ -24,16 +24,8 @@ DEFAULT_TEST_DIR = REPO_ROOT / "tests"
 
 # 已知"脚本伪装测试"——待逐步修复（每个加 def test_* 包装后从此集合删除）。
 # 门禁硬阻断新增违规，豁免既有文件，逐步清零至 0。
-_EXEMPTED: set[str] = {
-    "tests/alpha_signal/test_adversarial_alpha_signal.py",
-    "tests/benchmarks/test_vms_full_e2e.py",
-    "tests/ml_experiment/test_adversarial_ml.py",
-    "tests/ml_experiment/test_adversarial_ml_experiment.py",
-    "tests/test_depgraph_generator_design_protection.py",
-    "tests/test_e_contracts.py",
-    "tests/test_path_tree_generator_design_protection.py",
-    "tests/test_vms_semantic_search.py",
-}
+# 2026-06-26: 8个豁免文件全部已添加 def test_* 包装，集合清零。
+_EXEMPTED: set[str] = set()
 
 def _is_docstring_expr(node: ast.Expr) -> bool:
     """Expr 节点是否为 docstring（字符串常量）。"""

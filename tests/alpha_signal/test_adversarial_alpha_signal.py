@@ -309,6 +309,16 @@ def run_all_attacks() -> dict[str, Any]:
     }
 
 
+def test_adversarial_alpha_signal_report():
+    """Alpha-Signal 红蓝对抗报告结构验证——确保 run_all_attacks 返回合法报告。"""
+    report = run_all_attacks()
+    assert isinstance(report, dict)
+    assert report["total_attacks"] > 0, "应至少有1个攻击场景"
+    assert "detected" in report and "missed" in report
+    assert report["detected"] + report["missed"] == report["total_attacks"], "detected+missed 应等于 total"
+    assert len(report["results"]) == report["total_attacks"], "results 数应与 total_attacks 一致"
+
+
 if __name__ == "__main__":
     import json as _json
 

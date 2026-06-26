@@ -120,5 +120,10 @@ def main():
     return True
 
 
+def test_vms_semantic_search():
+    """端到端语义搜索验证——委托给 main()，pytest 收集入口。"""
+    assert main() is True
+
+
 if __name__ == "__main__":
     main()

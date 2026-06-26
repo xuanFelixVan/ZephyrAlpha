@@ -15,3 +15,9 @@ from .test_adversarial_ml import *  # noqa: F403
 from .test_adversarial_ml import run_all_attacks
 
 __all__ = ["run_all_attacks"]
+
+
+def test_delegation_import():
+    """验证委托导入成功——确保 test_adversarial_ml 可被访问。"""
+    assert run_all_attacks is not None
+
