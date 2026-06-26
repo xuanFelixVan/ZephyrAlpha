@@ -32,6 +32,7 @@ from zephyr.governance.rule_enforcement.ai_capability_guard import (
     _level_meets_min,
     require_capability,
 )
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestCapabilityLevel:
@@ -172,35 +173,35 @@ class TestRequireCapability:
 
 class TestCheckFileLevel:
     def test_shared_contracts_immutable(self):
-        result = _check_file_level("d:/ZephyrAlpha/src/zephyr/shared/contracts/base.py")
+        result = _check_file_level(str(REPO_ROOT / "src" / "zephyr" / "shared" / "contracts" / "base.py"))
         assert result is CapabilityLevel.IMMUTABLE
 
     def test_shared_contracts_subdir_immutable(self):
-        result = _check_file_level("d:/ZephyrAlpha/src/zephyr/shared/contracts/core/runtime_plane_tag.py")
+        result = _check_file_level(str(REPO_ROOT / "src" / "zephyr" / "shared" / "contracts" / "core" / "runtime_plane_tag.py"))
         assert result is CapabilityLevel.IMMUTABLE
 
     def test_governance_ai_immutable(self):
-        result = _check_file_level("d:/ZephyrAlpha/scripts/governance/ai/policy.py")
+        result = _check_file_level(str(REPO_ROOT / "scripts" / "governance" / "ai" / "policy.py"))
         assert result is CapabilityLevel.IMMUTABLE
 
     def test_registry_yaml_immutable(self):
-        result = _check_file_level("d:/ZephyrAlpha/src/zephyr/gates/_registry.yaml")
+        result = _check_file_level(str(REPO_ROOT / "src" / "zephyr" / "gates" / "_registry.yaml"))
         assert result is CapabilityLevel.IMMUTABLE
 
     def test_scripts_governance_extend(self):
-        result = _check_file_level("d:/ZephyrAlpha/scripts/governance/d5_architecture/checker.py")
+        result = _check_file_level(str(REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "checker.py"))
         assert result is CapabilityLevel.EXTEND
 
     def test_tests_architecture_extend(self):
-        result = _check_file_level("d:/ZephyrAlpha/tests/architecture/test_structure.py")
+        result = _check_file_level(str(REPO_ROOT / "tests" / "architecture" / "test_structure.py"))
         assert result is CapabilityLevel.EXTEND
 
     def test_factor_registry_extend(self):
-        result = _check_file_level("d:/ZephyrAlpha/src/zephyr/factor_registry/manager.py")
+        result = _check_file_level(str(REPO_ROOT / "src" / "zephyr" / "factor_registry" / "manager.py"))
         assert result is CapabilityLevel.EXTEND
 
     def test_default_full(self):
-        result = _check_file_level("d:/ZephyrAlpha/src/zephyr/runtime/executor.py")
+        result = _check_file_level(str(REPO_ROOT / "src" / "zephyr" / "runtime" / "executor.py"))
         assert result is CapabilityLevel.FULL
 
     def test_empty_path_returns_full(self):

@@ -13,6 +13,7 @@ from zephyr.governance.persistence.task_repo import TaskNotFoundError, TaskRepos
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _NOW = datetime.now(UTC)
 
@@ -29,10 +30,10 @@ def _make_task(**overrides):
         source_blueprint="MOD-INF-006",
         source_section="§3.2.1",
         description="根因：测试 auto_split 功能。治根：验证任务卡拆分机制，确保超粒度任务卡能被自动拆分为合规的原子卡。施工步骤：(1) 构造超粒度任务卡并调用 auto_split 方法验证拆分结果。验收标准：拆分后每张子卡通过粒度门禁且幻觉风险为零。",
-        files_in_scope=["d:/ZephyrAlpha/src/zephyr/db/task_repo.py"],
+        files_in_scope=[str(REPO_ROOT / "src" / "zephyr" / "db" / "task_repo.py")],
         deliverables=["task_repo.py 修复完成"],
         acceptance=["拆分后子卡通过粒度门禁"],
-        allowed_touch=["d:/ZephyrAlpha/src/zephyr/db/task_repo.py"],
+        allowed_touch=[str(REPO_ROOT / "src" / "zephyr" / "db" / "task_repo.py")],
         applicable_rules=[{"module_id": "MOD-INF-006", "section": "§3.2.1", "reason": "测试"}],
         rollback_instructions="git checkout -- .",
         post_sync_standard=["echo ok"],
@@ -100,16 +101,16 @@ class TestAutoSplitByFile:
                 seq=1,
                 deliverables=["产出A"],
                 files_in_scope=[
-                    "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-                    "d:/ZephyrAlpha/src/zephyr/core/models.py",
-                    "d:/ZephyrAlpha/src/zephyr/gates/task_types.py",
-                    "d:/ZephyrAlpha/tests/test_task_types.py",
+                    str(REPO_ROOT / "src" / "zephyr" / "db" / "task_repo.py"),
+                    str(REPO_ROOT / "src" / "zephyr" / "core" / "models.py"),
+                    str(REPO_ROOT / "src" / "zephyr" / "gates" / "task_types.py"),
+                    str(REPO_ROOT / "tests" / "test_task_types.py"),
                 ],
                 allowed_touch=[
-                    "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-                    "d:/ZephyrAlpha/src/zephyr/core/models.py",
-                    "d:/ZephyrAlpha/src/zephyr/gates/task_types.py",
-                    "d:/ZephyrAlpha/tests/test_task_types.py",
+                    str(REPO_ROOT / "src" / "zephyr" / "db" / "task_repo.py"),
+                    str(REPO_ROOT / "src" / "zephyr" / "core" / "models.py"),
+                    str(REPO_ROOT / "src" / "zephyr" / "gates" / "task_types.py"),
+                    str(REPO_ROOT / "tests" / "test_task_types.py"),
                 ],
             )
         sub_cards = repo.auto_split_task(task)
@@ -163,20 +164,20 @@ class TestAutoSplitG1Vague:
                 seq=1,
                 description="根因：系统质量差。治根：改进系统。施工步骤：修复所有问题，让系统变好。影响范围：整个项目。验收标准：系统正常运行。",
                 files_in_scope=[
-                    "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-                    "d:/ZephyrAlpha/src/zephyr/autopilot/autopilot.py",
-                    "d:/ZephyrAlpha/tests/test_task_types.py",
-                    "d:/ZephyrAlpha/docs/03_modules/_domain-infra_ops/task-system/blueprint.md",
-                    "d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py",
+                    str(REPO_ROOT / "src" / "zephyr" / "db" / "task_repo.py"),
+                    str(REPO_ROOT / "src" / "zephyr" / "autopilot" / "autopilot.py"),
+                    str(REPO_ROOT / "tests" / "test_task_types.py"),
+                    str(REPO_ROOT / "docs" / "03_modules" / "_domain-infra_ops" / "task-system" / "blueprint.md"),
+                    str(REPO_ROOT / "src" / "zephyr" / "core" / "blueprint_decomposer.py"),
                 ],
                 deliverables=["系统改进完成", "测试通过", "文档更新"],
                 acceptance=["系统正常运行", "测试通过", "文档更新"],
                 allowed_touch=[
-                    "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-                    "d:/ZephyrAlpha/src/zephyr/autopilot/autopilot.py",
-                    "d:/ZephyrAlpha/tests/test_task_types.py",
-                    "d:/ZephyrAlpha/docs/03_modules/_domain-infra_ops/task-system/blueprint.md",
-                    "d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py",
+                    str(REPO_ROOT / "src" / "zephyr" / "db" / "task_repo.py"),
+                    str(REPO_ROOT / "src" / "zephyr" / "autopilot" / "autopilot.py"),
+                    str(REPO_ROOT / "tests" / "test_task_types.py"),
+                    str(REPO_ROOT / "docs" / "03_modules" / "_domain-infra_ops" / "task-system" / "blueprint.md"),
+                    str(REPO_ROOT / "src" / "zephyr" / "core" / "blueprint_decomposer.py"),
                 ],
             )
         sub_cards = repo.auto_split_task(task)

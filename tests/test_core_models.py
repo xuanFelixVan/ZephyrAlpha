@@ -26,6 +26,7 @@ from zephyr.shared.shared_services.models import (
     TaskAuditFinding,
     TaskCard,
 )
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _NOW = datetime(2026, 5, 23, 12, 0, 0)
 
@@ -153,17 +154,17 @@ class TestTaskCardInstantiation:
             status=TaskStatus.IN_PROGRESS,
             priority=Priority.P0,
             phase=3,
-            upstream_files=["d:/ZephyrAlpha/src/a.py"],
+            upstream_files=[str(REPO_ROOT / "src" / "a.py")],
             downstream_outputs=[{"path": "out.md", "description": "Output"}],
-            allowed_touch=["d:/ZephyrAlpha/src/b.py"],
-            forbidden_touch=["d:/ZephyrAlpha/src/secrets.py"],
+            allowed_touch=[str(REPO_ROOT / "src" / "b.py")],
+            forbidden_touch=[str(REPO_ROOT / "src" / "secrets.py")],
             rollback_instructions="git reset --hard HEAD~1",
             estimated_tokens=16000,
             timeout_minutes=60,
             construction_status="in_progress",
             verification_status="verified",
         )
-        assert card.upstream_files == ["d:/ZephyrAlpha/src/a.py"]
+        assert card.upstream_files == [str(REPO_ROOT / "src" / "a.py")]
         assert card.estimated_tokens == 16000
         assert card.timeout_minutes == 60
         assert card.construction_status == "in_progress"
