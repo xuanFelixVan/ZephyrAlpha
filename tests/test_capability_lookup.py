@@ -1,4 +1,5 @@
 # [A_test] module_id=MOD-GOV_capability_lookup_test | suite=capability_lookup | scope=unit | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
 
 """
 test_capability_lookup — CapabilityLookup 反查注册表查询 API + 派生逻辑测试。
@@ -861,20 +862,19 @@ capabilities:
 # ---------------------------------------------------------------------------
 # check_capability_duplicates 测试
 # ---------------------------------------------------------------------------
-# 覆盖决策矩阵 5 分支：
-#   1. hard conflicting（新文件是同蓝图 duplicate → hard=True 阻断）
-#   2. sibling advisory（同 basename 异蓝图 → hard=False）
-#   3. canonical_displaced_hard（新 canonical 挤占已有同蓝图文件 → hard=True）
-#   4. soft-layer only（basename 不撞但模块名语义命中 → advisory）
-#   5. no signal（合法首实现 → 空列表）
+# B 方案：所有信号皆阻断（无 advisory）。覆盖决策矩阵 4 分支：
+#   1. conflicting（新文件是同蓝图 duplicate → 阻断）
+#   2. sibling（同 basename 异蓝图 → 阻断，B 方案从 advisory 升级为阻断）
+#   3. canonical_displaced（新 canonical 挤占已有同 basename 文件 → 阻断）
+#   4. no signal（合法首实现 → 空列表）
 
 
 def test_check_capability_duplicates_hard_conflicting(setup_registry):
-    """硬层 conflicting：新文件是已有 canonical 的同蓝图 duplicate → hard=True 阻断。
+    """conflicting：新文件是已有 canonical 的同蓝图 duplicate → 阻断。
 
     场景：setup_registry 已有 test/canonical.py (production, MOD-TEST) 作 canonical，
     shadow/canonical.py (prototype, MOD-TEST) 是 conflicting duplicate。
-    以 shadow/canonical.py 为"新增文件"调用 → hard=True, relation=conflicting。
+    以 shadow/canonical.py 为"新增文件"调用 → relation=conflicting。
     """
     yaml_path, scan_root = setup_registry
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -884,17 +884,16 @@ def test_check_capability_duplicates_hard_conflicting(setup_registry):
     )
     dups = reg.check_capability_duplicates([new_file])
     assert len(dups) == 1
-    assert dups[0].hard is True
     assert dups[0].relation == "conflicting"
     assert dups[0].capability_id == "test_cap"
     assert "conflicting duplicate" in dups[0].detail
 
 
-def test_check_capability_duplicates_sibling_advisory(tmp_path: Path):
-    """软层 sibling advisory：同 basename 不同蓝图 → hard=False, relation=sibling。
+def test_check_capability_duplicates_sibling_block(tmp_path: Path):
+    """sibling：同 basename 不同蓝图 → 阻断（B 方案从 advisory 升级为阻断）。
 
     场景：canonical (MOD-A, production) + duplicate (MOD-B, prototype)，同 basename
-    "canonical" 但异蓝图 → relation=sibling（非 conflicting）→ advisory 不阻断。
+    "canonical" 但异蓝图 → relation=sibling（非 conflicting）→ 阻断。
     """
     yaml_path = tmp_path / "registry.yaml"
     yaml_path.write_text(SAMPLE_YAML, encoding="utf-8")
@@ -923,18 +922,17 @@ def test_check_capability_duplicates_sibling_advisory(tmp_path: Path):
     )
     dups = reg.check_capability_duplicates([new_file])
     assert len(dups) == 1
-    assert dups[0].hard is False
     assert dups[0].relation == "sibling"
     assert dups[0].capability_id == "test_cap"
 
 
-def test_check_capability_duplicates_canonical_displaced_hard(setup_registry):
-    """硬层 canonical_displaced：新文件成为 canonical 但已有同蓝图 duplicate → hard=True。
+def test_check_capability_duplicates_canonical_displaced(setup_registry):
+    """canonical_displaced：新文件成为 canonical 但已有同蓝图 duplicate → 阻断。
 
     场景：setup_registry 中 test/canonical.py (production, MOD-TEST) 是 canonical，
     shadow/canonical.py (prototype, MOD-TEST) 是 conflicting duplicate。
     以 test/canonical.py 为"新增文件"调用 → 它是 canonical，但 duplicates 含
-    conflicting → hard=True, relation=canonical_displaced_conflicting。
+    conflicting → relation=canonical_displaced_conflicting。
     """
     yaml_path, scan_root = setup_registry
     reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
@@ -944,60 +942,15 @@ def test_check_capability_duplicates_canonical_displaced_hard(setup_registry):
     )
     dups = reg.check_capability_duplicates([new_file])
     assert len(dups) == 1
-    assert dups[0].hard is True
     assert dups[0].relation == "canonical_displaced_conflicting"
     assert dups[0].capability_id == "test_cap"
 
 
-def test_check_capability_duplicates_soft_layer_only(tmp_path: Path):
-    """软层 only advisory：basename 不撞任何 cap，但模块名经 find() 语义命中 → advisory。
-
-    场景：capability "test_cap" 已有 canonical。新文件 basename "cap" 不在
-    match_tokens {test_cap, canonical, 测试} 中 → check_file_canonical 返回 None
-    （硬层清）。但 module_path 末段 "cap" 经 find() 子串命中 "test_cap" → 软层
-    advisory（hard=False）。
-    """
-    yaml_path = tmp_path / "registry.yaml"
-    yaml_path.write_text(SAMPLE_YAML, encoding="utf-8")
-    scan_root = tmp_path / "src" / "zephyr"
-    scan_root.mkdir(parents=True, exist_ok=True)
-    # 先建 canonical，让 capability 有 alive canonical
-    _make_py_file(
-        scan_root / "test" / "canonical.py",
-        "zephyr.test.canonical",
-        "MOD-TEST_canonical",
-        blueprint="MOD-TEST",
-        domain="D-TEST",
-        maturity="production",
-    )
-    # 新文件：basename "cap" 不撞 match_tokens，但 module_path 末段 "cap"
-    # 经 find() 子串命中 "test_cap"（"cap" in "test_cap" → True）
-    _make_py_file(
-        scan_root / "other" / "cap.py",
-        "zephyr.other.cap",
-        "MOD-OTHER_cap",
-        blueprint="MOD-OTHER",
-        domain="D-TEST",
-        maturity="production",
-    )
-    reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
-    new_file = (
-        str(scan_root / "other" / "cap.py"),
-        "src/zephyr/other/cap.py",
-    )
-    dups = reg.check_capability_duplicates([new_file])
-    assert len(dups) == 1
-    assert dups[0].hard is False
-    assert dups[0].relation == "none"
-    assert len(dups[0].advisory_hits) > 0
-    assert dups[0].advisory_hits[0]["capability_id"] == "test_cap"
-
-
 def test_check_capability_duplicates_no_signal(setup_registry):
-    """无信号：新文件 basename 不撞、模块名不语义命中 → 空列表（门禁 ALLOW）。
+    """无信号：新文件 basename 不撞任何 cap → 空列表（门禁 ALLOW）。
 
     场景：合法首实现——新文件 module_path "zephyr.brand_new.thing"，basename "thing"
-    不在 match_tokens 中，find("thing") 无命中 → results=[]。
+    不在 match_tokens 中 → check_file_canonical 返回 None → results=[]。
     """
     yaml_path, scan_root = setup_registry
     # 新建一个完全不相关的文件（合法首实现）

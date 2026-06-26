@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] GatewayError on lock timeout；StashConflictWarning on stash pop 失败（数据保留在 stash）；CommitResult.status 暴露结果
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
 """GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）
 
 根因（上一轮调研结论）
@@ -756,12 +757,16 @@ class GitCommitGateway:
         return new_in_zone
 
     def _check_frontmatter_ttl(self, files: list[str]) -> tuple[bool, str]:
-        """GATE-15 等效校验：检查 .md 文件 frontmatter ttl 字段。
+        """GATE-15 等效校验：检查 .md + .py 文件 ttl 字段。
 
         弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
-        调用 check_frontmatter_metadata.py 做增量校验（只校验本次 commit 的 .md）。
-        当 .md 文件数 > _MAX_INLINE_MD_FILES 时，改用 --all-files 全量校验
+        调用 check_frontmatter_metadata.py 做增量校验（只校验本次 commit 的 .md/.py）。
+        当文件数 > _MAX_INLINE_MD_FILES 时，改用 --all-files 全量校验
         （避免 Windows WinError 206 命令行过长）。
+
+        格式路由（真源唯一——check_frontmatter_metadata.py 内部根据扩展名分发）：
+        - .md → parse_frontmatter()（YAML frontmatter）
+        - .py → parse_py_header()（# [TTL] value 注释行）
 
         Args:
             files: 绝对路径列表。
@@ -769,14 +774,20 @@ class GitCommitGateway:
         Returns:
             (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
         """
-        # 只校验 docs/ 下的 .md 文件（与 pre-commit GATE-15 的 files 正则一致）
-        md_files = [
-            f for f in files
-            if f.endswith(".md")
-            and os.path.relpath(f, str(self.project_root)).replace("\\", "/").startswith("docs/")
-        ]
-        if not md_files:
-            return True, "no .md files to check"
+        # 校验 docs/ 下的 .md + src/scripts/tests/ 下的 .py
+        ttl_files: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if f.endswith(".md") and rel.startswith("docs/"):
+                ttl_files.append(f)
+            elif f.endswith(".py") and (
+                rel.startswith("src/")
+                or rel.startswith("scripts/")
+                or rel.startswith("tests/")
+            ):
+                ttl_files.append(f)
+        if not ttl_files:
+            return True, "no .md/.py files to check"
 
         check_script = (
             self.project_root
@@ -788,12 +799,12 @@ class GitCommitGateway:
         if not check_script.exists():
             # fail-closed：校验脚本缺失是异常状态，必须阻断
             # 治本：原 fail-open 设计会让 ttl 校验在脚本缺失时完全失效，
-            # 违规 .md 可静默入库。脚本缺失说明环境损坏，应阻断而非放行。
+            # 违规文件可静默入库。脚本缺失说明环境损坏，应阻断而非放行。
             return False, f"check script not found: {check_script}"
 
-        cmd = [sys.executable, str(check_script)] + md_files
+        cmd = [sys.executable, str(check_script)] + ttl_files
         # 文件数过多时用 --all-files 全量校验（避免 WinError 206 命令行过长）
-        if len(md_files) > _MAX_INLINE_MD_FILES:
+        if len(ttl_files) > _MAX_INLINE_MD_FILES:
             cmd = [sys.executable, str(check_script), "--all-files"]
         result = subprocess.run(
             cmd,
@@ -915,73 +926,25 @@ class GitCommitGateway:
             )
             return False, detail
 
-        # 硬层 2 + 软层：能力重复检测（basename 撞 capability_id/alias + 模块名语义相似）
+        # 硬层 2：能力重复检测（basename 撞 capability_id/alias → duplicate）
         # 治本（2b 事件驱动）：commit 时自动触发，不依赖 AI 主动调 find() 查重——
         # 检测逻辑唯一真源收拢到 capability_lookup.check_capability_duplicates（L2/L3 共用）
+        # B 方案：所有信号皆阻断（去掉软层 advisory，理由见 check_capability_duplicates docstring）
         dups = lookup.check_capability_duplicates(new_py_files)
-        hard_dups = [d for d in dups if d.hard]
-        if hard_dups:
-            dup_lines = [f"{d.rel_path}: {d.detail}" for d in hard_dups]
+        if dups:
+            dup_lines = [f"{d.rel_path}: {d.detail}" for d in dups]
+            from zephyr.governance.capability_lookup import CAPABILITY_DUPLICATE_FIX_HINT
             detail = (
-                "能力重复——新增文件与已有能力构成同蓝图多实现"
+                "能力重复——新增文件与已有能力构成同能力多实现"
                 "（违反 SSoT / 向内收 2a 扩展优先于新建）:\n  "
                 + "\n  ".join(dup_lines)
-                + "\n  修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit"
-                + "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
+                + "\n  " + CAPABILITY_DUPLICATE_FIX_HINT
                 + " 或 reg.get(\"capability_id\") 反查真源文件路径"
                 + "；若为合法 canonical 迁移，在 registry YAML 声明 canonical_override"
             )
             return False, detail
 
-        # 软层 advisory：不阻断 commit，写报告供周期审计 reconciler 消费
-        # 治本（2b 事件驱动信息通道）：非阻断，避免高 FP 摩擦；advisory 留痕供兜底审计
-        advisory_dups = [d for d in dups if not d.hard]
-        if advisory_dups:
-            self._write_capability_advisory_report(advisory_dups)
-            return True, (
-                f"ssot check passed (advisory: {len(advisory_dups)} 重复信号"
-                f"已记录至 .runtime/reconcile_reports/)"
-            )
-
         return True, "ssot check passed"
-
-    def _write_capability_advisory_report(self, advisory_dups: list) -> None:
-        """软层 advisory 报告：写 JSON 到 .runtime/reconcile_reports/（不阻断 commit）。
-
-        治本（2b 事件驱动）：commit 时自动记录疑似重复信号，供周期审计 reconciler 消费。
-        报告路径约定与 GATE-ID-UNIQ reconciler 一致
-        （.runtime/reconcile_reports/<name>_<ts>.json，目录已 gitignore）。
-        fail-open：写报告失败不影响 commit（仅 log，不阻断）。
-        """
-        import time
-        report_dir = self.project_root / ".runtime" / "reconcile_reports"
-        try:
-            report_dir.mkdir(parents=True, exist_ok=True)
-            ts = int(time.time())
-            report_path = report_dir / f"cap_dup_advisory_{ts}.json"
-            payload = {
-                "generated_at": ts,
-                "kind": "capability_duplicate_advisory",
-                "entries": [
-                    {
-                        "rel_path": d.rel_path,
-                        "capability_id": d.capability_id,
-                        "canonical_file": d.canonical_file,
-                        "relation": d.relation,
-                        "detail": d.detail,
-                        "advisory_hits": d.advisory_hits,
-                    }
-                    for d in advisory_dups
-                ],
-            }
-            report_path.write_text(
-                json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
-        except OSError as e:
-            # fail-open：报告写入失败不阻断 commit
-            logging.getLogger(__name__).warning(
-                "capability advisory report write failed: %s", e
-            )
 
     def _load_n16_exempt_names(self) -> set[str]:
         """加载 N-16 豁免 basename 集合（真源：trae_028_doc_structure_naming.yaml）。

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.capability_lookup
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts)
+# [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts, check_capability_duplicates); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts, check_capability_duplicates)
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] YAML 真源是人工裁定的能力索引（capability_id/aliases/description + 可选 override/manual 条目）；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/removed_duplicates 均由磁盘扫描+git log 自动派生，不持久化为第二真源
@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] raises FileNotFoundError if YAML 真源缺失; returns empty list on scan errors; git 派生失败降级为空列表（不阻断查询）
 # [TESTS] tests/test_capability_lookup.py
 # [A_module] module_id=MOD-GOV_capability_lookup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
 
 """
 CapabilityLookup — 能力→真源文件反查注册表的查询 API + 扫描/派生逻辑（合一）
@@ -88,9 +89,11 @@ _MATURITY_RANK: dict[str, int] = {"production": 3, "prototype": 2, "design": 1}
 # 3 字符窗口（如"仓库根"）才能捕获语义 core 又避免巧合命中
 _CJK_MIN_SUBSTRING: int = 3
 
-# advisory 报告最大列出命中数（超过则视为模块名过于通用，只记计数不列全部，防报告泛滥）
-# 非阻断阈值——advisory 本就不阻断，此常量仅管报告可读性，不参与 BLOCK 判定
-_ADVISORY_MAX_HITS: int = 5
+# 能力重复修复指令（L2 gateway / L3 hook 共用，真源唯一，避免两处硬编码漂移）
+CAPABILITY_DUPLICATE_FIX_HINT = (
+    "修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit"
+    "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
+)
 
 
 # ---------------------------------------------------------------------------
@@ -135,20 +138,21 @@ class SSoTConflict:
 
 @dataclass
 class CapabilityDuplicate:
-    """能力重复信号条目（check_capability_duplicates 返回）。
+    """能力重复阻断信号条目（check_capability_duplicates 返回）。
 
     L2（GitCommitGateway._check_ssot_canonical）和 L3（check_ssot_gate.py pre-commit hook）
-    共享检测逻辑的唯一真源返回类型。hard=True 为高置信阻断信号
-    （relation=conflicting 同蓝图多实现，或新 canonical 挤占已有同 basename 文件）；
-    hard=False 为 advisory（sibling/名称语义相似），不阻断只记录。
+    共享检测逻辑的唯一真源返回类型。返回此类型 = 阻断信号（门禁 BLOCK）。
+
+    设计裁定（B 方案，向内收 2.3 治本）：去掉软层 advisory（find() 语义召回）——
+    软层 TP≈0（Python 标识符下划线是 word char，handoff_v2 不可分割，find() 匹配不到），
+    且 advisory 不阻断=无人行动=死数据。commit 门禁只负责高置信阻断（basename 精确碰撞），
+    低置信检测不是门禁职责，由 AGENTS.md §9.0 手动查重 + reconciler 周期审计兜底。
     """
     rel_path: str                # 新增文件相对路径（正斜杠）
-    capability_id: str           # 撞上的能力 ID（软层纯语义命中时可能为空）
+    capability_id: str           # 撞上的能力 ID
     canonical_file: str          # 该能力现有 canonical 文件
-    relation: str                # conflicting/sibling/unknown/canonical_displaced_*/semantic/none
-    hard: bool                   # True=阻断信号；False=advisory
+    relation: str                # conflicting/sibling/unknown/canonical_displaced_*
     detail: str                  # 人类可读说明
-    advisory_hits: list[dict] = field(default_factory=list)  # 软层 find() 命中（仅 hard=False 时非空）
 
 
 @dataclass
@@ -935,31 +939,28 @@ class CapabilityLookup:
     def check_capability_duplicates(
         self, new_py_files: list[tuple[str, str]]
     ) -> list[CapabilityDuplicate]:
-        """检测新增 .py 文件是否参与"同能力多实现"（basename 碰撞 + 名称语义相似）。
+        """检测新增 .py 文件是否参与"同能力多实现"（basename 碰撞 → 阻断）。
 
         与 check_ssot_conflicts 的分工（治本：检测逻辑唯一真源收拢到本方法，L2/L3 共用）：
           - check_ssot_conflicts：同 module_path 硬碰撞（[MODULE] 头字段精确匹配）。
-          - 本方法：basename 撞上 capability_id/alias（registry 派生已标为 duplicate）
-            + 模块名语义相似（find() 软召回，token-AND 子串匹配）。
+          - 本方法：basename 撞上 capability_id/alias（registry 派生已标为 duplicate）。
 
         治本（2a/2c）：复用 registry 构造时已派生的 duplicates 状态——
           check_file_canonical 查 _derive_canonical_and_duplicates 的派生结果，
           不重新实现 basename 匹配逻辑（派生是唯一真源，重算=第二份实现=漂移源）。
-          软层复用 find()（现有查询 API），不新建语义检测器。
 
-        决策矩阵（hard=True 阻断，hard=False advisory）：
+        决策矩阵（B 方案：所有信号皆阻断，无 advisory）：
           info = check_file_canonical(rel_path) 反查已派生状态：
-          - info is None（basename 不撞任何 cap）
-            → 硬层清；软层 find(模块名) 命中其他 cap → advisory
-          - info.is_canonical=True（新文件是 canonical）
-            → cap.duplicates 非空：含 conflicting→hard；否则 sibling→advisory
-            → cap.duplicates 空：合法首实现 → 清（软层排除自身）
-          - info.is_canonical=False（新文件被派生为 duplicate）
-            → relation=conflicting → hard；sibling/unknown → advisory
+          - info is None（basename 不撞任何 cap）→ 无信号
+          - info.is_canonical=True + cap.duplicates 非空 → 阻断（canonical_displaced_*）
+          - info.is_canonical=True + cap.duplicates 空 → 无信号（合法首实现）
+          - info.is_canonical=False → 阻断（duplicate，relation=conflicting/sibling/unknown）
 
-        软层指纹：module_path 末段（AI 选的模块名），非 docstring——
-          docstring 是散文，通用词泛滥会假阳性；模块名是标识符，token-AND 精确。
-          find() 的"合理代价"（见 find docstring）在 advisory 非阻断场景可接受。
+        设计裁定（B 方案，去掉软层 advisory 的理由）：
+          软层原用 find(module_path 末段) 做语义召回，但 Python 标识符下划线是
+          word char（handoff_v2 不可分割），find() 的 token-AND 匹配捕获不到硬层
+          漏掉的场景 → 软层 TP≈0。且 advisory 不阻断=无人行动=死数据。
+          commit 门禁只负责高置信阻断，低置信检测由 §9.0 手动查重兜底。
 
         参数:
             new_py_files: [(abs_path, rel_path), ...] 新增 .py 文件列表
@@ -967,14 +968,14 @@ class CapabilityLookup:
                            与 _disk_headers key / canonical_file 格式一致）
 
         返回:
-          CapabilityDuplicate 列表——空列表表示无任何信号（门禁应 ALLOW）。
+          CapabilityDuplicate 列表——空列表表示无信号（门禁应 ALLOW）；
+          非空列表表示阻断信号（门禁应 BLOCK）。
 
         已知限制（方案固有边界，非缺陷，修改门禁前 MUST 读此段落）:
           1. 无 [MODULE]/[A_module] 头的新文件不被 _scan_disk_headers 收录
-             → check_file_canonical 返回 None → 硬层漏检（与 check_ssot_conflicts
+             → check_file_canonical 返回 None → 漏检（与 check_ssot_conflicts
              同边界，header 完整性由其他门禁负责）。
-          2. 软层 find() 是模糊召回，hard=False 的 advisory 不阻断——避免高 FP 摩擦。
-          3. "全新 basename + 全新 module_path 实现已有能力"不可约漏报，
+          2. "全新 basename + 全新 module_path 实现已有能力"不可约漏报，
              由 check_ssot_conflicts（同 module_path）+ AGENTS.md §9.0 查重习惯
              + reconciler 周期审计三层兜底。
         """
@@ -986,89 +987,43 @@ class CapabilityLookup:
             info = self.check_file_canonical(rel_path)
             own_cap_id = info["capability_id"] if info else ""
             canonical_file = info.get("canonical_file", "") if info else ""
-            hard = False
             relation = "none"
-            detail_parts: list[str] = []
+            detail = ""
 
             if info is None:
-                pass  # basename 不撞任何 cap —— 硬层清
+                continue  # basename 不撞任何 cap → 无信号
             elif info.get("is_canonical"):
                 # 新文件被派生为 canonical
                 cap = self.get(own_cap_id)
                 dups = cap.get("duplicates", []) if cap else []
-                if dups:
-                    # 新 canonical 挤占已有同 basename 文件（多实现）
-                    relations = {d.get("relation", "unknown") for d in dups}
-                    if "conflicting" in relations:
-                        hard = True
-                        relation = "canonical_displaced_conflicting"
-                    else:
-                        relation = "canonical_displaced_sibling"
-                    detail_parts.append(
-                        f"新文件成为 {own_cap_id} 的 canonical，但已有 "
-                        f"{len(dups)} 个同 basename 文件降为 duplicate"
-                        f"（relation={sorted(relations)}）——多实现违反 SSoT"
-                    )
-                # else: 合法首实现，硬层清
-            else:
-                # 新文件被派生为 duplicate
-                relation = info.get("relation", "unknown")
-                if relation == "conflicting":
-                    hard = True
-                    detail_parts.append(
-                        f"新文件是 {own_cap_id} 的 conflicting duplicate"
-                        f"（同蓝图多实现，canonical={canonical_file}）——违反 SSoT"
-                    )
+                if not dups:
+                    continue  # 合法首实现 → 无信号
+                # 新 canonical 挤占已有同 basename 文件（多实现）
+                relations = {d.get("relation", "unknown") for d in dups}
+                if "conflicting" in relations:
+                    relation = "canonical_displaced_conflicting"
                 else:
-                    detail_parts.append(
-                        f"新文件是 {own_cap_id} 的 {relation} duplicate"
-                        f"（canonical={canonical_file}）——疑似重复，advisory"
-                    )
+                    relation = "canonical_displaced_sibling"
+                detail = (
+                    f"新文件成为 {own_cap_id} 的 canonical，但已有 "
+                    f"{len(dups)} 个同 basename 文件降为 duplicate"
+                    f"（relation={sorted(relations)}）——多实现违反 SSoT"
+                )
+            else:
+                # 新文件被派生为 duplicate → 阻断
+                relation = info.get("relation", "unknown")
+                detail = (
+                    f"新文件是 {own_cap_id} 的 {relation} duplicate"
+                    f"（canonical={canonical_file}）——违反 SSoT"
+                )
 
-            # 软层：find(模块名) 召回其他能力（hard=True 时跳过——阻断信号已足够，
-            # 不必再跑模糊召回；排除自身 cap 避免命中自己）
-            advisory_hits: list[dict] = []
-            if not hard:
-                header = self._disk_headers.get(rel_path)
-                name = ""
-                if header and header.module_path:
-                    name = header.module_path.split(".")[-1]
-                elif header:
-                    name = Path(rel_path).stem
-                if name and len(name.strip()) >= 2:
-                    hits = self.find(name)
-                    filtered = [
-                        {
-                            "capability_id": h.get("capability_id", ""),
-                            "canonical_file": h.get("canonical_file", ""),
-                            "description": h.get("description", ""),
-                        }
-                        for h in hits
-                        if h.get("capability_id", "") and h.get("capability_id", "") != own_cap_id
-                    ]
-                    if len(filtered) > _ADVISORY_MAX_HITS:
-                        # 模块名过于通用（如 utils/loader），列全部会泛滥——只记计数
-                        detail_parts.append(
-                            f"模块名 {name!r} 语义相似于 {len(filtered)} 个能力"
-                            f"（超过 {_ADVISORY_MAX_HITS}，名称过于通用，不列全部）"
-                        )
-                    elif filtered:
-                        advisory_hits = filtered
-                        detail_parts.append(
-                            f"模块名 {name!r} 语义相似于其他能力: "
-                            f"{[h['capability_id'] for h in advisory_hits]}"
-                        )
-
-            if detail_parts:
-                results.append(CapabilityDuplicate(
-                    rel_path=rel_path,
-                    capability_id=own_cap_id,
-                    canonical_file=canonical_file,
-                    relation=relation,
-                    hard=hard,
-                    detail="; ".join(detail_parts),
-                    advisory_hits=advisory_hits,
-                ))
+            results.append(CapabilityDuplicate(
+                rel_path=rel_path,
+                capability_id=own_cap_id,
+                canonical_file=canonical_file,
+                relation=relation,
+                detail=detail,
+            ))
         return results
 
     def list_all(self) -> list[dict]:
