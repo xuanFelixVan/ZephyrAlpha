@@ -421,7 +421,183 @@ class ExamOrchestrator:
             rate = hits / len(case.expected_contains) if case.expected_contains else 0.0
             return (rate, rate, 0.0, 1 if hits == len(case.expected_contains) else 0)
 
+        # v3.0.8: 通用 depth fallback——对未在硬编码分支处理的能力，
+        # 按 expected_* 字段类型做语义匹配。修复 depth 暴跌：原兜底 return 零
+        # 导致 21 个新增能力 depth 全零（与 inference() 硬编码链同类架构缺陷）。
+        generic = self._compute_metrics_generic(case, result)
+        if generic is not None:
+            return generic
         return (0.0, 0.0, 1.0, 0)
+
+    def _compute_metrics_generic(
+        self,
+        case: ExamTestCase,
+        result: dict,
+    ) -> tuple[float, float, float, int] | None:
+        """v3.0.8: 通用 depth fallback——按 expected_* 字段类型做语义匹配。
+
+        对未在 _compute_metrics 硬编码分支中处理的能力，穷举匹配 expected_* 字段：
+        布尔/列表/字符串/int 四类 + expected_contains 关键词兜底。
+        修复 depth 暴跌：原兜底 return (0,0,1,0) 导致 21 个新增能力 depth 全零
+        （与 inference() 硬编码链同类架构缺陷——_compute_metrics 也只显式处理 9 能力）。
+
+        Returns:
+            (precision, recall, edit_distance, exact_match) 或 None（无可用字段时）。
+        """
+        text = json.dumps(result, ensure_ascii=False).lower()
+        p_rates: list[float] = []
+        r_rates: list[float] = []
+        em_all = 1
+
+        # 1. 布尔字段（用 expected_structure_keys 判断是否为考点，因 dataclass 默认 False）
+        bool_fields = [
+            ("expected_compliant", "compliant"),
+            ("expected_has_bug", "has_bug"),
+            ("expected_ambiguous", "ambiguous"),
+            ("expected_has_cycle", "has_cycle"),
+            ("expected_has_hallucination", "has_hallucination"),
+        ]
+        for attr, key in bool_fields:
+            if key not in case.expected_structure_keys:
+                continue
+            exp = getattr(case, attr, False)
+            got = result.get(key)
+            if isinstance(got, bool):
+                match = 1 if got == exp else 0
+            elif got is None:
+                match = 0
+            else:
+                match = 1 if str(got).lower() == str(exp).lower() else 0
+            p_rates.append(match)
+            r_rates.append(match)
+            if not match:
+                em_all = 0
+
+        # 2. 列表字段（集合交集率）
+        list_fields = [
+            ("expected_affected_files", "affected_files"),
+            ("expected_affected_files_k", "affected_files"),
+            ("expected_call_chain", "call_chain"),
+            ("expected_tasks", "tasks"),
+            ("expected_order", "order"),
+            ("expected_modifiable", "modifiable"),
+            ("expected_blocked", "blocked"),
+            ("expected_rollback_points", "rollback_points"),
+            ("expected_cycle_path", "cycle_path"),
+            ("expected_hallucinated_items", "hallucinated_items"),
+        ]
+        # dict 列表字段需提取子字段（模型常返回 [{"function":...}] 而非 ["func"]）
+        dict_extractors = {
+            "call_chain": "function",
+            "tasks": "name",
+            "files": "name",
+            "changes": "file",
+        }
+        for attr, key in list_fields:
+            exp_list = getattr(case, attr, [])
+            if not exp_list:
+                continue
+            got_raw = result.get(key, [])
+            extractor = dict_extractors.get(key)
+            if (
+                extractor
+                and isinstance(got_raw, list)
+                and got_raw
+                and isinstance(got_raw[0], dict)
+            ):
+                got_list = [
+                    str(item.get(extractor, "")) for item in got_raw if isinstance(item, dict)
+                ]
+            else:
+                got_list = got_raw if isinstance(got_raw, list) else [str(got_raw)]
+            exp_set = {str(x).lower() for x in exp_list}
+            got_set = {str(x).lower() for x in got_list}
+            inter = len(exp_set & got_set)
+            p = inter / len(got_set) if got_set else 0.0
+            r = inter / len(exp_set) if exp_set else 0.0
+            p_rates.append(p)
+            r_rates.append(r)
+            if exp_set != got_set:
+                em_all = 0
+
+        # parallel_groups（列表的列表，按组集合匹配）
+        if case.expected_parallel_groups:
+            got_raw = result.get("parallel_groups", [])
+            exp_set = {tuple(sorted(g)) for g in case.expected_parallel_groups}
+            got_set = (
+                {tuple(sorted(g)) for g in got_raw}
+                if got_raw
+                and isinstance(got_raw, list)
+                and all(isinstance(g, list) for g in got_raw)
+                else set()
+            )
+            inter = len(exp_set & got_set)
+            p = inter / len(got_set) if got_set else 0.0
+            r = inter / len(exp_set) if exp_set else 0.0
+            p_rates.append(p)
+            r_rates.append(r)
+            if exp_set != got_set:
+                em_all = 0
+
+        # 3. 字符串字段（包含匹配）
+        str_fields = [
+            ("expected_tool", "tool"),
+            ("expected_root_cause", "root_cause"),
+            ("expected_answer", "answer"),
+        ]
+        for attr, key in str_fields:
+            exp_str = getattr(case, attr, "")
+            if not exp_str:
+                continue
+            got = str(result.get(key, "")).lower()
+            match = 1 if exp_str.lower() in got else 0
+            p_rates.append(match)
+            r_rates.append(match)
+            if not match:
+                em_all = 0
+
+        # bug_location 在 bugs[].location 里
+        if case.expected_bug_location:
+            bugs = result.get("bugs", [])
+            if isinstance(bugs, list):
+                loc_text = " ".join(
+                    str(b.get("location", "")) for b in bugs if isinstance(b, dict)
+                ).lower()
+            else:
+                loc_text = ""
+            match = 1 if case.expected_bug_location.lower() in loc_text else 0
+            p_rates.append(match)
+            r_rates.append(match)
+            if not match:
+                em_all = 0
+
+        # 4. int 字段（expected_step_count → 检查 steps 长度）
+        if case.expected_step_count and case.expected_step_count > 0:
+            steps = result.get("steps", [])
+            got_count = len(steps) if isinstance(steps, list) else 0
+            match = 1 if got_count == case.expected_step_count else 0
+            p_rates.append(match)
+            r_rates.append(match)
+            if not match:
+                em_all = 0
+
+        # 5. expected_contains 关键词命中率（兜底，几乎所有 case 都有）
+        kws = list(case.expected_contains or [])
+        if kws:
+            hits = sum(1 for kw in kws if kw.lower() in text)
+            rate = hits / len(kws)
+            p_rates.append(rate)
+            r_rates.append(rate)
+            if hits != len(kws):
+                em_all = 0
+
+        if not p_rates:
+            return None
+
+        p = sum(p_rates) / len(p_rates)
+        r = sum(r_rates) / len(r_rates)
+        ed = round(max(1.0 - (p + r) / 2, 0.0), 3)
+        return (round(p, 3), round(r, 3), ed, em_all)
 
     def _compute_speed(self) -> SpeedResult:
         latencies = self._all_latencies_ms
