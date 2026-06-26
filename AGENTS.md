@@ -154,6 +154,12 @@ result = await gateway.full_scan(user_text, llm_response)
    reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
    ```
    真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（能力索引，仅声明 capability_id/aliases/description；canonical_file/duplicates/removed_duplicates 全部由 CapabilityLookup 从磁盘头部+git log 自动派生）。已存在的能力 → 扩展现有 canonical 文件，禁止新建重复实现。
+
+   **需要蓝图磁盘路径时**，用 `load_blueprint_path(module_id)` 从 blueprint_registry.yaml 查询，不硬编码：
+   ```python
+   from zephyr.governance.rule_enforcement.sys_master_compliance import load_blueprint_path
+   path = load_blueprint_path("SYS-MASTER-001")  # 从 blueprint_registry.yaml 查询，蓝图改名自动跟随
+   ```
 1. 构造 CapabilityCard 并注册到 CapabilityRegistry
 2. 在 `data/capability_cards/` 下创建对应的 YAML
 3. 如果有自动化工作，创建 WorkDAG 并注册到 WorkOrchestrator
