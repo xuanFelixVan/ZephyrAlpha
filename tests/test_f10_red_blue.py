@@ -218,7 +218,7 @@ class TestProfileTamperingAttack:
 
         防护: detect_drift() 检测到分数异常上升 → drift_detected=True。
         """
-        from zephyr.intelligence.model_profiling.pipeline.results_writer import detect_drift
+        from zephyr.intelligence.model_profiling.results_writer import detect_drift
 
         history = [
             {"average_score": 0.60, "latency_p50_ms": 200.0, "model_name": "victim"},
@@ -234,7 +234,7 @@ class TestProfileTamperingAttack:
 
         防护: detect_drift() 检测到分数下降 → drift_detected=True。
         """
-        from zephyr.intelligence.model_profiling.pipeline.results_writer import detect_drift
+        from zephyr.intelligence.model_profiling.results_writer import detect_drift
 
         history = [
             {"average_score": 0.90, "latency_p50_ms": 100.0, "model_name": "victim"},
@@ -249,7 +249,7 @@ class TestProfileTamperingAttack:
 
         防护: detect_drift() 检测到延迟增加 > 50% → drift_detected=True。
         """
-        from zephyr.intelligence.model_profiling.pipeline.results_writer import detect_drift
+        from zephyr.intelligence.model_profiling.results_writer import detect_drift
 
         history = [
             {"average_score": 0.85, "latency_p50_ms": 100.0, "model_name": "victim"},
@@ -261,7 +261,7 @@ class TestProfileTamperingAttack:
 
     def test_attack_tamper_no_drift_when_stable(self) -> None:
         """正常情况: 分数和延迟稳定 → drift_detected=False。"""
-        from zephyr.intelligence.model_profiling.pipeline.results_writer import detect_drift
+        from zephyr.intelligence.model_profiling.results_writer import detect_drift
 
         history = [
             {"average_score": 0.85, "latency_p50_ms": 100.0, "model_name": "stable"},
@@ -273,7 +273,7 @@ class TestProfileTamperingAttack:
 
     def test_attack_tamper_insufficient_history(self) -> None:
         """历史记录不足 → 无法检测篡改。"""
-        from zephyr.intelligence.model_profiling.pipeline.results_writer import detect_drift
+        from zephyr.intelligence.model_profiling.results_writer import detect_drift
 
         history = [{"average_score": 0.95, "model_name": "single"}]
 
