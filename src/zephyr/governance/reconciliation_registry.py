@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] reconcile_for 永不抛异常——单个 reconciler 异常降级为 ReconcileResult(action="warn")
 # [TESTS] tests/unit/test_reconciliation_registry.py (P3-T1)
 # [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] permanent
+# [TTL] task_bound
 """reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2-T1）
 
 把 ``_post_commit_reconcile`` 单线硬编码升级为声明式 registry：每个被
@@ -80,6 +80,7 @@ __all__ = [
     "make_domain_doc_reconciler",
     "make_precommit_id_uniqueness_reconciler",
     "make_rules_integrity_reconciler",
+    "make_commit_gateway_audit_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -1437,4 +1438,116 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=270,
+    )
+
+
+def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-COMMIT-GW-AUDIT post-commit 审计 reconciler（C级 缺口4）。
+
+    扫描最近 N 个 commit，标记未经 GitCommitGateway 的裸 commit（message 不含
+    ``[GW:`` 标记）。双层防御：pre-commit GATE-COMMIT-GW 阻断裸 commit +
+    post-commit 审计兜底 ``--no-verify`` 绕过场景。
+
+    设计裁定（非阻断）：
+    post-commit 无法回滚 commit；裸 commit 已入 git 历史，仅告警记录到
+    ``.runtime/reconcile_reports/commit_gateway_audit_<ts>.json``，供追责。
+    与 make_precommit_id_uniqueness_reconciler 一致的"post-compensation 非阻断"模式。
+
+    trigger 裁定：always True（第一性原理：绕过 gateway 的裸 commit 可能涉及任何
+    文件，无法用文件前缀限定；审计扫描 git log 是毫秒级，不值得为省此开销引入
+    路径假设）。reconciler 仅在 ``commit()``（用户提交）后触发，
+    ``_commit_auto``（reconciler 自动提交）不触发 reconcile_for，无递归风险。
+
+    审计窗口裁定：最近 20 个 commit（覆盖一次开发会话的提交密度，平衡召回率与
+    噪音）。merge commit 跳过（合并提交无作者意图，非裸 commit 范畴）。
+
+    向内收设计（三原则审核）：
+    - 责任唯一：检测逻辑只在 validate_commit_gateway.py 一处（pre-commit hook
+      与本 reconciler 共用同一 GW 标记判定语义 ``[GW:``）
+    - 真源唯一：复用 ReconciliationRegistry 框架（第 11 个 reconciler），不新建
+      兜底系统；复用 _write_reconcile_report 报告落盘
+    - 向内收：扩展 ``_register_default_reconcilers`` 一行，不改 gateway 方法体
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
+            保持本纯 stdlib 模块不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-COMMIT-GW-AUDIT", priority=800)。
+    """
+    import os
+    import subprocess
+
+    project_root = gateway.project_root
+    _AUDIT_WINDOW = 20  # 审计最近 20 个 commit
+    _GW_MARKER = "[GW:"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 审计始终运行：绕过 gateway 的裸 commit 可能涉及任何文件
+        return True
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 扫描最近 N 个 commit
+        log_result = subprocess.run(
+            ["git", "log", f"-{_AUDIT_WINDOW}", "--oneline"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=10,
+        )
+        if log_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git log failed: {log_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 解析，标记无 [GW: 标记的 commit（跳过 merge commit）
+        violations: list[dict] = []
+        for line in log_result.stdout.strip().splitlines():
+            # format: <hash> <subject>
+            parts = line.split(" ", 1)
+            if len(parts) < 2:
+                continue
+            commit_hash, subject = parts[0], parts[1]
+            # 跳过 merge commit（合并提交无作者意图）
+            if subject.startswith("Merge "):
+                continue
+            if _GW_MARKER not in subject:
+                violations.append({"hash": commit_hash, "subject": subject[:120]})
+
+        # 3. 报告落盘
+        report = {
+            "gate_id": "GATE-COMMIT-GW-AUDIT",
+            "session_id": session_id,
+            "audit_window": _AUDIT_WINDOW,
+            "violations_count": len(violations),
+            "violations": violations,
+        }
+        report_path, write_err = _write_reconcile_report(
+            project_root, "commit_gateway_audit", report
+        )
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"audit done ({len(violations)} violations) but report write failed: {write_err}",
+            )
+
+        # 4. 判定（非阻断：commit 已入历史，仅告警）
+        if not violations:
+            return ReconcileResult(
+                action="clean",
+                detail=f"audit clean (window={_AUDIT_WINDOW}), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"audit detected {len(violations)} non-GW commits (window={_AUDIT_WINDOW}), report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-COMMIT-GW-AUDIT",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=800,  # 最后执行（审计非阻断，低优先级）
     )

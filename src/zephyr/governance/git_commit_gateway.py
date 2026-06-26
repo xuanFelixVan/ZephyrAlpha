@@ -89,6 +89,7 @@ from zephyr.governance.reconciliation_registry import (
     make_precommit_id_uniqueness_reconciler,
     make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
+    make_commit_gateway_audit_reconciler,
 )
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
@@ -437,7 +438,7 @@ class GitCommitGateway:
         return result
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change + 红蓝发现1 rules_integrity + P3收尾 rule_catalog）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change + 红蓝发现1 rules_integrity + P3收尾 rule_catalog + C级 commit_gateway_audit）。
 
         P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
@@ -448,6 +449,7 @@ class GitCommitGateway:
         P2-T9: vocab_change 纠偏（GATE-VOCAB-CHANGE，commit ttl_vocabulary.yaml 后自动重判所有 docs/*.md 的 ttl，治词表变更后 ttl 漂移）。
         红蓝发现1: rules_integrity 基线同步（GATE-RULES-INTEGRITY，commit RULES_MANIFEST 文件后自动 --register 重注册本地 golden hash 基线，治合法 commit 后 C 层误报 TAMPERED）。
         P3收尾: rule_catalog 同步（GATE-RULE-CATALOG，commit rules/ 下文件后自动重新生成 rule_catalog_registry.yaml，治 catalog stale 导致 depgraph.db 数据污染）。
+        C级缺口4: commit_gateway_audit 审计（GATE-COMMIT-GW-AUDIT，每次 commit 后扫描最近 20 个 commit，标记无 [GW: 标记的裸 commit，非阻断报告落盘，兜底 --no-verify 绕过 GATE-COMMIT-GW pre-commit hook）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
@@ -459,6 +461,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
         self._reconciliation_registry.register(make_domain_doc_reconciler(self))
+        self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
