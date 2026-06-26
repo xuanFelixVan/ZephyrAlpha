@@ -103,6 +103,38 @@ _POLL_INTERVAL = 0.1
 _MAX_INLINE_MD_FILES = 50  # 前端校验 .md 文件数阈值，超过时改用 --all-files 全量模式避免 Windows CLI 长度限制 (WinError 206)
 _SESSION_AWARE_STASH_ENV = "ZEPHYR_SESSION_AWARE_STASH"  # "0" 强制禁用 session 隔离 stash
 
+
+def _is_pid_alive(pid: int) -> bool:
+    """检查 PID 对应进程是否存活（跨平台，治本：识别僵尸锁）。
+
+    根因：_GlobalCommitLock 进程崩溃（kill/异常退出）时 __exit__ 不执行，
+    锁文件残留。仅靠 _LOCK_TTL_SECONDS 30min 过期太慢——_LOCK_TIMEOUT_DEFAULT
+    60s << 30min，僵尸锁在 60s 超时窗口内永远等不到 TTL 过期（实测阻塞 3min+）。
+    本函数在 TTL 检查前先查 PID 存活，僵尸锁立即清理（零窗口期）。
+    """
+    if pid <= 0:
+        return False
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+            if handle:
+                kernel32.CloseHandle(handle)
+                return True
+            # OpenProcess 失败——用 GetLastError 区分"进程不存在" vs "权限不足"
+            # ERROR_ACCESS_DENIED (5)：进程存在但权限不足（如 PID 4 System）→ 算存活
+            # ERROR_INVALID_PARAMETER (87)：PID 不存在 → 僵尸锁
+            err = kernel32.GetLastError()
+            return err == 5  # ERROR_ACCESS_DENIED
+        else:
+            os.kill(pid, 0)
+            return True
+    except (ProcessLookupError, PermissionError, OSError, ValueError):
+        return False
+
+
 # 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
 # 真源：ttl_vocabulary.yaml decision_tree + project_rules.md RULE-TWO
 # 非永久区路径（如 docs/_working/）的文件不触发门禁
@@ -126,6 +158,7 @@ class CommitStatus(str, Enum):
     METADATA_VIOLATION = "METADATA_VIOLATION"  # .md 文件 frontmatter ttl 校验失败
     SSOT_VIOLATION = "SSOT_VIOLATION"  # 新增 .py 声明了已有 module_path（绕过 scaffold 创建）
     NAMING_VIOLATION = "NAMING_VIOLATION"  # N-16 文件名唯一性校验失败（--no-verify 补偿）
+    SCRIPT_INTEGRITY_VIOLATION = "SCRIPT_INTEGRITY_VIOLATION"  # 受保护脚本完整性锚点缺失（自篡改纵深防御）
 
 
 class GatewayError(RuntimeError):
@@ -203,6 +236,20 @@ class _GlobalCommitLock:
                     acquired_at = data.get("acquired_at", 0)
                     if not isinstance(acquired_at, (int, float)):
                         acquired_at = 0
+                    # 治本：先检查 PID 是否存活，僵尸锁立即清理（零窗口期）
+                    # 根因：进程崩溃时 __exit__ 不执行，仅靠 TTL 30min 过期太慢
+                    # （_LOCK_TIMEOUT_DEFAULT 60s << 30min，实测阻塞 3min+）
+                    holder_pid = data.get("pid")
+                    if holder_pid is not None and not _is_pid_alive(int(holder_pid)):
+                        logger.warning(
+                            "_GlobalCommitLock: 持有进程 PID %s 已死亡，清理僵尸锁: %s",
+                            holder_pid, self._lock_file,
+                        )
+                        try:
+                            os.remove(self._lock_file)
+                        except OSError:
+                            pass
+                        continue
                     if time.time() - acquired_at > _LOCK_TTL_SECONDS:
                         try:
                             os.remove(self._lock_file)
@@ -817,23 +864,90 @@ class GitCommitGateway:
         # 检测逻辑调用共享函数（唯一真源：capability_lookup.check_ssot_conflicts）
         # L2 只负责筛选新增 .py（上方 _is_git_tracked）和格式化输出（下方），
         # 检测核心（解析头 + 反查 + 排除自己）收拢到 check_ssot_conflicts，L3 共用。
+        # 硬层 1：同 module_path 冲突（[MODULE] 头字段精确硬碰撞）——现有
         conflicts = lookup.check_ssot_conflicts(new_py_files)
-        if not conflicts:
-            return True, "ssot check passed"
+        if conflicts:
+            violation_lines = [
+                f"{c.rel_path} 声明 module_path={c.module_path}"
+                f" 与已有文件冲突: {', '.join(c.conflicts)}"
+                for c in conflicts
+            ]
+            detail = (
+                "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
+                + "\n  ".join(violation_lines)
+                + "\n  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）"
+                + "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
+                + " 或 reg.get(\"capability_id\") 反查真源文件路径"
+            )
+            return False, detail
 
-        violation_lines = [
-            f"{c.rel_path} 声明 module_path={c.module_path}"
-            f" 与已有文件冲突: {', '.join(c.conflicts)}"
-            for c in conflicts
-        ]
-        detail = (
-            "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
-            + "\n  ".join(violation_lines)
-            + "\n  修复指令：删除上述新增文件，扩展对应的已有文件后重新 commit（RULE-EIGHT 扩展优先于新建）"
-            + "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
-            + " 或 reg.get(\"capability_id\") 反查真源文件路径"
-        )
-        return False, detail
+        # 硬层 2 + 软层：能力重复检测（basename 撞 capability_id/alias + 模块名语义相似）
+        # 治本（2b 事件驱动）：commit 时自动触发，不依赖 AI 主动调 find() 查重——
+        # 检测逻辑唯一真源收拢到 capability_lookup.check_capability_duplicates（L2/L3 共用）
+        dups = lookup.check_capability_duplicates(new_py_files)
+        hard_dups = [d for d in dups if d.hard]
+        if hard_dups:
+            dup_lines = [f"{d.rel_path}: {d.detail}" for d in hard_dups]
+            detail = (
+                "能力重复——新增文件与已有能力构成同蓝图多实现"
+                "（违反 SSoT / 向内收 2a 扩展优先于新建）:\n  "
+                + "\n  ".join(dup_lines)
+                + "\n  修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit"
+                + "\n  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
+                + " 或 reg.get(\"capability_id\") 反查真源文件路径"
+                + "；若为合法 canonical 迁移，在 registry YAML 声明 canonical_override"
+            )
+            return False, detail
+
+        # 软层 advisory：不阻断 commit，写报告供周期审计 reconciler 消费
+        # 治本（2b 事件驱动信息通道）：非阻断，避免高 FP 摩擦；advisory 留痕供兜底审计
+        advisory_dups = [d for d in dups if not d.hard]
+        if advisory_dups:
+            self._write_capability_advisory_report(advisory_dups)
+            return True, (
+                f"ssot check passed (advisory: {len(advisory_dups)} 重复信号"
+                f"已记录至 .runtime/reconcile_reports/)"
+            )
+
+        return True, "ssot check passed"
+
+    def _write_capability_advisory_report(self, advisory_dups: list) -> None:
+        """软层 advisory 报告：写 JSON 到 .runtime/reconcile_reports/（不阻断 commit）。
+
+        治本（2b 事件驱动）：commit 时自动记录疑似重复信号，供周期审计 reconciler 消费。
+        报告路径约定与 GATE-ID-UNIQ reconciler 一致
+        （.runtime/reconcile_reports/<name>_<ts>.json，目录已 gitignore）。
+        fail-open：写报告失败不影响 commit（仅 log，不阻断）。
+        """
+        import time
+        report_dir = self.project_root / ".runtime" / "reconcile_reports"
+        try:
+            report_dir.mkdir(parents=True, exist_ok=True)
+            ts = int(time.time())
+            report_path = report_dir / f"cap_dup_advisory_{ts}.json"
+            payload = {
+                "generated_at": ts,
+                "kind": "capability_duplicate_advisory",
+                "entries": [
+                    {
+                        "rel_path": d.rel_path,
+                        "capability_id": d.capability_id,
+                        "canonical_file": d.canonical_file,
+                        "relation": d.relation,
+                        "detail": d.detail,
+                        "advisory_hits": d.advisory_hits,
+                    }
+                    for d in advisory_dups
+                ],
+            }
+            report_path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        except OSError as e:
+            # fail-open：报告写入失败不阻断 commit
+            logging.getLogger(__name__).warning(
+                "capability advisory report write failed: %s", e
+            )
 
     def _load_n16_exempt_names(self) -> set[str]:
         """加载 N-16 豁免 basename 集合（真源：trae_028_doc_structure_naming.yaml）。
