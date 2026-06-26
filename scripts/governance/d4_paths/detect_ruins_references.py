@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """detect_ruins_references.py — 残骸/废弃路径引用检测
 
 
@@ -93,25 +94,31 @@ def _get_obsolete_markers() -> list[str]:
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
-    "扫描单个文件并返回发现列表."
     try:
-        "扫描单个文件并返回发现列表."
-        "扫描并返回发现列表."
         content = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
         return findings
+    is_py = filepath.suffix == ".py"
     for pattern, label in _get_ruins_patterns():
+        # .py 文件中的 `\\\\` 是合法字符串转义/正则模式，不是"路径双重嵌套"bug。
+        # 该检测针对旧脚本生成的 JSON/YAML 错误路径，跳过 .py 避免假阳性。
+        if is_py and "路径双重嵌套" in label:
+            continue
         for match in re.finditer(pattern, content, re.IGNORECASE):
             line_num = content[: match.start()].count("\n") + 1
-            ctx_start = max(0, match.start() - 20)
-            ctx_end = min(len(content), match.end() + 20)
-            context = content[ctx_start:ctx_end].replace("\n", " ")
+            # 扩展 context 到完整行（capped 250）：让 ZeroResidueScanner 能看到
+            # 同行内的审计标记（"废弃"/"迁移"/"v2.0"），避免审计追踪文档被误判为违规。
+            line_start = content.rfind("\n", 0, match.start()) + 1
+            line_end = content.find("\n", match.end())
+            if line_end == -1:
+                line_end = len(content)
+            context = content[line_start:line_end].replace("\n", " ")
             findings.append(
                 {
                     "file": str(filepath.relative_to(REPO_ROOT)),
                     "line": line_num,
                     "pattern": label,
-                    "context": context[:120],
+                    "context": context[:250],
                 }
             )
     for pattern in _get_obsolete_markers():
@@ -141,7 +148,31 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
             rel = filepath.relative_to(REPO_ROOT)
         except ValueError:
             continue
-        if str(rel).startswith("_DO_NOT_USE") or str(rel).startswith(".trae"):
+        rel_str = str(rel).replace("\\", "/")
+        if rel_str.startswith("_DO_NOT_USE") or rel_str.startswith(".trae"):
+            continue
+        # 以下目录排除原因：文件内容必然引用废弃路径/废墟目录，属正常语义而非违规
+        # - data/backups/: 历史阶段备份文件，引用是当时正常路径
+        # - docs/01_policies_and_standards/rules/: 规则文件描述禁止行为时引用禁止内容
+        # - docs/01_policies_and_standards/_registry/contracts/: 配置文件声明 forbidden_paths
+        # - docs/01_policies_and_standards/_registry/catalogs/: 登记表注册废弃目录为 status:deprecated 条目
+        # - docs/02_enterprise_architecture/_archive/: 归档历史文档
+        # - docs/08_knowledge/: 知识库条目记录废弃路径作为知识
+        # - docs/_working/: 过程性文档（research_notes 等）
+        # - scripts/governance/: 治理脚本本身检测废弃路径，必然引用
+        # - tests/: 测试用例可能引用废弃路径验证检测逻辑
+        _EXCLUDE_PATH_PREFIXES = (
+            "data/backups/",
+            "docs/01_policies_and_standards/rules/",
+            "docs/01_policies_and_standards/_registry/contracts/",
+            "docs/01_policies_and_standards/_registry/catalogs/",
+            "docs/02_enterprise_architecture/_archive/",
+            "docs/08_knowledge/",
+            "docs/_working/",
+            "scripts/governance/",
+            "tests/",
+        )
+        if any(rel_str.startswith(p) for p in _EXCLUDE_PATH_PREFIXES):
             continue
         files_scanned += 1
         findings = scan_file(filepath)

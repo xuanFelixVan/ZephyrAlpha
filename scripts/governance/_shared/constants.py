@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] permanent
+# [TTL] task_bound
 """
 constants.py — 审计脚本共享常量
 
@@ -51,6 +51,13 @@ EXCLUDE_DIRS: frozenset[str] = frozenset(
         ".pytest_cache",
         ".mypy_cache",
         ".ruff_cache",
+        # vector_db 是 vector database 运行时数据目录（~52万文件，已被 .gitignore 忽略）。
+        # 临时文件/废弃路径检测针对源代码区，扫描 vector_db 浪费时间且无意义。
+        # 治本：加入 EXCLUDE_DIRS 后所有治理脚本（iter_files / os.walk+prune）统一跳过。
+        "vector_db",
+        # models 是 ML 模型文件目录（含 tokenizer.json 等大文件，已被 .gitignore 忽略）。
+        # 模型 JSON 的转义字符（\\\\）会被误判为"路径双重嵌套"，扫描无意义且产生假阳性。
+        "models",
     }
 )
 

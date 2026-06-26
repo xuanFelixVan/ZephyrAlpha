@@ -45,6 +45,7 @@ warn_only: false
 """
 
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -54,7 +55,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, REPO_ROOT
+from _shared.constants import EXCLUDE_DIRS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files
 
@@ -68,8 +69,9 @@ TEMP_FILE_PATTERNS = [
     (re.compile(r"^_tmp_"), "_tmp_ 前缀临时脚本"),
     (re.compile(r"^_debug_"), "_debug_ 前缀调试测试"),
     (re.compile(r"\.backup$"), ".backup 后缀备份文件"),
-    (re.compile(r"-v\d+\."), "-vN 版本后缀文件"),
-    (re.compile(r"-round\d+\."), "-roundN 版本后缀文件"),
+    # -vN./-roundN. 仅匹配代码/配置文件扩展名，避免误判知识库条目（如 ke-1337-v1.md，-v1 是合法版本号）
+    (re.compile(r"-v\d+\.(py|sh|ps1|yaml|yml|json|toml)$"), "-vN 版本后缀文件"),
+    (re.compile(r"-round\d+\.(py|sh|ps1|yaml|yml|json|toml)$"), "-roundN 版本后缀文件"),
     (re.compile(r"\.pyc$"), ".pyc 编译缓存文件"),
     (re.compile(r"\.bak$"), ".bak 备份文件"),
     (re.compile(r"\.baseline"), ".baseline 基线备份文件"),
@@ -89,23 +91,27 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
     findings = []
     files_scanned = 0
 
-    for dirname in TEMP_DIR_NAMES:
-        for dirpath_p in scan_dir.rglob(dirname):
-            try:
-                rel = str(dirpath_p.relative_to(REPO_ROOT)).replace("\\", "/")
-            except ValueError:
-                continue
-            parts = dirpath_p.relative_to(REPO_ROOT).parts
-            if any(p.startswith(".") for p in parts):
-                continue
-            findings.append(
-                {
-                    "file": rel,
-                    "type": "临时目录",
-                    "detail": f"{dirname}/ 目录",
-                    "severity": "MEDIUM",
-                }
-            )
+    # 收集临时目录：用 os.walk + prune 替代 rglob（避免遍历 .git 等大目录导致超时）。
+    # 注意：__pycache__/.pytest_cache 等自身也在 EXCLUDE_DIRS 中，
+    # 必须在 prune 之前收集它们（prune 之后这些目录就不进入下一层了，但当前层仍可见）。
+    for dirpath, dirnames, _filenames in os.walk(scan_dir):
+        for d in dirnames:
+            if d in TEMP_DIR_NAMES:
+                full = Path(dirpath) / d
+                try:
+                    rel = str(full.relative_to(REPO_ROOT)).replace("\\", "/")
+                except ValueError:
+                    continue
+                findings.append(
+                    {
+                        "file": rel,
+                        "type": "临时目录",
+                        "detail": f"{d}/ 目录",
+                        "severity": "MEDIUM",
+                    }
+                )
+        # prune：跳过 EXCLUDE_DIRS 与所有 . 开头目录的深入遍历
+        dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS and not d.startswith(".")]
 
     for filepath in iter_files(scan_dir):
         files_scanned += 1
@@ -138,22 +144,23 @@ def clean_temp_files(scan_dir: Path | None = None, dry_run: bool = True) -> tupl
     cleaned: list[str] = []
     files_scanned = 0
 
-    for dirname in TEMP_DIR_NAMES:
-        for dirpath_p in list(scan_dir.rglob(dirname)):
-            try:
-                rel = str(dirpath_p.relative_to(REPO_ROOT)).replace("\\", "/")
-            except ValueError:
-                continue
-            parts = dirpath_p.relative_to(REPO_ROOT).parts
-            if any(p.startswith(".") for p in parts):
-                continue
-            if dry_run:
-                cleaned.append(f"[DRY] {rel}/")
-            else:
-                import shutil
+    # 收集要清理的临时目录：os.walk + prune（与 scan_temp_files 一致，避免遍历 .git）
+    for dirpath, dirnames, _filenames in os.walk(scan_dir):
+        for d in dirnames:
+            if d in TEMP_DIR_NAMES:
+                full = Path(dirpath) / d
+                try:
+                    rel = str(full.relative_to(REPO_ROOT)).replace("\\", "/")
+                except ValueError:
+                    continue
+                if dry_run:
+                    cleaned.append(f"[DRY] {rel}/")
+                else:
+                    import shutil
 
-                shutil.rmtree(dirpath_p, ignore_errors=True)
-                cleaned.append(f"[DEL] {rel}/")
+                    shutil.rmtree(full, ignore_errors=True)
+                    cleaned.append(f"[DEL] {rel}/")
+        dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS and not d.startswith(".")]
 
     for filepath in iter_files(scan_dir):
         files_scanned += 1

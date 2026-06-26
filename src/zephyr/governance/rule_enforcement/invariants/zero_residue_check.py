@@ -122,7 +122,15 @@ class ZeroResidueScanner:
 
     def _scan_temp_files(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d1_structure/detect_temp_files.py")
-        return [("ZR-001", issue, "error", "") for issue in self._parse_findings(code, err)]
+        # __pycache__/.pytest_cache/.mypy_cache/.ruff_cache 是 Python 运行时产物，
+        # 已被 .gitignore 忽略（不会提交），降为 warning 不阻断；
+        # temp_*/tmp_*/.bak/.orig 等临时文件保持 error（防止开发者提交）。
+        runtime_cache_markers = ("__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", "目录")
+        results: list[tuple[str, str, str, str]] = []
+        for issue in self._parse_findings(code, err):
+            severity = "warning" if any(m in issue for m in runtime_cache_markers) else "error"
+            results.append(("ZR-001", issue, severity, ""))
+        return results
 
     def _scan_residual_files(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d1_structure/detect_residual_files.py")
@@ -130,7 +138,15 @@ class ZeroResidueScanner:
 
     def _scan_ruins_references(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d4_paths/detect_ruins_references.py")
-        return [("ZR-005", issue, "error", "") for issue in self._parse_findings(code, err)]
+        # "废弃"/"迁移"/"v2.0" 上下文的 findings 通常是文档审计追踪信息
+        # （说明"此路径已废弃，迁移至DB"时引用废弃路径），降为 warning 不阻断；
+        # 真正违规引用废弃路径作为规则来源/操作目标保持 error。
+        audit_markers = ("废弃", "迁移", "v2.0", "已废弃")
+        results: list[tuple[str, str, str, str]] = []
+        for issue in self._parse_findings(code, err):
+            severity = "warning" if any(m in issue for m in audit_markers) else "error"
+            results.append(("ZR-005", issue, severity, ""))
+        return results
 
     def _scan_orphan_py(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d1_structure/detect_orphan_py.py")

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit code reflects pass/fail
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -231,7 +232,8 @@ class TestScanTempFiles:
         mock_run.return_value = (0, "", "")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_temp_files(report)
+        for rule_id, message, severity, file_rel in scanner._scan_temp_files():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is True
 
     @patch.object(ZeroResidueScanner, "_run_script")
@@ -239,7 +241,8 @@ class TestScanTempFiles:
         mock_run.return_value = (1, "", "[ZR-001] _temp_file.py found\n")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_temp_files(report)
+        for rule_id, message, severity, file_rel in scanner._scan_temp_files():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is False
         assert any(f.rule_id == "ZR-001" for f in report.findings)
 
@@ -250,7 +253,8 @@ class TestScanResidualFiles:
         mock_run.return_value = (0, "", "")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_residual_files(report)
+        for rule_id, message, severity, file_rel in scanner._scan_residual_files():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is True
 
     @patch.object(ZeroResidueScanner, "_run_script")
@@ -258,7 +262,8 @@ class TestScanResidualFiles:
         mock_run.return_value = (1, "", "leftover.yaml found in project root\n")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_residual_files(report)
+        for rule_id, message, severity, file_rel in scanner._scan_residual_files():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is False
         assert any(f.rule_id == "ZR-006" for f in report.findings)
 
@@ -269,7 +274,8 @@ class TestScanRuinsReferences:
         mock_run.return_value = (0, "", "")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_ruins_references(report)
+        for rule_id, message, severity, file_rel in scanner._scan_ruins_references():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is True
 
     @patch.object(ZeroResidueScanner, "_run_script")
@@ -277,7 +283,8 @@ class TestScanRuinsReferences:
         mock_run.return_value = (1, "", "dead reference to deleted.py in imports\n")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_ruins_references(report)
+        for rule_id, message, severity, file_rel in scanner._scan_ruins_references():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is False
         assert any(f.rule_id == "ZR-005" for f in report.findings)
 
@@ -288,7 +295,8 @@ class TestScanOrphanPy:
         mock_run.return_value = (0, "", "")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_orphan_py(report)
+        for rule_id, message, severity, file_rel in scanner._scan_orphan_py():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is True
 
     @patch.object(ZeroResidueScanner, "_run_script")
@@ -296,7 +304,8 @@ class TestScanOrphanPy:
         mock_run.return_value = (1, "", "unregistered.py not in __init__.py\n")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_orphan_py(report)
+        for rule_id, message, severity, file_rel in scanner._scan_orphan_py():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is False
         assert any(f.rule_id == "ZR-003" for f in report.findings)
 
@@ -307,7 +316,8 @@ class TestScanOrphanDocs:
         mock_run.return_value = (0, "", "")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_orphan_docs(report)
+        for rule_id, message, severity, file_rel in scanner._scan_orphan_docs():
+            report.add(rule_id, message, severity, file_rel)
         assert report.is_clean is True
 
     @patch.object(ZeroResidueScanner, "_run_script")
@@ -315,6 +325,8 @@ class TestScanOrphanDocs:
         mock_run.return_value = (1, "", "stray.md not referenced anywhere\n")
         scanner = ZeroResidueScanner(project_root=Path("/tmp"))
         report = ResidueReport()
-        scanner._scan_orphan_docs(report)
-        assert report.is_clean is False
+        for rule_id, message, severity, file_rel in scanner._scan_orphan_docs():
+            report.add(rule_id, message, severity, file_rel)
+        # ZR-004 保持 warning：孤儿文档可能是新文件尚未提交，不阻断 is_clean
+        assert report.is_clean is True
         assert any(f.rule_id == "ZR-004" for f in report.findings)
