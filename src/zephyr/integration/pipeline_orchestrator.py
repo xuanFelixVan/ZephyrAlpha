@@ -2331,7 +2331,7 @@ class PipelineOrchestrator:
         if not candidates:
             return None
 
-        metrics_path = Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
+        metrics_path = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
         if not metrics_path.exists():
             return (
                 f"G6-BLOCKED: No blueprint_reads.jsonl found ({metrics_path}). "

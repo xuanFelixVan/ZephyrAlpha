@@ -43,10 +43,11 @@ from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
 from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
 from zephyr.infrastructure.asset_inventory.scanner import Scanner
 from zephyr.infrastructure.asset_inventory.telemetry import get_telemetry
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = REPO_ROOT
 
 
 def _parse_args() -> argparse.Namespace:

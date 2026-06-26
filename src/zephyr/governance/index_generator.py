@@ -35,15 +35,16 @@ from zephyr.infrastructure.asset_inventory.models import (
     RegistryEntry,
     UnifiedAssetIndex,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-INDEX_DIR = Path(__file__).resolve().parents[3] / "data" / "asset_index"
+INDEX_DIR = REPO_ROOT / "data" / "asset_index"
 INDEX_PATH = INDEX_DIR / "unified-asset-index.yaml"
 REGISTRY_DIRS = [
-    (Path(__file__).resolve().parents[3] / "src" / "zephyr" / "gates", "_registry.yaml"),
-    (Path(__file__).resolve().parents[3] / "docs" / "03_modules", "module-registry.yaml"),
-    (Path(__file__).resolve().parents[3] / "docs" / "03_modules", "blueprint_registry.yaml"),
+    (REPO_ROOT / "src" / "zephyr" / "gates", "_registry.yaml"),
+    (REPO_ROOT / "docs" / "03_modules", "module-registry.yaml"),
+    (REPO_ROOT / "docs" / "03_modules", "blueprint_registry.yaml"),
 ]
 
 HEALTH_WEIGHTS = {"orphan": 0.35, "ghost": 0.35, "drift": 0.20, "recency": 0.10}
@@ -53,7 +54,7 @@ class IndexGenerator:
     """统一资产索引生成器——Phase 1 实现（蓝图 §3.3）。"""
 
     def __init__(self, root: Path | None = None) -> None:
-        self.root = root or Path(__file__).resolve().parents[3]
+        self.root = root or REPO_ROOT
 
     def generate(
         self, classified_result: ClassificationResult, registry_entries: list[RegistryEntry] | None = None

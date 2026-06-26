@@ -46,6 +46,7 @@ from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = [
     "APPROVED_LABELS",
@@ -72,9 +73,8 @@ APPROVED_LABELS = [
 
 # 真源单一化：doc_type 合法值由 doc_type_vocabulary.yaml 唯一维护。
 # 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名。
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 _DOC_TYPE_VOCAB_PATH = (
-    _PROJECT_ROOT
+    REPO_ROOT
     / "docs"
     / "01_policies_and_standards"
     / "_registry"
@@ -97,7 +97,7 @@ VALID_DOC_TYPES: list[str] = _load_doc_type_values()
 
 # 真源单一化：layer 合法值由 layer_vocabulary.yaml 唯一维护（trae_060 §2）。
 _LAYER_VOCAB_PATH = (
-    _PROJECT_ROOT
+    REPO_ROOT
     / "docs"
     / "01_policies_and_standards"
     / "_registry"

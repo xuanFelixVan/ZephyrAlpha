@@ -76,6 +76,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import (
     Any,
     Literal,
@@ -641,7 +642,6 @@ class HealthMonitor:
 DirectiveChain = list[tuple[str, str, dict[str, Any]]]
 
 # agent_orchestrator.py 位于 src/zephyr/orchestrator/ → 仓库根为 parents[3]
-_REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 class AgentOrchestrator:
@@ -699,7 +699,7 @@ class AgentOrchestrator:
         if input_sanitizer is not None:
             self._input_sanitizer = input_sanitizer
         elif sanitize_llm_context:
-            self._input_sanitizer = InputSanitizer(root=str(_REPO_ROOT))
+            self._input_sanitizer = InputSanitizer(root=str(REPO_ROOT))
         else:
             self._input_sanitizer = None
 

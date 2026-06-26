@@ -76,6 +76,7 @@ from typing import Any, ClassVar
 
 import yaml
 
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.governance.rule_enforcement.gate_types import (
     GateEngineError,
     GateResult,
@@ -1311,7 +1312,7 @@ def _check_blueprint_read_compliance(
     - 未读蓝图则返回 GateViolationError
     - AI 必须读蓝图后才能继续
     """
-    metrics_path = Path(__file__).resolve().parents[4] / "data" / "telemetry" / "blueprint_reads.jsonl"
+    metrics_path = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
 
     if not metrics_path.exists():
         msg = (

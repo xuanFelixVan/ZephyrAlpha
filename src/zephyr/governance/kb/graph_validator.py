@@ -52,6 +52,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class ValidationSeverity(str, Enum):
@@ -206,8 +207,7 @@ class GraphValidator:
             ke_id = row["ke_id"]
             source_file = row["source_file"]
             try:
-                repo_root = Path(__file__).resolve().parents[3]
-                full_path = repo_root / source_file
+                full_path = REPO_ROOT / source_file
                 if not full_path.exists():
                     continue
                 content = full_path.read_text(encoding="utf-8")

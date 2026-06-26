@@ -49,15 +49,15 @@ import shutil
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
 _log = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-CAPABILITY_CARDS_DIR = PROJECT_ROOT / "data" / "capability_cards"
-AUDIT_LOGS_DIR = PROJECT_ROOT / "data" / "audit_logs"
-BRAIN_BACKUPS_DIR = PROJECT_ROOT / ".brain_backups"
-BRAIN_TRASH_DIR = PROJECT_ROOT / ".brain_trash"
+CAPABILITY_CARDS_DIR = REPO_ROOT / "data" / "capability_cards"
+AUDIT_LOGS_DIR = REPO_ROOT / "data" / "audit_logs"
+BRAIN_BACKUPS_DIR = REPO_ROOT / ".brain_backups"
+BRAIN_TRASH_DIR = REPO_ROOT / ".brain_trash"
 
 _BRAIN_MARKER = "# BRAIN"
 _MAX_BACKUPS_PER_FILE = 10
@@ -199,9 +199,9 @@ class ActionDispatcher:
 
         bak_path.write_text(content, encoding="utf-8")
 
-        git_commit = _git_commit_hash(PROJECT_ROOT)
+        git_commit = _git_commit_hash(REPO_ROOT)
         try:
-            rel_path = str(filepath.relative_to(PROJECT_ROOT))
+            rel_path = str(filepath.relative_to(REPO_ROOT))
         except ValueError:
             rel_path = str(filepath)
         manifest_entry = json.dumps(
@@ -346,10 +346,10 @@ class ActionDispatcher:
         if not content:
             return ActionReport("unknown", "code_generate", "skipped", "empty content")
 
-        # 安全: 限制在 PROJECT_ROOT 内
-        target = (PROJECT_ROOT / file_path_str).resolve()
-        if not str(target).startswith(str(PROJECT_ROOT.resolve())):
-            return ActionReport(file_path_str, "code_generate", "error", "path escapes PROJECT_ROOT")
+        # 安全: 限制在 REPO_ROOT 内
+        target = (REPO_ROOT / file_path_str).resolve()
+        if not str(target).startswith(str(REPO_ROOT.resolve())):
+            return ActionReport(file_path_str, "code_generate", "error", "path escapes REPO_ROOT")
 
         if target.exists():
             return ActionReport(file_path_str, "code_generate", "skipped", f"file already exists: {target.name}")
@@ -366,14 +366,14 @@ class ActionDispatcher:
             full_content += "\n"
 
         if self._dry_run:
-            _log.info("BrainHands: (dry-run) would create %s", target.relative_to(PROJECT_ROOT))
+            _log.info("BrainHands: (dry-run) would create %s", target.relative_to(REPO_ROOT))
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(full_content, encoding="utf-8")
 
-        _log.info("BrainHands: created %s (%d chars)", target.relative_to(PROJECT_ROOT), len(content))
+        _log.info("BrainHands: created %s (%d chars)", target.relative_to(REPO_ROOT), len(content))
         return ActionReport(
-            str(target.relative_to(PROJECT_ROOT)),
+            str(target.relative_to(REPO_ROOT)),
             "code_generate",
             "created",
             f"{len(content)} chars, {description[:60]}",
@@ -393,7 +393,7 @@ class ActionDispatcher:
             # 尝试从 result 中获取路径
             file_path_hint = result.get("file_path", "")
             if file_path_hint:
-                target_file = PROJECT_ROOT / file_path_hint
+                target_file = REPO_ROOT / file_path_hint
             elif module_name:
                 target_file = self._parse_file_path(source_text)
 
@@ -411,10 +411,10 @@ class ActionDispatcher:
         # 记录 trash manifest
         manifest_entry = json.dumps(
             {
-                "original": str(target_file.relative_to(PROJECT_ROOT)),
+                "original": str(target_file.relative_to(REPO_ROOT)),
                 "trashed_as": trash_name,
                 "timestamp": datetime.now(UTC).isoformat(),
-                "git_commit": _git_commit_hash(PROJECT_ROOT),
+                "git_commit": _git_commit_hash(REPO_ROOT),
             },
             ensure_ascii=False,
         )
@@ -433,7 +433,7 @@ class ActionDispatcher:
 
         _log.info("BrainHands: trashed %s → %s", target_file.name, trash_name)
         return ActionReport(
-            str(target_file.relative_to(PROJECT_ROOT)),
+            str(target_file.relative_to(REPO_ROOT)),
             "dead_code_removal",
             "deleted",
             f"moved to .brain_trash/{trash_name}",
@@ -528,7 +528,7 @@ class ActionDispatcher:
         module_name = self._extract_module_name(source_text)
         bp_file = self._find_blueprint_file(module_name)
         if bp_file is None:
-            bp_file = self._find_file_by_name(module_name, [PROJECT_ROOT / "architecture-model"])
+            bp_file = self._find_file_by_name(module_name, [REPO_ROOT / "architecture-model"])
 
         points = result.get("result", {}).get("points", [])
         if not points:
@@ -620,7 +620,7 @@ class ActionDispatcher:
             line = line.strip()
             if not line:
                 continue
-            candidate = PROJECT_ROOT / line
+            candidate = REPO_ROOT / line
             if candidate.exists() and candidate.is_file():
                 return candidate
             # 尝试只取 stem
@@ -633,19 +633,19 @@ class ActionDispatcher:
     def _find_module_file(self, module_name: str) -> Path | None:
         """在 src/ 下找对应的 .py 文件。"""
         candidates = [
-            PROJECT_ROOT / "src" / "zephyr" / "**" / f"{module_name}.py",
-            PROJECT_ROOT / "src" / f"zephyr/**/{module_name}.py",
+            REPO_ROOT / "src" / "zephyr" / "**" / f"{module_name}.py",
+            REPO_ROOT / "src" / f"zephyr/**/{module_name}.py",
         ]
         for pattern in candidates:
             try:
-                matches = list(PROJECT_ROOT.glob(str(pattern.relative_to(PROJECT_ROOT))))
+                matches = list(REPO_ROOT.glob(str(pattern.relative_to(REPO_ROOT))))
             except Exception:
-                matches = list(PROJECT_ROOT.rglob(f"{module_name}.py"))
+                matches = list(REPO_ROOT.rglob(f"{module_name}.py"))
             if matches:
                 return matches[0]
 
         # 模糊搜索
-        for py_file in (PROJECT_ROOT / "src").rglob("*.py"):
+        for py_file in (REPO_ROOT / "src").rglob("*.py"):
             if module_name in py_file.stem or py_file.stem in module_name:
                 return py_file
         return None
@@ -665,7 +665,7 @@ class ActionDispatcher:
 
     def _find_blueprint_file(self, module_name: str) -> Path | None:
         """在 architecture-model/ 下找 matching YAML。"""
-        arch = PROJECT_ROOT / "architecture-model"
+        arch = REPO_ROOT / "architecture-model"
         return self._find_file_by_name(module_name, [arch])
 
     def _find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:

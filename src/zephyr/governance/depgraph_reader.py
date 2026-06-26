@@ -42,8 +42,9 @@ import json
 import sqlite3
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT
 
-DB_PATH = Path(__file__).resolve().parents[3] / "data" / "databases" / "depgraph.db"
+DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 class DepgraphReader:

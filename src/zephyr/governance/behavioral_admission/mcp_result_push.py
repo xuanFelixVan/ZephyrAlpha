@@ -24,9 +24,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 _log = logging.getLogger(__name__)
 
-_STATE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data" / "mcp_push"
+_STATE_DIR = REPO_ROOT / "data" / "mcp_push"
 _STATE_FILE = _STATE_DIR / "push_state.json"
 _MAX_RETRIES = 3
 _RETRY_DELAY_SECONDS = 1.0

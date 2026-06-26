@@ -26,6 +26,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
+
+from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["FileChangeEvent", "FileChangeType", "FileWatcher"]
@@ -177,7 +179,7 @@ class BlueprintWatcher:
         auto_decompose: bool = True,
     ) -> None:
         if blueprints_dir is None:
-            blueprints_dir = Path(__file__).resolve().parents[3] / "docs" / "03_modules"
+            blueprints_dir = REPO_ROOT / "docs" / "03_modules"
         self._blueprints_dir = blueprints_dir
         self._auto_decompose = auto_decompose
         self._watcher = FileWatcher(

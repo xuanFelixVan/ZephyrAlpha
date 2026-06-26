@@ -21,8 +21,9 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.paths import REPO_ROOT
 
-DATA_DIR = Path(__file__).resolve().parents[3] / "data"
+DATA_DIR = REPO_ROOT / "data"
 
 
 class RuntimeConfig(BaseModel):

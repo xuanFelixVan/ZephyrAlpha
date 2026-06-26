@@ -41,6 +41,7 @@ from zephyr.shared.shared_services.models import (
     TaskCard,
     TaskStatus,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -222,7 +223,7 @@ class TaskManagerMCP:
                 try:
                     from zephyr.governance.architecture_governance.path_resolver import PathResolver
 
-                    resolver = PathResolver(str(Path(__file__).resolve().parents[3]))
+                    resolver = PathResolver(str(REPO_ROOT))
                     warnings = []
                     for item in downstream_outputs:
                         if isinstance(item, dict) and "path" in item:

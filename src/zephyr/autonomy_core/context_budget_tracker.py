@@ -35,6 +35,7 @@ from __future__ import annotations
 import time
 from enum import Enum, unique
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
 from typing import TYPE_CHECKING, Any
 
@@ -61,8 +62,6 @@ DEFAULT_THRESHOLDS = {
     ContextBudgetLevel.L3_HARD_STOP: 0.95,
 }
 
-_FILE = Path(__file__).resolve()
-REPO_ROOT: Path = _FILE.parents[3]
 
 _CONTEXT_RULES_PATH = REPO_ROOT / "config" / "context_rules.yaml"
 _context_rules_cache: dict | None = None

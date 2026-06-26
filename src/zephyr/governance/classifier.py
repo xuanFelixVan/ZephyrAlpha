@@ -37,6 +37,7 @@ from zephyr.infrastructure.asset_inventory.models import (
     RawFileEntry,
     ScanResult,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -187,7 +188,7 @@ class Classifier:
         import json
         import os
 
-        scans_dir = Path(__file__).resolve().parents[3] / "data" / "scans"
+        scans_dir = REPO_ROOT / "data" / "scans"
         scan_path = scans_dir / "raw-asset-scan.json"
 
         if not scan_path.exists():
@@ -205,7 +206,7 @@ class Classifier:
 
         result = self.classify(scan_result)
 
-        klass_dir = Path(__file__).resolve().parents[3] / "data" / "classified"
+        klass_dir = REPO_ROOT / "data" / "classified"
         klass_dir.mkdir(parents=True, exist_ok=True)
         out = klass_dir / "classified-assets.json"
         payload = result.model_dump(mode="json")

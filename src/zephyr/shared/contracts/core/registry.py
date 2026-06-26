@@ -57,6 +57,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.schema.schemas import Priority
+from zephyr.shared.io.paths import REPO_ROOT
 
 _logger = logging.getLogger("zephyr.shared.contracts.registry")
 
@@ -120,9 +121,7 @@ class ContractRegistry:
         self._initialized = False
 
         if repo_root is None:
-            from pathlib import Path as _Path
-
-            self._repo_root = _Path(__file__).resolve().parents[4]
+            self._repo_root = REPO_ROOT
         else:
             self._repo_root = repo_root
 

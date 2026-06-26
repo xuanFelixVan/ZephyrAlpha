@@ -18,12 +18,12 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 import psutil
 import yaml
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_MANIFEST_PATH = _PROJECT_ROOT / "scripts" / "script-manifest.yaml"
+_MANIFEST_PATH = REPO_ROOT / "scripts" / "script-manifest.yaml"
 _BASELINE_CACHE_TTL = 300.0
 
 _LONG_RUNNING_KEYWORDS = [
@@ -107,7 +107,7 @@ class SpeedBaselineChecker:
 
     def check_active_processes(self) -> SpeedCheckResult:
         baselines = self._load_script_baselines()
-        project_root_str = str(_PROJECT_ROOT)
+        project_root_str = str(REPO_ROOT)
         result = SpeedCheckResult()
 
         for proc in psutil.process_iter(["pid", "name", "cmdline", "create_time", "cwd"]):

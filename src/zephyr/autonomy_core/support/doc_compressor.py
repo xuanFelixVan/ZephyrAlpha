@@ -59,6 +59,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
 from typing import Any, Self
 
@@ -80,8 +81,6 @@ __all__ = [
 # 路径常量
 # ---------------------------------------------------------------------------
 
-_FILE = Path(__file__).resolve()
-REPO_ROOT: Path = _FILE.parents[4]
 DEFAULT_POLICY_PATH: Path = REPO_ROOT / "config" / "compression" / "policy.yaml"
 
 # ---------------------------------------------------------------------------

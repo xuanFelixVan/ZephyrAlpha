@@ -43,6 +43,7 @@ import sys
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ def _get_project_root() -> Path:
     env = os.environ.get("ZEPHYR_PROJECT_ROOT")
     if env:
         return Path(env)
-    return Path(__file__).resolve().parent.parent.parent.parent
+    return REPO_ROOT
 
 
 class IntegrityGuard:

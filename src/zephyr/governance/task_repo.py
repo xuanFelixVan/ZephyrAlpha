@@ -87,6 +87,7 @@ from zephyr.integration.shared.schema.severity_types import Priority
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 from zephyr.integration.shared_08.utils.time_utils import now_iso
 from zephyr.shared.task_types import Task, TaskCard, TaskNamespace, TaskStatus
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = [
     "CIRCULAR_ACCEPTANCE_ROUNDS",
@@ -233,9 +234,6 @@ class BatchReviewRequiredError(TaskRepositoryError):
 # 循环验收轮数：COMPLETED 转换时 post_sync_standard 命令必须连续 2 次返回 0
 CIRCULAR_ACCEPTANCE_ROUNDS = 2
 
-# 仓库根（用于解析 post_sync_standard 中的相对脚本路径）。
-# task_repo.py 位于 src/zephyr/governance/，parents[3] = 仓库根。
-_REPO_ROOT = Path(__file__).resolve().parents[3]
 
 _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
     TaskStatus.PENDING: frozenset(
@@ -784,10 +782,10 @@ class TaskRepository:
         )
 
         for cmd in (task.post_sync_specific or []):
-            reason = validate_post_sync_specific(cmd, _REPO_ROOT)
+            reason = validate_post_sync_specific(cmd, REPO_ROOT)
             if reason is not None:
                 raise PostSyncValidationError(task.task_id, cmd, reason)
-        reason = validate_rollback_instructions(task.rollback_instructions or "", _REPO_ROOT)
+        reason = validate_rollback_instructions(task.rollback_instructions or "", REPO_ROOT)
         if reason is not None:
             raise PostSyncValidationError(
                 task.task_id, task.rollback_instructions or "", reason
@@ -833,7 +831,7 @@ class TaskRepository:
                 if script_path is not None:
                     p = Path(script_path)
                     if not p.is_absolute():
-                        p = _REPO_ROOT / p
+                        p = REPO_ROOT / p
                     if not p.exists():
                         raise PostSyncValidationError(
                             task_id,
@@ -848,10 +846,10 @@ class TaskRepository:
             # 非 .py 命令（echo/git 等），无法内省，跳过
             return
 
-        # 3. 脚本存在性（相对路径基于 _REPO_ROOT 解析）
+        # 3. 脚本存在性（相对路径基于 REPO_ROOT 解析）
         p = Path(script_path)
         if not p.is_absolute():
-            p = _REPO_ROOT / p
+            p = REPO_ROOT / p
         if not p.exists():
             raise PostSyncValidationError(
                 task_id,
@@ -1176,7 +1174,7 @@ class TaskRepository:
             from zephyr.governance.post_sync_validator import validate_post_sync_specific
 
             for cmd in post_sync_specific:
-                reason = validate_post_sync_specific(cmd, _REPO_ROOT)
+                reason = validate_post_sync_specific(cmd, REPO_ROOT)
                 if reason is not None:
                     raise PostSyncValidationError(task_id, cmd, reason)
         if rollback_instructions is not None:
@@ -1184,7 +1182,7 @@ class TaskRepository:
                 validate_rollback_instructions,
             )
 
-            reason = validate_rollback_instructions(rollback_instructions, _REPO_ROOT)
+            reason = validate_rollback_instructions(rollback_instructions, REPO_ROOT)
             if reason is not None:
                 raise PostSyncValidationError(task_id, rollback_instructions, reason)
 

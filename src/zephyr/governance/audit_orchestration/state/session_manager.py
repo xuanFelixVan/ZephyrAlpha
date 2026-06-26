@@ -35,6 +35,7 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import yaml
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = ["Session", "SessionError", "SessionManager", "SessionState"]
 
@@ -42,7 +43,7 @@ _logger = logging.getLogger(__name__)
 
 _UTC = UTC
 
-_STATE_MACHINE_YAML = Path(__file__).parents[3] / "config" / "session_state_machine.yaml"
+_STATE_MACHINE_YAML = REPO_ROOT / "config" / "session_state_machine.yaml"
 
 _TRANSITION_MAP: dict[str, set[str]] = {
     "idle": {"active", "completed"},
@@ -99,7 +100,7 @@ class SessionManager:
     def __init__(self, db_path: Path | str | None = None) -> None:
         self._sessions: dict[str, Session] = {}
         self._config = self._load_config()
-        self._db_path = Path(db_path) if db_path else (Path(__file__).parents[3] / "data" / "sessions.db")
+        self._db_path = Path(db_path) if db_path else (REPO_ROOT / "data" / "sessions.db")
 
     def _load_config(self) -> dict[str, Any]:
         if not _STATE_MACHINE_YAML.exists():

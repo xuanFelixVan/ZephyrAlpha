@@ -32,6 +32,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import UTC
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any, ClassVar
 
 from zephyr.ops.actors.action_selector import ActionSelector
@@ -458,7 +459,7 @@ class FeedbackLoopScheduler:
     def _g6_check(self, anomaly: Any) -> bool:
         try:
             getattr(anomaly, "anomaly_id", "unknown")
-            metrics_path = Path(__file__).parents[3] / "data" / "telemetry" / "blueprint_reads.jsonl"
+            metrics_path = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
             if not metrics_path.exists():
                 return False
             with open(metrics_path, encoding="utf-8") as fh:

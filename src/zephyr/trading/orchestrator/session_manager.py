@@ -28,6 +28,7 @@ import logging
 import time
 from enum import Enum, unique
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from threading import RLock
 from typing import Any
 
@@ -42,8 +43,6 @@ __all__ = [
 
 _logger = logging.getLogger(__name__)
 
-_FILE = Path(__file__).resolve()
-REPO_ROOT = _FILE.parents[3]
 DEFAULT_STATE_MACHINE_PATH = REPO_ROOT / "config" / "session_state_machine.yaml"
 
 

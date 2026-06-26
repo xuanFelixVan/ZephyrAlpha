@@ -20,6 +20,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 
 @dataclass
 class ResidueFinding:
@@ -50,7 +52,7 @@ class ResidueReport:
 class ZeroResidueScanner:
     def __init__(self, project_root: Path | None = None) -> None:
         if project_root is None:
-            project_root = Path(__file__).resolve().parents[5]
+            project_root = REPO_ROOT
         self._root = project_root
         self._scripts_dir = project_root / "scripts" / "governance"
 

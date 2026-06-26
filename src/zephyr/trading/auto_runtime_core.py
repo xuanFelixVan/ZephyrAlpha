@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -252,7 +253,7 @@ class AutoRuntimeCore:
         """已废弃：定时调度已废除（2026-06-26裁定）。保留调用兼容性，但 register_task 为 no-op。"""
         from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
 
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
         register_boot_cron_jobs(self._circadian_scheduler, self._work_orchestrator, project_root)
 
     def _register_task_system_hooks(self) -> None:

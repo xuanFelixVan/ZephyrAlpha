@@ -28,6 +28,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 import yaml
 
@@ -35,7 +36,6 @@ logger = logging.getLogger(__name__)
 
 REGISTRY_PATH = Path("docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml")
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 @dataclass
@@ -60,7 +60,7 @@ class OverlapResult:
 class FunctionalDomainRegistry:
     def __init__(self, registry_path: Path | str | None = None):
         if registry_path is None:
-            self._path = PROJECT_ROOT / REGISTRY_PATH
+            self._path = REPO_ROOT / REGISTRY_PATH
         else:
             self._path = Path(registry_path)
         self._entries: list[DomainEntry] = []

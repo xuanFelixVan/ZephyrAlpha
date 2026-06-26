@@ -39,6 +39,7 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT
 
 _log = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ def _load_env() -> None:
     if _env_loaded:
         return
     _env_loaded = True
-    env_path = Path(__file__).resolve().parent.parent.parent.parent.parent / ".env"
+    env_path = REPO_ROOT / ".env"
     if not env_path.exists():
         return
     try:

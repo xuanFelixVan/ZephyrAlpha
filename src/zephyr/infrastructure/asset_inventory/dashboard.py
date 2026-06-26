@@ -29,7 +29,7 @@ from zephyr.infrastructure.asset_inventory.models import DashboardData, UnifiedA
 
 logger = logging.getLogger(__name__)
 
-REPORTS_DIR = Path(__file__).resolve().parents[3] / "data" / "reports"
+REPORTS_DIR = REPO_ROOT / "data" / "reports"
 DASHBOARD_PATH = REPORTS_DIR / "dashboard.json"
 
 
@@ -37,7 +37,7 @@ class Dashboard:
     """资产健康仪表盘生成器——Phase 1 实现（蓝图 §5）。"""
 
     def __init__(self, root: Path | None = None) -> None:
-        self.root = root or Path(__file__).resolve().parents[3]
+        self.root = root or REPO_ROOT
 
     def generate(self, index: UnifiedAssetIndex) -> DashboardData:
         logger.info("生成仪表盘...")
@@ -137,6 +137,8 @@ if __name__ == "__main__":
 from pydantic import BaseModel as _PydanticBaseModel
 
 
+
+from zephyr.shared.io.paths import REPO_ROOT
 class KnowledgeTransferRecord(_PydanticBaseModel):
     transferred_at: datetime
     health_score: str = "A"

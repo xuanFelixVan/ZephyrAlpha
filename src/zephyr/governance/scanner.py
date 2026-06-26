@@ -43,8 +43,8 @@ _MAX_FILE_SIZE_MB = 50
 _MAX_DEPTH = 15
 _GLIDE_WINDOW_SECONDS = 60
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-SCANS_DIR = PROJECT_ROOT / "data" / "scans"
+from zephyr.shared.io.paths import REPO_ROOT
+SCANS_DIR = REPO_ROOT / "data" / "scans"
 
 DEFAULT_DIRECTORIES = [
     "src/zephyr/",
@@ -93,7 +93,7 @@ class Scanner:
         self.timeout_seconds = timeout_seconds
         self.max_file_size = max_file_size_mb * 1024 * 1024
         self.max_depth = max_depth
-        self.root = root or PROJECT_ROOT
+        self.root = root or REPO_ROOT
 
     def scan(self, *, incremental: bool = False, last_scan_time: datetime | None = None) -> ScanResult:
         scan_id = _generate_scan_id()

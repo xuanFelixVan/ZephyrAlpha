@@ -23,6 +23,7 @@ import uuid
 from pathlib import Path
 
 import yaml
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class AlertLevel(enum.IntEnum):
@@ -33,7 +34,7 @@ class AlertLevel(enum.IntEnum):
 
 
 class AlertSubsystem:
-    _CONFIG_PATH = Path(__file__).resolve().parents[3] / "config" / "alert_rules.yaml"
+    _CONFIG_PATH = REPO_ROOT / "config" / "alert_rules.yaml"
 
     def __init__(self, module_id: str = "", test_mode: bool = False):
         self._module_id = module_id

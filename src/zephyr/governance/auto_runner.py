@@ -32,13 +32,13 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["GovernanceAutoRunner", "AutoRunnerResult"]
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-_DEPGRAPH_DB = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+_DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 class AutoRunnerResult:

@@ -27,10 +27,9 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
-
-PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
 ALWAYS_BLOCKED_OPERATIONS = [
     "delete_immutable_core",
@@ -111,7 +110,7 @@ class ImmutableCore:
         if project_root is not None:
             self.project_root = Path(project_root)
         else:
-            self.project_root = PROJECT_ROOT
+            self.project_root = REPO_ROOT
 
     def is_protected_path(self, path: str) -> bool:
         """检查路径是否在保护列表中."""
@@ -232,7 +231,7 @@ def get_immutable_core() -> ImmutableCore:
 
 __all__ = [
     "ALWAYS_BLOCKED_OPERATIONS",
-    "PROJECT_ROOT",
+    "REPO_ROOT",
     "PROTECTED_PATHS",
     "ImmutableCore",
     "IntegrityResult",

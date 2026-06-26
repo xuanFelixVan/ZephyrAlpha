@@ -33,6 +33,8 @@ from pathlib import Path
 
 from mcp.server import FastMCP
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
 from zephyr.shared.shared_services.models import (
@@ -240,7 +242,7 @@ class TaskManagerMCP:
                 try:
                     _mod = importlib.import_module("zephyr.governance.architecture_governance.path_resolver")
                     PathResolver = _mod.PathResolver
-                    resolver = PathResolver(str(Path(__file__).resolve().parents[3]))
+                    resolver = PathResolver(str(REPO_ROOT))
                     warnings = []
                     for item in downstream_outputs:
                         if isinstance(item, dict) and "path" in item:
@@ -498,7 +500,7 @@ class TaskManagerMCP:
             mgr._rbac_guard("write_draft")
             _mod = importlib.import_module("zephyr.trading.staging_area")
             StagingArea = _mod.StagingArea
-            sa = StagingArea(project_root=str(Path(__file__).resolve().parents[3]))
+            sa = StagingArea(project_root=str(REPO_ROOT))
             draft_path = sa.write_draft(session_id, file_path, content)
             return {"status": "draft_written", "draft_path": str(draft_path), "file_path": file_path}
 
@@ -508,7 +510,7 @@ class TaskManagerMCP:
             mgr._rbac_guard("commit_draft")
             _mod = importlib.import_module("zephyr.trading.staging_area")
             StagingArea = _mod.StagingArea
-            sa = StagingArea(project_root=str(Path(__file__).resolve().parents[3]))
+            sa = StagingArea(project_root=str(REPO_ROOT))
             if auto_merge:
                 result = sa.try_auto_merge(session_id, file_path)
             else:
@@ -528,7 +530,7 @@ class TaskManagerMCP:
             mgr._rbac_guard("list_drafts")
             _mod = importlib.import_module("zephyr.trading.staging_area")
             StagingArea = _mod.StagingArea
-            sa = StagingArea(project_root=str(Path(__file__).resolve().parents[3]))
+            sa = StagingArea(project_root=str(REPO_ROOT))
             drafts = sa.list_drafts(session_id)
             return {"session_id": session_id, "drafts": drafts, "count": len(drafts)}
 
@@ -538,7 +540,7 @@ class TaskManagerMCP:
             mgr._rbac_guard("discard_draft")
             _mod = importlib.import_module("zephyr.trading.staging_area")
             StagingArea = _mod.StagingArea
-            sa = StagingArea(project_root=str(Path(__file__).resolve().parents[3]))
+            sa = StagingArea(project_root=str(REPO_ROOT))
             ok = sa.discard(session_id, file_path)
             return {"status": "discarded" if ok else "not_found", "file_path": file_path}
 

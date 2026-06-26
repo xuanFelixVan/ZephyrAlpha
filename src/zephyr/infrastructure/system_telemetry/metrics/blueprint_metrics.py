@@ -46,15 +46,13 @@ import json
 import logging
 import os
 from datetime import UTC, datetime
-from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = ["METRICS_FILE", "BlueprintReadEvent", "record_blueprint_read"]
 
 _logger = logging.getLogger(__name__)
 _UTC = UTC
 
-_FILE = Path(__file__).resolve()
-REPO_ROOT = _FILE.parents[3]
 METRICS_FILE = REPO_ROOT / "data" / "telemetry" / "blueprint_reads.jsonl"
 
 

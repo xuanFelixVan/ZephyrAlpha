@@ -22,6 +22,8 @@ from pathlib import Path
 
 import yaml
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 
@@ -99,7 +101,7 @@ class PricingSync:
         if not litellm_json_path:
             _candidates = [
                 Path.home() / ".cache" / "litellm" / "model_prices_and_context_window.json",
-                Path(__file__).resolve().parents[3] / "data" / "litellm_prices.json",
+                REPO_ROOT / "data" / "litellm_prices.json",
             ]
             for c in _candidates:
                 if c.exists():

@@ -28,6 +28,7 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -134,7 +135,7 @@ class HealthMonitor:
         try:
             from zephyr.shared.healthcheck_service import HealthcheckService
 
-            project_root = Path(__file__).resolve().parents[3]
+            project_root = REPO_ROOT
             _healthcheck = HealthcheckService(project_root=project_root)
 
             def _healthcheck_probe() -> ProbeResult:

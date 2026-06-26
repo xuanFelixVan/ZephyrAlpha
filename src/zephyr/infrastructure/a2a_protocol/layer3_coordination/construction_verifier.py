@@ -19,6 +19,7 @@
 import ast
 from dataclasses import dataclass, field
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 @dataclass
@@ -43,8 +44,7 @@ class VerifierResult:
 
 
 _MIN_LINES_FOR_IMPLEMENTATION = 15
-_PROJECT_ROOT = Path(__file__).resolve().parents[5]
-_A2A_SRC = _PROJECT_ROOT / "src" / "zephyr" / "infra_ops" / "cicd_pipeline" / "a2a_protocol"
+_A2A_SRC = REPO_ROOT / "src" / "zephyr" / "infra_ops" / "cicd_pipeline" / "a2a_protocol"
 
 _EXPECTED_LAYERS = ["layer1_discovery", "layer2_communication", "layer3_coordination"]
 _KEY_IMPLEMENTED_MODULES = [
@@ -128,8 +128,8 @@ def _verify_layer(layer_name: str) -> dict:
 
 def _verify_registries() -> list[str]:
     issues: list[str] = []
-    registry_path = _PROJECT_ROOT / "docs" / "03_modules" / "module-registry.yaml"
-    blueprint_registry_path = _PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
+    registry_path = REPO_ROOT / "docs" / "03_modules" / "module-registry.yaml"
+    blueprint_registry_path = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
 
     if not registry_path.exists():
         issues.append("module-registry.yaml not found")

@@ -44,6 +44,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,7 @@ def _get_project_root() -> Path:
     env = os.environ.get("ZEPHYR_PROJECT_ROOT")
     if env:
         return Path(env)
-    return Path(__file__).resolve().parent.parent.parent.parent
+    return REPO_ROOT
 
 
 def _lock_path(root: Path) -> Path:

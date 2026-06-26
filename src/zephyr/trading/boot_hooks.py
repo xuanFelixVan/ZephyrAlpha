@@ -19,6 +19,7 @@ from __future__ import annotations
 import logging
 import threading
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 from zephyr.shared.event_bus import EventBus, EventType
 
@@ -64,7 +65,7 @@ def _init_shared_monitoring_modules() -> None:
         return
     _monitoring_modules_initialized = True
 
-    project_root = Path(__file__).resolve().parents[3]
+    project_root = REPO_ROOT
 
     # 1. LongevityMonitor
     try:
@@ -535,7 +536,7 @@ def register_boot_hooks() -> None:
     def _start_mcp_cluster() -> None:
         """启动 MCP 集群（10 个 Server 按 DAG 拓扑排序启动）。"""
         try:
-            launcher_path = Path(__file__).resolve().parents[3] / "scripts" / "mcp" / "launcher.py"
+            launcher_path = REPO_ROOT / "scripts" / "mcp" / "launcher.py"
             if not launcher_path.exists():
                 logger.warning("MCP launcher not found: %s", launcher_path)
                 return

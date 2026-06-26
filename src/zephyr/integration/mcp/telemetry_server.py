@@ -30,10 +30,11 @@ from pathlib import Path
 
 import yaml
 from mcp.server import FastMCP
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-_CONFIG_DIR = Path(__file__).resolve().parents[3] / "config"
+_CONFIG_DIR = REPO_ROOT / "config"
 
 
 class TelemetryMCP:

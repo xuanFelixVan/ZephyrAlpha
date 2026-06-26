@@ -41,6 +41,7 @@ import sys
 from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +56,7 @@ class GateResult(str, Enum):
     RED = "RED"
 
 
-_PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-_SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
+_SCRIPTS_DIR = REPO_ROOT / "scripts"
 _GOVERNANCE_DIR = _SCRIPTS_DIR / "governance"
 
 
@@ -73,7 +73,7 @@ def _run_script(script_rel: str, *args: str, timeout: int = 30) -> tuple[int, st
             encoding="utf-8",
             errors="replace",
             timeout=timeout,
-            cwd=str(_PROJECT_ROOT),
+            cwd=str(REPO_ROOT),
         )
         return result.returncode, result.stdout.strip()[:2000]
     except subprocess.TimeoutExpired:
@@ -83,14 +83,14 @@ def _run_script(script_rel: str, *args: str, timeout: int = 30) -> tuple[int, st
 
 
 def _check_file_exists(path: str, label: str) -> GateResult:
-    p = _PROJECT_ROOT / path
+    p = REPO_ROOT / path
     if p.exists():
         return GateResult.GREEN
     return GateResult.RED
 
 
 def _check_dir_exists(path: str, label: str) -> GateResult:
-    p = _PROJECT_ROOT / path
+    p = REPO_ROOT / path
     if p.is_dir():
         return GateResult.GREEN
     return GateResult.RED
@@ -103,7 +103,7 @@ def _check_dir_exists(path: str, label: str) -> GateResult:
 
 def check_session_manager() -> GateResult:
     """验证 session_logs/ 目录和 index.yaml 存在."""
-    log_dir = _PROJECT_ROOT / "session_logs"
+    log_dir = REPO_ROOT / "session_logs"
     index = log_dir / "index.yaml"
     if log_dir.is_dir() and index.exists():
         return GateResult.GREEN
@@ -139,7 +139,7 @@ def check_blueprint_mandatory() -> GateResult:
         "docs/03_modules/module-registry.yaml",
         "src/zephyr/gates/_registry.yaml",
     ]
-    missing = [p for p in required if not (_PROJECT_ROOT / p).exists()]
+    missing = [p for p in required if not (REPO_ROOT / p).exists()]
     if not missing:
         return GateResult.GREEN
     return GateResult.RED
@@ -154,7 +154,7 @@ def check_path_resolver() -> GateResult:
         "config",
         "data",
     ]
-    missing = [d for d in key_dirs if not (_PROJECT_ROOT / d).is_dir()]
+    missing = [d for d in key_dirs if not (REPO_ROOT / d).is_dir()]
     if not missing:
         return GateResult.GREEN
     return GateResult.YELLOW
@@ -162,7 +162,7 @@ def check_path_resolver() -> GateResult:
 
 def check_script_manifest() -> GateResult:
     """验证 scripts/script-manifest.yaml 存在且有内容."""
-    manifest = _PROJECT_ROOT / "scripts" / "script-manifest.yaml"
+    manifest = REPO_ROOT / "scripts" / "script-manifest.yaml"
     if not manifest.exists():
         return GateResult.RED
     if manifest.stat().st_size < 100:
@@ -254,7 +254,7 @@ def check_registry_consistency() -> GateResult:
 
 def check_precommit_config() -> GateResult:
     """验证 .pre-commit-config.yaml 存在."""
-    cfg = _PROJECT_ROOT / ".pre-commit-config.yaml"
+    cfg = REPO_ROOT / ".pre-commit-config.yaml"
     if cfg.exists() and cfg.stat().st_size > 50:
         return GateResult.GREEN
     return GateResult.YELLOW
@@ -279,22 +279,22 @@ def check_sys_master_compliance() -> GateResult:
 
 
 def check_data_vendor_integration() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/data/provider_base.py"
+    mod = REPO_ROOT / "src/zephyr/data/provider_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_factor_factory() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/factor/factor_base.py"
+    mod = REPO_ROOT / "src/zephyr/factor/factor_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_alpha_validator() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/factor/factor_base.py"
+    mod = REPO_ROOT / "src/zephyr/factor/factor_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_backtest_minimal() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/research_innovation/backtest_base.py"
+    mod = REPO_ROOT / "src/zephyr/research_innovation/backtest_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
@@ -306,7 +306,7 @@ def check_context_engine_health() -> GateResult:
 
 
 def check_kb_pipeline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/kb/__init__.py"
+    mod = REPO_ROOT / "src/zephyr/kb/__init__.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
@@ -365,7 +365,7 @@ def check_gate_engine_judge() -> GateResult:
 
 
 def check_feedback_loop() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/feedback-loop"
+    mod = REPO_ROOT / "src/zephyr/feedback-loop"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
 
 
@@ -457,7 +457,7 @@ def check_agent_rbac() -> GateResult:
 
 
 def check_audit_trail() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/audit-trail"
+    mod = REPO_ROOT / "src/zephyr/audit-trail"
     if not mod.is_dir():
         return GateResult.RED
 
@@ -515,7 +515,7 @@ def check_audit_trail_context() -> GateResult:
 
 
 def check_asset_inventory() -> GateResult:
-    mod = _PROJECT_ROOT / "data/asset_index/unified-asset-index.yaml"
+    mod = REPO_ROOT / "data/asset_index/unified-asset-index.yaml"
     if not mod.exists():
         return GateResult.YELLOW
 
@@ -541,12 +541,12 @@ def check_asset_inventory() -> GateResult:
 
 
 def check_observability_baseline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/system-telemetry"
+    mod = REPO_ROOT / "src/zephyr/system-telemetry"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
 
 
 def check_mcp_servers_health() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/mcp/gateway_server.py"
+    mod = REPO_ROOT / "src/zephyr/mcp/gateway_server.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
@@ -596,12 +596,12 @@ def check_budget_enforcer() -> GateResult:
 
 
 def check_strategy_pipeline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/pipeline/pipeline_orchestrator.py"
+    mod = REPO_ROOT / "src/zephyr/pipeline/pipeline_orchestrator.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_execution_pipeline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/pipeline/routemanifest.yaml"
+    mod = REPO_ROOT / "src/zephyr/pipeline/routemanifest.yaml"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
@@ -623,7 +623,7 @@ def check_full_audit_regression() -> GateResult:
 def check_architecture_guard() -> GateResult:
     exit_code, output = _run_script("d5_architecture/check_g6_ctr_compliance.py", timeout=30)
     if exit_code == 0:
-        mod = _PROJECT_ROOT / "docs/03_modules/_sys-master/blueprint.md"
+        mod = REPO_ROOT / "docs/03_modules/_sys-master/blueprint.md"
         if mod.exists():
             return GateResult.GREEN
     return GateResult.YELLOW
@@ -635,7 +635,7 @@ def check_full_backtest() -> GateResult:
 
         return GateResult.GREEN
     except ImportError:
-        mod = _PROJECT_ROOT / "src/zephyr/research_innovation/implementations/default_backtest_engine.py"
+        mod = REPO_ROOT / "src/zephyr/research_innovation/implementations/default_backtest_engine.py"
         return GateResult.GREEN if mod.exists() else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
@@ -648,14 +648,14 @@ def check_chaos_test() -> GateResult:
 
         return GateResult.GREEN
     except ImportError:
-        mod = _PROJECT_ROOT / "src/zephyr/feedback-loop/detectors/chaos_engineering.py"
+        mod = REPO_ROOT / "src/zephyr/feedback-loop/detectors/chaos_engineering.py"
         return GateResult.GREEN if mod.exists() else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
 
 
 def check_kill_switch() -> GateResult:
-    ks_dir = _PROJECT_ROOT / "src/zephyr/rollback/kill_switch.py"
+    ks_dir = REPO_ROOT / "src/zephyr/rollback/kill_switch.py"
     if not ks_dir.exists():
         return GateResult.RED
     try:
@@ -679,8 +679,8 @@ def check_shadow_mode() -> GateResult:
         return GateResult.GREEN
     except ImportError:
         shadow_files = [
-            _PROJECT_ROOT / "src/zephyr/testing/code_dedup/shadow_trust_validator.py",
-            _PROJECT_ROOT / "src/zephyr/testing/code_dedup/shadow_verifier.py",
+            REPO_ROOT / "src/zephyr/testing/code_dedup/shadow_trust_validator.py",
+            REPO_ROOT / "src/zephyr/testing/code_dedup/shadow_verifier.py",
         ]
         return GateResult.GREEN if all(f.exists() for f in shadow_files) else GateResult.YELLOW
     except Exception:
@@ -714,7 +714,7 @@ def check_drift_detection() -> GateResult:
 
 
 def check_e2e_integration_test() -> GateResult:
-    test_dir = _PROJECT_ROOT / "tests/governance/test_gct_integration.py"
+    test_dir = REPO_ROOT / "tests/governance/test_gct_integration.py"
     if not test_dir.exists():
         return GateResult.YELLOW
     try:
@@ -723,7 +723,7 @@ def check_e2e_integration_test() -> GateResult:
             capture_output=True,
             text=True,
             timeout=35,
-            cwd=str(_PROJECT_ROOT),
+            cwd=str(REPO_ROOT),
         )
         return GateResult.GREEN if result.returncode == 0 else GateResult.YELLOW
     except Exception:
@@ -731,7 +731,7 @@ def check_e2e_integration_test() -> GateResult:
 
 
 def check_mcp_e2e() -> GateResult:
-    test_dir = _PROJECT_ROOT / "tests/adversarial/test_mcp_red_team.py"
+    test_dir = REPO_ROOT / "tests/adversarial/test_mcp_red_team.py"
     if not test_dir.exists():
         return GateResult.YELLOW
     try:
@@ -740,7 +740,7 @@ def check_mcp_e2e() -> GateResult:
             capture_output=True,
             text=True,
             timeout=65,
-            cwd=str(_PROJECT_ROOT),
+            cwd=str(REPO_ROOT),
         )
         return GateResult.GREEN if result.returncode == 0 else GateResult.YELLOW
     except Exception:
@@ -749,9 +749,9 @@ def check_mcp_e2e() -> GateResult:
 
 def check_pipeline_e2e() -> GateResult:
     test_files = [
-        _PROJECT_ROOT / "tests/infrastructure/test_drift_e2e_pipeline.py",
-        _PROJECT_ROOT / "tests/infrastructure/test_escalation_e2e.py",
-        _PROJECT_ROOT / "tests/governance/test_jsonl_pipeline.py",
+        REPO_ROOT / "tests/infrastructure/test_drift_e2e_pipeline.py",
+        REPO_ROOT / "tests/infrastructure/test_escalation_e2e.py",
+        REPO_ROOT / "tests/governance/test_jsonl_pipeline.py",
     ]
     if not any(f.exists() for f in test_files):
         return GateResult.YELLOW
@@ -767,7 +767,7 @@ def check_pipeline_e2e() -> GateResult:
                     capture_output=True,
                     text=True,
                     timeout=35,
-                    cwd=str(_PROJECT_ROOT),
+                    cwd=str(REPO_ROOT),
                 ): p
                 for p in paths
             }
@@ -808,7 +808,7 @@ def check_dependency_audit() -> GateResult:
             return GateResult.RED
         return GateResult.GREEN
     except ImportError:
-        test_file = _PROJECT_ROOT / "tests/governance/test_dependency_graph_acyclic.py"
+        test_file = REPO_ROOT / "tests/governance/test_dependency_graph_acyclic.py"
         return GateResult.GREEN if test_file.exists() else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
@@ -839,7 +839,7 @@ def check_a2a_hold() -> GateResult:
 
 
 def check_code_dedup() -> GateResult:
-    dedup_dir = _PROJECT_ROOT / "src/zephyr/testing/code_dedup"
+    dedup_dir = REPO_ROOT / "src/zephyr/testing/code_dedup"
     if not dedup_dir.is_dir():
         return GateResult.YELLOW
     py_count = len(list(dedup_dir.glob("*.py")))
@@ -855,8 +855,8 @@ def check_task_system() -> GateResult:
 
         return GateResult.GREEN
     except ImportError:
-        tr = _PROJECT_ROOT / "src/zephyr/db/task_repo.py"
-        bo = _PROJECT_ROOT / "src/zephyr/orchestrator/batch_orchestrator.py"
+        tr = REPO_ROOT / "src/zephyr/db/task_repo.py"
+        bo = REPO_ROOT / "src/zephyr/orchestrator/batch_orchestrator.py"
         return GateResult.GREEN if tr.exists() and bo.exists() else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
@@ -881,9 +881,9 @@ def check_lsg_security() -> GateResult:
         return GateResult.GREEN
     except ImportError:
         key_files = [
-            _PROJECT_ROOT / "src/zephyr/llm-security/gateway.py",
-            _PROJECT_ROOT / "src/zephyr/llm-security/protocol.py",
-            _PROJECT_ROOT / "src/zephyr/llm-security/self_protection/red_team_scanner.py",
+            REPO_ROOT / "src/zephyr/llm-security/gateway.py",
+            REPO_ROOT / "src/zephyr/llm-security/protocol.py",
+            REPO_ROOT / "src/zephyr/llm-security/self_protection/red_team_scanner.py",
         ]
         missing = [str(f) for f in key_files if not f.exists()]
         if missing:

@@ -37,6 +37,7 @@ import os
 import sys
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.infrastructure.asset_inventory.classifier import Classifier
 from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
 from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
@@ -46,7 +47,6 @@ from zephyr.infrastructure.asset_inventory.telemetry import get_telemetry
 
 logger = logging.getLogger(__name__)
 
-ROOT = Path(__file__).resolve().parents[3]
 
 
 def _parse_args() -> argparse.Namespace:
@@ -93,12 +93,12 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _load_scan() -> str | None:
-    p = ROOT / "data" / "scans" / "raw-asset-scan.json"
+    p = REPO_ROOT / "data" / "scans" / "raw-asset-scan.json"
     return str(p) if p.exists() else None
 
 
 def _load_classified() -> str | None:
-    p = ROOT / "data" / "classified" / "classified-assets.json"
+    p = REPO_ROOT / "data" / "classified" / "classified-assets.json"
     return str(p) if p.exists() else None
 
 
@@ -109,7 +109,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
 
         count = 0
         for d in s.directories:
-            ad = ROOT / d
+            ad = REPO_ROOT / d
             if ad.is_dir():
                 q = deque([ad])
                 while q:
@@ -159,7 +159,7 @@ def _cmd_classify(args: argparse.Namespace) -> int:
 
     result = c.classify(scan)
 
-    out_dir = ROOT / "data" / "classified"
+    out_dir = REPO_ROOT / "data" / "classified"
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / "classified-assets.json"
     payload = result.model_dump(mode="json")
@@ -201,7 +201,7 @@ def _cmd_reconcile(args: argparse.Namespace) -> int:
     assets = [ClassifiedAsset(**a) for a in cdata.get("assets", [])]
     classified = ClassificationResult(**{**cdata, "assets": assets})
 
-    idx_path = ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
+    idx_path = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
     existing = None
     if idx_path.exists():
         import yaml
@@ -306,7 +306,7 @@ def _auto_fix_orphans(orphans: list) -> int:
     import subprocess
 
     fixed = 0
-    scaffold_script = str(ROOT / "scripts" / "scaffold.py")
+    scaffold_script = str(REPO_ROOT / "scripts" / "scaffold.py")
 
     for o in orphans:
         ext = Path(o.relative_path).suffix
@@ -324,7 +324,7 @@ def _auto_fix_orphans(orphans: list) -> int:
                         ["python", scaffold_script, "module", pkg, name, "--desc", f"auto-fix orphan: {rel}"],
                         capture_output=True,
                         timeout=30,
-                        cwd=str(ROOT),
+                        cwd=str(REPO_ROOT),
                     )
                     fixed += 1
                 except Exception:
@@ -336,7 +336,7 @@ def _auto_fix_orphans(orphans: list) -> int:
                     ["python", scaffold_script, "script", script_rel, "--desc", f"auto-fix orphan: {rel}"],
                     capture_output=True,
                     timeout=30,
-                    cwd=str(ROOT),
+                    cwd=str(REPO_ROOT),
                 )
                 fixed += 1
             except Exception:
@@ -346,7 +346,7 @@ def _auto_fix_orphans(orphans: list) -> int:
 
 
 def _cmd_dashboard(args: argparse.Namespace) -> int:
-    idx_p = ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
+    idx_p = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
     if not idx_p.exists():
         print("错误: 索引文件不存在——先运行 scan → classify → reconcile", file=sys.stderr)
         return 2
@@ -367,7 +367,7 @@ def _cmd_dashboard(args: argparse.Namespace) -> int:
 
 
 def _cmd_check(args: argparse.Namespace) -> int:
-    idx_p = ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
+    idx_p = REPO_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
     result: dict[str, object] = {}
 
     if not idx_p.exists():
@@ -430,7 +430,7 @@ def _cmd_bootstrap(args: argparse.Namespace) -> int:
 
     c = Classifier()
     classified = c.classify(result)
-    out_dir = ROOT / "data" / "classified"
+    out_dir = REPO_ROOT / "data" / "classified"
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / "classified-assets.json"
     payload = classified.model_dump(mode="json")
@@ -467,9 +467,9 @@ def _cmd_bootstrap(args: argparse.Namespace) -> int:
 def _cmd_clean(args: argparse.Namespace) -> int:
     dry = not args.apply
     cleanup_dirs = [
-        ROOT / "data" / "scans",
-        ROOT / "data" / "classified",
-        ROOT / "data" / "reports",
+        REPO_ROOT / "data" / "scans",
+        REPO_ROOT / "data" / "classified",
+        REPO_ROOT / "data" / "reports",
     ]
 
     total = 0
@@ -503,7 +503,7 @@ def _cmd_deps(args: argparse.Namespace) -> int:
 
     from zephyr.infrastructure.asset_inventory.dependency import build_dependency_graph
 
-    graph = build_dependency_graph(entries, ROOT)
+    graph = build_dependency_graph(entries, REPO_ROOT)
 
     print("  DEPENDENCY GRAPH")
     print(f"  files          {graph.total_files}")
@@ -526,7 +526,7 @@ def _cmd_deps(args: argparse.Namespace) -> int:
 def _cmd_registries(args: argparse.Namespace) -> int:
     from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryManager
 
-    mgr = RegistryManager(ROOT)
+    mgr = RegistryManager(REPO_ROOT)
     entries, skipped = mgr.load_all()
 
     print("  REGISTRIES")

@@ -45,6 +45,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = ["ContinuityContext", "SessionContinuity", "SessionState"]
 
@@ -490,7 +491,7 @@ class SessionContinuity:
             import subprocess
 
             script = (
-                Path(__file__).resolve().parents[2].parent.parent
+                REPO_ROOT
                 / "scripts"
                 / "governance"
                 / "auto_sync_all_registries.py"

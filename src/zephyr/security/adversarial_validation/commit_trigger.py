@@ -55,6 +55,7 @@ import threading
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -66,10 +67,8 @@ __all__: list[str] = [
 ]
 
 # ── 路径（绝对路径，对齐 project_memory 硬约束）──────────────────────────
-# commit_trigger.py 位于 src/zephyr/security/adversarial_validation/，
-# parents[4] = 项目根 d:\ZephyrAlpha
-_PROJECT_ROOT: Path = Path(__file__).resolve().parents[4]
-_QUEUE_DIR: Path = _PROJECT_ROOT / "data" / "red_blue" / "trigger_queue"
+# REPO_ROOT 由 zephyr.shared.io.paths 提供（SSoT）
+_QUEUE_DIR: Path = REPO_ROOT / "data" / "red_blue" / "trigger_queue"
 
 # ── 正式文件头部标记（对齐 project_memory 红蓝对抗触发条件）──────────────
 # 命中 `# [BLUEPRINT]` 或 `# [MODULE]`（方括号格式）。

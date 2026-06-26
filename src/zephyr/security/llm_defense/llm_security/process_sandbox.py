@@ -71,6 +71,7 @@ import os
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [
     "CWD_WHITELIST_SUFFIXES",
@@ -183,7 +184,7 @@ class L2aSandbox:
         env_whitelist: frozenset[str] | None = None,
         default_timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        self._repo_root: Path = repo_root if repo_root is not None else Path(__file__).resolve().parents[3]
+        self._repo_root: Path = repo_root if repo_root is not None else REPO_ROOT
         self._cwd_whitelist = cwd_whitelist or CWD_WHITELIST_SUFFIXES
         self._env_whitelist = env_whitelist or ENV_WHITELIST
         self._default_timeout = default_timeout

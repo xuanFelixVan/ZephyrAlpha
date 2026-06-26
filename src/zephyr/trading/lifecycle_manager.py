@@ -28,6 +28,7 @@ LifecycleManager — 启动/停止序列
 """
 
 from dataclasses import dataclass, field
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.capability_registry import CapabilityRegistry
@@ -162,9 +163,8 @@ class LifecycleManager:
 
     def _start_governance_watchdog(self) -> None:
         import sys as _sys
-        from pathlib import Path as _Path
 
-        _governance_dir = str(_Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "governance")
+        _governance_dir = str(REPO_ROOT / "scripts" / "governance")
         if _governance_dir not in _sys.path:
             _sys.path.insert(0, _governance_dir)
         from governance_watchdog import GovernanceWatchdog as _GovernanceWatchdog

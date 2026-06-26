@@ -89,6 +89,7 @@ from pydantic import BaseModel, Field, field_validator
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",
@@ -640,8 +641,6 @@ class HealthMonitor:
 # directive -> (tool_name, 默认参数构造器) 映射。生产可替换注入。
 DirectiveChain = list[tuple[str, str, dict[str, Any]]]
 
-# agent_orchestrator.py 位于 src/zephyr/orchestrator/ → 仓库根为 parents[3]
-_REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 class AgentOrchestrator:
@@ -701,7 +700,7 @@ class AgentOrchestrator:
         elif sanitize_llm_context:
             _mod = importlib.import_module("zephyr.security.llm_defense.llm_security.input_sanitizer")
             InputSanitizer = _mod.InputSanitizer
-            self._input_sanitizer = InputSanitizer(root=str(_REPO_ROOT))
+            self._input_sanitizer = InputSanitizer(root=str(REPO_ROOT))
         else:
             self._input_sanitizer = None
 

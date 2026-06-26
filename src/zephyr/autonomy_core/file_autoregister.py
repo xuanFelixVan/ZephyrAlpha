@@ -16,6 +16,7 @@
 
 import os
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
 import yaml
@@ -25,7 +26,7 @@ class FileAutoRegister:
     def __init__(self, manifest_path: Path | None = None):
         self.manifest_path = (
             manifest_path
-            or Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "governance" / "script-manifest.yaml"
+            or REPO_ROOT / "scripts" / "governance" / "script-manifest.yaml"
         )
 
     def register(self, file_path: str, module: str = "unknown") -> dict[str, Any]:

@@ -31,7 +31,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ClassVar
 
-PROJECT_ROOT = Path(__file__).parents[4]
+from zephyr.shared.io.paths import REPO_ROOT
 
 ALLOWED_FILES: set[str] = {
     "src/zephyr/shared/infra/process_pool.py",
@@ -167,7 +167,7 @@ def scan_directory(
 
 
 def result() -> GateResult:
-    return scan_directory(PROJECT_ROOT)
+    return scan_directory(REPO_ROOT)
 
 
 if __name__ == "__main__":

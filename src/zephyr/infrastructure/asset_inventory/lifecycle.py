@@ -24,6 +24,7 @@ import logging
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.infrastructure.asset_inventory.models import (
     AssetLifecycleEvent,
     AssetStatus,
@@ -57,7 +58,7 @@ class Lifecycle:
         root: Path | None = None,
     ) -> None:
         self.decay_days = decay_days or DEFAULT_DECAY_DAYS
-        self.root = root or Path(__file__).resolve().parents[3]
+        self.root = root or REPO_ROOT
 
     def evaluate(self, index: UnifiedAssetIndex) -> tuple[list[AssetLifecycleEvent], UnifiedAssetIndex]:
         now = datetime.now(UTC)

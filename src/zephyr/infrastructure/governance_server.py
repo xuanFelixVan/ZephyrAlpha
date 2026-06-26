@@ -49,14 +49,14 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure._base_server import BaseMCPServer
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = ["GovernanceServer", "create_server"]
 
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
 def _run_script(script_rel: str, *args: str) -> dict[str, Any]:
-    script_path = _PROJECT_ROOT / script_rel
+    script_path = REPO_ROOT / script_rel
     cmd = [sys.executable, str(script_path), *args]
     try:
         result = subprocess.run(
@@ -64,7 +64,7 @@ def _run_script(script_rel: str, *args: str) -> dict[str, Any]:
             capture_output=True,
             text=True,
             timeout=60,
-            cwd=str(_PROJECT_ROOT),
+            cwd=str(REPO_ROOT),
         )
         return {
             "exit_code": result.returncode,
@@ -494,7 +494,7 @@ class GovernanceServer(BaseMCPServer):
         if test_file is None:
             return {"contract_id": contract_id, "error": f"Unknown contract: {contract_id}", "valid": False}
 
-        test_path = _PROJECT_ROOT / test_file
+        test_path = REPO_ROOT / test_file
         if not test_path.exists():
             return {"contract_id": contract_id, "error": f"Test file not found: {test_file}", "valid": False}
 
@@ -560,16 +560,16 @@ class GovernanceServer(BaseMCPServer):
             from zephyr.behavioral_audit.cold_start import init_database, init_directories
             from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
 
-            project_root = str(_PROJECT_ROOT)
+            project_root = str(REPO_ROOT)
             init_directories(project_root)
             init_database(project_root)
             scan_level = {"LIGHT": ScanLevel.LIGHT, "STANDARD": ScanLevel.STANDARD, "DEEP": ScanLevel.DEEP}.get(
                 level, ScanLevel.STANDARD
             )
             target_dir = (
-                str(_PROJECT_ROOT / module_dir)
+                str(REPO_ROOT / module_dir)
                 if module_dir
-                else str(_PROJECT_ROOT / "src" / "zephyr" / "behavioral-auditor")
+                else str(REPO_ROOT / "src" / "zephyr" / "behavioral-auditor")
             )
             result = asyncio.run(scan(level=scan_level, scope=[target_dir] if module_dir else None))
             return {

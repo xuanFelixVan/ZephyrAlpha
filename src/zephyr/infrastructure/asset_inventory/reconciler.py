@@ -25,6 +25,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.infrastructure.asset_inventory.models import (
     ClassificationResult,
     ClassifiedAsset,
@@ -52,7 +53,7 @@ class Reconciler:
     ) -> None:
         self.orphan_tolerance_hours = orphan_tolerance_hours
         self.ghost_max_age_days = ghost_max_age_days
-        self.root = root or Path(__file__).resolve().parents[3]
+        self.root = root or REPO_ROOT
 
     def reconcile(
         self,

@@ -31,6 +31,8 @@ import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = [
@@ -210,7 +212,7 @@ class PostDocReviewScanner:
 
     def __init__(self, project_root: Path | None = None, session_id: str = "") -> None:
         if project_root is None:
-            project_root = Path(__file__).resolve().parents[4]
+            project_root = REPO_ROOT
         self._root = project_root
         # R7 防御：session_id 校验——禁止路径遍历字符
         if session_id and not _SESSION_ID_PATTERN.match(session_id):

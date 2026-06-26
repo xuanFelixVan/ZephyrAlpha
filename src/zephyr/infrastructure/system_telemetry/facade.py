@@ -52,6 +52,7 @@ from zephyr.infrastructure.system_telemetry.alerts import AlertSubsystem
 from zephyr.infrastructure.system_telemetry.health import HealthSubsystem
 from zephyr.infrastructure.system_telemetry.profiles import ProfileSubsystem
 from zephyr.infrastructure.system_telemetry.schema import SchemaSubsystem
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _logger = logging.getLogger(__name__)
 
@@ -70,8 +71,7 @@ _SHUTDOWN_ORDER = [
 _RING_SIZE = 4096
 _JSONL_FLUSH_INTERVAL = 16
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
-_DATA_DIR = _REPO_ROOT / "data" / "telemetry"
+_DATA_DIR = REPO_ROOT / "data" / "telemetry"
 
 _in_memory_ring: list[dict] = []
 _ring_write_cursor = 0

@@ -64,8 +64,7 @@ def _resolve_default_directive_dir() -> Path:
     if env:
         return Path(env).expanduser().resolve()
 
-    self_dir = Path(__file__).resolve()
-    project_root = self_dir.parents[3]
+    project_root = REPO_ROOT
     in_tree = project_root / "resources" / "DOS" / "directives"
     return in_tree
 

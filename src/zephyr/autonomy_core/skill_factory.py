@@ -18,6 +18,7 @@ import os
 import re
 from collections.abc import Generator
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
 import yaml
@@ -27,7 +28,6 @@ _SKILLS_DIR = _BASE_DIR / "skills"
 _FACTORY_DIR = _SKILLS_DIR / "factory"
 _REGISTRY_PATH = _BASE_DIR / "skill-registry.yaml"
 _AGENTS_MD_PATH = _BASE_DIR / "AGENTS.md"
-_PROJECT_ROOT = _BASE_DIR.parent.parent.parent
 
 
 class SkillFactory:
@@ -41,7 +41,7 @@ class SkillFactory:
     def _read_blueprint(self, blueprint_path: str) -> str:
         path = Path(blueprint_path)
         if not path.is_absolute():
-            candidate = _PROJECT_ROOT / path
+            candidate = REPO_ROOT / path
             if candidate.exists():
                 path = candidate
             else:

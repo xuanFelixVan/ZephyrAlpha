@@ -34,13 +34,13 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_PATTERNS_FILE = str(_PROJECT_ROOT / "data" / "runtime" / "zombie-patterns.json")
-_ZOMBIE_LOG = str(_PROJECT_ROOT / "data" / "runtime" / "zombie_kill.log")
+_PATTERNS_FILE = str(REPO_ROOT / "data" / "runtime" / "zombie-patterns.json")
+_ZOMBIE_LOG = str(REPO_ROOT / "data" / "runtime" / "zombie_kill.log")
 
 _SAFE_KEYWORDS = (
     "ide_health_service",
@@ -179,7 +179,7 @@ def scan_zombie_processes() -> ZombieScanResult:
     except ImportError:
         return result
 
-    project_root_str = str(_PROJECT_ROOT)
+    project_root_str = str(REPO_ROOT)
     current_pid = os.getpid()
 
     for proc in psutil.process_iter(["pid", "name", "cmdline", "create_time", "cwd"]):

@@ -63,6 +63,7 @@ from typing import Any
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = [
     "DEFAULT_ROUTER_YAML_PATH",
@@ -89,10 +90,6 @@ _UTC = UTC
 # 路径常量
 # ---------------------------------------------------------------------------
 
-# 路径解析：trigger_router.py 位于 src/zephyr/orchestrator/，
-# parents[3] = （项目根，与 capability.py 一致）
-_FILE = Path(__file__).resolve()
-REPO_ROOT: Path = _FILE.parents[4]
 DEFAULT_ROUTER_YAML_PATH: Path = REPO_ROOT / "config" / "trigger_router.yaml"
 
 PHASE1D_TRIGGER_TYPES: frozenset[str] = frozenset(

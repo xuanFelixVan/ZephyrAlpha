@@ -33,8 +33,8 @@ from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).parents[4]
-SRC_ROOT = PROJECT_ROOT / "src" / "zephyr"
+from zephyr.shared.io.paths import REPO_ROOT
+SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 LAYER_MODULE_NAMES = [
     "zephyr.data",

@@ -35,9 +35,9 @@ import yaml
 
 from zephyr.integration.shared.schema.schemas import Priority
 
-PROJECT_ROOT = Path(__file__).parents[4]
+from zephyr.shared.io.paths import REPO_ROOT
 CONTRACTS_PATH = (
-    PROJECT_ROOT
+    REPO_ROOT
     / "docs"
     / "02_enterprise_architecture"
     / "target-architecture"

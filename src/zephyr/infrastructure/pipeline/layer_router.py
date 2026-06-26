@@ -43,10 +43,10 @@ from typing import Any
 
 import yaml
 
+
+from zephyr.shared.io.paths import REPO_ROOT
 _logger = logging.getLogger(__name__)
 
-_FILE = Path(__file__).resolve()
-REPO_ROOT: Path = _FILE.parents[3]
 DEFAULT_CONTRACTS_PATH: Path = (
     REPO_ROOT
     / "docs"
