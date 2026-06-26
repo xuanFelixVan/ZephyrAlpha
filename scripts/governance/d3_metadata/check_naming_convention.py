@@ -1174,24 +1174,38 @@ def check_new_files_full(
 
     violations: list[NamingViolation] = []
 
-    # 先确定哪些是新增文件（git diff --cached --diff-filter=A）
-    # N-16 和风格检查都只对新增文件生效，修改文件不查（历史遗留豁免）
+    # 确定哪些是新增文件（未被 git 跟踪）vs 修改文件（已被 git 跟踪）
+    # 用 git ls-files 而非 git diff --cached --diff-filter=A：gateway 在 git add
+    # 之前调用此检查，staged 区为空，diff-filter=A 无法识别新增文件。
+    # git ls-files 判断文件是否已跟踪：未跟踪 = 新增，已跟踪 = 修改。
     try:
-        added_result = subprocess.run(
-            ["git", "diff", "--cached", "--diff-filter=A", "--name-only"],
+        tracked_result = subprocess.run(
+            ["git", "ls-files"],
             capture_output=True, text=True, check=True,
             cwd=str(project_root),
         )
-        added_set = {f.replace("\\", "/") for f in added_result.stdout.strip().splitlines() if f}
+        tracked_set = {f.replace("\\", "/") for f in tracked_result.stdout.strip().splitlines() if f}
     except (subprocess.CalledProcessError, FileNotFoundError):
-        added_set = set()  # fail-open: git 不可用时不阻断
+        tracked_set = None  # fail-open: git 不可用时不阻断
+
+    def _is_new_file(rel_path: str) -> bool:
+        """文件是否为新增（未被 git 跟踪）。fail-open: git 不可用时返回 False（不阻断）。"""
+        if tracked_set is None:
+            return False
+        return rel_path not in tracked_set
 
     # 1. N-16 唯一性检查（仅新增文件，扩展覆盖 tests/+docs/+src/+scripts/）
-    added_files_for_n16 = [
-        f for f in new_files
-        if (Path(f).resolve().relative_to(project_root.resolve()).as_posix()
-            if Path(f).is_absolute() else f) in added_set
-    ]
+    added_files_for_n16: list[str] = []
+    for f in new_files:
+        p = Path(f)
+        if not p.is_absolute():
+            p = project_root / f
+        try:
+            rel = p.resolve().relative_to(project_root.resolve()).as_posix()
+        except ValueError:
+            continue
+        if _is_new_file(rel):
+            added_files_for_n16.append(f)
     if added_files_for_n16:
         violations.extend(check_new_files_naming(
             added_files_for_n16, project_root, scopes=("tests", "docs", "src", "scripts")
@@ -1206,7 +1220,7 @@ def check_new_files_full(
             rel = p.resolve().relative_to(project_root.resolve()).as_posix()
         except ValueError:
             continue
-        if rel not in added_set:
+        if not _is_new_file(rel):
             continue  # 只查新增文件，修改文件跳过（历史遗留豁免）
         if _is_path_exempt(rel):
             continue
