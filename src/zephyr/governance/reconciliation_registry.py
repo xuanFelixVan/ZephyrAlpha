@@ -76,6 +76,7 @@ __all__ = [
     "make_path_tree_reconciler",
     "make_working_docs_reconciler",
     "make_domain_doc_reconciler",
+    "make_precommit_id_uniqueness_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -1031,4 +1032,108 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=600,
+    )
+
+
+def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-ID-UNIQ post-commit 兜底 reconciler（治本改进点2）。
+
+    GATE-ID-UNIQ (pre-commit hook id 唯一性) 被 GitCommitGateway 的 --no-verify
+    系统性绕过（机制层病根，与 GATE-15-ttl / GATE-REG-BL 同根：post-commit 补偿层）。
+    本 reconciler 在 post-commit 跑 check_precommit_id_uniqueness.py --ci 重校，
+    检测到 same-repo 重复 id 则记录违规报告供追责（commit 已入历史，非阻断——
+    与 make_ttl_reconciler 一致的设计裁定）。
+
+    设计裁定（非阻断）：
+    post-commit 无法回滚 commit；same-repo 重复 id 已入 git 历史，仅告警记录到
+    .runtime/reconcile_reports/id_uniqueness_<ts>.json，供 ide_health_daemon +
+    人工追责 + 后续修复（git revert 或 amend）。双层防御：pre-commit GATE-ID-UNIQ
+    阻断 + post-commit reconciler 兜底 --no-verify 绕过场景。
+
+    向内收设计（三原则审核）：
+    - 责任唯一：检测逻辑只在 check_precommit_id_uniqueness.py 一处（pre-commit
+      hook 与本 reconciler 共用同一脚本，无第二检测实现）
+    - 真源唯一：复用 ReconciliationRegistry 框架（第8个 reconciler），不新建兜底系统；
+      复用 make_ttl_reconciler 的"post-commit 重校 + 报告落盘 + 非阻断"模式
+    - 向内收：扩展 ``_register_default_reconcilers`` 一行，不改 gateway 方法体
+
+    trigger 裁定：committed_files 含 ``.pre-commit-config.yaml`` 即命中
+    （该文件是 GATE-ID-UNIQ 的唯一校验对象，与 pre-commit hook 的 files 正则一致）。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
+            保持本纯 stdlib 模块不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-ID-UNIQ", priority=250)。
+    """
+    import json
+    import os
+    import subprocess
+    import sys
+    import time
+
+    project_root = gateway.project_root
+    _CONFIG_REL = ".pre-commit-config.yaml"
+    _CHECK_SCRIPT = "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py"
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel == _CONFIG_REL:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. post-commit 重校（脚本内部读 CONFIG_PATH = REPO_ROOT/.pre-commit-config.yaml，
+        #    不接受文件参；--ci 硬阻断语义在 post-commit 退化为非阻断——exit 1 仅作信号）
+        scan_result = subprocess.run(
+            [sys.executable, _CHECK_SCRIPT, "--ci"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        # 2. 报告落盘
+        reports_dir = project_root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        report_path = reports_dir / f"id_uniqueness_{ts}.json"
+        report = {
+            "gate_id": "GATE-ID-UNIQ",
+            "session_id": session_id,
+            "timestamp": ts,
+            "exit_code": scan_result.returncode,
+            "checked_file": _CONFIG_REL,
+            "stdout_tail": scan_result.stdout.strip()[-500:],
+            "stderr_tail": scan_result.stderr.strip()[-500:],
+        }
+        try:
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"id_uniqueness scan done (exit={scan_result.returncode}) but report write failed: {e}",
+            )
+        # 3. 判定（exit 0 = clean；exit 1 = same-repo 重复 id 检出；exit 2 = 脚本异常）
+        if scan_result.returncode == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"id_uniqueness scan clean, report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"id_uniqueness scan detected violations (exit={scan_result.returncode}), report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-ID-UNIQ",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=250,
     )
