@@ -75,6 +75,27 @@ STASH_OVERWRITE = {"pop", "apply", "branch"}
 
 # 强制 stash 的环境变量（self_healer 等合法场景）
 FORCE_STASH_ENV = "ZEPHYR_FORCE_STASH"
+# GitCommitGateway 授权标记（P0-ENV 契约统一：gateway commit 流程设置此 env）
+GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
+
+
+def _is_gateway_authorized() -> bool:
+    """检测当前进程是否经 GitCommitGateway 或显式强制授权（P0-ENV 契约统一）。
+
+    统一两个 env：
+    - ZEPHYR_FORCE_STASH：self_healer 等合法场景显式强制 stash
+    - ZEPHYR_COMMIT_GATEWAY：GitCommitGateway 内部 commit 流程设置
+      （git_commit_gateway.py L429/L690 设此 env，validate_commit_gateway.py L62/L67 检测）
+
+    根因：gateway 直接调 git 子进程做 stash push（git_commit_gateway.py L584-585），
+    设置的是 ZEPHYR_COMMIT_GATEWAY，但本文件原只识别 ZEPHYR_FORCE_STASH，
+    两者不互认。本函数统一契约，使 gateway 的 stash 操作也被识别为授权。
+    """
+    return (
+        os.environ.get(FORCE_STASH_ENV) == "1"
+        or os.environ.get(GATEWAY_ENV) == "1"
+    )
+
 
 # git mv 目录重命名策略环境变量
 # block (默认): 检测到未跟踪文件 → 阻断
@@ -232,8 +253,8 @@ def _handle_stash(git_args: list[str]) -> int:
     files_in_scope = _extract_files_stash(args)
     if not files_in_scope:
         return _passthrough(git_args)
-    if os.environ.get(FORCE_STASH_ENV) == "1":
-        print(f"[GIT-GUARD] {FORCE_STASH_ENV}=1，强制 stash {len(files_in_scope)} 个未提交文件", file=sys.stderr)
+    if _is_gateway_authorized():
+        print(f"[GIT-GUARD] stash 授权（{FORCE_STASH_ENV}|{GATEWAY_ENV}），强制 stash {len(files_in_scope)} 个未提交文件", file=sys.stderr)
         return _passthrough(git_args)
     print("", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
@@ -247,6 +268,7 @@ def _handle_stash(git_args: list[str]) -> int:
     print("  解决方案:", file=sys.stderr)
     print("    1. 先 commit 你的修改：git add <file> && git commit -m '...'", file=sys.stderr)
     print(f"    2. 强制 stash（self_healer 等合法场景）：{FORCE_STASH_ENV}=1 git stash", file=sys.stderr)
+    print(f"    3. 经 GitCommitGateway commit（自动设置 {GATEWAY_ENV}=1，本门禁自动放行 stash）", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
     return 1
 
