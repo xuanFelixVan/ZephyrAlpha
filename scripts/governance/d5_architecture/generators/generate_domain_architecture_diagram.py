@@ -86,9 +86,11 @@ def get_domain_info(conn: sqlite3.Connection, domain_id: str) -> dict | None:
 def get_domain_nodes(conn: sqlite3.Connection, domain_id: str) -> list[dict]:
     """查询指定域的所有节点。"""
     cur = conn.execute(
-        "SELECT node_id, path, blueprint_id, design_maturity, build_status, node_name, "
-        "in_degree, out_degree, architecture_layer, file_path "
-        "FROM nodes WHERE domain_id=? ORDER BY path",
+        "SELECT n.node_id, n.path, n.blueprint_id, n.design_maturity, n.build_status, n.node_name, "
+        "(SELECT COUNT(*) FROM edges WHERE to_node_id=n.node_id) AS in_degree, "
+        "(SELECT COUNT(*) FROM edges WHERE from_node_id=n.node_id) AS out_degree, "
+        "n.architecture_layer, n.file_path "
+        "FROM nodes n WHERE n.domain_id=? ORDER BY n.path",
         (domain_id,),
     )
     rows = []

@@ -109,7 +109,9 @@ CREATE TABLE IF NOT EXISTS nodes (
     can_build                INTEGER DEFAULT 1,
     gate_reason              TEXT    NOT NULL DEFAULT '',
     hard_boundary_ref        TEXT,
-    consumed_interfaces      TEXT
+    consumed_interfaces      TEXT,
+    blueprint_id_invalid     INTEGER DEFAULT 0,
+    blueprint_path           TEXT
 )
 """
 
@@ -137,7 +139,10 @@ CREATE TABLE IF NOT EXISTS edges (
     resource_impact          TEXT,
     relationship_type        TEXT    DEFAULT 'one_to_many',
     cross_domain             INTEGER DEFAULT 0,
-    verified                 INTEGER DEFAULT 0
+    verified                 INTEGER DEFAULT 0,
+    dep_maturity             TEXT DEFAULT 'active',
+    is_legal_cycle           INTEGER DEFAULT 0,
+    valid_since              TEXT
 )
 """
 
@@ -248,7 +253,10 @@ CREATE TABLE IF NOT EXISTS arch_constraints (
     rule_definition  TEXT    NOT NULL,
     severity         TEXT    DEFAULT 'hard',
     enforcement      TEXT    DEFAULT 'gate',
-    description      TEXT
+    description      TEXT,
+    details          TEXT,
+    detected_at      TEXT,
+    violation_status TEXT    DEFAULT 'open'
 )
 """
 
@@ -258,7 +266,6 @@ CREATE TABLE IF NOT EXISTS arch_directory_tree (
     parent_path      TEXT,
     path_type        TEXT    NOT NULL,
     domain_id        TEXT,
-    state            TEXT    NOT NULL DEFAULT 'design',
     blueprint_id     TEXT,
     change_policy    TEXT,
     modification_permission TEXT,
@@ -314,7 +321,6 @@ _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_domdeps_from       ON domain_dependencies(from_domain)",
     "CREATE INDEX IF NOT EXISTS idx_domdeps_to         ON domain_dependencies(to_domain)",
     "CREATE INDEX IF NOT EXISTS idx_arch_dir_domain    ON arch_directory_tree(domain_id)",
-    "CREATE INDEX IF NOT EXISTS idx_arch_dir_state     ON arch_directory_tree(state)",
     "CREATE INDEX IF NOT EXISTS idx_arch_dir_build     ON arch_directory_tree(build_status)",
     "CREATE INDEX IF NOT EXISTS idx_arch_path_domain   ON arch_path_mappings(domain_id)",
 ]
@@ -893,6 +899,48 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "DROP TABLE IF EXISTS arch_bottlenecks",
             "DROP TABLE IF EXISTS arch_layers",
             "DROP TABLE IF EXISTS invariants",
+        ],
+    ),
+    (
+        15,
+        "v15: Drop 11 dead/drifted columns + rebuild arch_directory_tree (remove node_id FK) — fix #ARCH-016 schema drift. "
+        "nodes: 9 columns (in/out_degree改动态计算; business_stream/stream_role/runtime_plane/ddd_aggregate/"
+        "has_dynamic_import/implementation_ref/provided_interfaces无业务读写). "
+        "edges: migration_status (无业务读写). "
+        "arch_directory_tree: 重建表删node_id列+FK约束 (state列已在v5删除).",
+        [
+            # nodes: 9 dead/latent columns (无业务读写或仅JSON key; in/out_degree改动态COUNT计算)
+            "ALTER TABLE nodes DROP COLUMN in_degree",
+            "ALTER TABLE nodes DROP COLUMN out_degree",
+            "ALTER TABLE nodes DROP COLUMN business_stream",
+            "ALTER TABLE nodes DROP COLUMN stream_role",
+            "ALTER TABLE nodes DROP COLUMN runtime_plane",
+            "ALTER TABLE nodes DROP COLUMN ddd_aggregate",
+            "ALTER TABLE nodes DROP COLUMN has_dynamic_import",
+            "ALTER TABLE nodes DROP COLUMN implementation_ref",
+            "ALTER TABLE nodes DROP COLUMN provided_interfaces",
+            # edges: 1 dead column (仅V5 DDL+migration复制, 无业务读写)
+            # 先DROP orphan索引+触发器 (源码中不存在, 仅DB实例中有), 否则DROP COLUMN会失败或trigger变悬空
+            "DROP INDEX IF EXISTS idx_edges_migration",
+            "DROP TRIGGER IF EXISTS chk_edges_migration_status",
+            "DROP TRIGGER IF EXISTS chk_edges_migration_status_update",
+            "ALTER TABLE edges DROP COLUMN migration_status",
+            # arch_directory_tree: 重建表 (删node_id列+FK约束; state列已在v5删除, 此处仅对齐v1 DDL)
+            # 用重建表模式因node_id有FK约束, ALTER DROP COLUMN对有FK的列可能受限
+            _DDL_ARCH_DIRECTORY_TREE.replace(
+                "CREATE TABLE IF NOT EXISTS arch_directory_tree",
+                "CREATE TABLE arch_directory_tree_new",
+            ),
+            "INSERT INTO arch_directory_tree_new "
+            "(path, parent_path, path_type, domain_id, blueprint_id, change_policy, "
+            "modification_permission, build_status, design_maturity, last_scanned) "
+            "SELECT path, parent_path, path_type, domain_id, blueprint_id, change_policy, "
+            "modification_permission, build_status, design_maturity, last_scanned "
+            "FROM arch_directory_tree",
+            "DROP TABLE arch_directory_tree",
+            "ALTER TABLE arch_directory_tree_new RENAME TO arch_directory_tree",
+            # 重建索引 (DROP TABLE已删除arch_directory_tree的索引, 需重建)
+            *_DDL_INDEXES,
         ],
     ),
 ]
