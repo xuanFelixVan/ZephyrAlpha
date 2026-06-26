@@ -1039,8 +1039,16 @@ def check_filename_uniqueness_all(project_root: Path | None = None) -> list[Nami
 def check_new_files_naming(
     new_files: list[str],
     project_root: Path | None = None,
+    scopes: tuple[str, ...] = ("tests", "docs"),
 ) -> list[NamingViolation]:
     """增量 N-16 检查（真源唯一）：只检查新文件是否与已跟踪文件同名冲突。
+
+    Args:
+        new_files: 新文件路径列表（相对 project_root 或绝对路径）。
+        project_root: 项目根。
+        scopes: N-16 覆盖的顶级目录元组。默认 ("tests", "docs") 向后兼容；
+            选项B 治本扩展为 ("tests", "docs", "src", "scripts") 覆盖全库。
+            跨包合法同名（__init__.py/conftest.py）由豁免清单处理。
 
     用 ``git ls-files`` 构建已跟踪文件基线（避免 os.walk 扫描未跟踪 WIP，
     防多 session 临时文件误阻断），只检测新文件是否引入冲突（不阻断历史遗留）。
@@ -1062,7 +1070,9 @@ def check_new_files_naming(
     if project_root is None:
         project_root = Path(__file__).resolve().parents[3]
 
-    # 只检查 tests/ 和 docs/ 下的文件（N-16 scope + 性能优化）
+    # 只检查 scopes 覆盖目录下的文件（N-16 scope + 性能优化）
+    # 默认 tests+docs（向后兼容）；选项B 治本扩展含 src+scripts
+    scope_prefixes = tuple(f"{s}/" for s in scopes)
     new_rel_files: list[str] = []
     for f in new_files:
         p = Path(f)
@@ -1072,19 +1082,20 @@ def check_new_files_naming(
             rel = p.resolve().relative_to(project_root.resolve()).as_posix()
         except ValueError:
             continue  # 不在项目内
-        if rel.startswith(("tests/", "docs/")):
+        if rel.startswith(scope_prefixes):
             new_rel_files.append(rel)
 
     if not new_rel_files:
         return []
 
     # 豁免清单（真源：trae_028.yaml §n16_config，模块级常量已动态加载）
+    # 跨 scope 统一豁免：__init__.py/conftest.py（包标识/pytest约定）+ docs约定同名
     exempt = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_NAMES
 
     # 用 git ls-files 构建已跟踪文件基线（只已跟踪文件，排除未跟踪 WIP）
     try:
         result = subprocess.run(
-            ["git", "ls-files", "tests/", "docs/"],
+            ["git", "ls-files"] + list(scope_prefixes),
             capture_output=True,
             text=True,
             check=True,
@@ -1127,6 +1138,81 @@ def check_new_files_naming(
                 filepath=rel,
             ))
         committed_basenames[basename] = rel
+
+    return violations
+
+
+def check_new_files_full(
+    new_files: list[str],
+    project_root: Path | None = None,
+) -> list[NamingViolation]:
+    """增量全量命名硬阻断检查（治本·选项B）：GitCommitGateway 内嵌，绕不过 --no-verify。
+
+    对新增文件做 N-01~N-17 风格硬阻断 + N-16 唯一性硬阻断
+    （覆盖 tests/+docs/+src/+scripts/）。
+
+    设计（三个治本闭环）：
+    1. 全库覆盖：N-16 扩展到 src/+scripts/（跨包合法同名 __init__.py/conftest.py 豁免）
+    2. 全维度检测：新增文件 N-01~N-17 风格 + 新增文件 N-16 唯一性
+    3. 绕不过：GitCommitGateway 内嵌，--no-verify 绕过 pre-commit 但绕不过 gateway
+
+    新增 vs 修改区分（防历史违规阻断当前工作）：
+    - 新增文件（git diff --cached --diff-filter=A）：N-16 唯一性 + check_file 风格检查
+    - 修改文件：不查（历史遗留豁免）——修改不引入新文件名，N-16 仅对新文件名有意义
+
+    Args:
+        new_files: 本次 commit 的文件路径列表。
+        project_root: 项目根。
+
+    Returns:
+        NamingViolation 列表（空表示通过）。
+    """
+    if project_root is None:
+        project_root = Path(__file__).resolve().parents[3]
+
+    import subprocess  # 局部 import（与 check_new_files_naming 一致，避免模块级依赖）
+
+    violations: list[NamingViolation] = []
+
+    # 先确定哪些是新增文件（git diff --cached --diff-filter=A）
+    # N-16 和风格检查都只对新增文件生效，修改文件不查（历史遗留豁免）
+    try:
+        added_result = subprocess.run(
+            ["git", "diff", "--cached", "--diff-filter=A", "--name-only"],
+            capture_output=True, text=True, check=True,
+            cwd=str(project_root),
+        )
+        added_set = {f.replace("\\", "/") for f in added_result.stdout.strip().splitlines() if f}
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        added_set = set()  # fail-open: git 不可用时不阻断
+
+    # 1. N-16 唯一性检查（仅新增文件，扩展覆盖 tests/+docs/+src/+scripts/）
+    added_files_for_n16 = [
+        f for f in new_files
+        if (Path(f).resolve().relative_to(project_root.resolve()).as_posix()
+            if Path(f).is_absolute() else f) in added_set
+    ]
+    if added_files_for_n16:
+        violations.extend(check_new_files_naming(
+            added_files_for_n16, project_root, scopes=("tests", "docs", "src", "scripts")
+        ))
+
+    # 2. 对新增文件做 N-01~N-17 风格检查（修改文件不查，历史遗留豁免）
+    for f in new_files:
+        p = Path(f)
+        if not p.is_absolute():
+            p = project_root / f
+        try:
+            rel = p.resolve().relative_to(project_root.resolve()).as_posix()
+        except ValueError:
+            continue
+        if rel not in added_set:
+            continue  # 只查新增文件，修改文件跳过（历史遗留豁免）
+        if _is_path_exempt(rel):
+            continue
+        abspath = project_root / rel
+        if abspath.exists() and abspath.is_file():
+            violations.extend(check_file(rel, abspath, project_root))
 
     return violations
 
@@ -1382,6 +1468,14 @@ def main() -> int:
         help="增量 N-16 检查：只检查指定文件是否与已跟踪文件同名冲突（GitCommitGateway subprocess 调用，"
              "git ls-files 基线，不阻断历史遗留）",
     )
+    parser.add_argument(
+        "--check-new-full",
+        nargs="*",
+        default=None,
+        metavar="FILE",
+        help="增量全量命名硬阻断(治本·选项B):新增文件N-01~N-17风格+所有文件N-16唯一性"
+             "(覆盖tests/docs/src/scripts),硬阻断绕不过--no-verify。GitCommitGateway内嵌调用",
+    )
     args = parser.parse_args()
 
     # 增量 N-16 检查模式（GitCommitGateway --no-verify 补偿用，真源唯一）
@@ -1391,6 +1485,16 @@ def main() -> int:
         if violations:
             for v in violations:
                 print(f"[N-16] {v.message}")
+            return EXIT_FINDINGS
+        return EXIT_PASS
+
+    # 增量全量命名硬阻断模式（治本·选项B：GitCommitGateway 内嵌，绕不过 --no-verify）
+    if args.check_new_full is not None:
+        project_root = Path(__file__).resolve().parents[3]
+        violations = check_new_files_full(args.check_new_full, project_root)
+        if violations:
+            for v in violations:
+                print(f"[{v.rule}] {v.message}")
             return EXIT_FINDINGS
         return EXIT_PASS
 
