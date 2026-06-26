@@ -212,7 +212,7 @@ pre-commit run gate-schema-health --all-files
 **动作7.5**：在治理报告索引添加 v2 修订执行计划链接
 - `d:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\` 索引中添加 `schema_health_revised_execution_plan.md` 链接
 
-**动作7.6**（v2 未列，Agent 发现的漂移文件）：更新 `d:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\MOD-INF-012B-P2-postgresql-migration.md` L499
+**动作7.6**（v2 未列，Agent 发现的漂移文件）：更新 `d:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p2_postgresql_migration.md` L499
 - 从 PostgreSQL 迁移表清单中移除 `arch_layers`（表已删，迁移无意义）
 - 注：同清单 L502 的 `arch_invariants` 是**不同表**（非本轮删除的 `invariants`），不动
 
@@ -237,7 +237,7 @@ pre-commit run gate-schema-health --all-files
 | 10 | `scripts/governance/script_manifest.yaml` | 改：添加 verify_schema_health.py 条目 | 7.2 | v2 §3 阶段7.2 |
 | 11 | `.trae/rules/project_rules.md` | 改：RULE-SIXTEEN 追加 Schema 门禁说明 | 7.3 | v2 §3 阶段7.3 |
 | 12 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 改：L1106 移除 invariants.invariant_id 示例 | 7.4 | 本计划新增（Agent 发现） |
-| 13 | `docs/03_modules/_cross_layer/database/sub_blueprints/MOD-INF-012B-P2-postgresql-migration.md` | 改：L499 移除 arch_layers | 7.6 | 本计划新增（Agent 发现） |
+| 13 | `docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md` | 改：L499 移除 arch_layers | 7.6 | 本计划新增（Agent 发现） |
 
 **不动文件**（明确排除，与 v2 一致）：
 - `sync_yaml_to_depgraph.py`（cross_registry_rules 保留，sync 不动）

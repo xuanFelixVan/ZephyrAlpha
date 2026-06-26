@@ -11,13 +11,13 @@ ttl: permanent
 
 # P2 PostgreSQL迁移任务卡总览（全量重写版）
 
-> 施工方案真源：[MOD-INF-012B-P2-postgresql-migration.md](MOD-INF-012B-P2-postgresql-migration.md)
-> 受影响文件索引：[MOD-INF-012B-P2-affected-files-index.md](MOD-INF-012B-P2-affected-files-index.md)
+> 施工方案真源：[mod_inf_012b_p2_postgresql_migration.md](mod_inf_012b_p2_postgresql_migration.md)
+> 受影响文件索引：[mod_inf_012b_p2_affected_files_index.md](mod_inf_012b_p2_affected_files_index.md)
 > 版本说明：v2.0.0 基于深度去噪审查（去噪率68%，120→63文件）全量重写，原8个任务卡重构为"3阶段骨架卡 + 24个TC-PG执行卡"
 
 ## 文档说明
 
-本文档基于 [affected-files-index.md §九深度去噪审查](MOD-INF-012B-P2-affected-files-index.md#九深度去噪审查2026-06-25) 结果全量重写：
+本文档基于 [affected-files-index.md §九深度去噪审查](mod_inf_012b_p2_affected_files_index.md#九深度去噪审查2026-06-25) 结果全量重写：
 
 - **原8个任务卡**（P2-T1~P2-T6）重构为**3个阶段骨架卡**（保留基础设施/数据迁移/验证阶段）+ **24个TC-PG执行卡**（SQL方言调整细化）
 - **去噪成果**：原始约120个需迁移文件 → 去噪后63个文件，去噪率68%
@@ -1274,5 +1274,5 @@ P2-T1（Docker部署）→ P2-T2（数据迁移）→ TC-PG-01（depgraph_schema
 
 ---
 
-> 本文档基于 [affected-files-index.md §九深度去噪审查](MOD-INF-012B-P2-affected-files-index.md#九深度去噪审查2026-06-25) 结果编写。
+> 本文档基于 [affected-files-index.md §九深度去噪审查](mod_inf_012b_p2_affected_files_index.md#九深度去噪审查2026-06-25) 结果编写。
 > 原始约120个需迁移文件 → 去噪后63个文件，分为24个TC-PG执行卡，去噪率68%。

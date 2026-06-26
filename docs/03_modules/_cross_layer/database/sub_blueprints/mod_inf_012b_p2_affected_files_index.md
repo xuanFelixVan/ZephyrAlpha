@@ -804,7 +804,7 @@ references:
 | # | 文件路径 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|
 | 323 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` | SSoT路径引用 | 更新为PG连接配置引用 |
-| 324 | `docs/03_modules/_cross_layer/database/sub_blueprints/MOD-INF-012B-P2-task-cards.md` | depgraph.db引用 | 更新引用 |
+| 324 | `docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_task_cards.md` | depgraph.db引用 | 更新引用 |
 | 325 | `docs/03_modules/_domain_infra_runtime/task_system/blueprint.md` | SSoT路径引用 | 同上 |
 | 326 | `docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md` | SSoT路径引用 | 同上 |
 | 327 | `docs/03_modules/_domain_reporting/analytics_core/blueprint.md` | SSoT路径引用 | 同上 |

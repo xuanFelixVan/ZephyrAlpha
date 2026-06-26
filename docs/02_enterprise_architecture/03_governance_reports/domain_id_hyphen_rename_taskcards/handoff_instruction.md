@@ -40,20 +40,20 @@ D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_h
 
 【任务卡目录（14张卡+1索引）】
 D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\index.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062621.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062622.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062623.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062624.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062625.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062626.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062627.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062628.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062629.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062630.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062631.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062632.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062633.md
-D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\OPS-2026062634.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062621.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062622.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062623.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062624.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062625.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062626.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062627.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062628.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062629.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062630.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062631.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062632.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062633.md
+D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\task-ops-2026062634.md
 
 【DB（全景图，改前必须git备份）】
 D:\ZephyrAlpha\data\databases\depgraph.db
@@ -257,7 +257,7 @@ git status --short
 现在开始：
 1. 先读取方案文档 D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_plan.md 了解全貌
 2. 读取任务卡索引 D:\ZephyrAlpha\docs\02_enterprise_architecture\03_governance_reports\domain_id_hyphen_rename_taskcards\index.md 了解覆盖度
-3. 从 OPS-2026062621.md 开始逐卡执行，每卡执行前先读取该卡完整内容
+3. 从 task-ops-2026062621.md 开始逐卡执行，每卡执行前先读取该卡完整内容
 4. 每张主卡执行完立即执行对应元审查卡，循环至连续2轮全PASS
 5. 14张卡全部COMPLETED后执行第五部分全量审查，循环至连续2轮零问题
 6. 最后用大白话汇报所有工作成果、达成的目标、解决的问题
