@@ -196,17 +196,8 @@ This view is **driven by** the Business Architecture (what capabilities determin
   - `session_logs` — Session logs / 会话日志
   - `evidence-packs` — Evidence packs / 证据包
   - `state-and-tracking` — State and tracking / 状态与追踪
-- `19_development_workspace` — Development workspace: ongoing discussion, task books, working drafts / 开发工作区：持续讨论、任务书、工作草稿与待升格文档
-  - `taskbooks` — Task books / 任务书
-  - `working-designs` — Working design drafts / 工作设计稿
-  - `structure-and-mapping` — Structure and mapping / 结构与映射
-  - `open-questions` — Open questions / 未决问题
-  - `review-ready` — Review-ready drafts / 待升格稿
-  - `adr-drafts` — KB 决策记录 drafts / KB 决策记录 草稿区
-  - `roadmaps` — Roadmaps / 路线图
-  - `risk-registers` — Risk registers / 风险登记簿
-  - `session_logs` — Session log cache / 会话日志缓存
-  - `archive` — Workspace archive / 工作区本地归档
+- `19_development_workspace` — **RETIRED 2026-06-26** / 已退役：原"开发工作区"（持续讨论、任务书、工作草稿与待升格文档）。过程区已统一迁移至 `docs/_working/`（ttl=task_bound）；原目录已删除。下方历史子目录清单仅保留可追溯性，引用均已失效。
+  - ~~`taskbooks`~~ / ~~`working-designs`~~ / ~~`structure-and-mapping`~~ / ~~`open-questions`~~ / ~~`review-ready`~~ / ~~`adr-drafts`~~ / ~~`roadmaps`~~ / ~~`risk-registers`~~ / ~~`session_logs`~~ / ~~`archive`~~（共 10 子目录，随父目录退役一并删除）
 - `99_archive` — Archive: inactive but retained assets / 归档：非活跃但需保留的资产
   - `retired-docs` — Retired documents / 退役文档
   - `retired-blueprints` — Retired blueprints / 退役蓝图
@@ -295,9 +286,9 @@ This view is **driven by** the Business Architecture (what capabilities determin
 
 Status machine / 状态机：`draft → in_discussion → review_ready → active/accepted → superseded/deprecated`
 
-Full status machine spec: `19_development_workspace/structure-and-mapping/discussion-document-standard.md §6.3`
+Full status machine spec: ~~`19_development_workspace/structure-and-mapping/discussion-document-standard.md §6.3`~~（文件随 `19_development_workspace` 目录于 2026-06-26 退役删除，引用已不可达，标注作废）
 
-完整状态机规范：`19_development_workspace/structure-and-mapping/discussion-document-standard.md §6.3`
+完整状态机规范：~~`19_development_workspace/structure-and-mapping/discussion-document-standard.md §6.3`~~（同上，已作废）
 
 ---
 
@@ -321,14 +312,11 @@ Current status: under re-discussion (OQ-001, OQ-002, OQ-010 reopened). Three pre
 
 | File / 文件 | Purpose / 用途 |
 |------------|--------------|
-| `19_development_workspace/index.md` | Workspace index: reading order, document layers, promotion rules / 工作区总入口：阅读顺序、文档分层、升格规则 |
-| `19_development_workspace/taskbooks/taskbook.md` | Master task book: overall process, phase tasks, current focus / 总任务书：总流程、阶段任务、当前聚焦 |
-| `02_enterprise_architecture/architecture-rationale-log.md` | Architecture derivation and decision chain / 架构推导与决策链 |
-| `19_development_workspace/structure-and-mapping/discussion-document-standard.md` | Document standard v2.0.0 / 讨论文档标准 |
-| `19_development_workspace/structure-and-mapping/document-triage-guide.md` | Document triage guide / 文档分流指南 |
-| `19_development_workspace/structure-and-mapping/_registry/vocabularies/terminology_mapping.yaml` | Terminology mapping / 术语映射表 |
-| `19_development_workspace/structure-and-mapping/handoff-log.md` | AI session handoff log / AI 会话交接记录 |
-| `19_development_workspace/open-questions/open-questions-register.md` | Open questions register / 未决问题登记 |
+| `docs/_working/` | 过程区入口（task_bound）：承接原 `19_development_workspace` 的工作草稿、任务卡、session log 等过程产物 / Process area: working drafts, task cards, session logs (replaces retired workspace) |
+| `docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml` | 术语映射表（正式位置，原表指向 `19_development_workspace/...` 路径已失效）/ Terminology mapping (canonical location) |
+
+> **作废说明 / Obsolete entries (2026-06-26)**：原表 7 项入口全部指向 `19_development_workspace/` 下文件或不存在路径（`architecture-rationale-log.md` 经核实不存在），随目录退役一并失效，仅保留可追溯性：
+> ~~`19_development_workspace/index.md`~~ · ~~`19_development_workspace/taskbooks/taskbook.md`~~ · ~~`02_enterprise_architecture/architecture-rationale-log.md`~~ · ~~`19_development_workspace/structure-and-mapping/discussion-document-standard.md`~~ · ~~`19_development_workspace/structure-and-mapping/document-triage-guide.md`~~ · ~~`19_development_workspace/structure-and-mapping/handoff-log.md`~~ · ~~`19_development_workspace/open-questions/open-questions-register.md`~~
 
 ---
 
@@ -368,7 +356,7 @@ All documents under `docs/` must comply with `discussion-document-standard.md` v
 | `16_compliance_and_legal` | deferred | 仅个人使用期不激活；对外发行产品时激活 |
 | `17_risk_and_controls` | planned | 第一个真实交易前必须激活 |
 | `18_audit_and_evidence` | **partial** | 已有 `scripts/governance/` 产物流入；正式登记表待建 |
-| `19_development_workspace` | **active** | 当前主要工作区 |
+| `19_development_workspace` | **retired** | 2026-06-26 退役；过程区迁移至 `docs/_working/` |
 | `99_archive` | planned | 出现首个退役文档时激活 |
 
 **Status semantics / 状态语义**:

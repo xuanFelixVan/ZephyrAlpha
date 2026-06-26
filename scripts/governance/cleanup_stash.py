@@ -61,7 +61,10 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 MAX_STASHES = 5  # 超过时 WARNING
 CRITICAL_STASHES = 10  # 超过时建议清理
 KEEP_COUNT = 3  # 清理时保留最近 N 个
-ARCHIVE_DIR = _REPO_ROOT / "docs" / "19_development_workspace"
+# 归档目录：stash 归档快照是本地运行时产物（git stash 设计为本地临时栈），
+# 不应入库 VCS。落在 .runtime/ 下（已被 .gitignore 排除）。
+# 历史：原路径 docs/19_development_workspace/ 已于 2026-06-26 退役删除。
+ARCHIVE_DIR = _REPO_ROOT / ".runtime" / "stash_archive"
 
 
 def get_stash_list() -> list[str]:
