@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 571
+total_scripts: 573
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -42,30 +42,6 @@ scripts:
   path: _tmp_analyze_calibration.py
   description: import json
   domain: _tmp_analyze_calibration.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_check_tsd.py
-  path: _tmp_check_tsd.py
-  description: import sqlite3
-  domain: _tmp_check_tsd.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_fix_module_id.py
-  path: _tmp_fix_module_id.py
-  description: node 51 和 55 的 type_specific_data.module_id 仍是旧下划线格式（MOD_INF_009/016）。
-  domain: _tmp_fix_module_id.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_update_tsd.py
-  path: _tmp_update_tsd.py
-  description: 将 type_specific_data JSON 内 doc_references/yaml_references 数组中的
-  domain: _tmp_update_tsd.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -721,6 +697,46 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_check_indexes.py
+  path: governance/_tmp_check_indexes.py
+  description: import sqlite3
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_check_triggers.py
+  path: governance/_tmp_check_triggers.py
+  description: import sqlite3
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_run_v15.py
+  path: governance/_tmp_run_v15.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_smoke_gen.py
+  path: governance/_tmp_smoke_gen.py
+  description: import sqlite3
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_verify_v15.py
+  path: governance/_tmp_verify_v15.py
+  description: import sqlite3
   domain: governance
   execution_plane: warm-path
   status: registered
