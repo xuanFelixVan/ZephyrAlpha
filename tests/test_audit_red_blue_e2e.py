@@ -106,7 +106,7 @@ class TestDefenseRunnerE2E:
         result = runner.run_defense(scenario)
         assert isinstance(result, DefenseResult)
         assert result.passed is True
-        assert "simulated" in result.detail
+        assert "fail_closed" in result.detail
 
     def test_tier1_always_blocked(self):
         runner = DefenseRunner(gate_engine=None)

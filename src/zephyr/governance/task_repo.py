@@ -767,6 +767,32 @@ class TaskRepository:
         cmds = getattr(task, "post_sync_standard", None) or []
         self._validate_post_sync_commands(task.task_id, cmds)
 
+    def _validate_post_sync_extensions(self, task: Task) -> None:
+        """建卡时校验孪生字段 post_sync_specific + rollback_instructions（SSoT）。
+
+        W3 盲区封堵：post_sync_standard 有完整 SSoT 校验，但其同型孪生字段
+        post_sync_specific（list[str] 命令）此前完全无校验，rollback_instructions
+        （str，异构）仅有弱长度检查。AI 可在孪生字段填臆造命令而不被拦截。
+
+        post_sync_specific 与 post_sync_standard 同型同语义，委托 SSoT
+        ``validate_post_sync_specific``（薄包装，禁复制 _validate_single_sub_cmd）。
+        rollback_instructions 走轻量语义校验（非命令级，避免误杀描述性内容）。
+        """
+        from zephyr.governance.post_sync_validator import (
+            validate_post_sync_specific,
+            validate_rollback_instructions,
+        )
+
+        for cmd in (task.post_sync_specific or []):
+            reason = validate_post_sync_specific(cmd, _REPO_ROOT)
+            if reason is not None:
+                raise PostSyncValidationError(task.task_id, cmd, reason)
+        reason = validate_rollback_instructions(task.rollback_instructions or "", _REPO_ROOT)
+        if reason is not None:
+            raise PostSyncValidationError(
+                task.task_id, task.rollback_instructions or "", reason
+            )
+
     def _validate_post_sync_commands(self, task_id: str, cmds: list[str]) -> None:
         """校验一组 post_sync_standard 命令（create + update 复用）。
 
@@ -987,6 +1013,8 @@ class TaskRepository:
             )
         # DM-210625: post_sync_standard 可执行性校验（拦截臆造脚本/flag 落库）
         self._validate_post_sync_executable(task)
+        # W3: 孪生字段（post_sync_specific + rollback_instructions）SSoT 校验
+        self._validate_post_sync_extensions(task)
         with self._write_tx() as conn:
             self._check_files_in_scope_conflict(conn, task)
             if task.priority == Priority.P0:
@@ -1113,6 +1141,8 @@ class TaskRepository:
         tags: list[str] | None = None,
         model_rationale: str | None = None,
         post_sync_standard: list[str] | None = None,
+        post_sync_specific: list[str] | None = None,
+        rollback_instructions: str | None = None,
     ) -> TaskCard:
         """
         更新非状态字段。不触发状态机校验，也不写 state_transition 事件。
@@ -1124,6 +1154,13 @@ class TaskRepository:
             新的 post_sync_standard 命令列表。传入时触发
             ``_validate_post_sync_commands`` 机械校验（脚本存在 + argparse flag
             已注册），拒绝臆造 CLI/flag 落库。用于批量修复历史 broken 命令。
+        post_sync_specific:
+            新的 post_sync_specific 命令列表（与 post_sync_standard 同型同语义）。
+            传入时委托 SSoT ``validate_post_sync_specific`` 校验（W3 盲区封堵）。
+        rollback_instructions:
+            新的回滚说明文本（str，异构：描述性步骤 + 命令混合）。传入时走
+            SSoT ``validate_rollback_instructions`` 轻量语义校验（非命令级，
+            避免误杀 1599 张已建卡的描述性内容；仅校验非空+长度+python .py 存在性）。
 
         返回
         ----
@@ -1134,6 +1171,22 @@ class TaskRepository:
         # --help 不应在事务内长占连接）。校验通过后才进入写事务。
         if post_sync_standard is not None:
             self._validate_post_sync_commands(task_id, post_sync_standard)
+        # W3: 孪生字段 SSoT 校验（事务外，与 post_sync_standard 同段）
+        if post_sync_specific is not None:
+            from zephyr.governance.post_sync_validator import validate_post_sync_specific
+
+            for cmd in post_sync_specific:
+                reason = validate_post_sync_specific(cmd, _REPO_ROOT)
+                if reason is not None:
+                    raise PostSyncValidationError(task_id, cmd, reason)
+        if rollback_instructions is not None:
+            from zephyr.governance.post_sync_validator import (
+                validate_rollback_instructions,
+            )
+
+            reason = validate_rollback_instructions(rollback_instructions, _REPO_ROOT)
+            if reason is not None:
+                raise PostSyncValidationError(task_id, rollback_instructions, reason)
 
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
@@ -1165,6 +1218,13 @@ class TaskRepository:
                 updates.append(
                     ("post_sync_standard", json.dumps(post_sync_standard, ensure_ascii=False))
                 )
+            if post_sync_specific is not None:
+                updates.append(
+                    ("post_sync_specific", json.dumps(post_sync_specific, ensure_ascii=False))
+                )
+            if rollback_instructions is not None:
+                # rollback_instructions 是 TEXT（非 JSON list），直接写字符串
+                updates.append(("rollback_instructions", rollback_instructions))
 
             if not updates:
                 return _row_to_taskcard(row)

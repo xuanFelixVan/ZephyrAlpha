@@ -47,7 +47,7 @@ references:
   - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator——RedBlueValidator 作为 Phase 4 红蓝对抗阶段的执行者"}
   - {id: "MOD-INF-029", at: "§1", why: "Orphan Judge——红方可能利用孤儿判定边界制造绕过"}
   - {id: "MOD-INF-031", at: "§2", why: "AutoFix Engine——绕过发现后的修复执行"}
-  - {id: "MOD-INF-019", at: "§3", why: "Agent Spec——red-blue-validator Skill 注册与触发路由"}
+  - {id: "MOD-INF-019", at: "§3", why: "Agent Spec——red_blue_validator Skill 注册与触发路由"}
   - {id: "MOD-INF-024", at: "§2", why: "Knowledge Base——绕过模式知识条目存储与检索"}
   - {id: "MOD-INF-026", at: "§1", why: "Asset Inventory——攻击目标资产发现与枚举"}
 ---
@@ -768,7 +768,7 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` | 本文件 |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red_blue_validator\blueprint.md` | 本文件 |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` | Python 源码 |
 | 攻击场景注册表 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_scenario-registry.yaml` | REG-RB-001 |
 | Constitution 注册表 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\_constitution-registry.yaml` | REG-RB-002 |
@@ -821,7 +821,7 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | Drift Detector | 配置注入 | 攻击基线快照 | drift_engine 记录成功 |
 | Agent RBAC | 新增权限 | 攻击操作权限校验 | PermissionGuard 校验通过 |
 | Contract Registry | 新增契约 | CT-RB-001~003 | 契约注册成功 |
-| Feature Flag | 配置注入 | red-blue-validator 6 个开关 | flags.yaml 读取成功 |
+| Feature Flag | 配置注入 | red_blue_validator 6 个开关 | flags.yaml 读取成功 |
 | Capabilities | 新增声明 | CAP-RB-001 | 能力声明注册成功 |
 | Skill CBAC | 新增映射 | red-blue-adversarial CBAC | CBAC 映射注册成功 |
 | CI/CD Pipeline | 新增 workflow | GitHub Actions | push 触发验证 |
@@ -844,12 +844,12 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-030 条目 | 模块注册 |
-| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | red-blue-validator 蓝图条目 | 蓝图注册 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | red_blue_validator 蓝图条目 | 蓝图注册 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-030 元数据 | 资产索引 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 13 条依赖/引用 | 依赖注册 |
 | 5 | Agent Skill 注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | red-blue-adversarial Skill | Skill 发现 |
 | 6 | Gate 门禁注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | RED-BLUE-GATE 门禁 | 门禁注册 |
-| 7 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | red-blue-validator CLI 脚本 | 脚本注册 |
+| 7 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | red_blue_validator CLI 脚本 | 脚本注册 |
 | 8 | 注册表总索引 | `D:\ZephyrAlpha\docs\registry_of_registries.yaml` | REG-RB-001 + REG-RB-002 | 注册表发现 |
 
 ---
@@ -989,8 +989,8 @@ def run_all_scenarios(scenarios: list[AttackScenario]) -> list[ScenarioResult]:
 
 | 字段 | 值 | 填写者 |
 |------|-----|-------|
-| construction_status | completed | 施工者 |
-| verification_status | verified | 审计者 |
+| construction_status | partially_implemented | 施工者 |
+| verification_status | unverified | 审计者 |
 | code_alignment_verified | no | 审计者 |
 
 ---
@@ -1205,8 +1205,8 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | red-blue-validator 包 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` | 业务代码 | 修改（stub→实现） |
-| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` | 本文件 | 修改 |
+| 1 | red_blue_validator 包 | `D:\ZephyrAlpha\src\zephyr\security\adversarial_validation\` | 业务代码 | 修改（stub→实现） |
+| 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red_blue_validator\blueprint.md` | 本文件 | 修改 |
 | 3 | 测试目录 | `D:\ZephyrAlpha\tests\red_blue\` | 测试代码 | 新建 |
 | 4 | 数据目录 | `D:\ZephyrAlpha\data\red_blue\` | 配置/日志 | 新建 |
 | 5 | Skill 注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | Skill 注册 | 修改 |
@@ -1367,12 +1367,12 @@ python -m zephyr.red_blue_validator [OPTIONS]
 | # | 注册表 | 登记内容 | 状态 |
 |---|--------|---------|:---:|
 | 1 | module-registry.yaml | MOD-INF-030 条目 | ✅ |
-| 2 | blueprint_registry.yaml | red-blue-validator 蓝图条目 | ✅ |
+| 2 | blueprint_registry.yaml | red_blue_validator 蓝图条目 | ✅ |
 | 3 | cross-module-dependency-registry.yaml | 13 条依赖/引用 | ✅ |
 | 4 | agent-spec/skill-registry.yaml | red-blue-adversarial Skill | ❌ 施工后登记 |
 | 5 | gates/_registry.yaml | RED-BLUE-GATE 门禁 | ❌ 施工后登记 |
-| 6 | script-manifest.yaml | red-blue-validator CLI 脚本 | ❌ 施工后登记 |
-| 7 | red-blue-validator/__init__.py | __all__ 导出 | ❌ 施工后登记 |
+| 6 | script-manifest.yaml | red_blue_validator CLI 脚本 | ❌ 施工后登记 |
+| 7 | red_blue_validator/__init__.py | __all__ 导出 | ❌ 施工后登记 |
 | 8 | registry_of_registries.yaml | REG-RB-001 + REG-RB-002 | ✅ |
 
 ### 新增注册表

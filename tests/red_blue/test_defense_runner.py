@@ -250,25 +250,26 @@ class TestEvaluateGate:
         assert blocked is False
         assert source == "no_vector"
 
-    def test_simulated_source_when_no_gate_engine(self):
-        runner = DefenseRunner(gate_engine=None)
-        scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
-        blocked, source = runner._evaluate_gate(scenario, "G1")
-        assert source == "simulated"
-
-    def test_tier_1_blocked_via_simulation(self):
+    def test_fail_closed_source_when_no_gate_engine(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
         blocked, source = runner._evaluate_gate(scenario, "G1")
         assert blocked is True
-        assert source == "simulated"
+        assert source == "fail_closed"
 
-    def test_tier_7_bypassed_via_simulation(self):
+    def test_tier_1_blocked_via_fail_closed(self):
+        runner = DefenseRunner(gate_engine=None)
+        scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
+        blocked, source = runner._evaluate_gate(scenario, "G1")
+        assert blocked is True
+        assert source == "fail_closed"
+
+    def test_tier_7_blocked_via_fail_closed(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_7, vector="test")
         blocked, source = runner._evaluate_gate(scenario, "G1")
-        assert blocked is False
-        assert source == "simulated"
+        assert blocked is True
+        assert source == "fail_closed"
 
     def test_empty_gate_id_returns_false(self):
         runner = DefenseRunner(gate_engine=None)
@@ -329,13 +330,13 @@ class TestRunDefense:
         assert result.gate_id == "G1"
         assert "BLOCKED" in result.detail
 
-    def test_bypassed_result_for_tier_7(self):
+    def test_blocked_result_for_tier_7(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_7, gate_id="prompt_injection_filter")
         result = runner.run_defense(scenario)
-        assert result.passed is False
+        assert result.passed is True
         assert result.gate_id == "G1"
-        assert "BYPASSED" in result.detail
+        assert "BLOCKED" in result.detail
 
     def test_result_appended_to_results(self):
         runner = DefenseRunner(gate_engine=None)
@@ -381,7 +382,7 @@ class TestRunDefense:
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(tier=AttackTier.TIER_1)
         result = runner.run_defense(scenario)
-        assert "simulated" in result.detail
+        assert "fail_closed" in result.detail
 
 
 # ===========================================================================
@@ -581,6 +582,13 @@ class TestProcessScenario:
     def test_bypassed_scenario(self):
         validator = RedBlueValidator()
         scenario = make_scenario(tier=AttackTier.TIER_7)
+        # fail-closed 后 TIER_7 不再自然 bypass；mock defense 返回 passed=False
+        # 以隔离测试 _process_scenario 的 BYPASSED 映射分支（保留覆盖率）
+        validator._defense = MagicMock()
+        validator._defense.run_defense.return_value = DefenseResult(
+            passed=False, gate_id="G1",
+            detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
+        )
         result = validator._process_scenario(scenario)
         assert result.result == ResultClass.BYPASSED
 
@@ -605,6 +613,13 @@ class TestProcessScenario:
     def test_bypassed_has_bypass_entry(self):
         validator = RedBlueValidator()
         scenario = make_scenario(tier=AttackTier.TIER_7)
+        # fail-closed 后 TIER_7 不再自然 bypass；mock defense 返回 passed=False
+        # 以隔离测试 _process_scenario 的 BYPASSED 映射分支（保留覆盖率）
+        validator._defense = MagicMock()
+        validator._defense.run_defense.return_value = DefenseResult(
+            passed=False, gate_id="G1",
+            detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
+        )
         result = validator._process_scenario(scenario)
         assert result.bypass_entry is not None
 

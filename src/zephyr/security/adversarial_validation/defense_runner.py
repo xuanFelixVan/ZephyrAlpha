@@ -148,7 +148,16 @@ class DefenseRunner:
         if real_result is not None:
             return real_result, "gate_engine"
 
-        return self._simulate_gate(scenario, gate_id), "simulated"
+        # W3-T2 fail-closed：真实 Gate 不可用/异常时 BLOCKED，不再走 _simulate_gate
+        # 的 md5 哈希模拟（"哈希彩票"伪防御——攻击是否阻断由 scenario_id 的 md5
+        # 决定，与实际防御无关，违反零信任原则）。保留 _simulate_gate 仅供显式调用
+        # （单测/warn-only dry-run），禁止生产路径回退到该方法。
+        logger.warning(
+            "fail_closed gate_id=%s scenario_id=%s — real gate unavailable, BLOCKED",
+            gate_id,
+            scenario.scenario_id,
+        )
+        return True, "fail_closed"
 
     def _try_real_gate(self, scenario: AttackScenario, gate_id: str) -> bool | None:
         if self._gate_engine is None:
@@ -180,10 +189,20 @@ class DefenseRunner:
             logger.debug("real_gate gate_id=%s passed=%s violations=%d", gate_id, result.passed, len(result.violations))
             return result.passed
         except Exception as exc:
-            logger.warning("real_gate_failed gate_id=%s error=%s — falling back to simulation", gate_id, exc)
+            logger.warning("real_gate_failed gate_id=%s error=%s — real gate unavailable, fail_closed will BLOCK", gate_id, exc)
             return None
 
     def _simulate_gate(self, scenario: AttackScenario, gate_id: str) -> bool:
+        """显式模拟器——tier 分层语义模拟（md5 哈希决定 tier3-6 是否阻断）。
+
+        ⛔ 禁止生产路径（``_evaluate_gate``）接线为此方法回退（W3-T2 fail-closed
+        改造）。原 fallback 行为构成 fail-open 伪防御：攻击是否阻断由
+        ``scenario_id`` 的 md5 决定（"哈希彩票"），与实际防御无关。
+
+        保留此方法仅供：单元测试验证 tier 分层语义、未来 warn-only dry-run、
+        测试数据生成。删除需重写 11 个 TestSimulateGate 单测，回滚成本高，
+        故采最小破坏策略——改 fallback 行为而非删方法。
+        """
         tier_val = scenario.tier.value
         tier_num = int(tier_val.split("_")[1]) if "_" in tier_val else 1
 
