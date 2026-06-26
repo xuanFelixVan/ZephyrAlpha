@@ -1,202 +1,212 @@
-# [CHANGE-NOTE] 2026-06-27: P3向内收审查清理删除113条stale条目（指向已删除的domains/governance/operational目录）
 schema_version: 1.0.0
 module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-27T01:41:31Z'
-generated_by: P3向内收审查（手动清理stale条目，原生成器已归档）
-total_files: 40
+generated_at: '2026-06-26T18:11:33Z'
+generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
+total_files: 84
 files:
 - path: docs/01_policies_and_standards/index.md
   module_id: PS-IDX-001
-  title: 规则体系总索�?
+  title: 规则体系总索引
   doc_type: index
   status: active
-  version: 1.4.0
+  version: 2.1.0
   rule_form: declarative
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml
-  module_id: GOV-DOC-009
-  title: 文档控制原则
+- path: docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md
+  module_id: POL-PARALLEL-SESSION-001
+  title: Parallel Session Coordination Policy / 并行 Session 协作策略
   doc_type: policy
-  status: active
-  version: 1.8.2
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml
-  module_id: GOV-DOC-010
-  title: 文档可发现性策�?
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml
-  module_id: GOV-DOC-007
-  title: 文件删除/移动安全门禁
-  doc_type: policy
-  status: active
-  version: 1.1.0
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/index.md
-  module_id: GOV-DOC-000
-  title: 文档治理目录索引
-  doc_type: index
   status: active
   version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
   layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml
-  module_id: PS-STD-003
-  title: ZephyrAlpha 行为边界标准
-  doc_type: standard
-  status: active
-  version: 1.5.3
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
-  module_id: PS-STD-002
-  title: ZephyrAlpha 标准文档模板
-  doc_type: standard
-  status: active
-  version: 3.2.0
-  rule_form: declarative
-  scope: global
-  stability: frozen
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/glossary.yaml
-  module_id: META-GLS-001
-  title: ZephyrAlpha 规则体系术语�?
-  doc_type: terminology
-  status: active
-  version: 1.3.0
-  rule_form: data
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml
-  module_id: PS-STD-011
-  title: 治理方法�?
-  doc_type: standard
-  status: active
-  version: 2.7.0
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml
-  module_id: PS-STD-006
-  title: ZephyrAlpha 治理度量标准
-  doc_type: standard
-  status: active
-  version: 1.1.1
-  rule_form: declarative
-  scope: global
-  stability: evolving
-  layer: cross_layer
+  superseded_by: null
+- path: docs/01_policies_and_standards/rules/_index.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: 2.2.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/rules/index.md
-  module_id: META-IDX-001
-  title: 元规则目录索�?
+  module_id: ''
+  title: rules — 目录索引
   doc_type: index
   status: active
-  version: 1.3.0
-  rule_form: declarative
-  scope: global
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_011_code_type_import.yaml
+  module_id: TRAE-011
+  title: 代码构建-类型与导入
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: code_type_import
   stability: stable
-  layer: cross_layer
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml
+  module_id: TRAE-021
+  title: 行为边界-其余绝对禁止
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: other_prohibition
+  stability: frozen
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml
+  module_id: TRAE-028
+  title: 文档治理-结构与命名
+  doc_type: ''
+  status: ''
+  version: 1.5.0
+  rule_form: ''
+  scope: doc_structure_naming
+  stability: stable
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml
+  module_id: TRAE-030
+  title: 文档治理-编号与元数据
+  doc_type: ''
+  status: ''
+  version: 1.1.3
+  rule_form: ''
+  scope: doc_numbering_metadata
+  stability: stable
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_031_security_key_access.yaml
+  module_id: TRAE-031
+  title: 安全治理-密钥与访问控制
+  doc_type: ''
+  status: ''
+  version: 0.6.1
+  rule_form: ''
+  scope: security_access
+  stability: stable
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml
+  module_id: TRAE-032
+  title: 模块治理-准入与生命周期
+  doc_type: ''
+  status: ''
+  version: 1.1.2
+  rule_form: ''
+  scope: module_governance
+  stability: stable
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml
+  module_id: TRAE-036
+  title: 架构治理-门禁与过渡
+  doc_type: ''
+  status: ''
+  version: 1.1.0
+  rule_form: ''
+  scope: architecture_gate_transition
+  stability: stable
+  layer: compliance
+  superseded_by: ''
+- path: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
+  module_id: TRAE-041
+  title: 元规则-规则分类与裁决
+  doc_type: ''
+  status: ''
+  version: 1.4.1
+  rule_form: ''
+  scope: meta_rule_classification
+  stability: evolving
+  layer: compliance
   superseded_by: ''
 - path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
-  module_id: PS-STD-000
-  title: ZephyrAlpha 元标准宪�?
-  doc_type: standard
-  status: active
-  version: 2.0.2
-  rule_form: declarative
-  scope: global
-  stability: frozen
-  layer: cross_layer
+  module_id: TRAE-042
+  title: 元规则-标准体系与模板
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: meta_standard_template
+  stability: evolving
+  layer: compliance
   superseded_by: ''
 - path: docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml
-  module_id: PS-STD-001
-  title: ZephyrAlpha 元数据登记表
-  doc_type: standard
-  status: active
-  version: 6.0.1
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
+  module_id: TRAE-043
+  title: 元规则-元数据与度量
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: meta_metadata_metrics
+  stability: evolving
+  layer: compliance
   superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
-  module_id: PS-STD-004
-  title: ZephyrAlpha 规则分类与冲突裁决标�?
-  doc_type: standard
-  status: active
-  version: 2.0.2
-  rule_form: declarative
-  scope: global
+- path: docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml
+  module_id: TRAE-045
+  title: 数据治理-质量与血缘
+  doc_type: ''
+  status: ''
+  version: 1.1.1
+  rule_form: ''
+  scope: data_governance
   stability: stable
-  layer: cross_layer
+  layer: compliance
   superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
-  module_id: PS-STD-009
-  title: 规则治理标准
-  doc_type: standard
-  status: active
-  version: 3.0.2
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: cross_layer
+- path: docs/01_policies_and_standards/rules/trae_059_schema_version_write_protection.yaml
+  module_id: TRAE-059
+  title: _schema_version 写入保护规范
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: schema_version_write_protection
+  stability: frozen
+  layer: compliance
   superseded_by: ''
-- path: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
-  module_id: PS-STD-012
-  title: 规则验证标准
-  doc_type: standard
-  status: active
-  version: 1.2.1
-  rule_form: declarative
+- path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
+  module_id: GOV-028
+  title: Blueprint Construction Template
+  doc_type: template
+  status: draft
+  version: 1.0.0
+  rule_form: structural
   scope: global
   stability: evolving
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml
-  module_id: META-TERM-001
-  title: 术语映射表（大白�?�?行业术语�?
-  doc_type: reference
+- path: docs/01_policies_and_standards/templates/dependency_graph_template.md
+  module_id: GOV-029
+  title: 依赖图统一模板
+  doc_type: template
   status: active
-  version: 1.0.1
-  rule_form: data
+  version: 6.0.0
+  rule_form: structural
   scope: global
   stability: stable
   layer: cross_layer
   superseded_by: ''
 - path: docs/01_policies_and_standards/templates/index.md
-  module_id: TPL-IDX-001
+  module_id: GOV-030
   title: 文档模板目录索引
   doc_type: index
   status: active
@@ -206,32 +216,197 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+- path: docs/01_policies_and_standards/templates/playbook_runbook.md
+  module_id: OPS-007
+  title: Playbook Template
+  doc_type: operational_rule
+  status: draft
+  version: 0.1.0
+  rule_form: procedural
+  scope: global
+  stability: evolving
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/templates/policy_template.md
+  module_id: PSP-010
+  title: Policy Template
+  doc_type: template
+  status: draft
+  version: 0.1.0
+  rule_form: declarative
+  scope: global
+  stability: evolving
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/templates/register_template.md
+  module_id: GOV-032
+  title: Register Template
+  doc_type: template
+  status: draft
+  version: 0.1.0
+  rule_form: data
+  scope: global
+  stability: evolving
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/templates/risk_register_template.md
+  module_id: GOV-033
+  title: <主题> 风险登记簿
+  doc_type: template
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/templates/roadmap_template.md
+  module_id: GOV-034
+  title: <季度或主题> 路线图
+  doc_type: template
+  status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/templates/runbook_template.md
+  module_id: OPS-008
+  title: Runbook Template
+  doc_type: template
+  status: draft
+  version: 0.1.0
+  rule_form: procedural
+  scope: global
+  stability: evolving
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/templates/standard_template.md
+  module_id: STD-009
+  title: Standard Template
+  doc_type: template
+  status: draft
+  version: 0.1.0
+  rule_form: declarative
+  scope: global
+  stability: evolving
+  layer: cross_layer
+  superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/index.md
-  module_id: REG-IDX-001
-  title: 登记表体系目录索�?
+  module_id: GOV-005
+  title: 登记表体系目录索引
   doc_type: index
   status: active
-  version: 3.0.2
+  version: 3.1.0
   rule_form: declarative
   scope: global
   stability: stable
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
-  module_id: GOV-AI-001
-  title: AI 自治权限登记表（全模块权限终表）
-  doc_type: register
-  status: active
-  version: 1.3.0
-  rule_form: data
+- path: docs/01_policies_and_standards/_registry/catalogs/_index.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
+  rule_form: ''
   scope: ''
   stability: ''
-  layer: cross_layer
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml
+  module_id: CFG-ai-risk-register
+  title: AI 风险登记簿
+  doc_type: register
+  status: active
+  version: 1.0.1
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml
+  module_id: CFG-ai-session-registry
+  title: AI Session/Agent 登记表
+  doc_type: register
+  status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
+  module_id: CFG-business-streams
+  title: 业务流定义登记表
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: stable
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  module_id: PS-REG-021
+  title: 能力→真源文件反查注册表
+  doc_type: contract
+  status: active
+  version: 1.1.1
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
+  module_id: PS-REG-007
+  title: 跨模块依赖登记表
+  doc_type: register
+  status: active
+  version: 1.0.7
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml
+  module_id: PS-REG-019
+  title: 声明式契约跟踪登记表
+  doc_type: register
+  status: active
+  version: 1.5.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/depgraph_scan_exclusions.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
+  module_id: PS-REG-013
+  title: 项目目录登记?
+  doc_type: register
+  status: active
+  version: 1.0.1
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
-  module_id: REG-LLM-001
+  module_id: GOV-001
   title: 前沿大模型综合能力排名登记表
-  doc_type: reference
+  doc_type: register
   status: active
   version: 1.0.0
   rule_form: ''
@@ -241,7 +416,7 @@ files:
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
   module_id: PS-REG-012
-  title: Frontmatter 字段定义登记�?
+  title: Frontmatter 字段定义登记表
   doc_type: register
   status: active
   version: 1.0.0
@@ -250,38 +425,115 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/index.md
-  module_id: CAT-IDX-001
-  title: 登记表集中存储目录索�?
-  doc_type: index
+- path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  module_id: PS-REG-014
+  title: GATE 门禁登记?
+  doc_type: register
   status: active
-  version: 2.1.0
-  rule_form: declarative
-  scope: global
-  stability: stable
-  layer: ''
-  superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
-  module_id: PS-REG-016
-  title: 登记表的登记�?�?跨登记表一致性契�?
-  doc_type: contract
-  status: active
-  version: 1.1.0
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/_index.yaml
-  module_id: PS-REG-001
-  title: ZephyrAlpha 规则登记�?
+- path: docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml
+  module_id: CFG-hard-boundaries
+  title: 硬边界登记表
   doc_type: register
   status: active
-  version: 1.4.1
-  rule_form: data
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: frozen
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/index.md
+  module_id: GOV-002
+  title: 登记表集中存储目录索引
+  doc_type: index
+  status: active
+  version: 2.3.0
+  rule_form: declarative
   scope: global
   stability: stable
-  layer: cross_layer
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+  module_id: CFG-infrastructure-registry
+  title: 运行时基础设施登记表
+  doc_type: register
+  status: active
+  version: 1.0.1
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
+  module_id: CFG-knowledge-article-registry
+  title: 知识条目登记表
+  doc_type: register
+  status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/master_document_inventory_registry.yaml
+  module_id: PS-REG-020
+  title: 主文档清单（Master Document Inventory）
+  doc_type: register
+  status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
+  module_id: PS-REG-016
+  title: 登记表的登记表 — 跨登记表一致性契约
+  doc_type: contract
+  status: active
+  version: 1.2.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  module_id: PS-REG-018
+  title: 规则路径目录
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml
+  module_id: PS-REG-017
+  title: 任务卡元层登记表
+  doc_type: register
+  status: active
+  version: 1.2.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
   module_id: PS-CTR-001
@@ -291,11 +543,22 @@ files:
   version: 1.2.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/contracts/contract_mapping_table.yaml
+  module_id: MOD-GOVERNANCE
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/contracts/index.md
-  module_id: REG-CON-IDX
+  module_id: GOV-004
   title: _registry/contracts/ 目录索引
   doc_type: index
   status: active
@@ -305,8 +568,19 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
+  module_id: GOV-AI-006
+  title: AI 模型能力矩阵契约
+  doc_type: contract
+  status: active
+  version: 1.2.0
+  rule_form: data
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/schemas/index.md
-  module_id: ''
+  module_id: GOV-006
   title: _registry/schemas/ 目录索引
   doc_type: index
   status: active
@@ -314,6 +588,72 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml
+  module_id: GOV-AI-007
+  title: Session Log 标准 Schema
+  doc_type: schema
+  status: active
+  version: 2.2.0
+  rule_form: data
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_level_planned_vocabulary.yaml
+  module_id: PS-VOC-021
+  title: ai_autonomy_level_planned 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_vocabulary.yaml
+  module_id: PS-VOC-012
+  title: ai_autonomy 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/ai_capability_slot_vocabulary.yaml
+  module_id: PS-VOC-020
+  title: ai_capability_slot 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/blueprint_refs_status_vocabulary.yaml
+  module_id: PS-VOC-022
+  title: blueprint_refs.status 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/category_vocabulary.yaml
+  module_id: PS-VOC-013
+  title: category 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/classification_vocabulary.yaml
@@ -324,7 +664,29 @@ files:
   version: 1.0.1
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/compliance_tags_vocabulary.yaml
+  module_id: PS-VOC-014
+  title: compliance_tags 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/contract_status_vocabulary.yaml
+  module_id: PS-VOC-026
+  title: contract_status 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/created_by_vocabulary.yaml
@@ -335,7 +697,18 @@ files:
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/derived_from_relationship_vocabulary.yaml
+  module_id: PS-VOC-023
+  title: derived_from.relationship 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
@@ -346,15 +719,59 @@ files:
   version: 1.4.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/domain_vocabulary.yaml
+  module_id: PS-VOC-015
+  title: domain 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/evolution_policy_vocabulary.yaml
+  module_id: PS-VOC-016
+  title: evolution_policy 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/glossary.yaml
+  module_id: META-GLS-001
+  title: ZephyrAlpha 规则体系术语表
+  doc_type: terminology
+  status: active
+  version: 1.3.0
+  rule_form: data
+  scope: global
+  stability: stable
+  layer: cross_layer
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/governance_family_vocabulary.yaml
+  module_id: PS-VOC-017
+  title: governance_family 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/index.md
-  module_id: REG-VOC-IDX
+  module_id: GOV-007
   title: _registry/vocabularies/ 目录索引
   doc_type: index
   status: active
-  version: 1.0.1
+  version: 2.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -368,7 +785,7 @@ files:
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
@@ -376,10 +793,43 @@ files:
   title: layer 受控词表
   doc_type: vocabulary
   status: active
+  version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml
+  module_id: PS-VOC-027
+  title: module_lifecycle_status 受控词表
+  doc_type: vocabulary
+  status: active
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/provenance_audit_chain_verdict_vocabulary.yaml
+  module_id: PS-VOC-024
+  title: provenance.audit_chain.verdict 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/review_status_vocabulary.yaml
+  module_id: PS-VOC-018
+  title: review_status 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/rule_form_vocabulary.yaml
@@ -390,7 +840,18 @@ files:
   version: 1.2.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/safety_level_vocabulary.yaml
+  module_id: PS-VOC-019
+  title: safety_level 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/scope_vocabulary.yaml
@@ -401,7 +862,18 @@ files:
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/semantic_vocabulary.yaml
+  module_id: PS-VOC-025
+  title: semantic_type 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/stability_vocabulary.yaml
@@ -412,7 +884,7 @@ files:
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/status_vocabulary.yaml
@@ -423,18 +895,29 @@ files:
   version: 1.1.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
   layer: ''
+  superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml
+  module_id: META-TERM-001
+  title: 术语映射表（大白话 ↔ 行业术语）
+  doc_type: terminology
+  status: active
+  version: 1.0.1
+  rule_form: data
+  scope: global
+  stability: stable
+  layer: cross_layer
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
   module_id: PS-VOC-004
   title: ttl 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.0.0
+  version: 2.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/verifiability_vocabulary.yaml
@@ -445,6 +928,6 @@ files:
   version: 1.0.0
   rule_form: ''
   scope: ''
-  stability: ''
+  stability: evolving
   layer: ''
   superseded_by: ''

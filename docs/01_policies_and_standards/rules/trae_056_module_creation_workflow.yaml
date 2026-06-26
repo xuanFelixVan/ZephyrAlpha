@@ -783,3 +783,42 @@ sections:
 provenance:
   extracted_at: '2026-06-22T00:00:00'
   extracted_by: session-20260622-235c
+references:
+  rule_ids:
+  - TRAE-048
+  - TRAE-002
+  - TRAE-035
+  - TRAE-005
+  - TRAE-032
+  - TRAE-014
+  - TRAE-001
+  - TRAE-015
+  - TRAE-028
+  - TRAE-055
+  - TRAE-047
+  - TRAE-053
+  - TRAE-037
+  - TRAE-033
+  scripts:
+  - scripts/scaffold.py
+  - scripts/lock_files.py
+  - scripts/governance/extract_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/d3_metadata/check_naming_convention.py
+  - scripts/governance/check_registry_consistency.py
+  - scripts/governance/audit_registration.py
+  - scripts/governance/verify_key_imports.py
+  - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: procedure
+  executors:
+  - scripts/scaffold.py
+  - scripts/lock_files.py
+  bypass_allowed: false
+metadata:
+  change_policy: versioned
+  impact_level: H
+  modification_permission: human_gated
+  superseded_by: null

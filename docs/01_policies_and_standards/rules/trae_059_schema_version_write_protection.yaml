@@ -77,3 +77,26 @@ sections:
       whitelist:
       - src/zephyr/governance/depgraph_schema.py
       db_check: "SELECT MAX(version) FROM _schema_version == max(v for v,_,_ in _MIGRATIONS)"
+references:
+  rule_ids:
+  - TRAE-054
+  scripts:
+  - src/zephyr/governance/depgraph_schema.py
+  modules:
+  - src/zephyr/governance/depgraph_schema.py
+  blueprints: []
+enforcement:
+  type: hook
+  gate_id: G_TRAE_059
+  executors:
+  - G_TRAE_059
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-22'
+  extracted_by: session-20260622-schema-version-protection
+  source: "DM-202947 止血修复 + depgraph_schema.py 迁移框架写入独占裁定"
