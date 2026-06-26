@@ -89,7 +89,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
     try:
         import asyncio
 
-        from zephyr.shared.protocols.a2a.a2a_protocol import SecurityDecision
+        from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
         result = asyncio.run(
             gw.scan_agent_action(
@@ -114,7 +114,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
                     metadata={"source": "mcp_gateway"},
                 )
             )
-            from zephyr.shared.protocols.a2a.a2a_protocol import SecurityDecision
+            from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
