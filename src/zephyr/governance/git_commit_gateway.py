@@ -542,7 +542,13 @@ class GitCommitGateway:
     def _filter_gitignored(self, files: list[str]) -> list[str]:
         """返回 ``files`` 中被 ``.gitignore`` 忽略的绝对路径子集。
 
-        用 ``git check-ignore`` 批量检测（exit 0=有忽略项，1=无）。
+        用 ``git check-ignore --no-index`` 批量检测（exit 0=有忽略项，1=无）。
+
+        关键：必须加 ``--no-index``。默认 ``check-ignore`` 会跳过已跟踪文件——
+        即使它们匹配 ``.gitignore``。而本场景的根因正是"已跟踪 + 已 gitignore"
+        （如 ``.trae/documents/`` 被 gitignore 但文件仍被跟踪且已删除），
+        不加 ``--no-index`` 会漏检，导致后续 ``git add`` 整批失败。
+
         大小写不敏感比对（Windows on-disk vs git index 大小写可能不一）。
         """
         if not files:
@@ -550,7 +556,7 @@ class GitCommitGateway:
         rels = [
             os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in files
         ]
-        chk = self._run_git(["git", "check-ignore", "--"] + rels)
+        chk = self._run_git(["git", "check-ignore", "--no-index", "--"] + rels)
         # returncode 0 = 有忽略项；1 = 无忽略；其他 = 异常（视为无忽略，不阻断）
         if chk.returncode != 0 or not chk.stdout:
             return []

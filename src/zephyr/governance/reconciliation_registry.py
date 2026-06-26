@@ -973,7 +973,7 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 重生所有域制品（生成器幂等：相同输入→相同输出）
+        # 1. 重生所有域制品（生成器不含时间戳，相同 DB 输入→相同输出）
         for gen_name in ("generate_domain_doc.py", "generate_domain_dependency_diagram.py"):
             gen_result = subprocess.run(
                 [sys.executable, f"{_GEN_DIR}/{gen_name}", "--all"],
