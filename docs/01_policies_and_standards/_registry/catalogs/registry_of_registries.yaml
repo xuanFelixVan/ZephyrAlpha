@@ -9,7 +9,7 @@
 # ============================================================================
 # ZephyrAlpha 登记表的登记表 — 跨登记表一致性契约（Registry of Registries SSoT）
 # ============================================================================
-# 版本: 1.1.0 | 创建: 2026-05-02 | 更新: 2026-05-03 | owner: ZephyrAlpha-Owner
+# 版本: 1.2.0 | 创建: 2026-05-02 | 更新: 2026-05-16 | owner: ZephyrAlpha-Owner
 #
 # module_id: PS-REG-016
 # doc_type: contract
@@ -22,7 +22,7 @@ title: "登记表的登记表 — 跨登记表一致性契约"
 status: active
 version: "1.2.0"
 date: "2026-05-16"
-summary: "管理项目中所有登记表的跨表共享字段一致性规则。声明每个共享字段的 SSoT 归属、一致性级别、校验触发时机。v1.1.0：从 meta/ 迁移至 _registry/catalogs/，增补 YAML canonical 字段。"
+summary: "管理项目中所有登记表的跨表共享字段一致性规则。声明每个共享字段的 SSoT 归属、一致性级别、校验触发时机。v1.1.0：从 meta/ 迁移至 _registry/catalogs/，增补 YAML canonical 字段。v1.2.0：增补 GOV-MOD-007 MRS-001 交叉引用与 registry-master-index.yaml 自动扫描说明。"
 #
 # 对标: ITIL SACM CMDB 关系类型（CI 之间的 exact/derived/independent）
 #       + ISO 42001 §10.3 持续性改进（跨登记表一致性是 AI 系统可靠性的基础）
@@ -421,3 +421,12 @@ changelog:
       - "CR-001~006 覆盖 version / module_id / layer / status / priority / generation"
       - "SSoT 归属原则：第一手来源优先（物理文件 > 登记表）"
       - "v1.0.1: 新增 GOV-MOD-007 多登记表同步标准的交叉引用说明"
+  - version: "1.1.0"
+    date: "2026-05-03"
+    changes:
+      - "从 meta/ 迁移至 _registry/catalogs/，增补 YAML canonical 字段（schema_version/module_id/doc_type/title/status/version/date/summary）"
+  - version: "1.2.0"
+    date: "2026-05-16"
+    changes:
+      - "增补 GOV-MOD-007 MRS-001 交叉引用（§5.1 全量操作-登记矩阵）"
+      - "增补 registry-master-index.yaml 自动扫描说明（total_registries 以脚本扫描为准，勿写死）"
