@@ -214,8 +214,14 @@ def scan_files_residual(
             continue
         for m in pattern.finditer(content):
             start = m.start()
-            # 排除 [BLUEPRINT] 元数据行的模块 ID 声明
-            if '[BLUEPRINT]' in content[max(0, start - 50):start + 50]:
+            # 排除 [BLUEPRINT] 元数据行：只检查匹配点所在行（非 50 字符窗口）
+            # 修复 R5 红蓝对抗发现的 bug：50 字符窗口会误排除邻近行的真实残留
+            line_start = content.rfind('\n', 0, start) + 1
+            line_end = content.find('\n', start)
+            if line_end == -1:
+                line_end = len(content)
+            line_content = content[line_start:line_end]
+            if '[BLUEPRINT]' in line_content:
                 continue
             line_num = content.count('\n', 0, start) + 1
             residuals.append({
