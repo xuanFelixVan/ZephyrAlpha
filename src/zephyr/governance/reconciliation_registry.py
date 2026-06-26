@@ -71,6 +71,7 @@ __all__ = [
     "ReconciliationRegistry",
     "make_manifest_reconciler",
     "make_baseline_aware_reconciler",
+    "make_ttl_reconciler",
 ]
 
 
@@ -358,4 +359,107 @@ def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=200,
+    )
+
+
+def make_ttl_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-15 ttl post-commit 兜底 reconciler（P2-T4）。
+
+    GATE-15 (frontmatter ttl) 已有 pre-compensation（``_check_frontmatter_ttl``
+    在 commit() 前阻断违规 .md），但若 pre-compensation 因异常被吞，违规 .md
+    会漏放入库。本 reconciler 在 post-commit 兜底重校，记录违规报告供追责。
+
+    设计裁定（增量 vs 全量）：
+    continuation plan §4.4 原述"全量校验"，经核实 check_frontmatter_metadata.py
+    的真实 CLI（手动读 sys.argv，无 argparse；--all-files=全量 docs/，传文件参=增量）后，
+    采用**增量模式**（传 committed .md 文件为参数）。理由：
+    1. pre-compensation 已对 committed 文件增量校验，post 兜底应镜像同范围
+    2. 全量 5149 文件每次 .md 提交都跑会慢且产生无关噪声
+    3. 增量精确锁定"本次 commit 是否漏放违规 .md"（兜底语义）
+
+    非阻断设计：post-commit 无法回滚 commit；记录违规到
+    .runtime/reconcile_reports/ttl_<ts>.json，与 pre-compensation 形成双层防御。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
+            保持本模块纯 stdlib 不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-15-ttl", priority=300)。
+    """
+    import json
+    import os
+    import subprocess
+    import sys
+    import time
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("docs/") and rel.endswith(".md"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 筛选本次 committed 的 docs/*.md（增量模式参数）
+        md_files = []
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("docs/") and rel.endswith(".md"):
+                md_files.append(rel)
+        if not md_files:
+            return ReconcileResult(action="skip", detail="no docs/*.md in committed files")
+        # 2. post-commit 增量 ttl 校验（传文件参 → 增量模式，非 --all-files）
+        scan_result = subprocess.run(
+            [sys.executable, "scripts/governance/d3_metadata/check_frontmatter_metadata.py"]
+            + md_files,
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        # 3. 报告落盘
+        reports_dir = project_root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        report_path = reports_dir / f"ttl_{ts}.json"
+        report = {
+            "gate_id": "GATE-15-ttl",
+            "session_id": session_id,
+            "timestamp": ts,
+            "exit_code": scan_result.returncode,
+            "checked_files": md_files,
+            "stdout_tail": scan_result.stdout.strip()[-500:],
+            "stderr_tail": scan_result.stderr.strip()[-500:],
+        }
+        try:
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"ttl scan done (exit={scan_result.returncode}) but report write failed: {e}",
+            )
+        # 4. 判定（exit 0 = clean，非 0 = 违规检出）
+        if scan_result.returncode == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"ttl scan clean ({len(md_files)} .md), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"ttl scan detected violations (exit={scan_result.returncode}), report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-15-ttl",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=300,
     )
