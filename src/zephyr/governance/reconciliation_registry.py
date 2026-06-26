@@ -72,6 +72,7 @@ __all__ = [
     "make_manifest_reconciler",
     "make_baseline_aware_reconciler",
     "make_ttl_reconciler",
+    "make_ghost_reconciler",
 ]
 
 
@@ -462,4 +463,104 @@ def make_ttl_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=300,
+    )
+
+
+def make_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 depgraph ghost post-commit 对账 reconciler（P2-T5）。
+
+    commit 删除文件后，depgraph.db 可能残留 ghost node（磁盘已删除但 depgraph
+    仍保留——对称漂移）。本 reconciler 在 post-commit 跑 diagnose_depgraph.py
+    检测 ghost_count，记录报告供 ide_health_daemon + 人工追责。
+
+    路径核实（反幻觉第四次验证）：diagnose_depgraph.py 真实路径为
+    ``scripts/governance/diagnose_depgraph.py``（非 continuation plan §4.5 所述
+    ``scripts/governance/d5_architecture/diagnose_depgraph.py``——该路径不存在）。
+
+    设计裁定（trigger 检测删除方式）：
+    continuation plan §4.5 建议用 ``git show --name-status HEAD`` 检测 D 状态。
+    本实现改用 ``os.path.isfile(f)`` 检测 committed 文件不在磁盘 = 删除 commit。
+    理由：①更廉价（无 git subprocess）；②post-commit 时点等价（commit 刚发生，
+    工作树反映删除）；③代码更简。
+
+    非阻断设计：post-commit 无法回滚 commit；记录 ghost_count 到
+    .runtime/reconcile_reports/ghost_<ts>.json，ghost_count>0 仅告警。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
+            保持本模块纯 stdlib 不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-GHOST", priority=400)。
+    """
+    import json
+    import os
+    import re
+    import subprocess
+    import sys
+    import time
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # committed 文件不在磁盘 = 删除 commit（post-commit 时点，工作树已反映删除）
+        return any(not os.path.isfile(f) for f in committed_files)
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 跑 diagnose_depgraph.py（无 --output，捕获 stdout 解析 ghost_count）
+        diag_result = subprocess.run(
+            [sys.executable, "scripts/governance/diagnose_depgraph.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+        # 2. 解析 ghost_count（输出格式：[DIAG]   Found N orphan nodes (M ghost: ...))
+        ghost_count = -1
+        m = re.search(r"\((\d+)\s+ghost:", diag_result.stdout)
+        if m:
+            ghost_count = int(m.group(1))
+        # 3. 报告落盘
+        reports_dir = project_root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        report_path = reports_dir / f"ghost_{ts}.json"
+        report = {
+            "gate_id": "GATE-GHOST",
+            "session_id": session_id,
+            "timestamp": ts,
+            "exit_code": diag_result.returncode,
+            "ghost_count": ghost_count,
+            "deleted_files": [f for f in committed_files if not os.path.isfile(f)],
+            "stdout_tail": diag_result.stdout.strip()[-800:],
+            "stderr_tail": diag_result.stderr.strip()[-500:],
+        }
+        try:
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"ghost diagnose done (exit={diag_result.returncode}) but report write failed: {e}",
+            )
+        # 4. 判定（ghost_count==0 = clean；>0 = warn；-1 = 解析失败 = warn）
+        if diag_result.returncode == 0 and ghost_count == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"ghost diagnose clean (ghost_count=0), report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"ghost diagnose: ghost_count={ghost_count} (exit={diag_result.returncode}), report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-GHOST",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=400,
     )
