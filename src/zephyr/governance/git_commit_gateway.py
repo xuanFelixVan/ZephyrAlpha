@@ -91,6 +91,7 @@ from zephyr.governance.reconciliation_registry import (
     make_vocab_change_reconciler,
 )
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
+from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
 
 logger = logging.getLogger(__name__)
@@ -106,40 +107,6 @@ _LOCK_TIMEOUT_DEFAULT = 60.0  # 等待全局锁最长 60s（commit 串行化，�
 _POLL_INTERVAL = 0.1
 _MAX_INLINE_MD_FILES = 50  # 前端校验 .md 文件数阈值，超过时改用 --all-files 全量模式避免 Windows CLI 长度限制 (WinError 206)
 _SESSION_AWARE_STASH_ENV = "ZEPHYR_SESSION_AWARE_STASH"  # "0" 强制禁用 session 隔离 stash
-
-
-def _is_pid_alive(pid: int) -> bool:
-    """检查 PID 对应进程是否存活（跨平台，治本：识别僵尸锁）。
-
-    根因：_GlobalCommitLock 进程崩溃（kill/异常退出）时 __exit__ 不执行，
-    锁文件残留。仅靠 _LOCK_TTL_SECONDS 30min 过期太慢——_LOCK_TIMEOUT_DEFAULT
-    60s << 30min，僵尸锁在 60s 超时窗口内永远等不到 TTL 过期（实测阻塞 3min+）。
-    本函数在 TTL 检查前先查 PID 存活，僵尸锁立即清理（零窗口期）。
-    """
-    # 治本（红蓝对抗修复4）：防御性类型检查——None/str/float 等非法类型直接返回 False。
-    # 实际调用路径 L243 已用 int() 转换 + 外层 try/except 兜底，但函数本身不健壮：
-    # 若被其他地方直接调用（非 int 入参），会抛 TypeError 中断流程。
-    if not isinstance(pid, int) or pid <= 0:
-        return False
-    try:
-        if sys.platform == "win32":
-            import ctypes
-            kernel32 = ctypes.windll.kernel32
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
-            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
-            if handle:
-                kernel32.CloseHandle(handle)
-                return True
-            # OpenProcess 失败——用 GetLastError 区分"进程不存在" vs "权限不足"
-            # ERROR_ACCESS_DENIED (5)：进程存在但权限不足（如 PID 4 System）→ 算存活
-            # ERROR_INVALID_PARAMETER (87)：PID 不存在 → 僵尸锁
-            err = kernel32.GetLastError()
-            return err == 5  # ERROR_ACCESS_DENIED
-        else:
-            os.kill(pid, 0)
-            return True
-    except (ProcessLookupError, PermissionError, OSError, ValueError):
-        return False
 
 
 # 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
@@ -259,7 +226,7 @@ class _GlobalCommitLock:
                     # 根因：进程崩溃时 __exit__ 不执行，仅靠 TTL 30min 过期太慢
                     # （_LOCK_TIMEOUT_DEFAULT 60s << 30min，实测阻塞 3min+）
                     holder_pid = data.get("pid")
-                    if holder_pid is not None and not _is_pid_alive(int(holder_pid)):
+                    if holder_pid is not None and not is_pid_alive(int(holder_pid)):
                         logger.warning(
                             "_GlobalCommitLock: 持有进程 PID %s 已死亡，清理僵尸锁: %s",
                             holder_pid, self._lock_file,
@@ -1065,16 +1032,17 @@ class GitCommitGateway:
         return True, "ssot check passed"
 
     def _check_naming_uniqueness(self, files: list[str]) -> tuple[bool, str]:
-        """N-16 增量检查（subprocess 调用 check_naming_convention.py --check-new）。
+        """全量命名硬阻断检查（治本·选项B：subprocess 调用 --check-new-full）。
 
-        治本（向内收 v2）：N-16 检查逻辑真源唯一在
-        ``check_naming_convention.py::check_new_files_naming``，本方法仅 subprocess
-        调用，不实现检查逻辑。消除了原 ``_load_n16_exempt_names`` + 自实现检查的
-        真源分裂（gateway 与 check_naming_convention.py 两处加载豁免清单）。
+        治本（向内收 v2 + 选项B 扩展）：命名检查逻辑真源唯一在
+        ``check_naming_convention.py::check_new_files_full``，本方法仅 subprocess
+        调用。覆盖三个治本闭环：
+        1. 全库覆盖：N-16 扩展到 src/+scripts/（跨包合法同名豁免）
+        2. 全维度检测：新增文件 N-01~N-17 风格 + 所有文件 N-16 唯一性
+        3. 绕不过：GitCommitGateway 内嵌，--no-verify 绕过 pre-commit 但绕不过此
 
-        弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
-        检查逻辑：git ls-files 构建已跟踪文件基线，只检测本次提交文件是否引入
-        新冲突（不阻断历史遗留），避免 os.walk 扫描未跟踪 WIP 误阻断。
+        新增 vs 修改区分：新增文件查风格，修改文件不查（历史遗留豁免），
+        但 N-16 唯一性对所有文件查（防改名撞库）。
 
         Args:
             files: 绝对路径列表。
@@ -1082,24 +1050,25 @@ class GitCommitGateway:
         Returns:
             (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
         """
-        # 只在本次 commit 涉及 tests/ 或 docs/ 下文件时才检查（性能优化）
+        # 治本·选项B：覆盖 tests/+docs/+src/+scripts/（全库命名硬阻断）
+        _NAMING_SCOPES = ("tests/", "docs/", "src/", "scripts/")
         involves_naming_dirs = any(
             os.path.relpath(f, str(self.project_root)).replace("\\", "/").startswith(
-                ("tests/", "docs/")
+                _NAMING_SCOPES
             )
             for f in files
         )
         if not involves_naming_dirs:
-            return True, "no files in tests/ or docs/"
+            return True, "no files in naming scopes (tests/docs/src/scripts)"
 
-        # subprocess 调用 check_naming_convention.py --check-new（N-16 检查真源唯一）
+        # subprocess 调用 check_naming_convention.py --check-new-full（全量命名硬阻断真源唯一）
         script = str(
             self.project_root / "scripts" / "governance" / "d3_metadata"
             / "check_naming_convention.py"
         )
         try:
             result = subprocess.run(
-                [sys.executable, script, "--check-new", *files],
+                [sys.executable, script, "--check-new-full", *files],
                 capture_output=True,
                 text=True,
                 cwd=str(self.project_root),
@@ -1107,22 +1076,22 @@ class GitCommitGateway:
             )
         except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as e:
             logger.warning(
-                "GitCommitGateway: N-16 检查 subprocess 失败 (fail-open): %s", e
+                "GitCommitGateway: 命名检查 subprocess 失败 (fail-open): %s", e
             )
-            return True, f"N-16 check skipped (subprocess failed: {e})"
+            return True, f"naming check skipped (subprocess failed: {e})"
 
         if result.returncode == 0:
-            return True, "naming uniqueness passed"
+            return True, "naming check passed"
         if result.returncode == 1:
-            # exit 1 = N-16 冲突（EXIT_FINDINGS），stdout 含详情
+            # exit 1 = 命名违规（EXIT_FINDINGS），stdout 含详情
             detail = result.stdout.strip() or result.stderr.strip() or "naming violations found"
             return False, detail
         # exit 2 = usage error / 脚本不存在（测试环境 tmp_path 无脚本）→ fail-open
         logger.warning(
-            "GitCommitGateway: N-16 检查 subprocess 异常 exit=%s: %s",
+            "GitCommitGateway: 命名检查 subprocess 异常 exit=%s: %s",
             result.returncode, result.stderr.strip(),
         )
-        return True, f"N-16 check skipped (subprocess exit {result.returncode})"
+        return True, f"naming check skipped (subprocess exit {result.returncode})"
 
     def _load_protected_scripts(self) -> dict[str, list[str]]:
         """从 capability_canonical_file_registry.yaml 加载受保护脚本→锚点清单映射。
