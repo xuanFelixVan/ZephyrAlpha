@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] reconcile_for 永不抛异常——单个 reconciler 异常降级为 ReconcileResult(action="warn")
 # [TESTS] tests/unit/test_reconciliation_registry.py (P3-T1)
 # [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
 """reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2-T1）
 
 把 ``_post_commit_reconcile`` 单线硬编码升级为声明式 registry：每个被
@@ -177,6 +178,39 @@ class ReconciliationRegistry:
     def list_gate_ids(self) -> list[str]:
         """已注册的 gate_id 列表（诊断用）。"""
         return [s.gate_id for s in self._specs]
+
+
+def _write_reconcile_report(
+    project_root: "object", prefix: str, report: dict
+) -> "tuple[object, str]":
+    """写 reconciler 报告到 ``.runtime/reconcile_reports/{prefix}_{ts}.json``。
+
+    向内收（消除重复）：6 个 reconciler 都有 mkdir+ts+write+try/except 报告落盘
+    模式，本函数收拢为单点。自动添加 ``timestamp`` 字段。
+
+    Args:
+        project_root: Path 对象（gateway.project_root，类型注解 object 保持纯 stdlib）。
+        prefix: 报告文件名前缀（如 "baseline_aware" / "rules_integrity"）。
+        report: 报告字典（不含 timestamp，本函数自动注入）。
+
+    Returns:
+        (report_path, "") 成功 | (None, error_msg) 失败。
+    """
+    import json
+    import time
+    reports_dir = project_root / ".runtime" / "reconcile_reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    ts = int(time.time())
+    report["timestamp"] = ts
+    report_path = reports_dir / f"{prefix}_{ts}.json"
+    try:
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        return report_path, ""
+    except OSError as e:
+        return None, str(e)
 
 
 def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -345,29 +379,20 @@ def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
             timeout=60,
         )
         # 2. 报告落盘（无论 exit code，记录供追责）
-        reports_dir = project_root / ".runtime" / "reconcile_reports"
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time())
-        report_path = reports_dir / f"baseline_aware_{ts}.json"
         report = {
             "gate_id": "GATE-REG-BL",
             "session_id": session_id,
-            "timestamp": ts,
             "exit_code": scan_result.returncode,
             "stdout_tail": scan_result.stdout.strip()[-500:],
             "stderr_tail": scan_result.stderr.strip()[-500:],
             "committed_files": committed_files,
             "scanned_files": rel_py_files,
         }
-        try:
-            report_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError as e:
+        report_path, write_err = _write_reconcile_report(project_root, "baseline_aware", report)
+        if write_err:
             return ReconcileResult(
                 action="warn",
-                detail=f"baseline_aware scan done (exit={scan_result.returncode}) but report write failed: {e}",
+                detail=f"baseline_aware scan done (exit={scan_result.returncode}) but report write failed: {write_err}",
             )
         # 3. 判定结果
         if scan_result.returncode == 0:
@@ -450,28 +475,19 @@ def make_ttl_reconciler(gateway: "object") -> ReconcilerSpec:
             timeout=60,
         )
         # 3. 报告落盘
-        reports_dir = project_root / ".runtime" / "reconcile_reports"
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time())
-        report_path = reports_dir / f"ttl_{ts}.json"
         report = {
             "gate_id": "GATE-15-ttl",
             "session_id": session_id,
-            "timestamp": ts,
             "exit_code": scan_result.returncode,
             "checked_files": md_files,
             "stdout_tail": scan_result.stdout.strip()[-500:],
             "stderr_tail": scan_result.stderr.strip()[-500:],
         }
-        try:
-            report_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError as e:
+        report_path, write_err = _write_reconcile_report(project_root, "ttl", report)
+        if write_err:
             return ReconcileResult(
                 action="warn",
-                detail=f"ttl scan done (exit={scan_result.returncode}) but report write failed: {e}",
+                detail=f"ttl scan done (exit={scan_result.returncode}) but report write failed: {write_err}",
             )
         # 4. 判定（exit 0 = clean，非 0 = 违规检出）
         if scan_result.returncode == 0:
@@ -549,29 +565,20 @@ def make_ghost_reconciler(gateway: "object") -> ReconcilerSpec:
         if m:
             ghost_count = int(m.group(1))
         # 3. 报告落盘
-        reports_dir = project_root / ".runtime" / "reconcile_reports"
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time())
-        report_path = reports_dir / f"ghost_{ts}.json"
         report = {
             "gate_id": "GATE-GHOST",
             "session_id": session_id,
-            "timestamp": ts,
             "exit_code": diag_result.returncode,
             "ghost_count": ghost_count,
             "deleted_files": [f for f in committed_files if not os.path.isfile(f)],
             "stdout_tail": diag_result.stdout.strip()[-800:],
             "stderr_tail": diag_result.stderr.strip()[-500:],
         }
-        try:
-            report_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError as e:
+        report_path, write_err = _write_reconcile_report(project_root, "ghost", report)
+        if write_err:
             return ReconcileResult(
                 action="warn",
-                detail=f"ghost diagnose done (exit={diag_result.returncode}) but report write failed: {e}",
+                detail=f"ghost diagnose done (exit={diag_result.returncode}) but report write failed: {write_err}",
             )
         # 4. 判定（ghost_count==0 = clean；>0 = warn；-1 = 解析失败 = warn）
         if diag_result.returncode == 0 and ghost_count == 0:
@@ -868,29 +875,20 @@ def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
         details = scan["details"]
 
         # 2. 报告落盘
-        reports_dir = project_root / ".runtime" / "reconcile_reports"
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time())
-        report_path = reports_dir / f"working_docs_{ts}.json"
         report = {
             "gate_id": "GATE-WORKING-DOCS",
             "session_id": session_id,
-            "timestamp": ts,
             "scanned": scanned,
             "archived": archived,
             "clean": scan["clean"],
             "details": details,
             "archive_dir": scan["archive_dir"],
         }
-        try:
-            report_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError as e:
+        report_path, write_err = _write_reconcile_report(project_root, "working_docs", report)
+        if write_err:
             return ReconcileResult(
                 action="warn",
-                detail=f"working_docs scan done but report write failed: {e}",
+                detail=f"working_docs scan done but report write failed: {write_err}",
             )
 
         if scanned == 0:
@@ -1098,28 +1096,19 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
             timeout=30,
         )
         # 2. 报告落盘
-        reports_dir = project_root / ".runtime" / "reconcile_reports"
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time())
-        report_path = reports_dir / f"id_uniqueness_{ts}.json"
         report = {
             "gate_id": "GATE-ID-UNIQ",
             "session_id": session_id,
-            "timestamp": ts,
             "exit_code": scan_result.returncode,
             "checked_file": _CONFIG_REL,
             "stdout_tail": scan_result.stdout.strip()[-500:],
             "stderr_tail": scan_result.stderr.strip()[-500:],
         }
-        try:
-            report_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError as e:
+        report_path, write_err = _write_reconcile_report(project_root, "id_uniqueness", report)
+        if write_err:
             return ReconcileResult(
                 action="warn",
-                detail=f"id_uniqueness scan done (exit={scan_result.returncode}) but report write failed: {e}",
+                detail=f"id_uniqueness scan done (exit={scan_result.returncode}) but report write failed: {write_err}",
             )
         # 3. 判定（exit 0 = clean；exit 1 = same-repo 重复 id 检出；exit 2 = 脚本异常）
         if scan_result.returncode == 0:
@@ -1268,10 +1257,12 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
     的状态——消除 C 层误报，同时不削弱篡改检测能力。
 
     RULES_MANIFEST 真源为 ``validate_rules_integrity.py`` 顶部的列表（SSoT）。本
-    reconciler 的 trigger 采用宽匹配（committed file == AGENTS.md 或前缀
-    ``scripts/governance/``）而非硬编码清单复制——避免双源漂移。宽匹配的假阳性
-    （commit 了 governance 下非 RULES_MANIFEST 文件）仅多跑一次 --register（9 个
-    文件 hash，毫秒级），无副作用；无假阴性（所有 RULES_MANIFEST 路径均被覆盖）。
+    reconciler 的 trigger 总是返回 True（每次 commit 都 --register）。第一性原理：
+    trigger 的价值是避免不必要的 --register（性能优化），但 --register 仅 hash
+    RULES_MANIFEST 文件（毫秒级），远小于 commit 开销；而宽匹配（路径前缀判断）
+    基于"RULES_MANIFEST 全在 governance 下"的未校验假设，未来新增其他路径文件会
+    假阴性漏触发且无告警 → 基线不同步 → 误报 TAMPERED。性能收益不值得假设漂移风险，
+    治本：总是触发，消除假设。
 
     非阻断设计：--register 仅写本地非跟踪文件，exit 0 即基线已更新；失败降级 warn
     （报告落盘供追责）。priority 270（在 GATE-ID-UNIQ 250 之后、GATE-VOCAB-CHANGE
@@ -1286,7 +1277,6 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
         ReconcilerSpec(gate_id="GATE-RULES-INTEGRITY", priority=270)。
     """
     import json
-    import os
     import subprocess
     import sys
     import time
@@ -1295,13 +1285,11 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
     _VALIDATE_SCRIPT = "scripts/governance/meta/validate_rules_integrity.py"
 
     def _trigger(committed_files: list[str]) -> bool:
-        # 宽匹配：RULES_MANIFEST 全部 9 个文件均在 AGENTS.md 或 scripts/governance/ 下。
-        # 真源：validate_rules_integrity.py 顶部 RULES_MANIFEST 列表（SSoT）。
-        for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel == "AGENTS.md" or rel.startswith("scripts/governance/"):
-                return True
-        return False
+        # 第一性原理治本：总是触发。原宽匹配（AGENTS.md | scripts/governance/ 前缀）
+        # 基于未校验假设，未来 RULES_MANIFEST 新增其他路径文件会假阴性漏触发。
+        # --register 仅 hash RULES_MANIFEST 文件（毫秒级），不值得为省此开销引入假设。
+        # RULES_MANIFEST 真源在 validate_rules_integrity.py 顶部。
+        return True
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 1. post-commit 重注册基线（--register 内部读 RULES_MANIFEST 真源，重算全部 hash）
@@ -1315,29 +1303,20 @@ def make_rules_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
             timeout=30,
         )
         # 2. 报告落盘（无论 exit code，记录供追责）
-        reports_dir = project_root / ".runtime" / "reconcile_reports"
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time())
-        report_path = reports_dir / f"rules_integrity_{ts}.json"
         report = {
             "gate_id": "GATE-RULES-INTEGRITY",
             "session_id": session_id,
-            "timestamp": ts,
             "exit_code": reg_result.returncode,
             "stdout_tail": reg_result.stdout.strip()[-500:],
             "stderr_tail": reg_result.stderr.strip()[-500:],
             "triggered_by": committed_files,
         }
-        try:
-            report_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError as e:
+        report_path, write_err = _write_reconcile_report(project_root, "rules_integrity", report)
+        if write_err:
             return ReconcileResult(
                 action="warn",
                 detail=f"rules_integrity --register done (exit={reg_result.returncode}) "
-                       f"but report write failed: {e}",
+                       f"but report write failed: {write_err}",
             )
         # 3. 判定（--register exit 0 = 基线已更新；非 0 = 脚本异常）
         if reg_result.returncode == 0:
