@@ -427,6 +427,7 @@ capabilities:
       - _check_repo_root_usage     # REPO_ROOT门禁(删则parents[N]反模式可绕过SSoT)
       - _match_is_bootstrap        # bootstrap豁免检测(删则sys.path合法豁免失效→误杀或漏检)
       - _is_staged_delete          # staged delete识别(纵深防御,删则git add -f可能撤销用户的git rm --cached)
+      - _should_use_no_pathspec    # no-pathspec决策(staged delete保护核心,删则gitignored staged delete静默丢失,commit 32ead90e教训)
 
 # --------------------------------------------------------------------------
   - capability_id: domain_architecture_generators

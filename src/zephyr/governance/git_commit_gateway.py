@@ -706,6 +706,26 @@ class GitCommitGateway:
         )
         return chk.returncode == 0
 
+    def _should_use_no_pathspec(self, files: list[str], normal_files: list[str]) -> bool:
+        """判断本次 commit 是否应用无 pathspec 模式（staged delete 保护核心决策点）。
+
+        根因：``git commit -- <pathspec>`` 提交**工作区状态**而非**暂存区状态**。
+        对 gitignored 文件，工作区状态无法被 stage（gitignore 阻止），staged
+        delete（``git rm --cached``）被静默跳过（历史教训：commit 32ead90e
+        漏提交 5 个 egg_info 删除）。无 pathspec 模式提交所有 staged 变更，
+        staged delete 正确包含，``_verify_staged_is_clean`` 确保只提交目标文件。
+
+        判据：``normal_files`` 是 ``files`` 中非 gitignored 的子集，数量不等
+        说明目标含 gitignored 文件 → 必须用无 pathspec commit。
+
+        .. note::
+            本方法是 staged delete 保护的核心决策点，受 integrity_anchors
+            保护（capability_canonical_file_registry.yaml），删除/篡改会触发
+            SCRIPT_INTEGRITY_VIOLATION 阻断 commit。调用点在 ``_commit_locked``，
+            AGENTS.md §8 L212 警告勿删调用。
+        """
+        return len(normal_files) < len(files)
+
     def _filter_gitignored(self, files: list[str]) -> list[str]:
         """返回 ``files`` 中被 ``.gitignore`` 忽略的绝对路径子集。
 
@@ -1570,7 +1590,7 @@ class GitCommitGateway:
                         # 工作区状态无法被 stage（gitignore 阻止），staged delete 被静默
                         # 跳过。无 pathspec 模式提交所有 staged 变更，staged delete 正确
                         # 包含。_verify_staged_is_clean 确保只提交目标文件。
-                        has_gitignored = len(normal_files) < len(files)
+                        has_gitignored = self._should_use_no_pathspec(files, normal_files)
                         pathspec_for_commit = None if has_gitignored else pathspec_file
                         commit_hash, commit_err = self._commit_with_file_message(
                             full_message, pathspec_for_commit, files
