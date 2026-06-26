@@ -1,7 +1,7 @@
 %% D-ML_TRAIN 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:26
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 13, 依赖边数: 17
+%% 模块数: 12, 依赖边数: 16
 
 graph TD
 
@@ -19,7 +19,6 @@ graph TD
         src_zephyr_ml_train_models___init___py["src/zephyr/ml_train/models/__init__.py [prototype]"]
         src_zephyr_ml_train_services___init___py["src/zephyr/ml_train/services/__init__.py [prototype]"]
         src_zephyr_ml_train_trainer_base_py["src/zephyr/ml_train/trainer_base.py [prototype]"]
-        训练域_D_ML_106["训练域/D-ML-106 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -45,12 +44,11 @@ graph TD
     %% D-ML_TRAIN -> D-SHARED (2 条)
     src_zephyr_ml_train_inference_base_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D-SHARED]
-    %% D-ML_TRAIN -> D-TRADING (3 条)
+    %% D-ML_TRAIN -> D-TRADING (2 条)
     src_zephyr_ml_train_inference_base_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_TRADING[D-TRADING]
-    训练域_D_ML_106 -->|contract| D_TRADING[D-TRADING]
 
     %% 统计
     %% 域内依赖: 5 条
     %% 跨域入边: 7 条
-    %% 跨域出边: 5 条
+    %% 跨域出边: 4 条

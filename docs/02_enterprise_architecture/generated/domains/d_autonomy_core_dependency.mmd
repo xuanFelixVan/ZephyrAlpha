@@ -1,15 +1,12 @@
 %% D-AUTONOMY_CORE 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 181, 依赖边数: 427
+%% 模块数: 176, 依赖边数: 423
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_AUTONOMY_CORE[自治核心]
-        F23_agent_orchestrator_["F23-agent-orchestrator/ [design]"]
-        F24_agent_spec_["F24-agent-spec/ [design]"]
-        F32_state_machine_["F32-state-machine/ [design]"]
         src_zephyr_autonomy_core___init___py["src/zephyr/autonomy_core/__init__.py [production]"]
         src_zephyr_autonomy_core___init___from_orches_py["...autonomy_core/__init___from_orches.py [prototype]"]
         src_zephyr_autonomy_core___main___py["src/zephyr/autonomy_core/__main__.py [prototype]"]
@@ -107,7 +104,10 @@ graph TD
         src_zephyr_autonomy_core_rational_py["src/zephyr/autonomy_core/rational.py [prototype]"]
         src_zephyr_autonomy_core_registry_py["src/zephyr/autonomy_core/registry.py [prototype]"]
         src_zephyr_autonomy_core_security_filter_py["...phyr/autonomy_core/security_filter.py [prototype]"]
-        %% ... 还有 81 个模块未显示
+        src_zephyr_autonomy_core_self_diagnosis_py["...ephyr/autonomy_core/self_diagnosis.py [prototype]"]
+        src_zephyr_autonomy_core_self_evolution_fidelity_gate_py["..._core/self_evolution_fidelity_gate.py [prototype]"]
+        src_zephyr_autonomy_core_sensitivity_classifier_py["...tonomy_core/sensitivity_classifier.py [prototype]"]
+        %% ... 还有 76 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,12 +191,12 @@ graph TD
     src_zephyr_autonomy_core_fallback_staleness_gate_py -->|config_depends| src_zephyr_autonomy_core___init___py
     src_zephyr_autonomy_core_file_autorregister_py -->|config_depends| src_zephyr_autonomy_core___init___py
     src_zephyr_autonomy_core_host_resource_governor_py -->|config_depends| src_zephyr_autonomy_core___init___py
-    %% ... 还有 73 条域内依赖未显示
+    %% ... 还有 72 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-AUTONOMY_PERM -> D-AUTONOMY_CORE (1 条)
     D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|test_depends| src_zephyr_autonomy_core___init___py
-    %% D-GOVERNANCE -> D-AUTONOMY_CORE (213 条)
+    %% D-GOVERNANCE -> D-AUTONOMY_CORE (214 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_autonomy_core___init___py
@@ -234,22 +234,21 @@ graph TD
     D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_autonomy_core___init___py
     %% D-KNOWLEDGE -> D-AUTONOMY_CORE (1 条)
     D_KNOWLEDGE[D-KNOWLEDGE] -->|test_depends| src_zephyr_autonomy_core___init___py
-    %% D-OPS -> D-AUTONOMY_CORE (6 条)
+    %% D-OPS -> D-AUTONOMY_CORE (8 条)
     D_OPS[D-OPS] -->|import_depends| src_zephyr_autonomy_core___init___py
     D_OPS[D-OPS] -->|test_depends| src_zephyr_autonomy_core___init___py
     D_OPS[D-OPS] -->|test_depends| src_zephyr_autonomy_core___init___py
     D_OPS[D-OPS] -->|test_depends| src_zephyr_autonomy_core___init___py
     D_OPS[D-OPS] -->|test_depends| src_zephyr_autonomy_core___init___py
     D_OPS[D-OPS] -->|test_depends| src_zephyr_autonomy_core___init___py
-    %% D-TRADING -> D-AUTONOMY_CORE (4 条)
+    D_OPS[D-OPS] -->|runtime| src_zephyr_autonomy_core_self_evolution_fidelity_gate_py
+    D_OPS[D-OPS] -->|runtime| src_zephyr_autonomy_core_skill_resilience_py
+    %% D-TRADING -> D-AUTONOMY_CORE (3 条)
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_autonomy_core___init___py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_autonomy_core___init___py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_autonomy_core___init___py
-    D_TRADING[D-TRADING] -->|runtime| F23_agent_orchestrator_
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-AUTONOMY_CORE -> D-GOV-ENFORCEMENT (1 条)
-    src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
     %% D-AUTONOMY_CORE -> D-GOVERNANCE (2 条)
     src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_autonomy_core_vector_writer_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -257,7 +256,9 @@ graph TD
     src_zephyr_autonomy_core_engine_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_autonomy_core_skill_sandbox_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-AUTONOMY_CORE -> D-INTEGRATION (26 条)
+    %% D-AUTONOMY_CORE -> D-GOV_ENFORCEMENT (1 条)
+    src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    %% D-AUTONOMY_CORE -> D-INTEGRATION (24 条)
     src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_context_pipeline_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_context_injector_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -269,7 +270,6 @@ graph TD
     src_zephyr_autonomy_core_pattern_library_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_prompt_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_skill_executor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_autonomy_core_skill_freshness_ext_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_skill_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_skill_router_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_system_snapshot_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -283,26 +283,22 @@ graph TD
     src_zephyr_autonomy_core_support_doc_compressor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_support_prompt_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_support_system_snapshot_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    F24_agent_spec_ -->|data| D_INTEGRATION[D-INTEGRATION]
     %% D-AUTONOMY_CORE -> D-INTELLIGENCE (2 条)
     src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     src_zephyr_autonomy_core_context_assembler_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
-    %% D-AUTONOMY_CORE -> D-SECURITY (4 条)
+    %% D-AUTONOMY_CORE -> D-SECURITY (3 条)
     src_zephyr_autonomy_core_context_injector_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_autonomy_core_llm_gateway_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_autonomy_core_security_filter_py -->|import_depends| D_SECURITY[D-SECURITY]
-    F24_agent_spec_ -->|contract| D_SECURITY[D-SECURITY]
-    %% D-AUTONOMY_CORE -> D-SHARED (8 条)
+    %% D-AUTONOMY_CORE -> D-SHARED (6 条)
     src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_autonomy_core_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_autonomy_core_llm_gateway_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_autonomy_core_manag___t_context_budget_tracker_py -->|import_depends| D_SHARED[D-SHARED]
-    F23_agent_orchestrator_ -->|runtime| D_SHARED[D-SHARED]
-    F32_state_machine_ -->|runtime| D_SHARED[D-SHARED]
 
     %% 统计
-    %% 域内依赖: 153 条
-    %% 跨域入边: 228 条
-    %% 跨域出边: 46 条
+    %% 域内依赖: 152 条
+    %% 跨域入边: 230 条
+    %% 跨域出边: 41 条

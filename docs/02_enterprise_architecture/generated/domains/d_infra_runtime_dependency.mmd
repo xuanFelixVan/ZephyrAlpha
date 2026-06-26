@@ -1,7 +1,7 @@
 %% D-INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 148, 依赖边数: 420
+%% 模块数: 145, 依赖边数: 415
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         src_zephyr_infrastructure_hooks_event_hook_py["...yr/infrastructure/hooks/event_hook.py [production]"]
         src_zephyr_infrastructure_impact___init___py["...hyr/infrastructure/impact/__init__.py [production]"]
         src_zephyr_infrastructure_impact_impact_propagator_py["...structure/impact/impact_propagator.py [production]"]
-        %% ... 还有 48 个模块未显示
+        %% ... 还有 45 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -196,24 +196,12 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-AUTONOMY_PERM -> D-INFRA_RUNTIME (1 条)
     D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|test_depends| src_zephyr_infrastructure___init___py
-    %% D-GOV-SCRIPTS -> D-INFRA_RUNTIME (11 条)
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
-    %% D-GOVERNANCE -> D-INFRA_RUNTIME (125 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
+    %% D-GOVERNANCE -> D-INFRA_RUNTIME (124 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_infrastructure___init___py
@@ -245,8 +233,19 @@ graph TD
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_infrastructure___init___py
-    %% D-INFRA_A2A -> D-INFRA_RUNTIME (14 条)
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_infrastructure___init___py
+    %% D-GOV_SCRIPTS -> D-INFRA_RUNTIME (11 条)
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_infrastructure___init___py
+    %% D-INFRA_A2A -> D-INFRA_RUNTIME (13 条)
     D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_infrastructure___init___py
     D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_infrastructure___init___py
     D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_infrastructure___init___py
@@ -306,8 +305,6 @@ graph TD
     D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure___init___py
     D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure___init___py
     D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_infrastructure___init___py
-    %% D-INTELLIGENCE -> D-INFRA_RUNTIME (1 条)
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_infrastructure___init___py
     %% D-OPS -> D-INFRA_RUNTIME (33 条)
     D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
     D_OPS[D-OPS] -->|import_depends| src_zephyr_infrastructure___init___py
@@ -368,7 +365,7 @@ graph TD
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-INFRA_RUNTIME -> D-INTEGRATION (23 条)
+    %% D-INFRA_RUNTIME -> D-INTEGRATION (21 条)
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_blueprint_search_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -386,9 +383,7 @@ graph TD
     src_zephyr_infrastructure_infr___rocess_lifecycle_gateway_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_infrastructure_life___urce_optimization_engine_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_observability_02_session_audit_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -428,5 +423,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 101 条
-    %% 跨域入边: 246 条
-    %% 跨域出边: 73 条
+    %% 跨域入边: 243 条
+    %% 跨域出边: 71 条

@@ -1,7 +1,7 @@
 %% D-AUTONOMY_PERM 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 88, 依赖边数: 158
+%% 模块数: 70, 依赖边数: 157
 
 graph TD
 
@@ -77,24 +77,6 @@ graph TD
         tests_unit_agent_rbac___init___py["tests/unit/agent_rbac/__init__.py [prototype]"]
         tests_unit_agent_rbac_conftest_py["tests/unit/agent_rbac/conftest.py [prototype]"]
         tests_unit_agent_rbac_test_rbac_core_py["tests/unit/agent_rbac/test_rbac_core.py [prototype]"]
-        自治保护域_双写协调_D_AUTONOMY_166["自治保护域-双写协调/D-AUTONOMY-166 [design]"]
-        自治保护域_反馈升级_D_AUTONOMY_184["自治保护域-反馈升级/D-AUTONOMY-184 [design]"]
-        自治保护域_向量索引_D_AUTONOMY_74["自治保护域-向量索引/D-AUTONOMY-74 [design]"]
-        自治保护域_回滚协调_D_AUTONOMY_106["自治保护域-回滚协调/D-AUTONOMY-106 [design]"]
-        自治保护域_审计报告_D_AUTONOMY_203["自治保护域-审计报告/D-AUTONOMY-203 [design]"]
-        自治保护域_成本_D_AUTONOMY_16["自治保护域-成本/D-AUTONOMY-16 [design]"]
-        自治保护域_治理精简_D_AUTONOMY_128["自治保护域-治理精简/D-AUTONOMY-128 [design]"]
-        自治保护域_理解成本_D_AUTONOMY_145["自治保护域-理解成本/D-AUTONOMY-145 [design]"]
-        自治保护域_系统评分_D_AUTONOMY_151["自治保护域-系统评分/D-AUTONOMY-151 [design]"]
-        自治保护域_链路监控_D_AUTONOMY_120["自治保护域-链路监控/D-AUTONOMY-120 [design]"]
-        自治保护域_风控通知_D_AUTONOMY_52["自治保护域-风控通知/D-AUTONOMY-52 [design]"]
-        自治保护域_D_AUTONOMY_10["自治保护域/D-AUTONOMY-10 [design]"]
-        自治保护域_D_AUTONOMY_104["自治保护域/D-AUTONOMY-104 [design]"]
-        自治保护域_D_AUTONOMY_108["自治保护域/D-AUTONOMY-108 [design]"]
-        自治保护域_D_AUTONOMY_161["自治保护域/D-AUTONOMY-161 [design]"]
-        自治保护域_D_AUTONOMY_33["自治保护域/D-AUTONOMY-33 [design]"]
-        自治保护域_D_AUTONOMY_47["自治保护域/D-AUTONOMY-47 [design]"]
-        自治保护域_D_AUTONOMY_83["自治保护域/D-AUTONOMY-83 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -129,7 +111,7 @@ graph TD
     %% D-AUTONOMY_PERM -> D-INTEGRATION (2 条)
     tests_unit_agent_rbac_test_rbac_core_py -->|test_depends| D_INTEGRATION[D-INTEGRATION]
     tests_unit_agent_rbac_test_rbac_core_py -->|test_depends| D_INTEGRATION[D-INTEGRATION]
-    %% D-AUTONOMY_PERM -> D-SECURITY (138 条)
+    %% D-AUTONOMY_PERM -> D-SECURITY (137 条)
     src_zephyr_autonomy_perm_red_b___alidator_attack_registry_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_autonomy_perm_red_b___ator_convergence_checker_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_autonomy_perm_red_b___validator_defense_runner_py -->|import_depends| D_SECURITY[D-SECURITY]
@@ -164,4 +146,4 @@ graph TD
     %% 统计
     %% 域内依赖: 7 条
     %% 跨域入边: 5 条
-    %% 跨域出边: 146 条
+    %% 跨域出边: 145 条

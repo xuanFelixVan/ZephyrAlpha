@@ -1,7 +1,7 @@
-%% D-GOV-DOCS 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% D-GOV_DOCS 域全景依赖图
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 151, 依赖边数: 91
+%% 模块数: 127, 依赖边数: 86
 
 graph TD
 
@@ -68,29 +68,7 @@ graph TD
         docs_02_enterprise_architectur___cutting_runtime_planes_yaml["...del/cross_cutting/runtime_planes.yaml [production]"]
         docs_02_enterprise_architectur___model_domain_ddd_model_yaml["...hitecture_model/domain/ddd_model.yaml [production]"]
         docs_02_enterprise_architectur___l_events_domain_events_yaml["...cture_model/events/domain_events.yaml [production]"]
-        docs_02_enterprise_architectur___rontend_frontend_model_yaml["...re_model/frontend/frontend_model.yaml [production]"]
         docs_02_enterprise_architectur___chitecture_model_index_yaml["...tecture/architecture_model/index.yaml [production]"]
-        docs_02_enterprise_architectur___el_infra_core_services_yaml["...ecture_model/infra/core_services.yaml [production]"]
-        docs_02_enterprise_architectur___del_infra_shared_infra_yaml["...tecture_model/infra/shared_infra.yaml [production]"]
-        docs_02_enterprise_architectur___ure_model_layers_b_mcp_yaml[".../architecture_model/layers/b_mcp.yaml [production]"]
-        docs_02_enterprise_architectur___layers_l00_data_source_yaml["...ure_model/layers/l00_data_source.yaml [production]"]
-        docs_02_enterprise_architectur___ers_l01_infrastructure_yaml["..._model/layers/l01_infrastructure.yaml [production]"]
-        docs_02_enterprise_architectur___ayers_l02_alpha_factor_yaml["...re_model/layers/l02_alpha_factor.yaml [production]"]
-        docs_02_enterprise_architectur____l03_signal_generation_yaml["...del/layers/l03_signal_generation.yaml [production]"]
-        docs_02_enterprise_architectur___rs_l04_risk_management_yaml["...model/layers/l04_risk_management.yaml [production]"]
-        docs_02_enterprise_architectur___portfolio_construction_yaml["...ayers/l05_portfolio_construction.yaml [production]"]
-        docs_02_enterprise_architectur___rs_l06_trade_execution_yaml["...model/layers/l06_trade_execution.yaml [production]"]
-        docs_02_enterprise_architectur___7_post_trade_analytics_yaml[".../layers/l07_post_trade_analytics.yaml [production]"]
-        docs_02_enterprise_architectur___l08_human_ai_interface_yaml["...el/layers/l08_human_ai_interface.yaml [production]"]
-        docs_02_enterprise_architectur___09_research_innovation_yaml["...l/layers/l09_research_innovation.yaml [production]"]
-        docs_02_enterprise_architectur____layers_l10_compliance_yaml["...ture_model/layers/l10_compliance.yaml [production]"]
-        docs_02_enterprise_architectur___layers_l11_ml_platform_yaml["...ure_model/layers/l11_ml_platform.yaml [production]"]
-        docs_02_enterprise_architectur___s_l12_system_telemetry_yaml["...odel/layers/l12_system_telemetry.yaml [production]"]
-        docs_02_enterprise_architectur___rs_l13_experimentation_yaml["...model/layers/l13_experimentation.yaml [production]"]
-        docs_02_enterprise_architectur___re_model_layers_schema_yaml["...architecture_model/layers/schema.yaml [production]"]
-        docs_02_enterprise_architectur___re_model_layers_shared_yaml["...architecture_model/layers/shared.yaml [production]"]
-        docs_02_enterprise_architectur___ure_model_mir_vxzd5an__yaml[".../architecture_model/mir_vxzd5an_.yaml [production]"]
-        docs_02_enterprise_architectur____scripts_scripts_model_yaml["...ture_model/scripts/scripts_model.yaml [production]"]
         docs_02_enterprise_architectur___y_technology_landscape_yaml[".../technology/technology_landscape.yaml [production]"]
         docs_02_enterprise_architectur___rastructure_tech_stack_yaml["...coding_infrastructure_tech_stack.yaml [production]"]
         docs_03_modules__cross_layer_m___mposition_completeness_yaml["...F_013/decomposition_completeness.yaml [production]"]
@@ -107,7 +85,29 @@ graph TD
         docs_03_modules__domain_infra____rotocol_trigger_config_yaml["..._ops/a2a_protocol/trigger_config.yaml [production]"]
         docs_03_modules__domain_infra____otocol_version_tracker_yaml["...ops/a2a_protocol/version_tracker.yaml [production]"]
         docs_03_modules_path_ownership_map_yaml["docs/03_modules/path_ownership_map.yaml [production]"]
-        %% ... 还有 51 个模块未显示
+        src_zephyr_governance_kb___init___py["src/zephyr/governance/kb/__init__.py [prototype]"]
+        src_zephyr_governance_kb__backend_protocol_py["...yr/governance/kb/_backend_protocol.py [prototype]"]
+        src_zephyr_governance_kb_activate_py["src/zephyr/governance/kb/activate.py [prototype]"]
+        src_zephyr_governance_kb_analyze_py["src/zephyr/governance/kb/analyze.py [prototype]"]
+        src_zephyr_governance_kb_batch_ingest_py["src/zephyr/governance/kb/batch_ingest.py [prototype]"]
+        src_zephyr_governance_kb_bootstrap_py["src/zephyr/governance/kb/bootstrap.py [prototype]"]
+        src_zephyr_governance_kb_chromadb_init_py["...zephyr/governance/kb/chromadb_init.py [prototype]"]
+        src_zephyr_governance_kb_embedding_migrate_py["...yr/governance/kb/embedding_migrate.py [prototype]"]
+        src_zephyr_governance_kb_extract_py["src/zephyr/governance/kb/extract.py [prototype]"]
+        src_zephyr_governance_kb_filing_nlp_engine___init___py["...ance/kb/filing_nlp_engine/__init__.py [prototype]"]
+        src_zephyr_governance_kb_filing_nlp_engine_extract_py["...nance/kb/filing_nlp_engine/extract.py [prototype]"]
+        src_zephyr_governance_kb_freeze_py["src/zephyr/governance/kb/freeze.py [prototype]"]
+        src_zephyr_governance_kb_graph_validator_py["...phyr/governance/kb/graph_validator.py [prototype]"]
+        src_zephyr_governance_kb_ingest_py["src/zephyr/governance/kb/ingest.py [prototype]"]
+        src_zephyr_governance_kb_integrity_py["src/zephyr/governance/kb/integrity.py [prototype]"]
+        src_zephyr_governance_kb_kb_engine___init___py["...r/governance/kb/kb_engine/__init__.py [prototype]"]
+        src_zephyr_governance_kb_kb_engine_chromadb_init_py["...ernance/kb/kb_engine/chromadb_init.py [prototype]"]
+        src_zephyr_governance_kb_kb_engine_embedding_migrate_py["...nce/kb/kb_engine/embedding_migrate.py [prototype]"]
+        src_zephyr_governance_kb_kb_engine_kb_gate_task_py["...vernance/kb/kb_engine/kb_gate_task.py [prototype]"]
+        src_zephyr_governance_kb_kb_gate_task_py["src/zephyr/governance/kb/kb_gate_task.py [prototype]"]
+        src_zephyr_governance_kb_kb_repo_py["src/zephyr/governance/kb/kb_repo.py [prototype]"]
+        src_zephyr_governance_kb_ke_tombstone_py["src/zephyr/governance/kb/ke_tombstone.py [prototype]"]
+        %% ... 还有 27 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -129,26 +129,13 @@ graph TD
     src_zephyr_governance_kb_suppl___in_graph_engine___init___py -->|config_depends| src_zephyr_governance_kb_suppl___h_engine_graph_validator_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D-GOV-DOCS (1 条)
+    %% D-GOVERNANCE -> D-GOV_DOCS (1 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|runtime| src_zephyr_governance_kb_pipeline_activate_py
-    %% D-TRADING -> D-GOV-DOCS (1 条)
+    %% D-TRADING -> D-GOV_DOCS (1 条)
     D_TRADING[D-TRADING] -->|runtime| src_zephyr_governance_kb_pipeline_activate_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-GOV-DOCS -> D-GOV-ENFORCEMENT (12 条)
-    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_triage_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_triage_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV-ENFORCEMENT]
-    %% D-GOV-DOCS -> D-GOVERNANCE (28 条)
+    %% D-GOV_DOCS -> D-GOVERNANCE (26 条)
     src_zephyr_governance_kb_batch_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_activate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -159,7 +146,6 @@ graph TD
     src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_kb_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_self_test_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_triage_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_kb_engine_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -171,13 +157,23 @@ graph TD
     src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_pipeline_batch_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_triage_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_storage_kb_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_storage_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_storage_graph_validator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_kb_pipeline_activate_py -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-GOV-DOCS -> D-INTEGRATION (11 条)
+    %% D-GOV_DOCS -> D-GOV_ENFORCEMENT (10 条)
+    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
+    %% D-GOV_DOCS -> D-INTEGRATION (11 条)
     src_zephyr_governance_kb_chromadb_init_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_governance_kb_chromadb_init_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -189,10 +185,10 @@ graph TD
     src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    %% D-GOV-DOCS -> D-INTELLIGENCE (2 条)
+    %% D-GOV_DOCS -> D-INTELLIGENCE (2 条)
     src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
-    %% D-GOV-DOCS -> D-SHARED (20 条)
+    %% D-GOV_DOCS -> D-SHARED (19 条)
     src_zephyr_governance_kb_kb_gate_task_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_SHARED[D-SHARED]
@@ -206,7 +202,6 @@ graph TD
     src_zephyr_governance_kb_pipeline_batch_ingest_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_storage_chromadb_init_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_storage_chromadb_init_py -->|import_depends| D_SHARED[D-SHARED]
-    src_zephyr_governance_kb_pipeline_triage_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_storage_kb_repo_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_storage_kb_repo_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_governance_kb_storage_kb_repo_py -->|import_depends| D_SHARED[D-SHARED]
@@ -217,4 +212,4 @@ graph TD
     %% 统计
     %% 域内依赖: 16 条
     %% 跨域入边: 2 条
-    %% 跨域出边: 73 条
+    %% 跨域出边: 68 条

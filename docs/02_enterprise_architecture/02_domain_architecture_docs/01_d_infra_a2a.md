@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 a2a_communication（D-INFRA_A2A）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-26 19:04:16
+> 最后更新: 2026-06-26 21:00:25
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-INFRA_A2A | Domain ID | D-INFRA_A2A |
 | 域名称 | a2a_communication | Domain Name | a2a_communication |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 114 | Module Count | 114 |
-| 域内依赖 | 82 | Internal Dependencies | 82 |
+| 模块数 | 101 | Module Count | 101 |
+| 域内依赖 | 73 | Internal Dependencies | 73 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
-| 跨域出边 | 37 | Cross-domain Outgoing | 37 |
+| 跨域出边 | 35 | Cross-domain Outgoing | 35 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
-| 生产态模块 | 114 | Production Modules | 114 |
+| 生产态模块 | 101 | Production Modules | 101 |
 | 容量 | 114/150 (正常) | Capacity | 114/150 (正常) |
 | 描述 | A2A Card注册与发现(card_registry) | Description | A2A Card注册与发现(card_registry) |
 
 ## 模块清单 / Module List
 
-共 114 个模块（按路径排序，全部显示）
+共 101 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -131,17 +131,6 @@ ttl: permanent
 | src/zephyr/infrastructure/pipeline/layer_consumer_registry.py |  | production | generated |
 | src/zephyr/infrastructure/pipeline/layer_router.py |  | production | generated |
 | src/zephyr/infrastructure/pipeline/llm_gateway.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/__init__.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/benchmark_suite.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/capability_passport.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/cli.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/deepseek_v4_chat.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/exam_orchestrator.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/exam_test_cases.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/model_discovery.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/profiler.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/results_writer.py |  | production | generated |
-| src/zephyr/infrastructure/pipeline/model_profiler/task_model_learner.py |  | production | generated |
 | src/zephyr/infrastructure/pipeline/model_router.py |  | production | generated |
 | src/zephyr/infrastructure/pipeline/models.py |  | production | generated |
 | src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py |  | production | generated |
@@ -152,8 +141,6 @@ ttl: permanent
 | src/zephyr/infrastructure/queue/__init__.py |  | production | generated |
 | src/zephyr/infrastructure/queue/task_queue.py |  | production | generated |
 | src/zephyr/infrastructure/queue/task_scheduler.py |  | production | generated |
-| src/zephyr/infrastructure/sync/__init__.py |  | production | generated |
-| src/zephyr/infrastructure/sync/blueprint_code_sync.py |  | production | generated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -377,17 +364,6 @@ graph TD
 graph TD
     subgraph D_INFRA_A2A["D-INFRA_A2A a2a_communication"]
         src_zephyr_infrastructure_pipeline_llm_gateway_py["src/zephyr/infrastructure/pipeline/llm_gateway.py production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_init_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_benchmark_suite_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_capability_passport_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_cli_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_deepseek_v4_chat_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_exam_orchestrator_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_exam_test_cases_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_model_discovery_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_profiler_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_results_writer_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
-        src_zephyr_infrastructure_pipeline_model_profiler_task_model_learner_py["src/zephyr/infrastructure/pipeline/model_profil... production"]
         src_zephyr_infrastructure_pipeline_model_router_py["src/zephyr/infrastructure/pipeline/model_router.py production"]
         src_zephyr_infrastructure_pipeline_models_py["src/zephyr/infrastructure/pipeline/models.py production"]
         src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py["src/zephyr/infrastructure/pipeline/pipeline_age... production"]
@@ -398,19 +374,8 @@ graph TD
         src_zephyr_infrastructure_queue_init_py["src/zephyr/infrastructure/queue/__init__.py production"]
         src_zephyr_infrastructure_queue_task_queue_py["src/zephyr/infrastructure/queue/task_queue.py production"]
         src_zephyr_infrastructure_queue_task_scheduler_py["src/zephyr/infrastructure/queue/task_scheduler.py production"]
-        src_zephyr_infrastructure_sync_init_py["src/zephyr/infrastructure/sync/__init__.py production"]
-        src_zephyr_infrastructure_sync_blueprint_code_sync_py["src/zephyr/infrastructure/sync/blueprint_code_s... production"]
     end
-    src_zephyr_infrastructure_pipeline_model_profiler_benchmark_suite_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_capability_passport_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_deepseek_v4_chat_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_exam_test_cases_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_profiler_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_exam_orchestrator_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_results_writer_py -->|config_depends| src_zephyr_infrastructure_pipeline_model_profiler_init_py
-    src_zephyr_infrastructure_pipeline_model_profiler_init_py -->|import_depends| src_zephyr_infrastructure_pipeline_model_profiler_cli_py
     src_zephyr_infrastructure_queue_init_py -->|import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
-    src_zephyr_infrastructure_sync_init_py -->|import_depends| src_zephyr_infrastructure_sync_blueprint_code_sync_py
     D_SHARED["D-SHARED prototype"]
     src_zephyr_infrastructure_pipeline_models_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_model_router_py -->|import_depends| D_SHARED
@@ -421,14 +386,12 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_pipeline_model_profiler_model_discovery_py -->|import_depends| D_GOVERNANCE
-    src_zephyr_infrastructure_pipeline_model_profiler_task_model_learner_py -->|import_depends| D_INFRA_RUNTIME
     D_SHARED -.->|import_depends| src_zephyr_infrastructure_queue_task_queue_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_pipeline_llm_gateway_py,src_zephyr_infrastructure_pipeline_model_profiler_init_py,src_zephyr_infrastructure_pipeline_model_profiler_benchmark_suite_py,src_zephyr_infrastructure_pipeline_model_profiler_capability_passport_py,src_zephyr_infrastructure_pipeline_model_profiler_cli_py,src_zephyr_infrastructure_pipeline_model_profiler_deepseek_v4_chat_py,src_zephyr_infrastructure_pipeline_model_profiler_exam_orchestrator_py,src_zephyr_infrastructure_pipeline_model_profiler_exam_test_cases_py,src_zephyr_infrastructure_pipeline_model_profiler_model_discovery_py,src_zephyr_infrastructure_pipeline_model_profiler_profiler_py,src_zephyr_infrastructure_pipeline_model_profiler_results_writer_py,src_zephyr_infrastructure_pipeline_model_profiler_task_model_learner_py,src_zephyr_infrastructure_pipeline_model_router_py,src_zephyr_infrastructure_pipeline_models_py,src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py,src_zephyr_infrastructure_pipeline_pipeline_lock_py,src_zephyr_infrastructure_pipeline_pipeline_roadmap_py,src_zephyr_infrastructure_pipeline_preemption_manager_py,src_zephyr_infrastructure_pipeline_routing_plugins_py,src_zephyr_infrastructure_queue_init_py,src_zephyr_infrastructure_queue_task_queue_py,src_zephyr_infrastructure_queue_task_scheduler_py,src_zephyr_infrastructure_sync_init_py,src_zephyr_infrastructure_sync_blueprint_code_sync_py production
+    class src_zephyr_infrastructure_pipeline_llm_gateway_py,src_zephyr_infrastructure_pipeline_model_router_py,src_zephyr_infrastructure_pipeline_models_py,src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py,src_zephyr_infrastructure_pipeline_pipeline_lock_py,src_zephyr_infrastructure_pipeline_pipeline_roadmap_py,src_zephyr_infrastructure_pipeline_preemption_manager_py,src_zephyr_infrastructure_pipeline_routing_plugins_py,src_zephyr_infrastructure_queue_init_py,src_zephyr_infrastructure_queue_task_queue_py,src_zephyr_infrastructure_queue_task_scheduler_py production
     class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
     class D_SHARED external_design
 ```
@@ -440,8 +403,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-SHARED | 18 | import_depends |
-| D-INFRA_RUNTIME | 14 | import_depends |
-| D-GOVERNANCE | 3 | import_depends |
+| D-INFRA_RUNTIME | 13 | import_depends |
+| D-GOVERNANCE | 2 | import_depends |
 | D-INTEGRATION | 1 | import_depends |
 | D-GOV_AUDIT | 1 | import_depends |
 

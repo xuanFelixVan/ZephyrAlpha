@@ -1,7 +1,7 @@
 %% D-INFRA_A2A 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 114, 依赖边数: 126
+%% 模块数: 101, 依赖边数: 115
 
 graph TD
 
@@ -98,16 +98,16 @@ graph TD
         src_zephyr_infrastructure_pipe____layer_consumer_registry_py["...e/pipeline/layer_consumer_registry.py [production]"]
         src_zephyr_infrastructure_pipeline_layer_router_py["...frastructure/pipeline/layer_router.py [production]"]
         src_zephyr_infrastructure_pipeline_llm_gateway_py["...nfrastructure/pipeline/llm_gateway.py [production]"]
-        src_zephyr_infrastructure_pipe____model_profiler___init___py["...e/pipeline/model_profiler/__init__.py [production]"]
-        src_zephyr_infrastructure_pipe___profiler_benchmark_suite_py["...ine/model_profiler/benchmark_suite.py [production]"]
-        src_zephyr_infrastructure_pipe___iler_capability_passport_py["...model_profiler/capability_passport.py [production]"]
-        src_zephyr_infrastructure_pipeline_model_profiler_cli_py["...ucture/pipeline/model_profiler/cli.py [production]"]
-        src_zephyr_infrastructure_pipe___rofiler_deepseek_v4_chat_py["...ne/model_profiler/deepseek_v4_chat.py [production]"]
-        src_zephyr_infrastructure_pipe___ofiler_exam_orchestrator_py["...e/model_profiler/exam_orchestrator.py [production]"]
-        src_zephyr_infrastructure_pipe___profiler_exam_test_cases_py["...ine/model_profiler/exam_test_cases.py [production]"]
-        src_zephyr_infrastructure_pipe___profiler_model_discovery_py["...ine/model_profiler/model_discovery.py [production]"]
-        src_zephyr_infrastructure_pipe____model_profiler_profiler_py["...e/pipeline/model_profiler/profiler.py [production]"]
-        %% ... 还有 14 个模块未显示
+        src_zephyr_infrastructure_pipeline_model_router_py["...frastructure/pipeline/model_router.py [production]"]
+        src_zephyr_infrastructure_pipeline_models_py["...hyr/infrastructure/pipeline/models.py [production]"]
+        src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py["...ure/pipeline/pipeline_agent_bridge.py [production]"]
+        src_zephyr_infrastructure_pipeline_pipeline_lock_py["...rastructure/pipeline/pipeline_lock.py [production]"]
+        src_zephyr_infrastructure_pipeline_pipeline_roadmap_py["...tructure/pipeline/pipeline_roadmap.py [production]"]
+        src_zephyr_infrastructure_pipeline_preemption_manager_py["...ucture/pipeline/preemption_manager.py [production]"]
+        src_zephyr_infrastructure_pipeline_routing_plugins_py["...structure/pipeline/routing_plugins.py [production]"]
+        src_zephyr_infrastructure_queue___init___py["...phyr/infrastructure/queue/__init__.py [production]"]
+        src_zephyr_infrastructure_queue_task_queue_py["...yr/infrastructure/queue/task_queue.py [production]"]
+        %% ... 还有 1 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -160,9 +160,7 @@ graph TD
     src_zephyr_infrastructure_a2a______security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a____ession_smuggling_defense_py
     src_zephyr_infrastructure_events___init___py -->|import_depends| src_zephyr_infrastructure_events_event_store_py
     src_zephyr_infrastructure_pipeline___init___py -->|import_depends| src_zephyr_infrastructure_pipeline_llm_gateway_py
-    src_zephyr_infrastructure_pipe____model_profiler___init___py -->|import_depends| src_zephyr_infrastructure_pipeline_model_profiler_cli_py
     src_zephyr_infrastructure_queue___init___py -->|import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
-    src_zephyr_infrastructure_sync___init___py -->|import_depends| src_zephyr_infrastructure_sync_blueprint_code_sync_py
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py -->|config_depends| src_zephyr_infrastructure_a2a_protocol___init___py
     src_zephyr_infrastructure_a2a____col_market_data_pipeline_py -->|config_depends| src_zephyr_infrastructure_a2a_protocol___init___py
     src_zephyr_infrastructure_a2a_protocol_migration_strategy_py -->|config_depends| src_zephyr_infrastructure_a2a_protocol___init___py
@@ -186,12 +184,6 @@ graph TD
     src_zephyr_infrastructure_pipeline_layer_router_py -->|config_depends| src_zephyr_infrastructure_pipeline___init___py
     src_zephyr_infrastructure_pipeline_pipeline_lock_py -->|config_depends| src_zephyr_infrastructure_pipeline___init___py
     src_zephyr_infrastructure_pipeline_pipeline_roadmap_py -->|config_depends| src_zephyr_infrastructure_pipeline___init___py
-    src_zephyr_infrastructure_pipe___profiler_benchmark_suite_py -->|config_depends| src_zephyr_infrastructure_pipe____model_profiler___init___py
-    src_zephyr_infrastructure_pipe___iler_capability_passport_py -->|config_depends| src_zephyr_infrastructure_pipe____model_profiler___init___py
-    src_zephyr_infrastructure_pipe___rofiler_deepseek_v4_chat_py -->|config_depends| src_zephyr_infrastructure_pipe____model_profiler___init___py
-    src_zephyr_infrastructure_pipe___profiler_exam_test_cases_py -->|config_depends| src_zephyr_infrastructure_pipe____model_profiler___init___py
-    src_zephyr_infrastructure_pipe____model_profiler_profiler_py -->|config_depends| src_zephyr_infrastructure_pipe____model_profiler___init___py
-    %% ... 还有 2 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-GOVERNANCE -> D-INFRA_A2A (6 条)
@@ -205,13 +197,12 @@ graph TD
     D_SHARED[D-SHARED] -->|import_depends| src_zephyr_infrastructure_queue_task_queue_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-INFRA_A2A -> D-GOVERNANCE (3 条)
+    %% D-INFRA_A2A -> D-GOVERNANCE (2 条)
     src_zephyr_infrastructure_a2a_protocol___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_infrastructure_pipe___profiler_model_discovery_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     %% D-INFRA_A2A -> D-GOV_AUDIT (1 条)
     src_zephyr_infrastructure_a2a_protocol_legacy_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-INFRA_A2A -> D-INFRA_RUNTIME (14 条)
+    %% D-INFRA_A2A -> D-INFRA_RUNTIME (13 条)
     src_zephyr_infrastructure_a2a____oordination_a2a_red_team_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_infrastructure_a2a____r3_coordination___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_infrastructure_events___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
@@ -225,7 +216,6 @@ graph TD
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_infrastructure_pipeline___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_pipe___filer_task_model_learner_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     %% D-INFRA_A2A -> D-INTEGRATION (1 条)
     src_zephyr_infrastructure_a2a_____coordination_arbitrator_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     %% D-INFRA_A2A -> D-SHARED (18 条)
@@ -249,6 +239,6 @@ graph TD
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_SHARED[D-SHARED]
 
     %% 统计
-    %% 域内依赖: 82 条
+    %% 域内依赖: 73 条
     %% 跨域入边: 7 条
-    %% 跨域出边: 37 条
+    %% 跨域出边: 35 条

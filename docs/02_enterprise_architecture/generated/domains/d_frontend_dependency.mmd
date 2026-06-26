@@ -1,7 +1,7 @@
 %% D-FRONTEND 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 33, 依赖边数: 30
+%% 模块数: 23, 依赖边数: 29
 
 graph TD
 
@@ -30,16 +30,6 @@ graph TD
         src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py [prototype]"]
         src_zephyr_frontend_models___init___py["src/zephyr/frontend/models/__init__.py [prototype]"]
         src_zephyr_frontend_services___init___py["src/zephyr/frontend/services/__init__.py [prototype]"]
-        前端域_D_FRONTEND_06["前端域/D-FRONTEND-06 [design]"]
-        前端域_D_FRONTEND_08["前端域/D-FRONTEND-08 [design]"]
-        前端域_D_FRONTEND_10["前端域/D-FRONTEND-10 [design]"]
-        前端域_D_FRONTEND_12["前端域/D-FRONTEND-12 [design]"]
-        前端域_D_FRONTEND_14["前端域/D-FRONTEND-14 [design]"]
-        前端域_D_FRONTEND_16["前端域/D-FRONTEND-16 [design]"]
-        前端域_D_FRONTEND_18["前端域/D-FRONTEND-18 [design]"]
-        前端域_D_FRONTEND_20["前端域/D-FRONTEND-20 [design]"]
-        前端域_D_FRONTEND_22["前端域/D-FRONTEND-22 [design]"]
-        前端域_D_FRONTEND_24["前端域/D-FRONTEND-24 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -76,14 +66,13 @@ graph TD
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     %% D-FRONTEND -> D-INFRA_OPS (1 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_INFRA_OPS[D-INFRA_OPS]
-    %% D-FRONTEND -> D-OPS (3 条)
+    %% D-FRONTEND -> D-OPS (2 条)
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
-    前端域_D_FRONTEND_06 -->|contract| D_OPS[D-OPS]
     %% D-FRONTEND -> D-SHARED (1 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_SHARED[D-SHARED]
 
     %% 统计
     %% 域内依赖: 13 条
     %% 跨域入边: 8 条
-    %% 跨域出边: 9 条
+    %% 跨域出边: 8 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D-INFRA_RUNTIME）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-26 19:04:16
+> 最后更新: 2026-06-26 21:00:25
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 145 | Module Count | 145 |
 | 域内依赖 | 101 | Internal Dependencies | 101 |
-| 跨域入边 | 246 | Cross-domain Incoming | 246 |
-| 跨域出边 | 72 | Cross-domain Outgoing | 72 |
+| 跨域入边 | 243 | Cross-domain Incoming | 243 |
+| 跨域出边 | 71 | Cross-domain Outgoing | 71 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 6 | Prototype Modules | 6 |
 | 生产态模块 | 139 | Production Modules | 139 |
@@ -270,10 +270,10 @@ graph TD
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOV_AUDIT
-    src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_SHARED
+    src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_pipeline_orchestrator_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_audit_logger_py
     D_TRADING["D-TRADING prototype"]
@@ -573,8 +573,6 @@ graph TD
     src_zephyr_infrastructure_vector_memory_server_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_script_system_finding_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_script_system_kb_bridge_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_OPS["D-OPS prototype"]
@@ -590,7 +588,7 @@ graph TD
     class src_zephyr_infrastructure_pydantic_v2_migrator_py,src_zephyr_infrastructure_rate_limiter_py,src_zephyr_infrastructure_resource_provider_py,src_zephyr_infrastructure_runtime_init_py,src_zephyr_infrastructure_runtime_startup_shutdown_py,src_zephyr_infrastructure_sandbox_server_py,src_zephyr_infrastructure_script_system_init_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_script_system_kb_bridge_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_vector_memory_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_init_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_daemon_registry_from_infra_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_hooks_from_infra_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py production
     class src_zephyr_infrastructure_services_init_py design
     class D_SHARED external_prod
-    class D_INTEGRATION,D_GOVERNANCE,D_OPS,D_TRADING external_design
+    class D_INTEGRATION,D_OPS,D_TRADING external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -600,7 +598,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-SHARED | 36 | import_depends |
-| D-INTEGRATION | 22 | import_depends |
+| D-INTEGRATION | 21 | import_depends |
 | D-GOVERNANCE | 9 | import_depends |
 | D-GOV_AUDIT | 4 | import_depends |
 | D-OPS | 1 | import_depends |
@@ -609,16 +607,15 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 125 | runtime,import_depends,test_depends,config_depends |
+| D-GOVERNANCE | 124 | runtime,import_depends,test_depends,config_depends |
 | D-OPS | 33 | import_depends,test_depends |
 | D-INFRA_RECOVERY | 33 | import_depends |
-| D-INFRA_A2A | 14 | import_depends |
+| D-INFRA_A2A | 13 | import_depends |
 | D-INFRA_TELEMETRY | 12 | import_depends |
 | D-GOV_SCRIPTS | 11 | import_depends |
 | D-SHARED | 6 | import_depends |
 | D-GOV_AUDIT | 5 | import_depends |
 | D-TRADING | 4 | contract,import_depends |
-| D-INTELLIGENCE | 1 | import_depends |
 | D-INFRA_OPS | 1 | import_depends |
 | D-AUTONOMY_PERM | 1 | test_depends |
 

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 A股特色信号（D-ASHARE_SIGNAL）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-26 19:04:16
+> 最后更新: 2026-06-26 21:00:25
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview

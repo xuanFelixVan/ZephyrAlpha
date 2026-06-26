@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D-KNOWLEDGE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-26 19:04:16
+> 最后更新: 2026-06-26 21:00:25
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-KNOWLEDGE | Domain ID | D-KNOWLEDGE |
 | 域名称 | 知识管理 | Domain Name | knowledge_management |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 41 | Module Count | 41 |
+| 模块数 | 40 | Module Count | 40 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 30 | Cross-domain Outgoing | 30 |
+| 跨域出边 | 29 | Cross-domain Outgoing | 29 |
 | 设计态模块 | 2 | Design Modules | 2 |
-| 原型态模块 | 38 | Prototype Modules | 38 |
+| 原型态模块 | 37 | Prototype Modules | 37 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 知识管线(ingest/triage/extract/activate/analyze) | Description | 知识管线(ingest/triage/extract/activate/analyze) |
 
 ## 模块清单 / Module List
 
-共 41 个模块（按路径排序，全部显示）
+共 40 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -61,7 +61,6 @@ ttl: permanent
 | src/zephyr/governance/vector_memory/in_process_vector_memory.py |  | prototype | generated |
 | src/zephyr/governance/vector_memory/index_health_monitor.py |  | prototype | generated |
 | src/zephyr/governance/vector_memory/interface.py |  | prototype | generated |
-| src/zephyr/governance/vector_memory/local_model_scheduler.py |  | prototype | generated |
 | src/zephyr/governance/vector_memory/migrate_chroma_to_faiss.py |  | prototype | generated |
 | src/zephyr/governance/vector_memory/ollama_chat.py |  | prototype | generated |
 | src/zephyr/governance/vector_memory/ollama_embedding.py |  | prototype | generated |
@@ -118,7 +117,6 @@ graph TD
         src_zephyr_governance_vector_memory_in_process_vector_memory_py["src/zephyr/governance/vector_memory/in_process_... prototype"]
         src_zephyr_governance_vector_memory_index_health_monitor_py["src/zephyr/governance/vector_memory/index_healt... prototype"]
         src_zephyr_governance_vector_memory_interface_py["src/zephyr/governance/vector_memory/interface.py prototype"]
-        src_zephyr_governance_vector_memory_local_model_scheduler_py["src/zephyr/governance/vector_memory/local_model... prototype"]
         src_zephyr_governance_vector_memory_migrate_chroma_to_faiss_py["src/zephyr/governance/vector_memory/migrate_chr... prototype"]
         src_zephyr_governance_vector_memory_ollama_chat_py["src/zephyr/governance/vector_memory/ollama_chat.py prototype"]
         src_zephyr_governance_vector_memory_ollama_embedding_py["src/zephyr/governance/vector_memory/ollama_embe... prototype"]
@@ -127,6 +125,7 @@ graph TD
         src_zephyr_governance_vector_memory_sqlite_metadata_store_py["src/zephyr/governance/vector_memory/sqlite_meta... prototype"]
         src_zephyr_governance_vector_memory_vms_errors_py["src/zephyr/governance/vector_memory/vms_errors.py prototype"]
         src_zephyr_governance_vector_memory_vms_schemas_py["src/zephyr/governance/vector_memory/vms_schemas.py prototype"]
+        src_zephyr_knowledge_init_py["src/zephyr/knowledge/__init__.py prototype"]
     end
     src_zephyr_governance_vector_memory_bm25_index_py -.->|config_depends| src_zephyr_governance_vector_memory_init_py
     src_zephyr_governance_vector_memory_cross_collection_retriever_py -.->|config_depends| src_zephyr_governance_vector_memory_init_py
@@ -146,17 +145,17 @@ graph TD
     src_zephyr_governance_vector_memory_faiss_collection_manager_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_vector_memory_faiss_collection_manager_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_vector_memory_design_principles_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_governance_vector_memory_local_model_scheduler_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_vector_memory_index_health_monitor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_vector_memory_index_health_monitor_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_vector_memory_hybrid_retriever_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_governance_vector_memory_in_memory_fake_vms_py -.->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class architecture_model_layers_b_vector_memory_yaml production
-    class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,src_zephyr_governance_vector_memory_init_py,src_zephyr_governance_vector_memory_bm25_index_py,src_zephyr_governance_vector_memory_bridge_layer_py,src_zephyr_governance_vector_memory_cache_layer_py,src_zephyr_governance_vector_memory_chunk_strategy_router_py,src_zephyr_governance_vector_memory_collection_manager_py,src_zephyr_governance_vector_memory_collection_schemas_py,src_zephyr_governance_vector_memory_context_ingest_py,src_zephyr_governance_vector_memory_cross_collection_retriever_py,src_zephyr_governance_vector_memory_delegated_vector_memory_py,src_zephyr_governance_vector_memory_design_principles_py,src_zephyr_governance_vector_memory_faiss_collection_manager_py,src_zephyr_governance_vector_memory_hybrid_retriever_py,src_zephyr_governance_vector_memory_in_memory_fake_vms_py,src_zephyr_governance_vector_memory_in_memory_memory_backend_py,src_zephyr_governance_vector_memory_in_process_vector_memory_py,src_zephyr_governance_vector_memory_index_health_monitor_py,src_zephyr_governance_vector_memory_interface_py,src_zephyr_governance_vector_memory_local_model_scheduler_py,src_zephyr_governance_vector_memory_migrate_chroma_to_faiss_py,src_zephyr_governance_vector_memory_ollama_chat_py,src_zephyr_governance_vector_memory_ollama_embedding_py,src_zephyr_governance_vector_memory_provenance_enforcer_py,src_zephyr_governance_vector_memory_retrieval_feedback_py,src_zephyr_governance_vector_memory_sqlite_metadata_store_py,src_zephyr_governance_vector_memory_vms_errors_py,src_zephyr_governance_vector_memory_vms_schemas_py design
+    class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,src_zephyr_governance_vector_memory_init_py,src_zephyr_governance_vector_memory_bm25_index_py,src_zephyr_governance_vector_memory_bridge_layer_py,src_zephyr_governance_vector_memory_cache_layer_py,src_zephyr_governance_vector_memory_chunk_strategy_router_py,src_zephyr_governance_vector_memory_collection_manager_py,src_zephyr_governance_vector_memory_collection_schemas_py,src_zephyr_governance_vector_memory_context_ingest_py,src_zephyr_governance_vector_memory_cross_collection_retriever_py,src_zephyr_governance_vector_memory_delegated_vector_memory_py,src_zephyr_governance_vector_memory_design_principles_py,src_zephyr_governance_vector_memory_faiss_collection_manager_py,src_zephyr_governance_vector_memory_hybrid_retriever_py,src_zephyr_governance_vector_memory_in_memory_fake_vms_py,src_zephyr_governance_vector_memory_in_memory_memory_backend_py,src_zephyr_governance_vector_memory_in_process_vector_memory_py,src_zephyr_governance_vector_memory_index_health_monitor_py,src_zephyr_governance_vector_memory_interface_py,src_zephyr_governance_vector_memory_migrate_chroma_to_faiss_py,src_zephyr_governance_vector_memory_ollama_chat_py,src_zephyr_governance_vector_memory_ollama_embedding_py,src_zephyr_governance_vector_memory_provenance_enforcer_py,src_zephyr_governance_vector_memory_retrieval_feedback_py,src_zephyr_governance_vector_memory_sqlite_metadata_store_py,src_zephyr_governance_vector_memory_vms_errors_py,src_zephyr_governance_vector_memory_vms_schemas_py,src_zephyr_knowledge_init_py design
     class D_INTEGRATION external_prod
     class D_GOVERNANCE external_design
 ```
@@ -166,7 +165,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_KNOWLEDGE["D-KNOWLEDGE 知识管理"]
-        src_zephyr_knowledge_init_py["src/zephyr/knowledge/__init__.py prototype"]
         src_zephyr_knowledge_extensions_init_py["src/zephyr/knowledge/_extensions/__init__.py prototype"]
         src_zephyr_knowledge_api_init_py["src/zephyr/knowledge/api/__init__.py prototype"]
         src_zephyr_knowledge_core_init_py["src/zephyr/knowledge/core/__init__.py prototype"]
@@ -188,7 +186,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_knowledge_init_py,src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py,tests_test_skill_knowledge_base_py,tests_test_vector_memory_root_py,tests_unit_vector_memory_init_py,tests_unit_vector_memory_test_vector_memory_py design
+    class src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py,tests_test_skill_knowledge_base_py,tests_test_vector_memory_root_py,tests_unit_vector_memory_init_py,tests_unit_vector_memory_test_vector_memory_py design
     class D_AUTONOMY_CORE,D_GOVERNANCE,D_INTEGRATION external_prod
 ```
 
@@ -198,7 +196,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INTEGRATION | 16 | import_depends,test_depends |
+| D-INTEGRATION | 15 | import_depends,test_depends |
 | D-GOVERNANCE | 13 | runtime,import_depends,test_depends |
 | D-AUTONOMY_CORE | 1 | test_depends |
 

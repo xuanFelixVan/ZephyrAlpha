@@ -1,5 +1,5 @@
 %% D-EX_CORE 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 14, 依赖边数: 21
 
@@ -27,8 +27,6 @@ graph TD
     src_zephyr_ex_core_execution_engine_py -->|import_depends| src_zephyr_ex_core_order_manager_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOV-SCRIPTS -> D-EX_CORE (1 条)
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_ex_core___init___py
     %% D-GOVERNANCE -> D-EX_CORE (6 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
@@ -36,6 +34,8 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
+    %% D-GOV_SCRIPTS -> D-EX_CORE (1 条)
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_ex_core___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-EX_CORE -> D-GOVERNANCE (10 条)

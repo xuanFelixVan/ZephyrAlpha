@@ -1,70 +1,21 @@
 %% D-SIGLEGACY 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:46
+%% 生成时间: 2026-06-26 21:00:26
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 45, 依赖边数: 2
+%% 模块数: 0, 依赖边数: 0
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_SIGLEGACY[信号遗留设计态]
-        信号域_DDD契约_D_SIGNAL_160["信号域-DDD契约/D-SIGNAL-160 [design]"]
-        信号域_DDD契约_D_SIGNAL_162["信号域-DDD契约/D-SIGNAL-162 [design]"]
-        信号域_Regime_D_SIGNAL_65["信号域-Regime/D-SIGNAL-65 [design]"]
-        信号域_Regime_D_SIGNAL_67["信号域-Regime/D-SIGNAL-67 [design]"]
-        信号域_Regime_D_SIGNAL_74["信号域-Regime/D-SIGNAL-74 [design]"]
-        信号域_Regime_D_SIGNAL_76["信号域-Regime/D-SIGNAL-76 [design]"]
-        信号域_事件追踪_D_SIGNAL_101["信号域-事件追踪/D-SIGNAL-101 [design]"]
-        信号域_事件追踪_D_SIGNAL_103["信号域-事件追踪/D-SIGNAL-103 [design]"]
-        信号域_事件追踪_D_SIGNAL_99["信号域-事件追踪/D-SIGNAL-99 [design]"]
-        信号域_冲突融合_D_SIGNAL_134["信号域-冲突融合/D-SIGNAL-134 [design]"]
-        信号域_合成分配_D_SIGNAL_85["信号域-合成分配/D-SIGNAL-85 [design]"]
-        信号域_合成分配_D_SIGNAL_87["信号域-合成分配/D-SIGNAL-87 [design]"]
-        信号域_合成分配_D_SIGNAL_90["信号域-合成分配/D-SIGNAL-90 [design]"]
-        信号域_合成分配_D_SIGNAL_94["信号域-合成分配/D-SIGNAL-94 [design]"]
-        信号域_合成分配_D_SIGNAL_96["信号域-合成分配/D-SIGNAL-96 [design]"]
-        信号域_契约_D_SIGNAL_100["信号域-契约/D-SIGNAL-100 [design]"]
-        信号域_契约_D_SIGNAL_158["信号域-契约/D-SIGNAL-158 [design]"]
-        信号域_审计_D_SIGNAL_06["信号域-审计/D-SIGNAL-06 [design]"]
-        信号域_技术指标_D_SIGNAL_114["信号域-技术指标/D-SIGNAL-114 [design]"]
-        信号域_技术指标_D_SIGNAL_116["信号域-技术指标/D-SIGNAL-116 [design]"]
-        信号域_技术指标_D_SIGNAL_120["信号域-技术指标/D-SIGNAL-120 [design]"]
-        信号域_技术指标_D_SIGNAL_122["信号域-技术指标/D-SIGNAL-122 [design]"]
-        信号域_技术指标_D_SIGNAL_124["信号域-技术指标/D-SIGNAL-124 [design]"]
-        信号域_技术指标_D_SIGNAL_126["信号域-技术指标/D-SIGNAL-126 [design]"]
-        信号域_技术指标_D_SIGNAL_128["信号域-技术指标/D-SIGNAL-128 [design]"]
-        信号域_核心基础设施_D_SIGNAL_12["信号域-核心基础设施/D-SIGNAL-12 [design]"]
-        信号域_核心基础设施_D_SIGNAL_14["信号域-核心基础设施/D-SIGNAL-14 [design]"]
-        信号域_核心基础设施_D_SIGNAL_16["信号域-核心基础设施/D-SIGNAL-16 [design]"]
-        信号域_核心基础设施_D_SIGNAL_18["信号域-核心基础设施/D-SIGNAL-18 [design]"]
-        信号域_策略发布_D_SIGNAL_140["信号域-策略发布/D-SIGNAL-140 [design]"]
-        信号域_策略可视化_D_SIGNAL_105["信号域-策略可视化/D-SIGNAL-105 [design]"]
-        信号域_策略可视化_D_SIGNAL_107["信号域-策略可视化/D-SIGNAL-107 [design]"]
-        信号域_策略可视化_D_SIGNAL_109["信号域-策略可视化/D-SIGNAL-109 [design]"]
-        信号域_策略可视化_D_SIGNAL_111["信号域-策略可视化/D-SIGNAL-111 [design]"]
-        信号域_策略管理_D_SIGNAL_137["信号域-策略管理/D-SIGNAL-137 [design]"]
-        信号域_策略管理_D_SIGNAL_139["信号域-策略管理/D-SIGNAL-139 [design]"]
-        信号域_策略管理_D_SIGNAL_141["信号域-策略管理/D-SIGNAL-141 [design]"]
-        信号域_策略管理_D_SIGNAL_143["信号域-策略管理/D-SIGNAL-143 [design]"]
-        信号域_策略质量_D_SIGNAL_145["信号域-策略质量/D-SIGNAL-145 [design]"]
-        信号域_策略质量_D_SIGNAL_147["信号域-策略质量/D-SIGNAL-147 [design]"]
-        信号域_策略运行时_D_SIGNAL_150["信号域-策略运行时/D-SIGNAL-150 [design]"]
-        信号域_策略运行时_D_SIGNAL_152["信号域-策略运行时/D-SIGNAL-152 [design]"]
-        信号域_质量降级_D_SIGNAL_79["信号域-质量降级/D-SIGNAL-79 [design]"]
-        信号域_降级_D_SIGNAL_80["信号域-降级/D-SIGNAL-80 [design]"]
-        信号域_D_SIGNAL_20["信号域/D-SIGNAL-20 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-FACTOR -> D-SIGLEGACY (1 条)
-    D_FACTOR[D-FACTOR] -->|contract| 信号域_审计_D_SIGNAL_06
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-SIGLEGACY -> D-GOVERNANCE (1 条)
-    信号域_审计_D_SIGNAL_06 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
 
     %% 统计
     %% 域内依赖: 0 条
-    %% 跨域入边: 1 条
-    %% 跨域出边: 1 条
+    %% 跨域入边: 0 条
+    %% 跨域出边: 0 条

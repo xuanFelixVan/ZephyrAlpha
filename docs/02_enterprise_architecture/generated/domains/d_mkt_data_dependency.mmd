@@ -1,7 +1,7 @@
 %% D-MKT_DATA 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 10, 依赖边数: 19
+%% 模块数: 9, 依赖边数: 19
 
 graph TD
 
@@ -16,14 +16,11 @@ graph TD
         src_zephyr_market_data_market_data_pipeline_py["...r/market_data/market_data_pipeline.py [prototype]"]
         src_zephyr_market_data_models___init___py["...zephyr/market_data/models/__init__.py [prototype]"]
         src_zephyr_market_data_services___init___py["...phyr/market_data/services/__init__.py [prototype]"]
-        交易日历引擎交易所日历_假日管理_T+N计算_D_TRADING_07["交易日历引擎(交易所日历/假日管理/T+N计算)/D-TRADING-07 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOV-SCRIPTS -> D-MKT_DATA (1 条)
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_market_data___init___py
     %% D-GOVERNANCE -> D-MKT_DATA (16 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
@@ -41,6 +38,8 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_market_data___init___py
+    %% D-GOV_SCRIPTS -> D-MKT_DATA (1 条)
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_market_data___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-MKT_DATA -> D-GOVERNANCE (2 条)

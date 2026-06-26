@@ -1,5 +1,5 @@
 %% D-FUNDAMENTAL_SIGNAL 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 25, 依赖边数: 48
 
@@ -59,8 +59,6 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-FACTOR -> D-FUNDAMENTAL_SIGNAL (1 条)
     D_FACTOR[D-FACTOR] -->|import_depends| src_zephyr_signal_fundamental_pipeline_py
-    %% D-GOV-SCRIPTS -> D-FUNDAMENTAL_SIGNAL (1 条)
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_signal_fundamental___init___py
     %% D-GOVERNANCE -> D-FUNDAMENTAL_SIGNAL (8 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_signal_fundamental_pipeline_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
@@ -70,6 +68,8 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
+    %% D-GOV_SCRIPTS -> D-FUNDAMENTAL_SIGNAL (1 条)
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_signal_fundamental___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-FUNDAMENTAL_SIGNAL -> D-GOVERNANCE (1 条)

@@ -1,7 +1,7 @@
 %% D-SIMULATION 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:46
+%% 生成时间: 2026-06-26 21:00:26
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 23, 依赖边数: 30
+%% 模块数: 19, 依赖边数: 29
 
 graph TD
 
@@ -17,18 +17,14 @@ graph TD
         src_zephyr_simulation_core___init___py["src/zephyr/simulation/core/__init__.py [prototype]"]
         src_zephyr_simulation_default_backtest_engine_py["...simulation/default_backtest_engine.py [production]"]
         src_zephyr_simulation_default_backtest_engine_from_resear_py["...efault_backtest_engine_from_resear.py [prototype]"]
-        src_zephyr_simulation_engine_["src/zephyr/simulation/engine/ [design]"]
         src_zephyr_simulation_implementations___init___py["...imulation/implementations/__init__.py [prototype]"]
         src_zephyr_simulation_implemen___ons___init___from_resear_py["...plementations/__init___from_resear.py [prototype]"]
         src_zephyr_simulation_implemen___ault_experiment_pipeline_py["...ations/default_experiment_pipeline.py [production]"]
         src_zephyr_simulation_implemen___ent_pipeline_from_resear_py["...lt_experiment_pipeline_from_resear.py [prototype]"]
         src_zephyr_simulation_infrastructure___init___py["...simulation/infrastructure/__init__.py [prototype]"]
-        src_zephyr_simulation_market_sim_["src/zephyr/simulation/market_sim/ [design]"]
         src_zephyr_simulation_models___init___py["src/zephyr/simulation/models/__init__.py [prototype]"]
         src_zephyr_simulation_pipeline_base_py["src/zephyr/simulation/pipeline_base.py [production]"]
         src_zephyr_simulation_pipeline_base_from_resear_py["...mulation/pipeline_base_from_resear.py [prototype]"]
-        src_zephyr_simulation_result_["src/zephyr/simulation/result/ [design]"]
-        src_zephyr_simulation_scenario_["src/zephyr/simulation/scenario/ [design]"]
         src_zephyr_simulation_services___init___py["...ephyr/simulation/services/__init__.py [prototype]"]
     end
 
@@ -45,8 +41,6 @@ graph TD
     src_zephyr_simulation_implemen___ons___init___from_resear_py -->|config_depends| src_zephyr_simulation_implementations___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOV-SCRIPTS -> D-SIMULATION (1 条)
-    D_GOV_SCRIPTS[D-GOV-SCRIPTS] -->|import_depends| src_zephyr_simulation___init___py
     %% D-GOVERNANCE -> D-SIMULATION (12 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
@@ -60,6 +54,8 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    %% D-GOV_SCRIPTS -> D-SIMULATION (1 条)
+    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_simulation___init___py
     %% D-INTELLIGENCE -> D-SIMULATION (3 条)
     D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
     D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
@@ -68,12 +64,11 @@ graph TD
     D_SHARED[D-SHARED] -->|import_depends| src_zephyr_simulation___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-SIMULATION -> D-INTEGRATION (3 条)
+    %% D-SIMULATION -> D-INTEGRATION (2 条)
     src_zephyr_simulation_pipeline_base_from_resear_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_simulation_pipeline_base_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_simulation_ -->|contract| D_INTEGRATION[D-INTEGRATION]
 
     %% 统计
     %% 域内依赖: 10 条
     %% 跨域入边: 17 条
-    %% 跨域出边: 3 条
+    %% 跨域出边: 2 条

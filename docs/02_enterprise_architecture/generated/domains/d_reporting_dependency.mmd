@@ -1,7 +1,7 @@
 %% D-REPORTING 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:26
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 19, 依赖边数: 24
+%% 模块数: 15, 依赖边数: 23
 
 graph TD
 
@@ -22,10 +22,6 @@ graph TD
         src_zephyr_reporting_infrastructure___init___py[".../reporting/infrastructure/__init__.py [prototype]"]
         src_zephyr_reporting_models___init___py["src/zephyr/reporting/models/__init__.py [prototype]"]
         src_zephyr_reporting_services___init___py["...zephyr/reporting/services/__init__.py [prototype]"]
-        报告域_水印追踪_D_REPORTING_17["报告域-水印追踪/D-REPORTING-17 [design]"]
-        报告域_D_REPORTING_03["报告域/D-REPORTING-03 [design]"]
-        报告域_D_REPORTING_08["报告域/D-REPORTING-08 [design]"]
-        监管报告生成器证监会_交易所报告+数据完整性校验_D_REPORTING_06["...生成器(证监会/交易所报告+数据完整性校验)/D-REPORTING-06 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -39,7 +35,7 @@ graph TD
     D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-REPORTING -> D-GOVERNANCE (11 条)
+    %% D-REPORTING -> D-GOVERNANCE (10 条)
     src_zephyr_reporting___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -50,7 +46,6 @@ graph TD
     src_zephyr_reporting_implementations_default_tca_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_implementations___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_implementations___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    报告域_D_REPORTING_08 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
     %% D-REPORTING -> D-TRADING (9 条)
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
@@ -65,4 +60,4 @@ graph TD
     %% 统计
     %% 域内依赖: 1 条
     %% 跨域入边: 3 条
-    %% 跨域出边: 20 条
+    %% 跨域出边: 19 条

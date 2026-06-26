@@ -1,7 +1,7 @@
 %% D-COMPLIANCE 域全景依赖图
-%% 生成时间: 2026-06-25 18:42:45
+%% 生成时间: 2026-06-26 21:00:25
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 30, 依赖边数: 26
+%% 模块数: 25, 依赖边数: 25
 
 graph TD
 
@@ -32,11 +32,6 @@ graph TD
         src_zephyr_compliance_semantic_auditor___init___py["...mpliance/semantic_auditor/__init__.py [prototype]"]
         src_zephyr_compliance_services___init___py["...ephyr/compliance/services/__init__.py [prototype]"]
         src_zephyr_compliance_zero_knowledge_audit_stub___init___py["...zero_knowledge_audit_stub/__init__.py [prototype]"]
-        交易监控规则引擎+监管报告生成器+身份验证集成器+风险管理集___工作流引擎+合规仪表盘_D_COMPLIANCE_14["...监管变更追踪器+合规工作流引擎+合规仪表盘/D-COMPLIANCE-14 [design]"]
-        合规域_交易纪律_D_COMPLIANCE_23["合规域-交易纪律/D-COMPLIANCE-23 [design]"]
-        合规域_持续运营_D_COMPLIANCE_13["合规域-持续运营/D-COMPLIANCE-13 [design]"]
-        合规域_规则验证_D_COMPLIANCE_20["合规域-规则验证/D-COMPLIANCE-20 [design]"]
-        异常交易披露数据采集器监管披露数据→统计因子_D_DATA_89["异常交易披露数据采集器(监管披露数据→统计因子)/D-DATA-89 [design]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -46,7 +41,7 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-COMPLIANCE -> D-GOVERNANCE (11 条)
+    %% D-COMPLIANCE -> D-GOVERNANCE (10 条)
     src_zephyr_compliance_evidence_pack_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_compliance_aisg_sandbox_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_compliance_compliance_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -57,7 +52,6 @@ graph TD
     src_zephyr_compliance_implementations___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_compliance_semantic_auditor___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_compliance_zero_knowledge_audit_stub___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    合规域_持续运营_D_COMPLIANCE_13 -->|contract| D_GOVERNANCE[D-GOVERNANCE]
     %% D-COMPLIANCE -> D-GOV_AUDIT (11 条)
     src_zephyr_compliance_financial_compliance_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_compliance_merkle_hourly_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
@@ -77,4 +71,4 @@ graph TD
     %% 统计
     %% 域内依赖: 2 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 24 条
+    %% 跨域出边: 23 条
