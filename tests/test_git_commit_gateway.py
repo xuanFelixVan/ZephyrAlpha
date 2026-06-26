@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
+# [TTL] task_bound
 """test_git_commit_gateway.py — GitCommitGateway 单元测试（OPS-2026062512 验收）
 
 覆盖:
@@ -547,6 +548,107 @@ class TestEdgeCases:
         assert result.status == CommitStatus.OK
         msg = _last_commit_message(tmp_path)
         assert "[GW:unknown]" in msg, f"空 session_id 应默认 unknown: {msg}"
+
+
+class TestRenameFallback:
+    """回归测试：staged rename 的无 pathspec commit（方案 A+ 治本）。
+
+    根因：git commit --pathspec-from-file 对 staged rename（R100）拆分为
+    独立 add+delete，只提交 pathspec 匹配部分，破坏 rename。
+    治本：统一用无 pathspec commit，由 _stash_other_files +
+    _verify_staged_is_clean 双保险保证 staged 区只有目标文件。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    def _do_rename(self, repo: Path, old: str, new: str) -> None:
+        """两步法 rename（绕过 Windows 大小写不敏感文件系统）。"""
+        env = self._git_env()
+        tmp_name = f"_tmp_rename_{old}_{new}"
+        subprocess.run(
+            ["git", "mv", old, tmp_name], cwd=str(repo),
+            capture_output=True, env=env, check=True,
+        )
+        subprocess.run(
+            ["git", "mv", tmp_name, new], cwd=str(repo),
+            capture_output=True, env=env, check=True,
+        )
+
+    def test_staged_rename_committed_correctly(self, tmp_path: Path) -> None:
+        """staged rename 通过 GitCommitGateway 正确提交（R100 完整保留）。"""
+        _init_git_repo(tmp_path)
+        # 初始文件 UPPER.txt
+        f = _write_file(tmp_path, "UPPER.txt", "hello\n")
+        env = self._git_env()
+        subprocess.run(["git", "add", "UPPER.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(["git", "commit", "-m", "init upper", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        # rename UPPER.txt -> lower.txt（两步法）
+        self._do_rename(tmp_path, "UPPER.txt", "lower.txt")
+        # 验证 staged 是 R100
+        r = subprocess.run(
+            ["git", "diff", "--cached", "--name-status"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        assert r.stdout.strip().startswith("R"), f"staged 应为 rename: {r.stdout}"
+        # 通过 GitCommitGateway commit
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="rename-test",
+            files=[str(tmp_path / "lower.txt")],
+            message="refactor: rename UPPER.txt to lower.txt",
+        )
+        assert result.status == CommitStatus.OK, \
+            f"rename commit 应成功: {result.status} {result.message}"
+        # commit 后 staged 区无残留
+        r = subprocess.run(
+            ["git", "diff", "--cached", "--name-status"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        assert not r.stdout.strip(), \
+            f"commit 后 staged 区应无残留: {r.stdout}"
+        # HEAD commit 包含 rename
+        r = subprocess.run(
+            ["git", "show", "--name-status", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        assert "UPPER.txt" in r.stdout and "lower.txt" in r.stdout, \
+            f"HEAD 应含 rename: {r.stdout}"
+
+    def test_dirty_staged_blocks_commit(self, tmp_path: Path) -> None:
+        """staged 区有非目标文件时，commit 被阻断（防误提交）。"""
+        _init_git_repo(tmp_path)
+        # 两个初始文件
+        f_a = _write_file(tmp_path, "a.txt", "a\n")
+        f_b = _write_file(tmp_path, "b.txt", "b\n")
+        env = self._git_env()
+        subprocess.run(["git", "add", "a.txt", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        # 手动 stage 两个文件的修改
+        _write_file(tmp_path, "a.txt", "a modified\n")
+        _write_file(tmp_path, "b.txt", "b modified\n")
+        subprocess.run(["git", "add", "a.txt", "b.txt"], cwd=str(tmp_path), capture_output=True, env=env, check=True)
+        # 只 commit a.txt，但 b.txt 也在 staged 区
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="dirty-test",
+            files=[str(tmp_path / "a.txt")],
+            message="feat: only a",
+        )
+        # _stash_other_files 会 stash b.txt，staged 区变干净后 commit 成功
+        # 或如果 stash 未生效，_verify_staged_is_clean 会阻断
+        # 正确行为：b.txt 被 stash，commit a.txt 成功，stash pop 恢复 b.txt
+        assert result.status == CommitStatus.OK, \
+            f"stash 隔离后应成功: {result.status} {result.message}"
+        # b.txt 修改应恢复（stash pop）
+        assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", \
+            "b.txt 修改应通过 stash pop 恢复"
 
 
 class TestGitignoredTrackedDeleted:

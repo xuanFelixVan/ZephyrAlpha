@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；无 pathspec commit（方案 A+ 治本：git commit --pathspec-from-file 对 staged rename R100 拆分为 add+delete 破坏 rename，统一用 _commit_no_pathspec + _verify_staged_is_clean 双保险替代 pathspec-from-file）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] GatewayError on lock timeout；StashConflictWarning on stash pop 失败（数据保留在 stash）；CommitResult.status 暴露结果
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] permanent
+# [TTL] task_bound
 """GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）
 
 根因（上一轮调研结论）
@@ -166,6 +166,7 @@ class CommitStatus(str, Enum):
     SSOT_VIOLATION = "SSOT_VIOLATION"  # 新增 .py 声明了已有 module_path（绕过 scaffold 创建）
     NAMING_VIOLATION = "NAMING_VIOLATION"  # N-16 文件名唯一性校验失败（--no-verify 补偿）
     SCRIPT_INTEGRITY_VIOLATION = "SCRIPT_INTEGRITY_VIOLATION"  # 受保护脚本完整性锚点缺失（自篡改纵深防御）
+    REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"  # .py 文件使用 parents[N] 反模式而非 REPO_ROOT（SSoT 绕过）
 
 
 class GatewayError(RuntimeError):
@@ -424,6 +425,10 @@ class GitCommitGateway:
 
         porcelain 格式: ``XY <path>``，X=staged, Y=工作区。``??`` 行为未跟踪，跳过。
         target_files 用绝对路径归一化匹配（resolve），排除本次 commit 目标。
+
+        治本（rename 路径解析）：``R  old -> new`` 格式的 rename 行，
+        ``line[3:]`` 得到 ``old -> new`` 无法被 ``Path()`` 解析。提取新路径
+        （rename 目标），确保其他 session 的 staged rename 能被正确 stash。
         """
         status_result = self._run_git(["git", "status", "--porcelain"])
         if status_result.returncode != 0:
@@ -437,6 +442,9 @@ class GitCommitGateway:
             if not line.strip() or line.startswith("??"):
                 continue
             path = line[3:].strip().strip('"')
+            # rename 格式 "R  old -> new"：提取新路径（rename 目标）
+            if " -> " in path:
+                path = path.split(" -> ", 1)[1].strip().strip('"')
             abs_path = str((self.project_root / path).resolve())
             if abs_path not in target_set:
                 result.append(path)
@@ -1424,27 +1432,39 @@ class GitCommitGateway:
                             message="no staged changes in files_in_scope",
                         )
                     else:
-                        # 6. git commit --no-verify -F <msg> --pathspec-from-file=<file>
-                        commit_hash, commit_err = self._commit_with_file_message(
-                            pathspec_file, full_message
-                        )
-                        if commit_hash is None:
+                        # 6. 无 pathspec commit（方案 A+ 治本）
+                        # 根因：git commit --pathspec-from-file 对 staged rename
+                        # （R100）拆分为独立 add+delete，只提交 pathspec 匹配部分，
+                        # 破坏 rename。统一用无 pathspec commit，由
+                        # _stash_other_files + _verify_staged_is_clean 双保险
+                        # 保证 staged 区只有目标文件。
+                        clean, clean_err = self._verify_staged_is_clean(files)
+                        if not clean:
                             result = CommitResult(
                                 status=CommitStatus.COMMIT_FAILED,
-                                message=f"git commit failed: {commit_err}",
+                                message=f"staged 区不干净，拒绝无 pathspec commit: {clean_err}",
                             )
                         else:
-                            os.environ[_GATEWAY_ENV] = "1"
-                            logger.info(
-                                "GitCommitGateway: commit 成功 hash=%s marker=%s "
-                                "files=%d",
-                                commit_hash, gw_marker, len(files),
+                            commit_hash, commit_err = self._commit_no_pathspec(
+                                full_message
                             )
-                            result = CommitResult(
-                                status=CommitStatus.OK,
-                                message=f"committed {len(files)} files",
-                                commit_hash=commit_hash,
-                            )
+                            if commit_hash is None:
+                                result = CommitResult(
+                                    status=CommitStatus.COMMIT_FAILED,
+                                    message=f"git commit failed: {commit_err}",
+                                )
+                            else:
+                                os.environ[_GATEWAY_ENV] = "1"
+                                logger.info(
+                                    "GitCommitGateway: commit 成功 hash=%s marker=%s "
+                                    "files=%d (no-pathspec)",
+                                    commit_hash, gw_marker, len(files),
+                                )
+                                result = CommitResult(
+                                    status=CommitStatus.OK,
+                                    message=f"committed {len(files)} files",
+                                    commit_hash=commit_hash,
+                                )
         finally:
             # 7. 恢复 stash（无论 commit 成功失败都要恢复，不丢数据）
             if stashed:
@@ -1704,6 +1724,74 @@ class GitCommitGateway:
             except OSError:
                 pass
 
+    def _verify_staged_is_clean(self, target_files: list[str]) -> tuple[bool, str]:
+        """验证 staged 区只有目标文件（防误提交其他 session WIP）。
+
+        治本（方案 A+）：无 pathspec commit 前的防御性验证。staged 区是工作区
+        级全局共享状态，多 session 并发时可能残留其他 session 的 staged 文件。
+        本方法确保无 pathspec commit 只提交目标文件。
+
+        对于 rename，``git diff --cached --name-only`` 只返回新路径（rename 目标），
+        ``target_files`` 也应包含新路径。
+
+        Args:
+            target_files: 本次 commit 的目标文件绝对路径列表。
+
+        Returns:
+            (是否干净, 错误信息)。不干净时返回 False 及非目标文件列表。
+        """
+        staged_result = self._run_git(["git", "diff", "--cached", "--name-only"])
+        if staged_result.returncode != 0:
+            return False, f"git diff --cached failed: {staged_result.stderr.strip()}"
+        staged_files = {
+            f.strip() for f in staged_result.stdout.splitlines() if f.strip()
+        }
+        target_rel = {
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            for f in target_files
+        }
+        non_target = staged_files - target_rel
+        if non_target:
+            sample = sorted(non_target)[:5]
+            return False, f"staged 区有 {len(non_target)} 个非目标文件: {sample}"
+        return True, ""
+
+    def _commit_no_pathspec(self, message: str) -> tuple[str | None, str]:
+        """无 pathspec commit（用于 staged rename 场景，方案 A+ 治本）。
+
+        根因：``git commit --pathspec-from-file`` 对 staged rename（R100）会拆分为
+        独立的 add + delete，只提交 pathspec 匹配的部分，导致 rename 被破坏。
+        无 pathspec commit 提交所有 staged 文件，能正确处理 rename。
+
+        前置条件：调用方必须先 ``_verify_staged_is_clean`` 确认 staged 区只有
+        目标文件，否则会误提交其他 session 的 WIP。
+
+        Args:
+            message: commit message。
+
+        Returns:
+            (commit_hash, error_message)。commit_hash 为 None 表示失败。
+        """
+        msg_fd, msg_path = tempfile.mkstemp(
+            prefix="gw_commit_msg_", suffix=".txt", dir=str(self.project_root)
+        )
+        try:
+            with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
+                f.write(message)
+            commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
+            result = self._run_git(commit_cmd)
+            if result.returncode != 0:
+                return None, result.stderr.strip() or result.stdout.strip()
+            rev_result = self._run_git(["git", "rev-parse", "HEAD"])
+            if rev_result.returncode == 0:
+                return rev_result.stdout.strip(), ""
+            return "", ""
+        finally:
+            try:
+                os.remove(msg_path)
+            except OSError:
+                pass
+
     def _commit_auto(
         self,
         session_id: str,
@@ -1791,10 +1879,14 @@ class GitCommitGateway:
                             status=CommitStatus.NOTHING_TO_COMMIT,
                             message="no staged changes in auto-commit files",
                         )
-                    # commit（复用 _commit_with_file_message，统一执行点）
-                    commit_hash, commit_err = self._commit_with_file_message(
-                        pathspec_file, full_message
-                    )
+                    # commit（无 pathspec，方案 A+ 治本，与 _commit_locked 统一）
+                    clean, clean_err = self._verify_staged_is_clean(existing)
+                    if not clean:
+                        return CommitResult(
+                            status=CommitStatus.COMMIT_FAILED,
+                            message=f"staged 区不干净，拒绝无 pathspec auto-commit: {clean_err}",
+                        )
+                    commit_hash, commit_err = self._commit_no_pathspec(full_message)
                     if commit_hash is None:
                         return CommitResult(
                             status=CommitStatus.COMMIT_FAILED,
@@ -1802,7 +1894,7 @@ class GitCommitGateway:
                         )
                     os.environ[_GATEWAY_ENV] = "1"
                     logger.info(
-                        "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
+                        "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d (no-pathspec)",
                         commit_hash, gw_marker, len(existing),
                     )
                     return CommitResult(

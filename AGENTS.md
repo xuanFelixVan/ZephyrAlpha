@@ -206,6 +206,7 @@ result = await gateway.full_scan(user_text, llm_response)
 - **reconciler 不要裸调 `_run_git(["git", "commit", ...])`**——必须经 [`_commit_auto()`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 统一入口（锁 + ttl 校验 + GW 标记），否则 ttl 防御被绕过（详见 §7 TTL 校验统一拦截点）
 - **GitCommitGateway 僵尸锁自愈**：全局锁 `_GlobalCommitLock` 获取前先调 [`_is_pid_alive(pid)`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 检查持有进程存活——进程崩溃时锁文件残留，PID 已死则立即清理（零窗口期），不靠 TTL 30min 过期。新 AI 勿误判 `_is_pid_alive` 为冗余删掉（红蓝对抗验证，integrity_anchors 保护）。
 - **GitCommitGateway 中文 aliases 门禁**：commit 时自动调 [`_check_capability_aliases`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 检测 `capability_canonical_file_registry.yaml` 的 aliases 是否含 CJK 字符——禁堆中文同义词 alias 裁定的代码强制，`--no-verify` 绕不过。
+- **GitCommitGateway 无 pathspec commit（方案 A+ 治本）**：`_commit_locked` 和 `_commit_auto` 统一用 [`_commit_no_pathspec`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 替代 `--pathspec-from-file`。根因：`git commit --pathspec-from-file` 对 staged rename（R100）拆分为独立 add+delete，只提交 pathspec 匹配部分，破坏 rename。治本：消除 pathspec 依赖，由 `_stash_other_files`（stash 非目标修改）+ [`_verify_staged_is_clean`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py)（验证 staged 区只有目标文件）双保险保证安全。`_collect_non_target_rel` 已修复 rename 格式 `R old -> new` 的路径解析（提取新路径），确保其他 session 的 staged rename 能被正确 stash。
 
 ## 9. 新模块接入规则
 
