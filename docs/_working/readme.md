@@ -68,7 +68,7 @@ completes_when: "scripts/governance/check_xxx.py 退出码 0 且 docs/_working/ 
 **规则**：
 - `completes_when` 值为字符串，描述一个可机械验证的条件（脚本退出码、文件存在性、数据库状态等）
 - 仅检查**新增**文件（未 git 跟踪）；已跟踪文件修改不触发此校验
-- README.md 已跟踪，不受影响
+- readme.md 已跟踪，不受影响
 
 ## 六、AI 读取本目录文档前必须自查（防幽灵引用）
 
