@@ -1036,6 +1036,101 @@ def check_filename_uniqueness_all(project_root: Path | None = None) -> list[Nami
     return violations
 
 
+def check_new_files_naming(
+    new_files: list[str],
+    project_root: Path | None = None,
+) -> list[NamingViolation]:
+    """增量 N-16 检查（真源唯一）：只检查新文件是否与已跟踪文件同名冲突。
+
+    用 ``git ls-files`` 构建已跟踪文件基线（避免 os.walk 扫描未跟踪 WIP，
+    防多 session 临时文件误阻断），只检测新文件是否引入冲突（不阻断历史遗留）。
+
+    治本（向内收 v2）：N-16 检查逻辑真源唯一归本函数。GitCommitGateway 通过
+    subprocess 调用 ``--check-new`` 模式，删除 gateway 内的自实现
+    ``_check_naming_uniqueness`` + ``_load_n16_exempt_names``，消除真源分裂。
+
+    Args:
+        new_files: 新文件路径列表（相对 project_root 或绝对路径）。
+        project_root: 项目根。
+
+    Returns:
+        NamingViolation 列表（空表示通过）。
+    """
+    import subprocess
+    from collections import defaultdict
+
+    if project_root is None:
+        project_root = Path(__file__).resolve().parents[3]
+
+    # 只检查 tests/ 和 docs/ 下的文件（N-16 scope + 性能优化）
+    new_rel_files: list[str] = []
+    for f in new_files:
+        p = Path(f)
+        if not p.is_absolute():
+            p = project_root / f
+        try:
+            rel = p.resolve().relative_to(project_root.resolve()).as_posix()
+        except ValueError:
+            continue  # 不在项目内
+        if rel.startswith(("tests/", "docs/")):
+            new_rel_files.append(rel)
+
+    if not new_rel_files:
+        return []
+
+    # 豁免清单（真源：trae_028.yaml §n16_config，模块级常量已动态加载）
+    exempt = _N16_TESTS_EXEMPT_NAMES | _N16_DOCS_EXEMPT_NAMES
+
+    # 用 git ls-files 构建已跟踪文件基线（只已跟踪文件，排除未跟踪 WIP）
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "tests/", "docs/"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=str(project_root),
+        )
+        tracked_files = [f for f in result.stdout.strip().splitlines() if f]
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return []  # fail-open：git 不可用时不阻断 commit
+
+    tracked_basename_to_paths: dict[str, list[str]] = defaultdict(list)
+    for rel_path in tracked_files:
+        basename = os.path.basename(rel_path)
+        if basename in exempt:
+            continue
+        tracked_basename_to_paths[basename].append(rel_path.replace("\\", "/"))
+
+    violations: list[NamingViolation] = []
+    committed_basenames: dict[str, str] = {}  # basename → committed_rel_path
+
+    for rel in new_rel_files:
+        basename = os.path.basename(rel)
+        if basename in exempt:
+            continue
+
+        # 冲突检测 1：与已跟踪文件冲突
+        if basename in tracked_basename_to_paths:
+            existing = [p for p in tracked_basename_to_paths[basename] if p != rel]
+            if existing:
+                violations.append(NamingViolation(
+                    rule="N-16",
+                    message=f"文件名不唯一: {basename} (新增: {rel}, 已有: {', '.join(existing)})",
+                    filepath=rel,
+                ))
+
+        # 冲突检测 2：本次提交内部冲突
+        if basename in committed_basenames:
+            violations.append(NamingViolation(
+                rule="N-16",
+                message=f"文件名不唯一: {basename} (本次提交内冲突: {rel} vs {committed_basenames[basename]})",
+                filepath=rel,
+            ))
+        committed_basenames[basename] = rel
+
+    return violations
+
+
 # ---------------------------------------------------------------------------
 # 路径豁免判断
 # ---------------------------------------------------------------------------
@@ -1279,7 +1374,25 @@ def main() -> int:
     parser.add_argument("--staged", action="store_true", help="只检查git暂存区文件")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
     parser.add_argument("--validate-ssot", action="store_true", help="校验 SSoT(trae_028)与脚本双轨正则+N-16 fallback 一致性(裁定#208 R4)")
+    parser.add_argument(
+        "--check-new",
+        nargs="*",
+        default=None,
+        metavar="FILE",
+        help="增量 N-16 检查：只检查指定文件是否与已跟踪文件同名冲突（GitCommitGateway subprocess 调用，"
+             "git ls-files 基线，不阻断历史遗留）",
+    )
     args = parser.parse_args()
+
+    # 增量 N-16 检查模式（GitCommitGateway --no-verify 补偿用，真源唯一）
+    if args.check_new is not None:
+        project_root = Path(__file__).resolve().parents[3]
+        violations = check_new_files_naming(args.check_new, project_root)
+        if violations:
+            for v in violations:
+                print(f"[N-16] {v.message}")
+            return EXIT_FINDINGS
+        return EXIT_PASS
 
     # 裁定#208 R4: SSoT 机械联动校验（独立模式，不扫描文件）
     if args.validate_ssot:

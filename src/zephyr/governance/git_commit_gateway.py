@@ -1029,45 +1029,17 @@ class GitCommitGateway:
 
         return True, "ssot check passed"
 
-    def _load_n16_exempt_names(self) -> set[str]:
-        """加载 N-16 豁免 basename 集合（真源：trae_028_doc_structure_naming.yaml）。
-
-        fail-open：YAML 不可达时回退硬编码值（与 check_naming_convention.py 回退值一致）。
-
-        同步提醒：YAML path/key 链式访问 + fallback 值与
-        check_naming_convention.py:_load_n16_exemptions_from_yaml() 必须保持一致，
-        改一处改两处（架构约束：scripts/ ↔ src/ 跨层无法 import，只能 subprocess）。
-        """
-        yaml_path = (
-            self.project_root / "docs" / "01_policies_and_standards"
-            / "rules" / "trae_028_doc_structure_naming.yaml"
-        )
-        try:
-            import yaml
-            data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
-            cfg = (
-                data.get("sections", {})
-                .get("gov_doc_003_filename_uniqueness", {})
-                .get("n16_config", {})
-            )
-            tests_raw = cfg.get("exempt_names_tests", [])
-            docs_raw = cfg.get("exempt_names_docs_extra", [])
-            if isinstance(tests_raw, list) and isinstance(docs_raw, list):
-                return set(tests_raw) | set(docs_raw)
-        except Exception:
-            pass
-        return {"conftest.py", "__init__.py", "index.md", "blueprint.md",
-                "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml"}
-
     def _check_naming_uniqueness(self, files: list[str]) -> tuple[bool, str]:
-        """GATE-11/N-16 等效校验：检查文件名项目内唯一性。
+        """N-16 增量检查（subprocess 调用 check_naming_convention.py --check-new）。
+
+        治本（向内收 v2）：N-16 检查逻辑真源唯一在
+        ``check_naming_convention.py::check_new_files_naming``，本方法仅 subprocess
+        调用，不实现检查逻辑。消除了原 ``_load_n16_exempt_names`` + 自实现检查的
+        真源分裂（gateway 与 check_naming_convention.py 两处加载豁免清单）。
 
         弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
-        第一性原理治本（v2）：N-16 设计意图是"防止同名漂移入 git 历史"。
-        用 git ls-files（已跟踪文件）构建基线，仅检查本次提交文件是否引入新冲突，
-        避免 os.walk 扫描未跟踪 WIP（并发 session 临时文件导致误阻断）。
-
-        真源：trae_028_doc_structure_naming.yaml §gov_doc_003_filename_uniqueness
+        检查逻辑：git ls-files 构建已跟踪文件基线，只检测本次提交文件是否引入
+        新冲突（不阻断历史遗留），避免 os.walk 扫描未跟踪 WIP 误阻断。
 
         Args:
             files: 绝对路径列表。
@@ -1085,58 +1057,37 @@ class GitCommitGateway:
         if not involves_naming_dirs:
             return True, "no files in tests/ or docs/"
 
-        exempt = self._load_n16_exempt_names()
-
-        # 用 git ls-files 构建已跟踪文件基线（仅已跟踪文件，排除未跟踪 WIP）
-        ls_result = self._run_git(["git", "ls-files", "tests/", "docs/"])
-        if ls_result.returncode != 0:
-            logger.warning(
-                "GitCommitGateway: git ls-files 失败: %s", ls_result.stderr.strip()
+        # subprocess 调用 check_naming_convention.py --check-new（N-16 检查真源唯一）
+        script = str(
+            self.project_root / "scripts" / "governance" / "d3_metadata"
+            / "check_naming_convention.py"
+        )
+        try:
+            result = subprocess.run(
+                [sys.executable, script, "--check-new", *files],
+                capture_output=True,
+                text=True,
+                cwd=str(self.project_root),
+                timeout=30,
             )
-            return True, "git ls-files failed (fail-open)"
+        except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as e:
+            logger.warning(
+                "GitCommitGateway: N-16 检查 subprocess 失败 (fail-open): %s", e
+            )
+            return True, f"N-16 check skipped (subprocess failed: {e})"
 
-        from collections import defaultdict
-
-        tracked_basename_to_paths: dict[str, list[str]] = defaultdict(list)
-        for rel_path in ls_result.stdout.strip().splitlines():
-            if not rel_path:
-                continue
-            basename = os.path.basename(rel_path)
-            if basename in exempt:
-                continue
-            tracked_basename_to_paths[basename].append(rel_path.replace("\\", "/"))
-
-        # 检查本次提交文件是否引入新冲突
-        conflicts: list[str] = []
-        committed_basenames: dict[str, str] = {}  # basename → committed_rel_path
-        for f in files:
-            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-            if not rel.startswith(("tests/", "docs/")):
-                continue
-            basename = os.path.basename(f)
-            if basename in exempt:
-                continue
-
-            # 冲突检测 1：与已跟踪文件冲突
-            if basename in tracked_basename_to_paths:
-                existing = [p for p in tracked_basename_to_paths[basename] if p != rel]
-                if existing:
-                    conflicts.append(
-                        f"[N-16] 文件名不唯一: {basename} "
-                        f"(新增: {rel}, 已有: {', '.join(existing)})"
-                    )
-
-            # 冲突检测 2：本次提交内部冲突
-            if basename in committed_basenames:
-                conflicts.append(
-                    f"[N-16] 文件名不唯一: {basename} "
-                    f"(本次提交内冲突: {rel} vs {committed_basenames[basename]})"
-                )
-            committed_basenames[basename] = rel
-
-        if conflicts:
-            return False, "\n".join(conflicts)
-        return True, "naming uniqueness passed"
+        if result.returncode == 0:
+            return True, "naming uniqueness passed"
+        if result.returncode == 1:
+            # exit 1 = N-16 冲突（EXIT_FINDINGS），stdout 含详情
+            detail = result.stdout.strip() or result.stderr.strip() or "naming violations found"
+            return False, detail
+        # exit 2 = usage error / 脚本不存在（测试环境 tmp_path 无脚本）→ fail-open
+        logger.warning(
+            "GitCommitGateway: N-16 检查 subprocess 异常 exit=%s: %s",
+            result.returncode, result.stderr.strip(),
+        )
+        return True, f"N-16 check skipped (subprocess exit {result.returncode})"
 
     def _load_protected_scripts(self) -> dict[str, list[str]]:
         """从 capability_canonical_file_registry.yaml 加载受保护脚本→锚点清单映射。
