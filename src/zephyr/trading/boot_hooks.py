@@ -519,6 +519,18 @@ def register_boot_hooks() -> None:
     _init_shared_monitoring_modules()
     _subscribe_eventbus_consumers()
 
+    # 红蓝对抗提交触发消费线程 (MOD-INF-030 事件驱动)：daemon 线程轮询
+    # data/red_blue/trigger_queue/，门禁达标时跑 TIER_1 对抗。
+    # 就位+门禁激活：始终启动；ZEPHYR_RED_BLUE_AUTO_ENABLED!=1 时只 log 不实跑。
+    try:
+        from zephyr.security.adversarial_validation.commit_trigger import (
+            RedBlueTriggerConsumer,
+        )
+        RedBlueTriggerConsumer().start()
+        logger.info("RedBlueTriggerConsumer: started via boot hooks")
+    except Exception as e:
+        logger.warning("RedBlueTriggerConsumer: start failed: %s", e)
+
     # MCP 集群自动启动（daemon 线程，不阻塞主流程）
     def _start_mcp_cluster() -> None:
         """启动 MCP 集群（10 个 Server 按 DAG 拓扑排序启动）。"""
