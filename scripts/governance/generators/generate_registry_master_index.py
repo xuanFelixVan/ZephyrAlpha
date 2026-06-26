@@ -59,11 +59,24 @@ description: >
 CATALOGS_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 DEFAULT_OUTPUT = CATALOGS_DIR / "registry-master-index.yaml"
 
-CATEGORY_FROM_DOC_TYPE = {
-    "register": "governance_rule",
-    "vocabulary": "vocabulary",
-    "contract": "contract",
-}
+# 真源单一化：registry_category 是 doc_type 的属性，由 doc_type_vocabulary.yaml 唯一维护。
+# 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名或分类。
+_DOC_TYPE_VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+)
+
+
+def _load_registry_categories() -> dict[str, str]:
+    """从 doc_type_vocabulary.yaml 加载 value→registry_category 映射。"""
+    data = load_yaml(_DOC_TYPE_VOCAB_PATH)
+    return {
+        v["value"]: v["registry_category"]
+        for v in data.get("values", [])
+        if "registry_category" in v
+    }
+
+
+CATEGORY_FROM_DOC_TYPE: dict[str, str] = _load_registry_categories()
 
 
 def extract_registry_info(yaml_path: Path) -> dict | None:

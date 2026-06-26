@@ -83,6 +83,11 @@ _DOMAIN_PARENT_DIRS = frozenset(
         for d in ("L00_data_source", "L02_alpha_factor", "L04_risk_management", "L07_post_trade_analytics")
     }
 )
+# RENAME_REVIEW: 此处是 doc_type→后缀的第 5 处硬编码真源（阶段0验证发现）。
+# 与 check_naming_convention.py（已改读词表 filename_suffixes）不同，此处用连字符约定
+# （-policy.md）+ 宽松 endswith 匹配，且含幽灵值（playbook/runbook 不在 26 合法值中）
+# 和废弃值（checklist 已迁移至 operational_rule/register）。
+# 待阶段4改名时决定：合并进词表（加独立字段）还是重构为读词表 filename_suffixes。
 _DOC_TYPE_SUFFIX_MAP = {
     "policy": "-policy.md",
     "standard": "-standard.md",

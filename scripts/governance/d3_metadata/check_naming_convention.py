@@ -44,12 +44,14 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+import yaml
+
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 # ---------------------------------------------------------------------------
 # 白名单与豁免配置
@@ -509,7 +511,7 @@ def _check_n10_dir_naming(dirpath: str) -> list[NamingViolation]:
     rel = dirpath.replace("\\", "/").lower()
     if _DIR_DOCS_NUM_PREFIX_RE.match(name) and ("docs/" in rel or rel == name):
         return []
-    # Exempt module ID directories (e.g. MOD-INF-006, DOM-GOV-001, SYS-MASTER-001)
+    # Exempt module ID directories (e.g. MOD-TASK_SYSTEM, DOM-GOV-001, SYS-MASTER-001)
     if _DIR_MODULE_ID_RE.match(name):
         return []
     # Exempt root-level legitimate kebab-case directories (历史遗留,待迁移)
@@ -545,27 +547,25 @@ def _check_n10_dir_naming(dirpath: str) -> list[NamingViolation]:
 # N-11: 文件名后缀与 doc_type 一致性检测
 # ---------------------------------------------------------------------------
 
-_DOC_TYPE_SUFFIX_MAP: dict[str, list[str]] = {
-    "policy": ["_policy.md", "_policy.yaml", "_policy.yml", "_rules.yaml", "_rules.yml"],
-    "standard": ["_standard.md", "_standard.yaml", "_standard.yml"],
-    "protocol": ["_protocol.md"],
-    "operational_rule": ["_runbook.md", "_playbook.md", "_procedure.md", "_checklist.md"],
-    "register": ["_registry.md", "_register.md", "_registry.yaml", "_registry.yml", "_register.yaml", "_register.yml"],
-    "index": ["index.md"],
-    "template": ["_template.md"],
-    "terminology": [
-        "_registry/vocabularies/glossary.yaml",
-        "_terminology.md",
-        "_mapping.md",
-        "_registry/vocabularies/terminology_mapping.yaml",
-    ],
-    "blueprint": ["blueprint.md"],
-    "catalog": ["_catalog.md", "_catalog.yaml", "_catalog.yml", "_ranking.md", "_ranking.yaml"],
-    "guide": ["_guide.md"],
-    "reference": ["_reference.md", "_ref.md", "_reference.yaml"],
-    "log": ["_log.md"],
-    "report": ["_report.md"],
-}
+# 真源单一化：后缀规则是 doc_type 的属性，由 doc_type_vocabulary.yaml 唯一维护。
+# 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名或后缀。
+_DOC_TYPE_VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+)
+
+
+def _load_doc_type_suffixes() -> dict[str, list[str]]:
+    """从 doc_type_vocabulary.yaml 加载 value→filename_suffixes 映射。"""
+    data = yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8"))
+    return {
+        v["value"]: v["filename_suffixes"]
+        for v in data.get("values", [])
+        if "filename_suffixes" in v
+    }
+
+
+# 模块级加载一次（词表是项目内稳定文件，import 时读取）
+_DOC_TYPE_SUFFIX_MAP: dict[str, list[str]] = _load_doc_type_suffixes()
 
 _DOC_TYPE_RE = re.compile(r"^doc_type:\s*(\S+)", re.MULTILINE)
 
@@ -944,7 +944,7 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
     dom_tokens = {t for t in re.split(r"[_-]", dom_domain_fragment) if len(t) >= 3}
 
     # 只有当两者有共享 token 时才校验（说明 blueprint_id 包含域片段，是派生标识符）
-    # 数字序号制 module_id（MOD-L00-001/MOD-INF-005/MOD-MASTER-001）不包含域片段，
+    # 数字序号制 module_id（MOD-L00-001/MOD-INF-005/MOD-MASTER_BLUEPRINT）不包含域片段，
     # 无共享 token，自动跳过（module_id 体系问题为阶段 E 议题，裁定#206 B-4）
     if not (bp_tokens & dom_tokens):
         return []

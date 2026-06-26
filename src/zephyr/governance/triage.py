@@ -70,34 +70,30 @@ APPROVED_LABELS = [
     "ENCODING_BROKEN",
 ]
 
-VALID_DOC_TYPES = [
-    "policy",
-    "standard",
-    "operational_rule",
-    "register",
-    "index",
-    "protocol",
-    "template",
-    "terminology",
-    "reference",
-    "vocabulary",
-    "contract",
-    "schema",
-    "blueprint",
-    "construction_plan",
-    "design",
-    "plan",
-    "roadmap",
-    "readme",
-    "log",
-    "knowledge_entry",
-    "audit_report",
-    "service_spec",
-    "architecture_view",
-    "declaration",
-    "gate",
-    "config",
-]
+# 真源单一化：doc_type 合法值由 doc_type_vocabulary.yaml 唯一维护。
+# 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名。
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_DOC_TYPE_VOCAB_PATH = (
+    _PROJECT_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "vocabularies"
+    / "doc_type_vocabulary.yaml"
+)
+
+
+def _load_doc_type_values() -> list[str]:
+    """从 doc_type_vocabulary.yaml 加载活跃的 doc_type 值列表。
+
+    读 ``values`` 列表（不含 ``deprecated_values``），天然排除废弃值。
+    """
+    data = yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8"))
+    return [v["value"] for v in data.get("values", [])]
+
+
+# 模块级加载一次（词表是项目内稳定文件，import 时读取）
+VALID_DOC_TYPES: list[str] = _load_doc_type_values()
 
 VALID_LAYERS = [
     "data",
@@ -280,12 +276,12 @@ class TriageGate:
         category = fm.get("category", "").lower()
         doc_type = fm.get("doc_type", "").lower()
 
+        # RENAME_REVIEW: 以下分支按值名分组——若词表改名（如 blueprint→xxx），
+        # 需复核此分组映射。无法用词表属性（如 rule_form）替代，因为是业务分类逻辑。
         if doc_type in ("blueprint", "design"):
             return "BLUEPRINT"
         if doc_type in ("standard", "policy"):
             return "GOVERNANCE_STD"
-        if doc_type in ("report",):
-            return "AUDIT_REPORT"
         if category in ("strategy", "factor"):
             return "STRATEGY"
         if category in ("best_practice", "lesson_learned"):
