@@ -30,6 +30,18 @@ verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016
   --ci          硬阻断模式（默认行为，与其他 GATE 一致；显式传入便于阅读）
   --warn-only   软警告模式（发现漂移仍 exit 0）——用于观察期
 """
+__manifest__ = {
+    "args": [
+        {"flag": "--ci", "type": "bool", "description": "硬阻断模式（漂移 exit 1，默认行为）"},
+        {"flag": "--warn-only", "type": "bool", "description": "软警告模式（漂移仍 exit 0，观察期用）"},
+    ],
+    "description": "depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016 治本",
+    "dimensions": ["D5"],
+    "priority": "P1",
+    "timeout_seconds": 30,
+    "warn_only": False,
+}
+
 import argparse
 import re
 import sqlite3
@@ -66,18 +78,19 @@ def parse_ddl_columns(ddl: str) -> list[str]:
             current += char
         elif char == "," and depth == 0:
             col_def = current.strip()
-            if col_def and not col_def.upper().startswith(
-                ("PRIMARY", "FOREIGN", "CHECK", "UNIQUE", "CONSTRAINT")
-            ):
-                columns.append(col_def.split()[0])
+            if col_def:
+                toks = col_def.split()
+                # 精确匹配首 token：真表级约束子句首 token 恰为关键字(如 CONSTRAINT)，列名 constraint_id 首 token 为 CONSTRAINT_ID 不命中
+                if toks[0].upper() not in ("PRIMARY", "FOREIGN", "CHECK", "UNIQUE", "CONSTRAINT"):
+                    columns.append(toks[0])
             current = ""
         else:
             current += char
     col_def = current.strip()
-    if col_def and not col_def.upper().startswith(
-        ("PRIMARY", "FOREIGN", "CHECK", "UNIQUE", "CONSTRAINT")
-    ):
-        columns.append(col_def.split()[0])
+    if col_def:
+        toks = col_def.split()
+        if toks[0].upper() not in ("PRIMARY", "FOREIGN", "CHECK", "UNIQUE", "CONSTRAINT"):
+            columns.append(toks[0])
     return columns
 
 
