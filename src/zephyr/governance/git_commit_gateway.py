@@ -531,6 +531,15 @@ class GitCommitGateway:
                 message=f"_working/ 新文档 completes_when 校验失败: {working_detail}",
             )
 
+        # GATE-SRC-NO-DATA 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用
+        # 真源：trae_047 §gov_eng_002_directory_mapping 禁止规则
+        src_no_data_passed, src_no_data_detail = self._check_src_no_data(existing)
+        if not src_no_data_passed:
+            return CommitResult(
+                status=CommitStatus.METADATA_VIOLATION,
+                message=f"src/ 禁 data/ 子目录校验失败: {src_no_data_detail}",
+            )
+
         # 永久区晋升门禁：检测新文件进入永久区，未获批准则阻断
         if not allow_promote:
             new_permanent = self._check_permanent_zone_new_files(existing)
@@ -1457,6 +1466,34 @@ class GitCommitGateway:
         if violations:
             return False, "\n  ".join(violations)
         return True, "REPO_ROOT usage check passed (no parents[N] violations)"
+
+    def _check_src_no_data(self, files: list[str]) -> tuple[bool, str]:
+        """GATE-SRC-NO-DATA 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用。
+
+        真源：trae_047 §gov_eng_002_directory_mapping 禁止规则
+              "src/下禁止data/子目录(数据真源唯一位置为data/目录)"
+
+        检测：files 中是否有 src/data/ 路径前缀（大小写不敏感）。
+        原因：GitCommitGateway 使用 --no-verify 提交，pre-commit 钩子 gate-src-no-data
+              被跳过，故在 gateway 内部做等效校验（对标 GATE-15 等效校验模式）。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        violations: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if rel.lower().startswith("src/data/"):
+                violations.append(rel)
+        if violations:
+            return (
+                False,
+                f"src/ 下禁止 data/ 子目录（数据真源唯一位置为 data/）: {violations}",
+            )
+        return True, "src/ no-data check passed"
 
     # ------------------------------------------------------------------
     # 内部实现

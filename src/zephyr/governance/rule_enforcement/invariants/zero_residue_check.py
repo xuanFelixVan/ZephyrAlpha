@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_zero_residue_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import os
 import subprocess
 import sys
@@ -121,20 +122,21 @@ class ZeroResidueScanner:
 
     def _scan_temp_files(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d1_structure/detect_temp_files.py")
-        return [("ZR-001", issue, "warning", "") for issue in self._parse_findings(code, err)]
+        return [("ZR-001", issue, "error", "") for issue in self._parse_findings(code, err)]
 
     def _scan_residual_files(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d1_structure/detect_residual_files.py")
-        return [("ZR-006", issue, "warning", "") for issue in self._parse_findings(code, err)]
+        return [("ZR-006", issue, "error", "") for issue in self._parse_findings(code, err)]
 
     def _scan_ruins_references(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d4_paths/detect_ruins_references.py")
-        return [("ZR-005", issue, "warning", "") for issue in self._parse_findings(code, err)]
+        return [("ZR-005", issue, "error", "") for issue in self._parse_findings(code, err)]
 
     def _scan_orphan_py(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d1_structure/detect_orphan_py.py")
-        return [("ZR-003", issue, "warning", "") for issue in self._parse_findings(code, err)]
+        return [("ZR-003", issue, "error", "") for issue in self._parse_findings(code, err)]
 
     def _scan_orphan_docs(self) -> list[tuple[str, str, str, str]]:
         code, out, err = self._run_script("d9_knowledge/detect_orphan_documents.py")
+        # ZR-004 保持 warning：孤儿文档可能是新文件尚未提交，不一定是垃圾
         return [("ZR-004", issue, "warning", "") for issue in self._parse_findings(code, err)]

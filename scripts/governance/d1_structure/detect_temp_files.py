@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 from __future__ import annotations
 
 """
@@ -64,11 +65,14 @@ import argparse
 TEMP_FILE_PATTERNS = [
     (re.compile(r"^temp_"), "temp_ 前缀临时文件"),
     (re.compile(r"^tmp_"), "tmp_ 前缀临时文件"),
+    (re.compile(r"^_tmp_"), "_tmp_ 前缀临时脚本"),
+    (re.compile(r"^_debug_"), "_debug_ 前缀调试测试"),
     (re.compile(r"\.backup$"), ".backup 后缀备份文件"),
     (re.compile(r"-v\d+\."), "-vN 版本后缀文件"),
     (re.compile(r"-round\d+\."), "-roundN 版本后缀文件"),
     (re.compile(r"\.pyc$"), ".pyc 编译缓存文件"),
     (re.compile(r"\.bak$"), ".bak 备份文件"),
+    (re.compile(r"\.baseline"), ".baseline 基线备份文件"),
     (re.compile(r"\.orig$"), ".orig 合并残留文件"),
     (re.compile(r"\.swp$"), ".swp Vim 交换文件"),
     (re.compile(r"~$"), "~ 编辑器备份文件"),
