@@ -76,13 +76,13 @@ status: active
 
 created: "2026-05-02"
 
-last_updated: "2026-05-06"
+last_updated: "2026-06-26"
 
 ai_autonomy: human_gated
 
 ttl: permanent
 
-total_registered: 84
+total_registered: 85
 
 depends_on:
 
@@ -401,6 +401,26 @@ directories:
     status: active
 
     note: "reports/ + findings/ + state/(deprecated)"
+
+
+
+  - path: "docs/decomposition/"
+
+    responsibility: "Decomposition task cards — DM-100252~100255 PENDING task cards (panorama rebuild / domain sync fix)"
+
+    parent: "docs/"
+
+    has_index: true
+
+    module_id: null
+
+    kb_ref: null
+
+    track: D
+
+    status: active
+
+    note: "2026-06-22 added — task decomposition PENDING task card storage; ttl=task_bound"
 
 
 
@@ -1892,7 +1912,7 @@ directories:
 
 summary:
 
-  total_directories: 83
+  total_directories: 84
 
   by_track:
 
@@ -1900,7 +1920,7 @@ summary:
 
     B_track: 38
 
-    D_track: 1
+    D_track: 2
 
     uncategorized: 2
 
@@ -1908,7 +1928,7 @@ summary:
 
     config: 1
 
-    docs: 45
+    docs: 46
 
     schemas: 0
 
@@ -1916,9 +1936,9 @@ summary:
 
     src: 24
 
-  directories_with_index: 35
+  directories_with_index: 36
 
-  directories_without_index: 47
+  directories_without_index: 46
 
   frozen_directories: 1
 
@@ -1931,6 +1951,18 @@ summary:
 # ============================================================================
 
 changelog:
+
+  - version: "1.0.1"
+
+    date: "2026-06-26"
+
+    author: "AI-GLM-5.2"
+
+    changes:
+
+      - "Add docs/decomposition/ directory registration (DM-100252~100255 PENDING task cards, track=D)"
+
+      - "Update summary stats: total_directories 83->84, D_track 1->2, docs 45->46, total_registered 84->85, directories_with_index 35->36, directories_without_index 47->46"
 
   - version: "1.0.0"
 
