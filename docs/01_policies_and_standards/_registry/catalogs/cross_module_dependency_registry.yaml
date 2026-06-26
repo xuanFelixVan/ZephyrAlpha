@@ -378,7 +378,7 @@ dependencies:
 - dep_id: DEP-025f
   source: MOD-INF-023
   source_name: drift-detector
-  target: MOD-DATABASE
+  target: SH-DB-001
   target_name: database
   type: runtime
   strength: hard
@@ -388,7 +388,7 @@ dependencies:
 - dep_id: DEP-026
   source: MOD-INF-020
   source_name: audit-trail
-  target: MOD-DATABASE
+  target: SH-DB-001
   target_name: database
   type: runtime
   strength: hard
@@ -430,7 +430,7 @@ dependencies:
 - dep_id: DEP-030
   source: MOD-INF-015
   source_name: system-telemetry
-  target: MOD-DATABASE
+  target: SH-DB-001
   target_name: database
   type: data
   strength: hard
@@ -524,7 +524,7 @@ dependencies:
 - dep_id: DEP-039
   source: MOD-INF-017
   source_name: code-dedup-engine
-  target: MOD-DATABASE
+  target: SH-DB-001
   target_name: database
   type: data
   strength: hard
@@ -817,7 +817,7 @@ dependencies:
 - dep_id: DEP-067
   source: MOD-INF-024
   source_name: budget-enforcer
-  target: MOD-DATABASE
+  target: SH-DB-001
   target_name: database
   type: data
   strength: soft
@@ -957,7 +957,7 @@ dependencies:
 - dep_id: DEP-019-010
   source: MOD-INF-019
   source_name: agent-spec
-  target: MOD-DATABASE
+  target: SH-DB-001
   target_name: database
   type: data
   strength: soft
@@ -1214,7 +1214,7 @@ dependency_graph:
     MOD-INF-011:
     - MOD-INF-039
     MOD-INF-015:
-    - MOD-DATABASE
+    - SH-DB-001
     - MOD-INF-024
     - MOD-INF-022
     - MOD-INF-018
@@ -1232,7 +1232,7 @@ dependency_graph:
     - MOD-CONTEXT_ENGINE
     - MOD-FEEDBACK_LOOP
     - MOD-INF-016
-    - MOD-DATABASE
+    - SH-DB-001
     MOD-INF-020:
     - MOD-INF-021
     MOD-INF-021:
@@ -1249,7 +1249,7 @@ dependency_graph:
     - MOD-INF-018
     - MOD-GATE_ENGINE
     - MOD-INF-016
-    - MOD-DATABASE
+    - SH-DB-001
     MOD-INF-030:
     - MOD-GATE_ENGINE
     - MOD-INF-020
@@ -1284,7 +1284,7 @@ dependency_graph:
     - MOD-INF-025
     - MOD-INF-005
     - MOD-FEEDBACK_LOOP
-    - MOD-DATABASE
+    - SH-DB-001
     - MOD-LLM_SECURITY
     - MOD-INF-021
     - MOD-INF-022
@@ -1296,7 +1296,7 @@ dependency_graph:
     - MOD-INF-020
     - MOD-INF-022
     - MOD-INF-016
-    - MOD-DATABASE
+    - SH-DB-001
     - MOD-LLM_SECURITY
     - MOD-INF-023
     - MOD-CONTEXT_ENGINE
@@ -1338,7 +1338,7 @@ dependency_graph:
     - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019
     - MOD-INF-015
-    MOD-DATABASE:
+    SH-DB-001:
     - MOD-INF-015
     - MOD-INF-017
     - MOD-INF-019
@@ -1367,7 +1367,7 @@ dependency_graph:
     MOD-INF-020:
     - MOD-GATE_ENGINE
     - MOD-INF-015
-    - MOD-DATABASE
+    - SH-DB-001
     - MOD-INF-016
     - MOD-INF-023
     - MOD-INF-021
@@ -1399,7 +1399,7 @@ dependency_graph:
     - MOD-CONTEXT_ENGINE
     - MOD-TASK_SYSTEM
     - MOD-INF-016
-    - MOD-DATABASE
+    - SH-DB-001
     - MOD-INF-015
     - MOD-RESOURCE_OPTIMIZATION_ENGINE
     - MOD-INF-019

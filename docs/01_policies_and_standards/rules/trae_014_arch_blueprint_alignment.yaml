@@ -722,7 +722,7 @@ sections:
       title: Vector Memory
       belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
-    - module_id: MOD-DATABASE
+    - module_id: SH-DB-001
       title: Database
       belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module

@@ -191,7 +191,7 @@ modules:
     version: 0.12.1
   construction_plan:
     status: partially_implemented
-- module_id: MOD-DATABASE
+- module_id: SH-DB-001
   name: database
   layer: cross_layer
   functional_domain: data

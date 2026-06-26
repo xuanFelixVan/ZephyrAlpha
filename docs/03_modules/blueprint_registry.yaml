@@ -319,7 +319,7 @@ blueprints:
   last_updated: '2026-05-18'
   file_path: 03_modules/_domain_knowledge/vector_memory/blueprint.md
   construction_progress: partially_implemented
-- module_id: MOD-DATABASE
+- module_id: SH-DB-001
   name: database
   title: Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
   summary: 'Database 集成蓝图——聚合 MOD-INF-012A（Core: SQLite+DuckDB已实现）和 MOD-INF-012B（v3.0:

@@ -107,7 +107,7 @@ sections:
       pass: 允许存在，不触发循环告警
       fail: N/A
     - type: constraint
-      check: DEPTH_0边——database(MOD-DATABASE)↔system-telemetry(MOD-INF-015)双向依赖
+      check: DEPTH_0边——database(SH-DB-001)↔system-telemetry(MOD-INF-015)双向依赖
       pass: 合法循环LEGAL-001，有限步长收敛，不触发循环告警
       fail: N/A
     - type: constraint
@@ -350,7 +350,7 @@ sections:
     original_rules:
     - GOV-ARCH-010
     - ILDR-002
-    summary: 合法循环LEGAL-001为database(MOD-DATABASE)↔system-telemetry(MOD-INF-015)双向依赖，有限步长收敛，不触发循环告警
+    summary: 合法循环LEGAL-001为database(SH-DB-001)↔system-telemetry(MOD-INF-015)双向依赖，有限步长收敛，不触发循环告警
     impact_on_rules:
     - LEGAL-001是ILDR-002的核心实例
     - detect_depends_on_cycles.py对LEGAL-001不触发循环告警
@@ -359,7 +359,7 @@ sections:
     - telemetry写db走connection-pool直写不走ORM
     legal_cycles:
     - id: LEGAL-001
-      path: MOD-DATABASE→MOD-INF-015→MOD-DATABASE
+      path: SH-DB-001→MOD-INF-015→SH-DB-001
       justification: database↔system-telemetry运行时bootstrap对
       status: approved
       approved_by: owner
@@ -388,7 +388,7 @@ sections:
       expected_result: depends_on移除，pipeline执行前安全检查走EventBus
       on_failure: 维持pending_refactor状态，触发循环告警
     - order: 4
-      action: 将audit-trail(MOD-INF-020)→database(MOD-DATABASE)迁至database Contract接口
+      action: 将audit-trail(MOD-INF-020)→database(SH-DB-001)迁至database Contract接口
       pre_condition: audit-trail depends_on database
       expected_result: depends_on移除，审计记录写入走database Contract接口
       on_failure: 维持pending_refactor状态，可降级为DEPTH_0（audit必须持久化）
