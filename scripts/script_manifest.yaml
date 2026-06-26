@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 583
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,106 +38,18 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_check_db_pollution.py
-  path: _tmp_check_db_pollution.py
+- name: _tmp_d3_final_commit.py
+  path: _tmp_d3_final_commit.py
+  description: 收集所有已修改（M）的 D3 相关文件，排除无关变更（data/brain/），
+  domain: _tmp_d3_final_commit.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_diff_head_wt.py
+  path: _tmp_diff_head_wt.py
   description: import sqlite3
-  domain: _tmp_check_db_pollution.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_check_head_db.py
-  path: _tmp_check_head_db.py
-  description: import subprocess
-  domain: _tmp_check_head_db.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_backup.py
-  path: _tmp_d3_backup.py
-  description: 前置条件：_db_write_lock 的 GIT 备份门禁要求 DB 无未提交修改。
-  domain: _tmp_d3_backup.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_code_header_sync.py
-  path: _tmp_d3_code_header_sync.py
-  description: 扫描 src/ 和 scripts/ 下所有 .py 文件，用扩展映射做精确边界 regex 替换。
-  domain: sync
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_commit.py
-  path: _tmp_d3_commit.py
-  description: 筛选逻辑：
-  domain: _tmp_d3_commit.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_frontmatter_sync.py
-  path: _tmp_d3_frontmatter_sync.py
-  description: 对 docs/ 下所有 .md 文件，用扩展映射（含下划线版和连字符版）做精确边界 regex 替换。
-  domain: sync
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_residual_audit.py
-  path: _tmp_d3_residual_audit.py
-  description: 用精确边界正则 \\b{old_id}(?![A-Za-z0-9_]) 保护变体（MOD-INF-012B 等）。
-  domain: audit
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_state_audit.py
-  path: _tmp_d3_state_audit.py
-  description: 反幻觉核查——总结声称 D3-2~D3-8 全部完成，但 grep 发现代码头新 ID = 0。
-  domain: audit
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d3_yaml_sync.py
-  path: _tmp_d3_yaml_sync.py
-  description: 复用 D3-5~D3-6 的 expand_merges + 精确边界正则逻辑。
-  domain: sync
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_fix_kb_ttl.py
-  path: _tmp_fix_kb_ttl.py
-  description: 修复 GATE-15 预存违规（frontmatter 缺 ttl），解除 D3 提交阻断。
-  domain: _tmp_fix_kb_ttl.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_probe_tsd_bp.py
-  path: _tmp_probe_tsd_bp.py
-  description: import sqlite3
-  domain: _tmp_probe_tsd_bp.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_rename_check.py
-  path: _tmp_rename_check.py
-  description: import sqlite3
-  domain: _tmp_rename_check.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_stage_d_merge.py
-  path: _tmp_stage_d_merge.py
-  description: 经 apply_depgraph._db_write_lock 执行（含 GIT 备份门禁 + 物理备份 + 跨进程锁）：
-  domain: _tmp_stage_d_merge.py
+  domain: _tmp_diff_head_wt.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -793,14 +705,6 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_commit_stage1.py
-  path: governance/_tmp_commit_stage1.py
-  description: import sys
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2089,6 +1993,14 @@ scripts:
 - name: governance/d3_metadata/check_registry_consistency.py
   path: governance/d3_metadata/check_registry_consistency.py
   description: 读取 registry_of_registries.yaml，按 cross_registry_rules 比对多登记表共享字段。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d3_metadata/check_vocab_hardcode.py
+  path: governance/d3_metadata/check_vocab_hardcode.py
+  description: 检测 src/ 与 scripts/ 下 .py 文件中硬编码的词表合法值集合。
   domain: governance
   execution_plane: warm-path
   status: registered
