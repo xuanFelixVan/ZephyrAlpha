@@ -64,16 +64,10 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-
-def _find_repo_root() -> Path:
-    current = Path(__file__).resolve()
-    for parent in current.parents:
-        if (parent / "src" / "zephyr" / "__init__.py").exists():
-            return parent
-    raise FileNotFoundError(f"Cannot find project root from {current}")
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
-DB_PATH: Path = _find_repo_root() / "data" / "databases" / "depgraph.db"
+DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # ---------------------------------------------------------------------------
 # DDL — nodes 表（28列，v11删除module_lifecycle_state+添加CHECK约束）
@@ -959,6 +953,49 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         "清理 _DDL_INDEXES 声明 + DROP INDEX IF EXISTS 确保生产库与声明一致.",
         [
             "DROP INDEX IF EXISTS idx_domains_can_build",
+        ],
+    ),
+    (
+        18,
+        "v18: Add blueprint_id format CHECK triggers to nodes (裁定#208 三轨制 DB 层防护). "
+        "应用层 V1(apply_depgraph L359 禁止 --update-module 改 blueprint_id) + V2(L2135 --rename-blueprint-id 格式校验) "
+        "可被直接 SQL 绕过. 本 migration 在 DB 层添加 BEFORE INSERT + BEFORE UPDATE OF blueprint_id 触发器, "
+        "用 GLOB 粗校验 MOD-*/D-*/SH-*/PLACEHOLDER* 前缀(纯 SQL 无依赖), 应用层 is_valid_module_id() 做精细正则校验. "
+        "分层防御: DB 层阻断 gross violation(如 WRONG-FORMAT), app 层拦截 subtle violation(如 MOD-lowercase). "
+        "特殊情况处理: NULL(无蓝图)/空串(无蓝图)/blueprint_id_invalid=1(遗留失效 ID) 均放行. "
+        "未保护 arch_directory_tree/blueprint_links: 前者 sync_directory_registry UPSERT 会触发 UPDATE 校验阻断 "
+        "(2 个遗留无效 ID: DOC-ROOT/CAT-IDX-001), 后者 sync_blueprint_links 做 DELETE+INSERT FROM nodes 会触发 INSERT 校验阻断 "
+        "(716 个遗留无效 ID). nodes 是 blueprint_id 真源, 保护 nodes 即间接保护派生表.",
+        [
+            # 1. nodes BEFORE INSERT: 粗校验 blueprint_id 前缀
+            # GLOB 大小写敏感(三轨制要求大写), 纯 SQL 无需扩展
+            # 放行: NULL / 空串 / blueprint_id_invalid=1 / MOD-* / D-* / SH-* / PLACEHOLDER*
+            """CREATE TRIGGER IF NOT EXISTS chk_nodes_blueprint_id_insert
+            BEFORE INSERT ON nodes
+            WHEN NEW.blueprint_id IS NOT NULL
+              AND NEW.blueprint_id != ''
+              AND NEW.blueprint_id_invalid = 0
+              AND NEW.blueprint_id NOT GLOB 'MOD-*'
+              AND NEW.blueprint_id NOT GLOB 'D-*'
+              AND NEW.blueprint_id NOT GLOB 'SH-*'
+              AND NEW.blueprint_id NOT GLOB 'PLACEHOLDER*'
+            BEGIN
+                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
+            END""",
+            # 2. nodes BEFORE UPDATE OF blueprint_id: 粗校验 blueprint_id 前缀
+            # 仅当 blueprint_id 列出现在 SET 子句时触发, 不影响其他列的 UPDATE
+            """CREATE TRIGGER IF NOT EXISTS chk_nodes_blueprint_id_update
+            BEFORE UPDATE OF blueprint_id ON nodes
+            WHEN NEW.blueprint_id IS NOT NULL
+              AND NEW.blueprint_id != ''
+              AND NEW.blueprint_id_invalid = 0
+              AND NEW.blueprint_id NOT GLOB 'MOD-*'
+              AND NEW.blueprint_id NOT GLOB 'D-*'
+              AND NEW.blueprint_id NOT GLOB 'SH-*'
+              AND NEW.blueprint_id NOT GLOB 'PLACEHOLDER*'
+            BEGIN
+                SELECT RAISE(ABORT, 'nodes.blueprint_id format violation (裁定#208 三轨制: MOD-*/D-*/SH-*/PLACEHOLDER*, or set blueprint_id_invalid=1 for legacy)');
+            END""",
         ],
     ),
 ]
