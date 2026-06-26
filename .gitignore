@@ -222,3 +222,12 @@ models/
 
 # Runtime cache (walk_cache.json 400MB+, regenerate on demand)
 data/cache/
+
+# Red-blue adversarial test runtime (trigger_queue/bypass_logs/scheduler_state)
+data/red_blue/
+
+# E2E test vector index binaries (regenerable, large)
+data/e2e_test/
+
+# Scripts temporary files (logs/xml/db/tmp)
+scripts/_tmp_*
