@@ -12,53 +12,54 @@ from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.models import RawFileEntry, ScanResult
 from zephyr.infrastructure.asset_inventory.scanner import ConcurrentScanner, merge_scans
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestConcurrentScanner:
     def test_constructor(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
+        cs = ConcurrentScanner(REPO_ROOT)
         assert cs._lock_dir
 
     def test_not_locked_normal_file(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
-        assert not cs._is_locked(Path("D:/ZephyrAlpha/README.md"))
+        cs = ConcurrentScanner(REPO_ROOT)
+        assert not cs._is_locked(REPO_ROOT / "README.md")
 
     def test_scan_normal_existing_file(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
-        entry = cs._scan_normal(Path("D:/ZephyrAlpha/README.md"))
+        cs = ConcurrentScanner(REPO_ROOT)
+        entry = cs._scan_normal(REPO_ROOT / "README.md")
         assert entry is not None
         assert entry.sha256
         assert len(entry.sha256) == 64
         assert entry.size_bytes > 0
 
     def test_shas_match_for_same_file(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
-        e1 = cs._scan_normal(Path("D:/ZephyrAlpha/README.md"))
-        e2 = cs._scan_normal(Path("D:/ZephyrAlpha/README.md"))
+        cs = ConcurrentScanner(REPO_ROOT)
+        e1 = cs._scan_normal(REPO_ROOT / "README.md")
+        e2 = cs._scan_normal(REPO_ROOT / "README.md")
         assert e1 and e2
         assert e1.sha256 == e2.sha256
 
     def test_verify_sha_matches(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
-        path = Path("D:/ZephyrAlpha/README.md")
+        cs = ConcurrentScanner(REPO_ROOT)
+        path = REPO_ROOT / "README.md"
         sha = cs._scan_normal(path).sha256  # type: ignore[union-attr]
         assert cs._verify_sha(path, sha)
 
     def test_verify_sha_mismatch(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
-        assert not cs._verify_sha(Path("D:/ZephyrAlpha/README.md"), "not_a_real_sha")
+        cs = ConcurrentScanner(REPO_ROOT)
+        assert not cs._verify_sha(REPO_ROOT / "README.md", "not_a_real_sha")
 
     def test_scan_nonexistent_file(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
-        entry = cs._scan_normal(Path("D:/ZephyrAlpha/_nonexistent_xyz.txt"))
+        cs = ConcurrentScanner(REPO_ROOT)
+        entry = cs._scan_normal(REPO_ROOT / "_nonexistent_xyz.txt")
         assert entry is None
 
     def test_scan_batch_multiple_files(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
+        cs = ConcurrentScanner(REPO_ROOT)
         paths = [
-            Path("D:/ZephyrAlpha/README.md"),
-            Path("D:/ZephyrAlpha/pyproject.toml"),
-            Path("D:/ZephyrAlpha/_nonexistent_xyz.txt"),
+            REPO_ROOT / "README.md",
+            REPO_ROOT / "pyproject.toml",
+            REPO_ROOT / "_nonexistent_xyz.txt",
         ]
         results = cs.scan_batch(paths, max_workers=2)
         assert len(results) >= 2
@@ -66,7 +67,7 @@ class TestConcurrentScanner:
         assert "README.md" in rel_paths or any("README" in p for p in rel_paths)
 
     def test_scan_batch_empty_list(self) -> None:
-        cs = ConcurrentScanner(Path("D:/ZephyrAlpha"))
+        cs = ConcurrentScanner(REPO_ROOT)
         results = cs.scan_batch([], max_workers=1)
         assert results == []
 

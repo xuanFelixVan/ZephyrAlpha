@@ -18,6 +18,7 @@ from zephyr.infrastructure.asset_inventory.registry_adapter import (
     RegistryParseError,
     YamlListAdapter,
 )
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _YAML_LIST = """\
 - id: entry-1
@@ -120,18 +121,18 @@ class TestMarkdownTableAdapter:
 
 class TestRegistryManager:
     def test_constructor(self) -> None:
-        mgr = RegistryManager(Path("D:/ZephyrAlpha"))
+        mgr = RegistryManager(REPO_ROOT)
         assert mgr._known
 
     def test_find_adapter_known(self) -> None:
-        mgr = RegistryManager(Path("D:/ZephyrAlpha"))
-        ad = mgr._find_adapter("D:/ZephyrAlpha/docs/03_modules/module-registry.yaml")
+        mgr = RegistryManager(REPO_ROOT)
+        ad = mgr._find_adapter(str(REPO_ROOT / "docs/03_modules/module-registry.yaml"))
         assert ad is not None
         assert ad.registry_id == "REG-MOD-001"
 
     def test_find_adapter_csv_fallback(self) -> None:
-        mgr = RegistryManager(Path("D:/ZephyrAlpha"))
-        ad = mgr._find_adapter("D:/ZephyrAlpha/data/export.csv")
+        mgr = RegistryManager(REPO_ROOT)
+        ad = mgr._find_adapter(str(REPO_ROOT / "data/export.csv"))
         assert ad is not None
         assert isinstance(ad, CsvAdapter)
 
@@ -153,5 +154,5 @@ class TestRegistryManager:
             RegistryEntry(registry_id="R2", registry_path="", entry_path="src/matched.py"),
         ]
 
-        mgr = RegistryManager(Path("D:/ZephyrAlpha"))
+        mgr = RegistryManager(REPO_ROOT)
         assert mgr.cross_match_asset(asset, registry_entries)

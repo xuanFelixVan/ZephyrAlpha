@@ -14,13 +14,11 @@ Capacity & Runtime 红白对抗测试
 
 from __future__ import annotations
 
-import sys
 import tempfile
 import threading
 from pathlib import Path
 
-_PROJECT_ROOT = Path("D:/ZephyrAlpha/")
-sys.path.insert(0, str(_PROJECT_ROOT / "src"))
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 # ============================================================================

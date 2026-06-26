@@ -10,6 +10,7 @@
 from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.trust_anchor import BypassManager, BypassState
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestBypassState:
@@ -25,7 +26,7 @@ class TestBypassState:
 
 class TestBypassManager:
     def test_constructor(self) -> None:
-        bm = BypassManager(Path("D:/ZephyrAlpha"))
+        bm = BypassManager(REPO_ROOT)
         assert bm._override_path
 
     def test_not_bypass_when_no_file(self, tmp_path) -> None:

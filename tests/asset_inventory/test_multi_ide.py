@@ -10,15 +10,16 @@
 from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.metadata import MultiIDERuleGenerator
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestMultiIDERuleGenerator:
     def test_constructor(self) -> None:
-        gen = MultiIDERuleGenerator(Path("D:/ZephyrAlpha"))
+        gen = MultiIDERuleGenerator(REPO_ROOT)
         assert gen._root
 
     def test_generate_cursor_rules(self, tmp_path) -> None:
-        gen = MultiIDERuleGenerator(Path("D:/ZephyrAlpha"))
+        gen = MultiIDERuleGenerator(REPO_ROOT)
         output = gen.generate_cursor_rules(tmp_path / ".cursorrules")
         assert output.exists()
         content = output.read_text(encoding="utf-8")
@@ -26,7 +27,7 @@ class TestMultiIDERuleGenerator:
         assert "cursor" in content.lower()
 
     def test_generate_trae_rules(self, tmp_path) -> None:
-        gen = MultiIDERuleGenerator(Path("D:/ZephyrAlpha"))
+        gen = MultiIDERuleGenerator(REPO_ROOT)
         output = gen.generate_trae_rules(tmp_path / ".trae" / "rules" / "asset_inventory_rules.md")
         assert output.exists()
         content = output.read_text(encoding="utf-8")
@@ -34,7 +35,7 @@ class TestMultiIDERuleGenerator:
         assert "trae" in content.lower()
 
     def test_generate_vscode_rules(self, tmp_path) -> None:
-        gen = MultiIDERuleGenerator(Path("D:/ZephyrAlpha"))
+        gen = MultiIDERuleGenerator(REPO_ROOT)
         output = gen.generate_vscode_rules(tmp_path / ".github" / "copilot-instructions.md")
         assert output.exists()
         content = output.read_text(encoding="utf-8")
@@ -42,7 +43,7 @@ class TestMultiIDERuleGenerator:
         assert "copilot" in content.lower()
 
     def test_generate_jetbrains_rules(self, tmp_path) -> None:
-        gen = MultiIDERuleGenerator(Path("D:/ZephyrAlpha"))
+        gen = MultiIDERuleGenerator(REPO_ROOT)
         output = gen.generate_jetbrains_rules(tmp_path / ".idea" / "asset-inventory.xml")
         assert output.exists()
         content = output.read_text(encoding="utf-8")

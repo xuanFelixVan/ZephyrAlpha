@@ -15,13 +15,11 @@ capacity-assurance(MOD-INF-001) → runtime-integration(MOD-INF-002)
 
 from __future__ import annotations
 
-import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-_PROJECT_ROOT = Path("D:/ZephyrAlpha/")
-sys.path.insert(0, str(_PROJECT_ROOT / "src"))
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 def test_e2e_finding_to_taskcard_full_chain():
@@ -91,8 +89,8 @@ def test_e2e_contract_tester_on_real_files():
 
     tester = ContractTester(strict=False)
     gate_files = [
-        _PROJECT_ROOT / "src/zephyr/gates/g1-ingest.yaml",
-        _PROJECT_ROOT / "src/zephyr/gates/g2-triage.yaml",
+        REPO_ROOT / "src/zephyr/gates/g1-ingest.yaml",
+        REPO_ROOT / "src/zephyr/gates/g2-triage.yaml",
     ]
 
     for gf in gate_files:
@@ -106,7 +104,7 @@ def test_e2e_config_validator():
     from zephyr.infrastructure.config_validator import ConfigValidator
 
     validator = ConfigValidator()
-    config_files = list((_PROJECT_ROOT / "config").rglob("*.yaml"))[:3]
+    config_files = list((REPO_ROOT / "config").rglob("*.yaml"))[:3]
 
     assert len(config_files) > 0, "No config files found to validate"
 
@@ -191,7 +189,7 @@ def test_e2e_pydantic_v2_scanner():
     from zephyr.infrastructure.pydantic_v2_migrator import PydanticV2Migrator
 
     migrator = PydanticV2Migrator()
-    report = migrator.scan(str(_PROJECT_ROOT / "src" / "zephyr" / "shared"))
+    report = migrator.scan(str(REPO_ROOT / "src" / "zephyr" / "shared"))
 
     assert report.files_scanned > 0
 

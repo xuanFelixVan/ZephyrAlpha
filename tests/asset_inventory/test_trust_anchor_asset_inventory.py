@@ -15,6 +15,7 @@ from zephyr.infrastructure.asset_inventory.trust_anchor import (
     TrustAnchorResult,
     TrustLevel,
 )
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestTrustLevel:
@@ -40,7 +41,7 @@ class TestTrustAnchorResult:
 
 class TestTripleTrustAnchorGate:
     def test_constructor(self) -> None:
-        gate = TripleTrustAnchorGate(Path("D:/ZephyrAlpha"))
+        gate = TripleTrustAnchorGate(REPO_ROOT)
         assert gate._root
 
     def test_calculate_trust_full(self) -> None:
@@ -61,13 +62,13 @@ class TestTripleTrustAnchorGate:
         assert "不可信" in msg
 
     def test_verify_returns_result(self) -> None:
-        gate = TripleTrustAnchorGate(Path("D:/ZephyrAlpha"))
+        gate = TripleTrustAnchorGate(REPO_ROOT)
         result = gate.verify()
         assert isinstance(result, TrustAnchorResult)
         assert result.trust_level in (TrustLevel.FULL, TrustLevel.PARTIAL, TrustLevel.BROKEN)
 
     def test_cache_returns_same(self) -> None:
-        gate = TripleTrustAnchorGate(Path("D:/ZephyrAlpha"))
+        gate = TripleTrustAnchorGate(REPO_ROOT)
         r1 = gate.verify()
         r2 = gate.verify()
         assert r1.checked_at == r2.checked_at

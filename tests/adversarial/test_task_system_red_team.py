@@ -25,9 +25,7 @@ import pytest
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-_PROJECT_ROOT = Path("D:/ZephyrAlpha/")
-sys.path.insert(0, str(_PROJECT_ROOT / "src"))
-sys.path.insert(0, str(_PROJECT_ROOT))
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 # ============================================================================
@@ -590,7 +588,7 @@ def test_05_decompose_real_blueprint():
     """测试拆解真实蓝图文件"""
     from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
 
-    real_blueprint = _PROJECT_ROOT / "docs/03_modules/_domain-infra_ops/task-system/blueprint.md"
+    real_blueprint = REPO_ROOT / "docs/03_modules/_domain-infra_ops/task-system/blueprint.md"
     assert real_blueprint.exists(), f"蓝图不存在: {real_blueprint}"
 
     decomposer = BlueprintDecomposer(docs_dir=str(tempfile.mkdtemp()))
@@ -613,7 +611,7 @@ def test_05_decompose_batch():
     """测试批量拆解"""
     from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
 
-    real_blueprint = _PROJECT_ROOT / "docs/03_modules/_domain-infra_ops/task-system/blueprint.md"
+    real_blueprint = REPO_ROOT / "docs/03_modules/_domain-infra_ops/task-system/blueprint.md"
     if real_blueprint.exists():
         decomposer = BlueprintDecomposer()
         batch_results = decomposer.decompose_blueprints_batch([str(real_blueprint)], namespace="INFRA", phase=1)

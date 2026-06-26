@@ -23,9 +23,7 @@ import pytest
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-_PROJECT_ROOT = Path("D:/ZephyrAlpha/")
-sys.path.insert(0, str(_PROJECT_ROOT / "src"))
-sys.path.insert(0, str(_PROJECT_ROOT))
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 # ============================================================================
@@ -364,7 +362,7 @@ class TestMCPServersAdversarial:
     def test_tool_contracts_yaml_valid(self):
         import yaml
 
-        contracts_path = _PROJECT_ROOT / "src" / "zephyr" / "mcp" / "tool-contracts.yaml"
+        contracts_path = REPO_ROOT / "src" / "zephyr" / "mcp" / "tool-contracts.yaml"
         assert contracts_path.exists(), f"tool-contracts.yaml not found at {contracts_path}"
         with open(contracts_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -398,7 +396,7 @@ class TestLLMSecurityAdversarial:
     def test_l1_input_sanitizer_detects_injections(self):
         from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 
-        sanitizer = InputSanitizer(root=_PROJECT_ROOT)
+        sanitizer = InputSanitizer(root=REPO_ROOT)
         detected = 0
         for injection in self.PROMPT_INJECTIONS:
             try:
@@ -410,13 +408,13 @@ class TestLLMSecurityAdversarial:
     def test_l1_input_sanitizer_empty_input(self):
         from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
 
-        sanitizer = InputSanitizer(root=_PROJECT_ROOT)
+        sanitizer = InputSanitizer(root=REPO_ROOT)
         sanitizer.validate_llm_context("")
 
     def test_l1_input_sanitizer_unicode_bomb(self):
         from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
 
-        sanitizer = InputSanitizer(root=_PROJECT_ROOT)
+        sanitizer = InputSanitizer(root=REPO_ROOT)
         unicode_bomb = "\u0000\u0001\u0002\u0003" + "test"
         sanitizer.validate_llm_context(unicode_bomb)
 
@@ -461,7 +459,7 @@ class TestSharedCoreAdversarial:
     def test_freeze_manifest_valid(self):
         import yaml
 
-        manifest_path = _PROJECT_ROOT / "src" / "zephyr" / "shared" / "contracts" / "freezemanifest.yaml"
+        manifest_path = REPO_ROOT / "src" / "zephyr" / "shared" / "contracts" / "freezemanifest.yaml"
         assert manifest_path.exists(), f"freezemanifest.yaml not found at {manifest_path}"
         with open(manifest_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)

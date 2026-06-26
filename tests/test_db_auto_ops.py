@@ -14,11 +14,12 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-GOVERNANCE_DB = Path(r"D:\ZephyrAlpha\data\databases\governance.db")
-DEPGRAPH_DB = Path(r"D:\ZephyrAlpha\data\databases\depgraph.db")
-MARKET_DB = Path(r"D:\ZephyrAlpha\data\databases\market.duckdb")
-PROJECT_ROOT = Path(r"D:\ZephyrAlpha")
+GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+MARKET_DB = REPO_ROOT / "data" / "databases" / "market.duckdb"
+PROJECT_ROOT = REPO_ROOT  # alias 真源
 
 
 def test_database_service_init():

@@ -10,21 +10,22 @@
 from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.dashboard import KnowledgeTransferGate
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestKnowledgeTransferGate:
     def test_constructor(self) -> None:
-        gate = KnowledgeTransferGate(Path("D:/ZephyrAlpha"))
+        gate = KnowledgeTransferGate(REPO_ROOT)
         assert gate._root
 
     def test_generate_summary(self) -> None:
-        gate = KnowledgeTransferGate(Path("D:/ZephyrAlpha"))
+        gate = KnowledgeTransferGate(REPO_ROOT)
         summary = gate.generate_summary()
         assert isinstance(summary, str)
         assert len(summary) > 0
 
     def test_write_handoff(self, tmp_path) -> None:
-        gate = KnowledgeTransferGate(Path("D:/ZephyrAlpha"))
+        gate = KnowledgeTransferGate(REPO_ROOT)
         path = gate.write_handoff(tmp_path / "_asset_handoff.txt")
         assert path.exists()
         content = path.read_text(encoding="utf-8")

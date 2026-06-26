@@ -24,6 +24,7 @@ import sys
 from pathlib import Path
 from zephyr.trading.orchestrator.core import BaseModel
 from .utils import helper
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 """
 
 _NO_IMPORTS = """\
@@ -88,13 +89,13 @@ class TestDependencyExtractor:
 
 class TestBuildDependencyGraph:
     def test_empty_entries(self) -> None:
-        graph = build_dependency_graph([], Path("D:/ZephyrAlpha"))
+        graph = build_dependency_graph([], REPO_ROOT)
         assert graph.total_files == 0
         assert graph.total_edges == 0
 
     def test_single_py_file(self) -> None:
         entries = [{"relative_path": "src/zephyr/asset-inventory/scanner.py"}]
-        graph = build_dependency_graph(entries, Path("D:/ZephyrAlpha"))
+        graph = build_dependency_graph(entries, REPO_ROOT)
         assert graph.total_files == 1
         assert graph.total_edges > 0
         assert "src/zephyr/asset-inventory/scanner.py" in graph.nodes
@@ -104,7 +105,7 @@ class TestBuildDependencyGraph:
             {"relative_path": "README.md"},
             {"relative_path": "config.yaml"},
         ]
-        graph = build_dependency_graph(entries, Path("D:/ZephyrAlpha"))
+        graph = build_dependency_graph(entries, REPO_ROOT)
         assert graph.total_edges == 0
 
 

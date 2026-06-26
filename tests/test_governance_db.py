@@ -7,7 +7,9 @@ import sqlite3
 import sys
 from datetime import datetime
 
-DB_PATH = r"D:\ZephyrAlpha\data\databases\governance.db"
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DB_PATH = str(REPO_ROOT / "data" / "databases" / "governance.db")
 
 
 def test_all():

@@ -18,9 +18,10 @@ import sqlite3
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-GOVERNANCE_DB = Path(r"D:\ZephyrAlpha\data\databases\governance.db")
-DEPGRAPH_DB = Path(r"D:\ZephyrAlpha\data\databases\depgraph.db")
+GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 def test_sql_injection_protection():
@@ -63,7 +64,7 @@ def test_concurrent_writes():
     print("\n[TEST] 并发写入冲突测试")
 
     # 创建测试数据库
-    test_db = Path(r"D:\ZephyrAlpha\data\databases\test_concurrent.db")
+    test_db = REPO_ROOT / "data" / "databases" / "test_concurrent.db"
 
     # 初始化测试数据
     conn = sqlite3.connect(test_db)

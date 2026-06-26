@@ -21,7 +21,6 @@ F3 任务系统红蓝对抗极端测试
 from __future__ import annotations
 
 import os
-import sys
 import tempfile
 import threading
 import time
@@ -31,9 +30,7 @@ from pathlib import Path
 
 import pytest
 
-_PROJECT_ROOT = Path("D:/ZephyrAlpha/")
-sys.path.insert(0, str(_PROJECT_ROOT / "src"))
-sys.path.insert(0, str(_PROJECT_ROOT))
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _NOW = datetime.now(UTC)
 

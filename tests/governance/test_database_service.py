@@ -22,8 +22,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-PROJECT_ROOT = Path(r"D:\ZephyrAlpha")
+PROJECT_ROOT = REPO_ROOT  # alias 真源
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 

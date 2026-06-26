@@ -8,9 +8,10 @@ import sqlite3
 import subprocess
 import sys
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DB_PATH = Path(r"D:\ZephyrAlpha\data\databases\depgraph.db")
-GENERATOR_SCRIPT = Path(r"D:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py")
+DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+GENERATOR_SCRIPT = REPO_ROOT / "scripts" / "governance" / "generate_project_depgraph.py"
 
 
 def red_team_tests():

@@ -12,12 +12,13 @@ DM-100019: 三库集成测试+四方对齐验证
 import sqlite3
 import sys
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 数据库路径
-GOVERNANCE_DB = Path(r"D:\ZephyrAlpha\data\databases\governance.db")
-DEPGRAPH_DB = Path(r"D:\ZephyrAlpha\data\databases\depgraph.db")
-MARKET_DB = Path(r"D:\ZephyrAlpha\data\databases\market.duckdb")
-PROJECT_ROOT = Path(r"D:\ZephyrAlpha")
+GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+MARKET_DB = REPO_ROOT / "data" / "databases" / "market.duckdb"
+PROJECT_ROOT = REPO_ROOT  # alias 真源
 
 
 def test_cross_db_domain_consistency():

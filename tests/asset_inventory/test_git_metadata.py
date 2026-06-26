@@ -15,6 +15,7 @@ from zephyr.infrastructure.asset_inventory.metadata import (
     GitCommitInfo,
     GitMetadataExtractor,
 )
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestGitCommitInfo:
@@ -55,16 +56,16 @@ class TestGitAssetMetadata:
 
 class TestGitMetadataExtractor:
     def test_constructor(self) -> None:
-        ex = GitMetadataExtractor(Path("D:/ZephyrAlpha"))
+        ex = GitMetadataExtractor(REPO_ROOT)
         assert ex._root
 
     def test_current_lines_real_file(self) -> None:
-        ex = GitMetadataExtractor(Path("D:/ZephyrAlpha"))
+        ex = GitMetadataExtractor(REPO_ROOT)
         lines = ex._current_lines("README.md")
         assert lines > 0
 
     def test_current_lines_nonexistent(self) -> None:
-        ex = GitMetadataExtractor(Path("D:/ZephyrAlpha"))
+        ex = GitMetadataExtractor(REPO_ROOT)
         assert ex._current_lines("_nonexistent_xyz.txt") == 0
 
     def test_parse_date(self) -> None:

@@ -8,12 +8,10 @@
 """Deeper integration test: P0 inflation guard + block_sessions_count + timeout exemption"""
 
 import sqlite3
-import sys
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
 
-sys.path.insert(0, r"D:\ZephyrAlpha\src")
 
 from zephyr.governance.persistence.task_repo import (
     P0InflationFrozenError,
@@ -22,8 +20,9 @@ from zephyr.governance.persistence.task_repo import (
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority as P
 from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DB = Path(r"D:\ZephyrAlpha\data\databases\governance.db")
+DB = REPO_ROOT / "data" / "databases" / "governance.db"
 
 repo = TaskRepository(enable_gate=False)
 now = datetime.now(UTC)

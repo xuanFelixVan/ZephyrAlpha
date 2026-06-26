@@ -27,8 +27,9 @@ from unittest.mock import patch
 import pytest
 
 from zephyr.infrastructure.blueprint_code_sync import BlueprintCodeSync, SyncEntry, SyncReport
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-PROJECT_ROOT = Path(r"d:\ZephyrAlpha")
+PROJECT_ROOT = REPO_ROOT  # alias 真源
 
 
 class TestSyncEntry:

@@ -9,7 +9,9 @@ from datetime import datetime, timedelta
 
 import duckdb
 
-DB_PATH = r"D:\ZephyrAlpha\data\databases\market.duckdb"
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+DB_PATH = str(REPO_ROOT / "data" / "databases" / "market.duckdb")
 
 
 def test_all():

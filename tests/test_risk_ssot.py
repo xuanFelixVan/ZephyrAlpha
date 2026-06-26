@@ -26,6 +26,7 @@ from pathlib import Path
 import yaml
 
 from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
 class TestLoadRiskParamsSsotReturnsDict:
@@ -52,7 +53,7 @@ class TestLoadRiskParamsSsotReturnsDict:
         assert result["limits"]["max_sector"] == 0.30
 
     def test_returns_real_project_config(self):
-        project_root = Path("d:/ZephyrAlpha")
+        project_root = REPO_ROOT  # alias 真源
         result = load_risk_params_ssot(project_root)
         assert isinstance(result, dict)
         assert "schema_version" in result
