@@ -27,6 +27,14 @@
 #   本文件是能力索引，不被 sync_yaml_to_depgraph.py 同步——它是 CapabilityLookup
 #   的查询输入，与 depgraph.db 的 nodes 表是两个独立的数据面。
 #
+# alias 策略（防重建规矩）:
+#   aliases 仅用于英文标识符（函数名/常量/类名，如 REPO_ROOT、load_blueprint_path、
+#   RollbackExecutor）——精确短路径，find() 精确子串分支覆盖。
+#   中文变体（如"仓库根路径"/"蓝图磁盘路径"）由 find() token 包含匹配
+#   （CJK ≥3 字符公共子串）自然处理，禁止堆中文同义词 alias——
+#   那是把能力索引当同义词字典的反模式，每出新中文表达都要回来加 alias，
+#   违反真源唯一/向内收/第一性原理治本。
+#
 # 对标:
 #   K8s Service（声明式 capability_id）+ Endpoints 控制器（实时发现 canonical）——
 #   Endpoints 不持久化为独立资源，是 Service 的实时投影。本注册表同构。
@@ -138,15 +146,15 @@ capabilities:
       彻底归一见独立任务。GATE-DD07 已扩展检测 Path(__file__).parents[N] 模式（warn-only）。
     duplicates_manual:
       - path: src/zephyr/integration/shared_08/io/paths.py
-        relation: sibling
+        relation: re_export
         note: >-
-          shared_08 re-export wrapper（zephyr.integration.shared_08.io.paths），与 shared/io/paths.py
-          同属 MOD-INF-016。canonical 裁定为 src/zephyr/shared/io/paths.py（shared/ 是 src/ 代码真源）。
+          re-export 自 src/zephyr/shared/io/paths.py（REPO_ROOT/find_repo_root 单真源化）。
+          保留本模块以维持 15+ 消费者 import 路径不变。
       - path: scripts/governance/_shared/constants.py
-        relation: sibling
+        relation: re_export
         note: >-
-          scripts/ 下治理脚本的 REPO_ROOT 真源（find_repo_root()）。scripts/ 不能导入 src/zephyr/ 包，
-          故独立定义。src/ 代码用 zephyr.shared.io.paths，scripts/ 用 _shared.constants，两者平级。
+          bootstrap import + re-export 自 src/zephyr/shared/io/paths.py。
+          scripts/ 可 import src/（先例:git_commit.py），无需独立定义。
 
   # --------------------------------------------------------------------------
   - capability_id: find_repo_root
@@ -159,18 +167,19 @@ capabilities:
       - find_project_root
     description: >-
       仓库根目录查找算法(向上遍历找 src/zephyr/__init__.py 标记文件)。
-      架构约束双真源:src/ 代码用 zephyr.shared.io.paths.find_repo_root,
-      scripts/ 脚本用 _shared.constants.find_repo_root——两者逐字相同,
-      因 scripts/ 不能 import src/zephyr/ 包(职责隔离),无法消除双真源。
-      一致性由 tests/test_find_repo_root_consistency.py 保证(改一处必须改另一处,
-      否则测试失败)。GATE-VOCAB 不扫描此函数(非词表合法值,是路径查找算法)。
+      单真源:src/zephyr/shared/io/paths.py。scripts/ 可 bootstrap import src/
+      (先例:git_commit.py/check_ssot_gate.py),无架构约束阻碍单真源化。
+      其他模块(shared_08/io/paths.py、scripts/governance/_shared/constants.py)
+      re-export 本真源,不再有独立实现。GATE-VOCAB 不扫描此函数(非词表合法值)。
     duplicates_manual:
-      - path: scripts/governance/_shared/constants.py
-        relation: sibling
+      - path: src/zephyr/integration/shared_08/io/paths.py
+        relation: re_export
         note: >-
-          scripts/ 下治理脚本的 find_repo_root() 真源,与 src/zephyr/shared/io/paths.py
-          逐字相同。架构约束(scripts/ 不能 import src/)导致无法消除双真源。
-          一致性由 tests/test_find_repo_root_consistency.py 保证。
+          re-export 自 src/zephyr/shared/io/paths.py(保持 15+ 消费者 import 路径不变)。
+      - path: scripts/governance/_shared/constants.py
+        relation: re_export
+        note: >-
+          bootstrap import + re-export 自 src/zephyr/shared/io/paths.py。
 
   # --------------------------------------------------------------------------
   - capability_id: vocabulary_values_loader
