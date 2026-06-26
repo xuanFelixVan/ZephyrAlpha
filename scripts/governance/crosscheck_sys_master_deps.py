@@ -27,8 +27,14 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-SYS_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_sys_master" / "blueprint.md"
-MOD_MASTER = PROJECT_ROOT / "docs" / "03_modules" / "_master_blueprint" / "blueprint.md"
+# 路径真源在 zephyr.governance.rule_enforcement.sys_master_compliance（SSoT）
+# 本脚本复用真源，不重复硬编码，避免多真源漂移
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+from zephyr.governance.rule_enforcement.sys_master_compliance import (  # noqa: E402
+    MOD_MASTER_PATH,
+    SYS_MASTER_PATH,
+)
+
 DOM_GOV = PROJECT_ROOT / "docs" / "03_modules" / "_domain_governance" / "blueprint.md"
 
 EXPECTED_MODULES = [
@@ -76,8 +82,8 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     results = []
 
-    results.append(check_exists(SYS_MASTER, "SYS-MASTER-001 blueprint"))
-    results.append(check_exists(MOD_MASTER, "MOD-MASTER_BLUEPRINT blueprint"))
+    results.append(check_exists(SYS_MASTER_PATH, "SYS-MASTER-001 blueprint"))
+    results.append(check_exists(MOD_MASTER_PATH, "MOD-MASTER_BLUEPRINT blueprint"))
     results.append(check_exists(DOM_GOV, "DOM-GOV-001 blueprint"))
 
     if DOM_GOV.exists():
