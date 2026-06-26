@@ -186,8 +186,6 @@ D-GOV_AUDIT_TESTS 含两段下划线：GOV / AUDIT / TESTS。NR-001 仅检查第
 
 | 文件/目录 | 生成器 | 确认方式 |
 |---|---|---|
-| data/asset_index/target_path_tree.yaml | generate_target_path_tree.py | 头部 `auto_generated_by` |
-| data/asset_index/project_entity_depgraph.yaml | generate_project_depgraph.py | 生成器输出 |
 | docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md | generate_domain_index.py | 头部"由 generate_domain_index.py 自动生成" |
 | docs/02_enterprise_architecture/02_domain_architecture_docs/01-43_*.md | generate_domain_doc.py | 头部"由 generate_domain_doc.py 自动生成" |
 | docs/02_enterprise_architecture/02_domain_architecture_docs/*_architecture.md | generate_domain_architecture_diagram.py | 头部"由 generate_domain_architecture_diagram.py 自动生成" |
@@ -512,20 +510,6 @@ ttl: task_bound          # ← 新增此行（status=Draft 的施工方案，绑
 **动作 6.3b**：在 frontmatter 后（紧接 `---` 之后）插入追加文本模板（同其他历史文档）。
 
 ### 4.8 阶段 7：重新生成制品
-
-> ⚠️ **已废弃（2026-06-26 派生产物删除裁定）**：本阶段"重新生成 target_path_tree.yaml / project_entity_depgraph.yaml"已失效——`generate_target_path_tree.py` 脚本与 7 个派生 YAML 产物均已删除。depgraph.db 是唯一查询入口，禁止重新创建派生 YAML 副本。域名变更后改为直接查 depgraph.db（见 AGENTS.md §11 决策树）。
-
-**动作 7.1：重新生成 target_path_tree.yaml**
-
-```bash
-python scripts/governance/generate_target_path_tree.py
-```
-
-**动作 7.2：重新生成 project_entity_depgraph.yaml**
-
-```bash
-python scripts/governance/generate_project_depgraph.py
-```
 
 **动作 7.3：重新生成域架构文档**
 
