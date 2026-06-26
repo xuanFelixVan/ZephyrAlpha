@@ -33,8 +33,9 @@ import json
 import sqlite3
 import sys
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 def main() -> None:

@@ -36,9 +36,10 @@ from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/generated/domains")
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "generated" / "domains"
 
 
 def sanitize_node_id(path: str) -> str:

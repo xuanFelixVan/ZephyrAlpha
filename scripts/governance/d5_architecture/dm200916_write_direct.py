@@ -16,9 +16,10 @@
 import sqlite3
 import os
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-BASE = Path(r"D:\ZephyrAlpha\docs\02_enterprise_architecture\target_architecture\architecture_model")
-DEPGRAPH_DB = Path(r"D:\ZephyrAlpha\data\databases\depgraph.db")
+BASE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # 查询52域
 conn = sqlite3.connect(DEPGRAPH_DB)

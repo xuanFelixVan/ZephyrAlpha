@@ -21,9 +21,10 @@
 import sqlite3
 from pathlib import Path
 from datetime import datetime
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-DIAGRAMS_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/diagrams")
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+DIAGRAMS_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "diagrams"
 
 NOW = datetime.now().strftime("%Y-%m-%d")
 HEADER = f"""%% 重写时间: {NOW} (DM-200913 Phase4-B)

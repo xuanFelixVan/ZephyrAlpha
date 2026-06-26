@@ -34,11 +34,10 @@ import sys
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path(
-    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md"
-)
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "global_capability_heatmap.md"
 
 # 10 capability domains (能力域) - 7 business + 3 cross-cutting
 # Source: capability_heatmap.yaml v3.0.0 + capability_heatmap.md §3.1

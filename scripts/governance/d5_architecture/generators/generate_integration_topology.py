@@ -36,9 +36,10 @@ from datetime import datetime
 from pathlib import Path
 
 from domain_name_mapping import get_domain_name_zh
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_DIR = Path("D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram")
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram"
 
 
 def get_cross_domain_deps(conn: sqlite3.Connection) -> list[dict]:

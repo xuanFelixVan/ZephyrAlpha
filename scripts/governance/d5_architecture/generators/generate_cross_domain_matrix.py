@@ -32,11 +32,10 @@ from __future__ import annotations
 import sqlite3
 import sys
 from pathlib import Path
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
-OUTPUT_PATH = Path(
-    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md"
-)
+DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "cross_domain_matrix.md"
 
 
 def get_cross_domain_edges(conn: sqlite3.Connection) -> list[dict]:
