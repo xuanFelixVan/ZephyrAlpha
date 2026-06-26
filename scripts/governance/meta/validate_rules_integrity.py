@@ -55,7 +55,15 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
+# bootstrap: 一次性算 _shared 路径，随后 REPO_ROOT 真源来自 _shared.constants
+# （对标 check_precommit_id_uniqueness.py 模式，遵守 REPO_ROOT 真源唯一约束）
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _INTEGRITY_DB = _SCRIPTS_DIR / "meta" / "rules_integrity_db.json"
 
@@ -69,14 +77,9 @@ RULES_MANIFEST: list[dict] = [
     {"path": "scripts/governance/quality_standard.md", "critical": True, "desc": "脚本质量标准"},
     {"path": "scripts/governance/script_manifest.yaml", "critical": True, "desc": "脚本注册表"},
     {
-        "path": "docs/03_modules/infrastructure_runtime_integration/script_system/blueprint.md",
+        "path": "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py",
         "critical": True,
-        "desc": "脚本系统蓝图",
-    },
-    {
-        "path": "docs/03_modules/infrastructure_runtime_integration/script_system/index.md",
-        "critical": False,
-        "desc": "模块索引",
+        "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）",
     },
 ]
 
@@ -102,7 +105,7 @@ def _save_db(data: dict) -> None:
     _INTEGRITY_DB.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = f"{_INTEGRITY_DB}.{os.getpid()}.tmp"
     try:
-        with open(tmp_path, encoding="utf-8") as f:
+        with open(tmp_path, "w", encoding="utf-8") as f:
             json_mod.dump(data, f, ensure_ascii=False, indent=2)
 
         os.replace(tmp_path, _INTEGRITY_DB)
@@ -185,7 +188,7 @@ def check() -> dict:
             )
 
     db["last_check_at"] = now.isoformat()
-    _save_db(data)
+    _save_db(db)
 
     return {
         "timestamp": now.isoformat(),

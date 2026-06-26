@@ -223,6 +223,24 @@ repos:
         files: "^\\.pre-commit-config\\.yaml$"
         description: "检测 .pre-commit-config.yaml 内 hook id 唯一性，同一 repo 块内重复即阻断（历史教训：gate-ssot src/docs 重复导致覆盖）"
 
+      # ── GATE-INTEGRITY: 规则文件 golden hash 完整性校验（脚本自篡改 C 层兜底）──
+      # 治脚本自篡改纵深防御缺口：A 层（GitCommitGateway 内嵌 AST 锚点校验）是主防线
+      # （--no-verify 绕不过），C 层（本 hook）是兜底——validate_rules_integrity.py --check
+      # 校验受保护文件 golden hash，检测"保留锚点名但篡改内部逻辑"的精细攻击。
+      # 覆盖场景：不走 gateway 的裸 git commit（gateway 用 --no-verify，pre-commit 不触发）。
+      # 受保护文件清单：RULES_MANIFEST（validate_rules_integrity.py 内声明）
+      # 合法修改流程：改受保护文件后先 --register 更新基线，再 commit。
+      # 真源：scripts/governance/meta/validate_rules_integrity.py
+      - id: gate-rules-integrity
+        name: "GATE-INTEGRITY: 规则文件完整性 golden hash 校验（C 层兜底）"
+        entry: python scripts/governance/meta/validate_rules_integrity.py
+        args: ["--check"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(AGENTS\\.md|scripts/governance/)"
+        description: "C 层兜底：校验 RULES_MANIFEST 受保护文件 golden hash（A 层 gateway AST 锚点为主防线）"
+
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
@@ -310,16 +328,16 @@ repos:
       #           load_vocabulary_values("xxx.yaml") 引用文件存在性校验
       # 例外：DDL 文件白名单（sqlite_schema.py / depgraph_schema.py / audit_post_sync_commands.py，走 DDL-as-Code 协议）；
       #       行尾 `# noqa: gate-vocab` 内联豁免；_archive 排除
-      # 模式：--warn-only 起步（trae_060 §5 已排查 23 处硬编码违规待清零，清零后转 --ci 硬阻断）
+      # 模式：--ci 硬阻断（2026-06-26 违规清零，转 --ci，新硬编码提交将被阻断）
       - id: gate-vocab-hardcode
         name: "GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）"
         entry: python scripts/governance/d3_metadata/check_vocab_hardcode.py
-        args: ["--warn-only"]
+        args: ["--ci"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^(src/zephyr/.*\\.py|scripts/.*\\.py)$"
-        description: "AST 扫描 src/zephyr/ + scripts/ 下 .py 词表合法值硬编码（VALID_*_VALUES 字面量集合=造第二真源=漂移），warn-only 起步待 23 处违规清零后转 --ci。trae_060 §2 强制执行层"
+        description: "AST 扫描 src/zephyr/ + scripts/ 下 .py 词表合法值硬编码（VALID_*_VALUES 字面量集合=造第二真源=漂移），--ci 硬阻断。trae_060 §2 强制执行层"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
       # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
