@@ -11,6 +11,6 @@
 # [TESTS]
 """shared.utils — auto-generated package init."""
 
-from . import blueprint_scorer, context
+from . import context
 
-__all__ = ["blueprint_scorer", "context", "db_utils", "diff_utils", "migration", "pagination", "testing", "time_utils"]
+__all__ = ["context", "db_utils", "diff_utils", "migration", "pagination", "testing", "time_utils"]

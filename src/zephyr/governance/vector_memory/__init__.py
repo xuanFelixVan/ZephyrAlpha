@@ -79,7 +79,6 @@ __all__ = [
     "index_health_monitor",
     "ingest_context",
     "interface",
-    "local_model_scheduler",
     "logger",
     "main",
     "migrate_chroma_to_faiss",

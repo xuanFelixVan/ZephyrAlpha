@@ -59,7 +59,7 @@ def main() -> None:
 
     if not args.no_demo:
         try:
-            from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
+            from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
 
             scheduler = LocalModelScheduler()
             scheduler.ensure_models()

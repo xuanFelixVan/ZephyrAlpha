@@ -86,7 +86,6 @@ __all__ = [
     "in_process_vector_memory",
     "index_health_monitor",
     "interface",
-    "local_model_scheduler",
     "migrate_chroma_to_faiss",
     "ollama_chat",
     "ollama_embedding",

@@ -481,7 +481,6 @@ __all__ = [
     "attach_dlq_to_observer",
     "backup_and_rollback",
     "backup_file",
-    "blueprint_scorer",
     "cache",
     "cache_key",
     "capability",
@@ -607,7 +606,6 @@ __all__ = [
 _SUBMODULES = [
     "api_index",
     "api_client",
-    "blueprint_scorer",
     "cache",
     "capability",
     "constants",
