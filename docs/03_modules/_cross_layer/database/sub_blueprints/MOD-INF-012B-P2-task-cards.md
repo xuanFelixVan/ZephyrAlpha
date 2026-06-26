@@ -6,6 +6,7 @@ status: Draft
 version: "2.0.0"
 belongs_to: "MOD-INF-012B-P2"
 date: "2026-06-25"
+ttl: permanent
 ---
 
 # P2 PostgreSQL迁移任务卡总览（全量重写版）

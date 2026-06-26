@@ -1,6 +1,7 @@
 ---
 title: Blueprint Baseline
 module_id: DOC-BLUEPRINT_BASELINE
+ttl: permanent
 ---
 
 ﻿﻿﻿﻿﻿﻿﻿﻿﻿---

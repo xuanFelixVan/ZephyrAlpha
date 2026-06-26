@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-005"
 version: "5.5.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # governance_automation

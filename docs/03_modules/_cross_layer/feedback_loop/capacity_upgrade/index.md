@@ -7,6 +7,7 @@ blueprint_id: "MOD-008"
 version: "0.1.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # capacity_upgrade

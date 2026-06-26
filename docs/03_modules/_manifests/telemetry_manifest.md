@@ -9,6 +9,7 @@ conflict_note: |
   Planned action: merge infrastructure-only files (logs/, metrics_bridge.py) into
   observability/telemetry/, then delete infrastructure/system-telemetry/.
   See DM-248 for tracking.
+ttl: permanent
 ---
 
 # telemetry/ 文件清单（自动生成 2026-06-10）

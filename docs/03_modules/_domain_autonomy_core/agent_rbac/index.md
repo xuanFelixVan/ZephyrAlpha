@@ -7,6 +7,7 @@ status: Active
 title: Agent RBAC — 七层纵深防御 + 六横切面 权限系统
 updated: '2026-06-22'
 version: 0.14.0
+ttl: permanent
 ---
 
 

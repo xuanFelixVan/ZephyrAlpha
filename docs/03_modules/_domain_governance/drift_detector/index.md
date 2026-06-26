@@ -5,6 +5,7 @@ generated: '2026-05-28'
 blueprint_id: MOD-INF-023
 module_id: MOD-INF-023
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # Drift Detector — 目录索引

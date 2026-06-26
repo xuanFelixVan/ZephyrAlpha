@@ -12,6 +12,7 @@ depends_on:
   at: §6.9~§6.10
   why: 双轨制+双层对齐 canonical 规则——本文件仅引用，不重复定义
 title: 02 Enterprise Architecture
+ttl: permanent
 ---
 
 # 02 Enterprise Architecture — 目录索引

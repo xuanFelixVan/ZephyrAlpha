@@ -6,6 +6,7 @@ blueprint_id: MOD-INF-029
 title: Delivery
 module_id: MOD-012
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # Delivery — 孤儿判定子系统交付记录

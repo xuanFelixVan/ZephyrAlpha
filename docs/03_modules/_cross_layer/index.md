@@ -10,6 +10,7 @@ summary: >
   cross_layer 模块物理真源位于 _cross_layer/（早期架构升级迁移完成）。
   行为审计（MOD-INF-033 BehavioralAuditor）等模块已纳入索引。
   命名规范：统一下划线（snake_case）。
+ttl: permanent
 ---
 
 # cross_layer 模块蓝图索引

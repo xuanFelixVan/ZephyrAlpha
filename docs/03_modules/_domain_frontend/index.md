@@ -6,6 +6,7 @@ status: Active
 layer: domain
 date: "2026-06-22"
 version: "2.0.0"
+ttl: permanent
 ---
 
 # D-FRONTEND — 前端域索引

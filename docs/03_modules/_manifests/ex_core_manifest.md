@@ -2,6 +2,7 @@
 blueprint_id: MOD-023
 ssot_path: src/zephyr/trading
 status: active
+ttl: permanent
 ---
 
 # ex_core/ 文件清单（自动生成 2026-06-10）

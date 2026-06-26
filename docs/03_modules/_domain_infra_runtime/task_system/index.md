@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-006"
 version: "0.9.5"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # task_system

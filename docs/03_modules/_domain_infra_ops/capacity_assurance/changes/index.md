@@ -2,6 +2,7 @@
 doc_type: index
 status: active
 generated: '2026-05-28'
+ttl: permanent
 ---
 
 # Changes — 目录索引

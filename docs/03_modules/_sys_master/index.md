@@ -7,6 +7,7 @@ blueprint_id: "SYS-MASTER-001"
 version: "0.17.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # _sys_master

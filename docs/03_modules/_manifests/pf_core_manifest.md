@@ -2,6 +2,7 @@
 blueprint_id: MOD-023
 ssot_path: src/zephyr/pf_core
 status: active
+ttl: permanent
 ---
 
 # pf_core/ 文件清单（自动生成 2026-06-10）

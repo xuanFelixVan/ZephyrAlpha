@@ -7,6 +7,7 @@ blueprint_id: "MOD-L09-001"
 version: "2.1.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # research_core

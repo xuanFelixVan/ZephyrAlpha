@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-010"
 version: "1.0.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # changes

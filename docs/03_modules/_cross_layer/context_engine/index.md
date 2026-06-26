@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-008"
 version: "1.0.1"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # context_engine

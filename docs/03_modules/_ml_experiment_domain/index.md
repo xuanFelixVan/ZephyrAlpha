@@ -7,6 +7,7 @@ title: Ml Experiment Domain（遗留）
 module_id: MOD-072
 updated: '2026-06-22'
 version: 1.1.0
+ttl: permanent
 ---
 
 # Ml Experiment Domain — 目录索引（遗留）

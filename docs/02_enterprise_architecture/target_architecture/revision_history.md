@@ -11,6 +11,7 @@ language: zh
 created_by: agent
 valid_from: 2026-04-17
 summary: index.md §8 修订记录的完整归档。活跃修订见 index.md §8。
+ttl: permanent
 ---
 
 # 02_enterprise_architecture/target_architecture/ — 完整修订历史

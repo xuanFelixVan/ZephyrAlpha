@@ -6,6 +6,7 @@ blueprint_id: MOD-017
 title: Task Card Kms
 module_id: MOD-017
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # Task Card Kms — 目录索引

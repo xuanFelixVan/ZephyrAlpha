@@ -8,6 +8,7 @@ last_updated: '2026-06-24'
 owner: human
 purpose: 记录架构升级深度讨论的完整上下文、决策和待定项
 anti_hallucination: 本文件消除所有二元模糊地带，每个概念只有一个定义、一个归属、一个数字
+ttl: permanent
 ---
 
 # 架构升级深度讨论记录

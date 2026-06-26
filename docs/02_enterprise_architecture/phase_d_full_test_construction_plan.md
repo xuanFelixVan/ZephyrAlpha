@@ -9,6 +9,7 @@ owner: human
 purpose: 阶段D全量功能测试的详细施工方案，含前置条件、分阶段执行计划、验收标准
 parent_document: architecture_upgrade_discussion.md §二十五
 anti_hallucination: 所有路径和命令均已验证存在，所有数字来自实际查询
+ttl: permanent
 ---
 
 # 阶段D：全量功能测试 — 详细施工方案

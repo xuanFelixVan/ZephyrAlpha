@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-032"
 version: "5.4.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # resource_optimization_engine

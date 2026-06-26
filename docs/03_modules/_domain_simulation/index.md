@@ -6,6 +6,7 @@ status: Active
 layer: domain
 date: "2026-06-22"
 version: "2.0.0"
+ttl: permanent
 ---
 
 # D-SIMULATION — 实验仿真域索引

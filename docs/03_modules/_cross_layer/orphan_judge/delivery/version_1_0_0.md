@@ -7,6 +7,7 @@ phase: phase_0_phase_1
 status: Active
 author: human_plus_agent
 title: V1.0.0
+ttl: permanent
 ---
 
 # MOD-INF-029 OrphanJudge v1.0.0 交付记录

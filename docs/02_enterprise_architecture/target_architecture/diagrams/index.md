@@ -4,6 +4,7 @@ doc_type: index
 status: Active
 generated: '2026-05-02'
 title: Diagrams
+ttl: permanent
 ---
 
 # Diagrams — 目录索引

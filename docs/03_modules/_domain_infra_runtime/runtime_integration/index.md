@@ -7,6 +7,7 @@ blueprint_id: MOD-INF-002
 version: "6.1.1"
 created: "2026-05-01"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # runtime_integration

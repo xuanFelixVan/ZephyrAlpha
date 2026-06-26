@@ -7,6 +7,7 @@ blueprint_id: "GOV-FSTR-001"
 version: "4.2.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # restructuring

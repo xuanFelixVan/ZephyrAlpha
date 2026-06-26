@@ -11,6 +11,7 @@ rule_form: declarative
 scope: global
 stability: stable
 verifiability: manual
+ttl: permanent
 ---
 
 # _Registry — 登记表体系目录索引

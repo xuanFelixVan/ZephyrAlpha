@@ -7,6 +7,7 @@ blueprint_id: MOD-KB-001
 version: "0.12.1"
 created: "2026-05-06"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # knowledge_base

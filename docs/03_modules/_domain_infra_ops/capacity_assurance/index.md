@@ -6,6 +6,7 @@ blueprint_id: MOD-INF-001
 title: Capacity Assurance
 module_id: MOD-INF-024
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # Capacity Assurance — 目录索引

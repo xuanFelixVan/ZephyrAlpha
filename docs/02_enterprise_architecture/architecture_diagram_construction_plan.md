@@ -15,6 +15,7 @@ depends_on:
   - target: 依赖与架构全景图能力定位书
     at: §四 全景图组成
     why: depgraph.db是唯一真源,架构图应为派生物
+ttl: permanent
 ---
 
 # 架构图施工方案讨论

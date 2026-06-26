@@ -7,6 +7,7 @@ blueprint_id: MOD-023
 version: "0.13.0"
 created: "2026-05-02"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # vibe_coding_pipelines

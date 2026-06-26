@@ -6,6 +6,7 @@ blueprint_id: MOD-023
 title: Delivery
 module_id: MOD-027
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # Delivery — 目录索引

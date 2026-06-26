@@ -2,6 +2,7 @@
 blueprint_id: MOD-023
 ssot_path: src/zephyr/research
 status: active
+ttl: permanent
 ---
 
 # research/ 文件清单（自动生成 2026-06-10）

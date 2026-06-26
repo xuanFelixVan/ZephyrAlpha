@@ -9,6 +9,7 @@ depends_on:
   at: §文件清单
   why: 父级 architecture_model 索引——contracts 为其子目录，引用父级文件清单
 title: Contracts
+ttl: permanent
 ---
 
 # Contracts — 目录索引

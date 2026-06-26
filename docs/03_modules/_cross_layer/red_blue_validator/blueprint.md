@@ -64,7 +64,9 @@ references:
 >
 > **为什么现在不自动化**: 红蓝对抗需要同时跑两个 LLM（红方攻击+蓝方防御），成本翻倍。当前 LLM 调用量极低，连一个模型的调用都还没完全跑通。
 > **什么时候建**: 当可用 LLM 模型 ≥2，且每周 LLM 调用 ≥100 次，或 Gate 绕过事件 ≥3 次（说明防御有漏洞需要对抗验证）时。
-> **自动化宿主**: CircadianScheduler `hour=5` → `_red_blue_validation()` + FLE `_periodic_checks()` → `_red_blue_score_check()`
+> **自动化宿主（双触发并存）**:
+> - **事件驱动（主）**: GitCommitGateway post-commit 钩子（`_post_commit_red_blue_trigger`）→ 检测提交文件含 `[BLUEPRINT]/[MODULE]` 头部 → 写 `data/red_blue/trigger_queue/` 异步触发记录（锁内毫秒级）→ `RedBlueTriggerConsumer` 守护线程锁外跑 TIER_1 全量 14 场景（受 `ZEPHYR_RED_BLUE_AUTO_ENABLED` 门禁 + CircuitBreaker 频率保护）
+> - **定时触发（保留下限）**: CircadianScheduler `hour=6` → `_red_blue_daily_drill()` → GameDayRunner.run_game_day(DAILY) 全量演练
 
 > module_id: MOD-INF-030 | version: 2.0.0 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/security/adversarial_validation/ | generation: 17 | construction_progress: partially_implemented

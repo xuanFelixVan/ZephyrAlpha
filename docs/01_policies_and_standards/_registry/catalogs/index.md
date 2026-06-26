@@ -12,6 +12,7 @@ scope: global
 stability: stable
 verifiability: manual
 ai_autonomy: human_gated
+ttl: permanent
 ---
 
 # Catalogs — 登记表集中存储目录

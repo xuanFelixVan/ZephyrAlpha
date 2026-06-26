@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-015"
 version: "2.0.2"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # system_telemetry

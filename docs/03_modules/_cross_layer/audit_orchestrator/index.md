@@ -7,6 +7,7 @@ blueprint_id: "MOD-INF-027"
 version: "6.1.0"
 created: "2026-06-22"
 updated: "2026-06-22"
+ttl: permanent
 ---
 
 # audit_orchestrator
