@@ -133,7 +133,7 @@ entries:
   title: module_id 数字序号制双轨治理（SSoT 自相矛盾 + 历史违规 + 议题登记机制）
   severity: P1高
   adjudication: 裁定#208 双轨制（layer-master 数字序号制 + domain-functional 派生语义制 scoped 适用）；R1 SSoT调和 + R2 派生ID合规保留 + R3 历史违规分类治理 + R4 门禁升级 + R5 派生注册表结构化 + R6 议题登记机制建立 + R7 编号铁律 + R8 循环验证3轮
-  fix_phase: 裁定#208 阶段A-E
+  fix_phase: 裁定#208 阶段A-E（阶段A+B已完成 commit 2fb6b993d/5dfa2c650；产出物2/3已产出；C/D/E待施工）
   status: decided
   related_adjudication: '#208'
   created: '2026-06-26'
