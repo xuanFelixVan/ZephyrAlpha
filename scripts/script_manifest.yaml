@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 572
+total_scripts: 573
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,10 +38,18 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_check_orphans.py
-  path: _tmp_check_orphans.py
-  description: import sqlite3
-  domain: _tmp_check_orphans.py
+- name: _tmp_redblue_final.py
+  path: _tmp_redblue_final.py
+  description: 红蓝终极对抗：GATE-20 + LSG + AGENTS.md 全链路安全测试
+  domain: _tmp_redblue_final.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_redblue_full.py
+  path: _tmp_redblue_full.py
+  description: 模拟刚进项目的AI，从4个维度测试：
+  domain: _tmp_redblue_full.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -1984,7 +1992,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/check_naming_convention.py
   path: governance/d3_metadata/check_naming_convention.py
-  description: 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.4.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_
+  description: 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.5.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3912,7 +3920,7 @@ scripts:
   dimensions: []
 - name: governance/_shared/yaml_utils.py
   path: governance/_shared/yaml_utils.py
-  description: _shared/yaml_utils.py — YAML 文件加载共享工具
+  description: _shared/yaml_utils.py — YAML 文件加载共享工具（scripts 侧重新导出 + load_yaml 通用工具）
   domain: governance
   execution_plane: warm-path
   status: registered
