@@ -1,5 +1,5 @@
 ---
-doc_type: capability_heatmap
+doc_type: architecture_view
 title: 能力热力图
 version: "1.0"
 status: active

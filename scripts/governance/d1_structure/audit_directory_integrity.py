@@ -83,25 +83,30 @@ _DOMAIN_PARENT_DIRS = frozenset(
         for d in ("L00_data_source", "L02_alpha_factor", "L04_risk_management", "L07_post_trade_analytics")
     }
 )
-# RENAME_REVIEW: 此处是 doc_type→后缀的第 5 处硬编码真源（阶段0验证发现）。
-# 与 check_naming_convention.py（已改读词表 filename_suffixes）不同，此处用连字符约定
-# （-policy.md）+ 宽松 endswith 匹配，且含幽灵值（playbook/runbook 不在 26 合法值中）
-# 和废弃值（checklist 已迁移至 operational_rule/register）。
-# 待阶段4改名时决定：合并进词表（加独立字段）还是重构为读词表 filename_suffixes。
-_DOC_TYPE_SUFFIX_MAP = {
-    "policy": "-policy.md",
-    "standard": "-standard.md",
-    "protocol": "-protocol.md",
-    "playbook": "-playbook.md",
-    "runbook": "-runbook.md",
-    "checklist": "-checklist.md",
-    "template": "-template.md",
-    "index": "index.md",
-    "register": ".yaml",
-    "contract": ".yaml",
-    "vocabulary": ".yaml",
-    "schema": ".json",
-}
+# 真源单一化：后缀规则是 doc_type 的属性，由 doc_type_vocabulary.yaml 唯一维护。
+# 本模块直接消费词表（非同步复制），词表改即生效。禁止在此硬编码值名或后缀。
+# 阶段4修复：原硬编码 _DOC_TYPE_SUFFIX_MAP 含幽灵值（playbook/runbook 不在 26 合法值中）
+# 和废弃值（checklist 已迁移至 operational_rule/register），已替换为词表直读。
+# 与 check_naming_convention.py N-11 共享同一词表真源（同源不同消费点，非副本）。
+_DOC_TYPE_VOCAB_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+)
+
+
+def _load_doc_type_suffixes() -> dict[str, list[str]]:
+    """从 doc_type_vocabulary.yaml 加载 value→filename_suffixes 映射。"""
+    if yaml is None:
+        return {}
+    data = yaml.safe_load(_DOC_TYPE_VOCAB_PATH.read_text(encoding="utf-8"))
+    return {
+        v["value"]: v["filename_suffixes"]
+        for v in data.get("values", [])
+        if "filename_suffixes" in v
+    }
+
+
+# 模块级加载一次（词表是项目内稳定文件，import 时读取）
+_DOC_TYPE_SUFFIX_MAP: dict[str, list[str]] = _load_doc_type_suffixes()
 _LEGIT_MULTI_WORD_SUFFIXES = {"-state-machine.md", "-session-state-machine.md", "-standard-constitution.md"}
 _FILENAME_EXCEPTIONS = frozenset({"metadata_registry.yaml"})
 _RE_FRONTMATTER_MODULE_ID = re.compile("^module_id:\\s*([^\\s#]+)", re.MULTILINE)
@@ -394,37 +399,45 @@ def check_d4_naming_convention() -> list[Finding]:
                     Finding("D4-命名规范", "MEDIUM", _rel(fpath), "doc_type 缺失，无法校验文件名后缀是否匹配")
                 )
             continue
-        expected = _DOC_TYPE_SUFFIX_MAP.get(doc_type)
-        if expected is None:
+        expected_list = _DOC_TYPE_SUFFIX_MAP.get(doc_type)
+        if expected_list is None:
             continue
         fname_lower = fpath.name.lower()
         if fname_lower in ("agreements.yaml",):
             continue
-        if expected.endswith(".yaml") and suffix == ".yaml":
-            continue
-        if expected.endswith(".yml") and suffix == ".yml":
-            continue
-        if expected.endswith(".json") and suffix == ".json":
-            continue
-        if expected.endswith(".md") and suffix == ".md":
-            ok = fname_lower.endswith(expected.lower().lstrip("-"))
-            if not ok:
-                if fname_lower in _FILENAME_EXCEPTIONS:
+        # 词表后缀用下划线（_policy.md），实际文件名可能用连字符（-policy.md），
+        # 归一化后匹配（hyphen→underscore）
+        fname_norm = fname_lower.replace("-", "_")
+        ok = False
+        for expected in expected_list:
+            exp_norm = expected.lower().replace("-", "_")
+            if exp_norm.endswith((".yaml", ".yml")) and suffix in (".yaml", ".yml"):
+                ok = True
+                break
+            if exp_norm.endswith(".json") and suffix == ".json":
+                ok = True
+                break
+            if exp_norm.endswith(".md") and suffix == ".md":
+                check = exp_norm.lstrip("-_")
+                if fname_norm.endswith(check):
                     ok = True
-            if not ok:
-                for legit in _LEGIT_MULTI_WORD_SUFFIXES:
-                    if fname_lower.endswith(legit):
-                        ok = True
-                        break
-            if not ok:
-                findings.append(
-                    Finding(
-                        "D4-命名规范",
-                        "MEDIUM",
-                        _rel(fpath),
-                        f"文件名后缀不匹配 doc_type。doc_type={doc_type}，期望后缀 {expected}，实际文件名 {fpath.name}",
-                    )
+                    break
+        if not ok and fname_lower in _FILENAME_EXCEPTIONS:
+            ok = True
+        if not ok:
+            for legit in _LEGIT_MULTI_WORD_SUFFIXES:
+                if fname_lower.endswith(legit):
+                    ok = True
+                    break
+        if not ok:
+            findings.append(
+                Finding(
+                    "D4-命名规范",
+                    "MEDIUM",
+                    _rel(fpath),
+                    f"文件名后缀不匹配 doc_type。doc_type={doc_type}，期望后缀 {expected_list}，实际文件名 {fpath.name}",
                 )
+            )
     return findings
     "check d4 naming convention."
 

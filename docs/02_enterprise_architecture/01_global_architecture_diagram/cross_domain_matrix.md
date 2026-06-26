@@ -1,5 +1,5 @@
 ---
-doc_type: cross_domain_matrix
+doc_type: architecture_view
 title: 域间依赖矩阵
 version: "1.0"
 status: active

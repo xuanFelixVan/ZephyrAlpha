@@ -1,5 +1,5 @@
 ---
-doc_type: constraint_violations_report
+doc_type: audit_report
 title: 架构约束违规报告
 version: "1.0"
 status: active

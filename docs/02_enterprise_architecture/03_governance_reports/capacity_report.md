@@ -1,5 +1,5 @@
 ---
-doc_type: capacity_report
+doc_type: audit_report
 title: 域容量报告
 version: "1.0"
 status: active

@@ -1,5 +1,5 @@
 ---
-doc_type: domain_index
+doc_type: index
 title: 域总览索引
 version: "1.0"
 status: active

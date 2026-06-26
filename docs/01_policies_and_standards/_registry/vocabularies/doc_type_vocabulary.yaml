@@ -12,9 +12,9 @@
 # 版本：1.4.0
 # 创建日期：2026-04-30
 #
-# 本词表定义 doc_type 字段的全项目合法值（27 种）——涵盖 01_policies_and_standards/
+# 本词表定义 doc_type 字段的全项目合法值（25 种）——涵盖 01_policies_and_standards/
 # 核心子集（13 种）+ 其他目录（03_blueprints/、02_enterprise_architecture/ 等）的
-# 项目级类型（14 种）。任何文件 frontmatter 中的 doc_type 必须是以下值之一。
+# 项目级类型（12 种）。任何文件 frontmatter 中的 doc_type 必须是以下值之一。
 # 新增 doc_type 必须先在此词表中注册，再在 PS-STD-001 中更新。
 #
 # 对标标准：
@@ -30,8 +30,8 @@ version: "1.4.0"
 title: "doc_type 受控词表"
 status: active
 vocabulary_name: doc_type
-total_values: 26
-source: "PS-STD-001 §3.2 + §3.2.1（全项目完整词表 27 值：01_policies_and_standards/ 子集 13 值 + 其他目录 14 值）"
+total_values: 25
+source: "PS-STD-001 §3.2 + §3.2.1（全项目完整词表 25 值：01_policies_and_standards/ 子集 13 值 + 其他目录 12 值）"
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1 + §3.2"
@@ -210,15 +210,6 @@ values:
     ai_keywords: ["计划", "里程碑", "时间线", "plan", "roadmap"]
     examples: []
 
-  - value: roadmap
-    definition: "路线图——长期方向性规划，非具体施工计划"
-    rule_form: declarative
-    allowed_directories: ["01_policies_and_standards/"]
-    forbidden_directories: []
-    required_fields: []
-    ai_keywords: ["路线图", "方向", "roadmap", "vision"]
-    examples: []
-
   - value: readme
     definition: "自述文件——项目/目录级概况说明，面向人类阅读者"
     rule_form: declarative
@@ -305,6 +296,42 @@ values:
     examples: []
 
 # ============================================================
+# 字段语义正交说明：doc_type vs allowed_directories vs forbidden_directories
+# （Stage 4.1 防漂移——消除"类型即位置"的常见误解）
+# ============================================================
+# 三个字段是正交维度，分别回答不同问题：
+#
+#   doc_type              —— 这个文件"是什么"？（语义类型，由内容/用途决定）
+#   allowed_directories   —— 这个文件"应该放在哪"？（偏好位置，软引导）
+#   forbidden_directories —— 这个文件"禁止放在哪"？（硬约束，门禁拦截）
+#
+# 【正交性】
+#   doc_type 是文件的内在属性，不随存放位置改变。
+#   一个 policy 文件无论放在 governance/ 还是 _working/，它仍然是 policy。
+#   目录决定的是"组织归属"，doc_type 决定的是"语义归属"——两者独立。
+#
+# 【约束层级】
+#   forbidden_directories = 硬约束（GATE 门禁强制拦截，违反即阻断提交）
+#   allowed_directories   = 软引导（推荐位置，AI 分类时的首选目录）
+#   未列入两者的目录       = 中性区（既不推荐也不禁止，临时工作区适用）
+#
+# 【临时工作区豁免】
+#   docs/_working/、docs/09_audit/ 等临时/过程性目录不出现在任何 doc_type 的
+#   forbidden_directories 中（by design）。这些目录可存放任意非禁止的 doc_type
+#   文件——临时工作区是"过渡态"，其文件的 doc_type 由内容决定，不受
+#   allowed_directories 偏好约束。当文件从 _working/ 迁入正式目录时，
+#   再按目标目录的 allowed_directories 校验 doc_type 归属。
+#
+# 【常见误解纠正】
+#   ✗ "在 governance/ 下的文件 doc_type 必须是 policy"
+#   ✓ governance/ 下可有 policy/standard/protocol/index 等多种 doc_type
+#      （见各值的 allowed_directories 列表，governance/ 出现于多个值）
+#   ✗ "doc_type 决定了文件只能在某个目录"
+#   ✓ doc_type 的 allowed_directories 是多值列表（一个 doc_type 可在多个目录）
+#   ✗ "_working/ 下的文件不需要 doc_type"
+#   ✓ 仍需要——doc_type 是语义属性，_working/ 只是位置豁免，不是类型豁免
+
+# ============================================================
 # AI 决策辅助：选择 doc_type 的三问决策树
 # （便捷参考——canonical 规则定义见 PS-STD-001 §3.2 + §3.2.1）
 # ============================================================
@@ -324,7 +351,7 @@ values:
 #
 # Q4（项目级类型）: 你的文件不在 01_policies_and_standards/ 下吗？
 #     → 蓝图/架构 → adr / blueprint / construction_plan / architecture_view / service_spec
-#     → 开发工作区 → plan / roadmap / design / log
+#     → 开发工作区 → plan / design / log
 #     → 知识库     → knowledge_entry
 #     → 审计       → audit_report
 
@@ -418,3 +445,8 @@ deprecated_values:
     reason: "01_policies_and_standards/ 下不再使用——检查清单文件归入 operational_rule（含步骤）或 register（纯清单）"
     migrated_to: ["operational_rule", "register"]
     date: "2026-05-01"
+
+  - value: roadmap
+    reason: "与 plan 语义重叠（路线图是计划的一种），0 使用率，回填后按分布数据决策精简"
+    migrated_to: ["plan"]
+    date: "2026-06-26"
