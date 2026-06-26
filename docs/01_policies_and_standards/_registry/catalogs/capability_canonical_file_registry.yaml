@@ -453,10 +453,8 @@ capabilities:
     aliases:
       - depgraph_generators
       - architecture_generators
-      - 域架构生成器
       - generator
       - d5_generators
-      - 域文档生成器
     description: >-
       depgraph.db 驱动的域架构文档自动生成器集（14+ 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
