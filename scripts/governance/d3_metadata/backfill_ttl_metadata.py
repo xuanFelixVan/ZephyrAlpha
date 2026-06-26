@@ -206,11 +206,13 @@ def main() -> int:
     }
     ttl_changes = {"permanent": 0, "task_bound": 0}
 
+    changed_files: list[str] = []
     for fpath in md_files:
         result = backfill_file(fpath, dry_run=dry_run, rejudge=rejudge)
         stats[result] = stats.get(result, 0) + 1
         if result in ("backfilled", "rejudged"):
             rel_path = str(fpath.relative_to(REPO_ROOT)).replace("\\", "/")
+            changed_files.append(rel_path)
             metadata, _ = parse_frontmatter(fpath.read_text(encoding="utf-8"))
             ttl_value = _infer_ttl(rel_path, metadata)
             ttl_changes[ttl_value] += 1
@@ -240,6 +242,12 @@ def main() -> int:
         print("\nDry-run complete. Run without --dry-run to apply changes.")
     else:
         print("\nBackfill/Rejudge complete. Run check_frontmatter_metadata.py to verify.")
+
+    # 输出修改的文件列表（供 reconciler/手动纠偏提交用，每行一个相对路径）
+    if changed_files:
+        print(f"\n=== CHANGED FILES ({len(changed_files)}) ===")
+        for f in changed_files:
+            print(f)
 
     if stats["error"] > 0:
         return EXIT_FINDINGS
