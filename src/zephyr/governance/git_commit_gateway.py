@@ -98,7 +98,7 @@ _GLOBAL_LOCK_FILE = "git_commit_global.lock"
 _LOCK_TTL_SECONDS = 1800  # 30 分钟，防进程崩溃死锁（与 staging_area.py 一致）
 _LOCK_TIMEOUT_DEFAULT = 60.0  # 等待全局锁最长 60s（commit 串行化，比单文件锁久）
 _POLL_INTERVAL = 0.1
-_MAX_INLINE_PATHS = 50  # 文件数阈值，超过时改用 --all-files 全量模式避免 Windows CLI 长度限制 (WinError 206)
+_MAX_INLINE_MD_FILES = 50  # 前端校验 .md 文件数阈值，超过时改用 --all-files 全量模式避免 Windows CLI 长度限制 (WinError 206)
 _SESSION_AWARE_STASH_ENV = "ZEPHYR_SESSION_AWARE_STASH"  # "0" 强制禁用 session 隔离 stash
 
 # 永久区目录前缀——新文件进入这些目录需要 --allow-promote 门禁批准
@@ -675,7 +675,7 @@ class GitCommitGateway:
 
         弥补 GitCommitGateway --no-verify 绕过 pre-commit 的副作用。
         调用 check_frontmatter_metadata.py 做增量校验（只校验本次 commit 的 .md）。
-        当 .md 文件数 > _MAX_INLINE_PATHS 时，改用 --all-files 全量校验
+        当 .md 文件数 > _MAX_INLINE_MD_FILES 时，改用 --all-files 全量校验
         （避免 Windows WinError 206 命令行过长）。
 
         Args:
@@ -706,7 +706,7 @@ class GitCommitGateway:
 
         cmd = [sys.executable, str(check_script)] + md_files
         # 文件数过多时用 --all-files 全量校验（避免 WinError 206 命令行过长）
-        if len(md_files) > _MAX_INLINE_PATHS:
+        if len(md_files) > _MAX_INLINE_MD_FILES:
             cmd = [sys.executable, str(check_script), "--all-files"]
         result = subprocess.run(
             cmd,
