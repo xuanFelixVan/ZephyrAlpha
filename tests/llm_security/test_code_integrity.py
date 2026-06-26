@@ -37,7 +37,7 @@ class TestCodeIntegrityGuardInit:
 class TestComputeBaseline:
     def test_compute_baseline_for_existing_dir(self):
         guard = CodeIntegrityGuard(project_root=PROJECT_ROOT)
-        records = guard.compute_baseline_for_directory("src/zephyr/llm-security/layers")
+        records = guard.compute_baseline_for_directory("src/zephyr/security/llm_defense/llm_security/layers")
         assert isinstance(records, list)
         assert len(records) > 0
         for r in records:
