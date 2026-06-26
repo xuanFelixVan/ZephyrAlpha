@@ -180,11 +180,12 @@ repos:
       - id: gate-11-naming-convention
         name: "GATE-11: 命名规范门禁"
         entry: python scripts/governance/d3_metadata/check_naming_convention.py
+        args: ["--warn-only"]
         language: system
         pass_filenames: true
         always_run: false
         files: "^.*"
-        description: "全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律），违规即 block commit。多AI并发安全：pass_filenames只检查触发文件，不检查所有staged文件"
+        description: "全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律）。裁定#208 过渡期 --warn-only（N-17/N-06 历史违规不阻断，阶段 E 激活后移除转硬阻断）。多AI并发安全：pass_filenames只检查触发文件，不检查所有staged文件"
 
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）

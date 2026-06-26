@@ -1045,6 +1045,45 @@ def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
             conn.close()
 
 
+def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+    """
+    裁定#208 B5: 将指定 blueprint_id 标记为 invalid（软标记，不删除节点，保留可追溯链）。
+
+    用途：阶段 C/D 重编号时先标记旧 ID invalid，再插入新 ID，保留追溯链。
+    操作：nodes.blueprint_id_invalid=1 + gate_reason 写入 reason。
+    返回：True=成功，False=失败
+    """
+    if not blueprint_id:
+        print("ERROR: blueprint_id 不能为空", file=sys.stderr)
+        return False
+    with _db_write_lock(db_path=db_path, task="mark_blueprint_invalid"):
+        conn = sqlite3.connect(db_path)
+        try:
+            rows = conn.execute(
+                "SELECT node_id, path FROM nodes WHERE blueprint_id=?", (blueprint_id,)
+            ).fetchall()
+            if not rows:
+                print(f"ERROR: blueprint_id={blueprint_id} 未匹配任何节点", file=sys.stderr)
+                return False
+            for node_id, _path in rows:
+                conn.execute(
+                    "UPDATE nodes SET blueprint_id_invalid=1, gate_reason=? WHERE node_id=?",
+                    (reason, node_id),
+                )
+            conn.commit()
+            print(
+                f"[OK] blueprint_id={blueprint_id}: 标记 {len(rows)} 节点 invalid（reason={reason}）",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: mark_blueprint_invalid失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
 def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     """
     删除设计态边（硬删除，因边无软删除语义）。
@@ -2640,6 +2679,13 @@ def main() -> None:
         action="store_true",
         help="清理幽灵节点：删除nodes表中path在磁盘不存在的node（对称漂移修复，P1-DEP）",
     )
+    parser.add_argument(
+        "--mark-invalid",
+        type=str,
+        nargs=2,
+        metavar=("BLUEPRINT_ID", "REASON"),
+        help="裁定#208 B5: 标记 blueprint_id 为 invalid（软标记不删节点，保留追溯链；阶段 C/D 重编号专用）",
+    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -2679,6 +2725,13 @@ def main() -> None:
 
     if args.delete_design_edge is not None:
         ok = delete_design_edge(args.delete_design_edge)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.mark_invalid:
+        bp_id, reason = args.mark_invalid
+        ok = mark_blueprint_invalid(bp_id, reason)
         if not ok:
             sys.exit(4)
         return

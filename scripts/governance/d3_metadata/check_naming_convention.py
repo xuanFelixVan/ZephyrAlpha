@@ -246,17 +246,74 @@ def _check_n05_adr_missing_suffix(filepath: str) -> list[NamingViolation]:
 
 
 # ---------------------------------------------------------------------------
-# N-06: module_id scope 前缀检测（数字序号制 MOD-{LAYER}-{SEQ} 检测为阶段 E 议题，裁定#206 B-4 立议题不施工，当前仅校验 scope 前缀）
+# N-06: module_id scope 前缀检测 + 双轨制格式校验（裁定#208 R1/R4: layer-master 轨
+#        MOD-{LAYER_CODE}-{SEQ} 序号必填 + domain-functional 派生轨
+#        MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选 + D-XXX-{SEQ} 派生轨）
 # ---------------------------------------------------------------------------
 
 _MODULE_ID_SCOPE_RE = re.compile(
     r"^\s*module_id:[ \t]*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM)(?:[-_][A-Za-z0-9_]+)+[\"']?",
     re.MULTILINE,
 )
+# 裁定#208 R1/R4: 双轨制 module_id 格式正则（scope 前缀通过后，校验 MOD-*/D-* 值的格式）
+_MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-\d+$")            # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填（LAYER_CODE 首位字母，允许 L00/L01 等含数字层码）
+_MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]+(?:_[A-Z]+)*(?:-\d+)?$")     # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
+_MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]+(?:_[A-Z]+)*-\d+$")                  # 派生轨: D-XXX-{SEQ}
+# 提取 module_id 值（兼容 YAML module_id: VALUE 和 .py 头部 module_id=VALUE 两种格式）
+_MODULE_ID_VALUE_RE = re.compile(r'module_id[:=]\s*["\']?([A-Za-z][A-Za-z0-9_-]+)', re.MULTILINE)
 # Relaxed regex for inline module_id: inside .py comment headers (e.g. "# [A_test] module_id: SRC-TST-0212 | ...")
 _INLINE_MODULE_ID_SCOPE_RE = re.compile(
     r"module_id:\s*[\"']?(ADR|CP|KE|STD|DW|SRC|OPS|MOD|PSP|GOV|ARCH|VIEW|DOM|PS|SYS|KBG|REG|IDX|CFG|PHASE|TPL|IRN|TRAE|META|DM)(?:[-_][A-Za-z0-9_]+)+[\"']?\b"
 )
+
+
+def _check_n06_dual_track_format(filepath: str, content: str) -> list[NamingViolation]:
+    """裁定#208 R4: scope 前缀通过后，校验 MOD-*/D-* module_id 值符合双轨制格式。
+
+    layer-master 轨: MOD-{LAYER_CODE}-{SEQ}（序号必填）
+    domain-functional 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN]（序号可选）/ D-XXX-{SEQ}
+    非 MOD-*/D-* 前缀（如 ADR/KBG/CFG/TRAE）跳过格式校验（由 scope 前缀检测覆盖）。
+    """
+    violations: list[NamingViolation] = []
+    # 跳过 markdown 代码块（避免文档示例误判）
+    clean = re.sub(r"```[\s\S]*?```", "", content)
+    seen: set[str] = set()
+    for m in _MODULE_ID_VALUE_RE.finditer(clean):
+        value = m.group(1).strip().strip('"').strip("'")
+        if value in seen or not value:
+            continue
+        seen.add(value)
+        if value.startswith("MOD-"):
+            if not (_MODULE_ID_LAYER_MASTER_RE.match(value) or _MODULE_ID_DOMAIN_DERIVED_RE.match(value)):
+                violations.append(NamingViolation(
+                    rule="N-06",
+                    message=(
+                        f"module_id 格式不符合双轨制(裁定#208): {value}"
+                        f"（应为 MOD-{{LAYER}}-NNN layer-master 轨 或 MOD-{{DOMAIN_FRAGMENT}}[-NNN] 派生轨）"
+                    ),
+                    filepath=filepath,
+                ))
+        elif value.startswith("MOD"):
+            # MOD_ 或 MODxxx — MOD 前缀后必须用连字符 - 分隔，禁止下划线 _
+            violations.append(NamingViolation(
+                rule="N-06",
+                message=f"module_id 格式不符合双轨制(裁定#208): {value}（MOD 前缀后必须用连字符 - 分隔，禁止下划线 _）",
+                filepath=filepath,
+            ))
+        elif value.startswith("D-"):
+            if not _MODULE_ID_D_PREFIX_RE.match(value):
+                violations.append(NamingViolation(
+                    rule="N-06",
+                    message=f"module_id D-前缀格式不符合双轨制(裁定#208): {value}（应为 D-{{DOMAIN}}-NNN）",
+                    filepath=filepath,
+                ))
+        elif value.startswith("D_"):
+            violations.append(NamingViolation(
+                rule="N-06",
+                message=f"module_id 格式不符合双轨制(裁定#208): {value}（D 前缀后必须用连字符 - 分隔，禁止下划线 _）",
+                filepath=filepath,
+            ))
+    return violations
 
 
 def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
@@ -272,7 +329,8 @@ def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> li
         return []
     # Check: does ANY module_id: in the file have a valid scope prefix?
     if _MODULE_ID_SCOPE_RE.search(content) or _INLINE_MODULE_ID_SCOPE_RE.search(content):
-        return []
+        # 裁定#208 R4: scope 前缀通过后，校验 MOD-*/D-* module_id 双轨格式
+        return _check_n06_dual_track_format(filepath, content)
     # For .py files, only check header area (not type annotations)
     if name.endswith(".py"):
         bp_match = re.search(r"^\s*#\s*\[BLUEPRINT\]\s+\S+\s+\|\s*\S+\s*\|", content, re.MULTILINE)
@@ -958,6 +1016,52 @@ def check_naming(file_path: str) -> tuple[bool, str]:
     return False, f"❌ {name} 不符合任何标准前缀 {VALID_PREFIXES}"
 
 
+def _validate_ssot_linkage() -> tuple[bool, str]:
+    """裁定#208 R4: 校验 SSoT(trae_028)与脚本双轨正则机械联动一致。
+
+    防 SSoT 修订后 enforcement 脚本未同步（AI 编程社区 enforcement gap）。
+    独立模式（--validate-ssot），不扫描文件，仅校验 SSoT 文件与脚本常量一致性。
+    """
+    ssot_path = (
+        Path(__file__).resolve().parents[3]
+        / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
+    )
+    if not ssot_path.exists():
+        return False, f"❌ SSoT 文件不存在: {ssot_path}"
+    try:
+        content = ssot_path.read_text(encoding="utf-8")
+    except Exception as e:
+        return False, f"❌ SSoT 读取失败: {e}"
+
+    # 1. version >= 1.3.0（裁定#208 阶段A 要求）
+    vm = re.search(r"^version:\s*['\"]?(\d+)\.(\d+)\.(\d+)", content, re.MULTILINE)
+    if not vm:
+        return False, "❌ SSoT 未找到 version 字段"
+    ver = (int(vm.group(1)), int(vm.group(2)), int(vm.group(3)))
+    if ver < (1, 3, 0):
+        return False, f"❌ SSoT version {ver[0]}.{ver[1]}.{ver[2]} < 1.3.0（裁定#208 阶段A 双轨制未生效）"
+
+    # 2. 双轨制关键词存在（L1037-1040 condition 文本）
+    required = ["双轨制", "layer-master", "domain-functional", "[-NNN]"]
+    missing = [kw for kw in required if kw not in content]
+    if missing:
+        return False, f"❌ SSoT 缺少双轨制关键词: {missing}（裁定#208 R1 双轨制 condition 未生效？）"
+
+    # 3. 脚本双轨正则已定义（编译期已校验，此处 sanity check 防常量被误删）
+    regexes = {
+        "_MODULE_ID_LAYER_MASTER_RE": _MODULE_ID_LAYER_MASTER_RE,
+        "_MODULE_ID_DOMAIN_DERIVED_RE": _MODULE_ID_DOMAIN_DERIVED_RE,
+        "_MODULE_ID_D_PREFIX_RE": _MODULE_ID_D_PREFIX_RE,
+    }
+    undefined = [name for name, rx in regexes.items() if rx is None]
+    if undefined:
+        return False, f"❌ 脚本双轨正则未定义: {undefined}"
+
+    return True, (
+        f"✅ SSoT(trae_028 v{ver[0]}.{ver[1]}.{ver[2]}) 与脚本双轨正则机械联动一致（裁定#208 R4）"
+    )
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     import argparse
@@ -967,7 +1071,14 @@ def main() -> int:
     parser.add_argument("--scan", action="store_true", help="扫描整个项目目录")
     parser.add_argument("--staged", action="store_true", help="只检查git暂存区文件")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
+    parser.add_argument("--validate-ssot", action="store_true", help="校验 SSoT(trae_028)与脚本双轨正则一致性(裁定#208 R4)")
     args = parser.parse_args()
+
+    # 裁定#208 R4: SSoT 机械联动校验（独立模式，不扫描文件）
+    if args.validate_ssot:
+        ok, msg = _validate_ssot_linkage()
+        print(msg)
+        return EXIT_PASS if ok else EXIT_FINDINGS
 
     all_violations: list[NamingViolation] = []
 
@@ -1022,21 +1133,26 @@ def main() -> int:
                 filepath = target_path
                 all_violations.extend(check_file(filepath, target))
 
-    # N-17 违规作为 warning（历史遗留 module_id 体系问题，裁定#206 B-4 阶段 E 议题，不阻断 pre-commit）
+    # 裁定#208 R4: N-17 升为阻断（过渡期 --warn-only 时仍 warning 不阻断，阶段 E 激活后默认阻断）
     n17_violations = [v for v in all_violations if v.rule == "N-17"]
-    blocking_violations = [v for v in all_violations if v.rule != "N-17"]
+    other_violations = [v for v in all_violations if v.rule != "N-17"]
 
-    for v in blocking_violations:
+    for v in other_violations:
         print(f"[{v.rule}] {v.message}")
 
     if n17_violations:
-        print(f"\n[N-17 WARNING] 历史遗留 blueprint_id 域片段不一致（module_id 体系问题，阶段 E 议题，不阻断）:")
-        for v in n17_violations:
-            print(f"  [N-17] {v.message}")
-        print(f"  共 {len(n17_violations)} 个 N-17 warning")
+        if args.warn_only:
+            print(f"\n[N-17 WARNING] blueprint_id 域片段不一致（过渡期 --warn-only，不阻断；裁定#208 阶段 E 激活后阻断）:")
+            for v in n17_violations:
+                print(f"  [N-17] {v.message}")
+            print(f"  共 {len(n17_violations)} 个 N-17 warning")
+        else:
+            for v in n17_violations:
+                print(f"[N-17] {v.message}")
 
-    if blocking_violations:
-        print(f"\n总计 {len(blocking_violations)} 个阻断性命名违规")
+    blocking_count = len(other_violations) + (len(n17_violations) if not args.warn_only else 0)
+    if blocking_count:
+        print(f"\n总计 {blocking_count} 个阻断性命名违规")
         return EXIT_FINDINGS if not args.warn_only else EXIT_PASS
     return EXIT_PASS
 
