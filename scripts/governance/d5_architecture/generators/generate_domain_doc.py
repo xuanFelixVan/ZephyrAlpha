@@ -446,7 +446,7 @@ def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
-    lines.append("doc_type: domain_architecture_doc")
+    lines.append("doc_type: architecture_view")
     lines.append(f"title: {domain_id} {get_domain_name_zh(domain_id, info['domain_name'])}架构文档")
     lines.append('version: "1.0"')
     lines.append("status: active")

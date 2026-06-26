@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-doc-type-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: MOD-023
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -30,7 +30,7 @@ version: "1.4.0"
 title: "doc_type 受控词表"
 status: active
 vocabulary_name: doc_type
-total_values: 27
+total_values: 26
 source: "PS-STD-001 §3.2 + §3.2.1（全项目完整词表 27 值：01_policies_and_standards/ 子集 13 值 + 其他目录 14 值）"
 depends_on:
   - target: PS-STD-001

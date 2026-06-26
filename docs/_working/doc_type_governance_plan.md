@@ -172,16 +172,18 @@ grep 实测发现 doc_type 合法值的真源散落 4 处，互相不一致：
 
 ### 阶段 1：止血（生成器 + 根因 + bug）
 
-| 步骤 | 动作 | 文件 |
-|---|---|---|
-| 1.1 | 修 `total_values: 27→26` | [doc_type_vocabulary.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml) |
-| 1.2 | 3 个生成器注入 doc_type | bootstrap.py / ingest.py / generate_missing_index_md.py |
-| 1.3 | 找到并修复产出 `domain_architecture_doc`/`diagram` 的域架构生成器 | 待定位（grep 搜索该字符串的产出源） |
+| 步骤 | 动作 | 文件 | 状态 |
+|---|---|---|---|
+| 1.1 | 修 `total_values: 27→26` | [doc_type_vocabulary.yaml:33](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml#L33) | ✅ 已完成（26 值无重复，纯声明错误） |
+| 1.2 | 生成器注入 doc_type | 见下方修正映射 | ✅ 已完成（1 改+1 确认已对+1 修正为验证器） |
+| 1.3 | 找到并修复产出 `domain_architecture_doc`/`diagram` 的域架构生成器 | [generate_domain_doc.py:449](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_domain_doc.py#L449) + [generate_domain_architecture_diagram.py:493](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_domain_architecture_diagram.py#L493) | ✅ 已完成（2 生成器均改 → architecture_view） |
 
-**生成器注入映射**：
-- `generate_missing_index_md.py` → `index`（确定）
-- `ingest.py` → `knowledge_entry`（高概率，需读代码确认）
-- `bootstrap.py` → 按生成的文件类型逐一定（需读代码）
+**生成器注入映射（读码后修正）**：
+- `generate_missing_index_md.py:86` → `index` — **已正确注入**，无需改（原计划假设需改，实际已对）
+- `bootstrap.py:321` → `knowledge_entry` — ✅ 已注入 `_build_frontmatter_text()`（原计划不确定，读码确认创建 KE 文件，注入 knowledge_entry）
+- `ingest.py` → **不是生成器，是验证器**（校验 frontmatter 必填字段 + 存储已有文本，不创建 frontmatter）——原计划假设错误，无需注入。doc_type 校验属阶段 3 门禁工作
+
+**预存 bug（非本次引入，不阻断）**：bootstrap.py:199 `NameError: UnifiedMemoryAPI`（2 测试失败），与 doc_type 注入无关（改动在 line 321，bug 在 line 199）
 
 ### 阶段 2：治标→治本（分层回填）
 

@@ -318,6 +318,7 @@ class Bootstrap:
             f"---\n"
             f"module_id: {ke_id}\n"
             f"title: {head[:80]}\n"
+            f"doc_type: knowledge_entry\n"
             f"category: {chunk.category}\n"
             f"ttl: permanent\n"
             f"---\n\n"
@@ -375,7 +376,7 @@ def segment_document(
 
     body_start = 0
     if text.startswith("---"):
-        m = re.search(r"^---\n.*?\n---\n?", text, flags=re.DOTALL | re.MULTILINE)
+        m = re.search(r"^---\r?\n.*?\r?\n---\r?\n?", text, flags=re.DOTALL | re.MULTILINE)
         if m:
             body_start = m.end()
     body = text[body_start:]

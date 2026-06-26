@@ -490,7 +490,7 @@ def generate_domain_architecture_diagram(
 
     # frontmatter
     lines.append("---")
-    lines.append("doc_type: domain_architecture_diagram")
+    lines.append("doc_type: architecture_view")
     lines.append(f"title: {domain_id} {domain_name}架构图")
     lines.append('version: "1.0"')
     lines.append("status: active")
