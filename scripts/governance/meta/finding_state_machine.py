@@ -64,23 +64,9 @@ _src = _REPO_ROOT / "src"
 if str(_src) not in sys.path:
     sys.path.insert(0, str(_src))
 
-try:
-    from zephyr.infrastructure.finding import LIFECYCLE_STATUS_VALUES
+from zephyr.infrastructure.script_system.finding import LIFECYCLE_STATUS_VALUES
 
-    VALID_STATUSES = list(LIFECYCLE_STATUS_VALUES)
-except ImportError:
-    VALID_STATUSES = [
-        "OPEN",
-        "IN_PROGRESS",
-        "FIXED",
-        "VERIFIED",
-        "FALSE_POSITIVE",
-        "WONTFIX",
-        "ACCEPTED_RISK",
-        "CLOSED",
-        "OVERDUE",
-        "DEFERRED",
-    ]
+VALID_STATUSES = list(LIFECYCLE_STATUS_VALUES)
 
 VALID_TRANSITIONS = {
     "OPEN": ["IN_PROGRESS", "FALSE_POSITIVE", "WONTFIX", "DEFERRED", "OVERDUE"],

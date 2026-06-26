@@ -13,7 +13,33 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
-VALID_DOCUMENT_STATUSES = ["draft", "approved", "deprecated", "superseded"]
+
+
+def _load_valid_document_statuses() -> list[str]:
+    """从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
+
+    status_vocabulary.yaml v1.1.0 已将 approved→active、superseded→deprecated 迁移，
+    故合法值精简为 draft/active/deprecated 三值。
+    """
+    from pathlib import Path
+
+    import yaml
+
+    vocab = (
+        Path(__file__).resolve().parents[4]
+        / "docs"
+        / "01_policies_and_standards"
+        / "_registry"
+        / "vocabularies"
+        / "status_vocabulary.yaml"
+    )
+    if not vocab.exists():
+        return []
+    data = yaml.safe_load(vocab.read_text(encoding="utf-8")) or {}
+    return [str(v.get("value")) for v in data.get("values", []) if isinstance(v, dict)]
+
+
+VALID_DOCUMENT_STATUSES = _load_valid_document_statuses()
 
 
 class Contradiction:
