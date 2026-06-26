@@ -44,6 +44,7 @@ def build_kb_gate_eval_task(*, gate_id: str, title: str, deliverable: Path) -> T
         status=TaskStatus.IN_PROGRESS,
         execution_model=normalize_execution_model("system"),
         safety_level="M",
+        description=f"KB 门禁 {gate_id} 评估任务: {title}",
         deliverables=[str(deliverable)],
         created_at=now,
         updated_at=now,
