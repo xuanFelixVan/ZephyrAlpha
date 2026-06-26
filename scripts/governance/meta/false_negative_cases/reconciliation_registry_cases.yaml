@@ -1,0 +1,94 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-005 | scripts/governance/meta/false_negative_cases/reconciliation_registry_cases.yaml | §
+# module_id: MOD-INF-005
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# P3-T1: ReconciliationRegistry 假阴性 case 库（D2 修复后由 validate_mutation_testing.load_cases 加载）
+#
+# verifier: meta/verify_reconciliation_registry.py（SCRIPTS_DIR 相对路径 = scripts/governance/meta/）
+# 每个 case 的 expected_finding_id 对应 verifier 打印的 "FN-RR-XXX: PASS/FAIL: ..." 行，
+# check_detection 子串匹配判定 detected。
+#
+# 设计裁定（P3-T1 scaffold vs P3-T2 rigorous，呼应 continuation plan §5.1/§5.2）：
+#   本 yaml 描述 6 个 ReconciliationRegistry 结构/行为不变量缺陷场景，verifier 跑真实
+#   不变量检查并打印 finding ID。严格的"变异注入→oracle 判 killed/survived"由 P3-T2 的
+#   mutation_test_reconciliation_registry.py 承担（RR_UNDER_TEST seam 重定向 SSoT 到变异副本）。
+#   二者互补：P3-T1 = case + 可运行 verifier（打破自指的 oracle 种子），P3-T2 = 机械变异反馈环。
+#
+# defect/target_path 字段为描述性元数据（validate_mutation_testing.apply_mutation 当前为死代码，
+# check_detection 直接调 verifier 不注入）；保留以对齐 json case schema + 供未来激活注入用。
+module_id: MOD-INF-005
+cases:
+  - case_id: "FN-RR-001"
+    dimension: "D-RR"
+    description: "ReconcilerSpec 缺少必需字段（gate_id/trigger/reconcile/priority）——AI 重构时漏字段会破坏 registry 契约，post-commit 补偿静默失效"
+    verifier: "meta/verify_reconciliation_registry.py"
+    expected_finding_id: "FN-RR-001"
+    defect:
+      type: "content_inject"
+      path: "src/zephyr/governance/reconciliation_registry.py"
+    target_path: "src/zephyr/governance/reconciliation_registry.py"
+    expected_detection: true
+    timeout_seconds: 30
+
+  - case_id: "FN-RR-002"
+    dimension: "D-RR"
+    description: "register 非幂等——同 gate_id 重复注册产生重复 spec，reconcile_for 重复执行补偿逻辑"
+    verifier: "meta/verify_reconciliation_registry.py"
+    expected_finding_id: "FN-RR-002"
+    defect:
+      type: "content_inject"
+      path: "src/zephyr/governance/reconciliation_registry.py"
+    target_path: "src/zephyr/governance/reconciliation_registry.py"
+    expected_detection: true
+    timeout_seconds: 30
+
+  - case_id: "FN-RR-003"
+    dimension: "D-RR"
+    description: "reconcile_for 返回单值而非 list（D3 退化）——多 reconciler 时后续结果被覆盖，CommitResult.reconcile 丢失补偿记录"
+    verifier: "meta/verify_reconciliation_registry.py"
+    expected_finding_id: "FN-RR-003"
+    defect:
+      type: "content_inject"
+      path: "src/zephyr/governance/reconciliation_registry.py"
+    target_path: "src/zephyr/governance/reconciliation_registry.py"
+    expected_detection: true
+    timeout_seconds: 30
+
+  - case_id: "FN-RR-004"
+    dimension: "D-RR"
+    description: "reconcile_for 未按 priority 升序执行——manifest(100) 应先于 baseline_aware(200)/ttl(300)/ghost(400)，乱序导致依赖补偿失败"
+    verifier: "meta/verify_reconciliation_registry.py"
+    expected_finding_id: "FN-RR-004"
+    defect:
+      type: "content_inject"
+      path: "src/zephyr/governance/reconciliation_registry.py"
+    target_path: "src/zephyr/governance/reconciliation_registry.py"
+    expected_detection: true
+    timeout_seconds: 30
+
+  - case_id: "FN-RR-005"
+    dimension: "D-RR"
+    description: "单 reconciler 异常未捕获中断后续——一个 reconciler 抛异常导致剩余 reconciler 不执行，补偿链断裂"
+    verifier: "meta/verify_reconciliation_registry.py"
+    expected_finding_id: "FN-RR-005"
+    defect:
+      type: "content_inject"
+      path: "src/zephyr/governance/reconciliation_registry.py"
+    target_path: "src/zephyr/governance/reconciliation_registry.py"
+    expected_detection: true
+    timeout_seconds: 30
+
+  - case_id: "FN-RR-006"
+    dimension: "D-RR"
+    description: "空 registry 或无 trigger 命中时 reconcile_for 返回 None 而非 []——CommitResult.reconcile 序列化 None 抛异常，commit 路径崩溃"
+    verifier: "meta/verify_reconciliation_registry.py"
+    expected_finding_id: "FN-RR-006"
+    defect:
+      type: "content_inject"
+      path: "src/zephyr/governance/reconciliation_registry.py"
+    target_path: "src/zephyr/governance/reconciliation_registry.py"
+    expected_detection: true
+    timeout_seconds: 30

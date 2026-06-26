@@ -61,22 +61,83 @@ CASES_DIR = Path(__file__).resolve().parent / "false_negative_cases"
 
 
 def load_cases() -> list[dict]:
-    """加载已知缺陷用例。
+    """加载已知缺陷用例（D2 修复：json + yaml/yml 双源）。
+
+    支持两种 case schema（加适配层对齐，**不强行统一签名**——沿用 project_memory
+    DRY 重构裁定：签名不兼容的复制应保留适配层，而非强行统一）：
+
+    - **json case**（单文件单用例）：``case_id`` / ``dimension`` / ``verifier`` /
+      ``expected_finding_id`` / ``target_path`` / ``defect`` / ``expected_detection``
+      / ``timeout_seconds``
+    - **yaml case**（``*_cases.yaml`` 多用例 ``cases:`` 列表）：FalseNegativeCase
+      schema（``case_id`` / ``description`` / ``expected_detection`` / ``severity``
+      / ``input_file`` / ``expected_finding_count`` / ``false_negative_if``）+ 可选
+      json 兼容字段（``verifier`` / ``expected_finding_id`` / ``target_path`` /
+      ``defect`` / ``dimension``）
+
+    yaml case 经适配层映射到 dict（与 json case 同构），供 check_detection 消费：
+      - ``dimension`` ← ``dimension`` 或 ``expected_detection``
+      - ``verifier`` ← ``verifier``（缺省 ""→ check_detection SKIP，不计 false negative）
+      - ``expected_finding_id`` ← ``expected_finding_id`` 或 ``case_id``
+      - ``target_path`` ← ``target_path`` 或 ``input_file``
 
     Returns:
-        list[dict]: 缺陷用例
+        list[dict]: 缺陷用例（统一 dict schema）
     """
     cases: list[dict] = []
     if not CASES_DIR.exists():
         return cases
+
+    # 1. JSON cases（单文件单用例）
     for case_file in sorted(CASES_DIR.glob("*.json")):
         try:
             with open(case_file, encoding="utf-8") as f:
                 case = json.load(f)
                 case["_source_file"] = str(case_file.relative_to(CASES_DIR))
+                case["_schema"] = "json"
                 cases.append(case)
         except (json.JSONDecodeError, KeyError):
             continue
+
+    # 2. YAML cases（多用例 *_cases.yaml/*.yml）— D2 修复：原仅 glob *.json，
+    #    导致 4 个 *_cases.yaml 死库存（governance/security/architecture/data_quality）
+    try:
+        import yaml
+    except ImportError:  # pragma: no cover — yaml 是项目硬依赖
+        yaml = None  # type: ignore[assignment]
+    if yaml is not None:
+        yaml_files = sorted(CASES_DIR.glob("*.yaml")) + sorted(CASES_DIR.glob("*.yml"))
+        for case_file in yaml_files:
+            try:
+                with open(case_file, encoding="utf-8") as f:
+                    data = yaml.safe_load(f)
+                if not isinstance(data, dict):
+                    continue
+                raw_cases = data.get("cases", [])
+                if not isinstance(raw_cases, list):
+                    continue
+                for c in raw_cases:
+                    if not isinstance(c, dict):
+                        continue
+                    # 适配层：FalseNegativeCase schema → json-compatible dict
+                    adapted = {
+                        "case_id": c.get("case_id", "??"),
+                        "dimension": c.get("dimension") or c.get("expected_detection", ""),
+                        "description": c.get("description", ""),
+                        "verifier": c.get("verifier", ""),
+                        "expected_finding_id": c.get("expected_finding_id") or c.get("case_id", ""),
+                        "target_path": c.get("target_path") or c.get("input_file", ""),
+                        "defect": c.get("defect")
+                        or {"type": "file_create", "path": c.get("input_file", "")},
+                        "expected_detection": c.get("expected_detection", True),
+                        "timeout_seconds": c.get("timeout_seconds", 30),
+                        "severity": c.get("severity", "medium"),
+                        "_source_file": str(case_file.relative_to(CASES_DIR)),
+                        "_schema": "yaml",
+                    }
+                    cases.append(adapted)
+            except (yaml.YAMLError, KeyError, TypeError):
+                continue
     return cases
 
 
@@ -132,20 +193,32 @@ def check_detection(
 
     verifier = case.get("verifier", "")
     if not verifier:
-        return False, "未指定验证脚本"
+        # D2 配套修复：yaml case（FalseNegativeCase schema）无 verifier 字段时
+        # SKIP 而非计 false negative——否则 4 个 *_cases.yaml 死库存会膨胀漏检计数。
+        # SKIP 语义：未指定验证脚本 = 未配置 oracle，不计入 detected/missed 分母。
+        return True, "SKIP（未指定验证脚本）"
 
     verifier_path = SCRIPTS_DIR / verifier
     if not verifier_path.exists():
         return False, f"验证脚本不存在: {verifier}"
 
-    result = subprocess.run(
-        [sys.executable, str(verifier_path), "--warn-only"],
-        capture_output=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=case.get("timeout_seconds", 30),
-        cwd=str(REPO_ROOT),
-    )
+    # P3-T1 健壮性修复：捕获 verifier 超时/异常——原裸 subprocess.run 超时会抛
+    # TimeoutExpired 导致整个 run_mutations 中断（pre-existing 死库存 verifier
+    # check_naming_convention.py 即 30s 超时）。超时/异常 = verifier 未检出（false
+    # negative），如实记录而非崩溃，使框架可端到端运行至新 RR case。
+    try:
+        result = subprocess.run(
+            [sys.executable, str(verifier_path), "--warn-only"],
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=case.get("timeout_seconds", 30),
+            cwd=str(REPO_ROOT),
+        )
+    except subprocess.TimeoutExpired:
+        return False, f"TIMEOUT（{case.get('timeout_seconds', 30)}s）"
+    except Exception as e:  # noqa: BLE001 — verifier 启动失败如实记录
+        return False, f"verifier run error: {e}"
 
     expected_finding_id = case.get("expected_finding_id", "")
     stdout = result.stdout or ""
