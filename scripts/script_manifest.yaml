@@ -38,18 +38,18 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_redblue_lsg_gate20.py
+  path: _tmp_redblue_lsg_gate20.py
+  description: 红蓝对抗：GATE-20 + LSG 全面安全测试
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_redblue_n16_extreme_v2.py
   path: _tmp_redblue_n16_extreme_v2.py
   description: 模拟刚进项目的AI，从5个维度攻击N-16防线：
   domain: _tmp_redblue_n16_extreme_v2.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_redblue_rename.py
-  path: _tmp_redblue_rename.py
-  description: 测试库：data/databases/test_rename_redteam.db（生产库副本，隔离生产）。
-  domain: _tmp_redblue_rename.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
