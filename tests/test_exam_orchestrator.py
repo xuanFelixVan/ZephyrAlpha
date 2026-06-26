@@ -1194,3 +1194,278 @@ class TestBuildRecommendationsContinued:
         )
         recs = orch._build_recommendations(passport)
         assert recs.max_concurrent_tasks == 4
+
+
+# ══════════════════════════════════════════════════════════
+# P2 Tool 轴 (ROADMAP-02): function_calling + tool_chaining
+# ══════════════════════════════════════════════════════════
+
+class TestComputeMetricsFunctionCalling:
+    """_compute_metrics_generic 对 function_calling (expected_function_args) 的评分。"""
+
+    def _make_orch(self):
+        return ExamOrchestrator(MagicMock(), model_id="t")
+
+    def _make_case(self, tool: str, args: dict, contains=None):
+        return ExamTestCase(
+            case_id="T",
+            capability="function_calling",
+            difficulty=Difficulty.EASY,
+            prompt="test",
+            expected_structure_keys=["function", "arguments"],
+            expected_tool=tool,
+            expected_function_args=args,
+            expected_contains=contains or [],
+        )
+
+    def test_perfect_match(self):
+        """function 名 + 所有参数 value 命中 → 高分。"""
+        orch = self._make_orch()
+        case = self._make_case(
+            "Read", {"file_path": "docker-compose"}, contains=["file_path"]
+        )
+        result = {
+            "function": "Read",
+            "arguments": {"file_path": "/abs/docker-compose.yml"},
+        }
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert p == pytest.approx(1.0, abs=0.01)
+        assert em == 1
+
+    def test_wrong_function_name(self):
+        """function 名错误 → expected_tool 不匹配。"""
+        orch = self._make_orch()
+        case = self._make_case("Read", {"file_path": "docker-compose"})
+        result = {"function": "Grep", "arguments": {"file_path": "docker-compose"}}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 0
+        assert p < 1.0
+
+    def test_key_present_value_missing(self):
+        """参数 key 存在但 value 不符 → 部分分 (0.5)。"""
+        orch = self._make_orch()
+        case = self._make_case("Grep", {"pattern": "TODO", "path": "src"})
+        # pattern 对, path 不符
+        result = {"function": "Grep", "arguments": {"pattern": "TODO", "path": "/other"}}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 0
+        # args: pattern=1.0, path=0.5 → arg_rate=0.75; tool=1.0; contains 也可命中
+        assert 0.0 < p < 1.0
+
+    def test_missing_arguments_key(self):
+        """模型输出无 arguments → arg_rate=0。"""
+        orch = self._make_orch()
+        case = self._make_case("Read", {"file_path": "config.py"})
+        result = {"function": "Read"}  # 无 arguments
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 0
+
+
+class TestComputeMetricsToolChaining:
+    """_compute_metrics_generic 对 tool_chaining (expected_tool_sequence) 的评分。"""
+
+    def _make_orch(self):
+        return ExamOrchestrator(MagicMock(), model_id="t")
+
+    def _make_case(self, seq: list[str], contains=None):
+        return ExamTestCase(
+            case_id="T",
+            capability="tool_chaining",
+            difficulty=Difficulty.EASY,
+            prompt="test",
+            expected_structure_keys=["steps"],
+            expected_tool_sequence=seq,
+            expected_contains=contains or [],
+        )
+
+    def test_perfect_order(self):
+        """steps 工具顺序完全匹配 → 满分。"""
+        orch = self._make_orch()
+        case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
+        result = {"steps": [
+            {"tool": "Grep", "purpose": "find"},
+            {"tool": "Read", "purpose": "read"},
+        ]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert p == pytest.approx(1.0, abs=0.01)
+        assert em == 1
+
+    def test_wrong_order(self):
+        """工具顺序错误 → seq_rate 部分匹配。"""
+        orch = self._make_orch()
+        case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
+        result = {"steps": [
+            {"tool": "Read", "purpose": "read first"},
+            {"tool": "Grep", "purpose": "then search"},
+        ]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        # Read 在前, Grep 在后; expected=[Grep,Read] 作为子序列无法匹配
+        assert em == 0
+
+    def test_partial_sequence(self):
+        """3 步期望, 只匹配 2 步 → 部分分。"""
+        orch = self._make_orch()
+        case = self._make_case(["Glob", "Read", "Edit"], contains=["Glob", "Read", "Edit"])
+        result = {"steps": [
+            {"tool": "Glob", "purpose": "find"},
+            {"tool": "Read", "purpose": "read"},
+        ]}  # 缺 Edit
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 0
+        assert p < 1.0
+
+    def test_steps_with_function_key(self):
+        """steps 中用 'function' 而非 'tool' 也能匹配。"""
+        orch = self._make_orch()
+        case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
+        result = {"steps": [
+            {"function": "Grep"},
+            {"function": "Read"},
+        ]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        assert em == 1
+
+    def test_extra_steps_interleaved(self):
+        """中间插入额外步骤, 期望序列仍为有序子序列 → 匹配 (em=1)。"""
+        orch = self._make_orch()
+        case = self._make_case(["Grep", "Read"], contains=["Grep", "Read"])
+        result = {"steps": [
+            {"tool": "Glob", "purpose": "first find files"},
+            {"tool": "Grep", "purpose": "then search"},
+            {"tool": "Write", "purpose": "log"},
+            {"tool": "Read", "purpose": "finally read"},
+        ]}
+        p, r, ed, em = orch._compute_metrics(case, result)
+        # Grep 和 Read 仍按序出现 → seq_rate=1.0; contains Grep/Read 均在文本中 → 全中
+        # 额外的 Glob/Write 不在任何 expected 字段中, 不扣分
+        assert em == 1
+        assert p == pytest.approx(1.0, abs=0.01)
+
+
+class TestDeterministicJudgeToolAxis:
+    """DeterministicJudge 对 P 类 Tool 轴字段的评分。"""
+
+    def _make_judge(self):
+        from zephyr.intelligence.model_profiling.exam_judge import DeterministicJudge
+        return DeterministicJudge()
+
+    def test_function_args_full_hit(self):
+        """参数 key+value 全命中 → correctness 高。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="function_calling",
+            difficulty=Difficulty.EASY, prompt="t",
+            expected_structure_keys=["function", "arguments"],
+            expected_tool="Read",
+            expected_function_args={"file_path": "docker-compose"},
+            expected_contains=["file_path"],
+        )
+        text = '{"function": "Read", "arguments": {"file_path": "/abs/docker-compose.yml"}}'
+        result = judge.judge(case, text)
+        # keyword "file_path" 命中 + tool args 全命中 → correctness 高
+        assert result.correctness == pytest.approx(1.0, abs=0.01)
+
+    def test_function_args_partial(self):
+        """参数 key 存在但 value 不符 → correctness 部分分。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="function_calling",
+            difficulty=Difficulty.EASY, prompt="t",
+            expected_function_args={"pattern": "TODO", "path": "src"},
+            expected_contains=["pattern", "path"],
+        )
+        text = '{"function": "Grep", "arguments": {"pattern": "FIXME", "path": "src"}}'
+        result = judge.judge(case, text)
+        # pattern key 存在 value 不符 (0.5), path 全中 (1.0) → arg_score=0.75
+        assert 0.0 < result.correctness < 1.0
+
+    def test_tool_sequence_ordered(self):
+        """工具按序出现 → seq_score=1.0。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="tool_chaining",
+            difficulty=Difficulty.EASY, prompt="t",
+            expected_tool_sequence=["Grep", "Read"],
+            expected_contains=["Grep", "Read"],
+        )
+        text = '{"steps": [{"tool": "Grep"}, {"tool": "Read"}]}' + " " * 50
+        result = judge.judge(case, text)
+        assert result.correctness == pytest.approx(1.0, abs=0.01)
+
+    def test_tool_sequence_wrong_order(self):
+        """工具乱序 → seq_score 部分分。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="tool_chaining",
+            difficulty=Difficulty.EASY, prompt="t",
+            expected_tool_sequence=["Grep", "Read"],
+            expected_contains=["Grep", "Read"],
+        )
+        text = '{"steps": [{"tool": "Read"}, {"tool": "Grep"}]}' + " " * 50
+        result = judge.judge(case, text)
+        # keyword 全中 (0.5 weight) + seq: Grep 在 Read 后, 作为有序子序列只匹配 Grep (1/2=0.5)
+        # tool_score = 0.5*keyword + 0.5*seq = 0.5*1.0 + 0.5*0.5 = 0.75
+        # correctness = 0.5*keyword_cov + 0.5*tool_score = 0.5*1.0 + 0.5*0.75 = 0.875
+        assert 0.0 < result.correctness < 1.0
+
+    def test_no_tool_fields_neutral(self):
+        """无 Tool 轴字段 → 不影响原有评分逻辑。"""
+        judge = self._make_judge()
+        case = ExamTestCase(
+            case_id="T", capability="x",
+            difficulty=Difficulty.EASY, prompt="t",
+            expected_contains=["alpha"],
+        )
+        text = "alpha " * 30
+        result = judge.judge(case, text)
+        assert result.correctness == 1.0  # 纯关键词, 无 tool 字段干扰
+
+
+class TestToolAxisCasesRegistered:
+    """验证 function_calling / tool_chaining 题目正确注册到 CASES_BY_CAPABILITY。"""
+
+    def test_function_calling_cases(self):
+        from zephyr.intelligence.model_profiling.exam_test_cases import (
+            CASES_BY_CAPABILITY,
+        )
+        cases = CASES_BY_CAPABILITY.get("function_calling", [])
+        assert len(cases) == 3
+        ids = [c.case_id for c in cases]
+        assert "EX-FC-001" in ids
+        assert "EX-FC-002" in ids
+        assert "EX-FC-003" in ids
+        # 每题有 expected_function_args
+        for c in cases:
+            assert c.expected_function_args, f"{c.case_id} 缺 expected_function_args"
+
+    def test_tool_chaining_cases(self):
+        from zephyr.intelligence.model_profiling.exam_test_cases import (
+            CASES_BY_CAPABILITY,
+        )
+        cases = CASES_BY_CAPABILITY.get("tool_chaining", [])
+        assert len(cases) == 3
+        ids = [c.case_id for c in cases]
+        assert "EX-TC-001" in ids
+        assert "EX-TC-002" in ids
+        assert "EX-TC-003" in ids
+        # 每题有 expected_tool_sequence
+        for c in cases:
+            assert c.expected_tool_sequence, f"{c.case_id} 缺 expected_tool_sequence"
+
+    def test_difficulty_coverage(self):
+        """每能力覆盖 EASY/MEDIUM/HARD 三难度。"""
+        from zephyr.intelligence.model_profiling.exam_test_cases import (
+            CASES_BY_CAPABILITY,
+        )
+        for cap in ("function_calling", "tool_chaining"):
+            diffs = {c.difficulty for c in CASES_BY_CAPABILITY[cap]}
+            assert Difficulty.EASY in diffs
+            assert Difficulty.MEDIUM in diffs
+            assert Difficulty.HARD in diffs
+
+    def test_total_capability_count(self):
+        """Tool 轴新增 2 能力后, 总能力数=31。"""
+        from zephyr.intelligence.model_profiling.exam_test_cases import (
+            CASES_BY_CAPABILITY,
+        )
+        assert len(CASES_BY_CAPABILITY) == 31

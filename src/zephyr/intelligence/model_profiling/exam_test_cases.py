@@ -119,6 +119,12 @@ class ExamTestCase:
     # _score_olympiad_case 当无 expected_test_cases 时, 用此字段走静态断言轨
     expected_static_assertions: list[str] = field(default_factory=list)
 
+    # P类: 工具调用能力 (Tool 轴 ROADMAP-02)
+    # function_calling: 期望调用的函数名 (复用 J 类 expected_tool) + 参数键值对
+    expected_function_args: dict[str, str] = field(default_factory=dict)  # 预期参数 {key: value_substring}
+    # tool_chaining: 预期工具调用顺序 (按序出现的工具名列表)
+    expected_tool_sequence: list[str] = field(default_factory=list)
+
 
 # ══════════════════════════════════════════════════════════
 # task_classification (3 题)
@@ -1168,6 +1174,104 @@ EX_TS_003 = ExamTestCase(
     expected_structure_keys=["tool", "reason"],
     expected_tool="Glob",
     expected_contains=["pattern", "file paths", "list", "match"],
+)
+
+
+# ══════════════════════════════════════════════════════════
+# P类: 工具调用能力 (Tool 轴 ROADMAP-02)
+# function_calling: 测试模型能否生成正确的工具调用 (函数名 + 参数)
+# tool_chaining: 测试模型能否规划多工具调用顺序
+# ══════════════════════════════════════════════════════════
+
+# function_calling (3 题) — 生成结构化工具调用
+EX_FC_001 = ExamTestCase(
+    case_id="EX-FC-001",
+    capability="function_calling",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "你需要查看 docker-compose.yml 的完整内容来核对端口配置。"
+        "请生成工具调用，输出 JSON 包含 function 和 arguments 字段。"
+    ),
+    expected_structure_keys=["function", "arguments"],
+    expected_tool="Read",
+    expected_function_args={"file_path": "docker-compose"},
+    expected_contains=["file_path"],
+)
+
+EX_FC_002 = ExamTestCase(
+    case_id="EX-FC-002",
+    capability="function_calling",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "在 src/ 目录下搜索所有包含 'TODO' 或 'FIXME' 标记的代码行。"
+        "请生成工具调用，输出 JSON 包含 function 和 arguments 字段，"
+        "arguments 中需包含 pattern 和 path。"
+    ),
+    expected_structure_keys=["function", "arguments"],
+    expected_tool="Grep",
+    expected_function_args={"pattern": "TODO", "path": "src"},
+    expected_contains=["pattern", "path"],
+)
+
+EX_FC_003 = ExamTestCase(
+    case_id="EX-FC-003",
+    capability="function_calling",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "将 config.py 中的 DEBUG=True 改为 DEBUG=False。"
+        "请生成工具调用，输出 JSON 包含 function 和 arguments 字段，"
+        "arguments 中需包含 file_path、old_str、new_str 三个参数。"
+    ),
+    expected_structure_keys=["function", "arguments"],
+    expected_tool="Edit",
+    expected_function_args={
+        "file_path": "config.py",
+        "old_str": "DEBUG=True",
+        "new_str": "DEBUG=False",
+    },
+    expected_contains=["file_path", "old_str", "new_str"],
+)
+
+# tool_chaining (3 题) — 规划多工具调用顺序
+EX_TC_001 = ExamTestCase(
+    case_id="EX-TC-001",
+    capability="tool_chaining",
+    difficulty=Difficulty.EASY,
+    prompt=(
+        "找到 src/ 下所有包含 'auth' 关键词的文件，然后读取其中一个匹配文件的完整内容。"
+        "请规划工具调用顺序，输出 JSON 包含 steps 字段，steps 中每个元素含 tool 字段。"
+    ),
+    expected_structure_keys=["steps"],
+    expected_tool_sequence=["Grep", "Read"],
+    expected_contains=["Grep", "Read"],
+)
+
+EX_TC_002 = ExamTestCase(
+    case_id="EX-TC-002",
+    capability="tool_chaining",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "找到项目中所有 .yaml 配置文件，读取其中的 database 配置内容，"
+        "然后将数据库端口从 3306 修改为 5432。"
+        "请规划工具调用顺序，输出 JSON 包含 steps 字段。"
+    ),
+    expected_structure_keys=["steps"],
+    expected_tool_sequence=["Glob", "Read", "Edit"],
+    expected_contains=["Glob", "Read", "Edit"],
+)
+
+EX_TC_003 = ExamTestCase(
+    case_id="EX-TC-003",
+    capability="tool_chaining",
+    difficulty=Difficulty.HARD,
+    prompt=(
+        "搜索代码中 deprecated 函数的所有调用点，读取调用上下文判断是否需要替换，"
+        "如需替换则对调用点执行编辑。这是条件链路但整体顺序固定。"
+        "请规划工具调用顺序，输出 JSON 包含 steps 字段。"
+    ),
+    expected_structure_keys=["steps"],
+    expected_tool_sequence=["Grep", "Read", "Edit"],
+    expected_contains=["Grep", "Read", "Edit"],
 )
 
 
@@ -2534,6 +2638,13 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_TS_001,
     EX_TS_002,
     EX_TS_003,
+    # ── P2 Tool 轴 (ROADMAP-02): function_calling + tool_chaining ──
+    EX_FC_001,
+    EX_FC_002,
+    EX_FC_003,
+    EX_TC_001,
+    EX_TC_002,
+    EX_TC_003,
     # dependency_ordering
     EX_DO_001,
     EX_DO_002,

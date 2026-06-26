@@ -705,10 +705,10 @@ class ExamMode(str, Enum):
 
 | 路线图ID | 工作项 | 优先级 | 状态 | 依赖 | 说明 |
 |---------|--------|:---:|:---:|------|------|
-| ROADMAP-01 | P2 Cost 轴 | P0 | 进行中 | 无 | 从已有 `_all_latencies_ms`/`_all_tokens` 派生 token 成本，接入岗位匹配矩阵。本地模型成本≈0，云端模型按 API 定价（input/output token 价格）。成本是评分维度非硬门。 |
-| ROADMAP-02 | P2 Tool 轴 | P1 | 暂缓 | ROADMAP-01 | 设计工具调用能力测试题（function calling），扩展能力维度。很多岗位需要工具调用能力，是能力维度的真实扩展。工作量中等。 |
-| ROADMAP-03 | 真实本地模型 Quick 考试验证 | P1 | 暂缓 | ROADMAP-01, ROADMAP-02 | 用 quick_profile.py 对真实本地模型跑一次 Quick 考试，验证端到端流程，产出第一个真实护照。 |
-| ROADMAP-04 | P1-1 题目外置 YAML | P2 | 按需推进 | 无 | 把 exam_test_cases.py 中硬编码题目外置到 YAML，让题目可配置、可扩展。当前题目数（29）足够覆盖岗位匹配，等需要批量加题（每能力 20+ 题）时再做。避免过早工程化。 |
+| ROADMAP-01 | P2 Cost 轴 | P0 | ✅ 完成 | 无 | 从已有 `_all_latencies_ms`/`_all_tokens` 派生 token 成本，接入岗位匹配矩阵。本地模型成本≈0，云端模型按 API 定价（input/output token 价格）。成本是评分维度非硬门。 |
+| ROADMAP-02 | P2 Tool 轴 | P1 | ✅ 完成 | ROADMAP-01 | 设计工具调用能力测试题（function_calling + tool_chaining），扩展能力维度。新增 6 题（EX-FC-001~003, EX-TC-001~003），ExamTestCase 新增 P 类字段（expected_function_args/expected_tool_sequence），DeterministicJudge + _compute_metrics_generic 评分扩展。 |
+| ROADMAP-03 | 真实本地模型 Quick 考试验证 | P1 | 进行中 | ROADMAP-01, ROADMAP-02 | 用 quick_profile.py 对真实本地模型跑一次 Quick 考试，验证端到端流程，产出第一个真实护照。 |
+| ROADMAP-04 | P1-1 题目外置 YAML | P2 | 按需推进 | 无 | 把 exam_test_cases.py 中硬编码题目外置到 YAML，让题目可配置、可扩展。当前题目数（102）足够覆盖岗位匹配，等需要批量加题（每能力 20+ 题）时再做。避免过早工程化。 |
 | ROADMAP-05 | P2 Patch 轴 | P3 | 暂缓 | 无 | 补丁生成能力（生成可应用 diff/patch）。本质是代码能力细分，当前 `code_fix`/`refactor` 已部分覆盖。与现有代码能力重叠，优先级低。 |
 | ROADMAP-06 | P3 Agent Loop | P3 | 暂缓 | ROADMAP-03 | Agent 循环测试——模型在多轮对话/工具循环中的表现。高级岗位（自主 agent）需要。Quick 模式有真实数据后再推进。 |
 | ROADMAP-07 | P3 真实仓库测试 | P3 | 暂缓 | ROADMAP-06 | 在真实代码库上测试模型能力。最贴近实际岗位，但实现复杂度高。 |

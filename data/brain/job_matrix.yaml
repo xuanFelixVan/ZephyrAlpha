@@ -13,7 +13,7 @@
 #      任何模型都有幻觉, Claude 也不例外; 此值仅作岗位匹配参考
 #      未来岗位匹配时幻觉率权重较高, 但当前不做一票否决
 #
-# 能力名真源: CASES_BY_CAPABILITY (exam_test_cases.py) — 29 项
+# 能力名真源: CASES_BY_CAPABILITY (exam_test_cases.py) — 31 项 (含 Tool 轴 function_calling/tool_chaining)
 #
 # 当前状态: 骨架 (6 示例岗位), 未来扩展
 # ══════════════════════════════════════════════════════════
@@ -75,6 +75,7 @@ jobs:
       dead_code_removal: "C"
       code_generate: "D"
       naming_suggest: "C"
+      tool_selection: "D"
     max_hallucination: 0.40
     max_cost: 0.05
     category: "entry"
@@ -106,6 +107,8 @@ jobs:
       dead_code_removal: "C"
       cross_file_refactor: "C"
       dependency_trace: "C"
+      function_calling: "C"
+      tool_chaining: "D"
     max_hallucination: 0.25
     max_cost: 0.20
     category: "mid"
@@ -120,6 +123,7 @@ jobs:
       self_review: "C"
       error_recovery: "C"
       incremental_execution: "C"
+      function_calling: "C"
     max_hallucination: 0.30
     max_cost: 0.20
     category: "mid"
@@ -137,6 +141,7 @@ jobs:
       safety_judgment: "C"
       self_review: "C"
     max_hallucination: 0.15
+    max_cost: 1.00
     category: "senior"
     note: "岗位性质要求低幻觉, 但非硬门 — 正常评分, 权重较高"
 
@@ -151,6 +156,7 @@ jobs:
       dependency_trace: "C"
       hallucination_detect: "B"
       rollback_boundary_design: "C"
+      tool_chaining: "C"
     max_hallucination: 0.15
     max_cost: 1.00
     category: "senior"

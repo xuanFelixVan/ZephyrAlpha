@@ -161,6 +161,23 @@ class TestLoadMatrix:
         assert matcher._hallu_dims["fabrication"] == pytest.approx(0.20)
         assert len(matcher._hallu_dims) == 9
 
+    def test_tool_axis_capabilities_in_matrix(self):
+        """Tool 轴 (ROADMAP-02): function_calling/tool_chaining 出现在岗位 bonus 中。"""
+        m = JobMatcher()
+        # refactor_specialist 应有 function_calling + tool_chaining bonus
+        refactor = m._jobs.get("refactor_specialist", {})
+        bonus = refactor.get("bonus", {})
+        assert "function_calling" in bonus
+        assert "tool_chaining" in bonus
+        # code_generator 应有 function_calling bonus
+        gen = m._jobs.get("code_generator", {})
+        assert "function_calling" in gen.get("bonus", {})
+        # architecture_reviewer 应有 tool_chaining bonus
+        arch = m._jobs.get("architecture_reviewer", {})
+        assert "tool_chaining" in arch.get("bonus", {})
+        # rule_gatekeeper 必须有 max_cost (Cost 轴修复)
+        assert "max_cost" in m._jobs.get("rule_gatekeeper", {})
+
 
 # ── 2. _check_required ────────────────────────────────────
 

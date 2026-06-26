@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] APIError;RateLimitError;CostLimitError
 # [TESTS] tests/test_model_profiler/
 # [A_module] module_id=MOD-RSC_deepseek_v4_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端
@@ -215,6 +216,17 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "appropriate tool. Common tools: Read (read file), Grep (search content), Glob (find files), "
         "Edit (modify file), Write (create file)."
         '\nOutput JSON: {"tool": "ToolName", "reason": "why this tool"}'
+    ),
+    "function_calling": (
+        "You are a function calling expert. Given a task, generate the exact tool call "
+        "with function name and arguments. Tools: Read(file_path), Grep(pattern, path), "
+        "Glob(pattern, path), Edit(file_path, old_str, new_str), Write(file_path, content)."
+        '\nOutput JSON: {"function": "ToolName", "arguments": {"key": "value"}}'
+    ),
+    "tool_chaining": (
+        "You are a tool chaining planner. Given a multi-step task, plan the ordered sequence "
+        "of tool calls. Each step has a tool name. Tools: Read, Grep, Glob, Edit, Write."
+        '\nOutput JSON: {"steps": [{"tool": "ToolName", "purpose": "why"}]}'
     ),
     "impact_analysis": (
         "You are an impact analysis expert. Given a code change and project structure, "

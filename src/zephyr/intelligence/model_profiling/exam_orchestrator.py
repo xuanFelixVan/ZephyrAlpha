@@ -627,7 +627,11 @@ class ExamOrchestrator:
             exp_str = getattr(case, attr, "")
             if not exp_str:
                 continue
-            got = str(result.get(key, "")).lower()
+            # expected_tool 兼容 function_calling 输出的 "function" 键 (P类 Tool 轴)
+            if attr == "expected_tool":
+                got = str(result.get(key) or result.get("function") or "").lower()
+            else:
+                got = str(result.get(key, "")).lower()
             match = 1 if exp_str.lower() in got else 0
             p_rates.append(match)
             r_rates.append(match)
@@ -657,6 +661,55 @@ class ExamOrchestrator:
             p_rates.append(match)
             r_rates.append(match)
             if not match:
+                em_all = 0
+
+        # 4b. P类 Tool 轴字段 (ROADMAP-02)
+        # expected_function_args: function_calling 参数键值匹配
+        if case.expected_function_args:
+            args = result.get("arguments", {})
+            if not isinstance(args, dict):
+                args = {}
+            arg_hits = 0.0
+            for k, v in case.expected_function_args.items():
+                got_v = args.get(k)
+                if got_v is None:
+                    continue
+                if v and str(v).lower() in str(got_v).lower():
+                    arg_hits += 1.0
+                else:
+                    arg_hits += 0.5  # key 存在但 value 不符
+            arg_rate = arg_hits / len(case.expected_function_args)
+            p_rates.append(arg_rate)
+            r_rates.append(arg_rate)
+            if arg_rate < 1.0:
+                em_all = 0
+
+        # expected_tool_sequence: tool_chaining 有序子序列匹配
+        if case.expected_tool_sequence:
+            steps = result.get("steps", [])
+            got_tools: list[str] = []
+            if isinstance(steps, list):
+                for s in steps:
+                    if isinstance(s, dict):
+                        t = s.get("tool") or s.get("function") or ""
+                        if t:
+                            got_tools.append(str(t).lower())
+                    elif isinstance(s, str):
+                        got_tools.append(s.lower())
+            # 检查 expected 是否为 got 的有序子序列
+            seq_hits = 0
+            gi = 0
+            for et in case.expected_tool_sequence:
+                etl = et.lower()
+                while gi < len(got_tools) and got_tools[gi] != etl:
+                    gi += 1
+                if gi < len(got_tools):
+                    seq_hits += 1
+                    gi += 1
+            seq_rate = seq_hits / len(case.expected_tool_sequence)
+            p_rates.append(seq_rate)
+            r_rates.append(seq_rate)
+            if seq_rate < 1.0:
                 em_all = 0
 
         # 5. expected_contains 关键词命中率（兜底，几乎所有 case 都有）

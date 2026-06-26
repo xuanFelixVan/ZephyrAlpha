@@ -222,6 +222,53 @@ class DeterministicJudge:
         else:
             keyword_cov = 0.5  # 无关键词要求时给中性分
 
+        # 1b. Tool 轴字段评分 (P类 ROADMAP-02) — function_args / tool_sequence
+        # function_calling: 检查参数 key 是否出现, value 子串是否命中
+        func_args = getattr(case, "expected_function_args", {}) or {}
+        tool_seq = getattr(case, "expected_tool_sequence", []) or []
+        tool_diag = ""
+        if func_args or tool_seq:
+            parts = []
+            if func_args:
+                arg_hits = 0
+                for k, v in func_args.items():
+                    key_ok = k in text or k.lower() in text_lower
+                    val_ok = bool(v) and (str(v).lower() in text_lower)
+                    if key_ok and val_ok:
+                        arg_hits += 1
+                    elif key_ok:
+                        arg_hits += 0.5
+                arg_score = arg_hits / len(func_args) if func_args else 0.0
+                parts.append(f"args={arg_score:.2f}")
+            else:
+                arg_score = 0.0
+            if tool_seq:
+                # 检查工具是否按序出现 (相对顺序匹配)
+                seq_hits = 0
+                search_from = 0
+                for t in tool_seq:
+                    idx = text_lower.find(t.lower(), search_from)
+                    if idx >= 0:
+                        seq_hits += 1
+                        search_from = idx + len(t)
+                seq_score = seq_hits / len(tool_seq) if tool_seq else 0.0
+                parts.append(f"seq={seq_score:.2f}")
+            else:
+                seq_score = 0.0
+            # 合成 tool_score: 有 args 用 args, 有 seq 用 seq, 都有用均值
+            if func_args and tool_seq:
+                tool_score = 0.5 * arg_score + 0.5 * seq_score
+            elif func_args:
+                tool_score = arg_score
+            else:
+                tool_score = seq_score
+            tool_diag = " ".join(parts)
+            # tool 字段并入 correctness (与 keyword_cov 取均值, 无 keyword 时直接用 tool_score)
+            if expected_contains:
+                keyword_cov = 0.5 * keyword_cov + 0.5 * tool_score
+            else:
+                keyword_cov = tool_score
+
         # 2. 结构完整性 (0-1) — 检查 expected_structure_keys 是否在文本中出现
         expected_keys = getattr(case, "expected_structure_keys", []) or []
         if expected_keys:
@@ -253,6 +300,7 @@ class DeterministicJudge:
             reasoning=(
                 f"deterministic: kw={keyword_cov:.2f} "
                 f"struct={structure_score:.2f} len={length_score:.2f} "
+                f"{'tool[' + tool_diag + '] ' if tool_diag else ''}"
                 f"(len={length})"
             ),
         )
