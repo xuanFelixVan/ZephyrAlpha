@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-111 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.lifecycle.__init__; zephyr.integration.shared_08.io.io_cache; zephyr.integration.shared_08.io.streaming_reader; zephyr.shared.shared_services.infra_06.process_pool; zephyr.infrastructure.lifecycle.lazy_loader; zephyr.integration.shared_08.event_bus; zephyr.governance.audit_orchestrator.bridge
+# [DEPENDENCIES] zephyr.infrastructure.lifecycle.__init__; zephyr.integration.shared_08.io.io_cache; zephyr.integration.shared_08.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.infrastructure.lifecycle.lazy_loader; zephyr.integration.shared_08.event_bus; zephyr.governance.audit_orchestrator.bridge
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 # [STARTUP] imported
 # [MATURITY] production
@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ValueError on unknown strategy
 # [TESTS] tests/lifecycle_manager/test_resource_optimization_engine.py
 # [A_module] module_id=MOD-INF_resource_optimization_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -27,7 +28,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from zephyr.integration.shared_08.io.io_cache import FileCache
-from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool
+from zephyr.shared.infra.process_pool import MCPProcessPool
 
 from .daemon_registry import DaemonRegistry
 from .lazy_loader import LazyModuleRegistry

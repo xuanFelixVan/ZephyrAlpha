@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
 # [MODULE] zephyr.trading.resource_optimization
 # [DOMAIN] D-TRADING
-# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.integration.shared_08.lifecycle.resource_optimization_models; zephyr.integration.shared_08.io.io_cache; zephyr.integration.shared_08.io.streaming_reader; zephyr.shared.shared_services.infra_06.process_pool; zephyr.shared.lifecycle.lazy_loader; zephyr.shared.capacity_calibrator; zephyr.shared.capacity_digital_twin; zephyr.shared.capacity_fingerprint; zephyr.shared.capacity_governance_loop; zephyr.shared.capacity_runbook_generator; zephyr.shared.model_capacity_probe; zephyr.trading.__init__; zephyr.integration.shared_08.event_bus; zephyr.governance.audit_trail.bridge
+# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.integration.shared_08.lifecycle.resource_optimization_models; zephyr.integration.shared_08.io.io_cache; zephyr.integration.shared_08.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.shared.lifecycle.lazy_loader; zephyr.shared.capacity_calibrator; zephyr.shared.capacity_digital_twin; zephyr.shared.capacity_fingerprint; zephyr.shared.capacity_governance_loop; zephyr.shared.capacity_runbook_generator; zephyr.shared.model_capacity_probe; zephyr.trading.__init__; zephyr.integration.shared_08.event_bus; zephyr.governance.audit_trail.bridge
 # [CONSUMERS] runtime.auto_runtime_core; runtime.health_monitor; shared.lifecycle (re-export)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_resource_optimization | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 resource_optimization.py - MAPE-K autonomic resource optimization engine
@@ -67,7 +68,7 @@ from zephyr.shared.capacity_governance_loop import CapacityGovernanceLoop
 from zephyr.shared.capacity_runbook_generator import CapacityRunbookGenerator
 from zephyr.shared.lifecycle.lazy_loader import LazyModuleRegistry
 from zephyr.shared.model_capacity_probe import ModelCapacityProbe
-from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool
+from zephyr.shared.infra.process_pool import MCPProcessPool
 
 __all__ = [
     "CacheStats",

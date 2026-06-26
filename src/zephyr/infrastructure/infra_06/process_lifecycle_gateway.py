@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §2.10
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.process_lifecycle_gateway
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.shared.shared_services.infra_06.process_pool
+# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.shared.infra.process_pool
 # [CONSUMERS] zephyr.trading.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Server DAG)
 # [STARTUP] imported
 # [MATURITY] production
@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] launch 返回 None 表示启动失败（调用方处理）；launch_daemon 返回 bool 表示成功/失败
 # [TESTS] tests/zephyr/shared/infra/test_process_lifecycle_gateway.py
 # [A_module] module_id=MOD-INF_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ProcessLifecycleGateway — 进程生命周期统一入口
@@ -34,7 +35,7 @@ from __future__ import annotations
 import logging
 
 from zephyr.integration.shared_08.lifecycle.daemon_registry import DaemonRegistry
-from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool, PooledProcess
+from zephyr.shared.infra.process_pool import MCPProcessPool, PooledProcess
 
 __all__ = ["ProcessLifecycleGateway"]
 

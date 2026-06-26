@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] | scripts/governance/apply_depgraph.py | §1
 [MODULE] scripts.governance.apply_depgraph
@@ -1064,6 +1065,61 @@ def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
         except Exception as e:
             conn.rollback()
             print(f"ERROR: remove_design_node失败: {e}", file=sys.stderr)
+            return False
+        finally:
+            conn.close()
+
+
+def deprecate_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+    """
+    软废弃任意节点（含 production）——专用于孤儿节点清理。
+
+    与 remove_design_node 的区别：
+    - remove_design_node 仅限 design_maturity='design' 节点
+    - deprecate_node 不限制 design_maturity，绕过 5 态状态机
+
+    使用场景：物理文件已删除的孤儿节点（如生成器删除后遗留的 proxy 文件、
+    真源归一后的废弃副本），需要将 depgraph 节点标记为 deprecated 以保持
+    depgraph 与磁盘一致。
+
+    流程：
+    1. 验证节点存在
+    2. 验证当前 build_status 不是已 deprecated（幂等保护）
+    3. 检查边引用，有则警告（不阻断）
+    4. 软删除（build_status='deprecated'）
+    """
+    with _db_write_lock(db_path=db_path, task="deprecate_node"):
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT node_id, file_path, design_maturity, build_status FROM nodes WHERE node_id=?",
+                (node_id,),
+            ).fetchone()
+            if not row:
+                print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
+                return False
+            if row[3] == "deprecated":
+                print(f"[SKIP] node_id={node_id} 已是 deprecated（幂等）", file=sys.stderr)
+                return True
+
+            # 检查边引用
+            edge_count = conn.execute(
+                "SELECT COUNT(*) FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id)
+            ).fetchone()[0]
+            if edge_count > 0:
+                print(f"WARNING: node_id={node_id} 有{edge_count}条边引用（软废弃不删边）", file=sys.stderr)
+
+            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=?", (node_id,))
+            conn.commit()
+            print(
+                f"[OK] node_id={node_id} file_path={row[1]} design_maturity={row[2]}: "
+                f"软废弃（build_status {row[3]} -> deprecated）",
+                file=sys.stderr,
+            )
+            return True
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: deprecate_node失败: {e}", file=sys.stderr)
             return False
         finally:
             conn.close()
@@ -2858,6 +2914,12 @@ def main() -> None:
     )
     parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
     parser.add_argument(
+        "--deprecate-node",
+        type=int,
+        metavar="NODE_ID",
+        help="软废弃任意节点（含production）: NODE_ID — 专用于孤儿节点清理，绕过5态状态机",
+    )
+    parser.add_argument(
         "--delete-design-edge", type=int, metavar="EDGE_ID", help="删除设计态边（仅限dep_maturity=design）: EDGE_ID"
     )
     parser.add_argument(
@@ -3070,6 +3132,12 @@ def main() -> None:
 
     if args.remove_design_node is not None:
         ok = remove_design_node(args.remove_design_node)
+        if not ok:
+            sys.exit(4)
+        return
+
+    if args.deprecate_node is not None:
+        ok = deprecate_node(args.deprecate_node)
         if not ok:
             sys.exit(4)
         return

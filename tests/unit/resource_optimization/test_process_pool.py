@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """
@@ -18,7 +19,7 @@ TASK-INF-0142 Phase 4 verification.
 import sys
 import time
 
-from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool
+from zephyr.shared.infra.process_pool import MCPProcessPool
 
 
 class TestProcessPoolBasic:
