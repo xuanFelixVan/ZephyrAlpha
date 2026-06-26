@@ -210,7 +210,7 @@ class ActivateGate:
         classification = fm.get("classification", "UNKNOWN")
         priority = fm.get("priority", "P2")
 
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL).strip()
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL).strip()
         summary = body[:300] + "..." if len(body) > 300 else body
 
         return (
@@ -230,7 +230,7 @@ class ActivateGate:
         )
 
     def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
-        m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
         if not m:
             return None
         try:
@@ -264,7 +264,7 @@ class ActivateGate:
         enriched_fm["activated_at"] = datetime.now(_UTC).isoformat()
         enriched_fm["activation_status"] = "active"
 
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL)
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL)
         fm_yaml = yaml.dump(enriched_fm, allow_unicode=True, default_flow_style=False)
         enriched_text = f"---\n{fm_yaml}---\n{body}"
 

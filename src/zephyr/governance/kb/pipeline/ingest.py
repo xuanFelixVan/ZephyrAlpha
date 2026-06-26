@@ -219,13 +219,13 @@ class IngestGate:
             return None
         if not text.startswith("---"):
             return "Markdown 文件缺少 frontmatter（必须以 --- 开头）"
-        m = re.match(r"^---\n.*?\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n.*?\r?\n---", text, re.DOTALL)
         if not m:
             return "Markdown 文件 frontmatter 格式不正确（缺少闭合 ---）"
         return None
 
     def _parse_frontmatter(self, text: str, ext: str = ".md") -> dict[str, Any] | None:
-        m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
         if m:
             try:
                 return yaml.safe_load(m.group(1)) or {}
@@ -239,7 +239,7 @@ class IngestGate:
         return None
 
     def _check_content_length(self, text: str) -> str | None:
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL)
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL)
         body_len = len(body.strip())
         if body_len < MIN_CONTENT_CHARS:
             return f"内容过短（{body_len} 字符 < {MIN_CONTENT_CHARS}）"

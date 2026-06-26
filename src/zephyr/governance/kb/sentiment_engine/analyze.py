@@ -244,7 +244,7 @@ class AnalyzeGate:
         return conditions
 
     def _assess_complexity(self, text: str) -> str:
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL).strip()
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL).strip()
         code_blocks = len(re.findall(r"```", body))
         has_mermaid = bool(re.search(r"```mermaid", body))
         has_tables = bool(re.search(r"\|.*\|.*\|", body))
@@ -270,7 +270,7 @@ class AnalyzeGate:
         return "low"
 
     def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
-        m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
         if not m:
             return None
         try:
@@ -309,7 +309,7 @@ class AnalyzeGate:
         enriched_fm["activation_conditions"] = activation_conditions
         enriched_fm["implementation_complexity"] = complexity
 
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL)
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL)
         fm_yaml = yaml.dump(enriched_fm, allow_unicode=True, default_flow_style=False)
         enriched_text = f"---\n{fm_yaml}---\n{body}"
 

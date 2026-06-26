@@ -237,7 +237,7 @@ class ExtractGate:
         return max_num + 1
 
     def _extract_fields(self, text: str, fields: list[str]) -> dict[str, str]:
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL).strip()
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL).strip()
         result: dict[str, str] = {}
 
         for field_name in fields:
@@ -352,7 +352,7 @@ class ExtractGate:
         return "\n".join(parts)
 
     def _parse_frontmatter(self, text: str) -> dict[str, Any] | None:
-        m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+        m = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
         if not m:
             return None
         try:

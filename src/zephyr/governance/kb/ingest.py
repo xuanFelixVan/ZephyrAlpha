@@ -262,7 +262,7 @@ class IngestGate:
         return None
 
     def _check_content_length(self, text: str) -> str | None:
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL)
+        body = re.sub(r"^---\r?\n.*?\r?\n---\r?\n?", "", text, flags=re.DOTALL)
         body_len = len(body.strip())
         if body_len < MIN_CONTENT_CHARS:
             return f"内容过短（{body_len} 字符 < {MIN_CONTENT_CHARS}）"
