@@ -3,6 +3,7 @@ module_id: KE-3412---runtime-o-000
 title: §8A 6 Core Services — Runtime Operations / 6 大核心服务运维治理
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §8A 6 Core Services — Runtime Operations / 6 大核心服务运维治理

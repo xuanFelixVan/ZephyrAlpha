@@ -3,6 +3,7 @@ module_id: KE-508----hot-path-000
 title: 7.5.2 前端 Hot Path 的特殊性与硬约束
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.5.2 前端 Hot Path 的特殊性与硬约束

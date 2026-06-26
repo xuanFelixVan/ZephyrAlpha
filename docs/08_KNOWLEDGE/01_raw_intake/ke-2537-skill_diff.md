@@ -4,6 +4,7 @@ status: active
 title: 7.3 Skill Diff 基线
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 Skill Diff 基线

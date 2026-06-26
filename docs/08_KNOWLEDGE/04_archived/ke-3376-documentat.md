@@ -3,6 +3,7 @@ module_id: KE-3255
 title: 3.11 安全服务故障处置
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.11 安全服务故障处置

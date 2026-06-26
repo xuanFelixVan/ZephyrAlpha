@@ -3,6 +3,7 @@ module_id: KE-2192
 title: 4. Construction Phase Mapping (§10)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Construction Phase Mapping (§10)

@@ -4,6 +4,7 @@ status: active
 title: CT-DB-001：task_repo CRUD 契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # CT-DB-001：task_repo CRUD 契约

@@ -3,6 +3,7 @@ module_id: KE-4406-------29-files----------000
 title: Python 代码骨架 (29 files) —— 蓝图 §4 全量任务卡追溯
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Python 代码骨架 (29 files) —— 蓝图 §4 全量任务卡追溯

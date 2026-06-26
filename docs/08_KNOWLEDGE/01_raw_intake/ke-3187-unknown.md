@@ -4,6 +4,7 @@ status: active
 title: 决策背景
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 决策背景

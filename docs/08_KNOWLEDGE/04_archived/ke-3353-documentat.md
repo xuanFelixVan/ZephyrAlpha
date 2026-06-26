@@ -3,6 +3,7 @@ module_id: KE-3232
 title: 2.8 元层（治理 / 文档 / 协议）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.8 元层（治理 / 文档 / 协议）

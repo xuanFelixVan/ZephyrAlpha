@@ -3,6 +3,7 @@ module_id: KE-3820
 title: 11.5 施工完成标准
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.5 施工完成标准

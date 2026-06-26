@@ -3,6 +3,7 @@ module_id: KE-3335----tech-radar--------archi-001
 title: 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml

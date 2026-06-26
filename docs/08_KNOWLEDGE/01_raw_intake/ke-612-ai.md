@@ -3,6 +3,7 @@ module_id: KE-550
 title: 9.1 AI 幻觉补全接口/路径
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 AI 幻觉补全接口/路径

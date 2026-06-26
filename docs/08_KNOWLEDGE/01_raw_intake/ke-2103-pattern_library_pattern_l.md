@@ -4,6 +4,7 @@ status: active
 title: 3. Pattern Library — pattern_library.py (§2.3)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Pattern Library — pattern_library.py (§2.3)

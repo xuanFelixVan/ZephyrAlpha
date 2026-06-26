@@ -3,6 +3,7 @@ module_id: KE-1035
 title: 8.3 NASA Kaiaulu 方法论对标
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 NASA Kaiaulu 方法论对标

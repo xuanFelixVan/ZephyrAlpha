@@ -3,6 +3,7 @@ module_id: KE-3075
 title: test_stop_loss.py（14 tests）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # test_stop_loss.py（14 tests）

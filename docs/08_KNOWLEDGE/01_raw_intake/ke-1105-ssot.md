@@ -3,6 +3,7 @@ module_id: KE-1020
 title: 8. SSoT 声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. SSoT 声明

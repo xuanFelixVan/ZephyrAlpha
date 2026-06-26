@@ -4,6 +4,7 @@ status: active
 title: 2.30 人因工程——Owner状态感知与决策质量监控
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.30 人因工程——Owner状态感知与决策质量监控

@@ -3,6 +3,7 @@ module_id: KE-3884----p0--------5-003
 title: 13.4 Protocol 解耦 P0（关键，遗漏 #5 对应）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.4 Protocol 解耦 P0（关键，遗漏 #5 对应）

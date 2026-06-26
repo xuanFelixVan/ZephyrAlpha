@@ -4,6 +4,7 @@ status: active
 title: 2.22 意图绑定访问控制（IBAC + 横切面D——决策 D-018-20）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.22 意图绑定访问控制（IBAC + 横切面D——决策 D-018-20）

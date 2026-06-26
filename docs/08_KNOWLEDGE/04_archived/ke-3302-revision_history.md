@@ -3,6 +3,7 @@ module_id: KE-3302
 title: 13. Revision history / 修订记录
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. Revision history / 修订记录

@@ -4,6 +4,7 @@ status: active
 title: === Stability Transition Protocol 扩展字段（强制）===
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === Stability Transition Protocol 扩展字段（强制）===

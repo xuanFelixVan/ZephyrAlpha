@@ -3,6 +3,7 @@ module_id: KE-3257------registry-004
 title: 3.2 登记表层（Registry）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 登记表层（Registry）

@@ -3,6 +3,7 @@ module_id: KE-2393
 title: 6.5 关键决策建议
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.5 关键决策建议

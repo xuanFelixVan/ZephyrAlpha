@@ -4,6 +4,7 @@ status: active
 title: 3.5 治理层（09-GOV）三平面归属（同步批次）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 治理层（09-GOV）三平面归属（同步批次）

@@ -3,6 +3,7 @@ module_id: KE-4089-----sessio-000
 title: 4. beta ad (3 Files) — 跨Session学习
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. beta ad (3 Files) — 跨Session学习

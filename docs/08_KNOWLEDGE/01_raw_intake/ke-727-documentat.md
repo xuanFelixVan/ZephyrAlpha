@@ -4,6 +4,7 @@ status: active
 title: 五、变更记录
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 五、变更记录

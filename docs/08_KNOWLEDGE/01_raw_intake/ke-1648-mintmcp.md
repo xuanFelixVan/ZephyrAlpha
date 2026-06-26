@@ -3,6 +3,7 @@ module_id: KE-1558
 title: 16.3 MintMCP 企业级运维
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16.3 MintMCP 企业级运维

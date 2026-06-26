@@ -4,6 +4,7 @@ status: active
 title: 6.3 具体实施
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 具体实施

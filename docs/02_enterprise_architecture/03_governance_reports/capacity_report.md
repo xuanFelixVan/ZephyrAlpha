@@ -3,7 +3,7 @@ doc_type: capacity_report
 title: 域容量报告
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示各功能域的模块数量与容量上限对比，识别超容域和接近超容域，为域拆分决策提供依据。
 
 > 本文档由 generate_capacity_report.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:21
+> 最后更新: 2026-06-26 18:55:41
 > 数据源: depgraph.db domains表 + nodes表
 
 ## 统计概览
@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |
 |------|--------|:---:|:---:|:---:|
-| D-GOV_AUDIT_TESTS | audit_test_suite | 142 | 150 | 94.7% |
+| D-AUDITTEST | audit_test_suite | 142 | 150 | 94.7% |
 | D-INFRA_RUNTIME | 运行时集成 | 139 | 150 | 92.7% |
 | D-SECURITY | 对抗验证 | 132 | 150 | 88.0% |
 
@@ -47,12 +47,12 @@ ttl: permanent
 | D-EXEC_SIM | 执行仿真 | L2_domain | 150 |
 | D-EX_SOR | 执行路由 | L2_domain | 150 |
 | D-GOV-REPAIR | rollback |  | 150 |
-| D-INTEGRATION-GATEWAY | mcp_servers | L1_foundation | 150 |
+| D-INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 150 |
 | D-ML_SERVE | 推理 | L2_domain | 150 |
 | D-ML_TRAIN | 训练 | L2_domain | 150 |
 | D-PF_ALLOC | 组合分配 | L2_domain | 150 |
 | D-POSITION | 仓位管理 | L2_domain | 150 |
-| D-SECURITY-LLM | llm_defense | L1_foundation | 150 |
+| D-SECURITY_LLM | llm_defense | L1_foundation | 150 |
 | D-SELL_DECISION | 卖出决策 | L2_domain | 150 |
 | D-SIGLEGACY | 信号遗留设计态 | L2_domain | 150 |
 | D-SIGQC | 信号质量控制 | L2_domain | 150 |
@@ -63,6 +63,7 @@ ttl: permanent
 |------|--------|--------|:---:|:---:|:---:|------|
 | D-ALT_DATA | 另类数据 | L1_foundation | 1 | 150 | 0.7% | 正常 |
 | D-ASHARE_SIGNAL | A股特色信号 | L2_domain | 0 | 150 | 0.0% | 空 |
+| D-AUDITTEST | audit_test_suite | L2_domain | 142 | 150 | 94.7% | 接近超容 |
 | D-AUTONOMY_CORE | 自治核心 | L1_foundation | 2 | 150 | 1.3% | 正常 |
 | D-AUTONOMY_PERM | 自治保护 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D-BACKTEST | 回测 | L2_domain | 0 | 150 | 0.0% | 空 |
@@ -79,22 +80,21 @@ ttl: permanent
 | D-FACTOR | 因子 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D-FRONTEND | 前端 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D-FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 4 | 150 | 2.7% | 正常 |
-| D-GOV-DOCS | architecture_docs | L2_domain | 100 | 150 | 66.7% | 正常 |
-| D-GOV-ENFORCEMENT | rule_enforcement | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D-GOV-REPAIR | rollback |  | 0 | 150 | 0.0% | 空 |
-| D-GOV-SCRIPTS | code_dedup | L2_domain | 26 | 150 | 17.3% | 正常 |
 | D-GOVERNANCE | 生命周期管理 | L2_domain | 117 | 150 | 78.0% | 正常 |
 | D-GOV_AUDIT | 审计追踪 | L2_domain | 54 | 150 | 36.0% | 正常 |
-| D-GOV_AUDIT_TESTS | audit_test_suite | L2_domain | 142 | 150 | 94.7% | 接近超容 |
+| D-GOV_DOCS | architecture_docs | L2_domain | 100 | 150 | 66.7% | 正常 |
 | D-GOV_DRIFT | 漂移检测 | L2_domain | 9 | 150 | 6.0% | 正常 |
+| D-GOV_ENFORCEMENT | rule_enforcement | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D-GOV_RULE | 规则治理 | L2_domain | 11 | 150 | 7.3% | 正常 |
+| D-GOV_SCRIPTS | code_dedup | L2_domain | 26 | 150 | 17.3% | 正常 |
 | D-INFRA_A2A | a2a_communication | L0_infrastructure | 114 | 150 | 76.0% | 正常 |
 | D-INFRA_OPS | 基础设施运维 | L0_infrastructure | 7 | 150 | 4.7% | 正常 |
 | D-INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 107 | 150 | 71.3% | 正常 |
 | D-INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 139 | 150 | 92.7% | 接近超容 |
 | D-INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 51 | 150 | 34.0% | 正常 |
 | D-INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
-| D-INTEGRATION-GATEWAY | mcp_servers | L1_foundation | 0 | 150 | 0.0% | 空 |
+| D-INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D-INTELLIGENCE | 上下文管理 | L2_domain | 18 | 150 | 12.0% | 正常 |
 | D-KNOWLEDGE | 知识管理 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D-MKT_DATA | 行情数据 | L1_foundation | 1 | 150 | 0.7% | 正常 |
@@ -107,7 +107,7 @@ ttl: permanent
 | D-REPORTING | 报告 | L1_foundation | 1 | 150 | 0.7% | 正常 |
 | D-RISK | 风控 | L2_domain | 9 | 150 | 6.0% | 正常 |
 | D-SECURITY | 对抗验证 | L1_foundation | 132 | 150 | 88.0% | 接近超容 |
-| D-SECURITY-LLM | llm_defense | L1_foundation | 0 | 150 | 0.0% | 空 |
+| D-SECURITY_LLM | llm_defense | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D-SELL_DECISION | 卖出决策 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D-SHARED | 共享服务 | L1_foundation | 94 | 150 | 62.7% | 正常 |
 | D-SIGLEGACY | 信号遗留设计态 | L2_domain | 0 | 150 | 0.0% | 空 |

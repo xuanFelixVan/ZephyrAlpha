@@ -4,6 +4,7 @@ status: active
 title: 6. 盲点发现与靶心设计 v1.0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 盲点发现与靶心设计 v1.0

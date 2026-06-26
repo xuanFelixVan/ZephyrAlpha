@@ -4,6 +4,7 @@ status: active
 title: 4.1 module_id 即地址
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 module_id 即地址

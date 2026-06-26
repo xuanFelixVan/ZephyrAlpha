@@ -3,6 +3,7 @@ module_id: KE-3703
 title: MLC-001：阶段转换必须满足前置条件
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MLC-001：阶段转换必须满足前置条件

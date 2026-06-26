@@ -4,6 +4,7 @@ status: active
 title: 9.1 豁免资格
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 豁免资格

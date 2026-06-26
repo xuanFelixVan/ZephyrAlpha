@@ -3,6 +3,7 @@ module_id: KE-218
 title: 2.8 frontmatter 禁止行为
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.8 frontmatter 禁止行为

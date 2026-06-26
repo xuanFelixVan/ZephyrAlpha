@@ -4,6 +4,7 @@ status: active
 title: 一、层架构权威 (Layer Authority)
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 一、层架构权威 (Layer Authority)

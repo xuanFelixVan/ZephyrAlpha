@@ -4,6 +4,7 @@ status: active
 title: Trae 假死 / 卡住
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Trae 假死 / 卡住

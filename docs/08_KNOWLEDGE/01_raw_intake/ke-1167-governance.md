@@ -3,6 +3,7 @@ module_id: KE-1082
 title: AUD-002：审计日志不可篡改
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AUD-002：审计日志不可篡改

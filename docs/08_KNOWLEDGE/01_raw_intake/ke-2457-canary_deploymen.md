@@ -4,6 +4,7 @@ status: active
 title: 6.11 检测器金丝雀部署（Canary Deployment）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.11 检测器金丝雀部署（Canary Deployment）

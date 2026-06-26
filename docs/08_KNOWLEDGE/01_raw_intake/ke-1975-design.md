@@ -4,6 +4,7 @@ status: active
 title: 2.32 密码学防篡改审计追踪 + 取证就绪（决策 D-022-22）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.32 密码学防篡改审计追踪 + 取证就绪（决策 D-022-22）

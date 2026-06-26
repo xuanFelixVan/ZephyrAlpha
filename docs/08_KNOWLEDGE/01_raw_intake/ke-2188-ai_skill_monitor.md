@@ -4,6 +4,7 @@ status: active
 title: 3.3 #23: AISkillMonitor (M-28)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 #23: AISkillMonitor (M-28)

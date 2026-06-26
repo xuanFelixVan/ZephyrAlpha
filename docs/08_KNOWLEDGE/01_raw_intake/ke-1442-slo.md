@@ -4,6 +4,7 @@ status: active
 title: 10.2 冷启动 SLO（首次启动 / 重启后首次调用，补充）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 冷启动 SLO（首次启动 / 重启后首次调用，补充）

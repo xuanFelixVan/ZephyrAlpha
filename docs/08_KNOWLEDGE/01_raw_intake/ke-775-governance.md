@@ -4,6 +4,7 @@ status: active
 title: 一.1.3 选择决策树
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 一.1.3 选择决策树

@@ -3,6 +3,7 @@ module_id: KE-3728
 title: stable entry_criteria
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # stable entry_criteria

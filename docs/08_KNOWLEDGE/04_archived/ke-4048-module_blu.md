@@ -3,6 +3,7 @@ module_id: KE-3895
 title: 盲点覆盖矩阵（130条全覆盖）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 盲点覆盖矩阵（130条全覆盖）

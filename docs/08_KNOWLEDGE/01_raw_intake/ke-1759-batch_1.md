@@ -4,6 +4,7 @@ status: active
 title: 2.1 Batch 1 — 基础设施层（15 条）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Batch 1 — 基础设施层（15 条）

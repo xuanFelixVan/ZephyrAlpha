@@ -3,6 +3,7 @@ module_id: KE-4155
 title: 6. beta ab (3 Files) — 氛围编程集成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. beta ab (3 Files) — 氛围编程集成

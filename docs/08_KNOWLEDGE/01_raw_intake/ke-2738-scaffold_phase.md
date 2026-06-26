@@ -4,6 +4,7 @@ status: active
 title: DB-025-0018：Scaffold Phase 施工验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0018：Scaffold Phase 施工验证

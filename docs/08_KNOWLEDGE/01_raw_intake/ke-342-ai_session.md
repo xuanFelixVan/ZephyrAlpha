@@ -4,6 +4,7 @@ status: active
 title: 4.1 新 AI session 冷启动（所有任务通用）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 新 AI session 冷启动（所有任务通用）

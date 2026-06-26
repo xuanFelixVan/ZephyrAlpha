@@ -4,6 +4,7 @@ status: active
 title: 4.3 PIT 查询的实现路径（架构原则，非具体技术）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 PIT 查询的实现路径（架构原则，非具体技术）

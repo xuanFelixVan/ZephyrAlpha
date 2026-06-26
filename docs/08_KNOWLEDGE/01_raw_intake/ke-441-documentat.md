@@ -3,6 +3,7 @@ module_id: KE-397
 title: 5.1 选型矩阵
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 选型矩阵

@@ -3,6 +3,7 @@ module_id: KE-998
 title: 7. 违规处理
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 违规处理

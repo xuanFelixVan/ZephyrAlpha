@@ -3,6 +3,7 @@ module_id: KE-669
 status: active
 title: Ke Governance                     003
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 --___________-----003

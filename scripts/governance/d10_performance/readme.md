@@ -1,7 +1,7 @@
 ---
 module_id: GOV-072
 title: "d10_performance 维度 — 规划中"
-doc_type: governance_readme
+doc_type: readme
 status: planned
 version: "0.1.0"
 owner: ZephyrAlpha-Owner

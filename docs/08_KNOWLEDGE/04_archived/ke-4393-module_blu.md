@@ -3,6 +3,7 @@ module_id: KE-4230
 title: 9. 对标清单
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 对标清单

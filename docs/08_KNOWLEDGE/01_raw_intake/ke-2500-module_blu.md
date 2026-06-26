@@ -4,6 +4,7 @@ status: active
 title: 6.9 漂移演练手册自动生成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.9 漂移演练手册自动生成

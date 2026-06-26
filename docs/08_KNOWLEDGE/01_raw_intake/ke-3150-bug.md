@@ -3,6 +3,7 @@ module_id: KE-3044
 title: 发现的 Bug 与修复
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 发现的 Bug 与修复

@@ -3,6 +3,7 @@ module_id: KE-1128
 title: DRP-001：合规相关数据不得提前删除
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DRP-001：合规相关数据不得提前删除

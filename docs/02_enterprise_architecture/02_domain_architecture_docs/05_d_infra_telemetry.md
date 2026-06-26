@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-INFRA_TELEMETRY observability_profiling架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 observability_profiling（D-INFRA_TELEMETRY）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -32,6 +32,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 51 | Production Modules | 51 |
 | 容量 | 51/150 (正常) | Capacity | 51/150 (正常) |
+| 描述 | 系统遥测采集(system_telemetry) | Description | 系统遥测采集(system_telemetry) |
 
 ## 模块清单 / Module List
 

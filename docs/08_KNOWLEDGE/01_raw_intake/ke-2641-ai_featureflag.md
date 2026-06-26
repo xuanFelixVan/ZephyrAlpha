@@ -4,6 +4,7 @@ status: active
 title: AI 施工约定（FeatureFlag）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AI 施工约定（FeatureFlag）

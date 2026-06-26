@@ -4,6 +4,7 @@ status: active
 title: 6.3 Cold Start——历史操作回溯
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 Cold Start——历史操作回溯

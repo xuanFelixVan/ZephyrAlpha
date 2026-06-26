@@ -3,6 +3,7 @@ module_id: KE-3708
 title: 强制集成清单（每项新功能产出后 MUST 执行）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 强制集成清单（每项新功能产出后 MUST 执行）

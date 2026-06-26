@@ -4,6 +4,7 @@ status: active
 title: BackpressurePropagation（背压传导）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # BackpressurePropagation（背压传导）

@@ -3,6 +3,7 @@ module_id: KE-4404
 title: 施工文件对照（Phase scaffold）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 施工文件对照（Phase scaffold）

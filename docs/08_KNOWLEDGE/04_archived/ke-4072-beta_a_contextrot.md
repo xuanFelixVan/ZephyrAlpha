@@ -3,6 +3,7 @@ module_id: KE-3918--------contextrot--000
 title: 15.1 beta a — 核心缺失：ContextRot + Provenance + Eviction
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 beta a — 核心缺失：ContextRot + Provenance + Eviction

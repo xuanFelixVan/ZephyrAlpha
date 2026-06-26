@@ -3,6 +3,7 @@ module_id: KE-4453
 title: Phase C 实现清单
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase C 实现清单

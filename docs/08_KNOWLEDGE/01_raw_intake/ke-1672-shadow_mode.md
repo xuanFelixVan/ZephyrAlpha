@@ -4,6 +4,7 @@ status: active
 title: 18.1 Shadow Mode 三级激活体系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18.1 Shadow Mode 三级激活体系

@@ -4,6 +4,7 @@ status: active
 title: 18.3 数据库作为代码（Database-as-Code）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18.3 数据库作为代码（Database-as-Code）

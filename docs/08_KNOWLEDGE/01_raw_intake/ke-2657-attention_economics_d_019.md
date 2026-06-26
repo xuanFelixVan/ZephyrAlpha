@@ -4,6 +4,7 @@ status: active
 title: Attention Economics (D-019-20)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Attention Economics (D-019-20)

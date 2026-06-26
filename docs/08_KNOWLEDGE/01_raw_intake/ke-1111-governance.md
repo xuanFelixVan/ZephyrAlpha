@@ -3,6 +3,7 @@ module_id: KE-1026
 title: 8. 变更记录
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 变更记录

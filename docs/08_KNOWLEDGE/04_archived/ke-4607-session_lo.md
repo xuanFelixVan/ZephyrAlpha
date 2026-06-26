@@ -3,6 +3,7 @@ module_id: KE-4441
 title: 4.1 触发点
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 触发点

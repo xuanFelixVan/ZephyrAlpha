@@ -4,6 +4,7 @@ status: active
 title: permission_mode_manager.py — 新增文件（横切面D 组件）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # permission_mode_manager.py — 新增文件（横切面D 组件）

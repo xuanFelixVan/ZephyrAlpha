@@ -4,6 +4,7 @@ status: active
 title: P1-30：status 字段值 `active` 不在有效状态集合中
 category: test_coverage
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # P1-30：status 字段值 `active` 不在有效状态集合中

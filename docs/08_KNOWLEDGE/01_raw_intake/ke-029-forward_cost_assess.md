@@ -4,6 +4,7 @@ status: active
 title: 6.3 未来成本评估（Forward Cost Assessment）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 未来成本评估（Forward Cost Assessment）

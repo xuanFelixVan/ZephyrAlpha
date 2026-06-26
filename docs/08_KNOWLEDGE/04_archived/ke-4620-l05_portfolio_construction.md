@@ -3,6 +3,7 @@ module_id: KE-4620
 title: L05 Portfolio Construction（2 个新文件）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L05 Portfolio Construction（2 个新文件）

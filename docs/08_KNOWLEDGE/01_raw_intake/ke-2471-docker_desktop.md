@@ -4,6 +4,7 @@ status: active
 title: 6.2 Docker Desktop 沙箱（升级路径）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 Docker Desktop 沙箱（升级路径）

@@ -3,6 +3,7 @@ module_id: KE-3859
 title: 13. 修订记录
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 修订记录

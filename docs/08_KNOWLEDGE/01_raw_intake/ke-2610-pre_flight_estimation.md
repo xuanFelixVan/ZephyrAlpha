@@ -4,6 +4,7 @@ status: active
 title: 9.2 Pre-flight Estimation
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 Pre-flight Estimation

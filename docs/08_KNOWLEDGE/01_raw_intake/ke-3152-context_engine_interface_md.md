@@ -4,6 +4,7 @@ status: active
 title: 由 context-engine-interface.md §3.5 约束
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 由 context-engine-interface.md §3.5 约束

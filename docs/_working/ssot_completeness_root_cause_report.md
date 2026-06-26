@@ -1,6 +1,6 @@
 ---
 title: SSoT 完整性与改名传播闭环病根调研与裁定报告
-doc_type: governance_report
+doc_type: audit_report
 status: active
 ttl: task_bound
 created_by: agent

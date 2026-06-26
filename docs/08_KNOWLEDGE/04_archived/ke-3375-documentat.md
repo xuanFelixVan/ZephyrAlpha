@@ -3,6 +3,7 @@ module_id: KE-3254
 title: 3.10 异步架构约束
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.10 异步架构约束

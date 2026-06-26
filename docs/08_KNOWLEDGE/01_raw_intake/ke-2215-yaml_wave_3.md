@@ -4,6 +4,7 @@ status: active
 title: 3.5 策略树 YAML 设计（顶层设计——Wave 3 正式落地，参数在 config.py 中从 Wave 1 开始逐步配置）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 策略树 YAML 设计（顶层设计——Wave 3 正式落地，参数在 config.py 中从 Wave 1 开始逐步配置）

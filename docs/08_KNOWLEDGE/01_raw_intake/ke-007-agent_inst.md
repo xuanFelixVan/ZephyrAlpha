@@ -4,6 +4,7 @@ status: active
 title: 5.2.2 十维审计清单：每次施工后必须过一遍
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2.2 十维审计清单：每次施工后必须过一遍

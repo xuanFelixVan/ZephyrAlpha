@@ -4,6 +4,7 @@ status: active
 title: v0.14.0 — Resilience + Security + Drift (TASK-0004, R187-R202)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # v0.14.0 — Resilience + Security + Drift (TASK-0004, R187-R202)

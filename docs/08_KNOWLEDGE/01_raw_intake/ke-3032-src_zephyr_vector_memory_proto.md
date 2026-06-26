@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/vector-memory/protocol.py (experimental 产出)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/vector-memory/protocol.py (experimental 产出)

@@ -4,6 +4,7 @@ status: active
 title: 2.18 合规映射 —— 法律护栏
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.18 合规映射 —— 法律护栏

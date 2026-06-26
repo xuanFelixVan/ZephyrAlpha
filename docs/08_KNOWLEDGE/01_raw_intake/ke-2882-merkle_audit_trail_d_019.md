@@ -4,6 +4,7 @@ status: active
 title: Merkle Audit Trail (D-019-59)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Merkle Audit Trail (D-019-59)

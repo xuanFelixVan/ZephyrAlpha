@@ -3,6 +3,7 @@ module_id: KE-4443
 title: 5.3 降级路径
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 降级路径

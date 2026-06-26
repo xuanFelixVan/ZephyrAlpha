@@ -4,6 +4,7 @@ status: active
 title: 2.19 缓存一致性——权限变更推送失效 + 降级攻击防护（决策 D-018-17）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.19 缓存一致性——权限变更推送失效 + 降级攻击防护（决策 D-018-17）

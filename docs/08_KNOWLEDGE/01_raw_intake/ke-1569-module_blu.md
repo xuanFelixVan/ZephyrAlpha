@@ -4,6 +4,7 @@ status: active
 title: 13.3 氛围编程社区 — 五大上下文模式
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.3 氛围编程社区 — 五大上下文模式

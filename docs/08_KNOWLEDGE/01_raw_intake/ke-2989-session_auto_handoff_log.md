@@ -4,6 +4,7 @@ status: active
 title: 每次 session 结束时由 auto-handoff-log.py 自动生成（zero Owner action）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 每次 session 结束时由 auto-handoff-log.py 自动生成（zero Owner action）

@@ -4,6 +4,7 @@ status: active
 title: 2.4 V4 审计抽样
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 V4 审计抽样

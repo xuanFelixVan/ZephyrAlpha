@@ -3,6 +3,7 @@ module_id: KE-3439------endgame-001
 title: D-TDEBT：技术债务（Endgame 状态）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-TDEBT：技术债务（Endgame 状态）

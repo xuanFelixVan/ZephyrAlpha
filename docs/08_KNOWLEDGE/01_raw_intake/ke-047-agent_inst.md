@@ -4,6 +4,7 @@ status: active
 title: 8. 规则加载策略 — 三层记忆模型
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 规则加载策略 — 三层记忆模型

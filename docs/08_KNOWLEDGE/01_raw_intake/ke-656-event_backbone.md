@@ -4,6 +4,7 @@ status: active
 title: 触发条件（何时引入 Event Backbone）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 触发条件（何时引入 Event Backbone）

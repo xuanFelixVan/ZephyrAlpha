@@ -4,6 +4,7 @@ status: active
 title: IRN-009：双工具互斥（铁律9）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-009：双工具互斥（铁律9）

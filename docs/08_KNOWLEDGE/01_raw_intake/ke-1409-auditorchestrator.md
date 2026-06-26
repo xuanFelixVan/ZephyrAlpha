@@ -4,6 +4,7 @@ status: active
 title: 1.3 与 AuditOrchestrator 的关系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 与 AuditOrchestrator 的关系

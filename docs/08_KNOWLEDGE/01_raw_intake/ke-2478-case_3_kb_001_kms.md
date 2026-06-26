@@ -4,6 +4,7 @@ status: active
 title: 6.3 Case 3：KB-001 知识库蓝图 → KMS 五门禁（R72）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 Case 3：KB-001 知识库蓝图 → KMS 五门禁（R72）

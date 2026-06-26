@@ -3,6 +3,7 @@ module_id: KE-122
 title: 11. 通用回滚方案
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. 通用回滚方案

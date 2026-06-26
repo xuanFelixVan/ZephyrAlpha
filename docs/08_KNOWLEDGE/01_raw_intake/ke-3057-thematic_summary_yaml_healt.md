@@ -4,6 +4,7 @@ status: active
 title: thematic_summary.yaml —— health-monitor.py + prioritizer.py 联合产出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # thematic_summary.yaml —— health-monitor.py + prioritizer.py 联合产出

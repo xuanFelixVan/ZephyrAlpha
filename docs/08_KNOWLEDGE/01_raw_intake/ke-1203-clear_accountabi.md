@@ -4,6 +4,7 @@ status: active
 title: DOC-002：责任二选一（Clear Accountability）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-002：责任二选一（Clear Accountability）

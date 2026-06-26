@@ -4,6 +4,7 @@ status: active
 title: 2.28 IPI-Aware Budget Defense
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.28 IPI-Aware Budget Defense

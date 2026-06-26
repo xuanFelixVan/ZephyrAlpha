@@ -4,6 +4,7 @@ status: active
 title: 1.1 本视图回答的问题
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1 本视图回答的问题

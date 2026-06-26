@@ -3,6 +3,7 @@ module_id: KE-183---master-data-000
 title: 2.2 Reference & Master Data 域（参考与主数据）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Reference & Master Data 域（参考与主数据）

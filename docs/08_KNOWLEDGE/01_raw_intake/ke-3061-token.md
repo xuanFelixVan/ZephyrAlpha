@@ -4,6 +4,7 @@ status: active
 title: 十二、成本架构与Token预算
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 十二、成本架构与Token预算

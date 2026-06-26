@@ -4,6 +4,7 @@ status: active
 title: traces —— 上下文管理器风格，自动注入 trace_id
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # traces —— 上下文管理器风格，自动注入 trace_id

@@ -4,6 +4,7 @@ status: active
 title: 8.1 `blueprint_registry.yaml` 扩展（MUST）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 `blueprint_registry.yaml` 扩展（MUST）

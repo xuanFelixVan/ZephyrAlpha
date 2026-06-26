@@ -4,6 +4,7 @@ status: active
 title: COND-001：限额例外必须 Owner 审批
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # COND-001：限额例外必须 Owner 审批

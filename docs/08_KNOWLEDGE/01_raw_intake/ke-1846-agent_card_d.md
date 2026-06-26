@@ -4,6 +4,7 @@ status: active
 title: 2.2 Agent Card 与能力注册模型（决策 D-025-02）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Agent Card 与能力注册模型（决策 D-025-02）

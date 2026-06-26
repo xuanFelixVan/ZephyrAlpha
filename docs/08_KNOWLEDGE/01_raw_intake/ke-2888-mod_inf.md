@@ -4,6 +4,7 @@ status: active
 title: MOD-INF-021 任务卡索引
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-INF-021 任务卡索引

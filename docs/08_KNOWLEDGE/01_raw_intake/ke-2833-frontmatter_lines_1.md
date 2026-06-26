@@ -3,6 +3,7 @@ module_id: KE-2735
 title: Frontmatter (lines 1-24)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Frontmatter (lines 1-24)

@@ -4,6 +4,7 @@ status: active
 title: 五、Module ID 跨文件一致性
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 五、Module ID 跨文件一致性

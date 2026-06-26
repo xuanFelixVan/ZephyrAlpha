@@ -4,6 +4,7 @@ status: active
 title: 🔴 RULE-THREE：删除前置确认协议 — 不确认价值，不动手（与 RULE-ZERO / RULE-ONE / RULE-TWO 同级）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 🔴 RULE-THREE：删除前置确认协议 — 不确认价值，不动手（与 RULE-ZERO / RULE-ONE / RULE-TWO 同级）

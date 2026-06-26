@@ -4,6 +4,7 @@ status: active
 title: ai_behavior —— 记录每次模型调用
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ai_behavior —— 记录每次模型调用

@@ -4,6 +4,7 @@ status: active
 title: Stage 2：从“新树目录”到“机构级治理视角”
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 2：从“新树目录”到“机构级治理视角”

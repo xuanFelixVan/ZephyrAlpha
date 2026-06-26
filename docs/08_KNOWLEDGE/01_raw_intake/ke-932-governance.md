@@ -4,6 +4,7 @@ status: active
 title: 3.1 清扫通过
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 清扫通过

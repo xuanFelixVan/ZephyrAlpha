@@ -4,6 +4,7 @@ status: active
 title: 9. Drawer maturity status / 目录成熟度状态
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. Drawer maturity status / 目录成熟度状态

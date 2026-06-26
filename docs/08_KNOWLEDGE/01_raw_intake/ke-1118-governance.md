@@ -4,6 +4,7 @@ status: active
 title: 8.3 保留策略
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 保留策略

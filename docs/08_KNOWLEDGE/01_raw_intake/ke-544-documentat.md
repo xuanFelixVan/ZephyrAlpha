@@ -4,6 +4,7 @@ status: active
 title: 7.2 流程
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 流程

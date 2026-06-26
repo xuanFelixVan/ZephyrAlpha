@@ -4,6 +4,7 @@ status: active
 title: 2.2 Vibe Coding AI 检索策略映射
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Vibe Coding AI 检索策略映射

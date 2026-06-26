@@ -4,6 +4,7 @@ status: active
 title: MAD-001：架构必要性（MOD-P1）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MAD-001：架构必要性（MOD-P1）

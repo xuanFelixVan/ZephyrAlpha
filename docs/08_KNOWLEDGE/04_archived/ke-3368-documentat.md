@@ -3,6 +3,7 @@ module_id: KE-3247
 title: 3.1 三轴定义
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 三轴定义

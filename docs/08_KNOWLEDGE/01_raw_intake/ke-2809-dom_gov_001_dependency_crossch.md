@@ -4,6 +4,7 @@ status: active
 title: MOD-GOVERNANCE Dependency Crosscheck
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-GOVERNANCE Dependency Crosscheck

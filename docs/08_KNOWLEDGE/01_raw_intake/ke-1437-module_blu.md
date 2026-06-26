@@ -3,6 +3,7 @@ module_id: KE-1347
 title: 10.1 已知风险
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 已知风险

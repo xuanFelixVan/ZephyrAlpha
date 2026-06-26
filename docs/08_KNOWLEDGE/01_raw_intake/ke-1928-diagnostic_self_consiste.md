@@ -4,6 +4,7 @@ status: active
 title: 2.250 Diagnostic Self-Consistency Verifier - diagnostic_self_consistency.py (🆕 v
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.250 Diagnostic Self-Consistency Verifier - diagnostic_self_consistency.py (🆕 v

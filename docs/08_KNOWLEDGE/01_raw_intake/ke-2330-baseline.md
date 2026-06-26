@@ -4,6 +4,7 @@ status: active
 title: 4.3 触发条件 B：系统超越
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 触发条件 B：系统超越

@@ -4,6 +4,7 @@ status: active
 title: 4.3 语义审计 — 调度 MOD-INF-028 SemanticAuditor
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 语义审计 — 调度 MOD-INF-028 SemanticAuditor

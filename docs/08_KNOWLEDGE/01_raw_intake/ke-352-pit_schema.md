@@ -4,6 +4,7 @@ status: active
 title: 4.1 PIT 三个核心字段（强制 schema）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 PIT 三个核心字段（强制 schema）

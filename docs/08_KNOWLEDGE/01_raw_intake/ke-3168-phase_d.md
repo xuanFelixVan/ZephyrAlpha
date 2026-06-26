@@ -4,6 +4,7 @@ status: active
 title: Phase D 不变量回归
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase D 不变量回归

@@ -4,6 +4,7 @@ status: active
 title: AI 意识植入
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AI 意识植入

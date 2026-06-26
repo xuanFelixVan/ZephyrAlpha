@@ -3,6 +3,7 @@ module_id: KE-4425
 title: V类：氛围编程基础设施的自我修改漏洞
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # V类：氛围编程基础设施的自我修改漏洞

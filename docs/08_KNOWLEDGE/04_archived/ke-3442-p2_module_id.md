@@ -3,6 +3,7 @@ module_id: KE-3312-------module-id--28-004
 title: 4.6 P2 级：缺少 `module_id`（28 个文件）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.6 P2 级：缺少 `module_id`（28 个文件）

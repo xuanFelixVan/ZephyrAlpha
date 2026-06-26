@@ -3,6 +3,7 @@ module_id: KE-756
 title: 17. 审查周期
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 17. 审查周期

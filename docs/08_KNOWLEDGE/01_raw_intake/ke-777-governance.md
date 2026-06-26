@@ -4,6 +4,7 @@ status: active
 title: 1.3 责任边界（本标准不管什么）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 责任边界（本标准不管什么）

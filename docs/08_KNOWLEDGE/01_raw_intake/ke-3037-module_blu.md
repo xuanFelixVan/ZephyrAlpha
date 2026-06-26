@@ -4,6 +4,7 @@ status: active
 title: ── Stage 3 ──
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ── Stage 3 ──

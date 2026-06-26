@@ -4,6 +4,7 @@ status: active
 title: MVP Gate (D-019-84)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MVP Gate (D-019-84)

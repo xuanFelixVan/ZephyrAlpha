@@ -4,6 +4,7 @@ status: active
 title: 3.9.6 跨 Session 异常中断恢复（Session Crash Recovery Protocol）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9.6 跨 Session 异常中断恢复（Session Crash Recovery Protocol）

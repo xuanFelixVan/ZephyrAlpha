@@ -4,6 +4,7 @@ status: active
 title: 2.1 文件创建清单（按Phase分组）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 文件创建清单（按Phase分组）

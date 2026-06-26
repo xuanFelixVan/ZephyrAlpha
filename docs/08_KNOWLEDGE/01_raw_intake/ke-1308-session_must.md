@@ -4,6 +4,7 @@ status: active
 title: 每日安检（每次新 session 启动时 MUST 执行）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 每日安检（每次新 session 启动时 MUST 执行）

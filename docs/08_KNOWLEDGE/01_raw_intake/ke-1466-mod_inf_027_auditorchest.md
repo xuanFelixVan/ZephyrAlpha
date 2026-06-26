@@ -4,6 +4,7 @@ status: active
 title: 11. 与 MOD-INF-027 AuditOrchestrator 的集成契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. 与 MOD-INF-027 AuditOrchestrator 的集成契约

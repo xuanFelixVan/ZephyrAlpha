@@ -4,6 +4,7 @@ status: active
 title: 7.1 新 Session 冷启动定位路径
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 新 Session 冷启动定位路径

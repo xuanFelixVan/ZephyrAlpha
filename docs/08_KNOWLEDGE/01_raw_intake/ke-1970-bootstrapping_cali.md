@@ -4,6 +4,7 @@ status: active
 title: 2.30 启动校准阶段（Bootstrapping Calibration Phase）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.30 启动校准阶段（Bootstrapping Calibration Phase）

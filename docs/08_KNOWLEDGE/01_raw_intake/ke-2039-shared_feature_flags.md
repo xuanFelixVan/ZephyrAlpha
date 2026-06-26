@@ -3,6 +3,7 @@ module_id: KE-1948
 title: 2.8 shared-feature-flags（功能开关）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.8 shared-feature-flags（功能开关）

@@ -3,6 +3,7 @@ module_id: KE-4173
 title: 6.3 蓝图外已有实现（纳入蓝图管理）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 蓝图外已有实现（纳入蓝图管理）

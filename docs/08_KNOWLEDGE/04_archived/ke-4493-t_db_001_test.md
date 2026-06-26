@@ -3,6 +3,7 @@ module_id: KE-4328-----test--000
 title: DB-025-0067：T-DB-001——补全 test_database_manager.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0067：T-DB-001——补全 test_database_manager.py

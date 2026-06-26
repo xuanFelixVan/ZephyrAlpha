@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/orchestrator/schemas.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/orchestrator/schemas.py

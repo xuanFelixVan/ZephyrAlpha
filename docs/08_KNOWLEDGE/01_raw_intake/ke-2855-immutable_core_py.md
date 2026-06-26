@@ -4,6 +4,7 @@ status: active
 title: immutable_core.py 新增
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # immutable_core.py 新增

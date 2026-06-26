@@ -4,6 +4,7 @@ status: active
 title: 1.3.1 YAML 文件子类型
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3.1 YAML 文件子类型

@@ -3,6 +3,7 @@ module_id: KE-3307-----frontmatter---3-000
 title: 4.4 P1 级：双 frontmatter 块（3 个文件）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4 P1 级：双 frontmatter 块（3 个文件）

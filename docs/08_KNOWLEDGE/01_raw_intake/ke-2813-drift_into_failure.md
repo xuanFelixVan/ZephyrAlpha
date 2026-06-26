@@ -4,6 +4,7 @@ status: active
 title: === 故障正常化漂移 Drift Into Failure ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === 故障正常化漂移 Drift Into Failure ===

@@ -4,6 +4,7 @@ status: active
 title: 6.4 推荐施工路线（重排后）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 推荐施工路线（重排后）

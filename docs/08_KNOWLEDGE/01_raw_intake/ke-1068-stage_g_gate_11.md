@@ -4,6 +4,7 @@ status: active
 title: 6.2 Stage G 漏网清理 + GATE-11 引擎落地（2026-04-25）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 Stage G 漏网清理 + GATE-11 引擎落地（2026-04-25）

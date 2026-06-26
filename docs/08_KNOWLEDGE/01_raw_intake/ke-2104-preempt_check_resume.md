@@ -4,6 +4,7 @@ status: active
 title: 3. preempt_check / resume
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. preempt_check / resume

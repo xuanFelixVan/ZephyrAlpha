@@ -3,6 +3,7 @@ module_id: KE-3176
 title: 11. Revision history / 修订记录
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. Revision history / 修订记录

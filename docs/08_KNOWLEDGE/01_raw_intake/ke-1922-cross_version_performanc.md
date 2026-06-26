@@ -4,6 +4,7 @@ status: active
 title: 2.248 Cross-Version Performance Regression Detector - cross_version_regression.p
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.248 Cross-Version Performance Regression Detector - cross_version_regression.p

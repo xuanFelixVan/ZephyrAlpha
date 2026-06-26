@@ -4,6 +4,7 @@ status: active
 title: 3.1.3 管线调度器（PipelineOrchestrator）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1.3 管线调度器（PipelineOrchestrator）

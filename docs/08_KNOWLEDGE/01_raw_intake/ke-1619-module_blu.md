@@ -4,6 +4,7 @@ status: active
 title: 15. 完整性自检清单
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15. 完整性自检清单

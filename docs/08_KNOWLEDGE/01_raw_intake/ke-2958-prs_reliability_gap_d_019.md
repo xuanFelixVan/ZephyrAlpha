@@ -4,6 +4,7 @@ status: active
 title: PRS Reliability Gap (D-019-57)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # PRS Reliability Gap (D-019-57)

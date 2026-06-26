@@ -4,6 +4,7 @@ status: active
 title: 5. 禁止行为
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 禁止行为

@@ -3,6 +3,7 @@ module_id: KE-3928-----hooks-001
 title: 第九轮盲点（#158-#167）—— "Hooks自编辑" / "升级疲劳与上下文惩罚" / "三阶段反弹与施工容量"
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 第九轮盲点（#158-#167）—— "Hooks自编辑" / "升级疲劳与上下文惩罚" / "三阶段反弹与施工容量"

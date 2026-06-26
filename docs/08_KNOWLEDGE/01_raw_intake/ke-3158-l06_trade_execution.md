@@ -3,6 +3,7 @@ module_id: KE-3052
 title: L06 Trade Execution（3 个新文件）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L06 Trade Execution（3 个新文件）

@@ -4,6 +4,7 @@ status: active
 title: 2.1 全链路架构视图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 全链路架构视图

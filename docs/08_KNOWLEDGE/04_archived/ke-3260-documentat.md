@@ -3,6 +3,7 @@ module_id: KE-3153
 title: 1.1.1 直接对标
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1.1 直接对标

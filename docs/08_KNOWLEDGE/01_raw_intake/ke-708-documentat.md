@@ -4,6 +4,7 @@ status: active
 title: Stage 4：从“决策记忆”到“组织记忆系统”
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 4：从“决策记忆”到“组织记忆系统”

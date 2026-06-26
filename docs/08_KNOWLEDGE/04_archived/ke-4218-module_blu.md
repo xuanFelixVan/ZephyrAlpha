@@ -3,6 +3,7 @@ module_id: KE-4059
 title: 3.3 输入契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 输入契约

@@ -4,6 +4,7 @@ status: active
 title: 0.2 本文档**不是**
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.2 本文档**不是**

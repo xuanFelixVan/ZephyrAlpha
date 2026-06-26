@@ -4,6 +4,7 @@ status: active
 title: Three-Tier Prompt Cache (D-019-32)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Three-Tier Prompt Cache (D-019-32)

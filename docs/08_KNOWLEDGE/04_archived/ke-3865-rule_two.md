@@ -3,6 +3,7 @@ module_id: KE-3714-----------------------003
 title: 🔴 RULE-TWO：反孤儿功能——所有新产出必须可被系统发现和调用（与 RULE-ZERO / RULE-ONE 同级）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 🔴 RULE-TWO：反孤儿功能——所有新产出必须可被系统发现和调用（与 RULE-ZERO / RULE-ONE 同级）

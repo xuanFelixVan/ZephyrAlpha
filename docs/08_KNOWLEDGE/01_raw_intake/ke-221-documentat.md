@@ -4,6 +4,7 @@ status: active
 title: 2.4 条件性不可逆
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 条件性不可逆

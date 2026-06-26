@@ -3,6 +3,7 @@ module_id: KE-4042
 title: 3. Frontmatter Fields to Verify
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Frontmatter Fields to Verify

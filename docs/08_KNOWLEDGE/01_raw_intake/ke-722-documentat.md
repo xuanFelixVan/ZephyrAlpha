@@ -4,6 +4,7 @@ status: active
 title: Step 5：灰度发布
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 5：灰度发布

@@ -3,6 +3,7 @@ module_id: KE-276
 title: 3.2 Runtime topology diagram / 运行时拓扑图
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 Runtime topology diagram / 运行时拓扑图

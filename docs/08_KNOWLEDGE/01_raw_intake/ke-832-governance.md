@@ -4,6 +4,7 @@ status: active
 title: 16. 废弃流程
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16. 废弃流程

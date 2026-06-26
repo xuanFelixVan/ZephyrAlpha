@@ -3,6 +3,7 @@ module_id: KE-3278---v-000
 title: 4. End-to-end core process — Value Stream Map / 端到端核心业务流程（价值流图）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. End-to-end core process — Value Stream Map / 端到端核心业务流程（价值流图）

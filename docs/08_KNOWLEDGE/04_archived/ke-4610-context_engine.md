@@ -3,6 +3,7 @@ module_id: KE-4444
 title: 6.2 Context Engine 对其他服务的调用
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 Context Engine 对其他服务的调用

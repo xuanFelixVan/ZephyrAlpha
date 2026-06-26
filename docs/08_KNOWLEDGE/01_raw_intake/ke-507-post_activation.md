@@ -3,6 +3,7 @@ module_id: KE-456
 title: 6.2 Post-Activation 拓扑概要
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 Post-Activation 拓扑概要

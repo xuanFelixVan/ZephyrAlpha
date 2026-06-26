@@ -3,6 +3,7 @@ module_id: KE-1088
 title: AVP-004：与代码版本的关系
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AVP-004：与代码版本的关系

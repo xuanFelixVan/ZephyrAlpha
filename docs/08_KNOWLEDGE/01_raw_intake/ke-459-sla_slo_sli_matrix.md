@@ -4,6 +4,7 @@ status: active
 title: 5.2 SLA / SLO / SLI matrix / 服务等级矩阵
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 SLA / SLO / SLI matrix / 服务等级矩阵

@@ -4,6 +4,7 @@ status: active
 title: 4. Cross-domain core data flow / 跨域核心数据流
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Cross-domain core data flow / 跨域核心数据流

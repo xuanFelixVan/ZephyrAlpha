@@ -4,6 +4,7 @@ status: active
 title: 3.4 doc_type 与存放路径的映射
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 doc_type 与存放路径的映射

@@ -4,6 +4,7 @@ status: active
 title: 时间窗口 window_sec 定义条件聚合窗口，默认 60s（单次操作）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 时间窗口 window_sec 定义条件聚合窗口，默认 60s（单次操作）

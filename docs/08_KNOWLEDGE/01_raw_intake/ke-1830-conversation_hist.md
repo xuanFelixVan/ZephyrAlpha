@@ -4,6 +4,7 @@ status: active
 title: 2.19 对话历史税检测（Conversation History Tax Detector）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.19 对话历史税检测（Conversation History Tax Detector）

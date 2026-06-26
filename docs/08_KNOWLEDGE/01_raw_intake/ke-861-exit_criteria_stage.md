@@ -4,6 +4,7 @@ status: active
 title: 2.1 exit_criteria（Stage 退出门）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 exit_criteria（Stage 退出门）

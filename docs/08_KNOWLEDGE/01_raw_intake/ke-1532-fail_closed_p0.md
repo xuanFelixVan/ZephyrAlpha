@@ -3,6 +3,7 @@ module_id: KE-1442
 title: 12.5 Fail-closed P0（**关键**）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.5 Fail-closed P0（**关键**）

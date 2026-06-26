@@ -4,6 +4,7 @@ status: active
 title: 8. 第三轮深度审计——Security + Evaluation + Multi-Agent + Deployment 层面的盲点补充
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 第三轮深度审计——Security + Evaluation + Multi-Agent + Deployment 层面的盲点补充

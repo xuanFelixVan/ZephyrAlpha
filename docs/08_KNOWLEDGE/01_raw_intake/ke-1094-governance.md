@@ -4,6 +4,7 @@ status: active
 title: 7.2 闭环流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 闭环流程

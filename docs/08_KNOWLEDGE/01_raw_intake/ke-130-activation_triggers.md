@@ -4,6 +4,7 @@ status: active
 title: §10 Activation Triggers / 激活触发条件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §10 Activation Triggers / 激活触发条件

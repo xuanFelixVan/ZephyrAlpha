@@ -4,6 +4,7 @@ title: Research Notes
 module_id: GOV-061
 updated: "2026-06-22"
 ttl: task_bound
+doc_type: index
 ---
 
 # Research Notes

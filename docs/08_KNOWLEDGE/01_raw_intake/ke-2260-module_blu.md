@@ -3,6 +3,7 @@ module_id: KE-2166
 title: 决策追溯矩阵（38条全覆盖）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 决策追溯矩阵（38条全覆盖）

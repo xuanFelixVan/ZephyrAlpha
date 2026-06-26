@@ -4,6 +4,7 @@ status: active
 title: 3.1 #12 + #3: AlertManager + 告警收敛
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 #12 + #3: AlertManager + 告警收敛

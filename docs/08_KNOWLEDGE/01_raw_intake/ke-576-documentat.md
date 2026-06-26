@@ -4,6 +4,7 @@ status: active
 title: 8. 变更记录
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 变更记录

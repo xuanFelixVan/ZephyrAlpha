@@ -4,6 +4,7 @@ status: active
 title: 2.233 FLE Self-SLO/SLA Definition & Monitoring - fle_self_slo.py (🆕 v0.22.0 - 盲点
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.233 FLE Self-SLO/SLA Definition & Monitoring - fle_self_slo.py (🆕 v0.22.0 - 盲点

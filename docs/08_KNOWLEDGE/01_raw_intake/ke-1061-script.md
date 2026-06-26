@@ -3,6 +3,7 @@ module_id: KE-977
 title: 6.1 SCRIPT 域（脚本治理规则）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 SCRIPT 域（脚本治理规则）

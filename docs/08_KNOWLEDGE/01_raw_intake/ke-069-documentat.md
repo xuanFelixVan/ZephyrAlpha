@@ -4,6 +4,7 @@ status: active
 title: 1. 本文档的作用
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 本文档的作用

@@ -3,6 +3,7 @@ module_id: KE-3486-------normative-003
 title: 11.1 规范性引用（Normative）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 规范性引用（Normative）

@@ -4,6 +4,7 @@ status: active
 title: 3.3 项目实际统计（参考）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 项目实际统计（参考）

@@ -3,6 +3,7 @@ module_id: KE-1983--------8-000
 title: 3. 集成目标（§8）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 集成目标（§8）

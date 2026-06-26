@@ -4,6 +4,7 @@ status: active
 title: Vibe Coding Session 状态机规则
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Vibe Coding Session 状态机规则

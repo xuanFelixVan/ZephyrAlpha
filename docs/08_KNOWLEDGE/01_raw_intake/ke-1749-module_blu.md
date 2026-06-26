@@ -3,6 +3,7 @@ module_id: KE-1659
 title: 2.1 必备链接
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 必备链接

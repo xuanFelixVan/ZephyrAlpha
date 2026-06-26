@@ -4,6 +4,7 @@ status: active
 title: 7.2 根源分析优先——治根不治标（Root Cause First）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 根源分析优先——治根不治标（Root Cause First）

@@ -4,6 +4,7 @@ status: active
 title: 类似 OPA test——断言路由策略正确性
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 类似 OPA test——断言路由策略正确性

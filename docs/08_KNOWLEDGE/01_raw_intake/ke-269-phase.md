@@ -3,6 +3,7 @@ module_id: KE-247
 title: 3.1 Phase 目标矩阵
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 Phase 目标矩阵

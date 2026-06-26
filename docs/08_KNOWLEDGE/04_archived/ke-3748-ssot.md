@@ -3,6 +3,7 @@ module_id: KE-3598
 title: 5. SSoT 声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. SSoT 声明

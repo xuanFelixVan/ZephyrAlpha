@@ -4,6 +4,7 @@ status: active
 title: 7.3 废弃/合并目录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 废弃/合并目录

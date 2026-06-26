@@ -4,6 +4,7 @@ status: active
 title: 8.8 Skill Semantic Version Contract & Breakage Detection
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.8 Skill Semantic Version Contract & Breakage Detection

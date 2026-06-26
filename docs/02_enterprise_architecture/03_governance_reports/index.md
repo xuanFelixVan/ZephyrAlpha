@@ -1,5 +1,6 @@
 ---
 ttl: permanent
+doc_type: index
 ---
 
 # 治理报告索引（03_governance_reports）

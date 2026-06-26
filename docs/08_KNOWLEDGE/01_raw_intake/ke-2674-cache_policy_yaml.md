@@ -4,6 +4,7 @@ status: active
 title: cache_policy.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # cache_policy.yaml

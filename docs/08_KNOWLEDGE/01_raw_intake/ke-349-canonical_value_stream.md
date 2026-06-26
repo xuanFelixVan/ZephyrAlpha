@@ -4,6 +4,7 @@ status: active
 title: 4.1 Canonical value stream / 标准价值流（Mermaid VSM）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 Canonical value stream / 标准价值流（Mermaid VSM）

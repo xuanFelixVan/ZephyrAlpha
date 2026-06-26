@@ -3,6 +3,7 @@ module_id: KE-1369
 title: 10.5 施工状态
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.5 施工状态

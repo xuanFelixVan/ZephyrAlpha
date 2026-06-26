@@ -4,6 +4,7 @@ status: active
 title: 14.3 Shared 层准入边界规则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.3 Shared 层准入边界规则

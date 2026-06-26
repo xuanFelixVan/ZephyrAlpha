@@ -4,6 +4,7 @@ status: active
 title: 7.2 `entry_conditions` 数组项（每条 check）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 `entry_conditions` 数组项（每条 check）

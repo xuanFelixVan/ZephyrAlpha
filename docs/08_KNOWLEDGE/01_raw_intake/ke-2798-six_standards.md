@@ -3,6 +3,7 @@ module_id: KE-2701--------------6---s-003
 title: DB-025-0088：变更同步规则——治理信息 6 条 SLA
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0088：变更同步规则——治理信息 6 条 SLA

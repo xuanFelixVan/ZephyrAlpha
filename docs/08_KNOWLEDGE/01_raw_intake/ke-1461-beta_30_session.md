@@ -4,6 +4,7 @@ status: active
 title: 10.5 beta 30 Session 模拟结果
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.5 beta 30 Session 模拟结果

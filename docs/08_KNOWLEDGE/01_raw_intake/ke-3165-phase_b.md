@@ -3,6 +3,7 @@ module_id: KE-3059
 title: Phase B 最终状态
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase B 最终状态

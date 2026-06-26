@@ -4,6 +4,7 @@ status: active
 title: 2.1 JSON Schema（权威）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 JSON Schema（权威）

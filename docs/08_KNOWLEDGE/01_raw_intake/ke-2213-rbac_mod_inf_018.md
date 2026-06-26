@@ -4,6 +4,7 @@ status: active
 title: 3.4 RBAC 集成（对接 MOD-INF-018）——每 Skill 级权限
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 RBAC 集成（对接 MOD-INF-018）——每 Skill 级权限

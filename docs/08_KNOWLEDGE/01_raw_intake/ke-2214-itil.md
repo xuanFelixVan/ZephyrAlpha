@@ -4,6 +4,7 @@ status: active
 title: 3.5 按自动化层级分类（ITIL 对齐）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 按自动化层级分类（ITIL 对齐）

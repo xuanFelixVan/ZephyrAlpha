@@ -4,6 +4,7 @@ status: active
 title: 9. 接口文档要求
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 接口文档要求

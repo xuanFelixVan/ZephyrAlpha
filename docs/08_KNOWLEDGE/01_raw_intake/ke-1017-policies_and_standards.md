@@ -4,6 +4,7 @@ status: active
 title: 5.1 `01_policies_and_standards/`
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 `01_policies_and_standards/`

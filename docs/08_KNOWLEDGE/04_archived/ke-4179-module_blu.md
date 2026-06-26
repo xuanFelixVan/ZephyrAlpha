@@ -3,6 +3,7 @@ module_id: KE-4023-------10-000
 title: §29 产出物目录（10行）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §29 产出物目录（10行）

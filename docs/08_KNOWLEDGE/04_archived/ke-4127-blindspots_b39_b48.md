@@ -3,6 +3,7 @@ module_id: KE-3972
 title: 2. Blindspots B39-B48
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Blindspots B39-B48

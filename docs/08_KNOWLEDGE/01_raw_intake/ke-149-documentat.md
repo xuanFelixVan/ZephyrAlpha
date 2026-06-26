@@ -4,6 +4,7 @@ status: active
 title: 12.4 成本重建触发
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.4 成本重建触发

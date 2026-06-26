@@ -4,6 +4,7 @@ status: active
 title: 1. 登记规则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 登记规则

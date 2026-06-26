@@ -3,6 +3,7 @@ module_id: KE-3551
 title: 8.4 与 03-AA / scripts/ 的边界
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.4 与 03-AA / scripts/ 的边界

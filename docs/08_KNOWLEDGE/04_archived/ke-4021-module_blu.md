@@ -3,6 +3,7 @@ module_id: KE-3868
 title: 13.12 33盲点汇总与优先级
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.12 33盲点汇总与优先级

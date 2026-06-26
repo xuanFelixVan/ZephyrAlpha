@@ -3,6 +3,7 @@ module_id: KE-1135
 title: 维度评分（FULL 类型填写）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 维度评分（FULL 类型填写）

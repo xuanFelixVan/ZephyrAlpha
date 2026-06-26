@@ -3,6 +3,7 @@ module_id: KE-3488
 title: 12. SSoT 声明
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. SSoT 声明

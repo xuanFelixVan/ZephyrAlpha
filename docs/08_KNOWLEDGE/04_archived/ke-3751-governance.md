@@ -3,6 +3,7 @@ module_id: KE-3601
 title: 5.1 取消前检查
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 取消前检查

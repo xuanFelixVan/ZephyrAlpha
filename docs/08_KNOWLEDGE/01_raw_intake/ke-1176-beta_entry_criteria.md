@@ -3,6 +3,7 @@ module_id: KE-1091
 title: beta entry_criteria
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # beta entry_criteria

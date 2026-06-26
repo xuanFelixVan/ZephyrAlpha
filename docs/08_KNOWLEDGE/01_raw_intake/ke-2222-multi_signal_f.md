@@ -4,6 +4,7 @@ status: active
 title: 3.5.1 多信号源新鲜度引擎（Multi-Signal Freshness Engine）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5.1 多信号源新鲜度引擎（Multi-Signal Freshness Engine）

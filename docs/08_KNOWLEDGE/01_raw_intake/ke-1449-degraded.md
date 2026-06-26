@@ -4,6 +4,7 @@ status: active
 title: 10.3 允许的 "degraded" 情况（非安全相关）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 允许的 "degraded" 情况（非安全相关）

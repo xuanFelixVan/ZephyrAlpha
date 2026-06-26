@@ -3,6 +3,7 @@ module_id: KE-3018
 title: 0. 读者指南
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0. 读者指南

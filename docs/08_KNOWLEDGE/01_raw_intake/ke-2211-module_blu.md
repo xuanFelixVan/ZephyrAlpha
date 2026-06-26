@@ -3,6 +3,7 @@ module_id: KE-2118
 title: 3.4 脚本前缀约定（看名知义）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 脚本前缀约定（看名知义）

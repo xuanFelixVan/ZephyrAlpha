@@ -4,6 +4,7 @@ status: active
 title: 3. 检查结果记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 检查结果记录

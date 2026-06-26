@@ -4,6 +4,7 @@ status: active
 title: 4.3 前端与后端层的交互约定
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 前端与后端层的交互约定

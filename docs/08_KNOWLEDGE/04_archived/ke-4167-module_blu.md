@@ -3,6 +3,7 @@ module_id: KE-4011
 title: 施工落盘确认（2026-05-07 审计）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 施工落盘确认（2026-05-07 审计）

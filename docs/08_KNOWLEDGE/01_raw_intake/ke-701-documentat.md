@@ -4,6 +4,7 @@ status: active
 title: Stage 13：从"记忆系统前提"到"治理体系全貌确认"
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 13：从"记忆系统前提"到"治理体系全貌确认"

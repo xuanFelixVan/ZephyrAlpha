@@ -3,6 +3,7 @@ module_id: KE-4320-------ddl-000
 title: DB-025-0056：AP4 防护——禁止DDL穿插业务代码
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0056：AP4 防护——禁止DDL穿插业务代码

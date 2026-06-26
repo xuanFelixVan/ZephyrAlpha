@@ -4,6 +4,7 @@ status: active
 title: 模块蓝图 frontmatter（示例）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 模块蓝图 frontmatter（示例）

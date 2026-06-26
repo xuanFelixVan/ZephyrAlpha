@@ -3,6 +3,7 @@ module_id: KE-3224---strategy-000
 title: 2.4 Signal & Strategy 域（信号与策略）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 Signal & Strategy 域（信号与策略）

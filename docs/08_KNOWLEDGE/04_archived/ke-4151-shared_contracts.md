@@ -3,6 +3,7 @@ module_id: KE-3996
 title: 2.1 shared-contracts（跨层数据契约）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 shared-contracts（跨层数据契约）

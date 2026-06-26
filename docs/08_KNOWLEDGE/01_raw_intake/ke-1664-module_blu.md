@@ -3,6 +3,7 @@ module_id: KE-1574
 title: 17.3 告警阈值
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 17.3 告警阈值

@@ -3,6 +3,7 @@ module_id: KE-088
 title: 1.3.2 覆盖目录清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3.2 覆盖目录清单

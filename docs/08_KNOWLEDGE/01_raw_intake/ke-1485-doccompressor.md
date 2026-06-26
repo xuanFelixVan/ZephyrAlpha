@@ -4,6 +4,7 @@ status: active
 title: 11.3 修改DocCompressor
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.3 修改DocCompressor

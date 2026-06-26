@@ -4,6 +4,7 @@ status: active
 title: 9.1 职责
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 职责

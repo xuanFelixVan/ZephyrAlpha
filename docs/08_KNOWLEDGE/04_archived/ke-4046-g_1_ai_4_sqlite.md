@@ -3,6 +3,7 @@ module_id: KE-3893---4-------sqlite-000
 title: 13.8 G. 1人+AI运维（4个）——对标 SQLite Production Ops + PagerDuty
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.8 G. 1人+AI运维（4个）——对标 SQLite Production Ops + PagerDuty

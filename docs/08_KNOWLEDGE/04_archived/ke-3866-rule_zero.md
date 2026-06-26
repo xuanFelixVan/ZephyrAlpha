@@ -3,6 +3,7 @@ module_id: KE-3715
 title: 与 RULE-ZERO 的关系
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 与 RULE-ZERO 的关系

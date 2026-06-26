@@ -4,6 +4,7 @@ status: active
 title: Agent Drift (D-019-54)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Agent Drift (D-019-54)

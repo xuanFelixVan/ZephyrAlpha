@@ -3,6 +3,7 @@ module_id: KE-331----p0-003
 title: 4.2 experimental SLI/SLO 基线（P0 必采）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 experimental SLI/SLO 基线（P0 必采）

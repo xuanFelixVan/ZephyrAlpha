@@ -4,6 +4,7 @@ status: active
 title: 1. 路由决策树（7条规则）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 路由决策树（7条规则）

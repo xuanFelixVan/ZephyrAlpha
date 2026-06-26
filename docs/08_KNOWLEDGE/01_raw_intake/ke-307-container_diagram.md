@@ -4,6 +4,7 @@ status: active
 title: 3.3 Container diagram / 容器图
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 Container diagram / 容器图

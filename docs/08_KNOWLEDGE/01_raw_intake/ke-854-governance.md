@@ -3,6 +3,7 @@ module_id: KE-776
 title: 〇.2 本标准管理以下内容
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 〇.2 本标准管理以下内容

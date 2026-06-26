@@ -3,6 +3,7 @@ module_id: KE-2808
 title: OTel GenAI Metrics 对齐
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # OTel GenAI Metrics 对齐

@@ -3,6 +3,7 @@ module_id: KE-3949
 title: 17.1 预测维度
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 17.1 预测维度

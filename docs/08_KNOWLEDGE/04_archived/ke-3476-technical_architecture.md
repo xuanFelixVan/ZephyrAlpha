@@ -3,6 +3,7 @@ module_id: KE-3341---04-ta-001
 title: 5.3 与 04-TA 技术架构的关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 与 04-TA 技术架构的关系

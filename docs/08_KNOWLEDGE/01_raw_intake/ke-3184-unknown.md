@@ -4,6 +4,7 @@ status: active
 title: 验证结果
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 验证结果

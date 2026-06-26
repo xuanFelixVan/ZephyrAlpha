@@ -4,6 +4,7 @@ status: active
 title: Task Pipeline 蓝图 — M1-M11 双管线路由
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Task Pipeline 蓝图 — M1-M11 双管线路由

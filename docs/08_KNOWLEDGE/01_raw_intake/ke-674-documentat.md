@@ -4,6 +4,7 @@ status: active
 title: 任务卡 .md 文件存放规范
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 任务卡 .md 文件存放规范

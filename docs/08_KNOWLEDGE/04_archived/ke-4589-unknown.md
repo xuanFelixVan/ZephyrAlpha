@@ -3,6 +3,7 @@ module_id: KE-4423
 title: 决策记录
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 决策记录

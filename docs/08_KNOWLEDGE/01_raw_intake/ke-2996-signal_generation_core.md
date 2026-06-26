@@ -4,6 +4,7 @@ status: active
 title: signal-generation-core
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # signal-generation-core

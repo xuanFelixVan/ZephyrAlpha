@@ -4,6 +4,7 @@ status: active
 title: 5.3 跳级规则（明令禁止）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 跳级规则（明令禁止）

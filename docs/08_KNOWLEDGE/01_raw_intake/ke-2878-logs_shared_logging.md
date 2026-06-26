@@ -4,6 +4,7 @@ status: active
 title: logs —— 复用 shared.logging，增加便捷方法
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # logs —— 复用 shared.logging，增加便捷方法

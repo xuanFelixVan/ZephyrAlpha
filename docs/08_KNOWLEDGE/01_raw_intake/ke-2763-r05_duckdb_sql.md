@@ -3,6 +3,7 @@ module_id: KE-2666-----duckdb-sql-000
 title: DB-025-0044：R05 缓解——DuckDB sqlite_scanner 依赖
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0044：R05 缓解——DuckDB sqlite_scanner 依赖

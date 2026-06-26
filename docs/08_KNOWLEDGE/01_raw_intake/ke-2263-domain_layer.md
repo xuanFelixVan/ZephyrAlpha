@@ -3,6 +3,7 @@ module_id: KE-2169
 title: 3d. 配置热更新机制 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3d. 配置热更新机制 🆕

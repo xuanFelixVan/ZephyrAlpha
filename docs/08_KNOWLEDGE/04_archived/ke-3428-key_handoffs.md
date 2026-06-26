@@ -3,6 +3,7 @@ module_id: KE-3301
 title: 4.3 Key handoffs / 关键交接点
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 Key handoffs / 关键交接点

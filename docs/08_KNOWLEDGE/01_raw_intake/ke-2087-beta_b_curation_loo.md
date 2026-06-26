@@ -3,6 +3,7 @@ module_id: KE-1996---------curation-loo-000
 title: 3. beta b — 多轮能力 (Curation Loop + Effectiveness Eval)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. beta b — 多轮能力 (Curation Loop + Effectiveness Eval)

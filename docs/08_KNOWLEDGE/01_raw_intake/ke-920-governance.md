@@ -3,6 +3,7 @@ module_id: KE-842
 title: 22. 变更记录
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 22. 变更记录

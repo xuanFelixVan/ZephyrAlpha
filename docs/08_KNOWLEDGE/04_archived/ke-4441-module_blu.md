@@ -3,6 +3,7 @@ module_id: KE-4276
 title: D-022-20 密钥泄露防护
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-20 密钥泄露防护

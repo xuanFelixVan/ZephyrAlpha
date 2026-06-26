@@ -4,6 +4,7 @@ status: active
 title: 4.3 Step 3：残留物检测
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 Step 3：残留物检测

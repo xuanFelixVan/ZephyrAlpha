@@ -4,6 +4,7 @@ status: active
 title: 14.A.2 七维交叉审计维度
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.A.2 七维交叉审计维度

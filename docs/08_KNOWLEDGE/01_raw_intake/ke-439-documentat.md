@@ -4,6 +4,7 @@ status: active
 title: 5.1 单维度 0-10 分制
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 单维度 0-10 分制

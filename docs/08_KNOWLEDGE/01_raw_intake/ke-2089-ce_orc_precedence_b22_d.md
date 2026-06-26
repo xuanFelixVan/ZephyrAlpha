@@ -4,6 +4,7 @@ status: active
 title: 3. CE-Orc Precedence (B22) — DD96
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. CE-Orc Precedence (B22) — DD96

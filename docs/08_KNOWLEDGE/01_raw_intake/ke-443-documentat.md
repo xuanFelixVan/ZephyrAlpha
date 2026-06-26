@@ -3,6 +3,7 @@ module_id: KE-399
 title: 5.1 锚点声明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 锚点声明

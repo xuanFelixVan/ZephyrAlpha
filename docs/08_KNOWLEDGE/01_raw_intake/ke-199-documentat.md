@@ -3,6 +3,7 @@ module_id: KE-179
 title: 2.2 决策与记忆类
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 决策与记忆类

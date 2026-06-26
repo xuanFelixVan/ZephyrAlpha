@@ -4,6 +4,7 @@ status: active
 title: 4.1 设计原则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 设计原则

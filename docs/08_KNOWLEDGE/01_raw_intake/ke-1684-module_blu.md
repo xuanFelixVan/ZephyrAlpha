@@ -3,6 +3,7 @@ module_id: KE-1594------000
 title: 2. 文件-门映射
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 文件-门映射

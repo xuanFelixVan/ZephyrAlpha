@@ -4,6 +4,7 @@ status: active
 title: 3.6 按标签分类（K8s Conformance 对齐）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 按标签分类（K8s Conformance 对齐）

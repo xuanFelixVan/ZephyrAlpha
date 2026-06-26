@@ -4,6 +4,7 @@ status: active
 title: 12.1 Reasoning Spans
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.1 Reasoning Spans

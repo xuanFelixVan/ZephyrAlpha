@@ -4,6 +4,7 @@ status: active
 title: SEC-001：禁止明文存储密钥
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SEC-001：禁止明文存储密钥

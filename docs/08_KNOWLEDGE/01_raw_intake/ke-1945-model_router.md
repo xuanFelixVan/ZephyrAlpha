@@ -4,6 +4,7 @@ status: active
 title: 2.3 模型路由升级（Model Router）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 模型路由升级（Model Router）

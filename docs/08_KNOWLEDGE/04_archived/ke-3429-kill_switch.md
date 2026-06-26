@@ -3,6 +3,7 @@ module_id: KE-3302
 title: 4.3 kill switch 被绕过
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 kill switch 被绕过

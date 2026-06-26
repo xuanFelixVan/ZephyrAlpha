@@ -3,6 +3,7 @@ module_id: KE-3163
 title: 1.5.2 Tier 2：引用本注册表作为权威依据
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5.2 Tier 2：引用本注册表作为权威依据

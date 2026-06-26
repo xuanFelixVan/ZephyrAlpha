@@ -4,6 +4,7 @@ status: active
 title: 3.8 #62: BlueprintAccessFilter
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.8 #62: BlueprintAccessFilter

@@ -4,6 +4,7 @@ status: active
 title: 场景：Owner 发现治理脚本漏检 — AI 修复全流程
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 场景：Owner 发现治理脚本漏检 — AI 修复全流程

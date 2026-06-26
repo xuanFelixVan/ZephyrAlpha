@@ -3,6 +3,7 @@ module_id: KE-3767
 title: 1.2 核心职能（一句话 + 五支柱）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 核心职能（一句话 + 五支柱）

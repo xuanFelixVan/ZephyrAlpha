@@ -4,6 +4,7 @@ status: active
 title: 2.24 连续验证——每步重验证 Agent 身份与权限一致性（决策 D-018-22）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.24 连续验证——每步重验证 Agent 身份与权限一致性（决策 D-018-22）

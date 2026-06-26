@@ -4,6 +4,7 @@ status: active
 title: fix_plan.yaml —— auto_fixer.py 生成，引擎崩溃后恢复的依据
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # fix_plan.yaml —— auto_fixer.py 生成，引擎崩溃后恢复的依据

@@ -4,6 +4,7 @@ status: active
 title: escalation-protocol
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # escalation-protocol

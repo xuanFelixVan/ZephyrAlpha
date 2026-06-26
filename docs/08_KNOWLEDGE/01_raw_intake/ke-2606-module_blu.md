@@ -3,6 +3,7 @@ module_id: KE-2511-----------------3-003
 title: 9.2 交叉覆盖矩阵（目标：每文件 ≥ 3 维度）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 交叉覆盖矩阵（目标：每文件 ≥ 3 维度）

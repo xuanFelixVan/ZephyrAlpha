@@ -3,6 +3,7 @@ module_id: KE-380
 title: 4A.1 服务清单与物理位置
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4A.1 服务清单与物理位置

@@ -4,6 +4,7 @@ status: active
 title: 1.1 当前问题
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1 当前问题

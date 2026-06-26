@@ -3,6 +3,7 @@ module_id: KE-3718
 title: SEC-002：密钥必须通过环境变量或密钥管理服务注入
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SEC-002：密钥必须通过环境变量或密钥管理服务注入

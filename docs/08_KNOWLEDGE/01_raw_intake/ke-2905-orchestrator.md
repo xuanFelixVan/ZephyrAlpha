@@ -4,6 +4,7 @@ status: active
 title: Orchestrator 侧
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Orchestrator 侧

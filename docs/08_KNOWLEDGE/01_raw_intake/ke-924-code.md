@@ -4,6 +4,7 @@ status: active
 title: 3. CODE 域（代码级强制规则）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. CODE 域（代码级强制规则）

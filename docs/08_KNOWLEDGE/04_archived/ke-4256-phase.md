@@ -3,6 +3,7 @@ module_id: KE-4097
 title: 4. Phase 施工路线图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Phase 施工路线图

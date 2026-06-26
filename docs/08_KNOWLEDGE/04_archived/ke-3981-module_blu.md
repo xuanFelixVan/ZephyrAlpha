@@ -3,6 +3,7 @@ module_id: KE-3828
 title: 12. 修订记录
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. 修订记录

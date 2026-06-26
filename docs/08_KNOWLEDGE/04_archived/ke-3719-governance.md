@@ -3,6 +3,7 @@ module_id: KE-3571
 title: 〇.4 专业对标
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 〇.4 专业对标

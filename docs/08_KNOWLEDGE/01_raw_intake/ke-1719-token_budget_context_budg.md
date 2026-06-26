@@ -4,6 +4,7 @@ status: active
 title: 2. Token Budget — context_budget_tracker.py (§2.2 + DD2 + DD6)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Token Budget — context_budget_tracker.py (§2.2 + DD2 + DD6)

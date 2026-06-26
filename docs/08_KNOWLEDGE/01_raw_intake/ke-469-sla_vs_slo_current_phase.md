@@ -3,6 +3,7 @@ module_id: KE-421---current-phase-000
 title: 5.3 SLA vs SLO — current phase reality / 当前阶段的 SLA 现实
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 SLA vs SLO — current phase reality / 当前阶段的 SLA 现实

@@ -3,6 +3,7 @@ module_id: KE-3976
 title: 2. OWASP Top 10 for LLM 2025 完整覆盖矩阵
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. OWASP Top 10 for LLM 2025 完整覆盖矩阵

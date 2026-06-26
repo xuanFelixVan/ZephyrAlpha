@@ -4,6 +4,7 @@ status: active
 title: Model Evolution (D-019-23)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Model Evolution (D-019-23)

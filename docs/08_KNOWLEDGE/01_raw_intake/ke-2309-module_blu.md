@@ -3,6 +3,7 @@ module_id: KE-2215
 title: 4.1 源码文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 源码文件

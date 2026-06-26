@@ -4,6 +4,7 @@ status: active
 title: 7.2 跨层数据流路径
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 跨层数据流路径

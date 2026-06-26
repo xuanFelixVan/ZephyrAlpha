@@ -3,6 +3,7 @@ module_id: KE-3263-------conditional-chapte-003
 title: 3.2.2 条件性章节（Conditional Chapters）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.2 条件性章节（Conditional Chapters）

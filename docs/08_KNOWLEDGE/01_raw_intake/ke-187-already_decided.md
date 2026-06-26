@@ -3,6 +3,7 @@ module_id: KE-168
 title: 2.1 Already decided / 已确定的技术决策
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Already decided / 已确定的技术决策

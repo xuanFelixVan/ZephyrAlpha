@@ -4,6 +4,7 @@ status: active
 title: 13. 事故后复盘
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 事故后复盘

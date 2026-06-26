@@ -4,6 +4,7 @@ status: active
 title: 2.3 集成 MetricsWriteBuffer（盲点 #20）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 集成 MetricsWriteBuffer（盲点 #20）

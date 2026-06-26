@@ -4,6 +4,7 @@ status: active
 title: 6.2 CLI 输出格式（JSON lines）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 CLI 输出格式（JSON lines）

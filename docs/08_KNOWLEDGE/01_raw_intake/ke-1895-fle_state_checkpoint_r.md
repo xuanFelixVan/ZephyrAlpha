@@ -4,6 +4,7 @@ status: active
 title: 2.226 FLE State Checkpoint & Rewind - fle_state_checkpoint.py (🆕 v0.21.0 - 盲点275
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.226 FLE State Checkpoint & Rewind - fle_state_checkpoint.py (🆕 v0.21.0 - 盲点275

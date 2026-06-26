@@ -4,6 +4,7 @@ status: active
 title: 3.15 AI 过度依赖与状态验证
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.15 AI 过度依赖与状态验证

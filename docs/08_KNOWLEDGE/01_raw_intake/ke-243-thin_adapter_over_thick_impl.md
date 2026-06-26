@@ -4,6 +4,7 @@ status: active
 title: 原则 2：Thin Adapter Over Thick Implementation / 薄适配器优于厚实现
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 原则 2：Thin Adapter Over Thick Implementation / 薄适配器优于厚实现

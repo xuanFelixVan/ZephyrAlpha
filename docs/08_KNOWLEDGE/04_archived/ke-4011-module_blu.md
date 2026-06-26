@@ -3,6 +3,7 @@ module_id: KE-3858
 title: 13. 脚本系统运维与自我监控
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 脚本系统运维与自我监控

@@ -4,6 +4,7 @@ status: active
 title: 2.2 档位判定规则（防刷分）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 档位判定规则（防刷分）

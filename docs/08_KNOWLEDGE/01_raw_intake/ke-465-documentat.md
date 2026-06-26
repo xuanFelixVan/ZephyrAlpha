@@ -4,6 +4,7 @@ status: active
 title: 5.3 逃逸检测
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 逃逸检测

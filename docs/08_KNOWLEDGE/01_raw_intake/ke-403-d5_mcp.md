@@ -3,6 +3,7 @@ module_id: KE-367
 title: 4.5 D5 MCP 集成
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5 D5 MCP 集成

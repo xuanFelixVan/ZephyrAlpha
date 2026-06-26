@@ -3,6 +3,7 @@ module_id: KE-1538------------bootst-000
 title: 15.22 beta v -- 自举与经济学 (Bootstrap + ROI + Playground + Health + OTel)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.22 beta v -- 自举与经济学 (Bootstrap + ROI + Playground + Health + OTel)

@@ -4,6 +4,7 @@ status: active
 title: 8.1 Skill Testing & Evaluation Framework（决策 D-019-06）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 Skill Testing & Evaluation Framework（决策 D-019-06）

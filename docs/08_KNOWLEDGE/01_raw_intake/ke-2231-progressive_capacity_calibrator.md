@@ -4,6 +4,7 @@ status: active
 title: 3.6 #60: ProgressiveCapacityCalibrator
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 #60: ProgressiveCapacityCalibrator

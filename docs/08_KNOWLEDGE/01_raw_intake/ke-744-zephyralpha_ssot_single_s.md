@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha SSoT 权威图 (Single Source of Truth Authority Map)

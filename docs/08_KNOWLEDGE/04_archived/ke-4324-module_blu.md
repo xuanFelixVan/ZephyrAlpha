@@ -3,6 +3,7 @@ module_id: KE-4164
 title: 6.11 业界对标深化矩阵（第七轮追加）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.11 业界对标深化矩阵（第七轮追加）

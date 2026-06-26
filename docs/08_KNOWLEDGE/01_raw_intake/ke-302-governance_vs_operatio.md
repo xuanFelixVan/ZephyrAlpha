@@ -4,6 +4,7 @@ status: active
 title: 3.3 `governance/` vs `operational/` 边界判据
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 `governance/` vs `operational/` 边界判据

@@ -3,6 +3,7 @@ module_id: KE-4399
 title: Phase 2 — 集成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 2 — 集成

@@ -4,6 +4,7 @@ status: active
 title: permission_modes.yaml — 新增文件（横切面D 模式管理）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # permission_modes.yaml — 新增文件（横切面D 模式管理）

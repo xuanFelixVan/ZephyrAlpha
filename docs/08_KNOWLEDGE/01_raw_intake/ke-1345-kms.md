@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 5 级门禁策略（KMS 知识管道门禁体系）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 5 级门禁策略（KMS 知识管道门禁体系）

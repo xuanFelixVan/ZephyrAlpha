@@ -4,6 +4,7 @@ status: active
 title: 9. 第四轮深度审计——Economics + Lifecycle + GitOps + Zero-Trust + Autonomy 层面的盲点补充
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 第四轮深度审计——Economics + Lifecycle + GitOps + Zero-Trust + Autonomy 层面的盲点补充

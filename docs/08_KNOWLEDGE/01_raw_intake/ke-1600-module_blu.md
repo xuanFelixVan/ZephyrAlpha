@@ -3,6 +3,7 @@ module_id: KE-1510
 title: 14.1 第二轮审计结果全景矩阵
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.1 第二轮审计结果全景矩阵

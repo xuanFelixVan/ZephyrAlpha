@@ -3,6 +3,7 @@ module_id: KE-4439
 title: 修复的 3 个关键问题
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 修复的 3 个关键问题

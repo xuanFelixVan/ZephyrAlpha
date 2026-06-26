@@ -3,6 +3,7 @@ module_id: KE-834
 title: 2.7 K6：SSoT 冲突数
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 K6：SSoT 冲突数

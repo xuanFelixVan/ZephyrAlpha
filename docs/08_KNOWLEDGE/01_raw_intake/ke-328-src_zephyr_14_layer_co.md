@@ -4,6 +4,7 @@ status: active
 title: 4. `src/zephyr/` — 14-layer code architecture / 14 层代码分层架构
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. `src/zephyr/` — 14-layer code architecture / 14 层代码分层架构

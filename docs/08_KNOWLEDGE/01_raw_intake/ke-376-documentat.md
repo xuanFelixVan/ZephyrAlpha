@@ -4,6 +4,7 @@ status: active
 title: 4.3 安全编排点
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 安全编排点

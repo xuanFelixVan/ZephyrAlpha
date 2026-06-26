@@ -4,6 +4,7 @@ status: active
 title: 调用方注册 schema：
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 调用方注册 schema：

@@ -3,6 +3,7 @@ module_id: KE-327
 title: 4.2 按任务类型定向阅读
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 按任务类型定向阅读

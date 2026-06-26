@@ -4,6 +4,7 @@ status: active
 title: 2.3 分级 Provenance（决策 D-020-03）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 分级 Provenance（决策 D-020-03）

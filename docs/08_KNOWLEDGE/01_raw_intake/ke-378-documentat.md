@@ -4,6 +4,7 @@ status: active
 title: 4.3 指标采集拓扑
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 指标采集拓扑

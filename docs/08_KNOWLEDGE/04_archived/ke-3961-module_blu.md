@@ -3,6 +3,7 @@ module_id: KE-3809
 title: 11.1 施工策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 施工策略

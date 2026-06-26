@@ -4,6 +4,7 @@ status: active
 title: 5.3 三角闭环——审计反馈回写 Policy（决策 D-020-08）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 三角闭环——审计反馈回写 Policy（决策 D-020-08）

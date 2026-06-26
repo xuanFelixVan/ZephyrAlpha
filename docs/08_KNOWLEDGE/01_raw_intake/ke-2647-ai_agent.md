@@ -4,6 +4,7 @@ status: active
 title: 八、施工指南 —— AI agent 编码入口
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 八、施工指南 —— AI agent 编码入口

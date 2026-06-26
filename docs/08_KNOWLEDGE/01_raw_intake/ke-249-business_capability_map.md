@@ -4,6 +4,7 @@ status: active
 title: 3. Business Capability Map / 业务能力地图
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Business Capability Map / 业务能力地图

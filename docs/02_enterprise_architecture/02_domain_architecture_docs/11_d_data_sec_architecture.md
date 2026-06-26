@@ -1,5 +1,5 @@
 ---
-doc_type: domain_architecture_diagram
+doc_type: architecture_view
 title: D-DATA_SEC 数据安全与契约架构图
 version: "1.0"
 status: active

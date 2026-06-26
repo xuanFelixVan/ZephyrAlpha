@@ -3,6 +3,7 @@ module_id: KE-3896-----------1--ai-100--vibe-c-000
 title: 14. 全自动化策略 — 1人+AI，100% Vibe Coding，尽量零触碰
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. 全自动化策略 — 1人+AI，100% Vibe Coding，尽量零触碰

@@ -3,6 +3,7 @@ module_id: KE-2100
 title: 3.3 十八维检测矩阵
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 十八维检测矩阵

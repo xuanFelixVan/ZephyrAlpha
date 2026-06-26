@@ -3,6 +3,7 @@ module_id: KE-3679
 title: COND-002：报告分发必须遵循最小权限原则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # COND-002：报告分发必须遵循最小权限原则

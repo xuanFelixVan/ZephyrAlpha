@@ -3,6 +3,7 @@ module_id: KE-3913
 title: 第八轮盲点（#143-#157）—— "谁验证验证者" / 量化交易特化升级 / 升级规则安全生产
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 第八轮盲点（#143-#157）—— "谁验证验证者" / 量化交易特化升级 / 升级规则安全生产

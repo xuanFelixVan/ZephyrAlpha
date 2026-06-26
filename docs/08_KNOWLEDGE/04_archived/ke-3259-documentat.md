@@ -3,6 +3,7 @@ module_id: KE-3259
 title: 1.1 维度清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1 维度清单

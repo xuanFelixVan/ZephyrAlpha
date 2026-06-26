@@ -3,6 +3,7 @@ module_id: KE-3448
 title: 4.9 架构分层条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.9 架构分层条件禁止

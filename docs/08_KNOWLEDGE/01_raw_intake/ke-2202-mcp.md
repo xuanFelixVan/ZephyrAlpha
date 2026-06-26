@@ -3,6 +3,7 @@ module_id: KE-2109
 title: 3.3 MCP 原语覆盖
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 MCP 原语覆盖

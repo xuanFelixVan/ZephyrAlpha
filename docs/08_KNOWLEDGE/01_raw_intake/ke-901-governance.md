@@ -4,6 +4,7 @@ status: active
 title: 2.5 知识库条目
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 知识库条目

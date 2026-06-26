@@ -4,6 +4,7 @@ status: active
 title: 11.1 异常层级
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 异常层级

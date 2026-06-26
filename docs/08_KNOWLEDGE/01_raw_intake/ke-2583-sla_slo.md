@@ -3,6 +3,7 @@ module_id: KE-2488
 title: 8.4 SLA/SLO 度量指标
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.4 SLA/SLO 度量指标

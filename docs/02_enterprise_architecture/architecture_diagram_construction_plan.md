@@ -1,6 +1,6 @@
 ---
 module_id: GOV-036-ARCH-DIAGRAM-PLAN
-doc_type: architecture_construction_plan
+doc_type: construction_plan
 status: Draft
 version: 0.1.0
 created: '2026-06-22'
@@ -15,8 +15,14 @@ depends_on:
   - target: 依赖与架构全景图能力定位书
     at: §四 全景图组成
     why: depgraph.db是唯一真源,架构图应为派生物
-ttl: permanent
+ttl: task_bound
 ---
+
+> **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
+> D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
+> D-GOV_AUDIT_TESTS→D-AUDITTEST, D-INTEGRATION-GATEWAY→D-INTEGRATION_GATEWAY, D-SECURITY-LLM→D-SECURITY_LLM。
+> 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
+
 
 # 架构图施工方案讨论
 

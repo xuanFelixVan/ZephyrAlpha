@@ -3,6 +3,7 @@ module_id: KE-4280----witness-003
 title: D-022-24 时钟+Witness+静默窗口体系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-24 时钟+Witness+静默窗口体系

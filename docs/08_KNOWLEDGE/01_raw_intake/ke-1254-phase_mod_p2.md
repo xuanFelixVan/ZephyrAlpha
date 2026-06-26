@@ -4,6 +4,7 @@ status: active
 title: MAD-002：Phase 相关性（MOD-P2）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MAD-002：Phase 相关性（MOD-P2）

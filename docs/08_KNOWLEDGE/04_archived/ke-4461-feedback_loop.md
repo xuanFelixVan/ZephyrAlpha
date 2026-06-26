@@ -3,6 +3,7 @@ module_id: KE-4296-----feedback-loop--000
 title: DB-025-0030：集成——feedback-loop (MOD-FEEDBACK_LOOP) 集成验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0030：集成——feedback-loop (MOD-FEEDBACK_LOOP) 集成验证

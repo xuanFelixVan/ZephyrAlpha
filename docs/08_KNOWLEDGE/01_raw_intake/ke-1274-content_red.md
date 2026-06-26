@@ -4,6 +4,7 @@ status: active
 title: MTH-011：内容冗余审计三分类法（Content Redundancy Audit）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-011：内容冗余审计三分类法（Content Redundancy Audit）

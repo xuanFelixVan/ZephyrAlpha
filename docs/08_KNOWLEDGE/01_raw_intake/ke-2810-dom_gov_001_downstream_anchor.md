@@ -4,6 +4,7 @@ status: active
 title: MOD-GOVERNANCE Downstream Anchor Report
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-GOVERNANCE Downstream Anchor Report

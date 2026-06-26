@@ -4,6 +4,7 @@ status: active
 title: 3.3 #28: GracefulShutdown (M-32)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 #28: GracefulShutdown (M-32)

@@ -3,6 +3,7 @@ module_id: KE-3310
 title: 4.6 审计与可追溯性条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.6 审计与可追溯性条件禁止

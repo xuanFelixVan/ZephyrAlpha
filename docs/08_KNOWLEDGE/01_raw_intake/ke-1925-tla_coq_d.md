@@ -4,6 +4,7 @@ status: active
 title: 2.25 协议形式化验证 — TLA+/Coq（决策 D-025-22）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.25 协议形式化验证 — TLA+/Coq（决策 D-025-22）

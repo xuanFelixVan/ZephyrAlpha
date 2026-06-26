@@ -3,6 +3,7 @@ module_id: KE-3989--------asset-taxonomy-003
 title: 2.1 资产分类体系（Asset Taxonomy）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 资产分类体系（Asset Taxonomy）

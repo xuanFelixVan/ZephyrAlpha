@@ -3,6 +3,7 @@ module_id: KE-3946--------------dd75--000
 title: 16-EXPANDED. 第十二轮新增设计决策 (DD75-DD86)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16-EXPANDED. 第十二轮新增设计决策 (DD75-DD86)

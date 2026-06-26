@@ -4,6 +4,7 @@ status: active
 title: 排除规则（不应放入本目录的内容）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 排除规则（不应放入本目录的内容）

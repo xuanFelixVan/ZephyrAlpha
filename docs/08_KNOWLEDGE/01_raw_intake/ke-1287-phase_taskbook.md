@@ -4,6 +4,7 @@ status: active
 title: 检查每个 Phase taskbook 必须有双门
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 检查每个 Phase taskbook 必须有双门

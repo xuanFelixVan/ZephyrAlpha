@@ -3,6 +3,7 @@ module_id: KE-3463
 title: 〇.1 目的
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 〇.1 目的

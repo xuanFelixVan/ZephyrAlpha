@@ -4,6 +4,7 @@ status: active
 title: 10.3 模式 C：全自主 API 循环
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 模式 C：全自主 API 循环

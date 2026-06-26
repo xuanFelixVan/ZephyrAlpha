@@ -4,6 +4,7 @@ status: active
 title: 10.2 Phase 门禁（不可越级）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 Phase 门禁（不可越级）

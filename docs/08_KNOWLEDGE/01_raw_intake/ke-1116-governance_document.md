@@ -3,6 +3,7 @@ module_id: KE-1031
 title: 8.2 governance/document/ 文件夹
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 governance/document/ 文件夹

@@ -3,6 +3,7 @@ module_id: KE-3337-----domain-23-004
 title: 5.2.1 已注册 DOMAIN（23 个）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2.1 已注册 DOMAIN（23 个）

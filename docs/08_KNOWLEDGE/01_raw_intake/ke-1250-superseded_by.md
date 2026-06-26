@@ -4,6 +4,7 @@ status: active
 title: LFC-002：退役必须填写 superseded_by
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LFC-002：退役必须填写 superseded_by

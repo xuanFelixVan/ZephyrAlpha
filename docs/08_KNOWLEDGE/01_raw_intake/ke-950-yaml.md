@@ -4,6 +4,7 @@ status: active
 title: §3 YAML 模板（直接复制填写）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §3 YAML 模板（直接复制填写）

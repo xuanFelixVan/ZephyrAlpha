@@ -3,6 +3,7 @@ module_id: KE-2675---------sql--i-002
 title: DB-025-0053：AP1 防护——禁止手动SQL文件init
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0053：AP1 防护——禁止手动SQL文件init

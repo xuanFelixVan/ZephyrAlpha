@@ -4,6 +4,7 @@ status: active
 title: DOC-004：完整路径引用（Full Path Traceability）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-004：完整路径引用（Full Path Traceability）

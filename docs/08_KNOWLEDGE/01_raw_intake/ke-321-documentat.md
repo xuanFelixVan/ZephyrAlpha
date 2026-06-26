@@ -3,6 +3,7 @@ module_id: KE-295
 title: 3.6 密钥与凭证安全
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 密钥与凭证安全

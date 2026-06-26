@@ -4,6 +4,7 @@ status: active
 title: 3.1 #39: CapacityFingerprint (M-36)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 #39: CapacityFingerprint (M-36)

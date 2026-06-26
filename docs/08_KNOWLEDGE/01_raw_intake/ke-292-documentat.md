@@ -4,6 +4,7 @@ status: active
 title: 3.2.3 已消除的重复章节
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.3 已消除的重复章节

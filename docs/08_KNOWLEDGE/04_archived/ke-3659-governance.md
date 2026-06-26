@@ -3,6 +3,7 @@ module_id: KE-3514
 title: §2 子域导航速览
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §2 子域导航速览

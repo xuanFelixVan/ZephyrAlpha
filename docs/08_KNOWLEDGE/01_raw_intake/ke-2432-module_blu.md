@@ -4,6 +4,7 @@ status: active
 title: 6大类62项，每类核心实现：
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6大类62项，每类核心实现：

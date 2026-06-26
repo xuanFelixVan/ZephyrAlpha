@@ -4,6 +4,7 @@ status: active
 title: dispatch 过程中记录每个模块的副作用
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # dispatch 过程中记录每个模块的副作用

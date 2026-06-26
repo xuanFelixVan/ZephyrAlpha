@@ -4,6 +4,7 @@ status: active
 title: Phase 3 (P2, 2-3天, Optional)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 3 (P2, 2-3天, Optional)

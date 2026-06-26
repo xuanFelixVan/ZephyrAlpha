@@ -3,6 +3,7 @@ module_id: KE-201
 title: 2.4 Interface classification / 接口分类
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 Interface classification / 接口分类

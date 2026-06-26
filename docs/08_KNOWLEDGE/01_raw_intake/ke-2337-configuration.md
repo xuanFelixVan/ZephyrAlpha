@@ -4,6 +4,7 @@ status: active
 title: 4.4 触发条件 C：结构缺失
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4 触发条件 C：结构缺失

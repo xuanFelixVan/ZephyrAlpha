@@ -3,6 +3,7 @@ module_id: KE-2460
 title: 8. 渐进路线
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 渐进路线

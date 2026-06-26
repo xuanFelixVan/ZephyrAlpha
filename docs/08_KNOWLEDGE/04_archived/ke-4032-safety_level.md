@@ -3,6 +3,7 @@ module_id: KE-3879-----safety-level-000
 title: 13.3 工具级 safety_level
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.3 工具级 safety_level

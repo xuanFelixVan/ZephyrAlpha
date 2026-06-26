@@ -4,6 +4,7 @@ status: active
 title: MOD-INF-013 最终审计报告
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-INF-013 最终审计报告

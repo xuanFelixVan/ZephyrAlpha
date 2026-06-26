@@ -3,6 +3,7 @@ module_id: KE-614
 title: 三、优先级字段权威 (Priority Authority)
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三、优先级字段权威 (Priority Authority)

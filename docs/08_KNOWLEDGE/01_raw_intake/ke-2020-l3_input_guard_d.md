@@ -4,6 +4,7 @@ status: active
 title: 2.6 L3 — Input Guard 参数护栏（决策 D-018-08）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.6 L3 — Input Guard 参数护栏（决策 D-018-08）

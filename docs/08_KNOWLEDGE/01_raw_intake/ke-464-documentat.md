@@ -3,6 +3,7 @@ module_id: KE-416
 title: 5.3 分档标准
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 分档标准

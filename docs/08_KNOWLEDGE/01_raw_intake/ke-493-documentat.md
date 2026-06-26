@@ -4,6 +4,7 @@ status: active
 title: 6. 当前仍未完成的讨论
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 当前仍未完成的讨论

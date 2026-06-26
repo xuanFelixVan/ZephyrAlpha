@@ -3,6 +3,7 @@ module_id: KE-1230
 title: SIR-004：通知机制
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SIR-004：通知机制

@@ -4,6 +4,7 @@ status: active
 title: 审计追踪链蓝图 — 不可变动作审计 + 密码学 Provenance + Agent 级签名 + CoT 推理链 + 漂移检测
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 审计追踪链蓝图 — 不可变动作审计 + 密码学 Provenance + Agent 级签名 + CoT 推理链 + 漂移检测

@@ -3,6 +3,7 @@ module_id: KE-1433
 title: 12.3 L3 Schema P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.3 L3 Schema P0

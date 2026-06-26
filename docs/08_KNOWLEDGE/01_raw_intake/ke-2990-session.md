@@ -4,6 +4,7 @@ status: active
 title: 追加到 session 运行时
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 追加到 session 运行时

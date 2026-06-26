@@ -4,6 +4,7 @@ status: active
 title: 3.10 KO（Knowledge Observation）存储格式
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.10 KO（Knowledge Observation）存储格式

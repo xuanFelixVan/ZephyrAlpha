@@ -4,6 +4,7 @@ status: active
 title: 9.3 Dashboard
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 Dashboard

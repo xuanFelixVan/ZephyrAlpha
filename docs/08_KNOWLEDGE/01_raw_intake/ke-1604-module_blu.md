@@ -4,6 +4,7 @@ status: active
 title: 14.2 安全关机 (逆序)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.2 安全关机 (逆序)

@@ -4,6 +4,7 @@ status: active
 title: 3.13 条件性不可逆禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.13 条件性不可逆禁止

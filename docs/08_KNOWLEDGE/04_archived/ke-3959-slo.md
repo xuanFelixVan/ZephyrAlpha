@@ -3,6 +3,7 @@ module_id: KE-3807----slo-000
 title: 11.1 稳态 SLO
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 稳态 SLO

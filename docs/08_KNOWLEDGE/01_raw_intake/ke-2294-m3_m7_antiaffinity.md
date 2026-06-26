@@ -4,6 +4,7 @@ status: active
 title: 4. M3↔M7 antiAffinity 硬约束影响链路
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. M3↔M7 antiAffinity 硬约束影响链路

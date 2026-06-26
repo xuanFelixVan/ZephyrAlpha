@@ -3,6 +3,7 @@ module_id: KE-4438
 title: 10. 修订记录
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. 修订记录

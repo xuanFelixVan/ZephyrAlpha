@@ -3,6 +3,7 @@ module_id: KE-182
 title: 2.2 External system list / 外部系统清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 External system list / 外部系统清单

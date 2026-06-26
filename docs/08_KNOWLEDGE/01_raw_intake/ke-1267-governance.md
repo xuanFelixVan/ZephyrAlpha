@@ -4,6 +4,7 @@ status: active
 title: MTH-005：模块天花板与自治预留
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-005：模块天花板与自治预留

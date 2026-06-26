@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 标准文档模板
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 标准文档模板

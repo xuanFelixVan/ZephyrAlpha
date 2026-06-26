@@ -4,6 +4,7 @@ status: active
 title: 1.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1.2 核心原因（从专业机构招聘资料 + 技术博客提炼）

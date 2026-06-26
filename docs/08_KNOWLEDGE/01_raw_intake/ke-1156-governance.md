@@ -4,6 +4,7 @@ status: active
 title: AI 幻觉自动检测规则集
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AI 幻觉自动检测规则集

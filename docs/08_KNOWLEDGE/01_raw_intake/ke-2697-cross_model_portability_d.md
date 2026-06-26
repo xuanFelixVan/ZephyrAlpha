@@ -4,6 +4,7 @@ status: active
 title: Cross-Model Portability (D-019-17)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Cross-Model Portability (D-019-17)

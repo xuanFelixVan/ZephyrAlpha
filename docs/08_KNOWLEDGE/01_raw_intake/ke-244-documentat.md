@@ -3,6 +3,7 @@ module_id: KE-223---------19-006
 title: 文件清单（本目录 **20** 个文件：**19** 份登记/契约类工件 + **本 index.md**）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 文件清单（本目录 **20** 个文件：**19** 份登记/契约类工件 + **本 index.md**）

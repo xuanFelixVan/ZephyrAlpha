@@ -3,6 +3,7 @@ module_id: KE-3645
 title: ABS-001：盘后报告必须在规定时限内产出
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ABS-001：盘后报告必须在规定时限内产出

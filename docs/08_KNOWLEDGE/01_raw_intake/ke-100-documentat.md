@@ -4,6 +4,7 @@ status: active
 title: 1.4 适用范围
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.4 适用范围

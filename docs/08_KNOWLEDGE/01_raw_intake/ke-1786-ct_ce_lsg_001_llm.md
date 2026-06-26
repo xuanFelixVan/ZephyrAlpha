@@ -4,6 +4,7 @@ status: active
 title: 2.11 CT-CE-LSG-001：上下文引擎 → LLM安全 — 上下文注入前安全校验
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.11 CT-CE-LSG-001：上下文引擎 → LLM安全 — 上下文注入前安全校验

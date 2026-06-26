@@ -3,6 +3,7 @@ module_id: KE-141
 title: §13 Open Questions / 待决问题
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §13 Open Questions / 待决问题

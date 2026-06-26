@@ -4,6 +4,7 @@ status: active
 title: Hypothesis策略生成器——"给定任意合法TaskCard→Pipeline应产出有效PipelineResult"
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Hypothesis策略生成器——"给定任意合法TaskCard→Pipeline应产出有效PipelineResult"

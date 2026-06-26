@@ -4,6 +4,7 @@ status: active
 title: continuous_verifier.py — 新增文件（横切面D组件）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # continuous_verifier.py — 新增文件（横切面D组件）

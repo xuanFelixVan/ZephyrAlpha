@@ -3,6 +3,7 @@ module_id: KE-4053-------mod-inf--000
 title: 3.1 Audit Trail 集成（对接 MOD-INF-020）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 Audit Trail 集成（对接 MOD-INF-020）

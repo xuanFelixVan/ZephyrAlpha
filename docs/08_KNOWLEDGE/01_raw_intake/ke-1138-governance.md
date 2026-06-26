@@ -4,6 +4,7 @@ status: active
 title: ABS-001：所有数据源连接必须认证
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ABS-001：所有数据源连接必须认证

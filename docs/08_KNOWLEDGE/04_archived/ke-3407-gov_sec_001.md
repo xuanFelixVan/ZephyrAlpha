@@ -3,6 +3,7 @@ module_id: KE-3282------gov-sec-001--3-000
 title: 4.1 密钥泄露（GOV-SEC-001 §3）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 密钥泄露（GOV-SEC-001 §3）

@@ -3,6 +3,7 @@ module_id: KE-3382
 title: 7. 回滚方案
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 回滚方案

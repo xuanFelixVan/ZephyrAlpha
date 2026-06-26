@@ -4,6 +4,7 @@ status: active
 title: pyproject.toml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # pyproject.toml

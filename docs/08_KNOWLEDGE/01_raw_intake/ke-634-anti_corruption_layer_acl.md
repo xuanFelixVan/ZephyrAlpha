@@ -4,6 +4,7 @@ status: active
 title: Anti-Corruption Layer / ACL 三段结构（L00 数据接入）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Anti-Corruption Layer / ACL 三段结构（L00 数据接入）

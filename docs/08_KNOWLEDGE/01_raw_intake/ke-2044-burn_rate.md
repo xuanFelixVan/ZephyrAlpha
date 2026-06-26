@@ -4,6 +4,7 @@ status: active
 title: 2.9 Burn Rate 多窗口监控
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.9 Burn Rate 多窗口监控

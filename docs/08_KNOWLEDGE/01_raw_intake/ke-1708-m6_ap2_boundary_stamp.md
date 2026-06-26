@@ -4,6 +4,7 @@ status: active
 title: 2. M6 边界标记（AP2 Boundary Stamp）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. M6 边界标记（AP2 Boundary Stamp）

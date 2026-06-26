@@ -4,6 +4,7 @@ status: active
 title: degradation_chain.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # degradation_chain.yaml

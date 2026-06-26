@@ -4,6 +4,7 @@ status: active
 title: 4. Keyword Mapper — intent_keyword_mapper.py (§5.1 BUILD-C01)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Keyword Mapper — intent_keyword_mapper.py (§5.1 BUILD-C01)

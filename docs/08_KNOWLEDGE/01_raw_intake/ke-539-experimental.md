@@ -4,6 +4,7 @@ status: active
 title: 7.1 experimental 简化模型（单人）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 experimental 简化模型（单人）

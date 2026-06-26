@@ -4,6 +4,7 @@ status: active
 title: 2.2 R1 缓解：WAL 模式 + 写缓冲
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 R1 缓解：WAL 模式 + 写缓冲

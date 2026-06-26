@@ -3,6 +3,7 @@ module_id: KE-3623
 title: 7.2 审计判定速查表
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 审计判定速查表

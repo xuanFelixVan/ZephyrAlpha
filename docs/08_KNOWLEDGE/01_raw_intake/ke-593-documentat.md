@@ -4,6 +4,7 @@ status: active
 title: 8.4 幂等设计 — 资金安全一级红线
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.4 幂等设计 — 资金安全一级红线

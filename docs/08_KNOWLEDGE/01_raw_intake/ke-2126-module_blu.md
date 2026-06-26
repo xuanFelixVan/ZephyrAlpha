@@ -4,6 +4,7 @@ status: active
 title: 3.1 按审计维度分类（主分类轴）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 按审计维度分类（主分类轴）

@@ -3,6 +3,7 @@ module_id: KE-405
 title: 5.2 决策理由
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 决策理由

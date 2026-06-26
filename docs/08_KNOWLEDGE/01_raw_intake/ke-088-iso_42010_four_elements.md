@@ -4,6 +4,7 @@ status: active
 title: 1.2 ISO 42010 four elements / ISO 42010 四要素映射
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 ISO 42010 four elements / ISO 42010 四要素映射

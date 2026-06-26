@@ -3,6 +3,7 @@ module_id: KE-3215
 title: 2.3 frontmatter 字段定义的权威来源
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 frontmatter 字段定义的权威来源

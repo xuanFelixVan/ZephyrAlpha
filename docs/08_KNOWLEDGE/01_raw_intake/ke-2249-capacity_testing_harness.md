@@ -4,6 +4,7 @@ status: active
 title: 3.9 #33: CapacityTestingHarness
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9 #33: CapacityTestingHarness

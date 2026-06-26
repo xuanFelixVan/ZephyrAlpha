@@ -3,6 +3,7 @@ module_id: KE-3321---14-002
 title: 4A.3 与 14 层业务层的集成模式
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4A.3 与 14 层业务层的集成模式

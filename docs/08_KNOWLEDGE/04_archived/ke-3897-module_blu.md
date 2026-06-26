@@ -3,6 +3,7 @@ module_id: KE-3746-----------6-1-004
 title: 1. 模块清单（蓝图 §6.1）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 模块清单（蓝图 §6.1）

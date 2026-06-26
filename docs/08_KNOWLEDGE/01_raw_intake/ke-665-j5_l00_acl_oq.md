@@ -4,6 +4,7 @@ status: active
 title: 附记：J5 L00 ACL 显式化（非正式 OQ，补充落盘）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 附记：J5 L00 ACL 显式化（非正式 OQ，补充落盘）

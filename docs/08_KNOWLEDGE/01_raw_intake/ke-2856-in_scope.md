@@ -4,6 +4,7 @@ status: active
 title: In-Scope
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # In-Scope

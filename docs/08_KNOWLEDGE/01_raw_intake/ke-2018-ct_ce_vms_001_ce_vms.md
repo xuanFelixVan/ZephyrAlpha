@@ -4,6 +4,7 @@ status: active
 title: 2.6 CT-CE-VMS-001：CE ↔ VMS
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.6 CT-CE-VMS-001：CE ↔ VMS

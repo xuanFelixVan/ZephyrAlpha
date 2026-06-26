@@ -4,6 +4,7 @@ status: active
 title: AI 幻觉自检清单
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AI 幻觉自检清单

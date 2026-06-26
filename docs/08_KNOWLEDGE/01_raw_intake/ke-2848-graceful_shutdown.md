@@ -4,6 +4,7 @@ status: active
 title: Graceful Shutdown 设计 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Graceful Shutdown 设计 🆕

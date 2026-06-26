@@ -4,6 +4,7 @@ status: active
 title: 6.6.3 version 与 schema_version 规范
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6.3 version 与 schema_version 规范

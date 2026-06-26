@@ -4,6 +4,7 @@ status: active
 title: 7.4 版本化与回滚
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.4 版本化与回滚

@@ -4,6 +4,7 @@ status: active
 title: 2.23 Agent行为漂移检测（决策 D-022-16）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.23 Agent行为漂移检测（决策 D-022-16）

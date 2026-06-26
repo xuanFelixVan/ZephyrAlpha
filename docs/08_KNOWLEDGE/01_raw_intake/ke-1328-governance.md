@@ -4,6 +4,7 @@ status: active
 title: 目录创建模板
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 目录创建模板

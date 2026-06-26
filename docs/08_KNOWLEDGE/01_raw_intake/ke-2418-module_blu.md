@@ -4,6 +4,7 @@ status: active
 title: 5.6 产出物命名规范
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.6 产出物命名规范

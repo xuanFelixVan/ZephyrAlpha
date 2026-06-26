@@ -4,6 +4,7 @@ status: active
 title: 2.6 多轮审计扩展风险
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.6 多轮审计扩展风险

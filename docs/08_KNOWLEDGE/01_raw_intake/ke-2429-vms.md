@@ -4,6 +4,7 @@ status: active
 title: 6. 架构分层——VMS 内部模块分解
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 架构分层——VMS 内部模块分解

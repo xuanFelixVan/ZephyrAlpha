@@ -4,6 +4,7 @@ status: active
 title: 3.6 #37: SunkCostIntervention (M-35)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 #37: SunkCostIntervention (M-35)

@@ -4,6 +4,7 @@ status: active
 title: config/db_config.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # config/db_config.yaml

@@ -4,6 +4,7 @@ status: active
 title: 9.8 Skill Knowledge Distillation & Merge Detection
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.8 Skill Knowledge Distillation & Merge Detection

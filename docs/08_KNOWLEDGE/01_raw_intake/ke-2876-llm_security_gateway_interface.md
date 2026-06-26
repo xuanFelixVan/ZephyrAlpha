@@ -4,6 +4,7 @@ status: active
 title: LLM Security Gateway Interface / LLM 安全网关接口规范
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LLM Security Gateway Interface / LLM 安全网关接口规范

@@ -3,6 +3,7 @@ module_id: KE-2843
 title: Phase 3：检索质量闭环
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 3：检索质量闭环

@@ -4,6 +4,7 @@ status: active
 title: 代码去重引擎（Code Dedup Engine）蓝图 — Monoculture免疫 · 原子修复 · 决策审计链 · 主动发现 · 漏报可视 · 微克隆感知
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 代码去重引擎（Code Dedup Engine）蓝图 — Monoculture免疫 · 原子修复 · 决策审计链 · 主动发现 · 漏报可视 · 微克隆感知

@@ -4,6 +4,7 @@ status: active
 title: §4.3 管线执行结果（17字段）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §4.3 管线执行结果（17字段）

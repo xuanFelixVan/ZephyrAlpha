@@ -3,6 +3,7 @@ module_id: KE-1356
 title: 10.2 测试层级
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 测试层级

@@ -3,6 +3,7 @@ module_id: KE-2374
 title: 6.2 budget-enforcer/blueprint.md
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 budget-enforcer/blueprint.md

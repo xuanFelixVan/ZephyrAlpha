@@ -3,6 +3,7 @@ module_id: KE-286
 title: 3.3 Network boundary / 网络边界
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 Network boundary / 网络边界

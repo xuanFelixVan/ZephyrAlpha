@@ -1,5 +1,5 @@
 ---
-doc_type: delivery_record
+doc_type: log
 module_id: MOD-INF-029
 version: 1.0.0
 date: '2026-05-08'

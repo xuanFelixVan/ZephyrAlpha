@@ -4,6 +4,7 @@ status: active
 title: 3. ATM v2.0 原子事务管理器
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. ATM v2.0 原子事务管理器

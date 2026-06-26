@@ -3,6 +3,7 @@ module_id: KE-4324--------13-3-000
 title: DB-025-0063：容量估算——§13.3 性能基线
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0063：容量估算——§13.3 性能基线

@@ -3,6 +3,7 @@ module_id: KE-741
 title: 14.2 Informative 引用
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.2 Informative 引用

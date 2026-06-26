@@ -3,6 +3,7 @@ module_id: KE-434
 title: 6. Data Lineage / 数据血缘
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. Data Lineage / 数据血缘

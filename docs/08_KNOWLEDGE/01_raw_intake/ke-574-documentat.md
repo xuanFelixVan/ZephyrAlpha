@@ -3,6 +3,7 @@ module_id: KE-517
 title: 8. 开放问题
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 开放问题

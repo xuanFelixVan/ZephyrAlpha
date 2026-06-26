@@ -4,6 +4,7 @@ status: active
 title: 11.2 核心约束
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.2 核心约束

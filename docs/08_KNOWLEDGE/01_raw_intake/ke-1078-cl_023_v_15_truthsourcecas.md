@@ -4,6 +4,7 @@ status: active
 title: 6.7 CL-023 V-15 TruthSourceCascadeValidator 启动记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.7 CL-023 V-15 TruthSourceCascadeValidator 启动记录

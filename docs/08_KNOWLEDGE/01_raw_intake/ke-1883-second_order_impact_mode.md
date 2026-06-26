@@ -4,6 +4,7 @@ status: active
 title: 2.217 Second-Order Impact Model - second_order_impact_model.py (🆕 v0.20.0 - 盲点26
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.217 Second-Order Impact Model - second_order_impact_model.py (🆕 v0.20.0 - 盲点26

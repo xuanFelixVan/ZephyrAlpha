@@ -4,6 +4,7 @@ status: active
 title: 三、Emergency Change Board 协议
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三、Emergency Change Board 协议

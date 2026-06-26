@@ -4,6 +4,7 @@ status: active
 title: 8.1 部署位置：MCP Server 前端拦截
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 部署位置：MCP Server 前端拦截

@@ -4,6 +4,7 @@ status: active
 title: ===== AI 自治 =====
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ===== AI 自治 =====

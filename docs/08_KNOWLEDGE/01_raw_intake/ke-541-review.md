@@ -3,6 +3,7 @@ module_id: KE-489
 title: 7.1 Review 节奏
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 Review 节奏

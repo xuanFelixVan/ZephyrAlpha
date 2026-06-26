@@ -4,6 +4,7 @@ status: active
 title: 2.2 next_stage_entry_criteria（Stage 准入门）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 next_stage_entry_criteria（Stage 准入门）

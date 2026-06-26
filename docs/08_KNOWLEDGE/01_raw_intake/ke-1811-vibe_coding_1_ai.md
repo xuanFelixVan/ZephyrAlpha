@@ -4,6 +4,7 @@ status: active
 title: 2.15 Vibe Coding / 1人+AI 专属优化（决策 D-025-12）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.15 Vibe Coding / 1人+AI 专属优化（决策 D-025-12）

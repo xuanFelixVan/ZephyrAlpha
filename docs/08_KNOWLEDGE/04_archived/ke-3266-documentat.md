@@ -3,6 +3,7 @@ module_id: KE-3266
 title: 1.3 与其他视图的边界
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 与其他视图的边界

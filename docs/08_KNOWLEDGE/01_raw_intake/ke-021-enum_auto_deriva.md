@@ -4,6 +4,7 @@ status: active
 title: 6.13 枚举自动派生铁律（Enum Auto-Derivation Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.13 枚举自动派生铁律（Enum Auto-Derivation Mandate）

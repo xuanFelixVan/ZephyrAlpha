@@ -3,6 +3,7 @@ module_id: KE-400
 title: 5.1 格式
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 格式

@@ -4,6 +4,7 @@ status: active
 title: 8. 双轨/下沉结构（已退役）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 双轨/下沉结构（已退役）

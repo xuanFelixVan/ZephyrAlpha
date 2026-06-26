@@ -4,6 +4,7 @@ status: active
 title: infra_ops
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # infra_ops

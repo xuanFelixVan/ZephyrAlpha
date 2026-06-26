@@ -3,6 +3,7 @@ module_id: KE-234
 title: 3. 执行频率与耗时
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 执行频率与耗时

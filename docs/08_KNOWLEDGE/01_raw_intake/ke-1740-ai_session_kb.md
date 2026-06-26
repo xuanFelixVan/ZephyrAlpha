@@ -3,6 +3,7 @@ module_id: KE-1650--------ai-session----kb-001
 title: 2.1 必读文档（新 AI session 接手 KB 模块时按此顺序）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 必读文档（新 AI session 接手 KB 模块时按此顺序）

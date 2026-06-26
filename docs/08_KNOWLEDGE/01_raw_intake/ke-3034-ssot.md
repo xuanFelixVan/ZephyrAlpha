@@ -3,6 +3,7 @@ module_id: KE-2934
 title: SSoT 声明
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SSoT 声明

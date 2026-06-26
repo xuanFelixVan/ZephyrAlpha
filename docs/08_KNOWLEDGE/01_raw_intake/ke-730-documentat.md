@@ -4,6 +4,7 @@ status: active
 title: 受保护字段
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 受保护字段

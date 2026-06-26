@@ -4,6 +4,7 @@ status: active
 title: 3.2 Finding（Script System、Orchestrator、Gates、KB 共用）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 Finding（Script System、Orchestrator、Gates、KB 共用）

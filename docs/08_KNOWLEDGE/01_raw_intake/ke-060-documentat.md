@@ -3,6 +3,7 @@ module_id: KE-058
 title: 0.3 适用读者
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.3 适用读者

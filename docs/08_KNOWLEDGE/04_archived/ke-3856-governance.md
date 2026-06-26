@@ -3,6 +3,7 @@ module_id: KE-3705
 title: MRS-004：禁止行为清单
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MRS-004：禁止行为清单

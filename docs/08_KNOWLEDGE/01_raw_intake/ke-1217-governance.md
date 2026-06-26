@@ -3,6 +3,7 @@ module_id: KE-1130
 title: DRP-003：合规例外
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DRP-003：合规例外

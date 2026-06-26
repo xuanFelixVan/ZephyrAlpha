@@ -3,6 +3,7 @@ module_id: KE-3292
 title: 4.13 交接与架构治理条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.13 交接与架构治理条件禁止

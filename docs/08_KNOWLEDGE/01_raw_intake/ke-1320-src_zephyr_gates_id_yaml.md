@@ -4,6 +4,7 @@ status: active
 title: 创建门禁（src/zephyr/gates/<id>.yaml）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 创建门禁（src/zephyr/gates/<id>.yaml）

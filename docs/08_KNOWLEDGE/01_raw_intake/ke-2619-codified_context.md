@@ -4,6 +4,7 @@ status: active
 title: 9.5 与 Codified Context 对比（第一次量化数据）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.5 与 Codified Context 对比（第一次量化数据）

@@ -3,6 +3,7 @@ module_id: KE-130
 title: 12. 恢复操作
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. 恢复操作

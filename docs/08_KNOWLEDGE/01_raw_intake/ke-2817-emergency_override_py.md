@@ -4,6 +4,7 @@ status: active
 title: emergency_override.py — 新增文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # emergency_override.py — 新增文件

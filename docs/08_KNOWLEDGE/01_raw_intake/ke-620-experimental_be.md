@@ -4,6 +4,7 @@ status: active
 title: 9.3 防篡改机制（experimental 轻量 → beta 加强）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 防篡改机制（experimental 轻量 → beta 加强）

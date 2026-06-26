@@ -3,6 +3,7 @@ module_id: KE-2943
 title: SYS-MASTER-001 Consistency
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SYS-MASTER-001 Consistency

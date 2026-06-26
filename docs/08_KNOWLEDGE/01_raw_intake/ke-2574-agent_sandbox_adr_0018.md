@@ -4,6 +4,7 @@ status: active
 title: 8.3 与 Agent Sandbox（KBG-0018）的双层关系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 与 Agent Sandbox（KBG-0018）的双层关系

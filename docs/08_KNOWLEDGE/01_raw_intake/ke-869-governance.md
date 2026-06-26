@@ -4,6 +4,7 @@ status: active
 title: 2.13 跨维度脚本统计
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.13 跨维度脚本统计

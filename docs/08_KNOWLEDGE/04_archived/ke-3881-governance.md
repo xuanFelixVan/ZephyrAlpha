@@ -3,6 +3,7 @@ module_id: KE-3730
 title: 一、TTL 分级定义
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 一、TTL 分级定义

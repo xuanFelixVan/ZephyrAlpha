@@ -3,6 +3,7 @@ module_id: KE-4293-----task-system--m-000
 title: DB-025-0027：集成——task-system (MOD-TASK_SYSTEM) 集成验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0027：集成——task-system (MOD-TASK_SYSTEM) 集成验证

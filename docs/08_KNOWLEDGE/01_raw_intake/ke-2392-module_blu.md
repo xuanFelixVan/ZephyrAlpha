@@ -3,6 +3,7 @@ module_id: KE-2297
 title: 5.2 架构能力缺口
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 架构能力缺口

@@ -4,6 +4,7 @@ status: active
 title: 七、与 YAML 规则的对应
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 七、与 YAML 规则的对应

@@ -3,6 +3,7 @@ module_id: KE-3172
 title: 10.1 边界四象限
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 边界四象限

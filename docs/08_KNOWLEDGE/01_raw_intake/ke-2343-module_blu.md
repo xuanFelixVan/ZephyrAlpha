@@ -3,6 +3,7 @@ module_id: KE-2248
 title: 4.5 触发条件汇总
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5 触发条件汇总

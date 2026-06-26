@@ -4,6 +4,7 @@ status: active
 title: 2.1 KMS 知识管道时间轴
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 KMS 知识管道时间轴

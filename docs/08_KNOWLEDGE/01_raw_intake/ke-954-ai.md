@@ -4,6 +4,7 @@ status: active
 title: §4 对 AI 的使用指引
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §4 对 AI 的使用指引

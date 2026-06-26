@@ -4,6 +4,7 @@ status: active
 title: Track D：AI-AI 协作知识（beta+ 预留接口）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Track D：AI-AI 协作知识（beta+ 预留接口）

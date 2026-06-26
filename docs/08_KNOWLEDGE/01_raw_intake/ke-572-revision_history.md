@@ -3,6 +3,7 @@ module_id: KE-572
 title: 8. Revision history / 修订记录
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. Revision history / 修订记录

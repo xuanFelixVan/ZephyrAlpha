@@ -4,6 +4,7 @@ status: active
 title: Module Sandbox（模块级进程隔离）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Module Sandbox（模块级进程隔离）

@@ -4,6 +4,7 @@ status: active
 title: MLC-003：退役必须完成引用迁移
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MLC-003：退役必须完成引用迁移

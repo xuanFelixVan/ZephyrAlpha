@@ -4,6 +4,7 @@ status: active
 title: 18.3 门禁模拟器
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18.3 门禁模拟器

@@ -4,6 +4,7 @@ status: active
 title: data/cache/doom-loop-freeze-list.json —— 引擎自动维护
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # data/cache/doom-loop-freeze-list.json —— 引擎自动维护

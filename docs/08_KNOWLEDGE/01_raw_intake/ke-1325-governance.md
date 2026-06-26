@@ -4,6 +4,7 @@ status: active
 title: Trae 编辑器（必须配置）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Trae 编辑器（必须配置）

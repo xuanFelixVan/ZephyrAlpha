@@ -4,6 +4,7 @@ status: active
 title: CT-DB-002：ATM 事务契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # CT-DB-002：ATM 事务契约

@@ -4,6 +4,7 @@ status: active
 title: IFC-006：模块必须通过契约一致性检查
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IFC-006：模块必须通过契约一致性检查

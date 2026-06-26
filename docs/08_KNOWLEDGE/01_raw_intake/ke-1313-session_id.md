@@ -4,6 +4,7 @@ status: active
 title: 你的 session_id 格式
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 你的 session_id 格式

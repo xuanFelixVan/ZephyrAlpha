@@ -3,6 +3,7 @@ module_id: KE-839
 title: 20. 可验证性标注
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 20. 可验证性标注

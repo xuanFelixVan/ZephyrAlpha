@@ -4,6 +4,7 @@ status: active
 title: 4.1 DocStatus（域 A：文档 frontmatter）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 DocStatus（域 A：文档 frontmatter）

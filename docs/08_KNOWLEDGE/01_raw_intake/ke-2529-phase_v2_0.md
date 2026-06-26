@@ -3,6 +3,7 @@ module_id: KE-2434-----v2-0-0-003
 title: 7.2 Phase 路线图（v2.0.0 更新）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 Phase 路线图（v2.0.0 更新）

@@ -1,6 +1,6 @@
 ---
 title: blueprint_id / 节点路径 命名一致性病根调研与裁定报告
-doc_type: governance_report
+doc_type: audit_report
 status: active
 ttl: task_bound
 created_by: agent

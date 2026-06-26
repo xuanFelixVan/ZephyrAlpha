@@ -4,6 +4,7 @@ status: active
 title: 2. Core Implementation — context_injector.py (§2.4)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Core Implementation — context_injector.py (§2.4)

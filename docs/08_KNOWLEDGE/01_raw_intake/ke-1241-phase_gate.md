@@ -4,6 +4,7 @@ status: active
 title: IRN-005：Phase Gate（铁律5）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-005：Phase Gate（铁律5）

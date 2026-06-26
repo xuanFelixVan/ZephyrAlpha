@@ -3,6 +3,7 @@ module_id: KE-559
 title: 9.3 监管驱动的保留要求（占位）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 监管驱动的保留要求（占位）

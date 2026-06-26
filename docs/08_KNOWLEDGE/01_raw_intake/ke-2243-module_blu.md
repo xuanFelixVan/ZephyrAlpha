@@ -4,6 +4,7 @@ status: active
 title: 3.8 三轨 18 类知识分类体系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.8 三轨 18 类知识分类体系

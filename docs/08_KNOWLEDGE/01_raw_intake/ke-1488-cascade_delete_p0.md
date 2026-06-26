@@ -3,6 +3,7 @@ module_id: KE-1398---delete-p0-002
 title: 11.3 Cascade & Delete P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.3 Cascade & Delete P0

@@ -4,6 +4,7 @@ status: active
 title: Speculative Execution
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Speculative Execution

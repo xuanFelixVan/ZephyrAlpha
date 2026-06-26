@@ -4,6 +4,7 @@ status: active
 title: suitability_score 评估维度
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # suitability_score 评估维度

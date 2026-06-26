@@ -4,6 +4,7 @@ status: active
 title: 2.1 SkillLoader.progressive_load()
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 SkillLoader.progressive_load()

@@ -4,6 +4,7 @@ status: active
 title: 2.244 Emergent Behavioral Pattern Detector - emergent_behavior_detector.py (🆕 v0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.244 Emergent Behavioral Pattern Detector - emergent_behavior_detector.py (🆕 v0

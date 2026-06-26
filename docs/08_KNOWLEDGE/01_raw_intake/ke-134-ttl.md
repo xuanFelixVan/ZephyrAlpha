@@ -4,6 +4,7 @@ status: active
 title: 11. TTL 与生命周期
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. TTL 与生命周期

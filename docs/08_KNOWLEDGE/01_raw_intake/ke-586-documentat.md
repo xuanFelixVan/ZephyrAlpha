@@ -4,6 +4,7 @@ status: active
 title: §8.2 激活监控机制
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §8.2 激活监控机制

@@ -4,6 +4,7 @@ status: active
 title: Plugin Contract v1.0 — 所有治理脚本必须满足的接口约定
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Plugin Contract v1.0 — 所有治理脚本必须满足的接口约定

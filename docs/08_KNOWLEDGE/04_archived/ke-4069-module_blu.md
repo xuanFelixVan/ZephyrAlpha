@@ -3,6 +3,7 @@ module_id: KE-3915
 title: 15. 风险与缓解
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15. 风险与缓解

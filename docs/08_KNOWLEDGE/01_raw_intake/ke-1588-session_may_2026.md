@@ -4,6 +4,7 @@ status: active
 title: 14. 已发现未修复盲点（第六轮审计 | 2026-05-05）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. 已发现未修复盲点（第六轮审计 | 2026-05-05）

@@ -4,6 +4,7 @@ status: active
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根

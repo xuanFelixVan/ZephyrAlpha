@@ -4,6 +4,7 @@ status: active
 title: 11. AI 可消费性声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. AI 可消费性声明

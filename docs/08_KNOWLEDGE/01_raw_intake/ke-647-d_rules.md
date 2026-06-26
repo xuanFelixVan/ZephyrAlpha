@@ -4,6 +4,7 @@ status: active
 title: D-RULES：架构原则与不变量可验证性
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-RULES：架构原则与不变量可验证性

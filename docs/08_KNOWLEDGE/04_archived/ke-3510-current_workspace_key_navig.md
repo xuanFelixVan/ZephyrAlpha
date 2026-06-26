@@ -3,6 +3,7 @@ module_id: KE-3374
 title: 7. Current workspace key navigation / 当前工作区关键入口
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Current workspace key navigation / 当前工作区关键入口

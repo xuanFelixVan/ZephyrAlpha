@@ -4,6 +4,7 @@ status: active
 title: 13.5 路径索引使用指南
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.5 路径索引使用指南

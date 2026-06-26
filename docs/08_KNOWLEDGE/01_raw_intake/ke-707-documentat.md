@@ -4,6 +4,7 @@ status: active
 title: Stage 3：从“组织协作”到“决策连续性”
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 3：从“组织协作”到“决策连续性”

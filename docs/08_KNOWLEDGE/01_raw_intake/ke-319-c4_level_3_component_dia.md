@@ -4,6 +4,7 @@ status: active
 title: 3.5 C4 Level 3 — Component diagrams for critical layers / 关键层组件图
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 C4 Level 3 — Component diagrams for critical layers / 关键层组件图

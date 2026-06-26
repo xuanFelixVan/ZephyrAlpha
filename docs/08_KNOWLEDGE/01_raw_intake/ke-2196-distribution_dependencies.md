@@ -3,6 +3,7 @@ module_id: KE-2103
 title: 3.3 Distribution Dependencies（分布式依赖）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 Distribution Dependencies（分布式依赖）

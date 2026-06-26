@@ -3,6 +3,7 @@ module_id: KE-3171
 title: 10. 规则违反事故响应
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. 规则违反事故响应

@@ -4,6 +4,7 @@ status: active
 title: observation_window.yaml —— atomic_fixer.py 自动维护
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # observation_window.yaml —— atomic_fixer.py 自动维护

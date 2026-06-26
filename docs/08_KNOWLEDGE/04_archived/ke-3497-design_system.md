@@ -3,6 +3,7 @@ module_id: KE-3361
 title: 6.1 Design System 三件套
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 Design System 三件套

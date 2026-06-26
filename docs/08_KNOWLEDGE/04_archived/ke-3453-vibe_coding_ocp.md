@@ -3,6 +3,7 @@ module_id: KE-3322-------v2-1-0-003
 title: 4A.4 OCP 扩展点新增（v2.1.0）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4A.4 OCP 扩展点新增（v2.1.0）

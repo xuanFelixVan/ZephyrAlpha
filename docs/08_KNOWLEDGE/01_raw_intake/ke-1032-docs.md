@@ -4,6 +4,7 @@ status: active
 title: 5.2 docs 蓝图目录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 docs 蓝图目录

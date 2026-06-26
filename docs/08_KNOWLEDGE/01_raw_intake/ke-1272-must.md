@@ -4,6 +4,7 @@ status: active
 title: MTH-009：补漏与终止双检 [MUST — 每次审查结束时强制执行]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-009：补漏与终止双检 [MUST — 每次审查结束时强制执行]

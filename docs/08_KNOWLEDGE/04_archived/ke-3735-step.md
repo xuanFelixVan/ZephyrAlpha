@@ -3,6 +3,7 @@ module_id: KE-3585
 title: 4.2 Step 2：临时文件清除
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 Step 2：临时文件清除

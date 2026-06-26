@@ -4,6 +4,7 @@ status: active
 title: 2.4 Inject（注入）— context_injector.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 Inject（注入）— context_injector.py

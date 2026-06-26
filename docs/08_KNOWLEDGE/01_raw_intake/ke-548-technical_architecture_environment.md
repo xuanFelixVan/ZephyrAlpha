@@ -3,6 +3,7 @@ module_id: KE-496--------04-ta--9-environmen-000
 title: 7.3 环境矩阵（与 04-TA §9 Environment Matrix 对齐）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 环境矩阵（与 04-TA §9 Environment Matrix 对齐）

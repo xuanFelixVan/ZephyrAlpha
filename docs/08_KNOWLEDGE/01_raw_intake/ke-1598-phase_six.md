@@ -3,6 +3,7 @@ module_id: KE-1508-------6-phase-000
 title: 14.1 启动拓扑 (6 Phase)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.1 启动拓扑 (6 Phase)

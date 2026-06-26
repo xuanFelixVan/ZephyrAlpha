@@ -4,6 +4,7 @@ status: active
 title: 每次 resolve_route() 调用后写入 Decision Log
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 每次 resolve_route() 调用后写入 Decision Log

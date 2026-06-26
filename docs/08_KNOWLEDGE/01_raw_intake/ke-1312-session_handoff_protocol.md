@@ -4,6 +4,7 @@ status: active
 title: Session Handoff Protocol（会话交接协议）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Session Handoff Protocol（会话交接协议）

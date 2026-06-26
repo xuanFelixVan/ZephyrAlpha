@@ -3,6 +3,7 @@ module_id: KE-2789---drift-detector-000
 title: MOD-INF-023 — Drift Detector 任务卡索引
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-INF-023 — Drift Detector 任务卡索引

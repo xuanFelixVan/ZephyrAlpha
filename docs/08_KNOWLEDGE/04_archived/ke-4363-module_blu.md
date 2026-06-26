@@ -3,6 +3,7 @@ module_id: KE-4201
 title: 7.4 自包含原则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.4 自包含原则

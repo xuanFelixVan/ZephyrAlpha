@@ -4,6 +4,7 @@ status: active
 title: Database 蓝图 v2.2
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Database 蓝图 v2.2

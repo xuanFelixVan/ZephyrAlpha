@@ -3,6 +3,7 @@ module_id: KE-4355
 title: 验证所有新脚本标记 [FROZEN]
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 验证所有新脚本标记 [FROZEN]

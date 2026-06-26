@@ -3,6 +3,7 @@ module_id: KE-2521
 title: 9.4 施工状态
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.4 施工状态

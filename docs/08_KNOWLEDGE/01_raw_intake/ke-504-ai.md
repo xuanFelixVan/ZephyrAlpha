@@ -3,6 +3,7 @@ module_id: KE-453
 title: 6.2 AI 上下文预算
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 AI 上下文预算

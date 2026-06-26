@@ -4,6 +4,7 @@ status: active
 title: Checklist
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Checklist

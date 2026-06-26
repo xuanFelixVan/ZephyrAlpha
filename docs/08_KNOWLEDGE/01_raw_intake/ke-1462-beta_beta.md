@@ -3,6 +3,7 @@ module_id: KE-1372---beta-000
 title: 10.6 beta → beta 路径
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.6 beta → beta 路径

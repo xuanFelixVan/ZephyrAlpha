@@ -3,6 +3,7 @@ module_id: KE-1978
 title: 2h. Observability-as-Code 声明 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2h. Observability-as-Code 声明 🆕

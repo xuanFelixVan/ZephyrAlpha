@@ -3,6 +3,7 @@ module_id: KE-707
 title: 1.5 术语
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5 术语

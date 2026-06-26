@@ -4,6 +4,7 @@ status: active
 title: 1.1 Three-standard composite / 三标准合成方案
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1 Three-standard composite / 三标准合成方案

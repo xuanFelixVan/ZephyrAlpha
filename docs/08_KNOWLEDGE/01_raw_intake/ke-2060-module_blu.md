@@ -3,6 +3,7 @@ module_id: KE-1969------7-001
 title: §27 源码文件（7行）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §27 源码文件（7行）

@@ -3,6 +3,7 @@ module_id: KE-531
 title: 8.3 数据保留与销毁
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 数据保留与销毁

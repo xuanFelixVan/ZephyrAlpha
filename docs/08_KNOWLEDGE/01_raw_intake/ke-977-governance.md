@@ -4,6 +4,7 @@ status: active
 title: 4.2 禁止的导入
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 禁止的导入

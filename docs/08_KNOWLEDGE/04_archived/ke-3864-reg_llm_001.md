@@ -3,6 +3,7 @@ module_id: KE-3713
 title: 角色决策依据（基于 REG-LLM-001 基准数据）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 角色决策依据（基于 REG-LLM-001 基准数据）

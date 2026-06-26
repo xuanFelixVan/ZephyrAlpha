@@ -3,6 +3,7 @@ module_id: KE-3610
 title: 6.1 受控词表
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 受控词表

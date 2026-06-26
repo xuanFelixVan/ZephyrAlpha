@@ -4,6 +4,7 @@ status: active
 title: 3.12 #50: Meta-SLO
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.12 #50: Meta-SLO

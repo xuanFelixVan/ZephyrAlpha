@@ -4,6 +4,7 @@ status: active
 title: 13. 深度交叉审计盲点全注入 —— 10大维度33盲点
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 深度交叉审计盲点全注入 —— 10大维度33盲点

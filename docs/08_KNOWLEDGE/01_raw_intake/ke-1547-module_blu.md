@@ -3,6 +3,7 @@ module_id: KE-1457
 title: 13.1 审计结果全景矩阵
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.1 审计结果全景矩阵

@@ -4,6 +4,7 @@ status: active
 title: 2.2 V2 自动化警告
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 V2 自动化警告

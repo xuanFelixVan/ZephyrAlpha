@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-PF_CORE 组合核心架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-PF_CORE | Domain ID | D-PF_CORE |
 | 域名称 | 组合核心 | Domain Name | 组合核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 48 | Module Count | 48 |
+| 模块数 | 44 | Module Count | 44 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 14 | Cross-domain Outgoing | 14 |
-| 设计态模块 | 30 | Design Modules | 30 |
+| 设计态模块 | 26 | Design Modules | 26 |
 | 原型态模块 | 12 | Prototype Modules | 12 |
 | 生产态模块 | 6 | Production Modules | 6 |
 | 容量 | 6/150 (正常) | Capacity | 6/150 (正常) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 48 个模块（按路径排序，全部显示）
+共 44 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -84,10 +84,6 @@ ttl: permanent
 | src/zephyr/pf_core/strategy_base.py |  | production | generated |
 | src/zephyr/pf_core/strategy_engine/__init__.py |  | prototype | generated |
 | src/zephyr/pf_core/strategy_registry.py |  | prototype | generated |
-| 另类数据域缩写，D-ALT-02=SentimentEngine | D-ALT-DATA-02 | design | planned |
-| 推理域缩写，D-ML-02=ModelRegistry→归入MS-01 | MS-01 | design | planned |
-| 训练域缩写，D-ML-01=TrainingPipeline→归入MT-01 | MT-01 | design | planned |
-| 跨资产域缩写，D-XA=D-CROSS-ASSET(CA) | D-CROSS-ASSET-01 | design | planned |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -167,10 +163,6 @@ graph TD
         src_zephyr_pf_core_strategy_base_py["src/zephyr/pf_core/strategy_base.py production"]
         src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
-        D_ALT_02_SentimentEngine["D-ALT-DATA-02 design"]
-        D_ML_02_ModelRegistry_MS_01["MS-01 design"]
-        D_ML_01_TrainingPipeline_MT_01["MT-01 design"]
-        D_XA_D_CROSS_ASSET_CA["D-CROSS-ASSET-01 design"]
     end
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_pf_core_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
@@ -196,7 +188,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_default_attribution_engine_py,src_zephyr_pf_core_default_tca_engine_py,src_zephyr_pf_core_performance_attribution_report_py,src_zephyr_pf_core_strategy_base_py production
-    class src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_performance_attribution_engine_init_py,src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategies_default_equity_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py,D_ALT_02_SentimentEngine,D_ML_02_ModelRegistry_MS_01,D_ML_01_TrainingPipeline_MT_01,D_XA_D_CROSS_ASSET_CA design
+    class src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_performance_attribution_engine_init_py,src_zephyr_pf_core_risk_limits_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategies_default_equity_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
     class D_TRADING external_prod
     class D_GOVERNANCE external_design
 ```

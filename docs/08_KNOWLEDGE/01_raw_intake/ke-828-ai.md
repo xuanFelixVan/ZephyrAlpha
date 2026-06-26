@@ -4,6 +4,7 @@ status: active
 title: 15.5 AI 执行清单
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.5 AI 执行清单

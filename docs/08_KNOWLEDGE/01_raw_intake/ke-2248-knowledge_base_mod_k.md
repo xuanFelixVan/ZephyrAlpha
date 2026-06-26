@@ -3,6 +3,7 @@ module_id: KE-2154-------mod-k-000
 title: 3.8 Knowledge Base 集成（对接 MOD-KB-001）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.8 Knowledge Base 集成（对接 MOD-KB-001）

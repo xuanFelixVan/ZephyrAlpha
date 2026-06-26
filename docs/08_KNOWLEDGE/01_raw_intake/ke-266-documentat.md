@@ -4,6 +4,7 @@ status: active
 title: 3.1 7 核心能力域定义
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 7 核心能力域定义

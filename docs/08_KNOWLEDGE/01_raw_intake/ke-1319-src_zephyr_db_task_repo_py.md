@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/db/task_repo.py:447-463
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/db/task_repo.py:447-463

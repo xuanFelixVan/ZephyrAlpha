@@ -4,6 +4,7 @@ status: active
 title: 4. Drawer relationship diagram / 抽屉关系图
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Drawer relationship diagram / 抽屉关系图

@@ -4,6 +4,7 @@ status: active
 title: 5.1 仪表盘数据结构
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 仪表盘数据结构

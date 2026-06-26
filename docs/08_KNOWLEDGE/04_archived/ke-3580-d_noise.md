@@ -3,6 +3,7 @@ module_id: KE-3580
 title: D-NOISE：噪音与冗余
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-NOISE：噪音与冗余

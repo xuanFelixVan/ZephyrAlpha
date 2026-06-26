@@ -3,6 +3,7 @@ module_id: KE-2419
 title: 7. 深度硬规则（蓝图隐含约束）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 深度硬规则（蓝图隐含约束）

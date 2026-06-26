@@ -4,6 +4,7 @@ status: active
 title: 18.2 渐进式门禁激活
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18.2 渐进式门禁激活

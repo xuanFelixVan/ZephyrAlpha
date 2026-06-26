@@ -4,6 +4,7 @@ status: active
 title: 2.33 选择性遗忘与被遗忘权——Agent 记忆删除协议（决策 D-025-30）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.33 选择性遗忘与被遗忘权——Agent 记忆删除协议（决策 D-025-30）

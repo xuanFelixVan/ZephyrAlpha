@@ -4,6 +4,7 @@ status: active
 title: StateGraph Workflow (D-019-31)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # StateGraph Workflow (D-019-31)

@@ -4,6 +4,7 @@ status: active
 title: AI 使用指南
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AI 使用指南

@@ -4,6 +4,7 @@ status: active
 title: 0.1 本文档是
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.1 本文档是

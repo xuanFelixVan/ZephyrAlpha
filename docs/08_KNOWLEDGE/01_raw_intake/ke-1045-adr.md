@@ -4,6 +4,7 @@ status: active
 title: 5.5 ADR 引用
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.5 ADR 引用

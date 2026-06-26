@@ -4,6 +4,7 @@ status: active
 title: 1. 项目根目录
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 项目根目录

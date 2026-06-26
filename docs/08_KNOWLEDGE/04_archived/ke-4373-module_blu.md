@@ -3,6 +3,7 @@ module_id: KE-4211
 title: 8. 集成目标
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 集成目标

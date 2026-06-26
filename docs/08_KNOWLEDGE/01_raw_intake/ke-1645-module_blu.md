@@ -3,6 +3,7 @@ module_id: KE-1555
 title: 16.2 各组件恢复策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16.2 各组件恢复策略

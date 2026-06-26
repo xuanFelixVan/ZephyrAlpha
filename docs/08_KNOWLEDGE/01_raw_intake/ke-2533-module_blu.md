@@ -4,6 +4,7 @@ status: active
 title: 7.3 红白对抗编排
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 红白对抗编排

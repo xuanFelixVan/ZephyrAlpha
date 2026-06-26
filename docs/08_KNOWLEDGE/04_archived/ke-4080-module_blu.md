@@ -3,6 +3,7 @@ module_id: KE-3926
 title: 15.5 降级策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.5 降级策略

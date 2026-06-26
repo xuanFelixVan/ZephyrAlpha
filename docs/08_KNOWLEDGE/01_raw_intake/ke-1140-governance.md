@@ -4,6 +4,7 @@ status: active
 title: ABS-002：禁止硬编码连接凭据
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ABS-002：禁止硬编码连接凭据

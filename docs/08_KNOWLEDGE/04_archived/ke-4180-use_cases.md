@@ -3,6 +3,7 @@ module_id: KE-4024------use-000
 title: 2b. 资源层 USE 信号
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2b. 资源层 USE 信号

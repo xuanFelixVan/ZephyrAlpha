@@ -4,6 +4,7 @@ status: active
 title: 2. 讨论起点
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 讨论起点

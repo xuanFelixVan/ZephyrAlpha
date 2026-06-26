@@ -4,6 +4,7 @@ status: active
 title: 2.8 技术栈专有名词版本白名单（N-02 豁免）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.8 技术栈专有名词版本白名单（N-02 豁免）

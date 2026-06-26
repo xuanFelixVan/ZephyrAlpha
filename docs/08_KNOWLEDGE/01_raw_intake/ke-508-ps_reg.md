@@ -4,6 +4,7 @@ status: active
 title: 6.2 PS-REG-001 规则登记表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 PS-REG-001 规则登记表

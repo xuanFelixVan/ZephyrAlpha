@@ -4,6 +4,7 @@ status: active
 title: Agent Orchestrator Interface / Agent 编排器接口规范
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Agent Orchestrator Interface / Agent 编排器接口规范

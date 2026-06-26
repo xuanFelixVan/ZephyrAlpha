@@ -3,6 +3,7 @@ module_id: KE-3692
 title: experimental entry_criteria
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # experimental entry_criteria

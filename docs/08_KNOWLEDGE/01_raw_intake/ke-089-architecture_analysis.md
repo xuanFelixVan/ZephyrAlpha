@@ -4,6 +4,7 @@ status: active
 title: 1.3 与 `03-AA` 的边界铁律
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 与 `03-AA` 的边界铁律

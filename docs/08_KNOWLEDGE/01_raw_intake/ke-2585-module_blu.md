@@ -3,6 +3,7 @@ module_id: KE-2490
 title: 8.5 自动恢复与手动恢复边界
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.5 自动恢复与手动恢复边界

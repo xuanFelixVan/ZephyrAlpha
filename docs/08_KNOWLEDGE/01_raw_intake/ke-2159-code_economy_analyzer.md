@@ -4,6 +4,7 @@ status: active
 title: 3.15 #53: CodeEconomyAnalyzer
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.15 #53: CodeEconomyAnalyzer

@@ -4,6 +4,7 @@ status: active
 title: 4.3 写入频率
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 写入频率

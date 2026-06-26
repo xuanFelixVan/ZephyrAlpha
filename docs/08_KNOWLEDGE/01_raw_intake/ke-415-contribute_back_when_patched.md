@@ -4,6 +4,7 @@ status: active
 title: 原则 4：Contribute Back When Patched / 修改必反哺
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 原则 4：Contribute Back When Patched / 修改必反哺

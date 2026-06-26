@@ -3,6 +3,7 @@ module_id: KE-3186
 title: 12.1 三分类成本模型
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.1 三分类成本模型

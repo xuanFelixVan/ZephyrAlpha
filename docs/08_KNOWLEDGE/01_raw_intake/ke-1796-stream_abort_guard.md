@@ -4,6 +4,7 @@ status: active
 title: 2.13 事中控制——Stream Abort Guard
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.13 事中控制——Stream Abort Guard

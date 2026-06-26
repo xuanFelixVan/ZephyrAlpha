@@ -4,6 +4,7 @@ status: active
 title: 5.1 src 代码目录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 src 代码目录

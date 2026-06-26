@@ -4,6 +4,7 @@ status: active
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Feedback Loop Engine Interface / 反馈闭环引擎接口规范

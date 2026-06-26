@@ -3,6 +3,7 @@ module_id: KE-3318
 title: 2.1 架构与治理类
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 架构与治理类

@@ -4,6 +4,7 @@ status: active
 title: 6.3 个人量化一人团队的特殊性
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 个人量化一人团队的特殊性

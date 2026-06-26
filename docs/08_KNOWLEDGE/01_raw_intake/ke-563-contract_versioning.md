@@ -4,6 +4,7 @@ status: active
 title: 7.5 Contract versioning / 契约版本管理
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.5 Contract versioning / 契约版本管理

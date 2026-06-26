@@ -3,6 +3,7 @@ module_id: KE-932
 title: 5. DOC 域（文档治理规则）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. DOC 域（文档治理规则）

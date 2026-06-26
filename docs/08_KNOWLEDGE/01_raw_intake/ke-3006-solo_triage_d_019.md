@@ -4,6 +4,7 @@ status: active
 title: Solo Triage (D-019-77)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Solo Triage (D-019-77)

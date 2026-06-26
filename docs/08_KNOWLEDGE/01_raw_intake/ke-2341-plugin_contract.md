@@ -3,6 +3,7 @@ module_id: KE-2246--------plugin-contract-000
 title: 4.5 插件接口契约（Plugin Contract）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5 插件接口契约（Plugin Contract）

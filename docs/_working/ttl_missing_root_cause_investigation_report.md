@@ -7,7 +7,7 @@ version: "1.0.0"
 created: "2026-06-26"
 updated: "2026-06-26"
 owner: ZephyrAlpha-Owner
-doc_type: report
+doc_type: audit_report
 ttl: task_bound
 ---
 

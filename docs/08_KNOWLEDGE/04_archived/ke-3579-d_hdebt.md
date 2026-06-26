@@ -3,6 +3,7 @@ module_id: KE-3436
 title: D-HDEBT：历史债务
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-HDEBT：历史债务

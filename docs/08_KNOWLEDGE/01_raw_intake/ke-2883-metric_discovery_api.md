@@ -4,6 +4,7 @@ status: active
 title: Metric Discovery API 命名空间过滤
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Metric Discovery API 命名空间过滤

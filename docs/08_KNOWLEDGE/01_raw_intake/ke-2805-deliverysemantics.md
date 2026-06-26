@@ -4,6 +4,7 @@ status: active
 title: DeliverySemantics（消息传递语义）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DeliverySemantics（消息传递语义）

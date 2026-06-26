@@ -4,6 +4,7 @@ status: active
 title: 3. 受控枚举定义
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 受控枚举定义

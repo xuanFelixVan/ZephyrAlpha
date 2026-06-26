@@ -3,6 +3,7 @@ module_id: KE-4133
 title: 5.1 职责
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 职责

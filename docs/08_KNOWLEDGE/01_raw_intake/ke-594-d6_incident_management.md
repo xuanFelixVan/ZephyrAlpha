@@ -4,6 +4,7 @@ status: active
 title: §8 D6 — Incident Management / 事件管理域
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §8 D6 — Incident Management / 事件管理域

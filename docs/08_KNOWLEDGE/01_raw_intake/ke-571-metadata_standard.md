@@ -4,6 +4,7 @@ status: active
 title: 8. Metadata standard / 元数据标准
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. Metadata standard / 元数据标准

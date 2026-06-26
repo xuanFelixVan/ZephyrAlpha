@@ -3,6 +3,7 @@ module_id: KE-847
 title: 3. 度量周期与责任
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 度量周期与责任

@@ -3,6 +3,7 @@ module_id: KE-3565
 title: 3.2 四条核心接口
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 四条核心接口

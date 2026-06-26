@@ -3,6 +3,7 @@ module_id: KE-401
 title: 5.1 docs/ 目录结构对比
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 docs/ 目录结构对比

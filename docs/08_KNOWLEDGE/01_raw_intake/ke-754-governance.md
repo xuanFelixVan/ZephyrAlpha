@@ -4,6 +4,7 @@ status: active
 title: 1. 目的
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 目的

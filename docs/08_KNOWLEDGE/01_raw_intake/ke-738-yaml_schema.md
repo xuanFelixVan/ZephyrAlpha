@@ -4,6 +4,7 @@ status: active
 title: 每个注册条目的 YAML schema
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 每个注册条目的 YAML schema

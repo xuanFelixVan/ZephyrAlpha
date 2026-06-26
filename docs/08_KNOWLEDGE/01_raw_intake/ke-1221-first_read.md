@@ -4,6 +4,7 @@ status: active
 title: 🔴 FIRST-READ：入项目第一步——中央注册表总纲（最高优先级，高于 RULE-ZERO）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 🔴 FIRST-READ：入项目第一步——中央注册表总纲（最高优先级，高于 RULE-ZERO）

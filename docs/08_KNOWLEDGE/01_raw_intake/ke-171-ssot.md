@@ -3,6 +3,7 @@ module_id: KE-153
 title: 2. SSoT 声明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. SSoT 声明

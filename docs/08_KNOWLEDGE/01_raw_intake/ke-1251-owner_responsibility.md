@@ -3,6 +3,7 @@ module_id: KE-1164--------5-------owner-000
 title: LFC-003：级联影响 ≥ 5 个文件时需 Owner 批准
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LFC-003：级联影响 ≥ 5 个文件时需 Owner 批准

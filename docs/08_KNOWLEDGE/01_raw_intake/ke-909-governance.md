@@ -4,6 +4,7 @@ status: active
 title: 2.7 升级治理
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 升级治理

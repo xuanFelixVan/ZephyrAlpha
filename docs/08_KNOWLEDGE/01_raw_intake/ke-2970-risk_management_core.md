@@ -4,6 +4,7 @@ status: active
 title: risk-management-core
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # risk-management-core

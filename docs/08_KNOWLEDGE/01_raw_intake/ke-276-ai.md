@@ -4,6 +4,7 @@ status: active
 title: 3.14 AI 输出与数据边界
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.14 AI 输出与数据边界

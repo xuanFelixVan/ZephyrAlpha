@@ -4,6 +4,7 @@ status: active
 title: 4A.6 详细架构
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4A.6 详细架构

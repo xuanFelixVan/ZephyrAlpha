@@ -4,6 +4,7 @@ status: active
 title: 10.2 一句话区分 DA vs IA（防止读者混淆）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 一句话区分 DA vs IA（防止读者混淆）

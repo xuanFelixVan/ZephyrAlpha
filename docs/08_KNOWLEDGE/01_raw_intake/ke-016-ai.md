@@ -4,6 +4,7 @@ status: active
 title: 6. AI 施工执行原则
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. AI 施工执行原则

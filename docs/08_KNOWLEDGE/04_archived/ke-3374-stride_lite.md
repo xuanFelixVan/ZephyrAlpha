@@ -3,6 +3,7 @@ module_id: KE-3253
 title: 3.1 STRIDE-Lite 威胁分析
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 STRIDE-Lite 威胁分析

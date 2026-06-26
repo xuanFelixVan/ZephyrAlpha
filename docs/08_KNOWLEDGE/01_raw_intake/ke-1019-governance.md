@@ -4,6 +4,7 @@ status: active
 title: 5.1 流程决策树
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 流程决策树

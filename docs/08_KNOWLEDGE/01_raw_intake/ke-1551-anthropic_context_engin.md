@@ -4,6 +4,7 @@ status: active
 title: 13.1 Anthropic — Context Engineering（上下文工程）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.1 Anthropic — Context Engineering（上下文工程）

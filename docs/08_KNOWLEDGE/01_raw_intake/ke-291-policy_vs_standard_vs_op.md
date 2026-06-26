@@ -4,6 +4,7 @@ status: active
 title: 3.2.2 policy vs standard vs operational_rule 判据
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.2 policy vs standard vs operational_rule 判据

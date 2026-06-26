@@ -4,6 +4,7 @@ status: active
 title: 7.3 beta+ 多用户演进
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 beta+ 多用户演进

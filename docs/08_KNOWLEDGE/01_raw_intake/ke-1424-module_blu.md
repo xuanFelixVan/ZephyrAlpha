@@ -4,6 +4,7 @@ status: active
 title: 1.7 自动化不可逾越的边界
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.7 自动化不可逾越的边界

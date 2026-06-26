@@ -3,6 +3,7 @@ module_id: KE-4072
 title: 3.9.2 Session Log 最小格式约定（自动提取的基础）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9.2 Session Log 最小格式约定（自动提取的基础）

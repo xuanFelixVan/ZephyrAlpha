@@ -3,6 +3,7 @@ module_id: KE-1219
 title: SEC-005：密钥撤销
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SEC-005：密钥撤销

@@ -4,6 +4,7 @@ status: active
 title: ===== 规则：必须遵守的治理规则 =====
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ===== 规则：必须遵守的治理规则 =====

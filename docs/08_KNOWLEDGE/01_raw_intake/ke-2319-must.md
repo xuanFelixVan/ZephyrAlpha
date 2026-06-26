@@ -4,6 +4,7 @@ status: active
 title: 4.2 目录命名规则（MUST）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 目录命名规则（MUST）

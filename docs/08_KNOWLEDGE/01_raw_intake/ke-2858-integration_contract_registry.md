@@ -3,6 +3,7 @@ module_id: KE-2760
 title: 二、集成契约登记表（Integration Contract Registry）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 二、集成契约登记表（Integration Contract Registry）

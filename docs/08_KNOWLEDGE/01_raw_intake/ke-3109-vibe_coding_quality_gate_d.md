@@ -4,6 +4,7 @@ status: active
 title: Vibe Coding Quality Gate (D-019-79)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Vibe Coding Quality Gate (D-019-79)

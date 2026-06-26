@@ -4,6 +4,7 @@ status: active
 title: 3. 路由决策树（CT-PIPE-ORC-001 落地）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 路由决策树（CT-PIPE-ORC-001 落地）

@@ -3,6 +3,7 @@ module_id: KE-3567-----phase-000
 title: 3.5 stable（无下一 Phase）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 stable（无下一 Phase）

@@ -3,6 +3,7 @@ module_id: KE-298------prompt-injection-000
 title: 3.8 AI 输入安全（Prompt Injection 防护）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.8 AI 输入安全（Prompt Injection 防护）

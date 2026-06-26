@@ -3,6 +3,7 @@ module_id: KE-3376
 title: 7. Key integration points / 关键集成点与接口契约
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Key integration points / 关键集成点与接口契约

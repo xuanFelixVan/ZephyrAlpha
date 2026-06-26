@@ -4,6 +4,7 @@ status: active
 title: 特别条款：临时文件（session garbage）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 特别条款：临时文件（session garbage）

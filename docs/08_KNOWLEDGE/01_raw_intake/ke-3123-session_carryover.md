@@ -4,6 +4,7 @@ status: active
 title: 1.2 Session Carryover 的解决
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 Session Carryover 的解决

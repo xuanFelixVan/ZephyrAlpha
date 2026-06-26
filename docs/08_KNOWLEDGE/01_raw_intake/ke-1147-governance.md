@@ -3,6 +3,7 @@ module_id: KE-1062
 title: ACS-004：权限审批流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ACS-004：权限审批流程

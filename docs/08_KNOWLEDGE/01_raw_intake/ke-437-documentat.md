@@ -4,6 +4,7 @@ status: active
 title: 5. 文件命名规范
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 文件命名规范

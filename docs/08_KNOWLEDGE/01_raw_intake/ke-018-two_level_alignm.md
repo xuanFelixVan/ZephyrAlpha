@@ -4,6 +4,7 @@ status: active
 title: 6.10 双层对齐闸门原则（Two-Level Alignment Gate Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.10 双层对齐闸门原则（Two-Level Alignment Gate Mandate）

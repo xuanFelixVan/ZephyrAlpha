@@ -3,6 +3,7 @@ module_id: KE-1600
 title: 2. 27层清单
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 27层清单

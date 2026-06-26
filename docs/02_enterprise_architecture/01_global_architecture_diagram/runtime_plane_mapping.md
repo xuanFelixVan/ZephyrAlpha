@@ -1,5 +1,5 @@
 ---
-doc_type: runtime_plane_mapping
+doc_type: reference
 title: 运行平面映射图
 version: "1.0"
 status: active

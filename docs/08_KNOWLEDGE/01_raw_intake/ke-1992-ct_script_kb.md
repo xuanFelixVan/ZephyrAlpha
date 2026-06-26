@@ -4,6 +4,7 @@ status: active
 title: 2.4 CT-SCRIPT-KB-001：脚本系统 ↔ 知识库
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 CT-SCRIPT-KB-001：脚本系统 ↔ 知识库

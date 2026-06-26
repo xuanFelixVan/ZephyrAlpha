@@ -4,6 +4,7 @@ status: active
 title: 4.2 T3 AI 自治升格后目标（Sprint 14+ 左右）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 T3 AI 自治升格后目标（Sprint 14+ 左右）

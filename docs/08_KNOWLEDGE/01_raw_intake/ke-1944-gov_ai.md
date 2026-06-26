@@ -4,6 +4,7 @@ status: active
 title: 2.3 三层模型策略（GOV-AI-002 §一）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 三层模型策略（GOV-AI-002 §一）

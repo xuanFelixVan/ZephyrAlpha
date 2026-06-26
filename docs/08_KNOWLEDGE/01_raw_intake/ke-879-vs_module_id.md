@@ -3,6 +3,7 @@ module_id: KE-801-----vs-module-id-002
 title: 2.2.3 文件名 vs module_id 的正交性
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2.3 文件名 vs module_id 的正交性

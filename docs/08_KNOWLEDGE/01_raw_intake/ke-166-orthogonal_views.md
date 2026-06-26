@@ -3,6 +3,7 @@ module_id: KE-166
 title: 1ter. Orthogonal Views / 正交视图体系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1ter. Orthogonal Views / 正交视图体系

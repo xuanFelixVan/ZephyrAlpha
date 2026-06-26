@@ -4,6 +4,7 @@ status: active
 title: 95/4/1 分布监控（§11 目标分布）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 95/4/1 分布监控（§11 目标分布）

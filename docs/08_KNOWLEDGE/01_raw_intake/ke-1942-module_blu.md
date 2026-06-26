@@ -4,6 +4,7 @@ status: active
 title: 2.29 故障模式规范 + 冷启动反滥用 + 对抗测试
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.29 故障模式规范 + 冷启动反滥用 + 对抗测试

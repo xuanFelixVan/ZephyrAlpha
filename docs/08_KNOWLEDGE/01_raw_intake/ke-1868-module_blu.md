@@ -4,6 +4,7 @@ status: active
 title: 2.20 施工自指悖论与独立验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.20 施工自指悖论与独立验证

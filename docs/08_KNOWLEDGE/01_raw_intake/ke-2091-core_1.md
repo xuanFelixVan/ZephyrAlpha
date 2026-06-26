@@ -3,6 +3,7 @@ module_id: KE-2000----1------2-000
 title: 3. Core 模块（1 子模块, 2 文件）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Core 模块（1 子模块, 2 文件）

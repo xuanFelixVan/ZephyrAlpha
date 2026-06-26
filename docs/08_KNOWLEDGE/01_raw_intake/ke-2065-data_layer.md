@@ -3,6 +3,7 @@ module_id: KE-1974
 title: 2d. 多环境隔离 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2d. 多环境隔离 🆕

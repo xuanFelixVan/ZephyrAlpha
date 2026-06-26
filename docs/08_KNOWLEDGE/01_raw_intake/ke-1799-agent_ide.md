@@ -4,6 +4,7 @@ status: active
 title: 2.13 Agent 身份模型（多 IDE 支持 + 成熟度 + 委托链）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.13 Agent 身份模型（多 IDE 支持 + 成熟度 + 委托链）

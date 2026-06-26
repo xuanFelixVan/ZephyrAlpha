@@ -4,6 +4,7 @@ status: active
 title: 2.230 FLE Survivability & Self-Reconstruction - fle_survivability.py (🆕 v0.21.0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.230 FLE Survivability & Self-Reconstruction - fle_survivability.py (🆕 v0.21.0

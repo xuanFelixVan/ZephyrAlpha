@@ -3,6 +3,7 @@ module_id: KE-3287
 title: 4.10 门禁与校验条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.10 门禁与校验条件禁止

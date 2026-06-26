@@ -3,6 +3,7 @@ module_id: KE-086
 title: 1.3 术语
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 术语

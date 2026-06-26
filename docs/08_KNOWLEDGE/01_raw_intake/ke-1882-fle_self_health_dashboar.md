@@ -4,6 +4,7 @@ status: active
 title: 2.216 FLE Self-Health Dashboard - fle_health_dashboard.py (🆕 v0.20.0 - 盲点266 — O
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.216 FLE Self-Health Dashboard - fle_health_dashboard.py (🆕 v0.20.0 - 盲点266 — O

@@ -4,6 +4,7 @@ status: active
 title: 8. 完整示例
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 完整示例

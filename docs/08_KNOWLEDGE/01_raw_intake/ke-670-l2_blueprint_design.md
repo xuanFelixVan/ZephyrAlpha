@@ -4,6 +4,7 @@ status: active
 title: L2 设计模板（`blueprint` `design` `service_spec`）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L2 设计模板（`blueprint` `design` `service_spec`）

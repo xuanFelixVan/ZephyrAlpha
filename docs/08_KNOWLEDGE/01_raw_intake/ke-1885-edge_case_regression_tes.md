@@ -4,6 +4,7 @@ status: active
 title: 2.219 Edge Case Regression Testing - edge_case_regression.py (🆕 v0.20.0 - 盲点269
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.219 Edge Case Regression Testing - edge_case_regression.py (🆕 v0.20.0 - 盲点269

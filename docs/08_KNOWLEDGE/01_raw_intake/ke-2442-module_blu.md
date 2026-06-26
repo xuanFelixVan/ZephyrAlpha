@@ -3,6 +3,7 @@ module_id: KE-2347
 title: 6. 风险与缓解（扩展）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 风险与缓解（扩展）

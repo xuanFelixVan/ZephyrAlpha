@@ -4,6 +4,7 @@ status: active
 title: 7.1 反向依赖索引 —— 谁依赖 Shared+Core
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 反向依赖索引 —— 谁依赖 Shared+Core

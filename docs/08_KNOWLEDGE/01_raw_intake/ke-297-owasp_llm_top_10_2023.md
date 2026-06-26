@@ -4,6 +4,7 @@ status: active
 title: 3.2 OWASP LLM Top 10 映射（2023/2024）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 OWASP LLM Top 10 映射（2023/2024）

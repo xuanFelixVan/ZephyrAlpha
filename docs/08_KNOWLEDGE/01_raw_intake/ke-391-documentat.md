@@ -4,6 +4,7 @@ status: active
 title: 4.4 升格路径
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4 升格路径

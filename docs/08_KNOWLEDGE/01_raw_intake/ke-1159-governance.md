@@ -4,6 +4,7 @@ status: active
 title: ✅ 正确：仅导出公开 API
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ✅ 正确：仅导出公开 API

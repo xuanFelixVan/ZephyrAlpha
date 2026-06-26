@@ -4,6 +4,7 @@ status: active
 title: config/llm_security_patterns.yaml (experimental 产出)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # config/llm_security_patterns.yaml (experimental 产出)

@@ -4,6 +4,7 @@ status: active
 title: 4.1.1 生命周期引用约束（Lifecycle Reference Constraint）——2026-05-02 新增
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1.1 生命周期引用约束（Lifecycle Reference Constraint）——2026-05-02 新增

@@ -3,6 +3,7 @@ module_id: KE-4288----000
 title: DB-025-0017：task_repo JSON1 查询+upsert 语义验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0017：task_repo JSON1 查询+upsert 语义验证

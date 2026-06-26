@@ -4,6 +4,7 @@ status: active
 title: 2.236 FLE Internal API Contract & Versioning - fle_internal_api_versioning.py (🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.236 FLE Internal API Contract & Versioning - fle_internal_api_versioning.py (🆕

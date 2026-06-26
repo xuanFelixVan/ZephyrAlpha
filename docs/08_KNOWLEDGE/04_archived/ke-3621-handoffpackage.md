@@ -3,6 +3,7 @@ module_id: KE-3476
 title: §1 HandoffPackage 8 必填字段
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §1 HandoffPackage 8 必填字段

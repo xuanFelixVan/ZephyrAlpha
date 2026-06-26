@@ -3,6 +3,7 @@ module_id: KE-3308
 title: 4.5 大小写约定：枚举值小写 + 标识符大写
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5 大小写约定：枚举值小写 + 标识符大写

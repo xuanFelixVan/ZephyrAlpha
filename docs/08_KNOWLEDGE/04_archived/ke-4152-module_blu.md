@@ -3,6 +3,7 @@ module_id: KE-3997
 title: 2.2 职责范围
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 职责范围

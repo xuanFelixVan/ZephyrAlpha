@@ -4,6 +4,7 @@ status: active
 title: 7. 当前阶段的工作原则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 当前阶段的工作原则

@@ -4,6 +4,7 @@ status: active
 title: 孤儿检测：`scripts/governance/audit_registration.py`
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 孤儿检测：`scripts/governance/audit_registration.py`

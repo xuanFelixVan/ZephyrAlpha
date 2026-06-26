@@ -4,6 +4,7 @@ status: active
 title: 3. Drawer classification rationale / 抽屉分类依据
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Drawer classification rationale / 抽屉分类依据

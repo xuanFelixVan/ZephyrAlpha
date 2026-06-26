@@ -4,6 +4,7 @@ status: active
 title: 6.6.1 中文命名铁律
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6.1 中文命名铁律

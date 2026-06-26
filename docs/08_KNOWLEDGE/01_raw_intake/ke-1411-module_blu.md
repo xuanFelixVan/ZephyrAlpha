@@ -4,6 +4,7 @@ status: active
 title: 1.3 在三线体系中的位置
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 在三线体系中的位置

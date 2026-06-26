@@ -4,6 +4,7 @@ status: active
 title: config/capacity/error_budget_config.yaml 完整示例
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # config/capacity/error_budget_config.yaml 完整示例

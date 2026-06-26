@@ -3,6 +3,7 @@ module_id: KE-1626
 title: 2. SSoT 声明
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. SSoT 声明

@@ -43,8 +43,8 @@ tags:
 - orthogonal-view
 - vibe-coding-2.0
 - 6-core-services
-summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为43域派生，数据源depgraph.db。原14层模块清单废弃。
-date: '2026-06-23'
+summary: TOGAF Application Architecture 视图（v3.0.0 重组织版）。基于§2.1裁定，模块清单改为53域派生，数据源depgraph.db。原14层模块清单废弃。
+date: '2026-06-26'
 ttl: permanent
 ---
 
@@ -54,11 +54,11 @@ The Application Architecture answers:
 
 - What applications / modules / services exist? (C4 views)
 - How do they interact? (Interfaces and protocols)
-- How is `src/zephyr/` structured? (43域物理分类，数据源depgraph.db)
+- How is `src/zephyr/` structured? (53域物理分类，数据源depgraph.db)
 - How is `scripts/` organized? (Governance code topology)
 - Where do future platform modules belong? (Module placement)
 
-> **v3.0.0 重组织说明**：基于§2.1裁定，模块清单改为43域派生。原14层模块清单废弃，14层降级为域的`layer_id`属性。模块属性详情见`generated/domains/*.md`（由`generate_domain_doc.py`派生）。
+> **v3.0.0 重组织说明**：基于§2.1裁定，模块清单改为53域派生。原14层模块清单废弃，14层降级为域的`layer_id`属性。模块属性详情见`generated/domains/*.md`（由`generate_domain_doc.py`派生）。
 
 ---
 
@@ -92,7 +92,7 @@ The Application Architecture answers:
 
 ---
 
-## 4. 域架构（43域，数据源：depgraph.db）
+## 4. 域架构（53域，数据源：depgraph.db）
 
 > 本节为v3.0.0重写。模块清单由`generated/domains/*.md`派生，禁止在本文硬编码。
 > 完整域索引见`generated/domain_index.md`。
@@ -101,29 +101,28 @@ The Application Architecture answers:
 
 | 指标 | 值 | 数据源 |
 |------|:---:|--------|
-| 域总数 | 52 | depgraph.db `domains` 表 |
-| 节点总数 | 14388 | depgraph.db `nodes` 表 |
-| 依赖边总数 | 22605 | depgraph.db `edges` 表 |
-| production 节点 | 1207 | depgraph.db `nodes.design_maturity` |
-| design 节点 | 8026 | depgraph.db `nodes.design_maturity` |
-| prototype 节点 | 4935 | depgraph.db `nodes.design_maturity` |
+| 域总数 | 53 | depgraph.db `domains` 表 |
+| 节点总数 | 6501 | depgraph.db `nodes` 表 |
+| 依赖边总数 | 7191 | depgraph.db `edges` 表 |
+| production 节点 | 1404 | depgraph.db `nodes.design_maturity` |
+| design 节点 | 89 | depgraph.db `nodes.design_maturity` |
+| prototype 节点 | 5008 | depgraph.db `nodes.design_maturity` |
 
 ### 4.2 域层级分布
 
 | layer_id | 域数量 | 域清单 |
 |----------|:---:|--------|
-| `L0_infrastructure` | 2 | `D-INFRA_OPS`, `D-INFRA_RUNTIME` |
-| `L1_foundation` | 6 | `D-ALT_DATA`, `D-BEHAVIORAL_AUDIT`, `D-DATA_ENG`, `D-DATA_GOV`, `D-DATA_SEC`, `D-MKT_DATA` |
-| `L1_platform` | 7 | `D-AUTONOMY_CORE`, `D-FRONTEND`, `D-INTEGRATION`, `D-OPS`, `D-REPORTING`, `D-SECURITY`, `D-SHARED` |
-| `L2_domain` | 28 | `D-AUTONOMY_PERM`, `D-BACKTEST`, `D-COMPLIANCE`, `D-CROSS_ASSET`, `D-DIGITAL_TWIN`, `D-EXEC_SIM`, `D-EX_CORE`, `D-EX_SOR`, `D-FACTOR`, `D-GOVERNANCE`, `D-GOV_AUDIT`, `D-GOV_DRIFT`, `D-GOV_RULE`, `D-INTELLIGENCE`, `D-KNOWLEDGE`, `D-ML_SERVE`, `D-ML_TRAIN`, `D-PF_ALLOC`, `D-PF_CORE`, `D-POSITION`, `D-RISK`, `D-SELL_DECISION`, `D-SIGLEGACY`, `D-ASHARE_SIGNAL`, `D-FUNDAMENTAL_SIGNAL`, `D-SIGQC`, `D-SIMULATION`, `D-TRADING` |
-| `unassigned` | 9 | `D-AUTONOMY-CORE`, `D-AUTONOMY-PERM`, `D-GOV-ENFORCEMENT`, `D-GOV-REPAIR`, `D-GOV-SCRIPTS`, `D-INFRA-OPS`, `D-INTEGRATION-GATEWAY`, `D-ML-TRAIN`, `D-SECURITY-LLM` |
+| `L0_infrastructure` | 5 | `D-INFRA_A2A`, `D-INFRA_OPS`, `D-INFRA_RECOVERY`, `D-INFRA_RUNTIME`, `D-INFRA_TELEMETRY` |
+| `L1_foundation` | 15 | `D-ALT_DATA`, `D-AUTONOMY_CORE`, `D-BEHAVIORAL_AUDIT`, `D-DATA_ENG`, `D-DATA_GOV`, `D-DATA_SEC`, `D-FRONTEND`, `D-INTEGRATION`, `D-INTEGRATION_GATEWAY`, `D-MKT_DATA`, `D-OPS`, `D-REPORTING`, `D-SECURITY`, `D-SECURITY_LLM`, `D-SHARED` |
+| `L2_domain` | 32 | `D-ASHARE_SIGNAL`, `D-AUDITTEST`, `D-AUTONOMY_PERM`, `D-BACKTEST`, `D-COMPLIANCE`, `D-CROSS_ASSET`, `D-DIGITAL_TWIN`, `D-EXEC_SIM`, `D-EX_CORE`, `D-EX_SOR`, `D-FACTOR`, `D-FUNDAMENTAL_SIGNAL`, `D-GOVERNANCE`, `D-GOV_AUDIT`, `D-GOV_DOCS`, `D-GOV_DRIFT`, `D-GOV_ENFORCEMENT`, `D-GOV_RULE`, `D-GOV_SCRIPTS`, `D-INTELLIGENCE`, `D-KNOWLEDGE`, `D-ML_SERVE`, `D-ML_TRAIN`, `D-PF_ALLOC`, `D-PF_CORE`, `D-POSITION`, `D-RISK`, `D-SELL_DECISION`, `D-SIGLEGACY`, `D-SIGQC`, `D-SIMULATION`, `D-TRADING` |
+| `unassigned` | 1 | `D-GOV-REPAIR` |
 
 
 ### 4.3 域详细清单
 
 > 完整域清单（含模块数/容量/描述）见 [`generated/domain_index.md`](../generated/domain_index.md)。
-> 单域详细文档见 [`generated/domains/*.md`](../generated/domains/)（52个）。
-> 单域依赖图见 [`generated/domains/*_dependency.mmd`](../generated/domains/)（52个）。
+> 单域详细文档见 [`generated/domains/*.md`](../generated/domains/)（53个）。
+> 单域依赖图见 [`generated/domains/*_dependency.mmd`](../generated/domains/)（53个）。
 
 ### 4.4 跨域依赖矩阵
 
@@ -212,6 +211,6 @@ The Application Architecture answers:
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-23 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为43域派生（数据源depgraph.db）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
+| 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——模块清单改为53域派生（数据源depgraph.db）；原14层模块清单废弃；新增§4域架构、§4.1域统计概览、§4.2域层级分布、§4.3域详细清单、§4.4跨域依赖矩阵；§6模块归属原则改为域归属判定。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-04-22 | v2.0.0：模块属性详情迁移至 architecture_model/ 联邦 YAML 模型。 |

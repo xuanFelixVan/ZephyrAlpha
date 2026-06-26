@@ -4,6 +4,7 @@ status: active
 title: 防篡改日志（Tamper-Evident Logging）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 防篡改日志（Tamper-Evident Logging）

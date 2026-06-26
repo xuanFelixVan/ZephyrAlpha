@@ -1,5 +1,5 @@
 ---
-doc_type: domain_architecture_diagram
+doc_type: architecture_view
 title: D-SIGQC 信号质量控制架构图
 version: "1.0"
 status: active

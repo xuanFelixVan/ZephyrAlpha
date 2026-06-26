@@ -4,6 +4,7 @@ status: active
 title: 6. 门禁植入
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 门禁植入

@@ -3,6 +3,7 @@ module_id: KE-3990--------ps-std-005-000
 title: 2.1 蓝图层级分布（PS-STD-005 分类）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 蓝图层级分布（PS-STD-005 分类）

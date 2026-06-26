@@ -4,6 +4,7 @@ status: active
 title: 4.0 Runtime Plane Attribution / 运行平面归属
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.0 Runtime Plane Attribution / 运行平面归属

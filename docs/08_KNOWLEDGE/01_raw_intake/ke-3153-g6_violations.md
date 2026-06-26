@@ -4,6 +4,7 @@ status: active
 title: G6 Violations 明细
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # G6 Violations 明细

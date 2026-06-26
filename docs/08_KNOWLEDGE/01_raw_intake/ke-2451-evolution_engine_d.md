@@ -4,6 +4,7 @@ status: active
 title: 6.1 Evolution Engine 反馈闭环（决策 D-023-10）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 Evolution Engine 反馈闭环（决策 D-023-10）

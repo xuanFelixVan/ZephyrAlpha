@@ -3,6 +3,7 @@ module_id: KE-1299
 title: 1. 任务概述
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 任务概述

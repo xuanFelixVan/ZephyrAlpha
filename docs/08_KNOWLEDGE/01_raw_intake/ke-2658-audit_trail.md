@@ -4,6 +4,7 @@ status: active
 title: audit-trail
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # audit-trail

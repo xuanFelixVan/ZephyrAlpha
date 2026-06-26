@@ -3,6 +3,7 @@ module_id: KE-198
 title: 2.4 为什么是三平面而不是两平面或四平面
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 为什么是三平面而不是两平面或四平面

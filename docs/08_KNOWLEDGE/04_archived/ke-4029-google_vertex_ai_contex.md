@@ -3,6 +3,7 @@ module_id: KE-3876---vertex-ai-contex-004
 title: 13.2 Google — Vertex AI Context Caching
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.2 Google — Vertex AI Context Caching

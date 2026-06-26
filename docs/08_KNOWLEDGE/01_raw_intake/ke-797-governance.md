@@ -3,6 +3,7 @@ module_id: KE-720
 title: 11. 修改条件
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. 修改条件

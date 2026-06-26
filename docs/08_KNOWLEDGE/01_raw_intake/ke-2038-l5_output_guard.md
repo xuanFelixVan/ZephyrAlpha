@@ -4,6 +4,7 @@ status: active
 title: 2.8 L5 — Output Guard 输出护栏（决策 D-018-10）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.8 L5 — Output Guard 输出护栏（决策 D-018-10）

@@ -3,6 +3,7 @@ module_id: KE-3411
 title: 8A.3 降级矩阵
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8A.3 降级矩阵

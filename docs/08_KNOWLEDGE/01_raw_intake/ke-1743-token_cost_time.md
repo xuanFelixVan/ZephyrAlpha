@@ -4,6 +4,7 @@ status: active
 title: 2.1 五级预算体系（Token + Cost + Time 三维）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 五级预算体系（Token + Cost + Time 三维）

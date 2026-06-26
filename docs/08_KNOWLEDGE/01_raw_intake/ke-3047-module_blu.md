@@ -4,6 +4,7 @@ status: active
 title: 模块骨架 (TASK-0001)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 模块骨架 (TASK-0001)

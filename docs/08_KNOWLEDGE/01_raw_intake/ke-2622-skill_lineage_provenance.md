@@ -4,6 +4,7 @@ status: active
 title: 9.7 Skill Lineage & Provenance（决策 D-019-13）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.7 Skill Lineage & Provenance（决策 D-019-13）

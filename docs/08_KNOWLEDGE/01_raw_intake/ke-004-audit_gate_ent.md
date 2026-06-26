@@ -4,6 +4,7 @@ status: active
 title: 5.2 审计清单与门禁入口（Audit & Gate Entry）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 审计清单与门禁入口（Audit & Gate Entry）

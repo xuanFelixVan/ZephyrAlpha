@@ -3,6 +3,7 @@ module_id: KE-3771------protocol-003
 title: 1.3 实施策略：Protocol + 双实现（库化优先，按需服务化）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 实施策略：Protocol + 双实现（库化优先，按需服务化）

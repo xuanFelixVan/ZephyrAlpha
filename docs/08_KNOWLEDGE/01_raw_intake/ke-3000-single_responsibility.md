@@ -4,6 +4,7 @@ status: active
 title: 涓€銆佹娊灞夎矗浠伙紙Single Responsibility锛?
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 涓€銆佹娊灞夎矗浠伙紙Single Responsibility锛?

@@ -4,6 +4,7 @@ status: active
 title: 2.247 Adversarial Self-Test Engine - adversarial_self_test_engine.py (🆕 v0.23.0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.247 Adversarial Self-Test Engine - adversarial_self_test_engine.py (🆕 v0.23.0

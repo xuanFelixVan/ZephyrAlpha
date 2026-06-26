@@ -3,6 +3,7 @@ module_id: KE-4172-----should-000
 title: 6.3 `references` 字段（SHOULD）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 `references` 字段（SHOULD）

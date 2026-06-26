@@ -4,6 +4,7 @@ status: active
 title: Step 2：数据质量检查
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 2：数据质量检查

@@ -4,6 +4,7 @@ status: active
 title: intent_binder.py — 新增文件（横切面D核心组件）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # intent_binder.py — 新增文件（横切面D核心组件）

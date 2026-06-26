@@ -4,6 +4,7 @@ status: active
 title: 2.253 Inter-Module Latency Budget & SLA Manager - inter_module_latency_budget.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.253 Inter-Module Latency Budget & SLA Manager - inter_module_latency_budget.py

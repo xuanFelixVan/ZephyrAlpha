@@ -3,6 +3,7 @@ module_id: KE-4020
 title: 风险追溯 — 26/26 条
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 风险追溯 — 26/26 条

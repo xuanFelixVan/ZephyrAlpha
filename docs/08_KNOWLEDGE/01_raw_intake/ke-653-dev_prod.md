@@ -4,6 +4,7 @@ status: active
 title: 七、dev/prod 双模式权限表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 七、dev/prod 双模式权限表

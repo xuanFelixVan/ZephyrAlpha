@@ -4,6 +4,7 @@ status: active
 title: 2.3 System context diagram / 系统上下文图
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 System context diagram / 系统上下文图

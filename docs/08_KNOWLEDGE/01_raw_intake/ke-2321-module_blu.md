@@ -3,6 +3,7 @@ module_id: KE-2226
 title: 4.2 容量估算
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 容量估算

@@ -3,6 +3,7 @@ module_id: KE-4417-----shared-003
 title: 新建清单（Telemetry 独有的、shared 不提供的）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 新建清单（Telemetry 独有的、shared 不提供的）

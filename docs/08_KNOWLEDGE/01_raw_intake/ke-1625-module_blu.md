@@ -4,6 +4,7 @@ status: active
 title: 15.2 自举触发器（不需要人决定）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.2 自举触发器（不需要人决定）

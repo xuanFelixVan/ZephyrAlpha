@@ -4,6 +4,7 @@ status: active
 title: 0.2 本文档不是
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.2 本文档不是

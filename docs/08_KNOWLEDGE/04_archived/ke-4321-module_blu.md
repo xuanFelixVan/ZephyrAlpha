@@ -3,6 +3,7 @@ module_id: KE-4161
 title: 6.1 模块接口契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 模块接口契约

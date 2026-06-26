@@ -4,6 +4,7 @@ status: active
 title: 2.238 FLE Learning Rate Decay Detection - fle_learning_rate_decay.py (🆕 v0.22.0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.238 FLE Learning Rate Decay Detection - fle_learning_rate_decay.py (🆕 v0.22.0

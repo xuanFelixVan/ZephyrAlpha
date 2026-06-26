@@ -3,6 +3,7 @@ module_id: KE-3487-------informative-001
 title: 11.2 信息性引用（Informative）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.2 信息性引用（Informative）

@@ -3,6 +3,7 @@ module_id: KE-1404------p0--9-2-degrade-001-000
 title: 11.6 降级路径 P0（§9.2 DEGRADE-001 对应）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.6 降级路径 P0（§9.2 DEGRADE-001 对应）

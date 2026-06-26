@@ -3,6 +3,7 @@ module_id: KE-3917
 title: 15.1 三个维度的诚实判断
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 三个维度的诚实判断

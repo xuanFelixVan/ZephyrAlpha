@@ -4,6 +4,7 @@ status: active
 title: 7.4 Schema 校验（启动期强制）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.4 Schema 校验（启动期强制）

@@ -3,6 +3,7 @@ module_id: KE-601---------risk-management-003
 title: L04 — 风控管理层（Risk Management）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L04 — 风控管理层（Risk Management）

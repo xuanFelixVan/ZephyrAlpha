@@ -3,6 +3,7 @@ module_id: KE-3624
 title: 7.3 可脚本化的部分
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 可脚本化的部分

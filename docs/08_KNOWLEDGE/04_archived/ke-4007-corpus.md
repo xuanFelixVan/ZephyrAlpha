@@ -3,6 +3,7 @@ module_id: KE-3854----corpus-000
 title: 12.7 红队 corpus（独立目录，持续追加）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.7 红队 corpus（独立目录，持续追加）

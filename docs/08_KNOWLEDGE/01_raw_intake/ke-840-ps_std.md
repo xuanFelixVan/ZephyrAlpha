@@ -4,6 +4,7 @@ status: active
 title: 19. 与 PS-STD-001 字段不重复声明
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 19. 与 PS-STD-001 字段不重复声明

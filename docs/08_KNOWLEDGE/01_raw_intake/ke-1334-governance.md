@@ -4,6 +4,7 @@ status: active
 title: 决策流程快捷索引
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 决策流程快捷索引

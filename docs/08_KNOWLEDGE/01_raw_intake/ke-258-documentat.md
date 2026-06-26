@@ -4,6 +4,7 @@ status: active
 title: 3. 章节体系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 章节体系

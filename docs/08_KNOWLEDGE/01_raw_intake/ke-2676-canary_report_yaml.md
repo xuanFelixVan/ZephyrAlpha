@@ -4,6 +4,7 @@ status: active
 title: canary_report.yaml —— 每次全量扫描自动生成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # canary_report.yaml —— 每次全量扫描自动生成

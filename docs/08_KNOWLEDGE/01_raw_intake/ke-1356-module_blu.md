@@ -3,6 +3,7 @@ module_id: KE-1267
 title: 0.1 本文档是什么
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.1 本文档是什么

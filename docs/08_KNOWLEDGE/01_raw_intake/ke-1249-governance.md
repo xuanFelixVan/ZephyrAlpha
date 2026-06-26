@@ -4,6 +4,7 @@ status: active
 title: LFC-001：退役前必须完成依赖迁移
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LFC-001：退役前必须完成依赖迁移

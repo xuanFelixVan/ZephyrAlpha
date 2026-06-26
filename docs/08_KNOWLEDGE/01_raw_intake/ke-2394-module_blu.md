@@ -4,6 +4,7 @@ status: active
 title: 5.2 禁碰规则列表（绝对不碰的东西）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 禁碰规则列表（绝对不碰的东西）

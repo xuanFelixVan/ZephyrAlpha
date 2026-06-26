@@ -4,6 +4,7 @@ status: active
 title: 对 ZephyrAlpha 2.0 的特定价值
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 对 ZephyrAlpha 2.0 的特定价值

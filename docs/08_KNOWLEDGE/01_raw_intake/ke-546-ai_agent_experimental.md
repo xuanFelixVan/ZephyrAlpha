@@ -4,6 +4,7 @@ status: active
 title: 7.2 AI Agent 身份模型（experimental P0）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 AI Agent 身份模型（experimental P0）

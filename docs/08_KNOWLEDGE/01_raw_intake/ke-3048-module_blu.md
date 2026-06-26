@@ -4,6 +4,7 @@ status: active
 title: 三相流水线核心 (TASK-0002)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三相流水线核心 (TASK-0002)

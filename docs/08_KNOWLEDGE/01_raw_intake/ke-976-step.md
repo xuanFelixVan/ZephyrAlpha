@@ -3,6 +3,7 @@ module_id: KE-898
 title: 4.1 Step 1：产出物核验
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 Step 1：产出物核验

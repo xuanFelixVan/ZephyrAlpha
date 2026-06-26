@@ -3,6 +3,7 @@ module_id: KE-4197----readers-000
 title: 7.2 下游 Readers
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 下游 Readers

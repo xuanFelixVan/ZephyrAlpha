@@ -4,6 +4,7 @@ status: active
 title: 7.1 首席架构师定位（Chief Architect Identity）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 首席架构师定位（Chief Architect Identity）

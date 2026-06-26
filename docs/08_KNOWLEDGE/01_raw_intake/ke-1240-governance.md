@@ -4,6 +4,7 @@ status: active
 title: IRN-004：断链清零（铁律4）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-004：断链清零（铁律4）

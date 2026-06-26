@@ -4,6 +4,7 @@ status: active
 title: 3. Affinity Enforcement（§2.5约束落地）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Affinity Enforcement（§2.5约束落地）

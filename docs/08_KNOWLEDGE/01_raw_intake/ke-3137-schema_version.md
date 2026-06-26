@@ -3,6 +3,7 @@ module_id: KE-3035
 title: 8.1 schema_version 约定
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 schema_version 约定

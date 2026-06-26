@@ -4,6 +4,7 @@ status: active
 title: 6.3 文件系统契约
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 文件系统契约

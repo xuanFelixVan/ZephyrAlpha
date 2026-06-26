@@ -3,6 +3,7 @@ module_id: KE-036
 title: 6.6.4 健康检查脚本覆盖
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6.4 健康检查脚本覆盖

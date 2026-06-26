@@ -3,6 +3,7 @@ module_id: KE-522
 title: 8.1 根因分析
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 根因分析

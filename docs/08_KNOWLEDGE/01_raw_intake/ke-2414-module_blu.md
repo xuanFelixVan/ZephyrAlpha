@@ -4,6 +4,7 @@ status: active
 title: 5.5 编码铁律
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.5 编码铁律

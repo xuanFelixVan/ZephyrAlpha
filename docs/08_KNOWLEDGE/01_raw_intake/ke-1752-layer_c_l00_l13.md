@@ -4,6 +4,7 @@ status: active
 title: 2.1.2 layer（层级归属——C 轨 L00~L13 + cross_layer）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1.2 layer（层级归属——C 轨 L00~L13 + cross_layer）

@@ -4,6 +4,7 @@ status: active
 title: 2.3 14层扩展
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 14层扩展

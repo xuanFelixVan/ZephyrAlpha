@@ -3,6 +3,7 @@ module_id: KE-509----cold-path-000
 title: 7.5.3 前端 Cold Path 场景
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.5.3 前端 Cold Path 场景

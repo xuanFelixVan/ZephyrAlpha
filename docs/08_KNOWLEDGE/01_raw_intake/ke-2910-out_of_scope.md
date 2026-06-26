@@ -4,6 +4,7 @@ status: active
 title: Out-of-Scope
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Out-of-Scope

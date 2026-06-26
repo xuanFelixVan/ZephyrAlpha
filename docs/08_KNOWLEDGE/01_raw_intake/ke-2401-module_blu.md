@@ -4,6 +4,7 @@ status: active
 title: 5.3 覆盖率仪表板
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 覆盖率仪表板

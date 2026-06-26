@@ -4,6 +4,7 @@ status: active
 title: 6.4 血缘的 fitness function
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 血缘的 fitness function

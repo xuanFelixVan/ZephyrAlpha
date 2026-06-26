@@ -4,6 +4,7 @@ status: active
 title: LoadShedder（负载脱落）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LoadShedder（负载脱落）

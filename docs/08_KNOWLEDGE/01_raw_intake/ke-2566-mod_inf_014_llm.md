@@ -4,6 +4,7 @@ status: active
 title: 8.10 跨模块集成补充——MOD-LLM_SECURITY LLM Security
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.10 跨模块集成补充——MOD-LLM_SECURITY LLM Security

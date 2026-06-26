@@ -4,6 +4,7 @@ status: active
 title: 8. 破坏性变更处理
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 破坏性变更处理

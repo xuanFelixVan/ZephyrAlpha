@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 蓝图效能回顾报告
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 蓝图效能回顾报告

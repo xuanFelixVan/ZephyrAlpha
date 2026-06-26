@@ -3,6 +3,7 @@ module_id: KE-4429-------ki-003
 title: 验证 validate_import_style 被跳过 + KILL-SWITCH event 日志输出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 验证 validate_import_style 被跳过 + KILL-SWITCH event 日志输出

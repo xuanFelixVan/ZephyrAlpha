@@ -4,6 +4,7 @@ status: active
 title: 3.2 总览表（按运行平面维度 — 反查视图）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 总览表（按运行平面维度 — 反查视图）

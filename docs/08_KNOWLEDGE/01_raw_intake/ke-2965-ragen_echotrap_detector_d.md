@@ -4,6 +4,7 @@ status: active
 title: RAGEN EchoTrap Detector (D-019-73)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # RAGEN EchoTrap Detector (D-019-73)

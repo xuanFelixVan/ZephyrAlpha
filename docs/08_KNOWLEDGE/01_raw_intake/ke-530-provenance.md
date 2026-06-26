@@ -4,6 +4,7 @@ status: active
 title: 7. Provenance / 来源说明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Provenance / 来源说明

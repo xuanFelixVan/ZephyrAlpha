@@ -3,6 +3,7 @@ module_id: KE-2005---13-000
 title: 3. Google Context Caching (§13.2)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Google Context Caching (§13.2)

@@ -3,6 +3,7 @@ module_id: KE-3603
 title: 竞品分析
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 竞品分析

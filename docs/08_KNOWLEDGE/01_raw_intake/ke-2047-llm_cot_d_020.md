@@ -4,6 +4,7 @@ status: active
 title: 2.9 LLM 推理链（CoT）审计（决策 D-020-15）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.9 LLM 推理链（CoT）审计（决策 D-020-15）

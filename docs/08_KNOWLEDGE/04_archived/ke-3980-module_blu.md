@@ -3,6 +3,7 @@ module_id: KE-3827
 title: 12. 关联蓝图与文档
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. 关联蓝图与文档

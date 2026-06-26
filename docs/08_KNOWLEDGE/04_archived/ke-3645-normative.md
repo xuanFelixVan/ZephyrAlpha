@@ -3,6 +3,7 @@ module_id: KE-3500
 title: 14.1 Normative 引用
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.1 Normative 引用

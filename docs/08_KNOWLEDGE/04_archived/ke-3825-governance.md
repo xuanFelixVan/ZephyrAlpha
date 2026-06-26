@@ -3,6 +3,7 @@ module_id: KE-3674
 title: 三、Claude 特种救援触发条件
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三、Claude 特种救援触发条件

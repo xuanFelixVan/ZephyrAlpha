@@ -3,6 +3,7 @@ module_id: KE-3621
 title: 7. 自动归档
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 自动归档

@@ -4,6 +4,7 @@ status: active
 title: 8.5 Skill Execution Telemetry Standard
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.5 Skill Execution Telemetry Standard

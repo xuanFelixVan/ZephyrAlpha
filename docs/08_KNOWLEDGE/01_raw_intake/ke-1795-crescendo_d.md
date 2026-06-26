@@ -4,6 +4,7 @@ status: active
 title: 2.13 心理说服防御与Crescendo检测（决策 D-022-07）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.13 心理说服防御与Crescendo检测（决策 D-022-07）

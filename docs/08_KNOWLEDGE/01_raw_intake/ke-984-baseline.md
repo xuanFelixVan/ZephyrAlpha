@@ -3,6 +3,7 @@ module_id: KE-906--------1-003
 title: 4.2 B 家族：元治理（1 个）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 B 家族：元治理（1 个）

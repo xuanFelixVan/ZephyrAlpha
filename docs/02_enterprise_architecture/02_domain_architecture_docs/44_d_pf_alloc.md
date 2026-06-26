@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-PF_ALLOC 组合分配架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D-PF_ALLOC）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-PF_ALLOC | Domain ID | D-PF_ALLOC |
 | 域名称 | 组合分配 | Domain Name | 组合分配 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 15 | Module Count | 15 |
+| 模块数 | 11 | Module Count | 11 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 5 | Cross-domain Outgoing | 5 |
-| 设计态模块 | 5 | Design Modules | 5 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 10 | Prototype Modules | 10 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 15 个模块（按路径排序，全部显示）
+共 11 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -44,13 +44,9 @@ ttl: permanent
 | src/zephyr/pf_alloc/__init__.py |  | prototype | generated |
 | src/zephyr/pf_alloc/_extensions/__init__.py |  | prototype | deprecated |
 | src/zephyr/pf_alloc/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_alloc/constraint/ | 约束求解 | design | planned |
 | src/zephyr/pf_alloc/core/__init__.py |  | prototype | deprecated |
 | src/zephyr/pf_alloc/infrastructure/__init__.py |  | prototype | deprecated |
 | src/zephyr/pf_alloc/models/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_alloc/optimizer/ | 分配优化器 | design | planned |
-| src/zephyr/pf_alloc/rebalance/ | 再平衡引擎 | design | planned |
-| src/zephyr/pf_alloc/risk_budget/ | 风险预算 | design | planned |
 | src/zephyr/pf_alloc/services/__init__.py |  | prototype | deprecated |
 | src/zephyr/pf_alloc/strategy_lifecycle_event.py |  | prototype | generated |
 | src/zephyr/pf_core/default_equity_strategy.py |  | prototype | generated |
@@ -73,13 +69,9 @@ graph TD
         src_zephyr_pf_alloc_init_py["src/zephyr/pf_alloc/__init__.py prototype"]
         src_zephyr_pf_alloc_extensions_init_py["src/zephyr/pf_alloc/_extensions/__init__.py prototype"]
         src_zephyr_pf_alloc_api_init_py["src/zephyr/pf_alloc/api/__init__.py prototype"]
-        src_zephyr_pf_alloc_constraint["约束求解 design"]
         src_zephyr_pf_alloc_core_init_py["src/zephyr/pf_alloc/core/__init__.py prototype"]
         src_zephyr_pf_alloc_infrastructure_init_py["src/zephyr/pf_alloc/infrastructure/__init__.py prototype"]
         src_zephyr_pf_alloc_models_init_py["src/zephyr/pf_alloc/models/__init__.py prototype"]
-        src_zephyr_pf_alloc_optimizer["分配优化器 design"]
-        src_zephyr_pf_alloc_rebalance["再平衡引擎 design"]
-        src_zephyr_pf_alloc_risk_budget["风险预算 design"]
         src_zephyr_pf_alloc_services_init_py["src/zephyr/pf_alloc/services/__init__.py prototype"]
         src_zephyr_pf_alloc_strategy_lifecycle_event_py["src/zephyr/pf_alloc/strategy_lifecycle_event.py prototype"]
         src_zephyr_pf_core_default_equity_strategy_py["src/zephyr/pf_core/default_equity_strategy.py prototype"]
@@ -98,7 +90,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_alloc,src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_constraint,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_optimizer,src_zephyr_pf_alloc_rebalance,src_zephyr_pf_alloc_risk_budget,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py,src_zephyr_pf_core_strategy_portfolio_py design
+    class src_zephyr_pf_alloc,src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py,src_zephyr_pf_core_strategy_portfolio_py design
     class D_TRADING external_prod
     class D_SHARED,D_GOVERNANCE external_design
 ```

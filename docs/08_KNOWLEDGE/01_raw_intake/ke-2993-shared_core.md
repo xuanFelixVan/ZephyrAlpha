@@ -4,6 +4,7 @@ status: active
 title: Shared + Core 蓝图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Shared + Core 蓝图

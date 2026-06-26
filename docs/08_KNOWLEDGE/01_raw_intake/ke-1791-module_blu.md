@@ -4,6 +4,7 @@ status: active
 title: 2.12 可观测性与指标
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.12 可观测性与指标

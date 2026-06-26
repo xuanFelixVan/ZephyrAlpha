@@ -3,6 +3,7 @@ module_id: KE-3446--------data-source-000
 title: L00 — 数据源层（Data Source）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L00 — 数据源层（Data Source）

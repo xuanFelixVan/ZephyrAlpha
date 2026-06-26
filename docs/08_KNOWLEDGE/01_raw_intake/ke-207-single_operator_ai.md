@@ -4,6 +4,7 @@ status: active
 title: 2.3 "Single operator + AI" 人机协同特例 / 单人 + AI 协同的 R/A 重合处理
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 "Single operator + AI" 人机协同特例 / 单人 + AI 协同的 R/A 重合处理

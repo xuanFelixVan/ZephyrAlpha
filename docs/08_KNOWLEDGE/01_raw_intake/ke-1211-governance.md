@@ -4,6 +4,7 @@ status: active
 title: 二、`docs/` 目录结构
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 二、`docs/` 目录结构

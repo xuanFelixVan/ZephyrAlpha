@@ -4,6 +4,7 @@ status: active
 title: §6 D4 — Disaster Recovery & BCP / 灾难恢复与业务连续性域
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §6 D4 — Disaster Recovery & BCP / 灾难恢复与业务连续性域

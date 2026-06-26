@@ -4,6 +4,7 @@ status: active
 title: 2.14 升级引擎自身 Sandboxing —— OS 级隔离（决策 D-022-08）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.14 升级引擎自身 Sandboxing —— OS 级隔离（决策 D-022-08）

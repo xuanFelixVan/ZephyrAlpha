@@ -4,6 +4,7 @@ status: active
 title: 🔴 RULE-FOUR：创建即注册协议 — 不注册，不落盘（与 RULE-ZERO / RULE-ONE / RULE-TWO / RULE-THREE 同级）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 🔴 RULE-FOUR：创建即注册协议 — 不注册，不落盘（与 RULE-ZERO / RULE-ONE / RULE-TWO / RULE-THREE 同级）

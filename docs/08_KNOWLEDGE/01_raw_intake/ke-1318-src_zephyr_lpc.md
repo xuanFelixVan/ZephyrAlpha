@@ -4,6 +4,7 @@ status: active
 title: 三、`src/zephyr/` 双轨结构（LPC）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三、`src/zephyr/` 双轨结构（LPC）

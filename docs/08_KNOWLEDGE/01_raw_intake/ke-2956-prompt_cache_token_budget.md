@@ -4,6 +4,7 @@ status: active
 title: Prompt Cache & Token Budget（提示缓存与Token预算）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Prompt Cache & Token Budget（提示缓存与Token预算）

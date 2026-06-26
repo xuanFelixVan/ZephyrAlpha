@@ -4,6 +4,7 @@ status: active
 title: 2.2 Skill 触发表（Trigger Table）——对接 ZephyrAlpha 全流程七阶段
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Skill 触发表（Trigger Table）——对接 ZephyrAlpha 全流程七阶段

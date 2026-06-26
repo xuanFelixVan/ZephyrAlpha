@@ -4,6 +4,7 @@ status: active
 title: Vendor Registry 配置片段
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Vendor Registry 配置片段

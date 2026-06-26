@@ -4,6 +4,7 @@ status: active
 title: 4.2 HTTP API（beta 按需启用，预留骨架）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 HTTP API（beta 按需启用，预留骨架）

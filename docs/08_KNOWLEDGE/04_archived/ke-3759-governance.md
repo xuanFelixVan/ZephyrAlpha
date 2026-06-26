@@ -3,6 +3,7 @@ module_id: KE-3608
 title: 6.1 脚本功能
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 脚本功能

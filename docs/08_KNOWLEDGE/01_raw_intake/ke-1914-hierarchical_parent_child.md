@@ -4,6 +4,7 @@ status: active
 title: 2.24 Hierarchical Parent-Child Agent 成本归因
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.24 Hierarchical Parent-Child Agent 成本归因

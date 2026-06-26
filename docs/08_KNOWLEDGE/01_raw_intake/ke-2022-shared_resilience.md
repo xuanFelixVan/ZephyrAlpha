@@ -4,6 +4,7 @@ status: active
 title: 2.6 shared-resilience（韧性基座）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.6 shared-resilience（韧性基座）

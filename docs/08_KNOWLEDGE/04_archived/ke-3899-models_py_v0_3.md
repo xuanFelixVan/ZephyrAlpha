@@ -3,6 +3,7 @@ module_id: KE-3748---models-py-v0-3-0-000
 title: 步骤 1：✅ models.py v0.3.0 升级（已完成）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 步骤 1：✅ models.py v0.3.0 升级（已完成）

@@ -4,6 +4,7 @@ status: active
 title: 8.3 未来可能的扩展视图（不在本批次）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 未来可能的扩展视图（不在本批次）

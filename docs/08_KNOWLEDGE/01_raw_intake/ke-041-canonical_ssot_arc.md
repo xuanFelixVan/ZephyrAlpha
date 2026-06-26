@@ -4,6 +4,7 @@ status: active
 title: 6.9 架构数据 Canonical SSoT 铁律（Architecture Data Canonical SSoT Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.9 架构数据 Canonical SSoT 铁律（Architecture Data Canonical SSoT Mandate）

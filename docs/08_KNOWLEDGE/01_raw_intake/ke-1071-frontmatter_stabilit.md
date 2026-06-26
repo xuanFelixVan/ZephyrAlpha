@@ -4,6 +4,7 @@ status: active
 title: 6.3 新 frontmatter 字段：`stability`
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 新 frontmatter 字段：`stability`

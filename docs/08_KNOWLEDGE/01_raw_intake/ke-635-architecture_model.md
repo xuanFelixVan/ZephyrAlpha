@@ -4,6 +4,7 @@ status: active
 title: 企业架构树中的 architecture_model（镜像说明）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 企业架构树中的 architecture_model（镜像说明）

@@ -4,6 +4,7 @@ status: active
 title: 3.2 增强版五阶段检测流水线（含降级运行）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 增强版五阶段检测流水线（含降级运行）

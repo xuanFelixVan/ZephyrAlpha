@@ -4,6 +4,7 @@ status: active
 title: simplicity_audit.yaml —— health-monitor.py 每月产出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # simplicity_audit.yaml —— health-monitor.py 每月产出

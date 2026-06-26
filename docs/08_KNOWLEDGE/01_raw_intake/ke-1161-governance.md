@@ -3,6 +3,7 @@ module_id: KE-1076
 title: ARG-001：触发条件内的变更必须经过架构评审
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ARG-001：触发条件内的变更必须经过架构评审

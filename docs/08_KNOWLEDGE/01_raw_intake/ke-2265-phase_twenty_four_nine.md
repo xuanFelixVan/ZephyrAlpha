@@ -4,6 +4,7 @@ status: active
 title: 4. 蓝图分级访问控制（蓝图 §24.9 #62）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 蓝图分级访问控制（蓝图 §24.9 #62）

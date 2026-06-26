@@ -4,6 +4,7 @@ status: active
 title: === TOCTOU 原子化 ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === TOCTOU 原子化 ===

@@ -4,6 +4,7 @@ status: active
 title: 9.3 与已有实现的关系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 与已有实现的关系

@@ -3,6 +3,7 @@ module_id: KE-1957
 title: 2.9 shared-utilities（通用工具层）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.9 shared-utilities（通用工具层）

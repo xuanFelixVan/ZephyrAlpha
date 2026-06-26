@@ -4,6 +4,7 @@ status: active
 title: 三层模板对照表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三层模板对照表

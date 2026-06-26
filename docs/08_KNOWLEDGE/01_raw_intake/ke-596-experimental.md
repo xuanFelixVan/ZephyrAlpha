@@ -4,6 +4,7 @@ status: active
 title: 8A.1 服务生命周期（experimental 单机单进程）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8A.1 服务生命周期（experimental 单机单进程）

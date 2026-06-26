@@ -3,6 +3,7 @@ module_id: KE-2845---4-000
 title: Phase A — 4个高优先级契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase A — 4个高优先级契约

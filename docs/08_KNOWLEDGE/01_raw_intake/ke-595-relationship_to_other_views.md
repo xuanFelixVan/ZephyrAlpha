@@ -4,6 +4,7 @@ status: active
 title: §8 Relationship to Other Views / 与其他视图的关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §8 Relationship to Other Views / 与其他视图的关系

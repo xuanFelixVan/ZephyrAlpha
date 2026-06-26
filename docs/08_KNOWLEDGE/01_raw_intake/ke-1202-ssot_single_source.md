@@ -4,6 +4,7 @@ status: active
 title: DOC-001：SSoT 唯一（Single Source of Truth）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-001：SSoT 唯一（Single Source of Truth）

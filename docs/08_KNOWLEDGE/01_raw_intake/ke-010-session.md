@@ -4,6 +4,7 @@ status: active
 title: 5.3.1 Session 结束时（保存交接包）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3.1 Session 结束时（保存交接包）

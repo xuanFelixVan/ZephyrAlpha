@@ -4,6 +4,7 @@ status: active
 title: 2.8 Token ROI 模型
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.8 Token ROI 模型

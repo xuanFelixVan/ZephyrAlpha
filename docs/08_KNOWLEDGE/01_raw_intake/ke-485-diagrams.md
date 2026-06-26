@@ -3,6 +3,7 @@ module_id: KE-435
 title: 6. Diagrams / 图的组织
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. Diagrams / 图的组织

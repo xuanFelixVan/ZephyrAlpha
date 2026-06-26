@@ -4,6 +4,7 @@ status: active
 title: 管什么（In Scope）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 管什么（In Scope）

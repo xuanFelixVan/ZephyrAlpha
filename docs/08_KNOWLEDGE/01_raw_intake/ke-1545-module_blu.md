@@ -3,6 +3,7 @@ module_id: KE-1455------10-003
 title: 13.1 盲点总览（10 项）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.1 盲点总览（10 项）

@@ -3,6 +3,7 @@ module_id: KE-419
 title: 5.3 docs/ 根目录文件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 docs/ 根目录文件

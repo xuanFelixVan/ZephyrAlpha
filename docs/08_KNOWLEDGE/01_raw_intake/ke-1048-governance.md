@@ -4,6 +4,7 @@ status: active
 title: 5.6 施工图命名
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.6 施工图命名

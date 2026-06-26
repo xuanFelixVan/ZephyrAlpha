@@ -3,6 +3,7 @@ module_id: KE-307
 title: 4. 状态定义
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 状态定义

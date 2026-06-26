@@ -3,6 +3,7 @@ module_id: KE-3271
 title: 3.4 Communication protocol table / 通信协议表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 Communication protocol table / 通信协议表

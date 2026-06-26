@@ -3,6 +3,7 @@ module_id: KE-1362
 title: 10.3 降级条件速查表
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 降级条件速查表

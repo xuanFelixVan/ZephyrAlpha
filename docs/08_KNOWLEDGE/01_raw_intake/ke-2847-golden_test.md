@@ -4,6 +4,7 @@ status: active
 title: === Golden Test 自举悖论 ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === Golden Test 自举悖论 ===

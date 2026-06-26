@@ -3,6 +3,7 @@ module_id: KE-3479
 title: 10. 变更同步规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. 变更同步规则

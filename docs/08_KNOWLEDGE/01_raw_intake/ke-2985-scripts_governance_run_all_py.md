@@ -4,6 +4,7 @@ status: active
 title: scripts/governance/run_all.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # scripts/governance/run_all.py

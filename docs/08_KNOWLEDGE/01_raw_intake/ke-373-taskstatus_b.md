@@ -4,6 +4,7 @@ status: active
 title: 4.2 TaskStatus（域 B：任务系统）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 TaskStatus（域 B：任务系统）

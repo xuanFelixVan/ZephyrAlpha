@@ -4,6 +4,7 @@ status: active
 title: 5.1.1 governance/operational 边界判据
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1.1 governance/operational 边界判据

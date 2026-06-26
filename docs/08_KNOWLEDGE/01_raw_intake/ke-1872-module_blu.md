@@ -4,6 +4,7 @@ status: active
 title: 2.21 自动维护——僵尸规则检测 + 权限复杂度预算（决策 D-018-19）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.21 自动维护——僵尸规则检测 + 权限复杂度预算（决策 D-018-19）

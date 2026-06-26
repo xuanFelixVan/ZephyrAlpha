@@ -4,6 +4,7 @@ status: active
 title: 6.1 Windows ACL 沙箱实现要点（experimental 默认）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 Windows ACL 沙箱实现要点（experimental 默认）

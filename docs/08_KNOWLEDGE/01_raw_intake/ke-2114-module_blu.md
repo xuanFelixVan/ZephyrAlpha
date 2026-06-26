@@ -3,6 +3,7 @@ module_id: KE-2023
 title: 3. 技术选型
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 技术选型

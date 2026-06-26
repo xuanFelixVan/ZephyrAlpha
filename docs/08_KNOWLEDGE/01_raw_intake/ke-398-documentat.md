@@ -4,6 +4,7 @@ status: active
 title: 4.5.2 为什么枚举值用小写？
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5.2 为什么枚举值用小写？

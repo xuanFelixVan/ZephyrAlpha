@@ -3,6 +3,7 @@ module_id: KE-1977
 title: 2g. Telemetry 数据安全与合规 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2g. Telemetry 数据安全与合规 🆕

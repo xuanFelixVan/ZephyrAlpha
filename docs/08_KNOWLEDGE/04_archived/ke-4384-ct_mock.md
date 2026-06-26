@@ -3,6 +3,7 @@ module_id: KE-4222---ct-----mock-000
 title: 8.3 每个CT-*契约的mock策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 每个CT-*契约的mock策略

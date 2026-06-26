@@ -4,6 +4,7 @@ status: active
 title: 全量审计编排器蓝图 — 多维度迭代审计引擎（MDIAE）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 全量审计编排器蓝图 — 多维度迭代审计引擎（MDIAE）

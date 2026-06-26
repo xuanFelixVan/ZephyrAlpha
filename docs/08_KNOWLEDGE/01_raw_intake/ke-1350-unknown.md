@@ -3,6 +3,7 @@ module_id: KE-1262
 title: 激活条件
 category: knowledge_base
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 激活条件

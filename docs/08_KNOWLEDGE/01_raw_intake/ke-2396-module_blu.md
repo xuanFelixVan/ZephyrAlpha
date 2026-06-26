@@ -4,6 +4,7 @@ status: active
 title: 5.2.2 判定标准
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2.2 判定标准

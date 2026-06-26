@@ -4,6 +4,7 @@ status: active
 title: 责任声明（Single Responsibility）
 category: knowledge_base
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 责任声明（Single Responsibility）

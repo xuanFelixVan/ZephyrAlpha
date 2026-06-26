@@ -4,6 +4,7 @@ status: active
 title: LLM Security Gateway (MOD-LLM_SECURITY)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LLM Security Gateway (MOD-LLM_SECURITY)

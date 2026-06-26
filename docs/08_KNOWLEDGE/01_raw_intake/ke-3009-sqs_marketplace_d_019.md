@@ -4,6 +4,7 @@ status: active
 title: SQS Marketplace (D-019-42)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SQS Marketplace (D-019-42)

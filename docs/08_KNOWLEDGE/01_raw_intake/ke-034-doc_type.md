@@ -4,6 +4,7 @@ status: active
 title: 6.6.2 doc_type 使用规范
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6.2 doc_type 使用规范

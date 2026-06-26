@@ -3,6 +3,7 @@ module_id: KE-2688-----b-db--000
 title: DB-025-0070：T-DB-004——修复 b_db.yaml SSoT
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0070：T-DB-004——修复 b_db.yaml SSoT

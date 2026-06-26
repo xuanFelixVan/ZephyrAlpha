@@ -3,6 +3,7 @@ module_id: KE-4135
 title: 5.1 三级修复体系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 三级修复体系

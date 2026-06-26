@@ -3,6 +3,7 @@ module_id: KE-3542
 title: 2.4 优先级变更权限
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 优先级变更权限

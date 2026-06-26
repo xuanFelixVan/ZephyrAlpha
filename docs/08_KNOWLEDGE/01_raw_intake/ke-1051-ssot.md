@@ -4,6 +4,7 @@ status: active
 title: 检查项 5：SSoT 验证
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 检查项 5：SSoT 验证

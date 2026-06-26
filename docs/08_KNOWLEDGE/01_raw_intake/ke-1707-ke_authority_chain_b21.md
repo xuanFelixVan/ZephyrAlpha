@@ -4,6 +4,7 @@ status: active
 title: 2. KE Authority Chain (B21) — DD95
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. KE Authority Chain (B21) — DD95

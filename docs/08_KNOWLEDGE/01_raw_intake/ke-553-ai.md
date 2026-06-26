@@ -3,6 +3,7 @@ module_id: KE-501
 title: 7.3 AI 工具兼容性
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 AI 工具兼容性

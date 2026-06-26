@@ -3,6 +3,7 @@ module_id: KE-3599
 title: §5 变更记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §5 变更记录

@@ -4,6 +4,7 @@ status: active
 title: 15.1 自举五阶（从最坏情况逐步恢复）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 自举五阶（从最坏情况逐步恢复）

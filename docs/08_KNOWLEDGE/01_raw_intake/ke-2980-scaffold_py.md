@@ -4,6 +4,7 @@ status: active
 title: scaffold.py 中追加
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # scaffold.py 中追加

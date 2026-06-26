@@ -1,5 +1,5 @@
 ---
-doc_type: domain_architecture_diagram
+doc_type: architecture_view
 title: D-EX_CORE 执行核心架构图
 version: "1.0"
 status: active

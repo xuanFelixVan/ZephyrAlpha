@@ -3,6 +3,7 @@ module_id: KE-942
 title: 5.1 强制人工确认（必触发）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 强制人工确认（必触发）

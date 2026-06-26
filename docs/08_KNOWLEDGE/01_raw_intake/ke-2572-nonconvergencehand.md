@@ -4,6 +4,7 @@ status: active
 title: 8.3 不收敛处置协议（NonConvergenceHandler）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 不收敛处置协议（NonConvergenceHandler）

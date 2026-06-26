@@ -4,6 +4,7 @@ status: active
 title: 3.3 doc_type 与 layer 的联动
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 doc_type 与 layer 的联动

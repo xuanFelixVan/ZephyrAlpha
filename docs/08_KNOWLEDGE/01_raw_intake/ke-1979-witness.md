@@ -4,6 +4,7 @@ status: active
 title: 2.34 时钟完整性纵深防御 + Witness分离 + 静默窗口检测（决策 D-022-24）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.34 时钟完整性纵深防御 + Witness分离 + 静默窗口检测（决策 D-022-24）

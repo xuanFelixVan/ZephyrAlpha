@@ -4,6 +4,7 @@ status: active
 title: 1.2 适用范围
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 适用范围

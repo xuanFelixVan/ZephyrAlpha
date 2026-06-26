@@ -4,6 +4,7 @@ status: active
 title: 2.3 skill_loader.py 加载器骨架
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 skill_loader.py 加载器骨架

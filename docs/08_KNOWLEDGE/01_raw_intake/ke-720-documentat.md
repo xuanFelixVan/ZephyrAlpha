@@ -4,6 +4,7 @@ status: active
 title: Step 3.5：幂等性检查
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 3.5：幂等性检查

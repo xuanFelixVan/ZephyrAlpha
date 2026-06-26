@@ -4,6 +4,7 @@ status: active
 title: Feedback Loop Engine 蓝图 — Vibe Coding原生自我改进闭环
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Feedback Loop Engine 蓝图 — Vibe Coding原生自我改进闭环

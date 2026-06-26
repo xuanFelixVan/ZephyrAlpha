@@ -4,6 +4,7 @@ status: active
 title: 3.13 #38: MultiModelVendorRisk
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.13 #38: MultiModelVendorRisk

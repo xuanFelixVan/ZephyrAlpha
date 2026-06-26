@@ -4,6 +4,7 @@ status: active
 title: 3.3 Feedback Loop 集成（对接 MOD-FEEDBACK_LOOP）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 Feedback Loop 集成（对接 MOD-FEEDBACK_LOOP）

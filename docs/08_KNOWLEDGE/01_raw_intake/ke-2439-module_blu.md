@@ -4,6 +4,7 @@ status: active
 title: 6. 产出物存放目录
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 产出物存放目录

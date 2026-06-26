@@ -3,6 +3,7 @@ module_id: KE-4047---9-000
 title: 3. Risk Mitigation (§9)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Risk Mitigation (§9)

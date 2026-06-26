@@ -4,6 +4,7 @@ status: active
 title: 2.2 创建 sli_instrumentation.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 创建 sli_instrumentation.py

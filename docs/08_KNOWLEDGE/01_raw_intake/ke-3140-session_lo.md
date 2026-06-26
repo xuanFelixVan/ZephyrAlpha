@@ -3,6 +3,7 @@ module_id: KE-3038
 title: 9. 开放问题
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 开放问题

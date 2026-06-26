@@ -4,6 +4,7 @@ status: active
 title: _detector-registry.yaml — 声明式检测器注册表（机器 SSoT）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # _detector-registry.yaml — 声明式检测器注册表（机器 SSoT）

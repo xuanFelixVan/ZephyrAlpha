@@ -3,6 +3,7 @@ module_id: KE-597
 title: 资料性引用（Informative）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 资料性引用（Informative）

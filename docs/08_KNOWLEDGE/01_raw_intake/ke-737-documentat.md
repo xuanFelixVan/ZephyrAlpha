@@ -4,6 +4,7 @@ status: active
 title: VIEW-11 跳号说明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # VIEW-11 跳号说明

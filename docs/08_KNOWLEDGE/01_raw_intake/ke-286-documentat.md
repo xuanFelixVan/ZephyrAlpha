@@ -3,6 +3,7 @@ module_id: KE-264
 title: 3.2 决策规则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 决策规则

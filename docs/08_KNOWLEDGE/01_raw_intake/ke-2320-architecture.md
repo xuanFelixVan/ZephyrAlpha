@@ -4,6 +4,7 @@ status: active
 title: 4.2 触发条件 A：文件失联
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 触发条件 A：文件失联

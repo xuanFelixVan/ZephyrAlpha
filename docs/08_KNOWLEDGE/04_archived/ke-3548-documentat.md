@@ -3,6 +3,7 @@ module_id: KE-3408
 title: 8.2 系统性建议
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 系统性建议

@@ -3,6 +3,7 @@ module_id: KE-4342-------18-5--python-000
 title: DB-025-0084：混沌工程 §18.5——Python 5 Scenario
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0084：混沌工程 §18.5——Python 5 Scenario

@@ -3,6 +3,7 @@ module_id: KE-4451
 title: Phase A-E 总览
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase A-E 总览

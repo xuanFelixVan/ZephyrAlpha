@@ -4,6 +4,7 @@ status: active
 title: 5. Document lifecycle / 文档生命周期
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. Document lifecycle / 文档生命周期

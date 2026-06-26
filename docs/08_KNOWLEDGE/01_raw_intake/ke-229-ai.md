@@ -3,6 +3,7 @@ module_id: KE-208
 title: 2.5 AI 协作类
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 AI 协作类

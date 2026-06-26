@@ -3,6 +3,7 @@ module_id: KE-3873
 title: 13.2 注册登记清单（盘点系统必须登记到的位置）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.2 注册登记清单（盘点系统必须登记到的位置）

@@ -3,6 +3,7 @@ module_id: KE-600---alpha-----alpha-factor-000
 title: L02 — Alpha 因子层（Alpha Factor）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L02 — Alpha 因子层（Alpha Factor）

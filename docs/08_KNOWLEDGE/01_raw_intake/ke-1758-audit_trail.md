@@ -3,6 +3,7 @@ module_id: KE-1667
 title: 2.1 Audit Trail 集成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Audit Trail 集成

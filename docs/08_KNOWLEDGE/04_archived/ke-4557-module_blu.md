@@ -3,6 +3,7 @@ module_id: KE-4392
 title: Phase 0 — 骨架
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 0 — 骨架

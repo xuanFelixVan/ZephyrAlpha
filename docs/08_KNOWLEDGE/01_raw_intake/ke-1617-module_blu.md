@@ -3,6 +3,7 @@ module_id: KE-1527
 title: 15. 关键关联
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15. 关键关联

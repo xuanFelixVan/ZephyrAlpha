@@ -4,6 +4,7 @@ status: active
 title: 12. fail-closed 原则（贯穿全链路）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. fail-closed 原则（贯穿全链路）

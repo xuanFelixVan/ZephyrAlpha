@@ -3,6 +3,7 @@ module_id: KE-2351-----must-002
 title: 6.1 `belongs_to` 字段（MUST）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 `belongs_to` 字段（MUST）

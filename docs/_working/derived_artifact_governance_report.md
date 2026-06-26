@@ -1,6 +1,6 @@
 ---
 title: 派生产物治理病根调研报告 + 裁定 + 治本方案
-doc_type: report
+doc_type: audit_report
 status: draft
 ttl: task_bound
 created: 2026-06-26

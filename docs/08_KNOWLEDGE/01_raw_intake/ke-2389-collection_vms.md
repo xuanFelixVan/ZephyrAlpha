@@ -3,6 +3,7 @@ module_id: KE-2294-----collection---------vms-005
 title: 5.2 过渡期 Collection 映射（现有 → VMS 终态）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 过渡期 Collection 映射（现有 → VMS 终态）

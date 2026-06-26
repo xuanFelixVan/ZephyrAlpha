@@ -3,6 +3,7 @@ module_id: KE-3196
 title: 2. 前置条件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 前置条件

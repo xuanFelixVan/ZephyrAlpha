@@ -4,6 +4,7 @@ status: active
 title: shared-lifecycle.yaml —— 引擎 + shared_lifecycle_manager.py 自动维护
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # shared-lifecycle.yaml —— 引擎 + shared_lifecycle_manager.py 自动维护

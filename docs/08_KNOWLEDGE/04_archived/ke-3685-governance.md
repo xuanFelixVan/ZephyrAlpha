@@ -3,6 +3,7 @@ module_id: KE-3538
 title: 2.3 编码合规
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 编码合规

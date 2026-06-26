@@ -4,6 +4,7 @@ status: active
 title: Cognitive Memory (D-019-38)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Cognitive Memory (D-019-38)

@@ -3,6 +3,7 @@ module_id: KE-565
 title: ABS-{NNN}（绝对约束）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ABS-{NNN}（绝对约束）

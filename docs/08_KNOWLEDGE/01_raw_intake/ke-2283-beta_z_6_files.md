@@ -3,6 +3,7 @@ module_id: KE-2189
 title: 4. beta z (6 Files) — 原子性与自适应
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. beta z (6 Files) — 原子性与自适应

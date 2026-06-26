@@ -3,6 +3,7 @@ module_id: KE-3704
 title: MLC-002：逆向转换限制
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MLC-002：逆向转换限制

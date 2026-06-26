@@ -4,6 +4,7 @@ status: active
 title: 5.3 Architecture Model YAML
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 Architecture Model YAML

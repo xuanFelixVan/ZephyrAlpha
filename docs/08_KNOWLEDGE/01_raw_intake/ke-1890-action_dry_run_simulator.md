@@ -4,6 +4,7 @@ status: active
 title: 2.220 Action Dry-Run Simulator - action_dry_run_simulator.py (🆕 v0.20.0 - 盲点270
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.220 Action Dry-Run Simulator - action_dry_run_simulator.py (🆕 v0.20.0 - 盲点270

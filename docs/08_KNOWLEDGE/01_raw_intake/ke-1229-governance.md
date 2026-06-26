@@ -4,6 +4,7 @@ status: active
 title: IFC-005：契约状态转换条件
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IFC-005：契约状态转换条件

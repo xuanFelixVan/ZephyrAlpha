@@ -3,6 +3,7 @@ module_id: KE-1144
 title: IFC-007：Provider 退役时契约级联废弃
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IFC-007：Provider 退役时契约级联废弃

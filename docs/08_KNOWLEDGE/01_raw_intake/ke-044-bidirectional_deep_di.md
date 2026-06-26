@@ -4,6 +4,7 @@ status: active
 title: 7.3 双向深挖（Bidirectional Deep Dive）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 双向深挖（Bidirectional Deep Dive）

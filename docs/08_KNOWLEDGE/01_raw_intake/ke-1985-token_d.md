@@ -4,6 +4,7 @@ status: active
 title: 2.4 经济护栏 —— Token预算与成本控制（决策 D-022-03）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 经济护栏 —— Token预算与成本控制（决策 D-022-03）

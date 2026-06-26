@@ -3,6 +3,7 @@ module_id: KE-3970
 title: 2. Blindspot Summary B23-B38
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Blindspot Summary B23-B38

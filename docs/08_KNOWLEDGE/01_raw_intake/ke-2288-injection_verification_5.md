@@ -4,6 +4,7 @@ status: active
 title: 4. Injection Verification (§5.4 INJECT-C01)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Injection Verification (§5.4 INJECT-C01)

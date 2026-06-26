@@ -3,6 +3,7 @@ module_id: KE-1329
 title: 1.4 责任边界（不管什么——去哪找）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.4 责任边界（不管什么——去哪找）

@@ -4,6 +4,7 @@ status: active
 title: 6.2 TRAE 域（AI Session 强制注入规则）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 TRAE 域（AI Session 强制注入规则）

@@ -3,6 +3,7 @@ module_id: KE-3014------50--blocks-000
 title: YAML 代码块 (50+ blocks)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # YAML 代码块 (50+ blocks)

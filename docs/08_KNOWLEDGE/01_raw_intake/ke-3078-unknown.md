@@ -4,6 +4,7 @@ status: active
 title: 命名空间策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 命名空间策略

@@ -3,6 +3,7 @@ module_id: KE-4238
 title: 9.3 GATE-16 违规分类
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 GATE-16 违规分类

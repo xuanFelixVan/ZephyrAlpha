@@ -4,6 +4,7 @@ status: active
 title: 6.5 脚本自创入库强制约定（Self-Created Script Library Mandatory Registration）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.5 脚本自创入库强制约定（Self-Created Script Library Mandatory Registration）

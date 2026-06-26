@@ -3,6 +3,7 @@ module_id: KE-2009---1-000
 title: 3. Module Identity (§1)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Module Identity (§1)

@@ -4,6 +4,7 @@ status: active
 title: 10.3 DA 不做什么（防止越界）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 DA 不做什么（防止越界）

@@ -4,6 +4,7 @@ status: active
 title: MAD-004：接口可定义性（MOD-P4）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MAD-004：接口可定义性（MOD-P4）

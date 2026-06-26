@@ -4,6 +4,7 @@ status: active
 title: AgentTrace 3-Surface Telemetry (D-019-71)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AgentTrace 3-Surface Telemetry (D-019-71)

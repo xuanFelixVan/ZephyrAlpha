@@ -4,6 +4,7 @@ status: active
 title: 3.4 #13: AIUnderstandabilityConstraint
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 #13: AIUnderstandabilityConstraint

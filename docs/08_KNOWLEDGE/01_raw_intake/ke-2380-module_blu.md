@@ -4,6 +4,7 @@ status: active
 title: 5.1 14 层扩展路线（新增）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 14 层扩展路线（新增）

@@ -3,6 +3,7 @@ module_id: KE-4348
 title: _domain-governance
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # _domain-governance

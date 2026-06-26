@@ -3,6 +3,7 @@ module_id: KE-3813
 title: 11.2 Retrieval P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.2 Retrieval P0

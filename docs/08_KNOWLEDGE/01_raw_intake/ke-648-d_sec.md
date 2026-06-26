@@ -4,6 +4,7 @@ status: active
 title: D-SEC：安全架构与运行时隔离
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-SEC：安全架构与运行时隔离

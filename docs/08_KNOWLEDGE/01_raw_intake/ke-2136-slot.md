@@ -4,6 +4,7 @@ status: active
 title: 3.1 Slot 概念（上下文槽位）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 Slot 概念（上下文槽位）

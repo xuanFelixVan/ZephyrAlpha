@@ -3,6 +3,7 @@ module_id: KE-3590
 title: 4.4.3 Deferred Queue 机制（激活专用）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4.3 Deferred Queue 机制（激活专用）

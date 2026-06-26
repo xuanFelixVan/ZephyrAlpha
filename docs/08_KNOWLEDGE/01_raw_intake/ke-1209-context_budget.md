@@ -4,6 +4,7 @@ status: active
 title: DOC-008：上下文预算意识（Context Budget Awareness）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-008：上下文预算意识（Context Budget Awareness）

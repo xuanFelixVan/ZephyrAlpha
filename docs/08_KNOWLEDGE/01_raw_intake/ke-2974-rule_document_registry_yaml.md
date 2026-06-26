@@ -4,6 +4,7 @@ status: active
 title: rule_document_registry.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # rule_document_registry.yaml

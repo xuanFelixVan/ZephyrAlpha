@@ -4,6 +4,7 @@ status: active
 title: Track C：Owner 决策画像（3 类）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Track C：Owner 决策画像（3 类）

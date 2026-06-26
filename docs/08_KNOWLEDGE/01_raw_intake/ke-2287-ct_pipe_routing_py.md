@@ -4,6 +4,7 @@ status: active
 title: 4. ct_pipe_routing.py 核心函数
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. ct_pipe_routing.py 核心函数

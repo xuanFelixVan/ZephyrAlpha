@@ -3,6 +3,7 @@ module_id: KE-4217
 title: 8.1 角色定义
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 角色定义

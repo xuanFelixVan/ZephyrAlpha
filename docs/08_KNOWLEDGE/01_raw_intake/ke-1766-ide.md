@@ -4,6 +4,7 @@ status: active
 title: 2.1 IDE 热重载
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 IDE 热重载

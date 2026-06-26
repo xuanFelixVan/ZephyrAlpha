@@ -3,6 +3,7 @@ module_id: KE-3245
 title: 3.1 各层职责与边界
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 各层职责与边界

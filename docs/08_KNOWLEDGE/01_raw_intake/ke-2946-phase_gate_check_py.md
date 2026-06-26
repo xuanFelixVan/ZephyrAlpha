@@ -4,6 +4,7 @@ status: active
 title: phase_gate_check.py 逻辑
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # phase_gate_check.py 逻辑

@@ -4,6 +4,7 @@ status: active
 title: MTH-001：标准先行
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-001：标准先行

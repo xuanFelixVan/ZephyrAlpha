@@ -4,6 +4,7 @@ status: active
 title: Bug #5: GateEngine 自检漏掉 invariants/ 子目录
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bug #5: GateEngine 自检漏掉 invariants/ 子目录

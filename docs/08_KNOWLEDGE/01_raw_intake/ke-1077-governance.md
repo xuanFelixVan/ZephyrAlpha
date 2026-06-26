@@ -4,6 +4,7 @@ status: active
 title: 6.6 边界声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6 边界声明

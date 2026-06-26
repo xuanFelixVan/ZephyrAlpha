@@ -3,6 +3,7 @@ module_id: KE-980
 title: 6.2 脚本退出码
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 脚本退出码

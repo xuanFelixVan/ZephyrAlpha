@@ -3,6 +3,7 @@ module_id: KE-3029
 title: 5.1 触发点
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 触发点

@@ -3,6 +3,7 @@ module_id: KE-3392
 title: 7.3 External interface contracts / 外部接口契约
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 External interface contracts / 外部接口契约

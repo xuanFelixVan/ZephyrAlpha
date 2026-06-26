@@ -3,6 +3,7 @@ module_id: KE-4278
 title: D-022-22 密码学防篡改审计追踪
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-22 密码学防篡改审计追踪

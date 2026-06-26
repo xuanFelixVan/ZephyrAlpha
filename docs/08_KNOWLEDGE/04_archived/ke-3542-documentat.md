@@ -3,6 +3,7 @@ module_id: KE-3402
 title: 8.1 五类标准断言
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 五类标准断言

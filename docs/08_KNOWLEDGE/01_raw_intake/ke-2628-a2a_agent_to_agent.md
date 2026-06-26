@@ -4,6 +4,7 @@ status: active
 title: A2A 协调协议蓝图 — Agent-to-Agent 通信与冲突解决
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # A2A 协调协议蓝图 — Agent-to-Agent 通信与冲突解决

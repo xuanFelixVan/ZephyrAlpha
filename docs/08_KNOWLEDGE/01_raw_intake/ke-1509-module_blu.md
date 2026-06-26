@@ -3,6 +3,7 @@ module_id: KE-1419
 title: 12.1 源文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.1 源文件

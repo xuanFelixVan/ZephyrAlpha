@@ -3,6 +3,7 @@ module_id: KE-4393
 title: 施工Phase状态
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 施工Phase状态

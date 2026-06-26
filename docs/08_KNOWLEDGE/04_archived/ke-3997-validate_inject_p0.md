@@ -3,6 +3,7 @@ module_id: KE-3844---inject-p0-002
 title: 12.3 Validate & Inject P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.3 Validate & Inject P0

@@ -3,6 +3,7 @@ module_id: KE-373
 title: 4.7 AI 透明度条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.7 AI 透明度条件禁止

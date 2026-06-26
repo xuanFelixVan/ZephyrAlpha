@@ -4,6 +4,7 @@ status: active
 title: 6.18 AI 加载路径不可漂移铁律（AI Load Path Anti-Drift Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.18 AI 加载路径不可漂移铁律（AI Load Path Anti-Drift Mandate）

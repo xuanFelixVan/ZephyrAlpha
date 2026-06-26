@@ -3,6 +3,7 @@ module_id: KE-4353---feedbackloopengine-conte-003
 title: fle = FeedbackLoopEngine(context_adjust=get_ce())
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # fle = FeedbackLoopEngine(context_adjust=get_ce())

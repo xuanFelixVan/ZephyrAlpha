@@ -4,6 +4,7 @@ status: active
 title: 原则 3：License-as-Code / 许可证即代码
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 原则 3：License-as-Code / 许可证即代码

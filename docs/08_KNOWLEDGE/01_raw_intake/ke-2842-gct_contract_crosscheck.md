@@ -3,6 +3,7 @@ module_id: KE-2744
 title: GCT Contract Crosscheck
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # GCT Contract Crosscheck

@@ -4,6 +4,7 @@ status: active
 title: 15.3 最小必读路径（全新 AI session）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.3 最小必读路径（全新 AI session）

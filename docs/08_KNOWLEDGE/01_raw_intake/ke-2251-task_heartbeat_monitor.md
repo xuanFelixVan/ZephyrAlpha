@@ -4,6 +4,7 @@ status: active
 title: 3.9 #63: TaskHeartbeatMonitor (M-45)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9 #63: TaskHeartbeatMonitor (M-45)

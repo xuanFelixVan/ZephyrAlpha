@@ -3,6 +3,7 @@ module_id: KE-339
 title: 4. 与其他文档的关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 与其他文档的关系

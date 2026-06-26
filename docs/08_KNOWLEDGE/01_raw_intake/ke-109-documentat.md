@@ -3,6 +3,7 @@ module_id: KE-100
 title: 1.5.6 变更同步规则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5.6 变更同步规则

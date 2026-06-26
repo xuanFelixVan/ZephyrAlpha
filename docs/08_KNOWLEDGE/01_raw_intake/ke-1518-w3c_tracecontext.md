@@ -4,6 +4,7 @@ status: active
 title: 12.2 W3C TraceContext 传播
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.2 W3C TraceContext 传播

@@ -3,6 +3,7 @@ module_id: KE-4420
 title: U类：跨模块防御与元可观测性
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # U类：跨模块防御与元可观测性

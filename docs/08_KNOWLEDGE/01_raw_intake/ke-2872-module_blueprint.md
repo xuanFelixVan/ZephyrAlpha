@@ -3,6 +3,7 @@ module_id: KE-2772-------module-blueprint-003
 title: Level 2：单模块蓝图（Module Blueprint）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Level 2：单模块蓝图（Module Blueprint）

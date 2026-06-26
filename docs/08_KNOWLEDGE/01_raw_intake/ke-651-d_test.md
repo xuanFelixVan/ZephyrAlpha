@@ -4,6 +4,7 @@ status: active
 title: D-TEST：架构守卫与测试适配度
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-TEST：架构守卫与测试适配度

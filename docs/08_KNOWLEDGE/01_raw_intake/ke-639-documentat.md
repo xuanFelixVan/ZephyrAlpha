@@ -3,6 +3,7 @@ module_id: KE-576
 title: 外部登记表（不在本目录，由 catalog 索引引用）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 外部登记表（不在本目录，由 catalog 索引引用）

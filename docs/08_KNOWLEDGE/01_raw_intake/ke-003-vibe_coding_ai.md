@@ -4,6 +4,7 @@ status: active
 title: 5.1 Vibe Coding AI 的认知特征
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 Vibe Coding AI 的认知特征

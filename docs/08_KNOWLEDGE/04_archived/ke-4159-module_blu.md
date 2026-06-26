@@ -3,6 +3,7 @@ module_id: KE-4003
 title: 2.3 与已有类似功能的区别
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 与已有类似功能的区别

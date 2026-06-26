@@ -4,6 +4,7 @@ status: active
 title: validate_module_output
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # validate_module_output

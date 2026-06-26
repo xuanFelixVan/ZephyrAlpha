@@ -4,6 +4,7 @@ status: active
 title: 5. View vs YAML SSoT — key distinction / 视图与 YAML SSoT 的区别
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. View vs YAML SSoT — key distinction / 视图与 YAML SSoT 的区别

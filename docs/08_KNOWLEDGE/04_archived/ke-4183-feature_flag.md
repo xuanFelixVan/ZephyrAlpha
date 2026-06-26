@@ -3,6 +3,7 @@ module_id: KE-4027
 title: 2e. FeatureFlag 控制矩阵 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2e. FeatureFlag 控制矩阵 🆕

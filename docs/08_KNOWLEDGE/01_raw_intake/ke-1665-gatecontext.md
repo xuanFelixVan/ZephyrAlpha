@@ -4,6 +4,7 @@ status: active
 title: 17.3 GateContext — 上下文传播
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 17.3 GateContext — 上下文传播

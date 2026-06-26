@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-INFRA_RUNTIME 运行时集成架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D-INFRA_RUNTIME）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-INFRA_RUNTIME | Domain ID | D-INFRA_RUNTIME |
 | 域名称 | 运行时集成 | Domain Name | runtime_integration |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 148 | Module Count | 148 |
+| 模块数 | 145 | Module Count | 145 |
 | 域内依赖 | 101 | Internal Dependencies | 101 |
 | 跨域入边 | 246 | Cross-domain Incoming | 246 |
-| 跨域出边 | 73 | Cross-domain Outgoing | 73 |
-| 设计态模块 | 3 | Design Modules | 3 |
+| 跨域出边 | 72 | Cross-domain Outgoing | 72 |
+| 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 6 | Prototype Modules | 6 |
 | 生产态模块 | 139 | Production Modules | 139 |
 | 容量 | 139/150 (正常) | Capacity | 139/150 (正常) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 148 个模块（按路径排序，全部显示）
+共 145 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -185,9 +185,6 @@ ttl: permanent
 | src/zephyr/shared/lifecycle/resource_optimization_engine.py |  | production | generated |
 | src/zephyr/shared/lifecycle/resource_optimization_models.py |  | production | generated |
 | src/zephyr/shared/lifecycle/resource_optimization_models_from_infra.py |  | production | generated |
-| 运维基础设施域/D-INFRA-03 | Backup Manager(架构版) | design | planned |
-| 运维基础设施域/D-INFRA-321 | 数据源可用性SLA追踪器 | design | planned |
-| 运行时基础设施域-配置管理/D-INFRA-06 | 配置管理器 | design | planned |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -516,7 +513,8 @@ graph TD
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| D_SHARED
-    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| D_INTEGRATION
+    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -.->|import_depends| D_GOV_AUDIT
     D_SHARED -->|import_depends| src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -525,7 +523,7 @@ graph TD
     class src_zephyr_infrastructure_finding_task_bridge_py,src_zephyr_infrastructure_gate_engine_server_py,src_zephyr_infrastructure_gateway_server_py,src_zephyr_infrastructure_handoff_auto_loader_py,src_zephyr_infrastructure_health_monitor_init_py,src_zephyr_infrastructure_health_monitor_health_aggregator_py,src_zephyr_infrastructure_hooks_init_py,src_zephyr_infrastructure_hooks_event_hook_py,src_zephyr_infrastructure_impact_init_py,src_zephyr_infrastructure_impact_impact_propagator_py,src_zephyr_infrastructure_impact_llm_impact_analyzer_py,src_zephyr_infrastructure_infra_06_init_py,src_zephyr_infrastructure_infra_06_cache_py,src_zephyr_infrastructure_infra_06_process_lifecycle_gateway_py,src_zephyr_infrastructure_infra_06_process_pool_py,src_zephyr_infrastructure_infrastructure_base_py,src_zephyr_infrastructure_kill_switch_sim_py,src_zephyr_infrastructure_knowledge_init_py,src_zephyr_infrastructure_knowledge_base_server_py,src_zephyr_infrastructure_lifecycle_init_py,src_zephyr_infrastructure_lifecycle_lazy_loader_py,src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py,src_zephyr_infrastructure_lifecycle_scope_guard_py,src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py,src_zephyr_infrastructure_maintenance_init_py,src_zephyr_infrastructure_observability_02_init_py,src_zephyr_infrastructure_observability_02_session_audit_py,src_zephyr_infrastructure_prompt_provider_py production
     class src_zephyr_infrastructure_infrastructure_init_py,src_zephyr_infrastructure_models_init_py design
     class D_INTEGRATION external_prod
-    class D_SHARED external_design
+    class D_SHARED,D_GOV_AUDIT external_design
 ```
 
 ### 第 5 页 / 共 5 页 / Page 5 of 5
@@ -558,9 +556,6 @@ graph TD
         src_zephyr_shared_lifecycle_resource_optimization_engine_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
         src_zephyr_shared_lifecycle_resource_optimization_models_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
         src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py["src/zephyr/shared/lifecycle/resource_optimizati... production"]
-        D_INFRA_03["Backup Manager(架构版) design"]
-        D_INFRA_321["数据源可用性SLA追踪器 design"]
-        D_INFRA_06["配置管理器 design"]
     end
     src_zephyr_infrastructure_runtime_startup_shutdown_py -->|config_depends| src_zephyr_infrastructure_runtime_init_py
     src_zephyr_infrastructure_script_system_gate_bridge_py -->|config_depends| src_zephyr_infrastructure_script_system_init_py
@@ -593,7 +588,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_pydantic_v2_migrator_py,src_zephyr_infrastructure_rate_limiter_py,src_zephyr_infrastructure_resource_provider_py,src_zephyr_infrastructure_runtime_init_py,src_zephyr_infrastructure_runtime_startup_shutdown_py,src_zephyr_infrastructure_sandbox_server_py,src_zephyr_infrastructure_script_system_init_py,src_zephyr_infrastructure_script_system_finding_py,src_zephyr_infrastructure_script_system_gate_bridge_py,src_zephyr_infrastructure_script_system_kb_bridge_py,src_zephyr_infrastructure_sentinel_server_py,src_zephyr_infrastructure_task_manager_server_py,src_zephyr_infrastructure_telemetry_server_py,src_zephyr_infrastructure_vector_memory_server_py,src_zephyr_infrastructure_warm_hot_gate_py,src_zephyr_shared_lifecycle_init_py,src_zephyr_shared_lifecycle_daemon_registry_py,src_zephyr_shared_lifecycle_daemon_registry_from_infra_py,src_zephyr_shared_lifecycle_hooks_py,src_zephyr_shared_lifecycle_hooks_from_infra_py,src_zephyr_shared_lifecycle_lazy_loader_py,src_zephyr_shared_lifecycle_resource_optimization_engine_py,src_zephyr_shared_lifecycle_resource_optimization_models_py,src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py production
-    class src_zephyr_infrastructure_services_init_py,D_INFRA_03,D_INFRA_321,D_INFRA_06 design
+    class src_zephyr_infrastructure_services_init_py design
     class D_SHARED external_prod
     class D_INTEGRATION,D_GOVERNANCE,D_OPS,D_TRADING external_design
 ```
@@ -605,7 +600,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-SHARED | 36 | import_depends |
-| D-INTEGRATION | 23 | import_depends |
+| D-INTEGRATION | 22 | import_depends |
 | D-GOVERNANCE | 9 | import_depends |
 | D-GOV_AUDIT | 4 | import_depends |
 | D-OPS | 1 | import_depends |
@@ -619,7 +614,7 @@ graph TD
 | D-INFRA_RECOVERY | 33 | import_depends |
 | D-INFRA_A2A | 14 | import_depends |
 | D-INFRA_TELEMETRY | 12 | import_depends |
-| D-GOV-SCRIPTS | 11 | import_depends |
+| D-GOV_SCRIPTS | 11 | import_depends |
 | D-SHARED | 6 | import_depends |
 | D-GOV_AUDIT | 5 | import_depends |
 | D-TRADING | 4 | contract,import_depends |

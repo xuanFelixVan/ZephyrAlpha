@@ -4,6 +4,7 @@ status: active
 title: 5.2 修改数据结构的流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 修改数据结构的流程

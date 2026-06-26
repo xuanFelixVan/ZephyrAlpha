@@ -4,6 +4,7 @@ status: active
 title: 最终判定 — [✓] 100% 覆盖（第7轮——全量归零确认·无残留）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 最终判定 — [✓] 100% 覆盖（第7轮——全量归零确认·无残留）

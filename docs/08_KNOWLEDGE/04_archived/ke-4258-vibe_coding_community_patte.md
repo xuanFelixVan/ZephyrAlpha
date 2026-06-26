@@ -3,6 +3,7 @@ module_id: KE-4099
 title: 4. Vibe Coding Community Patterns (§13.3)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Vibe Coding Community Patterns (§13.3)

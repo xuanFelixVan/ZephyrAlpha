@@ -3,6 +3,7 @@ module_id: KE-660
 title: Vendor Registry / 厂商注册表设计原则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Vendor Registry / 厂商注册表设计原则

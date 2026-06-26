@@ -4,6 +4,7 @@ status: active
 title: 原则 1：Open Source First / 开源优先原则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 原则 1：Open Source First / 开源优先原则

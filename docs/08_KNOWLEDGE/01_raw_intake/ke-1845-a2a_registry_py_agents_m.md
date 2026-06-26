@@ -4,6 +4,7 @@ status: active
 title: 2.2 a2a_registry.py — AGENTS.md 注册
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 a2a_registry.py — AGENTS.md 注册

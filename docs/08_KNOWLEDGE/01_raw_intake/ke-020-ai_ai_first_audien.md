@@ -4,6 +4,7 @@ status: active
 title: 6.12 AI 受众优先原则（AI-First Audience Principle）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.12 AI 受众优先原则（AI-First Audience Principle）

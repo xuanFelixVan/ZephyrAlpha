@@ -3,6 +3,7 @@ module_id: KE-705
 title: 一.1.4 防幻觉完整路径映射表
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 一.1.4 防幻觉完整路径映射表

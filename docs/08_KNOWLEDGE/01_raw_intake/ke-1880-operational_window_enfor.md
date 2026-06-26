@@ -4,6 +4,7 @@ status: active
 title: 2.214 Operational Window Enforcer - operational_window_enforcer.py (🆕 v0.20.0 -
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.214 Operational Window Enforcer - operational_window_enforcer.py (🆕 v0.20.0 -

@@ -4,6 +4,7 @@ status: active
 title: 4.2 知识数据层（`docs/08_knowledge/`）——KE 物理文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 知识数据层（`docs/08_knowledge/`）——KE 物理文件

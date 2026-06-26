@@ -4,6 +4,7 @@ status: active
 title: Context Engine 蓝图 — 四阶段上下文注入
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Context Engine 蓝图 — 四阶段上下文注入

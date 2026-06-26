@@ -3,6 +3,7 @@ module_id: KE-798
 title: 2.2.2 特殊分区
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2.2 特殊分区

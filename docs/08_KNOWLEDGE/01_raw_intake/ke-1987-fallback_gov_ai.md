@@ -4,6 +4,7 @@ status: active
 title: 2.4 模型降级 Fallback 链（GOV-AI-002 §三）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 模型降级 Fallback 链（GOV-AI-002 §三）

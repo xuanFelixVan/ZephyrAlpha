@@ -4,6 +4,7 @@ status: active
 title: ⚠️ Vibe Coding 蓝图编写铁律
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ⚠️ Vibe Coding 蓝图编写铁律

@@ -3,6 +3,7 @@ module_id: KE-591---finding-000
 title: findings / Finding 落盘说明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # findings / Finding 落盘说明

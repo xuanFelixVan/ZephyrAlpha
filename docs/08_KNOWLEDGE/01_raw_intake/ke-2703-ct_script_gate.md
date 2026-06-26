@@ -4,6 +4,7 @@ status: active
 title: 四、集成概览（CT-SCRIPT-GATE-001）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 四、集成概览（CT-SCRIPT-GATE-001）

@@ -4,6 +4,7 @@ status: active
 title: 7.1 正面影响（3项 AGENTS.md §6.3 强制要求）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 正面影响（3项 AGENTS.md §6.3 强制要求）

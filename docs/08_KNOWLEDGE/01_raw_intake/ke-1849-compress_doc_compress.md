@@ -4,6 +4,7 @@ status: active
 title: 2.2 Compress（压缩）— doc_compressor.py + context_budget_tracker.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Compress（压缩）— doc_compressor.py + context_budget_tracker.py

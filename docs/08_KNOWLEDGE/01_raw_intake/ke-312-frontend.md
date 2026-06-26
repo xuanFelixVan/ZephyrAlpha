@@ -4,6 +4,7 @@ status: active
 title: 3.4 前端（10-FE）三平面归属（同步批次）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 前端（10-FE）三平面归属（同步批次）

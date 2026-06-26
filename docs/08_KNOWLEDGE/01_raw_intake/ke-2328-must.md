@@ -4,6 +4,7 @@ status: active
 title: 4.3 蓝图文件名约定（MUST）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 蓝图文件名约定（MUST）

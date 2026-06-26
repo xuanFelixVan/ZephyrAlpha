@@ -4,6 +4,7 @@ status: active
 title: Failure Archetypes (D-019-53)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Failure Archetypes (D-019-53)

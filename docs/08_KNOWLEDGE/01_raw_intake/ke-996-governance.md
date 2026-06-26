@@ -4,6 +4,7 @@ status: active
 title: 4.4 脚本未就绪时的后备方案
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4 脚本未就绪时的后备方案

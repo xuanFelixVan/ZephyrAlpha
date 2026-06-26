@@ -3,6 +3,7 @@ module_id: KE-3367---fle-001
 title: 6.3 与 FLE 集成
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 与 FLE 集成

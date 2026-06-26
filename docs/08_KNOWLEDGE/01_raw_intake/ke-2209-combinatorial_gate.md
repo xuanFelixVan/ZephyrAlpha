@@ -4,6 +4,7 @@ status: active
 title: 3.4 #58: CombinatorialGate
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 #58: CombinatorialGate

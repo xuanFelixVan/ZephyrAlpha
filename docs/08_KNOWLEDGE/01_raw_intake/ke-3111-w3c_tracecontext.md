@@ -4,6 +4,7 @@ status: active
 title: W3C TraceContext
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # W3C TraceContext

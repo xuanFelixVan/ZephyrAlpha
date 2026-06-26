@@ -4,6 +4,7 @@ status: active
 title: 2. Claude Rescue 触发器（5条）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Claude Rescue 触发器（5条）

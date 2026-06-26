@@ -4,6 +4,7 @@ status: active
 title: v0.15.0 — Forensic Vault + Cryptographic Trust (TASK-0005, R203-R220)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # v0.15.0 — Forensic Vault + Cryptographic Trust (TASK-0005, R203-R220)

@@ -4,6 +4,7 @@ status: active
 title: 四、技术决策权威 (ADR Authority)
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 四、技术决策权威 (ADR Authority)

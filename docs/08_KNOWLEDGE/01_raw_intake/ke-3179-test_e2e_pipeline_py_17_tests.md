@@ -3,6 +3,7 @@ module_id: KE-3073
 title: test_e2e_pipeline.py（17 tests）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # test_e2e_pipeline.py（17 tests）

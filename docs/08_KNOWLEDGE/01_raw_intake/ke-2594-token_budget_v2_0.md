@@ -3,6 +3,7 @@ module_id: KE-2499-----token-budget-v2-0-0-000
 title: 9. 多级 Token Budget（v2.0.0 新增）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 多级 Token Budget（v2.0.0 新增）

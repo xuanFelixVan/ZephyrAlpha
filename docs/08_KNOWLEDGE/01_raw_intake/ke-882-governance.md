@@ -3,6 +3,7 @@ module_id: KE-804
 title: 2.2 5 级门禁属性表
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 5 级门禁属性表

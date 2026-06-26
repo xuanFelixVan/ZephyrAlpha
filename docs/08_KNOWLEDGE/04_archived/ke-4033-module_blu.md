@@ -3,6 +3,7 @@ module_id: KE-3880
 title: 13.3 绝对禁止（反孤儿铁律）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.3 绝对禁止（反孤儿铁律）

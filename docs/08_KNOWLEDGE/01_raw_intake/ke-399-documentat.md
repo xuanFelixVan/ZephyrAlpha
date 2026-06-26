@@ -4,6 +4,7 @@ status: active
 title: 4.5.3 为什么标识符用大写？
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5.3 为什么标识符用大写？

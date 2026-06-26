@@ -4,6 +4,7 @@ status: active
 title: Bug #2: InputSanitizer 无 `sanitize()` 方法和 `is_clean` 属性
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bug #2: InputSanitizer 无 `sanitize()` 方法和 `is_clean` 属性

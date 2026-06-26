@@ -4,6 +4,7 @@ status: active
 title: 8. 新增 KPI 流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 新增 KPI 流程

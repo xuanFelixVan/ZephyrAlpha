@@ -3,6 +3,7 @@ module_id: KE-3455
 title: 责任声明（Single Responsibility）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 责任声明（Single Responsibility）

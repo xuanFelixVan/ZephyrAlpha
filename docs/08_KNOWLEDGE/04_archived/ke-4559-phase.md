@@ -3,6 +3,7 @@ module_id: KE-4394
 title: Phase 施工与质量门禁
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 施工与质量门禁

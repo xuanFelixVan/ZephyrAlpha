@@ -3,6 +3,7 @@ module_id: KE-3595
 title: 4.7 激活时间轴分布
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.7 激活时间轴分布

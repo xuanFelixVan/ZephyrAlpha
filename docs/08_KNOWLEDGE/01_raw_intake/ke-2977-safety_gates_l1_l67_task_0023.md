@@ -4,6 +4,7 @@ status: active
 title: Safety Gates L1-L67 (TASK-0023/0024/0025/0026)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Safety Gates L1-L67 (TASK-0023/0024/0025/0026)

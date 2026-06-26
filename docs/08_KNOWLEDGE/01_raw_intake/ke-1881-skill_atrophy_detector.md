@@ -4,6 +4,7 @@ status: active
 title: 2.215 Skill Atrophy Detector - skill_atrophy_detector.py (🆕 v0.20.0 - 盲点265 — FL
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.215 Skill Atrophy Detector - skill_atrophy_detector.py (🆕 v0.20.0 - 盲点265 — FL

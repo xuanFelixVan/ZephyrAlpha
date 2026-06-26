@@ -4,6 +4,7 @@ status: active
 title: 8.3 Prompt 模板（结构化——不留给 LLM 判断空间）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 Prompt 模板（结构化——不留给 LLM 判断空间）

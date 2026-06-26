@@ -4,6 +4,7 @@ status: active
 title: §1 任务系统的分层架构
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §1 任务系统的分层架构

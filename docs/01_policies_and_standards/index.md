@@ -179,7 +179,7 @@ verifiability: manual
 |---------|----------------------|:---:|
 | **修改/优化规则文件** | `rules/trae_032_module_lifecycle.yaml` | ~1500 |
 | **创建新标准文档** | `rules/trae_030_doc_numbering_metadata.yaml` + `rules/trae_043_meta_rule_metadata.yaml` | ~2500 |
-| **审查规则体系** | `rules/trae_044_compliance_audit.yaml` + `_registry/catalogs/registry_of_registries.yaml` | ~2000 |
+| **审查规则体系** | `rules/trae_044_compliance_audit.yaml` + `_registry/catalogs/registry_consistency_contract.yaml` | ~2000 |
 | **操作具体文件夹** | 对应规则文件 | ~1000 |
 
 ---
@@ -188,7 +188,7 @@ verifiability: manual
 
 | 注册表 | 路径 | 用途 |
 |--------|------|------|
-| **注册表之注册表** | [_registry/catalogs/registry_of_registries.yaml](_registry/catalogs/registry_of_registries.yaml) | 48 个注册表总索引 |
+| **注册表之注册表** | [_registry/catalogs/registry_consistency_contract.yaml](_registry/catalogs/registry_consistency_contract.yaml) | 48 个注册表总索引 |
 | **门禁注册表** | [_registry/catalogs/gate_registry.yaml](_registry/catalogs/gate_registry.yaml) | 全部门禁清单 |
 | **功能域注册表** | [_registry/catalogs/functional_domain_registry.yaml](_registry/catalogs/functional_domain_registry.yaml) | 39 域清单 |
 | **架构契约** | [_registry/contracts/architecture_contract.yaml](_registry/contracts/architecture_contract.yaml) | 架构合规自动验证契约 |

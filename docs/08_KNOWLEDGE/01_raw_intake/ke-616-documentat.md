@@ -3,6 +3,7 @@ module_id: KE-554
 title: 9.2 不应激活的反信号
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 不应激活的反信号

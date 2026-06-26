@@ -4,6 +4,7 @@ status: active
 title: Stage 8：从"机构标准确认"到"元数据契约与触发机制细化"
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 8：从"机构标准确认"到"元数据契约与触发机制细化"

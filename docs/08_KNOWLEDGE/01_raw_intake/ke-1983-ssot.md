@@ -4,6 +4,7 @@ status: active
 title: 2.4 密码学完整性数据模型（新增 SSoT 条目体）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 密码学完整性数据模型（新增 SSoT 条目体）

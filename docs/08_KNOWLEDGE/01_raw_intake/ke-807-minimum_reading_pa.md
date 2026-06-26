@@ -4,6 +4,7 @@ status: active
 title: 12.1 最低阅读路径（Minimum Reading Path）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.1 最低阅读路径（Minimum Reading Path）

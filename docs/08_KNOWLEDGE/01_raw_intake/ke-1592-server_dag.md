@@ -4,6 +4,7 @@ status: active
 title: 14. Server 依赖 DAG
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. Server 依赖 DAG

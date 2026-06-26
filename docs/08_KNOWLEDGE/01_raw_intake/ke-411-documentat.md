@@ -3,6 +3,7 @@ module_id: KE-375
 title: 4.8 部署与运行时条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.8 部署与运行时条件禁止

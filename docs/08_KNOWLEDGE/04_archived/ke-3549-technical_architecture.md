@@ -3,6 +3,7 @@ module_id: KE-3409-----------------04-ta-000
 title: 8.3 业界工具映射（建议，最终选型归 04-TA）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 业界工具映射（建议，最终选型归 04-TA）

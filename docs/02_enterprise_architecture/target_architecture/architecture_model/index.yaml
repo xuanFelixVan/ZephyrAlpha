@@ -116,16 +116,16 @@ domains:
 - id: D-FUNDAMENTAL_SIGNAL
   name: 基本面信号
   layer_id: L2_domain
-- id: D-GOV-DOCS
+- id: D-GOV_DOCS
   name: architecture_docs
   layer_id: L2_domain
-- id: D-GOV-ENFORCEMENT
+- id: D-GOV_ENFORCEMENT
   name: rule_enforcement
   layer_id: L2_domain
 - id: D-GOV-REPAIR
   name: rollback
   layer_id: 
-- id: D-GOV-SCRIPTS
+- id: D-GOV_SCRIPTS
   name: code_dedup
   layer_id: L2_domain
 - id: D-GOVERNANCE
@@ -134,7 +134,7 @@ domains:
 - id: D-GOV_AUDIT
   name: audit-trail
   layer_id: L2_domain
-- id: D-GOV_AUDIT_TESTS
+- id: D-AUDITTEST
   name: audit_test_suite
   layer_id: L2_domain
 - id: D-GOV_DRIFT
@@ -161,7 +161,7 @@ domains:
 - id: D-INTEGRATION
   name: pipeline_routing
   layer_id: L1_foundation
-- id: D-INTEGRATION-GATEWAY
+- id: D-INTEGRATION_GATEWAY
   name: mcp_servers
   layer_id: L1_foundation
 - id: D-INTELLIGENCE
@@ -200,7 +200,7 @@ domains:
 - id: D-SECURITY
   name: adversarial_validation
   layer_id: L1_foundation
-- id: D-SECURITY-LLM
+- id: D-SECURITY_LLM
   name: llm_defense
   layer_id: L1_foundation
 - id: D-SELL_DECISION

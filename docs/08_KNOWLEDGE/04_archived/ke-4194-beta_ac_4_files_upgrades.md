@@ -3,6 +3,7 @@ module_id: KE-4037---upgrades-000
 title: 3. beta ac (4 Files + upgrades) — 交互双模
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. beta ac (4 Files + upgrades) — 交互双模

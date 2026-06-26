@@ -4,6 +4,7 @@ status: active
 title: 7.1 迁移原则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 迁移原则

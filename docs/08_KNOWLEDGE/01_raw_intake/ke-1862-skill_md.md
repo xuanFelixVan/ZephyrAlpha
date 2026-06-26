@@ -4,6 +4,7 @@ status: active
 title: 2.2 SKILL.md 标准格式
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 SKILL.md 标准格式

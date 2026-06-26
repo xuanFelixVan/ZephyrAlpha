@@ -3,6 +3,7 @@ module_id: KE-314
 title: 3.4.1 防幻觉三向映射（doc_type → directory → rule_form）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4.1 防幻觉三向映射（doc_type → directory → rule_form）

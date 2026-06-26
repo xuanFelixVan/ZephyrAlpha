@@ -4,6 +4,7 @@ status: active
 title: === Owner 能力鸿沟 ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === Owner 能力鸿沟 ===

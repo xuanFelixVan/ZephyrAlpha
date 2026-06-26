@@ -4,6 +4,7 @@ status: active
 title: 7.1 审计流程（四步法）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 审计流程（四步法）

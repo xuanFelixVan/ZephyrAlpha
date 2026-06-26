@@ -4,6 +4,7 @@ status: active
 title: 6.4 最有利于 AI 施工的选择（AI-Construction-Friendliest Selection）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 最有利于 AI 施工的选择（AI-Construction-Friendliest Selection）

@@ -4,6 +4,7 @@ status: active
 title: 5.3 `03_modules/` (C 轨镜像)
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 `03_modules/` (C 轨镜像)

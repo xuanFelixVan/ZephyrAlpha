@@ -3,6 +3,7 @@ module_id: KE-460----t-endgame-000
 title: 6.3 达到 T-ENDGAME 顶级对标的总投入估算
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 达到 T-ENDGAME 顶级对标的总投入估算

@@ -3,6 +3,7 @@ module_id: KE-925---------g5-extract-yaml-000
 title: 4.5.2 检查项（对应 `g5-extract.yaml`）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5.2 检查项（对应 `g5-extract.yaml`）

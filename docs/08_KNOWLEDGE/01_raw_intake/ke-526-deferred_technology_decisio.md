@@ -3,6 +3,7 @@ module_id: KE-474
 title: 7. Deferred technology decisions / 暂未决定项清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Deferred technology decisions / 暂未决定项清单

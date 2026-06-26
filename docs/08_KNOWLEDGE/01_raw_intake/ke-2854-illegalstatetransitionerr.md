@@ -4,6 +4,7 @@ status: active
 title: 合法状态转移（非法转移直接抛 IllegalStateTransitionError）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 合法状态转移（非法转移直接抛 IllegalStateTransitionError）

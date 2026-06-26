@@ -4,6 +4,7 @@ status: active
 title: 3.3 内部层间数据流（事件驱动轨迹）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 内部层间数据流（事件驱动轨迹）

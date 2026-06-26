@@ -4,6 +4,7 @@ status: active
 title: 6.7a 代码变换保真铁律（Code Transformation Fidelity Rule）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.7a 代码变换保真铁律（Code Transformation Fidelity Rule）

@@ -4,6 +4,7 @@ status: active
 title: §一 模型生命周期 Pipeline
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §一 模型生命周期 Pipeline

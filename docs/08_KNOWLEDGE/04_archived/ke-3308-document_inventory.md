@@ -3,6 +3,7 @@ module_id: KE-3308
 title: 2. Document inventory / 文档清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Document inventory / 文档清单

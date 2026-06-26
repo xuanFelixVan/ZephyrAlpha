@@ -3,6 +3,7 @@ module_id: KE-4175
 title: 6.3 Flatline 检测
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 Flatline 检测

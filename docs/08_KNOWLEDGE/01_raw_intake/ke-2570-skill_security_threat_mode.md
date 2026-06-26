@@ -4,6 +4,7 @@ status: active
 title: 8.2 Skill Security Threat Model（决策 D-019-07）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 Skill Security Threat Model（决策 D-019-07）

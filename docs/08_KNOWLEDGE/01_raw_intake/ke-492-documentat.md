@@ -3,6 +3,7 @@ module_id: KE-441
 title: §6 禁止行为
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §6 禁止行为

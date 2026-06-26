@@ -3,6 +3,7 @@ module_id: KE-3181----experimental-p-000
 title: 11.2 Runbook 清单（experimental P0）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.2 Runbook 清单（experimental P0）

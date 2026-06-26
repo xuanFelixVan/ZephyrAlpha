@@ -4,6 +4,7 @@ status: active
 title: 10.2 模式 B：Roo Code / 外部 Agent JSON API
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 模式 B：Roo Code / 外部 Agent JSON API

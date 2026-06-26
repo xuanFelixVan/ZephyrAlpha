@@ -3,6 +3,7 @@ module_id: KE-3644
 title: A.1 脚本覆盖交叉验证
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # A.1 脚本覆盖交叉验证

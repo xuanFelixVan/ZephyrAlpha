@@ -4,6 +4,7 @@ status: active
 title: TASK-DS-0004：datasource-core 蓝图未来扩展
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # TASK-DS-0004：datasource-core 蓝图未来扩展

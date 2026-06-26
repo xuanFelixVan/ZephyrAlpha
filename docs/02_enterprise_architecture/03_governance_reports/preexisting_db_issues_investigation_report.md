@@ -2,6 +2,12 @@
 ttl: permanent
 ---
 
+> **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
+> D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
+> D-GOV_AUDIT_TESTS→D-AUDITTEST, D-INTEGRATION-GATEWAY→D-INTEGRATION_GATEWAY, D-SECURITY-LLM→D-SECURITY_LLM。
+> 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
+
+
 # 预存DB问题深度调研报告与治本方案
 
 > **文档定位**：针对4域拆分（裁定#200）后深度检查发现的3个预存DB问题 + 1个工具gap的完整调研报告

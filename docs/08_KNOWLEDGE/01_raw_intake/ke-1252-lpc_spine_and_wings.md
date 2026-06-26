@@ -4,6 +4,7 @@ status: active
 title: 一、LPC 双轨架构总则（Spine-and-Wings）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 一、LPC 双轨架构总则（Spine-and-Wings）

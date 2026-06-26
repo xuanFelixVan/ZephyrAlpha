@@ -4,6 +4,7 @@ status: active
 title: 1. LifecycleAware 实现
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. LifecycleAware 实现

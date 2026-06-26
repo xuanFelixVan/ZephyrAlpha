@@ -4,6 +4,7 @@ status: active
 title: 5.4 MRS-002：同步原子性
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.4 MRS-002：同步原子性

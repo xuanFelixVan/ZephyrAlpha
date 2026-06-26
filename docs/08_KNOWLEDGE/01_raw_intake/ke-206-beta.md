@@ -4,6 +4,7 @@ status: active
 title: 2.3 零信任原则（beta 起启用）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 零信任原则（beta 起启用）

@@ -4,6 +4,7 @@ status: active
 title: DOC-006：先读后改（Read-Before-Modify）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-006：先读后改（Read-Before-Modify）

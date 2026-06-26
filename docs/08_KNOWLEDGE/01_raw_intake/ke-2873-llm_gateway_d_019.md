@@ -4,6 +4,7 @@ status: active
 title: LLM Gateway (D-019-78)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # LLM Gateway (D-019-78)

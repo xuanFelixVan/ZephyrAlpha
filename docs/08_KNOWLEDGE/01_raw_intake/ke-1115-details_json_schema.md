@@ -4,6 +4,7 @@ status: active
 title: 8.2 `details` JSON schema
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 `details` JSON schema

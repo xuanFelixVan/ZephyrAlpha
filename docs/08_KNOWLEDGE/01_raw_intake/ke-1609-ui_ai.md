@@ -3,6 +3,7 @@ module_id: KE-1519----------ai-000
 title: 14.4 UI 策略——人看什么、AI看什么
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.4 UI 策略——人看什么、AI看什么

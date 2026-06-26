@@ -4,6 +4,7 @@ status: active
 title: Telemetry 内部实现约束
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Telemetry 内部实现约束

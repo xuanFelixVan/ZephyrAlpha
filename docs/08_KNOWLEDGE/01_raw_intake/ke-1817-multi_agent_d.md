@@ -4,6 +4,7 @@ status: active
 title: 2.16 Multi-Agent 共识与协商协议（决策 D-025-13）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.16 Multi-Agent 共识与协商协议（决策 D-025-13）

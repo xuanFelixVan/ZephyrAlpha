@@ -4,6 +4,7 @@ status: active
 title: 8.4 Skill Canary Deployment & A/B Testing（决策 D-019-09）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.4 Skill Canary Deployment & A/B Testing（决策 D-019-09）

@@ -4,6 +4,7 @@ status: active
 title: 2.7 frontmatter 模板
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 frontmatter 模板

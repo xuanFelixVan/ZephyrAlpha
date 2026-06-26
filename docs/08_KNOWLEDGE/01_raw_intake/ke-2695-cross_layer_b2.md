@@ -3,6 +3,7 @@ module_id: KE-2598--------b2---3-000
 title: 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）

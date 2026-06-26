@@ -4,6 +4,7 @@ status: active
 title: 8.9 Skill Discovery & Recommendation Engine
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.9 Skill Discovery & Recommendation Engine

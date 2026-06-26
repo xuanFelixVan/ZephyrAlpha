@@ -4,6 +4,7 @@ status: active
 title: 3.14 #52: CoreIntegrityGuard (M-41)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.14 #52: CoreIntegrityGuard (M-41)

@@ -4,6 +4,7 @@ status: active
 title: identity.py 中新增
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # identity.py 中新增

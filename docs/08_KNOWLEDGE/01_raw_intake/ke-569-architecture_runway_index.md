@@ -4,6 +4,7 @@ status: active
 title: 8. Architecture Runway Index / 架构预留通道总览
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. Architecture Runway Index / 架构预留通道总览

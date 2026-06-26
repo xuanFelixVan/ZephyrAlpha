@@ -4,6 +4,7 @@ status: active
 title: 2.16 信任锚初始化——The Bootstrap Trust Problem（决策 D-020-44）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.16 信任锚初始化——The Bootstrap Trust Problem（决策 D-020-44）

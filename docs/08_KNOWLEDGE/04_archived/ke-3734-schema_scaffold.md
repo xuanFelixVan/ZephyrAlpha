@@ -3,6 +3,7 @@ module_id: KE-3584----scaffold-003
 title: 4.2 schema 校验（scaffold 必须落地）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 schema 校验（scaffold 必须落地）

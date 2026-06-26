@@ -4,6 +4,7 @@ status: active
 title: 2.1 Git Commit + SQLite Dump 双轨 Checkpoint（决策 D-021-01 + D-021-04）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Git Commit + SQLite Dump 双轨 Checkpoint（决策 D-021-01 + D-021-04）

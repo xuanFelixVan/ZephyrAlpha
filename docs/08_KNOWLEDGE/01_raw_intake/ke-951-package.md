@@ -4,6 +4,7 @@ status: active
 title: 4. 同层模块（相对导入，仅限同 package 内）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 同层模块（相对导入，仅限同 package 内）

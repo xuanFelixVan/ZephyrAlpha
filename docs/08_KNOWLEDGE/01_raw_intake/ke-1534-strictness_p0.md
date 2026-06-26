@@ -3,6 +3,7 @@ module_id: KE-1444----p0-000
 title: 12.6 Strictness 管理 P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.6 Strictness 管理 P0

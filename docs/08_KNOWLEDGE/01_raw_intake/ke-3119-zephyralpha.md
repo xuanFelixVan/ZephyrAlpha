@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 蓝图体系架构标准
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 蓝图体系架构标准

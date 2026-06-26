@@ -4,6 +4,7 @@ status: active
 title: 6. Organizational memory system position / 组织记忆系统在全貌中的位置
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. Organizational memory system position / 组织记忆系统在全貌中的位置

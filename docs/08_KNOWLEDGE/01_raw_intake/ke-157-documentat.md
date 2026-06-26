@@ -4,6 +4,7 @@ status: active
 title: §14 跨标准字段交叉引用
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §14 跨标准字段交叉引用

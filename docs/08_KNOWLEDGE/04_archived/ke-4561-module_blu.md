@@ -3,6 +3,7 @@ module_id: KE-4396
 title: Phase 1 — 功能
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 1 — 功能

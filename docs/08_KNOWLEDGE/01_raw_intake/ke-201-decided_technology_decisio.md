@@ -3,6 +3,7 @@ module_id: KE-181
 title: 2.2 Decided technology decisions / 已决定的技术决策
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Decided technology decisions / 已决定的技术决策

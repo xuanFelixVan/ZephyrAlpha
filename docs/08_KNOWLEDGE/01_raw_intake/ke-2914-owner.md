@@ -4,6 +4,7 @@ status: active
 title: === 全状态防篡改 + 扩展 Owner 缺失 ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === 全状态防篡改 + 扩展 Owner 缺失 ===

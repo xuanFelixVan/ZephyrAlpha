@@ -4,6 +4,7 @@ status: active
 title: 6.1 Case 1：MASTER-001 总蓝图 → 三级金字塔（R90）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 Case 1：MASTER-001 总蓝图 → 三级金字塔（R90）

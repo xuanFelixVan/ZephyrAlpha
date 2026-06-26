@@ -3,6 +3,7 @@ module_id: KE-862-----------opa-gatekeeper-2-005
 title: 3.3 四档执行约定（对标 OPA Gatekeeper 2026）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 四档执行约定（对标 OPA Gatekeeper 2026）

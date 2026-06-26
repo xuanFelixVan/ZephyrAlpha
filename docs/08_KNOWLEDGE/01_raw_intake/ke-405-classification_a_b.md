@@ -4,6 +4,7 @@ status: active
 title: 4.6 classification：域 A（文档）与域 B（任务）分层
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.6 classification：域 A（文档）与域 B（任务）分层

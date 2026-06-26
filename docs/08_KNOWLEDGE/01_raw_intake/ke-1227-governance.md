@@ -4,6 +4,7 @@ status: active
 title: IFC-003：语义化版本兼容性
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IFC-003：语义化版本兼容性

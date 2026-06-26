@@ -4,6 +4,7 @@ status: active
 title: 9.2 归档触发与流程
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 归档触发与流程

@@ -4,6 +4,7 @@ status: active
 title: 2.1 Session Log
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Session Log

@@ -3,6 +3,7 @@ module_id: KE-3012
 title: X类：纵向行为模式——奖励黑客的三阶段反弹
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # X类：纵向行为模式——奖励黑客的三阶段反弹

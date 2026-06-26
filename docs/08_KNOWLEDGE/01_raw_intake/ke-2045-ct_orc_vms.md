@@ -4,6 +4,7 @@ status: active
 title: 2.9 CT-ORC-VMS-001：任务系统 → 向量记忆 — 任务输出写入向量库
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.9 CT-ORC-VMS-001：任务系统 → 向量记忆 — 任务输出写入向量库

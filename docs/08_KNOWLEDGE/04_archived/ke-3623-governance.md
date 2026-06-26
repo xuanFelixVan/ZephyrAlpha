@@ -3,6 +3,7 @@ module_id: KE-3478
 title: 10. 历史教训记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. 历史教训记录

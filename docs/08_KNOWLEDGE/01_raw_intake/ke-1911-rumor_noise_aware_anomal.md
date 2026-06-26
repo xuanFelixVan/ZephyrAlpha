@@ -4,6 +4,7 @@ status: active
 title: 2.239 Rumor/Noise-Aware Anomaly Filtering - rumor_noise_filter.py (🆕 v0.22.0 - 盲
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.239 Rumor/Noise-Aware Anomaly Filtering - rumor_noise_filter.py (🆕 v0.22.0 - 盲

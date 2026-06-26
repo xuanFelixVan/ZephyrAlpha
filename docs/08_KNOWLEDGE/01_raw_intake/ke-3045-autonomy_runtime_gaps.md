@@ -3,6 +3,7 @@ module_id: KE-2944
 title: T类：渐进自治与运行时状态的结构性缺口
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # T类：渐进自治与运行时状态的结构性缺口

@@ -4,6 +4,7 @@ status: active
 title: 6.2 原子事务模式（Atomic Transaction Mode）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 原子事务模式（Atomic Transaction Mode）

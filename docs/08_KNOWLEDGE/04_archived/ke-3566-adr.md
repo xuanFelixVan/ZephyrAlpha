@@ -3,6 +3,7 @@ module_id: KE-3423---------adr-002
 title: 9.3 每档激活的必做 ADR / 视图更新
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 每档激活的必做 ADR / 视图更新

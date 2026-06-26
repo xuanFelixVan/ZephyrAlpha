@@ -4,6 +4,7 @@ status: active
 title: 3.11 #65: 月度成本透明度报告
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.11 #65: 月度成本透明度报告

@@ -4,6 +4,7 @@ status: active
 title: 3.16 Shadow Manifest 信任链——AI幻觉的ImportError防护回路（v0.7.0 终极审视 #5）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.16 Shadow Manifest 信任链——AI幻觉的ImportError防护回路（v0.7.0 终极审视 #5）

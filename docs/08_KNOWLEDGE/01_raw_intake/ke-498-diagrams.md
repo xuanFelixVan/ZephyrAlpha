@@ -4,6 +4,7 @@ status: active
 title: 6.1 Diagrams / 图的惯例
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 Diagrams / 图的惯例

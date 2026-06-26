@@ -4,6 +4,7 @@ status: active
 title: 5.2 反幸存者偏差的查询契约
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 反幸存者偏差的查询契约

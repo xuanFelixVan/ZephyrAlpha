@@ -4,6 +4,7 @@ status: active
 title: 10. 废弃流程
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. 废弃流程

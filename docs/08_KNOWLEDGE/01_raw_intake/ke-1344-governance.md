@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 规则登记表
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 规则登记表

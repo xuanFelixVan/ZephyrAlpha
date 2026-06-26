@@ -4,6 +4,7 @@ status: active
 title: 09. Governance Architecture / 治理架构视图
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 09. Governance Architecture / 治理架构视图

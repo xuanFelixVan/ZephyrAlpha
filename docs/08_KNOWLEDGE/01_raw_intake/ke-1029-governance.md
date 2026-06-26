@@ -4,6 +4,7 @@ status: active
 title: 5.2 创建各类型工件的通用步骤模板
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 创建各类型工件的通用步骤模板

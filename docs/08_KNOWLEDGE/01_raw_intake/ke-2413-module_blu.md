@@ -3,6 +3,7 @@ module_id: KE-2318
 title: 5.5 施工状态
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.5 施工状态

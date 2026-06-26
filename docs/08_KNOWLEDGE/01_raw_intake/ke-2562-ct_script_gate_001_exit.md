@@ -4,6 +4,7 @@ status: active
 title: 8.1 CT-SCRIPT-GATE-001：脚本exit code → Gate判定
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 CT-SCRIPT-GATE-001：脚本exit code → Gate判定

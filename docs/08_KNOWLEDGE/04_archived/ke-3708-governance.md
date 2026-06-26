@@ -3,6 +3,7 @@ module_id: KE-3561
 title: 3. 变更分级
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 变更分级

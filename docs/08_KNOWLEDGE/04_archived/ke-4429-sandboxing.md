@@ -3,6 +3,7 @@ module_id: KE-4264---sandboxing-003
 title: D-022-08 引擎Sandboxing实现
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-08 引擎Sandboxing实现

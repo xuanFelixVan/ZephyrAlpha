@@ -4,6 +4,7 @@ status: active
 title: 2.228 Decision Entropy Monitor - decision_entropy_monitor.py (🆕 v0.21.0 - 盲点277
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.228 Decision Entropy Monitor - decision_entropy_monitor.py (🆕 v0.21.0 - 盲点277

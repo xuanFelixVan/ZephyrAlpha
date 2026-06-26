@@ -3,6 +3,7 @@ module_id: KE-4358
 title: G-CT 契约下游锚点（验收）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # G-CT 契约下游锚点（验收）

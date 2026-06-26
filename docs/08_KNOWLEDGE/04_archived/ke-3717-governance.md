@@ -3,6 +3,7 @@ module_id: KE-3569---------7-003
 title: §4 顶级机构级标准（7 问法）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §4 顶级机构级标准（7 问法）

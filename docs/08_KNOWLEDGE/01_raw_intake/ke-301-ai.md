@@ -4,6 +4,7 @@ status: active
 title: 3.3 三平面归属判定流程（AI / 开发者自助）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 三平面归属判定流程（AI / 开发者自助）

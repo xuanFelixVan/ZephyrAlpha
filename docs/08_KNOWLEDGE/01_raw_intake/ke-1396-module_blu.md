@@ -4,6 +4,7 @@ status: active
 title: 1.1 缺口 → 原因 → 解法
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1 缺口 → 原因 → 解法

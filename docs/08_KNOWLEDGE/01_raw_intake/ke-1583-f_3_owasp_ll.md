@@ -3,6 +3,7 @@ module_id: KE-1493--------3-------owasp-ll-005
 title: 13.7 F. 安全与治理（3个）——对标 OWASP LLM + AWS Secrets Manager
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.7 F. 安全与治理（3个）——对标 OWASP LLM + AWS Secrets Manager

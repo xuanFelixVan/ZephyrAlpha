@@ -3,6 +3,7 @@ module_id: KE-4215
 title: 8.1 五级响应定义
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 五级响应定义

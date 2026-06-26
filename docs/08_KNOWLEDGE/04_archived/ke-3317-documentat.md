@@ -3,6 +3,7 @@ module_id: KE-3200
 title: 2.1 五档定义
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 五档定义

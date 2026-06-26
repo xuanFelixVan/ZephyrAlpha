@@ -4,6 +4,7 @@ status: active
 title: context_drift_detector.py — 新增文件（L2 ABAC 扩展）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # context_drift_detector.py — 新增文件（L2 ABAC 扩展）

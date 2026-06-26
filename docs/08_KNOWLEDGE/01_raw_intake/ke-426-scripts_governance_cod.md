@@ -4,6 +4,7 @@ status: active
 title: 5. `scripts/` — Governance code topology / 治理代码拓扑
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. `scripts/` — Governance code topology / 治理代码拓扑

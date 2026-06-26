@@ -4,6 +4,7 @@ status: active
 title: 2.17 非文件操作升级规则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.17 非文件操作升级规则

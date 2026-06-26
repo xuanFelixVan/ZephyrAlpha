@@ -3,6 +3,7 @@ module_id: KE-1448------------------ai-session-003
 title: 13. 反孤儿集成设计 — 确保每个新 AI Session 自动发现并使用
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 反孤儿集成设计 — 确保每个新 AI Session 自动发现并使用

@@ -3,6 +3,7 @@ module_id: KE-750
 title: 15.4 Token 预算
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.4 Token 预算

@@ -3,6 +3,7 @@ module_id: KE-904---------g2-triage-yaml-003
 title: 4.2.2 检查项（对应 `g2-triage.yaml`）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2.2 检查项（对应 `g2-triage.yaml`）

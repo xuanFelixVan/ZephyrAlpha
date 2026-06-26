@@ -3,6 +3,7 @@ module_id: KE-1940
 title: 2.7 shared-lifecycle（模块生命周期）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 shared-lifecycle（模块生命周期）

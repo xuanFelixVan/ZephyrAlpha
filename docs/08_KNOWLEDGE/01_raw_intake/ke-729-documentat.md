@@ -3,6 +3,7 @@ module_id: KE-653
 title: 五、合规率总结
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 五、合规率总结

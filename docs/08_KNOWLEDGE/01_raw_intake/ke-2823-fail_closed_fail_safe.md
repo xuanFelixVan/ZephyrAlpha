@@ -3,6 +3,7 @@ module_id: KE-2726---fail-safe-000
 title: fail-closed 与 fail-safe 的分级策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # fail-closed 与 fail-safe 的分级策略

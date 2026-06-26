@@ -4,6 +4,7 @@ status: active
 title: §7 D5 — Change Management / 变更管理域
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §7 D5 — Change Management / 变更管理域

@@ -4,6 +4,7 @@ status: active
 title: 核心职能
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 核心职能

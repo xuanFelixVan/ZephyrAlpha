@@ -4,6 +4,7 @@ status: active
 title: 2.6 Living Spec 同步（决策 D-025-06）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.6 Living Spec 同步（决策 D-025-06）

@@ -3,6 +3,7 @@ module_id: KE-3477
 title: 10. SSoT 声明
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. SSoT 声明

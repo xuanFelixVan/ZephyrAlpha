@@ -3,6 +3,7 @@ module_id: KE-2372
 title: 6.2 状态转换映射
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 状态转换映射

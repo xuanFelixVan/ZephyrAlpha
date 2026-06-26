@@ -4,6 +4,7 @@ status: active
 title: 4.1 架构定位
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 架构定位

@@ -18,13 +18,13 @@ owner: ZephyrAlpha-Owner
 | .md 总数 | 5150 | — |
 | 有 frontmatter | 5123 | 27 个无 frontmatter |
 | 有 doc_type | 397（7%） | **91% 缺失** |
-| 非法 doc_type | 133（占有值 33.5%） | 词表形同虚设 |
+| 非法 doc_type | 133→**152**（Stage 2 全项目实测：150 已迁移 + 2 PENDING_REVIEW） | 词表形同虚设（原 133 仅 docs/，扩到全项目 +19） |
 | 词表声明值数 | 27 | **实际 26**（`total_values` 是 bug，handoff 文档列 27 时 `knowledge_entry` 重复一次） |
 | 废弃值 | 7 种 | governance_standard / ai_governance / governance_registry / registry / discussion_draft / candidate_pool / checklist |
-| 非法值集中度 | 106/133 = 80% | `domain_architecture_doc`(53)+`domain_architecture_diagram`(53) 同一生成器批量产物 |
+| 非法值集中度 | 106/152 = 70% | `domain_architecture_doc`(53)+`domain_architecture_diagram`(53) 同一生成器批量产物（Stage 1 已修生成器） |
 | **真源分散** | **4 处** | 词表(A)+triage.py(B)+check_naming(C)+generate_registry(D) 各硬编码一套合法值，仅 GATE-15 从词表动态加载 |
 | 真源漂移证据 | catalog/guide/report | C 的 `_DOC_TYPE_SUFFIX_MAP` 含词表没有的值；[triage.py:287](file:///d:/ZephyrAlpha/src/zephyr/governance/triage.py#L287) 把非法值 `report` 当有效路由 |
-| 统计范围缺口 | docs/ only | 133 非法值只扫 docs/，src/scripts 还有 `red_team_corpus`/`governance_readme` 零星非法值 |
+| 统计范围缺口 | ~~docs/ only~~ → 全项目 | Stage 2 已扩到 docs/+src/+scripts/+config/+architecture_model/，实测 152（含 `red_team_corpus`/`governance_readme`/`rule` 等零星非法值） |
 
 ## 2. 第一性原理推导
 
@@ -187,14 +187,14 @@ grep 实测发现 doc_type 合法值的真源散落 4 处，互相不一致：
 
 ### 阶段 2：治标→治本（分层回填）
 
-| 步骤 | 动作 | 产出 |
-|---|---|---|
-| 2.1 | 写 `backfill_doctype_metadata.py`——只执行第 5 节无歧义规则表，标 high 置信度直接回填，其余写 `PENDING_CONTENT_REVIEW` | 新脚本 |
-| 2.2 | 写 `migrate_illegal_doctype.py`——执行第 4 节机械映射表，130 个自动迁移，4 个标 `PENDING_REVIEW`。**扫描范围扩到全项目（docs/+src/+scripts/），不只 docs/**——已发现 `red_team_corpus`/`governance_readme` 等零星非法值 | 新脚本 |
-| 2.3 | AI 分片处理 `PENDING_CONTENT_REVIEW`——40 并发，每片按第 7 节决策树判定，低置信度标 `PENDING_HUMAN_REVIEW` | CSV 报告 |
-| 2.4 | 人工裁定 `PENDING_HUMAN_REVIEW` | 裁定记录 |
+| 步骤 | 动作 | 产出 | 状态 |
+|---|---|---|---|
+| 2.1 | 写 `backfill_doctype_metadata.py`——只执行第 5 节无歧义规则表，标 high 置信度直接回填，其余写 `PENDING_CONTENT_REVIEW` | 新脚本 | ✅ 已完成（实测 backfilled 4634=knowledge_entry 4632 + index 2；skip_ambiguous 93 待 2.3；0 error） |
+| 2.2 | 写 `migrate_illegal_doctype.py`——执行第 4 节机械映射表，扫描范围扩到全项目（docs/+src/+scripts/+config/+architecture_model/）。实测 migrated 150，PENDING_REVIEW 2（architecture_discussion + archive） | 新脚本 | ✅ 已完成（ILLEGAL_MAP 实测 27 条；新增 domain_index/task_card_index 修正原计划遗漏；0 error） |
+| 2.3 | AI 分片处理 `PENDING_CONTENT_REVIEW`——40 并发，每片按第 7 节决策树判定，低置信度标 `PENDING_HUMAN_REVIEW` | CSV 报告 | 待执行（skip_ambiguous 93 + PENDING_REVIEW 2 = 95 文件待内容判定） |
+| 2.4 | 人工裁定 `PENDING_HUMAN_REVIEW` | 裁定记录 | 待 2.3 |
 
-**关键：阶段 2.1 的路径判定覆盖率预计仅 30-40%**（只信无歧义的）。这与 ttl 路径判定 100% 覆盖不同——doc_type 的 60-70% 必须走 2.3 内容判定，这是治本的必要成本。
+**关键修正：阶段 2.1 实际覆盖率远超预估**——原估 30-40%，实测 backfilled 4634/5169 ≈ 89.6%（因 08_knowledge/ 实际 4644 文件，远超调研估的 ~1158，且词表 allowed_directories 已将 08_knowledge/ 绑定 knowledge_entry，路径判定与词表定义一致）。残留 skip_ambiguous 93（03_blueprints/ 等歧义路径）+ 2 PENDING_REVIEW 待 2.3 内容判定，治本必要成本从"60-70%"修正为"~1.8%"（95/5169）。
 
 ### 阶段 3：治本（门禁）
 

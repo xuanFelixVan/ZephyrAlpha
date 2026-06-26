@@ -4,6 +4,7 @@ status: active
 title: COND-003：回测必须覆盖多种市场状态
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # COND-003：回测必须覆盖多种市场状态

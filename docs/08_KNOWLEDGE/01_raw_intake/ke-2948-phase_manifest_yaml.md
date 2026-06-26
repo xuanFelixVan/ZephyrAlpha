@@ -4,6 +4,7 @@ status: active
 title: phasemanifest.yaml 结构
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # phasemanifest.yaml 结构

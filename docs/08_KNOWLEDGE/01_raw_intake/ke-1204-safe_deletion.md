@@ -4,6 +4,7 @@ status: active
 title: DOC-003：安全删除（Safe Deletion）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-003：安全删除（Safe Deletion）

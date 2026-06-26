@@ -4,6 +4,7 @@ status: active
 title: 2.18 文件底层属性漂移——编码、换行符、权限（决策 D-023-27）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.18 文件底层属性漂移——编码、换行符、权限（决策 D-023-27）

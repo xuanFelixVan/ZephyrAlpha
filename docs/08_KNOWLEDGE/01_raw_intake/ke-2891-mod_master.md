@@ -4,6 +4,7 @@ status: active
 title: MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-MASTER_BLUEPRINT 跨系统集成契约注册中心

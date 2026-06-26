@@ -3,6 +3,7 @@ module_id: KE-2830
 title: Phase 0 — 基础设施管控契约优先（新增）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 0 — 基础设施管控契约优先（新增）

@@ -3,6 +3,7 @@ module_id: KE-3637
 title: 9. 禁止行为
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 禁止行为

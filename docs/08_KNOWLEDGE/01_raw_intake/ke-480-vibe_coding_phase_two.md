@@ -4,6 +4,7 @@ status: active
 title: 5A.2 与 14 层量化架构的关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5A.2 与 14 层量化架构的关系

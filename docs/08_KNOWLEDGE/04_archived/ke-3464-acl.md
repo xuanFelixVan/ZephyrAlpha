@@ -3,6 +3,7 @@ module_id: KE-3464
 title: 5.1 当前 ACL 落盘位置
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 当前 ACL 落盘位置

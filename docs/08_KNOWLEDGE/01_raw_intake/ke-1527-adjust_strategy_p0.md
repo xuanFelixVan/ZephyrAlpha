@@ -3,6 +3,7 @@ module_id: KE-1437-----5-000
 title: 12.4 Adjust Strategy P0（遗漏 #5）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.4 Adjust Strategy P0（遗漏 #5）

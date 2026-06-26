@@ -3,6 +3,7 @@ module_id: KE-2159------7-003
 title: 3.9.1 来源矩阵（7 条全自动管线）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9.1 来源矩阵（7 条全自动管线）

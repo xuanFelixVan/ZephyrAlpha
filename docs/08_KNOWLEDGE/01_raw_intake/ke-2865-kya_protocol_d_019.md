@@ -4,6 +4,7 @@ status: active
 title: KYA Protocol (D-019-15)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # KYA Protocol (D-019-15)

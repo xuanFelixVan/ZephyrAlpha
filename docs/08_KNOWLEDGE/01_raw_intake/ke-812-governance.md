@@ -3,6 +3,7 @@ module_id: KE-735
 title: 13. 变更记录
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 变更记录

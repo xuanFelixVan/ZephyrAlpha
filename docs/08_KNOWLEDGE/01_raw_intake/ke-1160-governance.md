@@ -4,6 +4,7 @@ status: active
 title: archived
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # archived

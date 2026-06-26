@@ -4,6 +4,7 @@ status: active
 title: 3. 前端分层（Frontend Layering）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 前端分层（Frontend Layering）

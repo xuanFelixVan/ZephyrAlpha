@@ -4,6 +4,7 @@ status: active
 title: 6.15 漂移免疫架构原则（Drift-Immune Architecture Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.15 漂移免疫架构原则（Drift-Immune Architecture Mandate）

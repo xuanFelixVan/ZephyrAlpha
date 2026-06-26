@@ -3,6 +3,7 @@ module_id: KE-4347
 title: MOD-GOVERNANCE 集成契约锚点
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-GOVERNANCE 集成契约锚点

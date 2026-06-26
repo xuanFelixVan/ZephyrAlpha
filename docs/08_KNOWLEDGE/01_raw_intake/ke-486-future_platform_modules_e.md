@@ -4,6 +4,7 @@ status: active
 title: 6. Future platform modules & evolution roadmap / 未来平台模块与演进路线
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. Future platform modules & evolution roadmap / 未来平台模块与演进路线

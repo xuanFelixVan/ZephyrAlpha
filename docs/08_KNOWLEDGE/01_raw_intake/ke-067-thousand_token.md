@@ -3,6 +3,7 @@ module_id: KE-064---------1000-token-004
 title: 1.0 最小必读路径（~1000 Token）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.0 最小必读路径（~1000 Token）

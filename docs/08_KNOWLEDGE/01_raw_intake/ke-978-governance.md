@@ -3,6 +3,7 @@ module_id: KE-900
 title: 4.2 分类表
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 分类表

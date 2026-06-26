@@ -3,6 +3,7 @@ module_id: KE-151---------frontend-architectur-003
 title: 2. 前端架构原则（Frontend Architecture Principles）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 前端架构原则（Frontend Architecture Principles）

@@ -3,6 +3,7 @@ module_id: KE-3502
 title: 15.1 `scope` 字段
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 `scope` 字段

@@ -3,6 +3,7 @@ module_id: KE-1247
 title: 九、变更记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 九、变更记录

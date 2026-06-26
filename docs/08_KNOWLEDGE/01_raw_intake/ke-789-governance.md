@@ -4,6 +4,7 @@ status: active
 title: 检查项 10：引用出处验证
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 检查项 10：引用出处验证

@@ -4,6 +4,7 @@ status: active
 title: 2.25 权限模式管理器——Claude Code 5 模式 + Codex CLI Profiles（决策 D-018-23）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.25 权限模式管理器——Claude Code 5 模式 + Codex CLI Profiles（决策 D-018-23）

@@ -3,6 +3,7 @@ module_id: KE-3978----001
 title: 2. Source File Verification (§12.1)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Source File Verification (§12.1)

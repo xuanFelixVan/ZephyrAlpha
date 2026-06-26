@@ -4,6 +4,7 @@ status: active
 title: 6.4 beta 升级触发
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 beta 升级触发

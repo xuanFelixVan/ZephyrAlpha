@@ -4,6 +4,7 @@ status: active
 title: 9.2 豁免签发格式
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 豁免签发格式

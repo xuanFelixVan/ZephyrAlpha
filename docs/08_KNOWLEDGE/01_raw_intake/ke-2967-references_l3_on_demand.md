@@ -4,6 +4,7 @@ status: active
 title: References (L3, on-demand)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # References (L3, on-demand)

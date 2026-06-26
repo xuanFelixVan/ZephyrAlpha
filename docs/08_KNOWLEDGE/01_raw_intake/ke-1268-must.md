@@ -4,6 +4,7 @@ status: active
 title: MTH-006：根源分析原则 [MUST — 每次发现问题时强制执行]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-006：根源分析原则 [MUST — 每次发现问题时强制执行]

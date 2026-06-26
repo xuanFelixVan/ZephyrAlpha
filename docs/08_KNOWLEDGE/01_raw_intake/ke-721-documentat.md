@@ -4,6 +4,7 @@ status: active
 title: Step 4：生成报告
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 4：生成报告

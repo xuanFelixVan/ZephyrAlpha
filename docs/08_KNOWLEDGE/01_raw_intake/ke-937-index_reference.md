@@ -4,6 +4,7 @@ status: active
 title: 3.2 路径 1：index.md 全局入口 [首选]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 路径 1：index.md 全局入口 [首选]

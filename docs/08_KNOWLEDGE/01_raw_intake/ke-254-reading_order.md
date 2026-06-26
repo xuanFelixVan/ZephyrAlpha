@@ -4,6 +4,7 @@ status: active
 title: 3. Reading order / 推荐阅读顺序
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Reading order / 推荐阅读顺序

@@ -3,6 +3,7 @@ module_id: KE-3356
 title: 6. 失败处理
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. 失败处理

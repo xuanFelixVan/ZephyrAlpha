@@ -4,6 +4,7 @@ status: active
 title: 2.2 JSONL 为唯一真源 + 密码学完整性（决策 D-020-02 + D-020-04）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 JSONL 为唯一真源 + 密码学完整性（决策 D-020-02 + D-020-04）

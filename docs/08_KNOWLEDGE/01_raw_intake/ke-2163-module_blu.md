@@ -4,6 +4,7 @@ status: active
 title: 3.18 引擎成本效益自审计——引擎自身是最重的技术债吗？（v0.8.0 终极审视 #7——外部取证审计师发现的最根本盲点）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.18 引擎成本效益自审计——引擎自身是最重的技术债吗？（v0.8.0 终极审视 #7——外部取证审计师发现的最根本盲点）

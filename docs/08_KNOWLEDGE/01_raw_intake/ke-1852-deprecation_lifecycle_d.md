@@ -4,6 +4,7 @@ status: active
 title: 2.2 Deprecation Lifecycle (D-019-11)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Deprecation Lifecycle (D-019-11)

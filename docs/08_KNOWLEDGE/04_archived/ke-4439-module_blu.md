@@ -3,6 +3,7 @@ module_id: KE-4274
 title: D-022-18 形式验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-18 形式验证

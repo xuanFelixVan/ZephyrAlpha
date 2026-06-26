@@ -3,6 +3,7 @@ module_id: KE-4195
 title: 7.1 质量文档
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 质量文档

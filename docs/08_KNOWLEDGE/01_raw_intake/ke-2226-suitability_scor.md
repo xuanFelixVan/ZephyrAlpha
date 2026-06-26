@@ -4,6 +4,7 @@ status: active
 title: 3.6 安全提取适配性评估（Suitability Score —— v0.5.0 新增 — Wave 2 落地）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 安全提取适配性评估（Suitability Score —— v0.5.0 新增 — Wave 2 落地）

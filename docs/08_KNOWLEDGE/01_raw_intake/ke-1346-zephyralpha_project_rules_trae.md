@@ -3,6 +3,7 @@ module_id: KE-1258
 title: ZephyrAlpha Project Rules（Trae IDE 自动加载）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha Project Rules（Trae IDE 自动加载）

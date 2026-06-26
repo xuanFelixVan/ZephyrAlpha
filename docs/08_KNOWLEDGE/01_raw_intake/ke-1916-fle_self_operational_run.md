@@ -4,6 +4,7 @@ status: active
 title: 2.240 FLE Self-Operational Runbook Auto-Generation - fle_self_runbook_generator.
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.240 FLE Self-Operational Runbook Auto-Generation - fle_self_runbook_generator.

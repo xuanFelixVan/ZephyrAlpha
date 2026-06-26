@@ -3,6 +3,7 @@ module_id: KE-3814
 title: 11.3 施工约束
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.3 施工约束

@@ -4,6 +4,7 @@ status: active
 title: 4A.2 服务间依赖 DAG
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4A.2 服务间依赖 DAG

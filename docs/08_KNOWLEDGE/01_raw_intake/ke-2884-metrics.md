@@ -4,6 +4,7 @@ status: active
 title: metrics —— 四类指标，统一接口
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # metrics —— 四类指标，统一接口

@@ -3,6 +3,7 @@ module_id: KE-4063
 title: 3.4 输出契约
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 输出契约

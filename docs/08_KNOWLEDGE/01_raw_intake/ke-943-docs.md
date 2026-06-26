@@ -3,6 +3,7 @@ module_id: KE-865
 title: 3.3 docs 目录编号保留规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 docs 目录编号保留规则

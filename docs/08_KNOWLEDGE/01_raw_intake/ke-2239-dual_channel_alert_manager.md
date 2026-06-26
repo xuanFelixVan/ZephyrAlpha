@@ -4,6 +4,7 @@ status: active
 title: 3.7 #61: DualChannelAlertManager
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.7 #61: DualChannelAlertManager

@@ -4,6 +4,7 @@ status: active
 title: 3. Intent Parser — intent_parser.py (§5.1 BUILD-C00)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Intent Parser — intent_parser.py (§5.1 BUILD-C00)

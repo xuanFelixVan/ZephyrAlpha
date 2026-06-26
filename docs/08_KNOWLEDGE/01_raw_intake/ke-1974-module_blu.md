@@ -4,6 +4,7 @@ status: active
 title: 2.31 升级协议自身的技术债务与规则腐化
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.31 升级协议自身的技术债务与规则腐化

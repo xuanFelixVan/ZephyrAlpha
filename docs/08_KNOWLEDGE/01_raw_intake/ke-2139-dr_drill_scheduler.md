@@ -4,6 +4,7 @@ status: active
 title: 3.10 #34: DRDrillScheduler
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.10 #34: DRDrillScheduler

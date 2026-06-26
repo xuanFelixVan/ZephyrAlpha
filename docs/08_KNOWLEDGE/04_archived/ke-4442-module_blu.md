@@ -3,6 +3,7 @@ module_id: KE-4277
 title: D-022-21 冷启动管理
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-21 冷启动管理

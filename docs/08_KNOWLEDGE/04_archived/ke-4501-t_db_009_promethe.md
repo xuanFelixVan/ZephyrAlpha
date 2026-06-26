@@ -3,6 +3,7 @@ module_id: KE-4336
 title: DB-025-0075：T-DB-009——Prometheus/OpenTelemetry 导出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0075：T-DB-009——Prometheus/OpenTelemetry 导出

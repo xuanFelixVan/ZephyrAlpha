@@ -4,6 +4,7 @@ status: active
 title: 2.2 Batch 2 — 治理层（15 条）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 Batch 2 — 治理层（15 条）

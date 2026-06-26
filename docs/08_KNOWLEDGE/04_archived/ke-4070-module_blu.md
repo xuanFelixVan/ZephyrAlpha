@@ -3,6 +3,7 @@ module_id: KE-3916
 title: 15.1 三级指令体系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 三级指令体系

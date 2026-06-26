@@ -4,6 +4,7 @@ status: active
 title: EventBus 监听
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # EventBus 监听

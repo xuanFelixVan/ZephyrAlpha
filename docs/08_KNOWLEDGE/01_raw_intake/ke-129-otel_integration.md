@@ -3,6 +3,7 @@ module_id: KE-116
 title: 10.4 OTel Integration 概要
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.4 OTel Integration 概要

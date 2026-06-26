@@ -4,6 +4,7 @@ status: active
 title: 8.3 扩展触发条件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 扩展触发条件

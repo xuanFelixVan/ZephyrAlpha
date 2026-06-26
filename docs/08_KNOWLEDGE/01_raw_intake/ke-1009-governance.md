@@ -3,6 +3,7 @@ module_id: KE-930--------2026-000
 title: §5 前沿技术评估（2026年）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §5 前沿技术评估（2026年）

@@ -4,6 +4,7 @@ status: active
 title: 5.2 ACL 选型理由（为何不用 Adapter/Facade）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 ACL 选型理由（为何不用 Adapter/Facade）

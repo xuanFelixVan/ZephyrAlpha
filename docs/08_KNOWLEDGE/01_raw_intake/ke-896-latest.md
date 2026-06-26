@@ -4,6 +4,7 @@ status: active
 title: 2.4 状态快照（LATEST 模式）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 状态快照（LATEST 模式）

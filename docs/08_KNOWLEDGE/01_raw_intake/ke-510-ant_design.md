@@ -4,6 +4,7 @@ status: active
 title: 6.3 组件库与 Ant Design 的关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 组件库与 Ant Design 的关系

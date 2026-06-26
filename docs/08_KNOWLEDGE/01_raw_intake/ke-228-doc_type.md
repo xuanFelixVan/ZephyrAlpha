@@ -4,6 +4,7 @@ status: active
 title: 2.5 按 doc_type 分类的必填字段清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 按 doc_type 分类的必填字段清单

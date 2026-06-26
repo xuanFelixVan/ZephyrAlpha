@@ -4,6 +4,7 @@ status: active
 title: 4.1 T1 真实资金接入后目标（Sprint 12+ 左右）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 T1 真实资金接入后目标（Sprint 12+ 左右）

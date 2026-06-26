@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-KNOWLEDGE 知识管理架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D-KNOWLEDGE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-KNOWLEDGE | Domain ID | D-KNOWLEDGE |
 | 域名称 | 知识管理 | Domain Name | knowledge_management |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 50 | Module Count | 50 |
+| 模块数 | 41 | Module Count | 41 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 31 | Cross-domain Outgoing | 31 |
-| 设计态模块 | 11 | Design Modules | 11 |
+| 跨域出边 | 30 | Cross-domain Outgoing | 30 |
+| 设计态模块 | 2 | Design Modules | 2 |
 | 原型态模块 | 38 | Prototype Modules | 38 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 50 个模块（按路径排序，全部显示）
+共 41 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -81,15 +81,6 @@ ttl: permanent
 | tests/test_vector_memory_root.py |  | prototype | deprecated |
 | tests/unit/vector_memory/__init__.py |  | prototype | deprecated |
 | tests/unit/vector_memory/test_vector_memory.py |  | prototype | generated |
-| 知识域-AI提取/D-KNOWLEDGE-17 | AI Auto Knowledge Extractor | design | planned |
-| 知识域-图谱浏览/D-KNOWLEDGE-15 | Knowledge Graph Explorer | design | planned |
-| 知识域-推理/D-KNOWLEDGE-09 | Knowledge Reasoner | design | planned |
-| 知识域-搜索/D-KNOWLEDGE-21 | Knowledge Base Search Engine | design | planned |
-| 知识域-案例管理/D-KNOWLEDGE-23 | Case Library Tag System | design | planned |
-| 知识域-沉淀/D-KNOWLEDGE-25 | Research Knowledge Precipitator | design | planned |
-| 知识域-质量评估/D-KNOWLEDGE-11 | Knowledge Quality Assessor | design | planned |
-| 知识域-金融图谱/D-KNOWLEDGE-13 | Financial Knowledge Graph | design | planned |
-| 知识域-集成/D-KNOWLEDGE-19 | Obsidian Knowledge Base Integrator | design | planned |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -186,18 +177,7 @@ graph TD
         tests_test_vector_memory_root_py["tests/test_vector_memory_root.py prototype"]
         tests_unit_vector_memory_init_py["tests/unit/vector_memory/__init__.py prototype"]
         tests_unit_vector_memory_test_vector_memory_py["tests/unit/vector_memory/test_vector_memory.py prototype"]
-        AI_D_KNOWLEDGE_17["AI Auto Knowledge Extractor design"]
-        D_KNOWLEDGE_15["Knowledge Graph Explorer design"]
-        D_KNOWLEDGE_09["Knowledge Reasoner design"]
-        D_KNOWLEDGE_21["Knowledge Base Search Engine design"]
-        D_KNOWLEDGE_23["Case Library Tag System design"]
-        D_KNOWLEDGE_25["Research Knowledge Precipitator design"]
-        D_KNOWLEDGE_11["Knowledge Quality Assessor design"]
-        D_KNOWLEDGE_13["Financial Knowledge Graph design"]
-        D_KNOWLEDGE_19["Obsidian Knowledge Base Integrator design"]
     end
-    D_SHARED["D-SHARED design"]
-    D_KNOWLEDGE_09 -.->|contract| D_SHARED
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_skill_knowledge_base_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["D-GOVERNANCE production"]
@@ -208,9 +188,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_knowledge_init_py,src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py,tests_test_skill_knowledge_base_py,tests_test_vector_memory_root_py,tests_unit_vector_memory_init_py,tests_unit_vector_memory_test_vector_memory_py,AI_D_KNOWLEDGE_17,D_KNOWLEDGE_15,D_KNOWLEDGE_09,D_KNOWLEDGE_21,D_KNOWLEDGE_23,D_KNOWLEDGE_25,D_KNOWLEDGE_11,D_KNOWLEDGE_13,D_KNOWLEDGE_19 design
+    class src_zephyr_knowledge_init_py,src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py,tests_test_skill_knowledge_base_py,tests_test_vector_memory_root_py,tests_unit_vector_memory_init_py,tests_unit_vector_memory_test_vector_memory_py design
     class D_AUTONOMY_CORE,D_GOVERNANCE,D_INTEGRATION external_prod
-    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -221,7 +200,6 @@ graph TD
 |--------|:---:|---------|
 | D-INTEGRATION | 16 | import_depends,test_depends |
 | D-GOVERNANCE | 13 | runtime,import_depends,test_depends |
-| D-SHARED | 1 | contract |
 | D-AUTONOMY_CORE | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

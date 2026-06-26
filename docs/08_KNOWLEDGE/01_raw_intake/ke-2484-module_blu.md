@@ -3,6 +3,7 @@ module_id: KE-2389
 title: 6.4 治理脚本
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 治理脚本

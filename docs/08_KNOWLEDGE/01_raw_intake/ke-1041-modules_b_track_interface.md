@@ -4,6 +4,7 @@ status: active
 title: 5.4 `03_modules/_b_track_interfaces/` — 原 07_ai_engineering（已合并）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.4 `03_modules/_b_track_interfaces/` — 原 07_ai_engineering（已合并）

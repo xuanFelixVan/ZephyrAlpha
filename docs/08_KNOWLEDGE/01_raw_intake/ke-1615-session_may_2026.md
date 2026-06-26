@@ -4,6 +4,7 @@ status: active
 title: 15. 第七轮审计结论 —— 审计已达终点（2026-05-05）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15. 第七轮审计结论 —— 审计已达终点（2026-05-05）

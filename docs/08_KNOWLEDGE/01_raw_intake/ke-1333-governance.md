@@ -4,6 +4,7 @@ status: active
 title: 四步执行流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 四步执行流程

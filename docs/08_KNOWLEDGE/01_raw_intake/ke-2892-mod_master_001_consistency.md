@@ -3,6 +3,7 @@ module_id: KE-2792
 title: MOD-MASTER_BLUEPRINT Consistency
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MOD-MASTER_BLUEPRINT Consistency

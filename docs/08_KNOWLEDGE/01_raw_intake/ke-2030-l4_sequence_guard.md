@@ -4,6 +4,7 @@ status: active
 title: 2.7 L4 — Sequence Guard 序列护栏（决策 D-018-09，**最关键的盲点补丁**）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 L4 — Sequence Guard 序列护栏（决策 D-018-09，**最关键的盲点补丁**）

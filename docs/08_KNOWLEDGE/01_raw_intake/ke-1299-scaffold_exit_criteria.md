@@ -3,6 +3,7 @@ module_id: KE-1212
 title: scaffold exit_criteria
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # scaffold exit_criteria

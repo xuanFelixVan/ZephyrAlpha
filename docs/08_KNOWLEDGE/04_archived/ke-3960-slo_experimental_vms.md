@@ -3,6 +3,7 @@ module_id: KE-3808----slo-experimental-vms-003
 title: 11.1 稳态 SLO（experimental，VMS 健康前提下）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 稳态 SLO（experimental，VMS 健康前提下）

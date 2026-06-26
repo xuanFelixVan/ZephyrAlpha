@@ -3,6 +3,7 @@ module_id: KE-356
 title: 4.4 Bottlenecks &amp; waste / 瓶颈与浪费点
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4 Bottlenecks &amp; waste / 瓶颈与浪费点

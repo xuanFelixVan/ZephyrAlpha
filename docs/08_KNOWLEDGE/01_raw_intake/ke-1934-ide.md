@@ -4,6 +4,7 @@ status: active
 title: 2.26 跨IDE/跨编码助手 + 微秒级延迟 + 策略范围隔离
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.26 跨IDE/跨编码助手 + 微秒级延迟 + 策略范围隔离

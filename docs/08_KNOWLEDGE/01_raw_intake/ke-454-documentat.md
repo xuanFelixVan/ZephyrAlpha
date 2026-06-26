@@ -4,6 +4,7 @@ status: active
 title: 5.2.3 顶级域层级关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2.3 顶级域层级关系

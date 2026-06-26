@@ -4,6 +4,7 @@ status: active
 title: 3.3 L2 System Prompt 隔离格式
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 L2 System Prompt 隔离格式

@@ -3,6 +3,7 @@ module_id: KE-3630
 title: 8.1 OWASP ASVS 对标
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 OWASP ASVS 对标

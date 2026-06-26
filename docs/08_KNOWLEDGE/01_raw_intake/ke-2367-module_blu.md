@@ -4,6 +4,7 @@ status: active
 title: 5. 已实现代码完整路径索引
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 已实现代码完整路径索引

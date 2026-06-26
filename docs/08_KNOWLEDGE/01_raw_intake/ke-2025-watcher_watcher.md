@@ -4,6 +4,7 @@ status: active
 title: 2.7 自漂移检测——Watcher 的 Watcher（决策 D-023-07）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 自漂移检测——Watcher 的 Watcher（决策 D-023-07）

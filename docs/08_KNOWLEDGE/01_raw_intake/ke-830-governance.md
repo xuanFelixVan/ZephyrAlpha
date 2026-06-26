@@ -4,6 +4,7 @@ status: active
 title: 16. 异常豁免机制
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16. 异常豁免机制

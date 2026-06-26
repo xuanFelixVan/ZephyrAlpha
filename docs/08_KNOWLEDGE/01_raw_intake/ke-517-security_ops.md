@@ -3,6 +3,7 @@ module_id: KE-466---ops-000
 title: 6.3 Security & ops 抽屉状态
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 Security & ops 抽屉状态

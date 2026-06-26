@@ -4,6 +4,7 @@ status: active
 title: §3 D1 — Deployment / 部署域
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §3 D1 — Deployment / 部署域

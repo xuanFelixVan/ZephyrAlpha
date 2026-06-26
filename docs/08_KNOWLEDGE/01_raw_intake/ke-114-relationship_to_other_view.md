@@ -3,6 +3,7 @@ module_id: KE-104
 title: 10. Relationship to Other Views / 与其他视图的边界
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. Relationship to Other Views / 与其他视图的边界

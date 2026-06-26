@@ -4,6 +4,7 @@ status: active
 title: 4A.5 架构归属说明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4A.5 架构归属说明

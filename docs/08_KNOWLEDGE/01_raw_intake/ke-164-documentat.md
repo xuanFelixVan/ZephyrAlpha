@@ -4,6 +4,7 @@ status: active
 title: §18 完整性自检清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §18 完整性自检清单

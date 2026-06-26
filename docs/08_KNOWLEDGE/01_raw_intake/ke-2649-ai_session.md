@@ -4,6 +4,7 @@ status: active
 title: 新AI Session 读取顺序
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 新AI Session 读取顺序

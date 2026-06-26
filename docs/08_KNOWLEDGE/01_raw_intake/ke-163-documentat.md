@@ -4,6 +4,7 @@ status: active
 title: §17 可验证性标注
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §17 可验证性标注

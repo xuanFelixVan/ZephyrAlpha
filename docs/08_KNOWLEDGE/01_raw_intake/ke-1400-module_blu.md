@@ -3,6 +3,7 @@ module_id: KE-1311
 title: 1.2 核心职责
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 核心职责

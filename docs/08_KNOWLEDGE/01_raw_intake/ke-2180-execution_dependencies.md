@@ -3,6 +3,7 @@ module_id: KE-2088
 title: 3.2 Execution Dependencies（执行依赖）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 Execution Dependencies（执行依赖）

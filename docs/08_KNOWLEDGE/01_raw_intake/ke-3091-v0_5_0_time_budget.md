@@ -4,6 +4,7 @@ status: active
 title: ── v0.5.0 新增：Time Budget 三维预算体系 ──
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ── v0.5.0 新增：Time Budget 三维预算体系 ──

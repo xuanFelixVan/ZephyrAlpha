@@ -4,6 +4,7 @@ status: active
 title: auto_maintenance.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # auto_maintenance.yaml

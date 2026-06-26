@@ -4,6 +4,7 @@ status: active
 title: §1 Purpose / 目的
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §1 Purpose / 目的

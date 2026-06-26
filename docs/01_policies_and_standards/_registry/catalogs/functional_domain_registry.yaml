@@ -24,7 +24,7 @@ entry_schema:
   stability: str
   ai_autonomy: str
 entries:
-- domain: D-GOV-ENFORCEMENT
+- domain: D-GOV_ENFORCEMENT
   subdomain: rule_enforcement
   ssot_module: MOD-GATE_ENGINE
   ssot_path: src/zephyr/governance/rule_enforcement/
@@ -51,7 +51,7 @@ entries:
   - integration gate
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOV-SCRIPTS
+- domain: D-GOV_SCRIPTS
   subdomain: script_governance
   ssot_module: MOD-INF-005
   ssot_path: src/zephyr/governance/script_governance/
@@ -209,7 +209,7 @@ entries:
   - agent rbac
   stability: stable
   ai_autonomy: immutable_core
-- domain: D-SECURITY-LLM
+- domain: D-SECURITY_LLM
   subdomain: llm_defense
   ssot_module: MOD-LLM_SECURITY
   ssot_path: src/zephyr/security/llm_defense/
@@ -754,7 +754,7 @@ entries:
   - infrastructure layer
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-INTEGRATION-GATEWAY
+- domain: D-INTEGRATION_GATEWAY
   subdomain: mcp_servers
   ssot_module: MOD-INF-013
   ssot_path: src/zephyr/integration/mcp/
@@ -808,7 +808,7 @@ entries:
   - 模块生命周期
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-GOV-SCRIPTS
+- domain: D-GOV_SCRIPTS
   subdomain: code_dedup
   ssot_module: MOD-INF-017
   ssot_path: src/zephyr/governance/
@@ -900,7 +900,7 @@ entries:
   - 可观测性
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-GOV_AUDIT_TESTS
+- domain: D-AUDITTEST
   subdomain: audit_test_suite
   ssot_module: MOD-INF-027
   ssot_path: tests/
@@ -918,7 +918,7 @@ entries:
   - 单元测试
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOV-DOCS
+- domain: D-GOV_DOCS
   subdomain: architecture_docs
   ssot_module: MOD-INF-037
   ssot_path: docs/02_enterprise_architecture/

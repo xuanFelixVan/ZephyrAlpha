@@ -4,6 +4,7 @@ status: active
 title: IFC-002：接口变更必须走 ADR
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IFC-002：接口变更必须走 ADR

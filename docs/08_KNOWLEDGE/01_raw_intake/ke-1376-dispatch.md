@@ -4,6 +4,7 @@ status: active
 title: 1. dispatch 扩展
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. dispatch 扩展

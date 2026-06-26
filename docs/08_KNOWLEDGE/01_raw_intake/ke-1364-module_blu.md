@@ -3,6 +3,7 @@ module_id: KE-1275
 title: 0.3 令牌预算层级
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.3 令牌预算层级

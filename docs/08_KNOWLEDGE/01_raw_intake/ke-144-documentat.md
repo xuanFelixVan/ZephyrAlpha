@@ -4,6 +4,7 @@ status: active
 title: §12 异常豁免机制
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §12 异常豁免机制

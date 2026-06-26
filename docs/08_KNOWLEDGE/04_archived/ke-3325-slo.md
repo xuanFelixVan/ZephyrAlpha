@@ -3,6 +3,7 @@ module_id: KE-3206----------slo-000
 title: 2.2 三平面的量化指标（SLO）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 三平面的量化指标（SLO）

@@ -4,6 +4,7 @@ status: active
 title: CI Hook：检测Pipeline蓝图变更→自动触发联动文件同步检查
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # CI Hook：检测Pipeline蓝图变更→自动触发联动文件同步检查

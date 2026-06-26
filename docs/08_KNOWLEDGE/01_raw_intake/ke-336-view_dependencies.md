@@ -4,6 +4,7 @@ status: active
 title: 4. View dependencies / 视图依赖关系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. View dependencies / 视图依赖关系

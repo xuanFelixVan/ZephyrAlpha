@@ -4,6 +4,7 @@ status: active
 title: 2.5 规则不可变性 —— 升级规则对AI只读（决策 D-022-04）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 规则不可变性 —— 升级规则对AI只读（决策 D-022-04）

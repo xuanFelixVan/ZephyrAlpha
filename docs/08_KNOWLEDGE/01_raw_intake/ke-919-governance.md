@@ -4,6 +4,7 @@ status: active
 title: 21. 完整性自检清单
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 21. 完整性自检清单

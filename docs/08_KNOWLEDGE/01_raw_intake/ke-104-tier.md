@@ -3,6 +3,7 @@ module_id: KE-095
 title: 1.5.1 Tier 1：硬编码枚举值（变更必须同步）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5.1 Tier 1：硬编码枚举值（变更必须同步）

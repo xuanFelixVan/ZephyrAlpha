@@ -4,6 +4,7 @@ status: active
 title: 7. AI 自治权限标注
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. AI 自治权限标注

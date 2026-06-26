@@ -4,6 +4,7 @@ status: active
 title: 项目清爽原则（Project Cleanliness Principle）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 项目清爽原则（Project Cleanliness Principle）

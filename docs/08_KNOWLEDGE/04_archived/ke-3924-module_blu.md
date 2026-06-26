@@ -3,6 +3,7 @@ module_id: KE-3772
 title: 1.3 责任范围（管什么）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 责任范围（管什么）

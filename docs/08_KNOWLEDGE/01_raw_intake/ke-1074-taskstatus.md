@@ -3,6 +3,7 @@ module_id: KE-989----taskstatus-000
 title: 6.4 与 `TaskStatus` 十状态的交互
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 与 `TaskStatus` 十状态的交互

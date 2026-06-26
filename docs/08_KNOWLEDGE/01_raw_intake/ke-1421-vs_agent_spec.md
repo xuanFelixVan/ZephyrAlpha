@@ -3,6 +3,7 @@ module_id: KE-1331----vs-agent-spec-000
 title: 1.5 蓝图 vs Agent Spec 对比
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5 蓝图 vs Agent Spec 对比

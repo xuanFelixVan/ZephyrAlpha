@@ -3,6 +3,7 @@ module_id: KE-3462
 title: 0. 读者指南
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0. 读者指南

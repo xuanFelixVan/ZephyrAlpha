@@ -3,6 +3,7 @@ module_id: KE-4066
 title: 3.5 施工状态
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 施工状态

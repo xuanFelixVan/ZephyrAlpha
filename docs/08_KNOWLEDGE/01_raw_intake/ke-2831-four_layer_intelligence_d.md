@@ -4,6 +4,7 @@ status: active
 title: Four-Layer Intelligence (D-019-83)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Four-Layer Intelligence (D-019-83)

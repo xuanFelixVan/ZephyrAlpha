@@ -4,6 +4,7 @@ status: active
 title: Skill Topology DAG (D-019-63)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Skill Topology DAG (D-019-63)

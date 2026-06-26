@@ -4,6 +4,7 @@ status: active
 title: 2.4 Skill Factory 与自举机制（决策 D-019-05）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 Skill Factory 与自举机制（决策 D-019-05）

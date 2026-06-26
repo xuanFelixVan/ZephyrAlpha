@@ -15,8 +15,8 @@ date: "2026-06-25"
 valid_from: "2026-06-25"
 ttl: permanent
 rule_form: structural
-belongs_to: "MOD-DATABASE"
-parent_module: "MOD-DATABASE"
+belongs_to: "SH-DB-001"
+parent_module: "SH-DB-001"
 scope: global
 stability: evolving
 verifiability: automated

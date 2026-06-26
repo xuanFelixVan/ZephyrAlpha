@@ -3,6 +3,7 @@ module_id: KE-3437
 title: D-OWNER：Owner 域与跨层契约
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-OWNER：Owner 域与跨层契约

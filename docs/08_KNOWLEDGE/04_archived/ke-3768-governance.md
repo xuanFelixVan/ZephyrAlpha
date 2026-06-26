@@ -3,6 +3,7 @@ module_id: KE-3617
 title: 6.3 违规处置
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 违规处置

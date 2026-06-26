@@ -4,6 +4,7 @@ status: active
 title: 16. 完整性自检清单
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16. 完整性自检清单

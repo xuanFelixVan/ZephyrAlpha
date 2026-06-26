@@ -3,6 +3,7 @@ module_id: KE-3676
 title: CMR-002：合规检查必须覆盖所有适用维度
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # CMR-002：合规检查必须覆盖所有适用维度

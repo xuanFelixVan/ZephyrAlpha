@@ -3,6 +3,7 @@ module_id: KE-506
 title: 7.4 Event bus / 事件总线（当前状态）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.4 Event bus / 事件总线（当前状态）

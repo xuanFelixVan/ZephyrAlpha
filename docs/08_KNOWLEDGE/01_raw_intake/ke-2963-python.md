@@ -4,6 +4,7 @@ status: active
 title: Python 实现
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Python 实现

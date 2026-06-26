@@ -3,6 +3,7 @@ module_id: KE-322---schema-002
 title: 4.11 SSoT 与 Schema 一致性条件禁止
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.11 SSoT 与 Schema 一致性条件禁止

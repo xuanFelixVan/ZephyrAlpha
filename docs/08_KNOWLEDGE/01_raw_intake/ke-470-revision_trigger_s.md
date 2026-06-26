@@ -4,6 +4,7 @@ status: active
 title: 5.4 升级触发与 revision trigger / SLO 重写触发条件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.4 升级触发与 revision trigger / SLO 重写触发条件

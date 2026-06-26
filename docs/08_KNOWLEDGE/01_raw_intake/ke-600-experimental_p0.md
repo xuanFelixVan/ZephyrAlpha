@@ -4,6 +4,7 @@ status: active
 title: 8A.5 日常巡检清单（experimental P0）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8A.5 日常巡检清单（experimental P0）

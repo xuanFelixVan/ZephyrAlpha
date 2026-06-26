@@ -4,6 +4,7 @@ status: active
 title: 2.7 自监控——1人+AI 维护的刚需
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 自监控——1人+AI 维护的刚需

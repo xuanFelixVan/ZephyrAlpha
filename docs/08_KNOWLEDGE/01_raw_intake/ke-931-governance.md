@@ -4,6 +4,7 @@ status: active
 title: §3 依赖关系速览
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §3 依赖关系速览

@@ -4,6 +4,7 @@ status: active
 title: 漂移运行时检测蓝图 — Git-native Drift Detection + AI 施工专项
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 漂移运行时检测蓝图 — Git-native Drift Detection + AI 施工专项

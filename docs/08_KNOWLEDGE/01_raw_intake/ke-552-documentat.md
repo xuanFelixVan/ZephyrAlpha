@@ -4,6 +4,7 @@ status: active
 title: 7.3 复合命名规则（当二者联合引用时）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 复合命名规则（当二者联合引用时）

@@ -7,7 +7,7 @@
 # --- 治理锚定结束 ---
 module_id: MOD-INF-014
 schema_version: "1.0"
-doc_type: red_team_corpus
+doc_type: reference
 last_updated: "2026-05-06"
 status: seed
 description: |

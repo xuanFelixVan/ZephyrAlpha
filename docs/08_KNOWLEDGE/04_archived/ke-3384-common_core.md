@@ -3,6 +3,7 @@ module_id: KE-3262------common-core-005
 title: 3.2.1 通用核心（Common Core）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.1 通用核心（Common Core）

@@ -4,6 +4,7 @@ status: active
 title: 十六、FMEA 故障模式分析
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 十六、FMEA 故障模式分析

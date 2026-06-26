@@ -3,6 +3,7 @@ module_id: KE-2353
 title: 6.1 前置组件（必须先完成）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 前置组件（必须先完成）

@@ -1,5 +1,5 @@
 ---
-doc_type: domain_architecture_diagram
+doc_type: architecture_view
 title: D-INTELLIGENCE 上下文管理架构图
 version: "1.0"
 status: active

@@ -3,6 +3,7 @@ module_id: KE-3899
 title: 14. 当前缺失清单
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. 当前缺失清单

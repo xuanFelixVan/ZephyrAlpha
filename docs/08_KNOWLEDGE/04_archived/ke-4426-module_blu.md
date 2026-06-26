@@ -3,6 +3,7 @@ module_id: KE-4261
 title: D-022-04 规则不可变保护实现
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-04 规则不可变保护实现

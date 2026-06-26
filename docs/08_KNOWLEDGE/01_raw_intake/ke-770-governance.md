@@ -4,6 +4,7 @@ status: active
 title: §1.2 负向责任（本目录不管的事，去对应目录找）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §1.2 负向责任（本目录不管的事，去对应目录找）

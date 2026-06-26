@@ -3,6 +3,7 @@ module_id: KE-2275
 title: 5. 风险与缓解
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 风险与缓解

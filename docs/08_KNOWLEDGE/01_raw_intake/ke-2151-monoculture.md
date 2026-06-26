@@ -4,6 +4,7 @@ status: active
 title: 3.12 Monoculture 免疫——去重成功的根本性悖论（v0.7.0 终极审视——外部取证审计师发现 #1）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.12 Monoculture 免疫——去重成功的根本性悖论（v0.7.0 终极审视——外部取证审计师发现 #1）

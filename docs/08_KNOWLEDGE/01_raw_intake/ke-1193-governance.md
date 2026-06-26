@@ -4,6 +4,7 @@ status: active
 title: Cursor 崩溃 / 无响应
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Cursor 崩溃 / 无响应

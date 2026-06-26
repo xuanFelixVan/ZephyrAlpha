@@ -4,6 +4,7 @@ status: active
 title: Three Questions
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Three Questions

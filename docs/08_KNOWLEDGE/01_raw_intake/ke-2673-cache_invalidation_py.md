@@ -4,6 +4,7 @@ status: active
 title: cache_invalidation.py — 新增文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # cache_invalidation.py — 新增文件

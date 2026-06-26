@@ -4,6 +4,7 @@ status: active
 title: B 轨接口规范 — 目录索引
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # B 轨接口规范 — 目录索引

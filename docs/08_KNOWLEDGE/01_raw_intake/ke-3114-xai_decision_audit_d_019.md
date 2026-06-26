@@ -4,6 +4,7 @@ status: active
 title: XAI Decision Audit (D-019-25)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # XAI Decision Audit (D-019-25)

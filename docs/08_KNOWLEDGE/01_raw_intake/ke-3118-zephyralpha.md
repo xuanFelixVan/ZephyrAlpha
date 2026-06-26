@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 系统总蓝图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 系统总蓝图

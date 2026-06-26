@@ -4,6 +4,7 @@ status: active
 title: 2.218 Owner Absence Mode - owner_absence_mode.py (🆕 v0.20.0 - 盲点268 — Owner假期/应急
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.218 Owner Absence Mode - owner_absence_mode.py (🆕 v0.20.0 - 盲点268 — Owner假期/应急

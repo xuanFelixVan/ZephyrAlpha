@@ -3,6 +3,7 @@ module_id: KE-912---------g3-evaluate-yaml-003
 title: 4.3.2 检查项（对应 `g3-evaluate.yaml`）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3.2 检查项（对应 `g3-evaluate.yaml`）

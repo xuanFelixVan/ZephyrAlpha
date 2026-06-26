@@ -4,6 +4,7 @@ status: active
 title: 5. Third-party integrations / 第三方集成
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. Third-party integrations / 第三方集成

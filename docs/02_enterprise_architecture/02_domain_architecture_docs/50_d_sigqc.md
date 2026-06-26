@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-SIGQC 信号质量控制架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 信号质量控制（D-SIGQC）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,21 +22,21 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 50 | Number | 50 |
 | 域ID | D-SIGQC | Domain ID | D-SIGQC |
-| 域名称 | 信号质量控制 | Domain Name | 信号质量控制 |
+| 域名称 | 信号质量控制 | Domain Name | signal_quality |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 17 | Module Count | 17 |
+| 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
-| 设计态模块 | 10 | Design Modules | 10 |
+| 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 信号质量域。负责信号质量评估与监控，包括信号衰减检测、信号相关性分析、信号稳定性评估、信号噪声过滤。拆分自原D-SIGNAL域。 | Description | 信号质量域。负责信号质量评估与监控，包括信号衰减检测、信号相关性分析、信号稳定性评估、信号噪声过滤。拆分自原D-SIGNAL域。 |
+| 描述 | 信号质量评估 | Description | 信号质量评估 |
 
 ## 模块清单 / Module List
 
-共 17 个模块（按路径排序，全部显示）
+共 7 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -47,16 +47,6 @@ ttl: permanent
 | src/zephyr/signal_quality/infrastructure/__init__.py |  | prototype | deprecated |
 | src/zephyr/signal_quality/models/__init__.py |  | prototype | deprecated |
 | src/zephyr/signal_quality/services/__init__.py |  | prototype | deprecated |
-| 信号域-信号处理/D-SIGNAL-69 | Signal Normalizer | design | planned |
-| 信号域-信号处理/D-SIGNAL-71 | Signal TTL Timeout Manager | design | planned |
-| 信号域-冲突融合/D-SIGNAL-130 | 信号去重模块 | design | planned |
-| 信号域-冲突融合/D-SIGNAL-132 | 信号冲突解决 | design | planned |
-| 信号域-合成分配/D-SIGNAL-92 | Signal Revocation Executor | design | planned |
-| 信号域-技术指标/D-SIGNAL-118 | 实时模式检测与信号质量评估器 | design | planned |
-| 信号域-策略运行时/D-SIGNAL-156 | 信号质量退化监控 | design | planned |
-| 信号域-质量降级/D-SIGNAL-77 | Factor Coverage Rate Calculator | design | planned |
-| 信号域-质量降级/D-SIGNAL-81 | Empty Signal NEUTRAL Strategy Manager | design | planned |
-| 信号域-质量降级/D-SIGNAL-83 | Signal Expired Unconsumed Detector | design | planned |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -78,22 +68,12 @@ graph TD
         src_zephyr_signal_quality_infrastructure_init_py["src/zephyr/signal_quality/infrastructure/__init... prototype"]
         src_zephyr_signal_quality_models_init_py["src/zephyr/signal_quality/models/__init__.py prototype"]
         src_zephyr_signal_quality_services_init_py["src/zephyr/signal_quality/services/__init__.py prototype"]
-        D_SIGNAL_69["Signal Normalizer design"]
-        D_SIGNAL_71["Signal TTL Timeout Manager design"]
-        D_SIGNAL_130["信号去重模块 design"]
-        D_SIGNAL_132["信号冲突解决 design"]
-        D_SIGNAL_92["Signal Revocation Executor design"]
-        D_SIGNAL_118["实时模式检测与信号质量评估器 design"]
-        D_SIGNAL_156["信号质量退化监控 design"]
-        D_SIGNAL_77["Factor Coverage Rate Calculator design"]
-        D_SIGNAL_81["Empty Signal NEUTRAL Strategy Manager design"]
-        D_SIGNAL_83["Signal Expired Unconsumed Detector design"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_quality_init_py,src_zephyr_signal_quality_extensions_init_py,src_zephyr_signal_quality_api_init_py,src_zephyr_signal_quality_core_init_py,src_zephyr_signal_quality_infrastructure_init_py,src_zephyr_signal_quality_models_init_py,src_zephyr_signal_quality_services_init_py,D_SIGNAL_69,D_SIGNAL_71,D_SIGNAL_130,D_SIGNAL_132,D_SIGNAL_92,D_SIGNAL_118,D_SIGNAL_156,D_SIGNAL_77,D_SIGNAL_81,D_SIGNAL_83 design
+    class src_zephyr_signal_quality_init_py,src_zephyr_signal_quality_extensions_init_py,src_zephyr_signal_quality_api_init_py,src_zephyr_signal_quality_core_init_py,src_zephyr_signal_quality_infrastructure_init_py,src_zephyr_signal_quality_models_init_py,src_zephyr_signal_quality_services_init_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

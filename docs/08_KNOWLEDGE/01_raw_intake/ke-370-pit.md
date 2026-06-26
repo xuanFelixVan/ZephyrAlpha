@@ -3,6 +3,7 @@ module_id: KE-335
 title: 4.2 PIT 违反的三种典型场景与防御
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 PIT 违反的三种典型场景与防御

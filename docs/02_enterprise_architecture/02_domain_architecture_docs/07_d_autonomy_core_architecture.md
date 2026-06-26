@@ -1,5 +1,5 @@
 ---
-doc_type: domain_architecture_diagram
+doc_type: architecture_view
 title: D-AUTONOMY_CORE 自治核心架构图
 version: "1.0"
 status: active

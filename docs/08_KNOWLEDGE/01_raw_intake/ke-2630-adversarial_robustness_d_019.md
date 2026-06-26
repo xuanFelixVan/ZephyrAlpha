@@ -4,6 +4,7 @@ status: active
 title: Adversarial Robustness (D-019-46)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Adversarial Robustness (D-019-46)

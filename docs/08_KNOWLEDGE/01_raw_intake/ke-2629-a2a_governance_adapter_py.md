@@ -4,6 +4,7 @@ status: active
 title: a2a_governance_adapter.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # a2a_governance_adapter.py

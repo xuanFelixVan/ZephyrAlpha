@@ -4,6 +4,7 @@ status: active
 title: 6.2 Factor Lineage 端到端示例
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 Factor Lineage 端到端示例

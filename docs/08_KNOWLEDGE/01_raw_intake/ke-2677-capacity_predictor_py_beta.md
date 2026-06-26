@@ -4,6 +4,7 @@ status: active
 title: capacity_predictor.py（beta 实现）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # capacity_predictor.py（beta 实现）

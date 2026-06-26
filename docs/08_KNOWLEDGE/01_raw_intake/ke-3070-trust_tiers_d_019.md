@@ -4,6 +4,7 @@ status: active
 title: Trust Tiers (D-019-82)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Trust Tiers (D-019-82)

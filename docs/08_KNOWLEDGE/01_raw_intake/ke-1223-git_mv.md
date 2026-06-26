@@ -4,6 +4,7 @@ status: active
 title: 第一步：git mv 后立即搜索旧路径的所有引用
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 第一步：git mv 后立即搜索旧路径的所有引用

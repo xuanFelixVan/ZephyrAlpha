@@ -4,6 +4,7 @@ status: active
 title: 3.4 验证不通过
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 验证不通过

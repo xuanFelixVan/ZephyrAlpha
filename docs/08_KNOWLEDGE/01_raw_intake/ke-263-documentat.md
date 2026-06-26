@@ -4,6 +4,7 @@ status: active
 title: 3.1 章节清单（三层模板体系）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 章节清单（三层模板体系）

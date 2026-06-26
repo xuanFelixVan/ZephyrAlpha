@@ -4,6 +4,7 @@ status: active
 title: Vector Memory Service 蓝图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Vector Memory Service 蓝图

@@ -3,6 +3,7 @@ module_id: KE-3664
 title: AUD-003：审计日志访问受限
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AUD-003：审计日志访问受限

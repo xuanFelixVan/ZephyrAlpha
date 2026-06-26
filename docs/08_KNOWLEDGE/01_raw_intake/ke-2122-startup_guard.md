@@ -4,6 +4,7 @@ status: active
 title: 3.1 #26: StartupGuard (M-31)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 #26: StartupGuard (M-31)

@@ -4,6 +4,7 @@ status: active
 title: IRN-010：受保护路径不可写（铁律10）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-010：受保护路径不可写（铁律10）

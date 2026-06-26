@@ -4,6 +4,7 @@ status: active
 title: 2.37 升级协议人因动力学 + 奖励黑客纵向检测 + 施工容量上限（决策 D-022-27）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.37 升级协议人因动力学 + 奖励黑客纵向检测 + 施工容量上限（决策 D-022-27）

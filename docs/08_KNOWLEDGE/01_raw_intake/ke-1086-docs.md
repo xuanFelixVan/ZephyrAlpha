@@ -4,6 +4,7 @@ status: active
 title: 7.1 新增 `docs/` 顶级目录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 新增 `docs/` 顶级目录

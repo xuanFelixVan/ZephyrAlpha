@@ -4,6 +4,7 @@ status: active
 title: 8.2 按任务类型选择规则（领域触发）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 按任务类型选择规则（领域触发）

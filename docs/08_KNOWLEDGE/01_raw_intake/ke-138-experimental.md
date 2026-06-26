@@ -4,6 +4,7 @@ status: active
 title: 11.1 experimental 最小响应流程
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 experimental 最小响应流程

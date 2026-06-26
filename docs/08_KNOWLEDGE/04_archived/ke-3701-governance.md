@@ -3,6 +3,7 @@ module_id: KE-3554
 title: 21. 审查周期
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 21. 审查周期

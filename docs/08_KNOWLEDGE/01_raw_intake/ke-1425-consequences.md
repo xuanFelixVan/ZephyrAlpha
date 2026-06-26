@@ -4,6 +4,7 @@ status: active
 title: 10. 后果（Consequences）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10. 后果（Consequences）

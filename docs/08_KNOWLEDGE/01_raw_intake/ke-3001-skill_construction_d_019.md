@@ -4,6 +4,7 @@ status: active
 title: Skill Construction (D-019-80)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Skill Construction (D-019-80)

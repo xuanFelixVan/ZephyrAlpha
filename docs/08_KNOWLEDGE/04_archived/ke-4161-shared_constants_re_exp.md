@@ -3,6 +3,7 @@ module_id: KE-4005----re-exp-000
 title: 2.4 shared-constants（集中 re-export）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 shared-constants（集中 re-export）

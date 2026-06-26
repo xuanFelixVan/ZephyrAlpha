@@ -3,6 +3,7 @@ module_id: KE-1050
 title: 附录 A：与既有文档的对应关系
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 附录 A：与既有文档的对应关系

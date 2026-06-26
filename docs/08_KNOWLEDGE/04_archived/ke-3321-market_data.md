@@ -3,6 +3,7 @@ module_id: KE-3203
 title: 2.1 Market Data 域（行情数据）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Market Data 域（行情数据）

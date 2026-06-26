@@ -3,6 +3,7 @@ module_id: KE-1059
 title: ACS-001：最小权限原则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ACS-001：最小权限原则

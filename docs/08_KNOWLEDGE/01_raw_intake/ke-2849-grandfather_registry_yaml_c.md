@@ -4,6 +4,7 @@ status: active
 title: grandfather-registry.yaml —— cache_manager.py 自动维护
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # grandfather-registry.yaml —— cache_manager.py 自动维护

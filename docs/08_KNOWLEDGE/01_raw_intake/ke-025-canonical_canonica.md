@@ -4,6 +4,7 @@ status: active
 title: 6.17 Canonical 物理位置铁律（Canonical Physical Location Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.17 Canonical 物理位置铁律（Canonical Physical Location Mandate）

@@ -4,6 +4,7 @@ status: active
 title: 三层闭环架构
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三层闭环架构

@@ -4,6 +4,7 @@ status: active
 title: 10.1 Kill Switch 全局熔断
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 Kill Switch 全局熔断

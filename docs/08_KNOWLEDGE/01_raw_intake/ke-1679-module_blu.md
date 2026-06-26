@@ -4,6 +4,7 @@ status: active
 title: 19.1 受控旁路机制
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 19.1 受控旁路机制

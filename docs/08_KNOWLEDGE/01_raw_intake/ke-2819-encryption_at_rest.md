@@ -3,6 +3,7 @@ module_id: KE-2722
 title: 加密策略（Encryption at Rest）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 加密策略（Encryption at Rest）

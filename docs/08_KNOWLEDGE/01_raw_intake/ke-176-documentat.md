@@ -3,6 +3,7 @@ module_id: KE-158
 title: 2. 事故分级
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 事故分级

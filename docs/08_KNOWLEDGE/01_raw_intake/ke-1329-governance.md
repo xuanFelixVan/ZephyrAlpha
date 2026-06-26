@@ -4,6 +4,7 @@ status: active
 title: 四、归档流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 四、归档流程

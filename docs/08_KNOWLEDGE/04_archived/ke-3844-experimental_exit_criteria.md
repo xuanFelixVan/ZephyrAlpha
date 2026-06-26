@@ -3,6 +3,7 @@ module_id: KE-3693
 title: experimental exit_criteria
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # experimental exit_criteria

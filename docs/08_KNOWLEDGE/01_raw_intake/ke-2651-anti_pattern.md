@@ -4,6 +4,7 @@ status: active
 title: Anti-Pattern 注册表
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Anti-Pattern 注册表

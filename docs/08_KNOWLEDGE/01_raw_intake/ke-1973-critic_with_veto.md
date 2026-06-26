@@ -4,6 +4,7 @@ status: active
 title: 2.31 宪法治理与 Critic-with-veto（决策 D-025-28）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.31 宪法治理与 Critic-with-veto（决策 D-025-28）

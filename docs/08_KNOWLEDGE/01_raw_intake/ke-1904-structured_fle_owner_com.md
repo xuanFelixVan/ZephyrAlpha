@@ -4,6 +4,7 @@ status: active
 title: 2.231 Structured FLE-Owner Communication Protocol - fle_owner_comm_protocol.py (
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.231 Structured FLE-Owner Communication Protocol - fle_owner_comm_protocol.py (

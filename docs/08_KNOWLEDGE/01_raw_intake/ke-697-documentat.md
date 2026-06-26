@@ -4,6 +4,7 @@ status: active
 title: Stage 1：从“修补旧系统”到“建立新树”
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 1：从“修补旧系统”到“建立新树”

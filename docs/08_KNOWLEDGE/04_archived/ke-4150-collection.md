@@ -3,6 +3,7 @@ module_id: KE-3995
 title: 2.1 Collection 设计原则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Collection 设计原则

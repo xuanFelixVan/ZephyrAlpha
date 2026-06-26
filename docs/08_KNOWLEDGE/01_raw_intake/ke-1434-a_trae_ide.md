@@ -4,6 +4,7 @@ status: active
 title: 10.1 模式 A：Trae IDE 对话驱动
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 模式 A：Trae IDE 对话驱动

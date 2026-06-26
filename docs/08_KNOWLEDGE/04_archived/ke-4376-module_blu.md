@@ -3,6 +3,7 @@ module_id: KE-4214
 title: 8. 文件落位标准
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 文件落位标准

@@ -4,6 +4,7 @@ status: active
 title: 5.2 读取流程
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 读取流程

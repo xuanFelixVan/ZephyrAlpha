@@ -4,6 +4,7 @@ status: active
 title: 2.9 L6 — Observability 可观测性（决策 D-018-11）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.9 L6 — Observability 可观测性（决策 D-018-11）

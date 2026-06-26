@@ -4,6 +4,7 @@ status: active
 title: 不管什么（Out of Scope）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 不管什么（Out of Scope）

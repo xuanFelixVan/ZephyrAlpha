@@ -3,6 +3,7 @@ module_id: KE-762
 title: 18. 变更记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18. 变更记录

@@ -4,6 +4,7 @@ status: active
 title: 4.1.1 触发条件
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1.1 触发条件

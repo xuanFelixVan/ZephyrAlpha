@@ -3,6 +3,7 @@ module_id: KE-2187------------memory-ba-000
 title: 4. beta c — 持久化+结构化 (Memory Bank + XML Partitioning)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. beta c — 持久化+结构化 (Memory Bank + XML Partitioning)

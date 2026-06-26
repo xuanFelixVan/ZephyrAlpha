@@ -4,6 +4,7 @@ status: active
 title: 2.235 Multi-Source Market Data Divergence Detector - market_data_divergence.py (
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.235 Multi-Source Market Data Divergence Detector - market_data_divergence.py (

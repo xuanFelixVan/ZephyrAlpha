@@ -4,6 +4,7 @@ status: active
 title: 1.5 消费者注册表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5 消费者注册表

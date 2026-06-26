@@ -3,6 +3,7 @@ module_id: KE-1323
 title: 1.3 运行场景约束
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 运行场景约束

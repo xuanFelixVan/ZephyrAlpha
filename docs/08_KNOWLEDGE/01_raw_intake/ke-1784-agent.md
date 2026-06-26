@@ -4,6 +4,7 @@ status: active
 title: 2.11 上下文管理——跨 Agent 传递
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.11 上下文管理——跨 Agent 传递

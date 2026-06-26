@@ -4,6 +4,7 @@ status: active
 title: 4.3 争议术语
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 争议术语

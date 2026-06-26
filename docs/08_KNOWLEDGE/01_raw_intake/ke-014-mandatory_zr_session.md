@@ -4,6 +4,7 @@ status: active
 title: 5.3.5 🔴 MANDATORY-ZR — Session 终了强制自净（IRN-011 · ZR-008）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3.5 🔴 MANDATORY-ZR — Session 终了强制自净（IRN-011 · ZR-008）

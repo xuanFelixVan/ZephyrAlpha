@@ -4,6 +4,7 @@ status: active
 title: 6.1 HiL 触发点
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 HiL 触发点

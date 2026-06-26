@@ -4,6 +4,7 @@ status: active
 title: 7.1 功能域重叠判定流程（§7 #5 执行细则）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 功能域重叠判定流程（§7 #5 执行细则）

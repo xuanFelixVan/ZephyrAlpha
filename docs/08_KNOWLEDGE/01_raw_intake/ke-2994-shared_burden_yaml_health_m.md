@@ -4,6 +4,7 @@ status: active
 title: shared_burden.yaml —— health-monitor.py 产出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # shared_burden.yaml —— health-monitor.py 产出

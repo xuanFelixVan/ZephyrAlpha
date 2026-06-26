@@ -3,6 +3,7 @@ module_id: KE-3304
 title: 4.4 误报与性能预算（硬约束）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4 误报与性能预算（硬约束）

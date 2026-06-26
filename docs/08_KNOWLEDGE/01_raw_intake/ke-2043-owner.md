@@ -4,6 +4,7 @@ status: active
 title: 2.9 硬中断协议 —— Owner的最终控制权
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.9 硬中断协议 —— Owner的最终控制权

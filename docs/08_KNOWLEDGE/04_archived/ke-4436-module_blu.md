@@ -3,6 +3,7 @@ module_id: KE-4271
 title: D-022-15 量化交易升级特化
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-15 量化交易升级特化

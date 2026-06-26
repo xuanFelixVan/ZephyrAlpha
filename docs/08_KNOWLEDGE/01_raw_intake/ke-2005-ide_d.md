@@ -4,6 +4,7 @@ status: active
 title: 2.5 逻辑时钟——多 IDE 时序一致性（决策 D-020-09）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 逻辑时钟——多 IDE 时序一致性（决策 D-020-09）

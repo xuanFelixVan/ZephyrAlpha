@@ -3,6 +3,7 @@ module_id: KE-4303---000
 title: DB-025-0037：Related Update 3——模块 ID 注册表更新验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0037：Related Update 3——模块 ID 注册表更新验证

@@ -3,6 +3,7 @@ module_id: KE-3562
 title: 3.1 分层要求
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 分层要求

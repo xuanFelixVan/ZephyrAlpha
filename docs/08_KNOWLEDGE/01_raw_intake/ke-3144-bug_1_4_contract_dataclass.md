@@ -4,6 +4,7 @@ status: active
 title: Bug #1: 4 个 contract dataclass 字段排序被 codegen 覆盖
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bug #1: 4 个 contract dataclass 字段排序被 codegen 覆盖

@@ -4,6 +4,7 @@ status: active
 title: IRN-003：SSoT 唯一（铁律3）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-003：SSoT 唯一（铁律3）

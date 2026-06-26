@@ -3,6 +3,7 @@ module_id: KE-4416------shared-002
 title: 复用清单（Telemetry 基于这些 shared 组件构建，不复写）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 复用清单（Telemetry 基于这些 shared 组件构建，不复写）

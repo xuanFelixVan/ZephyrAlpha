@@ -4,6 +4,7 @@ status: active
 title: 14项盲点
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14项盲点

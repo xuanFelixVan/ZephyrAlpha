@@ -4,6 +4,7 @@ status: active
 title: 2.2 四层 Defense in Depth (D-019-07)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 四层 Defense in Depth (D-019-07)

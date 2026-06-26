@@ -4,6 +4,7 @@ status: active
 title: 附录 A：14 层架构对标证据
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 附录 A：14 层架构对标证据

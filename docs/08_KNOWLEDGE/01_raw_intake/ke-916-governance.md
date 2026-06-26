@@ -4,6 +4,7 @@ status: active
 title: 20. 字段不重复声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 20. 字段不重复声明

@@ -3,6 +3,7 @@ module_id: KE-2450------------v2-1-003
 title: 8. 需要更新的相关内容（v2.1 补全）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 需要更新的相关内容（v2.1 补全）

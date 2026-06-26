@@ -3,6 +3,7 @@ module_id: KE-2415
 title: 7. Key Design Decisions
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Key Design Decisions

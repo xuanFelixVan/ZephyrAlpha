@@ -3,6 +3,7 @@ module_id: KE-4194
 title: 7.1 指令格式要求
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 指令格式要求

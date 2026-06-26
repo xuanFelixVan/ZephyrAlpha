@@ -4,6 +4,7 @@ status: active
 title: 2.2 更新 module-registry.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 更新 module-registry.yaml

@@ -4,6 +4,7 @@ status: active
 title: Level 1：功能域集成蓝图（Domain Integration Blueprint）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Level 1：功能域集成蓝图（Domain Integration Blueprint）

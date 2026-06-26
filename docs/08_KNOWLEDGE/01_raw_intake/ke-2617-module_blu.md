@@ -3,6 +3,7 @@ module_id: KE-2522
 title: 9.4 问题模式分析
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.4 问题模式分析

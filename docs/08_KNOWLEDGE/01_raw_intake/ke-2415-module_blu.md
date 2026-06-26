@@ -3,6 +3,7 @@ module_id: KE-2320
 title: 5.5 路径索引使用指南
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.5 路径索引使用指南

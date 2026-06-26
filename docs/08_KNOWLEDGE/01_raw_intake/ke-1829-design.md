@@ -4,6 +4,7 @@ status: active
 title: 2.19 冷启动策略——零基线状态下的漂移检测引导（决策 D-023-33）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.19 冷启动策略——零基线状态下的漂移检测引导（决策 D-023-33）

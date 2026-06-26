@@ -4,6 +4,7 @@ status: active
 title: Level 0：全系统总蓝图（System Master Blueprint）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Level 0：全系统总蓝图（System Master Blueprint）

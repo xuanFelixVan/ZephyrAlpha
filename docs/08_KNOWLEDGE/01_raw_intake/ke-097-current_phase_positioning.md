@@ -4,6 +4,7 @@ status: active
 title: 1.3 Current phase positioning / 当前阶段定位（2026-04-24）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 Current phase positioning / 当前阶段定位（2026-04-24）

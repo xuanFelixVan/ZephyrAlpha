@@ -3,6 +3,7 @@ module_id: KE-3865
 title: 13.1 Sink P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.1 Sink P0

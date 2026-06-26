@@ -4,6 +4,7 @@ status: active
 title: 2. TOGAF four layers / TOGAF 四层结构
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. TOGAF four layers / TOGAF 四层结构

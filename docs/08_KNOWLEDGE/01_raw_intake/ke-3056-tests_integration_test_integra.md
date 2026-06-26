@@ -4,6 +4,7 @@ status: active
 title: tests/integration/test_integration_contracts.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # tests/integration/test_integration_contracts.py

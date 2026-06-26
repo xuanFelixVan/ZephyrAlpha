@@ -4,6 +4,7 @@ status: active
 title: 3.4 发现维度（DIM-DISCOVER-001）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 发现维度（DIM-DISCOVER-001）

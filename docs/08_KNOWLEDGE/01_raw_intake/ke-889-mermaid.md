@@ -4,6 +4,7 @@ status: active
 title: 2.3 三层架构全景图（Mermaid）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 三层架构全景图（Mermaid）

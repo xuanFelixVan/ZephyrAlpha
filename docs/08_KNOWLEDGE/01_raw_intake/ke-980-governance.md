@@ -3,6 +3,7 @@ module_id: KE-902
 title: 4.2 前端编号使用规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2 前端编号使用规则

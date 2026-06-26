@@ -4,6 +4,7 @@ status: active
 title: strictness.current <  1.0（开发时放松）：警告 + allow=True + 记审计
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # strictness.current <  1.0（开发时放松）：警告 + allow=True + 记审计

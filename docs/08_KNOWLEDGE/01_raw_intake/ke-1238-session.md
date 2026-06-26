@@ -4,6 +4,7 @@ status: active
 title: IRN-002：Session 预算（铁律2）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-002：Session 预算（铁律2）

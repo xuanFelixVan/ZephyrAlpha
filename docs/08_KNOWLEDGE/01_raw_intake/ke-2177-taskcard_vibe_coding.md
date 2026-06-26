@@ -4,6 +4,7 @@ status: active
 title: 3.2.1 TaskCard（Vibe Coding 扩展任务模型）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.1 TaskCard（Vibe Coding 扩展任务模型）

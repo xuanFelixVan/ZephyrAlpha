@@ -4,6 +4,7 @@ status: active
 title: 类名安全提取（处理 "StrategyBase + StrategyRegistry"）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 类名安全提取（处理 "StrategyBase + StrategyRegistry"）

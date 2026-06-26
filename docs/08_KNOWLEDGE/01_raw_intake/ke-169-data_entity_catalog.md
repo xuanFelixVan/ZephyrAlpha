@@ -4,6 +4,7 @@ status: active
 title: 2. Data Entity Catalog / 数据实体清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Data Entity Catalog / 数据实体清单

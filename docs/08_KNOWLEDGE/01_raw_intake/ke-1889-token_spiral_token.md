@@ -4,6 +4,7 @@ status: active
 title: 2.22 Token Spiral 早期预警系统（Token Spiral EWS）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.22 Token Spiral 早期预警系统（Token Spiral EWS）

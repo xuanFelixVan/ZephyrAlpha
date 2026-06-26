@@ -3,6 +3,7 @@ module_id: KE-3161
 title: 1.5 术语
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5 术语

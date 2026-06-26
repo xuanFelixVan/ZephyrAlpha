@@ -4,6 +4,7 @@ status: active
 title: 2.2 可选但推荐的 frontmatter
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 可选但推荐的 frontmatter

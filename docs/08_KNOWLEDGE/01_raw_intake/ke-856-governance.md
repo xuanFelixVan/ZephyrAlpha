@@ -3,6 +3,7 @@ module_id: KE-778
 title: §2 文件清单
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §2 文件清单

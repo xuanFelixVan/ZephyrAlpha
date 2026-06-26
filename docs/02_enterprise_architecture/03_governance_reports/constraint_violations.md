@@ -3,7 +3,7 @@ doc_type: constraint_violations_report
 title: 架构约束违规报告
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示架构约束违规情况，包括跨层依赖、循环依赖、命名违规等，为架构治理提供修复清单。
 
 > 本文档由 generate_constraint_violations.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:21
+> 最后更新: 2026-06-26 18:55:41
 > 数据源: depgraph.db arch_constraints表
 
 ## 统计概览
@@ -80,8 +80,8 @@ ttl: permanent
 | F1-CAPACITY-D-EX_SOR | 容量超限告警: D-EX_SOR | capacity_limit | D-EX_SOR |  | hard | gate | 域D-EX_SOR(执行路由)当前168模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-FACTOR | 容量超限告警: D-FACTOR | capacity_limit | D-FACTOR |  | hard | gate | 域D-FACTOR(因子)当前104模块超过上限80，需拆分或提升上限 |
 | F1-CAPACITY-D-FRONTEND | 容量超限告警: D-FRONTEND | capacity_limit | D-FRONTEND |  | hard | gate | 域D-FRONTEND(前端)当前278模块超过上限60，需拆分或提升上限 |
-| F1-CAPACITY-D-GOV-SCRIPTS | 容量超限告警: D-GOV-SCRIPTS | capacity_limit | D-GOVERNANCE |  | hard | gate | 域D-GOV-SCRIPTS(治理脚本)当前359模块超过上限340，需拆分或提升上限 |
 | F1-CAPACITY-D-GOVERNANCE | 容量超限告警: D-GOVERNANCE | capacity_limit | D-GOVERNANCE |  | hard | gate | 域D-GOVERNANCE(治理)当前2881模块超过上限750，需拆分或提升上限 |
+| F1-CAPACITY-D-GOV_SCRIPTS | 容量超限告警: D-GOV_SCRIPTS | capacity_limit | D-GOVERNANCE |  | hard | gate | 域D-GOV_SCRIPTS(治理脚本)当前359模块超过上限340，需拆分或提升上限 |
 | F1-CAPACITY-D-INFRA_OPS | 容量超限告警: D-INFRA_OPS | capacity_limit | D-INFRA_OPS |  | hard | gate | 域D-INFRA_OPS(基础设施运维)当前409模块超过上限40，需拆分或提升上限 |
 | F1-CAPACITY-D-INFRA_RUNTIME | 容量超限告警: D-INFRA_RUNTIME | capacity_limit | D-INFRA_RUNTIME |  | hard | gate | 域D-INFRA_RUNTIME(运行时基础设施)当前892模块超过上限480，需拆分或提升上限 |
 | F1-CAPACITY-D-INTEGRATION | 容量超限告警: D-INTEGRATION | capacity_limit | D-INTEGRATION |  | hard | gate | 域D-INTEGRATION(集成)当前314模块超过上限220，需拆分或提升上限 |
@@ -99,7 +99,7 @@ ttl: permanent
 | F1-CAPACITY-D-SECURITY | 容量超限告警: D-SECURITY | capacity_limit | D-SECURITY |  | hard | gate | 域D-SECURITY(安全)当前341模块超过上限320，需拆分或提升上限 |
 | F1-CAPACITY-D-SELL_DECISION | 容量超限告警: D-SELL_DECISION | capacity_limit | D-SELL_DECISION |  | hard | gate | 域D-SELL_DECISION(卖出决策)当前94模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-SHARED | 容量超限告警: D-SHARED | capacity_limit | D-SHARED |  | hard | gate | 域D-SHARED(共享)当前275模块超过上限210，需拆分或提升上限 |
-| F1-CAPACITY-D-SIGNAL | 容量超限告警: D-SIGNAL | capacity_limit | D-SIGLEGACY |  | hard | gate | 域D-SIGNAL(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
+| F1-CAPACITY-D-SIGLEGACY | 容量超限告警: D-SIGLEGACY | capacity_limit | D-SIGLEGACY |  | hard | gate | 域D-SIGLEGACY(信号(技术+通用))当前135模块超过上限80，需拆分或提升上限 |
 | F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D-SIMULATION |  | hard | gate | 域D-SIMULATION(仿真)当前92模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D-TRADING |  | hard | gate | 域D-TRADING(交易运营)当前163模块超过上限140，需拆分或提升上限 |
 |  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | code |  |
@@ -144,8 +144,8 @@ ttl: permanent
 | F1-CAPACITY-D-EX_SOR | 容量超限告警: D-EX_SOR | capacity_limit | D-EX_SOR |  | hard | open |
 | F1-CAPACITY-D-FACTOR | 容量超限告警: D-FACTOR | capacity_limit | D-FACTOR |  | hard | open |
 | F1-CAPACITY-D-FRONTEND | 容量超限告警: D-FRONTEND | capacity_limit | D-FRONTEND |  | hard | open |
-| F1-CAPACITY-D-GOV-SCRIPTS | 容量超限告警: D-GOV-SCRIPTS | capacity_limit | D-GOVERNANCE |  | hard | open |
 | F1-CAPACITY-D-GOVERNANCE | 容量超限告警: D-GOVERNANCE | capacity_limit | D-GOVERNANCE |  | hard | open |
+| F1-CAPACITY-D-GOV_SCRIPTS | 容量超限告警: D-GOV_SCRIPTS | capacity_limit | D-GOVERNANCE |  | hard | open |
 | F1-CAPACITY-D-INFRA_OPS | 容量超限告警: D-INFRA_OPS | capacity_limit | D-INFRA_OPS |  | hard | open |
 | F1-CAPACITY-D-INFRA_RUNTIME | 容量超限告警: D-INFRA_RUNTIME | capacity_limit | D-INFRA_RUNTIME |  | hard | open |
 | F1-CAPACITY-D-INTEGRATION | 容量超限告警: D-INTEGRATION | capacity_limit | D-INTEGRATION |  | hard | open |
@@ -163,7 +163,7 @@ ttl: permanent
 | F1-CAPACITY-D-SECURITY | 容量超限告警: D-SECURITY | capacity_limit | D-SECURITY |  | hard | open |
 | F1-CAPACITY-D-SELL_DECISION | 容量超限告警: D-SELL_DECISION | capacity_limit | D-SELL_DECISION |  | hard | open |
 | F1-CAPACITY-D-SHARED | 容量超限告警: D-SHARED | capacity_limit | D-SHARED |  | hard | open |
-| F1-CAPACITY-D-SIGNAL | 容量超限告警: D-SIGNAL | capacity_limit | D-SIGLEGACY |  | hard | open |
+| F1-CAPACITY-D-SIGLEGACY | 容量超限告警: D-SIGLEGACY | capacity_limit | D-SIGLEGACY |  | hard | open |
 | F1-CAPACITY-D-SIMULATION | 容量超限告警: D-SIMULATION | capacity_limit | D-SIMULATION |  | hard | open |
 | F1-CAPACITY-D-TRADING | 容量超限告警: D-TRADING | capacity_limit | D-TRADING |  | hard | open |
 |  | operational_rule 必须可验证（不能是 inspection） | architecture_contract |  |  | error | open |

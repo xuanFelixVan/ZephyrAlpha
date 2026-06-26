@@ -4,6 +4,7 @@ status: active
 title: COND-001：报告数据必须可追溯
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # COND-001：报告数据必须可追溯

@@ -3,6 +3,7 @@ module_id: KE-312
 title: 4.1 边界案例处理
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 边界案例处理

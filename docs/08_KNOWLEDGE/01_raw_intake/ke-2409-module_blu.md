@@ -4,6 +4,7 @@ status: active
 title: 5.4 依赖方向图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.4 依赖方向图

@@ -3,6 +3,7 @@ module_id: KE-2532
 title: A. 任务模型与生命周期
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # A. 任务模型与生命周期

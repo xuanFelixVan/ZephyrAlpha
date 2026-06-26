@@ -3,6 +3,7 @@ module_id: KE-3887----p0-000
 title: 13.5 Outcome 闭环 P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.5 Outcome 闭环 P0

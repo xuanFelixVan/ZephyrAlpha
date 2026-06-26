@@ -3,6 +3,7 @@ module_id: KE-1607
 title: 2. Blindspots B1-B12
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Blindspots B1-B12

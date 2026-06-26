@@ -4,6 +4,7 @@ status: active
 title: 与 MTH-011/012 的关系
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 与 MTH-011/012 的关系

@@ -3,6 +3,7 @@ module_id: KE-4110
 title: 4.3 治理脚本
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 治理脚本

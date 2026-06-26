@@ -4,6 +4,7 @@ status: active
 title: 2.27 模型API多Provider容灾与降级链（决策 D-022-19）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.27 模型API多Provider容灾与降级链（决策 D-022-19）

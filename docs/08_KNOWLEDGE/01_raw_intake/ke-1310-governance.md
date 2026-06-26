@@ -4,6 +4,7 @@ status: active
 title: Session 中期二次自检
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Session 中期二次自检

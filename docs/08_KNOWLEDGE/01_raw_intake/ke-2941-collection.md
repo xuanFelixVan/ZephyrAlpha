@@ -4,6 +4,7 @@ status: active
 title: Phase 2：8 Collection 落地
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 2：8 Collection 落地

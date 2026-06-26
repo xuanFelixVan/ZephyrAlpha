@@ -4,6 +4,7 @@ status: active
 title: IRN-001：编码扫描（铁律1）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-001：编码扫描（铁律1）

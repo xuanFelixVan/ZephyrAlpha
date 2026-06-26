@@ -3,6 +3,7 @@ module_id: KE-1085
 title: AVP-001：架构文档必须有版本号
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AVP-001：架构文档必须有版本号

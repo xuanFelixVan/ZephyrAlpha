@@ -3,6 +3,7 @@ module_id: KE-889
 title: 4.1 调度表
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 调度表

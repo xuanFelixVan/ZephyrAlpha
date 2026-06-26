@@ -3,6 +3,7 @@ module_id: KE-3246
 title: 3.1 决策框架
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 决策框架

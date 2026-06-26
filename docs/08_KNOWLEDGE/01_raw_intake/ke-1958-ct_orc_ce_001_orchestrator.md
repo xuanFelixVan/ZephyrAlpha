@@ -4,6 +4,7 @@ status: active
 title: 2.3 CT-ORC-CE-001：Orchestrator ↔ Context Engine
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 CT-ORC-CE-001：Orchestrator ↔ Context Engine

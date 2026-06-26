@@ -4,6 +4,7 @@ status: active
 title: 9.5 Zero-Trust Skill Architecture
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.5 Zero-Trust Skill Architecture

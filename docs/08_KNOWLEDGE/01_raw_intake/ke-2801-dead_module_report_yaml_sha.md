@@ -4,6 +4,7 @@ status: active
 title: dead_module_report.yaml —— shared_lifecycle_manager.py 产出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # dead_module_report.yaml —— shared_lifecycle_manager.py 产出

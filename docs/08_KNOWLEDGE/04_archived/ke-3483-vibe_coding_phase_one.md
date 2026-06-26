@@ -3,6 +3,7 @@ module_id: KE-3348
 title: 5A.1 6 大核心服务一句话定位
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5A.1 6 大核心服务一句话定位

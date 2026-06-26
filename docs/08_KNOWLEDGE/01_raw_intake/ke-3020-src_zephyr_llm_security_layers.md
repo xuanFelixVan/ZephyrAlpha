@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/llm-security/layers/l5_resource_protection.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/llm-security/layers/l5_resource_protection.py

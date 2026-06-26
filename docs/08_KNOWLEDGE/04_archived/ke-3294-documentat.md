@@ -3,6 +3,7 @@ module_id: KE-3182
 title: 11.3 伸缩触发点
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.3 伸缩触发点

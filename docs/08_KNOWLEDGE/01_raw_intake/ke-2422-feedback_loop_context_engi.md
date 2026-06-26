@@ -4,6 +4,7 @@ status: active
 title: 遗漏 #5：Feedback Loop → Context Engine 反馈通道 schema
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 遗漏 #5：Feedback Loop → Context Engine 反馈通道 schema

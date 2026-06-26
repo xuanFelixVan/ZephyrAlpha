@@ -4,6 +4,7 @@ status: active
 title: 4.5 Cross-cutting governance / 横向治理贯穿全链
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5 Cross-cutting governance / 横向治理贯穿全链

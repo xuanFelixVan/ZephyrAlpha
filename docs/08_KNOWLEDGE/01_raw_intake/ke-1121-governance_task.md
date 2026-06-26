@@ -3,6 +3,7 @@ module_id: KE-1036
 title: 8.4 governance/task/ 文件夹
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.4 governance/task/ 文件夹

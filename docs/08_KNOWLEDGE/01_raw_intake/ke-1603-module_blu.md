@@ -4,6 +4,7 @@ status: active
 title: 14.2 六轮审计全景
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.2 六轮审计全景

@@ -4,6 +4,7 @@ status: active
 title: Bug #4: AISGSandbox.scan_content() 返回 `list[str]` 而非 `list[dict]`
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bug #4: AISGSandbox.scan_content() 返回 `list[str]` 而非 `list[dict]`

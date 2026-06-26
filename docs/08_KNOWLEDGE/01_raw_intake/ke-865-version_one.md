@@ -3,6 +3,7 @@ module_id: KE-787
 title: 2.1 V1 自动化阻断
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 V1 自动化阻断

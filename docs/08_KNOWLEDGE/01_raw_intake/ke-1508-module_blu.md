@@ -3,6 +3,7 @@ module_id: KE-1418
 title: 12.1 施工策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.1 施工策略

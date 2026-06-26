@@ -3,6 +3,7 @@ module_id: KE-3560
 title: 3. 验证方式
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 验证方式

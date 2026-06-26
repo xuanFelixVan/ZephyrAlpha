@@ -4,6 +4,7 @@ status: active
 title: permission_hooks.py — 新增文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # permission_hooks.py — 新增文件

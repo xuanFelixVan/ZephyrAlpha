@@ -4,6 +4,7 @@ status: active
 title: 3. FileLockBackend（跨进程，B133）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. FileLockBackend（跨进程，B133）

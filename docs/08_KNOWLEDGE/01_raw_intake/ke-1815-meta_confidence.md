@@ -4,6 +4,7 @@ status: active
 title: 2.16 升级引擎 Meta-Confidence —— 判定自身的置信度（决策 D-022-10）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.16 升级引擎 Meta-Confidence —— 判定自身的置信度（决策 D-022-10）

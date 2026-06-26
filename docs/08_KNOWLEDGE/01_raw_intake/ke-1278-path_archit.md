@@ -4,6 +4,7 @@ status: active
 title: MTH-013：路径架构合规创建原则（Path Architecture Compliance） [MUST — 所有文件/目录创建操作]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-013：路径架构合规创建原则（Path Architecture Compliance） [MUST — 所有文件/目录创建操作]

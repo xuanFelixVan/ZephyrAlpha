@@ -4,6 +4,7 @@ status: active
 title: 6.1 metadata-registry.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 metadata-registry.yaml

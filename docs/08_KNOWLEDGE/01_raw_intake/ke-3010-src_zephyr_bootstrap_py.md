@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/bootstrap.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/bootstrap.py

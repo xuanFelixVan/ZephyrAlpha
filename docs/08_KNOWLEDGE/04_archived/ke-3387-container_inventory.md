@@ -3,6 +3,7 @@ module_id: KE-3387
 title: 3.2 Container inventory / 容器清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 Container inventory / 容器清单

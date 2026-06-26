@@ -4,6 +4,7 @@ status: active
 title: sensitivity_sweep_report.yaml —— Wave 2 health-monitor.py 产出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # sensitivity_sweep_report.yaml —— Wave 2 health-monitor.py 产出

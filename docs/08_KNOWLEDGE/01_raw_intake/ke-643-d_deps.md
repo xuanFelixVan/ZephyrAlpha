@@ -4,6 +4,7 @@ status: active
 title: D-DEPS：依赖与接口一致性
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-DEPS：依赖与接口一致性

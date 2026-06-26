@@ -4,6 +4,7 @@ status: active
 title: 4. status 受控词表（三域分离）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. status 受控词表（三域分离）

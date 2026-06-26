@@ -4,6 +4,7 @@ status: active
 title: 2.14 确定性重放——审计日志→系统状态重建（决策 D-020-34）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.14 确定性重放——审计日志→系统状态重建（决策 D-020-34）

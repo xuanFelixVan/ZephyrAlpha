@@ -19,7 +19,7 @@
 
 module_id: MOD-GOVERNANCE
 schema_version: "1.0"
-doc_type: registry
+doc_type: register
 ttl: permanent
 last_updated: "2026-05-06"
 

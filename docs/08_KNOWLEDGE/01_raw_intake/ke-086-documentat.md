@@ -3,6 +3,7 @@ module_id: KE-080
 title: 1.2 权重分配理由
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 权重分配理由

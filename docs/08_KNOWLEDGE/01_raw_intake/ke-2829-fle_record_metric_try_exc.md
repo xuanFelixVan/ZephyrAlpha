@@ -4,6 +4,7 @@ status: active
 title: 调 FLE 的 record_metric 必须 try/except，不抛到业务层
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 调 FLE 的 record_metric 必须 try/except，不抛到业务层

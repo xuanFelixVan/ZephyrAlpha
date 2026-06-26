@@ -3,6 +3,7 @@ module_id: KE-691
 title: 1.2 与其他视图的边界
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 与其他视图的边界

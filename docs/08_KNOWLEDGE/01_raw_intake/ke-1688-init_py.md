@@ -4,6 +4,7 @@ status: active
 title: 2. __init__.py 导出符号
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. __init__.py 导出符号

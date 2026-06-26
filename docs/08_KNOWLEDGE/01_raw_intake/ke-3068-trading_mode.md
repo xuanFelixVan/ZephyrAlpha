@@ -4,6 +4,7 @@ status: active
 title: 交易模式切换（Trading Mode）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 交易模式切换（Trading Mode）

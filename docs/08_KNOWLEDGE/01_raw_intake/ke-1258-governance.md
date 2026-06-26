@@ -4,6 +4,7 @@ status: active
 title: 新格式（必须）——结构化 map 数组
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 新格式（必须）——结构化 map 数组

@@ -4,6 +4,7 @@ status: active
 title: 5. 告警响应流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 告警响应流程

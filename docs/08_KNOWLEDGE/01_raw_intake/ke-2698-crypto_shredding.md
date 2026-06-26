@@ -4,6 +4,7 @@ status: active
 title: Crypto-Shredding
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Crypto-Shredding

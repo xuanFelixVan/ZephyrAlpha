@@ -3,6 +3,7 @@ module_id: KE-2418
 title: 7. 风险登记
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 风险登记

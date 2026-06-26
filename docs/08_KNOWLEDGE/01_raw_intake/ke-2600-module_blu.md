@@ -3,6 +3,7 @@ module_id: KE-2505
 title: 9. 已知风险与缓解
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 已知风险与缓解

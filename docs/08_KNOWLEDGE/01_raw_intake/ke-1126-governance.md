@@ -4,6 +4,7 @@ status: active
 title: 9. 推导链
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9. 推导链

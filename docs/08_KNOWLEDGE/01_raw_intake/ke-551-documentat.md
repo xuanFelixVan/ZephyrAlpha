@@ -4,6 +4,7 @@ status: active
 title: 7.3 一人团队的简化
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 一人团队的简化

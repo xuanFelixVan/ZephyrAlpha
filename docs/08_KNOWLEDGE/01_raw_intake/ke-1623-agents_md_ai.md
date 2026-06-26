@@ -4,6 +4,7 @@ status: active
 title: 15.1 AGENTS.md 硬约束（AI 冷启动零次理解成本）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 AGENTS.md 硬约束（AI 冷启动零次理解成本）

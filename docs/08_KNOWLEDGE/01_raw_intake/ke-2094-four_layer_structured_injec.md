@@ -4,6 +4,7 @@ status: active
 title: 3. Four-Layer Structured Injection (§5.4 INJECT-C00)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Four-Layer Structured Injection (§5.4 INJECT-C00)

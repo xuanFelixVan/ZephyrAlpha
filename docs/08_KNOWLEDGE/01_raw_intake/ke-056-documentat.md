@@ -4,6 +4,7 @@ status: active
 title: 0. 双轨制 + 双层对齐（规则引用）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0. 双轨制 + 双层对齐（规则引用）

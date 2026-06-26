@@ -4,6 +4,7 @@ status: active
 title: Schema Registry (D-019-67)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Schema Registry (D-019-67)

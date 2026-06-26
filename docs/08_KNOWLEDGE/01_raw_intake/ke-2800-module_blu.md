@@ -3,6 +3,7 @@ module_id: KE-2703-----------10-000
 title: DB-025-0092：蓝图编写铁律自检——10条铁律逐条复核验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0092：蓝图编写铁律自检——10条铁律逐条复核验证

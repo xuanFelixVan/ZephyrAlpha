@@ -3,6 +3,7 @@ module_id: KE-1264
 status: active
 title: Ke Module Blu     004
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 --004

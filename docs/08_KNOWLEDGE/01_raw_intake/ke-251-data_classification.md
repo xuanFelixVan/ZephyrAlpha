@@ -3,6 +3,7 @@ module_id: KE-230
 title: 3. Data Classification / 数据分类（三维）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Data Classification / 数据分类（三维）

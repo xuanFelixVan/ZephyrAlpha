@@ -4,6 +4,7 @@ status: active
 title: 6.8 文件删除质量对比预检（File Deletion Quality Comparison Gate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.8 文件删除质量对比预检（File Deletion Quality Comparison Gate）

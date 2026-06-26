@@ -4,6 +4,7 @@ status: active
 title: 8A.4 配置热更新
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8A.4 配置热更新

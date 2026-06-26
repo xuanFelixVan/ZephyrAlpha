@@ -3,6 +3,7 @@ module_id: KE-893---------g1-ingest-yaml-000
 title: 4.1.2 检查项（对应 `g1-ingest.yaml`）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1.2 检查项（对应 `g1-ingest.yaml`）

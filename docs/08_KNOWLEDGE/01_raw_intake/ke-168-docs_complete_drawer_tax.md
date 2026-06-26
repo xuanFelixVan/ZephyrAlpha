@@ -4,6 +4,7 @@ status: active
 title: 2. `docs/` complete drawer taxonomy / `docs/` 完整抽屉体系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. `docs/` complete drawer taxonomy / `docs/` 完整抽屉体系

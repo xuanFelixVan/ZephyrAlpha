@@ -3,6 +3,7 @@ module_id: KE-4311-----b-db-yaml--000
 title: DB-025-0046：R07 缓解——b_db.yaml SSoT 漂移
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0046：R07 缓解——b_db.yaml SSoT 漂移

@@ -4,6 +4,7 @@ status: active
 title: Saga Coordinator（触发式）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Saga Coordinator（触发式）

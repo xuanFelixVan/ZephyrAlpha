@@ -4,6 +4,7 @@ status: active
 title: 8.4 完整迭代伪代码
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.4 完整迭代伪代码

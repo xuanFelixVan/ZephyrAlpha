@@ -4,6 +4,7 @@ status: active
 title: 0. 本文档定位
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0. 本文档定位

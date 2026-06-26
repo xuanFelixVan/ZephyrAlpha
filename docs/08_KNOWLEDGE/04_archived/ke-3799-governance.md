@@ -3,6 +3,7 @@ module_id: KE-3648
 title: ABS-004：策略间相关性必须设置限额
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ABS-004：策略间相关性必须设置限额

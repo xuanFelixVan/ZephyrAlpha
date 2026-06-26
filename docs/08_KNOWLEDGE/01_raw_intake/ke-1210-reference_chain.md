@@ -4,6 +4,7 @@ status: active
 title: DOC-009：引用链完整性（Reference Chain Integrity）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-009：引用链完整性（Reference Chain Integrity）

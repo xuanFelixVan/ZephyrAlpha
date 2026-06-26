@@ -3,6 +3,7 @@ module_id: KE-4361
 title: 7.3 Collection 路由规则（git hook 默认）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 Collection 路由规则（git hook 默认）

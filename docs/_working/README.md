@@ -1,6 +1,6 @@
 ---
 title: 临时工作区（_working/）
-doc_type: directory_index
+doc_type: index
 ttl: permanent
 ---
 

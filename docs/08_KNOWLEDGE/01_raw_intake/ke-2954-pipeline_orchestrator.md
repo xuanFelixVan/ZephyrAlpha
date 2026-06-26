@@ -4,6 +4,7 @@ status: active
 title: === Pipeline-Orchestrator 双向状态漂移 ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === Pipeline-Orchestrator 双向状态漂移 ===

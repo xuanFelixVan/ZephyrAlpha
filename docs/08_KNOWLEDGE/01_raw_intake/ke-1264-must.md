@@ -4,6 +4,7 @@ status: active
 title: MTH-002：架构上下文自检 [MUST — 每次文件操作前强制执行]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-002：架构上下文自检 [MUST — 每次文件操作前强制执行]

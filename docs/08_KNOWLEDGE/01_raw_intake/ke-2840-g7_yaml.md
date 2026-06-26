@@ -4,6 +4,7 @@ status: active
 title: G7 YAML 规则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # G7 YAML 规则

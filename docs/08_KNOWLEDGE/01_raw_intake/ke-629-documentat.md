@@ -4,6 +4,7 @@ status: active
 title: 何时激活（升级为 `active`）？
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 何时激活（升级为 `active`）？

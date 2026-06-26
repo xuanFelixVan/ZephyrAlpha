@@ -4,6 +4,7 @@ status: active
 title: 4.5.5 否决方案
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5.5 否决方案

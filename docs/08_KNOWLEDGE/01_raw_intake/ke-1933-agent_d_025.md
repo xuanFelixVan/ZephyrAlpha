@@ -4,6 +4,7 @@ status: active
 title: 2.26 潜空间 Agent 间通信（决策 D-025-23）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.26 潜空间 Agent 间通信（决策 D-025-23）

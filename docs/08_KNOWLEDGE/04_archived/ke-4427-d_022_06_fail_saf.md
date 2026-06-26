@@ -3,6 +3,7 @@ module_id: KE-4262---d-022-06---fail-saf-003
 title: D-022-05 + D-022-06 引擎Fail-Safe + 死锁防护
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-05 + D-022-06 引擎Fail-Safe + 死锁防护

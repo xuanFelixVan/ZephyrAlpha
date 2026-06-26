@@ -3,6 +3,7 @@ module_id: KE-1614
 title: 2. Fatal Vulnerabilities B13-B20
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Fatal Vulnerabilities B13-B20

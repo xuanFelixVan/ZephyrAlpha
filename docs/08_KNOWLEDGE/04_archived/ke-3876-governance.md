@@ -3,6 +3,7 @@ module_id: KE-3725
 title: SIR-002：全级别通用响应规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SIR-002：全级别通用响应规则

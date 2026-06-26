@@ -3,6 +3,7 @@ module_id: KE-1981-----------19-2----6-3-000
 title: 3. 蓝图外已有实现（§19.2 + §6.3）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 蓝图外已有实现（§19.2 + §6.3）

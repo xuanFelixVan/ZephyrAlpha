@@ -4,6 +4,7 @@ status: active
 title: ✅ 正确（真正不确定类型时，用显式 Any 而非裸写）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ✅ 正确（真正不确定类型时，用显式 Any 而非裸写）

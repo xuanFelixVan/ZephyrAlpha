@@ -3,6 +3,7 @@ module_id: KE-3057
 title: L13 Experimentation（2 个新文件）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L13 Experimentation（2 个新文件）

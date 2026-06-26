@@ -4,6 +4,7 @@ status: active
 title: Track B：金融领域知识（7 类）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Track B：金融领域知识（7 类）

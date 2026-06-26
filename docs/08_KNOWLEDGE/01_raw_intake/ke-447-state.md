@@ -4,6 +4,7 @@ status: active
 title: 5.1 State 分域
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 State 分域

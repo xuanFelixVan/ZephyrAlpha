@@ -4,6 +4,7 @@ status: active
 title: 5. Source Validation — §5.3 VALIDATE-C01
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. Source Validation — §5.3 VALIDATE-C01

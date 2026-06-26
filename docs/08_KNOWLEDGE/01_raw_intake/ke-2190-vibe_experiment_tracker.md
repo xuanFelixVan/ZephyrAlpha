@@ -4,6 +4,7 @@ status: active
 title: 3.3 #41: VibeExperimentTracker (M-38)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 #41: VibeExperimentTracker (M-38)

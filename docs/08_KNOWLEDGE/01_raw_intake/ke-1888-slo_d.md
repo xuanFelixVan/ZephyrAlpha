@@ -4,6 +4,7 @@ status: active
 title: 2.22 SLO驱动升级合约 + 量化交易特化（决策 D-022-12）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.22 SLO驱动升级合约 + 量化交易特化（决策 D-022-12）

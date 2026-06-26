@@ -3,6 +3,7 @@ module_id: KE-213---pnl-000
 title: 2.6 Risk & PnL 域（风险与盈亏）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.6 Risk & PnL 域（风险与盈亏）

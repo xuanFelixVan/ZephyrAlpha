@@ -4,6 +4,7 @@ status: active
 title: 2. MemoryLockBackend（进程内）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. MemoryLockBackend（进程内）

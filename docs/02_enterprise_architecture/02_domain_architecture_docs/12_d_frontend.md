@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-FRONTEND 前端架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D-FRONTEND）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-FRONTEND | Domain ID | D-FRONTEND |
 | 域名称 | 前端 | Domain Name | 前端 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 33 | Module Count | 33 |
+| 模块数 | 23 | Module Count | 23 |
 | 域内依赖 | 13 | Internal Dependencies | 13 |
 | 跨域入边 | 8 | Cross-domain Incoming | 8 |
-| 跨域出边 | 9 | Cross-domain Outgoing | 9 |
-| 设计态模块 | 10 | Design Modules | 10 |
+| 跨域出边 | 8 | Cross-domain Outgoing | 8 |
+| 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 16 | Prototype Modules | 16 |
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 33 个模块（按路径排序，全部显示）
+共 23 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -63,16 +63,6 @@ ttl: permanent
 | src/zephyr/frontend/interface_base.py |  | prototype | generated |
 | src/zephyr/frontend/models/__init__.py |  | prototype | deprecated |
 | src/zephyr/frontend/services/__init__.py |  | prototype | deprecated |
-| 前端域/D-FRONTEND-06 | Report Visualization | design | planned |
-| 前端域/D-FRONTEND-08 | Alert Visualization | design | planned |
-| 前端域/D-FRONTEND-10 | Custom Chart Builder | design | planned |
-| 前端域/D-FRONTEND-12 | Approval Workflow UI | design | planned |
-| 前端域/D-FRONTEND-14 | Mobile Dashboard | design | planned |
-| 前端域/D-FRONTEND-16 | Collaborative Workspace | design | planned |
-| 前端域/D-FRONTEND-18 | Trading Chatbot | design | planned |
-| 前端域/D-FRONTEND-20 | One-Click Quant Interface | design | planned |
-| 前端域/D-FRONTEND-22 | API Gateway Proxy | design | planned |
-| 前端域/D-FRONTEND-24 | Feishu Bot | design | planned |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -83,8 +73,6 @@ ttl: permanent
 > - **虚线边框 = 设计态模块**（design，还在设计中）
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
-
-### 第 1 页 / 共 2 页 / Page 1 of 2
 
 ```mermaid
 graph TD
@@ -112,13 +100,6 @@ graph TD
         src_zephyr_frontend_interface_base_py_1["src/zephyr/frontend/interface_base.py prototype"]
         src_zephyr_frontend_models_init_py["src/zephyr/frontend/models/__init__.py prototype"]
         src_zephyr_frontend_services_init_py["src/zephyr/frontend/services/__init__.py prototype"]
-        D_FRONTEND_06["Report Visualization design"]
-        D_FRONTEND_08["Alert Visualization design"]
-        D_FRONTEND_10["Custom Chart Builder design"]
-        D_FRONTEND_12["Approval Workflow UI design"]
-        D_FRONTEND_14["Mobile Dashboard design"]
-        D_FRONTEND_16["Collaborative Workspace design"]
-        D_FRONTEND_18["Trading Chatbot design"]
     end
     src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_init_py -.->|config_depends| src_zephyr_frontend_dashboard_app_py
@@ -133,8 +114,7 @@ graph TD
     src_zephyr_frontend_interface_base_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
     src_zephyr_frontend_dashboard_components_gate_statistics_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
     src_zephyr_frontend_dashboard_components_task_progress_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
-    D_OPS["D-OPS design"]
-    D_FRONTEND_06 -.->|contract| D_OPS
+    D_OPS["D-OPS production"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -->|import_depends| D_OPS
     D_INFRA_OPS["D-INFRA_OPS prototype"]
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_INFRA_OPS
@@ -159,25 +139,9 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_interface_base_py production
-    class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_app_py_1,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_fitness_functions_py_1,src_zephyr_frontend_dashboard_components_gate_statistics_py_1,src_zephyr_frontend_dashboard_components_knowledge_overview_py_1,src_zephyr_frontend_dashboard_components_olap_trend_py_1,src_zephyr_frontend_dashboard_components_task_progress_py_1,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_interface_base_py_1,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py,D_FRONTEND_06,D_FRONTEND_08,D_FRONTEND_10,D_FRONTEND_12,D_FRONTEND_14,D_FRONTEND_16,D_FRONTEND_18 design
-    class D_GOVERNANCE external_prod
-    class D_OPS,D_INFRA_OPS,D_SHARED external_design
-```
-
-### 第 2 页 / 共 2 页 / Page 2 of 2
-
-```mermaid
-graph TD
-    subgraph D_FRONTEND["D-FRONTEND 前端"]
-        D_FRONTEND_20["One-Click Quant Interface design"]
-        D_FRONTEND_22["API Gateway Proxy design"]
-        D_FRONTEND_24["Feishu Bot design"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class D_FRONTEND_20,D_FRONTEND_22,D_FRONTEND_24 design
+    class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_app_py_1,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_fitness_functions_py_1,src_zephyr_frontend_dashboard_components_gate_statistics_py_1,src_zephyr_frontend_dashboard_components_knowledge_overview_py_1,src_zephyr_frontend_dashboard_components_olap_trend_py_1,src_zephyr_frontend_dashboard_components_task_progress_py_1,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_interface_base_py_1,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py design
+    class D_OPS,D_GOVERNANCE external_prod
+    class D_INFRA_OPS,D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -187,7 +151,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 4 | import_depends |
-| D-OPS | 3 | contract,import_depends |
+| D-OPS | 2 | import_depends |
 | D-SHARED | 1 | import_depends |
 | D-INFRA_OPS | 1 | import_depends |
 

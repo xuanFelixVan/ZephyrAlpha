@@ -4,6 +4,7 @@ status: active
 title: 2.5 动作历史与去重（Action History with Dedup）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 动作历史与去重（Action History with Dedup）

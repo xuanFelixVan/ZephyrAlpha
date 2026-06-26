@@ -4,6 +4,7 @@ status: active
 title: 2.23 Context Poisoning Cascade 检测
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.23 Context Poisoning Cascade 检测

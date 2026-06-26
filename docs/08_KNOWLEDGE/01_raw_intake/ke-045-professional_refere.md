@@ -4,6 +4,7 @@ status: active
 title: 7.4 专业对标驱动（Professional Reference Driven）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.4 专业对标驱动（Professional Reference Driven）

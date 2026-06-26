@@ -4,6 +4,7 @@ status: active
 title: 8. 紧急变更
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 紧急变更

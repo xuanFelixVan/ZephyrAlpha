@@ -3,6 +3,7 @@ module_id: KE-4049
 title: 3. Silent Failure Matrix Coverage
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Silent Failure Matrix Coverage

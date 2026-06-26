@@ -3,6 +3,7 @@ module_id: KE-4002
 title: 2.3 不包含的职责
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 不包含的职责

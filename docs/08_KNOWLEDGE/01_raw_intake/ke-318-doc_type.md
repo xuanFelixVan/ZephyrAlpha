@@ -4,6 +4,7 @@ status: active
 title: 3.5 新增 doc_type 的流程
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 新增 doc_type 的流程

@@ -4,6 +4,7 @@ status: active
 title: §9 标准间引用规范
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §9 标准间引用规范

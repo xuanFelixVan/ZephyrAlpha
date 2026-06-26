@@ -3,6 +3,7 @@ module_id: KE-748
 title: 15.2 `stability` 字段
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.2 `stability` 字段

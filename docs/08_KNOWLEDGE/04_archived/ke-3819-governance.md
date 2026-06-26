@@ -3,6 +3,7 @@ module_id: KE-3668
 title: AVP-003：变更日志
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AVP-003：变更日志

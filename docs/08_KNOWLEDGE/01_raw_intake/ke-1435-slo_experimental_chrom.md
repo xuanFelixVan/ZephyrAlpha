@@ -3,6 +3,7 @@ module_id: KE-1345----slo-experimental-chrom-000
 title: 10.1 稳态 SLO（experimental，ChromaDB 已加载完毕后）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 稳态 SLO（experimental，ChromaDB 已加载完毕后）

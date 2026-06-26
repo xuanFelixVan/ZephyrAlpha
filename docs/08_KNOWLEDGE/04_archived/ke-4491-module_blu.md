@@ -3,6 +3,7 @@ module_id: KE-4326----------15-000
 title: DB-025-0065：测试覆盖矩阵——§15
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0065：测试覆盖矩阵——§15

@@ -3,6 +3,7 @@ module_id: KE-3372-------ssot-003
 title: 7. 本文档的 SSoT 声明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 本文档的 SSoT 声明

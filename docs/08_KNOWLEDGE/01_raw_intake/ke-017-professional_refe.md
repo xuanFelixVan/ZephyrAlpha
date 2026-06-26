@@ -4,6 +4,7 @@ status: active
 title: 6.1 专业机构论证先行（Professional Reference-Validated Decision Making）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 专业机构论证先行（Professional Reference-Validated Decision Making）

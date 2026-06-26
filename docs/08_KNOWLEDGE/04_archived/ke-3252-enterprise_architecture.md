@@ -3,6 +3,7 @@ module_id: KE-3146
 title: 02 Enterprise Architecture — 目录索引
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 02 Enterprise Architecture — 目录索引

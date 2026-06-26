@@ -4,6 +4,7 @@ status: active
 title: Bulkhead（舱壁隔离）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bulkhead（舱壁隔离）

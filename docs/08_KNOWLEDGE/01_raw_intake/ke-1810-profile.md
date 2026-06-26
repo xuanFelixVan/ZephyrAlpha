@@ -4,6 +4,7 @@ status: active
 title: 2.15 环境感知预算 Profile
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.15 环境感知预算 Profile

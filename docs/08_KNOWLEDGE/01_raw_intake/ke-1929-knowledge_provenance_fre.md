@@ -4,6 +4,7 @@ status: active
 title: 2.251 Knowledge Provenance Freshness Scorer - knowledge_provenance_freshness.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.251 Knowledge Provenance Freshness Scorer - knowledge_provenance_freshness.py

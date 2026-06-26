@@ -4,6 +4,7 @@ status: active
 title: AUDIT-04：企业架构 + architecture_model 全量审计报告
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # AUDIT-04：企业架构 + architecture_model 全量审计报告

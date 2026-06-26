@@ -4,6 +4,7 @@ status: active
 title: ── v0.5.0 新增：额外的自适应干预动作（Oracle Runtime Budget Guardrails 对标）──
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ── v0.5.0 新增：额外的自适应干预动作（Oracle Runtime Budget Guardrails 对标）──

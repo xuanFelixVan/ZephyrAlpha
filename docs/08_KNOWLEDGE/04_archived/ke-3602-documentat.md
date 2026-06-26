@@ -3,6 +3,7 @@ module_id: KE-3458
 title: 根目录文件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 根目录文件

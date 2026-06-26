@@ -3,6 +3,7 @@ module_id: KE-2864
 title: R类：升级协议的自我验证与安全生产
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # R类：升级协议的自我验证与安全生产

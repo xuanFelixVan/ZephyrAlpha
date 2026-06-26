@@ -4,6 +4,7 @@ status: active
 title: 7.5 YAML schema 校验工具（T-2-17 配套交付）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.5 YAML schema 校验工具（T-2-17 配套交付）

@@ -4,6 +4,7 @@ status: active
 title: 13. 模块间交互规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 模块间交互规则

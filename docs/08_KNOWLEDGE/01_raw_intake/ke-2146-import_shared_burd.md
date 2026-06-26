@@ -4,6 +4,7 @@ status: active
 title: 3.11 Import表面积负债追踪（Shared Burden Score — v0.6.0 新增 — Wave 2 落地）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.11 Import表面积负债追踪（Shared Burden Score — v0.6.0 新增 — Wave 2 落地）

@@ -4,6 +4,7 @@ status: active
 title: Phase F 测试结果
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase F 测试结果

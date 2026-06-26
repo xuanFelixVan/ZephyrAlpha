@@ -4,6 +4,7 @@ status: active
 title: IRN-006：模型能力边界（铁律6）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-006：模型能力边界（铁律6）

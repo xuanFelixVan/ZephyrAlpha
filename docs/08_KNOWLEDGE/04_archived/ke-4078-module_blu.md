@@ -3,6 +3,7 @@ module_id: KE-3924
 title: 15.4 文档同步策略
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.4 文档同步策略

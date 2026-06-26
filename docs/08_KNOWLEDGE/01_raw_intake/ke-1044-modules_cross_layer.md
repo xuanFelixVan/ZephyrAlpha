@@ -4,6 +4,7 @@ status: active
 title: 5.5 `03_modules/_cross_layer/` — 跨层模块
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.5 `03_modules/_cross_layer/` — 跨层模块

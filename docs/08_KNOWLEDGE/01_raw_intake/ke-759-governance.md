@@ -4,6 +4,7 @@ status: active
 title: §1 本目录的责任
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §1 本目录的责任

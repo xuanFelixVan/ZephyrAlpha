@@ -1,19 +1,19 @@
 ---
-doc_type: domain_architecture_doc
-title: D-INTEGRATION-GATEWAY mcp_servers架构文档
+doc_type: architecture_view
+title: D-INTEGRATION_GATEWAY mcp_servers架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
 
 # 14_d_integration_gateway / mcp_servers
 
-> **文档作用 / Purpose**: 展示 mcp_servers（D-INTEGRATION-GATEWAY）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 mcp_servers（D-INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 14 | Number | 14 |
-| 域ID | D-INTEGRATION-GATEWAY | Domain ID | D-INTEGRATION-GATEWAY |
+| 域ID | D-INTEGRATION_GATEWAY | Domain ID | D-INTEGRATION_GATEWAY |
 | 域名称 | mcp_servers | Domain Name | mcp_servers |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 0 | Module Count | 0 |
@@ -53,7 +53,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION_GATEWAY["D-INTEGRATION-GATEWAY mcp_servers"]
+    subgraph D_INTEGRATION_GATEWAY["D-INTEGRATION_GATEWAY mcp_servers"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

@@ -3,6 +3,7 @@ module_id: KE-2465
 title: 8.1 当前规模
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 当前规模

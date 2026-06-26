@@ -4,6 +4,7 @@ status: active
 title: MAD-003：依赖关系合规（MOD-P3）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MAD-003：依赖关系合规（MOD-P3）

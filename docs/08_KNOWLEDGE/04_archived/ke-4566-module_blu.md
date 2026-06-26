@@ -3,6 +3,7 @@ module_id: KE-4401
 title: Phase 4：运维自动化
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase 4：运维自动化

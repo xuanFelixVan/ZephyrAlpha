@@ -4,6 +4,7 @@ status: active
 title: 13.4 健康检查
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.4 健康检查

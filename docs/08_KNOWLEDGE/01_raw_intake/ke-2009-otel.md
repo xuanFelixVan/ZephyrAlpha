@@ -4,6 +4,7 @@ status: active
 title: 2.5 OTel 语义规范跨模块传播
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 OTel 语义规范跨模块传播

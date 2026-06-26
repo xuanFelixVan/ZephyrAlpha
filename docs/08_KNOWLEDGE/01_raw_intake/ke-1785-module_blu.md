@@ -4,6 +4,7 @@ status: active
 title: 2.11 降级机制与渐进式恢复
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.11 降级机制与渐进式恢复

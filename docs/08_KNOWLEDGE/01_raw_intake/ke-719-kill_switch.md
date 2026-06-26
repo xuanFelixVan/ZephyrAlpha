@@ -4,6 +4,7 @@ status: active
 title: Step 3.5：确认 Kill Switch 配置
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 3.5：确认 Kill Switch 配置

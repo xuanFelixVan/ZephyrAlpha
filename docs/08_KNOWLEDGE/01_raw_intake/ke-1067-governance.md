@@ -4,6 +4,7 @@ status: active
 title: 6.2 分类规则
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 分类规则

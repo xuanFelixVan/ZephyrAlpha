@@ -4,6 +4,7 @@ status: active
 title: 2.4 skill-registry.yaml 初始注册表
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 skill-registry.yaml 初始注册表

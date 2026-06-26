@@ -1,7 +1,7 @@
 # architecture_model/（仓库根）— 机读边界声明
 # 病根治理：与 docs 下 EA 树并存，职责不得混写。
 schema_version: "1.0"
-doc_type: architecture_tree_scope
+doc_type: reference
 last_updated: "2026-05-06"
 
 this_tree:

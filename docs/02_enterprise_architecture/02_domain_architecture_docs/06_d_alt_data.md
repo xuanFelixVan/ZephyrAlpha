@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-ALT_DATA 另类数据架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 另类数据（D-ALT_DATA）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 1 | Production Modules | 1 |
@@ -71,24 +71,19 @@ graph TD
         src_zephyr_alt_data_services_init_py["src/zephyr/alt_data/services/__init__.py prototype"]
         src_zephyr_data_init_py["src/zephyr/data/__init__.py production"]
     end
-    D_SHARED["D-SHARED design"]
-    src_zephyr_alt_data_init_py -.->|contract| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_init_py production
     class src_zephyr_alt_data_init_py,src_zephyr_alt_data_extensions_init_py,src_zephyr_alt_data_api_init_py,src_zephyr_alt_data_core_init_py,src_zephyr_alt_data_infrastructure_init_py,src_zephyr_alt_data_models_init_py,src_zephyr_alt_data_services_init_py design
-    class D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
-|--------|:---:|---------|
-| D-SHARED | 1 | contract |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 

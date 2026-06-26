@@ -4,6 +4,7 @@ status: active
 title: 域蓝图 frontmatter（示例——beta 创建时）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 域蓝图 frontmatter（示例——beta 创建时）

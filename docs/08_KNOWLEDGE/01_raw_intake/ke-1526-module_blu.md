@@ -4,6 +4,7 @@ status: active
 title: 12.4 盲点清单（系统设计易遗漏的审计死角）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.4 盲点清单（系统设计易遗漏的审计死角）

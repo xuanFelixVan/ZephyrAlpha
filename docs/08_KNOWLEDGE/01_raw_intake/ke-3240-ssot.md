@@ -4,6 +4,7 @@ status: active
 title: SSoT 矛盾扫描报告
 category: test_coverage
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SSoT 矛盾扫描报告

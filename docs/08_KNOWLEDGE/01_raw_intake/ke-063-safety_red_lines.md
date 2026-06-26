@@ -3,6 +3,7 @@ module_id: KE-060-------safety-red-lines-006
 title: 1. 安全红线（Safety Red Lines / 不可撤销原则）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 安全红线（Safety Red Lines / 不可撤销原则）

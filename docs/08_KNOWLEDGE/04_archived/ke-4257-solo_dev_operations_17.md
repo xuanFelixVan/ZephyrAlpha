@@ -3,6 +3,7 @@ module_id: KE-4098---17-2-000
 title: 4. Solo-Dev Operations (§17.2)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. Solo-Dev Operations (§17.2)

@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 元数据登记表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 元数据登记表

@@ -4,6 +4,7 @@ status: active
 title: 7.2 新增 `src/zephyr/` 包（C 轨 or B 轨）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 新增 `src/zephyr/` 包（C 轨 or B 轨）

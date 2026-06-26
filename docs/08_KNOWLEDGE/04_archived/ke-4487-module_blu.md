@@ -3,6 +3,7 @@ module_id: KE-4322----------10------3-000
 title: DB-025-0058：负面后果监控——§10 负面后果 3 项
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0058：负面后果监控——§10 负面后果 3 项

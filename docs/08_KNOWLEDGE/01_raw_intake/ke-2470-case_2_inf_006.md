@@ -4,6 +4,7 @@ status: active
 title: 6.2 Case 2：INF-006 任务系统蓝图 → 施工 Phase 规划（R76）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 Case 2：INF-006 任务系统蓝图 → 施工 Phase 规划（R76）

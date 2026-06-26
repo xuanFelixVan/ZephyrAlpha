@@ -4,6 +4,7 @@ status: active
 title: 3.9.5 决策记录的三层模型（取代旧 ADR 体系）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9.5 决策记录的三层模型（取代旧 ADR 体系）

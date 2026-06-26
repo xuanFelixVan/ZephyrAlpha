@@ -4,6 +4,7 @@ status: active
 title: 2.2.4 编号空间铁律（扁平 + append-only）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2.4 编号空间铁律（扁平 + append-only）

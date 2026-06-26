@@ -4,6 +4,7 @@ status: active
 title: 🔴 RULE-ONE：Python 脚本并发写入安全规范（与 RULE-ZERO 同级）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 🔴 RULE-ONE：Python 脚本并发写入安全规范（与 RULE-ZERO 同级）

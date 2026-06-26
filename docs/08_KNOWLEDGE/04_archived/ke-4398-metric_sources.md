@@ -3,6 +3,7 @@ module_id: KE-4234----metric-sources-000
 title: 9.1 上游 Metric Sources
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 上游 Metric Sources

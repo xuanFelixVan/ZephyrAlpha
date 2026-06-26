@@ -4,6 +4,7 @@ status: active
 title: Skill Package (D-019-81)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Skill Package (D-019-81)

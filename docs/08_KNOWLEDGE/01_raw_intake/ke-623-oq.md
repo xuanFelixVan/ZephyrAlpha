@@ -4,6 +4,7 @@ status: active
 title: 9.4 下沉规则（与 OQ-072 双轨制协同）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.4 下沉规则（与 OQ-072 双轨制协同）

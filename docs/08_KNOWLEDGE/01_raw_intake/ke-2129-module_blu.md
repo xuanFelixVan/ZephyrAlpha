@@ -4,6 +4,7 @@ status: active
 title: 3.1.2 任务卡生命周期管理器
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1.2 任务卡生命周期管理器

@@ -4,6 +4,7 @@ status: active
 title: 知识库系统蓝图（MOD-KB-001）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 知识库系统蓝图（MOD-KB-001）

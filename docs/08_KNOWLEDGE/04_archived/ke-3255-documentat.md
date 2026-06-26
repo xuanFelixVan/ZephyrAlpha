@@ -3,6 +3,7 @@ module_id: KE-3149
 title: 1. 协议类型与适用范围
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1. 协议类型与适用范围

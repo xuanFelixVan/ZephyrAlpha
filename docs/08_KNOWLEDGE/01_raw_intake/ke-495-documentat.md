@@ -3,6 +3,7 @@ module_id: KE-444
 title: 6.1 能力升档投入模型
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 能力升档投入模型

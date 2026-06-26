@@ -3,6 +3,7 @@ module_id: KE-002
 title: 4. 编码安全（唯一始终生效的硬规则）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 编码安全（唯一始终生效的硬规则）

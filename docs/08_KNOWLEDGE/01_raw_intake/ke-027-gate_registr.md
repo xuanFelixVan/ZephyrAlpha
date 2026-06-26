@@ -4,6 +4,7 @@ status: active
 title: 6.19 门禁-登记表原子同步铁律（Gate-Registry Atomic Sync Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.19 门禁-登记表原子同步铁律（Gate-Registry Atomic Sync Mandate）

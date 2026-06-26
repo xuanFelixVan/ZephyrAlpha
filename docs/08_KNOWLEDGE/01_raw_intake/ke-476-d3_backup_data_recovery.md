@@ -4,6 +4,7 @@ status: active
 title: §5 D3 — Backup & Data Recovery / 备份与数据恢复域
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §5 D3 — Backup & Data Recovery / 备份与数据恢复域

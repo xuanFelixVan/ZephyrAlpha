@@ -3,6 +3,7 @@ module_id: KE-2188
 title: 4. beta v (5 Files)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. beta v (5 Files)

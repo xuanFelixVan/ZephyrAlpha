@@ -4,6 +4,7 @@ status: active
 title: 8.1 已经自动加载（热记忆）——但需自检
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 已经自动加载（热记忆）——但需自检

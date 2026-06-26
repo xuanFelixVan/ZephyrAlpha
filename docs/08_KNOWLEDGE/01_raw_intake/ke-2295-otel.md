@@ -4,6 +4,7 @@ status: active
 title: 4. OTel 语义集成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. OTel 语义集成

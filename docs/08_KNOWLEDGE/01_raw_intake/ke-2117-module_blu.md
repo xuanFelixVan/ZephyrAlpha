@@ -3,6 +3,7 @@ module_id: KE-2025
 title: 3. 文件组成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 文件组成

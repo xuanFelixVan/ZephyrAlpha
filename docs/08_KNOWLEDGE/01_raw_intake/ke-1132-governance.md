@@ -4,6 +4,7 @@ status: active
 title: 9.3 豁免副作用
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.3 豁免副作用

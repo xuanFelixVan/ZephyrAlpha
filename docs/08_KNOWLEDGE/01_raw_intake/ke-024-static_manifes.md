@@ -4,6 +4,7 @@ status: active
 title: 6.16 静态清单自动生成铁律（Static Manifest Auto-Generation Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.16 静态清单自动生成铁律（Static Manifest Auto-Generation Mandate）

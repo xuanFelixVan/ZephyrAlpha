@@ -3,6 +3,7 @@ module_id: KE-1603
 title: 2. AP Protection Implementation
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. AP Protection Implementation

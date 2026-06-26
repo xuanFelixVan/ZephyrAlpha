@@ -4,6 +4,7 @@ status: active
 title: IRN-008：先读后写（铁律8）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-008：先读后写（铁律8）

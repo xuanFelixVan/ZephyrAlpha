@@ -3,6 +3,7 @@ module_id: KE-476
 title: 7. Master Data Management / 主数据管理
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Master Data Management / 主数据管理

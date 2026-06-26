@@ -4,6 +4,7 @@ status: active
 title: === 成本/ROI 经济学 ===
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # === 成本/ROI 经济学 ===

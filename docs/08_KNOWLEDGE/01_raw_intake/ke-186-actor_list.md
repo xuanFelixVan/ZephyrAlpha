@@ -3,6 +3,7 @@ module_id: KE-167
 title: 2.1 Actor list / 参与者清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Actor list / 参与者清单

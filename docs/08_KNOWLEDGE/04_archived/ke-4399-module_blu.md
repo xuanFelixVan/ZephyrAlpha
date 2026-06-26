@@ -3,6 +3,7 @@ module_id: KE-4235
 title: 9.1 四级限流体系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 四级限流体系

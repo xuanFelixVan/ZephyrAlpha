@@ -22,7 +22,7 @@
 module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
-doc_type: rule
+doc_type: config
 title: "Feature Activation Policy"
 status: active
 ttl: permanent

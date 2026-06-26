@@ -3,6 +3,7 @@ module_id: KE-1515------4--------002
 title: 14.2 K. ChromaDB 运维纵深（4个）——对标 ChromaDB 源码级运维 + SQLite Production Patterns
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.2 K. ChromaDB 运维纵深（4个）——对标 ChromaDB 源码级运维 + SQLite Production Patterns

@@ -4,6 +4,7 @@ status: active
 title: 10.3 Traces / 分布式追踪
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 Traces / 分布式追踪

@@ -4,6 +4,7 @@ status: active
 title: Runtime Integration — MOD-INF-002
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Runtime Integration — MOD-INF-002

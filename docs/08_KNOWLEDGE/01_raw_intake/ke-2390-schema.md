@@ -4,6 +4,7 @@ status: active
 title: 5.2 数据库 Schema
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 数据库 Schema

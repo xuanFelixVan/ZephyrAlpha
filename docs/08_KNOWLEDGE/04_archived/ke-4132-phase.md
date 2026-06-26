@@ -3,6 +3,7 @@ module_id: KE-3977
 title: 2. Phase-版本映射
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. Phase-版本映射

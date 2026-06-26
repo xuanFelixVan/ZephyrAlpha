@@ -696,8 +696,8 @@ git checkout -- scripts/governance/extract_depgraph.py
 
 | # | 验证项 | 命令 | 预期结果 |
 |---|--------|------|---------|
-| 1 | 无残留sqlite3.connect | `grep -n "sqlite3.connect" scripts/governance/generate_target_path_tree.py` | 0结果 |
-| 2 | 脚本可运行 | `python scripts/governance/generate_target_path_tree.py --help` | 正常输出 |
+| 1 | 无残留sqlite3.connect | `grep -n "sqlite3.connect" scripts/governance/generate_target_path_tree.py` | 0结果（⚠️ 脚本已删除，本验证项已废弃） |
+| 2 | 脚本可运行 | `python scripts/governance/generate_target_path_tree.py --help` | 正常输出（⚠️ 脚本已删除，本验证项已废弃，见 AGENTS.md §11） |
 
 **回滚方案**：
 ```powershell

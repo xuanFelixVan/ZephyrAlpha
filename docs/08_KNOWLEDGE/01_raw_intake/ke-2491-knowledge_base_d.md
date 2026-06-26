@@ -4,6 +4,7 @@ status: active
 title: 6.5 Knowledge Base 投毒防护（决策 D-020-28）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.5 Knowledge Base 投毒防护（决策 D-020-28）

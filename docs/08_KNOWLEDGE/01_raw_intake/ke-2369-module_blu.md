@@ -4,6 +4,7 @@ status: active
 title: 5. 关键设计决策
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 关键设计决策

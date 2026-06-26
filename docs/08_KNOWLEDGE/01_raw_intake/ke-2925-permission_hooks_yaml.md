@@ -4,6 +4,7 @@ status: active
 title: permission_hooks.yaml — 钩子配置文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # permission_hooks.yaml — 钩子配置文件

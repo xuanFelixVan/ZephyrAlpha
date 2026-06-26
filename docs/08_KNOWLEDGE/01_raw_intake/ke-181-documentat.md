@@ -4,6 +4,7 @@ status: active
 title: 2.1 基线数据源
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 基线数据源

@@ -4,6 +4,7 @@ status: active
 title: 2.1.1 asset_type（资产类型——基于目录位置 + 扩展名）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1.1 asset_type（资产类型——基于目录位置 + 扩展名）

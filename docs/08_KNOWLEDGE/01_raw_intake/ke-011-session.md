@@ -4,6 +4,7 @@ status: active
 title: 5.3.2 Session 开始时（恢复上下文）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3.2 Session 开始时（恢复上下文）

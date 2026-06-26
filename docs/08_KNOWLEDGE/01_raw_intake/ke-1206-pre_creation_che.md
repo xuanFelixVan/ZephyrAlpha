@@ -4,6 +4,7 @@ status: active
 title: DOC-005：创建前必查（Pre-Creation Check）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-005：创建前必查（Pre-Creation Check）

@@ -4,6 +4,7 @@ status: active
 title: Leader Election via SQLite Lease（多节点主选举）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Leader Election via SQLite Lease（多节点主选举）

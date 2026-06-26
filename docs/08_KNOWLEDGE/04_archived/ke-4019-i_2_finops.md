@@ -3,6 +3,7 @@ module_id: KE-3866--------2-------finops--000
 title: 13.10 I. 成本与资源（2个）——对标 FinOps FOCUS + ML Observability
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.10 I. 成本与资源（2个）——对标 FinOps FOCUS + ML Observability

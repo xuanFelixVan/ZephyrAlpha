@@ -4,6 +4,7 @@ status: active
 title: 2.221 Prompt Effectiveness Analytics - prompt_effectiveness_analytics.py (🆕 v0.2
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.221 Prompt Effectiveness Analytics - prompt_effectiveness_analytics.py (🆕 v0.2

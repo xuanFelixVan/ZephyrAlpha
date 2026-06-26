@@ -3,6 +3,7 @@ module_id: KE-3435
 title: COND-{NNN}（条件约束）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # COND-{NNN}（条件约束）

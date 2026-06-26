@@ -4,6 +4,7 @@ status: active
 title: IRN-011：零残留原则（铁律11）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-011：零残留原则（铁律11）

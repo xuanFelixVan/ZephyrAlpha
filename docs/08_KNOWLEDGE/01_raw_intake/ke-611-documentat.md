@@ -4,6 +4,7 @@ status: active
 title: 9.1 审计数据架构
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 审计数据架构

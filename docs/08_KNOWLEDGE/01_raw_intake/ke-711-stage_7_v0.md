@@ -4,6 +4,7 @@ status: active
 title: Stage 7：从"工作区 v0"到"前置项目会话留痕机制迁移"
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 7：从"工作区 v0"到"前置项目会话留痕机制迁移"

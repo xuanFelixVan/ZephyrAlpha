@@ -4,6 +4,7 @@ status: active
 title: 2.2.5 状态字段（ADR 工作流语义）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2.5 状态字段（ADR 工作流语义）

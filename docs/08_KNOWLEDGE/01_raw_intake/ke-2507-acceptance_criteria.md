@@ -4,6 +4,7 @@ status: active
 title: 7. Acceptance Criteria
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Acceptance Criteria

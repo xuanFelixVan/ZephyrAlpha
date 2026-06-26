@@ -3,6 +3,7 @@ module_id: KE-973
 title: 6.1 自动检测项
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.1 自动检测项

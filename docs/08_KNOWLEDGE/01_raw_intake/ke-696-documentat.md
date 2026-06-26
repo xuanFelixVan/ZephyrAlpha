@@ -4,6 +4,7 @@ status: active
 title: 八、活跃 SSoT 矛盾追踪清单
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 八、活跃 SSoT 矛盾追踪清单

@@ -4,6 +4,7 @@ status: active
 title: 7. Stage 5：问题聚合与去重
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. Stage 5：问题聚合与去重

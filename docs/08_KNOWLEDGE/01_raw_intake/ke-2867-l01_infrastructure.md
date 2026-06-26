@@ -4,6 +4,7 @@ status: active
 title: L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?

@@ -3,6 +3,7 @@ module_id: KE-4333
 title: DB-025-0072：T-DB-006——dead_letter_queue
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0072：T-DB-006——dead_letter_queue

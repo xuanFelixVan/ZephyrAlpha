@@ -3,6 +3,7 @@ module_id: KE-3326------adr-002
 title: 5. Key ADR summary / 关键 ADR 汇总
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. Key ADR summary / 关键 ADR 汇总

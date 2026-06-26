@@ -4,6 +4,7 @@ status: active
 title: 2.19 多 Agent 辩论/审议协议（决策 D-025-16）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.19 多 Agent 辩论/审议协议（决策 D-025-16）

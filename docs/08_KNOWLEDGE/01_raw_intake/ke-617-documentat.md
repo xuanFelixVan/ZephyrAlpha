@@ -3,6 +3,7 @@ module_id: KE-555------6-002
 title: 9.2 4 环境 × 6 维度矩阵
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 4 环境 × 6 维度矩阵

@@ -4,6 +4,7 @@ status: active
 title: MTH-004：对标 = 架构标准，非机构冗余
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-004：对标 = 架构标准，非机构冗余

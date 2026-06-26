@@ -2,6 +2,12 @@
 ttl: task_bound
 ---
 
+> **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
+> D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
+> D-GOV_AUDIT_TESTS→D-AUDITTEST, D-INTEGRATION-GATEWAY→D-INTEGRATION_GATEWAY, D-SECURITY-LLM→D-SECURITY_LLM。
+> 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
+
+
 # 4个超限域拆分施工方案（ARCH-CAP-002 v1.0.8 合规）
 
 > **状态**: 待审批（ARCH-CAP-006 要求 Owner 审批后方可执行）

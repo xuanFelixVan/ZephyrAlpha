@@ -4,6 +4,7 @@ status: active
 title: 2.1 所有 policy/standard 文档的必填 frontmatter
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 所有 policy/standard 文档的必填 frontmatter

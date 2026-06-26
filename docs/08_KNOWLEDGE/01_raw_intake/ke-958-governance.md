@@ -4,6 +4,7 @@ status: active
 title: 4. 违规响应流程
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 违规响应流程

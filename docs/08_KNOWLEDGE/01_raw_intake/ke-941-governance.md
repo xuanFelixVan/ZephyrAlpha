@@ -4,6 +4,7 @@ status: active
 title: 3.3 路径 2：注册表查询 [次选]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 路径 2：注册表查询 [次选]

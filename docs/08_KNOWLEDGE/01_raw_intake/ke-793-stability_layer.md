@@ -3,6 +3,7 @@ module_id: KE-716---stability----layer-003
 title: 10.2 同 stability，不同 layer
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 同 stability，不同 layer

@@ -3,6 +3,7 @@ module_id: KE-1597-----mcp-000
 title: 2. 七个 MCP 服务端
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 七个 MCP 服务端

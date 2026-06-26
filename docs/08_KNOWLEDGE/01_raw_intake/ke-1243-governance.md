@@ -4,6 +4,7 @@ status: active
 title: IRN-007：架构终局锁定（铁律7）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # IRN-007：架构终局锁定（铁律7）

@@ -3,6 +3,7 @@ module_id: KE-3860
 title: 13. 风险
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 风险

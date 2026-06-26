@@ -4,6 +4,7 @@ status: active
 title: 总则：最优先行原则（Best-First Principle）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 总则：最优先行原则（Best-First Principle）

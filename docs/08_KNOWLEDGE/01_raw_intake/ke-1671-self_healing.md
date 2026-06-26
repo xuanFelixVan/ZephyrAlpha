@@ -3,6 +3,7 @@ module_id: KE-1581------self-healing-000
 title: 18.1 自愈设计（Self-Healing）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18.1 自愈设计（Self-Healing）

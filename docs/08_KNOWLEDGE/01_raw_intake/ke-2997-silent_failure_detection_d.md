@@ -4,6 +4,7 @@ status: active
 title: Silent Failure Detection (D-019-24)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Silent Failure Detection (D-019-24)

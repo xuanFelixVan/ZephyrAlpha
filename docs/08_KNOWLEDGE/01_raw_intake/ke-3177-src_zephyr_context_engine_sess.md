@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/context-engine/session_carryover.py
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/context-engine/session_carryover.py

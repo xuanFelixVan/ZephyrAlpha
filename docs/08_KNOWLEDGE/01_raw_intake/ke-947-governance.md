@@ -4,6 +4,7 @@ status: active
 title: 3.4 旧版编号废弃对照表
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 旧版编号废弃对照表

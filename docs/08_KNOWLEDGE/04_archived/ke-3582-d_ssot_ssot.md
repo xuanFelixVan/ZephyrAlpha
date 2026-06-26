@@ -3,6 +3,7 @@ module_id: KE-3438
 title: D-SSOT：SSOT 权威源映射
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-SSOT：SSOT 权威源映射

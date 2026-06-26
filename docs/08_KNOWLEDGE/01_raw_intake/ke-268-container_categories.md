@@ -3,6 +3,7 @@ module_id: KE-246
 title: 3.1 Container categories / 容器分类
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 Container categories / 容器分类

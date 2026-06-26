@@ -3,6 +3,7 @@ module_id: KE-3472
 title: 1.3 SSoT 声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 SSoT 声明

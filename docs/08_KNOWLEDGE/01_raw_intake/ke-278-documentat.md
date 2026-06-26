@@ -4,6 +4,7 @@ status: active
 title: 3.16 代码级强制规则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.16 代码级强制规则

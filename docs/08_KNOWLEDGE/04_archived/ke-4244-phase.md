@@ -3,6 +3,7 @@ module_id: KE-4085-----phase-005
 title: 4. 施工 Phase 规划
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 施工 Phase 规划

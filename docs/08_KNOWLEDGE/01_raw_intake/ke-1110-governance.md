@@ -4,6 +4,7 @@ status: active
 title: 8. 新增规则登记流程
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. 新增规则登记流程

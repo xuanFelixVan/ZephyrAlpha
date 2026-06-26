@@ -4,6 +4,7 @@ status: active
 title: 8.3 消耗率（Burn Rate）多窗口监控
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.3 消耗率（Burn Rate）多窗口监控

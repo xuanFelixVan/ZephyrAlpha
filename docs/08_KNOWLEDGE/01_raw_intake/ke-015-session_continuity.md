@@ -4,6 +4,7 @@ status: active
 title: 5.3 Session Continuity — 自动交接协议
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 Session Continuity — 自动交接协议

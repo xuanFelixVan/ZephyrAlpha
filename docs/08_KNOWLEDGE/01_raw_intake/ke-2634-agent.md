@@ -4,6 +4,7 @@ status: active
 title: 治理域集成蓝图 — Agent 治理八件套
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 治理域集成蓝图 — Agent 治理八件套

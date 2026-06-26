@@ -4,6 +4,7 @@ status: active
 title: 5.4 Mermaid 架构图
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.4 Mermaid 架构图

@@ -4,6 +4,7 @@ status: active
 title: 2.19 Agent 身份验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.19 Agent 身份验证

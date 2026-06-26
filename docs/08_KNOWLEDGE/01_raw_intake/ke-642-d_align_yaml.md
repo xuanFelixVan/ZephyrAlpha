@@ -4,6 +4,7 @@ status: active
 title: D-ALIGN：架构文档 ↔ 模型 YAML 一致性
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-ALIGN：架构文档 ↔ 模型 YAML 一致性

@@ -4,6 +4,7 @@ status: active
 title: 三、共享 Schema（多系统共用的数据结构 SSoT）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三、共享 Schema（多系统共用的数据结构 SSoT）

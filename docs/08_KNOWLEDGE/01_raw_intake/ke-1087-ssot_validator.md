@@ -4,6 +4,7 @@ status: active
 title: 7.1 与 SSoT Validator 的关系
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 与 SSoT Validator 的关系

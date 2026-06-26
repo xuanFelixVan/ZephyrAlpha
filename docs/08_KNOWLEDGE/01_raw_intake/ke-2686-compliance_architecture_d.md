@@ -4,6 +4,7 @@ status: active
 title: Compliance Architecture (D-019-14)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Compliance Architecture (D-019-14)

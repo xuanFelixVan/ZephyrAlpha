@@ -3,6 +3,7 @@ module_id: KE-920---------g4-activate-yaml-000
 title: 4.4.2 检查项（对应 `g4-activate.yaml`）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.4.2 检查项（对应 `g4-activate.yaml`）

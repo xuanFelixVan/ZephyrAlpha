@@ -3,6 +3,7 @@ module_id: KE-3430
 title: 4.3 Layer classification rationale / 分层分类依据
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 Layer classification rationale / 分层分类依据

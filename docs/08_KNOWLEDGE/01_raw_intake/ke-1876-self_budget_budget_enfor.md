@@ -4,6 +4,7 @@ status: active
 title: 2.21 Self-Budget——Budget Enforcer 自身运营成本管控
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.21 Self-Budget——Budget Enforcer 自身运营成本管控

@@ -4,6 +4,7 @@ status: active
 title: agent_creation_policy.yaml — Agent 复制/派生规则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # agent_creation_policy.yaml — Agent 复制/派生规则

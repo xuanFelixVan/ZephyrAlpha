@@ -4,6 +4,7 @@ status: active
 title: _call_model 入口
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # _call_model 入口

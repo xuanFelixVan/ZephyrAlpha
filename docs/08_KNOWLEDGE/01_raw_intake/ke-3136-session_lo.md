@@ -4,6 +4,7 @@ status: active
 title: 7. 完整示例
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 完整示例

@@ -4,6 +4,7 @@ status: active
 title: 3.11 #49: CapacityDigitalTwin (M-40)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.11 #49: CapacityDigitalTwin (M-40)

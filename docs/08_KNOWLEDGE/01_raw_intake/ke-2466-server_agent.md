@@ -4,6 +4,7 @@ status: active
 title: 6.2 跨 Server 编排流程（Agent 串联）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 跨 Server 编排流程（Agent 串联）

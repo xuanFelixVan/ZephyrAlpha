@@ -3,6 +3,7 @@ module_id: KE-1411
 title: 12轮盲点分布
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12轮盲点分布

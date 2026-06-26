@@ -3,6 +3,7 @@ module_id: KE-4329-----test--000
 title: DB-025-0068：T-DB-002——补全 test_audit_schema.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DB-025-0068：T-DB-002——补全 test_audit_schema.py

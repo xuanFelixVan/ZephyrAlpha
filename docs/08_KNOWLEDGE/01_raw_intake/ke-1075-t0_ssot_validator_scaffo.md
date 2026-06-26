@@ -4,6 +4,7 @@ status: active
 title: 6.4 T0 — SSoT Validator（scaffold 唯一治理任务）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 T0 — SSoT Validator（scaffold 唯一治理任务）

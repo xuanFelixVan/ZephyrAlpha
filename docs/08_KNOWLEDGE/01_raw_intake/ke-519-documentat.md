@@ -3,6 +3,7 @@ module_id: KE-468
 title: 6.4 图表引擎策略
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.4 图表引擎策略

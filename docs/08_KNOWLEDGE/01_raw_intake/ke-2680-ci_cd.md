@@ -4,6 +4,7 @@ status: active
 title: CI/CD 集成约束
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # CI/CD 集成约束

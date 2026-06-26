@@ -4,6 +4,7 @@ status: active
 title: 正面后果
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 正面后果

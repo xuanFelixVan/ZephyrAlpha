@@ -3,6 +3,7 @@ module_id: KE-3207-------b-000
 title: 2.2 平台能力层（B 轨横切）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 平台能力层（B 轨横切）

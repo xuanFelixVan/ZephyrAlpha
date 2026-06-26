@@ -4,6 +4,7 @@ status: active
 title: SkillsBench Efficacy (D-019-72)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # SkillsBench Efficacy (D-019-72)

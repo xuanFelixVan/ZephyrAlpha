@@ -4,6 +4,7 @@ status: active
 title: Orchestrator 侧的维度声明（调度契约）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Orchestrator 侧的维度声明（调度契约）

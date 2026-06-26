@@ -4,6 +4,7 @@ status: active
 title: L1 治理模板（`policy` `standard` `ai_governance`）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L1 治理模板（`policy` `standard` `ai_governance`）

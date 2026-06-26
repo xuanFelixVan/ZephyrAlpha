@@ -4,6 +4,7 @@ status: active
 title: 3.2 混合检索架构（HybridRetriever）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2 混合检索架构（HybridRetriever）

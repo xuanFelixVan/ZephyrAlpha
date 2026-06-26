@@ -3,6 +3,7 @@ module_id: KE-4259
 title: D-022-02 自动委托协议实现
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-02 自动委托协议实现

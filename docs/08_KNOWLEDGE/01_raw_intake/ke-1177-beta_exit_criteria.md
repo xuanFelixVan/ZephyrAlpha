@@ -3,6 +3,7 @@ module_id: KE-1092
 title: beta exit_criteria
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # beta exit_criteria

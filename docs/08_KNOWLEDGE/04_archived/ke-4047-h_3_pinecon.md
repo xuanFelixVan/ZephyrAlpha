@@ -3,6 +3,7 @@ module_id: KE-3894---------3-------pinecon-000
 title: 13.9 H. 集成与数据流（3个）——对标 Pinecone Export API + Qdrant Snapshots
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.9 H. 集成与数据流（3个）——对标 Pinecone Export API + Qdrant Snapshots

@@ -4,6 +4,7 @@ status: active
 title: 6.3 靶心设计 — Rollback System v8.0 (Adversarial-AI-Resilient Rollback Infrastructur
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 靶心设计 — Rollback System v8.0 (Adversarial-AI-Resilient Rollback Infrastructur

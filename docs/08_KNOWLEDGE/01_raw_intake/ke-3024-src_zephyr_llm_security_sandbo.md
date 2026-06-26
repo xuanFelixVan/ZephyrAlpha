@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/llm-security/sandbox/code_exec_sandbox.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/llm-security/sandbox/code_exec_sandbox.py

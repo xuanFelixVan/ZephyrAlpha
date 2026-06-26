@@ -3,6 +3,7 @@ module_id: KE-1222-----must-005
 title: 强制二选一处置（session 结束前 MUST 完成）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 强制二选一处置（session 结束前 MUST 完成）

@@ -4,6 +4,7 @@ status: active
 title: 2.27 多维向量信誉模型 — TrustFlow（决策 D-025-24）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.27 多维向量信誉模型 — TrustFlow（决策 D-025-24）

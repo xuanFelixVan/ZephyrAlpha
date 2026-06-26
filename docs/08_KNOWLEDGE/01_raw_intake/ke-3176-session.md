@@ -4,6 +4,7 @@ status: active
 title: 交接给下一个 Session
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 交接给下一个 Session

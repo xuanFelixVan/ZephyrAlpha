@@ -4,6 +4,7 @@ status: active
 title: 8.2 `module-registry.yaml` 扩展（SHOULD）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 `module-registry.yaml` 扩展（SHOULD）

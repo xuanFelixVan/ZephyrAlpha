@@ -4,6 +4,7 @@ status: active
 title: 4.5 Affinity 约束模型（对标 K8s PodAffinityTerm + WeightedPodAffinityTerm）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.5 Affinity 约束模型（对标 K8s PodAffinityTerm + WeightedPodAffinityTerm）

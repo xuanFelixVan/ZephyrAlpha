@@ -4,6 +4,7 @@ status: active
 title: 3.6 #44: CapacityRunbookGenerator
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 #44: CapacityRunbookGenerator

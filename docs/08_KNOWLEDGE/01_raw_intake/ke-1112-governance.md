@@ -4,6 +4,7 @@ status: active
 title: 8.1 表结构（当前实装）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.1 表结构（当前实装）

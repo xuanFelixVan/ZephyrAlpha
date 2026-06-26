@@ -4,6 +4,7 @@ status: active
 title: 2.30 Vibe Coding 深度优化 — 2026 版（决策 D-025-27）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.30 Vibe Coding 深度优化 — 2026 版（决策 D-025-27）

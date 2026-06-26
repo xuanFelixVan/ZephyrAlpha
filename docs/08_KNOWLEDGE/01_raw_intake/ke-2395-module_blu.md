@@ -4,6 +4,7 @@ status: active
 title: 5.2.1 判定流程
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2.1 判定流程

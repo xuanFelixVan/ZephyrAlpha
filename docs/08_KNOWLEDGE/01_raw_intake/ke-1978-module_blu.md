@@ -4,6 +4,7 @@ status: active
 title: 2.34 碳排放追踪·空转综合征·知识蒸馏——运维与可持续性全景（决策 D-025-31~34）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.34 碳排放追踪·空转综合征·知识蒸馏——运维与可持续性全景（决策 D-025-31~34）

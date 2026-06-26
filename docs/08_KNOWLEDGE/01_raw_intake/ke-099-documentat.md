@@ -4,6 +4,7 @@ status: active
 title: 1.4 决策溯源
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.4 决策溯源

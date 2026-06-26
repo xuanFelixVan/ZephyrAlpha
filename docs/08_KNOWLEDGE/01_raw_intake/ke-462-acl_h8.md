@@ -4,6 +4,7 @@ status: active
 title: 5.3 未来 ACL 扩展计划（H8 阶段）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 未来 ACL 扩展计划（H8 阶段）

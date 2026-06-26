@@ -3,6 +3,7 @@ module_id: KE-2951
 title: Task Pipeline Service Interface / 任务双管线服务接口规范
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Task Pipeline Service Interface / 任务双管线服务接口规范

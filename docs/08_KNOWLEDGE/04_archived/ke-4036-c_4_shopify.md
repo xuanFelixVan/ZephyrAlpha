@@ -3,6 +3,7 @@ module_id: KE-3883--------4-------shopify--000
 title: 13.4 C. 数据一致性（4个）——对标 Shopify Production RAG Data Pipeline
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13.4 C. 数据一致性（4个）——对标 Shopify Production RAG Data Pipeline

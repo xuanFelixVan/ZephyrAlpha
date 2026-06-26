@@ -3,6 +3,7 @@ module_id: KE-4408
 title: Risks
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Risks

@@ -4,6 +4,7 @@ status: active
 title: config/ — 运行时配置目录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # config/ — 运行时配置目录

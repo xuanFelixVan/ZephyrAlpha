@@ -4,6 +4,7 @@ status: active
 title: 决策 R33：L12 命名最终锁定为 `infra_ops`（Closes OQ-030）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 决策 R33：L12 命名最终锁定为 `infra_ops`（Closes OQ-030）

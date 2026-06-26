@@ -3,6 +3,7 @@ module_id: KE-4260
 title: D-022-03 经济护栏实现
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # D-022-03 经济护栏实现

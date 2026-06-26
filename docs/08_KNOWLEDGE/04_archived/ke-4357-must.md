@@ -3,6 +3,7 @@ module_id: KE-4196-------------must-002
 title: 7.2 核心条款速查（本蓝图仅列MUST项）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 核心条款速查（本蓝图仅列MUST项）

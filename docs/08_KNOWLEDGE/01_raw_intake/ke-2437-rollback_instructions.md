@@ -4,6 +4,7 @@ status: active
 title: 6. Rollback Instructions
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. Rollback Instructions

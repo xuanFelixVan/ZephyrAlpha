@@ -3,6 +3,7 @@ module_id: KE-1037
 title: 8.5 operational/ 文件夹
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.5 operational/ 文件夹

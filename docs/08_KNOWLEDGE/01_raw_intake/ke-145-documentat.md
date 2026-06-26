@@ -3,6 +3,7 @@ module_id: KE-132
 title: 12. 修改条件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. 修改条件

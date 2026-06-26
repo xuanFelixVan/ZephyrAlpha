@@ -4,6 +4,7 @@ status: active
 title: 2.10 通信安全——OWASP ASI07 全栈防护（决策 D-025-10）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.10 通信安全——OWASP ASI07 全栈防护（决策 D-025-10）

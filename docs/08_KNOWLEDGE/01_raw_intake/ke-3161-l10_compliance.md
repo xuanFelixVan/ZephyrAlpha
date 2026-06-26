@@ -3,6 +3,7 @@ module_id: KE-3055
 title: L10 Compliance（2 个新文件）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L10 Compliance（2 个新文件）

@@ -3,6 +3,7 @@ module_id: KE-3912
 title: 14.A.1 第十二轮新增盲点清单
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.A.1 第十二轮新增盲点清单

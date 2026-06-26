@@ -3,6 +3,7 @@ module_id: KE-3651
 title: ACS-002：禁止共享账号
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ACS-002：禁止共享账号

@@ -3,6 +3,7 @@ module_id: KE-3154--------------3-10-000
 title: 1.1.3 独立开发者更应该开源优先（3-10 倍更重要）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1.3 独立开发者更应该开源优先（3-10 倍更重要）

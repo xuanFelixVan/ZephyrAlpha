@@ -4,6 +4,7 @@ status: active
 title: 9.1 Skill Economics & Token Cost Accounting（决策 D-019-10）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.1 Skill Economics & Token Cost Accounting（决策 D-019-10）

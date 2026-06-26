@@ -3,6 +3,7 @@ module_id: KE-2963------8-008
 title: Track A：Vibe Coding 施工知识（8 类）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Track A：Vibe Coding 施工知识（8 类）

@@ -4,6 +4,7 @@ status: active
 title: 2.1 Build（检索）— context_assembler.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1 Build（检索）— context_assembler.py

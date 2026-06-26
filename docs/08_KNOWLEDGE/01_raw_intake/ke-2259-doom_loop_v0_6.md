@@ -4,6 +4,7 @@ status: active
 title: 3.9 Doom Loop 防护与修复升级阶梯（v0.6.0 新增 — Wave 2 落地）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9 Doom Loop 防护与修复升级阶梯（v0.6.0 新增 — Wave 2 落地）

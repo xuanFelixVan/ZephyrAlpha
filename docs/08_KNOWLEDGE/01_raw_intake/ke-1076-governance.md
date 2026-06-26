@@ -4,6 +4,7 @@ status: active
 title: 6.5 6 大核心服务的治理归属
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.5 6 大核心服务的治理归属

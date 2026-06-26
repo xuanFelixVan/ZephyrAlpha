@@ -3,6 +3,7 @@ module_id: KE-1148
 title: informative（仅供参考——变更时须评估影响但不强制同步）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # informative（仅供参考——变更时须评估影响但不强制同步）

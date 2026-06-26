@@ -3,6 +3,7 @@ module_id: KE-439
 title: 6. TTL 与生命周期
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. TTL 与生命周期

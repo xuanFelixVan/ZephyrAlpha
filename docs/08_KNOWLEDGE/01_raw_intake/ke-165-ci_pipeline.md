@@ -4,6 +4,7 @@ status: active
 title: §1bis 门禁追溯（CI / 本地工件）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §1bis 门禁追溯（CI / 本地工件）

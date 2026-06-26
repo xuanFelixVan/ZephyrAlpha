@@ -4,6 +4,7 @@ status: active
 title: 继承层扩展 (TASK-0003)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 继承层扩展 (TASK-0003)

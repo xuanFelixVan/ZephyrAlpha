@@ -3,6 +3,7 @@ module_id: KE-2265
 title: 5. beta w (6 Files)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. beta w (6 Files)

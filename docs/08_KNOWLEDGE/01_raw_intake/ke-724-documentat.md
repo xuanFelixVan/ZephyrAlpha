@@ -4,6 +4,7 @@ status: active
 title: Step 6：注册与监控
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 6：注册与监控

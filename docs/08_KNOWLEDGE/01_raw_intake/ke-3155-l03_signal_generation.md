@@ -3,6 +3,7 @@ module_id: KE-3049
 title: L03 Signal Generation（3 个新文件）
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # L03 Signal Generation（3 个新文件）

@@ -4,6 +4,7 @@ status: active
 title: 9.2 Skill Deprecation & Retirement Lifecycle（决策 D-019-11）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 9.2 Skill Deprecation & Retirement Lifecycle（决策 D-019-11）

@@ -4,6 +4,7 @@ status: active
 title: 10.2 **与其他 4 个服务相反——fail-closed 降级**
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.2 **与其他 4 个服务相反——fail-closed 降级**

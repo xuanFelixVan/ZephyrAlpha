@@ -3,6 +3,7 @@ module_id: KE-3848
 title: 12.4 TCO 月度模型
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.4 TCO 月度模型

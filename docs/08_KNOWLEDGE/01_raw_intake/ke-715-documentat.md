@@ -4,6 +4,7 @@ status: active
 title: Step 0：安全审查
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 0：安全审查

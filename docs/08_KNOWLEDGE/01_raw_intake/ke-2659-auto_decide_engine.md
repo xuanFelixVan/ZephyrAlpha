@@ -4,6 +4,7 @@ status: active
 title: Auto-Decide Engine（自动决策引擎）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Auto-Decide Engine（自动决策引擎）

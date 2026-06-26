@@ -3,6 +3,7 @@ module_id: KE-883
 title: 4. 与其他文件的关系
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 与其他文件的关系

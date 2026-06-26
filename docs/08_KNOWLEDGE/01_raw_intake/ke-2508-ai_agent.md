@@ -4,6 +4,7 @@ status: active
 title: 7. AI Agent 蓝图定位规则
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. AI Agent 蓝图定位规则

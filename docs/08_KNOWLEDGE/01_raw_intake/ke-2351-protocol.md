@@ -4,6 +4,7 @@ status: active
 title: 5. 反馈动作与下游 Protocol 引用（遗漏 #5 重点章节）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 反馈动作与下游 Protocol 引用（遗漏 #5 重点章节）

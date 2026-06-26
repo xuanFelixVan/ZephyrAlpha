@@ -3,6 +3,7 @@ module_id: KE-129
 title: 12. Cost Architecture / 成本架构
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12. Cost Architecture / 成本架构

@@ -3,6 +3,7 @@ module_id: KE-206----layer----------8-----p2-000
 title: 2.5 蓝图 layer 字段与目录不一致（8 个文件，P2）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.5 蓝图 layer 字段与目录不一致（8 个文件，P2）

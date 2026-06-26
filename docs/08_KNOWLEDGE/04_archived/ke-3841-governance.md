@@ -3,6 +3,7 @@ module_id: KE-3690
 title: DRP-002：删除前确认
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DRP-002：删除前确认

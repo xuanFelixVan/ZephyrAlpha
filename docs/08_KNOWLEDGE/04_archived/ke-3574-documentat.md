@@ -3,6 +3,7 @@ module_id: KE-3431
 title: 六、未来待办标准（Backlog）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 六、未来待办标准（Backlog）

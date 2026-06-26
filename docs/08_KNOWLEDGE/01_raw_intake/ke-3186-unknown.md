@@ -3,6 +3,7 @@ module_id: KE-3080
 title: 变更的文件
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 变更的文件

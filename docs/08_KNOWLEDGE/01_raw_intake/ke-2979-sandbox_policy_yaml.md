@@ -4,6 +4,7 @@ status: active
 title: sandbox_policy.yaml
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # sandbox_policy.yaml

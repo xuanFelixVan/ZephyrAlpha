@@ -4,6 +4,7 @@ status: active
 title: 10.1 Metrics / 指标
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 Metrics / 指标

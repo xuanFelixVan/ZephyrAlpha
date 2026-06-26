@@ -1,9 +1,9 @@
 ---
-doc_type: domain_architecture_doc
+doc_type: architecture_view
 title: D-ML_TRAIN 训练架构文档
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-26
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-25 20:00:20
+> 最后更新: 2026-06-26 19:04:16
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,11 +24,11 @@ ttl: permanent
 | 域ID | D-ML_TRAIN | Domain ID | D-ML_TRAIN |
 | 域名称 | 训练 | Domain Name | model_profiling |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 13 | Module Count | 13 |
+| 模块数 | 12 | Module Count | 12 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
-| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
-| 设计态模块 | 2 | Design Modules | 2 |
+| 跨域出边 | 4 | Cross-domain Outgoing | 4 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 11 | Prototype Modules | 11 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
@@ -36,7 +36,7 @@ ttl: permanent
 
 ## 模块清单 / Module List
 
-共 13 个模块（按路径排序，全部显示）
+共 12 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -52,7 +52,6 @@ ttl: permanent
 | src/zephyr/ml_train/models/__init__.py |  | prototype | deprecated |
 | src/zephyr/ml_train/services/__init__.py |  | prototype | deprecated |
 | src/zephyr/ml_train/trainer_base.py |  | prototype | generated |
-| 训练域/D-ML-106 | Barra Risk Factor Model | design | planned |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -79,15 +78,13 @@ graph TD
         src_zephyr_ml_train_models_init_py["src/zephyr/ml_train/models/__init__.py prototype"]
         src_zephyr_ml_train_services_init_py["src/zephyr/ml_train/services/__init__.py prototype"]
         src_zephyr_ml_train_trainer_base_py["src/zephyr/ml_train/trainer_base.py prototype"]
-        D_ML_106["Barra Risk Factor Model design"]
     end
     src_zephyr_ml_train_inference_base_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_init_py -.->|config_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
-    D_TRADING["D-TRADING prototype"]
-    D_ML_106 -.->|contract| D_TRADING
+    D_TRADING["D-TRADING production"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_TRADING
     D_SHARED["D-SHARED prototype"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
@@ -106,9 +103,9 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_init_py,src_zephyr_ml_train_extensions_init_py,src_zephyr_ml_train_api_init_py,src_zephyr_ml_train_core_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_infrastructure_init_py,src_zephyr_ml_train_models_init_py,src_zephyr_ml_train_services_init_py,src_zephyr_ml_train_trainer_base_py,D_ML_106 design
-    class D_INTELLIGENCE external_prod
-    class D_TRADING,D_SHARED,D_GOVERNANCE external_design
+    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_init_py,src_zephyr_ml_train_extensions_init_py,src_zephyr_ml_train_api_init_py,src_zephyr_ml_train_core_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_infrastructure_init_py,src_zephyr_ml_train_models_init_py,src_zephyr_ml_train_services_init_py,src_zephyr_ml_train_trainer_base_py design
+    class D_TRADING,D_INTELLIGENCE external_prod
+    class D_SHARED,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -117,7 +114,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-TRADING | 3 | contract,import_depends |
+| D-TRADING | 2 | import_depends |
 | D-SHARED | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

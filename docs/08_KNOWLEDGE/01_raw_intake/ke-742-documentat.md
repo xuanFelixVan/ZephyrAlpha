@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 2.0 架构推导与决策链
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 2.0 架构推导与决策链

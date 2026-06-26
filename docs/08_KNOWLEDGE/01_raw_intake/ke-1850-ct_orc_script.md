@@ -4,6 +4,7 @@ status: active
 title: 2.2 CT-ORC-SCRIPT-001：任务系统 ↔ 脚本系统
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 CT-ORC-SCRIPT-001：任务系统 ↔ 脚本系统

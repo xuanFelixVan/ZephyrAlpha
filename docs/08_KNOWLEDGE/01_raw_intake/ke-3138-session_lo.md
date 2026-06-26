@@ -4,6 +4,7 @@ status: active
 title: 8.2 新增字段规则
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8.2 新增字段规则

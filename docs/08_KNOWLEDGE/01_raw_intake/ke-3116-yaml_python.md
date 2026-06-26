@@ -3,6 +3,7 @@ module_id: KE-3015---python-000
 title: 代码块追溯 — YAML + Python
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 代码块追溯 — YAML + Python

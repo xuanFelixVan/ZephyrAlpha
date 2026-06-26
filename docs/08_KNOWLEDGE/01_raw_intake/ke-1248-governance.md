@@ -3,6 +3,7 @@ module_id: KE-1161
 title: 三、状态快照管理（LATEST 覆盖写入模式）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 三、状态快照管理（LATEST 覆盖写入模式）

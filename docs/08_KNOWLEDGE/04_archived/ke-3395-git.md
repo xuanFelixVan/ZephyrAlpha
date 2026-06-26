@@ -3,6 +3,7 @@ module_id: KE-3272
 title: 3.5 Git 操作安全
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 Git 操作安全

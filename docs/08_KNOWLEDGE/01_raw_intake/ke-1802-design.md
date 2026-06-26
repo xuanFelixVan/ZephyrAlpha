@@ -4,6 +4,7 @@ status: active
 title: 2.14 自动学习——假阳性模式识别与抑制（决策 D-023-21）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.14 自动学习——假阳性模式识别与抑制（决策 D-023-21）

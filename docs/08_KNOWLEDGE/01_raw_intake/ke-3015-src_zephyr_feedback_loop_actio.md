@@ -4,6 +4,7 @@ status: active
 title: src/zephyr/feedback-loop/action_protocols.py (FLE 侧定义)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # src/zephyr/feedback-loop/action_protocols.py (FLE 侧定义)

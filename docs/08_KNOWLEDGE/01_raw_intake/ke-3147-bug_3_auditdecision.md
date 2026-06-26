@@ -4,6 +4,7 @@ status: active
 title: Bug #3: AuditDecision 字段不匹配
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bug #3: AuditDecision 字段不匹配

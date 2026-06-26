@@ -4,6 +4,7 @@ status: active
 title: 2.20 Timeout Guard（并行监控线程）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.20 Timeout Guard（并行监控线程）

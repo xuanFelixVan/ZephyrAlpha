@@ -3,6 +3,7 @@ module_id: KE-3077
 title: 上下文预算
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 上下文预算

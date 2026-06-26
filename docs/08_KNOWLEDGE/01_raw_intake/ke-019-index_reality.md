@@ -4,6 +4,7 @@ status: active
 title: 6.11 索引-实际同步强制约定（Index-Reality Synchronization Mandate）
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.11 索引-实际同步强制约定（Index-Reality Synchronization Mandate）

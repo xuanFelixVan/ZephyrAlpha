@@ -4,6 +4,7 @@ status: active
 title: 10.1 本模块职责完成后
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 本模块职责完成后

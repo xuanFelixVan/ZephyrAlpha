@@ -3,6 +3,7 @@ module_id: KE-1537
 title: 15.2 IDE 能力矩阵
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.2 IDE 能力矩阵

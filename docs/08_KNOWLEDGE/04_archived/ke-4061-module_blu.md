@@ -3,6 +3,7 @@ module_id: KE-3908
 title: 14.3 对氛围编程的特殊适配
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14.3 对氛围编程的特殊适配

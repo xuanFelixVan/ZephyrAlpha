@@ -3,6 +3,7 @@ module_id: KE-4117
 title: 风险覆盖矩阵（44条全覆盖）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 风险覆盖矩阵（44条全覆盖）

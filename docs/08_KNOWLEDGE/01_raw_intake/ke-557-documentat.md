@@ -4,6 +4,7 @@ status: active
 title: 7.4 一人开发场景的风险考量
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.4 一人开发场景的风险考量

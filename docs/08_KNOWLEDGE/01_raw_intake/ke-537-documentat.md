@@ -3,6 +3,7 @@ module_id: KE-485
 title: 7.1 环境判定规则
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.1 环境判定规则

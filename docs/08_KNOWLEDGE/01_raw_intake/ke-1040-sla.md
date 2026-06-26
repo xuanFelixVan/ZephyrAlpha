@@ -4,6 +4,7 @@ status: active
 title: 5.3 SLA 与格式要求
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3 SLA 与格式要求

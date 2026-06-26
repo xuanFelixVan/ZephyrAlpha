@@ -4,6 +4,7 @@ status: active
 title: 15.1 AI 可直接执行的规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 15.1 AI 可直接执行的规则

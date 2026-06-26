@@ -3,6 +3,7 @@ module_id: KE-3144
 title: 0. 读者指南
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0. 读者指南

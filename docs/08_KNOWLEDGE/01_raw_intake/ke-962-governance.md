@@ -3,6 +3,7 @@ module_id: KE-884
 title: 4. 消费者注册表
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 消费者注册表

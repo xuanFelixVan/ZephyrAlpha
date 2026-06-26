@@ -3,6 +3,7 @@ module_id: KE-1115
 title: DLG-003：最小血缘粒度
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DLG-003：最小血缘粒度

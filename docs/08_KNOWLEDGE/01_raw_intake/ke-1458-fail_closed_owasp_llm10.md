@@ -4,6 +4,7 @@ status: active
 title: 10.4 fail-closed 与 OWASP LLM10 的平衡
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.4 fail-closed 与 OWASP LLM10 的平衡

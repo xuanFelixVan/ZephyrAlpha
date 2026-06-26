@@ -3,6 +3,7 @@ module_id: KE-1505
 title: 14. 成功指标
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. 成功指标

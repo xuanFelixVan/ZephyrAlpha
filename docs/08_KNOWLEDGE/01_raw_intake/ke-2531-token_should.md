@@ -4,6 +4,7 @@ status: active
 title: 7.2 Token 加载策略（SHOULD）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.2 Token 加载策略（SHOULD）

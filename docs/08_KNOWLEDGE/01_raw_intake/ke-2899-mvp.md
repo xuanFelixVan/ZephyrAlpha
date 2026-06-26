@@ -4,6 +4,7 @@ status: active
 title: 最小闭环 MVP ✅ 已完成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 最小闭环 MVP ✅ 已完成

@@ -4,6 +4,7 @@ status: active
 title: 6.2 四层输出验证
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 四层输出验证

@@ -4,6 +4,7 @@ status: active
 title: Emergency Trading Kill Switch（紧急交易停止）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Emergency Trading Kill Switch（紧急交易停止）

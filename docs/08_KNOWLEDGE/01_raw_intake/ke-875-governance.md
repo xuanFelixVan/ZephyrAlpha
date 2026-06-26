@@ -4,6 +4,7 @@ status: active
 title: 2.2.1 文件名
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2.1 文件名

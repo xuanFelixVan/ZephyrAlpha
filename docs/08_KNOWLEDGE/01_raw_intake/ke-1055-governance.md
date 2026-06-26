@@ -3,6 +3,7 @@ module_id: KE-971
 title: §6 版本历史
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §6 版本历史

@@ -3,6 +3,7 @@ module_id: KE-410----domain-000
 title: 5.2.4 新增 DOMAIN 的审批条件
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2.4 新增 DOMAIN 的审批条件

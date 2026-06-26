@@ -4,6 +4,7 @@ status: active
 title: 基础规则：Agent 连续 N 次 AgentProgress.observation_hash 相同 → 陷入循环
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 基础规则：Agent 连续 N 次 AgentProgress.observation_hash 相同 → 陷入循环

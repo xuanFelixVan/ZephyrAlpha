@@ -3,6 +3,7 @@ module_id: KE-1063
 title: ACS-005：权限周期性审查
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ACS-005：权限周期性审查

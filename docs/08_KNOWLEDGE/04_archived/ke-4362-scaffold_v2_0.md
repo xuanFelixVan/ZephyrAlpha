@@ -3,6 +3,7 @@ module_id: KE-4200------v2-0-0-004
 title: 7.3 scaffold 验收标准（v2.0.0 更新）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7.3 scaffold 验收标准（v2.0.0 更新）

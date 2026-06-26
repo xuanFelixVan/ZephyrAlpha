@@ -3,6 +3,7 @@ module_id: KE-111--------phase-transi-003
 title: 10.1 Phase 对齐表（配合 phase-transition-protocol.md）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.1 Phase 对齐表（配合 phase-transition-protocol.md）

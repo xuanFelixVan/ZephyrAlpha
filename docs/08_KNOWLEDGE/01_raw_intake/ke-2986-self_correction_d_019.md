@@ -4,6 +4,7 @@ status: active
 title: Self-Correction (D-019-45)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Self-Correction (D-019-45)

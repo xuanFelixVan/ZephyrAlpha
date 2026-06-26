@@ -3,6 +3,7 @@ module_id: KE-1280
 title: 第一轮基础盲点 — 协议层（#1-#20）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 第一轮基础盲点 — 协议层（#1-#20）

@@ -3,6 +3,7 @@ module_id: KE-1587--------chaos-engineering--000
 title: 18.5 故障注入测试（Chaos Engineering for SQLite）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 18.5 故障注入测试（Chaos Engineering for SQLite）

@@ -4,6 +4,7 @@ status: active
 title: 2.16 预算策略沙盘 + 策略版本管理
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.16 预算策略沙盘 + 策略版本管理

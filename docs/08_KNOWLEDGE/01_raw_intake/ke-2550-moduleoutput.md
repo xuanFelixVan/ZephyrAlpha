@@ -4,6 +4,7 @@ status: active
 title: 8个专用 ModuleOutput 子类
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8个专用 ModuleOutput 子类

@@ -1,6 +1,6 @@
 module_id: MOD-INF-007
 schema_version: '1.0'
-doc_type: registry
+doc_type: register
 ttl: permanent
 last_updated: '2026-06-22'
 gates:

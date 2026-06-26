@@ -4,6 +4,7 @@ status: active
 title: MTH-003：目标优先原则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-003：目标优先原则

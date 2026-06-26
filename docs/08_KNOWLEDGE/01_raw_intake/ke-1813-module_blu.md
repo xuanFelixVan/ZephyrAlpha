@@ -4,6 +4,7 @@ status: active
 title: 2.16 孤儿资源检测——磁盘有、注册表无、代码不引用（决策 D-023-25）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.16 孤儿资源检测——磁盘有、注册表无、代码不引用（决策 D-023-25）

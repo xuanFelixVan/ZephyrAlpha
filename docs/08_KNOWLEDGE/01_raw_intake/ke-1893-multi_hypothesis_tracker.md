@@ -4,6 +4,7 @@ status: active
 title: 2.224 Multi-Hypothesis Tracker - multi_hypothesis_tracker.py (🆕 v0.21.0 - 盲点273
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.224 Multi-Hypothesis Tracker - multi_hypothesis_tracker.py (🆕 v0.21.0 - 盲点273

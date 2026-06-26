@@ -4,6 +4,7 @@ status: active
 title: 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎

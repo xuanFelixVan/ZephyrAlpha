@@ -4,6 +4,7 @@ status: active
 title: 5.6 漂移溯源——Git Bisect 集成（决策 D-023-15）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.6 漂移溯源——Git Bisect 集成（决策 D-023-15）

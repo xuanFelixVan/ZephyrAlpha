@@ -4,6 +4,7 @@ status: active
 title: Context Engine Interface / 上下文引擎接口规范
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Context Engine Interface / 上下文引擎接口规范

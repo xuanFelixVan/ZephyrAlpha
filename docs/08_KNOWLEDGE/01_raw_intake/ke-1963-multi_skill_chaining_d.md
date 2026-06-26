@@ -4,6 +4,7 @@ status: active
 title: 2.3 Multi-Skill Chaining (D-019-08)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 Multi-Skill Chaining (D-019-08)

@@ -3,6 +3,7 @@ module_id: KE-3331
 title: 5.1 三类需要处理的"消失/变化"
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 三类需要处理的"消失/变化"

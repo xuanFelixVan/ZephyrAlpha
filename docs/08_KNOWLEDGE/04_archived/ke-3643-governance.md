@@ -3,6 +3,7 @@ module_id: KE-3498
 title: 14. 审查周期
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. 审查周期

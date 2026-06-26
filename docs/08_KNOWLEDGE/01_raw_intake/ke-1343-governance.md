@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 规则分类与冲突裁决标准
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 规则分类与冲突裁决标准

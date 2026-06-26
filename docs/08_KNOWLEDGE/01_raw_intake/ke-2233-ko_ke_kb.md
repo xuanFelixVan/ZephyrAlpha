@@ -4,6 +4,7 @@ status: active
 title: 3.6 KO→KE→KB 三级知识漏斗
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.6 KO→KE→KB 三级知识漏斗

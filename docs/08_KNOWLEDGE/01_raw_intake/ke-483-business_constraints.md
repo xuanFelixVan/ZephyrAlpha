@@ -3,6 +3,7 @@ module_id: KE-433
 title: 6. Business constraints / 业务约束与政策红线
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. Business constraints / 业务约束与政策红线

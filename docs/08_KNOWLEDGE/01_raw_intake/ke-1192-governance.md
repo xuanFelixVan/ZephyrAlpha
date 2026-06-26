@@ -4,6 +4,7 @@ status: active
 title: ✅ 正确：引用 CTR 契约类型
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ✅ 正确：引用 CTR 契约类型

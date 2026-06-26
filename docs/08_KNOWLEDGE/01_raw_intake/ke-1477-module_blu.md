@@ -4,6 +4,7 @@ status: active
 title: 11.2 实现缺失的1个文件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.2 实现缺失的1个文件

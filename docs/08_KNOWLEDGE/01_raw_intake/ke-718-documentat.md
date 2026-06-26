@@ -4,6 +4,7 @@ status: active
 title: Step 3：运行分析管线
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Step 3：运行分析管线

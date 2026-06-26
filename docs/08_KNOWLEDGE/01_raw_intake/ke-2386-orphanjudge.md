@@ -3,6 +3,7 @@ module_id: KE-2291---------orphanjudge-000
 title: 5.2 孤儿判定子系统（OrphanJudge）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.2 孤儿判定子系统（OrphanJudge）

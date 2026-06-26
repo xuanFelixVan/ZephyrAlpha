@@ -4,6 +4,7 @@ status: active
 title: 二、状态字段权威 (Status Authority) — 文档生命周期状态
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 二、状态字段权威 (Status Authority) — 文档生命周期状态

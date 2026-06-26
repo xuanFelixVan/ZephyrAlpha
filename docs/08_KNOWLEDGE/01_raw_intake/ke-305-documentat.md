@@ -3,6 +3,7 @@ module_id: KE-283
 title: 3.3 规则体系完整性
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 规则体系完整性

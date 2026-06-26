@@ -4,6 +4,7 @@ status: active
 title: 2.3 架构模型 YAML（层文件）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 架构模型 YAML（层文件）

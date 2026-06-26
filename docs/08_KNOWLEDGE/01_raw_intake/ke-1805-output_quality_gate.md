@@ -4,6 +4,7 @@ status: active
 title: 2.14 事中控制——Output Quality Gate
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.14 事中控制——Output Quality Gate

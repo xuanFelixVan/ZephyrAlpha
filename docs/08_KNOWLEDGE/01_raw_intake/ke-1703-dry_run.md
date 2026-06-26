@@ -4,6 +4,7 @@ status: active
 title: 2. dry_run 产出的关键信息
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. dry_run 产出的关键信息

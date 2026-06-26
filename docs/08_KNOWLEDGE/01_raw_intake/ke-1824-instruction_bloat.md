@@ -4,6 +4,7 @@ status: active
 title: 2.18 指令膨胀检测（Instruction Bloat Detector）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.18 指令膨胀检测（Instruction Bloat Detector）

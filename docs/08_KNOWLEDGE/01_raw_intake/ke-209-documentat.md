@@ -4,6 +4,7 @@ status: active
 title: 2.3 三平面的部署拓扑
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 三平面的部署拓扑

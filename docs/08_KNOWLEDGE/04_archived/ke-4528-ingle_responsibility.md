@@ -3,6 +3,7 @@ module_id: KE-4363
 title: 璐ｄ换澹版槑锛圫ingle Responsibility锛?
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 璐ｄ换澹版槑锛圫ingle Responsibility锛?

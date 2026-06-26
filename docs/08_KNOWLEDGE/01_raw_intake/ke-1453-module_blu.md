@@ -4,6 +4,7 @@ status: active
 title: 10.3 反向测试——"不动"的边界
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 反向测试——"不动"的边界

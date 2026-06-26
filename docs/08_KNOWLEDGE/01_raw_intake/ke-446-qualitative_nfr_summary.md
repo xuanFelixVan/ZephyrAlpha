@@ -4,6 +4,7 @@ status: active
 title: 5.1 Qualitative NFR summary / 定性 NFR 概览
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1 Qualitative NFR summary / 定性 NFR 概览

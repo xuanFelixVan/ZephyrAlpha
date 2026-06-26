@@ -3,6 +3,7 @@ module_id: KE-1386---sync-p0-000
 title: 11.1 Ingestion & Sync P0
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11.1 Ingestion & Sync P0

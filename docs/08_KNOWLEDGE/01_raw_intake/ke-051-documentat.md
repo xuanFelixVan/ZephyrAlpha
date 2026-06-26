@@ -3,6 +3,7 @@ module_id: KE-051
 status: active
 title: Ke Documentat     000
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 --000

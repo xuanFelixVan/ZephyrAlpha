@@ -1,5 +1,5 @@
 ---
-doc_type: domain_architecture_diagram
+doc_type: architecture_view
 title: D-AUTONOMY_PERM 自治保护架构图
 version: "1.0"
 status: active

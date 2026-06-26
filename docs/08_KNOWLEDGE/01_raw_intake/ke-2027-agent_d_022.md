@@ -4,6 +4,7 @@ status: active
 title: 2.7 多Agent死锁防护（决策 D-022-06）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 多Agent死锁防护（决策 D-022-06）

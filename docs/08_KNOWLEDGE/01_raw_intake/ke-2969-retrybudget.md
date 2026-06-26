@@ -4,6 +4,7 @@ status: active
 title: RetryBudget（重试配额）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # RetryBudget（重试配额）

@@ -4,6 +4,7 @@ status: active
 title: 3.2.1 KE ID 格式裁决
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.1 KE ID 格式裁决

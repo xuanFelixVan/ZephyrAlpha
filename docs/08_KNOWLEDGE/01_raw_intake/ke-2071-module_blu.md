@@ -3,6 +3,7 @@ module_id: KE-1980-------------7-001
 title: 3. 绑销责任追索（蓝图 §7 施工责任）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. 绑销责任追索（蓝图 §7 施工责任）

@@ -4,6 +4,7 @@ status: active
 title: Sleep-Time Protocol（睡眠时段协议）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Sleep-Time Protocol（睡眠时段协议）

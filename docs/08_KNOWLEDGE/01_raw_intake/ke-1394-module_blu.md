@@ -3,6 +3,7 @@ module_id: KE-1305
 title: 1.1 模块身份
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.1 模块身份

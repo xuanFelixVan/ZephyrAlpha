@@ -3,6 +3,7 @@ module_id: KE-3914-----1-000
 title: 契约追溯 — 15 §9集成 + 1 补充集成
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 契约追溯 — 15 §9集成 + 1 补充集成

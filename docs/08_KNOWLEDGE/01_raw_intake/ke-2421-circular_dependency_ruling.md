@@ -4,6 +4,7 @@ status: active
 title: §5 Circular Dependency Ruling
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §5 Circular Dependency Ruling

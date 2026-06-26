@@ -4,6 +4,7 @@ status: active
 title: 2026年4月前沿大模型综合能力排名
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2026年4月前沿大模型综合能力排名

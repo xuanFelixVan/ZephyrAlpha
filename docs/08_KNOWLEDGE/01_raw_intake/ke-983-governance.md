@@ -4,6 +4,7 @@ status: active
 title: 4.2.3 降级策略
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.2.3 降级策略

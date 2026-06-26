@@ -4,6 +4,7 @@ status: active
 title: 0.2 本文档不是
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 0.2 本文档不是

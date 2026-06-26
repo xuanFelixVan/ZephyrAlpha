@@ -4,6 +4,7 @@ status: active
 title: 2. 到需要做什么（回顾大盘 + 用户原意）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 到需要做什么（回顾大盘 + 用户原意）

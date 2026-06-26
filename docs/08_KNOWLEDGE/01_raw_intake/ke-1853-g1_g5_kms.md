@@ -4,6 +4,7 @@ status: active
 title: 2.2 G1-G5 KMS 决策门（知识生命周期判定）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 G1-G5 KMS 决策门（知识生命周期判定）

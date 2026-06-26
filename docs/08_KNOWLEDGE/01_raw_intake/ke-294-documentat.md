@@ -4,6 +4,7 @@ status: active
 title: 3.2.4 标准子类型推导表
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.2.4 标准子类型推导表

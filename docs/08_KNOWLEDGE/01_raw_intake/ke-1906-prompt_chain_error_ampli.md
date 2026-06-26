@@ -4,6 +4,7 @@ status: active
 title: 2.234 Prompt Chain Error Amplification Monitor - prompt_chain_amplification.py (
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.234 Prompt Chain Error Amplification Monitor - prompt_chain_amplification.py (

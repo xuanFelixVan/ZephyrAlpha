@@ -4,6 +4,7 @@ status: active
 title: 关于 R15-R22 的 superseded 处理说明
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 关于 R15-R22 的 superseded 处理说明

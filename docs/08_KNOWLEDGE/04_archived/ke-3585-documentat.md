@@ -3,6 +3,7 @@ module_id: KE-3441
 title: Domains — 目录索引
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Domains — 目录索引

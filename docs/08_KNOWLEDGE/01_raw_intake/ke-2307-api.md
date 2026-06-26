@@ -4,6 +4,7 @@ status: active
 title: 4.1 任务 API
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 任务 API

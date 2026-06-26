@@ -4,6 +4,7 @@ status: active
 title: 4.1 Python 库 API（experimental 主用）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 Python 库 API（experimental 主用）

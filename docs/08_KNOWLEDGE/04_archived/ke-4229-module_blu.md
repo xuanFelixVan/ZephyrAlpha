@@ -3,6 +3,7 @@ module_id: KE-4070
 title: 3.9 知识来源矩阵与全自动获取决策模型
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.9 知识来源矩阵与全自动获取决策模型

@@ -4,6 +4,7 @@ status: active
 title: COND-004：生产数据源异常时必须执行回退流程
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # COND-004：生产数据源异常时必须执行回退流程

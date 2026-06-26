@@ -4,6 +4,7 @@ status: active
 title: 原则 5：Replace-ability Before Adoption / 先保替换性，再引入
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 原则 5：Replace-ability Before Adoption / 先保替换性，再引入

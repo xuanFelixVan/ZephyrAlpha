@@ -3,6 +3,7 @@ module_id: KE-233
 title: 3. Runtime topology / 运行时拓扑
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Runtime topology / 运行时拓扑

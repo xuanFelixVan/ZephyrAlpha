@@ -4,6 +4,7 @@ status: active
 title: MTH-007：决策质量四问 [MUST — 每次向Owner提交方案时强制执行]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MTH-007：决策质量四问 [MUST — 每次向Owner提交方案时强制执行]

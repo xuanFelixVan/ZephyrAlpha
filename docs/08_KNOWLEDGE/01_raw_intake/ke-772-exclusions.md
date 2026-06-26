@@ -3,6 +3,7 @@ module_id: KE-695-----------------exclusions-005
 title: 1.3 本规范**不**覆盖以下内容{#exclusions}
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 本规范**不**覆盖以下内容{#exclusions}

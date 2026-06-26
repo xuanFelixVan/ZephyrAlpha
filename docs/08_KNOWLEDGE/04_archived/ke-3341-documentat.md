@@ -3,6 +3,7 @@ module_id: KE-3221
 title: 2.4 红线识别
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.4 红线识别

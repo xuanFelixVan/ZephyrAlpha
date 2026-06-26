@@ -4,6 +4,7 @@ status: active
 title: 3.5 #43: ModelCapacityProfile + ModelSwitchRecalibrator
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.5 #43: ModelCapacityProfile + ModelSwitchRecalibrator

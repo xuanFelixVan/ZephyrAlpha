@@ -3,6 +3,7 @@ module_id: KE-3399
 title: 8. TTL 与生命周期
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 8. TTL 与生命周期

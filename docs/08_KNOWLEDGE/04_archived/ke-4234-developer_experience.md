@@ -3,6 +3,7 @@ module_id: KE-4075-------dx-000
 title: 3c. 模块集成 DX：统一接入点 🆕
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3c. 模块集成 DX：统一接入点 🆕

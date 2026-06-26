@@ -3,6 +3,7 @@ module_id: KE-3600
 title: 5. 修订记录
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. 修订记录

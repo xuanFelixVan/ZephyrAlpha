@@ -4,6 +4,7 @@ status: active
 title: DOC-007：引用不复制（Reference, Don't Duplicate）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # DOC-007：引用不复制（Reference, Don't Duplicate）

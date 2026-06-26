@@ -4,6 +4,7 @@ status: active
 title: Concordia Negotiation (D-019-40)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Concordia Negotiation (D-019-40)

@@ -3,6 +3,7 @@ module_id: KE-4032---------lines-67-142-000
 title: §3 域内集成契约 (lines 67-142) —— 逐字段对齐
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §3 域内集成契约 (lines 67-142) —— 逐字段对齐

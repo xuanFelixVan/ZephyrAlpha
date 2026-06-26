@@ -3,6 +3,7 @@ module_id: KE-432
 title: 6. AI 幻觉响应
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6. AI 幻觉响应

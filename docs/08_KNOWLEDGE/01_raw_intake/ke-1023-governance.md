@@ -4,6 +4,7 @@ status: active
 title: 5.1.2 子目录准入与防幻觉路径映射
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.1.2 子目录准入与防幻觉路径映射

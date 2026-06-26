@@ -3,6 +3,7 @@ module_id: KE-4459
 title: 摘要
 category: test_coverage
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 摘要

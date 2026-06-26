@@ -4,6 +4,7 @@ status: active
 title: 13. 已发现未修复盲点（第五轮审计 | 2026-05-05）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 13. 已发现未修复盲点（第五轮审计 | 2026-05-05）

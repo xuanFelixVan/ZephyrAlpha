@@ -4,6 +4,7 @@ status: active
 title: rbac_roles.yaml 新增 security 维度的角色
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # rbac_roles.yaml 新增 security 维度的角色

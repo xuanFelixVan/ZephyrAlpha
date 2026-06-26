@@ -3,6 +3,7 @@ module_id: KE-4251
 title: B. 依赖与调度
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # B. 依赖与调度

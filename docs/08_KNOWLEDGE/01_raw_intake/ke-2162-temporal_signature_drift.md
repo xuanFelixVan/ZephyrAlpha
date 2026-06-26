@@ -4,6 +4,7 @@ status: active
 title: 3.17 Temporal Signature Drift——渐进类型化打破指纹缓存（v0.7.0 终极审视 #6）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.17 Temporal Signature Drift——渐进类型化打破指纹缓存（v0.7.0 终极审视 #6）

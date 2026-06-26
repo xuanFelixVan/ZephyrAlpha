@@ -4,6 +4,7 @@ status: active
 title: 2.3 Batch 3 — 集成层（14 条）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 Batch 3 — 集成层（14 条）

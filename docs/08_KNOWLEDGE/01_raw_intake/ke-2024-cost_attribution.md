@@ -4,6 +4,7 @@ status: active
 title: 2.7 成本归因体系（Cost Attribution）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.7 成本归因体系（Cost Attribution）

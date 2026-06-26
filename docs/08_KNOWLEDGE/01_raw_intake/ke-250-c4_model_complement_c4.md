@@ -4,6 +4,7 @@ status: active
 title: 3. C4 Model complement / C4 模型补充
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. C4 Model complement / C4 模型补充

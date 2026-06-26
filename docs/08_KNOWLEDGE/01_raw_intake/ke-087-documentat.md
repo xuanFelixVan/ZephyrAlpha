@@ -4,6 +4,7 @@ status: active
 title: 1.2 责任范围（本标准管什么）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.2 责任范围（本标准管什么）

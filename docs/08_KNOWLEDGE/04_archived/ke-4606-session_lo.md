@@ -3,6 +3,7 @@ module_id: KE-4440
 title: 3.1 顶层字段
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 顶层字段

@@ -4,6 +4,7 @@ status: active
 title: 16.5 施工顺序
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16.5 施工顺序

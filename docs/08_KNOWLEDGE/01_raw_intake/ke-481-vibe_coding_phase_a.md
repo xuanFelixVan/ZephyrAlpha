@@ -3,6 +3,7 @@ module_id: KE-481
 title: 5A.3 详细架构
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5A.3 详细架构

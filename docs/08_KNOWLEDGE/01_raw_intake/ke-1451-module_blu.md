@@ -4,6 +4,7 @@ status: active
 title: 10.3 门禁模板本身升级流程
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 10.3 门禁模板本身升级流程

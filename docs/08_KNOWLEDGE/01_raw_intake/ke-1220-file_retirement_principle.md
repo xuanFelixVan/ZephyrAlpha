@@ -4,6 +4,7 @@ status: active
 title: 附：文件退役原则（File Retirement Principle）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 附：文件退役原则（File Retirement Principle）

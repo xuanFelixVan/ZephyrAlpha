@@ -4,6 +4,7 @@ status: active
 title: Bug #1: InputSanitizer.__init__() 缺少 `root` 参数
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Bug #1: InputSanitizer.__init__() 缺少 `root` 参数

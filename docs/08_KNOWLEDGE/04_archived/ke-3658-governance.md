@@ -3,6 +3,7 @@ module_id: KE-3513
 title: 2. 验证分级体系
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 验证分级体系

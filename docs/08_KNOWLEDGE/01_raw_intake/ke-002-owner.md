@@ -4,6 +4,7 @@ status: active
 title: 5. Owner 画像与沟通协议
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5. Owner 画像与沟通协议

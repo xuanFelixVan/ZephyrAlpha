@@ -4,6 +4,7 @@ status: active
 title: 2.213 Regulatory Change Monitor - regulatory_change_monitor.py (🆕 v0.20.0 - 盲点26
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.213 Regulatory Change Monitor - regulatory_change_monitor.py (🆕 v0.20.0 - 盲点26

@@ -4,6 +4,7 @@ status: active
 title: Phase E 最终报告
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Phase E 最终报告

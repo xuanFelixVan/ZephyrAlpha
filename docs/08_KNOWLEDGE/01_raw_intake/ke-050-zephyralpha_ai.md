@@ -4,6 +4,7 @@ status: active
 title: ZephyrAlpha 项目 AI 基准文件
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ZephyrAlpha 项目 AI 基准文件

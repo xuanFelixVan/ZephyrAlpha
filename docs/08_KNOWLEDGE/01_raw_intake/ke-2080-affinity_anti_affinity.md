@@ -4,6 +4,7 @@ status: active
 title: 3. Affinity/Anti-Affinity 约束矩阵（5条）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. Affinity/Anti-Affinity 约束矩阵（5条）

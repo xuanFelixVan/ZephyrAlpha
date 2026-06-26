@@ -4,6 +4,7 @@ status: active
 title: 3.4 路径 3：工具搜索 [兜底]
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.4 路径 3：工具搜索 [兜底]

@@ -4,6 +4,7 @@ status: active
 title: 2.249 Decision Outcome Delay Attribution Registry - outcome_delay_attribution.py
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.249 Decision Outcome Delay Attribution Registry - outcome_delay_attribution.py

@@ -3,6 +3,7 @@ module_id: KE-3944
 title: 16.7 施工完成标准
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16.7 施工完成标准

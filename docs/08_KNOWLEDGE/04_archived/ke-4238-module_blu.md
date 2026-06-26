@@ -3,6 +3,7 @@ module_id: KE-4079----------19-4-000
 title: 4. 部署文件清单（§19.4）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4. 部署文件清单（§19.4）

@@ -4,6 +4,7 @@ status: active
 title: 5.5 MRS-003：同步后校验
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.5 MRS-003：同步后校验

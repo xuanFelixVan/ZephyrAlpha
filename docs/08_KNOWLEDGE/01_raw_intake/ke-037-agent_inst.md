@@ -3,6 +3,7 @@ module_id: KE-037
 title: 6.6.5 生成文件豁免
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6.5 生成文件豁免

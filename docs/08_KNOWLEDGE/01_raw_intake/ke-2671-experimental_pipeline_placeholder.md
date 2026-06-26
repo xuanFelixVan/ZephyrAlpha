@@ -4,6 +4,7 @@ status: active
 title: ⛔ 实验管线层 — 禁止施工 · C 轨占位蓝图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ⛔ 实验管线层 — 禁止施工 · C 轨占位蓝图

@@ -4,6 +4,7 @@ status: active
 title: 1.5 唯一真源声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.5 唯一真源声明

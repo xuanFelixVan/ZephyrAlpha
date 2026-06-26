@@ -4,6 +4,7 @@ status: active
 title: 每个 Role Skill 的标准目录结构
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 每个 Role Skill 的标准目录结构

@@ -4,6 +4,7 @@ status: active
 title: 2.223 Observer Effect Monitor - observer_effect_monitor.py (🆕 v0.21.0 - 盲点272 —
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.223 Observer Effect Monitor - observer_effect_monitor.py (🆕 v0.21.0 - 盲点272 —

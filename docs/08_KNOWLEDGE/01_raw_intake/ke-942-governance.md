@@ -4,6 +4,7 @@ status: active
 title: 3.3 新增领域流程
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 新增领域流程

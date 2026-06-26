@@ -3,6 +3,7 @@ module_id: KE-4048
 title: 3. script-manifest.yaml 注册
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. script-manifest.yaml 注册

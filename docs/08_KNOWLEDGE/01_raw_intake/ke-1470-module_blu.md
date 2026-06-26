@@ -3,6 +3,7 @@ module_id: KE-1380
 title: 11. 依赖关系
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. 依赖关系

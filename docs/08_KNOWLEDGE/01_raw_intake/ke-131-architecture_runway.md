@@ -4,6 +4,7 @@ status: active
 title: 11. Architecture Runway / 架构预留通道
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. Architecture Runway / 架构预留通道

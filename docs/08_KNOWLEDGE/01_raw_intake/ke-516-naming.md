@@ -4,6 +4,7 @@ status: active
 title: 6.3 Naming / 命名惯例
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.3 Naming / 命名惯例

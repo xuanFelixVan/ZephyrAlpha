@@ -4,6 +4,7 @@ status: active
 title: 3. DocCompressor — doc_compressor.py (§5.2 + DD3 + DD5)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3. DocCompressor — doc_compressor.py (§5.2 + DD3 + DD5)

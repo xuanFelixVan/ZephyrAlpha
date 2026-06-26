@@ -3,6 +3,7 @@ module_id: KE-3959---------lines-54-65-003
 title: §2 域内模块清单 (lines 54-65)
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §2 域内模块清单 (lines 54-65)

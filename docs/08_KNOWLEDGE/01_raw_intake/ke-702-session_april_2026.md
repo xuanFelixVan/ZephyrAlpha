@@ -4,6 +4,7 @@ status: active
 title: Stage 14：骨架对齐机构终局（2026-04-17 下半段，Opus 4.7 收口）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 14：骨架对齐机构终局（2026-04-17 下半段，Opus 4.7 收口）

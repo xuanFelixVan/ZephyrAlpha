@@ -3,6 +3,7 @@ module_id: KE-3661
 title: ARG-005：评审记录格式
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # ARG-005：评审记录格式

@@ -1,8 +1,8 @@
 ---
 classification: confidential
-date: '2026-06-23'
+date: '2026-06-26'
 doc_type: index
-generated: '2026-06-23'
+generated: '2026-06-26'
 layer: cross_layer
 merged_from: README.md + index.md
 module_id: ARCH-006
@@ -16,7 +16,7 @@ tags:
 - navigation
 - domain-driven
 - depgraph-derived
-summary: v3.0.0：基于§2.1裁定，导航改为43域索引+全景图派生视图说明。原14层分区导航废弃。
+summary: v3.0.0：基于§2.1裁定，导航改为53域索引+全景图派生视图说明。原14层分区导航废弃。
 ttl: permanent
 ---
 
@@ -41,11 +41,11 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）
 
-> **v3.0.0变更**：物理代码组织以43域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph.db派生。
+> **v3.0.0变更**：物理代码组织以53域为准（§2.1裁定），14层降级为域属性。结构化数据由depgraph.db派生。
 
 ---
 
-## 2. 域索引（43域，数据源：depgraph.db）
+## 2. 域索引（53域，数据源：depgraph.db）
 
 > 本索引由`scripts/governance/d5_architecture/generators/generate_domain_index.py`派生。
 > 完整域清单见`generated/domain_index.md`。
@@ -54,85 +54,74 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-INFRA_A2A` | a2a_communication | 114 | A2A通信与管线（从D-INFRA_RUNTIME拆分） |
-| `D-INFRA_OPS` | 基础设施运维 | 46 | 基础设施运维与监控 |
-| `D-INFRA_RECOVERY` | rollback_recovery | 107 | 回滚与自愈（从D-INFRA_RUNTIME拆分） |
-| `D-INFRA_RUNTIME` | runtime_integration | 148 | 运行时集成层 |
-| `D-INFRA_TELEMETRY` | observability_profiling | 51 | 可观测与画像（从D-INFRA_RUNTIME拆分） |
+| `D-INFRA_A2A` | a2a_communication | 114 | A2A Card注册与发现(card_registry) |
+| `D-INFRA_OPS` | resource_optimization | 34 | 资源优化引擎 |
+| `D-INFRA_RECOVERY` | rollback_recovery | 107 | 双轨Checkpoint(git commit + SQLite JSONL dump) |
+| `D-INFRA_RUNTIME` | runtime_integration | 145 | 运行时集成层 |
+| `D-INFRA_TELEMETRY` | observability_profiling | 51 | 系统遥测采集(system_telemetry) |
 
-### `L1_foundation` (6域)
-
-| 域ID | 域名称 | 节点数 | 描述 |
-|------|--------|:---:|------|
-| `D-ALT_DATA` | 另类数据 | 68 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
-| `D-BEHAVIORAL_AUDIT` | 行为审计 | 79 | 行为审计域(从D-SECURITY拆出,behavioral_auditor)。2026-06-25扩充红蓝对抗测试节点。 |
-| `D-DATA_ENG` | 数据工程(增值+融合+知识) | 147 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图 |
-| `D-DATA_GOV` | 数据治理(质量+血缘+参考) | 38 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数 |
-| `D-DATA_SEC` | 数据安全与契约 | 30 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验 |
-| `D-MKT_DATA` | 行情数据(接入+存储) | 266 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一 |
-
-### `L1_platform` (7域)
+### `L1_foundation` (15域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-AUTONOMY_CORE` | 自治核心 | 650 | 自治核心域。负责Agent自治运行时核心，包括AutoRuntime Core、PipelineOr |
-| `D-FRONTEND` | 前端 | 237 | Web界面、可视化看板、交互组件。人机交互入口。 |
-| `D-INTEGRATION` | pipeline_routing | 706 | M1-M11双管线路由 |
-| `D-OPS` | feedback-loop | 641 | 反馈收集器(collectors) |
-| `D-REPORTING` | 报告 | 132 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
-| `D-SECURITY` | adversarial_validation | 849 | 红蓝对抗验证 |
-| `D-SHARED` | shared_services | 288 | 事件总线(event_bus) |
+| `D-ALT_DATA` | 另类数据 | 8 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
+| `D-AUTONOMY_CORE` | agent_communication | 176 | A2A Card注册与发现(card_registry) |
+| `D-BEHAVIORAL_AUDIT` | 行为审计 | 79 | 行为审计域(从D-SECURITY拆出,behavioral_auditor) |
+| `D-DATA_ENG` | 数据工程(增值+融合+知识) | 7 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图 |
+| `D-DATA_GOV` | 数据治理(质量+血缘+参考) | 0 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数 |
+| `D-DATA_SEC` | 数据安全与契约 | 10 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验 |
+| `D-FRONTEND` | 前端 | 23 | Web界面、可视化看板、交互组件。人机交互入口。 |
+| `D-INTEGRATION` | pipeline_routing | 296 | M1-M11双管线路由 |
+| `D-INTEGRATION_GATEWAY` | mcp_servers | 0 | 11个MCP服务端 + 1 Gateway |
+| `D-MKT_DATA` | 行情数据(接入+存储) | 9 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一 |
+| `D-OPS` | feedback-loop | 433 | 反馈收集器(collectors) |
+| `D-REPORTING` | 报告 | 15 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
+| `D-SECURITY` | adversarial_validation | 244 | 红蓝对抗验证 |
+| `D-SECURITY_LLM` | llm_defense | 0 | L0供应链安全(模型验证/依赖扫描) |
+| `D-SHARED` | shared_services | 296 | 事件总线(event_bus) |
 
 ### `L2_domain` (32域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-AUTONOMY_PERM` | 自治保护 | 206 | 自治保护域。负责自治系统的安全边界保护，包括权限守卫、升级引擎、预算执行器、回滚系统。 |
-| `D-BACKTEST` | 回测 | 9 | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 |
-| `D-COMPLIANCE` | 合规 | 916 | 合规规则、交易限制、报告合规、监管对接。合规监管防线。 |
-| `D-CROSS_ASSET` | 跨资产 | 79 | 跨资产策略与配置 |
-| `D-DIGITAL_TWIN` | 数字孪生 | 13 | 数字孪生与虚拟市场仿真 |
-| `D-EXEC_SIM` | 执行仿真 | 8 | Split from D-SIMULATION |
-| `D-EX_CORE` | 执行核心 | 135 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行 |
-| `D-EX_SOR` | 执行路由 | 131 | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 |
-| `D-FACTOR` | 因子 | 320 | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 |
-| `D-GOV-DOCS` | 架构文档 | 151 | 架构文档与规则文档域（2026-06-25从D-GOVERNANCE/D-GOV_RULE拆分） |
-| `D-GOV-ENFORCEMENT` | 规则执行 | 107 | 规则执行代码域（2026-06-25从D-GOV_RULE/D-GOV_AUDIT扩充） |
-| `D-GOV-SCRIPTS` | 治理脚本 | 416 | 治理脚本域（2026-06-25从D-GOVERNANCE/D-GOV_RULE扩充） |
-| `D-GOVERNANCE` | lifecycle_management | 2843 | 模块生命周期钩子(hooks)。2026-06-25拆出文档/脚本域。 |
-| `D-GOV_AUDIT` | audit-trail | 189 | Merkle小时级完整性(merkle_hourly)。2026-06-25拆出测试节点。 |
-| `D-GOV_AUDIT_TESTS` | audit_test_suite | 152 | 审计测试套件（2026-06-25从D-GOV_AUDIT拆分） |
-| `D-GOV_DRIFT` | drift_detection | 22 | 39个漂移检测器注册与调度 |
-| `D-GOV_RULE` | 规则治理 | 12 | 规则执行、注册表管理、策略同步、标准定义。从 D-GOVERNANCE 拆分。2026-06-25拆出错位节点。 |
-| `D-INTELLIGENCE` | context_management | 273 | 上下文预算管理(context_budget/token_budget) |
-| `D-KNOWLEDGE` | knowledge_management | 160 | 知识管线(ingest/triage/extract/activate/analyze) |
-| `D-ML_SERVE` | 推理 | 69 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |
-| `D-ML_TRAIN` | 训练 | 118 | 机器学习训练域。负责ML模型训练管线，包括数据预处理、特征选择、超参优化、模型训练、交叉验证。 |
-| `D-PF_ALLOC` | 组合分配 | 114 | 资产组合分配优化 |
-| `D-PF_CORE` | 组合核心 | 202 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
-| `D-POSITION` | 仓位管理 | 77 | 持仓跟踪、仓位计算、盈亏归因、仓位调整。仓位账本。 |
-| `D-RISK` | 风控 | 775 | 风险度量、风险限额、压力测试、实时风控。交易安全阀。 |
-| `D-SELL_DECISION` | 卖出决策 | 64 | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 |
-| `D-SIGLEGACY` | 信号 | 476 | 信号生成、信号组合、信号过滤、信号优先级。交易信号引擎。 |
-| `D-ASHARE_SIGNAL` | A股特色信号 | 27 | A股特色信号域。负责A股市场特有的信号生成，包括资金流向信号、龙虎榜信号、融资融券信号、限售股解禁信 |
-| `D-FUNDAMENTAL_SIGNAL` | 基本面信号 | 24 | 基本面信号域。负责基本面分析信号生成，包括财务指标信号、估值信号、成长性信号、盈利能力信号。拆分自原 |
-| `D-SIGQC` | 信号质量 | 18 | 信号质量域。负责信号质量评估与监控，包括信号衰减检测、信号相关性分析、信号稳定性评估、信号噪声过滤。 |
-| `D-SIMULATION` | 仿真 | 128 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
-| `D-TRADING` | 交易运营 | 249 | 交易会话、交易接口、交易日志、交易复盘。交易运营中枢。合规检查由D-GOV-ENFORCEMENT门 |
+| `D-ASHARE_SIGNAL` | ashare_signal | 7 | A股特色信号生成 |
+| `D-AUDITTEST` | audit_test_suite | 152 | 审计单元测试(unit) |
+| `D-AUTONOMY_PERM` | escalation | 70 | 规则驱动升级(EscalationEngine) |
+| `D-BACKTEST` | 回测 | 7 | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 |
+| `D-COMPLIANCE` | 合规 | 25 | 合规规则、交易限制、报告合规、监管对接。合规监管防线。 |
+| `D-CROSS_ASSET` | 跨资产 | 11 | 跨资产策略与配置 |
+| `D-DIGITAL_TWIN` | 数字孪生 | 8 | 数字孪生与虚拟市场仿真 |
+| `D-EXEC_SIM` | 执行仿真 | 7 | Split from D-SIMULATION |
+| `D-EX_CORE` | 执行核心 | 14 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行 |
+| `D-EX_SOR` | 执行路由 | 7 | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 |
+| `D-FACTOR` | 因子 | 17 | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 |
+| `D-FUNDAMENTAL_SIGNAL` | fundamental_signal | 25 | 财务指标信号 |
+| `D-GOVERNANCE` | lifecycle_management | 2831 | 模块生命周期钩子(hooks) |
+| `D-GOV_AUDIT` | audit-trail | 188 | Merkle小时级完整性(merkle_hourly) |
+| `D-GOV_DOCS` | architecture_docs | 127 | 架构模型文档(architecture_model) |
+| `D-GOV_DRIFT` | drift_detection | 24 | 39个漂移检测器注册与调度 |
+| `D-GOV_ENFORCEMENT` | rule_enforcement | 107 | 门禁引擎流程编排(GatePipeline/GateEngine) |
+| `D-GOV_RULE` | rule_governance | 11 | 规则配置管理 |
+| `D-GOV_SCRIPTS` | code_dedup | 416 | 代码去重检测 |
+| `D-INTELLIGENCE` | context_management | 56 | 上下文预算管理(context_budget/token_budget) |
+| `D-KNOWLEDGE` | knowledge_management | 41 | 知识管线(ingest/triage/extract/activate/analyze) |
+| `D-ML_SERVE` | 推理 | 7 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |
+| `D-ML_TRAIN` | model_profiling | 12 | 模型性能画像 |
+| `D-PF_ALLOC` | 组合分配 | 11 | 资产组合分配优化 |
+| `D-PF_CORE` | 组合核心 | 44 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
+| `D-POSITION` | 仓位管理 | 8 | 持仓跟踪、仓位计算、盈亏归因、仓位调整。仓位账本。 |
+| `D-RISK` | 风控 | 25 | 风险度量、风险限额、压力测试、实时风控。交易安全阀。 |
+| `D-SELL_DECISION` | 卖出决策 | 7 | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 |
+| `D-SIGLEGACY` | siglegacy | 0 | 信号遗留设计态节点（原 D-SIGNAL 拆分后遗留的设计态占位域） |
+| `D-SIGQC` | signal_quality | 7 | 信号质量评估 |
+| `D-SIMULATION` | 仿真 | 19 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
+| `D-TRADING` | 交易运营 | 163 | 交易会话、交易接口、交易日志、交易复盘。交易运营中枢。合规检查由D-GOV_ENFORCEMENT门 |
 
-### `unassigned` (9域)
+### `unassigned` (1域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-AUTONOMY-CORE` | agent_communication | 0 | A2A Card注册与发现(card_registry) |
-| `D-AUTONOMY-PERM` | escalation | 0 | 规则驱动升级(EscalationEngine) |
-| `D-GOV-ENFORCEMENT` | rule_enforcement | 0 | 门禁引擎流程编排(GatePipeline/GateEngine) |
 | `D-GOV-REPAIR` | rollback | 0 | 双轨Checkpoint(git commit + SQLite JSONL dump) |
-| `D-GOV-SCRIPTS` | code_dedup | 0 | 代码去重检测 |
-| `D-INFRA-OPS` | resource_optimization | 0 | 资源优化引擎 |
-| `D-INTEGRATION-GATEWAY` | mcp_servers | 0 | 11个MCP服务端 + 1 Gateway |
-| `D-ML-TRAIN` | model_profiling | 0 | 模型性能画像 |
-| `D-SECURITY-LLM` | llm_defense | 0 | L0供应链安全(模型验证/依赖扫描) |
 
 ---
 
@@ -140,13 +129,13 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 文件 | 说明 |
 |------|------|
-| overview.md | 架构总览（v2.0.0：43域+全景图派生）|
+| overview.md | 架构总览（v2.0.0：53域+全景图派生）|
 | business_architecture.md | BA 业务架构视图 |
 | information_architecture.md | IA 信息架构视图 |
 | application_architecture.md | AA 应用架构视图（v2.0.0：域派生模块清单）|
 | technology_architecture.md | TA 技术架构视图 |
 | runtime_planes.md | 运行时平面正交视图 |
-| capability_heatmap.md | 能力热力图正交视图（v2.0.0：43域×能力域）|
+| capability_heatmap.md | 能力热力图正交视图（v2.0.0：53域×能力域）|
 | data_architecture.md | DA 数据架构视图 |
 | security_architecture.md | SEC 安全架构视图 |
 | integration_architecture.md | INTEG 集成架构视图 |
@@ -165,13 +154,13 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 派生视图 | 生成器 | 数据源 | 说明 |
 |---------|--------|--------|------|
-| `generated/domain_index.md` | generate_domain_index.py | domains+nodes | 43域总览索引 |
+| `generated/domain_index.md` | generate_domain_index.py | domains+nodes | 53域总览索引 |
 | `generated/cross_domain_matrix.md` | generate_cross_domain_matrix.py | edges | 跨域依赖矩阵 |
 | `generated/capacity_report.md` | generate_capacity_report.py | domains | 域容量报告 |
 | `generated/design_vs_production.md` | generate_design_vs_production.py | nodes | 设计态vs运营态统计 |
 | `generated/constraint_violations.md` | generate_constraint_violations.py | arch_constraints | 架构约束违规报告 |
-| `generated/domains/*.md` | generate_domain_doc.py | nodes+edges | 单域架构文档（52个）|
-| `generated/domains/*_dependency.mmd` | generate_domain_dependency_diagram.py | nodes+edges | 单域依赖图（52个）|
+| `generated/domains/*.md` | generate_domain_doc.py | nodes+edges | 单域架构文档（53个）|
+| `generated/domains/*_dependency.mmd` | generate_domain_dependency_diagram.py | nodes+edges | 单域依赖图（53个）|
 
 ---
 
@@ -180,13 +169,13 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | File / 文件 | Layer / 层 | Answers / 回答的核心问题 | Primary audience / 主要读者 | Status / 状态 |
 |------------|-----------|------------------------|--------------------------|--------------|
 | `index.md`（本文） | — | 本文档组是什么？怎么读？ | 所有人 | active |
-| `overview.md` | Cross-layer | 整体架构哲学？43域如何组织？ | 架构师、新加入者 | active |
+| `overview.md` | Cross-layer | 整体架构哲学？53域如何组织？ | 架构师、新加入者 | active |
 | `business_architecture.md` | BA | 为谁服务？核心业务能力？ | 业务负责人 | active |
 | `information_architecture.md` | IA | `docs/` 有哪些抽屉？ | 文档维护者、AI 协作者 | active |
 | `application_architecture.md` | AA | 系统有哪些应用/模块？域如何划分？ | 开发者、架构师 | active |
 | `technology_architecture.md` | TA | 用什么技术栈？ | SRE、实施者 | active |
 | `runtime_planes.md` 🔷 **正交视图 1** | Orthogonal | 运行平面怎么切分？ | 架构师、SRE | active |
-| `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 43域能力成熟度热力图？ | 架构师、决策层 | active |
+| `capability_heatmap.md` 🔷 **正交视图 2** | Orthogonal | 53域能力成熟度热力图？ | 架构师、决策层 | active |
 | `data_architecture.md` | DA | 业务数据对象？ | 量化研究员、数据工程师 | active |
 | `security_architecture.md` | SEC | 安全域划分？IAM？ | 安全工程师、合规 | active |
 | `integration_architecture.md` | INTEG | 集成风格？接口契约？ | 开发者、架构师、SRE | active |
@@ -201,7 +190,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 6. Reading order / 推荐阅读顺序
 
-**First time / 第一次读（5 分钟）**：`index.md`（本文）→ `overview.md` → `generated/domain_index.md`（43域总览）
+**First time / 第一次读（5 分钟）**：`index.md`（本文）→ `overview.md` → `generated/domain_index.md`（53域总览）
 
 **Architect / 架构师**：`overview.md` → `generated/domain_index.md` → 按域读`generated/domains/*.md`
 
@@ -233,7 +222,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 ## 9. Provenance / 来源说明
 
-本文档组由 `DW-IA-DESIGN-001` 拆分升格而来。v3.0.0 基于§2.1裁定重写为43域索引+全景图派生。
+本文档组由 `DW-IA-DESIGN-001` 拆分升格而来。v3.0.0 基于§2.1裁定重写为53域索引+全景图派生。
 
 ---
 
@@ -243,7 +232,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|
-| 2026-06-23 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为43域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。 |
+| 2026-06-26 | **v3.0.0（DM-200912 Phase4-A）**：基于§2.1裁定重写——导航改为53域索引+派生视图说明；新增§2域索引、§4派生视图；废弃14层分区导航。 |
 | 2026-05-06 | v2.2.0：双树与 SCOPE/SSoT 地图对齐。 |
 | 2026-05-02 | v2.1.0：修复 4 项 SSoT 对齐问题。 |
 

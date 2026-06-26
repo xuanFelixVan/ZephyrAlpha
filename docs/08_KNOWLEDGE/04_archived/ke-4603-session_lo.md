@@ -3,6 +3,7 @@ module_id: KE-4437
 title: 1.3 核心设计原则
 category: session_log
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 1.3 核心设计原则

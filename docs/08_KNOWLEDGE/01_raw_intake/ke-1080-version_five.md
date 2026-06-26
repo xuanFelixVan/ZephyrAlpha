@@ -4,6 +4,7 @@ status: active
 title: 7. 深度内容审计方法（V5 级验证）
 category: governance_rule
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 7. 深度内容审计方法（V5 级验证）

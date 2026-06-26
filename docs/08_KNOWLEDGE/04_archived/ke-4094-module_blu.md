@@ -3,6 +3,7 @@ module_id: KE-3940
 title: 16.4 待施工任务
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 16.4 待施工任务

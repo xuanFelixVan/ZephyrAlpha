@@ -4,6 +4,7 @@ status: active
 title: Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3

@@ -3,6 +3,7 @@ module_id: KE-578
 title: §8.1 各视图 Runway 章节快速导航
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # §8.1 各视图 Runway 章节快速导航

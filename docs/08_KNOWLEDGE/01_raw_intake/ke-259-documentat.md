@@ -4,6 +4,7 @@ status: active
 title: 3.1 违规文件（3 个）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 违规文件（3 个）

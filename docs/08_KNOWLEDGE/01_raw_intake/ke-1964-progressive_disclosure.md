@@ -4,6 +4,7 @@ status: active
 title: 2.3 Progressive Disclosure 加载策略（决策 D-019-04）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 Progressive Disclosure 加载策略（决策 D-019-04）

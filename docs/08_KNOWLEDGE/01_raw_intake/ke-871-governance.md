@@ -3,6 +3,7 @@ module_id: KE-793
 title: 2.2 禁止行为
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.2 禁止行为

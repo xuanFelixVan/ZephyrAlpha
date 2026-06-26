@@ -4,6 +4,7 @@ status: active
 title: dedup_report.yaml —— 完整检测报告
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # dedup_report.yaml —— 完整检测报告

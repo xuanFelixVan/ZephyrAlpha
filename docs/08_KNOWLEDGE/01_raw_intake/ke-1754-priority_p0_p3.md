@@ -4,6 +4,7 @@ status: active
 title: 2.1.4 priority（优先级——P0~P3，基于引用频率 + 依赖链深度）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.1.4 priority（优先级——P0~P3，基于引用频率 + 依赖链深度）

@@ -3,6 +3,7 @@ module_id: KE-3450
 title: 规范性引用（Normative）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 规范性引用（Normative）

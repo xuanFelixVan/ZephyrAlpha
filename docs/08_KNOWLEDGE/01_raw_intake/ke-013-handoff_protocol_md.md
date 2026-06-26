@@ -4,6 +4,7 @@ status: active
 title: 5.3.4 与 handoff-protocol.md 的关系
 category: agent_instruction
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 5.3.4 与 handoff-protocol.md 的关系

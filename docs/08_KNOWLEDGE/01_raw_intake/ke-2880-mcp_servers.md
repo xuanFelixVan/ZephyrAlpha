@@ -4,6 +4,7 @@ status: active
 title: MCP Servers 蓝图
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # MCP Servers 蓝图

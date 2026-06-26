@@ -4,6 +4,7 @@ status: active
 title: 3.3 层级关系与加载策略
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 层级关系与加载策略

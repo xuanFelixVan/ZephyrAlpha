@@ -4,6 +4,7 @@ status: active
 title: 3.3 Gate Engine 集成（资产盘点门禁）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.3 Gate Engine 集成（资产盘点门禁）

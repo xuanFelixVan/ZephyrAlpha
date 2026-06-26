@@ -4,6 +4,7 @@ status: active
 title: Stage 6：从“记忆系统讨论”到“简易决策记忆系统 v0”
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Stage 6：从“记忆系统讨论”到“简易决策记忆系统 v0”

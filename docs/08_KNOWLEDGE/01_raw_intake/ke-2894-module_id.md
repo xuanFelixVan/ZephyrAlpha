@@ -4,6 +4,7 @@ status: active
 title: 模块调用时不需要手动传 module_id
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 模块调用时不需要手动传 module_id

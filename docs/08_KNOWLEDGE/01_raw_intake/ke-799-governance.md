@@ -4,6 +4,7 @@ status: active
 title: 11. 变更同步规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 11. 变更同步规则

@@ -4,6 +4,7 @@ status: active
 title: 6.6 文档-代码共演化
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.6 文档-代码共演化

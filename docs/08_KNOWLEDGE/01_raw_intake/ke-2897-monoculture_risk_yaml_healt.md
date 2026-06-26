@@ -4,6 +4,7 @@ status: active
 title: monoculture-risk.yaml —— health-monitor.py 产出
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # monoculture-risk.yaml —— health-monitor.py 产出

@@ -4,6 +4,7 @@ status: active
 title: 2.3 "必须自研"的五条硬约束
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.3 "必须自研"的五条硬约束

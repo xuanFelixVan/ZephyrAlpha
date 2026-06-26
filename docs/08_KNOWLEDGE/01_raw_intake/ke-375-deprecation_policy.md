@@ -4,6 +4,7 @@ status: active
 title: 4.3 废弃政策（Deprecation Policy）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.3 废弃政策（Deprecation Policy）

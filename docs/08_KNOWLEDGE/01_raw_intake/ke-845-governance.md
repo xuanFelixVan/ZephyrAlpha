@@ -4,6 +4,7 @@ status: active
 title: 2. 12 维度审计清单
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. 12 维度审计清单

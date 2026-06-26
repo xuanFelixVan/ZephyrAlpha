@@ -4,6 +4,7 @@ status: active
 title: 2.246 Data Pipeline Backpressure & Buffer Manager - data_pipeline_backpressure.p
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.246 Data Pipeline Backpressure & Buffer Manager - data_pipeline_backpressure.p

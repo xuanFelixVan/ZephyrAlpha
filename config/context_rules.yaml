@@ -8,7 +8,7 @@
 module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
-doc_type: rule
+doc_type: config
 title: "Context Rules v1"
 status: active
 ttl: permanent

@@ -4,6 +4,7 @@ status: active
 title: Key Artifacts
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # Key Artifacts

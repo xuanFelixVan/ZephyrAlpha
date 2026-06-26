@@ -4,6 +4,7 @@ status: active
 title: CBAC 自保规则
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # CBAC 自保规则

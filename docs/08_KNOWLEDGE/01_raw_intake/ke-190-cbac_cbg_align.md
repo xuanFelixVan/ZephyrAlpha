@@ -3,6 +3,7 @@ module_id: KE-170--------cbac---cbg---align-002
 title: 2.10 三件套新组件（CBAC / CBG / AlignmentMonitor，**Wave 1 R83/R84 增补**）
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2.10 三件套新组件（CBAC / CBG / AlignmentMonitor，**Wave 1 R83/R84 增补**）

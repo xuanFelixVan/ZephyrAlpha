@@ -4,6 +4,7 @@ status: active
 title: 3.1 TaskCard（Orc、Pipeline、Gates、FLE、Script System 共用）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 3.1 TaskCard（Orc、Pipeline、Gates、FLE、Script System 共用）

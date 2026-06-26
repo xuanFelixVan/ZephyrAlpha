@@ -4,6 +4,7 @@ status: active
 title: 6.2 主题策略
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 6.2 主题策略

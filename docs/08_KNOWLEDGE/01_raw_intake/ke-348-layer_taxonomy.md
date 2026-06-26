@@ -4,6 +4,7 @@ status: active
 title: 4.1 14-layer taxonomy / 14 层分层体系
 category: documentation
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 4.1 14-layer taxonomy / 14 层分层体系

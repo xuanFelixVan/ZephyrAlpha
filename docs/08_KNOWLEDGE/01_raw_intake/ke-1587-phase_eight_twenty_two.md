@@ -4,6 +4,7 @@ status: active
 title: 14. 第二轮深度交叉审计盲点全注入 —— 8大维度22盲点（R2 追加）
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 14. 第二轮深度交叉审计盲点全注入 —— 8大维度22盲点（R2 追加）

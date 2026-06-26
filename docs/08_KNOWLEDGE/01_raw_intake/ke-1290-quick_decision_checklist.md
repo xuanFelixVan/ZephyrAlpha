@@ -4,6 +4,7 @@ status: active
 title: 快速判定清单（Quick Decision Checklist）
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 快速判定清单（Quick Decision Checklist）

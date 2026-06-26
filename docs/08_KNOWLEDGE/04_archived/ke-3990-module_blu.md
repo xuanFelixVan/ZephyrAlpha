@@ -3,6 +3,7 @@ module_id: KE-3837
 title: 12.2 前置条件
 category: module_blueprint
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 12.2 前置条件
