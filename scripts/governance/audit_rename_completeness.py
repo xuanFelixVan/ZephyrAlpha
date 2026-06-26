@@ -206,6 +206,35 @@ def circular_review(
     return passed_rounds >= rounds
 
 
+def circular_review_node_paths(
+    db_path: str, old_patterns: list[str], rounds: int = 2
+) -> bool:
+    """循环审查节点路径列：连续 rounds 轮扫描，每轮0残留才算通过（阶段D专用）。
+
+    扫描范围：nodes.path + blueprint_links.blueprint_path（与 scan_node_paths 一致）。
+    返回 True=通过（连续rounds轮0残留），False=失败。
+    """
+    passed_rounds = 0
+    for i in range(1, rounds + 1):
+        conn = sqlite3.connect(db_path)
+        try:
+            residuals = scan_node_paths(conn, old_patterns)
+            total = sum(r["count"] for r in residuals)
+            print(f"  Round {i}/{rounds}: {total} 残留行（{len(residuals)} 个列位）")
+            if total == 0:
+                passed_rounds += 1
+            else:
+                passed_rounds = 0  # 重置连续通过计数
+                for r in residuals:
+                    print(
+                        f"    {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows"
+                    )
+        finally:
+            conn.close()
+
+    return passed_rounds >= rounds
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="audit_rename_completeness.py",
@@ -256,6 +285,16 @@ def main() -> int:
     # 节点路径模式
     if args.check_node_paths:
         patterns = [args.old_pattern] if args.old_pattern else NODE_PATH_OLD_PREFIXES
+        # 循环审查模式（阶段D：连续N轮0残留才通过）
+        if args.rounds > 0:
+            print(f"=== 节点路径循环审查 {args.rounds} 轮（patterns={patterns}）===")
+            passed = circular_review_node_paths(args.db_path, patterns, rounds=args.rounds)
+            if passed:
+                print(f"[PASS] 连续 {args.rounds} 轮0残留，节点路径改名完整性审计通过")
+                return 0
+            print(f"[FAIL] 未能连续 {args.rounds} 轮0残留")
+            return 1
+        # 单次扫描模式
         conn = sqlite3.connect(args.db_path)
         try:
             residuals = scan_node_paths(conn, patterns)
@@ -263,9 +302,9 @@ def main() -> int:
             conn.close()
         total = sum(r["count"] for r in residuals)
         if total == 0:
-            print(f"[PASS] nodes.path 无旧前缀残留（{patterns}）")
+            print(f"[PASS] 节点路径列（nodes.path + blueprint_links.blueprint_path）无旧前缀残留（{patterns}）")
             return 0
-        print(f"[FAIL] nodes.path 发现 {total} 行残留:")
+        print(f"[FAIL] 节点路径列发现 {total} 行残留:")
         for r in residuals:
             print(f"  {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows")
             for s in r["samples"]:

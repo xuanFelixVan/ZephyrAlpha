@@ -2,7 +2,7 @@ metadata:
   graph_id: PROJECT-ENTITY-DEPGRAPH-001
   version: 4.0.0
   granularity: system
-  generated_at: '2026-06-26T03:02:53.814500'
+  generated_at: '2026-06-26T09:21:34.175399'
   generated_by: generate_project_depgraph_artifact.py
   source: depgraph.db (read-only CQRS projection, 裁定#207 R2)
   total_nodes: 6841
@@ -4193,7 +4193,7 @@ nodes:
     provided_interfaces: null
     type: module
   '549':
-    path: 信号域-审计/D-SIGNAL-06
+    path: 信号域-审计/D-SIGLEGACY-01
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -4234,7 +4234,7 @@ nodes:
     provided_interfaces: null
     type: module
   '550':
-    path: 信号域-契约/D-SIGNAL-100
+    path: 信号域-契约/D-SIGLEGACY-19
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -4275,7 +4275,7 @@ nodes:
     provided_interfaces: null
     type: module
   '551':
-    path: 信号域-契约/D-SIGNAL-158
+    path: 信号域-契约/D-SIGLEGACY-43
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -4724,7 +4724,7 @@ nodes:
     provided_interfaces: null
     type: module
   '562':
-    path: 信号域/D-SIGNAL-20
+    path: 信号域/D-SIGLEGACY-06
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -7945,7 +7945,7 @@ nodes:
     provided_interfaces: null
     type: module
   '638':
-    path: 信号域-降级/D-SIGNAL-80
+    path: 信号域-降级/D-SIGLEGACY-12
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -9011,7 +9011,7 @@ nodes:
     provided_interfaces: null
     type: module
   '664':
-    path: 信号域-策略发布/D-SIGNAL-140
+    path: 信号域-策略发布/D-SIGLEGACY-36
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -9188,7 +9188,7 @@ nodes:
     provided_interfaces: null
     type: module
   '666':
-    path: 信号域-核心基础设施/D-SIGNAL-12
+    path: 信号域-核心基础设施/D-SIGLEGACY-02
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -9229,7 +9229,7 @@ nodes:
     provided_interfaces: null
     type: module
   '667':
-    path: 信号域-核心基础设施/D-SIGNAL-14
+    path: 信号域-核心基础设施/D-SIGLEGACY-03
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -9270,7 +9270,7 @@ nodes:
     provided_interfaces: null
     type: module
   '668':
-    path: 信号域-核心基础设施/D-SIGNAL-16
+    path: 信号域-核心基础设施/D-SIGLEGACY-04
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -9311,7 +9311,7 @@ nodes:
     provided_interfaces: null
     type: module
   '669':
-    path: 信号域-核心基础设施/D-SIGNAL-18
+    path: 信号域-核心基础设施/D-SIGLEGACY-05
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -9352,7 +9352,7 @@ nodes:
     provided_interfaces: null
     type: module
   '670':
-    path: 信号域-A股特色-主力资金/D-SIGNAL-21
+    path: 信号域-A股特色-主力资金/D-ASHARE_SIGNAL-01
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9393,7 +9393,7 @@ nodes:
     provided_interfaces: null
     type: module
   '671':
-    path: 信号域-A股特色-主力资金/D-SIGNAL-23
+    path: 信号域-A股特色-主力资金/D-ASHARE_SIGNAL-02
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9434,7 +9434,7 @@ nodes:
     provided_interfaces: null
     type: module
   '672':
-    path: 信号域-A股特色-情绪周期/D-SIGNAL-25
+    path: 信号域-A股特色-情绪周期/D-ASHARE_SIGNAL-03
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9475,7 +9475,7 @@ nodes:
     provided_interfaces: null
     type: module
   '673':
-    path: 信号域-A股特色-决策评估/D-SIGNAL-27
+    path: 信号域-A股特色-决策评估/D-ASHARE_SIGNAL-04
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9516,7 +9516,7 @@ nodes:
     provided_interfaces: null
     type: module
   '674':
-    path: 信号域-A股特色-分时技术/D-SIGNAL-29
+    path: 信号域-A股特色-分时技术/D-ASHARE_SIGNAL-05
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9557,7 +9557,7 @@ nodes:
     provided_interfaces: null
     type: module
   '675':
-    path: 信号域-A股特色-大盘阶段/D-SIGNAL-31
+    path: 信号域-A股特色-大盘阶段/D-ASHARE_SIGNAL-06
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9598,7 +9598,7 @@ nodes:
     provided_interfaces: null
     type: module
   '676':
-    path: 信号域-A股特色-情绪周期/D-SIGNAL-33
+    path: 信号域-A股特色-情绪周期/D-ASHARE_SIGNAL-07
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9639,7 +9639,7 @@ nodes:
     provided_interfaces: null
     type: module
   '677':
-    path: 信号域-A股特色-主力资金/D-SIGNAL-36
+    path: 信号域-A股特色-主力资金/D-ASHARE_SIGNAL-08
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9680,7 +9680,7 @@ nodes:
     provided_interfaces: null
     type: module
   '678':
-    path: 信号域-A股特色-特殊信号/D-SIGNAL-38
+    path: 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-09
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9721,7 +9721,7 @@ nodes:
     provided_interfaces: null
     type: module
   '679':
-    path: 信号域-A股特色-分时技术/D-SIGNAL-40
+    path: 信号域-A股特色-分时技术/D-ASHARE_SIGNAL-10
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9762,7 +9762,7 @@ nodes:
     provided_interfaces: null
     type: module
   '680':
-    path: 信号域-A股特色-特殊信号/D-SIGNAL-42
+    path: 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-11
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9803,7 +9803,7 @@ nodes:
     provided_interfaces: null
     type: module
   '681':
-    path: 信号域-A股特色-决策评估/D-SIGNAL-45
+    path: 信号域-A股特色-决策评估/D-ASHARE_SIGNAL-12
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9844,7 +9844,7 @@ nodes:
     provided_interfaces: null
     type: module
   '682':
-    path: 信号域-A股特色-买卖点/D-SIGNAL-47
+    path: 信号域-A股特色-买卖点/D-ASHARE_SIGNAL-13
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9885,7 +9885,7 @@ nodes:
     provided_interfaces: null
     type: module
   '683':
-    path: 信号域-A股特色-大盘阶段/D-SIGNAL-49
+    path: 信号域-A股特色-大盘阶段/D-ASHARE_SIGNAL-14
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9926,7 +9926,7 @@ nodes:
     provided_interfaces: null
     type: module
   '684':
-    path: 信号域-A股特色-分时技术/D-SIGNAL-51
+    path: 信号域-A股特色-分时技术/D-ASHARE_SIGNAL-15
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -9967,7 +9967,7 @@ nodes:
     provided_interfaces: null
     type: module
   '685':
-    path: 信号域-A股特色-涨停封单/D-SIGNAL-53
+    path: 信号域-A股特色-涨停封单/D-ASHARE_SIGNAL-16
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -10008,7 +10008,7 @@ nodes:
     provided_interfaces: null
     type: module
   '686':
-    path: 信号域-A股特色-特殊信号/D-SIGNAL-55
+    path: 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-17
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -10049,7 +10049,7 @@ nodes:
     provided_interfaces: null
     type: module
   '687':
-    path: 信号域-A股特色-量化双引擎/D-SIGNAL-57
+    path: 信号域-A股特色-量化双引擎/D-ASHARE_SIGNAL-18
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -10090,7 +10090,7 @@ nodes:
     provided_interfaces: null
     type: module
   '688':
-    path: 信号域-A股特色-特殊信号/D-SIGNAL-61
+    path: 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-19
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -10131,7 +10131,7 @@ nodes:
     provided_interfaces: null
     type: module
   '689':
-    path: 信号域-A股特色-板块轮动/D-SIGNAL-63
+    path: 信号域-A股特色-板块轮动/D-ASHARE_SIGNAL-20
     granularity: file
     domain_id: D-ASHARE_SIGNAL
     subdomain_id: null
@@ -10172,7 +10172,7 @@ nodes:
     provided_interfaces: null
     type: module
   '690':
-    path: 信号域-Regime/D-SIGNAL-65
+    path: 信号域-Regime/D-SIGLEGACY-07
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10213,7 +10213,7 @@ nodes:
     provided_interfaces: null
     type: module
   '691':
-    path: 信号域-Regime/D-SIGNAL-67
+    path: 信号域-Regime/D-SIGLEGACY-08
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10254,7 +10254,7 @@ nodes:
     provided_interfaces: null
     type: module
   '692':
-    path: 信号域-Regime/D-SIGNAL-74
+    path: 信号域-Regime/D-SIGLEGACY-09
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10295,7 +10295,7 @@ nodes:
     provided_interfaces: null
     type: module
   '693':
-    path: 信号域-Regime/D-SIGNAL-76
+    path: 信号域-Regime/D-SIGLEGACY-10
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10336,7 +10336,7 @@ nodes:
     provided_interfaces: null
     type: module
   '694':
-    path: 信号域-信号处理/D-SIGNAL-69
+    path: 信号域-信号处理/D-SIGQC-01
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -10377,7 +10377,7 @@ nodes:
     provided_interfaces: null
     type: module
   '695':
-    path: 信号域-信号处理/D-SIGNAL-71
+    path: 信号域-信号处理/D-SIGQC-02
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -10418,7 +10418,7 @@ nodes:
     provided_interfaces: null
     type: module
   '696':
-    path: 信号域-质量降级/D-SIGNAL-77
+    path: 信号域-质量降级/D-SIGQC-03
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -10459,7 +10459,7 @@ nodes:
     provided_interfaces: null
     type: module
   '697':
-    path: 信号域-质量降级/D-SIGNAL-79
+    path: 信号域-质量降级/D-SIGLEGACY-11
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10500,7 +10500,7 @@ nodes:
     provided_interfaces: null
     type: module
   '698':
-    path: 信号域-质量降级/D-SIGNAL-81
+    path: 信号域-质量降级/D-SIGQC-04
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -10541,7 +10541,7 @@ nodes:
     provided_interfaces: null
     type: module
   '699':
-    path: 信号域-质量降级/D-SIGNAL-83
+    path: 信号域-质量降级/D-SIGQC-05
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -10582,7 +10582,7 @@ nodes:
     provided_interfaces: null
     type: module
   '700':
-    path: 信号域-合成分配/D-SIGNAL-85
+    path: 信号域-合成分配/D-SIGLEGACY-13
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10623,7 +10623,7 @@ nodes:
     provided_interfaces: null
     type: module
   '701':
-    path: 信号域-合成分配/D-SIGNAL-87
+    path: 信号域-合成分配/D-SIGLEGACY-14
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10664,7 +10664,7 @@ nodes:
     provided_interfaces: null
     type: module
   '702':
-    path: 信号域-合成分配/D-SIGNAL-90
+    path: 信号域-合成分配/D-SIGLEGACY-15
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10705,7 +10705,7 @@ nodes:
     provided_interfaces: null
     type: module
   '703':
-    path: 信号域-合成分配/D-SIGNAL-92
+    path: 信号域-合成分配/D-SIGQC-06
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -10746,7 +10746,7 @@ nodes:
     provided_interfaces: null
     type: module
   '704':
-    path: 信号域-合成分配/D-SIGNAL-94
+    path: 信号域-合成分配/D-SIGLEGACY-16
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10787,7 +10787,7 @@ nodes:
     provided_interfaces: null
     type: module
   '705':
-    path: 信号域-合成分配/D-SIGNAL-96
+    path: 信号域-合成分配/D-SIGLEGACY-17
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10828,7 +10828,7 @@ nodes:
     provided_interfaces: null
     type: module
   '706':
-    path: 信号域-事件追踪/D-SIGNAL-99
+    path: 信号域-事件追踪/D-SIGLEGACY-18
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10869,7 +10869,7 @@ nodes:
     provided_interfaces: null
     type: module
   '707':
-    path: 信号域-事件追踪/D-SIGNAL-101
+    path: 信号域-事件追踪/D-SIGLEGACY-20
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10910,7 +10910,7 @@ nodes:
     provided_interfaces: null
     type: module
   '708':
-    path: 信号域-事件追踪/D-SIGNAL-103
+    path: 信号域-事件追踪/D-SIGLEGACY-21
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10951,7 +10951,7 @@ nodes:
     provided_interfaces: null
     type: module
   '709':
-    path: 信号域-策略可视化/D-SIGNAL-105
+    path: 信号域-策略可视化/D-SIGLEGACY-22
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -10992,7 +10992,7 @@ nodes:
     provided_interfaces: null
     type: module
   '710':
-    path: 信号域-策略可视化/D-SIGNAL-107
+    path: 信号域-策略可视化/D-SIGLEGACY-23
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11033,7 +11033,7 @@ nodes:
     provided_interfaces: null
     type: module
   '711':
-    path: 信号域-策略可视化/D-SIGNAL-109
+    path: 信号域-策略可视化/D-SIGLEGACY-24
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11073,7 +11073,7 @@ nodes:
     provided_interfaces: null
     type: module
   '712':
-    path: 信号域-策略可视化/D-SIGNAL-111
+    path: 信号域-策略可视化/D-SIGLEGACY-25
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11114,7 +11114,7 @@ nodes:
     provided_interfaces: null
     type: module
   '713':
-    path: 信号域-技术指标/D-SIGNAL-114
+    path: 信号域-技术指标/D-SIGLEGACY-26
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11154,7 +11154,7 @@ nodes:
     provided_interfaces: null
     type: module
   '714':
-    path: 信号域-技术指标/D-SIGNAL-116
+    path: 信号域-技术指标/D-SIGLEGACY-27
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11195,7 +11195,7 @@ nodes:
     provided_interfaces: null
     type: module
   '715':
-    path: 信号域-技术指标/D-SIGNAL-118
+    path: 信号域-技术指标/D-SIGQC-07
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -11236,7 +11236,7 @@ nodes:
     provided_interfaces: null
     type: module
   '716':
-    path: 信号域-技术指标/D-SIGNAL-120
+    path: 信号域-技术指标/D-SIGLEGACY-28
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11277,7 +11277,7 @@ nodes:
     provided_interfaces: null
     type: module
   '717':
-    path: 信号域-技术指标/D-SIGNAL-122
+    path: 信号域-技术指标/D-SIGLEGACY-29
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11318,7 +11318,7 @@ nodes:
     provided_interfaces: null
     type: module
   '718':
-    path: 信号域-技术指标/D-SIGNAL-124
+    path: 信号域-技术指标/D-SIGLEGACY-30
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11359,7 +11359,7 @@ nodes:
     provided_interfaces: null
     type: module
   '719':
-    path: 信号域-技术指标/D-SIGNAL-126
+    path: 信号域-技术指标/D-SIGLEGACY-31
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11400,7 +11400,7 @@ nodes:
     provided_interfaces: null
     type: module
   '720':
-    path: 信号域-技术指标/D-SIGNAL-128
+    path: 信号域-技术指标/D-SIGLEGACY-32
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11440,7 +11440,7 @@ nodes:
     provided_interfaces: null
     type: module
   '721':
-    path: 信号域-冲突融合/D-SIGNAL-130
+    path: 信号域-冲突融合/D-SIGQC-08
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -11482,7 +11482,7 @@ nodes:
     provided_interfaces: null
     type: module
   '722':
-    path: 信号域-冲突融合/D-SIGNAL-132
+    path: 信号域-冲突融合/D-SIGQC-09
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -11522,7 +11522,7 @@ nodes:
     provided_interfaces: null
     type: module
   '723':
-    path: 信号域-冲突融合/D-SIGNAL-134
+    path: 信号域-冲突融合/D-SIGLEGACY-33
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11562,7 +11562,7 @@ nodes:
     provided_interfaces: null
     type: module
   '724':
-    path: 信号域-策略管理/D-SIGNAL-137
+    path: 信号域-策略管理/D-SIGLEGACY-34
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11602,7 +11602,7 @@ nodes:
     provided_interfaces: null
     type: module
   '725':
-    path: 信号域-策略管理/D-SIGNAL-139
+    path: 信号域-策略管理/D-SIGLEGACY-35
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11642,7 +11642,7 @@ nodes:
     provided_interfaces: null
     type: module
   '726':
-    path: 信号域-策略管理/D-SIGNAL-141
+    path: 信号域-策略管理/D-SIGLEGACY-37
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11682,7 +11682,7 @@ nodes:
     provided_interfaces: null
     type: module
   '727':
-    path: 信号域-策略管理/D-SIGNAL-143
+    path: 信号域-策略管理/D-SIGLEGACY-38
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11722,7 +11722,7 @@ nodes:
     provided_interfaces: null
     type: module
   '728':
-    path: 信号域-策略质量/D-SIGNAL-145
+    path: 信号域-策略质量/D-SIGLEGACY-39
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11762,7 +11762,7 @@ nodes:
     provided_interfaces: null
     type: module
   '729':
-    path: 信号域-策略质量/D-SIGNAL-147
+    path: 信号域-策略质量/D-SIGLEGACY-40
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11802,7 +11802,7 @@ nodes:
     provided_interfaces: null
     type: module
   '730':
-    path: 信号域-策略运行时/D-SIGNAL-150
+    path: 信号域-策略运行时/D-SIGLEGACY-41
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11842,7 +11842,7 @@ nodes:
     provided_interfaces: null
     type: module
   '731':
-    path: 信号域-策略运行时/D-SIGNAL-152
+    path: 信号域-策略运行时/D-SIGLEGACY-42
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11883,7 +11883,7 @@ nodes:
     provided_interfaces: null
     type: module
   '732':
-    path: 信号域-策略运行时/D-SIGNAL-156
+    path: 信号域-策略运行时/D-SIGQC-10
     granularity: file
     domain_id: D-SIGQC
     subdomain_id: null
@@ -11923,7 +11923,7 @@ nodes:
     provided_interfaces: null
     type: module
   '733':
-    path: 信号域-DDD契约/D-SIGNAL-160
+    path: 信号域-DDD契约/D-SIGLEGACY-44
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -11963,7 +11963,7 @@ nodes:
     provided_interfaces: null
     type: module
   '734':
-    path: 信号域-DDD契约/D-SIGNAL-162
+    path: 信号域-DDD契约/D-SIGLEGACY-45
     granularity: file
     domain_id: D-SIGLEGACY
     subdomain_id: null
@@ -464507,51 +464507,51 @@ blueprint_file_map:
   - src/zephyr/data_eng/infrastructure/__init__.py
   - src/zephyr/data_eng/_extensions/__init__.py
   MOD-SIGLEGACY:
-  - 信号域-审计/D-SIGNAL-06
-  - 信号域-契约/D-SIGNAL-100
-  - 信号域-契约/D-SIGNAL-158
-  - 信号域/D-SIGNAL-20
-  - 信号域-降级/D-SIGNAL-80
-  - 信号域-策略发布/D-SIGNAL-140
-  - 信号域-核心基础设施/D-SIGNAL-12
-  - 信号域-核心基础设施/D-SIGNAL-14
-  - 信号域-核心基础设施/D-SIGNAL-16
-  - 信号域-核心基础设施/D-SIGNAL-18
-  - 信号域-Regime/D-SIGNAL-65
-  - 信号域-Regime/D-SIGNAL-67
-  - 信号域-Regime/D-SIGNAL-74
-  - 信号域-Regime/D-SIGNAL-76
-  - 信号域-质量降级/D-SIGNAL-79
-  - 信号域-合成分配/D-SIGNAL-85
-  - 信号域-合成分配/D-SIGNAL-87
-  - 信号域-合成分配/D-SIGNAL-90
-  - 信号域-合成分配/D-SIGNAL-94
-  - 信号域-合成分配/D-SIGNAL-96
-  - 信号域-事件追踪/D-SIGNAL-99
-  - 信号域-事件追踪/D-SIGNAL-101
-  - 信号域-事件追踪/D-SIGNAL-103
-  - 信号域-策略可视化/D-SIGNAL-105
-  - 信号域-策略可视化/D-SIGNAL-107
-  - 信号域-策略可视化/D-SIGNAL-109
-  - 信号域-策略可视化/D-SIGNAL-111
-  - 信号域-技术指标/D-SIGNAL-114
-  - 信号域-技术指标/D-SIGNAL-116
-  - 信号域-技术指标/D-SIGNAL-120
-  - 信号域-技术指标/D-SIGNAL-122
-  - 信号域-技术指标/D-SIGNAL-124
-  - 信号域-技术指标/D-SIGNAL-126
-  - 信号域-技术指标/D-SIGNAL-128
-  - 信号域-冲突融合/D-SIGNAL-134
-  - 信号域-策略管理/D-SIGNAL-137
-  - 信号域-策略管理/D-SIGNAL-139
-  - 信号域-策略管理/D-SIGNAL-141
-  - 信号域-策略管理/D-SIGNAL-143
-  - 信号域-策略质量/D-SIGNAL-145
-  - 信号域-策略质量/D-SIGNAL-147
-  - 信号域-策略运行时/D-SIGNAL-150
-  - 信号域-策略运行时/D-SIGNAL-152
-  - 信号域-DDD契约/D-SIGNAL-160
-  - 信号域-DDD契约/D-SIGNAL-162
+  - 信号域-审计/D-SIGLEGACY-01
+  - 信号域-契约/D-SIGLEGACY-19
+  - 信号域-契约/D-SIGLEGACY-43
+  - 信号域/D-SIGLEGACY-06
+  - 信号域-降级/D-SIGLEGACY-12
+  - 信号域-策略发布/D-SIGLEGACY-36
+  - 信号域-核心基础设施/D-SIGLEGACY-02
+  - 信号域-核心基础设施/D-SIGLEGACY-03
+  - 信号域-核心基础设施/D-SIGLEGACY-04
+  - 信号域-核心基础设施/D-SIGLEGACY-05
+  - 信号域-Regime/D-SIGLEGACY-07
+  - 信号域-Regime/D-SIGLEGACY-08
+  - 信号域-Regime/D-SIGLEGACY-09
+  - 信号域-Regime/D-SIGLEGACY-10
+  - 信号域-质量降级/D-SIGLEGACY-11
+  - 信号域-合成分配/D-SIGLEGACY-13
+  - 信号域-合成分配/D-SIGLEGACY-14
+  - 信号域-合成分配/D-SIGLEGACY-15
+  - 信号域-合成分配/D-SIGLEGACY-16
+  - 信号域-合成分配/D-SIGLEGACY-17
+  - 信号域-事件追踪/D-SIGLEGACY-18
+  - 信号域-事件追踪/D-SIGLEGACY-20
+  - 信号域-事件追踪/D-SIGLEGACY-21
+  - 信号域-策略可视化/D-SIGLEGACY-22
+  - 信号域-策略可视化/D-SIGLEGACY-23
+  - 信号域-策略可视化/D-SIGLEGACY-24
+  - 信号域-策略可视化/D-SIGLEGACY-25
+  - 信号域-技术指标/D-SIGLEGACY-26
+  - 信号域-技术指标/D-SIGLEGACY-27
+  - 信号域-技术指标/D-SIGLEGACY-28
+  - 信号域-技术指标/D-SIGLEGACY-29
+  - 信号域-技术指标/D-SIGLEGACY-30
+  - 信号域-技术指标/D-SIGLEGACY-31
+  - 信号域-技术指标/D-SIGLEGACY-32
+  - 信号域-冲突融合/D-SIGLEGACY-33
+  - 信号域-策略管理/D-SIGLEGACY-34
+  - 信号域-策略管理/D-SIGLEGACY-35
+  - 信号域-策略管理/D-SIGLEGACY-37
+  - 信号域-策略管理/D-SIGLEGACY-38
+  - 信号域-策略质量/D-SIGLEGACY-39
+  - 信号域-策略质量/D-SIGLEGACY-40
+  - 信号域-策略运行时/D-SIGLEGACY-41
+  - 信号域-策略运行时/D-SIGLEGACY-42
+  - 信号域-DDD契约/D-SIGLEGACY-44
+  - 信号域-DDD契约/D-SIGLEGACY-45
   MOD-INFRA_RUNTIME:
   - 运维基础设施域/D-INFRA-03
   - 运维基础设施域/D-INFRA-321
@@ -465103,26 +465103,26 @@ blueprint_file_map:
   - src/zephyr/autonomy_core/services/__init__.py
   - src/zephyr/autonomy_core/_extensions/__init__.py
   MOD-ASHARE_SIGNAL:
-  - 信号域-A股特色-主力资金/D-SIGNAL-21
-  - 信号域-A股特色-主力资金/D-SIGNAL-23
-  - 信号域-A股特色-情绪周期/D-SIGNAL-25
-  - 信号域-A股特色-决策评估/D-SIGNAL-27
-  - 信号域-A股特色-分时技术/D-SIGNAL-29
-  - 信号域-A股特色-大盘阶段/D-SIGNAL-31
-  - 信号域-A股特色-情绪周期/D-SIGNAL-33
-  - 信号域-A股特色-主力资金/D-SIGNAL-36
-  - 信号域-A股特色-特殊信号/D-SIGNAL-38
-  - 信号域-A股特色-分时技术/D-SIGNAL-40
-  - 信号域-A股特色-特殊信号/D-SIGNAL-42
-  - 信号域-A股特色-决策评估/D-SIGNAL-45
-  - 信号域-A股特色-买卖点/D-SIGNAL-47
-  - 信号域-A股特色-大盘阶段/D-SIGNAL-49
-  - 信号域-A股特色-分时技术/D-SIGNAL-51
-  - 信号域-A股特色-涨停封单/D-SIGNAL-53
-  - 信号域-A股特色-特殊信号/D-SIGNAL-55
-  - 信号域-A股特色-量化双引擎/D-SIGNAL-57
-  - 信号域-A股特色-特殊信号/D-SIGNAL-61
-  - 信号域-A股特色-板块轮动/D-SIGNAL-63
+  - 信号域-A股特色-主力资金/D-ASHARE_SIGNAL-01
+  - 信号域-A股特色-主力资金/D-ASHARE_SIGNAL-02
+  - 信号域-A股特色-情绪周期/D-ASHARE_SIGNAL-03
+  - 信号域-A股特色-决策评估/D-ASHARE_SIGNAL-04
+  - 信号域-A股特色-分时技术/D-ASHARE_SIGNAL-05
+  - 信号域-A股特色-大盘阶段/D-ASHARE_SIGNAL-06
+  - 信号域-A股特色-情绪周期/D-ASHARE_SIGNAL-07
+  - 信号域-A股特色-主力资金/D-ASHARE_SIGNAL-08
+  - 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-09
+  - 信号域-A股特色-分时技术/D-ASHARE_SIGNAL-10
+  - 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-11
+  - 信号域-A股特色-决策评估/D-ASHARE_SIGNAL-12
+  - 信号域-A股特色-买卖点/D-ASHARE_SIGNAL-13
+  - 信号域-A股特色-大盘阶段/D-ASHARE_SIGNAL-14
+  - 信号域-A股特色-分时技术/D-ASHARE_SIGNAL-15
+  - 信号域-A股特色-涨停封单/D-ASHARE_SIGNAL-16
+  - 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-17
+  - 信号域-A股特色-量化双引擎/D-ASHARE_SIGNAL-18
+  - 信号域-A股特色-特殊信号/D-ASHARE_SIGNAL-19
+  - 信号域-A股特色-板块轮动/D-ASHARE_SIGNAL-20
   - src/zephyr/signal_ashare/__init__.py
   - src/zephyr/signal_ashare/core/__init__.py
   - src/zephyr/signal_ashare/api/__init__.py
@@ -465131,16 +465131,16 @@ blueprint_file_map:
   - src/zephyr/signal_ashare/models/__init__.py
   - src/zephyr/signal_ashare/services/__init__.py
   MOD-SIGQC:
-  - 信号域-信号处理/D-SIGNAL-69
-  - 信号域-信号处理/D-SIGNAL-71
-  - 信号域-质量降级/D-SIGNAL-77
-  - 信号域-质量降级/D-SIGNAL-81
-  - 信号域-质量降级/D-SIGNAL-83
-  - 信号域-合成分配/D-SIGNAL-92
-  - 信号域-技术指标/D-SIGNAL-118
-  - 信号域-冲突融合/D-SIGNAL-130
-  - 信号域-冲突融合/D-SIGNAL-132
-  - 信号域-策略运行时/D-SIGNAL-156
+  - 信号域-信号处理/D-SIGQC-01
+  - 信号域-信号处理/D-SIGQC-02
+  - 信号域-质量降级/D-SIGQC-03
+  - 信号域-质量降级/D-SIGQC-04
+  - 信号域-质量降级/D-SIGQC-05
+  - 信号域-合成分配/D-SIGQC-06
+  - 信号域-技术指标/D-SIGQC-07
+  - 信号域-冲突融合/D-SIGQC-08
+  - 信号域-冲突融合/D-SIGQC-09
+  - 信号域-策略运行时/D-SIGQC-10
   - src/zephyr/signal_quality/__init__.py
   - src/zephyr/signal_quality/infrastructure/__init__.py
   - src/zephyr/signal_quality/api/__init__.py

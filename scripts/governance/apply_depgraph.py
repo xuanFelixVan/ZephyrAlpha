@@ -1818,6 +1818,113 @@ def cmd_propagate_rename(
                     c.close()
 
 
+def cmd_propagate_node_paths(
+    path_mapping: dict[str, str],
+    bl_mapping: dict[str, str] | None = None,
+    dry_run: bool = False,
+    db_path: str = str(DEPGRAPH_PATH),
+    conn=None,
+) -> int:
+    """节点路径改名传播（裁定#206 节点路径派生 + 裁定#207 R1 阶段D）。
+
+    根据 D2 重新编号映射，精确值映射 nodes.path 与 blueprint_links.blueprint_path。
+    派生关系：节点路径域片段派生自 domain_id，序号按域内 old_seq 升序连续编号（01起）。
+    传播表：nodes.path（无只读触发器），blueprint_links.blueprint_path（需触发器通行证）。
+
+    精确值映射：禁止子串REPLACE，避免误伤（如 D-SIGNAL-1 误匹配 D-SIGNAL-10）。
+    返回受影响总行数，-1=失败。
+    """
+    own_conn = conn is None
+    bl_mapping = bl_mapping or {}
+
+    def _run(c: sqlite3.Connection) -> int:
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        total = 0
+
+        # 1. nodes.path 精确值映射（无只读触发器，可直接 UPDATE）
+        for old_path, new_path in path_mapping.items():
+            cnt = c.execute(
+                "SELECT COUNT(*) FROM nodes WHERE path=?", (old_path,)
+            ).fetchone()[0]
+            if cnt > 0:
+                print(
+                    f"  {mode} nodes.path: {old_path} -> {new_path}: {cnt} rows",
+                    file=sys.stderr,
+                )
+                if not dry_run:
+                    c.execute(
+                        "UPDATE nodes SET path=? WHERE path=?", (new_path, old_path)
+                    )
+                total += cnt
+
+        # 2. blueprint_links.blueprint_path 精确值映射（需触发器通行证）
+        for old_path, new_path in bl_mapping.items():
+            cnt = c.execute(
+                "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_path=?",
+                (old_path,),
+            ).fetchone()[0]
+            if cnt > 0:
+                print(
+                    f"  {mode} blueprint_links.blueprint_path: {old_path} -> {new_path}: {cnt} rows",
+                    file=sys.stderr,
+                )
+                if not dry_run:
+                    c.execute(
+                        "UPDATE blueprint_links SET blueprint_path=? WHERE blueprint_path=?",
+                        (new_path, old_path),
+                    )
+                total += cnt
+
+        if not dry_run and own_conn:
+            c.commit()
+        print(f"{mode} cmd_propagate_node_paths: total {total} rows", file=sys.stderr)
+        return total
+
+    if dry_run:
+        c = sqlite3.connect(db_path) if own_conn else conn
+        if own_conn:
+            c.execute("PRAGMA journal_mode=WAL")
+            c.execute("PRAGMA busy_timeout=30000")
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="propagate_node_paths", db_path=db_path):
+            c = sqlite3.connect(db_path) if own_conn else conn
+            if own_conn:
+                c.execute("PRAGMA journal_mode=WAL")
+                c.execute("PRAGMA busy_timeout=30000")
+            # 临时禁用 blueprint_links 只读触发器（仅当有 bl_mapping 时）
+            if bl_mapping:
+                c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
+            try:
+                n = _run(c)
+                # 成功后恢复只读触发器并 commit
+                if bl_mapping:
+                    _restore_blueprint_links_readonly_trigger(c)
+                if own_conn:
+                    c.commit()
+                return n
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                print(f"ERROR: cmd_propagate_node_paths失败: {e}", file=sys.stderr)
+                # 异常时也恢复只读触发器（保持门禁激活）
+                try:
+                    if bl_mapping:
+                        _restore_blueprint_links_readonly_trigger(c)
+                    if own_conn:
+                        c.commit()
+                except Exception:
+                    pass
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
 def cmd_update_domain_name(
     domain_id: str,
     new_name: str,
@@ -2444,6 +2551,13 @@ def main() -> None:
         help="blueprint_id 派生标识符传播（裁定#206 B-5/B-6 + 裁定#207 R1 B2）：精确值映射，禁止子串REPLACE",
     )
     parser.add_argument(
+        "--propagate-node-paths",
+        type=str,
+        metavar="JSON_FILE",
+        help="节点路径改名传播（裁定#206 节点路径派生 + 裁定#207 R1 阶段D）：读取 D2 映射 JSON，"
+        "精确值映射 nodes.path + blueprint_links.blueprint_path，按域内连续重新编号",
+    )
+    parser.add_argument(
         "--force-cross-domain",
         action="store_true",
         help="强制执行跨域匹配的 --update-domain-id（需确认跨域迁移为期望行为）",
@@ -2710,6 +2824,30 @@ def main() -> None:
 
     if args.propagate_rename:
         n = cmd_propagate_rename(_RENAME_MAP_204, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    if args.propagate_node_paths:
+        import json as _json
+
+        map_path = Path(args.propagate_node_paths)
+        if not map_path.is_file():
+            print(f"ERROR: 映射文件不存在: {map_path}", file=sys.stderr)
+            sys.exit(3)
+        with open(map_path, encoding="utf-8") as f:
+            mapping_data = _json.load(f)
+        path_mapping = mapping_data.get("path_mapping", {})
+        bl_mapping = mapping_data.get("bl_mapping", {})
+        if not path_mapping and not bl_mapping:
+            print("ERROR: 映射文件中 path_mapping 与 bl_mapping 均为空", file=sys.stderr)
+            sys.exit(3)
+        n = cmd_propagate_node_paths(
+            path_mapping,
+            bl_mapping=bl_mapping,
+            dry_run=args.dry_run,
+        )
         if n < 0:
             sys.exit(4)
         print(f"affected={n}")
