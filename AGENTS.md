@@ -71,6 +71,7 @@ from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arb
 
 ```python
 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 
 gateway = LSGSecurityGateway()
 
