@@ -1026,8 +1026,7 @@ docs/  (1 files: .yaml(1))
 │   ├── adversarial_test_ml_experiment.json  
 │   ├── adversarial_test_sys_master.json  
 │   └── scalability_1500_module_grouping.yaml  — scalability_1500_module_grouping config  
-├── 19_development_workspace/  (1 files: .csv(1))  
-│   └── stash_archive_latest.csv  
+├── 19_development_workspace/  [RETIRED 2026-06-26]  (deleted; process area migrated to _working/)
 ├── _working/  (6 files: .md(6))  
 │   ├── README.md  — 临时工作区（_working/）  
 │   ├── blueprint_id_naming_root_cause_report.md  — blueprint_id / 节点路径 命名一致性病根调研与裁定报告  

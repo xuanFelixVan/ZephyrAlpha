@@ -368,7 +368,7 @@ python scripts/governance/score_architecture.py --dashboard > docs/19_developmen
    - 排入下 Phase 任务卡
    - 下次评审检查是否恢复
 
-4. 评审会议纪要归档到 docs/19_development_workspace/architecture-score-reviews/YYYY-QN.md
+4. 评审会议纪要归档到 docs/_working/architecture-score-reviews/YYYY-QN.md
 ```
 
 ### 7.3 一人团队的简化

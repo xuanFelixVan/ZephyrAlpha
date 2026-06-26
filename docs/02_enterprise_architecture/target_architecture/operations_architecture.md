@@ -299,7 +299,7 @@ class ServiceHealthProtocol(Protocol):
 
 ## §9 Runbook Catalog / 操作手册目录
 
-> **本节为占位目录清单。** Runbook 文件将在各运维域激活时独立建档，统一存放于 `docs/19_development_workspace/runbooks/`（待创建）。
+> **本节为占位目录清单。** Runbook 文件将在各运维域激活时独立建档，统一存放于 `docs/_working/runbooks/`（待创建）。
 
 | ID | 域 | Runbook 名称 | 触发场景 | 状态 |
 |----|---|--------------|---------|------|
