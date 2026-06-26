@@ -395,9 +395,18 @@ class IdeHealthDaemon:
         runtime_dir.mkdir(parents=True, exist_ok=True)
         health_path = runtime_dir / "drift_health.json"
         health_path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
-        # 阈值告警
+        # 阈值告警 + 自动清理（P1-STH: stash > 5 时调 cleanup_stash.py --cleanup）
         if metrics["stash_count"] > 5:
-            logger.warning("drift health: stash_count=%d > 5", metrics["stash_count"])
+            logger.warning("drift health: stash_count=%d > 5, auto-cleanup", metrics["stash_count"])
+            # P1-STH: 自动调用 cleanup_stash.py --cleanup（保留 KEEP_COUNT=3 最新，安全）
+            try:
+                subprocess.run(
+                    [sys.executable, "scripts/governance/cleanup_stash.py", "--cleanup"],
+                    cwd=str(self._project_root),
+                    capture_output=True, text=True, timeout=60,
+                )
+            except Exception:
+                logger.exception("drift health: stash auto-cleanup failed")
         if metrics["worktree_changes"] > 50:
             logger.warning("drift health: worktree_changes=%d > 50", metrics["worktree_changes"])
 
