@@ -1076,7 +1076,16 @@ def main():
     parser = argparse.ArgumentParser(
         description="P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步到 depgraph.db"
     )
-    parser.parse_args()
+    parser.add_argument(
+        "--list-readonly-tables", action="store_true",
+        help="列出由 YAML 同步的只读表（手写会被覆盖），不执行同步",
+    )
+    args = parser.parse_args()
+    if args.list_readonly_tables:
+        print("# 以下表由 sync_yaml_to_depgraph.py 从 YAML 同步，禁止手写（DB 触发器会 ABORT）：")
+        for t in READONLY_TABLES:
+            print(f"  {t}")
+        return
     ok = sync_all()
     if not ok:
         sys.exit(1)

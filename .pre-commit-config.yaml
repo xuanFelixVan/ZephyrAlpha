@@ -537,22 +537,8 @@ repos:
         description: "vocabulary YAML 变更时校验派生文件一致性（骨架阶段 warn-only）。裁定#206-D/#ARCH-011 dir_prefix 字段新增后接入"
 
       # ── GATE-DERIVED 已删除（派生产物已删除，depgraph.db 是唯一查询入口）──
-      # 取而代之：GATE-SYNC-PATH-TREE 自动同步 arch_directory_tree（文件结构变更时触发）
-
-      # ── GATE-SYNC-PATH-TREE: 文件结构变更自动同步 arch_directory_tree（AGENTS.md §11.2 配套）──
-      # 权威依据：AGENTS.md §11.2 depgraph.db 使用决策树
-      # 触发：.py/.yaml 文件变更时（pre-commit files 过滤器）
-      # 行为：扫描磁盘 → 写入 depgraph.db arch_directory_tree 表（幂等，重复运行无副作用）
-      # 模式：自动同步（--write）；depgraph.db 若被修改显示为 unstaged 变更，由后续 commit 拾取
-      # 设计选择：pre-commit（非 post-commit）以利用 files 过滤器，仅在 .py/.yaml 变更时触发
-      - id: gate-sync-path-tree
-        name: "GATE-SYNC-PATH-TREE: 文件结构变更自动同步 arch_directory_tree"
-        entry: python scripts/governance/generate_project_path_tree.py --write
-        language: system
-        pass_filenames: false
-        always_run: false
-        files: "\\.(py|yaml)$"
-        description: ".py/.yaml 变更后自动同步 depgraph.db arch_directory_tree（AGENTS.md §11.2 决策树配套，幂等）。depgraph.db 修改作为 unstaged 变更由后续 commit 拾取"
+      # arch_directory_tree 同步已迁移到 GitCommitGateway post-commit reconciler（make_path_tree_reconciler）
+      # 比原 pre-commit hook 优势：depgraph.db 变更自动包含在后续 commit，无 unstaged 死循环副作用
 
       # ── GATE-SCHEMA-HEALTH: depgraph.db Schema 健康度校验（#ARCH-016 治本）──
       # 权威依据：schema_health_revised_execution_plan.md v2 §3 阶段5/6

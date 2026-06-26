@@ -163,8 +163,6 @@ references:
 | | | L2623 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
 | | | L3509-3566 | YAML输出分支锁 | YAML文件锁 | 保留（YAML文件不迁移PG） |
 | 4 | `scripts/governance/extract_depgraph.py` | L176,414 | `sqlite3.connect(str(db_path))` | 连接方式不同 | 改为`psycopg2.connect()`（无`?`占位符） |
-| 5 | ⚠️ `generate_target_path_tree.py` 已删除（2026-06-26） | — | — | 脚本已删除，TC-PG-10 已废弃，见 AGENTS.md §11 |
-| | | L73,94 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
 | 6 | `scripts/governance/migrate_arch_f_functions.py` | L29 | `DEPGRAPH_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
 | | | L35 | `import apply_depgraph as _ad` | 复用apply_depgraph锁机制 | 适配PG连接 |
 | | | L246,255 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
@@ -1087,7 +1085,6 @@ references:
 | 2 | `sync_yaml_to_depgraph.py` | 高：27个触发器改PL/pgSQL+12处INSERT OR REPLACE |
 | 3 | `generate_project_depgraph.py` | 高：5处连接+4处lock_files删除 |
 | 4 | `extract_depgraph.py` | 中：2处连接（无`?`占位符） |
-| 5 | `generate_target_path_tree.py` | 中：路径常量+2处连接 |
 | 6 | `audit_domain_nodes.py` | 中：3处连接+datetime('now')+INSERT OR REPLACE |
 | 7 | `diagnose_depgraph.py` | 低：1处连接 |
 | 8 | `detect_causal_conflicts.py` | 低：1处连接 |
@@ -1145,7 +1142,6 @@ references:
 | TC-PG-07 | sync_yaml_to_depgraph.py迁移 | sync_yaml_to_depgraph.py | 1 |
 | TC-PG-08 | generate_project_depgraph.py迁移 | generate_project_depgraph.py | 1 |
 | TC-PG-09 | extract_depgraph.py迁移 | extract_depgraph.py | 1 |
-| TC-PG-10 | ⚠️ generate_target_path_tree.py迁移（已废弃：脚本已删除） | — | 0 |
 | TC-PG-11 | audit_domain_nodes.py迁移 | audit_domain_nodes.py | 1 |
 | TC-PG-12 | diagnose_depgraph.py迁移 | diagnose_depgraph.py | 1 |
 | TC-PG-13 | detect_causal_conflicts.py迁移 | detect_causal_conflicts.py | 1 |

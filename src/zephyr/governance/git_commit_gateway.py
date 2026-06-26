@@ -81,6 +81,7 @@ from zephyr.governance.reconciliation_registry import (
     make_baseline_aware_reconciler,
     make_ttl_reconciler,
     make_ghost_reconciler,
+    make_path_tree_reconciler,
 )
 
 logger = logging.getLogger(__name__)
@@ -390,6 +391,7 @@ class GitCommitGateway:
         P2-T5: ghost 对账（depgraph 对称漂移检测，删除 commit 触发 diagnose_depgraph）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
+        self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
         self._reconciliation_registry.register(make_ttl_reconciler(self))
         self._reconciliation_registry.register(make_ghost_reconciler(self))
@@ -831,23 +833,6 @@ class GitCommitGateway:
                             stash_ref=stash_ref,
                             stash_kept=True,
                         )
-            elif not stash_ref:
-                # 防御：stash push 可能报错但 stash 实际已创建（Windows 上
-                # git stash push 可能因 "cannot spawn git: Filename too long"
-                # 报错但 stash 实际创建）。检查是否有本次 session 的孤儿 stash。
-                orphan = self._find_orphan_stash(session_id)
-                if orphan:
-                    logger.warning(
-                        "GitCommitGateway: 检测到孤儿 stash push 报错但 stash 实际创建 "
-                        "(session=%s ref=%s)，执行恢复", session_id, orphan
-                    )
-                    pop_ok = self._restore_stash(orphan)
-                    if not pop_ok:
-                        logger.warning(
-                            "GitCommitGateway: 孤儿 stash pop 失败，数据保留在 stash: %s", orphan
-                        )
-                    else:
-                        logger.info("GitCommitGateway: 孤儿 stash 已恢复 ref=%s", orphan)
             # Post-commit 漂移对账（P2-T1：声明式 ReconciliationRegistry，替代硬编码 _post_commit_reconcile）
             # 斩断 --no-verify 导致的 drift 循环：每个被绕过的 GATE 注册一个 reconciler，
             # commit 完成后由 registry 统一调度（trigger 命中即执行，异常降级为 warn 不阻断）
@@ -1035,29 +1020,6 @@ class GitCommitGateway:
             logger.warning("GitCommitGateway: git stash pop 异常: %s", stderr)
             return False
         return True
-
-    def _find_orphan_stash(self, session_id: str) -> str:
-        """查找是否有当前 session 的 stash 残留（防御性检查）。
-
-        用于处理 stash push 报错但 stash 实际创建的场景（Windows 上
-        git stash push 可能因 "cannot spawn git: Filename too long" 报错
-        但 stash 实际创建）。
-
-        Args:
-            session_id: AI session 标识。
-
-        Returns:
-            stash_ref（如 stash@{0}）或空字符串。
-        """
-        list_result = self._run_git(
-            ["git", "stash", "list", "--format=%gd|%gs"]
-        )
-        if list_result.returncode != 0:
-            return ""
-        for line in list_result.stdout.strip().splitlines():
-            if f"gw:{session_id}" in line:
-                return line.split("|", 1)[0]
-        return ""
 
     def _post_commit_red_blue_trigger(
         self,

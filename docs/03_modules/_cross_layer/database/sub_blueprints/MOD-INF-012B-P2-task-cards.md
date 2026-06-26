@@ -70,7 +70,6 @@ ttl: permanent
 | 7 | TC-PG-07 | sync_yaml_to_depgraph.py迁移 | sync_yaml_to_depgraph.py | 1 | MT-PG-07 |
 | 8 | TC-PG-08 | generate_project_depgraph.py迁移 | generate_project_depgraph.py | 1 | MT-PG-08 |
 | 9 | TC-PG-09 | extract_depgraph.py迁移 | extract_depgraph.py | 1 | MT-PG-09 |
-| 10 | TC-PG-10 | generate_target_path_tree.py迁移 | generate_target_path_tree.py | 1 | MT-PG-10 |
 | 11 | TC-PG-11 | audit_domain_nodes.py迁移 | audit_domain_nodes.py | 1 | MT-PG-11 |
 | 12 | TC-PG-12 | diagnose_depgraph.py迁移 | diagnose_depgraph.py | 1 | MT-PG-12 |
 | 13 | TC-PG-13 | detect_causal_conflicts.py迁移 | detect_causal_conflicts.py | 1 | MT-PG-13 |
@@ -669,43 +668,6 @@ git checkout -- scripts/governance/extract_depgraph.py
 
 ---
 
-### 5.10 TC-PG-10：generate_target_path_tree.py迁移
-
-| 字段 | 值 |
-|------|-----|
-| 任务卡ID | TC-PG-10 |
-| 标题 | generate_target_path_tree.py迁移 |
-| 优先级 | P2 |
-| 安全级别 | M |
-| 依赖 | TC-PG-01完成 |
-| 对应文档 | P2方案§六.6.6 |
-| 预计Token | 4000 |
-| 超时 | 30分钟 |
-
-**可修改文件白名单**：
-- `scripts/governance/generate_target_path_tree.py`（中复杂度：路径常量+2处连接）
-
-**施工要点**（基于affected-files-index.md §2.1第5项）：
-
-| 位置 | 当前 | 迁移后 |
-|------|------|--------|
-| L51 | `DEPGRAPH_PATH` | 从环境变量读取`PG_DSN` |
-| L73,94 | `sqlite3.connect()` | `psycopg2.connect()` |
-
-**验收标准**：
-
-| # | 验证项 | 命令 | 预期结果 |
-|---|--------|------|---------|
-| 1 | 无残留sqlite3.connect | `grep -n "sqlite3.connect" scripts/governance/generate_target_path_tree.py` | 0结果（⚠️ 脚本已删除，本验证项已废弃） |
-| 2 | 脚本可运行 | `python scripts/governance/generate_target_path_tree.py --help` | 正常输出（⚠️ 脚本已删除，本验证项已废弃，见 AGENTS.md §11） |
-
-**回滚方案**：
-```powershell
-git checkout -- scripts/governance/generate_target_path_tree.py
-```
-
----
-
 ### 5.11 TC-PG-11：audit_domain_nodes.py迁移
 
 | 字段 | 值 |
@@ -1211,7 +1173,6 @@ Remove-Item scripts/_archive/README.md
 | 10 | MT-PG-07 | TC-PG-07 | 无残留INSERT OR REPLACE、触发器改PL/pgSQL |
 | 11 | MT-PG-08 | TC-PG-08 | 无残留lock_files(depgraph)、YAML分支锁保留 |
 | 12 | MT-PG-09 | TC-PG-09 | 无残留sqlite3.connect |
-| 13 | MT-PG-10 | TC-PG-10 | 无残留sqlite3.connect |
 | 14 | MT-PG-11 | TC-PG-11 | 无残留datetime('now')/INSERT OR REPLACE |
 | 15 | MT-PG-12 | TC-PG-12 | 无残留sqlite3.connect |
 | 16 | MT-PG-13 | TC-PG-13 | 无残留sqlite3.connect |

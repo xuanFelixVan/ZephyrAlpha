@@ -431,7 +431,15 @@ def cmd_stats(dep_path: Path, output: str | None) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="depgraph 按需提取工具（禁止AI直接Read 157MB文件）",
-        epilog="See .trae/rules/project_rules.md RULE-SIXTEEN for the full protocol.",
+        epilog="""场景速查：
+  模块属于哪个域           → --paths（按域分组列出所有文件路径）
+  域有哪些模块             → --domains D-XXX
+  模块的物理路径           → --modules MOD-XXX
+  项目全景摘要             → --summary
+  文件大小/行数统计        → --stats
+
+See .trae/rules/project_rules.md RULE-SIXTEEN for the full protocol.""",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--summary", action="store_true", help="域摘要（域数+模块数+production_nodes+路径前缀）")
     parser.add_argument("--domains", type=str, help="指定域（逗号分隔），如 D-FACTOR,D-RISK")
