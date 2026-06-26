@@ -16,7 +16,6 @@ __all__ = [
     "PromptProtectionLayer",
     "ResourceGuard",
     "ResourceProtectionLayer",
-    "RuntimeSecurityLayer",
     "SupplyChainGuard",
     "SupplyChainValidator",
     "l0_supply_chain",
@@ -28,7 +27,6 @@ __all__ = [
     "l5_resource_protection",
     "l6_data_flow",
     "l6_observability",
-    "l7_runtime",
     "l8_compliance",
     "l8_multi_agent",
 ]
