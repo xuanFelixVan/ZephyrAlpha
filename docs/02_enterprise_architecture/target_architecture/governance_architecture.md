@@ -223,7 +223,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 
 | ID | 系统名 | 主层 | 次层 | 激活 Sprint |
 |---|---|---|---|---|
-| VIB-01 | Session 协作治理 | Policy | (Runtime handoff-log) | 已就位 |
+| VIB-01 | Session 协作治理 | Policy | (Runtime SessionRegistry/handoff-log) | 已落地（SessionRegistry/Handoff/ConflictDetector，P2-SES；commit 路径接入待 P4-T1） |
 | VIB-02 | 多 AI 工具规则单源 | Policy | — | 已就位 |
 | VIB-03 | 模型调用治理（6 子系统）| Policy | (Factory token 预算, Runtime 监控) | Sprint 10 |
 | VIB-04 | Prompt 资产治理 | Policy | — | Sprint 11 |

@@ -96,8 +96,8 @@ Agent 接续工作：知道上次 TODO、已尝试过的失败、已知风险
 |------|------|
 | **可机器读写 + 可人工审阅** | JSON 格式，frontmatter 友好；字段命名自解释 |
 | **版本化**：`schema_version` 字段强制 | 未来 schema 演化时，老文件可被自动迁移 |
-| **幂等写入** | 多次调用 `save()` 以最后一次为准 |
-| **单文件 SSoT** | 每个项目根只有一份 `session_carryover.json` |
+| **并行 session 命名空间隔离** | 多 session 并发时，`session_carryover.json` 按 `session_id` 命名空间隔离（`.runtime/sessions/<session_id>/session_carryover.json`）；合并时按 session 结束时间排序 merge，非"last-wins 覆盖"（P1-T1 并行模型，替代原串行幂等写入） |
+| **单文件 SSoT（串行场景）** | 单 session 串行场景仍维持每项目根一份 `session_carryover.json`；并行场景退化为命名空间隔离 |
 | **机密隔离** | 不写入敏感信息（API Key / Secret）|
 
 ---

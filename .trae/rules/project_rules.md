@@ -1044,6 +1044,10 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 | 运行 generate_project_depgraph.py 生成/更新 depgraph（⚠️ 架构升级期间禁止） | ✅ 生成脚本内部处理 |
 | 运行 diagnose_depgraph.py 诊断 | ✅ 诊断脚本内部处理 |
 
+### Schema 结构变更门禁（GATE-SCHEMA-HEALTH）
+
+结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 声明 + 添加 migration（`_MIGRATIONS` 列表）；禁止直接改写入代码跳过 DDL。GATE-SCHEMA-HEALTH（pre-commit）自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即阻断。对标 #ARCH-016 治本。
+
 ---
 
 ## RULE-SEVENTEEN：禁止 PowerShell 语法
@@ -1389,6 +1393,8 @@ STEP 5   — 按需定位具体注册表 → 开工
 
 **关门**（缺一不可）:
 ```
+0. 检查活跃 session（P1-T1 并行 session 协作）:
+   python -c "from zephyr.security.access_control.session_concurrency import SessionRegistry; r=SessionRegistry(); active=r.list_active(); assert len(active)<=1, f'{len(active)} active sessions — 关门前须协调'"
 1. python scripts/lock_files.py release-all <session_id>
 2. python scripts/lock_files.py cleanup
 3. python scripts/lock_files.py status → 确认 CLEAN
