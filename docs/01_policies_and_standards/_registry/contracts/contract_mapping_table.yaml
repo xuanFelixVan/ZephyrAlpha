@@ -170,7 +170,7 @@ layer_contracts:
     domain_mapping: null
 
   - contract_id: CTR-P1-004
-    layer: L11
+    layer: ml_train
     role: producer
     description: "ModelServingRequest → L03, L05"
     domain_mapping: ME-CT-TRAIN-001
