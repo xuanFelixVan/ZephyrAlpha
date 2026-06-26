@@ -203,6 +203,7 @@ if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
 from validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
 from validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
+from validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
 
 # 进程内 DB 写入串行锁——防止同进程多线程并发获取文件锁
 _db_write_lock_lock = threading.Lock()
@@ -1407,11 +1408,12 @@ def _validate_domain_naming(
             (errors if rules["NR-001"] == "error" else warnings).append(msg)
 
     # NR-002: 全大写下划线命名——regex 校验
+    # 真源统一：复用 validate_module_id_naming.DOMAIN_ID_RE（消除硬编码正则分裂）
     if "NR-002" in rules:
-        if not re.match(r"^D-[A-Z][A-Z0-9_]*$", domain_id):
+        if not _DOMAIN_ID_RE.match(domain_id):
             msg = (
                 f"NR-002(全大写下划线命名): 域ID '{domain_id}' 不匹配 "
-                f"^D-[A-Z][A-Z0-9_]*$（禁止小写字母/多余连字符）"
+                f"{_DOMAIN_ID_RE.pattern}（禁止小写字母/多余连字符）"
             )
             (errors if rules["NR-002"] == "error" else warnings).append(msg)
 
@@ -1449,6 +1451,12 @@ def cmd_insert_domain(
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     返回：True=成功，False=失败
     """
+    # 深度防御：函数层格式校验（防 cmd_batch 等绕过 main 的 _validate_domain_naming 直接调用）
+    # 真源：is_valid_domain_id（与 NR-002 共用 DOMAIN_ID_RE，消除正则分裂）
+    ok, reason = _validate_domain_id_format(domain_id)
+    if not ok:
+        print(f"ERROR: domain_id '{domain_id}' 格式不合规：{reason}", file=sys.stderr)
+        return False
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_insert_domain", db_path=db_path):
         if own_conn:

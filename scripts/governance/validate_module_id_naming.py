@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=CLEAN, exit 1=VIOLATION
-# [TESTS] tests/governance/test_validate_module_id_naming.py
+# [TESTS]
 
 r"""
 module_id 命名合规性校验门禁
@@ -96,8 +96,11 @@ def is_valid_module_id(bp_id: str) -> tuple[bool, str]:
 
 
 # domain_id 格式正则（D-{DOMAIN} 无序号，与 blueprint_id 的 D- 轨 D-{DOMAIN}-NNN 不同）
-# 真源：本常量是 domain_id 格式校验的唯一正则，被 apply_depgraph.py 的 cmd_rename_domain 复用
-DOMAIN_ID_RE = re.compile(r"^D-[A-Z]{1,20}(?:_[A-Z]{1,20})*\Z")
+# 真源：本常量是 domain_id 格式校验的唯一正则，被 apply_depgraph.py 复用
+#       （cmd_rename_domain + _validate_domain_naming NR-002 均复用本常量，消除硬编码分裂）
+# 与 NR-002 YAML 真源（domain_naming_rules.yaml）语义一致：全大写字母+数字+下划线
+# 安全加固：\Z 替代 $（换行安全，P2-2）+ {0,59} 长度限制（防超长输入，P2-3）
+DOMAIN_ID_RE = re.compile(r"^D-[A-Z][A-Z0-9_]{0,59}\Z")
 
 
 def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
@@ -117,7 +120,7 @@ def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
     """
     if DOMAIN_ID_RE.match(domain_id):
         return True, ""
-    return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D-GOVERNANCE），DOMAIN 为大写+下划线，无序号"
+    return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D-GOVERNANCE），DOMAIN 为大写字母+数字+下划线，无序号"
 
 
 def extract_frontmatter_field(text: str, field: str) -> str | None:
