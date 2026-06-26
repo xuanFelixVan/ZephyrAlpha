@@ -18,7 +18,7 @@
 [MODULE] scripts.governance.d5_architecture.generators.generate_capability_heatmap
 [INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到01_global_architecture_diagram/
 [MODIFY-GUARD] 修改需通过任务卡
-[CONSUMERS] CI自动触发;人工查看01_global_architecture_diagram/capability_heatmap.md
+[CONSUMERS] CI自动触发;人工查看01_global_architecture_diagram/global_capability_heatmap.md
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -38,7 +38,7 @@ from domain_name_mapping import get_domain_name_zh
 
 DEPGRAPH_DB = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
 OUTPUT_PATH = Path(
-    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/capability_heatmap.md"
+    "D:/ZephyrAlpha/docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md"
 )
 
 # 10 capability domains (能力域) - 7 business + 3 cross-cutting
@@ -113,7 +113,7 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name": "安全防护",
         "name_en": "Security",
         "type": "横切",
-        "domains": ["D-SECURITY", "D-SECURITY-LLM", "D-BEHAVIORAL_AUDIT", "D-DATA_SEC", "D-AUTONOMY_PERM"],
+        "domains": ["D-SECURITY", "D-SECURITY_LLM", "D-BEHAVIORAL_AUDIT", "D-DATA_SEC", "D-AUTONOMY_PERM"],
     },
     {
         "id": "CC3",
@@ -124,7 +124,7 @@ CAPABILITY_DOMAINS: list[dict] = [
             "D-INFRA_OPS",
             "D-INFRA_RUNTIME",
             "D-INTEGRATION",
-            "D-INTEGRATION-GATEWAY",
+            "D-INTEGRATION_GATEWAY",
             "D-SHARED",
             "D-FRONTEND",
             "D-REPORTING",
