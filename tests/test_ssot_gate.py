@@ -30,7 +30,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from scripts.scaffold import ScaffoldError, _check_duplicate_functionality
-from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo
+from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 from zephyr.governance.git_commit_gateway import CommitStatus, GitCommitGateway
 
 
@@ -459,3 +459,141 @@ class TestL2MutationFalsifiability:
         passed, detail = gateway._check_ssot_canonical([fake_new_abs])
         assert not passed, "注入假冲突后应阻断"
         assert "injected_conflict.py" in detail
+
+
+# ---------------------------------------------------------------------------
+# 测试组 7：共享检测函数 check_ssot_conflicts（L2/L3 唯一真源）
+# ---------------------------------------------------------------------------
+
+class TestCheckSsotConflicts:
+    """测试 capability_lookup.check_ssot_conflicts 共享检测函数。
+
+    这是 L2（GitCommitGateway）和 L3（pre-commit hook）检测逻辑的唯一真源。
+    测试覆盖：空列表/无头/新module_path/已有module_path/排除自己/多文件混合。
+    """
+
+    def test_empty_list_returns_empty(self):
+        """空列表 → 空冲突列表。"""
+        lookup = CapabilityLookup()
+        assert lookup.check_ssot_conflicts([]) == []
+
+    def test_no_module_header_skipped(self, monkeypatch):
+        """无 [MODULE] 头的文件 → 跳过（不报冲突）。"""
+        lookup = CapabilityLookup()
+        fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path="")
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: fake_header),
+        )
+        result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
+        assert result == [], "无 [MODULE] 头应跳过"
+
+    def test_new_module_path_no_conflict(self, monkeypatch):
+        """新 module_path → 无冲突。"""
+        lookup = CapabilityLookup()
+        new_mp = "zephyr.totally.new.module_xyz_999"
+        fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=new_mp)
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: fake_header),
+        )
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: [],
+        )
+        result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
+        assert result == [], "新 module_path 应无冲突"
+
+    def test_existing_module_path_returns_conflict(self, monkeypatch):
+        """已有 module_path → 返回冲突。"""
+        lookup = CapabilityLookup()
+        existing_mp = "zephyr.governance.git_commit_gateway"
+        fake_header = HeaderInfo(path="src/zephyr/fake_new.py", module_path=existing_mp)
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: fake_header),
+        )
+        existing_file = "src/zephyr/governance/git_commit_gateway.py"
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: [existing_file] if mp == existing_mp else [],
+        )
+        result = lookup.check_ssot_conflicts([("/abs/fake_new.py", "src/zephyr/fake_new.py")])
+        assert len(result) == 1
+        assert result[0].rel_path == "src/zephyr/fake_new.py"
+        assert result[0].module_path == existing_mp
+        assert existing_file in result[0].conflicts
+
+    def test_excludes_self(self, monkeypatch):
+        """新文件自己声明已有 module_path → 排除自己后无冲突。
+
+        场景：新文件路径恰好与已有文件相同（理论上不会发生，但验证排除逻辑）。
+        """
+        lookup = CapabilityLookup()
+        existing_mp = "zephyr.governance.git_commit_gateway"
+        new_rel = "src/zephyr/governance/git_commit_gateway.py"
+        fake_header = HeaderInfo(path=new_rel, module_path=existing_mp)
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: fake_header),
+        )
+        # find 返回包含新文件自己的列表
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: [new_rel],
+        )
+        result = lookup.check_ssot_conflicts([("/abs/git_commit_gateway.py", new_rel)])
+        assert result == [], "排除自己后应无冲突"
+
+    def test_multiple_files_mixed(self, monkeypatch):
+        """多文件混合：有的无头、有的新mp、有的冲突 → 正确分类。"""
+        lookup = CapabilityLookup()
+        existing_mp = "zephyr.governance.git_commit_gateway"
+        new_mp = "zephyr.totally.new.xyz"
+
+        # 三个文件：无头 / 新mp / 冲突mp
+        headers = {
+            "src/zephyr/no_header.py": HeaderInfo(path="src/zephyr/no_header.py", module_path=""),
+            "src/zephyr/new_module.py": HeaderInfo(path="src/zephyr/new_module.py", module_path=new_mp),
+            "src/zephyr/conflict.py": HeaderInfo(path="src/zephyr/conflict.py", module_path=existing_mp),
+        }
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
+        )
+        existing_file = "src/zephyr/governance/git_commit_gateway.py"
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: [existing_file] if mp == existing_mp else [],
+        )
+
+        files = [
+            ("/abs/no_header.py", "src/zephyr/no_header.py"),
+            ("/abs/new_module.py", "src/zephyr/new_module.py"),
+            ("/abs/conflict.py", "src/zephyr/conflict.py"),
+        ]
+        result = lookup.check_ssot_conflicts(files)
+        assert len(result) == 1, "只有 conflict.py 应报冲突"
+        assert result[0].rel_path == "src/zephyr/conflict.py"
+        assert result[0].module_path == existing_mp
+        assert existing_file in result[0].conflicts
+
+    def test_returns_ssoTConflict_type(self, monkeypatch):
+        """返回类型应为 SSoTConflict（验证 dataclass 结构）。"""
+        lookup = CapabilityLookup()
+        existing_mp = "zephyr.governance.git_commit_gateway"
+        fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=existing_mp)
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: fake_header),
+        )
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: ["src/zephyr/existing.py"],
+        )
+        result = lookup.check_ssot_conflicts([("/abs/fake.py", "src/zephyr/fake.py")])
+        assert len(result) == 1
+        assert isinstance(result[0], SSoTConflict)
+        assert hasattr(result[0], "rel_path")
+        assert hasattr(result[0], "module_path")
+        assert hasattr(result[0], "conflicts")

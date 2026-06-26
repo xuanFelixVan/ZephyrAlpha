@@ -642,34 +642,24 @@ class GitCommitGateway:
             # fail-open：capability_lookup 不可用时不阻断
             return True, f"capability_lookup 不可用，跳过 SSoT 兜底检查: {e}"
 
-        violations: list[str] = []
-        for abs_path, rel_path in new_py_files:
-            # 解析新文件的 [MODULE] 头
-            header = CapabilityLookup._parse_header(Path(abs_path), rel_path)
-            if not header.module_path:
-                continue  # 无 [MODULE] 头，跳过（无法判断）
+        # 检测逻辑调用共享函数（唯一真源：capability_lookup.check_ssot_conflicts）
+        # L2 只负责筛选新增 .py（上方 _is_git_tracked）和格式化输出（下方），
+        # 检测核心（解析头 + 反查 + 排除自己）收拢到 check_ssot_conflicts，L3 共用。
+        conflicts = lookup.check_ssot_conflicts(new_py_files)
+        if not conflicts:
+            return True, "ssot check passed"
 
-            # 反查磁盘上是否有其他文件声明了相同 module_path
-            conflicts = lookup.find_files_by_module_path(header.module_path)
-            # 排除新文件自己
-            conflicts = [c for c in conflicts if c != rel_path]
-
-            if conflicts:
-                conflict_list = ", ".join(conflicts)
-                violations.append(
-                    f"{rel_path} 声明 module_path={header.module_path}"
-                    f" 与已有文件冲突: {conflict_list}"
-                )
-
-        if violations:
-            detail = (
-                "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
-                + "\n  ".join(violations)
-                + "\n  复用决策（RULE-EIGHT）：扩展已有文件而非新建。"
-            )
-            return False, detail
-
-        return True, "ssot check passed"
+        violation_lines = [
+            f"{c.rel_path} 声明 module_path={c.module_path}"
+            f" 与已有文件冲突: {', '.join(c.conflicts)}"
+            for c in conflicts
+        ]
+        detail = (
+            "SSoT 冲突——新增文件声明了已有 module_path（绕过 scaffold 创建）:\n  "
+            + "\n  ".join(violation_lines)
+            + "\n  复用决策（RULE-EIGHT）：扩展已有文件而非新建。"
+        )
+        return False, detail
 
     # ------------------------------------------------------------------
     # 内部实现

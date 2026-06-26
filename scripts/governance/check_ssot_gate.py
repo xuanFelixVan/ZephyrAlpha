@@ -67,25 +67,24 @@ def main() -> int:
         print(f"GATE-SSOT: capability_lookup 不可用，跳过: {e}", file=sys.stderr)
         return 0
 
-    violations: list[tuple[str, str, list[str]]] = []
+    # 构造 (abs_path, rel_path) 列表——L3 特有：跳过已从磁盘删除的 staged 文件
+    new_py_files: list[tuple[str, str]] = []
     for rel_path in new_files:
         abs_path = _PROJECT_ROOT / rel_path
         if not abs_path.exists():
             continue
-        header = CapabilityLookup._parse_header(abs_path, rel_path)
-        if not header.module_path:
-            continue  # 无 [MODULE] 头，跳过（无法判断）
-        conflicts = lookup.find_files_by_module_path(header.module_path)
-        # 排除新文件自己
-        conflicts = [c for c in conflicts if c != rel_path]
-        if conflicts:
-            violations.append((rel_path, header.module_path, conflicts))
+        new_py_files.append((str(abs_path), rel_path))
 
-    if violations:
+    # 检测逻辑调用共享函数（唯一真源：capability_lookup.check_ssot_conflicts）
+    # L3 只负责获取 staged 新增 .py（上方 git diff）和格式化输出（下方），
+    # 检测核心（解析头 + 反查 + 排除自己）收拢到 check_ssot_conflicts，L2 共用。
+    conflicts = lookup.check_ssot_conflicts(new_py_files)
+    if conflicts:
         print("GATE-SSOT: SSoT 冲突——新增文件声明了已有 module_path:", file=sys.stderr)
-        for rel, mp, conflicts in violations:
+        for c in conflicts:
             print(
-                f"  {rel} 声明 module_path={mp} 与已有文件冲突: {', '.join(conflicts)}",
+                f"  {c.rel_path} 声明 module_path={c.module_path}"
+                f" 与已有文件冲突: {', '.join(c.conflicts)}",
                 file=sys.stderr,
             )
         print("  复用决策（RULE-EIGHT）：扩展已有文件而非新建。", file=sys.stderr)

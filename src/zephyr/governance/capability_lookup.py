@@ -103,6 +103,17 @@ class HeaderInfo:
 
 
 @dataclass
+class SSoTConflict:
+    """SSoT 冲突条目（check_ssot_conflicts 返回）。
+
+    L2（GitCommitGateway）和 L3（pre-commit hook）共享检测逻辑的唯一真源返回类型。
+    """
+    rel_path: str                # 新增文件相对路径（正斜杠）
+    module_path: str             # 新增文件声明的 module_path
+    conflicts: list[str]         # 冲突的已有文件列表（已排除新文件自己）
+
+
+@dataclass
 class CapabilityEntry:
     """能力条目（从 YAML 真源加载，运行时补充磁盘状态）。"""
     capability_id: str
@@ -435,6 +446,53 @@ class CapabilityLookup:
             if header.module_path == target:
                 matches.append(path)
         return matches
+
+    def check_ssot_conflicts(
+        self, new_py_files: list[tuple[str, str]]
+    ) -> list[SSoTConflict]:
+        """检测新增 .py 文件的 module_path 冲突（L2/L3 共享检测逻辑唯一真源）。
+
+        方案 E 治本重构：L2（GitCommitGateway._check_ssot_canonical）和
+        L3（check_ssot_gate.py pre-commit hook）的检测逻辑收拢到本方法，
+        避免两处重复实现导致的同步成本和漂移风险。
+
+        调用方职责（各自差异部分，不在本方法内）：
+          - L2: 从 commit files 筛选 src/zephyr/ + .py + 未跟踪（_is_git_tracked）
+          - L3: 从 git diff --diff-filter=A 获取 staged 新增 src/zephyr/*.py
+          - 两者都负责 import/初始化 CapabilityLookup 的 fail-open 降级
+
+        本方法职责（唯一真源）：
+          1. 解析每个新文件的 [MODULE] 头
+          2. find_files_by_module_path 反查
+          3. 排除新文件自己
+          4. 返回冲突列表
+
+        参数:
+            new_py_files: [(abs_path, rel_path), ...] 新增 .py 文件列表
+                          abs_path 用于读取文件头，rel_path 用于匹配 _disk_headers key
+                          （调用方保证已筛选 src/zephyr/ + .py）
+
+        返回:
+            冲突列表——空列表表示无冲突（门禁应 ALLOW）。
+            非空列表的每一项含 rel_path/module_path/conflicts（已排除自己）。
+        """
+        if not new_py_files:
+            return []
+        violations: list[SSoTConflict] = []
+        for abs_path, rel_path in new_py_files:
+            header = self._parse_header(Path(abs_path), rel_path)
+            if not header.module_path:
+                continue  # 无 [MODULE] 头，跳过（无法判断）
+            matched = self.find_files_by_module_path(header.module_path)
+            # 排除新文件自己（rel_path 用正斜杠，与 _disk_headers key 一致）
+            matched = [c for c in matched if c != rel_path]
+            if matched:
+                violations.append(SSoTConflict(
+                    rel_path=rel_path,
+                    module_path=header.module_path,
+                    conflicts=matched,
+                ))
+        return violations
 
     def list_all(self) -> list[dict]:
         return [self._entry_to_dict(cap) for cap in self._capabilities]
