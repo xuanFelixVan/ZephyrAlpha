@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """validate_field_ownership.py — frontmatter 字段归属校验
 
 
@@ -62,7 +63,6 @@ METADATA_REGISTRY_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "met
 SSOT_AUTHORITY_FILES = {
     "metadata_registry.yaml": "PS-STD-001 — frontmatter schema 唯一真源",
     "rule_classification_and_arbitration_standard.yaml": "PS-STD-011 — 规则分类唯一真源",
-    "_registry/vocabularies/glossary.yaml": "PS-STD-011 配套 — 术语定义唯一真源",
     "document_structure_standard.yaml": "PS-STD-002 — 文档结构唯一真源",
     "trae_028_doc_structure_naming.yaml": "GOV-DOC-002 — 目录结构唯一真源",
 }

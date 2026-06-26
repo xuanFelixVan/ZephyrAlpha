@@ -121,9 +121,9 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
-    usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/glossary.yaml。术语的大白话翻译/映射表使用 doc_type: register（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），register 是数据清单（对照表）。"
-    examples: ["_registry/vocabularies/glossary.yaml"]
-    filename_suffixes: ["_registry/vocabularies/glossary.yaml", "_terminology.md"]
+    usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/terminology_mapping.yaml。术语的大白话翻译/映射表使用 doc_type: register（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），register 是数据清单（对照表）。"
+    examples: ["_registry/vocabularies/terminology_mapping.yaml"]
+    filename_suffixes: ["_terminology_mapping.yaml", "_terminology.md"]
 
   - value: vocabulary
     definition: "受控词表——定义枚举值、合法值域的机器可读清单，供 AI 和 CI 消费"

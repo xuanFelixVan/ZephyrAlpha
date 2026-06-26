@@ -257,7 +257,7 @@ sections:
     - PS-STD-006 §2.7
     formula: 被多次定义的核心概念数（手动计数）
     conflict_definition: 同一概念在glossary.yaml外被 ≥ 2个文件定义
-    data_source: glossary.yaml（META-GLS-001）作为仲裁基准
+    data_source: 术语定义散布在各PS-STD规则文件，无集中仲裁源（glossary.yaml 已删除 2026-06-27）
     current_baseline: 待首次度量后建立（已知：SSoT曾在PS-STD-003和PS-STD-001中被独立定义，现已统一）
     alert_threshold: '> 3个冲突'
     target: 0

@@ -788,17 +788,6 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/vocabularies/glossary.yaml
-  module_id: META-GLS-001
-  title: ZephyrAlpha 规则体系术语表
-  doc_type: terminology
-  status: active
-  version: 1.3.0
-  rule_form: data
-  scope: global
-  stability: stable
-  layer: cross_layer
-  superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/vocabularies/governance_family_vocabulary.yaml
   module_id: PS-VOC-017
   title: governance_family 受控词表

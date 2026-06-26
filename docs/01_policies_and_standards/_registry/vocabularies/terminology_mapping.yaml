@@ -20,10 +20,7 @@ rule_form: data
 scope: global
 stability: stable
 verifiability: manual
-depends_on:
-- target: META-GLS-001
-  at: 全篇
-  why: 术语表——术语定义的唯一仲裁源，本表为下游衍生文件
+depends_on: []
 ai_autonomy: human_gated
 body: '
 

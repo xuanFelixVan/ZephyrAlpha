@@ -12,9 +12,9 @@ generated: '2026-06-26'
 
 ## 责任声明（Single Responsibility）
 
-本目录存放：**AI 消费的 YAML 受控词表**。包括 `*_vocabulary.yaml` 模式的受控词表（29 个）以及 `glossary.yaml`、`terminology_mapping.yaml` 两个术语映射文件。
+本目录存放：**AI 消费的 YAML 受控词表**。包括 `*_vocabulary.yaml` 模式的受控词表（28 个）以及 `terminology_mapping.yaml` 术语映射文件。
 
-## 文件清单（29 个 YAML）
+## 文件清单（28 个 YAML）
 
 | 文件 | 说明 |
 |------|------|
@@ -31,7 +31,6 @@ generated: '2026-06-26'
 | doc_type_vocabulary.yaml | 文档类型受控词表 |
 | domain_vocabulary.yaml | 领域受控词表 |
 | evolution_policy_vocabulary.yaml | 演化策略受控词表 |
-| glossary.yaml | 术语表 |
 | governance_family_vocabulary.yaml | 治理族受控词表 |
 | language_vocabulary.yaml | 文件语言受控词表 |
 | layer_vocabulary.yaml | 架构层归属受控词表 |
