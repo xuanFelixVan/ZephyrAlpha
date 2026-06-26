@@ -1,6 +1,6 @@
 ---
 blueprint_id: MOD-GOVERNANCE
-ttl: permanent
+ttl: task_bound
 doc_type: audit_report
 ---
 
