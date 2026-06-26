@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A：pathspec 为默认多 session 安全，_has_staged_renames 检测到 R100 时 fallback 到无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A 红蓝审核 v2：_commit_with_file_message 内置 rename 检测真源唯一，pathspec 为默认多 session 安全，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP；_commit_locked 和 _commit_auto 无需重复调用，reconciler 路径自动获得 rename 保护）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -424,11 +424,17 @@ class GitCommitGateway:
         """收集非目标的已修改已跟踪文件（相对路径），跳过未跟踪文件（??）。
 
         porcelain 格式: ``XY <path>``，X=staged, Y=工作区。``??`` 行为未跟踪，跳过。
-        target_files 用绝对路径归一化匹配（resolve），排除本次 commit 目标。
+        target_files 用绝对路径归一化匹配（resolve + normcase），排除本次 commit 目标。
 
         治本（rename 路径解析）：``R  old -> new`` 格式的 rename 行，
         ``line[3:]`` 得到 ``old -> new`` 无法被 ``Path()`` 解析。提取新路径
         （rename 目标），确保其他 session 的 staged rename 能被正确 stash。
+
+        治本（Windows 大小写不敏感匹配）：``Path.resolve()`` 在文件不存在时
+        （如 staged delete + 文件已从磁盘删除）无法归一化大小写，导致
+        target_files 路径与 git status 路径大小写不一致时误判目标为非目标，
+        进而被 ``_stash_other_files`` stash 走 staged delete。解法：用
+        ``os.path.normcase()`` 对 resolve 结果做大小写不敏感归一化。
         """
         status_result = self._run_git(["git", "status", "--porcelain"])
         if status_result.returncode != 0:
@@ -436,7 +442,9 @@ class GitCommitGateway:
                 "GitCommitGateway: git status 失败: %s", status_result.stderr.strip()
             )
             return []
-        target_set = {str(Path(f).resolve()) for f in target_files}
+        target_set = {
+            os.path.normcase(str(Path(f).resolve())) for f in target_files
+        }
         result: list[str] = []
         for line in status_result.stdout.splitlines():
             if not line.strip() or line.startswith("??"):
@@ -445,7 +453,7 @@ class GitCommitGateway:
             # rename 格式 "R  old -> new"：提取新路径（rename 目标）
             if " -> " in path:
                 path = path.split(" -> ", 1)[1].strip().strip('"')
-            abs_path = str((self.project_root / path).resolve())
+            abs_path = os.path.normcase(str((self.project_root / path).resolve()))
             if abs_path not in target_set:
                 result.append(path)
         return result
@@ -664,6 +672,29 @@ class GitCommitGateway:
         )
         return chk.returncode == 0
 
+    def _is_staged_delete(self, rel_path: str) -> bool:
+        """检查相对路径是否为 staged delete（已从 index 移除但仍在 HEAD）。
+
+        根因：``_stage_gitignored_tracked`` 的 ``existing`` 分支对磁盘上仍存在
+        的 gitignored-tracked 文件执行 ``git add -f``。若用户已 ``git rm --cached``
+        暂存删除，``_is_git_tracked`` 返回 False（不在 index）使 ``ex_tracked``
+        为空，理论上不会触发 ``git add -f``。但 ``_is_git_tracked`` 依赖
+        ``git ls-files`` 行为，在 ``:(icase)`` magic 或 git 版本差异下可能
+        不稳定。本方法作为纵深防御，显式识别 staged delete 状态，确保
+        ``git add -f`` 绝不撤销用户的 staged delete。
+
+        判据：不在 index（``git ls-files --error-unmatch`` 失败）
+              AND 在 HEAD（``git cat-file -e HEAD:<path>`` 成功）。
+        """
+        if self._is_git_tracked(rel_path):
+            return False  # 在 index 中，不是 staged delete
+        chk = subprocess.run(
+            ["git", "cat-file", "-e", f"HEAD:{rel_path}"],
+            capture_output=True,
+            cwd=str(self.project_root),
+        )
+        return chk.returncode == 0
+
     def _filter_gitignored(self, files: list[str]) -> list[str]:
         """返回 ``files`` 中被 ``.gitignore`` 忽略的绝对路径子集。
 
@@ -745,13 +776,19 @@ class GitCommitGateway:
                 if r.returncode != 0:
                     return False, f"git rm --cached failed: {r.stderr.strip()}", normal_files
         # 已存在 + 已跟踪 → git add -f（强制暂存修改）
+        # 治本（staged delete 保护）：跳过 staged delete 文件——用户已 git rm --cached
+        # 暂存删除，git add -f 会撤销该删除（重置 index 到工作区状态）。_is_git_tracked
+        # 对 staged delete 返回 False（不在 index），理论上已排除，但 _is_staged_delete
+        # 作为纵深防御确保万无一失（防 :(icase) magic 或 git 版本差异下的 _is_git_tracked
+        # 不稳定）。
         if existing:
             ex_rels = [
                 os.path.relpath(f, str(self.project_root)).replace("\\", "/")
                 for f in existing
             ]
             ex_tracked = [
-                f for f, rel in zip(existing, ex_rels) if self._is_git_tracked(rel)
+                f for f, rel in zip(existing, ex_rels)
+                if self._is_git_tracked(rel) and not self._is_staged_delete(rel)
             ]
             if ex_tracked:
                 r = self._run_git(["git", "add", "-f", "--"] + ex_tracked)
@@ -1559,20 +1596,19 @@ class GitCommitGateway:
                             message="no staged changes in files_in_scope",
                         )
                     else:
-                        # 6. commit（方案 A：pathspec 为默认，rename 时 fallback 无 pathspec）
-                        # 根因：git commit --pathspec-from-file 对 staged rename（R100）
-                        # 拆分为 add+delete 破坏 rename。检测到 rename 时 fallback 到
-                        # 无 pathspec + _verify_staged_is_clean 验证（防误提交其他 session WIP）。
-                        if self._has_staged_renames(files):
-                            commit_hash, commit_err = self._commit_with_file_message(
-                                full_message, None, files
-                            )
-                            commit_mode = "no-pathspec (rename fallback)"
-                        else:
-                            commit_hash, commit_err = self._commit_with_file_message(
-                                full_message, pathspec_file
-                            )
-                            commit_mode = "pathspec"
+                        # 6. commit（rename/gitignored 检测内置到 _commit_with_file_message）
+                        #
+                        # 治本（gitignored staged delete 修复）：当目标含 gitignored 文件
+                        # 时，必须用无 pathspec commit。根因：``git commit -- <pathspec>``
+                        # 提交**工作区状态**而非**暂存区状态**——对 gitignored 文件，
+                        # 工作区状态无法被 stage（gitignore 阻止），staged delete 被静默
+                        # 跳过。无 pathspec 模式提交所有 staged 变更，staged delete 正确
+                        # 包含。_verify_staged_is_clean 确保只提交目标文件。
+                        has_gitignored = len(normal_files) < len(files)
+                        pathspec_for_commit = None if has_gitignored else pathspec_file
+                        commit_hash, commit_err = self._commit_with_file_message(
+                            full_message, pathspec_for_commit, files
+                        )
                         if commit_hash is None:
                             result = CommitResult(
                                 status=CommitStatus.COMMIT_FAILED,
@@ -1582,8 +1618,8 @@ class GitCommitGateway:
                             os.environ[_GATEWAY_ENV] = "1"
                             logger.info(
                                 "GitCommitGateway: commit 成功 hash=%s marker=%s "
-                                "files=%d (%s)",
-                                commit_hash, gw_marker, len(files), commit_mode,
+                                "files=%d",
+                                commit_hash, gw_marker, len(files),
                             )
                             result = CommitResult(
                                 status=CommitStatus.OK,
@@ -1669,18 +1705,24 @@ class GitCommitGateway:
         # 目标文件绝不应被 stash——stash 会回滚工作区修改，导致 git add 时
         # 丢失目标文件的修改（commit 空内容）。_collect_non_target_rel 已排除
         # 目标文件，此检查是纵深防御的第二道防线，防止路径解析差异等边界情况。
+        # 治本（Windows 大小写不敏感）：用 normcase 归一化相对路径，防止
+        # target_files 与 candidates 大小写不一致时防御检查失效。
         target_rel_set = {
-            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            os.path.normcase(
+                os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            )
             for f in target_files
         }
-        tainted = [c for c in candidates if c in target_rel_set]
+        tainted = [c for c in candidates if os.path.normcase(c) in target_rel_set]
         if tainted:
             logger.warning(
                 "GitCommitGateway: 防御性拦截——目标文件被错误纳入 stash 候选，"
                 "已移除 (session=%s): %s",
                 session_id, tainted,
             )
-            candidates = [c for c in candidates if c not in target_rel_set]
+            candidates = [
+                c for c in candidates if os.path.normcase(c) not in target_rel_set
+            ]
 
         if not candidates:
             # 候选为空：session 隔离下无需 stash（其他 session WIP 留工作区），
@@ -1848,10 +1890,13 @@ class GitCommitGateway:
         if staged_result.returncode != 0:
             return False, f"git diff --cached failed: {staged_result.stderr.strip()}"
         staged_files = {
-            f.strip() for f in staged_result.stdout.splitlines() if f.strip()
+            os.path.normcase(f.strip())
+            for f in staged_result.stdout.splitlines() if f.strip()
         }
         target_rel = {
-            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            os.path.normcase(
+                os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            )
             for f in target_files
         }
         non_target = staged_files - target_rel
@@ -1866,26 +1911,33 @@ class GitCommitGateway:
         pathspec_file: str | None = None,
         target_files: list[str] | None = None,
     ) -> tuple[str | None, str]:
-        """统一 commit 入口（向内收：一个方法，参数控制 pathspec/无 pathspec）。
+        """统一 commit 入口（向内收：rename 检测内置，调用方无需关心）。
 
-        两种模式：
-        1. pathspec 模式（默认，多 session 安全）：``pathspec_file`` 非空时，
-           用 ``--pathspec-from-file``。适用于普通 add/modify/delete。
-        2. 无 pathspec 模式（rename fallback）：``pathspec_file=None`` 时，
-           用 ``_verify_staged_is_clean`` 验证 staged 区只有目标文件后无 pathspec
-           commit。根因：pathspec 对 staged rename（R100）拆分为 add+delete 破坏
-           rename，必须用无 pathspec。
+        自动 rename 检测（真源唯一）：``pathspec_file`` 非空且 ``target_files`` 非空时，
+        检测到目标文件有 staged rename（R100）自动切换无 pathspec 模式。根因：
+        ``git commit --pathspec-from-file`` 对 staged rename 拆分为独立 add+delete，
+        只提交 pathspec 匹配部分，破坏 rename。无 pathspec 模式用
+        ``_verify_staged_is_clean`` 验证 staged 区只有目标文件后 commit（防误提交
+        其他 session WIP）。
+
+        治本（红蓝审核 v2）：rename 检测逻辑从 ``_commit_locked``/``_commit_auto``
+        调用方内迁到此方法，消除两处重复调用 ``_has_staged_renames`` 的真源分裂，
+        且 ``_commit_auto``（reconciler 路径）自动获得 rename 保护。
 
         Args:
             message: commit message。
-            pathspec_file: pathspec 文件路径。None 时用无 pathspec（rename 场景）。
-            target_files: 目标文件绝对路径列表（pathspec_file=None 时用于 staged 验证）。
+            pathspec_file: pathspec 文件路径。None 时强制无 pathspec 模式。
+            target_files: 目标文件绝对路径列表（rename 检测 + staged 验证用）。
 
         Returns:
             (commit_hash, error_message)。commit_hash 为 None 表示失败。
         """
-        # 无 pathspec 模式：先验证 staged 区干净（防误提交其他 session WIP）
-        if pathspec_file is None:
+        use_pathspec = pathspec_file is not None
+        # rename 检测：有 pathspec 且有 target_files 时，检测 rename 自动切换无 pathspec
+        if use_pathspec and target_files and self._has_staged_renames(target_files):
+            use_pathspec = False
+        # 无 pathspec 模式：验证 staged 区干净（防误提交其他 session WIP）
+        if not use_pathspec:
             if not target_files:
                 return None, "无 pathspec commit 需要 target_files 参数"
             clean, err = self._verify_staged_is_clean(target_files)
@@ -1898,13 +1950,13 @@ class GitCommitGateway:
         try:
             with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
                 f.write(message)
-            if pathspec_file is None:
-                commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
-            else:
+            if use_pathspec:
                 commit_cmd = [
                     "git", "commit", "--no-verify", "-F", msg_path,
                     f"--pathspec-from-file={pathspec_file}",
                 ]
+            else:
+                commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
             result = self._run_git(commit_cmd)
             if result.returncode != 0:
                 return None, result.stderr.strip() or result.stdout.strip()
@@ -2005,9 +2057,10 @@ class GitCommitGateway:
                             status=CommitStatus.NOTHING_TO_COMMIT,
                             message="no staged changes in auto-commit files",
                         )
-                    # commit（pathspec 模式，reconciler 很少遇到 rename）
+                    # commit（rename 检测内置到 _commit_with_file_message，真源唯一）
+                    # reconciler 路径与 _commit_locked 一致，自动获得 rename 保护。
                     commit_hash, commit_err = self._commit_with_file_message(
-                        full_message, pathspec_file
+                        full_message, pathspec_file, existing
                     )
                     if commit_hash is None:
                         return CommitResult(

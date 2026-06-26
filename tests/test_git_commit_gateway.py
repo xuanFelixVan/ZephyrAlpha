@@ -551,12 +551,14 @@ class TestEdgeCases:
 
 
 class TestRenameFallback:
-    """回归测试：staged rename 的无 pathspec commit（方案 A+ 治本）。
+    """回归测试：staged rename 的 rename fallback（方案 A 治本，红蓝审核 v2）。
 
     根因：git commit --pathspec-from-file 对 staged rename（R100）拆分为
     独立 add+delete，只提交 pathspec 匹配部分，破坏 rename。
-    治本：统一用无 pathspec commit，由 _stash_other_files +
-    _verify_staged_is_clean 双保险保证 staged 区只有目标文件。
+    治本：_commit_with_file_message 内置 rename 检测（_has_staged_renames），
+    检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean
+    验证 staged 区只有目标文件。pathspec 为默认（多 session 安全），
+    rename 时 fallback 无 pathspec。reconciler 路径（_commit_auto）同样受保护。
     """
 
     @staticmethod
@@ -776,3 +778,103 @@ class TestGitignoredTrackedDeleted:
         assert "f00.txt" in diff.stdout, (
             f"非目标 WIP 应保留工作区:\n{diff.stdout}"
         )
+
+
+class TestStagedDeleteGitignored:
+    """回归测试：``git rm --cached`` staged delete + gitignored + 文件仍在磁盘。
+
+    场景：用户对 gitignored-tracked 文件执行 ``git rm --cached``（暂存删除），
+    文件仍存在于磁盘。然后调用 GitCommitGateway 提交该删除。
+
+    根因（已修复）：
+    1. ``_stage_gitignored_tracked`` 的 ``existing`` 分支用 ``git add -f`` 可能
+       撤销 staged delete（纵深防御：新增 ``_is_staged_delete`` 检查跳过）。
+    2. ``_collect_non_target_rel`` 用 ``Path.resolve()`` 匹配路径，当文件不在
+       磁盘时无法归一化大小写，导致目标被误判为非目标 → 被 stash 走 staged
+       delete。修复：用 ``os.path.normcase()`` 大小写不敏感匹配。
+
+    回归场景来源：egg_info 构建产物从 git 移除时，commit 32ead90e 漏提交 5 个
+    删除（staged delete 被 stash 走，只提交了 3 个修改文件）。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    def test_staged_delete_file_on_disk(self, tmp_path: Path) -> None:
+        """git rm --cached（staged delete）+ 文件仍在磁盘 → commit 应含删除。"""
+        _init_git_repo(tmp_path)
+        env = self._git_env()
+        # 1. 创建 gitignored 目录 + 文件，提交（使其被 tracked）
+        ig_dir = tmp_path / "build_artifacts"
+        ig_dir.mkdir()
+        foo = ig_dir / "artifact.txt"
+        foo.write_text("build output\n", encoding="utf-8")
+        normal = tmp_path / "normal.txt"
+        normal.write_text("v0\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "add", "."], cwd=str(tmp_path), capture_output=True,
+            env=env, check=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "init", "--no-verify"],
+            cwd=str(tmp_path), capture_output=True, env=env, check=True,
+        )
+        # 2. gitignore build_artifacts/ + git rm --cached foo（staged delete，文件留磁盘）
+        (tmp_path / ".gitignore").write_text("build_artifacts/\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "rm", "--cached", "build_artifacts/artifact.txt"],
+            cwd=str(tmp_path), capture_output=True, env=env, check=True,
+        )
+        normal.write_text("v1\n", encoding="utf-8")
+        # 确认 staged delete 状态
+        status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(tmp_path), capture_output=True, text=True,
+        )
+        assert "D  build_artifacts/artifact.txt" in status.stdout, (
+            f"前置条件失败——foo 应为 staged delete:\n{status.stdout}"
+        )
+        # 3. 通过 GitCommitGateway 提交
+        files = [
+            str(tmp_path / ".gitignore"),
+            str(foo),
+            str(normal),
+        ]
+        gw = GitCommitGateway(project_root=tmp_path)
+        result = gw.commit(
+            session_id="test-staged-del",
+            files=files,
+            message="test: staged delete gitignored file on disk",
+        )
+        assert result.status == CommitStatus.OK, (
+            f"commit 应成功: {result.status} {result.message}"
+        )
+        # 4. 验证 commit 含 artifact.txt 删除
+        show = subprocess.run(
+            ["git", "show", "--name-status", "HEAD"],
+            cwd=str(tmp_path), capture_output=True, text=True, env=env,
+        )
+        out = show.stdout
+        assert "build_artifacts/artifact.txt" in out, (
+            f"commit 未含 artifact.txt 删除:\n{out}"
+        )
+        assert (
+            "D\tbuild_artifacts/artifact.txt" in out
+            or "D  build_artifacts/artifact.txt" in out
+        ), f"artifact.txt 应标 D(删除):\n{out}"
+        # 5. 验证 artifact.txt 不再被 git 跟踪
+        tracked = subprocess.run(
+            ["git", "ls-files", "build_artifacts/"],
+            cwd=str(tmp_path), capture_output=True, text=True,
+        )
+        assert tracked.stdout.strip() == "", (
+            f"artifact.txt 仍被跟踪: {tracked.stdout}"
+        )
+        # 6. 验证文件仍在磁盘（git rm --cached 不删磁盘文件）
+        assert foo.exists(), "git rm --cached 不应删除磁盘文件"
