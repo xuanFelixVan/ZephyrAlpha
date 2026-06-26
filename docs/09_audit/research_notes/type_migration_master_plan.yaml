@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 老旧类型系统迁移总图 — 临时文件

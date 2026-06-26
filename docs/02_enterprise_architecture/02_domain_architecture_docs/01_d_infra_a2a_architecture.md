@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-INFRA_A2A a2a_communication架构图
 version: "1.0"
 status: active
-date: 2026-06-25
+date: 2026-06-27
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,17 +13,17 @@ ttl: permanent
 > **文档作用 / Purpose**: 以ASCII art可视化展示a2a_communication（D-INFRA_A2A）功能域的模块分层架构和依赖关系。
 
 > 本文档由 generate_domain_architecture_diagram.py 从 depgraph.db 自动生成
-> 最后更新 / Last Updated: 2026-06-25 20:00:20
+> 最后更新 / Last Updated: 2026-06-27 02:42:10
 > 数据源 / Data Source: depgraph.db nodes表 + edges表
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 a2a_communication（D-INFRA_A2A）的模块分布。共 114 个模块 / 114 modules。
+> 按 architecture_layer 分层显示 a2a_communication（D-INFRA_A2A）的模块分布。共 101 个模块 / 101 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (114 modules)            │
+│            L1 基础层 / Foundation Layer (101 modules)            │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/infrastructure/a2a_protocol/__init__.py  [produc... │
 │   src/zephyr/infrastructure/a2a_protocol/a2a_card_registry.py... │
@@ -43,16 +43,16 @@ ttl: permanent
 │   src/zephyr/infrastructure/a2a_protocol/layer3_coordination/... │
 │   src/zephyr/infrastructure/a2a_protocol/layer3_coordination/... │
 │   src/zephyr/infrastructure/a2a_protocol/layer3_coordination/... │
-│   ...还有 96 个模块 / 96 more modules                            │
+│   ...还有 83 个模块 / 83 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 114 个模块 / 114 modules）。
+> 按 architecture_layer 分组的模块清单（共 101 个模块 / 101 modules）。
 
-### L1 基础层 / Foundation Layer (114 modules)
+### L1 基础层 / Foundation Layer (101 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -147,46 +147,33 @@ ttl: permanent
 | 89 | src/zephyr/infrastructure/pipeline/layer_consumer_registr... | src/zephyr/infrastructure/pipeline/la... | production | generated |
 | 90 | src/zephyr/infrastructure/pipeline/layer_router.py | src/zephyr/infrastructure/pipeline/la... | production | generated |
 | 91 | src/zephyr/infrastructure/pipeline/llm_gateway.py | src/zephyr/infrastructure/pipeline/ll... | production | generated |
-| 92 | src/zephyr/infrastructure/pipeline/model_profiler/__init_... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 93 | src/zephyr/infrastructure/pipeline/model_profiler/benchma... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 94 | src/zephyr/infrastructure/pipeline/model_profiler/capabil... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 95 | src/zephyr/infrastructure/pipeline/model_profiler/cli.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 96 | src/zephyr/infrastructure/pipeline/model_profiler/deepsee... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 97 | src/zephyr/infrastructure/pipeline/model_profiler/exam_or... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 98 | src/zephyr/infrastructure/pipeline/model_profiler/exam_te... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 99 | src/zephyr/infrastructure/pipeline/model_profiler/model_d... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 100 | src/zephyr/infrastructure/pipeline/model_profiler/profile... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 101 | src/zephyr/infrastructure/pipeline/model_profiler/results... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 102 | src/zephyr/infrastructure/pipeline/model_profiler/task_mo... | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 103 | src/zephyr/infrastructure/pipeline/model_router.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 104 | src/zephyr/infrastructure/pipeline/models.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
-| 105 | src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
-| 106 | src/zephyr/infrastructure/pipeline/pipeline_lock.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
-| 107 | src/zephyr/infrastructure/pipeline/pipeline_roadmap.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
-| 108 | src/zephyr/infrastructure/pipeline/preemption_manager.py | src/zephyr/infrastructure/pipeline/pr... | production | generated |
-| 109 | src/zephyr/infrastructure/pipeline/routing_plugins.py | src/zephyr/infrastructure/pipeline/ro... | production | generated |
-| 110 | src/zephyr/infrastructure/queue/__init__.py | src/zephyr/infrastructure/queue/__ini... | production | generated |
-| 111 | src/zephyr/infrastructure/queue/task_queue.py | src/zephyr/infrastructure/queue/task_... | production | generated |
-| 112 | src/zephyr/infrastructure/queue/task_scheduler.py | src/zephyr/infrastructure/queue/task_... | production | generated |
-| 113 | src/zephyr/infrastructure/sync/__init__.py | src/zephyr/infrastructure/sync/__init... | production | generated |
-| 114 | src/zephyr/infrastructure/sync/blueprint_code_sync.py | src/zephyr/infrastructure/sync/bluepr... | production | generated |
+| 92 | src/zephyr/infrastructure/pipeline/model_router.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
+| 93 | src/zephyr/infrastructure/pipeline/models.py | src/zephyr/infrastructure/pipeline/mo... | production | generated |
+| 94 | src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
+| 95 | src/zephyr/infrastructure/pipeline/pipeline_lock.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
+| 96 | src/zephyr/infrastructure/pipeline/pipeline_roadmap.py | src/zephyr/infrastructure/pipeline/pi... | production | generated |
+| 97 | src/zephyr/infrastructure/pipeline/preemption_manager.py | src/zephyr/infrastructure/pipeline/pr... | production | generated |
+| 98 | src/zephyr/infrastructure/pipeline/routing_plugins.py | src/zephyr/infrastructure/pipeline/ro... | production | generated |
+| 99 | src/zephyr/infrastructure/queue/__init__.py | src/zephyr/infrastructure/queue/__ini... | production | generated |
+| 100 | src/zephyr/infrastructure/queue/task_queue.py | src/zephyr/infrastructure/queue/task_... | production | generated |
+| 101 | src/zephyr/infrastructure/queue/task_scheduler.py | src/zephyr/infrastructure/queue/task_... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 
-> 域内模块依赖关系（共 82 条 / 82 edges）。按依赖类型分组，使用 → 表示方向。
+> 域内模块依赖关系（共 73 条 / 73 edges）。按依赖类型分组，使用 → 表示方向。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│       依赖关系图 / Dependency Graph (共 82 条 / 82 edges)        │
+│       依赖关系图 / Dependency Graph (共 73 条 / 73 edges)        │
 ├──────────────────────────────────────────────────────────────────┤
 │   依赖类型数 / Dependency Types: 2                               │
-│   [import_depends]: 52 条 / edges                                │
-│   [config_depends]: 30 条 / edges                                │
+│   [import_depends]: 50 条 / edges                                │
+│   [config_depends]: 23 条 / edges                                │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                 [import_depends] (52 条 / edges)                 │
+│                 [import_depends] (50 条 / edges)                 │
 ├──────────────────────────────────────────────────────────────────┤
 │   a2a_card_registry.py → a2a_registry.py                         │
 │   __init__.py → __init__.py                                      │
@@ -237,12 +224,12 @@ ttl: permanent
 │   _security_and_economics.py → session_smuggling_defense.py      │
 │   __init__.py → event_store.py                                   │
 │   __init__.py → llm_gateway.py                                   │
-│   ...还有 3 条 / 3 more edges                                    │
+│   __init__.py → task_scheduler.py                                │
 └──────────────────────────────────────────────────────────────────┘
 
-**[config_depends]** (30 条 / edges) — 已达显示上限，省略 / limit reached
+**[config_depends]** (23 条 / edges) — 已达显示上限，省略 / limit reached
 
-> (最多显示前 50 条依赖边，共 82 条)
+> (最多显示前 50 条依赖边，共 73 条)
 
 ```
 

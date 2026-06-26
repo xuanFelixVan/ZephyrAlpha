@@ -5,6 +5,7 @@
 # stability: frozen
 # safety_level: H
 # ai_autonomy: immutable_core
+# ttl: permanent
 # 治理锚定结束
 module_id: CFG-hard-boundaries
 schema_version: "1.0.0"

@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # consumer_registry.yaml — 跨层契约消费者注册表 (SSoT)
 # 对标 CTR-VER-001（契约版本协商）的 VER-R3 要求：

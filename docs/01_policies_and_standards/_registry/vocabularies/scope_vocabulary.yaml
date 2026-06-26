@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # 本词表是 ZephyrAlpha 2.0 作用域唯一真源（SSoT）。任何地方的 scope 枚举值定义如果与本词表不一致，以本词表为准。
 schema_version: "1.0.0"

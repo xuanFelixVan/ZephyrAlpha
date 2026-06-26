@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # review_status 受控词表
 # ZephyrAlpha 2.0 审核状态唯一真源

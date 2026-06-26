@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # MOD-INF-019 盲点追踪 (v0.18.0)
 # 蓝图: docs/03_modules/_domain-infra_ops/agent-spec/blueprint.md

@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 Session Log 标准 Schema
 # 定义每次 AI session 结束时必须写入的 Session Log 格式

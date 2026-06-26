@@ -5,6 +5,7 @@ blueprint_id: GOV-INF-001
 # stability: stable
 # safety_level: M
 # ai_autonomy: human_gated
+# ttl: permanent
 # 治理锚定结束
 schema_version: 1.0.0
 doc_type: register

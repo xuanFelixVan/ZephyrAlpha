@@ -6,6 +6,7 @@ blueprint_id: GOV-INF-001
 # stability: stable
 # safety_level: M
 # ai_autonomy: immutable_core
+# ttl: permanent
 # 治理锚定结束
 # ============================================================================
 # ZephyrAlpha Frontmatter 字段定义登记表（Frontmatter Field Registry）— 唯一真源

@@ -38,7 +38,7 @@ sections:
       fail: 格式不匹配
     actions:
     - type: mandatory
-      step: 'A_full格式：14字段注释头部——[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]'
+      step: 'A_full格式：15字段注释头部——[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]'
     - type: mandatory
       step: '[DEPENDENCIES]上游依赖——填此文件import的模块，分号分隔；强制AI创建代码时到全景图查上游节点是否存在'
     - type: mandatory
@@ -46,13 +46,13 @@ sections:
     - type: mandatory
       step: '[MATURITY]设计成熟度——枚举design/prototype/production/legacy；强制AI声明设计态还是运营态'
     - type: mandatory
-      step: A_test格式：6字段简化版——[BLUEPRINT]/[MODULE]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[TESTS]
+      step: A_test格式：7字段简化版——[BLUEPRINT]/[MODULE]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[TESTS]/[TTL]
     - type: mandatory
-      step: B_yaml格式：5字段注释块——blueprint/module_id/stability/safety_level/ai_autonomy
+      step: B_yaml格式：6字段注释块——blueprint/module_id/stability/safety_level/ai_autonomy/ttl
     - type: mandatory
-      step: C_json格式：_meta字段——blueprint/module_id/stability/safety_level/ai_autonomy
+      step: C_json格式：_meta字段——blueprint/module_id/stability/safety_level/ai_autonomy/ttl
     - type: mandatory
-      step: E_shell格式：4字段注释——[BLUEPRINT]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]
+      step: E_shell格式：5字段注释——[BLUEPRINT]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[TTL]
     - type: mandatory
       step: 锚定文件时执行7步：判断归属蓝图→添加表头→更新蓝图§0.1→更新蓝图§11→更新蓝图§10→更新注册表和全景图→验证双向对齐
     - type: mandatory
@@ -125,18 +125,18 @@ sections:
     original_rules:
     - GOV-ENG-002
     items:
-    - description: A_full(.py十四字段注释头部)
-      details: '适用: code, script | 字段数: 14'
-    - description: A_test(.py六字段简化版)
-      details: '适用: test | 字段数: 6'
-    - description: B_yaml(YAML 5字段注释块)
-      details: '适用: gate, registry, contract(yaml), config, data | 字段数: 5'
+    - description: A_full(.py十五字段注释头部)
+      details: '适用: code, script | 字段数: 15'
+    - description: A_test(.py七字段简化版)
+      details: '适用: test | 字段数: 7'
+    - description: B_yaml(YAML 6字段注释块)
+      details: '适用: gate, registry, contract(yaml), config, data | 字段数: 6'
     - description: C_json(JSON _meta字段)
-      details: '适用: contract(json), schema(json) | 字段数: 5'
+      details: '适用: contract(json), schema(json) | 字段数: 6'
     - description: D_md(.md YAML frontmatter)
       details: '适用: doc | 引用REG-FRONTMATTER-001'
     - description: E_shell(Shell/Mermaid注释头部)
-      details: '适用: infra(.sh/.ps1/.mmd) | 字段数: 4'
+      details: '适用: infra(.sh/.ps1/.mmd) | 字段数: 5'
   gov_eng_002_enum_definitions:
     title: 枚举值定义(SSoT)
     section_type: principles
@@ -445,7 +445,7 @@ sections:
     - GOV-ENG-002
     items:
     - description: B_yaml格式定义
-      details: '# --- 治理锚定 --- / # blueprint: {module_id} | {blueprint_path} | §{N} / # module_id: {module_id} / # stability: {frozen|stable|evolving|volatile} / # safety_level: {H|M|L} / # ai_autonomy: {immutable_core|human_gated|ai_modifiable} / # --- 治理锚定结束 ---'
+      details: '# --- 治理锚定 --- / # blueprint: {module_id} | {blueprint_path} | §{N} / # module_id: {module_id} / # stability: {frozen|stable|evolving|volatile} / # safety_level: {H|M|L} / # ai_autonomy: {immutable_core|human_gated|ai_modifiable} / # ttl: {permanent|task_bound} / # --- 治理锚定结束 ---'
     - description: B_yaml适用文件清单
       details: 'gate: src/zephyr/gates/*.yaml(g1-ingest.yaml) | registry: *_registry.yaml, *manifest.yaml(_registry.yaml, script-manifest.yaml) | contract(yaml): docs/.../contracts/*.yaml(architecture_contract.yaml) | config: config/*.yaml(flags.yaml, budget_policy.yaml) | data: data/**/*.yaml(capability_cards/*.yaml, work_dags/*.yaml) | architecture: architecture_model/**/*.yaml(_index.yaml, l00_data_source.yaml)'
   gov_eng_002_cjson_format:
@@ -465,7 +465,7 @@ sections:
     - GOV-ENG-002
     items:
     - description: E_shell格式定义
-      details: '# [BLUEPRINT] {module_id} | {blueprint_path} | §{N} / # [STABILITY] {frozen|stable|evolving|volatile} / # [SAFETY] {H|M|L} / # [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable}'
+      details: '# [BLUEPRINT] {module_id} | {blueprint_path} | §{N} / # [STABILITY] {frozen|stable|evolving|volatile} / # [SAFETY] {H|M|L} / # [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable} / # [TTL] {permanent|task_bound}'
     - description: E_shell适用文件清单
       details: '.sh: scripts/hooks/*.sh(contract-fingerprint-hook.sh) | .ps1: scripts/**/*.ps1(test_concurrent_safety.ps1) | .mmd: docs/**/diagrams/*.mmd(c4_l1_system_context.mmd)'
   gov_eng_002_standard_relations:
