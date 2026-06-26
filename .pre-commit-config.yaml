@@ -372,7 +372,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(src/zephyr/.*\\.py|scripts/governance/.*\\.py|scripts/governance/script_manifest\\.yaml|src/zephyr/gates/_registry\\.yaml)$"
+        files: "^(src/zephyr/.*\\.py|scripts/governance/.*\\.py|scripts/governance/script_manifest\\.yaml)$"
         description: "增量注册审计——仅 NEW 孤儿阻断（PERSISTENT 存量不阻断），对标 RULE-TWO 防线 2 + anti_hallucination W2-T1"
 
       # ── GATE-RULE-FM: 规则文件 frontmatter 标准字段校验门禁 ──

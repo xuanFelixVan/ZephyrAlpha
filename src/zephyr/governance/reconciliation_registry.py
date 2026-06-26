@@ -70,6 +70,7 @@ __all__ = [
     "ReconcilerSpec",
     "ReconciliationRegistry",
     "make_manifest_reconciler",
+    "make_baseline_aware_reconciler",
 ]
 
 
@@ -264,4 +265,97 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=100,
+    )
+
+
+def make_baseline_aware_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-REG-BL baseline-aware post-commit 对账 reconciler（P2-T3）。
+
+    GATE-REG-BL 被 GitCommitGateway 的 --no-verify 系统性绕过（机制层病根）。
+    本 reconciler 在 post-commit 跑 audit_registration.py --incremental --baseline-aware
+    增量扫描，检测 NEW 孤儿（不阻断——commit 已入历史，仅记录报告供人工追责）。
+
+    非阻断设计理由：post-commit 对账无法回滚已提交 commit；记录 NEW 孤儿到
+    .runtime/reconcile_reports/baseline_aware_<ts>.json，供 ide_health_daemon + 人工追责。
+
+    flag 真实性已核实：--baseline-aware 在 audit_registration.py L810-814 真实注册
+    （呼应 project_memory 反幻觉教训：上一轮 AI 误判为臆造 flag）。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root，类型注解 object
+            保持本模块纯 stdlib 不 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-REG-BL", priority=200)。
+    """
+    import json
+    import os
+    import subprocess
+    import sys
+    import time
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("src/zephyr/") and rel.endswith(".py"):
+                return True
+            if rel.startswith("scripts/governance/") and rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. post-commit 增量 baseline-aware 扫描（非阻断）
+        scan_result = subprocess.run(
+            [sys.executable, "scripts/governance/audit_registration.py",
+             "--incremental", "--baseline-aware"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
+        # 2. 报告落盘（无论 exit code，记录供追责）
+        reports_dir = project_root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time())
+        report_path = reports_dir / f"baseline_aware_{ts}.json"
+        report = {
+            "gate_id": "GATE-REG-BL",
+            "session_id": session_id,
+            "timestamp": ts,
+            "exit_code": scan_result.returncode,
+            "stdout_tail": scan_result.stdout.strip()[-500:],
+            "stderr_tail": scan_result.stderr.strip()[-500:],
+            "committed_files": committed_files,
+        }
+        try:
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except OSError as e:
+            return ReconcileResult(
+                action="warn",
+                detail=f"baseline_aware scan done (exit={scan_result.returncode}) but report write failed: {e}",
+            )
+        # 3. 判定结果
+        if scan_result.returncode == 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"baseline_aware scan clean, report={report_path.name}",
+            )
+        # exit 1 = NEW 孤儿检出（commit 已入历史，仅告警）
+        return ReconcileResult(
+            action="warn",
+            detail=f"baseline_aware scan detected NEW orphans (exit={scan_result.returncode}), report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-REG-BL",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=200,
     )

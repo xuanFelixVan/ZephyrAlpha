@@ -78,6 +78,7 @@ from zephyr.governance.reconciliation_registry import (
     ReconcileResult,
     ReconciliationRegistry,
     make_manifest_reconciler,
+    make_baseline_aware_reconciler,
 )
 
 logger = logging.getLogger(__name__)
@@ -283,14 +284,14 @@ class GitCommitGateway:
                 )
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest 迁移）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware）。
 
-        P2-T2: manifest 对账逻辑已迁移为
-        ``reconciliation_registry.make_manifest_reconciler`` 工厂（闭包捕获 self），
-        本方法仅注册工厂产出。旧 ``_post_commit_reconcile`` 方法已删除。
-        P2-T3/T4/T5 将在此追加 baseline_aware / ttl / ghost reconciler 注册。
+        P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
+        P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
+        P2-T4/T5 将在此追加 ttl / ghost reconciler 注册。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
+        self._reconciliation_registry.register(make_baseline_aware_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
