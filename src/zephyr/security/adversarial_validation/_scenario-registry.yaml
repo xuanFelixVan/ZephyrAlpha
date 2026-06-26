@@ -11,7 +11,7 @@
 
 module_id: MOD-INF-005
 registry_version: "1.0.0"
-total_scenarios: 50
+total_scenarios: 54
 last_updated: "2026-06-26"
 
 scenarios:
@@ -558,16 +558,69 @@ scenarios:
     status: active
     description: "攻击者篡改生成器（bootstrap.py/ingest.py/generate_missing_index_md.py），移除 ttl 注入逻辑，使新生成的 .md 文件不带 ttl。G1 frontmatter_required_fields 应检测到 ttl 字段缺失并阻断。GATE-15 全量校验兜底。"
 
+  # === Schema Health Adversarial Scenarios (GATE-SCHEMA-HEALTH) ===
+  # 攻击面：depgraph.db schema 漂移与 migration 绕过（#ARCH-016 治本后的防漂移验证）
+  # 防御层：verify_schema_health.py pre-commit 门禁 + DDL-as-Code 铁律 + init_db 事务原子性
+  # 爆炸半径：FILE（单 DB 文件攻击）/ MODULE（schema 框架级攻击）
+  - scenario_id: RB-SCEN-051
+    name: "Schema Drift — DB Extra Column Injection"
+    tier: L2
+    severity: high
+    injection_vector: "db_alter_add_column"
+    target_module: "verify_schema_health.py"
+    defense: "check_ddl_columns (DDL 列一致性校验——DB 多出列即 exit 1)"
+    steady_state_verification: "verify_schema_health.py exit 1 when DB has column not in _DDL_*"
+    status: active
+    test_file: "tests/test_verify_schema_health.py::TestCheckDdlColumns::test_detects_extra_column"
+    description: "攻击者直接 ALTER TABLE ADD COLUMN 向 depgraph.db 注入 DDL 未声明的列（绕过 depgraph_schema._MIGRATIONS）。verify_schema_health.check_ddl_columns 比对 DB 实际列 vs _DDL_* 声明列，检测到 DB 多出列即报告 [DDL-DRIFT] 并 exit 1 阻断提交。"
+
+  - scenario_id: RB-SCEN-052
+    name: "Schema Drift — DB Missing Column (False Negative)"
+    tier: L2
+    severity: high
+    injection_vector: "db_alter_drop_column"
+    target_module: "verify_schema_health.py"
+    defense: "check_ddl_columns (DDL 列一致性校验——DB 缺少列即 exit 1)"
+    steady_state_verification: "verify_schema_health.py exit 1 when _DDL_* column missing from DB"
+    status: active
+    test_file: "tests/test_verify_schema_health.py::TestCheckDdlColumns::test_detects_missing_column"
+    description: "攻击者直接 ALTER TABLE DROP COLUMN 删除 DDL 声明的列（绕过 migration）。verify_schema_health.check_ddl_columns 检测到 declared - actual 非空，报告 [DDL-DRIFT] DB 缺少列并 exit 1。此场景验证门禁不会产生假阴性（漏报）。"
+
+  - scenario_id: RB-SCEN-053
+    name: "Migration Bypass — Direct .db File Modification"
+    tier: L1
+    severity: critical
+    injection_vector: "direct_db_modification"
+    target_module: "depgraph_schema.py / verify_schema_health.py"
+    defense: "DDL-as-Code 铁律 + check_schema_version (版本一致性校验)"
+    steady_state_verification: "verify_schema_health.py exit 1 on _schema_version MAX < len(_MIGRATIONS)"
+    status: active
+    test_file: "tests/test_verify_schema_health.py::TestCheckSchemaVersion::test_detects_version_behind"
+    description: "攻击者绕过 init_db() migration 框架，直接用 sqlite3 CLI 修改 depgraph.db（如手动 DROP TABLE/CREATE TABLE）。_schema_version 表不前进，verify_schema_health.check_schema_version 检测到 MAX(version) < len(_MIGRATIONS)，报告 [VERSION-DRIFT] 并 exit 1。此场景对应 DDL-as-Code 铁律第4步门禁。"
+
+  - scenario_id: RB-SCEN-054
+    name: "Migration Atomicity — Interrupted Migration ROLLBACK"
+    tier: L2
+    severity: high
+    injection_vector: "migration_interruption"
+    target_module: "depgraph_schema.py init_db()"
+    defense: "BEGIN/COMMIT/ROLLBACK 事务包裹 + PRAGMA foreign_keys 控制"
+    steady_state_verification: "init_db 抛 RuntimeError 后 DB 无部分应用（bad 表不存在 + 版本不前进 + 已有数据不丢失）"
+    status: active
+    test_file: "tests/test_depgraph_schema.py::TestMigrationAtomicity::test_failed_migration_rolls_back"
+    description: "攻击者（或断电/崩溃）在 _run_migration 执行中途中断。init_db 用 BEGIN/COMMIT/ROLLBACK 事务包裹所有 migration 语句，中途失败应完整回滚（无部分应用）。验证三不变量：①失败 migration 创建的表不存在 ②_schema_version 版本不前进 ③已有数据不丢失。"
+
 # Summary
 summary:
-  total: 50
+  total: 54
   by_tier:
-    L1_critical: 14
-    L2_high: 21
+    L1_critical: 15
+    L2_high: 24
     L3_medium: 6
     L6_advanced: 8
   rollback_specific: 10
   tier6_advanced: 8
   ttl_metadata: 4
+  schema_health: 4
   test_coverage: full
   last_updated: "2026-06-26"
