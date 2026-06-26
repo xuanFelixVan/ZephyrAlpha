@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 573
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,11 +38,11 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_verify_naming_gate.py
-  path: _tmp_verify_naming_gate.py
-  description: 模拟攻击路径：
-  domain: governance
-  execution_plane: hot-path
+- name: _tmp_check_orphans.py
+  path: _tmp_check_orphans.py
+  description: import sqlite3
+  domain: _tmp_check_orphans.py
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -1638,14 +1638,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/d11_compliance/validate_llm_security_gateway.py
-  path: governance/d11_compliance/validate_llm_security_gateway.py
-  description: validate_llm_security_gateway.py — 裸调 LLM API 检测门禁
-  domain: governance
-  execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/d11_compliance/validate_manifest_admission.py
   path: governance/d11_compliance/validate_manifest_admission.py
   description: from __future__ import annotations
@@ -3096,7 +3088,7 @@ scripts:
   dimensions: []
 - name: governance/d7_code/detect_direct_llm_calls.py
   path: governance/d7_code/detect_direct_llm_calls.py
-  description: detect_direct_llm_calls.py — 直接 LLM 调用检测
+  description: detect_direct_llm_calls.py — 裸调 LLM API 检测门禁（GATE-20）
   domain: governance
   execution_plane: warm-path
   status: registered
