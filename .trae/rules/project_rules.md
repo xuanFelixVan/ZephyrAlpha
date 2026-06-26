@@ -990,6 +990,17 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 
 **核心**：depgraph 存储在 SQLite 数据库 `D:/ZephyrAlpha/data/databases/depgraph.db`（v4.0.0, 16张表）——禁止 AI 直接 Read/Write。必须通过提取/应用脚本操作。
 
+### Schema 变更协议（DDL-as-Code 铁律）
+
+depgraph.db 的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
+
+1. **改 DDL 声明**：结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 常量（表 DDL 真源）或 `_DDL_INDEXES`（索引真源）
+2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 SQLite 报错）
+3. **跑 init_db()**：执行 `init_db()` 幂等应用 pending migrations（事务包裹，失败自动 ROLLBACK）
+4. **过门禁**：`python scripts/governance/verify_schema_health.py` 自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即 exit 1 阻断
+
+禁止：直接改 apply_depgraph.py 等写入代码的 SQL 来跳过 DDL 声明；直接改 .db 文件绕过 migration。
+
 ### 触发条件
 
 任何需要读取或修改 depgraph 的操作——包括查看模块定义、修改 physical_files、更新 blueprint_status、查看域结构等。
