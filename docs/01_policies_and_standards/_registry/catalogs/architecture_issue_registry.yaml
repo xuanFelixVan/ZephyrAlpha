@@ -1,0 +1,140 @@
+# [A_config] module_id=CFG-architecture-issue-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+registry_id: REG-ARCH-ISSUE-001
+name: 架构议题注册表
+description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架构治理议题的编号、状态、裁定与施工阶段。裁定#208 R6 建立，治本"#ARCH-XXX 无中央注册表、靠 grep-and-claim 占位"的病根。
+owner: MOD-INF-037
+tier: tier_1_governance
+status: Active
+version: 1.0.0
+created: '2026-06-26'
+last_updated: '2026-06-26'
+# 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
+
+# ============================================================
+# #ARCH 编号分配铁律（裁定#208 R7）
+# ============================================================
+# 1. 连续分配：#ARCH-NNN 按议题立项时间顺序连续分配，禁止跳号
+# 2. 不回收：已分配编号永不回收，即使议题被废弃/superseded，编号仍保留
+# 3. superseded_by 链：议题被新议题取代时，旧议题 status=superseded + 填 superseded_by=新议题ID；新议题 entries 中 reference 旧议题
+# 4. status 四值：open(待施工) / decided(已裁定待施工) / deprecated(已废弃不施工) / superseded(已被新议题取代)
+# 5. 编号预留：#ARCH-001~007 为早期预留编号（未正式登记，待回溯补录或永久保留为预留段）
+# 6. 登记强制：任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
+
+unique_key:
+- issue_id
+
+entry_schema:
+  issue_id: str              # #ARCH-NNN
+  title: str                 # 议题标题
+  severity: str              # P0致命 | P1高 | P2中 | P3低
+  adjudication: str          # 裁定/修复方案描述
+  fix_phase: str             # 施工阶段
+  status: str                # open | decided | deprecated | superseded
+  superseded_by: str         # (可选) 取代本议题的新议题ID
+  related_adjudication: str  # (可选) 关联裁定编号(如#208)
+  created: str               # 立项日期
+  last_updated: str          # 最后更新日期
+
+entries:
+# --- #ARCH-001~007: 早期预留编号（未正式登记，待回溯补录或永久保留为预留段） ---
+
+# --- #ARCH-008~018: 回溯登记自 schema_health_root_cure_plan.md 附录B（schema 健康类议题） ---
+- issue_id: '#ARCH-008'
+  title: contracts 表 Schema 漂移（DDL 7 列 vs 写入 13 列）
+  severity: P0致命
+  adjudication: 修复 DDL + migration v13
+  fix_phase: schema_health 阶段1
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-009'
+  title: gates.event_driven 写入断裂（sync 遗漏 3 列）
+  severity: P1高
+  adjudication: 修复 sync_gate_registry
+  fix_phase: schema_health 阶段2
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-010'
+  title: generate_project_depgraph.py 写入已删除列
+  severity: P0致命
+  adjudication: 清理残留 INSERT
+  fix_phase: schema_health 阶段3
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-011'
+  title: cross_registry_rules 声明但未接线
+  severity: P2中
+  adjudication: 标注 deprecated
+  fix_phase: schema_health 阶段4
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-012'
+  title: governance_audit_logs 假审计表
+  severity: P1高
+  adjudication: 删除表 + 移除写入
+  fix_phase: schema_health 阶段4
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-013'
+  title: arch_layers 残留表（v6 合并后冗余）
+  severity: P1高
+  adjudication: 删除表 + 清理读取者
+  fix_phase: schema_health 阶段4
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-014'
+  title: arch_bottlenecks 空表
+  severity: P2中
+  adjudication: 删除表
+  fix_phase: schema_health 阶段4
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-015'
+  title: invariants DB 副本漂移（255 vs YAML 20）
+  severity: P1高
+  adjudication: 删除 DB 表
+  fix_phase: schema_health 阶段4
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-016'
+  title: verify_schema_health.py 门禁缺失
+  severity: P0致命
+  adjudication: 新建校验脚本
+  fix_phase: schema_health 阶段5
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-017'
+  title: GATE-SCHEMA-HEALTH 未注册
+  severity: P0致命
+  adjudication: 注册到 pre-commit
+  fix_phase: schema_health 阶段6
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+- issue_id: '#ARCH-018'
+  title: 文档与索引未同步
+  severity: P2中
+  adjudication: 更新 6 个文档/索引
+  fix_phase: schema_health 阶段7
+  status: open
+  created: '2026-06-25'
+  last_updated: '2026-06-26'
+
+# --- #ARCH-019: 本议题（裁定#208 module_id 数字序号制双轨治理） ---
+- issue_id: '#ARCH-019'
+  title: module_id 数字序号制双轨治理（SSoT 自相矛盾 + 历史违规 + 议题登记机制）
+  severity: P1高
+  adjudication: 裁定#208 双轨制（layer-master 数字序号制 + domain-functional 派生语义制 scoped 适用）；R1 SSoT调和 + R2 派生ID合规保留 + R3 历史违规分类治理 + R4 门禁升级 + R5 派生注册表结构化 + R6 议题登记机制建立 + R7 编号铁律 + R8 循环验证3轮
+  fix_phase: 裁定#208 阶段A-E
+  status: decided
+  related_adjudication: '#208'
+  created: '2026-06-26'
+  last_updated: '2026-06-26'

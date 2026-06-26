@@ -1,6 +1,6 @@
 rule_id: TRAE-028
 title: 文档治理-结构与命名
-version: 1.2.0
+version: 1.3.0
 layer: compliance
 module_id: TRAE-028
 depends_on:
@@ -83,7 +83,7 @@ sections:
     - type: mandatory
       step: 前端使用FE前缀(FE-L1~L4)，不使用D-XXX编号
     - type: mandatory
-      step: 模块ID格式为D-XXX-{SEQ}，Shared为SH-{ABBR}-{NNN}，Frontend为FE-L{N}-{ABBR}-{NNN}
+      step: 模块ID格式为双轨制(layer-master轨MOD-{LAYER_CODE}-{SEQ}+domain-functional派生轨MOD-{DOMAIN_FRAGMENT}[-NNN]或D-XXX-{SEQ})，Shared为SH-{ABBR}-{NNN}，Frontend为FE-L{N}-{ABBR}-{NNN}
     prohibitions:
     - 禁止在Mermaid架构图中使用docs目录编号作为节点ID
     - 禁止在KB决策记录中用docs编号引用架构层
@@ -446,7 +446,7 @@ sections:
     - description: 脚本前缀内序号管理
       details: 合法前缀数量通过script-manifest.yaml查询;扩展规则:前缀内使用4位序号{prefix}_NNNN_{name}.py;目标10000脚本容量;现有脚本数通过script-manifest.yaml查询，逐步迁移
     - description: 模块ID容量评估
-      details: 现有MOD-{LAYER}-NNN(3位,上限999/层)和D-XXX-NNN(3位);1500目标预估充足;4位扩展MOD-{LAYER}-NNNN(上限9999/层)作为预留
+      details: layer-master轨MOD-{LAYER}-NNN(3位,上限999/层)和domain-functional派生轨D-XXX-NNN(3位)/MOD-{DOMAIN_FRAGMENT}[-NNN](序号可选);1500目标预估充足;4位扩展MOD-{LAYER}-NNNN(上限9999/层)作为预留
   gov_doc_001_1500_module_naming:
     title: 模块命名空间分区规则 (GOV-DOC-001 §5.10)
     section_type: rule
@@ -463,7 +463,7 @@ sections:
       fail: 未查gaps直接分配新ID
     - type: constraint
       check: 跨域模块命名
-      pass: 跨域共享模块使用SH-{ABBR}-{NNN}格式;域专属模块使用D-{DOMAIN}-{NNN}格式
+      pass: 跨域共享模块使用SH-{ABBR}-{NNN}格式;域专属模块使用domain-functional派生轨格式MOD-{DOMAIN_FRAGMENT}[-NNN]或D-{DOMAIN}-{NNN}(序号可选,见模块ID格式condition双轨制)
       fail: 跨域模块使用域专属格式
     actions:
     - type: mandatory
@@ -1034,9 +1034,10 @@ sections:
       pass: 域ID下划线后的第一段不得与任何已存在域ID匹配(无父子前缀,对应domain_naming_rules.yaml NR-001);域ID必须独立表达业务含义,不得依赖其他域ID才能理解(语义独立性,对应NR-003);domain_name必须与domain_id语义一致(中文名一致,对应NR-005);所有域平级无父子关系
       fail: D-XXX_YYY形式中XXX是已存在域ID(如D-SIGNAL_ASHARE暗示ASHARE是SIGNAL子域,违反NR-001);或域ID是其他域ID加下划线后缀形式(如D-SIGNAL_QUALITY依赖D-SIGNAL上下文,违反NR-003);或domain_name与domain_id表达不同业务含义(违反NR-005)
     - type: constraint
-      check: 模块ID格式
-      pass: MOD-{LAYER_CODE}-{SEQ}(如MOD-L00-001);D-XXX-{SEQ}(如D-MKT_DATA-001);Shared为SH-{ABBR}-{NNN};Frontend为FE-L{N}-{ABBR}-{NNN}
-      fail: 其他格式
+      check: 模块ID格式（双轨制，裁定#208 R1）
+      pass: 双轨制 scoped 适用—layer-master轨=MOD-{LAYER_CODE}-{SEQ}(如MOD-L00-001/MOD-INF-005,序号必填);domain-functional派生轨=MOD-{DOMAIN_FRAGMENT}[-NNN]或D-XXX-{SEQ}(如MOD-ASHARE_SIGNAL/MOD-ASHARE_SIGNAL-001/D-MKT_DATA-001,域片段派生自domain_id去D-前缀,序号可选);Shared为SH-{ABBR}-{NNN};Frontend为FE-L{N}-{ABBR}-{NNN};双轨判定=token共享测试(blueprint_id去MOD-/D-前缀与domain_id去D-前缀分词有交集则属派生轨)
+      fail: 其他格式(既非layer-master轨也非domain-functional派生轨)
+      rationale: 双轨制对标K8s name/UID分离(layer-master≈UID稳定不透明+派生轨≈name语义可读);调和L1038(序号必填)与派生规则(派生序号可选)的历史矛盾
     - type: constraint
       check: 文件名格式
       pass: 全小写snake_case;适用于YAML/JSON/MD/所有文件类型;禁止kebab-case(连字符);禁止大写(AGENTS.md白名单除外)
@@ -1080,7 +1081,7 @@ sections:
     conditions:
     - type: constraint
       check: blueprint_id 派生关系
-      pass: blueprint_id 的域片段派生自 domain_id(如domain_id=D-ASHARE_SIGNAL则blueprint_id=MOD-ASHARE_SIGNAL-NNN或MOD-ASHARE_SIGNAL);派生关系记录在derived_identifier_registry.yaml;blueprint_id命名格式见模块ID格式condition
+      pass: blueprint_id 的域片段派生自 domain_id(如domain_id=D-ASHARE_SIGNAL则blueprint_id=MOD-ASHARE_SIGNAL[-NNN],序号可选,见模块ID格式condition双轨制domain-functional轨);派生关系记录在derived_identifier_registry.yaml(sequence_required字段控制序号是否必填,派生轨=false)
       fail: blueprint_id 域片段与所属 domain_id 不一致(如domain_id=D-ASHARE_SIGNAL但blueprint_id=MOD-SIGNAL_ASHARE-旧名残留)
     - type: constraint
       check: 节点路径域片段派生关系
@@ -1161,9 +1162,13 @@ metadata:
   impact_level: M
   modification_permission: human_gated
   superseded_by:
-  version: "1.2.0"
+  version: "1.3.0"
   last_modified: "2026-06-26"
   change_history:
+  - version: "1.3.0"
+    date: "2026-06-26"
+    author: "AI-Assistant"
+    change: "裁定#208 R1: 模块ID格式 condition 改 scoped 双轨制(layer-master轨 MOD-{LAYER_CODE}-{SEQ} 序号必填 + domain-functional派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选);删除派生规则自指循环(或MOD-ASHARE_SIGNAL 内联开口→[-NNN]引用双轨主格式);同步修订 L86/L448/L466 三处旧引用;R5 derived_identifier_registry 增 sequence_required/format_pattern/scope 结构化字段"
   - version: "1.2.0"
     date: "2026-06-26"
     author: "AI-Assistant"
