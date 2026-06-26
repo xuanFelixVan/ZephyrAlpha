@@ -2,53 +2,45 @@
 # [MODULE] scripts.governance.validate_module_id_naming
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
-# [CONSUMERS] phase_manager.py; CI pipeline; AI session 冷启动
-# [STARTUP] manual
+# [CONSUMERS] check_naming_convention.py (GATE-11 N-06); apply_depgraph.py (cmd_rename_domain/cmd_insert_domain/NR-002)
+# [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] module_id 必须符合 PS-STD-001 §5 命名规范; 禁止嵌套编号
 # [MODIFY-GUARD] PS-STD-001 §5; PS-REG-012 frontmatter_field_registry.yaml; module_id_registry.yaml
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=CLEAN, exit 1=VIOLATION
+# [ERROR_CONTRACT] returns (bool, str); 不抛异常
 # [TESTS]
 
 r"""
-module_id 命名合规性校验门禁
+module_id / domain_id 格式校验真源（裁定#208 三轨制）
 
-规则来源: PS-STD-001 §5 编号分配铁律 + 裁定#208 三轨制
-校验内容:
-  1. 格式合规: module_id 必须符合裁定#208 三轨制（layer-master/派生/跨域共享）
-  2. 禁止嵌套编号: 不得出现 XXX-NNN-SUFFIX 模式（如 MOD-MASTER_BLUEPRINT-BASELINE）
-  3. 父子关系靠字段: parent_module / belongs_to 表达，不靠编号后缀
+本模块是 module_id / domain_id 格式校验的唯一责任点，被以下门禁/脚本 import 复用：
+  - check_naming_convention.py（N-06 GATE-11 pre-commit 自动触发）
+  - apply_depgraph.py（cmd_rename_domain / cmd_insert_domain / _validate_domain_naming NR-002）
 
-三轨正则真源（本文件是唯一真源，被 check_naming_convention.py 和 apply_depgraph.py 复用）:
+三轨正则真源（本文件是唯一真源）:
   - MODULE_ID_LAYER_MASTER_RE: MOD-{LAYER_CODE}-{SEQ}（如 MOD-INF-005）
   - MODULE_ID_DOMAIN_DERIVED_RE: MOD-{DOMAIN_FRAGMENT}[-NNN]（如 MOD-SHARED-002）
   - MODULE_ID_D_PREFIX_RE: D-{DOMAIN}-NNN（如 D-GOVERNANCE-001）
   - MODULE_ID_SHARED_RE: SH-{ABBR}-{NNN}（如 SH-DB-001）
-
-用法:
-  python scripts/governance/validate_module_id_naming.py [--warn-only] [--blueprint-dir DIR]
+  - DOMAIN_ID_RE: D-{DOMAIN}（如 D-GOVERNANCE，无序号）
 
 程序化校验（供其他脚本 import）:
-  from validate_module_id_naming import is_valid_module_id
+  from validate_module_id_naming import is_valid_module_id, is_valid_domain_id
   ok, reason = is_valid_module_id("MOD-INF-005")  # (True, "")
+  ok, reason = is_valid_domain_id("D-GOVERNANCE")  # (True, "")
+
+注：CLI 手工模式已删除（GATE-11 pre-commit 已自动覆盖同等校验，消除冗余 + 真源分裂）。
+    旧式单轨正则 VALID_MODULE_ID_PATTERN / NESTED_ID_PATTERN 一并删除（与三轨正则语义冲突）。
 """
 
-import argparse
 import re
-import sys
-from pathlib import Path
-
-# 旧式单轨正则（向后兼容保留；新代码请用 is_valid_module_id 三轨校验）
-VALID_MODULE_ID_PATTERN = re.compile(r"^[A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4}$")
-
-NESTED_ID_PATTERN = re.compile(r"^([A-Z]+(-[A-Z]+)?(-[A-Z]+\d*)?-\d{3,4})-[A-Z]")
 
 # ---------------------------------------------------------------------------
 # 裁定#208 三轨制正则（真源：本文件）
-# 被 check_naming_convention.py（N-06 GATE-11）和 apply_depgraph.py（V2 漏洞修复）复用
+# 被 check_naming_convention.py（N-06 GATE-11）和 apply_depgraph.py 复用
 # ---------------------------------------------------------------------------
 # 安全加固（红蓝对抗修复 P2-1~P2-4）：
 #   [0-9] 替代 \d（防止全角数字 U+FF10-FF19 被 \d 匹配）
@@ -59,8 +51,6 @@ MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")     
 MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]{1,20}(?:_[A-Z]{1,20})*(?:-[0-9]+)?\Z")  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
 MODULE_ID_D_PREFIX_RE = re.compile(r"^D-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")          # 派生轨: D-{DOMAIN}-NNN
 MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")           # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def is_valid_module_id(bp_id: str) -> tuple[bool, str]:
@@ -97,7 +87,7 @@ def is_valid_module_id(bp_id: str) -> tuple[bool, str]:
 
 # domain_id 格式正则（D-{DOMAIN} 无序号，与 blueprint_id 的 D- 轨 D-{DOMAIN}-NNN 不同）
 # 真源：本常量是 domain_id 格式校验的唯一正则，被 apply_depgraph.py 复用
-#       （cmd_rename_domain + _validate_domain_naming NR-002 均复用本常量，消除硬编码分裂）
+#       （cmd_rename_domain + cmd_insert_domain + _validate_domain_naming NR-002 均复用本常量，消除硬编码分裂）
 # 与 NR-002 YAML 真源（domain_naming_rules.yaml）语义一致：全大写字母+数字+下划线
 # 安全加固：\Z 替代 $（换行安全，P2-2）+ {0,59} 长度限制（防超长输入，P2-3）
 DOMAIN_ID_RE = re.compile(r"^D-[A-Z][A-Z0-9_]{0,59}\Z")
@@ -121,92 +111,3 @@ def is_valid_domain_id(domain_id: str) -> tuple[bool, str]:
     if DOMAIN_ID_RE.match(domain_id):
         return True, ""
     return False, "domain_id 必须为 D-{DOMAIN} 格式（如 D-GOVERNANCE），DOMAIN 为大写字母+数字+下划线，无序号"
-
-
-def extract_frontmatter_field(text: str, field: str) -> str | None:
-    in_fm = False
-    for i, line in enumerate(text.splitlines()):
-        stripped = line.strip().lstrip("\ufeff")
-        if i == 0 and stripped == "---":
-            in_fm = True
-            continue
-        if in_fm and stripped == "---":
-            break
-        if in_fm:
-            m = re.match(rf"{field}:\s*(.+)", stripped)
-            if m:
-                return m.group(1).strip().strip('"').strip("'")
-    return None
-
-
-def validate_blueprint(filepath: Path, warn_only: bool = False) -> list[dict]:
-    violations = []
-    try:
-        text = filepath.read_text(encoding="utf-8")
-    except (FileNotFoundError, UnicodeDecodeError):
-        return violations
-
-    module_id = extract_frontmatter_field(text, "module_id")
-    if not module_id:
-        return violations
-
-    if not VALID_MODULE_ID_PATTERN.match(module_id):
-        violations.append(
-            {
-                "file": str(filepath.relative_to(PROJECT_ROOT)),
-                "module_id": module_id,
-                "violation": "FORMAT_INVALID",
-                "message": f"module_id '{module_id}' does not match pattern {VALID_MODULE_ID_PATTERN.pattern}",
-            }
-        )
-
-    nested_match = NESTED_ID_PATTERN.match(module_id)
-    if nested_match:
-        parent_id = nested_match.group(1)
-        violations.append(
-            {
-                "file": str(filepath.relative_to(PROJECT_ROOT)),
-                "module_id": module_id,
-                "violation": "NESTED_ID",
-                "message": f"module_id '{module_id}' uses nested numbering (parent={parent_id}). "
-                f"Use independent numbering + parent_module field instead. "
-                f"See PS-STD-001 §5.4 rule #7.",
-            }
-        )
-
-    return violations
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Validate module_id naming compliance")
-    parser.add_argument("--warn-only", action="store_true", help="Print warnings but exit 0")
-    parser.add_argument("--blueprint-dir", default="docs/03_modules", help="Blueprint directory")
-    args = parser.parse_args()
-
-    blueprint_dir = PROJECT_ROOT / args.blueprint_dir
-    all_violations = []
-
-    for bp_file in sorted(blueprint_dir.rglob("blueprint*.md")):
-        violations = validate_blueprint(bp_file, args.warn_only)
-        all_violations.extend(violations)
-
-    if not all_violations:
-        print("[CLEAN] All module_ids comply with PS-STD-001 §5 naming rules.")
-        return 0
-
-    print(f"[VIOLATION] {len(all_violations)} module_id naming violation(s) found:\n")
-    for v in all_violations:
-        severity = "WARN" if args.warn_only else "FAIL"
-        print(f"  [{severity}] {v['violation']}: {v['file']}")
-        print(f"         module_id={v['module_id']}")
-        print(f"         {v['message']}\n")
-
-    if args.warn_only:
-        print(f"[WARN-ONLY] {len(all_violations)} violation(s) detected but not blocking.")
-        return 0
-
-    return 1
-
-
-if __name__ == "__main__":
-    sys.exit(main())
