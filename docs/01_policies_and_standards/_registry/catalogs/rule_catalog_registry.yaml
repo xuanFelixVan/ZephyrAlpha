@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-26T19:04:26Z'
+generated_at: '2026-06-26T20:04:41Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 total_files: 88
 files:
@@ -315,6 +315,17 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+- path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
+  module_id: GOV-AI-001
+  title: AI 自治权限登记表（全模块权限终表）
+  doc_type: register
+  status: active
+  version: 1.3.0
+  rule_form: data
+  scope: ''
+  stability: ''
+  layer: cross_layer
+  superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml
   module_id: CFG-ai-risk-register
   title: AI 风险登记簿
@@ -398,17 +409,6 @@ files:
   doc_type: ''
   status: ''
   version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml
-  module_id: REG-DERIVED-ID-001
-  title: 派生标识符关系表
-  doc_type: register
-  status: active
-  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -587,7 +587,7 @@ files:
   version: 1.2.0
   rule_form: ''
   scope: ''
-  stability: evolving
+  stability: ''
   layer: ''
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/contracts/contract_mapping_table.yaml
@@ -760,7 +760,7 @@ files:
   title: doc_type 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.4.0
+  version: 2.0.0
   rule_form: ''
   scope: ''
   stability: evolving
