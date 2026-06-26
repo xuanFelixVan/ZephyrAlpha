@@ -152,22 +152,41 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: vocabulary_values_loader
-    canonical_override: scripts/governance/_shared/yaml_utils.py
+    canonical_override: src/zephyr/shared/io/yaml_utils.py
     aliases:
       - load_vocabulary_values
+      - load_vocabulary_deprecated_map
       - vocabulary_loader
       - 词表加载器
       - vocab_loader
       - yaml_vocabulary_loader
     description: >-
-      vocabulary YAML 合法值集合加载的唯一公共入口。所有 scripts/ 下需要加载词表合法值
-      （如 VALID_STATUSES / VALID_LAYERS / VALID_TTL_VALUES 等）的代码应
-      from _shared.yaml_utils import load_vocabulary_values，禁止各脚本复制
-      _load_xxx_values() 局部函数（违反 SCRIPT-QUALITY-001 D-D-05）。
-      canonical = scripts/governance/_shared/yaml_utils.py（auto 派生：basename
-      yaml_utils 匹配别名；无同蓝图竞争候选）。对标 trae_060 §2 词表唯一真源原则。
-      注意：src/zephyr/ 下的代码（如 triage.py）因包路径隔离无法 import 此模块，
-      暂保留局部 loader，待统一到 src/zephyr/shared/yaml_utils 后消除。
+      vocabulary YAML 合法值集合 + 废弃值映射加载的唯一公共真源入口（治本1 收拢点）。
+      真源实现：src/zephyr/shared/io/yaml_utils.py 提供 load_vocabulary_values()
+      和 load_vocabulary_deprecated_map() 两个函数；scripts/governance/_shared/yaml_utils.py
+      重新导出，scripts/ 侧通过 from _shared.yaml_utils import load_vocabulary_values 使用。
+      src/zephyr/ 侧直接 from zephyr.shared.io.yaml_utils import load_vocabulary_values。
+      严禁任何脚本复制 _load_xxx_values() 局部函数（违反 SCRIPT-QUALITY-001 D-D-05
+      + 向内收原则1：能用现成的不创造）。strict=True 默认 fail-fast，文件不存在抛
+      FileNotFoundError（消除静默失败 DoS 漂移）。对标 trae_060 §2 词表唯一真源原则。
+
+  # --------------------------------------------------------------------------
+  - capability_id: vocab_hardcode_detector
+    canonical_override: scripts/governance/d3_metadata/check_vocab_hardcode.py
+    aliases:
+      - GATE-VOCAB
+      - check_vocab_hardcode
+      - 词表硬编码检测
+      - vocabulary_hardcode_gate
+      - gate_vocab
+    description: >-
+      GATE-VOCAB 词表合法值硬编码阻断门禁（trae_060 §2 + 向内收原则2 自动事件触发）。
+      pre-commit 阶段自动触发：src/zephyr/**/*.py 或 scripts/governance/**/*.py 变更时
+      AST 扫描 VALID/ALLOWED/LEGAL/PERMITTED_*_(VALUES|STATUSES|TYPES|LAYERS|LIST|SET)
+      字面量集合硬编码 + dict()/list()/tuple()/"x,y".split() 隐式字面量 + walrus 操作符
+      + load_vocabulary_values("xxx.yaml") 引用文件存在性。--ci 模式硬阻断（exit 1）。
+      内联豁免：# noqa: gate-vocab（带理由的诚实豁免）。canonical 在 scripts/ 下
+      （非 src/zephyr/），无法 auto 派生，故用 canonical_override 显式声明。
 
   # --------------------------------------------------------------------------
   - capability_id: blueprint_path_query
@@ -242,6 +261,30 @@ capabilities:
       canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，故用
       canonical_override 显式声明。Session 20260626 合并自 validate_llm_security_gateway.py。
 
+  # --------------------------------------------------------------------------
+  - capability_id: runtime_llm_call_interceptor
+    canonical_override: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
+    aliases:
+      - GATE-20-RUNTIME
+      - runtime_gate
+      - runtime_interceptor
+      - 运行时拦截器
+      - 运行时Gate
+      - LSG_RUNTIME_BACKUP
+      - BareLLMCallError
+    description: >-
+      GATE-20 运行时后备防线（RULE-LSG-001 运行时执行层）。GATE-20 是 pre-commit
+      AST 静态门禁，存在不可修复的静态分析上限：当代码内容运行时从外部（文件/网络/
+      数据库）获取再 exec 时，AST 层面不可见。本能力在 Python 进程运行时拦截所有
+      绕过 LSG 的裸调 LLM API（openai/anthropic/langchain/litellm）。
+      机制（方案 A+B 融合）：sitecustomize.py 启动时自动 install()（零业务侵入）→
+      sys.meta_path finder 拦截目标库导入→加载后 monkey-patch 核心调用方法→
+      调用时检查 LSG 放行令牌（contextvar+threading.local 混合存储，TTL 30s）→
+      缺失令牌抛 BareLLMCallError 硬阻断。LSG 的 scan_input/full_scan/scan_agent_action
+      在返回 ALLOW 时颁发令牌（gateway.py 单点注入）。支持 kill-switch
+      ZEPHYR_RUNTIME_GATE=0。canonical basename=runtime_interceptor 不匹配 alias，
+      无法 auto 派生，故用 canonical_override 显式声明。
+
 # ============================================================================
 # 维护日志
 # ============================================================================
@@ -260,3 +303,9 @@ capabilities:
 #   - canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，用 canonical_override 显式声明
 #   - 解决发现性：AI 搜 doc_type validation / ttl validation / GATE-15 可定位真源
 #   - 解决防重建：check_file_canonical() 反查阻止重复创建 frontmatter 校验脚本
+# 2026-06-26 新增 runtime_llm_call_interceptor（GATE-20 运行时后备防线）：
+#   - canonical = src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
+#   - 机制：sitecustomize 自动 install + sys.meta_path 钩子 + 四库 monkey-patch + 令牌放行
+#   - 补 GATE-20 静态分析上限（运行时代码生成 exec 不可见）
+#   - 解决发现性：AI 搜 GATE-20-RUNTIME / runtime_gate / 运行时拦截器 可定位真源
+#   - 解决防重建：check_file_canonical() 反查阻止重复创建运行时拦截器

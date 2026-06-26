@@ -93,6 +93,21 @@ result = await gateway.full_scan(user_text, llm_response)
 
 **GATE-20**：`python scripts/governance/d11_compliance/validate_llm_security_gateway.py --ci` — AST 扫描 src/zephyr/ 下所有裸调，已导入 LSG 的放行，未导入的阻断。
 
+#### 4.2.1 运行时 Gate（GATE-20 后备防线）
+
+> **GATE-20 是 pre-commit 静态门禁，存在不可修复的静态分析上限**：当代码内容在运行时
+> 从外部（文件/网络/数据库）获取再 `exec` 时，AST 层面不可见。运行时 Gate 作为后备防线，
+> 在 Python 进程运行时拦截所有绕过 LSG 的裸调 LLM API 调用。
+
+- **真源**：[runtime_interceptor.py](file:///d:/ZephyrAlpha/src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py)
+- **启动引导**：[sitecustomize.py](file:///d:/ZephyrAlpha/sitecustomize.py)（Python 解释器启动时自动 `install()`，零业务侵入）
+- **机制（方案 A+B 融合）**：sitecustomize 自动引导 → `sys.meta_path` finder 拦截 openai/anthropic/litellm/langchain 导入 → 加载后 monkey-patch 核心调用方法（`chat.completions.create` / `messages.create` / `litellm.completion` 等）→ 调用时检查 LSG 放行令牌（`contextvar` + `threading.local` 混合存储，TTL 30s）→ 缺失令牌抛 `BareLLMCallError` 硬阻断
+- **令牌颁发**：LSG 的 `scan_input` / `full_scan` / `scan_agent_action` 在返回 `ALLOW` 时自动调用 `grant_allowance()`（[gateway.py](file:///d:/ZephyrAlpha/src/zephyr/security/llm_defense/llm_security/gateway.py) 单点注入，业务代码无感知）
+- **kill-switch**：`ZEPHYR_RUNTIME_GATE=0` 关闭（sitecustomize 层 + install() 层双重尊重）
+- **部署说明**：cwd=repo root 时自动生效（`python -m pytest` / `python -c` / `python -m zephyr...` / repo root 脚本）。运行 `python scripts/sub/foo.py`（sys.path[0]=脚本目录）需 `PYTHONPATH=<repo_root>`
+- **测试**：`pytest tests/llm_security/test_runtime_interceptor.py`（含红蓝对抗：`code = read_file("payload.txt"); exec(code)` 运行时被拦截）
+- **能力注册**：`runtime_llm_call_interceptor`（capability_canonical_file_registry.yaml）
+
 ## 5. 三层 AI 工作分配
 
 - **L1 Trae**: 人在 IDE 交互时使用，免费，人在环
@@ -114,24 +129,31 @@ result = await gateway.full_scan(user_text, llm_response)
 - 所有新组件**必须**注册 CapabilityCard 到 CapabilityRegistry
 - 所有 AI 行为**必须**写入 AiAuditLogger
 - 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)（GOV-ENG-001）
-- **文件命名规范真源见 [`trae_028_doc_structure_naming.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)（GOV-DOC-003 §N-16）**——创建新文件前 MUST 先 `Grep` 检查项目内是否已存在同名 basename；**N-16 文件名项目内唯一性检测为硬阻断**（不受 GATE-11 `--warn-only` 过渡期影响），覆盖 `tests/` + `docs/` 目录，commit 时 pre-commit 钩子自动检测；同名文件导致 AI 无法确定真源产生漂移（如 `capability_heatmap.md` 曾存在两个不同内容同名文件，19315 vs 11966 字节）
+- **文件命名规范真源见 [`trae_028_doc_structure_naming.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)（GOV-DOC-003 §N-16）**——创建新文件前 MUST 先 `Grep` 检查项目内是否已存在同名 basename；**N-16 文件名项目内唯一性检测为硬阻断**（不受 GATE-11 `--warn-only` 过渡期影响），覆盖 `tests/` + `docs/` 目录，commit 时 pre-commit 钩子自动检测；同名文件导致 AI 无法确定真源产生漂移（如 `capability_heatmap.md` 曾存在两个不同内容同名文件，19315 vs 11966 字节）；**N-16 豁免清单（conftest.py/__init__.py/index.md 等）真源为 §gov_doc_003_filename_uniqueness.n16_config，`check_naming_convention.py` 从此动态加载（非硬编码），改 YAML 即生效，禁止改代码豁免清单**
 - 治理决策方法论见 [`trae_024_methodology_diagnosis.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml)（PS-STD-011）——含MTH-006诊断反转验证：深挖后MUST回溯初始诊断，不一致时追问"为什么初始诊断错了？"
 - 审计脚本质量见 [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md)（SCRIPT-QUALITY-001）
 - 产出物规格化见 [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)（GOV-DOC-011）——`.md` 文档 frontmatter 标准字段：`module_id, title, version, layer, depends_on, tags, **ttl（GATE-15 强制校验）**`。字段定义和 doc_type 映射见 trae_030；frontmatter 不可删字段完整清单见 [`onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)「绝对不可删的 15 类」
 - **所有 `.md` 文档 frontmatter MUST 含 `ttl` 字段**——2 个合法值：`permanent`（永久）/`task_bound`（任务绑定，完成即删）。判定方法：在永久区路径（`docs/01_policies/`、`docs/02_enterprise_architecture/`、`docs/03_modules/`、`docs/08_knowledge/`）→ `permanent`；否则 → `task_bound`（默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/README.md) 临时区）。详见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree`
-- **词表合法值加载规范（trae_060 §2）**——所有 `scripts/` 下需要加载 vocabulary YAML 合法值（如 `VALID_STATUSES` / `VALID_LAYERS` / `VALID_TTL_VALUES` 等）的代码 **MUST** 使用公共 loader：
-  ```python
-  # 正确（公共 loader，SSoT 唯一入口）
-  import sys
-  from pathlib import Path
-  _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
-  if _GOV_DIR not in sys.path:
-      sys.path.insert(0, _GOV_DIR)
-  from _shared.yaml_utils import load_vocabulary_values
-  VALID_STATUSES = load_vocabulary_values("status_vocabulary.yaml")
-  VALID_LAYER = load_vocabulary_values("layer_vocabulary.yaml", fallback_key="id")
-  ```
-  **禁止**各脚本复制 `_load_xxx_values()` 局部函数（违反 SCRIPT-QUALITY-001 D-D-05 + trae_060 §2）。capability 注册表已登记 `vocabulary_values_loader`（canonical = `scripts/governance/_shared/yaml_utils.py`）。配套门禁：**GATE-VOCAB**（`python scripts/governance/d3_metadata/check_vocab_hardcode.py`，pre-commit 钩子）AST 扫描检测 `VALID_*_VALUES/STATUSES/TYPES/LEVELS/LAYERS/TTL/CATEGORIES/CLASSIFICATIONS` 模式的字面量硬编码 + `load_vocabulary_values("xxx.yaml")` 引用文件存在性校验。例外：DDL 文件（`sqlite_schema.py` 等）走 DDL-as-Code 协议；`_archive/` 排除。
+- **词表合法值加载规范（trae_060 §2 / 向内收原则1+2）**——所有需要加载 vocabulary YAML 合法值（如 `VALID_STATUSES` / `VALID_LAYERS` / `VALID_TTL_VALUES` 等）的代码 **MUST** 使用公共 loader，**严禁**各脚本复制 `_load_xxx_values()` 局部函数（违反 SCRIPT-QUALITY-001 D-D-05 + 向内收原则1：能用现成的不创造）。
+  - **真源实现**（治本1 后）：`src/zephyr/shared/io/yaml_utils.py` 提供 `load_vocabulary_values()` 和 `load_vocabulary_deprecated_map()` 两个函数。`strict=True` 默认 fail-fast，文件不存在抛 `FileNotFoundError`（消除静默失败 DoS 漂移）。
+  - **scripts/ 侧用法**（重新导出，保持兼容）：
+    ```python
+    import sys
+    from pathlib import Path
+    _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+    if _GOV_DIR not in sys.path:
+        sys.path.insert(0, _GOV_DIR)
+    from _shared.yaml_utils import load_vocabulary_values, load_vocabulary_deprecated_map
+    VALID_STATUSES = load_vocabulary_values("status_vocabulary.yaml")
+    DEPRECATED_MAP = load_vocabulary_deprecated_map("doc_type_vocabulary.yaml")
+    ```
+  - **src/zephyr/ 侧用法**（直接 import）：
+    ```python
+    from zephyr.shared.io.yaml_utils import load_vocabulary_values, load_vocabulary_deprecated_map
+    VALID_DOC_TYPES = load_vocabulary_values("doc_type_vocabulary.yaml")
+    ```
+  - **配套门禁**（治本4 后）：**GATE-VOCAB** 已接入 `.pre-commit-config.yaml` 作为 pre-commit 钩子（`id: gate-vocab`，`--ci` 硬阻断模式），`src/zephyr/**/*.py` 或 `scripts/governance/**/*.py` 变更时自动触发。AST 扫描检测 `VALID/ALLOWED/LEGAL/PERMITTED_*_VALUES/STATUSES/TYPES/LEVELS/LAYERS/TTL/CATEGORIES/CLASSIFICATIONS/LIST/SET` 模式的字面量硬编码（含 `dict()/list()/tuple()/"a,b".split()` 隐式字面量 + walrus 操作符）+ `load_vocabulary_values("xxx.yaml")` 引用文件存在性校验。例外：DDL 文件（`sqlite_schema.py` 等）走 DDL-as-Code 协议；`_archive/` 排除；**`# noqa: gate-vocab`** 内联豁免（带理由的诚实豁免，非偷偷绕过）。
+  - **capability 反查注册表**已登记 2 条能力（`docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml`）：`vocabulary_values_loader`（canonical = `src/zephyr/shared/io/yaml_utils.py`）+ `vocab_hardcode_detector`（canonical = `scripts/governance/d3_metadata/check_vocab_hardcode.py`）。新 AI 创建词表加载器或硬编码检测器前，CapabilityLookup 会反查阻止重复造轮子。
 
 ## 8. 永远不要做的事
 

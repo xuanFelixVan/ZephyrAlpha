@@ -35,6 +35,7 @@ from zephyr.security.llm_defense.llm_security.protocol import (
     SecurityDecision,
     SecurityResult,
 )
+from zephyr.security.llm_defense.llm_security.runtime_interceptor import grant_allowance as _grant_runtime_allowance
 from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import ValidationLayer
 
 
@@ -338,7 +339,7 @@ class LSGSecurityGateway:
 
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
-        return ScanResult(
+        scan_result = ScanResult(
             decision=final_decision,
             mode=mode,
             layers_evaluated=len(layer_results),
@@ -350,6 +351,23 @@ class LSGSecurityGateway:
             layer_results=layer_results,
             blocked_by=blocked_by,
         )
+
+        # 运行时 Gate 放行令牌：仅对“预调用”扫描（输入/全量/Agent 动作）且 ALLOW 时颁发。
+        # scan_output（OUTPUT_ONLY）不颁发——输出扫描发生在 LLM 调用之后，不应放行后续裸调。
+        # 令牌 TTL 30s，使合法的“LSG 扫描通过 → 发起 LLM 调用”链路畅通（见 runtime_interceptor）。
+        if final_decision == SecurityDecision.ALLOW and mode in (
+            ScanMode.INPUT_ONLY,
+            ScanMode.FULL,
+            ScanMode.AGENT_ONLY,
+        ):
+            try:
+                _grant_runtime_allowance(request_id=ctx.request_id)
+            except Exception:
+                # 颁发失败绝不影响 LSG 主流程——最坏情况是合法调用被运行时 Gate 拦
+                # （此时业务侧会收到 BareLLMCallError，需检查 runtime_interceptor 状态）
+                pass
+
+        return scan_result
 
     async def validate_self_integrity(self) -> dict[str, Any]:
         """L7 自检：验证 LSG 自身代码完整性."""
