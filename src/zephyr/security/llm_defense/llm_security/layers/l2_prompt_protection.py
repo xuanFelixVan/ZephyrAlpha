@@ -35,6 +35,11 @@ _LEAK_PATTERNS = [
     r"tell\s+me\s+your\s+prompt",
     r"repeat\s+your\s+system\s+message",
     r"print\s+your\s+instructions",
+    r"show\s+me\s+your\s+prompt",
+    r"show\s+me\s+your\s+instructions",
+    r"your\s+system\s+instructions",
+    r"what\s+are\s+your\s+(system\s+)?instructions",
+    r"repeat\s+your\s+(initial\s+)?instructions",
 ]
 
 # 探测模式
@@ -45,6 +50,8 @@ _PROBING_PATTERNS = [
     r"what\s+are\s+your\s+rules",
     r"jailbreak",
     r"override\s+(your\s+)?(rules|restrictions)",
+    r"what\s+are\s+your\s+(system\s+)?instructions",
+    r"show\s+me\s+your\s+prompt",
 ]
 
 # 禁止话题
