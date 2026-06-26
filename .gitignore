@@ -93,6 +93,12 @@ dmypy.json
 *.db-wal
 *.db-shm
 *.sqlite3
+# 例外：depgraph.db 是已跟踪的全景图真源，需正常 git add/commit（非 -f 强制）
+# 根因：*.db 通配符导致 GitCommitGateway 误判为 gitignored，触发无 pathspec 模式，
+# 多 AI 并发时 staged 区不干净被拒。排除后恢复 pathspec 模式，支持并发提交。
+!data/databases/depgraph.db
+!data/databases/depgraph.db-wal
+!data/databases/depgraph.db-shm
 
 # OS
 .DS_Store
