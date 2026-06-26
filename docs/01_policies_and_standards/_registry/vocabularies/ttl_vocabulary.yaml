@@ -5,6 +5,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ttl 受控词表
 # ZephyrAlpha 2.0 文档保留期唯一真源
@@ -58,7 +59,7 @@ values:
 # ── 内容判定树（AI 创建文档时 MUST 按此树判定 ttl）──
 # 设计原则：
 #   1. 优先用内容信号判定，路径作为辅助兜底（治本：changes/等过程文件不再误判 permanent）
-#   2. 过程性子目录（changes/reports/_working/09_audit/_archive）→ task_bound
+#   2. 过程性子目录（changes/delivery/reports/_working/09_audit/_archive/decomposition）→ task_bound
 #   3. 过程性 doc_type（log/audit_report/operational_rule）→ task_bound
 #   4. 永久区路径 → permanent（准入受控，必为永久文件）
 #   5. 其他 → task_bound（默认落 docs/_working/）
@@ -91,6 +92,12 @@ decision_tree:
         - signal: path
           value: "/_archive/"
           operator: contains
+        - signal: path
+          value: "/delivery/"
+          operator: contains
+        - signal: path
+          value: "docs/decomposition/"
+          operator: startswith
       match: any
       yes: task_bound
       no: Q2
