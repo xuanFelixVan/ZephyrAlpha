@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 577
+total_scripts: 574
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -46,66 +46,42 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_d1d2_probe.py
-  path: _tmp_d1d2_probe.py
+- name: _tmp_check_db_pollution.py
+  path: _tmp_check_db_pollution.py
   description: import sqlite3
-  domain: _tmp_d1d2_probe.py
+  domain: _tmp_check_db_pollution.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_d_confirm.py
-  path: _tmp_d_confirm.py
+- name: _tmp_d3_commit.py
+  path: _tmp_d3_commit.py
+  description: 筛选逻辑：
+  domain: _tmp_d3_commit.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d3_state_audit.py
+  path: _tmp_d3_state_audit.py
+  description: 反幻觉核查——总结声称 D3-2~D3-8 全部完成，但 grep 发现代码头新 ID = 0。
+  domain: audit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_fix_kb_ttl.py
+  path: _tmp_fix_kb_ttl.py
+  description: 修复 GATE-15 预存违规（frontmatter 缺 ttl），解除 D3 提交阻断。
+  domain: _tmp_fix_kb_ttl.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_rename_check.py
+  path: _tmp_rename_check.py
   description: import sqlite3
-  domain: _tmp_d_confirm.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d_final_probe.py
-  path: _tmp_d_final_probe.py
-  description: import sqlite3
-  domain: _tmp_d_final_probe.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d_last_confirm.py
-  path: _tmp_d_last_confirm.py
-  description: import sqlite3
-  domain: _tmp_d_last_confirm.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d_master_check.py
-  path: _tmp_d_master_check.py
-  description: import sqlite3
-  domain: _tmp_d_master_check.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d_path_verify.py
-  path: _tmp_d_path_verify.py
-  description: 1. 提取每个违规节点的路径关键词
-  domain: _tmp_d_path_verify.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d_supp_check.py
-  path: _tmp_d_supp_check.py
-  description: import sqlite3
-  domain: _tmp_d_supp_check.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_d_target_nodes.py
-  path: _tmp_d_target_nodes.py
-  description: 阶段 C 路径同名验证可能因样本不全面而误判"不同模块"。
-  domain: _tmp_d_target_nodes.py
+  domain: _tmp_rename_check.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -766,9 +742,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_orphan_audit.py
-  path: governance/_tmp_orphan_audit.py
-  description: 治本目标：确保 v15 migration 后无遗留的 broken trigger/index。
+- name: governance/_tmp_final_check.py
+  path: governance/_tmp_final_check.py
+  description: import sqlite3
   domain: governance
   execution_plane: warm-path
   status: registered
