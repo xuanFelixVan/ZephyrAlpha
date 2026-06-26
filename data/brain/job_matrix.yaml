@@ -1,0 +1,142 @@
+# ══════════════════════════════════════════════════════════
+# P2: 模型岗位匹配矩阵
+# ══════════════════════════════════════════════════════════
+# 真源: data/brain/job_matrix.yaml
+# 消费: src/zephyr/intelligence/model_profiling/job_matcher.py
+#
+# 设计原则:
+#   1. 能力分级 A/B/C/D/F (compute_grade_simple)
+#      A>=0.75 精通 | B>=0.60 熟练 | C>=0.45 合格 | D>=0.30 初级 | F<0.30 不胜任
+#   2. required: 必须达到的最低分级, 任一不满足 = 不合格
+#   3. bonus: 加分项, 达到则提升 match_score
+#   4. max_hallucination: 岗位期望的幻觉率上限 (正常评分, 非硬门)
+#      任何模型都有幻觉, Claude 也不例外; 此值仅作岗位匹配参考
+#      未来岗位匹配时幻觉率权重较高, 但当前不做一票否决
+#
+# 能力名真源: CASES_BY_CAPABILITY (exam_test_cases.py) — 29 项
+#
+# 当前状态: 骨架 (6 示例岗位), 未来扩展
+# ══════════════════════════════════════════════════════════
+
+version: "1.0.0"
+last_updated: "2026-06-27"
+
+# 幻觉率六维 (参考 ChatGPT 建议 + 业界实践)
+# JobMatcher 用这些维度做岗位匹配时的幻觉权重计算
+hallucination_dimensions:
+  fabrication:
+    description: "事实编造 — 编造不存在的 API/函数/文件/事实"
+    weight: 0.25
+  inconsistency:
+    description: "输出不一致 — 同题两次回答差异大"
+    weight: 0.20
+  refusal:
+    description: "过度拒绝 — 能答的拒答"
+    weight: 0.10
+  overclaim:
+    description: "过度声称 — 声称做了没做的事"
+    weight: 0.15
+  context_drift:
+    description: "上下文漂移 — 长对话中忘记前提"
+    weight: 0.15
+  source_confusion:
+    description: "来源混淆 — 把 A 文件内容归给 B"
+    weight: 0.15
+
+jobs:
+  # ── 初级岗位 ──────────────────────────────────
+
+  junior_code_worker:
+    title: "初级代码工"
+    description: "修简单 bug、做小重构, 幻觉率可容忍中等"
+    required:
+      code_edit_precision: "C"
+      refactor: "D"
+    bonus:
+      dead_code_removal: "C"
+      code_generate: "D"
+      naming_suggest: "C"
+    max_hallucination: 0.40
+    category: "entry"
+
+  doc_organizer:
+    title: "文档整理员"
+    description: "摘要提取、命名建议、标签补全, 需要一定准确性"
+    required:
+      summary_extraction: "C"
+      naming_suggest: "C"
+      tag_completion: "C"
+    bonus:
+      task_classification: "C"
+      long_context_recall: "C"
+    max_hallucination: 0.30
+    category: "entry"
+
+  # ── 中级岗位 ──────────────────────────────────
+
+  refactor_specialist:
+    title: "重构专家"
+    description: "中大型重构、跨文件改造、死代码清理"
+    required:
+      refactor: "B"
+      code_edit_precision: "B"
+    bonus:
+      impact_analysis: "C"
+      dead_code_removal: "C"
+      cross_file_refactor: "C"
+      dependency_trace: "C"
+    max_hallucination: 0.25
+    category: "mid"
+
+  code_generator:
+    title: "代码生成手"
+    description: "代码生成、自审自纠、错误恢复"
+    required:
+      code_generate: "B"
+    bonus:
+      code_edit_precision: "C"
+      self_review: "C"
+      error_recovery: "C"
+      incremental_execution: "C"
+    max_hallucination: 0.30
+    category: "mid"
+
+  # ── 高级岗位 (要求低幻觉) ─────────────────────
+
+  rule_gatekeeper:
+    title: "规则守门员"
+    description: "规则合规检查、幻觉检测、异常分诊 — 要求低幻觉"
+    required:
+      rule_comprehension: "C"
+      hallucination_detect: "B"
+    bonus:
+      anomaly_triage: "C"
+      safety_judgment: "C"
+      self_review: "C"
+    max_hallucination: 0.15
+    category: "senior"
+    note: "岗位性质要求低幻觉, 但非硬门 — 正常评分, 权重较高"
+
+  architecture_reviewer:
+    title: "架构审查员"
+    description: "架构设计评审、依赖分析、影响评估 — 要求低幻觉"
+    required:
+      architecture_design: "B"
+      impact_analysis: "B"
+    bonus:
+      circular_dependency_detect: "C"
+      dependency_trace: "C"
+      hallucination_detect: "B"
+      rollback_boundary_design: "C"
+    max_hallucination: 0.15
+    category: "senior"
+    note: "岗位性质要求低幻觉, 但非硬门 — 正常评分, 权重较高"
+
+# ══════════════════════════════════════════════════════════
+# 未来扩展方向 (TODO):
+#   - olympiad_solver: 奥赛攻坚手 (code_generate=A, extreme_problem=B)
+#   - agent_loop_runner: Agent 循环执行手 (task_decomposition=B, tool_selection=B)
+#   - context_manager: 上下文管理专家 (context_management=B, long_context_recall=B)
+#   - safety_auditor: 安全审计员 (safety_judgment=A, hallucination_detect=A)
+#   - 岗位分级阈值可配置化 (entry/mid/senior 的幻觉期望)
+# ══════════════════════════════════════════════════════════
