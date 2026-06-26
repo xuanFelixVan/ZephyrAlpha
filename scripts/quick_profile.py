@@ -147,7 +147,7 @@ def _run_quick_exam(model_id: str, top_n: int) -> int:
         from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
         # 尝试导入 OllamaChat (项目内可能有不同实现)
         try:
-            from zephyr.intelligence.runtime.ollama_chat import OllamaChat
+            from zephyr.integration.local_model.ollama_chat import OllamaChat
         except ImportError:
             print(
                 "ERROR: OllamaChat not found. Quick exam requires a running Ollama instance.\n"
@@ -159,6 +159,9 @@ def _run_quick_exam(model_id: str, top_n: int) -> int:
         chat = OllamaChat(model=model_id)
         orch = ExamOrchestrator(chat, model_id=model_id)
         profile = orch.run_quick_exam()
+        # 持久化第一个真实护照
+        saved_path = profile.save()
+        print(f"  护照已保存: {saved_path}")
         _print_report(profile)
         return 0
     except Exception as e:

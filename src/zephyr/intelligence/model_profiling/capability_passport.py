@@ -45,6 +45,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 _log = logging.getLogger(__name__)
 
 PASSPORTS_DIR = REPO_ROOT / "data" / "brain" / "passports"
+QUICK_PROFILES_DIR = REPO_ROOT / "data" / "brain" / "quick_profiles"
 
 # 默认开发环境签名密钥（生产环境应通过环境变量 ZEPHYR_PASSPORT_SIGNING_KEY 覆盖）
 _DEFAULT_SIGNING_KEY = b"zephyr-passport-dev-key-v1"
@@ -461,3 +462,53 @@ class QuickProfile:
     # 岗位推荐（Top3，按 match_score 降序）
     recommendations: list[JobRecommendation] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+
+    def save(self) -> Path:
+        """持久化 QuickProfile 到 data/brain/quick_profiles/{model_id}.json。
+
+        与 CapabilityPassport.save() 不同, QuickProfile 不带 HMAC 签名——
+        它是轻量级画像视图, 非任务门控真源。
+        """
+        QUICK_PROFILES_DIR.mkdir(parents=True, exist_ok=True)
+        safe_id = self.model_id.replace(":", "_").replace("/", "_")
+        path = QUICK_PROFILES_DIR / f"{safe_id}.json"
+        path.write_text(
+            json.dumps(asdict(self), ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
+        _log.info("QuickProfile saved: %s", path)
+        return path
+
+    @staticmethod
+    def load(model_id: str) -> QuickProfile | None:
+        """从磁盘加载 QuickProfile, 文件不存在返回 None。"""
+        safe_id = model_id.replace(":", "_").replace("/", "_")
+        path = QUICK_PROFILES_DIR / f"{safe_id}.json"
+        if not path.exists():
+            return None
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return QuickProfile._from_dict(data)
+        except Exception as exc:
+            _log.warning("Failed to load QuickProfile for %s: %s", model_id, exc)
+            return None
+
+    @staticmethod
+    def _from_dict(data: dict) -> QuickProfile:
+        return QuickProfile(
+            model_id=data.get("model_id", ""),
+            exam_mode=data.get("exam_mode", "quick"),
+            exam_timestamp=data.get("exam_timestamp", ""),
+            exam_duration_seconds=data.get("exam_duration_seconds", 0.0),
+            capability_grades=data.get("capability_grades", {}),
+            capability_scores=data.get("capability_scores", {}),
+            hallucination=HallucinationBreakdown(**data.get("hallucination", {})),
+            cost=CostBreakdown(**data.get("cost", {})),
+            overall_grade=data.get("overall_grade", "F"),
+            overall_score=data.get("overall_score", 0.0),
+            recommendations=[
+                JobRecommendation(**r) if isinstance(r, dict) else r
+                for r in data.get("recommendations", [])
+            ],
+            notes=data.get("notes", []),
+        )

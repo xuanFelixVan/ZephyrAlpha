@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.AssertionError
 # [TESTS] tests/test_capability_passport.py
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -17,12 +18,16 @@ import pytest
 from zephyr.intelligence.model_profiling.capability_passport import (
     DEPTH_THRESHOLDS,
     PASSPORTS_DIR,
+    QUICK_PROFILES_DIR,
     BreadthResult,
     CapabilityPassport,
     DepthCapabilityResult,
     DepthResult,
     DriftResult,
+    HallucinationBreakdown,
     HallucinationResult,
+    JobRecommendation,
+    QuickProfile,
     Recommendations,
     SpeedResult,
     compute_grade,
@@ -302,3 +307,66 @@ class TestPassportsDir:
     def test_passports_dir_contains_data_brain_passports(self):
         assert "data" in str(PASSPORTS_DIR)
         assert "passports" in str(PASSPORTS_DIR)
+
+
+class TestQuickProfileSaveLoad:
+    """QuickProfile 持久化测试 (ROADMAP-03: 第一个真实护照)。"""
+
+    def test_save_and_load_roundtrip(self, tmp_path, monkeypatch):
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "QUICK_PROFILES_DIR", tmp_path)
+
+        profile = QuickProfile(
+            model_id="qwen3:8b",
+            exam_mode="quick",
+            overall_grade="B",
+            overall_score=0.72,
+            capability_grades={"refactor": "A", "code_fix": "B"},
+            capability_scores={"refactor": 1.0, "code_fix": 0.65},
+            hallucination=HallucinationBreakdown(fabrication=0.0, inconsistency=0.1),
+            recommendations=[
+                JobRecommendation(
+                    job_id="rule_gatekeeper",
+                    job_title="rule_gatekeeper",
+                    match_score=0.88,
+                    qualified=True,
+                    hallucination_passed=True,
+                ),
+            ],
+        )
+
+        saved_path = profile.save()
+        assert saved_path.exists()
+        assert saved_path.name == "qwen3_8b.json"
+
+        loaded = QuickProfile.load("qwen3:8b")
+        assert loaded is not None
+        assert loaded.model_id == "qwen3:8b"
+        assert loaded.overall_score == 0.72
+        assert loaded.overall_grade == "B"
+        assert loaded.capability_grades["refactor"] == "A"
+        assert loaded.hallucination.inconsistency == 0.1
+        assert len(loaded.recommendations) == 1
+        assert loaded.recommendations[0].job_title == "rule_gatekeeper"
+
+    def test_load_returns_none_for_nonexistent(self, tmp_path, monkeypatch):
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "QUICK_PROFILES_DIR", tmp_path)
+        assert QuickProfile.load("nonexistent-model") is None
+
+    def test_save_sanitizes_model_id(self, tmp_path, monkeypatch):
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
+
+        monkeypatch.setattr(cp_module, "QUICK_PROFILES_DIR", tmp_path)
+
+        profile = QuickProfile(model_id="org/model:tag")
+        saved_path = profile.save()
+        assert saved_path.name == "org_model_tag.json"
+
+    def test_quick_profiles_dir_is_path(self):
+        from pathlib import Path
+
+        assert isinstance(QUICK_PROFILES_DIR, Path)
+        assert "quick_profiles" in str(QUICK_PROFILES_DIR)
