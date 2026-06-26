@@ -14,8 +14,8 @@ depends_on:
     at: "depgraph_access_protocol"
     why: "depgraph程序化访问协议——本原则§2唯一真源访问范式"
   - target: TRAE-042
-    at: "section_yaml_rule_format"
-    why: "YAML规则文档格式——规则数据YAML侧格式铁律"
+    at: "ps_std_002_template_hierarchy"
+    why: "YAML规则文档格式——规则数据YAML侧格式铁律（三层模板体系）"
   - target: TRAE-043
     at: "ps_std_001_dual_source"
     why: "双真源声明（YAML=数据真源）——本原则§2法源"
@@ -202,7 +202,7 @@ sections:
     - "禁止跳过搜索直接创造"
     - "禁止把同步复制当扩展"
     prohibitions:
-    - "硬编码词表合法值:validate_document_ttl.py:67、validate_ssot.py:15-16、triage.py:73/102、scaffold.py:440-444等23处.py硬编码副本(9词表),MUST动态加载"
+    - "硬编码词表合法值:全量排查(2026-06-26)发现64处.py硬编码副本(12词表),其中4处已被GATE-VOCAB检出(VALID_SEMANTIC_TYPES×2/VALID_CONTRACT_STATUSES/VALID_MODULE_STATUSES),60处因变量名/形式不匹配GATE-VOCAB模式未检出(stability 14处/ai_autonomy 13处/ttl 8处/safety_level 5处/status 4处/其他16处)。完整清单见GATE-VOCAB审计输出。MUST动态加载"
     - "sync多真源:construction_progress三真源(frontmatter+blueprint_registry.yaml+module_registry.yaml)+validate_ssot_construction_progress.py:19-22三向校验,MUST收敛"
     - "时间触发14处:CircadianScheduler系统(circadian_scheduler.py/boot_cron_jobs.py/lifecycle_manager.py/f5_boot_integration.py/auto_runtime_core.py)、drift_cron_scheduler.py:48、ops/scheduler.py、ide_health_service.py:212、governance_watchdog.py:141、vms_cron_monitor.py:108、auto_fix_cron.py:108、dedup-watch.yml:4、red-blue-validator.yml:75死条件,MUST改事件驱动或CI兜底"
     - "手工触发~25处:sync_yaml_to_depgraph.py、auto_sync_all_registries.py、diagnose_depgraph.py等永久治理功能仅manual,MUST补事件注册"
