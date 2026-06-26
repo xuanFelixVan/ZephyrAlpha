@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-26'
-total_scripts: 578
+total_scripts: 579
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,22 +38,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: _tmp_analyze_calibration.py
-  path: _tmp_analyze_calibration.py
-  description: import json
-  domain: _tmp_analyze_calibration.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_analyze_v3.py
-  path: _tmp_analyze_v3.py
-  description: import json, sys
-  domain: _tmp_analyze_v3.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: _tmp_check_db_pollution.py
   path: _tmp_check_db_pollution.py
   description: import sqlite3
@@ -70,10 +54,26 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_d3_code_header_sync.py
+  path: _tmp_d3_code_header_sync.py
+  description: 扫描 src/ 和 scripts/ 下所有 .py 文件，用扩展映射做精确边界 regex 替换。
+  domain: sync
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_d3_commit.py
   path: _tmp_d3_commit.py
   description: 筛选逻辑：
   domain: _tmp_d3_commit.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_d3_frontmatter_sync.py
+  path: _tmp_d3_frontmatter_sync.py
+  description: 对 docs/ 下所有 .md 文件，用扩展映射（含下划线版和连字符版）做精确边界 regex 替换。
+  domain: sync
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -774,6 +774,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/_tmp_commit_stage0.py
+  path: governance/_tmp_commit_stage0.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/_tmp_final_check.py
   path: governance/_tmp_final_check.py
   description: import sqlite3
@@ -824,7 +832,7 @@ scripts:
   dimensions: []
 - name: governance/adversarial_sys_master_test.py
   path: governance/adversarial_sys_master_test.py
-  description: 'Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER-001 Integration Hardening'
+  description: 'Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Integration Hardening'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1064,7 +1072,7 @@ scripts:
   dimensions: []
 - name: governance/crosscheck_sys_master_deps.py
   path: governance/crosscheck_sys_master_deps.py
-  description: crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER-001 与 DOM-GOV-001 一致.
+  description: crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER_BLUEPRINT 与 DOM-GOV-001 一致.
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2328,7 +2336,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/checkers/check_dependency_direction.py
   path: governance/d5_architecture/checkers/check_dependency_direction.py
-  description: 对标：GOV-MOD-001 INJ-002（依赖可解析）、INJ-008（依赖方向合法）
+  description: 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-002（依赖可解析）、INJ-008（依赖方向合法）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2768,7 +2776,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_module_schema.py
   path: governance/d5_architecture/validators/validate_module_schema.py
-  description: 对标：GOV-MOD-001 INJ-003（契约已定义）、INJ-004（生命周期状态合法）、
+  description: 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-003（契约已定义）、INJ-004（生命周期状态合法）、
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3104,7 +3112,7 @@ scripts:
   dimensions: []
 - name: governance/d7_code/check_encoding.py
   path: governance/d7_code/check_encoding.py
-  description: 对标：GOV-MOD-001 INJ-007（编码合规）
+  description: 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-007（编码合规）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4232,7 +4240,7 @@ scripts:
   dimensions: []
 - name: _archive/governance/d3_metadata/assign_module_id.py
   path: _archive/governance/d3_metadata/assign_module_id.py
-  description: 对标：GOV-MOD-001 INJ-001（ID 唯一性）
+  description: 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-001（ID 唯一性）
   domain: governance
   execution_plane: warm-path
   status: registered
