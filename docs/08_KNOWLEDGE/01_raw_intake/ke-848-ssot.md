@@ -4,6 +4,7 @@ status: active
 title: 2. SSoT 声明
 category: governance
 ttl: permanent
+doc_type: knowledge_entry
 ---
 
 # 2. SSoT 声明
@@ -20,7 +21,7 @@ ttl: permanent
 
 **本文档与以下文件互补**（非取代关系）：
 - [registry-master-index.yaml](../../_registry/catalogs/registry-master-index.yaml)：列出 `total_registries` 条 catalogs 收录项——本标准是"创建 X 后怎么写"，它是"写到哪张表"
-- [registry_of_registries.yaml](../../_registry/catalogs/registry_of_registries.yaml)：共享字段和 SSoT 归属——本标准是"怎么同步"，它是"同步什么共享字段"
+- [registry_consistency_contract.yaml](../../_registry/catalogs/registry_consistency_contract.yaml)：共享字段和 SSoT 归属——本标准是"怎么同步"，它是"同步什么共享字段"
 - GOV-MOD-ALPHA_SIGNAL_DOMAIN 准入门控：创建模块时的审批流程——本标准是准入通过后登记数据的操作规范
 - GOV-MOD-003 生命周期策略：status 枚举值定义——本标准是 status 变更后的同步操作
 

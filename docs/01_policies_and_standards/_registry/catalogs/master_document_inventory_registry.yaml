@@ -22,7 +22,7 @@ depends_on:
     at: document-metadata-index-registry.yaml
     why: "01_policies_and_standards/ 细粒度文档元数据索引"
   - target: PS-REG-016
-    at: registry_of_registries.yaml
+    at: registry_consistency_contract.yaml
     why: "登记表一致性契约"
 total_documents: 0
 last_updated: "2026-05-06"

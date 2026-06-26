@@ -604,7 +604,7 @@ def sync_frontmatter_field_registry(cur):
 def sync_registry_of_registries(cur):
     """#161: 注册表之注册表 → registries + cross_registry_rules 表"""
     print("同步 #161: 注册表之注册表 → registries + cross_registry_rules...")
-    data = load_yaml("_registry/catalogs/registry_of_registries.yaml")
+    data = load_yaml("_registry/catalogs/registry_consistency_contract.yaml")
     if not data:
         return
 
@@ -699,7 +699,7 @@ def sync_rule_catalog_registry(cur):
             """
         INSERT INTO arch_directory_tree
         (path, parent_path, path_type, domain_id, blueprint_id, design_maturity)
-        VALUES (?, ?, 'file', 'D-GOV-DOCS', ?, 'design')
+        VALUES (?, ?, 'file', 'D-GOV_DOCS', ?, 'design')
         ON CONFLICT(path) DO UPDATE SET
             parent_path=excluded.parent_path,
             domain_id=excluded.domain_id,

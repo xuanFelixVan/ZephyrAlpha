@@ -598,7 +598,7 @@ references:
 | 123 | `docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml` | git备份/回滚命令引用depgraph.db（L134,155,200,207,239,245,295,692,707,708） | 更新为pg_dump/pg_restore策略 |
 | 124 | `docs/01_policies_and_standards/rules/trae_059_schema_version_write_protection.yaml` | _schema_version表引用depgraph.db（L36） | 更新为PG schema版本管理 |
 | 125 | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` | 任务描述引用depgraph.db字段名（L1266） | 低优先级，可保留或更新 |
-| 126 | `docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml` | path引用depgraph.db（L278,280） | 更新path为PG连接描述 |
+| 126 | `docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml` | path引用depgraph.db（L278,280） | 更新path为PG连接描述 |
 | 127 | `scripts/governance/_sync/cleanup_p0_auto_bridged.py` | PRAGMA journal_mode=WAL（L47） | 确认操作数据库归属后决定 |
 
 #### 第3轮新增：IDE配置文件（需更新，2个）

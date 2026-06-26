@@ -2,6 +2,12 @@
 ttl: permanent
 ---
 
+> **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
+> D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
+> D-GOV_AUDIT_TESTS→D-AUDITTEST, D-INTEGRATION-GATEWAY→D-INTEGRATION_GATEWAY, D-SECURITY-LLM→D-SECURITY_LLM。
+> 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
+
+
 # 依赖与架构全景图能力定位书
 
 > 版本：V5.8 | 2026-06-18（第16轮检查修复版）
@@ -1551,7 +1557,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 158 | 架构规则 TRAE-013~017/036~038 | rules/trae_*.yaml | arch_constraints 表 | 数据导入 | P1 |
 | 159 | 声明式契约追踪（11 条） | declarative_contract_tracker_registry.yaml | contracts 表扩展 | 扩展表+数据导入 | P2 |
 | 160 | Frontmatter 字段注册表（54 字段） | frontmatter_field_registry.yaml | field_vocabularies 表 | 数据导入 | P2 |
-| 161 | 注册表之注册表（18 个） | registry_of_registries.yaml | 新建 registries + cross_registry_rules 表 | 新建表+数据导入 | P2 |
+| 161 | 注册表之注册表（18 个） | registry_consistency_contract.yaml | 新建 registries + cross_registry_rules 表 | 新建表+数据导入 | P2 |
 | 162 | 目录注册表 | directory_registry.yaml | arch_directory_tree 表 | 数据导入 | P2 |
 | 163 | 规则路径目录（154 文件） | rule_catalog_registry.yaml | arch_directory_tree 表（文档节点位置） | 数据导入 | P2 |
 | 164 | 基础设施+模型能力契约 | infrastructure_registry.yaml + model_capability_contract.yaml | 新建 infrastructure_components + model_capabilities 表 | 新建表+数据导入 | P3 |

@@ -193,7 +193,7 @@ registered_ids:
     status: deleted
   - module_id: PS-REG-016
     title: "登记表的登记表（跨登记表一致性契约）"
-    path: "docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"
     doc_type: contract
     status: active
   - module_id: PS-REG-017

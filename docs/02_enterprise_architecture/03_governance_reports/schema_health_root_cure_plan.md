@@ -157,7 +157,7 @@ node.get("module_lifecycle_state", ""),  # L2721 值来源（注释标注"裁定
 ssot             TEXT NOT NULL,
 ```
 
-**证据——同步函数缺失**：`sync_yaml_to_depgraph.py` 中无 `sync_cross_registry_rules` 函数。`sync_all()`（L980-1064）的 19 个同步函数中不包含 cross_registry_rules。YAML 真源 `registry_of_registries.yaml` 含 6 条 CR 规则，但从未被同步到 DB。
+**证据——同步函数缺失**：`sync_yaml_to_depgraph.py` 中无 `sync_cross_registry_rules` 函数。`sync_all()`（L980-1064）的 19 个同步函数中不包含 cross_registry_rules。YAML 真源 `registry_consistency_contract.yaml` 含 6 条 CR 规则，但从未被同步到 DB。
 
 **后果**：表存在但永远为空。任何尝试 INSERT 的代码都会因 `ssot NOT NULL` 约束而失败（除非显式提供 ssot 值）。这是一个"声明了但从未接线"的死表。
 

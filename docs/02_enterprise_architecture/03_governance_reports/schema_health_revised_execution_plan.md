@@ -391,7 +391,7 @@ pre-commit run gate-schema-health --all-files
 
 **动作7.1**：更新 `docs/02_enterprise_architecture/dependency_architecture_panorama.md` §4.4 表归属矩阵
 - 移除已删 3 张表（arch_bottlenecks / arch_layers / invariants）
-- **保留** cross_registry_rules（注明：健康只读缓存，sync 自 registry_of_registries.yaml，6 条 CR 规则）
+- **保留** cross_registry_rules（注明：健康只读缓存，sync 自 registry_consistency_contract.yaml，6 条 CR 规则）
 - **保留** governance_audit_logs（注明：auto_runner 运行摘要审计；后续迁移至 src/zephyr/audit-trail/ WORM 模块为独立任务）
 - 更新 contracts 表列数：7 → 13
 

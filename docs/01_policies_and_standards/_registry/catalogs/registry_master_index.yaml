@@ -115,7 +115,7 @@ registries:
 - registry_id: PS-REG-016
   name: 登记表的登记�?�?跨登记表一致性契�?
   category: contract
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   format: yaml
   maintenance: manual
   entry_count: 22

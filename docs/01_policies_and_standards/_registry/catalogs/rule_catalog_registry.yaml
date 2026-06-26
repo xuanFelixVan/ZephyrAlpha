@@ -1313,7 +1313,7 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
-- path: docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml
+- path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   module_id: PS-REG-016
   title: 登记表的登记�?�?跨登记表一致性契�?
   doc_type: contract

@@ -14,7 +14,7 @@
 # [TESTS]
 """check_registry_consistency — 跨登记表一致性校验。
 
-读取 registry_of_registries.yaml，按 cross_registry_rules 比对多登记表共享字段。
+读取 registry_consistency_contract.yaml，按 cross_registry_rules 比对多登记表共享字段。
 可将 Finding 写入 scripts/governance/reports/findings.jsonl。
 """
 
@@ -56,7 +56,7 @@ try:
     FINDING_AVAILABLE = True
 except ImportError:
     FINDING_AVAILABLE = False
-ROR_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_of_registries.yaml"
+ROR_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_consistency_contract.yaml"
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.yaml_utils import load_yaml
 
@@ -259,7 +259,7 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻塞流程）")
     args = parser.parse_args()
     if not ROR_PATH.exists():
-        print(f"[SKIP] registry_of_registries.yaml 不存在: {ROR_PATH}", file=sys.stderr)
+        print(f"[SKIP] registry_consistency_contract.yaml 不存在: {ROR_PATH}", file=sys.stderr)
         sys.exit(EXIT_PASS)
     ror = load_yaml(ROR_PATH)
     rules = ror.get("cross_registry_rules", [])

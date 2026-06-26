@@ -1,7 +1,7 @@
 ---
 module_id: MOD-INF-012B
 title: "P2 PostgreSQL迁移任务卡总览（全量重写版）— 3阶段骨架卡 + 24个TC-PG执行卡"
-doc_type: task_card_index
+doc_type: index
 status: Draft
 version: "2.0.0"
 belongs_to: "MOD-INF-012B-P2"
@@ -1076,7 +1076,7 @@ git checkout -- requirements.txt pyproject.toml .env.example
 **可修改文件白名单**：
 - `docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml`（修改：更新depgraph.db描述为PostgreSQL）
 - `src/zephyr/governance/rule_enforcement/g_trae_059.yaml`（修改：L1,40,58,63,76,77注释引用depgraph.db）
-- `docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml`（修改：更新数据库描述）
+- `docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml`（修改：更新数据库描述）
 
 **施工要点**：
 1. 更新YAML文件中所有`depgraph.db`引用为`PostgreSQL (depgraph)`
@@ -1089,10 +1089,10 @@ git checkout -- requirements.txt pyproject.toml .env.example
 |---|--------|------|---------|
 | 1 | g_trae_056已更新 | `grep -i "postgresql" docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml` | 有结果 |
 | 2 | g_trae_059已更新 | `grep -i "postgresql" src/zephyr/governance/rule_enforcement/g_trae_059.yaml` | 有结果 |
-| 3 | registry已更新 | `grep -i "postgresql" docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml` | 有结果 |
+| 3 | registry已更新 | `grep -i "postgresql" docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml` | 有结果 |
 | 4 | YAML语法正确 | `python -c "import yaml; yaml.safe_load(open('docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml'))"` | 无报错 |
 
-**回滚方案**：`git checkout -- docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml src/zephyr/governance/rule_enforcement/g_trae_059.yaml docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml`
+**回滚方案**：`git checkout -- docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml src/zephyr/governance/rule_enforcement/g_trae_059.yaml docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml`
 
 ---
 

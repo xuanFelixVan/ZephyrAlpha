@@ -274,7 +274,7 @@ ttl: permanent
 | 32 | [src/zephyr/infrastructure/asset_inventory/registry_adapter.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/asset_inventory/registry_adapter.py) | 583-584 | 同上（重复实现） |
 | 33 | [config/blueprint_routing.yaml](file:///d:/ZephyrAlpha/config/blueprint_routing.yaml) | 814 | 字符串路径 |
 | 34 | [docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml) | 176 | `path:` 字段 |
-| 35 | [docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml) | 128, 130 | 登记表自描述 |
+| 35 | [docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml) | 128, 130 | 登记表自描述 |
 | 36 | [docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml) | 1239 | 字符串 |
 | 37 | [docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml) | 1242 | 字符串 |
 | 38 | [docs/01_policies_and_standards/rules/trae_033_module_registration_sync.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_033_module_registration_sync.yaml) | 83 | 字符串 |
