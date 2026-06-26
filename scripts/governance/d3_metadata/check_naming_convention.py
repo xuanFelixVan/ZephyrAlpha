@@ -1197,21 +1197,16 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     except Exception as e:
         return False, f"❌ SSoT 读取失败: {e}"
 
-    # 1. version 字段读取（用于成功消息可追溯性报告；下界校验已删除——双轨制生效性
-    #    由 check 2 关键词存在性实质性校验兜底，且版本号只升不降使 >= 1.3.0 永真为死代码；
-    #    保留则 (1,3,0) 在被测函数+测试双处硬编码，真源缺位，违背真源唯一原则）
+    # 1. version 字段读取（用于成功消息可追溯性报告；下界校验已删除——版本号只升不降
+    #    使 >= 1.3.0 永真为死代码；保留则 (1,3,0) 在被测函数+测试双处硬编码，真源缺位，
+    #    违背真源唯一原则。双轨制 enforcement 由 check 2 正则定义存在性兜底；YAML condition
+    #    文本侧的语义校验交由 validate_ssot.py GATE-SSOT 覆盖，避免关键词硬编码形成第二真源）
     vm = re.search(r"^version:\s*['\"]?(\d+)\.(\d+)\.(\d+)", content, re.MULTILINE)
     if not vm:
         return False, "❌ SSoT 未找到 version 字段"
     ver = (int(vm.group(1)), int(vm.group(2)), int(vm.group(3)))
 
-    # 2. 双轨制关键词存在（L1037-1040 condition 文本）
-    required = ["双轨制", "layer-master", "domain-functional", "[-NNN]"]
-    missing = [kw for kw in required if kw not in content]
-    if missing:
-        return False, f"❌ SSoT 缺少双轨制关键词: {missing}（裁定#208 R1 双轨制 condition 未生效？）"
-
-    # 3. 脚本双轨正则已定义（编译期已校验，此处 sanity check 防常量被误删）
+    # 2. 脚本双轨正则已定义（编译期已校验，此处 sanity check 防常量被误删）
     regexes = {
         "_MODULE_ID_LAYER_MASTER_RE": _MODULE_ID_LAYER_MASTER_RE,
         "_MODULE_ID_DOMAIN_DERIVED_RE": _MODULE_ID_DOMAIN_DERIVED_RE,
@@ -1221,7 +1216,7 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     if undefined:
         return False, f"❌ 脚本双轨正则未定义: {undefined}"
 
-    # 4. N-16 fallback 与 YAML n16_config 一致性校验（防 fallback 过时漂移）
+    # 3. N-16 fallback 与 YAML n16_config 一致性校验（防 fallback 过时漂移）
     #    fallback 是 YAML 不可达时的安全网，其值应与 YAML 保持一致；
     #    若 YAML 加了新豁免项但 fallback 未同步，此处报漂移。
     try:

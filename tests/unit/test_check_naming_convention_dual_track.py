@@ -178,7 +178,7 @@ class TestValidateSsotLinkage:
         assert ok is True, msg
         # 版本号由被测函数从 YAML 动态读取并拼入 msg；测试仅校验格式（下界校验已从被测函数
         # 删除——版本号只升不降使 >= 1.3.0 永真为死代码；保留则 (1,3,0) 在被测函数+测试双处
-        # 硬编码，真源缺位，违背真源唯一原则。双轨制生效性由 check 2 关键词实质性校验兜底）
+        # 硬编码，真源缺位，违背真源唯一原则。双轨制 enforcement 由 check 2 正则定义存在性兜底）
         m = re.search(r"v(\d+)\.(\d+)\.(\d+)", msg)
         assert m, f"msg 未含版本号模式: {msg}"
         assert "一致" in msg
