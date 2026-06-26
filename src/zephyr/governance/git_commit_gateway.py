@@ -76,8 +76,8 @@ from pathlib import Path
 
 from zephyr.governance.reconciliation_registry import (
     ReconcileResult,
-    ReconcilerSpec,
     ReconciliationRegistry,
+    make_manifest_reconciler,
 )
 
 logger = logging.getLogger(__name__)
@@ -283,25 +283,14 @@ class GitCommitGateway:
                 )
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest 迁移）。
 
-        P2-T1: manifest reconciler 委托给既有 ``_post_commit_reconcile`` 方法（过渡），
-        保持行为等价；P2-T2 将迁移为独立 manifest_reconciler 并删除旧方法。
-        P2-T3/T4/T5 将新增 baseline_aware / ttl / ghost reconciler。
+        P2-T2: manifest 对账逻辑已迁移为
+        ``reconciliation_registry.make_manifest_reconciler`` 工厂（闭包捕获 self），
+        本方法仅注册工厂产出。旧 ``_post_commit_reconcile`` 方法已删除。
+        P2-T3/T4/T5 将在此追加 baseline_aware / ttl / ghost reconciler 注册。
         """
-        def _manifest_trigger(committed_files: list[str]) -> bool:
-            for f in committed_files:
-                rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                if rel.startswith("scripts/") and rel.endswith(".py"):
-                    return True
-            return False
-
-        self._reconciliation_registry.register(ReconcilerSpec(
-            gate_id="GATE-19-manifest",
-            trigger=_manifest_trigger,
-            reconcile=lambda files, sid: self._post_commit_reconcile(files, sid),
-            priority=100,
-        ))
+        self._reconciliation_registry.register(make_manifest_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -835,95 +824,6 @@ class GitCommitGateway:
         logger.info(
             "GitCommitGateway: red-blue trigger emitted (session=%s hash=%s formal=%d)",
             session_id, commit_hash[:8], len(formal_files),
-        )
-
-    def _post_commit_reconcile(
-        self, committed_files: list[str], session_id: str
-    ) -> ReconcileResult:
-        """Post-stash-pop 真源对账（P0-DRC）。
-
-        在 stash pop 之后、释放全局锁之前执行：
-        1. 若 committed_files 含 scripts/ 下的 .py → 重生成 script_manifest.yaml
-        2. 若 manifest 变更 → 自动提交（GW 标记，--no-verify fast-path）
-
-        设计理由：gateway 的 --no-verify 绕过了 pre-commit 漂移检测 GATE
-        （GATE-19 manifest 漂移等），导致删除 scripts/ 下文件后 manifest
-        仍含僵尸引用。本方法在 commit 完成后立即对账，斩断 drift 循环。
-
-        非阻断：commit 已入 git 历史，阻断无意义。改为 warning + auto-fix。
-
-        manifest 体系区分（P1-T4 校正）：本方法重生成的是
-        ``scripts/script_manifest.yaml``（全树 manifest，由 generate_manifest.py
-        产出，供本 gateway + audit_registration 消费）；非
-        ``scripts/governance/script_manifest.yaml``（governance 子集，由
-        generate_script_manifest.py 产出，GATE-19 校验）。二者非冗余，禁止废弃任一。
-
-        Args:
-            committed_files: 本次 commit 的文件绝对路径列表。
-            session_id: session 标识（用于 auto-commit message 标记）。
-
-        Returns:
-            ReconcileResult: action ∈ skip|clean|auto_committed|warn。
-        """
-        # 1. 检测是否有 scripts/ 下的 .py 文件被 commit
-        scripts_touched = False
-        for f in committed_files:
-            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-            if rel.startswith("scripts/") and rel.endswith(".py"):
-                scripts_touched = True
-                break
-
-        if not scripts_touched:
-            return ReconcileResult(action="skip", detail="no scripts/*.py committed")
-
-        # 2. 重生成 manifest（SSoT disk-scan，generate_manifest.py os.walk scripts/）
-        gen_result = subprocess.run(
-            [sys.executable, "scripts/generate_manifest.py"],
-            cwd=str(self.project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=30,
-        )
-        if gen_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"manifest regeneration failed: {gen_result.stderr.strip()[:200]}",
-            )
-
-        # 3. 检测 manifest 是否变更（工作区 vs index）
-        diff_result = self._run_git(
-            ["git", "diff", "--name-only", "--", "scripts/script_manifest.yaml"]
-        )
-        if diff_result.returncode == 0 and not diff_result.stdout.strip():
-            return ReconcileResult(action="clean", detail="manifest up to date")
-
-        # 4. manifest 变更 → 自动提交修复（斩断 zombie 引用循环）
-        add_result = self._run_git(["git", "add", "scripts/script_manifest.yaml"])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add manifest failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(manifest): auto-reconcile by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = self._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg,
-             "--", "scripts/script_manifest.yaml"]
-        )
-        if commit_result.returncode == 0:
-            return ReconcileResult(
-                action="auto_committed",
-                detail="manifest drift detected and auto-reconciled",
-            )
-        return ReconcileResult(
-            action="warn",
-            detail=f"manifest drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
         )
 
     def _commit_with_file_message(

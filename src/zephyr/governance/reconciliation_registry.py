@@ -69,6 +69,7 @@ __all__ = [
     "ReconcileResult",
     "ReconcilerSpec",
     "ReconciliationRegistry",
+    "make_manifest_reconciler",
 ]
 
 
@@ -167,3 +168,100 @@ class ReconciliationRegistry:
     def list_gate_ids(self) -> list[str]:
         """已注册的 gate_id 列表（诊断用）。"""
         return [s.gate_id for s in self._specs]
+
+
+def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-19 manifest post-commit 对账 reconciler（P2-T2）。
+
+    把原 ``GitCommitGateway._post_commit_reconcile`` 逻辑迁移为独立 ReconcilerSpec，
+    注册到 ReconciliationRegistry。闭包捕获 gateway 实例以复用 ``project_root``
+    与 ``_run_git``。
+
+    对账链（与迁移前行为等价）：
+    1. trigger: committed_files 含 scripts/ 下 .py → 命中
+    2. 重生成 scripts/script_manifest.yaml（generate_manifest.py os.walk 全树 SSoT）
+    3. git diff 检测 manifest 变更 → 无变更返回 clean
+    4. 有变更 → git add + git commit --no-verify（斩断 zombie 引用循环）
+
+    manifest 体系区分（P1-T4 校正）：本 reconciler 重生成的是
+    ``scripts/script_manifest.yaml``（全树 manifest，generate_manifest.py 产出，
+    供 gateway + audit_registration 消费）；非 ``scripts/governance/script_manifest.yaml``
+    （governance 子集，generate_script_manifest.py 产出，GATE-19 校验）。二者非冗余。
+
+    Args:
+        gateway: GitCommitGateway 实例（仅用其 project_root + _run_git，类型注解为
+            object 避免本纯 stdlib 模块 import zephyr.*）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-19-manifest", priority=100)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("scripts/") and rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重生成 manifest（SSoT disk-scan）
+        gen_result = subprocess.run(
+            [sys.executable, "scripts/generate_manifest.py"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"manifest regeneration failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 manifest 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", "scripts/script_manifest.yaml"]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="manifest up to date")
+
+        # 3. 变更 → 自动提交修复
+        add_result = gateway._run_git(["git", "add", "scripts/script_manifest.yaml"])
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git add manifest failed: {add_result.stderr.strip()[:200]}",
+            )
+
+        auto_msg = (
+            f"chore(manifest): auto-reconcile by GitCommitGateway post-commit "
+            f"[GW:{session_id}:auto]"
+        )
+        commit_result = gateway._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg,
+             "--", "scripts/script_manifest.yaml"]
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail="manifest drift detected and auto-reconciled",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"manifest drift detected, auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-19-manifest",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=100,
+    )
