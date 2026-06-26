@@ -758,7 +758,8 @@ def _check_duplicate_functionality(
     # ── 维度3: SSoT module_path 冲突检测（方案 E：零新真源，复用 [MODULE] 头）──
     # force_override 不跳过——同 module_path = 同文件身份 = 确凿重复信号。
     # 真源是文件头部 [MODULE] 字段（已存在），反查通过 capability_lookup 实时扫描磁盘。
-    # L1 fail-open（import 失败时降级放行），L2 兜底门禁（git_commit_gateway）补防线。
+    # L1 fail-open（import 失败时降级放行），L2 兜底门禁（git_commit_gateway）补防线，
+    # L3 pre-commit hook（check_ssot_gate.py）双保险——三层防线共用 check_ssot_conflicts。
     if expected_module_path:
         try:
             from zephyr.governance.capability_lookup import CapabilityLookup

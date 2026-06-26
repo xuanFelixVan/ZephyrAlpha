@@ -78,6 +78,8 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 **孤儿检测**: `python scripts/governance/audit_registration.py`（每次 session 结束或 Pipeline Gate 运行时扫描）。exit 0 = CLEAN，exit 1 = 有孤儿。
 
+**SSoT 创建门禁（三层防线）**: scaffold 查重维度3（module_path 冲突）是硬阻断。三层防线：L1 scaffold 主防线 → L2 GitCommitGateway 兜底 → L3 pre-commit hook 双保险。绕过 scaffold 直接 Write 新 .py 后 commit 会被 L2/L3 拦截。已知边界：`git commit --no-verify` 能绕过 L3，依赖 GATE-COMMIT-GW 规则约束。检测逻辑唯一真源：`capability_lookup.check_ssot_conflicts()`。详见 [check_ssot_gate.py](file:///d:/ZephyrAlpha/scripts/governance/check_ssot_gate.py)。
+
 **规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-FOUR + [trae_015_arch_path_registration.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml) | 实现: [scaffold.py](file:///d:/ZephyrAlpha/scripts/scaffold.py) | 验证: `python scripts/governance/audit_registration.py`
 
 ---
@@ -306,7 +308,7 @@ STEP 1.2.1 — 提取文件级依赖：`python scripts/governance/extract_depgra
 STEP 1.2.2 — 路径树工具链（全景图维护，文件变更后必跑）:
            - 运营态目录树刷新: `python scripts/governance/generate_project_path_tree.py --write`（扫描磁盘→写入depgraph.db arch_directory_tree表。文件创建/删除/移动后MUST执行）
            - 运营态目录树检查: `python scripts/governance/generate_project_path_tree.py --check`（CI漂移检测，Session关门前必跑，G6_PT门禁）
-           - 目标路径推导与对齐验证: `python scripts/governance/generate_target_path_tree.py`（从depgraph.db设计态推导模块目标路径并验证命名规则对齐，输出到data/asset_index/target_path_tree.yaml）
+           - 目标路径推导与对齐验证: 直接查 depgraph.db `SELECT path, blueprint_id FROM nodes WHERE design_maturity='production'`（派生产物已删除，depgraph.db 是唯一查询入口，禁止重新创建 YAML 副本）
            - 架构文档路径树: `python scripts/governance/d5_architecture/generators/generate_path_tree.py`（读depgraph.db→生成md文档，供人类查看）
 STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 STEP 2  — 读 project_rules.md（即 L0 首关页面）→ 了解硬规则

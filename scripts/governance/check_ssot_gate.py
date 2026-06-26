@@ -21,6 +21,12 @@ GitCommitGateway.commit() 内嵌的 _check_ssot_canonical 是主防线
 （GitCommitGateway 用 --no-verify 绕过 pre-commit）。
 本脚本是双保险——当有人不用 GitCommitGateway 而是直接 git commit 时拦截。
 
+已知边界:
+    git commit --no-verify 能绕过本 hook（git 固有设计，无法技术阻止）。
+    依赖 GATE-COMMIT-GW 规则约束（全项目 git commit 必须经 GitCommitGateway）。
+    L2 GitCommitGateway._check_ssot_canonical 是主防线——即使用 --no-verify 绕过
+    pre-commit，gateway 内嵌检测逻辑仍生效（但绕过 gateway 直接 git commit 则无保护）。
+
 Exit codes:
     0 = PASS（无冲突或无新增 .py 文件）
     1 = BLOCK（检测到 module_path 冲突）
