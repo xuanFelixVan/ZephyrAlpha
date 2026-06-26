@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-27'
-total_scripts: 573
+total_scripts: 578
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -38,6 +38,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_add_frontmatter.py
+  path: _tmp_add_frontmatter.py
+  description: 处理策略：
+  domain: _tmp_add_frontmatter.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_check_depgraph.py
   path: _tmp_check_depgraph.py
   description: import sqlite3
@@ -46,10 +54,42 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_commit_casefix.py
+  path: _tmp_commit_casefix.py
+  description: 优化：去掉 claim_files（4688 文件太慢），直接 commit。
+  domain: _tmp_commit_casefix.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_fix_all_case.py
+  path: _tmp_fix_all_case.py
+  description: 对每个冲突目录用 git mv 两步法（大写 → 临时名 → 小写）。
+  domain: _tmp_fix_all_case.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: _tmp_fix_mod036.py
   path: _tmp_fix_mod036.py
   description: 保留 L23 tags 元数据标签（model-capability-exam 作为 tag 保留）。
   domain: _tmp_fix_mod036.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_fix_parents.py
+  path: _tmp_fix_parents.py
+  description: 转换规则（验证型）：
+  domain: _tmp_fix_parents.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_scan_case_conflicts.py
+  path: _tmp_scan_case_conflicts.py
+  description: 检测：git index 中的路径大小写与磁盘上实际路径大小写不一致的情况。
+  domain: scanner
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
