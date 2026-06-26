@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；无 pathspec commit（方案 A+ 治本：git commit --pathspec-from-file 对 staged rename R100 拆分为 add+delete 破坏 rename，统一用 _commit_no_pathspec + _verify_staged_is_clean 双保险替代 pathspec-from-file）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A：pathspec 为默认多 session 安全，_has_staged_renames 检测到 R100 时 fallback 到无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -599,6 +599,16 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.NAMING_VIOLATION,
                 message=f"中文 aliases 违规: {aliases_detail}",
+            )
+
+        # REPO_ROOT 真源归一门禁：检测 parents[N] 反模式（SSoT 绕过）
+        # 约定见 AGENTS.md §7 REPO_ROOT 真源归一——REPO_ROOT 是仓库根常量唯一真源
+        # 移植自 _tmp_fix_parents.py 检测逻辑，仅检测不修复
+        repo_root_passed, repo_root_detail = self._check_repo_root_usage(existing)
+        if not repo_root_passed:
+            return CommitResult(
+                status=CommitStatus.REPO_ROOT_VIOLATION,
+                message=f"REPO_ROOT 反模式: {repo_root_detail}",
             )
 
         # 追加 GW 标记
@@ -1340,6 +1350,123 @@ class GitCommitGateway:
         return True, "capability aliases check passed (no CJK aliases)"
 
     # ------------------------------------------------------------------
+    # REPO_ROOT 真源归一检测（移植自 _tmp_fix_parents.py，仅检测不修复）
+    # ------------------------------------------------------------------
+    _REPO_SYSPATH_LINE = re.compile(r"sys\.path\.(?:insert|append)\s*\(")
+    _REPO_ASSIGN_VAR = re.compile(r"^(\s*)([A-Za-z_][A-Za-z0-9_]*)\s*[:=]")
+
+    @staticmethod
+    def _is_bootstrap_var(text: str, var_name: str) -> bool:
+        """检测变量 VAR 是否被用于 sys.path.insert/append（bootstrap 合法豁免）。"""
+        pat = re.compile(
+            r"sys\.path\.(?:insert|append)\s*\([^)]*?\bstr\s*\(\s*"
+            + re.escape(var_name)
+            + r"\b"
+        )
+        return bool(pat.search(text))
+
+    @classmethod
+    def _match_is_bootstrap(cls, text: str, m: "re.Match[str]") -> bool:
+        """判断 parents[N] 匹配是否在 sys.path bootstrap 上下文（合法豁免）。
+
+        规则：
+          (a) 匹配所在行含 sys.path.insert/append → True（bootstrap）
+          (b) 匹配前缀是赋值 VAR = ...，且 VAR 用于 sys.path → True（bootstrap）
+          其他 → False（路径常量，违规）
+        """
+        start = text.rfind("\n", 0, m.start()) + 1
+        end = text.find("\n", m.start())
+        if end == -1:
+            end = len(text)
+        line = text[start:end]
+        if cls._REPO_SYSPATH_LINE.search(line):
+            return True
+        prefix = text[start:m.start()]
+        am = cls._REPO_ASSIGN_VAR.match(prefix)
+        if am:
+            var_name = am.group(2)
+            if var_name and cls._is_bootstrap_var(text, var_name):
+                return True
+        return False
+
+    def _check_repo_root_usage(self, files: list[str]) -> tuple[bool, str]:
+        """检测 .py 文件是否使用 parents[N] 反模式（应改用 REPO_ROOT）。
+
+        移植自 ``_tmp_fix_parents.py`` 检测逻辑（仅检测不修复）。
+        合法豁免：sys.path bootstrap 上下文（鸡生蛋：需先设 sys.path 才能 import REPO_ROOT）。
+
+        检测模式：
+          - ``Path(__file__).resolve().parents[N]``  → 若 resolve 后 == REPO_ROOT 则违规
+          - ``Path(__file__).resolve().parent.parent...`` (2+ parent) → 同上
+
+        真源：``zephyr.shared.io.paths.REPO_ROOT`` 是仓库根常量唯一真源。
+        约定见 AGENTS.md §7 REPO_ROOT 真源归一。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        violations: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if not f.endswith(".py"):
+                continue
+            if not (
+                rel.startswith("src/")
+                or rel.startswith("scripts/")
+                or rel.startswith("tests/")
+            ):
+                continue
+            # Phase 1（当前）：仅检查新增（未 git 跟踪）文件，防止新违规进入
+            # Phase 2：存量违规清理完成后，删除此 if 块切换为全量检查
+            # 存量违规清单见 _tmp_fix_parents.py 之前的扫描结果（156 处）
+            if self._is_git_tracked(rel):
+                continue
+            try:
+                text = Path(f).read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            resolved = Path(f).resolve()
+
+            # 模式1: Path(__file__).resolve().parents[N]
+            for m in re.finditer(
+                r"Path\(__file__\)\.resolve\(\)\.parents\[(\d+)\]", text
+            ):
+                if self._match_is_bootstrap(text, m):
+                    continue  # 合法豁免：sys.path bootstrap
+                n = int(m.group(1))
+                if n < len(resolved.parents) and resolved.parents[n] == self.project_root:
+                    line_no = text.count("\n", 0, m.start()) + 1
+                    violations.append(
+                        f"{rel}:{line_no} — Path(__file__).resolve().parents[{n}] "
+                        f"等于 REPO_ROOT，应改用 `from zephyr.shared.io.paths import REPO_ROOT`"
+                    )
+
+            # 模式2: Path(__file__).resolve().parent.parent... (2+ parent)
+            for m in re.finditer(
+                r"Path\(__file__\)\.resolve\(\)(?:\.parent){2,}", text
+            ):
+                if self._match_is_bootstrap(text, m):
+                    continue  # 合法豁免：sys.path bootstrap
+                chain = m.group(0)
+                parent_count = chain.count(".parent")
+                result = resolved
+                for _ in range(parent_count):
+                    result = result.parent
+                if result == self.project_root:
+                    line_no = text.count("\n", 0, m.start()) + 1
+                    violations.append(
+                        f"{rel}:{line_no} — Path(__file__).resolve(){'.parent' * parent_count} "
+                        f"等于 REPO_ROOT，应改用 `from zephyr.shared.io.paths import REPO_ROOT`"
+                    )
+
+        if violations:
+            return False, "\n  ".join(violations)
+        return True, "REPO_ROOT usage check passed (no parents[N] violations)"
+
+    # ------------------------------------------------------------------
     # 内部实现
     # ------------------------------------------------------------------
     def _commit_locked(
@@ -1432,39 +1559,37 @@ class GitCommitGateway:
                             message="no staged changes in files_in_scope",
                         )
                     else:
-                        # 6. 无 pathspec commit（方案 A+ 治本）
-                        # 根因：git commit --pathspec-from-file 对 staged rename
-                        # （R100）拆分为独立 add+delete，只提交 pathspec 匹配部分，
-                        # 破坏 rename。统一用无 pathspec commit，由
-                        # _stash_other_files + _verify_staged_is_clean 双保险
-                        # 保证 staged 区只有目标文件。
-                        clean, clean_err = self._verify_staged_is_clean(files)
-                        if not clean:
+                        # 6. commit（方案 A：pathspec 为默认，rename 时 fallback 无 pathspec）
+                        # 根因：git commit --pathspec-from-file 对 staged rename（R100）
+                        # 拆分为 add+delete 破坏 rename。检测到 rename 时 fallback 到
+                        # 无 pathspec + _verify_staged_is_clean 验证（防误提交其他 session WIP）。
+                        if self._has_staged_renames(files):
+                            commit_hash, commit_err = self._commit_with_file_message(
+                                full_message, None, files
+                            )
+                            commit_mode = "no-pathspec (rename fallback)"
+                        else:
+                            commit_hash, commit_err = self._commit_with_file_message(
+                                full_message, pathspec_file
+                            )
+                            commit_mode = "pathspec"
+                        if commit_hash is None:
                             result = CommitResult(
                                 status=CommitStatus.COMMIT_FAILED,
-                                message=f"staged 区不干净，拒绝无 pathspec commit: {clean_err}",
+                                message=f"git commit failed: {commit_err}",
                             )
                         else:
-                            commit_hash, commit_err = self._commit_no_pathspec(
-                                full_message
+                            os.environ[_GATEWAY_ENV] = "1"
+                            logger.info(
+                                "GitCommitGateway: commit 成功 hash=%s marker=%s "
+                                "files=%d (%s)",
+                                commit_hash, gw_marker, len(files), commit_mode,
                             )
-                            if commit_hash is None:
-                                result = CommitResult(
-                                    status=CommitStatus.COMMIT_FAILED,
-                                    message=f"git commit failed: {commit_err}",
-                                )
-                            else:
-                                os.environ[_GATEWAY_ENV] = "1"
-                                logger.info(
-                                    "GitCommitGateway: commit 成功 hash=%s marker=%s "
-                                    "files=%d (no-pathspec)",
-                                    commit_hash, gw_marker, len(files),
-                                )
-                                result = CommitResult(
-                                    status=CommitStatus.OK,
-                                    message=f"committed {len(files)} files",
-                                    commit_hash=commit_hash,
-                                )
+                            result = CommitResult(
+                                status=CommitStatus.OK,
+                                message=f"committed {len(files)} files",
+                                commit_hash=commit_hash,
+                            )
         finally:
             # 7. 恢复 stash（无论 commit 成功失败都要恢复，不丢数据）
             if stashed:
@@ -1681,48 +1806,27 @@ class GitCommitGateway:
             session_id, commit_hash[:8], len(formal_files),
         )
 
-    def _commit_with_file_message(
-        self,
-        pathspec_file: str,
-        message: str,
-    ) -> tuple[str | None, str]:
-        """用 -F <msg_file> 方式 commit（RULE-TWENTY 裁定2：避免 PowerShell 特殊字符问题）。
+    def _has_staged_renames(self, target_files: list[str]) -> bool:
+        """检测目标文件中是否有 staged rename（R 状态）。
 
-        统一使用 --pathspec-from-file（避免 Windows CLI 长度限制 WinError 206）。
-
-        Args:
-            pathspec_file: pathspec 文件路径（由 _write_pathspec_file 生成）。
-            message: commit message。
-
-        Returns:
-            (commit_hash, error_message)。commit_hash 为 None 表示失败。
+        pathspec 对 staged rename 拆分为 add+delete 破坏 rename，需 fallback
+        到无 pathspec commit。本方法只检测目标文件的 rename，不因其他 session
+        的 staged rename 误触发 fallback（否则会误阻断正常 pathspec commit）。
         """
-        # 写消息到临时文件（RULE-FIVE：temp-file + 原子写入）
-        msg_fd, msg_path = tempfile.mkstemp(
-            prefix="gw_commit_msg_", suffix=".txt", dir=str(self.project_root)
-        )
-        try:
-            with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
-                f.write(message)
-
-            commit_cmd = [
-                "git", "commit", "--no-verify", "-F", msg_path,
-                f"--pathspec-from-file={pathspec_file}",
-            ]
-            result = self._run_git(commit_cmd)
-            if result.returncode != 0:
-                return None, result.stderr.strip()
-
-            # 获取 commit hash
-            rev_result = self._run_git(["git", "rev-parse", "HEAD"])
-            if rev_result.returncode == 0:
-                return rev_result.stdout.strip(), ""
-            return "", ""
-        finally:
-            try:
-                os.remove(msg_path)
-            except OSError:
-                pass
+        target_rel = {
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            for f in target_files
+        }
+        result = self._run_git(["git", "diff", "--cached", "--name-status", "-M"])
+        if result.returncode != 0:
+            return False
+        for line in result.stdout.splitlines():
+            if line.startswith("R"):
+                # rename 格式：R100\bold_path\tnew_path
+                parts = line.split("\t")
+                if len(parts) >= 3 and parts[2] in target_rel:
+                    return True
+        return False
 
     def _verify_staged_is_clean(self, target_files: list[str]) -> tuple[bool, str]:
         """验证 staged 区只有目标文件（防误提交其他 session WIP）。
@@ -1756,29 +1860,51 @@ class GitCommitGateway:
             return False, f"staged 区有 {len(non_target)} 个非目标文件: {sample}"
         return True, ""
 
-    def _commit_no_pathspec(self, message: str) -> tuple[str | None, str]:
-        """无 pathspec commit（用于 staged rename 场景，方案 A+ 治本）。
+    def _commit_with_file_message(
+        self,
+        message: str,
+        pathspec_file: str | None = None,
+        target_files: list[str] | None = None,
+    ) -> tuple[str | None, str]:
+        """统一 commit 入口（向内收：一个方法，参数控制 pathspec/无 pathspec）。
 
-        根因：``git commit --pathspec-from-file`` 对 staged rename（R100）会拆分为
-        独立的 add + delete，只提交 pathspec 匹配的部分，导致 rename 被破坏。
-        无 pathspec commit 提交所有 staged 文件，能正确处理 rename。
-
-        前置条件：调用方必须先 ``_verify_staged_is_clean`` 确认 staged 区只有
-        目标文件，否则会误提交其他 session 的 WIP。
+        两种模式：
+        1. pathspec 模式（默认，多 session 安全）：``pathspec_file`` 非空时，
+           用 ``--pathspec-from-file``。适用于普通 add/modify/delete。
+        2. 无 pathspec 模式（rename fallback）：``pathspec_file=None`` 时，
+           用 ``_verify_staged_is_clean`` 验证 staged 区只有目标文件后无 pathspec
+           commit。根因：pathspec 对 staged rename（R100）拆分为 add+delete 破坏
+           rename，必须用无 pathspec。
 
         Args:
             message: commit message。
+            pathspec_file: pathspec 文件路径。None 时用无 pathspec（rename 场景）。
+            target_files: 目标文件绝对路径列表（pathspec_file=None 时用于 staged 验证）。
 
         Returns:
             (commit_hash, error_message)。commit_hash 为 None 表示失败。
         """
+        # 无 pathspec 模式：先验证 staged 区干净（防误提交其他 session WIP）
+        if pathspec_file is None:
+            if not target_files:
+                return None, "无 pathspec commit 需要 target_files 参数"
+            clean, err = self._verify_staged_is_clean(target_files)
+            if not clean:
+                return None, f"staged 区不干净，拒绝无 pathspec commit: {err}"
+        # 写消息到临时文件（RULE-FIVE：temp-file + 原子写入；RULE-TWENTY 裁定2）
         msg_fd, msg_path = tempfile.mkstemp(
             prefix="gw_commit_msg_", suffix=".txt", dir=str(self.project_root)
         )
         try:
             with os.fdopen(msg_fd, "w", encoding="utf-8") as f:
                 f.write(message)
-            commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
+            if pathspec_file is None:
+                commit_cmd = ["git", "commit", "--no-verify", "-F", msg_path]
+            else:
+                commit_cmd = [
+                    "git", "commit", "--no-verify", "-F", msg_path,
+                    f"--pathspec-from-file={pathspec_file}",
+                ]
             result = self._run_git(commit_cmd)
             if result.returncode != 0:
                 return None, result.stderr.strip() or result.stdout.strip()
@@ -1879,14 +2005,10 @@ class GitCommitGateway:
                             status=CommitStatus.NOTHING_TO_COMMIT,
                             message="no staged changes in auto-commit files",
                         )
-                    # commit（无 pathspec，方案 A+ 治本，与 _commit_locked 统一）
-                    clean, clean_err = self._verify_staged_is_clean(existing)
-                    if not clean:
-                        return CommitResult(
-                            status=CommitStatus.COMMIT_FAILED,
-                            message=f"staged 区不干净，拒绝无 pathspec auto-commit: {clean_err}",
-                        )
-                    commit_hash, commit_err = self._commit_no_pathspec(full_message)
+                    # commit（pathspec 模式，reconciler 很少遇到 rename）
+                    commit_hash, commit_err = self._commit_with_file_message(
+                        full_message, pathspec_file
+                    )
                     if commit_hash is None:
                         return CommitResult(
                             status=CommitStatus.COMMIT_FAILED,
@@ -1894,7 +2016,7 @@ class GitCommitGateway:
                         )
                     os.environ[_GATEWAY_ENV] = "1"
                     logger.info(
-                        "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d (no-pathspec)",
+                        "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
                         commit_hash, gw_marker, len(existing),
                     )
                     return CommitResult(
