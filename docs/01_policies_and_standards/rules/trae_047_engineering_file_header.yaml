@@ -42,7 +42,7 @@ sections:
     - type: mandatory
       step: '[DEPENDENCIES]上游依赖——填此文件import的模块，分号分隔；强制AI创建代码时到全景图查上游节点是否存在'
     - type: mandatory
-      step: '[STARTUP]启动方式——枚举auto_start/event_driven/scheduled/manual/imported；强制AI声明文件触发方式'
+      step: '[STARTUP]启动方式——枚举auto_start/event_driven/manual/imported；scheduled已废止(见trae_060§3事件驱动全自动)；强制AI声明文件触发方式'
     - type: mandatory
       step: '[MATURITY]设计成熟度——枚举design/prototype/production/legacy；强制AI声明设计态还是运营态'
     - type: mandatory
@@ -181,8 +181,8 @@ sections:
       rationale: 与depgraph.db nodes.design_maturity字段完全一致，零冲突
       applies_to: 所有A_full格式文件表头的[MATURITY]字段
     - id: STARTUP-ENUM
-      statement: 'startup枚举: auto_start(自动启动)/event_driven(事件驱动)/scheduled(定时调度)/manual(手动触发)/imported(被动导入不主动启动)'
-      rationale: 与depgraph.db nodes启动方式字段一致，强制AI声明文件触发方式
+      statement: 'startup枚举: auto_start(自动启动)/event_driven(事件驱动)/manual(手动触发,仅限一次性运维/诊断/迁移)/imported(被动导入不主动启动)；scheduled(定时调度)已废止(见trae_060§3)'
+      rationale: 强制AI声明文件触发方式；scheduled已废止因进程内定时触发等于要人指令触发未达自动(见trae_060§3事件驱动全自动)
       applies_to: 所有A_full格式文件表头的[STARTUP]字段
     - id: HEADER-FORMAT-ENUM
       statement: 'header_format枚举: A_full/A_test/B_yaml/C_json/D_md/E_shell/exempt'

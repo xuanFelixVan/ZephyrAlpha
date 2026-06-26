@@ -981,6 +981,11 @@ metadata:
   modification_permission: ai_modifiable
   superseded_by:
   change_history:
+  - version: 1.4.2
+    date: '2026-06-27'
+    by: AI-Assistant
+    changes:
+    - 移除references.rule_ids自引用TRAE-041(自引用无信息增量,违反向内收原则4新AI可发现性);v1.4.1的"补充TRAE-041"已撤销
   - version: 1.4.1
     date: '2026-06-21'
     by: AI-Assistant
