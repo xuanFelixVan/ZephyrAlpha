@@ -1,0 +1,81 @@
+{
+  "task_id": "DM-100067",
+  "source_file": "docs/01_policies_and_standards/domains/L04_risk_management/operational/stop_loss_config_runbook.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml",
+  "yaml_section": "dom_l04_002",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "Step1_确认策略信息": {
+      "content": "确认策略ID/类型/当前持仓和敞口/历史最大回撤",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.actions[0]"
+    },
+    "Step2_设置止损参数": {
+      "content": "参照DOM-L04-001 §2在risk-config.yaml中配置止损参数",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.actions[1]"
+    },
+    "Step3_参数验证": {
+      "content": "参数验证——不超过阈值+触发动作可执行+计算逻辑正确+边界值防御",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.actions[2] + conditions[0]"
+    },
+    "Step3_边界值防御_max_drawdown_0": {
+      "content": "max_drawdown=0→拒绝（必须设止损）",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.conditions[0] + prohibitions[0]"
+    },
+    "Step3_边界值防御_max_drawdown_1": {
+      "content": "max_drawdown=1.0→拒绝（止损无实际意义）",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.conditions[0] + prohibitions[1]"
+    },
+    "Step3_边界值防御_hard_stop_le_trailing": {
+      "content": "hard_stop≤trailing_stop→拒绝（追踪止损不能严于硬止损）",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.conditions[0] + prohibitions[2]"
+    },
+    "Step3.5_Kill_Switch配置": {
+      "content": "确认Kill Switch配置（全局回撤线/连续触发上限/恢复流程/交易所接口联通）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.actions[3] + conditions[1]"
+    },
+    "Step4_回测确认": {
+      "content": "历史数据模拟止损触发场景+确认触发时间点+确认止损后持仓",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.actions[4]"
+    },
+    "Step5_上线监控": {
+      "content": "dev环境5个交易日+监控触发事件+确认无误触发+Owner审批后切prod",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.actions[5]"
+    },
+    "禁止AI自动回滚": {
+      "content": "回滚涉及生产风控配置，禁止AI自动执行",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_002.prohibitions[3]"
+    }
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "YAML中原本无dom_l04_002 section，已新增完整section",
+    "新增2个conditions（边界值防御检查+Kill Switch配置检查）",
+    "新增6个actions（Step1~5 + Step3.5）",
+    "新增4个prohibitions（3个边界值拒绝+回滚禁止AI自动执行）"
+  ]
+}
