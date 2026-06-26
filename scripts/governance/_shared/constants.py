@@ -25,29 +25,18 @@ constants.py — 审计脚本共享常量
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
+# 一次性 bootstrap：算 sys.path（此 N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
+# 先例：scripts/git_commit.py、scripts/governance/check_ssot_gate.py 均已 bootstrap import src/。
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]  # scripts/governance/_shared/ -> root
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
-def find_repo_root() -> Path:
-    """从当前文件向上查找项目根目录（包含 src/zephyr/ 的目录）。
-
-    比 parents[N] 或 .parent 链更健壮——不依赖文件深度，
-    任何位置的模块都能正确定位项目根。
-
-    Returns:
-        Path: 项目根目录的绝对路径。
-
-    Raises:
-        FileNotFoundError: 向上遍历到文件系统根仍未找到标记。
-    """
-    current = Path(__file__).resolve()
-    for parent in current.parents:
-        if (parent / "src" / "zephyr" / "__init__.py").exists():
-            return parent
-    raise FileNotFoundError(f"Cannot find project root (no src/zephyr/__init__.py found) from {current}")
-
-
-REPO_ROOT: Path = find_repo_root()
+# find_repo_root / REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+# 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
+from zephyr.shared.io.paths import REPO_ROOT, find_repo_root  # noqa: E402
 
 EXCLUDE_DIRS: frozenset[str] = frozenset(
     {
