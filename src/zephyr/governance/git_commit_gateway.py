@@ -787,6 +787,14 @@ class GitCommitGateway:
                     self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
                 except Exception as e:
                     logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e)
+            # P4-T2: session shutdown handoff——写 .runtime/handoffs/handoff_<sid>.json
+            # 供下一 session startup 读取（crash recovery：每次 commit 后更新最新状态）
+            if result.status == CommitStatus.OK:
+                try:
+                    from zephyr.governance.phase_manager import session_shutdown
+                    session_shutdown(session_id, summary=message)
+                except Exception as e:
+                    logger.debug("GitCommitGateway: session_shutdown handoff failed: %s", e)
             # 清理 pathspec 临时文件
             if pathspec_file:
                 try:

@@ -455,6 +455,27 @@ class SessionHandoff:
         except (OSError, ValueError):
             return None
 
+    def read_latest_handoff(self) -> dict | None:
+        """读最近的 handoff package（按 mtime，不需 session_id）。
+
+        供 session_startup 读取上一 session 交接——跨 session 上下文恢复。
+        无 handoff 文件时返回 None（首次运行）。
+        """
+        try:
+            candidates = sorted(
+                self._handoff_dir.glob("handoff_*.json"),
+                key=lambda p: p.stat().st_mtime,
+                reverse=True,
+            )
+        except OSError:
+            return None
+        if not candidates:
+            return None
+        try:
+            return json.loads(candidates[0].read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+
 
 class SessionConflictDetector:
     """检测多 session 操作同一文件（P2-SES）。

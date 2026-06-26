@@ -569,7 +569,7 @@ repos:
       # 运行：pre-commit run handoff-log-generate --hook-stage manual
       - id: handoff-log-generate
         name: "Handoff: 生成交接日志（manual）"
-        entry: python scripts/hooks/auto-handoff-log.py
+        entry: python scripts/hooks/auto_handoff_log.py
         language: system
         pass_filenames: false
         always_run: false
@@ -578,7 +578,7 @@ repos:
 
       - id: handoff-log-post-commit
         name: "Handoff: 提交后交接快照（post-commit）"
-        entry: python scripts/hooks/auto-handoff-log.py --last-commit
+        entry: python scripts/hooks/auto_handoff_log.py --last-commit
         language: system
         pass_filenames: false
         always_run: true

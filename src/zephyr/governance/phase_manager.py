@@ -251,6 +251,23 @@ def phase_resolver(completed_gates: set[str]) -> ConstructionPhase:
 
 
 def session_startup(quick: bool = True) -> dict:
+    """Session 启动检查——运行 phase gate 套件并读取上一 session 交接。
+
+    P4-T2：读取 .runtime/handoffs/ 最近 handoff（若有），纳入返回结果供上下文恢复。
+    """
+    # P4-T2: 读取上一 session 交接（crash recovery / 跨 session 上下文）
+    prev_handoff: dict | None = None
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionHandoff
+        prev_handoff = SessionHandoff().read_latest_handoff()
+        if prev_handoff:
+            logger.info(
+                "session_startup: 读取上一 session 交接 (session=%s)",
+                prev_handoff.get("session_id"),
+            )
+    except Exception as e:
+        logger.debug("session_startup: read handoff failed: %s", e)
+
     from zephyr.governance.phase_check_registry import (
         check_audit_trail_context,
         check_blueprint_mandatory,
@@ -338,4 +355,23 @@ def session_startup(quick: bool = True) -> dict:
         "red": red,
         "checks": results,
         "next_action": next_action,
+        "prev_handoff": prev_handoff,
     }
+
+
+def session_shutdown(
+    session_id: str,
+    summary: str = "",
+    pending_tasks: list[str] | None = None,
+    warnings: list[str] | None = None,
+) -> dict:
+    """Session 结束时写 handoff package（session_startup 镜像，P4-T2 D5）。
+
+    写 .runtime/handoffs/handoff_<session_id>.json，供下一 session startup 读取。
+    轻量——仅写 handoff，不重跑 phase checks（那是 startup 的职责）。
+    由 GitCommitGateway.commit() finally 调用，每次 commit 后更新最新状态（crash recovery）。
+    """
+    from zephyr.security.access_control.session_concurrency import SessionHandoff
+    handoff = SessionHandoff()
+    path = handoff.write_handoff(session_id, summary, pending_tasks, warnings)
+    return {"session_id": session_id, "handoff_path": str(path)}
