@@ -119,6 +119,19 @@ result = await gateway.full_scan(user_text, llm_response)
 - 审计脚本质量见 [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md)（SCRIPT-QUALITY-001）
 - 产出物规格化见 [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)（GOV-DOC-011）——`.md` 文档 frontmatter 标准字段：`module_id, title, version, layer, depends_on, tags, **ttl（GATE-15 强制校验）**`。字段定义和 doc_type 映射见 trae_030；frontmatter 不可删字段完整清单见 [`onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)「绝对不可删的 15 类」
 - **所有 `.md` 文档 frontmatter MUST 含 `ttl` 字段**——2 个合法值：`permanent`（永久）/`task_bound`（任务绑定，完成即删）。判定方法：在永久区路径（`docs/01_policies/`、`docs/02_enterprise_architecture/`、`docs/03_modules/`、`docs/08_knowledge/`）→ `permanent`；否则 → `task_bound`（默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/README.md) 临时区）。详见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree`
+- **词表合法值加载规范（trae_060 §2）**——所有 `scripts/` 下需要加载 vocabulary YAML 合法值（如 `VALID_STATUSES` / `VALID_LAYERS` / `VALID_TTL_VALUES` 等）的代码 **MUST** 使用公共 loader：
+  ```python
+  # 正确（公共 loader，SSoT 唯一入口）
+  import sys
+  from pathlib import Path
+  _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+  if _GOV_DIR not in sys.path:
+      sys.path.insert(0, _GOV_DIR)
+  from _shared.yaml_utils import load_vocabulary_values
+  VALID_STATUSES = load_vocabulary_values("status_vocabulary.yaml")
+  VALID_LAYER = load_vocabulary_values("layer_vocabulary.yaml", fallback_key="id")
+  ```
+  **禁止**各脚本复制 `_load_xxx_values()` 局部函数（违反 SCRIPT-QUALITY-001 D-D-05 + trae_060 §2）。capability 注册表已登记 `vocabulary_values_loader`（canonical = `scripts/governance/_shared/yaml_utils.py`）。配套门禁：**GATE-VOCAB**（`python scripts/governance/d3_metadata/check_vocab_hardcode.py`，pre-commit 钩子）AST 扫描检测 `VALID_*_VALUES/STATUSES/TYPES/LEVELS/LAYERS/TTL/CATEGORIES/CLASSIFICATIONS` 模式的字面量硬编码 + `load_vocabulary_values("xxx.yaml")` 引用文件存在性校验。例外：DDL 文件（`sqlite_schema.py` 等）走 DDL-as-Code 协议；`_archive/` 排除。
 
 ## 8. 永远不要做的事
 
@@ -132,6 +145,15 @@ result = await gateway.full_scan(user_text, llm_response)
 ## 9. 新模块接入规则
 
 创建新模块时，必须：
+0. **查 CapabilityLookup 确认能力是否已存在**（防止重复造轮子）：
+   ```python
+   from zephyr.governance.capability_lookup import CapabilityLookup
+   reg = CapabilityLookup()              # 自动扫磁盘+派生 canonical
+   hits = reg.find("rollback")            # 关键词搜（匹配 capability_id/aliases/description/canonical_file）
+   cap = reg.get("rollback_executor")     # 按 capability_id 精确查
+   reg.check_file_canonical("src/zephyr/xxx.py")  # 反查某文件是哪个能力的 canonical
+   ```
+   真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（能力索引，仅声明 capability_id/aliases/description；canonical_file/duplicates/removed_duplicates 全部由 CapabilityLookup 从磁盘头部+git log 自动派生）。已存在的能力 → 扩展现有 canonical 文件，禁止新建重复实现。
 1. 构造 CapabilityCard 并注册到 CapabilityRegistry
 2. 在 `data/capability_cards/` 下创建对应的 YAML
 3. 如果有自动化工作，创建 WorkDAG 并注册到 WorkOrchestrator

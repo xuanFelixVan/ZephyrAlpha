@@ -135,6 +135,25 @@ capabilities:
       src/zephyr/shared/io/paths.py 是 REPO_ROOT 真源；截至本次仍有 90+ 文件各自推算，彻底归一见独立任务。
 
   # --------------------------------------------------------------------------
+  - capability_id: vocabulary_values_loader
+    canonical_override: scripts/governance/_shared/yaml_utils.py
+    aliases:
+      - load_vocabulary_values
+      - vocabulary_loader
+      - 词表加载器
+      - vocab_loader
+      - yaml_vocabulary_loader
+    description: >-
+      vocabulary YAML 合法值集合加载的唯一公共入口。所有 scripts/ 下需要加载词表合法值
+      （如 VALID_STATUSES / VALID_LAYERS / VALID_TTL_VALUES 等）的代码应
+      from _shared.yaml_utils import load_vocabulary_values，禁止各脚本复制
+      _load_xxx_values() 局部函数（违反 SCRIPT-QUALITY-001 D-D-05）。
+      canonical = scripts/governance/_shared/yaml_utils.py（auto 派生：basename
+      yaml_utils 匹配别名；无同蓝图竞争候选）。对标 trae_060 §2 词表唯一真源原则。
+      注意：src/zephyr/ 下的代码（如 triage.py）因包路径隔离无法 import 此模块，
+      暂保留局部 loader，待统一到 src/zephyr/shared/yaml_utils 后消除。
+
+  # --------------------------------------------------------------------------
   - capability_id: blueprint_path_query
     canonical_override: src/zephyr/governance/rule_enforcement/sys_master_compliance.py
     aliases:
