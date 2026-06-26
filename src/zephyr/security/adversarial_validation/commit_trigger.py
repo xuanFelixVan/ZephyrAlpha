@@ -28,8 +28,8 @@ CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
     跑 TIER_1 对抗，受 CircuitBreaker 频率保护。
   - **就位 + 门禁激活**：钩子代码始终就位（emit 总发生）；门禁 env var
     ZEPHYR_RED_BLUE_AUTO_ENABLED=1 时才实跑，否则只 log + 清队列（fail-closed）。
-  - **保留 daily_drill 定时路径**：本模块是并存新增，CircadianScheduler hour=6
-    的 _red_blue_daily_drill 不动。
+  - **唯一触发路径**：CircadianScheduler 定时调度已废除（2026-06-26），
+    本模块是红蓝对抗的唯一触发入口，由 GitCommitGateway post-commit 事件驱动。
 
 用法:
     # 锁内（GitCommitGateway post-commit 钩子）:

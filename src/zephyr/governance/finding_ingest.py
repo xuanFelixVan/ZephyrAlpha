@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.audit_trail.finding_ingest
 # [DOMAIN] D-GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.writer; zephyr.integration.shared_08.event_bus
-# [CONSUMERS] pipeline_runner.py; run_all.py; circadian_scheduler
+# [CONSUMERS] pipeline_runner.py; run_all.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] FindingIngest is the sole bridge between 144 governance scripts and audit-trail; every finding MUST pass through this class

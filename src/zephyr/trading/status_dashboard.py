@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.status_dashboard
 # [DOMAIN] D-TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
@@ -25,11 +25,27 @@ from datetime import datetime
 from typing import Any
 
 from zephyr.trading.capability_registry import CapabilityRegistry
-from zephyr.trading.circadian_scheduler import CircadianScheduler
 from zephyr.trading.health_monitor import HealthMonitor
 from zephyr.trading.night_shift_queue import NightShiftQueue
 from zephyr.trading.orphan_detector import OrphanDetector
 from zephyr.trading.work_orchestrator import WorkOrchestrator
+
+
+def _current_phase() -> str:
+    """根据当前时间返回系统节律阶段字符串。
+
+    原 CircadianScheduler.get_current_phase() 的内联实现——CircadianScheduler
+    定时调度机制已废除（2026-06-26 裁定），phase 仅用于状态面板展示，
+    故下沉为模块级纯函数，不再依赖调度器实例。
+    """
+    hour = datetime.now().hour
+    if 6 <= hour < 9:
+        return "MORNING"
+    if 9 <= hour < 18:
+        return "DAY"
+    if 18 <= hour < 21:
+        return "EVENING"
+    return "NIGHT"
 
 
 class StatusDashboard:
@@ -41,7 +57,6 @@ class StatusDashboard:
         health_monitor: HealthMonitor,
         night_shift_queue: NightShiftQueue,
         work_orchestrator: WorkOrchestrator,
-        circadian_scheduler: CircadianScheduler,
         orphan_detector: OrphanDetector | None = None,
         uptime_start: str = "",
     ) -> None:
@@ -49,19 +64,17 @@ class StatusDashboard:
         self._health = health_monitor
         self._nq = night_shift_queue
         self._wo = work_orchestrator
-        self._cs = circadian_scheduler
         self._orphan = orphan_detector
         self._uptime_start = uptime_start or datetime.now().isoformat()
 
     def render_tui(self) -> str:
-        phase = self._cs.get_current_phase()
+        phase = _current_phase()
         nq_stats = self._nq.stats()
         pending = self._wo.pending_count()
         running = self._wo.running_count()
         dags = self._wo.list_dags()
         caps = self._registry.list_all()
         pressure = self._health.pressure_level()
-        next_task = self._cs.get_next_task()
 
         orphan_rate = 0.0
         if self._orphan:
@@ -70,27 +83,25 @@ class StatusDashboard:
         lines = [
             f"{'=' * 60}",
             "  ZephyrAlpha AutoRuntime Core",
-            f"  Phase: {phase.value}  Pressure: {pressure.value}  OrphanRate: {orphan_rate:.1%}",
+            f"  Phase: {phase}  Pressure: {pressure.value}  OrphanRate: {orphan_rate:.1%}",
             f"{'=' * 60}",
             f"  Capabilities: {len(caps)} registered",
             f"  Night Shift: {nq_stats['pending']} pending / {nq_stats['resolved']} resolved",
             f"  Work DAGs: {len(dags)} loaded",
             f"  Pending: L1={pending.get('trae', 0)} L2={pending.get('local', 0)} L3={pending.get('api', 0)}",
             f"  Running: L1={running.get('trae', 0)} L2={running.get('local', 0)} L3={running.get('api', 0)}",
-            f"  Next circadian: {next_task.name if next_task else 'none'}",
             f"{'=' * 60}",
         ]
         return "\n".join(lines)
 
     def render_json(self) -> dict[str, Any]:
-        phase = self._cs.get_current_phase()
         nq_stats = self._nq.stats()
         orphan_rate = 0.0
         if self._orphan:
             orphan_rate = self._orphan.compute_orphan_rate()
 
         return {
-            "phase": phase.value,
+            "phase": _current_phase(),
             "pressure": self._health.pressure_level().value,
             "orphan_rate": orphan_rate,
             "capabilities": len(self._registry.list_all()),

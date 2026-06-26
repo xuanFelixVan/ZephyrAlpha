@@ -49,7 +49,6 @@ def _make_config(tmp_path: Path) -> RuntimeConfig:
         dream_archive_dir=tmp_path / "dream",
         feedback_proposal_dir=tmp_path / "feedback",
         health_snapshot_dir=tmp_path / "health",
-        circadian_state_path=tmp_path / "circadian" / "state.json",
         auto_start_l2=False,
     )
 
@@ -104,7 +103,6 @@ class TestAutoRuntimeCoreRealBoot:
         assert core.work_orchestrator is not None
         assert core.stop_gate is not None
         assert core._health_monitor is not None
-        assert core._circadian_scheduler is not None
 
     def test_boot_creates_real_dirs(self, tmp_path: Path) -> None:
         """验证 boot() 真实创建目录（ensure_runtime_dirs 真实执行）。"""
@@ -126,28 +124,6 @@ class TestAutoRuntimeCoreRealBoot:
         assert (tmp_path / "dream").exists()
         assert (tmp_path / "feedback").exists()
         assert (tmp_path / "health").exists()
-        assert (tmp_path / "circadian").exists()
-
-    def test_boot_registers_circadian_tasks(self, tmp_path: Path) -> None:
-        """验证 boot() 真实注册 CircadianScheduler 默认任务。"""
-        config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
-            core = AutoRuntimeCore(config)
-
-        patches = _patch_boot_extras(core)
-        exit_fn = _enter_patches(patches)
-        try:
-            core.boot()
-        finally:
-            exit_fn()
-
-        # CircadianScheduler 真实注册了默认任务
-        scheduler = core._circadian_scheduler
-        assert len(scheduler._tasks) >= 13
-        task_names = [t.name for t in scheduler._tasks]
-        assert "deep_drift_scan" in task_names
-        assert "red_blue_daily_drill" in task_names
-        assert "orphan_scan_and_fix" in task_names
 
 
 class TestAutoRuntimeCoreRealShutdown:
@@ -169,24 +145,6 @@ class TestAutoRuntimeCoreRealShutdown:
         report = core.shutdown()
         assert core._booted is False
         assert report.steps_completed > 0
-
-    def test_shutdown_stops_circadian_scheduler(self, tmp_path: Path) -> None:
-        """验证 shutdown() 真实停止 CircadianScheduler。"""
-        config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
-            core = AutoRuntimeCore(config)
-
-        patches = _patch_boot_extras(core)
-        exit_fn = _enter_patches(patches)
-        try:
-            core.boot()
-        finally:
-            exit_fn()
-
-        # boot 后 circadian_scheduler 可能正在运行（如果 boot 成功）
-        # shutdown 后应停止
-        core.shutdown()
-        assert core._circadian_scheduler._running is False
 
     def test_shutdown_idempotent(self, tmp_path: Path) -> None:
         """验证多次 shutdown() 不崩溃。"""
@@ -301,7 +259,6 @@ class TestAutoRuntimeCoreRealComponents:
 
         # 验证核心组件是真实类型（不是 MagicMock）
         from zephyr.trading.capability_registry import CapabilityRegistry
-        from zephyr.trading.circadian_scheduler import CircadianScheduler
         from zephyr.trading.dream_cycle import DreamCycle
         from zephyr.trading.health_monitor import HealthMonitor
         from zephyr.trading.work_orchestrator import WorkOrchestrator
@@ -309,7 +266,6 @@ class TestAutoRuntimeCoreRealComponents:
         assert isinstance(core.capability_registry, CapabilityRegistry)
         assert isinstance(core.work_orchestrator, WorkOrchestrator)
         assert isinstance(core._health_monitor, HealthMonitor)
-        assert isinstance(core._circadian_scheduler, CircadianScheduler)
         assert isinstance(core._dream_cycle, DreamCycle)
 
     def test_work_orchestrator_real_submit(self, tmp_path: Path) -> None:
@@ -346,16 +302,3 @@ class TestAutoRuntimeCoreRealComponents:
         result = core._health_monitor.probe("test-cap")
         assert result.alive is True
         assert result.ready is True
-
-    def test_circadian_scheduler_real_trigger_event(self, tmp_path: Path) -> None:
-        """验证 boot() 后 CircadianScheduler 可真实 trigger_event。"""
-        config = _make_config(tmp_path)
-        with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
-            core = AutoRuntimeCore(config)
-
-        called = []
-        core._circadian_scheduler.register_event_listener(
-            "test-event", lambda: called.append(1)
-        )
-        core._circadian_scheduler.trigger_event("test-event")
-        assert called == [1]

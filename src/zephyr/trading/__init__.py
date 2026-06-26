@@ -14,7 +14,6 @@ __all__ = [
     "capability_card",
     "capability_registry",
     "capability_sync",
-    "circadian_scheduler",
     "conductor",
     "dream_cycle",
     "feedback_loop",

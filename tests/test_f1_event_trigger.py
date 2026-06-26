@@ -1,7 +1,7 @@
 # [A_test] module_id=TEST-F1-EVENT | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §3.2
 # [MODULE] tests.test_f1_event_trigger
-# [INVARIANTS] 测试三套事件机制(shared.event_bus.EventBus/EventBusBackpressure/CircadianScheduler.trigger_event)触发F1组件
+# [INVARIANTS] 测试两套事件机制(shared.event_bus.EventBus/EventBusBackpressure)触发F1组件
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,7 +12,7 @@
 
 """F1 事件触发启动测试
 
-验证 F1 三套事件机制能否正确触发 F1 组件启动:
+验证 F1 两套事件机制能否正确触发 F1 组件启动:
   ① zephyr.shared.event_bus.EventBus（强类型领域事件）
      - subscribe(publish) TASK_CREATED/TASK_COMPLETED/GATE_PASSED 等事件
      - 验证 publish 触发订阅者回调
@@ -20,9 +20,6 @@
      - subscribe/emit 主题式事件
      - 验证 emit 触发订阅者回调
      - 验证背压控制（队列上限/丢弃计数）
-  ③ CircadianScheduler.trigger_event（本地事件）
-     - register_event_listener/trigger_event
-     - 验证 trigger_event 触发监听器回调
 
 依据: MOD-INF-035 §3.2数据流 + DM-201113 任务卡。
 """
@@ -39,7 +36,6 @@ from zephyr.shared.event_bus import (
     EventPriority,
     EventType,
 )
-from zephyr.trading.circadian_scheduler import CircadianScheduler
 
 
 # ---------------------------------------------------------------------------
@@ -291,98 +287,12 @@ class TestEventBusBackpressureBackpressure:
 
 
 # ---------------------------------------------------------------------------
-# ③ CircadianScheduler.trigger_event（本地事件）
-# ---------------------------------------------------------------------------
-
-
-class TestCircadianSchedulerEvent:
-    """验证 CircadianScheduler 本地事件机制。"""
-
-    def test_register_and_trigger(self) -> None:
-        scheduler = CircadianScheduler()
-        called = []
-
-        scheduler.register_event_listener("test-event", lambda: called.append(1))
-        scheduler.trigger_event("test-event")
-
-        assert called == [1]
-
-    def test_multiple_listeners_same_event(self) -> None:
-        scheduler = CircadianScheduler()
-        called1 = []
-        called2 = []
-
-        scheduler.register_event_listener("multi-event", lambda: called1.append(1))
-        scheduler.register_event_listener("multi-event", lambda: called2.append(1))
-
-        scheduler.trigger_event("multi-event")
-
-        assert called1 == [1]
-        assert called2 == [1]
-
-    def test_trigger_unknown_event_no_crash(self) -> None:
-        """验证触发未注册的事件不崩溃。"""
-        scheduler = CircadianScheduler()
-        scheduler.trigger_event("nonexistent-event")
-
-    def test_listener_exception_isolated(self) -> None:
-        """验证单个监听器异常不影响其他监听器。"""
-        scheduler = CircadianScheduler()
-        called = []
-
-        def exploding_listener() -> None:
-            raise RuntimeError("listener exploded")
-
-        scheduler.register_event_listener("iso-event", exploding_listener)
-        scheduler.register_event_listener("iso-event", lambda: called.append(1))
-
-        # 不应抛出异常
-        scheduler.trigger_event("iso-event")
-        # 正常监听器仍被调用
-        assert called == [1]
-
-
-class TestCircadianSchedulerTriggerF1:
-    """验证 CircadianScheduler.trigger_event 触发 F1 组件回调。"""
-
-    def test_boot_event_triggers_callback(self) -> None:
-        """验证 boot 事件可触发 F1 组件回调。"""
-        scheduler = CircadianScheduler()
-        booted = []
-
-        scheduler.register_event_listener("system.boot", lambda: booted.append(True))
-        scheduler.trigger_event("system.boot")
-
-        assert booted == [True]
-
-    def test_shutdown_event_triggers_callback(self) -> None:
-        """验证 shutdown 事件可触发 F1 组件回调。"""
-        scheduler = CircadianScheduler()
-        shutdown = []
-
-        scheduler.register_event_listener("system.shutdown", lambda: shutdown.append(True))
-        scheduler.trigger_event("system.shutdown")
-
-        assert shutdown == [True]
-
-    def test_reconcile_event_triggers_callback(self) -> None:
-        """验证 reconcile 事件可触发 F1 组件回调。"""
-        scheduler = CircadianScheduler()
-        reconciled = []
-
-        scheduler.register_event_listener("system.reconcile", lambda: reconciled.append(True))
-        scheduler.trigger_event("system.reconcile")
-
-        assert reconciled == [True]
-
-
-# ---------------------------------------------------------------------------
-# ④ 三套事件机制隔离性
+# ④ 事件机制隔离性
 # ---------------------------------------------------------------------------
 
 
 class TestThreeEventMechanismsIsolation:
-    """验证三套事件机制相互隔离——一个机制的异常不影响其他机制。"""
+    """验证事件机制相互隔离——一个机制的异常不影响其他机制。"""
 
     def test_event_bus_and_backpressure_isolated(self) -> None:
         """验证 EventBus 和 EventBusBackpressure 互不影响。"""
@@ -404,47 +314,3 @@ class TestThreeEventMechanismsIsolation:
         bp_bus.emit("task.created", {"task_id": "DM-ISO-002"})
         assert bp_called == [{"task_id": "DM-ISO-002"}]
         assert domain_called == ["DM-ISO-001"]
-
-    def test_circadian_isolated_from_event_bus(self) -> None:
-        """验证 CircadianScheduler.trigger_event 与 EventBus 互不影响。"""
-        scheduler = CircadianScheduler()
-        domain_bus = EventBus()
-
-        sched_called = []
-        domain_called = []
-
-        scheduler.register_event_listener("test-event", lambda: sched_called.append(1))
-        domain_bus.subscribe(EventType.TASK_STARTED, lambda e: domain_called.append(e.task_id))
-
-        # CircadianScheduler 触发，不影响 EventBus
-        scheduler.trigger_event("test-event")
-        assert sched_called == [1]
-        assert domain_called == []
-
-        # EventBus 发布，不影响 CircadianScheduler
-        domain_bus.publish(EventType.TASK_STARTED, task_id="DM-ISO-003")
-        assert domain_called == ["DM-ISO-003"]
-        assert sched_called == [1]
-
-    def test_three_mechanisms_coexist(self) -> None:
-        """验证三套事件机制可同时存在并独立工作。"""
-        domain_bus = EventBus()
-        bp_bus = EventBusBackpressure()
-        scheduler = CircadianScheduler()
-
-        d_called = []
-        b_called = []
-        s_called = []
-
-        domain_bus.subscribe(EventType.TASK_COMPLETED, lambda e: d_called.append(e.task_id))
-        bp_bus.subscribe("task.completed", lambda e: b_called.append(e.payload))
-        scheduler.register_event_listener("task.completed", lambda: s_called.append(1))
-
-        # 各自触发
-        domain_bus.publish(EventType.TASK_COMPLETED, task_id="DM-COEX-001")
-        bp_bus.emit("task.completed", {"task_id": "DM-COEX-002"})
-        scheduler.trigger_event("task.completed")
-
-        assert d_called == ["DM-COEX-001"]
-        assert b_called == [{"task_id": "DM-COEX-002"}]
-        assert s_called == [1]

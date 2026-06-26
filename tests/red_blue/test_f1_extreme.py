@@ -1,7 +1,7 @@
 # [A_test] module_id=TEST-F1-RED-BLUE | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §9
 # [MODULE] tests.red_blue.test_f1_extreme
-# [INVARIANTS] 红蓝对抗测试隔离外部依赖(LLM/ollama/VMS); 每个测试类覆盖一个极端场景; 聚焦F1核心组件(AutoRuntimeCore/WorkOrchestrator/CircadianScheduler/DreamCycle/Conductor)
+# [INVARIANTS] 红蓝对抗测试隔离外部依赖(LLM/ollama/VMS); 每个测试类覆盖一个极端场景; 聚焦F1核心组件(AutoRuntimeCore/WorkOrchestrator/DreamCycle/Conductor)
 # [CONSUMERS] pytest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -36,7 +36,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.trading.circadian_scheduler import CircadianScheduler
 from zephyr.trading.dream_cycle import DreamCycle
 from zephyr.trading.health_monitor import HealthMonitor, ProbeResult
 from zephyr.trading.work_dag import WorkItem
@@ -448,62 +447,3 @@ class TestConcurrent100Tasks:
             first_p1_idx = next(i for i, x in enumerate(ready) if x.priority == "P1")
             assert first_p0_idx < first_p1_idx
 
-
-# ---------------------------------------------------------------------------
-# 场景 ⑥ CircadianScheduler 异常注入 → 回调静默失败
-# ---------------------------------------------------------------------------
-
-
-class TestCircadianSchedulerAnomaly:
-    """红队：CircadianScheduler 回调抛异常 → 不应影响其他任务。
-
-    蓝队期望：trigger_event 捕获回调异常，不影响其他监听器。
-    """
-
-    def test_event_listener_exception_isolated(self) -> None:
-        scheduler = CircadianScheduler()
-        called = []
-
-        def exploding_cb() -> None:
-            raise RuntimeError("listener exploded")
-
-        def normal_cb() -> None:
-            called.append(1)
-
-        scheduler.register_event_listener("test-event", exploding_cb)
-        scheduler.register_event_listener("test-event", normal_cb)
-
-        # 不应抛出异常
-        scheduler.trigger_event("test-event")
-        # normal_cb 仍被调用
-        assert called == [1]
-
-    def test_trigger_unknown_event_no_crash(self) -> None:
-        scheduler = CircadianScheduler()
-        # 触发未注册的事件不应崩溃
-        scheduler.trigger_event("nonexistent-event")
-
-    def test_register_default_tasks_idempotent(self) -> None:
-        """验证 _register_default_tasks 多次调用不抛异常（定时调度已废除，该方法为 no-op）。"""
-        scheduler = CircadianScheduler()
-        # no-op: 多次调用均不抛异常
-        scheduler._register_default_tasks()
-        scheduler._register_default_tasks()
-        # no-op: _tasks 始终为空
-        assert scheduler._tasks == []
-
-    def test_red_blue_daily_drill_callback_registered(self) -> None:
-        """验证 _register_default_tasks 是 no-op（不再注册 red_blue_daily_drill 到 _tasks）。"""
-        scheduler = CircadianScheduler()
-        scheduler._register_default_tasks()
-        # no-op: 不再注册任何任务
-        rb_tasks = [t for t in scheduler._tasks if t.name == "red_blue_daily_drill"]
-        assert len(rb_tasks) == 0
-        # _red_blue_daily_drill 方法仍存在（事件驱动可直接调用）
-        assert callable(getattr(scheduler, "_red_blue_daily_drill", None))
-
-    def test_red_blue_daily_drill_silent_on_failure(self) -> None:
-        """验证 _red_blue_daily_drill 在 GameDayRunner 异常时静默失败。"""
-        scheduler = CircadianScheduler()
-        # 不应抛出异常
-        scheduler._red_blue_daily_drill()

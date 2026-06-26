@@ -488,26 +488,29 @@ scenarios:
     test_file: "tests/adversarial/test_naming_adversarial.py::TestAdversarialWhitelistManipulation"
 
   # === Stale Task / IN_PROGRESS Leak Scenarios (DM-400) ===
+  # [CHANGE-NOTE] 2026-06-26: CircadianScheduler 定时调度废除，stale_task_recovery
+  # 定时注册已移除；事件驱动迁移待定。RB-SCEN-045 防御层移除 circadian 层，
+  # RB-SCEN-046 攻击向量已失效（circadian_scheduler 不存在），标记 deprecated。
   - scenario_id: RB-SCEN-045
     name: "Stale IN_PROGRESS Task Leak — AI Completes Without Closing"
     tier: L1
     severity: critical
     injection_vector: "ai_session_exit_without_transition"
     target_module: "task_repo"
-    defense: "transition() DM-401 warning + circadian_scheduler stale_task_recovery + session close IN_PROGRESS=0 check"
+    defense: "transition() DM-401 warning + session close IN_PROGRESS=0 check (stale_task_recovery 事件驱动迁移待定)"
     steady_state_verification: "IN_PROGRESS count == 0 after session close"
     status: active
     test_file: "tests/adversarial/test_stale_task_adversarial.py::TestAdversarialStaleTaskLeak"
 
   - scenario_id: RB-SCEN-046
-    name: "Stale Task Recovery Bypass — Cron Job Disabled"
+    name: "Stale Task Recovery Bypass — CircadianScheduler Disabled (DEPRECATED)"
     tier: L2
     severity: high
     injection_vector: "circadian_scheduler_stale_recovery_disabled"
     target_module: "boot_cron_jobs"
-    defense: "stale_task_recovery registered at boot + idempotent + session close backup check"
-    steady_state_verification: "stale_task_recovery in circadian_scheduler task list"
-    status: active
+    defense: "circadian_scheduler 已废除（2026-06-26），本攻击向量失效；事件驱动迁移后需重新设计场景"
+    steady_state_verification: "N/A — circadian_scheduler task list 已不存在"
+    status: deprecated
     test_file: "tests/adversarial/test_stale_task_adversarial.py::TestAdversarialStaleRecoveryBypass"
 
   # === TTL Frontmatter Metadata Gate Adversarial Scenarios (GATE-15) ===

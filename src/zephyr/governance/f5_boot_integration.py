@@ -2,11 +2,11 @@
 # [MODULE] zephyr.governance.f5_boot_integration
 # [DOMAIN]
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.trading.boot_hooks; zephyr.trading.circadian_scheduler; zephyr.ops.scheduler
+# [CONSUMERS] zephyr.trading.boot_hooks; zephyr.ops.scheduler
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] register_startup_hook is idempotent; on_startup initializes F5四组件; on_shutdown clears F5 state; run_periodic_checks never raises
-# [MODIFY-GUARD] boot_hooks registration name must be "f5_boot_init"; CircadianScheduler task names must be "f5_deadlock_scan" / "f5_escalation_queue_scan"
+# [MODIFY-GUARD] boot_hooks registration name must be "f5_boot_init"
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -22,8 +22,11 @@ F5 = EscalationProtocol 五件套: EscalationEngine + DelegationEngine + Deadloc
 1. session_startup 钩子: 系统启动时按依赖顺序初始化 F5 四组件
    (DeadlockDetector → EscalationEngine → DelegationEngine → Arbitrator)
 2. FLE _periodic_checks() 集成: 巡检死锁/超时锁/升级队列/过期委托
-3. CircadianScheduler 注册定时任务: f5_deadlock_scan + f5_escalation_queue_scan
-4. boot_hooks 触发接口: register_startup_hook() 注册到 hook_registry
+3. boot_hooks 触发接口: register_startup_hook() 注册到 hook_registry
+
+注: CircadianScheduler 定时任务注册（f5_deadlock_scan / f5_escalation_queue_scan）
+已于 2026-06-26 裁定随 CircadianScheduler 一并废除；F5 巡检改由 FLE
+_periodic_checks() 事件驱动触发。
 """
 from __future__ import annotations
 
@@ -53,7 +56,6 @@ class F5BootIntegration:
     2. 初始化 EscalationEngine (规则匹配 + 熔断器 + 经济守卫)
     3. 初始化 DelegationEngine (注入 DeadlockDetector, MAX_DEPTH=3)
     4. 初始化 Arbitrator (注入 EscalationEngine + DeadlockDetector)
-    5. 注册 F5 定时巡检任务到 CircadianScheduler
 
     在系统关闭时:
     1. 清理 DelegationEngine 过期委托
@@ -62,8 +64,6 @@ class F5BootIntegration:
     """
 
     HOOK_NAME = "f5_boot_init"
-    CIRCADIAN_TASK_DEADLOCK = "f5_deadlock_scan"
-    CIRCADIAN_TASK_ESCALATION = "f5_escalation_queue_scan"
     DEADLOCK_TIMEOUT_SECONDS = 300.0
 
     def __init__(self, project_root: Path | None = None) -> None:
@@ -73,7 +73,6 @@ class F5BootIntegration:
         self._deadlock_detector: Any = None
         self._arbitrator: Any = None
         self._initialized = False
-        self._circadian_registered = False
         self._last_periodic_result: dict = {}
 
     def register_startup_hook(self) -> None:
@@ -190,11 +189,6 @@ class F5BootIntegration:
             errors=errors,
             details=details,
         )
-
-    def register_with_circadian(self, scheduler: Any) -> None:
-        """已废弃：定时任务注册已废除。保留签名兼容调用链，方法体为 no-op。"""
-        # 定时调度已废除（2026-06-26裁定），F5 死锁/升级检查改由事件驱动触发。
-        self._circadian_registered = True  # 标记已注册，避免重复调用
 
     def run_periodic_checks(self) -> dict:
         """FLE _periodic_checks() 集成入口 — 巡检死锁/超时锁/升级队列/过期委托。

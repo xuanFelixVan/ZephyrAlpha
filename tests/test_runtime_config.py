@@ -92,7 +92,6 @@ class TestRuntimeConfigEnsureDirs:
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
             night_shift_storage_path=tmp_path / "nsq" / "queue.jsonl",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
         )
         cfg.ensure_dirs()
         assert cfg.audit_log_dir.exists()
@@ -102,7 +101,6 @@ class TestRuntimeConfigEnsureDirs:
         assert cfg.feedback_proposal_dir.exists()
         assert cfg.health_snapshot_dir.exists()
         assert cfg.night_shift_storage_path.parent.exists()
-        assert cfg.circadian_state_path.parent.exists()
 
 
 class TestDataDir:

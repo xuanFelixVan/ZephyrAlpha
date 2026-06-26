@@ -18,26 +18,22 @@ from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
 
 
 class TestRegisterBootCronJobs:
-    """定时调度已废除（2026-06-26裁定）：register_boot_cron_jobs 保留函数签名
-    但不再调用 register_task。以下测试验证 no-op 行为。"""
+    """定时调度已废除（2026-06-26裁定）：register_boot_cron_jobs 仅保留事件订阅
+    （bus.subscribe skill.freshness_critical）。以下测试验证事件驱动行为和容错性。"""
 
-    def test_does_not_register_tasks(self, tmp_path):
-        """register_task 不被调用（定时调度已废除）。"""
-        scheduler = MagicMock()
+    def test_subscribes_freshness_event(self, tmp_path):
+        """subscribe skill.freshness_critical 事件（事件驱动入口）。"""
         orchestrator = MagicMock()
-        with patch("zephyr.trading.boot_cron_jobs.TaskRepository", create=True) as mock_repo_cls:
-            with patch("zephyr.trading.boot_cron_jobs.TaskCompletionGate", create=True) as mock_gate_cls:
-                mock_repo_cls.return_value = MagicMock()
-                mock_gate_cls.return_value = MagicMock()
-                register_boot_cron_jobs(scheduler, orchestrator, tmp_path)
-        assert scheduler.register_task.call_count == 0
+        with patch("zephyr.shared.event_bus.bus") as mock_bus:
+            register_boot_cron_jobs(orchestrator, tmp_path)
+            mock_bus.subscribe.assert_called_once()
+            event_name = mock_bus.subscribe.call_args.args[0]
+            assert event_name == "skill.freshness_critical"
 
     def test_failure_does_not_raise(self, tmp_path):
-        scheduler = MagicMock()
+        """bus.subscribe 失败时不抛异常（容错）。"""
         orchestrator = MagicMock()
-        with patch(
-            "zephyr.trading.boot_cron_jobs.TaskRepository",
-            side_effect=ImportError("no module"),
-            create=True,
-        ):
-            register_boot_cron_jobs(scheduler, orchestrator, tmp_path)
+        with patch("zephyr.shared.event_bus.bus") as mock_bus:
+            mock_bus.subscribe.side_effect = RuntimeError("broken")
+            # Should not raise
+            register_boot_cron_jobs(orchestrator, tmp_path)

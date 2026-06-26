@@ -14,7 +14,6 @@ from __future__ import annotations
 # [TESTS] tests/test_status_dashboard.py
 from unittest.mock import MagicMock
 
-from zephyr.trading.circadian_scheduler import CircadianPhase
 from zephyr.trading.health_monitor import PressureLevel
 from zephyr.trading.status_dashboard import StatusDashboard
 
@@ -45,13 +44,6 @@ def _make_work_orchestrator(dag_count: int = 0, pending: dict | None = None, run
     return wo
 
 
-def _make_circadian_scheduler(phase: CircadianPhase = CircadianPhase.DAY, next_task=None):
-    cs = MagicMock()
-    cs.get_current_phase.return_value = phase
-    cs.get_next_task.return_value = next_task
-    return cs
-
-
 class TestStatusDashboardInit:
     def test_creation_with_all_deps(self):
         dash = StatusDashboard(
@@ -59,7 +51,6 @@ class TestStatusDashboardInit:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
         )
         assert dash._registry is not None
         assert dash._uptime_start != ""
@@ -70,7 +61,6 @@ class TestStatusDashboardInit:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
             uptime_start="2026-01-01T00:00:00",
         )
         assert dash._uptime_start == "2026-01-01T00:00:00"
@@ -83,7 +73,6 @@ class TestStatusDashboardInit:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
             orphan_detector=od,
         )
         assert dash._orphan is od
@@ -96,7 +85,6 @@ class TestRenderTui:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
         )
         output = dash.render_tui()
         assert "ZephyrAlpha AutoRuntime Core" in output
@@ -109,7 +97,6 @@ class TestRenderTui:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(pending=2, resolved=5),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
         )
         output = dash.render_tui()
         assert "2 pending" in output
@@ -123,7 +110,6 @@ class TestRenderTui:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
             orphan_detector=od,
         )
         output = dash.render_tui()
@@ -135,7 +121,6 @@ class TestRenderTui:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
         )
         output = dash.render_tui()
         assert "0.0%" in output
@@ -148,7 +133,6 @@ class TestRenderJson:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
         )
         data = dash.render_json()
         assert "phase" in data
@@ -169,11 +153,10 @@ class TestRenderJson:
             health_monitor=_make_health_monitor(level=PressureLevel.ELEVATED),
             night_shift_queue=_make_night_shift_queue(pending=1, resolved=3),
             work_orchestrator=_make_work_orchestrator(dag_count=2),
-            circadian_scheduler=_make_circadian_scheduler(phase=CircadianPhase.NIGHT),
             orphan_detector=od,
         )
         data = dash.render_json()
-        assert data["phase"] == "NIGHT"
+        assert data["phase"] in ("MORNING", "DAY", "EVENING", "NIGHT")
         assert data["pressure"] == "ELEVATED"
         assert data["orphan_rate"] == 0.3
         assert data["capabilities"] == 5
@@ -187,7 +170,6 @@ class TestRenderJson:
             health_monitor=_make_health_monitor(),
             night_shift_queue=_make_night_shift_queue(),
             work_orchestrator=_make_work_orchestrator(),
-            circadian_scheduler=_make_circadian_scheduler(),
         )
         data = dash.render_json()
         assert data["orphan_rate"] == 0.0

@@ -103,31 +103,6 @@ class TestHealthMonitorAutoRun:
 class TestCircadianSchedulerAutoRun:
     """CircadianScheduler 小时级自动运行测试。"""
 
-    def test_circadian_scheduler_importable(self) -> None:
-        """CircadianScheduler 可导入。"""
-        from zephyr.trading.circadian_scheduler import CircadianScheduler
-        assert CircadianScheduler is not None
-
-    def test_circadian_scheduler_instantiable(self) -> None:
-        """CircadianScheduler 可实例化。"""
-        from zephyr.trading.circadian_scheduler import CircadianScheduler
-        cs = CircadianScheduler()
-        assert cs is not None
-
-    def test_circadian_scheduler_register_task(self) -> None:
-        """CircadianScheduler register_task 是 no-op（定时调度已废除，不添加任务、不执行回调）。"""
-        from zephyr.trading.circadian_scheduler import CircadianScheduler
-        cs = CircadianScheduler()
-
-        called = []
-        def _test_task():
-            called.append(True)
-
-        # no-op: register_task 不抛异常，但不添加任务也不执行回调
-        cs.register_task(hour=-1, name="test_task", layer="L1", callback=_test_task)
-        assert cs._tasks == []
-        assert called == []
-
     def test_sla_hourly_report_not_registered(self) -> None:
         """定时调度已废除：sla_hourly_report 不再通过 CircadianScheduler 定时触发。"""
         from zephyr.trading import boot_cron_jobs
@@ -135,15 +110,6 @@ class TestCircadianSchedulerAutoRun:
         src = inspect.getsource(boot_cron_jobs)
         # 定时调度已废除，不应有 sla_hourly_report 的 register_task 调用
         assert "sla_hourly_report" not in src or "register_task" not in src
-
-    def test_circadian_scheduler_start_stop(self) -> None:
-        """CircadianScheduler 可启动和停止。"""
-        from zephyr.trading.circadian_scheduler import CircadianScheduler
-        cs = CircadianScheduler()
-        cs.start()
-        time.sleep(0.1)
-        cs.stop()
-        assert True
 
     def test_health_monitor_monitor_loop_exception_safety(self) -> None:
         """HealthMonitor 监控循环异常安全。"""

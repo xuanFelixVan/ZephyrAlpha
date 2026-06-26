@@ -14,7 +14,7 @@
 
 三层防护验证：
 1. transition(COMPLETED)后提醒剩余IN_PROGRESS任务（无论session_id是否为空）
-2. circadian_scheduler注册recover_stale_claims定时任务
+2. recover_stale_claims 方法（CircadianScheduler 废除后定时注册已移除，事件驱动迁移待定）
 3. Session关门清单IN_PROGRESS=0检查
 """
 
@@ -113,27 +113,6 @@ class TestRedBlue:
         """无效 status 返回 0（不崩溃）。"""
         count = repo._count_by_status_and_session("INVALID_STATUS", "session-20260611-001")
         assert count == 0
-
-    def test_boot_cron_jobs_has_stale_recovery(self):
-        """boot_cron_jobs.py 注册了 stale_task_recovery 定时任务。"""
-        bcj_path = Path("src/zephyr/orchestration/runtime_core/boot_cron_jobs.py")
-        source = bcj_path.read_text(encoding="utf-8")
-        assert "_recover_stale_tasks" in source
-        assert "stale_task_recovery" in source
-        assert "recover_stale_claims" in source
-
-    def test_boot_cron_jobs_has_exception_protection(self):
-        """_recover_stale_tasks 有异常保护。"""
-        bcj_path = Path("src/zephyr/orchestration/runtime_core/boot_cron_jobs.py")
-        source = bcj_path.read_text(encoding="utf-8")
-        # 找到 _recover_stale_tasks 函数块
-        func_idx = source.index("def _recover_stale_tasks")
-        # 找下一个 def 或函数结尾
-        next_def = source.find("\ndef ", func_idx + 1)
-        if next_def == -1:
-            next_def = source.find("\n        circadian_scheduler.register_task", func_idx + 1)
-        func_block = source[func_idx:next_def] if next_def > 0 else source[func_idx:]
-        assert "except Exception" in func_block, "_recover_stale_tasks 缺少异常保护"
 
     def test_transition_reminder_wrapped_in_try_except(self, repo):
         """提醒逻辑被 try/except 包裹，不阻断 transition。"""

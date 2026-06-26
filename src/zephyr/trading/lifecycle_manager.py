@@ -13,6 +13,11 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_lifecycle_manager | layer=module | stability=evolving | safety=L | ai_autonomy=immutable_core
+# [CHANGE-NOTE] 2026-06-26: Owner 授权手术式修改——移除 CircadianScheduler 依赖（项目硬约束"废除CircadianScheduler定时触发机制"）。
+#   删除 circadian_scheduler 参数（boot_sequence/shutdown_sequence）、_register_audit_tasks（no-op）、
+#   _register_audit_event_hooks（注册的回调因 trigger_event 从未被调用而永不触发=死代码）、
+#   circadian_scheduler.start()/.stop() no-op 调用、finalizer.register("circadian_scheduler", ...)。
+#   未改动 boot/shutdown 语义与其他组件逻辑。
 
 __all__ = [
     "BootReport",
@@ -32,7 +37,6 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.capability_registry import CapabilityRegistry
-from zephyr.trading.circadian_scheduler import CircadianScheduler
 from zephyr.trading.dream_cycle import DreamCycle
 from zephyr.trading.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
@@ -73,7 +77,6 @@ class LifecycleManager:
         health_monitor: HealthMonitor,
         integration_registry: IntegrationRegistry,
         work_orchestrator: WorkOrchestrator,
-        circadian_scheduler: CircadianScheduler,
         dream_cycle: DreamCycle,
         feedback_loop: FeedbackLoop,
         stop_gate: StopGate,
@@ -86,12 +89,12 @@ class LifecycleManager:
             ("03_audit_logger_start", lambda: None),
             ("04_registry_load", lambda: registry.load_from_dir()),
             ("05_work_orch_load_dags", lambda: work_orchestrator.load_dags()),
-            ("06_circadian_start", lambda: circadian_scheduler.start()),  # no-op: 定时调度已废除 2026-06-26
+            # 06_circadian_start 已移除：CircadianScheduler 定时调度废除（2026-06-26裁定）
             ("07_health_monitor_start", lambda: health_monitor.start()),
             ("08_integration_validate", lambda: integration_registry.validate_all()),
-            # 定时调度已废除：_register_audit_tasks 中的 register_task 调用为 no-op
-            ("08a_audit_schedule_register", lambda: self._register_audit_tasks(circadian_scheduler)),
-            ("08b_audit_event_hooks_register", lambda: self._register_audit_event_hooks(circadian_scheduler)),
+            # 08a_audit_schedule_register / 08b_audit_event_hooks_register 已移除：
+            #   _register_audit_tasks 为 no-op；_register_audit_event_hooks 注册的回调因
+            #   CircadianScheduler.trigger_event 从未被调用而永不触发=死代码。
             ("09_audit_self_monitor_start", lambda: self._start_self_monitor()),
             ("09a_governance_watchdog_start", lambda: self._start_governance_watchdog()),
         ]
@@ -108,53 +111,9 @@ class LifecycleManager:
         finalizer.register("night_shift_queue", night_shift_queue.flush_all)
         finalizer.register("capability_registry", lambda: registry.dump_snapshot())
         finalizer.register("health-monitor", lambda: health_monitor.dump_last_snapshot())
-        finalizer.register("circadian_scheduler", circadian_scheduler.save_state)  # no-op: 定时调度已废除
+        # finalizer.register("circadian_scheduler", ...) 已移除：save_state 为 no-op（CircadianScheduler 废除）
 
         return report
-
-    def _register_audit_tasks(self, circadian_scheduler: CircadianScheduler) -> None:
-        """已废弃：定时审计任务注册已废除。保留签名兼容调用链，方法体为 no-op。"""
-        # 定时调度已废除（2026-06-26裁定），审计任务改由
-        # pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）触发。
-        pass
-
-    def _register_audit_event_hooks(self, circadian_scheduler: CircadianScheduler) -> None:
-        def _on_file_change_audit() -> None:
-            try:
-                from zephyr.governance.semantic_audit.self_healer import SelfHealer
-
-                healer = SelfHealer()
-                logger.info("Event hook: file change triggered semantic audit")
-            except Exception:
-                pass
-
-        def _on_security_event_audit() -> None:
-            try:
-                from zephyr.security.adversarial_validation.game_day_runner import GameDayFrequency, GameDayRunner
-
-                runner = GameDayRunner()
-                result = runner.run_game_day(GameDayFrequency.PER_COMMIT)
-                if result.bypasses > 0:
-                    logger.warning("Event hook: security event — %d bypasses detected", result.bypasses)
-            except Exception:
-                pass
-
-        def _on_orphan_detected_audit() -> None:
-            try:
-                from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
-
-                judge = OrphanJudge()
-                report = judge.batch_judge(scope="src/zephyr/", limit=20, dry_run=True)
-                if report.by_verdict.get("DELETE", 0) > 0:
-                    logger.warning(
-                        "Event hook: orphan detected — %d DELETE verdicts", report.by_verdict.get("DELETE", 0)
-                    )
-            except Exception:
-                pass
-
-        circadian_scheduler.register_event_listener("file_change", _on_file_change_audit)
-        circadian_scheduler.register_event_listener("security_event", _on_security_event_audit)
-        circadian_scheduler.register_event_listener("orphan_detected", _on_orphan_detected_audit)
 
     def _start_self_monitor(self) -> None:
         from zephyr.governance.audit_trail.self_monitor import SelfMonitor
@@ -174,15 +133,13 @@ class LifecycleManager:
     def shutdown_sequence(
         self,
         stop_gate: StopGate,
-        circadian_scheduler: CircadianScheduler,
         finalizer: Finalizer,
         health_monitor: HealthMonitor,
         audit_logger: AiAuditLogger,
     ) -> ShutdownReport:
         report = ShutdownReport()
 
-        circadian_scheduler.stop()
-        report.steps_completed += 1
+        # circadian_scheduler.stop() 已移除：no-op（CircadianScheduler 废除，2026-06-26裁定）
 
         report.finalizer_results = finalizer.run()
         report.steps_completed += 1

@@ -28,7 +28,6 @@ class TestAutoRuntimeCoreInit:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -49,7 +48,6 @@ class TestAutoRuntimeCoreInit:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -68,7 +66,6 @@ class TestAutoRuntimeCoreBoot:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -103,7 +100,6 @@ class TestAutoRuntimeCoreShutdown:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -127,7 +123,6 @@ class TestAutoRuntimeCoreProperties:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -143,7 +138,6 @@ class TestAutoRuntimeCoreProperties:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -161,7 +155,6 @@ class TestAutoRuntimeCoreCanStop:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -180,7 +173,6 @@ class TestAutoRuntimeCoreCanStop:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -201,7 +193,6 @@ class TestAutoRuntimeCoreLearnFromTaskResult:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -220,7 +211,6 @@ class TestAutoRuntimeCoreGetRecommendations:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):
@@ -237,7 +227,6 @@ class TestAutoRuntimeCoreGetRecommendations:
             dream_archive_dir=tmp_path / "dream",
             feedback_proposal_dir=tmp_path / "feedback",
             health_snapshot_dir=tmp_path / "health",
-            circadian_state_path=tmp_path / "circadian" / "state.json",
             auto_start_l2=False,
         )
         with patch("zephyr.trading.auto_runtime_core.AutoRuntimeCore._init_a2a"):

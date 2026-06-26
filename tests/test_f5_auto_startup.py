@@ -61,10 +61,6 @@ class TestF5BootIntegrationConstruction:
     def test_hook_name_constant(self):
         assert F5BootIntegration.HOOK_NAME == "f5_boot_init"
 
-    def test_circadian_task_name_constants(self):
-        assert F5BootIntegration.CIRCADIAN_TASK_DEADLOCK == "f5_deadlock_scan"
-        assert F5BootIntegration.CIRCADIAN_TASK_ESCALATION == "f5_escalation_queue_scan"
-
 
 class TestRegisterStartupHook:
     def test_registers_to_hook_registry(self):
@@ -185,55 +181,6 @@ class TestOnShutdown:
         assert len(integration.deadlock_detector._wait_graph) > 0
         result = integration.on_shutdown()
         assert result.details["deadlock_graph_reset"] is True
-
-
-class TestRegisterWithCircadian:
-    def test_registers_two_tasks(self):
-        integration = F5BootIntegration()
-        scheduler = MagicMock()
-        scheduler._tasks = []
-        integration.register_with_circadian(scheduler)
-        assert scheduler.register_task.call_count == 2
-        call_args_list = scheduler.register_task.call_args_list
-        task_names = [c.kwargs["name"] for c in call_args_list]
-        assert "f5_deadlock_scan" in task_names
-        assert "f5_escalation_queue_scan" in task_names
-
-    def test_idempotent(self):
-        integration = F5BootIntegration()
-        scheduler = MagicMock()
-        scheduler._tasks = []
-        integration.register_with_circadian(scheduler)
-        integration.register_with_circadian(scheduler)
-        assert scheduler.register_task.call_count == 2
-
-    def test_skips_already_registered_tasks(self):
-        integration = F5BootIntegration()
-        existing_task = MagicMock()
-        existing_task.name = "f5_deadlock_scan"
-        scheduler = MagicMock()
-        scheduler._tasks = [existing_task]
-        integration.register_with_circadian(scheduler)
-        # Only escalation task should be registered (deadlock already exists)
-        assert scheduler.register_task.call_count == 1
-        call_kwargs = scheduler.register_task.call_args
-        assert call_kwargs.kwargs["name"] == "f5_escalation_queue_scan"
-
-    def test_callback_is_run_periodic_checks(self):
-        integration = F5BootIntegration()
-        scheduler = MagicMock()
-        scheduler._tasks = []
-        integration.register_with_circadian(scheduler)
-        for call in scheduler.register_task.call_args_list:
-            assert call.kwargs["callback"] == integration.run_periodic_checks
-
-    def test_does_not_raise_on_scheduler_failure(self):
-        integration = F5BootIntegration()
-        scheduler = MagicMock()
-        scheduler._tasks = []
-        scheduler.register_task.side_effect = RuntimeError("scheduler broken")
-        # Should not raise
-        integration.register_with_circadian(scheduler)
 
 
 class TestRunPeriodicChecks:
@@ -360,17 +307,6 @@ class TestEndToEndBootCycle:
         shutdown_result = integration.on_shutdown()
         assert shutdown_result.success is True
         assert integration.is_initialized is False
-
-    def test_circadian_registration_after_startup(self):
-        integration = F5BootIntegration()
-        integration.on_startup()
-        scheduler = MagicMock()
-        scheduler._tasks = []
-        integration.register_with_circadian(scheduler)
-        assert scheduler.register_task.call_count == 2
-        # Periodic check should still work after circadian registration
-        result = integration.run_periodic_checks()
-        assert isinstance(result, dict)
 
     def test_multiple_periodic_checks_are_independent(self):
         integration = F5BootIntegration()

@@ -179,7 +179,6 @@ class TestAutoRuntimeCoreInit:
     @patch("zephyr.trading.auto_runtime_core.HealthMonitor")
     @patch("zephyr.trading.auto_runtime_core.IntegrationRegistry")
     @patch("zephyr.trading.auto_runtime_core.WorkOrchestrator")
-    @patch("zephyr.trading.auto_runtime_core.CircadianScheduler")
     @patch("zephyr.trading.auto_runtime_core.Finalizer")
     @patch("zephyr.trading.auto_runtime_core.LifecycleManager")
     @patch("zephyr.trading.auto_runtime_core.ModuleOnboardingScanner")
@@ -196,7 +195,6 @@ class TestAutoRuntimeCoreInit:
         mock_scanner,
         mock_lifecycle,
         mock_finalizer,
-        mock_circadian,
         mock_work_orch,
         mock_int_reg,
         mock_health,
@@ -217,7 +215,6 @@ class TestAutoRuntimeCoreInit:
         mock_cfg.feedback_proposal_dir = "/tmp/test_feedback"
         mock_cfg.health_snapshot_dir = "/tmp/test_health"
         mock_cfg.work_dag_dir = "/tmp/test_dag"
-        mock_cfg.circadian_state_path = "/tmp/test_circadian"
         mock_cfg.max_parallel_l1 = 2
         mock_cfg.max_parallel_l2 = 2
         mock_cfg.max_parallel_l3 = 2
@@ -241,7 +238,6 @@ class TestAutoRuntimeCoreInit:
     @patch("zephyr.trading.auto_runtime_core.HealthMonitor")
     @patch("zephyr.trading.auto_runtime_core.IntegrationRegistry")
     @patch("zephyr.trading.auto_runtime_core.WorkOrchestrator")
-    @patch("zephyr.trading.auto_runtime_core.CircadianScheduler")
     @patch("zephyr.trading.auto_runtime_core.Finalizer")
     @patch("zephyr.trading.auto_runtime_core.LifecycleManager")
     @patch("zephyr.trading.auto_runtime_core.ModuleOnboardingScanner")
@@ -258,7 +254,6 @@ class TestAutoRuntimeCoreInit:
         mock_scanner,
         mock_lifecycle,
         mock_finalizer,
-        mock_circadian,
         mock_work_orch,
         mock_int_reg,
         mock_health,
@@ -279,7 +274,6 @@ class TestAutoRuntimeCoreInit:
         mock_cfg.feedback_proposal_dir = "/tmp/test_feedback"
         mock_cfg.health_snapshot_dir = "/tmp/test_health"
         mock_cfg.work_dag_dir = "/tmp/test_dag"
-        mock_cfg.circadian_state_path = "/tmp/test_circadian"
         mock_cfg.max_parallel_l1 = 2
         mock_cfg.max_parallel_l2 = 2
         mock_cfg.max_parallel_l3 = 2
@@ -300,7 +294,6 @@ class TestAutoRuntimeCoreInit:
     @patch("zephyr.trading.auto_runtime_core.HealthMonitor")
     @patch("zephyr.trading.auto_runtime_core.IntegrationRegistry")
     @patch("zephyr.trading.auto_runtime_core.WorkOrchestrator")
-    @patch("zephyr.trading.auto_runtime_core.CircadianScheduler")
     @patch("zephyr.trading.auto_runtime_core.Finalizer")
     @patch("zephyr.trading.auto_runtime_core.LifecycleManager")
     @patch("zephyr.trading.auto_runtime_core.ModuleOnboardingScanner")
@@ -317,7 +310,6 @@ class TestAutoRuntimeCoreInit:
         mock_scanner,
         mock_lifecycle,
         mock_finalizer,
-        mock_circadian,
         mock_work_orch,
         mock_int_reg,
         mock_health,
@@ -338,7 +330,6 @@ class TestAutoRuntimeCoreInit:
         mock_cfg.feedback_proposal_dir = "/tmp/test_feedback"
         mock_cfg.health_snapshot_dir = "/tmp/test_health"
         mock_cfg.work_dag_dir = "/tmp/test_dag"
-        mock_cfg.circadian_state_path = "/tmp/test_circadian"
         mock_cfg.max_parallel_l1 = 2
         mock_cfg.max_parallel_l2 = 2
         mock_cfg.max_parallel_l3 = 2

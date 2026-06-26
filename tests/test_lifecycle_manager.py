@@ -17,7 +17,6 @@ from unittest.mock import MagicMock, patch
 
 from zephyr.integration.shared_08.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.capability_registry import CapabilityRegistry
-from zephyr.trading.circadian_scheduler import CircadianScheduler
 from zephyr.trading.dream_cycle import DreamCycle
 from zephyr.trading.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
@@ -38,7 +37,6 @@ def _make_config(tmp_path: Path) -> RuntimeConfig:
         feedback_proposal_dir=tmp_path / "feedback",
         health_snapshot_dir=tmp_path / "health",
         night_shift_storage_path=tmp_path / "nshift.jsonl",
-        circadian_state_path=tmp_path / "circadian" / "state.json",
     )
 
 
@@ -76,14 +74,12 @@ class TestBootSequence:
         health_monitor = HealthMonitor()
         integration_reg = IntegrationRegistry()
         work_orch = WorkOrchestrator(registry, dag_dir=tmp_path / "dags")
-        circadian = CircadianScheduler(state_path=tmp_path / "circadian" / "state.json")
         dream = DreamCycle(archive_dir=tmp_path / "dream")
         feedback = FeedbackLoop(proposal_dir=tmp_path / "feedback")
         stop_gate = StopGate()
         finalizer = Finalizer()
 
         with (
-            patch.object(lm, "_register_audit_tasks"),
             patch.object(lm, "_start_self_monitor"),
             patch.object(lm, "_start_governance_watchdog"),
         ):
@@ -94,7 +90,6 @@ class TestBootSequence:
                 health_monitor=health_monitor,
                 integration_registry=integration_reg,
                 work_orchestrator=work_orch,
-                circadian_scheduler=circadian,
                 dream_cycle=dream,
                 feedback_loop=feedback,
                 stop_gate=stop_gate,
@@ -115,14 +110,12 @@ class TestBootSequence:
         health_monitor = HealthMonitor()
         integration_reg = IntegrationRegistry()
         work_orch = WorkOrchestrator(registry, dag_dir=tmp_path / "dags")
-        circadian = CircadianScheduler(state_path=tmp_path / "circadian" / "state.json")
         dream = DreamCycle(archive_dir=tmp_path / "dream")
         feedback = FeedbackLoop(proposal_dir=tmp_path / "feedback")
         stop_gate = StopGate()
         finalizer = Finalizer()
 
         with (
-            patch.object(lm, "_register_audit_tasks"),
             patch.object(lm, "_start_self_monitor"),
             patch.object(lm, "_start_governance_watchdog"),
         ):
@@ -133,19 +126,17 @@ class TestBootSequence:
                 health_monitor=health_monitor,
                 integration_registry=integration_reg,
                 work_orchestrator=work_orch,
-                circadian_scheduler=circadian,
                 dream_cycle=dream,
                 feedback_loop=feedback,
                 stop_gate=stop_gate,
                 finalizer=finalizer,
             )
 
-        assert len(finalizer._cleanup_fns) == 4
+        assert len(finalizer._cleanup_fns) == 3
         types = [t for t, _ in finalizer._cleanup_fns]
         assert "night_shift_queue" in types
         assert "capability_registry" in types
         assert "health-monitor" in types
-        assert "circadian_scheduler" in types
 
     def test_boot_sequence_step_failure(self, tmp_path: Path) -> None:
         config = _make_config(tmp_path)
@@ -157,14 +148,12 @@ class TestBootSequence:
         health_monitor = MagicMock()
         integration_reg = MagicMock()
         work_orch = MagicMock()
-        circadian = MagicMock()
         dream = MagicMock()
         feedback = MagicMock()
         stop_gate = MagicMock()
         finalizer = Finalizer()
 
         with (
-            patch.object(lm, "_register_audit_tasks"),
             patch.object(lm, "_start_self_monitor"),
             patch.object(lm, "_start_governance_watchdog"),
         ):
@@ -175,7 +164,6 @@ class TestBootSequence:
                 health_monitor=health_monitor,
                 integration_registry=integration_reg,
                 work_orchestrator=work_orch,
-                circadian_scheduler=circadian,
                 dream_cycle=dream,
                 feedback_loop=feedback,
                 stop_gate=stop_gate,
@@ -191,7 +179,6 @@ class TestShutdownSequence:
         config = _make_config(tmp_path)
         lm = LifecycleManager(config)
         stop_gate = MagicMock()
-        circadian = MagicMock()
         finalizer = MagicMock()
         finalizer.run.return_value = {"resource_a": True}
         health_monitor = MagicMock()
@@ -199,15 +186,13 @@ class TestShutdownSequence:
 
         report = lm.shutdown_sequence(
             stop_gate=stop_gate,
-            circadian_scheduler=circadian,
             finalizer=finalizer,
             health_monitor=health_monitor,
             audit_logger=audit_logger,
         )
 
         assert isinstance(report, ShutdownReport)
-        assert report.steps_completed == 5
-        circadian.stop.assert_called_once()
+        assert report.steps_completed == 4
         finalizer.run.assert_called_once()
         health_monitor.stop.assert_called_once()
         audit_logger.flush.assert_called_once()
@@ -217,7 +202,6 @@ class TestShutdownSequence:
         config = _make_config(tmp_path)
         lm = LifecycleManager(config)
         stop_gate = MagicMock()
-        circadian = MagicMock()
         finalizer = MagicMock()
         finalizer.run.return_value = {"db": True, "cache": False}
         health_monitor = MagicMock()
@@ -225,7 +209,6 @@ class TestShutdownSequence:
 
         report = lm.shutdown_sequence(
             stop_gate=stop_gate,
-            circadian_scheduler=circadian,
             finalizer=finalizer,
             health_monitor=health_monitor,
             audit_logger=audit_logger,

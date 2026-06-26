@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.audit_trail.pipeline_runner
 # [DOMAIN] D-GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.audit_orchestrator.text_to_finding_adapter; zephyr.integration.shared.schema.base_config
-# [CONSUMERS] audit-orchestrator.cli; circadian_scheduler; audit_admission_controller
+# [CONSUMERS] audit-orchestrator.cli; audit_admission_controller
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] PipelineRunner executes scripts in dependency chain order; all findings collected as AuditFinding

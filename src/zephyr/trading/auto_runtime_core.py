@@ -43,7 +43,6 @@ from zephyr.shared.contracts.core.system_configuration import SystemConfiguratio
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.auto_integrator import AutoIntegrator
 from zephyr.trading.capability_registry import CapabilityRegistry
-from zephyr.trading.circadian_scheduler import CircadianScheduler
 from zephyr.trading.dream_cycle import DreamCycle
 from zephyr.trading.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
@@ -85,7 +84,6 @@ class AutoRuntimeCore:
             max_parallel_l2=self._config.max_parallel_l2,
             max_parallel_l3=self._config.max_parallel_l3,
         )
-        self._circadian_scheduler = CircadianScheduler(self._config.circadian_state_path)
         self._finalizer = Finalizer()
         self._lifecycle = LifecycleManager(self._config)
 
@@ -100,7 +98,6 @@ class AutoRuntimeCore:
             health_monitor=self._health_monitor,
             night_shift_queue=self._night_shift_queue,
             work_orchestrator=self._work_orchestrator,
-            circadian_scheduler=self._circadian_scheduler,
             orphan_detector=self._orphan_detector,
         )
 
@@ -125,7 +122,6 @@ class AutoRuntimeCore:
             health_monitor=self._health_monitor,
             integration_registry=self._integration_registry,
             work_orchestrator=self._work_orchestrator,
-            circadian_scheduler=self._circadian_scheduler,
             dream_cycle=self._dream_cycle,
             feedback_loop=self._feedback_loop,
             stop_gate=self._stop_gate,
@@ -250,11 +246,11 @@ class AutoRuntimeCore:
             logger.debug("Escalation EventBus auto-subscribe skipped")
 
     def _register_task_system_cron_jobs(self) -> None:
-        """已废弃：定时调度已废除（2026-06-26裁定）。保留调用兼容性，但 register_task 为 no-op。"""
+        """已废弃：定时调度已废除（2026-06-26裁定）。保留调用以注册事件订阅（bus.subscribe）。"""
         from zephyr.trading.boot_cron_jobs import register_boot_cron_jobs
 
         project_root = REPO_ROOT
-        register_boot_cron_jobs(self._circadian_scheduler, self._work_orchestrator, project_root)
+        register_boot_cron_jobs(self._work_orchestrator, project_root)
 
     def _register_task_system_hooks(self) -> None:
         from zephyr.trading.boot_hooks import register_boot_hooks
@@ -516,7 +512,6 @@ class AutoRuntimeCore:
             pass
         report = self._lifecycle.shutdown_sequence(
             stop_gate=self._stop_gate,
-            circadian_scheduler=self._circadian_scheduler,
             finalizer=self._finalizer,
             health_monitor=self._health_monitor,
             audit_logger=self._audit_logger,

@@ -5,9 +5,9 @@
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] register_boot_cron_jobs is idempotent; duplicate hour+name ignored by CircadianScheduler
-# [DEPRECATED] 定时调度已废除（2026-06-26裁定）：CircadianScheduler.register_task() 已改为 no-op。
-# 本函数保留签名兼容现有调用链，但所有 register_task 调用不再注册任何定时任务。
+# [INVARIANTS] register_boot_cron_jobs is idempotent
+# [DEPRECATED] 定时调度已废除（2026-06-26裁定）：CircadianScheduler 已彻底移除。
+# 本函数仅保留事件订阅（bus.subscribe）作为事件驱动入口，不再接收 circadian_scheduler 参数。
 # 审计/治理任务改由 pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）触发。
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
@@ -25,18 +25,16 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zephyr.trading.circadian_scheduler import CircadianScheduler
     from zephyr.trading.work_orchestrator import WorkOrchestrator
 
 logger = logging.getLogger(__name__)
 
 
 def register_boot_cron_jobs(
-    circadian_scheduler: CircadianScheduler,
     work_orchestrator: WorkOrchestrator,
     project_root: Path,
 ) -> None:
-    # 定时调度已废除（2026-06-26裁定）：所有 register_task 调用已移除。
+    # 定时调度已废除（2026-06-26裁定）：CircadianScheduler 已移除。
     # 仅保留事件订阅（bus.subscribe）作为事件驱动入口。
     try:
         from zephyr.shared.event_bus import bus

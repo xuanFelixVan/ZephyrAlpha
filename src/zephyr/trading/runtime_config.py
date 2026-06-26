@@ -26,7 +26,7 @@ def ensure_runtime_dirs(config: RuntimeConfig) -> None:
         config.feedback_proposal_dir,
         config.health_snapshot_dir,
         config.night_shift_storage_path.parent,
-        config.circadian_state_path.parent,
+        # circadian_state_path 已移除（CircadianScheduler 废除，2026-06-26裁定）
     ]:
         d.mkdir(parents=True, exist_ok=True)
 
