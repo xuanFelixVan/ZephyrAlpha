@@ -19,17 +19,22 @@ from pathlib import Path
 
 import pytest
 
+import importlib.util
 REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from governance.d7_code.detect_forward_reference import (  # noqa: E402
-    EXIT_FINDINGS,
-    EXIT_PASS,
-    ForwardRefViolation,
-    find_self_references,
-    has_future_annotations,
-    scan_file,
-)
+# 用 importlib 直接加载，绕过 governance 命名冲突
+#（src/zephyr/governance/ 与 scripts/governance/ 同名导致包解析歧义）
+_DFR_PATH = REPO_ROOT / "scripts" / "governance" / "d7_code" / "detect_forward_reference.py"
+_spec = importlib.util.spec_from_file_location("detect_forward_reference", _DFR_PATH)
+_dfr = importlib.util.module_from_spec(_spec)
+sys.modules["detect_forward_reference"] = _dfr  # 注册到 sys.modules，供内部 dataclass 解析 __module__
+_spec.loader.exec_module(_dfr)
+EXIT_FINDINGS = _dfr.EXIT_FINDINGS
+EXIT_PASS = _dfr.EXIT_PASS
+ForwardRefViolation = _dfr.ForwardRefViolation
+find_self_references = _dfr.find_self_references
+has_future_annotations = _dfr.has_future_annotations
+scan_file = _dfr.scan_file
 
 
 class TestHasFutureAnnotations:

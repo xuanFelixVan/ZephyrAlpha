@@ -1,32 +1,32 @@
-# 自动生成于 2026-06-23T16:50:44Z
+# 自动生成于 2026-06-26T03:48:05Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-06-23T16:50:44Z'
+generated_at: '2026-06-26T03:48:05Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 338
-with_manifest: 215
-missing_manifest: 123
+total_scripts: 369
+with_manifest: 218
+missing_manifest: 151
 categories:
-  governance: 100
+  governance: 115
   governance:_sync: 4
   governance:d10_performance: 1
-  governance:d11_compliance: 12
+  governance:d11_compliance: 13
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 22
   governance:d2_links: 3
-  governance:d3_metadata: 9
+  governance:d3_metadata: 11
   governance:d4_paths: 4
-  governance:d5_architecture: 86
+  governance:d5_architecture: 90
   governance:d6_security: 14
-  governance:d7_code: 21
+  governance:d7_code: 28
   governance:d8_doc_sync: 4
   governance:d9_knowledge: 2
   governance:generators: 8
-  governance:meta: 38
+  governance:meta: 39
   governance:observability: 1
-  governance:repair: 5
+  governance:repair: 6
 scripts:
 - name: _audit_gate_registry.py
   owner: governance
@@ -163,6 +163,36 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags:
   - Disruptive
+- name: _verify_fle_gates.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: _verify_gate_loading.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: _verify_yaml.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: add_file_headers.py
   owner: governance
   dimensions: []
@@ -264,7 +294,27 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: audit_post_sync_commands.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: audit_registration.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: audit_rename_completeness.py
   owner: governance
   dimensions: []
   priority: P2
@@ -399,6 +449,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: check_schema_version_writes.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: ci_self_check.py
   owner: governance
   dimensions: []
@@ -409,6 +469,37 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: cleanup_stash.py
+  owner: governance
+  dimensions:
+  - D7
+  priority: P2
+  timeout_seconds: 30
+  args:
+  - flag: --check
+    description: 检查 stash 数量，超过阈值时告警
+  - flag: --cleanup
+    description: 清理过期 stash，保留最近 N 个
+  - flag: --archive
+    description: 导出 stash 列表到归档文件
+  - flag: --keep
+    type: int
+    default: 3
+    description: 保留最近 N 个 stash
+  - flag: --max
+    type: int
+    default: 5
+    description: 告警阈值
+  - flag: --critical
+    type: int
+    default: 10
+    description: 严重阈值，建议清理
+  warn_only: true
+  description: 'git stash 堆积治理——检查/清理/归档 stash。 对标 OPS-2026062501 病根3（stash 堆积无清理机制）。
+
+    '
+  tags:
+  - Critical
 - name: construction_gate.py
   owner: governance
   dimensions: []
@@ -420,6 +511,36 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: create_alignment_tasks.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: create_d_signal_rename_tasks.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: create_f_func_task_cards.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: create_panorama_repair_tasks.py
   owner: governance
   dimensions: []
   priority: P2
@@ -489,6 +610,18 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d11_compliance/validate_commit_gateway.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D11
+  priority: P1
+  timeout_seconds: 5
+  args:
+  - --commit-msg-file
+  warn_only: false
+  description: GATE-COMMIT-GW门禁——检测裸git commit，强制走GitCommitGateway（环境变量或GW标记）
+  tags:
+  - Security
 - name: d11_compliance/validate_commit_message.py
   owner: governance:d11_compliance
   dimensions:
@@ -988,6 +1121,26 @@ scripts:
   - Quick
 - name: d2_links/validate_depends_on_format.py
   owner: governance:d2_links
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d3_metadata/backfill_ttl_metadata.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d3_metadata/check_frontmatter_metadata.py
+  owner: governance:d3_metadata
   dimensions: []
   priority: P2
   timeout_seconds: 60
@@ -1512,6 +1665,26 @@ scripts:
   description: GATE-INDEX — 索引文件自动校验/修复（消除手动索引维护，--check/--apply）
   tags:
   - Quick
+- name: d5_architecture/generators/domain_name_mapping.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d5_architecture/generators/generate_capability_heatmap.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_capacity_report.py
   owner: governance:d5_architecture
   dimensions: []
@@ -1555,6 +1728,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: d5_architecture/generators/generate_design_vs_production.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d5_architecture/generators/generate_domain_architecture_diagram.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
@@ -1615,6 +1798,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: d5_architecture/generators/generate_path_tree.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d5_architecture/generators/generate_runtime_plane_mapping.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
@@ -2492,6 +2685,16 @@ scripts:
   description: 直接 LLM 调用检测（COND-30 — L02-L07禁止直接import LLM SDK）
   tags:
   - Critical
+- name: d7_code/detect_forward_reference.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d7_code/detect_missing_encoding.py
   owner: governance:d7_code
   dimensions:
@@ -2525,6 +2728,66 @@ scripts:
   description: 静默降级检测（COND-45 — 降级路径必须有日志）
   tags:
   - Critical
+- name: d7_code/fix_n06_scope.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d7_code/fix_n12_ke_naming.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d7_code/fix_n13_snake_case.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d7_code/fix_n14_init_all.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d7_code/fix_n15_blueprint_path.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d7_code/fix_naming_manual.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d7_code/validate_contracts_purity.py
   owner: governance:d7_code
   dimensions:
@@ -2801,6 +3064,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: fix_broken_post_sync.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: fix_orphan_exports.py
   owner: governance
   dimensions: []
@@ -2873,6 +3146,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: generate_project_depgraph.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: generate_project_depgraph_artifact.py
   owner: governance
   dimensions: []
   priority: P2
@@ -3303,6 +3586,16 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: meta/mutation_test_post_sync_validator.py
+  owner: governance:meta
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: meta/phase_e_context_check.py
   owner: governance:meta
   dimensions: []
@@ -3577,8 +3870,38 @@ scripts:
   tags:
   - Quick
   - Security
+- name: migrate_arch_f_functions.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: migrate_clean_build_status.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: observability/gate_cache.py
   owner: governance:observability
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: perf_depgraph_baseline.py
+  owner: governance
   dimensions: []
   priority: P2
   timeout_seconds: 60
@@ -3684,6 +4007,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: rename_whitelist_cleanup.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: repair/audit_design_completeness.py
   owner: governance:repair
   dimensions: []
@@ -3695,6 +4028,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: repair/backup_db.py
+  owner: governance:repair
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: repair/concurrent_commit_test.py
   owner: governance:repair
   dimensions: []
   priority: P2
@@ -3894,6 +4237,16 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
+- name: task_show.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: task_summary.py
   owner: governance
   dimensions: []
@@ -4003,6 +4356,24 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: verify_schema_health.py
+  owner: governance
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --ci
+    type: bool
+    description: 硬阻断模式（漂移 exit 1，默认行为）
+  - flag: --warn-only
+    type: bool
+    description: 软警告模式（漂移仍 exit 0，观察期用）
+  warn_only: false
+  description: 'depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016
+    治本'
+  tags:
+  - Critical
 - name: vms_blindspot_check.py
   owner: governance
   dimensions: []

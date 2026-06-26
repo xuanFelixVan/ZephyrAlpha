@@ -344,6 +344,19 @@ repos:
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
         description: "源码或测试文件变更时强制验证测试能正常收集（排除 slow/e2e），AGENTS.md §4 源码-测试同步铁律自动化执行层。多AI并发优化：改为按文件触发，避免always_run卡死"
 
+      # ── GATE-19: 测试结构合规门禁（防脚本伪装测试 + 模块级副作用）──
+      # 检测内容: 1) test_*.py 必须含 def test_* 函数（ERROR 硬阻断）
+      #          2) 模块级零副作用（WARN 级，不阻断）
+      # 豁免: _EXEMPTED 集合中 8 个既有文件，逐步清零
+      - id: gate-19-test-structure
+        name: "GATE-19: 测试结构合规门禁（防脚本伪装测试）"
+        entry: python scripts/governance/check_test_structure.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^tests/.*\\.py$"
+        description: "test_*.py 必须含 def test_*（ERROR）；模块级副作用仅 WARN。8个既有文件豁免中。"
+
       # ── GATE-SSOT: SSoT 唯一真源门禁（KBG-0001 + KBG-0021 强制执行层）──
       # 权威依据：KBG-0001（docs/ 为唯一 canonical 真源）+ KBG-0021（三级违规分级 + Phase 0 强制门禁）
       #  真源声明：Session 20260417 + 20260424 KB 决策记录拍板
