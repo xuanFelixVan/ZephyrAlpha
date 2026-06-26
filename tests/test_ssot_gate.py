@@ -29,6 +29,18 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+# Session 隔离：绕过其他 session 的 WIP bug（sys_master_compliance.py:66 误用
+# PROJECT_ROOT 而非 REPO_ROOT，触发 NameError 阻断 governance 包 import 链）。
+# 本测试只验证 SSoT 门禁，不依赖 sys_master_compliance，故注入 mock 隔离。
+# 待其他 session 修复后可移除。
+_WIP_BUG_MODULES = [
+    "zephyr.governance.rule_enforcement.sys_master_compliance",
+    "zephyr.integration.shared_08.contracts.sys_master_compliance",
+]
+for _mod in _WIP_BUG_MODULES:
+    if _mod not in sys.modules:
+        sys.modules[_mod] = MagicMock()
+
 from scripts.scaffold import ScaffoldError, _check_duplicate_functionality
 from zephyr.governance.capability_lookup import CapabilityLookup, HeaderInfo, SSoTConflict
 from zephyr.governance.git_commit_gateway import CommitStatus, GitCommitGateway
@@ -597,3 +609,189 @@ class TestCheckSsotConflicts:
         assert hasattr(result[0], "rel_path")
         assert hasattr(result[0], "module_path")
         assert hasattr(result[0], "conflicts")
+
+
+# ---------------------------------------------------------------------------
+# 测试组 8：红蓝极限对抗（模拟刚进项目的 AI）
+# ---------------------------------------------------------------------------
+
+class TestRedBlueExtreme:
+    """红蓝极限对抗——模拟刚进项目的 AI 尝试绕过 SSoT 门禁。
+
+    视角：AI 没有上下文，不知道门禁存在，尝试各种创建方式。
+    验证三层防线（L1/L2/L3）的极限防御能力 + 已知限制边界。
+    """
+
+    @pytest.fixture
+    def gateway(self):
+        return GitCommitGateway(project_root=_PROJECT_ROOT, registry=MagicMock())
+
+    def _mock_l3_git_diff(self, monkeypatch, new_files: list[str]):
+        """mock check_ssot_gate 的 git diff 返回指定新文件列表。"""
+        import scripts.governance.check_ssot_gate as gate_module
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = "\n".join(new_files) + "\n" if new_files else ""
+        mock_result.stderr = ""
+        monkeypatch.setattr(gate_module.subprocess, "run", lambda *a, **kw: mock_result)
+        return gate_module
+
+    def _mock_capability_lookup(self, monkeypatch, headers: dict, conflicts: dict):
+        """mock CapabilityLookup 避免 scan 磁盘 + 控制解析/反查。"""
+        monkeypatch.setattr(CapabilityLookup, "_scan_disk_headers", lambda self: {})
+        monkeypatch.setattr(
+            CapabilityLookup, "_parse_header",
+            staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
+        )
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: conflicts.get(mp, []),
+        )
+
+    def _mock_path_exists(self, monkeypatch, fake_names: set[str]):
+        """mock Path.exists 对指定文件名返回 True，其余用真实 exists。"""
+        real_exists = Path.exists
+        def mock_exists(self):
+            if any(name in str(self) for name in fake_names):
+                return True
+            return real_exists(self)
+        monkeypatch.setattr(Path, "exists", mock_exists)
+
+    # ---- L3 pre-commit hook 直接测试 ----
+
+    def test_red_l3_blocks_direct_git_commit(self, monkeypatch, capsys):
+        """红方攻击1：绕过 Gateway 直接 git commit 重复文件 → L3 应拦截。
+
+        场景：刚进项目的 AI 不知道 GitCommitGateway 铁律，直接 git commit。
+        """
+        gate_module = self._mock_l3_git_diff(monkeypatch, ["src/zephyr/governance/fake_red.py"])
+        self._mock_path_exists(monkeypatch, {"fake_red"})
+        self._mock_capability_lookup(
+            monkeypatch,
+            headers={"src/zephyr/governance/fake_red.py": HeaderInfo(
+                path="src/zephyr/governance/fake_red.py",
+                module_path="zephyr.governance.git_commit_gateway",
+            )},
+            conflicts={"zephyr.governance.git_commit_gateway": ["src/zephyr/governance/git_commit_gateway.py"]},
+        )
+        exit_code = gate_module.main()
+        assert exit_code == 1, "L3 应阻断直接 git commit 的重复文件"
+        captured = capsys.readouterr()
+        assert "修复指令" in captured.err, "L3 消息应含'修复指令'"
+
+    def test_red_l3_passes_no_new_py(self, monkeypatch):
+        """红方攻击2：commit 无新 .py 文件 → L3 放行。"""
+        gate_module = self._mock_l3_git_diff(monkeypatch, [])
+        assert gate_module.main() == 0
+
+    def test_red_l3_fail_open_on_lookup_error(self, monkeypatch):
+        """红方攻击3：capability_lookup 不可用 → L3 fail-open 放行。
+
+        fail-open 策略：L3 是双保险，capability_lookup 崩溃时不阻断 commit 流程。
+        """
+        gate_module = self._mock_l3_git_diff(monkeypatch, ["src/zephyr/governance/fake_err.py"])
+        self._mock_path_exists(monkeypatch, {"fake_err"})
+        def fake_init(self, *args, **kwargs):
+            raise RuntimeError("mock init fail")
+        monkeypatch.setattr(CapabilityLookup, "__init__", fake_init)
+        assert gate_module.main() == 0, "L3 应 fail-open 放行"
+
+    # ---- 已知限制验证 ----
+
+    def test_red_same_batch_conflict_missed(self, monkeypatch):
+        """红方攻击4：同批次两新文件声明相同新 module_path → 漏检（已知限制）。
+
+        根因：check_ssot_conflicts 只反查磁盘已有文件，不检查 new_py_files 列表内部。
+        L1 scaffold 单文件创建不会有此问题；只有绕过 scaffold 批量 commit 才触发。
+        """
+        lookup = CapabilityLookup()
+        new_mp = "zephyr.brand_new.duplicate_xyz_999"
+        headers = {
+            "src/zephyr/fake_a.py": HeaderInfo(path="src/zephyr/fake_a.py", module_path=new_mp),
+            "src/zephyr/fake_b.py": HeaderInfo(path="src/zephyr/fake_b.py", module_path=new_mp),
+        }
+        monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
+        monkeypatch.setattr(CapabilityLookup, "find_files_by_module_path", lambda self, mp: [])
+        files = [("/abs/fake_a.py", "src/zephyr/fake_a.py"), ("/abs/fake_b.py", "src/zephyr/fake_b.py")]
+        result = lookup.check_ssot_conflicts(files)
+        assert result == [], "同批次新文件互相冲突 → 漏检（已知限制）"
+
+    # ---- [MODULE] 头格式变异 ----
+
+    def test_red_lowercase_module_header_ignored(self):
+        """红方攻击5：[module] 小写 → 正则不匹配 → 跳过。
+
+        正则 _RE_MODULE 大小写敏感。AI 写错大小写会被放行——
+        但这也意味着文件不会被 scaffold 识别（无 module_path = 不存在）。
+        """
+        import tempfile, os
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
+            f.write("# [module] zephyr.governance.git_commit_gateway\n")
+            tmp = f.name
+        try:
+            header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
+            assert header.module_path == "", "小写 [module] 应不匹配"
+        finally:
+            os.unlink(tmp)
+
+    def test_red_empty_module_header_skipped(self):
+        """红方攻击6：`# [MODULE]` 无内容 → module_path 为空 → 跳过。"""
+        import tempfile, os
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
+            f.write("# [MODULE]\n")
+            tmp = f.name
+        try:
+            header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
+            assert header.module_path == "", "空 [MODULE] 应解析为空"
+        finally:
+            os.unlink(tmp)
+
+    def test_red_empty_file_skipped(self):
+        """红方攻击7：空文件 → 无头 → 跳过。"""
+        import tempfile, os
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
+            f.write("")
+            tmp = f.name
+        try:
+            header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
+            assert header.module_path == "", "空文件应解析为空"
+        finally:
+            os.unlink(tmp)
+
+    # ---- 消息优化验证 ----
+
+    def test_red_l2_message_has_fix_instruction(self, gateway, monkeypatch):
+        """L2 阻断消息含'修复指令'（消息优化后验证）。"""
+        fake_new_rel = "src/zephyr/governance/fake_msg_l2.py"
+        fake_new_abs = str(_PROJECT_ROOT / fake_new_rel).replace("\\", "/")
+        monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
+        existing_mp = "zephyr.governance.git_commit_gateway"
+        fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
+        monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: fake_header))
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: ["src/zephyr/governance/git_commit_gateway.py"] if mp == existing_mp else [],
+        )
+        passed, detail = gateway._check_ssot_canonical([fake_new_abs])
+        assert not passed
+        assert "修复指令" in detail, "L2 消息应含'修复指令'"
+
+    # ---- 大小写敏感 ----
+
+    def test_red_module_path_case_sensitive(self, monkeypatch):
+        """红方攻击8：module_path 大小写变异 → 不匹配（检测能力限制）。
+
+        AI 声明 Zephyr.Governance.Git_Commit_Gateway（大写）→ 与已有
+        zephyr.governance.git_commit_gateway（小写）不匹配 → 不报冲突。
+        检测依赖 AI 正确声明 module_path——这是方案 E 的固有边界。
+        """
+        lookup = CapabilityLookup()
+        wrong_case_mp = "Zephyr.Governance.Git_Commit_Gateway"
+        headers = {"src/zephyr/fake_case.py": HeaderInfo(path="src/zephyr/fake_case.py", module_path=wrong_case_mp)}
+        monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
+        monkeypatch.setattr(
+            CapabilityLookup, "find_files_by_module_path",
+            lambda self, mp: ["src/zephyr/governance/git_commit_gateway.py"] if mp == "zephyr.governance.git_commit_gateway" else [],
+        )
+        result = lookup.check_ssot_conflicts([("/abs/fake_case.py", "src/zephyr/fake_case.py")])
+        assert result == [], "大小写不同的 module_path 应不匹配（检测能力限制）"
