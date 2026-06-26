@@ -1,0 +1,141 @@
+---
+doc_type: architecture_view
+title: D-EX_CORE 执行核心架构文档
+version: "1.0"
+status: active
+date: 2026-06-26
+owner: auto-generator
+ttl: permanent
+---
+
+# 29_d_ex_core / 执行核心
+
+> **文档作用 / Purpose**: 展示 执行核心（D-EX_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+
+> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
+> 最后更新: 2026-06-26 19:04:16
+> 数据源: depgraph.db nodes表 + edges表
+
+## 域基本信息 / Domain Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 编号 | 29 | Number | 29 |
+| 域ID | D-EX_CORE | Domain ID | D-EX_CORE |
+| 域名称 | 执行核心 | Domain Name | 执行核心 |
+| 层级 | L2_domain | Layer | L2_domain |
+| 模块数 | 14 | Module Count | 14 |
+| 域内依赖 | 1 | Internal Dependencies | 1 |
+| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域出边 | 13 | Cross-domain Outgoing | 13 |
+| 设计态模块 | 0 | Design Modules | 0 |
+| 原型态模块 | 11 | Prototype Modules | 11 |
+| 生产态模块 | 3 | Production Modules | 3 |
+| 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
+| 描述 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行质量分析。 | Description | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行质量分析。 |
+
+## 模块清单 / Module List
+
+共 14 个模块（按路径排序，全部显示）
+
+| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
+|---------|---------|-----------|---------|
+| src/zephyr/ex_core/__init__.py |  | production | generated |
+| src/zephyr/ex_core/_extensions/__init__.py |  | prototype | deprecated |
+| src/zephyr/ex_core/adapters/__init__.py |  | prototype | generated |
+| src/zephyr/ex_core/adapters/broker_interface.py |  | production | generated |
+| src/zephyr/ex_core/adapters/risk_validation_bridge.py |  | prototype | generated |
+| src/zephyr/ex_core/adapters/simulation_broker.py |  | production | generated |
+| src/zephyr/ex_core/api/__init__.py |  | prototype | deprecated |
+| src/zephyr/ex_core/broker_interface.py |  | prototype | generated |
+| src/zephyr/ex_core/core/__init__.py |  | prototype | deprecated |
+| src/zephyr/ex_core/execution_engine.py |  | prototype | generated |
+| src/zephyr/ex_core/infrastructure/__init__.py |  | prototype | deprecated |
+| src/zephyr/ex_core/order_manager.py |  | prototype | generated |
+| src/zephyr/ex_core/order_state_escalator.py |  | prototype | generated |
+| src/zephyr/ex_core/services/__init__.py |  | prototype | deprecated |
+
+## 域内依赖图 / Internal Dependency Diagram
+
+> 依赖图内嵌在本文档中，IDE 可直接渲染显示。每30个节点一组分页显示。
+>
+> **图例说明 / Legend**：
+> - **实线边框 = 运营态模块**（production，已上线运行）
+> - **虚线边框 = 设计态模块**（design，还在设计中）
+> - **实线箭头 = 运营态依赖**（已生效的依赖关系）
+> - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
+
+```mermaid
+graph TD
+    subgraph D_EX_CORE["D-EX_CORE 执行核心"]
+        src_zephyr_ex_core_init_py["src/zephyr/ex_core/__init__.py production"]
+        src_zephyr_ex_core_extensions_init_py["src/zephyr/ex_core/_extensions/__init__.py prototype"]
+        src_zephyr_ex_core_adapters_init_py["src/zephyr/ex_core/adapters/__init__.py prototype"]
+        src_zephyr_ex_core_adapters_broker_interface_py["src/zephyr/ex_core/adapters/broker_interface.py production"]
+        src_zephyr_ex_core_adapters_risk_validation_bridge_py["src/zephyr/ex_core/adapters/risk_validation_bri... prototype"]
+        src_zephyr_ex_core_adapters_simulation_broker_py["src/zephyr/ex_core/adapters/simulation_broker.py production"]
+        src_zephyr_ex_core_api_init_py["src/zephyr/ex_core/api/__init__.py prototype"]
+        src_zephyr_ex_core_broker_interface_py["src/zephyr/ex_core/broker_interface.py prototype"]
+        src_zephyr_ex_core_core_init_py["src/zephyr/ex_core/core/__init__.py prototype"]
+        src_zephyr_ex_core_execution_engine_py["src/zephyr/ex_core/execution_engine.py prototype"]
+        src_zephyr_ex_core_infrastructure_init_py["src/zephyr/ex_core/infrastructure/__init__.py prototype"]
+        src_zephyr_ex_core_order_manager_py["src/zephyr/ex_core/order_manager.py prototype"]
+        src_zephyr_ex_core_order_state_escalator_py["src/zephyr/ex_core/order_state_escalator.py prototype"]
+        src_zephyr_ex_core_services_init_py["src/zephyr/ex_core/services/__init__.py prototype"]
+    end
+    src_zephyr_ex_core_execution_engine_py -.->|import_depends| src_zephyr_ex_core_order_manager_py
+    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_broker_interface_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_simulation_broker_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
+    D_TRADING["D-TRADING production"]
+    src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_order_state_escalator_py -.->|config_depends| D_GOVERNANCE
+    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_ex_core_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
+    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_ex_core_init_py,src_zephyr_ex_core_adapters_broker_interface_py,src_zephyr_ex_core_adapters_simulation_broker_py production
+    class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_order_state_escalator_py,src_zephyr_ex_core_services_init_py design
+    class D_TRADING external_prod
+    class D_GOVERNANCE,D_GOV_SCRIPTS external_design
+```
+
+## 跨域依赖 / Cross-domain Dependencies
+
+### 本域依赖的其他域（出边）/ Depends On
+
+| 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
+|--------|:---:|---------|
+| D-GOVERNANCE | 10 | import_depends,config_depends |
+| D-TRADING | 3 | import_depends |
+
+### 依赖本域的其他域（入边）/ Depended By
+
+| 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
+|------|:---:|---------|
+| D-GOVERNANCE | 6 | test_depends |
+| D-GOV_SCRIPTS | 1 | import_depends |
+
+## 说明 / Notes
+
+- **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
+- **生成器 / Generator**: `generate_domain_doc.py`
+- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
+- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
