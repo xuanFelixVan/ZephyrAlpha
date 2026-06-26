@@ -14,20 +14,20 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-# v3.0.5: import 迁移到真源 #7(逻辑)+#1(数据)
-from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport import (
+# v3.0.5: import 统一到 #3 生产源（zephyr.intelligence.model_profiling）
+from zephyr.intelligence.model_profiling.capability_passport import (
     BreadthResult,
     CapabilityPassport,
     DepthCapabilityResult,
     DepthResult,
     HallucinationResult,
 )
-from zephyr.integration.model_profiler.exam_orchestrator import (
+from zephyr.intelligence.model_profiling.exam_orchestrator import (
     ExamOrchestrator,
     _normalized_edit_distance,
     _percentile,
 )
-from zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases import Difficulty, ExamTestCase
+from zephyr.intelligence.model_profiling.exam_test_cases import Difficulty, ExamTestCase
 
 
 class TestNormalizedEditDistance:

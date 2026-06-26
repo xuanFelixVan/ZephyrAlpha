@@ -20,12 +20,12 @@ from pathlib import Path
 _SRC = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(_SRC))
 
-from zephyr.integration.model_profiler.exam_orchestrator import (  # noqa: E402
+from zephyr.intelligence.model_profiling.exam_orchestrator import (  # noqa: E402
     _time_weight,
     _OLYMPIAD_CASE_PASS_THRESHOLD,
     ExamOrchestrator,
 )
-from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport import (  # noqa: E402
+from zephyr.intelligence.model_profiling.capability_passport import (  # noqa: E402
     BreadthResult,
     CapabilityPassport,
     DepthResult,
@@ -33,7 +33,7 @@ from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport im
     HallucinationResult,
     SpeedResult,
 )
-from zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases import (  # noqa: E402
+from zephyr.intelligence.model_profiling.exam_test_cases import (  # noqa: E402
     ALL_EXAM_CASES,
     Difficulty,
 )

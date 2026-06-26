@@ -56,7 +56,7 @@ DEFAULT_MODELS = ["qwen3:8b", "deepseek-r1:8b", "deepseek-r1:14b", "qwen2.5-code
 
 def run_exam(model: str, timeout_s: float = 120.0) -> dict[str, Any]:
     from zephyr.integration.local_model.ollama_chat import OllamaChat
-    from zephyr.integration.model_profiler.exam_orchestrator import ExamOrchestrator
+    from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
 
     model_id = model.replace(":", "_").replace("/", "_")
     _log.info("=" * 60)

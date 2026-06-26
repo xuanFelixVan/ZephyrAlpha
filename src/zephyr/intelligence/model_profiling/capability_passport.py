@@ -75,6 +75,7 @@ def _compute_signature(data: dict) -> str:
     return hmac.new(_get_signing_key(), canonical.encode("utf-8"), hashlib.sha256).hexdigest()
 
 DEPTH_THRESHOLDS: dict[str, float] = {
+    # 原 9 能力（保留阈值）
     "task_classification": 0.60,
     "tag_completion": 0.55,
     "summary_extraction": 0.55,
@@ -84,6 +85,27 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "refactor": 0.55,
     "code_generate": 0.55,
     "dead_code_removal": 0.55,
+    # v3.0.5 新增 19 能力（code_edit_precision 与 code_fix 同阈值）
+    "code_edit_precision": 0.60,
+    "ambiguity_detect": 0.65,
+    "architecture_design": 0.55,
+    "circular_dependency_detect": 0.55,
+    "context_consistency": 0.55,
+    "cross_file_refactor": 0.55,
+    "dependency_ordering": 0.55,
+    "dependency_trace": 0.55,
+    "error_recovery": 0.55,
+    "hallucination_detect": 0.55,
+    "impact_analysis": 0.65,
+    "incremental_execution": 0.55,
+    "long_context_recall": 0.55,
+    "parallel_planning": 0.55,
+    "rollback_boundary_design": 0.55,
+    "rule_comprehension": 0.55,
+    "safety_judgment": 0.55,
+    "self_review": 0.55,
+    "task_decomposition": 0.55,
+    "tool_selection": 0.55,
 }
 
 

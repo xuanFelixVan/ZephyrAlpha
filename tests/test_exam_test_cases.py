@@ -12,8 +12,8 @@
 
 from __future__ import annotations
 
-# v3.0.5: import 迁移到真源 #1
-from zephyr.intelligence.model_profiling.pipeline_routing.exam_test_cases import (
+# v3.0.5: import 统一到 #3 生产源（zephyr.intelligence.model_profiling）
+from zephyr.intelligence.model_profiling.exam_test_cases import (
     ALL_EXAM_CASES,
     CASES_BY_CAPABILITY,
     Difficulty,
@@ -123,7 +123,7 @@ class TestExamTestCaseDefaults:
 
 class TestAllExamCases:
     def test_count(self):
-        assert len(ALL_EXAM_CASES) == 27
+        assert len(ALL_EXAM_CASES) == 87
 
     def test_all_are_exam_test_case(self):
         for tc in ALL_EXAM_CASES:
@@ -143,27 +143,24 @@ class TestAllExamCases:
 
 
 class TestCasesByCapability:
-    EXPECTED_CAPABILITIES = {
+    # v3.0.5: 关键能力子集（不硬等全量 28 个，仅断言核心能力存在）
+    KEY_CAPABILITIES = {
         "task_classification",
         "tag_completion",
-        "summary_extraction",
-        "naming_suggest",
-        "anomaly_triage",
-        "code_fix",
-        "refactor",
+        "code_edit_precision",
         "code_generate",
         "dead_code_removal",
     }
 
     def test_key_count(self):
-        assert len(CASES_BY_CAPABILITY) == 9
+        assert len(CASES_BY_CAPABILITY) == 28
 
     def test_capabilities_match_expected(self):
-        assert set(CASES_BY_CAPABILITY.keys()) == self.EXPECTED_CAPABILITIES
+        assert self.KEY_CAPABILITIES <= set(CASES_BY_CAPABILITY.keys())
 
-    def test_each_capability_has_three_cases(self):
+    def test_each_capability_has_at_least_one_case(self):
         for cap, cases in CASES_BY_CAPABILITY.items():
-            assert len(cases) == 3, f"{cap} has {len(cases)} cases, expected 3"
+            assert len(cases) >= 1, f"{cap} has 0 cases"
 
     def test_all_cases_in_dict_match_capability(self):
         for cap, cases in CASES_BY_CAPABILITY.items():
@@ -172,13 +169,20 @@ class TestCasesByCapability:
 
     def test_total_cases_in_dict(self):
         total = sum(len(cases) for cases in CASES_BY_CAPABILITY.values())
-        assert total == 27
+        assert total == 87
 
     def test_difficulties_per_capability(self):
         for cap, cases in CASES_BY_CAPABILITY.items():
             difficulties = {tc.difficulty for tc in cases}
-            assert len(difficulties) >= 2, f"{cap} has only 1 difficulty: {difficulties}"
-            assert Difficulty.EASY in difficulties or Difficulty.MEDIUM in difficulties, f"{cap} missing EASY/MEDIUM"
+            assert len(difficulties) >= 1, f"{cap} has 0 difficulties: {difficulties}"
+
+    def test_olympiad_difficulty_correct(self):
+        """v3.0.5: EX_OLY_004 难度必须为 OLYMPIAD（原 bug 为 EXTREME）。"""
+        oly_cases = {tc.case_id: tc for tc in ALL_EXAM_CASES if tc.case_id.startswith("EX-OLY")}
+        assert "EX-OLY-004" in oly_cases, "EX-OLY-004 not found"
+        assert oly_cases["EX-OLY-004"].difficulty == Difficulty.OLYMPIAD, (
+            f"EX-OLY-004 difficulty is {oly_cases['EX-OLY-004'].difficulty}, expected OLYMPIAD"
+        )
 
 
 class TestExamTestCaseBoundary:

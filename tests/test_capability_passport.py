@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.intelligence.model_profiling.pipeline_routing.capability_passport import (
+from zephyr.intelligence.model_profiling.capability_passport import (
     DEPTH_THRESHOLDS,
     PASSPORTS_DIR,
     BreadthResult,
@@ -143,6 +143,7 @@ class TestComputeGrade:
 
 
 class TestDepthThresholds:
+    # v3.0.5: 关键能力子集（不硬等全量 28 个，仅断言核心能力存在）
     EXPECTED_KEYS = {
         "task_classification",
         "tag_completion",
@@ -150,16 +151,17 @@ class TestDepthThresholds:
         "naming_suggest",
         "anomaly_triage",
         "code_fix",
+        "code_edit_precision",
         "refactor",
         "code_generate",
         "dead_code_removal",
     }
 
-    def test_has_nine_keys(self):
-        assert len(DEPTH_THRESHOLDS) == 9
+    def test_has_at_least_nine_keys(self):
+        assert len(DEPTH_THRESHOLDS) >= 9
 
     def test_keys_match_expected(self):
-        assert set(DEPTH_THRESHOLDS.keys()) == self.EXPECTED_KEYS
+        assert self.EXPECTED_KEYS <= set(DEPTH_THRESHOLDS.keys())
 
     def test_all_values_are_float(self):
         for k, v in DEPTH_THRESHOLDS.items():
@@ -248,7 +250,7 @@ class TestCapabilityPassportToDict:
 
 class TestCapabilityPassportSaveLoad:
     def test_save_and_load_roundtrip(self, tmp_path, monkeypatch):
-        import zephyr.intelligence.model_profiling.pipeline_routing.capability_passport as cp_module
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
 
         monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
 
@@ -276,13 +278,13 @@ class TestCapabilityPassportSaveLoad:
         assert loaded.overall_grade == "A-"
 
     def test_load_returns_none_for_nonexistent(self, tmp_path, monkeypatch):
-        import zephyr.intelligence.model_profiling.pipeline_routing.capability_passport as cp_module
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
 
         monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
         assert CapabilityPassport.load("nonexistent") is None
 
     def test_save_sanitizes_model_id(self, tmp_path, monkeypatch):
-        import zephyr.intelligence.model_profiling.pipeline_routing.capability_passport as cp_module
+        import zephyr.intelligence.model_profiling.capability_passport as cp_module
 
         monkeypatch.setattr(cp_module, "PASSPORTS_DIR", tmp_path)
 

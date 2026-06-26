@@ -60,8 +60,8 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-e88e8757b0974da9bed7def543c
 
 
 def run_exam(model: str, thinking: bool) -> dict[str, Any]:
-    from zephyr.integration.model_profiler.deepseek_v4_chat import DeepSeekV4Chat
-    from zephyr.integration.model_profiler.exam_orchestrator import ExamOrchestrator
+    from zephyr.intelligence.model_profiling.deepseek_v4_chat import DeepSeekV4Chat
+    from zephyr.intelligence.model_profiling.exam_orchestrator import ExamOrchestrator
 
     variant = f"{model}{'-thinking' if thinking else '-non-thinking'}"
     _log.info("=" * 60)
