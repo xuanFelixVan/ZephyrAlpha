@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.migration.safe_delete_operational
+# [TTL] task_bound
 # [INVARIANTS] --dry-run MUST NOT modify/delete any file; MUST NOT run without verify_migration_alignment exit 0
 # [MODIFY-GUARD] panorama YAML (lifecycle field updates); migration-registry.yaml (status updates)
 # [CONSUMERS] migration pipeline; DM-310+ task cards
@@ -269,4 +270,5 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys; sys.exit("DEPRECATED: 此脚本已归档，depgraph.db 已迁移至 PostgreSQL 16")
     main()
