@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 from zephyr.integration.shared_08.contracts.model_serving_response import ModelServingResponse
 
 __all__ = ["ModelServingResponse"]

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_escalation_engine_imports.py
 # [A_module] module_id=MOD-RES__safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from zephyr.governance.self_test import HealthLevel, SelfTestReport, run_self_test
 
 _SUBMODULES = [

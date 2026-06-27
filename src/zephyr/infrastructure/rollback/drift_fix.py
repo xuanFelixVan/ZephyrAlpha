@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;DriftFixError
 # [TESTS] tests/rollback/
 # [A_module] module_id=MOD-INF_drift_fix | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -27,7 +28,7 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 
 from typing import Any
 
-from zephyr.governance.behavioral_auditor.events import DriftEvent
+from zephyr.behavioral_audit.events import DriftEvent
 
 
 class DriftFixHandler:

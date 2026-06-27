@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_context_engine_imports.py
 # [A_module] module_id=MOD-ORC__safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 _SUBMODULES = [
     "adversarial_robustness",

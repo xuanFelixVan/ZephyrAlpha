@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_backcompat_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。
 

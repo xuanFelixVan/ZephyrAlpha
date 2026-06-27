@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """feedback-loop.resilience — auto-generated package init."""
 
 from . import (

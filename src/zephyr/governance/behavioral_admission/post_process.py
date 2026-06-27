@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/unit/shared/test_post_process.py; tests/unit/test_post_process.py; tests/unit/shared/test_adversarial.py
 # [A_module] module_id=MOD-GOV_post_process | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 # ---
 # layer: governance

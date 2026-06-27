@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.knowledge — auto-generated package init."""
 
 from . import ke_linker, ke_structurer, kms_interface

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.adaptation — auto-generated package init."""
 
 from . import execution_tuner, prompt_version_manager

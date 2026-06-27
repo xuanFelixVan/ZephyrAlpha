@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L11 — ML Training Domain
 
 ML训练域统一包。包含模型训练、注册、推理的核心抽象和实现。

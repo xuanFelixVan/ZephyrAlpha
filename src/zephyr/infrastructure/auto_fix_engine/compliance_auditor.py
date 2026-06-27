@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ComplianceAuditError
 # [TESTS] tests/auto-fix-engine/test_compliance_auditor.py
 # [A_module] module_id=MOD-INF_compliance_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -23,12 +24,13 @@ import sqlite3
 from datetime import UTC, datetime
 
 from zephyr.infrastructure.auto_fix_engine.models import ComplianceEvidence, FixAction
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 
 
 class ComplianceAuditor:
-    def __init__(self, db_path: str = "data/databases/governance.db", retention_days: int = 90) -> None:
+    def __init__(self, db_path: str = str(DB_PATH), retention_days: int = 90) -> None:
         self._db_path = db_path
         self._retention_days = retention_days
         self._ensure_db()

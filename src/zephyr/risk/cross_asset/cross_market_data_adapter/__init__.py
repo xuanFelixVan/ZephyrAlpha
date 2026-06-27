@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """_cross_layer: Cross-layer integration pipelines for domain blueprints."""
 
 __all__ = [

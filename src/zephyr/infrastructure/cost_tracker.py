@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_cost_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 RI-15 CostTracker — 成本追踪器
@@ -20,7 +21,7 @@ RI-15 CostTracker — 成本追踪器
 职责：追踪 AI Agent 执行成本——Token消耗、API调用次数、费用预估与告警。
 对标：AWS Cost Explorer + OpenAI Usage API
 使用方式：
-    tracker = CostTracker(db_path="data/databases/governance.db")
+    tracker = CostTracker()  # 默认使用 DB_PATH (governance.db)
     tracker.record_usage(model="deepseek-chat", tokens_in=2500, tokens_out=1200)
     report = tracker.daily_report()
 """
@@ -35,6 +36,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "COST_TRACKER_SCHEMA",
@@ -118,7 +121,7 @@ class CostTracker:
 
     def __init__(
         self,
-        db_path: str | Path = "data/databases/governance.db",
+        db_path: str | Path = DB_PATH,
         daily_budget_usd: float = 10.0,
         auto_init: bool = True,
     ):

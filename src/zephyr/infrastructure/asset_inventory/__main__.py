@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """Asset Inventory CLI — MOD-INF-026 蓝图 §31
 
@@ -519,7 +520,7 @@ def _cmd_deps(args: argparse.Namespace) -> int:
         for imp in graph.orphan_imports[:5]:
             print(f"    → {imp}")
 
-    print("  （依赖图统一由 generate_project_depgraph.py 产出到 depgraph.db，不再产 JSON）")
+    print("  （依赖图统一由 generate_project_depgraph.py 产出到 PostgreSQL depgraph，不再产 JSON）")
     return 0
 
 

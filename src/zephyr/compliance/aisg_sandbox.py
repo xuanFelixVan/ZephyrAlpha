@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Re-export wrapper: aisg_sandbox has migrated to zephyr.governance.aisg_sandbox"""
 
 from zephyr.governance.aisg_sandbox import *  # noqa: F403

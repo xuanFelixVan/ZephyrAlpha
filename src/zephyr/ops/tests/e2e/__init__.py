@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """feedback-loop.tests.e2e — auto-generated package init."""
 
 from . import integration_test_pipeline

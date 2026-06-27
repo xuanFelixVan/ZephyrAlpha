@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] gzip失败→跳过压缩保留原文;SQLite backup失败→日志warning不阻塞
 # [TESTS] tests/unit/telemetry/
 # [A_module] module_id=MOD-INF_cold_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """L12 · archive/cold_stub — 冷存储归档管道。
 
@@ -33,11 +34,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.io.paths import DB_PATH
+
 _logger = logging.getLogger(__name__)
 
 _DEFAULT_ARCHIVE_DIR: Path = Path("data/telemetry/prod/archive")
 _BACKUP_DIR: Path = Path("data/backups")
-_DB_PATH: Path = Path("data/databases/governance.db")
+_DB_PATH: Path = DB_PATH
 _COST_LIMIT_GB: float = 10.0
 _COST_WARN_80PCT: float = 8.0
 _COST_CRITICAL_95PCT: float = 9.5

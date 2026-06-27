@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
 # [A_module] module_id=MOD-UNK_api_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 

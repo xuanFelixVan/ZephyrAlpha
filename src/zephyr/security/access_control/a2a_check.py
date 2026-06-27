@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Stub module: zephyr.security.access_control.a2a_check — implementation pending."""
 
 ALLOWED_TALK_PAIRS = None  # stub constant

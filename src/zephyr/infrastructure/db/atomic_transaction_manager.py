@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_atomic_transaction_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
 
@@ -48,10 +49,11 @@ References :
 Usage::
 
     from zephyr.infrastructure.db.atomic_transaction_manager import AtomicTransactionManager
+    from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
     atm = AtomicTransactionManager(
-        db_path="data/databases/governance.db",
-        root="D:/ZephyrAlpha",
+        db_path=str(DB_PATH),
+        root=str(REPO_ROOT),
     )
     with atm.transaction() as tx:
         tx.execute("UPDATE tasks SET status=? WHERE task_id=?", ("VERIFIED", "T-1-01"))

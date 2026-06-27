@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] Delegates to zephyr.data.persistence.task_repo
 # [TESTS] tests/test_mcp_task_claim.py; tests/test_boot_hooks_unlock.py
 # [A_module] module_id=MOD-INF_task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 Backward-compatible re-export wrapper.

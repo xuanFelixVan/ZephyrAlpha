@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-DAT_default_experiment_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """L13 — Default Experiment Pipeline
 
@@ -30,7 +31,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 
-from zephyr.governance.vector_memory.pipeline_base import (
+from zephyr.governance.pipeline_base import (
     ExperimentConfig,
     ExperimentMetric,
     ExperimentPipelineBase,

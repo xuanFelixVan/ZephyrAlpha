@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] Delegates to zephyr.data.persistence.sqlite_schema
 # [TESTS]
 # [A_module] module_id=MOD-INF_sqlite_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 Backward-compatible re-export wrapper.

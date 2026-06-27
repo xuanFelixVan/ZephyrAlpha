@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ReportError
 # [TESTS] tests/auto-fix-engine/test_fix_report.py
 # [A_module] module_id=MOD-SEC_fix_report | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import json
 import logging
 from datetime import UTC, datetime

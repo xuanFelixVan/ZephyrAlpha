@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] KeyError on unregistered service; TypeError on factory returning wrong type
 # [TESTS] tests/unit/test_shared_core.py
 # [A_module] module_id=MOD-INF_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 registry — 运行时 DI 容器

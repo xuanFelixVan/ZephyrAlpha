@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] VMSError hierarchy; no side effects
 # [TESTS] tests/unit/vector-memory/test_vector_memory.py; tests/adversarial/test_cross_layer_systems_red_team.py
 # [A_module] module_id=MOD-INT_vms_errors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] returns int (count synced); never raises; logs on failure
 # [TESTS]
 # [A_module] module_id=MOD-ORC_capability_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import logging
 from pathlib import Path
 from typing import Any

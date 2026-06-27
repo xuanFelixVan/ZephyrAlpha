@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_circuit_breaker_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 CircuitBreakerManager -- standalone circuit breaker manager (Netflix Hystrix equivalent).

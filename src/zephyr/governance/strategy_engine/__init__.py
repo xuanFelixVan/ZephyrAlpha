@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L05 — Portfolio Construction Strategies
 
 Phase C 具体策略实现包。

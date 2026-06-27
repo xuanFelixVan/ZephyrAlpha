@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """AlphaSignalPipeline L02→L03跨层集成管道
 ============================================
@@ -57,7 +58,7 @@ __all__ = [
 ]
 
 try:
-    from zephyr.governance.factor.factor_base import FactorBase
+    from zephyr.factor.factor_base import FactorBase
     from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
     from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
     from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
@@ -195,7 +196,7 @@ class AlphaSignalPipeline:
 
         if not self._factors:
             try:
-                from zephyr.governance.factor.factor_base import FactorBase as FB
+                from zephyr.factor.factor_base import FactorBase as FB
 
                 discovered = getattr(FB, "discover_factors", lambda: [])()
                 self._factors = list(discovered) if discovered else []

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # 代理模块：将 zephyr.ops.observability.notifier 重定向到 zephyr.infrastructure.observability.notifier
 from zephyr.infrastructure.observability.notifier import (
     Notification,

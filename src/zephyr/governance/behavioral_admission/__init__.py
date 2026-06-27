@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-GOV_behavioral_admission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 # Existing governance/behavioral-admission imports
 from zephyr.governance.behavioral_admission.admission_controller import (
     AdmissionController,

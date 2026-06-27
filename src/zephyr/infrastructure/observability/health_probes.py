@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # ==== BEGIN CODGEN:CT-TEL-004 ====
 from dataclasses import dataclass, field
 from datetime import datetime

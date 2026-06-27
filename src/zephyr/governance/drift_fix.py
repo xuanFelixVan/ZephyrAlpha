@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;DriftFixError
 # [TESTS] tests/rollback/
 # [A_module] module_id=MOD-RES_drift_fix | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 

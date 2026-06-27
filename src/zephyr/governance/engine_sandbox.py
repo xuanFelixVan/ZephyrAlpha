@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/test_escalation_engine.py
 # [A_module] module_id=MOD-RES_engine_sandbox | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 
@@ -61,7 +62,7 @@ class IsolationProfile:
     )
     write_paths: list[str] = field(
         default_factory=lambda: [
-            "docs/09_audit/",
+            "docs/_working/audit/",
         ]
     )
     deny_paths: list[str] = field(

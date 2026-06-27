@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
 # [A_module] module_id=MOD-INT__patterns | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """_patterns — 设计模式 re-export 桥接层。
 
 从 resilience/foundation/utils 子包及 shared.infra_06、integration.shared.schema 重新导出符号，

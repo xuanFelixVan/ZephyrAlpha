@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] InvalidDecisionError
 # [TESTS] tests/test_admission_response.py
 # [A_module] module_id=MOD-GOV_admission_response | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from __future__ import annotations
 
 from enum import Enum

@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # MAD-002 Phase Relevance Gate
 # 阶段相关性门禁 —— 确保新模块与当前开发阶段对齐

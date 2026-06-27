@@ -60,7 +60,6 @@ class DatabaseService:
 
     def __init__(self):
         self.governance_db = r"D:\ZephyrAlpha\data\databases\governance.db"
-        self.depgraph_db = r"D:\ZephyrAlpha\data\databases\depgraph.db"
         self.market_db = r"D:\ZephyrAlpha\data\databases\market.duckdb"
 
         self._governance_conn: sqlite3.Connection | None = None
@@ -327,7 +326,9 @@ if __name__ == "__main__":
 
     # 测试 depgraph.db
     conn = ds.get_depgraph_conn()
-    nodes = conn.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
+    with conn.cursor() as cur:
+        cur.execute("SELECT COUNT(*) FROM nodes")
+        nodes = cur.fetchone()["count"]
     print(f"depgraph.db: {nodes} nodes")
 
     # 测试 market.duckdb

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_loader | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 loader.py —— 共享 YAML 配置加载与 Pydantic 校验（Phase 3 新增 | 盲点 #3/#15 修复）

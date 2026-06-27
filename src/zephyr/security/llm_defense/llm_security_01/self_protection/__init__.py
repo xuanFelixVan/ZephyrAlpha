@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-SEC_self_protection | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 # Re-export from authoritative location — import from leaf modules directly
 from zephyr.security.llm_defense.llm_security.self_protection.adversarial_mutator import *  # noqa: F403
 from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import *  # noqa: F403

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_a2a_failure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """G-CT-008 消费端 — Escalation.on_a2a_failure() 跨 agent 通信失败升级.
 

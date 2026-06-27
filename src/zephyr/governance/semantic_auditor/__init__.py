@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-SEM_semantic_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 
 [MODULE] zephyr.governance.semantic_auditor

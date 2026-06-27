@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # MAD-005 Dependency Graph Template Compliance Gate
 # 依赖图模板合规门禁 —— 依赖图产出物必须符合 TPL-DEPGRAPH-001 模板

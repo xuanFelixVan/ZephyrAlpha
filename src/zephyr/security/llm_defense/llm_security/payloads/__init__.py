@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-SEC_payloads | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 class Payload:
     def __init__(self, payload_type="", content="", metadata=None):
         self.payload_type = payload_type

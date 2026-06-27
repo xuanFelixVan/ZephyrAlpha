@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # 代理模块：将 zephyr.governance.persistence.atomic_transaction_manager 重定向到 zephyr.governance.atomic_transaction_manager
 from zephyr.governance.atomic_transaction_manager import (
     AtomicTransactionManager,

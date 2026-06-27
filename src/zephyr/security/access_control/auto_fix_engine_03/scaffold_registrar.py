@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ScaffoldRegistrationError
 # [TESTS] tests/auto-fix-engine/test_scaffold_registrar.py
 # [A_module] module_id=MOD-SEC_scaffold_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

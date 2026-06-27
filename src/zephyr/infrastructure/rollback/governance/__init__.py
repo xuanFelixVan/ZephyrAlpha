@@ -1,5 +1,6 @@
 # [A_module] module_id=MOD-GOV_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
+# [TTL] task_bound
 """
 Rollback — MOD-INF-021
 

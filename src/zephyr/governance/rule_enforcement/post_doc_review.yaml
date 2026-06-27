@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # POST_DOC_REVIEW — Session 关门时文档内容审查门禁
 # 真源: trae_030_doc_numbering_metadata.yaml §1.2 执行后文档审查协议 + project_rules.md 关门步骤12

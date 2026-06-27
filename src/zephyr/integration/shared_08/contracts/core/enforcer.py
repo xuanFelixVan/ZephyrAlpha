@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.core.enforcer import ContractViolationError, EnforcementMode, enforce, enforce_input, enforce_output"
 # [A_module] module_id=MOD-INT_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.core.enforcer。"""
 from zephyr.shared.contracts.core.enforcer import *  # noqa: F401,F403

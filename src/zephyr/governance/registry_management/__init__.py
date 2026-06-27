@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ImportError_on_missing_module
 # [TESTS] tests/test_domain_structure.py
+# [TTL] task_bound
 """registry_management subdomain package — D-GOV-REGISTRY_MANAGEMENT."""
 
 __all__ = []

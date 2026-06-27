@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
 # [A_module] module_id=MOD-INT__version_and_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """_version_and_types — 版本与类型 re-export 桥接层。
 
 从 foundation/__version__/io/utils 子包及外部模块重新导出符号，

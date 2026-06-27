@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac/
+# [TTL] task_bound
 """
 Re-export shim — all implementations moved to zephyr.security.access_control.
 

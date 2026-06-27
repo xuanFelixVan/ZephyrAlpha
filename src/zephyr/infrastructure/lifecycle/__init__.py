@@ -10,6 +10,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.lifecycle — lifecycle management, resource optimization, and module lifecycle hooks."""
 
 from . import scope_guard

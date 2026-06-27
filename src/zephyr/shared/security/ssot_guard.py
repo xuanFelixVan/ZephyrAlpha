@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SEC_ssot_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -91,7 +92,7 @@ WATCHED_PREFIXES: tuple[str, ...] = (
     "scripts/governance/",
     "scripts/ci_audit/",
     ".github/workflows/",
-    "docs/09_audit/STANDARDS/",
+    "docs/_working/audit/STANDARDS/",
     "src/zephyr/",
     "docs/01_policies_and_standards/",
     "docs/00_meta/",

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_auto_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """
 AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 ==================================================

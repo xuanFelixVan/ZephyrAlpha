@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] FixBudgetExceededError;FixStormDetectedError
 # [TESTS] tests/auto-fix-engine/test_fix_budget.py
 # [A_module] module_id=MOD-INF_fix_budget | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -26,10 +27,11 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import BudgetDecision, BudgetInfo, FixLevel
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 
-_DB_PATH = Path("data/databases/governance.db")
+_DB_PATH = DB_PATH
 
 
 class FixBudget:

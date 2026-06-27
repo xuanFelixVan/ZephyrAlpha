@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError on missing sub-module
 # [TESTS] tests/unit/test_schemas.py; tests/unit/shared/test_schemas.py; tests/contract/test_schema_stability.py
 # [A_module] module_id=MOD-SHR_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

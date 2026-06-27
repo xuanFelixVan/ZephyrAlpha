@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Configuration loader for Zephyr Alpha."""
 
 from zephyr.infrastructure.config.shared.config import loader

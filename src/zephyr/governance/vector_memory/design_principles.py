@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] raises DimensionError/ChunkStrategyError/TTLError/HotColdSeparationError/ProvenanceMissingError on validation failure
 # [TESTS] tests/unit/vector-memory/test_vector_memory.py
 # [A_module] module_id=MOD-DAT_design_principles | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

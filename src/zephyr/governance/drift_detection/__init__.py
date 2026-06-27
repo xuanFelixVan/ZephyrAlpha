@@ -1,5 +1,6 @@
 # [A_module] module_id=MOD-GOV_drift_detection | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [TTL] task_bound
 from . import (
     absence_manager,
     ai_context_injector,

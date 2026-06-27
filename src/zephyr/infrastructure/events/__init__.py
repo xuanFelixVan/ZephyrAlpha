@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.events — auto-generated package init."""
 
 from . import event_reactor, event_store, hook_dispatcher

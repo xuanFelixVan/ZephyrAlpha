@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """context-engine.assembly — auto-generated package init."""
 
 __all__ = ["context_assembler", "context_injector", "context_pipeline"]

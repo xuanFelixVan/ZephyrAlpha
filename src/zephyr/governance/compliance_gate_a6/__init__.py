@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L10 — Compliance Concrete Implementations
 
 Phase C 具体实现包。

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.ops.gates"
 # [A_module] module_id=MOD-UNK__operational_gates | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 SUBMODULES = [
     "action_reversibility",

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
 # [A_module] module_id=MOD-UNK_dora_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 

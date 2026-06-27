@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L03 — Signal Combiner Concrete Implementations"""
 
 from __future__ import annotations

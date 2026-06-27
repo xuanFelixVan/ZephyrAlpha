@@ -48,6 +48,17 @@ PRAGMA 基线（P2迁移后已废弃）
   PostgreSQL 不需要 PRAGMA 配置（由服务器 postgresql.conf 管理）。
   SQLite 时代的 PRAGMA 配置已删除。
 
+P2 迁移后 schema 真源（重要）
+-----------------------------------
+  PG schema 真源：scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql
+  init_db() 仅验证核心表存在，不执行 DDL/migration。
+
+  _DDL_* 常量：列名对比真源（verify_schema_health.py 引用做 drift 校验），
+  类型定义与 02_create_pg_schema.sql 真源对齐（6 个 IDENTITY 列均为
+  BIGINT GENERATED ALWAYS AS IDENTITY，FK 列为 BIGINT）。
+  _DDL_*_V5 常量：v5/v11 migration 历史 SQL 记录，_MIGRATIONS 列表元组元素，
+  仅供版本号元数据引用，不执行。
+
 用法
 ----
     from zephyr.governance.persistence.depgraph_schema import init_db, get_db_connection, DB_PATH
@@ -118,12 +129,13 @@ def _build_pg_dsn(config: dict[str, str] | None = None, *, superuser: bool = Fal
     return kwargs
 
 # ---------------------------------------------------------------------------
-# DDL — nodes 表（28列，v11删除module_lifecycle_state+添加CHECK约束）
+# DDL — nodes 表（31列，v11删除module_lifecycle_state+添加CHECK约束）
+# P2迁移后类型与 02_create_pg_schema.sql 真源对齐：node_id 为 BIGINT IDENTITY
 # ---------------------------------------------------------------------------
 
 _DDL_NODES = """
 CREATE TABLE IF NOT EXISTS nodes (
-    node_id                  TEXT    PRIMARY KEY,
+    node_id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     node_type                TEXT    NOT NULL,
     path                     TEXT    NOT NULL,
     granularity              TEXT    NOT NULL DEFAULT 'file',
@@ -159,13 +171,14 @@ CREATE TABLE IF NOT EXISTS nodes (
 
 # ---------------------------------------------------------------------------
 # DDL — edges 表
+# P2迁移后类型与 02_create_pg_schema.sql 真源对齐：edge_id 为 BIGINT IDENTITY，FK 列为 BIGINT
 # ---------------------------------------------------------------------------
 
 _DDL_EDGES = """
 CREATE TABLE IF NOT EXISTS edges (
-    edge_id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    from_node_id             TEXT    NOT NULL,
-    to_node_id               TEXT    NOT NULL,
+    edge_id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    from_node_id             BIGINT  NOT NULL,
+    to_node_id               BIGINT  NOT NULL,
     dep_type                 TEXT    NOT NULL,
     architecture_direction   TEXT    DEFAULT 'downstream',
     coupling_strength        TEXT    DEFAULT 'critical',
@@ -271,7 +284,7 @@ CREATE TABLE IF NOT EXISTS contracts (
 
 _DDL_RULE_BINDINGS = """
 CREATE TABLE IF NOT EXISTS rule_bindings (
-    binding_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    binding_id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     function_name    TEXT    NOT NULL,
     rule_id          TEXT    NOT NULL,
     binding_type     TEXT    NOT NULL,
@@ -319,7 +332,7 @@ CREATE TABLE IF NOT EXISTS arch_directory_tree (
 
 _DDL_ARCH_PATH_MAPPINGS = """
 CREATE TABLE IF NOT EXISTS arch_path_mappings (
-    mapping_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    mapping_id       BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     domain_id        TEXT    NOT NULL,
     path_pattern     TEXT    NOT NULL,
     path_type        TEXT    NOT NULL,
@@ -490,7 +503,7 @@ CREATE TABLE IF NOT EXISTS gates (
 
 _DDL_GOVERNANCE_AUDIT_LOGS = """
 CREATE TABLE IF NOT EXISTS governance_audit_logs (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     timestamp     TEXT NOT NULL,
     total_gates   INTEGER DEFAULT 0,
     passed_gates  INTEGER DEFAULT 0,
@@ -603,7 +616,7 @@ CREATE TABLE IF NOT EXISTS registries (
 
 _DDL_DOMAIN_MAPPING = """
 CREATE TABLE IF NOT EXISTS domain_mapping (
-    mapping_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    mapping_id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     path_prefix  TEXT NOT NULL,
     domain_id    TEXT NOT NULL,
     subdomain_id TEXT,
@@ -615,7 +628,9 @@ CREATE TABLE IF NOT EXISTS domain_mapping (
 """
 
 # ---------------------------------------------------------------------------
-# 版本化迁移框架
+# 版本化迁移框架（P2迁移后：历史 SQLite 迁移记录，不再执行）
+# PG schema 真源：scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql
+# 本列表保留以支持 check_schema_version_writes.py / verify_schema_health.py 引用版本号元数据
 # ---------------------------------------------------------------------------
 
 _MIGRATIONS: list[tuple[int, str, list[str]]] = [

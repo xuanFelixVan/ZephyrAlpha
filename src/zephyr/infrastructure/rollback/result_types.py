@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;TypeError
 # [TESTS] tests/rollback/
 # [A_module] module_id=MOD-INF_result_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L05 Portfolio Construction — Re-export wrapper (DM-298)
 
 All modules have been migrated to zephyr.portfolio_core.core.

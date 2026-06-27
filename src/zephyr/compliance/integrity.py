@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Re-export wrapper: integrity has migrated to zephyr.governance.integrity"""
 
 from zephyr.governance.integrity import *  # noqa: F403

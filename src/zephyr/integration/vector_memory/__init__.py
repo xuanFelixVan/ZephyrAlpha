@@ -1,5 +1,6 @@
 # [A_module] module_id=MOD-INT_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
+# [TTL] task_bound
 """Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0
 =============================================================
 

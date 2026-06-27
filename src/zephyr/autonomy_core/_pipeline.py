@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_context_engine_imports.py
 # [A_module] module_id=MOD-ORC__pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from zephyr.autonomy_core.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,

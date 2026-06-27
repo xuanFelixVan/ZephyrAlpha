@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_blueprint_scorer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 blueprint_scorer.py — Re-export wrapper → canonical: zephyr.governance.audit_orchestration.blueprint_scorer

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.integration.shared_08.contracts.gate"
+# [TTL] task_bound
 
 __all__ = [
     "gate_result",

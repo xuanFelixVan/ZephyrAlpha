@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError on missing pandas
 # [TESTS]
 # [A_module] module_id=MOD-INT_timestamp_utils | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from datetime import datetime
 
 import pandas as pd

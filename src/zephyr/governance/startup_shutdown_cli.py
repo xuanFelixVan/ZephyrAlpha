@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
 # [TESTS] tests/test_rollback/
 # [A_module] module_id=MOD-RES_startup_shutdown_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

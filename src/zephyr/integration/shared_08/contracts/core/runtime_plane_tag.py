@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.core.runtime_plane_tag import RuntimePlane, HOT_PATH_LATENCY_BUDGET_MS, WARM_PATH_LATENCY_BUDGET_MS, COLD_PATH_LATENCY_BUDGET_MS, HOT_PATH_ACTIVATED, COLD_PATH_PARTIAL_ACTIVATED"
 # [A_module] module_id=MOD-INT_runtime_plane_tag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.core.runtime_plane_tag。"""
 from zephyr.shared.contracts.core.runtime_plane_tag import *  # noqa: F401,F403

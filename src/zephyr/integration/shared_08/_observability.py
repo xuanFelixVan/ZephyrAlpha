@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
 # [A_module] module_id=MOD-INT__observability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """_observability — 可观测性 re-export 桥接层。
 
 从 foundation/lifecycle/contracts 子包及 ops/observability、integration/shared/events 重新导出符号，

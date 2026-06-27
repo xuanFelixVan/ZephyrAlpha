@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_query_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 QueryMetrics — SQL 查询性能监控装饰器（SH-DB-001 v2.0）
@@ -31,7 +32,7 @@ Safety     : M（监控组件，不影响主流程）
 ----
     from zephyr.infrastructure.db.query_metrics import QueryMetrics
 
-    qm = QueryMetrics(db_path="data/databases/governance.db")
+    qm = QueryMetrics()  # 默认使用 DB_PATH (governance.db)
 
     @qm.track("list_tasks")
     def list_tasks(conn):

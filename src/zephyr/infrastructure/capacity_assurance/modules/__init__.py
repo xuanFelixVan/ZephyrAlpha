@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 ZephyrAlpha 容量保障体系 — 模块包
 包含盲点审计（§21-§25）补充的所有模块 (M-28~M-46)。

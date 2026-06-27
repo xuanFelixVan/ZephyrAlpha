@@ -9,6 +9,7 @@
 # [CONSUMERS] zephyr.integration.agent_communication; zephyr.infrastructure.a2a_protocol; zephyr.infrastructure.gateway_server
 # [ERROR_CONTRACT] import errors only
 # [TESTS] tests/test_shared_protocols.py
+# [TTL] task_bound
 
 """A2A Protocol — shared interface definitions.
 

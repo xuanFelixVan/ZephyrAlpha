@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] GameDayError on validation failure within game day session
 # [TESTS] tests/red_blue/test_game_day_runner.py
 # [A_module] module_id=MOD-SEC_game_day_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

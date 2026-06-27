@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_degrade_cascade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """全局降级级联预防（CT-DEGRADE-CASCADE）——降级传播链检测+熔断。"""
 

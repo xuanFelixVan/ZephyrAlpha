@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Optional
 
-from zephyr.integration.contracts.execution.order import OrderSide
-from zephyr.integration.contracts.execution.order import OrderStatus
-from zephyr.integration.contracts.execution.order import OrderType
+from zephyr.trading.trading_contracts.execution.order import OrderSide
+from zephyr.trading.trading_contracts.execution.order import OrderStatus
+from zephyr.trading.trading_contracts.execution.order import OrderType
 from zephyr.shared.contracts.core.trace_context import TraceContext
 # ---
 # layer: cross_cutting

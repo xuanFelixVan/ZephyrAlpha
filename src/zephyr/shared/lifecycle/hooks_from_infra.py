@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] re-raises Exception on init/startup failure
 # [TESTS] tests/lifecycle_manager/test_hooks.py
 # [A_module] module_id=MOD-INF_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """[BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.maintenance — auto-generated package init."""
 
 from . import autonomy_monitor, dogfooding, handbook, zero_config

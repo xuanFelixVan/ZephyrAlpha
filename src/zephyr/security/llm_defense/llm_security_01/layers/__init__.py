@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-SEC_layers | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 # Re-export from authoritative location — import from leaf modules directly
 from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import *  # noqa: F403
 from zephyr.security.llm_defense.llm_security.layers.l1_input import *  # noqa: F403

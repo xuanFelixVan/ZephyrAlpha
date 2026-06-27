@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 from .backtest_base import *
 from .default_backtest_engine import *
 from .pipeline_base import *

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """context-engine.management — auto-generated package init."""
 
 from . import context_evictor, context_rot_model

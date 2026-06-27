@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] QueryError;TaskNotFoundError
 # [TESTS] tests/db/
 # [A_module] module_id=MOD-INF_query | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """[BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 

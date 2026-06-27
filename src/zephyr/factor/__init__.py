@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """ZephyrAlpha — L02 Alpha Factor Layer
 
 SSoT: cross_layer_contracts.yaml v3.0

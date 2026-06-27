@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """shared.security — auto-generated package init."""
 
 __all__ = ["capability", "secrets", "ssot_guard"]

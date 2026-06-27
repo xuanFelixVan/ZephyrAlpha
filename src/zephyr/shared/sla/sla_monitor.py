@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SHR_sla_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 # 代理模块：将 zephyr.shared.sla.sla_monitor 重定向到 zephyr.infrastructure.sla.sla_monitor
 from zephyr.infrastructure.sla.sla_monitor import (

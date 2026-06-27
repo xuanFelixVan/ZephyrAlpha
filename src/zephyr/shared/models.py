@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/unit/test_schemas.py; tests/unit/db/test_task_repo.py; tests/unit/gates/test_gate_engine.py
 # [A_module] module_id=MOD-INF_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ZephyrAlpha 任务系统核心数据模型

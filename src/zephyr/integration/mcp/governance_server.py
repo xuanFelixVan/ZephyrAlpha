@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """GovernanceServer: 治理域统一MCP入口
 ========================================
 Server   : governance
@@ -555,8 +556,8 @@ class GovernanceServer(BaseMCPServer):
         import asyncio
 
         try:
-            from zephyr.governance.behavioral_auditor.cold_start import init_database, init_directories
-            from zephyr.governance.behavioral_auditor.drift_engine import ScanLevel, scan
+            from zephyr.behavioral_audit.cold_start import init_database, init_directories
+            from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
 
             project_root = str(REPO_ROOT)
             init_directories(project_root)
@@ -593,8 +594,8 @@ class GovernanceServer(BaseMCPServer):
 
     def _drift_report(self) -> dict[str, Any]:
         try:
-            from zephyr.governance.behavioral_auditor.drift_engine import build_report, load_detector_registry
-            from zephyr.governance.behavioral_auditor.drift_models import DriftReport
+            from zephyr.behavioral_audit.drift_engine import build_report, load_detector_registry
+            from zephyr.behavioral_audit.drift_models import DriftReport
 
             detectors = load_detector_registry()
             active_count = sum(1 for d in detectors if d.status == "active")
@@ -616,7 +617,7 @@ class GovernanceServer(BaseMCPServer):
 
     def _drift_budget(self, module_id: str) -> dict[str, Any]:
         try:
-            from zephyr.governance.behavioral_auditor.drift_infrastructure import check_budget_for_gate
+            from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
 
             result = check_budget_for_gate(module_id)
             return {

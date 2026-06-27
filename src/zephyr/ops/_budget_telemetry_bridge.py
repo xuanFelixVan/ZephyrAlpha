@@ -12,5 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # Re-export from authoritative location
 from zephyr.infrastructure.system_telemetry._budget_telemetry_bridge import *  # noqa: F403

@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_order | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.execution.order。"""
 from zephyr.trading.trading_contracts.execution.order import *  # noqa: F401,F403

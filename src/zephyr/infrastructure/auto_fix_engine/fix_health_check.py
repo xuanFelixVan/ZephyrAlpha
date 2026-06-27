@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] HealthCheckError
 # [TESTS] tests/auto-fix-engine/test_fix_health_check.py
 # [A_module] module_id=MOD-INF_fix_health_check | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -22,12 +23,13 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixHealthReport
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 
 
 class FixHealthCheck:
-    def __init__(self, db_path: str = "data/databases/governance.db") -> None:
+    def __init__(self, db_path: str | Path = DB_PATH) -> None:
         self._db_path = db_path
 
     def check(

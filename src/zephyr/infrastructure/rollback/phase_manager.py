@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
 # [TESTS] tests/test_rollback/
 # [A_module] module_id=MOD-INF_phase_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """Phase Manager — ZephyrAlpha 施工阶段门控引擎.
 

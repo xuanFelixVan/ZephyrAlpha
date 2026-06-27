@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INT_ssot_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ssot_guard.py —— Re-export wrapper → canonical: zephyr.integration.shared_08.security.ssot_guard

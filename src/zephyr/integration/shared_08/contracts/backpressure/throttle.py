@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.backpressure.throttle import BackpressureThrottle"
 # [A_module] module_id=MOD-INT_throttle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.backpressure.throttle。"""
 from zephyr.shared.contracts.backpressure.throttle import *  # noqa: F401,F403

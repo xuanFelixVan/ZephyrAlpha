@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] VMS不可用返回degraded; 空增量返回0
 # [TESTS] scripts/connect/kb_vms.py --trigger
 # [A_module] module_id=MOD-RSC_sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """KB→VMS 同步引擎 — sync_to_vms() 生产者"""
 
 from __future__ import annotations

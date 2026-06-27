@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] LSG不可用返回original_blocks+degraded_warning; 空输入返回空
 # [TESTS] scripts/connect/ce_lsg.py --trigger
 # [A_module] module_id=MOD-ORC_security_filter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """CE 安全过滤器 — filter_context() 生产者
 
 CT-CE-LSG-001: 将构建好的上下文块送入 LSGSecurityGateway 扫描后返回安全的执行上下文。

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RuntimeError when task_repo is None; GateViolationError on invalid transitions
 # [TESTS] tests/test_mcp_task_claim.py
 # [A_module] module_id=MOD-INF_task_manager_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ZephyrAlpha MCP Task Manager Server

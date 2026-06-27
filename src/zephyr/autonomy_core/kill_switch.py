@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-ORC_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 # SRC-0041: Copy file -- keep independent implementation, pending future review
 #   shared/kill_switch.py is now the unified export SSoT; this file exported

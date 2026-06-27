@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure
 # [TESTS] tests/audit-orchestrator/
+# [TTL] task_bound
 
 from zephyr.governance.audit_trail.anomaly import AnomalyDetector
 from zephyr.governance.audit_trail.bridge import OrchestratorBridge

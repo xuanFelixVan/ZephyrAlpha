@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L03 Signal Domain
 
 Signal域统一包。聚合信号生成、策略、合成、组合、资本配置和管线。

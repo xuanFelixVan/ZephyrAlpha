@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INT_limiter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 limiter.py —— Re-export wrapper → canonical: zephyr.infrastructure.shared_services.infra_06.limiter

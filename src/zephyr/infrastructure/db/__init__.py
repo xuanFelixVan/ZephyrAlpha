@@ -1,5 +1,6 @@
 # [A_module] module_id=MOD-INF_db | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
+# [TTL] task_bound
 """zephyr.infrastructure.db — 元数据持久化层（SQLite + DuckDB 双引擎）与原子事务管理 v2.0。
 
 本包封装 experimental 元数据层（见 ADR-0030：SQLite 作为任务 / 事件 / 知识 / 门禁的

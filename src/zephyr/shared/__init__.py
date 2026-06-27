@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-SHR_shared | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 __all__ = [
     "MIN_COMPATIBLE_SHARED_VERSION",

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ZombieCleanError
 # [TESTS] tests/auto-fix-engine/test_zombie_cleaner.py
 # [A_module] module_id=MOD-INF_zombie_cleaner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

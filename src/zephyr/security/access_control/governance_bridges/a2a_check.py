@@ -12,5 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # Module stub: zephyr.security.access_control.governance_bridges.a2a_check
 # This module is a placeholder. Implementation pending.

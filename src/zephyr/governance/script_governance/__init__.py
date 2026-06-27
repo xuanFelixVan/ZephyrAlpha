@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError_on_missing_module
 # [TESTS] tests/test_domain_structure.py
+# [TTL] task_bound
 """script_governance subdomain package — D-GOV-SCRIPT_GOVERNANCE."""
 
 __all__ = []

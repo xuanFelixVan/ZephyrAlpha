@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AutoFixEngineError;FixBlockedError
 # [TESTS] tests/auto-fix-engine/test_engine.py
 # [A_module] module_id=MOD-SEC_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -337,7 +338,7 @@ class AutoFixEngine:
                             traceability=FindingTraceability(),
                             recommendation_block=RecommendationBlock(),
                         )
-                        from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+                        from zephyr.governance.finding_ingest import FindingIngest
 
                         ingest = FindingIngest()
                         ingest.ingest_findings([verified_finding])
@@ -399,7 +400,7 @@ class AutoFixEngine:
             jsonl_lines.append(f.to_jsonl())
         if jsonl_lines:
             try:
-                from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+                from zephyr.governance.finding_ingest import FindingIngest
 
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)

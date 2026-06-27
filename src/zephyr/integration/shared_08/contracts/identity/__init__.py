@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
+# [TTL] task_bound
 
 from zephyr.integration.shared_08.contracts.identity.agent_identity import (
     MATURITY_AUTO_GUARD_TIMEOUT,

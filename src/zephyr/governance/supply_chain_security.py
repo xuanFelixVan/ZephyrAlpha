@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
 # [A_module] module_id=MOD-UNK_supply_chain_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import logging
 from datetime import UTC, datetime, timedelta
 from enum import Enum

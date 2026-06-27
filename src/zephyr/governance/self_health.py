@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] HealthCheckError on collector failure
 # [TESTS] tests/semantic-auditor/test_self_health.py
 # [A_module] module_id=MOD-SEM_self_health | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 semantic-auditor/self_health.py — MOD-INF-028 §3.1 Stage 11

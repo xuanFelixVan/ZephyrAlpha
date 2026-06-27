@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # _template.yaml — ZephyrAlpha Gate Template v1.0.0
 # 门禁标准模板——AI agent 复制此文件创建新门禁

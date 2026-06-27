@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ValidationError on invalid task_id format or field constraint violation
 # [TESTS] tests/unit/test_schemas.py; tests/unit/gates/test_gate_engine.py; tests/unit/db/test_task_repo.py
 # [A_module] module_id=MOD-GOV_task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -12,5 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # Re-export from authoritative location
 from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import *  # noqa: F403

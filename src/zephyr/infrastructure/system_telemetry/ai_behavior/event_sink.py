@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] FeatureFlag OFF→noop;ring buffer满→丢弃最旧
 # [TESTS] tests/unit/telemetry/
 # [A_module] module_id=MOD-INF_event_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """L12 · ai_behavior/event_sink — AI 行为遥测事件管道。
 

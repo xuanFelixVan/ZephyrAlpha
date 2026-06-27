@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
 # [A_module] module_id=MOD-SHR_permission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from dataclasses import dataclass, field
 from enum import Enum

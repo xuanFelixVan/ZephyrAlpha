@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] StagingError on all failures; CONFLICT raised when file modified by another session
 # [TESTS] tests/test_staging_area.py
 # [A_module] module_id=MOD-ORC_staging_area | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """
 StagingArea — 多AI并发草稿写入+提交+冲突检测模块（CT-SESSION-CONFLICT-002）
 

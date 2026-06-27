@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.reliability — auto-generated package init."""
 
 from . import circuit_breaker, context_guard

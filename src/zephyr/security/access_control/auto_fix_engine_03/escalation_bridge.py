@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] EscalationBridgeError
 # [TESTS] tests/auto-fix-engine/test_escalation_bridge.py
 # [A_module] module_id=MOD-SEC_escalation_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

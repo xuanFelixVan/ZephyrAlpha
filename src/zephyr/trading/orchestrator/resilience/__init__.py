@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """orchestrator.resilience — auto-generated package init."""
 
 from . import deferred_queue, failure_matcher

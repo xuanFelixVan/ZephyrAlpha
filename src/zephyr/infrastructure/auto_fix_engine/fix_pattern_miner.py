@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] PatternMiningError
 # [TESTS] tests/auto-fix-engine/test_fix_pattern_miner.py
 # [A_module] module_id=MOD-INF_fix_pattern_miner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -25,12 +26,13 @@ from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import FixAction, FixStatus
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 
 
 class FixPatternMiner:
-    def __init__(self, db_path: str = "data/databases/governance.db") -> None:
+    def __init__(self, db_path: str = str(DB_PATH)) -> None:
         self._db_path = db_path
         self._pattern_cache: dict[str, dict[str, Any]] = {}
         self._ensure_db()

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.core.gate_types import GateResult, GateViolationError"
 # [A_module] module_id=MOD-INT_gate_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.core.gate_types。
 
 shared 版本使用 __getattr__ 动态转发至 zephyr.governance.rule_enforcement.gate_types，

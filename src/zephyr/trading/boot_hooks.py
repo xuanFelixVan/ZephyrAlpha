@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] returns None; logs error on failure; writes hook_failure event on critical failure
 # [TESTS]
 # [A_module] module_id=MOD-ORC_boot_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

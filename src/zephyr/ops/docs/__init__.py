@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """feedback-loop.docs — auto-generated package init."""
 
 from . import cold_start_manual

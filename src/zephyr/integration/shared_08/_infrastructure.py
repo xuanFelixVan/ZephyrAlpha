@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
 # [A_module] module_id=MOD-INT__infrastructure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """_infrastructure — 基础设施 re-export 桥接层。
 
 从 io/security/utils/session_audit/lifecycle 子包及 zephyr.shared 重新导出符号，

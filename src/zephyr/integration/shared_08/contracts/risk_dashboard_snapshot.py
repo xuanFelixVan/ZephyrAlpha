@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # ==== BEGIN CODGEN:CTR-P1-008 ====
 from dataclasses import dataclass, field
 

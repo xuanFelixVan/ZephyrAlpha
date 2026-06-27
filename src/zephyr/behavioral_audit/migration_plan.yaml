@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # ZephyrAlpha — Drift Detector 供应商迁移计划（§6.19）
 # module_id: MOD-INF-023

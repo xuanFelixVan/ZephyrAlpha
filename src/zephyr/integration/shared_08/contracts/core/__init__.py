@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """shared.contracts.core — auto-generated package init."""
 
 from . import base_event, gate_types

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """shared.observability — auto-generated package init."""
 
 from . import health_discovery, session_audit

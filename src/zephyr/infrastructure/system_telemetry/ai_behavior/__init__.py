@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeatureFlag关闭→跳过写入;写入失败→日志warning
 # [TESTS] tests/unit/telemetry/
+# [TTL] task_bound
 """L12 · ai_behavior — AI 行为遥测（7维度 + Error Taxonomy）"""
 
 from zephyr.infrastructure.system_telemetry.ai_behavior.event_sink import (

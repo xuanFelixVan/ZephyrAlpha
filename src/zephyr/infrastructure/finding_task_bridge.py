@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_finding_task_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 Finding→TaskCard 桥接器
@@ -293,7 +294,7 @@ class FindingTaskBridge:
 
 def bridge_findings_to_tasks(
     findings: list[AuditFinding],
-    db_path: str | Path = "data/databases/governance.db",
+    db_path: str | Path = DB_PATH,
     namespace: TaskNamespace | None = None,
     dry_run: bool = False,
 ) -> BridgeResult:

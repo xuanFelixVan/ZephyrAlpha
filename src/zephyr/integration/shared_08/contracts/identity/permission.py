@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.integration.shared_08.contracts.identity.permission"
 # [A_module] module_id=MOD-INT_permission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.identity.permission。"""
 
 from zephyr.shared.contracts.identity.permission import *  # noqa: F401,F403

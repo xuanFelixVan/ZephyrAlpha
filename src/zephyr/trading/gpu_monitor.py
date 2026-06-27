@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] collect_gpu_stats 返回 dict，异常时返回 {"available": False, "error": str}
 # [TESTS]
 # [A_module] module_id=MOD-ORC_gpu_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 gpu_monitor.py — NVIDIA GPU 状态采集器

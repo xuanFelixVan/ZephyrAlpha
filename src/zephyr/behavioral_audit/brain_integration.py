@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_brain_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation"""
 
@@ -247,7 +248,7 @@ def _l0_startup_probe(project_root, result):
     try:
         from pathlib import Path as _Path
 
-        from zephyr.governance.behavioral_auditor.self_check import (
+        from zephyr.behavioral_audit.self_check import (
             bootstrap_self_check,
             check_core_files,
             check_registry_parsable,
@@ -396,14 +397,14 @@ def _l1_readiness_probe(project_root, result):
 
 def _l2_liveness_probe(result):
     try:
-        from zephyr.governance.behavioral_auditor.drift_engine import ScanLevel, scan
+        from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
 
         scan_result = _run_async(scan(level=ScanLevel.LIGHT))
 
         result.scan_events_found = scan_result.total_drift_events
 
         try:
-            from zephyr.governance.behavioral_auditor.orphan_scanner import OrphanScanner
+            from zephyr.behavioral_audit.orphan_scanner import OrphanScanner
 
             scanner = OrphanScanner()
 
@@ -415,7 +416,7 @@ def _l2_liveness_probe(result):
             pass
 
         try:
-            from zephyr.governance.behavioral_auditor.credibility_engine import CredibilityEngine
+            from zephyr.behavioral_audit.credibility_engine import CredibilityEngine
 
             engine = CredibilityEngine()
 
@@ -434,7 +435,7 @@ def _l2_liveness_probe(result):
             pass
 
         try:
-            from zephyr.governance.behavioral_auditor.correlation_engine import CorrelationEngine
+            from zephyr.behavioral_audit.correlation_engine import CorrelationEngine
 
             corr_engine = CorrelationEngine()
 
@@ -463,7 +464,7 @@ def _l2_liveness_probe(result):
 def _l3_reconcile(result, scan_level="LIGHT"):
     try:
         try:
-            from zephyr.governance.behavioral_auditor.forensics_engine import ForensicsConfig, ForensicsEngine
+            from zephyr.behavioral_audit.forensics_engine import ForensicsConfig, ForensicsEngine
 
             forensics = ForensicsEngine(ForensicsConfig())
 
@@ -503,7 +504,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
 
         result.cascade_alerts = len(cascade_alerts)
 
-        from zephyr.governance.behavioral_auditor.drift_engine import ScanLevel, scan
+        from zephyr.behavioral_audit.drift_engine import ScanLevel, scan
 
         verify_result = _run_async(scan(level=ScanLevel.LIGHT))
 
@@ -556,7 +557,7 @@ def execute_full_probe(project_root="", scan_level="LIGHT"):
 
 
 def session_entry_full_probe(project_root=""):
-    from zephyr.governance.behavioral_auditor.cold_start import session_entry_activate
+    from zephyr.behavioral_audit.cold_start import session_entry_activate
 
     cold_result = session_entry_activate(project_root)
 

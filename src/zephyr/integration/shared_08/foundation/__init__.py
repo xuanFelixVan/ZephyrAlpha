@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """shared.foundation — auto-generated package init."""
 
 __all__ = ["constants", "deprecation", "env", "errors", "flags", "types"]

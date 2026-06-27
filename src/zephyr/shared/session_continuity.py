@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_session_continuity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 SessionContinuity — Session 交接包自动生成与恢复
@@ -325,7 +326,7 @@ class SessionContinuity:
         - decisions_made 从 events 表读取
         - in_progress_tasks 含 step/construction_status/deliverables
         - open_questions 自动从 BLOCKED ≥2 session 的任务生成
-        - 同步输出 YAML 到 docs/09_audit/handoff/
+        - 同步输出 YAML 到 docs/_working/audit/handoff/
         """
         completed = []
         in_progress = []
@@ -521,7 +522,7 @@ class SessionContinuity:
         return questions
 
     def _write_yaml_handoff(self, handoff: dict) -> None:
-        """输出 YAML 交接包到 docs/09_audit/handoff/（GOV-AI-008 §2 合规路径）"""
+        """输出 YAML 交接包到 docs/_working/audit/handoff/（GOV-AI-008 §2 合规路径）"""
 
         out_dir = self._project_root / "docs" / "09_audit" / "handoff"
         out_dir.mkdir(parents=True, exist_ok=True)

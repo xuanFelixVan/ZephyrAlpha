@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] SchedulerError
 # [TESTS] tests/auto-fix-engine/test_fix_scheduler.py
 # [A_module] module_id=MOD-SEC_fix_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import logging
 import threading
 import time

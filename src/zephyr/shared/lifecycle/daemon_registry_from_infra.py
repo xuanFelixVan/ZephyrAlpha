@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] logging on registration/state errors (no raises)
 # [TESTS] tests/lifecycle_manager/test_daemon_registry.py
 # [A_module] module_id=MOD-INF_daemon_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

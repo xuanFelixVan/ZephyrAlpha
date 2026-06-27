@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] psutil 不可用时返回空结果；kill 对已退出 PID 不报错；模式文件损坏时重置为空 dict
 # [TESTS]
 # [A_module] module_id=MOD-ORC_zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 zombie_scanner.py — 僵尸 Python 进程检测与自动处置

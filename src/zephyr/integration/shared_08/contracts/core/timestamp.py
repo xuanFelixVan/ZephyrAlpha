@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.core.timestamp import Timestamp, NaiveDatetimeError, ensure_utc, from_unix_ns, to_local, utcnow"
 # [A_module] module_id=MOD-INT_timestamp | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.core.timestamp。"""
 from zephyr.shared.contracts.core.timestamp import *  # noqa: F401,F403

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Re-export wrapper: artifact_scanner has migrated to zephyr.governance.artifact_scanner"""
 
 from zephyr.governance.artifact_scanner import *  # noqa: F403

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # 代理模块：将 zephyr.governance.persistence.task_repo 重定向到 zephyr.governance.task_repo
 from zephyr.governance.rule_enforcement.gate_types import GateViolationError
 from zephyr.governance.task_repo import (

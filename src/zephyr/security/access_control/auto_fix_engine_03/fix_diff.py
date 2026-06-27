@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] DiffError
 # [TESTS] tests/auto-fix-engine/test_fix_diff.py
 # [A_module] module_id=MOD-SEC_fix_diff | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import difflib
 import hashlib
 from typing import Any

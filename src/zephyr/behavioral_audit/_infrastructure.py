@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
 # [A_module] module_id=MOD-SEC__infrastructure | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from zephyr.behavioral_audit.absence_manager import (
     AbsenceManagerConfig,
     EscalationEntry,

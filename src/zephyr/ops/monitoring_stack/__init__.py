@@ -1,4 +1,5 @@
 # [A_module] module_id=MOD-UNK_monitoring_stack | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """
 Auto-generated contracts package — traces
 

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_backup_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """备份管理器（CT-BACKUP-001）——SQLite VACUUM INTO + ChromaDB zip + integrity。"""
 

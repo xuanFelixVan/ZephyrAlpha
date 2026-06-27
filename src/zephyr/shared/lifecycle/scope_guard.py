@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # 代理模块：将 zephyr.shared.lifecycle.scope_guard 重定向到 zephyr.infrastructure.lifecycle.scope_guard
 from zephyr.infrastructure.lifecycle.scope_guard import (
     ScopeDrift,

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-SEC_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
+# [TTL] task_bound
 
 import asyncio
 import time

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 resilience/__init__.py — 韧性工具包入口（Phase 2 新增）
 

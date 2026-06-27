@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_scheduler_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -24,6 +25,7 @@ from zephyr.ops.forensic.boot_integrity_attestation import BootIntegrityAttestat
 from zephyr.ops.gates.deployment_suppression import DeploymentSuppression
 from zephyr.ops.resilience.config_hot_reload_guard import ConfigHotReloadGuard
 from zephyr.ops.security.wireheading_prevention import WireheadingPrevention
+from zephyr.shared.io.paths import GATES_DIR
 
 
 @dataclass
@@ -63,7 +65,7 @@ class SafetyGateManager:
 
     def _dispatch_fle_gates(self, anomaly: Any, diagnosis: Any) -> dict[str, bool]:
         results: dict[str, bool] = {}
-        registry_path = Path(__file__).resolve().parents[2] / "gates" / "_registry.yaml"
+        registry_path = GATES_DIR / "_registry.yaml"
         if not registry_path.exists():
             return results
         try:

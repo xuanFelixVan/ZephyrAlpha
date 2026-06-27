@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L00 Data Source
 =====================================
 
@@ -46,7 +47,7 @@ LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 
 from __future__ import annotations
 
-from zephyr.data_governance.provider_base import DataSourceBase, DataSourceMeta
-from zephyr.data_governance.quality_gate import DataQualityGate
+from zephyr.governance.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.governance.quality_gate import DataQualityGate
 
 __all__ = ["DataQualityGate", "DataSourceBase", "DataSourceMeta", "provider_base", "quality_gate"]

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
 # [TESTS] tests/test_rollback/
 # [A_module] module_id=MOD-RES_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """PhaseManager→GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 

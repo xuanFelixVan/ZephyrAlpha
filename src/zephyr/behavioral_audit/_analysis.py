@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
 # [A_module] module_id=MOD-SEC__analysis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from zephyr.behavioral_audit.correlation_engine import CorrelationEngine, CorrelationReport
 from zephyr.behavioral_audit.credibility_engine import CredibilityEngine, CredibilityScore
 from zephyr.behavioral_audit.cross_module_score import (

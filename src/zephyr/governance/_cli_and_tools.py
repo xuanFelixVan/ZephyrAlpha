@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.testing.code_dedup"
 # [A_module] module_id=MOD-UNK__cli_and_tools | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 SUBMODULES = [
     "cli",

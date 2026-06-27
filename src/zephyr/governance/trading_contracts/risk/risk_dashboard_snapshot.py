@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-EXE_risk_dashboard_snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot。"""
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import *  # noqa: F401,F403

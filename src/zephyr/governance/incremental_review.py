@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] IntegrityError;WriteError
 # [TESTS] tests/test_audit_trail/
 # [A_module] module_id=MOD-UNK_incremental_review | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from dataclasses import dataclass
 
 

@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 L01 Infrastructure — A2A Protocol 模块 (MOD-INF-025)
 

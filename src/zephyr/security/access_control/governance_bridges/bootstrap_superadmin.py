@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] bootstrap() never raises; returns dict with bootstrapped flag and error detail
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-SEC_bootstrap_superadmin_bridge | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [TTL] task_bound
 """BootstrapSuperadminBridge — Superadmin 账户启动桥接.
 
 依据蓝图 MOD-INF-018 §bootstrap_superadmin:

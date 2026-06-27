@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] PushError;CallbackConnectionError
 # [TESTS] tests/test_mcp_result_push.py
 # [A_module] module_id=MOD-GOV_mcp_result_push | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import json
 import logging
 import os

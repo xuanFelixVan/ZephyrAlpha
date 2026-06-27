@@ -13,5 +13,6 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "from zephyr.integration.shared_08.contracts.core.registry import ContractRegistry, ContractMeta, VersionMismatchError, VersionTransition, get_registry, reset_registry"
 # [A_module] module_id=MOD-INT_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.core.registry。"""
 from zephyr.shared.contracts.core.registry import *  # noqa: F401,F403

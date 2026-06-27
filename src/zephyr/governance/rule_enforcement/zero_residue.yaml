@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 module_id: MOD-INF-007
 gate_id: "ZERO-RESIDUE"

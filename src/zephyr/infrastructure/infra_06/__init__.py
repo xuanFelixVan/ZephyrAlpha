@@ -13,6 +13,7 @@ from . import cache
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """shared.infra — auto-generated package init."""
 
 __all__ = [

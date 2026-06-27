@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_audit_schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 audit_schema — 审计视图与查询入口（SH-DB-001 v2.0）
@@ -39,7 +40,7 @@ Safety     : M（只读查询，不修改数据）
 ----
     from zephyr.infrastructure.db.audit_schema import AuditQuery
 
-    aq = AuditQuery(db_path="data/databases/governance.db")
+    aq = AuditQuery()  # 默认使用 DB_PATH (governance.db)
     trail = aq.query_audit_for_session("session-20260501")
 """
 

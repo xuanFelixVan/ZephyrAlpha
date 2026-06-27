@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.integration.shared_08.contracts.experiment.model_serving_response"
 # [A_module] module_id=MOD-INT_model_serving_response | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.experiment.model_serving_response。"""
 

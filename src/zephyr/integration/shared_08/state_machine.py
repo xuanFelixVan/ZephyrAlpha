@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] InvalidTransitionError;TransitionGuardError;StateMachineRegistryError
 # [TESTS] tests/test_state_machine.py
 # [A_module] module_id=MOD-INT_state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038)

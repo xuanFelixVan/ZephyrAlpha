@@ -1,5 +1,6 @@
 # [A_module] module_id=MOD-GOV_bridges | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [TTL] task_bound
 """
 Drift Detector — MOD-INF-023
 =============================

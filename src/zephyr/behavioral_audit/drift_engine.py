@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/behavioral-auditor/
 # [A_module] module_id=MOD-SEC_drift_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 Drift Engine — 编排器核心 (SRC-0030 精简后)
@@ -687,7 +688,7 @@ def _output_findings_as_jsonl(result: ScanResult) -> list[str]:
         jsonl_lines.append(f.to_jsonl())
     if jsonl_lines:
         try:
-            from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+            from zephyr.governance.finding_ingest import FindingIngest
 
             ingest = FindingIngest()
             ingest.ingest_findings(findings)

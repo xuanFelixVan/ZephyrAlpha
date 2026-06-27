@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.session — auto-generated package init."""
 
 from . import session_boundary, session_continuity

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure; ImportError→module marked unavailable
 # [TESTS] tests/audit-orchestrator/
 # [A_module] module_id=MOD-GOV_audit_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -157,7 +158,7 @@ class AuditAdmissionController:
             jsonl_lines.append(f.to_jsonl())
         if jsonl_lines:
             try:
-                from zephyr.governance.audit_trail.finding_ingest import FindingIngest
+                from zephyr.governance.finding_ingest import FindingIngest
 
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)

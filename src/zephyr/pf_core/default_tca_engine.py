@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Re-export wrapper: default_tca_engine has migrated to zephyr.portfolio.core.default_tca_engine"""
 
 from zephyr.governance.default_tca_engine import *  # noqa: F403

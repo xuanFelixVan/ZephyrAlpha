@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.rollback"
 # [A_module] module_id=MOD-RES__monitoring | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 SUBMODULES = [
     "agent_cooldown",

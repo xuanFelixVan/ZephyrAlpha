@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if yaml not available
 # [TESTS]
 # [A_module] module_id=MOD-INT_contract_versions | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ZephyrAlpha — shared/contract_versions.py

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_momentum_factor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 # ---
 # domain: factor
@@ -34,7 +35,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from zephyr.governance.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
+from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
 
 
 @FactorRegistry.register

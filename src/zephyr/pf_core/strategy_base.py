@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Re-export wrapper: strategy_base has migrated to zephyr.portfolio.core.strategy_base"""
 
 from zephyr.governance.strategy_base import *  # noqa: F403

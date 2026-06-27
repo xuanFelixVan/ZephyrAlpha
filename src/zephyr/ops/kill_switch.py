@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-RES_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
+# [TTL] task_bound
 
 """
 KillSwitchManager — 三级 Kill Switch 管理器。

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] Pydantic ValidationError on invalid input
 # [TESTS] tests/lifecycle_manager/test_resource_optimization_models.py
 # [A_module] module_id=MOD-INF_resource_optimization_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

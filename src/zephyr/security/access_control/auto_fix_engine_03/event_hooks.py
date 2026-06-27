@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] EventHookError
 # [TESTS] tests/auto-fix-engine/test_event_hooks.py
 # [A_module] module_id=MOD-SEC_event_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import logging
 from collections.abc import Callable
 from datetime import UTC, datetime

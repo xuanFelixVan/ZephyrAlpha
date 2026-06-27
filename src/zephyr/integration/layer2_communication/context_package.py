@@ -12,5 +12,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # Re-export from authoritative location
 from zephyr.shared.protocols.a2a.a2a_schemas import *  # noqa: F403

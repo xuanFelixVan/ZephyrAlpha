@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.integration.shared_08.contracts.escalation.budget_alert"
 # [A_module] module_id=MOD-INT_budget_alert | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.shared.contracts.escalation.budget_alert。"""
 
 from zephyr.shared.contracts.escalation.budget_alert import *  # noqa: F401,F403

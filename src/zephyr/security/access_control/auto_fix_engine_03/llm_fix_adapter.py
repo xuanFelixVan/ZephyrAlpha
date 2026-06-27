@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] LLMFixError;SecretLeakDetectedError
 # [TESTS] tests/auto-fix-engine/test_llm_fix_adapter.py
 # [A_module] module_id=MOD-SEC_llm_fix_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

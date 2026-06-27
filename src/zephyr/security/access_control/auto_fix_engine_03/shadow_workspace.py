@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ShadowWorkspaceError
 # [TESTS] tests/auto-fix-engine/test_shadow_workspace.py
 # [A_module] module_id=MOD-SEC_shadow_workspace | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import logging
 import os
 import shutil

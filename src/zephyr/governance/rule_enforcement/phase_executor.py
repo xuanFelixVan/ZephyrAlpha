@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ValueError on unknown phase; GateEngineError on gate evaluation failure; returns PhaseExecutionResult
 # [TESTS] tests/test_phase_executor_rule_enforcement.py
 # [A_module] module_id=MOD-INF-007_phase_executor | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """PhaseExecutor — 阶段执行器，桥接 PhaseManager 和 GateEngine.
 

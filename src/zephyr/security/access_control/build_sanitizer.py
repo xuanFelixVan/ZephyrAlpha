@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Stub module: zephyr.security.access_control.build_sanitizer — implementation pending."""
 
 RISKY_BUILD_PATTERNS = None  # stub constant

@@ -11,5 +11,6 @@ from __future__ import annotations
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 
 __all__ = ["app"]

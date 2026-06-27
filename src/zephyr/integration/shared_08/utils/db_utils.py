@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INT_db_utils | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 db_utils.py — SQLite 连接公共 API（SSoT: zephyr.data.persistence.sqlite_schema）

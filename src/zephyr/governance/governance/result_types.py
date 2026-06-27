@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV_result_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """G-CT-003 — RollbackResult backward-compat re-export facade.
 Canonical home is now: zephyr.integration.shared_08.contracts.rollback_types

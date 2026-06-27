@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError on missing sub-module
 # [TESTS] tests/auto-fix-engine/
+# [TTL] task_bound
 from zephyr.security.access_control.auto_fix_engine_03.alignment_syncer import AlignmentSyncer
 from zephyr.security.access_control.auto_fix_engine_03.all_completer import AllCompleter
 from zephyr.security.access_control.auto_fix_engine_03.batch_fixer import BatchFixer

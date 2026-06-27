@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 class ErrorCode:
     UNKNOWN = "UNKNOWN"
     INVALID_REQUEST = "INVALID_REQUEST"

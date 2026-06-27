@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure
 # [TESTS] tests/audit-orchestrator/
+# [TTL] task_bound
 
 from zephyr.governance.audit_orchestrator.evidence_pack import EvidencePack
 from zephyr.governance.audit_orchestrator.integrity import IntegrityGuard
@@ -118,9 +119,7 @@ __all__ = [
     "TrustBridge",
     "TrustEngine",
     "TrustLevel",
-    "__main__",
     "anomaly",
-    "audit_admission_controller",
     "bridge",
     "cli",
     "cli_main",

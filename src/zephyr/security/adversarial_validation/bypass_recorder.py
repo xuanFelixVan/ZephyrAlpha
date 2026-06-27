@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] YAML write uses atomic os.replace; BypassLogNotFoundError if log dir missing
 # [TESTS] tests/red_blue/test_bypass_recorder.py
 # [A_module] module_id=MOD-SEC_bypass_recorder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

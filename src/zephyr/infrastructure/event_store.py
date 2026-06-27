@@ -13,13 +13,14 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_event_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 RI-13 EventStore — 事件存储
 ===========================
 职责：持久化审计日志与事件溯源——所有关键操作必须留下不可篡改的记录。
 使用方式：
-    store = EventStore(db_path="data/events.db")
+    store = EventStore()  # 默认使用 REPO_ROOT / "data" / "events.db"
     store.record(event)
     events = store.query(component="gate_engine", limit=100)
 """
@@ -34,6 +35,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [
     "EVENT_STORE_SCHEMA",
@@ -121,7 +124,7 @@ class EventStore:
     - 线程安全
     """
 
-    def __init__(self, db_path: str | Path = "data/events.db", auto_init: bool = True):
+    def __init__(self, db_path: str | Path = REPO_ROOT / "data" / "events.db", auto_init: bool = True):
         self._db_path = Path(db_path)
         self._lock = threading.Lock()
 

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ConflictResolutionError;IdempotencyViolationError
 # [TESTS] tests/auto-fix-engine/test_fix_reliability.py
 # [A_module] module_id=MOD-INF_fix_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -30,12 +31,12 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     FixAction,
     FixDeadLetter,
     FixLevel,
-    FixStatus,
 )
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 
-_DB_PATH = Path("data/databases/governance.db")
+_DB_PATH = DB_PATH
 
 
 class IdempotencyGuard:

@@ -16,6 +16,7 @@
 # [ERROR_CONTRACT] returns None; logs warning on failure; never raises
 # [TESTS]
 # [A_module] module_id=MOD-ORC_boot_cron_jobs | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [CONSUMERS] zephyr.__init__; zephyr.security.access_control; zephyr.security.budget_enforcement
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
 # [TESTS] tests/unit/test_telemetry_facade.py; tests/integration/test_auto_telemetry_bootstrap.py
+# [TTL] task_bound
 """system-telemetry — 系统遥测模块（MOD-INF-015 v2.1.0）.
 
 9 子系统: metrics | logs | traces | ai_behavior | health | profiles | alerts | schema | archive

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
 # [TESTS] tests/unit/telemetry/
+# [TTL] task_bound
 """L12 · traces — 分布式链路追踪（W3C TraceContext）"""
 
 from zephyr.infrastructure.system_telemetry.traces.span_stub import (

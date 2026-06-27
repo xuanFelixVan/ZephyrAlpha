@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ConflictResolutionError;IdempotencyViolationError
 # [TESTS] tests/auto-fix-engine/test_fix_reliability.py
 # [A_module] module_id=MOD-SEC_fix_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportFixError
 # [TESTS] tests/auto-fix-engine/test_import_fixer.py
 # [A_module] module_id=MOD-SEC_import_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import ast
 import logging
 import os

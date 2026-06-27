@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """orchestrator.core — auto-generated package init."""
 
 from . import trigger_router

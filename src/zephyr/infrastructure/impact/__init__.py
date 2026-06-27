@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """core.impact — auto-generated package init."""
 
 from . import impact_propagator, llm_impact_analyzer

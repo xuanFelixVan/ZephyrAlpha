@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
 # [A_module] module_id=MOD-INT_agent_identity_impl | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 import hashlib
 import hmac

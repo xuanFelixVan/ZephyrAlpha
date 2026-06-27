@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Stub module: zephyr.security.access_control.blind_spot_tracker — implementation pending."""
 
 

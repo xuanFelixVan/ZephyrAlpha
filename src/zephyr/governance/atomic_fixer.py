@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-UNK_atomic_fixer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """原子性修复引擎 — WAL 式 PREFLIGHT → CHECKPOINT → APPLY → RECOVER.
 

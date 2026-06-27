@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # ==== BEGIN CODGEN:CTR-006 ====
 from dataclasses import dataclass, field
 from datetime import datetime

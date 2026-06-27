@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] DedupExtractionError
 # [TESTS] tests/auto-fix-engine/test_dedup_extractor.py
 # [A_module] module_id=MOD-SEC_dedup_extractor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

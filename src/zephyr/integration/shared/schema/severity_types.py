@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ValueError on invalid enum value
 # [TESTS] tests/unit/test_schemas.py; tests/unit/shared/test_schemas.py
 # [A_module] module_id=MOD-SHR_severity_types | layer=module | stability=frozen | safety=L | ai_autonomy=immutable_core
+# [TTL] task_bound
 
 from __future__ import annotations
 

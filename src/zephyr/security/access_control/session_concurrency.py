@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SessionRegistry 读写失败不抛异常（返回空/False）；detect_mtime_conflict 文件不存在返回 False
 # [TESTS] tests/test_session_concurrency.py
+# [TTL] task_bound
 """Session 级并发协调模块（P2-SES 落地）。
 
 从 Stub 落地为真实的 session 级协调：

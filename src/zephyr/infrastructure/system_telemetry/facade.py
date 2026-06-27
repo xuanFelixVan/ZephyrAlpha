@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
 # [TESTS] tests/system-telemetry/test_facade.py
 # [A_module] module_id=MOD-INF_facade | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）
 

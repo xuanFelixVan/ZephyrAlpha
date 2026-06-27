@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] FixActionValidationError;FixBudgetExceededError
 # [TESTS] tests/auto-fix-engine/test_models.py
 # [A_module] module_id=MOD-SEC_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

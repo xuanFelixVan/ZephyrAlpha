@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.governance.rule_enforcement.gate_types"
 # [A_module] module_id=MOD-INT_gate_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """Re-export shim — 真源已合并至 zephyr.governance.rule_enforcement.gate_types。"""
 
 from zephyr.governance.rule_enforcement.gate_types import *  # noqa: F401,F403

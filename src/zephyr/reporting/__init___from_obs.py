@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError_on_missing_module
 # [TESTS] tests/test_domain_structure.py
 # [A_module] module_id=MOD-UNK_asset_inventory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """asset-inventory subdomain package — D-OBS-ASSET_INVENTORY."""
 
 __all__ = []

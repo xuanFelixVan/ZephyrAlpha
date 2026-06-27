@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """L06 Trade Execution — Re-export wrapper (DM-298)
 
 All modules have been migrated to zephyr.execution_core.core.

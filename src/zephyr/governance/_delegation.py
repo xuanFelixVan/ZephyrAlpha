@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_escalation_engine_imports.py
 # [A_module] module_id=MOD-RES__delegation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 from zephyr.governance.delegation_engine import DelegationEngine
 from zephyr.governance.escalation_models import (
     DelegationRecord,

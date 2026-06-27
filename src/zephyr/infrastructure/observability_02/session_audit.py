@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_session_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """Re-export shim: zephyr.integration.shared_08.session_audit → zephyr.infrastructure.shared_services.observability_02.session_audit"""
 

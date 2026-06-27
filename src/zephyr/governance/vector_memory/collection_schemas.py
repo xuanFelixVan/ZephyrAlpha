@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] COLLECTION_SCHEMAS keys match COLLECTION_NAMES; dimensions in ALLOWED_DIMENSIONS
 # [TESTS] tests/unit/vector-memory/test_vector_memory.py; tests/adversarial/test_cross_layer_systems_red_team.py
 # [A_module] module_id=MOD-DAT_collection_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

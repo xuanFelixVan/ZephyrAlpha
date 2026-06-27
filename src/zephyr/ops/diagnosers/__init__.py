@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
+# [TTL] task_bound
 """feedback-loop.diagnosers — DW-242: 71个子模块拆分为4个逻辑子模块。"""
 
 import importlib

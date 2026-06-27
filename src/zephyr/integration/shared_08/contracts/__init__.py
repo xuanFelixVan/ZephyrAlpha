@@ -9,6 +9,7 @@
 # [CONSUMERS]
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # CODEGEN-GUARD: CTR-declarations-manual
 from zephyr.integration.shared.contracts.errors import (
     ContractViolationError as ContractErrViolationError,

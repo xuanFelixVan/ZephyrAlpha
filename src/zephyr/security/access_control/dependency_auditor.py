@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Stub module: zephyr.security.access_control.dependency_auditor — implementation pending."""
 
 RESTRICTED_LICENSES = None  # stub constant

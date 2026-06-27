@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] SelfHealError
 # [TESTS] tests/semantic-auditor/test_self_healer.py
 # [A_module] module_id=MOD-SEM_self_healer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """[BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic-auditor/blueprint.md
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Stub module: zephyr.security.access_control.microstructure_defense — implementation pending."""
 
 DEFAULT_FIDELITY = None  # stub constant

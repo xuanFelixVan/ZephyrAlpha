@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] EscalationError;TimeoutError
 # [TESTS] tests/test_escalation_engine/
 # [A_module] module_id=MOD-RES_oms_risk_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

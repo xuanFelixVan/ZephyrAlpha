@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # 代理模块：将 zephyr.governance.persistence.audit_schema 重定向到 zephyr.governance.audit_schema
 from zephyr.governance.audit_schema import AuditQuery
 

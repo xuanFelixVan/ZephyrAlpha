@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] InterruptGuardError
 # [TESTS] tests/auto-fix-engine/test_interrupt_guard.py
 # [A_module] module_id=MOD-INF_interrupt_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -32,7 +33,7 @@ class InterruptGuard:
     def __init__(
         self,
         wal_dir: str = "data/auto_fix/wal",
-        db_path: str = "data/databases/governance.db",
+        db_path: str | Path = DB_PATH,
     ) -> None:
         self._wal_dir = Path(wal_dir)
         self._db_path = db_path

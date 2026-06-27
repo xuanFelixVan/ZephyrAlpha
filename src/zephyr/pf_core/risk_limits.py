@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Re-export wrapper: risk_limits has migrated to zephyr.portfolio.core.risk_limits"""
 
 from zephyr.governance.risk_limits import *  # noqa: F403

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.shared"
 # [A_module] module_id=MOD-INT__contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """_contracts — 契约 re-export 桥接层。
 
 从 contracts 子包 re-export 符号，保持 zephyr.shared 向后兼容。
