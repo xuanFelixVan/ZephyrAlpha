@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-012B
+module_id: MOD-DB_DEPGRAPH_PG
 submodule_path: src/zephyr/data/persistence
 title: "P2 PostgreSQL迁移—受影响文件完整索引（循环审查版）"
 doc_type: blueprint
@@ -30,14 +30,14 @@ tags: [postgresql, migration, affected-files, audit, p2, database-upgrade]
 priority: P1
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-INF-012B-P2", at: "§十二", why: "P2文档受影响文件索引的详细展开"}
+  - {target: "MOD-DB_DEPGRAPH_PG", at: "§十二", why: "P2文档受影响文件索引的详细展开"}
 references:
-  - {id: "MOD-INF-012B-P2", at: "全篇", why: "P2迁移方案主文档"}
+  - {id: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2迁移方案主文档"}
 ---
 
 # P2 PostgreSQL迁移—受影响文件完整索引（循环审查版）
 
-> module_id: MOD-INF-012B | version: 1.0.0 | status: Draft
+> module_id: MOD-DB_DEPGRAPH_PG | version: 1.0.0 | status: Draft
 > 审查轮次: 第1轮 | 审查日期: 2026-06-25
 > 裁定依据: D50-PG（仅depgraph.db迁移到PostgreSQL，governance.db和market.duckdb保持不变）
 
@@ -55,48 +55,48 @@ references:
 
 | # | 文件路径 | 位置（行号） | 变量/函数名 | 变更影响 | 执行办法 |
 |---|---------|:---------:|-----------|---------|---------|
-| 1 | `src/zephyr/governance/depgraph_schema.py` | L77 | `DB_PATH` | 路径常量→PG连接串 | 改为从环境变量读取PG_DSN |
-| | | L359-366 | `_PRAGMAS`（6条：WAL/synchronous/foreign_keys/busy_timeout/temp_store/wal_autocheckpoint） | PG无PRAGMA机制 | 删除全部PRAGMA；PG通过postgresql.conf配置 |
-| | | L369-371 | `_apply_pragmas()` | PRAGMA应用函数 | 删除该函数及所有调用点（L920、L990、L1010，共3处；L963为`PRAGMA foreign_keys=ON`非_apply_pragmas调用） |
-| | | L123,236,252,306,380,425,493,606 | `INTEGER PRIMARY KEY AUTOINCREMENT` | PG无AUTOINCREMENT | 改为`SERIAL`/`BIGSERIAL`或`GENERATED ALWAYS AS IDENTITY` |
-| | | L862,864,999 | `sqlite_master`查询 | PG系统表不同 | 改为`SELECT table_name FROM information_schema.tables WHERE table_schema='public'` |
-| | | L901,937 | `INSERT OR IGNORE INTO _schema_version` | PG无INSERT OR IGNORE | 改为`INSERT ... ON CONFLICT (version) DO NOTHING` |
-| | | L799 | `datetime('now')` | PG函数不同 | 改为`NOW()`或`CURRENT_TIMESTAMP` |
-| | | L901,937 | `VALUES (?, ?, ?)` | 占位符不同 | `?`→`%s`（psycopg2） |
-| | | L918,983,997,1008 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`/连接池 |
-| | | L947,963 | `PRAGMA foreign_keys = OFF/ON` | PG无此PRAGMA | 改为`SET session_replication_role = 'replica'`或删除 |
-| | | L831-855 | `CREATE VIEW ... WITH RECURSIVE` | PG兼容 | 无需修改 |
-| 2 | `src/zephyr/governance/database_service.py` | L58 | `self.depgraph_db` | 硬编码路径→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L76-81 | `get_depgraph_conn()`内`sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`；移除`row_factory = sqlite3.Row` |
-| | | L161,177,222,255,292 | `VALUES (?, ...)` | 占位符不同 | `?`→`%s`（含governance.db与market部分） |
-| | | L168,177 | `datetime('now')` | PG函数不同 | 改为`NOW()`（governance.db部分保持） |
-| | | L303 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
-| | | L186,192,198,204,210 | `get_depgraph_conn()`调用链 | 连接对象类型变化 | `sqlite3.Connection`→PG连接类型注解（5处） |
-| 3 | `src/zephyr/governance/depgraph_reader.py` | L46 | `DB_PATH = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L58 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`；移除`row_factory = sqlite3.Row` |
-| | | L78-245（约23处） | `?`占位符 | 占位符不同 | 全部`?`→`%s` |
-| | | L112,118 | `from_node`/`to_node`列名 | 潜在bug（实际为`from_node_id`/`to_node_id`） | 迁移时一并核对修复 |
-| | | L124 | `edge_type`列名 | 潜在bug（实际为`dep_type`） | 迁移时一并核对修复 |
-| | | L210 | `arch_domains`表 | 潜在bug（表不存在） | 迁移时一并核对修复 |
-| 4 | `src/zephyr/governance/rule_engine.py` | L50 | `_DB_PATH = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L53-56 | `_PRAGMAS`（WAL/foreign_keys/busy_timeout） | PG无PRAGMA | 删除全部PRAGMA |
-| | | L90 | `sqlite3.connect(timeout=10.0)` | 连接方式不同 | 改为`psycopg2.connect()`；`timeout`→PG连接超时配置 |
-| | | L92-93 | `for pragma in _PRAGMAS: conn.execute(pragma)` | PRAGMA循环 | 删除循环 |
-| | | L94 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
-| | | L154,172,190 | `VALUES (?)`/`WHERE ... = ?` | 占位符不同 | `?`→`%s` |
-| 5 | `src/zephyr/governance/auto_runner.py` | L41 | `_DEPGRAPH_DB = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L202,260,282 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`（3处；L199为`if not _DEPGRAPH_DB.exists()`非连接点） |
-| | | L206-215 | `CREATE TABLE IF NOT EXISTS governance_audit_logs (... AUTOINCREMENT ...)` | 兜底建表+AUTOINCREMENT | `AUTOINCREMENT`→`SERIAL`；建议删除兜底建表逻辑 |
-| | | L220 | `VALUES (?, ?, ?, ?, ?, ?, ?)` | 占位符不同 | `?`→`%s` |
-| 6 | `src/zephyr/infrastructure/asset_inventory/dashboard.py` | L159 | `dep_path = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L186 | `sqlite3.connect(timeout=10.0)` | 连接方式不同 | 改为`psycopg2.connect()` |
-| | | L187 | `SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5` | 潜在bug（`fan_in`列不存在，实际为`in_degree`） | 迁移时修复列名 |
+| 1 | `src/zephyr/governance/depgraph_schema.py` | L71 | `DB_PATH` | 路径常量→PG连接串 | 改为从环境变量读取PG_DSN |
+| | | L326-333 | `_PRAGMAS`（6条：WAL/synchronous/foreign_keys/busy_timeout/temp_store/wal_autocheckpoint） | PG无PRAGMA机制 | 删除全部PRAGMA；PG通过postgresql.conf配置 |
+| | | L336-338 | `_apply_pragmas()` | PRAGMA应用函数 | 删除该函数及所有调用点（L1064、L1145、L1168，共3处；L1107为`PRAGMA foreign_keys=ON`非_apply_pragmas调用） |
+| | | L119,227,275,347,392,460,573 | `INTEGER PRIMARY KEY AUTOINCREMENT` | PG无AUTOINCREMENT | 改为`BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY`（7处） |
+| | | L1006,1008,1157 | `sqlite_master`查询 | PG系统表不同 | 改为`SELECT table_name FROM information_schema.tables WHERE table_schema='public'` |
+| | | L1045,1081 | `INSERT OR IGNORE INTO _schema_version` | PG无INSERT OR IGNORE | 改为`INSERT ... ON CONFLICT (version) DO NOTHING` |
+| | | L763 | `datetime('now')` | PG函数不同 | 改为`NOW()`或`CURRENT_TIMESTAMP` |
+| | | L1045,1081 | `VALUES (?, ?, ?)` | 占位符不同 | `?`→`%s`（psycopg2） |
+| | | L1062,1138,1155,1166 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`/连接池 |
+| | | L1091,1148;L1107 | `PRAGMA foreign_keys = OFF/ON` | PG无此PRAGMA | 改为`SET session_replication_role = 'replica'`或删除（OFF两处L1091/L1148；ON一处L1107） |
+| | | L795-819 | `CREATE VIEW ... WITH RECURSIVE` | PG兼容 | 无需修改 |
+| 2 | `src/zephyr/governance/database_service.py` | L59 | `self.depgraph_db` | 硬编码路径→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L77-82 | `get_depgraph_conn()`内`sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`；移除`row_factory = sqlite3.Row` |
+| | | L162,178,223,256,293 | `VALUES (?, ...)` | 占位符不同 | `?`→`%s`（含governance.db与market部分） |
+| | | L169,178 | `datetime('now')` | PG函数不同 | 改为`NOW()`（governance.db部分保持） |
+| | | L304 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
+| | | L187,193,199,205,211 | `get_depgraph_conn()`调用链 | 连接对象类型变化 | `sqlite3.Connection`→PG连接类型注解（5处） |
+| 3 | `src/zephyr/governance/depgraph_reader.py` | L48 | `DB_PATH = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L60 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`；移除`row_factory = sqlite3.Row` |
+| | | L80-247（约23处） | `?`占位符 | 占位符不同 | 全部`?`→`%s` |
+| | | L114,120 | `from_node`/`to_node`列名 | 潜在bug（实际为`from_node_id`/`to_node_id`） | 迁移时一并核对修复 |
+| | | L126 | `edge_type`列名 | 潜在bug（实际为`dep_type`） | 迁移时一并核对修复 |
+| | | L206 | `arch_domains`表 | 潜在bug（表不存在） | 迁移时一并核对修复 |
+| 4 | `src/zephyr/governance/rule_engine.py` | L51 | `_DB_PATH = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L54-58 | `_PRAGMAS`（WAL/foreign_keys/busy_timeout） | PG无PRAGMA | 删除全部PRAGMA |
+| | | L91 | `sqlite3.connect(timeout=10.0)` | 连接方式不同 | 改为`psycopg2.connect()`；`timeout`→PG连接超时配置 |
+| | | L93-94 | `for pragma in _PRAGMAS: conn.execute(pragma)` | PRAGMA循环 | 删除循环 |
+| | | L95 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
+| | | L154,172,190 | `SELECT ... WHERE ... = ?`（3处查询占位符） | 占位符不同 | `?`→`%s` |
+| 5 | `src/zephyr/governance/auto_runner.py` | L42 | `_DEPGRAPH_DB = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L203,261,283 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`（3处；L200为`if not _DEPGRAPH_DB.exists()`非连接点） |
+| | | L206-216 | `CREATE TABLE IF NOT EXISTS governance_audit_logs (... AUTOINCREMENT ...)` | 兜底建表+AUTOINCREMENT | `AUTOINCREMENT`→`SERIAL`；建议删除兜底建表逻辑 |
+| | | L221 | `VALUES (?, ?, ?, ?, ?, ?, ?)` | 占位符不同 | `?`→`%s` |
+| 6 | `src/zephyr/infrastructure/asset_inventory/dashboard.py` | L162 | `dep_path = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L189 | `sqlite3.connect(timeout=10.0)` | 连接方式不同 | 改为`psycopg2.connect()` |
+| | | L190 | `SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5` | 潜在bug（`fan_in`列不存在；`in_degree`已在v15 migration L907删除） | 迁移时删除该查询或改为基于edges表度数计算 |
 
 ### 1.2 部分迁移的文件（1个）
 
 | # | 文件路径 | 位置（行号） | 变量/函数名 | 变更影响 | 执行办法 |
 |---|---------|:---------:|-----------|---------|---------|
-| 7 | `src/zephyr/governance/rule_watcher.py` | L59 | `_DEFAULT_DB_PATH = .../depgraph.db` | 路径传给subprocess | 改为PG连接配置；同步更新子脚本参数 |
+| 7 | `src/zephyr/governance/rule_watcher.py` | L60 | `_DEFAULT_DB_PATH = .../depgraph.db` | 路径传给subprocess | 改为PG连接配置；同步更新子脚本参数 |
 | | | L301 | `sqlite3.connect(_GOVERNANCE_DB)` | governance.db连接（保持SQLite） | 不迁移 |
 | | | L302 | `sqlite_master` | governance.db查询（保持SQLite） | 不迁移 |
 | | | L311 | `datetime('now')`/`VALUES (?, ...)` | governance.db SQL（保持SQLite） | 不迁移 |
@@ -139,30 +139,34 @@ references:
 
 ## 二、scripts/ 下受影响文件清单
 
-### 2.1 必须迁移到PostgreSQL的文件（45个）
+### 2.1 必须迁移到PostgreSQL的文件（44个）
 
 | # | 文件路径 | 位置（行号） | 变量/函数名 | 变更影响 | 执行办法 |
 |---|---------|:---------:|-----------|---------|---------|
-| 1 | `scripts/governance/apply_depgraph.py` | L70 | `DEPGRAPH_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L191 | `import lock_files as _lf` | 文件锁集成 | 删除（PG MVCC管理并发） |
-| | | L194 | `_db_write_lock_lock` | threading.Lock | 删除 |
-| | | L198 | `_db_write_lock()` | 双重锁 | 删除 |
-| | | L248 | `_optional_db_lock()` | 可选锁包装器 | 删除 |
-| | | L259,312,484,610,680,750,860,892,940,995,1044,1096,1158,1206,1261,1357,1407,1455,1512 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`/连接池 |
-| | | L647,708,806 | `cur.lastrowid` | PG无lastrowid | 改为`INSERT ... RETURNING id` |
-| | | L76 | `_check_git_backup()` | GIT备份门禁 | 改造为检查迁移脚本是否已提交 |
-| | | L148 | `_create_physical_backup()` | 物理备份 | 删除（PG用pg_dump） |
-| | | L303 | `_atomic_write()` | 原子写入 | 删除`_optional_db_lock`调用；改用PG事务 |
-| 2 | `scripts/governance/sync_yaml_to_depgraph.py` | L51 | `DB_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L864 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
-| | | L195,292,421,454,492,575,598,619,719,749,787,819 | `INSERT OR REPLACE` | PG无INSERT OR REPLACE | 改为`INSERT ... ON CONFLICT (...) DO UPDATE SET ...` |
-| | | L78,87 | `disable_readonly_triggers`/`restore_readonly_triggers` | 只读触发器管理 | 改为PG的`ALTER TABLE ... DISABLE TRIGGER` |
-| 3 | `scripts/governance/generate_project_depgraph.py` | L223 | `DEPGRAPH_DB_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L491,586,2619,3120,3192 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
-| | | L2513,2516,2540,3514 | `lock_files`（subprocess调用） | 文件锁 | 删除（PG MVCC管理并发） |
-| | | L2623 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
-| | | L3509-3566 | YAML输出分支锁 | YAML文件锁 | 保留（YAML文件不迁移PG） |
+| 1 | `scripts/governance/apply_depgraph.py` | L79 | `DEPGRAPH_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L200 | `import lock_files as _lf` | 文件锁集成 | 删除（PG MVCC管理并发） |
+| | | L212 | `_db_write_lock_lock` | threading.Lock | 删除 |
+| | | L215-216 | `_db_write_lock()` | 双重锁 | 删除 |
+| | | L265-266 | `_optional_db_lock()` | 可选锁包装器 | 删除 |
+| | | 全文件40处（L277-L2832，详见源码grep） | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()`/连接池 |
+| | | L678,739,837,965 | `cur.lastrowid` | PG无lastrowid | 改为`INSERT ... RETURNING id`（4处） |
+| | | L85 | `_check_git_backup()` | GIT备份门禁 | 改造为检查迁移脚本是否已提交 |
+| | | L157 | `_create_physical_backup()` | 物理备份 | 删除（PG用pg_dump） |
+| | | L321 | `_atomic_write()` | 原子写入 | 删除`_optional_db_lock`调用（L328）；改用PG事务 |
+| 2 | `scripts/governance/sync_yaml_to_depgraph.py` | L66 | `DB_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L1008 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
+| | | L214,311,440,473,511,598,621,642,742,772,810,842 | `INSERT OR REPLACE` | PG无INSERT OR REPLACE | 改为`INSERT ... ON CONFLICT (...) DO UPDATE SET ...`（12处） |
+| | | L97,106 | `disable_readonly_triggers`/`restore_readonly_triggers` | 只读触发器管理 | 改为PG的`ALTER TABLE ... DISABLE TRIGGER` |
+| 3 | `scripts/governance/generate_project_depgraph.py` | L227 | `DEPGRAPH_DB_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L495,589,2625,3124,3208 | `get_db_connection()` | 连接方式不同 | 改为`psycopg2.connect()`/连接池（5处，函数名为get_db_connection非sqlite3.connect） |
+| | | L2522,2546,3544 | `lock_files`（subprocess调用） | 文件锁 | 删除（PG MVCC管理并发）（3处） |
+| | | L2629 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
+| | | L3518-3575 | YAML输出分支锁 | YAML文件锁 | 保留（YAML文件不迁移PG） |
 | 4 | `scripts/governance/extract_depgraph.py` | L176,414 | `sqlite3.connect(str(db_path))` | 连接方式不同 | 改为`psycopg2.connect()`（无`?`占位符） |
+| 5 | `scripts/governance/generate_project_path_tree.py` | L197 | `DEPGRAPH_DB_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L65,143,816 | `sqlite3.connect(str(db_path))` | 连接方式不同 | 改为`psycopg2.connect()` |
+| | | L667,675,753 | `lock_files`（subprocess调用） | 文件锁 | 删除（PG MVCC管理并发） |
+| | | L156-159,832-835 | `INSERT OR IGNORE ... VALUES (?,?,?,?,?,?,?,?,?,?)` | PG无INSERT OR IGNORE+占位符 | `INSERT ... ON CONFLICT DO NOTHING`；`?`→`%s` |
 | 6 | `scripts/governance/migrate_arch_f_functions.py` | L29 | `DEPGRAPH_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
 | | | L35 | `import apply_depgraph as _ad` | 复用apply_depgraph锁机制 | 适配PG连接 |
 | | | L246,255 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
@@ -197,13 +201,13 @@ references:
 | 17 | `scripts/governance/rename_whitelist_cleanup.py` | L223 | `db_path = .../depgraph.db` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
 | | | L254,271 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
 | | | L241,245 | `UPDATE ... SET path = REPLACE(...)` | 写入操作 | `?`→`%s`；REPLACE()函数PG兼容 |
-| 18 | `scripts/governance/rebuild_progress.py` | L39 | `DB_PATH`(governance.db) | governance.db路径（保持SQLite） | 不迁移 |
-| | | L40 | `DEPGRAPH_DB`(depgraph.db) | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L54 | `sqlite3.connect(DB_PATH)` | governance.db连接（保持SQLite） | 不迁移 |
-| | | L77 | `sqlite3.connect(DEPGRAPH_DB)` | 连接方式不同 | 改为`psycopg2.connect()` |
-| 19 | `scripts/governance/perf_depgraph_baseline.py` | L51 | `DEPGRAPH_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L60 | `sqlite3.connect(uri, uri=True)` | URI只读连接 | PG无文件URI，改为标准连接+只读事务 |
-| | | L67 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
+| 18 | `scripts/governance/rebuild_progress.py` | L40 | `DB_PATH`(governance.db) | governance.db路径（保持SQLite） | 不迁移 |
+| | | L41 | `DEPGRAPH_DB`(depgraph.db) | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L55 | `sqlite3.connect(DB_PATH)` | governance.db连接（保持SQLite） | 不迁移 |
+| | | L78 | `sqlite3.connect(DEPGRAPH_DB)` | 连接方式不同 | 改为`psycopg2.connect()` |
+| 19 | `scripts/governance/perf_depgraph_baseline.py` | L54 | `DEPGRAPH_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
+| | | L63 | `sqlite3.connect(uri, uri=True)` | URI只读连接 | PG无文件URI，改为标准连接+只读事务 |
+| | | L70 | `sqlite_master` | PG系统表不同 | 改为`information_schema.tables` |
 | 20 | `scripts/governance/repair/audit_design_completeness.py` | L51 | `DST_DB` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
 | | | L294 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
 | | | L243 | `GROUP_CONCAT` | PG函数不同 | 改为`STRING_AGG(col, ',')` |
@@ -216,10 +220,7 @@ references:
 | | | L72 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
 | | | L342 | `PRAGMA busy_timeout=5000` | PG无此PRAGMA | 改为`SET lock_timeout` |
 | | | L484,602 | `import lock_files` | 文件锁 | 重新设计为PG事务锁 |
-| 23 | `scripts/governance/generate_project_path_tree.py` | L196 | `DEPGRAPH_DB_PATH` | 路径常量→PG连接配置 | 改为从环境变量读取PG_DSN |
-| | | L64,142,815 | `sqlite3.connect()` | 连接方式不同 | 改为`psycopg2.connect()` |
-| | | L666,753 | `lock_files`（subprocess调用） | 文件锁 | 重新设计为PG事务锁 |
-| 24-45 | `scripts/governance/d5_architecture/generators/*.py`（22个生成器） | 各文件 | `DEPGRAPH_DB`+`sqlite3.connect()` | 路径常量+连接方式 | 统一改为从环境变量读取PG_DSN+`psycopg2.connect()` |
+| 23-44 | `scripts/governance/d5_architecture/generators/*.py`（22个生成器） | 各文件 | `DEPGRAPH_DB`+`sqlite3.connect()` | 路径常量+连接方式 | 统一改为从环境变量读取PG_DSN+`psycopg2.connect()` |
 
 **d5_architecture/generators/下22个生成器清单**：
 - `generate_capacity_report.py`（L39,68）
@@ -249,17 +250,17 @@ references:
 
 | # | 文件路径 | 说明 |
 |---|---------|------|
-| 46 | `scripts/governance/create_f_func_task_cards.py` | governance.db + 任务卡字符串引用 |
-| 47 | `scripts/governance/create_panorama_repair_tasks.py` | governance.db + 任务卡字符串引用 |
-| 48 | `scripts/governance/create_alignment_tasks.py` | governance.db + upstream_files字符串 |
-| 49 | `scripts/governance/scan_ground_truth_deps.py` | 纯文件扫描器，不连接DB |
+| 45 | `scripts/governance/create_f_func_task_cards.py` | governance.db + 任务卡字符串引用 |
+| 46 | `scripts/governance/create_panorama_repair_tasks.py` | governance.db + 任务卡字符串引用 |
+| 47 | `scripts/governance/create_alignment_tasks.py` | governance.db + upstream_files字符串 |
+| 48 | `scripts/governance/scan_ground_truth_deps.py` | 纯文件扫描器，不连接DB |
 
 ### 2.3 纯文件操作（2个，迁移后需改为pg_dump）
 
 | # | 文件路径 | 位置（行号） | 变量/函数名 | 变更影响 | 执行办法 |
 |---|---------|:---------:|-----------|---------|---------|
-| 50 | `scripts/governance/repair/rollback_depgraph.py` | L40 | `DST = depgraph.db` | 纯文件操作（shutil.copy） | 迁移后改为pg_dump/pg_restore策略 |
-| 51 | `scripts/governance/repair/backup_db.py` | L21-22 | `DBDIR`/`DBS = ["depgraph.db", ...]` | 纯文件备份（shutil.copy2） | 迁移后改为pg_dump |
+| 49 | `scripts/governance/repair/rollback_depgraph.py` | L40 | `DST = depgraph.db` | 纯文件操作（shutil.copy） | 迁移后改为pg_dump/pg_restore策略 |
+| 50 | `scripts/governance/repair/backup_db.py` | L21-22 | `DBDIR`/`DBS = ["depgraph.db", ...]` | 纯文件备份（shutil.copy2） | 迁移后改为pg_dump |
 
 ---
 
@@ -425,18 +426,18 @@ references:
 
 | # | 文件路径 | 锁类型 | 位置（行号） | 处理方式 | 处理说明 |
 |---|---------|--------|:---------:|:-------:|---------|
-| 1 | `scripts/governance/apply_depgraph.py` | `_check_git_backup` | L76 | 改造 | 改为检查迁移脚本是否已提交 |
-| 2 | 同上 | `_create_physical_backup` | L148 | 删除 | PG用pg_dump |
-| 3 | 同上 | `_db_write_lock_lock` | L194 | 删除 | PG MVCC支持并发 |
-| 4 | 同上 | `_db_write_lock` | L198 | 删除 | 双重锁，PG行锁接管 |
-| 5 | 同上 | `_optional_db_lock` | L248 | 删除 | 随_db_write_lock删除 |
-| 6 | 同上 | `_atomic_write` | L303 | 改造 | 删除_optional_db_lock调用；改用PG事务 |
-| 7 | 同上 | `import lock_files` | L191 | 删除 | 不再需要文件锁保护 |
-| 8 | `scripts/governance/generate_project_depgraph.py` | `acquire_lock`/`release_lock` | L2512,2536 | 删除 | subprocess调用lock_files |
-| 9 | 同上 | write_depgraph_to_db锁 | L2609-2616 | 删除 | 随acquire/release删除 |
-| 10 | 同上 | --output-yaml模式锁 | L3509-3566 | 保留 | 保护YAML文件写入（非DB） |
-| 11 | `scripts/governance/sync_yaml_to_depgraph.py` | 无锁（缺失保护） | L864 | 改造 | PG事务隔离解决 |
-| 12 | 同上 | `disable/restore_readonly_triggers` | L78,87 | 改造 | 改为PG的ALTER TABLE DISABLE TRIGGER |
+| 1 | `scripts/governance/apply_depgraph.py` | `_check_git_backup` | L85 | 改造 | 改为检查迁移脚本是否已提交 |
+| 2 | 同上 | `_create_physical_backup` | L157 | 删除 | PG用pg_dump |
+| 3 | 同上 | `_db_write_lock_lock` | L212 | 删除 | PG MVCC支持并发 |
+| 4 | 同上 | `_db_write_lock` | L215-216 | 删除 | 双重锁，PG行锁接管 |
+| 5 | 同上 | `_optional_db_lock` | L265-266 | 删除 | 随_db_write_lock删除 |
+| 6 | 同上 | `_atomic_write` | L321 | 改造 | 删除_optional_db_lock调用（L328）；改用PG事务 |
+| 7 | 同上 | `import lock_files` | L200 | 删除 | 不再需要文件锁保护 |
+| 8 | `scripts/governance/generate_project_depgraph.py` | `acquire_lock`/`release_lock` | L2515,2539 | 删除 | subprocess调用lock_files |
+| 9 | 同上 | write_depgraph_to_db锁 | L2612-2617 | 删除 | 随acquire/release删除 |
+| 10 | 同上 | --output-yaml模式锁 | L3518-3575 | 保留 | 保护YAML文件写入（非DB） |
+| 11 | `scripts/governance/sync_yaml_to_depgraph.py` | 无锁（缺失保护） | L1008 | 改造 | PG事务隔离解决 |
+| 12 | 同上 | `disable/restore_readonly_triggers` | L97,106 | 改造 | 改为PG的ALTER TABLE DISABLE TRIGGER |
 | 13 | `scripts/lock_files.py` | 通用文件锁 | 全文件 | 保留 | 保护YAML/代码文件等非DB资源 |
 | 14 | `scripts/git_guard.py` | 只读扫描.ailocks/ | L190,65 | 保留 | 保护工作区文件 |
 | 15 | `scripts/governance/pre_op_check.py` | `_run_lock_check` | L137,235 | 保留 | 写前门禁检查 |
@@ -469,7 +470,7 @@ references:
 | **src/代理/导出** | 2 | persistence/depgraph_schema, __init__ |
 | **src/纯注释** | 5 | 3个__init__.py, g_trae_059.yaml, asset_inventory/__main__ |
 | **src/核心基础设施** | 3 | db_utils, paths, sqlite_schema |
-| **scripts/必须迁移** | 45 | apply_depgraph, sync_yaml, generate_project_depgraph等 |
+| **scripts/必须迁移** | 44 | apply_depgraph, sync_yaml, generate_project_depgraph等 |
 | **scripts/不直接访问** | 4 | create_f_func_task_cards等 |
 | **scripts/纯文件操作** | 2 | rollback_depgraph, backup_db |
 | **tests/全量迁移** | 4 | test_depgraph_db等 |
@@ -478,7 +479,11 @@ references:
 | **tests/不迁移** | 17+80 | governance.db测试 |
 | **docs/config/需更新** | 23 | 规则2+架构8+目标4+蓝图3+配置1+YAML2+注册表2+索引1 |
 | **锁机制/触发器** | 26 | 删除8+改造5+保留11+PG实现2 |
-| **总计** | **85+26** | 85个文件+26项锁机制/触发器 |
+| **总计** | **84+26** | 84个需迁移文件+26项锁机制/触发器 |
+| **其中：需迁移文件（84）** | 84 | src/必须迁移(6)+src/部分迁移(1)+scripts/必须迁移(44)+tests/全量(4)+tests/mock(1)+tests/部分(5)+docs/config(23) |
+| **其中：不需迁移/噪音文件（117）** | 117 | src/需复核(4)+src/代理导出(2)+src/纯注释(5)+src/核心基础设施(3)+scripts/不直接访问(4)+scripts/纯文件操作(2)+tests/不迁移(97) |
+
+> **总计口径说明**：表格14个文件类别行项求和=201（84+117），但"总计84"仅统计需直接修改SQL/连接的文件类别（即§9.2去噪前口径中"需迁移"部分，7类），排除"需复核/代理/注释/基础设施/不直接访问/纯文件操作/不迁移"7类不需修改SQL的文件（117个）。117个不需迁移文件中含tests/不迁移97个（governance.db测试17+market.duckdb测试80），仅作参考清单保留。26项锁机制/触发器为独立维度，与文件计数正交。
 
 ---
 
@@ -487,12 +492,12 @@ references:
 ### 第1轮审查（2026-06-25）
 
 **审查方法**：5个并行子任务审查src/scripts/tests/docs/config/锁机制
-**审查结果**：85个文件+26项锁机制/触发器
+**审查结果**：84个文件+26项锁机制/触发器
 **新增文件**：第1轮（基线）
 
 ### 第2轮审查（2026-06-25）
 
-**审查方法**：使用不同关键词（get_depgraph_conn/depgraph_schema导入、配置文件depgraph.db引用、psycopg2/postgresql已有引用、requirements/docker/CI文件）交叉验证
+**审查方法**：使用不同关键词（get_depgraph_conn/depgraph_schema导入、配置文件depgraph.db引用、psycopg2/postgresql已有引用、requirements/CI文件）交叉验证
 **审查结果**：新增28个文件
 **新增文件清单**：
 
@@ -541,14 +546,13 @@ references:
 | 104 | `data/rule_optimization/key_facts.yaml` | 引用depgraph.db | 同上 |
 | 105 | `data/asset_index/project_entity_depgraph.yaml` | 引用depgraph.db | 同上 |
 
-#### 第2轮新增：依赖/CI/Docker（4个）
+#### 第2轮新增：依赖/CI（3个）
 
 | # | 文件路径 | 变更影响 | 执行办法 |
 |---|---------|---------|---------|
 | 106 | `requirements-demo.txt` | 缺少psycopg2依赖 | 添加`psycopg2-binary>=2.9` |
 | 107 | `requirements-dev.txt` | 缺少psycopg2依赖 | 添加`psycopg2-binary>=2.9` |
-| 108 | `.github/workflows/governance.yml` | CI配置可能需要PG服务 | 添加PG service container |
-| 109 | `docker-compose.yml` | 已有Docker配置 | 检查是否需要添加PG服务 |
+| 108 | `.github/workflows/governance.yml` | CI配置可能需要PG服务 | 添加PG service（CI中安装PostgreSQL） |
 
 #### 第2轮新增：tests/（1个）
 
@@ -662,7 +666,7 @@ references:
 | 164 | `src/zephyr/governance/drift_detection/tamper_proof_audit.py` | 触发器 | L63,69 | 同上（副本） | 同上 |
 | 165 | `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` | 触发器 | L149,155 | 2个FTS5同步触发器 | VMS库非depgraph.db，不迁移 |
 | 166 | `src/zephyr/governance/vector_memory/sqlite_metadata_store.py` | 触发器 | L149,155 | 同上（副本） | 同上 |
-| 167 | `src/zephyr/governance/depgraph_schema.py` | 视图 | L831 | CREATE VIEW dep_cycles（WITH RECURSIVE） | PG兼容，直接迁移 |
+| 167 | `src/zephyr/governance/depgraph_schema.py` | 视图 | L795-819 | CREATE VIEW dep_cycles（WITH RECURSIVE） | PG兼容，直接迁移 |
 | 168 | `scripts/ops/auto_fix_cron.py` | 锁机制 | L57,67,79,83 | fcntl/msvcrt文件锁 | 评估cron任务是否操作depgraph.db |
 | 169 | `src/zephyr/governance/base_repo.py` | FTS5 | L348-352 | tasks_fts虚拟表 | governance.db保持SQLite，不迁移 |
 | 170 | `src/zephyr/infrastructure/db/base_repo.py` | FTS5 | L349-352 | 同上（副本） | 同上 |
@@ -950,7 +954,7 @@ references:
 
 | 轮次 | 新增文件数 | 新增位置数 | 状态 |
 |------|:---------:|:---------:|:----:|
-| 第1轮 | 85 | 200+ | 基线 |
+| 第1轮 | 84 | 200+ | 基线 |
 | 第2轮 | 28 | 0 | ✅ 已完成 |
 | 第3轮 | 52 | 12 | ✅ 已完成 |
 | 第4轮 | 138 | 多处 | ✅ 已完成 |
@@ -981,9 +985,9 @@ references:
 | 类别 | 原始数量 | 去噪后数量 | 减少量 | 去噪率 |
 |------|:---:|:---:|:---:|:---:|
 | src/zephyr/ | 26 | 6 | -20 | 77% |
-| scripts/governance/ | 46 | 14任务卡 | -32 | 70% |
+| scripts/governance/ | 44 | 14任务卡 | -30 | 68% |
 | tests/+配置+锁 | 30 | 13 | -17 | 57% |
-| **总计** | **102** | **33** | **-69** | **68%** |
+| **总计** | **100** | **33** | **-67** | **67%** |
 
 ### 9.3 src/zephyr/ 去噪详情（26→6）
 
@@ -1022,11 +1026,11 @@ references:
 | 路径保护（3个） | rbac_guard.py, path_guard.py, immutable_core.py | 仅路径字符串引用，不执行SQL |
 | governance.db相关（3个） | paths.py, db_utils.py, sqlite_schema.py | 指向governance.db而非depgraph.db |
 | 纯注释（5个） | g_trae_059.yaml, __main__.py, __init___from_obs.py, script_governance/__init__.py, registry_management/__init__.py | 纯注释/字符串引用 |
-| 导入导出（2个） | governance/__init__.py, rule_watcher.py | 仅导入导出，不直接执行SQL |
+| 导入导出（2个） | governance/__init__.py, rule_watcher.py | 仅导入导出，不直接执行SQL。注：rule_watcher.py L60的`_DEFAULT_DB_PATH`路径需随subprocess脚本迁移更新（见§1.2第7项），但不执行depgraph.db SQL，故归入NOISE |
 | YAML读取（2个） | audit_trail/pipeline_runner.py, audit_orchestrator/pipeline_runner.py | 读取YAML文件，非depgraph.db |
 | 已有PG兼容（3个） | rollback_integration.py(2份), environment_manager.py | 已支持PostgreSQL |
 
-### 9.4 scripts/governance/ 去噪详情（46→14任务卡）
+### 9.4 scripts/governance/ 去噪详情（44→14任务卡）
 
 #### DELETE（一次性脚本归档，8个）
 
@@ -1077,14 +1081,15 @@ references:
 
 **MERGE-B：concurrent_write_test.py合并到apply_depgraph.py任务卡**
 
-#### KEEP（独立任务卡，13个）
+#### KEEP（14个，含13个独立任务卡+1个合并到TC-PG-17）
 
 | # | 文件路径 | 迁移复杂度 |
 |---|---------|-----------|
-| 1 | `apply_depgraph.py` | 高：删除6处文件锁+lastrowid→RETURNING+19处sqlite3.connect |
-| 2 | `sync_yaml_to_depgraph.py` | 高：27个触发器改PL/pgSQL+12处INSERT OR REPLACE |
-| 3 | `generate_project_depgraph.py` | 高：5处连接+4处lock_files删除 |
+| 1 | `apply_depgraph.py` | 高：删除文件锁代码（import lock_files L200+`_db_write_lock_lock` L212+`_db_write_lock` L215-216+`_optional_db_lock` L265-266）+4处lastrowid→RETURNING（L678/739/837/965）+40处sqlite3.connect |
+| 2 | `sync_yaml_to_depgraph.py` | 高：27个触发器改PL/pgSQL+12处INSERT OR REPLACE（L214/311/440/473/511/598/621/642/742/772/810/842） |
+| 3 | `generate_project_depgraph.py` | 高：5处get_db_connection（L495/589/2625/3124/3208）+3处lock_files subprocess删除（L2522/2546/3544） |
 | 4 | `extract_depgraph.py` | 中：2处连接（无`?`占位符） |
+| 5 | `generate_project_path_tree.py` | 中：3处sqlite3.connect（L65/143/816）+2处lock_files subprocess（L675/753）+2处INSERT OR IGNORE+VALUES占位符（L156-159/832-835） |
 | 6 | `audit_domain_nodes.py` | 中：3处连接+datetime('now')+INSERT OR REPLACE |
 | 7 | `diagnose_depgraph.py` | 低：1处连接 |
 | 8 | `detect_causal_conflicts.py` | 低：1处连接 |
@@ -1092,7 +1097,10 @@ references:
 | 10 | `check_rule_four_way_alignment.py` | 低：1处连接+timeout |
 | 11 | `check_schema_version_writes.py` | 中：导入_MIGRATIONS+DB校验 |
 | 12 | `perf_depgraph_baseline.py` | 中：URI只读连接改造+sqlite_master |
-| 13 | `scripts/ops/upgrade_headers_to_14fields.py` | 中：有测试，CI集成 |
+| 13 | `rebuild_progress.py`（合并到TC-PG-17） | 中：同时操作governance.db（保持SQLite）和depgraph.db（迁移PG），仅depgraph部分迁移。因迁移复杂度与perf_depgraph_baseline.py相似且同属governance脚本，合并到TC-PG-17 |
+| 14 | `scripts/ops/upgrade_headers_to_14fields.py` | 中：有测试，CI集成（注：位于scripts/ops/，非scripts/governance/） |
+
+> **说明**：KEEP列表14项中，#1-#13来自`scripts/governance/`（44个必须迁移文件中的13个），#14来自`scripts/ops/`。§9.4标题"44→14任务卡"中的44仅统计`scripts/governance/`目录；14=13个KEEP任务卡（含#13合并到TC-PG-17）+1个MERGE-A任务卡（18个生成器批量迁移）。
 
 ### 9.5 tests/+配置+锁 去噪详情（30→13）
 
@@ -1104,13 +1112,14 @@ references:
 | 7-9 | requirements.txt, pyproject.toml, .env.example | 缺少psycopg2-binary和PG连接配置 |
 | 10 | depgraph_schema.py的CREATE VIEW dep_cycles | PG兼容，随主迁移卡处理 |
 
-#### DELETE（从清单删除，7个）
+#### DELETE（从清单删除，6个）
 
 | # | 文件路径 | 理由 |
 |---|---------|------|
 | 1-5 | tests/governance/下5个幽灵测试文件 | **文件不存在**，臆造的文件名 |
 | 6 | `cleanup_p0_auto_bridged.py` | 误判，操作governance.db |
-| 7 | `test_cross_layer_systems_red_team.py` | 纯噪音引用，不访问depgraph.db |
+
+> **说明**：`test_cross_layer_systems_red_team.py`原在此处#7，因与NOISE #2重复分类，现仅保留在NOISE #2（语义更准确：仅字符串引用postgresql）。
 
 #### CLEAN（清理噪音，9个）
 
@@ -1142,13 +1151,14 @@ references:
 | TC-PG-07 | sync_yaml_to_depgraph.py迁移 | sync_yaml_to_depgraph.py | 1 |
 | TC-PG-08 | generate_project_depgraph.py迁移 | generate_project_depgraph.py | 1 |
 | TC-PG-09 | extract_depgraph.py迁移 | extract_depgraph.py | 1 |
+| TC-PG-10 | generate_project_path_tree.py迁移 | generate_project_path_tree.py | 1 |
 | TC-PG-11 | audit_domain_nodes.py迁移 | audit_domain_nodes.py | 1 |
 | TC-PG-12 | diagnose_depgraph.py迁移 | diagnose_depgraph.py | 1 |
 | TC-PG-13 | detect_causal_conflicts.py迁移 | detect_causal_conflicts.py | 1 |
 | TC-PG-14 | analyze_change_impact.py迁移 | analyze_change_impact.py | 1 |
 | TC-PG-15 | check_rule_four_way_alignment.py迁移 | check_rule_four_way_alignment.py | 1 |
 | TC-PG-16 | check_schema_version_writes.py迁移 | check_schema_version_writes.py | 1 |
-| TC-PG-17 | perf_depgraph_baseline.py迁移 | perf_depgraph_baseline.py | 1 |
+| TC-PG-17 | perf_depgraph_baseline.py迁移（含rebuild_progress.py合并） | perf_depgraph_baseline.py + rebuild_progress.py | 2 |
 | TC-PG-18 | upgrade_headers_to_14fields.py迁移 | upgrade_headers_to_14fields.py | 1 |
 | TC-PG-19 | d5_architecture生成器批量迁移 | 18个生成器 | 18 |
 | TC-PG-20 | tests/ depgraph.db测试迁移 | 6个测试文件 | 6 |
@@ -1156,13 +1166,13 @@ references:
 | TC-PG-22 | 规则/注册表YAML描述更新 | trae_056 + trae_059 + registry_of_registries.yaml | 3 |
 | TC-PG-23 | depgraph_schema.py视图迁移 | CREATE VIEW dep_cycles | 1 |
 | TC-PG-24 | 归档一次性脚本 | 12个一次性脚本移至_archive/ | 12 |
-| **合计** | | | **63** |
+| **合计** | | | **65** |
 
-> **文件数说明**：TC-PG-23（视图迁移）与TC-PG-01（depgraph_schema.py迁移）共享同一文件`src/zephyr/governance/depgraph_schema.py`，但分属不同施工阶段（TC-PG-01为SQL方言调整，TC-PG-23为视图迁移），故文件数统计中不重复计算。各任务卡文件数求和为64，去重后实际唯一文件数为63。
+> **文件数说明**：TC-PG-23（视图迁移）与TC-PG-01（depgraph_schema.py迁移）共享同一文件`src/zephyr/governance/depgraph_schema.py`，但分属不同施工阶段（TC-PG-01为SQL方言调整，TC-PG-23为视图迁移），故文件数统计中不重复计算。各任务卡文件数求和为66，去重后实际唯一文件数为65。
 
 ### 9.7 去噪审查结论
 
-**去噪效果**：原始约120个需迁移文件 → 去噪后63个文件，分为24个任务卡，去噪率68%。
+**去噪效果**：原始约120个需迁移文件 → 去噪后65个文件，分为24个任务卡，去噪率67%（基于§9.2统计口径：100→33，(100-33)/100≈67%）。
 
 **关键收益**：
 1. **减少垃圾任务卡**——避免为幽灵文件/噪音文件/一次性脚本创建任务卡

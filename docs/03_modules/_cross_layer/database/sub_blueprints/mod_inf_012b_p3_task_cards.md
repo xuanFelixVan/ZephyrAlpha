@@ -1,16 +1,44 @@
 ---
-module_id: MOD-DATABASEB
+module_id: MOD-DB_DEPGRAPH_PG_OPT
+submodule_path: src/zephyr/infrastructure/db
 title: "P3 PostgreSQL优化任务卡总览 — 4个任务卡 + 4个元任务卡"
 doc_type: index
 status: Draft
 version: "1.0.0"
-belongs_to: "MOD-DATABASEB-P3"
+layer: cross_layer
+blueprint_level: sub_module
+owner: ZephyrAlpha-Owner
+classification: confidential
+language: zh
+created_by: AI-session-20260625-P3
 date: "2026-06-25"
+valid_from: "2026-06-25"
 ttl: permanent
+rule_form: structural
+belongs_to: "MOD-DB_DEPGRAPH_PG_OPT"
+parent_module: "SH-DB-001"
+scope: global
+stability: evolving
+verifiability: automated
+construction_progress: planned
+actual_disk_path: ''
+codification_level: L2
+generation: 3
+functional_domain: data
+summary: "P3 PostgreSQL优化任务卡总览——4个任务卡（P3-T1 pgvector / P3-T2 LISTEN-NOTIFY / P3-T3 分区表 / P3-T4 监控告警）+ 4个元任务卡。前置条件：P2迁移完成。"
+tags: [postgresql, pgvector, listen-notify, partitioning, monitoring, task-cards, p3, database-upgrade]
+priority: P2
+runtime_plane: hot
+depends_on:
+  - {target: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2迁移完成是P3优化的前置条件"}
+  - {target: "SH-DB-001", at: "全篇", why: "父蓝图——Database集成蓝图"}
+references:
+  - {id: "MOD-DB_DEPGRAPH_PG_OPT", at: "全篇", why: "P3方案真源——施工方案详细步骤"}
+  - {id: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2方案——前置条件与PG连接配置来源"}
 ---
 # P3 PostgreSQL优化任务卡总览
 
-> 施工方案真源：[MOD-DATABASEB-P3-postgresql-optimization.md](MOD-DATABASEB-P3-postgresql-optimization.md)
+> 施工方案真源：[mod_inf_012b_p3_postgresql_optimization.md](mod_inf_012b_p3_postgresql_optimization.md)
 > 前置条件：P2迁移完成（PostgreSQL运行中，红蓝测试通过）
 
 ## 任务卡清单
@@ -51,7 +79,7 @@ P3-T4（监控告警）→ P3-T1（pgvector）→ P3-T2（LISTEN/NOTIFY）→ P3
 ### 施工范围
 
 **可修改文件白名单**：
-- `docker/postgres/init/01_create_extensions.sql`（修改，取消vector注释）
+- `scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql`（修改，取消vector注释）
 - `src/zephyr/shared/utils/code_embedding.py`（新建）
 - `scripts/governance/update_embeddings.py`（新建）
 - `requirements.txt`（修改）
@@ -65,13 +93,13 @@ P3-T4（监控告警）→ P3-T1（pgvector）→ P3-T2（LISTEN/NOTIFY）→ P3
 #### 步骤1：安装pgvector扩展
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "CREATE EXTENSION IF NOT EXISTS vector;"
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
+psql -U zephyr -d depgraph -c "CREATE EXTENSION IF NOT EXISTS vector;"
+psql -U zephyr -d depgraph -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
 ```
 
-#### 步骤2：更新Docker初始化脚本
+#### 步骤2：更新PostgreSQL初始化脚本
 
-**文件路径**：`docker/postgres/init/01_create_extensions.sql`
+**文件路径**：`scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql`
 
 **注意**：此文件在P2阶段1[动作3]中创建，此处为修改（取消pgvector的注释）。
 
@@ -80,7 +108,7 @@ docker exec zephyr-postgres psql -U zephyr -d depgraph -c "SELECT extname, extve
 #### 步骤3：在nodes表添加embedding列
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding vector(384);
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT '';
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding_updated_at TIMESTAMP;
@@ -90,7 +118,7 @@ ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding_updated_at TIMESTAMP;
 #### 步骤4：创建HNSW索引
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 CREATE INDEX IF NOT EXISTS idx_nodes_embedding
 ON nodes USING hnsw (embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
@@ -128,7 +156,7 @@ pip install sentence-transformers
 python scripts\governance\update_embeddings.py --domain D-GOVERNANCE
 
 # 验证embedding已生成
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 SELECT COUNT(*) as total, COUNT(embedding) as has_embedding
 FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 "
@@ -158,15 +186,15 @@ for r in results:
 
 ```powershell
 # 1. 删除embedding列
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 ALTER TABLE nodes DROP COLUMN IF EXISTS embedding;
 ALTER TABLE nodes DROP COLUMN IF EXISTS embedding_model;
 ALTER TABLE nodes DROP COLUMN IF EXISTS embedding_updated_at;
 "
 # 2. 删除HNSW索引
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "DROP INDEX IF EXISTS idx_nodes_embedding;"
+psql -U zephyr -d depgraph -c "DROP INDEX IF EXISTS idx_nodes_embedding;"
 # 3. 删除vector扩展
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "DROP EXTENSION IF EXISTS vector;"
+psql -U zephyr -d depgraph -c "DROP EXTENSION IF EXISTS vector;"
 # 4. 删除Python文件
 Remove-Item src/zephyr/shared/utils/code_embedding.py
 Remove-Item scripts/governance/update_embeddings.py
@@ -202,7 +230,7 @@ Remove-Item scripts/governance/update_embeddings.py
 | 10 | D-GOVERNANCE域有embedding | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D-GOVERNANCE'` | >0 |
 | 11 | 语义搜索返回结果 | `semantic_search('任务管理', top_k=5)` | 返回≥1个结果 |
 | 12 | 语义搜索延迟 | 计时 | < 50ms |
-| 13 | Docker初始化脚本已更新 | `grep "vector" docker/postgres/init/01_create_extensions.sql` | CREATE EXTENSION IF NOT EXISTS vector |
+| 13 | PostgreSQL初始化脚本已更新 | `grep "vector" scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql` | CREATE EXTENSION IF NOT EXISTS vector |
 
 ### 审查流程
 
@@ -214,7 +242,7 @@ Remove-Item scripts/governance/update_embeddings.py
 
 ### 修复授权
 
-- `docker/postgres/init/01_create_extensions.sql`
+- `scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql`
 - `src/zephyr/shared/utils/code_embedding.py`
 - `scripts/governance/update_embeddings.py`
 - `requirements.txt`
@@ -263,7 +291,7 @@ Remove-Item scripts/governance/update_embeddings.py
 
 **关键**：
 - 复用P2中定义的PG连接配置（`from zephyr.shared.utils.pg_connection import PG_CONFIG`）
-- LISTEN使用直连PG端口5432，不通过pgbouncer(6432)
+- LISTEN使用直连PostgreSQL端口5432
 
 #### 步骤3：创建事件通知集成工具
 
@@ -294,7 +322,7 @@ Remove-Item scripts/governance/update_embeddings.py
 
 ```powershell
 # 1. 删除触发器
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP TRIGGER IF EXISTS tr_notify_node_insert ON nodes;
 DROP TRIGGER IF EXISTS tr_notify_node_update ON nodes;
 DROP TRIGGER IF EXISTS tr_notify_node_delete ON nodes;
@@ -399,7 +427,7 @@ Remove-Item src/zephyr/shared/utils/depgraph_events.py
 
 ```powershell
 cd D:\ZephyrAlpha
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM edges WHERE source_id IN (SELECT node_id FROM nodes WHERE domain_id = 'D-GOVERNANCE');
 EXPLAIN (ANALYZE, BUFFERS) SELECT COUNT(*) FROM nodes;
@@ -409,14 +437,14 @@ EXPLAIN (ANALYZE, BUFFERS) SELECT COUNT(*) FROM nodes;
 #### 步骤2：备份PostgreSQL数据库
 
 ```powershell
-docker exec zephyr-postgres pg_dump -U zephyr -d depgraph > data\databases\backups\depgraph_pre_partition.sql
+pg_dump -U zephyr -d depgraph > data\databases\backups\depgraph_pre_partition.sql
 ```
 
 #### 步骤3：获取完整列定义
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\d nodes"
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\d edges"
+psql -U zephyr -d depgraph -c "\d nodes"
+psql -U zephyr -d depgraph -c "\d edges"
 ```
 
 将输出中的列定义填入分区表DDL（替换 `-- ...` 注释部分）
@@ -436,10 +464,10 @@ docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\d edges"
 
 ```powershell
 # 执行分区迁移
-docker exec -i zephyr-postgres psql -U zephyr -d depgraph < scripts\governance\migrate_sqlite_to_pg\02_partition_tables.sql
+psql -U zephyr -d depgraph -f scripts\governance\migrate_sqlite_to_pg\02_partition_tables.sql
 
 # 验证数据一致性
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 SELECT 'nodes_old' as tbl, COUNT(*) FROM nodes_old
 UNION ALL
 SELECT 'nodes_new', COUNT(*) FROM nodes
@@ -453,7 +481,7 @@ SELECT 'edges_new', COUNT(*) FROM edges;
 #### 步骤6：验证分区裁剪
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 "
 ```
@@ -461,7 +489,7 @@ EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 #### 步骤7：对比性能
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM edges WHERE domain_id = 'D-GOVERNANCE';
 EXPLAIN (ANALYZE, BUFFERS) SELECT COUNT(*) FROM nodes;
@@ -471,7 +499,7 @@ EXPLAIN (ANALYZE, BUFFERS) SELECT COUNT(*) FROM nodes;
 #### 步骤8：删除旧表
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP TABLE nodes_old;
 DROP TABLE edges_old;
 "
@@ -507,14 +535,14 @@ DROP TABLE edges_old;
 
 ```powershell
 # 1. 恢复旧表（如果尚未删除）
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP TABLE IF EXISTS nodes;
 DROP TABLE IF EXISTS edges;
 ALTER TABLE nodes_old RENAME TO nodes;
 ALTER TABLE edges_old RENAME TO edges;
 "
 # 2. 如果旧表已删除，从备份恢复
-docker exec -i zephyr-postgres psql -U zephyr -d depgraph < data\databases\backups\depgraph_pre_partition.sql
+psql -U zephyr -d depgraph -f data\databases\backups\depgraph_pre_partition.sql
 # 3. 恢复depgraph_schema.py
 git checkout -- src/zephyr/governance/depgraph_schema.py
 ```
@@ -593,6 +621,13 @@ git checkout -- src/zephyr/governance/depgraph_schema.py
 - `scripts/governance/monitor_pg.py`（新建）
 - `config/pg_monitor.yaml`（新建）
 
+**禁止修改文件**：
+- `src/zephyr/governance/depgraph_schema.py`（分区表在P3-T3处理）
+- `scripts/governance/apply_depgraph.py`
+- `src/zephyr/shared/utils/pg_connection.py`（P2 已定义，仅复用）
+- `src/zephyr/shared/utils/code_embedding.py`（P3-T1 处理）
+- `src/zephyr/shared/utils/pg_notify.py`（P3-T2 处理）
+
 ### 施工步骤
 
 #### 步骤1：创建监控脚本
@@ -614,7 +649,7 @@ python scripts\governance\monitor_pg.py
 
 ```powershell
 # 在一个终端启动慢查询
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "SELECT pg_sleep(10);"
+psql -U zephyr -d depgraph -c "SELECT pg_sleep(10);"
 
 # 在另一个终端运行监控
 python scripts\governance\monitor_pg.py

@@ -1,6 +1,6 @@
 ---
-module_id: MOD-DATABASEB
-submodule_path: src/zephyr/data/persistence
+module_id: MOD-DB_DEPGRAPH_PG_OPT
+submodule_path: src/zephyr/infrastructure/db
 title: "P3 PostgreSQL优化详细施工方案 — pgvector+LISTEN/NOTIFY+分区表+监控告警"
 doc_type: blueprint
 status: Draft
@@ -30,16 +30,16 @@ tags: [postgresql, pgvector, listen-notify, partitioning, monitoring, optimizati
 priority: P2
 runtime_plane: hot
 depends_on:
-  - {target: "MOD-DATABASEB-P2", at: "全篇", why: "P2迁移完成是P3优化的前置条件"}
+  - {target: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2迁移完成是P3优化的前置条件"}
   - {target: "SH-DB-001", at: "全篇", why: "父蓝图——Database集成蓝图"}
 references:
-  - {id: "MOD-DATABASEB-P2", at: "全篇", why: "P2迁移方案——P3基于P2完成的PostgreSQL"}
+  - {id: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2迁移方案——P3基于P2完成的PostgreSQL"}
   - {id: "ARCH-CAP-002", at: "v1.0.8", why: "容量治理——分区后仍适用"}
 ---
 
 # P3 PostgreSQL优化详细施工方案 — pgvector+LISTEN/NOTIFY+分区表+监控告警
 
-> module_id: MOD-DATABASEB | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
+> module_id: MOD-DB_DEPGRAPH_PG_OPT | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
 > 施工阶段: P3（长期：优化） | 前置条件: P2迁移完成
 
 ## 文档使用说明
@@ -57,11 +57,11 @@ references:
 ### 1.1 P2迁移后的状态
 
 P2完成后，depgraph已运行在PostgreSQL上：
-- Docker部署PostgreSQL 16 + pgbouncer
+- Windows原生安装PostgreSQL 16
 - 数据已从SQLite迁移（14K nodes + 22K edges）
 - SQL方言已调整（100+连接点）
 - 文件锁已删除（PG MVCC管理并发）
-- 连接池已配置（pgbouncer transaction pooling）
+- PostgreSQL已安装并运行（Windows原生服务）
 - 红蓝测试通过（40并发写入验证）
 
 ### 1.2 P3优化目标
@@ -132,13 +132,13 @@ P2完成后，depgraph已运行在PostgreSQL上：
 ### 4.1 前置条件
 
 - [ ] P2迁移完成（PostgreSQL运行中）
-- [ ] Docker容器zephyr-postgres正常运行
+- [ ] PostgreSQL服务正常运行
 - [ ] Python环境已安装`sentence-transformers`包（用于生成embedding）
 
 ### 4.2 架构设计
 
 ```
-代码文件 → sentence-transformers → embedding向量(768维) → pgvector存储
+代码文件 → sentence-transformers → embedding向量(384维) → pgvector存储
                                                               ↓
                                             语义检索: ORDER BY embedding <=> query_embedding
 ```
@@ -156,18 +156,18 @@ P2完成后，depgraph已运行在PostgreSQL上：
 **操作**：在PowerShell中执行
 
 ```powershell
-# 进入PostgreSQL容器安装pgvector
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "CREATE EXTENSION IF NOT EXISTS vector;"
+# 安装pgvector扩展
+psql -U zephyr -d depgraph -c "CREATE EXTENSION IF NOT EXISTS vector;"
 
 # 验证安装
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
+psql -U zephyr -d depgraph -c "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
 ```
 
 **预期输出**：显示 `vector` 扩展，版本 `0.7.0+`。
 
-#### [动作2] 更新Docker初始化脚本
+#### [动作2] 更新PostgreSQL初始化脚本
 
-**文件路径**：`d:\ZephyrAlpha\docker\postgres\init\01_create_extensions.sql`
+**文件路径**：`d:\ZephyrAlpha\scripts\governance\migrate_sqlite_to_pg\01_create_extensions.sql`
 
 **注意**：此文件在P2阶段1[动作3]中创建，此处为修改（取消pgvector的注释）。
 
@@ -185,7 +185,7 @@ CREATE EXTENSION IF NOT EXISTS vector;  -- P3: pgvector for embedding
 **操作**：在PowerShell中执行
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding vector(384);
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT '';
 ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding_updated_at TIMESTAMP;
@@ -197,7 +197,7 @@ ALTER TABLE nodes ADD COLUMN IF NOT EXISTS embedding_updated_at TIMESTAMP;
 **操作**：在PowerShell中执行
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 CREATE INDEX IF NOT EXISTS idx_nodes_embedding
 ON nodes USING hnsw (embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
@@ -501,7 +501,7 @@ cd D:\ZephyrAlpha
 python scripts\governance\update_embeddings.py --domain D-GOVERNANCE
 
 # 验证embedding已生成
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 SELECT COUNT(*) as total,
        COUNT(embedding) as has_embedding
 FROM nodes
@@ -537,7 +537,7 @@ for r in results:
 
 | # | 文件路径 | 操作 | 说明 |
 |---|---------|------|------|
-| 1 | `docker/postgres/init/01_create_extensions.sql` | 修改 | 启用vector扩展 |
+| 1 | `scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql` | 修改 | 启用vector扩展 |
 | 2 | `src/zephyr/shared/utils/code_embedding.py` | 新建 | Embedding工具 |
 | 3 | `scripts/governance/update_embeddings.py` | 新建 | 批量更新脚本 |
 | 4 | `requirements.txt` | 修改 | 添加sentence-transformers |
@@ -549,9 +549,9 @@ for r in results:
 ### 5.1 前置条件
 
 - [ ] P2迁移完成（PostgreSQL运行中）
-- [ ] pgbouncer配置为transaction pooling
+- [ ] PostgreSQL直连配置正常
 
-**注意**：pgbouncer transaction pooling模式下，LISTEN/NOTIFY的持久订阅需要使用直连PostgreSQL端口（5432），不通过pgbouncer（6432）。因为LISTEN需要在会话级别保持，而transaction pooling会在事务结束后释放连接。
+**注意**：Windows原生安装的PostgreSQL使用直连（端口5432），LISTEN/NOTIFY的持久订阅可直接使用，无需额外配置。
 
 ### 5.2 架构设计
 
@@ -577,7 +577,7 @@ AI-1 (写入节点)                    AI-2 (监听变更)
 - 通知通道：`depgraph_changed`（节点/边变更）、`domain_capacity`（容量变更）
 - 载荷格式：JSON（包含node_id、action、domain_id）
 - 订阅方式：独立线程LISTEN，事件入队后异步处理
-- 连接方式：直连PostgreSQL（5432），不通过pgbouncer
+- 连接方式：直连PostgreSQL（5432）
 
 ### 5.3 详细施工步骤
 
@@ -586,7 +586,7 @@ AI-1 (写入节点)                    AI-2 (监听变更)
 **操作**：在PowerShell中执行
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 -- 创建触发器函数：节点变更时发送NOTIFY
 CREATE OR REPLACE FUNCTION notify_node_change() RETURNS TRIGGER AS \$\$
 DECLARE
@@ -672,11 +672,10 @@ from zephyr.shared.utils.pg_connection import PG_CONFIG
 
 logger = logging.getLogger(__name__)
 
-# LISTEN/NOTIFY需要直连PostgreSQL（不通过pgbouncer）
-# pgbouncer transaction pooling模式会在事务结束后释放连接，导致LISTEN失效
+# LISTEN/NOTIFY使用直连PostgreSQL
 PG_DIRECT_CONFIG = {
     "host": "localhost",
-    "port": 5432,  # 直连PG，不通过pgbouncer(6432)
+    "port": 5432,  # 直连PostgreSQL
     "database": "depgraph",
     "user": "zephyr",
     "password": PG_CONFIG["password"],  # 复用P2中的密码
@@ -1004,6 +1003,11 @@ nodes表（14K行）
 - 方案B：在edges表添加domain_id列，外键改为`FOREIGN KEY (source_id, domain_id) REFERENCES nodes(node_id, domain_id)`
 - 方案C：不分区edges表，仅分区nodes表（降低风险但edges查询无分区裁剪）
 
+**apply_depgraph.py 影响核查结论**（按方案A执行时）：
+- 经核查，apply_depgraph.py 中按 `node_id` 查询的 SQL 均为单表 `WHERE node_id = ?` 形式，PG 分区表对此自动优化，无需修改
+- apply_depgraph.py 已含孤儿边检测逻辑，删除外键约束后该逻辑依然有效
+- 结论：**按方案A执行时，apply_depgraph.py 无需修改**；若改用方案B，则需在 JOIN 中补充 domain_id 关联
+
 ### 6.4 详细施工步骤
 
 #### [动作1] 记录性能基线
@@ -1014,7 +1018,7 @@ nodes表（14K行）
 cd D:\ZephyrAlpha
 
 # 记录查询性能基线
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 -- 查询1: 按domain_id查询nodes
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
@@ -1046,8 +1050,8 @@ SELECT COUNT(*) FROM nodes;
 -- 注意：此脚本需要在维护窗口执行
 -- 执行前请确保已备份depgraph数据库
 -- 完整列定义获取命令：
---   docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\d nodes"
---   docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\d edges"
+--   psql -U zephyr -d depgraph -c "\d nodes"
+--   psql -U zephyr -d depgraph -c "\d edges"
 -- 将输出中的列定义填入下方DDL（替换 -- ... 注释部分）
 
 BEGIN;
@@ -1140,13 +1144,13 @@ COMMIT;
 cd D:\ZephyrAlpha
 
 # 1. 先备份PostgreSQL数据库
-docker exec zephyr-postgres pg_dump -U zephyr -d depgraph > data\databases\backups\depgraph_pre_partition.sql
+pg_dump -U zephyr -d depgraph > data\databases\backups\depgraph_pre_partition.sql
 
 # 2. 执行分区迁移
-docker exec -i zephyr-postgres psql -U zephyr -d depgraph < scripts\governance\migrate_sqlite_to_pg\02_partition_tables.sql
+psql -U zephyr -d depgraph -f scripts\governance\migrate_sqlite_to_pg\02_partition_tables.sql
 
 # 3. 验证数据一致性
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 SELECT 'nodes_old' as tbl, COUNT(*) FROM nodes_old
 UNION ALL
 SELECT 'nodes_new', COUNT(*) FROM nodes
@@ -1164,7 +1168,7 @@ SELECT 'edges_new', COUNT(*) FROM edges;
 **操作**：在PowerShell中执行
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 -- 验证分区裁剪：只扫描1个分区
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
@@ -1178,7 +1182,7 @@ SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 **操作**：在PowerShell中执行
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 -- 查询1: 按domain_id查询nodes
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
@@ -1202,7 +1206,7 @@ SELECT COUNT(*) FROM nodes;
 **操作**：确认数据一致后，在PowerShell中执行
 
 ```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP TABLE nodes_old;
 DROP TABLE edges_old;
 "
@@ -1213,6 +1217,20 @@ DROP TABLE edges_old;
 **文件路径**：`d:\ZephyrAlpha\src\zephyr\governance\depgraph_schema.py`
 
 **操作**：修改Schema DDL，将nodes和edges表定义改为分区表定义。具体修改内容参照 `02_partition_tables.sql` 中的DDL。
+
+#### [动作8] 重建 LISTEN/NOTIFY 触发器
+
+**操作**：分区表迁移后，原绑定在 nodes 表上的 LISTEN/NOTIFY 触发器（P3-T2 §五.5.3[动作1] 创建）会随旧表 DROP 而失效，需在新分区表上重新创建。
+
+**步骤**：重新执行 §五.5.3[动作1] 中的触发器函数与触发器创建 SQL（`notify_node_change` 函数 + `tr_notify_node_insert`/`tr_notify_node_update`/`tr_notify_node_delete` 三个触发器）。
+
+**验证**：
+```powershell
+psql -U zephyr -d depgraph -c "
+SELECT tgname FROM pg_trigger WHERE tgname LIKE 'tr_notify_%';
+"
+```
+预期返回 3 行。
 
 ### 6.5 验证清单
 
@@ -1225,6 +1243,9 @@ DROP TABLE edges_old;
 | 5 | 按域查询性能提升 | 对比基线 | 5-10x提升 |
 | 6 | 索引已创建 | `\di` | 显示所有索引 |
 | 7 | 旧表已删除 | `\dt` | 无nodes_old/edges_old |
+| 8 | LISTEN/NOTIFY触发器已重建 | `SELECT count(*) FROM pg_trigger WHERE tgname LIKE 'tr_notify_%'` | 3 |
+| 9 | embedding列在分区表中存在 | `SELECT column_name FROM information_schema.columns WHERE table_name='nodes' AND column_name='embedding'` | embedding |
+| 10 | apply_depgraph.py diagnose可运行 | `python scripts\governance\apply_depgraph.py diagnose` | 无报错 |
 
 ### 6.6 受影响文件
 
@@ -1523,7 +1544,7 @@ python scripts\governance\monitor_pg.py
 
 ```powershell
 # 在一个终端启动慢查询
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "SELECT pg_sleep(10);"
+psql -U zephyr -d depgraph -c "SELECT pg_sleep(10);"
 
 # 在另一个终端运行监控
 python scripts\governance\monitor_pg.py
@@ -1597,26 +1618,26 @@ pg_monitor:
 
 ```powershell
 # 1. 删除embedding列
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 ALTER TABLE nodes DROP COLUMN IF EXISTS embedding;
 ALTER TABLE nodes DROP COLUMN IF EXISTS embedding_model;
 ALTER TABLE nodes DROP COLUMN IF EXISTS embedding_updated_at;
 "
 
 # 2. 删除HNSW索引
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP INDEX IF EXISTS idx_nodes_embedding;
 "
 
 # 3. 删除vector扩展
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "DROP EXTENSION IF EXISTS vector;"
+psql -U zephyr -d depgraph -c "DROP EXTENSION IF EXISTS vector;"
 ```
 
 #### 阶段2（LISTEN/NOTIFY）回滚
 
 ```powershell
 # 1. 删除触发器
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP TRIGGER IF EXISTS tr_notify_node_insert ON nodes;
 DROP TRIGGER IF EXISTS tr_notify_node_update ON nodes;
 DROP TRIGGER IF EXISTS tr_notify_node_delete ON nodes;
@@ -1628,7 +1649,7 @@ DROP FUNCTION IF EXISTS notify_node_change();
 
 ```powershell
 # 1. 恢复旧表（如果尚未删除）
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 DROP TABLE IF EXISTS nodes;
 DROP TABLE IF EXISTS edges;
 ALTER TABLE nodes_old RENAME TO nodes;
@@ -1636,7 +1657,7 @@ ALTER TABLE edges_old RENAME TO edges;
 "
 
 # 2. 如果旧表已删除，从备份恢复
-docker exec -i zephyr-postgres psql -U zephyr -d depgraph < data\databases\backups\depgraph_pre_partition.sql
+psql -U zephyr -d depgraph -f data\databases\backups\depgraph_pre_partition.sql
 ```
 
 #### 阶段4（监控）回滚
@@ -1660,10 +1681,10 @@ docker exec -i zephyr-postgres psql -U zephyr -d depgraph < data\databases\backu
 
 | # | 风险 | 严重度 | 概率 | 缓解措施 |
 |---|------|:---:|:---:|---------|
-| 1 | pgvector安装失败 | 中 | 低 | 使用官方Docker镜像，预装pgvector |
+| 1 | pgvector安装失败 | 中 | 低 | 使用官方PostgreSQL安装包，手动安装pgvector |
 | 2 | embedding生成耗时 | 中 | 中 | 批量更新，非阻塞 |
 | 3 | LISTEN/NOTIFY触发器影响写入性能 | 中 | 中 | 触发器仅发送轻量JSON，测试验证 |
-| 4 | pgbouncer不支持LISTEN | 高 | 高 | LISTEN使用直连PG（5432），不通过pgbouncer |
+| 4 | LISTEN长连接稳定性 | 中 | 低 | LISTEN使用直连PG（5432） |
 | 5 | 分区迁移数据丢失 | 高 | 低 | 迁移前后行数对比 + pg_dump备份 |
 | 6 | 分区后外键失效 | 中 | 中 | 分区表外键支持有限，需调整约束 |
 | 7 | 监控脚本资源占用 | 低 | 低 | 30s间隔，轻量查询 |
@@ -1691,7 +1712,7 @@ docker exec -i zephyr-postgres psql -U zephyr -d depgraph < data\databases\backu
 
 | # | 文件路径 | 阶段 | 修改说明 |
 |---|---------|:---:|---------|
-| 1 | `docker/postgres/init/01_create_extensions.sql` | 1 | 启用vector扩展 |
+| 1 | `scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql` | 1 | 启用vector扩展 |
 | 2 | `requirements.txt` | 1 | 添加sentence-transformers |
 | 3 | `src/zephyr/governance/depgraph_schema.py` | 3 | Schema DDL改为分区表 |
 
@@ -1699,7 +1720,7 @@ docker exec -i zephyr-postgres psql -U zephyr -d depgraph < data\databases\backu
 
 | # | 文件路径 | 更新内容 |
 |---|---------|---------|
-| 1 | `docs/03_modules/_cross_layer/database/blueprint.md` | MOD-DATABASEB状态更新 |
+| 1 | `docs/03_modules/_cross_layer/database/blueprint.md` | MOD-DB_DEPGRAPH_PG状态更新 |
 | 2 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 全景图优化说明 |
 | 3 | `docs/03_modules/_cross_layer/database/sub_blueprints/index.md` | 子蓝图索引更新 |
 
@@ -1723,7 +1744,7 @@ docker exec -i zephyr-postgres psql -U zephyr -d depgraph < data\databases\backu
 | 10 | 配置参数合理 | 对照PG最佳实践 | 参数值合理 |
 | 11 | 与P2文档一致 | 对照P2文档 | 术语/路径/配置一致 |
 | 12 | pgvector设计合理 | 对照pgvector文档 | 维度/索引类型正确 |
-| 13 | LISTEN/NOTIFY设计合理 | 对照PG文档 | 直连PG不通过pgbouncer |
+| 13 | LISTEN/NOTIFY设计合理 | 对照PG文档 | 直连PostgreSQL |
 | 14 | 分区设计合理 | 对照PG分区文档 | HASH分区8个合理 |
 
 **审查流程**：
