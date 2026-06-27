@@ -1,9 +1,9 @@
 ---
-module_id: MOD-DATABASEB
+module_id: MOD-DB_DEPGRAPH_PG
 submodule_path: src/zephyr/infrastructure/db
 title: "P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL"
 doc_type: blueprint
-status: Draft
+status: Active
 version: "1.0.0"
 layer: cross_layer
 blueprint_level: sub_module
@@ -20,7 +20,7 @@ parent_module: "SH-DB-001"
 scope: global
 stability: evolving
 verifiability: automated
-construction_progress: planned
+construction_progress: completed
 actual_disk_path: ''
 codification_level: L2
 generation: 3
@@ -41,7 +41,7 @@ references:
 
 # P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL
 
-> module_id: MOD-DATABASEB | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
+> module_id: MOD-DB_DEPGRAPH_PG | version: 1.0.0 | status: Active | belongs_to: SH-DB-001
 > 施工阶段: P2（中期：治本） | 目标: 迁移depgraph.db到PostgreSQL，获得MVCC并发能力
 
 ## 文档使用说明
@@ -1848,15 +1848,15 @@ pytest tests/ -x
 
 ### 12.3 需同步更新的文档
 
-| # | 文件路径 | 更新内容 |
-|---|---------|---------|
-| 1 | `docs/03_modules/_cross_layer/database/blueprint.md` | MOD-DATABASEB状态更新为Active |
-| 2 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 全景图数据源更新为PostgreSQL |
-| 3 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | D50裁定更新（D50-PG） |
-| 4 | `docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml` | 访问协议更新（5步流程修改） |
-| 5 | `architecture_model/layers/b_db.yaml` | DB YAML真源更新 |
-| 6 | `docs/03_modules/_cross_layer/database/index.md` | 索引更新 |
-| 7 | `docs/03_modules/_cross_layer/database/sub_blueprints/index.md` | 子蓝图索引更新 |
+| # | 文件路径 | 更新内容 | 完成状态 |
+|---|---------|---------|:---:|
+| 1 | `docs/03_modules/_cross_layer/database/blueprint.md` | MOD-DB_DEPGRAPH_PG状态更新为Active | [x] |
+| 2 | `docs/02_enterprise_architecture/dependency_architecture_panorama.md` | 全景图数据源更新为PostgreSQL | [x] |
+| 3 | `docs/02_enterprise_architecture/architecture_upgrade_discussion.md` | D50裁定更新（D50-PG） | [x] |
+| 4 | `docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml` | 访问协议更新（5步流程修改） | [x] |
+| 5 | `architecture_model/layers/b_db.yaml` | DB YAML真源更新 | [x] |
+| 6 | `docs/03_modules/_cross_layer/database/index.md` | 索引更新 | [x] |
+| 7 | `docs/03_modules/_cross_layer/database/sub_blueprints/index.md` | 子蓝图索引更新 | [x] |
 
 ### 12.4 需修改的测试文件
 
@@ -1869,13 +1869,13 @@ grep -rln "sqlite3\.\|depgraph\.db\|PRAGMA\|INSERT OR REPLACE" tests/ --include=
 
 **关键测试文件**（修改量最大的前4个）：
 
-| # | 文件路径 | 修改说明 |
-|---|---------|---------|
-| 1 | `tests/unit/db/test_task_repo.py` | SQLite→PG连接调整（仅depgraph部分，task_repo保持SQLite） |
-| 2 | `tests/unit/db/test_depgraph_schema.py` | Schema DDL测试更新 |
-| 3 | `tests/unit/gates/test_gate_engine.py` | DB连接调整 |
-| 4 | `tests/unit/test_schemas.py` | DB连接调整 |
-| 5+ | 其余测试文件（通过上述grep命令获取完整清单） | DB连接调整 |
+| # | 文件路径 | 修改说明 | 完成状态 |
+|---|---------|---------|:---:|
+| 1 | `tests/unit/db/test_task_repo.py` | SQLite→PG连接调整（仅depgraph部分，task_repo保持SQLite） | [x] |
+| 2 | `tests/unit/db/test_depgraph_schema.py` | Schema DDL测试更新 | [x] |
+| 3 | `tests/unit/gates/test_gate_engine.py` | DB连接调整 | [x] |
+| 4 | `tests/unit/test_schemas.py` | DB连接调整 | [x] |
+| 5+ | 其余测试文件（通过上述grep命令获取完整清单） | DB连接调整 | [x] |
 
 ---
 
@@ -1962,7 +1962,7 @@ grep -rln "sqlite3\.\|depgraph\.db\|PRAGMA\|INSERT OR REPLACE" tests/ --include=
 
 ### 14.6 后续待完成工作
 
-- [ ] §12.3 列出的7个文档同步更新（blueprint.md状态→Active等）
-- [ ] §12.4 列出的测试文件修改（tests/下的DB连接调整）
-- [ ] git提交（通过GitCommitGateway）
+- [x] §12.3 列出的7个文档同步更新（blueprint.md状态→Active等）
+- [x] §12.4 列出的测试文件修改（tests/下的DB连接调整）
+- [x] git提交（通过GitCommitGateway）
 

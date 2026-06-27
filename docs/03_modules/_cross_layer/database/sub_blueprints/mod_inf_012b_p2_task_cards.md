@@ -2,7 +2,7 @@
 module_id: MOD-DB_DEPGRAPH_PG
 title: "P2 PostgreSQL迁移任务卡总览（全量重写版）— 3阶段骨架卡 + 24个TC-PG执行卡"
 doc_type: index
-status: Draft
+status: Active
 version: "2.0.0"
 belongs_to: "MOD-DB_DEPGRAPH_PG"
 date: "2026-06-25"

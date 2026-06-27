@@ -1,5 +1,5 @@
 ---
-module_id: MOD-DB_DEPGRAPH_PG_OPT
+module_id: MOD-DB_DEPGRAPH_OPT
 submodule_path: src/zephyr/infrastructure/db
 title: "P3 PostgreSQL优化详细施工方案 — pgvector+LISTEN/NOTIFY+分区表+监控告警"
 doc_type: blueprint
@@ -39,7 +39,7 @@ references:
 
 # P3 PostgreSQL优化详细施工方案 — pgvector+LISTEN/NOTIFY+分区表+监控告警
 
-> module_id: MOD-DB_DEPGRAPH_PG_OPT | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
+> module_id: MOD-DB_DEPGRAPH_OPT | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
 > 施工阶段: P3（长期：优化） | 前置条件: P2迁移完成
 
 ## 文档使用说明

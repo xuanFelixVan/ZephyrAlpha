@@ -3,7 +3,7 @@ blueprint_id: GOV-006
 doc_type: index
 generated: '2026-05-02'
 module_id: GOV-006
-status: active
+status: Active
 ttl: permanent
 title: _registry/schemas/ 目录索引
 version: 1.0.0

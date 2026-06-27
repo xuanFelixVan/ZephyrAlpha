@@ -56,7 +56,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 |------|--------|:---:|------|
 | `D-INFRA_A2A` | a2a_communication | 114 | A2A Card注册与发现(card_registry) |
 | `D-INFRA_OPS` | resource_optimization | 34 | 资源优化引擎 |
-| `D-INFRA_RECOVERY` | rollback_recovery | 107 | 双轨Checkpoint(git commit + SQLite JSONL dump) |
+| `D-INFRA_RECOVERY` | rollback_recovery | 107 | 双轨Checkpoint(git commit + DB dump：SQLite JSONL / pg_dump) |
 | `D-INFRA_RUNTIME` | runtime_integration | 145 | 运行时集成层 |
 | `D-INFRA_TELEMETRY` | observability_profiling | 51 | 系统遥测采集(system_telemetry) |
 
@@ -121,7 +121,7 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-GOV-REPAIR` | rollback | 0 | 双轨Checkpoint(git commit + SQLite JSONL dump) |
+| `D-GOV-REPAIR` | rollback | 0 | 双轨Checkpoint(git commit + DB dump：SQLite JSONL / pg_dump) |
 
 ---
 

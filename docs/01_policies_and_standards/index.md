@@ -175,7 +175,8 @@ verifiability: manual
 1. 本文件（index.md）                              ← 3 分钟了解全貌
 2. rules/trae_060_inward_consolidation.yaml        ← 向内收三原则（顶层统辖，必读真源）
 3. rules/_index.yaml                               ← 规则索引全貌
-4. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
+4. _registry/vocabularies/glossary.yaml            ← 术语对齐
+5. rules/trae_041_meta_rule_classification.yaml    ← 规则怎么分类
 ```
 
 > **trae_060 接入说明**：本冷启动路径与 `.trae/rules/project_rules.md`「第二原则」均指向 `rules/trae_060_inward_consolidation.yaml` 真源，不复制内容（符合 trae_060 §2 唯一真源直读）。新 AI 经 IDE 入口或 docs 入口均能发现向内收三原则。
@@ -200,6 +201,7 @@ verifiability: manual
 | **功能域注册表** | [_registry/catalogs/functional_domain_registry.yaml](_registry/catalogs/functional_domain_registry.yaml) | 39 域清单 |
 | **架构契约** | [_registry/contracts/architecture_contract.yaml](_registry/contracts/architecture_contract.yaml) | 架构合规自动验证契约 |
 | **frontmatter Schema** | [_registry/schemas/frontmatter_schema.json](_registry/schemas/frontmatter_schema.json) | frontmatter 字段校验 Schema |
+| **术语表** | [_registry/vocabularies/glossary.yaml](_registry/vocabularies/glossary.yaml) | 术语仲裁源 |
 | **doc_type 词表** | [_registry/vocabularies/doc_type_vocabulary.yaml](_registry/vocabularies/doc_type_vocabulary.yaml) | 文档类型受控枚举 |
 | **domain 词表** | [_registry/vocabularies/domain_vocabulary.yaml](_registry/vocabularies/domain_vocabulary.yaml) | 域受控枚举 |
 

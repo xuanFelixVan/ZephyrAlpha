@@ -3,7 +3,7 @@ module_id: MOD-DB_DEPGRAPH_PG
 submodule_path: src/zephyr/data/persistence
 title: "P2 PostgreSQL迁移—受影响文件完整索引（循环审查版）"
 doc_type: blueprint
-status: Draft
+status: Active
 version: "1.0.0"
 layer: cross_layer
 blueprint_level: sub_module
@@ -20,7 +20,7 @@ parent_module: "SH-DB-001"
 scope: global
 stability: evolving
 verifiability: automated
-construction_progress: planned
+construction_progress: completed
 actual_disk_path: ''
 codification_level: L2
 generation: 3
@@ -37,7 +37,7 @@ references:
 
 # P2 PostgreSQL迁移—受影响文件完整索引（循环审查版）
 
-> module_id: MOD-DB_DEPGRAPH_PG | version: 1.0.0 | status: Draft
+> module_id: MOD-DB_DEPGRAPH_PG | version: 1.0.0 | status: Active
 > 审查轮次: 第1轮 | 审查日期: 2026-06-25
 > 裁定依据: D50-PG（仅depgraph.db迁移到PostgreSQL，governance.db和market.duckdb保持不变）
 

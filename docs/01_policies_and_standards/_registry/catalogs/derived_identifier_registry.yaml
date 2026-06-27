@@ -1,4 +1,7 @@
 # [A_config] module_id=CFG-derived-identifier-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: REG-DERIVED-ID-001
+title: 派生标识符关系表
+doc_type: register
 registry_id: REG-DERIVED-ID-001
 name: 派生标识符关系表
 description: 派生标识符关系唯一真源（SSoT）。记录从 domain_id 派生的子标识符关系（blueprint_id 域片段、节点路径域片段）。domain_id 改名时，apply_depgraph.py --propagate-rename 依据本表执行派生标识符同步传播（精确值映射，禁止子串REPLACE）。裁定#206 B-5/B-6 + 裁定#207 R3-4。

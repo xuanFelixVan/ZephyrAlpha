@@ -1,5 +1,5 @@
 ---
-module_id: MOD-DB_DEPGRAPH_PG_OPT
+module_id: MOD-DB_DEPGRAPH_OPT
 submodule_path: src/zephyr/infrastructure/db
 title: "P3 PostgreSQL优化任务卡总览 — 4个任务卡 + 4个元任务卡"
 doc_type: index
@@ -15,7 +15,7 @@ date: "2026-06-25"
 valid_from: "2026-06-25"
 ttl: permanent
 rule_form: structural
-belongs_to: "MOD-DB_DEPGRAPH_PG_OPT"
+belongs_to: "MOD-DB_DEPGRAPH_OPT"
 parent_module: "SH-DB-001"
 scope: global
 stability: evolving
@@ -33,7 +33,7 @@ depends_on:
   - {target: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2迁移完成是P3优化的前置条件"}
   - {target: "SH-DB-001", at: "全篇", why: "父蓝图——Database集成蓝图"}
 references:
-  - {id: "MOD-DB_DEPGRAPH_PG_OPT", at: "全篇", why: "P3方案真源——施工方案详细步骤"}
+  - {id: "MOD-DB_DEPGRAPH_OPT", at: "全篇", why: "P3方案真源——施工方案详细步骤"}
   - {id: "MOD-DB_DEPGRAPH_PG", at: "全篇", why: "P2方案——前置条件与PG连接配置来源"}
 ---
 # P3 PostgreSQL优化任务卡总览

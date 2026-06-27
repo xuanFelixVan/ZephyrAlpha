@@ -553,15 +553,15 @@ def add_design_node(path, ...):
 
 ```bash
 # 1. 立即停止所有sync操作
-# 2. 从备份恢复DB
-cp data/backups/depgraph_pre_t18.db data/databases/depgraph.db
+# 2. 从备份恢复DB（P2迁移后使用pg_restore，原SQLite .db文件已废弃）
+psql -d depgraph -f data/backups/depgraph_pre_t18.sql
 # 3. 删除YAML文件
 rm -rf data/asset_index/design_state/
 # 4. 还原所有代码
 git checkout src/zephyr/governance/depgraph_schema.py
 git checkout scripts/governance/apply_depgraph.py
-# 5. 删除触发器（如果已安装）
-python -c "import sqlite3; c=sqlite3.connect('data/databases/depgraph.db'); c.execute('DROP TRIGGER IF EXISTS nodes_design_readonly_insert'); ..."
+# 5. 删除触发器（如果已安装）——P2迁移后使用psycopg2，原sqlite3模块已废弃
+python -c "from zephyr.governance.depgraph_schema import get_db_connection; c=get_db_connection(); cur=c.cursor(); cur.execute('DROP TRIGGER IF EXISTS nodes_design_readonly_insert ON nodes'); c.commit(); ..."
 ```
 
 ---

@@ -182,7 +182,7 @@ The Application Architecture answers:
 
 - **幂等性**：所有写操作MUST支持幂等重试
 - **容错**：失败不阻塞（DLQ + 告警）
-- **回滚**：双轨Checkpoint（git commit + SQLite JSONL dump）
+- **回滚**：双轨Checkpoint（git commit + DB dump：SQLite JSONL / pg_dump）
 
 ---
 

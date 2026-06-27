@@ -618,7 +618,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 | 阶段 | STEP | 操作 | 命令/工具 | 验证 | 失败处置 |
 |:---:|:---:|------|---------|------|---------|
-| **0 前置** | 0.1 | 备份 depgraph.db | `git add data/databases/depgraph.db` + `git commit -m "backup: depgraph before arch upgrade"` | `git log -1` 确认备份存在 | 禁止继续 |
+| **0 前置** | 0.1 | 备份 depgraph.db | `pg_dump depgraph > data/backups/depgraph_before_arch_upgrade.sql` + `git add data/backups/depgraph_before_arch_upgrade.sql` + `git commit -m "backup: depgraph before arch upgrade"` | `git log -1` 确认备份存在 | 禁止继续 |
 | | 0.2 | 确认设计文档版本 | Read frontmatter `version: 0.3.7` | 版本=0.3.7 | 回到设计审查 |
 | **0.5 盘点** | 0.5.1 | 全项目搜索37个功能的代码实现 | SearchCodebase + Grep（按功能名称关键词搜索 `src/zephyr/`） | 每个功能找到对应代码文件或确认仅有蓝图 | 记录为"仅蓝图" |
 | | 0.5.2 | 标记每个功能实现状态 | 生成功能实现状态清单 | 37个功能全部标记完成 | 补全缺失功能 |
@@ -649,19 +649,19 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 | # | 约束 | 原因 |
 |:---:|------|------|
-| 1 | depgraph.db 修改必须用 `apply_depgraph.py`，禁止直接改 .db 文件 | 原子性+冲突检测 |
+| 1 | depgraph.db 修改必须用 `apply_depgraph.py`，禁止直接改数据库 | 原子性+冲突检测 |
 | 2 | 改 depgraph.db 前必须 `git commit` 备份（trae_054 STEP0） | 回滚基准 |
 | 3 | ⚠️ 架构升级期间禁止运行 `generate_project_depgraph.py` | 会覆盖depgraph.db全景图 |
 | 4 | 三方对齐是验证步骤，不是修改步骤 | 不一致则回到对应阶段修复 |
 | 5 | 每阶段完成后必须验证通过才进下一阶段 | 步骤验证门（防错误累积） |
-| 6 | 阶段1失败→回滚depgraph.db到阶段0备份 | `git checkout data/databases/depgraph.db` |
+| 6 | 阶段1失败→回滚depgraph.db到阶段0备份 | `psql -d depgraph -f data/backups/depgraph_before_arch_upgrade.sql` |
 | 7 | 阶段0.5盘点必须区分运营态/设计态 | 有代码=运营态（granularity=runtime），仅蓝图=设计态（granularity=design），影响阶段1节点创建策略 |
 
 ### 11.4 回滚方案
 
 | 回滚场景 | 操作 |
 |---------|------|
-| 阶段1全景图修改失败 | `git checkout data/databases/depgraph.db`（恢复到阶段0备份） |
+| 阶段1全景图修改失败 | `psql -d depgraph -f data/backups/depgraph_before_arch_upgrade.sql`（恢复到阶段0备份） |
 | 阶段3代码修改失败 | `git checkout <文件>`（恢复到修改前）或 `python scripts/rollback.py preflight` → `rollback.py <cmd>` |
 | 三方对齐不一致 | 定位不一致项→回到对应阶段修复→重新对齐 |
 

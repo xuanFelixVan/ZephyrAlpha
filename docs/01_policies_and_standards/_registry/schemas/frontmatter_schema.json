@@ -40,6 +40,10 @@
           "description": "索引入口——目录级导航文件，声明子域职责边界和文件清单"
         },
         {
+          "const": "protocol",
+          "description": "协议——定义交互流程和消息时序"
+        },
+        {
           "const": "template",
           "description": "模板——可复用的文档结构骨架"
         },
@@ -56,8 +60,16 @@
           "description": "验证契约——定义 VR 规则的结构化验证标准"
         },
         {
+          "const": "reference",
+          "description": "参考文件——术语映射表、模型排名等参考数据"
+        },
+        {
           "const": "gate",
           "description": "门禁文件——定义质量门禁的触发条件、检查项和阻断规则"
+        },
+        {
+          "const": "schema",
+          "description": "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费"
         }
       ]
     },

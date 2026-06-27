@@ -32,7 +32,7 @@ runtime_plane: hot
 child_modules:
   - {module_id: "MOD-INF-012A", title: "Database Core — SQLite+DuckDB 双引擎核心运营", status: "Active", construction_progress: "completed", path: "sub_blueprints/（012A 无独立蓝图文件，代码清单见本文档 §1.1）"}
   - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph.db SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "completed", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
-  - {module_id: "MOD-DB_DEPGRAPH_PG_OPT", title: "P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控", status: "Draft", construction_progress: "planned", path: "sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md"}
+  - {module_id: "MOD-DB_DEPGRAPH_OPT", title: "P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控", status: "Draft", construction_progress: "planned", path: "sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md"}
 depends_on:
   - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
   - {target: "MOD-GATE_ENGINE", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
@@ -74,7 +74,7 @@ references:
 |-----------|------|------|:---:|------|
 | MOD-INF-012A | Database Core — SQLite+DuckDB 双引擎核心运营 | Active | completed | 012A 无独立蓝图文件，代码清单见本文档 §1.1 |
 | MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph.db SQLite→PostgreSQL（Windows原生安装） | Active | completed | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
-| MOD-DB_DEPGRAPH_PG_OPT | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控 | Draft | planned | [sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md) |
+| MOD-DB_DEPGRAPH_OPT | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控 | Draft | planned | [sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md) |
 
 ### 职责划分
 
@@ -82,7 +82,7 @@ references:
 |--------|---------|---------|
 | MOD-INF-012A | SQLite WAL 事务引擎 / DuckDB OLAP / ATM v2.0 / TaskRepository 10状态机 / DatabaseManager 运维 / AuditSchema 审计查询 / QueryMetrics 性能监控 | `src/zephyr/infrastructure/db/` 13 个 .py（全部已实现；governance/ 根与 governance/persistence/ 存在过渡期副本） |
 | MOD-DB_DEPGRAPH_PG | Windows原生安装 PostgreSQL / 数据迁移 / SQL 方言调整 / 删除文件锁 / 红蓝测试 | 见 P2 方案 §十二受影响文件索引 |
-| MOD-DB_DEPGRAPH_PG_OPT | pgvector 语义检索 / LISTEN/NOTIFY 事件通知 / 按 domain_id 分区表 / pg_stat_activity 监控告警 | 见 P3 方案 §十受影响文件索引 |
+| MOD-DB_DEPGRAPH_OPT | pgvector 语义检索 / LISTEN/NOTIFY 事件通知 / 按 domain_id 分区表 / pg_stat_activity 监控告警 | 见 P3 方案 §十受影响文件索引 |
 
 ### AI 施工指引
 
@@ -249,7 +249,7 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 | 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target_architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | DB YAML SSoT | — | 2.2.0 | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | DB YAML真源 |
 | 6 | 子蓝图 P2 迁移 | MOD-DB_DEPGRAPH_PG | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p2_postgresql_migration.md` | P2 迁移方案真源 |
-| 7 | 子蓝图 P3 优化 | MOD-DB_DEPGRAPH_PG_OPT | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p3_postgresql_optimization.md` | P3 优化方案真源 |
+| 7 | 子蓝图 P3 优化 | MOD-DB_DEPGRAPH_OPT | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub_blueprints\mod_inf_012b_p3_postgresql_optimization.md` | P3 优化方案真源 |
 
 ---
 

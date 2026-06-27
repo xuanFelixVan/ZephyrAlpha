@@ -2,7 +2,7 @@
 module_id: GOV-002
 title: "登记表集中存储目录索引"
 doc_type: index
-status: active
+status: Active
 version: "2.3.0"
 date: "2026-06-26"
 summary: "_registry/catalogs/ 导航入口。v2.3.0：P2-1 向内收——删除 document_metadata_index_registry.yaml（与 rule_catalog_registry.yaml 同源同数据的真重复），所有引用重定向至 rule_catalog_registry.yaml（PS-REG-018）。计数 28→27→26。"

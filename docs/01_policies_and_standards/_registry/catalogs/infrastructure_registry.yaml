@@ -33,13 +33,13 @@ module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
-version: "1.0.1"
+version: "1.0.3"
 status: active
 created: "2026-05-02"
-last_updated: "2026-05-06"
+last_updated: "2026-06-27"
 ai_autonomy: human_gated
 ttl: permanent
-total_registered: 11
+total_registered: 13
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -264,40 +264,78 @@ infrastructure:
     provisioned_at: null
     note: "MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎——I/O 缓存 + 流式读取 + 懒加载"
 
+  # --- 依赖架构图库（depgraph.db，P2迁移目标）---
+  - infra_id: "INFRA-DB-003"
+    name: "zephyr-depgraph-db"
+    type: relational_db
+    description: "依赖架构图库——存储 nodes/edges/domains/infrastructure_components 等20+表，架构治理真源"
+    runtime_plane: hot
+    host: "data/databases/depgraph.db"
+    health_check: query
+    dependency_of:
+      - "MOD-INF-012B"
+      - "MOD-GOVERNANCE"
+    sla: "ACID, < 30ms read p50"
+    status: planned
+    provisioned_at: null
+    note: "P2迁移目标：SQLite→PostgreSQL 16，迁移后 host 改为 localhost:5432，status 改为 connected"
+
+  # --- OLAP 分析引擎（DuckDB 内存模式）---
+  - infra_id: "INFRA-DB-004"
+    name: "zephyr-olap-engine"
+    type: cache
+    description: "DuckDB OLAP 分析引擎——内存模式(:memory:)只读挂载 governance.db 执行聚合查询，输出 Parquet 归档"
+    runtime_plane: warm
+    host: ":memory:"
+    health_check: query
+    dependency_of:
+      - "MOD-INF-012A"
+      - "MOD-TASK_SYSTEM"
+      - "MOD-FEEDBACK_LOOP"
+    sla: "内存模式，无持久化SLA；查询延迟 < 200ms p95"
+    status: planned
+    provisioned_at: null
+    note: "olap_engine.py L131 默认 :memory: 模式，ATTACH governance.db 只读分析；不迁移，P2后保持不变"
+
 # ============================================================================
 # 汇总统计
 # ============================================================================
 summary:
-  total: 11
+  total: 13
   by_type:
     event_bus: 1
     message_queue: 1
-    relational_db: 1
+    relational_db: 2
     vector_db: 1
-    cache: 3
+    cache: 4
     object_storage: 1
     config_center: 1
     service_registry: 1
     ci_pipeline: 1
   by_plane:
-    hot: 4
-    warm: 3
+    hot: 5
+    warm: 4
     cold: 4
   by_status:
-    planned: 10
+    planned: 12
     connected: 1
   dependency_map:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
     MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
     MOD-INF-005: [INFRA-MQ-001, INFRA-DB-001, INFRA-STORE-001]
+    MOD-INF-012A: [INFRA-DB-004]
+    MOD-INF-012B: [INFRA-DB-003]
     MOD-TASK_SYSTEM:
       - INFRA-MQ-001
       - INFRA-DB-001
       - INFRA-DB-002
+      - INFRA-DB-004
       - INFRA-STORE-001
       - INFRA-CACHE-001
       - INFRA-CFG-001
       - INFRA-CI-001
+    MOD-GOVERNANCE: [INFRA-DB-003]
+    MOD-FEEDBACK_LOOP: [INFRA-DB-004]
     MOD-RESOURCE_OPTIMIZATION_ENGINE:
       - INFRA-PROC-001
       - INFRA-CACHE-002
@@ -306,6 +344,15 @@ summary:
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.0.3"
+    date: "2026-06-27"
+    author: "AI-GLM-5.2"
+    changes:
+      - "登记 INFRA-DB-003：zephyr-depgraph-db（relational_db）——依赖架构图库，P2迁移目标SQLite→PostgreSQL"
+      - "登记 INFRA-DB-004：zephyr-olap-engine（cache）——DuckDB OLAP分析引擎，内存模式只读挂载governance.db"
+      - "修复审计盲区：原仅登记governance.db(INFRA-DB-001)，depgraph.db和DuckDB遗漏"
+      - "更新 summary：total 11→13，relational_db 1→2，cache 3→4，hot 4→5，warm 3→4，planned 10→12"
+      - "更新 dependency_map：新增 MOD-INF-012A/012B/MOD-GOVERNANCE/MOD-FEEDBACK_LOOP 依赖关系"
   - version: "1.0.2"
     date: "2026-05-06"
     author: "maintenance"
