@@ -1669,10 +1669,10 @@ sections:
       note: 不涉及不兼容
     - id: MOD-INF-003(deprecated)
       level: Level 2 MODULE
-      note: 已废弃兼容性不适用
+      note: 兼容性不适用
     - id: MOD-INF-004(deprecated)
       level: Level 2 MODULE
-      note: 已废弃兼容性不适用
+      note: 兼容性不适用
     conditions:
     - type: trigger
       check: 创建新蓝图分配ID时

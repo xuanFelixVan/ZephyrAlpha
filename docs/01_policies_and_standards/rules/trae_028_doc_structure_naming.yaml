@@ -188,8 +188,8 @@ sections:
       fail: 后缀与doc_type不一致(V1阻断)
     - type: constraint
       check: 大写文件白名单
-      pass: AGENTS.md(Trae硬约束)/Dockerfile(Docker硬约束)/README.md/LICENSE/CONTRIBUTING.md/SECURITY.md(GitHub平台功能)允许保留;新建文件一律全小写;对齐L224根目录白名单
-      fail: 新建大写文件名或白名单外大写文件
+      pass: 仅AGENTS.md允许保留;新建文件一律全小写
+      fail: 新建大写文件名
     actions:
     - type: mandatory
       step: 文件名后缀必须匹配doc_type(GATE-11 N-08强制校验)
@@ -460,7 +460,7 @@ sections:
       fail: 单域 production 节点 >200 未拆分
     - type: constraint
       check: 模块ID分配优先级
-      pass: 优先复用已废弃ID(查numbering_gaps);其次分配新ID;禁止跳号
+      pass: 优先复用空缺ID(查numbering_gaps);其次分配新ID;禁止跳号
       fail: 未查gaps直接分配新ID
     - type: constraint
       check: 跨域模块命名
@@ -628,7 +628,7 @@ sections:
     - description: 知识库条目强制路径
       details: docs/08_knowledge/
     - description: 审计报告/状态强制路径
-      details: docs/_working/audit/
+      details: docs/09_audit/
     - description: 业务代码强制路径
       details: src/zephyr/{layer_id}/
     - description: 治理/审计脚本强制路径

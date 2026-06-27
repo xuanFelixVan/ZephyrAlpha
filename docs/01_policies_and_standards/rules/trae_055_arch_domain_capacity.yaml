@@ -251,7 +251,7 @@ sections:
     rationale:
       why_no_fixed_limit: 域是功能单元，功能可以无限细分。抽屉式扩展（ARCH-CAP-005）保证新增域不修改代码，因此域数无软件上限。硬件资源在可预见未来不是约束（具体硬件容量通过运行时查询获取，不固化数字）。真实约束是 AI 可维护性（单域 ≤150），已由 ARCH-CAP-002 约束。
       why_1500_floor: 1500 是基于预计功能完善的增长预估下限。项目完整后预计 1500+ 模块。
-      why_hardware_threshold: 50000 节点阈值基于 SQLite 单表 B+树索引性能基准（百万行级前查询性能线性）+ depgraph 当前增长速率推算。500MB 基于 SQLite 内存映射读取的合理工作集上限（超过后 mmap 效率下降）。两者均为评估触发线，非硬阻断。
+      why_hardware_threshold: 50000 节点阈值基于 PostgreSQL 单表 B+树索引性能基准（百万行级前查询性能线性）+ depgraph 当前增长速率推算。500MB 基于 PostgreSQL shared_buffers 工作集合理上限（超过后缓存命中率下降）。两者均为评估触发线，非硬阻断。
   arch_cap_008_integration_sync:
     section_type: procedure
     title: 集成同步流程 (ARCH-CAP-008)
@@ -348,7 +348,8 @@ sections:
       by: session-20260625-002
       changes: '废除高度耦合放宽——删除ARCH-CAP-003（高度耦合四标准+AB选择），aliases移除ARCH-CAP-003；ARCH-CAP-002改为二元规则（≤150通过，>150必须拆分，无例外）；ARCH-CAP-007单域上限200→150；ARCH-CAP-008集成同步引用更新。裁定依据：100%AI开发项目不应有模糊地带，AI无法可靠判断高度耦合，二元规则可机械执行。决策记录存KE（topic=arch_cap_adjudication::ARCH-CAP-003_abolish）。'
 references:
-  rule_ids: []
+  rule_ids:
+  - TRAE-055
   scripts:
   - scripts/governance/extract_depgraph.py
   - scripts/governance/apply_depgraph.py

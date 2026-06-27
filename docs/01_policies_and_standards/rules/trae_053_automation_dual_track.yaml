@@ -1,5 +1,5 @@
 # 架构裁定 2026-06-26：
-# 定时轨已废除。在 100% AI 开发模式下，定时触发是伪需求——
+# 定时轨禁止使用。在 100% AI 开发模式下，定时触发是伪需求——
 # 所有审计任务已由 pre-commit GATE 体系（commit 事件触发）和
 # boot_hooks 事件钩子（状态变更事件触发）覆盖。
 # CircadianScheduler.start()/register_task() 已改为 no-op。
@@ -39,7 +39,7 @@ sections:
     - type: constraint
       check: 全项目扫描(去重/孤儿/临时文件/审计保留)
       pass: 归属 CI schedule 批量兜底(.github/workflows schedule)
-      fail: 挂在进程内事件驱动上(每次文件变更扫全项目=拖死)或进程内定时器(已废止)
+      fail: 挂在进程内事件驱动上(每次文件变更扫全项目=拖死)或进程内定时器(禁止)
     - type: constraint
       check: 状态变更响应(BLOCKED→升级/IN_PROGRESS→超时计时器)
       pass: 归属⚡事件轨
@@ -52,7 +52,7 @@ sections:
     - type: mandatory
       step: STEP1判定归属→对照两轨分类表确定🕐/⚡/🕐+⚡
     - type: mandatory
-      step: STEP2实现→⚡事件轨在 boot_hooks.py 注册(hook_registry.register 或 event_bus.subscribe)；批量兜底走 CI schedule(.github/workflows，非进程内Timer)；CircadianScheduler 已废止，禁止注册任何任务到 circadian_scheduler
+      step: STEP2实现→⚡事件轨在 boot_hooks.py 注册(hook_registry.register 或 event_bus.subscribe)；批量兜底走 CI schedule(.github/workflows，非进程内Timer)；CircadianScheduler 禁止使用，禁止注册任何任务到 circadian_scheduler
     - type: mandatory
       step: STEP3验证→触发事件后 check 对应 hooks 执行→⚡事件轨通过；CI workflow_run 历史有成功记录→CI兜底通过；grep 确认无 circadian_scheduler.register_task 调用→废止验证通过
     prohibitions:
@@ -60,8 +60,8 @@ sections:
     - 全项目重扫描挂在事件驱动上(每次文件变更扫全项目=拖死)
     - 实时校验只靠定时(等到凌晨才跑=反馈延迟十几小时)
     - 关键校验只有一轨无兜底(事件丢了没补偿=漏报)
-    - 新建或使用 CircadianScheduler 及任何进程内定时调度器(已废止，违反 trae_060 §3)
-    - 向 circadian_scheduler.register_task 注册任何任务(系统已废止)
+    - 新建或使用 CircadianScheduler 及任何进程内定时调度器(禁止使用，违反 trae_060 §3)
+    - 向 circadian_scheduler.register_task 注册任何任务(系统禁止使用)
     - 实现事件轨但不注册到hook_registry(触发条件满足了但钩子不响)
 references:
   rule_ids:

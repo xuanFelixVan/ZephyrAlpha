@@ -575,18 +575,18 @@ sections:
       action: 自动启动注册
       check: 注册到对应启动入口
       registration_entries:
-        # 定时轨已废除（2026-06-26裁定），改为事件驱动。scheduled 条目保留仅作历史参考，禁止新建定时轨。
-        scheduled: "boot_cron_jobs.py → circadian_scheduler.register_task（已废除，no-op）"
+        # 定时轨禁止使用，仅用事件驱动。scheduled 条目保留仅作历史参考，禁止新建定时轨。
+        scheduled: "boot_cron_jobs.py → circadian_scheduler.register_task（禁止使用，no-op）"
         event: "boot_hooks.py → hook_registry.register 或 event_bus.subscribe"
-        dual: "两条都要注册（注：定时轨已废除，dual 模式不再适用）"
+        dual: "两条都要注册（注：定时轨禁止使用，dual 模式不适用）"
       pass: 自动启动已注册
       fail: 未注册 → 禁止声明完成
     - order: 4
       action: 自动运行验证
       check: 脚本/模块能自动运行
       command: "python scripts/ide_health_service.py --status"
-      # 定时轨已废除（2026-06-26裁定），circadian.running/tasks_registered 不再适用，改为验证事件钩子执行
-      pass: "circadian.running=true + tasks_registered计数正确（定时轨已废除，此验证仅作历史参考）"
+      # 定时轨禁止使用，circadian.running/tasks_registered 不适用，改为验证事件钩子执行
+      pass: "circadian.running=true + tasks_registered计数正确（定时轨禁止使用，此验证仅作历史参考）"
       fail: 自动运行失败 → 修复
     - order: 5
       action: 自动结束验证
@@ -599,8 +599,8 @@ sections:
       fail: 无自动结束机制 → 补设计
     prohibitions:
     - 禁止消息驱动——必须事件驱动
-    # 定时轨已废除（2026-06-26裁定），禁止新建任何定时轨；以下条目保留仅作历史参考
-    - 禁止实现定时轨但不注册到circadian_scheduler（定时轨已废除，禁止新建定时轨本身）
+    # 定时轨禁止使用，禁止新建任何定时轨；以下条目保留仅作历史参考
+    - 禁止实现定时轨但不注册到circadian_scheduler（定时轨禁止使用，禁止新建定时轨本身）
     - 禁止实现事件轨但不注册到hook_registry
     - 禁止无超时熔断的无限循环
     - 禁止无明确完成条件的脚本
@@ -709,7 +709,7 @@ sections:
       action_detail: 评估是否删除文件（走RULE-THREE三步审判）或保留并补全流程
     - order: 3
       action: depgraph.db已修改
-      action_detail: "git checkout data/databases/depgraph.db 回滚到备份版本"
+      action_detail: "回滚方式：通过 pg_restore 恢复最近 pg_dump 备份，或通过 apply_depgraph.py 回滚命令；git checkout data/databases/depgraph.db 不适用（数据在 PG 服务器中）"
     - order: 4
       action: 设计态已创建但实体文件未创建
       action_detail: 保留设计态（标记can_build=false）或删除设计态节点

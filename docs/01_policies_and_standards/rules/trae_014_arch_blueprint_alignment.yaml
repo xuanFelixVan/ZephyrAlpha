@@ -482,10 +482,10 @@ sections:
       note: 不涉及不兼容
     - existing_id: MOD-INF-003(deprecated)
       new_level: Level 2 MODULE
-      note: 已废弃兼容性不适用
+      note: 兼容性不适用
     - existing_id: MOD-INF-004(deprecated)
       new_level: Level 2 MODULE
-      note: 已废弃兼容性不适用
+      note: 兼容性不适用
     rules:
     - 既存蓝图不强制改名——新标准只要求新增蓝图遵循ID体系
     - 既存蓝图在第一份该层的experimental升级蓝图时自然迁移

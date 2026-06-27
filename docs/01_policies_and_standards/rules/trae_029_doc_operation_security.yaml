@@ -128,7 +128,7 @@ sections:
       fail: 上下文窗口被低价值文件占用
     - type: constraint
       check: DOC-009 引用链完整性
-      pass: depends_on构成DAG无环;引用目标不存在/已废弃时阻断;深度=1层(直接声明);结构化格式{target,at,why};at字段精确到章节/段落/行号;禁止重定向链
+      pass: depends_on构成DAG无环;引用目标不存在时阻断;深度=1层(直接声明);结构化格式{target,at,why};at字段精确到章节/段落/行号;禁止重定向链
       fail: 引用环/断裂引用/传递依赖/缺失at字段/重定向文件
     - type: constraint
       check: depends_on结构化格式
@@ -144,7 +144,7 @@ sections:
     - 禁止凭记忆或猜测操作文件(违反DOC-006)
     - 禁止将内容从一个文件复制粘贴到另一个文件(违反DOC-007)
     - 禁止depends_on引用环(违反DOC-009)
-    - 禁止引用已废弃的目标(违反DOC-009)
+    - 禁止引用不存在的目标(违反DOC-009)
     - 禁止depends_on传递依赖超过1层(违反DOC-009)
     - 禁止仅作为转发/重定向用途的文件(违反DOC-009)
   doc_010:

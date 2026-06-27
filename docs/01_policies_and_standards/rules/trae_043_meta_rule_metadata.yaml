@@ -352,7 +352,7 @@ sections:
       pass: 遵循YAML特殊规则
       fail: 使用大写status或缺少schema_version
     rules:
-    - YAML文件status使用小写active/draft/deprecated(仅3值superseded已废弃)
+    - YAML文件status使用小写active/draft/deprecated(仅3值，无superseded)
     - 必须包含schema_version字段
     - 日期字段使用ISO 8601格式
     prohibitions:
@@ -446,7 +446,7 @@ sections:
     - type: trigger
       check: 选择文档类型时
       pass: 从27种合法doc_type中选择并匹配rule_form和目录
-      fail: 使用未注册或已废弃的doc_type
+      fail: 使用未注册的doc_type
     design_principles:
     - 自下而上归纳
     - 短名优先
@@ -566,12 +566,12 @@ sections:
       runtime:
       - session_id/waiting_for/ready_at
     task_id_format: NAMESPACE-SEQ
-    namespaces: 7个(MOD/KE/STD/SRC/OPS+已废弃DW)
+    namespaces: 6个(MOD/KE/STD/SRC/OPS)
     prohibitions:
     - files_in_scope或deliverables使用相对路径
     - deliverables与files_in_scope完全重叠(除非原地修改)
     - phase字段使用design/implement等字符串(必须0-9整数)
-    - 使用已废弃字段(predecessor/model_preference/est_hours/created等)
+    - 使用不支持的字段(predecessor/model_preference/est_hours/created等)
   ps_std_001_ai_governance_fields:
     title: 域C AI治理字段
     section_type: context

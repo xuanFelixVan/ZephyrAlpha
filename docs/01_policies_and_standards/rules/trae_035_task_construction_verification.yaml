@@ -148,7 +148,7 @@ sections:
       fail: 可豁免(但仍需循环验收)
     actions:
     - type: mandatory
-      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db D:/ZephyrAlpha/data/databases/depgraph.db --force（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
     - type: mandatory
       step: 重新生成路径树——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
     - type: mandatory
@@ -169,7 +169,7 @@ sections:
     - type: mandatory
       step: G7注册审计——python D:/ZephyrAlpha/scripts/governance/audit_registration.py
     - type: mandatory
-      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db D:/ZephyrAlpha/data/databases/depgraph.db --force（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
     - type: mandatory
       step: G6依赖图诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
     - type: mandatory
@@ -280,7 +280,7 @@ sections:
       expected_exit: 0
       on_fail: 有孤儿禁止关闭
     - step: G6依赖全景图生成（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
-      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db
+      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db D:/ZephyrAlpha/data/databases/depgraph.db --force
       expected_exit: 0
       on_fail: 结构未同步
     - step: G6依赖图诊断
