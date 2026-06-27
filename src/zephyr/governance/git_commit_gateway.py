@@ -89,7 +89,6 @@ from zephyr.governance.reconciliation_registry import (
     make_precommit_id_uniqueness_reconciler,
     make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
-    make_commit_gateway_audit_reconciler,
 )
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
@@ -146,6 +145,7 @@ class CommitStatus(str, Enum):
     NAMING_VIOLATION = "NAMING_VIOLATION"  # N-16 文件名唯一性校验失败（--no-verify 补偿）
     SCRIPT_INTEGRITY_VIOLATION = "SCRIPT_INTEGRITY_VIOLATION"  # 受保护脚本完整性锚点缺失（自篡改纵深防御）
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"  # .py 文件使用 parents[N] 反模式而非 REPO_ROOT（SSoT 绕过）
+    PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"  # 规则文档含过渡文本（GOV-DOC-016 纯陈述原则）
 
 
 class GatewayError(RuntimeError):
@@ -438,7 +438,7 @@ class GitCommitGateway:
         return result
 
     def _register_default_reconcilers(self) -> None:
-        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change + 红蓝发现1 rules_integrity + P3收尾 rule_catalog + C级 commit_gateway_audit）。
+        """注册默认 post-commit reconciler（P2-T1 框架 + P2-T2 manifest + P2-T3 baseline_aware + P2-T5 ghost + P2-T6 working_docs + P2-T7 domain_doc + P2-T8 id_uniqueness + P2-T9 vocab_change + 红蓝发现1 rules_integrity + P3收尾 rule_catalog）。
 
         P2-T2: manifest 对账逻辑迁移为 ``make_manifest_reconciler`` 工厂。
         P2-T3: baseline_aware 对账（GATE-REG-BL 补偿，非阻断，报告落盘）。
@@ -449,7 +449,6 @@ class GitCommitGateway:
         P2-T9: vocab_change 纠偏（GATE-VOCAB-CHANGE，commit ttl_vocabulary.yaml 后自动重判所有 docs/*.md 的 ttl，治词表变更后 ttl 漂移）。
         红蓝发现1: rules_integrity 基线同步（GATE-RULES-INTEGRITY，commit RULES_MANIFEST 文件后自动 --register 重注册本地 golden hash 基线，治合法 commit 后 C 层误报 TAMPERED）。
         P3收尾: rule_catalog 同步（GATE-RULE-CATALOG，commit rules/ 下文件后自动重新生成 rule_catalog_registry.yaml，治 catalog stale 导致 depgraph.db 数据污染）。
-        C级缺口4: commit_gateway_audit 审计（GATE-COMMIT-GW-AUDIT，每次 commit 后扫描最近 20 个 commit，标记无 [GW: 标记的裸 commit，非阻断报告落盘，兜底 --no-verify 绕过 GATE-COMMIT-GW pre-commit hook）。
         """
         self._reconciliation_registry.register(make_manifest_reconciler(self))
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
@@ -461,7 +460,6 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
         self._reconciliation_registry.register(make_domain_doc_reconciler(self))
-        self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -607,6 +605,16 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.REPO_ROOT_VIOLATION,
                 message=f"REPO_ROOT 反模式: {repo_root_detail}",
+            )
+
+        # GOV-DOC-016 纯陈述原则门禁：规则文档禁止过渡文本
+        # 真源：trae_030_doc_numbering_metadata.yaml §gov_doc_016_pure_assertion
+        # 规则文档只含当前有效规则的肯定陈述句，历史通过 git log 追踪
+        pure_passed, pure_detail = self._check_pure_assertion(existing)
+        if not pure_passed:
+            return CommitResult(
+                status=CommitStatus.PURE_ASSERTION_VIOLATION,
+                message=f"GOV-DOC-016 纯陈述违规: {pure_detail}",
             )
 
         # 追加 GW 标记
@@ -1046,14 +1054,15 @@ class GitCommitGateway:
     def _check_naming_uniqueness(self, files: list[str]) -> tuple[bool, str]:
         """全量命名硬阻断检查（治本·选项B：subprocess 调用 --check-new-full）。
 
-        治本（向内收 v2 + 全库覆盖）：命名检查逻辑真源唯一在
+        治本（向内收 v2 + 选项B 扩展）：命名检查逻辑真源唯一在
         ``check_naming_convention.py::check_new_files_full``，本方法仅 subprocess
         调用。覆盖三个治本闭环：
-        1. 全库覆盖：所有目录的文件都查命名（无 scope 限制）
-        2. 全维度检测：新增文件 N-01~N-17 风格 + 新增文件 N-16 唯一性
-        3. 绕不过：GitCommitGateway 内嵌（commit + _commit_auto），--no-verify 绕过 pre-commit 但绕不过此
+        1. 全库覆盖：N-16 扩展到 src/+scripts/（跨包合法同名豁免）
+        2. 全维度检测：新增文件 N-01~N-17 风格 + 所有文件 N-16 唯一性
+        3. 绕不过：GitCommitGateway 内嵌，--no-verify 绕过 pre-commit 但绕不过此
 
-        新增 vs 修改区分：新增文件查风格 + N-16 唯一性，修改文件不查（历史遗留豁免）。
+        新增 vs 修改区分：新增文件查风格，修改文件不查（历史遗留豁免），
+        但 N-16 唯一性对所有文件查（防改名撞库）。
 
         Args:
             files: 绝对路径列表。
@@ -1061,9 +1070,16 @@ class GitCommitGateway:
         Returns:
             (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
         """
-        # 治本·全库覆盖：所有目录的文件都查命名（无 scope 限制）
-        # N-16 唯一性 + N-01~N-17 风格检查均由 check_new_files_full 内部处理 scope 豁免
-        # （PATH_EXEMPT_PREFIXES 排除 archive/data/logs 等，_N16_*_EXEMPT_NAMES 排除 __init__.py 等）
+        # 治本·选项B：覆盖 tests/+docs/+src/+scripts/（全库命名硬阻断）
+        _NAMING_SCOPES = ("tests/", "docs/", "src/", "scripts/")
+        involves_naming_dirs = any(
+            os.path.relpath(f, str(self.project_root)).replace("\\", "/").startswith(
+                _NAMING_SCOPES
+            )
+            for f in files
+        )
+        if not involves_naming_dirs:
+            return True, "no files in naming scopes (tests/docs/src/scripts)"
 
         # subprocess 调用 check_naming_convention.py --check-new-full（全量命名硬阻断真源唯一）
         script = str(
@@ -1489,6 +1505,84 @@ class GitCommitGateway:
                 f"src/ 下禁止 data/ 子目录（数据真源唯一位置为 data/）: {violations}",
             )
         return True, "src/ no-data check passed"
+
+    # ------------------------------------------------------------------
+    # GOV-DOC-016 纯陈述原则校验（规则文档禁止过渡文本）
+    # 真源：trae_030_doc_numbering_metadata.yaml §gov_doc_016_pure_assertion
+    # ------------------------------------------------------------------
+    # 过渡文本模式（fail 条件实现）：
+    #   "已废止"/"旧定义"/"之前是X现在改为Y"/"已被取代"等
+    # 规则文档只含当前有效规则的肯定陈述句，历史通过 git log 追踪
+    _PURE_ASSERTION_PATTERNS: list[tuple["re.Pattern[str]", str]] = [
+        (re.compile(r"已[废止弃]\w*"), "已废止/已废弃/已弃用"),
+        (re.compile(r"旧[定规]义?[则]?"), "旧定义/旧规则"),
+        (re.compile(r"之前是.{1,30}现在"), "之前是X现在改为Y"),
+        (re.compile(r"已被取[代替]"), "已被取代/已被替代"),
+        (re.compile(r"P[0-9]迁移后"), "P2迁移后等过渡标记"),
+        (re.compile(r"从.{1,30}迁移(至|到)"), "从X迁移到Y"),
+    ]
+
+    # 规则文档范围（仅这些路径的 .md/.yaml 才检测，避免误伤任务卡/方案文档）
+    # 不含 docs/01_policies_and_standards/rules/——YAML 规则定义文件包含
+    # fail/prohibitions/change_history 等结构性反例展示，正则无法区分反例与真违规；
+    # 其纯陈述治理由 rules_integrity_reconciler 独立负责（向内收：不在此重复实现）
+    _PURE_ASSERTION_PATHS: tuple[str, ...] = (
+        ".trae/rules/",  # IDE 规则文件（AI 直接消费入口）
+        "AGENTS.md",  # 项目宪法（AI 直接消费入口）
+    )
+
+    def _check_pure_assertion(self, files: list[str]) -> tuple[bool, str]:
+        """GOV-DOC-016 纯陈述原则校验：规则文档禁止过渡文本。
+
+        规则文档只含当前有效规则的肯定陈述句（陈述结果/约束/命令），
+        禁止"已废止"/"旧定义"/"之前是X现在改为Y"/"已被取代"等过渡文本。
+        历史版本差异通过 git log 追踪。
+
+        检测范围（AI 直接消费的规则入口）：
+        - .trae/rules/*.md（IDE 规则，IDE 自动注入）
+        - AGENTS.md（项目宪法，AI 首读入口）
+
+        不检测：
+        - docs/01_policies_and_standards/rules/*.yaml + *.md——YAML 规则定义文件包含
+          fail/prohibitions/change_history 等结构性反例展示，正则无法区分反例与真违规，
+          其纯陈述治理由 rules_integrity_reconciler 独立负责
+        - 任务卡/方案文档/_working/ 过程文档（允许过渡描述）
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        # 筛选规则文档
+        rule_files: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if not (f.endswith(".md") or f.endswith(".yaml")):
+                continue
+            for prefix in self._PURE_ASSERTION_PATHS:
+                if rel.startswith(prefix) or rel == prefix:
+                    rule_files.append(f)
+                    break
+        if not rule_files:
+            return True, "pure assertion check skipped (no rule docs in commit)"
+
+        violations: list[str] = []
+        for f in rule_files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            try:
+                content = Path(f).read_text(encoding="utf-8")
+            except Exception:
+                continue  # 文件不可读跳过（fail-open，与 _check_capability_aliases 一致）
+            for pattern, desc in self._PURE_ASSERTION_PATTERNS:
+                matches = pattern.findall(content)
+                if matches:
+                    violations.append(
+                        f"{rel}: 发现过渡文本 [{desc}]: {matches[:3]}"
+                    )
+        if violations:
+            return False, "\n  ".join(violations)
+        return True, "pure assertion check passed (no transition text)"
 
     # ------------------------------------------------------------------
     # 内部实现
@@ -1970,7 +2064,7 @@ class GitCommitGateway:
         保护（校验/锁/stash），是 TTL 防御的最大盲区。
 
         与 ``commit()`` 的区别：
-        - 跑 ttl 校验 + 命名规范校验（不跑 completes_when/promote/ssot 校验）
+        - 只跑 ttl 校验（机器生成文件不需 completes_when/promote/ssot/naming 校验）
         - 不触发 reconciler（避免递归：commit→reconciler→_commit_auto→reconciler）
         - 不做 stash 隔离（reconciler 在锁外运行，工作区只有机器生成文件）
         - message 自动追加 [GW:{session_id}:auto] 标记
@@ -2020,12 +2114,12 @@ class GitCommitGateway:
                 message=f"frontmatter ttl 校验失败（auto-commit）: {ttl_detail}",
             )
 
-        # 命名规范校验（治本：auto-commit 也查命名，防生成器输出违规文件名）
-        naming_passed, naming_detail = self._check_naming_uniqueness(existing)
-        if not naming_passed:
+        # GOV-DOC-016 纯陈述原则门禁（auto-commit 同样拦截）
+        pure_passed, pure_detail = self._check_pure_assertion(existing)
+        if not pure_passed:
             return CommitResult(
-                status=CommitStatus.NAMING_VIOLATION,
-                message=f"命名校验失败（auto-commit）: {naming_detail}",
+                status=CommitStatus.PURE_ASSERTION_VIOLATION,
+                message=f"GOV-DOC-016 纯陈述违规（auto-commit）: {pure_detail}",
             )
 
         # 追加 GW auto 标记

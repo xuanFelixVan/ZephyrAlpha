@@ -1,4 +1,4 @@
-# ZephyrAlpha — AI Agent 接入宪法
+﻿# ZephyrAlpha — AI Agent 接入宪法
 
 > **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，全读完再开工）
 > **施工指导**: [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)（详细规则/冷启动序列/方法论索引）
@@ -269,9 +269,9 @@ result = await gateway.full_scan(user_text, llm_response)
 1. `python scripts/git_guard.py add src/x.py`
 2. `python scripts/git_guard.py commit -F _tmp.txt --no-verify`
 
-## 11. depgraph.db 使用指引（唯一全景真源）
+## 11. depgraph 使用指引（唯一全景真源）
 
-> depgraph.db 是唯一全景真源，禁止创建派生 YAML 副本。**P2迁移完成（2026-06-27）：depgraph.db 已从 SQLite 迁移到 PostgreSQL 16**，连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_db_connection()`。遇到 depgraph 相关问题，直接问工具：
+> depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_db_connection()`。遇到 depgraph 相关问题，直接问工具：
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
 - **改 DB 节点/路径** → `python scripts/governance/apply_depgraph.py --help`（35+ 子命令）
@@ -281,16 +281,16 @@ result = await gateway.full_scan(user_text, llm_response)
 - **改了 YAML 规则文件** → `python scripts/governance/sync_yaml_to_depgraph.py`（覆盖 readonly 表）
 - **改了 rules/ 下规则文件后同步 catalog** → 自动完成（GitCommitGateway post-commit GATE-RULE-CATALOG reconciler，无需手动）
 
-> 改 depgraph.db 前必须 `git commit` 备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/diagnose_depgraph.py`。
+> 改 depgraph 前必须通过 `pg_dump` 或 apply_depgraph.py 内置物理备份（trae_054 STEP0）。DB↔磁盘一致性检查用 `python scripts/governance/diagnose_depgraph.py`。
 
 ### 11.1 生成器时间戳约定
 
 > 所有生成器（`scripts/governance/d5_architecture/generators/` 下的 `.py` 文件）输出的文档中，
 > 日期字段 MUST 使用 `auto-generated`，最后更新时间 MUST 标注"最后更新以 git log 为准"。
-> **禁止在生成器中使用 `datetime.now()` 或任何实时时间源**，否则每次 commit depgraph.db
+> **禁止在生成器中使用 `datetime.now()` 或任何实时时间源**，否则每次修改 depgraph 数据库
 > 都会因时间戳变化产生非幂等噪音 auto-commit。
 
 - **真源实现**：所有生成器 docstring `[INVARIANTS]` 声明"输出幂等(相同输入→相同输出);零时间戳"
 - **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源
 - **检测**：`Select-String -Path "scripts/governance/d5_architecture/generators/*.py" -Pattern "datetime\.now\(\)"` 应返回零匹配
-- **自动触发**：GATE-DOMAIN-DOC reconciler 在 commit depgraph.db 后自动调用 generate_domain_doc.py 和 generate_domain_dependency_diagram.py 重生域文档，生成器幂等性确保无噪音 auto-commit
+- **自动触发**：GATE-DOMAIN-DOC reconciler 在修改 depgraph 后自动调用 generate_domain_doc.py 和 generate_domain_dependency_diagram.py 重生域文档，生成器幂等性确保无噪音 auto-commit

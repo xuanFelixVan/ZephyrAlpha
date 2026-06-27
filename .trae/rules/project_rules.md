@@ -45,7 +45,7 @@
 
 | 真源 | 绝对路径 | 说明 |
 |------|---------|------|
-| **架构全景图+依赖全景图（唯一真源）** | `D:/ZephyrAlpha/data/databases/depgraph.db` | SQLite 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**不存在其他依赖图文件，任何其他 depgraph 文件都是旧版或归档**。**⚠️ 禁止直接 Read！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集。详见 RULE-SIXTEEN** |
+| **架构全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_db_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
 | **治理数据库** | `D:/ZephyrAlpha/data/databases/governance.db` | SQLite，治理元数据+任务卡+成本+审计日志（26表）。任务系统SSoT。访问：`python -c "from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); print(len(r.list_all()))"` |
 | **业务时序数据库** | `D:/ZephyrAlpha/data/databases/market.duckdb` | DuckDB，业务时序数据（Tick/K线/因子/订单/持仓/风控，7表+1视图）。访问：`python -c "import duckdb; con=duckdb.connect(r'D:/ZephyrAlpha/data/databases/market.duckdb', read_only=True); print(con.execute('SHOW TABLES').fetchall())"` |
 | **迁移登记表** | `D:/ZephyrAlpha/docs/02_enterprise_architecture/migration_registry.yaml` | 每个需要迁移的文件的旧路径→新路径映射。搬家任务卡的唯一真源 |
@@ -53,7 +53,7 @@
 **绝对禁止**：
 - ❌ 引用 `project-entity-depgraph-v3-domain-draft.yaml`（已合并入真源，保留为副本）
 - ❌ 引用 `target_path_tree.yaml` 作为真源（它是验证工具输出，非真源；path_design 在 depgraph 内）
-- ❌ 引用 `archive/` 下的任何旧版 depgraph 文件作为真源
+- ❌ 引用 `archive/` 下的任何归档 depgraph 文件作为真源
 - ❌ 把 `project-path-tree.yaml` 当作独立真源修改（已合并至架构全景图）
 - ❌ 把 `functional_domain_registry.yaml` 当作域定义唯一真源（域定义已合并至架构全景图，registry 保留为兼容副本）
 
@@ -73,7 +73,7 @@
 | **新建/改造自动化系统** | 已通过两轨分类？ 🕐/⚡/🕐+⚡？ | RULE-FIFTEEN 施工三步 → 对照分类表 → 实现 → 验证 |
 | **结束 session** | 锁释放？临时文件清？ | `python scripts/lock_files.py release-all` + 零残留扫描 |
 | **处理任何任务** | 有对应 Agent Skill？ | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read 对应 yaml |
-| **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接 Read/Write？ | `python scripts/governance/extract_depgraph.py --summary` 提取子集；修改用 `apply_depgraph.py --batch`。直接 Read 157MB → OOM 崩溃 |
+| **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `python scripts/governance/extract_depgraph.py --summary` 提取子集；修改用 `apply_depgraph.py --batch`。depgraph 在 PostgreSQL，连接用 `get_db_connection()` |
 
 跳过任何一步 → 可能产生孤儿文件、死锁、重复轮子。
 
@@ -83,8 +83,8 @@
 
 ```
 1. 读 docs/registry_of_registries.yaml → 了解全项目有什么
-2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源 D:/ZephyrAlpha/data/databases/depgraph.db，禁止直接 Read。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
-2.1 确认三库就绪：depgraph.db（依赖图）+ governance.db（治理/任务）+ market.duckdb（业务时序）。路径均在 `data/databases/`。depgraph 用 extract_depgraph.py；governance 用 TaskRepository；market 用 duckdb.connect(read_only=True)
+2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
+2.1 确认三库就绪：depgraph（PostgreSQL，依赖图+架构全景）+ governance.db（SQLite，治理/任务卡/审计日志）+ market.duckdb（DuckDB，业务时序数据）。depgraph 用 extract_depgraph.py 或 `get_db_connection()`；governance 用 TaskRepository；market 用 duckdb.connect(read_only=True)
 3. 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
@@ -434,7 +434,7 @@ python scripts/lock_files.py check-session <session_id>
 ├─ 指标 2: 涉及修改 > 3 个文件？ → YES → 走任务系统
 ├─ 指标 3: 需要读取蓝图/设计文档？ → YES → 走任务系统
 ├─ 指标 4: 是数据库 Schema 变更？ → YES → 走任务系统
-├─ 指标 5: depgraph.db 操作(INSERT/UPDATE/DELETE)？ → YES → 走任务系统
+├─ 指标 5: depgraph 数据库操作(INSERT/UPDATE/DELETE)？ → YES → 走任务系统
 ├─ 指标 6: 消费者影响 > 50 个文件？ → YES → 走任务系统
 ├─ 指标 7: 跨域操作？ → YES → 走任务系统
 ├─ 指标 8: 多步骤施工 > 3 个步骤？ → YES → 走任务系统
@@ -473,7 +473,7 @@ python scripts/lock_files.py check-session <session_id>
 | 清理根目录临时文件 | 全不触发 | ❌ |
 | 重构 pipeline（需读蓝图+大量新代码） | 指标1+3 ✅ | ✅ |
 | 新增 gate 门禁 | 指标1+3 ✅ | ✅ |
-| depgraph.db INSERT 新域 | 指标5 ✅ | ✅ |
+| depgraph 数据库 INSERT 新域 | 指标5 ✅ | ✅ |
 | 大规模 import 更新（>50 文件） | 指标6 ✅ | ✅ |
 | 跨域模块迁移 | 指标7 ✅ | ✅ |
 
@@ -664,7 +664,7 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 
 | 对齐维度 | 对齐什么 | 验证方法 |
 |----------|---------|---------|
-| 全景图对齐 | depgraph.db ↔ 磁盘实际文件 | `diagnose_depgraph.py` 文件级：depgraph里有的文件是否都存在？磁盘上的文件是否都在depgraph里？ |
+| 全景图对齐 | depgraph ↔ 磁盘实际文件 | `diagnose_depgraph.py` 文件级：depgraph里有的文件是否都存在？磁盘上的文件是否都在depgraph里？ |
 | 蓝图对齐 | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 实际代码 | 蓝图声明的模块是否都实现了？代码里的文件是否都在 file_manifest 里？ |
 | 代码头部对齐 | [BLUEPRINT]/[CONSUMERS]/[MODULE] ↔ 实际引用 | 头部声明的蓝图ID是否指向正确蓝图？[CONSUMERS]列出的消费者是否真的import了本模块？ |
 
@@ -819,7 +819,7 @@ STEP 3  验证       → 端到端测试确认消费方仍能正常调用
 ```
 1. python scripts/governance/audit_registration.py → exit 0
 2. python scripts/governance/generate_project_path_tree.py --write
-3. ⚠️ 架构升级期间禁止运行——会覆盖 depgraph.db。用 extract_depgraph.py --summary 替代
+3. ⚠️ 架构升级期间禁止运行——会覆盖 depgraph 数据库。用 extract_depgraph.py --summary 替代
 # python scripts/governance/generate_project_depgraph.py --max-workers 8  # 正常期才运行
 ```
 
@@ -955,7 +955,7 @@ AIR-002: 任何系统生成根目录文件必须配套 TTL/上限/轮转策略�
 ## RULE-FIFTEEN：自动化双轨判定
 **YAML真源**: → 参见 rules/trae_053_automation_dual_track.yaml
 
-> **⚠️ 架构裁定（2026-06-26）**：定时轨（🕐 CircadianScheduler）已废除，改为事件驱动 + CI 批量兜底。
+> **⚠️ 架构裁定（2026-06-26）**：定时轨（🕐 CircadianScheduler）禁止使用，仅用事件驱动 + CI 批量兜底。
 > 以下分类表/施工步骤中关于"定时轨"的描述仅作历史参考，新建自动化系统禁止使用定时轨。
 > 原"定时轨"任务应迁移至事件驱动（boot_hooks）或 CI schedule（.github/workflows）。
 
@@ -980,24 +980,24 @@ STEP 1: 判定归属 → 对照分类表确定 🕐 / ⚡ / 🕐+⚡
 STEP 2: 实现
   ├─ 🕐 定时 → 在 boot_cron_jobs.py 中注册（circadian_scheduler.register_task）
   │             守护进程已挂载 circadian_scheduler，无需额外启动
-  │             【已废除 2026-06-26】定时轨已废除，register_task 为 no-op，禁止新建定时轨
+  │             register_task 为 no-op，禁止新建定时轨
   ├─ ⚡ 事件 → 在 boot_hooks.py 中注册 hook_registry.register 或 event_bus.subscribe
   │             守护进程已加载 boot_hooks，无需额外启动
-  └─ 🕐+⚡ 双轨 → 两条都要【注：定时轨已废除，原双轨任务改为事件轨+CI兜底】
+  └─ 🕐+⚡ 双轨 → 两条都要【注：双轨任务仅用事件轨+CI兜底】
 STEP 3: 验证 → python scripts/ide_health_service.py --status
   ├─ circadian.running=true + tasks_registered 正确计数 → 🕐 通过
-  │             【已废除 2026-06-26】circadian.running/tasks_registered 不再适用
+  │             circadian.running/tasks_registered 不适用
   └─ 触发事件后 check 对应 hooks 执行 → ⚡ 通过
 ```
 
 ### 守护进程承载
 
-> **⚠️ 定时轨已废除（2026-06-26裁定）**：`CircadianScheduler` 的 register_task/start/stop/save_state 均为 no-op。
+> **⚠️ 定时轨禁止使用**：`CircadianScheduler` 的 register_task/start/stop/save_state 均为 no-op。
 > 下表中"定时轨"行仅作历史参考，定时任务应迁移至事件驱动或 CI schedule。
 
 | 轨 | 载体 | 位置 |
 |---|------|------|
-| 🕐 定时 | `CircadianScheduler`（守护进程中，每小时整点执行）**【已废除，no-op】** | [ide_health_service.py](file:///d:/ZephyrAlpha/scripts/ide_health_service.py) |
+| 🕐 定时 | `CircadianScheduler`（守护进程中，每小时整点执行）**【no-op，禁止使用】** | [ide_health_service.py](file:///d:/ZephyrAlpha/scripts/ide_health_service.py) |
 | ⚡ 事件 | `HookRegistry`（TransitionEvent 触发）+ `EventBusBackpressure`（topic 触发） | [boot_hooks.py](file:///d:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py) |
 
 ### 绝对禁止
@@ -1008,25 +1008,25 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 | ❌ | 全项目重扫描挂在事件驱动上 | 每次文件变更扫全项目＝拖死 |
 | ❌ | 实时校验只靠定时（等到凌晨才跑） | 反馈延迟十几小时 |
 | ❌ | 关键校验只有一轨无兜底 | 事件丢了没补偿＝漏报 |
-| ❌ | 实现定时轨但不注册到 circadian_scheduler | 代码写好了但没人跑（定时轨已废除，禁止新建定时轨本身） |
+| ❌ | 实现定时轨但不注册到 circadian_scheduler | 代码写好了但没人跑（禁止新建定时轨） |
 | ❌ | 实现事件轨但不注册到 hook_registry | 触发条件满足了但钩子不响 |
 
 ---
 ## RULE-SIXTEEN：depgraph 程序化访问协议
 **YAML真源**: → 参见 rules/trae_054_depgraph_access_protocol.yaml
 
-**核心**：depgraph 存储在 SQLite 数据库 `D:/ZephyrAlpha/data/databases/depgraph.db`（schema v16, 26张表含2系统表）——禁止 AI 直接 Read/Write。必须通过提取/应用脚本操作。
+**核心**：depgraph 存储在 PostgreSQL 16 数据库（localhost:5432, 数据库名 `depgraph`, 用户 `zephyr`，schema v18, 25张表）。连接入口：`from zephyr.governance.depgraph_schema import get_db_connection`。禁止裸 `psql`/`sqlite3` 连接，必须通过提取/应用脚本或 `get_db_connection()` 操作。
 
 ### Schema 变更协议（DDL-as-Code 铁律）
 
-depgraph.db 的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
+depgraph 数据库的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改写入代码跳过 DDL 声明：
 
 1. **改 DDL 声明**：结构变更必须先改 `src/zephyr/governance/depgraph_schema.py` 的 `_DDL_*` 常量（表 DDL 真源）或 `_DDL_INDEXES`（索引真源）
-2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 SQLite 报错）
+2. **加 migration**：在 `_MIGRATIONS` 列表追加版本化迁移（版本号递增，含 description + DDL 语句列表）；DROP COLUMN 前必须先 DROP 引用该列的 trigger/index（否则 trigger 悬空或 PostgreSQL 报错）
 3. **跑 init_db()**：执行 `init_db()` 幂等应用 pending migrations（事务包裹，失败自动 ROLLBACK）
 4. **过门禁**：`python scripts/governance/verify_schema_health.py` 自动校验 DB↔DDL 一致性（DDL 列一致性 + 只读触发器 + 版本一致性），漂移即 exit 1 阻断
 
-禁止：直接改 apply_depgraph.py 等写入代码的 SQL 来跳过 DDL 声明；直接改 .db 文件绕过 migration。
+禁止：直接改 apply_depgraph.py 等写入代码的 SQL 来跳过 DDL 声明；直接改数据库绕过 migration。
 
 ### 触发条件
 
@@ -1048,11 +1048,9 @@ depgraph.db 的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改�
 
 修改 depgraph:
   STEP 0: 前置备份（MUST，每次 apply_depgraph.py 执行前）
-          ① git 备份: git add data/databases/depgraph.db
-             git commit -m "backup: depgraph before <操作描述>"
-             git log -1 --oneline data/databases/depgraph.db   # 验证备份存在
-          ② 物理备份: apply_depgraph.py 自动创建到 data/databases/backups/（无需手动操作）
-          # 回滚: git checkout HEAD~1 -- data/databases/depgraph.db
+          ① pg_dump 备份: pg_dump -U zephyr -d depgraph > data/databases/backups/depgraph_backup_$(date +%Y%m%d_%H%M%S).sql
+          ② 事务回滚: apply_depgraph.py 在事务内执行，失败自动 ROLLBACK（PG MVCC 保证）
+          # 回滚: psql -U zephyr -d depgraph -f data/databases/backups/depgraph_backup_XXX.sql
   STEP 1: AI 生成变更 JSON 文件
   STEP 2: python scripts/governance/apply_depgraph.py --batch changes.json --dry-run  # 验证
   STEP 3: python scripts/governance/apply_depgraph.py --batch changes.json             # 执行
@@ -1072,7 +1070,7 @@ depgraph.db 的 schema 变更必须遵循 DDL-as-Code 流程，禁止直接改�
 
 ### 为什么不能拆分 depgraph
 
-拆分 39 个域文件 → 跨域关系丢失 → AI 看到碎片化数据 → 产生大量漂移和幻觉。depgraph 保持一个文件（SSoT），通过程序化提取访问。
+拆分 39 个域文件 → 跨域关系丢失 → AI 看到碎片化数据 → 产生大量漂移和幻觉。depgraph 保持单一数据库（SSoT），通过程序化提取访问。
 
 ### 为什么不能换模型
 
@@ -1082,17 +1080,17 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 
 | # | 行为 | 后果 |
 |---|------|------|
-| ❌ | 用 Read 工具读取 depgraph 文件 | 157MB 加载 → OOM 崩溃 → IDE 重启 |
-| ❌ | 用 Write 工具直接写 depgraph 文件 | 157MB 写入 → OOM 崩溃 + 可能损坏文件 |
-| ❌ | 用任何方式将 depgraph 内容注入 AI 上下文 | 55M tokens → 内存溢出 |
+| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph 数据库 | 绕过 `get_db_connection()` 连接管理，连接泄漏风险 |
+| ❌ | 用 Read 工具读取 `data/databases/archive/` 下归档文件 | 数据过时，真源在 PostgreSQL |
+| ❌ | 用任何方式将 depgraph 全表内容注入 AI 上下文 | 55M tokens → 内存溢出 |
 | ❌ | 拆分 depgraph 为 39 个域文件 | 跨域关系丢失 → 漂移和幻觉 |
-| ❌ | 绕过提取脚本自己写 Python 代码直接读 depgraph | 你的 Python 代码可以读，但 AI 上下文不能 |
+| ❌ | 绕过提取脚本自己写 Python 代码直接查 depgraph | 你的 Python 代码可以查，但 AI 上下文不能装下全表 |
 
 ### 例外
 
 | 场景 | 允许操作 |
 |------|---------|
-| 读取 depgraph 前 20 行（仅看文件头警告） | ✅ Read(limit=20) |
+| 通过 `get_db_connection()` 执行有限查询（LIMIT/WHERE） | ✅ 返回结果集可控 |
 | 运行 generate_project_depgraph.py 生成/更新 depgraph（⚠️ 架构升级期间禁止） | ✅ 生成脚本内部处理 |
 | 运行 diagnose_depgraph.py 诊断 | ✅ 诊断脚本内部处理 |
 
@@ -1381,9 +1379,9 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 | 修改 project_rules.md | `python scripts/governance/sync_rule_registry.py` | rule-registry 不同步 → 禁止提交 |
 | 任何文件变更后 | `python scripts/governance/run_all.py --depth quick` | 有发现 → 先修再关 |
 | 修改蓝图§5.5自动化触发机制 / 修改代码实现 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint <蓝图路径>` | §5.5状态列与代码不一致 → 禁止关闭任务 |
-| **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨（注：定时轨已废除 2026-06-26，新建系统仅用事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
-| **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN | 直接 Read 157MB → OOM 崩溃 |
-| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db）。仅 depgraph.db 为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
+| **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨（注：新建系统仅用事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
+| **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN。depgraph 在 PostgreSQL，连接用 `get_db_connection()` | 裸连/读 archive/ 下文件 → 数据过时 |
+| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph 数据库）。仅 depgraph 数据库为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
 | 安全敏感变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |
 | 回滚/撤销 | `python scripts/rollback.py preflight` → CLEAN → `rollback.py <cmd>` | preflight FAIL → 禁止回滚 |
@@ -1414,8 +1412,8 @@ STEP 0.5 — Drift 健康检查（冷启动前置，P1-CLD；信息性不阻断�
         → 若 CRITICAL → warning（stash 堆积已达危险线）
 STEP 1   — 读 docs/registry_of_registries.yaml → 了解全项目注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板
-STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（唯一真源，禁止直接 Read 157MB 文件。详见 RULE-SIXTEEN）
-STEP 1.3 — 确认三库就绪：depgraph.db（依赖图，extract_depgraph.py）+ governance.db（治理/任务，TaskRepository）+ market.duckdb（业务时序，duckdb.connect）。路径均在 `data/databases/`
+STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（唯一真源，PostgreSQL 数据库，禁止裸连。详见 RULE-SIXTEEN）
+STEP 1.3 — 确认三库就绪：depgraph（PostgreSQL，依赖图+架构全景）+ governance.db（SQLite，治理/任务卡/审计日志）+ market.duckdb（DuckDB，业务时序数据）
 STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 STEP 2   — 读本文件（project_rules.md）→ 了解硬规则
 STEP 3   — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态
@@ -1431,7 +1429,7 @@ STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
 STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py（删除运营态节点后重建，但 build_status/module_lifecycle_state 不从文件头部解析，全用默认值 draft/inactive，导致911个节点手工维护数据丢失）。用 `python scripts/governance/extract_depgraph.py --summary` 替代
-STEP 4.16 — 三方对齐验证: ①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。exit≠0 → 漂移，禁止开工，先修复对齐
+STEP 4.16 — 三方对齐验证: ①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。exit≠0 → 漂移，禁止开工，先修复对齐
 STEP 5   — 按需定位具体注册表 → 开工
 ```
 

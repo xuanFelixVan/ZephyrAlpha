@@ -228,7 +228,7 @@ except PermissionError:
 ├─ 指标 2: 涉及修改 > 3 个文件？ → YES → 建 TaskCard
 ├─ 指标 3: 需要读取蓝图/设计文档？ → YES → 建 TaskCard
 ├─ 指标 4: 是数据库 Schema 变更？ → YES → 建 TaskCard
-├─ 指标 5: depgraph.db 操作(INSERT/UPDATE/DELETE)？ → YES → 建 TaskCard
+├─ 指标 5: depgraph 数据库操作(INSERT/UPDATE/DELETE)？ → YES → 建 TaskCard
 ├─ 指标 6: 消费者影响 > 50 个文件？ → YES → 建 TaskCard
 ├─ 指标 7: 跨域操作？ → YES → 建 TaskCard
 ├─ 指标 8: 多步骤施工 > 3 个步骤？ → YES → 建 TaskCard
@@ -276,7 +276,7 @@ except PermissionError:
 | 清理根目录临时文件 | 全不触发 | ❌ |
 | 重构 pipeline（需读蓝图+大量新代码） | 指标1+3 ✅ | ✅ |
 | 新增 gate 门禁 | 指标1+3 ✅ | ✅ |
-| depgraph.db INSERT 新域 | 指标5 ✅ | ✅ |
+| depgraph 数据库 INSERT 新域 | 指标5 ✅ | ✅ |
 | 大规模 import 更新（>50 文件） | 指标6 ✅ | ✅ |
 | 跨域模块迁移 | 指标7 ✅ | ✅ |
 
@@ -298,18 +298,18 @@ STEP 0.5 — 🧠 大脑系统启动（单次 boot 模式，Trae AI 进入项目
            未运行 → RunCommand(blocking=false): python scripts/construction/start_brain.py --once
            已运行 → 跳过（避免重复启动）
            验证: 等待15秒 → 检查输出包含 "[OK] Boot" → 确认boot步骤成功
-           ⚠️ 定时调度已废除（2026-06-26裁定）：CircadianScheduler 不再常驻运行。
+           ⚠️ CircadianScheduler 不常驻运行。
            所有审计/治理任务通过 pre-commit GATE（commit事件）和 boot_hooks（状态变更事件）自动触发。
            start_brain.py 现在以 --once 模式运行：执行 boot 后立即退出。
 STEP 1  — 读 docs/registry_of_registries.yaml → 了解全项目 48 个注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板（蓝图/任务卡/依赖图/策略/标准等）
-STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源 D:/ZephyrAlpha/data/databases/depgraph.db，禁止直接 Read）→ 项目域架构+模块归属+路径设计规则+capacity声明。⚠️ depgraph.db 对 LS/Glob 不可见（.db 过滤），存在性判断用 `python -c "import os; print(os.path.isfile(r'D:/ZephyrAlpha/data/databases/depgraph.db'))"`
-STEP 1.2.1 — 提取文件级依赖：`python scripts/governance/extract_depgraph.py --paths`（文件级依赖关系，含设计态和运营态，真源 depgraph.db）→ 文件依赖+迁移状态
+STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph` localhost:5432，禁止裸连）→ 项目域架构+模块归属+路径设计规则+capacity声明。连接用 `from zephyr.governance.depgraph_schema import get_db_connection`
+STEP 1.2.1 — 提取文件级依赖：`python scripts/governance/extract_depgraph.py --paths`（文件级依赖关系，含设计态和运营态，真源 depgraph PostgreSQL）→ 文件依赖+迁移状态
 STEP 1.2.2 — 路径树工具链（全景图维护，文件变更后必跑）:
-           - 运营态目录树刷新: `python scripts/governance/generate_project_path_tree.py --write`（扫描磁盘→写入depgraph.db arch_directory_tree表。文件创建/删除/移动后MUST执行）
+           - 运营态目录树刷新: `python scripts/governance/generate_project_path_tree.py --write`（扫描磁盘→写入 depgraph 数据库 arch_directory_tree表。文件创建/删除/移动后MUST执行）
            - 运营态目录树检查: `python scripts/governance/generate_project_path_tree.py --check`（CI漂移检测，Session关门前必跑，G6_PT门禁）
-           - 目标路径推导与对齐验证: 直接查 depgraph.db `SELECT path, blueprint_id FROM nodes WHERE design_maturity='production'`（派生产物已删除，depgraph.db 是唯一查询入口，禁止重新创建 YAML 副本）
-           - 架构文档路径树: `python scripts/governance/d5_architecture/generators/generate_path_tree.py`（读depgraph.db→生成md文档，供人类查看）
+           - 目标路径推导与对齐验证: 通过 `get_db_connection()` 查询 `SELECT path, blueprint_id FROM nodes WHERE design_maturity='production'`（派生产物已删除，depgraph 数据库是唯一查询入口，禁止重新创建 YAML 副本）
+           - 架构文档路径树: `python scripts/governance/d5_architecture/generators/generate_path_tree.py`（读 depgraph 数据库→生成md文档，供人类查看）
 STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 STEP 2  — 读 project_rules.md（即 L0 首关页面）→ 了解硬规则
 STEP 3  — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态
@@ -324,7 +324,7 @@ STEP 4.11 — Rollback System 激活: preflight + AutoTrigger + Kill Switch
 STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
-STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py --output-db（裁定#207 R2 C2：破坏性DB重建需--force，DELETE运营态节点后从磁盘扫描重建，手工维护数据丢失）。depgraph.db 是唯一查询入口，直接用 `sqlite3` 或 `apply_depgraph.py --query` 查询。概览用 `python scripts/governance/extract_depgraph.py --summary`
+STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py --output-db（裁定#207 R2 C2：破坏性DB重建需--force，DELETE运营态节点后从磁盘扫描重建，手工维护数据丢失）。depgraph 数据库是唯一查询入口，通过 `get_db_connection()` 或 `apply_depgraph.py --query` 查询。概览用 `python scripts/governance/extract_depgraph.py --summary`
 STEP 5  — 按需定位具体注册表 → 开工
 STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() → claim_next → 执行 → transition(COMPLETED) → 循环
            `from zephyr.trading.autopilot import AutoPilot; ap = AutoPilot(<session_id>); print(ap.status_report()); tasks = ap.run_cycle(max_tasks=3)`
@@ -346,7 +346,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | **删除文件** | 见 L0 铁律 #3 | 禁止删除 |
 | **新建功能** | 见 L0 铁律 #4 | 重复造轮子 |
 | **遇到任何决策**（方案选择/范围裁定/触发条件判定/多选项权衡） | 读 trae_025 MTH-009 → 按"分析过程+裁定结果+确认请求"三段格式输出 → 引用 MTH-007 四问（埋雷/容量/对标/建议） | 裁定格式不全或只给选项不给推荐 → 禁止提交方案 |
-| **修改 depgraph.db**（通过 apply_depgraph.py） | 见 trae_054 STEP0：① git 备份 `git add data/databases/depgraph.db` → `git commit -m "backup: depgraph before <操作>"` → 验证 git log ② 物理备份 apply_depgraph.py 自动创建到 `data/databases/backups/`（无需手动） | 未备份 → 禁止执行 apply_depgraph.py |
+| **修改 depgraph 数据库**（通过 apply_depgraph.py） | 见 trae_054 STEP0：① pg_dump 备份 `pg_dump -U zephyr -d depgraph > data/databases/backups/depgraph_backup_XXX.sql` ② 事务回滚：apply_depgraph.py 在事务内执行，失败自动 ROLLBACK（PG MVCC 保证） | 未备份 → 禁止执行 apply_depgraph.py |
 | 修改 `src/zephyr/` 下源码 | `python -m pytest tests/ --collect-only -q` | 语法错误 → 禁止提交 |
 | 修改 YAML 契约/配置 | `python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` | 契约断裂 → 禁止合并 |
 | 修改 AGENTS.md | `python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check` | LoadPath 断裂 → 禁止提交 |
@@ -370,7 +370,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | **规格化蓝图** | 先 Layer 1（蓝图+施工图模板 v4.0 合规）→ 后 Layer 2（规格化砍削） | Layer 1 不通过 → 禁止砍削 |
 | **规格化代码文件** | STEP 5.5：检查文件头部十一字段完整性 | 缺失 → 必须补充（规格化的"加"方向） |
 | **蓝图-代码双向对齐** | 蓝图 frontmatter.file_manifest + dependency_graph ↔ 代码 `[BLUEPRINT]` 字段互相验证 | 不对齐 → 漂移，禁止关闭任务 |
-| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph.db↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db 全景图）。仅 depgraph.db 为真源。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` + `python scripts/governance/generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
+| **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph 数据库全景图）。仅 depgraph 数据库为真源。正常期: `python scripts/governance/generate_project_depgraph.py --max-workers 8` + `python scripts/governance/generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
 | **写代码时** | 禁止占位符：无 `TODO`/`...`/`pass`/`NotImplementedError` | 半成品 = 未完成 → 禁止关闭任务 |
 | **修改文件** | 编辑优先 + 最小变更：surgical edit，禁止删+建，禁止顺手重构 | 丢失 history / 引入无关 bug → 禁止关闭任务 |
@@ -507,7 +507,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | # | 规则 |
 |---|------|
 | 1 | 发现事实错误 → 直接修正数字/名称/路径/状态。禁止添加解释性段落说明"之前为什么是错的" |
-| 2 | 文档中所有数字、字段数、版本号、计数必须是当前唯一真实值。不留"之前是X现在改为Y"的过渡文本 |
+| 2 | 文档中所有数字、字段数、版本号、计数必须是当前唯一真实值。不留"X到Y变更描述"的过渡文本 |
 | 3 | 历史版本差异通过变更日志追踪，不在正文中保留已过时数据 |
 | 4 | 单个 real number 原则：一个事实在所有蓝图中只能有一个数字。N 处出现 = 同一数字，不一致就是 bug，直接修 |
 
@@ -647,7 +647,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 
 | 场景 | 幻觉表现 | 正确做法 |
 |------|---------|---------|
-| 域名清单 | 凭D-XXX-YYY模式编造不存在的域名 | 查询depgraph.db获取实际域名 |
+| 域名清单 | 凭D-XXX-YYY模式编造不存在的域名 | 查询depgraph数据库获取实际域名 |
 | 模块清单 | 凭路径模式编造不存在的模块 | Grep/Read获取实际模块 |
 | 数字统计 | 凭印象填写数量 | 运行统计命令获取实际数字 |
 | 依赖关系 | 凭逻辑推断编造依赖边 | 查询domain_dependencies表 |
@@ -960,7 +960,7 @@ STEP 3: 评估修改对每个消费者的影响 → 无影响 → 继续 / 有�
 每次结构变更后 MUST 依次执行：
 
 ```bash
-# 1. 重新生成依赖图（⚠️ 架构升级期间禁止运行——会覆盖 depgraph.db 全景图）
+# 1. 重新生成依赖图（⚠️ 架构升级期间禁止运行——会覆盖 depgraph 数据库全景图）
 # python scripts/governance/generate_project_depgraph.py --max-workers 8  # 正常期才运行
 
 # 2. 诊断依赖图
