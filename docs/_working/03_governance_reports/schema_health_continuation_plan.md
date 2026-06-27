@@ -9,6 +9,7 @@ doc_type: construction_plan
 > **修订日期**：2026-06-26（v2 批准后第二轮上下文恢复）
 > **触发原因**：会话上下文再次丢失，系统重置为 Plan Mode；按用户硬约束"上一个 AI 的结论不可全信，必须回代码真源核实"，重新实测 DB + 脚本状态，发现 v2 计划已部分执行。
 > **施工总原则**：严格遵循 v2 计划，不偏离、不重新规划、不增加未请求功能。
+> **P2 迁移声明**：本文档制定于 P2 迁移前（depgraph.db 当时为 SQLite）。文中 sqlite3.connect/sqlite_master/_schema_version 等 SQLite 专有 API 为当时验证命令，P2 迁移后 depgraph.db 已改为 PostgreSQL，如需执行验证请改用 `from zephyr.governance.depgraph_schema import get_db_connection` + psycopg2 等价命令（依据 src/zephyr/governance/depgraph_schema.py）。
 
 ---
 

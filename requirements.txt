@@ -6,3 +6,4 @@ chromadb>=0.4.24
 mcp>=1.0.0
 openai>=1.0.0
 sentence-transformers>=3.0.0
+psycopg2-binary>=2.9.0

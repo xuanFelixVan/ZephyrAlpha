@@ -9,6 +9,7 @@ doc_type: construction_plan
 > **修订日期**：2026-06-26
 > **触发原因**：上下文丢失后重新进入 Plan Mode，对 v1 已批准计划做事实复核（循环审查），发现 5 处与代码/DB 现状不符的事实错误。按用户要求"循环审查文档是否有前后冲突的地方，至到文档问题=0"，必须修正后才能施工。
 > **适用语境**：100% AI 开发项目；客观专业架构师独立裁定（用户授权"判断价值，是否删除，还是混合"）。
+> **P2 迁移声明**：本文档制定于 P2 迁移前（depgraph.db 当时为 SQLite）。文中 sqlite3.connect/sqlite_master/PRAGMA table_info 等 SQLite 专有 API 为当时验证命令，P2 迁移后 depgraph.db 已改为 PostgreSQL，如需执行验证请改用 `from zephyr.governance.depgraph_schema import get_db_connection` + psycopg2 等价命令（依据 src/zephyr/governance/depgraph_schema.py）。
 
 ---
 

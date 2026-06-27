@@ -127,7 +127,7 @@ infrastructure_summary:
     - Orc (orchestrator): Agent 编排�?�?任务生命周期 + 沙箱
     - FLE (feedback_loop): 反馈循环 �?系统自调节闭�?
   shared_infrastructure:
-    - db: 元数据持久化 (SQLite)
+    - db: 元数据持久化 (SQLite + PostgreSQL)
     - gates: 门禁引擎 (circuit_breaker + gate_engine)
     - mcp: MCP 协议服务�?
     - pipeline: M1-M11 双管�?

@@ -10,6 +10,7 @@ doc_type: construction_plan
 > **版本**：v1（基于 5 路并行深度调研综合编写）
 > **方案性质**：待用户批准后执行
 > **依据**：第一性原理分析 + SSoT 硬约束（YAML 是规则数据唯一真源）+ trae_028 snake_case 一条规则零例外
+> **P2 迁移声明**：本文档制定于 P2 迁移前（depgraph.db 当时为 SQLite）。文中 sqlite3 命令/PRAGMA/sqlite_master 等 SQLite 专有 API 为当时验证/操作命令，P2 迁移后 depgraph.db 已改为 PostgreSQL，如需执行请改用 `from zephyr.governance.depgraph_schema import get_db_connection` + psycopg2 等价命令（依据 src/zephyr/governance/depgraph_schema.py）。
 
 ---
 

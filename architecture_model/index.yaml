@@ -107,7 +107,7 @@ partitions:
       name: Database
       path: layers/b_db.yaml
       status: implemented
-      description: 元数据持久化层（SQLite）+ 原子事务管理器
+      description: 元数据持久化层（SQLite + PostgreSQL）+ 原子事务管理器
     - id: feedback_loop
       name: Feedback Loop Engine (FLE)
       path: layers/b_feedback_loop.yaml

@@ -1,0 +1,51 @@
+{
+  "files": {
+    "AGENTS.md": {
+      "hash": "159f790cd95b34c5",
+      "critical": true,
+      "desc": "AI Agent 全局行为约束"
+    },
+    "scripts/governance/quickstart.md": {
+      "hash": "32c6021ef1ac7203",
+      "critical": true,
+      "desc": "AI Session 冷启动卡片"
+    },
+    "scripts/governance/_shared/thresholds.yaml": {
+      "hash": "728f7c8085603fd8",
+      "critical": true,
+      "desc": "关键阈值 SSoT"
+    },
+    "scripts/governance/meta/kill_switch_state.yaml": {
+      "hash": "ccfbaabc14c0091b",
+      "critical": true,
+      "desc": "Kill Switch 状态"
+    },
+    "scripts/governance/meta/shadow_mode_state.yaml": {
+      "hash": "910c30de2ad401c2",
+      "critical": false,
+      "desc": "Shadow Mode 状态"
+    },
+    "scripts/governance/meta/error_budget_state.yaml": {
+      "hash": "f3b3acbcfaf957e5",
+      "critical": true,
+      "desc": "Error Budget 状态"
+    },
+    "scripts/governance/quality_standard.md": {
+      "hash": "bad4af85038e3260",
+      "critical": true,
+      "desc": "脚本质量标准"
+    },
+    "scripts/governance/script_manifest.yaml": {
+      "hash": "db6aa7429ab1f4b0",
+      "critical": true,
+      "desc": "脚本注册表"
+    },
+    "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py": {
+      "hash": "6549c745d7eaa9bb",
+      "critical": true,
+      "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
+    }
+  },
+  "registered_at": "2026-06-27T19:48:01.394017+00:00",
+  "last_check_at": "2026-06-27T19:48:01.394017+00:00"
+}

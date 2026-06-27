@@ -11,6 +11,7 @@ doc_type: construction_plan
 > **调研方法**：只读调研（未修改任何文件），证据来源为代码静态分析 + DDL 真源逐行核实 + DB 读取者全量 grep + 项目文档 + 行业基准对标
 > **适用语境**：100% AI 开发项目
 > **调研者角色**：客观专业架构师（独立裁定删除/保留，不回避决策）
+> **P2 迁移声明**：本调研制定于 P2 迁移前（depgraph.db 当时为 SQLite）。文中 sqlite3.OperationalError/sqlite3.connect/sqlite_master/PRAGMA 等 SQLite 专有概念为调研时的 DB 实测记录，P2 迁移后 depgraph.db 已改为 PostgreSQL，如需复核请改用 `from zephyr.governance.depgraph_schema import get_db_connection` + psycopg2 等价命令（依据 src/zephyr/governance/depgraph_schema.py）。
 
 ---
 
