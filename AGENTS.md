@@ -197,9 +197,6 @@ result = await gateway.full_scan(user_text, llm_response)
     - **fail-open 不静默**（红蓝发现6 治本）：[`_load_protected_scripts`](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py) 原 `except Exception: pass` 静默吞掉 YAML 解析异常——YAML 损坏（可能是篡改信号）不可见。已改为 `except Exception as e: logger.warning(...)`。fail-open 策略保留（回退硬编码，避免 registry 损坏导致全项目 commit 瘫痪），但异常可见供追责。
     - **残留缺口（诚实记录）**：自指悖论——gateway 本身能被改，但改 gateway 触发 `gate-triple-align`/`gate-reg-bl` 等门禁且 `[SAFETY] M` 受保护；validate_rules_integrity.py 自身可被改，但它不在自身 RULES_MANIFEST 内（避免自指死锁）。这是可接受的架构权衡，非彻底治本。
     - **capability 反查**：`integrity_anchors` 字段在 `precommit_id_uniqueness_check` 能力条目下声明。新增受保护脚本时：①YAML 加 `integrity_anchors` + `canonical_override` ②gateway `_load_protected_scripts` 回退硬编码同步更新 ③`validate_rules_integrity.py` `RULES_MANIFEST` 加条目。
-- **裸 commit 检测门禁**（GATE-COMMIT-GW）→ 根因：多 AI session 共享 git index，裸 `git commit` 导致幽灵提交（OPS-2026062513 治本）。强制所有 commit 走 GitCommitGateway（串行锁 + stash 隔离 + GW 标记）。双层防御：
-  - **pre-commit 阻断层**：[`.pre-commit-config.yaml` L810-816](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L810-L816) `id: gate-commit-gw`，[`validate_commit_gateway.py`](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_commit_gateway.py) 检测环境变量 `ZEPHYR_COMMIT_GATEWAY=1` 或 commit message 含 `[GW:...]` 标记，任一满足放行；裸 `git commit`（无 gateway）→ env var 未设置 → hard block (exit 1)。GitCommitGateway 用 `git commit --no-verify` 绕过本门禁（fast path，gateway 已自带串行锁/stash 隔离）。
-  - **post-commit 审计兜底层**（C级 缺口4）：[`reconciliation_registry.py` `make_commit_gateway_audit_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/reconciliation_registry.py) priority=800，`--no-verify` 绕过 pre-commit 后，每次 gateway commit 后扫描最近 20 个 commit，标记无 `[GW:` 标记的裸 commit（跳过 merge commit），违规报告落盘 `.runtime/reconcile_reports/commit_gateway_audit_<ts>.json`（非阻断，commit 已入历史，供追责）。trigger always True（绕过可能涉及任何文件）；`_commit_auto` 不触发 reconcile_for，无递归。
 
 ## 8. 永远不要做的事
 
@@ -274,7 +271,7 @@ result = await gateway.full_scan(user_text, llm_response)
 
 ## 11. depgraph.db 使用指引（唯一全景真源）
 
-> depgraph.db 是唯一全景真源，禁止创建派生 YAML 副本。遇到 depgraph 相关问题，直接问工具：
+> depgraph.db 是唯一全景真源，禁止创建派生 YAML 副本。**P2迁移完成（2026-06-27）：depgraph.db 已从 SQLite 迁移到 PostgreSQL 16**，连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_db_connection()`。遇到 depgraph 相关问题，直接问工具：
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
 - **改 DB 节点/路径** → `python scripts/governance/apply_depgraph.py --help`（35+ 子命令）
