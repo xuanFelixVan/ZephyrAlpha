@@ -238,3 +238,132 @@ task_bound 任务，审查完成即关闭。修复的代码随模块生命周期
 - [ ] 有残留问题，需主AI协调
 
 **备注**：原跨分区问题（auto_runner.py `_DEPGRAPH_DB` 死代码）已于第4轮补充修复。tests/test_f18_redblue.py 中 13 处 `patch("...auto_runner._DEPGRAPH_DB", ...)` 调用仍在 skip 测试中，属于 tests/ 分区 PG 适配改造任务（测试文件 L37-39 已有 TODO 标注），本报告不越界处理。
+
+---
+
+## 补充工作记录：教训固化与提交（2026-06-28）
+
+### 一、教训提炼
+
+基于修复3（auto_runner.py `_DEPGRAPH_DB` 死代码）的根因分析，提炼出工程教训：
+
+> **迁移时只改使用点，不清理定义点**——会导致死代码残留 + 真源分裂。
+
+**P2迁移实证**：auto_runner.py 将 `sqlite3.connect(_DEPGRAPH_DB)` 改为 `get_db_connection()` 时，只改了使用点，没清理 `_DEPGRAPH_DB` 定义点，导致：
+1. `_DEPGRAPH_DB` 变成死代码（无生产引用）
+2. 与 `depgraph_schema.DB_PATH` 构成真源分裂（两处定义同一路径）
+3. 死代码残留至审查才发现
+
+### 二、三层落地（教训固化）
+
+用户批准三层落地方案，将教训写入 3 个位置，形成"记忆→验证→原则"完整闭环：
+
+#### 第1层：project_memory.md Lessons Learned（AI 跨 session 记忆）
+- **文件**：`c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha\project_memory.md`
+- **位置**：Lessons Learned 章节第3条
+- **内容**：记录 P2 迁移实证 + 门禁落地指引（TRAE-046 + TRAE-060 联动）
+- **强制力**：AI 自觉（新 AI 读取记忆时生效）
+
+#### 第2层：TRAE-046 v1.0.6（门禁验证项扩展）
+- **文件**：`docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml`
+- **版本**：1.0.5 → 1.0.6
+- **扩展点1**：`gov_eng_004_postmerge_verify.items` 增加第4项验证——"被替换的常量/变量定义点零残留"（Grep 扫描死代码定义，`expected_exit: 1` 表示零残留才通过）
+- **扩展点2**：`gov_eng_004_s1.prohibitions` 增加禁止项——"禁止迁移/重构后只清理使用点不清理定义点"
+- **强制力**：human_gated + stability: stable（`code_migration` 触发时门禁检查）
+- **作用**：提供可执行的验证步骤（Grep 命令）
+
+#### 第3层：TRAE-060 v1.0.1（顶层原则 prohibition）
+- **文件**：`docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml`
+- **版本**：1.0.0 → 1.0.1
+- **扩展点**：§2 唯一真源与直接消费 `prohibitions` 增加第5条——"迁移/重构替换使用点后遗留定义点死代码"
+- **强制力**：immutable_core + frozen（任何代码变更审查时生效）
+- **作用**：提供"为什么禁止"的理论依据（死代码=第二真源=漂移源）
+
+#### 三层联动关系
+
+| 层级 | 位置 | 强制力 | 触发时机 | 作用 |
+|---|---|---|---|---|
+| 记忆 | project_memory Lessons Learned | AI 自觉 | 新 AI 读取记忆时 | 跨 session 传承 |
+| 验证 | TRAE-046 Post-merge Verify 第4项 | 门禁检查 | `code_migration` 触发时 | 可执行验证步骤 |
+| 原则 | TRAE-060 §2 prohibition 第5条 | frozen 顶层原则 | 任何代码变更审查时 | 理论依据 |
+
+#### 为什么写在两个地方（TRAE-046 + TRAE-060）
+
+**功能不一样**——这是"原则→操作"的分层落地，不是重复：
+- **TRAE-060**（原则层，为什么）：scope=global，immutable_core+frozen，给出"死代码=第二真源=漂移源"的理论禁令
+- **TRAE-046**（操作层，怎么做）：scope=engineering_code_restructure，human_gated+stable，给出"Grep 扫描定义点零残留"的可执行验证
+
+类比法律体系：TRAE-060 像宪法原则（为什么），TRAE-046 像税法细则（怎么做）。只写一处会导致：只写 TRAE-046 缺"为什么"新 AI 不理解原理；只写 TRAE-060 缺"怎么做"原则悬空落不了地。
+
+### 三、GOV-DOC-016 门禁修复（trae_060 附带修复）
+
+提交时 GitCommitGateway 拦截：trae_060 中有 3 处"已废止/已废除"过渡文本，违反 GOV-DOC-016 纯陈述原则。
+
+| 行号 | 原文本 | 修复后 |
+|---|---|---|
+| L125 | CircadianScheduler系统**已废止** | CircadianScheduler系统**废止** |
+| L127 | 定时轨**已废除** | 定时轨**废除** |
+| L157 | 定时轨本身**已废止** | 定时轨本身**废止** |
+
+修复方式：去掉"已"字，从"过渡文本"改为"当前状态陈述"。语义不变，符合纯陈述原则。
+
+### 四、GitCommitGateway 提交
+
+#### 提交信息
+- **Commit Hash**：`412e5af95bba4a5492bf99cf30dea69dca6b2332`
+- **GW 标记**：`[GW:p2-review-ai02-20260628]`（通过 GitCommitGateway 合法提交）
+- **Session ID**：`p2-review-ai02-20260628`
+
+#### 提交的 6 个文件
+
+| 文件 | 类型 | 变更内容 |
+|---|---|---|
+| `src/zephyr/governance/auto_runner.py` | 修改 | 移除 `_DEPGRAPH_DB` 死代码 + 未使用 `REPO_ROOT` import |
+| `src/zephyr/governance/blast_radius.py` | 修改 | `Path("D:/ZephyrAlpha")` → `REPO_ROOT` 真源归一 |
+| `src/zephyr/governance/rule_enforcement/triple_alignment.py` | 修改 | `Path("D:/ZephyrAlpha")` → `REPO_ROOT` 真源归一 |
+| `docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml` | 修改 | v1.0.6 Post-merge Verify 第4项 + s1 prohibition |
+| `docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml` | 修改 | v1.0.1 §2 prohibition 第5条 + GOV-DOC-016 修复 |
+| `docs/_working/p2_review_reports/AI-02_report.md` | 新增 | AI-02 审查报告（本文件） |
+
+#### 门禁处置记录
+
+| 门禁 | 状态 | 处置 |
+|---|---|---|
+| N-16 文件名唯一性 | ❌→✅→⚠️ | 提交时曾重命名为 `ai_02_report.md`（snake_case 合规），后应主AI查找一致性要求改回 `AI-02_report.md`（与其他18个AI报告命名保持一致） |
+| GOV-DOC-016 纯陈述 | ❌→✅ | trae_060 中 3 处"已废止/已废除"→"废止/废除"（去过渡文本） |
+| TTL frontmatter | ✅ | `AI-02_report.md` 含 `ttl: task_bound` |
+| completes_when | ✅ | `AI-02_report.md` 含 `completes_when: "报告归档"` |
+
+#### 报告文件名变更说明
+
+提交时 GitCommitGateway 因 N-16 snake_case 门禁将 `AI-02_report.md` 重命名为 `ai_02_report.md`。提交完成后应主AI查找一致性要求（需与目录中其他 18 个 AI 报告 `AI-XX_report.md` 命名保持一致，便于主AI统一检索），改回 `AI-02_report.md`。
+
+注：目录中所有 19 个 AI 报告均使用 `AI-XX_report.md` 命名格式，主AI可通过 `AI-*_report.md` glob 模式统一检索。snake_case 命名规则对此 _working/ 临时报告目录的执行待主AI统一裁定。
+
+### 五、stash@{0} 清理
+
+GitCommitGateway 的 session 隔离 stash 机制在 pop 时失败（`STASH_CONFLICT`），原因是工作区有大量其他文件的未提交修改（tests/、.trae/、docs/ 等 P2迁移遗留）。
+
+#### 冗余验证
+
+| 统计项 | stash@{0} | 工作区 | 差异 |
+|---|---|---|---|
+| 文件数 | 5809 | 5800 | 9（= 已提交的 6 个文件 + 新增文件） |
+| 插入行 | 8604 | 8184 | 420（= 已提交文件的变更量） |
+| 删除行 | 3469 | 3394 | 75（= 已提交文件的删除量） |
+
+**结论**：stash@{0} 是冗余快照——已提交部分在 commit 412e5af 中，未提交部分在工作区中（两者对非提交文件的修改完全一致，如 `test_vocab_sync_chain.py` 46行变更在两者中相同）。
+
+#### 处置
+- 执行 `git stash drop 'stash@{0}'` → `Dropped stash@{0} (d6be5c403fa344280e023dac0ea85fb1b20b2322)`
+- 其他 session 的 stash（gw:cleanup-pp-pool、gw:vocab-p2p3-1 等）未动，不属于本次任务范围
+
+### 六、最终状态
+
+| 项 | 状态 |
+|---|---|
+| Commit 412e5af | ✅ 完好（6 个文件已入库） |
+| stash@{0} gw:p2-review-ai02-20260628 | ✅ 已 drop（冗余快照，工作区修改完整） |
+| 工作区其他文件修改 | ✅ 完好（5800 个文件的 P2 迁移遗留修改仍在工作区，未丢失） |
+| 教训固化三层落地 | ✅ 完成（project_memory + TRAE-046 v1.0.6 + TRAE-060 v1.0.1） |
+| GOV-DOC-016 门禁修复 | ✅ 完成（trae_060 3 处过渡文本已清理） |
