@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/rollback_depgraph.py | §8.2
 [MODULE] 无（独立脚本）
@@ -42,6 +43,17 @@ PRE_ROLLBACK_BACKUP = r"D:\ZephyrAlpha\data\databases\depgraph.db.backup.pre_rol
 
 
 def main():
+    # P2迁移后警告：depgraph.db 已迁移到 PostgreSQL，本脚本的文件复制式回滚
+    #（shutil.copy2）与 PG 服务器模式不兼容。如需回滚 PG 数据，应使用
+    # pg_dump/pg_restore 或 SQL 级时间点恢复（PITR），而非复制 .db 文件。
+    # 本脚本保留仅供 SQLite 备份文件的历史回滚参考，在 PG 模式下不应使用。
+    print(
+        "[WARNING] depgraph.db 已迁移到 PostgreSQL（P2迁移）。"
+        "本脚本的文件复制式回滚与 PG 不兼容，"
+        "如需回滚请使用 pg_dump/pg_restore 或 PITR。",
+        file=sys.stderr,
+    )
+
     if len(sys.argv) < 2:
         print("[ERROR] 用法: python rollback_depgraph.py <备份路径>")
         print("示例: python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.db.backup.pre_migration")

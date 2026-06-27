@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G7: 从 depgraph.db domains 表生成域容量报告MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -29,18 +30,23 @@
 
 from __future__ import annotations
 
-import sqlite3
 import sys
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "capacity_report.md"
 
 
-def get_domain_capacity(conn: sqlite3.Connection) -> list[dict]:
+def get_domain_capacity(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询所有域的容量信息（ARCH-CAP-001: production_nodes 口径）。"""
     cur = conn.execute(
         """SELECT d.domain_id, d.domain_name, d.layer_id, d.current_modules,
@@ -50,14 +56,14 @@ def get_domain_capacity(conn: sqlite3.Connection) -> list[dict]:
     )
     return [
         {
-            "domain_id": r[0],
-            "domain_name": r[1] or "",
-            "layer_id": r[2] or "",
-            "current_modules": r[3] or 0,
-            "max_modules": r[4] or 150,
-            "target_modules": r[5],
-            "description": r[6] or "",
-            "production_nodes": r[7] or 0,
+            "domain_id": r["domain_id"],
+            "domain_name": r["domain_name"] or "",
+            "layer_id": r["layer_id"] or "",
+            "current_modules": r["current_modules"] or 0,
+            "max_modules": r["max_modules"] or 150,
+            "target_modules": r["target_modules"],
+            "description": r["description"] or "",
+            "production_nodes": r["production_nodes"] or 0,
         }
         for r in cur.fetchall()
     ]
@@ -65,7 +71,7 @@ def get_domain_capacity(conn: sqlite3.Connection) -> list[dict]:
 
 def generate_capacity_report() -> str:
     """生成域容量报告MD文档。"""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         domains = get_domain_capacity(conn)
     finally:
@@ -180,10 +186,6 @@ def generate_capacity_report() -> str:
 
 def main() -> None:
     """入口：生成域容量报告。"""
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     content = generate_capacity_report()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")

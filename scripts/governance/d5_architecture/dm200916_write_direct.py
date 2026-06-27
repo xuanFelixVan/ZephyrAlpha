@@ -12,18 +12,24 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """生成3个YAML文件内容并直接写入（使用Write工具兼容方式）。"""
-import sqlite3
 import os
+import sys
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 BASE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
 DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # 查询52域
-conn = sqlite3.connect(DEPGRAPH_DB)
-conn.row_factory = sqlite3.Row
+conn = get_depgraph_pg_connection(autocommit=True)
 rows = conn.execute("""
     SELECT domain_id, domain_name, layer_id
     FROM domains

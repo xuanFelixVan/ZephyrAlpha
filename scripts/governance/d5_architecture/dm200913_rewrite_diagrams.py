@@ -12,16 +12,23 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """DM-200913 Phase4-B: 重写9个14层相关图表为52域派生
 
 基于§2.1裁定，将 diagrams/ 下9个图表从14层(L00-L13)节点改为52域节点。
 数据源: depgraph.db
 保留: P0跨层契约标注(CTR-001~CTR-006)、C4层级语义、业务数据流。
 """
-import sqlite3
+import sys
 from pathlib import Path
 from datetime import datetime
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 DIAGRAMS_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "diagrams"
@@ -37,14 +44,14 @@ HEADER = f"""%% 重写时间: {NOW} (DM-200913 Phase4-B)
 
 def get_domain_stats():
     """从depgraph.db获取域统计"""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     cur = conn.execute(
         """SELECT d.domain_id, d.domain_name, d.layer_id,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id) as nodes,
                   (SELECT COUNT(*) FROM nodes n WHERE n.domain_id = d.domain_id AND n.design_maturity = 'production') as prod
            FROM domains d ORDER BY d.layer_id, d.domain_id"""
     )
-    stats = {r[0]: {"name": r[1], "layer": r[2] or "N/A", "nodes": r[3], "prod": r[4]} for r in cur.fetchall()}
+    stats = {r["domain_id"]: {"name": r["domain_name"], "layer": r["layer_id"] or "N/A", "nodes": r["nodes"], "prod": r["prod"]} for r in cur.fetchall()}
     conn.close()
     return stats
 

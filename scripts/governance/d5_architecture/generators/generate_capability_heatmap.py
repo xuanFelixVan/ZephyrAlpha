@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G11: 从 depgraph.db 生成能力热力图
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.11
@@ -29,14 +30,19 @@
 
 from __future__ import annotations
 
-import sqlite3
 import sys
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "global_capability_heatmap.md"
 
 # 10 capability domains (能力域) - 7 business + 3 cross-cutting
@@ -152,47 +158,47 @@ def normalize_domain_id(domain_id: str) -> str:
     return domain_id.upper().replace("-", "_")
 
 
-def table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
+def table_exists(conn: PgConnExecuteWrapper, table_name: str) -> bool:
     """Check if a table exists in the database."""
-    cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table_name,))
+    cur = conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name=%s", (table_name,))
     return cur.fetchone() is not None
 
 
-def get_all_domains(conn: sqlite3.Connection) -> list[dict]:
+def get_all_domains(conn: PgConnExecuteWrapper) -> list[dict]:
     """Query all domains from the domains table."""
     cur = conn.execute("SELECT domain_id, domain_name, layer_id FROM domains ORDER BY domain_id")
     return [
         {
-            "domain_id": r[0],
-            "domain_name": r[1] or "",
-            "layer_id": r[2] or "",
+            "domain_id": r["domain_id"],
+            "domain_name": r["domain_name"] or "",
+            "layer_id": r["layer_id"] or "",
         }
         for r in cur.fetchall()
     ]
 
 
-def get_domain_maturity_counts(conn: sqlite3.Connection) -> dict[str, dict[str, int]]:
+def get_domain_maturity_counts(conn: PgConnExecuteWrapper) -> dict[str, dict[str, int]]:
     """Query node maturity counts grouped by domain_id and design_maturity.
 
     Returns: {domain_id: {"production": N, "design": N, "prototype": N, "active": N}}
     """
     cur = conn.execute(
-        """SELECT domain_id, design_maturity, COUNT(*)
+        """SELECT domain_id, design_maturity, COUNT(*) AS cnt
            FROM nodes
            WHERE domain_id IS NOT NULL
            GROUP BY domain_id, design_maturity"""
     )
     result: dict[str, dict[str, int]] = {}
     for r in cur.fetchall():
-        domain_id = r[0]
-        maturity = (r[1] or "unknown").lower()
-        count = r[2]
+        domain_id = r["domain_id"]
+        maturity = (r["design_maturity"] or "unknown").lower()
+        count = r["cnt"]
         result.setdefault(domain_id, {}).setdefault(maturity, 0)
         result[domain_id][maturity] += count
 
     # Also query build_status='active' counts for L3 detection
     cur = conn.execute(
-        """SELECT domain_id, COUNT(*)
+        """SELECT domain_id, COUNT(*) AS cnt
            FROM nodes
            WHERE domain_id IS NOT NULL
              AND design_maturity = 'production'
@@ -200,8 +206,8 @@ def get_domain_maturity_counts(conn: sqlite3.Connection) -> dict[str, dict[str, 
            GROUP BY domain_id"""
     )
     for r in cur.fetchall():
-        domain_id = r[0]
-        count = r[1]
+        domain_id = r["domain_id"]
+        count = r["cnt"]
         result.setdefault(domain_id, {})["active"] = count
 
     return result
@@ -243,7 +249,7 @@ def build_domain_capability_map() -> dict[str, str]:
 
 def generate_heatmap() -> str:
     """Generate the capability heatmap markdown document."""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         use_arch_table = table_exists(conn, "arch_domain_capacity")
         if use_arch_table:
@@ -529,10 +535,6 @@ def _maturity_definition(level: str) -> str:
 
 def main() -> None:
     """Entry point: generate the capability heatmap."""
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     content = generate_heatmap()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")

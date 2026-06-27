@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G4: 从 depgraph.db edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -30,23 +31,28 @@
 from __future__ import annotations
 
 import argparse
-import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
 
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram"
 
 
-def get_cross_domain_deps(conn: sqlite3.Connection) -> list[dict]:
+def get_cross_domain_deps(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询所有跨域依赖（按域对聚合）。"""
     cur = conn.execute(
         """SELECT n1.domain_id as from_domain, n2.domain_id as to_domain,
-                  COUNT(*) as cnt, GROUP_CONCAT(DISTINCT e.dep_type) as dep_types
+                  COUNT(*) as cnt, STRING_AGG(DISTINCT e.dep_type, ',') as dep_types
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
@@ -60,30 +66,30 @@ def get_cross_domain_deps(conn: sqlite3.Connection) -> list[dict]:
     )
     return [
         {
-            "from_domain": r[0],
-            "to_domain": r[1],
-            "count": r[2],
-            "dep_types": r[3] or "",
+            "from_domain": r["from_domain"],
+            "to_domain": r["to_domain"],
+            "count": r["cnt"],
+            "dep_types": r["dep_types"] or "",
         }
         for r in cur.fetchall()
     ]
 
 
-def get_domain_info_map(conn: sqlite3.Connection) -> dict[str, dict]:
+def get_domain_info_map(conn: PgConnExecuteWrapper) -> dict[str, dict]:
     """获取所有域的基本信息。"""
     cur = conn.execute("SELECT domain_id, domain_name, current_modules, layer_id FROM domains ORDER BY domain_id")
     return {
-        r[0]: {
-            "domain_id": r[0],
-            "domain_name": r[1] or r[0],
-            "current_modules": r[2] or 0,
-            "layer_id": r[3] or "",
+        r["domain_id"]: {
+            "domain_id": r["domain_id"],
+            "domain_name": r["domain_name"] or r["domain_id"],
+            "current_modules": r["current_modules"] or 0,
+            "layer_id": r["layer_id"] or "",
         }
         for r in cur.fetchall()
     }
 
 
-def generate_integration_topology(conn: sqlite3.Connection) -> str:
+def generate_integration_topology(conn: PgConnExecuteWrapper) -> str:
     """生成所有功能域的集成依赖关系图。"""
     deps = get_cross_domain_deps(conn)
     domain_map = get_domain_info_map(conn)
@@ -176,14 +182,10 @@ def main() -> None:
     parser.add_argument("--output-name", type=str, default="integration_topology.md", help="输出文件名")
     args = parser.parse_args()
 
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         content = generate_integration_topology(conn)
         out_path = output_dir / args.output_name

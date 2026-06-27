@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G9: 从 depgraph.db arch_constraints 表生成架构约束违规报告MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -29,16 +30,22 @@
 
 from __future__ import annotations
 
-import sqlite3
 import sys
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "constraint_violations.md"
 
 
-def get_all_constraints(conn: sqlite3.Connection) -> list[dict]:
+def get_all_constraints(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询所有架构约束。"""
     cur = conn.execute(
         """SELECT constraint_id, name, constraint_type, from_domain, to_domain,
@@ -49,18 +56,18 @@ def get_all_constraints(conn: sqlite3.Connection) -> list[dict]:
     )
     return [
         {
-            "constraint_id": r[0] or "",
-            "name": r[1] or "",
-            "constraint_type": r[2] or "",
-            "from_domain": r[3] or "",
-            "to_domain": r[4] or "",
-            "rule_definition": r[5] or "",
-            "severity": r[6] or "",
-            "enforcement": r[7] or "",
-            "description": r[8] or "",
-            "violation_status": r[9] or "",
-            "details": r[10] or "",
-            "detected_at": r[11] or "",
+            "constraint_id": r["constraint_id"] or "",
+            "name": r["name"] or "",
+            "constraint_type": r["constraint_type"] or "",
+            "from_domain": r["from_domain"] or "",
+            "to_domain": r["to_domain"] or "",
+            "rule_definition": r["rule_definition"] or "",
+            "severity": r["severity"] or "",
+            "enforcement": r["enforcement"] or "",
+            "description": r["description"] or "",
+            "violation_status": r["violation_status"] or "",
+            "details": r["details"] or "",
+            "detected_at": r["detected_at"] or "",
         }
         for r in cur.fetchall()
     ]
@@ -68,7 +75,7 @@ def get_all_constraints(conn: sqlite3.Connection) -> list[dict]:
 
 def generate_constraint_violations() -> str:
     """生成架构约束违规报告。"""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         constraints = get_all_constraints(conn)
     finally:
@@ -172,10 +179,6 @@ def generate_constraint_violations() -> str:
 
 def main() -> None:
     """入口：生成架构约束违规报告。"""
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     content = generate_constraint_violations()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")

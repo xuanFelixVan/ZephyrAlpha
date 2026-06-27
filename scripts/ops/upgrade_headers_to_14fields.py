@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] prints ERROR lines to stderr; exit 1 if any write fails; exit 0 on success
 # [TESTS] tests/test_upgrade_headers_to_14fields.py
+# [TTL] task_bound
 """
 Upgrade A_full file headers to 14 fields per TRAE-047 v1.1.0.
 
@@ -44,7 +45,6 @@ from __future__ import annotations
 import argparse
 import os
 import re
-import sqlite3
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
@@ -53,6 +53,13 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+
+# ── _shared 模块 import bootstrap（向内收：复用 SSoT 正则，禁止本地复制）──
+_GOV_DIR = str(PROJECT_ROOT / "scripts" / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.frontmatter import PY_HEADER_PATTERN  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 # Canonical 14-field order per TRAE-047 v1.1.0
 CANONICAL_FIELDS = [
@@ -88,7 +95,6 @@ NEW_FIELDS = {"DOMAIN", "DEPENDENCIES", "STARTUP", "MATURITY"}
 VALID_STARTUP = {"auto_start", "event_driven", "scheduled", "manual", "imported"}
 VALID_MATURITY = {"design", "prototype", "production", "legacy"}
 
-HEADER_PATTERN = re.compile(r"^#\s*\[([\w-]+)\]\s?(.*)")
 MAIN_BLOCK_PATTERN = re.compile(r'^if\s+__name__\s*==\s*["\']__main__["\']\s*:', re.MULTILINE)
 A_MODULE_PATTERN = re.compile(
     r"^#\s*\[A_module\]\s*module_id=([^|]+?)\s*\|.*?stability=(\w+).*?safety=(\w+).*?ai_autonomy=(\w+)"
@@ -183,11 +189,8 @@ class DepgraphLoader:
         self._load()
 
     def _load(self) -> None:
-        if not self.db_path.exists():
-            print(f"WARNING: depgraph.db not found at {self.db_path}", file=sys.stderr)
-            return
-        conn = sqlite3.connect(str(self.db_path))
-        conn.row_factory = sqlite3.Row
+        # P2迁移后：depgraph 已迁移到 PostgreSQL，不再依赖文件路径存在性检查。
+        conn = get_depgraph_pg_connection(autocommit=True)
         try:
             # Load nodes
             cursor = conn.execute(
@@ -303,7 +306,7 @@ def parse_header(lines: list[str]) -> tuple[dict[str, str], list[tuple[int, str,
     # Scan first 30 lines for header fields (comment lines with [FIELD])
     for i, line in enumerate(lines[:30]):
         stripped = line.rstrip("\n")
-        m = HEADER_PATTERN.match(stripped)
+        m = PY_HEADER_PATTERN.match(stripped)
         if m:
             field_name = m.group(1)
             value = m.group(2).strip()

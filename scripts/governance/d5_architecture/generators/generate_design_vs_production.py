@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G8: 从 depgraph.db nodes 表生成设计态vs运营态统计报告MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -29,18 +30,23 @@
 
 from __future__ import annotations
 
-import sqlite3
 import sys
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "design_vs_production.md"
 
 
-def get_maturity_stats(conn: sqlite3.Connection) -> list[dict]:
+def get_maturity_stats(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询各域的设计态vs运营态统计。"""
     cur = conn.execute(
         """SELECT d.domain_id, d.domain_name,
@@ -54,19 +60,19 @@ def get_maturity_stats(conn: sqlite3.Connection) -> list[dict]:
     )
     return [
         {
-            "domain_id": r[0],
-            "domain_name": r[1] or "",
-            "total": r[2],
-            "production": r[3],
-            "design": r[4],
-            "prototype": r[5],
-            "scaffold": r[6],
+            "domain_id": r["domain_id"],
+            "domain_name": r["domain_name"] or "",
+            "total": r["total"],
+            "production": r["production"],
+            "design": r["design"],
+            "prototype": r["prototype"],
+            "scaffold": r["scaffold"],
         }
         for r in cur.fetchall()
     ]
 
 
-def get_build_status_stats(conn: sqlite3.Connection) -> list[dict]:
+def get_build_status_stats(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询各 build_status 的统计。"""
     cur = conn.execute(
         """SELECT build_status, COUNT(*) as cnt
@@ -74,12 +80,12 @@ def get_build_status_stats(conn: sqlite3.Connection) -> list[dict]:
            GROUP BY build_status
            ORDER BY cnt DESC"""
     )
-    return [{"build_status": r[0] or "", "count": r[1]} for r in cur.fetchall()]
+    return [{"build_status": r["build_status"] or "", "count": r["cnt"]} for r in cur.fetchall()]
 
 
 def generate_design_vs_production() -> str:
     """生成设计态vs运营态统计报告。"""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         domain_stats = get_maturity_stats(conn)
         build_stats = get_build_status_stats(conn)
@@ -170,10 +176,6 @@ def generate_design_vs_production() -> str:
 
 def main() -> None:
     """入口：生成设计态vs运营态统计报告。"""
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     content = generate_design_vs_production()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")

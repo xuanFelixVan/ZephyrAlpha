@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G10: 自动生成架构文档库导航总览
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.10
@@ -30,15 +31,20 @@
 from __future__ import annotations
 
 import argparse
-import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
 
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
 OUTPUT_DIR = BASE_DIR / "00_overview_entry"
 
@@ -58,21 +64,21 @@ def scan_directory(dir_path: Path) -> list[str]:
     return sorted([f.name for f in dir_path.iterdir() if f.is_file() and not f.name.startswith(".")])
 
 
-def get_db_stats(conn: sqlite3.Connection) -> dict:
+def get_db_stats(conn: PgConnExecuteWrapper) -> dict:
     """从 depgraph.db 获取统计数据。"""
     stats = {}
 
     # 域总数
-    cur = conn.execute("SELECT COUNT(*) FROM domains")
-    stats["domain_count"] = cur.fetchone()[0]
+    cur = conn.execute("SELECT COUNT(*) AS cnt FROM domains")
+    stats["domain_count"] = cur.fetchone()["cnt"]
 
     # 节点总数
-    cur = conn.execute("SELECT COUNT(*) FROM nodes")
-    stats["node_count"] = cur.fetchone()[0]
+    cur = conn.execute("SELECT COUNT(*) AS cnt FROM nodes")
+    stats["node_count"] = cur.fetchone()["cnt"]
 
     # 边总数
-    cur = conn.execute("SELECT COUNT(*) FROM edges")
-    stats["edge_count"] = cur.fetchone()[0]
+    cur = conn.execute("SELECT COUNT(*) AS cnt FROM edges")
+    stats["edge_count"] = cur.fetchone()["cnt"]
 
     # 按层分组获取域
     cur = conn.execute(
@@ -85,7 +91,10 @@ def get_db_stats(conn: sqlite3.Connection) -> dict:
 
     # 按层分组
     layer_domains: dict[str, list[tuple[str, str]]] = {}
-    for layer_id, domain_id, domain_name in all_domains:
+    for r in all_domains:
+        layer_id = r["layer_id"]
+        domain_id = r["domain_id"]
+        domain_name = r["domain_name"]
         if layer_id not in layer_domains:
             layer_domains[layer_id] = []
         layer_domains[layer_id].append((domain_id, get_domain_name_zh(domain_id, domain_name or domain_id)))
@@ -99,7 +108,7 @@ def get_db_stats(conn: sqlite3.Connection) -> dict:
            WHERE layer_id IS NULL OR layer_id = ''
            ORDER BY domain_id"""
     )
-    stats["unassigned_domains"] = [(r[0], get_domain_name_zh(r[0], r[1] or r[0])) for r in cur.fetchall()]
+    stats["unassigned_domains"] = [(r["domain_id"], get_domain_name_zh(r["domain_id"], r["domain_name"] or r["domain_id"])) for r in cur.fetchall()]
 
     return stats
 
@@ -237,10 +246,6 @@ def main() -> None:
     parser.add_argument("--output-name", type=str, default="navigation_index.md", help="输出文件名")
     args = parser.parse_args()
 
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -250,7 +255,7 @@ def main() -> None:
     report_files = scan_directory(BASE_DIR / "03_governance_reports")
 
     # 获取统计数据
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         stats = get_db_stats(conn)
     finally:

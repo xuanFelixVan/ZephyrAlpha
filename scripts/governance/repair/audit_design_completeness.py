@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 r"""
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/audit_design_completeness.py | §5.2.4 MIG-4
 [MODULE] 无（独立脚本）
@@ -44,9 +45,16 @@ MIG-4: 完整性审计（v2.0 全面提取版）
 
 import os
 import re
-import sqlite3
 import sys
 from datetime import datetime
+from pathlib import Path
+
+# ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 DST_DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
 REPORT_PATH = r"D:\临时工作区\design_migration_gap_report.md"
@@ -177,41 +185,46 @@ def match_in_db(conn, declaration):
     node_type = declaration["node_type"]
 
     # 1. 精确匹配：path包含module_id
-    row = cur.execute(
-        "SELECT node_id FROM nodes WHERE design_maturity='design' AND path LIKE ? LIMIT 1", (f"%{mod_id}%",)
-    ).fetchone()
+    cur.execute(
+        "SELECT node_id FROM nodes WHERE design_maturity='design' AND path LIKE %s LIMIT 1", (f"%{mod_id}%",)
+    )
+    row = cur.fetchone()
     if row:
         return "path_exact"
 
     # 2. 精确匹配：node_name = module_id
-    row = cur.execute(
-        "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name = ? LIMIT 1", (mod_id,)
-    ).fetchone()
+    cur.execute(
+        "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name = %s LIMIT 1", (mod_id,)
+    )
+    row = cur.fetchone()
     if row:
         return "name_exact"
 
     # 3. 模糊匹配：node_name包含module_id
-    row = cur.execute(
-        "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name LIKE ? LIMIT 1", (f"%{mod_id}%",)
-    ).fetchone()
+    cur.execute(
+        "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name LIKE %s LIMIT 1", (f"%{mod_id}%",)
+    )
+    row = cur.fetchone()
     if row:
         return "name_fuzzy"
 
     # 4. 按node_type过滤后匹配（提高准确性）
     if node_type:
         # 4a. 在对应node_type中精确匹配node_name
-        row = cur.execute(
-            "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_type=? AND node_name = ? LIMIT 1",
+        cur.execute(
+            "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_type=%s AND node_name = %s LIMIT 1",
             (node_type, mod_id),
-        ).fetchone()
+        )
+        row = cur.fetchone()
         if row:
             return "type_name_exact"
 
         # 4b. 在对应node_type中模糊匹配node_name
-        row = cur.execute(
-            "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_type=? AND node_name LIKE ? LIMIT 1",
+        cur.execute(
+            "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_type=%s AND node_name LIKE %s LIMIT 1",
             (node_type, f"%{mod_id}%"),
-        ).fetchone()
+        )
+        row = cur.fetchone()
         if row:
             return "type_name_fuzzy"
 
@@ -219,17 +232,19 @@ def match_in_db(conn, declaration):
     if mod_name and len(mod_name) >= 3:
         # 跳过纯中文的名称（避免误匹配）
         if re.search(r"[A-Za-z]{3,}", mod_name):
-            row = cur.execute(
-                "SELECT node_id FROM nodes WHERE design_maturity='design' AND path LIKE ? LIMIT 1", (f"%{mod_name}%",)
-            ).fetchone()
+            cur.execute(
+                "SELECT node_id FROM nodes WHERE design_maturity='design' AND path LIKE %s LIMIT 1", (f"%{mod_name}%",)
+            )
+            row = cur.fetchone()
             if row:
                 return "path_name_fuzzy"
 
             # 6. 模糊匹配：node_name包含module_name
-            row = cur.execute(
-                "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name LIKE ? LIMIT 1",
+            cur.execute(
+                "SELECT node_id FROM nodes WHERE design_maturity='design' AND node_name LIKE %s LIMIT 1",
                 (f"%{mod_name}%",),
-            ).fetchone()
+            )
+            row = cur.fetchone()
             if row:
                 return "name_name_fuzzy"
 
@@ -239,12 +254,13 @@ def match_in_db(conn, declaration):
 def check_duplicates(conn):
     """检查depgraph.db中是否有重复path的设计态节点"""
     cur = conn.cursor()
-    rows = cur.execute("""
-        SELECT path, COUNT(*) as cnt, GROUP_CONCAT(node_id) as ids
+    cur.execute("""
+        SELECT path, COUNT(*) as cnt, STRING_AGG(node_id, ',') as ids
         FROM nodes WHERE design_maturity='design' AND path IS NOT NULL AND path != ''
         GROUP BY path HAVING cnt > 1
-    """).fetchall()
-    return [{"path": r[0], "count": r[1], "ids": r[2]} for r in rows]
+    """)
+    rows = cur.fetchall()
+    return [{"path": r["path"], "count": r["cnt"], "ids": r["ids"]} for r in rows]
 
 
 def main():
@@ -291,7 +307,7 @@ def main():
         print(f"  {fmt:15s}: {cnt}")
 
     # 连接DB匹配
-    conn = sqlite3.connect(DST_DB)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         matched = 0
         missing = []

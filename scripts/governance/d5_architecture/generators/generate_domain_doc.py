@@ -32,85 +32,91 @@ from __future__ import annotations
 
 import argparse
 import re
-import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from _common import cleanup_stale_files
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
 # 层级排序：编号按此顺序分组分配
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]
 
 
-def get_domain_info(conn: sqlite3.Connection, domain_id: str) -> dict | None:
+def get_domain_info(conn: PgConnExecuteWrapper, domain_id: str) -> dict | None:
     """查询域基本信息。"""
     cur = conn.execute(
         "SELECT domain_id, domain_name, current_modules, max_modules, production_nodes, layer_id, description "
-        "FROM domains WHERE domain_id=?",
+        "FROM domains WHERE domain_id=%s",
         (domain_id,),
     )
     row = cur.fetchone()
     if not row:
         return None
     return {
-        "domain_id": row[0],
-        "domain_name": row[1] or "",
-        "current_modules": row[2] or 0,
-        "max_modules": row[3] or 150,
-        "production_nodes": row[4] or 0,
-        "layer_id": row[5] or "",
-        "description": row[6] or "",
+        "domain_id": row["domain_id"],
+        "domain_name": row["domain_name"] or "",
+        "current_modules": row["current_modules"] or 0,
+        "max_modules": row["max_modules"] or 150,
+        "production_nodes": row["production_nodes"] or 0,
+        "layer_id": row["layer_id"] or "",
+        "description": row["description"] or "",
     }
 
 
-def get_domain_nodes(conn: sqlite3.Connection, domain_id: str) -> list[dict]:
+def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询指定域的所有节点。"""
     cur = conn.execute(
         "SELECT n.node_id, n.path, n.blueprint_id, n.design_maturity, n.build_status, n.node_name, "
         "(SELECT COUNT(*) FROM edges WHERE to_node_id=n.node_id) AS in_degree, "
         "(SELECT COUNT(*) FROM edges WHERE from_node_id=n.node_id) AS out_degree, "
         "n.architecture_layer, n.file_path "
-        "FROM nodes n WHERE n.domain_id=? ORDER BY n.path",
+        "FROM nodes n WHERE n.domain_id=%s ORDER BY n.path",
         (domain_id,),
     )
     rows = []
     for r in cur.fetchall():
         rows.append(
             {
-                "node_id": r[0],
-                "path": r[1] or "",
-                "blueprint_id": r[2] or "",
-                "design_maturity": r[3] or "",
-                "build_status": r[4] or "",
-                "node_name": r[5] or "",
-                "in_degree": r[6] or 0,
-                "out_degree": r[7] or 0,
-                "architecture_layer": r[8] or "",
-                "file_path": r[9] or "",
+                "node_id": r["node_id"],
+                "path": r["path"] or "",
+                "blueprint_id": r["blueprint_id"] or "",
+                "design_maturity": r["design_maturity"] or "",
+                "build_status": r["build_status"] or "",
+                "node_name": r["node_name"] or "",
+                "in_degree": r["in_degree"] or 0,
+                "out_degree": r["out_degree"] or 0,
+                "architecture_layer": r["architecture_layer"] or "",
+                "file_path": r["file_path"] or "",
             }
         )
     return rows
 
 
-def get_domain_edges(conn: sqlite3.Connection, domain_id: str) -> list[dict]:
+def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询域内依赖边（from_node 和 to_node 都在本域）。
 
     返回每条边的两端节点路径、名称、设计成熟度，供 Mermaid 图使用。
     """
     cur = conn.execute(
         """SELECT e.from_node_id, e.to_node_id, e.dep_type, e.dep_maturity,
-                  n1.path, n2.path, n1.design_maturity, n2.design_maturity,
-                  n1.node_name, n2.node_name
+                  n1.path AS from_path, n2.path AS to_path,
+                  n1.design_maturity AS from_maturity, n2.design_maturity AS to_maturity,
+                  n1.node_name AS from_name, n2.node_name AS to_name
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n1.domain_id=? AND n2.domain_id=?
+           WHERE n1.domain_id=%s AND n2.domain_id=%s
            ORDER BY e.from_node_id, e.to_node_id""",
         (domain_id, domain_id),
     )
@@ -118,22 +124,22 @@ def get_domain_edges(conn: sqlite3.Connection, domain_id: str) -> list[dict]:
     for r in cur.fetchall():
         edges.append(
             {
-                "from_node_id": r[0],
-                "to_node_id": r[1],
-                "dep_type": r[2] or "",
-                "dep_maturity": r[3] or "",
-                "from_path": r[4] or "",
-                "to_path": r[5] or "",
-                "from_maturity": r[6] or "",
-                "to_maturity": r[7] or "",
-                "from_name": r[8] or "",
-                "to_name": r[9] or "",
+                "from_node_id": r["from_node_id"],
+                "to_node_id": r["to_node_id"],
+                "dep_type": r["dep_type"] or "",
+                "dep_maturity": r["dep_maturity"] or "",
+                "from_path": r["from_path"] or "",
+                "to_path": r["to_path"] or "",
+                "from_maturity": r["from_maturity"] or "",
+                "to_maturity": r["to_maturity"] or "",
+                "from_name": r["from_name"] or "",
+                "to_name": r["to_name"] or "",
             }
         )
     return edges
 
 
-def get_cross_domain_deps(conn: sqlite3.Connection, domain_id: str) -> tuple[list[dict], list[dict]]:
+def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[list[dict], list[dict]]:
     """查询跨域依赖（聚合统计）。
 
     返回: (本域依赖的其他域列表, 依赖本域的其他域列表)
@@ -141,40 +147,40 @@ def get_cross_domain_deps(conn: sqlite3.Connection, domain_id: str) -> tuple[lis
     # 本域依赖的其他域（出边：from_node 在本域，to_node 在其他域）
     cur = conn.execute(
         """SELECT n2.domain_id as target_domain, COUNT(*) as cnt,
-                  GROUP_CONCAT(DISTINCT e.dep_type) as dep_types
+                  STRING_AGG(DISTINCT e.dep_type, ',') as dep_types
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n1.domain_id=? AND n2.domain_id != ?
+           WHERE n1.domain_id=%s AND n2.domain_id != %s
            GROUP BY n2.domain_id
            ORDER BY cnt DESC""",
         (domain_id, domain_id),
     )
     outgoing = []
     for r in cur.fetchall():
-        outgoing.append({"target_domain": r[0], "count": r[1], "dep_types": r[2] or ""})
+        outgoing.append({"target_domain": r["target_domain"], "count": r["cnt"], "dep_types": r["dep_types"] or ""})
 
     # 依赖本域的其他域（入边：from_node 在其他域，to_node 在本域）
     cur = conn.execute(
         """SELECT n1.domain_id as source_domain, COUNT(*) as cnt,
-                  GROUP_CONCAT(DISTINCT e.dep_type) as dep_types
+                  STRING_AGG(DISTINCT e.dep_type, ',') as dep_types
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n2.domain_id=? AND n1.domain_id != ?
+           WHERE n2.domain_id=%s AND n1.domain_id != %s
            GROUP BY n1.domain_id
            ORDER BY cnt DESC""",
         (domain_id, domain_id),
     )
     incoming = []
     for r in cur.fetchall():
-        incoming.append({"source_domain": r[0], "count": r[1], "dep_types": r[2] or ""})
+        incoming.append({"source_domain": r["source_domain"], "count": r["cnt"], "dep_types": r["dep_types"] or ""})
 
     return outgoing, incoming
 
 
 def get_cross_domain_edges_detail(
-    conn: sqlite3.Connection, domain_id: str, internal_node_ids: list[int]
+    conn: PgConnExecuteWrapper, domain_id: str, internal_node_ids: list[int]
 ) -> tuple[list[dict], list[dict]]:
     """查询跨域边的详细信息（涉及指定内部节点的），供 Mermaid 图绘制外部节点和边。
 
@@ -185,17 +191,19 @@ def get_cross_domain_edges_detail(
     if not internal_node_ids:
         return outgoing_edges, incoming_edges
 
-    placeholders = ",".join("?" * len(internal_node_ids))
+    placeholders = ",".join(["%s"] * len(internal_node_ids))
     params_out = [domain_id, domain_id] + list(internal_node_ids)
 
     # 出边：from 内部节点 → 外部节点
     cur = conn.execute(
-        f"""SELECT e.dep_type, n1.path, n2.path, n1.design_maturity, n2.design_maturity,
-                  n1.node_name, n2.node_name, n2.domain_id
+        f"""SELECT e.dep_type, n1.path AS from_path, n2.path AS to_path,
+                  n1.design_maturity AS from_maturity, n2.design_maturity AS to_maturity,
+                  n1.node_name AS from_name, n2.node_name AS to_name,
+                  n2.domain_id AS ext_domain
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n1.domain_id=? AND n2.domain_id != ?
+           WHERE n1.domain_id=%s AND n2.domain_id != %s
              AND e.from_node_id IN ({placeholders})
            LIMIT 15""",
         params_out,
@@ -203,25 +211,27 @@ def get_cross_domain_edges_detail(
     for r in cur.fetchall():
         outgoing_edges.append(
             {
-                "dep_type": r[0] or "",
-                "from_path": r[1] or "",
-                "to_path": r[2] or "",
-                "from_maturity": r[3] or "",
-                "to_maturity": r[4] or "",
-                "from_name": r[5] or "",
-                "to_name": r[6] or "",
-                "ext_domain": r[7] or "",
+                "dep_type": r["dep_type"] or "",
+                "from_path": r["from_path"] or "",
+                "to_path": r["to_path"] or "",
+                "from_maturity": r["from_maturity"] or "",
+                "to_maturity": r["to_maturity"] or "",
+                "from_name": r["from_name"] or "",
+                "to_name": r["to_name"] or "",
+                "ext_domain": r["ext_domain"] or "",
             }
         )
 
     # 入边：from 外部节点 → 内部节点
     cur = conn.execute(
-        f"""SELECT e.dep_type, n1.path, n2.path, n1.design_maturity, n2.design_maturity,
-                  n1.node_name, n2.node_name, n1.domain_id
+        f"""SELECT e.dep_type, n1.path AS from_path, n2.path AS to_path,
+                  n1.design_maturity AS from_maturity, n2.design_maturity AS to_maturity,
+                  n1.node_name AS from_name, n2.node_name AS to_name,
+                  n1.domain_id AS ext_domain
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n2.domain_id=? AND n1.domain_id != ?
+           WHERE n2.domain_id=%s AND n1.domain_id != %s
              AND e.to_node_id IN ({placeholders})
            LIMIT 15""",
         params_out,
@@ -229,14 +239,14 @@ def get_cross_domain_edges_detail(
     for r in cur.fetchall():
         incoming_edges.append(
             {
-                "dep_type": r[0] or "",
-                "from_path": r[1] or "",
-                "to_path": r[2] or "",
-                "from_maturity": r[3] or "",
-                "to_maturity": r[4] or "",
-                "from_name": r[5] or "",
-                "to_name": r[6] or "",
-                "ext_domain": r[7] or "",
+                "dep_type": r["dep_type"] or "",
+                "from_path": r["from_path"] or "",
+                "to_path": r["to_path"] or "",
+                "from_maturity": r["from_maturity"] or "",
+                "to_maturity": r["to_maturity"] or "",
+                "from_name": r["from_name"] or "",
+                "to_name": r["to_name"] or "",
+                "ext_domain": r["ext_domain"] or "",
             }
         )
 
@@ -408,13 +418,13 @@ def generate_internal_mermaid(
     return "\n".join(lines)
 
 
-def build_numbering_map(conn: sqlite3.Connection) -> dict[str, int]:
+def build_numbering_map(conn: PgConnExecuteWrapper) -> dict[str, int]:
     """构建域编号映射：按 layer_id 分组排序，生成 {domain_id: number} 映射。
 
     层级顺序: L0_infrastructure(01-02) → L1_foundation(03-08) → L1_platform(09-15) → L2_domain(16-53)
     """
     cur = conn.execute("SELECT domain_id, layer_id FROM domains")
-    domains = [(r[0], r[1] or "") for r in cur.fetchall()]
+    domains = [(r["domain_id"], r["layer_id"] or "") for r in cur.fetchall()]
 
     def _sort_key(item: tuple[str, str]) -> tuple[int, str]:
         layer = item[1]
@@ -425,7 +435,7 @@ def build_numbering_map(conn: sqlite3.Connection) -> dict[str, int]:
     return {did: idx + 1 for idx, (did, _) in enumerate(domains)}
 
 
-def generate_domain_doc(domain_id: str, conn: sqlite3.Connection, number: int = 0) -> str:
+def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int = 0) -> str:
     """生成域文档内容（中英文对照表格 + 内嵌 Mermaid 依赖图）。"""
     info = get_domain_info(conn, domain_id)
     if not info:
@@ -599,14 +609,10 @@ def main() -> None:
     if not args.all and not args.domain_id:
         parser.error("domain_id 是必填参数（除非使用 --all）")
 
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         # 构建编号映射（按 layer_id 分组排序）
         numbering_map = build_numbering_map(conn)
@@ -614,7 +620,7 @@ def main() -> None:
         if args.all:
             # 生成所有域的文档
             cur = conn.execute("SELECT domain_id FROM domains ORDER BY domain_id")
-            domain_ids = [r[0] for r in cur.fetchall()]
+            domain_ids = [r["domain_id"] for r in cur.fetchall()]
             success = 0
             for did in domain_ids:
                 number = numbering_map.get(did, 0)

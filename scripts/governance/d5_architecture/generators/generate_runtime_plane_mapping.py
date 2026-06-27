@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G12: 从 depgraph.db 生成运行平面映射图
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.12
@@ -29,14 +30,19 @@
 
 from __future__ import annotations
 
-import sqlite3
 import sys
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "runtime_plane_mapping.md"
 
 # 运行平面中英文对照（数据库 runtime_plane 字段值 → 中文名/英文名/描述）
@@ -61,7 +67,7 @@ UNASSIGNED_LABEL = "未标注"
 UNASSIGNED_EN = "Unassigned"
 
 
-def get_domain_plane_distribution(conn: sqlite3.Connection) -> list[dict]:
+def get_domain_plane_distribution(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询每个域在各运行平面的模块数量分布。"""
     cur = conn.execute(
         """SELECT n.domain_id, d.domain_name, n.runtime_plane, COUNT(*) as cnt
@@ -73,16 +79,16 @@ def get_domain_plane_distribution(conn: sqlite3.Connection) -> list[dict]:
     )
     return [
         {
-            "domain_id": r[0],
-            "domain_name": r[1] or r[0],
-            "runtime_plane": r[2],
-            "count": r[3],
+            "domain_id": r["domain_id"],
+            "domain_name": r["domain_name"] or r["domain_id"],
+            "runtime_plane": r["runtime_plane"],
+            "count": r["cnt"],
         }
         for r in cur.fetchall()
     ]
 
 
-def get_plane_totals(conn: sqlite3.Connection) -> list[dict]:
+def get_plane_totals(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询各运行平面的模块总数。"""
     cur = conn.execute(
         """SELECT runtime_plane, COUNT(*) as cnt
@@ -90,13 +96,13 @@ def get_plane_totals(conn: sqlite3.Connection) -> list[dict]:
            GROUP BY runtime_plane
            ORDER BY cnt DESC"""
     )
-    return [{"runtime_plane": r[0], "count": r[1]} for r in cur.fetchall()]
+    return [{"runtime_plane": r["runtime_plane"], "count": r["cnt"]} for r in cur.fetchall()]
 
 
-def get_domain_layer_map(conn: sqlite3.Connection) -> dict[str, str]:
+def get_domain_layer_map(conn: PgConnExecuteWrapper) -> dict[str, str]:
     """查询域→架构层映射。"""
     cur = conn.execute("SELECT domain_id, layer_id FROM domains ORDER BY domain_id")
-    return {r[0]: (r[1] or "") for r in cur.fetchall()}
+    return {r["domain_id"]: (r["layer_id"] or "") for r in cur.fetchall()}
 
 
 def plane_display(plane: str | None) -> tuple[str, str]:
@@ -108,7 +114,7 @@ def plane_display(plane: str | None) -> tuple[str, str]:
 
 def generate_runtime_plane_mapping() -> str:
     """生成运行平面映射图MD文档。"""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         distribution = get_domain_plane_distribution(conn)
         plane_totals = get_plane_totals(conn)
@@ -248,10 +254,6 @@ def generate_runtime_plane_mapping() -> str:
 
 def main() -> None:
     """入口：生成运行平面映射图。"""
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     content = generate_runtime_plane_mapping()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")

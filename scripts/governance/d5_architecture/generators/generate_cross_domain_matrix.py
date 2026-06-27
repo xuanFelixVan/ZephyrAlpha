@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G6: 从 depgraph.db edges 表生成域间依赖矩阵MD文档
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -29,21 +30,27 @@
 
 from __future__ import annotations
 
-import sqlite3
 import sys
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "cross_domain_matrix.md"
 
 
-def get_cross_domain_edges(conn: sqlite3.Connection) -> list[dict]:
+def get_cross_domain_edges(conn: PgConnExecuteWrapper) -> list[dict]:
     """查询所有跨域依赖边。"""
     cur = conn.execute(
         """SELECT n1.domain_id as from_domain, n2.domain_id as to_domain,
                   COUNT(*) as edge_count,
-                  GROUP_CONCAT(DISTINCT e.dep_type) as dep_types
+                  STRING_AGG(DISTINCT e.dep_type, ',') as dep_types
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
@@ -55,24 +62,24 @@ def get_cross_domain_edges(conn: sqlite3.Connection) -> list[dict]:
     )
     return [
         {
-            "from_domain": r[0],
-            "to_domain": r[1],
-            "edge_count": r[2],
-            "dep_types": r[3] or "",
+            "from_domain": r["from_domain"],
+            "to_domain": r["to_domain"],
+            "edge_count": r["edge_count"],
+            "dep_types": r["dep_types"] or "",
         }
         for r in cur.fetchall()
     ]
 
 
-def get_all_domain_ids(conn: sqlite3.Connection) -> list[str]:
+def get_all_domain_ids(conn: PgConnExecuteWrapper) -> list[str]:
     """查询所有域ID。"""
     cur = conn.execute("SELECT domain_id FROM domains ORDER BY domain_id")
-    return [r[0] for r in cur.fetchall()]
+    return [r["domain_id"] for r in cur.fetchall()]
 
 
 def generate_cross_domain_matrix() -> str:
     """生成域间依赖矩阵MD文档。"""
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         edges = get_cross_domain_edges(conn)
         domain_ids = get_all_domain_ids(conn)
@@ -139,10 +146,6 @@ def generate_cross_domain_matrix() -> str:
 
 def main() -> None:
     """入口：生成域间依赖矩阵。"""
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     content = generate_cross_domain_matrix()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(content, encoding="utf-8", newline="\n")

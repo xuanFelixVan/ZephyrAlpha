@@ -23,7 +23,6 @@ import hashlib
 import json
 import os
 import re
-import sqlite3
 import subprocess
 import sys
 from collections import defaultdict
@@ -33,8 +32,12 @@ from pathlib import Path
 
 import yaml
 
-# 复用真源连接器（禁裸 sqlite3.connect 绕过 WAL/busy_timeout 配置）
-from zephyr.governance.depgraph_schema import get_db_connection
+# P2 PG 迁移：删除 import sqlite3；导入 PG 连接入口
+_GOV_DIR = str(Path(__file__).resolve().parent)
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+import psycopg2  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -492,7 +495,7 @@ def _load_panorama_from_db(db_path):
     """
     import json as _json
 
-    conn = get_db_connection(db_path)
+    conn = get_depgraph_pg_connection(autocommit=False)
     data = {"domains": {}, "tree": {}, "meta": {}}
 
     # Load domains — map to the same structure as the YAML panorama domains section
@@ -558,7 +561,7 @@ def _load_panorama_from_db(db_path):
         cur = conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1")
         r = cur.fetchone()
         if r:
-            data["meta"]["schema_version"] = r[0]
+            data["meta"]["schema_version"] = r["version"]
     except Exception:
         pass
 
@@ -582,32 +585,32 @@ def _load_domain_mappings_from_db(db_path: Path):
     non_src_mappings = []
     unregistered_src_mappings = []
 
-    if not db_path.exists():
-        return domain_id_to_layer, non_src_mappings, unregistered_src_mappings
-
+    # P2 PG 迁移：删除 db_path.exists() 检查（PG 无文件路径概念）
     try:
-        conn = get_db_connection(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.cursor()
 
         # Tier 1: domain_id → layer_id from domains table (per-domain, more accurate than group-based)
         cur.execute("SELECT domain_id, layer_id FROM domains WHERE layer_id IS NOT NULL AND layer_id != ''")
-        for did, lid in cur.fetchall():
+        for r in cur.fetchall():
+            did = r["domain_id"]
+            lid = r["layer_id"]
             if did and lid:
                 domain_id_to_layer[did] = lid
 
         # Tier 2: path_prefix → (domain_id, subdomain_id) from domain_mapping table
         cur.execute("SELECT path_prefix, domain_id, subdomain_id FROM domain_mapping WHERE mapping_type = 'non_src'")
-        for prefix, did, sid in cur.fetchall():
-            non_src_mappings.append((prefix, did, sid or ""))
+        for r in cur.fetchall():
+            non_src_mappings.append((r["path_prefix"], r["domain_id"], r["subdomain_id"] or ""))
 
         cur.execute(
             "SELECT path_prefix, domain_id, subdomain_id FROM domain_mapping WHERE mapping_type = 'unregistered_src'"
         )
-        for prefix, did, sid in cur.fetchall():
-            unregistered_src_mappings.append((prefix, did, sid or ""))
+        for r in cur.fetchall():
+            unregistered_src_mappings.append((r["path_prefix"], r["domain_id"], r["subdomain_id"] or ""))
 
         conn.close()
-    except sqlite3.OperationalError:
+    except psycopg2.Error:
         # domain_mapping table doesn't exist yet — return empty mappings
         pass
 
@@ -2513,37 +2516,19 @@ def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
 
 
 def acquire_lock(lock_file: str, session_id: str) -> bool:
-    """DM-3003: 获取文件锁（通过lock_files.py跨进程互斥）"""
-    import subprocess
+    """DM-3003: 获取文件锁（通过lock_files.py跨进程互斥）
 
-    lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
-    if not lock_script.exists():
-        return False
-    result = subprocess.run(
-        [
-            sys.executable,
-            str(lock_script),
-            "acquire",
-            lock_file,
-            session_id,
-            "--task",
-            "depgraph db write",
-            "--skip-naming-check",
-        ],
-        capture_output=True,
-        text=True,
-    )
-    return result.returncode == 0
+    P2 PG 迁移：PG 使用 MVCC，无需文件锁。本函数保留为 no-op（返回 True）以维持调用结构。
+    """
+    return True
 
 
 def release_lock(lock_file: str, session_id: str) -> None:
-    """DM-3003: 释放文件锁"""
-    import subprocess
+    """DM-3003: 释放文件锁
 
-    lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
-    if not lock_script.exists():
-        return
-    subprocess.run([sys.executable, str(lock_script), "release", lock_file, session_id], capture_output=True, text=True)
+    P2 PG 迁移：PG 使用 MVCC，无需文件锁。本函数保留为 no-op 以维持调用结构。
+    """
+    pass
 
 
 def resolve_conflicts(cur):
@@ -2576,20 +2561,20 @@ def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch
     """
     # 验证设计态nodes存在
     cur.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity = 'design'")
-    db_nodes_count = cur.fetchone()[0]
+    db_nodes_count = cur.fetchone()["count"]
     if db_nodes_count == 0 and design_nodes:
         print(f"[DM-3013] WARNING: DB中无设计态nodes，内存有{len(design_nodes)}条")
 
     # 验证设计态edges存在
     cur.execute("SELECT COUNT(*) FROM edges WHERE dep_maturity = 'design'")
-    db_edges_count = cur.fetchone()[0]
+    db_edges_count = cur.fetchone()["count"]
     if db_edges_count == 0 and design_edges:
         print(f"[DM-3013] WARNING: DB中无设计态edges，内存有{len(design_edges)}条")
 
     # 验证设计态arch存在
     try:
         cur.execute("SELECT COUNT(*) FROM arch_directory_tree WHERE design_maturity = 'design'")
-        db_arch_count = cur.fetchone()[0]
+        db_arch_count = cur.fetchone()["count"]
     except Exception:
         db_arch_count = -1
     if db_arch_count == 0 and design_arch:
@@ -2602,8 +2587,7 @@ def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch
 
 
 def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None):
-    """Write depgraph to SQLite database (DM-100024)"""
-    import sqlite3
+    """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移"""
     from datetime import datetime
 
     print(f"[DEPGRAPH-DB] Writing to {db_path}...")
@@ -2619,16 +2603,16 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         print("[LOCK] Warning: Could not acquire lock, proceeding without lock")
 
     try:
-        # WAL+busy_timeout 经 get_db_connection 配置（禁裸 sqlite3.connect）；
-        # autocommit=False 保持 deferred 事务（conn.commit/rollback 原子性）；
-        # apply_foreign_keys=False 保持历史 DELETE 顺序（先 nodes 再 edges，FK ON 会阻断）
-        conn = get_db_connection(db_path, autocommit=False, apply_foreign_keys=False)
+        conn = get_depgraph_pg_connection(autocommit=False)  # P2 PG 迁移
         cursor = conn.cursor()
         # DM-012 Fix 4: Auto-cleanup old backup tables before writing
+        # P2 PG 迁移：sqlite_master → information_schema.tables
         backup_tables = cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%backup%'"
+            "SELECT table_name AS name FROM information_schema.tables "
+            "WHERE table_schema = 'public' AND table_name LIKE '%backup%'"
         ).fetchall()
-        for (bt_name,) in backup_tables:
+        for bt_row in backup_tables:
+            bt_name = bt_row["name"]
             # Validate table name format before using in DDL
             if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", bt_name):
                 continue
@@ -2696,8 +2680,8 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 trust_zone, license, drive_direction, type_specific_data, last_verified,
                 node_name, file_path, build_status,
                 can_build, gate_reason, hard_boundary_ref, consumed_interfaces
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                      ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                      %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     node.get("type", "module"),
                     node.get("path", ""),
@@ -2817,7 +2801,8 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
         # DB node_id是INTEGER自增，通过path建立映射
         path_to_db_node_id = {}
         for row in cursor.execute("SELECT path, node_id FROM nodes").fetchall():
-            path_to_db_node_id[row[0]] = row[1]
+            # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
+            path_to_db_node_id[row["path"]] = row["node_id"]
         # 生成器node_id→DB_node_id映射
         gen_to_db_node_id = {}
         for gen_id, path in gen_node_id_to_path.items():
@@ -2851,7 +2836,7 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
                 ddd_integration_pattern, failure_mode, fallback, activation_condition,
                 data_transfer_description, resource_impact, relationship_type,
                 cross_domain, verified
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     gen_to_db_node_id.get(from_node),
                     gen_to_db_node_id.get(to_node),
@@ -2938,13 +2923,15 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
             cur.execute("SELECT domain_id FROM domains")
             domain_rows = cur.fetchall()
             updated = 0
-            for (did,) in domain_rows:
-                cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=?", (did,))
-                all_count = cur.fetchone()[0]
-                cur.execute("UPDATE domains SET current_modules=? WHERE domain_id=?", (all_count, did))
-                cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=? AND design_maturity='production'", (did,))
-                prod_count = cur.fetchone()[0]
-                cur.execute("UPDATE domains SET production_nodes=? WHERE domain_id=?", (prod_count, did))
+            # P2 PG 迁移：? → %s；RealDictCursor 用列名访问
+            for r in domain_rows:
+                did = r["domain_id"]
+                cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=%s", (did,))
+                all_count = cur.fetchone()["count"]
+                cur.execute("UPDATE domains SET current_modules=%s WHERE domain_id=%s", (all_count, did))
+                cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=%s AND design_maturity='production'", (did,))
+                prod_count = cur.fetchone()["count"]
+                cur.execute("UPDATE domains SET production_nodes=%s WHERE domain_id=%s", (prod_count, did))
                 updated += 1
             conn.commit()
             print(f"  [H7] Synced current_modules (all) + production_nodes (production) for {updated} domains")
@@ -3121,7 +3108,8 @@ def load_design_state_from_db(db_path: str) -> dict:
     design_edges = []
     design_arch = []
     try:
-        conn = get_db_connection(db_path)
+        # P2 PG 迁移：sqlite3.connect → get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.cursor()
         # 加载设计态节点
         rows = cur.execute("""
@@ -3132,20 +3120,21 @@ def load_design_state_from_db(db_path: str) -> dict:
             WHERE design_maturity = 'design'
         """).fetchall()
         for row in rows:
-            path = row[0]
+            # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
+            path = row["path"]
             if path:
                 design_nodes[path] = {
                     "path": path,
-                    "type": row[1] or "module",
-                    "domain_id": row[2] or "",
-                    "blueprint_id": row[3] or "",
-                    "belongs_to": row[4] or "",
-                    "architecture_layer": row[5] or "",
-                    "design_maturity": row[6] or "design",
-                    "build_status": row[7] or "unbuilt",
-                    "change_policy": row[8] or "evolving",
-                    "impact_level": row[9] or "M",
-                    "modification_permission": row[10] or "ai_modifiable",
+                    "type": row["node_type"] or "module",
+                    "domain_id": row["domain_id"] or "",
+                    "blueprint_id": row["blueprint_id"] or "",
+                    "belongs_to": row["belongs_to"] or "",
+                    "architecture_layer": row["architecture_layer"] or "",
+                    "design_maturity": row["design_maturity"] or "design",
+                    "build_status": row["build_status"] or "unbuilt",
+                    "change_policy": row["change_policy"] or "evolving",
+                    "impact_level": row["impact_level"] or "M",
+                    "modification_permission": row["modification_permission"] or "ai_modifiable",
                     "lifecycle": "design",
                 }
         # DM-3012: 加载设计态边（dep_maturity='design'）
@@ -3205,7 +3194,8 @@ def load_production_state_from_db(db_path: str) -> dict:
     """
     production_meta = {}
     try:
-        conn = get_db_connection(db_path)
+        # P2 PG 迁移：sqlite3.connect → get_depgraph_pg_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.cursor()
         # 裁定#207 R2 C3：使用 PRODUCTION_PROTECTED_FIELDS 动态构建查询（原硬编码6列）
         cols = PRODUCTION_PROTECTED_FIELDS
@@ -3215,12 +3205,13 @@ def load_production_state_from_db(db_path: str) -> dict:
             "FROM nodes WHERE design_maturity = 'production'"
         ).fetchall()
         for row in rows:
-            path = row[0]
+            # P2 PG 迁移：RealDictCursor 返回字典，用列名访问
+            path = row["path"]
             if not path:
                 continue
             meta = {}
-            for i, col in enumerate(cols):
-                val = row[i + 1]
+            for col in cols:
+                val = row[col]
                 if val is not None and val != "":
                     meta[col] = val
             if meta:

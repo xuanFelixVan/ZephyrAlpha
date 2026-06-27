@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 # 一次性 bootstrap：算 sys.path（此 N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
 # 先例：scripts/git_commit.py、scripts/governance/check_ssot_gate.py 均已 bootstrap import src/。
@@ -39,6 +40,71 @@ if str(_PROJECT_ROOT) not in sys.path:
 # find_repo_root / REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
 # 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
 from zephyr.shared.io.paths import REPO_ROOT, find_repo_root  # noqa: E402
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，所有治理脚本通过此入口获取 PG 连接。
+# 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
+import psycopg2  # noqa: E402
+from psycopg2.extras import RealDictCursor  # noqa: E402
+from zephyr.governance.depgraph_schema import get_db_connection  # noqa: E402
+
+
+class PgConnExecuteWrapper:
+    """兼容 sqlite3.Connection.execute() 接口的 psycopg2 connection 包装器。
+
+    P2迁移后：psycopg2 connection 没有 execute() 方法，此包装器使原 SQLite 代码无需修改。
+    每次调用 execute() 创建一个新的 RealDictCursor（与原 sqlite3.Row 的 dict(row)/row['col'] 用法等价）。
+
+    注意：RealDictRow 不支持 row[0] 数字索引，需用列名访问（如 row['node_id']）。
+    """
+
+    def __init__(self, pg_conn: psycopg2.extensions.connection) -> None:
+        self._pg_conn = pg_conn
+
+    def execute(self, sql: str, params: tuple = ()) -> Any:
+        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute(sql, params)
+        return cur
+
+    def cursor(self):
+        """兼容 sqlite3 conn.cursor() 接口，返回 RealDictCursor（支持 execute/fetchone/fetchall）。"""
+        return self._pg_conn.cursor(cursor_factory=RealDictCursor)
+
+    def executemany(self, sql: str, params_list: list[tuple]) -> None:
+        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
+        cur.executemany(sql, params_list)
+        cur.close()
+
+    def commit(self) -> None:
+        self._pg_conn.commit()
+
+    def rollback(self) -> None:
+        self._pg_conn.rollback()
+
+    def close(self) -> None:
+        self._pg_conn.close()
+
+    @property
+    def row_factory(self) -> None:
+        """兼容 sqlite3 row_factory 设置（PG 模式下忽略，由 cursor_factory 替代）。"""
+        return None
+
+    @row_factory.setter
+    def row_factory(self, value: Any) -> None:
+        # PG 模式下忽略设置（已通过 cursor_factory=RealDictCursor 实现 dict-like 行）
+        pass
+
+
+def get_depgraph_pg_connection(autocommit: bool = True) -> PgConnExecuteWrapper:
+    """获取 depgraph PostgreSQL 连接（包装为兼容 sqlite3 接口）。
+
+    P2迁移后：所有治理脚本通过此入口获取 PG 连接，避免散点连接绕过统一配置。
+    返回的 PgConnExecuteWrapper 支持 conn.execute(sql, params).fetchone()/fetchall() 模式，
+    与原 sqlite3.Connection.execute() 接口兼容。
+
+    :param autocommit: True 启用自动提交（默认，适合只读/简单写）；False 需显式 conn.commit()
+    :return: PgConnExecuteWrapper 包装的 psycopg2 连接
+    """
+    return PgConnExecuteWrapper(get_db_connection(autocommit=autocommit))
 
 EXCLUDE_DIRS: frozenset[str] = frozenset(
     {

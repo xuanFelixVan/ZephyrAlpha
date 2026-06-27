@@ -67,12 +67,11 @@ import json
 import os
 import re
 import shutil
-import sqlite3
 import subprocess
 import sys
-import threading
-import time
 from pathlib import Path
+
+import psycopg2
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
@@ -193,25 +192,20 @@ def _cleanup_old_backups(db_name: str, keep: int = _BACKUP_KEEP) -> None:
         print(f"[BACKUP CLEANUP] 删除旧备份: {f.name}", file=sys.stderr)
 
 
-# 集成 lock_files.py 文件锁——堵住并发写入漏洞
-_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
-if str(_SCRIPTS_DIR) not in sys.path:
-    sys.path.insert(0, str(_SCRIPTS_DIR))
-import lock_files as _lf  # noqa: E402
-
-# 引入 module_id 三轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
-# 裁定#208 三轨制：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
+# P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
 _GOV_DIR = Path(__file__).resolve().parent
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
+# 引入 module_id 三轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
+# 裁定#208 三轨制：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
 from validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
 from validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
 from validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
 
-# 进程内 DB 写入串行锁——防止同进程多线程并发获取文件锁
-_db_write_lock_lock = threading.Lock()
-
-
+# P2 PG 迁移：文件锁已删除（PG 用 MVCC）。_db_write_lock 保留为 no-op 上下文管理器，
+# 维持原 with 结构避免大规模重新缩进；git 备份/物理备份门禁保留（project_memory 规则）。
 @contextlib.contextmanager
 def _db_write_lock(
     owner_id: str | None = None,
@@ -220,51 +214,17 @@ def _db_write_lock(
     max_retries: int = 30,
     retry_interval: float = 1.0,
 ):
-    """depgraph.db 写入文件锁上下文管理器（跨进程互斥 + 进程内串行 + 重试）。
-
-    双重保护：
-    1. threading.Lock() — 进程内多线程串行化（避免同进程线程竞争文件锁）
-    2. lock_files.py 文件锁 — 跨进程互斥（原子目录创建，TTL 30分钟）
-
-    GIT 备份门禁：写入前检查 depgraph.db 是否有 git 备份（project_memory 强制规则）。
-    如果 DB 有未提交修改（未备份），阻断写入并 sys.exit(4)。
-
-    重试机制：acquire 失败时等待 retry_interval 秒后重试，最多 max_retries 次。
-    db_path: 指定要锁的数据库文件路径（默认 DEPGRAPH_PATH）。
-    """
-    # GIT 备份门禁：写入前检查是否有 git 备份（在任何锁获取之前检查）
+    """depgraph 写入上下文管理器（P2 PG 迁移后：无锁，仅保留 git/物理备份门禁）。"""
     _check_db_path = Path(db_path) if db_path is not None else DEPGRAPH_PATH
     if not _check_git_backup(_check_db_path):
         sys.exit(4)
-
-    # 物理备份门禁：写入前自动创建物理备份（trae_054 STEP0 物理备份补充）
     _create_physical_backup(_check_db_path, tag=task)
-
-    oid = owner_id or f"depgraph-{os.getpid()}"
-    db_path_str = str(db_path if db_path is not None else DEPGRAPH_PATH)
-    _db_write_lock_lock.acquire()
-    try:
-        acquired = False
-        for attempt in range(max_retries):
-            rc = _lf.cmd_acquire(db_path_str, oid, task=task, skip_naming_check=True)
-            if rc == 0:
-                acquired = True
-                break
-            if attempt < max_retries - 1:
-                time.sleep(retry_interval)
-        if not acquired:
-            raise RuntimeError(f"无法获取 depgraph.db 写入锁 (owner={oid})，重试{max_retries}次后仍失败")
-        try:
-            yield
-        finally:
-            _lf.cmd_release(db_path_str, oid)
-    finally:
-        _db_write_lock_lock.release()
+    yield
 
 
 @contextlib.contextmanager
 def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Path | str | None = None):
-    """当 own_conn=True 时获取文件锁，否则不加锁（共享连接模式由调用方负责锁）。"""
+    """当 own_conn=True 时进入写入上下文（P2 后无锁，仅备份门禁）。"""
     if own_conn:
         with _db_write_lock(task=task, db_path=db_path):
             yield
@@ -274,8 +234,8 @@ def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Pat
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
     """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    conn = get_depgraph_pg_connection(autocommit=False)
+    # P2 PG: row_factory 由 wrapper 处理（RealDictCursor）
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)
@@ -327,15 +287,15 @@ def _atomic_write(dep: dict, conn=None) -> None:
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="_atomic_write"):
         if own_conn:
-            conn = sqlite3.connect(str(DEPGRAPH_PATH))
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             for node_id, node_data in dep.get("nodes", {}).items():
                 clean = {k: v for k, v in node_data.items() if not k.startswith("_")}
                 if "type" in clean:
                     clean["node_type"] = clean.pop("type")
-                set_clause = ", ".join(f"{k} = ?" for k in clean)
+                set_clause = ", ".join(f"{k} = %s" for k in clean)
                 values = list(clean.values()) + [node_id]
-                conn.execute(f"UPDATE nodes SET {set_clause} WHERE node_id = ?", values)
+                conn.execute(f"UPDATE nodes SET {set_clause} WHERE node_id = %s", values)
             if own_conn:
                 conn.commit()
             print("OK: depgraph DB updated", file=sys.stderr)
@@ -512,7 +472,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
     # 非dry-run: 统一事务（所有操作共享一个连接，全部成功才commit）
     with _db_write_lock(task="cmd_batch"):
-        conn = sqlite3.connect(str(DEPGRAPH_PATH))
+        conn = get_depgraph_pg_connection(autocommit=False)
         domain_op_count = 0
         try:
             for i, change in enumerate(changes):
@@ -638,10 +598,10 @@ def add_design_node(
         return -1
 
     with _db_write_lock(db_path=db_path, task="add_design_node"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             # 校验domain_id存在
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
                 return -1
@@ -657,25 +617,26 @@ def add_design_node(
 
             # 检查是否已存在同path的设计态节点
             existing = conn.execute(
-                "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
+                "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'", (path,)
             ).fetchone()
             if existing:
-                print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing[0]}，执行UPDATE", file=sys.stderr)
+                print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing['node_id']}，执行UPDATE", file=sys.stderr)
                 conn.execute(
-                    "UPDATE nodes SET blueprint_id=?, domain_id=?, build_status=?, blueprint_path=? WHERE node_id=?",
-                    (blueprint_id, domain_id, build_status, blueprint_path, existing[0]),
+                    "UPDATE nodes SET blueprint_id=%s, domain_id=%s, build_status=%s, blueprint_path=%s WHERE node_id=%s",
+                    (blueprint_id, domain_id, build_status, blueprint_path, existing["node_id"]),
                 )
                 conn.commit()
-                return existing[0]
+                return existing["node_id"]
 
             # 插入新节点
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
                    build_status, design_maturity, blueprint_path, can_build)
-                   VALUES (?, ?, 'directory', ?, ?, ?, 'design', ?, 1)""",
+                   VALUES (%s, %s, 'directory', %s, %s, %s, 'design', %s, 1)
+                   RETURNING node_id""",
                 ("design_node", path, domain_id, blueprint_id, build_status, blueprint_path),
             )
-            node_id = cur.lastrowid
+            node_id = cur.fetchone()["node_id"]
             conn.commit()
             print(f"[OK] 新增设计态节点 node_id={node_id} path={path}", file=sys.stderr)
             return node_id
@@ -708,23 +669,23 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = s
         return -1
 
     with _db_write_lock(db_path=db_path, task="add_file_node"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在domains表中", file=sys.stderr)
                 return -1
 
             existing = conn.execute(
-                "SELECT node_id FROM nodes WHERE path=? AND design_maturity='production'",
+                "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='production'",
                 (path,),
             ).fetchone()
             if existing:
                 print(
-                    f"WARNING: path '{path}' 已有production节点 node_id={existing[0]}",
+                    f"WARNING: path '{path}' 已有production节点 node_id={existing['node_id']}",
                     file=sys.stderr,
                 )
-                return existing[0]
+                return existing["node_id"]
 
             blueprint_path = (
                 f"docs/03_modules/{blueprint_id}/" if blueprint_id and not blueprint_id.startswith("PENDING") else None
@@ -733,10 +694,11 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = s
             cur = conn.execute(
                 """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
                    build_status, design_maturity, blueprint_path, can_build)
-                   VALUES (?, ?, 'file', ?, ?, 'generated', 'production', ?, 0)""",
+                   VALUES (%s, %s, 'file', %s, %s, 'generated', 'production', %s, 0)
+                   RETURNING node_id""",
                 ("module", path, domain_id, blueprint_id, blueprint_path),
             )
-            node_id = cur.lastrowid
+            node_id = cur.fetchone()["node_id"]
             conn.commit()
             print(
                 f"[OK] 新增文件级production节点 node_id={node_id} path={path}",
@@ -778,29 +740,29 @@ def add_design_edge(
     写入字段：dep_maturity='design'
     """
     with _db_write_lock(db_path=db_path, task="add_design_edge"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             # 校验from_node_id和to_node_id存在且为设计态
             from_node = conn.execute(
-                "SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (from_node_id,)
+                "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s", (from_node_id,)
             ).fetchone()
             if not from_node:
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
                 return -1
-            if from_node[1] != "design":
+            if from_node["design_maturity"] != "design":
                 print(
-                    f"ERROR: from_node_id={from_node_id} design_maturity={from_node[1]}（应为design）", file=sys.stderr
+                    f"ERROR: from_node_id={from_node_id} design_maturity={from_node['design_maturity']}（应为design）", file=sys.stderr
                 )
                 return -1
 
             to_node = conn.execute(
-                "SELECT node_id, design_maturity FROM nodes WHERE node_id=?", (to_node_id,)
+                "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s", (to_node_id,)
             ).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
                 return -1
-            if to_node[1] != "design":
-                print(f"ERROR: to_node_id={to_node_id} design_maturity={to_node[1]}（应为design）", file=sys.stderr)
+            if to_node["design_maturity"] != "design":
+                print(f"ERROR: to_node_id={to_node_id} design_maturity={to_node['design_maturity']}（应为design）", file=sys.stderr)
                 return -1
 
             # DFS循环检测：检查to_node_id是否能到达from_node_id
@@ -815,7 +777,8 @@ def add_design_edge(
                    event_ref, ddd_integration_pattern, failure_mode, fallback,
                    activation_condition, data_transfer_description, resource_impact,
                    relationship_type, cross_domain, verified, dep_maturity)
-                   VALUES (?, ?, ?, 'downstream', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 'design')""",
+                   VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 0, 'design')
+                   RETURNING edge_id""",
                 (
                     from_node_id,
                     to_node_id,
@@ -834,7 +797,7 @@ def add_design_edge(
                     relationship_type,
                 ),
             )
-            edge_id = cur.lastrowid
+            edge_id = cur.fetchone()["edge_id"]
             conn.commit()
             print(f"[OK] 新增设计态边 edge_id={edge_id} {from_node_id}->{to_node_id}", file=sys.stderr)
             return edge_id
@@ -858,8 +821,9 @@ def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
             continue
         visited.add(node)
         # 查询node的所有出边
-        edges = conn.execute("SELECT to_node_id FROM edges WHERE from_node_id=?", (node,)).fetchall()
-        for (next_node,) in edges:
+        edges = conn.execute("SELECT to_node_id FROM edges WHERE from_node_id=%s", (node,)).fetchall()
+        for edge in edges:
+            next_node = edge["to_node_id"]
             if next_node == target:
                 return True
             if next_node not in visited:
@@ -913,17 +877,17 @@ def add_edge(
         return -1
 
     with _db_write_lock(db_path=db_path, task="add_edge"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             # 校验节点存在性（不校验 design_maturity）
             from_node = conn.execute(
-                "SELECT node_id FROM nodes WHERE node_id=?", (from_node_id,)
+                "SELECT node_id FROM nodes WHERE node_id=%s", (from_node_id,)
             ).fetchone()
             if not from_node:
                 print(f"ERROR: from_node_id={from_node_id} 不存在", file=sys.stderr)
                 return -1
             to_node = conn.execute(
-                "SELECT node_id FROM nodes WHERE node_id=?", (to_node_id,)
+                "SELECT node_id FROM nodes WHERE node_id=%s", (to_node_id,)
             ).fetchone()
             if not to_node:
                 print(f"ERROR: to_node_id={to_node_id} 不存在", file=sys.stderr)
@@ -931,12 +895,12 @@ def add_edge(
 
             # 重复边检查
             dup = conn.execute(
-                "SELECT edge_id FROM edges WHERE from_node_id=? AND to_node_id=? AND dep_type=?",
+                "SELECT edge_id FROM edges WHERE from_node_id=%s AND to_node_id=%s AND dep_type=%s",
                 (from_node_id, to_node_id, dep_type),
             ).fetchone()
             if dup:
                 print(
-                    f"ERROR: 重复边已存在 edge_id={dup[0]} ({from_node_id}->{to_node_id} dep_type={dep_type})",
+                    f"ERROR: 重复边已存在 edge_id={dup['edge_id']} ({from_node_id}->{to_node_id} dep_type={dep_type})",
                     file=sys.stderr,
                 )
                 return -1
@@ -953,7 +917,8 @@ def add_edge(
                    event_ref, ddd_integration_pattern, failure_mode, fallback,
                    activation_condition, data_transfer_description, resource_impact,
                    relationship_type, cross_domain, verified, dep_maturity)
-                   VALUES (?, ?, ?, 'downstream', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)""",
+                   VALUES (%s, %s, %s, 'downstream', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0, 0, %s)
+                   RETURNING edge_id""",
                 (
                     from_node_id, to_node_id, dep_type,
                     coupling_strength, used_symbol, invocation_method, api_contract_refs,
@@ -962,7 +927,7 @@ def add_edge(
                     relationship_type, dep_maturity,
                 ),
             )
-            edge_id = cur.lastrowid
+            edge_id = cur.fetchone()["edge_id"]
             conn.commit()
             print(
                 f"[OK] 新增边 edge_id={edge_id} {from_node_id}->{to_node_id} "
@@ -999,17 +964,17 @@ def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_P
     }
 
     with _db_write_lock(db_path=db_path, task="transition_build_status"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
-            row = conn.execute("SELECT build_status FROM nodes WHERE node_id=?", (node_id,)).fetchone()
+            row = conn.execute("SELECT build_status FROM nodes WHERE node_id=%s", (node_id,)).fetchone()
             if not row:
                 print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
                 return False
-            current = row[0]
+            current = row["build_status"]
             if (current, to) not in valid_transitions:
                 print(f"ERROR: 非法状态转换: {current} -> {to}（合法转换: {valid_transitions}）", file=sys.stderr)
                 return False
-            conn.execute("UPDATE nodes SET build_status=? WHERE node_id=?", (to, node_id))
+            conn.execute("UPDATE nodes SET build_status=%s WHERE node_id=%s", (to, node_id))
             conn.commit()
             print(f"[OK] node_id={node_id}: build_status {current} -> {to}", file=sys.stderr)
             return True
@@ -1031,34 +996,34 @@ def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     3. 拒绝硬删除（DELETE FROM nodes）
     """
     with _db_write_lock(db_path=db_path, task="remove_design_node"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             # STEP 1: 登记检查 - 节点是否存在
             row = conn.execute(
-                "SELECT node_id, path, design_maturity, build_status FROM nodes WHERE node_id=?", (node_id,)
+                "SELECT node_id, path, design_maturity, build_status FROM nodes WHERE node_id=%s", (node_id,)
             ).fetchone()
             if not row:
                 print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
                 return False
-            if row[2] != "design":
-                print(f"ERROR: node_id={node_id} design_maturity={row[2]}（非设计态节点，禁止删除）", file=sys.stderr)
+            if row["design_maturity"] != "design":
+                print(f"ERROR: node_id={node_id} design_maturity={row['design_maturity']}（非设计态节点，禁止删除）", file=sys.stderr)
                 return False
 
             # STEP 2: 重复检查 - 是否有其他同path节点
             duplicates = conn.execute(
-                "SELECT COUNT(*) FROM nodes WHERE path=? AND node_id!=?", (row[1], node_id)
-            ).fetchone()[0]
+                "SELECT COUNT(*) FROM nodes WHERE path=%s AND node_id!=%s", (row["path"], node_id)
+            ).fetchone()["count"]
 
             # STEP 3: 功能价值检查 - 检查是否有边引用此节点
             edge_count = conn.execute(
-                "SELECT COUNT(*) FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id)
-            ).fetchone()[0]
+                "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR to_node_id=%s", (node_id, node_id)
+            ).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用，将先删除边", file=sys.stderr)
-                conn.execute("DELETE FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id))
+                conn.execute("DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s", (node_id, node_id))
 
             # 软删除（build_status='deprecated'）
-            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=?", (node_id,))
+            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=%s", (node_id,))
             conn.commit()
             print(f"[OK] node_id={node_id}: 软删除（build_status='deprecated'）", file=sys.stderr)
             return True
@@ -1089,31 +1054,31 @@ def deprecate_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     4. 软删除（build_status='deprecated'）
     """
     with _db_write_lock(db_path=db_path, task="deprecate_node"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             row = conn.execute(
-                "SELECT node_id, file_path, design_maturity, build_status FROM nodes WHERE node_id=?",
+                "SELECT node_id, file_path, design_maturity, build_status FROM nodes WHERE node_id=%s",
                 (node_id,),
             ).fetchone()
             if not row:
                 print(f"ERROR: node_id={node_id} 不存在", file=sys.stderr)
                 return False
-            if row[3] == "deprecated":
+            if row["build_status"] == "deprecated":
                 print(f"[SKIP] node_id={node_id} 已是 deprecated（幂等）", file=sys.stderr)
                 return True
 
             # 检查边引用
             edge_count = conn.execute(
-                "SELECT COUNT(*) FROM edges WHERE from_node_id=? OR to_node_id=?", (node_id, node_id)
-            ).fetchone()[0]
+                "SELECT COUNT(*) FROM edges WHERE from_node_id=%s OR to_node_id=%s", (node_id, node_id)
+            ).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用（软废弃不删边）", file=sys.stderr)
 
-            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=?", (node_id,))
+            conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=%s", (node_id,))
             conn.commit()
             print(
-                f"[OK] node_id={node_id} file_path={row[1]} design_maturity={row[2]}: "
-                f"软废弃（build_status {row[3]} -> deprecated）",
+                f"[OK] node_id={node_id} file_path={row['file_path']} design_maturity={row['design_maturity']}: "
+                f"软废弃（build_status {row['build_status']} -> deprecated）",
                 file=sys.stderr,
             )
             return True
@@ -1137,17 +1102,17 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = str(DE
         print("ERROR: blueprint_id 不能为空", file=sys.stderr)
         return False
     with _db_write_lock(db_path=db_path, task="mark_blueprint_invalid"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             rows = conn.execute(
-                "SELECT node_id, path FROM nodes WHERE blueprint_id=?", (blueprint_id,)
+                "SELECT node_id, path FROM nodes WHERE blueprint_id=%s", (blueprint_id,)
             ).fetchall()
             if not rows:
                 print(f"ERROR: blueprint_id={blueprint_id} 未匹配任何节点", file=sys.stderr)
                 return False
             for node_id, _path in rows:
                 conn.execute(
-                    "UPDATE nodes SET blueprint_id_invalid=1, gate_reason=? WHERE node_id=?",
+                    "UPDATE nodes SET blueprint_id_invalid=1, gate_reason=%s WHERE node_id=%s",
                     (reason, node_id),
                 )
             conn.commit()
@@ -1173,24 +1138,24 @@ def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     - dep_maturity 必须为 'design'（禁止删除运营态边）
     """
     with _db_write_lock(db_path=db_path, task="delete_design_edge"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             row = conn.execute(
-                "SELECT edge_id, from_node_id, to_node_id, dep_maturity FROM edges WHERE edge_id=?", (edge_id,)
+                "SELECT edge_id, from_node_id, to_node_id, dep_maturity FROM edges WHERE edge_id=%s", (edge_id,)
             ).fetchone()
             if not row:
                 print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
                 return False
-            if row[3] != "design":
+            if row["dep_maturity"] != "design":
                 print(
-                    f"ERROR: edge_id={edge_id} dep_maturity={row[3]}（非设计态边，禁止删除）",
+                    f"ERROR: edge_id={edge_id} dep_maturity={row['dep_maturity']}（非设计态边，禁止删除）",
                     file=sys.stderr,
                 )
                 return False
-            conn.execute("DELETE FROM edges WHERE edge_id=?", (edge_id,))
+            conn.execute("DELETE FROM edges WHERE edge_id=%s", (edge_id,))
             conn.commit()
             print(
-                f"[OK] 删除设计态边 edge_id={edge_id} ({row[1]}->{row[2]})",
+                f"[OK] 删除设计态边 edge_id={edge_id} ({row['from_node_id']}->{row['to_node_id']})",
                 file=sys.stderr,
             )
             return True
@@ -1210,19 +1175,19 @@ def delete_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
     用途：add_edge 的对偶命令，支持单条回滚（production 边无法用 --delete-design-edge 删除）
     """
     with _db_write_lock(db_path=db_path, task="delete_edge"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             row = conn.execute(
-                "SELECT edge_id, from_node_id, to_node_id, dep_type, dep_maturity FROM edges WHERE edge_id=?",
+                "SELECT edge_id, from_node_id, to_node_id, dep_type, dep_maturity FROM edges WHERE edge_id=%s",
                 (edge_id,),
             ).fetchone()
             if not row:
                 print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
                 return False
-            conn.execute("DELETE FROM edges WHERE edge_id=?", (edge_id,))
+            conn.execute("DELETE FROM edges WHERE edge_id=%s", (edge_id,))
             conn.commit()
             print(
-                f"[OK] 删除边 edge_id={edge_id} ({row[1]}->{row[2]} dep_type={row[3]} dep_maturity={row[4]})",
+                f"[OK] 删除边 edge_id={edge_id} ({row['from_node_id']}->{row['to_node_id']} dep_type={row['dep_type']} dep_maturity={row['dep_maturity']})",
                 file=sys.stderr,
             )
             return True
@@ -1242,15 +1207,15 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = str(DEPGRAPH_PATH)) 
     用途：F35 蓝图悬空处理（GOV-FSTR-001 引用的蓝图文件实际不存在）
     """
     with _db_write_lock(db_path=db_path, task="delete_blueprint_link"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             row = conn.execute(
-                "SELECT blueprint_id FROM blueprint_links WHERE blueprint_id=?", (blueprint_id,)
+                "SELECT blueprint_id FROM blueprint_links WHERE blueprint_id=%s", (blueprint_id,)
             ).fetchone()
             if not row:
                 print(f"ERROR: blueprint_id={blueprint_id} 在 blueprint_links 中不存在", file=sys.stderr)
                 return False
-            conn.execute("DELETE FROM blueprint_links WHERE blueprint_id=?", (blueprint_id,))
+            conn.execute("DELETE FROM blueprint_links WHERE blueprint_id=%s", (blueprint_id,))
             conn.commit()
             print(f"[OK] 删除 blueprint_link blueprint_id={blueprint_id}", file=sys.stderr)
             return True
@@ -1272,16 +1237,18 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = str(DEPGRAPH_
     """
     project_root = DEPGRAPH_PATH.parent.parent.parent  # D:/ZephyrAlpha
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_nodes"):
-        conn = sqlite3.connect(db_path)
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=30000")
+        conn = get_depgraph_pg_connection(autocommit=False)
+        pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+        pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             all_nodes = conn.execute(
                 "SELECT node_id, path FROM nodes WHERE path IS NOT NULL AND path != ''"
             ).fetchall()
 
             ghost_node_ids: list[tuple[str, str]] = []
-            for nid, path in all_nodes:
+            for r in all_nodes:
+                nid = r["node_id"]
+                path = r["path"]
                 full_path = Path(project_root) / path
                 if not full_path.exists():
                     ghost_node_ids.append((nid, path))
@@ -1301,12 +1268,12 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = str(DEPGRAPH_
             # 先删除引用这些 node 的 edges（避免外键残留孤儿边）
             for nid, _ in ghost_node_ids:
                 conn.execute(
-                    "DELETE FROM edges WHERE from_node_id = ? OR to_node_id = ?",
+                    "DELETE FROM edges WHERE from_node_id = %s OR to_node_id = %s",
                     (nid, nid),
                 )
             # 再删除 ghost nodes
             for nid, _ in ghost_node_ids:
-                conn.execute("DELETE FROM nodes WHERE node_id = ?", (nid,))
+                conn.execute("DELETE FROM nodes WHERE node_id = %s", (nid,))
             conn.commit()
             print(f"[OK] 删除 {len(ghost_node_ids)} 个幽灵节点（及关联 edges）")
             return len(ghost_node_ids)
@@ -1324,15 +1291,15 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = str(DEPGRAPH_
     返回：删除的边数，-1=失败
     """
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_edges"):
-        conn = sqlite3.connect(db_path)
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=30000")
+        conn = get_depgraph_pg_connection(autocommit=False)
+        pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+        pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             orphan_count = conn.execute(
                 """SELECT COUNT(*) FROM edges
                    WHERE from_node_id NOT IN (SELECT node_id FROM nodes)
                       OR to_node_id NOT IN (SELECT node_id FROM nodes)"""
-            ).fetchone()[0]
+            ).fetchone()["count"]
 
             if orphan_count == 0:
                 print("[OK] 无孤儿边，无需清理")
@@ -1348,7 +1315,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = str(DEPGRAPH_
                        LIMIT 10"""
                 ).fetchall()
                 for s in samples:
-                    print(f"  edge_id={s[0]}: {s[1]}->{s[2]} ({s[3]})")
+                    print(f"  edge_id={s['edge_id']}: {s['from_node_id']}->{s['to_node_id']} ({s['dep_type']})")
                 return orphan_count
 
             conn.execute(
@@ -1393,20 +1360,20 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = str(DEPGRAP
         return False
 
     with _db_write_lock(db_path=db_path, task="update_edge_type"):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             row = conn.execute(
-                "SELECT edge_id, from_node_id, to_node_id, dep_type FROM edges WHERE edge_id=?",
+                "SELECT edge_id, from_node_id, to_node_id, dep_type FROM edges WHERE edge_id=%s",
                 (edge_id,),
             ).fetchone()
             if not row:
                 print(f"ERROR: edge_id={edge_id} 不存在", file=sys.stderr)
                 return False
-            old_type = row[3]
-            conn.execute("UPDATE edges SET dep_type=? WHERE edge_id=?", (new_dep_type, edge_id))
+            old_type = row["dep_type"]
+            conn.execute("UPDATE edges SET dep_type=%s WHERE edge_id=%s", (new_dep_type, edge_id))
             conn.commit()
             print(
-                f"[OK] edge_id={edge_id}: dep_type {old_type} -> {new_dep_type} ({row[1]}->{row[2]})",
+                f"[OK] edge_id={edge_id}: dep_type {old_type} -> {new_dep_type} ({row['from_node_id']}->{row['to_node_id']})",
                 file=sys.stderr,
             )
             return True
@@ -1438,20 +1405,20 @@ def _validate_domain_naming(
     warnings: list[str] = []
 
     try:
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=False)
         cur = conn.execute(
             "SELECT rule_id, severity FROM domain_naming_rules "
             "WHERE applies_to IN ('create', 'both')"
         )
-        rules = {r[0]: r[1] for r in cur.fetchall()}
+        rules = {r["rule_id"]: r["severity"] for r in cur.fetchall()}
         if not rules:
             conn.close()
             return errors, warnings
 
         cur = conn.execute("SELECT domain_id FROM domains")
-        existing_ids = {r[0] for r in cur.fetchall()}
+        existing_ids = {r["domain_id"] for r in cur.fetchall()}
         conn.close()
-    except sqlite3.OperationalError:
+    except psycopg2.Error:
         # domain_naming_rules 表不存在——跳过校验（向后兼容）
         return errors, warnings
 
@@ -1518,9 +1485,9 @@ def cmd_insert_domain(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_insert_domain", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
-            existing = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            existing = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
             if existing:
                 print(f"ERROR: domain_id '{domain_id}' 已存在", file=sys.stderr)
                 return False
@@ -1536,7 +1503,7 @@ def cmd_insert_domain(
             conn.execute(
                 """INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
                    current_modules, max_modules, lifecycle, created_at, updated_at, build_status, layer_id)
-                   VALUES (?, ?, ?, ?, ?, 0, ?, 'design_only', ?, ?, 'planned', ?)""",
+                   VALUES (%s, %s, %s, %s, %s, 0, %s, 'design_only', %s, %s, 'planned', %s)""",
                 (domain_id, domain_name, domain_group, description, ssot_path, max_modules, now, now, layer_id),
             )
             if own_conn:
@@ -1570,15 +1537,15 @@ def cmd_update_domain_id(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_id", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_domain_id,)).fetchone()
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
                 return -1
 
             rows = conn.execute(
-                "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=? OR blueprint_id=?",
+                "SELECT node_id, path, domain_id FROM nodes WHERE belongs_to=%s OR blueprint_id=%s",
                 (module_id, module_id),
             ).fetchall()
             if not rows:
@@ -1586,7 +1553,7 @@ def cmd_update_domain_id(
                 return -1
 
             # 跨域共享防御检查（附录D裁定3）
-            domain_ids_in_match = set(r[2] for r in rows)
+            domain_ids_in_match = set(r["domain_id"] for r in rows)
             if len(domain_ids_in_match) > 1 and not force_cross_domain:
                 print(f"WARNING: module_id '{module_id}' 匹配 {len(rows)} 个节点，分布在 {len(domain_ids_in_match)} 个域: {domain_ids_in_match}", file=sys.stderr)
                 print(f"  跨域匹配可能导致误迁。使用 --force-cross-domain 确认，或改用 --migrate-nodes 按节点精确迁移。", file=sys.stderr)
@@ -1595,13 +1562,13 @@ def cmd_update_domain_id(
             if dry_run:
                 for r in rows:
                     print(
-                        f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})",
+                        f"[DRY RUN] 将 UPDATE node_id={r['node_id']} domain_id: {r['domain_id']} -> {new_domain_id} (path={r['path']})",
                         file=sys.stderr,
                     )
                 return len(rows)
 
             cur = conn.execute(
-                "UPDATE nodes SET domain_id=? WHERE belongs_to=? OR blueprint_id=?",
+                "UPDATE nodes SET domain_id=%s WHERE belongs_to=%s OR blueprint_id=%s",
                 (new_domain_id, module_id, module_id),
             )
             if own_conn:
@@ -1637,7 +1604,7 @@ _RENAME_SCAN_EXCLUDE_COLUMNS = {"blueprint_id", "path", "blueprint_path"}
 
 
 def _scan_replace_all_text_columns(
-    c: sqlite3.Connection,
+    c,
     old_id: str,
     new_id: str,
     dry_run: bool = False,
@@ -1654,22 +1621,35 @@ def _scan_replace_all_text_columns(
     """
     _exclude = exclude_columns or set()
     total = 0
+    # P2 PG 迁移：sqlite_master → information_schema.tables（PG 不支持 sqlite_master）
     cur = c.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        "SELECT table_name AS name FROM information_schema.tables "
+        "WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
     )
-    all_tables = [r[0] for r in cur.fetchall() if r[0] not in _RENAME_SCAN_EXCLUDE_TABLES]
+    all_tables = [
+        r["name"] for r in cur.fetchall() if r["name"] not in _RENAME_SCAN_EXCLUDE_TABLES
+    ]
     for tbl in all_tables:
-        cur = c.execute(f"PRAGMA table_info({tbl})")
+        # P2 PG 迁移：PRAGMA table_info → information_schema.columns
+        # PG 通过 information_schema.columns 查询列信息：
+        #   column_name=列名, data_type=数据类型（如 'text', 'character varying'）
+        cur = c.execute(
+            "SELECT column_name, data_type FROM information_schema.columns "
+            "WHERE table_schema = 'public' AND table_name = %s",
+            (tbl,),
+        )
         text_cols = [
-            r[1]
+            r["column_name"]
             for r in cur.fetchall()
-            if r[2] and r[2].upper() == "TEXT" and r[1] not in _exclude
+            if r["data_type"]
+            and r["data_type"].upper() in ("TEXT", "CHARACTER VARYING")
+            and r["column_name"] not in _exclude
         ]
         for col in text_cols:
             cnt = c.execute(
-                f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE ?",
+                f"SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s",
                 (f"%{old_id}%",),
-            ).fetchone()[0]
+            ).fetchone()["cnt"]
             if cnt > 0:
                 print(
                     f"  {mode} 兜底 {tbl}.{col} REPLACE '{old_id}'->'{new_id}': {cnt} rows",
@@ -1677,7 +1657,7 @@ def _scan_replace_all_text_columns(
                 )
                 if not dry_run:
                     c.execute(
-                        f"UPDATE {tbl} SET {col}=REPLACE({col}, ?, ?) WHERE {col} LIKE ?",
+                        f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
                         (old_id, new_id, f"%{old_id}%"),
                     )
                 total += cnt
@@ -1714,12 +1694,12 @@ def cmd_rename_domain(
         )
         return -1
 
-    def _run(c: sqlite3.Connection) -> int:
+    def _run(c) -> int:
         # 0. 校验 old 存在、new 不存在（禁止覆盖）
-        if not c.execute("SELECT 1 FROM domains WHERE domain_id=?", (old_id,)).fetchone():
+        if not c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (old_id,)).fetchone():
             print(f"ERROR: old_id '{old_id}' 不在 domains 表中", file=sys.stderr)
             return -1
-        if c.execute("SELECT 1 FROM domains WHERE domain_id=?", (new_id,)).fetchone():
+        if c.execute("SELECT 1 FROM domains WHERE domain_id=%s", (new_id,)).fetchone():
             print(f"ERROR: new_id '{new_id}' 已存在 domains 表中（禁止覆盖）", file=sys.stderr)
             return -1
 
@@ -1753,26 +1733,26 @@ def cmd_rename_domain(
         for step, tbl, col, use_like in steps:
             if use_like:
                 cnt = c.execute(
-                    f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE ?",
+                    f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE %s",
                     (f"%{old_id}%",),
-                ).fetchone()[0]
+                ).fetchone()["count"]
                 if cnt > 0:
                     print(f"  {mode} step{step:>2} {tbl}.{col} REPLACE+LIKE '%{old_id}%': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=REPLACE({col}, ?, ?) WHERE {col} LIKE ?",
+                            f"UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s",
                             (old_id, new_id, f"%{old_id}%"),
                         )
             else:
                 cnt = c.execute(
-                    f"SELECT COUNT(*) FROM {tbl} WHERE {col}=?",
+                    f"SELECT COUNT(*) FROM {tbl} WHERE {col}=%s",
                     (old_id,),
-                ).fetchone()[0]
+                ).fetchone()["count"]
                 if cnt > 0:
                     print(f"  {mode} step{step:>2} {tbl}.{col}='{old_id}': {cnt} rows", file=sys.stderr)
                     if not dry_run:
                         c.execute(
-                            f"UPDATE {tbl} SET {col}=? WHERE {col}=?",
+                            f"UPDATE {tbl} SET {col}=%s WHERE {col}=%s",
                             (new_id, old_id),
                         )
             total += cnt
@@ -1789,10 +1769,10 @@ def cmd_rename_domain(
 
     if dry_run:
         # dry_run 只读预览，不加写锁不备份
-        c = sqlite3.connect(db_path) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
         if own_conn:
-            c.execute("PRAGMA journal_mode=WAL")
-            c.execute("PRAGMA busy_timeout=30000")
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             return _run(c)
         finally:
@@ -1800,10 +1780,10 @@ def cmd_rename_domain(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task=f"rename_domain_{old_id}", db_path=db_path):
-            c = sqlite3.connect(db_path) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
             if own_conn:
-                c.execute("PRAGMA journal_mode=WAL")
-                c.execute("PRAGMA busy_timeout=30000")
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             try:
                 return _run(c)
             except Exception as e:
@@ -1838,10 +1818,10 @@ def _post_rename_residual_check(old_id: str, db_path: str) -> None:
             file=sys.stderr,
         )
         return
-    conn = sqlite3.connect(db_path)
+    conn = get_depgraph_pg_connection(autocommit=False)
     try:
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA busy_timeout=30000")
+        pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+        pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         residuals = scan_residual(conn, [old_id], check_all_text_columns=True)
         total = sum(r["count"] for r in residuals)
         if total == 0:
@@ -1883,7 +1863,7 @@ def cmd_fix_rename_residual(
     # 按旧ID长度降序排列（先长后短，避免 D-SIGNAL 先替换 D-SIGNAL_ASHARE 的子串）
     sorted_map = sorted(rename_map.items(), key=lambda x: len(x[0]), reverse=True)
 
-    def _run(c: sqlite3.Connection) -> int:
+    def _run(c) -> int:
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = 0
         for old_id, new_id in sorted_map:
@@ -1898,10 +1878,10 @@ def cmd_fix_rename_residual(
         return total
 
     if dry_run:
-        c = sqlite3.connect(db_path) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
         if own_conn:
-            c.execute("PRAGMA journal_mode=WAL")
-            c.execute("PRAGMA busy_timeout=30000")
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             return _run(c)
         finally:
@@ -1909,10 +1889,10 @@ def cmd_fix_rename_residual(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="fix_rename_residual", db_path=db_path):
-            c = sqlite3.connect(db_path) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
             if own_conn:
-                c.execute("PRAGMA journal_mode=WAL")
-                c.execute("PRAGMA busy_timeout=30000")
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             try:
                 return _run(c)
             except Exception as e:
@@ -1925,7 +1905,7 @@ def cmd_fix_rename_residual(
                     c.close()
 
 
-def _restore_blueprint_links_readonly_trigger(c: sqlite3.Connection) -> None:
+def _restore_blueprint_links_readonly_trigger(c) -> None:
     """恢复 blueprint_links 只读触发器（裁定#207 R1 B2 通行证恢复）。
 
     cmd_propagate_rename 临时 DROP 该触发器以写入 blueprint_links.blueprint_id，
@@ -1956,7 +1936,7 @@ def cmd_propagate_rename(
     own_conn = conn is None
     sorted_map = sorted(rename_map.items(), key=lambda x: len(x[0]), reverse=True)
 
-    def _run(c: sqlite3.Connection) -> int:
+    def _run(c) -> int:
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = 0
         for old_domain, new_domain in sorted_map:
@@ -1968,11 +1948,11 @@ def cmd_propagate_rename(
             for tbl, col in [("nodes", "blueprint_id"), ("blueprint_links", "blueprint_id")]:
                 try:
                     rows = c.execute(
-                        f"SELECT DISTINCT {col} FROM {tbl} WHERE {col} LIKE ?",
+                        f"SELECT DISTINCT {col} FROM {tbl} WHERE {col} LIKE %s",
                         (f"MOD-{old_frag}%",),
                     ).fetchall()
-                    old_bp_ids.update(r[0] for r in rows if r[0])
-                except sqlite3.OperationalError:
+                    old_bp_ids.update(r[col] for r in rows if r[col])
+                except psycopg2.Error:
                     pass
 
             for old_bp_id in sorted(old_bp_ids):
@@ -2020,10 +2000,10 @@ def _with_bp_rename_tx(
     返回 run_fn 的返回值，失败返回 -1。
     """
     if dry_run:
-        c = sqlite3.connect(db_path) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
         if own_conn:
-            c.execute("PRAGMA journal_mode=WAL")
-            c.execute("PRAGMA busy_timeout=30000")
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             return run_fn(c)
         finally:
@@ -2031,10 +2011,10 @@ def _with_bp_rename_tx(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task=task, db_path=db_path):
-            c = sqlite3.connect(db_path) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
             if own_conn:
-                c.execute("PRAGMA journal_mode=WAL")
-                c.execute("PRAGMA busy_timeout=30000")
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制）
             c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
             try:
@@ -2062,7 +2042,7 @@ def _with_bp_rename_tx(
 
 
 def _propagate_bp_id_core(
-    c: sqlite3.Connection,
+    c,
     old_bp_id: str,
     new_bp_id: str,
     dry_run: bool = False,
@@ -2084,13 +2064,13 @@ def _propagate_bp_id_core(
 
     # 1. nodes.blueprint_id 精确值映射
     cnt = c.execute(
-        "SELECT COUNT(*) FROM nodes WHERE blueprint_id=?", (old_bp_id,)
-    ).fetchone()[0]
+        "SELECT COUNT(*) FROM nodes WHERE blueprint_id=%s", (old_bp_id,)
+    ).fetchone()["count"]
     if cnt > 0:
         print(f"  {mode} nodes.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
         if not dry_run:
             c.execute(
-                "UPDATE nodes SET blueprint_id=? WHERE blueprint_id=?",
+                "UPDATE nodes SET blueprint_id=%s WHERE blueprint_id=%s",
                 (new_bp_id, old_bp_id),
             )
         total += cnt
@@ -2098,36 +2078,37 @@ def _propagate_bp_id_core(
     # 2. blueprint_links.blueprint_id 精确值映射
     try:
         cnt = c.execute(
-            "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=?", (old_bp_id,)
-        ).fetchone()[0]
-    except sqlite3.OperationalError:
+            "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=%s", (old_bp_id,)
+        ).fetchone()["count"]
+    except psycopg2.Error:
         cnt = 0
     if cnt > 0:
         print(f"  {mode} blueprint_links.blueprint_id: {old_bp_id} -> {new_bp_id}: {cnt} rows", file=sys.stderr)
         if not dry_run:
             c.execute(
-                "UPDATE blueprint_links SET blueprint_id=? WHERE blueprint_id=?",
+                "UPDATE blueprint_links SET blueprint_id=%s WHERE blueprint_id=%s",
                 (new_bp_id, old_bp_id),
             )
         total += cnt
 
     # 3. nodes.type_specific_data 级联清理（可选）
     if propagate_tsd:
+        # P2 PG 迁移：GLOB → LIKE（PG 不支持 GLOB；* 通配符 → % 通配符）
         tsd_rows = c.execute(
-            "SELECT node_id, type_specific_data FROM nodes WHERE type_specific_data GLOB ?",
-            (f"*{old_bp_id}*",),
+            "SELECT node_id, type_specific_data FROM nodes WHERE type_specific_data LIKE %s",
+            (f"%{old_bp_id}%",),
         ).fetchall()
         tsd_cnt = 0
         for row in tsd_rows:
-            node_id = row[0]
-            tsd = row[1]
+            node_id = row["node_id"]
+            tsd = row["type_specific_data"]
             if not tsd:
                 continue
             new_tsd = _safe_bp_id_replace(tsd, old_bp_id, new_bp_id)
             if new_tsd != tsd:
                 if not dry_run:
                     c.execute(
-                        "UPDATE nodes SET type_specific_data=? WHERE node_id=?",
+                        "UPDATE nodes SET type_specific_data=%s WHERE node_id=%s",
                         (new_tsd, node_id),
                     )
                 tsd_cnt += 1
@@ -2137,21 +2118,22 @@ def _propagate_bp_id_core(
 
     # 4. nodes.blueprint_path 级联清理（可选）
     if propagate_bp_path:
+        # P2 PG 迁移：GLOB → LIKE（PG 不支持 GLOB；* 通配符 → % 通配符）
         bp_path_rows = c.execute(
-            "SELECT node_id, blueprint_path FROM nodes WHERE blueprint_path GLOB ?",
-            (f"*{old_bp_id}*",),
+            "SELECT node_id, blueprint_path FROM nodes WHERE blueprint_path LIKE %s",
+            (f"%{old_bp_id}%",),
         ).fetchall()
         bp_cnt = 0
         for row in bp_path_rows:
-            node_id = row[0]
-            bp_path = row[1]
+            node_id = row["node_id"]
+            bp_path = row["blueprint_path"]
             if not bp_path:
                 continue
             new_path = _safe_bp_id_replace(bp_path, old_bp_id, new_bp_id)
             if new_path != bp_path:
                 if not dry_run:
                     c.execute(
-                        "UPDATE nodes SET blueprint_path=? WHERE node_id=?",
+                        "UPDATE nodes SET blueprint_path=%s WHERE node_id=%s",
                         (new_path, node_id),
                     )
                 bp_cnt += 1
@@ -2221,7 +2203,7 @@ def cmd_rename_blueprint_id(
 
     own_conn = conn is None
 
-    def _run(c: sqlite3.Connection) -> int:
+    def _run(c) -> int:
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = _propagate_bp_id_core(
             c, old_bp_id, new_bp_id, dry_run,
@@ -2247,10 +2229,10 @@ def cmd_rename_blueprint_id(
         return total
 
     if dry_run:
-        c = sqlite3.connect(db_path) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
         if own_conn:
-            c.execute("PRAGMA journal_mode=WAL")
-            c.execute("PRAGMA busy_timeout=30000")
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             return _run(c)
         finally:
@@ -2258,10 +2240,10 @@ def cmd_rename_blueprint_id(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="rename_blueprint_id", db_path=db_path):
-            c = sqlite3.connect(db_path) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
             if own_conn:
-                c.execute("PRAGMA journal_mode=WAL")
-                c.execute("PRAGMA busy_timeout=30000")
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             # 临时禁用 blueprint_links 只读触发器（裁定#207 R1 B2 通行证机制）
             c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
             try:
@@ -2307,15 +2289,15 @@ def cmd_propagate_node_paths(
     own_conn = conn is None
     bl_mapping = bl_mapping or {}
 
-    def _run(c: sqlite3.Connection) -> int:
+    def _run(c) -> int:
         mode = "[DRY RUN]" if dry_run else "[OK]"
         total = 0
 
         # 1. nodes.path 精确值映射（无只读触发器，可直接 UPDATE）
         for old_path, new_path in path_mapping.items():
             cnt = c.execute(
-                "SELECT COUNT(*) FROM nodes WHERE path=?", (old_path,)
-            ).fetchone()[0]
+                "SELECT COUNT(*) FROM nodes WHERE path=%s", (old_path,)
+            ).fetchone()["count"]
             if cnt > 0:
                 print(
                     f"  {mode} nodes.path: {old_path} -> {new_path}: {cnt} rows",
@@ -2323,15 +2305,15 @@ def cmd_propagate_node_paths(
                 )
                 if not dry_run:
                     c.execute(
-                        "UPDATE nodes SET path=? WHERE path=?", (new_path, old_path)
+                        "UPDATE nodes SET path=%s WHERE path=%s", (new_path, old_path)
                     )
                 total += cnt
 
         # 1b. nodes.file_path 精确值映射（与 path 同步传播，避免改名后 file_path 残留）
         for old_path, new_path in path_mapping.items():
             cnt = c.execute(
-                "SELECT COUNT(*) FROM nodes WHERE file_path=?", (old_path,)
-            ).fetchone()[0]
+                "SELECT COUNT(*) FROM nodes WHERE file_path=%s", (old_path,)
+            ).fetchone()["count"]
             if cnt > 0:
                 print(
                     f"  {mode} nodes.file_path: {old_path} -> {new_path}: {cnt} rows",
@@ -2339,16 +2321,16 @@ def cmd_propagate_node_paths(
                 )
                 if not dry_run:
                     c.execute(
-                        "UPDATE nodes SET file_path=? WHERE file_path=?", (new_path, old_path)
+                        "UPDATE nodes SET file_path=%s WHERE file_path=%s", (new_path, old_path)
                     )
                 total += cnt
 
         # 2. blueprint_links.blueprint_path 精确值映射（需触发器通行证）
         for old_path, new_path in bl_mapping.items():
             cnt = c.execute(
-                "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_path=?",
+                "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_path=%s",
                 (old_path,),
-            ).fetchone()[0]
+            ).fetchone()["count"]
             if cnt > 0:
                 print(
                     f"  {mode} blueprint_links.blueprint_path: {old_path} -> {new_path}: {cnt} rows",
@@ -2356,7 +2338,7 @@ def cmd_propagate_node_paths(
                 )
                 if not dry_run:
                     c.execute(
-                        "UPDATE blueprint_links SET blueprint_path=? WHERE blueprint_path=?",
+                        "UPDATE blueprint_links SET blueprint_path=%s WHERE blueprint_path=%s",
                         (new_path, old_path),
                     )
                 total += cnt
@@ -2367,10 +2349,10 @@ def cmd_propagate_node_paths(
         return total
 
     if dry_run:
-        c = sqlite3.connect(db_path) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
         if own_conn:
-            c.execute("PRAGMA journal_mode=WAL")
-            c.execute("PRAGMA busy_timeout=30000")
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+            pass  # P2 PG: PRAGMA 已删除（PG 不需要）
         try:
             return _run(c)
         finally:
@@ -2378,10 +2360,10 @@ def cmd_propagate_node_paths(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="propagate_node_paths", db_path=db_path):
-            c = sqlite3.connect(db_path) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
             if own_conn:
-                c.execute("PRAGMA journal_mode=WAL")
-                c.execute("PRAGMA busy_timeout=30000")
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
+                pass  # P2 PG: PRAGMA 已删除（PG 不需要）
             # 临时禁用 blueprint_links 只读触发器（仅当有 bl_mapping 时）
             if bl_mapping:
                 c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update")
@@ -2421,22 +2403,22 @@ def cmd_update_domain_name(
     """更新 domains.domain_name（裁定#204 配套）。返回受影响行数，-1=失败。"""
     own_conn = conn is None
 
-    def _run(c: sqlite3.Connection) -> int:
-        row = c.execute("SELECT domain_name FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+    def _run(c) -> int:
+        row = c.execute("SELECT domain_name FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
         if not row:
             print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
             return -1
         mode = "[DRY RUN]" if dry_run else "[OK]"
-        print(f"  {mode} domains.domain_name: '{row[0]}' -> '{new_name}'", file=sys.stderr)
+        print(f"  {mode} domains.domain_name: '{row['domain_name']}' -> '{new_name}'", file=sys.stderr)
         if dry_run:
             return 1
-        cur = c.execute("UPDATE domains SET domain_name=? WHERE domain_id=?", (new_name, domain_id))
+        cur = c.execute("UPDATE domains SET domain_name=%s WHERE domain_id=%s", (new_name, domain_id))
         if own_conn:
             c.commit()
         return cur.rowcount
 
     if dry_run:
-        c = sqlite3.connect(db_path) if own_conn else conn
+        c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
         try:
             return _run(c)
         finally:
@@ -2444,7 +2426,7 @@ def cmd_update_domain_name(
                 c.close()
     else:
         with _optional_db_lock(own_conn, task="update_domain_name", db_path=db_path):
-            c = sqlite3.connect(db_path) if own_conn else conn
+            c = get_depgraph_pg_connection(autocommit=False) if own_conn else conn
             try:
                 return _run(c)
             except Exception as e:
@@ -2471,13 +2453,13 @@ def cmd_migrate_nodes(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_migrate_nodes", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_domain_id,)).fetchone()
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: new_domain_id '{new_domain_id}' 不在 domains 表中", file=sys.stderr)
                 return -1
-            placeholders = ",".join("?" * len(node_ids))
+            placeholders = ",".join("%s" * len(node_ids))
             rows = conn.execute(
                 f"SELECT node_id, path, domain_id FROM nodes WHERE node_id IN ({placeholders})",
                 node_ids,
@@ -2487,10 +2469,10 @@ def cmd_migrate_nodes(
                 return -1
             if dry_run:
                 for r in rows:
-                    print(f"[DRY RUN] 将 UPDATE node_id={r[0]} domain_id: {r[2]} -> {new_domain_id} (path={r[1]})", file=sys.stderr)
+                    print(f"[DRY RUN] 将 UPDATE node_id={r['node_id']} domain_id: {r['domain_id']} -> {new_domain_id} (path={r['path']})", file=sys.stderr)
                 return len(rows)
             cur = conn.execute(
-                f"UPDATE nodes SET domain_id=? WHERE node_id IN ({placeholders})",
+                f"UPDATE nodes SET domain_id=%s WHERE node_id IN ({placeholders})",
                 [new_domain_id] + node_ids,
             )
             if own_conn:
@@ -2519,10 +2501,10 @@ def cmd_update_path(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_path", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             rows = conn.execute(
-                "SELECT node_id, path FROM nodes WHERE belongs_to=? OR blueprint_id=?", (module_id, module_id)
+                "SELECT node_id, path FROM nodes WHERE belongs_to=%s OR blueprint_id=%s", (module_id, module_id)
             ).fetchall()
             if not rows:
                 print(f"ERROR: module_id '{module_id}' 未找到匹配节点", file=sys.stderr)
@@ -2530,11 +2512,11 @@ def cmd_update_path(
 
             if dry_run:
                 for r in rows:
-                    print(f"[DRY RUN] 将 UPDATE node_id={r[0]} path: {r[1]} -> {new_path}", file=sys.stderr)
+                    print(f"[DRY RUN] 将 UPDATE node_id={r['node_id']} path: {r['path']} -> {new_path}", file=sys.stderr)
                 return len(rows)
 
             cur = conn.execute(
-                "UPDATE nodes SET path=? WHERE belongs_to=? OR blueprint_id=?", (new_path, module_id, module_id)
+                "UPDATE nodes SET path=%s WHERE belongs_to=%s OR blueprint_id=%s", (new_path, module_id, module_id)
             )
             if own_conn:
                 conn.commit()
@@ -2574,10 +2556,10 @@ def cmd_migrate_dependencies(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_migrate_dependencies", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             rows = conn.execute(
-                "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?",
+                "SELECT from_domain, to_domain, edge_count FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s",
                 (from_domain, to_domain),
             ).fetchall()
             if not rows:
@@ -2585,12 +2567,12 @@ def cmd_migrate_dependencies(
                 return -1
 
             if new_from_domain:
-                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_from_domain,)).fetchone()
+                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_from_domain,)).fetchone()
                 if not d:
                     print(f"ERROR: new_from_domain '{new_from_domain}' 不在 domains 表中", file=sys.stderr)
                     return -1
             if new_to_domain:
-                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (new_to_domain,)).fetchone()
+                d = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (new_to_domain,)).fetchone()
                 if not d:
                     print(f"ERROR: new_to_domain '{new_to_domain}' 不在 domains 表中", file=sys.stderr)
                     return -1
@@ -2601,22 +2583,22 @@ def cmd_migrate_dependencies(
             if dry_run:
                 for r in rows:
                     print(
-                        f"[DRY RUN] 将 UPDATE domain_dependencies: {r[0]} -> {r[1]} => {final_from} -> {final_to} (edge_count={r[2]})",
+                        f"[DRY RUN] 将 UPDATE domain_dependencies: {r['from_domain']} -> {r['to_domain']} => {final_from} -> {final_to} (edge_count={r['edge_count']})",
                         file=sys.stderr,
                     )
                 return len(rows)
 
             existing = conn.execute(
-                "SELECT edge_count FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (final_from, final_to)
+                "SELECT edge_count FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s", (final_from, final_to)
             ).fetchone()
 
             if existing and (final_from != from_domain or final_to != to_domain):
-                total = existing[0] + rows[0][2]
+                total = existing["edge_count"] + rows[0]["edge_count"]
                 conn.execute(
-                    "DELETE FROM domain_dependencies WHERE from_domain=? AND to_domain=?", (from_domain, to_domain)
+                    "DELETE FROM domain_dependencies WHERE from_domain=%s AND to_domain=%s", (from_domain, to_domain)
                 )
                 conn.execute(
-                    "UPDATE domain_dependencies SET edge_count=? WHERE from_domain=? AND to_domain=?",
+                    "UPDATE domain_dependencies SET edge_count=%s WHERE from_domain=%s AND to_domain=%s",
                     (total, final_from, final_to),
                 )
                 print(
@@ -2625,7 +2607,7 @@ def cmd_migrate_dependencies(
                 )
             else:
                 conn.execute(
-                    "UPDATE domain_dependencies SET from_domain=?, to_domain=? WHERE from_domain=? AND to_domain=?",
+                    "UPDATE domain_dependencies SET from_domain=%s, to_domain=%s WHERE from_domain=%s AND to_domain=%s",
                     (final_from, final_to, from_domain, to_domain),
                 )
                 print(
@@ -2670,10 +2652,10 @@ def cmd_update_domain_capacity(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_capacity", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             existing = conn.execute(
-                "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=?",
+                "SELECT domain_id, current_modules, max_modules, production_nodes FROM domains WHERE domain_id=%s",
                 (domain_id,),
             ).fetchone()
             if not existing:
@@ -2687,7 +2669,7 @@ def cmd_update_domain_capacity(
                 return True
 
             now = datetime.datetime.now().isoformat()
-            conn.execute(f"UPDATE domains SET {field}=?, updated_at=? WHERE domain_id=?", (value, now, domain_id))
+            conn.execute(f"UPDATE domains SET {field}=%s, updated_at=%s WHERE domain_id=%s", (value, now, domain_id))
             if own_conn:
                 conn.commit()
             print(f"[OK] UPDATE domains {field}: {domain_id} {old_value} -> {value}", file=sys.stderr)
@@ -2722,16 +2704,16 @@ def cmd_update_domain_layer(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_layer", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             existing = conn.execute(
-                "SELECT domain_id, layer_id FROM domains WHERE domain_id=?", (domain_id,)
+                "SELECT domain_id, layer_id FROM domains WHERE domain_id=%s", (domain_id,)
             ).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
 
-            old_layer = existing[1]
+            old_layer = existing["layer_id"]
             if old_layer == layer_id:
                 print(f"WARNING: domain_id '{domain_id}' layer_id 已是 {layer_id}，无需更新", file=sys.stderr)
                 return True
@@ -2741,7 +2723,7 @@ def cmd_update_domain_layer(
                 return True
 
             now = datetime.datetime.now().isoformat()
-            conn.execute("UPDATE domains SET layer_id=?, updated_at=? WHERE domain_id=?", (layer_id, now, domain_id))
+            conn.execute("UPDATE domains SET layer_id=%s, updated_at=%s WHERE domain_id=%s", (layer_id, now, domain_id))
             if own_conn:
                 conn.commit()
             print(f"[OK] UPDATE domains layer_id: {domain_id} {old_layer} -> {layer_id}", file=sys.stderr)
@@ -2770,20 +2752,20 @@ def cmd_update_domain_ssot_path(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_update_domain_ssot_path", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             existing = conn.execute(
-                "SELECT domain_id, ssot_path FROM domains WHERE domain_id=?", (domain_id,)
+                "SELECT domain_id, ssot_path FROM domains WHERE domain_id=%s", (domain_id,)
             ).fetchone()
             if not existing:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
-            old_path = existing[1]
+            old_path = existing["ssot_path"]
             if dry_run:
                 print(f"[DRY RUN] 将 UPDATE domains ssot_path: {domain_id} {old_path} -> {ssot_path}", file=sys.stderr)
                 return True
             now = datetime.datetime.now().isoformat()
-            conn.execute("UPDATE domains SET ssot_path=?, updated_at=? WHERE domain_id=?", (ssot_path, now, domain_id))
+            conn.execute("UPDATE domains SET ssot_path=%s, updated_at=%s WHERE domain_id=%s", (ssot_path, now, domain_id))
             if own_conn:
                 conn.commit()
             print(f"[OK] UPDATE domains ssot_path: {domain_id} {old_path} -> {ssot_path}", file=sys.stderr)
@@ -2829,21 +2811,21 @@ def cmd_insert_domain_mapping(
     own_conn = conn is None
     with _optional_db_lock(own_conn, task="cmd_insert_domain_mapping", db_path=db_path):
         if own_conn:
-            conn = sqlite3.connect(db_path)
+            conn = get_depgraph_pg_connection(autocommit=False)
         try:
             # 校验 domain_id 存在
-            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+            domain = conn.execute("SELECT domain_id FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
             if not domain:
                 print(f"ERROR: domain_id '{domain_id}' 不在 domains 表中", file=sys.stderr)
                 return False
 
             # 查重：path_prefix 已存在则拒绝（避免重复映射）
             existing = conn.execute(
-                "SELECT mapping_id, domain_id FROM domain_mapping WHERE path_prefix=?", (path_prefix,)
+                "SELECT mapping_id, domain_id FROM domain_mapping WHERE path_prefix=%s", (path_prefix,)
             ).fetchone()
             if existing:
                 print(
-                    f"ERROR: path_prefix '{path_prefix}' 已存在映射 (mapping_id={existing[0]}, domain_id={existing[1]})",
+                    f"ERROR: path_prefix '{path_prefix}' 已存在映射 (mapping_id={existing['mapping_id']}, domain_id={existing['domain_id']})",
                     file=sys.stderr,
                 )
                 return False
@@ -2860,7 +2842,7 @@ def cmd_insert_domain_mapping(
             conn.execute(
                 """INSERT INTO domain_mapping
                    (path_prefix, domain_id, subdomain_id, mapping_type, mapped_at, mapped_by, note)
-                   VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                   VALUES (%s, %s, %s, %s, %s, %s, %s)""",
                 (path_prefix, domain_id, subdomain_id or None, mapping_type, now, mapped_by, note or None),
             )
             if own_conn:

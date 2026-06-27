@@ -37,7 +37,6 @@ P0-7 YAML→DB 同步脚本：将规则/契约/门禁/词汇表从 YAML 同步�
 
 import argparse
 import os
-import sqlite3
 import sys
 from datetime import UTC
 from pathlib import Path
@@ -53,22 +52,13 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import DEPGRAPH_DB_PATH  # noqa: E402
-
-# 跨进程文件锁（裁定#206 / Bug G 修复——sync 是治理脚本中唯一缺锁的 DB 写入者）
-# 对标 apply_depgraph.py:193-197 的 lock_files 集成模式
-_SCRIPTS_DIR = str(_THIS_FILE.parent.parent)  # scripts/
-if _SCRIPTS_DIR not in sys.path:
-    sys.path.insert(0, _SCRIPTS_DIR)
-import lock_files as _lock_files  # noqa: E402
+# P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
+from _shared.constants import DEPGRAPH_DB_PATH, get_depgraph_pg_connection  # noqa: E402
+import psycopg2  # noqa: E402
 
 # 绝对路径（RULE-EIGHT）——DB_PATH 通过 _shared.constants 统一引用（Bug H 修复）
 DB_PATH = str(DEPGRAPH_DB_PATH)
 RULES_DIR = r"D:\ZephyrAlpha\docs\01_policies_and_standards"
-
-# 跨进程锁常量（Bug G 修复）——相对 REPO_ROOT 路径，与 apply_depgraph.py 归一化后一致
-_DB_REL_PATH = "data/databases/depgraph.db"
-_LOCK_OWNER = "sync-yaml-depgraph"
 
 # V5.0 裁定：9 张表全部保护（与 P0-6 创建触发器列表一致）
 READONLY_TABLES = [
@@ -95,42 +85,22 @@ def load_yaml(rel_path: str) -> dict:
 
 
 def disable_readonly_triggers(cur):
-    """临时禁用只读触发器（sync 脚本的通行证）"""
-    for table in READONLY_TABLES:
-        cur.execute(f"DROP TRIGGER IF EXISTS readonly_{table}_insert")
-        cur.execute(f"DROP TRIGGER IF EXISTS readonly_{table}_update")
-        cur.execute(f"DROP TRIGGER IF EXISTS readonly_{table}_delete")
-    print("  只读触发器已临时禁用（sync 通行证）")
+    """临时禁用只读触发器（sync 脚本的通行证）
+
+    P2 PG 迁移：PG 触发器机制与 SQLite 不同（PG 需 CREATE FUNCTION + CREATE TRIGGER）。
+    PG 模式下只读保护通过 GRANT/REVOKE 权限管理实现，sync 脚本使用超权连接直接写入。
+    本函数保留为 no-op 以维持调用结构（sync_all 中 try/finally 仍调用此函数）。
+    """
+    print("  [PG] 只读保护通过权限管理实现，sync 通行证自动生效（no-op）")
 
 
 def restore_readonly_triggers(cur):
-    """恢复只读触发器（无论成功失败必须恢复）"""
-    for table in READONLY_TABLES:
-        cur.execute(f"""
-        CREATE TRIGGER IF NOT EXISTS readonly_{table}_insert
-        BEFORE INSERT ON {table}
-        FOR EACH ROW
-        BEGIN
-            SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-        END;
-        """)
-        cur.execute(f"""
-        CREATE TRIGGER IF NOT EXISTS readonly_{table}_update
-        BEFORE UPDATE ON {table}
-        FOR EACH ROW
-        BEGIN
-            SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-        END;
-        """)
-        cur.execute(f"""
-        CREATE TRIGGER IF NOT EXISTS readonly_{table}_delete
-        BEFORE DELETE ON {table}
-        FOR EACH ROW
-        BEGIN
-            SELECT RAISE(ABORT, '{table} 表只读（唯一真源是 YAML），请修改 YAML 后运行 sync_yaml_to_depgraph.py');
-        END;
-        """)
-    print("  只读触发器已恢复（唯一真源保护激活）")
+    """恢复只读触发器（无论成功失败必须恢复）
+
+    P2 PG 迁移：PG 模式下只读保护通过 GRANT/REVOKE 权限管理实现，无需恢复触发器。
+    本函数保留为 no-op 以维持调用结构。
+    """
+    print("  [PG] 只读保护由权限管理持续生效（no-op）")
 
 
 # ========== P0 优先级同步 ==========
@@ -157,16 +127,16 @@ def sync_cross_module_dependencies(cur):
         target_name = dep.get("target_name", "")
 
         # 优先用 blueprint_id 匹配，其次用 path LIKE source_name
-        cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = ? LIMIT 1", (source,))
+        cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = %s LIMIT 1", (source,))
         from_row = cur.fetchone()
         if not from_row and source_name:
-            cur.execute("SELECT node_id FROM nodes WHERE path LIKE ? LIMIT 1", (f"%{source_name}%",))
+            cur.execute("SELECT node_id FROM nodes WHERE path LIKE %s LIMIT 1", (f"%{source_name}%",))
             from_row = cur.fetchone()
 
-        cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = ? LIMIT 1", (target,))
+        cur.execute("SELECT node_id FROM nodes WHERE blueprint_id = %s LIMIT 1", (target,))
         to_row = cur.fetchone()
         if not to_row and target_name:
-            cur.execute("SELECT node_id FROM nodes WHERE path LIKE ? LIMIT 1", (f"%{target_name}%",))
+            cur.execute("SELECT node_id FROM nodes WHERE path LIKE %s LIMIT 1", (f"%{target_name}%",))
             to_row = cur.fetchone()
 
         if from_row and to_row:
@@ -177,11 +147,11 @@ def sync_cross_module_dependencies(cur):
             (from_node_id, to_node_id, dep_type, coupling_strength,
              architecture_direction, api_contract_refs, data_transfer_description,
              dep_maturity, valid_since, is_legal_cycle)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'design', ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 'design', %s, %s)
             """,
                 (
-                    from_row[0],
-                    to_row[0],
+                    from_row["node_id"],
+                    to_row["node_id"],
                     dep.get("type", "import"),
                     dep.get("strength", "medium"),
                     dep.get("direction", "downstream"),
@@ -211,9 +181,15 @@ def sync_architecture_contract(cur):
         name = rule.get("name", rule_id)
         cur.execute(
             """
-        INSERT OR REPLACE INTO arch_constraints
+        INSERT INTO arch_constraints
         (constraint_id, name, constraint_type, rule_definition, severity, enforcement)
-        VALUES (?, ?, 'architecture_contract', ?, ?, 'code')
+        VALUES (%s, %s, 'architecture_contract', %s, %s, 'code')
+        ON CONFLICT(constraint_id) DO UPDATE SET
+            name=excluded.name,
+            constraint_type=excluded.constraint_type,
+            rule_definition=excluded.rule_definition,
+            severity=excluded.severity,
+            enforcement=excluded.enforcement
         """,
             (rule_id, name, str(rule.get("conditions", [])), rule.get("severity", "error")),
         )
@@ -247,7 +223,7 @@ def sync_contract_mapping_table(cur):
                 """
             INSERT INTO contracts
             (contract_id, name, provider_domain, consumer_domain, contract_type)
-            VALUES (?, ?, ?, ?, 'domain_contract')
+            VALUES (%s, %s, %s, %s, 'domain_contract')
             ON CONFLICT(contract_id) DO UPDATE SET
                 name=excluded.name,
                 provider_domain=excluded.provider_domain,
@@ -274,7 +250,7 @@ def sync_contract_mapping_table(cur):
             """
         INSERT INTO contracts
         (contract_id, name, provider_domain, consumer_domain, contract_type)
-        VALUES (?, ?, ?, ?, 'layer_contract')
+        VALUES (%s, %s, %s, %s, 'layer_contract')
         ON CONFLICT(contract_id) DO UPDATE SET
             name=excluded.name,
             provider_domain=excluded.provider_domain,
@@ -308,9 +284,17 @@ def sync_gate_registry(cur):
     for gate in gates:
         cur.execute(
             """
-        INSERT OR REPLACE INTO gates
+        INSERT INTO gates
         (gate_id, name, entry, description, files_trigger, always_run, category, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT(gate_id) DO UPDATE SET
+            name=excluded.name,
+            entry=excluded.entry,
+            description=excluded.description,
+            files_trigger=excluded.files_trigger,
+            always_run=excluded.always_run,
+            category=excluded.category,
+            status=excluded.status
         """,
             (
                 gate.get("gate_id", ""),
@@ -347,7 +331,7 @@ def validate_domain_id_consistency(cur, entries):
     如果 YAML 用 D-AUTONOMY-CORE 而 DB 已有 D-AUTONOMY_CORE,会报警并跳过。
     """
     cur.execute("SELECT domain_id FROM domains")
-    existing_ids = {row[0] for row in cur.fetchall()}
+    existing_ids = {row["domain_id"] for row in cur.fetchall()}
 
     issues = []
     for d in entries:
@@ -421,7 +405,7 @@ def sync_functional_domain_registry(cur):
             """
         INSERT INTO domains (domain_id, domain_name, domain_group, description,
                              modification_permission, build_status, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, 'planned', ?, ?)
+        VALUES (%s, %s, %s, %s, %s, 'planned', %s, %s)
         ON CONFLICT(domain_id) DO UPDATE SET
             domain_name=excluded.domain_name,
             description=excluded.description,
@@ -437,9 +421,10 @@ def sync_functional_domain_registry(cur):
             # arch_path_mappings 需要 path_type NOT NULL 和 state NOT NULL
             cur.execute(
                 """
-            INSERT OR REPLACE INTO arch_path_mappings
+            INSERT INTO arch_path_mappings
             (path_pattern, domain_id, path_type, state)
-            VALUES (?, ?, 'ssot', 'active')
+            VALUES (%s, %s, 'ssot', 'active')
+            ON CONFLICT DO NOTHING
             """,
                 (ssot_path, domain_id),
             )
@@ -470,9 +455,12 @@ def sync_vocabularies(cur):
 
             cur.execute(
                 """
-            INSERT OR REPLACE INTO field_vocabularies
+            INSERT INTO field_vocabularies
             (field_name, value, definition, source_yaml)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT(field_name, value) DO UPDATE SET
+                definition=excluded.definition,
+                source_yaml=excluded.source_yaml
             """,
                 (field_name, v, definition, yaml_file.name),
             )
@@ -508,9 +496,15 @@ def sync_architecture_rules(cur):
 
             cur.execute(
                 """
-            INSERT OR REPLACE INTO arch_constraints
+            INSERT INTO arch_constraints
             (constraint_id, name, constraint_type, rule_definition, severity, enforcement)
-            VALUES (?, ?, 'architecture_rule', ?, ?, 'code')
+            VALUES (%s, %s, 'architecture_rule', %s, %s, 'code')
+            ON CONFLICT(constraint_id) DO UPDATE SET
+                name=excluded.name,
+                constraint_type=excluded.constraint_type,
+                rule_definition=excluded.rule_definition,
+                severity=excluded.severity,
+                enforcement=excluded.enforcement
             """,
                 (rule_id, name, name + ": " + str(conditions), rule.get("severity", "error")),
             )
@@ -538,7 +532,7 @@ def sync_declarative_contract_tracker(cur):
         INSERT INTO contracts
         (contract_id, name, provider_domain, consumer_domain, contract_type,
          promise, actual_consumer, fulfillment_status, gap, target_phase, last_reviewed)
-        VALUES (?, ?, ?, ?, 'declarative', ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, 'declarative', %s, %s, %s, %s, %s, %s)
         ON CONFLICT(contract_id) DO UPDATE SET
             promise=excluded.promise,
             actual_consumer=excluded.actual_consumer,
@@ -595,9 +589,12 @@ def sync_frontmatter_field_registry(cur):
                 continue
             cur.execute(
                 """
-            INSERT OR REPLACE INTO field_vocabularies
+            INSERT INTO field_vocabularies
             (field_name, value, definition, source_yaml)
-            VALUES (?, ?, ?, 'frontmatter_field_registry.yaml')
+            VALUES (%s, %s, %s, 'frontmatter_field_registry.yaml')
+            ON CONFLICT(field_name, value) DO UPDATE SET
+                definition=excluded.definition,
+                source_yaml=excluded.source_yaml
             """,
                 (field_name, v, definition),
             )
@@ -618,9 +615,16 @@ def sync_registry_of_registries(cur):
     for reg in registries:
         cur.execute(
             """
-        INSERT OR REPLACE INTO registries
+        INSERT INTO registries
         (registry_id, name, title, path, version, description, ssot_for)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT(registry_id) DO UPDATE SET
+            name=excluded.name,
+            title=excluded.title,
+            path=excluded.path,
+            version=excluded.version,
+            description=excluded.description,
+            ssot_for=excluded.ssot_for
         """,
             (
                 reg.get("id", ""),
@@ -639,9 +643,15 @@ def sync_registry_of_registries(cur):
     for rule in rules:
         cur.execute(
             """
-        INSERT OR REPLACE INTO cross_registry_rules
+        INSERT INTO cross_registry_rules
         (rule_id, title, fields, ssot, consistency, violation_action)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT(rule_id) DO UPDATE SET
+            title=excluded.title,
+            fields=excluded.fields,
+            ssot=excluded.ssot,
+            consistency=excluded.consistency,
+            violation_action=excluded.violation_action
         """,
             (
                 rule.get("rule_id", ""),
@@ -671,7 +681,7 @@ def sync_directory_registry(cur):
             """
         INSERT INTO arch_directory_tree
         (path, parent_path, path_type, domain_id, blueprint_id, design_maturity)
-        VALUES (?, ?, 'directory', ?, ?, 'design')
+        VALUES (%s, %s, 'directory', %s, %s, 'design')
         ON CONFLICT(path) DO UPDATE SET
             parent_path=excluded.parent_path,
             domain_id=excluded.domain_id,
@@ -704,7 +714,7 @@ def sync_rule_catalog_registry(cur):
             """
         INSERT INTO arch_directory_tree
         (path, parent_path, path_type, domain_id, blueprint_id, design_maturity)
-        VALUES (?, ?, 'file', 'D-GOV_DOCS', ?, 'design')
+        VALUES (%s, %s, 'file', 'D-GOV_DOCS', %s, 'design')
         ON CONFLICT(path) DO UPDATE SET
             parent_path=excluded.parent_path,
             domain_id=excluded.domain_id,
@@ -739,9 +749,16 @@ def sync_infrastructure_registry(cur):
             continue
         cur.execute(
             """
-        INSERT OR REPLACE INTO infrastructure_components
+        INSERT INTO infrastructure_components
         (component_id, component_type, address, health_check, dependencies, sla, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'active')
+        VALUES (%s, %s, %s, %s, %s, %s, 'active')
+        ON CONFLICT(component_id) DO UPDATE SET
+            component_type=excluded.component_type,
+            address=excluded.address,
+            health_check=excluded.health_check,
+            dependencies=excluded.dependencies,
+            sla=excluded.sla,
+            status=excluded.status
         """,
             (
                 comp.get("infra_id", comp.get("component_id", comp.get("type", ""))),
@@ -769,10 +786,17 @@ def sync_model_capability_contract(cur):
     for model in models:
         cur.execute(
             """
-        INSERT OR REPLACE INTO model_capabilities
+        INSERT INTO model_capabilities
         (model_name, tier, max_files_per_session, allowed_paths,
          forbidden_paths, recommended_tasks, forbidden_tasks)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT(model_name) DO UPDATE SET
+            tier=excluded.tier,
+            max_files_per_session=excluded.max_files_per_session,
+            allowed_paths=excluded.allowed_paths,
+            forbidden_paths=excluded.forbidden_paths,
+            recommended_tasks=excluded.recommended_tasks,
+            forbidden_tasks=excluded.forbidden_tasks
         """,
             (
                 model.get("name", ""),
@@ -807,9 +831,14 @@ def sync_hard_boundaries(cur):
     for b in boundaries:
         cur.execute(
             """
-        INSERT OR REPLACE INTO hard_boundaries
+        INSERT INTO hard_boundaries
         (boundary_id, category, constraint_def, parameters, impact)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT(boundary_id) DO UPDATE SET
+            category=excluded.category,
+            constraint_def=excluded.constraint_def,
+            parameters=excluded.parameters,
+            impact=excluded.impact
         """,
             (
                 b.get("id", ""),
@@ -839,9 +868,15 @@ def sync_business_streams(cur):
     for s in streams:
         cur.execute(
             """
-        INSERT OR REPLACE INTO business_streams
+        INSERT INTO business_streams
         (stream_id, name, goal, input, output, runtime_plane)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT(stream_id) DO UPDATE SET
+            name=excluded.name,
+            goal=excluded.goal,
+            input=excluded.input,
+            output=excluded.output,
+            runtime_plane=excluded.runtime_plane
         """,
             (
                 s.get("id", ""),
@@ -911,7 +946,7 @@ def sync_domain_naming_rules(cur):
         INSERT INTO domain_naming_rules
             (rule_id, rule_name, rule_text, applies_to, severity,
              example_bad, example_good, created_at, source_doc)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT(rule_id) DO UPDATE SET
             rule_name=excluded.rule_name,
             rule_text=excluded.rule_text,
@@ -963,7 +998,7 @@ def sync_derived_identifier_registry(cur):
         INSERT INTO derived_identifier_registry
             (derived_type, source_field, derived_field,
              derivation_rule, propagation_method, source_doc)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s)
         ON CONFLICT(derived_type, derived_field) DO UPDATE SET
             source_field=excluded.source_field,
             derivation_rule=excluded.derivation_rule,
@@ -985,96 +1020,83 @@ def sync_derived_identifier_registry(cur):
 def sync_all() -> bool:
     """主同步函数：按优先级同步所有 YAML 源。
 
-    返回 True=同步成功，False=锁竞争或 DB 缺失跳过（不抛异常）。
+    返回 True=同步成功，False=DB 连接失败跳过（不抛异常）。
 
-    跨进程锁保护（裁定#206 / Bug G 修复）：
-      sync 是治理脚本中唯一缺锁的 DB 写入者。原实现仅依赖 sqlite3 事务 +
-      临时 DROP 只读触发器，与 apply_depgraph.py / generate_project_depgraph.py
-      并发可能竞争 depgraph.db 写入。现引入 lock_files.py 跨进程文件锁，
-      与 apply_depgraph.py 的 _db_write_lock 归一化后互斥（同一文件路径）。
+    P2 PG 迁移：删除 lock_files 跨进程文件锁（PG 用 MVCC，无需文件锁）。
+    事务管理保留：autocommit=False + 显式 commit/rollback。
     """
-    if not os.path.exists(DB_PATH):
-        print(f"[ERROR] {DB_PATH} not found")
-        return False
-
-    # Bug G 修复：跨进程文件锁——防止与 apply_depgraph.py 并发写入 depgraph.db
-    # skip_naming_check=True 与 apply_depgraph.py:237 保持一致（depgraph.db 命名豁免）
-    if _lock_files.cmd_acquire(
-        _DB_REL_PATH, _LOCK_OWNER, task="sync_yaml_to_depgraph", skip_naming_check=True
-    ) != 0:
-        print("⚠️ 无法获取锁，另一进程正在写入 depgraph.db（已 hold）——本次同步跳过")
-        return False
+    # P2 PG 迁移：删除 os.path.exists(DB_PATH) 检查（PG 无文件路径概念）
+    # P2 PG 迁移：删除 lock_files 跨进程文件锁（PG 用 MVCC）
     try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
+        conn = get_depgraph_pg_connection(autocommit=False)
+    except psycopg2.Error as e:
+        print(f"[ERROR] 无法连接 PostgreSQL: {e}")
+        return False
+    cur = conn.cursor()
 
-        print("=" * 60)
-        print("=== YAML→DB 同步开始 ===")
-        print(f"DB: {DB_PATH}")
-        print(f"RULES_DIR: {RULES_DIR}")
-        print("=" * 60)
+    print("=" * 60)
+    print("=== YAML→DB 同步开始 ===")
+    print(f"DB: {DB_PATH}")
+    print(f"RULES_DIR: {RULES_DIR}")
+    print("=" * 60)
 
-        try:
-            # 临时禁用只读触发器
-            disable_readonly_triggers(cur)
-            conn.commit()
+    try:
+        # 临时禁用只读触发器（PG 模式下为 no-op，权限管理替代）
+        disable_readonly_triggers(cur)
 
-            # P0 优先级同步
-            sync_cross_module_dependencies(cur)  # #152
-            sync_architecture_contract(cur)  # #153
-            sync_contract_mapping_table(cur)  # #154
+        # P0 优先级同步
+        sync_cross_module_dependencies(cur)  # #152
+        sync_architecture_contract(cur)  # #153
+        sync_contract_mapping_table(cur)  # #154
 
-            # P1 优先级同步
-            sync_gate_registry(cur)  # #155
-            sync_functional_domain_registry(cur)  # #156
-            sync_vocabularies(cur)  # #157
-            sync_architecture_rules(cur)  # #158
+        # P1 优先级同步
+        sync_gate_registry(cur)  # #155
+        sync_functional_domain_registry(cur)  # #156
+        sync_vocabularies(cur)  # #157
+        sync_architecture_rules(cur)  # #158
 
-            # P2 优先级同步
-            sync_declarative_contract_tracker(cur)  # #159
-            sync_frontmatter_field_registry(cur)  # #160
-            sync_registry_of_registries(cur)  # #161
-            sync_directory_registry(cur)  # #162
-            sync_rule_catalog_registry(cur)  # #163
+        # P2 优先级同步
+        sync_declarative_contract_tracker(cur)  # #159
+        sync_frontmatter_field_registry(cur)  # #160
+        sync_registry_of_registries(cur)  # #161
+        sync_directory_registry(cur)  # #162
+        sync_rule_catalog_registry(cur)  # #163
 
-            # P3 优先级同步
-            sync_infrastructure_registry(cur)  # #164
-            sync_model_capability_contract(cur)  # #164
+        # P3 优先级同步
+        sync_infrastructure_registry(cur)  # #164
+        sync_model_capability_contract(cur)  # #164
 
-            # P4 优先级同步（V4.2 新增表）
-            sync_hard_boundaries(cur)  # #170
-            sync_business_streams(cur)  # #171
-            sync_blueprint_links(cur)  # #172
+        # P4 优先级同步（V4.2 新增表）
+        sync_hard_boundaries(cur)  # #170
+        sync_business_streams(cur)  # #171
+        sync_blueprint_links(cur)  # #172
 
-            # P5 优先级同步（裁定#204 预防根因 + 裁定#206/#207 派生标识符）
-            sync_domain_naming_rules(cur)  # #173
-            sync_derived_identifier_registry(cur)  # #174 裁定#206 B-5/B-6 + #207 R3-4
+        # P5 优先级同步（裁定#204 预防根因 + 裁定#206/#207 派生标识符）
+        sync_domain_naming_rules(cur)  # #173
+        sync_derived_identifier_registry(cur)  # #174 裁定#206 B-5/B-6 + #207 R3-4
 
-            conn.commit()
-            print("\n[PASS] 19 项 YAML→DB 同步完成")
-            return True
+        conn.commit()
+        print("\n[PASS] 19 项 YAML→DB 同步完成")
+        return True
 
-        except Exception as e:
-            conn.rollback()
-            print(f"\n[SYNC ERROR] 同步失败，已回滚: {e}")
-            import traceback
+    except Exception as e:
+        conn.rollback()
+        print(f"\n[SYNC ERROR] 同步失败，已回滚: {e}")
+        import traceback
 
-            traceback.print_exc()
-            raise  # DM-3010: 用raise替代sys.exit(1)，让调用方可捕获
+        traceback.print_exc()
+        raise  # DM-3010: 用raise替代sys.exit(1)，让调用方可捕获
 
-        finally:
-            # 恢复只读触发器（无论成功失败必须恢复）
-            try:
-                restore_readonly_triggers(cur)
-                conn.commit()
-            except Exception as e:
-                print(f"[WARNING] 触发器恢复失败: {e}")
-            finally:
-                conn.close()
-                print("=== YAML→DB 同步完成 ===")
     finally:
-        # Bug G 修复：无论成功失败必须释放锁（避免死锁）
-        _lock_files.cmd_release(_DB_REL_PATH, _LOCK_OWNER)
+        # 恢复只读触发器（PG 模式下为 no-op）
+        try:
+            restore_readonly_triggers(cur)
+            conn.commit()
+        except Exception as e:
+            print(f"[WARNING] 触发器恢复失败: {e}")
+        finally:
+            conn.close()
+            print("=== YAML→DB 同步完成 ===")
 
 
 def main():

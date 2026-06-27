@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G1: 从 depgraph.db arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/ 目录树(中英文)输出到 generated/
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -32,14 +33,20 @@ from __future__ import annotations
 import argparse
 import os
 import re
-import sqlite3
 import sys
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 PROJECT_ROOT = REPO_ROOT
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram"
 TARGET_SUBTREE = "docs/02_enterprise_architecture"
@@ -62,7 +69,7 @@ SKIP_DIRS_FULL = {
 }
 
 
-def build_tree_rows(conn: sqlite3.Connection, scope: str = "arch") -> list[dict]:
+def build_tree_rows(conn: PgConnExecuteWrapper, scope: str = "arch") -> list[dict]:
     """从 arch_directory_tree 表查询目录记录，按 path 排序。
 
     scope='arch': 仅 docs/02_enterprise_architecture 下的目录
@@ -72,20 +79,20 @@ def build_tree_rows(conn: sqlite3.Connection, scope: str = "arch") -> list[dict]
         cur = conn.execute(
             "SELECT path, parent_path, path_type, domain_id, build_status, design_maturity "
             "FROM arch_directory_tree "
-            "WHERE path NOT LIKE '%/' "
+            "WHERE path NOT LIKE '%%/' "
             "ORDER BY path",
         )
     else:
         cur = conn.execute(
             "SELECT path, parent_path, path_type, domain_id, build_status, design_maturity "
             "FROM arch_directory_tree "
-            "WHERE (path = ? OR path LIKE ?) AND path NOT LIKE '%/' "
+            "WHERE (path = %s OR path LIKE %s) AND path NOT LIKE '%%/' "
             "ORDER BY path",
             (TARGET_SUBTREE, TARGET_SUBTREE + "/%"),
         )
     rows = []
     for r in cur.fetchall():
-        path = r[0] or ""
+        path = r["path"] or ""
         # 全项目模式下过滤噪声目录
         if scope == "full":
             parts = path.split("/")
@@ -94,11 +101,11 @@ def build_tree_rows(conn: sqlite3.Connection, scope: str = "arch") -> list[dict]
         rows.append(
             {
                 "path": path,
-                "parent_path": r[1] or "",
-                "path_type": r[2] or "",
-                "domain_id": r[3] or "",
-                "build_status": r[4] or "",
-                "design_maturity": r[5] or "",
+                "parent_path": r["parent_path"] or "",
+                "path_type": r["path_type"] or "",
+                "domain_id": r["domain_id"] or "",
+                "build_status": r["build_status"] or "",
+                "design_maturity": r["design_maturity"] or "",
             }
         )
     return rows
@@ -698,7 +705,7 @@ def find_roots(tree: dict) -> list[str]:
     return sorted(roots)
 
 
-def generate_path_tree(lang: str, conn: sqlite3.Connection, scope: str = "arch") -> str:
+def generate_path_tree(lang: str, conn: PgConnExecuteWrapper, scope: str = "arch") -> str:
     """生成路径树内容。
 
     lang: 'zh' 或 'en'
@@ -819,17 +826,13 @@ def main() -> None:
     parser.add_argument("--lang", type=str, choices=["zh", "en", "both"], default="both", help="生成语言")
     args = parser.parse_args()
 
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     zh_name = "full_project_tree_zh.md"
     en_name = "full_project_tree_en.md"
 
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         if args.lang in ("zh", "both"):
             content = generate_path_tree("zh", conn, "full")

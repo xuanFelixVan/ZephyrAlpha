@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """G3: 从 depgraph.db edges 表生成指定域的全景依赖图(.mmd Mermaid格式)
 
 [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
@@ -30,15 +31,20 @@
 from __future__ import annotations
 
 import argparse
-import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
 
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from domain_name_mapping import get_domain_name_zh
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "generated" / "domains"
 
 
@@ -61,52 +67,52 @@ def shorten_path(path: str, max_len: int = 40) -> str:
     return "..." + path[-(max_len - 3) :]
 
 
-def get_domain_nodes(conn: sqlite3.Connection, domain_id: str) -> list[dict]:
+def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询指定域的所有节点。"""
     cur = conn.execute(
-        "SELECT node_id, path, design_maturity FROM nodes WHERE domain_id=? ORDER BY path",
+        "SELECT node_id, path, design_maturity FROM nodes WHERE domain_id=%s ORDER BY path",
         (domain_id,),
     )
-    return [{"node_id": r[0], "path": r[1] or "", "design_maturity": r[2] or ""} for r in cur.fetchall()]
+    return [{"node_id": r["node_id"], "path": r["path"] or "", "design_maturity": r["design_maturity"] or ""} for r in cur.fetchall()]
 
 
-def get_domain_edges(conn: sqlite3.Connection, domain_id: str) -> list[dict]:
+def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询涉及指定域的所有边（域内+跨域）。"""
     cur = conn.execute(
-        """SELECT e.from_node_id, n1.path, n1.domain_id,
-                  e.to_node_id, n2.path, n2.domain_id,
+        """SELECT e.from_node_id, n1.path AS from_path, n1.domain_id AS from_domain,
+                  e.to_node_id, n2.path AS to_path, n2.domain_id AS to_domain,
                   e.dep_type, e.coupling_strength
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
-           WHERE n1.domain_id=? OR n2.domain_id=?
+           WHERE n1.domain_id=%s OR n2.domain_id=%s
            ORDER BY e.edge_id""",
         (domain_id, domain_id),
     )
     return [
         {
-            "from_id": r[0],
-            "from_path": r[1] or "",
-            "from_domain": r[2] or "",
-            "to_id": r[3],
-            "to_path": r[4] or "",
-            "to_domain": r[5] or "",
-            "dep_type": r[6] or "",
-            "coupling": r[7] or "",
+            "from_id": r["from_node_id"],
+            "from_path": r["from_path"] or "",
+            "from_domain": r["from_domain"] or "",
+            "to_id": r["to_node_id"],
+            "to_path": r["to_path"] or "",
+            "to_domain": r["to_domain"] or "",
+            "dep_type": r["dep_type"] or "",
+            "coupling": r["coupling_strength"] or "",
         }
         for r in cur.fetchall()
     ]
 
 
-def generate_dependency_diagram(domain_id: str, conn: sqlite3.Connection) -> str:
+def generate_dependency_diagram(domain_id: str, conn: PgConnExecuteWrapper) -> str:
     """生成域全景依赖图(.mmd)。"""
     # 验证域存在
-    cur = conn.execute("SELECT domain_name FROM domains WHERE domain_id=?", (domain_id,))
+    cur = conn.execute("SELECT domain_name FROM domains WHERE domain_id=%s", (domain_id,))
     row = cur.fetchone()
     if not row:
         print(f"ERROR: 域 '{domain_id}' 不存在", file=sys.stderr)
         return ""
-    domain_name = get_domain_name_zh(domain_id, row[0] or domain_id)
+    domain_name = get_domain_name_zh(domain_id, row["domain_name"] or domain_id)
 
     nodes = get_domain_nodes(conn, domain_id)
     edges = get_domain_edges(conn, domain_id)
@@ -225,18 +231,14 @@ def main() -> None:
     if not args.all and not args.domain_id:
         parser.error("domain_id 是必填参数（除非使用 --all）")
 
-    if not DEPGRAPH_DB.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_DB}", file=sys.stderr)
-        sys.exit(1)
-
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         if args.all:
             cur = conn.execute("SELECT domain_id FROM domains ORDER BY domain_id")
-            domain_ids = [r[0] for r in cur.fetchall()]
+            domain_ids = [r["domain_id"] for r in cur.fetchall()]
             success = 0
             for did in domain_ids:
                 content = generate_dependency_diagram(did, conn)
