@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """DLQ 管理器单元测试——enqueue + replay + max_attempts。"""

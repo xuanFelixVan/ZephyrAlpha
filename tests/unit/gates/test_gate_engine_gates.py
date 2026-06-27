@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 测试套件：GateEngine + TaskRepository 门禁集成（T-2-19）
 =========================================================

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase F — L08–L13 非主线层集成测试 + 背压契约
 
 测试范围：

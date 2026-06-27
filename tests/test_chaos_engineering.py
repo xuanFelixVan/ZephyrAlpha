@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_chaos_engineering.py
+# [TTL] task_bound
 
 from zephyr.ops.detectors.chaos_engineering import ChaosEngineering
 

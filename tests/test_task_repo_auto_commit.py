@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_task_repo_auto_commit.py
+# [TTL] task_bound
 
 """DM-202918: transition(COMPLETED)自动git commit测试。
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 from zephyr.governance.recovery_manifest_writer import RecoveryManifestWriter
 
 

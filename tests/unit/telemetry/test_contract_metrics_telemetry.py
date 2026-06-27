@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """telemetry.contract_metrics 框架单测。"""
 
 from zephyr.infrastructure.system_telemetry.contract_metrics import (

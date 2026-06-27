@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_merkle_audit_root.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.merkle_audit_root import MerkleAuditRoot
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_context_engine.py -q
+# [TTL] task_bound
 
 """Test suite for zephyr.infrastructure.shared_services.context_engine."""
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
 # [TESTS] pytest tests/integration/test_mcp_boot_hooks_integration.py -v --tb=short
+# [TTL] task_bound
 """DM-202910: MCP boot_hooks 集成测试——验证10进程实际启动能力。
 
 覆盖目标：

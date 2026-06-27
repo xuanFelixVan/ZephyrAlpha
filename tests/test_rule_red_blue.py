@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest assertions on detection status; report JSON written on session end
 # [TESTS] tests/test_rule_red_blue.py
+# [TTL] task_bound
 
 import json
 import os

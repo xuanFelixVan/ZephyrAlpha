@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] Pydantic ValidationError
 
 # [TESTS] pytest tests/test_schema_schemas.py -q
+# [TTL] task_bound
 
 from datetime import UTC, datetime
 

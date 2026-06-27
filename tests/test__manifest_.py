@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on missing keys; TypeError on wrong types
 # [TESTS] tests/test__manifest_.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

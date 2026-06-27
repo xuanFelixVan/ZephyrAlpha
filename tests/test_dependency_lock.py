@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get returns "unknown" for unregistered packages; no exceptions raised
 # [TESTS] test_dependency_lock.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

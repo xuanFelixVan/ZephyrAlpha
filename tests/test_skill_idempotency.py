@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] all tests must pass independently; class state cleared in fixture
 # [TESTS] pytest tests/test_skill_idempotency.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

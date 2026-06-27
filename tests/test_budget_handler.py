@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_budget_handler.py
+# [TTL] task_bound
 
 from unittest.mock import patch
 

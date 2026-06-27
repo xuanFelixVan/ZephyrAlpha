@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_flag_lifecycle.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.flag_lifecycle import FlagLifecycle

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] UnicodeDecodeError;OSError
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

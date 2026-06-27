@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 无
 
 # [TESTS] pytest tests/test_foundation_env.py -q
+# [TTL] task_bound
 
 import pytest
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """P0-U2 输入校验测试 — DOM-GOV-001 §8.2."""
 
 from __future__ import annotations

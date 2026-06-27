@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """context_pipeline 组合根单测（对齐 build→compress→validate→inject 顺序）。"""

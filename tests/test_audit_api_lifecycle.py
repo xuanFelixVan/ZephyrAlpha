@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass; exit non-zero on fail
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

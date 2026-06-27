@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 test_arch_guard_fitness.py — arch_guard 适应度函数最小测试集
 

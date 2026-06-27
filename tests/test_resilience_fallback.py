@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] FallbackExhaustedError
 
 # [TESTS] pytest tests/test_resilience_fallback.py -q
+# [TTL] task_bound
 
 import pytest
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 MOD-INF-018 跨模型一致性测试 — DeepSeek/GLM/Claude 对同权限规则判定一致性
 

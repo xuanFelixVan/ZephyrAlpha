@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] set/is_enabled/get_all never raise
 # [TESTS] tests/test_feature_flag.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

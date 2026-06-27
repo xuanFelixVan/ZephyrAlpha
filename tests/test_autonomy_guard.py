@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] unknown level returns empty list; can_autonomously returns False for unknown level
 # [TESTS] test_autonomy_guard.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

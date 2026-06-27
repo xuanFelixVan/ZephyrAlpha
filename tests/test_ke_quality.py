@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_ke_quality.py
+# [TTL] task_bound
 
 import pytest
 

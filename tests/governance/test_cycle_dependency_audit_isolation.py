@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 + 无 RBAC import 扫描.
 

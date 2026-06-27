@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] snapshot返回ResourceSnapshot;optimize返回OptimizationResult;CircuitBreaker状态机正确
 # [TESTS] tests/test_resource_optimization.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

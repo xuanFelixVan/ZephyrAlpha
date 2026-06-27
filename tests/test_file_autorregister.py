@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FileNotFoundError on missing manifest dir; yaml.YAMLError on corrupt input
 # [TESTS] tests/test_file_autorregister.py
+# [TTL] task_bound
 
 from pathlib import Path
 

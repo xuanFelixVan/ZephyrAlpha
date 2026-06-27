@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.AssertionError
 # [TESTS] tests/test_model_discovery.py
+# [TTL] task_bound
 
 import pytest
 

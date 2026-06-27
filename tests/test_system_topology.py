@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_system_topology.py
+# [TTL] task_bound
 
 
 from zephyr.behavioral_audit.system_topology import (

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_synthetic_anomaly_generator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.synthetic_anomaly_generator import (

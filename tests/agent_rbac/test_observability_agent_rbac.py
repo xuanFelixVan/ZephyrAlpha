@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试 L6 Observability — 指标上报与异常检测"""
 
 from zephyr.security.access_control.observability import (

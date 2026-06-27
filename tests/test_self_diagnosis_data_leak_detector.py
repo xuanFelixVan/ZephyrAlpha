@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_self_diagnosis_data_leak_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.self_diagnosis_data_leak_detector import (

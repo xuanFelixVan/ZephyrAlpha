@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """system-telemetry 红队对抗测试 — 边界·并发·注入·资源耗尽·关闭韧性（MOD-INF-015 v0.9.0）"""
 
 from __future__ import annotations

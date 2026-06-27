@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """audit-trail MOD-INF-020 import 冒烟测试 — 验证核心模块可被导入."""

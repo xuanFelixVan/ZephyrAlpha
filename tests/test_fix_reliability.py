@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest assertion errors on invariant violation
 # [TESTS] tests/test_fix_reliability.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

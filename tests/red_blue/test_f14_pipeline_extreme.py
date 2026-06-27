@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT] 测试失败=发现极端场景漏洞
 # [TESTS] self
 # [DOMAIN] D-ORC
+# [TTL] task_bound
 
 """F14 管线编排/反馈环 — 红蓝对抗端到端极端测试
 

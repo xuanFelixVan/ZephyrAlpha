@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """M1-M11 Pipeline Orchestrator 单元测试"""
 
 import sys

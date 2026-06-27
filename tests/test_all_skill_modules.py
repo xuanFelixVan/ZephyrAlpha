@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_all_skill_modules.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.all_skill_modules import AllSkillModules
 

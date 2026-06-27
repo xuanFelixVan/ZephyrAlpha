@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """test_security_scripts.py — D6 安全审计脚本单元测试
 
 覆盖脚本：

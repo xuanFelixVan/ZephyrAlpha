@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for D-022-08 EngineSandbox, D-022-09 AntiAutomationBias, D-022-12 SLOContract."""
 
 from __future__ import annotations
@@ -44,7 +45,7 @@ class TestEngineSandbox:
         from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
-        evt = sb.check_file_write("docs/09_audit/log.jsonl", "agent-1")
+        evt = sb.check_file_write("docs/_working/audit/log.jsonl", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_file_write_denied_src(self):

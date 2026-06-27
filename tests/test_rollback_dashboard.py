@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DashboardMetrics defaults are all zero
 # [TESTS] tests/test_rollback_dashboard.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

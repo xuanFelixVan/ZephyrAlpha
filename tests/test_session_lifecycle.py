@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_session_lifecycle.py
+# [TTL] task_bound
 from zephyr.security.access_control.session_lifecycle import (
     STATE_DEFS,
     SessionManager,

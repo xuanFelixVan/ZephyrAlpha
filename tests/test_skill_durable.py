@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_skill_durable.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

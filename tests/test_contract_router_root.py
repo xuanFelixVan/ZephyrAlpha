@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RouteResult returned for all inputs including unknown contract_id
 # [TESTS] test_contract_router.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

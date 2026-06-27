@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest assertions; test_claim_and_execute_cycle MUST verify status transitions
 # [TESTS] self
+# [TTL] task_bound
 """test_autopilot.py — AutoPilot 端到端测试
 
 覆盖：

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 GATE-11 module_id 双轨制单测（裁定#208 R1/R4）
 ================================================

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PipelineRoutingInputsError on unsupported/missing inputs; ValueError on unknown node_id
 # [TESTS] pytest tests/test_ct_pipe_routing.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_state.py
+# [TTL] task_bound
 
 import pytest
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_audit_full_closure_e2e.py
+# [TTL] task_bound
 
 import json
 from unittest.mock import patch

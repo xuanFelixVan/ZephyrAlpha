@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError on invalid phase;IndexError on out-of-range
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

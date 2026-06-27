@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase G — Performance Benchmarks & SLA Validation
 
 性能基准与 SLA 验证。测量 14 层全链路延迟、吞吐量与内存占用，

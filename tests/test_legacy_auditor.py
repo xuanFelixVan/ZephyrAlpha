@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError → skip; AttributeError → fail
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

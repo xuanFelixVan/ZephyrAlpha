@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] pytest exit 0
 
 # [TESTS] tests/test_scheduler_safety.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

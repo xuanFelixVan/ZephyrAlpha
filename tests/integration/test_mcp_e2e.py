@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 # AI-generated: MCP E2E lifecycle + protocol compliance tests (T-3-05, B16)
 """
 MCP 端到端测试 — T-3-05 (B16)

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess.TimeoutExpired handled gracefully
 # [TESTS] tests/test_trust_anchor_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

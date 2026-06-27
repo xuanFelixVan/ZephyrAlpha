@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """跨切面 D 异常检测 + 蓝图保真 + 原生API守卫 + 内存守卫 测试."""
 
 from __future__ import annotations

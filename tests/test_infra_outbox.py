@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] OutboxError
 
 # [TESTS] pytest tests/test_infra_outbox.py -q
+# [TTL] task_bound
 
 import asyncio
 

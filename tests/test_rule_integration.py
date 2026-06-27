@@ -23,10 +23,9 @@ from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.governance.rule_engine import RuleLoader
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
-_DB_PATH = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DB_PATH / _ARCH_PANORAMA 路径常量已移除
 _SKILL_REGISTRY = _PROJECT_ROOT / "src" / "zephyr" / "orchestration" / "agent_lifecycle" / "skill_registry.yaml"
 _RULES_DIR = _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
-_ARCH_PANORAMA = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
 
 @pytest.fixture
@@ -89,15 +88,13 @@ class TestGateIntegration:
 
 class TestDepgraphIntegration:
     def test_depgraph_rule_node_count(self, loader):
-        if not _DB_PATH.exists():
-            pytest.skip("depgraph.db not found")
         try:
             conn = get_db_connection()
             with conn.cursor() as cursor:
                 cursor.execute("SELECT COUNT(DISTINCT node_id) FROM nodes WHERE node_type = 'rule'")
                 db_count = cursor.fetchone()[0]
             conn.close()
-        except psycopg2.Error as exc:
+        except Exception as exc:
             pytest.skip(f"Cannot query depgraph (PG): {exc}")
         yaml_count = len(list(_RULES_DIR.glob("*.yaml")))
         assert db_count > 0 or yaml_count > 0, "Both DB and YAML should have rule entries"
@@ -108,15 +105,13 @@ class TestDepgraphIntegration:
 
 class TestArchitecturePanorama:
     def test_rule_domain_matches_panorama(self, loader):
-        if not _ARCH_PANORAMA.exists():
-            pytest.skip("depgraph.db not found")
         try:
             conn = get_db_connection()
             with conn.cursor() as cursor:
                 cursor.execute("SELECT COUNT(DISTINCT domain_id) FROM domains")
                 domain_count = cursor.fetchone()[0]
             conn.close()
-        except psycopg2.Error as exc:
+        except Exception as exc:
             pytest.skip(f"Cannot query depgraph (PG): {exc}")
         all_rules = loader.list_all_rules()
         rule_domains = set()

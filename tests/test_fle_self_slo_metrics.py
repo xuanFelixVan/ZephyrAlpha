@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fle_self_slo_metrics.py
+# [TTL] task_bound
 
 import time
 

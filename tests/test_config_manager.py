@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] load/validate_on_startup never raise
 # [TESTS] tests/test_config_manager.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

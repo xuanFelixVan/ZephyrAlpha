@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_decision_engine.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

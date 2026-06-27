@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 # AI-generated: T-3-19 (A25) beta 端到端验收测试
 """
 test_phase3_e2e · beta 端到端联调验收测试集

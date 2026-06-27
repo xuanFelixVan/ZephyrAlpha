@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] ValueError on invalid offset/limit
 
 # [TESTS] pytest tests/test_utils_pagination.py -q
+# [TTL] task_bound
 
 import pytest
 

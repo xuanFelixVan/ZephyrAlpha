@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """MCP 混沌工程测试（MOD-INF-013 Phase 8 — R126/B179/B188）。
 
 至少 5 个混沌实验：进程 kill / 连接断开 / 语法错误 / 高并发 / 空请求。

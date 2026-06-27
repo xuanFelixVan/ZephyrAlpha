@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_safety_gate_L50_L51.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.safety_gate_l1_l27 import ActionContext, GateVerdict
 from zephyr.ops.gates.safety_gate_l50_l51 import SafetyGateL50L55

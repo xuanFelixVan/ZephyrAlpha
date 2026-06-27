@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_blueprint_code_reconciler.py
+# [TTL] task_bound
 
 import os
 import tempfile

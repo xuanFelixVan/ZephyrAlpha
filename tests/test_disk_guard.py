@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] total_gb=0 returns (False, msg); no division by zero
 # [TESTS] test_disk_guard.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

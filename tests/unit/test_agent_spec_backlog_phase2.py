@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """Backlog Phase 2 测试: cross-model, ontology, prompt-eng, model-evolution, xai."""

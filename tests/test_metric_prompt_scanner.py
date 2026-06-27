@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_metric_prompt_scanner.py
+# [TTL] task_bound
 
 
 from zephyr.ops.security.metric_prompt_scanner import (

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FileNotFoundError on missing blueprint
 # [TESTS] pytest tests/test_skill_factory.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

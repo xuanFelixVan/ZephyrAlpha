@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_orchestrator_trigger_router.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

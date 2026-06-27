@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises TypeError on None input
 # [TESTS] tests/test_skill_breakage_checker.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

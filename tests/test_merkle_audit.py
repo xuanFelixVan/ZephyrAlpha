@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_merkle_audit.py -q
+# [TTL] task_bound
 
 import hashlib
 import json

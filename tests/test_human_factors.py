@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_human_factors.py
+# [TTL] task_bound
 
 import time
 

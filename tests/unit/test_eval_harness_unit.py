@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 # AI-generated: T-3-22 (A27) · EvalHarness 单元测试
 """
 test_eval_harness · EvalHarness 单元测试

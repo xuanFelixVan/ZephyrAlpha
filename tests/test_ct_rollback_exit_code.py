@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
 # [TESTS] pytest tests/test_ct_rollback_exit_code.py
+# [TTL] task_bound
 from __future__ import annotations
 
 from pathlib import Path

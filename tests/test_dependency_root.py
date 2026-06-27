@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SyntaxError in source code returns empty list
 # [TESTS] tests/test_dependency_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

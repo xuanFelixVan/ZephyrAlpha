@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_rollback_integrity.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Alpha-Signal Domain 红白对抗测试
 ====================================
 Domain   : ALPHA-SIGNAL-DOMAIN-001

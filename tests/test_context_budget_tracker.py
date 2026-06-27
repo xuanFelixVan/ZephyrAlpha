@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_context_budget_tracker.py
+# [TTL] task_bound
 
 from unittest.mock import MagicMock
 

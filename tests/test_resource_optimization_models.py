@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Pydantic ValidationError on invalid input
 # [TESTS] this file
+# [TTL] task_bound
 
 from __future__ import annotations
 

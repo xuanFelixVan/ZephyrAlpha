@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
 # [TESTS] pytest tests/e2e/test_mcp_full_lifecycle_e2e.py -v --tb=short
+# [TTL] task_bound
 """DM-202914: MCP boot→FLE→MCP→shutdown全链路E2E测试（不mock）。
 
 覆盖目标：

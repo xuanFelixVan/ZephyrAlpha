@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """治理脚本测试 — pytest 共享 Fixture"""
 
 from __future__ import annotations

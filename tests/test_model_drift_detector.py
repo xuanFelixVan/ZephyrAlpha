@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftResult on check_drift failure;json.JSONDecodeError on corrupted baseline
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """9项红队完整测试 — KB纵深防御对抗性验证
 =============================================
 蓝图: MOD-KB-001 §7.10.6

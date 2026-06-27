@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
 # [TESTS] pytest tests/test_detect_forward_reference.py
+# [TTL] task_bound
 from __future__ import annotations
 
 import ast

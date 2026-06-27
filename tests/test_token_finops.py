@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_token_finops.py
+# [TTL] task_bound
 
 
 from zephyr.ops.collectors.token_finops import TokenFinOps

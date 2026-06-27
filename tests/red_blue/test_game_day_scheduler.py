@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_game_day_scheduler.py
+# [TTL] task_bound
 
 import pytest
 import yaml

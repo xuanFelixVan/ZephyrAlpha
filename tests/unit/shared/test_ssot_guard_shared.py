@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 单元测试：src/zephyr/hooks/ssot_guard.py
 任务 ID : T-1-26（B07）
@@ -201,7 +202,7 @@ class TestIsWatched:
             "scripts/governance/scanner.py",
             "scripts/ci_audit/checker.py",
             ".github/workflows/ci.yml",
-            "docs/09_audit/STANDARDS/new-standard.md",
+            "docs/_working/audit/STANDARDS/new-standard.md",
             "src/zephyr/hooks/ssot_guard.py",
             "src/zephyr/db/task_repo.py",
         ],

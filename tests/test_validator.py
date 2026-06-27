@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeedbackLoopError
 # [TESTS] tests/test_validator.py
+# [TTL] task_bound
 
 from zephyr.ops.template import SKELETONS
 from zephyr.ops.validator import BASE, missing_files, validate_all, validate_one

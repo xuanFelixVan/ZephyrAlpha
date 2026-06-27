@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_backcompat_checker.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

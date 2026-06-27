@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase 4 门禁验证测试 — G-CT-007/008 全部通过."""
 
 import sys

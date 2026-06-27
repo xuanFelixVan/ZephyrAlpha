@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cross_gen_validation.py
+# [TTL] task_bound
 
 
 from zephyr.ops.evolution.cross_gen_validation import CrossGenValidation

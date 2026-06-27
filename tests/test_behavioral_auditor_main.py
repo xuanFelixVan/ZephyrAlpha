@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_behavioral_auditor_main.py
+# [TTL] task_bound
 
 import argparse
 from unittest.mock import MagicMock, patch

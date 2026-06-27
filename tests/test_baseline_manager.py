@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_baseline_manager.py -q
+# [TTL] task_bound
 
 import os
 

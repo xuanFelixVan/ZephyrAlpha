@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 单元测试：scripts/governance/validate_ssot.py
 任务 ID : T-2-33 (B13)

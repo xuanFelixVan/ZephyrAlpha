@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_degrade_cascade.py
+# [TTL] task_bound
 
 
 from zephyr.trading.orchestrator.degrade_cascade import DEGRADE_PROPAGATION_CHAIN, DegradeCascadeGuard

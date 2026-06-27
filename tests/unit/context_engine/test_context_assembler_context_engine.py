@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """ContextAssembler 单测（AUDIT-07 补齐）。"""
 
 from pathlib import Path

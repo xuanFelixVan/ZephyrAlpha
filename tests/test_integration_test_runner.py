@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception;AssertionError
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

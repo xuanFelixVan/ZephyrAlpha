@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] none
 
 # [TESTS] tests/test_context_debt_score.py
+# [TTL] task_bound
 
 """Tests for zephyr.autonomy_core.context_debt_score."""
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_recursive_diagnosis_trust_evaluator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.recursive_diagnosis_trust_evaluator import (

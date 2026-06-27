@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_phase_executor_rule_enforcement.py
+# [TTL] task_bound
 
 """PhaseExecutor 单元测试 — 验证阶段执行器桥接 PhaseManager 和 GateEngine."""
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register requires valid manifest_path; yaml.safe_load on corrupt file raises exception
 # [TESTS] pytest tests/test_file_autoregister.py
+# [TTL] task_bound
 
 from pathlib import Path
 

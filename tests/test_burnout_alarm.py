@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_burnout_alarm.py
+# [TTL] task_bound
 
 from zephyr.ops.diagnosers.burnout_alarm import BurnoutAlarm
 

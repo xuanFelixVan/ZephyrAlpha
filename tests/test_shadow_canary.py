@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_shadow_canary.py
+# [TTL] task_bound
 
 import pytest
 

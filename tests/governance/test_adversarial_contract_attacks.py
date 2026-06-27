@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """test_adversarial_contract_attacks.py — 治理域八件套红白对抗测试
 
 攻击面覆盖：

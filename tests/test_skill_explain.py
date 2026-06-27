@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on empty skill_id
 # [TESTS] pytest tests/test_skill_explain.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

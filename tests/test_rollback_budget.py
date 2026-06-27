@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] BudgetConsumeResult.allowed=False when any limit exceeded
 # [TESTS] tests/test_rollback_budget.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

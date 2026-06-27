@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """scanner 跨文件测试 — 相同文件不重复,不同文件找重复."""
 
 import sys

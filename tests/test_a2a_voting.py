@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_a2a_voting.py
+# [TTL] task_bound
 
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_voting import (
     A2AVoting,

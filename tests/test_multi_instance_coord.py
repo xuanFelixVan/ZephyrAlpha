@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_multi_instance_coord.py
+# [TTL] task_bound
 
 
 from zephyr.ops.resilience.multi_instance_coord import (

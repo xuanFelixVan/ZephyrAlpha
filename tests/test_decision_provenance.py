@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_decision_provenance.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.decision_provenance import DecisionProvenance

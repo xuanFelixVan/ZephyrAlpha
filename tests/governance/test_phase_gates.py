@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase Gates + 依赖审计隔离 + A2A Phase 4 Hold 测试."""
 
 from __future__ import annotations

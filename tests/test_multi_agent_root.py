@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_multi_agent_root.py
+# [TTL] task_bound
 
 from zephyr.infrastructure.a2a_protocol.multi_agent import (
     AgentCard,

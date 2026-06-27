@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 test_runtime_interceptor.py — 运行时 LLM 裸调拦截器测试
 

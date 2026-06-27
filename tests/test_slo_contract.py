@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] pytest raises on failure
 
 # [TESTS] test_slo_contract
+# [TTL] task_bound
 from __future__ import annotations
 
 from zephyr.governance.slo_contract import (

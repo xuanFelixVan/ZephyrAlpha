@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] OSError/PermissionError handled gracefully
 # [TESTS] tests/test_scanner_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_wireheading_prevention.py
+# [TTL] task_bound
 
 
 from zephyr.ops.security.wireheading_prevention import (

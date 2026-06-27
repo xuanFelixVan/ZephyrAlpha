@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get returns Optional[str]; set returns None; purge_expired returns int
 # [TESTS] pytest tests/test_skill_prompt_cache.py -q
+# [TTL] task_bound
 
 
 import pytest

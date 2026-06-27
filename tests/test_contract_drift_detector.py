@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip;参数非法→返回None
 # [TESTS] python -m pytest tests/test_contract_drift_detector.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

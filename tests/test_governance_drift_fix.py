@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError on invalid event; TypeError on wrong types
 # [TESTS] tests/test_governance_drift_fix.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] MigrationError
 
 # [TESTS] pytest tests/test_utils_migration.py -q
+# [TTL] task_bound
 
 import pytest
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_f21_event_driven.py
+# [TTL] task_bound
 
 """
 F21 事件启动测试 — DM-201250

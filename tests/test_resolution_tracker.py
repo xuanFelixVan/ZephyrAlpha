@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_resolution_tracker.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.resolution_tracker import ResolutionTracker

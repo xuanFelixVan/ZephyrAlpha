@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] analyze returns dict; _infer_symptom_category returns str; _generate_actions returns dict
 # [TESTS] pytest tests/test_skill_postmortem.py -q
+# [TTL] task_bound
 
 
 from zephyr.autonomy_core.skill_postmortem import SkillPostmortem

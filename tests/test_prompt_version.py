@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register/get_version/diff never raise
 # [TESTS] tests/test_prompt_version.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 = all pass
 # [TESTS] pytest tests/unit/db/test_dm400_stale_task_fix.py -v
+# [TTL] task_bound
 
 """DM-400/DM-401 端到端 + 红蓝对抗测试。
 

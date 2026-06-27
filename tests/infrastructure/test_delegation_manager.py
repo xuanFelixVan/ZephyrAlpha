@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Test Delegation Manager."""
 
 from zephyr.governance.delegation_manager import DelegateResult, DelegationManager

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_teacher_transfer.py
+# [TTL] task_bound
 
 
 from zephyr.ops.evolution.teacher_transfer import TeacherTransfer

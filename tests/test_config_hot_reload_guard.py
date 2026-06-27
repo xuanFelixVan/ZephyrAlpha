@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_config_hot_reload_guard.py
+# [TTL] task_bound
 
 
 from zephyr.ops.resilience.config_hot_reload_guard import (

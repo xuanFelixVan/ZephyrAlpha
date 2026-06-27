@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_objective_tracker.py
+# [TTL] task_bound
 
 from zephyr.governance.objective_tracker import ObjectiveTracker
 

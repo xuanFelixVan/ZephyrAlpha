@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 Orphan Integration Tests — 验证 shared/ 下35个孤儿模块的导入与核心功能
 按集群组织，每个模块测试：导入、实例化、核心方法

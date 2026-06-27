@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.AssertionError
 # [TESTS] tests/test_profiler.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

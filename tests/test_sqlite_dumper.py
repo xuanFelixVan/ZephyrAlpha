@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FileNotFoundError;ValueError
 # [TESTS] tests/test_sqlite_dumper.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

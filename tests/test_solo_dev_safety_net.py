@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_solo_dev_safety_net.py -q
+# [TTL] task_bound
 import pytest
 
 from zephyr.autonomy_core.solo_dev_safety_net import SafetyNetCheck, SoloDevSafetyNet

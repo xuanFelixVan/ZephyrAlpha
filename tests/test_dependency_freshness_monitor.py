@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_dependency_freshness_monitor.py
+# [TTL] task_bound
 
 import time
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_agent_trajectory_anomaly_detector.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

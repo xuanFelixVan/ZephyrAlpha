@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_capture.py
+# [TTL] task_bound
 
 
 from zephyr.ops.collectors.knowledge_capture import KnowledgeCapture

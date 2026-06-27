@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get/list_all/list_active/get_by_impact/check_re_evaluate never raise
 # [TESTS] tests/test_design_decisions_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

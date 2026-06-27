@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_red_blue_validator_tests.py
+# [TTL] task_bound
 
 import pytest
 from datetime import UTC, datetime

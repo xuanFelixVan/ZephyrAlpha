@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_meta_guard_latency_budget.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.meta_guard_latency_budget import MetaGuardLatencyBudget

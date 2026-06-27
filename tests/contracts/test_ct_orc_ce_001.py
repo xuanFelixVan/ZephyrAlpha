@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-ORC-CE-001 集成测试——Session Context请求。"""
 
 from __future__ import annotations

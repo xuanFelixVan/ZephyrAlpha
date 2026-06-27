@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 无
 
 # [TESTS] pytest tests/test_utils_testing.py -q
+# [TTL] task_bound
 
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
 from zephyr.integration.shared.schema.schemas import AuditReport, FailurePattern, HandoffPackage, KnowledgeEntry, Task

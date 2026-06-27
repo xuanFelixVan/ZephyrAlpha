@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_placebo_action_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.placebo_action_detector import PlaceboActionDetector

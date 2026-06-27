@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] optimize returns structured dict; _team_score returns tuple of 3 floats
 # [TESTS] tests/test_skill_team_optimizer.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_team_optimizer import SkillTeamOptimizer
 

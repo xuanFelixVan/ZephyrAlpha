@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """跨模块契约一致性测试（MOD-INF-013 §7）。
 
 验证 MCP 模块的 depends_on 依赖可达性 + 契约三方一致性。

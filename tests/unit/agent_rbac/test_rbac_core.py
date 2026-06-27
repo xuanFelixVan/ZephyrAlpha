@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 
 """Test suite: agent-rbac core — identity + permission_guard + rbac_guard + immutable_core + kill_switch"""
 

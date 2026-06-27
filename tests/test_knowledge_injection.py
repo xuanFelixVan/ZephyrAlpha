@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_injection.py
+# [TTL] task_bound
 
 
 from zephyr.ops.collectors.knowledge_injection import KnowledgeInjection

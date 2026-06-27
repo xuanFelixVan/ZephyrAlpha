@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_fragmentation_index.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.fragmentation_index import FragmentationIndex, FragmentationScore
 

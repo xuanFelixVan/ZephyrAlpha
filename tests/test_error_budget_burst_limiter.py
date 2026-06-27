@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_error_budget_burst_limiter.py
+# [TTL] task_bound
 
 import time
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """生产硬化测试 —— 并发安全 + 边界条件"""
 
 import threading

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_metric_cardinality_guard.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.metric_cardinality_guard import (

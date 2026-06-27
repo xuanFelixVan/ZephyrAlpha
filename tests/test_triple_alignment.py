@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on field mismatch or logic violation
 # [TESTS] tests/test_triple_alignment.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

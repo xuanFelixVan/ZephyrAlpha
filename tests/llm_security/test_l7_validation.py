@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 import pytest
 
 from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import (

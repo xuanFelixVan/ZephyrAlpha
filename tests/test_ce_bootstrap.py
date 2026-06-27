@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_ce_bootstrap.py
+# [TTL] task_bound
 
 import pytest
 

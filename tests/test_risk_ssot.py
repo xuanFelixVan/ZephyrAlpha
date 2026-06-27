@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] no exceptions raised from tests; all assertions use == or is
 
 # [TESTS] tests/test_risk_ssot.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

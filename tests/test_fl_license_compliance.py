@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_license_compliance.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.license_compliance import LicenseCompliance, LicenseRisk
 

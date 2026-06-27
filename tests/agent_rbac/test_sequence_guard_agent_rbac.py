@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 测试 L4 SequenceGuard — 操作序列追踪与危险序列阻断
 """

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module;AttributeError->skip_test
 # [TESTS] test_l07_post_trade_analytics.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

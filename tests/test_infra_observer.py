@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 无
 
 # [TESTS] pytest tests/test_infra_observer.py -q
+# [TTL] task_bound
 
 from zephyr.shared.shared_services.infra_06.observer import (
     EventType,

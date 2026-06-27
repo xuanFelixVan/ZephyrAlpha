@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_self_validator.py
+# [TTL] task_bound
 
 from zephyr.governance.self_validator import SelfValidator
 

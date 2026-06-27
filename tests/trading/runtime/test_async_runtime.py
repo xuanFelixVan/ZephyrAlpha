@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """AsyncRuntime 测试——事件循环引导 + run_in_executor 桥接。
 
 覆盖：

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest assertions on RuleLoader API returns
 # [TESTS] tests/test_rule_e2e.py
+# [TTL] task_bound
 
 import pytest
 

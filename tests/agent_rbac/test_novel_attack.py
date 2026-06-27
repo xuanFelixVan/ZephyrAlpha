@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """新攻击 / cybersec 2026 专项测试."""
 
 from __future__ import annotations

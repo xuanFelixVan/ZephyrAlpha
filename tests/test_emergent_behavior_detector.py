@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_emergent_behavior_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.emergent_behavior_detector import (

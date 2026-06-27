@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 测试失败必须包含断言消息
 
 # [TESTS] tests/test_rule_debt_auditor.py
+# [TTL] task_bound
 from __future__ import annotations
 
 import pytest

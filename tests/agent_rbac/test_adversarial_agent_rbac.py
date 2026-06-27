@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """MOD-INF-018 test_adversarial.py — 对抗性测试: 权限绕过/伪造/重放."""
 
 from __future__ import annotations

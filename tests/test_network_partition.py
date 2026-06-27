@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_network_partition.py
+# [TTL] task_bound
 
 
 from zephyr.trading.orchestrator.network_partition import NetworkPartitionGuard

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """跨切面 B 取证审计 C 层——audit_log/replay/legal_chain/rollback_sandbox/monotonic_clock 测试."""
 
 from __future__ import annotations

@@ -1,4 +1,5 @@
 # [A_test] module_id: SRC-TST-1936 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 import importlib.util
 import sys
 import types

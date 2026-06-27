@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_stochastic_diagnosis_verifier.py
+# [TTL] task_bound
 
 
 from zephyr.ops.verifiers.stochastic_diagnosis_verifier import (

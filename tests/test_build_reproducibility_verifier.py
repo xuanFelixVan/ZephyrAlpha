@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_build_reproducibility_verifier.py
+# [TTL] task_bound
 
 
 from zephyr.ops.verifiers.build_reproducibility_verifier import (

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试 AgentRbac 异常类型"""
 
 from zephyr.security.access_control.exceptions import (

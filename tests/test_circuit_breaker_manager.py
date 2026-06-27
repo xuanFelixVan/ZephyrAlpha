@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import failure -> skip
 # [TESTS] pytest tests/test_circuit_breaker_manager.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

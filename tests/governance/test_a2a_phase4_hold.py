@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """A2A Phase 4 Hold 测试 — Phase 3 未完成时禁止 Phase 4 启动."""
 
 from __future__ import annotations

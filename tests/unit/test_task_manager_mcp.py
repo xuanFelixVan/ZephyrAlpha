@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """TaskManagerMCP（FastMCP）协议与 BlueprintDecomposer 绑定单测。"""

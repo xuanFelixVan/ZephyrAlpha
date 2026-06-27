@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_prompt_optimization_regression_detector.py
+# [TTL] task_bound
 
 import pytest
 

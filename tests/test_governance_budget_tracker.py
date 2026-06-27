@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError on wrong arg types
 # [TESTS] tests/test_governance_budget_tracker.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

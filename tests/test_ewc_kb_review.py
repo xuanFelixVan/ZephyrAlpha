@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_ewc_kb_review.py
+# [TTL] task_bound
 
 import pytest
 

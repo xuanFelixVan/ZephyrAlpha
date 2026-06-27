@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 无
 
 # [TESTS] pytest tests/test_observability_tracing.py -q
+# [TTL] task_bound
 
 import pytest
 

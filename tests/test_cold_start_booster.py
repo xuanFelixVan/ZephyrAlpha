@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_cold_start_booster.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.cold_start_booster import ColdStartBooster, ColdStartProfile
 

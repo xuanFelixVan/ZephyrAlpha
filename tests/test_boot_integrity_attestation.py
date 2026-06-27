@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_boot_integrity_attestation.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

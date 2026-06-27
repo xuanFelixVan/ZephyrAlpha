@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_silent_corruption_detector.py
+# [TTL] task_bound
 
 import hashlib
 

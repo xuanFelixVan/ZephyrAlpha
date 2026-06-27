@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_config_governance.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.config_governance import ConfigGovernance
 

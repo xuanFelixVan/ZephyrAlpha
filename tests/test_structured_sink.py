@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败→stderr→内存缓冲→丢弃+告警
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

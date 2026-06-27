@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 backpressure_bridge 模块单元测试 — AUDIT-08 M6
 ================================================

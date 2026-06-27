@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase 1 Gate 检查测试 — DOM-GOV-001 §7.2 门禁检查."""
 
 from __future__ import annotations

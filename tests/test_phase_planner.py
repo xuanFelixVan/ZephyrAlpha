@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError on unknown phase name; PhaseStatus enum validation
 # [TESTS] tests/test_phase_planner.py
+# [TTL] task_bound
 
 from datetime import UTC, datetime
 

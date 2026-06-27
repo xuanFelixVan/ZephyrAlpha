@@ -1,4 +1,5 @@
 # [A_test] module_id=MOD-GOV_ssot_gate_test | suite=ssot_gate | scope=unit | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 test_ssot_gate — SSoT 创建门禁红蓝变异测试。

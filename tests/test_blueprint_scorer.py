@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] score_blueprint_route/score_and_rank_routes never raise
 # [TESTS] tests/test_blueprint_scorer.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

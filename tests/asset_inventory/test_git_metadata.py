@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for MOD-INF-026 §25 Git Metadata module."""
 
 from datetime import UTC, datetime

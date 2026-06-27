@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] route returns (role, domain) tuple always
 # [TESTS] tests/test_skill_router.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

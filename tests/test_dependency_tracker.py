@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_dependency_tracker.py -q
+# [TTL] task_bound
 from __future__ import annotations
 
 from zephyr.autonomy_core.dependency_tracker import (

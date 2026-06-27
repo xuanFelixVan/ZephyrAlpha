@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_safety_gate_L28_L29.py
+# [TTL] task_bound
 
 import time
 

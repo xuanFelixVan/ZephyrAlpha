@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError→skip
 # [TESTS] self
+# [TTL] task_bound
 
 """AutoRuntimeCore → FeedbackLoopScheduler 自动启动链路集成测试
 

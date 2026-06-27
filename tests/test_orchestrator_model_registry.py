@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_orchestrator_model_registry.py
+# [TTL] task_bound
 
 
 from zephyr.trading.orchestrator.model_registry import MODELS, ModelRegistry

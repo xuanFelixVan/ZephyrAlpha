@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-ORC-SCRIPT-001 集成测试——Task Blocking→Task创建。"""
 
 from __future__ import annotations

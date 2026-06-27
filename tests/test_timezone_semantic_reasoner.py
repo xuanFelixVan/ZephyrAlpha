@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_timezone_semantic_reasoner.py
+# [TTL] task_bound
 
 from datetime import UTC, datetime
 

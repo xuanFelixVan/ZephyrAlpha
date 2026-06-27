@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_reflection.py
+# [TTL] task_bound
 
 
 from zephyr.ops.evolution.self_reflection import SelfReflection

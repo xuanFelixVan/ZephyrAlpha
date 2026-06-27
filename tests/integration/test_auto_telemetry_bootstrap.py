@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """端到端验证：auto_bootstrap 自动遥测全链路集成测试
 
 验证 auto_bootstrap 对三大系统的 monkey-patch 注入是否正确：

@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] all tests must pass with exit 0
 
 # [TESTS] python -m pytest tests/test_db_bridge.py -q
+# [TTL] task_bound
 
 """Tests for zephyr.ops.db_bridge — record_via_db_contract and bulk_record_via_db_contract.
 

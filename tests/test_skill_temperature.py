@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_skill_temperature.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_temperature import SkillTemperature
 

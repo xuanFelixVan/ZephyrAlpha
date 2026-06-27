@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_position_reconciler.py -q
+# [TTL] task_bound
 from zephyr.position.position_reconciler import PositionReconciler
 
 

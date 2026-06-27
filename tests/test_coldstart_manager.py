@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_coldstart_manager.py
+# [TTL] task_bound
 
 
 from zephyr.governance.coldstart_manager import ColdstartManager

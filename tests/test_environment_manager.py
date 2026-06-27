@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_environment_manager.py
+# [TTL] task_bound
 
 from zephyr.security.access_control.environment_manager import (
     ENVIRONMENTS,

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_budget_event_driven.py
+# [TTL] task_bound
 
 """DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋预警自动触发降级隔离告警。
 

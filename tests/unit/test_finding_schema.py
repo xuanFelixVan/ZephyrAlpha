@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """script_system.finding Finding Schema — MOD-INF-005 §6.5 recommendation 对齐。"""

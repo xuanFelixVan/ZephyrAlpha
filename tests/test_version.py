@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] VersionMismatchError
 
 # [TESTS] pytest tests/test_version.py -q
+# [TTL] task_bound
 
 import pytest
 

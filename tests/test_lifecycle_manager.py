@@ -12,6 +12,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tests never raise; all assertions within pytest
 # [TESTS] this file
+# [TTL] task_bound
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 

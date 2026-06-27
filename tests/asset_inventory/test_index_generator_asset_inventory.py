@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for MOD-INF-026 IndexGenerator module — 蓝图 §2.4 + §17 附录 H 要求 >80% 覆盖."""
 
 from datetime import UTC, datetime

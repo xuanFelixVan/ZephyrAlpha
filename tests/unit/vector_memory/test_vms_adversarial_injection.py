@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 VMS 红蓝对抗测试 — 向量注入与投毒检测
 ======================================

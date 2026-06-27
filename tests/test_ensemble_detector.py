@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_ensemble_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.ensemble_detector import EnsembleDetector

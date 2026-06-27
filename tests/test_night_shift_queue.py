@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] NightShiftQueue.append返回str;pending返回list;resolve返回bool;stats返回dict
 # [TESTS] tests/test_night_shift_queue.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

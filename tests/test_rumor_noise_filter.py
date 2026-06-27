@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_rumor_noise_filter.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.rumor_noise_filter import (

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_brain_integration_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

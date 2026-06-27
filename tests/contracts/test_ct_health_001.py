@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-HEALTH-001 集成测试——三态健康探针：liveness / readiness / healthz。"""
 
 from __future__ import annotations

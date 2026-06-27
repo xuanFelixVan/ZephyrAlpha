@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_value_added_baseline.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.value_added_baseline import ValueAddedBaseline

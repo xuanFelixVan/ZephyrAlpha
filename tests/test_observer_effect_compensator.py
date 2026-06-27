@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module;AttributeError->skip_test
 # [TESTS] test_observer_effect_compensator.py
+# [TTL] task_bound
 
 import pytest
 

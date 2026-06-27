@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_llm_provider_integrity.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.llm_provider_integrity import (

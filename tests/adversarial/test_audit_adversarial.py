@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """红白对抗: Audit Trail 审计链攻击面测试.
 
 攻击向量:

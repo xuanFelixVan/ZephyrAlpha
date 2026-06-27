@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_self_test_verifier.py
+# [TTL] task_bound
 
 import os
 import tempfile

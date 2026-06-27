@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | tests/adversarial/ | §7 Phase 5.3
 # [DOMAIN] D-INF-ROLLBACK
 # [GOVERNANCE] A_test 6-field: test_id=DM-201911-ADV | type=adversarial | scope=scheduler | gate=G0 | owner=AI-09 | rollback=delete_file
+# [TTL] task_bound
 """
 DM-201911 红蓝对抗极端测试: RollbackScheduler 自动运行+自动关闭.
 

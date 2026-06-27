@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_ba_integration_test_runner.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

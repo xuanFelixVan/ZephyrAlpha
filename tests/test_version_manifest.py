@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_version/get_path/list_systems never raise
 # [TESTS] tests/test_version_manifest.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

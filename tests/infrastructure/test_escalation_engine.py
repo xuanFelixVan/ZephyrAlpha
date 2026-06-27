@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Test Escalation Engine — MOD-INF-022 v0.14.0.
 
 Tests the core EscalationEngine (L0-L4 model with CircuitBreaker + EconomicGuard).

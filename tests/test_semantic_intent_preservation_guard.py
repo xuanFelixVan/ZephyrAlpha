@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_semantic_intent_preservation_guard.py
+# [TTL] task_bound
 
 import pytest
 

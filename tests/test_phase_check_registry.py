@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GateResult.YELLOW on unknown check;GateResult.RED on exception
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

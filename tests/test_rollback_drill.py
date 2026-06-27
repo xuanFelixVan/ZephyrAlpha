@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DrillResult.success=False when no commits available
 # [TESTS] tests/test_rollback_drill.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

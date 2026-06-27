@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_risk returns None for unknown risk_id
 # [TESTS] tests/test_skill_risk_mitigator.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

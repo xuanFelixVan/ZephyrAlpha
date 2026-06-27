@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] self
+# [TTL] task_bound
 
 """DM-202509 验收测试: F15注册到AutoPilot实现任务调度"""
 from __future__ import annotations

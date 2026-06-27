@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] this file
+# [TTL] task_bound
 
 
 from zephyr.ops.gates.dynamic_llm_cost_router import DynamicLLMCostRouter

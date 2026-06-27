@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_vertical_self_assessment.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.vertical_self_assessment import VerticalSelfAssessment

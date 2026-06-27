@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError on add_span with invalid trace_id; empty dict on get_trace with unknown id
 # [TESTS] pytest tests/test_agent_observability.py
+# [TTL] task_bound
 
 import pytest
 

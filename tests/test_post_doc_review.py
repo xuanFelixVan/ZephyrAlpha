@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无
 # [TESTS] tests/test_post_doc_review.py
+# [TTL] task_bound
 
 import json
 import subprocess

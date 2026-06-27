@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_ba_canary_controller.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

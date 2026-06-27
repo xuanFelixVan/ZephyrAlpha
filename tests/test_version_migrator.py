@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_version_migrator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.version_migrator import VersionMigrator

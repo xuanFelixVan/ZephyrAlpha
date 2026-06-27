@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValidationError on invalid skill_id or out-of-range freshness_score
 # [TESTS] pytest tests/test_skill_model.py -q
+# [TTL] task_bound
 
 from datetime import datetime
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_retirement_planner.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.retirement_planner import RetirementPlanner

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-SCRIPT-KB-001 集成测试——Finding→KE入库。"""
 
 from __future__ import annotations

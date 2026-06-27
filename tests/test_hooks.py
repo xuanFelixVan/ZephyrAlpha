@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] re-raises on init/startup failure
 # [TESTS] this file
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AbsentStatus on check failure;json.JSONDecodeError on corrupted state
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

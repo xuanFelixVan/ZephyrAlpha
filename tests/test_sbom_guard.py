@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_sbom_guard.py
+# [TTL] task_bound
 
 from zephyr.governance.sbom_guard import SBOMGuard
 

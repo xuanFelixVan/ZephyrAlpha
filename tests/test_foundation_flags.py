@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] FlagNotFoundError
 
 # [TESTS] pytest tests/test_foundation_flags.py -q
+# [TTL] task_bound
 
 import pytest
 

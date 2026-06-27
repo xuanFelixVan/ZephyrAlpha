@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] pytest exit 0 on pass
 
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_protocol_state_store.py -q
+# [TTL] task_bound
 import json
 import os
 import shutil

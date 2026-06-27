@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/semantic-auditor/test_blast_radius_red_team.py
+# [TTL] task_bound
 
 """blast_radius 红蓝对抗测试 — 对抗性场景覆盖."""
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase E — Main Data Flow End-to-End Test
 
 主数据流端到端测试。验证 L00→L02→L03→L04→L05→L06→L07 完整 P0 链路。

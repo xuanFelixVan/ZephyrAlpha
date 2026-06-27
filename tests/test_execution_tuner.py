@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_execution_tuner.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

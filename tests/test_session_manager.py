@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError for unknown session; ValueError for duplicate session; SessionTransitionError for illegal transition
 # [TESTS] test_session_manager.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

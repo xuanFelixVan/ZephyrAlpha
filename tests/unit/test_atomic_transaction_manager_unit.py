@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 单元测试：src/zephyr/db/atomic_transaction_manager.py（T-2-30）
 ==============================================================

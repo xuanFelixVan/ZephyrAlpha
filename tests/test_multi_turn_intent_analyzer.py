@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 测试失败必须包含具体断言信息
 
 # [TESTS] tests/test_multi_turn_intent_analyzer.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

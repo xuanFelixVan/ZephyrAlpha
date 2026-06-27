@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试 TOCTOU Guard — 竞态防护"""
 
 from pathlib import Path

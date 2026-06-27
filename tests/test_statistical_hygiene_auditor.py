@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_statistical_hygiene_auditor.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.statistical_hygiene_auditor import (

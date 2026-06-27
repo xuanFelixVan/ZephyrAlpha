@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_policy returns None for unknown type; should_purge returns False for unknown type
 # [TESTS] test_orchestrator_data_lifecycle.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

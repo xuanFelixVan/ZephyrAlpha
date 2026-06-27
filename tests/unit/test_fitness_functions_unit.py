@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 # AI-generated: 适应度函数框架单元测试（T-4-04, B17）
 """
 FitnessFunctionFramework 单元测试

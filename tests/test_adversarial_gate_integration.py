@@ -4,6 +4,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_circuit_breaker.py
+# [TTL] task_bound
 
 import time
 from pathlib import Path

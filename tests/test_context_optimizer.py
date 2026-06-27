@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_context_optimizer.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.context_optimizer import ContextOptimizer
 

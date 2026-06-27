@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """demo_e2e_pipeline.py 语法自检（不执行全链路——需网络与 akshare）。"""

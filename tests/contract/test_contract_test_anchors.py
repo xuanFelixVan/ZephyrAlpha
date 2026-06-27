@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """contract-test-anchors.yaml 中登记的路径必须存在。"""
 
 from __future__ import annotations

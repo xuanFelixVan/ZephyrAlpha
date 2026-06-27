@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit codes: 0=all tests pass
 # [TESTS] tests/test_f5_e2e_lifecycle.py
+# [TTL] task_bound
 
 """F5 端到端集成测试 — boot→run→shutdown→restart 全链路 (DM-201517).
 

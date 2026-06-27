@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_event_integration.py
+# [TTL] task_bound
 
 import pytest
 from unittest.mock import MagicMock, patch

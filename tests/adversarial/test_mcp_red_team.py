@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 MCP Servers 红白对抗诊断测试（Pytest 兼容版）
 =============================================

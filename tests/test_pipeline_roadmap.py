@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ROICalculator.ratio_for_module returns (saved-invested)/max(invested,0.01); DependencyHealthChecker.missing_required auto-runs check_all
 # [TESTS] pytest tests/test_pipeline_roadmap.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

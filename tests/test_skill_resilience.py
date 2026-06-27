@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on exhausted retries
 # [TESTS] tests/test_skill_resilience.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

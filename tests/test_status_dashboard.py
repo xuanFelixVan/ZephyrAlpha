@@ -12,6 +12,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] render_tui返回str;render_json返回dict
 # [TESTS] tests/test_status_dashboard.py
+# [TTL] task_bound
 from unittest.mock import MagicMock
 
 from zephyr.trading.health_monitor import PressureLevel

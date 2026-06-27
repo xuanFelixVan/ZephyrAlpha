@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 ZephyrAlpha 2.0 — 全局测试配置与共享 fixture
 =============================================

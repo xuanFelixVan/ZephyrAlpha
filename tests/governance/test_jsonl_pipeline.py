@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """端到端验证 JSONL 管道 — BaseAuditScript → stdout → run_all 解析"""
 
 from __future__ import annotations

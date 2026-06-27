@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Pipeline 测试全局配置——阻止单元测试命中真实 LLM API。
 
 清除所有 LLM provider 的 API key 环境变量，强制 LLMGateway 进入 simulated 模式，

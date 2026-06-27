@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 T-V2-007 单元测试 — TriggerRouter (RI-03)
 ==========================================

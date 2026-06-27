@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试防护层模块 — ColdStartLock, AutoGuard, EscalationHandler"""
 
 from zephyr.security.access_control.guard_layers import AutoGuard, ColdStartLock, EscalationHandler

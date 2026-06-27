@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns error dict for unknown models; never raises
 # [TESTS] pytest tests/test_skill_model_evolution.py -q
+# [TTL] task_bound
 
 
 from zephyr.autonomy_core.skill_model_evolution import _MODEL_PROFILES, SkillModelEvolution

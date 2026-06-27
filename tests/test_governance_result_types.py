@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if canonical source missing; ValueError on invalid enum
 # [TESTS] tests/test_governance_result_types.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

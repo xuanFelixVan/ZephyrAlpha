@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Test Economic Guard — SSoT validation via escalation_models."""
 
 from zephyr.governance.escalation_models import EconomicGuard

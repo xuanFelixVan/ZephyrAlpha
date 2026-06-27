@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RegistryParseError on invalid YAML
 # [TESTS] tests/test_registry_adapter_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

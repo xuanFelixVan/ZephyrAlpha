@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_guard_interaction_topology_mapper.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.guard_interaction_topology_mapper import (

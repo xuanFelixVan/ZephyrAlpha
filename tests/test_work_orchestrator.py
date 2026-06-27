@@ -12,6 +12,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] submit返回str;complete_item更新状态;acquire_slot返回bool
 # [TESTS] tests/test_work_orchestrator.py
+# [TTL] task_bound
 from pathlib import Path
 from unittest.mock import MagicMock
 

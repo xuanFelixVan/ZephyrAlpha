@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_decision_fatigue_cli.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

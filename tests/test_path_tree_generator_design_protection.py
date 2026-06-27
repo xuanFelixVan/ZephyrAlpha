@@ -11,7 +11,8 @@ from pathlib import Path
 from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 注：depgraph 已迁移到 PostgreSQL（P2迁移），DB_PATH 路径常量已移除
+# 生成器 cmd_write_db 仅打印 db_path 参数，实际连接通过 get_depgraph_pg_connection() 走 PG
 GENERATOR_SCRIPT = REPO_ROOT / "scripts" / "governance" / "generate_project_path_tree.py"
 
 
@@ -49,7 +50,7 @@ def red_team_tests():
     # 2. 运行路径树生成器（红方攻击）
     print("\n[红方] 运行路径树生成器（尝试覆盖设计态）...")
     result = subprocess.run(
-        [sys.executable, str(GENERATOR_SCRIPT), "--output-db", str(DB_PATH)],
+        [sys.executable, str(GENERATOR_SCRIPT), "--output-db", "depgraph-pg"],
         capture_output=True,
         text=True,
         timeout=300,
@@ -91,7 +92,7 @@ def red_team_tests():
     print("\n[红方] 连续运行生成器10次...")
     for i in range(10):
         result = subprocess.run(
-            [sys.executable, str(GENERATOR_SCRIPT), "--output-db", str(DB_PATH)],
+            [sys.executable, str(GENERATOR_SCRIPT), "--output-db", "depgraph-pg"],
             capture_output=True,
             text=True,
             timeout=300,

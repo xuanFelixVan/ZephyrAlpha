@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sanitize_log:raises-TypeError-on-None-input
 # [TESTS] self
+# [TTL] task_bound
 
 import pytest
 

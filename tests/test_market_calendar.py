@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_market_calendar.py
+# [TTL] task_bound
 
 from zephyr.ops.collectors.market_calendar import MarketCalendar
 

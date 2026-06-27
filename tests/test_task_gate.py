@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] can_dispatch返回tuple[bool,str];get_safe_capabilities返回list
 # [TESTS] tests/test_task_gate.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

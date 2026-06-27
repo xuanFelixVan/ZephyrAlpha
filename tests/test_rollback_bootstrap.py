@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit codes: 0=success; 1=git unavailable; 2=no commits; 3=revert conflict
 # [TESTS] tests/test_rollback_bootstrap.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

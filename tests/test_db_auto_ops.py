@@ -21,7 +21,6 @@ from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 MARKET_DB = REPO_ROOT / "data" / "databases" / "market.duckdb"
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 

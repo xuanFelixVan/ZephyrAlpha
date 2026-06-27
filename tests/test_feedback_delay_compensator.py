@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_feedback_delay_compensator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.feedback_delay_compensator import (

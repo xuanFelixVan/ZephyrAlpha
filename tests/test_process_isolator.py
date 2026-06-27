@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_process_isolator.py -q
+# [TTL] task_bound
 from zephyr.governance.process_isolator import ProcessIsolator
 
 

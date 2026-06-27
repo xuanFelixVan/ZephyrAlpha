@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 # AI-generated: T-4-01 (A28) · AutoEvolutionEngine 单元测试
 """
 test_auto_evolution · stable 全自动进化引擎单元测试

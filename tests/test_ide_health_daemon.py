@@ -5,6 +5,7 @@
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [TTL] task_bound
 
 """IdeHealthDaemon 测试."""
 from __future__ import annotations

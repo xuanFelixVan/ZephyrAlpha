@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] calibrate returns dict with required keys
 # [TESTS] tests/test_skill_calibration.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises TypeError on invalid input types
 # [TESTS] tests/test_skill_knowledge_base.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_knowledge_base import SkillKnowledgeBridge
 

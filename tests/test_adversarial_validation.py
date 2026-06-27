@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] this file
+# [TTL] task_bound
 
 
 from zephyr.governance.rule_enforcement.adversarial_validation import AdversarialValidation

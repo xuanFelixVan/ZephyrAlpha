@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cross_session_consistency_validator.py
+# [TTL] task_bound
 
 import pytest
 

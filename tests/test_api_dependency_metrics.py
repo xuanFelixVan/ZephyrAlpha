@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_api_dependency_metrics.py
+# [TTL] task_bound
 
 from zephyr.ops.diagnosers.api_dependency_metrics import (
     APIDependencyMetrics,

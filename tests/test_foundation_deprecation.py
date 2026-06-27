@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] DeprecatedAPIError
 
 # [TESTS] pytest tests/test_foundation_deprecation.py -q
+# [TTL] task_bound
 
 import warnings
 

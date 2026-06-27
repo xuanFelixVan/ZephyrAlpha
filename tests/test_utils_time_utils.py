@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] ValueError on invalid ISO string
 
 # [TESTS] pytest tests/test_utils_time_utils.py -q
+# [TTL] task_bound
 
 from datetime import UTC, datetime, timedelta
 

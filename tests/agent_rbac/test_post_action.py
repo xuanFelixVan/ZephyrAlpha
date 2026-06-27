@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """MOD-INF-018 test_post_action.py — L5 Post-Action Hook 测试."""
 
 from __future__ import annotations

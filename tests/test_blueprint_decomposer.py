@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT]
 
 # [TESTS]
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -1,6 +1,7 @@
 # [A_test] module_id=MOD-INF-013 | layer=test | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §14
 # [TESTS] tests/test_mcp_launcher.py
+# [TTL] task_bound
 
 """MCP集群launcher.py自动化测试——DAG拓扑/路径/dry-run/signal/timeout。
 

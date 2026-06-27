@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
 # [TESTS] pytest tests/integration/test_mcp_signal_shutdown.py -v --tb=short
+# [TTL] task_bound
 """DM-202911: MCP SIGINT/SIGTERM 信号优雅关闭进程级测试。
 
 覆盖目标：

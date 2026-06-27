@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """P0-I1 depends_on 集成测试 — DOM-GOV-001 §8.3."""
 
 from __future__ import annotations

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_tone_adapter.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.tone_adapter import ToneAdapter

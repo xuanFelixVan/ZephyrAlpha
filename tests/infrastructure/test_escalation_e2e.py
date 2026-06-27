@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """End-to-End Integration Tests — Escalation Protocol Full Chain.
 
 Tests the complete chain: EscalationEngine → RBAC bridge → Audit trail → Rollback trigger.

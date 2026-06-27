@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_approver_check.py
+# [TTL] task_bound
 from zephyr.security.access_control.approver_check import RESTRICTED_ACTIONS, SUPERADMIN_AGENTS, verify_approver
 
 

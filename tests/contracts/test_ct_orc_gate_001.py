@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-ORC-GATE-001 集成测试——Task Lifecycle Gate。"""
 
 from __future__ import annotations

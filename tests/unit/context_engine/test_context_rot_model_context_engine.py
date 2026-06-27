@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for context_rot_model.py (TASK-014 beta a — 18 tests)."""
 
 import pytest

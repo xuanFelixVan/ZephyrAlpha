@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-PIPE-ORC-001 路由纯逻辑单测。"""
 
 import pytest

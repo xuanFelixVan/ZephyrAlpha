@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] validate_input/validate_output return {valid: bool, errors: list}
 # [TESTS] tests/test_skill_schema_registry.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

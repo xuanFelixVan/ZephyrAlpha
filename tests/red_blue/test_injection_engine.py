@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_injection_engine.py
+# [TTL] task_bound
 
 import pytest
 from datetime import datetime

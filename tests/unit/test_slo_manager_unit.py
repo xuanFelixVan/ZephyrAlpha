@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """SLO 管理器单元测试。"""
 
 from zephyr.ops.slo_manager import SLOManager

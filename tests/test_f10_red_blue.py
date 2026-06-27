@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] self
+# [TTL] task_bound
 
 """DM-202009: F10 红蓝对抗测试套件。
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Deeper integration test: P0 inflation guard + block_sessions_count + timeout exemption"""
 
 import sqlite3

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 Unit tests for hallucination_detector.py (T-3-07, ADR-0039)
 ==============================================================

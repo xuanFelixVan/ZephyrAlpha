@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_federated_security.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.federated_security import FederatedSecurity
 

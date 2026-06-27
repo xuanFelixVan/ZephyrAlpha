@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 Red-team adversarial tests for rollback system (MOD-INF-021 Phase 10).
 

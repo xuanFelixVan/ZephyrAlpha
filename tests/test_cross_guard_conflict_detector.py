@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cross_guard_conflict_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.cross_guard_conflict_detector import (

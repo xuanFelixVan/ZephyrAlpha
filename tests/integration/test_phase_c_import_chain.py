@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase C — Import Chain Validation
 
 验证所有 Phase C concrete class 的 import 路径在工作。

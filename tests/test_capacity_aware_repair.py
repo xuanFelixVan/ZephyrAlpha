@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_capacity_aware_repair.py
+# [TTL] task_bound
 
 from zephyr.ops.diagnosers.capacity_aware_repair import CapacityAwareRepair
 

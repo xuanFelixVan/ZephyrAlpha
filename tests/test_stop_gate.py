@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check返回StopGateResult;can_stop返回bool;acknowledge_shutdown无返回
 # [TESTS] tests/test_stop_gate.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

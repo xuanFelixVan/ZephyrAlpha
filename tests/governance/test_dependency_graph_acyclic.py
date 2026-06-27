@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """依赖无环测试 — 验证 governance/ 下有向图无循环."""
 
 import sys

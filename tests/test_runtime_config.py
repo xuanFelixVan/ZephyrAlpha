@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeConfig是Pydantic模型;DATA_DIR是Path
 # [TESTS] tests/test_runtime_config.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

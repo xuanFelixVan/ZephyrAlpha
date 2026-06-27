@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get/list_all/list_open/mitigate/accept never raise
 # [TESTS] tests/test_risk_registry_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

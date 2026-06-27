@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for Reward Hacking Rebound Detector — §2.37-D, Blind spot #161."""
 
 from __future__ import annotations

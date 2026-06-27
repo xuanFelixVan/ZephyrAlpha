@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_api_throttle_defense.py
+# [TTL] task_bound
 
 
 from zephyr.ops.resilience.self_api_throttle_defense import (

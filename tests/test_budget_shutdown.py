@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_budget_shutdown.py
+# [TTL] task_bound
 
 """DM-201504: F4 BudgetEngine自动关闭——shutdown资源清理+状态持久化+session_shutdown钩子。
 

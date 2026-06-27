@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_config_scanner.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

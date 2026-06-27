@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 
 """Test suite: drift-detector core — drift_engine + baseline_manager + drift_models"""
 

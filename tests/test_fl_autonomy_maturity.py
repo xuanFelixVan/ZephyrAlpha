@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_autonomy_maturity.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.autonomy_maturity import AutonomyMaturity
 

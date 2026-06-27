@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_kill_switch_sim.py -q
+# [TTL] task_bound
 
 import json
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_trigger_router_root.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.trigger_router import ConstructionStage, TriggerRouter
 

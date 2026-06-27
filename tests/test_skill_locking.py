@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises TimeoutError on lock timeout
 # [TESTS] pytest tests/test_skill_locking.py -q
+# [TTL] task_bound
 
 import os
 import threading

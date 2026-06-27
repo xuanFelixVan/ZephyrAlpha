@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试 IntentBinder — 意图绑定与连续验证"""
 
 from zephyr.security.access_control.intent_binder import IntentBinder, IntentState

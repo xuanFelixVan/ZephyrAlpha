@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeatureFlag OFF→noop; ring buffer full→discard oldest
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

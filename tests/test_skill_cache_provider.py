@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] configure returns dict with backend info
 # [TESTS] tests/test_skill_cache_provider.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

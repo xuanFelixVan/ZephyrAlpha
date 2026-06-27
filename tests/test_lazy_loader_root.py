@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError on unregistered; RuntimeError on not-yet-loaded; re-raises on import failure
 # [TESTS] this file
+# [TTL] task_bound
 
 from __future__ import annotations
 

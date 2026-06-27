@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_resource_starvation_aware.py
+# [TTL] task_bound
 
 
 from zephyr.ops.resilience.resource_starvation_aware import (

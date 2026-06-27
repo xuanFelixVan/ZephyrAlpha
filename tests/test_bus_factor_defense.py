@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] None
 # [TESTS] tests/test_bus_factor_defense.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

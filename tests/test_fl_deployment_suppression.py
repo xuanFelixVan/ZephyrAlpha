@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_deployment_suppression.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.deployment_suppression import DeployGateState, DeploymentSuppression
 

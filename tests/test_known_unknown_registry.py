@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_known_unknown_registry.py
+# [TTL] task_bound
 
 from zephyr.ops.collectors.known_unknown_registry import (
     KnownUnknown,

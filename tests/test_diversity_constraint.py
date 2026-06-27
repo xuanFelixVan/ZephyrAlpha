@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_diversity_constraint.py -q
+# [TTL] task_bound
 from __future__ import annotations
 
 from zephyr.autonomy_core.diversity_constraint import DiversityConstraint, DiversityReport

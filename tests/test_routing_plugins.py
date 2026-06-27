@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] NoEligibleNodeError when all candidates filtered out
 # [TESTS] pytest tests/test_routing_plugins.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

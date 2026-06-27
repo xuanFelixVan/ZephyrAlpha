@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Unit tests for wave_generator.py (ADR-003)"""
 
 from __future__ import annotations

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-CE-LSG-001 集成测试——Context Injection Safety。"""
 
 from __future__ import annotations

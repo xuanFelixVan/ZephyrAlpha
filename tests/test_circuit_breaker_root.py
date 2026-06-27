@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_circuit_breaker_root.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

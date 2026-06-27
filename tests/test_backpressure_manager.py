@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.raises on invalid input
 # [TESTS] —
+# [TTL] task_bound
 
 import time
 

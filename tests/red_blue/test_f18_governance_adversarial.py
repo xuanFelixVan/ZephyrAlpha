@@ -5,6 +5,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [TTL] task_bound
 """F18 治理脚本系统红蓝对抗极端测试.
 
 覆盖3类攻击向量:

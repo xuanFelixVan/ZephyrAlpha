@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValidationError on invalid version/stability; ValueError on semver check
 # [TESTS] pytest tests/test_skill_registry.py -q
+# [TTL] task_bound
 
 import pytest
 from pydantic import ValidationError

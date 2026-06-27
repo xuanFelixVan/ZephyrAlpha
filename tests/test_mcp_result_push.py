@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PushError;CallbackConnectionError
 # [TESTS] tests/test_mcp_result_push.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

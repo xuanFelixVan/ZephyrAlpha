@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] verify(nonexistent_path) -> IntegrityReport(valid=False); _load_manifest(missing_path) -> logs warning, no raise
 # [TESTS] pytest tests/test_gate_integrity_guard.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

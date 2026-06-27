@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_schema_migration.py
+# [TTL] task_bound
 
 
 from zephyr.trading.orchestrator.schema_migration import SchemaMigration

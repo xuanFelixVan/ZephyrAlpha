@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip;db不存在→返回空
 # [TESTS] python -m pytest tests/test_correlation_engine.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

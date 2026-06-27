@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/test_engine_sandbox.py
+# [TTL] task_bound
 """EngineSandbox — filesystem/network/boundary isolation and integrity tests."""
 
 from __future__ import annotations
@@ -52,7 +53,7 @@ class TestIsolationProfile:
     def test_default_profile(self) -> None:
         p = IsolationProfile()
         assert "docs/" in p.read_paths
-        assert "docs/09_audit/" in p.write_paths
+        assert "docs/_working/audit/" in p.write_paths
         assert ".env" in p.deny_paths
         assert "localhost" in p.network_allowed
         assert "api.openai.com" in p.network_denied
@@ -165,7 +166,7 @@ class TestCheckFileRead:
 class TestCheckFileWrite:
     def test_allowed_write(self) -> None:
         sb = EngineSandbox()
-        event = sb.check_file_write("docs/09_audit/log.txt")
+        event = sb.check_file_write("docs/_working/audit/log.txt")
         assert event.decision == AccessDecision.ALLOW
 
     def test_denied_write(self) -> None:
@@ -405,7 +406,7 @@ class TestAccessLogRecording:
     def test_events_recorded_in_order(self) -> None:
         sb = EngineSandbox()
         sb.check_file_read("docs/a.md", actor="a1")
-        sb.check_file_write("docs/09_audit/b.txt", actor="a2")
+        sb.check_file_write("docs/_working/audit/b.txt", actor="a2")
         sb.check_network_access("localhost", actor="a3")
         assert len(sb._access_log) == 3
         assert sb._access_log[0].actor == "a1"

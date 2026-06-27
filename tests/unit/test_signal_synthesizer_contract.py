@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 from __future__ import annotations
 
 """SignalSynthesizerBase — FactorSignal 入参 / SynthesizedSignal 出站对齐。"""

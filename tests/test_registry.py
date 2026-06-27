@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] registry load failure returns empty dict; missing registry file skips load
 # [TESTS] tests/test_registry.py
+# [TTL] task_bound
 
 
 import pytest

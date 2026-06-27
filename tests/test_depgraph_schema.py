@@ -50,6 +50,7 @@ _get_current_version = schema_mod._get_current_version
 
 # P2迁移：init_db 已迁移到 PostgreSQL（只验证 PG schema，不再创建 SQLite 文件），
 # PRAGMA/sqlite_master/_schema_version/SQLite 临时库测试均不适用 PG。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 get_db_connection + information_schema + %s 占位符替代 SQLite 临时库/PRAGMA/sqlite_master），当前 skip。
 pytestmark = pytest.mark.skip(
     reason="P2迁移：init_db 已迁移到 PG，SQLite 临时库 + PRAGMA 基线 + migration 事务原子性测试不适用"
 )

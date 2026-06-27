@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AssertionError on invariant violation
 # [TESTS] pytest tests/test_check_type_registry.py
+# [TTL] task_bound
 from __future__ import annotations
 
 import pytest

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import failure -> skip; validation error -> fail
 # [TESTS] pytest tests/test_pipeline_models.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

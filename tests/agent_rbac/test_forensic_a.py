@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """跨切面 B 取证审计 A 层——genesis/asymmetric/non-repudiation 测试."""
 
 from __future__ import annotations

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_maintenance_coordinator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.maintenance_coordinator import MaintenanceCoordinator

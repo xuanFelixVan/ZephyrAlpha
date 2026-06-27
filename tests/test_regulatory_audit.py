@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_regulatory_audit.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.regulatory_audit import RegulatoryAudit

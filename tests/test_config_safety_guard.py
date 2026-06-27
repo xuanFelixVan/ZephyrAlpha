@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_config_safety_guard.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.config_safety_guard import ConfigGuardResult, ConfigSafetyGuard
 

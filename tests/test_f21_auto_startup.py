@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_f21_auto_startup.py
+# [TTL] task_bound
 
 """
 F21 自动启动测试 — DM-201250

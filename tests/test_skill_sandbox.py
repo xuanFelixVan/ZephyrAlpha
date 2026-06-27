@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_tool/check_command/check_file_access return (bool, str)
 # [TESTS] tests/test_skill_sandbox.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError → skip; AttributeError → fail
 # [TESTS] python -m pytest tests/test_f5_red_team_extreme.py -v --timeout=60
+# [TTL] task_bound
 
 """F5 红蓝对抗极端测试 — DM-201513
 

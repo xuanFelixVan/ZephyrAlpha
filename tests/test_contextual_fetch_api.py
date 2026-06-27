@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_contextual_fetch_api.py -q
+# [TTL] task_bound
 from __future__ import annotations
 
 from zephyr.autonomy_core.contextual_fetch_api import (

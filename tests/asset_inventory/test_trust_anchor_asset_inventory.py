@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for MOD-INF-026 §26 Trust Anchor module."""
 
 from datetime import datetime

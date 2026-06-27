@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] 定义所有漂移事件类型
 # [TESTS] tests/test_ba_events.py
+# [TTL] task_bound
 
 
 from zephyr.shared.shared_services.events import (

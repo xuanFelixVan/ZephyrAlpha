@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试 L7 DryRun — 权限模拟与影响分析"""
 
 from zephyr.security.access_control.dry_run import DryRunResult, DryRunSimulator, ImpactAnalysis

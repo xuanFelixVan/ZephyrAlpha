@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_ensemble_drift.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.ensemble_drift import EnsembleDrift

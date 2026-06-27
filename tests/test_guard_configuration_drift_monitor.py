@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_guard_configuration_drift_monitor.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

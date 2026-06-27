@@ -11,9 +11,6 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_db_connection
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-
-DB_PATH = str(REPO_ROOT / "data" / "databases" / "depgraph.db")
 
 
 def test_all():

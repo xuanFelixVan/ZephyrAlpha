@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] WorkNode需要node_id+capability_id;WorkDAG需要dag_id;WorkItem需要item_id+capability_id
 # [TESTS] tests/test_work_dag.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -38,6 +38,7 @@ PROD_DB = Path(__file__).resolve().parents[2] / "data" / "databases" / "depgraph
 
 # P2迁移：depgraph 已从 SQLite 迁移到 PostgreSQL，PROD_DB (depgraph.db SQLite) 不再是真源。
 # cmd_rename_domain/scan_residual 均基于 SQLite 连接，PRAGMA wal_checkpoint 不适用 PG。
+# TODO(P2-migration): 后续需将本测试改造为 PG 适配版本（用 get_db_connection + PG 库副本替代 SQLite 文件复制 + PRAGMA wal_checkpoint），当前 skip。
 pytestmark = pytest.mark.skip(
     reason="P2迁移：depgraph 已迁移到 PG，SQLite 文件复制 + PRAGMA wal_checkpoint + sqlite3 连接测试不适用"
 )

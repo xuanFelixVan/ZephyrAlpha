@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_market_event_integrator.py
+# [TTL] task_bound
 
 from zephyr.ops.collectors.market_event_integrator import (
     MarketEvent,

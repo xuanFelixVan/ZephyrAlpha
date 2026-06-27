@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_trigger_monitor.py
+# [TTL] task_bound
 
 from zephyr.infrastructure.a2a_protocol.layer2_communication.trigger_monitor import TriggerMonitor
 

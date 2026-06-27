@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase E — Akshare 真实数据端到端测试
 
 用 Akshare 真实 A 股市场数据，验证 C-track 全线流水线：

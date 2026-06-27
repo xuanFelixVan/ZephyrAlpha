@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] test_kb_gate_task.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

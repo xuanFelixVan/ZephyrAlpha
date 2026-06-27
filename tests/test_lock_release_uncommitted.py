@@ -1,6 +1,7 @@
 # [A_test] test_id=DM-202919 | module=scripts/lock_files.py | gate=pytest
 # [BLUEPRINT] MOD-INF-005 | scripts/lock_files.py | §
 # [TESTS] tests/test_lock_release_uncommitted.py
+# [TTL] task_bound
 """DM-202919 验收测试: lock_files.py release 加 git status 警告.
 
 验证场景:

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """ML-Experiment Domain 红白对抗测试 (canonical entry point)
 =====================================================
 Delegates to test_adversarial_ml.py for actual test logic.

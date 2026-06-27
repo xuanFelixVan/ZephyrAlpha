@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_metrics_collector.py
+# [TTL] task_bound
 
 import math
 from dataclasses import fields

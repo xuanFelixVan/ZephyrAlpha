@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_poisoning_monitor.py -q
+# [TTL] task_bound
 from zephyr.autonomy_core.poisoning_monitor import PoisoningMonitor, PoisoningRisk
 
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_actors_init.py -q
+# [TTL] task_bound
 
 from zephyr.ops.actors import __all__
 

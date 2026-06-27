@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """KB 知识流水线：五阶段各调用 GateEngine.evaluate 的预期 gate_id（Mock 引擎）。"""
 
 from __future__ import annotations

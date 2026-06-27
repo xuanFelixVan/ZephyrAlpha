@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] self
+# [TTL] task_bound
 
 """F15 自动修复引擎 - 红蓝对抗极端测试
 

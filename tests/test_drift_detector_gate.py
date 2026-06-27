@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] trigger_recovery({}) returns dict with recovery_status; ImportError on drift_engine -> UnboundLocalError (source bug); empty payload -> defaults applied
 # [TESTS] pytest tests/test_drift_detector_gate.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

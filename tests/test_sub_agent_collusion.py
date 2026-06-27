@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_sub_agent_collusion.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

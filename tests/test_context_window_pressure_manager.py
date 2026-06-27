@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_context_window_pressure_manager.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.context_window_pressure_manager import (

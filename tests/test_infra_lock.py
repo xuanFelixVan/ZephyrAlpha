@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] LockError
 
 # [TESTS] pytest tests/test_infra_lock.py -q
+# [TTL] task_bound
 
 import asyncio
 

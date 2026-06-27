@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] all tests must pass exit 0
 
 # [TESTS] python -m pytest tests/test_healthcheck_service.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

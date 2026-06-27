@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 # AI-generated: DuckDB OLAP 引擎单元测试（T-4-05, B18）
 """
 OLAPEngine 单元测试

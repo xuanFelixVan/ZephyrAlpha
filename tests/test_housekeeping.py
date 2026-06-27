@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan_temp_files/should_clean never raise
 # [TESTS] tests/test_housekeeping.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

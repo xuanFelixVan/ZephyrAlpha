@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-SCRIPT-GATE-001 集成测试——Script Exit Code→Gate决策。"""
 
 from __future__ import annotations

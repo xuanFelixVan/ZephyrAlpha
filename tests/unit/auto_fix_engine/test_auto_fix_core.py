@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 
 """Test suite: auto-fix-engine core — AutoFixEngine init + fix_safety validation + basic fix workflow"""
 

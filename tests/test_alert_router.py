@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_alert_router.py -q
+# [TTL] task_bound
 
 from datetime import UTC, datetime
 from unittest.mock import patch

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] this file
+# [TTL] task_bound
 
 
 from zephyr.ops.gates.flag_lifecycle_manager import FlagLifecycleManager

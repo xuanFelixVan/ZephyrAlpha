@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.raises on invalid input
 # [TESTS] —
+# [TTL] task_bound
 
 
 from zephyr.governance.rule_enforcement.task_types import TaskStatus

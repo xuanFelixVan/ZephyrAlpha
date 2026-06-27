@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 红队对抗审计：shared-core 模块（MOD-INF-016）
 ==============================================

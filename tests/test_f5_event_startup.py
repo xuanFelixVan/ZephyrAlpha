@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit codes: 0=all tests pass
 # [TESTS] tests/test_f5_event_startup.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

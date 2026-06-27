@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_github_api_guard.py
+# [TTL] task_bound
 
 
 from zephyr.governance.github_api_guard import GitHubAPIGuard

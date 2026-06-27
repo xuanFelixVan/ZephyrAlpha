@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] CircuitOpenError
 
 # [TESTS] pytest tests/test_resilience_circuit_breaker.py -q
+# [TTL] task_bound
 
 import pytest
 

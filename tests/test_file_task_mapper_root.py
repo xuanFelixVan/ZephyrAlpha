@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_file_task_mapper_root.py
+# [TTL] task_bound
 
 from pathlib import Path
 from unittest.mock import MagicMock, patch

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_remote_attestation.py
+# [TTL] task_bound
 
 
 from zephyr.ops.security.remote_attestation import (

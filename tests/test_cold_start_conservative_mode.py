@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cold_start_conservative_mode.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.cold_start_conservative_mode import (

@@ -1,4 +1,5 @@
 # [A_test] module_id: SRC-TST-0869 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """test_event_store_stress.py — Event Store 压力测试（DW-0006）
 
 测试场景：

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 from zephyr.governance.behavioral_trust_checker import (
     BehavioralTrustChecker,
     TrustCheck,

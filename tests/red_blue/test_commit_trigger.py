@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_commit_trigger.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

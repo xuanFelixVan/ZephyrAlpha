@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Extension Hook Integration Tests — Escalation Engine (MOD-INF-022).
 
 Validates that all 15 extension detector modules are correctly loaded and integrated

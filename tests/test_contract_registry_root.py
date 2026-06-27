@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on empty contract_id; KeyError on missing contract
 # [TESTS] test_contract_registry.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

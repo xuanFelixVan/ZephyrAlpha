@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] record persists; query returns list; stats returns dict
 # [TESTS] tests/test_skill_telemetry.py
+# [TTL] task_bound
 
 import time
 from unittest.mock import patch

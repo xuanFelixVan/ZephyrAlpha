@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_guard_cascade_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.guard_cascade_detector import (

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_constitution_engine.py
+# [TTL] task_bound
 
 import pytest
 from pathlib import Path

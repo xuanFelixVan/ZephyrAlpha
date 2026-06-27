@@ -213,6 +213,7 @@ class TestParseDdlColumns:
 
 # P2迁移：以下测试类依赖 init_db 创建 SQLite 临时库 + sqlite3 连接 + PRAGMA/sqlite_master/触发器，
 # init_db 现在只验证 PG schema 不创建 SQLite 文件，这些测试不适用 PG。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 get_db_connection + information_schema 替代 SQLite 临时库/sqlite_master），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + init_db 创建 SQLite 文件，不适用 PG")
 class TestCheckDdlColumns:
     def test_healthy_db_no_issues(self, healthy_db_conn):
@@ -270,6 +271,7 @@ class TestCheckDdlColumns:
 # ---------------------------------------------------------------------------
 
 # P2迁移：依赖 SQLite 临时库 + sqlite_master 查询触发器，不适用 PG。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 pg_trigger 系统表替代 sqlite_master 触发器检查），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + sqlite_master 触发器检查，不适用 PG")
 class TestCheckReadonlyTriggers:
     def test_healthy_db_no_issues(self, healthy_db_conn):
@@ -320,6 +322,7 @@ class TestCheckReadonlyTriggers:
 # ---------------------------------------------------------------------------
 
 # P2迁移：依赖 SQLite 临时库 + _schema_version 表 + init_db 创建 SQLite 文件，不适用 PG。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 get_db_connection + PG _schema_version 表替代 SQLite 临时库），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + _schema_version 版本表，不适用 PG")
 class TestCheckSchemaVersion:
     def test_healthy_db_no_issues(self, healthy_db_conn):
@@ -365,6 +368,7 @@ class TestCheckSchemaVersion:
 
 # P2迁移：依赖 SQLite 临时库 + subprocess 调用 verify_schema_health.py --db <sqlite_file>，
 # verify_schema_health.py 现在检查 PG schema，不再支持 --db 指向 SQLite 文件。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（subprocess 调用不再传 --db，verify_schema_health.py 直接连 PG），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + subprocess --db <sqlite_file>，不适用 PG")
 class TestMainExitCodes:
     def test_healthy_db_exit_zero(self, healthy_db_path):

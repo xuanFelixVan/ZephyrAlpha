@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] SsotViolation;RegistryParseError
 
 # [TESTS] pytest tests/test_security_ssot_guard.py -q
+# [TTL] task_bound
 
 from zephyr.integration.shared_08.security.ssot_guard import (
     REGISTRY_REL_PATH,

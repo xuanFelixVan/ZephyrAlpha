@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_escalation_api.py
+# [TTL] task_bound
 
 
 from zephyr.governance.escalation_api import EscalationAPI

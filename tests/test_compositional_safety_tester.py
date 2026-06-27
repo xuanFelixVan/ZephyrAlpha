@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_compositional_safety_tester.py
+# [TTL] task_bound
 
 from zephyr.governance.compositional_safety_tester import CompositionalSafetyTester
 

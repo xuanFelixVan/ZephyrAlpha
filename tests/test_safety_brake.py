@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] test_safety_brake.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

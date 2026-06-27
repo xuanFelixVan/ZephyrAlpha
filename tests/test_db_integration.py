@@ -20,7 +20,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 # 数据库路径
 GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
-DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 注：depgraph 已迁移到 PostgreSQL（P2迁移），DEPGRAPH_DB 路径常量已移除
 MARKET_DB = REPO_ROOT / "data" / "databases" / "market.duckdb"
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 
@@ -210,16 +210,24 @@ def main():
     print("DM-100019: 三库集成测试+四方对齐验证")
     print("=" * 80)
 
-    # 检查数据库文件是否存在
+    # 检查数据库文件是否存在（注：depgraph 已迁移到 PostgreSQL，通过 get_db_connection() 验证）
     for db_path, db_name in [
         (GOVERNANCE_DB, "governance.db"),
-        (DEPGRAPH_DB, "depgraph.db"),
         (MARKET_DB, "market.duckdb"),
     ]:
         if not db_path.exists():
             print(f"\n✗ FAIL: {db_name} 不存在: {db_path}")
             return 1
         print(f"✓ {db_name} 存在: {db_path}")
+
+    # 验证 depgraph (PostgreSQL) 可连接
+    try:
+        dep_conn = get_db_connection()
+        dep_conn.close()
+        print("✓ depgraph (PostgreSQL) 连接成功")
+    except Exception as e:
+        print(f"\n✗ FAIL: depgraph (PostgreSQL) 连接失败: {e}")
+        return 1
 
     # 运行测试
     tests = [

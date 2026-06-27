@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest_exit_0
 # [TESTS] pytest tests/test_immutable_core.py -q
+# [TTL] task_bound
 
 import sys
 

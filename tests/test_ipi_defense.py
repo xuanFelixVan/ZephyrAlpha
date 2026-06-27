@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] pytest tests/test_ipi_defense.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

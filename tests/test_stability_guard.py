@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] no exceptions for empty lists; returns empty list when no breaking changes
 # [TESTS] test_stability_guard.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

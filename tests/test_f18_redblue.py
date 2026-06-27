@@ -34,6 +34,10 @@
 验收: python -m pytest tests/test_f18_redblue.py -v --tb=short -x
 """
 
+# TODO(P2-migration): 本文件中所有 patch(_DEPGRAPH_DB) + sqlite3 临时库的 skip 测试（含类级与方法级）
+# 均需后续改造为 PG 适配版本（用 mock get_db_connection 或 PG 临时库替代），当前 skip。
+# 详见各 skip 标记处的 TODO 注释。
+
 from __future__ import annotations
 
 import sqlite3
@@ -122,6 +126,7 @@ def _create_db_without_columns(db_path: Path) -> None:
 
 
 # P2迁移：patch("_DEPGRAPH_DB") 已失效——生产代码用 get_db_connection() 连 PG，不再读 _DEPGRAPH_DB 路径变量。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 mock get_db_connection 或 PG 临时库替代 patch _DEPGRAPH_DB + sqlite3 临时库），当前 skip。
 @pytest.mark.skip(reason="P2迁移：patch(_DEPGRAPH_DB) 已失效，生产代码用 get_db_connection() 连 PG")
 class TestDBFailure:
     """红队：DB 故障场景。蓝队：fallback 机制不崩溃。"""
@@ -600,6 +605,7 @@ class TestEventDrivenEdgeCases:
 
 
 # P2迁移：所有测试依赖 patch("_DEPGRAPH_DB") + sqlite3 临时 DB，patch 已失效。
+# TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 mock get_db_connection 或 PG 临时库替代 patch _DEPGRAPH_DB + sqlite3 临时库），当前 skip。
 @pytest.mark.skip(reason="P2迁移：patch(_DEPGRAPH_DB) 已失效，生产代码用 get_db_connection() 连 PG")
 class TestDataConsistency:
     """红队：数据不一致。蓝队：不崩溃，返回合理结果。"""

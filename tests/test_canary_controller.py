@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_canary_controller.py
+# [TTL] task_bound
 
 import json
 import os

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_budget_lifecycle_e2e.py
+# [TTL] task_bound
 
 """DM-201505: F4 自动化集成测试——完整生命周期端到端。
 

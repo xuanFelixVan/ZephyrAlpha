@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] JSONL写入失败→日志warning;不阻塞调用方
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -5,6 +5,7 @@
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [TTL] task_bound
 """tests.test_trading_session_lifecycle — F1 SessionLifecycle 测试
 
 覆盖 trading/session_lifecycle.py 的核心接口：

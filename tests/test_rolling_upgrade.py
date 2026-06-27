@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_rolling_upgrade.py
+# [TTL] task_bound
 
 
 from zephyr.trading.orchestrator.rolling_upgrade import RollingUpgradeManager

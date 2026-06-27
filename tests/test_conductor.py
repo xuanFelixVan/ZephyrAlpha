@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError→skip
 # [TESTS] tests/test_conductor.py
+# [TTL] task_bound
 """Conductor 单元测试——覆盖核心编排接口。"""
 from __future__ import annotations
 

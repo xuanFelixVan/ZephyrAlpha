@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 E2E integration tests for rollback pipeline (MOD-INF-021 §9 CT-RBK-GATE-001).
 

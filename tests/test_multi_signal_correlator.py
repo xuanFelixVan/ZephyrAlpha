@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_multi_signal_correlator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.multi_signal_correlator import MultiSignalCorrelator

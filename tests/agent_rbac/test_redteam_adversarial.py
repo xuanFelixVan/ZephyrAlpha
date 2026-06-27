@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 MOD-INF-018 对抗性红队测试 — 专用 Agent 尝试绕过七层+六横切面
 

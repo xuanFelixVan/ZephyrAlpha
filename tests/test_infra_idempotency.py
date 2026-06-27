@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] IdempotencyError
 
 # [TESTS] pytest tests/test_infra_idempotency.py -q
+# [TTL] task_bound
 
 import pytest
 

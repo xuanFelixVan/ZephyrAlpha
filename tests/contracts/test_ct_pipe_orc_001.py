@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-PIPE-ORC-001 集成测试——Task→Pipeline路由。"""
 
 from __future__ import annotations

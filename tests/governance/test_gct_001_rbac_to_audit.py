@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """G-CT-001 集成测试 — RBAC→Audit 端到端数据流通."""
 
 import sys

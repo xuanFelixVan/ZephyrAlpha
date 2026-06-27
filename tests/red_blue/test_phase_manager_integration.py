@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_phase_manager_integration.py
+# [TTL] task_bound
 
 import threading
 import time

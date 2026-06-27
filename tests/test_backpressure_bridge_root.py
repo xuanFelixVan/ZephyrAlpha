@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] self
+# [TTL] task_bound
 
 from unittest.mock import MagicMock, patch
 

@@ -1,5 +1,6 @@
 # [A_test] module_id: SRC-TST-0160 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
+# [TTL] task_bound
 """
 [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §9
 [MODULE] tests.infrastructure.test_registry_governance

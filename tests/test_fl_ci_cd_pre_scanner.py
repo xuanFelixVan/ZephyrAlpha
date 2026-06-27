@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_ci_cd_pre_scanner.py
+# [TTL] task_bound
 
 import pytest
 

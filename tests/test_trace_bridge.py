@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] None return when unset; False return when writer unset
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

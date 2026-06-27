@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] self
+# [TTL] task_bound
 
 """DM-202508 验收测试: F15注册到phase_manager实现自动启停"""
 from __future__ import annotations

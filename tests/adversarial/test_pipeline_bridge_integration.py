@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """集成测试: PipelineSkillBridge — Agent Spec 到 Pipeline 双向桥接.
 
 Covers:

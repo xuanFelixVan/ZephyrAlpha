@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_protocol_self_context.py -q
+# [TTL] task_bound
 from zephyr.governance.protocol_self_context import ProtocolSelfContext
 
 

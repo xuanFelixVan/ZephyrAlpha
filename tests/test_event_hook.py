@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_event_hook.py
+# [TTL] task_bound
 
 
 from zephyr.governance.ops_governance.event_hook import HookRegistry, TransitionEvent, hook_registry

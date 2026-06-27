@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] run_all returns list[ScenarioResult]; pass_rate returns float >= 0.0 and <= 1.0
 
 # [TESTS] tests/test_end_to_end_walkthrough.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

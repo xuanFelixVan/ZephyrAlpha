@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] 无
 
 # [TESTS] pytest tests/test_io_frontmatter_utils.py -q
+# [TTL] task_bound
 
 from zephyr.integration.shared_08.frontmatter_utils import (
     extract_body,

@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] RetryExhaustedError
 
 # [TESTS] pytest tests/test_resilience_retry.py -q
+# [TTL] task_bound
 
 import pytest
 

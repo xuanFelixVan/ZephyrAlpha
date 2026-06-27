@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module;AttributeError->skip_test
 # [TESTS] test_hawthorne_blind.py
+# [TTL] task_bound
 
 import pytest
 

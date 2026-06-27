@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass; RuntimeError on submit after shutdown
 # [TESTS] tests/test_audit_orchestrator_e2e.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

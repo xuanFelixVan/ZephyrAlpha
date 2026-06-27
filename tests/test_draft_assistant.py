@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] all tests must pass with exit 0
 # [TESTS] python -m pytest tests/test_draft_assistant.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

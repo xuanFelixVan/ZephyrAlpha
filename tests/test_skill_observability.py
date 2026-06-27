@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns error dict for unknown trace_id; never raises
 # [TESTS] pytest tests/test_skill_observability.py -q
+# [TTL] task_bound
 
 
 import pytest

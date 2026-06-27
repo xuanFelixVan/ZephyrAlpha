@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_traffic_replay_validator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.traffic_replay_validator import (

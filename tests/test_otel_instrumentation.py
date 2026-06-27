@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_otel_instrumentation.py -q
+# [TTL] task_bound
 import time
 
 from zephyr.autonomy_core.otel_instrumentation import OTelInstrumentation, PipelineTraceSpan

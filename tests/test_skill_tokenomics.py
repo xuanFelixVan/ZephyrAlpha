@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_skill_tokenomics.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_tokenomics import (
     SkillBudgetPreset,

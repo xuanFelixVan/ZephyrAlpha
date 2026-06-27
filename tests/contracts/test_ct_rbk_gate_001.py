@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-RBK-GATE-001 集成测试——Rollback System Exit Code → Gate 判定 → Pipeline 行为。"""
 
 from __future__ import annotations

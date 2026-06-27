@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FrozenInstanceError on mutation; TypeError on missing required fields
 # [TESTS] —
+# [TTL] task_bound
 
 import dataclasses
 

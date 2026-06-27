@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] pytest tests/test_sla_monitor.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] StalenessResult always returned even on git failure
 # [TESTS] pytest tests/test_rollback_target_staleness.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

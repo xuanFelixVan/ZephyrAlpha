@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_command_chain_length_gate.py
+# [TTL] task_bound
 
 
 from zephyr.governance.command_chain_length_gate import CommandChainGate

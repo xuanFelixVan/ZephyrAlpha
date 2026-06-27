@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] RateLimitError
 
 # [TESTS] pytest tests/test_infra_limiter.py -q
+# [TTL] task_bound
 
 import asyncio
 

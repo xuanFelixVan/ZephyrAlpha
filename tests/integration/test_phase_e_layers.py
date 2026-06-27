@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Phase E — Remaining Layer Integration Tests
 
 L01/L02/L08/L12 四层集成测试——补齐 Phase D 未覆盖的层。

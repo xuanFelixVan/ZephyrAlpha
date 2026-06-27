@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] none
 
 # [TESTS] pytest tests/test_breaking_change_detector.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

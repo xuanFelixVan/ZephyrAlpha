@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip; 实例化失败→fail
 # [TESTS] pytest tests/test_finding_task_bridge.py -q
+# [TTL] task_bound
 
 from unittest.mock import MagicMock
 

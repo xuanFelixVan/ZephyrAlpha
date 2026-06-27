@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_model_rotation_v2.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.model_rotation_v2 import ModelRotationV2

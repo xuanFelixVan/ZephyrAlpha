@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] All public methods return dataclass results even on error
 # [TESTS] pytest tests/test_rollback_verifier.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

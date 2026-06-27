@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 端到端语义搜索验证 — 使用真实嵌入模型 (bge-small-zh-v1.5)
 """

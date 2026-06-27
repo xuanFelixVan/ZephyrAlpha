@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """G-CT-007 — Agent Spec → Audit 集成测试."""
 
 from __future__ import annotations

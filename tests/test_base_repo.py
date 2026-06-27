@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/test_base_repo.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

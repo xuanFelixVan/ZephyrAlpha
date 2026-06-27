@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_handoff_manager.py
+# [TTL] task_bound
 
 from zephyr.behavioral_audit.handoff_manager import (
     HandoffManager,

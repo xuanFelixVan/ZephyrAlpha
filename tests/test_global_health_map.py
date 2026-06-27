@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_global_health_map.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.global_health_map import GlobalHealthMap

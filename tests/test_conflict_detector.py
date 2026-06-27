@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_conflict_detector.py
+# [TTL] task_bound
 
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.conflict_detector import (
     ChangeSet,

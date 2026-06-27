@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_consistency/validate_references never raise
 # [TESTS] tests/test_blueprint_health.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

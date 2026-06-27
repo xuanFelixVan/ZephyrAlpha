@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises KeyError on invalid skill_id; raises ValueError on path traversal
 # [TESTS] pytest tests/test_skill_loader.py -q
+# [TTL] task_bound
 
 from unittest.mock import patch
 

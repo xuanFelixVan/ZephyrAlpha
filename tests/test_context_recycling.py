@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] None
 # [TESTS] tests/test_context_recycling.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

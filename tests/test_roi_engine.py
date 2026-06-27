@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_roi_engine.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

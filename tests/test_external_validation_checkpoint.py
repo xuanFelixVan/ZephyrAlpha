@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_external_validation_checkpoint.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.external_validation_checkpoint import (

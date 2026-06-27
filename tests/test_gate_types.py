@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] GateViolationError raised only with GateResult; GateEngineError is RuntimeError subclass
 
 # [TESTS] tests/test_gate_types.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

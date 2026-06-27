@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 Drift Detector 扩展 E2E 测试 — 覆盖剩余 5% 差距
 ===================================================

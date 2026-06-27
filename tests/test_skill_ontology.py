@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] extract_entities returns list; match_entities returns dict; detect_gaps returns dict
 # [TESTS] pytest tests/test_skill_ontology.py -q
+# [TTL] task_bound
 
 import pytest
 

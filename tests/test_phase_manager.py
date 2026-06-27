@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] GateResult.RED blocks phase transition;ValueError on invalid phase
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

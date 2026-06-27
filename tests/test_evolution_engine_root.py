@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] self
+# [TTL] task_bound
 
 from datetime import datetime
 from unittest.mock import MagicMock

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-CE-VMS-001 集成测试——Context→Vector Search。"""
 
 from __future__ import annotations

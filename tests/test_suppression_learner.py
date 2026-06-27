@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_suppression_learner.py
+# [TTL] task_bound
 
 import uuid
 from datetime import UTC, datetime, timedelta

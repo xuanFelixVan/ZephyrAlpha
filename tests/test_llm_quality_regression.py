@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_llm_quality_regression.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.llm_quality_regression import LLMQualityRegression

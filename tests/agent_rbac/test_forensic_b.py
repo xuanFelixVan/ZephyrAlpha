@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """跨切面 B 取证审计 B 层——path/shell/rule_injection 守卫测试."""
 
 from __future__ import annotations

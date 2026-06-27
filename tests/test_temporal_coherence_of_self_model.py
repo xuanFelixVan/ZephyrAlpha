@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_temporal_coherence_of_self_model.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.temporal_coherence_of_self_model import (

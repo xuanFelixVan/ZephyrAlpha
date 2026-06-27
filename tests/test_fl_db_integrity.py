@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_db_integrity.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.db_integrity import DBIntegrity
 

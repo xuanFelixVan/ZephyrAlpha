@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises:TypeError-on-non-int-input
 # [TESTS] self
+# [TTL] task_bound
 
 import pytest
 

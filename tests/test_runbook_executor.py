@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_runbook_executor.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.runbook_executor import RunbookExecutor

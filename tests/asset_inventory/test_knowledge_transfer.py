@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for MOD-INF-026 §30 Knowledge Transfer module."""
 
 from pathlib import Path

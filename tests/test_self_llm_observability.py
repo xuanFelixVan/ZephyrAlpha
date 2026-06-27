@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_self_llm_observability.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.self_llm_observability import SelfLLMObservability

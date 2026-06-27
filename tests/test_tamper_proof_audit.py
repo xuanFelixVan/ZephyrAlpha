@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_tamper_proof_audit.py
+# [TTL] task_bound
 
 import os
 import sqlite3

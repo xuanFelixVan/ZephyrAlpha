@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_collaborative_learning.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.collaborative_learning import CollaborativeLearning

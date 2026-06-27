@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-FLE-ORC-001 集成测试——异常检测→调度调整。"""
 
 from __future__ import annotations

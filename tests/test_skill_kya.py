@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] handles missing SkillLoader gracefully
 # [TESTS] tests/test_skill_kya.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_kya import RISKY, SkillKYA
 

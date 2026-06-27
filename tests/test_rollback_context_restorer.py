@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RestoreContext fields must be str/list[str]
 # [TESTS] tests/test_rollback_context_restorer.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

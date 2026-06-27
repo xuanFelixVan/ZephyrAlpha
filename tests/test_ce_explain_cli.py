@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] none
 
 # [TESTS] pytest tests/test_ce_explain_cli.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

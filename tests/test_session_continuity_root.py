@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] tests raise AssertionError on failure; no side effects on real DB
 
 # [TESTS] python -m pytest tests/test_session_continuity.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

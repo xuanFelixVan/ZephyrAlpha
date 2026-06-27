@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] CacheError
 
 # [TESTS] pytest tests/test_infra_cache.py -q
+# [TTL] task_bound
 
 import asyncio
 import time

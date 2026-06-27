@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_graceful_degradation_planner.py
+# [TTL] task_bound
 
 
 from zephyr.ops.resilience.graceful_degradation_planner import (

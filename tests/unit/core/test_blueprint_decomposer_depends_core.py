@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """BlueprintDecomposer — depends_on 与 extract_depends_from_content。"""
 
 from pathlib import Path

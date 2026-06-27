@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.AssertionError on test failure
 # [TESTS] self
+# [TTL] task_bound
 from __future__ import annotations
 
 from datetime import datetime, timedelta

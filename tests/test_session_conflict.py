@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register_session returns False on conflict; release_session silently ignores unknown session
 # [TESTS] test_session_conflict.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

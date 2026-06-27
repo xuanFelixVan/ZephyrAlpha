@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] SecretsError
 
 # [TESTS] pytest tests/test_security_secrets.py -q
+# [TTL] task_bound
 
 import asyncio
 

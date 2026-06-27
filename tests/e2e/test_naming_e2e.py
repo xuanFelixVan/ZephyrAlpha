@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
+# [TTL] task_bound
 
 """DM-398: 命名规范端到端测试 — 验证完整防护链路。
 

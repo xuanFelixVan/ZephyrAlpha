@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_rbac_audit_bridge.py
+# [TTL] task_bound
 from unittest.mock import MagicMock, patch
 
 from zephyr.security.access_control.contracts import RBACAuditBridge

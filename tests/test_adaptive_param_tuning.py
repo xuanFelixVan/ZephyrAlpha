@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_adaptive_param_tuning.py
+# [TTL] task_bound
 
 from zephyr.ops.diagnosers.adaptive_param_tuning import (
     AdaptiveParamTuning,

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest_exit_0_on_pass
 # [TESTS] tests/test_scheduler_health.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

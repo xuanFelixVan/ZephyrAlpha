@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module;GateEngineError->graceful_fallback
 # [TESTS] test_audit_red_blue_e2e.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] pytest raises on failure
 
 # [TESTS] test_escalation_incident_response
+# [TTL] task_bound
 from __future__ import annotations
 
 from zephyr.governance.incident_response import (

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_intermittent_failure_pattern.py
+# [TTL] task_bound
 
 import time
 

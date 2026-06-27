@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError on wrong arg types; ValueError on empty strings
 # [TESTS] tests/test_governance_auditor.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

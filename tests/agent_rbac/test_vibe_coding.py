@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Vibe Coding / Novel Attack / Cybersec 2026 攻击面扩展测试."""
 
 from __future__ import annotations

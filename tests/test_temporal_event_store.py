@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_temporal_event_store.py
+# [TTL] task_bound
 
 
 from zephyr.ops.collectors.temporal_event_store import TemporalEventStore

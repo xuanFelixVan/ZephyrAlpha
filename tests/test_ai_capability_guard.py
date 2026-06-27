@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] pytest.AssertionError on logic mismatch; PermissionError on enforcement violation
 
 # [TESTS] tests/test_ai_capability_guard.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

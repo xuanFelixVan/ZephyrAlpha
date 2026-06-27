@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] pytest tests/test_session_continuity_session.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

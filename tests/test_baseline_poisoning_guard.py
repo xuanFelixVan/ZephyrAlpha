@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_baseline_poisoning_guard.py
+# [TTL] task_bound
 
 import hashlib
 

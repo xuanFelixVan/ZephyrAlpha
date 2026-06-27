@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 E2E 全链路测试 — knowledge-base v0.10.1 闭环管线
 =====================================================

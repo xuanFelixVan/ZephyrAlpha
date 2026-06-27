@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """降级边缘场景测试 — Stage 失败后系统行为."""
 
 import sys

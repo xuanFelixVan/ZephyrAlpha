@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_lean_scanner.py
+# [TTL] task_bound
 
 
 from zephyr.trading.orchestrator.lean_scanner import LeanScanner

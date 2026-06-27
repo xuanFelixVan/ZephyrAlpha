@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] DriftError;BaselineError
 # [TESTS] tests/test_drift_infrastructure.py
+# [TTL] task_bound
 
 import json
 import uuid

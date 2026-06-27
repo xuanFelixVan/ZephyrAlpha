@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_toil_quantification.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.toil_quantification import (

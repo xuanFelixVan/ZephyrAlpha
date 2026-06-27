@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Tests for MOD-INF-026 Dashboard module — 蓝图 §5 + §27 附录 H 要求 >85% 覆盖."""
 
 import json

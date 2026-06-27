@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_fle_regime_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.detectors.regime_detector import RegimeDetector

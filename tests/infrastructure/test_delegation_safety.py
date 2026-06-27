@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """DelegationEngine Safety Constraint Tests — D-022-02 四级安全约束.
 
 Tests each of the four safety constraints independently:

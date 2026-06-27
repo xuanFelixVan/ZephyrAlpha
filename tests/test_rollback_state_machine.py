@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError on invalid StepStatus in from_in_flight_data
 # [TESTS] pytest tests/test_rollback_state_machine.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

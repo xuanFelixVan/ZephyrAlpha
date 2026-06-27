@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_mock_strategy/require_phase0_context_check/is_dev_mode never raise
 # [TESTS] tests/test_construction_guide.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

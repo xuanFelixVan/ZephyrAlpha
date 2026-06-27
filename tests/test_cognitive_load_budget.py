@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_cognitive_load_budget.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.cognitive_load_budget import (

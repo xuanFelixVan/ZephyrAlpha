@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """审计链集成断裂面红白对抗测试 — MOD-INF-020 v1.4.0
 
 验证所有审计流已统一接入核心 AuditWriter 不可变审计链，

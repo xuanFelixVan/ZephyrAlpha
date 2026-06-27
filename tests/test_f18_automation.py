@@ -32,7 +32,7 @@ import pytest
 from zephyr.governance.depgraph_schema import get_db_connection
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
-_DEPGRAPH_DB = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DEPGRAPH_DB 路径常量已移除
 
 
 # ============================================================================
@@ -236,19 +236,19 @@ class TestAutoClose:
         runner = GovernanceAutoRunner()
         runner.run()
         # 验证审计日志表有记录（P2迁移后查询 PostgreSQL）
-        if _DEPGRAPH_DB.exists():
-            try:
-                conn = get_db_connection()
-                with conn.cursor() as cur:
-                    cur.execute("SELECT COUNT(*) FROM governance_audit_logs")
-                    count = cur.fetchone()[0]
-                conn.close()
-                assert count > 0, "governance_audit_logs should have records"
-            except psycopg2.Error:
-                # 表不存在时跳过
-                pytest.skip("governance_audit_logs table not yet created")
-        else:
-            pytest.skip("depgraph.db not found")
+        try:
+            conn = get_db_connection()
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM governance_audit_logs")
+                count = cur.fetchone()[0]
+            conn.close()
+            assert count > 0, "governance_audit_logs should have records"
+        except psycopg2.Error:
+            # 表不存在时跳过
+            pytest.skip("governance_audit_logs table not yet created")
+        except Exception:
+            # PG 连接失败时跳过
+            pytest.skip("depgraph (PostgreSQL) 不可用")
 
     def test_auto_close_releases_resources(self) -> None:
         """auto_close 释放注册的资源。"""

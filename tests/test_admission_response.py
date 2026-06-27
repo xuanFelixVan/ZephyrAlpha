@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidDecisionError on bad decision
 # [TESTS] tests/test_admission_response.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

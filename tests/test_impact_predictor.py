@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_impact_predictor.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.impact_predictor import ImpactPredictor

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_incident_postmortem.py
+# [TTL] task_bound
 
 from datetime import UTC, datetime
 

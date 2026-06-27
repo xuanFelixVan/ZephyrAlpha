@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # 契约 / CT / CTR 与测试文件的登记锚点（审计追溯用）
 # 值可为单个路径字符串，或为路径列表（同一 CT 多文件覆盖时）。

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip; FileWatcherError on invalid watch_dir
 # [TESTS] pytest tests/test_file_watcher.py -q
+# [TTL] task_bound
 
 import time
 

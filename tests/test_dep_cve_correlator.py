@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_dep_cve_correlator.py
+# [TTL] task_bound
 
 
 from zephyr.ops.security.dep_cve_correlator import (

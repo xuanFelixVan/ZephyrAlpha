@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """system-telemetry 单元测试 — Telemetry 门面 + 9 子系统（MOD-INF-015 v0.9.0）"""
 
 import os

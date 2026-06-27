@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_persuasion_detector.py -q
+# [TTL] task_bound
 from zephyr.governance.persuasion_detector import SUSPICIOUS_PATTERNS, PersuasionDetector
 
 

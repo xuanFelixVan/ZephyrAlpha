@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] SerializationError
 
 # [TESTS] pytest tests/test_io_serialization.py -q
+# [TTL] task_bound
 
 import json
 from dataclasses import dataclass

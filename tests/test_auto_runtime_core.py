@@ -12,6 +12,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_auto_runtime_core.py
+# [TTL] task_bound
 from unittest.mock import MagicMock, patch
 
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore

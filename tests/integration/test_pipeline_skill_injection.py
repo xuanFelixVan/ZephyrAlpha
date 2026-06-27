@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Pipeline 集成测试: Agent Spec Skill 注入全链路验证.
 
 验证:

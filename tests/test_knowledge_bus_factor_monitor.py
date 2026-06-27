@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_knowledge_bus_factor_monitor.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.knowledge_bus_factor_monitor import KnowledgeBusFactorMonitor

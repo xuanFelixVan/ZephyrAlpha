@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_defense_runner.py
+# [TTL] task_bound
 
 import hashlib
 from unittest.mock import MagicMock, patch

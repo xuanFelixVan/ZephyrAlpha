@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """MOD-INF-018 test_derive_rbac.py — RBAC 自动派生测试."""
 
 from __future__ import annotations

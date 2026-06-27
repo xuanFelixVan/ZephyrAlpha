@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 import pytest
 
 from zephyr.shared.contracts.security.security_decision import SecurityDecision

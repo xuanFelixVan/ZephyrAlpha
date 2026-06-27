@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] shadow_run returns structured dict; promote checks can_promote gate
 # [TESTS] tests/test_skill_shadow.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_shadow import SkillShadowDeploy
 

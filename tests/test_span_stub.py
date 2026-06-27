@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

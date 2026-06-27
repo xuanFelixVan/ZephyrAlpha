@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_burn_rate_alerter.py
+# [TTL] task_bound
 
 from zephyr.ops.diagnosers.burn_rate_alerter import (
     BurnRateAlerter,

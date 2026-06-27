@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-FLE-DB-001 集成测试——FLE Metrics→DB。"""
 
 from __future__ import annotations

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """Adversarial Red-Team Tests — Escalation Engine (MOD-INF-022).
 
 Tests the EscalationEngine against adversarial inputs designed to:

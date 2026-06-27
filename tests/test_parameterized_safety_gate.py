@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] none
 # [TESTS] this file
+# [TTL] task_bound
 
 
 from zephyr.ops.gates.parameterized_safety_gate import (

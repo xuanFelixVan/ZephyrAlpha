@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-TELE-FLE-001 集成测试——Telemetry→FLE。"""
 
 from __future__ import annotations

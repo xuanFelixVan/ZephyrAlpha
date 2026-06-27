@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] SchemaRegistryError
 
 # [TESTS] pytest tests/test_schema_schema_registry.py -q
+# [TTL] task_bound
 
 import pytest
 

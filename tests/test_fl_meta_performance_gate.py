@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_fl_meta_performance_gate.py
+# [TTL] task_bound
 
 from zephyr.ops.gates.meta_performance_gate import MetaPerformanceGate
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 G-CT-009: Five-System Governance Discovery Integration Test — MOD-INF-021~025
 

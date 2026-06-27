@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] import失败→skip
 # [TESTS] python -m pytest tests/test_cross_env_consistency.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

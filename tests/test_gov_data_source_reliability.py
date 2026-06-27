@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/test_gov_data_source_reliability.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

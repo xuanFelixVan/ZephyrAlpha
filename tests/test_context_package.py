@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_context_package.py
+# [TTL] task_bound
 
 from zephyr.governance.context_package import ContextPackage
 

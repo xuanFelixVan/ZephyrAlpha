@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """CT-ORC-VMS-001 集成测试——Task Output→Vector Memory。"""
 
 from __future__ import annotations

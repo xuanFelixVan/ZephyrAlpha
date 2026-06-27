@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_shell_dialect_detector.py
+# [TTL] task_bound
 from zephyr.security.access_control.shell_dialect_detector import (
     DANGEROUS_SHELL_PATTERNS,
     ShellDialectDetector,

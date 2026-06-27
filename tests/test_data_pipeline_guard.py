@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_data_pipeline_guard.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

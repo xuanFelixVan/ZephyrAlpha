@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] all tests must pass independently
 # [TESTS] pytest tests/test_skill_gitops.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

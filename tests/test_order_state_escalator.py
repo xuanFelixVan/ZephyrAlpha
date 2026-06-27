@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_order_state_escalator.py
+# [TTL] task_bound
 
 from zephyr.ex_core.order_state_escalator import OrderStateEscalator
 

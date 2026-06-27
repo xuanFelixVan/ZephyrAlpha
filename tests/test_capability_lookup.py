@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-GOV_capability_lookup_test | suite=capability_lookup | scope=unit | safety=L | ai_autonomy=ai_modifiable
-# [TTL] permanent
+# [TTL] task_bound
 
 """
 test_capability_lookup — CapabilityLookup 反查注册表查询 API + 派生逻辑测试。

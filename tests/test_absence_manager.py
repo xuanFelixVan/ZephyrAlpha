@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] none
 
 # [TESTS] python -m pytest tests/test_absence_manager.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

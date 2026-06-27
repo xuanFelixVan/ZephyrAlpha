@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """P0-I2 施工顺序验证 — DOM-GOV-001 §8.4."""
 
 from __future__ import annotations

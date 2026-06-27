@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """红白对抗: Agent Spec 技能加载系统攻击面测试.
 
 攻击向量:

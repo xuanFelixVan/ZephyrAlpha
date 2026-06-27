@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """ML-Experiment Domain 红白对抗测试
 ====================================
 Domain   : ML-EXPERIMENT-DOMAIN-001

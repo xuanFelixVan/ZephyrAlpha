@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 DM-202208 红蓝对抗-知识污染与检索劫持测试
 ==========================================

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """测试 DecisionExplainer — 结构化拒绝原因"""
 
 from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation

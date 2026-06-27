@@ -51,7 +51,7 @@ _VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 _CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 _CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 _SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
-_DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DEPGRAPH_DB 路径常量已移除
 _GENERATE_SCRIPT = _SCRIPTS_GOV / "d3_metadata" / "generate_derived_files.py"
 _SYNC_SCRIPT = _SCRIPTS_GOV / "sync_yaml_to_depgraph.py"
 _CONSTANTS_MODULE = _SCRIPTS_GOV / "_shared" / "constants.py"
@@ -167,9 +167,10 @@ class TestBugBVocabularyNameKey:
 
         只读查询生产 depgraph (PostgreSQL)，不写入任何数据。
         """
-        if not _DEPGRAPH_DB.exists():
-            pytest.skip(f"depgraph.db 不存在: {_DEPGRAPH_DB}")
-        conn = get_db_connection()
+        try:
+            conn = get_db_connection()
+        except Exception:
+            pytest.skip("depgraph (PostgreSQL) 不可用")
         try:
             with conn.cursor() as cur:
                 cur.execute(
@@ -185,9 +186,10 @@ class TestBugBVocabularyNameKey:
 
     def test_field_vocabularies_has_expected_vocab_names(self) -> None:
         """DB field_vocabularies 表包含核心 vocabulary 的裸字段名。"""
-        if not _DEPGRAPH_DB.exists():
-            pytest.skip(f"depgraph.db 不存在: {_DEPGRAPH_DB}")
-        conn = get_db_connection()
+        try:
+            conn = get_db_connection()
+        except Exception:
+            pytest.skip("depgraph (PostgreSQL) 不可用")
         try:
             with conn.cursor() as cur:
                 cur.execute("SELECT DISTINCT field_name FROM field_vocabularies")
@@ -339,22 +341,35 @@ class TestBugGLockProtection:
 # ===========================================================================
 
 class TestBugHDepgraphDbPath:
-    """Bug H 回归——DEPGRAPH_DB_PATH 常量统一 + sync 引用。
+    """Bug H 回归——DEPGRAPH_DB_PATH 常量统一 + sync 引用 + P2 PG 迁移。
 
     根因回顾：_shared/constants.py 只定义了 governance.db 的 DB_PATH，
     sync_yaml_to_depgraph.py 硬编码 `D:\\ZephyrAlpha\\data\\databases\\depgraph.db`，
     两个 DB_PATH 指向不同 DB，是潜在不一致点，且违反可移植性。
+
+    P2 迁移后（2026-06）：depgraph 已迁至 PostgreSQL，实际 DB 连接通过
+    get_depgraph_pg_connection() 获取；DEPGRAPH_DB_PATH 常量保留作日志标识/
+    历史路径引用，不再作为实际连接目标。本类同时保护：
+    1. Bug H 原意图——DEPGRAPH_DB_PATH 统一引用点不被破坏
+    2. P2 迁移成果——get_depgraph_pg_connection 入口必须存在
     """
 
     def test_constants_defines_depgraph_db_path(self) -> None:
-        """_shared/constants.py 必须定义 DEPGRAPH_DB_PATH 常量。"""
+        """_shared/constants.py 必须定义 DEPGRAPH_DB_PATH 常量（Bug H 统一引用点）。"""
         src = _CONSTANTS_MODULE.read_text(encoding="utf-8")
         assert "DEPGRAPH_DB_PATH" in src, (
             "_shared/constants.py 未定义 DEPGRAPH_DB_PATH 常量（Bug H 回归）"
         )
 
+    def test_constants_defines_pg_connection_entry(self) -> None:
+        """P2 迁移后 _shared/constants.py 必须定义 get_depgraph_pg_connection 入口。"""
+        src = _CONSTANTS_MODULE.read_text(encoding="utf-8")
+        assert "get_depgraph_pg_connection" in src, (
+            "_shared/constants.py 未定义 get_depgraph_pg_connection（P2 迁移回归）"
+        )
+
     def test_depgraph_db_path_points_to_correct_file(self) -> None:
-        """DEPGRAPH_DB_PATH 必须指向 data/databases/depgraph.db。"""
+        """DEPGRAPH_DB_PATH 必须指向 data/databases/depgraph.db（历史路径标识，P2 后仅作日志用）。"""
         from _shared.constants import DEPGRAPH_DB_PATH  # noqa: PLC0415
 
         assert DEPGRAPH_DB_PATH.name == "depgraph.db", (
@@ -374,6 +389,17 @@ class TestBugHDepgraphDbPath:
         # 不应再出现硬编码的绝对路径字符串（Bug H 的根因）
         assert r'"D:\ZephyrAlpha\data\databases\depgraph.db"' not in src, (
             "sync_yaml_to_depgraph.py 仍含硬编码绝对路径 DB_PATH（Bug H 回归）"
+        )
+
+    def test_sync_uses_pg_connection_not_sqlite(self) -> None:
+        """P2 迁移后 sync_yaml_to_depgraph.py 必须通过 get_depgraph_pg_connection 连 PG。"""
+        src = _SYNC_SCRIPT.read_text(encoding="utf-8")
+        assert "get_depgraph_pg_connection" in src, (
+            "sync_yaml_to_depgraph.py 未使用 get_depgraph_pg_connection（P2 迁移回归）"
+        )
+        # 不应再用 sqlite3 直连 depgraph
+        assert "sqlite3.connect" not in src, (
+            "sync_yaml_to_depgraph.py 仍用 sqlite3.connect（P2 迁移回归）"
         )
 
 

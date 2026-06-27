@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """E2E 测试: SpecEngine 蓝图→Skill 升级全流程.
 
 Covers:

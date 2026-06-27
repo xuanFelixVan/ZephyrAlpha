@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] no raises expected
 # [TESTS] this file
+# [TTL] task_bound
 
 from __future__ import annotations
 

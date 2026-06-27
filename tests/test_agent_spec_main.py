@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] none
 
 # [TESTS] python -m pytest tests/test_agent_spec_main.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

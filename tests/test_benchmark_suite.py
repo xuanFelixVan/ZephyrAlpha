@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.AssertionError
 # [TESTS] tests/test_benchmark_suite.py
+# [TTL] task_bound
 
 
 from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import (

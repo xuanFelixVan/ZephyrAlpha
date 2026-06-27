@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_architectural_sod.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

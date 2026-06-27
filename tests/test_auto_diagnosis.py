@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_auto_diagnosis.py
+# [TTL] task_bound
 
 from zephyr.ops.diagnosers.auto_diagnosis import AutoDiagnosis
 

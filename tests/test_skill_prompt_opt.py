@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute_readability returns dict; compress returns tuple; optimize returns dict
 # [TESTS] pytest tests/test_skill_prompt_opt.py -q
+# [TTL] task_bound
 
 
 from zephyr.autonomy_core.skill_prompt_opt import SkillPromptOptimizer

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError→fail; OSError→caught
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 = all pass; exit != 0 = regression
 # [TESTS] tests/test_skill_cross_model.py
+# [TTL] task_bound
 
 
 from zephyr.autonomy_core.skill_cross_model import (

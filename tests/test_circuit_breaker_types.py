@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/test_circuit_breaker_types.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

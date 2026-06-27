@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] vet returns structured dict; scan_vulnerabilities returns list
 # [TESTS] tests/test_skill_security.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.skill_security import SkillSecurity
 

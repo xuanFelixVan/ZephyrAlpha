@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute returns 0.0 on invalid input
 # [TESTS] pytest tests/test_skill_freshness.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

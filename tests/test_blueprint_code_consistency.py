@@ -18,6 +18,7 @@
 # [ERROR_CONTRACT] all tests must pass; no external dependencies beyond src tree
 
 # [TESTS] python -m pytest tests/test_blueprint_code_consistency.py -q
+# [TTL] task_bound
 
 from __future__ import annotations
 

@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """MCP 全链路压力测试（MOD-INF-013 Phase 8 — R79/B234）。
 
 测试场景：峰值 QPS ≥100，P95 <5s，零 OOM，零死锁。

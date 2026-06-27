@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest
 # [TESTS] tests/test_human_anomaly_flood_detector.py
+# [TTL] task_bound
 
 
 from zephyr.ops.diagnosers.human_anomaly_flood_detector import (

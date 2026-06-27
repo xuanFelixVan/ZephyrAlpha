@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_context_health_score.py
+# [TTL] task_bound
 
 from zephyr.autonomy_core.context_health_score import ContextHealthScore, HealthScoreReport
 
