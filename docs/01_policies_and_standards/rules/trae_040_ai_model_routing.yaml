@@ -101,7 +101,7 @@ sections:
     - type: mandatory
       step: context_summary不超过500字
     - type: mandatory
-      step: 文件命名：docs/_working/audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF
+      step: 文件命名：docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF
     prohibitions:
     - 禁止删除HandoffPackage中任一字段（删任一字段视为非法交接）
     - 禁止decisions_made中无rationale的决策
@@ -267,7 +267,7 @@ sections:
       expected_result: 完整的handoff文件已生成
       on_failure: 缺字段则非法交接，禁止关闭session
     - order: 2
-      action: 保存到docs/_working/audit/handoff/session-YYYYMMDD-NNN.yaml
+      action: 保存到docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml
       pre_condition: 模板已填写
       expected_result: 文件已保存(UTF-8/LF换行)
       on_failure: 检查路径和编码
@@ -354,7 +354,8 @@ sections:
       date: '2026-06-19'
       change: RQ审查修复——references.scripts路径修正(scripts/hooks/check_encoding.py→scripts/governance/d7_code/check_encoding.py)；references.modules路径修正+snake_case化(model-capability-contract.yaml→docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml)；provenance源文件标注归档状态；新增文件级change_history(违反RQ-14)
 references:
-  rule_ids: []
+  rule_ids:
+  - TRAE-040
   scripts:
   - scripts/governance/d7_code/check_encoding.py
   modules:
