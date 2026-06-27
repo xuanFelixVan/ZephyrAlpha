@@ -9,6 +9,7 @@ date: "2026-05-05"
 summary: "性能治理维度当前处于规划阶段。本目录保留为空壳以维持治理体系12维度完整性。
   该维度的脚本将在基础设施层（VMS/CE/Orc/Pipeline）达到beta稳定态后创建。
   当前性能相关的门禁检查（如gate_timeout）由Gate Engine内置默认值覆盖。"
+ttl: task_bound
 ---
 
 # d10_performance — 规划中

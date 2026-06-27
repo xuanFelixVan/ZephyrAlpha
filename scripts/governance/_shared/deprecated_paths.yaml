@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # 废弃路径共享清单（SSoT）
 # 本文件是 src/zephyr/gates/gate_engine.py 和 detect_ruins_references.py 的共享真源。
@@ -19,7 +20,7 @@ blacklist_patterns:
   - "_trash/"
   - "zephyralpha-1-0/"
   - "old_tree/"
-  - "docs/09_audit/state/"
+  - "docs/_working/audit/state/"
 
 # detect_ruins_references.py 用（正则匹配 + 人类可读标签）
 ruins_regex_patterns:
@@ -31,7 +32,7 @@ ruins_regex_patterns:
     label: "禁止引用候选池绝对路径作为权威来源"
   - pattern: "\\\\{3,}"
     label: "路径双重嵌套（3+连续反斜杠，旧脚本残留 bug）"
-  - pattern: "docs/09_audit/state[/\\\\]"
+  - pattern: "docs/_working/audit/state[/\\\\]"
     label: "v2.0 废弃——DB 已迁移至 data/databases/governance.db（ADR-0030 §4.1）"
 
 # 废弃跳转占位符检测

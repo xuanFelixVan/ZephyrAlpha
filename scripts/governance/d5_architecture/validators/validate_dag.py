@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 对标 dimension_audit_matrix.md §4.3：
   校验代码级 import 依赖图无循环，与 detect_depends_on_cycles.py（YAML 级）互补。

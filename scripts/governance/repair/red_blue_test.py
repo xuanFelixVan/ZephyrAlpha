@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/red_blue_test.py | §4
 [MODULE] 无（独立脚本）
@@ -428,6 +429,13 @@ def run_special_tests():
 
 
 def main():
+    # P2迁移后弃用：depgraph已迁移到PostgreSQL，本脚本基于SQLite语义（sqlite3.connect(
+    # depgraph.db)/IntegrityError/?占位符/row[0]数值索引）不再适用。需PG重写或参考
+    # repair/p2_pg_concurrent_test.py 模式。
+    print("[DEPRECATED] 本脚本基于SQLite语义，P2迁移后已弃用。")
+    print("[DEPRECATED] 需PG重写；并发测试替代品：python scripts/governance/repair/p2_pg_concurrent_test.py")
+    sys.exit(0)
+
     print("=" * 60)
     print("=== §4 红蓝对抗测试（20项）===")
     print("=" * 60)

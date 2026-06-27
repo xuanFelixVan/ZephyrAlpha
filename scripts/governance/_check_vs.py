@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """查看已完成任务卡的verification_status."""
 import sys
 sys.path.insert(0, "src")

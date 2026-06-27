@@ -12,14 +12,17 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """检查DM-201201和DM-201202的状态，了解它们如何成功transition."""
 import sys
 import sqlite3
 from pathlib import Path
 
+# 一次性 bootstrap：将 src/ 加入 sys.path（N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-DB_PATH = Path(__file__).parent.parent.parent / "data" / "databases" / "governance.db"
+# DB_PATH 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+from zephyr.shared.io.paths import DB_PATH  # noqa: E402
 
 
 def main() -> int:

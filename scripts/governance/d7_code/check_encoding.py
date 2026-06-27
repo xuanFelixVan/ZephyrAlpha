@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """check_encoding.py — 编码合规校验（INJ-007）
 
 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-007（编码合规）

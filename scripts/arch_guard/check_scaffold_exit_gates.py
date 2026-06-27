@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查
 
 对标 architecture_endgame_locked.md §6 + 06-security_architecture.md §10.2。

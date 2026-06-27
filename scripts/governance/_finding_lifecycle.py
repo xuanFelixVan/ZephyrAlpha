@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FindingNotFoundError;ArchiveCorruptionError
 # [TESTS] tests/test_finding_lifecycle.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

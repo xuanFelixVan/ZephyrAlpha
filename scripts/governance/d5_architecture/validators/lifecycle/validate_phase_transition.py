@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 对标 dimension_audit_matrix.md §4.12：
   校验 Phase 过渡是否满足双门协议（技术门禁 + 治理门禁）。

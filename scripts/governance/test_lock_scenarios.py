@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证
 

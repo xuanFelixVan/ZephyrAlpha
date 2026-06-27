@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns (bool, str); 不抛异常
 # [TESTS]
+# [TTL] task_bound
 
 r"""
 module_id / domain_id 格式校验真源（裁定#208 三轨制）

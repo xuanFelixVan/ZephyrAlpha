@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 #!/usr/bin/env python
 """
 crosscheck_sys_master_deps.py — 验证 SYS-MASTER-001 + MOD-MASTER_BLUEPRINT 与 DOM-GOV-001 一致.

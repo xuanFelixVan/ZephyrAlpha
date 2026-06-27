@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """rename_kebab_to_snake.py — 全项目文件名/目录名 kebab-case → snake_case 批量重命名。
 
 操作流程：

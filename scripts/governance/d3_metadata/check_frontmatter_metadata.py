@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无 hard-block 违规）；EXIT_FINDINGS=1（ttl 缺失/非法 或 strict-doctype 下 doc_type 缺失/非法）；EXIT_ERROR=2（脚本异常）
 # [TESTS] tests/unit/governance/test_check_frontmatter_metadata.py
+# [TTL] task_bound
 """GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验）
 
 校验 .md 文档 frontmatter 的词表字段：
@@ -57,12 +58,16 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
-from _shared.frontmatter import parse_frontmatter  # noqa: E402
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
+from _shared.frontmatter import (  # noqa: E402
+    parse_byaml_anchor,
+    parse_frontmatter,
+    parse_json_meta,
+    parse_py_header,
+)
 
-_PROJ = Path(__file__).resolve().parents[3]
 _VOCAB_DIR = (
-    _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 )
 
 # 字段校验配置——GATE-15 校验哪些字段的唯一声明
@@ -146,13 +151,28 @@ def _check_file(
     except (OSError, UnicodeDecodeError):
         return [f"cannot read file"]
 
-    metadata, _ = parse_frontmatter(text)
+    # 格式路由（向内收——一个校验函数，多格式解析）
+    # .md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta
+    suffix = fpath.suffix.lower()
+    if suffix == ".md":
+        metadata, _ = parse_frontmatter(text)
+    elif suffix in (".py", ".sh", ".ps1", ".mmd"):
+        metadata = parse_py_header(text)
+    elif suffix == ".yaml":
+        metadata = parse_byaml_anchor(text)
+    elif suffix == ".json":
+        metadata = parse_json_meta(text)
+    else:
+        return issues  # 不校验的扩展名
 
-    # 无 frontmatter 的文档跳过
+    # 无头部的文件跳过（不强制要求头部，仅校验有头部文件的字段）
     if not metadata:
         return issues
 
     for field, rule in field_rules.items():
+        # doc_type 只对 .md 校验（其他格式无 doc_type 字段）
+        if field == "doc_type" and suffix != ".md":
+            continue
         val = metadata.get(field)
         is_strict = rule["always_strict"] or (field == "doc_type" and strict_doctype)
         valid_values = vocab_cache[field]
@@ -202,15 +222,27 @@ def main() -> int:
     args = [a for a in raw_args if not a.startswith("-")]
 
     if args and not all_files:
-        # 增量模式：只校验传入的 .md 文件
-        files = [Path(a).resolve() for a in args if a.endswith(".md")]
+        # 增量模式：只校验传入的文件（.md/.py/.sh/.ps1/.mmd/.yaml/.json）
+        valid_suffixes = (".md", ".py", ".sh", ".ps1", ".mmd", ".yaml", ".json")
+        files = [Path(a).resolve() for a in args if a.endswith(valid_suffixes)]
     else:
-        # 全量模式：扫描 docs/ 下所有 .md（--all-files 或无文件参数时）
-        docs_dir = _PROJ / "docs"
-        files = list(docs_dir.rglob("*.md"))
+        # 全量模式：扫描 docs/ + src/ + scripts/ + tests/ 下所有支持格式
+        valid_suffixes = {".md", ".py", ".sh", ".ps1", ".mmd", ".yaml", ".json"}
+        exempt_parts = {"__pycache__", ".git", ".ailocks", "_backups", "_archive",
+                        ".aidrafts", ".runtime", "data", "models", ".mypy_cache",
+                        ".pytest_cache", ".ruff_cache"}
+        files = []
+        for scan_root_name in ("docs", "src", "scripts", "tests"):
+            scan_dir = REPO_ROOT / scan_root_name
+            if not scan_dir.exists():
+                continue
+            for fp in scan_dir.rglob("*"):
+                if (fp.is_file() and fp.suffix.lower() in valid_suffixes
+                        and not any(p in exempt_parts for p in fp.relative_to(REPO_ROOT).parts)):
+                    files.append(fp)
 
     if not files:
-        print("OK: no .md files to check")
+        print("OK: no files to check")
         return EXIT_PASS
 
     errors = 0
@@ -224,7 +256,7 @@ def main() -> int:
         )
         if issues:
             try:
-                rel = fpath.relative_to(_PROJ)
+                rel = fpath.relative_to(REPO_ROOT)
             except ValueError:
                 rel = fpath
             for issue in issues:

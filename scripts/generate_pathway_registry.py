@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 #!/usr/bin/env python3
 """从所有 MOD 蓝图的 §路径索引 章节自动生成 system-pathway-registry.yaml。
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """下游锚点验证脚本 — 扫描 8 个 L01 模块 blueprint.md 确认 DOM-GOV-001 anchor."""
 
 from __future__ import annotations

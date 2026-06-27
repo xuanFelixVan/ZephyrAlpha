@@ -4,6 +4,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
+# [TTL] task_bound
 """
 诊断 breadth_failed 能力的根因。
 

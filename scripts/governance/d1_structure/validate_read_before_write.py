@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """validate_read_before_write.py — 先读后写校验（IRN-008）
 
 对标：GOV-MOD-002 IRN-008（先读后写）

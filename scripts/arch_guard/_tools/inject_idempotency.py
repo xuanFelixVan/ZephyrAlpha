@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """为所有 P0/P1 契约添加 idempotency_key 字段——状态感知版本。
 
 策略：

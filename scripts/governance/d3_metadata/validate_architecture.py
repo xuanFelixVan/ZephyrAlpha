@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 validate_architecture.py - Validate rule files against architecture_contract.yaml
 Reads architecture_contract.yaml and validates all .md/.yaml files under
@@ -32,7 +33,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -46,20 +47,13 @@ timeout_seconds: 30
 warn_only: false
 """
 
-import sys
-from pathlib import Path
-
-_PROJ = Path(__file__).resolve().parents[2]
-if str(_PROJ) not in sys.path:
-    sys.path.insert(0, str(_PROJ))
-
 
 def main() -> int:
     """Validate architecture compliance against contract."""
     import yaml
 
     contract_path = (
-        _PROJ / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "architecture_contract.yaml"
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "architecture_contract.yaml"
     )
     errors = 0
 
@@ -70,7 +64,7 @@ def main() -> int:
     with open(contract_path, encoding="utf-8") as f:
         contract = yaml.safe_load(f)
 
-    scan_dir = _PROJ / "docs" / "01_policies_and_standards"
+    scan_dir = REPO_ROOT / "docs" / "01_policies_and_standards"
     if not scan_dir.exists():
         print("WARN: scan directory not found")
         return EXIT_PASS
@@ -96,7 +90,7 @@ def main() -> int:
         if doc_type and doc_type == "governance":
             parent = fpath.parent.name
             if parent.startswith("operational"):
-                rel = fpath.relative_to(_PROJ)
+                rel = fpath.relative_to(REPO_ROOT)
                 print(f"  WARN: {rel} governance doc_type in operational directory")
                 errors += 1
 

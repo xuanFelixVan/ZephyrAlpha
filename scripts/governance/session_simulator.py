@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器
 =================================================================

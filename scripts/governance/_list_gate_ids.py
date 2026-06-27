@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """Get all gate IDs from the gate_engine._GATE_FILES."""
 import sys
 from pathlib import Path

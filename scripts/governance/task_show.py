@@ -20,6 +20,7 @@ Usage:
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 任务不存在 → exit 1
 # [TESTS] 手动验证：python scripts/governance/task_show.py <existing_task_id>
+# [TTL] task_bound
 
 from __future__ import annotations
 

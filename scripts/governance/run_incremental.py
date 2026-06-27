@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 #!/usr/bin/env python3
 """增量扫描快捷入口 — 仅扫描 HEAD 变更相关的治理脚本。
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 对标 dimension_audit_matrix.md §6.1：
   自动化评分引擎，读取各维度采集指标 → 计算加权分数 → 输出报告。

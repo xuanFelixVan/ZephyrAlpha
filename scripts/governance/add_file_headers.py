@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] HeaderError; MappingError
 # [TESTS] tests/test_add_file_headers.py
+# [TTL] task_bound
 """
 
 import argparse

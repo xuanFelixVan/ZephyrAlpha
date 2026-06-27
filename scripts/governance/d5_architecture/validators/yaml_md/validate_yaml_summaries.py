@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """v1.0.0 -- 2026-05-03
 
 AGENTS.md §6.10 双层对齐闸门的根治层：

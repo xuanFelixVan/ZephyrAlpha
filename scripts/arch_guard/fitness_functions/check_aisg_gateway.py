@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 check_aisg_gateway.py — AISG 拦截门禁 (INV-015) Phase B 升级
 

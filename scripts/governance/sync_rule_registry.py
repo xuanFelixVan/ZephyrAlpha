@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 Checks that every RULE-ZERO through RULE-N in .trae/rules/project_rules.md
 has a corresponding TRAE-* entry in the _index.yaml TRAE domain.

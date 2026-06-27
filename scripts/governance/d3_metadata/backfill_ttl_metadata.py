@@ -62,6 +62,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.frontmatter import (  # noqa: E402
     PY_HEADER_PATTERN,
+    _FM_END_PATTERN,
     parse_byaml_anchor,
     parse_frontmatter,
     parse_json_meta,
@@ -73,9 +74,7 @@ from _shared.yaml_utils import evaluate_ttl, load_decision_tree  # noqa: E402
 # 约束：判定逻辑变更只需改 ttl_vocabulary.yaml decision_tree，本脚本自动同步
 _DECISION_TREE = load_decision_tree("ttl_vocabulary.yaml")
 
-# frontmatter 结束符正则（与 _shared/frontmatter.py _FM_END_PATTERN 一致）
-_FM_END_PATTERN = re.compile(r"\n---[ \t]*\n?")
-
+# frontmatter 结束符正则——从 _shared.frontmatter import（SSoT，不再本地复制）
 # ttl 行正则（匹配 frontmatter 内的 ttl: value 行，用于 rejudge 模式替换）
 # 支持 ttl: permanent / ttl: "permanent" / ttl: 'permanent' 格式
 _TTL_LINE_PATTERN = re.compile(r'^ttl:\s*["\']?[\w]+["\']?\s*$', re.MULTILINE)

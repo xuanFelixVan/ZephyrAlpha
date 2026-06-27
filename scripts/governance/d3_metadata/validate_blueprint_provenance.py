@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 Blueprint Provenance Gate - V-12: validate provenance triples in blueprint frontmatter
 Task: T-V2-001 (Wave 0 final review R73)
@@ -30,7 +31,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -43,22 +44,15 @@ timeout_seconds: 30
 warn_only: false
 """
 
-import sys
-from pathlib import Path
-
-_PROJ = Path(__file__).resolve().parents[2]
-if str(_PROJ) not in sys.path:
-    sys.path.insert(0, str(_PROJ))
-
 
 def main() -> int:
     """Validate provenance fields in blueprint frontmatter files."""
 
     errors = 0
     scan_dirs = [
-        _PROJ / "docs" / "02_enterprise_architecture" / "target-architecture",
-        _PROJ / "docs" / "04_construction_plans",
-        _PROJ / "docs" / "01_policies_and_standards",
+        REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture",
+        REPO_ROOT / "docs" / "04_construction_plans",
+        REPO_ROOT / "docs" / "01_policies_and_standards",
     ]
 
     for scan_dir in scan_dirs:
@@ -92,7 +86,7 @@ def main() -> int:
                 continue
 
             if not arbitration:
-                rel = fpath.relative_to(_PROJ)
+                rel = fpath.relative_to(REPO_ROOT)
                 print(f"  WARN: {rel} missing arbitration field in provenance")
                 errors += 1
 

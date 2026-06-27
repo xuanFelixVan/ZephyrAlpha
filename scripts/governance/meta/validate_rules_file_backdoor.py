@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """validate_rules_file_backdoor.py — Rules File Backdoor 检测器
 
 对标 B43（Rules File Backdoor）+ Snyk/Lasso Security 2025 年发现的

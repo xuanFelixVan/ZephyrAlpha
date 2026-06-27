@@ -51,15 +51,23 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
-
-# ── _shared 模块 import bootstrap（向内收：复用 SSoT 正则，禁止本地复制）──
-_GOV_DIR = str(PROJECT_ROOT / "scripts" / "governance")
+# 一次性 bootstrap：算 sys.path（N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
+# 先例：scripts/governance/_shared/constants.py、scripts/git_commit.py 均已 bootstrap。
+_PROJECT_ROOT_BOOTSTRAP = Path(__file__).resolve().parents[2]  # scripts/ops/ -> root
+_GOV_DIR = str(_PROJECT_ROOT_BOOTSTRAP / "scripts" / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+
+# REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 from _shared.frontmatter import PY_HEADER_PATTERN  # noqa: E402
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
+# PROJECT_ROOT 作为 REPO_ROOT 的向后兼容别名，供本文件现有代码引用（最小改动）。
+PROJECT_ROOT = REPO_ROOT
+# P2迁移后：DB_PATH 保留作为 SQLite 备份路径参考，实际连接通过 get_depgraph_pg_connection() 走 PostgreSQL。
+# 同模式见 src/zephyr/governance/depgraph_schema.py:72
+DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # Canonical 14-field order per TRAE-047 v1.1.0
 CANONICAL_FIELDS = [

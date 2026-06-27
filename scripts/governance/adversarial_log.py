@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪
 
 用法:

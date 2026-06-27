@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 check_capacity_slo_ssot.py — capacity_slo.yaml 注册表 + 与 invariants 数字对齐（SSoT 闭环）
 

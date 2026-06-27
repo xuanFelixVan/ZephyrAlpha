@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migration.
 
 NOTE: MD→YAML migration is complete. source_files field has been removed from

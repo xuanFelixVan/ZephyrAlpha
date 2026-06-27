@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 对标：Problem — 12份 blueprint layer 声明 ≠ 物理目录（根因：缺外部一致性检查）
 职责：读取 03_modules/**/blueprint.md 的 frontmatter layer 字段，

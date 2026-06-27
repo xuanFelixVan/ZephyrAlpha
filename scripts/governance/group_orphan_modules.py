@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """按域分组统计 ORPHAN MODULES — 用于建任务卡批量处理。
 
 用法:

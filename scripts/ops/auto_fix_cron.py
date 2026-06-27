@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] Returns exit code 0 on success, 1 on error
 # [TESTS] tests/test_auto_fix_cron.py
 # [A_module] module_id=MOD-INF_auto_fix_cron | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """F15 自动修复引擎 cron 定时启动脚本.
 

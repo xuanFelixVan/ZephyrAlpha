@@ -34,8 +34,8 @@ from zephyr.integration.shared.schema.severity_types import Priority, SafetyLeve
 
 NOW = datetime.now(UTC)
 
-# 方案文档（任务卡施工内容的唯一真源）
-PLAN_DOC = "D:/ZephyrAlpha/docs/02_enterprise_architecture/03_governance_reports/d_signal_rename_plan.md"
+# 方案文档（任务卡施工内容的唯一真源）——路径从 REPO_ROOT 推算，禁止硬编码绝对路径。
+PLAN_DOC = str(REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "d_signal_rename_plan.md")
 
 # 公共 applicable_rules
 COMMON_RULES = [

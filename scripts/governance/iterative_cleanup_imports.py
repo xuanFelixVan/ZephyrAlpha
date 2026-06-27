@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """自动迭代移除 governance/__init__.py 中导入失败的模块。
 
 策略:

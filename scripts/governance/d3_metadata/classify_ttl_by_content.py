@@ -10,7 +10,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0; EXIT_ERROR=2
-# [TTL] permanent
+# [TTL] task_bound
 """基于内容关键词的 ttl 精细分类审查脚本。
 
 与 backfill_ttl_metadata.py 的区别：
@@ -168,9 +168,7 @@ PERMANENT_DOC_TYPES = {
 DIR_TTL_MAP: list[tuple[str, str, str]] = [
     # ── task_bound 目录（过程性子目录，无论在哪个永久区下）──
     # 顺序：最具体的模式在前；contains 子串匹配
-    ("docs/_working/",            "task_bound", "临时工作区"),
-    ("docs/09_audit/",            "task_bound", "审计目录（过程性产出：调研/可行性分析）"),
-    ("docs/decomposition/",       "task_bound", "分解任务目录（过程性：DM-* 任务卡）"),
+    ("docs/_working/",            "task_bound", "临时工作区（唯一过程文档区：治理报告/研究笔记/分解任务/ttl审计）"),
     ("/changes/",                 "task_bound", "变更记录子目录（过程性）"),
     ("/delivery/",                "task_bound", "交付记录子目录（过程性）"),
     ("/reports/",                 "task_bound", "报告子目录（过程性）"),

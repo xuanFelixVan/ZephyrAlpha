@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """跨子系统盲点闭合追踪——扫描blueprint中的B-R盲点ID→交叉验证代码覆盖→生成闭合率报告
 
 用法:

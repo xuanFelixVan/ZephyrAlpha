@@ -875,7 +875,7 @@ def main() -> None:
         "--write", action="store_true", help="[DEPRECATED] Write tree to panorama YAML (DB is now the SSoT)"
     )
     group.add_argument("--check", action="store_true", help="CI mode: exit 1 if mismatch")
-    parser.add_argument("--output-db", type=str, default="", help="Write tree to SQLite database (DM-100025)")
+    parser.add_argument("--output-db", type=str, default="", help="Write tree to PostgreSQL database (DM-100025; P2迁移后 depgraph 已迁至 PG)")
     args = parser.parse_args()
 
     if args.check:

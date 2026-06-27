@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
 ===============================================

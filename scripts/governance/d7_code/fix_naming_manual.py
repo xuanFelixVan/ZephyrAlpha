@@ -23,6 +23,7 @@ Usage:
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 重命名失败 → 回滚并报告
 # [TESTS] python scripts/governance/d3_metadata/check_naming_convention.py --scan --warn-only
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -33,8 +34,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_CHECK_SCRIPT = _PROJECT_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
+# REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+# 一次性 bootstrap sys.path（此 N 值对本文件固定且仅用一次），随后从 _shared.constants 获取 REPO_ROOT。
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT
+_CHECK_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
 
 TARGET_RULES = {"N-03", "N-09", "N-10", "N-11", "N-16"}
 
@@ -87,7 +95,7 @@ def collect_violations() -> list[dict]:
         [sys.executable, str(_CHECK_SCRIPT), "--scan", "--warn-only"],
         capture_output=True,
         text=True,
-        cwd=_PROJECT_ROOT,
+        cwd=REPO_ROOT,
         encoding="utf-8",
         errors="replace",
     )
@@ -124,7 +132,7 @@ def _batch_update_references(renames: list[tuple[str, str]], dry_run: bool = Fal
     extensions = (".py", ".yaml", ".yml", ".md", ".json", ".toml", ".cfg", ".ini", ".txt")
     # 跳过备份/归档/snapshot目录（不应修改）
     skip_dirs = {"_backups", "_archive", "__pycache__", "node_modules", ".git", ".venv", "venv"}
-    for root, dirs, files in os.walk(_PROJECT_ROOT):
+    for root, dirs, files in os.walk(REPO_ROOT):
         dirs[:] = [
             d for d in dirs
             if not d.startswith(".") and d not in skip_dirs
@@ -175,20 +183,20 @@ def _git_mv(old: Path, new: Path, dry_run: bool = False) -> bool:
                 ["git", "mv", str(old), str(temp_name)],
                 check=True,
                 capture_output=True,
-                cwd=_PROJECT_ROOT,
+                cwd=REPO_ROOT,
             )
             subprocess.run(
                 ["git", "mv", str(temp_name), str(new)],
                 check=True,
                 capture_output=True,
-                cwd=_PROJECT_ROOT,
+                cwd=REPO_ROOT,
             )
         else:
             subprocess.run(
                 ["git", "mv", str(old), str(new)],
                 check=True,
                 capture_output=True,
-                cwd=_PROJECT_ROOT,
+                cwd=REPO_ROOT,
             )
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
@@ -208,7 +216,7 @@ def _git_mv(old: Path, new: Path, dry_run: bool = False) -> bool:
 def _build_file_index() -> dict[str, Path]:
     """构建文件/目录名到路径的索引（单次 os.walk）。"""
     index: dict[str, Path] = {}
-    for root, dirs, files in os.walk(_PROJECT_ROOT):
+    for root, dirs, files in os.walk(REPO_ROOT):
         dirs[:] = [
             d for d in dirs
             if not d.startswith(".") and d != "__pycache__" and d != "node_modules"
@@ -234,7 +242,7 @@ def _find_abspath(name: str) -> Path | None:
     if not name:
         return None
     # 先尝试直接作为相对路径
-    candidate = _PROJECT_ROOT / name
+    candidate = REPO_ROOT / name
     if candidate.exists():
         return candidate
     # 从索引查找
@@ -429,7 +437,7 @@ def fix_n16(violations: list[dict], dry_run: bool) -> tuple[int, list[tuple[str,
             if p in seen:
                 continue
             seen.add(p)
-            abspath = _PROJECT_ROOT / p
+            abspath = REPO_ROOT / p
             if not abspath.exists():
                 continue
             old_name = abspath.name

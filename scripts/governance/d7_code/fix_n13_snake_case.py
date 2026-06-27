@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=部分失败
 # [TESTS] 无
+# [TTL] task_bound
 """N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚本。
 
 修复内容:
@@ -31,7 +32,14 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+# 一次性 bootstrap sys.path（此 N 值对本文件固定且仅用一次），随后从 _shared.constants 获取 REPO_ROOT。
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT
 
 # ---------------------------------------------------------------------------
 # 重命名映射: (old_relative_path, new_relative_path)
@@ -40,8 +48,8 @@ RENAMES: list[tuple[str, str]] = [
     # index.md → index.md (4 files)
     ("docs/index.md", "docs/index.md"),
     ("docs/08_knowledge/index.md", "docs/08_knowledge/index.md"),
-    ("docs/09_audit/index.md", "docs/09_audit/index.md"),
-    ("docs/09_audit/state/index.md", "docs/09_audit/state/index.md"),
+    ("docs/_working/audit/index.md", "docs/_working/audit/index.md"),
+    ("docs/_working/audit/state/index.md", "docs/_working/audit/state/index.md"),
     # Chinese filenames → English snake_case (5 files)
     (
         "docs/02_enterprise_architecture/ai_team_mode_full_config.md",

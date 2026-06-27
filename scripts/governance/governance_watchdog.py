@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ServiceUnrecoverableError
 # [TESTS] tests/test_governance_watchdog.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

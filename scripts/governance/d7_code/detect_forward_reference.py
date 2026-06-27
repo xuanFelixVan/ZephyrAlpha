@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] exit 0=clean, exit 1=findings, exit 2=error
 # [TESTS] python scripts/governance/d7_code/detect_forward_reference.py --warn-only
 # [A_module] module_id=MOD-GOV_detect_forward_ref | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """detect_forward_reference — 前向引用检测扫描器。
 
 检测 class X 定义内部引用 X 自身的模式（前向引用 bug）。
@@ -35,7 +36,14 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+# REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+# 一次性 bootstrap sys.path（此 N 值对本文件固定且仅用一次），随后从 _shared.constants 获取 REPO_ROOT。
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT
 SCAN_DIRS = [REPO_ROOT / "src" / "zephyr", REPO_ROOT / "scripts"]
 SCAN_EXTENSIONS = {".py"}
 EXIT_PASS = 0

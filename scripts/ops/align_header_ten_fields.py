@@ -12,14 +12,20 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 import os
-import re
 import sys
 from collections import defaultdict
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
+
+# ── _shared 模块 import bootstrap（向内收：复用 SSoT 正则，禁止本地复制）──
+_GOV_DIR = str(REPO_ROOT / "scripts" / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.frontmatter import PY_HEADER_PATTERN  # noqa: E402
 
 REQUIRED_FIELDS = {
     "BLUEPRINT": None,
@@ -58,8 +64,6 @@ ALL_FIELDS_ORDER = [
     "TESTS",
 ]
 
-HEADER_PATTERN = re.compile(r"^#\s*\[([\w-]+)\]\s*(.*)")
-
 missing_stats = defaultdict(int)
 fixed_stats = defaultdict(int)
 files_scanned = 0
@@ -83,7 +87,7 @@ def scan_file(filepath: Path, dry_run: bool = False):
     found_fields = {}
 
     for i, line in enumerate(lines[:15]):
-        m = HEADER_PATTERN.match(line.rstrip("\n"))
+        m = PY_HEADER_PATTERN.match(line.rstrip("\n"))
         if m:
             field_name = m.group(1)
             found_fields[field_name] = m.group(2).strip()

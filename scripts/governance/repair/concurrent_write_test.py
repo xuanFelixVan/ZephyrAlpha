@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] | scripts/governance/repair/concurrent_write_test.py | §1
 [MODULE] 无（独立测试脚本）
@@ -626,6 +627,13 @@ def test_t10():
 
 # ========== 主函数 ==========
 def main():
+    # P2迁移后弃用：depgraph已迁移到PostgreSQL，本脚本基于SQLite语义（WAL/文件锁/
+    # IntegrityError/sqlite3.connect(depgraph.db)）不再适用。PG并发写入测试替代品：
+    # repair/p2_pg_concurrent_test.py（使用get_db_connection+psycopg2）。
+    print("[DEPRECATED] 本脚本基于SQLite语义，P2迁移后已弃用。")
+    print("[DEPRECATED] PG替代品：python scripts/governance/repair/p2_pg_concurrent_test.py")
+    return 0
+
     print("=" * 60)
     print("红蓝对抗测试 — depgraph 并发写入极限测试")
     print("=" * 60)

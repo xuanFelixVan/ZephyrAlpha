@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 DM-106: P2-B 迁移全量验证脚本
 验证 depgraph 所有 P2-B 输出的完整性和一致性
@@ -36,7 +37,6 @@ depgraph 双层结构:
 import csv
 import json
 import os
-import sqlite3
 import sys
 import time
 from collections import Counter
@@ -47,6 +47,13 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 DEPGRAPH_DB_PATH = PROJECT_ROOT / "data/databases/depgraph.db"
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 BP_MAPPING_PATH = PROJECT_ROOT / "data/asset_index/blueprint-domain-mapping.yaml"
 CSV_PATH = PROJECT_ROOT / "data/asset_index/module_domain_matching.csv"
 REPORT_PATH = PROJECT_ROOT / "data/asset_index/p2b-verification-report.yaml"
@@ -57,9 +64,12 @@ FILE_TYPES = {"module", "script"}
 
 
 def _load_from_db(db_path):
-    """Load depgraph data from SQLite database, returning a dict compatible with the old YAML structure."""
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    """Load depgraph data from PostgreSQL database, returning a dict compatible with the old YAML structure.
+
+    P2迁移后：depgraph 已迁移到 PostgreSQL。db_path 参数保留用于日志引用。
+    dict(row) 与原 sqlite3.Row 用法等价（RealDictRow 支持 dict() 转换）。
+    """
+    conn = get_depgraph_pg_connection(autocommit=True)
     data = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}, "tree": {}, "meta": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)
@@ -128,7 +138,7 @@ def _load_from_db(db_path):
         cur = conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1")
         r = cur.fetchone()
         if r:
-            data["meta"]["schema_version"] = r[0]
+            data["meta"]["schema_version"] = r["version"]
     except Exception:
         pass
     conn.close()
@@ -136,7 +146,7 @@ def _load_from_db(db_path):
 
 
 def _update_db_metadata(db_path, metadata_updates):
-    """Update metadata fields in the depgraph SQLite database.
+    """Update metadata fields in the depgraph PostgreSQL database.
 
     DM-202947 止血修复：_schema_version 表仅允许 depgraph_schema.py 的 _run_migration 写入，
     禁止其他脚本通过 INSERT OR REPLACE 覆写版本记录。此函数现为空操作（仅打印日志）。

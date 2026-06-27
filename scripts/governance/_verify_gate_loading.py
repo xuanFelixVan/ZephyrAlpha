@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """DM-201204 验证: gate_engine.load_gates()能加载所有门禁."""
 import sys
 from pathlib import Path

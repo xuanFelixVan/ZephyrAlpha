@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """DM-201204 STEP 2: 对比磁盘YAML文件和_registry.yaml注册情况.
 
 找出未注册的门禁YAML文件。

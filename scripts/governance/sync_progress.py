@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 #!/usr/bin/env python
 """
 sync_progress.py — 从 domain_progress.json 同步进度到 §2 模块清单表.

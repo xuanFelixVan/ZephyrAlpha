@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """批量注册 50 个无消费者 ORPHAN MODULES 到对应 __init__.py 的 __all__。
 
 策略:

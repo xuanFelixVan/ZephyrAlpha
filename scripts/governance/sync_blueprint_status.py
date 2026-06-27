@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """机械强制：construction_plan=phase_2_complete → blueprint.status=Active.
 
 规则

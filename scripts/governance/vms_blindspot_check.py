@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6)
 =============================================================

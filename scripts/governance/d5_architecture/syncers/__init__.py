@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/__init__.py | §
+# [TTL] task_bound
 # auto-created
 __all__ = [
     "archive_rationale_log",

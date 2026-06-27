@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d12_ai_hallucination/__init__.py | §
+# [TTL] task_bound
 """D12 AI 幻觉审计维度"""
 
 __all__ = [

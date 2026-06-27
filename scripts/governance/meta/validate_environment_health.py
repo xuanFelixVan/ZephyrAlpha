@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """validate_environment_health.py — 脚本运行环境健康检查
 
 对标 B21（脚本依赖隔离）+ Google SRE Environment Readiness Probe。

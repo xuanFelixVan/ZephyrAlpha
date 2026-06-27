@@ -12,7 +12,7 @@ created_by: human_plus_agent
 date: "2026-05-02"
 valid_from: "2026-05-02"
 summary: "ZephyrAlpha 审计脚本（scripts/governance/ 下所有 .py 文件）的质量标准唯一真源。定义 8 个质量维度及 MUST/SHOULD/MAY 条款。AI 创建或修复任意审计脚本时，必须以本标准为强制参考。对标 Google Python Style Guide + PEP 484/257/540 + OWASP + Clean Code + ISO 25010 + ISTQB。"
-ttl: permanent
+ttl: task_bound
 tags: [script-quality, coding-standard, ssot, ai-governance, audit]
 rule_form: declarative
 scope: global

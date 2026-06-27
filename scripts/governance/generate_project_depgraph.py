@@ -488,7 +488,7 @@ HEADER_FIELDS = [
 
 
 def _load_panorama_from_db(db_path):
-    """Load panorama data from SQLite database, returning a dict compatible with the old YAML structure.
+    """Load panorama data from PostgreSQL database, returning a dict compatible with the old YAML structure.
 
     Reads from: domains table, arch_directory_tree table, arch_path_mappings table.
     Returns dict with keys: domains, tree, and optional path sections.

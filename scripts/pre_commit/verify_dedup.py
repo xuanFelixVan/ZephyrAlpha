@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """pre_commit 验证脚本 — 委托给 code-dedup-engine CLI verify 子命令.
 
 在 pre_commit hook 中调用：

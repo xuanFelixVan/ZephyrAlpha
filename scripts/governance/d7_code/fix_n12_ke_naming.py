@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=部分失败
 # [TESTS] 无
+# [TTL] task_bound
 """N-12 KE 条目命名格式批量修复脚本。
 
 修复内容:
@@ -30,7 +31,14 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
+# 一次性 bootstrap sys.path（此 N 值对本文件固定且仅用一次），随后从 _shared.constants 获取 REPO_ROOT。
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT
 
 # KE 文件名模式: ke-{1-4位数字}-{snake_case_title}.md
 KE_VALID_PATTERN = re.compile(r"^ke-\d{1,4}-[a-z][a-z0-9_]+\.md$")

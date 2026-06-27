@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 validate_config_integrity.py — 运行时配置完整性十一层纵深审计 + 自动同步检测
 

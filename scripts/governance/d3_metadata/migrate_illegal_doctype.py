@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无错误）；EXIT_FINDINGS=1（有 PENDING_REVIEW 或异常）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：dry-run + 全量迁移 + 抽样验证
+# [TTL] task_bound
 """批量迁移非法 doc_type 值（doc_type 存量治理 Stage 2.2）
 
 扫描全项目（docs/ + src/ + scripts/ + config/ + architecture_model/），

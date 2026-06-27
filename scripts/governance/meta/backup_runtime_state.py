@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）
 

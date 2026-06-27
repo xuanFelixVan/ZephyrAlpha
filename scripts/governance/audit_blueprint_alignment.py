@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """audit_blueprint_alignment.py — 蓝图↔任务卡↔代码 三维对齐审计工具
 
 扫描 blueprints → task cards → downstream_outputs → 磁盘文件，

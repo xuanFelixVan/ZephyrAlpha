@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CyclicDependencyError
 # [TESTS] tests/test_build_script_dep_graph.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

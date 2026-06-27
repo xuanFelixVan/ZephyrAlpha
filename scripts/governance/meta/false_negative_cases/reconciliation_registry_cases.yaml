@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: task_bound
 # --- 治理锚定结束 ---
 # P3-T1: ReconciliationRegistry 假阴性 case 库（D2 修复后由 validate_mutation_testing.load_cases 加载）
 #

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """代码路径索引验证脚本（MOD-INF-013 §5 governance）。"""
 
 from __future__ import annotations

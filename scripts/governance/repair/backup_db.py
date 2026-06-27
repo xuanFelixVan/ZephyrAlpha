@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 # D:\ZephyrAlpha\scripts\governance\repair\backup_db.py
 import shutil
 import sys

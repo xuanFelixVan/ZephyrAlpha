@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 check_idempotency_key.py — 幂等 Key 字段存在性检查 (INV-007)
 

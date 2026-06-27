@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 __manifest__ = """
 args: []
 description: ⚠ __manifest__ 缺失——请添加元数据块

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 Runtime Integration Phase 2 完工验证 — MOD-INF-002
 =====================================================

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引
 ==============================================================================

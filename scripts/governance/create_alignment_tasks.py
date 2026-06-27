@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TaskRepositoryError
 # [TESTS] tests/test_create_alignment_tasks.py
+# [TTL] task_bound
 """
 
 import sys

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CLI漂移）
 
 扫描 governance.db 中所有任务的 post_sync_standard 命令，逐条机械校验：

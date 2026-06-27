@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """对标 architecture_principles.md §3 BvB 五维评分法：
   新引入的 OSS 依赖必须通过五维评估（License/Security/Maintenance/Community/Ecosystem）。
 

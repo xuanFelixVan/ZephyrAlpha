@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 Construction Gate — 施工前路径校验门禁
 调用 PathResolver 校验任务卡的 downstream_outputs 路径是否匹配当前项目结构。

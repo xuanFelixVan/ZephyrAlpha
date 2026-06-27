@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 #!/usr/bin/env python
 """
 check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac.

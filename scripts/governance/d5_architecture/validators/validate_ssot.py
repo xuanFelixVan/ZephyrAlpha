@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 VALID_PRIORITIES = ["P0", "P1", "P2", "P3"]
 
 

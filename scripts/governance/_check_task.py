@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """查看DM-201203任务卡的post_sync_standard和acceptance."""
 import sys
 sys.path.insert(0, "src")

@@ -14,6 +14,7 @@ from __future__ import annotations
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """分析 ORPHAN MODULES 的消费者情况 — 批量 Grep 优化版。
 
 优化策略:

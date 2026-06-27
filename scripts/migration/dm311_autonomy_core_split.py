@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] registry缺失->exit1; 源文件缺失->记录失败继续; 目标已存在->跳过
 # [TESTS] tests/test_dm311_migration.py
+# [TTL] task_bound
 """DM-311: autonomy_core/ 拆分迁移执行脚本。
 
 剪切粘贴模式：shutil.move() 将文件从 autonomy_core/ 移动到各自设计域路径。

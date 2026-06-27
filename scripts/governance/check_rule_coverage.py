@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """governance/check_rule_coverage 脚本 — 规则文件漂移检测
 
 读取 data/rule_optimization/key_facts.yaml，验证 .trae/rules/*.md 和 AGENTS.md

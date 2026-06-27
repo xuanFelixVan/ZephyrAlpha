@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS;exit 1=FINDINGS;exit 2=ERROR
 # [TESTS] tests/test_validate_rule_frontmatter.py
+# [TTL] task_bound
 """
 GATE-RULE-FM: 校验所有 trae_XXX.yaml 的 frontmatter 7标准字段+顺序+枚举值合法性。
 
@@ -53,7 +54,7 @@ if _GOV_DIR not in sys.path:
 
 import yaml
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GOV_DOCS_DIR, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -74,7 +75,6 @@ def _load_valid_values(vocab_file: str) -> set[str]:
     }
 
 # 规则文件目录
-REPO_ROOT = Path(__file__).resolve().parents[3]
 RULES_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "rules"
 
 # 7标准字段（必填）+ 完整标准顺序

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INF-005
+ttl: task_bound
 ---
 
 # MOD-INF-005 自适应阈值设计

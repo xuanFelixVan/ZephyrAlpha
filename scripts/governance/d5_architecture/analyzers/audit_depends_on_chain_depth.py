@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """audit_depends_on_chain_depth.py — depends_on 依赖链路深度审计
 
 

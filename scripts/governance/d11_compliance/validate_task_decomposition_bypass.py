@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 validate_task_decomposition_bypass.py — Task Decomposition Bypass 检测
 =====================================================================

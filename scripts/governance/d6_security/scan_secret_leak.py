@@ -12,9 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 对标 06-security_architecture.md §6.3 L3-Audit：
-  周扫描全库 secret 泄漏，Finding 写 docs/09_audit/findings/。
+  周扫描全库 secret 泄漏，Finding 写 docs/_working/audit/findings/。
 
 与 detect_secrets.py 的区别：
   - detect_secrets.py = CI pre_commit 级轻量扫描（单文件/增量）

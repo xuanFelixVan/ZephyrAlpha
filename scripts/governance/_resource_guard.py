@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ResourceLimitExceededError
 # [TESTS] tests/test_resource_guard.py
+# [TTL] task_bound
 
 from __future__ import annotations
 

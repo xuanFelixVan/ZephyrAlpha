@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """check_bvb_compliance.py — BvB 五维评分合规检查（stub）
 
 对标 architecture_principles.md §2 "开源优先与 Build-vs-Buy"。

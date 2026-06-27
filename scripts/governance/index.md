@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INF-005
+ttl: task_bound
 ---
 
 # 审计脚本系统 — 快读索引

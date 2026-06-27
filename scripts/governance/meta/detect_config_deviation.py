@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 detect_config_deviation.py — 配置文件与蓝图规范偏差检测（蓝图 §28 B65 + B87）
 

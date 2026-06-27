@@ -38,16 +38,14 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = r"D:\ZephyrAlpha\data\databases\governance.db"
-DEPGRAPH_DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
-
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
 # governance.db 仍为 SQLite（task_repo.py 等仍使用 sqlite3.connect）。
+# DB_PATH 真源为 _shared.constants（re-export 自 zephyr.shared.io.paths.REPO_ROOT）。
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, DB_PATH  # noqa: E402
 
 
 def main():

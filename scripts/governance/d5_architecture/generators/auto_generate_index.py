@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 #!/usr/bin/env python3
 """GATE-INDEX: Validate and auto-fix index.md factual accuracy.
 Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.

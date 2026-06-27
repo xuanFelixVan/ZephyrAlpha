@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """GATE-DTS — 双树同步检查闸门 (Dual Tree Sync)
 
 任务 ID : T-2-34

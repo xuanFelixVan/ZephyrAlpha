@@ -233,7 +233,7 @@ def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Pat
 
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
-    """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
+    """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
     conn = get_depgraph_pg_connection(autocommit=False)
     # P2 PG: row_factory 由 wrapper 处理（RealDictCursor）
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
@@ -279,7 +279,7 @@ def _find_module(dep: dict, module_id: str) -> dict | None:
 
 
 def _atomic_write(dep: dict, conn=None) -> None:
-    """将修改后的 depgraph 数据写回 SQLite 数据库。
+    """将修改后的 depgraph 数据写回 PostgreSQL 数据库。
 
     如果提供 conn 参数，使用该连接（不 commit/close）——用于 cmd_batch 统一事务。
     如果未提供 conn，打开新连接（独立模式，commit+close）。
@@ -388,7 +388,7 @@ def _apply_node_op(dep: dict, change: dict, index: int) -> None:
 def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
     """批量处理变更（统一事务管理，消除部分提交风险）。
 
-    非dry-run模式下，所有操作（域级+节点级）共享同一SQLite连接和事务：
+    非dry-run模式下，所有操作（域级+节点级）共享同一PostgreSQL连接和事务：
     - 全部成功 → 一次commit
     - 任一失败 → 全部rollback（消除P2-002部分提交风险）
 
@@ -608,7 +608,7 @@ def add_design_node(
 
             # 校验blueprint_id指向存在的蓝图文件
             if blueprint_id and not blueprint_id.startswith("PLACEHOLDER"):
-                bp_path = f"D:/ZephyrAlpha/docs/03_modules/{blueprint_id}/blueprint.md"
+                bp_path = REPO_ROOT / "docs" / "03_modules" / blueprint_id / "blueprint.md"
                 if not os.path.exists(bp_path):
                     print(f"WARNING: blueprint_id '{blueprint_id}' 对应的蓝图文件不存在: {bp_path}", file=sys.stderr)
 
@@ -662,7 +662,7 @@ def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = s
         print(f"ERROR: path必须不以/结尾（文件路径）: {path}", file=sys.stderr)
         return -1
 
-    project_root = DEPGRAPH_PATH.parent.parent.parent
+    project_root = REPO_ROOT
     full_path = project_root / path
     if not full_path.exists():
         print(f"ERROR: 文件不存在: {full_path}", file=sys.stderr)
@@ -1235,7 +1235,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = str(DEPGRAPH_
 
     注意：改 depgraph.db 前须 git commit 备份（trae_054 STEP0）。
     """
-    project_root = DEPGRAPH_PATH.parent.parent.parent  # D:/ZephyrAlpha
+    project_root = REPO_ROOT
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_nodes"):
         conn = get_depgraph_pg_connection(autocommit=False)
         pass  # P2 PG: PRAGMA 已删除（PG 不需要）

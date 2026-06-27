@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/__init__.py | §
+# [TTL] task_bound
 """Architecture Guard — 不变量适应度函数集
 
 每个文件对应 invariants.yaml 中的一条不变量。
