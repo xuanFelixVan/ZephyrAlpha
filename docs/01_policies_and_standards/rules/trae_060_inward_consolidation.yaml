@@ -122,13 +122,12 @@ sections:
     description: |
       永久性系统/功能脚本MUST自动事件触发+自动运行+自动维护+自动关闭。
       时间触发(cron/Timer/sleep-loop/periodic/进程内调度器)等于要人指令触发,没达成自动,禁止。
-      CircadianScheduler系统废止(project_memory MOD-INF-030,红蓝对抗已迁移事件驱动),禁止新建任何进程内定时调度器。
-      定时不全量兜底改由CI定期job(.github/workflows schedule)承担。
-      # 代码层面已落地(2026-06-26):register_task/start/stop/save_state 均为 no-op,_loop 已删除,定时轨废除,改为事件驱动。
+      禁止使用 CircadianScheduler 及任何进程内定时调度器（register_task/start/stop/save_state 均为 no-op）。
+      定时不全量兜底由CI定期job(.github/workflows schedule)承担。
     original_rules:
     - "永久性脚本MUST事件触发(event/hook/push/文件变更/状态变更),自动运行+自动维护+自动关闭"
     - "禁止时间触发:CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内调度器/进程内轮询守护"
-    - "CircadianScheduler系统废止(MOD-INF-030),禁止新建任何进程内定时调度器,禁止注册circadian_scheduler.register_task"
+    - "禁止使用 CircadianScheduler(MOD-INF-030)及任何进程内定时调度器,禁止注册circadian_scheduler.register_task"
     - "定时不全量兜底由CI定期job承担(.github/workflows schedule)——CI schedule属CI层批量兜底,非进程内Timer,不占运行时,无需人触发,可被push事件增量取代,允许"
     - "事件轨注册:事件钩子MUST在boot_hooks.py注册(hook_registry.register/event_bus.subscribe),禁止游离钩子"
     - "手工触发仅限特殊情况(一次性运维/诊断/迁移),永久性功能禁止manual-only"

@@ -145,6 +145,10 @@ data/drift_baselines/*
 !data/drift_baselines/.gitkeep
 data/drift_checkpoints/*
 !data/drift_checkpoints/.gitkeep
+
+# Health snapshots runtime data (only .gitkeep is tracked)
+src/zephyr/data/health_snapshots/*
+!src/zephyr/data/health_snapshots/.gitkeep
 data/drift_audit/*
 !data/drift_audit/.gitkeep
 data/drift_runbooks/*

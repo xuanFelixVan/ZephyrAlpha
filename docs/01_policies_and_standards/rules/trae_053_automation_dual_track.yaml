@@ -1,9 +1,9 @@
 # 架构裁定 2026-06-26：
 # 定时轨禁止使用。在 100% AI 开发模式下，定时触发是伪需求——
-# 所有审计任务已由 pre-commit GATE 体系（commit 事件触发）和
+# 所有审计任务由 pre-commit GATE 体系（commit 事件触发）和
 # boot_hooks 事件钩子（状态变更事件触发）覆盖。
-# CircadianScheduler.start()/register_task() 已改为 no-op。
-# 本规则从"双轨"降级为"单事件轨"。
+# CircadianScheduler.start()/register_task() 为 no-op 实现（禁止使用）。
+# 本规则为单事件轨（事件驱动 + CI 批量兜底）。
 rule_id: TRAE-053
 title: 铁律补充-自动化双轨判定
 version: 2.0.0

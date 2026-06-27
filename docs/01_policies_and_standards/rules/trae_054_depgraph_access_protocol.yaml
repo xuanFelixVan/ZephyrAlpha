@@ -37,20 +37,20 @@ sections:
       pass: 通过 extract_depgraph.py/apply_depgraph.py 程序化访问
       fail: 直接 Read/Write depgraph 文件 → OOM 崩溃
     - type: constraint
-      check: depgraph 存储在 PostgreSQL 数据库（通过 config/.env.postgres 配置连接，数据库名 depgraph，运行在 localhost:5432）。P2迁移完成于2026-06-27，原 SQLite 文件 data/databases/depgraph.db 已退役。禁止 AI 直接连数据库，必须通过 extract_depgraph.py/apply_depgraph.py 程序化访问
+      check: depgraph 存储在 PostgreSQL 数据库（通过 config/.env.postgres 配置连接，数据库名 depgraph，运行在 localhost:5432）。禁止 AI 直接连数据库，必须通过 extract_depgraph.py/apply_depgraph.py 程序化访问
       pass: 禁止 AI 直接 Read/Write，必须通过提取/应用脚本操作
       fail: 大文件加载 → OOM 崩溃
     actions:
     - type: mandatory
       step: '读取 depgraph: STEP1 确定需要什么数据 → STEP2 运行 extract_depgraph.py 对应命令 → STEP3 AI 只读提取结果(JSON, 几KB到几百KB, 安全)'
     - type: mandatory
-      step: '修改 depgraph 前置备份(STEP0): PG 迁移后备份机制变更——使用 pg_dump 或 apply_depgraph.py 内置物理备份。git 备份 depgraph.db 文件已不再适用（数据在 PG 服务器中）。回滚: 通过 pg_restore 或 apply_depgraph.py 回滚命令'
+      step: '修改 depgraph 前置备份(STEP0): 使用 pg_dump 或 apply_depgraph.py 内置物理备份。回滚: 通过 pg_restore 或 apply_depgraph.py 回滚命令'
     - type: mandatory
       step: '修改 depgraph: STEP0 前置备份(见上) → STEP1 AI 生成变更 JSON 文件 → STEP2 apply_depgraph.py --batch changes.json --dry-run(验证) → STEP3 apply_depgraph.py --batch changes.json(执行) → STEP4 extract_depgraph.py --summary(验证变更)'
     - type: mandatory
       step: '备份触发条件: 每次 apply_depgraph.py 执行前(apply_depgraph.py 是唯一合法 depgraph 写入口)。通过 PG 事务回滚提供原子性保障。extract_depgraph.py/diagnose_depgraph.py 是只读操作不需要备份。generate_project_depgraph.py 治本后允许运行（需先执行OPS-2026062502-506）'
     - type: mandatory
-      step: '备份范围: PG 迁移后通过 pg_dump 备份整个 depgraph 数据库。脚本文件(extract_depgraph.py/apply_depgraph.py)通过 git 常规版本控制保护，不需要额外备份触发'
+      step: '备份范围: 通过 pg_dump 备份整个 depgraph 数据库。脚本文件(extract_depgraph.py/apply_depgraph.py)通过 git 常规版本控制保护，不需要额外备份触发'
     - type: mandatory
       step: '物理备份规范: apply_depgraph.py 每次非 dry-run 写操作前通过 PG 事务保护。需要完整备份时使用 pg_dump。存放位置: data/databases/backups/。命名格式: depgraph.backup.{YYYYMMDD_HHMMSS}_{tag}.sql'
     - type: mandatory
