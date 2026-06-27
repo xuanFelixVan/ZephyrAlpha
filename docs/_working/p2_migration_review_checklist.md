@@ -116,9 +116,47 @@ completes_when: "P3 启动"
 - 6 个 IDENTITY 列 DDL 从 SQLite 语法更新为 PG 真源 `BIGINT GENERATED ALWAYS AS IDENTITY`
 - 双重脚本验证（verify_schema_health.py + check_schema_version_writes.py）
 
-## 六、后续行动项
+## 六、跨分区遗留事项处置闭环
 
-- [ ] 处置 6 项跨分区遗留事项（按优先级排序）
-- [ ] 提交各 AI 修复的未提交文件（trae_040/048/059 等其他 AI 修改的文件）
-- [ ] 确认 trae_043 glossary 备份内容（docs/_working/_trae_043_glossary_backup.yaml）是否合入
-- [ ] P2 迁移审查正式闭环 → 启动 P3 优化阶段
+6 项跨分区遗留事项已全部处置（2026-06-28）：
+
+| # | 事项 | 处置 | commit |
+|---|------|------|--------|
+| 1 | AI-04 migrate_chroma_to_faiss.py sys.path bootstrap | 改为 `.git` marker 向上搜索 | 62400a66 |
+| 2 | AI-05 governance.db 绝对路径记录 | 确认非 P2 范围（governance.db 仍为 SQLite，独立数据治理任务） | — |
+| 3 | AI-06 validator 行为变化知会 | 已修复（知会性事项） | — |
+| 4 | AI-09 _archive/ 归档脚本 SQLite 残留 | 8 个文件加 `sys.exit("DEPRECATED: ...")` 弃用守卫 | 6a707040 |
+| 5 | AI-10 TODO 注释无强制执行机制 | check_test_structure.py 扩展 skip+TODO 检测（AST + 正则） | 62400a66 |
+| 6 | AI-13 YAML 真源描述 + 磁盘遗留 SQLite | YAML 描述更新为 "DB dump (pg_dump / SQLite JSONL)" | 62400a66 |
+
+## 七、P2 审查正式闭环
+
+**闭环时间**：2026-06-28
+**闭环状态**：✅ 完成
+
+### 闭环提交记录（6 个 commit，5807 文件）
+
+| commit | 范围 | 文件数 | 说明 |
+|--------|------|--------|------|
+| d6176a19 | docs/_working/ | 24 | 19 AI 报告 + 关键字手册 + 修复指南 + 批量提交助手 |
+| 2477f367 | docs/ | 32 | AI-12~16 文档修复（registry/catalogs/blueprint/task_cards） |
+| 5f3a8869 | scripts/ | 474 | AI-05~09 脚本修复（TTL + REPO_ROOT + check_test_structure 扩展） |
+| ab97c484 | src/ | 3111 | AI-01~04 代码修复（TTL 批量补齐 + REPO_ROOT SSoT + service_registration） |
+| 4c62449e | tests/ | 2167 | AI-10~11 测试修复（TTL + skip+TODO + 死代码清理 + 路径修正） |
+| 74a07022 | tests/ (新增) | 3 | P2 回归测试（并发 commit 红蓝 + task_repo e2e + MV guard） |
+
+### 闭环结论
+
+- 19/19 AI 分区审查全部通过（连续两轮零问题）
+- 6 项跨分区遗留事项全部处置
+- 5807 个 P2 审查修复文件已提交（6 个 commit）
+- 3 个新增 P2 回归测试保护迁移成果
+- **P2 PostgreSQL 迁移审查正式闭环，可启动 P3 优化阶段**
+
+## 八、后续行动项
+
+- [x] 处置 6 项跨分区遗留事项（全部完成）
+- [x] 提交各 AI 修复的未提交文件（6 个 commit，5807 文件）
+- [x] P2 迁移审查正式闭环 → 启动 P3 优化阶段
+- [ ] 确认 trae_043 glossary 备份内容（docs/_working/_trae_043_glossary_backup.yaml）是否合入（非阻断）
+- [ ] 残留 13 个 YAML CircadianScheduler 废止过渡文本清理（trae_053/054/056 等，独立任务）
