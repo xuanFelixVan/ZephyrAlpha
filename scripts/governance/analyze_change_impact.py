@@ -13,13 +13,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DependencyGraphError
 # [TESTS] tests/test_analyze_change_impact.py
+# [TTL] task_bound
 
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import sqlite3
 import subprocess
 import sys
 from collections import defaultdict
@@ -30,11 +30,20 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
+# ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
-    """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
+
+    P2迁移后：db_path 参数保留仅为向后兼容，实际连接由 get_depgraph_pg_connection 统一管理。
+    """
+    conn = get_depgraph_pg_connection(autocommit=True)
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)
@@ -92,10 +101,9 @@ class ChangeImpactAnalyzer:
     def _load_depgraph(self) -> None:
         if self._loaded:
             return
+        # P2迁移后：depgraph 已迁移到 PostgreSQL，不再依赖文件路径存在性检查。
+        # 连接由 get_depgraph_pg_connection 统一管理，连接失败由下方 try/except 捕获。
         depgraph_path = DEFAULT_DEPGRAPH_PATH
-        if not depgraph_path.exists():
-            self._loaded = True
-            return
         try:
             self._depgraph = _load_depgraph_from_db(depgraph_path)
         except Exception as exc:

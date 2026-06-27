@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """fix_broken_post_sync.py — 批量修复历史 broken post_sync_standard 命令
 
 DM-210625 #205-D 裁定执行脚本：

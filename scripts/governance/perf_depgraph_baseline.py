@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] | scripts/governance/perf_depgraph_baseline.py | §1
 [MODULE] scripts.governance.perf_depgraph_baseline
@@ -42,7 +43,6 @@ import argparse
 import datetime
 import json
 import os
-import sqlite3
 import statistics
 import sys
 import time
@@ -52,32 +52,38 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
-
-def _connect_ro(db_path: Path) -> sqlite3.Connection:
-    """以只读模式连接 depgraph.db（避免触发写锁，支持并发测试）。"""
-    if not db_path.exists():
-        print(f"ERROR: depgraph.db not found at {db_path}", file=sys.stderr)
-        sys.exit(1)
-    uri = f"file:{db_path}?mode=ro"
-    conn = sqlite3.connect(uri, uri=True)
-    conn.row_factory = sqlite3.Row
-    return conn
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 
-def _discover_tables(conn: sqlite3.Connection) -> list[str]:
-    """自动发现所有表名。"""
-    rows = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
-    return [r[0] for r in rows]
+def _connect_ro(db_path: Path):
+    """获取 depgraph PostgreSQL 连接（P2迁移后；原 SQLite 只读 URI 模式已废弃）。
+
+    本脚本仅执行 SELECT，autocommit=True 即可。db_path 参数保留用于日志/结果引用。
+    """
+    return get_depgraph_pg_connection(autocommit=True)
 
 
-def _time_query(conn: sqlite3.Connection, sql: str, params: tuple = ()) -> float:
+def _discover_tables(conn) -> list[str]:
+    """自动发现所有表名（P2迁移：information_schema.tables）。"""
+    rows = conn.execute(
+        "SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name"
+    ).fetchall()
+    return [r["table_name"] for r in rows]
+
+
+def _time_query(conn, sql: str, params: tuple = ()) -> float:
     """计时单次查询，返回秒数。"""
     start = time.perf_counter()
     conn.execute(sql, params).fetchall()
     return time.perf_counter() - start
 
 
-def _run_scenario(conn: sqlite3.Connection, name: str, sql: str, params: tuple, runs: int) -> dict:
+def _run_scenario(conn, name: str, sql: str, params: tuple, runs: int) -> dict:
     """运行单个测试场景 N 次，返回统计结果。"""
     latencies: list[float] = []
     row_count = 0
@@ -113,11 +119,14 @@ def _run_scenario(conn: sqlite3.Connection, name: str, sql: str, params: tuple, 
     }
 
 
-def _explain_plan(conn: sqlite3.Connection, sql: str) -> list[str]:
-    """获取查询计划，检查索引使用。捕获异常避免中断。"""
+def _explain_plan(conn, sql: str) -> list[str]:
+    """获取查询计划，检查索引使用。捕获异常避免中断。
+
+    P2迁移：PostgreSQL 使用 EXPLAIN（非 EXPLAIN QUERY PLAN），输出列为 "QUERY PLAN"。
+    """
     try:
-        rows = conn.execute(f"EXPLAIN QUERY PLAN {sql}").fetchall()
-        return [r[3] for r in rows]
+        rows = conn.execute(f"EXPLAIN {sql}").fetchall()
+        return [r["QUERY PLAN"] for r in rows]
     except Exception as e:
         return [f"EXPLAIN ERROR: {e}"]
 
@@ -128,15 +137,15 @@ def run_baseline(db_path: Path, runs: int) -> dict:
     try:
         tables = _discover_tables(conn)
 
-        # 基本统计
-        node_count = conn.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
-        edge_count = conn.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
-        domain_count = conn.execute("SELECT COUNT(*) FROM domains").fetchone()[0]
+        # 基本统计（P2迁移：fetchone()[0] → ["cnt"]，COUNT(*) AS cnt）
+        node_count = conn.execute("SELECT COUNT(*) AS cnt FROM nodes").fetchone()["cnt"]
+        edge_count = conn.execute("SELECT COUNT(*) AS cnt FROM edges").fetchone()["cnt"]
+        domain_count = conn.execute("SELECT COUNT(*) AS cnt FROM domains").fetchone()["cnt"]
 
-        # 取一个真实 domain_id 用于按域过滤测试
-        sample_domain = conn.execute("SELECT domain_id FROM domains ORDER BY rowid LIMIT 1").fetchone()[0]
+        # 取一个真实 domain_id 用于按域过滤测试（P2迁移：ORDER BY rowid → ORDER BY domain_id）
+        sample_domain = conn.execute("SELECT domain_id FROM domains ORDER BY domain_id LIMIT 1").fetchone()["domain_id"]
         # 取一个真实 node_id 用于递归测试
-        sample_node = conn.execute("SELECT node_id FROM nodes ORDER BY rowid LIMIT 1").fetchone()[0]
+        sample_node = conn.execute("SELECT node_id FROM nodes ORDER BY node_id LIMIT 1").fetchone()["node_id"]
 
         scenarios: list[dict] = []
 
@@ -165,7 +174,7 @@ def run_baseline(db_path: Path, runs: int) -> dict:
         # T4: 按域过滤节点
         scenarios.append(
             _run_scenario(
-                conn, "T4_filter_by_domain", "SELECT * FROM nodes WHERE domain_id = ?", (sample_domain,), runs
+                conn, "T4_filter_by_domain", "SELECT * FROM nodes WHERE domain_id = %s", (sample_domain,), runs
             )
         )
 
@@ -189,7 +198,7 @@ def run_baseline(db_path: Path, runs: int) -> dict:
                 "T6_recursive_deps_depth5",
                 """WITH RECURSIVE dep_chain AS (
                  SELECT from_node_id, to_node_id, 1 AS depth
-                 FROM edges WHERE from_node_id = ?
+                 FROM edges WHERE from_node_id = %s
                  UNION ALL
                  SELECT e.from_node_id, e.to_node_id, dc.depth + 1
                  FROM edges e JOIN dep_chain dc ON e.from_node_id = dc.to_node_id
@@ -230,10 +239,14 @@ def run_baseline(db_path: Path, runs: int) -> dict:
         # 查询计划检查（T3 的索引使用情况）
         t3_plan = _explain_plan(conn, scenarios[2]["sql"])
 
+        # P2迁移：PG 无文件大小，用 pg_database_size() 查询数据库大小
+        db_size_bytes = conn.execute(
+            "SELECT pg_database_size(current_database()) AS sz"
+        ).fetchone()["sz"]
         result = {
             "test_time": datetime.datetime.now().isoformat(),
             "db_path": str(db_path),
-            "db_size_mb": round(os.path.getsize(db_path) / 1024 / 1024, 2),
+            "db_size_mb": round(db_size_bytes / 1024 / 1024, 2),
             "tables": tables,
             "node_count": node_count,
             "edge_count": edge_count,

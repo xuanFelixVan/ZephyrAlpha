@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 DM-105: depgraph 未分配节点三策略处理脚本
 策略1: 归入(Assimilate) — 匹配已有 blueprint_id
@@ -39,6 +40,13 @@ from datetime import datetime
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
@@ -92,10 +100,7 @@ def load_bp_mapping(yaml_path):
 
 def load_depgraph(db_path):
     """加载 depgraph DB，返回与原 YAML 结构兼容的 dict"""
-    import sqlite3
-
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    conn = get_depgraph_pg_connection(autocommit=True)
     data = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)
@@ -117,16 +122,14 @@ def load_depgraph(db_path):
 
 def save_depgraph(data, db_path):
     """将修改后的 nodes 写回 depgraph DB"""
-    import sqlite3
-
-    conn = sqlite3.connect(str(db_path))
+    conn = get_depgraph_pg_connection(autocommit=False)
     for nid, node in data.get("nodes", {}).items():
         row = dict(node)
         row["node_type"] = row.pop("type", "")
-        sets = ", ".join(f"{k}=?" for k in row if k != "node_id")
+        sets = ", ".join(f"{k}=%s" for k in row if k != "node_id")
         vals = [v for k, v in row.items() if k != "node_id"]
         if sets:
-            conn.execute(f"UPDATE nodes SET {sets} WHERE node_id=?", vals + [nid])
+            conn.execute(f"UPDATE nodes SET {sets} WHERE node_id=%s", vals + [nid])
     conn.commit()
     conn.close()
 

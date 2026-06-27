@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PanoramaLoadError
 # [TESTS]
+# [TTL] task_bound
 """从磁盘扫描生成架构全景图的tree段（运营态目录结构）。
 
 核心变更（DM-283/DM-310）:
@@ -32,13 +33,19 @@ import argparse
 import json
 import logging
 import os
-import sqlite3
 import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -56,13 +63,13 @@ def _yaml_load(path):
 
 
 def _load_panorama_from_db(db_path):
-    """Load panorama data from SQLite database, returning a dict compatible with the old YAML structure.
+    """Load panorama data from PostgreSQL database, returning a dict compatible with the old YAML structure.
 
+    P2迁移后：depgraph 已迁移到 PostgreSQL。db_path 参数保留用于日志引用。
     Reads from: domains table, arch_directory_tree table, arch_path_mappings table.
     Returns dict with keys: domains, tree, meta, and optional path sections.
     """
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    conn = get_depgraph_pg_connection(autocommit=True)
     data = {"domains": {}, "tree": {}, "meta": {}}
 
     # Load domains — map to the same structure as the YAML panorama domains section
@@ -126,7 +133,7 @@ def _load_panorama_from_db(db_path):
         cur = conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1")
         r = cur.fetchone()
         if r:
-            data["meta"]["schema_version"] = r[0]
+            data["meta"]["schema_version"] = r["version"]
     except Exception:
         pass
 
@@ -135,11 +142,12 @@ def _load_panorama_from_db(db_path):
 
 
 def _write_tree_to_db(db_path, tree, total_files, total_dirs):
-    """Write tree structure to SQLite database arch_directory_tree table.
+    """Write tree structure to PostgreSQL arch_directory_tree table.
 
+    P2迁移后：depgraph 已迁移到 PostgreSQL。db_path 参数保留用于日志引用。
     Clears existing operational rows (preserves design-state), then inserts new ones.
     """
-    conn = sqlite3.connect(str(db_path))
+    conn = get_depgraph_pg_connection(autocommit=False)
     try:
         # Clear existing operational data (preserve design-state)
         conn.execute("DELETE FROM arch_directory_tree WHERE COALESCE(design_maturity, '') != 'design'")
@@ -152,10 +160,11 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
                 return
 
             cursor.execute(
-                """INSERT OR IGNORE INTO arch_directory_tree
+                """INSERT INTO arch_directory_tree
                 (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
                  change_policy, modification_permission, build_status, last_scanned)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (path) DO NOTHING""",
                 (
                     path,
                     parent_path,
@@ -183,7 +192,7 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
                 _insert_tree_node(conn, root_name, root_data)
 
         conn.commit()
-        count = conn.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
+        count = conn.execute("SELECT COUNT(*) AS cnt FROM arch_directory_tree").fetchone()["cnt"]
         print(f"[PATH-TREE-DB] Updated {count} directory tree nodes")
     except Exception as e:
         conn.rollback()
@@ -240,8 +249,7 @@ def load_domain_derivation() -> dict:
     Returns:
         {path_prefix: {domain_id, subdomain_id}} sorted by prefix length desc.
     """
-    if not DEPGRAPH_DB_PATH.exists():
-        return {}
+    # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
     try:
         data = _load_panorama_from_db(DEPGRAPH_DB_PATH)
     except Exception:
@@ -622,10 +630,7 @@ def cmd_write() -> None:
     """
     print("[DEPRECATED] --write is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
 
-    if not DEPGRAPH_DB_PATH.exists():
-        print(f"[FAIL] Panorama file not found: {DEPGRAPH_DB_PATH}")
-        sys.exit(1)
-
+    # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
     # === PHASE 1: Compute (no lock needed) ===
     # These steps are read-only or pure computation — safe to run in parallel.
 
@@ -759,10 +764,7 @@ def cmd_write() -> None:
 
 def cmd_check() -> None:
     """Check if panorama tree is in sync with disk."""
-    if not DEPGRAPH_DB_PATH.exists():
-        print(f"[FAIL] Panorama file not found: {DEPGRAPH_DB_PATH}")
-        sys.exit(1)
-
+    # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
     try:
         panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH)
     except Exception as e:
@@ -804,15 +806,13 @@ def cmd_check() -> None:
 
 
 def cmd_write_db(db_path: str) -> None:
-    """Write tree to SQLite database (DM-100025)"""
-    import sqlite3
-
+    """Write tree to PostgreSQL database (DM-100025; P2迁移后 depgraph 已迁至 PG)"""
     print(f"[PATH-TREE-DB] Writing to {db_path}...")
 
     domain_derivation = load_domain_derivation()
     tree = generate_tree(domain_derivation)
 
-    conn = sqlite3.connect(db_path)
+    conn = get_depgraph_pg_connection(autocommit=False)
     cursor = conn.cursor()
 
     try:
@@ -828,10 +828,11 @@ def cmd_write_db(db_path: str) -> None:
                 return
 
             cursor.execute(
-                """INSERT OR IGNORE INTO arch_directory_tree
+                """INSERT INTO arch_directory_tree
                 (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
                  change_policy, modification_permission, build_status, last_scanned)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (path) DO NOTHING""",
                 (
                     path,
                     parent_path,
@@ -856,7 +857,7 @@ def cmd_write_db(db_path: str) -> None:
             insert_tree_node(root_name, root_data)
 
         conn.commit()
-        count = cursor.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
+        count = cursor.execute("SELECT COUNT(*) AS cnt FROM arch_directory_tree").fetchone()["cnt"]
         print(f"[PATH-TREE-DB] Inserted {count} directory tree nodes")
 
     except Exception as e:

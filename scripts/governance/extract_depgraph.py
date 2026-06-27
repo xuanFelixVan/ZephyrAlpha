@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] | scripts/governance/extract_depgraph.py | §1
 [MODULE] scripts.governance.extract_depgraph
@@ -51,7 +52,6 @@ import argparse
 import datetime
 import json
 import os
-import sqlite3
 import subprocess
 import sys
 import time
@@ -70,6 +70,13 @@ class _CustomEncoder(json.JSONEncoder):
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 # DB 新鲜度警告阈值（小时）——超过此时长未更新则警告
 STALE_HOURS_THRESHOLD = 24
@@ -174,9 +181,11 @@ def _print_freshness_warning(freshness: dict) -> None:
 
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
-    """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
+
+    P2迁移后：depgraph 已迁移到 PostgreSQL。db_path 参数保留用于日志引用。
+    """
+    conn = get_depgraph_pg_connection(autocommit=True)
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)
@@ -411,12 +420,12 @@ def cmd_paths(dep: dict, output: str | None, domain_filter: list[str] | None = N
 
 
 def cmd_stats(dep_path: Path, output: str | None) -> None:
-    """数据库统计。"""
-    size_bytes = os.path.getsize(dep_path)
-    conn = sqlite3.connect(str(dep_path))
-    node_count = conn.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
-    edge_count = conn.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
-    domain_count = conn.execute("SELECT COUNT(*) FROM domains").fetchone()[0]
+    """数据库统计（P2迁移后：depgraph 已迁至 PostgreSQL，size 来自 pg_database_size）。"""
+    conn = get_depgraph_pg_connection(autocommit=True)
+    size_bytes = conn.execute("SELECT pg_database_size(current_database()) AS sz").fetchone()["sz"]
+    node_count = conn.execute("SELECT COUNT(*) AS cnt FROM nodes").fetchone()["cnt"]
+    edge_count = conn.execute("SELECT COUNT(*) AS cnt FROM edges").fetchone()["cnt"]
+    domain_count = conn.execute("SELECT COUNT(*) AS cnt FROM domains").fetchone()["cnt"]
     conn.close()
     result = {
         "path": str(dep_path),

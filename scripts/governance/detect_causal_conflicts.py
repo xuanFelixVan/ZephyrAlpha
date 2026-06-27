@@ -13,13 +13,13 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CausalChainBrokenError
 # [TESTS] tests/test_detect_causal_conflicts.py
+# [TTL] task_bound
 
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import sqlite3
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -29,11 +29,17 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+
 
 def _load_depgraph_from_db(db_path: Path) -> dict:
-    """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
+    conn = get_depgraph_pg_connection(autocommit=True)
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)

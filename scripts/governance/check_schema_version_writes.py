@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=无违规; exit 1=发现违规; exit 2=加载失败
 # [TESTS] manual --dry-run
+# [TTL] task_bound
 """
 G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。
 
@@ -33,6 +34,13 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SCAN_DIRS = ["src/zephyr", "scripts", "tests"]
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 # Whitelist: depgraph_schema.py (depgraph.db migrations) + sqlite_schema.py (governance.db migrations)
 WHITELIST = {
     "src/zephyr/governance/depgraph_schema.py",
@@ -120,7 +128,6 @@ def run_ast_scan() -> int:
 def run_db_check() -> int:
     """DB state check: verify _schema_version.MAX(version) == _MIGRATIONS max version."""
     print("[G_TRAE_059] DB check: verifying schema version consistency...")
-    import sqlite3
 
     sys.path.insert(0, str(PROJECT_ROOT / "src"))
     from zephyr.governance.depgraph_schema import _MIGRATIONS
@@ -128,10 +135,10 @@ def run_db_check() -> int:
     migrations_max = max(v for v, _, _ in _MIGRATIONS)
     print(f"  _MIGRATIONS max version: v{migrations_max}")
 
-    db_path = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
-    conn = sqlite3.connect(str(db_path))
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
-        db_max = conn.execute("SELECT MAX(version) FROM _schema_version").fetchone()[0]
+        row = conn.execute("SELECT MAX(version) AS max_version FROM _schema_version").fetchone()
+        db_max = row["max_version"] if row else None
     finally:
         conn.close()
 

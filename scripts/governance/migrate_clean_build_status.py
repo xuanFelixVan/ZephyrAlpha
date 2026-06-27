@@ -6,13 +6,18 @@ B. 删除非标准node_type节点（白名单准入，裁定#184）
 C. 删除7682个无blueprint_id的design_maturity='design'幽灵节点（裁定#192）
 
 执行顺序：先删非标准节点 → 删幽灵节点 → 归一化build_status → 归一化design_maturity
-"""
-import sqlite3
-import os
-import sys
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                       "data", "databases", "depgraph.db")
+P2迁移后：depgraph 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理。
+"""
+import sys
+from pathlib import Path
+
+# ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 VALID_BUILD_STATUS = {"planned", "generated", "testing", "stable", "deprecated"}
 VALID_DESIGN_MATURITY = {"design", "production", "prototype"}
@@ -20,61 +25,57 @@ NODES_WHITELIST = {"module", "script", "test", "config"}
 
 
 def clean_depgraph():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("PRAGMA foreign_keys = OFF")  # 手动管理边删除
+    conn = get_depgraph_pg_connection(autocommit=False)
+    # P2迁移后：PostgreSQL 无 PRAGMA foreign_keys；手动管理边删除（先删 edges 再删 nodes）
     cur = conn.cursor()
 
     # 记录清洗前状态
-    before_total = cur.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
-    before_bs = dict(cur.execute(
-        "SELECT build_status, COUNT(*) FROM nodes GROUP BY build_status").fetchall())
-    before_nt = dict(cur.execute(
-        "SELECT node_type, COUNT(*) FROM nodes GROUP BY node_type").fetchall())
+    cur.execute("SELECT COUNT(*) AS cnt FROM nodes")
+    before_total = cur.fetchone()["cnt"]
+    cur.execute("SELECT build_status, COUNT(*) AS cnt FROM nodes GROUP BY build_status")
+    before_bs = {r["build_status"]: r["cnt"] for r in cur.fetchall()}
+    cur.execute("SELECT node_type, COUNT(*) AS cnt FROM nodes GROUP BY node_type")
+    before_nt = {r["node_type"]: r["cnt"] for r in cur.fetchall()}
     print(f"[BEFORE] total nodes: {before_total}")
     print(f"[BEFORE] build_status: {before_bs}")
 
     try:
         # ========== Step 1: 删除非标准node_type节点（裁定#184白名单准入） ==========
         # 白名单={module,script,test,config}，其余全部删除
-        non_standard = cur.execute(
-            "SELECT COUNT(*) FROM nodes WHERE node_type NOT IN ({})".format(
-                ",".join("?" * len(NODES_WHITELIST)),
-            ),
+        placeholders = ",".join(["%s"] * len(NODES_WHITELIST))
+        cur.execute(
+            "SELECT COUNT(*) AS cnt FROM nodes WHERE node_type NOT IN ({})".format(placeholders),
             tuple(NODES_WHITELIST),
-        ).fetchone()[0]
+        )
+        non_standard = cur.fetchone()["cnt"]
         print(f"\n[Step1] Deleting {non_standard} non-standard node_type nodes...")
 
         # 先删除这些节点的边
         cur.execute(
-            "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(
-                ",".join("?" * len(NODES_WHITELIST)),
-            ),
+            "DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(placeholders),
             tuple(NODES_WHITELIST),
         )
         edges_del_1 = cur.rowcount
         cur.execute(
-            "DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(
-                ",".join("?" * len(NODES_WHITELIST)),
-            ),
+            "DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE node_type NOT IN ({}))".format(placeholders),
             tuple(NODES_WHITELIST),
         )
         edges_del_2 = cur.rowcount
         print(f"  Deleted {edges_del_1 + edges_del_2} edges referencing non-standard nodes")
 
         cur.execute(
-            "DELETE FROM nodes WHERE node_type NOT IN ({})".format(
-                ",".join("?" * len(NODES_WHITELIST)),
-            ),
+            "DELETE FROM nodes WHERE node_type NOT IN ({})".format(placeholders),
             tuple(NODES_WHITELIST),
         )
         print(f"  Deleted {cur.rowcount} non-standard nodes")
 
         # ========== Step 2: 删除幽灵设计节点（裁定#192） ==========
         # design_maturity='design' AND (blueprint_id IS NULL OR blueprint_id='')
-        ghost = cur.execute(
-            "SELECT COUNT(*) FROM nodes WHERE design_maturity='design' "
+        cur.execute(
+            "SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity='design' "
             "AND (blueprint_id IS NULL OR blueprint_id='')"
-        ).fetchone()[0]
+        )
+        ghost = cur.fetchone()["cnt"]
         print(f"\n[Step2] Deleting {ghost} ghost design nodes (no blueprint_id)...")
 
         # 先删除这些节点的边
@@ -135,7 +136,8 @@ def clean_depgraph():
         print(f"  unbuilt→generated: {cur.rowcount}")
 
         # path_invalid → 删除节点
-        path_invalid = cur.execute("SELECT COUNT(*) FROM nodes WHERE build_status='path_invalid'").fetchone()[0]
+        cur.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE build_status='path_invalid'")
+        path_invalid = cur.fetchone()["cnt"]
         if path_invalid > 0:
             cur.execute("DELETE FROM edges WHERE from_node_id IN (SELECT node_id FROM nodes WHERE build_status='path_invalid')")
             cur.execute("DELETE FROM edges WHERE to_node_id IN (SELECT node_id FROM nodes WHERE build_status='path_invalid')")
@@ -149,17 +151,19 @@ def clean_depgraph():
 
         # ========== 验证 ==========
         print("\n=== VERIFICATION ===")
-        after_total = cur.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
-        after_bs = dict(cur.execute(
-            "SELECT build_status, COUNT(*) FROM nodes GROUP BY build_status").fetchall())
-        after_dm = dict(cur.execute(
-            "SELECT design_maturity, COUNT(*) FROM nodes GROUP BY design_maturity").fetchall())
-        after_nt = dict(cur.execute(
-            "SELECT node_type, COUNT(*) FROM nodes GROUP BY node_type").fetchall())
-        ghost_remaining = cur.execute(
-            "SELECT COUNT(*) FROM nodes WHERE design_maturity='design' "
+        cur.execute("SELECT COUNT(*) AS cnt FROM nodes")
+        after_total = cur.fetchone()["cnt"]
+        cur.execute("SELECT build_status, COUNT(*) AS cnt FROM nodes GROUP BY build_status")
+        after_bs = {r["build_status"]: r["cnt"] for r in cur.fetchall()}
+        cur.execute("SELECT design_maturity, COUNT(*) AS cnt FROM nodes GROUP BY design_maturity")
+        after_dm = {r["design_maturity"]: r["cnt"] for r in cur.fetchall()}
+        cur.execute("SELECT node_type, COUNT(*) AS cnt FROM nodes GROUP BY node_type")
+        after_nt = {r["node_type"]: r["cnt"] for r in cur.fetchall()}
+        cur.execute(
+            "SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity='design' "
             "AND (blueprint_id IS NULL OR blueprint_id='')"
-        ).fetchone()[0]
+        )
+        ghost_remaining = cur.fetchone()["cnt"]
 
         print(f"[AFTER] total nodes: {after_total} (deleted {before_total - after_total})")
         print(f"[AFTER] build_status: {after_bs}")

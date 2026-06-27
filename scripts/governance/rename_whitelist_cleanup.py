@@ -12,9 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=有残留
 # [TESTS] 无
+# [TTL] task_bound
 """命名规范白名单清理 - 全文替换脚本。
 
-按施工方案 docs/09_audit/research_notes/naming_whitelist_cleanup_plan.md Phase 3 执行。
+按施工方案 docs/_working/audit/research_notes/naming_whitelist_cleanup_plan.md Phase 3 执行。
 将所有引用从旧名（大写/kebab）替换为新名（snake_case）。
 
 用法:
@@ -28,12 +29,18 @@ from __future__ import annotations
 import argparse
 import os
 import re
-import sqlite3
 import subprocess
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
+# ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 # 替换映射（按字符串长度降序排列，避免短串先匹配破坏长串）
 # 注意: 旧名为原始大写/kebab形式，新名为 snake_case。替换已执行完毕，
@@ -74,7 +81,7 @@ EXCLUDE_PREFIXES: list[str] = [
     "data/security_baselines/",
     "docs/08_knowledge/01_raw_intake/",
     "docs/08_knowledge/04_archived/",
-    "docs/09_audit/research_notes/",  # 施工方案文档记录旧名→新名映射，不应替换
+    "docs/_working/audit/research_notes/",  # 施工方案文档记录旧名→新名映射，不应替换
     "scripts/_archive/",
 ]
 
@@ -219,12 +226,9 @@ def update_depgraph(dry_run: bool = False) -> int:
 
     执行 4 条 SQL UPDATE，将 nodes 表中的旧路径替换为新路径。
     依据施工方案 §3.4。
-    """
-    db_path = REPO_ROOT / "data" / "databases" / "depgraph.db"
-    if not db_path.exists():
-        print(f"[ERROR] depgraph.db not found: {db_path}", file=sys.stderr)
-        return 1
 
+    P2迁移后：depgraph 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理。
+    """
     # SQL UPDATE 语句（按施工方案 §3.4）
     # 注意: SCOPE.yaml 排除 REGISTRY_SCOPE.yaml
     updates = [
@@ -251,16 +255,16 @@ def update_depgraph(dry_run: bool = False) -> int:
 
     if dry_run:
         # dry-run: 只查询受影响的行数，不执行 UPDATE
-        conn = sqlite3.connect(str(db_path))
+        conn = get_depgraph_pg_connection(autocommit=True)
         try:
             for desc, sql in updates:
                 # 将 UPDATE ... REPLACE ... WHERE ... 转为 SELECT COUNT(*)
                 # 提取 WHERE 子句
                 where_idx = sql.find("WHERE")
                 where_clause = sql[where_idx:] if where_idx >= 0 else ""
-                select_sql = f"SELECT COUNT(*) FROM nodes {where_clause}"
+                select_sql = f"SELECT COUNT(*) AS cnt FROM nodes {where_clause}"
                 cur = conn.execute(select_sql)
-                count = cur.fetchone()[0]
+                count = cur.fetchone()["cnt"]
                 print(f"  {mode}{desc}: {count} rows affected")
                 total_changes += count
         finally:
@@ -268,7 +272,7 @@ def update_depgraph(dry_run: bool = False) -> int:
         print(f"\n{mode}总计: {total_changes} rows would be updated")
         return 0
 
-    conn = sqlite3.connect(str(db_path))
+    conn = get_depgraph_pg_connection(autocommit=False)
     try:
         for desc, sql in updates:
             cur = conn.execute(sql)

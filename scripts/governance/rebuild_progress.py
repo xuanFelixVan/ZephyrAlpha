@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/rebuild_progress.py | §9.3
 [MODULE] 无（独立脚本）
@@ -35,9 +36,18 @@ import os
 import sqlite3
 import sys
 from datetime import datetime
+from pathlib import Path
 
 DB_PATH = r"D:\ZephyrAlpha\data\databases\governance.db"
 DEPGRAPH_DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
+# governance.db 仍为 SQLite（task_repo.py 等仍使用 sqlite3.connect）。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 
 def main():
@@ -72,21 +82,21 @@ def main():
         print(f"[ERROR] 查询governance.db失败: {e}")
         return 1
 
-    if os.path.exists(DEPGRAPH_DB):
-        try:
-            dconn = sqlite3.connect(DEPGRAPH_DB)
-            node_count = dconn.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
-            edge_count = dconn.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
-            design_nodes = dconn.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity='design'").fetchone()[0]
-            dconn.close()
-            print("\n[depgraph.db 状态]")
-            print(f"  节点总数: {node_count}")
-            print(f"  边总数: {edge_count}")
-            print(f"  设计态节点: {design_nodes}")
-        except sqlite3.Error as e:
-            print(f"[WARN] 查询depgraph.db失败: {e}")
-    else:
-        print(f"\n[WARN] depgraph.db不存在: {DEPGRAPH_DB}")
+    # P2迁移后：depgraph 已迁移到 PostgreSQL（governance.db 仍为 SQLite，上面已查询）
+    try:
+        dconn = get_depgraph_pg_connection(autocommit=True)
+        node_count = dconn.execute("SELECT COUNT(*) AS cnt FROM nodes").fetchone()["cnt"]
+        edge_count = dconn.execute("SELECT COUNT(*) AS cnt FROM edges").fetchone()["cnt"]
+        design_nodes = dconn.execute(
+            "SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity='design'"
+        ).fetchone()["cnt"]
+        dconn.close()
+        print("\n[depgraph.db 状态]")
+        print(f"  节点总数: {node_count}")
+        print(f"  边总数: {edge_count}")
+        print(f"  设计态节点: {design_nodes}")
+    except Exception as e:
+        print(f"[WARN] 查询depgraph(PG)失败: {e}")
 
     print("\n" + "=" * 80)
     completed = status_counts.get("COMPLETED", 0)

@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ResolveError
 # [TESTS] tests/test_scan_ground_truth_deps.py
+# [TTL] task_bound
 """
 
 import argparse

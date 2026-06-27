@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 漂移→exit 1; 健康→exit 0; 脚本自身错误→exit 2
 # [TESTS] tests/test_verify_schema_health.py
+# [TTL] task_bound
 """
 verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016 治本）
 
@@ -44,7 +45,6 @@ __manifest__ = {
 
 import argparse
 import re
-import sqlite3
 import sys
 from pathlib import Path
 
@@ -52,7 +52,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, DEPGRAPH_DB_PATH  # noqa: E402
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR, get_depgraph_pg_connection  # noqa: E402
 
 _REPO_ROOT = str(next(p for p in _THIS_FILE.parents if (p / "src" / "zephyr").exists()))
 if _REPO_ROOT not in sys.path:
@@ -129,8 +129,12 @@ def check_ddl_columns(conn, issues: list) -> None:
     """校验1：DB 实际列 vs DDL 声明列。"""
     for table, ddl in _DDL_MAP.items():
         declared = set(parse_ddl_columns(ddl))
-        cursor = conn.execute(f"PRAGMA table_info({table})")
-        actual = {row[1] for row in cursor.fetchall()}
+        cursor = conn.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_schema='public' AND table_name=%s",
+            (table,),
+        )
+        actual = {row["column_name"] for row in cursor.fetchall()}
         if not actual:
             issues.append(f"[DDL-DRIFT] 表 '{table}' 不存在于 DB 中")
             continue
@@ -143,12 +147,18 @@ def check_ddl_columns(conn, issues: list) -> None:
 
 
 def check_readonly_triggers(conn, issues: list) -> None:
-    """校验2：只读触发器存在性（READONLY_TABLES 9 张表 × 3 触发器）。"""
+    """校验2：只读触发器存在性（READONLY_TABLES 9 张表 × 3 触发器）。
+
+    P2迁移后说明：PostgreSQL 不支持 SQLite 风格的"只读触发器"（SQLite 用触发器阻断写操作），
+    PG 改用权限/RLS 策略实现只读保护。此处在 information_schema.triggers 中按名称查找，
+    若 P2 迁移未重建同名触发器，将报告 missing（属预期，只读保护机制已变更）。
+    """
     for table in READONLY_TABLES:
         for action in ("insert", "update", "delete"):
             trig_name = f"readonly_{table}_{action}"
             cursor = conn.execute(
-                "SELECT name FROM sqlite_master WHERE type='trigger' AND name=?",
+                "SELECT trigger_name FROM information_schema.triggers "
+                "WHERE trigger_schema='public' AND trigger_name=%s",
                 (trig_name,),
             )
             if cursor.fetchone() is None:
@@ -160,8 +170,8 @@ def check_readonly_triggers(conn, issues: list) -> None:
 def check_schema_version(conn, issues: list) -> None:
     """校验3：Schema 版本一致性。"""
     expected = len(depgraph_schema._MIGRATIONS)
-    cursor = conn.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
-    actual = cursor.fetchone()[0]
+    cursor = conn.execute("SELECT COALESCE(MAX(version), 0) AS v FROM _schema_version")
+    actual = cursor.fetchone()["v"]
     if actual != expected:
         issues.append(
             f"[VERSION-DRIFT] _schema_version MAX={actual} 但 _MIGRATIONS 有 {expected} 条迁移"
@@ -171,17 +181,14 @@ def check_schema_version(conn, issues: list) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="depgraph.db Schema 健康度校验")
-    parser.add_argument("--db", default=str(DEPGRAPH_DB_PATH), help="depgraph.db 路径")
+    parser.add_argument("--db", default="", help="（已废弃）P2迁移后连接由 get_depgraph_pg_connection 统一管理")
     parser.add_argument("--ci", action="store_true", help="硬阻断模式（默认行为，显式传入便于阅读）")
     parser.add_argument("--warn-only", action="store_true", help="软警告模式（发现漂移仍 exit 0）")
     args = parser.parse_args()
 
-    db_path = Path(args.db)
-    if not db_path.exists():
-        print(f"[ERROR] DB 不存在: {db_path}")
-        return EXIT_ERROR
-
-    conn = sqlite3.connect(str(db_path))
+    # P2迁移后：depgraph.db 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理
+    # （--db 参数保留以兼容既有 pre-commit 调用，但不再用于连接）
+    conn = get_depgraph_pg_connection(autocommit=True)
     issues: list[str] = []
     try:
         check_ddl_columns(conn, issues)

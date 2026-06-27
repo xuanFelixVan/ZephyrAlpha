@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ParseError
 # [TESTS] tests/test_diagnose_depgraph.py
+# [TTL] task_bound
 """
 
 import argparse
@@ -24,6 +25,13 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 LAYER_MAP = {
     "L00": 0,
@@ -48,10 +56,7 @@ ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "standard", "templat
 
 
 def load_depgraph():
-    import sqlite3
-
-    conn = sqlite3.connect(str(DEPGRAPH_PATH))
-    conn.row_factory = sqlite3.Row
+    conn = get_depgraph_pg_connection(autocommit=True)
     data = {"nodes": {}, "edges": [], "adjacency_lists": {"forward": {}, "reverse": {}}, "metadata": {}}
     for row in conn.execute("SELECT * FROM nodes"):
         node = dict(row)

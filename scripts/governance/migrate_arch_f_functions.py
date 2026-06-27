@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 节点创建失败→exit 1; 边创建失败→exit 2; 域迁移失败→exit 3; 事件注册失败→exit 4
 # [TESTS] python scripts/governance/migrate_arch_f_functions.py --dry-run
+# [TTL] task_bound
 """
 阶段1迁移脚本：创建37个F功能设计态节点 + 56条依赖边 + 5个域迁移 + 12个事件注册。
 
@@ -35,6 +36,13 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 import apply_depgraph as _ad  # noqa: E402, I001
+
+# P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 
 # ===== §8.4 + §11.5: 37个F功能设计态节点定义 =====
@@ -181,37 +189,37 @@ F_EVENTS = [
 ]
 
 
-def _get_f_node_id(conn: sqlite3.Connection, f_id: str) -> int | None:
+def _get_f_node_id(conn, f_id: str) -> int | None:
     """查询F功能设计态节点的node_id（按path匹配）。"""
     path = next((f[2] for f in F_FUNCTIONS if f[0] == f_id), None)
     if not path:
         return None
-    row = conn.execute("SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)).fetchone()
-    return row[0] if row else None
+    row = conn.execute("SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'", (path,)).fetchone()
+    return row["node_id"] if row else None
 
 
-def _domain_exists(conn: sqlite3.Connection, domain_id: str) -> bool:
+def _domain_exists(conn, domain_id: str) -> bool:
     """检查domain_id在domains表中是否存在。"""
-    row = conn.execute("SELECT 1 FROM domains WHERE domain_id=?", (domain_id,)).fetchone()
+    row = conn.execute("SELECT 1 FROM domains WHERE domain_id=%s", (domain_id,)).fetchone()
     return row is not None
 
 
-def _edge_exists(conn: sqlite3.Connection, from_id: int, to_id: int, dep_type: str) -> bool:
+def _edge_exists(conn, from_id: int, to_id: int, dep_type: str) -> bool:
     """检查边是否已存在（幂等）。"""
     row = conn.execute(
-        "SELECT 1 FROM edges WHERE from_node_id=? AND to_node_id=? AND dep_type=? AND dep_maturity='design'",
+        "SELECT 1 FROM edges WHERE from_node_id=%s AND to_node_id=%s AND dep_type=%s AND dep_maturity='design'",
         (from_id, to_id, dep_type),
     ).fetchone()
     return row is not None
 
 
-def _event_exists(conn: sqlite3.Connection, event_name: str) -> bool:
+def _event_exists(conn, event_name: str) -> bool:
     """检查事件是否已注册（幂等）。"""
-    row = conn.execute("SELECT 1 FROM domain_events WHERE name=?", (event_name,)).fetchone()
+    row = conn.execute("SELECT 1 FROM domain_events WHERE name=%s", (event_name,)).fetchone()
     return row is not None
 
 
-def _detect_cycle_dfs(conn: sqlite3.Connection, start: int, target: int) -> bool:
+def _detect_cycle_dfs(conn, start: int, target: int) -> bool:
     """DFS检测从start能否到达target（添加start->target会形成环）。"""
     if start == target:
         return True
@@ -223,9 +231,10 @@ def _detect_cycle_dfs(conn: sqlite3.Connection, start: int, target: int) -> bool
             continue
         visited.add(node)
         edges = conn.execute(
-            "SELECT to_node_id FROM edges WHERE from_node_id=? AND dep_maturity='design'", (node,)
+            "SELECT to_node_id FROM edges WHERE from_node_id=%s AND dep_maturity='design'", (node,)
         ).fetchall()
-        for (next_node,) in edges:
+        for edge_row in edges:
+            next_node = edge_row["to_node_id"]
             if next_node == target:
                 return True
             if next_node not in visited:
@@ -239,14 +248,10 @@ def run_migration(dry_run: bool = True) -> int:
     print(f"  节点: {len(F_FUNCTIONS)}  边: {len(F_EDGES)}  事件: {len(F_EVENTS)}")
     print()
 
-    if not DEPGRAPH_PATH.exists():
-        print(f"ERROR: depgraph.db 不存在: {DEPGRAPH_PATH}", file=sys.stderr)
-        return 1
-
+    # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
     # ===== DRY RUN: 只读，不获取锁 =====
     if dry_run:
-        conn = sqlite3.connect(str(DEPGRAPH_PATH))
-        conn.row_factory = sqlite3.Row
+        conn = get_depgraph_pg_connection(autocommit=True)
         _run_checks(conn, print_preview=True)
         conn.close()
         print("\n[DRY RUN] 无写入。执行请去掉 --dry-run。")
@@ -254,8 +259,8 @@ def run_migration(dry_run: bool = True) -> int:
 
     # ===== 实际写入: 使用 apply_depgraph 的写入锁 =====
     with _ad._db_write_lock(task="migrate_arch_f_functions"):
-        conn = sqlite3.connect(str(DEPGRAPH_PATH))
-        conn.row_factory = sqlite3.Row
+        # autocommit=False 以支持 commit/rollback 事务语义
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             errors = _run_checks(conn, print_preview=False)
             if errors:
@@ -272,28 +277,30 @@ def run_migration(dry_run: bool = True) -> int:
             for f_id, name, path, bp_id, domain_id, build_status, layer in F_FUNCTIONS:
                 # 检查是否已存在
                 existing = conn.execute(
-                    "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
+                    "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'", (path,)
                 ).fetchone()
                 blueprint_path = f"docs/03_modules/{bp_id}/" if bp_id else ""
                 if existing:
                     # 更新
                     conn.execute(
-                        """UPDATE nodes SET blueprint_id=?, domain_id=?, build_status=?,
-                        blueprint_path=?
-                        WHERE node_id=?""",
-                        (bp_id, domain_id, build_status, blueprint_path, existing[0]),
+                        """UPDATE nodes SET blueprint_id=%s, domain_id=%s, build_status=%s,
+                        blueprint_path=%s
+                        WHERE node_id=%s""",
+                        (bp_id, domain_id, build_status, blueprint_path, existing["node_id"]),
                     )
-                    f_node_map[f_id] = existing[0]
+                    f_node_map[f_id] = existing["node_id"]
                     updated_nodes += 1
                 else:
-                    # 新建
+                    # 新建（P2迁移：PG 要求 node_id 非空，用 DESIGN-{f_id} 生成唯一 PK；
+                    # cur.lastrowid → INSERT ... RETURNING node_id）
                     cur = conn.execute(
-                        """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
+                        """INSERT INTO nodes (node_id, node_type, path, granularity, domain_id, blueprint_id,
                         build_status, design_maturity, blueprint_path, can_build)
-                        VALUES ('design_node', ?, 'directory', ?, ?, ?, 'design', ?, 1)""",
-                        (path, domain_id, bp_id, build_status, blueprint_path),
+                        VALUES (%s, 'design_node', %s, 'directory', %s, %s, %s, 'design', %s, 1)
+                        RETURNING node_id""",
+                        (f"DESIGN-{f_id}", path, domain_id, bp_id, build_status, blueprint_path),
                     )
-                    f_node_map[f_id] = cur.lastrowid
+                    f_node_map[f_id] = cur.fetchone()["node_id"]
                     created_nodes += 1
             print(f"[STEP 1] 节点: 新建={created_nodes}  更新={updated_nodes}  总计={len(f_node_map)}")
 
@@ -319,8 +326,8 @@ def run_migration(dry_run: bool = True) -> int:
                     """INSERT INTO edges (from_node_id, to_node_id, dep_type, architecture_direction,
                     coupling_strength, invocation_method, failure_mode, fallback, activation_condition,
                     data_transfer_description, relationship_type, cross_domain, verified, dep_maturity)
-                    VALUES (?, ?, ?, 'downstream', 'medium', 'direct', 'runtime_error', 'no_fallback',
-                    'always', ?, '', 0, 0, 'design')""",
+                    VALUES (%s, %s, %s, 'downstream', 'medium', 'direct', 'runtime_error', 'no_fallback',
+                    'always', %s, '', 0, 0, 'design')""",
                     (from_id, to_id, dep_type, desc),
                 )
                 created_edges += 1
@@ -337,9 +344,10 @@ def run_migration(dry_run: bool = True) -> int:
                 sub_domains = ", ".join(next((f[4] for f in F_FUNCTIONS if f[0] == s), "") for s in subscriber_list)
                 event_id = f"E-ARCH-{event_name.upper()}"
                 conn.execute(
-                    """INSERT OR IGNORE INTO domain_events
+                    """INSERT INTO domain_events
                     (event_id, name, source_domain, target_domains, payload_schema, priority, event_type)
-                    VALUES (?, ?, ?, ?, ?, 'P1', 'arch_event')""",
+                    VALUES (%s, %s, %s, %s, %s, 'P1', 'arch_event')
+                    ON CONFLICT (event_id) DO NOTHING""",
                     (event_id, event_name, pub_domain, sub_domains, desc),
                 )
                 created_events += 1
@@ -357,7 +365,7 @@ def run_migration(dry_run: bool = True) -> int:
             conn.close()
 
 
-def _run_checks(conn: sqlite3.Connection, print_preview: bool) -> list[str]:
+def _run_checks(conn, print_preview: bool) -> list[str]:
     """前置检查：验证所有domain_id存在、F功能无重复path。返回错误列表。"""
     errors: list[str] = []
 
@@ -394,9 +402,9 @@ def _run_checks(conn: sqlite3.Connection, print_preview: bool) -> list[str]:
         print("\n=== 节点预览 ===")
         for f_id, name, path, bp_id, domain_id, build_status, layer in F_FUNCTIONS:
             existing = conn.execute(
-                "SELECT node_id FROM nodes WHERE path=? AND design_maturity='design'", (path,)
+                "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'", (path,)
             ).fetchone()
-            status = f"已存在node_id={existing[0]}" if existing else "新建"
+            status = f"已存在node_id={existing['node_id']}" if existing else "新建"
             print(
                 f"  {f_id:4s} {name:20s}  domain={domain_id:20s}  build={build_status:10s}  layer={layer:8s}  {status}"
             )

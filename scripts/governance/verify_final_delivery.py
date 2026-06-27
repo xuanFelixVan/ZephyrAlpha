@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/verify_final_delivery.py | §11最终交付验证
 [MODULE] 无（独立脚本）
@@ -30,17 +31,20 @@
 """
 
 import os
-import sqlite3
+import sys
+from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 DB = r"D:\ZephyrAlpha\data\databases\depgraph.db"
 GOV_DB = r"D:\ZephyrAlpha\data\databases\governance.db"
 
 
 def main():
-    if not os.path.exists(DB):
-        print(f"[ERROR] depgraph.db不存在: {DB}")
-        exit(1)
-
     print("=" * 60)
     print("§11 最终交付验证")
     print("=" * 60)
@@ -49,10 +53,9 @@ def main():
 
     # 1. 设计态节点数验证
     print("\n[1] 设计态节点数验证（>= 1128）")
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
-    r = cur.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity='design'").fetchone()
-    design_count = r[0]
+    conn = get_depgraph_pg_connection(autocommit=True)
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity='design'").fetchone()
+    design_count = r["cnt"]
     if design_count >= 1128:
         print(f"  ✅ PASS: 设计态节点数 {design_count} >= 1128")
     else:
@@ -64,19 +67,21 @@ def main():
 
     # 2. 规则表数据验证（各表 > 0）- 规则表在depgraph.db中
     print("\n[2] 规则表数据验证（各表 > 0）")
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
+    conn = get_depgraph_pg_connection(autocommit=True)
     tables = ["gates", "field_vocabularies", "registries", "hard_boundaries", "business_streams", "blueprint_links"]
     for table in tables:
         try:
-            # 检查表是否存在
-            r = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()
+            # 检查表是否存在（P2迁移后改用 information_schema）
+            r = conn.execute(
+                "SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name=%s",
+                (table,),
+            ).fetchone()
             if r is None:
                 print(f"  ❌ FAIL: 表 {table} 不存在")
                 all_pass = False
                 continue
-            r = cur.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
-            count = r[0]
+            r = conn.execute(f"SELECT COUNT(*) AS cnt FROM {table}").fetchone()
+            count = r["cnt"]
             if count > 0:
                 print(f"  ✅ PASS: {table} = {count}")
             else:
@@ -89,31 +94,30 @@ def main():
 
     # 3. depgraph.db基本验证
     print("\n[3] depgraph.db基本验证")
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
-    r = cur.execute("SELECT COUNT(*) FROM nodes").fetchone()
-    print(f"  总节点数: {r[0]}")
-    r = cur.execute("SELECT COUNT(*) FROM edges").fetchone()
-    print(f"  总边数: {r[0]}")
-    r = cur.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity='design'").fetchone()
-    print(f"  设计态节点: {r[0]}")
-    r = cur.execute("SELECT COUNT(*) FROM edges WHERE dep_maturity='design'").fetchone()
-    print(f"  设计态边: {r[0]}")
-    r = cur.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity!='design' OR design_maturity IS NULL").fetchone()
-    print(f"  运营态节点: {r[0]}")
-    r = cur.execute("SELECT COUNT(*) FROM edges WHERE dep_maturity!='design' OR dep_maturity IS NULL").fetchone()
-    print(f"  运营态边: {r[0]}")
+    conn = get_depgraph_pg_connection(autocommit=True)
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM nodes").fetchone()
+    print(f"  总节点数: {r['cnt']}")
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM edges").fetchone()
+    print(f"  总边数: {r['cnt']}")
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity='design'").fetchone()
+    print(f"  设计态节点: {r['cnt']}")
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM edges WHERE dep_maturity='design'").fetchone()
+    print(f"  设计态边: {r['cnt']}")
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM nodes WHERE design_maturity!='design' OR design_maturity IS NULL").fetchone()
+    print(f"  运营态节点: {r['cnt']}")
+    r = conn.execute("SELECT COUNT(*) AS cnt FROM edges WHERE dep_maturity!='design' OR dep_maturity IS NULL").fetchone()
+    print(f"  运营态边: {r['cnt']}")
 
     # 4. edges完整性验证
     print("\n[4] edges完整性验证")
-    r = cur.execute("""
-        SELECT COUNT(*) FROM edges e
+    r = conn.execute("""
+        SELECT COUNT(*) AS cnt FROM edges e
         WHERE NOT EXISTS (SELECT 1 FROM nodes n WHERE n.node_id = e.from_node_id)
            OR NOT EXISTS (SELECT 1 FROM nodes n WHERE n.node_id = e.to_node_id)
     """).fetchone()
-    print(f"  悬空边: {r[0]}")
-    if r[0] > 0:
-        print(f"  ❌ FAIL: 存在{r[0]}条悬空边")
+    print(f"  悬空边: {r['cnt']}")
+    if r["cnt"] > 0:
+        print(f"  ❌ FAIL: 存在{r['cnt']}条悬空边")
         all_pass = False
     else:
         print("  ✅ PASS: 无悬空边")

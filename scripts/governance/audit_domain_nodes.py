@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """SRC-100200: Audit 13 over-capacity domains granularity distribution.
 P0-4升级：4类检测（跨域违规+容量超限+孤儿节点+层级违规）
 """
@@ -20,13 +21,19 @@ import argparse
 import glob
 import json
 import os
-import sqlite3
 import sys
+from pathlib import Path
 
 import yaml
 
-DB_PATH = "D:/ZephyrAlpha/data/databases/depgraph.db"
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 
 # ============================================================================
@@ -37,7 +44,8 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 def detect_cross_domain_violations(cur) -> list:
     """检测1: 跨域违规（import跨越域边界但未在domain_dependencies中声明）"""
     cur.execute("""
-    SELECT e.from_node_id, e.to_node_id, n1.domain_id, n2.domain_id, e.dep_type
+    SELECT e.from_node_id, e.to_node_id, n1.domain_id AS from_domain_id,
+           n2.domain_id AS to_domain_id, e.dep_type
     FROM edges e
     JOIN nodes n1 ON e.from_node_id = n1.node_id
     JOIN nodes n2 ON e.to_node_id = n2.node_id
@@ -54,11 +62,11 @@ def detect_cross_domain_violations(cur) -> list:
     return [
         {
             "type": "cross_domain",
-            "from_node": r[0],
-            "to_node": r[1],
-            "from_domain": r[2],
-            "to_domain": r[3],
-            "dep_type": r[4],
+            "from_node": r["from_node_id"],
+            "to_node": r["to_node_id"],
+            "from_domain": r["from_domain_id"],
+            "to_domain": r["to_domain_id"],
+            "dep_type": r["dep_type"],
         }
         for r in cur.fetchall()
     ]
@@ -80,7 +88,7 @@ def detect_capacity_violations(cur) -> list:
     HAVING COUNT(*) > d.max_modules
     """)
     return [
-        {"type": "capacity_exceeded", "domain_id": r[0], "production_nodes": r[1], "max": r[2]} for r in cur.fetchall()
+        {"type": "capacity_exceeded", "domain_id": r["domain_id"], "production_nodes": r["production_count"], "max": r["max_modules"]} for r in cur.fetchall()
     ]
 
 
@@ -99,7 +107,7 @@ def detect_hard_limit_violations(cur) -> list:
     HAVING COUNT(*) > 150
     """)
     return [
-        {"type": "hard_limit_exceeded", "domain_id": r[0], "production_nodes": r[1], "hard_limit": 150, "max": r[2]}
+        {"type": "hard_limit_exceeded", "domain_id": r["domain_id"], "production_nodes": r["production_count"], "hard_limit": 150, "max": r["max_modules"]}
         for r in cur.fetchall()
     ]
 
@@ -114,15 +122,15 @@ def detect_orphan_nodes(cur) -> list:
     AND (n.design_maturity != 'design' OR n.design_maturity IS NULL)
     LIMIT 100
     """)
-    return [{"type": "orphan_node", "node_id": r[0], "path": r[1]} for r in cur.fetchall()]
+    return [{"type": "orphan_node", "node_id": r["node_id"], "path": r["path"]} for r in cur.fetchall()]
 
 
 def detect_layer_violations(cur) -> list:
     """检测4: 层级违规（通过domains.layer_id+layer_level数值比较）DM-3007修正 v6: arch_domain_layers已合并"""
     # DM-3007: 使用layer_level数值比较替代硬编码LIKE字符串匹配
     cur.execute("""
-    SELECT e.from_node_id, e.to_node_id, n1.domain_id, n2.domain_id,
-           d1.layer_id, d2.layer_id
+    SELECT e.from_node_id, e.to_node_id, n1.domain_id AS from_domain_id,
+           n2.domain_id AS to_domain_id, d1.layer_id AS from_layer_id, d2.layer_id AS to_layer_id
     FROM edges e
     JOIN nodes n1 ON e.from_node_id = n1.node_id
     JOIN nodes n2 ON e.to_node_id = n2.node_id
@@ -135,12 +143,12 @@ def detect_layer_violations(cur) -> list:
     return [
         {
             "type": "layer_violation",
-            "from": r[0],
-            "to": r[1],
-            "from_domain": r[2],
-            "to_domain": r[3],
-            "from_layer": r[4],
-            "to_layer": r[5],
+            "from": r["from_node_id"],
+            "to": r["to_node_id"],
+            "from_domain": r["from_domain_id"],
+            "to_domain": r["to_domain_id"],
+            "from_layer": r["from_layer_id"],
+            "to_layer": r["to_layer_id"],
         }
         for r in cur.fetchall()
     ]
@@ -150,14 +158,14 @@ def write_violations(cur, violations: list):
     """DM-3009: 将4类检测结果持久化到arch_constraints表"""
     for v in violations:
         cur.execute(
-            "INSERT INTO arch_constraints (constraint_type, violation_status, details, detected_at) VALUES (?, 'open', ?, datetime('now'))",
+            "INSERT INTO arch_constraints (constraint_type, violation_status, details, detected_at) VALUES (%s, 'open', %s, now())",
             (v["type"], str(v)),
         )
 
 
 def check_all():
     """DM-3008: 清空旧检测结果并执行4类检测"""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_depgraph_pg_connection(autocommit=False)
     try:
         cur = conn.cursor()
         # 清空旧检测结果
@@ -181,7 +189,7 @@ def check_all():
 
 def run_4class_check():
     """执行4类检测，输出报告"""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         cur = conn.cursor()
 
@@ -330,7 +338,7 @@ def main():
         run_4class_check()
         sys.exit(0)
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_depgraph_pg_connection(autocommit=False)
     try:
         cur = conn.cursor()
 
@@ -339,11 +347,11 @@ def main():
         step2 = {}
         for d in domains_13:
             cur.execute(
-                "SELECT node_type, COUNT(*) FROM nodes WHERE domain_id=? AND design_maturity='design' GROUP BY node_type ORDER BY COUNT(*) DESC",
+                "SELECT node_type, COUNT(*) AS cnt FROM nodes WHERE domain_id=%s AND design_maturity='design' GROUP BY node_type ORDER BY COUNT(*) DESC",
                 (d,),
             )
             rows = cur.fetchall()
-            step2[d] = {r[0]: r[1] for r in rows}
+            step2[d] = {r["node_type"]: r["cnt"] for r in rows}
             total = sum(step2[d].values())
             print(f"  {d}: total={total} -> {step2[d]}")
 
@@ -352,24 +360,24 @@ def main():
         step3 = {}
         for d in domains_13:
             cur.execute(
-                "SELECT COUNT(*) as total, SUM(CASE WHEN belongs_to IS NOT NULL AND belongs_to != '' THEN 1 ELSE 0 END) as has_parent FROM nodes WHERE domain_id=? AND design_maturity='design' AND node_type IN ('feature','reference','implementation')",
+                "SELECT COUNT(*) as total, SUM(CASE WHEN belongs_to IS NOT NULL AND belongs_to != '' THEN 1 ELSE 0 END) as has_parent FROM nodes WHERE domain_id=%s AND design_maturity='design' AND node_type IN ('feature','reference','implementation')",
                 (d,),
             )
             row = cur.fetchone()
-            step3[d] = {"total": row[0], "has_parent": row[1]} if row[0] > 0 else {"total": 0, "has_parent": 0}
+            step3[d] = {"total": row["total"], "has_parent": row["has_parent"]} if row["total"] > 0 else {"total": 0, "has_parent": 0}
             print(f"  {d}: total_fri={step3[d]['total']}, has_parent={step3[d]['has_parent']}")
 
         # STEP 4
         print("STEP 4: D-SIGLEGACY / D-SIMULATION details")
         for dom in ["D-SIGLEGACY", "D-SIMULATION"]:
             cur.execute(
-                "SELECT node_id, node_name, node_type FROM nodes WHERE domain_id=? AND design_maturity='design' ORDER BY node_id",
+                "SELECT node_id, node_name, node_type FROM nodes WHERE domain_id=%s AND design_maturity='design' ORDER BY node_id",
                 (dom,),
             )
             rows = cur.fetchall()
             print(f"  {dom}: {len(rows)} nodes")
             for r in rows:
-                print(f"    {r[0]} | {r[1] or '(empty)'} | {r[2]}")
+                print(f"    {r['node_id']} | {r['node_name'] or '(empty)'} | {r['node_type']}")
 
         # STEP 5
         print("STEP 5: Duplicate names")
@@ -377,7 +385,7 @@ def main():
             "SELECT node_name, domain_id, COUNT(*) as cnt FROM nodes WHERE design_maturity='design' AND node_name IS NOT NULL AND node_name != '' GROUP BY node_name, domain_id HAVING COUNT(*) > 1 ORDER BY cnt DESC"
         )
         dup_rows = cur.fetchall()
-        step5 = [{"node_name": r[0], "domain_id": r[1], "count": r[2]} for r in dup_rows]
+        step5 = [{"node_name": r["node_name"], "domain_id": r["domain_id"], "count": r["cnt"]} for r in dup_rows]
         print(f"  Duplicate groups: {len(step5)}")
         for r in step5:
             print(f'    name="{r["node_name"]}" | domain={r["domain_id"]} | count={r["count"]}')
@@ -385,10 +393,10 @@ def main():
         # STEP 6
         print("STEP 6: Empty names")
         cur.execute(
-            "SELECT domain_id, node_type, COUNT(*) FROM nodes WHERE design_maturity='design' AND (node_name IS NULL OR node_name = '') GROUP BY domain_id, node_type ORDER BY COUNT(*) DESC"
+            "SELECT domain_id, node_type, COUNT(*) AS cnt FROM nodes WHERE design_maturity='design' AND (node_name IS NULL OR node_name = '') GROUP BY domain_id, node_type ORDER BY COUNT(*) DESC"
         )
         empty_rows = cur.fetchall()
-        step6 = [{"domain_id": r[0], "node_type": r[1], "count": r[2]} for r in empty_rows]
+        step6 = [{"domain_id": r["domain_id"], "node_type": r["node_type"], "count": r["cnt"]} for r in empty_rows]
         total_empty = sum(r["count"] for r in step6)
         print(f"  Empty name nodes: {total_empty} across {len(step6)} groups")
         for r in step6:
@@ -402,9 +410,9 @@ def main():
         valid_domains = set()
         try:
             cur.execute("SELECT domain_id FROM domains")
-            valid_domains = {row[0] for row in cur.fetchall()}
-        except sqlite3.OperationalError as e:
-            if "no such table" not in str(e).lower():
+            valid_domains = {row["domain_id"] for row in cur.fetchall()}
+        except Exception as e:
+            if "no such table" not in str(e).lower() and "does not exist" not in str(e).lower():
                 print(f"  [H8] Error querying domains table: {e}")
             # If table doesn't exist, that's expected - skip silently
 
@@ -427,10 +435,15 @@ def main():
                 continue
             try:
                 cur.execute(
-                    """INSERT OR REPLACE INTO arch_constraints
+                    """INSERT INTO arch_constraints
                                (constraint_id, name, constraint_type, from_domain, to_domain,
                                 rule_definition, severity, enforcement, description)
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                               ON CONFLICT (constraint_id) DO UPDATE SET
+                                name=EXCLUDED.name, constraint_type=EXCLUDED.constraint_type,
+                                from_domain=EXCLUDED.from_domain, to_domain=EXCLUDED.to_domain,
+                                rule_definition=EXCLUDED.rule_definition, severity=EXCLUDED.severity,
+                                enforcement=EXCLUDED.enforcement, description=EXCLUDED.description""",
                     (
                         c["constraint_id"],
                         c["name"],
@@ -451,8 +464,8 @@ def main():
         print(f"  [H8] Inserted {inserted} arch_constraints from YAML, skipped {skipped} with invalid domain refs")
 
         # Verify
-        cur.execute("SELECT COUNT(*) FROM arch_constraints")
-        count = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) AS cnt FROM arch_constraints")
+        count = cur.fetchone()["cnt"]
         print(f"  Verification: {count} record(s) in arch_constraints")
 
         print("=== SRC-100200 COMPLETE ===")

@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=0残留; exit 1=有残留; exit 2=参数错误/DB错误
 # [TESTS] tests/unit/test_audit_rename_completeness.py
+# [TTL] task_bound
 """audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
 
 扫描 depgraph.db 所有表的所有 TEXT 列，检测旧标识符残留。
@@ -51,16 +52,16 @@ from __future__ import annotations
 
 import argparse
 import re
-import sqlite3
 import sys
 from pathlib import Path
+from typing import Any
 
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import DEPGRAPH_DB_PATH  # noqa: E402
+from _shared.constants import DEPGRAPH_DB_PATH, get_depgraph_pg_connection  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -92,32 +93,29 @@ NODE_PATH_OLD_PREFIXES = ["D-SIGNAL-"]
 EXCLUDE_COLUMNS = {"blueprint_id", "path", "blueprint_path"}
 
 
-def _get_all_text_columns(conn: sqlite3.Connection) -> dict[str, list[str]]:
+def _get_all_text_columns(conn: Any) -> dict[str, list[str]]:
     """获取所有表（排除 EXCLUDE_TABLES）的 TEXT 类型列。
 
     排除 path/blueprint_path 列（阶段D专用，由 scan_node_paths 专门检查）。
     返回 {table_name: [col1, col2, ...]}。
     """
     cur = conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        "SELECT table_name, column_name FROM information_schema.columns "
+        "WHERE table_schema='public' AND data_type IN ('text', 'character varying', 'character') "
+        "ORDER BY table_name, ordinal_position"
     )
-    tables = [r[0] for r in cur.fetchall() if r[0] not in EXCLUDE_TABLES]
-
     result: dict[str, list[str]] = {}
-    for tbl in tables:
-        cur = conn.execute(f"PRAGMA table_info({tbl})")
-        text_cols = [
-            r[1]
-            for r in cur.fetchall()
-            if r[2] and r[2].upper() == "TEXT" and r[1] not in EXCLUDE_COLUMNS
-        ]
-        if text_cols:
-            result[tbl] = text_cols
+    for r in cur.fetchall():
+        tbl = r["table_name"]
+        col = r["column_name"]
+        if tbl in EXCLUDE_TABLES or col in EXCLUDE_COLUMNS:
+            continue
+        result.setdefault(tbl, []).append(col)
     return result
 
 
 def scan_residual(
-    conn: sqlite3.Connection,
+    conn: Any,
     old_ids: list[str],
     check_all_text_columns: bool = True,
 ) -> list[dict]:
@@ -133,17 +131,18 @@ def scan_residual(
             for old_id in old_ids:
                 try:
                     cur = conn.execute(
-                        f"SELECT COUNT(*) FROM {tbl} WHERE {col} LIKE ?",
+                        f"SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s",
                         (f"%{old_id}%",),
                     )
-                    cnt = cur.fetchone()[0]
+                    row = cur.fetchone()
+                    cnt = row["cnt"] if row else 0
                     if cnt > 0:
                         # 取样前3个值用于报告
                         cur = conn.execute(
-                            f"SELECT {col} FROM {tbl} WHERE {col} LIKE ? LIMIT 3",
+                            f"SELECT {col} FROM {tbl} WHERE {col} LIKE %s LIMIT 3",
                             (f"%{old_id}%",),
                         )
-                        samples = [r[0][:80] if r[0] else "" for r in cur.fetchall()]
+                        samples = [r[col][:80] if r[col] else "" for r in cur.fetchall()]
                         residuals.append(
                             {
                                 "table": tbl,
@@ -153,14 +152,14 @@ def scan_residual(
                                 "samples": samples,
                             }
                         )
-                except sqlite3.OperationalError:
+                except Exception:
                     pass  # 列不存在或查询错误，跳过
 
     return residuals
 
 
 def scan_node_paths(
-    conn: sqlite3.Connection, old_patterns: list[str]
+    conn: Any, old_patterns: list[str]
 ) -> list[dict]:
     """扫描 nodes.path 中包含旧路径前缀的残留（阶段D专用）。
 
@@ -169,14 +168,15 @@ def scan_node_paths(
     residuals: list[dict] = []
     for pattern in old_patterns:
         cur = conn.execute(
-            "SELECT COUNT(*) FROM nodes WHERE path LIKE ?", (f"%{pattern}%",)
+            "SELECT COUNT(*) AS cnt FROM nodes WHERE path LIKE %s", (f"%{pattern}%",)
         )
-        cnt = cur.fetchone()[0]
+        row = cur.fetchone()
+        cnt = row["cnt"] if row else 0
         if cnt > 0:
             cur = conn.execute(
-                "SELECT path FROM nodes WHERE path LIKE ? LIMIT 5", (f"%{pattern}%",)
+                "SELECT path FROM nodes WHERE path LIKE %s LIMIT 5", (f"%{pattern}%",)
             )
-            samples = [r[0][:80] for r in cur.fetchall()]
+            samples = [r["path"][:80] for r in cur.fetchall()]
             residuals.append(
                 {
                     "table": "nodes",
@@ -241,7 +241,7 @@ def circular_review(
     """
     passed_rounds = 0
     for i in range(1, rounds + 1):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=True)
         try:
             residuals = scan_residual(conn, old_ids, check_all_text_columns=True)
             total = sum(r["count"] for r in residuals)
@@ -270,7 +270,7 @@ def circular_review_node_paths(
     """
     passed_rounds = 0
     for i in range(1, rounds + 1):
-        conn = sqlite3.connect(db_path)
+        conn = get_depgraph_pg_connection(autocommit=True)
         try:
             residuals = scan_node_paths(conn, old_patterns)
             total = sum(r["count"] for r in residuals)
@@ -322,7 +322,7 @@ def main() -> int:
     parser.add_argument(
         "--db-path",
         default=str(DEPGRAPH_DB_PATH),
-        help="depgraph.db 路径",
+        help="depgraph.db 路径（P2迁移后已废弃，保留仅为向后兼容；实际连接由 PostgreSQL 配置决定）",
     )
     parser.add_argument(
         "--check-files",
@@ -332,9 +332,8 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    if not Path(args.db_path).exists():
-        print(f"ERROR: DB not found: {args.db_path}", file=sys.stderr)
-        return 2
+    # P2迁移后：depgraph 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理，
+    # 不再依赖文件路径存在性检查（原 Path(args.db_path).exists() 对 PG 服务器无意义）。
 
     # 确定要检查的旧标识符
     if args.old_id:
@@ -368,7 +367,7 @@ def main() -> int:
             print(f"[FAIL] 未能连续 {args.rounds} 轮0残留")
             return 1
         # 单次扫描模式
-        conn = sqlite3.connect(args.db_path)
+        conn = get_depgraph_pg_connection(autocommit=True)
         try:
             residuals = scan_node_paths(conn, patterns)
         finally:
@@ -395,7 +394,7 @@ def main() -> int:
         return 1
 
     # 单次扫描模式
-    conn = sqlite3.connect(args.db_path)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         residuals = scan_residual(conn, old_ids, check_all_text_columns=True)
     finally:
