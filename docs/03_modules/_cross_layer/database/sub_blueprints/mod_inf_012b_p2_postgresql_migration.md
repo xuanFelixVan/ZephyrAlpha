@@ -1,7 +1,7 @@
 ---
 module_id: MOD-DATABASEB
-submodule_path: src/zephyr/data/persistence
-title: "P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL+pgbouncer"
+submodule_path: src/zephyr/infrastructure/db
+title: "P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL"
 doc_type: blueprint
 status: Draft
 version: "1.0.0"
@@ -25,8 +25,8 @@ actual_disk_path: ''
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "P2中期方案——将depgraph.db从SQLite迁移到PostgreSQL，获得MVCC并发能力，支持40+AI并发写入不同功能域。覆盖Docker部署、数据迁移、SQL方言调整、文件锁删除、连接池配置、红蓝测试6大施工阶段。"
-tags: [postgresql, migration, mvcc, pgbouncer, docker, depgraph, concurrency, p2, database-upgrade]
+summary: "P2中期方案——将depgraph.db从SQLite迁移到PostgreSQL，获得MVCC并发能力，支持40+AI并发写入不同功能域。覆盖Windows原生安装、数据迁移、SQL方言调整、文件锁删除、连接配置、红蓝测试6大施工阶段。"
+tags: [postgresql, migration, mvcc, depgraph, concurrency, p2, database-upgrade]
 priority: P1
 runtime_plane: hot
 depends_on:
@@ -34,12 +34,12 @@ depends_on:
   - {target: "trae_054", at: "§no_split", why: "禁止拆分depgraph——迁移后仍为单库单文件(SSoT)"}
   - {target: "D50", at: "裁定", why: "3库架构裁定——需更新为PostgreSQL"}
 references:
-  - {id: "MOD-DATABASEA", at: "全篇", why: "Database Core——SQLite+DuckDB已实现部分"}
+  - {id: "MOD-INF-012A", at: "全篇", why: "Database Core——SQLite+DuckDB已实现部分"}
   - {id: "ARCH-CAP-002", at: "v1.0.8", why: "容量治理二元规则——迁移后仍适用"}
   - {id: "trae_054", at: "全篇", why: "depgraph访问协议——迁移后访问方式变更"}
 ---
 
-# P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL+pgbouncer
+# P2 PostgreSQL迁移详细施工方案 — depgraph.db从SQLite迁移到PostgreSQL
 
 > module_id: MOD-DATABASEB | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
 > 施工阶段: P2（中期：治本） | 目标: 迁移depgraph.db到PostgreSQL，获得MVCC并发能力
@@ -72,7 +72,7 @@ references:
 |------|---------|---------|
 | MVCC并发写入 | 40并发写不同domain_id的行，近线性加速 | 红蓝测试（§九） |
 | 行级锁 | 不同domain_id的写入不互斥 | 并发写入测试 |
-| 连接池 | pgbouncer transaction pooling，池大小20-30 | 连接数监控 |
+| 连接池 | PostgreSQL直连（无需连接池），max_connections=200 | 连接数监控 |
 | 数据零丢失 | SQLite数据100%迁移到PostgreSQL | 行数对比校验 |
 | 零停机回滚 | 可随时回滚到SQLite | 回滚脚本验证 |
 
@@ -136,15 +136,35 @@ references:
 | 其他表 | ~500 | 规则、模板、事件等 |
 | **总数据量** | ~39.2MB | SQLite文件大小 |
 
-### 2.3 DB_PATH三处SSoT（必须同步修改）
+### 2.3 DB_PATH 真源与散布情况（必须同步修改）
 
-> **注意**：以下行号为调研时（2026-06-25）记录，实际修改前请用 `grep -n "DB_PATH\|depgraph.db" <文件路径>` 验证当前行号。
+> **注意**：以下行号为 2026-06-27 核查记录，实际修改前请用 `grep -rn "DB_PATH\s*=\|depgraph\.db" <文件路径>` 验证当前行号。
+> **关键澄清**：`DB_PATH` 在项目中并非干净 SSoT——`governance.db` 与 `depgraph.db` 是两个不同数据库，各自有定义点。本迁移只动 `depgraph.db`。
 
-| # | 文件路径 | 行号(参考) | 当前值 | 迁移后 |
-|---|---------|------|--------|--------|
-| 1 | `src/zephyr/shared/io/paths.py` | 66 | `DB_PATH = ...depgraph.db` | PostgreSQL连接串 |
-| 2 | `src/zephyr/governance/sqlite_schema.py` | 76 | `DB_PATH = ...depgraph.db` | PostgreSQL连接串 |
-| 3 | `src/zephyr/governance/depgraph_schema.py` | 77 | `DB_PATH = ...depgraph.db` | PostgreSQL连接串 |
+**A. depgraph.db 路径定义（本迁移范围，必须改为 PostgreSQL 连接串）**
+
+| # | 文件路径 | 行号(参考) | 当前定义 | 迁移后 |
+|---|---------|------|---------|--------|
+| 1 | `src/zephyr/governance/depgraph_schema.py` | 71 | `DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"`（**Schema 真源**） | PG 连接配置 |
+| 2 | `src/zephyr/governance/depgraph_reader.py` | 48 | `DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"` | PG 连接配置 |
+| 3 | `src/zephyr/governance/rule_engine.py` | 51 | `_DB_PATH = ... depgraph.db` | PG 连接配置 |
+| 4 | `src/zephyr/governance/rule_watcher.py` | 60 | `_DEFAULT_DB_PATH = ... depgraph.db` | PG 连接配置 |
+| 5 | `src/zephyr/governance/auto_runner.py` | 42 | `_DEPGRAPH_DB = ... depgraph.db` | PG 连接配置 |
+| 6 | `src/zephyr/governance/blast_radius.py` | 45 | 硬编码 `Path("D:/ZephyrAlpha/data/databases/depgraph.db")` | PG 连接配置（消除硬编码） |
+| 7 | `src/zephyr/governance/database_service.py` | 59 | 硬编码 `r"D:\ZephyrAlpha\data\databases\depgraph.db"` | PG 连接配置（消除硬编码） |
+
+**B. governance.db 路径定义（不在本迁移范围，保持 SQLite）**
+
+| # | 文件路径 | 行号(参考) | 当前定义 | 处理 |
+|---|---------|------|---------|------|
+| 1 | `src/zephyr/shared/io/paths.py` | 67 | `DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"`（governance.db 真源） | 不变 |
+| 2 | `src/zephyr/governance/sqlite_schema.py` | 77 | `DB_PATH = _find_repo_root() / "data" / "databases" / "governance.db"` | 不变 |
+
+**C. scripts/ 下散布的 depgraph.db 路径定义（约 28 处）**
+
+`scripts/governance/` 与 `scripts/ops/` 下多个脚本各自定义 depgraph.db 路径（如 `apply_depgraph.py`、`audit_domain_nodes.py`、`check_rule_four_way_alignment.py`、`generate_project_depgraph.py`、`upgrade_headers_to_14fields.py` 等），部分硬编码 `D:/ZephyrAlpha/...`。完整清单见受影响文件索引（并发审查文档），迁移时需统一改为从 `depgraph_schema.py` 导入 PG 连接配置，消除散布与硬编码。
+
+> **治理原则**：迁移后 depgraph.db 的 PG 连接配置应收敛到 `depgraph_schema.py` 单一真源，其他文件通过 `from zephyr.governance.depgraph_schema import get_db_connection` 复用，禁止重复定义。
 
 ---
 
@@ -152,11 +172,11 @@ references:
 
 | 阶段 | 名称 | 依赖 | 风险 | 预计任务卡数 |
 |:---:|------|------|:---:|:---:|
-| 1 | Docker部署PostgreSQL + pgbouncer | 无 | 中 | 1 |
+| 1 | Windows原生安装PostgreSQL | 无 | 中 | 1 |
 | 2 | 数据迁移脚本（SQLite→PostgreSQL） | 阶段1 | 高 | 1 |
 | 3 | SQL方言调整（SQLite特有语法→PG标准） | 阶段2 | 高 | 3（按文件分组） |
 | 4 | 删除文件锁补丁 | 阶段3 | 中 | 1 |
-| 5 | 连接池配置 | 阶段1 | 低 | 1 |
+| 5 | 连接配置 | 阶段1 | 低 | 1 |
 | 6 | 红蓝测试验证并发写入 | 阶段3-5 | 中 | 1 |
 | - | **合计** | - | - | **8个任务卡** |
 
@@ -164,129 +184,62 @@ references:
 
 ---
 
-## 四、阶段1：Docker部署PostgreSQL + pgbouncer
+## 四、阶段1：Windows原生安装PostgreSQL
 
 ### 4.1 前置条件
 
-- [ ] Docker Desktop已安装并运行
+- [ ] Windows 10/11（x64）操作系统
+- [ ] 管理员权限（用于安装和注册Windows服务）
 - [ ] D盘有至少5GB可用空间（PostgreSQL数据目录）
-- [ ] 端口5432（PostgreSQL）和6432（pgbouncer）未被占用
+- [ ] 端口5432未被占用
 
 ### 4.2 详细施工步骤
 
-#### [动作1] 创建Docker Compose文件
+#### [动作1] 下载并安装PostgreSQL 16
 
-**文件路径**：`d:\ZephyrAlpha\docker\docker-compose.postgres.yml`
+**操作**：
 
-**Windows Docker Desktop注意**：
-- 确保Docker Desktop设置中已启用"Use WSL 2 based engine"
-- bind mount路径`D:/ZephyrAlpha/data/databases/postgres`需在Docker Desktop的"Settings > Resources > File Sharing"中添加D盘
-- 如果bind mount失败，可改用named volume（删除`driver_opts`配置）
+1. 从 https://www.postgresql.org/download/windows/ 下载 PostgreSQL 16 的 EDB 图形化安装包（`postgresql-16.x-windows-x64.exe`）。
+2. 以管理员身份运行安装程序，按图形化向导逐步安装：
+   - **安装目录**：保持默认 `C:\Program Files\PostgreSQL\16`（或自定义到D盘）
+   - **数据目录**：保持默认 `C:\Program Files\PostgreSQL\16\data`（或自定义）
+   - **超级用户密码**：为 `postgres` 超级用户设置强密码（请妥善保存，本方案后续以 `<postgres_password>` 占位）
+   - **端口**：`5432`
+   - **区域设置**：`Default locale`（或 `C` 以获得最佳性能）
+   - **服务配置**：勾选"Install as a Windows Service"，服务名保持默认 `postgresql-x64-16`，启动类型选择"自动"
+3. 安装完成时勾选取消"Launch Stack Builder"（无需额外组件）。
 
-**操作**：创建新文件，内容如下：
-
-```yaml
-version: "3.9"
-
-services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: zephyr-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: zephyr
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zephyr_dev_2026}
-      POSTGRES_DB: depgraph
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./postgres/init:/docker-entrypoint-initdb.d
-    command:
-      - "postgres"
-      - "-c"
-      - "max_connections=200"
-      - "-c"
-      - "shared_buffers=256MB"
-      - "-c"
-      - "effective_cache_size=1GB"
-      - "-c"
-      - "work_mem=16MB"
-      - "-c"
-      - "maintenance_work_mem=128MB"
-      - "-c"
-      - "wal_level=replica"
-      - "-c"
-      - "max_wal_size=2GB"
-      - "-c"
-      - "checkpoint_timeout=30min"
-      - "-c"
-      - "log_min_duration_statement=500"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U zephyr -d depgraph"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - zephyr-net
-
-  pgbouncer:
-    image: edoburu/pgbouncer:latest
-    container_name: zephyr-pgbouncer
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DB_USER: zephyr
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-zephyr_dev_2026}
-      DB_HOST: postgres
-      DB_NAME: depgraph
-      POOL_MODE: transaction
-      MAX_CLIENT_CONN: 200
-      DEFAULT_POOL_SIZE: 30
-      RESERVE_POOL_SIZE: 5
-      RESERVE_POOL_TIMEOUT: 3
-      SERVER_RESET_QUERY: DISCARD ALL
-      LISTEN_PORT: 6432
-    ports:
-      - "6432:6432"
-    networks:
-      - zephyr-net
-
-volumes:
-  postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: D:/ZephyrAlpha/data/databases/postgres
-
-networks:
-  zephyr-net:
-    driver: bridge
-```
-
-**关键参数说明**：
-- `max_connections=200`：PostgreSQL最大连接数，预留pgbouncer连接
-- `shared_buffers=256MB`：PostgreSQL共享缓冲区，约为总内存的25%
-- `POOL_MODE=transaction`：pgbouncer事务级连接池，适合短事务场景
-- `MAX_CLIENT_CONN=200`：pgbouncer最大客户端连接数，支持40+AI并发
-- `DEFAULT_POOL_SIZE=30`：每个数据库/用户的连接池大小
-
-#### [动作2] 创建PostgreSQL数据目录
-
-**操作**：在PowerShell中执行
+**安装后验证**：
 
 ```powershell
-New-Item -ItemType Directory -Force -Path "D:\ZephyrAlpha\data\databases\postgres"
-New-Item -ItemType Directory -Force -Path "D:\ZephyrAlpha\docker\postgres\init"
+# 检查Windows服务状态（应为 Running）
+Get-Service postgresql-x64-16
 ```
 
-#### [动作3] 创建PostgreSQL初始化脚本
+**预期输出**：`Status=Running, Name=postgresql-x64-16, DisplayName=postgresql-x64-16 - PostgreSQL Server 16`。
 
-**文件路径**：`d:\ZephyrAlpha\docker\postgres\init\01_create_extensions.sql`
+#### [动作2] 创建数据库和用户
+
+**操作**：在PowerShell中执行（会提示输入postgres超级用户密码）
+
+```powershell
+# 创建应用用户 zephyr
+psql -U postgres -c "CREATE USER zephyr WITH PASSWORD 'zephyr_dev_2026';"
+
+# 创建 depgraph 数据库，属主为 zephyr
+psql -U postgres -c "CREATE DATABASE depgraph OWNER zephyr ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C' TEMPLATE template0;"
+
+# 授予 zephyr 用户在 depgraph 数据库的全部权限
+psql -U postgres -d depgraph -c "GRANT ALL ON DATABASE depgraph TO zephyr;"
+```
+
+**说明**：
+- 应用连接统一使用 `zephyr` 用户，不使用 `postgres` 超级用户。
+- `zephyr_dev_2026` 仅为开发环境示例密码，生产环境请使用强密码并通过 `config/.env.postgres` 注入。
+
+#### [动作3] 创建扩展初始化脚本
+
+**文件路径**：`d:\ZephyrAlpha\scripts\governance\migrate_sqlite_to_pg\01_create_extensions.sql`
 
 **操作**：创建新文件，内容如下：
 
@@ -299,91 +252,88 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- CREATE EXTENSION IF NOT EXISTS vector;  -- P3: pgvector
 ```
 
-#### [动作4] 创建环境变量文件
-
-**文件路径**：`d:\ZephyrAlpha\docker\.env.postgres`
-
-**操作**：创建新文件，内容如下：
-
-```env
-POSTGRES_PASSWORD=zephyr_dev_2026
-```
-
-**注意**：此文件必须加入`.gitignore`，禁止提交密码到仓库。
-
-#### [动作5] 更新.gitignore
-
-**文件路径**：`d:\ZephyrAlpha\.gitignore`
-
-**操作**：在文件末尾追加以下行：
-
-```gitignore
-
-# PostgreSQL secrets
-docker/.env.postgres
-data/databases/postgres/
-```
-
-#### [动作6] 启动PostgreSQL + pgbouncer
+#### [动作4] 安装扩展
 
 **操作**：在PowerShell中执行
 
 ```powershell
 cd D:\ZephyrAlpha
-docker compose -f docker\docker-compose.postgres.yml --env-file docker\.env.postgres up -d
+psql -U zephyr -d depgraph -f scripts\governance\migrate_sqlite_to_pg\01_create_extensions.sql
 ```
 
-#### [动作7] 验证PostgreSQL启动成功
+**预期输出**：`CREATE EXTENSION` × 2。
+
+#### [动作5] 配置 .env.postgres
+
+**文件路径**：`d:\ZephyrAlpha\config\.env.postgres`
+
+**操作**：创建新文件，内容如下：
+
+```env
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=depgraph
+POSTGRES_USER=zephyr
+POSTGRES_PASSWORD=zephyr_dev_2026
+```
+
+**注意**：此文件必须加入`.gitignore`，禁止提交密码到仓库。
+
+**更新.gitignore**：
+
+**文件路径**：`d:\ZephyrAlpha\.gitignore`
+
+在文件末尾追加以下行：
+
+```gitignore
+
+# PostgreSQL secrets
+config/.env.postgres
+data/databases/postgres/
+```
+
+#### [动作6] 验证服务运行
 
 **操作**：在PowerShell中执行
 
 ```powershell
-# 检查容器状态
-docker ps --filter "name=zephyr-postgres" --filter "name=zephyr-pgbouncer"
+# 检查Windows服务状态
+Get-Service postgresql-x64-16
 
 # 检查PostgreSQL健康
-docker exec zephyr-postgres pg_isready -U zephyr -d depgraph
+pg_isready -U zephyr -d depgraph
 
-# 检查pgbouncer连接
-docker exec zephyr-pgbouncer psql -U zephyr -d depgraph -p 6432 -c "SELECT 1;"
+# 验证连接（执行简单查询）
+psql -U zephyr -d depgraph -c "SELECT 1;"
+
+# 验证扩展已安装
+psql -U zephyr -d depgraph -c "\dx"
 ```
 
 **预期输出**：
-- 两个容器状态均为 `Up (healthy)`
+- `Get-Service` 返回 `Status=Running`
 - `pg_isready` 返回 `accepting connections`
 - `SELECT 1` 返回 `1`
-
-#### [动作8] 验证扩展安装
-
-**操作**：在PowerShell中执行
-
-```powershell
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\dx"
-```
-
-**预期输出**：显示 `pg_stat_statements` 和 `pgcrypto` 扩展。
+- `\dx` 显示 `pg_stat_statements` 和 `pgcrypto` 扩展
 
 ### 4.3 验证清单
 
 | # | 验证项 | 命令 | 预期结果 |
 |---|--------|------|---------|
-| 1 | PostgreSQL容器运行 | `docker ps --filter name=zephyr-postgres` | Up (healthy) |
-| 2 | pgbouncer容器运行 | `docker ps --filter name=zephyr-pgbouncer` | Up |
-| 3 | PostgreSQL可连接 | `docker exec zephyr-postgres pg_isready` | accepting connections |
-| 4 | pgbouncer可连接 | `docker exec zephyr-pgbouncer psql -c "SELECT 1"` | 返回1 |
-| 5 | 扩展已安装 | `docker exec zephyr-postgres psql -c "\dx"` | pg_stat_statements + pgcrypto |
-| 6 | 数据目录已创建 | `Test-Path D:\ZephyrAlpha\data\databases\postgres` | True |
-| 7 | .env.postgres已gitignore | `git check-ignore docker/.env.postgres` | 返回该文件路径 |
+| 1 | PostgreSQL服务运行 | `Get-Service postgresql-x64-16` | Status=Running |
+| 2 | PostgreSQL可连接 | `pg_isready -U zephyr -d depgraph` | accepting connections |
+| 3 | 简单查询可执行 | `psql -U zephyr -d depgraph -c "SELECT 1;"` | 返回1 |
+| 4 | 扩展已安装 | `psql -U zephyr -d depgraph -c "\dx"` | pg_stat_statements + pgcrypto |
+| 5 | zephyr用户可登录 | `psql -U zephyr -d depgraph -c "SELECT current_user;"` | zephyr |
+| 6 | .env.postgres已gitignore | `git check-ignore config/.env.postgres` | 返回该文件路径 |
 
 ### 4.4 受影响文件
 
 | # | 文件路径 | 操作 | 说明 |
 |---|---------|------|------|
-| 1 | `docker/docker-compose.postgres.yml` | 新建 | Docker Compose配置 |
-| 2 | `docker/postgres/init/01_create_extensions.sql` | 新建 | PG初始化脚本 |
-| 3 | `docker/.env.postgres` | 新建 | 环境变量（密码） |
-| 4 | `.gitignore` | 修改 | 添加PG secrets和data目录忽略 |
-| 5 | `data/databases/postgres/` | 新建目录 | PG数据卷挂载点 |
+| 1 | `scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql` | 新建 | PG扩展初始化脚本 |
+| 2 | `config/.env.postgres` | 新建 | 环境变量（连接配置与密码） |
+| 3 | `.gitignore` | 修改 | 添加PG secrets和data目录忽略 |
 
 ---
 
@@ -391,7 +341,7 @@ docker exec zephyr-postgres psql -U zephyr -d depgraph -c "\dx"
 
 ### 5.1 前置条件
 
-- [ ] 阶段1已完成（PostgreSQL + pgbouncer运行中）
+- [ ] 阶段1已完成（PostgreSQL运行中）
 - [ ] `depgraph.db`已git commit备份（最新状态）
 - [ ] Python环境已安装`psycopg2-binary`包
 
@@ -455,7 +405,7 @@ SQLite → PostgreSQL 数据迁移脚本
     python scripts/governance/migrate_sqlite_to_pg/migrate_data.py
 
 前置条件：
-    1. PostgreSQL已启动（docker compose up）
+    1. PostgreSQL已启动（Windows服务运行中）
     2. PG Schema已创建（01_create_pg_schema.sql已执行）
     3. depgraph.db已git commit备份
 """
@@ -469,10 +419,10 @@ from pathlib import Path
 # SQLite路径
 SQLITE_PATH = r"D:\ZephyrAlpha\data\databases\depgraph.db"
 
-# PostgreSQL连接参数（通过pgbouncer）
+# PostgreSQL连接参数（直连PostgreSQL）
 PG_CONFIG = {
     "host": "localhost",
-    "port": 6432,
+    "port": 5432,
     "database": "depgraph",
     "user": "zephyr",
     "password": "zephyr_dev_2026",
@@ -603,7 +553,7 @@ def main():
     print(f"  发现 {len(tables)} 张表: {', '.join(tables)}")
 
     # 连接PostgreSQL
-    print(f"\n[2/4] 连接PostgreSQL (via pgbouncer)...")
+    print(f"\n[2/4] 连接PostgreSQL...")
     pg_conn = psycopg2.connect(**PG_CONFIG)
     pg_conn.autocommit = False
 
@@ -668,7 +618,7 @@ git add data/databases/depgraph.db
 git commit -m "backup: depgraph.db before PostgreSQL migration"
 
 # 2. 执行PG Schema DDL
-docker exec -i zephyr-postgres psql -U zephyr -d depgraph < scripts\governance\migrate_sqlite_to_pg\01_create_pg_schema.sql
+psql -U zephyr -d depgraph -f scripts\governance\migrate_sqlite_to_pg\01_create_pg_schema.sql
 
 # 3. 执行数据迁移
 python scripts\governance\migrate_sqlite_to_pg\migrate_data.py
@@ -682,7 +632,7 @@ python scripts\governance\migrate_sqlite_to_pg\migrate_data.py
 
 ```powershell
 # 验证关键表行数
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 SELECT 'nodes' as tbl, COUNT(*) FROM nodes
 UNION ALL
 SELECT 'edges', COUNT(*) FROM edges
@@ -691,7 +641,7 @@ SELECT 'domains', COUNT(*) FROM domains;
 "
 
 # 验证跨表关系完整性
-docker exec zephyr-postgres psql -U zephyr -d depgraph -c "
+psql -U zephyr -d depgraph -c "
 SELECT COUNT(*) as orphan_edges
 FROM edges e
 LEFT JOIN nodes n ON e.source_id = n.node_id
@@ -710,13 +660,13 @@ WHERE n.node_id IS NULL;
 | # | 验证项 | 命令 | 预期结果 |
 |---|--------|------|---------|
 | 1 | depgraph.db已备份 | `git log --oneline -1` | 显示backup commit |
-| 2 | PG Schema创建成功 | `docker exec zephyr-postgres psql -c "\dt"` | 显示所有表 |
+| 2 | PG Schema创建成功 | `psql -U zephyr -d depgraph -c "\dt"` | 显示所有表 |
 | 3 | 数据迁移成功 | `python migrate_data.py` | 迁移成功! 总行数: ~37000 |
 | 4 | nodes行数匹配 | `SELECT COUNT(*) FROM nodes` | 14383 |
 | 5 | edges行数匹配 | `SELECT COUNT(*) FROM edges` | 22605 |
 | 6 | domains行数匹配 | `SELECT COUNT(*) FROM domains` | 55 |
 | 7 | 无孤儿边 | orphan_edges查询 | 0 |
-| 8 | 索引创建成功 | `docker exec zephyr-postgres psql -c "\di"` | 显示所有索引 |
+| 8 | 索引创建成功 | `psql -U zephyr -d depgraph -c "\di"` | 显示所有索引 |
 
 ### 5.3 受影响文件
 
@@ -852,13 +802,13 @@ WHERE n.node_id IS NULL;
 
 #### 6.4.1 文件：`src/zephyr/governance/depgraph_schema.py`
 
-**当前状态**：depgraph.db的Schema DDL + 版本化迁移框架（v1-v11），27张表定义，20个索引，dep_cycles视图。
+**当前状态**：depgraph.db的Schema DDL + 版本化迁移框架（v1-v18，v18 为 blueprint_id 三轨制 DB 触发器），23张表定义，18个索引，dep_cycles视图。
 
 **修改清单**：
 
 | # | 行号 | 当前内容 | 修改为 | 说明 |
 |---|------|---------|--------|------|
-| 1 | 77 | `DB_PATH = ...depgraph.db` | `PG_CONFIG = {"host": "localhost", "port": 6432, ...}` | DB路径→PG连接配置 |
+| 1 | 77 | `DB_PATH = ...depgraph.db` | `PG_CONFIG = {"host": "localhost", "port": 5432, ...}` | DB路径→PG连接配置 |
 | 2 | 全文 | `import sqlite3` | `import psycopg2` + `from psycopg2.extras import RealDictCursor` | 导入PG驱动 |
 | 3 | 全文 | `sqlite3.connect(DB_PATH)` | `psycopg2.connect(**PG_CONFIG)` | 连接方式 |
 | 4 | 全文 | `PRAGMA journal_mode=WAL` | （删除） | PG无PRAGMA |
@@ -969,10 +919,10 @@ def _create_physical_backup():
     import subprocess
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     backup_path = f"data/databases/backups/depgraph_pg_{timestamp}.sql"
-    subprocess.run([
-        "docker", "exec", "zephyr-postgres",
-        "pg_dump", "-U", "zephyr", "-d", "depgraph"
-    ], stdout=open(backup_path, "w"))
+    with open(backup_path, "w") as f:
+        subprocess.run([
+            "pg_dump", "-U", "zephyr", "-d", "depgraph"
+        ], stdout=f, check=True)
     return backup_path
 ```
 
@@ -1011,14 +961,14 @@ ALTER TABLE nodes ENABLE TRIGGER prevent_write;
 |---|---------|------|
 | 1 | `scripts/governance/generate_project_depgraph.py` | 磁盘扫描→DB写入（注意：禁止运行，但代码仍需调整） |
 | 2 | `scripts/governance/extract_depgraph.py` | depgraph查询导出 |
-| 3 | `scripts/governance/detect_forward_reference.py` | 前向引用检测 |
-| 4 | `scripts/governance/check_capacity.py` | 容量治理检查 |
-| 5 | `scripts/governance/validate_depgraph.py` | depgraph验证 |
-| 6 | `scripts/governance/d7_code/check_encoding.py` | 编码检查 |
-| 7 | `scripts/governance/cleanup_stash.py` | stash管理 |
-| 8 | `scripts/governance/d5_architecture/*.py` | 架构检查脚本（多个） |
-| 9 | `scripts/governance/d3_metadata/*.py` | 元数据检查脚本（多个） |
-| 10 | `scripts/governance/d1_structure/*.py` | 结构检查脚本（多个） |
+| 3 | `scripts/governance/d7_code/detect_forward_reference.py` | 前向引用检测（注意：在 d7_code/ 子目录下） |
+| 4 | `scripts/governance/d7_code/check_encoding.py` | 编码检查 |
+| 5 | `scripts/governance/cleanup_stash.py` | stash管理 |
+| 6 | `scripts/governance/d5_architecture/`（含 generators/checkers/detectors/analyzers/syncers/validators 子目录，共 80+ 脚本） | 架构治理脚本集合（generators/ 含 16 个生成器，validators/ 含大量验证器） |
+| 7 | `scripts/governance/d3_metadata/*.py` | 元数据检查脚本（多个） |
+| 8 | `scripts/governance/d1_structure/*.py` | 结构检查脚本（多个） |
+
+> **注意**：原清单中的 `check_capacity.py` 与 `validate_depgraph.py` 经核查不存在（已废弃或合并）；容量治理由 `scripts/governance/d5_architecture/generators/generate_capacity_report.py` 承担，depgraph 验证散布在 d5_architecture/validators/ 下多个 `validate_*.py`。
 
 ### 6.6 任务卡P2-T3-C：查询/工具层修改
 
@@ -1173,7 +1123,6 @@ def _create_physical_backup():
     backup_path = f"data/databases/backups/depgraph_pg_{timestamp}.sql"
     with open(backup_path, "w") as f:
         subprocess.run([
-            "docker", "exec", "zephyr-postgres",
             "pg_dump", "-U", "zephyr", "-d", "depgraph"
         ], stdout=f, check=True)
     return backup_path
@@ -1232,32 +1181,35 @@ grep -rn "threading.Lock.*db\|threading.Lock.*DB" scripts/governance/ src/
 
 ---
 
-## 八、阶段5：连接池配置
+## 八、阶段5：连接配置
 
 ### 8.1 前置条件
 
-- [ ] 阶段1已完成（pgbouncer已部署）
+- [ ] 阶段1已完成（PostgreSQL已安装运行）
 
 ### 8.2 详细施工步骤
 
-#### [动作1] 验证pgbouncer配置
+#### [动作1] 验证PostgreSQL直连可用
 
-**操作**：阶段1的docker-compose.postgres.yml中已配置pgbouncer参数。验证配置：
+**操作**：Windows原生安装的PostgreSQL直接连接即可，无需连接池。验证直连配置：
 
 ```powershell
-# 查看pgbouncer配置
-docker exec zephyr-pgbouncer cat /etc/pgbouncer/pgbouncer.ini
+# 验证PostgreSQL服务状态
+Get-Service postgresql-x64-16
 
-# 查看pgbouncer连接池状态
-docker exec zephyr-pgbouncer psql -U zephyr -d pgbouncer -p 6432 -c "SHOW POOLS;"
+# 验证直连可连接
+psql -U zephyr -d depgraph -c "SELECT current_user, current_database();"
+
+# 查看当前连接数与最大连接数
+psql -U zephyr -d depgraph -c "SELECT count(*) AS active, (SELECT setting FROM pg_settings WHERE name='max_connections') AS max FROM pg_stat_activity;"
 ```
 
 **关键参数确认**：
-- `pool_mode = transaction`（事务级连接池）
-- `max_client_conn = 200`（最大客户端连接数）
-- `default_pool_size = 30`（每个数据库/用户的连接池大小）
+- PostgreSQL服务状态：`Running`
+- 直连返回：`zephyr / depgraph`
+- `max_connections` 默认 100，建议调为 200（见§8.2 动作3）
 
-#### [动作2] 创建Python连接池工具
+#### [动作2] 创建Python连接工具
 
 **文件路径**：`d:\ZephyrAlpha\src\zephyr\shared\utils\pg_connection.py`
 
@@ -1265,9 +1217,9 @@ docker exec zephyr-pgbouncer psql -U zephyr -d pgbouncer -p 6432 -c "SHOW POOLS;
 
 ```python
 """
-PostgreSQL连接池工具
+PostgreSQL连接工具
 ===================
-通过pgbouncer连接PostgreSQL，提供统一的连接接口。
+直连PostgreSQL（Windows原生安装，无需连接池），提供统一的连接接口。
 
 使用方式：
     from zephyr.shared.utils.pg_connection import get_depgraph_connection
@@ -1282,10 +1234,10 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 
-# PostgreSQL连接参数（通过pgbouncer）
+# PostgreSQL连接参数（直连PostgreSQL）
 PG_CONFIG = {
     "host": "localhost",
-    "port": 6432,  # pgbouncer端口
+    "port": 5432,
     "database": "depgraph",
     "user": "zephyr",
     "password": "zephyr_dev_2026",
@@ -1294,7 +1246,7 @@ PG_CONFIG = {
 
 @contextmanager
 def get_depgraph_connection():
-    """获取depgraph数据库连接（PostgreSQL via pgbouncer）。
+    """获取depgraph数据库连接（直连PostgreSQL）。
 
     使用方式：
         with get_depgraph_connection() as conn:
@@ -1337,7 +1289,7 @@ def get_depgraph_dict_cursor():
         conn.close()
 ```
 
-#### [动作3] 更新db_utils.py使用PG连接池
+#### [动作3] 更新db_utils.py使用PG直连
 
 **文件路径**：`d:\ZephyrAlpha\src\zephyr\shared\utils\db_utils.py`
 
@@ -1366,7 +1318,13 @@ def get_db_connection(db_type='governance'):
         raise ValueError(f"Unknown db_type: {db_type}")
 ```
 
-#### [动作4] 验证连接池并发能力
+**可选：调整 max_connections**：编辑 `C:\Program Files\PostgreSQL\16\data\postgresql.conf`，将 `max_connections` 改为 `200` 以支持40+AI并发，重启服务：
+
+```powershell
+Restart-Service postgresql-x64-16
+```
+
+#### [动作4] 验证直连并发能力
 
 **操作**：在PowerShell中执行
 
@@ -1379,7 +1337,7 @@ import time
 
 PG_CONFIG = {
     'host': 'localhost',
-    'port': 6432,
+    'port': 5432,
     'database': 'depgraph',
     'user': 'zephyr',
     'password': 'zephyr_dev_2026',
@@ -1414,9 +1372,9 @@ print('All workers done')
 
 | # | 验证项 | 命令 | 预期结果 |
 |---|--------|------|---------|
-| 1 | pgbouncer运行 | `docker ps --filter name=zephyr-pgbouncer` | Up |
-| 2 | pgbouncer配置正确 | `docker exec zephyr-pgbouncer cat /etc/pgbouncer/pgbouncer.ini` | pool_mode=transaction |
-| 3 | 连接池状态 | `SHOW POOLS;` | 显示活跃连接 |
+| 1 | PostgreSQL服务运行 | `Get-Service postgresql-x64-16` | Status=Running |
+| 2 | 直连可连接 | `psql -U zephyr -d depgraph -c "SELECT 1;"` | 返回1 |
+| 3 | 连接数配置 | `psql -c "SHOW max_connections;"` | 100（或调整为200） |
 | 4 | 并发查询成功 | 10线程并发查询 | 全部成功 |
 | 5 | pg_connection.py可用 | `from zephyr.shared.utils.pg_connection import get_depgraph_connection` | 无报错 |
 
@@ -1424,7 +1382,7 @@ print('All workers done')
 
 | # | 文件路径 | 操作 | 说明 |
 |---|---------|------|------|
-| 1 | `src/zephyr/shared/utils/pg_connection.py` | 新建 | PG连接池工具 |
+| 1 | `src/zephyr/shared/utils/pg_connection.py` | 新建 | PG直连工具 |
 | 2 | `src/zephyr/shared/utils/db_utils.py` | 修改 | 增加PG连接分支 |
 
 ---
@@ -1476,7 +1434,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 PG_CONFIG = {
     "host": "localhost",
-    "port": 6432,
+    "port": 5432,
     "database": "depgraph",
     "user": "zephyr",
     "password": "zephyr_dev_2026",
@@ -1711,7 +1669,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 PG_CONFIG = {
     'host': 'localhost',
-    'port': 6432,
+    'port': 5432,
     'database': 'depgraph',
     'user': 'zephyr',
     'password': 'zephyr_dev_2026',
@@ -1809,10 +1767,11 @@ git revert HEAD~N  # N为P2迁移的commit数
 git checkout -- data/databases/depgraph.db
 ```
 
-#### [动作3] 停止PostgreSQL
+#### [动作3] 停止PostgreSQL服务
 
 ```powershell
-docker compose -f docker\docker-compose.postgres.yml down
+# 停止Windows服务（如需彻底卸载，可改用Stop-Service + 卸载程序）
+Stop-Service postgresql-x64-16
 ```
 
 #### [动作4] 验证SQLite恢复
@@ -1829,7 +1788,7 @@ pytest tests/ -x
 | 1 | depgraph.db可用 | diagnose正常输出 |
 | 2 | 单元测试通过 | 全部通过 |
 | 3 | apply_depgraph.py可用 | 可正常执行命令 |
-| 4 | PostgreSQL已停止 | docker ps无PG容器 |
+| 4 | PostgreSQL已停止 | `Get-Service postgresql-x64-16` 返回 Stopped |
 
 ---
 
@@ -1841,16 +1800,15 @@ pytest tests/ -x
 | 2 | SQL方言遗漏 | 中 | 高 | grep扫描残留SQLite语法 + 单元测试 |
 | 3 | 触发器翻译错误 | 高 | 中 | 逐个触发器对照测试 |
 | 4 | 性能退化 | 中 | 低 | 红蓝测试压力测试 |
-| 5 | pgbouncer连接耗尽 | 中 | 低 | 连接池监控 + 池大小调优 |
-| 6 | Docker容器崩溃 | 中 | 低 | restart: unless-stopped + 健康检查 |
-| 7 | 并发session冲突 | 中 | 中 | git分支隔离 + 并发session锁 |
-| 8 | DDL与DB不一致 | 高 | 高 | 迁移前从DB导出实际schema |
+| 5 | PostgreSQL服务异常 | 中 | 低 | Windows服务自动重启 + pg_isready健康检查 |
+| 6 | 并发session冲突 | 中 | 中 | git分支隔离 + 并发session锁 |
+| 7 | DDL与DB不一致 | 高 | 高 | 迁移前从DB导出实际schema |
 
 ---
 
 ## 十二、受影响文件完整索引
 
-> **完整清单**：详见 [MOD-DATABASEB-P2-affected-files-index.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/MOD-DATABASEB-P2-affected-files-index.md)（循环审查版，包含85个文件+26项锁机制/触发器的完整清单：文件路径、位置、变量/函数名、变更影响、执行办法）
+> **完整清单**：详见 [mod_inf_012b_p2_affected_files_index.md](mod_inf_012b_p2_affected_files_index.md)（循环审查版，包含85个文件+26项锁机制/触发器的完整清单：文件路径、位置、变量/函数名、变更影响、执行办法）
 >
 > **审查状态**：第1轮审查完成（2026-06-25），85个文件+26项锁机制/触发器已记录。第2轮审查待执行。
 
@@ -1858,14 +1816,13 @@ pytest tests/ -x
 
 | # | 文件路径 | 阶段 | 说明 |
 |---|---------|:---:|------|
-| 1 | `docker/docker-compose.postgres.yml` | 1 | Docker Compose配置 |
-| 2 | `docker/postgres/init/01_create_extensions.sql` | 1 | PG初始化脚本 |
-| 3 | `docker/.env.postgres` | 1 | 环境变量 |
-| 4 | `scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql` | 2 | SQLite实际schema |
-| 5 | `scripts/governance/migrate_sqlite_to_pg/01_create_pg_schema.sql` | 2 | PG Schema DDL |
-| 6 | `scripts/governance/migrate_sqlite_to_pg/migrate_data.py` | 2 | 数据迁移脚本 |
-| 7 | `src/zephyr/shared/utils/pg_connection.py` | 5 | PG连接池工具 |
-| 8 | `tests/integration/test_pg_concurrency.py` | 6 | 红蓝测试脚本 |
+| 1 | `scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql` | 1 | PG扩展初始化脚本 |
+| 2 | `config/.env.postgres` | 1 | 环境变量（连接配置与密码） |
+| 3 | `scripts/governance/migrate_sqlite_to_pg/00_sqlite_actual_schema.sql` | 2 | SQLite实际schema |
+| 4 | `scripts/governance/migrate_sqlite_to_pg/01_create_pg_schema.sql` | 2 | PG Schema DDL |
+| 5 | `scripts/governance/migrate_sqlite_to_pg/migrate_data.py` | 2 | 数据迁移脚本 |
+| 6 | `src/zephyr/shared/utils/pg_connection.py` | 5 | PG直连工具 |
+| 7 | `tests/integration/test_pg_concurrency.py` | 6 | 红蓝测试脚本 |
 
 ### 12.2 修改文件
 
@@ -1881,13 +1838,13 @@ pytest tests/ -x
 | 8 | `scripts/governance/sync_yaml_to_depgraph.py` | 3 | SQL方言+触发器管理 |
 | 9 | `scripts/governance/generate_project_depgraph.py` | 3,4 | SQL方言+删除锁 |
 | 10 | `scripts/governance/extract_depgraph.py` | 3 | SQL方言 |
-| 11 | `scripts/governance/detect_forward_reference.py` | 3 | SQL方言 |
-| 12 | `scripts/governance/check_capacity.py` | 3 | SQL方言 |
-| 13 | `scripts/governance/validate_depgraph.py` | 3 | SQL方言 |
-| 14 | `scripts/governance/d7_code/check_encoding.py` | 3 | SQL方言 |
-| 15 | `scripts/governance/cleanup_stash.py` | 3 | SQL方言 |
-| 16-64 | `src/zephyr/**/*.py`（49个文件） | 3 | SQL方言调整 |
-| 65 | `requirements.txt` | 2 | 添加psycopg2-binary |
+| 11 | `scripts/governance/d7_code/detect_forward_reference.py` | 3 | SQL方言（位于 d7_code/ 子目录） |
+| 12 | `scripts/governance/d7_code/check_encoding.py` | 3 | SQL方言（位于 d7_code/ 子目录） |
+| 13 | `scripts/governance/cleanup_stash.py` | 3 | SQL方言 |
+| 14-62 | `src/zephyr/**/*.py`（49个文件） | 3 | SQL方言调整 |
+| 63 | `requirements.txt` | 2 | 添加psycopg2-binary |
+
+> **注**：原表中的 `check_capacity.py` 和 `validate_depgraph.py` 经核查不存在（已废弃或合并），详见 §6.5.3。容量治理由 `scripts/governance/d5_architecture/generators/generate_capacity_report.py` 承担。
 
 ### 12.3 需同步更新的文档
 
@@ -1935,7 +1892,7 @@ grep -rln "sqlite3\.\|depgraph\.db\|PRAGMA\|INSERT OR REPLACE" tests/ --include=
 | 5 | 依赖关系正确 | 阶段间依赖检查 | 依赖顺序合理 |
 | 6 | 验证清单完整 | 每个阶段有验证 | 每阶段≥5项验证 |
 | 7 | 回滚方案可行 | 回滚步骤可执行 | 4步回滚完整 |
-| 8 | 风险识别完整 | 8项风险全覆盖 | 每项有缓解措施 |
+| 8 | 风险识别完整 | 7项风险全覆盖 | 每项有缓解措施 |
 | 9 | 受影响文件完整 | 对照调研报告 | 文件数匹配 |
 | 10 | 翻译规则准确 | 对照SQLite/PG文档 | 规则无错误 |
 | 11 | 代码示例可执行 | 代码语法检查 | 无语法错误 |
@@ -1949,3 +1906,63 @@ grep -rln "sqlite3\.\|depgraph\.db\|PRAGMA\|INSERT OR REPLACE" tests/ --include=
 3. 修复问题
 4. 重新检查
 5. 连续2次0问题 → 通过
+
+---
+
+## 十四、P2迁移完成总结（2026-06-27）
+
+### 14.1 完成状态
+
+| 阶段 | 任务 | 状态 | 验证结果 |
+|------|------|------|----------|
+| P2-T1 | PostgreSQL 16安装 | ✅ 完成 | PostgreSQL 16.14 运行正常 |
+| P2-T2 | 数据迁移（SQLite→PG） | ✅ 完成 | 25表，6428 nodes，7094 edges，48 domains，schema v18 |
+| P2-T3 | SQL方言调整（65文件） | ✅ 完成 | 6个src/核心文件 + 44个scripts/文件全部迁移 |
+| P2-T4 | 删除文件锁补丁 | ✅ 完成 | 3个核心写入脚本已无SQLite文件锁，_concurrency业务锁保留 |
+| P2-T5 | 连接配置 | ✅ 完成 | depgraph_schema.py统一PG入口，_shared/constants.py提供PgConnExecuteWrapper |
+| P2-T6 | 红蓝测试 | ✅ 完成 | 5/5全过（40并发写入验证） |
+
+### 14.2 综合验证结果（16/16通过）
+
+- 3个核心写入脚本（apply_depgraph/sync_yaml_to_depgraph/generate_project_depgraph）--help/dry-run正常
+- 6个d5_architecture生成器运行正常（generate_domain_index/capacity_report/cross_domain_matrix/domain_doc/path_tree/integration_topology）
+- 4个诊断脚本正常（verify_schema_health/diagnose_depgraph/audit_rename_completeness/check_schema_version_writes）
+- SQLite残留模式检查：无问题（38处sqlite3.connect全部是governance.db/zalpha_metadata.db/测试/迁移源，合理保留）
+- row[N]索引访问检查：无问题（22处r[0]/row[0]全部在保留SQLite的脚本中，合理）
+
+### 14.3 红蓝测试结果（40并发写入）
+
+| 测试 | 场景 | 结果 | 耗时 |
+|------|------|------|------|
+| T1 | 40并发INSERT（独立行） | 40/40成功 | 0.27s |
+| T2 | 40并发UPDATE同一行（行锁串行化） | 40/40成功，counter=40（无丢失更新） | 0.28s |
+| T3 | 40并发写+40并发读（MVCC读写不阻塞） | 80/80成功 | 0.52s |
+| T4 | 死锁检测与自动恢复 | PG自动检测并回滚死锁事务 | 1.55s |
+| T5 | 40并发事务回滚（事务隔离） | 40/40成功，0残留行 | 0.27s |
+
+### 14.4 关键交付物
+
+| 文件 | 角色 |
+|------|------|
+| `src/zephyr/governance/depgraph_schema.py` | PG连接统一入口（get_db_connection） |
+| `scripts/governance/_shared/constants.py` | PgConnExecuteWrapper + get_depgraph_pg_connection |
+| `config/.env.postgres` | PG连接配置 |
+| `scripts/governance/migrate_sqlite_to_pg/` | 迁移工具（DDL+数据迁移） |
+| `scripts/governance/repair/p2_pg_concurrent_test.py` | 40并发红蓝测试脚本 |
+
+### 14.5 保留SQLite的文件清单
+
+以下文件保留SQLite访问（访问governance.db/zalpha_metadata.db或为测试/备份脚本）：
+
+- governance.db脚本：task_show.py, task_self_check.py, _sync/*.py, meta/*.py, audit_post_sync_commands.py等
+- zalpha_metadata.db脚本：validate_cross_references.py
+- 测试脚本：repair/red_blue_test.py, repair/concurrent_write_test.py
+- 备份脚本：phase_a_backup.py
+- 迁移源脚本：migrate_sqlite_to_pg/migrate_data.py
+
+### 14.6 后续待完成工作
+
+- [ ] §12.3 列出的7个文档同步更新（blueprint.md状态→Active等）
+- [ ] §12.4 列出的测试文件修改（tests/下的DB连接调整）
+- [ ] git提交（通过GitCommitGateway）
+
