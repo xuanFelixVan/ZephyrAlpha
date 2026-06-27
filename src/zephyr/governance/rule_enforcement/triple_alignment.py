@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] TripleAlignmentError(list[AlignmentViolation])
 # [TESTS] tests/test_triple_alignment.py
 # [A_module] module_id=MOD-GOV_triple_alignment | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁
@@ -39,9 +40,12 @@ from typing import Any
 
 import yaml
 
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 logger = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path("D:/ZephyrAlpha")
+# P2迁移审查修复：禁止 Path("D:/ZephyrAlpha") 硬编码，改用 REPO_ROOT 真源
+PROJECT_ROOT = REPO_ROOT
 BLUEPRINT_REGISTRY = PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml"
 MODULE_REGISTRY = PROJECT_ROOT / "docs/03_modules/module-registry.yaml"
 DEPENDENCY_MAP = PROJECT_ROOT / "docs/02_enterprise_architecture/system-dependency-map.md"

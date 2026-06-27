@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] DepgraphLoadError on invalid YAML; ValueError on max_depth<1
 # [TESTS] tests/semantic-auditor/test_blast_radius.py
 # [A_module] module_id=MOD-SEM_blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 blast_radius — MOD-INF-028 §3.1 Stage 9
@@ -36,12 +37,15 @@ from typing import Any
 import yaml
 
 from zephyr.governance.semantic_audit.models import SemanticAuditFinding
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = ["BlastRadiusAnalyzer", "BlastRadiusReport"]
 
 logger = logging.getLogger(__name__)
 
-_DEPGRAPH_DEFAULT_PATH = Path("D:/ZephyrAlpha/data/databases/depgraph.db")
+# depgraph.db 物理路径（P2迁移后已迁移到 PostgreSQL，此路径保留作为参考）
+# 真源：zephyr.shared.io.paths.REPO_ROOT（禁止 Path("D:/ZephyrAlpha") 硬编码）
+_DEPGRAPH_DEFAULT_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 class DepgraphLoadError(RuntimeError):

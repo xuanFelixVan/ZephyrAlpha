@@ -1,6 +1,6 @@
 rule_id: TRAE-060
 title: 向内收原则（唯一真源·事件驱动·第一性原理）
-version: 1.0.0
+version: 1.0.1
 layer: compliance
 module_id: TRAE-060
 depends_on:
@@ -114,6 +114,7 @@ sections:
     - "同步复制YAML内容到另一个YAML/MD再消费——同步复制违反原则①"
     - "用if/elif链隐式枚举合法值替代读词表"
     - "改了词表不改消费代码(留旧硬编码)——静默漂移"
+    - "迁移/重构替换使用点后遗留定义点死代码——改了sqlite3.connect(X)为get_db_connection()后,X常量定义MUST同步清理;无引用的定义点=第二真源=漂移源(实证:P2迁移auto_runner.py _DEPGRAPH_DB死代码与depgraph_schema.DB_PATH真源分裂)"
 
   event_driven_full_auto:
     section_type: rule
@@ -121,9 +122,9 @@ sections:
     description: |
       永久性系统/功能脚本MUST自动事件触发+自动运行+自动维护+自动关闭。
       时间触发(cron/Timer/sleep-loop/periodic/进程内调度器)等于要人指令触发,没达成自动,禁止。
-      CircadianScheduler系统已废止(project_memory MOD-INF-030,红蓝对抗已迁移事件驱动),禁止新建任何进程内定时调度器。
+      CircadianScheduler系统废止(project_memory MOD-INF-030,红蓝对抗已迁移事件驱动),禁止新建任何进程内定时调度器。
       定时不全量兜底改由CI定期job(.github/workflows schedule)承担。
-      # 代码层面已落地(2026-06-26):register_task/start/stop/save_state 均为 no-op,_loop 已删除,定时轨已废除,改为事件驱动。
+      # 代码层面已落地(2026-06-26):register_task/start/stop/save_state 均为 no-op,_loop 已删除,定时轨废除,改为事件驱动。
     original_rules:
     - "永久性脚本MUST事件触发(event/hook/push/文件变更/状态变更),自动运行+自动维护+自动关闭"
     - "禁止时间触发:CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内调度器/进程内轮询守护"
@@ -153,7 +154,7 @@ sections:
     prohibitions:
     - "新建/使用CircadianScheduler或任何进程内定时调度器"
     - "用cron/Timer/sleep-loop/periodic做永久功能的主触发"
-    - "实现定时轨但不注册(代码写好没人跑)——定时轨本身已废止"
+    - "实现定时轨但不注册(代码写好没人跑)——定时轨本身废止"
     - "永久性功能脚本仅manual触发(无事件注册)"
     - "把CI schedule当主触发(它只做兜底,主触发必须事件)"
 
@@ -279,6 +280,9 @@ provenance:
   source: "Owner裁定(2026-06-26)——用户'向内收'三原则固化;依据project_memory YAML唯一真源铁律+MOD-INF-030废止CircadianScheduler+红蓝对抗迁移事件驱动+trae_057 AI消费优先"
 
 change_history:
+- version: '1.0.1'
+  date: '2026-06-28'
+  change: '补充§2 prohibitions第5条"迁移/重构替换使用点后遗留定义点死代码"——基于P2迁移实证(auto_runner.py _DEPGRAPH_DB死代码与depgraph_schema.DB_PATH真源分裂);与trae_046 v1.0.6 Post-merge Verify第4项联动;同步修复GOV-DOC-016门禁拦截(3处"已废止/已废除"→"废止/废除",去掉过渡文本)'
 - version: '1.0.0'
   date: '2026-06-26'
   change: '初始创建——固化用户向内收三原则(唯一真源·事件驱动·第一性原理);统辖trae_057/053/054;配套GATE-VOCAB门禁'

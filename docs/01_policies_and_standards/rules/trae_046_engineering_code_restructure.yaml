@@ -1,6 +1,6 @@
 rule_id: TRAE-046
 title: 工程治理-代码重组安全
-version: 1.0.5
+version: 1.0.6
 layer: compliance
 module_id: TRAE-046
 depends_on: []
@@ -60,6 +60,7 @@ sections:
     - 禁止批量合并多个重复文件
     - 禁止批量延迟更新蓝图
     - 禁止"看起来一样就直接删"——必须用Read工具对比确认
+    - 禁止迁移/重构后只清理使用点不清理定义点——改了sqlite3.connect(X)为get_db_connection()后，X常量定义MUST同步清理（实证：P2迁移 auto_runner.py _DEPGRAPH_DB 死代码残留与 depgraph_schema.DB_PATH 真源分裂）
   gov_eng_004_s2:
     title: 重复文件价值分析方法论(5步)
     section_type: rule
@@ -138,6 +139,10 @@ sections:
       command: pytest tests/相关目录/
       expected_exit: 0
       on_fail: 测试失败——必须修复
+    - step: 被替换的常量/变量定义点零残留
+      command: 'Grep工具: pattern=''被替换的常量名'' path=''src/'' output_mode=''content'' -n=true 确认无死代码定义'
+      expected_exit: 1
+      on_fail: 迁移/重构后遗留死代码定义点——MUST删除无引用的常量/变量定义，避免真源分裂（实证：P2迁移 auto_runner.py _DEPGRAPH_DB 死代码残留）
   gov_eng_004_taskcard_template:
     title: 任务卡安全条款模板
     section_type: examples
@@ -324,6 +329,12 @@ metadata:
   modification_permission: human_gated
   superseded_by:
   change_history:
+  - version: 1.0.6
+    date: '2026-06-28'
+    by: session-20260628-p2-review-ai02
+    changes:
+    - 补充 Post-merge Verify 第4项"被替换的常量/变量定义点零残留"——基于P2迁移实证（auto_runner.py _DEPGRAPH_DB 死代码残留）
+    - 补充 gov_eng_004_s1 prohibitions"禁止迁移/重构后只清理使用点不清理定义点"
   - version: 1.0.5
     date: '2026-06-21'
     by: AI-Assistant

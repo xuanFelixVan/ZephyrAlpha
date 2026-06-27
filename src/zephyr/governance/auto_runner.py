@@ -36,14 +36,10 @@ from typing import Any
 import psycopg2
 
 from zephyr.governance.depgraph_schema import get_db_connection
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["GovernanceAutoRunner", "AutoRunnerResult"]
-
-# depgraph.db SQLite 备份路径（P2迁移后已切换到 PostgreSQL，此路径保留作为参考）
-_DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 class AutoRunnerResult:
