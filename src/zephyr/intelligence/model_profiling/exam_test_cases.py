@@ -917,6 +917,17 @@ EX_RC_003 = ExamTestCase(
     expected_contains=["snake_case", "yaml", "hardcoded", "config"],
 )
 
+# 审查2.2修复: rule_comprehension 正例对照组 (防止"总是报不合规"退化策略拿满分)
+EX_RC_004 = ExamTestCase(
+    case_id="EX-RC-004",
+    capability="rule_comprehension",
+    difficulty=Difficulty.MEDIUM,
+    prompt="规则集：1.文件名必须snake_case 2.禁止PowerShell语法 3.复杂逻辑必须落盘为.py脚本 4.禁止在代码中使用中文变量名 5.所有配置必须从YAML读取。场景：开发者编写了 `validate_config.py` 文件（snake_case），用Python标准库实现了一个50行的配置校验函数，所有配置参数从 `config.yaml` 读取，变量名均为英文。这段代码违反了哪些规则？",
+    expected_structure_keys=["compliant", "violations"],
+    expected_compliant=True,
+    expected_contains=["compliant", "no violation", "follows"],
+)
+
 # safety_judgment (3 题) — 安全判断
 EX_SJ_001 = ExamTestCase(
     case_id="EX-SJ-001",
@@ -1349,41 +1360,6 @@ EX_IA_003 = ExamTestCase(
     expected_contains=["impl1", "impl2", "factory", "client"],
 )
 
-_EX_IA_004_MED = ExamTestCase(  # 重命名消除覆盖（HARD 版保留在 ALL_EXAM_CASES）
-    case_id="EX-IA-004-MED",
-    capability="impact_analysis",
-    difficulty=Difficulty.MEDIUM,
-    prompt=(
-        "impact analysis: If I change the data model in model.py, which files will be affected?\n"
-        "Project structure (10 files):\n"
-        "  model.py: class User: def __init__(self, name, email): pass\n"
-        "  dao1.py: from model import User; def create_user(u): save(u)\n"
-        "  dao2.py: from model import User; def get_user(id): return User(...)\n"
-        "  dao3.py: from model import User; def update_user(u): save(u)\n"
-        "  service1.py: from dao1 import create_user\n"
-        "  service2.py: from dao2 import get_user\n"
-        "  service3.py: from dao3 import update_user\n"
-        "  api1.py: from service1 import create_user\n"
-        "  api2.py: from service2 import get_user\n"
-        "  api3.py: from service3 import update_user\n"
-        "List all affected files."
-    ),
-    expected_structure_keys=["affected_files"],
-    expected_affected_files_k=[
-        "model.py",
-        "dao1.py",
-        "dao2.py",
-        "dao3.py",
-        "service1.py",
-        "service2.py",
-        "service3.py",
-        "api1.py",
-        "api2.py",
-        "api3.py",
-    ],
-    expected_contains=["dao1", "dao2", "service1", "api1"],
-)
-
 EX_IA_005 = ExamTestCase(
     case_id="EX-IA-005",
     capability="impact_analysis",
@@ -1497,30 +1473,6 @@ EX_CDD_003 = ExamTestCase(
     expected_has_cycle=True,
     expected_cycle_path=["m1", "m2", "m3", "m4", "m5"],
     expected_contains=["cycle", "m1", "m5"],
-)
-
-_EX_CDD_004_MED = ExamTestCase(  # 重命名消除覆盖（HARD 版保留在 ALL_EXAM_CASES）
-    case_id="EX-CDD-004-MED",
-    capability="circular_dependency_detect",
-    difficulty=Difficulty.MEDIUM,
-    prompt=(
-        "circular dependency check: Analyze these 10 modules for circular dependencies.\n"
-        "  service.py: from repository import Repository\n"
-        "  repository.py: from model import User\n"
-        "  model.py: from validator import validate\n"
-        "  validator.py: from service import Service  # hidden cycle through service\n"
-        "  config.py: from model import User\n"
-        "  cache.py: from config import Config\n"
-        "  logger.py: import logging\n"
-        "  utils.py: from logger import log\n"
-        "  auth.py: from service import Service\n"
-        "  api.py: from auth import Auth\n"
-        "Report all cycles found."
-    ),
-    expected_structure_keys=["has_cycle", "cycle_path"],
-    expected_has_cycle=True,
-    expected_cycle_path=["service", "repository", "model", "validator"],
-    expected_contains=["cycle", "service", "validator"],
 )
 
 EX_CDD_005 = ExamTestCase(
@@ -2157,6 +2109,25 @@ EX_SR_004 = ExamTestCase(
     expected_contains=["double", "append", "overlap"],
 )
 
+# 审查2.2修复: self_review 负例对照组 (防止"总是报bug"退化策略拿满分)
+EX_SR_005 = ExamTestCase(
+    case_id="EX-SR-005",
+    capability="self_review",
+    difficulty=Difficulty.MEDIUM,
+    prompt=(
+        "review this code for bugs:\n"
+        "def calculate_average(numbers):\n"
+        "    if not numbers:\n"
+        "        return 0\n"
+        "    total = sum(numbers)\n"
+        "    return total / len(numbers)"
+    ),
+    expected_structure_keys=["has_bug", "bugs"],
+    expected_has_bug=False,
+    expected_bug_location="",
+    expected_contains=["no bug", "correct", "clean"],
+)
+
 
 # ══════════════════════════════════════════════════════════
 # v3.0.5 奥赛级附加题 (6 道) — 极限深度，参与奥赛封顶
@@ -2556,8 +2527,8 @@ EX_OLY_009 = ExamTestCase(
 
 
 # ══════════════════════════════════════════════════════════
-# 全集 — 96 题 (90题原集 + 6道context_management死题激活; P0修复)
-# P0核心12能力 + P1重要8能力 + P2辅助9能力(含context_management) + OLYMPIAD 9题 = 96题
+# 全集 — 127 题 (审查2.1修复: 23孤儿激活+2废弃删除; 审查2.2修复: 2负例对照)
+# P0核心12能力 + P1重要8能力 + P2辅助9能力(含context_management) + OLYMPIAD 9题 = 127题
 # ══════════════════════════════════════════════════════════
 
 ALL_EXAM_CASES: list[ExamTestCase] = [
@@ -2578,15 +2549,17 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_RC_001,
     EX_RC_002,
     EX_RC_003,
+    EX_RC_004,  # 正例对照 (审查2.2修复)
     # safety_judgment
     EX_SJ_001,
     EX_SJ_002,
     EX_SJ_003,
-    # self_review (3题 + 1道hard区分题)
+    # self_review (3题 + 1道hard区分题 + 1道负例对照组)
     EX_SR_001,
     EX_SR_002,
     EX_SR_003,
     EX_SR_004,
+    EX_SR_005,  # 负例对照 (审查2.2修复)
     # error_recovery
     EX_ER_001,
     EX_ER_002,
@@ -2600,15 +2573,20 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_CDD_002,
     EX_CDD_003,
     EX_CDD_004,
+    EX_CDD_005,  # 孤儿题激活 (审查2.1修复)
     # impact_analysis (原5题保留前3题 + 1道hard区分题)
     EX_IA_001,
     EX_IA_002,
     EX_IA_003,
     EX_IA_004,
+    EX_IA_005,  # 孤儿题激活 (审查2.1修复)
+    EX_CFA_003,  # 孤儿题激活: impact_analysis HARD (审查2.1修复)
     # task_decomposition (原5题保留前3题)
     EX_TD_001,
     EX_TD_002,
     EX_TD_003,
+    EX_TD_004,  # 孤儿题激活 (审查2.1修复)
+    EX_TD_005,  # 孤儿题激活 (审查2.1修复)
     # incremental_execution
     EX_IE_001,
     EX_IE_002,
@@ -2630,6 +2608,11 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_HD_001,
     EX_HD_002,
     EX_HD_003,
+    EX_CFHD_001,  # 孤儿题激活 (审查2.1修复)
+    EX_CFHD_002,
+    EX_CFHD_003,
+    EX_CFHD_004,
+    EX_CFHD_005,
     # ambiguity_detect
     EX_AMB_001,
     EX_AMB_002,
@@ -2659,6 +2642,8 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_CL_003,
     # tag_completion
     EX_TG_001,
+    EX_TG_002,  # 孤儿题激活 (审查2.1修复)
+    EX_TG_003,
     # naming_suggest
     EX_NS_001,
     EX_NS_002,
@@ -2673,14 +2658,26 @@ ALL_EXAM_CASES: list[ExamTestCase] = [
     EX_DC_003,
     # cross_file_refactor
     EX_CFR_001,
+    EX_CFR_002,  # 孤儿题激活 (审查2.1修复)
+    EX_CFR_003,
     # long_context_recall
     EX_LCR_001,
     EX_LCR_002,
     EX_LCR_003,
     # file_edit_precision
     EX_FEP_001,
+    EX_FEP_002,  # 孤儿题激活 (审查2.1修复)
+    EX_FEP_003,
     # rollback_boundary_design (原5题保留前1题)
     EX_RBD_001,
+    EX_RBD_002,  # 孤儿题激活 (审查2.1修复)
+    EX_RBD_003,
+    EX_RBD_004,
+    EX_RBD_005,
+    # parallel_planning (孤儿题激活: EASY/MEDIUM/HARD补全难度阶梯, 审查2.1修复)
+    EX_PP_001,
+    EX_PP_002,
+    EX_PP_003,
     # context_management (6题) — P0修复：原定义漏入 ALL_EXAM_CASES，现激活
     EX_CFAW_001,
     EX_CFAW_002,

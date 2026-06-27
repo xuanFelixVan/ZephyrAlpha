@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] self
+# [TTL] task_bound
 
 from __future__ import annotations
 
@@ -123,7 +124,8 @@ class TestExamTestCaseDefaults:
 
 class TestAllExamCases:
     def test_count(self):
-        assert len(ALL_EXAM_CASES) == 90
+        # v2.3.2: 96→127 (审查2.1修复: 23孤儿激活+2废弃删除+2负例对照)
+        assert len(ALL_EXAM_CASES) == 127
 
     def test_all_are_exam_test_case(self):
         for tc in ALL_EXAM_CASES:
@@ -153,7 +155,8 @@ class TestCasesByCapability:
     }
 
     def test_key_count(self):
-        assert len(CASES_BY_CAPABILITY) == 28
+        # v2.3.2: 29→31 (ROADMAP-02 新增 function_calling/tool_chaining)
+        assert len(CASES_BY_CAPABILITY) == 31
 
     def test_capabilities_match_expected(self):
         assert self.KEY_CAPABILITIES <= set(CASES_BY_CAPABILITY.keys())
@@ -169,7 +172,8 @@ class TestCasesByCapability:
 
     def test_total_cases_in_dict(self):
         total = sum(len(cases) for cases in CASES_BY_CAPABILITY.values())
-        assert total == 90
+        # v2.3.2: 96→127 (审查2.1修复: 23孤儿激活+2废弃删除+2负例对照)
+        assert total == 127
 
     def test_difficulties_per_capability(self):
         for cap, cases in CASES_BY_CAPABILITY.items():

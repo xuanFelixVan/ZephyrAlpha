@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.3.1"
+version: "2.3.2"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -105,7 +105,8 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 | v2.0.0 (容量升级) | 同 v1.0.0 | ExamMode, PassportIndex, ExamQueueItem | Phase 1-3 待施工 |
 | v2.2.0 (成本效率) | 同 v2.0.0 | CostEfficiencyResult 数据模型 | 待施工 |
 | v2.3.0 (三级模式+九维幻觉+岗位匹配) | ExamOrchestrator(九维+三级), capability_passport(HallucinationBreakdown 九维+QuickProfile), job_matcher, quick_profile.py, job_matrix.yaml, exam_rubric/executor/judge(三轨评分) | Cost 轴, Tool 轴 | 见 §17.4 未来路线图 |
-| v2.3.1 (Cost+Tool 轴+首个真实护照) | 同 v2.3.0 + CostBreakdown(cost_score)+Tool 轴(function_calling/tool_chaining 6题)+QuickProfile.save()/load()持久化+data/brain/quick_profiles/qwen3_8b.json | 无 (P1 全完成) | P3/P4 按需推进 |
+| v2.3.1 (Cost+Tool 轴+首个真实护照) | 同 v2.3.0 + CostBreakdown(cost_score)+Tool 轴(function_calling/tool_chaining 6题)+QuickProfile.save()/load()持久化+data/brain/quick_profiles/qwen3_8b.json | 无 (P1 全完成) | 见 §17.4 未来路线图 |
+| v2.3.2 (Claude审查修复+CI检查) | 同 v2.3.1 + exam_test_cases.py(23孤儿激活+2废弃删除+2负例对照=127题) + check_exam_case_consistency.py(CI一致性检查) + §17.5方法论风险记录 | 无 | 见 §17.5 已知方法论风险 |
 
 ---
 
@@ -737,6 +738,38 @@ ROADMAP-03: 真实 Quick 考试验证
     ├ ROADMAP-07: P3 真实仓库测试 (当 Agent Loop 成熟后)
     └ ROADMAP-08: P4 持续画像 (当有 3+ 护照后)
 ```
+
+### §17.5 已知方法论风险（Claude 外部审查记录）
+
+> **时态属性**：本节属于**永久时态**——记录已知方法论风险，AI 修改题库/评分时必读，防止忽视根本性方法论问题。
+> **来源**：Claude 对 `exam_test_cases.py` 的外部架构审查（2026-06-27）
+> **处理策略**：机械发现（2.1孤儿题/2.2缺负例）已代码修复 + CI 检查脚本 [check_exam_case_consistency.py](file:///D:/ZephyrAlpha/scripts/governance/check_exam_case_consistency.py) 防复发；方法论发现（3.1-3.5 + 2.3）记录在此，不在本轮代码修复，待后续按需推进。
+
+#### 风险清单
+
+| # | 风险ID | 风险 | 严重度 | 状态 | 说明 | 缓解措施/后续行动 |
+|---|--------|------|:---:|:---:|------|------|
+| 1 | RISK-3.1 | 目标分差反向校准 | 高 | 记录 | 先定分差结论（deepseek vs qwen = 1.2-1.4x）再调题目参数（针密度/通过阈值），颠倒了评测因果链——experimenter degrees of freedom / Goodhart's Law 自我作用。题库"靴带"系在旧结论上，模型升级后偏差隐性自我巩固且难发现。 | 后续：题库参数调整必须基于独立基准（非目标分差）；审查题库变更时检查是否有"调参凑分差"行为；考虑引入盲调机制（出题人不看分差数据）。 |
+| 2 | RISK-3.2 | 裁判层偏差不可见 | 高 | 记录 | judge×0.4 占奥赛分 40%，奥赛分决定综合分封顶系数（0.80~1.00）。LLM-as-judge 存在 verbosity bias / self-preference bias / position bias，同源模型互判会系统性偏差，杠杆效应放大（非线性误差）。判分引擎不在题库层，无法在审查范围内验证。 | 后续：审查判分引擎是否做到 (a) 裁判与被测模型解耦（禁止同源/同厂互判）(b) 输出匿名化（隐去模型身份）(c) 关键奥赛题 ≥2 厂商裁判交叉验证 + 人工抽样复核边界题。 |
+| 3 | RISK-3.3 | 单题统计可靠性不足 | 中 | 记录 | 多数（能力×难度）单元格 n=1~3，29 轴能力画像多数在统计意义上是噪声，却被当 TaskGate 路由信号。综合分信度尚可（104+ 题汇总），但细粒度能力轴信度不足——一道题的措辞差异就能让分数 0%↔100% 跳变。 | 后续：ROADMAP-04 题目外置后批量扩展至每能力 20+ 题提升单轴信度；当前用五级粗分级（A/B/C/D/F）降低噪声敏感度，能力轮廓 > 每题精度。 |
+| 4 | RISK-3.4 | 静态题库污染风险 | 中 | 记录 | 静态题库经 6+ 厂商 API 通道明文传输（DeepSeek/Qwen/Kimi/GLM/MiniMax/Gemini/Claude），长期使用存在被动暴露风险。一旦进入未来模型训练语料，评测体系渐进失效且不可感知（表面分数仍"看起来合理"）。 | 后续：评估题库私有化/加密、动态滚动更新（参考 LiveBench/LiveCodeBench）、题目改写扰动方案；逐家核实厂商数据使用条款。 |
+| 5 | RISK-3.5 | 真实源码跨厂商 API 暴露 | 高 | 记录 | OLY-007~023 嵌入 `task_gate.py`/`git_commit_gateway.py` 等核心治理源码（单题 8K-10K 字符），跑分时发往多家第三方 API。与 Trae CN 尽调结论（即使关闭遥测仍上传数据）形成同类风险——核心治理/交易模块源码被常态化发往第三方。 | 后续：评估用脱敏/合成代码替代真实源码，或限制奥赛题仅用本地模型跑分；至少对核心治理文件做 API 暴露评估。 |
+| 6 | RISK-2.3 | expected_contains 判分语义不可审计 | 中 | 记录 | 高权重纵轴(0.50)大量用 expected_contains 软匹配，但 AND/OR 语义、大小写/中英文敏感度、字面 vs 语义匹配均未在题库层定义，仅存在于判分引擎。字面子串匹配天然脆弱（假阴/假阳），中英文关键词混填是缓解性打补丁非根治。 | 后续：判分引擎审查时确认 expected_contains 语义并文档化到题库层；评估语义对齐替代方案（如 embedding 相似度）。 |
+
+#### 审查修复对照
+
+| 审查发现 | 类型 | 处理 | 验证 |
+|---------|------|------|------|
+| 2.1 孤儿题/能力天窗（29道死代码） | 机械 | ✅ 代码修复：23 孤儿激活 + 2 废弃副本删除 + 2 负例新增 = 127 题 | `check_exam_case_consistency.py` → ALL CLEAN（定义127=注册127） |
+| 2.2 二元判断缺负例对照组 | 机械 | ✅ 代码修复：EX_SR_005(has_bug=False) + EX_RC_004(compliant=True) | self_review=[T,T,T,T,F], rule_comp=[F,F,F,T] |
+| 2.3 expected_contains 语义不可审计 | 方法论 | ⏳ 记录 RISK-2.3 | 待判分引擎审查 |
+| 3.1 目标分差反向校准 | 方法论 | ⏳ 记录 RISK-3.1 | 待后续范式调整 |
+| 3.2 裁判偏差不可见 | 方法论 | ⏳ 记录 RISK-3.2 | 待判分引擎审查 |
+| 3.3 单题统计可靠性 | 方法论 | ⏳ 记录 RISK-3.3 | 待 ROADMAP-04 批量扩题 |
+| 3.4 静态题库污染 | 方法论 | ⏳ 记录 RISK-3.4 | 待评估动态更新方案 |
+| 3.5 真实源码 API 暴露 | 方法论 | ⏳ 记录 RISK-3.5 | 待评估脱敏/本地化方案 |
+
+> **审查基线说明**：Claude 审查基于旧版本题库（声称 context_management 6 题全未注册）。实际 context_management 已在 P0 修复中全部注册（EX_CFAW_001~003 + EX_CWM_001~003），本审查修复处理了其余仍然成立的发现。
 
 ---
 

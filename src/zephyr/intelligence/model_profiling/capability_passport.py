@@ -110,6 +110,9 @@ DEPTH_THRESHOLDS: dict[str, float] = {
     "task_decomposition": 0.55,
     "tool_selection": 0.55,
     "context_management": 0.55,
+    # v2.3.2: Tool 轴能力 (ROADMAP-02 新增，补全阈值)
+    "function_calling": 0.55,
+    "tool_chaining": 0.55,
 }
 
 
