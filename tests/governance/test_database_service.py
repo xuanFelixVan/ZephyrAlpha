@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [TTL] task_bound
 """
 R2-1: DatabaseService 测试 — DuckDB连接/健康检查/读写/连接池管理
 
@@ -60,14 +61,17 @@ class TestDatabaseServiceConnection:
         result = conn.execute("SELECT 1").fetchone()
         assert result[0] == 1
 
-    def test_get_depgraph_conn_returns_sqlite(self, db_service):
-        """验证 depgraph.db 连接"""
-        import sqlite3
+    def test_get_depgraph_conn_returns_pg(self, db_service):
+        """验证 depgraph (PostgreSQL) 连接（P2迁移后：psycopg2）"""
+        import psycopg2
 
         conn = db_service.get_depgraph_conn()
-        assert isinstance(conn, sqlite3.Connection)
-        result = conn.execute("SELECT 1").fetchone()
-        assert result[0] == 1
+        assert isinstance(conn, psycopg2.extensions.connection)
+        with conn.cursor() as cur:
+            cur.execute("SELECT 1")
+            result = cur.fetchone()
+        # RealDictCursor 返回 RealDictRow，用 values() 兼容数字索引访问
+        assert list(result.values())[0] == 1
 
     def test_get_market_read_conn_works(self, db_service):
         """验证只读连接可执行查询"""

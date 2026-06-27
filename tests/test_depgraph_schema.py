@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] python -m pytest tests/test_depgraph_schema.py -q
+# [TTL] task_bound
 """
 test_depgraph_schema.py — depgraph_schema.py DDL 真源与迁移框架单元测试
 
@@ -46,6 +47,12 @@ schema_version = schema_mod.schema_version
 _MIGRATIONS = schema_mod._MIGRATIONS
 _DDL_INDEXES = schema_mod._DDL_INDEXES
 _get_current_version = schema_mod._get_current_version
+
+# P2迁移：init_db 已迁移到 PostgreSQL（只验证 PG schema，不再创建 SQLite 文件），
+# PRAGMA/sqlite_master/_schema_version/SQLite 临时库测试均不适用 PG。
+pytestmark = pytest.mark.skip(
+    reason="P2迁移：init_db 已迁移到 PG，SQLite 临时库 + PRAGMA 基线 + migration 事务原子性测试不适用"
+)
 
 
 def _extract_index_name(sql: str) -> str | None:

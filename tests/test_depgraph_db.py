@@ -1,21 +1,24 @@
 """
-DM-100017: depgraph.db端到端功能测试
+DM-100017: depgraph.db端到端功能测试（P2迁移后：PostgreSQL）
 覆盖：dep_表组7表CRUD、arch_表组7表CRUD、rule_bindings表、nodes 23列、edges 18列
 """
 
 import json
-import sqlite3
 import sys
 from datetime import datetime
 
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DB_PATH = str(REPO_ROOT / "data" / "databases" / "depgraph.db")
 
 
 def test_all():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    conn.cursor_factory = RealDictCursor
     c = conn.cursor()
     passed = 0
     failed = 0
@@ -31,15 +34,21 @@ def test_all():
 
     # === 1. domains 表 ===
     print("\n=== 1. domains ===")
-    count = c.execute("SELECT COUNT(*) FROM domains").fetchone()[0]
+    c.execute("SELECT COUNT(*) AS cnt FROM domains")
+    count = c.fetchone()["cnt"]
     check("domains has 35 records", count == 35, f"got {count}")
 
-    d = c.execute("SELECT * FROM domains WHERE domain_id='D-DATA-PERSISTENCE'").fetchone()
+    c.execute("SELECT * FROM domains WHERE domain_id='D-DATA-PERSISTENCE'")
+    d = c.fetchone()
     check("domains SELECT by id", d is not None and d["domain_name"] == "persistence")
 
     # === 2. nodes 表 (23列) ===
     print("\n=== 2. nodes (23 columns) ===")
-    cols = [desc[1] for desc in c.execute("PRAGMA table_info(nodes)").fetchall()]
+    c.execute("""
+        SELECT column_name FROM information_schema.columns
+        WHERE table_schema='public' AND table_name='nodes'
+    """)
+    cols = [row["column_name"] for row in c.fetchall()]
     expected_cols = [
         "node_id",
         "node_type",
@@ -67,12 +76,17 @@ def test_all():
     for col in expected_cols:
         check(f"nodes has column '{col}'", col in cols, f"missing {col}")
 
-    node_count = c.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
+    c.execute("SELECT COUNT(*) AS cnt FROM nodes")
+    node_count = c.fetchone()["cnt"]
     check("nodes has data", node_count > 100, f"got {node_count}")
 
     # === 3. edges 表 (18列+) ===
     print("\n=== 3. edges (18 columns) ===")
-    edge_cols = [desc[1] for desc in c.execute("PRAGMA table_info(edges)").fetchall()]
+    c.execute("""
+        SELECT column_name FROM information_schema.columns
+        WHERE table_schema='public' AND table_name='edges'
+    """)
+    edge_cols = [row["column_name"] for row in c.fetchall()]
     expected_edge = [
         "edge_id",
         "from_node",
@@ -97,78 +111,113 @@ def test_all():
     for col in expected_edge:
         check(f"edges has column '{col}'", col in edge_cols, f"missing {col}")
 
-    edge_count = c.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
+    c.execute("SELECT COUNT(*) AS cnt FROM edges")
+    edge_count = c.fetchone()["cnt"]
     check("edges has data", edge_count > 100, f"got {edge_count}")
 
     # === 4. domain_dependencies ===
     print("\n=== 4. domain_dependencies ===")
     c.execute(
-        """INSERT OR REPLACE INTO domain_dependencies (from_domain, to_domain, edge_count, edge_types, constraint_type)
-        VALUES (?, ?, ?, ?, ?)""",
+        """INSERT INTO domain_dependencies (from_domain, to_domain, edge_count, edge_types, constraint_type)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (from_domain, to_domain) DO UPDATE SET
+            edge_count=EXCLUDED.edge_count,
+            edge_types=EXCLUDED.edge_types,
+            constraint_type=EXCLUDED.constraint_type""",
         ("D-DATA", "D-GOV", 5, '["import_depends"]', "hard"),
     )
     conn.commit()
-    dd = c.execute("SELECT * FROM domain_dependencies WHERE from_domain='D-DATA' AND to_domain='D-GOV'").fetchone()
+    c.execute("SELECT * FROM domain_dependencies WHERE from_domain='D-DATA' AND to_domain='D-GOV'")
+    dd = c.fetchone()
     check("domain_dependencies INSERT+SELECT", dd is not None and dd["edge_count"] == 5)
 
     # === 5. contracts ===
     print("\n=== 5. contracts ===")
     now = datetime.now().isoformat()
     c.execute(
-        """INSERT OR REPLACE INTO contracts (contract_id, name, provider_domain, consumer_domain, contract_type, schema_definition, version)
-        VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO contracts (contract_id, name, provider_domain, consumer_domain, contract_type, schema_definition, version)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (contract_id) DO UPDATE SET
+            name=EXCLUDED.name,
+            provider_domain=EXCLUDED.provider_domain,
+            consumer_domain=EXCLUDED.consumer_domain,
+            contract_type=EXCLUDED.contract_type,
+            schema_definition=EXCLUDED.schema_definition,
+            version=EXCLUDED.version""",
         ("CTR-TEST-001", "Test Contract", "D-DATA", "D-GOV", "api", "{}", "1.0"),
     )
     conn.commit()
-    ctr = c.execute("SELECT * FROM contracts WHERE contract_id='CTR-TEST-001'").fetchone()
+    c.execute("SELECT * FROM contracts WHERE contract_id='CTR-TEST-001'")
+    ctr = c.fetchone()
     check("contracts INSERT+SELECT", ctr is not None)
 
     # === 6. domain_events ===
     print("\n=== 6. domain_events ===")
     c.execute(
-        """INSERT OR REPLACE INTO domain_events (event_id, name, source_domain, target_domains, payload_schema, priority)
-        VALUES (?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO domain_events (event_id, name, source_domain, target_domains, payload_schema, priority)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (event_id) DO UPDATE SET
+            name=EXCLUDED.name,
+            source_domain=EXCLUDED.source_domain,
+            target_domains=EXCLUDED.target_domains,
+            payload_schema=EXCLUDED.payload_schema,
+            priority=EXCLUDED.priority""",
         ("EVT-TEST-001", "Test Event", "D-DATA", '["D-GOV"]', "{}", "P1"),
     )
     conn.commit()
-    evt = c.execute("SELECT * FROM domain_events WHERE event_id='EVT-TEST-001'").fetchone()
+    c.execute("SELECT * FROM domain_events WHERE event_id='EVT-TEST-001'")
+    evt = c.fetchone()
     check("domain_events INSERT+SELECT", evt is not None)
 
     # === 8. arch_ 表组 ===
+    # 注意：arch_domain_capacity 和 arch_domain_layers 已在 v6/v14 删除/合并入 domains 表
     print("\n=== 8. arch_domain_capacity ===")
-    cap = c.execute("SELECT COUNT(*) FROM arch_domain_capacity").fetchone()[0]
-    check("arch_domain_capacity has data", cap > 0, f"got {cap}")
+    try:
+        c.execute("SELECT COUNT(*) AS cnt FROM arch_domain_capacity")
+        cap = c.fetchone()["cnt"]
+        check("arch_domain_capacity has data", cap > 0, f"got {cap}")
+    except psycopg2.Error:
+        check("arch_domain_capacity has data", False, "table deleted (v6/v14 merged into domains)")
 
     print("\n=== 9. arch_path_mappings ===")
-    pm = c.execute("SELECT COUNT(*) FROM arch_path_mappings").fetchone()[0]
+    c.execute("SELECT COUNT(*) AS cnt FROM arch_path_mappings")
+    pm = c.fetchone()["cnt"]
     check("arch_path_mappings has data", pm > 0, f"got {pm}")
 
     print("\n=== 11. arch_domain_layers ===")
-    dl = c.execute("SELECT COUNT(*) FROM arch_domain_layers").fetchone()[0]
-    check("arch_domain_layers has data", dl > 0, f"got {dl}")
+    try:
+        c.execute("SELECT COUNT(*) AS cnt FROM arch_domain_layers")
+        dl = c.fetchone()["cnt"]
+        check("arch_domain_layers has data", dl > 0, f"got {dl}")
+    except psycopg2.Error:
+        check("arch_domain_layers has data", False, "table deleted (v6/v14 merged into domains)")
 
     print("\n=== 12. arch_constraints ===")
-    ac = c.execute("SELECT COUNT(*) FROM arch_constraints").fetchone()[0]
+    c.execute("SELECT COUNT(*) AS cnt FROM arch_constraints")
+    ac = c.fetchone()["cnt"]
     check("arch_constraints has data", ac > 0, f"got {ac}")
 
     print("\n=== 13. arch_directory_tree ===")
-    dt = c.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
+    c.execute("SELECT COUNT(*) AS cnt FROM arch_directory_tree")
+    dt = c.fetchone()["cnt"]
     check("arch_directory_tree has data", dt > 0, f"got {dt}")
 
     # === 15. rule_bindings ===
     print("\n=== 15. rule_bindings ===")
     c.execute(
         """INSERT INTO rule_bindings (function_name, rule_id, binding_type, trigger_type, trigger_id)
-        VALUES (?, ?, ?, ?, ?)""",
+        VALUES (%s, %s, %s, %s, %s)""",
         ("test_func", "RULE-001", "pre_check", "operation", "OP-001"),
     )
     conn.commit()
-    rb = c.execute("SELECT * FROM rule_bindings WHERE function_name='test_func'").fetchone()
+    c.execute("SELECT * FROM rule_bindings WHERE function_name='test_func'")
+    rb = c.fetchone()
     check("rule_bindings INSERT+SELECT", rb is not None)
 
     # === 16. type_specific_data JSON解析 ===
     print("\n=== 16. type_specific_data JSON ===")
-    node = c.execute("SELECT type_specific_data FROM nodes LIMIT 1").fetchone()
+    c.execute("SELECT type_specific_data FROM nodes LIMIT 1")
+    node = c.fetchone()
     if node and node["type_specific_data"]:
         try:
             data = json.loads(node["type_specific_data"])

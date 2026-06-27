@@ -14,6 +14,10 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
+import psycopg2
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
@@ -52,20 +56,26 @@ def test_database_service_init():
 
     except ImportError as e:
         print(f"  ⚠ DatabaseService 导入失败: {e}")
-        print("  回退到直接 sqlite3 连接测试")
+        print("  回退到直接连接测试")
 
-        # 回退测试：直接连接
-        for db_path, name in [
-            (GOVERNANCE_DB, "governance.db"),
-            (DEPGRAPH_DB, "depgraph.db"),
-        ]:
-            try:
-                conn = sqlite3.connect(str(db_path))
-                conn.execute("SELECT 1")
-                conn.close()
-                print(f"  ✓ {name} 直接连接成功")
-            except Exception as ex:
-                assert False, f"{name} 连接失败: {ex}"
+        # 回退测试：直接连接（governance 用 sqlite3，depgraph 已迁移到 PostgreSQL）
+        try:
+            conn = sqlite3.connect(str(GOVERNANCE_DB))
+            conn.execute("SELECT 1")
+            conn.close()
+            print("  ✓ governance.db 直接连接成功")
+        except Exception as ex:
+            assert False, f"governance.db 连接失败: {ex}"
+
+        try:
+            conn = get_db_connection()
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1")
+                cur.fetchone()
+            conn.close()
+            print("  ✓ depgraph (PG) 直接连接成功")
+        except Exception as ex:
+            assert False, f"depgraph (PG) 连接失败: {ex}"
 
         print("  ✓ PASS: 直接连接测试通过（DatabaseService 待完善）")
     except Exception as e:
@@ -76,22 +86,28 @@ def test_health_check():
     """测试自动运行健康检查（SELECT 1）"""
     print("\n[TEST] 数据库健康检查测试")
 
-    databases = [
-        (GOVERNANCE_DB, "governance.db"),
-        (DEPGRAPH_DB, "depgraph.db"),
-    ]
+    # governance.db 健康检查（保持 SQLite）
+    try:
+        conn = sqlite3.connect(str(GOVERNANCE_DB))
+        cursor = conn.execute("SELECT 1")
+        result = cursor.fetchone()
+        conn.close()
+        assert result and result[0] == 1, f"governance.db: 健康检查返回异常值: {result}"
+        print("  ✓ governance.db: 健康检查通过")
+    except Exception as e:
+        assert False, f"governance.db: 健康检查失败: {e}"
 
-    for db_path, name in databases:
-        try:
-            conn = sqlite3.connect(str(db_path))
-            cursor = conn.execute("SELECT 1")
-            result = cursor.fetchone()
-            conn.close()
-
-            assert result and result[0] == 1, f"{name}: 健康检查返回异常值: {result}"
-            print(f"  ✓ {name}: 健康检查通过")
-        except Exception as e:
-            assert False, f"{name}: 健康检查失败: {e}"
+    # depgraph 健康检查（P2迁移后：PostgreSQL）
+    try:
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT 1")
+            result = cur.fetchone()
+        conn.close()
+        assert result and result[0] == 1, f"depgraph (PG): 健康检查返回异常值: {result}"
+        print("  ✓ depgraph (PG): 健康检查通过")
+    except Exception as e:
+        assert False, f"depgraph (PG): 健康检查失败: {e}"
 
     # DuckDB 健康检查
     try:
@@ -111,7 +127,7 @@ def test_health_check():
 
 
 def test_event_notification():
-    """测试数据变更事件通知（模拟 EventBus）"""
+    """测试数据变更事件通知（模拟 EventBus，P2迁移后：PostgreSQL）"""
     print("\n[TEST] 数据变更事件通知测试")
 
     events_received = []
@@ -119,31 +135,29 @@ def test_event_notification():
     def on_change(event_type, data):
         events_received.append((event_type, data))
 
-    # 模拟：插入数据后触发事件
-    conn = sqlite3.connect(str(DEPGRAPH_DB))
-
-    # 清理可能残留的测试数据
-    conn.execute("DELETE FROM nodes WHERE path = 'test/event.py' AND node_type = 'test'")
-    conn.commit()
-
-    # 插入测试节点（node_id 为 INTEGER 自增主键，省略让数据库分配）
+    # 模拟：插入数据后触发事件（P2迁移后：PostgreSQL）
+    # node_id 在 v5 migration 后为 bigint（INTEGER PK AUTOINCREMENT → PG bigint）
+    test_node_id = 999999
+    conn = get_db_connection()
     try:
-        cursor = conn.execute(
-            """
-            INSERT INTO nodes (node_type, path)
-            VALUES (?, ?)
-        """,
-            ("test", "test/event.py"),
-        )
-        conn.commit()
-        inserted_id = cursor.lastrowid
+        with conn.cursor() as cur:
+            # 清理可能残留的测试数据
+            cur.execute("DELETE FROM nodes WHERE node_id = %s", (test_node_id,))
+
+        # 插入测试节点（node_id 为 bigint 主键，显式指定数字 ID）
+        # node_id 是 GENERATED ALWAYS AS IDENTITY，需 OVERRIDING SYSTEM VALUE
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO nodes (node_id, node_type, path) OVERRIDING SYSTEM VALUE VALUES (%s, %s, %s)",
+                (test_node_id, "test", "test/event.py"),
+            )
 
         # 模拟事件通知
-        on_change("NODE_INSERTED", {"node_id": inserted_id})
+        on_change("NODE_INSERTED", {"node_id": test_node_id})
 
         # 清理
-        conn.execute("DELETE FROM nodes WHERE node_id = ?", (inserted_id,))
-        conn.commit()
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM nodes WHERE node_id = %s", (test_node_id,))
 
     except Exception as e:
         assert False, f"插入测试失败: {e}"
@@ -188,21 +202,36 @@ def test_schema_version_check():
     """测试 schema 版本检查"""
     print("\n[TEST] Schema 版本检查")
 
-    for db_path, name in [(GOVERNANCE_DB, "governance.db"), (DEPGRAPH_DB, "depgraph.db")]:
-        try:
-            conn = sqlite3.connect(str(db_path))
-            cursor = conn.execute("SELECT version FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
-            row = cursor.fetchone()
-            conn.close()
+    # governance.db schema 版本检查（保持 SQLite）
+    try:
+        conn = sqlite3.connect(str(GOVERNANCE_DB))
+        cursor = conn.execute("SELECT version FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            print(f"  ✓ governance.db: schema 版本 = {row[0]}")
+        else:
+            print(f"  ⚠ governance.db: _schema_version 表为空")
+    except sqlite3.OperationalError:
+        print(f"  ⚠ governance.db: 无 _schema_version 表")
+    except Exception as e:
+        assert False, f"governance.db: 检查失败: {e}"
 
-            if row:
-                print(f"  ✓ {name}: schema 版本 = {row[0]}")
-            else:
-                print(f"  ⚠ {name}: _schema_version 表为空")
-        except sqlite3.OperationalError:
-            print(f"  ⚠ {name}: 无 _schema_version 表")
-        except Exception as e:
-            assert False, f"{name}: 检查失败: {e}"
+    # depgraph schema 版本检查（P2迁移后：PostgreSQL）
+    try:
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT version FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
+            row = cur.fetchone()
+        conn.close()
+        if row:
+            print(f"  ✓ depgraph (PG): schema 版本 = {row[0]}")
+        else:
+            print(f"  ⚠ depgraph (PG): _schema_version 表为空")
+    except psycopg2.Error:
+        print(f"  ⚠ depgraph (PG): 无 _schema_version 表")
+    except Exception as e:
+        assert False, f"depgraph (PG): 检查失败: {e}"
 
     print("  ✓ PASS: schema 版本检查完成")
 

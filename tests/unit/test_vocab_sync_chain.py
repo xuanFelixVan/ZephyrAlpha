@@ -31,13 +31,14 @@ from __future__ import annotations
 
 import json
 import os
-import sqlite3
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 import yaml
+
+from zephyr.governance.depgraph_schema import get_db_connection
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPTS_GOV = _PROJECT_ROOT / "scripts" / "governance"
@@ -164,16 +165,18 @@ class TestBugBVocabularyNameKey:
     def test_field_vocabularies_table_has_no_dirty_field_name(self) -> None:
         """DB field_vocabularies 表的 field_name 不含 _vocabulary 后缀脏值。
 
-        只读查询生产 depgraph.db，不写入任何数据。
+        只读查询生产 depgraph (PostgreSQL)，不写入任何数据。
         """
         if not _DEPGRAPH_DB.exists():
             pytest.skip(f"depgraph.db 不存在: {_DEPGRAPH_DB}")
-        conn = sqlite3.connect(str(_DEPGRAPH_DB))
+        conn = get_db_connection()
         try:
-            rows = conn.execute(
-                "SELECT DISTINCT field_name FROM field_vocabularies "
-                "WHERE field_name LIKE '%_vocabulary'"
-            ).fetchall()
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT DISTINCT field_name FROM field_vocabularies "
+                    "WHERE field_name LIKE '%_vocabulary'"
+                )
+                rows = cur.fetchall()
         finally:
             conn.close()
         assert rows == [], (
@@ -184,11 +187,11 @@ class TestBugBVocabularyNameKey:
         """DB field_vocabularies 表包含核心 vocabulary 的裸字段名。"""
         if not _DEPGRAPH_DB.exists():
             pytest.skip(f"depgraph.db 不存在: {_DEPGRAPH_DB}")
-        conn = sqlite3.connect(str(_DEPGRAPH_DB))
+        conn = get_db_connection()
         try:
-            rows = conn.execute(
-                "SELECT DISTINCT field_name FROM field_vocabularies"
-            ).fetchall()
+            with conn.cursor() as cur:
+                cur.execute("SELECT DISTINCT field_name FROM field_vocabularies")
+                rows = cur.fetchall()
         finally:
             conn.close()
         present = {r[0] for r in rows}

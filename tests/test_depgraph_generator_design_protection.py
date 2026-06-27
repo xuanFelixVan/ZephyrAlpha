@@ -4,10 +4,11 @@ DM-100026: 极端红蓝测试：depgraph生成器vs设计态保护
 蓝方：验证设计态保护机制
 """
 
-import sqlite3
 import subprocess
 import sys
 from pathlib import Path
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
@@ -20,20 +21,29 @@ def red_team_tests():
     print("红方测试：尝试覆盖设计态节点")
     print("=" * 80)
 
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     # 1. 插入测试设计态节点
     print("\n[红方] 插入设计态测试节点...")
     cursor.execute("""
-        INSERT OR REPLACE INTO nodes
+        INSERT INTO nodes
         (node_id, node_type, domain_id, path, design_maturity, deployment_lifecycle, impact_level, modification_permission)
-        VALUES ('TEST-DESIGN-001', 'module', 'D-TEST', 'test/design/module.py', 'design', 'stable', 'M', 'human_gated')
+        OVERRIDING SYSTEM VALUE
+        VALUES (900001, 'module', 'D-TEST', 'test/design/module.py', 'design', 'stable', 'M', 'human_gated')
+        ON CONFLICT (node_id) DO UPDATE SET
+            node_type=EXCLUDED.node_type,
+            domain_id=EXCLUDED.domain_id,
+            path=EXCLUDED.path,
+            design_maturity=EXCLUDED.design_maturity,
+            deployment_lifecycle=EXCLUDED.deployment_lifecycle,
+            impact_level=EXCLUDED.impact_level,
+            modification_permission=EXCLUDED.modification_permission
     """)
     conn.commit()
 
     # 验证插入成功
-    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id = 'TEST-DESIGN-001'")
+    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id = 900001")
     count = cursor.fetchone()[0]
     print(f"  ✓ 设计态节点已插入: {count} 个")
 
@@ -51,7 +61,7 @@ def red_team_tests():
 
     # 3. 验证设计态节点是否被保护
     print("\n[蓝方] 验证设计态节点保护...")
-    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id = 'TEST-DESIGN-001'")
+    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id = 900001")
     count = cursor.fetchone()[0]
 
     if count == 0:
@@ -64,7 +74,7 @@ def red_team_tests():
     # 4. 验证字段未被覆盖
     cursor.execute("""
         SELECT design_maturity, deployment_lifecycle, impact_level, modification_permission
-        FROM nodes WHERE node_id = 'TEST-DESIGN-001'
+        FROM nodes WHERE node_id = 900001
     """)
     row = cursor.fetchone()
     if row:
@@ -93,7 +103,7 @@ def red_team_tests():
             print(f"  第 {i + 1} 次运行失败: {result.stderr[:200]}")
 
     # 6. 最终验证设计态节点
-    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id = 'TEST-DESIGN-001'")
+    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id = 900001")
     count = cursor.fetchone()[0]
 
     if count == 0:
@@ -106,11 +116,17 @@ def red_team_tests():
     # 7. 测试 rule/template 节点保护
     print("\n[红方] 插入 rule 和 template 测试节点...")
     cursor.execute("""
-        INSERT OR REPLACE INTO nodes
+        INSERT INTO nodes
         (node_id, node_type, domain_id, path, design_maturity)
+        OVERRIDING SYSTEM VALUE
         VALUES
-        ('TEST-RULE-001', 'rule', 'D-TEST', 'test/rule.yaml', 'design'),
-        ('TEST-TEMPLATE-001', 'template', 'D-TEST', 'test/template.yaml', 'design')
+        (900002, 'rule', 'D-TEST', 'test/rule.yaml', 'design'),
+        (900003, 'template', 'D-TEST', 'test/template.yaml', 'design')
+        ON CONFLICT (node_id) DO UPDATE SET
+            node_type=EXCLUDED.node_type,
+            domain_id=EXCLUDED.domain_id,
+            path=EXCLUDED.path,
+            design_maturity=EXCLUDED.design_maturity
     """)
     conn.commit()
 
@@ -123,7 +139,7 @@ def red_team_tests():
     )
 
     # 验证 rule/template 节点
-    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id IN ('TEST-RULE-001', 'TEST-TEMPLATE-001')")
+    cursor.execute("SELECT COUNT(*) FROM nodes WHERE node_id IN (900002, 900003)")
     count = cursor.fetchone()[0]
 
     if count < 2:
@@ -135,8 +151,9 @@ def red_team_tests():
 
     # 8. 清理测试数据
     print("\n[清理] 删除测试节点...")
-    cursor.execute("DELETE FROM nodes WHERE node_id LIKE 'TEST-%'")
-    cursor.execute("DELETE FROM edges WHERE from_node LIKE 'TEST-%' OR to_node LIKE 'TEST-%'")
+    # node_id 为 bigint，用 IN 替代 LIKE（v5 migration 后 node_id 从 TEXT 改为 INTEGER）
+    cursor.execute("DELETE FROM nodes WHERE node_id IN (900001, 900002, 900003)")
+    cursor.execute("DELETE FROM edges WHERE from_node_id IN (900001, 900002, 900003) OR to_node_id IN (900001, 900002, 900003)")
     conn.commit()
 
     conn.close()

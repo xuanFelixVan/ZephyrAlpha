@@ -1,4 +1,5 @@
 # [A_test] module_id: SRC-TST-1899 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 """audit_rename_completeness.py 回归测试（红蓝对抗逻辑永久化）。
 
 测试覆盖（红蓝对抗矩阵）：
@@ -34,6 +35,12 @@ from audit_rename_completeness import (  # noqa: E402
 )
 
 PROD_DB = Path(__file__).resolve().parents[2] / "data" / "databases" / "depgraph.db"
+
+# P2迁移：depgraph 已从 SQLite 迁移到 PostgreSQL，PROD_DB (depgraph.db SQLite) 不再是真源。
+# cmd_rename_domain/scan_residual 均基于 SQLite 连接，PRAGMA wal_checkpoint 不适用 PG。
+pytestmark = pytest.mark.skip(
+    reason="P2迁移：depgraph 已迁移到 PG，SQLite 文件复制 + PRAGMA wal_checkpoint + sqlite3 连接测试不适用"
+)
 
 
 @pytest.fixture

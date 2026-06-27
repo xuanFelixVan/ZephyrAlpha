@@ -160,22 +160,26 @@ def test_transaction_rollback():
 
 
 def test_wal_mode():
-    """蓝方：验证 WAL 模式启用"""
+    """蓝方：验证 WAL 模式启用（P2迁移后：depgraph 已迁移到 PostgreSQL，WAL 由 PG 服务器管理）"""
     print("\n[TEST] WAL 模式验证")
 
-    for db_path, db_name in [(GOVERNANCE_DB, "governance.db"), (DEPGRAPH_DB, "depgraph.db")]:
-        conn = sqlite3.connect(db_path)
-        cursor = conn.execute("PRAGMA journal_mode")
-        mode = cursor.fetchone()[0]
-        conn.close()
+    # governance.db 仍使用 SQLite，检查 WAL
+    conn = sqlite3.connect(GOVERNANCE_DB)
+    cursor = conn.execute("PRAGMA journal_mode")
+    mode = cursor.fetchone()[0]
+    conn.close()
 
-        if mode == "wal":
-            print(f"  ✓ {db_name}: WAL 模式已启用")
-        else:
-            print(f"  ✗ FAIL: {db_name} 未启用 WAL 模式: {mode}")
-            return False
+    if mode == "wal":
+        print("  ✓ governance.db: WAL 模式已启用")
+    else:
+        print(f"  ✗ FAIL: governance.db 未启用 WAL 模式: {mode}")
+        return False
 
-    print("  ✓ PASS: 所有数据库均启用 WAL 模式")
+    # depgraph 已迁移到 PostgreSQL，WAL 由 PostgreSQL 服务器管理（postgresql.conf）
+    # 不再检查 depgraph 的 PRAGMA journal_mode（PG 无此 PRAGMA）
+    print("  ✓ depgraph (PG): WAL 由 PostgreSQL 服务器管理（无需 PRAGMA 检查）")
+
+    print("  ✓ PASS: 数据库 WAL 模式验证完成")
     return True
 
 

@@ -4,10 +4,11 @@ DM-100027: 极端红蓝测试：路径树生成器vs设计态保护
 蓝方：验证设计态保护机制
 """
 
-import sqlite3
 import subprocess
 import sys
 from pathlib import Path
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
@@ -20,15 +21,23 @@ def red_team_tests():
     print("红方测试：尝试覆盖设计态目录")
     print("=" * 80)
 
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
 
-    # 1. 插入测试设计态目录节点
+    # 1. 插入测试设计态目录节点（state 列 v5 已删除，改用 design_maturity）
     print("\n[红方] 插入设计态测试目录节点...")
     cursor.execute("""
-        INSERT OR REPLACE INTO arch_directory_tree
-        (path, parent_path, path_type, domain_id, state, blueprint_id, change_policy, modification_permission)
+        INSERT INTO arch_directory_tree
+        (path, parent_path, path_type, domain_id, design_maturity, blueprint_id, change_policy, modification_permission)
         VALUES ('test/design/directory', 'test/design', 'directory', 'D-TEST', 'design', 'TEST-BLUEPRINT', 'stable', 'human_gated')
+        ON CONFLICT (path) DO UPDATE SET
+            parent_path=EXCLUDED.parent_path,
+            path_type=EXCLUDED.path_type,
+            domain_id=EXCLUDED.domain_id,
+            design_maturity=EXCLUDED.design_maturity,
+            blueprint_id=EXCLUDED.blueprint_id,
+            change_policy=EXCLUDED.change_policy,
+            modification_permission=EXCLUDED.modification_permission
     """)
     conn.commit()
 
@@ -61,19 +70,19 @@ def red_team_tests():
 
     print(f"  ✓ 设计态目录节点仍存在: {count} 个")
 
-    # 4. 验证字段未被覆盖
+    # 4. 验证字段未被覆盖（state 列 v5 已删除，改用 design_maturity）
     cursor.execute("""
-        SELECT state, blueprint_id
+        SELECT design_maturity, blueprint_id
         FROM arch_directory_tree WHERE path = 'test/design/directory'
     """)
     row = cursor.fetchone()
     if row:
-        state, blueprint_id = row
+        design_maturity, blueprint_id = row
         print("  ✓ 字段保护验证:")
-        print(f"    state: {state} (应为 'design')")
+        print(f"    design_maturity: {design_maturity} (应为 'design')")
         print(f"    blueprint_id: {blueprint_id} (应为 'TEST-BLUEPRINT')")
 
-        if state != "design":
+        if design_maturity != "design":
             print("  ✗ 失败: 字段被覆盖！")
             conn.close()
             return False

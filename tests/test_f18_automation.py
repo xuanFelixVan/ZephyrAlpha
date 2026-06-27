@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit=0 on success
 # [TESTS] self
+# [TTL] task_bound
 
 """F18 治理脚本系统自动化测试.
 
@@ -23,10 +24,12 @@
 
 from __future__ import annotations
 
-import sqlite3
 from pathlib import Path
 
+import psycopg2
 import pytest
+
+from zephyr.governance.depgraph_schema import get_db_connection
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _DEPGRAPH_DB = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"
@@ -228,22 +231,22 @@ class TestAutoClose:
         assert result.audit_logged is True
 
     def test_audit_log_written_to_depgraph(self) -> None:
-        """审计日志写入 depgraph.db governance_audit_logs 表。"""
+        """审计日志写入 depgraph governance_audit_logs 表（P2迁移后：PostgreSQL）。"""
         from zephyr.governance.auto_runner import GovernanceAutoRunner
         runner = GovernanceAutoRunner()
         runner.run()
-        # 验证审计日志表有记录
+        # 验证审计日志表有记录（P2迁移后查询 PostgreSQL）
         if _DEPGRAPH_DB.exists():
-            conn = sqlite3.connect(str(_DEPGRAPH_DB))
             try:
-                cur = conn.execute("SELECT COUNT(*) FROM governance_audit_logs")
-                count = cur.fetchone()[0]
+                conn = get_db_connection()
+                with conn.cursor() as cur:
+                    cur.execute("SELECT COUNT(*) FROM governance_audit_logs")
+                    count = cur.fetchone()[0]
+                conn.close()
                 assert count > 0, "governance_audit_logs should have records"
-            except sqlite3.OperationalError:
+            except psycopg2.Error:
                 # 表不存在时跳过
                 pytest.skip("governance_audit_logs table not yet created")
-            finally:
-                conn.close()
         else:
             pytest.skip("depgraph.db not found")
 

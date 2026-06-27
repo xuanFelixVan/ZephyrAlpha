@@ -9,15 +9,17 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest assertions on integration correctness and performance
 # [TESTS] tests/test_rule_integration.py
+# [TTL] task_bound
 
-import sqlite3
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import psycopg2
 import pytest
 import yaml
 
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.governance.rule_engine import RuleLoader
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -90,13 +92,13 @@ class TestDepgraphIntegration:
         if not _DB_PATH.exists():
             pytest.skip("depgraph.db not found")
         try:
-            conn = sqlite3.connect(str(_DB_PATH), timeout=10.0)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.execute("SELECT COUNT(DISTINCT node_id) FROM nodes WHERE node_type = 'rule'")
-            db_count = cursor.fetchone()[0]
+            conn = get_db_connection()
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(DISTINCT node_id) FROM nodes WHERE node_type = 'rule'")
+                db_count = cursor.fetchone()[0]
             conn.close()
-        except sqlite3.Error as exc:
-            pytest.skip(f"Cannot query depgraph.db: {exc}")
+        except psycopg2.Error as exc:
+            pytest.skip(f"Cannot query depgraph (PG): {exc}")
         yaml_count = len(list(_RULES_DIR.glob("*.yaml")))
         assert db_count > 0 or yaml_count > 0, "Both DB and YAML should have rule entries"
         assert abs(db_count - yaml_count) <= yaml_count * 0.5, (
@@ -109,13 +111,13 @@ class TestArchitecturePanorama:
         if not _ARCH_PANORAMA.exists():
             pytest.skip("depgraph.db not found")
         try:
-            conn = sqlite3.connect(str(_ARCH_PANORAMA), timeout=10.0)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.execute("SELECT COUNT(DISTINCT domain_id) FROM domains")
-            domain_count = cursor.fetchone()[0]
+            conn = get_db_connection()
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(DISTINCT domain_id) FROM domains")
+                domain_count = cursor.fetchone()[0]
             conn.close()
-        except sqlite3.Error as exc:
-            pytest.skip(f"Cannot query depgraph.db: {exc}")
+        except psycopg2.Error as exc:
+            pytest.skip(f"Cannot query depgraph (PG): {exc}")
         all_rules = loader.list_all_rules()
         rule_domains = set()
         for rule in all_rules:

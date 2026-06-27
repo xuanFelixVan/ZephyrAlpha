@@ -12,6 +12,10 @@ DM-100019: 三库集成测试+四方对齐验证
 import sqlite3
 import sys
 from pathlib import Path
+
+import psycopg2
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 数据库路径
@@ -32,8 +36,8 @@ def test_cross_db_domain_consistency():
     gov_domains = {row[0] for row in gov_cursor.fetchall()}
     gov_conn.close()
 
-    # 从 depgraph.db 获取所有 domain_id
-    dep_conn = sqlite3.connect(DEPGRAPH_DB)
+    # 从 depgraph (PostgreSQL) 获取所有 domain_id
+    dep_conn = get_db_connection()
     dep_cursor = dep_conn.cursor()
     dep_cursor.execute("SELECT DISTINCT domain_id FROM nodes WHERE domain_id IS NOT NULL")
     dep_domains = {row[0] for row in dep_cursor.fetchall()}
@@ -60,16 +64,16 @@ def test_cross_db_domain_consistency():
 
 
 def test_directory_tree_filesystem_alignment():
-    """测试 depgraph.db arch_directory_tree 与实际文件系统对齐"""
+    """测试 depgraph arch_directory_tree 与实际文件系统对齐（P2迁移后：PostgreSQL）"""
     print("\n[TEST] arch_directory_tree 与实际文件系统对齐验证")
 
-    dep_conn = sqlite3.connect(DEPGRAPH_DB)
+    dep_conn = get_db_connection()
     dep_cursor = dep_conn.cursor()
 
-    # 获取所有文件路径（排除目录）
+    # 获取所有文件路径（排除目录；state 列 v5 已删除，仅按 path_type 过滤）
     dep_cursor.execute("""
         SELECT path FROM arch_directory_tree
-        WHERE path_type = 'file' AND state = 'operational'
+        WHERE path_type = 'file'
     """)
     db_paths = {row[0] for row in dep_cursor.fetchall()}
     dep_conn.close()
@@ -109,16 +113,16 @@ def test_schema_version_consistency():
         print("  ⚠ WARNING: governance.db 无 _schema_version 表")
     gov_conn.close()
 
-    # depgraph.db
-    dep_conn = sqlite3.connect(DEPGRAPH_DB)
+    # depgraph (PostgreSQL)
+    dep_conn = get_db_connection()
     dep_cursor = dep_conn.cursor()
     try:
         dep_cursor.execute("SELECT version, applied_at FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
         row = dep_cursor.fetchone()
         if row:
             versions["depgraph"] = row[0]
-    except sqlite3.OperationalError:
-        print("  ⚠ WARNING: depgraph.db 无 _schema_version 表")
+    except psycopg2.Error:
+        print("  ⚠ WARNING: depgraph (PG) 无 _schema_version 表")
     dep_conn.close()
 
     # market.duckdb
@@ -160,8 +164,8 @@ def test_data_integrity():
     gov_tables = {row[0] for row in gov_cursor.fetchall()}
     gov_conn.close()
 
-    # depgraph.db 节点数
-    dep_conn = sqlite3.connect(DEPGRAPH_DB)
+    # depgraph (PostgreSQL) 节点数
+    dep_conn = get_db_connection()
     dep_cursor = dep_conn.cursor()
     dep_cursor.execute("SELECT COUNT(*) FROM nodes")
     node_count = dep_cursor.fetchone()[0]
