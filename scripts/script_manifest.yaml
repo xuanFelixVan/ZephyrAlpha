@@ -4144,7 +4144,7 @@ scripts:
   dimensions: []
 - name: _archive/construction/create_dm_phase9_tasks.py
   path: _archive/construction/create_dm_phase9_tasks.py
-  description: import sqlite3
+  description: import sys
   domain: _archive
   execution_plane: hot-path
   status: registered
@@ -4376,7 +4376,7 @@ scripts:
   dimensions: []
 - name: _archive/governance/repair/ensure_dep_cycles_view.py
   path: _archive/governance/repair/ensure_dep_cycles_view.py
-  description: import sqlite3
+  description: import sys
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4408,7 +4408,7 @@ scripts:
   dimensions: []
 - name: _archive/migration/_verify_step4.py
   path: _archive/migration/_verify_step4.py
-  description: import sqlite3
+  description: import sys
   domain: _archive
   execution_plane: warm-path
   status: registered
