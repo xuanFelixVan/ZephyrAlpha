@@ -20,6 +20,13 @@ doc_type: architecture_view
 > 合并后覆盖：依赖全景图（dep_ 表组，管"谁依赖谁"）+ 架构全景图（arch_ 表组，管"放在哪"）+ 共享表（domains/contracts 等）。
 > 不包含：施工步骤和问题清单（见 archive/depgraph_issue_registry.md）、架构升级项目导航（见 architecture_upgrade_discussion.md）、生成器技术问题清单（见 generator_issues.md）。
 
+> **⚠️ 数据源迁移说明（P2 迁移完成 2026-06-27）**：`depgraph.db` 已从 SQLite 迁移至 **PostgreSQL 16**。数据库名称 `depgraph.db` 保持不变（指代逻辑数据库，而非物理文件）。本次迁移带来的引擎差异：
+> - 自增主键：SQLite 的 `INTEGER PK AUTOINCREMENT` → PostgreSQL 的 `GENERATED ALWAYS AS IDENTITY`（不再需要 `sqlite_sequence` 序列跟踪表）
+> - 并发控制：SQLite 的文件级写锁 → PostgreSQL 的 MVCC 行级锁（多版本并发控制，读写互不阻塞）
+> - 约束校验：SQLite 的 `ALTER TABLE ADD CHECK` 不回溯限制 → PostgreSQL 支持 `NOT VALID` 延迟校验 + `VALIDATE CONSTRAINT`
+> - 序列管理：SQLite 由 `sqlite_sequence` 表自动维护 → PostgreSQL 由 IDENTITY 列内部序列自动维护，无需 PRAGMA
+> - 以下文中出现的 `AUTOINCREMENT` / `写锁` / `sqlite_sequence` 等 SQLite 特有术语，均按上述映射理解为 PostgreSQL 等价机制。
+
 ---
 
 ## 一、依赖与架构全景图是什么？（一句话）
@@ -102,7 +109,7 @@ doc_type: architecture_view
 | `domain_dependencies` | 域间依赖声明 | arch_constraints 跨域检测引用 |
 | `rule_bindings` | 规则绑定 | 门禁检查引用 |
 
-### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 + v6/v8 新增 domain_mapping/governance_audit_logs = 25 张，v14 删除 arch_layers/arch_bottlenecks/invariants 3 表后余 22 张；系统表 _schema_version 由迁移脚本管理 / sqlite_sequence 由 SQLite 自动管理）
+### 4.4 表归属矩阵（P0-1 后 15 张业务表 + P0-6 后新增 9 张 + v6/v8 新增 domain_mapping/governance_audit_logs = 25 张，v14 删除 arch_layers/arch_bottlenecks/invariants 3 表后余 22 张；系统表 _schema_version 由迁移脚本管理 / PostgreSQL IDENTITY 列内部序列自动维护，无 sqlite_sequence）
 
 | 管理方 | 表 | 生成器每次运行会怎样 | AI能手动改吗 |
 |--------|---|---------------------|:---:|
@@ -139,7 +146,7 @@ doc_type: architecture_view
 生成器是把物理世界的文件"翻译"到全景图的桥梁。它同时管依赖全景图（扫描 import）和架构全景图（扫描文件系统目录树）。
 
 **它做的事（V3.2 合并后 12 步完整流程，V5.5 裁定：arch_directory_tree 由 path_tree 独立管理，生成器不再处理）**：
-1. 获取 depgraph.db 写锁（G-Blind-6 修复）
+1. 获取 PostgreSQL MVCC 行级锁（G-Blind-6 修复，PG 无需文件级写锁）
 2. 加载设计态数据（nodes WHERE design_maturity='design' + edges WHERE dep_maturity='design'）→ 存到内存
 3. DELETE 运营态数据（nodes WHERE design_maturity != 'design' OR design_maturity IS NULL + edges WHERE dep_maturity != 'design' OR dep_maturity IS NULL）
 4. 扫描 15 个白名单目录（§14.8，裁定#186 移除 tests/）
@@ -150,7 +157,7 @@ doc_type: architecture_view
 9. 检测循环依赖（Tarjan SCC），输出循环报告（D-Blind-1 修复）
 10. 调用 audit_domain_nodes.py 写入 arch_constraints（A-Blind-5 修复）
 11. 输出执行报告（G-Blind-5 修复，§14.10 格式）
-12. 释放写锁
+12. 释放锁（PG 事务结束自动释放行锁）
 
 **它不做的**：
 - 不创造设计态模块（设计态必须来自用户输入，生成器不碰）
@@ -402,7 +409,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 ### 12.3 双态关联规则
 
-**核心裁定（V3.3 E1/E2 修复）**：设计态和运营态是**不同的行**，通过 `blueprint_id` 关联（一对多）。node_id 是**自增整数主键**（当前 schema 为 TEXT，V3.4 施工时改为 INTEGER PRIMARY KEY AUTOINCREMENT），与 path 解耦。
+**核心裁定（V3.3 E1/E2 修复）**：设计态和运营态是**不同的行**，通过 `blueprint_id` 关联（一对多）。node_id 是**自增整数主键**（当前 schema 为 TEXT，V3.4 施工时改为 INTEGER GENERATED ALWAYS AS IDENTITY），与 path 解耦。
 
 **为什么 node_id 不能含 filename**：
 - filename 变了 → node_id 变了 → 所有关联的 edges 丢失
@@ -424,9 +431,9 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 **node_id 格式**（V3.4 修正）：
 - **当前 schema**：TEXT 类型，格式混乱（有 `D-TRADING-01` 也有文件名）
-- **V3.4 施工后**：INTEGER PRIMARY KEY AUTOINCREMENT，自增整数，与 path 完全解耦
+- **V3.4 施工后**：INTEGER GENERATED ALWAYS AS IDENTITY，自增整数，与 path 完全解耦
 - **迁移策略**（P0-1 Schema 迁移执行）：
-  1. 创建新表 `nodes_new`，node_id 为 INTEGER PK AUTOINCREMENT，其余字段与 nodes 相同 + 新增 5 字段（has_dynamic_import/blueprint_id_invalid/in_degree/out_degree/blueprint_path）
+  1. 创建新表 `nodes_new`，node_id 为 INTEGER GENERATED ALWAYS AS IDENTITY，其余字段与 nodes 相同 + 新增 5 字段（has_dynamic_import/blueprint_id_invalid/in_degree/out_degree/blueprint_path）
   2. 从 nodes 复制数据到 nodes_new，node_id 自增分配新值
   3. 创建 `node_id_mapping` 临时表，记录旧 node_id → 新 node_id 映射
   4. edges 表新增 from_node_id/to_node_id（INTEGER FK），根据 mapping 填充
@@ -895,7 +902,7 @@ AI查询模式：
 
 | 字段 | 类型 | 含义 | 来源 |
 |------|------|------|------|
-| node_id | TEXT（V3.4 改为 INTEGER PK AUTOINCREMENT） | 节点 ID | 当前生成器分配；V3.4 后数据库自增 |
+| node_id | TEXT（V3.4 改为 INTEGER GENERATED ALWAYS AS IDENTITY） | 节点 ID | 当前生成器分配；V3.4 后数据库自增 |
 
 **生成器重建的字段（运营态，11 列）**——从代码扫描得出：
 
@@ -1253,7 +1260,7 @@ SSoT = Single Source of Truth = 唯一真源。
 |---------|---------|---------|---------|
 | Backstage（Spotify/CNCF） | catalog-info.yaml（文本真源），DB 为派生索引 | depgraph.db 为真源 | 项目反向：DB 为真源，YAML 为派生 |
 | Structurizr / C4 model | models-as-code（DSL 文本真源） | depgraph.db 为真源 | 项目用 DB 替代 DSL 文本 |
-| CocoIndex + VeloDB | 一表三索引（PG + 向量 + 全文） | depgraph.db（SQLite 单库） | 项目用 SQLite 单库，轻量但够用 |
+| CocoIndex + VeloDB | 一表三索引（PG + 向量 + 全文） | depgraph.db（PostgreSQL 单库） | 项目用 PostgreSQL 单库，轻量但够用 |
 | Google Bazel / BUILD 文件 | BUILD 文件文本真源 | depgraph.db 为真源 | 项目用 DB 替代 BUILD 文件 |
 | Terraform state | tfstate 文件（JSON 真源） | depgraph.db 为真源 | 项目用 DB 替代 tfstate 文件 |
 
@@ -1261,9 +1268,9 @@ SSoT = Single Source of Truth = 唯一真源。
 
 | 风险 | 缓解措施 |
 |------|---------|
-| DB 二进制不可 git diff | 强制 git 备份门禁（apply_depgraph.py `_check_git_backup()`） |
+| DB 数据不可直接 git diff | 强制备份门禁（apply_depgraph.py `_check_git_backup()`；PG 通过 pg_dump 导出 SQL/JSON 纳入版本管理） |
 | DB 损坏无文本回退 | 定期 `extract_depgraph.py --summary` 导出 JSON 快照 |
-| DB 并发写入冲突 | `lock_files.py` 跨进程锁 + `threading.Lock` 进程内锁 |
+| DB 并发写入冲突 | PostgreSQL MVCC 行级锁（事务隔离，读写互不阻塞） + `threading.Lock` 进程内锁 |
 
 ---
 
@@ -1385,7 +1392,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | P1 重要问题 | — | 14 | **0**（V3.4 全部修复） |
 
 **修复文件**：`scripts/governance/generate_project_depgraph.py`（H1-H9, A1, V3.1/V3.2/V3.3/V3.4 裁定）
-**Schema修复**：`data/databases/depgraph.db`（J1-J4 ALTER TABLE，V3.4 施工时执行 P0-1 Schema 迁移）
+**Schema修复**：depgraph 数据库（PostgreSQL，SQLite 时期为 `data/databases/depgraph.db` 文件；J1-J4 ALTER TABLE，V3.4 施工时执行 P0-1 Schema 迁移）
 **文档合并**：原"依赖全景图能力定位书.md" → "dependency_architecture_panorama.md"（V3.2）
 
 **待施工**（V5.8 文档已就绪，按 §22 七批次施工）：
@@ -1451,7 +1458,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 41 | blueprint_path 推导 | **blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md** | ✅ |
 | 44 | 生成器触发量化 | **代码文件数变化>0 OR 蓝图§4变化 OR 路径树变化 → 触发** | ✅ |
 | 46 | 设计态节点删除 | **apply_depgraph.py --remove-design-node + RULE-THREE 三步审判 + 软删除** | ✅ |
-| 57 | 生成器并发锁 | **运行时获取 depgraph.db 写锁，禁止 apply_depgraph.py 并发写入** | ✅ |
+| 57 | 生成器并发锁 | **运行时获取 PostgreSQL MVCC 行级锁，禁止 apply_depgraph.py 并发写入** | ✅ |
 | 62 | 运营态循环检测 | **生成器内置 Tarjan SCC，写入 dep_cycles 视图** | ✅ |
 | 63 | 设计态边循环检测 | **apply_depgraph.py --add-design-edge 写入前 DFS 检测，阻断循环** | ✅ |
 | 64 | blueprint_id 校验 | **生成器校验 blueprint_id 指向的蓝图文件是否存在，不存在标记 blueprint_id_invalid** | ✅ |
@@ -1466,7 +1473,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 34 | 判定信号单一化 | **design_maturity 字段为唯一判定依据**，禁止 os.path.exists() 或 path 末尾 / | ✅ |
 | 37 | build_status 5 态 | **planned → generated → testing → stable → deprecated**（裁定#178） | ✅ |
 | 55 | 动态 import 标记 | **nodes 表加 has_dynamic_import 字段**（V3.4 新增；~~v15已删，见§迁移说明后v15裁定~~） | ⏳ |
-| 67 | node_id 稳定性 | **node_id 改为 INTEGER PK AUTOINCREMENT，与 path 解耦**（V3.4 P0-1） | ⏳ |
+| 67 | node_id 稳定性 | **node_id 改为 INTEGER GENERATED ALWAYS AS IDENTITY，与 path 解耦**（V3.4 P0-1） | ⏳ |
 | 80 | 8 种 node_type | **module/package/script/test/config/schema/doc_template/data_template** | ✅ |
 | 82 | arch_directory_tree state | **删除 state 字段，统一用 design_maturity**（V3.4 P0-1） | ⏳ |
 | 87 | ~~arch_layers 层级~~ | **清除后 7 条（L0-L6）**（~~v14已删arch_layers表~~） | ⏳ |
@@ -1768,7 +1775,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 **核心教训**（4条）：
 1. **生成器是唯一数据入口** — 生成器的 bug 会系统性污染整个依赖图
 2. **设计态数据需要独立保护** — DELETE+INSERT 架构中，设计态节点需用 `WHERE design_maturity='design'` 保护
-3. **备份是最后防线** — 施工前必须 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`
+3. **备份是最后防线** — 施工前必须 `pg_dump` 导出 depgraph 数据库备份（SQLite 时期为 `cp data/databases/depgraph.db data/databases/depgraph.db.backup.V5.7`）
 4. **AI vibe coding 的膨胀效应** — 需系统性清理机制（如 5,738 个 prototype 节点）
 
 ---
@@ -2060,7 +2067,7 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 5. 执行 `init_db()` 完成 v12 迁移，`_schema_version` 表新增版本 12 记录
 6. 验证全部通过：schema_version=12，7 个新触发器存在，非法值插入测试 5 项全 PASS
 
-**为何采用触发器而非 ALTER TABLE ADD CHECK**：SQLite 的 `ALTER TABLE ADD CHECK` 在表已有数据时不会回溯校验，且不可与既有 DDL 合并。触发器方案支持 BEFORE INSERT/UPDATE 实时拦截 + 幂等创建（`CREATE TRIGGER IF NOT EXISTS`），更适合版本化迁移框架。
+**为何采用触发器而非 ALTER TABLE ADD CHECK**：早期 SQLite 的 `ALTER TABLE ADD CHECK` 在表已有数据时不会回溯校验，且不可与既有 DDL 合并；迁移至 PostgreSQL 后，PG 虽支持 `ALTER TABLE ADD CHECK NOT VALID` 延迟校验，但触发器方案仍具优势——支持 BEFORE INSERT/UPDATE 实时拦截 + 幂等创建（`CREATE OR REPLACE TRIGGER`，PG14+），更适合版本化迁移框架。
 
 **合并说明**: 本裁定整合了 6a3c179e 会话的 5 项发现，统一归并到 preexisting 调研报告（`preexisting_db_issues_investigation_report.md` 附录B）。原交接文档已删除，避免信息分散。
 
@@ -2083,7 +2090,7 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 | D | generate_derived_files.py:182/227/286 | P1 | `open()` 缺 `"w"` 模式，tmp 文件不存在时 `FileNotFoundError` 崩溃 |
 | E | generate_derived_files.py:280 | P1 | schema_json `oneOf` 重写逻辑错（写空 `enum` 键，不清理 `oneOf`） |
 | F | generate_derived_files.py:186/231/291 | P2 | 异常捕获太窄（仅 `PermissionError`，不捕获 `OSError`/`JSONDecodeError`/`YAMLError`） |
-| G | sync_yaml_to_depgraph.py 全文 | P3 | 无跨进程文件锁保护（治理脚本中唯一缺锁的 DB 写入者） |
+| G | sync_yaml_to_depgraph.py 全文 | P3 | 无跨进程并发保护（治理脚本中唯一缺事务隔离的 DB 写入者；迁移 PG 后由 MVCC 行级锁兜底，但建议显式事务包裹） |
 | H | sync_yaml_to_depgraph.py:51 | P3 | `DB_PATH` 硬编码绝对路径，与 `_shared/constants.py` 不一致 |
 
 **影响范围**: 7 个 Python 代码文件、8+ YAML/JSON 规则文件、6+ 文档/索引文件、3 个派生文件、1 个 DB 表（`field_vocabularies`）、2 个孤儿模块（`kb/triage.py`、`kb/pipeline/triage.py`）

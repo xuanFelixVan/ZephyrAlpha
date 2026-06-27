@@ -55,10 +55,45 @@ modules:
       untested_p1: []
       untested_p2: []
 
+  - id: db-depgraph-pg
+    module_id: MOD-DB_DEPGRAPH_PG
+    name: Depgraph PostgreSQL Layer
+    submodule_path: src/zephyr/governance/
+    status: implemented
+    priority: P1
+    runtime_plane: hot
+    description: depgraph.db PostgreSQL 迁移层——25表schema v18，6428 nodes，支持40+ AI并发写入(MVCC)，Psycopg2连接，PgConnExecuteWrapper兼容层。P2迁移完成于2026-06-27。
+    db_engine: postgresql
+    db_connection: config/.env.postgres
+    db_host: localhost
+    db_port: 5432
+    db_name: depgraph
+    db_user: zephyr
+    files:
+      - depgraph_schema.py
+      - database_service.py
+      - depgraph_reader.py
+      - rule_engine.py
+      - auto_runner.py
+    interfaces:
+      - contract_id: CT-DB-PG-001
+        role: producer
+        description: depgraph PG连接契约——get_db_connection(autocommit/superuser/replica)
+      - contract_id: CT-DB-PG-002
+        role: producer
+        description: PG兼容层契约——PgConnExecuteWrapper(execute/executemany/commit/rollback)
+    kb_ref:
+      - KBG-0041
+    test_coverage:
+      tested:
+        - depgraph_schema.py (tests/unit/test_depgraph_schema.py)
+      untested_p1: []
+      untested_p2: []
+
 summary:
-  total: 1
+  total: 2
   by_status:
-    implemented: 1
-  total_files: 7
-  tested_files: 7
-  untested_files: 0
+    implemented: 2
+  total_files: 12
+  tested_files: 8
+  untested_files: 4
