@@ -4,6 +4,7 @@
 检查项:
   1. 每个 test_*.py 含至少一个 def test_* 函数
   2. 模块级代码零副作用（仅允许 import/常量赋值/类定义/函数定义/docstring）
+  3. skip 装饰器必须有 TODO 注释（防止 skip 后遗忘修复）
 
 用法:
   python scripts/governance/check_test_structure.py              # 硬阻断模式
@@ -16,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import re
 import sys
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -91,6 +93,25 @@ def _has_test_function(tree: ast.Module) -> bool:
     return False
 
 
+_TODO_RE = re.compile(r"#\s*TODO", re.IGNORECASE)
+
+
+def _has_skip_decorator(tree: ast.Module) -> bool:
+    """模块是否含带 skip/skipif 装饰器的 test 函数。"""
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_"):
+            for dec in node.decorator_list:
+                dec_str = ast.unparse(dec) if hasattr(ast, "unparse") else ""
+                if "skip" in dec_str.lower():
+                    return True
+    return False
+
+
+def _has_todo_comment(source: str) -> bool:
+    """源码中是否含 # TODO 注释。"""
+    return bool(_TODO_RE.search(source))
+
+
 def check_file(filepath: Path) -> tuple[list[str], list[str]]:
     """检查单个 test_*.py，返回 (errors, warns)。
     errors=硬阻断（脚本伪装测试），warns=仅警告（模块级副作用，含合法模式误报）。
@@ -105,6 +126,10 @@ def check_file(filepath: Path) -> tuple[list[str], list[str]]:
 
     if not _has_test_function(tree):
         errors.append("缺少 def test_* 函数（疑似'脚本伪装测试'）")
+
+    # skip 装饰器必须有 TODO 注释（防止 skip 后遗忘修复）
+    if _has_skip_decorator(tree) and not _has_todo_comment(source):
+        warns.append("含 skip 装饰器但无 # TODO 注释（skip 测试须标注修复计划）")
 
     for node in tree.body:
         if not _is_allowed_toplevel(node):

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-DAT_migrate_chroma_to_faiss | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """
 ChromDB → FAISS + SQLite WAL 数据迁移脚本
@@ -33,7 +34,11 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+# Bootstrap: 基于 .git marker 定位仓库根（文件移动不 break，替代 parents[N] 硬编码）
+_repo_root = Path(__file__).resolve()
+while not (_repo_root / ".git").exists() and _repo_root != _repo_root.parent:
+    _repo_root = _repo_root.parent
+sys.path.insert(0, str(_repo_root / "src"))
 
 from zephyr.integration.shared_08.io.paths import VMS_PERSIST_DIR
 

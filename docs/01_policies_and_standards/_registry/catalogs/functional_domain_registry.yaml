@@ -384,7 +384,7 @@ entries:
   ssot_module: MOD-INF-021
   ssot_path: src/zephyr/governance/
   covers:
-  - 双轨Checkpoint(git commit + SQLite JSONL dump)
+  - 双轨Checkpoint(git commit + DB dump(pg_dump for PostgreSQL / SQLite JSONL for governance.db))
   - 四级回滚(full_revert/partial_revert/discard/hard_reset)
   - 自动回滚触发器(auto_guard后验信号)
   - 回滚验证器(G0门禁 + DB一致性自愈)
@@ -857,7 +857,7 @@ entries:
   ssot_module: MOD-INF-021
   ssot_path: src/zephyr/infrastructure/rollback/
   covers:
-  - 双轨Checkpoint(git commit + SQLite JSONL dump)
+  - 双轨Checkpoint(git commit + DB dump(pg_dump for PostgreSQL / SQLite JSONL for governance.db))
   - 四级回滚(full_revert/partial_revert/discard/hard_reset)
   - 自动回滚触发器(auto_guard后验信号)
   - 回滚验证器(G0门禁 + DB一致性自愈)
