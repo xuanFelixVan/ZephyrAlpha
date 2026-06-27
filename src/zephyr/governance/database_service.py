@@ -124,7 +124,9 @@ class DatabaseService:
 
         try:
             conn = self.get_depgraph_conn()
-            conn.execute("SELECT 1").fetchone()
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1")
+                cur.fetchone()
             result["depgraph"] = True
         except Exception:
             result["depgraph"] = False

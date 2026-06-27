@@ -232,7 +232,7 @@ data/e2e_test/
 # Scripts temporary files (logs/xml/db/tmp)
 scripts/_tmp_*
 
-# PostgreSQL secrets (P2 migration — MOD-INF-012B-P2)
+# PostgreSQL secrets (P2 migration — MOD-DB_DEPGRAPH_PG)
 # Contains connection credentials; never commit to repository
 config/.env.postgres
 # PostgreSQL native data directory (Windows install)

@@ -71,7 +71,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 # P2迁移真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
 DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
-# PostgreSQL 连接配置文件路径（P2迁移真源：MOD-INF-012B-P2）
+# PostgreSQL 连接配置文件路径（P2迁移真源：MOD-DB_DEPGRAPH_PG）
 _PG_ENV_PATH: Path = REPO_ROOT / "config" / ".env.postgres"
 
 
@@ -973,7 +973,7 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     (
         16,
         "v16: Drop surviving orphan trigger chk_edges_design_immutable_update — fix #ARCH-016 残留. "
-        "源码中不存在(MOD-INF-012B-P2裁定: 3个chk_前缀orphan trigger仅DB实例中有), v15已清2个, 此为第3个. "
+        "源码中不存在(MOD-DB_DEPGRAPH_PG裁定: 3个chk_前缀orphan trigger仅DB实例中有), v15已清2个, 此为第3个. "
         "该trigger引用dep_maturity(live列,不broken)但从未触发(全代码库无UPDATE edges SET dep_maturity).",
         [
             "DROP TRIGGER IF EXISTS chk_edges_design_immutable_update",

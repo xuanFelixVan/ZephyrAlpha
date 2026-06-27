@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-INF_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """AssetDashboard — MOD-INF-026 资产健康仪表盘生成器
 
@@ -26,6 +27,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.infrastructure.asset_inventory.models import DashboardData, UnifiedAssetIndex
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +160,6 @@ class KnowledgeTransferGate:
 
     def generate_summary(self) -> str:
         index_path = self._root / "data" / "asset_index" / "unified-asset-index.yaml"
-        dep_path = self._root / "data" / "databases" / "depgraph.db"
 
         lines: list[str] = []
         lines.append("")
@@ -181,18 +182,18 @@ class KnowledgeTransferGate:
             except Exception:
                 lines.append("  (索引解析失败)")
 
-        if dep_path.exists():
-            import sqlite3
+        try:
+            from zephyr.governance.depgraph_schema import get_db_connection
 
-            try:
-                conn = sqlite3.connect(str(dep_path), timeout=10.0)
-                cursor = conn.execute("SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5")
-                top = [row[0] for row in cursor.fetchall()]
-                conn.close()
-                if top:
-                    lines.append(f"  最高依赖:  {', '.join(top)}")
-            except Exception:
-                pass
+            conn = get_db_connection(autocommit=True)
+            with conn.cursor() as cur:
+                cur.execute("SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5")
+                top = [row["node_id"] for row in cur.fetchall()]
+            conn.close()
+            if top:
+                lines.append(f"  最高依赖:  {', '.join(str(t) for t in top)}")
+        except Exception:
+            pass
 
         lines.append("=" * 40)
         lines.append("")

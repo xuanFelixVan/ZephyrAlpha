@@ -3301,7 +3301,7 @@ def main():
     parser.add_argument(
         "--output-yaml", type=str, default="", help="[DEPRECATED] Output YAML data file path (DB is now the SSoT)"
     )
-    parser.add_argument("--output-db", type=str, default="", help="Output SQLite database path (DM-100024)")
+    parser.add_argument("--output-db", type=str, default="", help="Output PostgreSQL database name (P2迁移后: depgraph.db 已迁移到 PostgreSQL)")
     parser.add_argument("--output-md-section", type=str, default="", help="Output markdown section file path")
     parser.add_argument("--max-workers", type=int, default=8, help="ThreadPoolExecutor workers")
     parser.add_argument(
