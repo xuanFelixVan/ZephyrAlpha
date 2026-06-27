@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] AutoRunnerError on failure; RuntimeError on resource leak
 # [TESTS] tests/test_auto_runner.py
 # [A_module] module_id=MOD-GOV_auto_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
 
 """GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.
 
@@ -28,16 +29,20 @@
 from __future__ import annotations
 
 import logging
-import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+import psycopg2
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["GovernanceAutoRunner", "AutoRunnerResult"]
 
+# depgraph.db SQLite 备份路径（P2迁移后已切换到 PostgreSQL，此路径保留作为参考）
 _DEPGRAPH_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
@@ -192,43 +197,38 @@ class GovernanceAutoRunner:
         logger.info("Auto-close finished")
 
     def _write_audit_log(self) -> None:
-        """写入审计日志到 depgraph.db governance_audit_logs 表.
+        """写入审计日志到 PostgreSQL governance_audit_logs 表.
 
-        表结构由 depgraph_schema.py 迁移 v7 创建（8列含 skipped_gates）。
+        表结构由 02_create_pg_schema.sql 创建（8列含 skipped_gates）。
+        P2迁移后：从 SQLite 切换到 PostgreSQL，使用 psycopg2 cursor 模式。
         """
-        if not _DEPGRAPH_DB.exists():
+        try:
+            conn = get_db_connection(autocommit=False)
+        except (psycopg2.Error, FileNotFoundError, ValueError) as e:
+            logger.warning("_write_audit_log: PG 连接失败: %s", e)
             return
 
-        conn = sqlite3.connect(str(_DEPGRAPH_DB))
         try:
-            # 兜底建表（migration v7 已创建；此处 IF NOT EXISTS 仅防异常场景）
-            conn.execute(
-                "CREATE TABLE IF NOT EXISTS governance_audit_logs ("
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                "timestamp TEXT NOT NULL, "
-                "total_gates INTEGER DEFAULT 0, "
-                "passed_gates INTEGER DEFAULT 0, "
-                "failed_gates INTEGER DEFAULT 0, "
-                "skipped_gates INTEGER DEFAULT 0, "
-                "success INTEGER DEFAULT 0, "
-                "errors TEXT DEFAULT '')"
-            )
-
-            conn.execute(
-                "INSERT INTO governance_audit_logs "
-                "(timestamp, total_gates, passed_gates, failed_gates, skipped_gates, success, errors) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (
-                    self._result.started_at,
-                    self._result.total_gates,
-                    self._result.passed_gates,
-                    self._result.failed_gates,
-                    self._result.skipped_gates,
-                    1 if self._result.success else 0,
-                    "; ".join(self._result.errors[:10]),
-                ),
-            )
+            with conn.cursor() as cur:
+                # 表已由 02_create_pg_schema.sql 创建，无需兜底建表
+                cur.execute(
+                    "INSERT INTO governance_audit_logs "
+                    "(timestamp, total_gates, passed_gates, failed_gates, skipped_gates, success, errors) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (
+                        self._result.started_at,
+                        self._result.total_gates,
+                        self._result.passed_gates,
+                        self._result.failed_gates,
+                        self._result.skipped_gates,
+                        1 if self._result.success else 0,
+                        "; ".join(self._result.errors[:10]),
+                    ),
+                )
             conn.commit()
+        except psycopg2.Error as e:
+            logger.warning("_write_audit_log: 写入审计日志失败: %s", e)
+            conn.rollback()
         finally:
             conn.close()
 
@@ -242,9 +242,10 @@ class GovernanceAutoRunner:
 
     @staticmethod
     def get_gates_by_event(event_type: str) -> list[str]:
-        """从 depgraph.db 查询指定 event_driven 触发器的 gate 列表.
+        """从 PostgreSQL depgraph 查询指定 event_driven 触发器的 gate 列表.
 
         全景图是项目真源——event_driven 配置存储在 gates 表 event_driven 列。
+        P2迁移后：从 SQLite 切换到 PostgreSQL，使用 psycopg2 cursor 模式。
 
         Args:
             event_type: 事件类型（always/on_commit/on_file_change/on_session_start/
@@ -253,45 +254,51 @@ class GovernanceAutoRunner:
         Returns:
             list[str]: 匹配的 gate_id 列表；DB不可用时返回空列表
         """
-        if not _DEPGRAPH_DB.exists():
+        try:
+            conn = get_db_connection(autocommit=True)
+        except (psycopg2.Error, FileNotFoundError, ValueError) as e:
+            logger.warning("get_gates_by_event(%s) PG 连接失败: %s", event_type, e)
             return []
 
         try:
-            conn = sqlite3.connect(str(_DEPGRAPH_DB))
-            try:
-                rows = conn.execute(
+            with conn.cursor() as cur:
+                cur.execute(
                     "SELECT gate_id FROM gates "
-                    "WHERE event_driven=? AND status='active' AND auto_start=1 "
+                    "WHERE event_driven=%s AND status='active' AND auto_start=1 "
                     "ORDER BY gate_id",
                     (event_type,),
-                ).fetchall()
-                return [r[0] for r in rows]
-            finally:
-                conn.close()
-        except Exception as e:
+                )
+                rows = cur.fetchall()
+            return [r[0] for r in rows]
+        except psycopg2.Error as e:
             logger.warning("get_gates_by_event(%s) failed: %s", event_type, e)
             return []
+        finally:
+            conn.close()
 
     @staticmethod
     def get_all_event_types() -> list[str]:
-        """从 depgraph.db 查询所有非空的 event_driven 类型。"""
-        if not _DEPGRAPH_DB.exists():
+        """从 PostgreSQL depgraph 查询所有非空的 event_driven 类型。"""
+        try:
+            conn = get_db_connection(autocommit=True)
+        except (psycopg2.Error, FileNotFoundError, ValueError) as e:
+            logger.warning("get_all_event_types PG 连接失败: %s", e)
             return []
 
         try:
-            conn = sqlite3.connect(str(_DEPGRAPH_DB))
-            try:
-                rows = conn.execute(
+            with conn.cursor() as cur:
+                cur.execute(
                     "SELECT DISTINCT event_driven FROM gates "
                     "WHERE status='active' AND event_driven != '' "
                     "ORDER BY event_driven"
-                ).fetchall()
-                return [r[0] for r in rows]
-            finally:
-                conn.close()
-        except Exception as e:
+                )
+                rows = cur.fetchall()
+            return [r[0] for r in rows]
+        except psycopg2.Error as e:
             logger.warning("get_all_event_types failed: %s", e)
             return []
+        finally:
+            conn.close()
 
 
 def main() -> None:

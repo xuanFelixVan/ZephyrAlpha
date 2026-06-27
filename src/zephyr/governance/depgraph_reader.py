@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 depgraph_reader.py — 依赖图数据库查询工具模块
 
@@ -39,25 +40,48 @@ depgraph_reader.py — 依赖图数据库查询工具模块
 from __future__ import annotations
 
 import json
-import sqlite3
 from pathlib import Path
 from typing import Any
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+from zephyr.governance.depgraph_schema import get_db_connection
 from zephyr.shared.io.paths import REPO_ROOT
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+
+
+class _PgConnExecuteWrapper:
+    """兼容 sqlite3.Connection.execute() 接口的 psycopg2 connection 包装器。
+
+    P2迁移后：psycopg2 connection 没有 execute() 方法，此包装器使原 SQLite 代码无需修改。
+    每次调用 execute() 创建一个新的 RealDictCursor（与原 sqlite3.Row 的 dict(row) 用法等价）。
+    """
+
+    def __init__(self, pg_conn: psycopg2.extensions.connection):
+        self._pg_conn = pg_conn
+
+    def execute(self, sql: str, params: tuple = ()) -> Any:
+        cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute(sql, params)
+        return cur
+
+    def close(self) -> None:
+        self._pg_conn.close()
 
 
 class DepgraphReader:
     """依赖图数据库读取器"""
 
     def __init__(self, db_path: str | Path | None = None):
+        # db_path 参数保留向后兼容（P2迁移后 PG 连接配置由 depgraph_schema.get_db_connection 管理）
         self._db_path = Path(db_path) if db_path else DB_PATH
-        self._conn: sqlite3.Connection | None = None
+        self._conn: _PgConnExecuteWrapper | None = None
 
-    def _get_conn(self) -> sqlite3.Connection:
+    def _get_conn(self) -> _PgConnExecuteWrapper:
         if self._conn is None:
-            self._conn = sqlite3.connect(str(self._db_path))
-            self._conn.row_factory = sqlite3.Row
+            self._conn = _PgConnExecuteWrapper(get_db_connection(autocommit=True))
         return self._conn
 
     def close(self) -> None:
@@ -76,26 +100,26 @@ class DepgraphReader:
     def get_nodes_by_domain(self, domain_id: str) -> list[dict[str, Any]]:
         """按 domain_id 查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM nodes WHERE domain_id = ?", (domain_id,))
+        cursor = conn.execute("SELECT * FROM nodes WHERE domain_id = %s", (domain_id,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
         """按 node_type 查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM nodes WHERE node_type = ?", (node_type,))
+        cursor = conn.execute("SELECT * FROM nodes WHERE node_type = %s", (node_type,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_node_by_path(self, path: str) -> dict[str, Any] | None:
         """按 path 精确查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM nodes WHERE path = ?", (path,))
+        cursor = conn.execute("SELECT * FROM nodes WHERE path = %s", (path,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
     def get_node_by_id(self, node_id: str) -> dict[str, Any] | None:
         """按 node_id 精确查询节点"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM nodes WHERE node_id = ?", (node_id,))
+        cursor = conn.execute("SELECT * FROM nodes WHERE node_id = %s", (node_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -110,19 +134,19 @@ class DepgraphReader:
     def get_edges_from_node(self, from_node: str) -> list[dict[str, Any]]:
         """查询从指定节点出发的所有边"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM edges WHERE from_node = ?", (from_node,))
+        cursor = conn.execute("SELECT * FROM edges WHERE from_node = %s", (from_node,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_edges_to_node(self, to_node: str) -> list[dict[str, Any]]:
         """查询指向指定节点的所有边"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM edges WHERE to_node = ?", (to_node,))
+        cursor = conn.execute("SELECT * FROM edges WHERE to_node = %s", (to_node,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_edges_by_type(self, edge_type: str) -> list[dict[str, Any]]:
         """按 edge_type 查询边"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM edges WHERE edge_type = ?", (edge_type,))
+        cursor = conn.execute("SELECT * FROM edges WHERE edge_type = %s", (edge_type,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_all_edges(self) -> list[dict[str, Any]]:
@@ -136,13 +160,13 @@ class DepgraphReader:
     def get_rules_by_function(self, function_name: str) -> list[dict[str, Any]]:
         """按 function_name 查询规则"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM rule_bindings WHERE function_name = ?", (function_name,))
+        cursor = conn.execute("SELECT * FROM rule_bindings WHERE function_name = %s", (function_name,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_rules_by_rule_id(self, rule_id: str) -> list[dict[str, Any]]:
         """按 rule_id 查询规则绑定"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM rule_bindings WHERE rule_id = ?", (rule_id,))
+        cursor = conn.execute("SELECT * FROM rule_bindings WHERE rule_id = %s", (rule_id,))
         return [dict(row) for row in cursor.fetchall()]
 
     def get_all_rule_bindings(self) -> list[dict[str, Any]]:
@@ -160,7 +184,7 @@ class DepgraphReader:
     def get_template_by_id(self, template_id: str) -> dict[str, Any] | None:
         """按 template_id 查询模板"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT * FROM nodes WHERE node_id = ? AND node_type = 'template'", (template_id,))
+        cursor = conn.execute("SELECT * FROM nodes WHERE node_id = %s AND node_type = 'template'", (template_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
 
@@ -174,7 +198,7 @@ class DepgraphReader:
             SELECT rb.*, n.path as module_path
             FROM rule_bindings rb
             JOIN nodes n ON rb.node_id = n.node_id
-            WHERE n.path = ?
+            WHERE n.path = %s
             """,
             (module_path,),
         )
@@ -192,7 +216,7 @@ class DepgraphReader:
         """查询指定域间的依赖关系"""
         conn = self._get_conn()
         cursor = conn.execute(
-            "SELECT * FROM domain_dependencies WHERE from_domain = ? AND to_domain = ?", (from_domain, to_domain)
+            "SELECT * FROM domain_dependencies WHERE from_domain = %s AND to_domain = %s", (from_domain, to_domain)
         )
         row = cursor.fetchone()
         return dict(row) if row else None
@@ -211,34 +235,37 @@ class DepgraphReader:
         if parent_path is None:
             cursor = conn.execute("SELECT * FROM arch_directory_tree")
         else:
-            cursor = conn.execute("SELECT * FROM arch_directory_tree WHERE parent_path = ?", (parent_path,))
+            cursor = conn.execute("SELECT * FROM arch_directory_tree WHERE parent_path = %s", (parent_path,))
         return [dict(row) for row in cursor.fetchall()]
 
     # ── 统计查询 ──────────────────────────────────────────────
+    # P2迁移后：RealDictCursor 返回 dict-like 行，需用列名访问（不再支持 [0] 索引）
 
     def get_node_count(self) -> int:
         """获取节点总数"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT COUNT(*) FROM nodes")
-        return cursor.fetchone()[0]
+        cursor = conn.execute("SELECT COUNT(*) AS cnt FROM nodes")
+        return cursor.fetchone()["cnt"]
 
     def get_edge_count(self) -> int:
         """获取边总数"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT COUNT(*) FROM edges")
-        return cursor.fetchone()[0]
+        cursor = conn.execute("SELECT COUNT(*) AS cnt FROM edges")
+        return cursor.fetchone()["cnt"]
 
     def get_domain_count(self) -> int:
         """获取域总数"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT COUNT(DISTINCT domain_id) FROM nodes WHERE domain_id IS NOT NULL")
-        return cursor.fetchone()[0]
+        cursor = conn.execute(
+            "SELECT COUNT(DISTINCT domain_id) AS cnt FROM nodes WHERE domain_id IS NOT NULL"
+        )
+        return cursor.fetchone()["cnt"]
 
     def get_type_specific_data(self, node_id: str) -> dict[str, Any] | None:
         """获取节点的 type_specific_data（JSON 字段）"""
         conn = self._get_conn()
-        cursor = conn.execute("SELECT type_specific_data FROM nodes WHERE node_id = ?", (node_id,))
+        cursor = conn.execute("SELECT type_specific_data FROM nodes WHERE node_id = %s", (node_id,))
         row = cursor.fetchone()
-        if row and row[0]:
-            return json.loads(row[0])
+        if row and row["type_specific_data"]:
+            return json.loads(row["type_specific_data"])
         return None

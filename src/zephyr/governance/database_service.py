@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] task_bound
 """
 DatabaseService: 统一管理三个数据库的连接池、生命周期、健康检查
 
@@ -35,6 +36,10 @@ from contextlib import contextmanager
 from typing import Any
 
 import duckdb
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+from zephyr.governance.depgraph_schema import get_db_connection
 
 
 class DatabaseService:
@@ -59,7 +64,7 @@ class DatabaseService:
         self.market_db = r"D:\ZephyrAlpha\data\databases\market.duckdb"
 
         self._governance_conn: sqlite3.Connection | None = None
-        self._depgraph_conn: sqlite3.Connection | None = None
+        self._depgraph_conn: Any | None = None  # psycopg2 connection (P2迁移后)
         self._market_conn: duckdb.DuckDBPyConnection | None = None
 
         self._market_write_lock = threading.Lock()
@@ -67,17 +72,20 @@ class DatabaseService:
         self._tick_batch_buffer: list[dict[str, Any]] = []
 
     def get_governance_conn(self) -> sqlite3.Connection:
-        """获取 governance.db 连接"""
+        """获取 governance.db 连接（保持 SQLite）"""
         if self._governance_conn is None:
             self._governance_conn = sqlite3.connect(self.governance_db)
             self._governance_conn.row_factory = sqlite3.Row
         return self._governance_conn
 
-    def get_depgraph_conn(self) -> sqlite3.Connection:
-        """获取 depgraph.db 连接"""
+    def get_depgraph_conn(self) -> Any:
+        """获取 depgraph PostgreSQL 连接（P2迁移后从 SQLite 切换到 PostgreSQL）
+
+        返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
+        """
         if self._depgraph_conn is None:
-            self._depgraph_conn = sqlite3.connect(self.depgraph_db)
-            self._depgraph_conn.row_factory = sqlite3.Row
+            self._depgraph_conn = get_db_connection(autocommit=True)
+            self._depgraph_conn.cursor_factory = RealDictCursor
         return self._depgraph_conn
 
     def get_market_conn(self) -> duckdb.DuckDBPyConnection:
@@ -180,35 +188,47 @@ class DatabaseService:
         conn.commit()
 
     # ========== depgraph.db 方法 ==========
+    # P2迁移后：depgraph 已切换到 PostgreSQL，使用 psycopg2 cursor 模式
+    # cursor_factory=RealDictCursor 使每行返回 RealDictRow，dict(row) 兼容原 sqlite3.Row 用法
 
     def get_node(self, node_id: str) -> dict[str, Any] | None:
         """获取节点"""
         conn = self.get_depgraph_conn()
-        row = conn.execute("SELECT * FROM nodes WHERE node_id=?", (node_id,)).fetchone()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM nodes WHERE node_id=%s", (node_id,))
+            row = cur.fetchone()
         return dict(row) if row else None
 
     def get_nodes_by_domain(self, domain_id: str) -> list:
         """按域获取节点"""
         conn = self.get_depgraph_conn()
-        rows = conn.execute("SELECT * FROM nodes WHERE domain_id=?", (domain_id,)).fetchall()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM nodes WHERE domain_id=%s", (domain_id,))
+            rows = cur.fetchall()
         return [dict(r) for r in rows]
 
     def get_nodes_by_type(self, node_type: str) -> list:
         """按类型获取节点"""
         conn = self.get_depgraph_conn()
-        rows = conn.execute("SELECT * FROM nodes WHERE node_type=?", (node_type,)).fetchall()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM nodes WHERE node_type=%s", (node_type,))
+            rows = cur.fetchall()
         return [dict(r) for r in rows]
 
     def get_rule_bindings_by_function(self, function_name: str) -> list:
         """按函数名获取规则绑定"""
         conn = self.get_depgraph_conn()
-        rows = conn.execute("SELECT * FROM rule_bindings WHERE function_name=?", (function_name,)).fetchall()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM rule_bindings WHERE function_name=%s", (function_name,))
+            rows = cur.fetchall()
         return [dict(r) for r in rows]
 
     def get_edges_from_node(self, from_node: str) -> list:
         """获取节点的出边"""
         conn = self.get_depgraph_conn()
-        rows = conn.execute("SELECT * FROM edges WHERE from_node=?", (from_node,)).fetchall()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM edges WHERE from_node=%s", (from_node,))
+            rows = cur.fetchall()
         return [dict(r) for r in rows]
 
     # ========== market.duckdb 方法 ==========

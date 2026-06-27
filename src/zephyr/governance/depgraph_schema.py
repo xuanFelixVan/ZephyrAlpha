@@ -43,32 +43,79 @@ v10变更: domains 表清理7个无区分度装饰字段（can_build/gate_reason
 v14变更: 删除3张死表/漂移表（arch_bottlenecks/arch_layers/invariants）— fix #ARCH-013~015
         保留 cross_registry_rules（健康sync缓存）与 governance_audit_logs（auto_runner活跃写入）
 
-PRAGMA 基线（与 governance.db 一致）
+PRAGMA 基线（P2迁移后已废弃）
 -----------------------------------
-  journal_mode = WAL
-  synchronous = NORMAL
-  foreign_keys = ON
-  busy_timeout = 5000
-  temp_store = MEMORY
-  wal_autocheckpoint = 4096
+  PostgreSQL 不需要 PRAGMA 配置（由服务器 postgresql.conf 管理）。
+  SQLite 时代的 PRAGMA 配置已删除。
 
 用法
 ----
     from zephyr.governance.persistence.depgraph_schema import init_db, get_db_connection, DB_PATH
 
-    init_db()              # 幂等，可重复调用
-    conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
+    init_db()              # 幂等，验证 PG schema 健康性
+    conn = get_db_connection()   # 返回 PostgreSQL 连接（psycopg2）
 """
 
 from __future__ import annotations
 
-import sqlite3
+import os
 from pathlib import Path
+from typing import Any
+
+import psycopg2
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 
+# depgraph.db 物理路径（P2迁移后已迁移到 PostgreSQL，此路径保留作为 SQLite 备份路径参考）
+# P2迁移真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
 DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"
+
+# PostgreSQL 连接配置文件路径（P2迁移真源：MOD-INF-012B-P2）
+_PG_ENV_PATH: Path = REPO_ROOT / "config" / ".env.postgres"
+
+
+def _load_pg_config() -> dict[str, str]:
+    """从 config/.env.postgres 加载 PostgreSQL 连接参数。
+
+    文件格式：KEY=VALUE，行首 # 为注释。
+    必需字段：POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
+    """
+    if not _PG_ENV_PATH.exists():
+        raise FileNotFoundError(
+            f"PG 连接配置文件不存在: {_PG_ENV_PATH}\n"
+            "请参考 P2迁移方案 §四 创建该文件（含 5 个必需字段）"
+        )
+    config: dict[str, str] = {}
+    with _PG_ENV_PATH.open(encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                config[k.strip()] = v.strip()
+    required = ["POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD"]
+    missing = [k for k in required if k not in config]
+    if missing:
+        raise ValueError(f"PG 连接配置缺少必需字段: {missing} (文件: {_PG_ENV_PATH})")
+    return config
+
+
+def _build_pg_dsn(config: dict[str, str] | None = None, *, superuser: bool = False) -> dict[str, Any]:
+    """构建 psycopg2.connect() 的关键字参数。
+
+    :param superuser: True 时使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
+    :return: psycopg2.connect() 的 kwargs
+    """
+    if config is None:
+        config = _load_pg_config()
+    kwargs: dict[str, Any] = {
+        "host": config["POSTGRES_HOST"],
+        "port": config["POSTGRES_PORT"],
+        "dbname": config["POSTGRES_DB"],
+        "password": config["POSTGRES_PASSWORD"],
+    }
+    kwargs["user"] = "postgres" if superuser else config["POSTGRES_USER"]
+    return kwargs
 
 # ---------------------------------------------------------------------------
 # DDL — nodes 表（28列，v11删除module_lifecycle_state+添加CHECK约束）
@@ -320,22 +367,8 @@ _DDL_INDEXES = [
 ]
 
 # ---------------------------------------------------------------------------
-# PRAGMA 配置
+# PRAGMA 配置（P2迁移后已删除：PostgreSQL 不需要 PRAGMA，由服务器配置管理）
 # ---------------------------------------------------------------------------
-
-_PRAGMAS = [
-    "PRAGMA journal_mode = WAL",
-    "PRAGMA synchronous = NORMAL",
-    "PRAGMA foreign_keys = ON",
-    "PRAGMA busy_timeout = 5000",
-    "PRAGMA temp_store = MEMORY",
-    "PRAGMA wal_autocheckpoint = 4096",
-]
-
-
-def _apply_pragmas(conn: sqlite3.Connection) -> None:
-    for pragma in _PRAGMAS:
-        conn.execute(pragma)
 
 
 # ---------------------------------------------------------------------------
@@ -1002,24 +1035,46 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
 ]
 
 
-def _get_current_version(conn: sqlite3.Connection) -> int:
-    cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='_schema_version'")
-    if cursor.fetchone() is None:
-        nodes_cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='nodes'")
-        if nodes_cursor.fetchone() is not None:
-            return -1
-        return 0
-    cursor = conn.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
-    row = cursor.fetchone()
-    return row[0] if row else 0
+def _get_current_version(conn: Any) -> int:
+    """获取 PG schema 版本。
+
+    P2迁移后：PG schema 由 02_create_pg_schema.sql 创建，_schema_version 表已填充。
+    返回值含义：
+        -1: nodes 表存在但 _schema_version 表不存在（旧 PG，需重新建 schema）
+        0: 两者都不存在
+        >0: 当前 schema 版本号
+    """
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema = 'public' AND table_name = '_schema_version'
+        """)
+        if cur.fetchone() is None:
+            cur.execute("""
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = 'public' AND table_name = 'nodes'
+            """)
+            if cur.fetchone() is not None:
+                return -1
+            return 0
+        cur.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
+        row = cur.fetchone()
+        return row[0] if row else 0
 
 
 def _run_migration(
-    conn: sqlite3.Connection,
+    conn: Any,
     version: int,
     description: str,
     statements: list[str],
 ) -> None:
+    """执行单个迁移版本（PG模式：保留作为参考，init_db 中不再调用）。
+
+    P2迁移后：PG schema 由 02_create_pg_schema.sql 一次性创建，_MIGRATIONS 不再执行。
+    此函数保留以支持 check_schema_version_writes.py 引用 _MIGRATIONS 数据。
+    """
     from datetime import UTC, datetime
 
     now = datetime.now(UTC).isoformat()
@@ -1028,87 +1083,67 @@ def _run_migration(
         if not stmt:
             continue
         try:
-            conn.execute(stmt)
-        except sqlite3.OperationalError as exc:
+            with conn.cursor() as cur:
+                cur.execute(stmt)
+        except psycopg2.Error as exc:
             msg = str(exc).lower()
             benign = (
-                "duplicate column name",
-                "duplicate column",
                 "already exists",
-                "duplicate key name:",
+                "duplicate column",
                 "no such column",
             )
             if any(p in msg for p in benign):
                 continue
             raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc
-    conn.execute(
-        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
-        (version, now, description),
-    )
+    with conn.cursor() as cur:
+        cur.execute(
+            "INSERT INTO _schema_version (version, applied_at, description) VALUES (%s, %s, %s) "
+            "ON CONFLICT (version) DO NOTHING",
+            (version, now, description),
+        )
 
 
 def init_db(
-    db_path: Path | str | None = None,
+    db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
     *,
     echo: bool = False,
 ) -> Path:
-    """幂等初始化 depgraph.db（执行 DDL + 按需运行版本化迁移）。
+    """验证 PostgreSQL depgraph schema 健康性（幂等）。
 
-    可安全重复调用：已存在的表和列不会被覆盖，已执行的迁移会被跳过。
+    P2迁移后：PG schema 由 scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql 创建。
+    本函数不再执行 DDL/migration，仅验证核心表存在并返回 DB_PATH（参考路径）。
+
+    若核心表不存在，请运行:
+        psql -U postgres -d depgraph -f scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql
+
+    :return: DB_PATH（SQLite 备份路径参考，PG 模式下不再使用此路径）
     """
-    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
-    resolved.parent.mkdir(parents=True, exist_ok=True)
-
-    conn = sqlite3.connect(str(resolved))
+    conn = get_db_connection()
     try:
-        _apply_pragmas(conn)
-        conn.execute(_DDL_SCHEMA_VERSION.strip())
-
-        current = _get_current_version(conn)
-        if echo:
-            print(f"[depgraph_schema] current version: {current}")
-
-        if current < 0:
-            bootstrapped = abs(current)
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = 'public' AND table_name = 'nodes'
+            """)
+            if cur.fetchone() is None:
+                raise RuntimeError(
+                    "PG depgraph schema 未创建。请运行:\n"
+                    "  psql -U postgres -d depgraph -f scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql"
+                )
             if echo:
-                print("[depgraph_schema] bootstrapping legacy DB -> marking v1 as applied")
-            from datetime import UTC, datetime
-
-            now = datetime.now(UTC).isoformat()
-            for v, desc, _ in _MIGRATIONS:
-                if v <= bootstrapped:
-                    conn.execute(
-                        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
-                        (v, now, desc + " [bootstrap: legacy DB]"),
-                    )
-            current = bootstrapped
-
-        # 临时禁用FK用于迁移（PRAGMA foreign_keys在事务外设置）
-        # 原因：v11迁移需要重建nodes表（添加CHECK约束），DROP TABLE在FK=ON时会触发
-        # edges/arch_directory_tree的FK检查导致失败。迁移完成后重新启用。
-        has_pending_migrations = any(v > current for v, _, _ in _MIGRATIONS)
-        if has_pending_migrations:
-            conn.execute("PRAGMA foreign_keys = OFF")
-
-        conn.execute("BEGIN")
-        try:
-            for version, description, statements in _MIGRATIONS:
-                if version <= current:
-                    continue
-                if echo:
-                    print(f"[depgraph_schema] executing migration v{version}: {description}")
-                _run_migration(conn, version, description, statements)
-            conn.execute("COMMIT")
-        except Exception:
-            conn.execute("ROLLBACK")
-            raise
-        finally:
-            if has_pending_migrations:
-                conn.execute("PRAGMA foreign_keys = ON")
+                cur.execute(
+                    "SELECT COUNT(*) FROM information_schema.tables "
+                    "WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
+                )
+                count = cur.fetchone()[0]
+                cur.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
+                ver = cur.fetchone()[0]
+                print(f"[depgraph_schema] PG schema healthy: {count} tables, version=v{ver}")
     finally:
         conn.close()
 
-    return resolved.resolve()
+    return DB_PATH
 
 
 # ---------------------------------------------------------------------------
@@ -1117,55 +1152,63 @@ def init_db(
 
 
 def get_db_connection(
-    db_path: Path | str | None = None,
+    db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
     *,
-    check_same_thread: bool = False,
-    timeout: float = 30.0,
+    superuser: bool = False,
     autocommit: bool = True,
-    apply_foreign_keys: bool = True,
-) -> sqlite3.Connection:
-    """返回配置好 PRAGMA 的 depgraph.db 连接。
+    replica: bool = False,
+    # 以下参数保留向后兼容但 PG 模式下无效（避免调用方修改）
+    check_same_thread: bool = False,  # SQLite-only，PG 忽略
+    timeout: float = 30.0,  # SQLite-only，PG 忽略
+    apply_foreign_keys: bool = True,  # SQLite-only，PG 忽略（FK 由 schema DDL 管理）
+) -> Any:
+    """返回 PostgreSQL depgraph 连接。
 
-    所有 depgraph.db 连接必须经此入口（禁止裸 sqlite3.connect 绕过 WAL/busy_timeout 配置）。
+    所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。
 
-    autocommit=True (默认): isolation_level=None，每条语句自动提交（适合只读/简单写）。
-    autocommit=False: isolation_level='' (deferred)，需显式 conn.commit()（适合原子批量写，
-        如 generate_project_depgraph.write_depgraph_to_db 的 DELETE+INSERT+UPDATE 序列）。
-    apply_foreign_keys=False: 关闭 FK 约束（用于需保持 FK OFF 的写路径，如先删 nodes 再删 edges
-        的历史 DELETE 顺序；FK ON 会阻断父行删除）。FK 仅在写时生效，只读连接无影响。
+    :param superuser: True 使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
+    :param autocommit: True 启用自动提交（默认）；False 需显式 conn.commit()
+    :param replica: True 设置 session_replication_role='replica' 禁用所有触发器和 FK
+        （仅超级用户可用；用于批量数据导入/迁移场景；自动设置 superuser=True）
+
+    注意：以下 SQLite 时代参数保留向后兼容但 PG 模式下无效：
+        - db_path, check_same_thread, timeout, apply_foreign_keys
     """
-    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
-    conn = sqlite3.connect(
-        str(resolved),
-        isolation_level=None if autocommit else "",
-        check_same_thread=check_same_thread,
-        timeout=timeout,
-    )
-    conn.row_factory = sqlite3.Row
-    _apply_pragmas(conn)
-    if not apply_foreign_keys:
-        # 历史写路径（先删 nodes 再删 edges）依赖 FK OFF；启用 FK 会阻断 DELETE
-        conn.execute("PRAGMA foreign_keys = OFF")
+    if replica:
+        superuser = True  # session_replication_role 需要超级用户
+
+    conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser))
+    conn.autocommit = autocommit
+
+    if replica:
+        with conn.cursor() as cur:
+            cur.execute("SET session_replication_role = 'replica';")
+        if not autocommit:
+            conn.commit()
+
     return conn
 
 
 def table_names(db_path: Path | str | None = None) -> list[str]:
-    """返回 depgraph.db 中所有表名。"""
-    resolved = Path(db_path) if db_path is not None else DB_PATH
-    conn = sqlite3.connect(str(resolved))
+    """返回 PostgreSQL depgraph 中所有 public schema 表名。"""
+    conn = get_db_connection()
     try:
-        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
-        return [row[0] for row in cursor.fetchall()]
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+                ORDER BY table_name
+            """)
+            return [row[0] for row in cur.fetchall()]
     finally:
         conn.close()
 
 
 def schema_version(db_path: Path | str | None = None) -> int:
-    """返回当前 depgraph.db 的 schema 版本。"""
-    resolved = Path(db_path) if db_path is not None else DB_PATH
-    conn = sqlite3.connect(str(resolved))
+    """返回当前 PostgreSQL depgraph 的 schema 版本。"""
+    conn = get_db_connection()
     try:
-        _apply_pragmas(conn)
         return _get_current_version(conn)
     finally:
         conn.close()
