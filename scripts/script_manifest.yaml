@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-28'
-total_scripts: 573
+total_scripts: 570
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -126,26 +126,10 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: print_dimension_ranking.py
-  path: print_dimension_ranking.py
-  description: import json
-  domain: print_dimension_ranking.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: print_exam_summary.py
   path: print_exam_summary.py
   description: import json
   domain: print_exam_summary.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: print_latest_two.py
-  path: print_latest_two.py
-  description: import json
-  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -953,14 +937,6 @@ scripts:
 - name: governance/create_d_signal_rename_tasks.py
   path: governance/create_d_signal_rename_tasks.py
   description: 创建 D-SIGNAL* 4 域改名执行任务卡（10 张主卡 + 10 张元审查卡）。
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/create_f_func_task_cards.py
-  path: governance/create_f_func_task_cards.py
-  description: 创建F1-F37依赖设计剩余缺口的4张任务卡。
   domain: governance
   execution_plane: warm-path
   status: registered
