@@ -27,7 +27,7 @@ import pytest
 def scheduler():
     """Create a FeedbackLoopScheduler with InProcessVectorMemory mocked."""
     with patch(
-        "zephyr.governance.vector_memory.in_process_vector_memory.InProcessVectorMemory"
+        "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
     ) as vms_cls:
         vms_cls.return_value = MagicMock()
         from zephyr.ops.scheduler import FeedbackLoopScheduler
@@ -190,7 +190,7 @@ class TestSchedulerSingleton:
     def test_get_instance_returns_singleton(self):
         """get_instance returns the same instance."""
         with patch(
-            "zephyr.governance.vector_memory.in_process_vector_memory.InProcessVectorMemory"
+            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
         ):
             from zephyr.ops.scheduler import FeedbackLoopScheduler
 
@@ -203,7 +203,7 @@ class TestSchedulerSingleton:
     def test_reset_instance_clears_singleton(self):
         """reset_instance clears the singleton."""
         with patch(
-            "zephyr.governance.vector_memory.in_process_vector_memory.InProcessVectorMemory"
+            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
         ):
             from zephyr.ops.scheduler import FeedbackLoopScheduler
 

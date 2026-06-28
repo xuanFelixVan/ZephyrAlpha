@@ -120,8 +120,8 @@ def main():
 
     import faiss
 
-    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
-    from zephyr.governance.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
+    from zephyr.integration.vector_memory.faiss_collection_manager import FAISSCollectionManager
+    from zephyr.integration.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
 
     print(f"\n  FAISS GPU: {faiss.get_num_gpus()}")
     print("  FAISS AVX2: OK\n")

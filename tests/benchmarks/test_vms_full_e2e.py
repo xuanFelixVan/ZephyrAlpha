@@ -77,7 +77,7 @@ def main():
     # =========================================================================
     print("\n[1] VMS 启动 + 嵌入模型状态...")
 
-    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
     vms = InProcessVectorMemory(persist_dir=str(TEST_DIR))
     t0 = time.perf_counter()
@@ -156,7 +156,7 @@ def main():
     # =========================================================================
     print("\n[4] 批量写入 (add_vectors_batch)...")
 
-    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
+    from zephyr.integration.vector_memory.faiss_collection_manager import FAISSCollectionManager
 
     faiss_cm = vms._collection_manager
     meta_store = vms._metadata_store
@@ -232,7 +232,7 @@ def main():
     print("\n[7] 混合检索 (HybridRetriever RRF)...")
 
     try:
-        from zephyr.governance.vector_memory.hybrid_retriever import HybridRetriever
+        from zephyr.integration.vector_memory.hybrid_retriever import HybridRetriever
 
         embed_router = vms._embedding_router
         retriever = HybridRetriever(faiss_cm, embed_router, meta_store)

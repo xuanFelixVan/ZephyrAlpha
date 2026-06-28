@@ -48,7 +48,7 @@ from zephyr.governance.kb._backend_protocol import (
     MemoryBackend,
     MemoryRecord,
 )
-from zephyr.governance.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
+from zephyr.integration.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
 
 __all__ = ["TOPIC_TO_COLLECTION", "VMSMemoryBackend"]
 
@@ -217,7 +217,7 @@ def create_vms_backend(
         已初始化的 VMS 后端（VMS 不可用时自动降级）。
     """
     try:
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         vms = InProcessVectorMemory(persist_dir=vms_persist_dir)
         vms.start()

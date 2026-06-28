@@ -40,7 +40,7 @@ class SyncEngine:
         try:
             from zephyr.autonomy_core.vector_bridge import VectorBridge
             from zephyr.governance.persistence.sqlite_schema import get_db_connection
-            from zephyr.governance.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
+            from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 
             conn = get_db_connection()
             since_str = since.isoformat() if since else "1970-01-01"

@@ -58,17 +58,17 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-from zephyr.governance.vector_memory.retrieval_feedback import (
+from zephyr.integration.vector_memory.retrieval_feedback import (
     FeedbackEntry,
     RetrievalFeedback,
 )
-from zephyr.governance.vector_memory.index_health_monitor import (
+from zephyr.integration.vector_memory.index_health_monitor import (
     DriftReport,
     HealthReport,
     IndexHealthMonitor,
     TTLExpiryReport,
 )
-from zephyr.governance.vector_memory.collection_manager import TTL_MAP
+from zephyr.integration.vector_memory.collection_manager import TTL_MAP
 from zephyr.integration.local_model.cache_layer import (
     CacheLayer,
     DEFAULT_CACHE_SIZE,
@@ -246,7 +246,7 @@ class TestMaintenanceLoopTasks:
         # 从源码验证常量
         import inspect
 
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         source = inspect.getsource(InProcessVectorMemory._maintenance_loop)
         assert "CHECK_INTERVAL = 60" in source

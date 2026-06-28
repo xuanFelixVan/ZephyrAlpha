@@ -41,7 +41,7 @@ from typing import Any
 
 import pytest
 
-from zephyr.governance.vector_memory.hybrid_retriever import (
+from zephyr.integration.vector_memory.hybrid_retriever import (
     BM25Index,
     COLLECTION_DECAY_RATES,
     DEFAULT_SCORE_THRESHOLD,

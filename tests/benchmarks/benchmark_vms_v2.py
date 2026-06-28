@@ -43,7 +43,7 @@ def main():
 
     import faiss
 
-    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
+    from zephyr.integration.vector_memory.faiss_collection_manager import FAISSCollectionManager
 
     print("=" * 60)
     print("  FAISS v2 Benchmark: Batch Write + IVF+PQ")

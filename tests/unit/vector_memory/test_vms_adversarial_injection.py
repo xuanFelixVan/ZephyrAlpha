@@ -29,46 +29,46 @@ class TestAdversarialProvenance:
 
     def test_forged_empty_origin_rejected(self):
         """伪造空 origin → ProvenanceEnforcer 必须拒绝"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
-        from zephyr.governance.vector_memory.vms_schemas import WriteTrace
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
         trace = WriteTrace(origin="", audit_chain=["session-1"], arbitration="autonomous")
         assert ProvenanceEnforcer.validate(trace) is False
 
     def test_forged_whitespace_origin_rejected(self):
         """伪造纯空格 origin → 必须拒绝"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
-        from zephyr.governance.vector_memory.vms_schemas import WriteTrace
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
         trace = WriteTrace(origin="   ", audit_chain=["session-1"], arbitration="autonomous")
         assert ProvenanceEnforcer.validate(trace) is False
 
     def test_tampered_empty_audit_chain_rejected(self):
         """篡改 audit_chain 为空列表 → 必须拒绝"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
-        from zephyr.governance.vector_memory.vms_schemas import WriteTrace
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
         trace = WriteTrace(origin="orc/decision", audit_chain=[], arbitration="autonomous")
         assert ProvenanceEnforcer.validate(trace) is False
 
     def test_missing_arbitration_rejected(self):
         """缺失 arbitration → 必须拒绝"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
-        from zephyr.governance.vector_memory.vms_schemas import WriteTrace
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
         trace = WriteTrace(origin="orc/decision", audit_chain=["session-1"], arbitration="")
         assert ProvenanceEnforcer.validate(trace) is False
 
     def test_none_writetrace_rejected(self):
         """None WriteTrace → 必须拒绝"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.validate(None) is False
 
     def test_valid_writetrace_accepted(self):
         """合法 WriteTrace → 必须通过"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
-        from zephyr.governance.vector_memory.vms_schemas import WriteTrace
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.vms_schemas import WriteTrace
 
         trace = WriteTrace(
             origin="orc/decision",
@@ -79,7 +79,7 @@ class TestAdversarialProvenance:
 
     def test_provenance_attach_adds_validated_flag(self):
         """attach() 必须将 provenance 绑定到 metadata 并标记 validated=True"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         metadata = {"content": "test"}
         provenance = {
@@ -95,7 +95,7 @@ class TestAdversarialProvenance:
 
     def test_provenance_attach_does_not_mutate_original(self):
         """attach() 不得修改原始 metadata"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         metadata = {"content": "test"}
         provenance = {"origin": "x", "audit_chain": ["y"], "arbitration": "z"}
@@ -108,37 +108,37 @@ class TestCBACAdversarial:
 
     def test_cbau_check_rejects_human_gated_for_ai(self):
         """human-gated Collection (rules) → cbau_check 必须拒绝 AI 操作"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.cbau_check("rules", "write", ai_session="ai-12") is False
 
     def test_cbau_check_allows_autonomous_collection(self):
         """autonomous Collection → cbau_check 必须允许"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.cbau_check("code_context", "write") is True
 
     def test_cbau_check_allows_supervised_collection(self):
         """supervised Collection → cbau_check 必须允许"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.cbau_check("decisions", "write") is True
 
     def test_ai_autonomy_gate_rejects_human_gated(self):
         """human-gated Collection → ai_autonomy_gate 必须拒绝 AI session"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.ai_autonomy_gate("rules", session_type="ai") is False
 
     def test_ai_autonomy_gate_allows_autonomous(self):
         """autonomous Collection → ai_autonomy_gate 必须允许 AI session"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.ai_autonomy_gate("code_context", session_type="ai") is True
 
     def test_ai_autonomy_gate_allows_human_session(self):
         """human-gated Collection + human session → 必须允许"""
-        from zephyr.governance.vector_memory.provenance_enforcer import ProvenanceEnforcer
+        from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
 
         assert ProvenanceEnforcer.ai_autonomy_gate("rules", session_type="human") is True
 
@@ -205,7 +205,7 @@ class TestAdversarialWriteInjection:
 
     @pytest.fixture
     def fake_vms(self):
-        from zephyr.governance.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
+        from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 
         return InMemoryFakeVMS()
 

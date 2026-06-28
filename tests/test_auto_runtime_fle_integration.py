@@ -137,7 +137,7 @@ class TestStartFleSchedulerCreatesAndStarts:
         需要 InProcessVectorMemory。mock 后验证链路完整。
         """
         with patch(
-            "zephyr.governance.vector_memory.in_process_vector_memory.InProcessVectorMemory"
+            "zephyr.integration.vector_memory.in_process_vector_memory.InProcessVectorMemory"
         ) as mock_vms_cls:
             mock_vms_cls.return_value = MagicMock()
 

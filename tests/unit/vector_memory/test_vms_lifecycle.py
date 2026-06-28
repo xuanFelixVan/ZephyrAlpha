@@ -42,7 +42,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from zephyr.governance.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
+from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
 
@@ -258,7 +258,7 @@ class TestMaintenanceThread:
         """
         # 由于 InProcessVectorMemory 依赖 ChromaDB，我们验证线程启动逻辑
         # 通过检查 start() 源码中的线程创建模式
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         # 检查类是否有必要的属性
         assert hasattr(InProcessVectorMemory, "_maintenance_loop")

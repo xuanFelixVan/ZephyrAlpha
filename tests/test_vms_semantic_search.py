@@ -27,7 +27,7 @@ def main():
         shutil.rmtree(TEST_DIR)
     TEST_DIR.mkdir(parents=True)
 
-    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
     print("=" * 60)
     print("  端到端语义搜索验证 (真实嵌入模型)")

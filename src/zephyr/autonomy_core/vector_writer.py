@@ -69,7 +69,7 @@ class VectorWriter:
         t0 = time.perf_counter()
 
         try:
-            from zephyr.governance.vector_memory.context_ingest import ingest_context
+            from zephyr.integration.vector_memory.context_ingest import ingest_context
 
             records = self._blocks_to_records(blocks, task_id, session_id)
             count = ingest_context(records, collection, task_id, session_id)

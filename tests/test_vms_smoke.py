@@ -12,7 +12,7 @@ import tempfile
 sys.path.insert(0, "src")
 from pathlib import Path
 
-from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
 def test_vms_smoke():
     """VMS 端到端冒烟测试——所有逻辑在函数内，模块级零副作用。"""

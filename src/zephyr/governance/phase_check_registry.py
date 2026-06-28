@@ -271,8 +271,8 @@ def check_kb_pipeline() -> GateResult:
 
 def check_vms_health() -> GateResult:
     try:
-        from zephyr.governance.vector_memory.collection_manager import CollectionManager
-        from zephyr.governance.vector_memory.index_health_monitor import IndexHealthMonitor
+        from zephyr.integration.vector_memory.collection_manager import CollectionManager
+        from zephyr.integration.vector_memory.index_health_monitor import IndexHealthMonitor
 
         cm = CollectionManager()
         monitor = IndexHealthMonitor(cm)

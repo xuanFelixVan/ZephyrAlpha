@@ -67,7 +67,7 @@ def register_services() -> None:
 
     # vector-memory — InProcessVectorMemory
     def _make_vector_memory() -> Any:
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         return InProcessVectorMemory()
 
@@ -91,7 +91,7 @@ def register_services() -> None:
 
     # collection_schemas — COLLECTION_SCHEMAS dict
     def _make_collection_schemas() -> Any:
-        from zephyr.governance.vector_memory.collection_manager import COLLECTION_SCHEMAS
+        from zephyr.integration.vector_memory.collection_manager import COLLECTION_SCHEMAS
 
         return COLLECTION_SCHEMAS
 

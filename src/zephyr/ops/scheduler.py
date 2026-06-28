@@ -167,7 +167,7 @@ class FeedbackLoopScheduler:
         if self.vector_bridge is None:
             try:
                 from zephyr.autonomy_core.vector_bridge import VectorBridge
-                from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+                from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
                 _vms = InProcessVectorMemory()
                 _vms.start()

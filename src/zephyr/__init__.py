@@ -19,7 +19,7 @@ C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
   核心数据模型:    from zephyr.integration.shared_08.schemas import Task, TaskStatus
   门禁检查:        from zephyr.governance.rule_enforcement import gate_engine
   上下文构建:      from zephyr.autonomy_core.context_management import intent_parser
-  向量记忆服务:    from zephyr.governance.vector_memory import InProcessVectorMemory
+  向量记忆服务:    from zephyr.integration.vector_memory import InProcessVectorMemory
 """
 
 import importlib

@@ -131,7 +131,7 @@ def test_00_import_shared_core():
 
 
 def _setup_vms_collection(tmp_path=None):
-    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
     vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_col" if tmp_path else None)
     vms.create_collection("decisions", 512)
@@ -151,7 +151,7 @@ class TestVectorMemoryAdversarial:
         assert isinstance(results, list)
 
     def test_nonexistent_collection_search_raises(self, tmp_path):
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_nx")
         with pytest.raises(KeyError):
@@ -170,7 +170,7 @@ class TestVectorMemoryAdversarial:
         assert isinstance(results, list)
 
     def test_collection_manager_8_collections(self):
-        from zephyr.governance.vector_memory.collection_manager import CollectionManager
+        from zephyr.integration.vector_memory.collection_manager import CollectionManager
 
         cm = CollectionManager()
         if hasattr(cm, "TARGET_COLLECTIONS"):
@@ -178,15 +178,15 @@ class TestVectorMemoryAdversarial:
             assert expected == 8, f"Expected 8 collections, got {expected}"
 
     def test_interface_contract(self):
-        from zephyr.governance.vector_memory.interface import VectorMemoryBase
+        from zephyr.integration.vector_memory.interface import VectorMemoryBase
 
         assert hasattr(VectorMemoryBase, "store")
         assert hasattr(VectorMemoryBase, "search")
         assert hasattr(VectorMemoryBase, "delete")
 
     def test_provenance_bypass_write_rejected(self, tmp_path):
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.governance.vector_memory.vms_errors import ProvenanceMissingError
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.vms_errors import ProvenanceMissingError
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_prov")
         vms.init_all_collections()
@@ -194,8 +194,8 @@ class TestVectorMemoryAdversarial:
             vms.write("decisions", "制造一个没有来源的决策", metadata=None)
 
     def test_human_gated_collection_write_behavior(self, tmp_path):
-        from zephyr.governance.vector_memory.collection_schemas import COLLECTION_SCHEMAS
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.collection_schemas import COLLECTION_SCHEMAS
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         human_gated_collections = [
             name for name, schema in COLLECTION_SCHEMAS.items() if schema.get("ai_autonomy_level") == "human-gated"
@@ -231,7 +231,7 @@ class TestVectorMemoryAdversarial:
             assert isinstance(results, list)
 
     def test_collection_metadata_corruption_resilience(self, tmp_path):
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_meta")
         vms.init_all_collections()
@@ -250,7 +250,7 @@ class TestVectorMemoryAdversarial:
             pass
 
     def test_vms_start_stop_cycle_health(self, tmp_path):
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_cycle")
         vms.init_all_collections()
@@ -265,8 +265,8 @@ class TestVectorMemoryAdversarial:
 
     def test_vector_bridge_all_collections_access(self, tmp_path):
         from zephyr.autonomy_core.vector_bridge import VectorBridge
-        from zephyr.governance.vector_memory.collection_schemas import COLLECTION_NAMES
-        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.integration.vector_memory.collection_schemas import COLLECTION_NAMES
+        from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_test")
         vms.init_all_collections()

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.local_model.embedding_router
 # [DOMAIN] D-INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
-# [CONSUMERS] zephyr.autonomy_core.skill_router; zephyr.governance.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.governance.data_source_router.embedding_router; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.integration.vector_memory.embedding_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.trading.auto_runtime_core; tests/benchmarks.test_vms_full_e2e; tests.unit.vector_memory.test_vector_memory
+# [CONSUMERS] zephyr.autonomy_core.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.governance.data_source_router.embedding_router; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.integration.vector_memory.embedding_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.trading.auto_runtime_core; tests/benchmarks.test_vms_full_e2e; tests.unit.vector_memory.test_vector_memory
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
