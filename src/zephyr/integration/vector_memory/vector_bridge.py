@@ -122,8 +122,8 @@ class VectorBridge:
         )
 
     def write_failure_pattern(self, pattern_text: str) -> str:
-        # 内容哈希作 doc_id——pattern_text 稳定时幂等；若 FLE 上游含 timestamp 导致每次不同，
-        # 需提取 pattern_key 业务键替代（见任务卡风险 B）
+        # 内容哈希作 doc_id——pattern_text 稳定时幂等
+        # 治本(风险B): scheduler.py 调用方已提取稳定 root_cause(去 z_score) 作 pattern_text
         doc_id = f"lesson::{hashlib.sha256(pattern_text.encode()).hexdigest()[:16]}"
         return self._vms.write(
             "lessons",

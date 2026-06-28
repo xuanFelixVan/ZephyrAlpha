@@ -404,7 +404,16 @@ class FeedbackLoopScheduler:
 
         if self.vector_bridge is not None and event.diagnosis is not None:
             try:
-                diag_text = getattr(event.diagnosis, "summary", None) or str(event.diagnosis)
+                # 治本(风险B): str(diagnosis) 含 uuid diagnosis_id → 内容哈希每次不同 = 无幂等
+                # 提取稳定 pattern_text: summary > root_cause(去 z_score 浮点) > str() 兜底
+                diag_text = getattr(event.diagnosis, "summary", None)
+                if diag_text is None:
+                    root_cause = getattr(event.diagnosis, "root_cause", None)
+                    if root_cause:
+                        # root_cause 格式 "Elevated {metric} (z={score:.2f})" → 保留稳定部分
+                        diag_text = root_cause.split(" (")[0]
+                    else:
+                        diag_text = str(event.diagnosis)
                 if diag_text and event.verification is not None:
                     verdict = getattr(event.verification, "verdict", None)
                     if verdict is not None and str(verdict) not in ("HEALTHY", "NOMINAL"):
