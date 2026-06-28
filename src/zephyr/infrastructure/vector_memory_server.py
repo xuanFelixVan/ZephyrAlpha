@@ -105,6 +105,10 @@ class VectorMemoryServer(BaseMCPServer):
                             "arbitration": {"type": "string"},
                         },
                     },
+                    "doc_id": {
+                        "type": "string",
+                        "description": "可选确定性业务 id——传入时同 id 覆盖(幂等),不传时回退 uuid+timestamp",
+                    },
                 },
             },
             handler=self._write,
@@ -170,7 +174,7 @@ class VectorMemoryServer(BaseMCPServer):
         hits = self._vms.search(collection_name, query, k=k)
         return {"hits": hits, "collection": collection_name, "query": query}
 
-    def _write(self, collection_name: str, content: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
+    def _write(self, collection_name: str, content: str, metadata: dict[str, Any] | None = None, doc_id: str | None = None) -> dict[str, Any]:
         if self._vms is None:
             return {"error": "VMS 未就绪", "written": False}
         from zephyr.shared.registry import ServiceRegistry
@@ -183,8 +187,8 @@ class VectorMemoryServer(BaseMCPServer):
                 "written": False,
             }
         try:
-            doc_id = self._vms.write(collection_name, content, metadata=metadata)
-            return {"doc_id": doc_id, "collection": collection_name, "written": True}
+            result_id = self._vms.write(collection_name, content, metadata=metadata, doc_id=doc_id)
+            return {"doc_id": result_id, "collection": collection_name, "written": True}
         except Exception as e:
             return {"error": str(e), "written": False}
 
