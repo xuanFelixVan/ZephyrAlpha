@@ -1203,7 +1203,7 @@ contracts:
     source_domain: D-OPS
     target_domains: [D-INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
-    physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health/ (MOD-INF-015)
+    physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health_probes.py (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
     description: "L12 → L01/L06 遥测健康检查契约。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。"

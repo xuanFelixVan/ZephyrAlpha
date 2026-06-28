@@ -761,6 +761,24 @@ repos:
         description: "YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线"
         stages: [manual]
 
+      # ── GATE-CONTRACT-PHYSICAL-PATH: 契约 physical_path 连字符目录阻断（SSoT 死代码治本）──
+      # 权威依据：AGENTS.md §CT-TEL-001~004 codegen 死代码治本约束（2026-06-28）
+      # 病根：CT-TEL-001~004 历史 physical_path 指向 src/zephyr/system-telemetry/（连字符目录），
+      #       Python 无法 import 连字符目录名，codegen 产物全是死代码。治本改为 null 后，
+      #       未来 AI 可能"修复" null 为路径让死代码复活。本门禁治本：检测连字符目录即 hard block。
+      # 检测范围：cross_layer_contracts.yaml 变更时触发
+      # 检测内容：physical_path 路径中任何目录段含连字符（不匹配 [a-zA-Z_][a-zA-Z0-9_]*）→ exit 1
+      # 模式：--ci 硬阻断（默认 pre-commit 阶段，非 manual）
+      - id: gate-contract-physical-path
+        name: "GATE-CONTRACT-PHYSICAL-PATH: 契约 physical_path 连字符目录阻断"
+        entry: python scripts/governance/d5_architecture/checkers/check_contract_physical_path.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts\\.yaml$"
+        description: "检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python 无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束"
+
       - id: gate-bom-utf8-check
         name: "GATE-BOM: UTF-8 BOM 检测"
         entry: python scripts/governance/d11_compliance/validate_no_utf8_bom.py

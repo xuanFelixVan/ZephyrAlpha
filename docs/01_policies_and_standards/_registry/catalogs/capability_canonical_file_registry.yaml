@@ -526,6 +526,100 @@ capabilities:
       显式声明。已知边界：git commit --no-verify 能绕过本 hook（git 固有设计），依赖
       GATE-COMMIT-GW 规则约束。
 
+  # --------------------------------------------------------------------------
+  # 以下 5 条为 2026-06-28 SSoT 三重冗余治本新增（CT-TEL-001~004 codegen 死代码修复）
+  # 病根：system-telemetry/ 连字符目录 codegen 死代码 + physical_path 可被恢复
+  # 治本：4 条 system_telemetry 真源能力反查 + 1 条 physical_path 门禁能力反查
+
+  - capability_id: system_telemetry_metrics_collector
+    canonical_override: src/zephyr/infrastructure/system_telemetry/contract_metrics.py
+    aliases:
+      - ContractMetricsCollector
+      - SlaRecord
+      - DriftAlert
+      - contract_metrics
+      - telemetry_metrics
+      - CT-TEL-001
+    description: >-
+      L12 遥测指标采集契约（CT-TEL-001）唯一手工实现真源（MOD-INF-015）。
+      cross_layer_contracts.yaml 中 CT-TEL-001 的 physical_path 为 null（停止 codegen），
+      本文件是唯一真源。含 ContractMetricsCollector / SlaRecord / DriftAlert 三个类。
+      被 tests/integration/ + tests/contracts/ + __init__.py 等 5+ 处 import。
+      新 AI 想做"遥测指标采集/契约指标收集/SLA 漂移告警"前，CapabilityLookup 会反查
+      到本文件，提示"扩展现有类，勿新建 system-telemetry/ 连字符目录或重复造轮子"。
+      禁止在 observability/ 下重建 contract_metrics.py（已作为 codegen 死代码删除）。
+
+  - capability_id: system_telemetry_logs_sink
+    canonical_override: src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py
+    aliases:
+      - StructuredSink
+      - structured_sink
+      - telemetry_logs
+      - jsonl_sink
+      - CT-TEL-002
+    description: >-
+      L12 遥测日志持久化契约（CT-TEL-002）唯一手工实现真源（MOD-INF-015）。
+      cross_layer_contracts.yaml 中 CT-TEL-002 的 physical_path 为 null（停止 codegen），
+      本文件是唯一真源。结构化日志通过 JSONL 持久化，支持 trace_id 关联。
+      新 AI 想做"遥测日志持久化/结构化日志 sink/JSONL 日志写入"前，CapabilityLookup
+      会反查到本文件，提示"扩展现有类，勿新建"。
+
+  - capability_id: system_telemetry_traces_span
+    canonical_override: src/zephyr/infrastructure/system_telemetry/traces/span_stub.py
+    aliases:
+      - SpanStub
+      - span_stub
+      - telemetry_traces
+      - trace_span
+      - CT-TEL-003
+    description: >-
+      L12 遥测链路追踪契约（CT-TEL-003）唯一手工实现真源（MOD-INF-015）。
+      cross_layer_contracts.yaml 中 CT-TEL-003 的 physical_path 为 null（停止 codegen），
+      本文件是唯一真源。W3C TraceContext 传播，采样率可配置，提供 span 创建/属性设置/
+      上下文管理接口。新 AI 想做"链路追踪/span 创建/trace context 传播"前，CapabilityLookup
+      会反查到本文件，提示"扩展现有类，勿新建"。
+
+  - capability_id: system_telemetry_health_probe
+    canonical_override: src/zephyr/infrastructure/system_telemetry/health_probes.py
+    aliases:
+      - HealthProbe
+      - health_probes
+      - telemetry_health
+      - liveness_probe
+      - readiness_probe
+      - CT-TEL-004
+    description: >-
+      L12 遥测健康检查契约（CT-TEL-004）唯一手工实现真源（MOD-INF-015）。
+      cross_layer_contracts.yaml 中 CT-TEL-004 的 physical_path 为 null（停止 codegen），
+      本文件是唯一真源。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。
+      新 AI 想做"健康检查/存活探针/就绪探针"前，CapabilityLookup 会反查到本文件，
+      提示"扩展现有类，勿新建"。禁止在 observability/ 下重建 health_probes.py
+      （已作为 codegen 死代码删除）。
+
+  - capability_id: contract_physical_path_validator
+    canonical_override: scripts/governance/d5_architecture/checkers/check_contract_physical_path.py
+    aliases:
+      - GATE-CONTRACT-PHYSICAL-PATH
+      - gate-contract-physical-path
+      - physical_path_check
+      - contract_path_validator
+      - dash_directory_detector
+    description: >-
+      cross_layer_contracts.yaml 中 physical_path 连字符目录阻断门禁（GATE-CONTRACT-PHYSICAL-PATH）。
+      病根（2026-06-28）：CT-TEL-001~004 历史 physical_path 指向 src/zephyr/system-telemetry/
+      （连字符目录），Python 无法 import 连字符目录名，codegen 产物全是死代码。治本改为 null
+      后，未来 AI 可能"修复" null 为路径让死代码复活。本门禁治本：检测 physical_path 路径中
+      任何目录段含连字符（不匹配 [a-zA-Z_][a-zA-Z0-9_]*）→ hard block (exit 1 in --ci)。
+      pre-commit 事件驱动（cross_layer_contracts.yaml 变更时触发，非 manual 阶段）。
+      canonical 在 scripts/ 下（非 src/zephyr/），basename check_contract_physical_path
+      不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明。
+      扩展提示：如需检测其他 YAML 字段的路径合法性，扩展本脚本（加 --target 参数），
+      勿新建 checker（向内收原则1：能用现成的不创造）。
+    integrity_anchors:
+      - _IDENT_RE              # Python标识符正则(篡改即检测失效,GitCommitGateway AST 校验锚点)
+      - _check_physical_path   # 单契约检测函数(检测逻辑真源)
+      - _KNOWN_DEAD_PATTERNS   # 已知死路径模式列表(篡改即丢失精确提示)
+
 # ============================================================================
 # 维护日志
 # ============================================================================
@@ -564,3 +658,11 @@ capabilities:
 #     新 AI 用 reg.find("ssot gate")/find("capability duplicate") 现在能定位真源
 #   - 治本（2c）：红蓝对抗发现 check_ssot_gate.py 漂移 bug（commit a1fffa4b 漏改，
 #     d.hard AttributeError），同步修复 + 对齐 B 方案 + 共享 CAPABILITY_DUPLICATE_FIX_HINT
+# 2026-06-28 新增 5 条（SSoT 三重冗余治本，CT-TEL-001~004 codegen 死代码修复）：
+#   - 4 条 system_telemetry 真源能力（metrics_collector/logs_sink/traces_span/health_probe）：
+#     canonical 均指向 src/zephyr/infrastructure/system_telemetry/ 下对应文件（MOD-INF-015）
+#   - 1 条 contract_physical_path_validator（GATE-CONTRACT-PHYSICAL-PATH 门禁）：
+#     canonical_override = scripts/governance/d5_architecture/checkers/check_contract_physical_path.py
+#   - 治本（2d 可发现性）：新 AI 搜"遥测指标/日志/追踪/健康探针"能定位真源，不再重复造轮子
+#   - 治本（2c 防绕过）：physical_path 指向连字符目录时 pre-commit 硬阻断，防止死代码复活
+#   - 红蓝对抗发现：AGENTS.md 未注册 CT-TEL 真源 + 无门禁防 physical_path 恢复，本次治本
