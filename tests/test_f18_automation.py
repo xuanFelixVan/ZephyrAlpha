@@ -29,7 +29,7 @@ from pathlib import Path
 import psycopg2
 import pytest
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DEPGRAPH_DB 路径常量已移除
@@ -237,7 +237,7 @@ class TestAutoClose:
         runner.run()
         # 验证审计日志表有记录（P2迁移后查询 PostgreSQL）
         try:
-            conn = get_db_connection()
+            conn = get_depgraph_pg_connection()
             with conn.cursor() as cur:
                 cur.execute("SELECT COUNT(*) FROM governance_audit_logs")
                 count = cur.fetchone()[0]

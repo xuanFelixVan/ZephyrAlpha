@@ -303,12 +303,12 @@ STEP 0.5 — 🧠 大脑系统启动（单次 boot 模式，Trae AI 进入项目
            start_brain.py 现在以 --once 模式运行：执行 boot 后立即退出。
 STEP 1  — 读 docs/registry_of_registries.yaml → 了解全项目 48 个注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板（蓝图/任务卡/依赖图/策略/标准等）
-STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph` localhost:5432，禁止裸连）→ 项目域架构+模块归属+路径设计规则+capacity声明。连接用 `from zephyr.governance.depgraph_schema import get_db_connection`
+STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph` localhost:5432，禁止裸连）→ 项目域架构+模块归属+路径设计规则+capacity声明。连接用 `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`
 STEP 1.2.1 — 提取文件级依赖：`python scripts/governance/extract_depgraph.py --paths`（文件级依赖关系，含设计态和运营态，真源 depgraph PostgreSQL）→ 文件依赖+迁移状态
 STEP 1.2.2 — 路径树工具链（全景图维护，文件变更后必跑）:
            - 运营态目录树刷新: `python scripts/governance/generate_project_path_tree.py --write`（扫描磁盘→写入 depgraph 数据库 arch_directory_tree表。文件创建/删除/移动后MUST执行）
            - 运营态目录树检查: `python scripts/governance/generate_project_path_tree.py --check`（CI漂移检测，Session关门前必跑，G6_PT门禁）
-           - 目标路径推导与对齐验证: 通过 `get_db_connection()` 查询 `SELECT path, blueprint_id FROM nodes WHERE design_maturity='production'`（派生产物已删除，depgraph 数据库是唯一查询入口，禁止重新创建 YAML 副本）
+           - 目标路径推导与对齐验证: 通过 `get_depgraph_pg_connection()` 查询 `SELECT path, blueprint_id FROM nodes WHERE design_maturity='production'`（派生产物已删除，depgraph 数据库是唯一查询入口，禁止重新创建 YAML 副本）
            - 架构文档路径树: `python scripts/governance/d5_architecture/generators/generate_path_tree.py`（读 depgraph 数据库→生成md文档，供人类查看）
 STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 STEP 2  — 读 project_rules.md（即 L0 首关页面）→ 了解硬规则
@@ -324,7 +324,7 @@ STEP 4.11 — Rollback System 激活: preflight + AutoTrigger + Kill Switch
 STEP 4.12 — Budget Enforcer 激活: Token/Cost/Time 三维预算
 STEP 4.13 — Audit Trail: 审计链完整性 + 最近 50 条事件注入
 STEP 4.14 — A2A Protocol: 发现→通信→调度→防护 四段检查
-STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py --output-db（裁定#207 R2 C2：破坏性DB重建需--force，DELETE运营态节点后从磁盘扫描重建，手工维护数据丢失）。depgraph 数据库是唯一查询入口，通过 `get_db_connection()` 或 `apply_depgraph.py --query` 查询。概览用 `python scripts/governance/extract_depgraph.py --summary`
+STEP 4.15 — DepMap 依赖图: ⚠️ 禁止运行 generate_project_depgraph.py --output-db（裁定#207 R2 C2：破坏性DB重建需--force，DELETE运营态节点后从磁盘扫描重建，手工维护数据丢失）。depgraph 数据库是唯一查询入口，通过 `get_depgraph_pg_connection()` 或 `apply_depgraph.py --query` 查询。概览用 `python scripts/governance/extract_depgraph.py --summary`
 STEP 5  — 按需定位具体注册表 → 开工
 STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() → claim_next → 执行 → transition(COMPLETED) → 循环
            `from zephyr.trading.autopilot import AutoPilot; ap = AutoPilot(<session_id>); print(ap.status_report()); tasks = ap.run_cycle(max_tasks=3)`

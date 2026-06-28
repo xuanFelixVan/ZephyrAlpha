@@ -45,7 +45,7 @@ from zephyr.shared.io.paths import REPO_ROOT, find_repo_root  # noqa: E402
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
 import psycopg2  # noqa: E402
 from psycopg2.extras import RealDictCursor  # noqa: E402
-from zephyr.governance.depgraph_schema import get_db_connection  # noqa: E402
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 
 class PgConnExecuteWrapper:
@@ -104,7 +104,7 @@ def get_depgraph_pg_connection(autocommit: bool = True) -> PgConnExecuteWrapper:
     :param autocommit: True 启用自动提交（默认，适合只读/简单写）；False 需显式 conn.commit()
     :return: PgConnExecuteWrapper 包装的 psycopg2 连接
     """
-    return PgConnExecuteWrapper(get_db_connection(autocommit=autocommit))
+    return PgConnExecuteWrapper(get_depgraph_pg_connection(autocommit=autocommit))
 
 EXCLUDE_DIRS: frozenset[str] = frozenset(
     {

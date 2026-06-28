@@ -10,11 +10,11 @@ from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 
 def test_all():
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     conn.cursor_factory = RealDictCursor
     c = conn.cursor()
     passed = 0

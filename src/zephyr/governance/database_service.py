@@ -39,7 +39,7 @@ import duckdb
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 
 class DatabaseService:
@@ -83,7 +83,7 @@ class DatabaseService:
         返回 psycopg2 connection，cursor_factory=RealDictCursor 以兼容原 sqlite3.Row 的 dict(row) 用法。
         """
         if self._depgraph_conn is None:
-            self._depgraph_conn = get_db_connection(autocommit=True)
+            self._depgraph_conn = get_depgraph_pg_connection(autocommit=True)
             self._depgraph_conn.cursor_factory = RealDictCursor
         return self._depgraph_conn
 

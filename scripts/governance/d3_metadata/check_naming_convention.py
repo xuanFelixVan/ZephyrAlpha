@@ -1321,6 +1321,11 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
     派生关系：blueprint_id 的域片段派生自 domain_id（去掉 D- 前缀）。
     数字序号制 module_id（MOD-L00-001 / MOD-INF-005）不含域片段，跳过校验。
     仅 .py 文件头部含 [BLUEPRINT]+[DOMAIN] 时校验。
+
+    BOM 治本（2026-06-28）：用 utf-8-sig 自动剥离 BOM。HEAD 版本部分 .py 文件含 BOM
+    （\\ufeff），导致 ^\\s*# 正则在第一行匹配失败 → bp_match=None → N-17 不触发 →
+    历史豁免差集失效 → 工作区版本被误判为"新引入违规"。utf-8-sig 让 HEAD 和工作区
+    版本解析一致，历史豁免差集正确计算。
     """
     name = Path(filepath).name
     if not name.endswith(".py"):
@@ -1328,7 +1333,7 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8", errors="replace")
+        content = abspath.read_text(encoding="utf-8-sig", errors="replace")
     except Exception:
         return []
 

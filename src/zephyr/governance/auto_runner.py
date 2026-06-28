@@ -35,7 +35,7 @@ from typing import Any
 
 import psycopg2
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 logger = logging.getLogger(__name__)
 
@@ -199,7 +199,7 @@ class GovernanceAutoRunner:
         P2迁移后：从 SQLite 切换到 PostgreSQL，使用 psycopg2 cursor 模式。
         """
         try:
-            conn = get_db_connection(autocommit=False)
+            conn = get_depgraph_pg_connection(autocommit=False)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
             logger.warning("_write_audit_log: PG 连接失败: %s", e)
             return
@@ -251,7 +251,7 @@ class GovernanceAutoRunner:
             list[str]: 匹配的 gate_id 列表；DB不可用时返回空列表
         """
         try:
-            conn = get_db_connection(autocommit=True)
+            conn = get_depgraph_pg_connection(autocommit=True)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
             logger.warning("get_gates_by_event(%s) PG 连接失败: %s", event_type, e)
             return []
@@ -276,7 +276,7 @@ class GovernanceAutoRunner:
     def get_all_event_types() -> list[str]:
         """从 PostgreSQL depgraph 查询所有非空的 event_driven 类型。"""
         try:
-            conn = get_db_connection(autocommit=True)
+            conn = get_depgraph_pg_connection(autocommit=True)
         except (psycopg2.Error, FileNotFoundError, ValueError) as e:
             logger.warning("get_all_event_types PG 连接失败: %s", e)
             return []

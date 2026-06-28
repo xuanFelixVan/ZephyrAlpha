@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
@@ -21,7 +21,7 @@ def red_team_tests():
     print("红方测试：尝试覆盖设计态节点")
     print("=" * 80)
 
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     cursor = conn.cursor()
 
     # 1. 插入测试设计态节点

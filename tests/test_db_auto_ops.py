@@ -17,7 +17,7 @@ from pathlib import Path
 
 import psycopg2
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
@@ -67,7 +67,7 @@ def test_database_service_init():
             assert False, f"governance.db 连接失败: {ex}"
 
         try:
-            conn = get_db_connection()
+            conn = get_depgraph_pg_connection()
             with conn.cursor() as cur:
                 cur.execute("SELECT 1")
                 cur.fetchone()
@@ -98,7 +98,7 @@ def test_health_check():
 
     # depgraph 健康检查（P2迁移后：PostgreSQL）
     try:
-        conn = get_db_connection()
+        conn = get_depgraph_pg_connection()
         with conn.cursor() as cur:
             cur.execute("SELECT 1")
             result = cur.fetchone()
@@ -137,7 +137,7 @@ def test_event_notification():
     # 模拟：插入数据后触发事件（P2迁移后：PostgreSQL）
     # node_id 在 v5 migration 后为 bigint（INTEGER PK AUTOINCREMENT → PG bigint）
     test_node_id = 999999
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
             # 清理可能残留的测试数据
@@ -218,7 +218,7 @@ def test_schema_version_check():
 
     # depgraph schema 版本检查（P2迁移后：PostgreSQL）
     try:
-        conn = get_db_connection()
+        conn = get_depgraph_pg_connection()
         with conn.cursor() as cur:
             cur.execute("SELECT version FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
             row = cur.fetchone()

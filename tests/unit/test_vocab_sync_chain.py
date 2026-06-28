@@ -38,7 +38,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _SCRIPTS_GOV = _PROJECT_ROOT / "scripts" / "governance"
@@ -168,7 +168,7 @@ class TestBugBVocabularyNameKey:
         只读查询生产 depgraph (PostgreSQL)，不写入任何数据。
         """
         try:
-            conn = get_db_connection()
+            conn = get_depgraph_pg_connection()
         except Exception:
             pytest.skip("depgraph (PostgreSQL) 不可用")
         try:
@@ -187,7 +187,7 @@ class TestBugBVocabularyNameKey:
     def test_field_vocabularies_has_expected_vocab_names(self) -> None:
         """DB field_vocabularies 表包含核心 vocabulary 的裸字段名。"""
         try:
-            conn = get_db_connection()
+            conn = get_depgraph_pg_connection()
         except Exception:
             pytest.skip("depgraph (PostgreSQL) 不可用")
         try:
@@ -513,3 +513,72 @@ class TestDerivedFileConsistency:
             assert "field_name" not in data, (
                 f"{vocab_file} 含遗留 field_name 键（应为 vocabulary_name）"
             )
+
+
+# ===========================================================================
+# 数据库连接函数命名约定（真源冲突治本——F1 改名回归保护）
+# ===========================================================================
+
+class TestDbConnectionNamingConvention:
+    """数据库连接函数命名约定断言（防真源冲突回归）。
+
+    病根：depgraph_schema.get_db_connection 与 sqlite_schema/db_utils 的同名函数冲突。
+    治本：F1 改名为 get_depgraph_pg_connection。见 AGENTS.md §11.4。
+    """
+
+    def test_depgraph_pg_connection_exists(self) -> None:
+        """F1 必须定义 get_depgraph_pg_connection（PG 入口）。"""
+        import zephyr.governance.depgraph_schema as mod  # noqa: PLC0415
+
+        assert hasattr(mod, "get_depgraph_pg_connection"), (
+            "depgraph_schema.py 未定义 get_depgraph_pg_connection（真源冲突治本回归）"
+        )
+
+    def test_depgraph_get_db_connection_is_deprecated_alias(self) -> None:
+        """F1 的 get_db_connection 必须是 deprecation 别名，指向 get_depgraph_pg_connection。"""
+        import zephyr.governance.depgraph_schema as mod  # noqa: PLC0415
+
+        assert hasattr(mod, "get_db_connection"), (
+            "depgraph_schema.py 未保留 get_db_connection deprecation 别名（向后兼容破坏）"
+        )
+        assert mod.get_db_connection is mod.get_depgraph_pg_connection, (
+            "get_db_connection 不是 get_depgraph_pg_connection 的别名（真源分裂）"
+        )
+
+    def test_sqlite_get_db_connection_exists_in_db_utils(self) -> None:
+        """F3 必须定义 get_db_connection（SQLite governance.db 入口）。"""
+        import zephyr.shared.utils.db_utils as mod  # noqa: PLC0415
+
+        assert hasattr(mod, "get_db_connection"), (
+            "db_utils.py 未定义 get_db_connection（SQLite 入口缺失）"
+        )
+
+    def test_sqlite_get_db_connection_exists_in_sqlite_schema(self) -> None:
+        """F2 必须定义 get_db_connection（SQLite governance.db 入口）。"""
+        import zephyr.governance.sqlite_schema as mod  # noqa: PLC0415
+
+        assert hasattr(mod, "get_db_connection"), (
+            "sqlite_schema.py 未定义 get_db_connection（SQLite 入口缺失）"
+        )
+
+    def test_depgraph_pg_connection_returns_psycopg2(self) -> None:
+        """F1 返回类型必须是 psycopg2 connection（非 sqlite3）。"""
+        import inspect  # noqa: PLC0415
+
+        import zephyr.governance.depgraph_schema as mod  # noqa: PLC0415
+
+        src = inspect.getsource(mod.get_depgraph_pg_connection)
+        assert "psycopg2.connect" in src, (
+            "get_depgraph_pg_connection 未使用 psycopg2.connect（PG 入口被篡改）"
+        )
+
+    def test_sqlite_get_db_connection_uses_sqlite3(self) -> None:
+        """F3 必须使用 sqlite3.connect（非 psycopg2）。"""
+        import inspect  # noqa: PLC0415
+
+        import zephyr.shared.utils.db_utils as mod  # noqa: PLC0415
+
+        src = inspect.getsource(mod.get_db_connection)
+        assert "sqlite3.connect" in src, (
+            "db_utils.get_db_connection 未使用 sqlite3.connect（SQLite 入口被篡改）"
+        )

@@ -1295,6 +1295,11 @@ def get_depgraph_dict_cursor():
 
 **操作**：修改 `get_db_connection` 函数，根据数据库类型选择连接方式：
 
+> ⚠ **未实现的设计稿（2026-06-28 真源冲突治本标注）**：
+> 此设计稿提议把 `db_utils.py` 的 `get_db_connection` 改为 `db_type` 路由器，**实际未实现**。
+> 实际采用方案：PG 入口 = [`depgraph_schema.get_depgraph_pg_connection()`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py)（原名 `get_db_connection`，已改名消除同名冲突），SQLite 入口 = [`db_utils.get_db_connection(db_path=None)`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py)（签名无 `db_type` 参数）。
+> **新 AI 勿按此设计稿补全路由器**——会破坏 83 处 SQLite 调用点的隐式契约。见 AGENTS.md §11.4。
+
 ```python
 def get_db_connection(db_type='governance'):
     """获取数据库连接。

@@ -61,10 +61,10 @@ P2 迁移后 schema 真源（重要）
 
 用法
 ----
-    from zephyr.governance.persistence.depgraph_schema import init_db, get_db_connection, DB_PATH
+    from zephyr.governance.persistence.depgraph_schema import init_db, get_depgraph_pg_connection, DB_PATH
 
     init_db()              # 幂等，验证 PG schema 健康性
-    conn = get_db_connection()   # 返回 PostgreSQL 连接（psycopg2）
+    conn = get_depgraph_pg_connection()   # 返回 PostgreSQL 连接（psycopg2）
 """
 
 from __future__ import annotations
@@ -1133,7 +1133,7 @@ def init_db(
 
     :return: DB_PATH（SQLite 备份路径参考，PG 模式下不再使用此路径）
     """
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
@@ -1166,7 +1166,7 @@ def init_db(
 # ---------------------------------------------------------------------------
 
 
-def get_db_connection(
+def get_depgraph_pg_connection(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
     *,
     superuser: bool = False,
@@ -1204,9 +1204,14 @@ def get_db_connection(
     return conn
 
 
+# DEPRECATED: get_db_connection 已改名为 get_depgraph_pg_connection（消除与 SQLite 同名冲突）。
+# 保留别名向后兼容，新代码必须用 get_depgraph_pg_connection。见 AGENTS.md §11.4。
+get_db_connection = get_depgraph_pg_connection
+
+
 def table_names(db_path: Path | str | None = None) -> list[str]:
     """返回 PostgreSQL depgraph 中所有 public schema 表名。"""
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
@@ -1222,7 +1227,7 @@ def table_names(db_path: Path | str | None = None) -> list[str]:
 
 def schema_version(db_path: Path | str | None = None) -> int:
     """返回当前 PostgreSQL depgraph 的 schema 版本。"""
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     try:
         return _get_current_version(conn)
     finally:
@@ -1231,7 +1236,8 @@ def schema_version(db_path: Path | str | None = None) -> int:
 
 __all__ = [
     "DB_PATH",
-    "get_db_connection",
+    "get_depgraph_pg_connection",
+    "get_db_connection",  # DEPRECATED 别名，向后兼容
     "init_db",
     "schema_version",
     "table_names",

@@ -19,7 +19,7 @@ import psycopg2
 import pytest
 import yaml
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.rule_engine import RuleLoader
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -89,7 +89,7 @@ class TestGateIntegration:
 class TestDepgraphIntegration:
     def test_depgraph_rule_node_count(self, loader):
         try:
-            conn = get_db_connection()
+            conn = get_depgraph_pg_connection()
             with conn.cursor() as cursor:
                 cursor.execute("SELECT COUNT(DISTINCT node_id) FROM nodes WHERE node_type = 'rule'")
                 db_count = cursor.fetchone()[0]
@@ -106,7 +106,7 @@ class TestDepgraphIntegration:
 class TestArchitecturePanorama:
     def test_rule_domain_matches_panorama(self, loader):
         try:
-            conn = get_db_connection()
+            conn = get_depgraph_pg_connection()
             with conn.cursor() as cursor:
                 cursor.execute("SELECT COUNT(DISTINCT domain_id) FROM domains")
                 domain_count = cursor.fetchone()[0]

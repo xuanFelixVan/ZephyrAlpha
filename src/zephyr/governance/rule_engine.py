@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
+# [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] zephyr.governance.rule_engine
 # [DOMAIN] D-GOV_RULE
 # [DEPENDENCIES]
@@ -39,7 +39,7 @@ import psycopg2
 import yaml
 from psycopg2.extras import RealDictCursor
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 
 def _find_project_root() -> Path:
@@ -105,7 +105,7 @@ class RuleLoader:
         if self._db_available is False:
             return None
         try:
-            conn = _PgConnExecuteWrapper(get_db_connection(autocommit=True))
+            conn = _PgConnExecuteWrapper(get_depgraph_pg_connection(autocommit=True))
             # 检查 rule_bindings 表存在
             cursor = conn.execute("""
                 SELECT table_name

@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 注：depgraph 已迁移到 PostgreSQL（P2迁移），DB_PATH 路径常量已移除
@@ -22,7 +22,7 @@ def red_team_tests():
     print("红方测试：尝试覆盖设计态目录")
     print("=" * 80)
 
-    conn = get_db_connection()
+    conn = get_depgraph_pg_connection()
     cursor = conn.cursor()
 
     # 1. 插入测试设计态目录节点（state 列 v5 已删除，改用 design_maturity）

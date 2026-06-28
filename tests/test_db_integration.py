@@ -15,7 +15,7 @@ from pathlib import Path
 
 import psycopg2
 
-from zephyr.governance.depgraph_schema import get_db_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 数据库路径
@@ -37,7 +37,7 @@ def test_cross_db_domain_consistency():
     gov_conn.close()
 
     # 从 depgraph (PostgreSQL) 获取所有 domain_id
-    dep_conn = get_db_connection()
+    dep_conn = get_depgraph_pg_connection()
     dep_cursor = dep_conn.cursor()
     dep_cursor.execute("SELECT DISTINCT domain_id FROM nodes WHERE domain_id IS NOT NULL")
     dep_domains = {row[0] for row in dep_cursor.fetchall()}
@@ -67,7 +67,7 @@ def test_directory_tree_filesystem_alignment():
     """测试 depgraph arch_directory_tree 与实际文件系统对齐（P2迁移后：PostgreSQL）"""
     print("\n[TEST] arch_directory_tree 与实际文件系统对齐验证")
 
-    dep_conn = get_db_connection()
+    dep_conn = get_depgraph_pg_connection()
     dep_cursor = dep_conn.cursor()
 
     # 获取所有文件路径（排除目录；state 列 v5 已删除，仅按 path_type 过滤）
@@ -114,7 +114,7 @@ def test_schema_version_consistency():
     gov_conn.close()
 
     # depgraph (PostgreSQL)
-    dep_conn = get_db_connection()
+    dep_conn = get_depgraph_pg_connection()
     dep_cursor = dep_conn.cursor()
     try:
         dep_cursor.execute("SELECT version, applied_at FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
@@ -165,7 +165,7 @@ def test_data_integrity():
     gov_conn.close()
 
     # depgraph (PostgreSQL) 节点数
-    dep_conn = get_db_connection()
+    dep_conn = get_depgraph_pg_connection()
     dep_cursor = dep_conn.cursor()
     dep_cursor.execute("SELECT COUNT(*) FROM nodes")
     node_count = dep_cursor.fetchone()[0]
@@ -210,7 +210,7 @@ def main():
     print("DM-100019: 三库集成测试+四方对齐验证")
     print("=" * 80)
 
-    # 检查数据库文件是否存在（注：depgraph 已迁移到 PostgreSQL，通过 get_db_connection() 验证）
+    # 检查数据库文件是否存在（注：depgraph 已迁移到 PostgreSQL，通过 get_depgraph_pg_connection() 验证）
     for db_path, db_name in [
         (GOVERNANCE_DB, "governance.db"),
         (MARKET_DB, "market.duckdb"),
@@ -222,7 +222,7 @@ def main():
 
     # 验证 depgraph (PostgreSQL) 可连接
     try:
-        dep_conn = get_db_connection()
+        dep_conn = get_depgraph_pg_connection()
         dep_conn.close()
         print("✓ depgraph (PostgreSQL) 连接成功")
     except Exception as e:

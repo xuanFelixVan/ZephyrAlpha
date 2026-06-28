@@ -183,9 +183,9 @@ class KnowledgeTransferGate:
                 lines.append("  (索引解析失败)")
 
         try:
-            from zephyr.governance.depgraph_schema import get_db_connection
+            from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
-            conn = get_db_connection(autocommit=True)
+            conn = get_depgraph_pg_connection(autocommit=True)
             with conn.cursor() as cur:
                 cur.execute("SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5")
                 top = [row["node_id"] for row in cur.fetchall()]

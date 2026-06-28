@@ -45,7 +45,7 @@
 
 | 真源 | 绝对路径 | 说明 |
 |------|---------|------|
-| **架构全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_db_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
+| **架构全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
 | **治理数据库** | `D:/ZephyrAlpha/data/databases/governance.db` | SQLite，治理元数据+任务卡+成本+审计日志（26表）。任务系统SSoT。访问：`python -c "from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); print(len(r.list_all()))"` |
 | **业务时序数据库** | `D:/ZephyrAlpha/data/databases/market.duckdb` | DuckDB，业务时序数据（Tick/K线/因子/订单/持仓/风控，7表+1视图）。访问：`python -c "import duckdb; con=duckdb.connect(r'D:/ZephyrAlpha/data/databases/market.duckdb', read_only=True); print(con.execute('SHOW TABLES').fetchall())"` |
 | **迁移登记表** | `D:/ZephyrAlpha/docs/02_enterprise_architecture/migration_registry.yaml` | 每个需要迁移的文件的旧路径→新路径映射。搬家任务卡的唯一真源 |
@@ -73,7 +73,7 @@
 | **新建/改造自动化系统** | 已通过两轨分类？ 🕐/⚡/🕐+⚡？ | RULE-FIFTEEN 施工三步 → 对照分类表 → 实现 → 验证 |
 | **结束 session** | 锁释放？临时文件清？ | `python scripts/lock_files.py release-all` + 零残留扫描 |
 | **处理任何任务** | 有对应 Agent Skill？ | 查看 `data/capability_cards/` 目录（skill_*.yaml）→ 匹配 → Read 对应 yaml |
-| **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `python scripts/governance/extract_depgraph.py --summary` 提取子集；修改用 `apply_depgraph.py --batch`。depgraph 在 PostgreSQL，连接用 `get_db_connection()` |
+| **读取/修改 depgraph** | 用 extract_depgraph.py 提取？不是直接裸连？ | `python scripts/governance/extract_depgraph.py --summary` 提取子集；修改用 `apply_depgraph.py --batch`。depgraph 在 PostgreSQL，连接用 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` |
 
 跳过任何一步 → 可能产生孤儿文件、死锁、重复轮子。
 
@@ -84,7 +84,7 @@
 ```
 1. 读 docs/registry_of_registries.yaml → 了解全项目有什么
 2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
-2.1 确认三库就绪：depgraph（PostgreSQL，依赖图+架构全景）+ governance.db（SQLite，治理/任务卡/审计日志）+ market.duckdb（DuckDB，业务时序数据）。depgraph 用 extract_depgraph.py 或 `get_db_connection()`；governance 用 TaskRepository；market 用 duckdb.connect(read_only=True)
+2.1 确认三库就绪：depgraph（PostgreSQL，依赖图+架构全景）+ governance.db（SQLite，治理/任务卡/审计日志）+ market.duckdb（DuckDB，业务时序数据）。depgraph 用 extract_depgraph.py 或 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`；governance 用 TaskRepository；market 用 duckdb.connect(read_only=True)
 3. 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
@@ -1015,7 +1015,7 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 ## RULE-SIXTEEN：depgraph 程序化访问协议
 **YAML真源**: → 参见 rules/trae_054_depgraph_access_protocol.yaml
 
-**核心**：depgraph 存储在 PostgreSQL 16 数据库（localhost:5432, 数据库名 `depgraph`, 用户 `zephyr`，schema v18, 25张表）。连接入口：`from zephyr.governance.depgraph_schema import get_db_connection`。禁止裸 `psql`/`sqlite3` 连接，必须通过提取/应用脚本或 `get_db_connection()` 操作。
+**核心**：depgraph 存储在 PostgreSQL 16 数据库（localhost:5432, 数据库名 `depgraph`, 用户 `zephyr`，schema v18, 25张表）。连接入口：`from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`。禁止裸 `psql`/`sqlite3` 连接，必须通过提取/应用脚本或 `get_depgraph_pg_connection()` 操作。
 
 ### Schema 变更协议（DDL-as-Code 铁律）
 
@@ -1080,7 +1080,7 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 
 | # | 行为 | 后果 |
 |---|------|------|
-| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph 数据库 | 绕过 `get_db_connection()` 连接管理，连接泄漏风险 |
+| ❌ | 用裸 `psql` / `sqlite3` 直接连接 depgraph 数据库 | 绕过 `get_depgraph_pg_connection()` 连接管理，连接泄漏风险 |
 | ❌ | 用 Read 工具读取 `data/databases/archive/` 下归档文件 | 数据过时，真源在 PostgreSQL |
 | ❌ | 用任何方式将 depgraph 全表内容注入 AI 上下文 | 55M tokens → 内存溢出 |
 | ❌ | 拆分 depgraph 为 39 个域文件 | 跨域关系丢失 → 漂移和幻觉 |
@@ -1090,7 +1090,7 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 
 | 场景 | 允许操作 |
 |------|---------|
-| 通过 `get_db_connection()` 执行有限查询（LIMIT/WHERE） | ✅ 返回结果集可控 |
+| 通过 `get_depgraph_pg_connection()` 执行有限查询（LIMIT/WHERE） | ✅ 返回结果集可控 |
 | 运行 generate_project_depgraph.py 生成/更新 depgraph（⚠️ 架构升级期间禁止） | ✅ 生成脚本内部处理 |
 | 运行 diagnose_depgraph.py 诊断 | ✅ 诊断脚本内部处理 |
 
@@ -1380,7 +1380,7 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 | 任何文件变更后 | `python scripts/governance/run_all.py --depth quick` | 有发现 → 先修再关 |
 | 修改蓝图§5.5自动化触发机制 / 修改代码实现 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint <蓝图路径>` | §5.5状态列与代码不一致 → 禁止关闭任务 |
 | **新建/改造自动化系统** | RULE-FIFTEEN 两轨判定：对照分类表 → 🕐 定时(circadian_scheduler) / ⚡ 事件(hook_registry) / 🕐+⚡ 双轨（注：新建系统仅用事件轨+CI兜底） | 单轨实现或未注册 → 禁止关闭任务 |
-| **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN。depgraph 在 PostgreSQL，连接用 `get_db_connection()` | 裸连/读 archive/ 下文件 → 数据过时 |
+| **读取/修改 depgraph** | `python scripts/governance/extract_depgraph.py --summary`（读取）/ `python scripts/governance/apply_depgraph.py --batch <变更文件>`（修改） → 详见 RULE-SIXTEEN。depgraph 在 PostgreSQL，连接用 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` | 裸连/读 archive/ 下文件 → 数据过时 |
 | **三方对齐（全景图+蓝图+代码头部）** | 结构变更后 MUST 执行三方对齐：①全景图对齐: `diagnose_depgraph.py`（depgraph↔磁盘文件）②蓝图对齐: 蓝图frontmatter.file_manifest+dependency_graph↔实际代码 ③代码头部对齐: [BLUEPRINT]/[CONSUMERS]/[MODULE]↔实际引用。⚠️ 架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph 数据库）。仅 depgraph 数据库为真源。正常期: `generate_project_depgraph.py --max-workers 8` + `generate_project_path_tree.py --write` + 蓝图 frontmatter | 任一方过时 → AI 看到幻影/漏掉真实文件 → 禁止关闭任务 |
 | **创建/删除/移动文件后** | `python scripts/governance/generate_project_path_tree.py --write` | 路径树过时 → 下个 session 冷启动看到错误结构 → 禁止关闭任务 |
 | 安全敏感变更 | `python scripts/governance/d6_security/scan_secret_leak.py` | 泄漏 → 硬阻断 CI |

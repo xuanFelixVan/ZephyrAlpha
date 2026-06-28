@@ -32,7 +32,7 @@ for p in (str(_REPO_ROOT), str(_SRC)):
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from zephyr.governance.depgraph_schema import get_db_connection, _load_pg_config
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, _load_pg_config
 
 RESULTS: list[tuple[str, bool, str]] = []
 TEST_TABLE = "_p2_concurrent_test"
@@ -52,7 +52,7 @@ def _record(name: str, ok: bool, detail: str) -> None:
 def _setup_test_table() -> None:
     """创建临时测试表（如果存在则先删除），并 GRANT 权限给普通用户。"""
     pg_user = _get_pg_user()
-    conn = get_db_connection(autocommit=True, superuser=True)
+    conn = get_depgraph_pg_connection(autocommit=True, superuser=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"DROP TABLE IF EXISTS {TEST_TABLE}")
@@ -76,7 +76,7 @@ def _setup_test_table() -> None:
 
 def _cleanup_test_table() -> None:
     """清理测试表。"""
-    conn = get_db_connection(autocommit=True, superuser=True)
+    conn = get_depgraph_pg_connection(autocommit=True, superuser=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"DROP TABLE IF EXISTS {TEST_TABLE}")
@@ -92,7 +92,7 @@ def _cleanup_test_table() -> None:
 def _t1_worker(worker_id: int) -> tuple[int, bool, str]:
     """每个 worker 插入一行。"""
     try:
-        conn = get_db_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             with conn.cursor() as cur:
                 cur.execute(
@@ -122,7 +122,7 @@ def test_t1_concurrent_insert() -> None:
     ok_count = sum(1 for _, ok, _ in results if ok)
     fail_count = 40 - ok_count
     # 验证数据完整性
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"SELECT COUNT(*) AS cnt FROM {TEST_TABLE}")
@@ -143,7 +143,7 @@ def test_t1_concurrent_insert() -> None:
 def _t2_worker(worker_id: int) -> tuple[int, bool, str]:
     """每个 worker 更新同一行的 counter。"""
     try:
-        conn = get_db_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             with conn.cursor() as cur:
                 # SELECT ... FOR UPDATE 获取行锁
@@ -171,7 +171,7 @@ def test_t2_concurrent_update_same_row() -> None:
     """T2: 40 并发 UPDATE 同一行。"""
     print("\n=== T2: 40 并发 UPDATE 同一行（行锁串行化）===")
     # 清理 T1 残留数据，然后插入 id=0 的行
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"DELETE FROM {TEST_TABLE}")
@@ -187,7 +187,7 @@ def test_t2_concurrent_update_same_row() -> None:
 
     ok_count = sum(1 for _, ok, _ in results if ok)
     # 验证 counter 最终值
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"SELECT counter FROM {TEST_TABLE} WHERE id=0")
@@ -210,7 +210,7 @@ def test_t2_concurrent_update_same_row() -> None:
 def _t3_writer(worker_id: int) -> tuple[int, bool, str]:
     """写入者：插入行。"""
     try:
-        conn = get_db_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             with conn.cursor() as cur:
                 cur.execute(
@@ -231,7 +231,7 @@ def _t3_writer(worker_id: int) -> tuple[int, bool, str]:
 def _t3_reader(worker_id: int) -> tuple[int, bool, str]:
     """读取者：查询表。"""
     try:
-        conn = get_db_connection(autocommit=True)
+        conn = get_depgraph_pg_connection(autocommit=True)
         try:
             with conn.cursor() as cur:
                 cur.execute(f"SELECT COUNT(*) AS cnt FROM {TEST_TABLE}")
@@ -247,7 +247,7 @@ def test_t3_concurrent_read_write() -> None:
     """T3: 40 并发写 + 40 并发读。"""
     print("\n=== T3: 40 并发写 + 40 并发读（MVCC 读写不阻塞）===")
     # 清理之前的测试数据
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"DELETE FROM {TEST_TABLE} WHERE id >= 1000")
@@ -270,7 +270,7 @@ def test_t3_concurrent_read_write() -> None:
     fail_count = len(all_results) - ok_count
 
     # 验证写入的 40 行存在
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"SELECT COUNT(*) AS cnt FROM {TEST_TABLE} WHERE id >= 1000")
@@ -291,7 +291,7 @@ def test_t3_concurrent_read_write() -> None:
 def _t4_deadlock_worker_a() -> tuple[bool, str]:
     """Worker A: 先锁 id=2000，再锁 id=2001。"""
     try:
-        conn = get_db_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             with conn.cursor() as cur:
                 cur.execute(f"SELECT counter FROM {TEST_TABLE} WHERE id=2000 FOR UPDATE")
@@ -314,7 +314,7 @@ def _t4_deadlock_worker_a() -> tuple[bool, str]:
 def _t4_deadlock_worker_b() -> tuple[bool, str]:
     """Worker B: 先锁 id=2001，再锁 id=2000（相反顺序，制造死锁）。"""
     try:
-        conn = get_db_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             with conn.cursor() as cur:
                 cur.execute(f"SELECT counter FROM {TEST_TABLE} WHERE id=2001 FOR UPDATE")
@@ -338,7 +338,7 @@ def test_t4_deadlock_detection() -> None:
     """T4: 死锁检测与自动恢复。"""
     print("\n=== T4: 死锁检测与自动恢复 ===")
     # 清理并插入两行用于死锁测试
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"DELETE FROM {TEST_TABLE} WHERE id IN (2000, 2001)")
@@ -372,7 +372,7 @@ def test_t4_deadlock_detection() -> None:
 def _t5_worker(worker_id: int) -> tuple[int, bool, str]:
     """每个 worker 开启事务，插入后回滚。"""
     try:
-        conn = get_db_connection(autocommit=False)
+        conn = get_depgraph_pg_connection(autocommit=False)
         try:
             with conn.cursor() as cur:
                 cur.execute(
@@ -401,7 +401,7 @@ def test_t5_concurrent_rollback() -> None:
 
     ok_count = sum(1 for _, ok, _ in results if ok)
     # 验证回滚的行不存在
-    conn = get_db_connection(autocommit=True)
+    conn = get_depgraph_pg_connection(autocommit=True)
     try:
         with conn.cursor() as cur:
             cur.execute(f"SELECT COUNT(*) AS cnt FROM {TEST_TABLE} WHERE id >= 3000")
@@ -426,7 +426,7 @@ def main() -> int:
 
     # 前置检查：PG 连接
     try:
-        conn = get_db_connection(autocommit=True)
+        conn = get_depgraph_pg_connection(autocommit=True)
         with conn.cursor() as cur:
             cur.execute("SELECT version()")
             version = cur.fetchone()[0]

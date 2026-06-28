@@ -111,7 +111,7 @@ references:
 | 11 | CircuitBreakerTypes | 012A | ✅ 已实现 | 熔断器类型定义 |
 | 12 | Query | 012A | ✅ 已实现 | 查询构造器 |
 | 13 | Transition | 012A | ✅ 已实现 | 状态迁移定义 |
-| 14 | DualDBRouter | 012B | ❌ 已裁定删除 | ~~PostgreSQL（在线）+ SQLite（离线）路由~~——P2 迁移完成，过渡期前提消失；由 `get_db_connection()` 函数级路由覆盖 |
+| 14 | DualDBRouter | 012B | ❌ 已裁定删除 | ~~PostgreSQL（在线）+ SQLite（离线）路由~~——P2 迁移完成，过渡期前提消失；由 [`get_depgraph_pg_connection()`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py)（PG）+ [`get_db_connection()`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py)（SQLite）双入口覆盖 |
 | 15 | WriteBatcher | 012B | ⏸ 暂缓（待 L 级） | 批量写入缓冲——真问题但 L 级（5000+脚本）需求，当前 S 级 571 脚本无写争抢实证 |
 | 16 | ScriptScheduler | 012B | ❌ 已裁定删除 | ~~Worker Pool + Semaphore + PriorityQueue~~——由 [BulkheadExecutorV2](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py)（四池+熔断）+ MOD-INF-005 覆盖 |
 | 17 | ScriptRegistry | 012B | ✅ 已覆盖 | 脚本注册表——已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py) ScriptRegistry 类覆盖（CT-DB-005 契约对齐） |
@@ -122,8 +122,10 @@ references:
 ```
 MOD-TASK_SYSTEM (task-system) ──→ TaskRepository ──→ events 表 ──→ OLAPEngine ──→ MOD-FEEDBACK_LOOP (FLE)
 MOD-GATE_ENGINE (gate-engine) ──→ TaskRepository ──→ gates 表   ──→ AuditSchema ──→ MOD-INF-020 (audit)
-v3.0: 脚本执行器 ──→ get_db_connection() ──→ PG（depgraph）/ SQLite（governance）──→ script_executions 表（暂缓，待 M-1 级）
+v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ PG（depgraph）──→ script_executions 表（暂缓，待 M-1 级）
+                            └─→ get_db_connection() ──→ SQLite（governance.db，治理/任务卡）
 注: DualDBRouter 已裁定删除（P2 迁移完成，过渡期前提消失）；WriteBatcher 暂缓（待 L 级 5000+脚本）
+注: 无路由器——PG 入口 get_depgraph_pg_connection() 与 SQLite 入口 get_db_connection() 是不同函数，调用方按需选择（见 AGENTS.md §11.4 真源冲突治本）
 ```
 
 ## 核心接口契约一览
@@ -136,7 +138,7 @@ v3.0: 脚本执行器 ──→ get_db_connection() ──→ PG（depgraph）/ 
 | CT-DB-004 | 012A DatabaseManager | MOD-INF-015/001 | ✅ 已实现 |
 | CT-DB-005 | 012B ScriptRegistry | MOD-TASK_SYSTEM/009/010 | ✅ 已由 _concurrency.ScriptRegistry 覆盖 |
 | CT-DB-006 | 012B ScriptExecutionLogger | MOD-TASK_SYSTEM/020/010 | ⏸ 暂缓（待 M-1 级 500+脚本，当前 571 已达） |
-| CT-DB-007 | 012B DualDBRouter | ALL modules | ❌ 已裁定删除（由 get_db_connection 覆盖） |
+| CT-DB-007 | 012B DualDBRouter | ALL modules | ❌ 已裁定删除（由 get_depgraph_pg_connection() PG + get_db_connection() SQLite 双入口覆盖） |
 
 ## 依赖关系
 
@@ -258,7 +260,7 @@ v3.0: 脚本执行器 ──→ get_db_connection() ──→ PG（depgraph）/ 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
 | 1 | `src/zephyr/infrastructure/db/` (13 .py) | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\` | Core 已实现源码 | 已实现 (012A) |
-| 2 | `dual_db_router.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\dual_db_router.py` | ~~v3.0 双库路由~~ | ❌ 不新建（P2 完成，由 get_db_connection 覆盖） |
+| 2 | `dual_db_router.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\dual_db_router.py` | ~~v3.0 双库路由~~ | ❌ 不新建（P2 完成，由 get_depgraph_pg_connection() + get_db_connection() 双入口覆盖） |
 | 3 | `write_batcher.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\write_batcher.py` | v3.0 批量写入 | ⏸ 暂缓（待 L 级 5000+脚本） |
 | 4 | `script_scheduler.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\script_scheduler.py` | ~~v3.0 Worker Pool~~ | ❌ 不新建（由 BulkheadExecutorV2 覆盖） |
 | 5 | `pg_lock.py` | `D:\ZephyrAlpha\src\zephyr\infrastructure\db\pg_lock.py` | v3.0 PG Advisory Lock | 待施工 (012B 阶段3 SQL方言) |
