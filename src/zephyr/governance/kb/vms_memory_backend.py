@@ -102,6 +102,7 @@ class VMSMemoryBackend:
                 collection_name=collection,
                 content=record.content,
                 metadata=metadata,
+                doc_id=record.chunk_id,  # 治本：用确定性业务 id 替代 uuid（修复丢弃 record.chunk_id 的 bug）
             )
             return chunk_id
         except Exception as exc:

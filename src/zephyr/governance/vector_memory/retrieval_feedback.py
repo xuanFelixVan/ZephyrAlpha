@@ -29,6 +29,7 @@ RetrievalFeedback — MOD-INF-011 FLE 检索质量消费
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from datetime import UTC, datetime
 from typing import Any
@@ -72,6 +73,8 @@ class RetrievalFeedback:
         if self._vms is None:
             _logger.warning("RetrievalFeedback: VMS 未注入，跳过失败模式写入")
             return None
+        # 内容哈希作 doc_id——pattern_text 稳定时幂等（见任务卡风险 B）
+        doc_id = f"lesson::{hashlib.sha256(pattern_text.encode()).hexdigest()[:16]}"
         return self._vms.write(
             "lessons",
             pattern_text,
@@ -80,6 +83,7 @@ class RetrievalFeedback:
                 "audit_chain": ["fle"],
                 "arbitration": "autonomous",
             },
+            doc_id=doc_id,
         )
 
     def track_long_tail(self, query: str) -> None:
