@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-28'
-total_scripts: 571
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2297,6 +2297,14 @@ scripts:
 - name: governance/d5_architecture/checkers/check_trace_context_propagation.py
   path: governance/d5_architecture/checkers/check_trace_context_propagation.py
   description: 扫描 L00~L07 各层代码，检测 TraceContext（CTR-TRACE-001）是否正确传播。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/checkers/check_vms_ssot.py
+  path: governance/d5_architecture/checkers/check_vms_ssot.py
+  description: 防止 AI 重建已删除的 governance/vector_memory/ 目录（VMS 漂移副本）。
   domain: governance
   execution_plane: warm-path
   status: registered
