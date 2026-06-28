@@ -367,13 +367,23 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
   3. 出现 API 消费者需求（如 dashboard 展示健康状态）
 - **新 AI 警告**：勿尝试"修复"此 stub——它是项目治理层选择事件驱动路线后留下的协议层化石，修复会违反 P3-T4 裁定。PG 健康检查真源在 `verify_schema_health.py` 校验4
 
-#### 遗留项-3：write_with_provenance 治本（进行中，MOD-INF-011 任务卡执行中）
+#### 遗留项-3：write_with_provenance 治本（已治本，2026-06-28）
 
-- **状态**：进行中（session=wwp-20260628，已完成 stage1 write_with_provenance 加 doc_id + col.add→col.upsert，stage2 14 调用方补确定性业务 id，stage3a context_ingest 迁移到 integration 真源）
+- **状态**：已治本（5 阶段全部完成，8 commits）
 - **问题本质**：[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` doc_id 路径是 VMS 全局设计缺陷，影响所有 HOT collection（decisions/lessons/knowledge/rules/code_context）。同一内容 commit N 次堆 N 份重复 doc，TTL 到期才清理
 - **正确范式**：[kb_repo._upsert_vector](file:///d:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/kb_repo.py#L399) 的 `col.upsert + 确定性业务 id`（同 id 覆盖，零垃圾）
-- **真源声明**：integration/vector_memory/ 是 VMS 唯一真源；governance/vector_memory/ 是漂移副本，MOD-INF-011 阶段 3 将删除
-- **启动条件**：评估对 decisions/lessons/knowledge/rules 已有数据的影响后启动
+- **治本动作**（8 commits）：
+  1. S1 `6797764c`：write_with_provenance 加 doc_id 入参 + col.add→col.upsert
+  2. S2A `6eb1019c`：vector_bridge 5 处补确定性 doc_id
+  3. S2B `fd80aaa5`：retrieval_feedback 2 份 + vms_memory_backend 补 doc_id
+  4. S2C `dc7a9925`：mcp + infrastructure vector_memory_server 补 doc_id 透传
+  5. S2D `2d513d37`：sync_engine + memory_writer + context_ingest 补 doc_id
+  6. S3.0 `12c522e9`：integration 版缺陷修复（COLLECTION_ALIASES + datetime import + snapshot_backup 完整实现）
+  7. S3.1 `306dbb2f`+`01377504`：governance/vector_memory 整包删除 + 91 处 import 重定向 + context_ingest 移植
+  8. 风险B `548e8638`：write_failure_pattern 提取稳定 root_cause 作 pattern_text（治本内容哈希无效问题）
+- **真源声明**：integration/vector_memory/ 是 VMS 唯一真源；governance/vector_memory/ 已删除（2026-06-28）
+- **遗留子项**：faiss_collection_manager.py 的 write_with_provenance 签名不兼容（只有 collection_name+content_vector，缺 content/metadata/doc_id），FAISS 后端为蓝图规划可选后端，当前用 chromadb，需单独补全
+- **新 AI 警告**：勿重建 governance/vector_memory/ 目录——它是已删除的漂移副本，integration/vector_memory/ 是唯一真源
 
 #### 遗留项-4：VMS 快照失控治本（已治本，2026-06-28）
 
@@ -394,14 +404,14 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 
 | # | 组件 | 裁定 | 理由 |
 |---|------|------|------|
-| 14 | DualDBRouter | **删除** | P2 迁移完成，过渡期前提消失；`get_db_connection()` 函数级路由已覆盖（PG+SQLite 各有入口） |
+| 14 | DualDBRouter | **删除** | P2 迁移完成，过渡期前提消失；由 [`get_depgraph_pg_connection()`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py)（PG）+ [`get_db_connection()`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py)（SQLite）双入口覆盖（无路由器，见 §11.4） |
 | 15 | WriteBatcher | **暂缓**（待 L 级） | 真问题（SQLite 单写锁）但 L 级（5000+脚本）需求，当前 S 级 571 脚本无写争抢实证 |
 | 16 | ScriptScheduler | **删除** | [BulkheadExecutorV2](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py)（四池+熔断）已覆盖；MOD-INF-005 已有同名组件 |
 | 17 | ScriptRegistry | **已覆盖** ✅ | 已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py) ScriptRegistry 类覆盖，CT-DB-005 契约对齐现有类 |
 | 18 | ScriptExecutionLogger | **暂缓**（待 M-1 级） | 571 脚本已达 M-1 下限 500，纯新增低风险，待 JSONL 查询痛点实证后启动 |
 
 **禁止新建的文件**（违反则为重复造轮子）：
-- `dual_db_router.py` — P2 完成，由 `get_db_connection()` 覆盖
+- `dual_db_router.py` — P2 完成，由 `get_depgraph_pg_connection()`（PG）+ `get_db_connection()`（SQLite）双入口覆盖
 - `script_scheduler.py`（012B 范畴）— 由 BulkheadExecutorV2 + MOD-INF-005 覆盖
 
 **暂缓清单**（待规模达标启动，不得提前新建）：
@@ -412,7 +422,37 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - `script_registry.py` — 已存在于 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py)，CT-DB-005 契约对齐
 
 **跨文档同步修改**（已完成的断链修复）：
-- [audit_orchestrator/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md)：DualDBRouter 引用改为 get_db_connection()
+- [audit_orchestrator/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md)：DualDBRouter 引用改为 get_depgraph_pg_connection()（PG）+ get_db_connection()（SQLite）双入口
 - [shared_core/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/shared_core/blueprint.md)：WriteBatcher 标注"暂缓待 L 级"
 - [governance_automation/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/governance_automation/blueprint.md) §36.4/36.5：标注暂缓条件
 - [blueprint_registry.yaml](file:///d:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml)：summary 更新
+
+### 11.4 数据库连接函数真源冲突治本（2026-06-28）
+
+> **本节是数据库连接函数的硬约束。** 任何 AI 在涉及 `get_db_connection` 或 `get_depgraph_pg_connection` 时必须先读本节。
+> 真源：[depgraph_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) + [db_utils.py](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) + [sqlite_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) + [_shared/constants.py](file:///d:/ZephyrAlpha/scripts/governance/_shared/constants.py)
+
+**病根**：P2 迁移前 depgraph 是 SQLite，`depgraph_schema.get_db_connection` 命名合理。P2 迁移后变 PG，函数名没改，与 SQLite 的 2 个同名 `get_db_connection` 冲突。文档编造"路由器"语义合理化同名冲突，但实际无路由器。
+
+**治本前的 9 个 import 入口**（3 真实定义 + 5 re-export + 1 wrapper）：
+
+| 函数 | 位置 | 返回 | 目标 DB | 调用点 |
+|------|------|------|---------|--------|
+| F1 `get_depgraph_pg_connection`（原 `get_db_connection`） | [depgraph_schema.py:1169](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) | psycopg2.conn | **PG** (depgraph) | 42 |
+| F2 `get_db_connection` | [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) | sqlite3.conn | SQLite (governance) | 70 |
+| F3 `get_db_connection` | [db_utils.py:59](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) | sqlite3.conn | SQLite (governance) | 13 |
+| F4 `get_depgraph_pg_connection` | [constants.py:97](file:///d:/ZephyrAlpha/scripts/governance/_shared/constants.py) | PgConnExecuteWrapper | **PG** (包装 F1) | 29 |
+
+**治本措施**：
+1. F1 改名 `get_db_connection` → `get_depgraph_pg_connection`（消除与 SQLite 同名冲突），保留 deprecation 别名 `get_db_connection = get_depgraph_pg_connection`（向后兼容）
+2. 16 个 import 文件更新为新名
+3. 删除 [blueprint.md:125](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/blueprint.md) 虚假"路由器"语义，改为真实双入口数据流
+4. 标注 [p2_postgresql_migration.md:1299](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) `db_type` 路由器设计稿为"未实现"
+5. 新增 F1/F2/F3 存在性断言测试
+
+**新 AI 警告**：
+- ❌ **勿按 `db_type` 路由器设计稿补全** F3——会破坏 83 处 SQLite 调用点隐式契约
+- ❌ **勿用 SQLite 入口连 PG**——`db_utils.get_db_connection` / `sqlite_schema.get_db_connection` 返回 sqlite3.Connection，连 depgraph 会报 `no such table: nodes`
+- ✅ **连 PG 用** `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`（src 包）或 `from _shared.constants import get_depgraph_pg_connection`（scripts 包，wrapper 兼容 sqlite3 接口）
+- ✅ **连 SQLite 用** `from zephyr.shared.utils.db_utils import get_db_connection` 或 `from zephyr.governance.sqlite_schema import get_db_connection`
+- ⚠ F2/F3 仍同名 `get_db_connection`（SQLite governance.db），合并需独立任务卡（83 调用点风险高）
