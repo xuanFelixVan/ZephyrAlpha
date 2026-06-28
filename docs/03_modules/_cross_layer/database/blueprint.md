@@ -32,7 +32,7 @@ runtime_plane: hot
 child_modules:
   - {module_id: "MOD-INF-012A", title: "Database Core — SQLite+DuckDB 双引擎核心运营", status: "Active", construction_progress: "completed", path: "sub_blueprints/（012A 无独立蓝图文件，代码清单见本文档 §1.1）"}
   - {module_id: "MOD-DB_DEPGRAPH_PG", title: "P2 PostgreSQL迁移 — depgraph.db SQLite→PostgreSQL（Windows原生安装）", status: "Active", construction_progress: "completed", path: "sub_blueprints/mod_inf_012b_p2_postgresql_migration.md"}
-  - {module_id: "MOD-DB_DEPGRAPH_OPT", title: "P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控", status: "Draft", construction_progress: "planned", path: "sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md"}
+  - {module_id: "MOD-DB_DEPGRAPH_OPT", title: "P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控", status: "Draft", construction_progress: "partially_implemented", path: "sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md"}
 depends_on:
   - {target: "MOD-TASK_SYSTEM", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
   - {target: "MOD-GATE_ENGINE", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
@@ -74,7 +74,7 @@ references:
 |-----------|------|------|:---:|------|
 | MOD-INF-012A | Database Core — SQLite+DuckDB 双引擎核心运营 | Active | completed | 012A 无独立蓝图文件，代码清单见本文档 §1.1 |
 | MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph.db SQLite→PostgreSQL（Windows原生安装） | Active | completed | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
-| MOD-DB_DEPGRAPH_OPT | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控 | Draft | planned | [sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md) |
+| MOD-DB_DEPGRAPH_OPT | P3 PostgreSQL优化 — pgvector+LISTEN/NOTIFY+分区表+监控 | Draft | partially_implemented | [sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md](sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md) |
 
 ### 职责划分
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "P3 PostgreSQL优化详细施工方案 — pgvector+LISTEN/NOTIFY+分区表+监控告警"
 doc_type: blueprint
 status: Draft
-version: "1.0.0"
+version: "1.1.0"
 layer: cross_layer
 blueprint_level: sub_module
 owner: ZephyrAlpha-Owner
@@ -13,6 +13,7 @@ language: zh
 created_by: AI-session-20260625-P3
 date: "2026-06-25"
 valid_from: "2026-06-25"
+last_reviewed: "2026-06-28"
 ttl: permanent
 rule_form: structural
 belongs_to: "SH-DB-001"
@@ -20,12 +21,12 @@ parent_module: "SH-DB-001"
 scope: global
 stability: evolving
 verifiability: automated
-construction_progress: planned
+construction_progress: partially_implemented
 actual_disk_path: ''
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "P3长期方案——PostgreSQL优化：pgvector代码embedding语义检索、LISTEN/NOTIFY AI间事件通知、按domain_id分区表大表优化、pg_stat_activity监控告警。覆盖4大优化方向的详细施工步骤。"
+summary: "P3 PostgreSQL优化方案（v1.1.0 裁定修订）——原4任务经第一性原理审查：T2 LISTEN/NOTIFY+T3 分区表裁定删除（伪需求/过度工程），T1 pgvector裁定改造为扩展VMS code_context（不重复造轮子），T4 监控告警裁定改造为扩展verify_schema_health.py事件驱动检查（替代违反trae_053的常驻monitor_pg.py）。T4已实现。"
 tags: [postgresql, pgvector, listen-notify, partitioning, monitoring, optimization, p3, database-upgrade]
 priority: P2
 runtime_plane: hot
@@ -39,8 +40,59 @@ references:
 
 # P3 PostgreSQL优化详细施工方案 — pgvector+LISTEN/NOTIFY+分区表+监控告警
 
-> module_id: MOD-DB_DEPGRAPH_OPT | version: 1.0.0 | status: Draft | belongs_to: SH-DB-001
+> module_id: MOD-DB_DEPGRAPH_OPT | version: 1.1.0 | status: Draft | belongs_to: SH-DB-001
 > 施工阶段: P3（长期：优化） | 前置条件: P2迁移完成
+
+---
+
+## ⚠ P3 裁定记录（2026-06-28 第一性原理审查）
+
+> **本章节是 P3 施工的最高优先级指令。** 后续各章节（§四~§七）保留原始设计供参考，
+> 但**施工必须以本裁定为准**。任何与裁定冲突的原始内容均以裁定优先。
+
+### 裁定背景
+
+P3 文档创建于 2026-06-25，与 P2 文档同日编写，**早于 P2 迁移实际完成（2026-06-27）**。
+P3 基于"P2 打算做成什么样"的猜测编写，未核对 P2 实际产出的 PG schema。经第一性原理
+审查发现 38 个问题（schema 幻觉 + 重复造轮子 + 伪需求 + 过度工程），裁定如下：
+
+### 实际 PG schema（P2 产出，P3 假设与之脱节）
+
+| 项 | P3 原假设 | 实际 PG schema |
+|---|---|---|
+| nodes.node_id | TEXT | BIGINT GENERATED ALWAYS AS IDENTITY |
+| nodes.name | 存在 | **不存在**（实际 node_name） |
+| nodes.description | 存在 | **不存在** |
+| edges.source_id/target_id/edge_type | 存在 | **不存在**（实际 from_node_id/to_node_id/dep_type） |
+| edges.domain_id | 存在 | **不存在** |
+| PG 连接 | pg_connection.py + PG_CONFIG | **文件不存在**（实际 depgraph_schema.get_db_connection()） |
+| 数据量 | 14K nodes + 22K edges | 实际 6429 nodes + 7094 edges，库仅 24 MB |
+
+### 四任务裁定结论
+
+| 任务卡 | 原计划 | 裁定 | 理由 | 状态 |
+|--------|--------|------|------|------|
+| **P3-T1** pgvector | 新建 pgvector + code_embedding.py | **改造**：扩展 VMS code_context indexer | VMS（ChromaDB+BGE-M3+Hybrid+reranker）已是成熟体系，pgvector 是降级重复造轮子。code_context collection 已定义 schema 但无 indexer——治本是补 indexer 而非建第二套向量库 | 待施工（单独立任务卡） |
+| **P3-T2** LISTEN/NOTIFY | 新建 pg_notify.py + 触发器 | **删除** | 100% AI 开发模式无常驻监听者（AI 是短暂 session），NOTIFY 无人接收白白增加写入开销。GitCommitGateway+ReconciliationRegistry 事件驱动对账已覆盖 AI 间协调 | 已裁定删除 |
+| **P3-T3** 分区表 | nodes/edges HASH 分区 | **删除** | 24MB/6429行过度工程（分区为百万级设计），edges 无 domain_id 列无法分区，改主键影响所有现有代码，风险远大于零收益 | 已裁定删除 |
+| **P3-T4** 监控告警 | 新建 monitor_pg.py 常驻监控 | **改造**：扩展 verify_schema_health.py | --watch 定时轮询违反 trae_053，常驻进程无人维持，alerts.log 无人查看。治本：扩展现有 pre-commit 事件驱动检查 | **已实现** ✅ |
+
+### P3-T4 实现详情（已落地）
+
+- **修改文件**：`scripts/governance/verify_schema_health.py`
+- **新增校验4** `check_pg_runtime_health()`：死锁计数（信息性）/ 连接数饱和（>80% 阻断）/ 长事务（>300s 阻断）
+- **设计原则**：事件驱动（pre-commit 触发），非常驻轮询，符合 trae_053
+- **测试**：`tests/test_verify_schema_health.py::TestCheckPgRuntimeHealth` 6 个 mock 测试全过
+- **真实运行**：已发现 1 次历史死锁（信息性输出，不阻断）
+
+### 给后续 AI 的指令
+
+1. **禁止新建** pgvector 扩展、code_embedding.py、pg_notify.py、monitor_pg.py、config/pg_monitor.yaml
+2. **禁止新建** nodes.embedding 列、depgraph_events 表、分区表
+3. P3-T1 若要施工，必须扩展 VMS code_context（见 §P3-T1 改造方案），不得新建 pgvector
+4. 本裁定已同步注册至 AGENTS.md，新 AI 进项目可查
+
+---
 
 ## 文档使用说明
 

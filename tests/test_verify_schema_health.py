@@ -439,3 +439,97 @@ class TestMainExitCodes:
             cwd=str(_REPO_ROOT),
         )
         assert result.returncode in (0, 2)
+
+
+# ---------------------------------------------------------------------------
+# 6. check_pg_runtime_health 单元测试（P3-T4 改造，mock PG 系统视图）
+# ---------------------------------------------------------------------------
+
+class _FakeCursor:
+    """模拟 psycopg2 cursor，fetchone 返回预设 dict 行。"""
+
+    def __init__(self, rows):
+        self._rows = rows
+
+    def execute(self, *args, **kwargs):
+        pass
+
+    def fetchone(self):
+        return self._rows.pop(0) if self._rows else None
+
+    def fetchall(self):
+        return self._rows
+
+
+class _FakeConn:
+    """模拟 PG 连接，按 SQL 关键词路由返回预设行。"""
+
+    def __init__(self, deadlocks=0, active_conns=5, max_conns=100, long_tx=0):
+        self._deadlocks = deadlocks
+        self._active = active_conns
+        self._max = max_conns
+        self._long_tx = long_tx
+
+    def execute(self, sql, *args):
+        sql_lower = sql.lower()
+        if "pg_stat_database" in sql_lower:
+            return _FakeCursor([{"deadlocks": self._deadlocks}])
+        elif "long_tx" in sql_lower:
+            return _FakeCursor([{"long_tx": self._long_tx}])
+        elif "pg_stat_activity" in sql_lower:
+            return _FakeCursor([{"active": self._active, "max_conn": self._max}])
+        return _FakeCursor([])
+
+    def close(self):
+        pass
+
+
+class TestCheckPgRuntimeHealth:
+    """校验4：PG 运行时健康检查（P3-T4 改造，替代常驻 monitor_pg.py）。"""
+
+    def test_healthy_db_no_issues(self):
+        conn = _FakeConn(deadlocks=0, active_conns=5, max_conns=100, long_tx=0)
+        issues = []
+        vsh.check_pg_runtime_health(conn, issues)
+        assert issues == []
+
+    def test_deadlock_info_only_not_blocking(self, capsys):
+        """死锁累计值仅信息性输出，不加入 issues（不阻断提交）。"""
+        conn = _FakeConn(deadlocks=3, active_conns=5, max_conns=100, long_tx=0)
+        issues = []
+        vsh.check_pg_runtime_health(conn, issues)
+        assert issues == []
+        captured = capsys.readouterr()
+        assert "PG-DEADLOCK" in captured.out
+        assert "3" in captured.out
+
+    def test_connection_saturation_blocks(self):
+        conn = _FakeConn(deadlocks=0, active_conns=85, max_conns=100, long_tx=0)
+        issues = []
+        vsh.check_pg_runtime_health(conn, issues)
+        assert len(issues) == 1
+        assert "PG-CONN-SATURATED" in issues[0]
+        assert "85" in issues[0]
+
+    def test_connection_normal_no_issue(self):
+        conn = _FakeConn(deadlocks=0, active_conns=50, max_conns=100, long_tx=0)
+        issues = []
+        vsh.check_pg_runtime_health(conn, issues)
+        assert issues == []
+
+    def test_long_transaction_blocks(self):
+        conn = _FakeConn(deadlocks=0, active_conns=5, max_conns=100, long_tx=2)
+        issues = []
+        vsh.check_pg_runtime_health(conn, issues)
+        assert len(issues) == 1
+        assert "PG-LONG-TX" in issues[0]
+        assert "2" in issues[0]
+
+    def test_multiple_issues_all_reported(self):
+        """死锁不阻断 + 连接饱和阻断 + 长事务阻断 = 2 个 issues。"""
+        conn = _FakeConn(deadlocks=1, active_conns=90, max_conns=100, long_tx=3)
+        issues = []
+        vsh.check_pg_runtime_health(conn, issues)
+        assert len(issues) == 2
+        assert any("PG-CONN-SATURATED" in i for i in issues)
+        assert any("PG-LONG-TX" in i for i in issues)

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "P3 PostgreSQL优化任务卡总览 — 4个任务卡 + 4个元任务卡"
 doc_type: index
 status: Draft
-version: "1.0.0"
+version: "1.1.0"
 layer: cross_layer
 blueprint_level: sub_module
 owner: ZephyrAlpha-Owner
@@ -13,6 +13,7 @@ language: zh
 created_by: AI-session-20260625-P3
 date: "2026-06-25"
 valid_from: "2026-06-25"
+last_reviewed: "2026-06-28"
 ttl: permanent
 rule_form: structural
 belongs_to: "MOD-DB_DEPGRAPH_OPT"
@@ -20,12 +21,12 @@ parent_module: "SH-DB-001"
 scope: global
 stability: evolving
 verifiability: automated
-construction_progress: planned
+construction_progress: partially_implemented
 actual_disk_path: ''
 codification_level: L2
 generation: 3
 functional_domain: data
-summary: "P3 PostgreSQL优化任务卡总览——4个任务卡（P3-T1 pgvector / P3-T2 LISTEN-NOTIFY / P3-T3 分区表 / P3-T4 监控告警）+ 4个元任务卡。前置条件：P2迁移完成。"
+summary: "P3 PostgreSQL优化任务卡总览（v1.1.0 裁定修订）——经第一性原理审查：P3-T2/T3 裁定删除（伪需求/过度工程），P3-T1 裁定改造（扩展VMS替代pgvector），P3-T4 裁定改造并已实现（扩展verify_schema_health.py替代常驻monitor_pg.py）。后续 AI 施工须以裁定为准。"
 tags: [postgresql, pgvector, listen-notify, partitioning, monitoring, task-cards, p3, database-upgrade]
 priority: P2
 runtime_plane: hot
@@ -41,22 +42,38 @@ references:
 > 施工方案真源：[mod_inf_012b_p3_postgresql_optimization.md](mod_inf_012b_p3_postgresql_optimization.md)
 > 前置条件：P2迁移完成（PostgreSQL运行中，红蓝测试通过）
 
-## 任务卡清单
+---
 
-| # | 任务卡ID | 名称 | 对应文档章节 | 元任务卡ID |
-|---|---------|------|------------|-----------|
-| 1 | P3-T1 | pgvector扩展（代码embedding语义检索） | §四 | P3-MT1 |
-| 2 | P3-T2 | LISTEN/NOTIFY（AI间事件通知） | §五 | P3-MT2 |
-| 3 | P3-T3 | 按domain_id分区表（大表优化） | §六 | P3-MT3 |
-| 4 | P3-T4 | 监控告警（pg_stat_activity） | §七 | P3-MT4 |
+## ⚠ P3 裁定记录（2026-06-28）— 后续 AI 必读
 
-## 推荐执行顺序
+> **本裁定是 P3 施工的最高优先级指令，优先于下方所有原始任务卡内容。**
+> 完整裁定理由见 [P3方案 §裁定记录](mod_inf_012b_p3_postgresql_optimization.md#p3-裁定记录2026-06-28-第一性原理审查)。
 
-```
-P3-T4（监控告警）→ P3-T1（pgvector）→ P3-T2（LISTEN/NOTIFY）→ P3-T3（分区表）
-```
+### 裁定结论
 
-**理由**：见P3方案§三.3.1
+| 任务卡 | 裁定 | 状态 | 说明 |
+|--------|------|------|------|
+| **P3-T4** 监控告警 | **改造** | ✅ 已实现 | 扩展 `verify_schema_health.py` 增加校验4 `check_pg_runtime_health()`（死锁/连接饱和/长事务），事件驱动替代常驻 monitor_pg.py。6 测试全过 |
+| **P3-T1** pgvector | **改造** | 待施工 | 不建 pgvector，改为扩展 VMS code_context indexer（VMS 已有 BGE-M3+Hybrid+reranker，pgvector 是降级重复造轮子）。需单独立任务卡 |
+| **P3-T2** LISTEN/NOTIFY | **删除** | 已裁定 | 100% AI 开发无常驻监听者，GitCommitGateway 事件驱动对账已覆盖。禁止新建 pg_notify.py/触发器 |
+| **P3-T3** 分区表 | **删除** | 已裁定 | 24MB/6429行过度工程，edges 无 domain_id 无法分区。禁止新建分区表 |
+
+### 给后续 AI 的硬约束
+
+1. **禁止新建**：pgvector 扩展、code_embedding.py、pg_notify.py、monitor_pg.py、config/pg_monitor.yaml、nodes.embedding 列、depgraph_events 表、分区表
+2. **P3-T4 已完成**：`verify_schema_health.py --skip-runtime` 可跳过运行时检查；默认 pre-commit 会跑校验4
+3. **P3-T1 若施工**：必须扩展 [VMS code_context](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py)，注册为 GitCommitGateway reconciler（事件驱动），不得新建 pgvector
+
+---
+
+## 任务卡清单（原始，供参考）
+
+| # | 任务卡ID | 名称 | 裁定 | 对应文档章节 |
+|---|---------|------|------|------------|
+| 1 | P3-T1 | pgvector扩展（代码embedding语义检索） | 改造→扩展VMS | §四 |
+| 2 | P3-T2 | LISTEN/NOTIFY（AI间事件通知） | ~~删除~~ | §五 |
+| 3 | P3-T3 | 按domain_id分区表（大表优化） | ~~删除~~ | §六 |
+| 4 | P3-T4 | 监控告警（pg_stat_activity） | 改造→已实现 ✅ | §七 |
 
 ---
 
