@@ -337,6 +337,43 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
 - **pre-commit 防复发**：`gate-path-naming` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）用 pygrep 检测 .py 文件中含 `target-architecture` 或 `architecture-model` → hard block。新 AI 不要在 .py 文件中写连字符路径，MUST 用下划线 `target_architecture` / `architecture_model`。
 - **REPO_ROOT 真源唯一**：scripts/ 下脚本 MUST `from _shared.constants import REPO_ROOT` 获取仓库根常量，禁止 `Path(__file__).resolve().parents[N]` 自行推算（易错且违反 SSoT）。
 
+**P3 遗留项登记**（第二轮第一性原理审查 2026-06-28）：
+
+> **本节是 P3 第二轮审查后的遗留项硬约束。** 任何 AI 在涉及 code_context indexer 或 health_probes 修复前必须先读本节。
+> 真源：[p3_t1_code_context_indexer_task_card.md §0](file:///d:/ZephyrAlpha/docs/_working/p3_t1_code_context_indexer_task_card.md) + [health_probes_stub_disposition.md §0](file:///d:/ZephyrAlpha/docs/_working/health_probes_stub_disposition.md)
+
+#### 遗留项-1：code_context indexer 暂缓施工
+
+- **状态**：Suspended（暂缓施工，消费方为零）
+- **前置条件**（满足任一方可重新评估）：
+  1. CE 接入 VMS：[context_engine.py](file:///d:/ZephyrAlpha/src/zephyr/shared/context_engine.py) 从 stub 升级为真实接入 VMS/hybrid_retriever
+  2. Agent 增加 code_search 工具：autonomy_core 的 Agent 工具集新增显式消费 code_context collection 的工具
+- **施工硬约束**（解除暂缓后若施工必须遵守）：
+  1. writer 路径必须用 `col.upsert + 确定性业务 id`，**禁用** [write_with_provenance](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` 路径（会制造 90 天重复垃圾）
+  2. AST 分块必须扩展 [chunk_strategy_router.py](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/chunk_strategy_router.py) 的 `_ast_aware_chunk` 方法，**禁用**新建独立分块函数
+  3. AST 解析必须复用 [symbol_index.py](file:///d:/ZephyrAlpha/src/zephyr/governance/symbol_index.py) 的 `ast.parse + ast.walk` 模式
+  4. GATE-CODE-CONTEXT reconciler 仅在消费方就绪后注册，避免死代码
+- **替代方案**：L1 IDE 场景已由 trae `SearchCodebase` 工具覆盖（语义搜索 + 实时代码库索引，覆盖 src/zephyr/，零成本零维护）
+- **新 AI 警告**：勿尝试"修复"或"实现"本 indexer——在消费方为零时建 indexer 是往黑洞灌数据，违反 RULE-THREE 功能价值审判
+
+#### 遗留项-2：health_probes database 探针治本
+
+- **状态**：务实搁置（stub 已降级 Maturity=prototype + 行内注释标记，不修不删）
+- **诚实定位**：本搁置是**务实搁置（pragmatic deferral）非治本（root-cause fix）**。真正的治本需要修复 HealthAggregator 调用方 + 补 wal_checkpoint_lag 采集器 + 补 API 消费者
+- **搁置理由**：P3-T4 裁定 PG 健康检查真源迁移至 `verify_schema_health.py` 校验4（事件驱动，pre-commit），完整修复 health_probes 会违反 trae_053 常驻监控禁令
+- **触发条件**（满足任一可重新评估）：
+  1. 项目部署到生产环境，需要常驻健康监控（trae_053 可能有例外条款）
+  2. verify_schema_health.py 校验4 无法覆盖某些运行时场景（如 WAL 复制延迟）
+  3. 出现 API 消费者需求（如 dashboard 展示健康状态）
+- **新 AI 警告**：勿尝试"修复"此 stub——它是项目治理层选择事件驱动路线后留下的协议层化石，修复会违反 P3-T4 裁定。PG 健康检查真源在 `verify_schema_health.py` 校验4
+
+#### 遗留项-3：write_with_provenance 治本（独立任务，非本轮范围）
+
+- **状态**：未启动，需单独立任务卡
+- **问题本质**：[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` doc_id 路径是 VMS 全局设计缺陷，影响所有 HOT collection（decisions/lessons/knowledge/rules/code_context）。同一内容 commit N 次堆 N 份重复 doc，TTL 到期才清理
+- **正确范式**：[kb_repo._upsert_vector](file:///d:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/kb_repo.py#L399) 的 `col.upsert + 确定性业务 id`（同 id 覆盖，零垃圾）
+- **启动条件**：评估对 decisions/lessons/knowledge/rules 已有数据的影响后启动
+
 ### 11.3 012B 5 组件第一性原理裁定记录（2026-06-28）
 
 > **本节是 012B 数据库 v3.0 组件相关工作的硬约束。** 任何 AI 在涉及 DualDBRouter/WriteBatcher/ScriptScheduler/ScriptRegistry/ScriptExecutionLogger 时必须先读本节。

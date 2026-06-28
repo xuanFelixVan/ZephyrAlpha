@@ -2,8 +2,8 @@
 module_id: MOD-INF-015
 title: "health_probes database 探针 stub 处置方案 — 降级标记，不修不删"
 doc_type: construction_plan
-status: Draft
-version: "1.0.0"
+status: Accepted
+version: "1.1.0"
 layer: cross_layer
 blueprint_level: sub_module
 owner: ZephyrAlpha-Owner
@@ -33,6 +33,47 @@ references:
 
 > 真源：[health_probes.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/system_telemetry/health_probes.py)
 > P3-T4 裁定背景：[P3方案 §裁定记录](../03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md)
+
+---
+
+## §0 第二轮第一性原理审查定位（2026-06-28，维持搁置）
+
+> **本方案当前状态：Accepted（维持搁置，不修不删）**。
+> 下方原始处置方案维持有效，本章节补充第二轮审查的诚实定位。
+
+### 0.1 诚实定位：务实搁置，非治本
+
+第二轮第一性原理审查确认：本方案的"降级标记"是**务实搁置（pragmatic deferral）**，**不是治本（root-cause fix）**。
+
+| 维度 | 本方案的实际定位 |
+|------|----------------|
+| 治本 | ❌ 不是——真正的治本需要修复 HealthAggregator 调用方 + 补 wal_checkpoint_lag 采集器 + 补 API 消费者 |
+| 务实搁置 | ✅ 是——在 P3-T4 已用事件驱动 verify_schema_health.py 校验4 覆盖 PG 健康检查的前提下，搁置常驻监控路线的协议层化石 |
+| 技术债管理 | ✅ 合理——降级标记 + 行内注释 + AGENTS.md 登记确保新 AI 不会误以为是 bug 而浪费精力修复 |
+
+### 0.2 为什么搁置是合理的
+
+1. **路线已裁定**：P3-T4 裁定 PG 健康检查真源迁移至 `verify_schema_health.py` 校验4（事件驱动，pre-commit），违反 trae_053 的常驻 monitor_pg.py 路线已被否决
+2. **修复会违反裁定**：完整修复 health_probes 需要新建采集器 + 常驻 poll_all 调用，与 P3-T4 裁定直接冲突
+3. **协议层有保留价值**：CT-HEALTH-001 契约（12 系统三态探针）是 MOD-MASTER-002 §十四 标准化 HealthCheck 实现，未来生产部署可复用
+
+### 0.3 解除搁置的触发条件
+
+与下方 §五"后续触发条件"一致，满足任一条件时重新评估：
+1. 项目部署到生产环境，需要常驻健康监控（此时 trae_053 可能有例外条款）
+2. verify_schema_health.py 校验4 无法覆盖某些运行时场景（如 WAL 复制延迟）
+3. 出现 API 消费者需求（如 dashboard 展示健康状态）
+
+### 0.4 关联遗留项登记
+
+本搁置已登记到 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) §11.2 P3 遗留项-2 章节，确保 AI 可发现。
+
+---
+
+## §1 原始处置方案（维持有效）
+
+> 以下内容是第二轮审查前的原始方案，第二轮审查确认维持有效。
+> 本方案是"务实搁置"非"治本"，诚实定位见 §0.1。
 
 ---
 

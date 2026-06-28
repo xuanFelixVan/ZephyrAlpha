@@ -2,8 +2,8 @@
 module_id: MOD-DB_DEPGRAPH_OPT
 title: "P3-T1 改造任务卡 — VMS code_context indexer（AST-aware 分块 + reconciler 事件驱动）"
 doc_type: construction_plan
-status: Draft
-version: "1.0.0"
+status: Suspended
+version: "1.1.0"
 layer: cross_layer
 blueprint_level: sub_module
 owner: ZephyrAlpha-Owner
@@ -34,6 +34,61 @@ references:
 
 > 真源裁定：[P3方案 §裁定记录](../03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p3_postgresql_optimization.md)
 > 自动化约束：[trae_053](../01_policies_and_standards/rules/trae_053_automation_dual_track.yaml) — 事件驱动，非常驻
+
+---
+
+## §0 第二轮第一性原理审查裁定（2026-06-28，暂缓施工）
+
+> **本任务卡当前状态：Suspended（暂缓施工）**。消费方就绪前禁止施工。
+> 下方原始设计文档保留作为审查过程证据，**不代表当前可施工方案**。
+
+### 0.1 审查发现的 5 个根本性问题
+
+| # | 问题 | 严重度 | 证据 |
+|---|------|--------|------|
+| Q1 | **元问题不成立**：trae IDE 内置 `SearchCodebase` 工具已是语义搜索（基于 embedding model 套件 + 实时代码库索引），覆盖 src/zephyr/，零成本零维护。任务卡 §1.1 立论"项目没有按语义找代码的能力"被证伪 | 致命 | [.trae/rules/project_rules.md](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) RULE-EIGHT 强制 AI 使用 SearchCodebase |
+| Q2 | **code_context collection 零真实消费方**：全项目 `grep .search("code_context")` No matches。CE（context_engine.py）是 stub 不调 VMS，`readers=["CE"]`（collection_manager.py:181）是画饼。建 indexer = 往黑洞灌数据 | 致命 | [context_engine.py](file:///d:/ZephyrAlpha/src/zephyr/shared/context_engine.py) 是 stub |
+| Q3 | **writer 路径错误会制造 90 天重复垃圾**：任务卡原设计用 `write_with_provenance`，其实现是 `col.add + uuid` doc_id（[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py#L446)），同一函数 commit N 次堆 N 份重复 doc，90 天才清理。正确范式是 [kb_repo._upsert_vector](file:///d:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/kb_repo.py#L399) 的 `col.upsert + 确定性业务 id` | 致命 | collection_manager.py 第 446-468 行 vs kb_repo.py 第 399-432 行 |
+| Q4 | **AST 分块过度工程**：[symbol_index.py](file:///d:/ZephyrAlpha/src/zephyr/governance/symbol_index.py) 已有 AST 解析能力，[chunk_strategy_router.py:74-85](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/chunk_strategy_router.py#L74) ast_aware 分支未实现。在消费方为零时实现 AST 切分是空转 | 中 | symbol_index.py 已覆盖符号查询场景 |
+| Q5 | **向内收违反**：已有 trae SearchCodebase（L1 IDE 场景）+ symbol_index（符号查询场景），任务卡忽略两者新建 indexer | 中 | 四大逻辑审核结论 |
+
+### 0.2 裁定结论
+
+**P3-T1 code_context indexer：暂缓施工**
+
+理由（基于第一性原理）：
+1. **消费方为零**——建 indexer 是往黑洞灌数据，违反 RULE-THREE 功能价值审判
+2. **已有现成能力**——trae SearchCodebase 已覆盖 L1 IDE 场景语义搜索，零成本零维护
+3. **writer 路径错误未修复**——若现在施工会制造 90 天重复垃圾
+
+### 0.3 解除暂缓的前置条件
+
+满足以下任一条件后方可重新评估施工：
+
+1. **CE 接入 VMS**：[context_engine.py](file:///d:/ZephyrAlpha/src/zephyr/shared/context_engine.py) 从 stub 升级为真实接入 VMS/hybrid_retriever，code_context 成为 CE 的真实数据源
+2. **Agent 增加 code_search 工具**：autonomy_core 的 Agent 工具集新增 `code_search` 工具，显式消费 code_context collection
+
+### 0.4 若施工的硬约束
+
+解除暂缓后若施工，必须遵守：
+
+1. **writer 路径**：必须用 `col.upsert + 确定性业务 id`（如 `f"{file_path}::{symbol_name}::{start_line}"`），**禁用** `write_with_provenance` 的 `col.add + uuid` 路径
+2. **AST 分块**：扩展 [chunk_strategy_router.py](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/chunk_strategy_router.py) 的 `_ast_aware_chunk` 方法（当前 stub），**禁用**新建独立分块函数
+3. **复用 symbol_index**：AST 解析逻辑复用 [symbol_index.py](file:///d:/ZephyrAlpha/src/zephyr/governance/symbol_index.py) 的 `ast.parse + ast.walk` 模式
+4. **reconciler 注册**：GATE-CODE-CONTEXT reconciler 仅在消费方就绪后注册，避免死代码
+
+### 0.5 关联遗留项
+
+- **write_with_provenance 治本**（独立任务，非本任务卡范围）：[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` 路径是 VMS 全局设计缺陷，影响所有 HOT collection（decisions/lessons/knowledge/rules/code_context）。需单独立任务卡评估对已有数据的影响
+- **AGENTS.md §11.2 遗留项登记**：本裁定已登记到 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) §11.2 P3 遗留项章节
+
+---
+
+## §1 原始设计文档（保留作为审查过程证据，非当前可施工方案）
+
+> ⚠️ 以下内容是第二轮审查前的原始设计，存在上述 5 个根本性问题。
+> 仅作为审查过程证据保留，**不代表当前可施工方案**。
+> 解除暂缓条件见 §0.3，施工硬约束见 §0.4。
 
 ---
 
