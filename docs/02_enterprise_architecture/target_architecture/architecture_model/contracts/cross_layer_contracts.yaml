@@ -1135,7 +1135,7 @@ contracts:
     source_domain: D-OPS
     target_domains: [D-INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
-    physical_path: src/zephyr/system-telemetry/contract_metrics.py
+    physical_path: null  # CT-TEL-001: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/contract_metrics.py (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
     description: "L12 → L01/L06 遥测指标采集契约。Telemetry facade 提供指标采集接口，消费方通过 gauge/counter/histogram/summary 记录指标。SLA: 指标采集延迟<1s。"
@@ -1157,7 +1157,7 @@ contracts:
     source_domain: D-OPS
     target_domains: [D-INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
-    physical_path: src/zephyr/system-telemetry/logs/structured_sink.py
+    physical_path: null  # CT-TEL-002: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/logs/ (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
     description: "L12 → L01/L06 遥测日志持久化契约。结构化日志通过 JSONL 持久化，支持 trace_id 关联。SLA: 持久化延迟<5s。"
@@ -1180,7 +1180,7 @@ contracts:
     source_domain: D-OPS
     target_domains: [D-INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
-    physical_path: src/zephyr/system-telemetry/traces/span_stub.py
+    physical_path: null  # CT-TEL-003: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/traces/ (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
     description: "L12 → L01/L06 遥测链路追踪契约。W3C TraceContext 传播，采样率可配置。提供 span 创建/属性设置/上下文管理接口。"
@@ -1203,7 +1203,7 @@ contracts:
     source_domain: D-OPS
     target_domains: [D-INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
-    physical_path: src/zephyr/system-telemetry/health_probes.py
+    physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health/ (MOD-INF-015)
     stability: evolving
     schema_version: "1.0"
     description: "L12 → L01/L06 遥测健康检查契约。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。"
