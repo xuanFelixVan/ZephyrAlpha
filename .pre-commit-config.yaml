@@ -387,24 +387,28 @@ repos:
         always_run: false
         description: "src/data/ 路径硬阻断——数据真源唯一位置为 data/，src/ 仅放代码（trae_047 §gov_eng_002_directory_mapping）"
 
-      # ── GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 漂移副本防复发）──
-      # 权威依据：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明
+      # ── GATE-VMS-SSOT: VMS 单一真源门禁（双检测：governance/vector_memory 漂移副本 + snapshot 方法重建）──
+      # 权威依据：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明 + 遗留项-4 snapshot 整体删除治本
       # 真源声明：integration/vector_memory/ 是 VMS 唯一真源，governance/vector_memory/ 已删除（2026-06-28）
-      # 病根：governance/vector_memory 26 文件漂移副本与 integration/vector_memory 并存，
-      #       导致维度方向双向漂移（integration 512d 领先 / governance 384d 落后）
+      #          snapshot_backup/cleanup_snapshots/_cleanup_old_snapshots 三方法已删除治本（commit dddd1813）
+      # 病根1：governance/vector_memory 26 文件漂移副本与 integration/vector_memory 并存，
+      #        导致维度方向双向漂移（integration 512d 领先 / governance 384d 落后）
+      # 病根2：snapshot_backup 目标路径在源路径内 → copytree 递归自复制 → 30GB 膨胀；
+      #        R4 被高估（ChromaDB SQLite ACID+WAL 已应对断电）；snapshot 零消费方（只写不读）
       # 检测范围：staged 文件（新增/修改/重命名）路径前缀匹配
-      # 检测内容：src/zephyr/governance/vector_memory/ 路径前缀硬阻断（大小写不敏感）
+      # 检测1：src/zephyr/governance/vector_memory/ 路径前缀硬阻断（大小写不敏感）——防漂移副本重建
+      # 检测2：src/zephyr/integration/vector_memory/ 下 .py AST 扫描——防 snapshot 方法重建（防空桩绕过）
       # 模式：--ci 硬阻断（违规 = 拒绝提交）
-      # 历史教训：commit 306dbb2f76 + 0137750451 删除 governance 副本治本，本门禁防 AI 重建
+      # 历史教训：commit 306dbb2f76+0137750451 删除 governance 副本；commit dddd1813 删除 snapshot 三方法
       - id: gate-vms-ssot
-        name: "GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 防复发）"
+        name: "GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 防复发 + snapshot 方法重建 防复发）"
         entry: python scripts/governance/d5_architecture/checkers/check_vms_ssot.py
         args: ["--ci"]
         language: system
         pass_filenames: false
         always_run: false
-        files: "^src/zephyr/governance/vector_memory/"
-        description: "src/zephyr/governance/vector_memory/ 路径硬阻断——VMS 唯一真源为 integration/vector_memory/，governance 副本已于 2026-06-28 删除治本（commit 306dbb2f76+0137750451），本门禁防 AI 重建"
+        files: "^src/zephyr/(governance|integration)/vector_memory/"
+        description: "双检测：①src/zephyr/governance/vector_memory/ 路径硬阻断（VMS 真源唯一 integration/，governance 副本 2026-06-28 删除治本 commit 306dbb2f76+0137750451）；②src/zephyr/integration/vector_memory/ 下 .py AST 扫描，重建 snapshot_backup/cleanup_snapshots/_cleanup_old_snapshots 方法名即阻断（commit dddd1813 删除治本——30GB 递归灾难+零消费方+R4 被 ACID+WAL 覆盖）"
 
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
       # 权威依据：IRN-011（ai_behavior_iron_policy.md）9 条零残留规则（ZR-001~009）

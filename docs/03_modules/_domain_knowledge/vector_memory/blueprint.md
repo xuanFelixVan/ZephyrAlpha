@@ -482,7 +482,6 @@ class ProvenanceEnforcer:
 class IndexHealthMonitor:
     def check_all(self) -> HealthReport: ...
     def detect_drift(self) -> DriftReport: ...
-    def integrity_check(self) -> dict[str, Any]: ...
     def check_ttl_expiry(self) -> list[TTLExpiryReport]: ...
     def auto_repair(self, collection_name: str) -> bool: ...
 ```
@@ -732,7 +731,6 @@ class FeedbackEntry(BaseModel):
 | TTL过期清理 | auto_scheduled | _maintenance_loop()每24h调用CollectionManager.purge_expired() | ✅已实现 |
 | 定时健康检查 | auto_scheduled | _maintenance_loop()每60s调用IndexHealthMonitor.check_all() | ✅已实现 |
 | 定时漂移检测 | auto_scheduled | check_all()含drift检测(非独立定时) | ⚠️部分实现 |
-| 完整性校验 | auto_scheduled | _maintenance_loop()可调用integrity_check() | ⚠️部分实现(方法存在但未加入_maintenance_loop定时调度) |
 | 自动修复 | auto_event | _maintenance_loop()中check_all()检测unhealthy时触发auto_repair() | ✅已实现 |
 | 检索缓存 | auto_event | search()/write()时CacheLayer自动缓存 | ✅已实现 |
 | 检索反馈收集 | auto_event | start()中注入RetrievalFeedback | ✅已实现 |
@@ -764,7 +762,7 @@ class FeedbackEntry(BaseModel):
 | 7 | ChromaDB SQLite 锁冲突 | write() 异常 | 重试 3 次 + 指数退避 | 写入操作 |
 | 8 | 混合检索超时 | HybridRetriever timeout_ms | 返回 partial=True + 当前最佳结果 | 检索操作 |
 | 9 | 蓝图漂移 | IndexHealthMonitor.detect_drift() | 告警 + 写入 drift 登记 | 全系统 |
-| 10 | 索引损坏 | IndexHealthMonitor.integrity_check() | auto_repair() + 幂等重建 | 受损 Collection |
+| 10 | 索引损坏 | IndexHealthMonitor.check_all() | auto_repair()（R4 由 ChromaDB SQLite ACID+WAL 防断电） | 受损 Collection |
 
 **异常层级**：`VMSError` → `DesignPrincipleError`（子类: `DimensionError`, `ChunkStrategyError`, `TTLError`, `HotColdSeparationError`）/ `ProvenanceMissingError`
 
@@ -810,7 +808,7 @@ class FeedbackEntry(BaseModel):
 |--------|---------|---------|---------|
 | ChromaDB QPS 爆 | 写入/检索延迟飙升 | 全部 VMS 读写降质 | 写入队列 + 限流 + 降级为只读 |
 | GPU VRAM 不足 | 嵌入推理 OOM | 1024d Collection 不可用 | 降级为 bge-small 512d + CPU fallback |
-| ChromaDB 数据损坏 | 索引不一致 | 受损 Collection 不可检索 | auto_repair() + 幂等重建 |
+| ChromaDB 数据损坏 | 索引不一致 | 受损 Collection 不可检索 | auto_repair()（R4 由 ChromaDB SQLite ACID+WAL 防断电） |
 
 ---
 
@@ -967,7 +965,7 @@ class FeedbackEntry(BaseModel):
 | R1 | ChromaDB 单进程写入瓶颈——多 IDE 并发写入冲突 | 中 | 高 | ChromaDB WAL mode + 写入队列 + 写入幂等 | 风险 |
 | R2 | BGE-M3 ONNX 模型加载慢——首次启动延迟 > 10s | 高 | 中 | 模型预热 + 懒加载 + 512d 快速路径先行 + CacheLayer | 风险 |
 | R3 | 向量检索质量不足——BGE-M3 对中文领域术语理解有限 | 中 | 高 | 混合检索 + RRF 融合 + Phase 3 reranker + 嵌入模型版本追踪 | 风险 |
-| R4 | ChromaDB 数据损坏——断电导致向量索引不一致 | 低 | 🔴 致命 | 启动时完整性校验 + 幂等重建 (ChromaDB SQLite ACID+WAL 应对断电; snapshot 备份已删除——R4 被 ACID+WAL 覆盖) | 风险 |
+| R4 | ChromaDB 数据损坏——断电导致向量索引不一致 | 低 | 🔴 致命 | ChromaDB SQLite ACID+WAL 防断电 + auto_repair() 尝试修复（snapshot 备份已删除——R4 被 ACID+WAL 覆盖，零消费方，30GB递归bug根因） | 风险 |
 | R5 | 8 Collection 数据量膨胀——长期运行后检索变慢 | 中 | 中 | TTL 机制 + 热冷数据分离 + Auto-compaction | 风险 |
 | R6 | 嵌入模型升级后新旧向量混合 | 低 | 高 | 每个向量记录 embedding_model_version；升级时全量重嵌入 | 风险 |
 | R7 | 嵌入缓存不一致——CacheLayer 返回过期 embedding | 低 | 中 | content fingerprint(sha256) 为缓存 key；模型版本变更→自动 invalidate | 风险 |
@@ -1031,7 +1029,7 @@ class FeedbackEntry(BaseModel):
 | provenance_enforcer.py | WriteTrace 校验 + CBAC 校验 + AI 自治门控 | validate()/attach()/cbau_check()/ai_autonomy_gate() |
 | embedding_router.py | 双模型路由 BGE-M3/bge-small + warmup + 降级——已迁移至MOD-INF-039 | embed()/embed_batch()/warmup()/health_check() |
 | chunk_strategy_router.py | 8 种分块策略路由 | route()/validate_strategy() |
-| index_health_monitor.py | 自检+自动修复+漂移检测 | check_all()/detect_drift()/auto_repair()/integrity_check() |
+| index_health_monitor.py | 自检+自动修复+漂移检测 | check_all()/detect_drift()/auto_repair() |
 | cache_layer.py | Embedding memoization + 模型版本变更清缓存——已迁移至MOD-INF-039 | put()/get()/invalidate_collection()/invalidate_all_on_model_change() |
 | bridge_layer.py | kb/ ↔ VMS 双向桥接 | migrate_collection()/双读逻辑 |
 
@@ -1104,7 +1102,7 @@ class FeedbackEntry(BaseModel):
 | Phase 1 | 某模块集成失败 | 该模块降级为 skip（noop），其他模块继续 |
 | Phase 2 | 迁移数据损坏 | 从 kb/ 旧 Collection 重新迁移；BridgeLayer 回退到仅读 kb/ |
 | Phase 3 | 混合检索精度低于纯向量 | 切换为纯向量模式 + score threshold 收紧 |
-| Phase 4 | HealthMonitor 错误清除了活跃数据 | ProvenanceEnforcer audit_chain 回放重写 |
+| Phase 4 | HealthMonitor 错误清除了活跃数据 | auto_repair() 尝试修复；失败则从上游源头重写（audit_chain 回放重写未实现） |
 
 ### 16.5 施工完成与生产就绪标准
 

@@ -25,7 +25,6 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 - check_all() → HealthReport: 扫描所有 Collection 健康状态 · mitigates R0/R5/R8
 - auto_repair(collection): 自动修复索引损坏
 - detect_drift(): 比对蓝图 §2 与磁盘实际 Collection · mitigates R0
-- integrity_check(): 启动时完整性校验 · mitigates R4
 - check_ttl_expiry(): TTL 过期记录检查 · mitigates R5/R8
 """
 
@@ -129,26 +128,6 @@ class IndexHealthMonitor:
             missing_collections=missing,
             detail=f"disk={disk_collections}, blueprint={blueprint_collections}",
         )
-
-    # mitigates R4
-    def integrity_check(self) -> dict[str, Any]:
-        issues: list[str] = []
-        for info in self._collection_manager.list_collections():
-            if info.exists:
-                try:
-                    col = self._collection_manager.client.get_collection(info.name)
-                    count = col.count()
-                    if count > 0:
-                        data = col.get(limit=10, include=["embeddings"])
-                        embeddings = data.get("embeddings")
-                        if embeddings is not None and len(embeddings) > 0:
-                            for emb in embeddings:
-                                if emb is not None and len(emb) != info.dimension:
-                                    issues.append(f"{info.name}: 维度不匹配 (声明={info.dimension}, 实际={len(emb)})")
-                                    break
-                except Exception as e:
-                    issues.append(f"{info.name}: integrity check 失败: {e}")
-        return {"status": "clean" if not issues else "corrupted", "issues": issues}
 
     # mitigates R5/R8
     def check_ttl_expiry(self) -> list[TTLExpiryReport]:
