@@ -386,15 +386,19 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
 - **新 AI 警告**：勿重建 governance/vector_memory/ 目录——它是已删除的漂移副本，integration/vector_memory/ 是唯一真源
 - **pre-commit 防复发**：`gate-vms-ssot` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）检测 staged 文件路径前缀 `src/zephyr/governance/vector_memory/`（大小写不敏感）→ hard block (exit 1)。新 AI 试图 commit 该路径会被自动阻断，治本 SSoT 双向漂移防复发
 
-#### 遗留项-4：VMS 快照失控治本（已治本，2026-06-28）
+#### 遗留项-4：VMS 快照功能删除治本（已治本，2026-06-28）
 
-- **状态**：已治本（snapshot_backup 递归 bug 修复 + 30GB 垃圾清理 + last_daily_ts 启动即触发 bug 修复）
-- **问题本质**：[index_health_monitor.py:138](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/index_health_monitor.py#L138) `snapshot_backup` 三重缺陷叠加：(1) 目标路径在源路径内 → copytree 递归自复制 → 30GB 膨胀；(2) 无 max_snapshots 清理 → 无限堆积；(3) R4 风险被高估（chromadb 1.5.8 SQLite ACID+WAL 已应对断电，R4 审计 6 盲点 F1-F6 与数据损坏无关）
-- **治本动作**：
-  1. snapshot_backup 加 max_snapshots=3 + ignore_patterns("_snapshots","vector_db_backups") + 默认目录改 `data/vector_db_backups`（修递归 bug + 加清理）
-  2. 删除 `data/vector_db/_snapshots/` 30GB 递归垃圾
-  3. [in_process_vector_memory.py:381](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/in_process_vector_memory.py#L381) `last_daily_ts: float = 0.0` → `datetime.now(UTC).timestamp()`（修启动即触发 bug）
-- **新 AI 警告**：勿重建 `data/vector_db/_snapshots/` 目录或恢复全量 copytree 无 ignore 的快照逻辑——递归 bug 会导致磁盘爆炸
+- **状态**：已治本（snapshot 功能整体删除——从"修 bug"升级为"删功能"）
+- **问题本质**：[index_health_monitor.py](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/index_health_monitor.py) `snapshot_backup` 三重缺陷叠加：(1) 目标路径在源路径内 → copytree 递归自复制 → 30GB 膨胀；(2) 无 max_snapshots 清理 → 无限堆积；(3) R4 风险被高估（chromadb 1.5.8 SQLite ACID+WAL 已应对断电，R4 审计 6 盲点 F1-F6 与数据损坏无关）
+- **第一性原理裁定**：元问题"VMS 需要本地 snapshot 备份吗？"→ 不需要。R4 被 ChromaDB SQLite ACID+WAL 覆盖；snapshot 零消费方（只写不读，无 restore 实现）；死代码（vms_snapshot_backup.py import 断裂）；30GB 灾难根因
+- **治本动作**（删除而非修复）：
+  1. 删除 [index_health_monitor.py](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/index_health_monitor.py) 的 `snapshot_backup()`/`_cleanup_old_snapshots()`/`cleanup_snapshots()` 三方法 + unused imports（shutil/Path）
+  2. 删除 [in_process_vector_memory.py](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/in_process_vector_memory.py) 维护线程的 `snapshot_backup()` 调用
+  3. 删除死脚本 `scripts/governance/vms_snapshot_backup.py`（import 断裂）+ manifest/naming 白名单条目
+  4. 更新蓝图 [blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain_knowledge/vector_memory/blueprint.md) / 治理脚本 / 测试（移除所有 snapshot 声明，R4 缓解改为"完整性校验+幂等重建"，数据损坏恢复改为"audit_chain 回放重写"）
+  5. 删除 `data/vector_db/_snapshots/` 30GB 递归垃圾（.NET `\\?\` 前缀瞬间清完 334 层嵌套）
+  6. [in_process_vector_memory.py](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/in_process_vector_memory.py) `last_daily_ts` 初始化修正为 `datetime.now(UTC).timestamp()`（修启动即触发 bug，独立于 snapshot 删除）
+- **新 AI 警告**：勿重建 snapshot 备份功能——R4 已被 ChromaDB SQLite ACID+WAL 覆盖，snapshot 是冗余的且是 30GB 灾难根因。数据损坏恢复走 `ProvenanceEnforcer audit_chain 回放重写`，不走 snapshot
 
 ### 11.3 012B 5 组件第一性原理裁定记录（2026-06-28）
 

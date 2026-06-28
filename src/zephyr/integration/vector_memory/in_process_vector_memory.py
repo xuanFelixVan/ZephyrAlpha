@@ -406,8 +406,3 @@ class InProcessVectorMemory:
                     _logger.info("VMS maintenance: purge_expired done")
                 except Exception:
                     _logger.debug("VMS maintenance: purge_expired failed", exc_info=True)
-                try:
-                    self._index_health_monitor.snapshot_backup()
-                    _logger.info("VMS maintenance: snapshot_backup done")
-                except Exception:
-                    _logger.debug("VMS maintenance: snapshot_backup failed", exc_info=True)

@@ -65,10 +65,9 @@ PHASE_ROLLBACKS = {
         "name": "Phase 4: 运维自动化",
         "modules": [
             "index_health_monitor.py (关闭自动修复)",
-            "vms_snapshot_backup.py",
         ],
         "env_var": "VMS_PHASE4_MODE=monitor_only",
-        "description": "仅监控不自动修复——snapshot/schedule_maintenance 暂停",
+        "description": "仅监控不自动修复——schedule_maintenance 暂停",
     },
 }
 

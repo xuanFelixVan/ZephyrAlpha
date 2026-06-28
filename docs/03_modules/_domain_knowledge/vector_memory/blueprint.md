@@ -304,7 +304,7 @@ ZephyrAlpha 的 AI 治理框架需要一个统一的向量记忆体来支撑语�
 | 决策写入 | Orchestrator 完成任务决策 | ①Orc→VMS.write('decisions', text, metadata) → ②ProvenanceEnforcer.validate → ③EmbeddingRouter.embed → ④CollectionManager.write_with_provenance | 向量 ID |
 | FLE 反馈 | FLE 检测到检索结果有用/无用 | ①FLE→RetrievalFeedback.record(hit_id, was_useful) → ②写入 feedback_log → ③影响后续检索排序 | FeedbackEntry |
 | KB 迁移 | 知识条目入库 | ①KB→VMS.write('knowledge', ke_content, metadata) → ②BridgeLayer 双读过渡 | VMS knowledge Collection 更新 |
-| 索引自愈 | IndexHealthMonitor 检测到 unhealthy | ①check_all() → ②detect_drift() → ③auto_repair() → ④snapshot_backup() | HealthReport |
+| 索引自愈 | IndexHealthMonitor 检测到 unhealthy | ①check_all() → ②detect_drift() → ③auto_repair() | HealthReport |
 | 降级 | BGE-M3 加载失败 | ①EmbeddingRouter.warmup() 失败 → ②降级为 bge-small 512d → ③再失败降级为 InMemory | Degraded 状态运行 |
 
 ---
@@ -482,7 +482,6 @@ class ProvenanceEnforcer:
 class IndexHealthMonitor:
     def check_all(self) -> HealthReport: ...
     def detect_drift(self) -> DriftReport: ...
-    def snapshot_backup(self, backup_dir: Path | str | None = None) -> Path: ...
     def integrity_check(self) -> dict[str, Any]: ...
     def check_ttl_expiry(self) -> list[TTLExpiryReport]: ...
     def auto_repair(self, collection_name: str) -> bool: ...
@@ -733,7 +732,6 @@ class FeedbackEntry(BaseModel):
 | TTL过期清理 | auto_scheduled | _maintenance_loop()每24h调用CollectionManager.purge_expired() | ✅已实现 |
 | 定时健康检查 | auto_scheduled | _maintenance_loop()每60s调用IndexHealthMonitor.check_all() | ✅已实现 |
 | 定时漂移检测 | auto_scheduled | check_all()含drift检测(非独立定时) | ⚠️部分实现 |
-| 定时快照备份 | auto_scheduled | _maintenance_loop()每24h调用IndexHealthMonitor.snapshot_backup() | ✅已实现 |
 | 完整性校验 | auto_scheduled | _maintenance_loop()可调用integrity_check() | ⚠️部分实现(方法存在但未加入_maintenance_loop定时调度) |
 | 自动修复 | auto_event | _maintenance_loop()中check_all()检测unhealthy时触发auto_repair() | ✅已实现 |
 | 检索缓存 | auto_event | search()/write()时CacheLayer自动缓存 | ✅已实现 |
@@ -766,7 +764,7 @@ class FeedbackEntry(BaseModel):
 | 7 | ChromaDB SQLite 锁冲突 | write() 异常 | 重试 3 次 + 指数退避 | 写入操作 |
 | 8 | 混合检索超时 | HybridRetriever timeout_ms | 返回 partial=True + 当前最佳结果 | 检索操作 |
 | 9 | 蓝图漂移 | IndexHealthMonitor.detect_drift() | 告警 + 写入 drift 登记 | 全系统 |
-| 10 | 索引损坏 | IndexHealthMonitor.integrity_check() | auto_repair() + snapshot 恢复 | 受损 Collection |
+| 10 | 索引损坏 | IndexHealthMonitor.integrity_check() | auto_repair() + 幂等重建 | 受损 Collection |
 
 **异常层级**：`VMSError` → `DesignPrincipleError`（子类: `DimensionError`, `ChunkStrategyError`, `TTLError`, `HotColdSeparationError`）/ `ProvenanceMissingError`
 
@@ -812,7 +810,7 @@ class FeedbackEntry(BaseModel):
 |--------|---------|---------|---------|
 | ChromaDB QPS 爆 | 写入/检索延迟飙升 | 全部 VMS 读写降质 | 写入队列 + 限流 + 降级为只读 |
 | GPU VRAM 不足 | 嵌入推理 OOM | 1024d Collection 不可用 | 降级为 bge-small 512d + CPU fallback |
-| ChromaDB 数据损坏 | 索引不一致 | 受损 Collection 不可检索 | auto_repair() + snapshot 恢复 |
+| ChromaDB 数据损坏 | 索引不一致 | 受损 Collection 不可检索 | auto_repair() + 幂等重建 |
 
 ---
 
@@ -930,7 +928,6 @@ class FeedbackEntry(BaseModel):
 | 嵌入模型缓存 | `D:\ZephyrAlpha\models\bge-m3\` | BGE-M3 ONNX 模型文件 |
 | 轻量模型缓存 | `D:\ZephyrAlpha\models\bge-small-zh-v1.5\` | 512d 轻量嵌入模型 |
 | 嵌入缓存 | `D:\ZephyrAlpha\data\vector_db\_embedding_cache\` | Embedding memoization 持久化 |
-| 索引快照 | `D:\ZephyrAlpha\data\vector_db\_snapshots\` | ChromaDB snapshot 备份 |
 
 ---
 
@@ -970,7 +967,7 @@ class FeedbackEntry(BaseModel):
 | R1 | ChromaDB 单进程写入瓶颈——多 IDE 并发写入冲突 | 中 | 高 | ChromaDB WAL mode + 写入队列 + 写入幂等 | 风险 |
 | R2 | BGE-M3 ONNX 模型加载慢——首次启动延迟 > 10s | 高 | 中 | 模型预热 + 懒加载 + 512d 快速路径先行 + CacheLayer | 风险 |
 | R3 | 向量检索质量不足——BGE-M3 对中文领域术语理解有限 | 中 | 高 | 混合检索 + RRF 融合 + Phase 3 reranker + 嵌入模型版本追踪 | 风险 |
-| R4 | ChromaDB 数据损坏——断电导致向量索引不一致 | 低 | 🔴 致命 | 定期 snapshot 备份 + 启动时完整性校验 + 幂等重建 | 风险 |
+| R4 | ChromaDB 数据损坏——断电导致向量索引不一致 | 低 | 🔴 致命 | 启动时完整性校验 + 幂等重建 (ChromaDB SQLite ACID+WAL 应对断电; snapshot 备份已删除——R4 被 ACID+WAL 覆盖) | 风险 |
 | R5 | 8 Collection 数据量膨胀——长期运行后检索变慢 | 中 | 中 | TTL 机制 + 热冷数据分离 + Auto-compaction | 风险 |
 | R6 | 嵌入模型升级后新旧向量混合 | 低 | 高 | 每个向量记录 embedding_model_version；升级时全量重嵌入 | 风险 |
 | R7 | 嵌入缓存不一致——CacheLayer 返回过期 embedding | 低 | 中 | content fingerprint(sha256) 为缓存 key；模型版本变更→自动 invalidate | 风险 |
@@ -1034,7 +1031,7 @@ class FeedbackEntry(BaseModel):
 | provenance_enforcer.py | WriteTrace 校验 + CBAC 校验 + AI 自治门控 | validate()/attach()/cbau_check()/ai_autonomy_gate() |
 | embedding_router.py | 双模型路由 BGE-M3/bge-small + warmup + 降级——已迁移至MOD-INF-039 | embed()/embed_batch()/warmup()/health_check() |
 | chunk_strategy_router.py | 8 种分块策略路由 | route()/validate_strategy() |
-| index_health_monitor.py | 自检+自动修复+漂移检测 | check_all()/detect_drift()/auto_repair()/snapshot_backup() |
+| index_health_monitor.py | 自检+自动修复+漂移检测 | check_all()/detect_drift()/auto_repair()/integrity_check() |
 | cache_layer.py | Embedding memoization + 模型版本变更清缓存——已迁移至MOD-INF-039 | put()/get()/invalidate_collection()/invalidate_all_on_model_change() |
 | bridge_layer.py | kb/ ↔ VMS 双向桥接 | migrate_collection()/双读逻辑 |
 
@@ -1107,7 +1104,7 @@ class FeedbackEntry(BaseModel):
 | Phase 1 | 某模块集成失败 | 该模块降级为 skip（noop），其他模块继续 |
 | Phase 2 | 迁移数据损坏 | 从 kb/ 旧 Collection 重新迁移；BridgeLayer 回退到仅读 kb/ |
 | Phase 3 | 混合检索精度低于纯向量 | 切换为纯向量模式 + score threshold 收紧 |
-| Phase 4 | HealthMonitor 错误清除了活跃数据 | 从 snapshot 恢复 |
+| Phase 4 | HealthMonitor 错误清除了活跃数据 | ProvenanceEnforcer audit_chain 回放重写 |
 
 ### 16.5 施工完成与生产就绪标准
 

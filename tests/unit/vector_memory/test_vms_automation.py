@@ -27,11 +27,10 @@ TestRetrievalFeedbackCollection (6):
     - sample_for_quality_monitor 抽样
     - write_failure_pattern 无 VMS 时降级
 
-TestMaintenanceLoopTasks (5):
+TestMaintenanceLoopTasks (4):
     - _maintenance_loop 间隔常量
     - stop_event 中断循环
     - check_ttl_expiry 返回报告
-    - snapshot_backup 创建备份
     - auto_repair 返回 bool
 
 TestTTLExpiryCheck (4):
@@ -39,11 +38,6 @@ TestTTLExpiryCheck (4):
     - TTLExpiryReport 字段完整
     - 空集合不报错
     - TTL 值正确
-
-TestSnapshotBackup (3):
-    - cleanup_snapshots 返回删除数
-    - _cleanup_old_snapshots 保留 max 个
-    - persist_dir 不存在时返回 None
 """
 
 from __future__ import annotations
@@ -292,23 +286,6 @@ class TestMaintenanceLoopTasks:
         # TTL_MAP 有 3 个 collection
         assert len(reports) <= 3
 
-    def test_snapshot_backup_creates_dir(self, tmp_path: Path) -> None:
-        """snapshot_backup 创建备份目录。"""
-        mock_cm = MagicMock()
-        mock_cm.persist_dir = tmp_path / "fake_persist"
-        mock_cm.persist_dir.mkdir(parents=True, exist_ok=True)
-        # 创建一个假文件
-        (mock_cm.persist_dir / "test.txt").write_text("test", encoding="utf-8")
-
-        monitor = IndexHealthMonitor(mock_cm)
-        backup_dir = tmp_path / "backups"
-
-        result = monitor.snapshot_backup(backup_dir=backup_dir, max_snapshots=3)
-
-        assert result is not None
-        assert result.exists()
-        assert backup_dir.exists()
-
     def test_auto_repair_returns_bool(self) -> None:
         """auto_repair 返回 bool。"""
         mock_cm = MagicMock()
@@ -368,67 +345,3 @@ class TestTTLExpiryCheck:
         for r in reports:
             if r.collection in TTL_MAP:
                 assert r.total_count == 0 or r.expired_count >= 0
-
-
-# ============================================================================
-# TestSnapshotBackup — 快照备份
-# ============================================================================
-
-
-class TestSnapshotBackup:
-    """自动化机制: 快照定时备份。"""
-
-    def test_cleanup_snapshots_returns_count(self, tmp_path: Path) -> None:
-        """cleanup_snapshots 返回删除的快照数。"""
-        mock_cm = MagicMock()
-        mock_cm.persist_dir = tmp_path
-
-        monitor = IndexHealthMonitor(mock_cm)
-        backup_dir = tmp_path / "backups"
-        backup_dir.mkdir()
-
-        # 创建 5 个快照
-        for i in range(5):
-            (backup_dir / f"snapshot_2026010{i}T000000").mkdir()
-
-        removed = monitor.cleanup_snapshots(backup_dir=backup_dir, max_snapshots=3)
-
-        assert removed == 2  # 删除 5-3=2 个
-        remaining = list(backup_dir.glob("snapshot_*"))
-        assert len(remaining) == 3
-
-    def test_cleanup_old_snapshots_keeps_max(self, tmp_path: Path) -> None:
-        """_cleanup_old_snapshots 保留最新的 max_snapshots 个。"""
-        mock_cm = MagicMock()
-        mock_cm.persist_dir = tmp_path
-
-        monitor = IndexHealthMonitor(mock_cm)
-        backup_dir = tmp_path / "backups"
-        backup_dir.mkdir()
-
-        # 创建 4 个快照（按时间命名）
-        names = [
-            "snapshot_20260101T000000",
-            "snapshot_20260102T000000",
-            "snapshot_20260103T000000",
-            "snapshot_20260104T000000",
-        ]
-        for name in names:
-            (backup_dir / name).mkdir()
-
-        monitor._cleanup_old_snapshots(backup_dir, max_snapshots=2)
-
-        remaining = sorted(p.name for p in backup_dir.glob("snapshot_*"))
-        assert len(remaining) == 2
-        assert "snapshot_20260103T000000" in remaining
-        assert "snapshot_20260104T000000" in remaining
-
-    def test_snapshot_backup_none_when_no_persist(self, tmp_path: Path) -> None:
-        """persist_dir 不存在时 snapshot_backup 返回 None。"""
-        mock_cm = MagicMock()
-        mock_cm.persist_dir = tmp_path / "nonexistent"
-
-        monitor = IndexHealthMonitor(mock_cm)
-        result = monitor.snapshot_backup(backup_dir=tmp_path / "backups")
-
-        assert result is None

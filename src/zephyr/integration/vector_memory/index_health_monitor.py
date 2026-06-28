@@ -25,7 +25,6 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 - check_all() → HealthReport: 扫描所有 Collection 健康状态 · mitigates R0/R5/R8
 - auto_repair(collection): 自动修复索引损坏
 - detect_drift(): 比对蓝图 §2 与磁盘实际 Collection · mitigates R0
-- snapshot_backup(): 定期 snapshot 备份 · mitigates R4
 - integrity_check(): 启动时完整性校验 · mitigates R4
 - check_ttl_expiry(): TTL 过期记录检查 · mitigates R5/R8
 """
@@ -33,9 +32,7 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 from __future__ import annotations
 
 import logging
-import shutil
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -132,69 +129,6 @@ class IndexHealthMonitor:
             missing_collections=missing,
             detail=f"disk={disk_collections}, blueprint={blueprint_collections}",
         )
-
-    # mitigates R4
-    def snapshot_backup(self, backup_dir: Path | str | None = None, max_snapshots: int = 3) -> Path | None:
-        backup_root = Path(backup_dir) if backup_dir else Path("data/vector_db_backups")
-        backup_root.mkdir(parents=True, exist_ok=True)
-        timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
-        snapshot_path = backup_root / f"snapshot_{timestamp}"
-
-        if self._collection_manager.persist_dir.exists():
-            _ignore = shutil.ignore_patterns("_snapshots", "vector_db_backups")
-            shutil.copytree(
-                str(self._collection_manager.persist_dir),
-                str(snapshot_path),
-                dirs_exist_ok=False,
-                ignore=_ignore,
-            )
-
-            persist_size = sum(
-                f.stat().st_size
-                for f in self._collection_manager.persist_dir.rglob("*")
-                if f.is_file() and "_snapshots" not in str(f) and "vector_db_backups" not in str(f)
-            )
-            snap_size = sum(f.stat().st_size for f in snapshot_path.rglob("*") if f.is_file())
-
-            if persist_size > 0 and snap_size > persist_size * 1.5:
-                shutil.rmtree(str(snapshot_path))
-                _logger.error(
-                    "IndexHealthMonitor: 快照异常膨胀 — snapshot=%.1f MB, persist=%.1f MB (%.1fx) — 已拒绝并删除",
-                    snap_size / (1024 * 1024),
-                    persist_size / (1024 * 1024),
-                    snap_size / persist_size,
-                )
-                return None
-
-            _logger.info("IndexHealthMonitor: snapshot 备份完成 → %s (mitigates R4)", snapshot_path)
-            self._cleanup_old_snapshots(backup_root, max_snapshots)
-        else:
-            _logger.warning("IndexHealthMonitor: persist_dir 不存在，跳过备份")
-            return None
-        return snapshot_path
-
-    def _cleanup_old_snapshots(self, backup_root: Path, max_snapshots: int) -> None:
-        snapshots = sorted(backup_root.glob("snapshot_*"), key=lambda p: p.name)
-        if len(snapshots) <= max_snapshots:
-            return
-        for old in snapshots[:-max_snapshots]:
-            try:
-                shutil.rmtree(str(old))
-                _logger.info("IndexHealthMonitor: 清理旧快照 → %s", old)
-            except OSError as e:
-                _logger.warning("IndexHealthMonitor: 清理旧快照失败 → %s: %s", old, e)
-
-    def cleanup_snapshots(self, backup_dir: Path | str | None = None, max_snapshots: int = 3) -> int:
-        backup_root = Path(backup_dir) if backup_dir else Path("data/vector_db_backups")
-        if not backup_root.exists():
-            return 0
-        before = len(list(backup_root.glob("snapshot_*")))
-        self._cleanup_old_snapshots(backup_root, max_snapshots)
-        after = len(list(backup_root.glob("snapshot_*")))
-        removed = before - after
-        if removed > 0:
-            _logger.info("IndexHealthMonitor: cleanup_snapshots 删除 %d 个旧快照 (保留 %d)", removed, after)
-        return removed
 
     # mitigates R4
     def integrity_check(self) -> dict[str, Any]:

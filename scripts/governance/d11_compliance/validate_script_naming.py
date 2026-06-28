@@ -127,7 +127,6 @@ EXCEPTIONS = frozenset(
         "vms_migrate.py",
         "vms_migration_dry_run.py",
         "vms_phase_rollback.py",
-        "vms_snapshot_backup.py",
         "vms_version_sync_check.py",
         "ci_self_check.py",
     }

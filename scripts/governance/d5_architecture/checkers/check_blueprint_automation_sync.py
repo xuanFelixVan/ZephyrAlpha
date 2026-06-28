@@ -82,10 +82,6 @@ CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
                 "file": "vector-memory/in_process_vector_memory.py",
                 "pattern": r"_maintenance_loop.*check_all|check_all",
             },
-            "定时快照备份": {
-                "file": "vector-memory/in_process_vector_memory.py",
-                "pattern": r"_maintenance_loop.*snapshot_backup|snapshot_backup",
-            },
             "自动修复": {
                 "file": "vector-memory/in_process_vector_memory.py",
                 "pattern": r"_maintenance_loop.*auto_repair|auto_repair",

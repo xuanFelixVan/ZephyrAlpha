@@ -53,7 +53,7 @@ R1_BLINDSPOTS = {
     "B-R1-017": "TTL机制: execution_traces 30d, code_context 90d——已实现: TTL_MAP + check_ttl_expiry()",
     "B-R1-018": "冷热分离: HOT/COLD_COLLECTIONS——已实现: DesignPrinciplesEnforcer",
     "B-R1-019": "模型版本追踪: embedding_model_version——已实现: COLLECTION_SCHEMAS",
-    "B-R1-020": "Snapshot备份: 定期备份——已实现: IndexHealthMonitor.snapshot_backup() + vms_snapshot_backup.py",
+    "B-R1-020": "Snapshot备份: 定期备份——已删除: R4被ChromaDB SQLite ACID+WAL覆盖, 零消费方, snapshot_backup()递归bug根因 (2026-06-28治本)",
     "B-R1-021": "启动预热: 双模型 warmup——已实现: EmbeddingRouter.warmup()",
     "B-R1-022": "降级链: BGE-M3 → bge-small → InMemory——已实现: EmbeddingRouter",
     "B-R1-023": "双读过渡: kb/ ↔ VMS——已实现: BridgeLayer.dual_read_mode()",
