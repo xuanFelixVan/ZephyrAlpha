@@ -89,7 +89,7 @@ class AutoRuntimeCore:
         self._lifecycle = LifecycleManager(self._config)
 
         src_root = self._config.capability_card_dir.parent.parent / "src" / "zephyr"
-        bp_root = self._config.capability_card_dir.parent.parent / "architecture-model"
+        bp_root = self._config.capability_card_dir.parent.parent / "architecture_model"
         self._scanner = ModuleOnboardingScanner(src_root, bp_root, self._registry)
         self._auto_integrator = AutoIntegrator(self._registry, self._config.max_daily_l3_activations)
         self._orphan_detector = OrphanDetector(self._scanner, self._registry)

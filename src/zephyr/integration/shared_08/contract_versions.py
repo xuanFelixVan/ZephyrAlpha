@@ -110,7 +110,7 @@ class ContractRegistry:
     """
 
     _ssot_path: str = (
-        "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+        "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
     )
 
     def __init__(self, repo_root: Path | None = None) -> None:

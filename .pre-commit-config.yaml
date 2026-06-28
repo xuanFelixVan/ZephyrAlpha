@@ -779,6 +779,18 @@ repos:
         files: "^docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts\\.yaml$"
         description: "检测 cross_layer_contracts.yaml 中 physical_path 指向连字符目录（如 system-telemetry），Python 无法 import 即阻断。对标 AGENTS.md CT-TEL 死代码治本约束"
 
+      # ── GATE-PATH-NAMING: 连字符路径阻断（2026-06-28 全仓库路径治本防复发）──
+      # 权威依据：AGENTS.md §路径命名约束（target_architecture/architecture_model 下划线）
+      # 病根：历史路径重命名（连字符→下划线）时漏改 48 个 .py 文件，导致 gate-c2 等钩子空跑数月
+      # 检测：.py 文件中含 target-architecture 或 architecture-model → hard block
+      # 正确路径：target_architecture / architecture_model（下划线，Python 合法标识符）
+      - id: gate-path-naming
+        name: "GATE-PATH-NAMING: 连字符路径阻断 (target-architecture/architecture-model)"
+        entry: "target-architecture|architecture-model"
+        language: pygrep
+        files: \.py$
+        description: "检测 .py 文件中含连字符路径 target-architecture/architecture-model（应为下划线），防止路径重命名技术债复发"
+
       - id: gate-bom-utf8-check
         name: "GATE-BOM: UTF-8 BOM 检测"
         entry: python scripts/governance/d11_compliance/validate_no_utf8_bom.py

@@ -19,7 +19,7 @@
 
 检测内容：
 - 检查目标路径是否在受保护清单中
-- 受保护路径：.git/、AGENTS.md、meta/*.md、architecture-model/
+- 受保护路径：.git/、AGENTS.md、meta/*.md、architecture_model/
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -57,7 +57,7 @@ PROTECTED_PATTERNS = [
     (".git/", "只读——禁止任何操作"),
     ("AGENTS.md", "重大修改须 Owner 审批"),
     ("docs/01_policies_and_standards/rules/", "重大修改须 Owner 审批（rules/ 下所有 .yaml）"),
-    ("docs/02_enterprise_architecture/target-architecture/architecture-model/", "重大修改须 Owner 审批"),
+    ("docs/02_enterprise_architecture/target_architecture/architecture_model/", "重大修改须 Owner 审批"),
 ]
 
 

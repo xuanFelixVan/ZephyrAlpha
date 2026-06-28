@@ -58,15 +58,15 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 AUDIT_MATRIX_PATH = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "dimension_audit_matrix.md"
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "dimension_audit_matrix.md"
 )
 ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts" / "arch_guard" / "manifest.yaml"
 INVARIANTS_PATH = (
     REPO_ROOT
     / "docs"
     / "02_enterprise_architecture"
-    / "target-architecture"
-    / "architecture-model"
+    / "target_architecture"
+    / "architecture_model"
     / "cross-cutting"
     / "invariants.yaml"
 )
@@ -74,8 +74,8 @@ CONTRACTS_PATH = (
     REPO_ROOT
     / "docs"
     / "02_enterprise_architecture"
-    / "target-architecture"
-    / "architecture-model"
+    / "target_architecture"
+    / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"
 )

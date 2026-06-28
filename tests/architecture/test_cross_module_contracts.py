@@ -29,7 +29,7 @@ REQUIRED_DEPENDENCIES = [
 ]
 
 MCP_BLUEPRINT = REPO_ROOT / "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"
-B_MCP_YAML = REPO_ROOT / "architecture-model/layers/b_mcp.yaml"
+B_MCP_YAML = REPO_ROOT / "architecture_model/layers/b_mcp.yaml"
 TOOL_CONTRACTS = REPO_ROOT / "src/zephyr/mcp/tool-contracts.yaml"
 
 

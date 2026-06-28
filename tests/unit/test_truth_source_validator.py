@@ -35,7 +35,7 @@ class TestClassifySource:
         assert tier == TruthTier.TIER_0
 
     def test_tier1_architecture_model(self, validator):
-        tier = validator.classify_source("architecture-model/layers/b_core.yaml")
+        tier = validator.classify_source("architecture_model/layers/b_core.yaml")
         assert tier == TruthTier.TIER_1
 
     def test_tier2_module_blueprint(self, validator):
@@ -85,7 +85,7 @@ class TestConflictResolution:
             TruthClaim(
                 fact_id="system.boundary",
                 value="intra-module",
-                source_path="architecture-model/layers/b_core.yaml",
+                source_path="architecture_model/layers/b_core.yaml",
                 tier=TruthTier.TIER_1,
             ),
         ]
@@ -98,7 +98,7 @@ class TestConflictResolution:
             TruthClaim(
                 fact_id="module.files",
                 value=["a.py", "b.py"],
-                source_path="architecture-model/layers/b_core.yaml",
+                source_path="architecture_model/layers/b_core.yaml",
                 tier=TruthTier.TIER_1,
             ),
             TruthClaim(
@@ -217,7 +217,7 @@ class TestGuardModification:
 
     def test_blocks_tier1_modification(self, validator):
         allowed = validator.guard_modification(
-            "architecture-model/layers/b_core.yaml",
+            "architecture_model/layers/b_core.yaml",
             agent_id="agent-002",
         )
         assert allowed is False
@@ -248,7 +248,7 @@ class TestResolveAll:
                 TruthClaim(
                     fact_id="fact.B",
                     value="alpha",
-                    source_path="architecture-model/layers/test.yaml",
+                    source_path="architecture_model/layers/test.yaml",
                     tier=TruthTier.TIER_1,
                 ),
                 TruthClaim(

@@ -54,8 +54,8 @@ TECH_LANDSCAPE = (
     REPO_ROOT
     / "docs"
     / "02_enterprise_architecture"
-    / "target-architecture"
-    / "architecture-model"
+    / "target_architecture"
+    / "architecture_model"
     / "technology"
     / "technology_landscape.yaml"
 )

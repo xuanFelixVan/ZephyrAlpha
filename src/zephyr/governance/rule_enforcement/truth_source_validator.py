@@ -19,7 +19,7 @@
 真源优先级裁决器（Truth Source Validator）
 
 依据：MOD-MASTER-002 蓝图 §零之零 真源优先级宪章
-实现 5 级优先级链：Tier 0(本蓝图) → Tier 1(architecture-model YAML)
+实现 5 级优先级链：Tier 0(本蓝图) → Tier 1(architecture_model YAML)
 → Tier 2(模块蓝图) → Tier 3(策略标准文档) → Tier 4(实际代码)
 
 功能：
@@ -56,7 +56,7 @@ class TruthTier(IntEnum):
 
 TIER_LABELS: dict[TruthTier, str] = {
     TruthTier.TIER_0: "本蓝图 MOD-MASTER_BLUEPRINT（跨系统集成契约）",
-    TruthTier.TIER_1: "architecture-model/layers/{module}.yaml（单模块结构定义）",
+    TruthTier.TIER_1: "architecture_model/layers/{module}.yaml（单模块结构定义）",
     TruthTier.TIER_2: "docs/03_modules/{layer}/blueprint.md（模块级实现指引）",
     TruthTier.TIER_3: "docs/01_policies_and_standards/（通用规范与策略）",
     TruthTier.TIER_4: "实际代码（运行时现实）",
@@ -76,7 +76,7 @@ def _classify_path(path: str) -> TruthTier:
 
     if "_master-blueprint" in normalized and "blueprint.md" in normalized:
         return TruthTier.TIER_0
-    if "architecture-model/layers/" in normalized and normalized.endswith(".yaml"):
+    if "architecture_model/layers/" in normalized and normalized.endswith(".yaml"):
         return TruthTier.TIER_1
     if "docs/03_modules/" in normalized and normalized.endswith("blueprint.md"):
         return TruthTier.TIER_2

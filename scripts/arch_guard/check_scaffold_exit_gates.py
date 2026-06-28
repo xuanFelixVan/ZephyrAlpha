@@ -83,9 +83,9 @@ def check_audit_db() -> tuple[bool, str]:
 
 
 SEC_VIEW_PATH = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "06-security_architecture.md"
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "06-security_architecture.md"
 )
-OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "00-overview.md"
+OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "00-overview.md"
 
 
 def check_security_view_active() -> tuple[bool, str]:

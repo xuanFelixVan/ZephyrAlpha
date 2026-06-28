@@ -20,8 +20,8 @@ safety_level : M（治理脚本）
 
 功能
 ----
-检查仓库根 architecture-model/（施工树）与
-docs/02_enterprise_architecture/target-architecture/architecture-model/（企业架构树）
+检查仓库根 architecture_model/（施工树）与
+docs/02_enterprise_architecture/target_architecture/architecture_model/（企业架构树）
 之间的同步一致性。
 
 检测内容（按严重性）：
@@ -33,7 +33,7 @@ docs/02_enterprise_architecture/target-architecture/architecture-model/（企业
 
 对标：
 - AGENTS.md §6.9 双树分工
-- architecture-model/scope.yaml R1/R2/R3
+- architecture_model/scope.yaml R1/R2/R3
 - AUDIT-04 D-ALIGN 维度
 
 用法：
@@ -48,7 +48,7 @@ __manifest__ = """
 args:
   - --warn-only
   - --ci
-description: GATE-DTS — 双树同步检查闸门（architecture-model/ 施工树 vs docs/EA/architecture-model/ 企业架构树）
+description: GATE-DTS — 双树同步检查闸门（architecture_model/ 施工树 vs docs/EA/architecture_model/ 企业架构树）
 dimensions:
 - D5
 priority: P0
@@ -75,8 +75,8 @@ from _shared.yaml_utils import load_yaml
 ensure_utf8_stdout()
 
 # 双树路径常量
-IMPL_TREE = REPO_ROOT / "architecture-model"
-EA_TREE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
+IMPL_TREE = REPO_ROOT / "architecture_model"
+EA_TREE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
 SCOPE_YAML = IMPL_TREE / "scope.yaml"
 
 # 文件名映射：施工树文件名 -> 企业架构树文件名（处理连字符/下划线差异）

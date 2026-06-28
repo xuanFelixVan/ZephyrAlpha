@@ -25,7 +25,7 @@ AutoTaskGenerator — 自动任务生成器
     src/**/*.py       → task_classification, tag_completion, naming_suggest
     data/capability_cards/*.yaml → summary_extraction
     data/audit_logs/*.jsonl      → anomaly_triage
-    architecture-model/**/*.yaml → summary_extraction
+    architecture_model/**/*.yaml → summary_extraction
 
 机制:
     - 每次 MAPE-K 调和周期生成一批任务
@@ -104,7 +104,7 @@ class AutoTaskGenerator:
         """扫描各数据源，发现新的文件加入处理队列。"""
         sources: list[tuple[str, str]] = [
             ("src/zephyr/**/*.py", "python"),
-            ("architecture-model/**/*.yaml", "blueprint"),
+            ("architecture_model/**/*.yaml", "blueprint"),
             ("docs/**/*.md", "doc"),
         ]
 

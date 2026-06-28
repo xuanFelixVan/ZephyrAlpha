@@ -80,7 +80,7 @@ from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
 
-ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
+ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
 ADR_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "adr"
 
 _errors: list[str] = []

@@ -529,7 +529,7 @@ class ActionDispatcher:
         module_name = self._extract_module_name(source_text)
         bp_file = self._find_blueprint_file(module_name)
         if bp_file is None:
-            bp_file = self._find_file_by_name(module_name, [REPO_ROOT / "architecture-model"])
+            bp_file = self._find_file_by_name(module_name, [REPO_ROOT / "architecture_model"])
 
         points = result.get("result", {}).get("points", [])
         if not points:
@@ -665,8 +665,8 @@ class ActionDispatcher:
         return None
 
     def _find_blueprint_file(self, module_name: str) -> Path | None:
-        """在 architecture-model/ 下找 matching YAML。"""
-        arch = REPO_ROOT / "architecture-model"
+        """在 architecture_model/ 下找 matching YAML。"""
+        arch = REPO_ROOT / "architecture_model"
         return self._find_file_by_name(module_name, [arch])
 
     def _find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:

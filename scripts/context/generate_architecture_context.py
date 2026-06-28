@@ -24,7 +24,7 @@ JSON 上下文包。解决 "每个 AI session 重新学习架构" 的问题。
 用法: python scripts/context/generate_architecture_context.py
       python scripts/context/generate_architecture_context.py --watch  # 文件变更自动重生成
 
-SSoT: cross_layer_contracts.yaml + invariants.yaml + architecture-model/layers/*.yaml
+SSoT: cross_layer_contracts.yaml + invariants.yaml + architecture_model/layers/*.yaml
        + ADR + governance + session/handoff + capacity_slo + gate/module registry + capability-heatmap
        + arch_guard manifest
 """
@@ -45,12 +45,12 @@ if not REPO_ROOT.exists():
 import yaml
 
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+    "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
 )
 INVARIANTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/invariants.yaml"
+    "docs/02_enterprise_architecture/target_architecture/architecture_model/cross-cutting/invariants.yaml"
 )
-LAYERS_DIR = REPO_ROOT / ("docs/02_enterprise_architecture/target-architecture/architecture-model/layers")
+LAYERS_DIR = REPO_ROOT / ("docs/02_enterprise_architecture/target_architecture/architecture_model/layers")
 ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
 OUTPUT_PATH = REPO_ROOT / "src/zephyr/context-engine/architecture-context.json"
 handoff_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
@@ -59,7 +59,7 @@ GATE_REGISTRY_YAML = REPO_ROOT / "docs/01_policies_and_standards/_registry/catal
 MODULE_REGISTRY_YAML = REPO_ROOT / "docs/03_modules/module-registry.yaml"
 CAPABILITY_HEATMAP_YAML = (
     REPO_ROOT
-    / "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/capability_heatmap.yaml"
+    / "docs/02_enterprise_architecture/target_architecture/architecture_model/cross-cutting/capability_heatmap.yaml"
 )
 ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts/arch_guard/manifest.yaml"
 

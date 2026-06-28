@@ -57,7 +57,7 @@ import argparse
 ANCHOR_FILES = [
     "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml",
     "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml",
-    "docs/01_policies_and_standards/_registry/catalogs/architecture-model/index.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/architecture_model/index.yaml",
     "docs/01_policies_and_standards/governance/architecture/adr/index.md",
     "AGENTS.md",
     ".pre_commit-config.yaml",

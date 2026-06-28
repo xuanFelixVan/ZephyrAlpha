@@ -41,7 +41,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 EXPECTED_FILES: list[dict[str, Any]] = [
     # Card 1: 模块骨架
     {"path": "src/zephyr/mcp/__init__.py", "card": "TASK-INF-013-0001", "new": False, "check": "exports_9_classes"},
-    {"path": "architecture-model/layers/b_mcp.yaml", "card": "TASK-INF-013-0001", "new": False, "check": "has_9_files"},
+    {"path": "architecture_model/layers/b_mcp.yaml", "card": "TASK-INF-013-0001", "new": False, "check": "has_9_files"},
     {"path": "AGENTS.md", "card": "TASK-INF-013-0001", "new": False, "check": "rule_8_mcp_naming"},
     # Card 2: 错误码+帧
     {

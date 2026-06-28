@@ -43,7 +43,7 @@ DEGRADE-003: 沙箱创建失败 → 任务 FAIL，拒绝无沙箱运行（安全
 --------
 LPC 双轨架构 B 轨（Bounded Context · 无 l<NN>_ 前缀）
 架构决策： 目录双轨治理 +  Orc +  Sandbox
-架构真源：docs/02_enterprise_architecture/target-architecture/
+架构真源：docs/02_enterprise_architecture/target_architecture/
          vibe-coding-infrastructure-architecture.md §3.4
 
 依赖

@@ -43,7 +43,7 @@
   索引快照   : data/vector_db/_snapshots/
 
 蓝图真源  : docs/03_modules/infrastructure_runtime_integration/vector-memory/blueprint.md v0.7.0
-SSoT     : architecture-model/layers/b_vector_memory.yaml
+SSoT     : architecture_model/layers/b_vector_memory.yaml
 ADR      : ADR-0019(FLE单向依赖) + ADR-0031(ChromaDB选型) + ADR-0016(BGE-M3嵌入契约)
 审计     : 四轮80盲点全覆盖（R1:33/R2:22/R3:19/R4:6）— 蓝图纸面~95-96/100
 """

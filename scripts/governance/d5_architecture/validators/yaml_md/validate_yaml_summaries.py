@@ -20,7 +20,7 @@ AGENTS.md §6.10 双层对齐闸门的根治层：
         by_quadrant / total_registered / global_stats）均为手动维护，
         无自动化交叉校验。每次数据变更后 summary 漂移不可避免。
 
-  本闸门：自动扫描 architecture-model/ 下所有 YAML 文件，从实际条目数据
+  本闸门：自动扫描 architecture_model/ 下所有 YAML 文件，从实际条目数据
           反算聚合值 -> 与声明的 summary 逐项对比 -> 报告所有不一致。
 
 检查范围：
@@ -69,7 +69,7 @@ from _shared.encoding import ensure_utf8_stdout
 from _shared.yaml_utils import load_yaml
 
 ensure_utf8_stdout()
-ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
+ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
 SCAN_ENTRIES = [
     ("layers", ARCH_MODEL / "layers", True),
     ("infra", ARCH_MODEL / "infra", True),

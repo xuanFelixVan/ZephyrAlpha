@@ -857,7 +857,7 @@ related_open_questions:
 related_kb:
 - KBG-0012
 tags:
-- target-architecture
+- target_architecture
 - capability-heatmap
 - maturity
 - archimate

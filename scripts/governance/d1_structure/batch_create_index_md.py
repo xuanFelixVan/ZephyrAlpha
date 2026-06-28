@@ -133,11 +133,11 @@ RESPONSIBILITY_MAP = {
         "设计决策框架 — build-vs-buy 等架构决策辅助文档",
         [
             ("ADR", "02_enterprise_architecture/adr/"),
-            ("架构视图", "02_enterprise_architecture/target-architecture/"),
+            ("架构视图", "02_enterprise_architecture/target_architecture/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture": (
-        "目标架构视图（TOGAF）— 00-overview 到 dimension-audit-matrix + architecture-model/ + diagrams/（正文已收口，已无 by-domain/）",
+    "02_enterprise_architecture/target_architecture": (
+        "目标架构视图（TOGAF）— 00-overview 到 dimension-audit-matrix + architecture_model/ + diagrams/（正文已收口，已无 by-domain/）",
         [
             ("治理规范", "01_policies_and_standards/"),
             ("ADR", "02_enterprise_architecture/adr/"),
@@ -152,7 +152,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "09_audit/findings": (
-        "安全与合规 Finding、事件响应初稿 Markdown（对齐 target-architecture/06-security_architecture.md）",
+        "安全与合规 Finding、事件响应初稿 Markdown（对齐 target_architecture/06-security_architecture.md）",
         [
             ("审计总控", "09_audit/index.md"),
             ("审计报告", "09_audit/reports/"),
@@ -222,65 +222,65 @@ RESPONSIBILITY_MAP = {
             (".md 文档", "01_policies_and_standards/governance/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model": (
+    "02_enterprise_architecture/target_architecture/architecture_model": (
         "架构模型 YAML — layers/（14 层层定义）、contracts/（跨层契约）、events/（领域事件）、cross-cutting/（横切）、domain/（DDD）、frontend/（前端）、scripts/（脚本）、technology/（技术栈）",
         [
-            (".md 架构视图文档", "02_enterprise_architecture/target-architecture/（上层）"),
+            (".md 架构视图文档", "02_enterprise_architecture/target_architecture/（上层）"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/diagrams": (
+    "02_enterprise_architecture/target_architecture/diagrams": (
         "架构图 — Mermaid 格式（.mmd）：C4/序列图/拓扑图/数据流图/治理激活甘特图",
         [
-            ("架构文档 .md", "02_enterprise_architecture/target-architecture/（上层）"),
+            ("架构文档 .md", "02_enterprise_architecture/target_architecture/（上层）"),
         ],
     ),
     # === Level 4 ===
-    "02_enterprise_architecture/target-architecture/architecture-model/contracts": (
+    "02_enterprise_architecture/target_architecture/architecture_model/contracts": (
         "跨层契约 YAML",
         [
-            ("层定义 YAML", "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
+            ("层定义 YAML", "02_enterprise_architecture/target_architecture/architecture_model/layers/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/cross-cutting": (
+    "02_enterprise_architecture/target_architecture/architecture_model/cross-cutting": (
         "横切关注点 YAML — 能力热力图、运行时不变量、运行时平面",
         [
-            ("层定义 YAML", "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
+            ("层定义 YAML", "02_enterprise_architecture/target_architecture/architecture_model/layers/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/domain": (
+    "02_enterprise_architecture/target_architecture/architecture_model/domain": (
         "DDD 领域模型 YAML",
         [
-            ("层定义 YAML", "02_enterprise_architecture/target-architecture/architecture-model/layers/"),
+            ("层定义 YAML", "02_enterprise_architecture/target_architecture/architecture_model/layers/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/events": (
+    "02_enterprise_architecture/target_architecture/architecture_model/events": (
         "领域事件 YAML",
         [
-            ("DDD 领域模型", "02_enterprise_architecture/target-architecture/architecture-model/domain/"),
+            ("DDD 领域模型", "02_enterprise_architecture/target_architecture/architecture_model/domain/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/frontend": (
+    "02_enterprise_architecture/target_architecture/architecture_model/frontend": (
         "前端模型 YAML",
         [
-            ("技术栈定义", "02_enterprise_architecture/target-architecture/architecture-model/technology/"),
+            ("技术栈定义", "02_enterprise_architecture/target_architecture/architecture_model/technology/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/layers": (
+    "02_enterprise_architecture/target_architecture/architecture_model/layers": (
         "14 层层定义 YAML（l00-data-source ~ l13-experiment-pipeline + shared + _schema）",
         [
-            ("跨层契约", "02_enterprise_architecture/target-architecture/architecture-model/contracts/"),
+            ("跨层契约", "02_enterprise_architecture/target_architecture/architecture_model/contracts/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/scripts": (
+    "02_enterprise_architecture/target_architecture/architecture_model/scripts": (
         "脚本模型 YAML + 架构门禁检查脚本",
         [
             ("治理脚本", "01_policies_and_standards/scripts/"),
         ],
     ),
-    "02_enterprise_architecture/target-architecture/architecture-model/technology": (
+    "02_enterprise_architecture/target_architecture/architecture_model/technology": (
         "技术栈 YAML — 技术全景图 + Vibe Coding 基础设施技术栈",
         [
-            ("前端技术栈", "02_enterprise_architecture/target-architecture/architecture-model/frontend/"),
+            ("前端技术栈", "02_enterprise_architecture/target_architecture/architecture_model/frontend/"),
         ],
     ),
 }

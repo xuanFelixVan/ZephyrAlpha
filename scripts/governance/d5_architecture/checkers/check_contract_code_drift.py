@@ -60,19 +60,18 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
 _CONTRACTS_YAML = (
-    _REPO_ROOT
+    REPO_ROOT
     / "docs"
     / "02_enterprise_architecture"
-    / "target-architecture"
-    / "architecture-model"
+    / "target_architecture"
+    / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"
 )
-_CONTRACT_OUT_DIR = _REPO_ROOT / "src" / "zephyr" / "shared" / "contracts"
+_CONTRACT_OUT_DIR = REPO_ROOT / "src" / "zephyr" / "shared" / "contracts"
 _SNAPSHOT_FILE = _CONTRACT_OUT_DIR / "_codegen_snapshot.txt"
 
 

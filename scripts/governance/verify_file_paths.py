@@ -61,7 +61,7 @@ EXPECTED_FILES: list[str] = [
     ".pre-commit-config.yaml",
     # 路径迁移: governance/ai/ → _registry/catalogs/
     "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml",
-    # 命名规范: architecture-model → architecture_model
+    # 命名规范: architecture_model → architecture_model
     "architecture_model/layers/b_mcp.yaml",
     # 命名规范: mcp-servers → mcp_servers
     "docs/03_modules/_cross_layer/mcp_servers/blueprint.md",

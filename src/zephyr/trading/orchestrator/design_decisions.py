@@ -62,7 +62,7 @@ DECISIONS: dict[str, DesignDecision] = {
         title="YAML 结构化契约",
         content="所有 CT-* 契约使用 YAML 格式定义，包含 trigger/schema/telemetry/ai_prompt 结构化字段",
         alternatives=["纯 Markdown 表格 → 难以机器解析", "JSON Schema → 过于冗长"],
-        rationale="YAML 兼顾人类可读性和机器解析，与 architecture-model 格式一致",
+        rationale="YAML 兼顾人类可读性和机器解析，与 architecture_model 格式一致",
         re_evaluate_when="出现大量 YAML 解析性能瓶颈时",
         impact_scope="契约定义格式",
     ),

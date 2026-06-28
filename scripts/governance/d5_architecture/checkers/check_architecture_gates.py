@@ -49,8 +49,8 @@ from _shared.thresholds import get as get_threshold
 
 ensure_utf8_stdout()
 
-ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model"
-TARGET_ARCH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture"
+ARCH_MODEL = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "architecture_model"
+TARGET_ARCH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture"
 ADR_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "adr"
 
 VIEW_LINE_LIMITS = {
@@ -633,7 +633,7 @@ def extra_03_summary_total_consistent() -> tuple[bool, list[str]]:
 
 
 def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
-    """GATE-A: src/zephyr/ ↔ architecture-model/ 代码与YAML双层对账
+    """GATE-A: src/zephyr/ ↔ architecture_model/ 代码与YAML双层对账
 
     AGENTS.md §6.10 GATE-A — 实际代码 ↔ YAML SSoT
     - CRITICAL: src/zephyr/lNN_* 目录存在但 _index.yaml 无对应分区（硬阻断）
@@ -931,7 +931,7 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
     检测每类变更是否完成了跨文件联动同步：
     1. 蓝图编辑 → module-registry.yaml 版本号应同步
     2. YAML SSoT 变更 → 对应 MD 视图应同步
-    3. 新建代码目录 → architecture-model YAML 应登记
+    3. 新建代码目录 → architecture_model YAML 应登记
     """
     errors = []
     logs_dir = REPO_ROOT / "session_logs"
@@ -1000,20 +1000,20 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
 
         # 检查 2: YAML SSoT 变更 → MD 视图
         if changed_yamls:
-            arch_model_yamls = [y for y in changed_yamls if "architecture-model" in y.lower()]
+            arch_model_yamls = [y for y in changed_yamls if "architecture_model" in y.lower()]
             if arch_model_yamls and not session_has_alignment_section:
                 errors.append(
-                    f"WARNING: {log_name} 修改了 architecture-model YAML "
+                    f"WARNING: {log_name} 修改了 architecture_model YAML "
                     f"但未包含'变更对齐检查'节 "
                     f"（比对 §6.10 GATE-B——YAML SSoT 变更应同步更新 MD 视图）"
                 )
 
-        # 检查 3: 新建代码目录 → architecture-model 登记
+        # 检查 3: 新建代码目录 → architecture_model 登记
         if new_dirs and not session_has_alignment_section:
             errors.append(
                 f"WARNING: {log_name} 新建了 src/zephyr/ 目录 "
                 f"但未包含'变更对齐检查'节 "
-                f"（比对 §6.10 GATE-A——新建代码目录应同步更新 architecture-model YAML）"
+                f"（比对 §6.10 GATE-A——新建代码目录应同步更新 architecture_model YAML）"
             )
 
         # 检查 4: 文件变更 → path-tree 刷新

@@ -171,8 +171,8 @@ def check_tech_radar(module_id: str = None) -> list[str]:
         REPO_ROOT
         / "docs"
         / "02_enterprise_architecture"
-        / "target-architecture"
-        / "architecture-model"
+        / "target_architecture"
+        / "architecture_model"
         / "technology"
         / "technology_landscape.yaml"
     )

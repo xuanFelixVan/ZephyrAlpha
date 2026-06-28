@@ -51,8 +51,8 @@ DEFAULT_CONTRACTS_PATH: Path = (
     REPO_ROOT
     / "docs"
     / "02_enterprise_architecture"
-    / "target-architecture"
-    / "architecture-model"
+    / "target_architecture"
+    / "architecture_model"
     / "contracts"
     / "cross_layer_contracts.yaml"
 )

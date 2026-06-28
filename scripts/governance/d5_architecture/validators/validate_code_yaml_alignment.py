@@ -21,7 +21,7 @@
       AGENTS.md §6.9 — 架构数据 Canonical SSoT 铁律
 
 检测内容：
-- CRITICAL: 实际存在的代码目录未在 architecture-model/ YAML 中登记
+- CRITICAL: 实际存在的代码目录未在 architecture_model/ YAML 中登记
 - HIGH: YAML 登记的文件在实际磁盘上不存在
 - MEDIUM: YAML 登记的模块文件数与实际文件数不一致
 
@@ -32,7 +32,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: GATE-A — 实际代码目录↔architecture-model/YAML SSoT 双层对账（AGENTS.md §6.10），检测未登记目录/YAML漂移/文件数不一致
+description: GATE-A — 实际代码目录↔architecture_model/YAML SSoT 双层对账（AGENTS.md §6.10），检测未登记目录/YAML漂移/文件数不一致
 dimensions:
 - D5
 priority: P0
@@ -143,7 +143,7 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
         if dir_name not in yaml_expected_dirs:
             criticals.append(
                 f"目录存在但 YAML 未登记: src/zephyr/{dir_name}/ "
-                f"— AGENTS.md §6.10 GATE-A 违规，请在 architecture-model/index.yaml 添加"
+                f"— AGENTS.md §6.10 GATE-A 违规，请在 architecture_model/index.yaml 添加"
             )
 
     # HIGH/MEDIUM: YAML ↔ 实际文件对账
@@ -208,7 +208,7 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description="GATE-A: src/zephyr/ ↔ architecture-model/ 双层对账")
+    parser = argparse.ArgumentParser(description="GATE-A: src/zephyr/ ↔ architecture_model/ 双层对账")
     parser.add_argument(
         "--warn-only",
         action="store_true",
@@ -223,7 +223,7 @@ def main() -> None:
     parser.add_argument(
         "--yaml-dir",
         type=str,
-        default=str(REPO_ROOT / "architecture-model"),
+        default=str(REPO_ROOT / "architecture_model"),
         help="YAML SSoT 目录",
     )
     args = parser.parse_args()

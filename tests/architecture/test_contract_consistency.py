@@ -35,7 +35,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 YAML_PATH = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+    "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
 )
 
 TYPE_MAP = {

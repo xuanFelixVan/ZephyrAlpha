@@ -66,7 +66,7 @@ for name, info in scripts.items():
 print()
 print("=== CTR contracts ===")
 with open(
-    "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml",
+    "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml",
     encoding="utf-8",
 ) as f:
     contracts = yaml.safe_load(f)
@@ -78,7 +78,7 @@ print(f"  Total: {ctr_count} (P0={p0_count}, P1={p1_count})")
 
 print()
 print("=== Architecture model layers ===")
-layer_files = glob.glob("architecture-model/layers/*.yaml")
+layer_files = glob.glob("architecture_model/layers/*.yaml")
 print(f"  Layer YAML files: {len(layer_files)}")
 
 print()
