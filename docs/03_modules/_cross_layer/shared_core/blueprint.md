@@ -129,7 +129,7 @@ depends_on:
 |------|------|
 | 单机部署：i7-12700KF（12C20T）/ 64GB RAM / RTX 3090 24GB / 1TB NVMe SSD | 所有容量设计基于单机，不支持水平扩展 |
 | Python 3.12+ + Pydantic V2 | 所有数据模型必须继承 BaseModel，禁止 dataclass |
-| SQLite 单写者锁 | 写入串行化，需 WriteBatcher 批量合并 |
+| SQLite 单写者锁 | 写入串行化，需 WriteBatcher 批量合并（暂缓待 L 级 5000+脚本） |
 | 100 AI 并发稳态 | 共享组件必须支持 100 并发读写 |
 | 1,500 模块 / 10,000 脚本目标容量 | 注册表和索引必须支持 O(1) 或 O(log N) 查询 |
 
@@ -667,7 +667,7 @@ depends_on:
 
 | # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
 |---|---------|---------|---------|---------|
-| 1 | SQLite 写入拥塞（SQLITE_BUSY） | busy_timeout > 5s | WriteBatcher 批量合并 + 降级为内存队列 | 所有持久化操作 |
+| 1 | SQLite 写入拥塞（SQLITE_BUSY） | busy_timeout > 5s | WriteBatcher 批量合并（暂缓待 L 级）+ 降级为内存队列 | 所有持久化操作 |
 | 2 | CircuitBreaker 熔断触发 | 失败率 > 阈值 | FallbackChain 降级 + 半开探测 | 依赖该外部服务的所有 Session |
 | 3 | Cache L2 命中率 < 50% | 监控指标 | 降级为仅 L1 + 关键查询走 DB 直连 | 上下文注入、蓝图查询 |
 | 4 | PriorityLock 死锁 | 等待 > 60s | DeadWorkerReaper 强制释放 + TTL 30min | 所有持锁操作 |
@@ -1124,7 +1124,7 @@ logger = get_logger(__name__)
 
 | 触发条件 | 组件 | 动作 |
 |---------|------|------|
-| 并发写入 > 10/s | SQLite | WriteBatcher 批量合并 |
+| 并发写入 > 10/s | SQLite | WriteBatcher 批量合并（暂缓待 L 级） |
 | AI Session > 100 | MemoryCache | per-session L1 + shared L2 双层 |
 | 模块 > 1,500 | Metrics | Label 白名单 + Lock-Free Counter |
 | 并发 API 调用 > 20 | HTTP Client | per-provider 独立连接池 |

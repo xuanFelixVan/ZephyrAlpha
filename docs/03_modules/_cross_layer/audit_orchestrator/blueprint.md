@@ -509,7 +509,7 @@ class GlobalAuditReport(BaseModel):
 | MOD-INF-029 OrphanJudge | 必须 | 孤儿判定三决策树 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\orphan-judge\blueprint.md` |
 | MOD-INF-030 RedBlue Validator | 必须 | 红白对抗验证 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` |
 | MOD-INF-031 AutoFix Engine | 必须 | 修复执行 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
-| MOD-DATABASE Database v3.0 | 必须 | DualDBRouter + WriteBatcher | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\database\blueprint.md` |
+| MOD-DATABASE Database v3.0 | 必须 | get_db_connection() + WriteBatcher（暂缓待 L 级） | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\database\blueprint.md` |
 | MOD-INF-023 Drift Detector | 可选 | 漂移信号 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\drift-detector\blueprint.md` |
 | MOD-FEEDBACK_LOOP Feedback Loop | 可选 | 审计发现回写规则演进 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\feedback-loop\blueprint.md` |
 
@@ -598,7 +598,7 @@ class GlobalAuditReport(BaseModel):
 | Pipeline Orchestrator | 新增 Pipeline Stage | `PRE-DEPLOY-AUDIT` stage | Pipeline 执行审计门禁 |
 | Agent Spec Skill | 注册 Skill | `audit-orchestrator` skill | `python -m zephyr.agent_spec list` 可见 |
 | Cron Scheduler | 配置注入 | `config/audit_schedule.yaml` | 定时触发执行 |
-| Database v3.0 | 接口契约 CT-AO-DB-001 | DualDBRouter + WriteBatcher | 审计事件写入 PG |
+| Database v3.0 | 接口契约 CT-AO-DB-001 | get_db_connection()（WriteBatcher 暂缓待 L 级） | 审计事件写入 PG |
 
 ### 12.1 域契约锚点
 
@@ -1261,9 +1261,9 @@ STEP 3: 拆分后验证
 
 | 写入路径 | 目标 | 路由 | 吞吐目标 |
 |---------|------|------|---------|
-| audit_report | audit_reports 表 | DualDBRouter.write() + WriteBatcher | ~500 writes/s |
+| audit_report | audit_reports 表 | get_db_connection().write()（WriteBatcher 暂缓待 L 级） | ~500 writes/s（待 L 级） |
 | hash_cache | SQLite hash_cache.db（本地） | 本地直写 | — |
-| script_executions | script_executions 表 | DualDBRouter.write() + WriteBatcher | ~500 writes/s |
+| script_executions | script_executions 表 | get_db_connection().write()（待 M-1 级启动） | ~500 writes/s（待 M-1 级） |
 | pattern_db | SQLite patterns.db（本地） | 单写者 | — |
 
 #### 脚本超时渐进式降级
@@ -1308,7 +1308,7 @@ STEP 3: 拆分后验证
 | 审计总控依赖 | 对端模块容量升级 | 接口契约 | 兼容性 |
 |-------------|----------------|---------|:---:|
 | ScriptScheduler (MOD-INF-005) | §〇-B 并发 | CT-AO-SS-001 | ✅ |
-| DualDBRouter (MOD-DATABASE) | §23+§24 | CT-AO-DB-001 | ✅ |
+| DualDBRouter (MOD-DATABASE) | §23+§24 | CT-AO-DB-001 | ❌ 已裁定删除，由 get_db_connection() 覆盖 |
 | BehavioralAuditor (MOD-INF-033) | §3.1 并行消费 | CT-BEH-* | ✅ |
 | SemanticAuditor (MOD-INF-028) | v5.0.0 完整方案 | CT-SEM-001 | ✅ |
 | AssetInventory (MOD-INF-026) | v3.0.0 容量升级 | CT-AO-AI-001 | ✅ |

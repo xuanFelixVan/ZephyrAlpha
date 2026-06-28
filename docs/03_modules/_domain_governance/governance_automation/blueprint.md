@@ -2378,7 +2378,10 @@ concurrency:
 
 ---
 
-### 36.4 G3：SQLite 写入队列 + 批量合并
+### 36.4 G3：SQLite 写入队列 + 批量合并 ⏸ 暂缓（待 L 级 5000+脚本）
+
+> **⚠ 012B 裁定（2026-06-28）**：WriteBatcher 暂缓。当前 S 级 571 脚本无写争抢实证，
+> L 级（5000+脚本）启动。depgraph.db 已迁 PG（MVCC 解决其写争抢），剩余 SQLite 争抢仅在 governance.db。
 
 **问题**：SQLite WAL 模式只允许 1 个写事务。100 AI 同时写 events/gates/tasks 时，99 个排队等待 busy_timeout（5s）。
 
@@ -2415,7 +2418,11 @@ concurrency:
 
 ---
 
-### 36.5 G4：脚本执行历史表
+### 36.5 G4：脚本执行历史表 ⏸ 暂缓（待 M-1 级 500+脚本，当前 571 已达）
+
+> **⚠ 012B 裁定（2026-06-28）**：ScriptExecutionLogger 暂缓但近期可启动。
+> 当前 571 脚本已达 M-1 下限 500，纯新增低风险（不影响现有表）。
+> 启动条件：JSONL 查询痛点实证，或 audit_orchestrator 完成度提升至 20/33。
 
 **问题**：当前脚本执行结果仅存 JSONL 文件，10,000 脚本 × 100 AI 的执行历史无法高效查询和聚合。
 
