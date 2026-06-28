@@ -43,7 +43,8 @@ class MemoryWriter:
             tid = getattr(task, "task_id", "unknown")
             summary = f"Task: {getattr(task, 'title', '')}. Result: {json.dumps(result or {}, default=str)}"
             bridge._vms.write(
-                "session_snapshots", summary[:2000], metadata={"task_id": tid, "status": getattr(task, "status", "?")}
+                "session_snapshots", summary[:2000], metadata={"task_id": tid, "status": getattr(task, "status", "?")},
+                doc_id=f"session::{tid}",
             )
             logger.info("[ORC-VMS] archived: %s", tid)
             return ArchiveResult(stored=1)

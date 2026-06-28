@@ -61,7 +61,7 @@ class SyncEngine:
                 text = f"{title}: {summary or ''}"[:2000]
                 meta = {"ke_id": ke_id, "category": category or "", "tags": tags or ""}
                 try:
-                    bridge._vms.write("knowledge", text, metadata=meta)
+                    bridge._vms.write("knowledge", text, metadata=meta, doc_id=f"ke::{ke_id}")
                     stored += 1
                 except Exception as exc:
                     logger.debug("[KB-VMS] write failed for %s: %s", ke_id, exc)
