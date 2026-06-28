@@ -475,6 +475,7 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - **技术调查推荐方向**（2026-06-28 审查补充，供合并任务卡参考）：**F3→F2（合并 F3 入 F2，F2 作为真源）**
   - 依据①：F2 签名是 F3 超集——F2 含 `check_same_thread`/`timeout` 关键字参数，F3 仅 `db_path` 一参数。F3 调用方迁到 F2 无需改调用代码；反向不成立
   - 依据②：F2 用 `isolation_level=None`（autocommit），被 `database_manager.py` 3 处实现（infrastructure/db/、governance/、governance/persistence/）依赖显式事务控制（BEGIN IMMEDIATE/COMMIT/ROLLBACK）。F3 用默认 deferred 隔离级，无法承接 F2 调用方
+  - 依据②补充（F3→F2 迁移风险，2026-06-28 调查）：F3 调用方迁移到 F2 时，依赖隐式事务（多条 DML 在一个事务中自动 BEGIN/需 commit()）的调用方需改为显式 BEGIN/COMMIT，否则 autocommit 下每条 DML 立即提交无法回滚。只读查询（SELECT）迁移安全。DB_PATH 两者一致（`data/databases/governance.db`，F2 自定义 / F3 从 `zephyr.shared.io.paths` 导入）。F3 的 12 个 import 点中含漂移副本（`kb/kb_repo.py` vs `kb/storage/kb_repo.py`、`audit_orchestration/wave_generator.py` vs `audit_orchestration/core/wave_generator.py`），合并前需先清理漂移副本
   - 依据③：实际 `get_db_connection` 调用点 F2=39 处 vs F3=12 处（"70/13"是 [CONSUMERS] 头部所有符号导入数，非真实调用点），迁移 F3→F2 仅需改 12 处，风险更低
   - 依据④：F2 同文件含 `init_db`/`SchemaManager`/`_MIGRATIONS`/`schema_version`，是 governance.db schema 管理唯一综合体；F3 的 `init_db` 是轻量版，docstring 自承"full schema migration support, use F2 directly"
   - **注意**：capability_canonical_file_registry.yaml 当前 `sqlite_db_connection.canonical_override` 指向 F3 是临时占位（登记现状），合并任务卡应按 F3→F2 方向裁定后同步修正
