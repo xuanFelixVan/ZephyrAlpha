@@ -32,6 +32,7 @@ VectorBridge — MOD-INF-011 CE/KB 外部集成适配器
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from datetime import UTC, datetime
 from typing import Any
@@ -62,7 +63,7 @@ class VectorBridge:
         meta.setdefault("origin", f"kb/ke/{ke_id}")
         meta.setdefault("audit_chain", ["kb"])
         meta.setdefault("arbitration", "supervised")
-        return self._vms.write("knowledge", content, metadata=meta)
+        return self._vms.write("knowledge", content, metadata=meta, doc_id=f"ke::{ke_id}")
 
     def sync_rules(self, rule_id: str, content: str) -> str:
         return self._vms.write(
@@ -73,6 +74,7 @@ class VectorBridge:
                 "audit_chain": ["governance"],
                 "arbitration": "human-gated",
             },
+            doc_id=f"rule::{rule_id}",
         )
 
     def write_decision(self, task_id: str, decision_text: str) -> str:
@@ -85,6 +87,7 @@ class VectorBridge:
                 "arbitration": "supervised",
                 "task_id": task_id,
             },
+            doc_id=f"decision::{task_id}",
         )
 
     def write_session_summary(self, session_id: str, summary: str) -> str:
@@ -97,9 +100,12 @@ class VectorBridge:
                 "arbitration": "autonomous",
                 "session_id": session_id,
             },
+            doc_id=f"session::{session_id}",
         )
 
     def audit_operation(self, operation: str, details: dict[str, Any]) -> str:
+        # 不传 doc_id——audited_at 每次不同必生成新 doc，审计日志语义本该每次独立记录；
+        # execution_traces ttl=30 自净，天然堆叠可接受
         import json
 
         return self._vms.write(
@@ -116,6 +122,9 @@ class VectorBridge:
         )
 
     def write_failure_pattern(self, pattern_text: str) -> str:
+        # 内容哈希作 doc_id——pattern_text 稳定时幂等；若 FLE 上游含 timestamp 导致每次不同，
+        # 需提取 pattern_key 业务键替代（见任务卡风险 B）
+        doc_id = f"lesson::{hashlib.sha256(pattern_text.encode()).hexdigest()[:16]}"
         return self._vms.write(
             "lessons",
             pattern_text,
@@ -124,4 +133,5 @@ class VectorBridge:
                 "audit_chain": ["fle"],
                 "arbitration": "autonomous",
             },
+            doc_id=doc_id,
         )
