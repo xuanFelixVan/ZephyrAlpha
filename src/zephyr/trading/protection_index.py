@@ -64,7 +64,6 @@ NORMAL_PATTERNS: list[str] = [
     "src/zephyr/orchestrator/",
     "src/zephyr/runtime/",
     "src/zephyr/telemetry/",
-    "src/zephyr/system-telemetry/",
     "src/zephyr/asset-inventory/",
     "tests/",
     "scripts/",
