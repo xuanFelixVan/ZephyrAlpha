@@ -382,8 +382,9 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
   7. S3.1 `306dbb2f`+`01377504`：governance/vector_memory 整包删除 + 91 处 import 重定向 + context_ingest 移植
   8. 风险B `548e8638`：write_failure_pattern 提取稳定 root_cause 作 pattern_text（治本内容哈希无效问题）
 - **真源声明**：integration/vector_memory/ 是 VMS 唯一真源；governance/vector_memory/ 已删除（2026-06-28）
-- **遗留子项**：faiss_collection_manager.py 的 write_with_provenance 签名不兼容（只有 collection_name+content_vector，缺 content/metadata/doc_id），FAISS 后端为蓝图规划可选后端，当前用 chromadb，需单独补全
+- **遗留子项**：已全部治本（2026-06-28 补充施工）——(1) faiss_collection_manager.write_with_provenance 死代码已删除（零调用方，FAISS 启用时按 CollectionManager 真源签名重新实现）；(2) test_vms_full_e2e.py 破损冗余测试已删除（VMS API 测试由 test_vms_lifecycle.py 22 测试覆盖，FAISS 测试由 benchmark_vms_e2e.py + benchmark_vms_v2.py 覆盖）；(3) 蓝图 L500 签名已同步补 doc_id
 - **新 AI 警告**：勿重建 governance/vector_memory/ 目录——它是已删除的漂移副本，integration/vector_memory/ 是唯一真源
+- **pre-commit 防复发**：`gate-vms-ssot` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）检测 staged 文件路径前缀 `src/zephyr/governance/vector_memory/`（大小写不敏感）→ hard block (exit 1)。新 AI 试图 commit 该路径会被自动阻断，治本 SSoT 双向漂移防复发
 
 #### 遗留项-4：VMS 快照失控治本（已治本，2026-06-28）
 
