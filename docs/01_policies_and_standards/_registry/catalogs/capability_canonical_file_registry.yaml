@@ -620,6 +620,62 @@ capabilities:
       - _check_physical_path   # 单契约检测函数(检测逻辑真源)
       - _KNOWN_DEAD_PATTERNS   # 已知死路径模式列表(篡改即丢失精确提示)
 
+  # --------------------------------------------------------------------------
+  - capability_id: depgraph_pg_connection
+    canonical_override: src/zephyr/governance/depgraph_schema.py
+    aliases:
+      - get_depgraph_pg_connection
+      - depgraph_pg_connection
+      - pg_connection
+      - postgres_connection
+      - psycopg2_connection
+    description: >-
+      depgraph PostgreSQL 数据库连接的唯一真源函数（P2 PG 迁移后治本，AGENTS.md §11.4）。
+      canonical = src/zephyr/governance/depgraph_schema.py 的 get_depgraph_pg_connection()
+      （原名 get_db_connection，2026-06-28 改名消除与 SQLite 同名冲突；保留 deprecated 别名
+      向后兼容，新代码必须用 get_depgraph_pg_connection）。
+      解决发现性：新 AI 搜 "数据库连接/pg连接/depgraph connection" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止在别处新建 PG 连接函数。
+      解决防绕过：AGENTS.md §11.4 + project_rules.md 指针 + 本注册表三重冗余，
+      新 AI 写 DB 连接代码前会被引导到本真源。
+    duplicates_manual:
+      - path: scripts/governance/_shared/constants.py
+        relation: re_export
+        note: >-
+          scripts/ 侧 PG 连接 wrapper（get_depgraph_pg_connection），bootstrap import +
+          re-export 自 src/zephyr/governance/depgraph_schema.py。scripts/ 消费者用本 wrapper，
+          src/ 消费者直接 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection。
+      - path: src/zephyr/governance/depgraph_schema.py
+        relation: re_export
+        note: >-
+          get_db_connection（deprecated 别名）= get_depgraph_pg_connection 的向后兼容别名。
+          新代码禁止使用，仅保留过渡。见 AGENTS.md §11.4。
+
+  # --------------------------------------------------------------------------
+  - capability_id: sqlite_db_connection
+    canonical_override: src/zephyr/shared/utils/db_utils.py
+    aliases:
+      - get_db_connection
+      - sqlite_connection
+      - sqlite3_connection
+      - db_utils_get_db_connection
+    description: >-
+      SQLite 数据库连接函数（governance.db 等）。F2/F3 同名冲突遗留项（AGENTS.md §11.4 遗留项）。
+      现状：两个文件各有一个 get_db_connection()，函数名相同但实现不同（参数/返回值不同）：
+        F2 = src/zephyr/governance/sqlite_schema.py（governance.db 专用，含 schema 初始化）
+        F3 = src/zephyr/shared/utils/db_utils.py（通用 SQLite，接受 db_path 参数）
+      canonical_override 指向 F3（通用入口，shared/utils 是公共工具层）。
+      待办：F2/F3 合并需独立任务卡（83 调用点风险高），合并前禁止新建第三个 get_db_connection。
+      解决发现性：新 AI 搜 "sqlite连接/get_db_connection" 可定位真源 + 知晓同名冲突。
+      解决防重建：check_file_canonical() 反查 + AGENTS.md §11.4 警告阻止新建第三个同名函数。
+    duplicates_manual:
+      - path: src/zephyr/governance/sqlite_schema.py
+        relation: conflicting
+        note: >-
+          F2 同名冲突（同名 get_db_connection，不同实现）。governance.db 专用版本，
+          含 schema 初始化逻辑。与 F3（shared/utils 通用版）参数签名不同。
+          待 F2/F3 合并任务卡裁定真源（83 调用点需逐一迁移），合并前勿新建第三个。
+
 # ============================================================================
 # 维护日志
 # ============================================================================
@@ -666,3 +722,9 @@ capabilities:
 #   - 治本（2d 可发现性）：新 AI 搜"遥测指标/日志/追踪/健康探针"能定位真源，不再重复造轮子
 #   - 治本（2c 防绕过）：physical_path 指向连字符目录时 pre-commit 硬阻断，防止死代码复活
 #   - 红蓝对抗发现：AGENTS.md 未注册 CT-TEL 真源 + 无门禁防 physical_path 恢复，本次治本
+# 2026-06-28 新增 2 条（数据库连接函数真源注册，AGENTS.md §11.4 配套）：
+#   - depgraph_pg_connection: F1 canonical（depgraph_schema.py）+ F4 wrapper（_shared/constants.py）
+#   - sqlite_db_connection: F2/F3 同名冲突登记（sqlite_schema.py vs db_utils.py，待合并任务卡）
+#   - 治本（2d 可发现性）：新 AI 搜 "数据库连接/pg连接/sqlite连接/get_db_connection" 能定位真源
+#   - 治本（2c 防重建）：check_file_canonical() 反查 + AGENTS.md §11.4 警告阻止新建第三个同名函数
+#   - 红蓝对抗发现：此前 capability_lookup.find("get_db_connection") 返回空，新 AI 可能重复造轮子

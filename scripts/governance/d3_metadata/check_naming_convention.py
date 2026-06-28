@@ -352,7 +352,7 @@ def _check_n06_module_id_scope(filepath: str, abspath: Path | None = None) -> li
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8", errors="replace")
+        content = _read_text_bom_safe(abspath)
     except Exception:
         return []
     # Check: does ANY module_id: in the file have a valid scope prefix?
@@ -402,7 +402,7 @@ def _check_n07_module_id_number_mismatch(filepath: str, abspath: Path | None = N
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8", errors="replace")
+        content = _read_text_bom_safe(abspath)
     except Exception:
         return []
     fn_match = _FILENAME_ADR_NUM_RE.match(stem)
@@ -608,7 +608,7 @@ def _check_n11_doctype_suffix(filepath: str, abspath: Path | None = None) -> lis
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8", errors="replace")
+        content = _read_text_bom_safe(abspath)
     except Exception:
         return []
     dt_match = _DOC_TYPE_RE.search(content)
@@ -797,7 +797,7 @@ def _check_n14_init_has_all(filepath: str, abspath: Path | None = None) -> list[
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8", errors="replace")
+        content = _read_text_bom_safe(abspath)
     except Exception:
         return []
     if not content.strip():
@@ -826,7 +826,7 @@ def _check_n15_blueprint_path_exists(
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8", errors="replace")
+        content = _read_text_bom_safe(abspath)
     except Exception:
         return []
     match = _BLUEPRINT_HEADER_RE.search(content)
@@ -1333,7 +1333,7 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
     if abspath is None or not abspath.exists():
         return []
     try:
-        content = abspath.read_text(encoding="utf-8-sig", errors="replace")
+        content = _read_text_bom_safe(abspath)
     except Exception:
         return []
 
@@ -1380,6 +1380,25 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
             )
         ]
     return []
+
+
+# ---------------------------------------------------------------------------
+# BOM 安全读取公共入口（P0-A 彻底化治本，2026-06-28）
+# ---------------------------------------------------------------------------
+# 根因：HEAD 版本部分 .py 文件含 BOM（\ufeff），导致锚定行首的正则
+# （如 N-15 `^\s*#?\s*\[BLUEPRINT\]`、N-17 `^\s*#\s*\[BLUEPRINT\]`）匹配失败，
+# HEAD 版本 violations=0，工作区版本正常触发，历史豁免差集非空 → 误阻断提交。
+# utf-8-sig 自动剥离 BOM，让 HEAD 和工作区版本解析一致，差集正确计算。
+# 本函数是所有 N-* 检查读取 .py 文件的唯一入口，禁止再散用 read_text(utf-8)。
+
+
+def _read_text_bom_safe(abspath: Path) -> str:
+    """读取文件内容，自动剥离 BOM（BOM 脆弱性统一治本入口）。
+
+    所有 N-* 检查读取 .py 文件必须走本函数，禁止散用 abspath.read_text(utf-8)。
+    见 2026-06-28 N-17 BOM 治本 + P0-A 彻底化（5 处脆弱 read_text 收拢）。
+    """
+    return abspath.read_text(encoding="utf-8-sig", errors="replace")
 
 
 # ---------------------------------------------------------------------------

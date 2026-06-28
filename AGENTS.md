@@ -383,8 +383,10 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
   8. 风险B `548e8638`：write_failure_pattern 提取稳定 root_cause 作 pattern_text（治本内容哈希无效问题）
 - **真源声明**：integration/vector_memory/ 是 VMS 唯一真源；governance/vector_memory/ 已删除（2026-06-28）
 - **遗留子项**：已全部治本（2026-06-28 补充施工）——(1) faiss_collection_manager.write_with_provenance 死代码已删除（零调用方，FAISS 启用时按 CollectionManager 真源签名重新实现）；(2) test_vms_full_e2e.py 破损冗余测试已删除（VMS API 测试由 test_vms_lifecycle.py 22 测试覆盖，FAISS 测试由 benchmark_vms_e2e.py + benchmark_vms_v2.py 覆盖）；(3) 蓝图 L500 签名已同步补 doc_id
-- **新 AI 警告**：勿重建 governance/vector_memory/ 目录——它是已删除的漂移副本，integration/vector_memory/ 是唯一真源
-- **pre-commit 防复发**：`gate-vms-ssot` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）双检测——① 检测 staged 文件路径前缀 `src/zephyr/governance/vector_memory/`（大小写不敏感）→ hard block (exit 1)，治本 SSoT 双向漂移防复发；② AST 扫描 `src/zephyr/integration/vector_memory/` 下 .py 防重建 snapshot 方法（详见遗留项-4）
+- **新 AI 警告**：
+  1. 勿重建 governance/vector_memory/ 目录——它是已删除的漂移副本，integration/vector_memory/ 是唯一真源
+  2. 勿补全 faiss_collection_manager.write_with_provenance——它是零调用方死代码，FAISS 启用时按 CollectionManager 真源签名重新实现（勿在 FAISS 未启用时提前补全）
+- **pre-commit 防复发**：`gate-vms-ssot` 钩子（[.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml)）三重检测——① 检测 staged 文件路径前缀 `src/zephyr/governance/vector_memory/`（大小写不敏感）→ hard block (exit 1)，治本 SSoT 双向漂移防复发；② AST 扫描 `src/zephyr/integration/vector_memory/` 下 .py 防重建 snapshot 方法（详见遗留项-4）；③ AST 扫描防重建 `write_with_provenance` 方法（faiss_collection_manager.py 死代码防复发）
 
 #### 遗留项-4：VMS 快照功能删除治本（已治本，2026-06-28）
 
@@ -462,3 +464,20 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - ✅ **连 PG 用** `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`（src 包）或 `from _shared.constants import get_depgraph_pg_connection`（scripts 包，wrapper 兼容 sqlite3 接口）
 - ✅ **连 SQLite 用** `from zephyr.shared.utils.db_utils import get_db_connection` 或 `from zephyr.governance.sqlite_schema import get_db_connection`
 - ⚠ F2/F3 仍同名 `get_db_connection`（SQLite governance.db），合并需独立任务卡（83 调用点风险高）
+
+#### 遗留项：F2/F3 SQLite 同名冲突（待合并，2026-06-28 登记）
+
+- **状态**：未治本（待独立任务卡，83 调用点风险高）
+- **问题本质**：两个文件各有一个 `get_db_connection()`，函数名相同但实现不同：
+  - F2 [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) — governance.db 专用，含 schema 初始化，70 调用点
+  - F3 [db_utils.py:59](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) — 通用 SQLite，接受 db_path 参数，13 调用点
+- **未合并原因**：83 调用点需逐一迁移验证，风险高，需独立任务卡裁定真源（F2 还是 F3）
+- **触发条件**（任一满足即应启动合并任务卡）：
+  1. 出现第三个 `get_db_connection` 实现（违反真源唯一）
+  2. F2/F3 行为差异导致 bug（如 schema 初始化副作用不一致）
+  3. 调用方误用错误入口导致连接错误 DB
+- **capability 反查**：[capability_canonical_file_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml) 已注册 `sqlite_db_connection` capability（canonical_override 指向 F3，F2 标记为 conflicting duplicate）。新 AI 搜 `get_db_connection` 可通过 `CapabilityLookup.find()` 定位真源 + 知晓同名冲突
+- **新 AI 警告**：
+  - ❌ **勿新建第三个 `get_db_connection`**——违反真源唯一，应扩展现有 F2 或 F3
+  - ❌ **勿在未读本节时修改 SQLite 连接代码**——可能误用入口
+  - ⚠ **合并 F2/F3 需独立任务卡**——83 调用点逐一迁移，勿在本节治本中夹带

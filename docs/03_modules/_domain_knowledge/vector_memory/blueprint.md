@@ -118,7 +118,7 @@ END_REQUIRED_SECTIONS
 # Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化
 
 > **module_id**: MOD-INF-011 | **version**: 0.12.0 | **status**: active | **layer**: cross_layer
-> **actual_disk_path**: `src/zephyr/vector-memory/` | **generation**: 1 | **construction_progress**: partially_implemented
+> **actual_disk_path**: `src/zephyr/integration/vector_memory/` | **generation**: 1 | **construction_progress**: partially_implemented
 
 ## 概述
 
@@ -198,7 +198,7 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 | 21 | ollama_chat.py | §17 | Ollama 本地 LLM 推理 | 已迁移 | MOD-INF-039 |
 | 22 | local_model_scheduler.py | §17 | 本地模型调度循环 | 已迁移 | MOD-INF-039 |
 | 23 | migrate_chroma_to_faiss.py | §17 | ChromaDB→FAISS 迁移 | 已实现 | |
-| 24 | vms-config.yaml | §5.1 | VMS 环境配置 Schema | 已实现 | |
+| 24 | vms_config.yaml | §5.1 | VMS 环境配置 Schema | 已实现 | |
 | 25 | __init__.py | §2 | VMS 架构归属+8 Collection docstring | 已实现 | |
 | 26 | bm25_index.py | §3.2 | BM25 稀疏检索索引 | 已实现 | |
 | 27 | vms_errors.py | §6 | 异常层级 SSoT | 已实现 | |
@@ -208,14 +208,14 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/vector-memory/` 逐文件核对 | ☐ |
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/integration/vector_memory/` 逐文件核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 | 8 Collection Schema 与代码 COLLECTION_SCHEMAS 一致 | `grep "COLLECTION_SCHEMAS" *.py` | ☐ |
 | 双嵌入维度路由与代码 EmbeddingRouter 一致 | `grep "embedding_model" *.py` | ☐ |
 | 代码 [BLUEPRINT] 头部指向 = 本蓝图 module_id | `grep "\[BLUEPRINT\]" *.py` 核对 module_id | ☐ |
 | §4.2 每个数据模型的 SSoT 文件中确实存在该模型 | `grep "class {ModelName}" {ssot_file}.py` 逐模型核对 | ☐ |
 | §0.1 每个文件的职责与其他文件无重叠 | 交叉比对职责列 | ☐ |
-| §5.5 自动化触发机制状态列与代码实现一致 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint docs/03_modules/_domain-infra_ops/vector-memory/blueprint.md` | ✅ |
+| §5.5 自动化触发机制状态列与代码实现一致 | `python scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py --blueprint docs/03_modules/_domain_knowledge/vector_memory/blueprint.md` | ✅ |
 
 ### §0.3 版本-代码映射
 
@@ -242,7 +242,7 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 
 | # | 声明项 | 值 |
 |---|--------|-----|
-| 1 | 主代码目录 | `src/zephyr/vector-memory/` |
+| 1 | 主代码目录 | `src/zephyr/integration/vector_memory/` |
 | 2 | 已知副本目录 | `src/zephyr/kb/` — 原因：过渡期遗留，4 旧 Collection 仍在 kb/ 中；`src/zephyr/local-model/` — 原因：MOD-INF-039 拆分后 5 个文件在两目录存在副本 |
 | 3 | 副本处置状态 | kb/：迁移中(3/7已完成)；local_model/：VMS 侧为 re-export 兼容层，消费者逐步迁移至 `from zephyr.local_model import ...` |
 
@@ -677,7 +677,7 @@ class FeedbackEntry(BaseModel):
 | 6 | 批量大小 | 16（1024d）/ 32（512d） |
 | 7 | 距离度量 | cosine |
 | 8 | 混合检索 | Vector(HNSW) + BM25 + RRF融合(k=60) |
-| 9 | 配置入口 | vms-config.yaml（禁止硬编码） |
+| 9 | 配置入口 | vms_config.yaml（禁止硬编码） |
 | 10 | ChromaDB 遥测 | MUST 禁用（CHROMA_TELEMETRY_IMPL=none） |
 
 ### §5.2 容量估算
@@ -743,7 +743,7 @@ class FeedbackEntry(BaseModel):
 | 1 | 编码模式 | 同一 Collection 内混用维度 | Collection 创建时锁定维度 | 检索不可比 |
 | 2 | 编码模式 | 跳过 WriteTrace 直接写入 | MUST 通过 write() → ProvenanceEnforcer | 审计链断裂 |
 | 3 | 编码模式 | AI 擅自变更 Collection Schema | 须经 Owner 审批 + 更新蓝图 §2 | 治理失控 |
-| 4 | 编码模式 | 硬编码配置 | vms-config.yaml | 配置漂移 |
+| 4 | 编码模式 | 硬编码配置 | vms_config.yaml | 配置漂移 |
 | 5 | 编码模式 | ChromaDB 遥测开启 | MUST 禁用 | 隐私合规 |
 | 6 | 导入源 | zephyr.vector_memory 导入 zephyr.kb.* | 通过 BridgeLayer 间接访问 | 分层约束 |
 
@@ -828,7 +828,7 @@ class FeedbackEntry(BaseModel):
 
 | # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
 |---|---------|---------|------------|---------|
-| 1 | 单元测试 | InProcessVectorMemory/EmbeddingRouter/HybridRetriever/ProvenanceEnforcer/IndexHealthMonitor/CollectionManager | `tests/unit/vector-memory/test_vector_memory.py` | 覆盖率 > 80% |
+| 1 | 单元测试 | InProcessVectorMemory/EmbeddingRouter/HybridRetriever/ProvenanceEnforcer/IndexHealthMonitor/CollectionManager | `tests/unit/vector_memory/test_vector_memory.py` | 覆盖率 > 80% |
 | 2 | 集成测试 | VMS→CE 检索链路 | CE build 阶段成功检索 KE 条目 | 端到端通过 |
 | 3 | 测试替身 | InMemoryFakeVMS（in_memory_fake_vms.py） | 消费方（CE/Orc/FLE）单元测试独立于 VMS 状态 | InMemoryFakeVMS 接口与 InProcessVectorMemory 一致 |
 | 4 | 确定性嵌入 | DeterministicEmbedder（基于 content_hash 生成固定伪向量） | 测试环境下嵌入结果稳定可复现 | 相同输入→相同向量 |
@@ -843,15 +843,15 @@ class FeedbackEntry(BaseModel):
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-MASTER_BLUEPRINT | 必须 | CT-CE-VMS-001 集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
-| MOD-KB-001 | 可选 | 知识库——beta VMS整合目标 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
-| MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` |
-| MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\local-model\blueprint.md` |
-| MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\feedback-loop\blueprint.md` |
+| MOD-KB-001 | 可选 | 知识库——beta VMS整合目标 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge-base\blueprint.md` |
+| MOD-CONTEXT_ENGINE | 必须 | CE——VMS的主要消费方 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context-engine\blueprint.md` |
+| MOD-INF-039 | 必须 | 本地模型推理——嵌入路由/缓存/Ollama/调度 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
+| MOD-FEEDBACK_LOOP | 可选 | FLE 消费检索反馈 | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\feedback-loop\blueprint.md` |
 | L02-Alpha因子层 | 可选 | C轨域：因子语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\l02_factor\blueprint.md` |
 | L11-ML平台层 | 可选 | C轨域：模型语义检索 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\blueprint.md` |
 | KBG-0016 | 必须 | VMS生产级嵌入与分块契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` |
 | KBG-0031 | 必须 | Phase 2 ChromaDB基线选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` |
-| MOD-INF-039 | 必须 | 嵌入服务——EmbeddingRouter/CacheLayer/OllamaEmbedding已迁移至local_model | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\local-model\blueprint.md` |
+| MOD-INF-039 | 必须 | 嵌入服务——EmbeddingRouter/CacheLayer/OllamaEmbedding已迁移至local_model | — | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\local-model\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -918,10 +918,10 @@ class FeedbackEntry(BaseModel):
 
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
-| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\vector-memory\` | VMS 源码（25 个 .py + 1 个 .yaml） |
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\vector_memory\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\` | VMS 源码（25 个 .py + 1 个 .yaml） |
 | 过渡期代码 | `D:\ZephyrAlpha\src\zephyr\kb\chromadb_init.py` + `unified_memory_api.py` | 现有实现——Phase 2 后冻结 |
-| 测试代码 | `D:\ZephyrAlpha\tests\unit\vector-memory\` | 单元测试 |
+| 测试代码 | `D:\ZephyrAlpha\tests\unit\vector_memory\` | 单元测试 |
 | ChromaDB 数据 | `D:\ZephyrAlpha\data\vector_db\` | ChromaDB 持久化目录 |
 | 嵌入模型缓存 | `D:\ZephyrAlpha\models\bge-m3\` | BGE-M3 ONNX 模型文件 |
 | 轻量模型缓存 | `D:\ZephyrAlpha\models\bge-small-zh-v1.5\` | 512d 轻量嵌入模型 |
@@ -950,7 +950,7 @@ class FeedbackEntry(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 版本号 0.9.0 + P0 | 蓝图 status → active |
 | 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | VMS 模块状态 active | 蓝图已定稿 |
-| 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
+| 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context-engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
 | 4 | b_vector_memory.yaml SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 8 Collection + 双嵌入维度 + Phase 0-4 | SSoT 反向同步 |
 | 5 | KBG-0031 状态 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 添加"已通向 VMS v0.9.0 8 Collection"注释 | 避免 KB 决策记录 与蓝图不一致 |
 | 6 | Tech Stack | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\technology\vibe_coding_infrastructure_tech_stack.yaml` | TECH-04/TECH-05 更新双嵌入维度 | 新增 bge-small-zh-v1.5 轻量路径 |
@@ -976,7 +976,7 @@ class FeedbackEntry(BaseModel):
 | R12 | 敏感数据泄露到向量索引中 | 低 | 🔴 致命 | 写入前 input_sanitizer 扫描 + rules/knowledge 人类审查 | 风险 |
 | R13 | Collection 数量失控膨胀 | 中 | 中 | 新增 Collection 须经 Owner 审批 + 更新蓝图 §2 | 风险 |
 | R14 | 迁移期间数据不一致 | 高 | 高 | BridgeLayer 双读阶段；迁移完成后 kb/ 标记 deprecated | 风险 |
-| NC1 | ChromaDB + BGE-M3 + bge-small 三依赖——部署复杂度增加 | 高 | 中 | 统一安装脚本 + vms-config.yaml 校验 | 负面后果 |
+| NC1 | ChromaDB + BGE-M3 + bge-small 三依赖——部署复杂度增加 | 高 | 中 | 统一安装脚本 + vms_config.yaml 校验 | 负面后果 |
 | NC2 | 向量检索不确定性——语义相似 ≠ 语义相同 | 中 | 中 | 混合检索 + RRF 缓解 | 负面后果 |
 | NC3 | 双模型增加资源占用（~2GB+300MB） | 高 | 中 | 按需加载 + 降级策略 | 负面后果 |
 
@@ -1019,7 +1019,7 @@ class FeedbackEntry(BaseModel):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4 ProvenanceEnforcer / EmbeddingRouter / ChunkStrategyRouter / IndexHealthMonitor / CacheLayer / BridgeLayer |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\vector-memory\` 下 6 个模块文件 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\` 下 6 个模块文件 |
 | 验收标准 | ProvenanceEnforcer 可校验 WriteTrace；EmbeddingRouter 可按 Collection 路由；BridgeLayer 可双读 |
 
 **创建文件清单**：
@@ -1054,7 +1054,7 @@ class FeedbackEntry(BaseModel):
 | delegated_vector_memory.py | RI-02 落地适配器 | VectorMemoryBase→UnifiedMemoryAPI 映射 |
 | vms_errors.py | 异常层级 SSoT | VMSError/DesignPrincipleError/ProvenanceMissingError/DimensionError |
 | design_principles.py | 设计原则校验 SSoT | validate_dimension()/validate_provenance()/validate_chunk_strategy()/validate_ttl() |
-| vms-config.yaml | VMS 环境配置 Schema | persist_dir/model_dir/telemetry/batch_size |
+| vms_config.yaml | VMS 环境配置 Schema | persist_dir/model_dir/telemetry/batch_size |
 
 #### Phase 3：检索质量闭环（✅ 已完成）
 
@@ -1141,7 +1141,7 @@ class FeedbackEntry(BaseModel):
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
 | 1 | 命令 | `python -m zephyr.vector_memory` | VMS 模块入口 | — | — |
-| 2 | 配置 | `vms-config.yaml` | VMS 环境配置 | persist_dir/model_dir/telemetry | MUST 在启动时校验 |
+| 2 | 配置 | `vms_config.yaml` | VMS 环境配置 | persist_dir/model_dir/telemetry | MUST 在启动时校验 |
 
 ### 16.10 故障与操作手册
 
@@ -1360,7 +1360,7 @@ class FeedbackEntry(BaseModel):
 | 6 | **CBAC 校验不可绕过**——AI 自治级别绑定到 Collection | 越权操作 |
 | 7 | **混合检索不可降级为纯向量**——除非 RRF 融合精度低于纯向量（需 benchmark 证据） | 检索质量退化 |
 | 8 | **IndexHealthMonitor 不可禁用**——启动时漂移检测 + 定期健康检查 | 漂移无感知 |
-| 9 | **vms-config.yaml 是唯一配置入口**——禁止硬编码配置 | 配置漂移 |
+| 9 | **vms_config.yaml 是唯一配置入口**——禁止硬编码配置 | 配置漂移 |
 | 10 | **迁移脚本必须 dry-run**——先输出映射表 → Owner 审核 → 执行 | 数据损坏 |
 | 11 | **construction_progress 必须与代码实际状态一致** | 重复造轮子或跳过施工 |
 | 12 | **actual_disk_path 必须与 §11 产出物路径一致** | 搜索失败、导入错误 |
@@ -1408,8 +1408,8 @@ class FeedbackEntry(BaseModel):
 | 1 | VMS YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 蓝图真源 |
 | 2 | KBG-0016 嵌入契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` | 嵌入规格 |
 | 3 | KBG-0031 ChromaDB选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 选型依据 |
-| 4 | CE 蓝图 | MOD-CONTEXT_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | 集成目标 |
-| 5 | KB 蓝图 | MOD-KB-001 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` | 整合目标 |
+| 4 | CE 蓝图 | MOD-CONTEXT_ENGINE | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\context-engine\blueprint.md` | 集成目标 |
+| 5 | KB 蓝图 | MOD-KB-001 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\knowledge-base\blueprint.md` | 整合目标 |
 | 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 注册 |
 | 7 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
 | 8 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
@@ -1431,13 +1431,13 @@ class FeedbackEntry(BaseModel):
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | VMS 源码 | `D:\ZephyrAlpha\src\zephyr\vector-memory\` | 修改 | 接口实现 |
+| 1 | VMS 源码 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\` | 修改 | 接口实现 |
 | 2 | kb/ 遗留 | `D:\ZephyrAlpha\src\zephyr\kb\` | 读取 | 迁移源 |
-| 3 | 单元测试 | `D:\ZephyrAlpha\tests\unit\vector-memory\` | 修改 | 测试覆盖 |
-| 4 | 配置 | `D:\ZephyrAlpha\src\zephyr\vector-memory\vms-config.yaml` | 读取 | 配置校验 |
+| 3 | 单元测试 | `D:\ZephyrAlpha\tests\unit\vector_memory\` | 修改 | 测试覆盖 |
+| 4 | 配置 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\vms_config.yaml` | 读取 | 配置校验 |
 | 5 | 嵌入模型 | `D:\ZephyrAlpha\models\bge-m3\` + `models\bge-small-zh-v1.5\` | 读取 | 模型加载 |
 | 6 | 向量数据 | `D:\ZephyrAlpha\data\vector_db\` | 修改 | 持久化 |
-| 7 | 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\vector-memory\` | 修改 | 本文件 |
+| 7 | 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\vector_memory\` | 修改 | 本文件 |
 
 ---
 
@@ -1451,34 +1451,34 @@ class FeedbackEntry(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/data/knowledge_management/vector-memory/bm25_index.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/bridge_layer.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/cache_layer.py` | ⚠️ 骨架 | |
-| `src/zephyr/data/knowledge_management/vector-memory/chunk_strategy_router.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/collection_manager.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/collection_schemas.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/cross_collection_retriever.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/delegated_vector_memory.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/design_principles.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector-memory/embedding_router.py` | ⚠️ 骨架 | |
-| `src/zephyr/data/knowledge_management/vector-memory/faiss_collection_manager.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/hybrid_retriever.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/in_memory_fake_vms.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/in_memory_memory_backend.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/in_process_vector_memory.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/index_health_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/interface.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/local_model_scheduler.py` | ⚠️ 骨架 | |
-| `src/zephyr/data/knowledge_management/vector-memory/migrate_chroma_to_faiss.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/ollama_chat.py` | ⚠️ 骨架 | |
-| `src/zephyr/data/knowledge_management/vector-memory/ollama_embedding.py` | ⚠️ 骨架 | |
-| `src/zephyr/data/knowledge_management/vector-memory/provenance_enforcer.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/retrieval_feedback.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/sqlite_metadata_store.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector-memory/vector_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/vector-memory/vms-config.yaml` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/vms_errors.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/vector-memory/vms_schemas.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/bm25_index.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/bridge_layer.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/cache_layer.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/chunk_strategy_router.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/collection_manager.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/collection_schemas.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/cross_collection_retriever.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/delegated_vector_memory.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/design_principles.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/embedding_router.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/faiss_collection_manager.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/hybrid_retriever.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/in_memory_fake_vms.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/in_memory_memory_backend.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/in_process_vector_memory.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/index_health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/interface.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/local_model_scheduler.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/ollama_chat.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/ollama_embedding.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/provenance_enforcer.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/retrieval_feedback.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vector_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vms_config.yaml` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vms_errors.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vms_schemas.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -1519,7 +1519,7 @@ class FeedbackEntry(BaseModel):
 | Tier 1 | KB 蓝图 (MOD-KB-001) | §12 集成点、§5.3 迁移方案 |
 | Tier 2 | FLE (MOD-FEEDBACK_LOOP) | §4 RetrievalFeedback 接口 |
 | Tier 2 | Orchestrator (MOD-TASK_SYSTEM) | §4 VectorBridge.write_decision() |
-| Tier 3 | tests/unit/vector-memory/ | §4 数据模型、§11 产出物路径 |
+| Tier 3 | tests/unit/vector_memory/ | §4 数据模型、§11 产出物路径 |
 
 ### 变更审批与同步规则
 
