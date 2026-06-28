@@ -378,7 +378,7 @@ class InProcessVectorMemory:
     def _maintenance_loop(self) -> None:
         CHECK_INTERVAL = 60
         DAILY_INTERVAL = 86400
-        last_daily_ts: float = 0.0
+        last_daily_ts: float = datetime.now(UTC).timestamp()
 
         while not self._stop_event.is_set():
             self._stop_event.wait(timeout=CHECK_INTERVAL)

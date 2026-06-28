@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain-knowledge/vector-memory/blueprint.md
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md
 # [TTL] task_bound
 """Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0
 =============================================================
@@ -42,7 +42,7 @@
   嵌入缓存   : data/vector_db/_embedding_cache/
   索引快照   : data/vector_db/_snapshots/
 
-蓝图真源  : docs/03_modules/infrastructure_runtime_integration/vector-memory/blueprint.md v0.7.0
+蓝图真源  : docs/03_modules/_domain_knowledge/vector_memory/blueprint.md v0.7.0
 SSoT     : architecture_model/layers/b_vector_memory.yaml
 ADR      : ADR-0019(FLE单向依赖) + ADR-0031(ChromaDB选型) + ADR-0016(BGE-M3嵌入契约)
 审计     : 四轮80盲点全覆盖（R1:33/R2:22/R3:19/R4:6）— 蓝图纸面~95-96/100

@@ -349,8 +349,8 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
   1. CE 接入 VMS：[context_engine.py](file:///d:/ZephyrAlpha/src/zephyr/shared/context_engine.py) 从 stub 升级为真实接入 VMS/hybrid_retriever
   2. Agent 增加 code_search 工具：autonomy_core 的 Agent 工具集新增显式消费 code_context collection 的工具
 - **施工硬约束**（解除暂缓后若施工必须遵守）：
-  1. writer 路径必须用 `col.upsert + 确定性业务 id`，**禁用** [write_with_provenance](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` 路径（会制造 90 天重复垃圾）
-  2. AST 分块必须扩展 [chunk_strategy_router.py](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/chunk_strategy_router.py) 的 `_ast_aware_chunk` 方法，**禁用**新建独立分块函数
+  1. writer 路径必须用 `col.upsert + 确定性业务 id`，**禁用** [write_with_provenance](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` 路径（会制造 90 天重复垃圾）
+  2. AST 分块必须扩展 [chunk_strategy_router.py](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/chunk_strategy_router.py) 的 `_ast_aware_chunk` 方法，**禁用**新建独立分块函数
   3. AST 解析必须复用 [symbol_index.py](file:///d:/ZephyrAlpha/src/zephyr/governance/symbol_index.py) 的 `ast.parse + ast.walk` 模式
   4. GATE-CODE-CONTEXT reconciler 仅在消费方就绪后注册，避免死代码
 - **替代方案**：L1 IDE 场景已由 trae `SearchCodebase` 工具覆盖（语义搜索 + 实时代码库索引，覆盖 src/zephyr/，零成本零维护）
@@ -367,12 +367,23 @@ P3 原计划 4 个任务经第一性原理审查（38 个问题），裁定如�
   3. 出现 API 消费者需求（如 dashboard 展示健康状态）
 - **新 AI 警告**：勿尝试"修复"此 stub——它是项目治理层选择事件驱动路线后留下的协议层化石，修复会违反 P3-T4 裁定。PG 健康检查真源在 `verify_schema_health.py` 校验4
 
-#### 遗留项-3：write_with_provenance 治本（独立任务，非本轮范围）
+#### 遗留项-3：write_with_provenance 治本（进行中，MOD-INF-011 任务卡执行中）
 
-- **状态**：未启动，需单独立任务卡
-- **问题本质**：[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/governance/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` doc_id 路径是 VMS 全局设计缺陷，影响所有 HOT collection（decisions/lessons/knowledge/rules/code_context）。同一内容 commit N 次堆 N 份重复 doc，TTL 到期才清理
+- **状态**：进行中（session=wwp-20260628，已完成 stage1 write_with_provenance 加 doc_id + col.add→col.upsert，stage2 14 调用方补确定性业务 id，stage3a context_ingest 迁移到 integration 真源）
+- **问题本质**：[collection_manager.py:446-468](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/collection_manager.py#L446) 的 `col.add + uuid` doc_id 路径是 VMS 全局设计缺陷，影响所有 HOT collection（decisions/lessons/knowledge/rules/code_context）。同一内容 commit N 次堆 N 份重复 doc，TTL 到期才清理
 - **正确范式**：[kb_repo._upsert_vector](file:///d:/ZephyrAlpha/src/zephyr/intelligence/model_evaluation/kb_repo.py#L399) 的 `col.upsert + 确定性业务 id`（同 id 覆盖，零垃圾）
+- **真源声明**：integration/vector_memory/ 是 VMS 唯一真源；governance/vector_memory/ 是漂移副本，MOD-INF-011 阶段 3 将删除
 - **启动条件**：评估对 decisions/lessons/knowledge/rules 已有数据的影响后启动
+
+#### 遗留项-4：VMS 快照失控治本（已治本，2026-06-28）
+
+- **状态**：已治本（snapshot_backup 递归 bug 修复 + 30GB 垃圾清理 + last_daily_ts 启动即触发 bug 修复）
+- **问题本质**：[index_health_monitor.py:138](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/index_health_monitor.py#L138) `snapshot_backup` 三重缺陷叠加：(1) 目标路径在源路径内 → copytree 递归自复制 → 30GB 膨胀；(2) 无 max_snapshots 清理 → 无限堆积；(3) R4 风险被高估（chromadb 1.5.8 SQLite ACID+WAL 已应对断电，R4 审计 6 盲点 F1-F6 与数据损坏无关）
+- **治本动作**：
+  1. snapshot_backup 加 max_snapshots=3 + ignore_patterns("_snapshots","vector_db_backups") + 默认目录改 `data/vector_db_backups`（修递归 bug + 加清理）
+  2. 删除 `data/vector_db/_snapshots/` 30GB 递归垃圾
+  3. [in_process_vector_memory.py:381](file:///d:/ZephyrAlpha/src/zephyr/integration/vector_memory/in_process_vector_memory.py#L381) `last_daily_ts: float = 0.0` → `datetime.now(UTC).timestamp()`（修启动即触发 bug）
+- **新 AI 警告**：勿重建 `data/vector_db/_snapshots/` 目录或恢复全量 copytree 无 ignore 的快照逻辑——递归 bug 会导致磁盘爆炸
 
 ### 11.3 012B 5 组件第一性原理裁定记录（2026-06-28）
 

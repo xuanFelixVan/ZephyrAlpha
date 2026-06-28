@@ -28,7 +28,6 @@ IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
 - snapshot_backup(): 定期 snapshot 备份 · mitigates R4
 - integrity_check(): 启动时完整性校验 · mitigates R4
 - check_ttl_expiry(): TTL 过期记录检查 · mitigates R5/R8
-- schedule_maintenance(): WAL checkpoint + VACUUM + ANALYZE
 """
 
 from __future__ import annotations
