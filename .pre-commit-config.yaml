@@ -387,6 +387,25 @@ repos:
         always_run: false
         description: "src/data/ 路径硬阻断——数据真源唯一位置为 data/，src/ 仅放代码（trae_047 §gov_eng_002_directory_mapping）"
 
+      # ── GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 漂移副本防复发）──
+      # 权威依据：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明
+      # 真源声明：integration/vector_memory/ 是 VMS 唯一真源，governance/vector_memory/ 已删除（2026-06-28）
+      # 病根：governance/vector_memory 26 文件漂移副本与 integration/vector_memory 并存，
+      #       导致维度方向双向漂移（integration 512d 领先 / governance 384d 落后）
+      # 检测范围：staged 文件（新增/修改/重命名）路径前缀匹配
+      # 检测内容：src/zephyr/governance/vector_memory/ 路径前缀硬阻断（大小写不敏感）
+      # 模式：--ci 硬阻断（违规 = 拒绝提交）
+      # 历史教训：commit 306dbb2f76 + 0137750451 删除 governance 副本治本，本门禁防 AI 重建
+      - id: gate-vms-ssot
+        name: "GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 防复发）"
+        entry: python scripts/governance/d5_architecture/checkers/check_vms_ssot.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/governance/vector_memory/"
+        description: "src/zephyr/governance/vector_memory/ 路径硬阻断——VMS 唯一真源为 integration/vector_memory/，governance 副本已于 2026-06-28 删除治本（commit 306dbb2f76+0137750451），本门禁防 AI 重建"
+
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
       # 权威依据：IRN-011（ai_behavior_iron_policy.md）9 条零残留规则（ZR-001~009）
       # 真源声明：Session 20260505 零残留原则落地
