@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-011
-submodule_path: src/zephyr/governance/vector_memory
+submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
@@ -15,7 +15,7 @@ valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
 belongs_to: "MOD-MASTER_BLUEPRINT"
-actual_disk_path: "src/zephyr/governance/vector_memory/"
+actual_disk_path: "src/zephyr/integration/vector_memory/"
 last_updated: "2026-05-18"
 last_verified: "2026-05-18"
 generation: 1
@@ -117,7 +117,7 @@ END_REQUIRED_SECTIONS
 
 # Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化
 
-> **module_id**: MOD-INF-011 | **version**: 0.12.0 | **status**: active | **layer**: cross_layer
+> **module_id**: MOD-INF-011 | **version**: 0.12.1 | **status**: active | **layer**: cross_layer
 > **actual_disk_path**: `src/zephyr/integration/vector_memory/` | **generation**: 1 | **construction_progress**: partially_implemented
 
 ## 概述

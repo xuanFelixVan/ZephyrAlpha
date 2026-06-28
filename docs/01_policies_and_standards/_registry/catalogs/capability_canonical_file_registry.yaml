@@ -645,11 +645,6 @@ capabilities:
           scripts/ 侧 PG 连接 wrapper（get_depgraph_pg_connection），bootstrap import +
           re-export 自 src/zephyr/governance/depgraph_schema.py。scripts/ 消费者用本 wrapper，
           src/ 消费者直接 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection。
-      - path: src/zephyr/governance/depgraph_schema.py
-        relation: re_export
-        note: >-
-          get_db_connection（deprecated 别名）= get_depgraph_pg_connection 的向后兼容别名。
-          新代码禁止使用，仅保留过渡。见 AGENTS.md §11.4。
 
   # --------------------------------------------------------------------------
   - capability_id: sqlite_db_connection
@@ -664,8 +659,8 @@ capabilities:
       现状：两个文件各有一个 get_db_connection()，函数名相同但实现不同（参数/返回值不同）：
         F2 = src/zephyr/governance/sqlite_schema.py（governance.db 专用，含 schema 初始化）
         F3 = src/zephyr/shared/utils/db_utils.py（通用 SQLite，接受 db_path 参数）
-      canonical_override 指向 F3（通用入口，shared/utils 是公共工具层）。
-      待办：F2/F3 合并需独立任务卡（83 调用点风险高），合并前禁止新建第三个 get_db_connection。
+      canonical_override 指向 F3（临时占位，待 F3→F2 合并任务卡裁定后修正，见 AGENTS.md §11.4）。
+      待办：F2/F3 合并需独立任务卡（83 导入点风险高），合并前禁止新建第三个 get_db_connection。
       解决发现性：新 AI 搜 "sqlite连接/get_db_connection" 可定位真源 + 知晓同名冲突。
       解决防重建：check_file_canonical() 反查 + AGENTS.md §11.4 警告阻止新建第三个同名函数。
     duplicates_manual:
@@ -674,7 +669,27 @@ capabilities:
         note: >-
           F2 同名冲突（同名 get_db_connection，不同实现）。governance.db 专用版本，
           含 schema 初始化逻辑。与 F3（shared/utils 通用版）参数签名不同。
-          待 F2/F3 合并任务卡裁定真源（83 调用点需逐一迁移），合并前勿新建第三个。
+          待 F2/F3 合并任务卡裁定真源（83 导入点需逐一迁移），合并前勿新建第三个。
+
+  # --------------------------------------------------------------------------
+  - capability_id: vms_ssot_gate
+    canonical_override: scripts/governance/d5_architecture/checkers/check_vms_ssot.py
+    aliases:
+      - gate-vms-ssot
+      - vms_single_source_check
+      - snapshot_rebuild_detector
+      - faiss_dead_code_detector
+      - dead_method_rebuild_check
+      - vms_ssot_checker
+    description: >-
+      VMS 单一真源门禁（GATE-VMS-SSOT）。三重检测：
+      ① governance/vector_memory/ 漂移副本目录重建检测
+      ② snapshot_backup/cleanup_snapshots/_cleanup_old_snapshots 方法重建检测（AST）
+      ③ faiss_collection_manager.write_with_provenance 死代码重建检测（AST）
+      真源：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明 + 遗留项-4 snapshot 整体删除治本。
+      解决发现性：新 AI 搜 "vms ssot/snapshot 重建/faiss dead code" 可定位本门禁。
+      解决防重建：新 AI 想做"VMS SSoT 检测/snapshot 重建检测/faiss dead code 检测"前，
+      CapabilityLookup.find("vms ssot") 会反查到本文件，阻止重建同类门禁。
 
 # ============================================================================
 # 维护日志

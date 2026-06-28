@@ -444,7 +444,7 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 
 **治本前的 9 个 import 入口**（3 真实定义 + 5 re-export + 1 wrapper）：
 
-| 函数 | 位置 | 返回 | 目标 DB | 调用点 |
+| 函数 | 位置 | 返回 | 目标 DB | 导入点 |
 |------|------|------|---------|--------|
 | F1 `get_depgraph_pg_connection`（原 `get_db_connection`） | [depgraph_schema.py:1169](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) | psycopg2.conn | **PG** (depgraph) | 42 |
 | F2 `get_db_connection` | [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) | sqlite3.conn | SQLite (governance) | 70 |
@@ -459,19 +459,25 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 5. 新增 F1/F2/F3 存在性断言测试
 
 **新 AI 警告**：
-- ❌ **勿按 `db_type` 路由器设计稿补全** F3——会破坏 83 处 SQLite 调用点隐式契约
+- ❌ **勿按 `db_type` 路由器设计稿补全** F3——会破坏 83 处 SQLite 导入点隐式契约
 - ❌ **勿用 SQLite 入口连 PG**——`db_utils.get_db_connection` / `sqlite_schema.get_db_connection` 返回 sqlite3.Connection，连 depgraph 会报 `no such table: nodes`
 - ✅ **连 PG 用** `from zephyr.governance.depgraph_schema import get_depgraph_pg_connection`（src 包）或 `from _shared.constants import get_depgraph_pg_connection`（scripts 包，wrapper 兼容 sqlite3 接口）
 - ✅ **连 SQLite 用** `from zephyr.shared.utils.db_utils import get_db_connection` 或 `from zephyr.governance.sqlite_schema import get_db_connection`
-- ⚠ F2/F3 仍同名 `get_db_connection`（SQLite governance.db），合并需独立任务卡（83 调用点风险高）
+- ⚠ F2/F3 仍同名 `get_db_connection`（SQLite governance.db），合并需独立任务卡（83 导入点风险高）
 
 #### 遗留项：F2/F3 SQLite 同名冲突（待合并，2026-06-28 登记）
 
-- **状态**：未治本（待独立任务卡，83 调用点风险高）
+- **状态**：未治本（待独立任务卡，83 导入点风险高）
 - **问题本质**：两个文件各有一个 `get_db_connection()`，函数名相同但实现不同：
-  - F2 [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) — governance.db 专用，含 schema 初始化，70 调用点
-  - F3 [db_utils.py:59](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) — 通用 SQLite，接受 db_path 参数，13 调用点
-- **未合并原因**：83 调用点需逐一迁移验证，风险高，需独立任务卡裁定真源（F2 还是 F3）
+  - F2 [sqlite_schema.py:465](file:///d:/ZephyrAlpha/src/zephyr/governance/sqlite_schema.py) — governance.db 专用，含 schema 初始化，70 导入点
+  - F3 [db_utils.py:59](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/db_utils.py) — 通用 SQLite，接受 db_path 参数，13 导入点
+- **未合并原因**：83 导入点（真实 `get_db_connection` 调用点约 51）需逐一迁移验证，风险高，需独立任务卡裁定真源（F2 还是 F3）
+- **技术调查推荐方向**（2026-06-28 审查补充，供合并任务卡参考）：**F3→F2（合并 F3 入 F2，F2 作为真源）**
+  - 依据①：F2 签名是 F3 超集——F2 含 `check_same_thread`/`timeout` 关键字参数，F3 仅 `db_path` 一参数。F3 调用方迁到 F2 无需改调用代码；反向不成立
+  - 依据②：F2 用 `isolation_level=None`（autocommit），被 `database_manager.py` 3 处实现（infrastructure/db/、governance/、governance/persistence/）依赖显式事务控制（BEGIN IMMEDIATE/COMMIT/ROLLBACK）。F3 用默认 deferred 隔离级，无法承接 F2 调用方
+  - 依据③：实际 `get_db_connection` 调用点 F2=39 处 vs F3=12 处（"70/13"是 [CONSUMERS] 头部所有符号导入数，非真实调用点），迁移 F3→F2 仅需改 12 处，风险更低
+  - 依据④：F2 同文件含 `init_db`/`SchemaManager`/`_MIGRATIONS`/`schema_version`，是 governance.db schema 管理唯一综合体；F3 的 `init_db` 是轻量版，docstring 自承"full schema migration support, use F2 directly"
+  - **注意**：capability_canonical_file_registry.yaml 当前 `sqlite_db_connection.canonical_override` 指向 F3 是临时占位（登记现状），合并任务卡应按 F3→F2 方向裁定后同步修正
 - **触发条件**（任一满足即应启动合并任务卡）：
   1. 出现第三个 `get_db_connection` 实现（违反真源唯一）
   2. F2/F3 行为差异导致 bug（如 schema 初始化副作用不一致）
@@ -480,4 +486,4 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 - **新 AI 警告**：
   - ❌ **勿新建第三个 `get_db_connection`**——违反真源唯一，应扩展现有 F2 或 F3
   - ❌ **勿在未读本节时修改 SQLite 连接代码**——可能误用入口
-  - ⚠ **合并 F2/F3 需独立任务卡**——83 调用点逐一迁移，勿在本节治本中夹带
+  - ⚠ **合并 F2/F3 需独立任务卡**——83 导入点逐一迁移，勿在本节治本中夹带

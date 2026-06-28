@@ -1,5 +1,18 @@
 #!/usr/bin/env python
-# [A_full] module_id=CFG-check-vms-ssot | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-011 | scripts/governance/d5_architecture/checkers/check_vms_ssot.py | §
+# [MODULE] scripts.governance.d5_architecture.checkers.check_vms_ssot
+# [DOMAIN] D-GOVERNANCE
+# [DEPENDENCIES]
+# [CONSUMERS] .pre-commit-config.yaml GATE-VMS-SSOT
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] DEAD_METHOD_NAMES changes require Owner approval; 真源 AGENTS.md §11.2 遗留项-3/4
+# [MODIFY-GUARD] FORBIDDEN_PREFIX, DEAD_METHOD_NAMES, DEAD_METHOD_CHECK_PREFIX changes require Owner approval
+# [STABILITY] stable
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] exit 0=PASS; exit 1=VIOLATION (--ci mode)
+# [TESTS] none
 # [TTL] permanent
 #
 # GATE-VMS-SSOT: VMS 单一真源门禁（三重检测：governance/vector_memory 漂移副本 + snapshot 方法重建 + faiss dead code 重建）
@@ -53,6 +66,16 @@ import argparse
 import ast
 import subprocess
 import sys
+from pathlib import Path
+
+# bootstrap：scripts/ 包外消费者一次性极简 sys.path，随后 from _shared.constants import REPO_ROOT
+# 真源约束：AGENTS.md §7 REPO_ROOT 真源归一（project_memory L29 硬约束）
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT
 
 # 检测1：禁止路径前缀（小写，大小写不敏感比较——Windows 文件系统大小写不敏感）
 # 规则真源见 AGENTS.md §11.2 遗留项-3 VMS SSoT 声明，此处为校验执行逻辑非第二真源
@@ -74,13 +97,20 @@ DEAD_METHOD_CHECK_PREFIX = "src/zephyr/integration/vector_memory/"
 
 
 def get_staged_files():
-    """获取 staged 文件列表（相对路径，仅新增/修改/重命名）"""
-    result = subprocess.run(
-        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
+    """获取 staged 文件列表（相对路径，仅新增/修改/重命名）
+
+    fail-open：git 不在 PATH 或调用失败时返回空列表（不阻断提交）。
+    """
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except FileNotFoundError:
+        # git 不在 PATH——fail-open（不阻断提交）
+        return []
     if result.returncode != 0:
         return []
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
@@ -112,10 +142,12 @@ def check_dead_method_rebuild(files):
             continue
         if not f.lower().endswith(".py"):
             continue
+        # 用绝对路径打开（REPO_ROOT 真源，治本 VS-4+VS-8：消除对 cwd=repo root 的隐式假设）
+        abs_path = REPO_ROOT / f
         try:
-            with open(f, encoding="utf-8") as fp:
+            with open(abs_path, encoding="utf-8") as fp:
                 source = fp.read()
-            tree = ast.parse(source, filename=f)
+            tree = ast.parse(source, filename=str(abs_path))
         except (OSError, SyntaxError):
             continue
         for node in ast.walk(tree):
