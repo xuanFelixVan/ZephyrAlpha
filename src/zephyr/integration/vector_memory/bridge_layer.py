@@ -86,10 +86,19 @@ TOPIC_TO_COLLECTION: dict[str, str] = {
     "trace": "execution_traces",
 }
 
+COLLECTION_ALIASES: dict[str, str] = {
+    "decisions": "decisions",
+    "learnings": "learnings",
+    "runbooks": "runbooks",
+    "contracts": "contracts",
+    "drift_events": "drift_events",
+}
+
 
 class BridgeLayer:
     MIGRATION_MAP: ClassVar[dict[str, dict[str, Any]]] = MIGRATION_MAP
     TOPIC_TO_COLLECTION: ClassVar[dict[str, str]] = TOPIC_TO_COLLECTION
+    COLLECTION_ALIASES: ClassVar[dict[str, str]] = COLLECTION_ALIASES
 
     def __init__(
         self,
