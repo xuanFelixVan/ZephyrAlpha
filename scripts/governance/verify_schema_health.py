@@ -21,6 +21,7 @@ verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016
   1. DDL 列一致性：DB 实际列 vs _DDL_* 声明列（仅保留表）
   2. 只读触发器存在性：READONLY_TABLES 的 9 张表 × 3 触发器
   3. Schema 版本一致性：MAX(_schema_version) == len(_MIGRATIONS)
+  4. PG 运行时健康：死锁计数 / 连接数饱和 / 长事务（P3-T4 改造，替代原计划常驻 monitor_pg.py）
 
 退出码：
   0 = 健康（PASS）
@@ -28,15 +29,17 @@ verify_schema_health.py — depgraph.db Schema 健康度校验门禁（#ARCH-016
   2 = 脚本错误（ERROR）
 
 模式：
-  --ci          硬阻断模式（默认行为，与其他 GATE 一致；显式传入便于阅读）
-  --warn-only   软警告模式（发现漂移仍 exit 0）——用于观察期
+  --ci              硬阻断模式（默认行为，与其他 GATE 一致；显式传入便于阅读）
+  --warn-only       软警告模式（发现漂移仍 exit 0）——用于观察期
+  --skip-runtime    跳过校验4（PG 运行时健康），仅做 Schema 静态校验——用于无 PG 连接或快速 pre-commit
 """
 __manifest__ = {
     "args": [
         {"flag": "--ci", "type": "bool", "description": "硬阻断模式（漂移 exit 1，默认行为）"},
         {"flag": "--warn-only", "type": "bool", "description": "软警告模式（漂移仍 exit 0，观察期用）"},
+        {"flag": "--skip-runtime", "type": "bool", "description": "跳过 PG 运行时健康检查（校验4），仅做 Schema 静态校验"},
     ],
-    "description": "depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性，漂移即阻断。对标 #ARCH-016 治本",
+    "description": "depgraph.db Schema 健康度校验——DDL 列一致性 + 只读触发器 + 版本一致性 + PG 运行时健康，漂移即阻断。对标 #ARCH-016 治本；P3-T4 改造：事件驱动 PG 运行时监控，替代违反 trae_053 的常驻 monitor_pg.py 方案",
     "dimensions": ["D5"],
     "priority": "P1",
     "timeout_seconds": 30,
@@ -179,11 +182,70 @@ def check_schema_version(conn, issues: list) -> None:
         )
 
 
+# ── 校验4：PG 运行时健康（P3-T4 改造） ──────────────────────────────────────────
+# 裁定背景：原 P3-T4 计划新建 monitor_pg.py --watch 常驻监控（违反 trae_053 定时轨），
+# 且 100% AI 开发模式无常驻监听者。治本方案：扩展现有 verify_schema_health.py，
+# 在 pre-commit 事件驱动时检查 PG 运行时指标，替代常驻监控。
+# 阈值设计：连接>80%（接近耗尽，当前状态可阻断）/ 长事务>300s（真正卡死，当前状态可阻断）
+# 死锁计数为累计值（无法区分历史/当前），仅信息性输出不阻断
+_LONG_TX_THRESHOLD_SECONDS = 300
+_CONN_SATURATION_PCT = 80
+
+
+def check_pg_runtime_health(conn, issues: list) -> None:
+    """校验4：PostgreSQL 运行时健康（死锁 / 连接数饱和 / 长事务）。
+
+    只读查询，不修改任何状态。事件驱动（pre-commit / 手动），非常驻轮询——符合 trae_053。
+    - 死锁计数（累计值）：仅 print 信息，不加入 issues（历史值无法区分，不阻断提交）
+    - 连接数饱和 / 长事务（当前状态）：加入 issues，可阻断（反映实时问题）
+    """
+    # 4a. 死锁计数（累计值，>0 说明曾发生死锁——信息性输出，不阻断）
+    cursor = conn.execute(
+        "SELECT deadlocks FROM pg_stat_database WHERE datname = current_database()"
+    )
+    row = cursor.fetchone()
+    if row and row["deadlocks"] is not None and row["deadlocks"] > 0:
+        # 累计值不加入 issues（会因历史死锁误阻断），仅信息性提示供 AI 排查
+        print(
+            f"  [INFO][PG-DEADLOCK] 累计死锁 {row['deadlocks']} 次（pg_stat_database.deadlocks 历史值，"
+            f"可用 SELECT pg_stat_reset() 清零基线）"
+        )
+
+    # 4b. 连接数饱和度（当前库连接 / max_connections）——当前状态，可阻断
+    cursor = conn.execute(
+        "SELECT count(*) AS active, "
+        "(SELECT setting::int FROM pg_settings WHERE name='max_connections') AS max_conn "
+        "FROM pg_stat_activity WHERE datname = current_database()"
+    )
+    row = cursor.fetchone()
+    if row and row["max_conn"] and row["max_conn"] > 0:
+        usage_pct = row["active"] / row["max_conn"] * 100
+        if usage_pct > _CONN_SATURATION_PCT:
+            issues.append(
+                f"[PG-CONN-SATURATED] 连接数 {row['active']}/{row['max_conn']}"
+                f"（{usage_pct:.0f}%），超过 {_CONN_SATURATION_PCT}% 阈值，存在连接耗尽风险"
+            )
+
+    # 4c. 长事务 / 长查询（active 状态超过阈值秒数）——当前状态，可阻断
+    cursor = conn.execute(
+        "SELECT count(*) AS long_tx FROM pg_stat_activity "
+        "WHERE datname = current_database() AND state = 'active' "
+        "AND query_start IS NOT NULL "
+        f"AND now() - query_start > interval '{_LONG_TX_THRESHOLD_SECONDS} seconds'"
+    )
+    row = cursor.fetchone()
+    if row and row["long_tx"] is not None and row["long_tx"] > 0:
+        issues.append(
+            f"[PG-LONG-TX] 检测到 {row['long_tx']} 个超过 {_LONG_TX_THRESHOLD_SECONDS}s 的活跃长事务/长查询，可能阻塞迁移或写入"
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="depgraph.db Schema 健康度校验")
     parser.add_argument("--db", default="", help="（已废弃）P2迁移后连接由 get_depgraph_pg_connection 统一管理")
     parser.add_argument("--ci", action="store_true", help="硬阻断模式（默认行为，显式传入便于阅读）")
     parser.add_argument("--warn-only", action="store_true", help="软警告模式（发现漂移仍 exit 0）")
+    parser.add_argument("--skip-runtime", action="store_true", help="跳过校验4（PG 运行时健康），仅做 Schema 静态校验")
     args = parser.parse_args()
 
     # P2迁移后：depgraph.db 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理
@@ -194,6 +256,8 @@ def main() -> int:
         check_ddl_columns(conn, issues)
         check_readonly_triggers(conn, issues)
         check_schema_version(conn, issues)
+        if not args.skip_runtime:
+            check_pg_runtime_health(conn, issues)
     except Exception as e:
         print(f"[ERROR] 校验脚本异常: {e}")
         return EXIT_ERROR
