@@ -267,7 +267,12 @@ Remove-Item scripts/governance/update_embeddings.py
 
 ---
 
-## 任务卡 P3-T2：LISTEN/NOTIFY（AI间事件通知）
+## 任务卡 P3-T2：LISTEN/NOTIFY（AI间事件通知）~~已裁定删除~~
+
+> **⚠ 已裁定删除（2026-06-28 第一性原理审查）**：本任务卡已删除。
+> 裁定理由：100% AI 开发模式无常驻监听者（AI 是短暂 session），NOTIFY 无人接收白白增加写入开销。
+> GitCommitGateway + ReconciliationRegistry 事件驱动对账已覆盖 AI 间协调。
+> 完整裁定见本文档顶部"P3 裁定记录"。以下内容仅保留供历史追溯，**禁止作为施工依据**。
 
 ### 基本信息
 
@@ -352,7 +357,10 @@ Remove-Item src/zephyr/shared/utils/depgraph_events.py
 
 ---
 
-## 元任务卡 P3-MT2：审查修复P3-T2
+## 元任务卡 P3-MT2：审查修复P3-T2 ~~已连带删除~~
+
+> **⚠ 已连带删除（2026-06-28）**：P3-T2 已裁定删除，本审查任务卡连带删除。
+> 以下内容仅保留供历史追溯，**禁止作为施工依据**。
 
 ### 基本信息
 
@@ -398,7 +406,12 @@ Remove-Item src/zephyr/shared/utils/depgraph_events.py
 
 ---
 
-## 任务卡 P3-T3：按domain_id分区表（大表优化）
+## 任务卡 P3-T3：按domain_id分区表（大表优化）~~已裁定删除~~
+
+> **⚠ 已裁定删除（2026-06-28 第一性原理审查）**：本任务卡已删除。
+> 裁定理由：24MB/6429行过度工程（分区为百万级设计），edges 无 domain_id 列无法分区，
+> 改主键影响所有现有代码，风险远大于零收益。
+> 完整裁定见本文档顶部"P3 裁定记录"。以下内容仅保留供历史追溯，**禁止作为施工依据**。
 
 ### 基本信息
 
@@ -566,7 +579,10 @@ git checkout -- src/zephyr/governance/depgraph_schema.py
 
 ---
 
-## 元任务卡 P3-MT3：审查修复P3-T3
+## 元任务卡 P3-MT3：审查修复P3-T3 ~~已连带删除~~
+
+> **⚠ 已连带删除（2026-06-28）**：P3-T3 已裁定删除，本审查任务卡连带删除。
+> 以下内容仅保留供历史追溯，**禁止作为施工依据**。
 
 ### 基本信息
 
@@ -697,44 +713,45 @@ Remove-Item config/pg_monitor.yaml
 
 ---
 
-## 元任务卡 P3-MT4：审查修复P3-T4
+## 元任务卡 P3-MT4：审查修复P3-T4（裁定后方案）
+
+> **⚠ 裁定后适配（2026-06-28）**：原审查清单基于已删除的 `monitor_pg.py` 方案（12 项），
+> 已适配为基于 `verify_schema_health.py` 校验4 的审查清单（10 项）。原清单见 git 历史。
 
 ### 基本信息
 
 | 字段 | 值 |
 |------|-----|
 | 任务卡ID | P3-MT4 |
-| 标题 | 循环审查修复P3-T4（监控告警） |
+| 标题 | 循环审查修复P3-T4（监控告警——裁定后方案） |
 | 优先级 | P3 |
 | 安全级别 | L |
-| 依赖 | P3-T4完成 |
+| 依赖 | P3-T4 裁定后方案已实现（commit 8f0c13ab6e） |
+| 审查对象 | `scripts/governance/verify_schema_health.py` 校验4 `check_pg_runtime_health()` |
 
-### 审查清单
+### 审查清单（基于裁定后方案）
 
-| # | 审查项 | 检查方法 | 通过标准 |
-|---|--------|---------|---------|
-| 1 | monitor_pg.py存在 | `Test-Path scripts/governance/monitor_pg.py` | True |
-| 2 | pg_monitor.yaml存在 | `Test-Path config/pg_monitor.yaml` | True |
-| 3 | 监控脚本可运行 | `python scripts/governance/monitor_pg.py` | 无报错 |
-| 4 | 慢查询检测功能 | pg_sleep(10) + 监控 | 检测到慢查询 |
-| 5 | 连接数检测功能 | `python scripts/governance/monitor_pg.py` | 显示连接数 |
-| 6 | 空闲事务检测功能 | 开启事务不提交 + 监控 | 检测到空闲事务 |
-| 7 | 死锁检测功能 | `SELECT deadlocks FROM pg_stat_database WHERE datname='depgraph'` | 可查询 |
-| 8 | 告警日志路径存在 | `Test-Path data/databases/postgres/alerts.log` | True（有告警时） |
-| 9 | 持续监控模式 | `python scripts/governance/monitor_pg.py --watch --interval 5` | 每5s检查 |
-| 10 | 复用PG_CONFIG | `grep "from zephyr.shared.utils.pg_connection import PG_CONFIG" scripts/governance/monitor_pg.py` | 有结果 |
-| 11 | 告警阈值合理 | `grep "slow_query_seconds\|max_connections" config/pg_monitor.yaml` | 5s, 150 |
-| 12 | pg_stat_statements可用 | `SELECT query, calls, mean_exec_time FROM pg_stat_statements LIMIT 1` | 有结果 |
+| # | 审查项 | 检查方法 | 通过标准 | 结果 |
+|---|--------|---------|---------|------|
+| 1 | check_pg_runtime_health 函数存在 | `Grep "def check_pg_runtime_health" scripts/governance/verify_schema_health.py` | 函数定义存在 | ✅ PASS（L195） |
+| 2 | 复用 PG 连接真源 | `Grep "get_depgraph_pg_connection\|get_db_connection" scripts/governance/verify_schema_health.py` | 多处命中 | ✅ PASS（L58/245/251/253） |
+| 3 | --skip-runtime 参数存在 | `Grep "skip_runtime" scripts/governance/verify_schema_health.py` | 参数定义存在 | ✅ PASS（L34/40/248/259） |
+| 4 | 阈值常量存在 | `Grep "_LONG_TX_THRESHOLD_SECONDS\|_CONN_SATURATION_PCT" scripts/governance/verify_schema_health.py` | 常量定义存在 | ✅ PASS（L191=300, L192=80） |
+| 5 | 禁止文件不存在 | 检查 monitor_pg.py / pg_monitor.yaml / pg_connection.py | 三个文件均不存在 | ✅ PASS |
+| 6 | 死锁检查（信息性输出） | `Grep "PG-DEADLOCK" scripts/governance/verify_schema_health.py` | 信息性 print，不加入 issues | ✅ PASS（L210） |
+| 7 | 连接饱和检查（阻断） | `Grep "PG-CONN-SATURATED" scripts/governance/verify_schema_health.py` | >80% 阈值加入 issues | ✅ PASS（L225） |
+| 8 | 长事务检查（阻断） | `Grep "PG-LONG-TX" scripts/governance/verify_schema_health.py` | >300s 加入 issues | ✅ PASS（L239） |
+| 9 | 测试覆盖 | `pytest tests/test_verify_schema_health.py::TestCheckPgRuntimeHealth -v` | 6 个测试全过 | ✅ PASS（L487 测试类） |
+| 10 | pre-commit 钩子注册 | `Grep "gate-schema-health" .pre-commit-config.yaml` | 钩子已注册（事件驱动触发） | ✅ PASS（L673/675） |
 
-### 审查流程
+### 审查结果（2026-06-28 执行）
 
-1. 按清单逐项检查
-2. 记录问题
-3. 修复问题
-4. 重新检查
-5. 连续2次0问题 → COMPLETED
+- **第1轮**：10 项审查全 PASS，0 问题
+- **第2轮**：10 项审查全 PASS，0 问题
+- 连续 2 次 0 问题 → **COMPLETED** ✅
 
-### 修复授权
+### 修复授权（裁定后）
 
-- `scripts/governance/monitor_pg.py`
-- `config/pg_monitor.yaml`
+- `scripts/governance/verify_schema_health.py`
+- `tests/test_verify_schema_health.py`
+- `.pre-commit-config.yaml`（如需调整钩子配置）
