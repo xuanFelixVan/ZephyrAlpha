@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-EX_CORE 执行核心架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D-EX_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:21
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 14 | Module Count | 14 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
-| 跨域出边 | 13 | Cross-domain Outgoing | 13 |
+| 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 11 | Prototype Modules | 11 |
 | 生产态模块 | 3 | Production Modules | 3 |
@@ -87,9 +87,7 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_broker_interface_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_simulation_broker_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
@@ -102,8 +100,8 @@ graph TD
     D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_ex_core_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_broker_interface_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
@@ -123,7 +121,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 10 | import_depends,config_depends |
+| D-GOVERNANCE | 8 | config_depends,import_depends |
 | D-TRADING | 3 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

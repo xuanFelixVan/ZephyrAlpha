@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-FUNDAMENTAL_SIGNAL 基本面信号架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基本面信号（D-FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:21
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -144,15 +144,15 @@ graph TD
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|import_depends| D_TRADING
     D_FACTOR["D-FACTOR prototype"]
     D_FACTOR -.->|import_depends| src_zephyr_signal_fundamental_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
     D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_signal_fundamental_init_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -178,8 +178,8 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-GOVERNANCE | 8 | test_depends |
-| D-GOV_SCRIPTS | 1 | import_depends |
 | D-FACTOR | 1 | import_depends |
+| D-GOV_SCRIPTS | 1 | import_depends |
 
 ## 说明 / Notes
 

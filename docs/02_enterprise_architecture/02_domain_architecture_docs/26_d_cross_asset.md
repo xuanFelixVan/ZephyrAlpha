@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-CROSS_ASSET 跨资产架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 跨资产（D-CROSS_ASSET）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:21
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -78,14 +78,14 @@ graph TD
         src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py prototype"]
     end
     src_zephyr_risk_risk_manager_base_py -.->|config_depends| src_zephyr_cross_asset_init_py
-    D_TRADING["D-TRADING prototype"]
-    src_zephyr_cross_asset -.->|contract| D_TRADING
+    D_TRADING["D-TRADING production"]
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     D_SHARED["D-SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
+    src_zephyr_cross_asset -.->|contract| D_TRADING
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
@@ -95,7 +95,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py production
     class src_zephyr_cross_asset,src_zephyr_cross_asset_init_py,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py design
-    class D_TRADING,D_SHARED,D_GOVERNANCE external_design
+    class D_TRADING external_prod
+    class D_SHARED,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

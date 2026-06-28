@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-INFRA_A2A a2a_communication架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 a2a_communication（D-INFRA_A2A）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -278,10 +278,10 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_dashboard_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_formal_verification_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_frame_negotiation_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_protocol_gateway_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_tracing_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_protocol_gateway_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_frame_negotiation_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_formal_verification_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -405,8 +405,8 @@ graph TD
 | D-SHARED | 18 | import_depends |
 | D-INFRA_RUNTIME | 13 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
-| D-INTEGRATION | 1 | import_depends |
 | D-GOV_AUDIT | 1 | import_depends |
+| D-INTEGRATION | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

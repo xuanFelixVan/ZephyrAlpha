@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-AUTONOMY_CORE 自治核心架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D-AUTONOMY_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:21
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,24 +24,23 @@ ttl: permanent
 | 域ID | D-AUTONOMY_CORE | Domain ID | D-AUTONOMY_CORE |
 | 域名称 | 自治核心 | Domain Name | agent_communication |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 176 | Module Count | 176 |
-| 域内依赖 | 152 | Internal Dependencies | 152 |
+| 模块数 | 175 | Module Count | 175 |
+| 域内依赖 | 151 | Internal Dependencies | 151 |
 | 跨域入边 | 230 | Cross-domain Incoming | 230 |
 | 跨域出边 | 41 | Cross-domain Outgoing | 41 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 174 | Prototype Modules | 174 |
+| 原型态模块 | 173 | Prototype Modules | 173 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | A2A Card注册与发现(card_registry) | Description | A2A Card注册与发现(card_registry) |
 
 ## 模块清单 / Module List
 
-共 176 个模块（按路径排序，全部显示）
+共 175 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
 | src/zephyr/autonomy_core/__init__.py |  | production | generated |
-| src/zephyr/autonomy_core/__init___from_orches.py |  | prototype | generated |
 | src/zephyr/autonomy_core/__main__.py |  | prototype | generated |
 | src/zephyr/autonomy_core/_extensions/__init__.py |  | prototype | deprecated |
 | src/zephyr/autonomy_core/_infrastructure.py |  | prototype | generated |
@@ -233,7 +232,6 @@ ttl: permanent
 graph TD
     subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_init_py["src/zephyr/autonomy_core/__init__.py production"]
-        src_zephyr_autonomy_core_init_from_orches_py["src/zephyr/autonomy_core/__init___from_orches.py prototype"]
         src_zephyr_autonomy_core_main_py["src/zephyr/autonomy_core/__main__.py prototype"]
         src_zephyr_autonomy_core_extensions_init_py["src/zephyr/autonomy_core/_extensions/__init__.py prototype"]
         src_zephyr_autonomy_core_infrastructure_py["src/zephyr/autonomy_core/_infrastructure.py prototype"]
@@ -262,6 +260,7 @@ graph TD
         src_zephyr_autonomy_core_cold_start_booster_py["src/zephyr/autonomy_core/cold_start_booster.py prototype"]
         src_zephyr_autonomy_core_complexity_budget_py["src/zephyr/autonomy_core/complexity_budget.py prototype"]
         src_zephyr_autonomy_core_config_safety_guard_py["src/zephyr/autonomy_core/config_safety_guard.py prototype"]
+        src_zephyr_autonomy_core_context_assembler_py["src/zephyr/autonomy_core/context_assembler.py prototype"]
     end
     src_zephyr_autonomy_core_architecture_context_loader_py -.->|config_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_adversarial_robustness_py -.->|config_depends| src_zephyr_autonomy_core_init_py
@@ -279,6 +278,7 @@ graph TD
     src_zephyr_autonomy_core_cold_start_booster_py -.->|config_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_citation_walker_py -.->|config_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_complexity_budget_py -.->|config_depends| src_zephyr_autonomy_core_init_py
+    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_config_safety_guard_py -.->|config_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_injection_py -.->|config_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_safety_py -.->|config_depends| src_zephyr_autonomy_core_init_py
@@ -286,24 +286,23 @@ graph TD
     src_zephyr_autonomy_core_pipeline_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_main_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_assembly_context_assembler_py -.->|import_depends| src_zephyr_autonomy_core_init_py
-    src_zephyr_autonomy_core_init_from_orches_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_assembly_context_injector_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_assembly_init_py -.->|config_depends| src_zephyr_autonomy_core_assembly_context_assembler_py
     src_zephyr_autonomy_core_assembly_context_pipeline_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION["D-INTEGRATION production"]
+    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTEGRATION
+    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
+    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_assembly_context_assembler_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_assembly_context_injector_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_assembly_context_pipeline_py -.->|import_depends| D_INTEGRATION
-    D_GOVERNANCE["D-GOVERNANCE design"]
-    D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_architecture_context_loader_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_autonomy_core_architecture_context_loader_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_autonomy_core_architecture_context_loader_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_autonomy_core_architecture_context_loader_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_INTELLIGENCE["D-INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_OPS["D-OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_autonomy_core_init_py
@@ -313,14 +312,18 @@ graph TD
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_autonomy_core_init_py
+    D_OPS -.->|test_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_autonomy_core_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_autonomy_core_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_init_py production
-    class src_zephyr_autonomy_core_init_from_orches_py,src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_extensions_init_py,src_zephyr_autonomy_core_infrastructure_py,src_zephyr_autonomy_core_injection_py,src_zephyr_autonomy_core_pipeline_py,src_zephyr_autonomy_core_safety_py,src_zephyr_autonomy_core_adversarial_robustness_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_alignment_scorer_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_api_init_py,src_zephyr_autonomy_core_architecture_context_loader_py,src_zephyr_autonomy_core_assembly_init_py,src_zephyr_autonomy_core_assembly_context_assembler_py,src_zephyr_autonomy_core_assembly_context_injector_py,src_zephyr_autonomy_core_assembly_context_pipeline_py,src_zephyr_autonomy_core_atomic_injector_py,src_zephyr_autonomy_core_budget_forecaster_py,src_zephyr_autonomy_core_cache_invalidation_py,src_zephyr_autonomy_core_ce_bootstrap_py,src_zephyr_autonomy_core_ce_explain_cli_py,src_zephyr_autonomy_core_ce_playground_v2_py,src_zephyr_autonomy_core_ce_vibe_shortcuts_py,src_zephyr_autonomy_core_checkpoint_manager_py,src_zephyr_autonomy_core_citation_walker_py,src_zephyr_autonomy_core_cold_start_booster_py,src_zephyr_autonomy_core_complexity_budget_py,src_zephyr_autonomy_core_config_safety_guard_py design
-    class D_INTEGRATION external_prod
-    class D_GOVERNANCE,D_INTELLIGENCE,D_OPS,D_TRADING external_design
+    class src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_extensions_init_py,src_zephyr_autonomy_core_infrastructure_py,src_zephyr_autonomy_core_injection_py,src_zephyr_autonomy_core_pipeline_py,src_zephyr_autonomy_core_safety_py,src_zephyr_autonomy_core_adversarial_robustness_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_alignment_scorer_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_api_init_py,src_zephyr_autonomy_core_architecture_context_loader_py,src_zephyr_autonomy_core_assembly_init_py,src_zephyr_autonomy_core_assembly_context_assembler_py,src_zephyr_autonomy_core_assembly_context_injector_py,src_zephyr_autonomy_core_assembly_context_pipeline_py,src_zephyr_autonomy_core_atomic_injector_py,src_zephyr_autonomy_core_budget_forecaster_py,src_zephyr_autonomy_core_cache_invalidation_py,src_zephyr_autonomy_core_ce_bootstrap_py,src_zephyr_autonomy_core_ce_explain_cli_py,src_zephyr_autonomy_core_ce_playground_v2_py,src_zephyr_autonomy_core_ce_vibe_shortcuts_py,src_zephyr_autonomy_core_checkpoint_manager_py,src_zephyr_autonomy_core_citation_walker_py,src_zephyr_autonomy_core_cold_start_booster_py,src_zephyr_autonomy_core_complexity_budget_py,src_zephyr_autonomy_core_config_safety_guard_py,src_zephyr_autonomy_core_context_assembler_py design
+    class D_INTEGRATION,D_INTELLIGENCE,D_GOVERNANCE external_prod
+    class D_OPS,D_TRADING external_design
 ```
 
 ### 第 2 页 / 共 6 页 / Page 2 of 6
@@ -328,7 +331,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
-        src_zephyr_autonomy_core_context_assembler_py["src/zephyr/autonomy_core/context_assembler.py prototype"]
         src_zephyr_autonomy_core_context_budget_py["src/zephyr/autonomy_core/context_budget.py prototype"]
         src_zephyr_autonomy_core_context_budget_tracker_py["src/zephyr/autonomy_core/context_budget_tracker.py prototype"]
         src_zephyr_autonomy_core_context_debt_score_py["src/zephyr/autonomy_core/context_debt_score.py prototype"]
@@ -358,18 +360,13 @@ graph TD
         src_zephyr_autonomy_core_engine_py["src/zephyr/autonomy_core/engine.py prototype"]
         src_zephyr_autonomy_core_fallback_staleness_gate_py["src/zephyr/autonomy_core/fallback_staleness_gat... prototype"]
         src_zephyr_autonomy_core_file_autoregister_py["src/zephyr/autonomy_core/file_autoregister.py prototype"]
+        src_zephyr_autonomy_core_file_autorregister_py["src/zephyr/autonomy_core/file_autorregister.py prototype"]
     end
-    D_INTEGRATION["D-INTEGRATION production"]
-    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTEGRATION
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
-    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
-    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_GOVERNANCE
     D_SHARED["D-SHARED production"]
     src_zephyr_autonomy_core_context_budget_tracker_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_context_budget_tracker_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_context_budget_tracker_py -.->|import_depends| D_SHARED
+    D_INTEGRATION["D-INTEGRATION production"]
     src_zephyr_autonomy_core_context_pipeline_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_context_injector_py -.->|import_depends| D_INTEGRATION
     D_SECURITY["D-SECURITY production"]
@@ -383,8 +380,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_context_pipeline_auto_py production
-    class src_zephyr_autonomy_core_context_assembler_py,src_zephyr_autonomy_core_context_budget_py,src_zephyr_autonomy_core_context_budget_tracker_py,src_zephyr_autonomy_core_context_debt_score_py,src_zephyr_autonomy_core_context_evaluator_py,src_zephyr_autonomy_core_context_evictor_py,src_zephyr_autonomy_core_context_health_score_py,src_zephyr_autonomy_core_context_injector_py,src_zephyr_autonomy_core_context_model_strategy_py,src_zephyr_autonomy_core_context_optimizer_py,src_zephyr_autonomy_core_context_outcome_tracker_py,src_zephyr_autonomy_core_context_pipeline_py,src_zephyr_autonomy_core_context_playground_py,src_zephyr_autonomy_core_context_rot_model_py,src_zephyr_autonomy_core_context_rule_registry_py,src_zephyr_autonomy_core_context_value_attribution_py,src_zephyr_autonomy_core_contextual_fetch_api_py,src_zephyr_autonomy_core_core_init_py,src_zephyr_autonomy_core_curation_loop_py,src_zephyr_autonomy_core_dependency_tracker_py,src_zephyr_autonomy_core_diff_injector_py,src_zephyr_autonomy_core_dispatch_table_py,src_zephyr_autonomy_core_diversity_constraint_py,src_zephyr_autonomy_core_doc_compressor_py,src_zephyr_autonomy_core_domain_decay_config_py,src_zephyr_autonomy_core_embedding_version_lock_py,src_zephyr_autonomy_core_engine_py,src_zephyr_autonomy_core_fallback_staleness_gate_py,src_zephyr_autonomy_core_file_autoregister_py design
-    class D_INTEGRATION,D_INTELLIGENCE,D_GOVERNANCE,D_SHARED,D_SECURITY,D_GOV_AUDIT external_prod
+    class src_zephyr_autonomy_core_context_budget_py,src_zephyr_autonomy_core_context_budget_tracker_py,src_zephyr_autonomy_core_context_debt_score_py,src_zephyr_autonomy_core_context_evaluator_py,src_zephyr_autonomy_core_context_evictor_py,src_zephyr_autonomy_core_context_health_score_py,src_zephyr_autonomy_core_context_injector_py,src_zephyr_autonomy_core_context_model_strategy_py,src_zephyr_autonomy_core_context_optimizer_py,src_zephyr_autonomy_core_context_outcome_tracker_py,src_zephyr_autonomy_core_context_pipeline_py,src_zephyr_autonomy_core_context_playground_py,src_zephyr_autonomy_core_context_rot_model_py,src_zephyr_autonomy_core_context_rule_registry_py,src_zephyr_autonomy_core_context_value_attribution_py,src_zephyr_autonomy_core_contextual_fetch_api_py,src_zephyr_autonomy_core_core_init_py,src_zephyr_autonomy_core_curation_loop_py,src_zephyr_autonomy_core_dependency_tracker_py,src_zephyr_autonomy_core_diff_injector_py,src_zephyr_autonomy_core_dispatch_table_py,src_zephyr_autonomy_core_diversity_constraint_py,src_zephyr_autonomy_core_doc_compressor_py,src_zephyr_autonomy_core_domain_decay_config_py,src_zephyr_autonomy_core_embedding_version_lock_py,src_zephyr_autonomy_core_engine_py,src_zephyr_autonomy_core_fallback_staleness_gate_py,src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_file_autorregister_py design
+    class D_SHARED,D_INTEGRATION,D_SECURITY,D_GOV_AUDIT external_prod
 ```
 
 ### 第 3 页 / 共 6 页 / Page 3 of 6
@@ -392,7 +389,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
-        src_zephyr_autonomy_core_file_autorregister_py["src/zephyr/autonomy_core/file_autorregister.py prototype"]
         src_zephyr_autonomy_core_fragmentation_index_py["src/zephyr/autonomy_core/fragmentation_index.py prototype"]
         src_zephyr_autonomy_core_host_resource_governor_py["src/zephyr/autonomy_core/host_resource_governor.py prototype"]
         src_zephyr_autonomy_core_ide_watcher_py["src/zephyr/autonomy_core/ide_watcher.py prototype"]
@@ -422,6 +418,7 @@ graph TD
         src_zephyr_autonomy_core_pattern_library_py["src/zephyr/autonomy_core/pattern_library.py prototype"]
         src_zephyr_autonomy_core_phase_planner_py["src/zephyr/autonomy_core/phase_planner.py prototype"]
         src_zephyr_autonomy_core_pipeline_orchestrator_py["src/zephyr/autonomy_core/pipeline_orchestrator.py prototype"]
+        src_zephyr_autonomy_core_poisoning_monitor_py["src/zephyr/autonomy_core/poisoning_monitor.py prototype"]
     end
     src_zephyr_autonomy_core_integration_init_py -.->|config_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
     src_zephyr_autonomy_core_management_init_py -.->|import_depends| src_zephyr_autonomy_core_management_context_rot_model_py
@@ -445,7 +442,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_file_autorregister_py,src_zephyr_autonomy_core_fragmentation_index_py,src_zephyr_autonomy_core_host_resource_governor_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_infrastructure_init_py,src_zephyr_autonomy_core_integration_init_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_integrity_check_py,src_zephyr_autonomy_core_intent_keyword_mapper_py,src_zephyr_autonomy_core_intent_parser_py,src_zephyr_autonomy_core_kill_switch_py,src_zephyr_autonomy_core_knowledge_distiller_py,src_zephyr_autonomy_core_list_ce_files_py,src_zephyr_autonomy_core_llm_gateway_py,src_zephyr_autonomy_core_lsg_pattern_tracker_py,src_zephyr_autonomy_core_management_init_py,src_zephyr_autonomy_core_management_context_budget_tracker_py,src_zephyr_autonomy_core_management_context_evictor_py,src_zephyr_autonomy_core_management_context_rot_model_py,src_zephyr_autonomy_core_mcp_adapter_py,src_zephyr_autonomy_core_memory_bank_py,src_zephyr_autonomy_core_mode_manager_py,src_zephyr_autonomy_core_models_init_py,src_zephyr_autonomy_core_otel_instrumentation_py,src_zephyr_autonomy_core_parsing_init_py,src_zephyr_autonomy_core_parsing_intent_keyword_mapper_py,src_zephyr_autonomy_core_parsing_intent_parser_py,src_zephyr_autonomy_core_pattern_library_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_pipeline_orchestrator_py design
+    class src_zephyr_autonomy_core_fragmentation_index_py,src_zephyr_autonomy_core_host_resource_governor_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_infrastructure_init_py,src_zephyr_autonomy_core_integration_init_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_integrity_check_py,src_zephyr_autonomy_core_intent_keyword_mapper_py,src_zephyr_autonomy_core_intent_parser_py,src_zephyr_autonomy_core_kill_switch_py,src_zephyr_autonomy_core_knowledge_distiller_py,src_zephyr_autonomy_core_list_ce_files_py,src_zephyr_autonomy_core_llm_gateway_py,src_zephyr_autonomy_core_lsg_pattern_tracker_py,src_zephyr_autonomy_core_management_init_py,src_zephyr_autonomy_core_management_context_budget_tracker_py,src_zephyr_autonomy_core_management_context_evictor_py,src_zephyr_autonomy_core_management_context_rot_model_py,src_zephyr_autonomy_core_mcp_adapter_py,src_zephyr_autonomy_core_memory_bank_py,src_zephyr_autonomy_core_mode_manager_py,src_zephyr_autonomy_core_models_init_py,src_zephyr_autonomy_core_otel_instrumentation_py,src_zephyr_autonomy_core_parsing_init_py,src_zephyr_autonomy_core_parsing_intent_keyword_mapper_py,src_zephyr_autonomy_core_parsing_intent_parser_py,src_zephyr_autonomy_core_pattern_library_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_pipeline_orchestrator_py,src_zephyr_autonomy_core_poisoning_monitor_py design
     class D_INTEGRATION,D_SECURITY external_prod
     class D_SHARED external_design
 ```
@@ -455,7 +452,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
-        src_zephyr_autonomy_core_poisoning_monitor_py["src/zephyr/autonomy_core/poisoning_monitor.py prototype"]
         src_zephyr_autonomy_core_position_optimizer_py["src/zephyr/autonomy_core/position_optimizer.py prototype"]
         src_zephyr_autonomy_core_progressive_disclosure_injector_py["src/zephyr/autonomy_core/progressive_disclosure... prototype"]
         src_zephyr_autonomy_core_prompt_registry_py["src/zephyr/autonomy_core/prompt_registry.py prototype"]
@@ -485,23 +481,24 @@ graph TD
         src_zephyr_autonomy_core_skill_durable_py["src/zephyr/autonomy_core/skill_durable.py prototype"]
         src_zephyr_autonomy_core_skill_economics_py["src/zephyr/autonomy_core/skill_economics.py prototype"]
         src_zephyr_autonomy_core_skill_efficacy_calibrator_py["src/zephyr/autonomy_core/skill_efficacy_calibra... prototype"]
+        src_zephyr_autonomy_core_skill_evaluator_py["src/zephyr/autonomy_core/skill_evaluator.py prototype"]
     end
     D_INTEGRATION["D-INTEGRATION production"]
     src_zephyr_autonomy_core_prompt_registry_py -.->|import_depends| D_INTEGRATION
     D_SECURITY["D-SECURITY prototype"]
     src_zephyr_autonomy_core_security_filter_py -.->|import_depends| D_SECURITY
+    D_OPS["D-OPS prototype"]
+    D_OPS -.->|runtime| src_zephyr_autonomy_core_self_evolution_fidelity_gate_py
     D_GOVERNANCE["D-GOVERNANCE design"]
     D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_security_filter_py
     D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_security_filter_py
-    D_OPS["D-OPS prototype"]
-    D_OPS -.->|runtime| src_zephyr_autonomy_core_self_evolution_fidelity_gate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_poisoning_monitor_py,src_zephyr_autonomy_core_position_optimizer_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_rational_py,src_zephyr_autonomy_core_registry_py,src_zephyr_autonomy_core_security_filter_py,src_zephyr_autonomy_core_self_diagnosis_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_sensitivity_classifier_py,src_zephyr_autonomy_core_services_init_py,src_zephyr_autonomy_core_session_learner_py,src_zephyr_autonomy_core_shadow_canary_py,src_zephyr_autonomy_core_skill_attention_py,src_zephyr_autonomy_core_skill_breakage_checker_py,src_zephyr_autonomy_core_skill_cache_provider_py,src_zephyr_autonomy_core_skill_calibration_py,src_zephyr_autonomy_core_skill_canary_py,src_zephyr_autonomy_core_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skill_compliance_py,src_zephyr_autonomy_core_skill_consensus_py,src_zephyr_autonomy_core_skill_constructor_py,src_zephyr_autonomy_core_skill_context_isolation_py,src_zephyr_autonomy_core_skill_contract_py,src_zephyr_autonomy_core_skill_cross_model_py,src_zephyr_autonomy_core_skill_di_py,src_zephyr_autonomy_core_skill_discovery_py,src_zephyr_autonomy_core_skill_durable_py,src_zephyr_autonomy_core_skill_economics_py,src_zephyr_autonomy_core_skill_efficacy_calibrator_py design
+    class src_zephyr_autonomy_core_position_optimizer_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_rational_py,src_zephyr_autonomy_core_registry_py,src_zephyr_autonomy_core_security_filter_py,src_zephyr_autonomy_core_self_diagnosis_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_sensitivity_classifier_py,src_zephyr_autonomy_core_services_init_py,src_zephyr_autonomy_core_session_learner_py,src_zephyr_autonomy_core_shadow_canary_py,src_zephyr_autonomy_core_skill_attention_py,src_zephyr_autonomy_core_skill_breakage_checker_py,src_zephyr_autonomy_core_skill_cache_provider_py,src_zephyr_autonomy_core_skill_calibration_py,src_zephyr_autonomy_core_skill_canary_py,src_zephyr_autonomy_core_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skill_compliance_py,src_zephyr_autonomy_core_skill_consensus_py,src_zephyr_autonomy_core_skill_constructor_py,src_zephyr_autonomy_core_skill_context_isolation_py,src_zephyr_autonomy_core_skill_contract_py,src_zephyr_autonomy_core_skill_cross_model_py,src_zephyr_autonomy_core_skill_di_py,src_zephyr_autonomy_core_skill_discovery_py,src_zephyr_autonomy_core_skill_durable_py,src_zephyr_autonomy_core_skill_economics_py,src_zephyr_autonomy_core_skill_efficacy_calibrator_py,src_zephyr_autonomy_core_skill_evaluator_py design
     class D_INTEGRATION external_prod
-    class D_SECURITY,D_GOVERNANCE,D_OPS external_design
+    class D_SECURITY,D_OPS,D_GOVERNANCE external_design
 ```
 
 ### 第 5 页 / 共 6 页 / Page 5 of 6
@@ -509,7 +506,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
-        src_zephyr_autonomy_core_skill_evaluator_py["src/zephyr/autonomy_core/skill_evaluator.py prototype"]
         src_zephyr_autonomy_core_skill_executor_py["src/zephyr/autonomy_core/skill_executor.py prototype"]
         src_zephyr_autonomy_core_skill_explain_py["src/zephyr/autonomy_core/skill_explain.py prototype"]
         src_zephyr_autonomy_core_skill_factory_py["src/zephyr/autonomy_core/skill_factory.py prototype"]
@@ -539,6 +535,7 @@ graph TD
         src_zephyr_autonomy_core_skill_resilience_py["src/zephyr/autonomy_core/skill_resilience.py prototype"]
         src_zephyr_autonomy_core_skill_risk_mitigator_py["src/zephyr/autonomy_core/skill_risk_mitigator.py prototype"]
         src_zephyr_autonomy_core_skill_router_py["src/zephyr/autonomy_core/skill_router.py prototype"]
+        src_zephyr_autonomy_core_skill_sandbox_py["src/zephyr/autonomy_core/skill_sandbox.py prototype"]
     end
     D_INTEGRATION["D-INTEGRATION prototype"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_INTEGRATION
@@ -548,13 +545,14 @@ graph TD
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_autonomy_core_skill_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_skill_router_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_autonomy_core_skill_sandbox_py -.->|import_depends| D_GOV_AUDIT
     D_OPS["D-OPS prototype"]
     D_OPS -.->|runtime| src_zephyr_autonomy_core_skill_resilience_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_skill_evaluator_py,src_zephyr_autonomy_core_skill_executor_py,src_zephyr_autonomy_core_skill_explain_py,src_zephyr_autonomy_core_skill_factory_py,src_zephyr_autonomy_core_skill_feature_flags_py,src_zephyr_autonomy_core_skill_feedback_py,src_zephyr_autonomy_core_skill_freshness_py,src_zephyr_autonomy_core_skill_freshness_ext_py,src_zephyr_autonomy_core_skill_gitops_py,src_zephyr_autonomy_core_skill_guardrails_py,src_zephyr_autonomy_core_skill_idempotency_py,src_zephyr_autonomy_core_skill_kill_switch_py,src_zephyr_autonomy_core_skill_knowledge_base_py,src_zephyr_autonomy_core_skill_kya_py,src_zephyr_autonomy_core_skill_learning_py,src_zephyr_autonomy_core_skill_lifecycle_py,src_zephyr_autonomy_core_skill_lineage_py,src_zephyr_autonomy_core_skill_loader_py,src_zephyr_autonomy_core_skill_locking_py,src_zephyr_autonomy_core_skill_model_py,src_zephyr_autonomy_core_skill_model_evolution_py,src_zephyr_autonomy_core_skill_observability_py,src_zephyr_autonomy_core_skill_ontology_py,src_zephyr_autonomy_core_skill_postmortem_py,src_zephyr_autonomy_core_skill_prompt_cache_py,src_zephyr_autonomy_core_skill_prompt_opt_py,src_zephyr_autonomy_core_skill_registry_py,src_zephyr_autonomy_core_skill_resilience_py,src_zephyr_autonomy_core_skill_risk_mitigator_py,src_zephyr_autonomy_core_skill_router_py design
+    class src_zephyr_autonomy_core_skill_executor_py,src_zephyr_autonomy_core_skill_explain_py,src_zephyr_autonomy_core_skill_factory_py,src_zephyr_autonomy_core_skill_feature_flags_py,src_zephyr_autonomy_core_skill_feedback_py,src_zephyr_autonomy_core_skill_freshness_py,src_zephyr_autonomy_core_skill_freshness_ext_py,src_zephyr_autonomy_core_skill_gitops_py,src_zephyr_autonomy_core_skill_guardrails_py,src_zephyr_autonomy_core_skill_idempotency_py,src_zephyr_autonomy_core_skill_kill_switch_py,src_zephyr_autonomy_core_skill_knowledge_base_py,src_zephyr_autonomy_core_skill_kya_py,src_zephyr_autonomy_core_skill_learning_py,src_zephyr_autonomy_core_skill_lifecycle_py,src_zephyr_autonomy_core_skill_lineage_py,src_zephyr_autonomy_core_skill_loader_py,src_zephyr_autonomy_core_skill_locking_py,src_zephyr_autonomy_core_skill_model_py,src_zephyr_autonomy_core_skill_model_evolution_py,src_zephyr_autonomy_core_skill_observability_py,src_zephyr_autonomy_core_skill_ontology_py,src_zephyr_autonomy_core_skill_postmortem_py,src_zephyr_autonomy_core_skill_prompt_cache_py,src_zephyr_autonomy_core_skill_prompt_opt_py,src_zephyr_autonomy_core_skill_registry_py,src_zephyr_autonomy_core_skill_resilience_py,src_zephyr_autonomy_core_skill_risk_mitigator_py,src_zephyr_autonomy_core_skill_router_py,src_zephyr_autonomy_core_skill_sandbox_py design
     class D_GOV_AUDIT,D_GOV_ENFORCEMENT external_prod
     class D_INTEGRATION,D_OPS external_design
 ```
@@ -564,7 +562,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
-        src_zephyr_autonomy_core_skill_sandbox_py["src/zephyr/autonomy_core/skill_sandbox.py prototype"]
         src_zephyr_autonomy_core_skill_schema_registry_py["src/zephyr/autonomy_core/skill_schema_registry.py prototype"]
         src_zephyr_autonomy_core_skill_security_py["src/zephyr/autonomy_core/skill_security.py prototype"]
         src_zephyr_autonomy_core_skill_shadow_py["src/zephyr/autonomy_core/skill_shadow.py prototype"]
@@ -592,8 +589,6 @@ graph TD
         src_zephyr_autonomy_core_vibe_coding_quality_gate_py["src/zephyr/autonomy_core/vibe_coding_quality_ga... prototype"]
     end
     src_zephyr_autonomy_core_support_architecture_context_loader_py -.->|config_depends| src_zephyr_autonomy_core_support_init_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
-    src_zephyr_autonomy_core_skill_sandbox_py -.->|import_depends| D_GOV_AUDIT
     D_INTEGRATION["D-INTEGRATION prototype"]
     src_zephyr_autonomy_core_system_snapshot_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_task_context_builder_py -.->|import_depends| D_INTEGRATION
@@ -606,8 +601,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_autonomy_core_skill_sandbox_py,src_zephyr_autonomy_core_skill_schema_registry_py,src_zephyr_autonomy_core_skill_security_py,src_zephyr_autonomy_core_skill_shadow_py,src_zephyr_autonomy_core_skill_silent_failure_py,src_zephyr_autonomy_core_skill_team_optimizer_py,src_zephyr_autonomy_core_skill_telemetry_py,src_zephyr_autonomy_core_skill_temperature_py,src_zephyr_autonomy_core_skill_tokenomics_py,src_zephyr_autonomy_core_skill_translator_py,src_zephyr_autonomy_core_skill_workflow_py,src_zephyr_autonomy_core_solo_dev_safety_net_py,src_zephyr_autonomy_core_staleness_manager_py,src_zephyr_autonomy_core_support_init_py,src_zephyr_autonomy_core_support_architecture_context_loader_py,src_zephyr_autonomy_core_support_doc_compressor_py,src_zephyr_autonomy_core_support_prompt_registry_py,src_zephyr_autonomy_core_support_system_snapshot_py,src_zephyr_autonomy_core_system_snapshot_py,src_zephyr_autonomy_core_task_context_builder_py,src_zephyr_autonomy_core_token_budget_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vector_bridge_py,src_zephyr_autonomy_core_vector_writer_py,src_zephyr_autonomy_core_verify_paths_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py design
-    class D_GOV_AUDIT,D_GOVERNANCE external_prod
+    class src_zephyr_autonomy_core_skill_schema_registry_py,src_zephyr_autonomy_core_skill_security_py,src_zephyr_autonomy_core_skill_shadow_py,src_zephyr_autonomy_core_skill_silent_failure_py,src_zephyr_autonomy_core_skill_team_optimizer_py,src_zephyr_autonomy_core_skill_telemetry_py,src_zephyr_autonomy_core_skill_temperature_py,src_zephyr_autonomy_core_skill_tokenomics_py,src_zephyr_autonomy_core_skill_translator_py,src_zephyr_autonomy_core_skill_workflow_py,src_zephyr_autonomy_core_solo_dev_safety_net_py,src_zephyr_autonomy_core_staleness_manager_py,src_zephyr_autonomy_core_support_init_py,src_zephyr_autonomy_core_support_architecture_context_loader_py,src_zephyr_autonomy_core_support_doc_compressor_py,src_zephyr_autonomy_core_support_prompt_registry_py,src_zephyr_autonomy_core_support_system_snapshot_py,src_zephyr_autonomy_core_system_snapshot_py,src_zephyr_autonomy_core_task_context_builder_py,src_zephyr_autonomy_core_token_budget_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vector_bridge_py,src_zephyr_autonomy_core_vector_writer_py,src_zephyr_autonomy_core_verify_paths_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py design
+    class D_GOVERNANCE external_prod
     class D_INTEGRATION external_design
 ```
 
@@ -619,23 +614,23 @@ graph TD
 |--------|:---:|---------|
 | D-INTEGRATION | 24 | import_depends |
 | D-SHARED | 6 | import_depends |
-| D-SECURITY | 3 | import_depends |
 | D-GOV_AUDIT | 3 | import_depends |
-| D-INTELLIGENCE | 2 | import_depends |
+| D-SECURITY | 3 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
+| D-INTELLIGENCE | 2 | import_depends |
 | D-GOV_ENFORCEMENT | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 214 | contract,runtime,import_depends,test_depends |
-| D-OPS | 8 | runtime,import_depends,test_depends |
+| D-GOVERNANCE | 214 | contract,import_depends,runtime,test_depends |
+| D-OPS | 8 | import_depends,runtime,test_depends |
 | D-TRADING | 3 | import_depends |
 | D-INTEGRATION | 2 | import_depends |
-| D-KNOWLEDGE | 1 | test_depends |
 | D-INTELLIGENCE | 1 | import_depends |
 | D-AUTONOMY_PERM | 1 | test_depends |
+| D-KNOWLEDGE | 1 | test_depends |
 
 ## 说明 / Notes
 

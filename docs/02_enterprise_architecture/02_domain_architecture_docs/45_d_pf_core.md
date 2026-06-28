@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-PF_CORE 组合核心架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -40,7 +40,9 @@ ttl: permanent
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
-|  | A-001 | design | stable |
+|  | MT-04 | design | generated |
+|  | D-ALT-DATA-06 | design | generated |
+|  | D-ALT-DATA-07 | design | generated |
 |  | MS-02 | design | generated |
 |  | MT-02 | design | generated |
 |  | MS-04 | design | generated |
@@ -48,11 +50,9 @@ ttl: permanent
 |  | MS-03 | design | generated |
 |  | MS-05 | design | generated |
 |  | MT-05 | design | generated |
-|  | MT-04 | design | generated |
+|  | A-001 | design | stable |
 |  | D-ALT-DATA-03 | design | generated |
 |  | D-ALT-DATA-11 | design | generated |
-|  | D-ALT-DATA-06 | design | generated |
-|  | D-ALT-DATA-07 | design | generated |
 |  | D-ALT-DATA-09 | design | generated |
 |  | D-ALT-DATA-10 | design | generated |
 |  | D-ALT-DATA-13 | design | generated |
@@ -100,7 +100,9 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_PF_CORE["D-PF_CORE 组合核心"]
-        A_001["A-001 design"]
+        MT_04["MT-04 design"]
+        D_ALT_DATA_06["D-ALT-DATA-06 design"]
+        D_ALT_DATA_07["D-ALT-DATA-07 design"]
         MS_02["MS-02 design"]
         MT_02["MT-02 design"]
         MS_04["MS-04 design"]
@@ -108,11 +110,9 @@ graph TD
         MS_03["MS-03 design"]
         MS_05["MS-05 design"]
         MT_05["MT-05 design"]
-        MT_04["MT-04 design"]
+        A_001["A-001 design"]
         D_ALT_DATA_03["D-ALT-DATA-03 design"]
         D_ALT_DATA_11["D-ALT-DATA-11 design"]
-        D_ALT_DATA_06["D-ALT-DATA-06 design"]
-        D_ALT_DATA_07["D-ALT-DATA-07 design"]
         D_ALT_DATA_09["D-ALT-DATA-09 design"]
         D_ALT_DATA_10["D-ALT-DATA-10 design"]
         D_ALT_DATA_13["D-ALT-DATA-13 design"]
@@ -140,7 +140,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_analytics_base_py production
-    class A_001,MS_02,MT_02,MS_04,MT_03,MS_03,MS_05,MT_05,MT_04,D_ALT_DATA_03,D_ALT_DATA_11,D_ALT_DATA_06,D_ALT_DATA_07,D_ALT_DATA_09,D_ALT_DATA_10,D_ALT_DATA_13,D_ALT_DATA_15,D_ALT_DATA_17,D_ALT_DATA_06_1,D_ALT_DATA_14,D_CROSS_ASSET_03,D_CROSS_ASSET_13,AP_07,AP_09,RK_10,PA_01,src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py design
+    class MT_04,D_ALT_DATA_06,D_ALT_DATA_07,MS_02,MT_02,MS_04,MT_03,MS_03,MS_05,MT_05,A_001,D_ALT_DATA_03,D_ALT_DATA_11,D_ALT_DATA_09,D_ALT_DATA_10,D_ALT_DATA_13,D_ALT_DATA_15,D_ALT_DATA_17,D_ALT_DATA_06_1,D_ALT_DATA_14,D_CROSS_ASSET_03,D_CROSS_ASSET_13,AP_07,AP_09,RK_10,PA_01,src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py design
     class D_REPORTING,D_GOVERNANCE external_design
 ```
 
@@ -178,11 +178,11 @@ graph TD
     src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
     src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategies_init_py -.->|import_depends| D_GOVERNANCE
+    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_attribution_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_compliance_rule_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -200,8 +200,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 12 | contract,import_depends |
-| D-TRADING | 1 | import_depends |
 | D-REPORTING | 1 | import_depends |
+| D-TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

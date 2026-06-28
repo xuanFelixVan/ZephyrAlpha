@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-RISK 风控架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 风控（D-RISK）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -121,8 +121,6 @@ graph TD
     src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_init_py -.->|config_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_risk_oms_risk_engine_py -.->|config_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
@@ -136,29 +134,31 @@ graph TD
     D_SHARED["D-SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| D_TRADING
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_risk_oms_risk_engine_py -.->|config_depends| D_GOVERNANCE
     D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_init_py
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_risk_manager_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_stop_loss_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_stop_loss_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_stop_loss_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_stop_loss_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_risk_risk_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py production
     class src_zephyr_risk_init_py,src_zephyr_risk_extensions_init_py,src_zephyr_risk_api_init_py,src_zephyr_risk_core_init_py,src_zephyr_risk_cross_asset_init_py,src_zephyr_risk_cross_asset_cross_asset_risk_decomposer_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_cross_asset_currency_hedger_and_fixed_income_init_py,src_zephyr_risk_cross_asset_risk_manager_py,src_zephyr_risk_cross_asset_risk_manager_base_py,src_zephyr_risk_implementations_init_py,src_zephyr_risk_infrastructure_init_py,src_zephyr_risk_oms_risk_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_services_init_py design
-    class D_GOVERNANCE,D_TRADING external_prod
+    class D_TRADING,D_GOVERNANCE external_prod
     class D_SHARED,D_GOV_SCRIPTS external_design
 ```
 
@@ -169,8 +169,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-TRADING | 10 | import_depends |
-| D-SHARED | 1 | import_depends |
 | D-GOVERNANCE | 1 | config_depends |
+| D-SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

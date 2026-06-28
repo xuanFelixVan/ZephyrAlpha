@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-BEHAVIORAL_AUDIT 行为审计架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行为审计（D-BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:21
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,7 +26,7 @@ ttl: permanent
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 78 | Module Count | 78 |
 | 域内依赖 | 11 | Internal Dependencies | 11 |
-| 跨域入边 | 159 | Cross-domain Incoming | 159 |
+| 跨域入边 | 158 | Cross-domain Incoming | 158 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
@@ -173,34 +173,37 @@ graph TD
     src_zephyr_behavioral_audit_drift_infrastructure_py -->|import_depends| src_zephyr_behavioral_audit_drift_models_py
     D_INTEGRATION["D-INTEGRATION prototype"]
     src_zephyr_behavioral_audit_brain_integration_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
-    src_zephyr_behavioral_audit_drift_engine_py -.->|import_depends| D_GOV_AUDIT
+    D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_behavioral_audit_drift_engine_py -->|import_depends| D_GOV_AUDIT
+    src_zephyr_behavioral_audit_drift_engine_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_behavioral_audit_drift_hotfix_bypass_py -.->|import_depends| D_INTEGRATION
-    D_SECURITY["D-SECURITY prototype"]
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_absence_manager_py
+    D_OPS["D-OPS prototype"]
+    D_OPS -.->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_absence_manager_py
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_ai_construction_detectors_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_ai_construction_detectors_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_ai_construction_detectors_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_ai_construction_detectors_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_ai_construction_detectors_py
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_ai_context_injector_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_ai_context_injector_py
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_baseline_poisoning_guard_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_baseline_poisoning_guard_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_architecture_principles_py
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_baseline_manager_py
-    D_GOV_DRIFT["D-GOV_DRIFT prototype"]
-    D_GOV_DRIFT -.->|test_depends| src_zephyr_behavioral_audit_baseline_manager_py
-    D_GOV_DRIFT -.->|test_depends| src_zephyr_behavioral_audit_baseline_manager_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_chaos_injector_py
+    D_GOV_AUDIT -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
+    D_GOV_AUDIT -->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
+    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT prototype"]
+    D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_drift_hotfix_bypass_py
+    D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
+    D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_cascade_detector_py
+    D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
+    D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_drift_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
+    D_INFRA_TELEMETRY["D-INFRA_TELEMETRY production"]
+    D_INFRA_TELEMETRY -->|import_depends| src_zephyr_behavioral_audit_contract_drift_detector_py
+    D_OPS -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
+    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_behavioral_audit_absence_manager_py,src_zephyr_behavioral_audit_ai_construction_detectors_py,src_zephyr_behavioral_audit_ai_context_injector_py,src_zephyr_behavioral_audit_architecture_contracts_py,src_zephyr_behavioral_audit_architecture_principles_py,src_zephyr_behavioral_audit_backcompat_checker_py,src_zephyr_behavioral_audit_baseline_manager_py,src_zephyr_behavioral_audit_baseline_poisoning_guard_py,src_zephyr_behavioral_audit_benchmark_integrity_py,src_zephyr_behavioral_audit_brain_integration_py,src_zephyr_behavioral_audit_canary_controller_py,src_zephyr_behavioral_audit_cascade_detector_py,src_zephyr_behavioral_audit_chaos_injector_py,src_zephyr_behavioral_audit_code_review_ai_py,src_zephyr_behavioral_audit_config_consistency_py,src_zephyr_behavioral_audit_contract_drift_detector_py,src_zephyr_behavioral_audit_correlation_engine_py,src_zephyr_behavioral_audit_credibility_engine_py,src_zephyr_behavioral_audit_cross_env_consistency_py,src_zephyr_behavioral_audit_cross_module_score_py,src_zephyr_behavioral_audit_dashboard_py,src_zephyr_behavioral_audit_data_classification_py,src_zephyr_behavioral_audit_data_lifecycle_py,src_zephyr_behavioral_audit_data_source_reliability_py,src_zephyr_behavioral_audit_dependency_manager_py,src_zephyr_behavioral_audit_detector_dispatcher_py,src_zephyr_behavioral_audit_drift_engine_py,src_zephyr_behavioral_audit_drift_hotfix_bypass_py,src_zephyr_behavioral_audit_drift_infrastructure_py,src_zephyr_behavioral_audit_drift_models_py production
-    class D_INTEGRATION,D_GOV_AUDIT,D_SECURITY,D_GOVERNANCE,D_GOV_DRIFT external_design
+    class D_GOV_AUDIT,D_INFRA_TELEMETRY external_prod
+    class D_INTEGRATION,D_OPS,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_SECURITY external_design
 ```
 
 ### 第 2 页 / 共 3 页 / Page 2 of 3
@@ -245,29 +248,28 @@ graph TD
     src_zephyr_behavioral_audit_tamper_proof_audit_py -.->|import_depends| D_INTEGRATION
     src_zephyr_behavioral_audit_trend_analyzer_py -->|import_depends| D_GOVERNANCE
     D_SECURITY["D-SECURITY prototype"]
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_drift_training_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_drift_training_py
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_forensics_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_forensics_engine_py
-    D_OPS["D-OPS prototype"]
-    D_OPS -.->|runtime| src_zephyr_behavioral_audit_forensics_engine_py
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_drift_result_types_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_drift_result_types_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_drift_result_types_py
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_git_bisector_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_git_bisector_py
-    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_file_attr_checker_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_file_attr_checker_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_roi_engine_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_rollback_bridge_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_self_check_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_suppression_learner_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_tamper_proof_audit_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_trend_analyzer_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_drift_result_types_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_drift_training_py
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_gate_persistence_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_behavioral_audit_gate_persistence_py
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_handoff_manager_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_resource_guard_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_incremental_scanner_py
+    D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_headless_scanner_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_behavioral_audit_drift_result_types_py,src_zephyr_behavioral_audit_drift_training_py,src_zephyr_behavioral_audit_file_attr_checker_py,src_zephyr_behavioral_audit_forensics_engine_py,src_zephyr_behavioral_audit_gate_persistence_py,src_zephyr_behavioral_audit_git_bisector_py,src_zephyr_behavioral_audit_gitignore_auditor_py,src_zephyr_behavioral_audit_handoff_manager_py,src_zephyr_behavioral_audit_headless_scanner_py,src_zephyr_behavioral_audit_incremental_scanner_py,src_zephyr_behavioral_audit_ml_engineering_py,src_zephyr_behavioral_audit_model_drift_monitor_py,src_zephyr_behavioral_audit_naming_magic_checker_py,src_zephyr_behavioral_audit_orphan_scanner_py,src_zephyr_behavioral_audit_performance_baseline_py,src_zephyr_behavioral_audit_python_compat_py,src_zephyr_behavioral_audit_regime_detector_py,src_zephyr_behavioral_audit_resource_guard_py,src_zephyr_behavioral_audit_roi_engine_py,src_zephyr_behavioral_audit_rollback_bridge_py,src_zephyr_behavioral_audit_scan_mutex_py,src_zephyr_behavioral_audit_self_check_py,src_zephyr_behavioral_audit_self_test_verifier_py,src_zephyr_behavioral_audit_suppression_learner_py,src_zephyr_behavioral_audit_symlink_checker_py,src_zephyr_behavioral_audit_system_topology_py,src_zephyr_behavioral_audit_tamper_proof_audit_py,src_zephyr_behavioral_audit_test_fixture_checker_py,src_zephyr_behavioral_audit_trend_analyzer_py,tests_adversarial_test_f3_extreme_py production
     class D_GOVERNANCE external_prod
-    class D_INTEGRATION,D_SECURITY,D_OPS external_design
+    class D_INTEGRATION,D_SECURITY external_design
 ```
 
 ### 第 3 页 / 共 3 页 / Page 3 of 3
@@ -308,20 +310,19 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-INTEGRATION | 3 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
+| D-GOV_AUDIT | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 88 | test_depends,import_depends |
+| D-GOVERNANCE | 88 | import_depends,test_depends |
 | D-SECURITY | 51 | import_depends |
 | D-GOV_DRIFT | 8 | test_depends |
 | D-GOV_ENFORCEMENT | 5 | import_depends |
 | D-OPS | 3 | import_depends,runtime |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-TRADING | 1 | import_depends |
 | D-INFRA_TELEMETRY | 1 | import_depends |
 
 ## 说明 / Notes

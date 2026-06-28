@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-ML_TRAIN 训练架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -90,15 +90,15 @@ graph TD
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE design"]
-    D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
-    D_SHARED -.->|import_depends| src_zephyr_ml_train_trainer_base_py
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_inference_base_py
+    D_SHARED -.->|import_depends| src_zephyr_ml_train_trainer_base_py
+    D_GOVERNANCE["D-GOVERNANCE design"]
+    D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -114,8 +114,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-TRADING | 2 | import_depends |
 | D-SHARED | 2 | import_depends |
+| D-TRADING | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

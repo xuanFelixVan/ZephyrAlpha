@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-OPS 反馈循环架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D-OPS）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 433 | Module Count | 433 |
 | 域内依赖 | 327 | Internal Dependencies | 327 |
 | 跨域入边 | 406 | Cross-domain Incoming | 406 |
-| 跨域出边 | 105 | Cross-domain Outgoing | 105 |
+| 跨域出边 | 104 | Cross-domain Outgoing | 104 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 408 | Prototype Modules | 408 |
 | 生产态模块 | 24 | Production Modules | 24 |
@@ -533,34 +533,34 @@ graph TD
     src_zephyr_ops_actors_init_py -.->|import_depends| src_zephyr_ops_actors_alert_router_py
     D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
     src_zephyr_governance_budget_engine_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_governance_budget_profile_manager_py -.->|config_depends| D_GOVERNANCE
     D_SHARED["D-SHARED production"]
     src_zephyr_governance_budget_handler_py -.->|import_depends| D_SHARED
+    D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_governance_budget_handler_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D-INTEGRATION production"]
     src_zephyr_governance_cost_budget_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_cost_budget_py -.->|import_depends| D_SHARED
-    src_zephyr_governance_meta_observability_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_observability_dashboard_py -.->|config_depends| D_GOVERNANCE
-    src_zephyr_governance_token_budget_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_ops_circuit_breaker_py -.->|import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
     src_zephyr_ops_budget_telemetry_bridge_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_trace_bridge_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_init_from_obs_py -.->|import_depends| D_SHARED
     src_zephyr_ops_init_from_obs_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    src_zephyr_governance_budget_profile_manager_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_meta_observability_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_observability_dashboard_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_governance_token_budget_py -.->|config_depends| D_GOVERNANCE
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_ops_init_py
     D_FRONTEND["D-FRONTEND production"]
     D_FRONTEND -->|import_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
     D_INFRA_OPS["D-INFRA_OPS prototype"]
     D_INFRA_OPS -.->|import_depends| src_zephyr_ops_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_ops_init_py
@@ -575,7 +575,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class architecture_model_layers_system_telemetry_yaml,config_capacity_token_budget_yaml,scripts_ops_auto_fix_cron_py,scripts_ops_upgrade_headers_to_14fields_py,src_zephyr_governance_observability_governance_observability_dashboard_py,src_zephyr_ops_init_py production
     class docs_03_modules_domain_infra_ops_system_telemetry_blueprint_md,src_zephyr_governance_budget_engine_py,src_zephyr_governance_budget_handler_py,src_zephyr_governance_budget_models_py,src_zephyr_governance_budget_profile_manager_py,src_zephyr_governance_budget_tracker_py,src_zephyr_governance_cost_budget_py,src_zephyr_governance_meta_observability_py,src_zephyr_governance_observability_dashboard_py,src_zephyr_governance_observability_governance_init_py,src_zephyr_governance_observability_governance_benchmark_integrity_py,src_zephyr_governance_observability_governance_performance_baseline_py,src_zephyr_governance_observability_governance_provenance_tracker_py,src_zephyr_governance_token_budget_py,src_zephyr_ops_init_from_obs_py,src_zephyr_ops_budget_telemetry_bridge_py,src_zephyr_ops_circuit_breaker_py,src_zephyr_ops_extensions_init_py,src_zephyr_ops_gen_inherited_py,src_zephyr_ops_trace_bridge_py,src_zephyr_ops_actors_init_py,src_zephyr_ops_actors_action_selector_py,src_zephyr_ops_actors_agent_lifecycle_py,src_zephyr_ops_actors_alert_router_py design
-    class D_BEHAVIORAL_AUDIT,D_GOVERNANCE,D_SHARED,D_INTEGRATION,D_INFRA_RUNTIME,D_FRONTEND,D_TRADING external_prod
+    class D_BEHAVIORAL_AUDIT,D_SHARED,D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME,D_FRONTEND,D_TRADING external_prod
     class D_INFRA_OPS,D_GOV_SCRIPTS external_design
 ```
 
@@ -622,10 +622,9 @@ graph TD
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_kb_provenance_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_financial_stratification_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_feedback_collector_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_ops_circuit_breaker_py -.->|config_depends| D_GOVERNANCE
     D_INTEGRATION["D-INTEGRATION production"]
     src_zephyr_ops_circuit_breaker_repo_py -.->|import_depends| D_INTEGRATION
+    D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_ops_circuit_breaker_repo_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ops_alert_dispatcher_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
@@ -642,6 +641,7 @@ graph TD
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_SHARED
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_SHARED
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_INTEGRATION
+    src_zephyr_ops_backpressure_bridge_py -.->|import_depends| D_INTEGRATION
     D_DATA_SEC["D-DATA_SEC prototype"]
     D_DATA_SEC -.->|import_depends| src_zephyr_ops_circuit_breaker_types_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_ops_circuit_breaker_types_py
@@ -654,8 +654,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ops_actors_api_version_contract_py,src_zephyr_ops_actors_global_action_scheduler_py,src_zephyr_ops_actors_incident_priority_triage_automator_py,src_zephyr_ops_actors_intent_driven_ops_py,src_zephyr_ops_actors_multi_agent_orchestrator_py,src_zephyr_ops_actors_notification_personalizer_py,src_zephyr_ops_actors_owner_absence_escalation_py,src_zephyr_ops_actors_saga_compensator_py,src_zephyr_ops_actors_secondary_alert_channel_py,src_zephyr_ops_ai_behavior_init_py,src_zephyr_ops_ai_behavior_event_sink_py,src_zephyr_ops_alert_dispatcher_py,src_zephyr_ops_alerts_init_py,src_zephyr_ops_analytics_base_py,src_zephyr_ops_api_init_py,src_zephyr_ops_archive_init_py,src_zephyr_ops_archive_cold_stub_py,src_zephyr_ops_auto_bootstrap_py,src_zephyr_ops_auto_evolution_py,src_zephyr_ops_backpressure_bridge_py,src_zephyr_ops_circuit_breaker_py,src_zephyr_ops_circuit_breaker_repo_py,src_zephyr_ops_circuit_breaker_types_py,src_zephyr_ops_collectors_init_py,src_zephyr_ops_collectors_calendar_adapter_py,src_zephyr_ops_collectors_config_timeline_py,src_zephyr_ops_collectors_data_quality_validator_py,src_zephyr_ops_collectors_feedback_collector_py,src_zephyr_ops_collectors_financial_stratification_py,src_zephyr_ops_collectors_kb_provenance_py design
-    class D_GOVERNANCE,D_INTEGRATION,D_TRADING,D_INFRA_RUNTIME,D_SHARED external_prod
-    class D_DATA_SEC external_design
+    class D_INTEGRATION,D_TRADING,D_INFRA_RUNTIME,D_SHARED external_prod
+    class D_GOVERNANCE,D_DATA_SEC external_design
 ```
 
 ### 第 3 页 / 共 15 页 / Page 3 of 15
@@ -1109,15 +1109,15 @@ graph TD
     end
     src_zephyr_ops_observability_cli_summary_py -.->|config_depends| src_zephyr_ops_observability_init_py
     src_zephyr_ops_observability_cost_tracker_py -.->|config_depends| src_zephyr_ops_observability_init_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_ops_kill_switch_py -.->|config_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
     src_zephyr_ops_health_aggregator_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_health_probes_py -.->|import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_ops_metrics_collector_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ops_health_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_metrics_blueprint_metrics_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_metrics_init_py -.->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_ops_kill_switch_py -.->|config_depends| D_GOVERNANCE
     D_SHARED["D-SHARED prototype"]
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1126,7 +1126,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ops_gates_safety_gate_l38_l39_py,src_zephyr_ops_gates_safety_gate_l40_l41_py,src_zephyr_ops_gates_safety_gate_l42_l43_py,src_zephyr_ops_gates_safety_gate_l44_l45_py,src_zephyr_ops_gates_safety_gate_l46_l47_py,src_zephyr_ops_gates_safety_gate_l48_l49_py,src_zephyr_ops_gates_safety_gate_l50_l51_py,src_zephyr_ops_gates_safety_gate_l52_l53_py,src_zephyr_ops_gates_safety_gate_l54_l55_py,src_zephyr_ops_gates_safety_gate_l56_l57_py,src_zephyr_ops_gates_safety_gate_l58_l59_py,src_zephyr_ops_gates_safety_gate_l60_l61_py,src_zephyr_ops_gates_safety_gate_l62_l63_py,src_zephyr_ops_gates_safety_gate_l64_l65_py,src_zephyr_ops_gates_safety_gate_l66_l67_py production
     class src_zephyr_ops_gates_scope_creep_monitor_py,src_zephyr_ops_generator_py,src_zephyr_ops_health_init_py,src_zephyr_ops_health_aggregator_py,src_zephyr_ops_health_probes_py,src_zephyr_ops_infrastructure_init_py,src_zephyr_ops_kill_switch_py,src_zephyr_ops_metrics_init_py,src_zephyr_ops_metrics_blueprint_metrics_py,src_zephyr_ops_metrics_collector_py,src_zephyr_ops_models_init_py,src_zephyr_ops_monitoring_stack_init_py,src_zephyr_ops_observability_init_py,src_zephyr_ops_observability_cli_summary_py,src_zephyr_ops_observability_cost_tracker_py design
-    class D_GOVERNANCE,D_INFRA_RUNTIME external_prod
+    class D_INFRA_RUNTIME,D_GOVERNANCE external_prod
     class D_SHARED external_design
 ```
 
@@ -1197,11 +1197,11 @@ graph TD
     src_zephyr_ops_observability_health_py -.->|import_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED prototype"]
     src_zephyr_ops_observability_session_audit_py -.->|import_depends| D_SHARED
-    D_SHARED -.->|import_depends| src_zephyr_ops_observability_health_py
-    D_SHARED -.->|import_depends| src_zephyr_ops_observability_metrics_py
     D_INFRA_TELEMETRY["D-INFRA_TELEMETRY production"]
     D_INFRA_TELEMETRY -.->|import_depends| src_zephyr_ops_observability_health_discovery_py
+    D_SHARED -.->|import_depends| src_zephyr_ops_observability_health_py
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
+    D_SHARED -.->|import_depends| src_zephyr_ops_observability_metrics_py
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_tracing_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1267,11 +1267,11 @@ graph TD
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_cross_module_integration_py
     D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
     src_zephyr_ops_telemetry_py -.->|import_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_ops_trading_kill_switch_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_ops_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_traces_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_traces_init_py -.->|import_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    src_zephyr_ops_trading_kill_switch_py -.->|config_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -1397,31 +1397,30 @@ graph TD
 | D-INFRA_RUNTIME | 33 | import_depends,test_depends |
 | D-GOVERNANCE | 29 | config_depends,import_depends,runtime,test_depends |
 | D-SHARED | 14 | import_depends,test_depends |
-| D-AUTONOMY_CORE | 8 | runtime,import_depends,test_depends |
+| D-AUTONOMY_CORE | 8 | import_depends,runtime,test_depends |
 | D-INTEGRATION | 6 | import_depends,runtime |
 | D-SECURITY | 5 | import_depends,test_depends |
 | D-TRADING | 4 | import_depends |
 | D-BEHAVIORAL_AUDIT | 3 | import_depends,runtime |
 | D-GOV_DRIFT | 1 | import_depends |
 | D-GOV_AUDIT | 1 | test_depends |
-| D-FACTOR | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 385 | import_depends,runtime,test_depends,config_depends |
+| D-GOVERNANCE | 385 | config_depends,import_depends,runtime,test_depends |
 | D-SHARED | 6 | import_depends |
-| D-TRADING | 3 | runtime,import_depends |
-| D-GOV_SCRIPTS | 2 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
+| D-TRADING | 3 | import_depends,runtime |
 | D-FRONTEND | 2 | import_depends |
-| D-INTEGRATION | 1 | import_depends |
-| D-INFRA_TELEMETRY | 1 | import_depends |
-| D-INFRA_RUNTIME | 1 | import_depends |
+| D-GOV_AUDIT | 2 | import_depends |
+| D-GOV_SCRIPTS | 2 | import_depends |
 | D-INFRA_OPS | 1 | import_depends |
 | D-DATA_SEC | 1 | import_depends |
 | D-AUDITTEST | 1 | test_depends |
+| D-INFRA_RUNTIME | 1 | import_depends |
+| D-INFRA_TELEMETRY | 1 | import_depends |
+| D-INTEGRATION | 1 | import_depends |
 
 ## 说明 / Notes
 

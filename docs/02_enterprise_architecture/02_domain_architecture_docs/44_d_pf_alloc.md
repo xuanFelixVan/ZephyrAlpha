@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-PF_ALLOC 组合分配架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D-PF_ALLOC）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -77,14 +77,14 @@ graph TD
         src_zephyr_pf_core_default_equity_strategy_py["src/zephyr/pf_core/default_equity_strategy.py prototype"]
         src_zephyr_pf_core_strategy_portfolio_py["src/zephyr/pf_core/strategy_portfolio.py prototype"]
     end
-    D_SHARED["D-SHARED prototype"]
-    src_zephyr_pf_alloc -.->|contract| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_TRADING
-    src_zephyr_pf_core_strategy_portfolio_py -.->|config_depends| D_GOVERNANCE
+    D_SHARED["D-SHARED prototype"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
+    src_zephyr_pf_core_strategy_portfolio_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_pf_alloc -.->|contract| D_SHARED
     D_GOVERNANCE -.->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -92,7 +92,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_alloc,src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py,src_zephyr_pf_core_strategy_portfolio_py design
     class D_TRADING external_prod
-    class D_SHARED,D_GOVERNANCE external_design
+    class D_GOVERNANCE,D_SHARED external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -101,8 +101,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
+| D-GOVERNANCE | 2 | config_depends,import_depends |
 | D-SHARED | 2 | contract,import_depends |
-| D-GOVERNANCE | 2 | import_depends,config_depends |
 | D-TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

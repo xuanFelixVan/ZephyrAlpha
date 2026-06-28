@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-GOV_RULE 规则治理架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则治理（D-GOV_RULE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -83,9 +83,9 @@ graph TD
     src_zephyr_governance_constitutional_update_constitutional_update_py -->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_governance_rule_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_engine_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_constitutional_update_constitutional_update_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_engine_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_constitutional_update_constitutional_update_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_constitutional_update_constitutional_update_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_constitutional_update_constitutional_update_py
@@ -103,8 +103,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-SHARED | 1 | import_depends |
 | D-INTEGRATION | 1 | import_depends |
+| D-SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

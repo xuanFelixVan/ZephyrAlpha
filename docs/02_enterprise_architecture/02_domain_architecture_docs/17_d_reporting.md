@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-REPORTING 报告架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D-REPORTING）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,19 +24,19 @@ ttl: permanent
 | 域ID | D-REPORTING | Domain ID | D-REPORTING |
 | 域名称 | 报告 | Domain Name | 报告 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 15 | Module Count | 15 |
+| 模块数 | 12 | Module Count | 12 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
-| 跨域出边 | 19 | Cross-domain Outgoing | 19 |
+| 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 14 | Prototype Modules | 14 |
+| 原型态模块 | 11 | Prototype Modules | 11 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 | Description | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
 
 ## 模块清单 / Module List
 
-共 15 个模块（按路径排序，全部显示）
+共 12 个模块（按路径排序，全部显示）
 
 | 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
 |---------|---------|-----------|---------|
@@ -49,9 +49,6 @@ ttl: permanent
 | src/zephyr/reporting/core/__init__.py |  | prototype | deprecated |
 | src/zephyr/reporting/default_attribution_engine.py |  | prototype | generated |
 | src/zephyr/reporting/default_tca_engine.py |  | prototype | generated |
-| src/zephyr/reporting/implementations/__init__.py |  | prototype | generated |
-| src/zephyr/reporting/implementations/default_attribution_engine.py |  | prototype | generated |
-| src/zephyr/reporting/implementations/default_tca_engine.py |  | prototype | generated |
 | src/zephyr/reporting/infrastructure/__init__.py |  | prototype | deprecated |
 | src/zephyr/reporting/models/__init__.py |  | prototype | deprecated |
 | src/zephyr/reporting/services/__init__.py |  | prototype | deprecated |
@@ -78,9 +75,6 @@ graph TD
         src_zephyr_reporting_core_init_py["src/zephyr/reporting/core/__init__.py prototype"]
         src_zephyr_reporting_default_attribution_engine_py["src/zephyr/reporting/default_attribution_engine.py prototype"]
         src_zephyr_reporting_default_tca_engine_py["src/zephyr/reporting/default_tca_engine.py prototype"]
-        src_zephyr_reporting_implementations_init_py["src/zephyr/reporting/implementations/__init__.py prototype"]
-        src_zephyr_reporting_implementations_default_attribution_engine_py["src/zephyr/reporting/implementations/default_at... prototype"]
-        src_zephyr_reporting_implementations_default_tca_engine_py["src/zephyr/reporting/implementations/default_tc... prototype"]
         src_zephyr_reporting_infrastructure_init_py["src/zephyr/reporting/infrastructure/__init__.py prototype"]
         src_zephyr_reporting_models_init_py["src/zephyr/reporting/models/__init__.py prototype"]
         src_zephyr_reporting_services_init_py["src/zephyr/reporting/services/__init__.py prototype"]
@@ -90,19 +84,15 @@ graph TD
     src_zephyr_reporting_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
+    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_reporting_analytics_base_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_reporting_implementations_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_reporting_implementations_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_reporting_implementations_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_reporting_implementations_default_tca_engine_py -.->|import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
     D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_PF_CORE["D-PF_CORE production"]
@@ -112,7 +102,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_demos_demo_e2e_pipeline_py production
-    class src_zephyr_reporting_init_py,src_zephyr_reporting_init_from_obs_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_implementations_init_py,src_zephyr_reporting_implementations_default_attribution_engine_py,src_zephyr_reporting_implementations_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py design
+    class src_zephyr_reporting_init_py,src_zephyr_reporting_init_from_obs_py,src_zephyr_reporting_extensions_init_py,src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_api_init_py,src_zephyr_reporting_core_init_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_infrastructure_init_py,src_zephyr_reporting_models_init_py,src_zephyr_reporting_services_init_py design
     class D_TRADING,D_PF_CORE external_prod
     class D_GOVERNANCE external_design
 ```
@@ -123,8 +113,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 10 | import_depends |
-| D-TRADING | 9 | import_depends |
+| D-TRADING | 6 | import_depends |
+| D-GOVERNANCE | 5 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

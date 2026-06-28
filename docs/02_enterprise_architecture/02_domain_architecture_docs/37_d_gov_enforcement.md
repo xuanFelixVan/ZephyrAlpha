@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D-GOV_ENFORCEMENT rule_enforcement架构文档
 version: "1.0"
 status: active
-date: auto-generated
+date: 2026-06-29
 owner: auto-generator
 ttl: permanent
 ---
@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 rule_enforcement（D-GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新以 git log 为准
+> 最后更新: 2026-06-29 01:07:22
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -223,25 +223,24 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_rule_enforcement_audit_chain_verifier_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_rule_enforcement_capability_checker_py -->|import_depends| D_GOV_AUDIT
+    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_init_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_INTELLIGENCE["D-INTELLIGENCE prototype"]
-    D_INTELLIGENCE -.->|contract| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_GOV_DRIFT["D-GOV_DRIFT design"]
-    D_GOV_DRIFT -.->|runtime| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_GOV_AUDIT -.->|runtime| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_TRADING["D-TRADING prototype"]
-    D_TRADING -.->|contract| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
-    D_GOVERNANCE -.->|runtime| src_zephyr_governance_rule_enforcement_adaptive_threshold_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adversarial_validation_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adversarial_strategies_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adversarial_validation_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adversarial_validation_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adversarial_strategies_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_adversarial_validation_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_ai_capability_guard_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_anti_pattern_guard_py
+    D_AUDITTEST["D-AUDITTEST prototype"]
+    D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_enforcement_audit_chain_verifier_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_breaking_change_detector_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -249,7 +248,7 @@ graph TD
     class src_zephyr_governance_rule_enforcement_init_py,src_zephyr_governance_rule_enforcement_template_yaml,src_zephyr_governance_rule_enforcement_adaptive_threshold_py,src_zephyr_governance_rule_enforcement_admission_mad_001_architecture_necessity_yaml,src_zephyr_governance_rule_enforcement_admission_mad_002_phase_relevance_yaml,src_zephyr_governance_rule_enforcement_admission_mad_003_dependency_compliance_yaml,src_zephyr_governance_rule_enforcement_admission_mad_004_interface_definability_yaml,src_zephyr_governance_rule_enforcement_admission_mad_005_dependency_graph_template_yaml,src_zephyr_governance_rule_enforcement_adversarial_strategies_py,src_zephyr_governance_rule_enforcement_adversarial_validation_py,src_zephyr_governance_rule_enforcement_ai_capability_guard_py,src_zephyr_governance_rule_enforcement_anti_pattern_guard_py,src_zephyr_governance_rule_enforcement_audit_chain_verifier_py,src_zephyr_governance_rule_enforcement_breaking_change_detector_py,src_zephyr_governance_rule_enforcement_can_i_deploy_py,src_zephyr_governance_rule_enforcement_capability_checker_py,src_zephyr_governance_rule_enforcement_cbac_matrix_py,src_zephyr_governance_rule_enforcement_cdc_broker_py,src_zephyr_governance_rule_enforcement_check_types_check_type_registry_py production
     class src_zephyr_governance_rule_enforcement_admission_init_py,src_zephyr_governance_rule_enforcement_check_types_init_py,src_zephyr_governance_rule_enforcement_check_types_adversarial_validation_py,src_zephyr_governance_rule_enforcement_check_types_ct_audit_findings_resolved_py,src_zephyr_governance_rule_enforcement_check_types_ct_blueprint_read_check_py,src_zephyr_governance_rule_enforcement_check_types_ct_circuit_breaker_py,src_zephyr_governance_rule_enforcement_check_types_ct_circular_dependency_scan_py,src_zephyr_governance_rule_enforcement_check_types_ct_classification_py,src_zephyr_governance_rule_enforcement_check_types_ct_content_length_py,src_zephyr_governance_rule_enforcement_check_types_ct_content_quality_py,src_zephyr_governance_rule_enforcement_check_types_ct_contract_compatibility_check_py design
     class D_GOV_AUDIT external_prod
-    class D_GOVERNANCE,D_INTELLIGENCE,D_GOV_DRIFT,D_TRADING external_design
+    class D_GOV_SCRIPTS,D_GOVERNANCE,D_AUDITTEST external_design
 ```
 
 ### 第 2 页 / 共 4 页 / Page 2 of 4
@@ -313,16 +312,16 @@ graph TD
     D_TRADING["D-TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
     D_TRADING -.->|import_depends| src_zephyr_governance_rule_enforcement_drift_detector_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_end_to_end_walkthrough_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_contract_template_manager_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_contract_template_manager_py
     D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_end_to_end_walkthrough_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_contract_template_manager_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_circuit_breaker_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_contract_template_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -396,12 +395,6 @@ graph TD
     src_zephyr_governance_rule_enforcement_gate_types_py -->|import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py -->|import_depends| D_INTEGRATION
     src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py -.->|import_depends| D_SHARED
-    D_AUDITTEST["D-AUDITTEST prototype"]
-    D_AUDITTEST -.->|test_depends| src_zephyr_governance_rule_enforcement_gate_context_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_gate_context_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_gate_context_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_gate_context_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_gate_context_py
     D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
@@ -414,14 +407,20 @@ graph TD
     D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_GOV_DOCS -.->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
+    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE -->|import_depends| src_zephyr_governance_rule_enforcement_gate_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_rule_enforcement_g3_evaluate_yaml,src_zephyr_governance_rule_enforcement_g4_activate_yaml,src_zephyr_governance_rule_enforcement_g5_extract_yaml,src_zephyr_governance_rule_enforcement_g6_blueprint_compliance_yaml,src_zephyr_governance_rule_enforcement_g6_ctr_compliance_yaml,src_zephyr_governance_rule_enforcement_g6_path_tree_freshness_yaml,src_zephyr_governance_rule_enforcement_g7_position_limits_yaml,src_zephyr_governance_rule_enforcement_g8_yaml,src_zephyr_governance_rule_enforcement_g8_leverage_yaml,src_zephyr_governance_rule_enforcement_g9_yaml,src_zephyr_governance_rule_enforcement_g9_strategy_correlation_yaml,src_zephyr_governance_rule_enforcement_g_asset_inventory_yaml,src_zephyr_governance_rule_enforcement_gate_context_py,src_zephyr_governance_rule_enforcement_gate_dedup_yaml,src_zephyr_governance_rule_enforcement_gate_engine_py,src_zephyr_governance_rule_enforcement_gate_health_py,src_zephyr_governance_rule_enforcement_gate_integrity_guard_py,src_zephyr_governance_rule_enforcement_gate_override_py,src_zephyr_governance_rule_enforcement_gate_pipeline_py,src_zephyr_governance_rule_enforcement_gate_simulator_py,src_zephyr_governance_rule_enforcement_gate_types_py,src_zephyr_governance_rule_enforcement_gct_024_budget_enforcer_yaml,src_zephyr_governance_rule_enforcement_integration_test_runner_py,src_zephyr_governance_rule_enforcement_invariants_en_001_circular_dependency_py,src_zephyr_governance_rule_enforcement_invariants_en_001_circular_dependency_yaml,src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_py,src_zephyr_governance_rule_enforcement_invariants_en_002_enforcement_validator_yaml,src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_py,src_zephyr_governance_rule_enforcement_invariants_en_003_contract_compatibility_yaml production
     class src_zephyr_governance_rule_enforcement_invariants_init_py design
-    class D_INTEGRATION,D_BEHAVIORAL_AUDIT,D_GOVERNANCE,D_GOV_AUDIT external_prod
-    class D_SHARED,D_AUDITTEST,D_AUTONOMY_CORE,D_GOV_DOCS external_design
+    class D_INTEGRATION,D_BEHAVIORAL_AUDIT,D_GOVERNANCE,D_GOV_AUDIT,D_INTELLIGENCE external_prod
+    class D_SHARED,D_AUTONOMY_CORE,D_GOV_DOCS external_design
 ```
 
 ### 第 4 页 / 共 4 页 / Page 4 of 4
@@ -457,32 +456,32 @@ graph TD
     src_zephyr_governance_rule_enforcement_truth_source_validator_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_rule_enforcement_truth_source_validator_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE prototype"]
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_kiss_enforcer_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_risk_ssot_py
-    D_TRADING["D-TRADING prototype"]
-    D_TRADING -.->|import_depends| src_zephyr_governance_rule_enforcement_task_completion_gate_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_task_completion_gate_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_task_completion_gate_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
-    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
     D_INTEGRATION -.->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
     D_INTEGRATION -->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_INTEGRATION -.->|import_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
     D_SECURITY["D-SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_TRADING["D-TRADING production"]
+    D_TRADING -->|import_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
+    D_TRADING -.->|import_depends| src_zephyr_governance_rule_enforcement_task_completion_gate_py
+    D_TRADING -.->|import_depends| src_zephyr_governance_rule_enforcement_triple_alignment_py
+    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_sys_master_compliance_py
+    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_task_types_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_enforcement_task_types_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_rule_enforcement_invariants_en_process_lifecycle_gateway_py,src_zephyr_governance_rule_enforcement_invariants_zero_residue_check_py,src_zephyr_governance_rule_enforcement_kiss_enforcer_py,src_zephyr_governance_rule_enforcement_observability_baseline_yaml,src_zephyr_governance_rule_enforcement_risk_ssot_py,src_zephyr_governance_rule_enforcement_secrets_guard_py,src_zephyr_governance_rule_enforcement_sys_master_compliance_py,src_zephyr_governance_rule_enforcement_sys_master_compliance_yaml,src_zephyr_governance_rule_enforcement_task_g0_entry_yaml,src_zephyr_governance_rule_enforcement_task_g0_orc_gate_engine_yaml,src_zephyr_governance_rule_enforcement_task_g7_orc_gate_engine_yaml,src_zephyr_governance_rule_enforcement_task_completion_gate_py,src_zephyr_governance_rule_enforcement_task_types_py,src_zephyr_governance_rule_enforcement_triple_alignment_py,src_zephyr_governance_rule_enforcement_truth_source_validator_py,src_zephyr_governance_rule_enforcement_zero_residue_yaml production
     class src_zephyr_governance_rule_enforcement_task_init_py design
-    class D_SHARED,D_INTEGRATION,D_GOV_AUDIT external_prod
-    class D_GOVERNANCE,D_TRADING,D_GOV_SCRIPTS,D_SECURITY external_design
+    class D_SHARED,D_INTEGRATION,D_GOV_AUDIT,D_TRADING external_prod
+    class D_GOVERNANCE,D_SECURITY,D_GOV_SCRIPTS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -502,15 +501,15 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 168 | test_depends,runtime,import_depends |
-| D-GOV_SCRIPTS | 10 | import_depends |
+| D-GOVERNANCE | 168 | import_depends,runtime,test_depends |
 | D-GOV_DOCS | 10 | import_depends |
+| D-GOV_SCRIPTS | 10 | import_depends |
 | D-TRADING | 6 | contract,import_depends |
+| D-GOV_AUDIT | 5 | import_depends,runtime |
 | D-SECURITY | 5 | import_depends |
-| D-GOV_AUDIT | 5 | runtime,import_depends |
 | D-INTEGRATION | 3 | import_depends |
-| D-INTELLIGENCE | 2 | contract,import_depends |
 | D-AUDITTEST | 2 | test_depends |
+| D-INTELLIGENCE | 2 | contract,import_depends |
 | D-GOV_DRIFT | 1 | runtime |
 | D-AUTONOMY_CORE | 1 | import_depends |
 
