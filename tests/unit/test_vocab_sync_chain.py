@@ -582,3 +582,37 @@ class TestDbConnectionNamingConvention:
         assert "sqlite3.connect" in src, (
             "db_utils.get_db_connection 未使用 sqlite3.connect（SQLite 入口被篡改）"
         )
+
+    def test_f4_wrapper_no_infinite_recursion(self) -> None:
+        """F4 constants.get_depgraph_pg_connection 不得无限递归自调用。
+
+        防回归（2026-06-28）：F1 改名后，F4 import 同名函数遮蔽真源，导致 L107
+        调用局部 wrapper 而非 F1 真源 → RecursionError → path_tree sync failed。
+        治本：import 用别名 ``_get_depgraph_pg_connection_from_depgraph_schema``，
+        wrapper 内部调用别名消除遮蔽。本测试通过实际调用 F4 wrapper 验证不递归。
+        """
+        import sys  # noqa: PLC0415
+
+        # scripts/ 不在默认 sys.path，需 bootstrap
+        repo_root = Path(__file__).resolve().parents[2]
+        if str(repo_root) not in sys.path:
+            sys.path.insert(0, str(repo_root))
+
+        # 关键：若 F4 递归，下面 import + call 会抛 RecursionError
+        from scripts.governance._shared.constants import (  # noqa: PLC0415
+            PgConnExecuteWrapper,
+            get_depgraph_pg_connection as f4_wrapper,
+        )
+
+        conn = f4_wrapper(autocommit=True)
+        try:
+            assert isinstance(conn, PgConnExecuteWrapper), (
+                "F4 wrapper 必须返回 PgConnExecuteWrapper（包装 psycopg2 conn）"
+            )
+            # 验证能正常执行 SQL（确认底层是真实 PG 连接，非递归假对象）
+            cur = conn.execute("SELECT 1 AS ok")
+            row = cur.fetchone()
+            assert dict(row)["ok"] == 1
+        finally:
+            conn.close()
+

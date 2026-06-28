@@ -45,7 +45,14 @@ from zephyr.shared.io.paths import REPO_ROOT, find_repo_root  # noqa: E402
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
 import psycopg2  # noqa: E402
 from psycopg2.extras import RealDictCursor  # noqa: E402
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+# 注意：import 用别名，避免与本模块下方定义的 wrapper 函数同名遮蔽导致无限递归。
+# F1 真源（depgraph_schema）返回 psycopg2 connection；F4 wrapper（本模块）包装为 PgConnExecuteWrapper。
+# 同名设计是为调用方透明替代，但 wrapper 内部必须调用真源，不能调用自己。
+# 治本（2026-06-28）：原直接 import 同名，L107 调用解析到局部 wrapper → RecursionError →
+# path_tree sync failed warning。改用别名消除遮蔽。见 AGENTS.md §11.4。
+from zephyr.governance.depgraph_schema import (
+    get_depgraph_pg_connection as _get_depgraph_pg_connection_from_depgraph_schema,  # noqa: E402
+)
 
 
 class PgConnExecuteWrapper:
@@ -104,7 +111,11 @@ def get_depgraph_pg_connection(autocommit: bool = True) -> PgConnExecuteWrapper:
     :param autocommit: True 启用自动提交（默认，适合只读/简单写）；False 需显式 conn.commit()
     :return: PgConnExecuteWrapper 包装的 psycopg2 连接
     """
-    return PgConnExecuteWrapper(get_depgraph_pg_connection(autocommit=autocommit))
+    # 调用 F1 真源（depgraph_schema.get_depgraph_pg_connection），非本模块 wrapper。
+    # 用 import 别名消除同名遮蔽，否则会无限递归（wrapper 调用自己）。
+    return PgConnExecuteWrapper(
+        _get_depgraph_pg_connection_from_depgraph_schema(autocommit=autocommit)
+    )
 
 EXCLUDE_DIRS: frozenset[str] = frozenset(
     {
