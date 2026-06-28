@@ -2296,7 +2296,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/checkers/check_vms_ssot.py
   path: governance/d5_architecture/checkers/check_vms_ssot.py
-  description: 防止 AI 重建已删除的 governance/vector_memory/ 目录（VMS 漂移副本）。
+  description: 检测1（路径前缀）：防止 AI 重建已删除的 governance/vector_memory/ 漂移副本目录。
   domain: governance
   execution_plane: warm-path
   status: registered
