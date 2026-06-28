@@ -241,3 +241,6 @@ scripts/_tmp_*
 config/.env.postgres
 # PostgreSQL native data directory (Windows install)
 data/databases/postgres/
+
+# Model quick exam profiles (runtime data, regenerable; same policy as data/brain/passports/)
+data/brain/quick_profiles/*
