@@ -789,7 +789,8 @@ repos:
         entry: "target-architecture|architecture-model"
         language: pygrep
         files: \.py$
-        description: "检测 .py 文件中含连字符路径 target-architecture/architecture-model（应为下划线），防止路径重命名技术债复发"
+        exclude: "_archive/"
+        description: "检测 .py 文件中含连字符路径 target-architecture/architecture-model（应为下划线），防止路径重命名技术债复发；_archive/ 归档目录豁免"
 
       - id: gate-bom-utf8-check
         name: "GATE-BOM: UTF-8 BOM 检测"
