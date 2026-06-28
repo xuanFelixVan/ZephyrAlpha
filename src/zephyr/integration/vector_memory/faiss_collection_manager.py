@@ -413,13 +413,6 @@ class FAISSCollectionManager:
             )
         return results
 
-    def write_with_provenance(
-        self,
-        collection_name: str,
-        content_vector: np.ndarray,
-    ) -> None:
-        self.add_vector(collection_name, content_vector)
-
     def init_all_collections(self) -> list[CollectionInfo]:
         results: list[CollectionInfo] = []
         for name in COLLECTION_NAMES:
