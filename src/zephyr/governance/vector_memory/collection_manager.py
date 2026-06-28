@@ -448,21 +448,26 @@ class CollectionManager:
         collection_name: str,
         content: str,
         metadata: dict[str, Any],
+        doc_id: str | None = None,
     ) -> str:
         DesignPrinciplesEnforcer.validate_provenance(metadata)
         col = self.get_collection(collection_name)
         import uuid
         from datetime import UTC, datetime
 
-        doc_id = f"{collection_name}::{datetime.now(UTC).strftime('%Y%m%dT%H%M%S')}::{uuid.uuid4().hex[:12]}"
+        # 确定性业务 id 优先（治本幂等缺陷，对齐 kb_repo._upsert_vector 范式）；
+        # 无 id 时回退 uuid+timestamp（向后兼容，旧调用方不 break）
+        if doc_id is None:
+            doc_id = f"{collection_name}::{datetime.now(UTC).strftime('%Y%m%dT%H%M%S')}::{uuid.uuid4().hex[:12]}"
         meta = self._flatten_metadata(metadata)
         meta["written_at"] = datetime.now(UTC).isoformat()
 
+        # col.add → col.upsert（治本：同 doc_id 覆盖，消除重复垃圾堆叠）
         if self._embedding_router is not None:
             embedding = self._embedding_router.embed(content, collection_name)
-            col.add(ids=[doc_id], documents=[content], metadatas=[meta], embeddings=[embedding])
+            col.upsert(ids=[doc_id], documents=[content], metadatas=[meta], embeddings=[embedding])
         else:
-            col.add(ids=[doc_id], documents=[content], metadatas=[meta])
+            col.upsert(ids=[doc_id], documents=[content], metadatas=[meta])
 
         _logger.debug("CollectionManager: 写入 '%s' → %s (provenance validated)", content[:40], collection_name)
         return doc_id

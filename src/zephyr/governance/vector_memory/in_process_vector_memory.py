@@ -255,6 +255,7 @@ class InProcessVectorMemory:
         collection_name: str,
         content: str,
         metadata: dict[str, Any] | None = None,
+        doc_id: str | None = None,
     ) -> str:
         from zephyr.governance.vector_memory.bridge_layer import COLLECTION_ALIASES
         from zephyr.governance.vector_memory.collection_manager import DesignPrinciplesEnforcer
@@ -266,6 +267,7 @@ class InProcessVectorMemory:
             collection_name=collection_name,
             content=content,
             metadata=meta,
+            doc_id=doc_id,
         )
 
     def search(

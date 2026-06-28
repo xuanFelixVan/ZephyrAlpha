@@ -217,6 +217,7 @@ class InProcessVectorMemory:
         collection_name: str,
         content: str,
         metadata: dict[str, Any] | None = None,
+        doc_id: str | None = None,
     ) -> str:
         from zephyr.integration.vector_memory.bridge_layer import COLLECTION_ALIASES
         from zephyr.integration.vector_memory.collection_manager import DesignPrinciplesEnforcer
@@ -228,6 +229,7 @@ class InProcessVectorMemory:
             collection_name=collection_name,
             content=content,
             metadata=meta,
+            doc_id=doc_id,
         )
 
     def _get_in_memory_backend(self) -> Any:
