@@ -5,15 +5,15 @@ title: "02_triaged — 目录索引"
 module_id: ""
 blueprint_id: ""
 version: "1.0.0"
-created: "2026-06-22"
-updated: "2026-06-22"
-ttl: permanent
+created: "2026-06-30"
+updated: "2026-06-30"
+ttl: "permanent"
 ---
 
 # 02_triaged
 
 > 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-06-22
+> 生成日期：2026-06-30
 
 ## 目录内容
 
