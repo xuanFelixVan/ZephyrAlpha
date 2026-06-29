@@ -17,15 +17,15 @@ date: "2026-05-06"
 owner: ZephyrAlpha-Owner
 ai_autonomy: human_gated
 ttl: permanent
-summary: "跨目录主文档清单——索引 docs/ 下所有一级目录的入口文档和关键产出物。01_policies_and_standards/ 细粒度文档索引见 document-metadata-index-registry.yaml（PS-REG-002）。"
+summary: "跨目录主文档清单——索引 docs/ 下所有一级目录的入口文档和关键产出物。01_policies_and_standards/ 细粒度规则索引见 rule_catalog_registry.yaml（PS-REG-018，唯一真源 SSoT）。"
 depends_on:
-  - target: PS-REG-002
-    at: document-metadata-index-registry.yaml
-    why: "01_policies_and_standards/ 细粒度文档元数据索引"
+  - target: PS-REG-018
+    at: rule_catalog_registry.yaml
+    why: "01_policies_and_standards/ 规则路径目录（原 PS-REG-002 document-metadata-index-registry.yaml 已合并到此）"
   - target: PS-REG-016
     at: registry_consistency_contract.yaml
     why: "登记表一致性契约"
 total_documents: 0
-last_updated: "2026-05-06"
-note: "beta 阶段——跨目录文档清单自动化工具未就绪，当前为空表。01_policies_and_standards/ 文档请查阅 document-metadata-index-registry.yaml"
+last_updated: "2026-06-29"
+note: "未实现——跨目录文档清单自动化工具未就绪，当前为空表（status: draft）。01_policies_and_standards/ 规则索引请查阅 rule_catalog_registry.yaml（PS-REG-018）；登记表清单请查阅 registry_master_index.yaml"
 documents: []

@@ -142,11 +142,6 @@ capabilities:
       src/zephyr/shared/io/paths.py 是 src/ 代码的 REPO_ROOT 真源；截至本次仍有 90+ 文件各自推算，
       彻底归一见独立任务。GATE-DD07 已扩展检测 Path(__file__).parents[N] 模式（warn-only）。
     duplicates_manual:
-      - path: src/zephyr/integration/shared_08/io/paths.py
-        relation: re_export
-        note: >-
-          re-export 自 src/zephyr/shared/io/paths.py（REPO_ROOT/find_repo_root 单真源化）。
-          保留本模块以维持 15+ 消费者 import 路径不变。
       - path: scripts/governance/_shared/constants.py
         relation: re_export
         note: >-
@@ -164,13 +159,9 @@ capabilities:
       仓库根目录查找算法(向上遍历找 src/zephyr/__init__.py 标记文件)。
       单真源:src/zephyr/shared/io/paths.py。scripts/ 可 bootstrap import src/
       (先例:git_commit.py/check_ssot_gate.py),无架构约束阻碍单真源化。
-      其他模块(shared_08/io/paths.py、scripts/governance/_shared/constants.py)
-      re-export 本真源,不再有独立实现。GATE-VOCAB 不扫描此函数(非词表合法值)。
+      scripts/governance/_shared/constants.py re-export 本真源,不再有独立实现。
+      GATE-VOCAB 不扫描此函数(非词表合法值)。
     duplicates_manual:
-      - path: src/zephyr/integration/shared_08/io/paths.py
-        relation: re_export
-        note: >-
-          re-export 自 src/zephyr/shared/io/paths.py(保持 15+ 消费者 import 路径不变)。
       - path: scripts/governance/_shared/constants.py
         relation: re_export
         note: >-
