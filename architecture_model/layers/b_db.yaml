@@ -5,7 +5,7 @@ partition:
   track: b_track
   bounded_context: false
   status: implemented
-  db_file_path: data/databases/governance.db
+  db_file_path: "→ infrastructure_registry.yaml INFRA-DB-001（数据库清单真源，禁止同步）"
   backup_dir: data/backups/
   warehouse_dir: data/warehouse/
   blueprint_ref: docs/03_modules/_cross_layer/database/blueprint.md
@@ -62,13 +62,9 @@ modules:
     status: implemented
     priority: P1
     runtime_plane: hot
-    description: depgraph.db PostgreSQL 迁移层——25表schema v18，6428 nodes，支持40+ AI并发写入(MVCC)，Psycopg2连接，PgConnExecuteWrapper兼容层。P2迁移完成于2026-06-27。
+    description: depgraph PostgreSQL 迁移层——28表schema v18，支持40+ AI并发写入(MVCC)，Psycopg2连接，PgConnExecuteWrapper兼容层。P2迁移完成于2026-06-27。数据库清单真源：infrastructure_registry.yaml INFRA-DB-003
     db_engine: postgresql
-    db_connection: config/.env.postgres
-    db_host: localhost
-    db_port: 5432
-    db_name: depgraph
-    db_user: zephyr
+    db_connection_ssot: "→ infrastructure_registry.yaml INFRA-DB-003（连接配置真源，禁止同步）"
     files:
       - depgraph_schema.py
       - database_service.py

@@ -78,6 +78,8 @@ references:
 
 ### 1.3 架构裁定更新
 
+> ⚠️ 历史裁定记录。当前数据库清单真源：`infrastructure_registry.yaml`（INFRA-DB-001~005，详见 AGENTS.md §11.0）。
+
 **原D50裁定**：3库：governance.db(SQLite)+depgraph.db(SQLite)+market.duckdb(DuckDB)
 
 **P2更新裁定（D50-PG）**：

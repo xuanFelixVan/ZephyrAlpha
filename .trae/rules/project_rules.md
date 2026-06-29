@@ -46,8 +46,7 @@
 | 真源 | 绝对路径 | 说明 |
 |------|---------|------|
 | **架构全景图+依赖全景图（唯一真源）** | PostgreSQL `depgraph`（localhost:5432） | PostgreSQL 16 数据库，设计态+运行态合一。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图。包含 path_design 段（路径设计权威）+ capacity声明(1500模块)。**⚠️ 禁止裸连！AI 必须用 `python scripts/governance/extract_depgraph.py --summary/--domains/--top` 提取子集，或通过 `get_depgraph_pg_connection()` 执行有限查询。详见 RULE-SIXTEEN** |
-| **治理数据库** | `D:/ZephyrAlpha/data/databases/governance.db` | SQLite，治理元数据+任务卡+成本+审计日志（26表）。任务系统SSoT。访问：`python -c "from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); print(len(r.list_all()))"` |
-| **业务时序数据库** | `D:/ZephyrAlpha/data/databases/market.duckdb` | DuckDB，业务时序数据（Tick/K线/因子/订单/持仓/风控，7表+1视图）。访问：`python -c "import duckdb; con=duckdb.connect(r'D:/ZephyrAlpha/data/databases/market.duckdb', read_only=True); print(con.execute('SHOW TABLES').fetchall())"` |
+| **数据库清单（5库唯一真源）** | `D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml` | INFRA-DB-001~005 唯一真源（governance.db/ChromaDB/PostgreSQL depgraph/DuckDB OLAP/market.duckdb）。包含类型/地址/健康检查/依赖/SLA/状态。**禁止在其它文档同步数据库清单**，所有引用用纯指针。详见 AGENTS.md §11.0 |
 | **迁移登记表** | `D:/ZephyrAlpha/docs/02_enterprise_architecture/migration_registry.yaml` | 每个需要迁移的文件的旧路径→新路径映射。搬家任务卡的唯一真源 |
 
 **绝对禁止**：
@@ -84,7 +83,7 @@
 ```
 1. 读 docs/registry_of_registries.yaml → 了解全项目有什么
 2. 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（架构全景图+依赖图唯一真源，PostgreSQL 数据库 `depgraph`，禁止裸连。→ 项目域架构+目录结构+依赖关系+capacity声明。详见 RULE-SIXTEEN）
-2.1 确认三库就绪：depgraph（PostgreSQL，依赖图+架构全景）+ governance.db（SQLite，治理/任务卡/审计日志）+ market.duckdb（DuckDB，业务时序数据）。depgraph 用 extract_depgraph.py 或 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`；governance 用 TaskRepository；market 用 duckdb.connect(read_only=True)
+2.1 确认数据库就绪：5 库清单（INFRA-DB-001~005）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）。其中 depgraph 用 extract_depgraph.py 或 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` 提取子集，禁止裸连
 3. 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 4. 读本文件（project_rules.md）→ 了解怎么做事
 5. 按需定位具体注册表 → 开工
@@ -1039,7 +1038,7 @@ depgraph 数据库的 schema 变更必须遵循 DDL-as-Code 流程，禁止直�
   STEP 1: 确定需要什么数据（域摘要？指定域？指定模块？顶级元数据？路径列表？）
   STEP 2: 运行对应提取命令
           python scripts/governance/extract_depgraph.py --summary     # 43域+模块数
-          python scripts/governance/extract_depgraph.py --domains D-FACTOR,D-RISK
+          python scripts/governance/extract_depgraph.py --domains D_FACTOR,D_RISK
           python scripts/governance/extract_depgraph.py --modules D-FACTOR-01
           python scripts/governance/extract_depgraph.py --top          # 顶级元数据
           python scripts/governance/extract_depgraph.py --paths        # 所有physical_files
@@ -1419,7 +1418,7 @@ STEP 0.5 — Drift 健康检查（冷启动前置，P1-CLD；信息性不阻断�
 STEP 1   — 读 docs/registry_of_registries.yaml → 了解全项目注册表
 STEP 1.1 — 读 docs/03_modules/template_registry.yaml → 了解可用模板
 STEP 1.2 — 提取 depgraph 摘要：`python scripts/governance/extract_depgraph.py --summary`（唯一真源，PostgreSQL 数据库，禁止裸连。详见 RULE-SIXTEEN）
-STEP 1.3 — 确认三库就绪：depgraph（PostgreSQL，依赖图+架构全景）+ governance.db（SQLite，治理/任务卡/审计日志）+ market.duckdb（DuckDB，业务时序数据）
+STEP 1.3 — 确认数据库就绪：5 库清单（INFRA-DB-001~005）见 `infrastructure_registry.yaml`（真源，详见 AGENTS.md §11.0）
 STEP 1.5 — 读 docs/03_modules/_sys_master/blueprint.md §0 → 定位子系统任务域
 STEP 2   — 读本文件（project_rules.md）→ 了解硬规则
 STEP 3   — Session Continuity 恢复: 上一个 session 做了啥 / 未完成任务 / 锁状态

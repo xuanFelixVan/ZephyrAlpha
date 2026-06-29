@@ -25,7 +25,7 @@
 #   注：本文件不是"规则数据真源"（那条铁律仅适用于 docs/01_policies_and_standards/
 #   下的规则文件，由 sync_yaml_to_depgraph.py 同步到 9 个 readonly DB 表）。
 #   本文件是能力索引，不被 sync_yaml_to_depgraph.py 同步——它是 CapabilityLookup
-#   的查询输入，与 depgraph.db 的 nodes 表是两个独立的数据面。
+#   的查询输入，与 depgraph（PostgreSQL，INFRA-DB-003）的 nodes 表是两个独立的数据面。
 #
 # alias 策略（防重建规矩）:
 #   aliases 仅用于英文标识符（函数名/常量/类名，如 REPO_ROOT、load_blueprint_path、
@@ -470,11 +470,11 @@ capabilities:
       - generator
       - d5_generators
     description: >-
-      depgraph.db 驱动的域架构文档自动生成器集（14+ 生成器）。
+      depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（14+ 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
       输出幂等（相同 DB 输入→相同输出），零时间戳（date: auto-generated，
       最后更新以 git log 为准），禁止在生成器中使用 datetime.now()。
-      GATE-DOMAIN-DOC reconciler 在 commit depgraph.db 后自动触发
+      GATE-DOMAIN-DOC reconciler 在 commit depgraph（PostgreSQL）后自动触发
       generate_domain_doc.py 和 generate_domain_dependency_diagram.py。
     # 生成器→输出目录映射（生成器豁免区真源）
     # 落在这些目录内的新文件跳过 GitCommitGateway PROMOTION_BLOCKED 门禁
