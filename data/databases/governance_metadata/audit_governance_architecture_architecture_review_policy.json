@@ -27,7 +27,7 @@
     },
     "ARG-005": {
       "type": "mandatory",
-      "content": "评审记录必须包含ISO 8601 UTC日期、评审人ID、变更描述、清单逐项结果、否决/通过决定、理由，存放于docs/09_audit/architecture-reviews/",
+      "content": "评审记录必须包含ISO 8601 UTC日期、评审人ID、变更描述、清单逐项结果、否决/通过决定、理由，存放于docs/_working/audit/architecture-reviews/",
       "status": "COVERED"
     }
   },

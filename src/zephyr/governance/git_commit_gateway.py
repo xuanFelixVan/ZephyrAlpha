@@ -90,6 +90,7 @@ from zephyr.governance.reconciliation_registry import (
     make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
     make_commit_gateway_audit_reconciler,
+    make_deprecated_directory_reconciler,
 )
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
@@ -462,6 +463,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
         self._reconciliation_registry.register(make_domain_doc_reconciler(self))
         self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))  # GATE-COMMIT-GW-AUDIT 缺口4接线：裸commit post-compensation 审计
+        self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))  # GATE-DEPRECATED-DIR 09_audit 治本加固：post-commit 检测废弃目录重建
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -597,6 +599,15 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.NAMING_VIOLATION,
                 message=f"中文 aliases 违规: {aliases_detail}",
+            )
+
+        # 废弃目录门禁（09_audit 治本加固）：检测提交文件是否位于 docs/09_audit/ 等
+        # 已废弃目录下——gateway 内嵌，--no-verify 绕不过（对标 _check_capability_aliases 模式）
+        deprecated_passed, deprecated_detail = self._check_deprecated_directories(existing)
+        if not deprecated_passed:
+            return CommitResult(
+                status=CommitStatus.NAMING_VIOLATION,
+                message=f"废弃目录违规: {deprecated_detail}",
             )
 
         # REPO_ROOT 真源归一门禁：检测 parents[N] 反模式（SSoT 绕过）
@@ -1364,6 +1375,37 @@ class GitCommitGateway:
         return True, "capability aliases check passed (no CJK aliases)"
 
     # ------------------------------------------------------------------
+    # 废弃目录门禁（09_audit 治本加固，红蓝对抗修复）
+    # ------------------------------------------------------------------
+    # 废弃目录清单：key=相对路径前缀，value=废弃原因+迁移目标
+    # 与 validate_directory_structure.py 的 ALLOWED_DOCS_DIRS 白名单互补——
+    # 白名单是"允许的"（warn-only 脚本），DEPRECATED_DIRS 是"显式禁止的"（gateway 硬阻断）
+    _DEPRECATED_DIRS: dict[str, str] = {
+        "docs/09_audit": "已合并入 docs/_working/audit/（trae_047 gov_eng_002_directory_mapping）",
+    }
+
+    def _check_deprecated_directories(self, files: list[str]) -> tuple[bool, str]:
+        """废弃目录门禁：检测提交文件是否位于已废弃的目录路径下。
+
+        治本：09_audit/ 已合并入 docs/_working/audit/，但此前无代码强制——新 AI 可
+        通过 GitCommitGateway 在 docs/09_audit/ 下创建文件，--no-verify 绕过 pre-commit。
+        本方法在 gateway 层内嵌废弃目录检测，--no-verify 绕不过。
+
+        对标 _check_capability_aliases 模式（L1319）：gateway 内嵌，--no-verify 绕不过。
+        """
+        violations: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            for deprecated, reason in self._DEPRECATED_DIRS.items():
+                if rel == deprecated or rel.startswith(deprecated + "/"):
+                    violations.append(
+                        f"{rel} → 废弃目录 {deprecated}/（{reason}）"
+                    )
+        if violations:
+            return False, "\n  ".join(violations)
+        return True, "deprecated directories check passed"
+
+    # ------------------------------------------------------------------
     # REPO_ROOT 真源归一检测（移植自 _tmp_fix_parents.py，仅检测不修复）
     # ------------------------------------------------------------------
     _REPO_SYSPATH_LINE = re.compile(r"sys\.path\.(?:insert|append)\s*\(")
@@ -2114,6 +2156,14 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.METADATA_VIOLATION,
                 message=f"frontmatter ttl 校验失败（auto-commit）: {ttl_detail}",
+            )
+
+        # 废弃目录门禁（09_audit 治本加固，auto-commit 同样拦截）
+        deprecated_passed, deprecated_detail = self._check_deprecated_directories(existing)
+        if not deprecated_passed:
+            return CommitResult(
+                status=CommitStatus.NAMING_VIOLATION,
+                message=f"废弃目录违规（auto-commit）: {deprecated_detail}",
             )
 
         # GOV-DOC-016 纯陈述原则门禁（auto-commit 同样拦截）

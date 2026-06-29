@@ -31,7 +31,7 @@
       "status": "COVERED"
     },
     "FILE_NAMING": {
-      "rule": "文件命名：docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF",
+      "rule": "文件命名：docs/_working/audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF",
       "type": "mandatory",
       "status": "COVERED"
     },

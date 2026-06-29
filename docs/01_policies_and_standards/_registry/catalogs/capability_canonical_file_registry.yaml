@@ -426,6 +426,7 @@ capabilities:
       # gateway 现通过 from zephyr.shared.infra.process_pool import is_pid_alive 复用，
       # 僵尸锁调用点在 _GlobalCommitLock.__enter__（L229），由 test_lock_timeout_when_held_indefinitely 保护。
       - _check_capability_aliases  # 中文aliases门禁(红蓝对抗修复2,删则中文aliases可绕过)
+      - _check_deprecated_directories  # 废弃目录门禁(09_audit治本加固,删则新AI可在docs/09_audit/下提交)
       - _check_repo_root_usage     # REPO_ROOT门禁(删则parents[N]反模式可绕过SSoT)
       - _match_is_bootstrap        # bootstrap豁免检测(删则sys.path合法豁免失效→误杀或漏检)
       - _is_staged_delete          # staged delete识别(纵深防御,删则git add -f可能撤销用户的git rm --cached)

@@ -37,7 +37,7 @@
     },
     "PTP-ACCEPTANCE": {
       "type": "mandatory",
-      "content": "HiL审核产出docs/09_audit/phase-N-acceptance.md，包含退出门校验结果、准入门校验结果、用户签字、日期、已知风险清单",
+      "content": "HiL审核产出docs/_working/audit/phase-N-acceptance.md，包含退出门校验结果、准入门校验结果、用户签字、日期、已知风险清单",
       "status": "COVERED"
     },
     "PTP-SCRIPTS": {
