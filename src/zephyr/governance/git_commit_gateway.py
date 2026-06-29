@@ -1483,16 +1483,21 @@ class GitCommitGateway:
         return False
 
     def _check_repo_root_usage(self, files: list[str]) -> tuple[bool, str]:
-        """检测 .py 文件是否使用 parents[N] 反模式（应改用 REPO_ROOT）。
+        """检测 .py 文件的 REPO_ROOT/DB_PATH SSoT 违规（应改用真源常量）。
 
         移植自 ``_tmp_fix_parents.py`` 检测逻辑（仅检测不修复）。
         合法豁免：sys.path bootstrap 上下文（鸡生蛋：需先设 sys.path 才能 import REPO_ROOT）。
 
         检测模式：
-          - ``Path(__file__).resolve().parents[N]``  → 若 resolve 后 == REPO_ROOT 则违规
-          - ``Path(__file__).resolve().parent.parent...`` (2+ parent) → 同上
+          - 模式1: ``Path(__file__).resolve().parents[N]``  → 若 resolve 后 == REPO_ROOT 则违规
+          - 模式2: ``Path(__file__).resolve().parent.parent...`` (2+ parent) → 同上
+          - 模式3: AST 检测使用 REPO_ROOT/DB_PATH 但未 import，或 import 顺序错误
+          - 模式4: ``Path("D:\\ZephyrAlpha...")`` 硬编码路径字面量（阶段C 治本：防新 AI 硬编码）
+          - 模式5: ``sqlite3.connect("绝对路径.db")`` 硬编码数据库连接（应改用 DB_PATH/PG 连接）
 
-        真源：``zephyr.shared.io.paths.REPO_ROOT`` 是仓库根常量唯一真源。
+        真源：``zephyr.shared.io.paths.REPO_ROOT`` 是仓库根常量唯一真源；
+              ``_shared.constants.DB_PATH`` 是 governance.db 路径真源；
+              ``get_depgraph_pg_connection()`` 是 depgraph 连接真源（已迁移 PG）。
         约定见 AGENTS.md §7 REPO_ROOT 真源归一。
 
         Args:
@@ -1555,6 +1560,28 @@ class GitCommitGateway:
                         f"等于 REPO_ROOT，应改用 `from zephyr.shared.io.paths import REPO_ROOT`"
                     )
 
+            # 模式4: Path("D:\ZephyrAlpha...") 硬编码路径字面量（阶段C 治本：防新 AI 硬编码）
+            # 真源: zephyr.shared.io.paths.REPO_ROOT
+            # 只检测 Path() 调用中的硬编码，不误报任务卡数据字符串（如 d_init_task_system.py）
+            # 豁免: 注释行（# 开头）
+            # 正则 [\\/]+ 覆盖: r"D:\Z" (1反斜杠,原始字符串) 和 "D:\\Z" (2反斜杠,普通字符串转义)
+            # r? 覆盖: Path(r"...") 原始字符串前缀
+            for m in re.finditer(
+                r'Path\(\s*r?["\'][Dd]:[\\/]+ZephyrAlpha', text, re.IGNORECASE
+            ):
+                line_start = text.rfind("\n", 0, m.start()) + 1
+                line_end = text.find("\n", m.start())
+                if line_end == -1:
+                    line_end = len(text)
+                line = text[line_start:line_end]
+                if line.lstrip().startswith("#"):
+                    continue  # 注释行豁免
+                line_no = text.count("\n", 0, m.start()) + 1
+                violations.append(
+                    f"{rel}:{line_no} — Path(\"D:\\ZephyrAlpha...\") 硬编码路径，"
+                    f"应改用 `from zephyr.shared.io.paths import REPO_ROOT`"
+                )
+
             # 模式3: AST 检测 REPO_ROOT/DB_PATH 使用但未 import (治本: 防止 missing import 复发)
             # 真源: zephyr.shared.io.paths.REPO_ROOT/DB_PATH
             # 覆盖: 完全缺失 import + import 顺序错误(import 在使用之后)
@@ -1592,6 +1619,36 @@ class GitCommitGateway:
                                 f"{rel}:{_node.lineno} — 使用 {_node.id}(行{_node.lineno}) "
                                 f"在 import(行{_imported[_node.id]}) 之前"
                             )
+
+                # 模式5: sqlite3.connect("绝对路径.db") 硬编码数据库连接（阶段C 治本）
+                # 真源: _shared.constants.DB_PATH / get_depgraph_pg_connection()
+                # 检测: sqlite3.connect 的第一个参数是字面量字符串，绝对路径+.db后缀
+                # 豁免: ":memory:" 内存数据库；相对路径（由 cwd 决定不强制）
+                for _node in _ast.walk(_tree):
+                    if not isinstance(_node, _ast.Call):
+                        continue
+                    _func = _node.func
+                    _is_sqlite_connect = (
+                        isinstance(_func, _ast.Attribute)
+                        and _func.attr == "connect"
+                        and isinstance(_func.value, _ast.Name)
+                        and _func.value.id == "sqlite3"
+                    )
+                    if not _is_sqlite_connect or not _node.args:
+                        continue
+                    _arg = _node.args[0]
+                    if not (isinstance(_arg, _ast.Constant) and isinstance(_arg.value, str)):
+                        continue
+                    _db = _arg.value
+                    if _db == ":memory:":
+                        continue  # 内存数据库豁免
+                    # 绝对路径判定: Windows 含 ':' 或 POSIX 以 '/' 开头
+                    if _db.endswith(".db") and (":" in _db or _db.startswith("/")):
+                        violations.append(
+                            f"{rel}:{_node.lineno} — sqlite3.connect(\"{_db}\") "
+                            f"硬编码绝对路径，应改用 `from _shared.constants import DB_PATH` "
+                            f"或 `get_depgraph_pg_connection()`"
+                        )
 
         if violations:
             return False, "\n  ".join(violations)
