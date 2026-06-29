@@ -33,10 +33,10 @@ module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
-version: "1.0.5"
+version: "1.0.6"
 status: active
 created: "2026-05-02"
-last_updated: "2026-06-29"
+last_updated: "2026-06-30"
 ai_autonomy: human_gated
 ttl: permanent
 total_registered: 14
@@ -84,6 +84,7 @@ _schema:
 #   description         一句话说明
 #   runtime_plane       运行时平面（hot/warm/cold）
 #   host                host:port 或连接串（experimental 填具体值）
+#   access_method       访问方式：模块/函数入口 + 安全参数（如 read_only=True）。数据库类组件必填，新 AI 读此字段即可安全访问数据库
 #   health_check        健康检查：ping/http/tcp/query
 #   dependency_of[]     被哪些模块依赖（module_id）
 #   sla                 SLA 承诺
@@ -132,6 +133,7 @@ infrastructure:
     description: "SQLite 任务库——存放 TaskCard、状态迁移历史、Audit Trail"
     runtime_plane: cold
     host: ".runtime/db/data/databases/governance.db"
+    access_method: "入口: zephyr.governance.task_repo.TaskRepository（高级 API）/ zephyr.governance.sqlite_schema.get_db_connection（低级 API）；验证: python -c \"from zephyr.governance.task_repo import TaskRepository; r=TaskRepository(); print(len(r.list_all()))\""
     health_check: query
     dependency_of:
       - "MOD-TASK_SYSTEM"
@@ -148,6 +150,7 @@ infrastructure:
     description: "向量检索与 KMS 语义检索——VMS (MOD-INF-011) 主向量后端，ChromaDB→FAISS 迁移过渡期"
     runtime_plane: cold
     host: "data/vector_db/"
+    access_method: "入口: zephyr.integration.vector_memory.collection_manager.CollectionManager（内部用 chromadb.PersistentClient(path=data/vector_db/)）；迁移脚本: zephyr.integration.vector_memory.migrate_chroma_to_faiss.py"
     health_check: query
     dependency_of:
       - "MOD-INF-011"
@@ -274,6 +277,7 @@ infrastructure:
     description: "依赖架构图库——存储 nodes/edges/domains/infrastructure_components 等28表，架构治理真源（PostgreSQL 16）"
     runtime_plane: hot
     host: "localhost:5432/depgraph"
+    access_method: "入口: zephyr.governance.depgraph_schema.get_depgraph_pg_connection()（统一入口）；导出工具: scripts/governance/extract_depgraph.py；连接配置: config/.env.postgres"
     health_check: query
     dependency_of:
       - "MOD-INF-012B"
@@ -290,6 +294,7 @@ infrastructure:
     description: "DuckDB OLAP 分析引擎——内存模式(:memory:)只读挂载 governance.db 执行聚合查询，输出 Parquet 归档"
     runtime_plane: warm
     host: ":memory:"
+    access_method: "入口: zephyr.governance.persistence.olap_engine.OLAPEngine（:memory: 模式，ATTACH governance.db 只读分析；禁止写入）"
     health_check: query
     dependency_of:
       - "MOD-INF-012A"
@@ -307,6 +312,7 @@ infrastructure:
     description: "DuckDB 业务时序库——行情 tick/k线3s/订单/持仓/回测结果/回测成交/风险快照/因子值持久化（8 表）"
     runtime_plane: hot
     host: "data/databases/market.duckdb"
+    access_method: "安全约束: duckdb.connect(host, read_only=True)——read_only=True 必须显式指定，禁止读写模式连接（数据损坏风险）；统一管理: DatabaseService（database_service.py）；验证: python -c \"import duckdb; con=duckdb.connect(r'D:/ZephyrAlpha/data/databases/market.duckdb', read_only=True); print(con.execute('SHOW TABLES').fetchall())\""
     health_check: query
     dependency_of:
       - "MOD-TRADING"
@@ -369,6 +375,15 @@ summary:
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.0.6"
+    date: "2026-06-30"
+    author: "AI-GLM-5.2"
+    changes:
+      - "新增 access_method 字段（字段说明 + 5 个数据库条目），补齐访问方式真源：INFRA-DB-001 TaskRepository/get_db_connection；INFRA-DB-002 CollectionManager(PersistentClient)；INFRA-DB-003 get_depgraph_pg_connection()/extract_depgraph.py；INFRA-DB-004 OLAPEngine(:memory: ATTACH 只读)；INFRA-DB-005 duckdb.connect(read_only=True)——read_only=True 为安全约束"
+      - "修复访问方式真空：Phase 2(cc5b648a) 将 project_rules.md 的数据库验证命令改为指针引用本登记表，但本登记表仅记录 host 路径未记录访问方式，造成'删除了访问方式但未在真源补充'的真空；本次补齐"
+      - "安全意义：INFRA-DB-005 market.duckdb 的 read_only=True 是安全参数——新 AI 不知可能以读写模式连接，有数据损坏风险；现 access_method 字段显式标注安全约束"
+      - "遵循真源唯一：访问方式与数据库清单同处一文件；遵循向内收：扩展现有字段而非新建文件；遵循新 AI 可发现性：新 AI 读本登记表即可安全访问每个数据库"
+      - "证据链：task_repo.py TaskRepository + sqlite_schema.py:465 get_db_connection + collection_manager.py:282 PersistentClient + depgraph_schema.py:1170 get_depgraph_pg_connection + olap_engine.py:114 OLAPEngine + database_service.py DatabaseService"
   - version: "1.0.5"
     date: "2026-06-29"
     author: "AI-GLM-5.2"
