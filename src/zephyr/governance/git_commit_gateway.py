@@ -89,6 +89,7 @@ from zephyr.governance.reconciliation_registry import (
     make_precommit_id_uniqueness_reconciler,
     make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
+    make_commit_gateway_audit_reconciler,
 )
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
@@ -460,6 +461,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
         self._reconciliation_registry.register(make_domain_doc_reconciler(self))
+        self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))  # GATE-COMMIT-GW-AUDIT 缺口4接线：裸commit post-compensation 审计
 
     # ------------------------------------------------------------------
     # 公开 API
