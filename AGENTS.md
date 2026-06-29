@@ -192,7 +192,19 @@ result = await gateway.full_scan(user_text, llm_response)
 - **`docs/_working/` 新增 .md 文件 MUST 在 frontmatter 声明 `completes_when` 字段**（可验证的完成条件），GitCommitGateway commit 时自动拦截缺失该字段的新文档；规则真源见 [trae_028 §归档与废弃流程](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)。
   - 自动归档由 [GATE-WORKING-DOCS reconciler](file:///d:/ZephyrAlpha/src/zephyr/governance/reconciliation_registry.py) post-commit 事件驱动（capability_id：`working_docs_ghost_ref_archiver`，反查用法见 §9）。
 - **读取 `docs/_working/` 下任何 .md 前 MUST 验证文档引用的脚本/YAML/blueprint_id 是否仍存在**（防幽灵引用漂移），细则见 [GATE-WORKING-DOCS reconciler](file:///d:/ZephyrAlpha/src/zephyr/governance/reconciliation_registry.py)（`scan_and_archive_working_docs` 幽灵引用检测）。
-- **归档区 `docs/_archive/`（永久保留历史文件）**——已完成历史使命但需永久保留的文件（如架构决策记录、施工方案、阶段总结）MUST 移到 [`docs/_archive/`](file:///d:/ZephyrAlpha/docs/_archive/)。归档操作：`git mv <file> docs/_archive/` + frontmatter `ttl: permanent` + `status: deprecated` + **同步修复所有引用旧路径的文件**（.md/.yaml/.json/.csv）。归档区在 [`directory_contract.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml) `directory_zones.permanent.paths` 中（default_ttl=permanent），`validate_document_ttl.py --list-all-non-permanent` 不列为清理候选。**`docs/_archive/` 是唯一合法归档区**——禁止在 `docs/` 下创建其他归档目录（如 `_working/archive/`、`09_archive/`）。归档后引用断裂由 [GATE-DOC-REF](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/audit_broken_links.py) 门禁在 commit 时检测断链并阻断。
+- **归档区 `docs/_archive/`（永久保留历史文件）**——归档触发条件采用二分法判定树（禁止凭"感觉不再需要"归档），所有永久区(01/02/03/08)的文件归档统一归此：
+
+  **判定树（按顺序回答，命中即归档；两个问题均答 NO 则保留原位）**：
+
+  - **Q1 替换归档**：是否存在新文件 Y 承担与目标文件 X 相同的职责，且 Y 是 X 的真源继任者（典型场景：md 规则→yaml 规则重写、旧脚本→新脚本重写、模块拆分合并）？
+    - **YES → 执行替换归档**：① `git mv X docs/_archive/`；② 扫描全库引用点（.md/.yaml/.json/.csv），所有指向 X 的引用 MUST 更新为指向 Y（新真源）；③ frontmatter `ttl: permanent` + `status: deprecated`。
+    - **NO → 进入 Q2**。
+
+  - **Q2 删除归档**：目标文件 X 是否属于下线资产（功能下线 / 模块移除 / 脚本停用，且全库无活跃引用点）？
+    - **YES → 执行删除归档**：① `git mv X docs/_archive/`；② 扫描全库引用点（.md/.yaml/.json/.csv），所有指向 X 的引用 MUST 从源头删除（无继任真源，不指向新文件）；③ frontmatter `ttl: permanent` + `status: deprecated`。
+    - **NO → 保留原位**（X 仍有活跃职责，不归档）。
+
+  **核心原则**：真源唯一——文件有继任者时，目标文件保留在原地 = 双真源并存 = AI 漂移，MUST 移走。归档区在 [`directory_contract.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml) `directory_zones.permanent.paths` 中（default_ttl=permanent），`validate_document_ttl.py --list-all-non-permanent` 不列为清理候选。**`docs/_archive/` 是唯一合法归档区**——禁止在 `docs/` 下创建其他归档目录。归档后引用断裂由 [GATE-DOC-REF](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/audit_broken_links.py) 门禁在 commit 时检测断链并阻断。
 - **共享能力真源位置**——跨层共享能力（errors / paths / yaml_utils / infra_06 等）真源在 [`src/zephyr/shared/`](file:///d:/ZephyrAlpha/src/zephyr/shared/)。新增共享能力 MUST 直接在 `src/zephyr/shared/` 创建或扩展，**禁止在 `src/zephyr/integration/` 下创建 `shared_*` proxy 层**（CapabilityLookup 反查 `shared.foundation.errors` / `shared.io.paths` 等能力可定位真源，`check_capability_duplicates` 在 commit 时自动检测 basename 撞 capability_id/alias）。`src/zephyr/shared/` 禁止 import `integration.*`（向下依赖原则，详见 §7 ZephyrBaseError 真源归一）。
 - **禁止纯 re-export shim 文件（GATE-NO-PURE-SHIM，治本漏洞1，2026-06-29）**——禁止新建纯 re-export shim 文件（`from zephyr.shared.* import *` 无实质代码的 .py 文件）。纯 shim 是真源分裂温床——AI 看到两个 import 路径指向同一符号，无法确定真源产生漂移。**判定标准**：AST 分析文件，若①有跨包 `from zephyr.shared.* import` ②无 ClassDef/FunctionDef/AsyncFunctionDef 实质节点 ③所有 Assign target 都是 `__all__`/`__version__` → 判定为纯 shim → commit 阻断。**合法例外**：①`__init__.py` 包聚合（`from . import sub` + `__all__`）②临时过渡 shim（文件头部含 `# [TTL] task_bound` + `# [DEPRECATED]` 标记，有 TTL 自动清理机制）。**强制方式**：[`check_pure_shim.py`](file:///d:/ZephyrAlpha/scripts/governance/d7_code/check_pure_shim.py) GATE-NO-PURE-SHIM pre-commit 钩子，commit `src/zephyr/**/*.py` 时自动检测（`--no-verify` 绕不过 GitCommitGateway Python 层门禁）。
 - **词表合法值加载规范** → 见 [trae_060 §2 唯一真源与直接消费](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml#L84-L115)（向内收原则①+②；禁止硬编码/同步复制词表合法值，必须 yaml.safe_load 动态加载；GATE-VOCAB 门禁强制执行）。本节不复制规则文本，仅提供实现层用法示例。
