@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files（治本 2026-06-29：仅无 pathspec commit 时 stash——gitignored/rename 场景；pathspec commit 天然隔离无需 stash，消除巨型 stash pop 冲突堆积）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A 红蓝审核 v2：_commit_with_file_message 内置 rename 检测真源唯一，pathspec 为默认多 session 安全，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP；_commit_locked 和 _commit_auto 无需重复调用，reconciler 路径自动获得 rename 保护）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files（治本 2026-06-29：仅无 pathspec commit 时 stash——gitignored/rename 场景；pathspec commit 天然隔离无需 stash，消除巨型 stash pop 冲突堆积）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A 红蓝审核 v2：_commit_with_file_message 内置 rename 检测真源唯一，pathspec 为默认多 session 安全，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP；_commit_locked 和 _commit_auto 无需重复调用，reconciler 路径自动获得 rename 保护）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径；held_files 冲突阻断（搭便车治本 2026-06-30：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本 2026-06-30：pre-commit gate 声明式注册，新门禁 register(GateSpec) 而非硬编码 _check_*，消除多 session 频繁修改 commit() 方法体的搭便车冲突源）
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -94,6 +94,8 @@ from zephyr.governance.reconciliation_registry import (
     make_commit_gateway_audit_reconciler,
     make_deprecated_directory_reconciler,
 )
+from zephyr.governance.commit_gate_registry import CommitGateRegistry  # pre-commit 门禁注册表（架构债务 #AD-001 治本）
+from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate  # 搭便车防护门禁
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
 from zephyr.shared.io.frontmatter_utils import parse_frontmatter_from_file
@@ -176,6 +178,7 @@ class CommitStatus(str, Enum):
     SCRIPT_INTEGRITY_VIOLATION = "SCRIPT_INTEGRITY_VIOLATION"  # 受保护脚本完整性锚点缺失（自篡改纵深防御）
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"  # .py 文件使用 parents[N] 反模式而非 REPO_ROOT（SSoT 绕过）
     PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"  # 规则文档含过渡文本（GOV-DOC-016 纯陈述原则）
+    HELD_OVERLAP_VIOLATION = "HELD_OVERLAP_VIOLATION"  # 目标文件被其他活跃 session 持有（搭便车防护，--allow-overlap 放行）
     PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"  # 纯 re-export shim 文件（GATE-NO-PURE-SHIM --no-verify 补偿）
 
 
@@ -328,6 +331,9 @@ class GitCommitGateway:
         # post-commit 漂移对账注册表（P2-T1：声明式 reconciler 框架，替代硬编码 _post_commit_reconcile）
         self._reconciliation_registry = ReconciliationRegistry()
         self._register_default_reconcilers()
+        # pre-commit 门禁注册表（架构债务 #AD-001 治本：声明式 gate 框架，新门禁 register 而非硬编码 _check_*）
+        self._gate_registry = CommitGateRegistry()
+        self._gate_registry.register(make_held_overlap_gate())
 
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
         """为 session 声明持有本次 commit 的文件（激活 session 隔离 stash）。
@@ -510,6 +516,7 @@ class GitCommitGateway:
         files: list[str],
         message: str,
         allow_promote: bool = False,
+        allow_overlap: bool = False,
     ) -> CommitResult:
         """串行化 commit 入口。
 
@@ -519,6 +526,9 @@ class GitCommitGateway:
             message: commit message（不含 GW 标记，自动追加）。
             allow_promote: 是否允许新文件进入永久区。AI 不得设为 True——
                 永久区晋升须经用户终端确认（--allow-promote CLI flag）。
+            allow_overlap: 逃生通道——目标文件被其他活跃 session 持有时放行
+                （搭便车防护 HELD_OVERLAP_VIOLATION）。commit message 追加
+                ``[GW:<sid>:overlap]`` 标记供审计追踪。CLI 对应 ``--allow-overlap``。
 
         Returns:
             CommitResult。
@@ -680,9 +690,30 @@ class GitCommitGateway:
                 message=f"GATE-NO-PURE-SHIM 纯 re-export shim 违规: {shim_detail}",
             )
 
+        # pre-commit 门禁注册表（架构债务 #AD-001 治本：声明式 gate，新增门禁 register 而非硬编码 _check_*）
+        # 当前注册：HELD-OVERLAP（搭便车防护，priority=50）
+        gate_results = self._gate_registry.check_all(
+            self, existing, session_id=session_id, allow_overlap=allow_overlap
+        )
+        for gr in gate_results:
+            if not gr.passed:
+                if gr.gate_id == "HELD-OVERLAP":
+                    return CommitResult(
+                        status=CommitStatus.HELD_OVERLAP_VIOLATION,
+                        message=gr.detail,
+                    )
+                # 未知 gate 违规 → 通用阻断（fail-closed）
+                return CommitResult(
+                    status=CommitStatus.COMMIT_FAILED,
+                    message=f"门禁 {gr.gate_id} 阻断: {gr.detail}",
+                )
+
         # 追加 GW 标记
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
+        if allow_overlap:
+            # 逃生通道标记：审计追踪用
+            full_message += f"\n[GW:{session_id}:overlap]"
 
         try:
             with _GlobalCommitLock(self.project_root):
@@ -1540,11 +1571,11 @@ class GitCommitGateway:
                 or rel.startswith("tests/")
             ):
                 continue
-            # Phase 1（当前）：仅检查新增（未 git 跟踪）文件，防止新违规进入
-            # Phase 2：存量违规清理完成后，删除此 if 块切换为全量检查
-            # 存量违规清单见 _tmp_fix_parents.py 之前的扫描结果（156 处）
-            if self._is_git_tracked(rel):
+            # 豁免：归档脚本（历史遗留，不再维护，不强制 SSoT 归一）
+            if rel.startswith("scripts/_archive/"):
                 continue
+            # Phase 2（已切换）：全量检查 src/+scripts/+tests/（含 git tracked 文件）
+            # 存量违规已清理（commit 491e2d94），新违规将被拦截
             try:
                 text = Path(f).read_text(encoding="utf-8")
             except (OSError, UnicodeDecodeError):

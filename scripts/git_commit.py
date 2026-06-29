@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_cli | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
@@ -27,7 +27,7 @@
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
 
-exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突
+exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断
 """
 
 from __future__ import annotations
@@ -122,7 +122,7 @@ def main() -> int:
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
             "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规"
+            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断"
         ),
     )
     parser.add_argument(
@@ -151,6 +151,14 @@ def main() -> int:
         default=False,
         help="批准新文件晋升到永久区（docs/01_policies/、02_enterprise_architecture/、"
              "03_modules/、08_knowledge/）。AI 不得自行使用——须用户终端手动指定。",
+    )
+    parser.add_argument(
+        "--allow-overlap",
+        action="store_true",
+        default=False,
+        help="搭便车防护逃生通道——目标文件被其他活跃 session 持有时放行"
+             "（HELD_OVERLAP_VIOLATION）。commit message 追加 [GW:<sid>:overlap] 标记"
+             "供审计追踪。AI 不得自行使用——须用户终端手动指定。",
     )
     args = parser.parse_args()
 
@@ -183,6 +191,7 @@ def main() -> int:
             files=files,
             message=args.message,
             allow_promote=args.allow_promote,
+            allow_overlap=args.allow_overlap,
         )
     finally:
         gw.release_files(args.session, claimed)
@@ -214,6 +223,14 @@ def main() -> int:
             file=sys.stderr,
         )
         return 4
+    elif result.status == CommitStatus.HELD_OVERLAP_VIOLATION:
+        print(f"HELD_OVERLAP_VIOLATION: {result.message}", file=sys.stderr)
+        print(
+            "  目标文件被其他活跃 session 持有（搭便车防护）。"
+            "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+            file=sys.stderr,
+        )
+        return 5
     else:  # COMMIT_FAILED / METADATA_VIOLATION
         print(f"FAILED: {result.message}", file=sys.stderr)
         return 1
