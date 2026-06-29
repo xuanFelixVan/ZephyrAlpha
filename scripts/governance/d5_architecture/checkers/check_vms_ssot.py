@@ -6,8 +6,8 @@
 # [CONSUMERS] .pre-commit-config.yaml GATE-VMS-SSOT
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DEAD_METHOD_NAMES changes require Owner approval; 真源 AGENTS.md §11.2 遗留项-3/4
-# [MODIFY-GUARD] FORBIDDEN_PREFIX, DEAD_METHOD_NAMES, DEAD_METHOD_CHECK_PREFIX changes require Owner approval
+# [INVARIANTS] DEAD_METHOD_NAMES, DEAD_METHOD_FILE_SCOPE changes require Owner approval; 真源 AGENTS.md §11.2 遗留项-3/4
+# [MODIFY-GUARD] FORBIDDEN_PREFIX, DEAD_METHOD_NAMES, DEAD_METHOD_FILE_SCOPE, DEAD_METHOD_CHECK_PREFIX changes require Owner approval
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] human_gated
