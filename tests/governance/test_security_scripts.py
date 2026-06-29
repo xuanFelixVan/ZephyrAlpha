@@ -23,7 +23,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
 GOV_DIR = REPO_ROOT / "scripts" / "governance"
 
 ENV = os.environ.copy()
@@ -95,6 +94,8 @@ class TestDetectPermanentFileDeletion:
 class TestExitCodeConstants:
     def test_exit_constants_defined(self):
         sys.path.insert(0, str(GOV_DIR / "_shared"))
+
+from _shared.constants import REPO_ROOT
         from constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
         assert EXIT_PASS == 0

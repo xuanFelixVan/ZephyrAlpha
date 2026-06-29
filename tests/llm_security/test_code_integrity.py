@@ -10,11 +10,12 @@ import os
 from pathlib import Path
 
 from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import (
+from _shared.constants import REPO_ROOT
     CodeIntegrityGuard,
     IntegrityStatus,
 )
 
-PROJECT_ROOT = str(Path(__file__).resolve().parents[2])
+PROJECT_ROOT = str(REPO_ROOT)
 
 
 class TestCodeIntegrityGuardInit:

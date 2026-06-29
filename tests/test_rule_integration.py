@@ -21,8 +21,9 @@ import yaml
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.rule_engine import RuleLoader
+from _shared.constants import REPO_ROOT
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_PROJECT_ROOT = REPO_ROOT
 # 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DB_PATH / _ARCH_PANORAMA 路径常量已移除
 _SKILL_REGISTRY = _PROJECT_ROOT / "src" / "zephyr" / "orchestration" / "agent_lifecycle" / "skill_registry.yaml"
 _RULES_DIR = _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"

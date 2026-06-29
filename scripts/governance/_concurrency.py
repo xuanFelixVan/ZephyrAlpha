@@ -72,9 +72,11 @@ import yaml
 # 一次性 sys.path bootstrap（REPO_ROOT 规则允许 scripts/ 一次性极简 bootstrap）
 # _concurrency 被 run_all.py 以 bare module 导入（from _concurrency import ...），
 # 需自行确保 src/ 在 sys.path 以便 import zephyr.shared.infra.process_pool
-_SRC_ROOT = str(Path(__file__).resolve().parents[2] / "src")
+_SRC_ROOT = str(REPO_ROOT / "src")
 if _SRC_ROOT not in sys.path:
     sys.path.insert(0, _SRC_ROOT)
+
+from _shared.constants import REPO_ROOT
 from zephyr.shared.infra.process_pool import is_pid_alive  # PID 存活检测真源唯一（红蓝对抗归一，曾三处分裂）
 
 # ---------------------------------------------------------------------------

@@ -56,7 +56,7 @@ from typing import Any
 
 import yaml
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+_REPO_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _MANIFEST_PATH = _SCRIPTS_DIR / "script_manifest.yaml"
 _KILL_SWITCH_PATH = _SCRIPTS_DIR / "meta" / "kill_switch_state.yaml"
@@ -140,6 +140,8 @@ def _check_import_integrity() -> dict:
         ],
         capture_output=True,
         text=True,
+
+from _shared.constants import REPO_ROOT
         timeout=30,
         cwd=str(_REPO_ROOT),
         encoding="utf-8",

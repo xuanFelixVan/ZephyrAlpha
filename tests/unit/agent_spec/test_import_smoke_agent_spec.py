@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_PROJECT_ROOT = REPO_ROOT
 _SRC_DIR = _PROJECT_ROOT / "src"
 
 
@@ -24,6 +24,8 @@ def _ensure_path() -> None:
     src_str = str(_SRC_DIR)
     if src_str not in sys.path:
         sys.path.insert(0, src_str)
+
+from _shared.constants import REPO_ROOT
 
 
 class TestAgentSpecImportSmoke:

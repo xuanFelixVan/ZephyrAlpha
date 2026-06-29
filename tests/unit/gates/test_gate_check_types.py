@@ -8,6 +8,7 @@
 # [TTL] task_bound
 
 from __future__ import annotations
+from _shared.constants import REPO_ROOT
 
 """Test suite: gate check type system"""
 
@@ -28,7 +29,7 @@ from zephyr.governance.rule_enforcement.gate_types import GateEngineError, GateV
 from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
-GATES_DIR = Path(__file__).resolve().parents[3] / "src" / "zephyr" / "gates"
+GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gates"
 
 
 def _make_task(

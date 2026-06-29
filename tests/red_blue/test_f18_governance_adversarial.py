@@ -24,12 +24,14 @@ from unittest.mock import patch
 
 import pytest
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _SRC_DIR = str(_PROJECT_ROOT / "src")
 _GOV_DIR = str(_PROJECT_ROOT / "scripts" / "governance")
 for p in [_SRC_DIR, _GOV_DIR]:
     if p not in sys.path:
         sys.path.insert(0, p)
+
+from _shared.constants import REPO_ROOT
 
 
 # ============================================================================

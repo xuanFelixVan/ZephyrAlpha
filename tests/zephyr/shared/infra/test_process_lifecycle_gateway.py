@@ -12,8 +12,9 @@ import time
 from pathlib import Path
 
 import pytest
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).parents[4]
+PROJECT_ROOT = REPO_ROOT
 
 
 @pytest.fixture

@@ -44,9 +44,9 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 
 
 def _yaml_load(path):

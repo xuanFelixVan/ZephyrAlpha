@@ -7,6 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from _shared.constants import REPO_ROOT
+
 from datetime import UTC, datetime
 
 from zephyr.governance.task_repo import TaskRepository
@@ -14,7 +16,7 @@ from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.models import TaskCard, TaskNamespace, TaskStatus
 
-DB_PATH = Path(__file__).resolve().parents[1] / "data" / "databases" / "governance.db"
+DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"
 
 
 def _make_task(task_id: str, title: str, depends_on: list[str] | None = None) -> TaskCard:

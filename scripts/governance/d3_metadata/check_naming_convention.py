@@ -1068,7 +1068,7 @@ def check_new_files_naming(
     from collections import defaultdict
 
     if project_root is None:
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
 
     # scope 过滤：None=全库覆盖，tuple=只检查指定目录
     if scopes is None:
@@ -1183,7 +1183,7 @@ def check_new_files_full(
         NamingViolation 列表（空表示通过）。
     """
     if project_root is None:
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
 
     import subprocess  # 局部 import（与 check_new_files_naming 一致，避免模块级依赖）
 
@@ -1476,7 +1476,7 @@ def _validate_ssot_linkage() -> tuple[bool, str]:
     独立模式（--validate-ssot），不扫描文件，仅校验 SSoT 文件与脚本常量一致性。
     """
     ssot_path = (
-        Path(__file__).resolve().parents[3]
+        REPO_ROOT
         / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
     )
     if not ssot_path.exists():
@@ -1580,7 +1580,7 @@ def main() -> int:
 
     # 增量 N-16 检查模式（GitCommitGateway --no-verify 补偿用，真源唯一）
     if args.check_new is not None:
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
         violations = check_new_files_naming(args.check_new, project_root)
         if violations:
             for v in violations:
@@ -1590,7 +1590,7 @@ def main() -> int:
 
     # 增量全量命名硬阻断模式（治本·选项B：GitCommitGateway 内嵌，绕不过 --no-verify）
     if args.check_new_full is not None:
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
         violations = check_new_files_full(args.check_new_full, project_root)
         if violations:
             for v in violations:
@@ -1615,18 +1615,18 @@ def main() -> int:
                 capture_output=True,
                 text=True,
                 check=True,
-                cwd=Path(__file__).resolve().parents[3],
+                cwd=REPO_ROOT,
             )
             staged_files = [f for f in result.stdout.strip().split("\n") if f]
         except (subprocess.CalledProcessError, FileNotFoundError):
             staged_files = []
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
         for rel_path in staged_files:
             abspath = project_root / rel_path
             if abspath.exists() and abspath.is_file():
                 all_violations.extend(check_file(rel_path.replace("\\", "/"), abspath, project_root))
     elif args.scan:
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = REPO_ROOT
         for root, dirs, files in os.walk(project_root):
             dirs[:] = [d for d in dirs if not d.startswith(".") and d != "__pycache__" and d != "node_modules"]
             rel_root = str(root).replace(str(project_root), "").lstrip("\\/").lstrip("/")
@@ -1644,7 +1644,7 @@ def main() -> int:
         targets = args.paths if args.paths else ["."]
         # N-16 全局检测不依赖传入文件列表——它是项目级唯一性检查，
         # 在默认模式也必须运行（否则 pre-commit 钩子不会发现同名文件）
-        _project_root_for_n16 = Path(__file__).resolve().parents[3]
+        _project_root_for_n16 = REPO_ROOT
         all_violations.extend(check_filename_uniqueness_all(_project_root_for_n16))
         for target_path in targets:
             target = Path(target_path)

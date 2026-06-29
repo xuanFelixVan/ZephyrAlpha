@@ -36,6 +36,7 @@ import pytest
 from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 from zephyr.security.llm_defense.llm_security.protocol import SecurityDecision
 from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
+from _shared.constants import REPO_ROOT
     BareLLMCallError,
     _ctx_allowance,
     _is_guarded,
@@ -52,7 +53,7 @@ from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
     uninstall,
 )
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
+_REPO_ROOT = REPO_ROOT
 
 
 def _litellm_importable() -> bool:

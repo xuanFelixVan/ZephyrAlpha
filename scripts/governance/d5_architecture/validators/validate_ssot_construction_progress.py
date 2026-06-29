@@ -44,7 +44,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -63,7 +63,7 @@ from pathlib import Path
 
 import yaml
 
-_REPO_ROOT = Path(__file__).resolve().parents[4]
+_REPO_ROOT = REPO_ROOT
 
 VALID_PROGRESS = frozenset(
     {

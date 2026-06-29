@@ -34,8 +34,9 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
 _LOCK_SCRIPT = _SCRIPTS_DIR / "lock_files.py"
 

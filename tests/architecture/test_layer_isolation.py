@@ -27,6 +27,7 @@ import ast
 from pathlib import Path
 
 import pytest
+from _shared.constants import REPO_ROOT
 
 LAYER_ORDER = [
     "l00-data-source",
@@ -62,7 +63,6 @@ SHARED_DIRS = {
     "vector-memory",
 }
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 

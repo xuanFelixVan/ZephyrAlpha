@@ -7,6 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 from __future__ import annotations
+from _shared.constants import REPO_ROOT
 
 """
 Unit tests for agent_orchestrator.py (T-3-10, A22)
@@ -374,7 +375,7 @@ class TestAgentOrchestrator:
         assert res.task_id == "T-ORCH-FIXED"
 
     def test_orchestrate_sanitizer_blocks_prompt_injection_claim(self) -> None:
-        repo = Path(__file__).resolve().parents[3]
+        repo = REPO_ROOT
         from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
 
         orch = AgentOrchestrator(

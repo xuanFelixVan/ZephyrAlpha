@@ -44,7 +44,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_PASS
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: [--check-write, --check-delete, --check-create, --check-all, --session-id, --json]
@@ -71,7 +71,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
 _LOCK_SCRIPT = _SCRIPTS_DIR / "lock_files.py"
 _SCAFFOLD_SCRIPT = _SCRIPTS_DIR / "scaffold.py"

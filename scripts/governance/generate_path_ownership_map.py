@@ -35,8 +35,9 @@ import sys
 from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
 OUTPUT_FILE = MODULES_DIR / "path_ownership_map.yaml"
 BLUEPRINT_PATTERN = "**/blueprint.md"

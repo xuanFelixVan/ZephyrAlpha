@@ -29,8 +29,9 @@ import json
 import re
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 GATE = [sys.executable, str(PROJECT_ROOT / "src" / "zephyr" / "gates" / "sys_master_compliance.py"), "--json"]
 
 

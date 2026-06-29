@@ -49,7 +49,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_ERROR
+from _shared.constants import EXIT_ERROR, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -71,7 +71,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_PROJECT_ROOT = REPO_ROOT
 _GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "gates"
 _AGENTS_PATH = _PROJECT_ROOT / "AGENTS.md"
 

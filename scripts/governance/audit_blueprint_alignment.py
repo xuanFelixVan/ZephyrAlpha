@@ -47,7 +47,7 @@ import re
 import sys
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 
 __manifest__ = """
 args:
@@ -65,7 +65,7 @@ description: >
   AST内容质量校验、GCT桥接验证、蓝图符号落地检测。
 """
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = REPO_ROOT
 
 TC_DIRS = {
     "MOD-INF-017": ROOT / "docs/03_modules/infrastructure_runtime_integration/code-dedup-engine/changes/MOD-INF-017",

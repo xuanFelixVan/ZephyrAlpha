@@ -16,6 +16,7 @@ import yaml
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+from _shared.constants import REPO_ROOT
 
 scheduler_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.game_day_scheduler",
@@ -44,7 +45,7 @@ scenario_mod = pytest.importorskip(
 )
 ScenarioLoader = scenario_mod.ScenarioLoader
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _SCENARIO_REGISTRY_PATH = (
     _PROJECT_ROOT
     / "src"

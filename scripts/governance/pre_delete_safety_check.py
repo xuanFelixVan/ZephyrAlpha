@@ -49,8 +49,9 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+from _shared.constants import REPO_ROOT
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
 
 _REGISTRY_FILES: list[Path] = [

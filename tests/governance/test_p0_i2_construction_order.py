@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
 
 class TestP0I2ConstructionOrder:
@@ -39,5 +40,5 @@ class TestP0I2ConstructionOrder:
             "escalation/contracts.py",
         ]
         for bf in bridge_files:
-            path = Path(__file__).resolve().parents[2] / "src" / "zephyr" / "governance" / bf
+            path = REPO_ROOT / "src" / "zephyr" / "governance" / bf
             assert path.exists(), f"Bridge file missing: {bf}"

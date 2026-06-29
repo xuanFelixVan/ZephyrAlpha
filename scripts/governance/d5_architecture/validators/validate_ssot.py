@@ -25,9 +25,10 @@ def _load_valid_document_statuses() -> list[str]:
     from pathlib import Path
 
     import yaml
+from _shared.constants import REPO_ROOT
 
     vocab = (
-        Path(__file__).resolve().parents[4]
+        REPO_ROOT
         / "docs"
         / "01_policies_and_standards"
         / "_registry"
@@ -93,7 +94,7 @@ def _get_valid_layers() -> list[str]:
     import yaml
 
     vocab = (
-        Path(__file__).resolve().parents[4]
+        REPO_ROOT
         / "docs"
         / "01_policies_and_standards"
         / "_registry"
@@ -182,7 +183,7 @@ def check_ssot_coverage_completeness(files=None) -> list[Contradiction]:
 
     import yaml
 
-    project_root = Path(__file__).resolve().parents[4]
+    project_root = REPO_ROOT
     trae_028_path = (
         project_root
         / "docs"

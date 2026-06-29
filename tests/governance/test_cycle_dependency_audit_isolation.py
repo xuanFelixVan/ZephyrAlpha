@@ -16,8 +16,9 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-GOVERNANCE_ROOT = Path(__file__).resolve().parents[2] / "src" / "zephyr" / "governance"
+GOVERNANCE_ROOT = REPO_ROOT / "src" / "zephyr" / "governance"
 
 
 def scan_imports(filepath: Path) -> list[str]:

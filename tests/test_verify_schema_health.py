@@ -37,12 +37,14 @@ import pytest
 # sys.path 设置（verify_schema_health 不是包模块，需手动加入 scripts/governance）
 # ---------------------------------------------------------------------------
 
-_REPO_ROOT = Path(__file__).resolve().parents[1]
+_REPO_ROOT = REPO_ROOT
 _GOV_DIR = _REPO_ROOT / "scripts" / "governance"
 _SRC_DIR = _REPO_ROOT / "src"
 for _p in (str(_GOV_DIR), str(_SRC_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+
+from _shared.constants import REPO_ROOT
 
 schema_mod = pytest.importorskip("zephyr.governance.depgraph_schema")
 vsh = pytest.importorskip("verify_schema_health")

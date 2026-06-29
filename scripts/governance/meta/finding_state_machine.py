@@ -36,7 +36,7 @@ Usage:
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_PASS
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -58,7 +58,7 @@ import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+_REPO_ROOT = REPO_ROOT
 _STATE_DB_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "finding_state_db.json"
 
 _src = _REPO_ROOT / "src"

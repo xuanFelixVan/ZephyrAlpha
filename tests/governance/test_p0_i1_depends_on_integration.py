@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
 
 class TestP0I1DependsOnIntegration:
@@ -32,13 +33,13 @@ class TestP0I1DependsOnIntegration:
             assert mid.startswith("MOD-INF-"), f"{mid} 不遵守命名规范"
 
     def test_gct_contracts_count_eight(self):
-        gov_init = Path(__file__).resolve().parents[2] / "src" / "zephyr" / "governance" / "__init__.py"
+        gov_init = REPO_ROOT / "src" / "zephyr" / "governance" / "__init__.py"
         gov_doc = gov_init.read_text(encoding="utf-8")
         gcts = set(re.findall(r"G-CT-\d+", gov_doc))
         assert len(gcts) >= 8, f"Expected >= 8 GCT contracts, found {len(gcts)}: {sorted(gcts)}"
 
     def test_blueprint_references_sys_master(self):
-        bp_path = Path(__file__).resolve().parents[2] / "docs" / "03_modules" / "_domain-governance" / "blueprint.md"
+        bp_path = REPO_ROOT / "docs" / "03_modules" / "_domain-governance" / "blueprint.md"
         content = bp_path.read_text(encoding="utf-8")
         assert "SYS-MASTER" in content or "sys-master" in content.lower()
 

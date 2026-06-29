@@ -40,7 +40,7 @@ import yaml
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_GOV = _PROJECT_ROOT / "scripts" / "governance"
 if str(_SCRIPTS_GOV) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_GOV))

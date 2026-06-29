@@ -35,10 +35,12 @@ import yaml
 
 # ── 一次性 bootstrap：加 src/ 到 sys.path，re-export 真源函数 ──
 # 约束：N 值对本文件固定（scripts/governance/_shared/ → repo root = parents[3]），仅此一次
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+_REPO_ROOT = REPO_ROOT
 _SRC = str(_REPO_ROOT / "src")
 if _SRC not in _sys.path:
     _sys.path.insert(0, _SRC)
+
+from _shared.constants import REPO_ROOT
 
 # re-export 真源函数（SSoT：src/zephyr/shared/io/yaml_utils.py）
 from zephyr.shared.io.yaml_utils import (  # noqa: E402,F401

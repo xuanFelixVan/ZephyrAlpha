@@ -38,9 +38,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 
 
 def _grep_file(pattern: str, target: Path) -> bool:

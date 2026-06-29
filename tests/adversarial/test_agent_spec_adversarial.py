@@ -25,6 +25,7 @@ import pytest
 import yaml
 
 from zephyr.autonomy_core.skill_loader import SkillLoader, _count_tokens
+from _shared.constants import REPO_ROOT
 
 
 class TestNonExistentSkill:
@@ -122,7 +123,7 @@ class TestRegistryIntegrity:
 
     def test_skill_registry_yaml_valid(self):
         """skill-registry.yaml 应是合法 YAML."""
-        reg_path = Path(__file__).parents[2] / "src" / "zephyr" / "agent-spec" / "skill-registry.yaml"
+        reg_path = REPO_ROOT / "src" / "zephyr" / "agent-spec" / "skill-registry.yaml"
         assert reg_path.exists(), f"Registry not found at {reg_path}"
         data = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
         assert "skills" in data

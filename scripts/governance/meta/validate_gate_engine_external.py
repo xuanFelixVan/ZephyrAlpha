@@ -50,7 +50,7 @@ from __future__ import annotations
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_PASS
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -75,7 +75,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_PROJECT_ROOT = REPO_ROOT
 _GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 _DB_PATH = _PROJECT_ROOT / "data" / "databases" / "governance.db"
 _SNAPSHOT_PATH = _PROJECT_ROOT / "scripts" / "governance" / "meta" / "gate_engine_hashes.json"

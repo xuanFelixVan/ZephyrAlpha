@@ -24,6 +24,7 @@ import ast
 from pathlib import Path
 
 import pytest
+from _shared.constants import REPO_ROOT
 
 MONEY_PATTERNS = [
     "price",
@@ -51,7 +52,6 @@ MONEY_PATTERNS = [
     "exit_price",
 ]
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 LAYER_ORDER = [

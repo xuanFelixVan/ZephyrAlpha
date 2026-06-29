@@ -40,8 +40,9 @@ import os
 import re
 import subprocess
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 INIT_PY = PROJECT_ROOT / "src" / "zephyr" / "governance" / "__init__.py"
 
 

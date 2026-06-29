@@ -20,8 +20,9 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 CHECK_SCRIPT = PROJECT_ROOT / "scripts" / "governance" / "d3_metadata" / "check_naming_convention.py"
 SCAFFOLD_SCRIPT = PROJECT_ROOT / "scripts" / "scaffold.py"
 

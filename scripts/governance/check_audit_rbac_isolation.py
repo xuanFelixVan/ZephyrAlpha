@@ -35,9 +35,9 @@ import ast
 import sys
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 AUDIT_DIR = PROJECT_ROOT / "src" / "zephyr" / "governance" / "audit-trail"
 
 

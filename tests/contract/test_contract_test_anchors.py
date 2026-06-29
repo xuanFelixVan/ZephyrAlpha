@@ -14,8 +14,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from _shared.constants import REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
 ANCHORS = REPO_ROOT / "tests/contract/contract-test-anchors.yaml"
 
 

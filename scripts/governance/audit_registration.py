@@ -59,9 +59,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 GATES_DIR = SRC_ZEPHYR / "gates"

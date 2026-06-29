@@ -47,6 +47,7 @@ from unittest.mock import patch
 import pytest
 
 from zephyr.governance.git_commit_gateway import (
+from _shared.constants import REPO_ROOT
     CommitStatus,
     GatewayError,
     GitCommitGateway,
@@ -54,7 +55,7 @@ from zephyr.governance.git_commit_gateway import (
     _LOCK_TTL_SECONDS,
 )
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_PROJECT_ROOT = REPO_ROOT
 
 
 # ---------------------------------------------------------------------------

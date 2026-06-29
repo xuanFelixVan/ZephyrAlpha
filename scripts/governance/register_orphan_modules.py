@@ -39,8 +39,9 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 
 

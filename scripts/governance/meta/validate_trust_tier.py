@@ -40,7 +40,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args:
@@ -65,7 +65,7 @@ from pathlib import Path
 
 import yaml
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+_REPO_ROOT = REPO_ROOT
 _POLICY_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "trust_tier_policy.yaml"
 
 if sys.stdout.encoding != "utf-8":

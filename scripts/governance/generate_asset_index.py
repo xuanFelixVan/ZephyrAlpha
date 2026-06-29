@@ -29,8 +29,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
+from _shared.constants import REPO_ROOT
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
 
 _SCAN_DIRECTORIES: dict[str, list[str | None]] = {

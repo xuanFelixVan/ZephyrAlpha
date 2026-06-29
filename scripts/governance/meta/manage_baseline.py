@@ -28,6 +28,7 @@ Usage:
 """
 
 from __future__ import annotations
+from _shared.constants import REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -50,7 +51,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
+_REPO_ROOT = REPO_ROOT
 _BASELINE_DIR = _REPO_ROOT / "scripts" / "governance" / "meta" / "baselines"
 _CURRENT_BASELINE = _BASELINE_DIR / "current_baseline.jsonl"
 _BASELINE_META = _BASELINE_DIR / "baseline_meta.json"

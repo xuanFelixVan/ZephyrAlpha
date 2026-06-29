@@ -19,8 +19,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+from _shared.constants import REPO_ROOT
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_PROJECT_ROOT = REPO_ROOT
 _REPORT_DIR = _PROJECT_ROOT / "data" / "databases" / "governance_metadata"
 _REPORT_PATH = _REPORT_DIR / "red_blue_report.json"
 

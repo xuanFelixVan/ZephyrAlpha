@@ -22,9 +22,11 @@ from pathlib import Path
 import pytest
 
 # 配置 sys.path（tests/unit/ 无 conftest，自行 insert）
-_GOV_DIR = str(Path(__file__).resolve().parents[2] / "scripts" / "governance")
+_GOV_DIR = str(REPO_ROOT / "scripts" / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import REPO_ROOT
 
 # 测试库不需要 git 备份（隔离生产库）
 os.environ.setdefault("ZEPHYR_SKIP_BACKUP_CHECK", "1")
@@ -34,7 +36,7 @@ from audit_rename_completeness import (  # noqa: E402
     scan_residual, scan_files_residual, EXCLUDE_COLUMNS,
 )
 
-PROD_DB = Path(__file__).resolve().parents[2] / "data" / "databases" / "depgraph.db"
+PROD_DB = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # P2迁移：depgraph 已从 SQLite 迁移到 PostgreSQL，PROD_DB (depgraph.db SQLite) 不再是真源。
 # cmd_rename_domain/scan_residual 均基于 SQLite 连接，PRAGMA wal_checkpoint 不适用 PG。

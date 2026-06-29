@@ -43,9 +43,9 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 SESSION_STATE_DIR = PROJECT_ROOT / ".trae" / "session_state"
 
 REQUIRED_MANIFEST_FIELDS = [

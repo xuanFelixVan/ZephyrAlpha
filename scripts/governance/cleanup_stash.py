@@ -32,6 +32,7 @@ exit codes: 0=pass/warn, 1=cleanup_needed, 2=error
 """
 
 from __future__ import annotations
+from _shared.constants import REPO_ROOT
 
 __manifest__ = """
 args:
@@ -56,7 +57,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
+_REPO_ROOT = REPO_ROOT
 
 # 阈值常量
 MAX_STASHES = 5  # 超过时 WARNING

@@ -52,9 +52,9 @@ import textwrap
 from collections import defaultdict
 from pathlib import Path
 
-from _shared.constants import EXIT_PASS
+from _shared.constants import EXIT_PASS, REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 
 EXCLUDE_PARTS = {"__pycache__", ".pytest_cache", ".mypy_cache", ".git", ".venv"}

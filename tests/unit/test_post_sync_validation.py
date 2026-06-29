@@ -44,13 +44,14 @@ import sys
 from pathlib import Path
 
 import pytest
+from _shared.constants import REPO_ROOT
 
 # ----------------------------------------------------------------------------
 # SSoT 加载（绕过 zephyr.governance.__init__ import 链断裂）
 # ----------------------------------------------------------------------------
 # PSV_UNDER_TEST seam：mutation 测试可重定向到变异副本；缺省指向真源。
 # 正常 pytest 运行不受影响（加载 src 下真源）。
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = REPO_ROOT
 _DEFAULT_SSOt = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "post_sync_validator.py"
 _SSoT_PATH = Path(os.environ.get("PSV_UNDER_TEST", str(_DEFAULT_SSOt)))
 
