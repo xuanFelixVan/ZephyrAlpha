@@ -9,7 +9,6 @@
 # ---
 # module_id: THRESHOLDS-001
 # title: 脚本系统关键阈值集中配置
-# doc_type: config
 # status: active
 # version: "1.0.0"
 # layer: infrastructure

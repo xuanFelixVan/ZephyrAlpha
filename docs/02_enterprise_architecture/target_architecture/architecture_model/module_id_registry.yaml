@@ -79,42 +79,42 @@ registered_ids:
   - module_id: PS-STD-000
     title: "元标准宪法"
     path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-001
     title: "元数据注册表"
     path: "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-002
     title: "标准文档模板"
     path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-003
     title: "行为边界标准"
     path: "docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-004
     title: "规则分类与冲突裁决标准"
     path: "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-006
     title: "治理度量标准"
     path: "docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-009
     title: "规则治理标准"
     path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: PS-STD-010
     title: "规则生命周期标准（已合并至 PS-STD-009）"
     path: "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml"
-    doc_type: standard
+    doc_type: policy
     status: merged
   - module_id: PS-REG-001
     title: "规则登记表"
@@ -195,7 +195,7 @@ registered_ids:
   - module_id: PS-REG-016
     title: "登记表的登记表（跨登记表一致性契约）"
     path: "docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml"
-    doc_type: contract
+    doc_type: gate
     status: active
   - module_id: PS-REG-017
     title: "任务卡元层登记表"
@@ -215,14 +215,14 @@ registered_ids:
   - module_id: PS-REG-021
     title: "能力→真源文件反查注册表"
     path: "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
-    doc_type: contract
+    doc_type: gate
     status: active
 
   # === GOV 文档治理层 ===
   - module_id: GOV-DOC-001
     title: "全系统统一编号规范"
     path: "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: GOV-DOC-002
     title: "目录结构规范"
@@ -252,7 +252,7 @@ registered_ids:
   - module_id: GOV-DOC-007
     title: "文件操作安全门控"
     path: "docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml"
-    doc_type: standard
+    doc_type: policy
     status: draft
     note: "2026-05-03 R5 审计：原路径 file-safety-gate.md 不存在，更正为磁盘实际文件名 trae_029_doc_operation_security.yaml（与 AGENTS.md §6.8 引用一致）"
 
@@ -275,29 +275,29 @@ registered_ids:
   - module_id: GOV-AI-006
     title: "AI 模型能力矩阵契约"
     path: "docs/01_policies_and_standards/_registry/contracts/model-capability-contract.yaml"
-    doc_type: contract
+    doc_type: gate
     status: active
   - module_id: GOV-AI-007
     title: "Session Log 标准 Schema"
     path: "docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml"
-    doc_type: contract
+    doc_type: gate
     status: active
 
   # === GOV 任务治理层 ===
   - module_id: GOV-TASK-001
     title: "任务卡规范标准"
     path: "docs/01_policies_and_standards/governance/task/task-card-standard.md"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: GOV-TASK-004
     title: "任务生命周期治理标准"
     path: "docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md"
-    doc_type: standard
+    doc_type: policy
     status: active
   - module_id: GOV-TASK-005
     title: "任务关闭标准"
     path: "docs/01_policies_and_standards/governance/task/task-closure-standard.md"
-    doc_type: standard
+    doc_type: policy
     status: active
 
   # === GOV 安全层 ===

@@ -74,24 +74,24 @@ def _infer_doctype(rel_path: str, filename: str) -> str | None:
         filename: 文件名（如 "index.md"）。
 
     Returns:
-        doc_type 值（如 "knowledge_entry"），或 None 表示路径有歧义。
+        doc_type 值（如 "vocabulary"），或 None 表示路径有歧义。
         规则按特异性排序：文件名绑定优先于目录绑定。
     """
     # 文件名固定绑定（最高优先级，任何目录下都成立）
     if filename == "index.md":
         return "index"
     if filename == "README.md":
-        return "readme"
+        return "index"
 
     # 目录强绑定
     if rel_path.startswith("docs/08_knowledge/"):
-        return "knowledge_entry"
+        return "vocabulary"
     if "_registry/vocabularies/" in rel_path:
         return "vocabulary"
     if "_registry/schemas/" in rel_path:
-        return "contract"  # v2.0.0: schema 已废弃，合并到 contract
+        return "gate"  # v3.0.0: schema 已废弃，合并到 gate
     if "_registry/contracts/" in rel_path:
-        return "contract"
+        return "gate"
 
     # 路径有歧义——无法无歧义判定
     return None

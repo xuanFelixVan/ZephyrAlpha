@@ -33,7 +33,7 @@
 #   - Terraform Provider Registry：Schema → Validate → Pass/Fail
 #
 # 依赖（本契约引用的真源文件）：
-#   - vocabularies/doc_type_vocabulary.yaml → doc_type 19 值及其 allowed/forbidden_directories
+#   - vocabularies/doc_type_vocabulary.yaml → doc_type 10 值及其 allowed/forbidden_directories
 #   - vocabularies/ttl_vocabulary.yaml → ttl 2 值（permanent/task_bound）
 #   - rules/trae_047_engineering_file_header.yaml → header 格式规则（directory_mapping 已迁出）
 # ============================================================

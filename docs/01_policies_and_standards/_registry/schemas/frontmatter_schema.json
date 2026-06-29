@@ -981,26 +981,6 @@
       }
     },
     {
-      "description": "standard 类型的 rule_form 必须为 declarative",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "standard"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "declarative"
-          }
-        }
-      }
-    },
-    {
       "description": "operational_rule 类型的 rule_form 必须为 procedural",
       "if": {
         "properties": {
@@ -1041,26 +1021,6 @@
       }
     },
     {
-      "description": "protocol 类型的 rule_form 必须为 declarative",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "protocol"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "declarative"
-          }
-        }
-      }
-    },
-    {
       "description": "template 类型的 rule_form 必须为 structural",
       "if": {
         "properties": {
@@ -1081,71 +1041,11 @@
       }
     },
     {
-      "description": "terminology 类型的 rule_form 必须为 data",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "terminology"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "data"
-          }
-        }
-      }
-    },
-    {
       "description": "vocabulary 类型的 rule_form 必须为 data",
       "if": {
         "properties": {
           "doc_type": {
             "const": "vocabulary"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "data"
-          }
-        }
-      }
-    },
-    {
-      "description": "contract 类型的 rule_form 必须为 data",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "contract"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "data"
-          }
-        }
-      }
-    },
-    {
-      "description": "reference 类型的 rule_form 必须为 data",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "reference"
           }
         },
         "required": [
@@ -1176,26 +1076,6 @@
         "properties": {
           "rule_form": {
             "const": "declarative"
-          }
-        }
-      }
-    },
-    {
-      "description": "schema 类型的 rule_form 必须为 data",
-      "if": {
-        "properties": {
-          "doc_type": {
-            "const": "schema"
-          }
-        },
-        "required": [
-          "doc_type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "rule_form": {
-            "const": "data"
           }
         }
       }

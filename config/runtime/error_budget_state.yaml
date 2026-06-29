@@ -8,7 +8,6 @@
 # ---
 # module_id: ERROR_BUDGET-001
 # title: Error Budget 状态
-# doc_type: config
 # status: active
 # version: "1.0.0"
 # layer: infra_ops

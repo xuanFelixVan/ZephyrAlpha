@@ -9,7 +9,6 @@
 # ---
 # module_id: SCRIPT_RETIREMENT-001
 # title: 脚本退役状态
-# doc_type: config
 # status: active
 # version: "1.0.0"
 # layer: infrastructure

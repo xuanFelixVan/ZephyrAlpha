@@ -148,16 +148,14 @@ AMBIGUOUS_SIGNALS: list[str] = [
 ]
 
 # ── 过程性 doc_type（辅助判定 → task_bound）──
-PROCESS_DOC_TYPES = {"log", "audit_report", "operational_rule", "construction_plan"}
+PROCESS_DOC_TYPES = {"audit_report", "operational_rule"}
 
 # ── 永久性 doc_type（辅助判定 → permanent）──
-# v2.0.0: 已移除废弃值 protocol/schema/reference/declaration/roadmap（合并到 policy/contract/register+architecture_view+audit_report+contract+config/policy）
+# v3.0.0: 已移除废弃值（standard/terminology/contract/config/knowledge_entry/service_spec/readme/log/construction_plan）
 PERMANENT_DOC_TYPES = {
-    "policy", "standard", "blueprint",
+    "policy", "blueprint",
     "vocabulary", "register", "template", "index",
-    "terminology", "contract", "gate", "config",
-    "architecture_view", "knowledge_entry", "service_spec",
-    "readme",
+    "gate", "architecture_view",
 }
 
 # ── 模糊 doc_type（不加入任何集合 → 标题无信号时进 pending）──

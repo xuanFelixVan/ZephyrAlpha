@@ -73,11 +73,11 @@ ILLEGAL_MAP: dict[str, str] = {
     "domain_architecture_doc": "architecture_view",
     "domain_architecture_diagram": "architecture_view",
     # config/ 目录（8+1+1=10 个）
-    "rule": "config",
-    "capacity_slo": "config",
-    "manifest": "config",
+    "rule": "register",
+    "capacity_slo": "register",
+    "manifest": "register",
     # 拼写规范化（6 个）
-    "service_interface_spec": "service_spec",
+    "service_interface_spec": "architecture_view",
     # 报告类（4+2+1+1+1=9 个）
     "governance_report": "audit_report",
     "report": "audit_report",
@@ -88,7 +88,7 @@ ILLEGAL_MAP: dict[str, str] = {
     "catalog": "register",
     "registry_of_registries": "register",
     # 去前缀（1 个）
-    "architecture_construction_plan": "construction_plan",
+    "architecture_construction_plan": "blueprint",
     # 设计类（1 个）——v2.0.0: design 已废弃，合并到 blueprint
     "architecture_design": "blueprint",
     # 参考数据（3+1=4 个）——v2.0.0: reference 已废弃，按文件实际内容拆分
@@ -97,14 +97,14 @@ ILLEGAL_MAP: dict[str, str] = {
     "capability_heatmap": "register",
     "architecture_tree_scope": "register",
     # 记录类（1 个）
-    "delivery_record": "log",
+    "delivery_record": "audit_report",
     # 索引类（1+1+2=4 个）
     "directory_index": "index",
     "domain_index": "index",
     "task_card_index": "index",
     # 其他单例
-    "governance_readme": "readme",
-    "red_team_corpus": "config",  # v2.0.0: reference 已废弃，red_team_corpus 是配置文件
+    "governance_readme": "index",
+    "red_team_corpus": "register",  # v2.0.0: reference 已废弃，red_team_corpus 是配置文件
     "handoff_instruction": "operational_rule",
 }
 

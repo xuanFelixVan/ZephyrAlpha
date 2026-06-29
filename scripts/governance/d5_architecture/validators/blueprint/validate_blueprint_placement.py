@@ -195,7 +195,7 @@ def main() -> int:
             if not matched:
                 doc_type = fm.get("doc_type", "")
                 if not doc_type:
-                    continue  # 跳过无 doc_type 的文件（v2.0.0: placeholder 幽灵值修复）
+                    continue  # 跳过无 doc_type 的文件
                 if _is_domain_owned(fm, path_parts):
                     continue  # 判据(c) 域归属豁免
                 violations_p0.append(

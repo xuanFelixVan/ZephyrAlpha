@@ -274,7 +274,7 @@ class TriageGate:
         # 需复核此分组映射。无法用词表属性（如 rule_form）替代，因为是业务分类逻辑。
         if doc_type == "blueprint":
             return "BLUEPRINT"
-        if doc_type in ("standard", "policy"):
+        if doc_type in ("policy",):
             return "GOVERNANCE_STD"
         if category in ("strategy", "factor"):
             return "STRATEGY"

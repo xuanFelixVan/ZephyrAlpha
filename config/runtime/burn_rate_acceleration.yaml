@@ -8,7 +8,6 @@
 # ---
 # module_id: BURN_RATE_ACCEL-001
 # title: Burn Rate 二阶导数（加速度）追踪
-# doc_type: config
 # status: active
 # version: "1.0.0"
 # layer: infra_ops

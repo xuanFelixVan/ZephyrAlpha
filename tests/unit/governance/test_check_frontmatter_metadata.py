@@ -95,7 +95,7 @@ def test_ttl_invalid(tmp_path, vocab_cache, deprecated_cache):
 
 def test_doctype_valid(tmp_path, vocab_cache, deprecated_cache):
     """合法 doc_type → 无 issues。"""
-    fpath = _make_md(tmp_path, "ttl: permanent\ndoc_type: standard")
+    fpath = _make_md(tmp_path, "ttl: permanent\ndoc_type: policy")
     issues = _check_file(fpath, _FIELD_RULES, vocab_cache, deprecated_cache, strict_doctype=False)
     assert issues == []
 
@@ -157,6 +157,6 @@ def test_generic_loader_doctype():
     values = _load_vocab_values("doc_type_vocabulary.yaml")
     # 验证几个已知合法值
     assert "policy" in values
-    assert "standard" in values
-    assert "knowledge_entry" in values
+    assert "policy" in values
+    assert "vocabulary" in values
     assert isinstance(values, set)

@@ -824,7 +824,7 @@ sections:
         normative_language: MUST/SHOULD/MAY
         note: 含4种标准子类型(§3.2)——行为规则型/数据注册表型/宪法原则型/格式定义型——不同子类型适用不同章节集合
       - layer: L2设计模板(中间10章)
-        applicable_doc_types: blueprint/design/service_spec
+        applicable_doc_types: blueprint/architecture_view
         benchmark_organizations: ISO TS / IETF BCP / IEEE RecPractice
         normative_language: SHOULD/MAY
         note: 'construction_plan原为独立L2模板，已于2026-05-02合并入blueprint(§2施工指引)。对历史文档doc_type: construction_plan仍保留'

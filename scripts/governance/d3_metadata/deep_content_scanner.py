@@ -99,7 +99,7 @@ def scan_content_type_mismatch() -> list[dict]:
         has_policy = bool(POLICY_KEYWORDS.search(body))
         has_declarative = bool(DECLARATIVE_KEYWORDS.search(body))
 
-        if doc_type in ("policy", "standard") and has_procedural and not has_policy and not has_declarative:
+        if doc_type in ("policy",) and has_procedural and not has_policy and not has_declarative:
             findings.append(
                 {
                     "file": rel,

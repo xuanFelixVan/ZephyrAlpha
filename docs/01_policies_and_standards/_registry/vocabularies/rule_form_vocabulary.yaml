@@ -62,7 +62,7 @@ values:
     definition: "结构类规则——定义文档/文件的结构骨架"
     ai_consumption: "AI 按模板生成文档"
     examples: ["blueprint-construction-template.md", "session-log-schema.yaml"]
-    doc_types: ["template"]  # v2.0.0: blueprint/construction_plan 的 rule_form 为 declarative（真源: doc_type_vocabulary.yaml）
+    doc_types: ["template"]  # v3.0.0: blueprint 的 rule_form 为 declarative（真源: doc_type_vocabulary.yaml）
 
 # ============================================================
 # AI 决策辅助：选择 rule_form 的判断标准

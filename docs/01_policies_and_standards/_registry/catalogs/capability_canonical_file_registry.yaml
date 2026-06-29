@@ -3,7 +3,6 @@
 # 能力→真源文件反查注册表（capability → canonical_file reverse lookup）
 # ============================================================================
 # module_id: PS-REG-019
-# doc_type: contract
 # status: active
 # version: 1.1.0
 # date: 2026-06-26

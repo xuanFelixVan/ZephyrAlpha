@@ -56,7 +56,7 @@ class TestTriageGate:
         src = _write_ke(
             tmp_path / "raw",
             "KE-001",
-            "module_id: KE-001\ntitle: Test\ncategory: governance\ndoc_type: standard\nlayer: l01_data_processing",
+            "module_id: KE-001\ntitle: Test\ncategory: governance\ndoc_type: policy\nlayer: l01_data_processing",
             "A" * 600,
         )
         result = gate.triage(src)
@@ -111,7 +111,7 @@ class TestTriageGate:
         src = _write_ke(
             tmp_path / "raw",
             "KE-005",
-            "module_id: KE-005\ntitle: T\ncategory: governance\ndoc_type: standard\nlayer: l01_data_processing",
+            "module_id: KE-005\ntitle: T\ncategory: governance\ndoc_type: policy\nlayer: l01_data_processing",
             "A" * 600,
         )
         result = gate.triage(src)
@@ -123,7 +123,7 @@ class TestTriageGate:
         src = _write_ke(
             tmp_path / "raw",
             "KE-006",
-            "module_id: KE-006\ntitle: T\ncategory: governance\ndoc_type: standard\nlayer: l01_data_processing",
+            "module_id: KE-006\ntitle: T\ncategory: governance\ndoc_type: policy\nlayer: l01_data_processing",
             "A" * 600,
         )
         result = gate.triage(src)
@@ -147,7 +147,7 @@ class TestTriageGate:
         src = _write_ke(
             tmp_path / "raw",
             "KE-008",
-            "module_id: KE-008\ntitle: T\ncategory: governance\ndoc_type: standard\nlayer: invalid_layer",
+            "module_id: KE-008\ntitle: T\ncategory: governance\ndoc_type: policy\nlayer: invalid_layer",
             "A" * 600,
         )
         result = gate.triage(src)
@@ -166,9 +166,9 @@ class TestTriageClassify:
         result = gate._classify({"doc_type": "blueprint"}, "")
         assert result == "BLUEPRINT"
 
-    def test_doc_type_standard(self, tmp_path: Path):
+    def test_doc_type_policy(self, tmp_path: Path):
         gate = _make_triage_gate(tmp_path)
-        result = gate._classify({"doc_type": "standard"}, "")
+        result = gate._classify({"doc_type": "policy"}, "")
         assert result == "GOVERNANCE_STD"
 
     def test_keyword_classification(self, tmp_path: Path):
@@ -190,7 +190,7 @@ class TestTriageScore:
             "title": "Rich",
             "category": "governance",
             "layer": "l01_data_processing",
-            "doc_type": "standard",
+            "doc_type": "policy",
             "date": "2025-01-01",
         }
         text = "---\nmodule_id: KE-100\n---\n" + "A" * 600
@@ -209,7 +209,7 @@ class TestTriageScore:
             "title": "T",
             "category": "c",
             "layer": "l01_data_processing",
-            "doc_type": "standard",
+            "doc_type": "policy",
             "date": "2025-01-01",
         }
         text = "---\n---\n" + "A" * 1000 + "\n 设计决策 根因 接口定义"

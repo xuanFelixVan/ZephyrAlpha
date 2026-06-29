@@ -297,7 +297,7 @@ class Bootstrap:
             f"---\n"
             f"module_id: {ke_id}\n"
             f"title: {head[:80]}\n"
-            f"doc_type: knowledge_entry\n"
+            f"doc_type: vocabulary\n"
             f"category: {chunk.category}\n"
             f"ttl: permanent\n"
             f"---\n\n"
