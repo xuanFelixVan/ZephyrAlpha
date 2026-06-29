@@ -628,7 +628,7 @@ sections:
     - description: 知识库条目强制路径
       details: docs/08_knowledge/
     - description: 审计报告/状态强制路径
-      details: docs/09_audit/
+      details: docs/_working/audit/
     - description: 业务代码强制路径
       details: src/zephyr/{layer_id}/
     - description: 治理/审计脚本强制路径
@@ -718,7 +718,7 @@ sections:
     - DOC-006
     procedure:
     - order: 1
-      action: 归档-将文件移动到对应archive/子目录(审计→09_audit/archive/;架构→02_enterprise_architecture/archive/)
+      action: 归档-将文件移动到对应archive/子目录(审计→_working/audit/archive/;架构→02_enterprise_architecture/archive/)
       pre_condition: 文档需要归档(保留历史但不再活跃使用)
       expected_result: 文件已移至archive/目录
       on_failure: 目录不存在→先创建archive/目录

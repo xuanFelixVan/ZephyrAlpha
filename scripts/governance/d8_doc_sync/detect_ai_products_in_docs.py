@@ -74,7 +74,7 @@ def scan_ai_products() -> list[dict]:
         created_by = fm.get("created_by", "")
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
 
-        if created_by == "agent" and ".audit_cache" not in rel and "09_audit" not in rel:
+        if created_by == "agent" and ".audit_cache" not in rel and "_working/audit" not in rel:
             findings.append(
                 {
                     "file": rel,

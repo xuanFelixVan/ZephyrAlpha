@@ -376,7 +376,7 @@ if __name__ == "__main__":
     print(f"  SCORE: {report['score']}")
     print("=" * 60)
 
-    report_path = _PROJECT_ROOT / "docs" / "09_audit" / "adversarial_test_ml_experiment.json"
+    report_path = _PROJECT_ROOT / "docs" / "_working" / "audit" / "adversarial_test_ml_experiment.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     with open(report_path, "w", encoding="utf-8") as f:
         _json.dump(report, f, indent=2, ensure_ascii=False)

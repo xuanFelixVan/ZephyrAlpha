@@ -524,7 +524,7 @@ class SessionContinuity:
     def _write_yaml_handoff(self, handoff: dict) -> None:
         """输出 YAML 交接包到 docs/_working/audit/handoff/（GOV-AI-008 §2 合规路径）"""
 
-        out_dir = self._project_root / "docs" / "09_audit" / "handoff"
+        out_dir = self._project_root / "docs" / "_working" / "audit" / "handoff"
         out_dir.mkdir(parents=True, exist_ok=True)
 
         session_id = handoff["session_id"]

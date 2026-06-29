@@ -120,7 +120,7 @@ def scan_lifecycle_violations() -> list[dict]:
                     }
                 )
 
-        if created_by == "agent" and ".audit_cache" not in rel and "09_audit" not in rel:
+        if created_by == "agent" and ".audit_cache" not in rel and "_working/audit" not in rel:
             findings.append(
                 {
                     "file": rel,

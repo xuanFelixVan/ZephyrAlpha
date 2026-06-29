@@ -1043,7 +1043,7 @@ def extra_04_ssot_issue_trend() -> tuple[bool, list[str]]:
     errors = []
     import yaml
 
-    tracking_path = REPO_ROOT / "docs" / "09_audit" / "STATE" / "ssot-issue-tracking.yaml"
+    tracking_path = REPO_ROOT / "docs" / "_working" / "audit" / "STATE" / "ssot-issue-tracking.yaml"
 
     if not tracking_path.exists():
         errors.append("EXTRA-04 SKIP: ssot-issue-tracking.yaml 不存在（对标 ITIL KEDB——需要先创建问题追踪登记表）")

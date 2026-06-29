@@ -127,7 +127,7 @@ ALLOWED_DOCS_DIRS: set[str] = {
     "02_enterprise_architecture",
     "03_modules",
     "08_knowledge",
-    "09_audit",
+    "_working",
     "99_archive",
 }
 

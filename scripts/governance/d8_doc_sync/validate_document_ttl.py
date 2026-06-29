@@ -111,7 +111,7 @@ def scan_ttl_violations() -> list[dict]:
             try:
                 file_date = datetime.strptime(str(date_str), "%Y-%m-%d")
                 if (now - file_date).days > 30:
-                    if "archive" not in rel.lower() and "09_audit" not in rel:
+                    if "archive" not in rel.lower() and "_working/audit" not in rel:
                         findings.append(
                             {
                                 "file": rel,
@@ -153,7 +153,7 @@ def scan_dated_snapshots() -> list[dict]:
     """扫描过期快照."""
     findings = []
     "扫描并返回发现列表."
-    scan_dirs = [REPO_ROOT / "" / "docs" / "09_audit", REPO_ROOT / "" / "docs" / "02_enterprise_architecture"]
+    scan_dirs = [REPO_ROOT / "" / "docs" / "_working" / "audit", REPO_ROOT / "" / "docs" / "02_enterprise_architecture"]
     for scan_dir in scan_dirs:
         if not scan_dir.exists():
             continue

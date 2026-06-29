@@ -53,7 +53,7 @@ RESPONSIBILITY_MAP = {
             ("架构视图/ADR", "02_enterprise_architecture/"),
             ("模块蓝图/施工图/交付", "03_modules/"),
             ("AI 服务接口合同", "03_modules/_b_track_interfaces/"),
-            ("审计报告/状态", "09_audit/"),
+            ("审计报告/状态", "_working/audit/"),
         ],
     ),
     "02_enterprise_architecture": (
@@ -80,8 +80,8 @@ RESPONSIBILITY_MAP = {
             ("模块蓝图", "03_modules/"),
         ],
     ),
-    "09_audit": (
-        "审计报告与审计状态数据（Ex-post — 执行得怎样）",
+    "_working/audit": (
+        "审计报告与审计状态数据（Ex-post — 执行得怎样）—— 已合并入 docs/_working/ 临时区",
         [
             ("治理规范/合规标准", "01_policies_and_standards/"),
             ("架构文档", "02_enterprise_architecture/"),
@@ -143,27 +143,18 @@ RESPONSIBILITY_MAP = {
             ("ADR", "02_enterprise_architecture/adr/"),
         ],
     ),
-    "09_audit/reports": (
+    "_working/audit/reports": (
         "审计报告 — 架构合规性审计、SSoT 验证扫描报告",
         [
             ("治理规范", "01_policies_and_standards/"),
-            ("Finding / 事件初稿", "09_audit/findings/"),
-            ("审计状态目录（遗留）", "09_audit/state/"),
+            ("Finding / 事件初稿", "_working/audit/findings/"),
         ],
     ),
-    "09_audit/findings": (
+    "_working/audit/findings": (
         "安全与合规 Finding、事件响应初稿 Markdown（对齐 target_architecture/06-security_architecture.md）",
         [
-            ("审计总控", "09_audit/index.md"),
-            ("审计报告", "09_audit/reports/"),
-        ],
-    ),
-    "09_audit/state": (
-        "审计状态数据 — 目录 legacy；运行时状态见 data/（ADR-0030）",
-        [
-            ("审计报告", "09_audit/reports/"),
-            ("Finding 落盘", "09_audit/findings/"),
-            ("治理规范", "01_policies_and_standards/"),
+            ("审计总控", "_working/audit/index.md"),
+            ("审计报告", "_working/audit/reports/"),
         ],
     ),
     # === Level 3 ===

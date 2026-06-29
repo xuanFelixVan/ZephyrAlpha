@@ -350,7 +350,7 @@ def main() -> int:
         "attacks": [{"name": r.name, "detected": r.detected, "detail": r.detail} for r in results],
     }
 
-    report_path = PROJECT_ROOT / "docs" / "09_audit" / "adversarial_test_sys_master_20260507.json"
+    report_path = PROJECT_ROOT / "docs" / "_working" / "audit" / "adversarial_test_sys_master_20260507.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nReport: {report_path.relative_to(PROJECT_ROOT)}")

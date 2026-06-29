@@ -21,7 +21,7 @@ detect_dated_snapshots.py — 带日期快照文件检测
 对标：GOV-DOC-006 §三（状态快照文件必须使用 LATEST 命名）
 
 检测内容：
-- 扫描 09_audit/ 和 02_enterprise_architecture/snapshots/ 下带日期的快照文件
+- 扫描 _working/audit/ 和 02_enterprise_architecture/snapshots/ 下带日期的快照文件
 - 状态快照应使用 *-LATEST.json/yaml/md 命名
 
 exit codes: 0=pass, 1=findings, 2=error
@@ -68,7 +68,7 @@ def main() -> None:
 
     findings = []
     scan_dirs = [
-        REPO_ROOT / "" / "docs" / "09_audit",
+        REPO_ROOT / "" / "docs" / "_working" / "audit",
         REPO_ROOT / "" / "docs" / "02_enterprise_architecture",
     ]
 

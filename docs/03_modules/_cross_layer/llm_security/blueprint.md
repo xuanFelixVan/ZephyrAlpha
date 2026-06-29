@@ -5710,7 +5710,7 @@ Encoding Defense Layers — LSG + LLM 协作
 | Red Team载荷 | `D:\ZephyrAlpha\src\zephyr\llm-security\payloads\red-team-payloads.yaml` | 攻击载荷库 |
 | PII/Secret模式 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\secrets.py` | 敏感数据检测模式库 |
 | 注入模式库 | `D:\ZephyrAlpha\src\zephyr\llm-security\patterns\injection_patterns.py` | Prompt注入特征库 |
-| 威胁模型 | `D:\ZephyrAlpha\docs\09_audit\threat_models\` | 威胁建模文档 |
+| 威胁模型 | `D:\ZephyrAlpha\docs\_working\audit\threat_models\` | 威胁建模文档 |
 | 审计日志 | `D:\ZephyrAlpha\src\zephyr\llm-security\audit_logs\` | 运行时审计日志 |
 | 安全仪表板 | `D:\ZephyrAlpha\src\zephyr\llm-security\dashboard\` | Streamlit仪表板 |
 | AI BOM | `D:\ZephyrAlpha\src\zephyr\llm-security\ai_bom.yaml` | AI供应链物料清单 |

@@ -63,7 +63,7 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 
 BASELINE_DIR = REPO_ROOT / "data" / "security_baselines"
-FINDINGS_DIR = REPO_ROOT / "docs" / "09_audit" / "findings"
+FINDINGS_DIR = REPO_ROOT / "docs" / "_working" / "audit" / "findings"
 
 SECRET_PATTERNS_DEEP = [
     (

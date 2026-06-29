@@ -110,7 +110,7 @@ values:
       - "AI 自治权限标注表"
       - "TTL 与生命周期节"
       - "变更记录节"
-    compliance_script: "python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template <类型>"
+    # v2.0.0: compliance_script 已移除——check_template_compliance.py 已于 2026-06-22 归档（见 scripts/_archive/retirement_log_20260622_055519.md），不再维护
     examples: ["blueprint-construction-template.md", "dependency-graph-template.md"]
     filename_suffixes: ["_template.md"]
 
@@ -121,6 +121,7 @@ values:
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["术语", "定义", "glossary", "terminology", "仲裁", "语义"]
+    registry_category: terminology
     usage_note: "术语定义的唯一仲裁源（primary）——如 _registry/vocabularies/terminology_mapping.yaml。术语的大白话翻译/映射表使用 doc_type: register（derived）——如 _registry/vocabularies/terminology_mapping.yaml。两者的区别：terminology 是定义（字典），register 是数据清单（对照表）。"
     examples: ["_registry/vocabularies/terminology_mapping.yaml"]
     filename_suffixes: ["_terminology_mapping.yaml", "_terminology.md"]
@@ -176,7 +177,7 @@ values:
   - value: log
     definition: "日志——session log、变更日志等时间戳驱动的记录"
     rule_form: data
-    allowed_directories: ["09_audit/"]
+    allowed_directories: ["_working/audit/"]
     forbidden_directories: ["01_policies_and_standards/"]
     required_fields: ["session_id"]
     ai_keywords: ["日志", "session", "记录", "log", "timestamp"]
@@ -195,7 +196,7 @@ values:
   - value: audit_report
     definition: "审计报告——自动或手动生成的审计产出物"
     rule_form: data
-    allowed_directories: ["09_audit/"]
+    allowed_directories: ["_working/audit/"]
     forbidden_directories: ["03_blueprints/"]
     required_fields: ["generated_at"]
     ai_keywords: ["审计", "报告", "audit", "report"]
@@ -217,7 +218,7 @@ values:
     rule_form: declarative
     allowed_directories: ["02_enterprise_architecture/"]
     forbidden_directories: ["01_policies_and_standards/"]
-    required_fields: ["view_type"]
+    required_fields: []  # v2.0.0: view_type 声明已移除（无对应 vocabulary，向内收不创造）
     ai_keywords: ["架构视图", "4+1", "view", "architecture_view"]
     examples: []
 
