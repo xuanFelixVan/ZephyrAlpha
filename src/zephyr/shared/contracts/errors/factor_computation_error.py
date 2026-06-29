@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.errors.factor_computation_error
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] factor.factor_base
 # [STARTUP] imported

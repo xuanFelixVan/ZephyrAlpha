@@ -231,9 +231,9 @@ graph TD
         src_zephyr_infrastructure_rollback_rollback_target_staleness_py["src/zephyr/infrastructure/rollback/rollback_tar... production"]
         src_zephyr_infrastructure_rollback_rollback_verifier_py["src/zephyr/infrastructure/rollback/rollback_ver... production"]
     end
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_SHARED
@@ -283,7 +283,7 @@ graph TD
         src_zephyr_infrastructure_rollback_vulnerability_rescanner_py["src/zephyr/infrastructure/rollback/vulnerabilit... production"]
         src_zephyr_infrastructure_rollback_warm_standby_py["src/zephyr/infrastructure/rollback/warm_standby.py production"]
     end
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE
@@ -304,9 +304,9 @@ graph TD
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 33 | import_depends |
 | D-GOV_AUDIT | 7 | import_depends |
-| D-SHARED | 5 | import_depends |
+| D_SHARED | 5 | import_depends |
 | D-GOVERNANCE | 4 | import_depends |
-| D-INTEGRATION | 2 | import_depends |
+| D_INTEGRATION | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

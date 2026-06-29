@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.blueprint_search_server
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] manual

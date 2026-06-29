@@ -1012,7 +1012,7 @@ sections:
       fail: 其他文件中存在命名规则定义(非引用)
     - type: constraint
       check: 域ID格式
-      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔子域);示例D-MKT_DATA/D-EX_CORE/D-AUTONOMY_CORE
+      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔子域);示例D_MKT_DATA/D-EX_CORE/D_AUTONOMY_CORE
       fail: 连字符格式(D-EX-CORE)或小写格式(d-ex_core)
     - type: constraint
       check: 模块ID格式

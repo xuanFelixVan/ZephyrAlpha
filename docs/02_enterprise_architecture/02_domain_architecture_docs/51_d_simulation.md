@@ -77,14 +77,14 @@ graph TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -.->|import_depends| src_zephyr_simulation_init_py
     src_zephyr_simulation_implementations_init_py -.->|config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py
     src_zephyr_simulation_implementations_init_from_resear_py -.->|config_depends| src_zephyr_simulation_implementations_init_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_simulation_pipeline_base_from_resear_py -.->|import_depends| D_INTEGRATION
     src_zephyr_simulation_pipeline_base_py -.->|import_depends| D_INTEGRATION
     D_INTELLIGENCE["D-INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     D_SHARED -.->|import_depends| src_zephyr_simulation_init_py
     D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_simulation_init_py
@@ -114,7 +114,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INTEGRATION | 2 | import_depends |
+| D_INTEGRATION | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -123,7 +123,7 @@ graph TD
 | D-GOVERNANCE | 12 | test_depends |
 | D-INTELLIGENCE | 3 | import_depends |
 | D-GOV_SCRIPTS | 1 | import_depends |
-| D-SHARED | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

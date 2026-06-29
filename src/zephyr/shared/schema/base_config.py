@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.schema.base_config
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] shared.schema.schemas; gates.task_types; shared.schema.audit_types; kb.knowledge_types
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-116 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.maintenance.autonomy_monitor
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.maintenance.zero_config
 # [CONSUMERS]
 # [STARTUP] imported

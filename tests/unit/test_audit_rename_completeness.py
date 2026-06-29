@@ -98,7 +98,7 @@ class TestRedTeam:
     def test_r1_rename_to_existing_blocked(self, test_db):
         """R1: 改名到已存在 new_id 应失败（禁止覆盖）。"""
         n = cmd_rename_domain(
-            "D-SECURITY_LLM", "D-GOV_ENFORCEMENT", dry_run=False, db_path=test_db
+            "D_SECURITY_LLM", "D-GOV_ENFORCEMENT", dry_run=False, db_path=test_db
         )
         assert n == -1, f"应禁止覆盖已存在 new_id，但 return={n}"
 

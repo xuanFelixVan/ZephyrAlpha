@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.bm25_index
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.vector_memory.__init__
 # [CONSUMERS]
 # [STARTUP] imported

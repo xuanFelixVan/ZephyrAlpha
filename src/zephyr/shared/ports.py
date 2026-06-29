@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-078 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_core.ports
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol
 # [CONSUMERS] zephyr.infrastructure_runtime_integration; zephyr.infrastructure.mcp_servers
 # [STARTUP] imported

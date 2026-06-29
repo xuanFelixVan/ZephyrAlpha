@@ -65,7 +65,7 @@ graph TD
     src_zephyr_factor_init_py -.->|config_depends| src_zephyr_factor_alpha_signal_pipeline_py
     D_FUNDAMENTAL_SIGNAL["D-FUNDAMENTAL_SIGNAL production"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_factor_factor_base_py -.->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_factor_value_factor_py -.->|import_depends| D_GOVERNANCE
@@ -93,7 +93,7 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 3 | config_depends,import_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
-| D-SHARED | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

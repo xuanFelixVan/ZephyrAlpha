@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.core.enforcer
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] governance.rule_enforcement.invariants.en_003_contract_compatibility
 # [STARTUP] imported

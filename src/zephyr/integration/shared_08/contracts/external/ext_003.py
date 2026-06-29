@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.external.ext_003
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.external.__init__
 # [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported

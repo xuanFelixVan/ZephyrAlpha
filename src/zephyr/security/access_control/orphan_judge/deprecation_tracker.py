@@ -1,6 +1,6 @@
 # [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.deprecation_tracker
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

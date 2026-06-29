@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.vms_errors
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] collection_manager; design_principles; in_process_vector_memory; faiss_collection_manager; tests
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.token_budget
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.infrastructure.shared_services.observability_02.token_utils; zephyr.autonomy_core.*
 # [STARTUP] imported

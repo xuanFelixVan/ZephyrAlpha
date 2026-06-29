@@ -322,7 +322,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Runtime** | AI 行为审计（VIB-14）| `scripts/audit_log/vib14_ai_behavior_audit.py` |
 | **Runtime** | AISG 六大模块 | `src/zephyr/compliance/ai_security/`（D-01 P0 红线）|
 | **Runtime** | Scout Agent 运行态 | `src/zephyr/ml_train/scout/` + `kms/daily_digest/` |
-| **Runtime** | 四大引擎 K2 占位 | `D-FRONTEND/decision_engine/` · `D-PF_CORE/capital_allocation/` · `D-GOV_AUDIT/failure_learning/` · `D-SIMULATION/market_regime/` |
+| **Runtime** | 四大引擎 K2 占位 | `D_FRONTEND/decision_engine/` · `D-PF_CORE/capital_allocation/` · `D-GOV_AUDIT/failure_learning/` · `D-SIMULATION/market_regime/` |
 
 ### 5.3 AI 员工规划总数（v1.2.0：39→46 系统，~39 AI 员工）
 

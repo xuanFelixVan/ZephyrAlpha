@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.decision_registry
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_decision_registry; tests.agent_rbac.test_decisions
 # [STARTUP] imported

@@ -556,13 +556,13 @@
       }
     ]
   },
-  "D-INTEGRATION": {
+  "D_INTEGRATION": {
     "domain_name": "pipeline_routing",
-    "domain_short": "D-INTEGRATION",
+    "domain_short": "D_INTEGRATION",
     "module_count": 25,
     "items": [
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "backpressure_types.py",
         "path": "src/zephyr/integration/backpressure_types.py",
         "physical_files": [
@@ -572,7 +572,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "circuit_breaker_manager.py",
         "path": "src/zephyr/integration/circuit_breaker_manager.py",
         "physical_files": [
@@ -582,7 +582,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "backpressure_manager.py",
         "path": "src/zephyr/integration/backpressure_manager.py",
         "physical_files": [
@@ -592,7 +592,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "cost_tracker.py",
         "path": "src/zephyr/integration/cost_tracker.py",
         "physical_files": [
@@ -602,7 +602,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "ct_pipe_routing.py",
         "path": "src/zephyr/integration/ct_pipe_routing.py",
         "physical_files": [
@@ -612,7 +612,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "dead_letter_queue.py",
         "path": "src/zephyr/integration/dead_letter_queue.py",
         "physical_files": [
@@ -622,7 +622,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "models.py",
         "path": "src/zephyr/integration/models.py",
         "physical_files": [
@@ -632,7 +632,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "layer_router.py",
         "path": "src/zephyr/integration/layer_router.py",
         "physical_files": [
@@ -642,7 +642,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "llm_gateway.py",
         "path": "src/zephyr/integration/llm_gateway.py",
         "physical_files": [
@@ -652,7 +652,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "layer_consumer_registry.py",
         "path": "src/zephyr/integration/layer_consumer_registry.py",
         "physical_files": [
@@ -662,7 +662,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "pipeline_lock.py",
         "path": "src/zephyr/integration/pipeline_lock.py",
         "physical_files": [
@@ -672,7 +672,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "pipeline_agent_bridge.py",
         "path": "src/zephyr/integration/pipeline_agent_bridge.py",
         "physical_files": [
@@ -682,7 +682,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "model_router.py",
         "path": "src/zephyr/integration/model_router.py",
         "physical_files": [
@@ -692,7 +692,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "pipeline_roadmap.py",
         "path": "src/zephyr/integration/pipeline_roadmap.py",
         "physical_files": [
@@ -702,7 +702,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "pipeline_orchestrator.py",
         "path": "src/zephyr/integration/pipeline_orchestrator.py",
         "physical_files": [
@@ -712,7 +712,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "preemption_manager.py",
         "path": "src/zephyr/integration/preemption_manager.py",
         "physical_files": [
@@ -722,7 +722,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "routing_plugins.py",
         "path": "src/zephyr/integration/routing_plugins.py",
         "physical_files": [
@@ -732,7 +732,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init__.py",
         "path": "src/zephyr/integration/__init__.py",
         "physical_files": [
@@ -742,7 +742,7 @@
         "blueprint_status": "MOD-INTEGRATION"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init___from_orches.py",
         "path": "src/zephyr/integration/__init___from_orches.py",
         "physical_files": [
@@ -752,7 +752,7 @@
         "blueprint_status": "MOD-SHARED-001"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "ports.py",
         "path": "src/zephyr/integration/ports.py",
         "physical_files": [
@@ -762,7 +762,7 @@
         "blueprint_status": "MOD-INF-009"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init__.py",
         "path": "src/zephyr/integration/api/__init__.py",
         "physical_files": [
@@ -772,7 +772,7 @@
         "blueprint_status": "MOD-INTEGRATION"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init__.py",
         "path": "src/zephyr/integration/core/__init__.py",
         "physical_files": [
@@ -782,7 +782,7 @@
         "blueprint_status": "MOD-INTEGRATION"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init__.py",
         "path": "src/zephyr/integration/infrastructure/__init__.py",
         "physical_files": [
@@ -792,7 +792,7 @@
         "blueprint_status": "MOD-INTEGRATION"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init__.py",
         "path": "src/zephyr/integration/services/__init__.py",
         "physical_files": [
@@ -802,7 +802,7 @@
         "blueprint_status": "MOD-INTEGRATION"
       },
       {
-        "module_id": "D-INTEGRATION",
+        "module_id": "D_INTEGRATION",
         "name": "__init__.py",
         "path": "src/zephyr/integration/_extensions/__init__.py",
         "physical_files": [

@@ -86,7 +86,7 @@ graph TD
     src_zephyr_security_access_control_governance_bridges_capability_check_py -.->|config_depends| src_zephyr_security_access_control_governance_bridges_init_py
     src_zephyr_security_access_control_governance_bridges_contracts_py -.->|config_depends| src_zephyr_security_access_control_governance_bridges_init_py
     tests_agent_rbac_conftest_py -.->|config_depends| tests_agent_rbac_init_py
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|import_depends| D_SECURITY
@@ -155,7 +155,7 @@ graph TD
         tests_agent_rbac_test_sequence_guard_agent_rbac_py["tests/agent_rbac/test_sequence_guard_agent_rbac.py prototype"]
         tests_agent_rbac_test_toctou_guard_agent_rbac_py["tests/agent_rbac/test_toctou_guard_agent_rbac.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_agent_rbac_test_cybersec_2026_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_decisions_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_decision_explainer_agent_rbac_py -.->|test_depends| D_SECURITY
@@ -200,18 +200,18 @@ graph TD
     tests_test_agent_signer_py -.->|test_depends| D_GOV_AUDIT
     D_GOVERNANCE["D-GOVERNANCE production"]
     tests_test_ce_kill_switch_py -.->|test_depends| D_GOVERNANCE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_kill_switch_root_py -.->|test_depends| D_SECURITY
     tests_test_kill_switch_root_py -.->|test_depends| D_SECURITY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_kill_switch_sim_py -.->|test_depends| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_kill_switch_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_trading_kill_switch_py -.->|test_depends| D_GOVERNANCE
     tests_agent_rbac_test_vibe_coding_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_vibe_coding_py -.->|test_depends| D_SECURITY
     tests_agent_rbac_test_vibe_coding_py -.->|test_depends| D_SECURITY
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_INTEGRATION
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_INTEGRATION
     tests_unit_agent_rbac_test_rbac_core_py -.->|test_depends| D_SECURITY
@@ -231,10 +231,10 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-SECURITY | 137 | import_depends,test_depends |
+| D_SECURITY | 137 | import_depends,test_depends |
 | D-GOVERNANCE | 3 | config_depends,test_depends |
-| D-INTEGRATION | 2 | test_depends |
-| D-AUTONOMY_CORE | 1 | test_depends |
+| D_INTEGRATION | 2 | test_depends |
+| D_AUTONOMY_CORE | 1 | test_depends |
 | D-GOV_AUDIT | 1 | test_depends |
 | D_INFRA_RUNTIME | 1 | test_depends |
 

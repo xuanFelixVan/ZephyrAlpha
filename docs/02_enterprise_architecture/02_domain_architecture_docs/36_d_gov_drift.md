@@ -86,11 +86,11 @@ graph TD
     src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_GOVERNANCE
     D_GOV_SCRIPTS["D-GOV_SCRIPTS production"]
     scripts_governance_d5_architecture_validators_validate_ssot_py -->|import_depends| D_GOV_SCRIPTS
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_baseline_manager_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_ba_chaos_injector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_chaos_injector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_context_drift_detector_py -.->|test_depends| D_SECURITY
     tests_test_contract_drift_detector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_drift_detector_gate_py -.->|test_depends| D_GOVERNANCE
@@ -127,12 +127,12 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 10 | config_depends,import_depends,runtime,test_depends |
-| D-BEHAVIORAL_AUDIT | 8 | test_depends |
+| D_BEHAVIORAL_AUDIT | 8 | test_depends |
 | D-GOV_AUDIT | 7 | import_depends,runtime |
 | D-AUTONOMY_PERM | 1 | runtime |
 | D-GOV_ENFORCEMENT | 1 | runtime |
 | D-GOV_SCRIPTS | 1 | import_depends |
-| D-SECURITY | 1 | test_depends |
+| D_SECURITY | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -143,7 +143,7 @@ graph TD
 | D-TRADING | 3 | import_depends,runtime |
 | D-COMPLIANCE | 2 | import_depends |
 | D-AUDITTEST | 1 | test_depends |
-| D-OPS | 1 | import_depends |
+| D_OPS | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

@@ -1028,7 +1028,7 @@ sections:
       fail: 其他文件中存在命名规则定义(非引用)
     - type: constraint
       check: 域ID格式
-      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules.yaml NR-002);示例D-MKT_DATA/D-ASHARE_SIGNAL/D-AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
+      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules.yaml NR-002);示例D_MKT_DATA/D-ASHARE_SIGNAL/D_AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
       fail: 连字符格式(D-EX-CORE)或小写格式(d-ex_core)
     - type: constraint
       check: 域ID语义完整性

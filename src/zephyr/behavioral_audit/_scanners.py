@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._scanners
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.incremental_scanner; zephyr.behavioral_audit.headless_scanner; zephyr.behavioral_audit.file_attr_checker; zephyr.behavioral_audit.gitignore_auditor; zephyr.behavioral_audit.symlink_checker; zephyr.behavioral_audit.naming_magic_checker; zephyr.behavioral_audit.test_fixture_checker; zephyr.behavioral_audit.python_compat; zephyr.behavioral_audit.orphan_scanner; zephyr.behavioral_audit.scan_mutex
 # [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.sys_master_compliance
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.sys_master_compliance
 # [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.infrastructure.rollback.phase_check_registry
 # [STARTUP] imported

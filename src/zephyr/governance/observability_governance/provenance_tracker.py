@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-054 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.provenance_tracker
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.observability_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

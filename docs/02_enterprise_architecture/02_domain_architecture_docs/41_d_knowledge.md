@@ -62,11 +62,11 @@ graph TD
         tests_unit_vector_memory_init_py["tests/unit/vector_memory/__init__.py prototype"]
         tests_unit_vector_memory_test_vector_memory_py["tests/unit/vector_memory/test_vector_memory.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_knowledge_base_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["D-GOVERNANCE production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_INTEGRATION
     docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
@@ -86,8 +86,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 2 | runtime,test_depends |
-| D-AUTONOMY_CORE | 1 | test_depends |
-| D-INTEGRATION | 1 | test_depends |
+| D_AUTONOMY_CORE | 1 | test_depends |
+| D_INTEGRATION | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

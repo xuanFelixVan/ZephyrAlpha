@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.session_concurrency
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_session_concurrency; zephyr.governance.git_commit_gateway
 # [STARTUP] imported

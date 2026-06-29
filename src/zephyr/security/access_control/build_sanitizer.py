@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.build_sanitizer
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_build_sanitizer
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.ops._circuit_breaker
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported

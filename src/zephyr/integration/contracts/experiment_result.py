@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.contracts.experiment_result
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.experiment_result
 # [CONSUMERS] zephyr.simulation.pipeline_base_from_resear; zephyr.simulation.pipeline_base
 # [STARTUP] imported

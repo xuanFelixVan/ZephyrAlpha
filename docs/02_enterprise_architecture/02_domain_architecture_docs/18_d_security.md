@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-SECURITY 对抗验证架构文档
+title: D_SECURITY 对抗验证架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 18_d_security / 对抗验证
 
-> **文档作用 / Purpose**: 展示 对抗验证（D-SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 对抗验证（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 18 | Number | 18 |
-| 域ID | D-SECURITY | Domain ID | D-SECURITY |
+| 域ID | D_SECURITY | Domain ID | D_SECURITY |
 | 域名称 | 对抗验证 | Domain Name | 对抗验证 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 243 | Module Count | 243 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_behavioral_audit_init_py["src/zephyr/behavioral_audit/__init__.py prototype"]
         src_zephyr_behavioral_audit_main_py["src/zephyr/behavioral_audit/__main__.py prototype"]
         src_zephyr_behavioral_audit_analysis_py["src/zephyr/behavioral_audit/_analysis.py prototype"]
@@ -90,7 +90,7 @@ graph TD
     src_zephyr_behavioral_audit_core_py -.->|import_depends| src_zephyr_behavioral_audit_state_machine_py
     src_zephyr_behavioral_audit_infrastructure_py -.->|import_depends| src_zephyr_behavioral_audit_alert_router_py
     src_zephyr_behavioral_audit_infrastructure_py -.->|import_depends| src_zephyr_behavioral_audit_cold_start_py
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_behavioral_audit_cold_start_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_behavioral_audit_reconciler_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_behavioral_audit_runbook_generator_py -.->|import_depends| D_BEHAVIORAL_AUDIT
@@ -113,7 +113,7 @@ graph TD
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_reconciler_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_events_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_cold_start_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_init_py
     D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_security_access_control_a2a_check_py
@@ -139,7 +139,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_access_control_auto_fix_engine_03_all_completer_py["src/zephyr/security/access_control/auto_fix_eng... prototype"]
         src_zephyr_security_access_control_auto_fix_engine_03_batch_fixer_py["src/zephyr/security/access_control/auto_fix_eng... prototype"]
         src_zephyr_security_access_control_auto_fix_engine_03_compliance_auditor_py["src/zephyr/security/access_control/auto_fix_eng... prototype"]
@@ -215,7 +215,7 @@ graph TD
     src_zephyr_security_access_control_auto_fix_engine_03_engine_py -->|import_depends| D_GOV_AUDIT
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_security_access_control_auto_fix_engine_03_escalation_bridge_py -->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_security_access_control_auto_fix_engine_03_llm_fix_adapter_py -.->|import_depends| D_SHARED
     D_TRADING["D-TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_engine_py
@@ -247,7 +247,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_access_control_bootstrap_superadmin_py["src/zephyr/security/access_control/bootstrap_su... production"]
         src_zephyr_security_access_control_bootstrap_verifier_py["src/zephyr/security/access_control/bootstrap_ve... production"]
         src_zephyr_security_access_control_build_sanitizer_py["src/zephyr/security/access_control/build_saniti... production"]
@@ -308,7 +308,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_access_control_identity_py["src/zephyr/security/access_control/identity.py production"]
         src_zephyr_security_access_control_immutable_core_py["src/zephyr/security/access_control/immutable_co... production"]
         src_zephyr_security_access_control_input_guard_py["src/zephyr/security/access_control/input_guard.py production"]
@@ -385,7 +385,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_access_control_orphan_judge_judge_py["src/zephyr/security/access_control/orphan_judge... production"]
         src_zephyr_security_access_control_orphan_judge_kb_bridge_py["src/zephyr/security/access_control/orphan_judge... prototype"]
         src_zephyr_security_access_control_orphan_judge_mcp_integration_py["src/zephyr/security/access_control/orphan_judge... prototype"]
@@ -465,7 +465,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_access_control_shell_dialect_detector_py["src/zephyr/security/access_control/shell_dialec... production"]
         src_zephyr_security_access_control_toctou_guard_py["src/zephyr/security/access_control/toctou_guard.py production"]
         src_zephyr_security_access_control_vibe_coding_guard_py["src/zephyr/security/access_control/vibe_coding_... production"]
@@ -561,7 +561,7 @@ graph TD
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
     src_zephyr_security_adversarial_validation_constitution_guard_py -.->|import_depends| D_GOV_ENFORCEMENT
@@ -580,7 +580,7 @@ graph TD
     D_AUTONOMY_PERM -.->|import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_security_adversarial_validation_validator_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_security_adversarial_validation_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -596,7 +596,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_llm_defense_llm_security_init_py["src/zephyr/security/llm_defense/llm_security/__... prototype"]
         src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py["src/zephyr/security/llm_defense/llm_security/be... production"]
         src_zephyr_security_llm_defense_llm_security_dashboard_init_py["src/zephyr/security/llm_defense/llm_security/da... prototype"]
@@ -652,14 +652,14 @@ graph TD
     src_zephyr_security_llm_defense_llm_security_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py -.->|config_depends| src_zephyr_security_llm_defense_llm_security_layers_init_py
     src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py -.->|config_depends| src_zephyr_security_llm_defense_llm_security_layers_init_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -.->|import_depends| D_SHARED
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_security_llm_defense_llm_security_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py -->|import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_patterns_secrets_py -.->|import_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
@@ -673,7 +673,7 @@ graph TD
     D_GOV_AUDIT -->|import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     D_INTEGRATION -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_INTEGRATION -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_INTEGRATION -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
@@ -691,7 +691,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_llm_defense_llm_security_self_protection_init_py["src/zephyr/security/llm_defense/llm_security/se... prototype"]
         src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py["src/zephyr/security/llm_defense/llm_security/se... production"]
         src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py["src/zephyr/security/llm_defense/llm_security/se... production"]
@@ -736,7 +736,7 @@ graph TD
     src_zephyr_security_llm_defense_llm_security_01_self_protection_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py -->|import_depends| D_GOV_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_01_context_scanner_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py
@@ -761,7 +761,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY["D-SECURITY 对抗验证"]
+    subgraph D_SECURITY["D_SECURITY 对抗验证"]
         src_zephyr_security_llm_defense_llm_security_01_self_protection_red_team_scanner_py["src/zephyr/security/llm_defense/llm_security_01... prototype"]
         src_zephyr_security_models_init_py["src/zephyr/security/models/__init__.py prototype"]
         src_zephyr_security_services_init_py["src/zephyr/security/services/__init__.py prototype"]
@@ -779,13 +779,13 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-BEHAVIORAL_AUDIT | 51 | import_depends |
-| D-SHARED | 5 | import_depends |
+| D_BEHAVIORAL_AUDIT | 51 | import_depends |
+| D_SHARED | 5 | import_depends |
 | D-GOV_AUDIT | 5 | import_depends |
 | D-GOV_ENFORCEMENT | 5 | import_depends |
 | D-GOVERNANCE | 4 | import_depends |
 | D-TRADING | 2 | import_depends |
-| D-INTEGRATION | 2 | import_depends |
+| D_INTEGRATION | 2 | import_depends |
 | D-INTELLIGENCE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -796,17 +796,17 @@ graph TD
 | D-AUTONOMY_PERM | 137 | import_depends,test_depends |
 | D-TRADING | 7 | import_depends |
 | D-GOV_AUDIT | 6 | import_depends |
-| D-OPS | 5 | import_depends,test_depends |
-| D-INTEGRATION | 4 | import_depends |
+| D_OPS | 5 | import_depends,test_depends |
+| D_INTEGRATION | 4 | import_depends |
 | D-AUDITTEST | 3 | test_depends |
-| D-AUTONOMY_CORE | 3 | import_depends |
+| D_AUTONOMY_CORE | 3 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
 | D-GOV_ENFORCEMENT | 2 | import_depends |
 | D-GOV_DRIFT | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 对抗验证（D-SECURITY）的模块分布。共 243 个模块 / 243 modules。
+> 按 architecture_layer 分层显示 对抗验证（D_SECURITY）的模块分布。共 243 个模块 / 243 modules。
 
 ```
 

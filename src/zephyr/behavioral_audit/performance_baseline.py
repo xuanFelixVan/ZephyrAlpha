@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-governance/drift-detector/blueprint.md
 # [MODULE] zephyr.behavioral_audit.performance_baseline
-# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-GATE_ENGINE;MOD-INF-021;MOD-INF-020
 # [STARTUP] imported

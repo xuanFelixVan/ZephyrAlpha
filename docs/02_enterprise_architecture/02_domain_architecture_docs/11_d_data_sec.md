@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-DATA_SEC 数据安全与契约架构文档
+title: D_DATA_SEC 数据安全与契约架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 11_d_data_sec / 数据安全与契约
 
-> **文档作用 / Purpose**: 展示 数据安全与契约（D-DATA_SEC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 数据安全与契约（D_DATA_SEC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 11 | Number | 11 |
-| 域ID | D-DATA_SEC | Domain ID | D-DATA_SEC |
+| 域ID | D_DATA_SEC | Domain ID | D_DATA_SEC |
 | 域名称 | 数据安全与契约 | Domain Name | 数据安全与契约 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 10 | Module Count | 10 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_DATA_SEC["D-DATA_SEC 数据安全与契约"]
+    subgraph D_DATA_SEC["D_DATA_SEC 数据安全与契约"]
         src_zephyr_data_persistence_init_py["src/zephyr/data/persistence/__init__.py prototype"]
         src_zephyr_data_persistence_circuit_breaker_types_py["src/zephyr/data/persistence/circuit_breaker_typ... prototype"]
         src_zephyr_data_persistence_sqlite_schema_py["src/zephyr/data/persistence/sqlite_schema.py prototype"]
@@ -61,7 +61,7 @@ graph TD
     src_zephyr_data_persistence_init_py -.->|config_depends| src_zephyr_data_persistence_sqlite_schema_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_data_persistence_sqlite_schema_py -.->|import_depends| D_GOVERNANCE
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_data_persistence_circuit_breaker_types_py -.->|import_depends| D_OPS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -78,7 +78,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 1 | import_depends |
-| D-OPS | 1 | import_depends |
+| D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -86,7 +86,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数据安全与契约（D-DATA_SEC）的模块分布。共 10 个模块 / 10 modules。
+> 按 architecture_layer 分层显示 数据安全与契约（D_DATA_SEC）的模块分布。共 10 个模块 / 10 modules。
 
 ```
 

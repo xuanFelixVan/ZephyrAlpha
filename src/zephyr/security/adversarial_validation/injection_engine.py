@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §16 Phase 0 + §6.1
 # [MODULE] zephyr.security.adversarial_validation.injection_engine
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py; game_day_runner.py; chaos_engine.py (external)
 # [STARTUP] imported

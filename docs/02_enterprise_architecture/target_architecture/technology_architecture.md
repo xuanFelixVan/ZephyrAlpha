@@ -110,7 +110,7 @@ This view is **driven by** the Application Architecture (application characteris
 |-------------------------------|--------------|-----------------|
 | Q5-2: Scheduler? (Airflow / Prefect / Dagster / Cron?) | Memory Pipeline and async pipelines | Medium |
 | Q5-3: ML framework? (PyTorch / scikit-learn / JAX?) | D-ML_TRAIN 训练域技术路径 | Medium |
-| Q5-4: LLM integration? (Native API / LiteLLM / OpenRouter?) | D-FRONTEND 人机接口 | Low — deferred (OQ-011) |
+| Q5-4: LLM integration? (Native API / LiteLLM / OpenRouter?) | D_FRONTEND 人机接口 | Low — deferred (OQ-011) |
 | Q5-5: Deployment mode? (Local / Cloud / Hybrid? Containerized?) | SRE drawer activation depth | Low — deferred |
 
 ---
@@ -146,10 +146,10 @@ This view is **driven by** the Application Architecture (application characteris
 ## 4. Cross-domain core data flow / 跨域核心数据流
 
 ```
-D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK 风控 → D-PF_CORE 组合构建 → D-EX_CORE 执行核心 → D-TRADING 交易运营
+D_MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK 风控 → D-PF_CORE 组合构建 → D-EX_CORE 执行核心 → D-TRADING 交易运营
 ```
 
-横向治理贯穿：`D-GOVERNANCE 治理` + `D-RISK 风控` + `D-FRONTEND 人机接口`
+横向治理贯穿：`D-GOVERNANCE 治理` + `D-RISK 风控` + `D_FRONTEND 人机接口`
 
 > 细颗粒度数据契约 → `application_architecture.md §7` + `architecture_model/contracts/cross_layer_contracts.yaml`
 > 域分类唯一（§2.1 裁定），14 层（L00-L13）降级为域的 `layer_id` 属性，不再作为并行分类体系。
@@ -161,9 +161,9 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK �
 | 契约 ID | 集成点 | 接入层 | 协议 | 状态 | 关键约束 |
 |---------|--------|-------|------|------|---------|
 | EXT-001 | **Broker API** | D-EX_CORE `adapters/` | REST / FIX 4.2+ | planned | 须实现 `BrokerInterface`；发单前必过 `pre_trade/` |
-| EXT-002 | **Market Data** | D-MKT_DATA `connectors/` | REST / WS | planned | 须经 `quality/` 质量门禁 |
-| EXT-003 | **LLM Providers** | D-FRONTEND | REST (OpenAI-compatible) | in use | D-FACTOR~D-TRADING 禁止直接调用；支持降级 |
-| EXT-004 | **Feishu** | D-FRONTEND `notifications/` | REST Webhook | partial | 非关键路径；失败重试 3 次 |
+| EXT-002 | **Market Data** | D_MKT_DATA `connectors/` | REST / WS | planned | 须经 `quality/` 质量门禁 |
+| EXT-003 | **LLM Providers** | D_FRONTEND | REST (OpenAI-compatible) | in use | D-FACTOR~D-TRADING 禁止直接调用；支持降级 |
+| EXT-004 | **Feishu** | D_FRONTEND `notifications/` | REST Webhook | partial | 非关键路径；失败重试 3 次 |
 
 **候选 Broker**：SimulationAdapter (P0) → Interactive Brokers (P1) → Futu (P1) → Longport (P2)
 **候选数据源**：AKShare (P0, 免费) → Tushare (P1) → Wind (P2) → 实时 Tick (P2)
@@ -217,10 +217,10 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK �
 |-----|---------|----------------|-------------|-----|----------|
 | **D-EX_CORE 订单 + 成交回报** | 🔴 金融资金 | ≤ 5 min | ≤ 24 h | **0（零丢失）** | 热备 |
 | **D-GOV_AUDIT Audit Log** | 🔴 合规审计 | ≤ 15 min | ≤ 24 h | **0（append-only）** | 热备 |
-| **D-MKT_DATA 数据源 + D-PF_CORE 信号** | 🟡 业务核心 | ≤ 15 min | ≤ 4 h | ≤ 5 min | 温备 |
+| **D_MKT_DATA 数据源 + D-PF_CORE 信号** | 🟡 业务核心 | ≤ 15 min | ≤ 4 h | ≤ 5 min | 温备 |
 | **D-FACTOR 因子 + D-RISK 风控** | 🟡 业务核心 | ≤ 30 min | ≤ 4 h | ≤ 15 min（可重算） | 温备 |
 | **D-TRADING 归因 + D-INTELLIGENCE 实验** | 🟢 离线分析 | ≤ 4 h | ≤ 48 h | ≤ 1 h | 冷备 |
-| **D-OPS Telemetry** | 🟢 辅助 | ≤ 4 h | ≤ 24 h | ≤ 30 min | 冷备 |
+| **D_OPS Telemetry** | 🟢 辅助 | ≤ 4 h | ≤ 24 h | ≤ 30 min | 冷备 |
 | **中间缓存** | 🟢 可丢弃 | — | — | ∞ | 无备份 |
 
 ### 8.2 三级灾备预案
@@ -228,8 +228,8 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK �
 | 级别 | 适用链路 | 机制 | 当前阶段成本 |
 |-----|---------|------|-------------|
 | **Tier 1 热备** | D-EX_CORE 订单 + D-GOV_AUDIT Audit | 双实例 active-standby，数据实时同步 | Post-Activation 启用 |
-| **Tier 2 温备** | D-MKT_DATA~D-PF_CORE 业务核心 | 数据层持续同步，计算层冷启动 | 文件级同步成本极低 |
-| **Tier 3 冷备** | D-TRADING/D-OPS/D-INTELLIGENCE 离线 | pg_dump / Parquet 归档 + Git | 每日快照 |
+| **Tier 2 温备** | D_MKT_DATA~D-PF_CORE 业务核心 | 数据层持续同步，计算层冷启动 | 文件级同步成本极低 |
+| **Tier 3 冷备** | D-TRADING/D_OPS/D-INTELLIGENCE 离线 | pg_dump / Parquet 归档 + Git | 每日快照 |
 
 ### 8.3 量化特殊场景
 
@@ -335,7 +335,7 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK �
 
 | 域 | CPU (core·h/日) | Memory 峰值 (GB) | Storage 年增 (GB) | IOPS 峰值 |
 |----|:-----:|:------:|:------:|:----:|
-| D-MKT_DATA 行情数据 | 2 | 1.5 | 20 | 300 |
+| D_MKT_DATA 行情数据 | 2 | 1.5 | 20 | 300 |
 | D_INFRA_RUNTIME 基础设施 | 0.5 | 0.5 | 1 | 50 |
 | D-FACTOR 因子 | 6 | 3 | 15 | 500 |
 | D-SIGLEGACY 信号 | 3 | 1 | 5 | 100 |
@@ -343,11 +343,11 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK �
 | D-PF_CORE 组合核心 | 4 | 2 | 3 | 80 |
 | D-EX_CORE 执行核心 | 2 | 0.8 | 8 | 200 |
 | D-TRADING 交易运营 | 2 | 1 | 5 | 60 |
-| D-FRONTEND 人机接口 | 1 | 0.5 | 1 | 30 |
+| D_FRONTEND 人机接口 | 1 | 0.5 | 1 | 30 |
 | D-SIMULATION 仿真 | 8 | 4 | 30 | 400 |
 | D-COMPLIANCE 合规 | 0.5 | 0.3 | 1 | 40 |
 | D-ML_TRAIN 训练 | 3 | 4 | 10 | 200 |
-| D-OPS 遥测 | 1 | 0.8 | 20 | 150 |
+| D_OPS 遥测 | 1 | 0.8 | 20 | 150 |
 | D-INTELLIGENCE 实验 | 2 | 1.5 | 8 | 100 |
 | D-GOV_AUDIT Audit Log | 0.3 | 0.2 | 25 | 50 |
 | **合计峰值** | **~20-25** | **~12 / ~24 含 OS** | **~155** | **~1500** |

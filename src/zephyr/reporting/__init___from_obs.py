@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-026 | data/databases/depgraph.db | D-OBS-ASSET_INVENTORY
 # [MODULE] zephyr.observability.asset_inventory
-# [DOMAIN] D-REPORTING
+# [DOMAIN] D_REPORTING
 # [DEPENDENCIES] zephyr.reporting.__init__
 # [CONSUMERS] domain_migration_consumers
 # [STARTUP] imported

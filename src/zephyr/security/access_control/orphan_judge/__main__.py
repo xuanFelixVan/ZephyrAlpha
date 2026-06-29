@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §4.1
 # [MODULE] zephyr.security.access_control.orphan_judge.__main__
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] python -m zephyr.security.access_control.orphan_judge; audit-orchestrator.cli
 # [STARTUP] manual

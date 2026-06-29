@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-DATA_SEC
 # [MODULE] zephyr.data.persistence.circuit_breaker_types
-# [DOMAIN] D-DATA_SEC
+# [DOMAIN] D_DATA_SEC
 # [DEPENDENCIES] zephyr.ops.circuit_breaker_types
 # [CONSUMERS]
 # [STARTUP] imported

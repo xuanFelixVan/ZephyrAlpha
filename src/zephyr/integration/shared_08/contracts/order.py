@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.shared_08.contracts.order
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context; zephyr.shared.contracts.__init__
 # [CONSUMERS]
 # [STARTUP] imported

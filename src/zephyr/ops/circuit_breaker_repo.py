@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.circuit_breaker_repo
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.governance.persistence.circuit_breaker_types
 # [CONSUMERS]
 # [STARTUP] imported

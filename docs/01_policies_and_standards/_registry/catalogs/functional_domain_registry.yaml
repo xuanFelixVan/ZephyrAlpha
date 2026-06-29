@@ -188,7 +188,7 @@ entries:
   - 语义一致性
   stability: stable
   ai_autonomy: human_gated
-- domain: D-SECURITY
+- domain: D_SECURITY
   subdomain: access_control
   ssot_module: MOD-INF-018
   ssot_path: src/zephyr/security/access_control/
@@ -212,7 +212,7 @@ entries:
   - agent rbac
   stability: stable
   ai_autonomy: immutable_core
-- domain: D-SECURITY_LLM
+- domain: D_SECURITY_LLM
   subdomain: llm_defense
   ssot_module: MOD-LLM_SECURITY
   ssot_path: src/zephyr/security/llm_defense/
@@ -235,7 +235,7 @@ entries:
   - security gateway
   stability: stable
   ai_autonomy: immutable_core
-- domain: D-SECURITY
+- domain: D_SECURITY
   subdomain: adversarial_validation
   ssot_module: MOD-INF-030
   ssot_path: src/zephyr/security/adversarial_validation/
@@ -260,7 +260,7 @@ entries:
   - 鲁棒性测试
   stability: stable
   ai_autonomy: human_gated
-- domain: D-INTEGRATION
+- domain: D_INTEGRATION
   subdomain: pipeline_routing
   ssot_module: MOD-INF-009
   ssot_path: src/zephyr/integration/
@@ -281,7 +281,7 @@ entries:
   - M1-M11
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-AUTONOMY_CORE
+- domain: D_AUTONOMY_CORE
   subdomain: agent_lifecycle
   ssot_module: MOD-INF-019
   ssot_path: src/zephyr/autonomy_core/
@@ -301,7 +301,7 @@ entries:
   - Agent生命周期
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-AUTONOMY_CORE
+- domain: D_AUTONOMY_CORE
   subdomain: agent_communication
   ssot_module: MOD-INF-025
   ssot_path: src/zephyr/autonomy_core/
@@ -505,7 +505,7 @@ entries:
   - 资产
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-OPS
+- domain: D_OPS
   subdomain: telemetry
   ssot_module: MOD-INF-015
   ssot_path: src/zephyr/ops/
@@ -523,7 +523,7 @@ entries:
   - 监控
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-OPS
+- domain: D_OPS
   subdomain: feedback-loop
   ssot_module: MOD-FEEDBACK_LOOP
   ssot_path: src/zephyr/ops/
@@ -681,7 +681,7 @@ entries:
   - 性能画像
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-SHARED
+- domain: D_SHARED
   subdomain: shared_services
   ssot_module: MOD-INF-016
   ssot_path: src/zephyr/shared/shared_services/
@@ -757,7 +757,7 @@ entries:
   - infrastructure layer
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-INTEGRATION_GATEWAY
+- domain: D_INTEGRATION_GATEWAY
   subdomain: mcp_servers
   ssot_module: MOD-INF-013
   ssot_path: src/zephyr/integration/mcp/

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._contracts
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.approval_types; zephyr.integration.shared_08.contracts.core.enforcer; zephyr.integration.shared_08.contracts.core.runtime_plane_tag; zephyr.integration.shared_08.contracts.core.timestamp; zephyr.integration.shared_08.contracts.rollback_types
 # [CONSUMERS] zephyr.shared.__init__
 # [STARTUP] imported

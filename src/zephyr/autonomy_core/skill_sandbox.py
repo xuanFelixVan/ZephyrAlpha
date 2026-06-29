@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.skill_sandbox
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.governance.audit_trail.bridge
 # [CONSUMERS]
 # [STARTUP] imported

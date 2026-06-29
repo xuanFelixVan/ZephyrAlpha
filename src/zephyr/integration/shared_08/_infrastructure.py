@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._infrastructure
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared.api_03.api_client; zephyr.integration.shared_08.cache; zephyr.integration.shared_08.diff_utils; zephyr.integration.shared_08.file_utils; zephyr.integration.shared_08.secrets; zephyr.integration.shared_08.serialization; zephyr.integration.shared_08.session_audit; zephyr.shared.config.__init__
 # [CONSUMERS] zephyr.shared.__init__
 # [STARTUP] imported

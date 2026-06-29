@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.blind_spot_tracker
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_blind_spot_tracker; tests.agent_rbac.test_blind_spot_coverage
 # [STARTUP] imported

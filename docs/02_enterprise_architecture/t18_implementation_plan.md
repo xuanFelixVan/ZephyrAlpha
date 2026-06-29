@@ -116,10 +116,10 @@ edges表已有3个设计态保护触发器：
 | D-COMPLIANCE | 891 | 11.1% |
 | D-RISK | 749 | 9.3% |
 | D-GOVERNANCE | 605 | 7.5% |
-| D-SECURITY | 603 | 7.5% |
-| D-AUTONOMY_CORE | 475 | 5.9% |
+| D_SECURITY | 603 | 7.5% |
+| D_AUTONOMY_CORE | 475 | 5.9% |
 | D-SIGLEGACY | 474 | 5.9% |
-| D-INTEGRATION | 416 | 5.2% |
+| D_INTEGRATION | 416 | 5.2% |
 | D_INFRA_OPS | 387 | 4.8% |
 | D_INFRA_RUNTIME | 311 | 3.9% |
 | D-FACTOR | 302 | 3.8% |

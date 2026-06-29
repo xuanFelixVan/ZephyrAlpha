@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INTEGRATION 管线路由架构文档
+title: D_INTEGRATION 管线路由架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 13_d_integration / 管线路由
 
-> **文档作用 / Purpose**: 展示 管线路由（D-INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 13 | Number | 13 |
-| 域ID | D-INTEGRATION | Domain ID | D-INTEGRATION |
+| 域ID | D_INTEGRATION | Domain ID | D_INTEGRATION |
 | 域名称 | 管线路由 | Domain Name | 管线路由 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 280 | Module Count | 280 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_init_py["src/zephyr/integration/__init__.py production"]
         src_zephyr_integration_extensions_init_py["src/zephyr/integration/_extensions/__init__.py prototype"]
         src_zephyr_integration_api_init_py["src/zephyr/integration/api/__init__.py prototype"]
@@ -95,7 +95,7 @@ graph TD
     src_zephyr_integration_layer2_communication_init_py -.->|import_depends| src_zephyr_integration_layer2_communication_handoff_manager_py
     src_zephyr_integration_layer2_communication_init_py -.->|import_depends| src_zephyr_integration_layer2_communication_push_notifier_py
     src_zephyr_integration_layer2_communication_init_py -.->|import_depends| src_zephyr_integration_layer2_communication_streaming_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_integration_ct_pipe_routing_py -.->|import_depends| D_SHARED
     D_TRADING["D-TRADING production"]
     src_zephyr_integration_behavioral_admission_admission_response_py -->|import_depends| D_TRADING
@@ -113,7 +113,7 @@ graph TD
     src_zephyr_integration_layer2_communication_streaming_py -.->|import_depends| D_SHARED
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     D_INTELLIGENCE -->|import_depends| src_zephyr_integration_init_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_integration_init_py
     D_SIMULATION["D-SIMULATION prototype"]
     D_SIMULATION -.->|import_depends| src_zephyr_integration_contracts_experiment_result_py
@@ -144,7 +144,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_layer2_communication_trigger_monitor_py["src/zephyr/integration/layer2_communication/tri... prototype"]
         src_zephyr_integration_layer3_coordination_init_py["src/zephyr/integration/layer3_coordination/__in... prototype"]
         src_zephyr_integration_layer_consumer_registry_py["src/zephyr/integration/layer_consumer_registry.py prototype"]
@@ -214,9 +214,9 @@ graph TD
     src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_task_manager_server_py
     src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_telemetry_server_py
     src_zephyr_integration_mcp_init_py -.->|import_depends| src_zephyr_integration_mcp_base_server_py
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_integration_llm_gateway_py -.->|import_depends| D_SECURITY
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_integration_llm_gateway_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer2_communication_trigger_monitor_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer3_coordination_init_py -.->|import_depends| D_SHARED
@@ -233,7 +233,7 @@ graph TD
     src_zephyr_integration_mcp_gateway_server_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_integration_mcp_gate_engine_server_py -.->|import_depends| D_SHARED
     src_zephyr_integration_mcp_gate_engine_server_py -.->|import_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_mcp_init_py
@@ -261,7 +261,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_mcp_tool_contracts_yaml["src/zephyr/integration/mcp/tool_contracts.yaml production"]
         src_zephyr_integration_mcp_vector_memory_server_py["src/zephyr/integration/mcp/vector_memory_server.py prototype"]
         src_zephyr_integration_mcp_server_py["src/zephyr/integration/mcp_server.py prototype"]
@@ -305,7 +305,7 @@ graph TD
     src_zephyr_integration_shared_events_init_py -.->|import_depends| src_zephyr_integration_shared_events_event_schemas_py
     src_zephyr_integration_shared_events_init_py -.->|import_depends| src_zephyr_integration_shared_events_dlq_bridge_py
     src_zephyr_integration_shared_events_init_py -.->|import_depends| src_zephyr_integration_shared_events_event_bus_upgrade_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_integration_model_router_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
@@ -315,13 +315,13 @@ graph TD
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_GOVERNANCE
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_GOV_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_AUTONOMY_CORE
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_INTELLIGENCE
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SECURITY
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
@@ -344,7 +344,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_shared_events_upgrade_strategy_py["src/zephyr/integration/shared/events/upgrade_st... production"]
         src_zephyr_integration_shared_schema_init_py["src/zephyr/integration/shared/schema/__init__.py prototype"]
         src_zephyr_integration_shared_schema_base_config_py["src/zephyr/integration/shared/schema/base_confi... production"]
@@ -400,13 +400,13 @@ graph TD
     src_zephyr_integration_shared_08_contracts_backpressure_init_py -.->|import_depends| src_zephyr_integration_shared_08_contracts_backpressure_pause_py
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_integration_shared_schema_schemas_py -->|import_depends| D_GOV_ENFORCEMENT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_integration_shared_08_cache_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_contract_versions_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_infrastructure_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_init_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_version_and_types_py -.->|import_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -436,7 +436,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_shared_08_contracts_backpressure_resume_py["src/zephyr/integration/shared_08/contracts/back... production"]
         src_zephyr_integration_shared_08_contracts_backpressure_throttle_py["src/zephyr/integration/shared_08/contracts/back... production"]
         src_zephyr_integration_shared_08_contracts_capital_allocation_result_py["src/zephyr/integration/shared_08/contracts/capi... prototype"]
@@ -482,7 +482,7 @@ graph TD
     src_zephyr_integration_shared_08_contracts_external_ext_003_py -.->|config_depends| src_zephyr_integration_shared_08_contracts_external_init_py
     src_zephyr_integration_shared_08_contracts_external_ext_002_py -.->|config_depends| src_zephyr_integration_shared_08_contracts_external_init_py
     src_zephyr_integration_shared_08_contracts_external_ext_004_py -.->|config_depends| src_zephyr_integration_shared_08_contracts_external_init_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_integration_shared_08_contracts_external_init_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_contracts_external_init_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_contracts_external_init_py -.->|import_depends| D_SHARED
@@ -519,7 +519,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_shared_08_contracts_gate_gate_result_py["src/zephyr/integration/shared_08/contracts/gate... prototype"]
         src_zephyr_integration_shared_08_contracts_identity_init_py["src/zephyr/integration/shared_08/contracts/iden... prototype"]
         src_zephyr_integration_shared_08_contracts_identity_agent_identity_py["src/zephyr/integration/shared_08/contracts/iden... production"]
@@ -557,14 +557,14 @@ graph TD
     src_zephyr_integration_shared_08_contracts_security_init_py -.->|config_depends| src_zephyr_integration_shared_08_contracts_security_security_decision_py
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_integration_shared_08_contracts_sys_master_compliance_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_integration_shared_08_contracts_order_py -.->|import_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_contracts_protocols_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_contracts_protocols_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_rollback_types_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_integration_shared_08_errors_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_security_security_decision_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_sys_master_compliance_py
@@ -592,7 +592,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_shared_08_evals_py["src/zephyr/integration/shared_08/evals.py production"]
         src_zephyr_integration_shared_08_file_utils_py["src/zephyr/integration/shared_08/file_utils.py production"]
         src_zephyr_integration_shared_08_flags_py["src/zephyr/integration/shared_08/flags.py production"]
@@ -634,7 +634,7 @@ graph TD
     src_zephyr_integration_shared_08_lifecycle_init_py -.->|import_depends| src_zephyr_integration_shared_08_lifecycle_lazy_loader_py
     src_zephyr_integration_shared_08_lifecycle_init_py -.->|import_depends| src_zephyr_integration_shared_08_lifecycle_daemon_registry_py
     src_zephyr_integration_shared_08_lifecycle_init_py -.->|import_depends| src_zephyr_integration_shared_08_lifecycle_hooks_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_integration_shared_08_health_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_idempotency_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_limiter_py -.->|import_depends| D_SHARED
@@ -642,7 +642,7 @@ graph TD
     src_zephyr_integration_shared_08_foundation_constants_py -.->|import_depends| D_SHARED
     D_TRADING["D-TRADING production"]
     src_zephyr_integration_shared_08_lifecycle_daemon_registry_py -.->|import_depends| D_TRADING
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
@@ -677,7 +677,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_shared_08_logging_py["src/zephyr/integration/shared_08/logging.py prototype"]
         src_zephyr_integration_shared_08_metrics_py["src/zephyr/integration/shared_08/metrics.py prototype"]
         src_zephyr_integration_shared_08_migration_py["src/zephyr/integration/shared_08/migration.py production"]
@@ -716,16 +716,16 @@ graph TD
     src_zephyr_integration_shared_08_resilience_init_py -->|import_depends| src_zephyr_integration_shared_08_resilience_retry_py
     src_zephyr_integration_shared_08_security_init_py -.->|config_depends| src_zephyr_integration_shared_08_security_capability_py
     src_zephyr_integration_shared_08_utils_init_py -.->|import_depends| src_zephyr_integration_shared_08_utils_context_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_integration_shared_08_metrics_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_logging_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_observer_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_outbox_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_tracing_py -.->|import_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_security_capability_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_security_capability_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
@@ -759,7 +759,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_shared_08_utils_diff_utils_py["src/zephyr/integration/shared_08/utils/diff_uti... prototype"]
         src_zephyr_integration_shared_08_utils_migration_py["src/zephyr/integration/shared_08/utils/migratio... prototype"]
         src_zephyr_integration_shared_08_utils_pagination_py["src/zephyr/integration/shared_08/utils/paginati... prototype"]
@@ -817,7 +817,7 @@ graph TD
     src_zephyr_integration_vector_memory_init_py -.->|import_depends| src_zephyr_integration_vector_memory_interface_py
     src_zephyr_integration_vector_memory_init_py -.->|import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_init_py -.->|import_depends| src_zephyr_integration_vector_memory_ollama_embedding_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_integration_vector_memory_chunk_strategy_router_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_collection_manager_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_collection_schemas_py -.->|import_depends| D_SHARED
@@ -829,7 +829,7 @@ graph TD
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_retrieval_feedback_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_init_py -.->|import_depends| D_GOVERNANCE
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
@@ -863,7 +863,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION["D-INTEGRATION 管线路由"]
+    subgraph D_INTEGRATION["D_INTEGRATION 管线路由"]
         src_zephyr_integration_vector_memory_vector_bridge_py["src/zephyr/integration/vector_memory/vector_bri... prototype"]
         src_zephyr_integration_vector_memory_vms_config_yaml["src/zephyr/integration/vector_memory/vms_config... production"]
         src_zephyr_integration_vector_memory_vms_errors_py["src/zephyr/integration/vector_memory/vms_errors.py prototype"]
@@ -875,7 +875,7 @@ graph TD
         tests_integration_test_mcp_idle_timeout_py["tests/integration/test_mcp_idle_timeout.py production"]
         tests_integration_test_mcp_signal_shutdown_py["tests/integration/test_mcp_signal_shutdown.py production"]
     end
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_shared_shared_services_observability_02_token_utils_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_vms_schemas_py -.->|import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -893,15 +893,15 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-SHARED | 69 | import_depends |
+| D_SHARED | 69 | import_depends |
 | D-GOVERNANCE | 11 | config_depends,import_depends |
-| D-SECURITY | 4 | import_depends |
+| D_SECURITY | 4 | import_depends |
 | D-GOV_ENFORCEMENT | 3 | import_depends |
 | D-INTELLIGENCE | 3 | import_depends |
 | D-TRADING | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-AUTONOMY_CORE | 2 | import_depends |
-| D-OPS | 1 | import_depends |
+| D_AUTONOMY_CORE | 2 | import_depends |
+| D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -909,17 +909,17 @@ graph TD
 |------|:---:|---------|
 | D-GOVERNANCE | 230 | import_depends,test_depends |
 | D-TRADING | 49 | event,import_depends |
-| D-AUTONOMY_CORE | 24 | import_depends |
+| D_AUTONOMY_CORE | 24 | import_depends |
 | D_INFRA_RUNTIME | 20 | import_depends |
 | D-GOV_ENFORCEMENT | 13 | import_depends |
 | D-GOV_SCRIPTS | 13 | import_depends |
 | D-GOV_DOCS | 11 | import_depends |
-| D-SHARED | 7 | import_depends |
-| D-OPS | 6 | import_depends,runtime |
+| D_SHARED | 7 | import_depends |
+| D_OPS | 6 | import_depends,runtime |
 | D-INTELLIGENCE | 6 | import_depends |
 | D-GOV_AUDIT | 5 | import_depends |
-| D-BEHAVIORAL_AUDIT | 3 | import_depends |
-| D-SECURITY | 2 | import_depends |
+| D_BEHAVIORAL_AUDIT | 3 | import_depends |
+| D_SECURITY | 2 | import_depends |
 | D-SIMULATION | 2 | import_depends |
 | D-AUTONOMY_PERM | 2 | test_depends |
 | D_INFRA_RECOVERY | 2 | import_depends |
@@ -929,7 +929,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 管线路由（D-INTEGRATION）的模块分布。共 280 个模块 / 280 modules。
+> 按 architecture_layer 分层显示 管线路由（D_INTEGRATION）的模块分布。共 280 个模块 / 280 modules。
 
 ```
 

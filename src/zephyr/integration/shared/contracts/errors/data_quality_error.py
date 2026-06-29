@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-148 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared.contracts.errors.data_quality_error
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
 # [CONSUMERS]
 # [STARTUP] imported

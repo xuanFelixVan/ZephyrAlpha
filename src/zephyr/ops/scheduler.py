@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.scheduler
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.integrity; zephyr.behavioral_audit.drift_engine; zephyr.security.access_control.auto_fix_engine_03.__init__; zephyr.infrastructure.__init__; zephyr.integration.shared_08.event_bus; zephyr.autonomy_core.__init__; zephyr.governance.__init__
 # [CONSUMERS] ide_health_service.py; auto_runtime_core.py
 # [STARTUP] imported

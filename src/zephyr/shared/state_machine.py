@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-038 | docs/03_modules/_domain_infra_runtime/state_machine_engine/blueprint.md | §4
 # [MODULE] zephyr.shared.state_machine
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-TASK_SYSTEM(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-RESOURCE_OPTIMIZATION_ENGINE(resource);MOD-INF-015(telemetry);governance.drift_detection.state_machine;infrastructure_runtime_integration.auto_fix_engine.state_machine
 # [STARTUP] imported

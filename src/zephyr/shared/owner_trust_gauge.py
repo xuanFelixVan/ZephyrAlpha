@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.owner_trust_gauge
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

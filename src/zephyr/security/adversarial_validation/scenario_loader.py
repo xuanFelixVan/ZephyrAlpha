@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.2 + §16 Phase 0
 # [MODULE] zephyr.security.adversarial_validation.scenario_loader
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py; attack_registry.py; game_day_runner.py
 # [STARTUP] imported

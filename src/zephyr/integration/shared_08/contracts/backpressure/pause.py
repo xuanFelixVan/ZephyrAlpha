@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.integration.shared_08.contracts.backpressure.pause
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.__init__; zephyr.integration.shared_08.contracts.core.trace_context
 # [CONSUMERS] legacy imports via integration.shared_08.contracts
 # [STARTUP] imported

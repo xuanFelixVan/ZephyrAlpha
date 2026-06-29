@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.1
 # [MODULE] zephyr.integration.shared_08.contracts.runtime_types
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS] scripts.construction.start_brain;scripts.a2a_full_verification;scripts.construction.local_layer_daemon;zephyr.trading
 # [STARTUP] imported

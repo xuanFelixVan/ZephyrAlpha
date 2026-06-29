@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §vibe_coding_guard
 # [MODULE] zephyr.security.access_control.vibe_coding_guard
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests/agent_rbac/test_vibe_coding.py
 # [STARTUP] imported

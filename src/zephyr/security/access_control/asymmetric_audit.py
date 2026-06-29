@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.asymmetric_audit
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_asymmetric_audit; tests.agent_rbac.test_forensic_a
 # [STARTUP] imported

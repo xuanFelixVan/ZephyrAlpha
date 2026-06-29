@@ -214,7 +214,7 @@ graph TD
         tests_test_safety_gate_l42_l43_py["tests/test_safety_gate_l42_l43.py production"]
         tests_test_safety_gate_l44_l45_py["tests/test_safety_gate_l44_l45.py production"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_legal_audit_chain_py -.->|test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -261,9 +261,9 @@ graph TD
         tests_unit_vector_memory_test_vms_adversarial_injection_py["tests/unit/vector_memory/test_vms_adversarial_i... production"]
         tests_unit_vector_memory_test_vms_automation_py["tests/unit/vector_memory/test_vms_automation.py production"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_self_health_monitor_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_self_heal_agent_py -.->|test_depends| D_SECURITY
     tests_test_self_heal_agent_py -.->|test_depends| D_SECURITY
     D_GOV_AUDIT["D-GOV_AUDIT production"]
@@ -276,7 +276,7 @@ graph TD
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_audit_core_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_audit_core_py -.->|test_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_unit_resource_optimization_test_self_healing_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -308,11 +308,11 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOV_AUDIT | 7 | test_depends |
-| D-SECURITY | 3 | test_depends |
+| D_SECURITY | 3 | test_depends |
 | D-GOV_ENFORCEMENT | 2 | test_depends |
 | D-GOV_DRIFT | 1 | test_depends |
-| D-OPS | 1 | test_depends |
-| D-SHARED | 1 | test_depends |
+| D_OPS | 1 | test_depends |
+| D_SHARED | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

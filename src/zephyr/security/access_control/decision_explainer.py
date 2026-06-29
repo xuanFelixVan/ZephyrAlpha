@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.decision_explainer
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_decision_explainer_root; tests.agent_rbac.test_decision_explainer_agent_rbac; tests.unit.agent_rbac.test_rbac_core
 # [STARTUP] imported

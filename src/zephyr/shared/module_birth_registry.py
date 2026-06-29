@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.module_birth_registry
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.__init__; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

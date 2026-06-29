@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.diagnosers._reliability
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.diagnosers.__init__
 # [CONSUMERS] zephyr.observability.feedback_loop.diagnosers.__init__
 # [STARTUP] imported

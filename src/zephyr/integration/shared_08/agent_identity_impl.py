@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-150 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.agent_identity_impl
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.integration.shared_08.contracts.identity.agent_identity
 # [STARTUP] imported

@@ -311,12 +311,12 @@ def load_arch_constraints(project_root: str) -> list[dict]:
 
 domains_13 = [
     "D-PF_CORE",
-    "D-MKT_DATA",
+    "D_MKT_DATA",
     "D-RISK",
-    "D-INTEGRATION",
-    "D-OPS",
-    "D-SECURITY",
-    "D-AUTONOMY_CORE",
+    "D_INTEGRATION",
+    "D_OPS",
+    "D_SECURITY",
+    "D_AUTONOMY_CORE",
     "D-ML_TRAIN",
     "D-GOVERNANCE",
     "D-COMPLIANCE",

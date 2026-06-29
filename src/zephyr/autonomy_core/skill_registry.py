@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.skill_registry
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported

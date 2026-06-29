@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §L1
 # [MODULE] zephyr.security.access_control.orphan_judge.reference_graph_engine
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] orphan-judge.judge._run_layer L1
 # [STARTUP] imported

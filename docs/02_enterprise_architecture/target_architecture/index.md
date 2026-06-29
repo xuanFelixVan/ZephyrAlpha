@@ -64,21 +64,21 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-ALT_DATA` | 另类数据 | 8 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
-| `D-AUTONOMY_CORE` | agent_communication | 176 | A2A Card注册与发现(card_registry) |
-| `D-BEHAVIORAL_AUDIT` | 行为审计 | 79 | 行为审计域(从D-SECURITY拆出,behavioral_auditor) |
-| `D-DATA_ENG` | 数据工程(增值+融合+知识) | 7 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图 |
-| `D-DATA_GOV` | 数据治理(质量+血缘+参考) | 0 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数 |
-| `D-DATA_SEC` | 数据安全与契约 | 10 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验 |
-| `D-FRONTEND` | 前端 | 23 | Web界面、可视化看板、交互组件。人机交互入口。 |
-| `D-INTEGRATION` | pipeline_routing | 296 | M1-M11双管线路由 |
-| `D-INTEGRATION_GATEWAY` | mcp_servers | 0 | 11个MCP服务端 + 1 Gateway |
-| `D-MKT_DATA` | 行情数据(接入+存储) | 9 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一 |
-| `D-OPS` | feedback-loop | 433 | 反馈收集器(collectors) |
-| `D-REPORTING` | 报告 | 15 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
-| `D-SECURITY` | adversarial_validation | 244 | 红蓝对抗验证 |
-| `D-SECURITY_LLM` | llm_defense | 0 | L0供应链安全(模型验证/依赖扫描) |
-| `D-SHARED` | shared_services | 296 | 事件总线(event_bus) |
+| `D_ALT_DATA` | 另类数据 | 8 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
+| `D_AUTONOMY_CORE` | agent_communication | 176 | A2A Card注册与发现(card_registry) |
+| `D_BEHAVIORAL_AUDIT` | 行为审计 | 79 | 行为审计域(从D_SECURITY拆出,behavioral_auditor) |
+| `D_DATA_ENG` | 数据工程(增值+融合+知识) | 7 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图 |
+| `D_DATA_GOV` | 数据治理(质量+血缘+参考) | 0 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数 |
+| `D_DATA_SEC` | 数据安全与契约 | 10 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验 |
+| `D_FRONTEND` | 前端 | 23 | Web界面、可视化看板、交互组件。人机交互入口。 |
+| `D_INTEGRATION` | pipeline_routing | 296 | M1-M11双管线路由 |
+| `D_INTEGRATION_GATEWAY` | mcp_servers | 0 | 11个MCP服务端 + 1 Gateway |
+| `D_MKT_DATA` | 行情数据(接入+存储) | 9 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一 |
+| `D_OPS` | feedback-loop | 433 | 反馈收集器(collectors) |
+| `D_REPORTING` | 报告 | 15 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
+| `D_SECURITY` | adversarial_validation | 244 | 红蓝对抗验证 |
+| `D_SECURITY_LLM` | llm_defense | 0 | L0供应链安全(模型验证/依赖扫描) |
+| `D_SHARED` | shared_services | 296 | 事件总线(event_bus) |
 
 ### `L2_domain` (32域)
 

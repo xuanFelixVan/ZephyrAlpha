@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l6_data_flow
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.__init__
 # [CONSUMERS]
 # [STARTUP] imported

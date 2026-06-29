@@ -27,22 +27,22 @@ graph LR
     end
 
     subgraph L1_foundation["基础层 / Foundation"]
-        alt_data["D-ALT_DATA<br/>另类数据"]
-        data_eng["D-DATA_ENG<br/>数据工程"]
-        data_sec["D-DATA_SEC<br/>数据安全"]
+        alt_data["D_ALT_DATA<br/>另类数据"]
+        data_eng["D_DATA_ENG<br/>数据工程"]
+        data_sec["D_DATA_SEC<br/>数据安全"]
     end
 
     subgraph L1_platform["平台层 / Platform"]
-        autonomy["D-AUTONOMY_CORE<br/>自治核心"]
-        frontend["D-FRONTEND<br/>前端"]
-        integration["D-INTEGRATION<br/>集成"]
+        autonomy["D_AUTONOMY_CORE<br/>自治核心"]
+        frontend["D_FRONTEND<br/>前端"]
+        integration["D_INTEGRATION<br/>集成"]
     end
 
     subgraph L2_domain["业务域层 / Business Domain"]
         trading["D-TRADING<br/>交易运营"]
         backtest["D-BACKTEST<br/>回测"]
         risk["D-RISK<br/>风险"]
-        reporting["D-REPORTING<br/>报告"]
+        reporting["D_REPORTING<br/>报告"]
         compliance["D-COMPLIANCE<br/>合规"]
     end
 

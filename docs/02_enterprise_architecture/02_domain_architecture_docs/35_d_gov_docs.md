@@ -179,7 +179,7 @@ graph TD
     src_zephyr_governance_kb_extract_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_kb_extract_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_bootstrap_py -.->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_kb_chromadb_init_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_chromadb_init_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_embedding_migrate_py -.->|import_depends| D_GOVERNANCE
@@ -238,9 +238,9 @@ graph TD
     src_zephyr_governance_kb_pipeline_init_py -.->|config_depends| src_zephyr_governance_kb_pipeline_activate_py
     src_zephyr_governance_kb_sentiment_engine_init_py -.->|config_depends| src_zephyr_governance_kb_sentiment_engine_analyze_py
     src_zephyr_governance_kb_storage_backend_protocol_py -.->|config_depends| src_zephyr_governance_kb_storage_init_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
@@ -286,14 +286,14 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_governance_kb_unified_memory_api_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_vms_memory_backend_py -.->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_kb_storage_kb_repo_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_storage_kb_repo_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_storage_kb_repo_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_storage_kb_repo_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_storage_unified_memory_api_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_storage_unified_memory_api_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_kb_supply_chain_graph_engine_graph_validator_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_supply_chain_graph_engine_graph_validator_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_supply_chain_graph_engine_graph_validator_py -.->|import_depends| D_GOVERNANCE
@@ -313,8 +313,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 26 | import_depends,runtime |
-| D-SHARED | 19 | import_depends |
-| D-INTEGRATION | 11 | import_depends |
+| D_SHARED | 19 | import_depends |
+| D_INTEGRATION | 11 | import_depends |
 | D-GOV_ENFORCEMENT | 10 | import_depends |
 | D-INTELLIGENCE | 2 | import_depends |
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.olap_trend
-# [DOMAIN] D-FRONTEND
+# [DOMAIN] D_FRONTEND
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

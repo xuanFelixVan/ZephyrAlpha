@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.4
 # [MODULE] zephyr.security.access_control.orphan_judge.kb_bridge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.intelligence.model_evaluation.unified_memory_api
 # [CONSUMERS] orphan-judge.__main__._cmd_report; report_generator
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-AUTONOMY_CORE
 # [MODULE] zephyr.autonomy_core.vibe_coding_quality_gate
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] imported

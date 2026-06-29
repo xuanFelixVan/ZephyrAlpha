@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-190 | docs/03_modules/_cross_layer/shared-core/shared_infra_blueprint.md
 # [MODULE] zephyr.integration.shared_08.state_machine
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
 # [CONSUMERS] MOD-TASK_SYSTEM(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-RESOURCE_OPTIMIZATION_ENGINE(resource);MOD-INF-015(telemetry)
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-151 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contract_enforcer
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] none
 # [STARTUP] imported

@@ -1,10 +1,11 @@
 ---
 doc_type: construction_plan
-status: active
+status: completed
 title: "P2: shared_services proxy 层渐进式消除"
 module_id: "MOD-ARCH_PROXY_ELIM"
 version: "1.0.0"
 created: "2026-06-29"
+completed: "2026-06-29"
 ttl: task_bound
 completes_when: "24个proxy文件全部物理删除，~100处import指向真源，depgraph 24节点deprecated，capability_canonical_file_registry.yaml canonical指向真源，全量测试通过"
 ---
@@ -76,6 +77,25 @@ proxy 层违反三条核心原则：
 
 ## 六、进度追踪
 
-| 批次 | proxy 文件 | 引用数 | 状态 | commit |
-|------|-----------|--------|------|--------|
-| — | — | — | 未开始 | — |
+| 阶段 | 内容 | 状态 | commit |
+|------|------|------|--------|
+| 阶段1-迁移(src/) | 50 文件 import 替换 + 24 proxy 删除 | ✅ 完成 | 9ae4970995 |
+| 阶段1-迁移(tests/+scripts/+healthcheck) | 52 文件 import 替换(events 特殊映射+infrastructure 断引用修复) | ✅ 完成 | 9ae4970995 |
+| 阶段1-治本 | models.py pydantic forward reference 缺陷修复(human_gated,Owner 授权) | ✅ 完成 | 9ae4970995 |
+| 阶段2-canonical(B5) | auto 派生已指向真源(单候选); description 过时描述已修正 | ✅ 完成 | f07a62be5 |
+| 阶段3-bug(B3/B4) | proxy 已删,无需修(随阶段1消除) | ✅ N/A | — |
+| 阶段4-验证 | src/tests/scripts grep 零残留; 235 passed(5 历史失败非 P2 引入) | ✅ 完成 | — |
+| B7-depgraph | 24 proxy 节点 build_status -> deprecated(OK=24,SKIP=0,FAIL=0) | ✅ 完成 | PG(无文件变更) |
+
+## 七、完成摘要
+
+P2 `completes_when` 全部满足:
+- ✅ 24 proxy 文件物理删除(`src/zephyr/shared/shared_services/` 目录不存在)
+- ✅ ~100 处 import 指向真源(src/tests/scripts 三处 grep No matches)
+- ✅ depgraph 24 节点 deprecated(PG nodes.build_status='deprecated',边引用保留)
+- ✅ canonical 指向真源(auto 派生单候选 `src/zephyr/shared/session_continuity.py`)
+- ✅ 全量测试通过(235 passed; 5 历史失败为 blueprint_decomposer 内部逻辑,非 P2 引入)
+
+遗留(非 P2 范围):
+- 5 个 shared_services 相关节点未 deprecate(50971 event_bus path 指向真源; 4 个 token_utils path 字段过时)——属 depgraph 数据质量治理,非 proxy 消除
+- P3: integration/shared_08/ 第二层 proxy 消除(10 个 proxy 现指向真源但仍为 proxy 层)

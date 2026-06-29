@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.escalation.budget_alert
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.budget_enforcement.alerts;zephyr.infrastructure.budget_enforcement.bridges.alerts;zephyr.infrastructure.escalation
 # [STARTUP] imported

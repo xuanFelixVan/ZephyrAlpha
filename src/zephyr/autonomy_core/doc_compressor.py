@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.doc_compressor
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared_08.security.capability
 # [CONSUMERS]
 # [STARTUP] imported

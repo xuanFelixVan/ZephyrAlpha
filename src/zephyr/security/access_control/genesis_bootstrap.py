@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §genesis
 # [MODULE] zephyr.security.access_control.genesis_bootstrap
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] auto_runtime_core._bootstrap_rbac; boot_hooks._register_rbac_hooks
 # [STARTUP] imported

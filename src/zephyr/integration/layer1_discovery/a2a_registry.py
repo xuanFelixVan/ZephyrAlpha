@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION-GATEWAY
 # [MODULE] zephyr.integration.layer1_discovery.a2a_registry
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_registry
 # [CONSUMERS] zephyr.integration.layer1_discovery.__init__
 # [STARTUP] imported

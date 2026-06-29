@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §L3
 # [MODULE] zephyr.security.access_control.orphan_judge.unique_analyzer
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] orphan-judge.judge._run_layer L3
 # [STARTUP] imported

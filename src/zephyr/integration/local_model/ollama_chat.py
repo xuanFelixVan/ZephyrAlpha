@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.ollama_chat
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py; vector_memory_server.py
 # [STARTUP] imported

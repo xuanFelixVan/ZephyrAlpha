@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §7.1
 # [MODULE] zephyr.security.access_control.orphan_judge.feedback_bridge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(误判反馈)
 # [STARTUP] imported

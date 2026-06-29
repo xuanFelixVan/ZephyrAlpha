@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION-GATEWAY
 # [MODULE] zephyr.integration.layer2_communication.push_notifier
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_schemas
 # [CONSUMERS] zephyr.integration.layer2_communication.__init__
 # [STARTUP] imported

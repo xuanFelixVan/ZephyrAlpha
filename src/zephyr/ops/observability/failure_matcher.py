@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-124 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.observability.failure_matcher
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.observability.__init__
 # [CONSUMERS]
 # [STARTUP] imported

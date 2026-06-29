@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §7.2 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.circuit_breaker
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] game_day_runner.py; validator.py
 # [STARTUP] imported

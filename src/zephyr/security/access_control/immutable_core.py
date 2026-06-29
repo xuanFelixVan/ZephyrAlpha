@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §immutable_core
 # [MODULE] zephyr.security.access_control.immutable_core
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] genesis_bootstrap._phase_immutable_core
 # [STARTUP] imported

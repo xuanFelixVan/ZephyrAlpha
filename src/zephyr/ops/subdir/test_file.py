@@ -1,6 +1,6 @@
 # [BLUEPRINT] docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.subdir.test_file
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

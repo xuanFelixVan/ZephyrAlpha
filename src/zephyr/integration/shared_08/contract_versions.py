@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-152 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contract_versions
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.infra_06.observer
 # [CONSUMERS] zephyr.integration.shared_08.contracts.__init__; zephyr.integration.shared_08._contracts
 # [STARTUP] imported

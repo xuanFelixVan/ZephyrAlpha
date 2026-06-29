@@ -705,8 +705,8 @@ docs/  (包含1个文件: .yaml(1))
 │   │   ├── 12_d_frontend_architecture.md  — 前端架构图  
 │   │   ├── 13_d_integration.md  — 管线路由  
 │   │   ├── 13_d_integration_architecture.md  — 管线路由架构图  
-│   │   ├── 14_d_integration_gateway.md  — D-INTEGRATION_GATEWAY  
-│   │   ├── 14_d_integration_gateway_architecture.md  — D-INTEGRATION_GATEWAY架构图  
+│   │   ├── 14_d_integration_gateway.md  — D_INTEGRATION_GATEWAY  
+│   │   ├── 14_d_integration_gateway_architecture.md  — D_INTEGRATION_GATEWAY架构图  
 │   │   ├── 15_d_mkt_data.md  — 行情数据  
 │   │   ├── 15_d_mkt_data_architecture.md  — 行情数据架构图  
 │   │   ├── 16_d_ops.md  — 反馈循环  
@@ -715,8 +715,8 @@ docs/  (包含1个文件: .yaml(1))
 │   │   ├── 17_d_reporting_architecture.md  — 报告架构图  
 │   │   ├── 18_d_security.md  — 对抗验证  
 │   │   ├── 18_d_security_architecture.md  — 对抗验证架构图  
-│   │   ├── 19_d_security_llm.md  — D-SECURITY_LLM  
-│   │   ├── 19_d_security_llm_architecture.md  — D-SECURITY_LLM架构图  
+│   │   ├── 19_d_security_llm.md  — D_SECURITY_LLM  
+│   │   ├── 19_d_security_llm_architecture.md  — D_SECURITY_LLM架构图  
 │   │   ├── 20_d_shared.md  — 共享服务  
 │   │   ├── 20_d_shared_architecture.md  — 共享服务架构图  
 │   │   ├── 21_d_ashare_signal.md  — A股特色信号  

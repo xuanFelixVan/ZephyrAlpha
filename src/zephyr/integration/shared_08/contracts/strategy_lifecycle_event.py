@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.shared_08.contracts.strategy_lifecycle_event
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] tests.integration.test_phase_f_layers
 # [STARTUP] imported

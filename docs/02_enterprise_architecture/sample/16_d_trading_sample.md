@@ -90,7 +90,7 @@ graph TD
     risk_domain -->|风控规则| risk
 
     %% 跨域出边 / Cross-domain Outgoing
-    fill -->|成交记录| reporting["D-REPORTING 运营<br/>报告域"]
+    fill -->|成交记录| reporting["D_REPORTING 运营<br/>报告域"]
     pos -.->|持仓数据 设计态| backtest["D-BACKTEST 设计<br/>回测域"]
 
     %% 样式 / Styling
@@ -122,7 +122,7 @@ graph TD
 | 源域 | 依赖数 | 主要依赖类型 | Source Domain | Dependency Count | Main Type |
 |------|:---:|------|-------|:---:|------|
 | D-BACKTEST | 20 | 回测调用 / Backtest Call | D-BACKTEST | 20 | Backtest Call |
-| D-REPORTING | 8 | 报告数据 / Report Data | D-REPORTING | 8 | Report Data |
+| D_REPORTING | 8 | 报告数据 / Report Data | D_REPORTING | 8 | Report Data |
 | ... | ... | ... | ... | ... | ... |
 
 ---

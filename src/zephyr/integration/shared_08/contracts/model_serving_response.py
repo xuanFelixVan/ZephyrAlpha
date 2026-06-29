@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.shared_08.contracts.model_serving_response
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.integration.contracts.model_serving_response; tests.integration.test_phase_f_layers
 # [STARTUP] imported

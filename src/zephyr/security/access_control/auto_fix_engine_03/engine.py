@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.engine
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.batch_fixer; zephyr.security.access_control.auto_fix_engine_03.compliance_auditor; zephyr.security.access_control.auto_fix_engine_03.fix_budget; zephyr.security.access_control.auto_fix_engine_03.fix_diff; zephyr.security.access_control.auto_fix_engine_03.fix_health_check; zephyr.security.access_control.auto_fix_engine_03.fix_pattern_miner; zephyr.security.access_control.auto_fix_engine_03.fix_reliability; zephyr.security.access_control.auto_fix_engine_03.fix_report; zephyr.security.access_control.auto_fix_engine_03.fix_safety; zephyr.security.access_control.auto_fix_engine_03.models; zephyr.security.access_control.auto_fix_engine_03.shadow_workspace; zephyr.security.access_control.auto_fix_engine_03.state_machine; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__; zephyr.integration.shared_08.event_bus
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-judge);__main__.py
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.llm_gateway
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__
 # [CONSUMERS]
 # [STARTUP] imported

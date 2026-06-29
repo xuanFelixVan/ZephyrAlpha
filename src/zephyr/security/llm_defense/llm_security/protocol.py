@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.protocol
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.contracts.security.security_decision
 # [CONSUMERS]
 # [STARTUP] imported

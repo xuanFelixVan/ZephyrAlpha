@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-DATA_SEC
 # [MODULE] zephyr.data.persistence.sqlite_schema
-# [DOMAIN] D-DATA_SEC
+# [DOMAIN] D_DATA_SEC
 # [DEPENDENCIES] zephyr.governance.sqlite_schema
 # [CONSUMERS] zephyr.data.persistence.__init__
 # [STARTUP] imported

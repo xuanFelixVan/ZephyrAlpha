@@ -63,7 +63,7 @@ graph TD
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_TRADING
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
     src_zephyr_pf_core_strategy_portfolio_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_pf_alloc -.->|contract| D_SHARED
@@ -84,7 +84,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 2 | config_depends,import_depends |
-| D-SHARED | 2 | contract,import_depends |
+| D_SHARED | 2 | contract,import_depends |
 | D-TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

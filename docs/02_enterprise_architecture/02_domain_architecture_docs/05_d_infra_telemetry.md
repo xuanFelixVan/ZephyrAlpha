@@ -94,15 +94,15 @@ graph TD
     src_zephyr_infrastructure_session_init_py -->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -.->|import_depends| D_SHARED
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -.->|import_depends| D_OPS
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_system_telemetry_facade_py -->|import_depends| D_INFRA_RUNTIME
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py -->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_system_telemetry_init_py -->|import_depends| D_INFRA_RUNTIME
@@ -148,10 +148,10 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 12 | import_depends |
-| D-SHARED | 3 | import_depends |
-| D-BEHAVIORAL_AUDIT | 1 | import_depends |
+| D_SHARED | 3 | import_depends |
+| D_BEHAVIORAL_AUDIT | 1 | import_depends |
 | D-GOVERNANCE | 1 | import_depends |
-| D-OPS | 1 | import_depends |
+| D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

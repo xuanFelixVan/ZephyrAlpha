@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.reasoning_spans
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.ops.__init___from_obs; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

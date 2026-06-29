@@ -208,7 +208,7 @@ config/
 ├── domains/
 │   ├── D-INFRA.yaml               # 基础设施域配置
 │   ├── D-GOVERNANCE.yaml          # 治理域配置
-│   ├── D-SECURITY.yaml            # 安全域配置
+│   ├── D_SECURITY.yaml            # 安全域配置
 │   └── ... (61个域配置文件)
 └── README.md                      # 配置使用说明
 ```

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §5.1
 # [MODULE] zephyr.security.access_control.orphan_judge.config_loader
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.models
 # [CONSUMERS] orphan-judge.judge.OrphanJudge; 各checker初始化
 # [STARTUP] imported

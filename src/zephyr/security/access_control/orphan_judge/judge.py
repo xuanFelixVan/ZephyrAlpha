@@ -1,6 +1,6 @@
 # [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.judge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.duplicate_detector; zephyr.governance.rule_enforcement.gate_types
 # [CONSUMERS]
 # [STARTUP] imported

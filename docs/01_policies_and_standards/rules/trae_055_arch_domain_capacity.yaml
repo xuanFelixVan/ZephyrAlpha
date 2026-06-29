@@ -143,7 +143,7 @@ sections:
       fail: 域根目录下再套一层同名子目录（如 src/zephyr/behavioral_audit/behavioral_auditor/）
     - type: constraint
       check: 域命名与路径命名一致性
-      pass: domain_id 语义与 ssot_path 语义1:1映射（如 D-BEHAVIORAL_AUDIT ↔ src/zephyr/behavioral_audit/）
+      pass: domain_id 语义与 ssot_path 语义1:1映射（如 D_BEHAVIORAL_AUDIT ↔ src/zephyr/behavioral_audit/）
       fail: domain_id 与 ssot_path 语义不一致
     actions:
     - type: mandatory

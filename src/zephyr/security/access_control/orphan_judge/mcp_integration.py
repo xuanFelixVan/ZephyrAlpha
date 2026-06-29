@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §7.2
 # [MODULE] zephyr.governance.orphan_judgment.mcp_integration
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge; zephyr.governance.__init__
 # [CONSUMERS] MCP Server Tool Registry; FastMCP clients
 # [STARTUP] imported

@@ -302,20 +302,20 @@ def load_domain_derivation() -> dict:
     PATH_DOMAIN_FALLBACK = {
         # scripts/ — governance/utility scripts
         "scripts/governance/": "D-GOVERNANCE",
-        "scripts/data/": "D-DATA_ENG",
+        "scripts/data/": "D_DATA_ENG",
         "scripts/construction/": "D-GOVERNANCE",
-        "scripts/autonomy_core/": "D-AUTONOMY_CORE",
+        "scripts/autonomy_core/": "D_AUTONOMY_CORE",
         "scripts/cleanup/": "D-GOVERNANCE",
-        "scripts/connect/": "D-INTEGRATION",
-        "scripts/database/": "D-DATA_ENG",
+        "scripts/connect/": "D_INTEGRATION",
+        "scripts/database/": "D_DATA_ENG",
         "scripts/repair/": "D-GOVERNANCE",
         "scripts/": "D-GOVERNANCE",
         # data/ — data files and databases
-        "data/databases/": "D-DATA_ENG",
+        "data/databases/": "D_DATA_ENG",
         "data/asset_index/": "D-GOVERNANCE",
         "data/metrics/": "D-GOVERNANCE",
         "data/reports/": "D-GOVERNANCE",
-        "data/": "D-DATA_ENG",
+        "data/": "D_DATA_ENG",
         # docs/ — governance documentation
         "docs/03_modules/": "D-GOVERNANCE",
         "docs/01_policies_and_standards/": "D-GOVERNANCE",
@@ -326,7 +326,7 @@ def load_domain_derivation() -> dict:
         # config/ — configuration
         "config/": "D-GOVERNANCE",
         # agent_spec/ — agent specifications
-        "agent_spec/": "D-AUTONOMY_CORE",
+        "agent_spec/": "D_AUTONOMY_CORE",
     }
     for prefix, did in PATH_DOMAIN_FALLBACK.items():
         if prefix not in derivation:

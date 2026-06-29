@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-DATA_ENG 数据工程架构文档
+title: D_DATA_ENG 数据工程架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 09_d_data_eng / 数据工程
 
-> **文档作用 / Purpose**: 展示 数据工程（D-DATA_ENG）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 数据工程（D_DATA_ENG）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 09 | Number | 09 |
-| 域ID | D-DATA_ENG | Domain ID | D-DATA_ENG |
+| 域ID | D_DATA_ENG | Domain ID | D_DATA_ENG |
 | 域名称 | 数据工程 | Domain Name | 数据工程 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 7 | Module Count | 7 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_DATA_ENG["D-DATA_ENG 数据工程"]
+    subgraph D_DATA_ENG["D_DATA_ENG 数据工程"]
         src_zephyr_data_eng_init_py["src/zephyr/data_eng/__init__.py prototype"]
         src_zephyr_data_eng_extensions_init_py["src/zephyr/data_eng/_extensions/__init__.py prototype"]
         src_zephyr_data_eng_api_init_py["src/zephyr/data_eng/api/__init__.py prototype"]
@@ -74,7 +74,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数据工程（D-DATA_ENG）的模块分布。共 7 个模块 / 7 modules。
+> 按 architecture_layer 分层显示 数据工程（D_DATA_ENG）的模块分布。共 7 个模块 / 7 modules。
 
 ```
 

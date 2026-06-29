@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §
 # [MODULE] zephyr.integration.vector_memory.design_principles
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.vector_memory.collection_schemas; zephyr.integration.vector_memory.vms_errors; zephyr.integration.vector_memory.provenance_enforcer; zephyr.integration.vector_memory.vms_schemas
 # [CONSUMERS] collection_manager; in_process_vector_memory; faiss_collection_manager; tests
 # [STARTUP] imported

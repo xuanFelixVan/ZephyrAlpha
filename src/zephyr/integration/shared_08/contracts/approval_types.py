@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-154 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.approval_types
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.approval; zephyr.security.access_control.approver_check; zephyr.security.access_control.governance_bridges.approver_check
 # [STARTUP] imported

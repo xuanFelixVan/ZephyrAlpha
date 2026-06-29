@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit.drift_engine
-# [DOMAIN] D-BEHAVIORAL_AUDIT
+# [DOMAIN] D_BEHAVIORAL_AUDIT
 # [DEPENDENCIES] zephyr.behavioral_audit.drift_infrastructure; zephyr.behavioral_audit.drift_models; zephyr.governance.audit_trail.finding_model; zephyr.governance.audit_trail.__init__
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported

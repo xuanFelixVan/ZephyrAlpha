@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-OPS
 # [MODULE] zephyr.ops.metrics.blueprint_metrics
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] imported

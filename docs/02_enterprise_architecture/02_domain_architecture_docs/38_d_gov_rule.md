@@ -59,9 +59,9 @@ graph TD
         src_zephyr_governance_constitutional_update_constitutional_update_py["src/zephyr/governance/constitutional_update/con... production"]
         src_zephyr_governance_rule_engine_py["src/zephyr/governance/rule_engine.py production"]
     end
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_constitutional_update_constitutional_update_py -->|import_depends| D_INTEGRATION
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_constitutional_update_constitutional_update_py -->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_governance_rule_engine_py
@@ -85,8 +85,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INTEGRATION | 1 | import_depends |
-| D-SHARED | 1 | import_depends |
+| D_INTEGRATION | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

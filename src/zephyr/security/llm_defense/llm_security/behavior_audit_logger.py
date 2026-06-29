@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/llm_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.behavior_audit_logger
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.utils.time_utils; zephyr.governance.audit_trail.bridge
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §L0
 # [MODULE] zephyr.security.access_control.orphan_judge.registration_checker
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] orphan-judge.judge._run_layer L0
 # [STARTUP] imported

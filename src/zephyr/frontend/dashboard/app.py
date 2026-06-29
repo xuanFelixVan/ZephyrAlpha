@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.app
-# [DOMAIN] D-FRONTEND
+# [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] zephyr.infra_ops.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual

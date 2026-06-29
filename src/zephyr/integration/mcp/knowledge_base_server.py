@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.knowledge_base_server
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.governance.__init__; zephyr.integration.vector_memory.in_process_vector_memory
 # [CONSUMERS]
 # [STARTUP] manual

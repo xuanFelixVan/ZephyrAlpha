@@ -105,7 +105,7 @@ ttl: permanent
 
 | 能力域 | 类型 | 包含域 |
 |--------|:---:|--------|
-| 数据接入 | 业务 | D-MKT_DATA, D-ALT_DATA, D-DATA_ENG |
+| 数据接入 | 业务 | D_MKT_DATA, D_ALT_DATA, D_DATA_ENG |
 | 因子研究 | 业务 | D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC |
 | 策略决策 | 业务 | D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET |
 | 执行交易 | 业务 | D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION |
@@ -113,8 +113,8 @@ ttl: permanent
 | 回测仿真 | 业务 | D-BACKTEST, D-SIMULATION, D-EXEC_SIM, D-DIGITAL_TWIN |
 | ML平台 | 业务 | D-ML_TRAIN, D-ML_SERVE |
 | 治理（横切） | 横切 | D-GOVERNANCE, D-GOV_RULE, D-GOV_AUDIT, D-GOV_DRIFT, D-GOV_ENFORCEMENT, D-GOV_REPAIR, D-GOV_SCRIPTS |
-| 安全（横切） | 横切 | D-SECURITY, D-SECURITY_LLM, D-BEHAVIORAL_AUDIT, D-DATA_SEC, D-AUTONOMY_PERM |
-| 基础设施（横切） | 横切 | D_INFRA_OPS, D_INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION_GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS |
+| 安全（横切） | 横切 | D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D-AUTONOMY_PERM |
+| 基础设施（横切） | 横切 | D_INFRA_OPS, D_INFRA_RUNTIME, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D_AUTONOMY_CORE, D_OPS |
 
 
 ### 3.2 域成熟度快照（53域）
@@ -129,21 +129,21 @@ ttl: permanent
 | `D_INFRA_RECOVERY` | rollback_recovery | `L0_infrastructure` | 107 | 107 | 0 | 0 | L3+ |
 | `D_INFRA_RUNTIME` | runtime_integration | `L0_infrastructure` | 145 | 139 | 0 | 6 | L3+ |
 | `D_INFRA_TELEMETRY` | observability_profiling | `L0_infrastructure` | 51 | 51 | 0 | 0 | L3+ |
-| `D-ALT_DATA` | 另类数据 | `L1_foundation` | 8 | 1 | 0 | 7 | L3+ |
-| `D-AUTONOMY_CORE` | agent_communication | `L1_foundation` | 176 | 2 | 0 | 174 | L3+ |
-| `D-BEHAVIORAL_AUDIT` | 行为审计 | `L1_foundation` | 79 | 79 | 0 | 0 | L3+ |
-| `D-DATA_ENG` | 数据工程(增值+融合+知识) | `L1_foundation` | 7 | 0 | 0 | 7 | L2 |
-| `D-DATA_GOV` | 数据治理(质量+血缘+参考) | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
-| `D-DATA_SEC` | 数据安全与契约 | `L1_foundation` | 10 | 0 | 0 | 10 | L2 |
-| `D-FRONTEND` | 前端 | `L1_foundation` | 23 | 7 | 0 | 16 | L3+ |
-| `D-INTEGRATION` | pipeline_routing | `L1_foundation` | 296 | 70 | 0 | 226 | L3+ |
-| `D-INTEGRATION_GATEWAY` | mcp_servers | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
-| `D-MKT_DATA` | 行情数据(接入+存储) | `L1_foundation` | 9 | 1 | 0 | 8 | L3+ |
-| `D-OPS` | feedback-loop | `L1_foundation` | 433 | 24 | 1 | 408 | L3+ |
-| `D-REPORTING` | 报告 | `L1_foundation` | 15 | 1 | 0 | 14 | L3+ |
-| `D-SECURITY` | adversarial_validation | `L1_foundation` | 244 | 132 | 0 | 112 | L3+ |
-| `D-SECURITY_LLM` | llm_defense | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
-| `D-SHARED` | shared_services | `L1_foundation` | 296 | 93 | 0 | 203 | L3+ |
+| `D_ALT_DATA` | 另类数据 | `L1_foundation` | 8 | 1 | 0 | 7 | L3+ |
+| `D_AUTONOMY_CORE` | agent_communication | `L1_foundation` | 176 | 2 | 0 | 174 | L3+ |
+| `D_BEHAVIORAL_AUDIT` | 行为审计 | `L1_foundation` | 79 | 79 | 0 | 0 | L3+ |
+| `D_DATA_ENG` | 数据工程(增值+融合+知识) | `L1_foundation` | 7 | 0 | 0 | 7 | L2 |
+| `D_DATA_GOV` | 数据治理(质量+血缘+参考) | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
+| `D_DATA_SEC` | 数据安全与契约 | `L1_foundation` | 10 | 0 | 0 | 10 | L2 |
+| `D_FRONTEND` | 前端 | `L1_foundation` | 23 | 7 | 0 | 16 | L3+ |
+| `D_INTEGRATION` | pipeline_routing | `L1_foundation` | 296 | 70 | 0 | 226 | L3+ |
+| `D_INTEGRATION_GATEWAY` | mcp_servers | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
+| `D_MKT_DATA` | 行情数据(接入+存储) | `L1_foundation` | 9 | 1 | 0 | 8 | L3+ |
+| `D_OPS` | feedback-loop | `L1_foundation` | 433 | 24 | 1 | 408 | L3+ |
+| `D_REPORTING` | 报告 | `L1_foundation` | 15 | 1 | 0 | 14 | L3+ |
+| `D_SECURITY` | adversarial_validation | `L1_foundation` | 244 | 132 | 0 | 112 | L3+ |
+| `D_SECURITY_LLM` | llm_defense | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
+| `D_SHARED` | shared_services | `L1_foundation` | 296 | 93 | 0 | 203 | L3+ |
 | `D-ASHARE_SIGNAL` | ashare_signal | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
 | `D-AUDITTEST` | audit_test_suite | `L2_domain` | 152 | 142 | 0 | 10 | L3+ |
 | `D-AUTONOMY_PERM` | escalation | `L2_domain` | 70 | 2 | 1 | 67 | L3+ |

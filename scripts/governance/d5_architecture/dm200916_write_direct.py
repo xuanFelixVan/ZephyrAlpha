@@ -160,7 +160,7 @@ id_conventions:
     example: AGG-001
   - prefix: D-{{CATEGORY}}-{{NAME}}
     scope: depgraph.db domains表
-    example: D-MKT_DATA
+    example: D_MKT_DATA
     note: "§2.1裁定后域ID为唯一物理分类标识"
 """
 
@@ -308,9 +308,9 @@ capability_domains:
   name: 数据能力
   description: Market data ingestion / quality / PIT / survivorship / lineage
   primary_domains:
-  - D-MKT_DATA
-  - D-ALT_DATA
-  - D-DATA_ENG
+  - D_MKT_DATA
+  - D_ALT_DATA
+  - D_DATA_ENG
   investment_intensity: Critical
   investment_rationale: '§2.1裁定后从14层迁移到52域体系'
 - id: C2
@@ -373,7 +373,7 @@ capability_domains:
   name: 人机交互&研究
   description: Human-AI interface / research notebooks / CLI
   primary_domains:
-  - D-FRONTEND
+  - D_FRONTEND
   type: cross_cutting
   investment_intensity: High
   investment_rationale: '§2.1裁定后从14层迁移到52域体系'
@@ -381,7 +381,7 @@ capability_domains:
   name: 可观测性
   description: Metrics / logs / traces / ai_behavior
   primary_domains:
-  - D-OPS
+  - D_OPS
   type: cross_cutting
   investment_intensity: Medium
   investment_rationale: '§2.1裁定后从14层迁移到52域体系'
@@ -389,15 +389,15 @@ capability_domains:
   name: AI自治
   description: D家族系统 / ai_operator预留口子 / decision engine
   primary_domains:
-  - D-AUTONOMY_CORE
+  - D_AUTONOMY_CORE
   - D-AUTONOMY_PERM
   type: cross_cutting
   investment_intensity: High
   investment_rationale: '§2.1裁定后从14层迁移到52域体系'
 capabilities:
 - id: CAP-001
-  name: D-MKT_DATA × C1
-  domain: D-MKT_DATA
+  name: D_MKT_DATA × C1
+  domain: D_MKT_DATA
   capability: C1
   maturity: L2
   maturity_symbol: 🟡
@@ -484,8 +484,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-009
-  name: D-FRONTEND × CC1
-  domain: D-FRONTEND
+  name: D_FRONTEND × CC1
+  domain: D_FRONTEND
   capability: CC1
   maturity: L0
   maturity_symbol: ⚪
@@ -528,8 +528,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-013
-  name: D-OPS × CC2
-  domain: D-OPS
+  name: D_OPS × CC2
+  domain: D_OPS
   capability: CC2
   maturity: L1
   maturity_symbol: 🔵
@@ -550,8 +550,8 @@ capabilities:
   t1_target: L2
   gap_to_t1: 1
 - id: CAP-015
-  name: D-SHARED × C1
-  domain: D-SHARED
+  name: D_SHARED × C1
+  domain: D_SHARED
   capability: C1
   maturity: L2
   maturity_symbol: 🟡
@@ -561,8 +561,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 1
 - id: CAP-016
-  name: D-AUTONOMY_CORE × CC3
-  domain: D-AUTONOMY_CORE
+  name: D_AUTONOMY_CORE × CC3
+  domain: D_AUTONOMY_CORE
   capability: CC3
   maturity: L1
   maturity_symbol: 🔵
@@ -592,18 +592,18 @@ gap_analysis:
     capability: CAP-001
     from: L2
     to: L4
-    description: D-MKT_DATA × C1数据能力，T1硬阻塞
+    description: D_MKT_DATA × C1数据能力，T1硬阻塞
   p1_important:
   - gap_id: G-5
     capability: CAP-009
     from: L0
     to: L3
-    description: D-FRONTEND × CC1人机接口
+    description: D_FRONTEND × CC1人机接口
   - gap_id: G-6
     capability: CAP-013
     from: L1
     to: L3
-    description: D-OPS × CC2可观测性
+    description: D_OPS × CC2可观测性
   - gap_id: G-7
     capability: CAP-012
     from: L1
@@ -624,23 +624,23 @@ gap_analysis:
     capability: CAP-016
     from: L1
     to: L3
-    description: D-AUTONOMY_CORE × CC3 AI自治
+    description: D_AUTONOMY_CORE × CC3 AI自治
 target_states:
   t1_true_capital:
     description: 真实资金接入
     key_upgrades:
-    - 'D-MKT_DATA C1: L2 → L4'
+    - 'D_MKT_DATA C1: L2 → L4'
     - 'D-RISK C3: L1 → L4'
     - 'D-EX_CORE C5: L1 → L4'
     - 'D-COMPLIANCE C7: L2 → L4'
-    - 'D-OPS CC2: L1 → L3'
+    - 'D_OPS CC2: L1 → L3'
     total_score_target: 120
     avg_maturity_target: 2.93
   t3_ai_autonomy:
     description: AI自治升格
     key_upgrades:
-    - 'D-FRONTEND CC1: L0 → L3'
-    - 'D-AUTONOMY_CORE CC3: L1 → L4'
+    - 'D_FRONTEND CC1: L0 → L3'
+    - 'D_AUTONOMY_CORE CC3: L1 → L4'
     - 'D-ML_TRAIN C6: L1 → L4'
     total_score_target: 160
     avg_maturity_target: 3.9

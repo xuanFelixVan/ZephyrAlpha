@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security_01.process_sandbox
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.process_sandbox
 # [CONSUMERS]
 # [STARTUP] imported

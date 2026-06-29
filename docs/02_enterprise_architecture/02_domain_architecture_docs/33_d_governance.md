@@ -80,7 +80,7 @@ graph TD
         config_flags_yaml["config/flags.yaml production"]
         config_kb_parameters_yaml["config/kb_parameters.yaml production"]
     end
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|runtime| architecture_model_layers_b_llm_security_yaml
     D_OPS -.->|runtime| architecture_model_layers_b_gates_yaml
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -208,7 +208,7 @@ graph TD
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime| D_AUTONOMY_PERM
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract| D_AUTONOMY_CORE
     docs_03_modules_cross_layer_mcp_servers_blueprint_md -.->|contract| D_AUTONOMY_PERM
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
@@ -216,7 +216,7 @@ graph TD
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|contract| D_AUTONOMY_PERM
     D_GOV_DRIFT["D-GOV_DRIFT design"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_GOV_DRIFT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|contract| D_SECURITY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_INFRA_RUNTIME
@@ -286,12 +286,12 @@ graph TD
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     docs_03_modules_domain_infra_runtime_runtime_integration_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     docs_03_modules_sys_master_blueprint_md -.->|contract| D_AUTONOMY_CORE
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| D_AUTONOMY_CORE
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime| D_OPS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -357,9 +357,9 @@ graph TD
     scripts_governance_d5_architecture_checkers_check_orphan_outputs_py -.->|config_depends| scripts_governance_d5_architecture_checkers_init_py
     scripts_governance_d5_architecture_checkers_check_trace_context_propagation_py -.->|config_depends| scripts_governance_d5_architecture_checkers_init_py
     scripts_governance_d5_architecture_detectors_analyze_same_name_module_relations_py -.->|config_depends| scripts_governance_d5_architecture_detectors_init_py
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     scripts_governance_d5_architecture_audit_agent_spec_py -.->|import_depends| D_AUTONOMY_CORE
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|runtime| scripts_governance_d5_architecture_detectors_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -577,10 +577,10 @@ graph TD
     src_zephyr_governance_main_py -.->|import_depends| src_zephyr_governance_init_py
     src_zephyr_governance_adapters_init_py -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     src_zephyr_governance_adapters_init_py -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_governance_adversarial_tester_py -.->|import_depends| D_OPS
     src_zephyr_governance_adversarial_tester_py -.->|import_depends| D_OPS
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_service_registration_py -.->|import_depends| D_SHARED
     src_zephyr_governance_service_registration_py -.->|import_depends| D_SHARED
     D_TRADING["D-TRADING production"]
@@ -595,7 +595,7 @@ graph TD
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_init_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_init_py
     D_EX_CORE["D-EX_CORE prototype"]
@@ -672,9 +672,9 @@ graph TD
     src_zephyr_governance_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_governance_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_governance_analytics_base_py -.->|import_depends| D_TRADING
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_alerts_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_approval_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
@@ -695,7 +695,7 @@ graph TD
     D_GOV_AUDIT -->|import_depends| src_zephyr_governance_aisg_sandbox_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_audit_schema_py
     D_INTEGRATION -.->|import_depends| src_zephyr_governance_architecture_governance_path_resolver_py
-    D_REPORTING["D-REPORTING prototype"]
+    D_REPORTING["D_REPORTING prototype"]
     D_REPORTING -.->|import_depends| src_zephyr_governance_analytics_base_py
     D_REPORTING -.->|import_depends| src_zephyr_governance_analytics_base_py
     D_REPORTING -.->|import_depends| src_zephyr_governance_analytics_base_py
@@ -761,9 +761,9 @@ graph TD
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_session_lifecycle_py
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_audit_write_failure_protector_py -.->|import_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_base_repo_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_base_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| D_GOV_AUDIT
@@ -823,13 +823,13 @@ graph TD
     src_zephyr_governance_broker_interface_py -.->|import_depends| D_TRADING
     src_zephyr_governance_broker_interface_py -.->|import_depends| D_TRADING
     src_zephyr_governance_broker_interface_py -.->|import_depends| D_TRADING
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_governance_burn_rate_monitor_py -.->|import_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_compliance_map_py -.->|import_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_bridges_alerts_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_bridges_spec_auditor_py -.->|import_depends| D_INTEGRATION
     D_COMPLIANCE["D-COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_compliance_manager_py
@@ -895,12 +895,12 @@ graph TD
     src_zephyr_governance_context_governance_context_manager_py -.->|config_depends| src_zephyr_governance_context_governance_init_py
     src_zephyr_governance_context_governance_bandwidth_optimizer_py -.->|config_depends| src_zephyr_governance_context_governance_init_py
     src_zephyr_governance_context_governance_context_recycling_py -.->|config_depends| src_zephyr_governance_context_governance_init_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_context_budget_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_contracts_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_contracts_py -.->|import_depends| D_SHARED
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_governance_cost_attributor_py -.->|import_depends| D_OPS
     D_GOV_RULE["D-GOV_RULE production"]
     src_zephyr_governance_constitutional_update_init_py -.->|import_depends| D_GOV_RULE
@@ -956,13 +956,13 @@ graph TD
     src_zephyr_governance_data_governance_data_lifecycle_py -.->|config_depends| src_zephyr_governance_data_governance_init_py
     src_zephyr_governance_data_governance_data_quality_py -.->|config_depends| src_zephyr_governance_data_governance_init_py
     src_zephyr_governance_data_governance_data_source_reliability_py -.->|config_depends| src_zephyr_governance_data_governance_init_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_database_manager_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_database_manager_py -.->|import_depends| D_GOV_AUDIT
-    D_REPORTING["D-REPORTING prototype"]
+    D_REPORTING["D_REPORTING prototype"]
     src_zephyr_governance_default_attribution_engine_py -.->|import_depends| D_REPORTING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_default_security_gateway_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_default_security_gateway_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_default_security_gateway_py -.->|import_depends| D_INTEGRATION
@@ -971,10 +971,10 @@ graph TD
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_TRADING
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_default_quality_gate_py -.->|import_depends| D_SHARED
     src_zephyr_governance_delegation_engine_py -.->|import_depends| D_SECURITY
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_governance_degradation_manager_py -.->|import_depends| D_OPS
     D_COMPLIANCE["D-COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_default_security_gateway_py
@@ -1109,9 +1109,9 @@ graph TD
     src_zephyr_governance_drift_detection_scan_mutex_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_runbook_generator_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     src_zephyr_governance_drift_detection_state_machine_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_governance_drift_fix_py -.->|import_depends| D_SECURITY
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_drift_detection_state_machine_py -.->|import_depends| D_SHARED
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_drift_detection_tamper_proof_audit_py -.->|import_depends| D_GOV_AUDIT
@@ -1163,7 +1163,7 @@ graph TD
     end
     src_zephyr_governance_financial_governance_fsm_verifier_py -.->|config_depends| src_zephyr_governance_financial_governance_init_py
     src_zephyr_governance_financial_governance_financial_compliance_py -.->|config_depends| src_zephyr_governance_financial_governance_init_py
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_escalation_engine_py -.->|import_depends| D_SECURITY
     D_COMPLIANCE["D-COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_evidence_pack_py
@@ -1223,10 +1223,10 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
     src_zephyr_governance_finding_ingest_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_finding_ingest_py -.->|import_depends| D_GOV_AUDIT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_gate_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_governance_contracts_py -.->|import_depends| D_INTEGRATION
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_governance_contracts_py -.->|import_depends| D_SHARED
     src_zephyr_governance_governance_budget_handler_py -.->|import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1279,11 +1279,11 @@ graph TD
     src_zephyr_governance_intelligence_governance_model_drift_monitor_py -.->|config_depends| src_zephyr_governance_intelligence_governance_init_py
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_governance_ingest_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_ingest_py -.->|import_depends| D_INTEGRATION
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_governance_integration_hub_py -.->|import_depends| D_AUTONOMY_CORE
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_governance_governance_drift_fix_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_governance_rbac_bridge_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_governance_rbac_bridge_py -.->|import_depends| D_INTEGRATION
@@ -1347,11 +1347,11 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_kb_gate_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_lifecycle_py -.->|import_depends| D_GOV_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_llm_impact_analyzer_py -.->|import_depends| D_SECURITY
     D_GOV_DRIFT["D-GOV_DRIFT production"]
     src_zephyr_governance_merkle_audit_py -.->|import_depends| D_GOV_DRIFT
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_governance_model_router_py -.->|import_depends| D_OPS
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     src_zephyr_governance_model_router_py -.->|import_depends| D_INTELLIGENCE
@@ -1411,12 +1411,12 @@ graph TD
     src_zephyr_governance_ops_governance_startup_shutdown_py -.->|config_depends| src_zephyr_governance_ops_governance_init_py
     src_zephyr_governance_orphan_judgment_init_py -.->|import_depends| src_zephyr_governance_orphan_judgment_orphan_detector_py
     src_zephyr_governance_ops_governance_startup_shutdown_cli_py -.->|config_depends| src_zephyr_governance_ops_governance_init_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_performance_attribution_report_py -.->|import_depends| D_SHARED
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
@@ -1431,14 +1431,14 @@ graph TD
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_DRIFT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     src_zephyr_governance_persistence_circuit_breaker_types_py -.->|import_depends| D_OPS
     D_OPS -.->|import_depends| src_zephyr_governance_persistence_circuit_breaker_types_py
     D_OPS -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE["D-PF_CORE production"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_performance_attribution_engine_init_py
-    D_REPORTING["D-REPORTING prototype"]
+    D_REPORTING["D_REPORTING prototype"]
     D_REPORTING -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_REPORTING -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_TRADING["D-TRADING prototype"]
@@ -1501,14 +1501,14 @@ graph TD
     src_zephyr_governance_projection_engine_py -.->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_query_metrics_py -.->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_query_metrics_py -.->|import_depends| src_zephyr_governance_query_metrics_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     D_TRADING["D-TRADING production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_TRADING
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
     D_GOV_DRIFT["D-GOV_DRIFT production"]
@@ -1516,15 +1516,15 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_AUTONOMY_CORE
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_pipeline_base_py -.->|import_depends| D_SHARED
-    D_FRONTEND["D-FRONTEND production"]
+    D_FRONTEND["D_FRONTEND production"]
     D_FRONTEND -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_FRONTEND -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_persistence_task_repo_py
@@ -1598,7 +1598,7 @@ graph TD
     src_zephyr_governance_resilience_governance_incident_response_py -.->|config_depends| src_zephyr_governance_resilience_governance_init_py
     src_zephyr_governance_resilience_governance_fault_tolerance_py -.->|config_depends| src_zephyr_governance_resilience_governance_init_py
     src_zephyr_governance_resilience_governance_spof_checker_py -.->|config_depends| src_zephyr_governance_resilience_governance_init_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_result_types_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_rollback_audit_nexus_py -.->|import_depends| D_GOV_AUDIT
@@ -1655,7 +1655,7 @@ graph TD
     src_zephyr_governance_security_governance_init_py -.->|config_depends| src_zephyr_governance_security_governance_supply_chain_security_py
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_rollback_executor_py -.->|import_depends| D_GOV_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_rollback_executor_py -.->|import_depends| D_SECURITY
     D_COMPLIANCE["D-COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_security_gateway_base_py
@@ -1785,14 +1785,14 @@ graph TD
     src_zephyr_governance_strategy_registry_py -.->|import_depends| src_zephyr_governance_strategy_base_py
     src_zephyr_governance_strategies_init_py -.->|import_depends| src_zephyr_governance_strategies_default_equity_strategy_py
     src_zephyr_governance_strategies_default_equity_strategy_py -.->|import_depends| src_zephyr_governance_strategy_base_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_spec_auditor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_sqlite_dumper_py -.->|import_depends| D_INTEGRATION
     D_TRADING["D-TRADING production"]
     src_zephyr_governance_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
     D_PF_ALLOC["D-PF_ALLOC prototype"]
     src_zephyr_governance_strategy_engine_init_py -.->|import_depends| D_PF_ALLOC
-    D_DATA_SEC["D-DATA_SEC prototype"]
+    D_DATA_SEC["D_DATA_SEC prototype"]
     D_DATA_SEC -.->|import_depends| src_zephyr_governance_sqlite_schema_py
     D_PF_ALLOC -.->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE["D-PF_CORE production"]
@@ -1862,11 +1862,11 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_governance_tamper_evident_log_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_supply_chain_py -.->|import_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_task_repo_py -.->|import_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_governance_task_repo_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_task_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_task_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_task_repo_py -.->|import_depends| D_INTEGRATION
@@ -1938,13 +1938,13 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_governance_base_server_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_governance_transition_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_transition_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_triage_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_triage_py -.->|import_depends| D_INTEGRATION
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     src_zephyr_governance_triage_py -.->|import_depends| D_INTELLIGENCE
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_a2a_protocol_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
@@ -1999,18 +1999,18 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py
     src_zephyr_integration_governance_data_source_reliability_py -.->|config_depends| src_zephyr_integration_governance_init_py
     src_zephyr_integration_governance_data_source_router_init_py -.->|config_depends| src_zephyr_integration_governance_data_source_router_embedding_router_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_db_olap_engine_py_1 -.->|import_depends| D_INTEGRATION
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_INFRA_RUNTIME
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_SECURITY
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_INTEGRATION
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_SHARED
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_GOV_AUDIT
@@ -2024,7 +2024,7 @@ graph TD
     D_INFRA_A2A -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py
     D_INTEGRATION -.->|import_depends| src_zephyr_integration_mcp_governance_server_py
     D_INTEGRATION -.->|import_depends| src_zephyr_integration_mcp_governance_server_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_ops_evolution_prompt_factory_governance_py
     D_TRADING["D-TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_shared_capacity_governance_loop_py
@@ -2078,21 +2078,21 @@ graph TD
     tests_architecture_test_layer_isolation_py -.->|config_depends| tests_architecture_init_py
     tests_architecture_test_cross_module_contracts_py -.->|config_depends| tests_architecture_init_py
     tests_architecture_test_money_and_docs_py -.->|config_depends| tests_architecture_init_py
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_adversarial_test_agent_spec_e2e_py -.->|test_depends| D_AUTONOMY_CORE
     tests_adversarial_test_agent_spec_adversarial_py -.->|test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_INFRA_RUNTIME
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SECURITY
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SECURITY
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SECURITY
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SECURITY
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SECURITY
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_INTEGRATION
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_SHARED
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_INTEGRATION
@@ -2147,7 +2147,7 @@ graph TD
     tests_contract_test_contract_test_anchors_py -.->|config_depends| tests_contract_init_py
     tests_contract_test_import_chain_py -.->|config_depends| tests_contract_init_py
     tests_contract_contract_test_anchors_yaml -.->|config_depends| tests_contract_init_py
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_conftest_py -.->|test_depends| D_SECURITY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_asset_inventory_test_models_asset_inventory_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2222,7 +2222,7 @@ graph TD
     tests_contracts_test_ct_script_kb_001_py -.->|test_depends| D_TRADING
     tests_contracts_test_ct_tele_fle_001_py -.->|test_depends| D_TRADING
     tests_contracts_test_ct_orc_vms_001_py -.->|test_depends| D_TRADING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_SECURITY
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_SECURITY
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_SECURITY
@@ -2230,7 +2230,7 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_GOV_AUDIT
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_GOV_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2279,11 +2279,11 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_governance_test_gct_integration_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_governance_test_gct_integration_py -.->|test_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_governance_test_gct_integration_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_governance_test_gct_integration_py -.->|test_depends| D_SECURITY
     tests_governance_test_gct_integration_py -.->|test_depends| D_SECURITY
     tests_governance_test_gov_5system_integration_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2341,21 +2341,21 @@ graph TD
         tests_llm_security_test_l1_input_defense_py["tests/llm_security/test_l1_input_defense.py prototype"]
         tests_llm_security_test_l2_prompt_protection_py["tests/llm_security/test_l2_prompt_protection.py prototype"]
     end
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     tests_integration_test_akshare_real_data_py -.->|test_depends| D_MKT_DATA
     D_RISK["D-RISK production"]
     tests_integration_test_akshare_real_data_py -.->|test_depends| D_RISK
     tests_integration_test_akshare_real_data_py -.->|test_depends| D_RISK
     D_TRADING["D-TRADING production"]
     tests_integration_test_agent_e2e_py -.->|test_depends| D_TRADING
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_OPS
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_INTELLIGENCE
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_INTEGRATION
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_INTEGRATION
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_integration_test_beta_e2e_py -.->|test_depends| D_AUTONOMY_CORE
     tests_integration_test_beta_e2e_py -.->|test_depends| D_OPS
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -2364,7 +2364,7 @@ graph TD
     tests_integration_test_evolution_e2e_py -.->|test_depends| D_OPS
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_integration_test_gate_e2e_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_integration_test_gate_e2e_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2415,7 +2415,7 @@ graph TD
     tests_semantic_auditor_test_blast_radius_red_team_py -.->|config_depends| tests_semantic_auditor_init_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_a2a_card_registry_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_a2a_check_py -.->|test_depends| D_SECURITY
     tests_llm_security_test_l3_output_security_py -.->|test_depends| D_SECURITY
     tests_llm_security_test_l3_output_security_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2527,13 +2527,13 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_a2a_voting_py -.->|test_depends| D_INFRA_RUNTIME
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_ab_test_py -.->|test_depends| D_OPS
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_absence_manager_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_abac_guard_root_py -.->|test_depends| D_SECURITY
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_abac_guard_root_py -.->|test_depends| D_INTEGRATION
     tests_test_a2a_work_steal_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_action_composition_health_monitor_py -.->|test_depends| D_OPS
@@ -2590,15 +2590,15 @@ graph TD
         tests_test_alternative_path_blocker_py["tests/test_alternative_path_blocker.py prototype"]
         tests_test_amplification_guard_py["tests/test_amplification_guard.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_agent_creation_policy_py -.->|test_depends| D_SECURITY
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_agent_lifecycle_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_test_agent_health_monitor_root_py -.->|test_depends| D_TRADING
     tests_test_agent_orchestrator_root_py -.->|test_depends| D_TRADING
     tests_test_agent_skill_guard_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_agent_spec_main_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_agent_quality_py -.->|test_depends| D_TRADING
     tests_test_agent_spec_registry_py -.->|test_depends| D_AUTONOMY_CORE
@@ -2609,7 +2609,7 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_ai_code_standards_py -.->|test_depends| D_GOV_AUDIT
     tests_test_agent_trajectory_anomaly_detector_py -.->|test_depends| D_OPS
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_ai_context_injector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_ai_construction_detectors_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -2656,9 +2656,9 @@ graph TD
         tests_test_audit_api_lifecycle_py["tests/test_audit_api_lifecycle.py prototype"]
         tests_test_audit_bridge_py["tests/test_audit_bridge.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_anomaly_detector_py -.->|test_depends| D_SECURITY
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_anomaly_clustering_py -.->|test_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_anomaly_py -.->|test_depends| D_GOV_AUDIT
@@ -2667,11 +2667,11 @@ graph TD
     tests_test_anti_pattern_guard_root_py -.->|test_depends| D_SECURITY
     tests_test_approver_check_py -.->|test_depends| D_SECURITY
     tests_test_api_version_contract_py -.->|test_depends| D_OPS
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_approval_py -.->|test_depends| D_INTEGRATION
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_architecture_contracts_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_assembly_context_assembler_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_architecture_principles_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_architecture_context_loader_py -.->|test_depends| D_AUTONOMY_CORE
@@ -2730,7 +2730,7 @@ graph TD
     tests_test_audit_financial_compliance_py -.->|test_depends| D_GOV_AUDIT
     tests_test_audit_incremental_review_py -.->|test_depends| D_GOV_AUDIT
     tests_test_audit_indexer_py -.->|test_depends| D_GOV_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_audit_orphan_judge_e2e_py -.->|test_depends| D_SECURITY
     tests_test_audit_orphan_judge_e2e_py -.->|test_depends| D_SECURITY
     tests_test_audit_orphan_judge_e2e_py -.->|test_depends| D_SECURITY
@@ -2783,18 +2783,18 @@ graph TD
         tests_test_backup_manager_py["tests/test_backup_manager.py prototype"]
         tests_test_bandwidth_optimizer_py["tests/test_bandwidth_optimizer.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_automated_rca_postmortem_generator_py -.->|test_depends| D_OPS
     tests_test_autonomy_credit_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_test_autonomy_guard_py -.->|test_depends| D_TRADING
     tests_test_autonomy_maturity_py -.->|test_depends| D_OPS
     tests_test_autopilot_py -.->|test_depends| D_TRADING
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_autopilot_py -.->|test_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_autopilot_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_autopilot_py -.->|test_depends| D_INTEGRATION
     tests_test_autopilot_py -.->|test_depends| D_INTEGRATION
     tests_test_autopilot_py -.->|test_depends| D_INTEGRATION
@@ -2847,15 +2847,15 @@ graph TD
         tests_test_blueprint_scorer_py["tests/test_blueprint_scorer.py prototype"]
         tests_test_blueprint_validator_py["tests/test_blueprint_validator.py prototype"]
     end
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_baseline_poisoning_guard_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_base_repo_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_TRADING["D-TRADING production"]
     tests_test_batch_orchestrator_py -.->|test_depends| D_TRADING
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_behavioral_auditor_main_py -.->|test_depends| D_AUTONOMY_CORE
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_blast_radius_budget_py -.->|test_depends| D_OPS
     tests_test_benchmark_integrity_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_benchmark_runner_py -.->|test_depends| D_TRADING
@@ -2863,9 +2863,9 @@ graph TD
     tests_test_benchmark_suite_py -.->|test_depends| D_INTELLIGENCE
     tests_test_blast_radius_detector_py -.->|test_depends| D_OPS
     tests_test_blind_spot_closure_py -.->|test_depends| D_TRADING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_blind_spot_tracker_py -.->|test_depends| D_SECURITY
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_blueprint_code_sync_py -.->|test_depends| D_SHARED
     tests_test_blueprint_code_reconciler_py -.->|test_depends| D_OPS
     tests_test_blueprint_decomposer_py -.->|test_depends| D_SHARED
@@ -2916,12 +2916,12 @@ graph TD
     end
     D_TRADING["D-TRADING production"]
     tests_test_boot_cron_jobs_py -.->|test_depends| D_TRADING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_bootstrap_superadmin_py -.->|test_depends| D_SECURITY
     tests_test_bootstrap_verifier_py -.->|test_depends| D_SECURITY
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
@@ -2930,10 +2930,10 @@ graph TD
     tests_test_boot_hooks_py -.->|test_depends| D_TRADING
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_breaking_change_detector_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_boot_integrity_attestation_py -.->|test_depends| D_OPS
     tests_test_bridges_anomaly_py -.->|test_depends| D_GOV_AUDIT
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_brain_integration_root_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_bridges_delegation_bridge_py -.->|test_depends| D_GOV_AUDIT
     tests_test_bridges_contracts_py -.->|test_depends| D_GOV_AUDIT
@@ -2981,16 +2981,16 @@ graph TD
         tests_test_ce_integrity_check_py["tests/test_ce_integrity_check.py prototype"]
         tests_test_ce_playground_v2_py["tests/test_ce_playground_v2.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_cache_invalidation_py -.->|test_depends| D_AUTONOMY_CORE
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_burnout_alarm_py -.->|test_depends| D_OPS
     tests_test_canary_repair_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_test_canary_manager_py -.->|test_depends| D_TRADING
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_canary_controller_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_canary_rollout_manager_py -.->|test_depends| D_SECURITY
     tests_test_capability_check_py -.->|test_depends| D_SECURITY
     tests_test_capability_check_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3048,11 +3048,11 @@ graph TD
     end
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_changelog_manager_py -.->|test_depends| D_GOV_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_ce_vibe_shortcuts_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D-TRADING production"]
     tests_test_chaos_hooks_py -.->|test_depends| D_TRADING
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_chaos_engineering_py -.->|test_depends| D_OPS
     tests_test_chaos_engine_py -.->|test_depends| D_TRADING
     tests_test_chaos_engine_ops_py -.->|test_depends| D_TRADING
@@ -3060,9 +3060,9 @@ graph TD
     tests_test_check_type_registry_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_checkpoint_manager_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_citation_walker_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_circuit_breaker_manager_py -.->|test_depends| D_INTEGRATION
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_cli_summary_py -.->|test_depends| D_SHARED
     tests_test_circuit_breaker_root_py -.->|test_depends| D_SHARED
     tests_test_ci_cd_pre_scanner_py -.->|test_depends| D_OPS
@@ -3114,17 +3114,17 @@ graph TD
         tests_test_config_fixer_py["tests/test_config_fixer.py prototype"]
         tests_test_config_governance_py["tests/test_config_governance.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_cognitive_load_py -.->|test_depends| D_OPS
     tests_test_cognitive_load_budget_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_cold_start_lock_py -.->|test_depends| D_SECURITY
     tests_test_cold_start_lock_py -.->|test_depends| D_SECURITY
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_cold_start_py -.->|test_depends| D_GOV_AUDIT
     tests_test_cold_start_conservative_mode_py -.->|test_depends| D_OPS
     tests_test_collaborative_learning_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_cold_start_booster_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_collectors_py -.->|test_depends| D_OPS
     tests_test_complexity_budget_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3177,11 +3177,11 @@ graph TD
         tests_test_context_model_strategy_py["tests/test_context_model_strategy.py prototype"]
         tests_test_context_optimizer_py["tests/test_context_optimizer.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_config_hot_reload_guard_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_test_config_manager_py -.->|test_depends| D_TRADING
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_config_safety_guard_py -.->|test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_conflict_detector_py -.->|test_depends| D_INFRA_RUNTIME
@@ -3191,7 +3191,7 @@ graph TD
     tests_test_conformal_prediction_py -.->|test_depends| D_OPS
     tests_test_context_assembler_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_budget_tracker_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_context_engine_py -.->|test_depends| D_SHARED
     tests_test_context_engine_support_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_debt_score_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3241,18 +3241,18 @@ graph TD
         tests_test_correlation_engine_py["tests/test_correlation_engine.py prototype"]
         tests_test_cost_attributor_py["tests/test_cost_attributor.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_contextual_fetch_api_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_outcome_tracker_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_pipeline_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_playground_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_rule_registry_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_rot_model_root_py -.->|test_depends| D_AUTONOMY_CORE
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_context_truncation_py -.->|test_depends| D_OPS
     tests_test_context_value_attribution_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_context_window_contamination_detector_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_continuous_verifier_py -.->|test_depends| D_SECURITY
     tests_test_context_window_pressure_manager_py -.->|test_depends| D_OPS
     tests_test_contracts_py -.->|test_depends| D_SECURITY
@@ -3307,11 +3307,11 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_credibility_engine_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_counterfactual_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_cross_cutting_py -.->|test_depends| D_SECURITY
     tests_test_cross_blueprint_contract_drift_py -.->|test_depends| D_OPS
     tests_test_cross_module_integration_root_py -.->|test_depends| D_OPS
@@ -3374,7 +3374,7 @@ graph TD
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_ct_content_quality_py -.->|test_depends| D_INTEGRATION
     tests_test_ct_contract_compatibility_check_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_ct_contract_compatibility_check_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -3432,24 +3432,24 @@ graph TD
         tests_test_decision_fatigue_py["tests/test_decision_fatigue.py prototype"]
         tests_test_decision_fatigue_cli_py["tests/test_decision_fatigue_cli.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_cybersec_2026_guard_py -.->|test_depends| D_SECURITY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_data_classification_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_data_lifecycle_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_daemon_registry_py -.->|test_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_db_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_db_py -.->|test_depends| D_INTEGRATION
     tests_test_db_py -.->|test_depends| D_INTEGRATION
     tests_test_db_py -.->|test_depends| D_INTEGRATION
     tests_test_db_py -.->|test_depends| D_SHARED
     tests_test_db_py -.->|test_depends| D_SECURITY
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_data_quality_gate_py -.->|test_depends| D_OPS
     tests_test_data_source_reliability_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_data_volume_growth_monitor_py -.->|test_depends| D_OPS
@@ -3498,13 +3498,13 @@ graph TD
         tests_test_deterministic_replay_py["tests/test_deterministic_replay.py prototype"]
         tests_test_diagnosers_py["tests/test_diagnosers.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_decision_provenance_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_decision_registry_py -.->|test_depends| D_SECURITY
     D_TRADING["D-TRADING production"]
     tests_test_deferred_queue_py -.->|test_depends| D_TRADING
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_deferred_queue_py -.->|test_depends| D_SHARED
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     tests_test_deepseek_v4_chat_py -.->|test_depends| D_INTELLIGENCE
@@ -3515,11 +3515,11 @@ graph TD
     tests_test_delegation_bridge_py -.->|test_depends| D_GOV_AUDIT
     tests_test_dependency_auditor_py -.->|test_depends| D_SECURITY
     tests_test_dependency_graph_py -.->|test_depends| D_SHARED
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_dependency_manager_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_dependency_freshness_monitor_py -.->|test_depends| D_OPS
     tests_test_dependency_lock_py -.->|test_depends| D_TRADING
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_dependency_tracker_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -3565,14 +3565,14 @@ graph TD
         tests_test_drift_infrastructure_py["tests/test_drift_infrastructure.py prototype"]
         tests_test_drift_models_py["tests/test_drift_models.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_diagnosis_engine_py -.->|test_depends| D_OPS
     tests_test_diagnosis_kpi_py -.->|test_depends| D_OPS
     tests_test_digital_twin_sandbox_py -.->|test_depends| D_OPS
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_diff_planner_py -.->|test_depends| D_SHARED
     tests_test_diminishing_returns_detector_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_diff_injector_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D-TRADING production"]
     tests_test_disk_guard_py -.->|test_depends| D_TRADING
@@ -3629,11 +3629,11 @@ graph TD
         tests_test_e_gov_contracts_py["tests/test_e_gov_contracts.py prototype"]
         tests_test_e_gov_rbac_bridge_py["tests/test_e_gov_rbac_bridge.py prototype"]
     end
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_drift_result_types_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_dry_run_sandbox_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_dry_run_root_py -.->|test_depends| D_SECURITY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_dry_run_simulator_py -.->|test_depends| D_INFRA_RUNTIME
@@ -3641,7 +3641,7 @@ graph TD
     tests_test_e2e_integration_health_py -.->|test_depends| D_OPS
     tests_test_dynamic_llm_cost_router_py -.->|test_depends| D_OPS
     tests_test_dynamic_threshold_py -.->|test_depends| D_OPS
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_e_gov_contracts_py -.->|test_depends| D_SHARED
     tests_test_e_gov_budget_handler_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -3688,11 +3688,11 @@ graph TD
         tests_test_engine_sandbox_py["tests/test_engine_sandbox.py prototype"]
         tests_test_ensemble_detector_py["tests/test_ensemble_detector.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_embedding_version_lock_py -.->|test_depends| D_AUTONOMY_CORE
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_ebpf_monitor_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_emergency_override_py -.->|test_depends| D_SECURITY
     tests_test_emergency_takeover_py -.->|test_depends| D_OPS
     tests_test_engine_root_py -.->|test_depends| D_SECURITY
@@ -3751,14 +3751,14 @@ graph TD
         tests_test_event_store_py["tests/test_event_store.py prototype"]
         tests_test_event_store_stress_py["tests/test_event_store_stress.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_ensemble_drift_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_environment_manager_py -.->|test_depends| D_SECURITY
     tests_test_error_budget_py -.->|test_depends| D_OPS
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_escalation_contracts_py -.->|test_depends| D_INTEGRATION
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_escalation_contracts_py -.->|test_depends| D_SHARED
     tests_test_escalation_bridge_py -.->|test_depends| D_SECURITY
     tests_test_escalation_bridge_py -.->|test_depends| D_SECURITY
@@ -3815,11 +3815,11 @@ graph TD
         tests_test_federated_protocol_py["tests/test_federated_protocol.py prototype"]
         tests_test_federated_security_py["tests/test_federated_security.py prototype"]
     end
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_events_ba_py -.->|test_depends| D_SHARED
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_evidence_pack_py -.->|test_depends| D_GOV_AUDIT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_evolution_engine_root_py -.->|test_depends| D_OPS
     tests_test_evolution_init_py -.->|test_depends| D_OPS
     tests_test_ewc_kb_review_py -.->|test_depends| D_OPS
@@ -3827,7 +3827,7 @@ graph TD
     tests_test_exam_orchestrator_py -.->|test_depends| D_INTELLIGENCE
     tests_test_exam_orchestrator_py -.->|test_depends| D_INTELLIGENCE
     tests_test_exam_orchestrator_py -.->|test_depends| D_INTELLIGENCE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_exceptions_root_py -.->|test_depends| D_SECURITY
     tests_test_execution_tuner_py -.->|test_depends| D_SHARED
     tests_test_exam_test_cases_py -.->|test_depends| D_INTELLIGENCE
@@ -3883,13 +3883,13 @@ graph TD
     tests_test_feedback_loop_py -.->|test_depends| D_TRADING
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_feedback_bridge_py -.->|test_depends| D_GOV_AUDIT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_feedback_delay_compensator_py -.->|test_depends| D_OPS
     tests_test_feedback_collector_root_py -.->|test_depends| D_OPS
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_file_attr_checker_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_feedback_policy_py -.->|test_depends| D_GOV_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_file_autoregister_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_feedback_self_audit_py -.->|test_depends| D_GOV_AUDIT
     tests_test_file_autorregister_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3945,7 +3945,7 @@ graph TD
         tests_test_fl_eval_harness_py["tests/test_fl_eval_harness.py prototype"]
         tests_test_fl_evolution_engine_py["tests/test_fl_evolution_engine.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_fl_anomaly_detector_py -.->|test_depends| D_OPS
     tests_test_fl_api_version_contract_py -.->|test_depends| D_OPS
     tests_test_fl_autonomy_maturity_py -.->|test_depends| D_OPS
@@ -4005,7 +4005,7 @@ graph TD
         tests_test_fl_template_py["tests/test_fl_template.py prototype"]
         tests_test_fl_validator_py["tests/test_fl_validator.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_fl_exceptions_py -.->|test_depends| D_OPS
     tests_test_fl_federated_security_py -.->|test_depends| D_OPS
     tests_test_fl_fitness_functions_py -.->|test_depends| D_OPS
@@ -4065,7 +4065,7 @@ graph TD
         tests_test_fsm_verifier_py["tests/test_fsm_verifier.py prototype"]
         tests_test_function_discovery_py["tests/test_function_discovery.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_flag_lifecycle_py -.->|test_depends| D_OPS
     tests_test_flapping_detector_py -.->|test_depends| D_OPS
     tests_test_fle_anomaly_detector_py -.->|test_depends| D_OPS
@@ -4125,13 +4125,13 @@ graph TD
         tests_test_governance_a2a_check_py["tests/test_governance_a2a_check.py prototype"]
         tests_test_governance_approver_check_py["tests/test_governance_approver_check.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_gamification_py -.->|test_depends| D_OPS
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_gate_health_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_override_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_types_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_gate_types_py -.->|test_depends| D_INTEGRATION
     tests_test_gate_context_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_integrity_guard_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -4140,7 +4140,7 @@ graph TD
     tests_test_gate_simulator_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_pipeline_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_pipeline_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_gate_persistence_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_gen_inherited_py -.->|test_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT production"]
@@ -4189,17 +4189,17 @@ graph TD
         tests_test_health_probes_root_py["tests/test_health_probes_root.py prototype"]
         tests_test_healthcheck_service_py["tests/test_healthcheck_service.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_governance_bootstrap_superadmin_py -.->|test_depends| D_SECURITY
     tests_test_governance_contracts_py -.->|test_depends| D_SECURITY
     tests_test_governance_capability_check_py -.->|test_depends| D_SECURITY
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_governance_capability_check_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_governance_drift_fix_py -.->|test_depends| D_SHARED
     D_TRADING["D-TRADING production"]
     tests_test_gpu_consensus_scheduler_py -.->|test_depends| D_TRADING
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_gradual_poisoning_detector_py -.->|test_depends| D_OPS
     tests_test_graceful_degradation_planner_py -.->|test_depends| D_OPS
     tests_test_guard_cascade_detector_py -.->|test_depends| D_OPS
@@ -4253,18 +4253,18 @@ graph TD
         tests_test_infra_lock_py["tests/test_infra_lock.py prototype"]
         tests_test_infra_observer_py["tests/test_infra_observer.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_heisenbug_detector_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_host_resource_governor_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_hook_dispatcher_py -.->|test_depends| D_SHARED
     tests_test_hook_dispatcher_py -.->|test_depends| D_SHARED
     tests_test_hooks_py -.->|test_depends| D_SHARED
     D_TRADING["D-TRADING production"]
     tests_test_housekeeping_py -.->|test_depends| D_TRADING
     tests_test_human_anomaly_flood_detector_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_immutable_core_root_py -.->|test_depends| D_SECURITY
     tests_test_impact_predictor_py -.->|test_depends| D_OPS
     tests_test_impact_propagator_py -.->|test_depends| D_SHARED
@@ -4319,12 +4319,12 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_infrastructure_base_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_input_guard_root_py -.->|test_depends| D_SECURITY
     tests_test_input_guard_root_py -.->|test_depends| D_SECURITY
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_infra_outbox_py -.->|test_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_infra_outbox_py -.->|test_depends| D_INTEGRATION
     tests_test_integration_root_py -.->|test_depends| D_SECURITY
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
@@ -4333,9 +4333,9 @@ graph TD
     tests_test_integration_registry_py -.->|test_depends| D_TRADING
     D_GOV_DRIFT["D-GOV_DRIFT production"]
     tests_test_integrity_root_py -.->|test_depends| D_GOV_DRIFT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_integration_test_pipeline_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_integrity_check_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_intent_keyword_mapper_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_integrity_self_check_py -.->|test_depends| D_SECURITY
@@ -4392,7 +4392,7 @@ graph TD
     tests_test_kb_activate_py -.->|test_depends| D_INTELLIGENCE
     tests_test_kb_analyze_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_kb_analyze_py -.->|test_depends| D_INTELLIGENCE
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     tests_test_kb_chromadb_init_py -.->|test_depends| D_MKT_DATA
     tests_test_kb_extract_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_GOV_AUDIT["D-GOV_AUDIT production"]
@@ -4449,17 +4449,17 @@ graph TD
         tests_test_llm_cost_accounting_py["tests/test_llm_cost_accounting.py prototype"]
         tests_test_llm_cost_router_py["tests/test_llm_cost_router.py prototype"]
     end
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_kms_interface_py -.->|test_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_kiss_enforcer_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_knowledge_capture_py -.->|test_depends| D_OPS
     tests_test_knowledge_bus_factor_monitor_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_knowledge_distiller_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_knowledge_distillation_py -.->|test_depends| D_OPS
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     tests_test_knowledge_engine_py -.->|test_depends| D_MKT_DATA
     D_TRADING["D-TRADING production"]
     tests_test_knowledge_freshness_py -.->|test_depends| D_TRADING
@@ -4469,7 +4469,7 @@ graph TD
     tests_test_knowledge_packaging_py -.->|test_depends| D_OPS
     tests_test_known_unknown_registry_py -.->|test_depends| D_OPS
     tests_test_latency_slo_py -.->|test_depends| D_OPS
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_layer_consumer_registry_py -.->|test_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -4515,26 +4515,26 @@ graph TD
         tests_test_merkle_audit_py["tests/test_merkle_audit.py prototype"]
         tests_test_merkle_audit_root_py["tests/test_merkle_audit_root.py prototype"]
     end
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_llm_gateway_py -.->|test_depends| D_INTEGRATION
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_llm_quality_regression_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_llm_fix_adapter_py -.->|test_depends| D_SECURITY
     tests_test_llm_fix_adapter_py -.->|test_depends| D_SECURITY
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_llm_impact_analyzer_py -.->|test_depends| D_SHARED
     tests_test_llm_provider_integrity_py -.->|test_depends| D_OPS
     tests_test_log_anomaly_py -.->|test_depends| D_OPS
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_local_first_arch_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_maintenance_coordinator_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_lsg_pattern_tracker_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_log_rotation_py -.->|test_depends| D_GOV_AUDIT
     tests_test_market_calendar_py -.->|test_depends| D_OPS
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     tests_test_market_data_pipeline_py -.->|test_depends| D_MKT_DATA
     tests_test_memory_bank_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_mcp_adapter_py -.->|test_depends| D_INFRA_RUNTIME
@@ -4587,17 +4587,17 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_merkle_hourly_py -.->|test_depends| D_GOV_AUDIT
     tests_test_metadata_py -.->|test_depends| D_INFRA_RUNTIME
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_meta_performance_gate_py -.->|test_depends| D_OPS
     tests_test_meta_guard_latency_budget_py -.->|test_depends| D_OPS
     tests_test_metric_prompt_scanner_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_mgmt_context_evictor_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_metric_cardinality_guard_py -.->|test_depends| D_OPS
     tests_test_mgmt_context_budget_tracker_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_mgmt_context_budget_tracker_py -.->|test_depends| D_SHARED
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_microstructure_defense_py -.->|test_depends| D_SECURITY
     tests_test_mgmt_context_rot_model_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_models_root_py -.->|test_depends| D_SECURITY
@@ -4647,9 +4647,9 @@ graph TD
         tests_test_offline_resilience_py["tests/test_offline_resilience.py prototype"]
         tests_test_oms_risk_engine_py["tests/test_oms_risk_engine.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_monotonic_clock_py -.->|test_depends| D_SECURITY
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_mtti_tracker_py -.->|test_depends| D_OPS
     tests_test_multi_agent_collusion_detector_py -.->|test_depends| D_SECURITY
     tests_test_multi_agent_orchestrator_py -.->|test_depends| D_OPS
@@ -4658,7 +4658,7 @@ graph TD
     tests_test_multi_agent_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_multi_signal_correlator_py -.->|test_depends| D_OPS
     tests_test_multi_model_consensus_py -.->|test_depends| D_INFRA_RUNTIME
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_naming_magic_checker_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_native_api_guard_py -.->|test_depends| D_SECURITY
     D_TRADING["D-TRADING production"]
@@ -4666,7 +4666,7 @@ graph TD
     tests_test_night_shift_queue_py -.->|test_depends| D_TRADING
     tests_test_nonstationary_effectiveness_py -.->|test_depends| D_OPS
     tests_test_notification_feedback_py -.->|test_depends| D_OPS
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_notifier_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -4712,7 +4712,7 @@ graph TD
         tests_test_parsing_intent_parser_py["tests/test_parsing_intent_parser.py prototype"]
         tests_test_path_guard_py["tests/test_path_guard.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_openfeature_py -.->|test_depends| D_OPS
     tests_test_operational_seasonality_py -.->|test_depends| D_OPS
     tests_test_online_feature_importance_py -.->|test_depends| D_OPS
@@ -4726,11 +4726,11 @@ graph TD
     tests_test_orchestrator_task_queue_py -.->|test_depends| D_TRADING
     tests_test_orchestrator_rollback_manager_py -.->|test_depends| D_TRADING
     tests_test_orchestrator_trigger_router_py -.->|test_depends| D_TRADING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_orphan_detector_py -.->|test_depends| D_SECURITY
     tests_test_orphan_detector_py -.->|test_depends| D_TRADING
     tests_test_orchestrator_wave_generator_py -.->|test_depends| D_TRADING
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_orphan_scanner_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -4778,16 +4778,16 @@ graph TD
     end
     D_TRADING["D-TRADING production"]
     tests_test_path_index_py -.->|test_depends| D_TRADING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_permission_hooks_py -.->|test_depends| D_SECURITY
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_pattern_library_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_permission_mode_manager_py -.->|test_depends| D_SECURITY
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_performance_baseline_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_phase_planner_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_phase_executor_root_py -.->|test_depends| D_TRADING
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_pipeline_agent_bridge_py -.->|test_depends| D_INTEGRATION
     tests_test_pipeline_agent_bridge_py -.->|test_depends| D_TRADING
     tests_test_pipeline_roadmap_py -.->|test_depends| D_INTEGRATION
@@ -4840,13 +4840,13 @@ graph TD
         tests_test_provider_failover_py["tests/test_provider_failover.py prototype"]
         tests_test_push_notifier_py["tests/test_push_notifier.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_post_action_verifier_py -.->|test_depends| D_SECURITY
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_post_process_root_py -.->|test_depends| D_GOV_AUDIT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_preventive_repair_py -.->|test_depends| D_OPS
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_preemption_manager_py -.->|test_depends| D_INTEGRATION
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_preemption_manager_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -4861,7 +4861,7 @@ graph TD
     tests_test_prompt_lifecycle_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_prompt_self_optimization_loop_py -.->|test_depends| D_OPS
     tests_test_prompt_sanitizer_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_progressive_disclosure_injector_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -4907,7 +4907,7 @@ graph TD
         tests_test_resilience_fallback_py["tests/test_resilience_fallback.py prototype"]
         tests_test_resilience_retry_py["tests/test_resilience_retry.py prototype"]
     end
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_python_compat_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
@@ -4915,21 +4915,21 @@ graph TD
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_pydantic_v2_migrator_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_quality_monitor_py -.->|test_depends| D_SHARED
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_rational_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_rbac_guard_root_py -.->|test_depends| D_SECURITY
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_rbac_guard_root_py -.->|test_depends| D_INTEGRATION
     tests_test_rbac_audit_bridge_py -.->|test_depends| D_SECURITY
     tests_test_reconciler_root_py -.->|test_depends| D_INFRA_RUNTIME
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     tests_test_realtime_streaming_py -.->|test_depends| D_MKT_DATA
     D_TRADING["D-TRADING production"]
     tests_test_reconciliation_loop_py -.->|test_depends| D_TRADING
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_recovery_time_stats_py -.->|test_depends| D_OPS
     tests_test_recursive_diagnosis_trust_evaluator_py -.->|test_depends| D_OPS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -4976,13 +4976,13 @@ graph TD
         tests_test_rollback_drill_py["tests/test_rollback_drill.py prototype"]
         tests_test_rollback_executor_root_py["tests/test_rollback_executor_root.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_resolution_tracker_py -.->|test_depends| D_OPS
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_resource_optimization_engine_py -.->|test_depends| D_SHARED
     tests_test_resource_optimization_engine_py -.->|test_depends| D_SHARED
     tests_test_resource_optimization_models_py -.->|test_depends| D_SHARED
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_resource_guard_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_TRADING["D-TRADING production"]
     tests_test_resource_optimization_py -.->|test_depends| D_TRADING
@@ -5042,11 +5042,11 @@ graph TD
         tests_test_scaffold_registrar_py["tests/test_scaffold_registrar.py prototype"]
         tests_test_scan_mutex_py["tests/test_scan_mutex.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_rollback_integrity_py -.->|test_depends| D_OPS
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_rollback_sandbox_py -.->|test_depends| D_SECURITY
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_routing_plugins_py -.->|test_depends| D_INTEGRATION
     D_TRADING["D-TRADING production"]
     tests_test_rolling_upgrade_py -.->|test_depends| D_TRADING
@@ -5061,7 +5061,7 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_sbom_generator_py -.->|test_depends| D_GOV_AUDIT
     tests_test_sbom_generator_py -.->|test_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_saga_compensator_py -.->|test_depends| D_SHARED
     tests_test_scaffold_registrar_py -.->|test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -5108,7 +5108,7 @@ graph TD
         tests_test_self_diagnosis_data_leak_detector_py["tests/test_self_diagnosis_data_leak_detector.py prototype"]
         tests_test_self_evolution_fidelity_gate_py["tests/test_self_evolution_fidelity_gate.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_scheduler_act_py -.->|test_depends| D_OPS
     tests_test_scheduler_health_py -.->|test_depends| D_OPS
     tests_test_scheduler_collect_detect_py -.->|test_depends| D_OPS
@@ -5117,7 +5117,7 @@ graph TD
     tests_test_scheduler_safety_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_test_schema_migration_py -.->|test_depends| D_TRADING
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_schema_schemas_py -.->|test_depends| D_INTEGRATION
     tests_test_schema_schemas_py -.->|test_depends| D_INTEGRATION
     tests_test_schema_evolution_root_py -.->|test_depends| D_OPS
@@ -5127,7 +5127,7 @@ graph TD
     tests_test_secondary_alert_channel_py -.->|test_depends| D_OPS
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_secrets_guard_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_scope_guard_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -5173,11 +5173,11 @@ graph TD
         tests_test_session_manager_py["tests/test_session_manager.py prototype"]
         tests_test_session_smuggling_defense_py["tests/test_session_smuggling_defense.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_self_modification_rate_limiter_py -.->|test_depends| D_OPS
     tests_test_self_modification_audit_py -.->|test_depends| D_OPS
     tests_test_self_ha_py -.->|test_depends| D_OPS
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_self_test_verifier_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_self_reflection_py -.->|test_depends| D_OPS
     D_GOV_DRIFT["D-GOV_DRIFT production"]
@@ -5186,15 +5186,15 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_semantic_auditor_py -.->|test_depends| D_GOV_AUDIT
     tests_test_semantic_intent_preservation_guard_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_sensitivity_classifier_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_sequence_guard_root_py -.->|test_depends| D_SECURITY
     tests_test_session_concurrency_py -.->|test_depends| D_SECURITY
     tests_test_serialization_format_tracker_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_test_session_conflict_py -.->|test_depends| D_TRADING
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_session_boundary_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -5240,13 +5240,13 @@ graph TD
         tests_test_skill_efficacy_calibrator_py["tests/test_skill_efficacy_calibrator.py prototype"]
         tests_test_skill_evaluator_py["tests/test_skill_evaluator.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_shadow_canary_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_shadow_workspace_py -.->|test_depends| D_SECURITY
     tests_test_shadow_workspace_py -.->|test_depends| D_SECURITY
     tests_test_shell_dialect_detector_py -.->|test_depends| D_SECURITY
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_silent_corruption_detector_py -.->|test_depends| D_OPS
     tests_test_sim2real_calibration_py -.->|test_depends| D_OPS
     tests_test_skill_attention_py -.->|test_depends| D_AUTONOMY_CORE
@@ -5302,7 +5302,7 @@ graph TD
         tests_test_skill_security_py["tests/test_skill_security.py prototype"]
         tests_test_skill_shadow_py["tests/test_skill_shadow.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_explain_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_executor_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_factory_py -.->|test_depends| D_AUTONOMY_CORE
@@ -5362,16 +5362,16 @@ graph TD
         tests_test_startup_shutdown_cli_py["tests/test_startup_shutdown_cli.py prototype"]
         tests_test_state_machine_py["tests/test_state_machine.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_silent_failure_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_tokenomics_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_temperature_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_team_optimizer_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_workflow_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_translator_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_sla_monitor_py -.->|test_depends| D_SHARED
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_slo_capacity_metrics_py -.->|test_depends| D_OPS
     tests_test_solo_dev_safety_net_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_slo_manager_root_py -.->|test_depends| D_OPS
@@ -5428,7 +5428,7 @@ graph TD
     end
     D_TRADING["D-TRADING production"]
     tests_test_state_propagation_root_py -.->|test_depends| D_TRADING
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_state_migration_validator_py -.->|test_depends| D_OPS
     tests_test_state_synchronizer_root_py -.->|test_depends| D_TRADING
     tests_test_statistical_hygiene_auditor_py -.->|test_depends| D_OPS
@@ -5442,7 +5442,7 @@ graph TD
     tests_test_sub_agent_collusion_py -.->|test_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_supply_chain_py -.->|test_depends| D_GOV_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_support_system_snapshot_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_support_prompt_registry_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_support_architecture_context_loader_py -.->|test_depends| D_AUTONOMY_CORE
@@ -5490,9 +5490,9 @@ graph TD
         tests_test_timeout_guard_py["tests/test_timeout_guard.py prototype"]
         tests_test_timezone_semantic_reasoner_py["tests/test_timezone_semantic_reasoner.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_system_snapshot_root_py -.->|test_depends| D_AUTONOMY_CORE
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_system_topology_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     tests_test_task_gate_py -.->|test_depends| D_INTELLIGENCE
@@ -5500,17 +5500,17 @@ graph TD
     tests_test_task_gate_py -.->|test_depends| D_TRADING
     tests_test_system_transfer_py -.->|test_depends| D_TRADING
     tests_test_tamper_proof_audit_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_task_lifecycle_manager_py -.->|test_depends| D_SHARED
     tests_test_task_model_learner_py -.->|test_depends| D_INTELLIGENCE
     tests_test_task_scheduler_py -.->|test_depends| D_SHARED
     tests_test_task_queue_py -.->|test_depends| D_TRADING
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_task_types_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_task_types_py -.->|test_depends| D_INTEGRATION
     tests_test_task_types_py -.->|test_depends| D_INTEGRATION
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_teacher_transfer_py -.->|test_depends| D_OPS
     tests_test_teardown_manager_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -5557,9 +5557,9 @@ graph TD
         tests_test_utils_testing_py["tests/test_utils_testing.py prototype"]
         tests_test_utils_time_utils_py["tests/test_utils_time_utils.py prototype"]
     end
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_toctou_guard_root_py -.->|test_depends| D_SECURITY
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_toil_quantification_py -.->|test_depends| D_OPS
     tests_test_toctou_revalidation_py -.->|test_depends| D_OPS
     tests_test_token_finops_py -.->|test_depends| D_OPS
@@ -5567,7 +5567,7 @@ graph TD
     tests_test_tone_adapter_v2_py -.->|test_depends| D_OPS
     tests_test_trace_causal_bridge_py -.->|test_depends| D_OPS
     tests_test_traffic_replay_validator_py -.->|test_depends| D_OPS
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_trace_decorator_py -.->|test_depends| D_SHARED
     tests_test_training_data_gov_py -.->|test_depends| D_OPS
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -5575,9 +5575,9 @@ graph TD
     tests_test_trend_cycle_separator_py -.->|test_depends| D_OPS
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_triple_alignment_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_trend_analyzer_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_trigger_router_root_py -.->|test_depends| D_AUTONOMY_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -5623,9 +5623,9 @@ graph TD
         tests_test_worm_write_integrity_py["tests/test_worm_write_integrity.py prototype"]
         tests_test_wqa_scorer_py["tests/test_wqa_scorer.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_vector_bridge_py -.->|test_depends| D_AUTONOMY_CORE
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_value_added_baseline_py -.->|test_depends| D_OPS
     tests_test_validator_py -.->|test_depends| D_OPS
     tests_test_verification_engine_py -.->|test_depends| D_OPS
@@ -5636,9 +5636,9 @@ graph TD
     tests_test_version_migrator_py -.->|test_depends| D_OPS
     tests_test_verify_paths_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_vertical_self_assessment_py -.->|test_depends| D_OPS
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_test_version_py -.->|test_depends| D_INTEGRATION
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_vibe_coding_guard_py -.->|test_depends| D_SECURITY
     tests_test_vibe_coding_enforcer_py -.->|test_depends| D_GOV_AUDIT
     tests_test_version_manifest_py -.->|test_depends| D_TRADING
@@ -5690,18 +5690,18 @@ graph TD
         tests_unit_context_engine_test_system_snapshot_context_engine_py["tests/unit/context_engine/test_system_snapshot_... prototype"]
     end
     tests_unit_arch_guard_test_arch_guard_fitness_py -.->|config_depends| tests_unit_arch_guard_init_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_zero_config_py -.->|test_depends| D_SHARED
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_writer_py -.->|test_depends| D_GOV_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_zombie_cleaner_py -.->|test_depends| D_SECURITY
     tests_test_zombie_cleaner_py -.->|test_depends| D_SECURITY
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_test_zero_residue_check_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_test_zombie_fle_detector_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_agent_spec_test_import_smoke_agent_spec_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_agent_spec_test_filled_modules_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_auto_fix_engine_test_auto_fix_core_py -.->|test_depends| D_SECURITY
@@ -5759,10 +5759,10 @@ graph TD
     tests_unit_core_test_blindspot_coverage_py -.->|config_depends| tests_unit_core_init_py
     tests_unit_cross_module_test_ocp_extension_points_cross_module_py -.->|config_depends| tests_unit_cross_module_init_py
     tests_unit_escalation_engine_conftest_py -.->|config_depends| tests_unit_escalation_engine_init_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_unit_core_test_blueprint_decomposer_depends_core_py -.->|test_depends| D_SHARED
     tests_unit_core_test_session_continuity_core_py -.->|test_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_db_test_circuit_breaker_repo_db_py -.->|test_depends| D_INTEGRATION
     tests_unit_db_test_circuit_breaker_repo_db_py -.->|test_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
@@ -5774,7 +5774,7 @@ graph TD
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_INTEGRATION
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_INTEGRATION
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_unit_feedback_loop_test_auto_evolution_feedback_loop_py -.->|test_depends| D_OPS
     tests_unit_feedback_loop_test_backpressure_bridge_feedback_loop_py -.->|test_depends| D_OPS
     tests_unit_feedback_loop_test_config_feedback_loop_py -.->|test_depends| D_OPS
@@ -5825,7 +5825,7 @@ graph TD
     end
     tests_unit_governance_test_gate11_naming_convention_governance_py -.->|config_depends| tests_unit_governance_init_py
     tests_unit_governance_conftest_py -.->|config_depends| tests_unit_governance_init_py
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_unit_feedback_loop_test_protocols_py -.->|test_depends| D_OPS
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_unit_gates_test_circuit_breaker_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -5834,12 +5834,12 @@ graph TD
     tests_unit_gates_test_gate_check_types_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_gate_check_types_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_gate_check_types_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_gates_test_gate_check_types_py -.->|test_depends| D_INTEGRATION
     tests_unit_gates_test_task_completion_gate_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_sys_master_compliance_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_SHARED
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_INTEGRATION
@@ -5890,7 +5890,7 @@ graph TD
         tests_unit_shared_init_py["tests/unit/shared/__init__.py prototype"]
     end
     tests_unit_rollback_conftest_py -.->|config_depends| tests_unit_rollback_init_py
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_unit_llm_security_test_ai_behavior_audit_logger_llm_security_py -.->|test_depends| D_SECURITY
     D_TRADING["D-TRADING production"]
     tests_unit_orchestrator_test_agent_orchestrator_py -.->|test_depends| D_TRADING
@@ -5956,9 +5956,9 @@ graph TD
     tests_unit_test_activate_unit_py -.->|test_depends| D_INTELLIGENCE
     D_TRADING["D-TRADING production"]
     tests_unit_test_agent_orchestrator_unit_py -.->|test_depends| D_TRADING
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_unit_test_agent_orchestrator_unit_py -.->|test_depends| D_SECURITY
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_test_agent_spec_backlog_phase1_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_agent_health_monitor_unit_py -.->|test_depends| D_TRADING
     tests_unit_test_agent_spec_backlog_phase2_py -.->|test_depends| D_AUTONOMY_CORE
@@ -5968,9 +5968,9 @@ graph TD
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_unit_test_anti_pattern_guard_unit_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_AUTONOMY_CORE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_GOV_AUDIT
@@ -6027,15 +6027,15 @@ graph TD
     tests_unit_test_audit_schema_unit_py -.->|test_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_unit_test_blueprint_search_mcp_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_unit_test_blueprint_decomposer_depends_unit_py -.->|test_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_unit_test_can_i_deploy_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_test_capability_unit_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_capability_checker_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_test_capability_checker_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_unit_test_auto_evolution_unit_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
     tests_unit_test_capacity_budget_unit_py -.->|test_depends| D_TRADING
@@ -6089,20 +6089,20 @@ graph TD
         tests_unit_test_ingest_unit_py["tests/unit/test_ingest_unit.py prototype"]
         tests_unit_test_input_sanitizer_unit_py["tests/unit/test_input_sanitizer_unit.py prototype"]
     end
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_OPS
-    D_FRONTEND["D-FRONTEND production"]
+    D_FRONTEND["D_FRONTEND production"]
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_test_dispatch_table_unit_py -.->|test_depends| D_AUTONOMY_CORE
     D_TRADING["D-TRADING production"]
     tests_unit_test_design_decisions_unit_py -.->|test_depends| D_TRADING
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_test_dos_launcher_unit_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_durable_execution_unit_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_doc_compressor_unit_py -.->|test_depends| D_AUTONOMY_CORE
@@ -6154,11 +6154,11 @@ graph TD
         tests_unit_test_signal_synthesizer_contract_py["tests/unit/test_signal_synthesizer_contract.py prototype"]
         tests_unit_test_skill_hardening_py["tests/unit/test_skill_hardening.py prototype"]
     end
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     tests_unit_test_instrument_unit_py -.->|test_depends| D_MKT_DATA
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_test_intent_keyword_mapper_unit_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_test_kg_interface_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_intent_parser_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_intent_accuracy_unit_py -.->|test_depends| D_AUTONOMY_CORE
@@ -6175,7 +6175,7 @@ graph TD
     tests_unit_test_phase_executor_unit_py -.->|test_depends| D_TRADING
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_unit_test_post_process_unit_py -.->|test_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_unit_test_pipeline_orchestrator_unit_py -.->|test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -6214,15 +6214,15 @@ graph TD
         tests_verify_b54_b56_b59_deep_py["tests/verify_b54_b56_b59_deep.py prototype"]
         tests_zephyr_shared_infra_test_process_lifecycle_gateway_py["tests/zephyr/shared/infra/test_process_lifecycl... prototype"]
     end
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_verify_b54_b56_b59_deep_py -.->|test_depends| D_SHARED
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     tests_verify_b54_b56_b59_deep_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     tests_verify_b54_b56_b59_deep_py -.->|test_depends| D_INTEGRATION
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     tests_unit_test_slo_manager_unit_py -.->|test_depends| D_OPS
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_test_skill_registry_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_ssot_guard_unit_py -.->|test_depends| D_INTEGRATION
     D_TRADING["D-TRADING production"]
@@ -6250,31 +6250,31 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-OPS | 385 | config_depends,import_depends,runtime,test_depends |
-| D-INTEGRATION | 230 | import_depends,test_depends |
+| D_OPS | 385 | config_depends,import_depends,runtime,test_depends |
+| D_INTEGRATION | 230 | import_depends,test_depends |
 | D-TRADING | 217 | import_depends,test_depends |
-| D-AUTONOMY_CORE | 214 | contract,import_depends,runtime,test_depends |
-| D-SECURITY | 206 | contract,import_depends,runtime,test_depends |
-| D-SHARED | 181 | import_depends,test_depends |
+| D_AUTONOMY_CORE | 214 | contract,import_depends,runtime,test_depends |
+| D_SECURITY | 206 | contract,import_depends,runtime,test_depends |
+| D_SHARED | 181 | import_depends,test_depends |
 | D-GOV_ENFORCEMENT | 168 | import_depends,runtime,test_depends |
 | D-GOV_AUDIT | 140 | contract,import_depends,runtime,test_depends |
 | D_INFRA_RUNTIME | 124 | config_depends,import_depends,runtime,test_depends |
-| D-BEHAVIORAL_AUDIT | 88 | import_depends,test_depends |
+| D_BEHAVIORAL_AUDIT | 88 | import_depends,test_depends |
 | D-INTELLIGENCE | 49 | import_depends,test_depends |
 | D-GOV_DRIFT | 25 | config_depends,contract,import_depends,runtime,test_depends |
-| D-MKT_DATA | 16 | test_depends |
+| D_MKT_DATA | 16 | test_depends |
 | D-RISK | 14 | test_depends |
 | D-GOV_SCRIPTS | 12 | test_depends |
 | D-SIMULATION | 12 | test_depends |
 | D-FUNDAMENTAL_SIGNAL | 8 | test_depends |
-| D-FRONTEND | 8 | test_depends |
+| D_FRONTEND | 8 | test_depends |
 | D-GOV_RULE | 7 | import_depends,test_depends |
 | D-PF_CORE | 6 | test_depends |
 | D_INFRA_A2A | 6 | import_depends |
 | D-EX_CORE | 6 | test_depends |
 | D-AUTONOMY_PERM | 4 | contract,runtime |
 | D-FACTOR | 4 | test_depends |
-| D-REPORTING | 2 | import_depends |
+| D_REPORTING | 2 | import_depends |
 | D-CROSS_ASSET | 2 | test_depends |
 | D-PF_ALLOC | 1 | import_depends |
 | D-ML_TRAIN | 1 | data |
@@ -6285,37 +6285,37 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-OPS | 29 | config_depends,import_depends,runtime,test_depends |
+| D_OPS | 29 | config_depends,import_depends,runtime,test_depends |
 | D-GOV_SCRIPTS | 29 | import_depends |
 | D-TRADING | 27 | contract,import_depends,runtime |
 | D-GOV_DOCS | 26 | import_depends,runtime |
 | D-GOV_AUDIT | 21 | config_depends,contract,import_depends,runtime |
 | D-PF_CORE | 12 | contract,import_depends |
-| D-INTEGRATION | 11 | config_depends,import_depends |
+| D_INTEGRATION | 11 | config_depends,import_depends |
 | D-GOV_DRIFT | 10 | config_depends,import_depends,runtime,test_depends |
 | D-COMPLIANCE | 10 | import_depends |
 | D_INFRA_RUNTIME | 9 | import_depends |
 | D_INFRA_OPS | 8 | config_depends,import_depends,test_depends |
 | D-EX_CORE | 8 | config_depends,import_depends |
 | D-INTELLIGENCE | 6 | config_depends,import_depends |
-| D-REPORTING | 5 | import_depends |
-| D-SECURITY | 4 | import_depends |
-| D-FRONTEND | 4 | import_depends |
+| D_REPORTING | 5 | import_depends |
+| D_SECURITY | 4 | import_depends |
+| D_FRONTEND | 4 | import_depends |
 | D_INFRA_RECOVERY | 4 | import_depends |
 | D-AUTONOMY_PERM | 3 | config_depends,test_depends |
 | D-FACTOR | 3 | config_depends,import_depends |
 | D-GOV_ENFORCEMENT | 3 | import_depends |
-| D-SHARED | 3 | import_depends |
-| D-AUTONOMY_CORE | 2 | import_depends |
-| D-BEHAVIORAL_AUDIT | 2 | import_depends |
+| D_SHARED | 3 | import_depends |
+| D_AUTONOMY_CORE | 2 | import_depends |
+| D_BEHAVIORAL_AUDIT | 2 | import_depends |
 | D-KNOWLEDGE | 2 | runtime,test_depends |
-| D-MKT_DATA | 2 | config_depends |
+| D_MKT_DATA | 2 | config_depends |
 | D-PF_ALLOC | 2 | config_depends,import_depends |
 | D_INFRA_A2A | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
 | D-POSITION | 1 | config_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
-| D-DATA_SEC | 1 | import_depends |
+| D_DATA_SEC | 1 | import_depends |
 | D-RISK | 1 | config_depends |
 
 ## 架构全景图 / Architecture Overview

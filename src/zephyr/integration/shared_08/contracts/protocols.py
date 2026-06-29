@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-183 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.protocols
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_types
 # [CONSUMERS] zephyr.governance.rule_enforcement;zephyr.governance.behavioral_auditor;zephyr.governance.audit_trail;zephyr.infrastructure.rollback;zephyr.autonomy_core;zephyr.integration;zephyr.governance
 # [STARTUP] imported

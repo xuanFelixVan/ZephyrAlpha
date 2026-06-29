@@ -13,11 +13,11 @@ DOMAIN_DIR_MAP = {
     "autonomy_perm": "D-AUTONOMY-PERM",
     "infra_runtime": "D-INFRA-RUNTIME",
     "infra_ops": "D-INFRA-OPS",
-    "security": "D-SECURITY",
-    "integration": "D-INTEGRATION",
-    "frontend": "D-FRONTEND",
+    "security": "D_SECURITY",
+    "integration": "D_INTEGRATION",
+    "frontend": "D_FRONTEND",
     "governance": "D-GOVERNANCE",
-    "ops": "D-OPS",
+    "ops": "D_OPS",
     "data": "D-DATA",
     "alt_data": "D-ALT-DATA",
     "data_eng": "D-DATA-ENG",
@@ -35,7 +35,7 @@ DOMAIN_DIR_MAP = {
     "ex_core": "D-EX-CORE",
     "ex_sor": "D-EX-SOR",
     "risk": "D-RISK",
-    "reporting": "D-REPORTING",
+    "reporting": "D_REPORTING",
     "trading": "D-TRADING",
     "simulation": "D-SIMULATION",
     "research": "D-RESEARCH",
@@ -52,16 +52,16 @@ OLD_DIR_TO_DOMAIN = {
     "runtime": "D-AUTONOMY-CORE",
     "core": "D-AUTONOMY-CORE",
     "db": "D-AUTONOMY-CORE",
-    "llm-security": "D-SECURITY",
-    "integration": "D-INTEGRATION",
+    "llm-security": "D_SECURITY",
+    "integration": "D_INTEGRATION",
     "governance": "D-GOVERNANCE",
     "kb": "D-KNOWLEDGE",
     "vector-memory": "D-KNOWLEDGE",
-    "system-telemetry": "D-OPS",
+    "system-telemetry": "D_OPS",
     "escalation-engine": "D-AUTONOMY-CORE",
     "budget-enforcer": "D-AUTONOMY-CORE",
-    "capacity_calibrator": "D-OPS",
-    "alert_manager": "D-OPS",
+    "capacity_calibrator": "D_OPS",
+    "alert_manager": "D_OPS",
     "shared": "D-INFRA-RUNTIME",
     "factor": "D-FACTOR",
     "signal": "D-SIGNAL",
@@ -73,7 +73,7 @@ OLD_DIR_TO_DOMAIN = {
     "ml": "D-ML-TRAIN",
     "data": "D-DATA",
     "research": "D-RESEARCH",
-    "reporting": "D-REPORTING",
+    "reporting": "D_REPORTING",
     "simulation": "D-SIMULATION",
     "position": "D-POSITION",
     "alt_data": "D-ALT-DATA",
@@ -84,22 +84,22 @@ OLD_DIR_TO_DOMAIN = {
     "sell_decision": "D-SELL-DECISION",
     "ex_sor": "D-EX-SOR",
     "ex_core": "D-EX-CORE",
-    "frontend": "D-FRONTEND",
+    "frontend": "D_FRONTEND",
     "infra_runtime": "D-INFRA-RUNTIME",
     "infra_ops": "D-INFRA-OPS",
     "autonomy_perm": "D-AUTONOMY-PERM",
     "autonomy_core": "D-AUTONOMY-CORE",
-    "security": "D-SECURITY",
-    "ops": "D-OPS",
+    "security": "D_SECURITY",
+    "ops": "D_OPS",
     "knowledge": "D-KNOWLEDGE",
     "context-engine": "D-AUTONOMY-CORE",
-    "health-monitor": "D-OPS",
+    "health-monitor": "D_OPS",
     "trading-contracts": "D-TRADING",
     "semantic-auditor": "D-GOVERNANCE",
-    "mcp": "D-INTEGRATION",
+    "mcp": "D_INTEGRATION",
     "agent-spec": "D-AUTONOMY-CORE",
     "audit-orchestrator": "D-GOVERNANCE",
-    "red-blue-validator": "D-SECURITY",
+    "red-blue-validator": "D_SECURITY",
 }
 
 OLD_LAYER_TO_DOMAIN = {
@@ -110,8 +110,8 @@ OLD_LAYER_TO_DOMAIN = {
     "l04": "D-RISK",
     "l05": "D-PF-CORE",
     "l06": "D-EX-CORE",
-    "l07": "D-REPORTING",
-    "l08": "D-FRONTEND",
+    "l07": "D_REPORTING",
+    "l08": "D_FRONTEND",
     "l09": "D-RESEARCH",
     "l10": "D-COMPLIANCE",
     "l11": "D-ML-TRAIN",
@@ -137,11 +137,11 @@ def infer_domain(path, migration_registry):
     if path.startswith("scripts/governance/"):
         return "D-GOVERNANCE"
     if path.startswith("scripts/ops/"):
-        return "D-OPS"
+        return "D_OPS"
     if path.startswith("scripts/security/"):
-        return "D-SECURITY"
+        return "D_SECURITY"
     if path.startswith("scripts/"):
-        return "D-OPS"
+        return "D_OPS"
     return ""
 
 

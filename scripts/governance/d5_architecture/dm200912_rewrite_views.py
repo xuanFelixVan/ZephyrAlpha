@@ -818,7 +818,7 @@ def write_capability_heatmap(data: dict) -> None:
 
     # 能力域定义（7业务+3横切=10能力域）
     capability_domains = [
-        ("数据接入", "D-MKT_DATA, D-ALT_DATA, D-DATA_ENG"),
+        ("数据接入", "D_MKT_DATA, D_ALT_DATA, D_DATA_ENG"),
         ("因子研究", "D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC"),
         ("策略决策", "D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET"),
         ("执行交易", "D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION"),
@@ -829,10 +829,10 @@ def write_capability_heatmap(data: dict) -> None:
             "治理（横切）",
             "D-GOVERNANCE, D-GOV_RULE, D-GOV_AUDIT, D-GOV_DRIFT, D-GOV_ENFORCEMENT, D-GOV_REPAIR, D-GOV_SCRIPTS",
         ),
-        ("安全（横切）", "D-SECURITY, D-SECURITY_LLM, D-BEHAVIORAL_AUDIT, D-DATA_SEC, D-AUTONOMY_PERM"),
+        ("安全（横切）", "D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D-AUTONOMY_PERM"),
         (
             "基础设施（横切）",
-            "D_INFRA_OPS, D_INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION_GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS",
+            "D_INFRA_OPS, D_INFRA_RUNTIME, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D_AUTONOMY_CORE, D_OPS",
         ),
     ]
 

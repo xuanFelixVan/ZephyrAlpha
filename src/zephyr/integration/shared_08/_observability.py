@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._observability
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.errors; zephyr.integration.shared.events.__init__; zephyr.integration.shared.events.dlq; zephyr.integration.shared_08.health; zephyr.integration.shared_08.lifecycle.__init__; zephyr.integration.shared_08.logging; zephyr.integration.shared_08.metrics; zephyr.integration.shared_08.context
 # [CONSUMERS] zephyr.shared.__init__
 # [STARTUP] imported

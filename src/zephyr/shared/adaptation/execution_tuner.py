@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-083 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.adaptation.execution_tuner
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §bootstrap_superadmin
 # [MODULE] zephyr.security.access_control.bootstrap_superadmin
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] governance_bridges.bootstrap_superadmin.BootstrapSuperadminBridge
 # [STARTUP] imported

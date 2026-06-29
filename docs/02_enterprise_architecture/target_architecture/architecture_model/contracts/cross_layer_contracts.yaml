@@ -79,7 +79,7 @@ contracts:
     name: "NormalizedMarketData / 标准化行情数据"
     priority: P0
     frozen: true
-    source_domain: D-MKT_DATA
+    source_domain: D_MKT_DATA
     target_domains: [D-FACTOR, D-SIGLEGACY, D-SIMULATION]
     flow: "L00 Data Source → L02 Alpha Factor"
     physical_path: src/zephyr/shared/contracts/market_data.py
@@ -345,7 +345,7 @@ contracts:
     name: "TraceContext / 全链路追踪上下文"
     priority: P0
     frozen: true
-    source_domain: D-MKT_DATA
+    source_domain: D_MKT_DATA
     target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-ML_TRAIN]
     flow: "L00 → L02 → L03 → L05 → L06 → L07（贯穿全链路）"
     physical_path: src/zephyr/shared/contracts/trace_context.py
@@ -381,7 +381,7 @@ contracts:
     name: "DataQualityError / 行情质量门禁不通过错误"
     priority: P0
     frozen: true
-    source_domain: D-MKT_DATA
+    source_domain: D_MKT_DATA
     target_domains: [D-FACTOR]
     flow: "L00 Data Source → L02 Alpha Factor（错误路径）"
     physical_path: src/zephyr/shared/contracts/errors/data_quality_error.py
@@ -533,7 +533,7 @@ contracts:
     name: "ContractViolationError / 契约违反错误"
     priority: P0
     frozen: true
-    source_domain: D-SHARED
+    source_domain: D_SHARED
     target_domains: ["*"]
     flow: "shared/contracts/ → ALL LAYERS（运行时强制校验失败）"
     physical_path: src/zephyr/shared/contracts/errors/contract_violation_error.py
@@ -568,7 +568,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-FACTOR
-    target_domains: [D-MKT_DATA]
+    target_domains: [D_MKT_DATA]
     flow: "L02/L03 下游 → L00 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/pause.py
     stability: locked-5yr
@@ -596,7 +596,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-FACTOR
-    target_domains: [D-MKT_DATA]
+    target_domains: [D_MKT_DATA]
     flow: "L02/L03 下游 → L00 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/throttle.py
     stability: locked-5yr
@@ -623,7 +623,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D-FACTOR
-    target_domains: [D-MKT_DATA]
+    target_domains: [D_MKT_DATA]
     flow: "L02/L03 下游 → L00 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/resume.py
     stability: locked-5yr
@@ -825,7 +825,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-RISK
-    target_domains: [D-FRONTEND]
+    target_domains: [D_FRONTEND]
     flow: "L04 Risk Management → L08 Human-AI Interface"
     physical_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
     stability: upgradable
@@ -852,7 +852,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-TRADING
-    target_domains: [D-FRONTEND, D-COMPLIANCE]
+    target_domains: [D_FRONTEND, D-COMPLIANCE]
     flow: "L07 Post-trade Analytics → L08/L10"
     physical_path: src/zephyr/shared/contracts/performance_attribution_report.py
     stability: upgradable
@@ -880,7 +880,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_INFRA_OPS
-    target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-FRONTEND, D-SIMULATION, D-COMPLIANCE, D-ML_TRAIN, D-OPS]
+    target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D_FRONTEND, D-SIMULATION, D-COMPLIANCE, D-ML_TRAIN, D_OPS]
     flow: "L01 Configuration Management → 全系统"
     physical_path: src/zephyr/shared/contracts/system_configuration.py
     stability: upgradable
@@ -910,7 +910,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-RISK
-    target_domains: [D-PF_CORE, D-TRADING, D-FRONTEND, D-COMPLIANCE]
+    target_domains: [D-PF_CORE, D-TRADING, D_FRONTEND, D-COMPLIANCE]
     flow: "L04 Risk Metrics → L05/L07/L08/L10"
     physical_path: src/zephyr/shared/contracts/risk_metrics.py
     stability: upgradable
@@ -1021,8 +1021,8 @@ contracts:
     name: "TelemetryEmitter / 遥测发射器"
     priority: P1
     frozen: true
-    source_domain: D-OPS
-    target_domains: [D_INFRA_OPS, D-RISK, D-EX_CORE, D-TRADING, D-COMPLIANCE, D-OPS]
+    source_domain: D_OPS
+    target_domains: [D_INFRA_OPS, D-RISK, D-EX_CORE, D-TRADING, D-COMPLIANCE, D_OPS]
     flow: "L12 Metrics → 全系统"
     physical_path: src/zephyr/shared/contracts/telemetry_emitter.py
     stability: upgradable
@@ -1132,7 +1132,7 @@ contracts:
     name: "TelemetryMetrics / 遥测指标采集"
     priority: P1
     frozen: false
-    source_domain: D-OPS
+    source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-001: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/contract_metrics.py (MOD-INF-015)
@@ -1154,7 +1154,7 @@ contracts:
     name: "TelemetryLogs / 遥测日志持久化"
     priority: P1
     frozen: false
-    source_domain: D-OPS
+    source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-002: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/logs/ (MOD-INF-015)
@@ -1177,7 +1177,7 @@ contracts:
     name: "TelemetryTraces / 遥测链路追踪"
     priority: P1
     frozen: false
-    source_domain: D-OPS
+    source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-003: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/traces/ (MOD-INF-015)
@@ -1200,7 +1200,7 @@ contracts:
     name: "TelemetryHealth / 遥测健康检查"
     priority: P1
     frozen: false
-    source_domain: D-OPS
+    source_domain: D_OPS
     target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health_probes.py (MOD-INF-015)

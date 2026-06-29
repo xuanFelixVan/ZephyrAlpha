@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §4.2
 # [MODULE] zephyr.security.access_control.orphan_judge.models
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.judge
 # [CONSUMERS] db.py; report_generator.py; config_loader.py
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
 # [MODULE] zephyr.infrastructure.capacity_assurance.degradation_spiral_detector
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

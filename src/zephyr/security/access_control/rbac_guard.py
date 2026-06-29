@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.rbac_guard
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests/agent_rbac/test_redteam_adversarial.py
 # [STARTUP] imported

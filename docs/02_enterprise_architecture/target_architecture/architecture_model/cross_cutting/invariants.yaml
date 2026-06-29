@@ -90,8 +90,8 @@ invariants:
     category: boundary_integrity
     statement: "前后端唯一接触点：前端只能通过 L08 api_gateway 访问后端，禁止前端直接调用任何内部服�?"
 
-    owner: D-FRONTEND
-    sub_owner: D-FRONTEND
+    owner: D_FRONTEND
+    sub_owner: D_FRONTEND
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/check_fe_acl_boundary.py
     kb_ref: KBG-0007
@@ -191,8 +191,8 @@ invariants:
     category: data_integrity
     statement: "Survivorship Bias 零容忍：回测数据集必须包含退�?停牌标的，不得使用存活者偏差数�?"
 
-    owner: D-MKT_DATA
-    sub_owner: D-MKT_DATA / D-MKT_DATA
+    owner: D_MKT_DATA
+    sub_owner: D_MKT_DATA / D_MKT_DATA
     enforcement: fitness_function
     fitness_function_path: scripts/arch_guard/fitness_functions/check_survivorship_bias.py
     kb_ref: KBG-0005

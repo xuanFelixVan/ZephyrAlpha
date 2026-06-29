@@ -103,9 +103,9 @@ graph TD
     src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py -->|config_depends| src_zephyr_infrastructure_capacity_assurance_contracts_init_py
     src_zephyr_infrastructure_capacity_assurance_contracts_init_py -->|import_depends| src_zephyr_infrastructure_init_py
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| src_zephyr_infrastructure_init_py
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     src_zephyr_init_py -->|import_depends| D_OPS
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_audit_logger_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_GOV_AUDIT
@@ -113,7 +113,7 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_infrastructure_base_server_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pipeline_orchestrator_py -->|import_depends| D_GOVERNANCE
@@ -206,7 +206,7 @@ graph TD
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| src_zephyr_infrastructure_capacity_assurance_modules_cold_start_estimator_py
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| src_zephyr_infrastructure_capacity_assurance_modules_trace_capacity_injector_py
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| src_zephyr_infrastructure_capacity_assurance_modules_winfs_defense_py
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| D_SHARED
@@ -271,11 +271,11 @@ graph TD
     end
     src_zephyr_infrastructure_db_atomic_transaction_manager_py -->|config_depends| src_zephyr_infrastructure_db_init_py
     src_zephyr_infrastructure_db_circuit_breaker_types_py -->|config_depends| src_zephyr_infrastructure_db_init_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_infrastructure_doc_guard_server_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_doc_guard_server_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_event_bus_upgrade_py -->|import_depends| D_INTEGRATION
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_event_bus_upgrade_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_file_watcher_py -->|import_depends| D_SHARED
@@ -344,10 +344,10 @@ graph TD
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| src_zephyr_infrastructure_lifecycle_init_py
     src_zephyr_infrastructure_lifecycle_init_py -->|import_depends| src_zephyr_infrastructure_lifecycle_scope_guard_py
     src_zephyr_infrastructure_observability_02_init_py -->|import_depends| src_zephyr_infrastructure_observability_02_session_audit_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_gateway_server_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_knowledge_base_server_py -->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_infrastructure_gate_engine_server_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_gate_engine_server_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_finding_task_bridge_py -->|import_depends| D_SHARED
@@ -407,9 +407,9 @@ graph TD
     src_zephyr_shared_lifecycle_daemon_registry_from_infra_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
     src_zephyr_shared_lifecycle_resource_optimization_engine_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
     src_zephyr_shared_lifecycle_resource_optimization_models_from_infra_py -->|config_depends| src_zephyr_shared_lifecycle_init_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_resource_provider_py -.->|import_depends| D_INTEGRATION
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_task_manager_server_py -->|import_depends| D_INTEGRATION
@@ -420,7 +420,7 @@ graph TD
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_SHARED -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
     D_SHARED -.->|import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_shared_lifecycle_hooks_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     D_TRADING["D-TRADING prototype"]
@@ -441,23 +441,23 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-SHARED | 34 | import_depends |
-| D-INTEGRATION | 20 | import_depends |
+| D_SHARED | 34 | import_depends |
+| D_INTEGRATION | 20 | import_depends |
 | D-GOVERNANCE | 9 | import_depends |
 | D-GOV_AUDIT | 4 | import_depends |
-| D-OPS | 1 | import_depends |
+| D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-GOVERNANCE | 124 | config_depends,import_depends,runtime,test_depends |
-| D-OPS | 33 | import_depends,test_depends |
+| D_OPS | 33 | import_depends,test_depends |
 | D_INFRA_RECOVERY | 33 | import_depends |
 | D_INFRA_A2A | 13 | import_depends |
 | D_INFRA_TELEMETRY | 12 | import_depends |
 | D-GOV_SCRIPTS | 11 | import_depends |
-| D-SHARED | 6 | import_depends |
+| D_SHARED | 6 | import_depends |
 | D-GOV_AUDIT | 5 | import_depends |
 | D-TRADING | 3 | contract,import_depends |
 | D_INFRA_OPS | 1 | import_depends |

@@ -35,7 +35,7 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/apply_depgraph.py --batch changes.json
   python scripts/governance/apply_depgraph.py --batch changes.json --dry-run
 
-  # F5 合规豁免：D-SECURITY 拆分后域/路径/依赖迁移命令
+  # F5 合规豁免：D_SECURITY 拆分后域/路径/依赖迁移命令
   python scripts/governance/apply_depgraph.py --insert-domain D-NEW "新域" 业务 L2_domain src/zephyr/new/ --max-modules 200
   python scripts/governance/apply_depgraph.py --update-domain-id D-FACTOR-01 D-NEW_DOMAIN --dry-run
   python scripts/governance/apply_depgraph.py --update-path D-FACTOR-01 src/zephyr/new_domain/module.py --dry-run

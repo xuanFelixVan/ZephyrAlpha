@@ -82,7 +82,7 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 | 52 | 07-D-POSITION-仓位管理域.md | E-XXX-NN | E-POS-02 | DriftDetected / E-POS-03 RebalanceTriggered / E-PO | path和功能名均未命中 |
 | 53 | 07-D-POSITION-仓位管理域.md | E-XXX-NN | E-POS-04 | CapitalCurveUpdated / E-POS-05 StateChanged | path和功能名均未命中 |
 | 54 | 08-D-EX-CORE-执行核心域.md | E-XXX-NN | E-EX-08 | IdempotencyBlocked | path和功能名均未命中 |
-| 55 | 10-D-REPORTING-报告域.md | L-XXX | L-007 | ；EU AI Act Art.12+MiFID II RTS 6 | path和功能名均未命中 |
+| 55 | 10-D_REPORTING-报告域.md | L-XXX | L-007 | ；EU AI Act Art.12+MiFID II RTS 6 | path和功能名均未命中 |
 | 56 | 11-D-RISK-风控域.md | C-XXX | C-020 | 渐进式全球扩展 | path和功能名均未命中 |
 | 57 | 12-D-ML-TRAIN-训练域.md | E-XXX-NN | E-ML-02 | NewFactorDiscovered | path和功能名均未命中 |
 | 58 | 12-D-ML-TRAIN-训练域.md | E-XXX-NN | E-ML-03 | RetrainTriggered | path和功能名均未命中 |
@@ -113,15 +113,15 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 | 83 | 24-D-INFRA-RUNTIME-运行时基础设施域.md | E-XXX-NN | E-IF-03 | ProcessHeartbeatLost | path和功能名均未命中 |
 | 84 | 24-D-INFRA-RUNTIME-运行时基础设施域.md | E-XXX-NN | E-IF-04 | GPUOOMDetected | path和功能名均未命中 |
 | 85 | 24-D-INFRA-RUNTIME-运行时基础设施域.md | E-XXX-NN | E-IF-05 | ConfigChanged | path和功能名均未命中 |
-| 86 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-02 | VulnerabilityDetected / E-SC-03 UnauthorizedAccess | path和功能名均未命中 |
-| 87 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-03 | UnauthorizedAccess | path和功能名均未命中 |
-| 88 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-04 | ThreatAlert | path和功能名均未命中 |
-| 89 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-05 | EncryptionKeyRotated | path和功能名均未命中 |
-| 90 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-07 | AISGBlocked | path和功能名均未命中 |
-| 91 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-08 | CollusionDetected | path和功能名均未命中 |
-| 92 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-09 | IntegrityViolation | path和功能名均未命中 |
-| 93 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-SC-10 | SandboxEscaped | path和功能名均未命中 |
-| 94 | 24-D-SECURITY-安全域.md | E-XXX-NN | E-AUT-02 | PermissionChanged | path和功能名均未命中 |
+| 86 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-02 | VulnerabilityDetected / E-SC-03 UnauthorizedAccess | path和功能名均未命中 |
+| 87 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-03 | UnauthorizedAccess | path和功能名均未命中 |
+| 88 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-04 | ThreatAlert | path和功能名均未命中 |
+| 89 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-05 | EncryptionKeyRotated | path和功能名均未命中 |
+| 90 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-07 | AISGBlocked | path和功能名均未命中 |
+| 91 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-08 | CollusionDetected | path和功能名均未命中 |
+| 92 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-09 | IntegrityViolation | path和功能名均未命中 |
+| 93 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-SC-10 | SandboxEscaped | path和功能名均未命中 |
+| 94 | 24-D_SECURITY-安全域.md | E-XXX-NN | E-AUT-02 | PermissionChanged | path和功能名均未命中 |
 | 95 | 25-D-INFRA-OPS-运维基础设施域.md | D-XXX-NN | D-INFRA-446 | 技术债务追踪 | path和功能名均未命中 |
 | 96 | 25-D-INFRA-OPS-运维基础设施域.md | E-XXX-NN | E-IO-04 | AlertFired | path和功能名均未命中 |
 | 97 | 25-D-INFRA-OPS-运维基础设施域.md | E-XXX-NN | E-IO-01 | BackupCompleted | path和功能名均未命中 |
@@ -130,23 +130,23 @@ E-XXX-NN, AGG-XXX, CTR-XXX, VO-XXX, DD-XXX-NN, B-XXX, L-XXX。
 | 100 | 25-D-INFRA-OPS-运维基础设施域.md | E-XXX-NN | E-IO-05 | AlertEscalated | path和功能名均未命中 |
 | 101 | 25-D-INFRA-OPS-运维基础设施域.md | E-XXX-NN | E-IO-06 | DRDrillCompleted | path和功能名均未命中 |
 | 102 | 25-D-INFRA-OPS-运维基础设施域.md | E-XXX-NN | E-IO-07 | LogAnomalyDetected | path和功能名均未命中 |
-| 103 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-02 | ContractViolated / E-INT-03 SchemaVersionChanged / | path和功能名均未命中 |
-| 104 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-03 | SchemaVersionChanged / E-INT-04 EventRoutingFailed | path和功能名均未命中 |
-| 105 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-04 | EventRoutingFailed | path和功能名均未命中 |
-| 106 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-05 | ContractFrozen | path和功能名均未命中 |
-| 107 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-06 | IdempotencyKeyMissing | path和功能名均未命中 |
-| 108 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-07 | APIGatewayRequestRouted | path和功能名均未命中 |
-| 109 | 25-D-INTEGRATION-集成域.md | E-XXX-NN | E-INT-08 | SchemaValidationFailed | path和功能名均未命中 |
+| 103 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-02 | ContractViolated / E-INT-03 SchemaVersionChanged / | path和功能名均未命中 |
+| 104 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-03 | SchemaVersionChanged / E-INT-04 EventRoutingFailed | path和功能名均未命中 |
+| 105 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-04 | EventRoutingFailed | path和功能名均未命中 |
+| 106 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-05 | ContractFrozen | path和功能名均未命中 |
+| 107 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-06 | IdempotencyKeyMissing | path和功能名均未命中 |
+| 108 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-07 | APIGatewayRequestRouted | path和功能名均未命中 |
+| 109 | 25-D_INTEGRATION-集成域.md | E-XXX-NN | E-INT-08 | SchemaValidationFailed | path和功能名均未命中 |
 | 110 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-04 | AuditAnomalyDetected | path和功能名均未命中 |
 | 111 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-05 | DDDViolationDetected | path和功能名均未命中 |
 | 112 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-06 | DecisionArchived | path和功能名均未命中 |
 | 113 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-07 | ComplianceAuditCompleted | path和功能名均未命中 |
 | 114 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-08 | IncidentEscalated | path和功能名均未命中 |
 | 115 | 27-D-GOVERNANCE-治理域.md | E-XXX-NN | E-GV-09 | TopologyDriftDetected | path和功能名均未命中 |
-| 116 | 28-D-FRONTEND-前端域.md | E-XXX-NN | E-AU-05 | HealthDegraded | path和功能名均未命中 |
-| 117 | 30-D-OPS-运维域.md | E-XXX-NN | E-OP-04 | RemediationExecuted | path和功能名均未命中 |
-| 118 | 30-D-OPS-运维域.md | E-XXX-NN | E-OP-06 | SLOBreached | path和功能名均未命中 |
-| 119 | 30-D-OPS-运维域.md | E-XXX-NN | E-OP-07 | SurvivalRuleTriggered | path和功能名均未命中 |
+| 116 | 28-D_FRONTEND-前端域.md | E-XXX-NN | E-AU-05 | HealthDegraded | path和功能名均未命中 |
+| 117 | 30-D_OPS-运维域.md | E-XXX-NN | E-OP-04 | RemediationExecuted | path和功能名均未命中 |
+| 118 | 30-D_OPS-运维域.md | E-XXX-NN | E-OP-06 | SLOBreached | path和功能名均未命中 |
+| 119 | 30-D_OPS-运维域.md | E-XXX-NN | E-OP-07 | SurvivalRuleTriggered | path和功能名均未命中 |
 | 120 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-02 | SellArbitrated / E-SELL-03 SellExecuted / E-SELL-0 | path和功能名均未命中 |
 | 121 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-04 | SellLoopFeedback | path和功能名均未命中 |
 | 122 | 31-D-SELL-DECISION-卖出决策域.md | E-XXX-NN | E-SELL-001 |  | path和功能名均未命中 |

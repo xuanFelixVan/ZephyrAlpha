@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION-GATEWAY
 # [MODULE] zephyr.integration.layer2_communication.context_package
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_schemas
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §8.3 + §16 Phase 2b
 # [MODULE] zephyr.security.adversarial_validation.game_day_scheduler
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.game_day_runner
 # [CONSUMERS] cli.py; CI/CD workflow
 # [STARTUP] imported

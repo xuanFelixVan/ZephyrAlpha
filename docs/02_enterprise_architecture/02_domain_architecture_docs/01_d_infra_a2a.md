@@ -106,7 +106,7 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_collusion_detector_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_causal_trace_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_anomaly_detector_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_a2a_protocol_init_py -.->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_infrastructure_a2a_protocol_init_py -.->|import_depends| D_GOVERNANCE
@@ -166,7 +166,7 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|import_depends| D_INFRA_RUNTIME
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_dashboard_py
@@ -223,7 +223,7 @@ graph TD
     src_zephyr_infrastructure_pipeline_layer_router_py -->|config_depends| src_zephyr_infrastructure_pipeline_init_py
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_infrastructure_a2a_protocol_legacy_auditor_py -->|import_depends| D_GOV_AUDIT
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_a2a_protocol_legacy_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py -.->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -268,7 +268,7 @@ graph TD
         src_zephyr_infrastructure_queue_task_scheduler_py["src/zephyr/infrastructure/queue/task_scheduler.py production"]
     end
     src_zephyr_infrastructure_queue_init_py -->|import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_pipeline_models_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_model_router_py -->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -294,18 +294,18 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-SHARED | 18 | import_depends |
+| D_SHARED | 18 | import_depends |
 | D_INFRA_RUNTIME | 13 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
 | D-GOV_AUDIT | 1 | import_depends |
-| D-INTEGRATION | 1 | import_depends |
+| D_INTEGRATION | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-GOVERNANCE | 6 | import_depends |
-| D-SHARED | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

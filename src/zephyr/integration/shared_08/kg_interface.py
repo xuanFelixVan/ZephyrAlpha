@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-189 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.kg_interface
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] tests
 # [STARTUP] imported

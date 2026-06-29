@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security_01.layers.l3_output
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.layers.l3_output
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §kill_switch
 # [MODULE] zephyr.security.access_control.kill_switch
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] genesis_bootstrap._phase_kill_switch; tests/agent_rbac/test_kill_switch_agent_rbac.py
 # [STARTUP] imported

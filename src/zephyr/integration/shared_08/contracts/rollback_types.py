@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-184 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contracts.rollback_types
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.rollback.result_types;zephyr.infrastructure.rollback.governance.result_types;zephyr.governance.contracts
 # [STARTUP] imported

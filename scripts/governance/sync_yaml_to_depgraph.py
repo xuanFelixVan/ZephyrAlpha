@@ -315,9 +315,9 @@ def sync_gate_registry(cur):
 def normalize_domain_id(domain_id: str) -> str:
     """归一化域ID: 保留 D- 前缀,将其余连字符替换为下划线。
 
-    D-AUTONOMY-CORE → D-AUTONOMY_CORE
+    D-AUTONOMY-CORE → D_AUTONOMY_CORE
     D-INFRA-OPS    → D_INFRA_OPS
-    D-AUTONOMY_CORE → D-AUTONOMY_CORE (无变化)
+    D_AUTONOMY_CORE → D_AUTONOMY_CORE (无变化)
     """
     if not domain_id.startswith("D-"):
         return domain_id
@@ -328,7 +328,7 @@ def validate_domain_id_consistency(cur, entries):
     """校验 YAML 域ID与 DB 现有域ID的归一化一致性,防止连字符/下划线重复。
 
     检查: YAML 中的 domain_id 归一化后是否与 DB 现有 domain_id 不同但归一化相同。
-    如果 YAML 用 D-AUTONOMY-CORE 而 DB 已有 D-AUTONOMY_CORE,会报警并跳过。
+    如果 YAML 用 D-AUTONOMY-CORE 而 DB 已有 D_AUTONOMY_CORE,会报警并跳过。
     """
     cur.execute("SELECT domain_id FROM domains")
     existing_ids = {row["domain_id"] for row in cur.fetchall()}

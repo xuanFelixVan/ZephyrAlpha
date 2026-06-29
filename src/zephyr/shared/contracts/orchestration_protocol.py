@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.orchestration_protocol
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.rollback; zephyr.governance.ops_governance; zephyr.infrastructure.rollback; zephyr.trading.orchestrator.chaos_hooks; zephyr.trading.orchestrator.batch_orchestrator
 # [STARTUP] imported

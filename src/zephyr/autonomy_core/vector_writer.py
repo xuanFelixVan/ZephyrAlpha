@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-CE-VMS-001
 # [MODULE] zephyr.autonomy_core.vector_writer
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] zephyr.autonomy_core.task_context_builder
 # [STARTUP] imported

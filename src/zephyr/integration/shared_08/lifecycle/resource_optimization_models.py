@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.lifecycle.resource_optimization_models
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] shared.io.io_cache; shared.infra.process_pool; runtime.resource_optimization; shared.lifecycle.resource_optimization_engine
 # [STARTUP] imported

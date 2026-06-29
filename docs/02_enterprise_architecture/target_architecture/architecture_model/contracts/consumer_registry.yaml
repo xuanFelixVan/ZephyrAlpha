@@ -29,7 +29,7 @@ consumers:
   - contract_id: CTR-001
     contract_name: NormalizedMarketData
     registered_consumers:
-      - {domain: D-MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-SIGLEGACY, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-RISK, module: "metrics_warm", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
@@ -56,14 +56,14 @@ consumers:
       - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-COMPLIANCE, module: "compliance", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-005
     contract_name: Fill
     registered_consumers:
       - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-006
     contract_name: PositionSnapshot
@@ -71,7 +71,7 @@ consumers:
       - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-FRONTEND, module: "orchestration", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_FRONTEND, module: "orchestration", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D-ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
 
@@ -91,13 +91,13 @@ consumers:
     contract_name: DataQualityError
     registered_consumers:
       - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-ERR-002
     contract_name: FactorComputationError
     registered_consumers:
       - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-ERR-003
     contract_name: SignalDegradationWarning
@@ -126,17 +126,17 @@ consumers:
   - contract_id: CTR-BP-001
     contract_name: BackpressurePause
     registered_consumers:
-      - {domain: D-MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   - contract_id: CTR-BP-002
     contract_name: BackpressureThrottle
     registered_consumers:
-      - {domain: D-MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   - contract_id: CTR-BP-003
     contract_name: BackpressureResume
     registered_consumers:
-      - {domain: D-MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   # ─── P1 契约消费者 ───
   - contract_id: CTR-P1-010
@@ -156,7 +156,7 @@ consumers:
       - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D-COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-P1-014
     contract_name: ExperimentResult

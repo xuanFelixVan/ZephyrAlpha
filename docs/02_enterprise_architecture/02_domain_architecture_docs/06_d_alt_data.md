@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-ALT_DATA 另类数据架构文档
+title: D_ALT_DATA 另类数据架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 06_d_alt_data / 另类数据
 
-> **文档作用 / Purpose**: 展示 另类数据（D-ALT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 另类数据（D_ALT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 06 | Number | 06 |
-| 域ID | D-ALT_DATA | Domain ID | D-ALT_DATA |
+| 域ID | D_ALT_DATA | Domain ID | D_ALT_DATA |
 | 域名称 | 另类数据 | Domain Name | 另类数据 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 8 | Module Count | 8 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_ALT_DATA["D-ALT_DATA 另类数据"]
+    subgraph D_ALT_DATA["D_ALT_DATA 另类数据"]
         src_zephyr_alt_data_init_py["src/zephyr/alt_data/__init__.py prototype"]
         src_zephyr_alt_data_extensions_init_py["src/zephyr/alt_data/_extensions/__init__.py prototype"]
         src_zephyr_alt_data_api_init_py["src/zephyr/alt_data/api/__init__.py prototype"]
@@ -76,7 +76,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 另类数据（D-ALT_DATA）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 另类数据（D_ALT_DATA）的模块分布。共 8 个模块 / 8 modules。
 
 ```
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a.a2a_protocol
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.shared.protocols.a2a; zephyr.infrastructure.a2a_protocol
 # [STARTUP] imported

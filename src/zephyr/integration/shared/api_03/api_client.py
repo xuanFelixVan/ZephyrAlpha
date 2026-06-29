@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.api_03.api_client
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors; zephyr.integration.shared_08.resilience.circuit_breaker; zephyr.integration.shared_08.resilience.retry; zephyr.integration.shared_08.io.serialization
 # [CONSUMERS]
 # [STARTUP] imported

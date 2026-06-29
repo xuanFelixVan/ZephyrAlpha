@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._analysis
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.correlation_engine; zephyr.behavioral_audit.credibility_engine; zephyr.behavioral_audit.cross_module_score; zephyr.behavioral_audit.forensics_engine; zephyr.behavioral_audit.git_bisector; zephyr.behavioral_audit.reconciler; zephyr.behavioral_audit.roi_engine; zephyr.behavioral_audit.rollback_bridge; zephyr.behavioral_audit.runbook_generator; zephyr.behavioral_audit.self_check; zephyr.behavioral_audit.suppression_learner; zephyr.behavioral_audit.tamper_proof_audit; zephyr.behavioral_audit.trend_analyzer; zephyr.behavioral_audit.chaos_injector; zephyr.behavioral_audit.backcompat_checker; zephyr.behavioral_audit.ai_construction_detectors
 # [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.escalation_bridge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.models; zephyr.governance.__init__
 # [CONSUMERS] engine.py;fix_reliability.py
 # [STARTUP] imported

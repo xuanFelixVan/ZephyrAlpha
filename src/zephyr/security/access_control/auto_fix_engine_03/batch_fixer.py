@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.security.access_control.auto_fix_engine_03.batch_fixer
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.auto_fix_engine_03.fix_budget; zephyr.security.access_control.auto_fix_engine_03.fix_reliability; zephyr.security.access_control.auto_fix_engine_03.models
 # [CONSUMERS] engine.py
 # [STARTUP] imported

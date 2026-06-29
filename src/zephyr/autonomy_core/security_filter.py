@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-CE-LSG-001
 # [MODULE] zephyr.autonomy_core.security_filter
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security_01.context_scanner
 # [CONSUMERS] zephyr.autonomy_core.task_context_builder
 # [STARTUP] imported

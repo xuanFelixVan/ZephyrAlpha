@@ -45,7 +45,7 @@ domain_count:
   added_domains:
     - D-GOV_RULE (175模块, D48拆分追认)
     - D-GOV_AUDIT (69模块, D48拆分追认)
-    - D-BEHAVIORAL_AUDIT (60模块, D-SECURITY拆分追认)
+    - D_BEHAVIORAL_AUDIT (60模块, D_SECURITY拆分追认)
     - D-GOV_DRIFT (22模块, D48拆分保留)
   renamed_domains:
     - D-INFRASTRUCTURE + D-INFRA-RUNTIME 合并为 D_INFRA_RUNTIME

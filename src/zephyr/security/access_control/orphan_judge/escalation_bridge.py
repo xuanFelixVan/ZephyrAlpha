@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.2
 # [MODULE] zephyr.security.access_control.orphan_judge.escalation_bridge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(ESCALATE判决)
 # [STARTUP] imported

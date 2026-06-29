@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-188 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.evals
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] tests
 # [STARTUP] imported

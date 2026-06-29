@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.embedding_router
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.embedding_router
 # [CONSUMERS] in_process_vector_memory;hybrid_retriever;auto_runtime_core;skill_router
 # [STARTUP] imported

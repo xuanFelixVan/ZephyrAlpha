@@ -42,21 +42,21 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D-ALT_DATA | 另类数据 | 8 | 1 | 0 | 7 | 8/150 (OK) | [d_alt_data.md](domains/d_alt_data.md) |
-| D-AUTONOMY_CORE | 自治核心 | 176 | 2 | 0 | 174 | 176/150 (超容) | [d_autonomy_core.md](domains/d_autonomy_core.md) |
-| D-BEHAVIORAL_AUDIT | 行为审计 | 78 | 78 | 0 | 0 | 78/150 (OK) | [d_behavioral_audit.md](domains/d_behavioral_audit.md) |
-| D-DATA_ENG | 数据工程 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_data_eng.md](domains/d_data_eng.md) |
-| D-DATA_GOV | 数据治理 | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_data_gov.md](domains/d_data_gov.md) |
-| D-DATA_SEC | 数据安全与契约 | 10 | 0 | 0 | 10 | 10/150 (OK) | [d_data_sec.md](domains/d_data_sec.md) |
-| D-FRONTEND | 前端 | 23 | 7 | 0 | 16 | 23/150 (OK) | [d_frontend.md](domains/d_frontend.md) |
-| D-INTEGRATION | 管线路由 | 282 | 70 | 0 | 212 | 282/150 (超容) | [d_integration.md](domains/d_integration.md) |
-| D-INTEGRATION_GATEWAY | mcp_servers | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_integration_gateway.md](domains/d_integration_gateway.md) |
-| D-MKT_DATA | 行情数据 | 9 | 1 | 0 | 8 | 9/150 (OK) | [d_mkt_data.md](domains/d_mkt_data.md) |
-| D-OPS | 反馈循环 | 433 | 24 | 1 | 408 | 433/150 (超容) | [d_ops.md](domains/d_ops.md) |
-| D-REPORTING | 报告 | 15 | 1 | 0 | 14 | 15/150 (OK) | [d_reporting.md](domains/d_reporting.md) |
-| D-SECURITY | 对抗验证 | 243 | 132 | 0 | 111 | 243/150 (超容) | [d_security.md](domains/d_security.md) |
-| D-SECURITY_LLM | llm_defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_security_llm.md](domains/d_security_llm.md) |
-| D-SHARED | 共享服务 | 295 | 93 | 0 | 202 | 295/150 (超容) | [d_shared.md](domains/d_shared.md) |
+| D_ALT_DATA | 另类数据 | 8 | 1 | 0 | 7 | 8/150 (OK) | [d_alt_data.md](domains/d_alt_data.md) |
+| D_AUTONOMY_CORE | 自治核心 | 176 | 2 | 0 | 174 | 176/150 (超容) | [d_autonomy_core.md](domains/d_autonomy_core.md) |
+| D_BEHAVIORAL_AUDIT | 行为审计 | 78 | 78 | 0 | 0 | 78/150 (OK) | [d_behavioral_audit.md](domains/d_behavioral_audit.md) |
+| D_DATA_ENG | 数据工程 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_data_eng.md](domains/d_data_eng.md) |
+| D_DATA_GOV | 数据治理 | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_data_gov.md](domains/d_data_gov.md) |
+| D_DATA_SEC | 数据安全与契约 | 10 | 0 | 0 | 10 | 10/150 (OK) | [d_data_sec.md](domains/d_data_sec.md) |
+| D_FRONTEND | 前端 | 23 | 7 | 0 | 16 | 23/150 (OK) | [d_frontend.md](domains/d_frontend.md) |
+| D_INTEGRATION | 管线路由 | 282 | 70 | 0 | 212 | 282/150 (超容) | [d_integration.md](domains/d_integration.md) |
+| D_INTEGRATION_GATEWAY | mcp_servers | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_integration_gateway.md](domains/d_integration_gateway.md) |
+| D_MKT_DATA | 行情数据 | 9 | 1 | 0 | 8 | 9/150 (OK) | [d_mkt_data.md](domains/d_mkt_data.md) |
+| D_OPS | 反馈循环 | 433 | 24 | 1 | 408 | 433/150 (超容) | [d_ops.md](domains/d_ops.md) |
+| D_REPORTING | 报告 | 15 | 1 | 0 | 14 | 15/150 (OK) | [d_reporting.md](domains/d_reporting.md) |
+| D_SECURITY | 对抗验证 | 243 | 132 | 0 | 111 | 243/150 (超容) | [d_security.md](domains/d_security.md) |
+| D_SECURITY_LLM | llm_defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_security_llm.md](domains/d_security_llm.md) |
+| D_SHARED | 共享服务 | 295 | 93 | 0 | 202 | 295/150 (超容) | [d_shared.md](domains/d_shared.md) |
 
 ### L2_domain (32 个域)
 

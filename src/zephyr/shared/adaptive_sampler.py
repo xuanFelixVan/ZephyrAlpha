@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.adaptive_sampler
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.ops.__init___from_obs; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

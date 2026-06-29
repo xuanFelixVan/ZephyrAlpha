@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.task_repository_protocol
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading; zephyr.governance; zephyr.resilience
 # [STARTUP] imported

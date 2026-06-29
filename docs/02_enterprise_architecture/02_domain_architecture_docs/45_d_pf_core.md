@@ -80,7 +80,7 @@ graph TD
         src_zephyr_pf_core_analytics_base_py["src/zephyr/pf_core/analytics_base.py production"]
         src_zephyr_pf_core_api_init_py["src/zephyr/pf_core/api/__init__.py prototype"]
     end
-    D_REPORTING["D-REPORTING prototype"]
+    D_REPORTING["D_REPORTING prototype"]
     src_zephyr_pf_core_analytics_base_py -.->|import_depends| D_REPORTING
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_analytics_base_py
@@ -149,7 +149,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 12 | contract,import_depends |
-| D-REPORTING | 1 | import_depends |
+| D_REPORTING | 1 | import_depends |
 | D-TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

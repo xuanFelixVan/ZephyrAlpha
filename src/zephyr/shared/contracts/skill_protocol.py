@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.skill_protocol
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.mcp_servers; zephyr.governance.agent_spec; zephyr.infrastructure.rollback
 # [STARTUP] imported

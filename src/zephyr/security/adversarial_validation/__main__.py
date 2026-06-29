@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §10
 # [MODULE] zephyr.security.adversarial_validation.__main__
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.cli
 # [CONSUMERS] End users; CI/CD
 # [STARTUP] manual

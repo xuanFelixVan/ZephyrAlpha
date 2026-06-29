@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._patterns
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.deprecation; zephyr.integration.shared_08.flags; zephyr.integration.shared_08.idempotency; zephyr.integration.shared_08.limiter; zephyr.integration.shared_08.lock; zephyr.integration.shared_08.migration; zephyr.integration.shared_08.outbox; zephyr.integration.shared_08.pagination; zephyr.integration.shared_08.resilience.__init__; zephyr.integration.shared_08.schema_registry; zephyr.integration.shared_08.testing
 # [CONSUMERS] zephyr.shared.__init__
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-FRONTEND 前端架构文档
+title: D_FRONTEND 前端架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 12_d_frontend / 前端
 
-> **文档作用 / Purpose**: 展示 前端（D-FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 12 | Number | 12 |
-| 域ID | D-FRONTEND | Domain ID | D-FRONTEND |
+| 域ID | D_FRONTEND | Domain ID | D_FRONTEND |
 | 域名称 | 前端 | Domain Name | 前端 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 23 | Module Count | 23 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_FRONTEND["D-FRONTEND 前端"]
+    subgraph D_FRONTEND["D_FRONTEND 前端"]
         src_zephyr_frontend_init_py["src/zephyr/frontend/__init__.py prototype"]
         src_zephyr_frontend_extensions_init_py["src/zephyr/frontend/_extensions/__init__.py prototype"]
         src_zephyr_frontend_api_init_py["src/zephyr/frontend/api/__init__.py prototype"]
@@ -84,12 +84,12 @@ graph TD
     src_zephyr_frontend_interface_base_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_components_gate_statistics_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_components_task_progress_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -->|import_depends| D_OPS
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_frontend_dashboard_app_py_1 -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py_1 -->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_SHARED
     D_INFRA_OPS["D_INFRA_OPS prototype"]
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_INFRA_OPS
@@ -121,8 +121,8 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 4 | import_depends |
-| D-OPS | 2 | import_depends |
-| D-SHARED | 1 | import_depends |
+| D_OPS | 2 | import_depends |
+| D_SHARED | 1 | import_depends |
 | D_INFRA_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -133,7 +133,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 前端（D-FRONTEND）的模块分布。共 23 个模块 / 23 modules。
+> 按 architecture_layer 分层显示 前端（D_FRONTEND）的模块分布。共 23 个模块 / 23 modules。
 
 ```
 

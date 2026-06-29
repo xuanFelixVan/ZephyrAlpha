@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-AUTONOMY_CORE 自治核心架构文档
+title: D_AUTONOMY_CORE 自治核心架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 07_d_autonomy_core / 自治核心
 
-> **文档作用 / Purpose**: 展示 自治核心（D-AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 07 | Number | 07 |
-| 域ID | D-AUTONOMY_CORE | Domain ID | D-AUTONOMY_CORE |
+| 域ID | D_AUTONOMY_CORE | Domain ID | D_AUTONOMY_CORE |
 | 域名称 | 自治核心 | Domain Name | 自治核心 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 175 | Module Count | 175 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_init_py["src/zephyr/autonomy_core/__init__.py production"]
         src_zephyr_autonomy_core_main_py["src/zephyr/autonomy_core/__main__.py prototype"]
         src_zephyr_autonomy_core_extensions_init_py["src/zephyr/autonomy_core/_extensions/__init__.py prototype"]
@@ -107,7 +107,7 @@ graph TD
     src_zephyr_autonomy_core_assembly_context_injector_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     src_zephyr_autonomy_core_assembly_init_py -.->|config_depends| src_zephyr_autonomy_core_assembly_context_assembler_py
     src_zephyr_autonomy_core_assembly_context_pipeline_py -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTEGRATION
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
@@ -122,7 +122,7 @@ graph TD
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_TRADING["D-TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
@@ -148,7 +148,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_context_budget_py["src/zephyr/autonomy_core/context_budget.py prototype"]
         src_zephyr_autonomy_core_context_budget_tracker_py["src/zephyr/autonomy_core/context_budget_tracker.py prototype"]
         src_zephyr_autonomy_core_context_debt_score_py["src/zephyr/autonomy_core/context_debt_score.py prototype"]
@@ -180,14 +180,14 @@ graph TD
         src_zephyr_autonomy_core_file_autoregister_py["src/zephyr/autonomy_core/file_autoregister.py prototype"]
         src_zephyr_autonomy_core_file_autorregister_py["src/zephyr/autonomy_core/file_autorregister.py prototype"]
     end
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_autonomy_core_context_budget_tracker_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_context_budget_tracker_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_context_budget_tracker_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_context_pipeline_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_context_injector_py -.->|import_depends| D_INTEGRATION
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_autonomy_core_context_injector_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_core_doc_compressor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_engine_py -.->|import_depends| D_INTEGRATION
@@ -206,7 +206,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_fragmentation_index_py["src/zephyr/autonomy_core/fragmentation_index.py prototype"]
         src_zephyr_autonomy_core_host_resource_governor_py["src/zephyr/autonomy_core/host_resource_governor.py prototype"]
         src_zephyr_autonomy_core_ide_watcher_py["src/zephyr/autonomy_core/ide_watcher.py prototype"]
@@ -242,12 +242,12 @@ graph TD
     src_zephyr_autonomy_core_management_init_py -.->|import_depends| src_zephyr_autonomy_core_management_context_rot_model_py
     src_zephyr_autonomy_core_management_init_py -.->|import_depends| src_zephyr_autonomy_core_management_context_evictor_py
     src_zephyr_autonomy_core_parsing_init_py -.->|config_depends| src_zephyr_autonomy_core_parsing_intent_parser_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_intent_parser_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_intent_keyword_mapper_py -.->|import_depends| D_INTEGRATION
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_autonomy_core_llm_gateway_py -.->|import_depends| D_SECURITY
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_autonomy_core_llm_gateway_py -.->|import_depends| D_SHARED
     src_zephyr_autonomy_core_pattern_library_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_pattern_library_py -.->|import_depends| D_INTEGRATION
@@ -269,7 +269,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_position_optimizer_py["src/zephyr/autonomy_core/position_optimizer.py prototype"]
         src_zephyr_autonomy_core_progressive_disclosure_injector_py["src/zephyr/autonomy_core/progressive_disclosure... prototype"]
         src_zephyr_autonomy_core_prompt_registry_py["src/zephyr/autonomy_core/prompt_registry.py prototype"]
@@ -301,11 +301,11 @@ graph TD
         src_zephyr_autonomy_core_skill_efficacy_calibrator_py["src/zephyr/autonomy_core/skill_efficacy_calibra... prototype"]
         src_zephyr_autonomy_core_skill_evaluator_py["src/zephyr/autonomy_core/skill_evaluator.py prototype"]
     end
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_prompt_registry_py -.->|import_depends| D_INTEGRATION
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_autonomy_core_security_filter_py -.->|import_depends| D_SECURITY
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|runtime| src_zephyr_autonomy_core_self_evolution_fidelity_gate_py
     D_GOVERNANCE["D-GOVERNANCE design"]
     D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_security_filter_py
@@ -323,7 +323,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_skill_executor_py["src/zephyr/autonomy_core/skill_executor.py prototype"]
         src_zephyr_autonomy_core_skill_explain_py["src/zephyr/autonomy_core/skill_explain.py prototype"]
         src_zephyr_autonomy_core_skill_factory_py["src/zephyr/autonomy_core/skill_factory.py prototype"]
@@ -355,7 +355,7 @@ graph TD
         src_zephyr_autonomy_core_skill_router_py["src/zephyr/autonomy_core/skill_router.py prototype"]
         src_zephyr_autonomy_core_skill_sandbox_py["src/zephyr/autonomy_core/skill_sandbox.py prototype"]
     end
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_GOV_AUDIT
@@ -364,7 +364,7 @@ graph TD
     src_zephyr_autonomy_core_skill_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_skill_router_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_skill_sandbox_py -.->|import_depends| D_GOV_AUDIT
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|runtime| src_zephyr_autonomy_core_skill_resilience_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -379,7 +379,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUTONOMY_CORE["D-AUTONOMY_CORE 自治核心"]
+    subgraph D_AUTONOMY_CORE["D_AUTONOMY_CORE 自治核心"]
         src_zephyr_autonomy_core_skill_schema_registry_py["src/zephyr/autonomy_core/skill_schema_registry.py prototype"]
         src_zephyr_autonomy_core_skill_security_py["src/zephyr/autonomy_core/skill_security.py prototype"]
         src_zephyr_autonomy_core_skill_shadow_py["src/zephyr/autonomy_core/skill_shadow.py prototype"]
@@ -407,7 +407,7 @@ graph TD
         src_zephyr_autonomy_core_vibe_coding_quality_gate_py["src/zephyr/autonomy_core/vibe_coding_quality_ga... prototype"]
     end
     src_zephyr_autonomy_core_support_architecture_context_loader_py -.->|config_depends| src_zephyr_autonomy_core_support_init_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_autonomy_core_system_snapshot_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_task_context_builder_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE production"]
@@ -430,10 +430,10 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INTEGRATION | 24 | import_depends |
-| D-SHARED | 6 | import_depends |
+| D_INTEGRATION | 24 | import_depends |
+| D_SHARED | 6 | import_depends |
 | D-GOV_AUDIT | 3 | import_depends |
-| D-SECURITY | 3 | import_depends |
+| D_SECURITY | 3 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
 | D-INTELLIGENCE | 2 | import_depends |
 | D-GOV_ENFORCEMENT | 1 | import_depends |
@@ -443,16 +443,16 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-GOVERNANCE | 214 | contract,import_depends,runtime,test_depends |
-| D-OPS | 8 | import_depends,runtime,test_depends |
+| D_OPS | 8 | import_depends,runtime,test_depends |
 | D-TRADING | 3 | import_depends |
-| D-INTEGRATION | 2 | import_depends |
+| D_INTEGRATION | 2 | import_depends |
 | D-INTELLIGENCE | 1 | import_depends |
 | D-AUTONOMY_PERM | 1 | test_depends |
 | D-KNOWLEDGE | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 自治核心（D-AUTONOMY_CORE）的模块分布。共 175 个模块 / 175 modules。
+> 按 architecture_layer 分层显示 自治核心（D_AUTONOMY_CORE）的模块分布。共 175 个模块 / 175 modules。
 
 ```
 

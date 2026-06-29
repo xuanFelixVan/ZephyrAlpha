@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.model_capacity_probe
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading.resource_optimization; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

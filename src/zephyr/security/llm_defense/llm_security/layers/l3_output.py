@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-LLM_SECURITY
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l3_output
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security_01.layers.l3_output; zephyr.security.llm_defense.llm_security_01.layers.__init__; tests.adversarial.test_cross_layer_systems_red_team; tests.llm_security.test_l3_output_security
 # [STARTUP] imported

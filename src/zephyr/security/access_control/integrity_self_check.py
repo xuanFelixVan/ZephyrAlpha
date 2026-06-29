@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md | §integrity_self_check
 # [MODULE] zephyr.security.access_control.integrity_self_check
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] tests/agent_rbac/test_integrity_agent_rbac.py
 # [STARTUP] imported

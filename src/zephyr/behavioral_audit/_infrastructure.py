@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._infrastructure
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.absence_manager; zephyr.behavioral_audit.ai_context_injector; zephyr.behavioral_audit.alert_router; zephyr.behavioral_audit.baseline_manager; zephyr.behavioral_audit.canary_controller; zephyr.behavioral_audit.cold_start; zephyr.behavioral_audit.config_consistency; zephyr.behavioral_audit.dashboard; zephyr.behavioral_audit.gate_persistence; zephyr.behavioral_audit.handoff_manager; zephyr.behavioral_audit.resource_guard
 # [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STARTUP] imported

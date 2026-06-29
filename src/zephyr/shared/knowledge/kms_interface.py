@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-106 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.knowledge.kms_interface
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.knowledge.ke_linker
 # [CONSUMERS]
 # [STARTUP] imported

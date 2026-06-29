@@ -74,24 +74,24 @@ graph LR
     end
 
     subgraph ACL_Layer["反腐层 Anti-Corruption Layer"]
-        CONN["D-MKT_DATA connectors/<br/>(ACL for market data)"]
+        CONN["D_MKT_DATA connectors/<br/>(ACL for market data)"]
         BROKER_A["D-EX_CORE adapters/<br/>(ACL for broker)"]
-        LLM_A["D-FRONTEND/<br/>(ACL for LLM)"]
+        LLM_A["D_FRONTEND/<br/>(ACL for LLM)"]
     end
 
     subgraph Core["ZephyrAlpha Core Domains (depgraph.db派生)"]
-        D_MKT_DATA["D-MKT_DATA<br/>行情数据"]
-        D_ALT_DATA["D-ALT_DATA<br/>另类数据"]
+        D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
+        D_ALT_DATA["D_ALT_DATA<br/>另类数据"]
         D_FACTOR["D-FACTOR<br/>因子"]
         D_SIGNAL["D-SIGLEGACY<br/>信号"]
         D_RISK["D-RISK<br/>风控"]
         D_PF_CORE["D-PF_CORE<br/>组合核心"]
         D_EX_CORE["D-EX_CORE<br/>执行核心"]
         D_TRADING["D-TRADING<br/>交易运营"]
-        D_REPORTING["D-REPORTING<br/>报告"]
-        D_FRONTEND["D-FRONTEND<br/>前端"]
+        D_REPORTING["D_REPORTING<br/>报告"]
+        D_FRONTEND["D_FRONTEND<br/>前端"]
         D_ML_TRAIN["D-ML_TRAIN<br/>训练"]
-        D_OPS["D-OPS<br/>反馈循环"]
+        D_OPS["D_OPS<br/>反馈循环"]
     end
 
     subgraph Notify["通知输出 Output"]
@@ -109,8 +109,8 @@ graph LR
 
     %% P0 Cross-Layer Contracts / 跨层数据契约承重墙
     %% 契约真源: cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
-    D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D-MKT_DATA → D-FACTOR" --> D_FACTOR
+    %% CTR-001: NormalizedMarketData (frozen) — D_MKT_DATA → D-FACTOR
+    D_MKT_DATA -- "🔒 CTR-001<br/>NormalizedMarketData<br/>D_MKT_DATA → D-FACTOR" --> D_FACTOR
 
     %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
     D_FACTOR -- "🔒 CTR-002<br/>FactorSignal<br/>D-FACTOR → D-SIGLEGACY" --> D_SIGNAL
@@ -153,8 +153,8 @@ flowchart TD
         BK["券商 API<br/>Broker API"]
     end
 
-    subgraph D_MKT_DATA_Grp["D-MKT_DATA · 行情数据 / Market Data"]
-        D_MKT_DATA["D-MKT_DATA<br/>Ingestion · Standardization · Quality Gating<br/>接入 · 标准化 · 质量门禁"]
+    subgraph D_MKT_DATA_Grp["D_MKT_DATA · 行情数据 / Market Data"]
+        D_MKT_DATA["D_MKT_DATA<br/>Ingestion · Standardization · Quality Gating<br/>接入 · 标准化 · 质量门禁"]
     end
 
     subgraph D_FACTOR_Grp["D-FACTOR · 因子 / Alpha Factor"]
@@ -185,14 +185,14 @@ flowchart TD
         D_ML_TRAIN["D-ML_TRAIN<br/>Model Training · Registry · Inference<br/>模型训练 · 注册 · 推理"]
     end
 
-    subgraph D_OPS_Grp["D-OPS · 反馈循环 / System Telemetry"]
-        D_OPS["D-OPS<br/>Structured Metrics · Observability<br/>结构化指标 · 可观测性"]
+    subgraph D_OPS_Grp["D_OPS · 反馈循环 / System Telemetry"]
+        D_OPS["D_OPS<br/>Structured Metrics · Observability<br/>结构化指标 · 可观测性"]
     end
 
-    %% External → D-MKT_DATA
+    %% External → D_MKT_DATA
     MD -->|"REST/WebSocket<br/>原始行情数据"| D_MKT_DATA
 
-    %% D-MKT_DATA → D-FACTOR: CTR-001 NormalizedMarketData (frozen)
+    %% D_MKT_DATA → D-FACTOR: CTR-001 NormalizedMarketData (frozen)
     D_MKT_DATA -->|"🔒 CTR-001<br/>NormalizedMarketData<br/>[frozen]"| D_FACTOR
 
     %% D-FACTOR → D-SIGLEGACY: CTR-002 FactorSignal (frozen)
@@ -229,7 +229,7 @@ flowchart TD
     %% D-TRADING → D-ML_TRAIN: CTR-006 PositionSnapshot (frozen) — 战略决策
     D_TRADING -->|"🔒 CTR-006<br/>PositionSnapshot<br/>[frozen]"| D_ML_TRAIN
 
-    %% D-TRADING → D-OPS: 绩效指标上报
+    %% D-TRADING → D_OPS: 绩效指标上报
     D_TRADING -->|"PnL / Risk Metrics<br/>绩效与风险指标"| D_OPS
 
     %% D-ML_TRAIN → D-FACTOR: 模型预测反馈
@@ -238,7 +238,7 @@ flowchart TD
     %% D-ML_TRAIN → D-PF_CORE: 模型预测反馈
     D_ML_TRAIN -->|"ModelPrediction<br/>模型预测"| D_PF_CORE
 
-    %% D-RISK → D-OPS: 风险指标上报
+    %% D-RISK → D_OPS: 风险指标上报
     D_RISK -->|"Risk Metrics<br/>风险指标"| D_OPS
 
     %% 样式定义
@@ -278,8 +278,8 @@ flowchart TD
         FEISHU_EXT["Feishu<br/>飞书<br/>(REST Webhook)"]
     end
 
-    %% ── D-MKT_DATA 行情数据 ───────────────────────────────────────
-    subgraph D_MKT_DATA["D-MKT_DATA · 行情数据 / Market Data"]
+    %% ── D_MKT_DATA 行情数据 ───────────────────────────────────────
+    subgraph D_MKT_DATA["D_MKT_DATA · 行情数据 / Market Data"]
         MKT_CONN["connectors/<br/>数据源适配器"]
         MKT_NORM["normalizers/<br/>标准化"]
         MKT_QG["quality/<br/>质量门禁"]
@@ -287,8 +287,8 @@ flowchart TD
         MKT_CACHE["cache/<br/>缓存"]
     end
 
-    %% ── D-SHARED 基础设施 (cross-cutting) ────────────────────────
-    D_SHARED["D-SHARED · 基础设施 / Infrastructure<br/>config · logging · exceptions · runtime<br/>配置 · 日志 · 异常 · 运行时<br/>⟵ 所有域依赖，省略连线"]
+    %% ── D_SHARED 基础设施 (cross-cutting) ────────────────────────
+    D_SHARED["D_SHARED · 基础设施 / Infrastructure<br/>config · logging · exceptions · runtime<br/>配置 · 日志 · 异常 · 运行时<br/>⟵ 所有域依赖，省略连线"]
 
     %% ── D-FACTOR 因子 ─────────────────────────────────────────────
     subgraph D_FACTOR["D-FACTOR · 因子 / Alpha Factor"]
@@ -340,8 +340,8 @@ flowchart TD
         TRD_RPT["reports/<br/>报告生成"]
     end
 
-    %% ── D-FRONTEND 前端 ──────────────────────────────────────────
-    subgraph D_FRONTEND["D-FRONTEND · 前端 / Human-AI Interface"]
+    %% ── D_FRONTEND 前端 ──────────────────────────────────────────
+    subgraph D_FRONTEND["D_FRONTEND · 前端 / Human-AI Interface"]
         FE_CLI["cli/<br/>操作者入口"]
         FE_ORCH["orchestration/<br/>人机协作编排"]
         FE_NOTIF["notifications/<br/>飞书 · 告警分发"]
@@ -353,8 +353,8 @@ flowchart TD
     %% ── D-INTELLIGENCE 战略决策 ───────────────────────────────────
     D_INTELLIGENCE["D-INTELLIGENCE · 战略决策 / Strategic Decision<br/>长期配置 · 决策支持 · 战略报告<br/>⟵ 消费所有域输出"]
 
-    %% ── AI Agent Ops (D-INTELLIGENCE + D-AUTONOMY_CORE) ──────────
-    AI_OPS["AI Agent Ops<br/>D-INTELLIGENCE + D-AUTONOMY_CORE<br/>LLM 调用 · 记忆 · 实验研究"]
+    %% ── AI Agent Ops (D-INTELLIGENCE + D_AUTONOMY_CORE) ──────────
+    AI_OPS["AI Agent Ops<br/>D-INTELLIGENCE + D_AUTONOMY_CORE<br/>LLM 调用 · 记忆 · 实验研究"]
 
     %% ══════════════════════════════════════════════════════════════
     %% DATA FLOW EDGES — 主流数据流（含 P0 跨域数据契约标注）
@@ -468,14 +468,14 @@ graph TD
     subgraph HOST["Host Machine（当前：Windows / 计划：Linux）"]
         subgraph MAIN["ZephyrAlpha Main Process (Python)"]
             direction TB
-            D_MKT_DATA["D-MKT_DATA<br/>行情数据"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| D_FACTOR["D-FACTOR<br/>因子"]
+            D_MKT_DATA["D_MKT_DATA<br/>行情数据"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| D_FACTOR["D-FACTOR<br/>因子"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_SIGNAL["D-SIGLEGACY<br/>信号"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_RISK["D-RISK<br/>风控"]
             D_FACTOR -->|"🔒 CTR-002<br/>FactorSignal"| D_PF_CORE["D-PF_CORE<br/>组合"]
             D_RISK -->|"🔒 CTR-003<br/>RiskLimits"| D_PF_CORE
             D_PF_CORE -->|"🔓 CTR-004<br/>Order"| D_EX_CORE["D-EX_CORE<br/>执行"]
             D_EX_CORE -->|"🔒 CTR-005<br/>Fill + 🔒 CTR-006<br/>PositionSnapshot"| D_TRADING["D-TRADING<br/>交易运营"]
-            D_TRADING -->|"Report"| D_FRONTEND["D-FRONTEND<br/>前端"]
+            D_TRADING -->|"Report"| D_FRONTEND["D_FRONTEND<br/>前端"]
         end
         subgraph STORAGE["Local Storage"]
             DB["Data Store (Parquet / DuckDB · 待定)"]
@@ -512,7 +512,7 @@ def write_capability_heatmap_visual(stats):
     """52域×10能力域矩阵（与capability_heatmap.md v2.0.0对齐）"""
     # 10能力域定义
     capability_domains = [
-        ("数据接入", ["D-MKT_DATA", "D-ALT_DATA", "D-DATA_ENG"]),
+        ("数据接入", ["D_MKT_DATA", "D_ALT_DATA", "D_DATA_ENG"]),
         ("因子研究", ["D-FACTOR", "D-SIGLEGACY", "D-FUNDAMENTAL_SIGNAL", "D-ASHARE_SIGNAL", "D-SIGQC"]),
         ("策略决策", ["D-PF_CORE", "D-PF_ALLOC", "D-SELL_DECISION", "D-CROSS_ASSET"]),
         ("执行交易", ["D-EX_CORE", "D-EX_SOR", "D-TRADING", "D-POSITION"]),
@@ -520,8 +520,8 @@ def write_capability_heatmap_visual(stats):
         ("回测仿真", ["D-BACKTEST", "D-SIMULATION", "D-EXEC_SIM", "D-DIGITAL_TWIN"]),
         ("ML平台", ["D-ML_TRAIN", "D-ML_SERVE"]),
         ("治理(横切)", ["D-GOVERNANCE", "D-GOV_RULE", "D-GOV_AUDIT", "D-GOV_DRIFT"]),
-        ("安全(横切)", ["D-SECURITY", "D-BEHAVIORAL_AUDIT", "D-DATA_SEC", "D-AUTONOMY_PERM"]),
-        ("基础设施(横切)", ["D_INFRA_OPS", "D_INFRA_RUNTIME", "D-INTEGRATION", "D-SHARED", "D-FRONTEND", "D-REPORTING", "D-KNOWLEDGE", "D-INTELLIGENCE", "D-AUTONOMY_CORE", "D-OPS"]),
+        ("安全(横切)", ["D_SECURITY", "D_BEHAVIORAL_AUDIT", "D_DATA_SEC", "D-AUTONOMY_PERM"]),
+        ("基础设施(横切)", ["D_INFRA_OPS", "D_INFRA_RUNTIME", "D_INTEGRATION", "D_SHARED", "D_FRONTEND", "D_REPORTING", "D-KNOWLEDGE", "D-INTELLIGENCE", "D_AUTONOMY_CORE", "D_OPS"]),
     ]
 
     def maturity_label(did):
@@ -588,7 +588,7 @@ C4Container
     Person(operator, "Independent Operator", "独立操作者")
 
     System_Boundary(zephyr, "ZephyrAlpha 2.0") {
-        Container(data_pipeline, "Data Pipeline", "Python / D-MKT_DATA", "Market data ingestion,<br/>standardization, quality gating<br/>行情数据接入、标准化、质量门禁")
+        Container(data_pipeline, "Data Pipeline", "Python / D_MKT_DATA", "Market data ingestion,<br/>standardization, quality gating<br/>行情数据接入、标准化、质量门禁")
 
         Container(factor_engine, "Factor Engine", "Python / D-FACTOR+D-SIGLEGACY", "Alpha factor calculation,<br/>signal generation<br/>Alpha 因子计算、信号生成")
 
@@ -600,7 +600,7 @@ C4Container
 
         Container(analytics, "Post-Trade Analytics", "Python / D-TRADING", "Performance attribution,<br/>reporting<br/>绩效归因、报告")
 
-        Container(ai_ops, "AI Agent Ops", "Python / D-FRONTEND + D-AUTONOMY_CORE", "Agent rules, memory,<br/>context management<br/>Agent 规则、记忆、上下文")
+        Container(ai_ops, "AI Agent Ops", "Python / D_FRONTEND + D_AUTONOMY_CORE", "Agent rules, memory,<br/>context management<br/>Agent 规则、记忆、上下文")
 
         ContainerDb(storage, "Data Storage", "PostgreSQL + TimescaleDB / DuckDB / Parquet", "Market data, factor signals,<br/>positions, trades<br/>行情、因子、持仓、交易数据")
 
@@ -617,7 +617,7 @@ C4Container
 
     %% P0 Cross-Domain Contracts / 跨域数据契约承重墙
     %% 契约真源: cross_layer_contracts.yaml
-    %% CTR-001: NormalizedMarketData (frozen) — D-MKT_DATA → D-FACTOR
+    %% CTR-001: NormalizedMarketData (frozen) — D_MKT_DATA → D-FACTOR
     Rel(data_pipeline, factor_engine, "CTR-001<br/>NormalizedMarketData<br/>[frozen]", "标准化行情数据")
 
     %% CTR-002: FactorSignal (frozen) — D-FACTOR → D-SIGLEGACY/D-RISK/D-PF_CORE
@@ -651,14 +651,14 @@ C4Container
 def write_c4_l3_data_source():
     content = HEADER + """
 %%{init: {'theme': 'default'}}%%
-%% v2.0.0: L00 Data Source → D-MKT_DATA 行情数据域组件
+%% v2.0.0: L00 Data Source → D_MKT_DATA 行情数据域组件
 %% 文件名保留l00前缀以兼容现有引用
 
 C4Component
-    title C4 Level 3 — D-MKT_DATA 行情数据域组件
-    title (D-MKT_DATA 数据源域组件分解 / H5)
+    title C4 Level 3 — D_MKT_DATA 行情数据域组件
+    title (D_MKT_DATA 数据源域组件分解 / H5)
 
-    Container_Boundary(d_mkt_data, "D-MKT_DATA 行情数据 / Market Data (depgraph.db派生)") {
+    Container_Boundary(d_mkt_data, "D_MKT_DATA 行情数据 / Market Data (depgraph.db派生)") {
 
         Component(vendor_registry, "Vendor Registry", "Python / vendor_registry.py", "Vendor 统一注册中心：按 asset_class/jurisdiction/data_domain 解析可用 Vendor，含优先级排序与健康状态上报<br/>Vendor Registry: register / resolve / healthcheck_all")
 
@@ -683,13 +683,13 @@ C4Component
         ComponentDb(cache, "Raw Data Cache", "DuckDB / Parquet", "按 asof_date 分区的 PIT 原始数据快照（可选缓存层）")
     }
 
-    Container_Ext(shared_contracts, "D-SHARED/contracts/", "Python / canonical schema", "Instrument / Bar / Tick / CorporateAction / FundamentalSnapshot")
+    Container_Ext(shared_contracts, "D_SHARED/contracts/", "Python / canonical schema", "Instrument / Bar / Tick / CorporateAction / FundamentalSnapshot")
 
     Container_Ext(d_factor, "D-FACTOR 因子", "Python / D-FACTOR/", "因子消费侧（通过 IDataSource）")
 
     System_Ext(vendor_ext, "External Vendors", "iFinD / Tushare / AKShare / Polygon / ...")
 
-    System_Ext(d_ops, "D-OPS 反馈循环", "OTel Collector / Prometheus", "metrics + traces 接收")
+    System_Ext(d_ops, "D_OPS 反馈循环", "OTel Collector / Prometheus", "metrics + traces 接收")
 
     Rel(d_factor, vendor_registry, "resolve(asset_class, jurisdiction, data_domain)", "解析可用 Vendor")
     Rel(vendor_registry, ifind_facade, "returns (primary)")
@@ -763,7 +763,7 @@ C4Component
 
     System_Ext(broker_ext, "Broker API", "券商 API（实盘激活后）")
 
-    Container_Ext(d_ops, "D-OPS 反馈循环", "OTel / Prometheus", "订单延迟 + 成交吞吐 + 幂等命中率")
+    Container_Ext(d_ops, "D_OPS 反馈循环", "OTel / Prometheus", "订单延迟 + 成交吞吐 + 幂等命中率")
 
     Rel(d_pf_core, oms, "submits target orders", "目标委托")
     Rel(oms, idempotency_guard, "check before send", "Key 生成 + SETNX")
@@ -831,7 +831,7 @@ C4Component
 
     Container_Ext(d_factor, "D-FACTOR 因子", "Python / D-FACTOR/", "因子供 feature 来源")
 
-    Container_Ext(d_mkt_data, "D-MKT_DATA 行情数据", "Python / D-MKT_DATA/", "原始数据 via IDataSource")
+    Container_Ext(d_mkt_data, "D_MKT_DATA 行情数据", "Python / D_MKT_DATA/", "原始数据 via IDataSource")
 
     Container_Ext(d_signal_pf, "D-SIGLEGACY/D-PF_CORE 信号&组合", "Python / D-SIGLEGACY + D-PF_CORE/", "下游推理消费者")
 
@@ -841,7 +841,7 @@ C4Component
 
     ContainerDb_Ext(feature_storage, "Feature Storage", "Parquet / DuckDB", "按 entity × asof_date 分区")
 
-    Container_Ext(d_ops, "D-OPS 反馈循环", "OTel + Prometheus", "训练/推理 metric + 漂移 metric")
+    Container_Ext(d_ops, "D_OPS 反馈循环", "OTel + Prometheus", "训练/推理 metric + 漂移 metric")
 
     Rel(d_factor, feature_store, "writes factors as features", "feature ingest")
     Rel(d_mkt_data, feature_store, "writes raw features", "via pit_query")

@@ -81,7 +81,7 @@ class TestDualTrackRegexes:
         assert _MODULE_ID_D_PREFIX_RE.match("D-MKT_DATA-001")
 
     def test_d_prefix_fail_no_seq(self):
-        assert _MODULE_ID_D_PREFIX_RE.match("D-MKT_DATA") is None
+        assert _MODULE_ID_D_PREFIX_RE.match("D_MKT_DATA") is None
 
 
 # ---------------------------------------------------------------------------

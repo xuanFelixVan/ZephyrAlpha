@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._drift
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.contract_drift_detector; zephyr.behavioral_audit.drift_result_types; zephyr.behavioral_audit.drift_training; zephyr.behavioral_audit.drift_infrastructure; zephyr.behavioral_audit.drift_hotfix_bypass; zephyr.behavioral_audit.cascade_detector; zephyr.behavioral_audit.baseline_poisoning_guard
 # [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STARTUP] imported

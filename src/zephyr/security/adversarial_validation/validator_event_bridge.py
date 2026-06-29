@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SEC-030 | docs/03_modules/_domain_security/red_blue_validator/blueprint.md | §
 # [MODULE] zephyr.security.adversarial_validation.validator_event_bridge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.event_bus; zephyr.security.adversarial_validation.validator
 # [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported

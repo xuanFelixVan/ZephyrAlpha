@@ -67,7 +67,7 @@ graph TD
     src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_TRADING["D-TRADING production"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_TRADING
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
@@ -95,7 +95,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-SHARED | 2 | import_depends |
+| D_SHARED | 2 | import_depends |
 | D-TRADING | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -103,7 +103,7 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-INTELLIGENCE | 4 | import_depends |
-| D-SHARED | 2 | import_depends |
+| D_SHARED | 2 | import_depends |
 | D-GOVERNANCE | 1 | data |
 
 ## 架构全景图 / Architecture Overview

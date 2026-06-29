@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.ttl_cleanup_engine
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.capacity_assurance.modules.__init__; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

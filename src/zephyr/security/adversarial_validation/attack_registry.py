@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md
 # [MODULE] zephyr.security.adversarial_validation.attack_registry
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
 # [CONSUMERS] 见蓝图 §4 接口契约
 # [STARTUP] imported

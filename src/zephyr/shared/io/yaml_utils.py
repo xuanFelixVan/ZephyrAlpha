@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SHR-io-yaml | src/zephyr/shared/io/yaml_utils.py | §
 # [MODULE] zephyr.shared.io.yaml_utils
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS] scripts/governance/_shared/yaml_utils.py(重新导出); src/zephyr/governance/triage.py
 # [STARTUP] imported

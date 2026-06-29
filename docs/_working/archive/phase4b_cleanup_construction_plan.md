@@ -18,7 +18,7 @@ completes_when: "已归档,施工方案保留作为历史参考"
 
 > **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
 > D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
-> D-GOV_AUDIT_TESTS→D-AUDITTEST, D-INTEGRATION-GATEWAY→D-INTEGRATION_GATEWAY, D-SECURITY-LLM→D-SECURITY_LLM。
+> D-GOV_AUDIT_TESTS→D-AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
 > 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
 
 
@@ -59,11 +59,11 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 | 域 | 总节点数（错误口径） | **production节点数（正确口径）** |
 |---|:---:|:---:|
 | D-GOVERNANCE | 4285 | **138** |
-| D-SECURITY | 849 | **134** |
+| D_SECURITY | 849 | **134** |
 | D-GOV_RULE | 175 | 175 |
 | D-GOV_AUDIT | 69 | 69 |
 | D-GOV_DRIFT | 22 | 22 |
-| D-BEHAVIORAL_AUDIT | 60 | 60 |
+| D_BEHAVIORAL_AUDIT | 60 | 60 |
 | D_INFRA_RUNTIME | 726 | **1** |
 | D_INFRA_OPS | 404 | **3** |
 
@@ -74,7 +74,7 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 | D-GOV_RULE | 175 | 175+138=313 | ❌超限 | — | ❌未完成 | **保留** | 合并后313>200违反硬上限；规则执行引擎+门禁管线是独立业务能力 |
 | D-GOV_AUDIT | 69 | 69+138=207 | ❌超限 | — | ❌未完成 | **保留** | 合并后207>200违反硬上限；审计追踪链+合规验证是独立业务能力 |
 | D-GOV_DRIFT | 22 | 22+138=160 | ✅在150-200 | ❌22<80 | ❌未完成 | **合并回D-GOVERNANCE** | 22<80域过小（ARCH-CAP-002）；合并后160在150-200高度耦合区间；文件散落无独立ssot_path |
-| D-BEHAVIORAL_AUDIT | 60 | 60+134=194 | ✅不超限 | ❌60<80 | ✅已完成 | **保留** | 拆分已物理完成（76个.py文件已迁移）；60模块构成完整独立域；回退成本高 |
+| D_BEHAVIORAL_AUDIT | 60 | 60+134=194 | ✅不超限 | ❌60<80 | ✅已完成 | **保留** | 拆分已物理完成（76个.py文件已迁移）；60模块构成完整独立域；回退成本高 |
 | D_INFRA_RUNTIME | 1 | — | — | — | — | **重命名为D_INFRA_RUNTIME** | 设计域是D_INFRA_RUNTIME但DB缺失下划线版；D_INFRA_RUNTIME功能=应用运行时服务，与D_INFRA_RUNTIME语义一致 |
 
 ### 2.5 业界实践对标
@@ -92,7 +92,7 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 39设计域（§17.6）
 + D-GOV_RULE（保留，第40域）
 + D-GOV_AUDIT（保留，第41域）
-+ D-BEHAVIORAL_AUDIT（保留，第42域）
++ D_BEHAVIORAL_AUDIT（保留，第42域）
 + D-TEST（D77决策执行，第43域）
 - D-GOV_DRIFT（合并回D-GOVERNANCE，22个节点domain_id改回）
 = 43域
@@ -105,14 +105,14 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 | # | 操作 | 类型 | 影响范围 |
 |---|------|------|---------|
 | 1 | 删除6个连字符重复域 | DB清理 | D-AUTONOMY-CORE/PERM, D-GOV_AUDIT/DRIFT, D-INFRA-OPS, D-ML-TRAIN（0模块空壳） |
-| 2 | 删除5个新空壳连字符域 | DB清理 | D-GOV-ENFORCEMENT/REPAIR/SCRIPTS, D-INTEGRATION-GATEWAY, D-SECURITY-LLM（0模块，不在39设计中） |
+| 2 | 删除5个新空壳连字符域 | DB清理 | D-GOV-ENFORCEMENT/REPAIR/SCRIPTS, D_INTEGRATION-GATEWAY, D_SECURITY-LLM（0模块，不在39设计中） |
 | 3 | D_INFRA_RUNTIME + D_INFRA_RUNTIME → D_INFRA_RUNTIME | 域重命名 | 2个域合并为1个下划线版 |
 | 4 | D-GOV_DRIFT合并回D-GOVERNANCE | 域合并 | 22个节点domain_id改回D-GOVERNANCE |
 | 5 | 创建D-TEST域 | D77执行 | 1个INSERT |
 | 6 | 清理functional_domain_registry.yaml连字符条目 | YAML清理 | 12个条目 |
-| 7 | 更新§17.6纳入D-GOV_RULE/D-GOV_AUDIT/D-BEHAVIORAL_AUDIT/D-TEST | 文档更新 | architecture_upgrade_discussion.md |
+| 7 | 更新§17.6纳入D-GOV_RULE/D-GOV_AUDIT/D_BEHAVIORAL_AUDIT/D-TEST | 文档更新 | architecture_upgrade_discussion.md |
 | 8 | 更新project_rules.md RULE-TEN域数39→43 | 规则更新 | project_rules.md第610行 |
-| 9 | 修复D-BEHAVIORAL_AUDIT depgraph路径过时 | DB修复 | 60个节点file_path更新（文件已迁至behavioral_audit/但DB记录旧路径） |
+| 9 | 修复D_BEHAVIORAL_AUDIT depgraph路径过时 | DB修复 | 60个节点file_path更新（文件已迁至behavioral_audit/但DB记录旧路径） |
 | 10 | 修复D_INFRA_RUNTIME production节点分类 | DB修复 | 726个节点design_maturity重分类（大量实际存在的文件被误标为design/prototype） |
 | 11 | 更新D-GOVERNANCE production节点数 | DB修复 | 138→160（合并D-GOV_DRIFT后） |
 
@@ -158,11 +158,11 @@ for r in rows: print(f'{r[0]:30s} {r[1]:5d}')
 
 | # | 域ID | production模块 | 来源 |
 |---|------|:---:|------|
-| 1-38 | D-MKT_DATA...D-SHARED | 各异 | §17.6设计域（38个，D_INFRA_RUNTIME由D_INFRA_RUNTIME+D_INFRA_RUNTIME重命名而来） |
+| 1-38 | D_MKT_DATA...D_SHARED | 各异 | §17.6设计域（38个，D_INFRA_RUNTIME由D_INFRA_RUNTIME+D_INFRA_RUNTIME重命名而来） |
 | 39 | D_INFRA_RUNTIME | 1→需重分类 | D_INFRA_RUNTIME重命名 |
 | 40 | D-GOV_RULE | 175 | D48拆分保留 |
 | 41 | D-GOV_AUDIT | 69 | D48拆分保留 |
-| 42 | D-BEHAVIORAL_AUDIT | 60 | D-SECURITY拆分保留 |
+| 42 | D_BEHAVIORAL_AUDIT | 60 | D_SECURITY拆分保留 |
 | 43 | D-TEST | 待统计 | D77执行 |
 
 > D-GOV_DRIFT（22模块）合并回D-GOVERNANCE，D-GOVERNANCE从138→160。
@@ -187,14 +187,14 @@ for r in rows: print(f'{r[0]:30s} {r[1]:5d}')
 | 域 | 零入度数 | 占总量% | 备注 |
 |----|:--------:|:------:|------|
 | D-GOVERNANCE | 1,204 | 39.8% | 治理脚本天然零入边（被调度器调用，不被import） |
-| D-OPS | 264 | 8.7% | 运维脚本 |
+| D_OPS | 264 | 8.7% | 运维脚本 |
 | D_INFRA_RUNTIME（原D_INFRA_RUNTIME） | 242 | 8.0% | 基础设施（含 rollback 47个零导入但被 `__init__.py` 重导出） |
-| D-AUTONOMY_CORE | 190 | 6.3% | 含大量 `_` 前缀内部模块 |
+| D_AUTONOMY_CORE | 190 | 6.3% | 含大量 `_` 前缀内部模块 |
 | D-COMPLIANCE | 167 | 5.5% | 合规脚本 |
 | D-TRADING | 133 | 4.4% | 交易运营 |
-| D-INTEGRATION | 113 | 3.7% | 集成模块 |
-| D-SECURITY | 87 | 2.9% | 安全模块（零入边≠可删；37个零导入被 `__init__.py` 动态导入） |
-| D-SHARED | 85 | 2.8% | 共享服务 |
+| D_INTEGRATION | 113 | 3.7% | 集成模块 |
+| D_SECURITY | 87 | 2.9% | 安全模块（零入边≠可删；37个零导入被 `__init__.py` 动态导入） |
+| D_SHARED | 85 | 2.8% | 共享服务 |
 | D-RISK | 72 | 2.4% | 风控模块 |
 
 > **关键判断**：D-GOVERNANCE 的 1,204 个零入度节点中，绝大多数是治理脚本——它们被 `phase_manager.py` 调度执行，不被其他模块 import。这不是"可删"信号，是"治理脚本天然属性"。
@@ -339,18 +339,18 @@ STEP 1 登记检查（增强版）→ 文件是否在任何注册表/manifest/__
 | 批次 | 域 | 零入度数 | 预判 | 任务卡数 |
 |:---:|----|:--------:|------|:-------:|
 | 1 | D-GOVERNANCE | 1,204 | 治理脚本天然零入边，大部分保留 | 3 |
-| 2 | D-OPS | 264 | 运维脚本，类似治理 | 1 |
+| 2 | D_OPS | 264 | 运维脚本，类似治理 | 1 |
 | 3 | D_INFRA_RUNTIME（原D_INFRA_RUNTIME） | 242 | 含 rollback 47个零导入（**全部被 `__init__.py` 重导出，保留**） | 1 |
-| 4 | D-AUTONOMY_CORE | 190 | 含 `_` 前缀内部模块 | 1 |
+| 4 | D_AUTONOMY_CORE | 190 | 含 `_` 前缀内部模块 | 1 |
 | 5 | D-COMPLIANCE | 167 | 合规脚本 | 1 |
 | 6 | D-TRADING | 133 | 交易运营 | 1 |
-| 7 | D-INTEGRATION | 113 | 集成模块 | 1 |
-| 8 | D-SECURITY | 87 | 安全模块（**37个零导入被动态导入，全部保留**） | 1 |
-| 9 | D-SHARED | 85 | 共享服务 | 1 |
+| 7 | D_INTEGRATION | 113 | 集成模块 | 1 |
+| 8 | D_SECURITY | 87 | 安全模块（**37个零导入被动态导入，全部保留**） | 1 |
+| 9 | D_SHARED | 85 | 共享服务 | 1 |
 | 10 | D-RISK | 72 | 风控模块 | 1 |
 | 11 | D-GOV_RULE | 175 | 规则执行引擎，需逐个审查 | 1 |
 | 12 | D-GOV_AUDIT | 69 | 审计追踪，需逐个审查 | 1 |
-| 13 | D-BEHAVIORAL_AUDIT | 60 | 行为审计，需逐个审查 | 1 |
+| 13 | D_BEHAVIORAL_AUDIT | 60 | 行为审计，需逐个审查 | 1 |
 | 14 | 其余30域 | ~265 | 按域建卡 | 3-5 |
 | **合计** | **43域** | **3,024** | — | **17-20** |
 
@@ -362,7 +362,7 @@ STEP 1 登记检查（增强版）→ 文件是否在任何注册表/manifest/__
 5c. 预计 80%+ 为治理脚本，实际需审判的约 200-300 个
 ```
 
-**D-SECURITY 特殊处理**（安全模块零入边≠可删）：
+**D_SECURITY 特殊处理**（安全模块零入边≠可删）：
 
 ```
 5d. 安全模块零入边节点 → 全部标记为"保留+接通"
@@ -463,11 +463,11 @@ actions:
   domains_deleted: 11  # 6连字符重复 + 5空壳连字符
 
 domain_coverage:  # 43域覆盖矩阵
-  D-MKT_DATA: done
+  D_MKT_DATA: done
   D-GOVERNANCE: done
   D-GOV_RULE: done
   D-GOV_AUDIT: done
-  D-BEHAVIORAL_AUDIT: done
+  D_BEHAVIORAL_AUDIT: done
   D-TEST: done
   ...
 ```
@@ -518,7 +518,7 @@ STEP 8（全量验证）→ 依赖 STEP 1-7 全部完成
 | 风险 | 概率 | 影响 | 缓解 |
 |------|:---:|:---:|------|
 | 误删被 `__init__.py` 重导出的零导入文件 | **高** | **极高** | 四步审判 STEP 1 增加隐藏消费者检查；rollback/47个、security/37个、llm_security_01/21个全部保护 |
-| 误删安全/治理模块 | 中 | 高 | D-SECURITY 零入边节点全部标记"保留+接通"，不进删除流程 |
+| 误删安全/治理模块 | 中 | 高 | D_SECURITY 零入边节点全部标记"保留+接通"，不进删除流程 |
 | 迁移注册表同步引入错误 | 中 | 中 | 同步前备份 migration_registry.yaml，同步后 diff 确认 |
 | depgraph.db 清理导致数据丢失 | 低 | 高 | 清理前 `cp depgraph.db depgraph.db.backup.pre-cleanup` |
 | 63个旧文件删除后引用断裂 | 低 | 中 | 每删一个文件立即 Grep 废墟检查 |
@@ -529,7 +529,7 @@ STEP 8（全量验证）→ 依赖 STEP 1-7 全部完成
 
 > 以下类型的裁定必须人类审批后才能执行删除：
 > - STEP 3 功能价值裁定 ALL=NO 的文件
-> - D-SECURITY 域的任何删除建议
+> - D_SECURITY 域的任何删除建议
 > - 任何 `kill_switch` / `alert` / `capacity` / `rollback` 相关文件
 > - 任何被 `__init__.py` 重导出但看似零导入的文件（如判定需删除）
 > - 域架构裁定中的域合并/重命名/删除操作（§二 STEP D1-D9）
@@ -550,4 +550,4 @@ STEP 8（全量验证）→ 依赖 STEP 1-7 全部完成
 | 8 | 删除被 `__init__.py` 重导出的零导入文件 | 隐藏消费者，删除会导致包导入崩溃 |
 | 9 | 将 D-GOV_RULE 合并回 D-GOVERNANCE | 合并后313>200违反硬上限 |
 | 10 | 将 D-GOV_AUDIT 合并回 D-GOVERNANCE | 合并后207>200违反硬上限 |
-| 11 | 将 D-BEHAVIORAL_AUDIT 合并回 D-SECURITY | 拆分已物理完成，回退成本高 |
+| 11 | 将 D_BEHAVIORAL_AUDIT 合并回 D_SECURITY | 拆分已物理完成，回退成本高 |

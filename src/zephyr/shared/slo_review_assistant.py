@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.slo_review_assistant
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine; zephyr.infrastructure.capacity_assurance.modules.__init__; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

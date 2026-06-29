@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-OPS 反馈循环架构文档
+title: D_OPS 反馈循环架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 16_d_ops / 反馈循环
 
-> **文档作用 / Purpose**: 展示 反馈循环（D-OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 16 | Number | 16 |
-| 域ID | D-OPS | Domain ID | D-OPS |
+| 域ID | D_OPS | Domain ID | D_OPS |
 | 域名称 | 反馈循环 | Domain Name | 反馈循环 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 433 | Module Count | 433 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         architecture_model_layers_system_telemetry_yaml["architecture_model/layers/system_telemetry.yaml production"]
         config_capacity_token_budget_yaml["config/capacity/token_budget.yaml production"]
         docs_03_modules_domain_infra_ops_system_telemetry_blueprint_md["docs__03_modules___domain_infra_ops__system_tel... design"]
@@ -91,13 +91,13 @@ graph TD
     src_zephyr_ops_actors_init_py -.->|import_depends| src_zephyr_ops_actors_action_selector_py
     src_zephyr_ops_actors_init_py -.->|import_depends| src_zephyr_ops_actors_agent_lifecycle_py
     src_zephyr_ops_actors_init_py -.->|import_depends| src_zephyr_ops_actors_alert_router_py
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_governance_budget_engine_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_governance_budget_handler_py -.->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_governance_budget_handler_py -.->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_cost_budget_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_cost_budget_py -.->|import_depends| D_SHARED
     src_zephyr_ops_circuit_breaker_py -.->|import_depends| D_GOVERNANCE
@@ -118,7 +118,7 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_FRONTEND["D-FRONTEND prototype"]
+    D_FRONTEND["D_FRONTEND prototype"]
     D_FRONTEND -.->|import_depends| src_zephyr_ops_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
@@ -140,7 +140,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_actors_api_version_contract_py["src/zephyr/ops/actors/api_version_contract.py prototype"]
         src_zephyr_ops_actors_global_action_scheduler_py["src/zephyr/ops/actors/global_action_scheduler.py prototype"]
         src_zephyr_ops_actors_incident_priority_triage_automator_py["src/zephyr/ops/actors/incident_priority_triage_... prototype"]
@@ -179,7 +179,7 @@ graph TD
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_kb_provenance_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_financial_stratification_py
     src_zephyr_ops_collectors_init_py -.->|import_depends| src_zephyr_ops_collectors_feedback_collector_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_ops_circuit_breaker_repo_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_ops_circuit_breaker_repo_py -.->|import_depends| D_GOVERNANCE
@@ -192,14 +192,14 @@ graph TD
     src_zephyr_ops_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_ops_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_ops_analytics_base_py -.->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_SHARED
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_SHARED
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_SHARED
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_SHARED
     src_zephyr_ops_auto_evolution_py -.->|import_depends| D_INTEGRATION
     src_zephyr_ops_backpressure_bridge_py -.->|import_depends| D_INTEGRATION
-    D_DATA_SEC["D-DATA_SEC prototype"]
+    D_DATA_SEC["D_DATA_SEC prototype"]
     D_DATA_SEC -.->|import_depends| src_zephyr_ops_circuit_breaker_types_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_ops_circuit_breaker_types_py
     D_GOVERNANCE -.->|runtime| src_zephyr_ops_auto_evolution_py
@@ -219,7 +219,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_collectors_knowledge_capture_py["src/zephyr/ops/collectors/knowledge_capture.py prototype"]
         src_zephyr_ops_collectors_knowledge_freshness_py["src/zephyr/ops/collectors/knowledge_freshness.py prototype"]
         src_zephyr_ops_collectors_knowledge_injection_py["src/zephyr/ops/collectors/knowledge_injection.py prototype"]
@@ -278,7 +278,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_detectors_alert_desensitization_curve_py["src/zephyr/ops/detectors/alert_desensitization_... prototype"]
         src_zephyr_ops_detectors_anomaly_clustering_py["src/zephyr/ops/detectors/anomaly_clustering.py prototype"]
         src_zephyr_ops_detectors_anomaly_detector_py["src/zephyr/ops/detectors/anomaly_detector.py prototype"]
@@ -321,7 +321,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_detectors_intermittent_failure_pattern_py["src/zephyr/ops/detectors/intermittent_failure_p... prototype"]
         src_zephyr_ops_detectors_log_anomaly_py["src/zephyr/ops/detectors/log_anomaly.py prototype"]
         src_zephyr_ops_detectors_maintenance_coordinator_py["src/zephyr/ops/detectors/maintenance_coordinato... prototype"]
@@ -367,7 +367,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_diagnosers_reliability_py["src/zephyr/ops/diagnosers/_reliability.py prototype"]
         src_zephyr_ops_diagnosers_action_composition_health_monitor_py["src/zephyr/ops/diagnosers/action_composition_he... prototype"]
         src_zephyr_ops_diagnosers_adaptive_param_tuning_py["src/zephyr/ops/diagnosers/adaptive_param_tuning.py prototype"]
@@ -410,7 +410,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_diagnosers_guard_interaction_topology_mapper_py["src/zephyr/ops/diagnosers/guard_interaction_top... prototype"]
         src_zephyr_ops_diagnosers_guard_self_consistency_auditor_py["src/zephyr/ops/diagnosers/guard_self_consistenc... prototype"]
         src_zephyr_ops_diagnosers_human_anomaly_flood_detector_py["src/zephyr/ops/diagnosers/human_anomaly_flood_d... prototype"]
@@ -453,7 +453,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_diagnosers_slo_capacity_metrics_py["src/zephyr/ops/diagnosers/slo_capacity_metrics.py prototype"]
         src_zephyr_ops_diagnosers_socratic_questions_py["src/zephyr/ops/diagnosers/socratic_questions.py prototype"]
         src_zephyr_ops_diagnosers_statistical_hygiene_auditor_py["src/zephyr/ops/diagnosers/statistical_hygiene_a... prototype"]
@@ -513,7 +513,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_evolution_self_reflection_py["src/zephyr/ops/evolution/self_reflection.py prototype"]
         src_zephyr_ops_evolution_self_upgrade_canary_py["src/zephyr/ops/evolution/self_upgrade_canary.py prototype"]
         src_zephyr_ops_evolution_semantic_intent_preservation_guard_py["src/zephyr/ops/evolution/semantic_intent_preser... prototype"]
@@ -565,9 +565,9 @@ graph TD
     src_zephyr_ops_forensic_init_py -.->|import_depends| src_zephyr_ops_forensic_toctou_guard_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_facade_py -.->|import_depends| D_INFRA_RUNTIME
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     src_zephyr_ops_evolution_engine_py -.->|import_depends| D_SECURITY
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_ops_feedback_collector_py -.->|import_depends| D_INTEGRATION
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|config_depends| src_zephyr_ops_gates_init_py
@@ -585,7 +585,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_gates_operational_gates_py["src/zephyr/ops/gates/_operational_gates.py prototype"]
         src_zephyr_ops_gates_safety_gates_py["src/zephyr/ops/gates/_safety_gates.py prototype"]
         src_zephyr_ops_gates_security_gates_py["src/zephyr/ops/gates/_security_gates.py prototype"]
@@ -617,7 +617,7 @@ graph TD
         src_zephyr_ops_gates_safety_gate_l28_l29_py["src/zephyr/ops/gates/safety_gate_l28_l29.py production"]
         src_zephyr_ops_gates_safety_gate_l36_l37_py["src/zephyr/ops/gates/safety_gate_l36_l37.py production"]
     end
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_ops_gates_adversarial_validation_py -.->|import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -632,7 +632,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_gates_safety_gate_l38_l39_py["src/zephyr/ops/gates/safety_gate_l38_l39.py production"]
         src_zephyr_ops_gates_safety_gate_l40_l41_py["src/zephyr/ops/gates/safety_gate_l40_l41.py production"]
         src_zephyr_ops_gates_safety_gate_l42_l43_py["src/zephyr/ops/gates/safety_gate_l42_l43.py production"]
@@ -675,7 +675,7 @@ graph TD
     src_zephyr_ops_metrics_blueprint_metrics_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_metrics_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_kill_switch_py -.->|config_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -691,7 +691,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_observability_failure_matcher_py["src/zephyr/ops/observability/failure_matcher.py prototype"]
         src_zephyr_ops_observability_health_py["src/zephyr/ops/observability/health.py prototype"]
         src_zephyr_ops_observability_health_discovery_py["src/zephyr/ops/observability/health_discovery.py prototype"]
@@ -738,13 +738,13 @@ graph TD
     src_zephyr_ops_observability_tracing_py -.->|import_depends| src_zephyr_ops_observability_logging_py
     D_GOV_DRIFT["D-GOV_DRIFT production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_GOV_DRIFT
-    D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
+    D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_SECURITY
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_GOVERNANCE
@@ -752,7 +752,7 @@ graph TD
     src_zephyr_ops_profiles_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_schema_init_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_observability_health_py -.->|import_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_ops_observability_session_audit_py -.->|import_depends| D_SHARED
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     D_INFRA_TELEMETRY -.->|import_depends| src_zephyr_ops_observability_health_discovery_py
@@ -775,7 +775,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_security_remote_attestation_py["src/zephyr/ops/security/remote_attestation.py prototype"]
         src_zephyr_ops_security_secret_rotation_py["src/zephyr/ops/security/secret_rotation.py prototype"]
         src_zephyr_ops_security_wireheading_prevention_py["src/zephyr/ops/security/wireheading_prevention.py prototype"]
@@ -841,7 +841,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         src_zephyr_ops_verifiers_federated_protocol_py["src/zephyr/ops/verifiers/federated_protocol.py prototype"]
         src_zephyr_ops_verifiers_golden_test_external_py["src/zephyr/ops/verifiers/golden_test_external.py prototype"]
         src_zephyr_ops_verifiers_no_llm_degradation_py["src/zephyr/ops/verifiers/no_llm_degradation.py prototype"]
@@ -875,7 +875,7 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_watchdog_py -.->|import_depends| D_INFRA_RUNTIME
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_agent_observability_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_audit_observability_dashboard_py -.->|test_depends| D_GOV_AUDIT
@@ -884,12 +884,12 @@ graph TD
     tests_test_cost_budget_root_py -.->|test_depends| D_GOVERNANCE
     tests_test_meta_observability_py -.->|test_depends| D_GOVERNANCE
     tests_test_observability_health_py -.->|test_depends| D_INFRA_RUNTIME
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     tests_test_observability_health_py -.->|test_depends| D_SHARED
     tests_test_observability_logging_py -.->|test_depends| D_SHARED
     tests_test_observability_tracing_py -.->|test_depends| D_SHARED
     tests_test_observability_tracing_py -.->|test_depends| D_SHARED
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     tests_test_observability_root_py -.->|test_depends| D_SECURITY
     tests_test_observability_metrics_py -.->|test_depends| D_INFRA_RUNTIME
     tests_adversarial_test_telemetry_red_team_py -.->|test_depends| D_INFRA_RUNTIME
@@ -908,7 +908,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_OPS["D-OPS 反馈循环"]
+    subgraph D_OPS["D_OPS 反馈循环"]
         tests_test_self_llm_observability_py["tests/test_self_llm_observability.py prototype"]
         tests_test_skill_observability_py["tests/test_skill_observability.py prototype"]
         tests_test_skill_telemetry_py["tests/test_skill_telemetry.py prototype"]
@@ -923,7 +923,7 @@ graph TD
         tests_unit_test_telemetry_facade_py["tests/unit/test_telemetry_facade.py prototype"]
         tests_unit_test_token_budget_unit_py["tests/unit/test_token_budget_unit.py prototype"]
     end
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_observability_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_telemetry_py -.->|test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -953,12 +953,12 @@ graph TD
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 33 | import_depends,test_depends |
 | D-GOVERNANCE | 29 | config_depends,import_depends,runtime,test_depends |
-| D-SHARED | 14 | import_depends,test_depends |
-| D-AUTONOMY_CORE | 8 | import_depends,runtime,test_depends |
-| D-INTEGRATION | 6 | import_depends,runtime |
-| D-SECURITY | 5 | import_depends,test_depends |
+| D_SHARED | 14 | import_depends,test_depends |
+| D_AUTONOMY_CORE | 8 | import_depends,runtime,test_depends |
+| D_INTEGRATION | 6 | import_depends,runtime |
+| D_SECURITY | 5 | import_depends,test_depends |
 | D-TRADING | 4 | import_depends |
-| D-BEHAVIORAL_AUDIT | 3 | import_depends,runtime |
+| D_BEHAVIORAL_AUDIT | 3 | import_depends,runtime |
 | D-GOV_DRIFT | 1 | import_depends |
 | D-GOV_AUDIT | 1 | test_depends |
 
@@ -967,21 +967,21 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-GOVERNANCE | 385 | config_depends,import_depends,runtime,test_depends |
-| D-SHARED | 6 | import_depends |
+| D_SHARED | 6 | import_depends |
 | D-TRADING | 3 | import_depends,runtime |
-| D-FRONTEND | 2 | import_depends |
+| D_FRONTEND | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
-| D-DATA_SEC | 1 | import_depends |
-| D-INTEGRATION | 1 | import_depends |
+| D_DATA_SEC | 1 | import_depends |
+| D_INTEGRATION | 1 | import_depends |
 | D_INFRA_OPS | 1 | import_depends |
 | D_INFRA_RUNTIME | 1 | import_depends |
 | D-AUDITTEST | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 反馈循环（D-OPS）的模块分布。共 433 个模块 / 433 modules。
+> 按 architecture_layer 分层显示 反馈循环（D_OPS）的模块分布。共 433 个模块 / 433 modules。
 
 ```
 

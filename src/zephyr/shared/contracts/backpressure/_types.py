@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-SHARED-002
 # [MODULE] zephyr.shared.contracts.backpressure._types
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] zephyr.shared.contracts.backpressure.resume; zephyr.shared.contracts.backpressure.pause; zephyr.shared.contracts.backpressure.throttle
 # [STARTUP] imported

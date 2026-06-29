@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §6.2 + §16 Phase 2a
 # [MODULE] zephyr.security.adversarial_validation.convergence_checker
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.models
 # [CONSUMERS] validator.py; escalation-engine (external)
 # [STARTUP] imported

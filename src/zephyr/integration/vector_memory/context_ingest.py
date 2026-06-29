@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-CE-VMS-001
 # [MODULE] zephyr.integration.vector_memory.context_ingest
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.vector_memory.in_memory_fake_vms
 # [CONSUMERS] zephyr.autonomy_core.vector_writer
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] GOV-076 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.observability.gate_cache
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES]
 # [CONSUMERS] phase_manager.py;run_all.py
 # [STARTUP] manual

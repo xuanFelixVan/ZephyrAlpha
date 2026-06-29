@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INTEGRATION_GATEWAY 集成网关架构文档
+title: D_INTEGRATION_GATEWAY 集成网关架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 14_d_integration_gateway / 集成网关
 
-> **文档作用 / Purpose**: 展示 集成网关（D-INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 集成网关（D_INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 14 | Number | 14 |
-| 域ID | D-INTEGRATION_GATEWAY | Domain ID | D-INTEGRATION_GATEWAY |
+| 域ID | D_INTEGRATION_GATEWAY | Domain ID | D_INTEGRATION_GATEWAY |
 | 域名称 | 集成网关 | Domain Name | 集成网关 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 0 | Module Count | 0 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INTEGRATION_GATEWAY["D-INTEGRATION_GATEWAY 集成网关"]
+    subgraph D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY 集成网关"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -66,7 +66,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 集成网关（D-INTEGRATION_GATEWAY）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 集成网关（D_INTEGRATION_GATEWAY）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 

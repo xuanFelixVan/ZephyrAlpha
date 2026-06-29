@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-REPORTING 报告架构文档
+title: D_REPORTING 报告架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 17_d_reporting / 报告
 
-> **文档作用 / Purpose**: 展示 报告（D-REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 17 | Number | 17 |
-| 域ID | D-REPORTING | Domain ID | D-REPORTING |
+| 域ID | D_REPORTING | Domain ID | D_REPORTING |
 | 域名称 | 报告 | Domain Name | 报告 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 12 | Module Count | 12 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_REPORTING["D-REPORTING 报告"]
+    subgraph D_REPORTING["D_REPORTING 报告"]
         scripts_demos_demo_e2e_pipeline_py["scripts/demos/demo_e2e_pipeline.py production"]
         src_zephyr_reporting_init_py["src/zephyr/reporting/__init__.py prototype"]
         src_zephyr_reporting_init_from_obs_py["src/zephyr/reporting/__init___from_obs.py prototype"]
@@ -106,7 +106,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 报告（D-REPORTING）的模块分布。共 12 个模块 / 12 modules。
+> 按 architecture_layer 分层显示 报告（D_REPORTING）的模块分布。共 12 个模块 / 12 modules。
 
 ```
 

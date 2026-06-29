@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §6.3
 # [MODULE] zephyr.security.access_control.orphan_judge.rbac_bridge
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.permission_guard
 # [CONSUMERS] orphan-judge.judge.OrphanJudge(DELETE动作前)
 # [STARTUP] imported

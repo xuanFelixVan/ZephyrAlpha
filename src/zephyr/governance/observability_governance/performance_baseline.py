@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-053 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.performance_baseline
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.governance.observability_governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

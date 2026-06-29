@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [MODULE] zephyr.integration.ct_pipe_routing
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.__init__; zephyr.integration.shared.schema.schemas; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported

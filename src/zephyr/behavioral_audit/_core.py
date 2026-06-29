@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit._core
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.events; zephyr.behavioral_audit.state_machine; zephyr.behavioral_audit.detector_dispatcher
 # [CONSUMERS] zephyr.behavioral_audit.__init__
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-187 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.integration.shared_08.durable_execution
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] tests
 # [STARTUP] imported

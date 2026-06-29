@@ -94,16 +94,16 @@ graph TD
     src_zephyr_governance_rollback_wal_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
     src_zephyr_infrastructure_rollback_governance_auditor_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_governance_contracts_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
-    D_FRONTEND["D-FRONTEND production"]
+    D_FRONTEND["D_FRONTEND production"]
     D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -145,15 +145,15 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 8 | config_depends,import_depends,test_depends |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-OPS | 1 | import_depends |
-| D-SHARED | 1 | import_depends |
+| D_OPS | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 | D_INFRA_RUNTIME | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-FRONTEND | 1 | import_depends |
+| D_FRONTEND | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

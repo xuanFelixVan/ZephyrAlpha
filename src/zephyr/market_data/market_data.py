@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.execution.trading.trading_contracts.market.market_data
-# [DOMAIN] D-MKT_DATA
+# [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS] factor; _cross_layer
 # [STARTUP] imported

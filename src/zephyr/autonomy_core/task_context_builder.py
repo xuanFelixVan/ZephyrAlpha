@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-ORC-CE-001
 # [MODULE] zephyr.autonomy_core.task_context_builder
-# [DOMAIN] D-AUTONOMY_CORE
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS] zephyr.trading.orchestrator.context_bridge
 # [STARTUP] imported

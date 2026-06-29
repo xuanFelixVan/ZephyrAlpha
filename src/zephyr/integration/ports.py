@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §ports
 # [MODULE] zephyr.integration.ports
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.__init__
 # [CONSUMERS] zephyr.integration.pipeline_orchestrator;zephyr.integration.layer_router
 # [STARTUP] imported

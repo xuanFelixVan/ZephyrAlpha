@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-096 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.events.event_reactor
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.event_bus
 # [CONSUMERS]
 # [STARTUP] imported

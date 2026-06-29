@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.alert_manager
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.capacity_assurance.modules.__init__; zephyr.ops.auto_evolution; zephyr.security.llm_defense.llm_security.layers.l6_observability; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

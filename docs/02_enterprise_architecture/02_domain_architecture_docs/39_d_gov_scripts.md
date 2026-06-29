@@ -150,11 +150,11 @@ graph TD
     scripts_archive_migration_update_non_import_refs_py -.->|config_depends| scripts_archive_migration_check_coverage_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_INFRA_RUNTIME
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_GOV_AUDIT
-    D_SECURITY["D-SECURITY production"]
+    D_SECURITY["D_SECURITY production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -225,9 +225,9 @@ graph TD
     scripts_construction_check_transition_code_py -.->|import_depends| D_GOVERNANCE
     scripts_construction_d_init_task_system_py -.->|import_depends| D_GOVERNANCE
     scripts_construction_d_init_task_system_py -.->|import_depends| D_GOVERNANCE
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     scripts_construction_d_init_task_system_py -.->|import_depends| D_SHARED
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_construction_d_init_task_system_py -.->|import_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -281,9 +281,9 @@ graph TD
     scripts_governance_shared_libcst_docstring_adder_py -.->|config_depends| scripts_governance_shared_init_py
     scripts_governance_shared_registry_entry_count_py -.->|config_depends| scripts_governance_shared_init_py
     scripts_governance_shared_thresholds_py -.->|config_depends| scripts_governance_shared_init_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_construction_demo_a2a_coordination_py -.->|import_depends| D_INTEGRATION
-    D_MKT_DATA["D-MKT_DATA production"]
+    D_MKT_DATA["D_MKT_DATA production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_MKT_DATA
     D_GOVERNANCE["D-GOVERNANCE production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_GOVERNANCE
@@ -299,7 +299,7 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_EX_CORE
     D_SIMULATION["D-SIMULATION prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_SIMULATION
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_SECURITY
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTELLIGENCE
@@ -694,9 +694,9 @@ graph TD
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_INTEGRATION
-    D_SHARED["D-SHARED production"]
+    D_SHARED["D_SHARED production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_SHARED
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -802,10 +802,10 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     scripts_governance_session_startup_check_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_session_startup_check_py -.->|import_depends| D_GOVERNANCE
-    D_OPS["D-OPS production"]
+    D_OPS["D_OPS production"]
     scripts_governance_session_simulator_py -.->|import_depends| D_OPS
     scripts_governance_meta_validate_gate_engine_external_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_governance_meta_validate_gate_engine_external_py -.->|import_depends| D_INTEGRATION
     scripts_governance_meta_validate_gate_engine_external_py -.->|import_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -858,7 +858,7 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE production"]
     scripts_governance_task_self_check_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_task_self_check_py -.->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_governance_task_self_check_py -.->|import_depends| D_INTEGRATION
     scripts_governance_task_summary_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_task_summary_py -.->|import_depends| D_GOVERNANCE
@@ -909,7 +909,7 @@ graph TD
     scripts_rollback_py -.->|import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_rollback_py -.->|import_depends| D_INFRA_RUNTIME
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     scripts_run_deepseek_v4_exam_py -.->|import_depends| D_INTEGRATION
     scripts_scaffold_py -.->|import_depends| D_INFRA_RUNTIME
     scripts_scaffold_py -.->|import_depends| D_INTEGRATION
@@ -931,15 +931,15 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 29 | import_depends |
-| D-INTEGRATION | 13 | import_depends |
+| D_INTEGRATION | 13 | import_depends |
 | D_INFRA_RUNTIME | 11 | import_depends |
 | D-GOV_ENFORCEMENT | 10 | import_depends |
 | D-RISK | 3 | import_depends |
-| D-SHARED | 3 | import_depends |
-| D-SECURITY | 2 | import_depends |
+| D_SHARED | 3 | import_depends |
+| D_SECURITY | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-OPS | 2 | import_depends |
-| D-MKT_DATA | 1 | import_depends |
+| D_OPS | 2 | import_depends |
+| D_MKT_DATA | 1 | import_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D-INTELLIGENCE | 1 | import_depends |
 | D-EX_CORE | 1 | import_depends |

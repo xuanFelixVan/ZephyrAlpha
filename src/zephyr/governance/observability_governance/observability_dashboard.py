@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-052 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.observability_dashboard
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

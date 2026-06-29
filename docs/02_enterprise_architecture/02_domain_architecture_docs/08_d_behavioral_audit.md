@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-BEHAVIORAL_AUDIT 行为审计架构文档
+title: D_BEHAVIORAL_AUDIT 行为审计架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 08_d_behavioral_audit / 行为审计
 
-> **文档作用 / Purpose**: 展示 行为审计（D-BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 08 | Number | 08 |
-| 域ID | D-BEHAVIORAL_AUDIT | Domain ID | D-BEHAVIORAL_AUDIT |
+| 域ID | D_BEHAVIORAL_AUDIT | Domain ID | D_BEHAVIORAL_AUDIT |
 | 域名称 | 行为审计 | Domain Name | 行为审计 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 78 | Module Count | 78 |
@@ -32,7 +32,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 78 | Production Modules | 78 |
 | 容量 | 79/150 (正常) | Capacity | 79/150 (正常) |
-| 描述 | 行为审计域(从D-SECURITY拆出,behavioral_auditor) | Description | 行为审计域(从D-SECURITY拆出,behavioral_auditor) |
+| 描述 | 行为审计域(从D_SECURITY拆出,behavioral_auditor) | Description | 行为审计域(从D_SECURITY拆出,behavioral_auditor) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT 行为审计"]
+    subgraph D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT 行为审计"]
         src_zephyr_behavioral_audit_absence_manager_py["src/zephyr/behavioral_audit/absence_manager.py production"]
         src_zephyr_behavioral_audit_ai_construction_detectors_py["src/zephyr/behavioral_audit/ai_construction_det... production"]
         src_zephyr_behavioral_audit_ai_context_injector_py["src/zephyr/behavioral_audit/ai_context_injector.py production"]
@@ -86,13 +86,13 @@ graph TD
     src_zephyr_behavioral_audit_drift_engine_py -->|import_depends| src_zephyr_behavioral_audit_drift_models_py
     src_zephyr_behavioral_audit_drift_engine_py -->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
     src_zephyr_behavioral_audit_drift_infrastructure_py -->|import_depends| src_zephyr_behavioral_audit_drift_models_py
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_behavioral_audit_brain_integration_py -.->|import_depends| D_INTEGRATION
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_behavioral_audit_drift_engine_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_behavioral_audit_drift_engine_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_behavioral_audit_drift_hotfix_bypass_py -.->|import_depends| D_INTEGRATION
-    D_OPS["D-OPS prototype"]
+    D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_chaos_injector_py
@@ -110,7 +110,7 @@ graph TD
     D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     D_INFRA_TELEMETRY -->|import_depends| src_zephyr_behavioral_audit_contract_drift_detector_py
     D_OPS -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -125,7 +125,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT 行为审计"]
+    subgraph D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT 行为审计"]
         src_zephyr_behavioral_audit_drift_result_types_py["src/zephyr/behavioral_audit/drift_result_types.py production"]
         src_zephyr_behavioral_audit_drift_training_py["src/zephyr/behavioral_audit/drift_training.py production"]
         src_zephyr_behavioral_audit_file_attr_checker_py["src/zephyr/behavioral_audit/file_attr_checker.py production"]
@@ -159,10 +159,10 @@ graph TD
     end
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_behavioral_audit_gate_persistence_py -->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_behavioral_audit_tamper_proof_audit_py -.->|import_depends| D_INTEGRATION
     src_zephyr_behavioral_audit_trend_analyzer_py -->|import_depends| D_GOVERNANCE
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_forensics_engine_py
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_git_bisector_py
     D_SECURITY -.->|import_depends| src_zephyr_behavioral_audit_roi_engine_py
@@ -191,7 +191,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT 行为审计"]
+    subgraph D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT 行为审计"]
         tests_adversarial_test_rollback_concurrent_extreme_py["tests/adversarial/test_rollback_concurrent_extr... production"]
         tests_adversarial_test_rollback_partial_extreme_py["tests/adversarial/test_rollback_partial_extreme.py production"]
         tests_adversarial_test_rollback_scheduler_py["tests/adversarial/test_rollback_scheduler.py production"]
@@ -224,7 +224,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INTEGRATION | 3 | import_depends |
+| D_INTEGRATION | 3 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
 
@@ -233,16 +233,16 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D-GOVERNANCE | 88 | import_depends,test_depends |
-| D-SECURITY | 51 | import_depends |
+| D_SECURITY | 51 | import_depends |
 | D-GOV_DRIFT | 8 | test_depends |
 | D-GOV_ENFORCEMENT | 5 | import_depends |
-| D-OPS | 3 | import_depends,runtime |
+| D_OPS | 3 | import_depends,runtime |
 | D-GOV_AUDIT | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 行为审计（D-BEHAVIORAL_AUDIT）的模块分布。共 78 个模块 / 78 modules。
+> 按 architecture_layer 分层显示 行为审计（D_BEHAVIORAL_AUDIT）的模块分布。共 78 个模块 / 78 modules。
 
 ```
 

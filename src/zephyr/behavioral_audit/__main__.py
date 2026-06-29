@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit.__main__
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.self_test_verifier; zephyr.behavioral_audit.drift_infrastructure; zephyr.behavioral_audit.self_check
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] manual

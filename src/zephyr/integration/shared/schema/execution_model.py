@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.schema.execution_model
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]
 # [CONSUMERS] gates.task_types; shared.schema.schemas; core.blueprint_decomposer; db.task_repo; orchestrator; mcp; kb
 # [STARTUP] imported

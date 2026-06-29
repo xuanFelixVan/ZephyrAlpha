@@ -1,6 +1,6 @@
 # [BLUEPRINT]
 # [MODULE] zephyr.observability
-# [DOMAIN] D-OPS
+# [DOMAIN] D_OPS
 # [DEPENDENCIES] zephyr.ops.__init__; zephyr.shared.adaptive_sampler; zephyr.shared.reasoning_spans
 # [CONSUMERS]
 # [STARTUP] imported

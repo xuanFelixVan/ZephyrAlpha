@@ -95,7 +95,7 @@ graph TD
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     src_zephyr_intelligence_infrastructure_init_py -.->|contract| D_GOV_ENFORCEMENT
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE
-    D_INTEGRATION["D-INTEGRATION prototype"]
+    D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_intelligence_model_evaluation_activate_py -.->|import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_GOVERNANCE
@@ -107,7 +107,7 @@ graph TD
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
-    D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_AUTONOMY_CORE
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
@@ -117,7 +117,7 @@ graph TD
     D_GOV_DOCS -.->|import_depends| src_zephyr_intelligence_model_evaluation_kb_repo_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_intelligence_model_evaluation_kb_repo_py
     D_INTEGRATION -.->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_SECURITY["D-SECURITY prototype"]
+    D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_TRADING["D-TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
@@ -164,7 +164,7 @@ graph TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_model_discovery_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_model_discovery_py -->|import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_INTEGRATION["D-INTEGRATION production"]
+    D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|import_depends| D_INTEGRATION
     D_TRADING["D-TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
@@ -197,13 +197,13 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-GOVERNANCE | 6 | config_depends,import_depends |
-| D-INTEGRATION | 6 | import_depends |
+| D_INTEGRATION | 6 | import_depends |
 | D-ML_TRAIN | 4 | import_depends |
 | D-SIMULATION | 3 | import_depends |
 | D-GOV_ENFORCEMENT | 2 | contract,import_depends |
 | D-TRADING | 1 | import_depends |
-| D-SHARED | 1 | import_depends |
-| D-AUTONOMY_CORE | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
+| D_AUTONOMY_CORE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -211,11 +211,11 @@ graph TD
 |------|:---:|---------|
 | D-GOVERNANCE | 49 | import_depends,test_depends |
 | D-TRADING | 5 | import_depends |
-| D-INTEGRATION | 3 | import_depends |
+| D_INTEGRATION | 3 | import_depends |
 | D-GOV_DOCS | 2 | import_depends |
-| D-AUTONOMY_CORE | 2 | import_depends |
+| D_AUTONOMY_CORE | 2 | import_depends |
 | D-GOV_SCRIPTS | 1 | import_depends |
-| D-SECURITY | 1 | import_depends |
+| D_SECURITY | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

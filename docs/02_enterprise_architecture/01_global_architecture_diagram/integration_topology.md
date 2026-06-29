@@ -29,21 +29,21 @@ graph LR
         D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>observability_profiling<br/>(0模块)"]
     end
     subgraph L1_foundation[L1_foundation]
-        D_ALT_DATA["D-ALT_DATA<br/>另类数据<br/>(68模块)"]
-        D_AUTONOMY_CORE["D-AUTONOMY_CORE<br/>自治核心<br/>(650模块)"]
-        D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT<br/>行为审计<br/>(60模块)"]
-        D_DATA_ENG["D-DATA_ENG<br/>数据工程<br/>(147模块)"]
-        D_DATA_GOV["D-DATA_GOV<br/>数据治理<br/>(38模块)"]
-        D_DATA_SEC["D-DATA_SEC<br/>数据安全与契约<br/>(30模块)"]
-        D_FRONTEND["D-FRONTEND<br/>前端<br/>(237模块)"]
-        D_INTEGRATION["D-INTEGRATION<br/>管线路由<br/>(706模块)"]
-        D_INTEGRATION_GATEWAY["D-INTEGRATION-GATEWAY<br/>mcp_servers<br/>(0模块)"]
-        D_MKT_DATA["D-MKT_DATA<br/>行情数据<br/>(266模块)"]
-        D_OPS["D-OPS<br/>反馈循环<br/>(697模块)"]
-        D_REPORTING["D-REPORTING<br/>报告<br/>(132模块)"]
-        D_SECURITY["D-SECURITY<br/>对抗验证<br/>(849模块)"]
-        D_SECURITY_LLM["D-SECURITY-LLM<br/>llm_defense<br/>(0模块)"]
-        D_SHARED["D-SHARED<br/>共享服务<br/>(290模块)"]
+        D_ALT_DATA["D_ALT_DATA<br/>另类数据<br/>(68模块)"]
+        D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心<br/>(650模块)"]
+        D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT<br/>行为审计<br/>(60模块)"]
+        D_DATA_ENG["D_DATA_ENG<br/>数据工程<br/>(147模块)"]
+        D_DATA_GOV["D_DATA_GOV<br/>数据治理<br/>(38模块)"]
+        D_DATA_SEC["D_DATA_SEC<br/>数据安全与契约<br/>(30模块)"]
+        D_FRONTEND["D_FRONTEND<br/>前端<br/>(237模块)"]
+        D_INTEGRATION["D_INTEGRATION<br/>管线路由<br/>(706模块)"]
+        D_INTEGRATION_GATEWAY["D_INTEGRATION-GATEWAY<br/>mcp_servers<br/>(0模块)"]
+        D_MKT_DATA["D_MKT_DATA<br/>行情数据<br/>(266模块)"]
+        D_OPS["D_OPS<br/>反馈循环<br/>(697模块)"]
+        D_REPORTING["D_REPORTING<br/>报告<br/>(132模块)"]
+        D_SECURITY["D_SECURITY<br/>对抗验证<br/>(849模块)"]
+        D_SECURITY_LLM["D_SECURITY-LLM<br/>llm_defense<br/>(0模块)"]
+        D_SHARED["D_SHARED<br/>共享服务<br/>(290模块)"]
     end
     subgraph L2_domain[L2_domain]
         D_ASHARE_SIGNAL["D-ASHARE_SIGNAL<br/>A股特色信号<br/>(27模块)"]
@@ -192,15 +192,15 @@ graph LR
     %% 跨域依赖边总数: 3634
 
     %% Top 10 依赖对
-    %% 1. D-GOVERNANCE -> D-OPS: 385 条
-    %% 2. D-GOVERNANCE -> D-INTEGRATION: 237 条
+    %% 1. D-GOVERNANCE -> D_OPS: 385 条
+    %% 2. D-GOVERNANCE -> D_INTEGRATION: 237 条
     %% 3. D-GOVERNANCE -> D-TRADING: 226 条
-    %% 4. D-GOVERNANCE -> D-AUTONOMY_CORE: 213 条
-    %% 5. D-GOVERNANCE -> D-SECURITY: 207 条
-    %% 6. D-GOVERNANCE -> D-SHARED: 185 条
+    %% 4. D-GOVERNANCE -> D_AUTONOMY_CORE: 213 条
+    %% 5. D-GOVERNANCE -> D_SECURITY: 207 条
+    %% 6. D-GOVERNANCE -> D_SHARED: 185 条
     %% 7. D-GOVERNANCE -> D-GOV-ENFORCEMENT: 168 条
     %% 8. D-GOVERNANCE -> D-GOV_AUDIT: 140 条
-    %% 9. D-AUTONOMY_PERM -> D-SECURITY: 138 条
+    %% 9. D-AUTONOMY_PERM -> D_SECURITY: 138 条
     %% 10. D-GOVERNANCE -> D_INFRA_RUNTIME: 125 条
 
 ```

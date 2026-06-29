@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §4
 # [MODULE] zephyr.shared.contracts.llm_gateway_protocol
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.infrastructure.pipeline; zephyr.infrastructure.auto_fix_engine; zephyr.autonomy_core.llm_gateway
 # [STARTUP] imported

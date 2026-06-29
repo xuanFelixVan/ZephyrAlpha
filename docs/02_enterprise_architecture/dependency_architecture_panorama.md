@@ -5,7 +5,7 @@ doc_type: architecture_view
 
 > **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
 > D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
-> D-GOV_AUDIT_TESTS→D-AUDITTEST, D-INTEGRATION-GATEWAY→D-INTEGRATION_GATEWAY, D-SECURITY-LLM→D-SECURITY_LLM。
+> D-GOV_AUDIT_TESTS→D-AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
 > 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
 
 
@@ -1029,7 +1029,7 @@ AI查询模式：
 | 8 | `docs/03_modules/` | 模块蓝图 | D-GOV-DOCS | 保留 |
 | 9 | `docs/01_policies_and_standards/` | 政策标准 | D-GOV-DOCS | 保留 |
 | 10 | `docs/02_enterprise_architecture/` | 企业架构 | D-GOV-DOCS | 保留 |
-| 11 | `frontend/` | 前端代码 | D-FRONTEND | 保留 |
+| 11 | `frontend/` | 前端代码 | D_FRONTEND | 保留 |
 | 12 | `architecture_model/` | 架构模型 | D-ARCH-MODEL | 保留 |
 | 13 | `infra/` | 基础设施 | D-INFRA | 保留 |
 | 14 | `tools/` | 工具脚本 | D-TOOLS | 保留 |
@@ -1489,7 +1489,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 173 | nodes 表节点准入边界 | **只收录有 import 依赖的代码节点（.py+.yaml），文档/规则/模板不进 nodes 表**（业界对标 dependency-cruiser/ArchUnit） | ✅ |
 | 174 | 规则文件归属 | **规则文件（trae_*.yaml）不进 nodes 表，归属 D-GOV-DOCS（文档域），在 arch_directory_tree 记录位置**。规则文件虽是 yaml 格式但本质是"规则文档"非"运行时配置"，无 import 依赖边，是孤岛节点。D-GOV-RULE 域 179 个规则文件节点应从 nodes 表清理。规则与业务域的逻辑约束通过 arch_constraints 表独立解决（from_domain/to_domain），不通过 nodes 表归属实现 | ✅ |
 | 175 | 测试域处理 | **删除 10 个并发测试域**（D-T3-W0~W3/D-T4-SAME/D-T5-W0~W3/D-T9-PREREQ）。这些是 concurrent_write_test.py 红蓝对抗测试残留，已泄漏到生产 depgraph.db（0 模块空壳），ssot_path 路径不存在代码，测试隔离机制失效。业界实践：测试用独立测试库，不污染生产 DB（JUnit/K8s kind/Google Bazel） | ✅ |
-| 176 | 设计态域处理 | **保留 5 个设计态域**（D-GOV_ENFORCEMENT/D-GOV_REPAIR/D-GOV_SCRIPTS/D-INTEGRATION_GATEWAY/D-SECURITY_LLM），标记为"计划中"。这些域为缓解超容父域而规划（D-GOVERNANCE 3860 模块超容 1930%、D-SECURITY 849、D-INTEGRATION 705、D-OPS 679），functional_domain_registry.yaml 已有完整 covers 规划。业界对标 DDD Bounded Context planned/TOGAF Transition Architecture | ✅ |
+| 176 | 设计态域处理 | **保留 5 个设计态域**（D-GOV_ENFORCEMENT/D-GOV_REPAIR/D-GOV_SCRIPTS/D_INTEGRATION_GATEWAY/D_SECURITY_LLM），标记为"计划中"。这些域为缓解超容父域而规划（D-GOVERNANCE 3860 模块超容 1930%、D_SECURITY 849、D_INTEGRATION 705、D_OPS 679），functional_domain_registry.yaml 已有完整 covers 规划。业界对标 DDD Bounded Context planned/TOGAF Transition Architecture | ✅ |
 | 177 | 域命名统一 | **统一为下划线风格**（D-XXX_YYY），符合 trae_028 GOV-DOC-003 §SSoT 规定。当前 15 个域违规（25.9%）：5 个功能域（D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT 等）+ 10 个测试域（如保留则 D-T3-W0→D-T3_W0）。连字符已导致域重复 bug（project_memory 记录），sync 脚本已打 normalize_domain_id 补丁。业界对标 PEP8/K8s 社区均用 snake_case | ✅ |
 
 ### 20.5 施工优先级与验收裁定（施工层）
@@ -1872,7 +1872,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 - **ARCH-CAP-003 废除**：trae_055 v1.0.8 移除 aliases 中的 ARCH-CAP-003
 - **ARCH-CAP-002 重写为二元规则**：≤150 通过，>150 必须拆分，无例外
-- **5 个 max=200 域统一改为 150**：D-GOVERNANCE / D-GOV_AUDIT / D-GOV_DRIFT / D-GOV_RULE / D-SECURITY
+- **5 个 max=200 域统一改为 150**：D-GOVERNANCE / D-GOV_AUDIT / D-GOV_DRIFT / D-GOV_RULE / D_SECURITY
 - **理由**：100% AI 开发项目不应有模糊地带。"高度耦合"是拆分信号，不是放宽上限的理由
 
 #### 裁定#195：修复统计口径，新增 production_nodes 字段（v9 migration）
@@ -1945,7 +1945,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | | | → | **D_INFRA_RECOVERY** (新建) | 107 | 回滚与自愈 |
 | | | → | **D_INFRA_TELEMETRY** (新建) | 51 | 可观测与画像 |
 | D-GOV_AUDIT (228) | | → | D-GOV_AUDIT (保留) | 54 | 审计核心 |
-| | | → | D-BEHAVIORAL_AUDIT (扩充) | 79 | 红蓝对抗测试 |
+| | | → | D_BEHAVIORAL_AUDIT (扩充) | 79 | 红蓝对抗测试 |
 | | | → | **D-GOV_AUDIT_TESTS** (新建) | 142 | 审计测试套件 |
 | D-GOVERNANCE (178) | | → | D-GOVERNANCE (保留) | 117 | 治理核心 |
 | | | → | **D-GOV-DOCS** (新建) | 100 | 架构文档 |
@@ -1955,7 +1955,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | | | → | D-GOV-ENFORCEMENT (扩充) | 69 | 规则执行代码 |
 
 **新建域**: 5 个（D_INFRA_A2A, D_INFRA_RECOVERY, D_INFRA_TELEMETRY, D-GOV_AUDIT_TESTS, D-GOV-DOCS）
-**扩充域**: 3 个（D-BEHAVIORAL_AUDIT, D-GOV-SCRIPTS, D-GOV-ENFORCEMENT）
+**扩充域**: 3 个（D_BEHAVIORAL_AUDIT, D-GOV-SCRIPTS, D-GOV-ENFORCEMENT）
 
 **工具扩展**（apply_depgraph.py）:
 - `--migrate-nodes`: 按 node_id 列表精确迁移 domain_id（解决跨域共享 blueprint_id 误迁问题）
@@ -2023,7 +2023,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 **#203-A 详情（layer_id 非法值修复）**:
 
-`arch_layers` 表仅定义 4 个合法层（L0_infrastructure / L1_foundation / L2_domain / L3_application），但 DB 中有 9 个域使用了非法值 `L1_platform`（不在合法层表中）。其中 7 个为预存脏值，2 个（D-SECURITY-LLM / D-INTEGRATION-GATEWAY）为本会话阶段1错误沿用。
+`arch_layers` 表仅定义 4 个合法层（L0_infrastructure / L1_foundation / L2_domain / L3_application），但 DB 中有 9 个域使用了非法值 `L1_platform`（不在合法层表中）。其中 7 个为预存脏值，2 个（D_SECURITY-LLM / D_INTEGRATION-GATEWAY）为本会话阶段1错误沿用。
 
 裁定采用方案C：将全部 9 个域的 layer_id 改为 `L1_foundation`（基础服务层）。
 

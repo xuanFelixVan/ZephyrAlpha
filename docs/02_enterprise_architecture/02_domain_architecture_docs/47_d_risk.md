@@ -99,7 +99,7 @@ graph TD
     src_zephyr_risk_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_cross_asset_risk_manager_py -.->|import_depends| D_TRADING
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| D_TRADING
     D_GOVERNANCE["D-GOVERNANCE production"]
@@ -138,7 +138,7 @@ graph TD
 |--------|:---:|---------|
 | D-TRADING | 10 | import_depends |
 | D-GOVERNANCE | 1 | config_depends |
-| D-SHARED | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

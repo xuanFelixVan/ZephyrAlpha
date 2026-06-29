@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-MKT_DATA 行情数据架构文档
+title: D_MKT_DATA 行情数据架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 15_d_mkt_data / 行情数据
 
-> **文档作用 / Purpose**: 展示 行情数据（D-MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 16:06:28
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 15 | Number | 15 |
-| 域ID | D-MKT_DATA | Domain ID | D-MKT_DATA |
+| 域ID | D_MKT_DATA | Domain ID | D_MKT_DATA |
 | 域名称 | 行情数据 | Domain Name | 行情数据 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 9 | Module Count | 9 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_MKT_DATA["D-MKT_DATA 行情数据"]
+    subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
         src_zephyr_market_data_init_py["src/zephyr/market_data/__init__.py production"]
         src_zephyr_market_data_extensions_init_py["src/zephyr/market_data/_extensions/__init__.py prototype"]
         src_zephyr_market_data_api_init_py["src/zephyr/market_data/api/__init__.py prototype"]
@@ -103,7 +103,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 行情数据（D-MKT_DATA）的模块分布。共 9 个模块 / 9 modules。
+> 按 architecture_layer 分层显示 行情数据（D_MKT_DATA）的模块分布。共 9 个模块 / 9 modules。
 
 ```
 

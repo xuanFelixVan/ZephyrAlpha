@@ -65,7 +65,7 @@ graph TD
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
-    D_SHARED["D-SHARED prototype"]
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
     src_zephyr_cross_asset -.->|contract| D_TRADING
     D_GOVERNANCE["D-GOVERNANCE prototype"]
@@ -88,7 +88,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-TRADING | 5 | contract,import_depends |
-| D-SHARED | 1 | import_depends |
+| D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

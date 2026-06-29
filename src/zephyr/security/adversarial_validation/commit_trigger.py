@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §67
 # [MODULE] zephyr.security.adversarial_validation.commit_trigger
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation.validator; zephyr.security.adversarial_validation.circuit_breaker; zephyr.security.adversarial_validation.models
 # [CONSUMERS] zephyr.governance.git_commit_gateway; zephyr.trading.boot_hooks
 # [STARTUP] imported

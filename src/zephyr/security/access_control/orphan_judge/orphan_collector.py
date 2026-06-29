@@ -1,6 +1,6 @@
 # [BLUEPRINT]
 # [MODULE] zephyr.security.access_control.orphan_judge.orphan_collector
-# [DOMAIN] D-SECURITY
+# [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.cascade_analyzer; zephyr.security.access_control.orphan_judge.decision_table; zephyr.security.access_control.orphan_judge.safety_fence; zephyr.security.access_control.orphan_judge.deprecation_tracker
 # [CONSUMERS]
 # [STARTUP] imported

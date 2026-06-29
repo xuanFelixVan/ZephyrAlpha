@@ -101,517 +101,517 @@ entries:
   old_path: src/zephyr/ops/__init__.py
   status: pending
   subdomain_id: resource_optimization
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/adversarial_resilience.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/adversarial_resilience.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/a2a_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/a2a_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/abac_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/abac_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/agent_creation_policy.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/agent_creation_policy.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/anomaly_detector.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/anomaly_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/asymmetric_audit.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/asymmetric_audit.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/anti_pattern_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/anti_pattern_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/audit_log_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/audit_log_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_maintenance.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/auto_maintenance.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/approver_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/approver_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/blind_spot_tracker.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/blind_spot_tracker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/bootstrap_superadmin.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/bootstrap_superadmin.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/build_sanitizer.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/build_sanitizer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/capability_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/capability_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/blueprint_fidelity.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/blueprint_fidelity.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/bootstrap_verifier.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/bootstrap_verifier.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/cache_invalidation.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/cache_invalidation.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/cascading_failure_isolator.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/cascading_failure_isolator.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/canary_rollout_manager.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/canary_rollout_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/cold_start_lock.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/cold_start_lock.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/compliance_matrix.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/compliance_matrix.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/cross_session_detector.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/cross_session_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/continuous_verifier.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/continuous_verifier.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/contract_verifier.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/contract_verifier.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/contracts.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/contracts.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/context_drift_detector.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/context_drift_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/cross_cutting.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/cross_cutting.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/decision_explainer.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/decision_explainer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/cybersec_2026_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/cybersec_2026_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/decision_registry.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/decision_registry.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/defense_depth.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/defense_depth.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/emergency_override.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/emergency_override.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/dependency_auditor.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/dependency_auditor.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/dry_run.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/dry_run.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/derive_rbac_roles.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/derive_rbac_roles.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/false_completion_detector.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/false_completion_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/escalation_handler.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/escalation_handler.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/environment_manager.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/environment_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/exceptions.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/exceptions.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/guard_layers.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/guard_layers.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/genesis_bootstrap.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/genesis_bootstrap.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/engine_degradation.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/engine_degradation.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/identity.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/identity.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/input_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/input_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/immutable_core.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/immutable_core.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/integration.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/integration.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/integrity_self_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/integrity_self_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/kill_switch.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/kill_switch.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/memory_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/memory_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/legal_audit_chain.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/legal_audit_chain.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/key_hierarchy.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/key_hierarchy.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/intent_binder.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/intent_binder.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/microstructure_defense.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/microstructure_defense.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/memory_provenance_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/memory_provenance_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/micro_verifier.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/micro_verifier.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/novel_attack_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/novel_attack_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/multi_agent_collusion_detector.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/multi_agent_collusion_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/native_api_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/native_api_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/monotonic_clock.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/monotonic_clock.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/non_repudiation.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/non_repudiation.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/observability.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/observability.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/output_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/output_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/path_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/path_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/permission_hooks.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/permission_hooks.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/permission_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/permission_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/permission_mode_manager.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/permission_mode_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/post_action_verifier.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/post_action_verifier.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/rbac_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/rbac_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/rollback_sandbox.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/rollback_sandbox.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/phase_executor.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/phase_executor.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/risk_mitigation.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/risk_mitigation.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/replay_attack_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/replay_attack_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/rule_injection_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/rule_injection_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/sequence_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/sequence_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/shell_dialect_detector.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/shell_dialect_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/secrets_lifecycle.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/secrets_lifecycle.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/vibe_coding_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/vibe_coding_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/__init__.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/__init__.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/session_concurrency.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/session_concurrency.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/toctou_guard.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/toctou_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/session_lifecycle.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/session_lifecycle.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/governance_bridges/a2a_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/governance_bridges/a2a_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/governance_bridges/bootstrap_superadmin.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/governance_bridges/bootstrap_superadmin.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/governance_bridges/capability_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/governance_bridges/capability_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/governance_bridges/__init__.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/governance_bridges/__init__.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/governance_bridges/approver_check.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/governance_bridges/approver_check.py
@@ -623,7 +623,7 @@ entries:
   old_path: src/zephyr/autonomy_core/agent-spec/agent_observability.py
   status: done
   subdomain_id: agent_lifecycle
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/governance_bridges/contracts.py
   old_path: src/zephyr/autonomy_perm/agent-rbac/governance_bridges/contracts.py
@@ -6041,625 +6041,625 @@ entries:
   old_path: src/zephyr/autonomy_core/runtime/zombie_scanner.py
   status: done
   subdomain_id: runtime_core
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/alignment_syncer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/alignment_syncer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/all_completer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/all_completer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/compliance_auditor.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/compliance_auditor.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/batch_fixer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/batch_fixer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/dep_version_fixer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/dep_version_fixer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/dedup_extractor.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/dedup_extractor.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/config_fixer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/config_fixer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/engine.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/drift_fixer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/drift_fixer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/event_hooks.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/event_hooks.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_budget.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_budget.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_health_check.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_health_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_diff.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_diff.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/escalation_bridge.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/escalation_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_reliability.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_reliability.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_pattern_miner.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_pattern_miner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/interrupt_guard.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/interrupt_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_report.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_report.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_safety.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_safety.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/import_fixer.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/import_fixer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/fix_scheduler.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/fix_scheduler.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/llm_fix_adapter.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/llm_fix_adapter.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/scaffold_registrar.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/scaffold_registrar.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/models.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/models.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/self_heal_agent.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/self_heal_agent.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/zombie_cleaner.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/zombie_cleaner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/shadow_workspace.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/shadow_workspace.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/ai_construction_detectors.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/ai_construction_detectors.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/__init__.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/__init__.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/state_machine.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/state_machine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/absence_manager.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/absence_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/auto_fix_engine_03/__main__.py
   old_path: src/zephyr/autonomy_perm/auto_fix_engine_03/__main__.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/ai_context_injector.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/ai_context_injector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/alert_router.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/alert_router.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/architecture_contracts.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/architecture_contracts.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/baseline_manager.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/baseline_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/baseline_poisoning_guard.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/baseline_poisoning_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/backcompat_checker.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/backcompat_checker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/architecture_principles.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/architecture_principles.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/benchmark_integrity.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/benchmark_integrity.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/brain_integration.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/brain_integration.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/canary_controller.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/canary_controller.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/chaos_injector.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/chaos_injector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/cascade_detector.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/cascade_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/code_review_ai.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/code_review_ai.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/cold_start.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/cold_start.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/correlation_engine.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/correlation_engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/config_consistency.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/config_consistency.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/contract_drift_detector.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/contract_drift_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/credibility_engine.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/credibility_engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/dashboard.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/dashboard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/cross_module_score.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/cross_module_score.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/cross_env_consistency.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/cross_env_consistency.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/data_quality.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/data_quality.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/data_source_reliability.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/data_source_reliability.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/data_lifecycle.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/data_lifecycle.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/data_classification.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/data_classification.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/detector_dispatcher.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/detector_dispatcher.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_models.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_models.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/dependency_manager.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/dependency_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_infrastructure.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_infrastructure.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_hotfix_bypass.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_hotfix_bypass.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_engine.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_cron_scheduler.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_cron_scheduler.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_training.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_training.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/drift_result_types.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/drift_result_types.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/file_attr_checker.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/file_attr_checker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/forensics_engine.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/forensics_engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/events.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/events.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/git_bisector.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/git_bisector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/gate_persistence.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/gate_persistence.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/gitignore_auditor.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/gitignore_auditor.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/handoff_manager.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/handoff_manager.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/headless_scanner.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/headless_scanner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/ml_engineering.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/ml_engineering.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/incremental_scanner.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/incremental_scanner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/integration_test_runner.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/integration_test_runner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/model_drift_monitor.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/model_drift_monitor.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/naming_magic_checker.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/naming_magic_checker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/orphan_scanner.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/orphan_scanner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/performance_baseline.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/performance_baseline.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/python_compat.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/python_compat.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/reconciler.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/reconciler.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/regime_detector.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/regime_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/resource_guard.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/resource_guard.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/rollback_bridge.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/rollback_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/roi_engine.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/roi_engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/runbook_generator.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/runbook_generator.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/self_check.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/self_check.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/scan_mutex.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/scan_mutex.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/suppression_learner.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/suppression_learner.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/state_machine.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/state_machine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/system_topology.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/system_topology.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/symlink_checker.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/symlink_checker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/self_test_verifier.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/self_test_verifier.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/test_fixture_checker.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/test_fixture_checker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/trend_analyzer.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/trend_analyzer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/tamper_proof_audit.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/tamper_proof_audit.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/_analysis.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/_analysis.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/_core.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/_core.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/_infrastructure.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/_infrastructure.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/_scanners.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/_scanners.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/_drift.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/_drift.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/__main__.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/__main__.py
@@ -6671,7 +6671,7 @@ entries:
   old_path: src/zephyr/autonomy_perm/budget-enforcer/action_history.py
   status: done
   subdomain_id: budget_enforcement
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/behavioral-auditor/__init__.py
   old_path: src/zephyr/autonomy_perm/behavioral-auditor/__init__.py
@@ -7649,247 +7649,247 @@ entries:
   old_path: src/zephyr/autonomy_perm/escalation-engine/governance/__init__.py
   status: done
   subdomain_id: escalation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/cascade_analyzer.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/cascade_analyzer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/db.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/db.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/decision_table.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/decision_table.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/config_loader.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/config_loader.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/duplicate_detector.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/duplicate_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/deprecation_tracker.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/deprecation_tracker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/feedback_bridge.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/feedback_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/judge.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/judge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/escalation_bridge.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/escalation_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/drift_bridge.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/drift_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/mcp_integration.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/mcp_integration.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/kb_bridge.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/kb_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/models.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/models.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/orphan_detector.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/orphan_detector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/registration_checker.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/registration_checker.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/orphan_collector.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/orphan_collector.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/reference_graph_engine.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/reference_graph_engine.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/report_generator.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/report_generator.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/rbac_bridge.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/rbac_bridge.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/standalone_evaluator.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/standalone_evaluator.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/swid_tag.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/swid_tag.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/safety_fence.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/safety_fence.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/async_monitor.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/async_monitor.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/unique_analyzer.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/unique_analyzer.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/__init__.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/__init__.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/access_control/orphan-judge/__main__.py
   old_path: src/zephyr/autonomy_perm/orphan-judge/__main__.py
   status: done
   subdomain_id: access_control
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/ai_attack_generator.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/ai_attack_generator.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/blast_radius.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/blast_radius.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/cleanup.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/cleanup.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/cli.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/cli.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/constitution_engine.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/constitution_engine.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/cold_start.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/cold_start.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/circuit_breaker.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/circuit_breaker.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/injection_engine.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/injection_engine.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/game_day_scheduler.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/game_day_scheduler.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/mcp_endpoints.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/mcp_endpoints.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/models.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/models.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/scenario_loader.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/scenario_loader.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/__init__.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/__init__.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/validator.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/validator.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/steady_state.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/steady_state.py
@@ -7907,7 +7907,7 @@ entries:
   old_path: src/zephyr/compliance/artifact_scanner.py
   status: done
   subdomain_id: governance
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/__main__.py
   old_path: src/zephyr/autonomy_perm/red-blue-validator/__main__.py
@@ -13499,7 +13499,7 @@ entries:
   old_path: src/zephyr/autonomy_core/gates/admission/mad_005_dependency_graph_template.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: config
   new_path: src/zephyr/security/access_control/change_log.yaml
   old_path: src/zephyr/autonomy_perm/agent-rbac/change_log.yaml
@@ -13535,7 +13535,7 @@ entries:
   old_path: src/zephyr/compliance/behavioral-auditor/migration-plan.yaml
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: config
   new_path: src/zephyr/security/access_control/persistence/change_log.yaml
   old_path: src/zephyr/autonomy_perm/agent-rbac/persistence/change_log.yaml
@@ -14327,277 +14327,277 @@ entries:
   old_path: src/zephyr/autonomy_core/context-engine/architecture-context.json
   status: done
   subdomain_id: context_management
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/behavior_audit_logger.py
   old_path: src/zephyr/security/llm-security/behavior_audit_logger.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/gateway.py
   old_path: src/zephyr/security/llm-security/gateway.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/input_sanitizer.py
   old_path: src/zephyr/security/llm-security/input_sanitizer.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/process_sandbox.py
   old_path: src/zephyr/security/llm-security/process_sandbox.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/protocol.py
   old_path: src/zephyr/security/llm-security/protocol.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/dashboard/app.py
   old_path: src/zephyr/security/llm-security/dashboard/app.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l0_supply_chain.py
   old_path: src/zephyr/security/llm-security/layers/l0_supply_chain.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l1_input.py
   old_path: src/zephyr/security/llm-security/layers/l1_input.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l2a_process_sandbox.py
   old_path: src/zephyr/security/llm-security/layers/l2a_process_sandbox.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l2_prompt_protection.py
   old_path: src/zephyr/security/llm-security/layers/l2_prompt_protection.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l3_output.py
   old_path: src/zephyr/security/llm-security/layers/l3_output.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l4_agent.py
   old_path: src/zephyr/security/llm-security/layers/l4_agent.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l5_resource_protection.py
   old_path: src/zephyr/security/llm-security/layers/l5_resource_protection.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l6_data_flow.py
   old_path: src/zephyr/security/llm-security/layers/l6_data_flow.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l6_observability.py
   old_path: src/zephyr/security/llm-security/layers/l6_observability.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l7_runtime.py
   old_path: src/zephyr/security/llm-security/layers/l7_runtime.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l8_compliance.py
   old_path: src/zephyr/security/llm-security/layers/l8_compliance.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/layers/l8_multi_agent.py
   old_path: src/zephyr/security/llm-security/layers/l8_multi_agent.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/patterns/injection_patterns.py
   old_path: src/zephyr/security/llm-security/patterns/injection_patterns.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/patterns/secrets.py
   old_path: src/zephyr/security/llm-security/patterns/secrets.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/self_protection/adversarial_mutator.py
   old_path: src/zephyr/security/llm-security/self_protection/adversarial_mutator.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/self_protection/code_integrity.py
   old_path: src/zephyr/security/llm-security/self_protection/code_integrity.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/self_protection/isolation.py
   old_path: src/zephyr/security/llm-security/self_protection/isolation.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/self_protection/l7_validation.py
   old_path: src/zephyr/security/llm-security/self_protection/l7_validation.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm-security/self_protection/red_team_scanner.py
   old_path: src/zephyr/security/llm-security/self_protection/red_team_scanner.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/behavior_audit_logger.py
   old_path: src/zephyr/security/llm_security_01/behavior_audit_logger.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/context_scanner.py
   old_path: src/zephyr/security/llm_security_01/context_scanner.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/gateway.py
   old_path: src/zephyr/security/llm_security_01/gateway.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/input_sanitizer.py
   old_path: src/zephyr/security/llm_security_01/input_sanitizer.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/process_sandbox.py
   old_path: src/zephyr/security/llm_security_01/process_sandbox.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l0_supply_chain.py
   old_path: src/zephyr/security/llm_security_01/layers/l0_supply_chain.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l1_input.py
   old_path: src/zephyr/security/llm_security_01/layers/l1_input.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l2a_process_sandbox.py
   old_path: src/zephyr/security/llm_security_01/layers/l2a_process_sandbox.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l2_prompt_protection.py
   old_path: src/zephyr/security/llm_security_01/layers/l2_prompt_protection.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l3_output.py
   old_path: src/zephyr/security/llm_security_01/layers/l3_output.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l4_agent.py
   old_path: src/zephyr/security/llm_security_01/layers/l4_agent.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l5_resource_protection.py
   old_path: src/zephyr/security/llm_security_01/layers/l5_resource_protection.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l6_observability.py
   old_path: src/zephyr/security/llm_security_01/layers/l6_observability.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/layers/l8_multi_agent.py
   old_path: src/zephyr/security/llm_security_01/layers/l8_multi_agent.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/patterns/injection_patterns.py
   old_path: src/zephyr/security/llm_security_01/patterns/injection_patterns.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/patterns/secrets.py
   old_path: src/zephyr/security/llm_security_01/patterns/secrets.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/adversarial_mutator.py
   old_path: src/zephyr/security/llm_security_01/self_protection/adversarial_mutator.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/code_integrity.py
   old_path: src/zephyr/security/llm_security_01/self_protection/code_integrity.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/isolation.py
   old_path: src/zephyr/security/llm_security_01/self_protection/isolation.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/l7_validation.py
   old_path: src/zephyr/security/llm_security_01/self_protection/l7_validation.py
   status: done
   subdomain_id: llm_defense
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/llm_defense/llm_security_01/self_protection/red_team_scanner.py
   old_path: src/zephyr/security/llm_security_01/self_protection/red_team_scanner.py
@@ -14831,37 +14831,37 @@ entries:
   old_path: src/zephyr/security/semantic-auditor/trigger_engine.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/attack_registry.py
   old_path: src/zephyr/security/red-blue-validator/attack_registry.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/bypass_recorder.py
   old_path: src/zephyr/security/red-blue-validator/bypass_recorder.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/constitution_guard.py
   old_path: src/zephyr/security/red-blue-validator/constitution_guard.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/convergence_checker.py
   old_path: src/zephyr/security/red-blue-validator/convergence_checker.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/defense_runner.py
   old_path: src/zephyr/security/red-blue-validator/defense_runner.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-SECURITY
+- domain_id: D_SECURITY
   file_type: module
   new_path: src/zephyr/security/adversarial_validation/game_day_runner.py
   old_path: src/zephyr/security/red-blue-validator/game_day_runner.py

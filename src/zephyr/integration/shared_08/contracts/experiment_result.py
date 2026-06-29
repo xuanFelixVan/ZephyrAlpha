@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.shared_08.contracts.experiment_result
-# [DOMAIN] D-INTEGRATION
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
 # [CONSUMERS] zephyr.integration.contracts.experiment_result; tests.integration.test_phase_f_layers
 # [STARTUP] imported

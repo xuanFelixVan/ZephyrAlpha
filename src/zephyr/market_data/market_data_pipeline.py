@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-004 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.market_data.market_data_pipeline
-# [DOMAIN] D-MKT_DATA
+# [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

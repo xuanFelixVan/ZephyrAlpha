@@ -56,7 +56,7 @@ planes:
         submodule: ai_security/security_gateway
         note: AISG security_gateway，< 50ms 目标（Hot-adjacent）
       - id: shared-runtime-plane-tag
-        domain: D-SHARED
+        domain: D_SHARED
         submodule: contracts/runtime_plane_tag.py
         note: 枚举定义，所有平面共用契约
     t3_additional_modules:
@@ -91,15 +91,15 @@ planes:
     current_status: active
     modules:
       - id: l00-connectors-default
-        domain: D-MKT_DATA
+        domain: D_MKT_DATA
         submodule: connectors/*.py（akshare/tushare/wind 默认）
         note: 当前默认数据接入
       - id: l00-normalizers
-        domain: D-MKT_DATA
+        domain: D_MKT_DATA
         submodule: normalizers/
         note: 数据标准化
       - id: l00-cache
-        domain: D-MKT_DATA
+        domain: D_MKT_DATA
         submodule: cache/
         note: 数据缓存
       - id: l01-config
@@ -179,15 +179,15 @@ planes:
         submodule: review/（实时 TCA）
         note: 实时交易成本分析
       - id: l08-cli
-        domain: D-FRONTEND
+        domain: D_FRONTEND
         submodule: cli/
         note: 命令行接口
       - id: l08-orchestration
-        domain: D-FRONTEND
+        domain: D_FRONTEND
         submodule: orchestration/
         note: AI 编排
       - id: l08-notifications
-        domain: D-FRONTEND
+        domain: D_FRONTEND
         submodule: notifications/
         note: 消息通知
       - id: l09-notebooks
@@ -223,19 +223,19 @@ planes:
         submodule: model_registry/（读）
         note: 模型注册表只读
       - id: l12-metrics-warm
-        domain: D-OPS
+        domain: D_OPS
         submodule: metrics/（标准采集）
         note: 指标采集
       - id: l12-logs
-        domain: D-OPS
+        domain: D_OPS
         submodule: logs/
         note: 日志管道
       - id: l12-traces
-        domain: D-OPS
+        domain: D_OPS
         submodule: traces/
         note: 分布式追踪
       - id: l12-ai-behavior
-        domain: D-OPS
+        domain: D_OPS
         submodule: ai_behavior/
         note: AI 行为监控
       - id: l13-shadow
@@ -251,7 +251,7 @@ planes:
         submodule: promotion_gate/
         note: 晋级门禁
       - id: shared-contracts
-        domain: D-SHARED
+        domain: D_SHARED
         submodule: contracts/*.py（余下契约）
         note: 跨层公共契约（除 runtime_plane_tag.py 外）
     sla:
@@ -280,11 +280,11 @@ planes:
     current_status: partial
     modules:
       - id: l00-storage
-        domain: D-MKT_DATA
+        domain: D_MKT_DATA
         submodule: storage/（落盘）
         note: 数据持久化存储
       - id: l00-quality
-        domain: D-MKT_DATA
+        domain: D_MKT_DATA
         submodule: quality/（批量校验）
         note: 数据质量批量检查
       - id: l02-pipeline
@@ -356,11 +356,11 @@ planes:
         submodule: model_registry/（写）
         note: 模型注册表写入
       - id: l12-archive
-        domain: D-OPS
+        domain: D_OPS
         submodule: traces/（长期归档）
         note: 追踪数据归档
       - id: l12-archive
-        domain: D-OPS
+        domain: D_OPS
         submodule: ai_behavior/（回溯分析）
         note: AI 行为历史回溯
       - id: l13-ab-testing
@@ -376,11 +376,11 @@ planes:
         submodule: src/zephyr/ml_train/scout/ + cron
         note: D-02 Scout Agent（每日抓取批任务）
       - id: fe-ssr-reports
-        domain: D-FRONTEND
+        domain: D_FRONTEND
         submodule: apps/reports-center/（SSR 报表）
         note: 前端服务端渲染报表（Cold）
       - id: fe-codegen
-        domain: D-FRONTEND
+        domain: D_FRONTEND
         submodule: tools/codegen/
         note: 构建期代码生成工具（Cold）
     sla:

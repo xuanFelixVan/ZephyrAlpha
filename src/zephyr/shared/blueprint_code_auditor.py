@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-MAIN-001
 # [MODULE] zephyr.shared.blueprint_code_auditor
-# [DOMAIN] D-SHARED
+# [DOMAIN] D_SHARED
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.governance.__init__; zephyr.governance.rule_enforcement.gate_engine; tests.unit.shared.test_orphan_integration
 # [STARTUP] imported

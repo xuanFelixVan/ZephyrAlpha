@@ -36,7 +36,7 @@ ttl: permanent
 | 交易执行 | 生成、提交、执行订单 | D-TRADING |
 | 风险管理 | 风控检查、风险监控 | D-RISK |
 | 回测验证 | 策略回测、历史验证 | D-BACKTEST |
-| 数据管理 | 行情数据、持仓数据 | D-DATA_ENG |
+| 数据管理 | 行情数据、持仓数据 | D_DATA_ENG |
 | 合规报告 | 合规检查、监管报告 | D-COMPLIANCE |
 | 投资组合 | 组合管理、再平衡 | D-PORTFOLIO |
 | 基础设施 | 运行时、部署、监控 | D_INFRA_OPS |
@@ -69,7 +69,7 @@ graph LR
 | 成交回报 | 执行结果 | 成交记录 | D-TRADING |
 | 持仓更新 | 成交记录 | 最新持仓 | D-TRADING |
 | 风险监控 | 持仓、市场数据 | 风险指标 | D-RISK |
-| 报告生成 | 交易记录、持仓 | 报告 | D-REPORTING |
+| 报告生成 | 交易记录、持仓 | 报告 | D_REPORTING |
 
 ---
 
