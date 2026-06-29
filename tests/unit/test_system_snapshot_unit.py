@@ -61,7 +61,7 @@ def tmp_repo(tmp_path: Path):
     snapshots_dir.mkdir(parents=True)
 
     # DB
-    db_dir = tmp_path / "docs" / "09_audit" / "STATE"
+    db_dir = tmp_path / "docs" / "_working" / "audit" / "STATE"
     db_dir.mkdir(parents=True)
     db_path = db_dir / "governance.db"
     init_db(db_path)

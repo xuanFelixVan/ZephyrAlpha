@@ -69,8 +69,8 @@ BUDGET_LIMITS = {
 def find_latest_session_log() -> Path | None:
     """查找最新会话日志"""
     log_dirs = [
-        REPO_ROOT / "" / "docs" / "09_audit" / "session_logs",
-        REPO_ROOT / "docs" / "09_audit" / "session_logs",
+        REPO_ROOT / "" / "docs" / "_working" / "audit" / "session_logs",
+        REPO_ROOT / "docs" / "_working" / "audit" / "session_logs",
         REPO_ROOT / "session_logs",
     ]
     for log_dir in log_dirs:
