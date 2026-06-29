@@ -22,7 +22,7 @@ ZephyrAlpha Dashboard · Streamlit 仪表盘
 
 Task ID     : T-4-07
 Depends     : T-4-04（fitness_functions）、T-4-05（olap_engine）、
-              T-2-11-A（kb_repo）、T-1-13（task_repo）
+              T-1-13（task_repo）
 safety_level: L
 
 5 个页面：
@@ -89,7 +89,7 @@ class DashboardApp:
     task_repo : Any | None
         TaskRepo 实例。
     kb_repo : Any | None
-        KbRepo 实例。
+        KbRepo 实例（deprecated, KB refactor Step 2.1 移除了 kb_repo.py, 始终传 None）。
     olap_engine : Any | None
         OLAPEngine 实例。
     """

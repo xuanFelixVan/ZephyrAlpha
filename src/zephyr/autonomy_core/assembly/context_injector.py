@@ -20,13 +20,16 @@ ContextInjector: retrieve and inject relevant knowledge into prompt context
 ============================================================================
 Task ID : T-2-12 (C39)
 safety_level : L
-Depends : kb_repo.py
 
-Retrieves knowledge from KbRepo and assembles it into an injected context
-string for prompt construction. Supports three retrieval modes:
+Retrieves knowledge and assembles it into an injected context string for
+prompt construction. Supports three retrieval modes:
   1. By task_id  — find KEs related to a specific task
   2. By module_id — find KEs belonging to a module
-  3. By keyword  — semantic/keyword search via KbRepo.search()
+  3. By keyword  — semantic/keyword search
+
+kb_repo is optional (KB refactor Step 2.1 removed kb_repo.py SQLite layer);
+when None, inject_by_* methods return empty InjectedContext.
+KB refactor Phase 3 will migrate consumers to VMS-backed retrieval.
 
 Respects token budget limits from ContextBudgetTracker.
 """
@@ -67,12 +70,13 @@ class InjectedContext(BaseModel):
 
 
 class ContextInjector:
-    """Retrieve and inject knowledge context from KbRepo.
+    """Retrieve and inject knowledge context.
 
     Parameters
     ----------
-    kb_repo : KbRepo
-        Knowledge base repository instance.
+    kb_repo : Any | None
+        Knowledge base repository instance (optional; KB refactor Step 2.1
+        removed kb_repo.py, when None inject_by_* return empty context).
     token_budget : int
         Maximum token budget for injected context (default 8000).
     max_sources : int
@@ -81,7 +85,7 @@ class ContextInjector:
 
     def __init__(
         self,
-        kb_repo: Any,
+        kb_repo: Any | None = None,
         token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         max_sources: int = 10,
     ) -> None:
@@ -89,7 +93,13 @@ class ContextInjector:
         self._token_budget = token_budget
         self._max_sources = max_sources
 
-    def inject_by_task_id(self, task_id: str) -> Self:
+    def inject_by_task_id(self, task_id: str) -> InjectedContext:
+        if self._kb_repo is None:
+            return InjectedContext(
+                retrieval_mode=RetrievalMode.TASK_ID.value,
+                query=task_id,
+                budget_remaining=self._token_budget,
+            )
         records = self._kb_repo.list_by_status()
         matching: list[Any] = []
         for rec in records:
@@ -102,7 +112,13 @@ class ContextInjector:
 
         return self._assemble_context(matching, RetrievalMode.TASK_ID, task_id)
 
-    def inject_by_module_id(self, module_id: str) -> Self:
+    def inject_by_module_id(self, module_id: str) -> InjectedContext:
+        if self._kb_repo is None:
+            return InjectedContext(
+                retrieval_mode=RetrievalMode.MODULE_ID.value,
+                query=module_id,
+                budget_remaining=self._token_budget,
+            )
         records = self._kb_repo.list_by_status()
         matching: list[Any] = []
         for rec in records:
@@ -115,7 +131,13 @@ class ContextInjector:
 
         return self._assemble_context(matching, RetrievalMode.MODULE_ID, module_id)
 
-    def inject_by_keyword(self, keyword: str) -> Self:
+    def inject_by_keyword(self, keyword: str) -> InjectedContext:
+        if self._kb_repo is None:
+            return InjectedContext(
+                retrieval_mode=RetrievalMode.KEYWORD.value,
+                query=keyword,
+                budget_remaining=self._token_budget,
+            )
         hits = self._kb_repo.search(
             query_text=keyword,
             collection="ke_entries",
