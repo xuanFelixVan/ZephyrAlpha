@@ -459,11 +459,13 @@ class TestSessionAwareStash:
         assert recorded == [], f"pathspec commit 不应 stash，pathspec={recorded}"
         assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应留在工作区"
 
-    def test_empty_held_files_pathspec_skips_stash(self, tmp_path: Path) -> None:
-        """pathspec commit 跳过 stash——已注册 session held_files=[] 也不 stash。
+    def test_registered_session_pathspec_skips_stash(self, tmp_path: Path) -> None:
+        """pathspec commit 跳过 stash——已注册 session + 已 claim 也不 stash。
 
         治本（2026-06-29）：同 test_unregistered_session_pathspec_skips_stash，
         pathspec commit 天然隔离，session 注册状态不影响 stash 决策。
+        治本（2026-06-30）：claim_required_gate 要求 session 注册后必须 claim
+        目标文件（AGENTS.md §8 L284），故本测试 claim f_a 后再 commit。
         """
         f_a, f_b = self._commit_two_files(tmp_path)
         f_a.write_text("x = 10\n", encoding="utf-8")
@@ -471,8 +473,8 @@ class TestSessionAwareStash:
 
         gw = GitCommitGateway(project_root=tmp_path)
         recorded = self._attach_spy(gw)
-        # 注册 session 但不 claim 任何文件（held_files=[]）
-        gw._registry.register("sess-A")
+        # 注册 session 并 claim 目标文件（claim_required_gate 约束，AGENTS.md §8 L284）
+        gw.claim_files("sess-A", [str(f_a)])
 
         result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"

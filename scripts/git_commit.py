@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION)
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_cli | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
@@ -27,7 +27,7 @@
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
 
-exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断
+exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断
 """
 
 from __future__ import annotations
@@ -122,7 +122,7 @@ def main() -> int:
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
             "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断"
+            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断"
         ),
     )
     parser.add_argument(
@@ -231,6 +231,15 @@ def main() -> int:
             file=sys.stderr,
         )
         return 5
+    elif result.status == CommitStatus.CLAIM_REQUIRED_VIOLATION:
+        print(f"CLAIM_REQUIRED_VIOLATION: {result.message}", file=sys.stderr)
+        print(
+            "  session 已注册但目标文件未 claim_files（红蓝对抗红攻1治本）。"
+            "  commit 前 MUST 调 claim_files 声明工作范围（AGENTS.md §8 L284）。"
+            "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+            file=sys.stderr,
+        )
+        return 6
     else:  # COMMIT_FAILED / METADATA_VIOLATION
         print(f"FAILED: {result.message}", file=sys.stderr)
         return 1

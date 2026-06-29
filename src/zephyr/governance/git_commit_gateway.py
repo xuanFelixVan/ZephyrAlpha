@@ -97,6 +97,7 @@ from zephyr.governance.reconciliation_registry import (
 )
 from zephyr.governance.commit_gate_registry import CommitGateRegistry  # pre-commit 门禁注册表（架构债务 #AD-001 治本）
 from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate  # 搭便车防护门禁
+from zephyr.governance.commit_gates.claim_required_gate import make_claim_required_gate  # claim_files 前置检查门禁
 from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate  # 新建 .py CapabilityLookup 提示（warn-only）
 from zephyr.governance.capability_lookup import REGISTRY_YAML  # registry 路径真源唯一（治本：消除 _check_capability_aliases / _load_protected_scripts 硬编码分裂）
 from zephyr.shared.infra.process_pool import is_pid_alive  # 僵尸锁检测真源唯一（红蓝对抗归一：曾三处分裂，现统一到 process_pool.py）
@@ -181,6 +182,7 @@ class CommitStatus(str, Enum):
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"  # .py 文件使用 parents[N] 反模式而非 REPO_ROOT（SSoT 绕过）
     PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"  # 规则文档含过渡文本（GOV-DOC-016 纯陈述原则）
     HELD_OVERLAP_VIOLATION = "HELD_OVERLAP_VIOLATION"  # 目标文件被其他活跃 session 持有（搭便车防护，--allow-overlap 放行）
+    CLAIM_REQUIRED_VIOLATION = "CLAIM_REQUIRED_VIOLATION"  # session 已注册但目标文件未 claim（红蓝对抗红攻1治本，--allow-overlap 放行）
     PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"  # 纯 re-export shim 文件（GATE-NO-PURE-SHIM --no-verify 补偿）
 
 
@@ -336,6 +338,7 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：声明式 gate 框架，新门禁 register 而非硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
+        self._gate_registry.register(make_claim_required_gate())  # claim_files 前置检查（priority=40，先于 HELD-OVERLAP 检查 claim）
         self._gate_registry.register(make_capability_overlap_gate())  # 缺口4：新建 .py CapabilityLookup 提示（warn-only）
 
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
@@ -573,6 +576,14 @@ class GitCommitGateway:
                 message="no existing or tracked files to commit",
             )
 
+        # ============================================================
+        # 存量门禁区域（_check_* 硬编码调用）
+        # 新增 pre-commit 门禁 MUST 走 CommitGateRegistry 注册制：
+        #   1. 在 commit_gates/ 下创建 make_xxx_gate() 返回 GateSpec
+        #   2. 在 __init__ 中 self._gate_registry.register(...)
+        # 禁止在此区域新增 _check_* 调用（架构债务 #AD-001 治本，AGENTS.md §8 L286）
+        # ============================================================
+
         # GATE-15 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用
         ttl_passed, ttl_detail = self._check_frontmatter_ttl(existing)
         if not ttl_passed:
@@ -695,7 +706,7 @@ class GitCommitGateway:
             )
 
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：声明式 gate，新增门禁 register 而非硬编码 _check_*）
-        # 当前注册：HELD-OVERLAP（搭便车防护，priority=50）
+        # 当前注册：CLAIM-REQUIRED（claim_files 前置检查，priority=40）、HELD-OVERLAP（搭便车防护，priority=50）
         gate_results = self._gate_registry.check_all(
             self, existing, session_id=session_id, allow_overlap=allow_overlap
         )
@@ -704,6 +715,11 @@ class GitCommitGateway:
                 if gr.gate_id == "HELD-OVERLAP":
                     return CommitResult(
                         status=CommitStatus.HELD_OVERLAP_VIOLATION,
+                        message=gr.detail,
+                    )
+                if gr.gate_id == "CLAIM-REQUIRED":
+                    return CommitResult(
+                        status=CommitStatus.CLAIM_REQUIRED_VIOLATION,
                         message=gr.detail,
                     )
                 # 未知 gate 违规 → 通用阻断（fail-closed）
