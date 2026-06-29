@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码 + load_vocabulary_values 引用 yaml 存在性；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免
+# [INVARIANTS] AST 扫描检测词表合法值硬编码 + load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -44,6 +44,8 @@ import re
 import sys
 from pathlib import Path
 
+import yaml
+
 # ── 路径设置 ──
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
@@ -72,14 +74,20 @@ _VOCAB_FILES: dict[str, str] = {
     "REVIEW_STATUS": "review_status_vocabulary.yaml",
     "RULE_FORM": "rule_form_vocabulary.yaml",
     "VERIFIABILITY": "verifiability_vocabulary.yaml",
+    "STARTUP": "startup_vocabulary.yaml",
 }
 
 # ── 疑似词表硬编码的变量名模式 ──
 # 匹配 VALID/ALLOWED/LEGAL/PERMITTED_*_VALUES/STATUSES/TYPES/LEVELS/LAYERS/TTL/CATEGORIES/CLASSIFICATIONS/LIST/SET
 # v1.1.0 增强：增加 ALLOWED/LEGAL/PERMITTED 前缀 + LIST/SET 后缀（覆盖红队绕过 A01/A10）
+# v1.2.0 增强：增加 STARTUP 后缀（覆盖 [STARTUP] 标记硬编码漏网——红蓝发现3 治本）
 _VALID_VAR_PATTERN = re.compile(
-    r"^(VALID|ALLOWED|LEGAL|PERMITTED)_[A-Z_]*?(VALUES|STATUSES|TYPES|LEVELS|LAYERS|TTL|CATEGORIES|CLASSIFICATIONS|LIST|SET)$"
+    r"^(VALID|ALLOWED|LEGAL|PERMITTED)_[A-Z_]*?(VALUES|STATUSES|TYPES|LEVELS|LAYERS|TTL|CATEGORIES|CLASSIFICATIONS|LIST|SET|STARTUP)$"
 )
+
+# ── [STARTUP] 标记值校验（v1.2.0 新增——红蓝发现3 治本）──
+# 扫描 .py 文件头部 [STARTUP] 标记，校验值是否在 startup_vocabulary.yaml 合法值中
+_STARTUP_MARKER_PATTERN = re.compile(r"^#\s*\[STARTUP\]\s*(\w+)")
 
 # ── DDL 例外白名单（SQL CHECK 无法 yaml.safe_load，走 DDL-as-Code 协议）──
 _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
@@ -87,6 +95,58 @@ _DDL_EXEMPT_FILES: frozenset[str] = frozenset({
     "depgraph_schema.py",
     "audit_post_sync_commands.py",
 })
+
+
+def _load_startup_values(vocab_dir: Path) -> set[str]:
+    """从 startup_vocabulary.yaml 动态加载 [STARTUP] 合法值（SSoT 唯一真源）。
+
+    红蓝发现3 治本：startup_vocabulary.yaml 声明"校验器从本文件动态加载"但无脚本实际加载。
+    本函数兑现该声明，消除 [STARTUP] 标记零门禁缺口。
+
+    Returns:
+        合法值 set[str]；文件不存在时返回空 set（warn-only，不崩溃）。
+    """
+    p = vocab_dir / "startup_vocabulary.yaml"
+    if not p.exists():
+        return set()
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8"))
+    except Exception:
+        return set()
+    if not isinstance(data, dict):
+        return set()
+    return {v["value"] for v in data.get("values", []) if isinstance(v, dict) and "value" in v}
+
+
+def _check_startup_marker(source: str, valid_values: set[str]) -> list[tuple[int, str]]:
+    """校验 .py 文件头部的 [STARTUP] 标记值是否合法（红蓝发现3 治本）。
+
+    扫描文件头部注释（前 30 行）中的 [STARTUP] 标记，
+    校验值是否在 startup_vocabulary.yaml 的合法值中。
+
+    Args:
+        source: 文件源码
+        valid_values: startup_vocabulary.yaml 的合法值集合
+
+    Returns:
+        (行号, 违规描述) 列表（空列表 = 通过或无 [STARTUP] 标记）
+    """
+    if not valid_values:
+        return []
+    issues: list[tuple[int, str]] = []
+    # 只扫描文件头部注释（前 30 行足够覆盖脚本头锚定区）
+    for i, line in enumerate(source.splitlines()[:30], 1):
+        m = _STARTUP_MARKER_PATTERN.match(line)
+        if m:
+            value = m.group(1)
+            if value not in valid_values:
+                issues.append((
+                    i,
+                    f"[STARTUP] 标记值 '{value}' 不在 startup_vocabulary.yaml 合法值中"
+                    f"(合法值: {sorted(valid_values)})",
+                ))
+            break  # 只检查第一个 [STARTUP] 标记
+    return issues
 
 
 def _is_literal_collection(value: ast.expr) -> bool:
@@ -128,12 +188,13 @@ def _is_literal_collection(value: ast.expr) -> bool:
     return False
 
 
-def _check_file(filepath: Path, vocab_dir: Path) -> list[tuple[int, str]]:
-    """检查单个 Python 文件的词表硬编码与 yaml 引用存在性。
+def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None = None) -> list[tuple[int, str]]:
+    """检查单个 Python 文件的词表硬编码与 yaml 引用存在性 + [STARTUP] 标记值校验。
 
     Args:
         filepath: Python 文件绝对路径。
         vocab_dir: 词表 YAML 所在目录（用于校验 load_vocabulary_values 引用存在性）。
+        startup_values: startup_vocabulary.yaml 的合法值集合（None 表示跳过 [STARTUP] 校验）。
 
     Returns:
         (行号, 违规描述) 列表（空列表 = 通过）。
@@ -155,6 +216,11 @@ def _check_file(filepath: Path, vocab_dir: Path) -> list[tuple[int, str]]:
         source = filepath.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return [(0, "cannot read file")]
+
+    # 检测3：[STARTUP] 标记值合法性校验（v1.2.0 新增——红蓝发现3 治本）
+    if startup_values:
+        startup_issues = _check_startup_marker(source, startup_values)
+        issues.extend(startup_issues)
 
     try:
         tree = ast.parse(source, filename=str(filepath))
@@ -275,6 +341,9 @@ def main() -> int:
         / "vocabularies"
     )
 
+    # 加载 [STARTUP] 合法值（红蓝发现3 治本：兑现 startup_vocabulary.yaml "校验器动态加载"声明）
+    startup_values = _load_startup_values(vocab_dir)
+
     # 排除 _archive 目录
     exclude = EXCLUDE_DIRS | {"_archive", "tests"}
 
@@ -291,7 +360,7 @@ def main() -> int:
         )
         for filepath in py_files:
             checked += 1
-            issues = _check_file(filepath, vocab_dir)
+            issues = _check_file(filepath, vocab_dir, startup_values)
             for lineno, issue in issues:
                 all_issues.append((filepath, lineno, issue))
 

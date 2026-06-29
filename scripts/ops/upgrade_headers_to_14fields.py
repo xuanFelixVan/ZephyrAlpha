@@ -59,6 +59,7 @@ if _GOV_DIR not in sys.path:
 
 # REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
+from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402
 from _shared.frontmatter import PY_HEADER_PATTERN  # noqa: E402
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
@@ -97,9 +98,10 @@ REQUIRED_FIELDS_SET = {
 # Fields that are new in v1.1.0 (were absent in v1.0.x 10-field format)
 NEW_FIELDS = {"DOMAIN", "DEPENDENCIES", "STARTUP", "MATURITY"}
 
-# Valid enum values per TRAE-047
-VALID_STARTUP = {"auto_start", "event_driven", "scheduled", "manual", "imported"}
-VALID_MATURITY = {"design", "prototype", "production", "legacy"}
+# Valid enum values 动态加载自 vocabulary YAML（SSoT 唯一真源，禁止硬编码——红蓝发现3 治本）
+# 原硬编码含废弃值 scheduled 漏网（GATE-VOCAB 检测模式不覆盖 STARTUP 后缀），现改为动态加载
+VALID_STARTUP = load_vocabulary_values("startup_vocabulary.yaml")
+VALID_MATURITY = load_vocabulary_values("maturity_vocabulary.yaml")
 
 MAIN_BLOCK_PATTERN = re.compile(r'^if\s+__name__\s*==\s*["\']__main__["\']\s*:', re.MULTILINE)
 A_MODULE_PATTERN = re.compile(

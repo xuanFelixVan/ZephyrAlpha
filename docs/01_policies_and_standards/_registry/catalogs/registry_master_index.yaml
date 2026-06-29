@@ -1,11 +1,11 @@
-# 自动生成于 2026-06-29T11:30:44Z
+# 自动生成于 2026-06-29T16:00:19Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-29T11:30:44Z'
+generated_at: '2026-06-29T16:00:19Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 21
+total_registries: 19
 registries:
 - registry_id: CFG-ai-risk-register
   name: AI 风险登记簿
@@ -41,7 +41,7 @@ registries:
   status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
-  category: contract
+  category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
   format: yaml
   maintenance: manual
@@ -95,14 +95,6 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
-- registry_id: PS-REG-012
-  name: Frontmatter 字段定义登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 58
-  status: active
 - registry_id: REG-FUNC-DOMAIN-001
   name: 功能域注册表
   category: governance_rule
@@ -143,21 +135,13 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
-- registry_id: PS-REG-020
-  name: 主文档清单（Master Document Inventory）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/master_document_inventory_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: draft
 - registry_id: PS-REG-016
   name: 登记表的登记表 — 跨登记表一致性契约
-  category: contract
+  category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   format: yaml
   maintenance: manual
-  entry_count: 22
+  entry_count: 21
   status: active
 - registry_id: PS-REG-018
   name: 规则路径目录（唯一真源 SSoT）
@@ -165,7 +149,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 139
+  entry_count: 138
   status: active
 - registry_id: PS-REG-017
   name: 任务卡元层登记表

@@ -245,16 +245,6 @@ registries:
       - "article_id"
       - "title"
 
-  - id: "REG-016"
-    name: "master-document-inventory"
-    title: "主文档清单"
-    path: "docs/01_policies_and_standards/_registry/catalogs/master_document_inventory_registry.yaml"
-    version: "1.0.0"
-    description: "项目全部文档的清单索引"
-    ssoT_for:
-      - "document_id"
-      - "path"
-
   - id: "REG-017"
     name: "project-path-tree"
     title: "物理路径树"

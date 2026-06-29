@@ -51,7 +51,6 @@ ttl: permanent
 | `ai_autonomy_authority_registry.yaml` | 登记表 | AI 自治权限登记表——全模块权限终表 | manual |
 | `rule_catalog_registry.yaml` | 登记表 | 规则目录——全部规则的分类索引与交叉引用 | auto |
 | `functional_domain_registry.yaml` | 登记表 | 功能域登记表——按功能域组织的模块注册 | manual |
-| `master_document_inventory_registry.yaml` | 注册表 | 主文档清单——全项目文档的集中索引 | manual |
 | `business_streams_registry.yaml` | 登记表 | 业务流定义 | manual |
 | `depgraph_scan_exclusions.yaml` | 登记表 | depgraph 扫描排除规则（数据真源，规则定义见 trae_058） | manual |
 | `hard_boundaries_registry.yaml` | 登记表 | 硬边界定义 | manual |
