@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-29'
-total_scripts: 575
+total_scripts: 579
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -654,9 +654,41 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/_tmp_analyze_wip.py
+  path: governance/_tmp_analyze_wip.py
+  description: import subprocess
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_check_domains.py
+  path: governance/_tmp_check_domains.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_diff_sample.py
+  path: governance/_tmp_diff_sample.py
+  description: import subprocess
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/_tmp_inspect_residue.py
   path: governance/_tmp_inspect_residue.py
   description: from __future__ import annotations
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_migrate_hyphen_variant.py
+  path: governance/_tmp_migrate_hyphen_variant.py
+  description: 根因：历史数据存在两种写法：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1001,14 +1033,6 @@ scripts:
 - name: governance/dm105_depgraph_triage.py
   path: governance/dm105_depgraph_triage.py
   description: 'DM-105: depgraph 未分配节点三策略处理脚本'
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/dm106_p2b_verification.py
-  path: governance/dm106_p2b_verification.py
-  description: 'DM-106: P2-B 迁移全量验证脚本'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2168,7 +2192,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/dm200916_write_direct.py
   path: governance/d5_architecture/dm200916_write_direct.py
-  description: import os
+  description: 治本改造（2026-06-29）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4177,6 +4201,14 @@ scripts:
 - name: _archive/governance/dm101_blueprint_domain_mapping.py
   path: _archive/governance/dm101_blueprint_domain_mapping.py
   description: 'DM-101: 构建 blueprint_id → domain 映射表 + CSV 模块匹配文件'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/governance/dm106_p2b_verification.py
+  path: _archive/governance/dm106_p2b_verification.py
+  description: 'DM-106: P2-B 迁移全量验证脚本'
   domain: governance
   execution_plane: warm-path
   status: registered
