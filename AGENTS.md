@@ -200,11 +200,14 @@ result = await gateway.full_scan(user_text, llm_response)
     - **capability 反查**：`integrity_anchors` 字段在 `precommit_id_uniqueness_check` 能力条目下声明。新增受保护脚本时：①YAML 加 `integrity_anchors` + `canonical_override` ②gateway `_load_protected_scripts` 回退硬编码同步更新 ③`validate_rules_integrity.py` `RULES_MANIFEST` 加条目。
 
 - **文档引用完整性门禁**（GATE-DOC-REF）→ 调研发现 AI 在 .md/.csv/.yaml 中编造虚假文件引用（如 dom_gov_001 虚假审计闭环：index.md 列 22 张不存在的任务卡，move_plan.csv 引用 4 个不存在的文件）。已加自动化门禁防止未来 AI 再造虚假引用：
-  - **pre-commit 阻断层**：[`.pre-commit-config.yaml` L244-261](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L244-L261) `id: gate-doc-ref`，staged 的 .md/.csv/.yaml/.json 文件触发 [`audit_broken_links.py`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 扫描 markdown 链接 + 纯文本路径 + CSV 列值 + YAML 值，断链 → warn-only（过渡期，存量 117 条待清理后转 --ci 硬阻断）。
-  - **检测范围**：.md（markdown 链接 + 纯文本路径）/ .csv（列值路径）/ .yaml/.yml（值路径 + 纯文本）/ .json（纯文本路径）。跳过 http/https/ftp/mailto 锚点 URL。
-  - **路径解析**：双重尝试——先相对于文件目录（markdown 链接习惯），再相对于项目根（CSV/YAML 项目根相对路径）。
+  - **pre-commit 阻断层**：[`.pre-commit-config.yaml` L244-261](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L244-L261) `id: gate-doc-ref`，staged 的 .md/.csv/.yaml/.json 文件触发 [`audit_broken_links.py`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 扫描 markdown 链接 + 纯文本路径 + CSV 列值 + YAML 值 + frontmatter blueprint_id + index.md 清单 + audit_report 审计对象，断链 → warn-only（过渡期，存量清零后转 --ci 硬阻断）。
+  - **检测范围**：.md（markdown 链接 + 纯文本路径 + frontmatter blueprint_id + index.md 清单 + audit_report 审计对象）/ .csv（列值路径）/ .yaml/.yml（值路径 + 纯文本）/ .json（纯文本路径）。跳过 http/https/ftp/mailto 锚点 URL。
+  - **路径解析**：三重尝试——①先相对于文件目录（markdown 链接习惯）②再相对于项目根（CSV/YAML 项目根相对路径）③basename 全局搜索兜底（裸文件名如 blueprint.md 在项目其他目录存在）。注意：index.md 清单检测**禁用 basename 兜底**（本目录契约语义，兜底会掩盖幻觉）。
   - **capability 反查**已登记 `broken_link_detector`（canonical = `scripts/governance/d2_links/audit_broken_links.py`）。新 AI 想做"断链检测/ghost ref/phantom reference"前，CapabilityLookup 会反查到本脚本，提示"扩展本脚本（加提取器函数），勿新建 checker"。
   - **治本 GAP-1**：解决"非 .md 文件（.csv/.yaml/.json）中的路径引用无检测"防护缺口。真源：[`audit_broken_links.py` `_extract_csv_paths`/`_extract_text_paths`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
+  - **治本 GAP-2**：解决"frontmatter.blueprint_id 引用的蓝图是否存在无检测"防护缺口。检测 .md frontmatter 的 blueprint_id 字段值是否在 [`blueprint_registry.yaml`](file:///d:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) 中存在。空值跳过（合法，如 index.md 无归属蓝图）；格式非法跳过（交给 GATE-11 N-06 三轨制格式校验）。真源：[`audit_broken_links.py` `_check_blueprint_id_exists`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
+  - **治本 GAP-3**：解决"index.md 列出的文件清单是否存在无检测"防护缺口。对名为 index.md 的文件做**严格本地解析**（仅相对 source.parent，禁 basename 兜底——本目录契约语义）。处理 markdown 链接 + `file:///D:/ZephyrAlpha/...` 绝对 URL 两种格式。真源：[`audit_broken_links.py` `_check_index_md_inventory`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
+  - **治本 GAP-4**：解决"audit_report 审计对象存在性无检测"防护缺口。对 doc_type=audit_report 的 .md 文件，校验三类引用：①frontmatter.blueprint_id ②frontmatter.module_id ③正文 MODULE_ID 匹配（MOD-XXX-NNN/D-XXX-NNN/SH-XXX-NNN 三轨制）。自动生成 audit_report（无 blueprint_id 无 module_id）跳过。真源：[`audit_broken_links.py` `_check_audit_report_objects`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。已检出幻觉：ai_12/17/18_report.md 引用不存在的 `MOD-DB_DEPGRAPH_PG`/`MOD-INF`。
 
 ## 8. 永远不要做的事
 

@@ -24,6 +24,13 @@
       - 跨目录的虚假文件引用闭环
     本扩展治本：从仅 .md markdown 链接扩展到多文件类型 + 多引用语法。
 
+五防护缺口治本进展：
+    GAP-1: 非.md文件路径引用（.csv/.yaml/.json）—— 已治本（v1）
+    GAP-2: frontmatter.blueprint_id 存在性        —— 已治本（v2，本次扩展）
+    GAP-3: index.md 文件清单完整性（严格本地解析）  —— 已治本（v2，本次扩展）
+    GAP-4: audit_report 审计对象存在性            —— 已治本（v2，本次扩展）
+    GAP-5: 跨目录引用闭环（_working/ 归档）      —— 已治本（reconciler）
+
 支持模式：
     python audit_broken_links.py <文件>          # 检测单个文件
     python audit_broken_links.py <目录>          # 递归检测目录
@@ -35,11 +42,16 @@
     2. 纯文本文件路径（含 / + 扩展名）      —— .md/.csv/.yaml/.yml/.json
     3. CSV 列值中的文件路径               —— .csv 文件
     4. YAML 值中的文件路径               —— .yaml/.yml 文件
+    5. frontmatter.blueprint_id 存在性     —— .md 文件（GAP-2）
+    6. index.md 文件清单严格本地解析       —— index.md（GAP-3，禁 basename 兜底）
+    7. audit_report 审计对象存在性         —— doc_type=audit_report（GAP-4）
 
 跳过的引用：
     - http://, https://, ftp://, mailto: URL
     - 锚点引用 (#anchor)
     - 不支持的文件扩展名
+    - 格式非法的 blueprint_id（交给 GATE-11 N-06 格式校验）
+    - 空值 blueprint_id（合法，如 index.md 无归属蓝图）
 """
 
 from __future__ import annotations
@@ -205,6 +217,246 @@ def _extract_yaml_paths(content: str) -> list[str]:
     return refs
 
 
+# ============================================================================
+# GAP-2/3/4 治本扩展（2026-06-29）：语义引用完整性检测
+# ============================================================================
+# 背景：GAP-1（非.md文件路径引用）已治本。但 AI 幻觉的三类语义引用仍无检测：
+#   GAP-2: .md frontmatter.blueprint_id 引用的蓝图是否在 blueprint_registry.yaml 存在
+#   GAP-3: index.md 列出的文件清单是否真实存在（严格本地解析，禁 basename 兜底）
+#   GAP-4: doc_type=audit_report 引用的审计对象（blueprint_id/module_id/正文ID）是否存在
+# 治本路径：扩展现有 audit_broken_links.py（向内收原则 + AGENTS.md 显式声明唯一扩展点）
+
+# --- frontmatter 解析（无 yaml 依赖，简单正则）---
+_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
+
+def _frontmatter_field(content: str, field: str) -> str:
+    """从 .md frontmatter 提取单字段值（简单正则，避免 yaml 依赖）。
+
+    :param content: 文件全文
+    :param field: 字段名（如 blueprint_id / module_id / doc_type）
+    :return: 字段值（去除引号和注释），空字符串表示不存在或空值
+    """
+    m = _FRONTMATTER_RE.match(content)
+    if not m:
+        return ""
+    fm = m.group(1)
+    m2 = re.search(
+        rf"^{field}:\s*[\"']?([^\"'\n#]+?)[\"']?\s*(?:#.*)?$",
+        fm,
+        re.MULTILINE,
+    )
+    if m2:
+        return m2.group(1).strip()
+    return ""
+
+
+# --- 三轨制 module_id 格式正则（真源 validate_module_id_naming.py:51-54）---
+_MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")
+_MODULE_ID_DERIVED_MOD_RE = re.compile(r"^MOD-[A-Z]{1,20}(?:_[A-Z]{1,20})*(?:-[0-9]+)?\Z")
+_MODULE_ID_DERIVED_D_RE = re.compile(r"^D-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")
+_MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")
+
+# 正文中的 MODULE_ID 模式（用于 GAP-4 audit_report 审计对象提取）
+_BODY_MODULE_ID_RE = re.compile(
+    r"\b("
+    r"MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+"
+    r"|MOD-[A-Z]{1,20}(?:_[A-Z]{1,20})*(?:-[0-9]+)?"
+    r"|D-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+"
+    r"|SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+"
+    r")\b"
+)
+
+
+def _is_valid_module_id_format(mid: str) -> bool:
+    """检查 module_id 是否符合三轨制格式之一。
+
+    真源：validate_module_id_naming.py:51-54（向内收，不复制实现，复用正则）。
+    格式非法的 ID 交给 GATE-11 N-06 校验，本函数仅判格式合法性以决定是否查存在性。
+    """
+    return any(
+        p.match(mid)
+        for p in (
+            _MODULE_ID_LAYER_MASTER_RE,
+            _MODULE_ID_DERIVED_MOD_RE,
+            _MODULE_ID_DERIVED_D_RE,
+            _MODULE_ID_SHARED_RE,
+        )
+    )
+
+
+# --- blueprint_registry.yaml 缓存（GAP-2/GAP-4 共用）---
+_VALID_BLUEPRINT_IDS: set[str] | None = None
+
+
+def _get_valid_blueprint_ids() -> set[str]:
+    """Lazy 加载 blueprint_registry.yaml 中所有合法 module_id 集合。
+
+    真源链：blueprint.md frontmatter → sync_registry_from_blueprints.py
+    → blueprint_registry.yaml → 本函数。
+    本函数不调 load_blueprint_path()（src/zephyr/governance/...），保持
+    audit_broken_links.py 纯 scripts/ 依赖（避免 import zephyr.* 链断裂风险）。
+    """
+    global _VALID_BLUEPRINT_IDS
+    if _VALID_BLUEPRINT_IDS is not None:
+        return _VALID_BLUEPRINT_IDS
+    _VALID_BLUEPRINT_IDS = set()
+    registry_path = REPO_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml"
+    if not registry_path.exists():
+        return _VALID_BLUEPRINT_IDS
+    try:
+        import yaml
+        data = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
+        for bp in (data or {}).get("blueprints", []):
+            mid = bp.get("module_id")
+            if mid:
+                _VALID_BLUEPRINT_IDS.add(mid)
+    except Exception:
+        pass  # registry 解析失败不阻断（降级为空集，所有 ID 判通过）
+    return _VALID_BLUEPRINT_IDS
+
+
+def _check_blueprint_id_exists(bp_id: str, source: Path, gap_tag: str = "GAP-2") -> str | None:
+    """GAP-2 核心：校验 blueprint_id 是否在 blueprint_registry.yaml 中存在。
+
+    :param bp_id: 待校验的 module_id
+    :param source: 引用所在文件（用于错误消息）
+    :param gap_tag: GAP 标签（GAP-2=frontmatter / GAP-4=audit_report）
+    :return: 断链描述字符串（如果不存在），None 如果通过
+
+    规则：
+    - 空值跳过（合法，如 index.md 无归属蓝图）
+    - 格式非法跳过（由 GATE-11 N-06 覆盖格式校验，避免重复）
+    - registry 不可用（空集）跳过（降级不阻断）
+    """
+    if not bp_id:
+        return None
+    if not _is_valid_module_id_format(bp_id):
+        return None  # 格式问题交给 N-06，不在此重复校验
+    valid_ids = _get_valid_blueprint_ids()
+    if not valid_ids:
+        return None  # registry 不可用，降级不阻断
+    if bp_id not in valid_ids:
+        return (
+            f"{gap_tag} 幻觉blueprint_id: {bp_id} "
+            f"不在blueprint_registry.yaml ← {source.name}"
+        )
+    return None
+
+
+# --- GAP-3: index.md 文件清单严格本地解析 ---
+def _check_index_md_inventory(content: str, source: Path) -> list[str]:
+    """GAP-3: 严格校验 index.md 列出的文件清单存在性。
+
+    仅相对 source.parent 解析，**禁止 basename 全局兜底**。
+    理由：index.md 是"本目录契约"，basename 兜底会掩盖幻觉
+    （如 index.md 列 phantom.md，别处有同名 phantom.md 误判通过）。
+
+    处理两种引用格式：
+    1. [text](relative_path) — markdown 链接（自动生成 index.md 风格）
+    2. [text](file:///D:/ZephyrAlpha/...) — 绝对 URL（手工编写 index.md 风格）
+    """
+    if source.name != "index.md":
+        return []
+
+    broken: list[str] = []
+    seen: set[str] = set()
+
+    for m in MD_LINK_RE.finditer(content):
+        target = m.group(2).split("#")[0].strip()
+        if not target:
+            continue
+        # 跳过外部 URL（http/https/ftp/mailto/#/data:）
+        if _is_url(target):
+            continue
+
+        # 处理 file:/// 绝对路径
+        if target.startswith("file:///"):
+            abs_path = target[len("file:///"):]
+            # Windows: file:///D:/ZephyrAlpha/... -> 尝试直接解析
+            try:
+                if Path(abs_path).exists():
+                    continue
+            except (OSError, ValueError):
+                pass
+            # 剥离盘符+项目根，转项目相对路径
+            norm = abs_path.replace("\\", "/")
+            parts = norm.split("/", 2)
+            if len(parts) >= 3 and ":" in parts[0]:
+                rel = parts[2]
+                try:
+                    if (REPO_ROOT / rel).exists():
+                        continue
+                except (OSError, ValueError):
+                    pass
+            if target not in seen:
+                seen.add(target)
+                broken.append(
+                    f"GAP-3 index清单断链: {target} ← {source.name}"
+                )
+            continue
+
+        # 标准相对路径——仅 source.parent，无 basename 兜底
+        try:
+            if (source.parent / target).resolve().exists():
+                continue
+        except (OSError, ValueError):
+            pass
+        if target not in seen:
+            seen.add(target)
+            broken.append(f"GAP-3 index清单断链: {target} ← {source.name}")
+
+    return broken
+
+
+# --- GAP-4: audit_report 审计对象存在性 ---
+def _check_audit_report_objects(content: str, source: Path) -> list[str]:
+    """GAP-4: 校验 doc_type=audit_report 文档的审计对象存在性。
+
+    三类引用：
+    1. frontmatter.blueprint_id（非空）→ 校验存在性（复用 GAP-2 逻辑）
+    2. frontmatter.module_id（非空）→ 校验存在性（语义混淆但事实存在）
+    3. 正文 MODULE_ID 匹配 → 校验存在性
+
+    自动生成 audit_report（无 blueprint_id 无 module_id）→ 跳过
+    （由 generate_constraint_violations.py 等生成器保证数据真源）。
+    """
+    doc_type = _frontmatter_field(content, "doc_type")
+    if doc_type != "audit_report":
+        return []
+
+    broken: list[str] = []
+    seen: set[str] = set()
+
+    # 1. frontmatter.blueprint_id
+    bp_id = _frontmatter_field(content, "blueprint_id")
+    if bp_id and bp_id not in seen:
+        seen.add(bp_id)
+        result = _check_blueprint_id_exists(bp_id, source, gap_tag="GAP-4")
+        if result:
+            broken.append(result)
+
+    # 2. frontmatter.module_id
+    mod_id = _frontmatter_field(content, "module_id")
+    if mod_id and mod_id not in seen:
+        seen.add(mod_id)
+        result = _check_blueprint_id_exists(mod_id, source, gap_tag="GAP-4")
+        if result:
+            broken.append(result)
+
+    # 3. 正文 MODULE_ID（三轨制正则匹配）
+    for m in _BODY_MODULE_ID_RE.finditer(content):
+        mid = m.group(1)
+        if mid in seen:
+            continue
+        seen.add(mid)
+        result = _check_blueprint_id_exists(mid, source, gap_tag="GAP-4")
+        if result:
+            broken.append(result)
+
+    return broken
+
+
 def audit_file(file_path: str | Path) -> tuple[bool, list[str]]:
     """审计单个文件的断链与幽灵引用。
 
@@ -230,6 +482,16 @@ def audit_file(file_path: str | Path) -> tuple[bool, list[str]]:
     if ext == ".md":
         refs.extend(_extract_md_links(content))
         refs.extend(_extract_text_paths(content))
+        # GAP-2: frontmatter.blueprint_id 存在性检测
+        bp_id = _frontmatter_field(content, "blueprint_id")
+        if bp_id:
+            result = _check_blueprint_id_exists(bp_id, p, gap_tag="GAP-2")
+            if result:
+                broken.append(result)
+        # GAP-3: index.md 文件清单严格本地解析（禁 basename 兜底）
+        broken.extend(_check_index_md_inventory(content, p))
+        # GAP-4: audit_report 审计对象存在性
+        broken.extend(_check_audit_report_objects(content, p))
     elif ext == ".csv":
         refs.extend(_extract_csv_paths(content))
     elif ext in (".yaml", ".yml"):
@@ -238,7 +500,7 @@ def audit_file(file_path: str | Path) -> tuple[bool, list[str]]:
     elif ext == ".json":
         refs.extend(_extract_text_paths(content))
 
-    # 去重并检查
+    # 去重并检查（通用路径引用，含 basename 兜底）
     seen: set[str] = set()
     for ref in refs:
         if ref in seen:
