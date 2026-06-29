@@ -328,6 +328,16 @@ global_forbidden:
     check: "no .bak/.baseline file under src/"
     severity: error
 
+  - rule: "src/ 下禁止 data/ 子目录（数据真源唯一位置为 data/）"
+    check: "no path with prefix 'src/data/' (case-insensitive)"
+    forbidden_prefix: "src/data/"
+    severity: error
+    rationale: "src/ 仅放代码，运行态数据（brain passport / audit_logs / telemetry / capability_cards 等）唯一合法位置为 data/ 目录。src/ 下创建 data/ 子目录会导致双真源漂移。"
+    history_lesson: "src/data/brain/passports/ 与 data/brain/passports/ 并存导致版本漂移（2026-06-27 清理，commit 36871193）"
+    consumers:
+      - "scripts/governance/d5_architecture/checkers/check_src_no_data.py（pre-commit gate-src-no-data）"
+      - "GitCommitGateway._check_src_no_data（--no-verify 等效校验，从 _CONTRACT_CACHE 加载）"
+
   - rule: "永久区下禁止 .csv/.jsonl"
     check: "no .csv/.jsonl file in permanent zone"
     severity: error

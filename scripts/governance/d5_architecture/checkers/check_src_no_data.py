@@ -6,8 +6,8 @@
 #
 # GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录校验
 #
-# 真源：trae_047_engineering_file_header.yaml §gov_eng_002_directory_mapping 禁止规则
-#       "src/下禁止data/子目录(数据真源唯一位置为data/目录,src/仅放代码不放运行态数据)"
+# 真源（治本 2026-06-29）：directory_contract.yaml global_forbidden[].forbidden_prefix
+#       消除原硬编码 FORBIDDEN_PREFIX = "src/data/"，前缀变更只需改契约一处
 #
 # 原理：data/ 是运行态数据（brain passport / audit_logs / telemetry / capability_cards 等）
 #       唯一合法存放位置。src/ 下创建 data/ 子目录会导致双真源漂移。
@@ -21,10 +21,47 @@
 import argparse
 import subprocess
 import sys
+from pathlib import Path
 
-# 禁止路径前缀（小写，大小写不敏感比较——Windows 文件系统大小写不敏感）
-# 规则真源见 trae_047 §gov_eng_002_directory_mapping，此处为校验执行逻辑非第二真源
-FORBIDDEN_PREFIX = "src/data/"
+# ── 路径设置（一次性 bootstrap，随后用 _shared.constants.REPO_ROOT）──
+# 约束：REPO_ROOT 真源唯一为 zephyr.shared.io.paths.REPO_ROOT
+#       scripts/ 包外消费者仅允许一次性 bootstrap 算 sys.path（N 值固定且仅用一次）
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+import yaml as _yaml  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+# ── 真源加载：从 directory_contract.yaml 动态加载 forbidden prefixes ──
+_CONTRACT_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "contracts" / "directory_contract.yaml"
+)
+
+
+def _load_forbidden_prefixes() -> tuple[str, ...]:
+    """从 directory_contract.yaml global_forbidden 提取所有 forbidden_prefix 值。
+
+    真源：directory_contract.yaml global_forbidden[].forbidden_prefix
+    治本（2026-06-29）：消除硬编码 FORBIDDEN_PREFIX，前缀变更只需改契约一处。
+
+    fail-closed 例外：契约文件不存在时返回空 tuple（不阻断）——避免 contract 缺失
+    导致 pre-commit 全局失效；GitCommitGateway 内部有独立的等效校验作为第二道防线。
+    """
+    try:
+        contract = _yaml.safe_load(_CONTRACT_PATH.read_text(encoding="utf-8")) or {}
+    except FileNotFoundError:
+        return ()
+    rules = contract.get("global_forbidden", []) or []
+    return tuple(
+        r.get("forbidden_prefix") for r in rules
+        if isinstance(r, dict) and r.get("forbidden_prefix")
+    )
+
+
+FORBIDDEN_PREFIXES: tuple[str, ...] = _load_forbidden_prefixes()
 
 
 def get_staged_files():
@@ -39,11 +76,18 @@ def get_staged_files():
 
 
 def check_src_no_data(files):
-    """检测是否有 src/data/ 路径的 staged 文件（大小写不敏感）"""
+    """检测是否有 src/data/ 路径的 staged 文件（大小写不敏感）
+
+    遍历 FORBIDDEN_PREFIXES（从 directory_contract.yaml 动态加载），
+    任一前缀命中即违规。
+    """
     violations = []
     for f in files:
-        if f.lower().startswith(FORBIDDEN_PREFIX):
-            violations.append(f)
+        f_lower = f.lower()
+        for prefix in FORBIDDEN_PREFIXES:
+            if f_lower.startswith(prefix.lower()):
+                violations.append(f)
+                break
     return violations
 
 
@@ -67,7 +111,7 @@ def main():
     msg = (
         f"[GATE-SRC-NO-DATA] 违规：src/ 下禁止 data/ 子目录（数据真源唯一位置为 data/）\n"
         f"  违规文件：{violations}\n"
-        f"  真源：trae_047 §gov_eng_002_directory_mapping 禁止规则\n"
+        f"  真源：directory_contract.yaml global_forbidden[].forbidden_prefix\n"
         f"  原因：src/ 仅放代码，运行态数据必须放 data/ 下\n"
         f"  历史教训：src/data/brain/ 与 data/brain/ 并存导致版本漂移（2026-06-27 清理）"
     )
