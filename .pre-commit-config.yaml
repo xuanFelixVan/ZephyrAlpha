@@ -679,6 +679,23 @@ repos:
         files: "^scripts/governance/.*\\.py$"
         description: "AST 级别检测本地重定义 _shared API 符号（D-D-07），warn-only 模式，需修复时运行 fix_shared_bypass.py --fix"
 
+      # ── GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（治本漏洞1 2026-06-29）──
+      # 权威依据：AGENTS.md「禁止纯 re-export shim 文件」规则
+      # 病根：纯 shim（跨包 from zephyr.shared.* import * + 无实质代码）是真源分裂温床，
+      #       AI 无法确定真源产生漂移（shared_08 案例：144 文件冗余 proxy 层）
+      # 检测内容：AST 分析 .py 文件，判定是否为纯 re-export shim
+      # 例外：__init__.py 包聚合 / TTL=task_bound + # [DEPRECATED] 临时过渡
+      - id: gate-no-pure-shim
+        name: "GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（防 proxy 层重建）"
+        entry: python scripts/governance/d7_code/check_pure_shim.py
+        args: ["--ci"]
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        stages: [commit]
+        description: "AST 检测纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码），防止新 AI 重建 proxy 层重蹈 shared_08 覆辙"
+
       # ── GATE-19: 静态清单漂移阻断（AGENTS.md §6.16 自动化执行层）──
       # 权威依据：AGENTS.md §6.16 静态清单自动生成铁律——任何"条目+计数"清单必须由生成器产出
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_static_manifest_drift.py + 接入 pre-commit
