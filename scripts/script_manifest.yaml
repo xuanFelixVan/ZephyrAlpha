@@ -654,14 +654,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_analyze_wip.py
-  path: governance/_tmp_analyze_wip.py
-  description: import subprocess
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/_tmp_check_domains.py
   path: governance/_tmp_check_domains.py
   description: import sys
@@ -670,9 +662,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_diff_sample.py
-  path: governance/_tmp_diff_sample.py
-  description: import subprocess
+- name: governance/_tmp_check_migration.py
+  path: governance/_tmp_check_migration.py
+  description: import sys
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -697,6 +689,14 @@ scripts:
 - name: governance/_tmp_scan_hyphen_variant.py
   path: governance/_tmp_scan_hyphen_variant.py
   description: 根因：历史数据存在两种写法：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tmp_scan_residue.py
+  path: governance/_tmp_scan_residue.py
+  description: import os
   domain: governance
   execution_plane: warm-path
   status: registered
