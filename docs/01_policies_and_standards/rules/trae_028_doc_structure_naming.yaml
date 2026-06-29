@@ -718,12 +718,12 @@ sections:
     - DOC-006
     procedure:
     - order: 1
-      action: 归档-将文件移动到docs/_working/archive/(统一归档区;01/02/03/08所有永久区deprecated文件归此一处;废除各永久区下的_archive/子目录)
+      action: 归档-将文件移动到docs/_archive/(统一归档区;01/02/03/08所有永久区deprecated文件归此一处;废除各永久区下的_archive/子目录)
       pre_condition: 文档需要归档(保留历史但不再活跃使用)
-      expected_result: 文件已移至docs/_working/archive/
-      on_failure: 目录不存在→先创建docs/_working/archive/目录
+      expected_result: 文件已移至docs/_archive/
+      on_failure: 目录不存在→先创建docs/_archive/目录
     - order: 2
-      action: 归档-更新文件frontmatter(status:deprecated;ttl:30d)+更新所有引用+重新生成rule_catalog_registry.yaml
+      action: 归档-更新文件frontmatter(status:deprecated;ttl:permanent)+更新所有引用+重新生成rule_catalog_registry.yaml
       pre_condition: 文件已移至archive/
       expected_result: frontmatter和引用已更新
       on_failure: 引用未全部更新→在同一commit中完成

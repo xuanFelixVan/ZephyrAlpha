@@ -91,6 +91,7 @@ directory_zones:
       - "docs/02_enterprise_architecture/"
       - "docs/03_modules/"
       - "docs/08_knowledge/"
+      - "docs/_archive/"
     default_ttl: permanent
     gate: allow_promote_required
     # 永久区子目录中，以下路径豁免晋升门禁（生成器专用）
@@ -112,7 +113,6 @@ directory_zones:
       - "changes/"
       - "delivery/"
       - "reports/"
-      - "_archive/"
       - "audit/"
       - "decomposition/"
       - "ttl_content_audit/"
