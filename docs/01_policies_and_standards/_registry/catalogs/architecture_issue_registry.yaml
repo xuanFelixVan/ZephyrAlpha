@@ -158,7 +158,7 @@ entries:
 - issue_id: '#ARCH-021'
   title: scaffold.py layer 默认值违反 SSoT 并持续生成非合规规则文件
   severity: P1高
-  adjudication: 修复 scripts/scaffold.py line 425 `layer: str = "L1"`（默认值是 layer_vocabulary.yaml 标记的废弃值）+ line 443 `valid_layers = {"L0", "L1", "L2", "L3"}`（与 layer_vocabulary.yaml 的16个架构层名矛盾）。治本：layer 默认值改为合法架构层名（如 compliance）；valid_layers 改为从 layer_vocabulary.yaml 动态加载（DYNAMIC_FROM_SSOT）。
+  adjudication: 修复 scripts/scaffold.py line 425 `layer: str = "L1"`（默认值是 layer_vocabulary.yaml 标记的废弃值）+ line 443 `valid_layers = {"L0", "L1", "L2", "L3"}`（与 layer_vocabulary.yaml 的16个架构层名矛盾）。治本：layer 默认值改为合法架构层名（如 compliance）；valid_layers 改为从 layer_vocabulary.yaml 动态加载（dynamic_from_ssot）。
   fix_phase: 待立项（超范围：scripts/）
   status: open
   created: '2026-06-27'

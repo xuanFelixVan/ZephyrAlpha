@@ -21,10 +21,10 @@
 #   - PS-STD-001 §2.6 + §2.8：全量 frontmatter 一致性约束
 #
 # 依赖（本契约引用的真源文件）：
-#   - vocabularies/doc_type_vocabulary.yaml   → doc_type 13 值（01_policies_and_standards/ 子集）
+#   - vocabularies/doc_type_vocabulary.yaml   → doc_type 19 值（v2.0.0，canonical SSoT，全项目唯一真源）
 #   - vocabularies/rule_form_vocabulary.yaml  → rule_form 4 值
 #   - vocabularies/status_vocabulary.yaml    → status 3 值
-#   - PS-STD-001 §3.2                      → doc_type 全项目 27 值（完整词表）
+#   - PS-STD-001 §3.2                      → doc_type 19 值（v2.0.0，引用 doc_type_vocabulary.yaml 真源）
 #   - PS-STD-001 trae_043_meta_rule_metadata.yaml  → 全量字段定义 + 约束真源
 # ============================================================
 
@@ -111,7 +111,7 @@ frontmatter_schema:
       stage: draft
 
     - name: doc_type
-      allowed_values: "DYNAMIC_FROM_SSOT"  # 禁止内联复制——值集从 doc_type_vocabulary.yaml 动态加载（v2.0.0，19 值）
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 doc_type_vocabulary.yaml 动态加载（v2.0.0，19 值）
       description: "文档类型，受控词表（canonical SSoT: doc_type_vocabulary.yaml）"
       derived_from: "_registry/vocabularies/doc_type_vocabulary.yaml"
       stage: draft
@@ -128,7 +128,7 @@ frontmatter_schema:
       stage: draft
 
     - name: layer
-      allowed_values: "DYNAMIC_FROM_SSOT"  # 禁止内联复制——值集从 layer_vocabulary.yaml 动态加载
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 layer_vocabulary.yaml 动态加载
       description: "架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）"
       derived_from: "_registry/vocabularies/layer_vocabulary.yaml"
       stage: active
@@ -138,7 +138,7 @@ frontmatter_schema:
       stage: draft
 
     - name: classification
-      allowed_values: "DYNAMIC_FROM_SSOT"  # 禁止内联复制——值集从 classification_vocabulary.yaml 动态加载
+      allowed_values: "dynamic_from_ssot"  # 禁止内联复制——值集从 classification_vocabulary.yaml 动态加载
       description: "文件密级（3 值：public/internal/confidential，canonical SSoT: classification_vocabulary.yaml）"
       derived_from: "_registry/vocabularies/classification_vocabulary.yaml"
       stage: active

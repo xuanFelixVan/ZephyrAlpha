@@ -20,56 +20,61 @@
       "description": "文档品种——01_policies_and_standards/ 目录下 13 种。PS-STD-001 §3.2.1",
       "oneOf": [
         {
-          "const": "policy",
-          "description": "策略——定义'必须/禁止'的声明式规则，AI 不可修改"
+          "const": "policy"
         },
         {
-          "const": "standard",
-          "description": "标准——定义度量/格式/接口的声明式规范"
+          "const": "standard"
         },
         {
-          "const": "operational_rule",
-          "description": "操作规则——定义'如何做'的步骤化流程，仅存在于 operational/ 目录"
+          "const": "operational_rule"
         },
         {
-          "const": "register",
-          "description": "注册表——结构化数据清单，AI 可修改"
+          "const": "register"
         },
         {
-          "const": "index",
-          "description": "索引入口——目录级导航文件，声明子域职责边界和文件清单"
+          "const": "index"
         },
         {
-          "const": "protocol",
-          "description": "协议——定义交互流程和消息时序"
+          "const": "template"
         },
         {
-          "const": "template",
-          "description": "模板——可复用的文档结构骨架"
+          "const": "terminology"
         },
         {
-          "const": "terminology",
-          "description": "术语表——核心术语的统一定义和仲裁源"
+          "const": "vocabulary"
         },
         {
-          "const": "vocabulary",
-          "description": "受控词表——定义枚举值、合法值域的机器可读清单"
+          "const": "contract"
         },
         {
-          "const": "contract",
-          "description": "验证契约——定义 VR 规则的结构化验证标准"
+          "const": "blueprint"
         },
         {
-          "const": "reference",
-          "description": "参考文件——术语映射表、模型排名等参考数据"
+          "const": "construction_plan"
         },
         {
-          "const": "gate",
-          "description": "门禁文件——定义质量门禁的触发条件、检查项和阻断规则"
+          "const": "readme"
         },
         {
-          "const": "schema",
-          "description": "Schema 定义——JSON/YAML 格式的数据结构校验定义，供 CI 校验和代码生成消费"
+          "const": "log"
+        },
+        {
+          "const": "knowledge_entry"
+        },
+        {
+          "const": "audit_report"
+        },
+        {
+          "const": "service_spec"
+        },
+        {
+          "const": "architecture_view"
+        },
+        {
+          "const": "gate"
+        },
+        {
+          "const": "config"
         }
       ]
     },

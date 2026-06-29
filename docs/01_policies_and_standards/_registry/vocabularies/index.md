@@ -12,41 +12,45 @@ generated: '2026-06-26'
 
 ## 责任声明（Single Responsibility）
 
-本目录存放：**AI 消费的 YAML 受控词表**。包括 `*_vocabulary.yaml` 模式的受控词表（29 个）以及 `glossary.yaml`、`terminology_mapping.yaml` 两个术语映射文件。
+本目录存放：**AI 消费的 YAML 受控词表**。包括 `*_vocabulary.yaml` 模式的受控词表（32 个）以及 `terminology_mapping.yaml` 术语映射文件。
 
-## 文件清单（29 个 YAML）
+## 文件清单（33 个 YAML）
 
 | 文件 | 说明 |
 |------|------|
-| ai_autonomy_level_planned_vocabulary.yaml | AI 自治规划级别受控词表 |
-| ai_autonomy_vocabulary.yaml | AI 自治级别受控词表 |
-| ai_capability_slot_vocabulary.yaml | AI 能力槽位受控词表 |
-| blueprint_refs_status_vocabulary.yaml | 蓝图引用状态受控词表 |
-| category_vocabulary.yaml | 分类受控词表 |
-| classification_vocabulary.yaml | 文件密级受控词表（2 值） |
-| compliance_tags_vocabulary.yaml | 合规标签受控词表 |
-| contract_status_vocabulary.yaml | 契约状态受控词表 |
-| created_by_vocabulary.yaml | 创建者类型受控词表（3 值） |
-| derived_from_relationship_vocabulary.yaml | 派生关系受控词表 |
-| doc_type_vocabulary.yaml | 文档类型受控词表（27 值） |
-| domain_vocabulary.yaml | 领域受控词表 |
-| evolution_policy_vocabulary.yaml | 演化策略受控词表 |
-| glossary.yaml | 术语表 |
-| governance_family_vocabulary.yaml | 治理族受控词表 |
-| language_vocabulary.yaml | 文件语言受控词表（3 值） |
-| layer_vocabulary.yaml | 架构层归属受控词表（16 值） |
-| module_lifecycle_status_vocabulary.yaml | 模块生命周期状态受控词表 |
-| provenance_audit_chain_verdict_vocabulary.yaml | 溯源审计链判定受控词表 |
-| review_status_vocabulary.yaml | 审查状态受控词表 |
-| rule_form_vocabulary.yaml | 规则表达形式受控词表（4 值） |
-| safety_level_vocabulary.yaml | 安全级别受控词表 |
-| scope_vocabulary.yaml | 规则作用范围受控词表（4 值） |
-| semantic_vocabulary.yaml | 语义受控词表 |
-| stability_vocabulary.yaml | 规则稳定性受控词表（4 值） |
-| status_vocabulary.yaml | 文档状态受控词表（3 值） |
+| ai_autonomy_level_planned_vocabulary.yaml | ai_autonomy_level_planned 受控词表（4 值） |
+| ai_autonomy_vocabulary.yaml | ai_autonomy 受控词表（3 值） |
+| ai_capability_slot_vocabulary.yaml | ai_capability_slot 受控词表（4 值） |
+| blueprint_refs_status_vocabulary.yaml | blueprint_refs.status 受控词表（3 值） |
+| category_vocabulary.yaml | category 受控词表（10 值） |
+| classification_vocabulary.yaml | classification 受控词表（3 值） |
+| compliance_tags_vocabulary.yaml | compliance_tags 受控词表（6 值） |
+| contract_status_vocabulary.yaml | contract_status 受控词表（3 值） |
+| created_by_vocabulary.yaml | created_by 受控词表（3 值） |
+| derived_from_relationship_vocabulary.yaml | derived_from.relationship 受控词表（3 值） |
+| doc_type_vocabulary.yaml | doc_type 受控词表（19 值） |
+| domain_vocabulary.yaml | domain 受控词表（10 值） |
+| evolution_policy_vocabulary.yaml | evolution_policy 受控词表（3 值） |
+| file_category_vocabulary.yaml | file_category 受控词表（10 值） |
+| governance_family_vocabulary.yaml | governance_family 受控词表（4 值） |
+| header_format_vocabulary.yaml | header_format 受控词表（7 值） |
+| language_vocabulary.yaml | language 受控词表（3 值） |
+| layer_vocabulary.yaml | layer 受控词表（16 值） |
+| maturity_vocabulary.yaml | maturity 受控词表（4 值） |
+| module_lifecycle_status_vocabulary.yaml | module_lifecycle_status 受控词表（8 值） |
+| provenance_audit_chain_verdict_vocabulary.yaml | provenance.audit_chain.verdict 受控词表（3 值） |
+| review_status_vocabulary.yaml | review_status 受控词表（4 值） |
+| rule_form_vocabulary.yaml | rule_form 受控词表（4 值） |
+| safety_level_vocabulary.yaml | safety_level 受控词表（3 值） |
+| scope_vocabulary.yaml | scope 受控词表（4 值） |
+| section_type_vocabulary.yaml | section_type 受控词表（17 值） |
+| semantic_vocabulary.yaml | semantic_type 受控词表（4 值） |
+| stability_vocabulary.yaml | stability 受控词表（4 值） |
+| startup_vocabulary.yaml | startup 受控词表（4 值） |
+| status_vocabulary.yaml | status 受控词表（3 值） |
 | terminology_mapping.yaml | 术语映射表 |
-| ttl_vocabulary.yaml | 保留期限受控词表（5 值） |
-| verifiability_vocabulary.yaml | 规则可验证性受控词表（3 值） |
+| ttl_vocabulary.yaml | ttl 受控词表（2 值） |
+| verifiability_vocabulary.yaml | verifiability 受控词表（3 值） |
 
 ## 排除规则（不应放入本目录的内容）
 
