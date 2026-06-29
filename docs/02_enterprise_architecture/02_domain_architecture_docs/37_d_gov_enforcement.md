@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_ENFORCEMENT rule_enforcement架构文档
+title: D-GOV_ENFORCEMENT 规则执行架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 37_d_gov_enforcement / rule_enforcement
+# 37_d_gov_enforcement / 规则执行
 
-> **文档作用 / Purpose**: 展示 rule_enforcement（D-GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 规则执行（D-GOV_ENFORCEMENT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 37 | Number | 37 |
 | 域ID | D-GOV_ENFORCEMENT | Domain ID | D-GOV_ENFORCEMENT |
-| 域名称 | rule_enforcement | Domain Name | rule_enforcement |
+| 域名称 | 规则执行 | Domain Name | 规则执行 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 107 | Module Count | 107 |
 | 域内依赖 | 138 | Internal Dependencies | 138 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT rule_enforcement"]
+    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT 规则执行"]
         src_zephyr_governance_rule_enforcement_init_py["src/zephyr/governance/rule_enforcement/__init__.py production"]
         src_zephyr_governance_rule_enforcement_template_yaml["src/zephyr/governance/rule_enforcement/_templat... production"]
         src_zephyr_governance_rule_enforcement_adaptive_threshold_py["src/zephyr/governance/rule_enforcement/adaptive... production"]
@@ -141,7 +141,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT rule_enforcement"]
+    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT 规则执行"]
         src_zephyr_governance_rule_enforcement_check_types_ct_deduplication_py["src/zephyr/governance/rule_enforcement/check_ty... prototype"]
         src_zephyr_governance_rule_enforcement_check_types_ct_drift_budget_py["src/zephyr/governance/rule_enforcement/check_ty... prototype"]
         src_zephyr_governance_rule_enforcement_check_types_ct_encoding_py["src/zephyr/governance/rule_enforcement/check_ty... prototype"]
@@ -222,7 +222,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT rule_enforcement"]
+    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT 规则执行"]
         src_zephyr_governance_rule_enforcement_g3_evaluate_yaml["src/zephyr/governance/rule_enforcement/g3_evalu... production"]
         src_zephyr_governance_rule_enforcement_g4_activate_yaml["src/zephyr/governance/rule_enforcement/g4_activ... production"]
         src_zephyr_governance_rule_enforcement_g5_extract_yaml["src/zephyr/governance/rule_enforcement/g5_extra... production"]
@@ -313,7 +313,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT rule_enforcement"]
+    subgraph D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT 规则执行"]
         src_zephyr_governance_rule_enforcement_invariants_en_process_lifecycle_gateway_py["src/zephyr/governance/rule_enforcement/invarian... production"]
         src_zephyr_governance_rule_enforcement_invariants_zero_residue_check_py["src/zephyr/governance/rule_enforcement/invarian... production"]
         src_zephyr_governance_rule_enforcement_kiss_enforcer_py["src/zephyr/governance/rule_enforcement/kiss_enf... production"]
@@ -401,7 +401,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 rule_enforcement（D-GOV_ENFORCEMENT）的模块分布。共 107 个模块 / 107 modules。
+> 按 architecture_layer 分层显示 规则执行（D-GOV_ENFORCEMENT）的模块分布。共 107 个模块 / 107 modules。
 
 ```
 

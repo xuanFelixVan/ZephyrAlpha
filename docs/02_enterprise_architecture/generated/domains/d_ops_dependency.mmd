@@ -1,7 +1,7 @@
 %% D-OPS 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 433, 依赖边数: 838
+%% 模块数: 433, 依赖边数: 837
 
 graph TD
 
@@ -272,8 +272,6 @@ graph TD
     src_zephyr_governance_budget_engine_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
     src_zephyr_ops_scheduler_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
     src_zephyr_ops_auto_evolution_py -->|runtime| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    %% D-OPS -> D-FACTOR (1 条)
-    src_zephyr_ops_auto_evolution_py -->|runtime| D_FACTOR[D-FACTOR]
     %% D-OPS -> D-GOVERNANCE (29 条)
     src_zephyr_governance_budget_handler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_ops_circuit_breaker_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -376,4 +374,4 @@ graph TD
     %% 统计
     %% 域内依赖: 327 条
     %% 跨域入边: 406 条
-    %% 跨域出边: 105 条
+    %% 跨域出边: 104 条

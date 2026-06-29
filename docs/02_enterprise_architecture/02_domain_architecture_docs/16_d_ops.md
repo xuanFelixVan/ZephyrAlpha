@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D-OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 16 | Number | 16 |
 | 域ID | D-OPS | Domain ID | D-OPS |
-| 域名称 | 反馈循环 | Domain Name | feedback-loop |
+| 域名称 | 反馈循环 | Domain Name | 反馈循环 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 433 | Module Count | 433 |
 | 域内依赖 | 327 | Internal Dependencies | 327 |

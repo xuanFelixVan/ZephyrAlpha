@@ -1,7 +1,7 @@
 %% D-GOV_AUDIT 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 185, 依赖边数: 488
+%% 模块数: 183, 依赖边数: 482
 
 graph TD
 
@@ -88,9 +88,7 @@ graph TD
         src_zephyr_governance_audit_or___tration_version_manifest_py["...dit_orchestration/version_manifest.py [prototype]"]
         src_zephyr_governance_audit_orchestration_wave_generator_py["...audit_orchestration/wave_generator.py [prototype]"]
         src_zephyr_governance_audit_orchestrator___init___py["...rnance/audit_orchestrator/__init__.py [prototype]"]
-        src_zephyr_governance_audit_orchestrator___main___py["...rnance/audit_orchestrator/__main__.py [prototype]"]
         src_zephyr_governance_audit_orchestrator_anomaly_py["...ernance/audit_orchestrator/anomaly.py [prototype]"]
-        src_zephyr_governance_audit_or___dit_admission_controller_py["...strator/audit_admission_controller.py [prototype]"]
         src_zephyr_governance_audit_orchestrator_bridge_py["...vernance/audit_orchestrator/bridge.py [prototype]"]
         src_zephyr_governance_audit_orchestrator_cli_py[".../governance/audit_orchestrator/cli.py [prototype]"]
         src_zephyr_governance_audit_orchestrator_cold_start_py["...ance/audit_orchestrator/cold_start.py [production]"]
@@ -107,7 +105,9 @@ graph TD
         src_zephyr_governance_audit_orchestrator_log_rotation_py["...ce/audit_orchestrator/log_rotation.py [prototype]"]
         src_zephyr_governance_audit_orchestrator_merkle_hourly_py["...e/audit_orchestrator/merkle_hourly.py [prototype]"]
         src_zephyr_governance_audit_orchestrator_models_py["...vernance/audit_orchestrator/models.py [prototype]"]
-        %% ... 还有 85 个模块未显示
+        src_zephyr_governance_audit_orchestrator_pipeline_runner_py["...audit_orchestrator/pipeline_runner.py [prototype]"]
+        src_zephyr_governance_audit_orchestrator_query_py["...overnance/audit_orchestrator/query.py [prototype]"]
+        %% ... 还有 83 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -121,8 +121,6 @@ graph TD
     src_zephyr_governance_audit_or___tion_resilience___init___py -->|import_depends| src_zephyr_governance_audit_or___silience_failure_matcher_py
     src_zephyr_governance_audit_or___ate_agent_health_monitor_py -->|import_depends| src_zephyr_governance_audit_or____core_agent_orchestrator_py
     src_zephyr_governance_audit_orchestration_state___init___py -->|import_depends| src_zephyr_governance_audit_or___on_state_session_manager_py
-    src_zephyr_governance_audit_or___dit_admission_controller_py -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
-    src_zephyr_governance_audit_or___dit_admission_controller_py -->|import_depends| src_zephyr_governance_audit_trail___init___py
     src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| src_zephyr_governance_audit_trail_feedback_bridge_py
     src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| src_zephyr_governance_audit_trail_delegation_bridge_py
     src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| src_zephyr_governance_audit_orchestrator_merkle_hourly_py
@@ -169,7 +167,6 @@ graph TD
     src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| src_zephyr_governance_audit_trail_external_tool_audit_py
     src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| src_zephyr_governance_audit_trail_genesis_py
     src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| src_zephyr_governance_audit_trail_replay_engine_py
-    src_zephyr_governance_audit_orchestrator___main___py -->|import_depends| src_zephyr_governance_audit_trail_cli_py
     src_zephyr_governance_audit_tr___dit_admission_controller_py -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     src_zephyr_governance_audit_tr___dit_admission_controller_py -->|import_depends| src_zephyr_governance_audit_trail___init___py
     src_zephyr_governance_audit_trail_bridge_py -->|import_depends| src_zephyr_governance_audit_trail_feedback_bridge_py
@@ -191,7 +188,10 @@ graph TD
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_query_py
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
     src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_indexer_py
-    %% ... 还有 101 条域内依赖未显示
+    src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
+    src_zephyr_governance_audit_trail_integrity_py -->|import_depends| src_zephyr_governance_audit_trail_agent_signer_py
+    %% ... 还有 98 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-AUDITTEST -> D-GOV_AUDIT (7 条)
@@ -301,10 +301,7 @@ graph TD
     D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     %% D-SHARED -> D-GOV_AUDIT (1 条)
     D_SHARED[D-SHARED] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    %% D-TRADING -> D-GOV_AUDIT (11 条)
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail___init___py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_tr___dit_admission_controller_py
+    %% D-TRADING -> D-GOV_AUDIT (8 条)
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_merkle_hourly_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_log_rotation_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_retention_py
@@ -418,6 +415,6 @@ graph TD
     src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
 
     %% 统计
-    %% 域内依赖: 181 条
-    %% 跨域入边: 211 条
+    %% 域内依赖: 178 条
+    %% 跨域入边: 208 条
     %% 跨域出边: 96 条

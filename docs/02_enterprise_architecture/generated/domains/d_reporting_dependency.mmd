@@ -1,7 +1,7 @@
 %% D-REPORTING 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 15, 依赖边数: 23
+%% 模块数: 12, 依赖边数: 15
 
 graph TD
 
@@ -16,9 +16,6 @@ graph TD
         src_zephyr_reporting_core___init___py["src/zephyr/reporting/core/__init__.py [prototype]"]
         src_zephyr_reporting_default_attribution_engine_py["...porting/default_attribution_engine.py [prototype]"]
         src_zephyr_reporting_default_tca_engine_py["...ephyr/reporting/default_tca_engine.py [prototype]"]
-        src_zephyr_reporting_implementations___init___py["...reporting/implementations/__init__.py [prototype]"]
-        src_zephyr_reporting_implement___fault_attribution_engine_py["...tations/default_attribution_engine.py [prototype]"]
-        src_zephyr_reporting_implementations_default_tca_engine_py["...implementations/default_tca_engine.py [prototype]"]
         src_zephyr_reporting_infrastructure___init___py[".../reporting/infrastructure/__init__.py [prototype]"]
         src_zephyr_reporting_models___init___py["src/zephyr/reporting/models/__init__.py [prototype]"]
         src_zephyr_reporting_services___init___py["...zephyr/reporting/services/__init__.py [prototype]"]
@@ -35,29 +32,21 @@ graph TD
     D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-REPORTING -> D-GOVERNANCE (10 条)
+    %% D-REPORTING -> D-GOVERNANCE (5 条)
     src_zephyr_reporting___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_reporting_implement___fault_attribution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_reporting_implement___fault_attribution_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_reporting_implementations_default_tca_engine_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_reporting_implementations___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_reporting_implementations___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-REPORTING -> D-TRADING (9 条)
+    %% D-REPORTING -> D-TRADING (6 条)
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_reporting_implementations_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_reporting_implementations_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_reporting_implementations_default_tca_engine_py -->|import_depends| D_TRADING[D-TRADING]
 
     %% 统计
     %% 域内依赖: 1 条
     %% 跨域入边: 3 条
-    %% 跨域出边: 19 条
+    %% 跨域出边: 11 条

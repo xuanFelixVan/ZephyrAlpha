@@ -1,14 +1,13 @@
 %% D-TRADING 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 161, 依赖边数: 593
+%% 模块数: 159, 依赖边数: 567
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_TRADING[交易运营]
         src_zephyr_trading___init___py["src/zephyr/trading/__init__.py [production]"]
-        src_zephyr_trading___init___from_orches_py["...ephyr/trading/__init___from_orches.py [prototype]"]
         src_zephyr_trading___main___py["src/zephyr/trading/__main__.py [prototype]"]
         src_zephyr_trading__extensions___init___py["...ephyr/trading/_extensions/__init__.py [prototype]"]
         src_zephyr_trading_action_dispatcher_py["src/zephyr/trading/action_dispatcher.py [prototype]"]
@@ -25,7 +24,6 @@ graph TD
         src_zephyr_trading_capability_card_py["src/zephyr/trading/capability_card.py [prototype]"]
         src_zephyr_trading_capability_registry_py["...zephyr/trading/capability_registry.py [prototype]"]
         src_zephyr_trading_capability_sync_py["src/zephyr/trading/capability_sync.py [prototype]"]
-        src_zephyr_trading_circadian_scheduler_py["...zephyr/trading/circadian_scheduler.py [prototype]"]
         src_zephyr_trading_conductor_py["src/zephyr/trading/conductor.py [prototype]"]
         src_zephyr_trading_core___init___py["src/zephyr/trading/core/__init__.py [prototype]"]
         src_zephyr_trading_dream_cycle_py["src/zephyr/trading/dream_cycle.py [prototype]"]
@@ -107,7 +105,9 @@ graph TD
         src_zephyr_trading_orchestrator_session_manager_py["...ading/orchestrator/session_manager.py [prototype]"]
         src_zephyr_trading_orchestrator_stability_guard_py["...ading/orchestrator/stability_guard.py [prototype]"]
         src_zephyr_trading_orchestrator_startup_sequencer_py["...ing/orchestrator/startup_sequencer.py [prototype]"]
-        %% ... 还有 61 个模块未显示
+        src_zephyr_trading_orchestrator_state___init___py["...rading/orchestrator/state/__init__.py [prototype]"]
+        src_zephyr_trading_orchestrato___ate_agent_health_monitor_py["...strator/state/agent_health_monitor.py [prototype]"]
+        %% ... 还有 59 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -117,7 +117,6 @@ graph TD
     src_zephyr_trading_boot_cron_jobs_py -->|import_depends| src_zephyr_trading___init___py
     src_zephyr_trading_boot_hooks_py -->|import_depends| src_zephyr_trading___init___py
     src_zephyr_trading_conductor_py -->|import_depends| src_zephyr_trading___init___py
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| src_zephyr_trading___init___py
     src_zephyr_trading_capability_registry_py -->|import_depends| src_zephyr_trading___init___py
     src_zephyr_trading_capability_sync_py -->|import_depends| src_zephyr_trading___init___py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|import_depends| src_zephyr_trading___init___py
@@ -191,7 +190,8 @@ graph TD
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
-    %% ... 还有 60 条域内依赖未显示
+    src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_validator_protocol_py
+    %% ... 还有 58 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-CROSS_ASSET -> D-TRADING (5 条)
@@ -222,7 +222,7 @@ graph TD
     D_FUNDAMENTAL_SIGNAL[D-FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
     D_FUNDAMENTAL_SIGNAL[D-FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
     D_FUNDAMENTAL_SIGNAL[D-FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
-    %% D-GOVERNANCE -> D-TRADING (225 条)
+    %% D-GOVERNANCE -> D-TRADING (217 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -233,9 +233,6 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading___init___py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
@@ -253,6 +250,9 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___rket_macro_factor_signal_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___et_factor_monitor_report_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
     %% D-GOV_AUDIT -> D-TRADING (2 条)
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_trading___init___py
     D_GOV_AUDIT[D-GOV_AUDIT] -->|import_depends| src_zephyr_trading___init___py
@@ -273,10 +273,7 @@ graph TD
     D_PF_ALLOC[D-PF_ALLOC] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     %% D-PF_CORE -> D-TRADING (1 条)
     D_PF_CORE[D-PF_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    %% D-REPORTING -> D-TRADING (9 条)
-    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
-    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
-    D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    %% D-REPORTING -> D-TRADING (6 条)
     D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
     D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_REPORTING[D-REPORTING] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -303,9 +300,7 @@ graph TD
     src_zephyr_trading_boot_cron_jobs_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
     src_zephyr_trading_orchestrator_context_bridge_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
     src_zephyr_trading_orchestrator_memory_writer_py -->|import_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    %% D-TRADING -> D-BEHAVIORAL_AUDIT (1 条)
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_BEHAVIORAL_AUDIT[D-BEHAVIORAL_AUDIT]
-    %% D-TRADING -> D-GOVERNANCE (28 条)
+    %% D-TRADING -> D-GOVERNANCE (27 条)
     src_zephyr_trading_auto_dispatcher_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_autopilot_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -316,7 +311,6 @@ graph TD
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_conductor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -334,10 +328,7 @@ graph TD
     src_zephyr_trading_ide_health_daemon_py -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_ide_health_daemon_py -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_trading_ide_health_daemon_py -->|contract| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-TRADING -> D-GOV_AUDIT (11 条)
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
+    %% D-TRADING -> D-GOV_AUDIT (8 条)
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
@@ -359,8 +350,7 @@ graph TD
     src_zephyr_trading_orchestrator_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     src_zephyr_trading_orchestrator_core_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     src_zephyr_trading_ide_health_daemon_py -->|contract| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-TRADING -> D-INFRA_RUNTIME (4 条)
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
+    %% D-TRADING -> D-INFRA_RUNTIME (3 条)
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_trading_orchestrator_script_runner_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     src_zephyr_trading_ide_health_daemon_py -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
@@ -395,23 +385,17 @@ graph TD
     src_zephyr_trading_orchestrator_file_task_mapper_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_trading_orchestrator_hallucination_detector_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_trading_orchestrator_hallucination_detector_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    %% D-TRADING -> D-INTELLIGENCE (6 条)
+    %% D-TRADING -> D-INTELLIGENCE (5 条)
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     src_zephyr_trading_boot_hooks_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     src_zephyr_trading_task_gate_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
     %% D-TRADING -> D-OPS (3 条)
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_OPS[D-OPS]
     src_zephyr_trading_orchestrator_trigger_router_py -->|import_depends| D_OPS[D-OPS]
     src_zephyr_trading_ide_health_daemon_py -->|runtime| D_OPS[D-OPS]
-    %% D-TRADING -> D-SECURITY (12 条)
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
-    src_zephyr_trading_circadian_scheduler_py -->|import_depends| D_SECURITY[D-SECURITY]
+    %% D-TRADING -> D-SECURITY (7 条)
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_trading_lifecycle_manager_py -->|import_depends| D_SECURITY[D-SECURITY]
@@ -419,7 +403,7 @@ graph TD
     src_zephyr_trading_orchestrator_agent_orchestrator_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_trading_orchestrator_context_bridge_py -->|import_depends| D_SECURITY[D-SECURITY]
     src_zephyr_trading_orchestrator_core_agent_orchestrator_py -->|import_depends| D_SECURITY[D-SECURITY]
-    %% D-TRADING -> D-SHARED (42 条)
+    %% D-TRADING -> D-SHARED (41 条)
     src_zephyr_trading_auto_dispatcher_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_autopilot_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_autopilot_py -->|contract| D_SHARED[D-SHARED]
@@ -440,7 +424,6 @@ graph TD
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_alert_handler_py -->|import_depends| D_SHARED[D-SHARED]
@@ -450,8 +433,9 @@ graph TD
     src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_contract_registry_py -->|import_depends| D_SHARED[D-SHARED]
+    src_zephyr_trading_orchestrator_chaos_hooks_py -->|import_depends| D_SHARED[D-SHARED]
 
     %% 统计
-    %% 域内依赖: 140 条
-    %% 跨域入边: 284 条
-    %% 跨域出边: 169 条
+    %% 域内依赖: 138 条
+    %% 跨域入边: 273 条
+    %% 跨域出边: 156 条

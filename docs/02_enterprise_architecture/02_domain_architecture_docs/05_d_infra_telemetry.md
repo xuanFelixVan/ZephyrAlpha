@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_TELEMETRY observability_profiling架构文档
+title: D-INFRA_TELEMETRY 可观测性架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 05_d_infra_telemetry / observability_profiling
+# 05_d_infra_telemetry / 可观测性
 
-> **文档作用 / Purpose**: 展示 observability_profiling（D-INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 可观测性（D-INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 05 | Number | 05 |
 | 域ID | D-INFRA_TELEMETRY | Domain ID | D-INFRA_TELEMETRY |
-| 域名称 | observability_profiling | Domain Name | observability_profiling |
+| 域名称 | 可观测性 | Domain Name | 可观测性 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 35 | Module Count | 35 |
 | 域内依赖 | 11 | Internal Dependencies | 11 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_TELEMETRY["D-INFRA_TELEMETRY observability_profiling"]
+    subgraph D_INFRA_TELEMETRY["D-INFRA_TELEMETRY 可观测性"]
         src_zephyr_infrastructure_model_capability_exam_init_py["src/zephyr/infrastructure/model_capability_exam... production"]
         src_zephyr_infrastructure_model_profiler_init_py["src/zephyr/infrastructure/model_profiler/__init... production"]
         src_zephyr_infrastructure_observability_init_py["src/zephyr/infrastructure/observability/__init_... production"]
@@ -123,7 +123,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_TELEMETRY["D-INFRA_TELEMETRY observability_profiling"]
+    subgraph D_INFRA_TELEMETRY["D-INFRA_TELEMETRY 可观测性"]
         src_zephyr_infrastructure_system_telemetry_profiles_init_py["src/zephyr/infrastructure/system_telemetry/prof... production"]
         src_zephyr_infrastructure_system_telemetry_schema_init_py["src/zephyr/infrastructure/system_telemetry/sche... production"]
         src_zephyr_infrastructure_system_telemetry_traces_init_py["src/zephyr/infrastructure/system_telemetry/trac... production"]
@@ -159,7 +159,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 observability_profiling（D-INFRA_TELEMETRY）的模块分布。共 35 个模块 / 35 modules。
+> 按 architecture_layer 分层显示 可观测性（D-INFRA_TELEMETRY）的模块分布。共 35 个模块 / 35 modules。
 
 ```
 

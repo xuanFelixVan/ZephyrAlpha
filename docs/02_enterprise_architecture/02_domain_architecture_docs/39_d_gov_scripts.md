@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_SCRIPTS code_dedup架构文档
+title: D-GOV_SCRIPTS 脚本治理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 39_d_gov_scripts / code_dedup
+# 39_d_gov_scripts / 脚本治理
 
-> **文档作用 / Purpose**: 展示 code_dedup（D-GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 脚本治理（D-GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 39 | Number | 39 |
 | 域ID | D-GOV_SCRIPTS | Domain ID | D-GOV_SCRIPTS |
-| 域名称 | code_dedup | Domain Name | code_dedup |
+| 域名称 | 脚本治理 | Domain Name | 脚本治理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 411 | Module Count | 411 |
 | 域内依赖 | 314 | Internal Dependencies | 314 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_init_py["scripts/__init__.py prototype"]
         scripts_archive_construction_create_db_alignment_tasks_py["scripts/_archive/construction/create_db_alignme... prototype"]
         scripts_archive_construction_create_dm_phase9_tasks_py["scripts/_archive/construction/create_dm_phase9_... prototype"]
@@ -91,7 +91,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_archive_migration_check_coverage_py["scripts/_archive/migration/check_coverage.py prototype"]
         scripts_archive_migration_comprehensive_import_fix_py["scripts/_archive/migration/comprehensive_import... prototype"]
         scripts_archive_migration_create_target_dirs_py["scripts/_archive/migration/create_target_dirs.py prototype"]
@@ -168,7 +168,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_arch_guard_check_cross_plane_communication_py["scripts/arch_guard/check_cross_plane_communicat... prototype"]
         scripts_arch_guard_check_fe_acl_boundary_py["scripts/arch_guard/check_fe_acl_boundary.py prototype"]
         scripts_arch_guard_check_hot_path_purity_py["scripts/arch_guard/check_hot_path_purity.py prototype"]
@@ -241,7 +241,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_construction_demo_a2a_chat_py["scripts/construction/demo_a2a_chat.py prototype"]
         scripts_construction_demo_a2a_coordination_py["scripts/construction/demo_a2a_coordination.py prototype"]
         scripts_construction_demo_e2e_pipeline_py["scripts/construction/demo_e2e_pipeline.py prototype"]
@@ -326,7 +326,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_shared_walk_py["scripts/governance/_shared/walk.py prototype"]
         scripts_governance_shared_yaml_utils_py["scripts/governance/_shared/yaml_utils.py prototype"]
         scripts_governance_sync_check_p0_status_py["scripts/governance/_sync/check_p0_status.py prototype"]
@@ -380,7 +380,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_d10_performance_init_py["scripts/governance/d10_performance/__init__.py prototype"]
         scripts_governance_d10_performance_collect_system_threads_py["scripts/governance/d10_performance/collect_syst... prototype"]
         scripts_governance_d11_compliance_init_py["scripts/governance/d11_compliance/__init__.py prototype"]
@@ -457,7 +457,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_d1_structure_detect_residual_files_py["scripts/governance/d1_structure/detect_residual... prototype"]
         scripts_governance_d1_structure_detect_temp_files_py["scripts/governance/d1_structure/detect_temp_fil... prototype"]
         scripts_governance_d1_structure_drafts_zone_archiver_py["scripts/governance/d1_structure/drafts_zone_arc... prototype"]
@@ -516,7 +516,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_d4_paths_detect_split_delete_ref_commit_py["scripts/governance/d4_paths/detect_split_delete... prototype"]
         scripts_governance_d6_security_init_py["scripts/governance/d6_security/__init__.py prototype"]
         scripts_governance_d6_security_check_protected_paths_py["scripts/governance/d6_security/check_protected_... prototype"]
@@ -584,7 +584,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_d7_code_validate_fle_action_metadata_py["scripts/governance/d7_code/validate_fle_action_... prototype"]
         scripts_governance_d7_code_validate_fle_imports_py["scripts/governance/d7_code/validate_fle_imports.py prototype"]
         scripts_governance_d7_code_validate_import_style_py["scripts/governance/d7_code/validate_import_styl... prototype"]
@@ -641,7 +641,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_generate_path_ownership_map_py["scripts/governance/generate_path_ownership_map.py prototype"]
         scripts_governance_generate_project_depgraph_py["scripts/governance/generate_project_depgraph.py prototype"]
         scripts_governance_generate_project_path_tree_py["scripts/governance/generate_project_path_tree.py prototype"]
@@ -712,7 +712,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_meta_false_negative_cases_init_py["scripts/governance/meta/false_negative_cases/__... prototype"]
         scripts_governance_meta_false_negative_cases_architecture_cases_yaml["scripts/governance/meta/false_negative_cases/ar... production"]
         scripts_governance_meta_false_negative_cases_data_quality_cases_yaml["scripts/governance/meta/false_negative_cases/da... production"]
@@ -760,7 +760,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_meta_validate_end_to_end_benchmark_py["scripts/governance/meta/validate_end_to_end_ben... prototype"]
         scripts_governance_meta_validate_environment_health_py["scripts/governance/meta/validate_environment_he... prototype"]
         scripts_governance_meta_validate_false_negatives_py["scripts/governance/meta/validate_false_negative... prototype"]
@@ -821,7 +821,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_governance_status_py["scripts/governance/status.py prototype"]
         scripts_governance_sync_blueprint_status_py["scripts/governance/sync_blueprint_status.py prototype"]
         scripts_governance_sync_progress_py["scripts/governance/sync_progress.py prototype"]
@@ -878,7 +878,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS code_dedup"]
+    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
         scripts_lock_files_py["scripts/lock_files.py prototype"]
         scripts_mcp_generate_ide_config_py["scripts/mcp/generate_ide_config.py prototype"]
         scripts_mcp_launcher_py["scripts/mcp/launcher.py prototype"]
@@ -954,7 +954,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 code_dedup（D-GOV_SCRIPTS）的模块分布。共 411 个模块 / 411 modules。
+> 按 architecture_layer 分层显示 脚本治理（D-GOV_SCRIPTS）的模块分布。共 411 个模块 / 411 modules。
 
 ```
 

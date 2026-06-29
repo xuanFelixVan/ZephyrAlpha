@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D-INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 13 | Number | 13 |
 | 域ID | D-INTEGRATION | Domain ID | D-INTEGRATION |
-| 域名称 | 管线路由 | Domain Name | pipeline_routing |
+| 域名称 | 管线路由 | Domain Name | 管线路由 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 280 | Module Count | 280 |
 | 域内依赖 | 299 | Internal Dependencies | 299 |

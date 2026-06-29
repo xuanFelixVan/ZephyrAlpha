@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_A2A a2a_communication架构文档
+title: D-INFRA_A2A A2A通信架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 01_d_infra_a2a / a2a_communication
+# 01_d_infra_a2a / A2A通信
 
-> **文档作用 / Purpose**: 展示 a2a_communication（D-INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 A2A通信（D-INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 01 | Number | 01 |
 | 域ID | D-INFRA_A2A | Domain ID | D-INFRA_A2A |
-| 域名称 | a2a_communication | Domain Name | a2a_communication |
+| 域名称 | A2A通信 | Domain Name | A2A通信 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 101 | Module Count | 101 |
 | 域内依赖 | 73 | Internal Dependencies | 73 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A a2a_communication"]
+    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_a2a_protocol_init_py["src/zephyr/infrastructure/a2a_protocol/__init__.py production"]
         src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["src/zephyr/infrastructure/a2a_protocol/a2a_card... production"]
         src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py["src/zephyr/infrastructure/a2a_protocol/layer1_d... production"]
@@ -132,7 +132,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A a2a_communication"]
+    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_cross_agent_semantic_flow_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_dashboard_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_debate_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
@@ -187,7 +187,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A a2a_communication"]
+    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
@@ -254,7 +254,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A a2a_communication"]
+    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_pipeline_llm_gateway_py["src/zephyr/infrastructure/pipeline/llm_gateway.py production"]
         src_zephyr_infrastructure_pipeline_model_router_py["src/zephyr/infrastructure/pipeline/model_router.py production"]
         src_zephyr_infrastructure_pipeline_models_py["src/zephyr/infrastructure/pipeline/models.py production"]
@@ -309,7 +309,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 a2a_communication（D-INFRA_A2A）的模块分布。共 101 个模块 / 101 modules。
+> 按 architecture_layer 分层显示 A2A通信（D-INFRA_A2A）的模块分布。共 101 个模块 / 101 modules。
 
 ```
 

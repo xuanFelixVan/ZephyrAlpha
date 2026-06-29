@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数据工程（D-DATA_ENG）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:51
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 09 | Number | 09 |
 | 域ID | D-DATA_ENG | Domain ID | D-DATA_ENG |
-| 域名称 | 数据工程 | Domain Name | 数据工程(增值+融合+知识) |
+| 域名称 | 数据工程 | Domain Name | 数据工程 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |

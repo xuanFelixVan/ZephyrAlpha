@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_RECOVERY rollback_recovery架构文档
+title: D-INFRA_RECOVERY 回滚恢复架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 03_d_infra_recovery / rollback_recovery
+# 03_d_infra_recovery / 回滚恢复
 
-> **文档作用 / Purpose**: 展示 rollback_recovery（D-INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 回滚恢复（D-INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 03 | Number | 03 |
 | 域ID | D-INFRA_RECOVERY | Domain ID | D-INFRA_RECOVERY |
-| 域名称 | rollback_recovery | Domain Name | rollback_recovery |
+| 域名称 | 回滚恢复 | Domain Name | 回滚恢复 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 107 | Module Count | 107 |
 | 域内依赖 | 79 | Internal Dependencies | 79 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY rollback_recovery"]
+    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_auto_fix_engine_init_py["src/zephyr/infrastructure/auto_fix_engine/__ini... production"]
         src_zephyr_infrastructure_auto_fix_engine_main_py["src/zephyr/infrastructure/auto_fix_engine/__mai... production"]
         src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["src/zephyr/infrastructure/auto_fix_engine/align... production"]
@@ -123,7 +123,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY rollback_recovery"]
+    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_reliability_init_py["src/zephyr/infrastructure/reliability/__init__.py production"]
         src_zephyr_infrastructure_reliability_circuit_breaker_py["src/zephyr/infrastructure/reliability/circuit_b... production"]
         src_zephyr_infrastructure_reliability_context_guard_py["src/zephyr/infrastructure/reliability/context_g... production"]
@@ -199,7 +199,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY rollback_recovery"]
+    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_rollback_hallucination_guard_py["src/zephyr/infrastructure/rollback/hallucinatio... production"]
         src_zephyr_infrastructure_rollback_intent_archiver_py["src/zephyr/infrastructure/rollback/intent_archi... production"]
         src_zephyr_infrastructure_rollback_kill_switch_py["src/zephyr/infrastructure/rollback/kill_switch.py production"]
@@ -264,7 +264,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY rollback_recovery"]
+    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_rollback_rollback_wal_py["src/zephyr/infrastructure/rollback/rollback_wal.py production"]
         src_zephyr_infrastructure_rollback_runbook_generator_py["src/zephyr/infrastructure/rollback/runbook_gene... production"]
         src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["src/zephyr/infrastructure/rollback/s3_snapshot_... production"]
@@ -314,7 +314,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 rollback_recovery（D-INFRA_RECOVERY）的模块分布。共 107 个模块 / 107 modules。
+> 按 architecture_layer 分层显示 回滚恢复（D-INFRA_RECOVERY）的模块分布。共 107 个模块 / 107 modules。
 
 ```
 

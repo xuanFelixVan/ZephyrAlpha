@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_DOCS architecture_docs架构文档
+title: D-GOV_DOCS 架构文档治理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 35_d_gov_docs / architecture_docs
+# 35_d_gov_docs / 架构文档治理
 
-> **文档作用 / Purpose**: 展示 architecture_docs（D-GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 架构文档治理（D-GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 35 | Number | 35 |
 | 域ID | D-GOV_DOCS | Domain ID | D-GOV_DOCS |
-| 域名称 | architecture_docs | Domain Name | architecture_docs |
+| 域名称 | 架构文档治理 | Domain Name | 架构文档治理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 127 | Module Count | 127 |
 | 域内依赖 | 16 | Internal Dependencies | 16 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS architecture_docs"]
+    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
         docs_01_policies_and_standards_registry_schemas_session_log_schema_yaml["docs/01_policies_and_standards/_registry/schema... production"]
         docs_01_policies_and_standards_rules_index_yaml["docs/01_policies_and_standards/rules/_index.yaml production"]
         docs_01_policies_and_standards_rules_trae_001_file_operation_security_yaml["docs/01_policies_and_standards/rules/trae_001_f... production"]
@@ -91,7 +91,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS architecture_docs"]
+    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
         docs_01_policies_and_standards_rules_trae_029_doc_operation_security_yaml["docs/01_policies_and_standards/rules/trae_029_d... production"]
         docs_01_policies_and_standards_rules_trae_030_doc_numbering_metadata_yaml["docs/01_policies_and_standards/rules/trae_030_d... production"]
         docs_01_policies_and_standards_rules_trae_031_security_key_access_yaml["docs/01_policies_and_standards/rules/trae_031_s... production"]
@@ -134,7 +134,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS architecture_docs"]
+    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
         docs_02_enterprise_architecture_target_architecture_architecture_model_events_domain_events_yaml["docs/02_enterprise_architecture/target_architec... production"]
         docs_02_enterprise_architecture_target_architecture_architecture_model_index_yaml["docs/02_enterprise_architecture/target_architec... production"]
         docs_02_enterprise_architecture_target_architecture_architecture_model_technology_technology_landscape_yaml["docs/02_enterprise_architecture/target_architec... production"]
@@ -201,7 +201,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS architecture_docs"]
+    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
         src_zephyr_governance_kb_graph_validator_py["src/zephyr/governance/kb/graph_validator.py prototype"]
         src_zephyr_governance_kb_ingest_py["src/zephyr/governance/kb/ingest.py prototype"]
         src_zephyr_governance_kb_integrity_py["src/zephyr/governance/kb/integrity.py prototype"]
@@ -273,7 +273,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS architecture_docs"]
+    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
         src_zephyr_governance_kb_storage_kb_repo_py["src/zephyr/governance/kb/storage/kb_repo.py prototype"]
         src_zephyr_governance_kb_storage_unified_memory_api_py["src/zephyr/governance/kb/storage/unified_memory... prototype"]
         src_zephyr_governance_kb_supply_chain_graph_engine_init_py["src/zephyr/governance/kb/supply_chain_graph_eng... prototype"]
@@ -327,7 +327,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 architecture_docs（D-GOV_DOCS）的模块分布。共 127 个模块 / 127 modules。
+> 按 architecture_layer 分层显示 架构文档治理（D-GOV_DOCS）的模块分布。共 127 个模块 / 127 modules。
 
 ```
 

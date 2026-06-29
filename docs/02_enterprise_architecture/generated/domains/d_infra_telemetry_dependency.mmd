@@ -1,18 +1,16 @@
 %% D-INFRA_TELEMETRY 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 37, 依赖边数: 31
+%% 模块数: 35, 依赖边数: 29
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_INFRA_TELEMETRY[observability_profiling]
+    subgraph D_INFRA_TELEMETRY[可观测性]
         src_zephyr_infrastructure_model_capability_exam___init___py["...ure/model_capability_exam/__init__.py [production]"]
         src_zephyr_infrastructure_model_profiler___init___py["...astructure/model_profiler/__init__.py [production]"]
         src_zephyr_infrastructure_observability___init___py["...rastructure/observability/__init__.py [production]"]
         src_zephyr_infrastructure_obse___lity___init___from_infra_py[".../observability/__init___from_infra.py [production]"]
-        src_zephyr_infrastructure_observability_contract_metrics_py["...ure/observability/contract_metrics.py [production]"]
-        src_zephyr_infrastructure_observability_health_probes_py["...ucture/observability/health_probes.py [production]"]
         src_zephyr_infrastructure_observability_notifier_py["...rastructure/observability/notifier.py [production]"]
         src_zephyr_infrastructure_observability_trace_decorator_py["...ture/observability/trace_decorator.py [production]"]
         src_zephyr_infrastructure_quality___init___py["...yr/infrastructure/quality/__init__.py [production]"]
@@ -52,8 +50,6 @@ graph TD
     src_zephyr_infrastructure_obse___lity___init___from_infra_py -->|import_depends| src_zephyr_infrastructure_observability_trace_decorator_py
     src_zephyr_infrastructure_quality___init___py -->|import_depends| src_zephyr_infrastructure_quality_quality_monitor_py
     src_zephyr_infrastructure_sla___init___py -->|import_depends| src_zephyr_infrastructure_sla_sla_monitor_py
-    src_zephyr_infrastructure_observability_contract_metrics_py -->|config_depends| src_zephyr_infrastructure_observability___init___py
-    src_zephyr_infrastructure_observability_health_probes_py -->|config_depends| src_zephyr_infrastructure_observability___init___py
     src_zephyr_infrastructure_system_telemetry__trace_bridge_py -->|config_depends| src_zephyr_infrastructure_system_telemetry___init___py
     src_zephyr_infrastructure_system_telemetry_health_probes_py -->|config_depends| src_zephyr_infrastructure_system_telemetry___init___py
     src_zephyr_infrastructure_system_telemetry_watchdog_py -->|config_depends| src_zephyr_infrastructure_system_telemetry___init___py
@@ -89,6 +85,6 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py -->|import_depends| D_SHARED[D-SHARED]
 
     %% 统计
-    %% 域内依赖: 13 条
+    %% 域内依赖: 11 条
     %% 跨域入边: 0 条
     %% 跨域出边: 18 条

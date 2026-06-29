@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D-SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 20 | Number | 20 |
 | 域ID | D-SHARED | Domain ID | D-SHARED |
-| 域名称 | 共享服务 | Domain Name | shared_services |
+| 域名称 | 共享服务 | Domain Name | 共享服务 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 294 | Module Count | 294 |
 | 域内依赖 | 184 | Internal Dependencies | 184 |

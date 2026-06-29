@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数据治理（D-DATA_GOV）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:51
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 10 | Number | 10 |
 | 域ID | D-DATA_GOV | Domain ID | D-DATA_GOV |
-| 域名称 | 数据治理 | Domain Name | 数据治理(质量+血缘+参考) |
+| 域名称 | 数据治理 | Domain Name | 数据治理 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |

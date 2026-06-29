@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 规则治理（D-GOV_RULE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 38 | Number | 38 |
 | 域ID | D-GOV_RULE | Domain ID | D-GOV_RULE |
-| 域名称 | 规则治理 | Domain Name | rule_governance |
+| 域名称 | 规则治理 | Domain Name | 规则治理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 11 | Module Count | 11 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |

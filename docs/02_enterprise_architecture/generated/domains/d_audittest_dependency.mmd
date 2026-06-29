@@ -1,12 +1,12 @@
 %% D-AUDITTEST 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:45
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 152, 依赖边数: 15
+%% 模块数: 151, 依赖边数: 15
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_AUDITTEST[audit_test_suite]
+    subgraph D_AUDITTEST[审计测试套件]
         tests_agent_rbac_test_rbac_auto_lifecycle_py["...gent_rbac/test_rbac_auto_lifecycle.py [production]"]
         tests_e2e_test_mcp_full_lifecycle_e2e_py["tests/e2e/test_mcp_full_lifecycle_e2e.py [production]"]
         tests_test_adversarial_extreme_py["tests/test_adversarial_extreme.py [production]"]
@@ -22,7 +22,6 @@ graph TD
         tests_test_budget_event_driven_py["tests/test_budget_event_driven.py [production]"]
         tests_test_budget_lifecycle_e2e_py["tests/test_budget_lifecycle_e2e.py [production]"]
         tests_test_budget_shutdown_py["tests/test_budget_shutdown.py [production]"]
-        tests_test_circadian_red_blue_drill_py["tests/test_circadian_red_blue_drill.py [production]"]
         tests_test_conductor_py["tests/test_conductor.py [production]"]
         tests_test_f10_red_blue_py["tests/test_f10_red_blue.py [production]"]
         tests_test_f18_automation_py["tests/test_f18_automation.py [production]"]
@@ -107,7 +106,8 @@ graph TD
         tests_test_l02_alpha_factor_py["tests/test_l02_alpha_factor.py [production]"]
         tests_test_l03_signal_generation_py["tests/test_l03_signal_generation.py [production]"]
         tests_test_l04_risk_management_py["tests/test_l04_risk_management.py [production]"]
-        %% ... 还有 52 个模块未显示
+        tests_test_l05_portfolio_construction_py["tests/test_l05_portfolio_construction.py [production]"]
+        %% ... 还有 51 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）

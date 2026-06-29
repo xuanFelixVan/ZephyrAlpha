@@ -1,12 +1,12 @@
 %% D-GOV_SCRIPTS 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 413, 依赖边数: 409
+%% 模块数: 411, 依赖边数: 407
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_GOV_SCRIPTS[code_dedup]
+    subgraph D_GOV_SCRIPTS[脚本治理]
         scripts___init___py["scripts/__init__.py [prototype]"]
         scripts__archive_construction_create_db_alignment_tasks_py["...truction/create_db_alignment_tasks.py [prototype]"]
         scripts__archive_construction_create_dm_phase9_tasks_py["...onstruction/create_dm_phase9_tasks.py [prototype]"]
@@ -107,7 +107,7 @@ graph TD
         scripts_construction_test_event_hook_py["scripts/construction/test_event_hook.py [prototype]"]
         scripts_context_generate_architecture_context_py["...text/generate_architecture_context.py [prototype]"]
         scripts_dm90971_add_test_headers_py["scripts/dm90971_add_test_headers.py [prototype]"]
-        %% ... 还有 313 个模块未显示
+        %% ... 还有 311 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     scripts_governance_phase_a_backup_py -->|config_depends| scripts_governance___init___py
     scripts_governance_rename_kebab_to_snake_py -->|config_depends| scripts_governance___init___py
     scripts_governance_rebuild_progress_py -->|config_depends| scripts_governance___init___py
-    %% ... 还有 235 条域内依赖未显示
+    %% ... 还有 234 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-GOVERNANCE -> D-GOV_SCRIPTS (12 条)
@@ -215,7 +215,7 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_EX_CORE[D-EX_CORE]
     %% D-GOV_SCRIPTS -> D-FUNDAMENTAL_SIGNAL (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D-FUNDAMENTAL_SIGNAL]
-    %% D-GOV_SCRIPTS -> D-GOVERNANCE (30 条)
+    %% D-GOV_SCRIPTS -> D-GOVERNANCE (29 条)
     scripts_rollback_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_scaffold_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_construction_check_statuses_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -242,7 +242,6 @@ graph TD
     scripts_governance_vms_health_check_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_vms_cron_monitor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_vms_migrate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    scripts_governance_vms_snapshot_backup_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_vms_migration_dry_run_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -308,6 +307,6 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
 
     %% 统计
-    %% 域内依赖: 315 条
+    %% 域内依赖: 314 条
     %% 跨域入边: 13 条
-    %% 跨域出边: 81 条
+    %% 跨域出边: 80 条

@@ -1,7 +1,7 @@
 %% D-FACTOR 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 17, 依赖边数: 14
+%% 模块数: 14, 依赖边数: 10
 
 graph TD
 
@@ -17,9 +17,6 @@ graph TD
         src_zephyr_factor_ctr_001_consumer___init___py["...r/factor/ctr_001_consumer/__init__.py [prototype]"]
         src_zephyr_factor_engine___init___py["src/zephyr/factor/engine/__init__.py [prototype]"]
         src_zephyr_factor_factor_base_py["src/zephyr/factor/factor_base.py [production]"]
-        src_zephyr_factor_factors___init___py["src/zephyr/factor/factors/__init__.py [prototype]"]
-        src_zephyr_factor_factors_momentum_factor_py["...hyr/factor/factors/momentum_factor.py [prototype]"]
-        src_zephyr_factor_factors_value_factor_py["...zephyr/factor/factors/value_factor.py [prototype]"]
         src_zephyr_factor_infrastructure___init___py["...hyr/factor/infrastructure/__init__.py [prototype]"]
         src_zephyr_factor_momentum_factor_py["src/zephyr/factor/momentum_factor.py [prototype]"]
         src_zephyr_factor_services___init___py["src/zephyr/factor/services/__init__.py [prototype]"]
@@ -28,7 +25,6 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_factor___init___py -->|config_depends| src_zephyr_factor_alpha_signal_pipeline_py
-    src_zephyr_factor_factors___init___py -->|config_depends| src_zephyr_factor_factors_value_factor_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-GOVERNANCE -> D-FACTOR (4 条)
@@ -36,22 +32,18 @@ graph TD
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_factor_factor_base_py
-    %% D-OPS -> D-FACTOR (1 条)
-    D_OPS[D-OPS] -->|runtime| src_zephyr_factor_factors___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-FACTOR -> D-FUNDAMENTAL_SIGNAL (1 条)
     src_zephyr_factor_alpha_signal_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D-FUNDAMENTAL_SIGNAL]
-    %% D-FACTOR -> D-GOVERNANCE (5 条)
+    %% D-FACTOR -> D-GOVERNANCE (3 条)
     src_zephyr_factor_value_factor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_factor_momentum_factor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_factor_factors_value_factor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_factor_factors_momentum_factor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_factor_bus_factor_defense_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
     %% D-FACTOR -> D-SHARED (1 条)
     src_zephyr_factor_factor_base_py -->|import_depends| D_SHARED[D-SHARED]
 
     %% 统计
-    %% 域内依赖: 2 条
-    %% 跨域入边: 5 条
-    %% 跨域出边: 7 条
+    %% 域内依赖: 1 条
+    %% 跨域入边: 4 条
+    %% 跨域出边: 5 条

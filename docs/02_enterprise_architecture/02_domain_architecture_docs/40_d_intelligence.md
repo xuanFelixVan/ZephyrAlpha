@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 上下文管理（D-INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 40 | Number | 40 |
 | 域ID | D-INTELLIGENCE | Domain ID | D-INTELLIGENCE |
-| 域名称 | 上下文管理 | Domain Name | context_management |
+| 域名称 | 上下文管理 | Domain Name | 上下文管理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 42 | Module Count | 42 |
 | 域内依赖 | 29 | Internal Dependencies | 29 |

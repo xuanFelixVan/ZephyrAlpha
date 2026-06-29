@@ -1,7 +1,7 @@
 %% D-KNOWLEDGE 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 40, 依赖边数: 35
+%% 模块数: 14, 依赖边数: 5
 
 graph TD
 
@@ -10,32 +10,6 @@ graph TD
         architecture_model_layers_b_vector_memory_yaml["...ure_model/layers/b_vector_memory.yaml [production]"]
         docs_03_modules__domain_knowle___knowledge_base_blueprint_md["...knowledge/knowledge_base/blueprint.md [design]"]
         docs_03_modules__domain_knowledge_vector_memory_blueprint_md["..._knowledge/vector_memory/blueprint.md [design]"]
-        src_zephyr_governance_vector_memory___init___py[".../governance/vector_memory/__init__.py [prototype]"]
-        src_zephyr_governance_vector_memory_bm25_index_py["...overnance/vector_memory/bm25_index.py [prototype]"]
-        src_zephyr_governance_vector_memory_bridge_layer_py["...ernance/vector_memory/bridge_layer.py [prototype]"]
-        src_zephyr_governance_vector_memory_cache_layer_py["...vernance/vector_memory/cache_layer.py [prototype]"]
-        src_zephyr_governance_vector_memory_chunk_strategy_router_py["...ector_memory/chunk_strategy_router.py [prototype]"]
-        src_zephyr_governance_vector_memory_collection_manager_py["...e/vector_memory/collection_manager.py [prototype]"]
-        src_zephyr_governance_vector_memory_collection_schemas_py["...e/vector_memory/collection_schemas.py [prototype]"]
-        src_zephyr_governance_vector_memory_context_ingest_py["...nance/vector_memory/context_ingest.py [prototype]"]
-        src_zephyr_governance_vector_m___oss_collection_retriever_py["..._memory/cross_collection_retriever.py [prototype]"]
-        src_zephyr_governance_vector_m____delegated_vector_memory_py["...tor_memory/delegated_vector_memory.py [prototype]"]
-        src_zephyr_governance_vector_memory_design_principles_py["...ce/vector_memory/design_principles.py [prototype]"]
-        src_zephyr_governance_vector_m___faiss_collection_manager_py["...or_memory/faiss_collection_manager.py [prototype]"]
-        src_zephyr_governance_vector_memory_hybrid_retriever_py["...nce/vector_memory/hybrid_retriever.py [prototype]"]
-        src_zephyr_governance_vector_memory_in_memory_fake_vms_py["...e/vector_memory/in_memory_fake_vms.py [prototype]"]
-        src_zephyr_governance_vector_m___in_memory_memory_backend_py["...or_memory/in_memory_memory_backend.py [prototype]"]
-        src_zephyr_governance_vector_m___in_process_vector_memory_py["...or_memory/in_process_vector_memory.py [prototype]"]
-        src_zephyr_governance_vector_memory_index_health_monitor_py["...vector_memory/index_health_monitor.py [prototype]"]
-        src_zephyr_governance_vector_memory_interface_py["...governance/vector_memory/interface.py [prototype]"]
-        src_zephyr_governance_vector_m____migrate_chroma_to_faiss_py["...tor_memory/migrate_chroma_to_faiss.py [prototype]"]
-        src_zephyr_governance_vector_memory_ollama_chat_py["...vernance/vector_memory/ollama_chat.py [prototype]"]
-        src_zephyr_governance_vector_memory_ollama_embedding_py["...nce/vector_memory/ollama_embedding.py [prototype]"]
-        src_zephyr_governance_vector_memory_provenance_enforcer_py[".../vector_memory/provenance_enforcer.py [prototype]"]
-        src_zephyr_governance_vector_memory_retrieval_feedback_py["...e/vector_memory/retrieval_feedback.py [prototype]"]
-        src_zephyr_governance_vector_memory_sqlite_metadata_store_py["...ector_memory/sqlite_metadata_store.py [prototype]"]
-        src_zephyr_governance_vector_memory_vms_errors_py["...overnance/vector_memory/vms_errors.py [prototype]"]
-        src_zephyr_governance_vector_memory_vms_schemas_py["...vernance/vector_memory/vms_schemas.py [prototype]"]
         src_zephyr_knowledge___init___py["src/zephyr/knowledge/__init__.py [prototype]"]
         src_zephyr_knowledge__extensions___init___py["...hyr/knowledge/_extensions/__init__.py [prototype]"]
         src_zephyr_knowledge_api___init___py["src/zephyr/knowledge/api/__init__.py [prototype]"]
@@ -50,11 +24,6 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_governance_vector_memory_bm25_index_py -->|config_depends| src_zephyr_governance_vector_memory___init___py
-    src_zephyr_governance_vector_m___oss_collection_retriever_py -->|config_depends| src_zephyr_governance_vector_memory___init___py
-    src_zephyr_governance_vector_memory_interface_py -->|config_depends| src_zephyr_governance_vector_memory___init___py
-    src_zephyr_governance_vector_m___in_memory_memory_backend_py -->|config_depends| src_zephyr_governance_vector_memory___init___py
-    src_zephyr_governance_vector_memory_vms_errors_py -->|config_depends| src_zephyr_governance_vector_memory___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-GOVERNANCE -> D-KNOWLEDGE (1 条)
@@ -63,38 +32,13 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-KNOWLEDGE -> D-AUTONOMY_CORE (1 条)
     tests_test_skill_knowledge_base_py -->|test_depends| D_AUTONOMY_CORE[D-AUTONOMY_CORE]
-    %% D-KNOWLEDGE -> D-GOVERNANCE (13 条)
-    src_zephyr_governance_vector_memory_bridge_layer_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_memory_context_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_m____delegated_vector_memory_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_m___faiss_collection_manager_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_memory_design_principles_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_memory_index_health_monitor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_memory_in_memory_fake_vms_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_m___in_process_vector_memory_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_m____migrate_chroma_to_faiss_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_memory_sqlite_metadata_store_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_vector_memory_provenance_enforcer_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D-KNOWLEDGE -> D-GOVERNANCE (2 条)
     tests_unit_vector_memory_test_vector_memory_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
     docs_03_modules__domain_knowledge_vector_memory_blueprint_md -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-KNOWLEDGE -> D-INTEGRATION (15 条)
-    src_zephyr_governance_vector_memory_collection_manager_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_cache_layer_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_chunk_strategy_router_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_collection_schemas_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_m___faiss_collection_manager_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_index_health_monitor_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_hybrid_retriever_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_m___in_process_vector_memory_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_m___in_process_vector_memory_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_ollama_embedding_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_m____migrate_chroma_to_faiss_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_ollama_chat_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_retrieval_feedback_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    src_zephyr_governance_vector_memory_vms_schemas_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
+    %% D-KNOWLEDGE -> D-INTEGRATION (1 条)
     tests_unit_vector_memory_test_vector_memory_py -->|test_depends| D_INTEGRATION[D-INTEGRATION]
 
     %% 统计
-    %% 域内依赖: 5 条
+    %% 域内依赖: 0 条
     %% 跨域入边: 1 条
-    %% 跨域出边: 29 条
+    %% 跨域出边: 4 条

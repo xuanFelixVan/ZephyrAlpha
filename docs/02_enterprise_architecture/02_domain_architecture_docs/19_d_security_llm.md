@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-SECURITY_LLM llm_defense架构文档
+title: D-SECURITY_LLM LLM防御架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -8,12 +8,12 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 19_d_security_llm / llm_defense
+# 19_d_security_llm / LLM防御
 
-> **文档作用 / Purpose**: 展示 llm_defense（D-SECURITY_LLM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 LLM防御（D-SECURITY_LLM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 14:36:52
+> 最后更新: 2026-06-29 15:00:44
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -22,7 +22,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 19 | Number | 19 |
 | 域ID | D-SECURITY_LLM | Domain ID | D-SECURITY_LLM |
-| 域名称 | llm_defense | Domain Name | llm_defense |
+| 域名称 | LLM防御 | Domain Name | LLM防御 |
 | 层级 | L1_foundation | Layer | L1_foundation |
 | 模块数 | 0 | Module Count | 0 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_SECURITY_LLM["D-SECURITY_LLM llm_defense"]
+    subgraph D_SECURITY_LLM["D-SECURITY_LLM LLM防御"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -66,7 +66,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 llm_defense（D-SECURITY_LLM）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 LLM防御（D-SECURITY_LLM）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 

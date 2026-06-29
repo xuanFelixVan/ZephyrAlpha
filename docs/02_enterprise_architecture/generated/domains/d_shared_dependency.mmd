@@ -1,7 +1,7 @@
 %% D-SHARED 域全景依赖图
-%% 生成时间: auto-generated
+%% 生成时间: 2026-06-29 15:00:46
 %% 数据源: depgraph.db nodes表 + edges表
-%% 模块数: 295, 依赖边数: 671
+%% 模块数: 294, 依赖边数: 664
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         src_zephyr_shared_contracts_po___mance_attribution_report_py["...lio/performance_attribution_report.py [prototype]"]
         src_zephyr_shared_contracts_portfolio_position_py["...hared/contracts/portfolio/position.py [prototype]"]
         src_zephyr_shared_contracts_po___strategy_lifecycle_event_py["...portfolio/strategy_lifecycle_event.py [prototype]"]
-        %% ... 还有 195 个模块未显示
+        %% ... 还有 194 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_shared_contracts_escalation___init___py -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_er___contract_violation_error_py
     src_zephyr_shared_contracts_errors___init___py -->|import_depends| src_zephyr_shared_contracts_errors_data_quality_error_py
-    %% ... 还有 105 条域内依赖未显示
+    %% ... 还有 104 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D-AUDITTEST -> D-SHARED (1 条)
@@ -209,7 +209,7 @@ graph TD
     D_FACTOR[D-FACTOR] -->|import_depends| src_zephyr_shared_contracts_er___factor_computation_error_py
     %% D-FRONTEND -> D-SHARED (1 条)
     D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    %% D-GOVERNANCE -> D-SHARED (183 条)
+    %% D-GOVERNANCE -> D-SHARED (181 条)
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_shared___init___py
     D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_shared_shared_servi___rvability_02_token_utils_py
@@ -333,7 +333,7 @@ graph TD
     D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_shared_services_session_continuity_py
     D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
     D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D-INFRA_RUNTIME -> D-SHARED (36 条)
+    %% D-INFRA_RUNTIME -> D-SHARED (34 条)
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_blueprint_decomposer_py
@@ -362,13 +362,13 @@ graph TD
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_schema_severity_types_py
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_infra_06_process_pool_py
     D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
+    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
     %% D-INFRA_TELEMETRY -> D-SHARED (3 条)
     D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_shared_services_session_continuity_py
     D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
     D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared___init___py
-    %% D-INTEGRATION -> D-SHARED (70 条)
+    %% D-INTEGRATION -> D-SHARED (69 条)
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_shared_services_models_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_security___init___py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_shared_services_models_py
@@ -381,7 +381,6 @@ graph TD
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2___r3_coordination___init___py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared___init___py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2a___init___py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
@@ -399,6 +398,7 @@ graph TD
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_io_paths_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_utils_time_utils_py
     %% D-INTELLIGENCE -> D-SHARED (1 条)
     D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_shared_contracts_ex___t_model_serving_response_py
     %% D-ML_TRAIN -> D-SHARED (2 条)
@@ -430,7 +430,7 @@ graph TD
     D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_shared_alert_manager_py
     D_SECURITY[D-SECURITY] -->|import_depends| src_zephyr_shared_security_secrets_py
-    %% D-TRADING -> D-SHARED (42 条)
+    %% D-TRADING -> D-SHARED (41 条)
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_shared_services_models_py
     D_TRADING[D-TRADING] -->|contract| src_zephyr_shared_contracts_task_repository_protocol_py
@@ -446,7 +446,6 @@ graph TD
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_core_telemetry_emitter_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_shared_services_infra_06_process_pool_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_capacity_calibrator_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_capacity_digital_twin_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_capacity_fingerprint_py
@@ -461,6 +460,7 @@ graph TD
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_shared_services_models_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_core_registry_py
+    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-SHARED -> D-GOVERNANCE (3 条)
@@ -500,6 +500,6 @@ graph TD
     src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
 
     %% 统计
-    %% 域内依赖: 185 条
-    %% 跨域入边: 459 条
+    %% 域内依赖: 184 条
+    %% 跨域入边: 453 条
     %% 跨域出边: 27 条
