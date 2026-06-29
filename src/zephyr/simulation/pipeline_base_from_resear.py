@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
 # [MODULE] zephyr.research.simulation.pipeline_base
 # [DOMAIN] D_SIMULATION
-# [DEPENDENCIES] zephyr.integration.contracts.experiment_result
+# [DEPENDENCIES] zephyr.shared.contracts.experiment_result
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -41,7 +41,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, ClassVar
 
-from zephyr.integration.contracts.experiment_result import ExperimentResult
+from zephyr.shared.contracts.experiment_result import ExperimentResult
 
 
 @dataclass(frozen=True)

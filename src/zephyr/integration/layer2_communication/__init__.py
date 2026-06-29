@@ -3,17 +3,6 @@
 # Re-export from shared protocols
 from zephyr.shared.protocols.a2a.a2a_schemas import *  # noqa: F403
 
-# DM-367: re-export local shim modules
-from . import (
-    a2a_schemas,
-    a2a_state,
-    handoff_manager,
-    message_router,
-    push_notifier,
-    streaming,
-    trigger_monitor,
-)
-
 __all__ = [
     "A2AMessage",
     "A2AMessagePart",
@@ -26,13 +15,6 @@ __all__ = [
     "MessageRouterProtocol",
     "PartType",
     "PushNotifierProtocol",
-    "a2a_schemas",
-    "a2a_state",
-    "handoff_manager",
-    "message_router",
-    "push_notifier",
-    "streaming",
-    "trigger_monitor",
 ]
 
 __version__ = "0.10.0"
