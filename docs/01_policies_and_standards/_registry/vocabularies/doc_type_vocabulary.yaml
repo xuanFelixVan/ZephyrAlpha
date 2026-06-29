@@ -48,7 +48,7 @@ values:
   - value: policy
     definition: "声明式规则——定义'必须/禁止/条件'的行为约束或可量化技术标准（格式/接口/度量），不定义'如何做'"
     rule_form: declarative
-    allowed_directories: ["governance/", "meta/"]
+    allowed_directories: ["docs/01_policies_and_standards/policies/", "scripts/governance/"]
     forbidden_directories: ["operational/"]
     required_fields: ["valid_from"]
     ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "推荐", "方案", "做法", "best practice", "应该"]
@@ -69,7 +69,7 @@ values:
   - value: register
     definition: "注册表/配置——结构化数据清单或运行时配置定义，用于发现、索引和参数设置"
     rule_form: data
-    allowed_directories: ["_registry/", "meta/", "config/", "src/zephyr/config/"]
+    allowed_directories: ["docs/01_policies_and_standards/_registry/", "docs/03_modules/_manifests/", "docs/registry_of_registries.yaml", "src/zephyr/", "scripts/"]
     forbidden_directories: ["operational/"]
     required_fields: ["summary"]
     ai_keywords: ["注册表", "登记表", "清单", "索引", "registry", "配置", "config", "参数", "settings"]
@@ -110,7 +110,7 @@ values:
   - value: vocabulary
     definition: "受控参考数据——定义枚举值域、术语定义或知识内容的机器可读清单，供 AI 和 CI 消费"
     rule_form: data
-    allowed_directories: ["_registry/vocabularies/", "meta/", "08_knowledge/"]
+    allowed_directories: ["docs/01_policies_and_standards/_registry/vocabularies/"]
     forbidden_directories: ["operational/", "governance/"]
     required_fields: []
     ai_keywords: ["词表", "枚举", "合法值", "vocabulary", "controlled", "术语", "定义", "glossary", "terminology", "知识", "knowledge"]
@@ -121,7 +121,7 @@ values:
   - value: blueprint
     definition: "蓝图——模块/子系统的完整设计文档和施工指导，包含架构决策、数据模型、接口定义、任务分解"
     rule_form: declarative
-    allowed_directories: ["03_blueprints/", "03_modules/"]
+    allowed_directories: ["docs/03_modules/"]
     forbidden_directories: ["operational/", "governance/"]
     required_fields: ["valid_from", "architecture_layers", "last_verified"]
     ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块", "施工", "任务", "checklist", "construction", "plan"]
@@ -134,7 +134,7 @@ values:
   - value: audit_report
     definition: "审计/记录——时间戳驱动的记录、session log 或结构化审计产出物"
     rule_form: data
-    allowed_directories: ["_working/audit/", "session_logs/"]
+    allowed_directories: ["session_logs/"]
     forbidden_directories: ["03_blueprints/"]
     required_fields: []
     ai_keywords: ["审计", "报告", "audit", "report", "日志", "session", "记录", "log", "timestamp"]
@@ -145,7 +145,7 @@ values:
   - value: architecture_view
     definition: "架构视图——4+1 架构视角文档或服务/模块的外部接口规格"
     rule_form: declarative
-    allowed_directories: ["02_enterprise_architecture/", "03_blueprints/", "03_modules/specs/"]
+    allowed_directories: ["docs/02_enterprise_architecture/", "docs/03_modules/specs/", "docs/03_modules/_b_track_interfaces/"]
     forbidden_directories: ["01_policies_and_standards/"]
     required_fields: []  # v3.0.0: service_spec 已并入（api_version 降为可选 via tags）
     ai_keywords: ["架构视图", "4+1", "view", "architecture_view", "服务", "接口", "API", "spec", "服务规格"]
@@ -154,7 +154,7 @@ values:
   - value: gate
     definition: "门禁/验证定义——定义质量门禁的触发条件、检查项、阻断规则或 VR 验证标准"
     rule_form: declarative
-    allowed_directories: ["governance/architecture/", "_registry/contracts/"]
+    allowed_directories: ["src/zephyr/governance/rule_enforcement/", "docs/01_policies_and_standards/_registry/contracts/", "docs/01_policies_and_standards/_registry/schemas/"]
     forbidden_directories: ["operational/"]
     required_fields: ["valid_from"]
     ai_keywords: ["门禁", "gate", "阻断", "检查", "准入", "契约", "验证", "VR", "contract", "rule"]
@@ -169,7 +169,7 @@ values:
 # 三个字段是正交维度，分别回答不同问题：
 #
 #   doc_type              —— 这个文件"是什么"？（语义类型，由内容/用途决定）
-#   allowed_directories   —— 这个文件"应该放在哪"？（偏好位置，软引导）
+#   allowed_directories   —— 这个文件"应该放在哪"？（允许位置，DCR-001 硬约束）
 #   forbidden_directories —— 这个文件"禁止放在哪"？（硬约束，门禁拦截）
 #
 # 【正交性】
@@ -177,16 +177,15 @@ values:
 #   一个 policy 文件无论放在 governance/ 还是 _working/，它仍然是 policy。
 #   目录决定的是"组织归属"，doc_type 决定的是"语义归属"——两者独立。
 #
-# 【约束层级】
-#   forbidden_directories = 硬约束（GATE 门禁强制拦截，违反即阻断提交）
-#   allowed_directories   = 软引导（推荐位置，AI 分类时的首选目录）
-#   未列入两者的目录       = 中性区（既不推荐也不禁止，临时工作区适用）
+# 【约束层级】（v3.1.0 更新：DCR-001/002 启用后 allowed_directories 升级为硬约束）
+#   forbidden_directories = 硬约束（DCR-002 门禁强制拦截，违反即阻断提交）
+#   allowed_directories   = 硬约束（DCR-001 门禁强制校验，文件目录必须在其中，否则阻断提交）
+#   未列入两者的目录       = 中性区（临时/归档区豁免，见下文）
 #
-# 【临时工作区豁免】
-#   docs/_working/、docs/_working/audit/ 等临时/过程性目录不出现在任何 doc_type 的
-#   forbidden_directories 中（by design）。这些目录可存放任意非禁止的 doc_type
-#   文件——临时工作区是"过渡态"，其文件的 doc_type 由内容决定，不受
-#   allowed_directories 偏好约束。当文件从 _working/ 迁入正式目录时，
+# 【临时/归档区豁免】（DCR-001/002 检查器跳过以下目录）
+#   docs/_working/、docs/_archive/ 等临时/归档目录的文件不受 DCR-001/002 检查。
+#   临时工作区是"过渡态"，归档区是"历史遗留"——其文件的 doc_type 由内容决定，
+#   不受 allowed_directories 硬约束。当文件从 _working/ 迁入正式目录时，
 #   再按目标目录的 allowed_directories 校验 doc_type 归属。
 #
 # 【常见误解纠正】

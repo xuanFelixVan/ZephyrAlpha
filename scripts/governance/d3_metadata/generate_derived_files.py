@@ -161,10 +161,20 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         # 大小写不敏感——YAML 中可能写作 dynamic_from_ssot 或 DYNAMIC_FROM_SSOT
         _av = field.get("allowed_values")
         _ev = field.get("enum_values")
-        if (isinstance(_av, str) and _av.lower() == "dynamic_from_ssot") or (
-            isinstance(_ev, str) and _ev.lower() == "dynamic_from_ssot"
-        ):
+        _has_sentinel = (
+            (isinstance(_av, str) and _av.lower() == "dynamic_from_ssot")
+            or (isinstance(_ev, str) and _ev.lower() == "dynamic_from_ssot")
+        )
+        if _has_sentinel:
             continue
+
+        # Sentinel 完整性检查：VOCAB_FIELD_MAP 中的字段必须有 sentinel
+        # 防止 sentinel 被删除后硬编码值——即使值当前一致，未来词表变更会漂移
+        if field_name in VOCAB_FIELD_MAP:
+            _drift(
+                f"field_registry.{field_name}: 字段在 VOCAB_FIELD_MAP 中但未使用 dynamic_from_ssot sentinel"
+                f"——sentinel 可能被删除并替换为硬编码值，这会导致未来词表变更时漂移"
+            )
 
         current_values: set[str] = set()
         if "allowed_values" in field:
@@ -233,8 +243,17 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         # dynamic_from_ssot 标志：值集由词表单一维护，派生同步应跳过
         # 大小写不敏感——YAML 中可能写作 dynamic_from_ssot 或 DYNAMIC_FROM_SSOT
         _av = field.get("allowed_values")
-        if isinstance(_av, str) and _av.lower() == "dynamic_from_ssot":
+        _has_sentinel = isinstance(_av, str) and _av.lower() == "dynamic_from_ssot"
+        if _has_sentinel:
             continue
+
+        # Sentinel 完整性检查：VOCAB_FIELD_MAP 中的字段必须有 sentinel
+        if field_name in VOCAB_FIELD_MAP:
+            _drift(
+                f"arch_contract.{field_name}: 字段在 VOCAB_FIELD_MAP 中但未使用 dynamic_from_ssot sentinel"
+                f"——sentinel 可能被删除，这会导致未来词表变更时漂移"
+            )
+
         current = field.get("allowed_values", [])
         current_set = set(str(v) for v in current)
         vocab_set = set(vocab_values)
