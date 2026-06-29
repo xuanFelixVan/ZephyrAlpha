@@ -27,7 +27,7 @@
 
 SSoT 源:
     - script_manifest.yaml  → total_scripts
-    - gate-registry.md    → total_gates
+    - gate_registry.yaml    → total_gates
     - registry-master-index.yaml → total_registries
     - .pre_commit-config.yaml   → precommit_hooks
 
@@ -59,7 +59,7 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 SSOT_PATHS = {
     "total_scripts": REPO_ROOT / "scripts" / "governance" / "script_manifest.yaml",
-    "total_gates": REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate-registry.md",
+    "total_gates": REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate_registry.yaml",
     "total_registries": REPO_ROOT
     / "docs"
     / "01_policies_and_standards"

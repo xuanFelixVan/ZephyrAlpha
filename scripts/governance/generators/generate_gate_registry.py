@@ -16,7 +16,7 @@
 """
 generate_gate_registry.py — 门禁登记表自动生成器
 
-从 .pre-commit-config.yaml 自动派生 gate-registry.md。
+从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。
 对标 §6.16 静态清单自动生成铁律——手工维护的 gate-registry 将被此脚本替代。
 
 Usage:

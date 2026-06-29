@@ -791,7 +791,7 @@ class ManualApprovalGate:
 
 | 产出物类型 | 存放完整路径 | 职责 | consumer_min | 注册位置 |
 |-----------|------------|------|-------------|---------|
-| 门禁注册表Catalogs副本 | docs/01_policies_and_standards/_registry/catalogs/gate-registry.md | 声明式注册表 | MOD-INF-015 | — |
+| 门禁注册表Catalogs副本 | docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | 声明式注册表 | MOD-INF-015 | — |
 | 门禁测试(单元) | tests/unit/test_gate_*.py | 单元测试 | — | — |
 | 门禁测试(集成) | tests/integration/test_gate_e2e.py | 集成测试 | — | — |
 | 门禁治理脚本 | scripts/governance/d6_security/validate_gate_discipline.py | 注册一致性校验 | — | script-manifest.yaml |

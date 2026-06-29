@@ -433,7 +433,7 @@ sections:
     - DOC-001
     items:
     - description: GATE门禁ID扩展
-      details: 现有GATE-NN(2位,上限99);扩展为GATE-NNN(3位,上限999);触发阈值80个;当前数量通过gate-registry.md查询
+      details: 现有GATE-NN(2位,上限99);扩展为GATE-NNN(3位,上限999);触发阈值80个;当前数量通过gate_registry.yaml查询
     - description: 领域事件ID扩展
       details: 现有E-{DOMAIN}-NN(2位,上限99/域);扩展为E-{DOMAIN}-NNN(3位,上限999/域);触发阈值80/域
     - description: 数据源ID扩展

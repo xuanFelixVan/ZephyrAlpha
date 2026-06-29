@@ -55,7 +55,7 @@ ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
 OUTPUT_PATH = REPO_ROOT / "src/zephyr/context-engine/architecture-context.json"
 handoff_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
 CAPACITY_SLO_YAML = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
-GATE_REGISTRY_YAML = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
+GATE_REGISTRY_YAML = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
 MODULE_REGISTRY_YAML = REPO_ROOT / "docs/03_modules/module-registry.yaml"
 CAPABILITY_HEATMAP_YAML = (
     REPO_ROOT
@@ -356,7 +356,7 @@ def _extract_capacity_slo(context: dict) -> None:
 
 def _extract_gate_registry(context: dict) -> None:
     if not GATE_REGISTRY_YAML.is_file():
-        context["gate_registry"] = {"error": "未找到 gate-registry.md"}
+        context["gate_registry"] = {"error": "未找到 gate_registry.yaml"}
         return
     data = yaml.safe_load(GATE_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
     gates = data.get("gates") or []

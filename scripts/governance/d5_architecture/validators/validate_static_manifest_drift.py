@@ -54,7 +54,7 @@ is 'entry list + count' must be auto-generated (Type A) or schema input (Type B)
 
 Checks:
   1. script_manifest.yaml -- via generate_script_manifest.py --check
-  2. gate-registry.md    -- via generate_gate_registry.py --check
+  2. gate_registry.yaml    -- via generate_gate_registry.py --check
 
 Usage:
     python validate_static_manifest_drift.py --check

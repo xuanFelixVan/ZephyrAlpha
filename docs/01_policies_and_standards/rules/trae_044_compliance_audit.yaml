@@ -614,7 +614,7 @@ sections:
       - P0违规未修复禁止关闭审计
       - 审计结果必须按GOV-CMP-002 §2-4留痕
       key_decisions:
-      - 门禁数以gate-registry.md的total_gates为准
+      - 门禁数以gate_registry.yaml的total_gates为准
       - catalogs登记表数以registry-master-index.yaml的total_registries为准
       - 不依赖附录中的历史常量
   gov_cmp_003_framework_alignment:
@@ -628,7 +628,7 @@ sections:
       rationale: 对标OWASP ASVS确保安全审计覆盖面
       applies_to: 安全审计维度设计
     - id: ALIGN-OPENSFF
-      statement: OpenSSF Best Practices Badge对标——基础设施安全→D6 11个安全脚本+pre-commit detect-secrets；代码质量→D7 14个质量脚本+ruff；安全审计→本协议全文+脚本数以script-manifest.yaml为准+门禁数以gate-registry.md的total_gates为准；漏洞响应→GOV-CMP-002审计追踪+D6；文档完整性→D8 4个文档同步脚本+D9 2个知识脚本
+      statement: OpenSSF Best Practices Badge对标——基础设施安全→D6 11个安全脚本+pre-commit detect-secrets；代码质量→D7 14个质量脚本+ruff；安全审计→本协议全文+脚本数以script-manifest.yaml为准+门禁数以gate_registry.yaml的total_gates为准；漏洞响应→GOV-CMP-002审计追踪+D6；文档完整性→D8 4个文档同步脚本+D9 2个知识脚本
       rationale: 对标OpenSSF确保开源最佳实践
       applies_to: 合规审计框架设计
     - id: ALIGN-NASA
@@ -645,8 +645,8 @@ sections:
       command: 对比script-manifest.yaml与audit_protocol.md §2
       expected_exit: 0
       on_fail: 补充遗漏脚本引用
-    - step: 门禁覆盖交叉验证——所有门禁在协议中均有引用位置（门禁数以gate-registry.md的total_gates为准）
-      command: 对比gate-registry.md与audit_protocol.md
+    - step: 门禁覆盖交叉验证——所有门禁在协议中均有引用位置（门禁数以gate_registry.yaml的total_gates为准）
+      command: 对比gate_registry.yaml与audit_protocol.md
       expected_exit: 0
       on_fail: 补充遗漏门禁引用
     - step: 登记表覆盖交叉验证——所有登记表（以registry-master-index.yaml的total_registries为准）通过validate_registry_master_index.py等脚本覆盖
@@ -756,14 +756,14 @@ sections:
       - 本协议是全部治理脚本的全覆盖索引（以script-manifest.yaml为准）
       key_decisions:
       - 本文档是：(1)每次审计的执行入口 (2)审计规则/工具/范围/频率的唯一真源 (3)审计结果处置的决策树 (4)全部治理脚本的全覆盖索引（以script-manifest.yaml为准）
-      - 本文档不是：(1)具体审计脚本的实现文档→见scripts/governance/各脚本 (2)门禁策略的详细定义→见gate-registry.md+各策略文件 (3)12维度评分算法→见12-dimension_audit_matrix.md §5
+      - 本文档不是：(1)具体审计脚本的实现文档→见scripts/governance/各脚本 (2)门禁策略的详细定义→见gate_registry.yaml+各策略文件 (3)12维度评分算法→见12-dimension_audit_matrix.md §5
   gov_cmp_003_gate_mapping:
     title: 门禁与维度映射
     section_type: context
     original_rules:
     - GOV-CMP-003
     context:
-      summary: 门禁到审计维度的完整映射关系（门禁数以gate-registry.md的total_gates为准）
+      summary: 门禁到审计维度的完整映射关系（门禁数以gate_registry.yaml的total_gates为准）
       impact_on_rules:
       - GATE-01~03/06/07→D5架构一致性
       - GATE-11/12→D3元数据合规
@@ -777,7 +777,7 @@ sections:
       - GATE-ENUM/FRONTMATTER/DERIVED/DUP→D3
       - VC-A/B/C/D→D12 AI幻觉与治理
       key_decisions:
-      - 门禁数以gate-registry.md的total_gates为准
+      - 门禁数以gate_registry.yaml的total_gates为准
       - G1-G5为运行时门禁（KMS管道），非静态扫描
       - ARG-001~005为纯人工评审门禁
   gov_cmp_003_cross_refs:
@@ -786,7 +786,7 @@ sections:
     original_rules:
     - GOV-CMP-003
     context:
-      summary: 与script-manifest.yaml、gate-registry.md、registry-master-index.yaml的三重交叉验证结果
+      summary: 与script-manifest.yaml、gate_registry.yaml、registry-master-index.yaml的三重交叉验证结果
       impact_on_rules:
       - 脚本覆盖：manifest中所有脚本（以script-manifest.yaml为准）在§2中全覆盖，协议中引用的脚本路径在manifest中存在，P0/P1/P2优先级与manifest一致
       - 门禁覆盖：GATE-01~03/06/07→D5§2.5; GATE-11/12→D3§2.3; GATE-13→D11§2.11; GATE-14→D5§2.5; GATE-15/16→D3+D5; GATE-17→D1§2.1; GATE-18→D7§2.7; GATE-SQ/ADM/COMMIT/IDX→D11+D1; G1-G5→KMS管道§5步骤3; ARG-001~005→架构评审§5步骤3; VC-A/B/C/D→D12§2.12
@@ -803,11 +803,11 @@ sections:
     - description: v1.0.0 初始版本
       details: 初始版本。12维度审计清单+4类审计类型+3级审计等级+5步审计流程+报告模板+闭环规则+专业框架对标
     - description: v1.1.0 深度自审计修复
-      details: 与script-manifest.yaml（91脚本）、gate-registry.md（34门禁）、registry-master-index.yaml（38登记表）完成三重交叉验证。新增30+遗漏脚本引用。新增GATE-13/G1-G5/ARG-001~005/MOD-ADMIT/FACTOR-QUALITY/FILE-OP-SAFE门禁覆盖。新增§2.13跨维度统计表。新增§A交叉验证记录。新增depends_on 9条规则引用。修正script总数从~90到91
+      details: 与script-manifest.yaml（91脚本）、gate_registry.yaml（34门禁）、registry-master-index.yaml（38登记表）完成三重交叉验证。新增30+遗漏脚本引用。新增GATE-13/G1-G5/ARG-001~005/MOD-ADMIT/FACTOR-QUALITY/FILE-OP-SAFE门禁覆盖。新增§2.13跨维度统计表。新增§A交叉验证记录。新增depends_on 9条规则引用。修正script总数从~90到91
     - description: v1.2.0 四重交叉验证修复
       details: 与docs/01_policies_and_standards/下全部37个规则文件逐一核对。depends_on从10条扩展至37条（覆盖PS-STD-000~012、GOV-DOC-001~010、GOV-ARCH-001~005、GOV-MOD-ALPHA_SIGNAL_DOMAIN~004/007、GOV-AI-003~005、GOV-SEC-001~003、GOV-TASK-001/004/005、GOV-CMP-001/002等全部规则）。各维度审计规则栏补充完整路径链接。新增§B规则文件完整路径索引（13类60+文件），支持Vibe Coding场景下AI秒查文件路径
     - description: v1.3.0 内部矛盾修复
-      details: RQ-01审查修复。(1)gov_cmp_003_gate_mapping summary从"32个门禁"改为引用SSoT（门禁数以gate-registry.md的total_gates为准），与gov_cmp_003_change_sync的total_gates:25对齐。(2)gov_cmp_003_cross_validation从"34个门禁"改为引用SSoT（所有门禁，门禁数以gate-registry.md为准）。(3)gov_cmp_003 actions和procedure的QUICK模式从"建议始终包含D3+D5"改为"必须包含D3+D5"，与gov_cmp_003_quick_reference的"必须包含"对齐。(4)全文件硬编码数字（177脚本/34门禁/38登记表）统一改为SSoT引用（script-manifest.yaml/gate-registry.md/registry-master-index.yaml），消除数字漂移风险
+      details: RQ-01审查修复。(1)gov_cmp_003_gate_mapping summary从"32个门禁"改为引用SSoT（门禁数以gate_registry.yaml的total_gates为准），与gov_cmp_003_change_sync的total_gates:25对齐。(2)gov_cmp_003_cross_validation从"34个门禁"改为引用SSoT（所有门禁，门禁数以gate_registry.yaml为准）。(3)gov_cmp_003 actions和procedure的QUICK模式从"建议始终包含D3+D5"改为"必须包含D3+D5"，与gov_cmp_003_quick_reference的"必须包含"对齐。(4)全文件硬编码数字（177脚本/34门禁/38登记表）统一改为SSoT引用（script-manifest.yaml/gate_registry.yaml/registry-master-index.yaml），消除数字漂移风险
   gov_cmp_003_ai_consumability:
     title: AI消费指南
     section_type: context
@@ -838,11 +838,11 @@ sections:
       summary: 协议中的AUTO_SYNC标注——关键常量以对应SSoT为准，不依赖协议内硬编码值
       impact_on_rules:
       - total_scripts:以script-manifest.yaml为准
-      - total_gates:以gate-registry.md的total_gates为准
+      - total_gates:以gate_registry.yaml的total_gates为准
       - total_registries:以registry-master-index.yaml的total_registries为准
       - precommit_hooks:以.pre-commit-config.yaml为准
       key_decisions:
-      - 门禁数以gate-registry.md的total_gates为准
+      - 门禁数以gate_registry.yaml的total_gates为准
       - catalogs登记表数以registry-master-index.yaml的total_registries为准
       - 不依赖附录中的历史常量
   gov_cmp_003_normative_refs:

@@ -184,7 +184,7 @@ registered_ids:
     status: active
   - module_id: PS-REG-014
     title: "GATE 门禁登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
     doc_type: register
     status: active
   - module_id: PS-REG-015
