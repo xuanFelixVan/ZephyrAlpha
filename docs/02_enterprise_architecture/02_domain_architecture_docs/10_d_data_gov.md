@@ -10,10 +10,10 @@ ttl: permanent
 
 # 10_d_data_gov / 数据治理
 
-> **文档作用 / Purpose**: 展示 数据治理（D-DATA_GOV）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 数据治理（D-DATA_GOV）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:21
+> 最后更新: 2026-06-29 14:36:51
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,13 +33,6 @@ ttl: permanent
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数据字典。拆分自原D-DATA域。 | Description | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数据字典。拆分自原D-DATA域。 |
-
-## 模块清单 / Module List
-
-共 0 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -71,9 +64,30 @@ graph TD
 
 无跨域入边依赖 / No cross-domain incoming dependencies
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 数据治理（D-DATA_GOV）的模块分布。共 0 个模块 / 0 modules。
+
+（无模块 / No modules）
+
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
+
+（无模块 / No modules）
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
+
+（无域内依赖 / No internal dependencies）
+
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

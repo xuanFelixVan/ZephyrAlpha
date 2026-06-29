@@ -10,10 +10,10 @@ ttl: permanent
 
 # 17_d_reporting / 报告
 
-> **文档作用 / Purpose**: 展示 报告（D-REPORTING）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 报告（D-REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:22
+> 最后更新: 2026-06-29 14:36:52
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,25 +33,6 @@ ttl: permanent
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 | Description | 绩效报告、风险报告、合规报告、自定义报表。数据呈现层。 |
-
-## 模块清单 / Module List
-
-共 12 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
-| scripts/demos/demo_e2e_pipeline.py |  | production | generated |
-| src/zephyr/reporting/__init__.py |  | prototype | generated |
-| src/zephyr/reporting/__init___from_obs.py |  | prototype | generated |
-| src/zephyr/reporting/_extensions/__init__.py |  | prototype | deprecated |
-| src/zephyr/reporting/analytics_base.py |  | prototype | generated |
-| src/zephyr/reporting/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/reporting/core/__init__.py |  | prototype | deprecated |
-| src/zephyr/reporting/default_attribution_engine.py |  | prototype | generated |
-| src/zephyr/reporting/default_tca_engine.py |  | prototype | generated |
-| src/zephyr/reporting/infrastructure/__init__.py |  | prototype | deprecated |
-| src/zephyr/reporting/models/__init__.py |  | prototype | deprecated |
-| src/zephyr/reporting/services/__init__.py |  | prototype | deprecated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -123,9 +104,88 @@ graph TD
 | D-GOVERNANCE | 2 | import_depends |
 | D-PF_CORE | 1 | import_depends |
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 报告（D-REPORTING）的模块分布。共 12 个模块 / 12 modules。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│              L2 领域层 / Domain Layer (11 modules)               │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/reporting/__init__.py  [prototype]                  │
+│   src/zephyr/reporting/__init___from_obs.py  [prototype]         │
+│   src/zephyr/reporting/_extensions/__init__.py  [prototype]      │
+│   src/zephyr/reporting/analytics_base.py  [prototype]            │
+│   src/zephyr/reporting/api/__init__.py  [prototype]              │
+│   src/zephyr/reporting/core/__init__.py  [prototype]             │
+│   src/zephyr/reporting/default_attribution_engine.py  [protot... │
+│   src/zephyr/reporting/default_tca_engine.py  [prototype]        │
+│   src/zephyr/reporting/infrastructure/__init__.py  [prototype]   │
+│   src/zephyr/reporting/models/__init__.py  [prototype]           │
+│   src/zephyr/reporting/services/__init__.py  [prototype]         │
+└──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                未分类 / Unclassified (1 modules)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   scripts/demos/demo_e2e_pipeline.py  [production]               │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 12 个模块 / 12 modules）。
+
+### L2 领域层 / Domain Layer (11 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/reporting/__init__.py | src/zephyr/reporting/__init__.py | prototype | generated |
+| 2 | src/zephyr/reporting/__init___from_obs.py | src/zephyr/reporting/__init___from_ob... | prototype | generated |
+| 3 | src/zephyr/reporting/_extensions/__init__.py | src/zephyr/reporting/_extensions/__in... | prototype | deprecated |
+| 4 | src/zephyr/reporting/analytics_base.py | src/zephyr/reporting/analytics_base.py | prototype | generated |
+| 5 | src/zephyr/reporting/api/__init__.py | src/zephyr/reporting/api/__init__.py | prototype | deprecated |
+| 6 | src/zephyr/reporting/core/__init__.py | src/zephyr/reporting/core/__init__.py | prototype | deprecated |
+| 7 | src/zephyr/reporting/default_attribution_engine.py | src/zephyr/reporting/default_attribut... | prototype | generated |
+| 8 | src/zephyr/reporting/default_tca_engine.py | src/zephyr/reporting/default_tca_engi... | prototype | generated |
+| 9 | src/zephyr/reporting/infrastructure/__init__.py | src/zephyr/reporting/infrastructure/_... | prototype | deprecated |
+| 10 | src/zephyr/reporting/models/__init__.py | src/zephyr/reporting/models/__init__.py | prototype | deprecated |
+| 11 | src/zephyr/reporting/services/__init__.py | src/zephyr/reporting/services/__init_... | prototype | deprecated |
+
+### 未分类 / Unclassified (1 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | scripts/demos/demo_e2e_pipeline.py | scripts/demos/demo_e2e_pipeline.py | production | generated |
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 1 条 / 1 edges）。按依赖类型分组，使用 → 表示方向。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│        依赖关系图 / Dependency Graph (共 1 条 / 1 edges)         │
+├──────────────────────────────────────────────────────────────────┤
+│   依赖类型数 / Dependency Types: 1                               │
+│   [config_depends]: 1 条 / edges                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [config_depends] (1 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   __init___from_obs.py → __init__.py                             │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

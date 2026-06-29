@@ -10,10 +10,10 @@ ttl: permanent
 
 # 43_d_ml_train / 训练
 
-> **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:22
+> 最后更新: 2026-06-29 14:36:52
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,25 +33,6 @@ ttl: permanent
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 模型性能画像 | Description | 模型性能画像 |
-
-## 模块清单 / Module List
-
-共 12 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
-| docs/03_modules/_cross_layer/model_profiler/blueprint.md | docs__03_modules___cross_layer__model... | design | planned |
-| src/zephyr/ml_train/__init__.py |  | prototype | generated |
-| src/zephyr/ml_train/_extensions/__init__.py |  | prototype | deprecated |
-| src/zephyr/ml_train/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/ml_train/core/__init__.py |  | prototype | deprecated |
-| src/zephyr/ml_train/implementations/__init__.py |  | prototype | generated |
-| src/zephyr/ml_train/implementations/default_inference_engine.py |  | prototype | generated |
-| src/zephyr/ml_train/inference_base.py |  | prototype | generated |
-| src/zephyr/ml_train/infrastructure/__init__.py |  | prototype | deprecated |
-| src/zephyr/ml_train/models/__init__.py |  | prototype | deprecated |
-| src/zephyr/ml_train/services/__init__.py |  | prototype | deprecated |
-| src/zephyr/ml_train/trainer_base.py |  | prototype | generated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -125,9 +106,98 @@ graph TD
 | D-SHARED | 2 | import_depends |
 | D-GOVERNANCE | 1 | data |
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 训练（D-ML_TRAIN）的模块分布。共 12 个模块 / 12 modules。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│             L1 基础层 / Foundation Layer (1 modules)             │
+├──────────────────────────────────────────────────────────────────┤
+│   docs__03_modules___cross_layer__model_profiler__blueprint_m... │
+└──────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│              L2 领域层 / Domain Layer (11 modules)               │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/ml_train/__init__.py  [prototype]                   │
+│   src/zephyr/ml_train/_extensions/__init__.py  [prototype]       │
+│   src/zephyr/ml_train/api/__init__.py  [prototype]               │
+│   src/zephyr/ml_train/core/__init__.py  [prototype]              │
+│   src/zephyr/ml_train/implementations/__init__.py  [prototype]   │
+│   src/zephyr/ml_train/implementations/default_inference_engin... │
+│   src/zephyr/ml_train/inference_base.py  [prototype]             │
+│   src/zephyr/ml_train/infrastructure/__init__.py  [prototype]    │
+│   src/zephyr/ml_train/models/__init__.py  [prototype]            │
+│   src/zephyr/ml_train/services/__init__.py  [prototype]          │
+│   src/zephyr/ml_train/trainer_base.py  [prototype]               │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 12 个模块 / 12 modules）。
+
+### L1 基础层 / Foundation Layer (1 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | docs__03_modules___cross_layer__model... | design | planned |
+
+### L2 领域层 / Domain Layer (11 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/ml_train/__init__.py | src/zephyr/ml_train/__init__.py | prototype | generated |
+| 2 | src/zephyr/ml_train/_extensions/__init__.py | src/zephyr/ml_train/_extensions/__ini... | prototype | deprecated |
+| 3 | src/zephyr/ml_train/api/__init__.py | src/zephyr/ml_train/api/__init__.py | prototype | deprecated |
+| 4 | src/zephyr/ml_train/core/__init__.py | src/zephyr/ml_train/core/__init__.py | prototype | deprecated |
+| 5 | src/zephyr/ml_train/implementations/__init__.py | src/zephyr/ml_train/implementations/_... | prototype | generated |
+| 6 | src/zephyr/ml_train/implementations/default_inference_eng... | src/zephyr/ml_train/implementations/d... | prototype | generated |
+| 7 | src/zephyr/ml_train/inference_base.py | src/zephyr/ml_train/inference_base.py | prototype | generated |
+| 8 | src/zephyr/ml_train/infrastructure/__init__.py | src/zephyr/ml_train/infrastructure/__... | prototype | deprecated |
+| 9 | src/zephyr/ml_train/models/__init__.py | src/zephyr/ml_train/models/__init__.py | prototype | deprecated |
+| 10 | src/zephyr/ml_train/services/__init__.py | src/zephyr/ml_train/services/__init__.py | prototype | deprecated |
+| 11 | src/zephyr/ml_train/trainer_base.py | src/zephyr/ml_train/trainer_base.py | prototype | generated |
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 5 条 / 5 edges）。按依赖类型分组，使用 → 表示方向。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│        依赖关系图 / Dependency Graph (共 5 条 / 5 edges)         │
+├──────────────────────────────────────────────────────────────────┤
+│   依赖类型数 / Dependency Types: 2                               │
+│   [import_depends]: 4 条 / edges                                 │
+│   [config_depends]: 1 条 / edges                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [import_depends] (4 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   inference_base.py → trainer_base.py                            │
+│   default_inference_engine.py → trainer_base.py                  │
+│   default_inference_engine.py → inference_base.py                │
+│   __init__.py → default_inference_engine.py                      │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [config_depends] (1 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   __init__.py → trainer_base.py                                  │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

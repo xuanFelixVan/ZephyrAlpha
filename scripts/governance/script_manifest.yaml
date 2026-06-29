@@ -1788,16 +1788,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: d5_architecture/generators/generate_domain_architecture_diagram.py
-  owner: governance:d5_architecture
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: d5_architecture/generators/generate_domain_dependency_diagram.py
   owner: governance:d5_architecture
   dimensions: []

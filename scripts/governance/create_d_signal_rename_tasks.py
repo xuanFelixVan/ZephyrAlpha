@@ -629,7 +629,7 @@ def _build_main_09_regenerate_verify() -> Task:
         "治根：执行11个生成器命令重新生成13个制品，执行3项验证（DB无残留/新ID存在/grep无旧域名）。\n"
         "施工步骤：\n"
         "【资产索引】python scripts/governance/generate_project_depgraph.py。\n"
-        "【域架构文档】generate_domain_index.py + generate_domain_doc.py --all + generate_domain_architecture_diagram.py --all。\n"
+        "【域架构文档】generate_domain_index.py + generate_domain_doc.py --all（G2+G10 合并：含 Mermaid + ASCII art）。\n"
         "【治理报告】generate_capacity_report.py + generate_design_vs_production.py + generate_constraint_violations.py。\n"
         "【全局架构图】generate_cross_domain_matrix.py + generate_runtime_plane_mapping.py + "
         "generate_capability_heatmap.py + dm200912_rewrite_views.py + dm200913_rewrite_diagrams.py + dm200916_write_direct.py。\n"

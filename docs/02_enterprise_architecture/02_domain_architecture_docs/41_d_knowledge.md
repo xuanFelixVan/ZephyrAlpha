@@ -10,10 +10,10 @@ ttl: permanent
 
 # 41_d_knowledge / 知识管理
 
-> **文档作用 / Purpose**: 展示 知识管理（D-KNOWLEDGE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 知识管理（D-KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:22
+> 最后更新: 2026-06-29 14:36:52
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,27 +33,6 @@ ttl: permanent
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 知识管线(ingest/triage/extract/activate/analyze) | Description | 知识管线(ingest/triage/extract/activate/analyze) |
-
-## 模块清单 / Module List
-
-共 14 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
-| architecture_model/layers/b_vector_memory.yaml |  | production | deprecated |
-| docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | docs__03_modules___domain_knowledge__... | design | planned |
-| docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | docs__03_modules___domain_knowledge__... | design | planned |
-| src/zephyr/knowledge/__init__.py |  | prototype | deprecated |
-| src/zephyr/knowledge/_extensions/__init__.py |  | prototype | deprecated |
-| src/zephyr/knowledge/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/knowledge/core/__init__.py |  | prototype | deprecated |
-| src/zephyr/knowledge/infrastructure/__init__.py |  | prototype | deprecated |
-| src/zephyr/knowledge/models/__init__.py |  | prototype | deprecated |
-| src/zephyr/knowledge/services/__init__.py |  | prototype | deprecated |
-| tests/test_skill_knowledge_base.py |  | prototype | generated |
-| tests/test_vector_memory_root.py |  | prototype | deprecated |
-| tests/unit/vector_memory/__init__.py |  | prototype | deprecated |
-| tests/unit/vector_memory/test_vector_memory.py |  | prototype | generated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -117,9 +96,67 @@ graph TD
 |------|:---:|---------|
 | D-GOVERNANCE | 1 | contract |
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 知识管理（D-KNOWLEDGE）的模块分布。共 14 个模块 / 14 modules。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│            L1 基础层 / Foundation Layer (14 modules)             │
+├──────────────────────────────────────────────────────────────────┤
+│   architecture_model/layers/b_vector_memory.yaml  [production]   │
+│   docs__03_modules___domain_knowledge__knowledge_base__bluepr... │
+│   docs__03_modules___domain_knowledge__vector_memory__bluepri... │
+│   src/zephyr/knowledge/__init__.py  [prototype]                  │
+│   src/zephyr/knowledge/_extensions/__init__.py  [prototype]      │
+│   src/zephyr/knowledge/api/__init__.py  [prototype]              │
+│   src/zephyr/knowledge/core/__init__.py  [prototype]             │
+│   src/zephyr/knowledge/infrastructure/__init__.py  [prototype]   │
+│   src/zephyr/knowledge/models/__init__.py  [prototype]           │
+│   src/zephyr/knowledge/services/__init__.py  [prototype]         │
+│   tests/test_skill_knowledge_base.py  [prototype]                │
+│   tests/test_vector_memory_root.py  [prototype]                  │
+│   tests/unit/vector_memory/__init__.py  [prototype]              │
+│   tests/unit/vector_memory/test_vector_memory.py  [prototype]    │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 14 个模块 / 14 modules）。
+
+### L1 基础层 / Foundation Layer (14 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | architecture_model/layers/b_vector_memory.yaml | architecture_model/layers/b_vector_me... | production | deprecated |
+| 2 | docs/03_modules/_domain_knowledge/knowledge_base/blueprin... | docs__03_modules___domain_knowledge__... | design | planned |
+| 3 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | docs__03_modules___domain_knowledge__... | design | planned |
+| 4 | src/zephyr/knowledge/__init__.py | src/zephyr/knowledge/__init__.py | prototype | deprecated |
+| 5 | src/zephyr/knowledge/_extensions/__init__.py | src/zephyr/knowledge/_extensions/__in... | prototype | deprecated |
+| 6 | src/zephyr/knowledge/api/__init__.py | src/zephyr/knowledge/api/__init__.py | prototype | deprecated |
+| 7 | src/zephyr/knowledge/core/__init__.py | src/zephyr/knowledge/core/__init__.py | prototype | deprecated |
+| 8 | src/zephyr/knowledge/infrastructure/__init__.py | src/zephyr/knowledge/infrastructure/_... | prototype | deprecated |
+| 9 | src/zephyr/knowledge/models/__init__.py | src/zephyr/knowledge/models/__init__.py | prototype | deprecated |
+| 10 | src/zephyr/knowledge/services/__init__.py | src/zephyr/knowledge/services/__init_... | prototype | deprecated |
+| 11 | tests/test_skill_knowledge_base.py | tests/test_skill_knowledge_base.py | prototype | generated |
+| 12 | tests/test_vector_memory_root.py | tests/test_vector_memory_root.py | prototype | deprecated |
+| 13 | tests/unit/vector_memory/__init__.py | tests/unit/vector_memory/__init__.py | prototype | deprecated |
+| 14 | tests/unit/vector_memory/test_vector_memory.py | tests/unit/vector_memory/test_vector_... | prototype | generated |
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
+
+（无域内依赖 / No internal dependencies）
+
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

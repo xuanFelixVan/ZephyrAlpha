@@ -10,10 +10,10 @@ ttl: permanent
 
 # 51_d_simulation / 仿真
 
-> **文档作用 / Purpose**: 展示 仿真（D-SIMULATION）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 仿真（D-SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:22
+> 最后更新: 2026-06-29 14:36:52
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,32 +33,6 @@ ttl: permanent
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 4/150 (正常) | Capacity | 4/150 (正常) |
 | 描述 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 | Description | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
-
-## 模块清单 / Module List
-
-共 19 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
-| src/zephyr/simulation/ | 仿真核心域 | design | planned |
-| src/zephyr/simulation/__init__.py |  | prototype | generated |
-| src/zephyr/simulation/__init___from_resear.py |  | prototype | generated |
-| src/zephyr/simulation/_extensions/__init__.py |  | prototype | deprecated |
-| src/zephyr/simulation/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/simulation/backtest_base.py |  | production | generated |
-| src/zephyr/simulation/backtest_base_from_resear.py |  | prototype | generated |
-| src/zephyr/simulation/core/__init__.py |  | prototype | deprecated |
-| src/zephyr/simulation/default_backtest_engine.py |  | production | generated |
-| src/zephyr/simulation/default_backtest_engine_from_resear.py |  | prototype | generated |
-| src/zephyr/simulation/implementations/__init__.py |  | prototype | generated |
-| src/zephyr/simulation/implementations/__init___from_resear.py |  | prototype | generated |
-| src/zephyr/simulation/implementations/default_experiment_pipeline.py |  | production | generated |
-| src/zephyr/simulation/implementations/default_experiment_pipeline_from_resear.py |  | prototype | generated |
-| src/zephyr/simulation/infrastructure/__init__.py |  | prototype | deprecated |
-| src/zephyr/simulation/models/__init__.py |  | prototype | deprecated |
-| src/zephyr/simulation/pipeline_base.py |  | production | generated |
-| src/zephyr/simulation/pipeline_base_from_resear.py |  | prototype | generated |
-| src/zephyr/simulation/services/__init__.py |  | prototype | deprecated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -151,9 +125,106 @@ graph TD
 | D-GOV_SCRIPTS | 1 | import_depends |
 | D-SHARED | 1 | import_depends |
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 仿真（D-SIMULATION）的模块分布。共 19 个模块 / 19 modules。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│              L2 领域层 / Domain Layer (19 modules)               │
+├──────────────────────────────────────────────────────────────────┤
+│   仿真核心域  [design]                                           │
+│   src/zephyr/simulation/__init__.py  [prototype]                 │
+│   src/zephyr/simulation/__init___from_resear.py  [prototype]     │
+│   src/zephyr/simulation/_extensions/__init__.py  [prototype]     │
+│   src/zephyr/simulation/api/__init__.py  [prototype]             │
+│   src/zephyr/simulation/backtest_base.py  [production]           │
+│   src/zephyr/simulation/backtest_base_from_resear.py  [protot... │
+│   src/zephyr/simulation/core/__init__.py  [prototype]            │
+│   src/zephyr/simulation/default_backtest_engine.py  [production] │
+│   src/zephyr/simulation/default_backtest_engine_from_resear.p... │
+│   src/zephyr/simulation/implementations/__init__.py  [prototype] │
+│   src/zephyr/simulation/implementations/__init___from_resear.... │
+│   src/zephyr/simulation/implementations/default_experiment_pi... │
+│   src/zephyr/simulation/implementations/default_experiment_pi... │
+│   src/zephyr/simulation/infrastructure/__init__.py  [prototype]  │
+│   src/zephyr/simulation/models/__init__.py  [prototype]          │
+│   src/zephyr/simulation/pipeline_base.py  [production]           │
+│   src/zephyr/simulation/pipeline_base_from_resear.py  [protot... │
+│   src/zephyr/simulation/services/__init__.py  [prototype]        │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 19 个模块 / 19 modules）。
+
+### L2 领域层 / Domain Layer (19 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/simulation/ | 仿真核心域 | design | planned |
+| 2 | src/zephyr/simulation/__init__.py | src/zephyr/simulation/__init__.py | prototype | generated |
+| 3 | src/zephyr/simulation/__init___from_resear.py | src/zephyr/simulation/__init___from_r... | prototype | generated |
+| 4 | src/zephyr/simulation/_extensions/__init__.py | src/zephyr/simulation/_extensions/__i... | prototype | deprecated |
+| 5 | src/zephyr/simulation/api/__init__.py | src/zephyr/simulation/api/__init__.py | prototype | deprecated |
+| 6 | src/zephyr/simulation/backtest_base.py | src/zephyr/simulation/backtest_base.py | production | generated |
+| 7 | src/zephyr/simulation/backtest_base_from_resear.py | src/zephyr/simulation/backtest_base_f... | prototype | generated |
+| 8 | src/zephyr/simulation/core/__init__.py | src/zephyr/simulation/core/__init__.py | prototype | deprecated |
+| 9 | src/zephyr/simulation/default_backtest_engine.py | src/zephyr/simulation/default_backtes... | production | generated |
+| 10 | src/zephyr/simulation/default_backtest_engine_from_resear.py | src/zephyr/simulation/default_backtes... | prototype | generated |
+| 11 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | prototype | generated |
+| 12 | src/zephyr/simulation/implementations/__init___from_resea... | src/zephyr/simulation/implementations... | prototype | generated |
+| 13 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | production | generated |
+| 14 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | prototype | generated |
+| 15 | src/zephyr/simulation/infrastructure/__init__.py | src/zephyr/simulation/infrastructure/... | prototype | deprecated |
+| 16 | src/zephyr/simulation/models/__init__.py | src/zephyr/simulation/models/__init__.py | prototype | deprecated |
+| 17 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | production | generated |
+| 18 | src/zephyr/simulation/pipeline_base_from_resear.py | src/zephyr/simulation/pipeline_base_f... | prototype | generated |
+| 19 | src/zephyr/simulation/services/__init__.py | src/zephyr/simulation/services/__init... | prototype | deprecated |
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 10 条 / 10 edges）。按依赖类型分组，使用 → 表示方向。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│       依赖关系图 / Dependency Graph (共 10 条 / 10 edges)        │
+├──────────────────────────────────────────────────────────────────┤
+│   依赖类型数 / Dependency Types: 2                               │
+│   [import_depends]: 7 条 / edges                                 │
+│   [config_depends]: 3 条 / edges                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [import_depends] (7 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   default_backtest_engine.py → __init__.py                       │
+│   default_backtest_engine_f... → __init__.py                     │
+│   __init___from_resear.py → backtest_base.py                     │
+│   __init___from_resear.py → default_backtest_engine.py           │
+│   __init___from_resear.py → pipeline_base.py                     │
+│   default_experiment_pipeli... → __init__.py                     │
+│   default_experiment_pipeli... → __init__.py                     │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                 [config_depends] (3 条 / edges)                  │
+├──────────────────────────────────────────────────────────────────┤
+│   backtest_base_from_resear.py → __init__.py                     │
+│   __init__.py → default_experiment_pipeli...                     │
+│   __init___from_resear.py → __init__.py                          │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

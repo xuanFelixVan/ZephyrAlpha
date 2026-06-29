@@ -10,10 +10,10 @@ ttl: permanent
 
 # 18_d_security / 对抗验证
 
-> **文档作用 / Purpose**: 展示 对抗验证（D-SECURITY）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 对抗验证（D-SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:22
+> 最后更新: 2026-06-29 14:36:52
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,256 +33,6 @@ ttl: permanent
 | 生产态模块 | 132 | Production Modules | 132 |
 | 容量 | 132/150 (正常) | Capacity | 132/150 (正常) |
 | 描述 | 红蓝对抗验证 | Description | 红蓝对抗验证 |
-
-## 模块清单 / Module List
-
-共 243 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
-| src/zephyr/behavioral_audit/__init__.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/__main__.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/_analysis.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/_core.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/_drift.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/_infrastructure.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/_scanners.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/alert_router.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/cold_start.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/data_quality.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/events.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/integration_test_runner.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/reconciler.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/runbook_generator.py |  | prototype | generated |
-| src/zephyr/behavioral_audit/state_machine.py |  | prototype | generated |
-| src/zephyr/security/__init__.py |  | prototype | generated |
-| src/zephyr/security/_extensions/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/access_control/__init__.py |  | production | stable |
-| src/zephyr/security/access_control/a2a_check.py |  | production | stable |
-| src/zephyr/security/access_control/abac_guard.py |  | production | stable |
-| src/zephyr/security/access_control/adversarial_resilience.py |  | production | stable |
-| src/zephyr/security/access_control/agent_creation_policy.py |  | production | stable |
-| src/zephyr/security/access_control/anomaly_detector.py |  | production | stable |
-| src/zephyr/security/access_control/anti_pattern_guard.py |  | production | stable |
-| src/zephyr/security/access_control/approver_check.py |  | production | stable |
-| src/zephyr/security/access_control/asymmetric_audit.py |  | production | stable |
-| src/zephyr/security/access_control/audit_log_guard.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/__init__.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/__main__.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/alignment_syncer.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/all_completer.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/batch_fixer.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/compliance_auditor.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/config_fixer.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/dedup_extractor.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/dep_version_fixer.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/drift_fixer.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/engine.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/escalation_bridge.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/event_hooks.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_budget.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_diff.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_health_check.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_pattern_miner.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_reliability.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_report.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_safety.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/fix_scheduler.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/import_fixer.py |  | prototype | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/interrupt_guard.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/llm_fix_adapter.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/models.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/scaffold_registrar.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/self_heal_agent.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/shadow_workspace.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/state_machine.py |  | production | stable |
-| src/zephyr/security/access_control/auto_fix_engine_03/zombie_cleaner.py |  | production | stable |
-| src/zephyr/security/access_control/auto_maintenance.py |  | production | stable |
-| src/zephyr/security/access_control/blind_spot_tracker.py |  | production | stable |
-| src/zephyr/security/access_control/blueprint_fidelity.py |  | production | stable |
-| src/zephyr/security/access_control/bootstrap_superadmin.py |  | production | stable |
-| src/zephyr/security/access_control/bootstrap_verifier.py |  | production | stable |
-| src/zephyr/security/access_control/build_sanitizer.py |  | production | stable |
-| src/zephyr/security/access_control/cache_invalidation.py |  | production | stable |
-| src/zephyr/security/access_control/canary_rollout_manager.py |  | production | stable |
-| src/zephyr/security/access_control/capability_check.py |  | production | stable |
-| src/zephyr/security/access_control/cascading_failure_isolator.py |  | production | stable |
-| src/zephyr/security/access_control/cold_start_lock.py |  | production | stable |
-| src/zephyr/security/access_control/compliance_matrix.py |  | production | stable |
-| src/zephyr/security/access_control/context_drift_detector.py |  | production | stable |
-| src/zephyr/security/access_control/continuous_verifier.py |  | production | stable |
-| src/zephyr/security/access_control/contract_verifier.py |  | production | stable |
-| src/zephyr/security/access_control/contracts.py |  | production | stable |
-| src/zephyr/security/access_control/cross_cutting.py |  | production | stable |
-| src/zephyr/security/access_control/cross_session_detector.py |  | production | stable |
-| src/zephyr/security/access_control/cybersec_2026_guard.py |  | production | stable |
-| src/zephyr/security/access_control/decision_explainer.py |  | production | stable |
-| src/zephyr/security/access_control/decision_registry.py |  | production | stable |
-| src/zephyr/security/access_control/defense_depth.py |  | production | stable |
-| src/zephyr/security/access_control/dependency_auditor.py |  | production | stable |
-| src/zephyr/security/access_control/derive_rbac_roles.py |  | production | stable |
-| src/zephyr/security/access_control/dry_run.py |  | production | stable |
-| src/zephyr/security/access_control/emergency_override.py |  | production | stable |
-| src/zephyr/security/access_control/engine_degradation.py |  | production | stable |
-| src/zephyr/security/access_control/environment_manager.py |  | production | stable |
-| src/zephyr/security/access_control/escalation_handler.py |  | production | stable |
-| src/zephyr/security/access_control/exceptions.py |  | production | stable |
-| src/zephyr/security/access_control/false_completion_detector.py |  | production | stable |
-| src/zephyr/security/access_control/genesis_bootstrap.py |  | production | stable |
-| src/zephyr/security/access_control/guard_layers.py |  | production | stable |
-| src/zephyr/security/access_control/identity.py |  | production | stable |
-| src/zephyr/security/access_control/immutable_core.py |  | production | stable |
-| src/zephyr/security/access_control/input_guard.py |  | production | stable |
-| src/zephyr/security/access_control/integration.py |  | production | stable |
-| src/zephyr/security/access_control/integrity_self_check.py |  | production | stable |
-| src/zephyr/security/access_control/intent_binder.py |  | production | stable |
-| src/zephyr/security/access_control/key_hierarchy.py |  | production | stable |
-| src/zephyr/security/access_control/kill_switch.py |  | production | stable |
-| src/zephyr/security/access_control/legal_audit_chain.py |  | production | stable |
-| src/zephyr/security/access_control/memory_guard.py |  | production | stable |
-| src/zephyr/security/access_control/memory_provenance_guard.py |  | production | stable |
-| src/zephyr/security/access_control/micro_verifier.py |  | production | stable |
-| src/zephyr/security/access_control/microstructure_defense.py |  | production | stable |
-| src/zephyr/security/access_control/monotonic_clock.py |  | production | stable |
-| src/zephyr/security/access_control/multi_agent_collusion_detector.py |  | production | stable |
-| src/zephyr/security/access_control/native_api_guard.py |  | production | stable |
-| src/zephyr/security/access_control/non_repudiation.py |  | production | stable |
-| src/zephyr/security/access_control/novel_attack_guard.py |  | production | stable |
-| src/zephyr/security/access_control/observability.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/__init__.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/__main__.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/config_loader.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/db.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/decision_table.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/drift_bridge.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/duplicate_detector.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/escalation_bridge.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/feedback_bridge.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/judge.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/kb_bridge.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/mcp_integration.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/models.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/orphan_collector.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/orphan_detector.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/rbac_bridge.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/registration_checker.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/report_generator.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/safety_fence.py |  | production | stable |
-| src/zephyr/security/access_control/orphan_judge/standalone_evaluator.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/swid_tag.py |  | prototype | stable |
-| src/zephyr/security/access_control/orphan_judge/unique_analyzer.py |  | prototype | stable |
-| src/zephyr/security/access_control/output_guard.py |  | production | stable |
-| src/zephyr/security/access_control/path_guard.py |  | production | stable |
-| src/zephyr/security/access_control/permission_guard.py |  | production | stable |
-| src/zephyr/security/access_control/permission_hooks.py |  | production | stable |
-| src/zephyr/security/access_control/permission_mode_manager.py |  | production | stable |
-| src/zephyr/security/access_control/phase_executor.py |  | prototype | stable |
-| src/zephyr/security/access_control/post_action_verifier.py |  | production | stable |
-| src/zephyr/security/access_control/rbac_guard.py |  | production | stable |
-| src/zephyr/security/access_control/replay_attack_guard.py |  | production | stable |
-| src/zephyr/security/access_control/risk_mitigation.py |  | production | stable |
-| src/zephyr/security/access_control/rollback_sandbox.py |  | production | stable |
-| src/zephyr/security/access_control/rule_injection_guard.py |  | production | stable |
-| src/zephyr/security/access_control/secrets_lifecycle.py |  | production | stable |
-| src/zephyr/security/access_control/sequence_guard.py |  | production | stable |
-| src/zephyr/security/access_control/session_concurrency.py |  | production | stable |
-| src/zephyr/security/access_control/session_lifecycle.py |  | production | stable |
-| src/zephyr/security/access_control/shell_dialect_detector.py |  | production | stable |
-| src/zephyr/security/access_control/toctou_guard.py |  | production | stable |
-| src/zephyr/security/access_control/vibe_coding_guard.py |  | production | stable |
-| src/zephyr/security/adversarial_validation/__init__.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/__main__.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/ai_attack_generator.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/async_monitor.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/attack_registry.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/blast_radius.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/bypass_recorder.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/circuit_breaker.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/cleanup.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/cli.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/cold_start.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/constitution_engine.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/constitution_guard.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/convergence_checker.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/defense_runner.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/game_day_runner.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/game_day_scheduler.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/injection_engine.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/mcp_endpoints.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/models.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/scenario_loader.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/steady_state.py |  | prototype | generated |
-| src/zephyr/security/adversarial_validation/validator.py |  | prototype | generated |
-| src/zephyr/security/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/core/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/infrastructure/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/llm_defense/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/llm_defense/llm_security/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/dashboard/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/dashboard/app.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/gateway.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/input_sanitizer.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l1_input.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l3_output.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/patterns/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/patterns/secrets.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/payloads/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/payloads/injection_payloads.yaml |  | production | deprecated |
-| src/zephyr/security/llm_defense/llm_security/payloads/leak_probe_phrases.yaml |  | production | deprecated |
-| src/zephyr/security/llm_defense/llm_security/payloads/red_team_payloads.yaml |  | production | deprecated |
-| src/zephyr/security/llm_defense/llm_security/payloads/tool_call_payloads.yaml |  | production | deprecated |
-| src/zephyr/security/llm_defense/llm_security/process_sandbox.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/protocol.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security/red_team_corpus.yaml |  | production | deprecated |
-| src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py |  | prototype | generated |
-| ...phyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/self_protection/isolation.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py |  | production | generated |
-| src/zephyr/security/llm_defense/llm_security_01/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/behavior_audit_logger.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/context_scanner.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/gateway.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/input_sanitizer.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l0_supply_chain.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l1_input.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l2_prompt_protection.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l2a_process_sandbox.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l3_output.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l4_agent.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l5_resource_protection.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l6_observability.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/layers/l8_multi_agent.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/patterns/__init__.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/patterns/injection_patterns.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/patterns/secrets.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/process_sandbox.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/self_protection/__init__.py |  | prototype | generated |
-| ...r/security/llm_defense/llm_security_01/self_protection/adversarial_mutator.py |  | prototype | generated |
-| ...zephyr/security/llm_defense/llm_security_01/self_protection/code_integrity.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/self_protection/isolation.py |  | prototype | generated |
-| src/zephyr/security/llm_defense/llm_security_01/self_protection/l7_validation.py |  | prototype | generated |
-| ...phyr/security/llm_defense/llm_security_01/self_protection/red_team_scanner.py |  | prototype | generated |
-| src/zephyr/security/models/__init__.py |  | prototype | deprecated |
-| src/zephyr/security/services/__init__.py |  | prototype | deprecated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -1054,9 +804,328 @@ graph TD
 | D-GOV_ENFORCEMENT | 2 | import_depends |
 | D-GOV_DRIFT | 1 | test_depends |
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 对抗验证（D-SECURITY）的模块分布。共 243 个模块 / 243 modules。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│            L1 基础层 / Foundation Layer (243 modules)            │
+├──────────────────────────────────────────────────────────────────┤
+│   src/zephyr/behavioral_audit/__init__.py  [prototype]           │
+│   src/zephyr/behavioral_audit/__main__.py  [prototype]           │
+│   src/zephyr/behavioral_audit/_analysis.py  [prototype]          │
+│   src/zephyr/behavioral_audit/_core.py  [prototype]              │
+│   src/zephyr/behavioral_audit/_drift.py  [prototype]             │
+│   src/zephyr/behavioral_audit/_infrastructure.py  [prototype]    │
+│   src/zephyr/behavioral_audit/_scanners.py  [prototype]          │
+│   src/zephyr/behavioral_audit/alert_router.py  [prototype]       │
+│   src/zephyr/behavioral_audit/cold_start.py  [prototype]         │
+│   src/zephyr/behavioral_audit/data_quality.py  [prototype]       │
+│   src/zephyr/behavioral_audit/events.py  [prototype]             │
+│   src/zephyr/behavioral_audit/integration_test_runner.py  [pr... │
+│   src/zephyr/behavioral_audit/reconciler.py  [prototype]         │
+│   src/zephyr/behavioral_audit/runbook_generator.py  [prototype]  │
+│   src/zephyr/behavioral_audit/state_machine.py  [prototype]      │
+│   src/zephyr/security/__init__.py  [prototype]                   │
+│   src/zephyr/security/_extensions/__init__.py  [prototype]       │
+│   src/zephyr/security/access_control/__init__.py  [production]   │
+│   ...还有 225 个模块 / 225 more modules                          │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 243 个模块 / 243 modules）。
+
+### L1 基础层 / Foundation Layer (243 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 | src/zephyr/behavioral_audit/__init__.py | src/zephyr/behavioral_audit/__init__.py | prototype | generated |
+| 2 | src/zephyr/behavioral_audit/__main__.py | src/zephyr/behavioral_audit/__main__.py | prototype | generated |
+| 3 | src/zephyr/behavioral_audit/_analysis.py | src/zephyr/behavioral_audit/_analysis.py | prototype | generated |
+| 4 | src/zephyr/behavioral_audit/_core.py | src/zephyr/behavioral_audit/_core.py | prototype | generated |
+| 5 | src/zephyr/behavioral_audit/_drift.py | src/zephyr/behavioral_audit/_drift.py | prototype | generated |
+| 6 | src/zephyr/behavioral_audit/_infrastructure.py | src/zephyr/behavioral_audit/_infrastr... | prototype | generated |
+| 7 | src/zephyr/behavioral_audit/_scanners.py | src/zephyr/behavioral_audit/_scanners.py | prototype | generated |
+| 8 | src/zephyr/behavioral_audit/alert_router.py | src/zephyr/behavioral_audit/alert_rou... | prototype | generated |
+| 9 | src/zephyr/behavioral_audit/cold_start.py | src/zephyr/behavioral_audit/cold_star... | prototype | generated |
+| 10 | src/zephyr/behavioral_audit/data_quality.py | src/zephyr/behavioral_audit/data_qual... | prototype | generated |
+| 11 | src/zephyr/behavioral_audit/events.py | src/zephyr/behavioral_audit/events.py | prototype | generated |
+| 12 | src/zephyr/behavioral_audit/integration_test_runner.py | src/zephyr/behavioral_audit/integrati... | prototype | generated |
+| 13 | src/zephyr/behavioral_audit/reconciler.py | src/zephyr/behavioral_audit/reconcile... | prototype | generated |
+| 14 | src/zephyr/behavioral_audit/runbook_generator.py | src/zephyr/behavioral_audit/runbook_g... | prototype | generated |
+| 15 | src/zephyr/behavioral_audit/state_machine.py | src/zephyr/behavioral_audit/state_mac... | prototype | generated |
+| 16 | src/zephyr/security/__init__.py | src/zephyr/security/__init__.py | prototype | generated |
+| 17 | src/zephyr/security/_extensions/__init__.py | src/zephyr/security/_extensions/__ini... | prototype | deprecated |
+| 18 | src/zephyr/security/access_control/__init__.py | src/zephyr/security/access_control/__... | production | stable |
+| 19 | src/zephyr/security/access_control/a2a_check.py | src/zephyr/security/access_control/a2... | production | stable |
+| 20 | src/zephyr/security/access_control/abac_guard.py | src/zephyr/security/access_control/ab... | production | stable |
+| 21 | src/zephyr/security/access_control/adversarial_resilience.py | src/zephyr/security/access_control/ad... | production | stable |
+| 22 | src/zephyr/security/access_control/agent_creation_policy.py | src/zephyr/security/access_control/ag... | production | stable |
+| 23 | src/zephyr/security/access_control/anomaly_detector.py | src/zephyr/security/access_control/an... | production | stable |
+| 24 | src/zephyr/security/access_control/anti_pattern_guard.py | src/zephyr/security/access_control/an... | production | stable |
+| 25 | src/zephyr/security/access_control/approver_check.py | src/zephyr/security/access_control/ap... | production | stable |
+| 26 | src/zephyr/security/access_control/asymmetric_audit.py | src/zephyr/security/access_control/as... | production | stable |
+| 27 | src/zephyr/security/access_control/audit_log_guard.py | src/zephyr/security/access_control/au... | production | stable |
+| 28 | src/zephyr/security/access_control/auto_fix_engine_03/__i... | src/zephyr/security/access_control/au... | prototype | stable |
+| 29 | src/zephyr/security/access_control/auto_fix_engine_03/__m... | src/zephyr/security/access_control/au... | prototype | stable |
+| 30 | src/zephyr/security/access_control/auto_fix_engine_03/ali... | src/zephyr/security/access_control/au... | prototype | stable |
+| 31 | src/zephyr/security/access_control/auto_fix_engine_03/all... | src/zephyr/security/access_control/au... | prototype | stable |
+| 32 | src/zephyr/security/access_control/auto_fix_engine_03/bat... | src/zephyr/security/access_control/au... | prototype | stable |
+| 33 | src/zephyr/security/access_control/auto_fix_engine_03/com... | src/zephyr/security/access_control/au... | prototype | stable |
+| 34 | src/zephyr/security/access_control/auto_fix_engine_03/con... | src/zephyr/security/access_control/au... | prototype | stable |
+| 35 | src/zephyr/security/access_control/auto_fix_engine_03/ded... | src/zephyr/security/access_control/au... | prototype | stable |
+| 36 | src/zephyr/security/access_control/auto_fix_engine_03/dep... | src/zephyr/security/access_control/au... | production | stable |
+| 37 | src/zephyr/security/access_control/auto_fix_engine_03/dri... | src/zephyr/security/access_control/au... | production | stable |
+| 38 | src/zephyr/security/access_control/auto_fix_engine_03/eng... | src/zephyr/security/access_control/au... | production | stable |
+| 39 | src/zephyr/security/access_control/auto_fix_engine_03/esc... | src/zephyr/security/access_control/au... | production | stable |
+| 40 | src/zephyr/security/access_control/auto_fix_engine_03/eve... | src/zephyr/security/access_control/au... | production | stable |
+| 41 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 42 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 43 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 44 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 45 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 46 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 47 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 48 | src/zephyr/security/access_control/auto_fix_engine_03/fix... | src/zephyr/security/access_control/au... | production | stable |
+| 49 | src/zephyr/security/access_control/auto_fix_engine_03/imp... | src/zephyr/security/access_control/au... | prototype | stable |
+| 50 | src/zephyr/security/access_control/auto_fix_engine_03/int... | src/zephyr/security/access_control/au... | production | stable |
+| 51 | src/zephyr/security/access_control/auto_fix_engine_03/llm... | src/zephyr/security/access_control/au... | production | stable |
+| 52 | src/zephyr/security/access_control/auto_fix_engine_03/mod... | src/zephyr/security/access_control/au... | production | stable |
+| 53 | src/zephyr/security/access_control/auto_fix_engine_03/sca... | src/zephyr/security/access_control/au... | production | stable |
+| 54 | src/zephyr/security/access_control/auto_fix_engine_03/sel... | src/zephyr/security/access_control/au... | production | stable |
+| 55 | src/zephyr/security/access_control/auto_fix_engine_03/sha... | src/zephyr/security/access_control/au... | production | stable |
+| 56 | src/zephyr/security/access_control/auto_fix_engine_03/sta... | src/zephyr/security/access_control/au... | production | stable |
+| 57 | src/zephyr/security/access_control/auto_fix_engine_03/zom... | src/zephyr/security/access_control/au... | production | stable |
+| 58 | src/zephyr/security/access_control/auto_maintenance.py | src/zephyr/security/access_control/au... | production | stable |
+| 59 | src/zephyr/security/access_control/blind_spot_tracker.py | src/zephyr/security/access_control/bl... | production | stable |
+| 60 | src/zephyr/security/access_control/blueprint_fidelity.py | src/zephyr/security/access_control/bl... | production | stable |
+| 61 | src/zephyr/security/access_control/bootstrap_superadmin.py | src/zephyr/security/access_control/bo... | production | stable |
+| 62 | src/zephyr/security/access_control/bootstrap_verifier.py | src/zephyr/security/access_control/bo... | production | stable |
+| 63 | src/zephyr/security/access_control/build_sanitizer.py | src/zephyr/security/access_control/bu... | production | stable |
+| 64 | src/zephyr/security/access_control/cache_invalidation.py | src/zephyr/security/access_control/ca... | production | stable |
+| 65 | src/zephyr/security/access_control/canary_rollout_manager.py | src/zephyr/security/access_control/ca... | production | stable |
+| 66 | src/zephyr/security/access_control/capability_check.py | src/zephyr/security/access_control/ca... | production | stable |
+| 67 | src/zephyr/security/access_control/cascading_failure_isol... | src/zephyr/security/access_control/ca... | production | stable |
+| 68 | src/zephyr/security/access_control/cold_start_lock.py | src/zephyr/security/access_control/co... | production | stable |
+| 69 | src/zephyr/security/access_control/compliance_matrix.py | src/zephyr/security/access_control/co... | production | stable |
+| 70 | src/zephyr/security/access_control/context_drift_detector.py | src/zephyr/security/access_control/co... | production | stable |
+| 71 | src/zephyr/security/access_control/continuous_verifier.py | src/zephyr/security/access_control/co... | production | stable |
+| 72 | src/zephyr/security/access_control/contract_verifier.py | src/zephyr/security/access_control/co... | production | stable |
+| 73 | src/zephyr/security/access_control/contracts.py | src/zephyr/security/access_control/co... | production | stable |
+| 74 | src/zephyr/security/access_control/cross_cutting.py | src/zephyr/security/access_control/cr... | production | stable |
+| 75 | src/zephyr/security/access_control/cross_session_detector.py | src/zephyr/security/access_control/cr... | production | stable |
+| 76 | src/zephyr/security/access_control/cybersec_2026_guard.py | src/zephyr/security/access_control/cy... | production | stable |
+| 77 | src/zephyr/security/access_control/decision_explainer.py | src/zephyr/security/access_control/de... | production | stable |
+| 78 | src/zephyr/security/access_control/decision_registry.py | src/zephyr/security/access_control/de... | production | stable |
+| 79 | src/zephyr/security/access_control/defense_depth.py | src/zephyr/security/access_control/de... | production | stable |
+| 80 | src/zephyr/security/access_control/dependency_auditor.py | src/zephyr/security/access_control/de... | production | stable |
+| 81 | src/zephyr/security/access_control/derive_rbac_roles.py | src/zephyr/security/access_control/de... | production | stable |
+| 82 | src/zephyr/security/access_control/dry_run.py | src/zephyr/security/access_control/dr... | production | stable |
+| 83 | src/zephyr/security/access_control/emergency_override.py | src/zephyr/security/access_control/em... | production | stable |
+| 84 | src/zephyr/security/access_control/engine_degradation.py | src/zephyr/security/access_control/en... | production | stable |
+| 85 | src/zephyr/security/access_control/environment_manager.py | src/zephyr/security/access_control/en... | production | stable |
+| 86 | src/zephyr/security/access_control/escalation_handler.py | src/zephyr/security/access_control/es... | production | stable |
+| 87 | src/zephyr/security/access_control/exceptions.py | src/zephyr/security/access_control/ex... | production | stable |
+| 88 | src/zephyr/security/access_control/false_completion_detec... | src/zephyr/security/access_control/fa... | production | stable |
+| 89 | src/zephyr/security/access_control/genesis_bootstrap.py | src/zephyr/security/access_control/ge... | production | stable |
+| 90 | src/zephyr/security/access_control/guard_layers.py | src/zephyr/security/access_control/gu... | production | stable |
+| 91 | src/zephyr/security/access_control/identity.py | src/zephyr/security/access_control/id... | production | stable |
+| 92 | src/zephyr/security/access_control/immutable_core.py | src/zephyr/security/access_control/im... | production | stable |
+| 93 | src/zephyr/security/access_control/input_guard.py | src/zephyr/security/access_control/in... | production | stable |
+| 94 | src/zephyr/security/access_control/integration.py | src/zephyr/security/access_control/in... | production | stable |
+| 95 | src/zephyr/security/access_control/integrity_self_check.py | src/zephyr/security/access_control/in... | production | stable |
+| 96 | src/zephyr/security/access_control/intent_binder.py | src/zephyr/security/access_control/in... | production | stable |
+| 97 | src/zephyr/security/access_control/key_hierarchy.py | src/zephyr/security/access_control/ke... | production | stable |
+| 98 | src/zephyr/security/access_control/kill_switch.py | src/zephyr/security/access_control/ki... | production | stable |
+| 99 | src/zephyr/security/access_control/legal_audit_chain.py | src/zephyr/security/access_control/le... | production | stable |
+| 100 | src/zephyr/security/access_control/memory_guard.py | src/zephyr/security/access_control/me... | production | stable |
+| 101 | src/zephyr/security/access_control/memory_provenance_guar... | src/zephyr/security/access_control/me... | production | stable |
+| 102 | src/zephyr/security/access_control/micro_verifier.py | src/zephyr/security/access_control/mi... | production | stable |
+| 103 | src/zephyr/security/access_control/microstructure_defense.py | src/zephyr/security/access_control/mi... | production | stable |
+| 104 | src/zephyr/security/access_control/monotonic_clock.py | src/zephyr/security/access_control/mo... | production | stable |
+| 105 | src/zephyr/security/access_control/multi_agent_collusion_... | src/zephyr/security/access_control/mu... | production | stable |
+| 106 | src/zephyr/security/access_control/native_api_guard.py | src/zephyr/security/access_control/na... | production | stable |
+| 107 | src/zephyr/security/access_control/non_repudiation.py | src/zephyr/security/access_control/no... | production | stable |
+| 108 | src/zephyr/security/access_control/novel_attack_guard.py | src/zephyr/security/access_control/no... | production | stable |
+| 109 | src/zephyr/security/access_control/observability.py | src/zephyr/security/access_control/ob... | production | stable |
+| 110 | src/zephyr/security/access_control/orphan_judge/__init__.py | src/zephyr/security/access_control/or... | prototype | stable |
+| 111 | src/zephyr/security/access_control/orphan_judge/__main__.py | src/zephyr/security/access_control/or... | prototype | stable |
+| 112 | src/zephyr/security/access_control/orphan_judge/cascade_a... | src/zephyr/security/access_control/or... | production | stable |
+| 113 | src/zephyr/security/access_control/orphan_judge/config_lo... | src/zephyr/security/access_control/or... | prototype | stable |
+| 114 | src/zephyr/security/access_control/orphan_judge/db.py | src/zephyr/security/access_control/or... | prototype | stable |
+| 115 | src/zephyr/security/access_control/orphan_judge/decision_... | src/zephyr/security/access_control/or... | production | stable |
+| 116 | src/zephyr/security/access_control/orphan_judge/deprecati... | src/zephyr/security/access_control/or... | production | stable |
+| 117 | src/zephyr/security/access_control/orphan_judge/drift_bri... | src/zephyr/security/access_control/or... | prototype | stable |
+| 118 | src/zephyr/security/access_control/orphan_judge/duplicate... | src/zephyr/security/access_control/or... | prototype | stable |
+| 119 | src/zephyr/security/access_control/orphan_judge/escalatio... | src/zephyr/security/access_control/or... | prototype | stable |
+| 120 | src/zephyr/security/access_control/orphan_judge/feedback_... | src/zephyr/security/access_control/or... | prototype | stable |
+| 121 | src/zephyr/security/access_control/orphan_judge/judge.py | src/zephyr/security/access_control/or... | production | stable |
+| 122 | src/zephyr/security/access_control/orphan_judge/kb_bridge.py | src/zephyr/security/access_control/or... | prototype | stable |
+| 123 | src/zephyr/security/access_control/orphan_judge/mcp_integ... | src/zephyr/security/access_control/or... | prototype | stable |
+| 124 | src/zephyr/security/access_control/orphan_judge/models.py | src/zephyr/security/access_control/or... | prototype | stable |
+| 125 | src/zephyr/security/access_control/orphan_judge/orphan_co... | src/zephyr/security/access_control/or... | prototype | stable |
+| 126 | src/zephyr/security/access_control/orphan_judge/orphan_de... | src/zephyr/security/access_control/or... | production | stable |
+| 127 | src/zephyr/security/access_control/orphan_judge/rbac_brid... | src/zephyr/security/access_control/or... | prototype | stable |
+| 128 | src/zephyr/security/access_control/orphan_judge/reference... | src/zephyr/security/access_control/or... | prototype | stable |
+| 129 | src/zephyr/security/access_control/orphan_judge/registrat... | src/zephyr/security/access_control/or... | prototype | stable |
+| 130 | src/zephyr/security/access_control/orphan_judge/report_ge... | src/zephyr/security/access_control/or... | prototype | stable |
+| 131 | src/zephyr/security/access_control/orphan_judge/safety_fe... | src/zephyr/security/access_control/or... | production | stable |
+| 132 | src/zephyr/security/access_control/orphan_judge/standalon... | src/zephyr/security/access_control/or... | prototype | stable |
+| 133 | src/zephyr/security/access_control/orphan_judge/swid_tag.py | src/zephyr/security/access_control/or... | prototype | stable |
+| 134 | src/zephyr/security/access_control/orphan_judge/unique_an... | src/zephyr/security/access_control/or... | prototype | stable |
+| 135 | src/zephyr/security/access_control/output_guard.py | src/zephyr/security/access_control/ou... | production | stable |
+| 136 | src/zephyr/security/access_control/path_guard.py | src/zephyr/security/access_control/pa... | production | stable |
+| 137 | src/zephyr/security/access_control/permission_guard.py | src/zephyr/security/access_control/pe... | production | stable |
+| 138 | src/zephyr/security/access_control/permission_hooks.py | src/zephyr/security/access_control/pe... | production | stable |
+| 139 | src/zephyr/security/access_control/permission_mode_manage... | src/zephyr/security/access_control/pe... | production | stable |
+| 140 | src/zephyr/security/access_control/phase_executor.py | src/zephyr/security/access_control/ph... | prototype | stable |
+| 141 | src/zephyr/security/access_control/post_action_verifier.py | src/zephyr/security/access_control/po... | production | stable |
+| 142 | src/zephyr/security/access_control/rbac_guard.py | src/zephyr/security/access_control/rb... | production | stable |
+| 143 | src/zephyr/security/access_control/replay_attack_guard.py | src/zephyr/security/access_control/re... | production | stable |
+| 144 | src/zephyr/security/access_control/risk_mitigation.py | src/zephyr/security/access_control/ri... | production | stable |
+| 145 | src/zephyr/security/access_control/rollback_sandbox.py | src/zephyr/security/access_control/ro... | production | stable |
+| 146 | src/zephyr/security/access_control/rule_injection_guard.py | src/zephyr/security/access_control/ru... | production | stable |
+| 147 | src/zephyr/security/access_control/secrets_lifecycle.py | src/zephyr/security/access_control/se... | production | stable |
+| 148 | src/zephyr/security/access_control/sequence_guard.py | src/zephyr/security/access_control/se... | production | stable |
+| 149 | src/zephyr/security/access_control/session_concurrency.py | src/zephyr/security/access_control/se... | production | stable |
+| 150 | src/zephyr/security/access_control/session_lifecycle.py | src/zephyr/security/access_control/se... | production | stable |
+| 151 | src/zephyr/security/access_control/shell_dialect_detector.py | src/zephyr/security/access_control/sh... | production | stable |
+| 152 | src/zephyr/security/access_control/toctou_guard.py | src/zephyr/security/access_control/to... | production | stable |
+| 153 | src/zephyr/security/access_control/vibe_coding_guard.py | src/zephyr/security/access_control/vi... | production | stable |
+| 154 | src/zephyr/security/adversarial_validation/__init__.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 155 | src/zephyr/security/adversarial_validation/__main__.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 156 | src/zephyr/security/adversarial_validation/ai_attack_gene... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 157 | src/zephyr/security/adversarial_validation/async_monitor.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 158 | src/zephyr/security/adversarial_validation/attack_registr... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 159 | src/zephyr/security/adversarial_validation/blast_radius.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 160 | src/zephyr/security/adversarial_validation/bypass_recorde... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 161 | src/zephyr/security/adversarial_validation/circuit_breake... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 162 | src/zephyr/security/adversarial_validation/cleanup.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 163 | src/zephyr/security/adversarial_validation/cli.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 164 | src/zephyr/security/adversarial_validation/cold_start.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 165 | src/zephyr/security/adversarial_validation/constitution_e... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 166 | src/zephyr/security/adversarial_validation/constitution_g... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 167 | src/zephyr/security/adversarial_validation/convergence_ch... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 168 | src/zephyr/security/adversarial_validation/defense_runner.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 169 | src/zephyr/security/adversarial_validation/game_day_runne... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 170 | src/zephyr/security/adversarial_validation/game_day_sched... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 171 | src/zephyr/security/adversarial_validation/injection_engi... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 172 | src/zephyr/security/adversarial_validation/mcp_endpoints.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 173 | src/zephyr/security/adversarial_validation/models.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 174 | src/zephyr/security/adversarial_validation/scenario_loade... | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 175 | src/zephyr/security/adversarial_validation/steady_state.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 176 | src/zephyr/security/adversarial_validation/validator.py | src/zephyr/security/adversarial_valid... | prototype | generated |
+| 177 | src/zephyr/security/api/__init__.py | src/zephyr/security/api/__init__.py | prototype | deprecated |
+| 178 | src/zephyr/security/core/__init__.py | src/zephyr/security/core/__init__.py | prototype | deprecated |
+| 179 | src/zephyr/security/infrastructure/__init__.py | src/zephyr/security/infrastructure/__... | prototype | deprecated |
+| 180 | src/zephyr/security/llm_defense/__init__.py | src/zephyr/security/llm_defense/__ini... | prototype | deprecated |
+| 181 | src/zephyr/security/llm_defense/llm_security/__init__.py | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 182 | src/zephyr/security/llm_defense/llm_security/behavior_aud... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 183 | src/zephyr/security/llm_defense/llm_security/dashboard/__... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 184 | src/zephyr/security/llm_defense/llm_security/dashboard/ap... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 185 | src/zephyr/security/llm_defense/llm_security/gateway.py | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 186 | src/zephyr/security/llm_defense/llm_security/input_saniti... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 187 | src/zephyr/security/llm_defense/llm_security/layers/__ini... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 188 | src/zephyr/security/llm_defense/llm_security/layers/l0_su... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 189 | src/zephyr/security/llm_defense/llm_security/layers/l1_in... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 190 | src/zephyr/security/llm_defense/llm_security/layers/l2_pr... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 191 | src/zephyr/security/llm_defense/llm_security/layers/l2a_p... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 192 | src/zephyr/security/llm_defense/llm_security/layers/l3_ou... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 193 | src/zephyr/security/llm_defense/llm_security/layers/l4_ag... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 194 | src/zephyr/security/llm_defense/llm_security/layers/l5_re... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 195 | src/zephyr/security/llm_defense/llm_security/layers/l6_da... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 196 | src/zephyr/security/llm_defense/llm_security/layers/l6_ob... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 197 | src/zephyr/security/llm_defense/llm_security/layers/l8_co... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 198 | src/zephyr/security/llm_defense/llm_security/layers/l8_mu... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+| 199 | src/zephyr/security/llm_defense/llm_security/patterns/__i... | src/zephyr/security/llm_defense/llm_s... | prototype | generated |
+| 200 | src/zephyr/security/llm_defense/llm_security/patterns/inj... | src/zephyr/security/llm_defense/llm_s... | production | generated |
+
+> (仅显示前 200 个模块，共 243 个)
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 243 条 / 243 edges）。按依赖类型分组，使用 → 表示方向。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│      依赖关系图 / Dependency Graph (共 243 条 / 243 edges)       │
+├──────────────────────────────────────────────────────────────────┤
+│   依赖类型数 / Dependency Types: 2                               │
+│   [import_depends]: 238 条 / edges                               │
+│   [config_depends]: 5 条 / edges                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                [import_depends] (238 条 / edges)                 │
+├──────────────────────────────────────────────────────────────────┤
+│   __init__.py → __init__.py                                      │
+│   __init__.py → __init__.py                                      │
+│   all_completer.py → models.py                                   │
+│   alignment_syncer.py → models.py                                │
+│   compliance_auditor.py → models.py                              │
+│   batch_fixer.py → fix_budget.py                                 │
+│   batch_fixer.py → fix_reliability.py                            │
+│   batch_fixer.py → models.py                                     │
+│   config_fixer.py → models.py                                    │
+│   dep_version_fixer.py → models.py                               │
+│   engine.py → compliance_auditor.py                              │
+│   engine.py → batch_fixer.py                                     │
+│   engine.py → escalation_bridge.py                               │
+│   engine.py → fix_diff.py                                        │
+│   engine.py → fix_pattern_miner.py                               │
+│   engine.py → fix_budget.py                                      │
+│   engine.py → fix_reliability.py                                 │
+│   engine.py → fix_health_check.py                                │
+│   engine.py → fix_safety.py                                      │
+│   engine.py → fix_report.py                                      │
+│   engine.py → models.py                                          │
+│   engine.py → shadow_workspace.py                                │
+│   engine.py → state_machine.py                                   │
+│   escalation_bridge.py → models.py                               │
+│   drift_fixer.py → models.py                                     │
+│   dedup_extractor.py → models.py                                 │
+│   fix_diff.py → models.py                                        │
+│   fix_pattern_miner.py → models.py                               │
+│   fix_budget.py → models.py                                      │
+│   event_hooks.py → models.py                                     │
+│   fix_reliability.py → models.py                                 │
+│   fix_health_check.py → models.py                                │
+│   fix_safety.py → models.py                                      │
+│   fix_report.py → models.py                                      │
+│   import_fixer.py → models.py                                    │
+│   fix_scheduler.py → models.py                                   │
+│   llm_fix_adapter.py → fix_safety.py                             │
+│   llm_fix_adapter.py → models.py                                 │
+│   scaffold_registrar.py → models.py                              │
+│   self_heal_agent.py → models.py                                 │
+│   shadow_workspace.py → models.py                                │
+│   __init__.py → all_completer.py                                 │
+│   __init__.py → alignment_syncer.py                              │
+│   __init__.py → compliance_auditor.py                            │
+│   __init__.py → batch_fixer.py                                   │
+│   __init__.py → config_fixer.py                                  │
+│   __init__.py → dep_version_fixer.py                             │
+│   __init__.py → engine.py                                        │
+│   __init__.py → escalation_bridge.py                             │
+│   ...还有 189 条 / 189 more edges                                │
+└──────────────────────────────────────────────────────────────────┘
+
+**[config_depends]** (5 条 / edges) — 已达显示上限，省略 / limit reached
+
+> (最多显示前 50 条依赖边，共 243 条)
+
+```
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

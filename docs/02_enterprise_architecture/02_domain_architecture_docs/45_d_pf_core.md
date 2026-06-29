@@ -10,10 +10,10 @@ ttl: permanent
 
 # 45_d_pf_core / 组合核心
 
-> **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 01:07:22
+> 最后更新: 2026-06-29 14:36:52
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -33,57 +33,6 @@ ttl: permanent
 | 生产态模块 | 6 | Production Modules | 6 |
 | 容量 | 6/150 (正常) | Capacity | 6/150 (正常) |
 | 描述 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 | Description | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
-
-## 模块清单 / Module List
-
-共 44 个模块（按路径排序，全部显示）
-
-| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |
-|---------|---------|-----------|---------|
-|  | MT-04 | design | generated |
-|  | D-ALT-DATA-06 | design | generated |
-|  | D-ALT-DATA-07 | design | generated |
-|  | MS-02 | design | generated |
-|  | MT-02 | design | generated |
-|  | MS-04 | design | generated |
-|  | MT-03 | design | generated |
-|  | MS-03 | design | generated |
-|  | MS-05 | design | generated |
-|  | MT-05 | design | generated |
-|  | A-001 | design | stable |
-|  | D-ALT-DATA-03 | design | generated |
-|  | D-ALT-DATA-11 | design | generated |
-|  | D-ALT-DATA-09 | design | generated |
-|  | D-ALT-DATA-10 | design | generated |
-|  | D-ALT-DATA-13 | design | generated |
-|  | D-ALT-DATA-15 | design | generated |
-|  | D-ALT-DATA-17 | design | generated |
-|  | D-ALT-DATA-06扩展 | design | generated |
-|  | D-ALT-DATA-14 | design | generated |
-|  | D-CROSS-ASSET-03 | design | generated |
-|  | D-CROSS-ASSET-13 | design | generated |
-|  | AP-07 | design | generated |
-|  | AP-09 | design | generated |
-|  | RK-10 | design | generated |
-|  | PA-01 | design | generated |
-| src/zephyr/pf_core/__init__.py |  | prototype | generated |
-| src/zephyr/pf_core/_extensions/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_core/analytics_base.py |  | production | generated |
-| src/zephyr/pf_core/api/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_core/compliance_rule.py |  | production | generated |
-| src/zephyr/pf_core/core/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_core/default_attribution_engine.py |  | production | generated |
-| src/zephyr/pf_core/default_tca_engine.py |  | production | generated |
-| src/zephyr/pf_core/infrastructure/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_core/performance_attribution_engine/__init__.py |  | prototype | generated |
-| src/zephyr/pf_core/performance_attribution_report.py |  | production | generated |
-| src/zephyr/pf_core/risk_limits.py |  | prototype | generated |
-| src/zephyr/pf_core/services/__init__.py |  | prototype | deprecated |
-| src/zephyr/pf_core/strategies/__init__.py |  | prototype | generated |
-| src/zephyr/pf_core/strategies/default_equity_strategy.py |  | prototype | generated |
-| src/zephyr/pf_core/strategy_base.py |  | production | generated |
-| src/zephyr/pf_core/strategy_engine/__init__.py |  | prototype | generated |
-| src/zephyr/pf_core/strategy_registry.py |  | prototype | generated |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -209,9 +158,102 @@ graph TD
 |------|:---:|---------|
 | D-GOVERNANCE | 6 | test_depends |
 
+## 架构全景图 / Architecture Overview
+
+> 按 architecture_layer 分层显示 组合核心（D-PF_CORE）的模块分布。共 44 个模块 / 44 modules。
+
+```
+
+┌──────────────────────────────────────────────────────────────────┐
+│              L2 领域层 / Domain Layer (44 modules)               │
+├──────────────────────────────────────────────────────────────────┤
+│   MT-04  [design]                                                │
+│   D-ALT-DATA-06  [design]                                        │
+│   D-ALT-DATA-07  [design]                                        │
+│   MS-02  [design]                                                │
+│   MT-02  [design]                                                │
+│   MS-04  [design]                                                │
+│   MT-03  [design]                                                │
+│   MS-03  [design]                                                │
+│   MS-05  [design]                                                │
+│   MT-05  [design]                                                │
+│   A-001  [design]                                                │
+│   D-ALT-DATA-03  [design]                                        │
+│   D-ALT-DATA-11  [design]                                        │
+│   D-ALT-DATA-09  [design]                                        │
+│   D-ALT-DATA-10  [design]                                        │
+│   D-ALT-DATA-13  [design]                                        │
+│   D-ALT-DATA-15  [design]                                        │
+│   D-ALT-DATA-17  [design]                                        │
+│   ...还有 26 个模块 / 26 more modules                            │
+└──────────────────────────────────────────────────────────────────┘
+
+```
+
+## 模块分层清单 / Module Layered List
+
+> 按 architecture_layer 分组的模块清单（共 44 个模块 / 44 modules）。
+
+### L2 领域层 / Domain Layer (44 modules)
+
+| # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
+|:--:|---------|---------|:---:|:---:|
+| 1 |  | MT-04 | design | generated |
+| 2 |  | D-ALT-DATA-06 | design | generated |
+| 3 |  | D-ALT-DATA-07 | design | generated |
+| 4 |  | MS-02 | design | generated |
+| 5 |  | MT-02 | design | generated |
+| 6 |  | MS-04 | design | generated |
+| 7 |  | MT-03 | design | generated |
+| 8 |  | MS-03 | design | generated |
+| 9 |  | MS-05 | design | generated |
+| 10 |  | MT-05 | design | generated |
+| 11 |  | A-001 | design | stable |
+| 12 |  | D-ALT-DATA-03 | design | generated |
+| 13 |  | D-ALT-DATA-11 | design | generated |
+| 14 |  | D-ALT-DATA-09 | design | generated |
+| 15 |  | D-ALT-DATA-10 | design | generated |
+| 16 |  | D-ALT-DATA-13 | design | generated |
+| 17 |  | D-ALT-DATA-15 | design | generated |
+| 18 |  | D-ALT-DATA-17 | design | generated |
+| 19 |  | D-ALT-DATA-06扩展 | design | generated |
+| 20 |  | D-ALT-DATA-14 | design | generated |
+| 21 |  | D-CROSS-ASSET-03 | design | generated |
+| 22 |  | D-CROSS-ASSET-13 | design | generated |
+| 23 |  | AP-07 | design | generated |
+| 24 |  | AP-09 | design | generated |
+| 25 |  | RK-10 | design | generated |
+| 26 |  | PA-01 | design | generated |
+| 27 | src/zephyr/pf_core/__init__.py | src/zephyr/pf_core/__init__.py | prototype | generated |
+| 28 | src/zephyr/pf_core/_extensions/__init__.py | src/zephyr/pf_core/_extensions/__init... | prototype | deprecated |
+| 29 | src/zephyr/pf_core/analytics_base.py | src/zephyr/pf_core/analytics_base.py | production | generated |
+| 30 | src/zephyr/pf_core/api/__init__.py | src/zephyr/pf_core/api/__init__.py | prototype | deprecated |
+| 31 | src/zephyr/pf_core/compliance_rule.py | src/zephyr/pf_core/compliance_rule.py | production | generated |
+| 32 | src/zephyr/pf_core/core/__init__.py | src/zephyr/pf_core/core/__init__.py | prototype | deprecated |
+| 33 | src/zephyr/pf_core/default_attribution_engine.py | src/zephyr/pf_core/default_attributio... | production | generated |
+| 34 | src/zephyr/pf_core/default_tca_engine.py | src/zephyr/pf_core/default_tca_engine.py | production | generated |
+| 35 | src/zephyr/pf_core/infrastructure/__init__.py | src/zephyr/pf_core/infrastructure/__i... | prototype | deprecated |
+| 36 | src/zephyr/pf_core/performance_attribution_engine/__init_... | src/zephyr/pf_core/performance_attrib... | prototype | generated |
+| 37 | src/zephyr/pf_core/performance_attribution_report.py | src/zephyr/pf_core/performance_attrib... | production | generated |
+| 38 | src/zephyr/pf_core/risk_limits.py | src/zephyr/pf_core/risk_limits.py | prototype | generated |
+| 39 | src/zephyr/pf_core/services/__init__.py | src/zephyr/pf_core/services/__init__.py | prototype | deprecated |
+| 40 | src/zephyr/pf_core/strategies/__init__.py | src/zephyr/pf_core/strategies/__init_... | prototype | generated |
+| 41 | src/zephyr/pf_core/strategies/default_equity_strategy.py | src/zephyr/pf_core/strategies/default... | prototype | generated |
+| 42 | src/zephyr/pf_core/strategy_base.py | src/zephyr/pf_core/strategy_base.py | production | generated |
+| 43 | src/zephyr/pf_core/strategy_engine/__init__.py | src/zephyr/pf_core/strategy_engine/__... | prototype | generated |
+| 44 | src/zephyr/pf_core/strategy_registry.py | src/zephyr/pf_core/strategy_registry.py | prototype | generated |
+
+## 依赖关系图 / Dependency Graph
+
+> 域内模块依赖关系（共 0 条 / 0 edges）。按依赖类型分组，使用 → 表示方向。
+
+（无域内依赖 / No internal dependencies）
+
+
 ## 说明 / Notes
 
 - **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表
-- **生成器 / Generator**: `generate_domain_doc.py`
+- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）
 - **维护方式 / Maintenance**: 自动生成，全景图更新时刷新
 - **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`
+- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / `[prototype]`=原型 / `[unknown]`=未知

@@ -13,12 +13,23 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-"""G2: 从 depgraph.db nodes+edges 表生成指定域的 MD 文档(含模块清单+内嵌Mermaid依赖图)
+"""G2+G10 合并：从 depgraph.db nodes+edges 表生成指定域的 MD 文档
 
-[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4
+包含：
+- 模块清单（按 architecture_layer 分组）
+- 域内依赖图（内嵌 Mermaid，分页显示）
+- 跨域依赖（出边/入边聚合）
+- 架构全景图（ASCII art 分层可视化）
+- 依赖关系图（ASCII art 按 dep_type 分组）
+
+治本合并：消除 generate_domain_architecture_diagram.py 的 4 个 DB 查询函数逐字重复 +
+修复 arch_diagram 孤儿状态（原 reconciler 不调用它，53 个 _architecture.md 已过时）。
+合并后由 GATE-DOMAIN-DOC reconciler 统一维护，ASCII art 也会随 depgraph.db 变更自动刷新。
+
+[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/_working/architecture_diagram_construction_plan.md | §4.4
 [MODULE] scripts.governance.d5_architecture.generators.generate_domain_doc
 [INVARIANTS] 输出幂等(相同输入→相同输出);只读depgraph.db;输出到02_domain_architecture_docs/
-[MODIFY-GUARD] 修改需通过DM-200910任务卡或后续维护任务卡
+[MODIFY-GUARD] 修改需通过DM200910任务卡或后续维护任务卡
 [CONSUMERS] CI自动触发;人工查看02_domain_architecture_docs/{编号}_{domain}.md
 [STABILITY] evolving
 [SAFETY] L
@@ -31,6 +42,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from datetime import datetime
@@ -51,6 +63,23 @@ OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_arch
 
 # 层级排序：编号按此顺序分组分配
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]
+
+# 层级中文显示名映射（合并自 generate_domain_architecture_diagram.py）
+LAYER_DISPLAY = {
+    "L0_infrastructure": "L0 基础设施层 / Infrastructure Layer",
+    "L1_foundation": "L1 基础层 / Foundation Layer",
+    "L1_platform": "L1 平台层 / Platform Layer",
+    "L2_domain": "L2 领域层 / Domain Layer",
+    "L3_application": "L3 应用层 / Application Layer",
+}
+
+# ASCII box 内部宽度（合并自 generate_domain_architecture_diagram.py）
+BOX_WIDTH = 64
+
+
+# ---------------------------------------------------------------------------
+# 数据库查询函数
+# ---------------------------------------------------------------------------
 
 
 def get_domain_info(conn: PgConnExecuteWrapper, domain_id: str) -> dict | None:
@@ -106,7 +135,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
 def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询域内依赖边（from_node 和 to_node 都在本域）。
 
-    返回每条边的两端节点路径、名称、设计成熟度，供 Mermaid 图使用。
+    返回每条边的两端节点路径、名称、设计成熟度，供 Mermaid 图和 ASCII 依赖图使用。
     """
     cur = conn.execute(
         """SELECT e.from_node_id, e.to_node_id, e.dep_type, e.dep_maturity,
@@ -251,6 +280,28 @@ def get_cross_domain_edges_detail(
         )
 
     return outgoing_edges, incoming_edges
+
+
+def build_numbering_map(conn: PgConnExecuteWrapper) -> dict[str, int]:
+    """构建域编号映射：按 layer_id 分组排序，生成 {domain_id: number} 映射。
+
+    层级顺序: L0_infrastructure(01-02) → L1_foundation(03-08) → L1_platform(09-15) → L2_domain(16-53)
+    """
+    cur = conn.execute("SELECT domain_id, layer_id FROM domains")
+    domains = [(r["domain_id"], r["layer_id"] or "") for r in cur.fetchall()]
+
+    def _sort_key(item: tuple[str, str]) -> tuple[int, str]:
+        layer = item[1]
+        layer_idx = LAYER_ORDER.index(layer) if layer in LAYER_ORDER else len(LAYER_ORDER)
+        return (layer_idx, item[0])
+
+    domains.sort(key=_sort_key)
+    return {did: idx + 1 for idx, (did, _) in enumerate(domains)}
+
+
+# ---------------------------------------------------------------------------
+# Mermaid 辅助函数
+# ---------------------------------------------------------------------------
 
 
 def sanitize_node_id(path: str) -> str:
@@ -418,25 +469,334 @@ def generate_internal_mermaid(
     return "\n".join(lines)
 
 
-def build_numbering_map(conn: PgConnExecuteWrapper) -> dict[str, int]:
-    """构建域编号映射：按 layer_id 分组排序，生成 {domain_id: number} 映射。
+# ---------------------------------------------------------------------------
+# ASCII art 辅助函数（合并自 generate_domain_architecture_diagram.py）
+# ---------------------------------------------------------------------------
 
-    层级顺序: L0_infrastructure(01-02) → L1_foundation(03-08) → L1_platform(09-15) → L2_domain(16-53)
+
+def _display_width(s: str) -> int:
+    """计算字符串显示宽度（CJK字符算2，其余算1）。"""
+    width = 0
+    for ch in s:
+        code = ord(ch)
+        if (
+            0x4E00 <= code <= 0x9FFF
+            or 0x3000 <= code <= 0x303F
+            or 0xFF00 <= code <= 0xFFEF
+            or 0x2E80 <= code <= 0x2EFF
+            or 0x3400 <= code <= 0x4DBF
+        ):
+            width += 2
+        else:
+            width += 1
+    return width
+
+
+def _pad_to_width(s: str, width: int) -> str:
+    """按显示宽度右填充空格到指定宽度。"""
+    current = _display_width(s)
+    if current >= width:
+        return s
+    return s + " " * (width - current)
+
+
+def _truncate(text: str, max_len: int = 40) -> str:
+    """截断文本到指定显示宽度，超出则加'...'。"""
+    if not text:
+        return ""
+    if _display_width(text) <= max_len:
+        return text
+    # 按显示宽度截断
+    result = ""
+    w = 0
+    for ch in text:
+        cw = 2 if ord(ch) > 0x7F else 1
+        if w + cw > max_len - 3:
+            break
+        result += ch
+        w += cw
+    return result + "..."
+
+
+def _layer_sort_key(layer: str) -> tuple[int, str]:
+    """层级排序键：LAYER_ORDER 优先，其余按字母序，空值最后。"""
+    if layer in LAYER_ORDER:
+        return (LAYER_ORDER.index(layer), layer)
+    elif layer:
+        return (len(LAYER_ORDER), layer)
+    else:
+        return (len(LAYER_ORDER) + 1, "")
+
+
+def _make_box(title: str, content_lines: list[str], width: int = BOX_WIDTH) -> list[str]:
+    """生成ASCII box（带标题行和内容行）。
+
+    结构:
+    ┌──────┐
+    │ title │  (居中)
+    ├──────┤
+    │ line │  (左对齐)
+    └──────┘
     """
-    cur = conn.execute("SELECT domain_id, layer_id FROM domains")
-    domains = [(r["domain_id"], r["layer_id"] or "") for r in cur.fetchall()]
+    inner = width
+    top = "┌" + "─" * (inner + 2) + "┐"
+    bottom = "└" + "─" * (inner + 2) + "┘"
+    separator = "├" + "─" * (inner + 2) + "┤"
 
-    def _sort_key(item: tuple[str, str]) -> tuple[int, str]:
-        layer = item[1]
-        layer_idx = LAYER_ORDER.index(layer) if layer in LAYER_ORDER else len(LAYER_ORDER)
-        return (layer_idx, item[0])
+    lines = [top]
+    # 标题行（居中）
+    title_w = _display_width(title)
+    if title_w >= inner:
+        title_padded = _truncate(title, inner)
+    else:
+        left_pad = (inner - title_w) // 2
+        title_padded = " " * left_pad + title
+    lines.append(f"│ {_pad_to_width(title_padded, inner)} │")
 
-    domains.sort(key=_sort_key)
-    return {did: idx + 1 for idx, (did, _) in enumerate(domains)}
+    if content_lines:
+        lines.append(separator)
+        for line in content_lines:
+            line_trunc = _truncate(line, inner)
+            lines.append(f"│ {_pad_to_width(line_trunc, inner)} │")
+
+    lines.append(bottom)
+    return lines
+
+
+def _arrow_down(width: int = BOX_WIDTH) -> list[str]:
+    """生成向下箭头（层间连接）。"""
+    center = width // 2 + 2  # +2 for "│ " prefix offset
+    return [" " * center + "│", " " * center + "▼"]
+
+
+def _display_edge_name(name: str, path: str, max_len: int = 28) -> str:
+    """生成依赖边的节点显示名：优先 node_name，否则用 path 的 basename。"""
+    if name:
+        return _truncate(name, max_len)
+    if path:
+        # 用 basename 提高可读性（如 auto_dispatcher.py 而非完整路径）
+        base = path.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+        return _truncate(base, max_len)
+    return "?"
+
+
+# ---------------------------------------------------------------------------
+# ASCII art 章节生成函数（合并自 generate_domain_architecture_diagram.py）
+# ---------------------------------------------------------------------------
+
+
+def generate_ascii_architecture_overview(
+    domain_id: str, domain_name: str, nodes: list[dict]
+) -> str:
+    """生成ASCII架构全景图（按 architecture_layer 分层显示）。
+
+    - 按 architecture_layer 分组节点
+    - 每层一个ASCII box，最多显示20个模块（超过显示前18个+"...还有N个"）
+    - 层与层之间用箭头连接
+    """
+    # 按 architecture_layer 分组
+    layer_groups: dict[str, list[dict]] = {}
+    for n in nodes:
+        layer = n["architecture_layer"] or ""
+        layer_groups.setdefault(layer, []).append(n)
+
+    # 排序层级
+    sorted_layers = sorted(layer_groups.keys(), key=_layer_sort_key)
+
+    if not sorted_layers:
+        return "（无模块 / No modules）\n"
+
+    lines: list[str] = []
+    lines.append("```")
+    lines.append("")
+
+    for idx, layer in enumerate(sorted_layers):
+        layer_nodes = layer_groups[layer]
+        display_name = LAYER_DISPLAY.get(layer, layer) if layer else "未分类 / Unclassified"
+        count = len(layer_nodes)
+
+        # 最多显示20个模块（前18 + "...还有N个"）
+        MAX_PER_LAYER = 20
+        if count <= MAX_PER_LAYER:
+            shown = layer_nodes
+            more_count = 0
+        else:
+            shown = layer_nodes[: MAX_PER_LAYER - 2]
+            more_count = count - (MAX_PER_LAYER - 2)
+
+        # 构建内容行：每行一个模块名
+        content = []
+        for n in shown:
+            name = n["node_name"] or n["path"] or f"node_{n['node_id']}"
+            maturity = n["design_maturity"] or "unknown"
+            content.append(f"  {name}  [{maturity}]")
+
+        if more_count > 0:
+            content.append(f"  ...还有 {more_count} 个模块 / {more_count} more modules")
+
+        title = f"{display_name} ({count} modules)"
+        box_lines = _make_box(title, content)
+
+        # 层间箭头
+        if idx > 0:
+            lines.extend(_arrow_down())
+
+        lines.extend(box_lines)
+
+    lines.append("")
+    lines.append("```")
+    return "\n".join(lines)
+
+
+def generate_module_layered_list(nodes: list[dict]) -> str:
+    """生成模块分层清单表格（按 architecture_layer 分组，中英文表头）。"""
+    # 按 architecture_layer 分组
+    layer_groups: dict[str, list[dict]] = {}
+    for n in nodes:
+        layer = n["architecture_layer"] or ""
+        layer_groups.setdefault(layer, []).append(n)
+
+    sorted_layers = sorted(layer_groups.keys(), key=_layer_sort_key)
+
+    if not sorted_layers:
+        return "（无模块 / No modules）\n"
+
+    lines: list[str] = []
+
+    MAX_PER_LAYER = 200
+    for layer in sorted_layers:
+        layer_nodes = layer_nodes_all = layer_groups[layer]
+        display_name = LAYER_DISPLAY.get(layer, layer) if layer else "未分类 / Unclassified"
+
+        lines.append(f"### {display_name} ({len(layer_nodes_all)} modules)")
+        lines.append("")
+
+        shown = layer_nodes_all[:MAX_PER_LAYER]
+        lines.append(
+            "| # | 模块路径 / Module Path | 模块名称 / Module Name | "
+            "成熟度 / Maturity | 构建状态 / Build Status |"
+        )
+        lines.append("|:--:|---------|---------|:---:|:---:|")
+
+        for i, n in enumerate(shown, 1):
+            path_display = _truncate(n["path"] or "", 60)
+            name_display = _truncate(n["node_name"] or n["path"] or "", 40)
+            lines.append(
+                f"| {i} | {path_display} | {name_display} | "
+                f"{n['design_maturity']} | {n['build_status']} |"
+            )
+
+        if len(layer_nodes_all) > MAX_PER_LAYER:
+            lines.append(f"\n> (仅显示前 {MAX_PER_LAYER} 个模块，共 {len(layer_nodes_all)} 个)")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def generate_ascii_dependency_graph(edges: list[dict]) -> str:
+    """生成ASCII依赖关系图（按 dep_type 分组显示域内依赖边）。
+
+    - 按 dep_type 分组
+    - 最多显示50条依赖边（超过显示前48条+"...还有N条"）
+    - 使用 → 表示方向
+    """
+    if not edges:
+        return "（无域内依赖 / No internal dependencies）\n"
+
+    # 按 dep_type 分组
+    type_groups: dict[str, list[dict]] = {}
+    for e in edges:
+        dtype = e["dep_type"] or "unknown"
+        type_groups.setdefault(dtype, []).append(e)
+
+    # 排序 dep_type（按数量降序）
+    sorted_types = sorted(type_groups.keys(), key=lambda t: -len(type_groups[t]))
+
+    MAX_EDGES = 50
+    total = len(edges)
+
+    lines: list[str] = []
+    lines.append("```")
+    lines.append("")
+
+    # 总览 box
+    overview_title = f"依赖关系图 / Dependency Graph (共 {total} 条 / {total} edges)"
+    overview_content = [f"  依赖类型数 / Dependency Types: {len(sorted_types)}"]
+    for dtype in sorted_types:
+        overview_content.append(
+            f"  [{dtype}]: {len(type_groups[dtype])} 条 / edges"
+        )
+    lines.extend(_make_box(overview_title, overview_content))
+    lines.append("")
+
+    # 分组详情
+    shown_total = 0
+    for dtype in sorted_types:
+        group_edges = type_groups[dtype]
+        remaining = MAX_EDGES - shown_total
+        # 剩余空间不足以显示至少1条边时，输出摘要行而非空box
+        if remaining <= 1:
+            lines.append(f"**[{dtype}]** ({len(group_edges)} 条 / edges) — 已达显示上限，省略 / limit reached")
+            lines.append("")
+            continue
+
+        if len(group_edges) <= remaining:
+            shown = group_edges
+            more = 0
+        else:
+            shown = group_edges[: remaining - 1]
+            more = len(group_edges) - (remaining - 1)
+
+        shown_total += len(shown)
+
+        group_title = f"[{dtype}] ({len(group_edges)} 条 / edges)"
+        content = []
+        for e in shown:
+            from_name = _display_edge_name(e["from_name"], e["from_path"])
+            to_name = _display_edge_name(e["to_name"], e["to_path"])
+            content.append(f"  {from_name} → {to_name}")
+
+        if more > 0:
+            content.append(f"  ...还有 {more} 条 / {more} more edges")
+
+        lines.extend(_make_box(group_title, content))
+        lines.append("")
+
+    if total > MAX_EDGES:
+        lines.append(f"> (最多显示前 {MAX_EDGES} 条依赖边，共 {total} 条)")
+        lines.append("")
+
+    lines.append("```")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# 原子写入（合并自 generate_domain_architecture_diagram.py）
+# ---------------------------------------------------------------------------
+
+
+def _atomic_write(path: Path, content: str) -> None:
+    """原子写入文件（tmp文件 + os.replace）。"""
+    tmp_path = f"{path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(content)
+        os.replace(tmp_path, str(path))
+    except Exception:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+# ---------------------------------------------------------------------------
+# 主文档生成
+# ---------------------------------------------------------------------------
 
 
 def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int = 0) -> str:
-    """生成域文档内容（中英文对照表格 + 内嵌 Mermaid 依赖图）。"""
+    """生成域文档内容（中英文对照表格 + 内嵌 Mermaid 依赖图 + ASCII art 架构图）。"""
     info = get_domain_info(conn, domain_id)
     if not info:
         print(f"ERROR: 域 '{domain_id}' 不存在", file=sys.stderr)
@@ -456,11 +816,13 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     total_outgoing = sum(d["count"] for d in outgoing_agg)
     total_incoming = sum(d["count"] for d in incoming_agg)
 
+    domain_name_zh = get_domain_name_zh(domain_id, info["domain_name"])
+
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
     lines.append("doc_type: architecture_view")
-    lines.append(f"title: {domain_id} {get_domain_name_zh(domain_id, info['domain_name'])}架构文档")
+    lines.append(f"title: {domain_id} {domain_name_zh}架构文档")
     lines.append('version: "1.0"')
     lines.append("status: active")
     lines.append(f"date: {now.split()[0]}")
@@ -468,9 +830,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {get_domain_name_zh(domain_id, info['domain_name'])}")
+    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh}")
     lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 展示 {get_domain_name_zh(domain_id, info['domain_name'])}（{domain_id}）功能域的模块清单、域内依赖关系和跨域依赖关系，供架构审查和域治理参考。")
+    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。")
     lines.append("")
     lines.append("> 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成")
     lines.append(f"> 最后更新: {now}")
@@ -484,7 +846,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("|------|------|-------|-------|")
     lines.append(f"| 编号 | {number:02d} | Number | {number:02d} |")
     lines.append(f"| 域ID | {domain_id} | Domain ID | {domain_id} |")
-    lines.append(f"| 域名称 | {get_domain_name_zh(domain_id, info['domain_name'])} | Domain Name | {info['domain_name']} |")
+    lines.append(f"| 域名称 | {domain_name_zh} | Domain Name | {info['domain_name']} |")
     lines.append(f"| 层级 | {info['layer_id']} | Layer | {info['layer_id']} |")
     lines.append(f"| 模块数 | {len(nodes)} | Module Count | {len(nodes)} |")
     lines.append(f"| 域内依赖 | {len(edges)} | Internal Dependencies | {len(edges)} |")
@@ -499,23 +861,6 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     )
     if info["description"]:
         lines.append(f"| 描述 | {info['description']} | Description | {info['description']} |")
-    lines.append("")
-
-    # 模块清单（中英文对照）
-    lines.append("## 模块清单 / Module List")
-    lines.append("")
-    lines.append(f"共 {len(nodes)} 个模块（按路径排序，全部显示）")
-    lines.append("")
-    lines.append(
-        "| 模块路径 / Module Path | 模块名称 / Module Name | 设计成熟度 / Maturity | 构建状态 / Build Status |"
-    )
-    lines.append("|---------|---------|-----------|---------|")
-    for n in nodes:
-        path_display = n["path"] if len(n["path"]) <= 80 else "..." + n["path"][-77:]
-        name_display = n["node_name"] if len(n["node_name"]) <= 40 else n["node_name"][:37] + "..."
-        lines.append(
-            f"| {path_display} | {name_display} | {n['design_maturity']} | {n['build_status']} |"
-        )
     lines.append("")
 
     # 域内依赖图（内嵌 Mermaid，分页显示全部节点）
@@ -545,7 +890,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             lines.append("")
 
         mermaid_code = generate_internal_mermaid(
-            domain_id, get_domain_name_zh(domain_id, info["domain_name"]), page_nodes, edges, page_outgoing, page_incoming
+            domain_id, domain_name_zh, page_nodes, edges, page_outgoing, page_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
@@ -580,21 +925,63 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("无跨域入边依赖 / No cross-domain incoming dependencies")
     lines.append("")
 
+    # 架构全景图（ASCII art，合并自 generate_domain_architecture_diagram.py）
+    lines.append("## 架构全景图 / Architecture Overview")
+    lines.append("")
+    lines.append(
+        f"> 按 architecture_layer 分层显示 {domain_name_zh}（{domain_id}）的模块分布。"
+        f"共 {len(nodes)} 个模块 / {len(nodes)} modules。"
+    )
+    lines.append("")
+    lines.append(generate_ascii_architecture_overview(domain_id, domain_name_zh, nodes))
+    lines.append("")
+
+    # 模块分层清单（按 architecture_layer 分组，合并自 generate_domain_architecture_diagram.py）
+    lines.append("## 模块分层清单 / Module Layered List")
+    lines.append("")
+    lines.append(
+        f"> 按 architecture_layer 分组的模块清单（共 {len(nodes)} 个模块 / {len(nodes)} modules）。"
+    )
+    lines.append("")
+    lines.append(generate_module_layered_list(nodes))
+
+    # 依赖关系图（ASCII art，合并自 generate_domain_architecture_diagram.py）
+    lines.append("## 依赖关系图 / Dependency Graph")
+    lines.append("")
+    lines.append(
+        f"> 域内模块依赖关系（共 {len(edges)} 条 / {len(edges)} edges）。"
+        "按依赖类型分组，使用 → 表示方向。"
+    )
+    lines.append("")
+    lines.append(generate_ascii_dependency_graph(edges))
+    lines.append("")
+
     # 说明
     lines.append("## 说明 / Notes")
     lines.append("")
     lines.append("- **数据源 / Data Source**: `depgraph.db` 的 `nodes`、`edges`、`domains` 表")
-    lines.append("- **生成器 / Generator**: `generate_domain_doc.py`")
+    lines.append("- **生成器 / Generator**: `generate_domain_doc.py`（G2+G10 合并）")
     lines.append("- **维护方式 / Maintenance**: 自动生成，全景图更新时刷新")
     lines.append("- **文件名规则 / File Naming**: `{编号:02d}_{域ID小写}.md`，如 `16_d_trading.md`")
+    lines.append(
+        "- **图例说明 / Legend**: `[production]`=已上线 / `[design]`=设计中 / "
+        "`[prototype]`=原型 / `[unknown]`=未知"
+    )
     lines.append("")
 
     return "\n".join(lines)
 
 
+# ---------------------------------------------------------------------------
+# CLI 入口
+# ---------------------------------------------------------------------------
+
+
 def main() -> None:
-    """入口：生成指定域的 MD 文档。"""
-    parser = argparse.ArgumentParser(description="G2: 生成域架构文档(含内嵌Mermaid依赖图)")
+    """入口：生成指定域的 MD 文档（含 Mermaid 依赖图 + ASCII art 架构图）。"""
+    parser = argparse.ArgumentParser(
+        description="G2+G10 合并: 生成域架构文档(含内嵌Mermaid依赖图+ASCII art架构图+分层清单+依赖关系图)"
+    )
     parser.add_argument(
         "domain_id",
         type=str,
@@ -628,7 +1015,7 @@ def main() -> None:
                 if content:
                     safe_name = did.replace("-", "_").lower()
                     out_path = output_dir / f"{number:02d}_{safe_name}.md"
-                    out_path.write_text(content, encoding="utf-8", newline="\n")
+                    _atomic_write(out_path, content)
                     print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
                     success += 1
             print(f"\n共生成 {success}/{len(domain_ids)} 个域文档")
@@ -637,11 +1024,18 @@ def main() -> None:
                 f"{numbering_map.get(did, 0):02d}_{did.replace('-', '_').lower()}.md"
                 for did in domain_ids if numbering_map.get(did, 0)
             }
-            deleted = cleanup_stale_files(
+            # 1. 清理非 _architecture 的残留 doc（编号格式不匹配的旧文件）
+            deleted_docs = cleanup_stale_files(
                 output_dir, expected_docs, r'^\d{2}_d_(?!.*_architecture\.md$)[a-z0-9_]+\.md$'
             )
-            if deleted:
-                print(f"[CLEANUP] 删除 {len(deleted)} 个残留文档: {deleted}")
+            if deleted_docs:
+                print(f"[CLEANUP] 删除 {len(deleted_docs)} 个残留文档: {deleted_docs}")
+            # 2. 清理所有过时的 _architecture.md（合并后不再生成这类文件，治本消除孤儿制品）
+            deleted_arch = cleanup_stale_files(
+                output_dir, set(), r'^\d{2}_d_[a-z0-9_]+_architecture\.md$'
+            )
+            if deleted_arch:
+                print(f"[CLEANUP] 删除 {len(deleted_arch)} 个过时 _architecture.md 孤儿制品: {deleted_arch}")
         else:
             # 生成单个域的文档
             number = numbering_map.get(args.domain_id, 0)
@@ -650,7 +1044,7 @@ def main() -> None:
                 sys.exit(2)
             safe_name = args.domain_id.replace("-", "_").lower()
             out_path = output_dir / f"{number:02d}_{safe_name}.md"
-            out_path.write_text(content, encoding="utf-8", newline="\n")
+            _atomic_write(out_path, content)
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
     finally:
         conn.close()
