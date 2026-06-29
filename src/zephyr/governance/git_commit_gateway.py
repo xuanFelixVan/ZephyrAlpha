@@ -537,11 +537,13 @@ class GitCommitGateway:
         abs_files = [os.path.abspath(f) for f in files]
         # 过滤不存在且未 git 跟踪的文件：
         # - 存在的文件 → 保留
-        # - 不存在但 git 跟踪 → 保留（deletion commit 场景，含 staged delete）
+        # - 不存在但 git 跟踪（在 index） → 保留（deletion commit 场景）
+        # - 不存在且是 staged delete（不在 index 但在 HEAD） → 保留
+        #   （git rm / git rm --cached 后文件不在 index，_is_git_tracked 返回 False，
+        #    必须用 _is_staged_delete 检测 HEAD 中是否仍有该文件——这是必需检测
+        #    而非纵深防御，详见 _is_staged_delete docstring）
         # - 不存在且未跟踪 → 丢弃（避免 git add 失败返回 COMMIT_FAILED）
         # 对标 git_commit.py CLI 的 _check_missing 逻辑（line 101-143）
-        # 注意：staged delete 文件（git rm）仍在 index 中（标记为 D 状态），
-        # _is_git_tracked 用 git ls-files --error-unmatch 返回 True。
         existing: list[str] = []
         for f in abs_files:
             if os.path.isfile(f):
@@ -723,15 +725,20 @@ class GitCommitGateway:
     def _is_staged_delete(self, rel_path: str) -> bool:
         """检查相对路径是否为 staged delete（已从 index 移除但仍在 HEAD）。
 
-        根因：``_stage_gitignored_tracked`` 的 ``existing`` 分支对磁盘上仍存在
-        的 gitignored-tracked 文件执行 ``git add -f``。若用户已 ``git rm --cached``
-        暂存删除，``_is_git_tracked`` 返回 False（不在 index）使 ``ex_tracked``
-        为空，理论上不会触发 ``git add -f``。但 ``_is_git_tracked`` 依赖
-        ``git ls-files`` 行为，在 ``:(icase)`` magic 或 git 版本差异下可能
-        不稳定。本方法作为纵深防御，显式识别 staged delete 状态，确保
-        ``git add -f`` 绝不撤销用户的 staged delete。
+        **必需性**（非纵深防御）：``_is_git_tracked`` 用 ``git ls-files
+        --error-unmatch`` 检查 index，对 staged delete 文件（``git rm`` 或
+        ``git rm --cached`` 后）返回 **False**（文件不在 index）。因此凡是要
+        保留/排除 staged delete 文件的场景，必须用本方法补充检测——不是
+        "纵深防御"，而是必需的检测。
 
-        判据：不在 index（``git ls-files --error-unmatch`` 失败）
+        两个调用场景：
+          1. ``commit()`` 方法：``_is_git_tracked(rel) or _is_staged_delete(rel)``
+             — staged delete 文件需要被保留进 existing 列表才能提交删除
+          2. ``_stage_gitignored_tracked``：``_is_git_tracked(rel) and not
+             _is_staged_delete(rel)`` — 跳过 staged delete 文件，避免
+             ``git add -f`` 撤销用户的暂存删除
+
+        判据：不在 index（``_is_git_tracked`` 返回 False）
               AND 在 HEAD（``git cat-file -e HEAD:<path>`` 成功）。
         """
         if self._is_git_tracked(rel_path):
@@ -845,10 +852,10 @@ class GitCommitGateway:
                     return False, f"git rm --cached failed: {r.stderr.strip()}", normal_files
         # 已存在 + 已跟踪 → git add -f（强制暂存修改）
         # 治本（staged delete 保护）：跳过 staged delete 文件——用户已 git rm --cached
-        # 暂存删除，git add -f 会撤销该删除（重置 index 到工作区状态）。_is_git_tracked
-        # 对 staged delete 返回 False（不在 index），理论上已排除，但 _is_staged_delete
-        # 作为纵深防御确保万无一失（防 :(icase) magic 或 git 版本差异下的 _is_git_tracked
-        # 不稳定）。
+        # 暂存删除，git add -f 会撤销该删除（重置 index 到工作区状态）。
+        # _is_git_tracked 对 staged delete 返回 False（不在 index），但本场景需要的是
+        # "在 index 的已存在文件"——staged delete 文件不在 index 不应被 git add -f。
+        # _is_staged_delete 是必需检测（不是纵深防御），详见 _is_staged_delete docstring。
         if existing:
             ex_rels = [
                 os.path.relpath(f, str(self.project_root)).replace("\\", "/")
@@ -1581,6 +1588,9 @@ class GitCommitGateway:
                 line = text[line_start:line_end]
                 if line.lstrip().startswith("#"):
                     continue  # 注释行豁免
+                # Bug3 修复（2026-06-30）：检测器自身豁免——docstring 含反模式字符串用于说明
+                if rel == "src/zephyr/governance/git_commit_gateway.py":
+                    continue  # 检测器自身 docstring 豁免
                 line_no = text.count("\n", 0, m.start()) + 1
                 violations.append(
                     f"{rel}:{line_no} — Path(\"D:\\ZephyrAlpha...\") 硬编码路径，"
@@ -1601,29 +1611,34 @@ class GitCommitGateway:
                 _TARGET_SSOT = {"REPO_ROOT", "DB_PATH"}
                 _imported: dict[str, int] = {}  # symbol -> import 行号
                 _has_star = False
+                # Bug1 修复（2026-06-30）：_shared.constants 是 scripts/ 侧合法导入源
+                # （AGENTS.md §7：scripts/ 包外消费者可用 from _shared.constants import REPO_ROOT）
+                # Bug2 修复（2026-06-30）：真源定义文件 paths.py 自身使用 REPO_ROOT/DB_PATH 是合法的
+                _is_ssot_definition = (rel == "src/zephyr/shared/io/paths.py")
                 for _node in _ast.walk(_tree):
                     if isinstance(_node, _ast.ImportFrom):
                         _mod = _node.module or ""
-                        if _mod == "zephyr.shared.io.paths":
+                        if _mod in ("zephyr.shared.io.paths", "_shared.constants"):
                             if any(_a.name == "*" for _a in _node.names):
                                 _has_star = True
                             for _a in _node.names:
                                 if _a.name != "*":
                                     _imported[_a.asname or _a.name] = _node.lineno
-                for _node in _ast.walk(_tree):
-                    if isinstance(_node, _ast.Name) and _node.id in _TARGET_SSOT:
-                        if _has_star:
-                            continue  # import * 覆盖
-                        if _node.id not in _imported:
-                            violations.append(
-                                f"{rel}:{_node.lineno} — 使用 {_node.id} 但未 "
-                                f"from zephyr.shared.io.paths import {_node.id}"
-                            )
-                        elif _imported[_node.id] > _node.lineno:
-                            violations.append(
-                                f"{rel}:{_node.lineno} — 使用 {_node.id}(行{_node.lineno}) "
-                                f"在 import(行{_imported[_node.id]}) 之前"
-                            )
+                if not _is_ssot_definition:
+                    for _node in _ast.walk(_tree):
+                        if isinstance(_node, _ast.Name) and _node.id in _TARGET_SSOT:
+                            if _has_star:
+                                continue  # import * 覆盖
+                            if _node.id not in _imported:
+                                violations.append(
+                                    f"{rel}:{_node.lineno} — 使用 {_node.id} 但未 "
+                                    f"from zephyr.shared.io.paths import {_node.id}"
+                                )
+                            elif _imported[_node.id] > _node.lineno:
+                                violations.append(
+                                    f"{rel}:{_node.lineno} — 使用 {_node.id}(行{_node.lineno}) "
+                                    f"在 import(行{_imported[_node.id]}) 之前"
+                                )
 
                 # 模式5: sqlite3.connect("绝对路径.db") 硬编码数据库连接（阶段C 治本）
                 # 真源: _shared.constants.DB_PATH / get_depgraph_pg_connection()
