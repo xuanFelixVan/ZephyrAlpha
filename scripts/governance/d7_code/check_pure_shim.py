@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 纯 re-export shim 检测器——防止新 AI 创建纯跨包 re-export shim 文件（重蹈 shared_08 覆辙）
-# [MODIFY-GUARD] 检测逻辑变更 MUST 同步更新 AGENTS.md 对应规则段落
+# [MODIFY-GUARD] 检测逻辑变更无需改 AGENTS.md（AGENTS.md 是指针式描述，指向本文件 is_pure_reexport_shim() 为唯一真源，文档不复制技术细节）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
