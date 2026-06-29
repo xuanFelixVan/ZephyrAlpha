@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_project_path_tree
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] AI cold-start; depgraph generator; migration tasks
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] --write MUST preserve design-state nodes; output MUST be valid YAML
-# [MODIFY-GUARD] depgraph.db
+# [MODIFY-GUARD] PostgreSQL arch_directory_tree
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -32,8 +32,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
-import subprocess
+# 治本（2026-06-29）：删除 import os / import subprocess（锁剧场删除后无使用）。
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -202,7 +201,10 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
         conn.close()
 
 
-DEPGRAPH_DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-29）：删除 DEPGRAPH_DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"。
+# P2 PG 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
+# 此常量指向往已归档 .db 文件，是路径污染源（对齐 apply_depgraph.py / extract_depgraph.py 已治本）。
+# _load_panorama_from_db / _write_tree_to_db 的 db_path 参数保留但 PG 模式下不使用（传 None）。
 
 SCAN_ROOTS = ["src/zephyr", "scripts", "tests", "config", "docs", "data"]
 SKIP_DIRS = {
@@ -251,7 +253,7 @@ def load_domain_derivation() -> dict:
     """
     # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
     try:
-        data = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+        data = _load_panorama_from_db(None)
     except Exception:
         return {}
     if not data:
@@ -301,30 +303,30 @@ def load_domain_derivation() -> dict:
     # These directories contain governance/utility/config files, mapped to closest domain
     PATH_DOMAIN_FALLBACK = {
         # scripts/ — governance/utility scripts
-        "scripts/governance/": "D-GOVERNANCE",
+        "scripts/governance/": "D_GOVERNANCE",
         "scripts/data/": "D_DATA_ENG",
-        "scripts/construction/": "D-GOVERNANCE",
+        "scripts/construction/": "D_GOVERNANCE",
         "scripts/autonomy_core/": "D_AUTONOMY_CORE",
-        "scripts/cleanup/": "D-GOVERNANCE",
+        "scripts/cleanup/": "D_GOVERNANCE",
         "scripts/connect/": "D_INTEGRATION",
         "scripts/database/": "D_DATA_ENG",
-        "scripts/repair/": "D-GOVERNANCE",
-        "scripts/": "D-GOVERNANCE",
+        "scripts/repair/": "D_GOVERNANCE",
+        "scripts/": "D_GOVERNANCE",
         # data/ — data files and databases
         "data/databases/": "D_DATA_ENG",
-        "data/asset_index/": "D-GOVERNANCE",
-        "data/metrics/": "D-GOVERNANCE",
-        "data/reports/": "D-GOVERNANCE",
+        "data/asset_index/": "D_GOVERNANCE",
+        "data/metrics/": "D_GOVERNANCE",
+        "data/reports/": "D_GOVERNANCE",
         "data/": "D_DATA_ENG",
         # docs/ — governance documentation
-        "docs/03_modules/": "D-GOVERNANCE",
-        "docs/01_policies_and_standards/": "D-GOVERNANCE",
-        "docs/02_enterprise_architecture/": "D-GOVERNANCE",
-        "docs/": "D-GOVERNANCE",
+        "docs/03_modules/": "D_GOVERNANCE",
+        "docs/01_policies_and_standards/": "D_GOVERNANCE",
+        "docs/02_enterprise_architecture/": "D_GOVERNANCE",
+        "docs/": "D_GOVERNANCE",
         # tests/ — quality assurance
-        "tests/": "D-GOVERNANCE",
+        "tests/": "D_GOVERNANCE",
         # config/ — configuration
-        "config/": "D-GOVERNANCE",
+        "config/": "D_GOVERNANCE",
         # agent_spec/ — agent specifications
         "agent_spec/": "D_AUTONOMY_CORE",
     }
@@ -394,7 +396,7 @@ def _extract_path_section_domains(section_data: dict, section_name: str, derivat
         # Load domain IDs from panorama domains section
         panorama = {}
         try:
-            panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH) or {}
+            panorama = _load_panorama_from_db(None) or {}
         except Exception:
             pass
         domains_data = panorama.get("domains", {})
@@ -622,26 +624,19 @@ def _mark_pending_deletion(tree: dict, target_path: str) -> bool:
 
 
 def cmd_write() -> None:
-    """Write tree section to panorama YAML, preserving design-state nodes.
+    """Write tree to PostgreSQL arch_directory_tree, preserving design-state nodes.
 
-    Concurrent strategy: compute first (no lock), then lock only for read-merge-write.
-    This allows multiple AI sessions to compute in parallel, only serializing the
-    final write step (which is fast).
+    治本（2026-06-29）：删除文件锁剧场（对齐 apply_depgraph.py / sync_yaml_to_depgraph.py）。
+    P2 PG 迁移后 depgraph 已迁至 PostgreSQL，PG MVCC 事务（autocommit=False）提供原子性，
+    文件锁对 PG 写无保护作用（锁键指向往已归档 .db 文件，语义悬空）。
+    迁移文档 §7 漏删此脚本的锁，本次治本补齐。
     """
-    print("[DEPRECATED] --write is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
-
-    # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
-    # === PHASE 1: Compute (no lock needed) ===
-    # These steps are read-only or pure computation — safe to run in parallel.
-
-    # Load domain derivation (reads panorama path sections — read-only)
+    # === PHASE 1: Compute (read-only / pure computation) ===
     domain_derivation = load_domain_derivation()
     print(f"[PATH-TREE] Loaded {len(domain_derivation)} domain derivation entries")
 
-    # Generate new tree from disk scan (pure computation)
     new_tree = generate_tree(domain_derivation)
 
-    # Load migration registry for pending_deletion marking (read-only)
     migration_registry_path = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
     pending_entries = []
     if migration_registry_path.exists():
@@ -661,112 +656,49 @@ def cmd_write() -> None:
         except Exception:
             pass
 
-    print("[PATH-TREE] Computation done. Ready to write (lock needed).")
+    print("[PATH-TREE] Computation done. Ready to write.")
 
-    # === PHASE 2: Lock → Read → Merge → Write → Unlock ===
-    # Only this phase needs the lock. It's fast (read YAML + merge dicts + write YAML).
-
-    session_id = os.environ.get("ZEPHYR_SESSION_ID", f"path-tree-{os.getpid()}")
-    lock_acquired = False
-    lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
-
-    # Acquire lock with retry
-    max_retries = 3
-    retry_delay = 5
-    for attempt in range(1, max_retries + 1):
-        if not lock_script.exists():
-            break
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(lock_script),
-                "acquire",
-                str(DEPGRAPH_DB_PATH),
-                session_id,
-                "--task",
-                "path-tree generation",
-            ],
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode == 0:
-            lock_acquired = True
-            print(f"[LOCK] Acquired write lock on panorama (owner={session_id})")
-            break
-        if attempt < max_retries:
-            print(
-                f"[LOCK] Panorama locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s..."
-            )
-            import time
-
-            time.sleep(retry_delay)
-        else:
-            print(f"[LOCKED] Cannot acquire lock after {max_retries} attempts: {result.stdout.strip()}")
-            print("         Another AI session is writing. Retry later.")
-            sys.exit(1)
-
+    # === PHASE 2: Read → Merge → Write (PG MVCC 保护，无需文件锁) ===
     try:
-        # Read latest panorama (under lock — guaranteed latest state)
-        try:
-            panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH)
-        except Exception as e:
-            print(f"[FAIL] Cannot load panorama: {e}")
-            sys.exit(1)
+        panorama = _load_panorama_from_db(None)
+    except Exception as e:
+        print(f"[FAIL] Cannot load panorama: {e}")
+        sys.exit(1)
 
-        if not panorama:
-            print("[FAIL] Panorama is empty")
-            sys.exit(1)
+    if not panorama:
+        print("[FAIL] Panorama is empty")
+        sys.exit(1)
 
-        # Merge: new operational tree + existing design-state nodes
-        old_tree = panorama.get("tree", {})
-        merged_tree = merge_with_design_nodes(new_tree, old_tree)
+    old_tree = panorama.get("tree", {})
+    merged_tree = merge_with_design_nodes(new_tree, old_tree)
+    _fix_all_dict_lifecycle(merged_tree)
 
-        # Fix any remaining dict lifecycle values
-        _fix_all_dict_lifecycle(merged_tree)
+    pending_count = 0
+    for old_p in pending_entries:
+        if _mark_pending_deletion(merged_tree, old_p):
+            pending_count += 1
+    if pending_count:
+        print(f"[PATH-TREE] Marked {pending_count} nodes as pending_deletion")
 
-        # Mark pending_deletion
-        pending_count = 0
-        for old_p in pending_entries:
-            if _mark_pending_deletion(merged_tree, old_p):
-                pending_count += 1
-        if pending_count:
-            print(f"[PATH-TREE] Marked {pending_count} nodes as pending_deletion")
+    total_files = 0
+    total_dirs = 0
+    for root_name, subtree in merged_tree.items():
+        if isinstance(subtree, dict):
+            fc, dc = count_tree(subtree)
+            total_files += fc
+            total_dirs += dc
 
-        # Count
-        total_files = 0
-        total_dirs = 0
-        for root_name, subtree in merged_tree.items():
-            if isinstance(subtree, dict):
-                fc, dc = count_tree(subtree)
-                total_files += fc
-                total_dirs += dc
+    _write_tree_to_db(None, merged_tree, total_files, total_dirs)
 
-        # Update panorama — write merged tree to DB
-        panorama["tree"] = merged_tree
-        panorama["meta"]["generated_at"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-        panorama["meta"]["total_files"] = total_files
-        panorama["meta"]["total_directories"] = total_dirs
-
-        # Write tree to DB (update arch_directory_tree)
-        _write_tree_to_db(DEPGRAPH_DB_PATH, merged_tree, total_files, total_dirs)
-
-        print(f"[OK] Tree written to {DEPGRAPH_DB_PATH}")
-        print(f"     Files: {total_files} | Directories: {total_dirs}")
-    finally:
-        if lock_acquired and lock_script.exists():
-            subprocess.run(
-                [sys.executable, str(lock_script), "release", str(DEPGRAPH_DB_PATH), session_id],
-                capture_output=True,
-                text=True,
-            )
-            print("[LOCK] Released write lock on panorama")
+    print("[OK] Tree written to PostgreSQL arch_directory_tree")
+    print(f"     Files: {total_files} | Directories: {total_dirs}")
 
 
 def cmd_check() -> None:
     """Check if panorama tree is in sync with disk."""
     # P2迁移后：depgraph 已迁移到 PostgreSQL，不再检查 .db 文件是否存在
     try:
-        panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+        panorama = _load_panorama_from_db(None)
     except Exception as e:
         print(f"[FAIL] Cannot load panorama: {e}")
         sys.exit(1)
@@ -805,89 +737,21 @@ def cmd_check() -> None:
         print("[OK] Panorama tree is in sync with disk.")
 
 
-def cmd_write_db(db_path: str) -> None:
-    """Write tree to PostgreSQL database (DM-100025; P2迁移后 depgraph 已迁至 PG)"""
-    print(f"[PATH-TREE-DB] Writing to {db_path}...")
-
-    domain_derivation = load_domain_derivation()
-    tree = generate_tree(domain_derivation)
-
-    conn = get_depgraph_pg_connection(autocommit=False)
-    cursor = conn.cursor()
-
-    try:
-        # Clear existing operational data (preserve design-state)
-        cursor.execute("DELETE FROM arch_directory_tree WHERE COALESCE(design_maturity, '') != 'design'")
-
-        def insert_tree_node(path: str, node_data: dict, parent_path: str = None):
-            """Recursively insert tree nodes"""
-            state = node_data.get("lifecycle", "operational")
-
-            # Skip design-state nodes (already in DB)
-            if state == "design":
-                return
-
-            cursor.execute(
-                """INSERT INTO arch_directory_tree
-                (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
-                 change_policy, modification_permission, build_status, last_scanned)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (path) DO NOTHING""",
-                (
-                    path,
-                    parent_path,
-                    "directory" if "children" in node_data else "file",
-                    node_data.get("__domain_id__", ""),
-                    state,
-                    node_data.get("__blueprint_id__", ""),
-                    node_data.get("__stability__", ""),
-                    node_data.get("__ai_autonomy__", ""),
-                    "unbuilt",
-                    datetime.now(UTC).isoformat(),
-                ),
-            )
-
-            # Recurse into children
-            for child_name, child_data in node_data.get("children", {}).items():
-                child_path = f"{path}/{child_name}" if path else child_name
-                insert_tree_node(child_path, child_data, path)
-
-        # Insert all root nodes
-        for root_name, root_data in tree.items():
-            insert_tree_node(root_name, root_data)
-
-        conn.commit()
-        count = cursor.execute("SELECT COUNT(*) AS cnt FROM arch_directory_tree").fetchone()["cnt"]
-        print(f"[PATH-TREE-DB] Inserted {count} directory tree nodes")
-
-    except Exception as e:
-        conn.rollback()
-        print(f"[PATH-TREE-DB] ERROR: {e}")
-        raise
-    finally:
-        conn.close()
-
-
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate panorama tree section")
+    parser = argparse.ArgumentParser(description="Generate panorama tree section (PostgreSQL arch_directory_tree)")
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "--write", action="store_true", help="[DEPRECATED] Write tree to panorama YAML (DB is now the SSoT)"
+        "--write", action="store_true", help="Write tree to PostgreSQL arch_directory_tree (preserves design-state rows)"
     )
     group.add_argument("--check", action="store_true", help="CI mode: exit 1 if mismatch")
-    parser.add_argument("--output-db", type=str, default="", help="Write tree to PostgreSQL database (DM-100025; P2迁移后 depgraph 已迁至 PG)")
     args = parser.parse_args()
 
     if args.check:
         cmd_check()
-    elif args.output_db:
-        cmd_write_db(args.output_db)
     elif args.write:
         cmd_write()
     else:
-        print(
-            "[DEPRECATED] Default stdout YAML output is deprecated. DB is now the SSoT. YAML output will be removed in a future version."
-        )
+        # 默认输出 YAML 到 stdout（调试/预览用，不写 DB）
         domain_derivation = load_domain_derivation()
         tree = generate_tree(domain_derivation)
         print(yaml.dump({"tree": tree}, allow_unicode=True, default_flow_style=False, sort_keys=False))

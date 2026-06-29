@@ -2,7 +2,7 @@
 """
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
 # [MODULE] scripts.governance.generate_project_depgraph
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.__init__
 # [CONSUMERS] CI pipeline; governance automation; system-dependency-map.md
 # [STARTUP] manual
@@ -204,7 +204,7 @@ def normalize_path(path: str) -> str:
     # 校验非法字符
     if _ILLEGAL_PATH_PATTERNS.search(path):
         return ""
-    # 剥离域ID前缀子路径（如 D-PF_CORE/xxx → xxx）
+    # 剥离域ID前缀子路径（如 D_PF_CORE/xxx → xxx）
     if path.startswith("D-") and "/" in path:
         path = path.split("/", 1)[1]
     return path.strip()
@@ -2517,22 +2517,6 @@ def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
         return new_data
 
 
-def acquire_lock(lock_file: str, session_id: str) -> bool:
-    """DM-3003: 获取文件锁（通过lock_files.py跨进程互斥）
-
-    P2 PG 迁移：PG 使用 MVCC，无需文件锁。本函数保留为 no-op（返回 True）以维持调用结构。
-    """
-    return True
-
-
-def release_lock(lock_file: str, session_id: str) -> None:
-    """DM-3003: 释放文件锁
-
-    P2 PG 迁移：PG 使用 MVCC，无需文件锁。本函数保留为 no-op 以维持调用结构。
-    """
-    pass
-
-
 def resolve_conflicts(cur):
     """DM-3011: 显式冲突解决函数（设计态优先）
 
@@ -2589,20 +2573,16 @@ def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch
 
 
 def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None):
-    """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移"""
+    """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移
+
+    治本（2026-06-29）：删除文件锁调用（对齐 apply_depgraph.py / sync_yaml_to_depgraph.py）。
+    P2 PG 迁移后 PG MVCC 事务（autocommit=False）提供原子性，无需文件锁。
+    原 acquire_lock/release_lock no-op 桩已删除，调用点同步清除（消除误导日志）。
+    """
     from datetime import datetime
 
-    print(f"[DEPGRAPH-DB] Writing to {db_path}...")
+    print(f"[DEPGRAPH-DB] Writing to PostgreSQL depgraph...")
     conn = None  # DM-3004: 预初始化None，防御性编程
-
-    # DM-3003: 获取写锁，防止多进程并发写入depgraph.db
-    lock_file = db_path + ".lock"
-    session_id = os.environ.get("ZEPHYR_SESSION_ID", f"depgraph-{os.getpid()}")
-    lock_acquired = acquire_lock(lock_file, session_id)
-    if lock_acquired:
-        print(f"[LOCK] Acquired write lock on depgraph.db (owner={session_id})")
-    else:
-        print("[LOCK] Warning: Could not acquire lock, proceeding without lock")
 
     try:
         conn = get_depgraph_pg_connection(autocommit=False)  # P2 PG 迁移
@@ -2971,10 +2951,6 @@ def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None
     finally:
         if conn is not None:  # DM-3004: is not None守卫
             conn.close()
-        # DM-3003: 释放写锁
-        if lock_acquired:
-            release_lock(lock_file, session_id)
-            print("[LOCK] Released write lock on depgraph.db")
 
 
 # ============================================================================
@@ -3330,25 +3306,20 @@ def main():
     # 步骤2: 加载设计态数据（G1修复：从DB加载，不再依赖YAML）
     existing_design_nodes = {}
     design_state = None  # DM-3013: 初始化design_state，供write_depgraph_to_db使用
-    db_path_for_design = ""
-    if args.output_db:
-        db_path_for_design = args.output_db if os.path.isabs(args.output_db) else str(PROJECT_ROOT / args.output_db)
-    else:
-        # 默认DB路径（dry-run和非dry-run都从默认DB加载设计态）
-        db_path_for_design = str(PROJECT_ROOT / "data" / "databases" / "depgraph.db")
-
-    if db_path_for_design and os.path.exists(db_path_for_design):
-        design_state = load_design_state_from_db(db_path_for_design)
+    # 治本（2026-06-29）：删除 db_path_for_design + os.path.exists 守卫（幽灵完成处理）。
+    # P2 PG 迁移后 .db 文件不存在，守卫恒 False → design_state 永远 None → 设计态不被加载/保护。
+    # PG 模式下直接调 load_design_state_from_db(None)（参数未用，内部走 get_depgraph_pg_connection）。
+    try:
+        design_state = load_design_state_from_db(None)
         existing_design_nodes = design_state["nodes"]
         print(
-            f"[DEPGRAPH] G1修复: 从DB加载 {len(existing_design_nodes)} 个设计态节点, "
+            f"[DEPGRAPH] G1修复: 从PG加载 {len(existing_design_nodes)} 个设计态节点, "
             f"{len(design_state['edges'])} 条设计态边, "
             f"{len(design_state['arch'])} 条设计态arch记录"
         )
-    else:
-        # 兼容旧YAML加载逻辑（已废弃）
+    except Exception as e:
+        print(f"[DEPGRAPH] 警告: 从PG加载设计态失败: {e}，回退到YAML兼容逻辑")
         design_state = None
-        preloaded_old_data = None
         if args.output_yaml:
             out_path = PROJECT_ROOT / args.output_yaml
             if out_path.exists():
@@ -3440,14 +3411,18 @@ def main():
     depgraph = build_depgraph(files_data, functional_domains, domain_derivation, existing_design_nodes, granularity)
 
     # P1修复: 恢复运营态(production)节点的手动维护元数据(防重新生成丢失)
-    if db_path_for_design and os.path.exists(db_path_for_design):
-        production_meta = load_production_state_from_db(db_path_for_design)
+    # 治本（2026-06-29）：删除 os.path.exists 守卫（同 design_state 幽灵完成处理）。
+    # P2 PG 迁移后 .db 文件不存在，守卫恒 False → production_meta 永不加载（幽灵完成）。
+    try:
+        production_meta = load_production_state_from_db(None)
         if production_meta:
             protected_cnt = apply_production_metadata_protection(depgraph.get("nodes", {}), production_meta)
             print(
-                f"[DEPGRAPH] P1修复: 加载 {len(production_meta)} 个运营态节点元数据, "
+                f"[DEPGRAPH] P1修复: 从PG加载 {len(production_meta)} 个运营态节点元数据, "
                 f"恢复保护 {protected_cnt} 个重建节点"
             )
+    except Exception as e:
+        print(f"[DEPGRAPH] 警告: 从PG加载运营态元数据失败: {e}")
 
     # Enrich edges with semantic fields from cross-module-dependency-registry
     print("[DEPGRAPH] Loading cross-module-dependency-registry...")
