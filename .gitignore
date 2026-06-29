@@ -112,9 +112,9 @@ Thumbs.db
 *.tmp.md
 *.tmp.json
 
-# Root scratch from ad-hoc YAML/tooling (ZERO-RESIDUE; must not be committed)
-/_temp*.yaml
-/_temp*.py
+# Scratch from ad-hoc YAML/tooling (ZERO-RESIDUE; 无前导/匹配所有目录，治本 2026-06-29)
+_temp*.yaml
+_temp*.py
 
 # Temp and backup
 *.bak
@@ -184,8 +184,8 @@ _fix_*.py
 _debug_*.py
 _final_*.py
 _tmp_*.py
-/_temp*.txt
-/_temp*.md
+_temp*.txt
+_temp*.md
 
 # AI tool directories
 .roo/
