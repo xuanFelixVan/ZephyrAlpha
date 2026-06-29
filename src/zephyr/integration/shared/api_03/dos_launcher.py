@@ -45,6 +45,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [
     "DOSLauncher",

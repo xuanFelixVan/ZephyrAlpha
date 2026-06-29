@@ -34,6 +34,7 @@ from zephyr.infrastructure.asset_inventory.models import (
     RegistryEntry,
     UnifiedAssetIndex,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -225,8 +226,6 @@ from pydantic import BaseModel as _SchemaBaseModel
 from pydantic import Field as _SchemaField
 
 
-
-from zephyr.shared.io.paths import REPO_ROOT
 class MigrationStep(_SchemaBaseModel):
     version: str
     description: str

@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.integration.shared.schema.schemas import Priority, SafetyLevel
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.registry import ServiceRegistry
 from zephyr.shared.task_types import GateLevel, TaskCard, TaskNamespace, TaskStatus
 

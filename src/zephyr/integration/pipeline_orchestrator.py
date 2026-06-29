@@ -87,6 +87,7 @@ from zephyr.integration.ct_pipe_routing import (
 )
 from zephyr.integration.dead_letter_queue import DeadLetterQueue
 from zephyr.integration.model_router import ModelRouter
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.integration.models import (
     M_MODULE_SPECS,
     M_MODULES,
