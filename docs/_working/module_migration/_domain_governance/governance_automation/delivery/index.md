@@ -1,0 +1,37 @@
+---
+doc_type: index
+status: Active
+generated: '2026-05-02'
+blueprint_id: MOD-INF-005
+title: Delivery
+module_id: MOD-025
+updated: "2026-06-22"
+ttl: task_bound
+completes_when: "对应模块变更/交付流程合入正式蓝图或发布记录后归档删除（2026-06-29 迁自 docs/03_modules/ 永久区）"
+---
+
+# Delivery — 脚本系统交付记录
+
+## 责任声明（Single Responsibility）
+
+本目录只存放：**MOD-INF-005 script-system 模块的交付记录**。
+
+## 已完成交付
+
+| 版本 | 日期 | Phase | 交付物 |
+|------|------|-------|--------|
+| v0.1.0--mvp | 2026-05-02 | -MVP | `src/zephyr/infrastructure/runtime_integration/script_system/__init__.py` |
+| | | | `src/zephyr/infrastructure/runtime_integration/script_system/finding.py`（Finding Schema + FindingCollection） |
+| | | | `scripts/governance/__init__.py` |
+| | | | `scripts/governance/run_all.py`（40个审计脚本统一编排入口） |
+| | | | OPS-VC-005 verifiability: manual → semi-automated |
+
+## 排除规则（不应放入本目录的内容）
+
+- ❌ 蓝图 → `../`
+- ❌ 审计脚本 → `D:\ZephyrAlpha\scripts\governance\`
+- ❌ 核心代码 → `D:\ZephyrAlpha\src\zephyr\script_system\`
+
+## 父级目录
+
+- 父级：[governance_automation](../index.md)
