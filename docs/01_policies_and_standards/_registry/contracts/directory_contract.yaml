@@ -263,9 +263,9 @@ doc_type_directory_crosscheck:
   validation_rules:
     - id: DCR-001
       name: "文件 doc_type 的 allowed_directories 包含文件所在目录"
-      check: "file.doc_type.allowed_directories contains file.directory OR file.directory in temporary_zone"
+      check: "file.doc_type.allowed_directories contains file.directory OR file.directory in temporary_zone OR file.directory in archive_zone OR file.directory in runtime_zone"
       severity: error
-      note: "临时区（docs/_working/）豁免此规则——临时区可存放任意非禁止的 doc_type 文件"
+      note: "临时区（docs/_working/）、归档区（docs/_archive/）、运行时归档区（.runtime/）豁免此规则——临时区为过程性文档，归档区为历史遗留，运行时归档区为 neutral zone 非正式文档区，均不受 allowed_directories 硬约束"
 
     - id: DCR-002
       name: "文件 doc_type 的 forbidden_directories 不包含文件所在目录"

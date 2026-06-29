@@ -19,20 +19,17 @@ Consumes directory_contract.yaml（目录维度约束的唯一真源，合并原
 trae_047 directory_mapping / ttl_vocabulary Q3 / doc_type_vocabulary crosscheck
 三维来源）并校验文件合规性。
 
-Implemented checks (DCR-003~007):
+Implemented checks (DCR-001~007):
+  DCR-001: doc_type.allowed_directories contains file.directory (error)
+  DCR-002: doc_type.forbidden_directories not contains file.directory (error)
   DCR-003: permanent zone file ttl == permanent             (error)
   DCR-004: temporary zone file ttl == task_bound            (warning)
   DCR-005: file extension in directory_extensions.allowed   (error)
   DCR-006: file extension not in directory_extensions.forbidden (error)
   DCR-007: root directory file in root_directory_whitelist  (error)
 
-Deferred checks (pending Phase 2.2 vocabulary alignment):
-  DCR-001: doc_type.allowed_directories contains file.directory
-  DCR-002: doc_type.forbidden_directories not contains file.directory
-  Reason: doc_type_vocabulary.yaml allowed_directories use generic patterns
-  ("governance/", "meta/") that don't match actual repo paths. Enabling now
-  would produce false-positive storms. Phase 2.2 will align vocabulary values
-  to real paths, then DCR-001/002 will be enabled here.
+DCR-001/002 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）
+DCR-001/002 真源：doc_type_vocabulary.yaml values[].allowed_directories/forbidden_directories
 
 Modes:
   --staged              check git-staged files only (pre-commit use)
@@ -70,6 +67,22 @@ _CONTRACT_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards"
     / "_registry" / "contracts" / "directory_contract.yaml"
 )
+_VOCABULARY_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards"
+    / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
+)
+
+# DCR-001/002 豁免目录前缀（临时区 + 归档区 + 运行时/IDE 工具区 + 模板区）
+# docs/_working/：临时工作区（过程性文档）
+# docs/_archive/：永久区归档（历史遗留，不受新规则约束）
+# .runtime/：运行时归档区（working_archive 等，neutral zone，非正式文档区）
+# .trae/：IDE 工具区（documents 等，过程性文档，非正式文档区）
+# docs/01_policies_and_standards/templates/：模板区（TMP-EX-001 豁免——模板是 Class Definition，
+#   cookbook template 的 doc_type 取目标类型，不受目标类型的 allowed_directories 约束）
+_DCR_EXEMPT_PREFIXES = (
+    "docs/_working/", "docs/_archive/", ".runtime/", ".trae/",
+    "docs/01_policies_and_standards/templates/",
+)
 
 # 扫描的扩展名集合（覆盖所有 zone 可能出现的文件类型）
 _SCAN_EXTENSIONS: frozenset[str] = frozenset({
@@ -89,6 +102,17 @@ def load_contract() -> dict:
     """
     with open(_CONTRACT_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def load_doc_type_vocabulary() -> dict:
+    """加载 doc_type_vocabulary.yaml，返回 doc_type → config 映射。
+
+    DCR-001/002 真源：doc_type 的 allowed_directories/forbidden_directories
+    由 doc_type_vocabulary.yaml 单一定义，本函数读取后建立查找表。
+    """
+    with open(_VOCABULARY_PATH, encoding="utf-8") as f:
+        vocab = yaml.safe_load(f)
+    return {v["value"]: v for v in vocab.get("values", [])}
 
 
 def get_staged_files() -> list[str]:
@@ -274,10 +298,90 @@ def check_ttl_zone(rel_path: str, contract: dict) -> list[dict]:
     return findings
 
 
-def scan_files(files: list[str], contract: dict) -> list[dict]:
+def _file_matches_pattern(rel_path: str, pattern: str) -> bool:
+    """检查文件路径是否匹配 allowed/forbidden_directories 模式。
+
+    匹配规则：
+    - pattern 以 / 结尾 → 目录前缀匹配（文件所在目录 startswith pattern）
+    - pattern 不以 / 结尾 → 文件路径精确匹配（如 docs/registry_of_registries.yaml）
+    """
+    rel_posix = rel_path.replace("\\", "/")
+    if pattern.endswith("/"):
+        rel_dir = str(Path(rel_posix).parent).replace("\\", "/")
+        rel_dir_norm = rel_dir + "/" if rel_dir != "." else "./"
+        return rel_dir_norm.startswith(pattern)
+    else:
+        return rel_posix == pattern
+
+
+def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict) -> list[dict]:
+    """DCR-001 + DCR-002: doc_type 的目录约束校验。
+
+    DCR-001: file.doc_type.allowed_directories contains file.directory
+             OR file.directory in temporary_zone (docs/_working/)
+             OR file.directory in archive_zone (docs/_archive/)
+    DCR-002: file.doc_type.forbidden_directories not contains file.directory
+
+    仅校验有 frontmatter 的文件。doc_type 真源为 doc_type_vocabulary.yaml。
+    """
+    if not rel_path.endswith((".md", ".yaml", ".yml")):
+        return []
+
+    abs_path = REPO_ROOT / rel_path
+    try:
+        fm, _ = parse_frontmatter_from_file(abs_path)
+    except OSError:
+        return []
+
+    doc_type = fm.get("doc_type")
+    if not doc_type:
+        return []  # 无 doc_type 的文件不校验（由 GATE-15 负责）
+
+    if doc_type not in vocab:
+        return []  # 未知 doc_type 由其他门禁负责
+
+    doc_type_config = vocab[doc_type]
+    rel_posix = rel_path.replace("\\", "/")
+    rel_dir = str(Path(rel_posix).parent).replace("\\", "/")
+
+    findings: list[dict] = []
+
+    # DCR-001: allowed_directories 校验（豁免 _working/ 和 _archive/）
+    is_exempt = any(rel_posix.startswith(prefix) for prefix in _DCR_EXEMPT_PREFIXES)
+    if not is_exempt:
+        allowed_dirs = doc_type_config.get("allowed_directories", [])
+        if allowed_dirs:
+            matched = any(_file_matches_pattern(rel_posix, p) for p in allowed_dirs)
+            if not matched:
+                findings.append({
+                    "rule": "DCR-001",
+                    "severity": "error",
+                    "file": rel_path,
+                    "detail": f"doc_type={doc_type} 文件目录 {rel_dir}/ 不在 allowed_directories {allowed_dirs} 内",
+                })
+
+    # DCR-002: forbidden_directories 校验
+    forbidden_dirs = doc_type_config.get("forbidden_directories", [])
+    if forbidden_dirs:
+        matched = any(_file_matches_pattern(rel_posix, p) for p in forbidden_dirs)
+        if matched:
+            findings.append({
+                "rule": "DCR-002",
+                "severity": "error",
+                "file": rel_path,
+                "detail": f"doc_type={doc_type} 文件目录 {rel_dir}/ 在 forbidden_directories {forbidden_dirs} 内",
+            })
+
+    return findings
+
+
+def scan_files(files: list[str], contract: dict, vocab: dict | None = None) -> list[dict]:
     """对给定文件列表执行所有已实现的 DCR 校验。"""
+    if vocab is None:
+        vocab = load_doc_type_vocabulary()
     findings: list[dict] = []
     for rel_path in files:
+        findings.extend(check_doc_type_directory(rel_path, contract, vocab))
         findings.extend(check_extension(rel_path, contract))
         findings.extend(check_root_whitelist(rel_path, contract))
         findings.extend(check_ttl_zone(rel_path, contract))
@@ -325,7 +429,7 @@ def scan_all(contract: dict) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-003~007，DCR-001/002 待 Phase 2.2 词汇对齐）"
+        description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007）"
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--ci", action="store_true",
@@ -347,6 +451,14 @@ def main() -> int:
               file=sys.stderr)
         return EXIT_ERROR
 
+    # 加载 doc_type 词表（DCR-001/002 真源）
+    try:
+        vocab = load_doc_type_vocabulary()
+    except Exception as e:
+        print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 doc_type_vocabulary.yaml: {e}",
+              file=sys.stderr)
+        return EXIT_ERROR
+
     # 确定扫描文件列表
     if args.staged:
         files = get_staged_files()
@@ -361,7 +473,7 @@ def main() -> int:
 
     # 执行校验
     try:
-        findings = scan_files(files, contract)
+        findings = scan_files(files, contract, vocab)
     except Exception as e:
         print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 校验异常: {e}", file=sys.stderr)
         return EXIT_ERROR
