@@ -147,15 +147,16 @@ sections:
       check: 文件扩展名是否在所在目录的允许格式清单内
       pass: 文件放在正确的目录且格式匹配
       fail: 文件放在错误的目录(如 .py 在 docs/ 下)
-    actions:
-    - type: mandatory
-      step: 永久区目录允许格式——docs/01_policies_and_standards/(.md/.yaml/.json仅限schemas子目录); docs/02_enterprise_architecture/(.md/.mmd/.yaml); docs/03_modules/(.md/.yaml); docs/08_knowledge/(仅.md); src/zephyr/(.py/.yaml); scripts/(.py/.sh/.ps1/.yaml/.json); config/(.yaml/.json); architecture_model/(.yaml)
-    - type: mandatory
-      step: 临时区目录允许格式——docs/_working/(.md/.csv/.yaml); docs/_working/audit/(.md); docs/_working/research_notes/(.md/.txt/.yaml); docs/_working/decomposition/(.md); docs/_working/ttl_content_audit/(.csv)
-    - type: mandatory
-      step: 根目录白名单(20个)——.gitignore/.gitattributes/.editorconfig/.traeignore/.env.example/.importlinter/.pre-commit-config.yaml/pyproject.toml/py.ini/requirements.txt/requirements-dev.txt/requirements-demo.txt/sitecustomize.py/Dockerfile/docker-compose.yml/AGENTS.md/CONTRIBUTING.md/README.md/SECURITY.md/LICENSE;根目录禁止出现白名单外的任何文件
-    - type: mandatory
-      step: 禁止规则——docs/01~03~/08~下禁止.py; docs/08_knowledge/下禁止非.md; src/下禁止.bak/.baseline等备份文件; 永久区下禁止.csv/.jsonl
+    ssot_pointer:
+      target: directory_contract.yaml
+      path: docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
+      module_id: PS-CTR-002
+      sections: [directory_extensions, root_directory_whitelist, global_forbidden]
+      migration_note: 目录→扩展名映射的唯一真源已迁入 directory_contract.yaml（2026-06-29）。原 actions 散文式步骤已结构化为 directory_extensions 数组，本节不再摘抄值。
+    enforcement:
+      gate: GATE-DIRECTORY-CONTRACT
+      script: scripts/governance/d1_structure/check_directory_contract.py
+      checks: [DCR-005, DCR-006, DCR-007]
     rationale: 责任唯一真源唯一——每种格式有且只有一个合法存放区域; AI不需猜测该放哪里; 消除多目录同类内容的同步成本和漂移风险
   gov_eng_002_enum_definitions:
     title: 枚举值定义(SSoT)
@@ -177,20 +178,32 @@ sections:
       rationale: 与PS-REG-012完全一致，零冲突
       applies_to: 所有文件表头的[AI_AUTONOMY]/ai_autonomy字段
     - id: MATURITY-ENUM
-      statement: 'maturity枚举: design(设计态仅有蓝图无代码)/prototype(运营态快速原型无测试)/production(运营态生产级有测试)/legacy(运营态设计过时待重构)'
-      rationale: 与depgraph.db nodes.design_maturity字段完全一致，零冲突
+      ssot_pointer:
+        target: maturity_vocabulary.yaml
+        path: docs/01_policies_and_standards/_registry/vocabularies/maturity_vocabulary.yaml
+        module_id: PS-VOC-028
+      rationale: 真源已迁出为独立词表（2026-06-29），消除内联枚举的同步成本
       applies_to: 所有A_full格式文件表头的[MATURITY]字段
     - id: STARTUP-ENUM
-      statement: 'startup枚举: auto_start(自动启动)/event_driven(事件驱动)/manual(手动触发,仅限一次性运维/诊断/迁移)/imported(被动导入不主动启动)；scheduled(定时调度)禁止使用(见trae_060§3)'
-      rationale: 强制AI声明文件触发方式；scheduled禁止使用因进程内定时触发等于要人指令触发未达自动(见trae_060§3事件驱动全自动)
+      ssot_pointer:
+        target: startup_vocabulary.yaml
+        path: docs/01_policies_and_standards/_registry/vocabularies/startup_vocabulary.yaml
+        module_id: PS-VOC-029
+      rationale: 真源已迁出为独立词表（2026-06-29），消除内联枚举的同步成本
       applies_to: 所有A_full格式文件表头的[STARTUP]字段
     - id: HEADER-FORMAT-ENUM
-      statement: 'header_format枚举: A_full/A_test/B_yaml/C_json/D_md/E_shell/exempt'
-      rationale: 新增枚举，定义文件类型到表头格式的映射
+      ssot_pointer:
+        target: header_format_vocabulary.yaml
+        path: docs/01_policies_and_standards/_registry/vocabularies/header_format_vocabulary.yaml
+        module_id: PS-VOC-030
+      rationale: 真源已迁出为独立词表（2026-06-29），消除内联枚举的同步成本
       applies_to: 所有文件的表头格式选择
     - id: FILE-CATEGORY-ENUM
-      statement: 'file_category枚举: code/script/gate/registry/contract/config/data/doc/test/infra'
-      rationale: 新增枚举，定义文件分类
+      ssot_pointer:
+        target: file_category_vocabulary.yaml
+        path: docs/01_policies_and_standards/_registry/vocabularies/file_category_vocabulary.yaml
+        module_id: PS-VOC-031
+      rationale: 真源已迁出为独立词表（2026-06-29），消除内联枚举的同步成本
       applies_to: 所有文件的分类判定
   gov_eng_002_state_machine:
     title: 表头状态机
