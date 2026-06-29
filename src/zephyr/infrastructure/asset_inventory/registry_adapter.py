@@ -572,8 +572,8 @@ class RegistryManager:
         self._known["docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"] = (
             YamlListAdapter("REG-CROSS-002", "cross-module-dependency-registry.yaml", asset_key="from_module")
         )
-        self._known["docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"] = YamlListAdapter(
-            "REG-GATE-CAT-001", "gate_registry.yaml", asset_key="gate_id"
+        self._known["docs/01_policies_and_standards/_registry/catalogs/gate_registry.md"] = YamlListAdapter(
+            "REG-GATE-CAT-001", "gate_registry.md", asset_key="gate_id"
         )
         self._known["docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"] = YamlListAdapter(
             "REG-INFRA-001", "infrastructure-registry.md", asset_key="component_id"
