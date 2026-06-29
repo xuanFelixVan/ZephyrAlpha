@@ -22,17 +22,24 @@ check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）
 判定标准（全部满足才阻断）：
   1. 文件不是 __init__.py（包聚合豁免）
   2. 文件头部无 `# [TTL] task_bound` + `# [DEPRECATED]` 标记（临时过渡豁免）
-  3. AST 分析：
+  3. AST 白名单分析（代码 is_pure_reexport_shim() 为唯一真源）：
      - 有至少一个 ImportFrom，module 以 "zephyr.shared." 开头（跨包 re-export）
-     - 无 ClassDef / FunctionDef / AsyncFunctionDef 实质节点
-     - 所有 Assign 的 target 都是 __all__ / __version__（无其他赋值）
+     - 无实质代码——白名单方式：仅允许以下节点不算实质代码
+       * ImportFrom / Import（导入语句）
+       * Assign 且 target 是 __all__ / __version__（包元数据赋值）
+       * Expr + Constant（docstring / 模块级字符串）
+       * Pass（空语句）
+       其他所有节点类型都算实质代码（ClassDef/FunctionDef/AsyncFunctionDef/
+       If/For/While/Try/With/Raise/Assert/Delete/Global/Nonlocal/AugAssign/
+       AnnAssign 等）
 
 合法 re-export 场景（不阻断）：
   - __init__.py 包聚合（`from . import sub1, sub2` + `__all__`）
   - TTL=task_bound + # [DEPRECATED] 标记的临时过渡 shim
-  - 含实质代码的文件（class/function/非 __all__ 赋值）
+  - 含实质代码的文件（class/function/非 __all__ 赋值/if 等任意语句）
 
-真源：AGENTS.md「禁止纯 re-export shim」规则段落
+真源：本文件 is_pure_reexport_shim() 函数（判定逻辑唯一真源）
+规则：AGENTS.md「禁止纯 re-export shim」规则段落（描述"做什么"，不描述"怎么做"）
 病根分析：docs/_working/ 下治本漏洞1调研报告
 """
 

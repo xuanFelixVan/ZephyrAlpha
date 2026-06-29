@@ -681,11 +681,9 @@ repos:
         description: "AST 级别检测本地重定义 _shared API 符号（D-D-07），warn-only 模式，需修复时运行 fix_shared_bypass.py --fix"
 
       # ── GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（治本漏洞1 2026-06-29）──
-      # 权威依据：AGENTS.md「禁止纯 re-export shim 文件」规则
-      # 病根：纯 shim（跨包 from zephyr.shared.* import * + 无实质代码）是真源分裂温床，
-      #       AI 无法确定真源产生漂移（shared_08 案例：144 文件冗余 proxy 层）
-      # 检测内容：AST 分析 .py 文件，判定是否为纯 re-export shim
-      # 例外：__init__.py 包聚合 / TTL=task_bound + # [DEPRECATED] 临时过渡
+      # 权威依据：AGENTS.md §禁止纯 re-export shim 文件（规则真源——描述"做什么"）
+      # 检测逻辑真源：scripts/governance/d7_code/check_pure_shim.py（代码——描述"怎么做"）
+      # 不在此复述判定标准/病根/例外，避免与 AGENTS.md 和 check_pure_shim.py 分裂
       - id: gate-no-pure-shim
         name: "GATE-NO-PURE-SHIM: 纯 re-export shim 文件检测（防 proxy 层重建）"
         entry: python scripts/governance/d7_code/check_pure_shim.py
