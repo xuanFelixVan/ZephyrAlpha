@@ -32,27 +32,27 @@ planes:
     current_status: inactive
     modules:
       - id: l04-limits
-        domain: D-RISK
+        domain: D_RISK
         submodule: limits/
         note: pre-trade hard check（T1 激活）
       - id: l04-stop-loss
-        domain: D-RISK
+        domain: D_RISK
         submodule: stop_loss/
         note: 毫秒级 kill switch 触发（T1 激活）
       - id: l04-monitor-hot
-        domain: D-RISK
+        domain: D_RISK
         submodule: monitor/
         note: real-time hard monitor（T1 激活）
       - id: l06-sor
-        domain: D-EX_CORE
+        domain: D_EX_CORE
         submodule: sor/
         note: smart order routing（T1 激活）
       - id: l06-adapters-hot
-        domain: D-EX_CORE
+        domain: D_EX_CORE
         submodule: adapters/*_hot.py
         note: 券商直连（T1 激活）
       - id: l10-security-gateway  # hot_adjacent
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: ai_security/security_gateway
         note: AISG security_gateway，< 50ms 目标（Hot-adjacent）
       - id: shared-runtime-plane-tag
@@ -119,63 +119,63 @@ planes:
         submodule: runtime/
         note: 基础运行时
       - id: l02-factors-online
-        domain: D-FACTOR
+        domain: D_FACTOR
         submodule: factors/（online increment 增量计算）
         note: 因子在线增量模式
       - id: l02-evaluation-realtime
-        domain: D-FACTOR
+        domain: D_FACTOR
         submodule: evaluation/（real-time IC）
         note: 实时信息系数计算
       - id: l03-signals-default
-        domain: D-SIGLEGACY
+        domain: D_SIGLEGACY
         submodule: signals/（default）
         note: 默认信号输出
       - id: l03-sentiment
-        domain: D-SIGLEGACY
+        domain: D_SIGLEGACY
         submodule: sentiment/
         note: 情绪分析
       - id: l03-predictions
-        domain: D-SIGLEGACY
+        domain: D_SIGLEGACY
         submodule: predictions/（AI推理）
         note: AI 推理信号
       - id: l04-metrics-warm
-        domain: D-RISK
+        domain: D_RISK
         submodule: metrics/（VaR/CVaR 计算）
         note: 风险指标 Warm 计算
       - id: l04-monitor-warm
-        domain: D-RISK
+        domain: D_RISK
         submodule: monitor/（default）
         note: 默认监控
       - id: l05-optimization
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: optimization/
         note: 组合优化
       - id: l05-rebalancing
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: rebalancing/
         note: 再平衡
       - id: l05-meta-router
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: meta_router/
         note: 策略元路由
       - id: l05-strategic
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: strategic/（决策部分）
         note: 战略决策
       - id: l06-oms
-        domain: D-EX_CORE
+        domain: D_EX_CORE
         submodule: oms/
         note: 订单状态机
       - id: l06-pre-trade
-        domain: D-EX_CORE
+        domain: D_EX_CORE
         submodule: pre_trade/
         note: 交易前检查
       - id: l06-adapters-default
-        domain: D-EX_CORE
+        domain: D_EX_CORE
         submodule: adapters/（default）
         note: 默认券商适配器
       - id: l07-review-realtime
-        domain: D-TRADING
+        domain: D_TRADING
         submodule: review/（实时 TCA）
         note: 实时交易成本分析
       - id: l08-cli
@@ -191,35 +191,35 @@ planes:
         submodule: notifications/
         note: 消息通知
       - id: l09-notebooks
-        domain: D-SIMULATION
+        domain: D_SIMULATION
         submodule: notebooks/（交互式）
         note: 研究笔记本
       - id: l09-prototypes
-        domain: D-SIMULATION
+        domain: D_SIMULATION
         submodule: prototypes/
         note: 原型实验
       - id: l10-validators
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: validators/
         note: 合规校验器
       - id: l10-ai-security-others
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: ai_security/（security_gateway 之外的 5 模块）
         note: AISG 其余模块
       - id: l10-rules
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: rules/
         note: 规则引擎
       - id: l10-policy-engine
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: policy_engine/
         note: 策略执行引擎
       - id: l11-serving-default
-        domain: D-ML_TRAIN
+        domain: D_ML_TRAIN
         submodule: serving/（default Python）
         note: 模型推理默认（Warm）
       - id: l11-model-registry-read
-        domain: D-ML_TRAIN
+        domain: D_ML_TRAIN
         submodule: model_registry/（读）
         note: 模型注册表只读
       - id: l12-metrics-warm
@@ -239,15 +239,15 @@ planes:
         submodule: ai_behavior/
         note: AI 行为监控
       - id: l13-shadow
-        domain: D-INTELLIGENCE
+        domain: D_INTELLIGENCE
         submodule: shadow/（影子交易运行时）
         note: 影子测试
       - id: l13-champion-challenger
-        domain: D-INTELLIGENCE
+        domain: D_INTELLIGENCE
         submodule: champion_challenger/（评分）
         note: 冠军挑战者评分
       - id: l13-promotion-gate
-        domain: D-INTELLIGENCE
+        domain: D_INTELLIGENCE
         submodule: promotion_gate/
         note: 晋级门禁
       - id: shared-contracts
@@ -288,71 +288,71 @@ planes:
         submodule: quality/（批量校验）
         note: 数据质量批量检查
       - id: l02-pipeline
-        domain: D-FACTOR
+        domain: D_FACTOR
         submodule: pipeline/（全量计算）
         note: 因子批量全量计算
       - id: l02-factors-batch
-        domain: D-FACTOR
+        domain: D_FACTOR
         submodule: factors/（批量回算）
         note: 因子批量回算
       - id: l02-registry
-        domain: D-FACTOR
+        domain: D_FACTOR
         submodule: registry/
         note: 因子注册表持久化
       - id: l03-sentiment-batch
-        domain: D-SIGLEGACY
+        domain: D_SIGLEGACY
         submodule: sentiment/（历史批量分析）
         note: 情绪历史批量
       - id: l04-metrics-cold
-        domain: D-RISK
+        domain: D_RISK
         submodule: metrics/（日终 + 月度回测）
         note: 风险指标批量计算
       - id: l05-backtest
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: backtest/
         note: 策略回测
       - id: l05-performance
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: performance/
         note: 绩效分析
       - id: l05-strategic-history
-        domain: D-PF_CORE
+        domain: D_PF_CORE
         submodule: strategic/（历史回溯）
         note: 战略历史分析
       - id: l07-attribution
-        domain: D-TRADING
+        domain: D_TRADING
         submodule: attribution/（日终归因）
         note: 绩效归因
       - id: l07-reports
-        domain: D-TRADING
+        domain: D_TRADING
         submodule: reports/（月度报表）
         note: 月度报表生成
       - id: l09-experiments
-        domain: D-SIMULATION
+        domain: D_SIMULATION
         submodule: experiments/（批量实验沙盒）
         note: 实验沙盒
       - id: l10-audit-trail
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: audit-trail/（归档）
         note: 审计追踪归档
       - id: l10-policies-sbom
-        domain: D-COMPLIANCE
+        domain: D_COMPLIANCE
         submodule: policies/（SBOM 扫描）
         note: 供应链 SBOM 扫描
       - id: l11-training
-        domain: D-ML_TRAIN
+        domain: D_ML_TRAIN
         submodule: training/
         note: 模型训练
       - id: l11-evaluation
-        domain: D-ML_TRAIN
+        domain: D_ML_TRAIN
         submodule: evaluation/
         note: 模型评估
       - id: l11-scout
-        domain: D-ML_TRAIN
+        domain: D_ML_TRAIN
         submodule: scout/（批量分析）
         note: Scout Agent 批量任务
       - id: l11-model-registry-write
-        domain: D-ML_TRAIN
+        domain: D_ML_TRAIN
         submodule: model_registry/（写）
         note: 模型注册表写入
       - id: l12-archive
@@ -364,15 +364,15 @@ planes:
         submodule: ai_behavior/（回溯分析）
         note: AI 行为历史回溯
       - id: l13-ab-testing
-        domain: D-INTELLIGENCE
+        domain: D_INTELLIGENCE
         submodule: ab_testing/（结果聚合）
         note: A/B 测试结果聚合
       - id: gov-factory
-        domain: D-GOVERNANCE
+        domain: D_GOVERNANCE
         submodule: scripts/governance/（Factory 层所有脚本）
         note: 治理 Factory 层（构建期 / 定时批调度）
       - id: gov-scout-d02
-        domain: D-GOVERNANCE
+        domain: D_GOVERNANCE
         submodule: src/zephyr/ml_train/scout/ + cron
         note: D-02 Scout Agent（每日抓取批任务）
       - id: fe-ssr-reports

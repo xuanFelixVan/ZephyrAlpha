@@ -1,6 +1,6 @@
 ---
 module_id: MOD-L10-001
-title: D-COMPLIANCE 域索引
+title: D_COMPLIANCE 域索引
 doc_type: index
 status: Active
 layer: domain
@@ -9,9 +9,9 @@ version: "2.0.0"
 ttl: permanent
 ---
 
-# D-COMPLIANCE — 合规域索引
+# D_COMPLIANCE — 合规域索引
 
-> **架构裁定**：D19/D21 — 14层降级为域属性，D-COMPLIANCE 为唯一分类。
+> **架构裁定**：D19/D21 — 14层降级为域属性，D_COMPLIANCE 为唯一分类。
 > **命名规范**：统一下划线（snake_case）。
 
 ## 模块清单

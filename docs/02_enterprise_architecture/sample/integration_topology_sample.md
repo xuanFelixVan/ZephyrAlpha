@@ -39,11 +39,11 @@ graph LR
     end
 
     subgraph L2_domain["业务域层 / Business Domain"]
-        trading["D-TRADING<br/>交易运营"]
-        backtest["D-BACKTEST<br/>回测"]
-        risk["D-RISK<br/>风险"]
+        trading["D_TRADING<br/>交易运营"]
+        backtest["D_BACKTEST<br/>回测"]
+        risk["D_RISK<br/>风险"]
         reporting["D_REPORTING<br/>报告"]
-        compliance["D-COMPLIANCE<br/>合规"]
+        compliance["D_COMPLIANCE<br/>合规"]
     end
 
     %% 跨域依赖关系 / Cross-domain dependencies

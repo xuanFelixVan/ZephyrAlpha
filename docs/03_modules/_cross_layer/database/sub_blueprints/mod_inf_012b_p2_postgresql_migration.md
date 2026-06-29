@@ -1351,7 +1351,7 @@ PG_CONFIG = {
 def query_worker(worker_id):
     conn = psycopg2.connect(**PG_CONFIG)
     cur = conn.cursor()
-    cur.execute('SELECT COUNT(*) FROM nodes WHERE domain_id = %s', ('D-GOVERNANCE',))
+    cur.execute('SELECT COUNT(*) FROM nodes WHERE domain_id = %s', ('D_GOVERNANCE',))
     count = cur.fetchone()[0]
     print(f'Worker {worker_id}: {count} nodes')
     cur.close()

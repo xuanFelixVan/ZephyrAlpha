@@ -75,56 +75,56 @@ capability_domains:
   name: 因子&信号能力
   description: Alpha factor / sentiment / signal extraction / factor registry / IC-IR
   primary_domains:
-  - D-FACTOR
-  - D-SIGLEGACY
-  - D-FUNDAMENTAL_SIGNAL
-  - D-ASHARE_SIGNAL
-  - D-SIGQC
+  - D_FACTOR
+  - D_SIGLEGACY
+  - D_FUNDAMENTAL_SIGNAL
+  - D_ASHARE_SIGNAL
+  - D_SIGQC
   investment_intensity: Critical
   investment_rationale: ''
 - id: C3
   name: 风控能力
   description: Pre-trade / at-trade / post-trade / VaR-CVaR / limits / stop-loss
   primary_domains:
-  - D-RISK
+  - D_RISK
   investment_intensity: Critical
   investment_rationale: ''
 - id: C4
   name: 组合构建能力
   description: Optimization / rebalancing / backtest / strategic allocation / meta-router
   primary_domains:
-  - D-PF_CORE
-  - D-PF_ALLOC
-  - D-CROSS_ASSET
+  - D_PF_CORE
+  - D_PF_ALLOC
+  - D_CROSS_ASSET
   investment_intensity: Critical
   investment_rationale: ''
 - id: C5
   name: 执行&交易后能力
   description: OMS / SOR / execution / attribution / TCA / review
   primary_domains:
-  - D-EX_CORE
-  - D-EX_SOR
-  - D-TRADING
-  - D-POSITION
+  - D_EX_CORE
+  - D_EX_SOR
+  - D_TRADING
+  - D_POSITION
   investment_intensity: High
   investment_rationale: ''
 - id: C6
   name: ML/AI平台能力
   description: Model lifecycle / training / serving / scout / experimentation
   primary_domains:
-  - D-ML_TRAIN
-  - D-ML_SERVE
+  - D_ML_TRAIN
+  - D_ML_SERVE
   investment_intensity: High
   investment_rationale: ''
 - id: C7
   name: 治理&合规能力
   description: Compliance runtime / governance three-layer / AISG / audit trail
   primary_domains:
-  - D-COMPLIANCE
-  - D-GOVERNANCE
-  - D-GOV_RULE
-  - D-GOV_AUDIT
-  - D-GOV_DRIFT
+  - D_COMPLIANCE
+  - D_GOVERNANCE
+  - D_GOV_RULE
+  - D_GOV_AUDIT
+  - D_GOV_DRIFT
   investment_intensity: Low
   investment_rationale: ''
 - id: CC1
@@ -148,7 +148,7 @@ capability_domains:
   description: D家族系统 / ai_operator预留口子 / decision engine
   primary_domains:
   - D_AUTONOMY_CORE
-  - D-AUTONOMY_PERM
+  - D_AUTONOMY_PERM
   type: cross_cutting
   investment_intensity: High
   investment_rationale: ''
@@ -176,8 +176,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-003
-  name: D-FACTOR × C2
-  domain: D-FACTOR
+  name: D_FACTOR × C2
+  domain: D_FACTOR
   capability: C2
   maturity: L1
   maturity_symbol: 🔵
@@ -187,8 +187,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-004
-  name: D-SIGLEGACY × C2
-  domain: D-SIGLEGACY
+  name: D_SIGLEGACY × C2
+  domain: D_SIGLEGACY
   capability: C2
   maturity: L1
   maturity_symbol: 🔵
@@ -198,8 +198,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-005
-  name: D-RISK × C3
-  domain: D-RISK
+  name: D_RISK × C3
+  domain: D_RISK
   capability: C3
   maturity: L1
   maturity_symbol: 🔵
@@ -209,8 +209,8 @@ capabilities:
   t1_target: L4
   gap_to_t1: 3
 - id: CAP-006
-  name: D-PF_CORE × C4
-  domain: D-PF_CORE
+  name: D_PF_CORE × C4
+  domain: D_PF_CORE
   capability: C4
   maturity: L1
   maturity_symbol: 🔵
@@ -220,8 +220,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-007
-  name: D-EX_CORE × C5
-  domain: D-EX_CORE
+  name: D_EX_CORE × C5
+  domain: D_EX_CORE
   capability: C5
   maturity: L1
   maturity_symbol: 🔵
@@ -231,8 +231,8 @@ capabilities:
   t1_target: L4
   gap_to_t1: 3
 - id: CAP-008
-  name: D-TRADING × C5
-  domain: D-TRADING
+  name: D_TRADING × C5
+  domain: D_TRADING
   capability: C5
   maturity: L1
   maturity_symbol: 🔵
@@ -253,8 +253,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 3
 - id: CAP-010
-  name: D-SIMULATION × CC1
-  domain: D-SIMULATION
+  name: D_SIMULATION × CC1
+  domain: D_SIMULATION
   capability: CC1
   maturity: L1
   maturity_symbol: 🔵
@@ -264,8 +264,8 @@ capabilities:
   t1_target: L2
   gap_to_t1: 1
 - id: CAP-011
-  name: D-COMPLIANCE × C7
-  domain: D-COMPLIANCE
+  name: D_COMPLIANCE × C7
+  domain: D_COMPLIANCE
   capability: C7
   maturity: L2
   maturity_symbol: 🟡
@@ -275,8 +275,8 @@ capabilities:
   t1_target: L4
   gap_to_t1: 2
 - id: CAP-012
-  name: D-ML_TRAIN × C6
-  domain: D-ML_TRAIN
+  name: D_ML_TRAIN × C6
+  domain: D_ML_TRAIN
   capability: C6
   maturity: L1
   maturity_symbol: 🔵
@@ -297,8 +297,8 @@ capabilities:
   t1_target: L3
   gap_to_t1: 2
 - id: CAP-014
-  name: D-INTELLIGENCE × C6
-  domain: D-INTELLIGENCE
+  name: D_INTELLIGENCE × C6
+  domain: D_INTELLIGENCE
   capability: C6
   maturity: L1
   maturity_symbol: 🔵
@@ -335,17 +335,17 @@ gap_analysis:
     capability: CAP-005
     from: L1
     to: L4
-    description: D-RISK × C3风控能力，T1硬阻塞
+    description: D_RISK × C3风控能力，T1硬阻塞
   - gap_id: G-2
     capability: CAP-007
     from: L1
     to: L4
-    description: D-EX_CORE × C5执行能力，T1硬阻塞
+    description: D_EX_CORE × C5执行能力，T1硬阻塞
   - gap_id: G-3
     capability: CAP-011
     from: L2
     to: L4
-    description: D-COMPLIANCE × C7合规能力，T1硬阻塞
+    description: D_COMPLIANCE × C7合规能力，T1硬阻塞
   - gap_id: G-4
     capability: CAP-001
     from: L2
@@ -366,18 +366,18 @@ gap_analysis:
     capability: CAP-012
     from: L1
     to: L3
-    description: D-ML_TRAIN × C6 ML平台
+    description: D_ML_TRAIN × C6 ML平台
   p2_deferred:
   - gap_id: G-8
     capability: CAP-003
     from: L1
     to: L3
-    description: D-FACTOR × C2因子
+    description: D_FACTOR × C2因子
   - gap_id: G-9
     capability: CAP-006
     from: L1
     to: L3
-    description: D-PF_CORE × C4组合
+    description: D_PF_CORE × C4组合
   - gap_id: G-10
     capability: CAP-016
     from: L1
@@ -388,9 +388,9 @@ target_states:
     description: 真实资金接入
     key_upgrades:
     - 'D_MKT_DATA C1: L2 → L4'
-    - 'D-RISK C3: L1 → L4'
-    - 'D-EX_CORE C5: L1 → L4'
-    - 'D-COMPLIANCE C7: L2 → L4'
+    - 'D_RISK C3: L1 → L4'
+    - 'D_EX_CORE C5: L1 → L4'
+    - 'D_COMPLIANCE C7: L2 → L4'
     - 'D_OPS CC2: L1 → L3'
     total_score_target: 120
     avg_maturity_target: 2.93
@@ -399,7 +399,7 @@ target_states:
     key_upgrades:
     - 'D_FRONTEND CC1: L0 → L3'
     - 'D_AUTONOMY_CORE CC3: L1 → L4'
-    - 'D-ML_TRAIN C6: L1 → L4'
+    - 'D_ML_TRAIN C6: L1 → L4'
     total_score_target: 160
     avg_maturity_target: 3.9
   t_endgame:

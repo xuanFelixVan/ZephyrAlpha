@@ -84,44 +84,44 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-ASHARE_SIGNAL` | ashare_signal | 7 | A股特色信号生成 |
-| `D-AUDITTEST` | audit_test_suite | 152 | 审计单元测试(unit) |
-| `D-AUTONOMY_PERM` | escalation | 70 | 规则驱动升级(EscalationEngine) |
-| `D-BACKTEST` | 回测 | 7 | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 |
-| `D-COMPLIANCE` | 合规 | 25 | 合规规则、交易限制、报告合规、监管对接。合规监管防线。 |
-| `D-CROSS_ASSET` | 跨资产 | 11 | 跨资产策略与配置 |
-| `D-DIGITAL_TWIN` | 数字孪生 | 8 | 数字孪生与虚拟市场仿真 |
-| `D-EXEC_SIM` | 执行仿真 | 7 | Split from D-SIMULATION |
-| `D-EX_CORE` | 执行核心 | 14 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行 |
-| `D-EX_SOR` | 执行路由 | 7 | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 |
-| `D-FACTOR` | 因子 | 17 | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 |
-| `D-FUNDAMENTAL_SIGNAL` | fundamental_signal | 25 | 财务指标信号 |
-| `D-GOVERNANCE` | lifecycle_management | 2831 | 模块生命周期钩子(hooks) |
-| `D-GOV_AUDIT` | audit-trail | 188 | Merkle小时级完整性(merkle_hourly) |
-| `D-GOV_DOCS` | architecture_docs | 127 | 架构模型文档(architecture_model) |
-| `D-GOV_DRIFT` | drift_detection | 24 | 39个漂移检测器注册与调度 |
-| `D-GOV_ENFORCEMENT` | rule_enforcement | 107 | 门禁引擎流程编排(GatePipeline/GateEngine) |
-| `D-GOV_RULE` | rule_governance | 11 | 规则配置管理 |
-| `D-GOV_SCRIPTS` | code_dedup | 416 | 代码去重检测 |
-| `D-INTELLIGENCE` | context_management | 56 | 上下文预算管理(context_budget/token_budget) |
-| `D-KNOWLEDGE` | knowledge_management | 41 | 知识管线(ingest/triage/extract/activate/analyze) |
-| `D-ML_SERVE` | 推理 | 7 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |
-| `D-ML_TRAIN` | model_profiling | 12 | 模型性能画像 |
-| `D-PF_ALLOC` | 组合分配 | 11 | 资产组合分配优化 |
-| `D-PF_CORE` | 组合核心 | 44 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
-| `D-POSITION` | 仓位管理 | 8 | 持仓跟踪、仓位计算、盈亏归因、仓位调整。仓位账本。 |
-| `D-RISK` | 风控 | 25 | 风险度量、风险限额、压力测试、实时风控。交易安全阀。 |
-| `D-SELL_DECISION` | 卖出决策 | 7 | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 |
-| `D-SIGLEGACY` | siglegacy | 0 | 信号遗留设计态节点（原 D-SIGNAL 拆分后遗留的设计态占位域） |
-| `D-SIGQC` | signal_quality | 7 | 信号质量评估 |
-| `D-SIMULATION` | 仿真 | 19 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
-| `D-TRADING` | 交易运营 | 163 | 交易会话、交易接口、交易日志、交易复盘。交易运营中枢。合规检查由D-GOV_ENFORCEMENT门 |
+| `D_ASHARE_SIGNAL` | ashare_signal | 7 | A股特色信号生成 |
+| `D_AUDITTEST` | audit_test_suite | 152 | 审计单元测试(unit) |
+| `D_AUTONOMY_PERM` | escalation | 70 | 规则驱动升级(EscalationEngine) |
+| `D_BACKTEST` | 回测 | 7 | 历史回测、参数寻优、过拟合检测、绩效归因。策略验证引擎。 |
+| `D_COMPLIANCE` | 合规 | 25 | 合规规则、交易限制、报告合规、监管对接。合规监管防线。 |
+| `D_CROSS_ASSET` | 跨资产 | 11 | 跨资产策略与配置 |
+| `D_DIGITAL_TWIN` | 数字孪生 | 8 | 数字孪生与虚拟市场仿真 |
+| `D_EXEC_SIM` | 执行仿真 | 7 | Split from D_SIMULATION |
+| `D_EX_CORE` | 执行核心 | 14 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行 |
+| `D_EX_SOR` | 执行路由 | 7 | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 |
+| `D_FACTOR` | 因子 | 17 | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 |
+| `D_FUNDAMENTAL_SIGNAL` | fundamental_signal | 25 | 财务指标信号 |
+| `D_GOVERNANCE` | lifecycle_management | 2831 | 模块生命周期钩子(hooks) |
+| `D_GOV_AUDIT` | audit-trail | 188 | Merkle小时级完整性(merkle_hourly) |
+| `D_GOV_DOCS` | architecture_docs | 127 | 架构模型文档(architecture_model) |
+| `D_GOV_DRIFT` | drift_detection | 24 | 39个漂移检测器注册与调度 |
+| `D_GOV_ENFORCEMENT` | rule_enforcement | 107 | 门禁引擎流程编排(GatePipeline/GateEngine) |
+| `D_GOV_RULE` | rule_governance | 11 | 规则配置管理 |
+| `D_GOV_SCRIPTS` | code_dedup | 416 | 代码去重检测 |
+| `D_INTELLIGENCE` | context_management | 56 | 上下文预算管理(context_budget/token_budget) |
+| `D_KNOWLEDGE` | knowledge_management | 41 | 知识管线(ingest/triage/extract/activate/analyze) |
+| `D_ML_SERVE` | 推理 | 7 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |
+| `D_ML_TRAIN` | model_profiling | 12 | 模型性能画像 |
+| `D_PF_ALLOC` | 组合分配 | 11 | 资产组合分配优化 |
+| `D_PF_CORE` | 组合核心 | 44 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
+| `D_POSITION` | 仓位管理 | 8 | 持仓跟踪、仓位计算、盈亏归因、仓位调整。仓位账本。 |
+| `D_RISK` | 风控 | 25 | 风险度量、风险限额、压力测试、实时风控。交易安全阀。 |
+| `D_SELL_DECISION` | 卖出决策 | 7 | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 |
+| `D_SIGLEGACY` | siglegacy | 0 | 信号遗留设计态节点（原 D-SIGNAL 拆分后遗留的设计态占位域） |
+| `D_SIGQC` | signal_quality | 7 | 信号质量评估 |
+| `D_SIMULATION` | 仿真 | 19 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
+| `D_TRADING` | 交易运营 | 163 | 交易会话、交易接口、交易日志、交易复盘。交易运营中枢。合规检查由D_GOV_ENFORCEMENT门 |
 
 ### `unassigned` (1域)
 
 | 域ID | 域名称 | 节点数 | 描述 |
 |------|--------|:---:|------|
-| `D-GOV-REPAIR` | rollback | 0 | 双轨Checkpoint(git commit + DB dump：SQLite JSONL / pg_dump) |
+| `D_GOV_REPAIR` | rollback | 0 | 双轨Checkpoint(git commit + DB dump：SQLite JSONL / pg_dump) |
 
 ---
 

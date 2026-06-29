@@ -4,8 +4,8 @@ doc_type: architecture_view
 ---
 
 > **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
-> D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
-> D-GOV_AUDIT_TESTS→D-AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
+> D_GOV_DOCS→D_GOV_DOCS, D_GOV_ENFORCEMENT→D_GOV_ENFORCEMENT, D_GOV_SCRIPTS→D_GOV_SCRIPTS,
+> D_GOV_AUDIT_TESTS→D_AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
 > 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
 
 
@@ -94,10 +94,10 @@ doc_type: architecture_view
 | 表 | 存什么 | 例子 |
 |----|--------|------|
 | `arch_directory_tree` | 目录树（所有文件/目录的物理位置） | src/zephyr/trading/order_center/main.py |
-| `arch_domain_layers` | 每个功能域属于哪一层 | D-TRADING（交易域）属于 L2 领域层 |
-| `arch_domain_capacity` | 域容量上限 | D-TRADING max_modules=80 |
-| `arch_path_mappings` | 路径→域映射规则 | src/zephyr/trading/ → D-TRADING |
-| `arch_constraints` | 架构约束（跨域违规等） | D-TRADING → D-INFRA 违规 |
+| `arch_domain_layers` | 每个功能域属于哪一层 | D_TRADING（交易域）属于 L2 领域层 |
+| `arch_domain_capacity` | 域容量上限 | D_TRADING max_modules=80 |
+| `arch_path_mappings` | 路径→域映射规则 | src/zephyr/trading/ → D_TRADING |
+| `arch_constraints` | 架构约束（跨域违规等） | D_TRADING → D-INFRA 违规 |
 
 ### 4.3 共享表（5 张表，v14 删除 invariants 后）
 
@@ -322,7 +322,7 @@ arch_directory_tree.domain_id → domains.domain_id（必须存在，A-Blind-3 �
 SELECT * FROM arch_constraints WHERE violation_status = 'open';
 
 -- 查询特定域的违规
-SELECT * FROM arch_constraints WHERE domain_id = 'D-TRADING';
+SELECT * FROM arch_constraints WHERE domain_id = 'D_TRADING';
 ```
 
 ---
@@ -370,13 +370,13 @@ SELECT * FROM arch_constraints WHERE domain_id = 'D-TRADING';
 
 **path字段**：存目录路径（末尾带 `/`），如 `src/zephyr/trading/order_center/`。文件还不存在，但规划了将来放在这个目录下。
 
-**blueprint_path字段**（新增）：存蓝图文档路径，如 `docs/03_modules/D-TRADING/order_center/blueprint.md`。
+**blueprint_path字段**（新增）：存蓝图文档路径，如 `docs/03_modules/D_TRADING/order_center/blueprint.md`。
 
 **blueprint_path 机械推导规则**（零歧义）：
 ```
 blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 ```
-- `domain_id`：节点所属功能域 ID（如 D-TRADING）
+- `domain_id`：节点所属功能域 ID（如 D_TRADING）
 - `module_name`：从设计态节点 path 末尾目录名推导（如 `src/zephyr/trading/order_center/` → `order_center`）
 
 蓝图可能还没创建，但位置已定。推导规则机械可计算，AI 零歧义。
@@ -554,7 +554,7 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 python scripts/governance/apply_depgraph.py --add-design-node \
   --path "src/zephyr/trading/order_center/" \
   --blueprint-id "bp-trading-order-center" \
-  --domain-id D-TRADING \
+  --domain-id D_TRADING \
   [--build-status planned]
 ```
 写入时 `design_maturity='design'`，`build_status` 默认 `planned`（可通过 `--build-status` 指定 stable/deprecated，但需符合 §12.6 状态机转换规则，裁定#190 设计态只用3态子集 planned/stable/deprecated）。`blueprint_path` 由脚本按 §12.1 机械推导规则自动填充。node_id 由数据库自增分配。
@@ -660,7 +660,7 @@ python scripts/governance/apply_depgraph.py --remove-design-node --node-id 1001
 ```sql
 -- 查某个域的所有模块
 SELECT node_id, path, design_maturity, build_status, blueprint_id
-FROM nodes WHERE domain_id = 'D-TRADING' ORDER BY design_maturity, path;
+FROM nodes WHERE domain_id = 'D_TRADING' ORDER BY design_maturity, path;
 
 -- 查某个模块依赖谁（出边）
 SELECT e.to_node_id, e.dep_type, e.dep_maturity, n.path AS to_path
@@ -698,7 +698,7 @@ WHERE path = 'src/zephyr/trading/order_center/main.py';
 SELECT d.domain_id, d.domain_name, c.max_modules, c.current_modules,
        (c.current_modules * 100.0 / c.max_modules) AS usage_pct
 FROM domains d JOIN arch_domain_capacity c ON d.domain_id = c.domain_id
-WHERE d.domain_id = 'D-TRADING';
+WHERE d.domain_id = 'D_TRADING';
 
 -- 查超容域（>80%）
 SELECT d.domain_id, d.domain_name, c.max_modules, c.current_modules
@@ -1020,15 +1020,15 @@ AI查询模式：
 | # | 目录 | 扫描内容 | 域归属 | 裁定 |
 |---|------|---------|--------|:---:|
 | 1 | `src/zephyr/` | 核心业务代码 | 35 个功能域（动态推导） | 保留 |
-| 2 | `scripts/` | 治理脚本 | D-GOV-SCRIPTS | 保留 |
+| 2 | `scripts/` | 治理脚本 | D_GOV_SCRIPTS | 保留 |
 | 3 | `data/asset_index/` | 资产索引 YAML | D-DATA-ASSET | 保留 |
 | 4 | `data/config/` | 数据配置 | D-DATA-CONFIG | 保留 |
 | 5 | `data/metrics/` | 指标定义 | D-DATA-METRICS | 保留 |
 | 6 | `config/` | 项目配置 YAML | D-INFRA-CONFIG | 保留 |
 | 7 | `schemas/` | Schema 定义 | D-DATA-SCHEMA | 保留 |
-| 8 | `docs/03_modules/` | 模块蓝图 | D-GOV-DOCS | 保留 |
-| 9 | `docs/01_policies_and_standards/` | 政策标准 | D-GOV-DOCS | 保留 |
-| 10 | `docs/02_enterprise_architecture/` | 企业架构 | D-GOV-DOCS | 保留 |
+| 8 | `docs/03_modules/` | 模块蓝图 | D_GOV_DOCS | 保留 |
+| 9 | `docs/01_policies_and_standards/` | 政策标准 | D_GOV_DOCS | 保留 |
+| 10 | `docs/02_enterprise_architecture/` | 企业架构 | D_GOV_DOCS | 保留 |
 | 11 | `frontend/` | 前端代码 | D_FRONTEND | 保留 |
 | 12 | `architecture_model/` | 架构模型 | D-ARCH-MODEL | 保留 |
 | 13 | `infra/` | 基础设施 | D-INFRA | 保留 |
@@ -1193,7 +1193,7 @@ SELECT * FROM dep_cycles ORDER BY domain_id;
 SELECT * FROM dep_cycles_report ORDER BY edge_count DESC;
 
 -- 查询特定域的循环依赖
-SELECT * FROM dep_cycles WHERE domain_id = 'D-TRADING';
+SELECT * FROM dep_cycles WHERE domain_id = 'D_TRADING';
 ```
 
 **业界依据**：Google Bazel 检测到循环依赖直接构建失败；Jane Street OCaml 编译器报错；Meta Hack 类型检查器报错。ZephyrAlpha 对齐——运营态循环警告，设计态循环阻断。
@@ -1220,7 +1220,7 @@ SELECT * FROM dep_cycles WHERE domain_id = 'D-TRADING';
 
 循环依赖检测：
   - 发现 8 个 SCC（453 条边）
-  - 最大 SCC：D-TRADING（12 节点 / 45 边）
+  - 最大 SCC：D_TRADING（12 节点 / 45 边）
 
 blueprint_id 校验：
   - 校验失败：2 个（见失败清单）
@@ -1487,10 +1487,10 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 81 | 外键约束方向 | **单向外键：nodes.path 必须在 arch_directory_tree 存在，反向不要求** | ✅ |
 | 149 | 两表覆盖范围 | **nodes 7,590 节点 vs arch_directory_tree 9,204 行**（差 1,614 个文档/数据/模板节点） | ✅ |
 | 173 | nodes 表节点准入边界 | **只收录有 import 依赖的代码节点（.py+.yaml），文档/规则/模板不进 nodes 表**（业界对标 dependency-cruiser/ArchUnit） | ✅ |
-| 174 | 规则文件归属 | **规则文件（trae_*.yaml）不进 nodes 表，归属 D-GOV-DOCS（文档域），在 arch_directory_tree 记录位置**。规则文件虽是 yaml 格式但本质是"规则文档"非"运行时配置"，无 import 依赖边，是孤岛节点。D-GOV-RULE 域 179 个规则文件节点应从 nodes 表清理。规则与业务域的逻辑约束通过 arch_constraints 表独立解决（from_domain/to_domain），不通过 nodes 表归属实现 | ✅ |
+| 174 | 规则文件归属 | **规则文件（trae_*.yaml）不进 nodes 表，归属 D_GOV_DOCS（文档域），在 arch_directory_tree 记录位置**。规则文件虽是 yaml 格式但本质是"规则文档"非"运行时配置"，无 import 依赖边，是孤岛节点。D_GOV_RULE 域 179 个规则文件节点应从 nodes 表清理。规则与业务域的逻辑约束通过 arch_constraints 表独立解决（from_domain/to_domain），不通过 nodes 表归属实现 | ✅ |
 | 175 | 测试域处理 | **删除 10 个并发测试域**（D-T3-W0~W3/D-T4-SAME/D-T5-W0~W3/D-T9-PREREQ）。这些是 concurrent_write_test.py 红蓝对抗测试残留，已泄漏到生产 depgraph.db（0 模块空壳），ssot_path 路径不存在代码，测试隔离机制失效。业界实践：测试用独立测试库，不污染生产 DB（JUnit/K8s kind/Google Bazel） | ✅ |
-| 176 | 设计态域处理 | **保留 5 个设计态域**（D-GOV_ENFORCEMENT/D-GOV_REPAIR/D-GOV_SCRIPTS/D_INTEGRATION_GATEWAY/D_SECURITY_LLM），标记为"计划中"。这些域为缓解超容父域而规划（D-GOVERNANCE 3860 模块超容 1930%、D_SECURITY 849、D_INTEGRATION 705、D_OPS 679），functional_domain_registry.yaml 已有完整 covers 规划。业界对标 DDD Bounded Context planned/TOGAF Transition Architecture | ✅ |
-| 177 | 域命名统一 | **统一为下划线风格**（D-XXX_YYY），符合 trae_028 GOV-DOC-003 §SSoT 规定。当前 15 个域违规（25.9%）：5 个功能域（D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT 等）+ 10 个测试域（如保留则 D-T3-W0→D-T3_W0）。连字符已导致域重复 bug（project_memory 记录），sync 脚本已打 normalize_domain_id 补丁。业界对标 PEP8/K8s 社区均用 snake_case | ✅ |
+| 176 | 设计态域处理 | **保留 5 个设计态域**（D_GOV_ENFORCEMENT/D-GOV_REPAIR/D_GOV_SCRIPTS/D_INTEGRATION_GATEWAY/D_SECURITY_LLM），标记为"计划中"。这些域为缓解超容父域而规划（D_GOVERNANCE 3860 模块超容 1930%、D_SECURITY 849、D_INTEGRATION 705、D_OPS 679），functional_domain_registry.yaml 已有完整 covers 规划。业界对标 DDD Bounded Context planned/TOGAF Transition Architecture | ✅ |
+| 177 | 域命名统一 | **统一为下划线风格**（D-XXX_YYY），符合 trae_028 GOV-DOC-003 §SSoT 规定。当前 15 个域违规（25.9%）：5 个功能域（D_GOV_ENFORCEMENT→D_GOV_ENFORCEMENT 等）+ 10 个测试域（如保留则 D-T3-W0→D-T3_W0）。连字符已导致域重复 bug（project_memory 记录），sync 脚本已打 normalize_domain_id 补丁。业界对标 PEP8/K8s 社区均用 snake_case | ✅ |
 
 ### 20.5 施工优先级与验收裁定（施工层）
 
@@ -1872,7 +1872,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 - **ARCH-CAP-003 废除**：trae_055 v1.0.8 移除 aliases 中的 ARCH-CAP-003
 - **ARCH-CAP-002 重写为二元规则**：≤150 通过，>150 必须拆分，无例外
-- **5 个 max=200 域统一改为 150**：D-GOVERNANCE / D-GOV_AUDIT / D-GOV_DRIFT / D-GOV_RULE / D_SECURITY
+- **5 个 max=200 域统一改为 150**：D_GOVERNANCE / D_GOV_AUDIT / D_GOV_DRIFT / D_GOV_RULE / D_SECURITY
 - **理由**：100% AI 开发项目不应有模糊地带。"高度耦合"是拆分信号，不是放宽上限的理由
 
 #### 裁定#195：修复统计口径，新增 production_nodes 字段（v9 migration）
@@ -1914,9 +1914,9 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 - **4 个超限域**（production_nodes > 150）：
   - D_INFRA_RUNTIME：412（超限 262，2.7x）
-  - D-GOV_AUDIT：230（超限 80，1.5x）
-  - D-GOVERNANCE：185（超限 35，1.2x）
-  - D-GOV_RULE：177（超限 27，1.2x）
+  - D_GOV_AUDIT：230（超限 80，1.5x）
+  - D_GOVERNANCE：185（超限 35，1.2x）
+  - D_GOV_RULE：177（超限 27，1.2x）
 - **拆分作为后续任务**，本次只修复统计口径和字段
 
 #### 施工记录
@@ -1944,18 +1944,18 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | | | → | **D_INFRA_A2A** (新建) | 114 | A2A 通信与管线 |
 | | | → | **D_INFRA_RECOVERY** (新建) | 107 | 回滚与自愈 |
 | | | → | **D_INFRA_TELEMETRY** (新建) | 51 | 可观测与画像 |
-| D-GOV_AUDIT (228) | | → | D-GOV_AUDIT (保留) | 54 | 审计核心 |
+| D_GOV_AUDIT (228) | | → | D_GOV_AUDIT (保留) | 54 | 审计核心 |
 | | | → | D_BEHAVIORAL_AUDIT (扩充) | 79 | 红蓝对抗测试 |
-| | | → | **D-GOV_AUDIT_TESTS** (新建) | 142 | 审计测试套件 |
-| D-GOVERNANCE (178) | | → | D-GOVERNANCE (保留) | 117 | 治理核心 |
-| | | → | **D-GOV-DOCS** (新建) | 100 | 架构文档 |
-| | | → | D-GOV-SCRIPTS (扩充) | 26 | 治理脚本 |
-| D-GOV_RULE (118) | | → | D-GOV_RULE (保留) | 11 | 规则配置 |
-| | | → | D-GOV-DOCS (共享) | (计入上方) | 规则文档 |
-| | | → | D-GOV-ENFORCEMENT (扩充) | 69 | 规则执行代码 |
+| | | → | **D_GOV_AUDIT_TESTS** (新建) | 142 | 审计测试套件 |
+| D_GOVERNANCE (178) | | → | D_GOVERNANCE (保留) | 117 | 治理核心 |
+| | | → | **D_GOV_DOCS** (新建) | 100 | 架构文档 |
+| | | → | D_GOV_SCRIPTS (扩充) | 26 | 治理脚本 |
+| D_GOV_RULE (118) | | → | D_GOV_RULE (保留) | 11 | 规则配置 |
+| | | → | D_GOV_DOCS (共享) | (计入上方) | 规则文档 |
+| | | → | D_GOV_ENFORCEMENT (扩充) | 69 | 规则执行代码 |
 
-**新建域**: 5 个（D_INFRA_A2A, D_INFRA_RECOVERY, D_INFRA_TELEMETRY, D-GOV_AUDIT_TESTS, D-GOV-DOCS）
-**扩充域**: 3 个（D_BEHAVIORAL_AUDIT, D-GOV-SCRIPTS, D-GOV-ENFORCEMENT）
+**新建域**: 5 个（D_INFRA_A2A, D_INFRA_RECOVERY, D_INFRA_TELEMETRY, D_GOV_AUDIT_TESTS, D_GOV_DOCS）
+**扩充域**: 3 个（D_BEHAVIORAL_AUDIT, D_GOV_SCRIPTS, D_GOV_ENFORCEMENT）
 
 **工具扩展**（apply_depgraph.py）:
 - `--migrate-nodes`: 按 node_id 列表精确迁移 domain_id（解决跨域共享 blueprint_id 误迁问题）
@@ -1971,30 +1971,30 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 阶段0 | git 备份 + 刷新 4 域缓存 | da53f1cffd |
 | 阶段0.5 | 扩展 apply_depgraph.py（3 个新功能） | d8be4eade3 |
 | 阶段1 | 修正 674 个错位节点 | 681cab37b3 |
-| 阶段2 | 拆分 D-GOV_AUDIT（171 测试节点） | 7b3a9b1655, edce73646f |
+| 阶段2 | 拆分 D_GOV_AUDIT（171 测试节点） | 7b3a9b1655, edce73646f |
 | 阶段3 | 拆分 D_INFRA_RUNTIME（411 节点→4 域） | cd85c37b10 |
 | 阶段4 | 刷新 15 域缓存 + 文档同步 | 02b3903ea6 |
 
-#### 裁定#201：D-SIGLEGACY 拆分补裁定（追溯正式记录）
+#### 裁定#201：D_SIGLEGACY 拆分补裁定（追溯正式记录）
 
 - **执行日期**: 2026-06-25（补裁定，实际拆分发生在裁定#200前后但未记录）
 - **规则依据**: D38/D41（平铺域，无子域）、ARCH-CAP-002（单域 production_nodes ≤ 150）
-- **背景**: preexisting DB 问题调研发现 D-SIGLEGACY→3 子域拆分无任何裁定记录，无 registry 条目。本裁定追溯补记。
+- **背景**: preexisting DB 问题调研发现 D_SIGLEGACY→3 子域拆分无任何裁定记录，无 registry 条目。本裁定追溯补记。
 
 **拆分结果**:
 
 | 原域 | 原 prod 数 | → | 拆分后域 | prod 数 | 说明 |
 |------|--------:|---|---------|------:|------|
-| D-SIGLEGACY (1) | | → | D-SIGLEGACY (保留) | 0 | 设计态占位域，45 个 design 节点待重新分配，ssot_path 留空 |
-| | | → | **D-ASHARE_SIGNAL** (新建) | 0 | A 股特色信号，ssot_path=`src/zephyr/signal_ashare/` |
-| | | → | **D-FUNDAMENTAL_SIGNAL** (新建) | 4 | 基本面信号，ssot_path=`src/zephyr/signal_fundamental/` |
-| | | → | **D-SIGQC** (新建) | 0 | 信号质量，ssot_path=`src/zephyr/signal_quality/` |
+| D_SIGLEGACY (1) | | → | D_SIGLEGACY (保留) | 0 | 设计态占位域，45 个 design 节点待重新分配，ssot_path 留空 |
+| | | → | **D_ASHARE_SIGNAL** (新建) | 0 | A 股特色信号，ssot_path=`src/zephyr/signal_ashare/` |
+| | | → | **D_FUNDAMENTAL_SIGNAL** (新建) | 4 | 基本面信号，ssot_path=`src/zephyr/signal_fundamental/` |
+| | | → | **D_SIGQC** (新建) | 0 | 信号质量，ssot_path=`src/zephyr/signal_quality/` |
 
-**命名说明**（裁定#ARCH-002）: D-ASHARE_SIGNAL/FUNDAMENTAL/QUALITY 的 `D-SIGLEGACY_` 前缀仅表示拆分来源关系，**不表示层级子域**。依据 D38 裁定（parent_domain 仅作分组属性），这 3 个域是独立平级域，无 parent_domain 字段指向 D-SIGLEGACY。重命名涉及 105 文件 + 301 行 DB 更新，风险远大于收益，故保留命名。
+**命名说明**（裁定#ARCH-002）: D_ASHARE_SIGNAL/FUNDAMENTAL/QUALITY 的 `D_SIGLEGACY_` 前缀仅表示拆分来源关系，**不表示层级子域**。依据 D38 裁定（parent_domain 仅作分组属性），这 3 个域是独立平级域，无 parent_domain 字段指向 D_SIGLEGACY。重命名涉及 105 文件 + 301 行 DB 更新，风险远大于收益，故保留命名。
 
-**D-SIGLEGACY 保留说明**（裁定#ARCH-004）: D-SIGLEGACY 保留为设计态占位域（build_status=planned），45 个 design 节点（虚拟设计态路径如"信号域-核心基础设施/D-SIGLEGACY-12"）后续随架构演进重新分配到子域。ssot_path 留空（无代码目录）。
+**D_SIGLEGACY 保留说明**（裁定#ARCH-004）: D_SIGLEGACY 保留为设计态占位域（build_status=planned），45 个 design 节点（虚拟设计态路径如"信号域-核心基础设施/D-SIGLEGACY-12"）后续随架构演进重新分配到子域。ssot_path 留空（无代码目录）。
 
-**验证**: D-SIGLEGACY production_nodes=0，D-FUNDAMENTAL_SIGNAL production_nodes=4，全部 ≤ 150，ARCH-CAP-002 合规。
+**验证**: D_SIGLEGACY production_nodes=0，D_FUNDAMENTAL_SIGNAL production_nodes=4，全部 ≤ 150，ARCH-CAP-002 合规。
 
 #### 裁定#202：数据一致性修复（registry 与 panorama 对齐）
 
@@ -2003,7 +2003,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 域 | 问题 | 修复 |
 |----|------|------|
-| D-GOV_RULE | panorama 有 4 条裁定（#174/#194/#199/#200），但 registry 无条目 | 补写 registry 条目 |
+| D_GOV_RULE | panorama 有 4 条裁定（#174/#194/#199/#200），但 registry 无条目 | 补写 registry 条目 |
 | D_INFRA_OPS | registry 有 3 条（asset-inventory/capacity-assurance/resource_optimization），但 panorama 无直接裁定 | 补写 panorama 裁定记录 |
 
 **D_INFRA_OPS 补记**: D_INFRA_OPS 在 domain_split_plan 附录 C.1 作为跨域共享 blueprint_id 引用域出现，但未作为拆分主体被裁定。该域有 7 个 production 节点，ssot_path=`src/zephyr/infra_ops/`，lifecycle=design_only，build_status=planned（已修正）。本裁定追溯确认其合法地位。
@@ -2032,7 +2032,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 2. 这 9 个域的 ssot_path 都是 `src/zephyr/xxx/` 基础服务路径，归属 L1_foundation 语义正确
 3. 方案B（注册第5层）成本远大于收益；方案A（仅修2域）留下7个脏值治标不治本
 
-修复后 layer_id 分布：L2_domain 32 / L1_foundation 15 / L0_infrastructure 5 / NULL 1（D-GOV-REPAIR，已 deprecated）。
+修复后 layer_id 分布：L2_domain 32 / L1_foundation 15 / L0_infrastructure 5 / NULL 1（D_GOV_REPAIR，已 deprecated）。
 
 **#203-B 详情（孤儿边清理）**:
 
@@ -2063,7 +2063,7 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
    - `chk_domains_build_status_insert/update`：校验 build_status ∈ 5 值
    - `chk_domains_layer_id_insert/update`：校验 layer_id ∈ 4 值或 NULL
 3. 修复 `apply_depgraph.py` 中 `cmd_insert_domain` 的默认值：max_modules 200→150（裁定#194 硬上限），build_status 'unbuilt'→'planned'（避免被触发器拦截）；`add_design_node` build_status 默认值 'unbuilt'→'planned'
-4. 修复 D-GOV-REPAIR max_modules NULL → 150
+4. 修复 D_GOV_REPAIR max_modules NULL → 150
 5. 执行 `init_db()` 完成 v12 迁移，`_schema_version` 表新增版本 12 记录
 6. 验证全部通过：schema_version=12，7 个新触发器存在，非法值插入测试 5 项全 PASS
 

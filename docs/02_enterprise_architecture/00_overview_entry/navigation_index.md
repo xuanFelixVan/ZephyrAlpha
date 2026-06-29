@@ -73,8 +73,8 @@ ttl: permanent
 |------|:---:|--------|
 | 基础设施层 | 5 | D_INFRA_A2A（a2a_communication）、D_INFRA_OPS（基础设施运维）、D_INFRA_RECOVERY（rollback_recovery） 等 |
 | 基础层 | 15 | D_ALT_DATA（另类数据）、D_AUTONOMY_CORE（自治核心）、D_BEHAVIORAL_AUDIT（行为审计） 等 |
-| 业务域层 | 32 | D-ASHARE_SIGNAL（A股特色信号）、D-AUTONOMY_PERM（自治保护）、D-BACKTEST（回测） 等 |
-| 未分层 | 1 | D-GOV-REPAIR（rollback） |
+| 业务域层 | 32 | D_ASHARE_SIGNAL（A股特色信号）、D_AUTONOMY_PERM（自治保护）、D_BACKTEST（回测） 等 |
+| 未分层 | 1 | D_GOV_REPAIR（rollback） |
 
 ---
 

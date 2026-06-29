@@ -113,16 +113,16 @@ edges表已有3个设计态保护触发器：
 
 | domain_id | 节点数 | 占比 |
 |---|:---:|:---:|
-| D-COMPLIANCE | 891 | 11.1% |
-| D-RISK | 749 | 9.3% |
-| D-GOVERNANCE | 605 | 7.5% |
+| D_COMPLIANCE | 891 | 11.1% |
+| D_RISK | 749 | 9.3% |
+| D_GOVERNANCE | 605 | 7.5% |
 | D_SECURITY | 603 | 7.5% |
 | D_AUTONOMY_CORE | 475 | 5.9% |
-| D-SIGLEGACY | 474 | 5.9% |
+| D_SIGLEGACY | 474 | 5.9% |
 | D_INTEGRATION | 416 | 5.2% |
 | D_INFRA_OPS | 387 | 4.8% |
 | D_INFRA_RUNTIME | 311 | 3.9% |
-| D-FACTOR | 302 | 3.8% |
+| D_FACTOR | 302 | 3.8% |
 | 其他29个域 | 2,807 | 35.0% |
 | **合计** | **8,020** | **100%** |
 
@@ -279,14 +279,14 @@ edges表缺失6个字段（含字段名变更）：
 ```
 data/asset_index/design_state/
 ├── nodes/
-│   ├── D-COMPLIANCE.yaml          # 891节点
-│   ├── D-RISK.yaml                # 749节点
-│   ├── D-GOVERNANCE.yaml          # 605节点
+│   ├── D_COMPLIANCE.yaml          # 891节点
+│   ├── D_RISK.yaml                # 749节点
+│   ├── D_GOVERNANCE.yaml          # 605节点
 │   └── ... (39个域文件，共8020节点)
 ├── edges/
-│   ├── D-COMPLIANCE.yaml          # 按from_node的域拆分
-│   ├── D-RISK.yaml
-│   ├── D-GOVERNANCE.yaml
+│   ├── D_COMPLIANCE.yaml          # 按from_node的域拆分
+│   ├── D_RISK.yaml
+│   ├── D_GOVERNANCE.yaml
 │   └── ... (39个域文件，共15295边)
 ├── arch_directory_tree/
 │   └── design_arch.yaml           # 8595条目录树

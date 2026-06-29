@@ -207,7 +207,7 @@ config/
 ├── global.yaml                    # 全局配置（数据库路径、日志级别、API密钥等）
 ├── domains/
 │   ├── D-INFRA.yaml               # 基础设施域配置
-│   ├── D-GOVERNANCE.yaml          # 治理域配置
+│   ├── D_GOVERNANCE.yaml          # 治理域配置
 │   ├── D_SECURITY.yaml            # 安全域配置
 │   └── ... (61个域配置文件)
 └── README.md                      # 配置使用说明
@@ -236,7 +236,7 @@ config/
 **已完成工作**：
 - STEP 1 ✅ 生成器 `_extract_domain_override()` + `derive_domain_id(filepath=)` 覆盖逻辑
 - STEP 2 ✅ 头部体系从十字段扩展为十一字段（[DOMAIN] 可选）
-- STEP 3 ✅ 22 个明确跨域文件已添加 [DOMAIN] 字段（保守映射，治理核心保留 D-GOVERNANCE）
+- STEP 3 ✅ 22 个明确跨域文件已添加 [DOMAIN] 字段（保守映射，治理核心保留 D_GOVERNANCE）
 - STEP 4 ✅ 验证 22/22 文件 [DOMAIN] 读取正确 + 无 [DOMAIN] 文件走路径派生
 
 **未完成部分**（未来工作，不阻塞当前阶段）：
@@ -249,7 +249,7 @@ config/
 
 当前模块的 `domain_id` 由生成器通过路径派生（`UNREGISTERED_SRC_MAP` + `DOMAIN_NAME_TO_LAYER`）。路径派生的问题：模块放在错误目录时，domain_id 会被错误推导，无法纠正。
 
-**实际案例**：`src/zephyr/governance/` 下有 422 个平铺文件，其中约 100-150 个实际属于其他域（如 trading、data、security），但因路径在 governance/ 下被错误标记为 D-GOVERNANCE。
+**实际案例**：`src/zephyr/governance/` 下有 422 个平铺文件，其中约 100-150 个实际属于其他域（如 trading、data、security），但因路径在 governance/ 下被错误标记为 D_GOVERNANCE。
 
 ### 选项
 
@@ -274,7 +274,7 @@ config/
 ```python
 # [BLUEPRINT] MOD-INF-005 | src/zephyr/governance/kill_switch.py | §3
 # [MODULE] zephyr.governance.kill_switch
-# [DOMAIN] D-RESILIENCE    # ← 新增字段，覆盖路径派生的 D-GOVERNANCE
+# [DOMAIN] D-RESILIENCE    # ← 新增字段，覆盖路径派生的 D_GOVERNANCE
 # [INVARIANTS] ...
 # [MODIFY-GUARD] ...
 ```

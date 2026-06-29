@@ -80,7 +80,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D_MKT_DATA
-    target_domains: [D-FACTOR, D-SIGLEGACY, D-SIMULATION]
+    target_domains: [D_FACTOR, D_SIGLEGACY, D_SIMULATION]
     flow: "L00 Data Source → L02 Alpha Factor"
     physical_path: src/zephyr/shared/contracts/market_data.py
     stability: locked-5yr
@@ -129,8 +129,8 @@ contracts:
     name: "FactorSignal / 因子信号"
     priority: P0
     frozen: true
-    source_domain: D-FACTOR
-    target_domains: [D-SIGLEGACY, D-RISK, D-PF_CORE]
+    source_domain: D_FACTOR
+    target_domains: [D_SIGLEGACY, D_RISK, D_PF_CORE]
     flow: "L02 Alpha Factor → L03/L04/L05"
     physical_path: src/zephyr/shared/contracts/factor_signal.py
     stability: locked-5yr
@@ -175,8 +175,8 @@ contracts:
     name: "RiskLimits / 风险限额"
     priority: P0
     frozen: true
-    source_domain: D-RISK
-    target_domains: [D-PF_CORE]
+    source_domain: D_RISK
+    target_domains: [D_PF_CORE]
     flow: "L04 Risk Management → L05 Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/risk_limits.py
     stability: locked-5yr
@@ -214,8 +214,8 @@ contracts:
     name: "Order / 委托指令"
     priority: P0
     frozen: false
-    source_domain: D-PF_CORE
-    target_domains: [D-EX_CORE]
+    source_domain: D_PF_CORE
+    target_domains: [D_EX_CORE]
     flow: "L05 Portfolio Construction → L06 Trade Execution"
     physical_path: src/zephyr/shared/contracts/order.py
     stability: locked-5yr
@@ -259,8 +259,8 @@ contracts:
     name: "Fill / 成交回报"
     priority: P0
     frozen: true
-    source_domain: D-EX_CORE
-    target_domains: [D-TRADING]
+    source_domain: D_EX_CORE
+    target_domains: [D_TRADING]
     flow: "L06 Trade Execution → L07 Post-Trade Analytics"
     physical_path: src/zephyr/shared/contracts/fill.py
     stability: locked-5yr
@@ -301,8 +301,8 @@ contracts:
     name: "PositionSnapshot / 持仓快照"
     priority: P0
     frozen: true
-    source_domain: D-EX_CORE
-    target_domains: [D-RISK, D-TRADING, D-ML_TRAIN]
+    source_domain: D_EX_CORE
+    target_domains: [D_RISK, D_TRADING, D_ML_TRAIN]
     flow: "L06 OMS / L07 Analytics → L04 Risk Monitor / L11 Strategic Decision"
     physical_path: src/zephyr/shared/contracts/position.py
     stability: locked-5yr
@@ -346,7 +346,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D_MKT_DATA
-    target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-ML_TRAIN]
+    target_domains: [D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_ML_TRAIN]
     flow: "L00 → L02 → L03 → L05 → L06 → L07（贯穿全链路）"
     physical_path: src/zephyr/shared/contracts/trace_context.py
     stability: locked-5yr
@@ -382,7 +382,7 @@ contracts:
     priority: P0
     frozen: true
     source_domain: D_MKT_DATA
-    target_domains: [D-FACTOR]
+    target_domains: [D_FACTOR]
     flow: "L00 Data Source → L02 Alpha Factor（错误路径）"
     physical_path: src/zephyr/shared/contracts/errors/data_quality_error.py
     stability: locked-5yr
@@ -411,8 +411,8 @@ contracts:
     name: "FactorComputationError / 因子计算失败错误"
     priority: P0
     frozen: true
-    source_domain: D-FACTOR
-    target_domains: [D-SIGLEGACY]
+    source_domain: D_FACTOR
+    target_domains: [D_SIGLEGACY]
     flow: "L02 Alpha Factor → L03 Signal Generation（错误路径）"
     physical_path: src/zephyr/shared/contracts/errors/factor_computation_error.py
     stability: locked-5yr
@@ -441,8 +441,8 @@ contracts:
     name: "SignalDegradationWarning / 信号质量下降警告"
     priority: P0
     frozen: true
-    source_domain: D-SIGLEGACY
-    target_domains: [D-RISK, D-PF_CORE]
+    source_domain: D_SIGLEGACY
+    target_domains: [D_RISK, D_PF_CORE]
     flow: "L03 Signal Generation → L04/L05（降级通知）"
     physical_path: src/zephyr/shared/contracts/errors/signal_degradation_warning.py
     stability: locked-5yr
@@ -471,8 +471,8 @@ contracts:
     name: "RiskLimitViolationError / 风险限额突破错误"
     priority: P0
     frozen: true
-    source_domain: D-RISK
-    target_domains: [D-PF_CORE, D-EX_CORE]
+    source_domain: D_RISK
+    target_domains: [D_PF_CORE, D_EX_CORE]
     flow: "L04 Risk Management → L05/L06（拒绝交易）"
     physical_path: src/zephyr/shared/contracts/errors/risk_limit_violation_error.py
     stability: locked-5yr
@@ -502,8 +502,8 @@ contracts:
     name: "ExecutionRejectionError / 执行拒绝错误"
     priority: P0
     frozen: true
-    source_domain: D-EX_CORE
-    target_domains: [D-PF_CORE, D-TRADING]
+    source_domain: D_EX_CORE
+    target_domains: [D_PF_CORE, D_TRADING]
     flow: "L06 Trade Execution → L05/L07（执行失败反馈）"
     physical_path: src/zephyr/shared/contracts/errors/execution_rejection_error.py
     stability: locked-5yr
@@ -567,7 +567,7 @@ contracts:
     name: "BackpressurePause / 背压暂停信号"
     priority: P0
     frozen: true
-    source_domain: D-FACTOR
+    source_domain: D_FACTOR
     target_domains: [D_MKT_DATA]
     flow: "L02/L03 下游 → L00 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/pause.py
@@ -595,7 +595,7 @@ contracts:
     name: "BackpressureThrottle / 背压降速信号"
     priority: P0
     frozen: true
-    source_domain: D-FACTOR
+    source_domain: D_FACTOR
     target_domains: [D_MKT_DATA]
     flow: "L02/L03 下游 → L00 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/throttle.py
@@ -622,7 +622,7 @@ contracts:
     name: "BackpressureResume / 背压恢复信号"
     priority: P0
     frozen: true
-    source_domain: D-FACTOR
+    source_domain: D_FACTOR
     target_domains: [D_MKT_DATA]
     flow: "L02/L03 下游 → L00 上游（背压逆向）"
     physical_path: src/zephyr/shared/contracts/backpressure/resume.py
@@ -648,8 +648,8 @@ contracts:
     name: "FactorMonitorReport / 因子有效性监控报告"
     priority: P1
     frozen: true
-    source_domain: D-FACTOR
-    target_domains: [D-TRADING]
+    source_domain: D_FACTOR
+    target_domains: [D_TRADING]
     flow: "L02 Alpha Factor → L07 Post-trade Analytics"
     physical_path: src/zephyr/shared/contracts/factor_monitor_report.py
     stability: upgradable
@@ -676,8 +676,8 @@ contracts:
     name: "MacroFactorSignal / 宏观因子信号"
     priority: P1
     frozen: true
-    source_domain: D-FACTOR
-    target_domains: [D-SIGLEGACY, D-PF_CORE]
+    source_domain: D_FACTOR
+    target_domains: [D_SIGLEGACY, D_PF_CORE]
     flow: "L02（宏观因子计算）→ L03/L05"
     physical_path: src/zephyr/shared/contracts/macro_factor_signal.py
     stability: upgradable
@@ -701,8 +701,8 @@ contracts:
     name: "CapitalAllocationResult / 资本配置结果"
     priority: P1
     frozen: true
-    source_domain: D-SIGLEGACY
-    target_domains: [D-PF_CORE]
+    source_domain: D_SIGLEGACY
+    target_domains: [D_PF_CORE]
     flow: "L03 Signal Generation → L05 Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/capital_allocation_result.py
     stability: upgradable
@@ -724,8 +724,8 @@ contracts:
     name: "ModelServingRequest / 模型推理请求"
     priority: P1
     frozen: true
-    source_domain: D-ML_TRAIN
-    target_domains: [D-SIGLEGACY, D-PF_CORE]
+    source_domain: D_ML_TRAIN
+    target_domains: [D_SIGLEGACY, D_PF_CORE]
     flow: "L11 ML Platform → L03/L05"
     physical_path: src/zephyr/shared/contracts/model_serving_request.py
     stability: upgradable
@@ -743,8 +743,8 @@ contracts:
     name: "ModelServingResponse / 模型推理响应"
     priority: P1
     frozen: true
-    source_domain: D-ML_TRAIN
-    target_domains: [D-SIGLEGACY, D-PF_CORE]
+    source_domain: D_ML_TRAIN
+    target_domains: [D_SIGLEGACY, D_PF_CORE]
     flow: "L11 ML Platform → L03/L05"
     physical_path: src/zephyr/shared/contracts/model_serving_response.py
     stability: upgradable
@@ -767,8 +767,8 @@ contracts:
     name: "StrategyLifecycleEvent / 策略生命周期事件"
     priority: P1
     frozen: true
-    source_domain: D-PF_CORE
-    target_domains: [D-TRADING, D-COMPLIANCE]
+    source_domain: D_PF_CORE
+    target_domains: [D_TRADING, D_COMPLIANCE]
     flow: "L05 Portfolio Construction → L07/L10"
     physical_path: src/zephyr/shared/contracts/strategy_lifecycle_event.py
     stability: upgradable
@@ -793,8 +793,8 @@ contracts:
     name: "ExecutionReport / 执行分析报告"
     priority: P1
     frozen: true
-    source_domain: D-EX_CORE
-    target_domains: [D-TRADING]
+    source_domain: D_EX_CORE
+    target_domains: [D_TRADING]
     flow: "L06 Trade Execution → L07 Post-trade Analytics"
     physical_path: src/zephyr/shared/contracts/execution_report.py
     stability: upgradable
@@ -824,7 +824,7 @@ contracts:
     name: "RiskDashboardSnapshot / 风险仪表板快照"
     priority: P1
     frozen: true
-    source_domain: D-RISK
+    source_domain: D_RISK
     target_domains: [D_FRONTEND]
     flow: "L04 Risk Management → L08 Human-AI Interface"
     physical_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
@@ -851,8 +851,8 @@ contracts:
     name: "PerformanceAttributionReport / 绩效归因报告"
     priority: P1
     frozen: true
-    source_domain: D-TRADING
-    target_domains: [D_FRONTEND, D-COMPLIANCE]
+    source_domain: D_TRADING
+    target_domains: [D_FRONTEND, D_COMPLIANCE]
     flow: "L07 Post-trade Analytics → L08/L10"
     physical_path: src/zephyr/shared/contracts/performance_attribution_report.py
     stability: upgradable
@@ -880,7 +880,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_INFRA_OPS
-    target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D_FRONTEND, D-SIMULATION, D-COMPLIANCE, D-ML_TRAIN, D_OPS]
+    target_domains: [D_FACTOR, D_SIGLEGACY, D_RISK, D_PF_CORE, D_EX_CORE, D_TRADING, D_FRONTEND, D_SIMULATION, D_COMPLIANCE, D_ML_TRAIN, D_OPS]
     flow: "L01 Configuration Management → 全系统"
     physical_path: src/zephyr/shared/contracts/system_configuration.py
     stability: upgradable
@@ -909,8 +909,8 @@ contracts:
     name: "RiskMetricsReport / 风险指标报告"
     priority: P1
     frozen: true
-    source_domain: D-RISK
-    target_domains: [D-PF_CORE, D-TRADING, D_FRONTEND, D-COMPLIANCE]
+    source_domain: D_RISK
+    target_domains: [D_PF_CORE, D_TRADING, D_FRONTEND, D_COMPLIANCE]
     flow: "L04 Risk Metrics → L05/L07/L08/L10"
     physical_path: src/zephyr/shared/contracts/risk_metrics.py
     stability: upgradable
@@ -947,8 +947,8 @@ contracts:
     name: "ComplianceRule / 合规规则"
     priority: P1
     frozen: true
-    source_domain: D-COMPLIANCE
-    target_domains: [D-RISK, D-EX_CORE, D-COMPLIANCE]
+    source_domain: D_COMPLIANCE
+    target_domains: [D_RISK, D_EX_CORE, D_COMPLIANCE]
     flow: "L10 Compliance Rule Definitions → L04/L06/L10"
     physical_path: src/zephyr/shared/contracts/compliance_rule.py
     stability: upgradable
@@ -974,7 +974,7 @@ contracts:
 
   - id: OCP-002
     name: "StrategyBase + StrategyRegistry / 策略扩展点"
-    domain: D-PF_CORE
+    domain: D_PF_CORE
     registry: StrategyRegistry
     autodiscover: null
     physical_path: src/zephyr/pf_core/strategy_base.py
@@ -999,7 +999,7 @@ contracts:
 
   - id: OCP-003
     name: "BrokerInterface / 券商扩展点"
-    domain: D-EX_CORE
+    domain: D_EX_CORE
     registry: null
     autodiscover: null
     physical_path: src/zephyr/ex_core/broker_interface.py
@@ -1022,7 +1022,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D_OPS
-    target_domains: [D_INFRA_OPS, D-RISK, D-EX_CORE, D-TRADING, D-COMPLIANCE, D_OPS]
+    target_domains: [D_INFRA_OPS, D_RISK, D_EX_CORE, D_TRADING, D_COMPLIANCE, D_OPS]
     flow: "L12 Metrics → 全系统"
     physical_path: src/zephyr/shared/contracts/telemetry_emitter.py
     stability: upgradable
@@ -1053,8 +1053,8 @@ contracts:
     name: "ExperimentResult / 实验结论"
     priority: P1
     frozen: true
-    source_domain: D-INTELLIGENCE
-    target_domains: [D-SIMULATION, D-ML_TRAIN]
+    source_domain: D_INTELLIGENCE
+    target_domains: [D_SIMULATION, D_ML_TRAIN]
     flow: "L13 Experimentation → L09 Research / L11 ML Platform"
     physical_path: src/zephyr/shared/contracts/experiment_result.py
     stability: upgradable
@@ -1095,8 +1095,8 @@ contracts:
     name: "SynthesizedSignal / 合成交易信号"
     priority: P1
     frozen: true
-    source_domain: D-SIGLEGACY
-    target_domains: [D-RISK, D-PF_CORE]
+    source_domain: D_SIGLEGACY
+    target_domains: [D_RISK, D_PF_CORE]
     flow: "L03 Signal Generation → L04 Risk Management / L05 Portfolio Construction"
     physical_path: src/zephyr/shared/contracts/synthesized_signal.py
     stability: upgradable
@@ -1133,7 +1133,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D_OPS
-    target_domains: [D_INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D_EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-001: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/contract_metrics.py (MOD-INF-015)
     stability: evolving
@@ -1155,7 +1155,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D_OPS
-    target_domains: [D_INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D_EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-002: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/logs/ (MOD-INF-015)
     stability: evolving
@@ -1178,7 +1178,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D_OPS
-    target_domains: [D_INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D_EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-003: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/traces/ (MOD-INF-015)
     stability: evolving
@@ -1201,7 +1201,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D_OPS
-    target_domains: [D_INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D_EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health_probes.py (MOD-INF-015)
     stability: evolving
@@ -1256,7 +1256,7 @@ external_contracts:
 ocp_extension_points:
   - id: OCP-001
     name: "FactorBase + FactorRegistry / 因子扩展点"
-    domain: D-FACTOR
+    domain: D_FACTOR
     registry: FactorRegistry
     autodiscover: autodiscover_factors
     physical_path: src/zephyr/factor/base.py

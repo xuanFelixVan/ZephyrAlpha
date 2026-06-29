@@ -12,7 +12,7 @@ ttl: permanent
 
 # Ml Experiment Domain — 目录索引（遗留）
 
-> ⚠️ **遗留目录**：本域已被 D-SIMULATION（实验仿真域）取代。待 RULE-THREE 审判后删除或合并。
+> ⚠️ **遗留目录**：本域已被 D_SIMULATION（实验仿真域）取代。待 RULE-THREE 审判后删除或合并。
 
 ## 责任声明（Single Responsibility）
 

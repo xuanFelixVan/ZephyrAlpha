@@ -170,12 +170,12 @@ pip install sentence-transformers
 
 ```powershell
 # 先更新一个小域测试
-python scripts\governance\update_embeddings.py --domain D-GOVERNANCE
+python scripts\governance\update_embeddings.py --domain D_GOVERNANCE
 
 # 验证embedding已生成
 psql -U zephyr -d depgraph -c "
 SELECT COUNT(*) as total, COUNT(embedding) as has_embedding
-FROM nodes WHERE domain_id = 'D-GOVERNANCE';
+FROM nodes WHERE domain_id = 'D_GOVERNANCE';
 "
 
 # 测试语义搜索
@@ -195,7 +195,7 @@ for r in results:
 | 1 | pgvector扩展安装 | `SELECT extname FROM pg_extension WHERE extname='vector'` | vector |
 | 2 | embedding列存在 | `\d nodes` | 显示embedding列 |
 | 3 | HNSW索引存在 | `SELECT indexname FROM pg_indexes WHERE indexname='idx_nodes_embedding'` | idx_nodes_embedding |
-| 4 | embedding已生成 | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D-GOVERNANCE'` | >0 |
+| 4 | embedding已生成 | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D_GOVERNANCE'` | >0 |
 | 5 | 语义搜索可用 | `semantic_search('任务管理')` | 返回相关模块 |
 | 6 | 搜索延迟 | 语义搜索计时 | < 50ms |
 
@@ -244,7 +244,7 @@ Remove-Item scripts/governance/update_embeddings.py
 | 7 | update_embeddings.py存在 | `Test-Path scripts/governance/update_embeddings.py` | True |
 | 8 | sentence-transformers已安装 | `pip show sentence-transformers` | 已安装 |
 | 9 | requirements.txt已更新 | `grep "sentence-transformers" requirements.txt` | 有结果 |
-| 10 | D-GOVERNANCE域有embedding | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D-GOVERNANCE'` | >0 |
+| 10 | D_GOVERNANCE域有embedding | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D_GOVERNANCE'` | >0 |
 | 11 | 语义搜索返回结果 | `semantic_search('任务管理', top_k=5)` | 返回≥1个结果 |
 | 12 | 语义搜索延迟 | 计时 | < 50ms |
 | 13 | PostgreSQL初始化脚本已更新 | `grep "vector" scripts/governance/migrate_sqlite_to_pg/01_create_extensions.sql` | CREATE EXTENSION IF NOT EXISTS vector |
@@ -458,8 +458,8 @@ Remove-Item src/zephyr/shared/utils/depgraph_events.py
 ```powershell
 cd D:\ZephyrAlpha
 psql -U zephyr -d depgraph -c "
-EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
-EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM edges WHERE source_id IN (SELECT node_id FROM nodes WHERE domain_id = 'D-GOVERNANCE');
+EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D_GOVERNANCE';
+EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM edges WHERE source_id IN (SELECT node_id FROM nodes WHERE domain_id = 'D_GOVERNANCE');
 EXPLAIN (ANALYZE, BUFFERS) SELECT COUNT(*) FROM nodes;
 " > scripts\governance\migrate_sqlite_to_pg\performance_baseline.txt
 ```
@@ -512,7 +512,7 @@ SELECT 'edges_new', COUNT(*) FROM edges;
 
 ```powershell
 psql -U zephyr -d depgraph -c "
-EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
+EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D_GOVERNANCE';
 "
 ```
 
@@ -520,8 +520,8 @@ EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 
 ```powershell
 psql -U zephyr -d depgraph -c "
-EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
-EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM edges WHERE domain_id = 'D-GOVERNANCE';
+EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM nodes WHERE domain_id = 'D_GOVERNANCE';
+EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM edges WHERE domain_id = 'D_GOVERNANCE';
 EXPLAIN (ANALYZE, BUFFERS) SELECT COUNT(*) FROM nodes;
 " > scripts\governance\migrate_sqlite_to_pg\performance_after_partition.txt
 ```
@@ -606,7 +606,7 @@ git checkout -- src/zephyr/governance/depgraph_schema.py
 | 6 | edges_default存在 | `SELECT tablename FROM pg_tables WHERE tablename='edges_default'` | edges_default |
 | 7 | nodes行数一致 | `SELECT count(*) FROM nodes` | 14383（与迁移前一致） |
 | 8 | edges行数一致 | `SELECT count(*) FROM edges` | 22605（与迁移前一致） |
-| 9 | 分区裁剪生效 | `EXPLAIN SELECT * FROM nodes WHERE domain_id='D-GOVERNANCE'` | 只扫描1个分区 |
+| 9 | 分区裁剪生效 | `EXPLAIN SELECT * FROM nodes WHERE domain_id='D_GOVERNANCE'` | 只扫描1个分区 |
 | 10 | 旧表已删除 | `SELECT tablename FROM pg_tables WHERE tablename IN ('nodes_old','edges_old')` | 0结果 |
 | 11 | 触发器已重建 | `SELECT count(*) FROM pg_trigger WHERE tgname LIKE 'tr_notify_%'` | 3 |
 | 12 | embedding列在分区中 | `SELECT column_name FROM information_schema.columns WHERE table_name='nodes_p0' AND column_name='embedding'` | embedding |

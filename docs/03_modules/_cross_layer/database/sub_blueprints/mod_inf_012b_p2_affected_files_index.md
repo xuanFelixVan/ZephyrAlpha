@@ -382,7 +382,7 @@ references:
 | 11 | `docs/02_enterprise_architecture/target_architecture/overview.md` | L48 | 技术栈区分depgraph.db(PG)+governance.db(SQLite) | D50-PG裁定 |
 | 12 | `docs/02_enterprise_architecture/target_architecture/technology_architecture.md` | L334 | 容量模型数据源说明补充PG | D50-PG裁定 |
 | 13 | `docs/02_enterprise_architecture/target_architecture/application_architecture.md` | L186 | 确认回滚系统SQLite JSONL dump是否针对depgraph.db | 需确认 |
-| 14 | `docs/02_enterprise_architecture/target_architecture/index.md` | L130 | 确认D-GOV-REPAIR回滚是否针对depgraph.db | 需确认 |
+| 14 | `docs/02_enterprise_architecture/target_architecture/index.md` | L130 | 确认D_GOV_REPAIR回滚是否针对depgraph.db | 需确认 |
 
 ### 4.4 蓝图文档（3个）
 

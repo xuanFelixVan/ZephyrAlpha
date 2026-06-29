@@ -23,7 +23,7 @@ ttl: permanent
 **项目路径**: D:\ZephyrAlpha
 **规则文件**: .trae/rules/project\_rules.md（L0铁律）+ .trae/rules/onboarding\_detail.md（L1施工指导）
 **施工文档**: docs/02\_enterprise\_architecture/phase\_d\_full\_test\_construction\_plan.md
-**任务系统**: TaskRepository（SQLite，data/databases/governance.db）
+**任务系统**: TaskRepository（SQLite，详见 `infrastructure_registry.yaml` INFRA-DB-001）
 
 **RULE-TEN 14步统一流程**（你必须遵循）:
 
@@ -875,7 +875,7 @@ STEP 1-14 按14步统一流程执行
 你是统筹AI，负责协调19个功能AI的工作。
 
 ## 你的职责
-1. 基础设施准备: depgraph.db建表 + conftest.py插件 + 静态存活地图
+1. 基础设施准备: depgraph（PostgreSQL）建表 + conftest.py插件 + 静态存活地图
 2. 依赖协调: 处理AI间的依赖冲突（如AI-17依赖AI-12的向量记忆）
 3. 验收: 每个AI完成后审查其报告
 4. 反馈处理: 收集P0/P1反馈，转发给对应阶段
@@ -1263,10 +1263,10 @@ P0优先级。Agent入职认证系统（与F10模型考试不同维度）。Agen
 - 功能: F25 数据库集成层
 - 蓝图: MOD-DATABASE database
 - 源码包: src/zephyr/infrastructure/db/（13文件）+ src/zephyr/governance/sqlite_schema.py
-- 包含子系统: SQLite核心运营 + DuckDB市场数据 + PostgreSQL容量升级 + 三库架构(governance.db/depgraph.db/market.duckdb)
+- 包含子系统: SQLite核心运营 + DuckDB市场数据 + PostgreSQL容量升级 + 5库架构（清单见 `infrastructure_registry.yaml`）
 
 ## 背景
-P1优先级。三库架构是全项目数据持久化基础。
+P1优先级。5库架构是全项目数据持久化基础（清单见 `infrastructure_registry.yaml`）。
 
 ## 阶段A：创建详细任务卡
 
@@ -1752,7 +1752,7 @@ P2优先级。代码去重防止重复造轮子。
 - 包含子系统: JSONL唯一真源写入 + 哈希链防篡改 + HMAC系统级签名 + Ed25519 Agent级不可否认签名 + CoT推理链审计 + 13种异常行为签名检测 + Merkle小时级完整性 + 证据包(evidence_pack) + 重放引擎(replay_engine) + 分层存储 + 隐私脱敏 + 信任引擎
 - 蓝图版本: v2.1.0, generation 9
 - construction_progress: partially_implemented
-- 功能域: D-GOV_AUDIT/audit-trail
+- 功能域: D_GOV_AUDIT/audit-trail
 
 ## 背景
 不可变动作审计与密码学完整性保证。与F6（漂移检测/行为审计）不同：F6检测基线偏离和行为边界，F36解决操作记录不可篡改+不可否认+密码学可验证。目标容量 100 AI并发 × 10,000脚本 × 峰值120条/秒写入。

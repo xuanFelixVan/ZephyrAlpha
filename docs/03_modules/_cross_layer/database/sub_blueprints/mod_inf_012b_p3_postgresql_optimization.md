@@ -505,7 +505,7 @@ sentence-transformers>=2.7.0
     python scripts/governance/update_embeddings.py
 
     # 更新指定域
-    python scripts/governance/update_embeddings.py --domain D-GOVERNANCE
+    python scripts/governance/update_embeddings.py --domain D_GOVERNANCE
 """
 
 import argparse
@@ -550,14 +550,14 @@ if __name__ == "__main__":
 cd D:\ZephyrAlpha
 
 # 先更新一个小域测试
-python scripts\governance\update_embeddings.py --domain D-GOVERNANCE
+python scripts\governance\update_embeddings.py --domain D_GOVERNANCE
 
 # 验证embedding已生成
 psql -U zephyr -d depgraph -c "
 SELECT COUNT(*) as total,
        COUNT(embedding) as has_embedding
 FROM nodes
-WHERE domain_id = 'D-GOVERNANCE';
+WHERE domain_id = 'D_GOVERNANCE';
 "
 
 # 测试语义搜索
@@ -571,7 +571,7 @@ for r in results:
 ```
 
 **预期输出**：
-- D-GOVERNANCE域的节点大部分有embedding
+- D_GOVERNANCE域的节点大部分有embedding
 - 语义搜索返回相关模块（如task_repo、task_types等）
 
 ### 4.4 验证清单
@@ -581,7 +581,7 @@ for r in results:
 | 1 | pgvector扩展安装 | `SELECT extname FROM pg_extension WHERE extname='vector'` | vector |
 | 2 | embedding列存在 | `\d nodes` | 显示embedding列 |
 | 3 | HNSW索引存在 | `SELECT indexname FROM pg_indexes WHERE indexname='idx_nodes_embedding'` | idx_nodes_embedding |
-| 4 | embedding已生成 | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D-GOVERNANCE'` | >0 |
+| 4 | embedding已生成 | `SELECT COUNT(embedding) FROM nodes WHERE domain_id='D_GOVERNANCE'` | >0 |
 | 5 | 语义搜索可用 | `semantic_search('任务管理')` | 返回相关模块 |
 | 6 | 搜索延迟 | 语义搜索计时 | < 50ms |
 
@@ -850,7 +850,7 @@ depgraph事件通知集成
     listener = get_event_listener()
     listener.start()
     for event in listener.events():
-        if event['payload'].get('domain_id') == 'D-GOVERNANCE':
+        if event['payload'].get('domain_id') == 'D_GOVERNANCE':
             print(f"GOVERNANCE域变更: {event['payload']}")
 """
 
@@ -1073,12 +1073,12 @@ cd D:\ZephyrAlpha
 psql -U zephyr -d depgraph -c "
 -- 查询1: 按domain_id查询nodes
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
+SELECT * FROM nodes WHERE domain_id = 'D_GOVERNANCE';
 
 -- 查询2: 按domain_id查询edges
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM edges WHERE source_id IN (
-    SELECT node_id FROM nodes WHERE domain_id = 'D-GOVERNANCE'
+    SELECT node_id FROM nodes WHERE domain_id = 'D_GOVERNANCE'
 );
 
 -- 查询3: 全表扫描
@@ -1223,7 +1223,7 @@ SELECT 'edges_new', COUNT(*) FROM edges;
 psql -U zephyr -d depgraph -c "
 -- 验证分区裁剪：只扫描1个分区
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
+SELECT * FROM nodes WHERE domain_id = 'D_GOVERNANCE';
 "
 ```
 
@@ -1237,11 +1237,11 @@ SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
 psql -U zephyr -d depgraph -c "
 -- 查询1: 按domain_id查询nodes
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM nodes WHERE domain_id = 'D-GOVERNANCE';
+SELECT * FROM nodes WHERE domain_id = 'D_GOVERNANCE';
 
 -- 查询2: 按domain_id查询edges
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM edges WHERE domain_id = 'D-GOVERNANCE';
+SELECT * FROM edges WHERE domain_id = 'D_GOVERNANCE';
 
 -- 查询3: 全表扫描
 EXPLAIN (ANALYZE, BUFFERS)

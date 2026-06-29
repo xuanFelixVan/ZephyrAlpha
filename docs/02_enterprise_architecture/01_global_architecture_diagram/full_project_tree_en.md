@@ -721,8 +721,8 @@ docs/  (1 files: .yaml(1))
 │   │   ├── 20_d_shared_architecture.md  — 共享服务 architecture  
 │   │   ├── 21_d_ashare_signal.md  — A股特色信号  
 │   │   ├── 21_d_ashare_signal_architecture.md  — A股特色信号 architecture  
-│   │   ├── 22_d_audittest.md  — D-AUDITTEST  
-│   │   ├── 22_d_audittest_architecture.md  — D-AUDITTEST architecture  
+│   │   ├── 22_d_audittest.md  — D_AUDITTEST  
+│   │   ├── 22_d_audittest_architecture.md  — D_AUDITTEST architecture  
 │   │   ├── 23_d_autonomy_perm.md  — 自治保护  
 │   │   ├── 23_d_autonomy_perm_architecture.md  — 自治保护 architecture  
 │   │   ├── 24_d_backtest.md  — 回测  
@@ -747,16 +747,16 @@ docs/  (1 files: .yaml(1))
 │   │   ├── 33_d_governance_architecture.md  — 生命周期管理 architecture  
 │   │   ├── 34_d_gov_audit.md  — 审计追踪  
 │   │   ├── 34_d_gov_audit_architecture.md  — 审计追踪 architecture  
-│   │   ├── 35_d_gov_docs.md  — D-GOV_DOCS  
-│   │   ├── 35_d_gov_docs_architecture.md  — D-GOV_DOCS architecture  
+│   │   ├── 35_d_gov_docs.md  — D_GOV_DOCS  
+│   │   ├── 35_d_gov_docs_architecture.md  — D_GOV_DOCS architecture  
 │   │   ├── 36_d_gov_drift.md  — 漂移检测  
 │   │   ├── 36_d_gov_drift_architecture.md  — 漂移检测 architecture  
-│   │   ├── 37_d_gov_enforcement.md  — D-GOV_ENFORCEMENT  
-│   │   ├── 37_d_gov_enforcement_architecture.md  — D-GOV_ENFORCEMENT architecture  
+│   │   ├── 37_d_gov_enforcement.md  — D_GOV_ENFORCEMENT  
+│   │   ├── 37_d_gov_enforcement_architecture.md  — D_GOV_ENFORCEMENT architecture  
 │   │   ├── 38_d_gov_rule.md  — 规则治理  
 │   │   ├── 38_d_gov_rule_architecture.md  — 规则治理 architecture  
-│   │   ├── 39_d_gov_scripts.md  — D-GOV_SCRIPTS  
-│   │   ├── 39_d_gov_scripts_architecture.md  — D-GOV_SCRIPTS architecture  
+│   │   ├── 39_d_gov_scripts.md  — D_GOV_SCRIPTS  
+│   │   ├── 39_d_gov_scripts_architecture.md  — D_GOV_SCRIPTS architecture  
 │   │   ├── 40_d_intelligence.md  — 上下文管理  
 │   │   ├── 40_d_intelligence_architecture.md  — 上下文管理 architecture  
 │   │   ├── 41_d_knowledge.md  — 知识管理  
@@ -801,7 +801,7 @@ docs/  (1 files: .yaml(1))
 │   │   ├── 00_overview_entry_sample.md  — "架构文档库总览样板"  
 │   │   ├── 04_architecture_principles_decisions_sample.md  — "架构原则与决策样板"  
 │   │   ├── 05_manual_architecture_views_sample.md  — "业务架构视图样板"  
-│   │   ├── 16_d_trading_sample.md  — D-TRADING_SAMPLE  
+│   │   ├── 16_d_trading_sample.md  — D_TRADING_SAMPLE  
 │   │   ├── 6_手工架构图_样板.mmd  — 6_手工架构图_样板 diagram  
 │   │   ├── integration_topology_sample.md  — "集成拓扑图样板 / Integration Topology Sample"  
 │   │   └── path_tree_sample.md  — "物理路径树样板"  

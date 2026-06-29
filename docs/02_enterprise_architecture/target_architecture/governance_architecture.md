@@ -127,7 +127,7 @@ ttl: permanent
 
 ### 2.2 三层物理位置速查
 
-> **详细路径清单** → 查询 depgraph.db: `SELECT path FROM nodes WHERE domain_id IN ('D-GOVERNANCE','D-GOV_AUDIT','D-GOV_RULE')`（governance/arch_guard/quality 三域）
+> **详细路径清单** → 查询 depgraph.db: `SELECT path FROM nodes WHERE domain_id IN ('D_GOVERNANCE','D_GOV_AUDIT','D_GOV_RULE')`（governance/arch_guard/quality 三域）
 
 | 层 | 关键物理位置 | 代表产物 |
 |---|---|---|
@@ -322,7 +322,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 | **Runtime** | AI 行为审计（VIB-14）| `scripts/audit_log/vib14_ai_behavior_audit.py` |
 | **Runtime** | AISG 六大模块 | `src/zephyr/compliance/ai_security/`（D-01 P0 红线）|
 | **Runtime** | Scout Agent 运行态 | `src/zephyr/ml_train/scout/` + `kms/daily_digest/` |
-| **Runtime** | 四大引擎 K2 占位 | `D_FRONTEND/decision_engine/` · `D-PF_CORE/capital_allocation/` · `D-GOV_AUDIT/failure_learning/` · `D-SIMULATION/market_regime/` |
+| **Runtime** | 四大引擎 K2 占位 | `D_FRONTEND/decision_engine/` · `D_PF_CORE/capital_allocation/` · `D_GOV_AUDIT/failure_learning/` · `D_SIMULATION/market_regime/` |
 
 ### 5.3 AI 员工规划总数（v1.2.0：39→46 系统，~39 AI 员工）
 
@@ -393,7 +393,7 @@ B-01 是"治理治理系统的系统"（对标 Goldman GRB）：Policy 元规则
 - [ ] 所有 `module_id` 在全库唯一（无重复）
 - [ ] 所有文件在 `directory-keep-whitelist.yaml` 或有明确 owner
 - [ ] `reference-remap-table.yaml` 审计日志完整（本次重组的 10+ 条 change_log）
-- [ ] 域分层无越界引用（D-FACTOR 不得 import D-PF_CORE，域边界由 depgraph.db 定义）
+- [ ] 域分层无越界引用（D_FACTOR 不得 import D_PF_CORE，域边界由 depgraph.db 定义）
 - [ ] 6 大核心服务接口规范已全部在 `docs/03_modules/_b_track_interfaces/` 就位
 
 ### 6.5 6 大核心服务的治理归属

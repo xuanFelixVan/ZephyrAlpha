@@ -147,7 +147,7 @@ sections:
       fail: domain_id 与 ssot_path 语义不一致
     actions:
     - type: mandatory
-      step: 拆分大域时 MUST 拆成平行域（如 D-GOVERNANCE 拆成 D-GOV_AUDIT/D-GOV_DRIFT/D-GOV_RULE/D-GOVERNANCE 四个平级域），禁止拆成子域（如 D-GOVERNANCE/AUDIT）
+      step: 拆分大域时 MUST 拆成平行域（如 D_GOVERNANCE 拆成 D_GOV_AUDIT/D_GOV_DRIFT/D_GOV_RULE/D_GOVERNANCE 四个平级域），禁止拆成子域（如 D_GOVERNANCE/AUDIT）
     - type: mandatory
       step: 新域 MUST 独立注册到 domains 表，有自己的 domain_id、domain_name、domain_group、layer_id、ssot_path、max_modules
     - type: mandatory
@@ -157,7 +157,7 @@ sections:
     - type: mandatory
       step: 域命名 MUST 遵循 FP-4（命名=未来方向），根据模块未来发展方向推导命名，不根据当前子集命名
     prohibitions:
-    - 创建子域（如 D-GOVERNANCE/AUDIT 形式）
+    - 创建子域（如 D_GOVERNANCE/AUDIT 形式）
     - 使用父子域命名（如 D-GOV_PARENT/D-GOV_CHILD）
     - 拆分后保留"父域"概念（拆分后所有域平级，无父域）
     - 在域根目录下创建同名子目录再放模块（如 src/zephyr/foo/foo/）——违反 FP-5 最小嵌套

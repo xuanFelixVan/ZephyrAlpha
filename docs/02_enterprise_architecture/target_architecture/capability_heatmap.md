@@ -106,15 +106,15 @@ ttl: permanent
 | 能力域 | 类型 | 包含域 |
 |--------|:---:|--------|
 | 数据接入 | 业务 | D_MKT_DATA, D_ALT_DATA, D_DATA_ENG |
-| 因子研究 | 业务 | D-FACTOR, D-SIGLEGACY, D-FUNDAMENTAL_SIGNAL, D-ASHARE_SIGNAL, D-SIGQC |
-| 策略决策 | 业务 | D-PF_CORE, D-PF_ALLOC, D-SELL_DECISION, D-CROSS_ASSET |
-| 执行交易 | 业务 | D-EX_CORE, D-EX_SOR, D-TRADING, D-POSITION |
-| 风险控制 | 业务 | D-RISK, D-COMPLIANCE |
-| 回测仿真 | 业务 | D-BACKTEST, D-SIMULATION, D-EXEC_SIM, D-DIGITAL_TWIN |
-| ML平台 | 业务 | D-ML_TRAIN, D-ML_SERVE |
-| 治理（横切） | 横切 | D-GOVERNANCE, D-GOV_RULE, D-GOV_AUDIT, D-GOV_DRIFT, D-GOV_ENFORCEMENT, D-GOV_REPAIR, D-GOV_SCRIPTS |
-| 安全（横切） | 横切 | D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D-AUTONOMY_PERM |
-| 基础设施（横切） | 横切 | D_INFRA_OPS, D_INFRA_RUNTIME, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D_AUTONOMY_CORE, D_OPS |
+| 因子研究 | 业务 | D_FACTOR, D_SIGLEGACY, D_FUNDAMENTAL_SIGNAL, D_ASHARE_SIGNAL, D_SIGQC |
+| 策略决策 | 业务 | D_PF_CORE, D_PF_ALLOC, D_SELL_DECISION, D_CROSS_ASSET |
+| 执行交易 | 业务 | D_EX_CORE, D_EX_SOR, D_TRADING, D_POSITION |
+| 风险控制 | 业务 | D_RISK, D_COMPLIANCE |
+| 回测仿真 | 业务 | D_BACKTEST, D_SIMULATION, D_EXEC_SIM, D_DIGITAL_TWIN |
+| ML平台 | 业务 | D_ML_TRAIN, D_ML_SERVE |
+| 治理（横切） | 横切 | D_GOVERNANCE, D_GOV_RULE, D_GOV_AUDIT, D_GOV_DRIFT, D_GOV_ENFORCEMENT, D-GOV_REPAIR, D_GOV_SCRIPTS |
+| 安全（横切） | 横切 | D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D_AUTONOMY_PERM |
+| 基础设施（横切） | 横切 | D_INFRA_OPS, D_INFRA_RUNTIME, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D_KNOWLEDGE, D_INTELLIGENCE, D_AUTONOMY_CORE, D_OPS |
 
 
 ### 3.2 域成熟度快照（53域）
@@ -123,7 +123,7 @@ ttl: permanent
 
 | 域ID | 域名称 | layer_id | 节点数 | production | design | prototype | 成熟度评级 |
 |------|--------|----------|:---:|:---:|:---:|:---:|:---:|
-| `D-GOV-REPAIR` | rollback | `N/A` | 0 | 0 | 0 | 0 | L0 |
+| `D_GOV_REPAIR` | rollback | `N/A` | 0 | 0 | 0 | 0 | L0 |
 | `D_INFRA_A2A` | a2a_communication | `L0_infrastructure` | 114 | 114 | 0 | 0 | L3+ |
 | `D_INFRA_OPS` | resource_optimization | `L0_infrastructure` | 34 | 7 | 1 | 26 | L3+ |
 | `D_INFRA_RECOVERY` | rollback_recovery | `L0_infrastructure` | 107 | 107 | 0 | 0 | L3+ |
@@ -144,38 +144,38 @@ ttl: permanent
 | `D_SECURITY` | adversarial_validation | `L1_foundation` | 244 | 132 | 0 | 112 | L3+ |
 | `D_SECURITY_LLM` | llm_defense | `L1_foundation` | 0 | 0 | 0 | 0 | L0 |
 | `D_SHARED` | shared_services | `L1_foundation` | 296 | 93 | 0 | 203 | L3+ |
-| `D-ASHARE_SIGNAL` | ashare_signal | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-AUDITTEST` | audit_test_suite | `L2_domain` | 152 | 142 | 0 | 10 | L3+ |
-| `D-AUTONOMY_PERM` | escalation | `L2_domain` | 70 | 2 | 1 | 67 | L3+ |
-| `D-BACKTEST` | 回测 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-COMPLIANCE` | 合规 | `L2_domain` | 25 | 0 | 0 | 25 | L2 |
-| `D-CROSS_ASSET` | 跨资产 | `L2_domain` | 11 | 1 | 1 | 9 | L3+ |
-| `D-DIGITAL_TWIN` | 数字孪生 | `L2_domain` | 8 | 0 | 1 | 7 | L2 |
-| `D-EXEC_SIM` | 执行仿真 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-EX_CORE` | 执行核心 | `L2_domain` | 14 | 3 | 0 | 11 | L3+ |
-| `D-EX_SOR` | 执行路由 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-FACTOR` | 因子 | `L2_domain` | 17 | 2 | 0 | 15 | L3+ |
-| `D-FUNDAMENTAL_SIGNAL` | fundamental_signal | `L2_domain` | 25 | 4 | 0 | 21 | L3+ |
-| `D-GOVERNANCE` | lifecycle_management | `L2_domain` | 2831 | 117 | 50 | 2664 | L3+ |
-| `D-GOV_AUDIT` | audit-trail | `L2_domain` | 188 | 54 | 2 | 132 | L3+ |
-| `D-GOV_DOCS` | architecture_docs | `L2_domain` | 127 | 78 | 0 | 49 | L3+ |
-| `D-GOV_DRIFT` | drift_detection | `L2_domain` | 24 | 9 | 1 | 14 | L3+ |
-| `D-GOV_ENFORCEMENT` | rule_enforcement | `L2_domain` | 107 | 69 | 0 | 38 | L3+ |
-| `D-GOV_RULE` | rule_governance | `L2_domain` | 11 | 11 | 0 | 0 | L3+ |
-| `D-GOV_SCRIPTS` | code_dedup | `L2_domain` | 416 | 26 | 0 | 390 | L3+ |
-| `D-INTELLIGENCE` | context_management | `L2_domain` | 56 | 18 | 0 | 38 | L3+ |
-| `D-KNOWLEDGE` | knowledge_management | `L2_domain` | 41 | 1 | 2 | 38 | L3+ |
-| `D-ML_SERVE` | 推理 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-ML_TRAIN` | model_profiling | `L2_domain` | 12 | 0 | 1 | 11 | L2 |
-| `D-PF_ALLOC` | 组合分配 | `L2_domain` | 11 | 0 | 1 | 10 | L2 |
-| `D-PF_CORE` | 组合核心 | `L2_domain` | 44 | 6 | 26 | 12 | L3+ |
-| `D-POSITION` | 仓位管理 | `L2_domain` | 8 | 0 | 0 | 8 | L2 |
-| `D-RISK` | 风控 | `L2_domain` | 25 | 9 | 0 | 16 | L3+ |
-| `D-SELL_DECISION` | 卖出决策 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-SIGLEGACY` | siglegacy | `L2_domain` | 0 | 0 | 0 | 0 | L0 |
-| `D-SIGQC` | signal_quality | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
-| `D-SIMULATION` | 仿真 | `L2_domain` | 19 | 4 | 1 | 14 | L3+ |
-| `D-TRADING` | 交易运营 | `L2_domain` | 163 | 20 | 0 | 143 | L3+ |
+| `D_ASHARE_SIGNAL` | ashare_signal | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_AUDITTEST` | audit_test_suite | `L2_domain` | 152 | 142 | 0 | 10 | L3+ |
+| `D_AUTONOMY_PERM` | escalation | `L2_domain` | 70 | 2 | 1 | 67 | L3+ |
+| `D_BACKTEST` | 回测 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_COMPLIANCE` | 合规 | `L2_domain` | 25 | 0 | 0 | 25 | L2 |
+| `D_CROSS_ASSET` | 跨资产 | `L2_domain` | 11 | 1 | 1 | 9 | L3+ |
+| `D_DIGITAL_TWIN` | 数字孪生 | `L2_domain` | 8 | 0 | 1 | 7 | L2 |
+| `D_EXEC_SIM` | 执行仿真 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_EX_CORE` | 执行核心 | `L2_domain` | 14 | 3 | 0 | 11 | L3+ |
+| `D_EX_SOR` | 执行路由 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_FACTOR` | 因子 | `L2_domain` | 17 | 2 | 0 | 15 | L3+ |
+| `D_FUNDAMENTAL_SIGNAL` | fundamental_signal | `L2_domain` | 25 | 4 | 0 | 21 | L3+ |
+| `D_GOVERNANCE` | lifecycle_management | `L2_domain` | 2831 | 117 | 50 | 2664 | L3+ |
+| `D_GOV_AUDIT` | audit-trail | `L2_domain` | 188 | 54 | 2 | 132 | L3+ |
+| `D_GOV_DOCS` | architecture_docs | `L2_domain` | 127 | 78 | 0 | 49 | L3+ |
+| `D_GOV_DRIFT` | drift_detection | `L2_domain` | 24 | 9 | 1 | 14 | L3+ |
+| `D_GOV_ENFORCEMENT` | rule_enforcement | `L2_domain` | 107 | 69 | 0 | 38 | L3+ |
+| `D_GOV_RULE` | rule_governance | `L2_domain` | 11 | 11 | 0 | 0 | L3+ |
+| `D_GOV_SCRIPTS` | code_dedup | `L2_domain` | 416 | 26 | 0 | 390 | L3+ |
+| `D_INTELLIGENCE` | context_management | `L2_domain` | 56 | 18 | 0 | 38 | L3+ |
+| `D_KNOWLEDGE` | knowledge_management | `L2_domain` | 41 | 1 | 2 | 38 | L3+ |
+| `D_ML_SERVE` | 推理 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_ML_TRAIN` | model_profiling | `L2_domain` | 12 | 0 | 1 | 11 | L2 |
+| `D_PF_ALLOC` | 组合分配 | `L2_domain` | 11 | 0 | 1 | 10 | L2 |
+| `D_PF_CORE` | 组合核心 | `L2_domain` | 44 | 6 | 26 | 12 | L3+ |
+| `D_POSITION` | 仓位管理 | `L2_domain` | 8 | 0 | 0 | 8 | L2 |
+| `D_RISK` | 风控 | `L2_domain` | 25 | 9 | 0 | 16 | L3+ |
+| `D_SELL_DECISION` | 卖出决策 | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_SIGLEGACY` | siglegacy | `L2_domain` | 0 | 0 | 0 | 0 | L0 |
+| `D_SIGQC` | signal_quality | `L2_domain` | 7 | 0 | 0 | 7 | L2 |
+| `D_SIMULATION` | 仿真 | `L2_domain` | 19 | 4 | 1 | 14 | L3+ |
+| `D_TRADING` | 交易运营 | `L2_domain` | 163 | 20 | 0 | 143 | L3+ |
 
 
 ### 3.3 能力域成熟度汇总

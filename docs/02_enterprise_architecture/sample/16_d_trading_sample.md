@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 16 | Number | 16 |
-| 域ID | D-TRADING | Domain ID | D-TRADING |
+| 域ID | D_TRADING | Domain ID | D_TRADING |
 | 域名称 | 交易运营 | Domain Name | Trading Operations |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 249 | Module Count | 249 |
@@ -65,7 +65,7 @@ ttl: permanent
 ```mermaid
 graph TD
     %% 域内模块 / Internal Modules
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         order["订单生成和管理 运营<br/>Order Generation production"]
         exec["订单执行引擎 运营<br/>Execution Engine production"]
         fill["成交回报处理 运营<br/>Fill Processing production"]
@@ -86,12 +86,12 @@ graph TD
     market_data["D-MARKET_DATA 运营<br/>行情数据"]
     market_data -->|行情数据| order
 
-    risk_domain["D-RISK 运营<br/>风险域"]
+    risk_domain["D_RISK 运营<br/>风险域"]
     risk_domain -->|风控规则| risk
 
     %% 跨域出边 / Cross-domain Outgoing
     fill -->|成交记录| reporting["D_REPORTING 运营<br/>报告域"]
-    pos -.->|持仓数据 设计态| backtest["D-BACKTEST 设计<br/>回测域"]
+    pos -.->|持仓数据 设计态| backtest["D_BACKTEST 设计<br/>回测域"]
 
     %% 样式 / Styling
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -114,14 +114,14 @@ graph TD
 | 目标域 | 依赖数 | 主要依赖类型 | Target Domain | Dependency Count | Main Type |
 |--------|:---:|------|-------|:---:|------|
 | D-MARKET_DATA | 15 | 数据读取 / Data Read | D-MARKET_DATA | 15 | Data Read |
-| D-RISK | 10 | 风控检查 / Risk Check | D-RISK | 10 | Risk Check |
+| D_RISK | 10 | 风控检查 / Risk Check | D_RISK | 10 | Risk Check |
 | ... | ... | ... | ... | ... | ... |
 
 ### 被依赖的域 / Depended By
 
 | 源域 | 依赖数 | 主要依赖类型 | Source Domain | Dependency Count | Main Type |
 |------|:---:|------|-------|:---:|------|
-| D-BACKTEST | 20 | 回测调用 / Backtest Call | D-BACKTEST | 20 | Backtest Call |
+| D_BACKTEST | 20 | 回测调用 / Backtest Call | D_BACKTEST | 20 | Backtest Call |
 | D_REPORTING | 8 | 报告数据 / Report Data | D_REPORTING | 8 | Report Data |
 | ... | ... | ... | ... | ... | ... |
 

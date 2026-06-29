@@ -4199,13 +4199,13 @@ entries:
   old_path: src/zephyr/autonomy_core/feedback-loop/verifiers/verification_engine.py
   status: done
   subdomain_id: feedback-loop
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/adaptive_threshold.py
   old_path: src/zephyr/autonomy_core/gates/adaptive_threshold.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/adversarial_strategies.py
   old_path: src/zephyr/autonomy_core/gates/adversarial_strategies.py
@@ -4223,439 +4223,439 @@ entries:
   old_path: src/zephyr/autonomy_core/feedback-loop/verifiers/__init__.py
   status: done
   subdomain_id: feedback-loop
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/adversarial_validation.py
   old_path: src/zephyr/autonomy_core/gates/adversarial_validation.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/ai_capability_guard.py
   old_path: src/zephyr/autonomy_core/gates/ai_capability_guard.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/capability_checker.py
   old_path: src/zephyr/autonomy_core/gates/capability_checker.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/anti_pattern_guard.py
   old_path: src/zephyr/autonomy_core/gates/anti_pattern_guard.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/audit_chain_verifier.py
   old_path: src/zephyr/autonomy_core/gates/audit_chain_verifier.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/cbac_matrix.py
   old_path: src/zephyr/autonomy_core/gates/cbac_matrix.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/breaking_change_detector.py
   old_path: src/zephyr/autonomy_core/gates/breaking_change_detector.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/can_i_deploy.py
   old_path: src/zephyr/autonomy_core/gates/can_i_deploy.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/cdc_broker.py
   old_path: src/zephyr/autonomy_core/gates/cdc_broker.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/circuit_breaker.py
   old_path: src/zephyr/autonomy_core/gates/circuit_breaker.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/contract_template_manager.py
   old_path: src/zephyr/autonomy_core/gates/contract_template_manager.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/drift-detector.py
   old_path: src/zephyr/autonomy_core/gates/drift-detector.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_context.py
   old_path: src/zephyr/autonomy_core/gates/gate_context.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/end_to_end_walkthrough.py
   old_path: src/zephyr/autonomy_core/gates/end_to_end_walkthrough.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_integrity_guard.py
   old_path: src/zephyr/autonomy_core/gates/gate_integrity_guard.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_engine.py
   old_path: src/zephyr/autonomy_core/gates/gate_engine.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_override.py
   old_path: src/zephyr/autonomy_core/gates/gate_override.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_pipeline.py
   old_path: src/zephyr/autonomy_core/gates/gate_pipeline.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_health.py
   old_path: src/zephyr/autonomy_core/gates/gate_health.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_simulator.py
   old_path: src/zephyr/autonomy_core/gates/gate_simulator.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/kiss_enforcer.py
   old_path: src/zephyr/autonomy_core/gates/kiss_enforcer.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/gate_types.py
   old_path: src/zephyr/autonomy_core/gates/gate_types.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/risk_ssot.py
   old_path: src/zephyr/autonomy_core/gates/risk_ssot.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/integration_test_runner.py
   old_path: src/zephyr/autonomy_core/gates/integration_test_runner.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/secrets_guard.py
   old_path: src/zephyr/autonomy_core/gates/secrets_guard.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/sys_master_compliance.py
   old_path: src/zephyr/autonomy_core/gates/sys_master_compliance.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/task_completion_gate.py
   old_path: src/zephyr/autonomy_core/gates/task_completion_gate.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/task_types.py
   old_path: src/zephyr/autonomy_core/gates/task_types.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/__init__.py
   old_path: src/zephyr/autonomy_core/gates/__init__.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/triple_alignment.py
   old_path: src/zephyr/autonomy_core/gates/triple_alignment.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/truth_source_validator.py
   old_path: src/zephyr/autonomy_core/gates/truth_source_validator.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/adversarial_validation.py
   old_path: src/zephyr/autonomy_core/gates/check_types/adversarial_validation.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_audit_findings_resolved.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_audit_findings_resolved.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_blueprint_read_check.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_blueprint_read_check.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_circuit_breaker.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_circuit_breaker.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/admission/__init__.py
   old_path: src/zephyr/autonomy_core/gates/admission/__init__.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/check_type_registry.py
   old_path: src/zephyr/autonomy_core/gates/check_types/check_type_registry.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_circular_dependency_scan.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_circular_dependency_scan.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_content_length.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_content_length.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_classification.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_classification.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_contract_compatibility_check.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_contract_compatibility_check.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_content_quality.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_content_quality.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_deduplication.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_deduplication.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_enforcement_mode_check.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_enforcement_mode_check.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_drift_budget.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_drift_budget.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_encoding.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_encoding.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_file_extension.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_file_extension.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_field_presence.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_field_presence.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_leverage_limit.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_leverage_limit.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_frontmatter.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_frontmatter.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_fle_gate.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_fle_gate.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_manual_approval.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_manual_approval.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_line_ending.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_line_ending.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_path_blacklist.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_path_blacklist.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_position_limit.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_position_limit.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_path_routing.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_path_routing.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_path_whitelist.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_path_whitelist.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_restructuring_safety.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_restructuring_safety.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_reference_check.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_reference_check.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_rollback_exit_code.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_rollback_exit_code.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_regex_pattern.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_regex_pattern.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_score_threshold.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_score_threshold.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_security_artifact_scan.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_security_artifact_scan.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_strategy_correlation.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_strategy_correlation.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/invariants/en_001_circular_dependency.py
   old_path: src/zephyr/autonomy_core/gates/invariants/en_001_circular_dependency.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_temporal.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_temporal.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/__init__.py
   old_path: src/zephyr/autonomy_core/gates/check_types/__init__.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/invariants/en_003_contract_compatibility.py
   old_path: src/zephyr/autonomy_core/gates/invariants/en_003_contract_compatibility.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/check_types/ct_zero_residue_check.py
   old_path: src/zephyr/autonomy_core/gates/check_types/ct_zero_residue_check.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.py
   old_path: src/zephyr/autonomy_core/gates/invariants/en_002_enforcement_validator.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/invariants/zero_residue_check.py
   old_path: src/zephyr/autonomy_core/gates/invariants/zero_residue_check.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/invariants/en_process_lifecycle_gateway.py
   old_path: src/zephyr/autonomy_core/gates/invariants/en_process_lifecycle_gateway.py
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/invariants/__init__.py
   old_path: src/zephyr/autonomy_core/gates/invariants/__init__.py
@@ -4673,7 +4673,7 @@ entries:
   old_path: src/zephyr/autonomy_core/orchestrator/alert_handler.py
   status: done
   subdomain_id: runtime_core
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/rule_enforcement/task/__init__.py
   old_path: src/zephyr/autonomy_core/gates/task/__init__.py
@@ -7895,13 +7895,13 @@ entries:
   old_path: src/zephyr/autonomy_perm/red-blue-validator/steady_state.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/aisg_sandbox.py
   old_path: src/zephyr/compliance/aisg_sandbox.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/artifact_scanner.py
   old_path: src/zephyr/compliance/artifact_scanner.py
@@ -7913,1177 +7913,1177 @@ entries:
   old_path: src/zephyr/autonomy_perm/red-blue-validator/__main__.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/default_security_gateway.py
   old_path: src/zephyr/compliance/default_security_gateway.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/compliance_manager.py
   old_path: src/zephyr/compliance/compliance_manager.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/evidence_pack.py
   old_path: src/zephyr/compliance/evidence_pack.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/financial_compliance.py
   old_path: src/zephyr/compliance/financial_compliance.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/integrity.py
   old_path: src/zephyr/compliance/integrity.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/merkle_hourly.py
   old_path: src/zephyr/compliance/merkle_hourly.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/__init__.py
   old_path: src/zephyr/compliance/__init__.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/security_gateway_base.py
   old_path: src/zephyr/compliance/security_gateway_base.py
   status: done
   subdomain_id: governance
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/anomaly.py
   old_path: src/zephyr/compliance/audit-orchestrator/anomaly.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/audit_admission_controller.py
   old_path: src/zephyr/compliance/audit-orchestrator/audit_admission_controller.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/cli.py
   old_path: src/zephyr/compliance/audit-orchestrator/cli.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/bridge.py
   old_path: src/zephyr/compliance/audit-orchestrator/bridge.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/delegation_auditor.py
   old_path: src/zephyr/compliance/audit-orchestrator/delegation_auditor.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/cold_start.py
   old_path: src/zephyr/compliance/audit-orchestrator/cold_start.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/contracts.py
   old_path: src/zephyr/compliance/audit-orchestrator/contracts.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/drift_bridge.py
   old_path: src/zephyr/compliance/audit-orchestrator/drift_bridge.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/feedback_bridge.py
   old_path: src/zephyr/compliance/audit-orchestrator/feedback_bridge.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/delegation_bridge.py
   old_path: src/zephyr/compliance/audit-orchestrator/delegation_bridge.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/external_tool_audit.py
   old_path: src/zephyr/compliance/audit-orchestrator/external_tool_audit.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/feedback_policy.py
   old_path: src/zephyr/compliance/audit-orchestrator/feedback_policy.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/genesis.py
   old_path: src/zephyr/compliance/audit-orchestrator/genesis.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/evidence_pack.py
   old_path: src/zephyr/compliance/audit-orchestrator/evidence_pack.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/integrity.py
   old_path: src/zephyr/compliance/audit-orchestrator/integrity.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/indexer.py
   old_path: src/zephyr/compliance/audit-orchestrator/indexer.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/merkle_hourly.py
   old_path: src/zephyr/compliance/audit-orchestrator/merkle_hourly.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/models.py
   old_path: src/zephyr/compliance/audit-orchestrator/models.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/log_rotation.py
   old_path: src/zephyr/compliance/audit-orchestrator/log_rotation.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/pipeline_runner.py
   old_path: src/zephyr/compliance/audit-orchestrator/pipeline_runner.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/query.py
   old_path: src/zephyr/compliance/audit-orchestrator/query.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/replay_engine.py
   old_path: src/zephyr/compliance/audit-orchestrator/replay_engine.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/retention.py
   old_path: src/zephyr/compliance/audit-orchestrator/retention.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/resource_aware_pool.py
   old_path: src/zephyr/compliance/audit-orchestrator/resource_aware_pool.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/self_monitor.py
   old_path: src/zephyr/compliance/audit-orchestrator/self_monitor.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/text_to_finding_adapter.py
   old_path: src/zephyr/compliance/audit-orchestrator/text_to_finding_adapter.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/trust_bridge.py
   old_path: src/zephyr/compliance/audit-orchestrator/trust_bridge.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/tiered_storage.py
   old_path: src/zephyr/compliance/audit-orchestrator/tiered_storage.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/writer.py
   old_path: src/zephyr/compliance/audit-orchestrator/writer.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/tiered_storage_bridge.py
   old_path: src/zephyr/compliance/audit-orchestrator/tiered_storage_bridge.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/__init__.py
   old_path: src/zephyr/compliance/audit-orchestrator/__init__.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/trust_engine.py
   old_path: src/zephyr/compliance/audit-orchestrator/trust_engine.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/anomaly.py
   old_path: src/zephyr/compliance/audit-trail/anomaly.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/agent_signer.py
   old_path: src/zephyr/compliance/audit-trail/agent_signer.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-orchestrator/__main__.py
   old_path: src/zephyr/compliance/audit-orchestrator/__main__.py
   status: done
   subdomain_id: audit-orchestrator
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/audit_admission_controller.py
   old_path: src/zephyr/compliance/audit-trail/audit_admission_controller.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/api_lifecycle.py
   old_path: src/zephyr/compliance/audit-trail/api_lifecycle.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridge.py
   old_path: src/zephyr/compliance/audit-trail/bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/cli.py
   old_path: src/zephyr/compliance/audit-trail/cli.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/changelog_manager.py
   old_path: src/zephyr/compliance/audit-trail/changelog_manager.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/corporate_actions.py
   old_path: src/zephyr/compliance/audit-trail/corporate_actions.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/code_archaeology.py
   old_path: src/zephyr/compliance/audit-trail/code_archaeology.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/cold_start.py
   old_path: src/zephyr/compliance/audit-trail/cold_start.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/drift_bridge.py
   old_path: src/zephyr/compliance/audit-trail/drift_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/delegation_auditor.py
   old_path: src/zephyr/compliance/audit-trail/delegation_auditor.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/compliance_map.py
   old_path: src/zephyr/compliance/audit-trail/compliance_map.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/contracts.py
   old_path: src/zephyr/compliance/audit-trail/contracts.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/delegation_bridge.py
   old_path: src/zephyr/compliance/audit-trail/delegation_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/dora_metrics.py
   old_path: src/zephyr/compliance/audit-trail/dora_metrics.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/feedback_self_audit.py
   old_path: src/zephyr/compliance/audit-trail/feedback_self_audit.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/feedback_policy.py
   old_path: src/zephyr/compliance/audit-trail/feedback_policy.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/evidence_pack.py
   old_path: src/zephyr/compliance/audit-trail/evidence_pack.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/feedback_bridge.py
   old_path: src/zephyr/compliance/audit-trail/feedback_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/external_tool_audit.py
   old_path: src/zephyr/compliance/audit-trail/external_tool_audit.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/genesis.py
   old_path: src/zephyr/compliance/audit-trail/genesis.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/financial_compliance.py
   old_path: src/zephyr/compliance/audit-trail/financial_compliance.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/glossary_matrix.py
   old_path: src/zephyr/compliance/audit-trail/glossary_matrix.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/indexer.py
   old_path: src/zephyr/compliance/audit-trail/indexer.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/integrity.py
   old_path: src/zephyr/compliance/audit-trail/integrity.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/kb_gate.py
   old_path: src/zephyr/compliance/audit-trail/kb_gate.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/incremental_review.py
   old_path: src/zephyr/compliance/audit-trail/incremental_review.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/observability_dashboard.py
   old_path: src/zephyr/compliance/audit-trail/observability_dashboard.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/merkle_hourly.py
   old_path: src/zephyr/compliance/audit-trail/merkle_hourly.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/log_rotation.py
   old_path: src/zephyr/compliance/audit-trail/log_rotation.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/models.py
   old_path: src/zephyr/compliance/audit-trail/models.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/privacy.py
   old_path: src/zephyr/compliance/audit-trail/privacy.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/orchestrator.py
   old_path: src/zephyr/compliance/audit-trail/orchestrator.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/pipeline_runner.py
   old_path: src/zephyr/compliance/audit-trail/pipeline_runner.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/query.py
   old_path: src/zephyr/compliance/audit-trail/query.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/provenance_tracker.py
   old_path: src/zephyr/compliance/audit-trail/provenance_tracker.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/resource_aware_pool.py
   old_path: src/zephyr/compliance/audit-trail/resource_aware_pool.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/retention.py
   old_path: src/zephyr/compliance/audit-trail/retention.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/sbom_generator.py
   old_path: src/zephyr/compliance/audit-trail/sbom_generator.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/replay_engine.py
   old_path: src/zephyr/compliance/audit-trail/replay_engine.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/spec_auditor.py
   old_path: src/zephyr/compliance/audit-trail/spec_auditor.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/self_monitor.py
   old_path: src/zephyr/compliance/audit-trail/self_monitor.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/supply_chain_security.py
   old_path: src/zephyr/compliance/audit-trail/supply_chain_security.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/tiered_storage_bridge.py
   old_path: src/zephyr/compliance/audit-trail/tiered_storage_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/tiered_storage.py
   old_path: src/zephyr/compliance/audit-trail/tiered_storage.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/supply_chain.py
   old_path: src/zephyr/compliance/audit-trail/supply_chain.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/trust_engine.py
   old_path: src/zephyr/compliance/audit-trail/trust_engine.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/trust_bridge.py
   old_path: src/zephyr/compliance/audit-trail/trust_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/wqa_scorer.py
   old_path: src/zephyr/compliance/audit-trail/wqa_scorer.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/writer.py
   old_path: src/zephyr/compliance/audit-trail/writer.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/__init__.py
   old_path: src/zephyr/compliance/audit-trail/__init__.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/contracts.py
   old_path: src/zephyr/compliance/audit-trail/bridges/contracts.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/__main__.py
   old_path: src/zephyr/compliance/audit-trail/__main__.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/delegation_bridge.py
   old_path: src/zephyr/compliance/audit-trail/bridges/delegation_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/anomaly.py
   old_path: src/zephyr/compliance/audit-trail/bridges/anomaly.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/feedback_bridge.py
   old_path: src/zephyr/compliance/audit-trail/bridges/feedback_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/drift_bridge.py
   old_path: src/zephyr/compliance/audit-trail/bridges/drift_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/spec_auditor.py
   old_path: src/zephyr/compliance/audit-trail/bridges/spec_auditor.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/tiered_storage_bridge.py
   old_path: src/zephyr/compliance/audit-trail/bridges/tiered_storage_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/trust_bridge.py
   old_path: src/zephyr/compliance/audit-trail/bridges/trust_bridge.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-admission/admission_controller.py
   old_path: src/zephyr/compliance/behavioral-admission/admission_controller.py
   status: done
   subdomain_id: behavioral-admission
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/audit-trail/bridges/__init__.py
   old_path: src/zephyr/compliance/audit-trail/bridges/__init__.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-admission/gpu_consensus_scheduler.py
   old_path: src/zephyr/compliance/behavioral-admission/gpu_consensus_scheduler.py
   status: done
   subdomain_id: behavioral-admission
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-admission/protection_index.py
   old_path: src/zephyr/compliance/behavioral-admission/protection_index.py
   status: done
   subdomain_id: behavioral-admission
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-admission/session_lifecycle.py
   old_path: src/zephyr/compliance/behavioral-admission/session_lifecycle.py
   status: done
   subdomain_id: behavioral-admission
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-admission/__init__.py
   old_path: src/zephyr/compliance/behavioral-admission/__init__.py
   status: done
   subdomain_id: behavioral-admission
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-admission/verdict_engine.py
   old_path: src/zephyr/compliance/behavioral-admission/verdict_engine.py
   status: done
   subdomain_id: behavioral-admission
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/absence_manager.py
   old_path: src/zephyr/compliance/behavioral-auditor/absence_manager.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/ai_construction_detectors.py
   old_path: src/zephyr/compliance/behavioral-auditor/ai_construction_detectors.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/ai_context_injector.py
   old_path: src/zephyr/compliance/behavioral-auditor/ai_context_injector.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/alert_router.py
   old_path: src/zephyr/compliance/behavioral-auditor/alert_router.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/architecture_contracts.py
   old_path: src/zephyr/compliance/behavioral-auditor/architecture_contracts.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/architecture_principles.py
   old_path: src/zephyr/compliance/behavioral-auditor/architecture_principles.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/baseline_manager.py
   old_path: src/zephyr/compliance/behavioral-auditor/baseline_manager.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/backcompat_checker.py
   old_path: src/zephyr/compliance/behavioral-auditor/backcompat_checker.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/benchmark_integrity.py
   old_path: src/zephyr/compliance/behavioral-auditor/benchmark_integrity.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/canary_controller.py
   old_path: src/zephyr/compliance/behavioral-auditor/canary_controller.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/baseline_poisoning_guard.py
   old_path: src/zephyr/compliance/behavioral-auditor/baseline_poisoning_guard.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/cascade_detector.py
   old_path: src/zephyr/compliance/behavioral-auditor/cascade_detector.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/brain_integration.py
   old_path: src/zephyr/compliance/behavioral-auditor/brain_integration.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/cold_start.py
   old_path: src/zephyr/compliance/behavioral-auditor/cold_start.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/code_review_ai.py
   old_path: src/zephyr/compliance/behavioral-auditor/code_review_ai.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/correlation_engine.py
   old_path: src/zephyr/compliance/behavioral-auditor/correlation_engine.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/contract_drift_detector.py
   old_path: src/zephyr/compliance/behavioral-auditor/contract_drift_detector.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/chaos_injector.py
   old_path: src/zephyr/compliance/behavioral-auditor/chaos_injector.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/credibility_engine.py
   old_path: src/zephyr/compliance/behavioral-auditor/credibility_engine.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/config_consistency.py
   old_path: src/zephyr/compliance/behavioral-auditor/config_consistency.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/cross_env_consistency.py
   old_path: src/zephyr/compliance/behavioral-auditor/cross_env_consistency.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/data_lifecycle.py
   old_path: src/zephyr/compliance/behavioral-auditor/data_lifecycle.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/dashboard.py
   old_path: src/zephyr/compliance/behavioral-auditor/dashboard.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/data_quality.py
   old_path: src/zephyr/compliance/behavioral-auditor/data_quality.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/data_source_reliability.py
   old_path: src/zephyr/compliance/behavioral-auditor/data_source_reliability.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/cross_module_score.py
   old_path: src/zephyr/compliance/behavioral-auditor/cross_module_score.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/dependency_manager.py
   old_path: src/zephyr/compliance/behavioral-auditor/dependency_manager.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/data_classification.py
   old_path: src/zephyr/compliance/behavioral-auditor/data_classification.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/detector_dispatcher.py
   old_path: src/zephyr/compliance/behavioral-auditor/detector_dispatcher.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_cron_scheduler.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_cron_scheduler.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_engine.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_engine.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_infrastructure.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_infrastructure.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_models.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_models.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_hotfix_bypass.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_hotfix_bypass.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/forensics_engine.py
   old_path: src/zephyr/compliance/behavioral-auditor/forensics_engine.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/file_attr_checker.py
   old_path: src/zephyr/compliance/behavioral-auditor/file_attr_checker.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_training.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_training.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/events.py
   old_path: src/zephyr/compliance/behavioral-auditor/events.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/drift_result_types.py
   old_path: src/zephyr/compliance/behavioral-auditor/drift_result_types.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/gate_persistence.py
   old_path: src/zephyr/compliance/behavioral-auditor/gate_persistence.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/incremental_scanner.py
   old_path: src/zephyr/compliance/behavioral-auditor/incremental_scanner.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/gitignore_auditor.py
   old_path: src/zephyr/compliance/behavioral-auditor/gitignore_auditor.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/integration_test_runner.py
   old_path: src/zephyr/compliance/behavioral-auditor/integration_test_runner.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/headless_scanner.py
   old_path: src/zephyr/compliance/behavioral-auditor/headless_scanner.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/handoff_manager.py
   old_path: src/zephyr/compliance/behavioral-auditor/handoff_manager.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/git_bisector.py
   old_path: src/zephyr/compliance/behavioral-auditor/git_bisector.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/model_drift_monitor.py
   old_path: src/zephyr/compliance/behavioral-auditor/model_drift_monitor.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/ml_engineering.py
   old_path: src/zephyr/compliance/behavioral-auditor/ml_engineering.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/naming_magic_checker.py
   old_path: src/zephyr/compliance/behavioral-auditor/naming_magic_checker.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/performance_baseline.py
   old_path: src/zephyr/compliance/behavioral-auditor/performance_baseline.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/python_compat.py
   old_path: src/zephyr/compliance/behavioral-auditor/python_compat.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/orphan_scanner.py
   old_path: src/zephyr/compliance/behavioral-auditor/orphan_scanner.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/reconciler.py
   old_path: src/zephyr/compliance/behavioral-auditor/reconciler.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/regime_detector.py
   old_path: src/zephyr/compliance/behavioral-auditor/regime_detector.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/resource_guard.py
   old_path: src/zephyr/compliance/behavioral-auditor/resource_guard.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/roi_engine.py
   old_path: src/zephyr/compliance/behavioral-auditor/roi_engine.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/runbook_generator.py
   old_path: src/zephyr/compliance/behavioral-auditor/runbook_generator.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/scan_mutex.py
   old_path: src/zephyr/compliance/behavioral-auditor/scan_mutex.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/state_machine.py
   old_path: src/zephyr/compliance/behavioral-auditor/state_machine.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/suppression_learner.py
   old_path: src/zephyr/compliance/behavioral-auditor/suppression_learner.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/rollback_bridge.py
   old_path: src/zephyr/compliance/behavioral-auditor/rollback_bridge.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/self_check.py
   old_path: src/zephyr/compliance/behavioral-auditor/self_check.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/self_test_verifier.py
   old_path: src/zephyr/compliance/behavioral-auditor/self_test_verifier.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/symlink_checker.py
   old_path: src/zephyr/compliance/behavioral-auditor/symlink_checker.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/system_topology.py
   old_path: src/zephyr/compliance/behavioral-auditor/system_topology.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/tamper_proof_audit.py
   old_path: src/zephyr/compliance/behavioral-auditor/tamper_proof_audit.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/__init__.py
   old_path: src/zephyr/compliance/behavioral-auditor/__init__.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/trend_analyzer.py
   old_path: src/zephyr/compliance/behavioral-auditor/trend_analyzer.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/__main__.py
   old_path: src/zephyr/compliance/behavioral-auditor/__main__.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/behavioral-auditor/test_fixture_checker.py
   old_path: src/zephyr/compliance/behavioral-auditor/test_fixture_checker.py
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/compliance_gate_a6/default_security_gateway.py
   old_path: src/zephyr/compliance/compliance_gate_a6/default_security_gateway.py
   status: done
   subdomain_id: compliance_gate_a6
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/implementations/__init__.py
   old_path: src/zephyr/compliance/implementations/__init__.py
   status: done
   subdomain_id: implementations
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/compliance_gate_a6/__init__.py
   old_path: src/zephyr/compliance/compliance_gate_a6/__init__.py
   status: done
   subdomain_id: compliance_gate_a6
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/implementations/default_security_gateway.py
   old_path: src/zephyr/compliance/implementations/default_security_gateway.py
   status: done
   subdomain_id: implementations
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/feedback_self_audit.py
   old_path: src/zephyr/compliance/semantic-auditor/feedback_self_audit.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/compliance_map.py
   old_path: src/zephyr/compliance/semantic-auditor/compliance_map.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/kb_gate.py
   old_path: src/zephyr/compliance/semantic-auditor/kb_gate.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/privacy.py
   old_path: src/zephyr/compliance/semantic-auditor/privacy.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/spec_auditor.py
   old_path: src/zephyr/compliance/semantic-auditor/spec_auditor.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/supply_chain.py
   old_path: src/zephyr/compliance/semantic-auditor/supply_chain.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic-auditor/__init__.py
   old_path: src/zephyr/compliance/semantic-auditor/__init__.py
   status: done
   subdomain_id: semantic-auditor
-- domain_id: D-RISK
+- domain_id: D_RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/risk_manager_base.py
   old_path: src/zephyr/cross_asset/risk_manager_base.py
   status: removed
   subdomain_id: cross_asset
-- domain_id: D-RISK
+- domain_id: D_RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/risk_manager.py
   old_path: src/zephyr/cross_asset/risk_manager.py
   status: removed
   subdomain_id: cross_asset
-- domain_id: D-RISK
+- domain_id: D_RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/cross_asset_risk_decomposer/__init__.py
   old_path: src/zephyr/cross_asset/cross_asset_risk_decomposer/__init__.py
   status: removed
   subdomain_id: cross_asset
-- domain_id: D-RISK
+- domain_id: D_RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py
   old_path: src/zephyr/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py
   status: removed
   subdomain_id: cross_asset
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/zero_knowledge_audit_stub/__init__.py
   old_path: src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py
   status: done
   subdomain_id: zero_knowledge_audit_stub
-- domain_id: D-RISK
+- domain_id: D_RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/currency_hedger_and_fixed_income/__init__.py
   old_path: src/zephyr/cross_asset/currency_hedger_and_fixed_income/__init__.py
@@ -9095,7 +9095,7 @@ entries:
   old_path: src/zephyr/data_govern/knowledge_engine.py
   status: migrated
   subdomain_id: data
-- domain_id: D-RISK
+- domain_id: D_RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/cross_market_data_adapter/__init__.py
   old_path: src/zephyr/cross_asset/cross_market_data_adapter/__init__.py
@@ -12797,73 +12797,73 @@ entries:
   old_path: src/zephyr/infra_runtime/system-telemetry/schema/__init__.py
   status: done
   subdomain_id: telemetry
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/inference_base.py
   old_path: src/zephyr/ml_train/inference_base.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py
   old_path: src/zephyr/ml_train/implementations/default_inference_engine.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/implementations/__init__.py
   old_path: src/zephyr/ml_train/implementations/__init__.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/__init__.py
   old_path: src/zephyr/ml_train/__init__.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/kb_repo.py
   old_path: src/zephyr/research/kb_repo.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/unified_memory_api.py
   old_path: src/zephyr/research/unified_memory_api.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/reranker.py
   old_path: src/zephyr/research/reranker.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/activate.py
   old_path: src/zephyr/research/activate.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/sync_engine.py
   old_path: src/zephyr/research/sync_engine.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/backtest_base.py
   old_path: src/zephyr/research/backtest_base.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/implementations/default_backtest_engine.py
   old_path: src/zephyr/research/implementations/default_backtest_engine.py
   status: done
   subdomain_id: model_evaluation
-- domain_id: D-INTELLIGENCE
+- domain_id: D_INTELLIGENCE
   file_type: module
   new_path: src/zephyr/intelligence/model_evaluation/__init__.py
   old_path: src/zephyr/research/__init__.py
@@ -13313,7 +13313,7 @@ entries:
   old_path: src/zephyr/autonomy_core/agent-spec/skill-registry.yaml
   status: done
   subdomain_id: agent_lifecycle
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g1-ingest.yaml
   old_path: src/zephyr/autonomy_core/gates/g1-ingest.yaml
@@ -13337,163 +13337,163 @@ entries:
   old_path: src/zephyr/autonomy_core/context-engine/config/compression/policy.yaml
   status: done
   subdomain_id: context_management
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g4-activate.yaml
   old_path: src/zephyr/autonomy_core/gates/g4-activate.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g2-triage.yaml
   old_path: src/zephyr/autonomy_core/gates/g2-triage.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g6-ctr-compliance.yaml
   old_path: src/zephyr/autonomy_core/gates/g6-ctr-compliance.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g3-evaluate.yaml
   old_path: src/zephyr/autonomy_core/gates/g3-evaluate.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g6-blueprint-compliance.yaml
   old_path: src/zephyr/autonomy_core/gates/g6-blueprint-compliance.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g7-position-limits.yaml
   old_path: src/zephyr/autonomy_core/gates/g7-position-limits.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g5-extract.yaml
   old_path: src/zephyr/autonomy_core/gates/g5-extract.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g6-path-tree-freshness.yaml
   old_path: src/zephyr/autonomy_core/gates/g6-path-tree-freshness.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g9-strategy-correlation.yaml
   old_path: src/zephyr/autonomy_core/gates/g9-strategy-correlation.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g8.yaml
   old_path: src/zephyr/autonomy_core/gates/g8.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g9.yaml
   old_path: src/zephyr/autonomy_core/gates/g9.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g8-leverage.yaml
   old_path: src/zephyr/autonomy_core/gates/g8-leverage.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/gct-024-budget-enforcer.yaml
   old_path: src/zephyr/autonomy_core/gates/gct-024-budget-enforcer.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/observability-baseline.yaml
   old_path: src/zephyr/autonomy_core/gates/observability-baseline.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/gate-dedup.yaml
   old_path: src/zephyr/autonomy_core/gates/GATE-DEDUP.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/g-asset-inventory.yaml
   old_path: src/zephyr/autonomy_core/gates/g-asset-inventory.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/_template.yaml
   old_path: src/zephyr/autonomy_core/gates/_template.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/sys-master-compliance.yaml
   old_path: src/zephyr/autonomy_core/gates/sys-master-compliance.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/admission/mad-002-phase-relevance.yaml
   old_path: src/zephyr/autonomy_core/gates/admission/mad-002-phase-relevance.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/admission/mad-001-architecture-necessity.yaml
   old_path: src/zephyr/autonomy_core/gates/admission/mad-001-architecture-necessity.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/admission/mad-003-dependency-compliance.yaml
   old_path: src/zephyr/autonomy_core/gates/admission/mad-003-dependency-compliance.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/zero-residue.yaml
   old_path: src/zephyr/autonomy_core/gates/ZERO-RESIDUE.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: registry
   new_path: src/zephyr/governance/rule_enforcement/_registry.yaml
   old_path: src/zephyr/autonomy_core/gates/_registry.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/task/g0-orc-gate-engine.yaml
   old_path: src/zephyr/autonomy_core/gates/task/g0-orc-gate-engine.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/invariants/en-001-circular-dependency.yaml
   old_path: src/zephyr/autonomy_core/gates/invariants/en-001-circular-dependency.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/admission/mad-004-interface-definability.yaml
   old_path: src/zephyr/autonomy_core/gates/admission/mad-004-interface-definability.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/admission/mad_005_dependency_graph_template.yaml
   old_path: src/zephyr/autonomy_core/gates/admission/mad_005_dependency_graph_template.yaml
@@ -13505,31 +13505,31 @@ entries:
   old_path: src/zephyr/autonomy_perm/agent-rbac/change_log.yaml
   status: done
   subdomain_id: access_control
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/task/g0-entry.yaml
   old_path: src/zephyr/autonomy_core/gates/task/g0-entry.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/invariants/en-002-enforcement-validator.yaml
   old_path: src/zephyr/autonomy_core/gates/invariants/en-002-enforcement-validator.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/invariants/en-003-contract-compatibility.yaml
   old_path: src/zephyr/autonomy_core/gates/invariants/en-003-contract-compatibility.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/rule_enforcement/task/g7-orc-gate-engine.yaml
   old_path: src/zephyr/autonomy_core/gates/task/g7-orc-gate-engine.yaml
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: config
   new_path: src/zephyr/governance/behavioral-auditor/migration-plan.yaml
   old_path: src/zephyr/compliance/behavioral-auditor/migration-plan.yaml
@@ -13541,7 +13541,7 @@ entries:
   old_path: src/zephyr/autonomy_perm/agent-rbac/persistence/change_log.yaml
   status: done
   subdomain_id: access_control
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: registry
   new_path: src/zephyr/governance/behavioral-auditor/_detector-registry.yaml
   old_path: src/zephyr/compliance/behavioral-auditor/_detector-registry.yaml
@@ -14741,91 +14741,91 @@ entries:
   old_path: src/zephyr/security/audit-trail/bridges/spec_auditor.py
   status: done
   subdomain_id: audit-trail
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/alignment_engine.py
   old_path: src/zephyr/security/semantic-auditor/alignment_engine.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/compliance_map.py
   old_path: src/zephyr/security/semantic-auditor/compliance_map.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/feedback_self_audit.py
   old_path: src/zephyr/security/semantic-auditor/feedback_self_audit.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/fix_prioritizer.py
   old_path: src/zephyr/security/semantic-auditor/fix_prioritizer.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/issue_aggregator.py
   old_path: src/zephyr/security/semantic-auditor/issue_aggregator.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/kb_gate.py
   old_path: src/zephyr/security/semantic-auditor/kb_gate.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/llm_bridge.py
   old_path: src/zephyr/security/semantic-auditor/llm_bridge.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/privacy.py
   old_path: src/zephyr/security/semantic-auditor/privacy.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/reference_extractor.py
   old_path: src/zephyr/security/semantic-auditor/reference_extractor.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/safety_boundary.py
   old_path: src/zephyr/security/semantic-auditor/safety_boundary.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/self_healer.py
   old_path: src/zephyr/security/semantic-auditor/self_healer.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/self_health.py
   old_path: src/zephyr/security/semantic-auditor/self_health.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/spec_auditor.py
   old_path: src/zephyr/security/semantic-auditor/spec_auditor.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/supply_chain.py
   old_path: src/zephyr/security/semantic-auditor/supply_chain.py
   status: done
   subdomain_id: semantic_audit
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: module
   new_path: src/zephyr/governance/semantic_audit/trigger_engine.py
   old_path: src/zephyr/security/semantic-auditor/trigger_engine.py
@@ -14975,31 +14975,31 @@ entries:
   old_path: src/zephyr/security/mcp/_base_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: directory
   new_path: src/zephyr/governance/rule_enforcement
   old_path: src/zephyr/governance/gates
   status: done
   subdomain_id: rule_enforcement
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: directory
   new_path: src/zephyr/governance/drift_detection
   old_path: src/zephyr/governance/drift-detector
   status: done
   subdomain_id: drift_detection
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: directory
   new_path: src/zephyr/governance/audit_orchestration
   old_path: src/zephyr/governance/orchestrator
   status: done
   subdomain_id: audit_orchestration
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: directory
   new_path: src/zephyr/governance/orphan_judgment
   old_path: src/zephyr/governance/orphan-judge
   status: done
   subdomain_id: orphan_judgment
-- domain_id: D-GOVERNANCE
+- domain_id: D_GOVERNANCE
   file_type: directory
   new_path: src/zephyr/observability/feedback-loop
   old_path: src/zephyr/governance/feedback-loop

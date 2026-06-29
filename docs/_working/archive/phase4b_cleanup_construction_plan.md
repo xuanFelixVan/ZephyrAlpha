@@ -17,8 +17,8 @@ completes_when: "已归档,施工方案保留作为历史参考"
 ---
 
 > **裁定 #ARCH-REN-001（2026-06-26）**：6 个域 ID 连字符→下划线改名：
-> D-GOV-DOCS→D-GOV_DOCS, D-GOV-ENFORCEMENT→D-GOV_ENFORCEMENT, D-GOV-SCRIPTS→D-GOV_SCRIPTS,
-> D-GOV_AUDIT_TESTS→D-AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
+> D_GOV_DOCS→D_GOV_DOCS, D_GOV_ENFORCEMENT→D_GOV_ENFORCEMENT, D_GOV_SCRIPTS→D_GOV_SCRIPTS,
+> D_GOV_AUDIT_TESTS→D_AUDITTEST, D_INTEGRATION-GATEWAY→D_INTEGRATION_GATEWAY, D_SECURITY-LLM→D_SECURITY_LLM。
 > 本文档中出现的旧域名均为历史记录，已由上述裁定更新。
 
 
@@ -58,11 +58,11 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 
 | 域 | 总节点数（错误口径） | **production节点数（正确口径）** |
 |---|:---:|:---:|
-| D-GOVERNANCE | 4285 | **138** |
+| D_GOVERNANCE | 4285 | **138** |
 | D_SECURITY | 849 | **134** |
-| D-GOV_RULE | 175 | 175 |
-| D-GOV_AUDIT | 69 | 69 |
-| D-GOV_DRIFT | 22 | 22 |
+| D_GOV_RULE | 175 | 175 |
+| D_GOV_AUDIT | 69 | 69 |
+| D_GOV_DRIFT | 22 | 22 |
 | D_BEHAVIORAL_AUDIT | 60 | 60 |
 | D_INFRA_RUNTIME | 726 | **1** |
 | D_INFRA_OPS | 404 | **3** |
@@ -71,9 +71,9 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 
 | 域 | production模块 | 合并后父域模块数 | 超200? | <80? | 物理迁移完成? | **裁定** | 裁定理由 |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|------|
-| D-GOV_RULE | 175 | 175+138=313 | ❌超限 | — | ❌未完成 | **保留** | 合并后313>200违反硬上限；规则执行引擎+门禁管线是独立业务能力 |
-| D-GOV_AUDIT | 69 | 69+138=207 | ❌超限 | — | ❌未完成 | **保留** | 合并后207>200违反硬上限；审计追踪链+合规验证是独立业务能力 |
-| D-GOV_DRIFT | 22 | 22+138=160 | ✅在150-200 | ❌22<80 | ❌未完成 | **合并回D-GOVERNANCE** | 22<80域过小（ARCH-CAP-002）；合并后160在150-200高度耦合区间；文件散落无独立ssot_path |
+| D_GOV_RULE | 175 | 175+138=313 | ❌超限 | — | ❌未完成 | **保留** | 合并后313>200违反硬上限；规则执行引擎+门禁管线是独立业务能力 |
+| D_GOV_AUDIT | 69 | 69+138=207 | ❌超限 | — | ❌未完成 | **保留** | 合并后207>200违反硬上限；审计追踪链+合规验证是独立业务能力 |
+| D_GOV_DRIFT | 22 | 22+138=160 | ✅在150-200 | ❌22<80 | ❌未完成 | **合并回D_GOVERNANCE** | 22<80域过小（ARCH-CAP-002）；合并后160在150-200高度耦合区间；文件散落无独立ssot_path |
 | D_BEHAVIORAL_AUDIT | 60 | 60+134=194 | ✅不超限 | ❌60<80 | ✅已完成 | **保留** | 拆分已物理完成（76个.py文件已迁移）；60模块构成完整独立域；回退成本高 |
 | D_INFRA_RUNTIME | 1 | — | — | — | — | **重命名为D_INFRA_RUNTIME** | 设计域是D_INFRA_RUNTIME但DB缺失下划线版；D_INFRA_RUNTIME功能=应用运行时服务，与D_INFRA_RUNTIME语义一致 |
 
@@ -83,38 +83,38 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 |---------|--------|------------------|---------|
 | 1500模块推荐域数 | 30-50 | 43 | ✅ 在区间内 |
 | 单域模块数 | 20-50 | 平均36 | ✅ 在区间内 |
-| Vibe Coding Wall | 50文件后AI退化 | 最大175(D-GOV_RULE) | ⚠️ D-GOV_RULE偏大，但合并会超200硬上限 |
-| AI session可覆盖 | 单域≤50模块 | 3个域超50 | ⚠️ 需关注，未来D-GOV_RULE达200时再次拆分 |
+| Vibe Coding Wall | 50文件后AI退化 | 最大175(D_GOV_RULE) | ⚠️ D_GOV_RULE偏大，但合并会超200硬上限 |
+| AI session可覆盖 | 单域≤50模块 | 3个域超50 | ⚠️ 需关注，未来D_GOV_RULE达200时再次拆分 |
 
 ### 2.6 最终域数裁定
 
 ```
 39设计域（§17.6）
-+ D-GOV_RULE（保留，第40域）
-+ D-GOV_AUDIT（保留，第41域）
++ D_GOV_RULE（保留，第40域）
++ D_GOV_AUDIT（保留，第41域）
 + D_BEHAVIORAL_AUDIT（保留，第42域）
 + D-TEST（D77决策执行，第43域）
-- D-GOV_DRIFT（合并回D-GOVERNANCE，22个节点domain_id改回）
+- D_GOV_DRIFT（合并回D_GOVERNANCE，22个节点domain_id改回）
 = 43域
 ```
 
-> D-GOVERNANCE合并后：138+22=160 production模块（150-200高度耦合区间，满足ARCH-CAP-003四标准）。
+> D_GOVERNANCE合并后：138+22=160 production模块（150-200高度耦合区间，满足ARCH-CAP-003四标准）。
 
 ### 2.7 depgraph.db 域数据质量问题修复（11项操作）
 
 | # | 操作 | 类型 | 影响范围 |
 |---|------|------|---------|
-| 1 | 删除6个连字符重复域 | DB清理 | D-AUTONOMY-CORE/PERM, D-GOV_AUDIT/DRIFT, D-INFRA-OPS, D-ML-TRAIN（0模块空壳） |
-| 2 | 删除5个新空壳连字符域 | DB清理 | D-GOV-ENFORCEMENT/REPAIR/SCRIPTS, D_INTEGRATION-GATEWAY, D_SECURITY-LLM（0模块，不在39设计中） |
+| 1 | 删除6个连字符重复域 | DB清理 | D-AUTONOMY-CORE/PERM, D_GOV_AUDIT/DRIFT, D-INFRA-OPS, D_ML_TRAIN（0模块空壳） |
+| 2 | 删除5个新空壳连字符域 | DB清理 | D_GOV_ENFORCEMENT/REPAIR/SCRIPTS, D_INTEGRATION-GATEWAY, D_SECURITY-LLM（0模块，不在39设计中） |
 | 3 | D_INFRA_RUNTIME + D_INFRA_RUNTIME → D_INFRA_RUNTIME | 域重命名 | 2个域合并为1个下划线版 |
-| 4 | D-GOV_DRIFT合并回D-GOVERNANCE | 域合并 | 22个节点domain_id改回D-GOVERNANCE |
+| 4 | D_GOV_DRIFT合并回D_GOVERNANCE | 域合并 | 22个节点domain_id改回D_GOVERNANCE |
 | 5 | 创建D-TEST域 | D77执行 | 1个INSERT |
 | 6 | 清理functional_domain_registry.yaml连字符条目 | YAML清理 | 12个条目 |
-| 7 | 更新§17.6纳入D-GOV_RULE/D-GOV_AUDIT/D_BEHAVIORAL_AUDIT/D-TEST | 文档更新 | architecture_upgrade_discussion.md |
+| 7 | 更新§17.6纳入D_GOV_RULE/D_GOV_AUDIT/D_BEHAVIORAL_AUDIT/D-TEST | 文档更新 | architecture_upgrade_discussion.md |
 | 8 | 更新project_rules.md RULE-TEN域数39→43 | 规则更新 | project_rules.md第610行 |
 | 9 | 修复D_BEHAVIORAL_AUDIT depgraph路径过时 | DB修复 | 60个节点file_path更新（文件已迁至behavioral_audit/但DB记录旧路径） |
 | 10 | 修复D_INFRA_RUNTIME production节点分类 | DB修复 | 726个节点design_maturity重分类（大量实际存在的文件被误标为design/prototype） |
-| 11 | 更新D-GOVERNANCE production节点数 | DB修复 | 138→160（合并D-GOV_DRIFT后） |
+| 11 | 更新D_GOVERNANCE production节点数 | DB修复 | 138→160（合并D_GOV_DRIFT后） |
 
 **执行顺序**：
 
@@ -122,7 +122,7 @@ ARCH-CAP-001 明确规定：**模块 = production 节点**（`design_maturity='p
 STEP D1: 备份 depgraph.db
 STEP D2: 删除11个连字符域（操作1-2）
 STEP D3: D_INFRA_RUNTIME + D_INFRA_RUNTIME → D_INFRA_RUNTIME（操作3）
-STEP D4: D-GOV_DRIFT合并回D-GOVERNANCE（操作4）
+STEP D4: D_GOV_DRIFT合并回D_GOVERNANCE（操作4）
 STEP D5: 创建D-TEST（操作5）
 STEP D6: 清理YAML（操作6）
 STEP D7: 更新文档和规则（操作7-8）
@@ -139,8 +139,8 @@ python -c "import sqlite3; conn=sqlite3.connect('data/databases/depgraph.db'); p
 # 2. 连字符域清零验证（应为0）
 python -c "import sqlite3; conn=sqlite3.connect('data/databases/depgraph.db'); print(f'Hyphen domains: {conn.execute(\"SELECT COUNT(*) FROM domains WHERE domain_id LIKE \\\"%-%\\\"\").fetchone()[0]}')"
 
-# 3. D-GOV_DRIFT合并验证（应为0）
-python -c "import sqlite3; conn=sqlite3.connect('data/databases/depgraph.db'); print(f'D-GOV_DRIFT nodes: {conn.execute(\"SELECT COUNT(*) FROM nodes WHERE domain_id=?\", (\"D-GOV_DRIFT\",)).fetchone()[0]}')"
+# 3. D_GOV_DRIFT合并验证（应为0）
+python -c "import sqlite3; conn=sqlite3.connect('data/databases/depgraph.db'); print(f'D_GOV_DRIFT nodes: {conn.execute(\"SELECT COUNT(*) FROM nodes WHERE domain_id=?\", (\"D_GOV_DRIFT\",)).fetchone()[0]}')"
 
 # 4. D-TEST存在验证（应为1）
 python -c "import sqlite3; conn=sqlite3.connect('data/databases/depgraph.db'); print(f'D-TEST exists: {conn.execute(\"SELECT COUNT(*) FROM domains WHERE domain_id=?\", (\"D-TEST\",)).fetchone()[0]}')"
@@ -160,12 +160,12 @@ for r in rows: print(f'{r[0]:30s} {r[1]:5d}')
 |---|------|:---:|------|
 | 1-38 | D_MKT_DATA...D_SHARED | 各异 | §17.6设计域（38个，D_INFRA_RUNTIME由D_INFRA_RUNTIME+D_INFRA_RUNTIME重命名而来） |
 | 39 | D_INFRA_RUNTIME | 1→需重分类 | D_INFRA_RUNTIME重命名 |
-| 40 | D-GOV_RULE | 175 | D48拆分保留 |
-| 41 | D-GOV_AUDIT | 69 | D48拆分保留 |
+| 40 | D_GOV_RULE | 175 | D48拆分保留 |
+| 41 | D_GOV_AUDIT | 69 | D48拆分保留 |
 | 42 | D_BEHAVIORAL_AUDIT | 60 | D_SECURITY拆分保留 |
 | 43 | D-TEST | 待统计 | D77执行 |
 
-> D-GOV_DRIFT（22模块）合并回D-GOVERNANCE，D-GOVERNANCE从138→160。
+> D_GOV_DRIFT（22模块）合并回D_GOVERNANCE，D_GOVERNANCE从138→160。
 
 ## 三、清洁范围（调查数据，2026-06-22）
 
@@ -186,18 +186,18 @@ for r in rows: print(f'{r[0]:30s} {r[1]:5d}')
 
 | 域 | 零入度数 | 占总量% | 备注 |
 |----|:--------:|:------:|------|
-| D-GOVERNANCE | 1,204 | 39.8% | 治理脚本天然零入边（被调度器调用，不被import） |
+| D_GOVERNANCE | 1,204 | 39.8% | 治理脚本天然零入边（被调度器调用，不被import） |
 | D_OPS | 264 | 8.7% | 运维脚本 |
 | D_INFRA_RUNTIME（原D_INFRA_RUNTIME） | 242 | 8.0% | 基础设施（含 rollback 47个零导入但被 `__init__.py` 重导出） |
 | D_AUTONOMY_CORE | 190 | 6.3% | 含大量 `_` 前缀内部模块 |
-| D-COMPLIANCE | 167 | 5.5% | 合规脚本 |
-| D-TRADING | 133 | 4.4% | 交易运营 |
+| D_COMPLIANCE | 167 | 5.5% | 合规脚本 |
+| D_TRADING | 133 | 4.4% | 交易运营 |
 | D_INTEGRATION | 113 | 3.7% | 集成模块 |
 | D_SECURITY | 87 | 2.9% | 安全模块（零入边≠可删；37个零导入被 `__init__.py` 动态导入） |
 | D_SHARED | 85 | 2.8% | 共享服务 |
-| D-RISK | 72 | 2.4% | 风控模块 |
+| D_RISK | 72 | 2.4% | 风控模块 |
 
-> **关键判断**：D-GOVERNANCE 的 1,204 个零入度节点中，绝大多数是治理脚本——它们被 `phase_manager.py` 调度执行，不被其他模块 import。这不是"可删"信号，是"治理脚本天然属性"。
+> **关键判断**：D_GOVERNANCE 的 1,204 个零入度节点中，绝大多数是治理脚本——它们被 `phase_manager.py` 调度执行，不被其他模块 import。这不是"可删"信号，是"治理脚本天然属性"。
 
 ### 3.3 迁移残留旧文件（63个，按域分组）
 
@@ -338,23 +338,23 @@ STEP 1 登记检查（增强版）→ 文件是否在任何注册表/manifest/__
 
 | 批次 | 域 | 零入度数 | 预判 | 任务卡数 |
 |:---:|----|:--------:|------|:-------:|
-| 1 | D-GOVERNANCE | 1,204 | 治理脚本天然零入边，大部分保留 | 3 |
+| 1 | D_GOVERNANCE | 1,204 | 治理脚本天然零入边，大部分保留 | 3 |
 | 2 | D_OPS | 264 | 运维脚本，类似治理 | 1 |
 | 3 | D_INFRA_RUNTIME（原D_INFRA_RUNTIME） | 242 | 含 rollback 47个零导入（**全部被 `__init__.py` 重导出，保留**） | 1 |
 | 4 | D_AUTONOMY_CORE | 190 | 含 `_` 前缀内部模块 | 1 |
-| 5 | D-COMPLIANCE | 167 | 合规脚本 | 1 |
-| 6 | D-TRADING | 133 | 交易运营 | 1 |
+| 5 | D_COMPLIANCE | 167 | 合规脚本 | 1 |
+| 6 | D_TRADING | 133 | 交易运营 | 1 |
 | 7 | D_INTEGRATION | 113 | 集成模块 | 1 |
 | 8 | D_SECURITY | 87 | 安全模块（**37个零导入被动态导入，全部保留**） | 1 |
 | 9 | D_SHARED | 85 | 共享服务 | 1 |
-| 10 | D-RISK | 72 | 风控模块 | 1 |
-| 11 | D-GOV_RULE | 175 | 规则执行引擎，需逐个审查 | 1 |
-| 12 | D-GOV_AUDIT | 69 | 审计追踪，需逐个审查 | 1 |
+| 10 | D_RISK | 72 | 风控模块 | 1 |
+| 11 | D_GOV_RULE | 175 | 规则执行引擎，需逐个审查 | 1 |
+| 12 | D_GOV_AUDIT | 69 | 审计追踪，需逐个审查 | 1 |
 | 13 | D_BEHAVIORAL_AUDIT | 60 | 行为审计，需逐个审查 | 1 |
 | 14 | 其余30域 | ~265 | 按域建卡 | 3-5 |
 | **合计** | **43域** | **3,024** | — | **17-20** |
 
-**D-GOVERNANCE 特殊处理**（占总量 40%）：
+**D_GOVERNANCE 特殊处理**（占总量 40%）：
 
 ```
 5a. 先过滤：排除 node_type='script' 的治理脚本（天然零入边，保留）
@@ -457,16 +457,16 @@ actions:
   deleted_no_value: N
   connected: N
   human_pending: N
-  domains_merged: 1  # D-GOV_DRIFT → D-GOVERNANCE
+  domains_merged: 1  # D_GOV_DRIFT → D_GOVERNANCE
   domains_renamed: 2  # D_INFRA_RUNTIME + D_INFRA_RUNTIME → D_INFRA_RUNTIME
   domains_created: 1  # D-TEST
   domains_deleted: 11  # 6连字符重复 + 5空壳连字符
 
 domain_coverage:  # 43域覆盖矩阵
   D_MKT_DATA: done
-  D-GOVERNANCE: done
-  D-GOV_RULE: done
-  D-GOV_AUDIT: done
+  D_GOVERNANCE: done
+  D_GOV_RULE: done
+  D_GOV_AUDIT: done
   D_BEHAVIORAL_AUDIT: done
   D-TEST: done
   ...
@@ -543,11 +543,11 @@ STEP 8（全量验证）→ 依赖 STEP 1-7 全部完成
 | 1 | 删除空 `__init__.py` | 包结构占位，删除会破坏 import |
 | 2 | 合并功能相似文件 | 属于重构，不属于清洁 |
 | 3 | 修改文件内容 | 清洁只做保留/删除/注册，不改代码 |
-| 4 | 处理 D-GOVERNANCE 治理脚本零入边 | 天然属性，不是问题 |
+| 4 | 处理 D_GOVERNANCE 治理脚本零入边 | 天然属性，不是问题 |
 | 5 | 处理设计态节点缺失文件 | 设计态文件尚未创建是正常的 |
 | 6 | 删除 `_fix_and_lifecycle.py` | 有消费者+蓝图+frozen/immutable_core，应迁移而非删除 |
 | 7 | 运行 `generate_project_depgraph.py` | 架构升级期间禁止运行（会覆盖 depgraph.db） |
 | 8 | 删除被 `__init__.py` 重导出的零导入文件 | 隐藏消费者，删除会导致包导入崩溃 |
-| 9 | 将 D-GOV_RULE 合并回 D-GOVERNANCE | 合并后313>200违反硬上限 |
-| 10 | 将 D-GOV_AUDIT 合并回 D-GOVERNANCE | 合并后207>200违反硬上限 |
+| 9 | 将 D_GOV_RULE 合并回 D_GOVERNANCE | 合并后313>200违反硬上限 |
+| 10 | 将 D_GOV_AUDIT 合并回 D_GOVERNANCE | 合并后207>200违反硬上限 |
 | 11 | 将 D_BEHAVIORAL_AUDIT 合并回 D_SECURITY | 拆分已物理完成，回退成本高 |

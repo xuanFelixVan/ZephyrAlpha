@@ -30,92 +30,92 @@ consumers:
     contract_name: NormalizedMarketData
     registered_consumers:
       - {domain: D_MKT_DATA, module: "data_source", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-RISK, module: "metrics_warm", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-SIMULATION, module: "research_innovation", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_SIGLEGACY, module: "signal_generation", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_RISK, module: "metrics_warm", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_SIMULATION, module: "research_innovation", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-002
     contract_name: FactorSignal
     registered_consumers:
-      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   - contract_id: CTR-003
     contract_name: RiskLimits
     registered_consumers:
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-004
     contract_name: Order
     registered_consumers:
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-COMPLIANCE, module: "compliance", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_COMPLIANCE, module: "compliance", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-005
     contract_name: Fill
     registered_consumers:
-      - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-006
     contract_name: PositionSnapshot
     registered_consumers:
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_TRADING, module: "post_trade_analytics", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D_FRONTEND, module: "orchestration", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
-      - {domain: D-ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
+      - {domain: D_ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   # ─── P0 全链路追踪消费者 ───
   - contract_id: CTR-TRACE-001
     contract_name: TraceContext
     registered_consumers:
-      - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   # ─── P0 错误契约消费者 ───
   - contract_id: CTR-ERR-001
     contract_name: DataQualityError
     registered_consumers:
-      - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-ERR-002
     contract_name: FactorComputationError
     registered_consumers:
-      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-ERR-003
     contract_name: SignalDegradationWarning
     registered_consumers:
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   - contract_id: CTR-ERR-004
     contract_name: RiskLimitViolationError
     registered_consumers:
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   - contract_id: CTR-ERR-005
     contract_name: ExecutionRejectionError
     registered_consumers:
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
-      - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
+      - {domain: D_TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-04-30"}
 
   - contract_id: CTR-ERR-006
     contract_name: ContractViolationError
@@ -142,27 +142,27 @@ consumers:
   - contract_id: CTR-P1-010
     contract_name: SystemConfiguration
     registered_consumers:
-      - {domain: D-FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_FACTOR, module: "alpha_factor", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_SIGLEGACY, module: "signal_generation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_PF_CORE, module: "portfolio_construction", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
 
   - contract_id: CTR-P1-013
     contract_name: TelemetryEmitter
     registered_consumers:
       - {domain: D_INFRA_OPS, module: "infrastructure", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_RISK, module: "risk_management", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_TRADING, module: "post_trade_analytics", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_COMPLIANCE, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-05"}
       - {domain: D_OPS, module: "system-telemetry", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
 
   - contract_id: CTR-P1-014
     contract_name: ExperimentResult
     registered_consumers:
-      - {domain: D-SIMULATION, module: "research_innovation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
-      - {domain: D-ML_TRAIN, module: "ml_platform", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_SIMULATION, module: "research_innovation", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
+      - {domain: D_ML_TRAIN, module: "ml_platform", tier: 1, pinned_version: "1.0", registered_at: "2026-05-05"}
 
 summary:
   total_contracts_registered: 18

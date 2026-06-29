@@ -54,7 +54,7 @@ sections:
     - type: mandatory
       step: '物理备份规范: apply_depgraph.py 每次非 dry-run 写操作前通过 PG 事务保护。需要完整备份时使用 pg_dump。存放位置: data/databases/backups/。命名格式: depgraph.backup.{YYYYMMDD_HHMMSS}_{tag}.sql'
     - type: mandatory
-      step: 'extract_depgraph.py 命令清单: --summary(域数+模块数) / --domains D-FACTOR,D-RISK / --modules D-FACTOR-01 / --top(顶级元数据) / --paths(所有physical_files) / --stats(文件大小统计)'
+      step: 'extract_depgraph.py 命令清单: --summary(域数+模块数) / --domains D_FACTOR,D_RISK / --modules D-FACTOR-01 / --top(顶级元数据) / --paths(所有physical_files) / --stats(文件大小统计)'
     - type: mandatory
       step: '变更 JSON 格式: [{"op":"update","module_id":"D-FACTOR-01","field":"blueprint_status","value":"has_blueprint"}] / [{"op":"add_physical_file","module_id":"D-FACTOR-01","path":"src/zephyr/factor/new_file.py"}] / [{"op":"remove_physical_file",...}] / [{"op":"set_physical_files","module_id":"D-FACTOR-01","files":["path1.py","path2.py"]}]'
     - type: mandatory

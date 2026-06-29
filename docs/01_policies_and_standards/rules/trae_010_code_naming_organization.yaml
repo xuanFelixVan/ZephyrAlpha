@@ -137,7 +137,7 @@ sections:
     items:
     - id: SPLIT-001
       statement: 按功能域拆分——域驱动设计，各域内聚
-      rationale: D-DATA / D-RISK / D-EXECUTION等域自然内聚
+      rationale: D-DATA / D_RISK / D-EXECUTION等域自然内聚
       applies_to: 文档拆分首选策略
     - id: SPLIT-002
       statement: 按架构层拆分——层级清晰的系统

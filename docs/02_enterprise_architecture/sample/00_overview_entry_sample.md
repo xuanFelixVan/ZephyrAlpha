@@ -93,7 +93,7 @@ ttl: permanent
 | 基础设施层 | 2 | D_INFRA_OPS（基础设施运维）、D_INFRA_RUNTIME（运行时集成） |
 | 基础层 | 6 | D_ALT_DATA（另类数据）、D_DATA_ENG（数据工程） 等 |
 | 平台层 | 7 | D_AUTONOMY_CORE（自治核心）、D_FRONTEND（前端） 等 |
-| 业务域层 | 28 | D-TRADING（交易运营）、D-BACKTEST（回测）、D-RISK（风险） 等 |
+| 业务域层 | 28 | D_TRADING（交易运营）、D_BACKTEST（回测）、D_RISK（风险） 等 |
 | 未分层 | 9 | 待分类的域 |
 
 ---

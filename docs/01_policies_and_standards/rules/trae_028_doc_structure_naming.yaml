@@ -1028,8 +1028,8 @@ sections:
       fail: 其他文件中存在命名规则定义(非引用)
     - type: constraint
       check: 域ID格式
-      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules.yaml NR-002);示例D_MKT_DATA/D-ASHARE_SIGNAL/D_AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
-      fail: 连字符格式(D-EX-CORE)或小写格式(d-ex_core)
+      pass: D-XXX_YYY(大写D+大写域缩写+下划线分隔业务语义片段,对应domain_naming_rules.yaml NR-002);示例D_MKT_DATA/D_ASHARE_SIGNAL/D_AUTONOMY_CORE;下划线用于拼接多业务语义片段,不表示父子层级
+      fail: 连字符格式(D_EX_CORE)或小写格式(d-ex_core)
     - type: constraint
       check: 域ID语义完整性
       pass: 域ID下划线后的第一段不得与任何已存在域ID匹配(无父子前缀,对应domain_naming_rules.yaml NR-001);域ID必须独立表达业务含义,不得依赖其他域ID才能理解(语义独立性,对应NR-003);domain_name必须与domain_id语义一致(中文名一致,对应NR-005);所有域平级无父子关系
@@ -1070,7 +1070,7 @@ sections:
       step: check_naming_convention.py必须与本文件对齐;本文件修改后必须同步更新检测脚本
     prohibitions:
     - 禁止在其他规则文件(trae_010/022/030/042)中定义命名规则(只能引用本文件)
-    - 禁止域ID使用连字符(D-EX-CORE)或小写(d-ex_core)
+    - 禁止域ID使用连字符(D_EX_CORE)或小写(d-ex_core)
     - 禁止文件名使用kebab-case(连字符)
     - 禁止目录名使用kebab-case(连字符)
     - 禁止check_naming_convention.py的检测规则与本文件不一致
@@ -1082,12 +1082,12 @@ sections:
     conditions:
     - type: constraint
       check: blueprint_id 派生关系
-      pass: blueprint_id 的域片段派生自 domain_id(如domain_id=D-ASHARE_SIGNAL则blueprint_id=MOD-ASHARE_SIGNAL[-NNN],序号可选,见模块ID格式condition双轨制domain-functional轨);派生关系记录在derived_identifier_registry.yaml(sequence_required字段控制序号是否必填,派生轨=false)
-      fail: blueprint_id 域片段与所属 domain_id 不一致(如domain_id=D-ASHARE_SIGNAL但blueprint_id=MOD-SIGNAL_ASHARE-旧名残留)
+      pass: blueprint_id 的域片段派生自 domain_id(如domain_id=D_ASHARE_SIGNAL则blueprint_id=MOD-ASHARE_SIGNAL[-NNN],序号可选,见模块ID格式condition双轨制domain-functional轨);派生关系记录在derived_identifier_registry.yaml(sequence_required字段控制序号是否必填,派生轨=false)
+      fail: blueprint_id 域片段与所属 domain_id 不一致(如domain_id=D_ASHARE_SIGNAL但blueprint_id=MOD-SIGNAL_ASHARE-旧名残留)
     - type: constraint
       check: 节点路径域片段派生关系
-      pass: nodes.path 中的域标识片段派生自 domain_id(如domain_id=D-ASHARE_SIGNAL则节点路径含D-ASHARE_SIGNAL-NNN);节点路径编号按域内顺序分配(D-XXX-01,-02...)
-      fail: nodes.path 域片段与所属 domain_id 不一致(如domain_id=D-ASHARE_SIGNAL但路径含D-SIGNAL-21旧名残留)
+      pass: nodes.path 中的域标识片段派生自 domain_id(如domain_id=D_ASHARE_SIGNAL则节点路径含D_ASHARE_SIGNAL-NNN);节点路径编号按域内顺序分配(D-XXX-01,-02...)
+      fail: nodes.path 域片段与所属 domain_id 不一致(如domain_id=D_ASHARE_SIGNAL但路径含D-SIGNAL-21旧名残留)
     actions:
     - type: mandatory
       step: 派生标识符的域片段必须跟随 domain_id;domain_id 改名时派生标识符必须同步改名(见gov_doc_003_rename_propagation)

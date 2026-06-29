@@ -30,7 +30,7 @@ entries:
   applies_to: create
   severity: error
   example_bad: D-SIGNAL_ASHARE（D-SIGNAL 为已存在域，暗示 ASHARE 是 SIGNAL 的子域）
-  example_good: D-ASHARE_SIGNAL（D-ASHARE 非已存在域，ASHARE_SIGNAL 独立表达业务含义）
+  example_good: D_ASHARE_SIGNAL（D-ASHARE 非已存在域，ASHARE_SIGNAL 独立表达业务含义）
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_naming_ssot 域ID语义完整性condition
 - rule_id: NR-002
   rule_name: 全大写下划线命名
@@ -38,29 +38,29 @@ entries:
   applies_to: create
   severity: error
   example_bad: D-Signal-Ashare（含小写和多余连字符）
-  example_good: D-ASHARE_SIGNAL（全大写+下划线）
+  example_good: D_ASHARE_SIGNAL（全大写+下划线）
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_naming_ssot 域ID格式condition
 - rule_id: NR-003
   rule_name: 语义独立性
-  rule_text: 域ID必须独立表达业务含义，禁止依赖其他域ID才能理解。域ID不得是其他域ID加下划线后缀的形式（如 D-SIGNAL_QUALITY 违规，因依赖 D-SIGNAL 才能理解；应改为 D-SIGQC 独立表达"信号质量控制"）。
+  rule_text: 域ID必须独立表达业务含义，禁止依赖其他域ID才能理解。域ID不得是其他域ID加下划线后缀的形式（如 D-SIGNAL_QUALITY 违规，因依赖 D-SIGNAL 才能理解；应改为 D_SIGQC 独立表达"信号质量控制"）。
   applies_to: create
   severity: error
   example_bad: D-SIGNAL_QUALITY（依赖 D-SIGNAL 上下文才能理解）
-  example_good: D-SIGQC（独立表达"信号质量控制"语义）
+  example_good: D_SIGQC（独立表达"信号质量控制"语义）
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_naming_ssot 域ID语义完整性condition
 - rule_id: NR-004
   rule_name: 设计态标识
-  rule_text: 设计态占位域（build_status=planned 且 current_modules=0）应使用 LEGACY 后缀标识其遗留/占位性质（如 D-SIGLEGACY 而非 D-SIGNAL），避免与未来正式域混淆。
+  rule_text: 设计态占位域（build_status=planned 且 current_modules=0）应使用 LEGACY 后缀标识其遗留/占位性质（如 D_SIGLEGACY 而非 D-SIGNAL），避免与未来正式域混淆。
   applies_to: create
   severity: warning
   example_bad: D-SIGNAL（设计态占位域未标识遗留性质）
-  example_good: D-SIGLEGACY（LEGACY 后缀明确标识遗留设计态）
+  example_good: D_SIGLEGACY（LEGACY 后缀明确标识遗留设计态）
   source_doc: docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml §设计态域处理
 - rule_id: NR-005
   rule_name: 中文名一致
-  rule_text: domain_name 必须与 domain_id 语义一致（如 D-SIGQC 对应"信号质量控制"），禁止中文名与英文ID表达不同业务含义。
+  rule_text: domain_name 必须与 domain_id 语义一致（如 D_SIGQC 对应"信号质量控制"），禁止中文名与英文ID表达不同业务含义。
   applies_to: create
   severity: warning
-  example_bad: D-SIGQC 对应 domain_name="数据质量"（中文名与ID语义不一致）
-  example_good: D-SIGQC 对应 domain_name="信号质量控制"（中文名与ID语义一致）
+  example_bad: D_SIGQC 对应 domain_name="数据质量"（中文名与ID语义不一致）
+  example_good: D_SIGQC 对应 domain_name="信号质量控制"（中文名与ID语义一致）
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_naming_ssot 域ID语义完整性condition

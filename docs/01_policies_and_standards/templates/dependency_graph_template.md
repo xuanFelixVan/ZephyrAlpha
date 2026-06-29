@@ -589,7 +589,7 @@ granularity_hierarchy:
 |------|------|------|
 | `application` | 独立应用 | zephyr.runtime |
 | `package` | Python 包 | zephyr.core |
-| `domain` | 业务域 | D-DATA, D-RISK |
+| `domain` | 业务域 | D-DATA, D_RISK |
 | `aggregate` | DDD 聚合 | AGG-007 MarketDataBatch |
 | `service` | 外部服务 | Ollama, DeepSeek API |
 | `library` | 第三方库 | pydantic, networkx |
@@ -605,9 +605,9 @@ granularity_hierarchy:
 | 应该有 | `config_depends` | 配置引用依赖 | gate 引用 rule-registry |
 | 应该有 | `data_depends` | 数据文件依赖 | 脚本读取 YAML 注册表 |
 | 应该有 | `blueprint_depends` | 蓝图契约依赖 | blueprint §4 引用另一个蓝图 |
-| 应该有 | `event_depends` | 事件驱动依赖 | D-SIGLEGACY 订阅 E-RS-01 |
-| 应该有 | `contract_depends` | 契约消费依赖 | D-FACTOR 消费 CTR-001 |
-| 应该有 | `shared_kernel` | 共享内核依赖 | D-EXECUTION + D-RISK 共享 Position |
+| 应该有 | `event_depends` | 事件驱动依赖 | D_SIGLEGACY 订阅 E-RS-01 |
+| 应该有 | `contract_depends` | 契约消费依赖 | D_FACTOR 消费 CTR-001 |
+| 应该有 | `shared_kernel` | 共享内核依赖 | D-EXECUTION + D_RISK 共享 Position |
 | 可选 | `script_depends` | 脚本调用依赖 | 脚本 import 另一个脚本 |
 | 可选 | `runtime_depends` | 运行时服务依赖 | 调用 Ollama API |
 

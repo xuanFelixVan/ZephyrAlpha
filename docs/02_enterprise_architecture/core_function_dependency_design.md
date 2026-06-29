@@ -513,23 +513,23 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 
 |  功能 | 需建节点                            | 设计域             |
 | :-: | :------------------------------ | :-------------- |
-|  F3 | task\_repository 设计态            | D-GOVERNANCE    |
+|  F3 | task\_repository 设计态            | D_GOVERNANCE    |
 |  F7 | llm\_safety\_gateway 设计态        | D_SECURITY      |
-| F18 | governance\_script\_system 设计态  | D-GOVERNANCE    |
+| F18 | governance\_script\_system 设计态  | D_GOVERNANCE    |
 | F20 | unified\_monitor 设计态            | D_OPS           |
 | F21 | ide\_health\_guardian 设计态       | D_INFRA_OPS     |
 | F23 | agent\_orchestrator 设计态         | D_AUTONOMY_CORE |
 | F24 | agent\_spec\_skill 设计态          | D_AUTONOMY_CORE |
 | F27 | capacity\_assurance 设计态         | D_INFRA_OPS     |
-| F28 | asset\_inventory 设计态            | D-GOVERNANCE    |
-| F29 | semantic\_auditor 设计态           | D-GOVERNANCE    |
+| F28 | asset\_inventory 设计态            | D_GOVERNANCE    |
+| F29 | semantic\_auditor 设计态           | D_GOVERNANCE    |
 | F30 | red\_blue\_validator 设计态        | D_SECURITY      |
-| F31 | registry\_governance 设计态        | D-GOVERNANCE    |
+| F31 | registry\_governance 设计态        | D_GOVERNANCE    |
 | F32 | state\_machine\_engine 设计态      | D_AUTONOMY_CORE |
 | F33 | local\_model\_infra 设计态         | D_INFRA_OPS     |
-| F34 | code\_dedup\_engine 设计态         | D-GOVERNANCE    |
-| F35 | file\_structure\_governance 设计态 | D-GOVERNANCE    |
-| F36 | audit\_trail\_chain 设计态         | D-GOV_AUDIT     |
+| F34 | code\_dedup\_engine 设计态         | D_GOVERNANCE    |
+| F35 | file\_structure\_governance 设计态 | D_GOVERNANCE    |
+| F36 | audit\_trail\_chain 设计态         | D_GOV_AUDIT     |
 | F37 | resource\_optimization 设计态      | D_INFRA_OPS     |
 
 > **规划差异说明**（depgraph.db 现状 vs 本文档规划目标）：
@@ -537,10 +537,10 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 >
 > | 功能 | 本文档规划域 | depgraph现状域 | 迁移理由 |
 > |:---:|:---:|:---:|------|
-> | F28 | D-GOVERNANCE | D_OPS | "统一登记"偏治理，非运维 |
-> | F32 | D_AUTONOMY_CORE | D-GOVERNANCE | 通用框架非治理功能 |
+> | F28 | D_GOVERNANCE | D_OPS | "统一登记"偏治理，非运维 |
+> | F32 | D_AUTONOMY_CORE | D_GOVERNANCE | 通用框架非治理功能 |
 > | F33 | D_INFRA_OPS | D_AUTONOMY_CORE | 基础设施非自治逻辑 |
-> | F36 | D-GOV_AUDIT | D_SECURITY | 专用审计域更精确 |
+> | F36 | D_GOV_AUDIT | D_SECURITY | 专用审计域更精确 |
 > | F37 | D_INFRA_OPS | D_AUTONOMY_CORE | 基础设施运维 |
 
 ***
@@ -892,7 +892,7 @@ L2/L3/L4/L5 ──发布事件──> 事件总线(F22) ──订阅──> L6(�
 | 0.3.3 | 2026-06-24 | 第5轮审查修复8个问题：①F19入度4→5（实际5条入边）②§4.3规则3限定DIP范围（业务调度用contract/event，健康检查F1→F21和同层协作F1→F23允许runtime）③§7.1添加pipeline_start事件，事件总数11→12 ④§8新增§8.3类型变更记录 ⑤§7.2事件方向图修正（L6不发布事件）⑥§10第5项排除F26 ⑦F8说明删除"入度最高" ⑧§7.1添加event边说明 |
 | 0.3.4 | 2026-06-24 | 第6轮审查修复4个问题：①设计原则2与§4.3规则3同步（添加业务调度限定+健康检查/同层协作例外）②F12说明删除"入度最高"（F22入度11才是最高）③§10第4项F5/F9/F10入度=0→跨层入度=0（F9入度1来自L6内部F5→F9）④§7.2事件方向图添加L2（pipeline_start发布者F1在L2） |
 | 0.3.5 | 2026-06-24 | 第7轮审查修复4个问题：①frontmatter version 0.3.2→0.3.5（与变更历史同步）②§二末尾事件方向L4/L5→L2/L3/L4/L5（F1在L2、F4/F2/F27在L3发布事件）③§7.2事件方向图L1/L2/L3/L4/L5→L2/L3/L4/L5（L1的F21不发布事件）④§7.2禁止说明同步去除L1 |
-| 0.3.6 | 2026-06-24 | 功能域审查修复：①P1域ID命名格式统一为下划线（D_INFRA_OPS/D_AUTONOMY_CORE/D-GOV_AUDIT，共8处连字符→下划线，与depgraph.db真源对齐）②P2添加规划差异说明（F28/F32/F33/F36/F37共5个功能设计域归属与depgraph现状不一致，本文档为规划目标，depgraph需迁移） |
+| 0.3.6 | 2026-06-24 | 功能域审查修复：①P1域ID命名格式统一为下划线（D_INFRA_OPS/D_AUTONOMY_CORE/D_GOV_AUDIT，共8处连字符→下划线，与depgraph.db真源对齐）②P2添加规划差异说明（F28/F32/F33/F36/F37共5个功能设计域归属与depgraph现状不一致，本文档为规划目标，depgraph需迁移） |
 | 0.3.7 | 2026-06-24 | 新增§十一实施工作流程：6阶段（前置→全景图→蓝图→代码→三方对齐→测试验证），含详细步骤表、关键约束6项、回滚方案3类 |
 | 0.3.8 | 2026-06-24 | §十一新增阶段0.5：盘点37个功能实现状态（代码vs蓝图）。区分运营态（有代码，granularity=runtime）和设计态（仅蓝图，granularity=design），影响阶段1节点创建策略。新增4个盘点步骤+1项关键约束 |
 | 0.3.9 | 2026-06-24 | §十一新增§11.5功能实现状态盘点表：①汇总表（37个功能按7层分组，标注运营态/设计态/未发现/已归档+主要实现位置+文件数）②运营态功能代码文件清单（33个功能的主入口文件+核心目录完整路径）③非运营态功能说明（F17已归档/F20未发现/F34设计态/F35设计态）④路径漂移警示（F26蓝图声明governance/lifecycle_manager/实际在trading/、F31蓝图声明governance/registry_governance/实际在infrastructure/）。统计：运营态33个\|设计态2个\|未发现1个\|已归档1个 |

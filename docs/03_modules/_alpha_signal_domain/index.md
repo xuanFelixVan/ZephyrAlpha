@@ -11,9 +11,9 @@ ttl: permanent
 ---
 # Alpha Signal Domain — 目录索引（遗留）
 
-> ⚠️ **遗留目录**：本域已被 D-SIGLEGACY（信号生成域）取代。待 RULE-THREE 审判后删除或合并。
+> ⚠️ **遗留目录**：本域已被 D_SIGLEGACY（信号生成域）取代。待 RULE-THREE 审判后删除或合并。
 >
-> ⚠️ **裁定#204 追加说明（2026-06-25）**：上文提到的 D-SIGLEGACY 域已改名——D-SIGLEGACY → D-SIGLEGACY（信号遗留设计态），其 3 个子域亦同步改名：D-ASHARE_SIGNAL → D-ASHARE_SIGNAL，D-FUNDAMENTAL_SIGNAL → D-FUNDAMENTAL_SIGNAL，D-SIGQC → D-SIGQC。本遗留文档中的旧名保留为历史上下文。
+> ⚠️ **裁定#204 追加说明（2026-06-25）**：上文提到的 D_SIGLEGACY 域已改名——D_SIGLEGACY → D_SIGLEGACY（信号遗留设计态），其 3 个子域亦同步改名：D_ASHARE_SIGNAL → D_ASHARE_SIGNAL，D_FUNDAMENTAL_SIGNAL → D_FUNDAMENTAL_SIGNAL，D_SIGQC → D_SIGQC。本遗留文档中的旧名保留为历史上下文。
 
 ## 责任声明（Single Responsibility）
 

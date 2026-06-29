@@ -46,41 +46,41 @@ graph LR
         D_SHARED["D_SHARED<br/>共享服务<br/>(290模块)"]
     end
     subgraph L2_domain[L2_domain]
-        D_ASHARE_SIGNAL["D-ASHARE_SIGNAL<br/>A股特色信号<br/>(27模块)"]
-        D_AUTONOMY_PERM["D-AUTONOMY_PERM<br/>自治保护<br/>(270模块)"]
-        D_BACKTEST["D-BACKTEST<br/>回测<br/>(9模块)"]
-        D_COMPLIANCE["D-COMPLIANCE<br/>合规<br/>(916模块)"]
-        D_CROSS_ASSET["D-CROSS_ASSET<br/>跨资产<br/>(79模块)"]
-        D_DIGITAL_TWIN["D-DIGITAL_TWIN<br/>数字孪生<br/>(13模块)"]
-        D_EXEC_SIM["D-EXEC_SIM<br/>执行仿真<br/>(8模块)"]
-        D_EX_CORE["D-EX_CORE<br/>执行核心<br/>(135模块)"]
-        D_EX_SOR["D-EX_SOR<br/>执行路由<br/>(131模块)"]
-        D_FACTOR["D-FACTOR<br/>因子<br/>(320模块)"]
-        D_FUNDAMENTAL_SIGNAL["D-FUNDAMENTAL_SIGNAL<br/>基本面信号<br/>(24模块)"]
-        D_GOV_DOCS["D-GOV-DOCS<br/>architecture_docs<br/>(0模块)"]
-        D_GOV_ENFORCEMENT["D-GOV-ENFORCEMENT<br/>rule_enforcement<br/>(0模块)"]
-        D_GOV_SCRIPTS["D-GOV-SCRIPTS<br/>code_dedup<br/>(0模块)"]
-        D_GOVERNANCE["D-GOVERNANCE<br/>生命周期管理<br/>(3904模块)"]
-        D_GOV_AUDIT["D-GOV_AUDIT<br/>审计追踪<br/>(268模块)"]
-        D_GOV_AUDIT_TESTS["D-GOV_AUDIT_TESTS<br/>audit_test_suite<br/>(0模块)"]
-        D_GOV_DRIFT["D-GOV_DRIFT<br/>漂移检测<br/>(38模块)"]
-        D_GOV_RULE["D-GOV_RULE<br/>规则治理<br/>(178模块)"]
-        D_INTELLIGENCE["D-INTELLIGENCE<br/>上下文管理<br/>(273模块)"]
-        D_KNOWLEDGE["D-KNOWLEDGE<br/>知识管理<br/>(194模块)"]
-        D_ML_SERVE["D-ML_SERVE<br/>推理<br/>(69模块)"]
-        D_ML_TRAIN["D-ML_TRAIN<br/>训练<br/>(119模块)"]
-        D_PF_ALLOC["D-PF_ALLOC<br/>组合分配<br/>(114模块)"]
-        D_PF_CORE["D-PF_CORE<br/>组合核心<br/>(202模块)"]
-        D_POSITION["D-POSITION<br/>仓位管理<br/>(77模块)"]
-        D_RISK["D-RISK<br/>风控<br/>(775模块)"]
-        D_SELL_DECISION["D-SELL_DECISION<br/>卖出决策<br/>(64模块)"]
-        D_SIGLEGACY["D-SIGLEGACY<br/>信号遗留设计态<br/>(476模块)"]
-        D_SIGQC["D-SIGQC<br/>信号质量控制<br/>(18模块)"]
-        D_SIMULATION["D-SIMULATION<br/>仿真<br/>(128模块)"]
-        D_TRADING["D-TRADING<br/>交易运营<br/>(249模块)"]
+        D_ASHARE_SIGNAL["D_ASHARE_SIGNAL<br/>A股特色信号<br/>(27模块)"]
+        D_AUTONOMY_PERM["D_AUTONOMY_PERM<br/>自治保护<br/>(270模块)"]
+        D_BACKTEST["D_BACKTEST<br/>回测<br/>(9模块)"]
+        D_COMPLIANCE["D_COMPLIANCE<br/>合规<br/>(916模块)"]
+        D_CROSS_ASSET["D_CROSS_ASSET<br/>跨资产<br/>(79模块)"]
+        D_DIGITAL_TWIN["D_DIGITAL_TWIN<br/>数字孪生<br/>(13模块)"]
+        D_EXEC_SIM["D_EXEC_SIM<br/>执行仿真<br/>(8模块)"]
+        D_EX_CORE["D_EX_CORE<br/>执行核心<br/>(135模块)"]
+        D_EX_SOR["D_EX_SOR<br/>执行路由<br/>(131模块)"]
+        D_FACTOR["D_FACTOR<br/>因子<br/>(320模块)"]
+        D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号<br/>(24模块)"]
+        D_GOV_DOCS["D_GOV_DOCS<br/>architecture_docs<br/>(0模块)"]
+        D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>rule_enforcement<br/>(0模块)"]
+        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>code_dedup<br/>(0模块)"]
+        D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理<br/>(3904模块)"]
+        D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪<br/>(268模块)"]
+        D_GOV_AUDIT_TESTS["D_GOV_AUDIT_TESTS<br/>audit_test_suite<br/>(0模块)"]
+        D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测<br/>(38模块)"]
+        D_GOV_RULE["D_GOV_RULE<br/>规则治理<br/>(178模块)"]
+        D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理<br/>(273模块)"]
+        D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理<br/>(194模块)"]
+        D_ML_SERVE["D_ML_SERVE<br/>推理<br/>(69模块)"]
+        D_ML_TRAIN["D_ML_TRAIN<br/>训练<br/>(119模块)"]
+        D_PF_ALLOC["D_PF_ALLOC<br/>组合分配<br/>(114模块)"]
+        D_PF_CORE["D_PF_CORE<br/>组合核心<br/>(202模块)"]
+        D_POSITION["D_POSITION<br/>仓位管理<br/>(77模块)"]
+        D_RISK["D_RISK<br/>风控<br/>(775模块)"]
+        D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策<br/>(64模块)"]
+        D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态<br/>(476模块)"]
+        D_SIGQC["D_SIGQC<br/>信号质量控制<br/>(18模块)"]
+        D_SIMULATION["D_SIMULATION<br/>仿真<br/>(128模块)"]
+        D_TRADING["D_TRADING<br/>交易运营<br/>(249模块)"]
     end
     subgraph unknown[unknown]
-        D_GOV_REPAIR["D-GOV-REPAIR<br/>rollback<br/>(0模块)"]
+        D_GOV_REPAIR["D_GOV_REPAIR<br/>rollback<br/>(0模块)"]
     end
 
     %% 跨域依赖（按依赖数排序，最多显示 100 条）
@@ -192,15 +192,15 @@ graph LR
     %% 跨域依赖边总数: 3634
 
     %% Top 10 依赖对
-    %% 1. D-GOVERNANCE -> D_OPS: 385 条
-    %% 2. D-GOVERNANCE -> D_INTEGRATION: 237 条
-    %% 3. D-GOVERNANCE -> D-TRADING: 226 条
-    %% 4. D-GOVERNANCE -> D_AUTONOMY_CORE: 213 条
-    %% 5. D-GOVERNANCE -> D_SECURITY: 207 条
-    %% 6. D-GOVERNANCE -> D_SHARED: 185 条
-    %% 7. D-GOVERNANCE -> D-GOV-ENFORCEMENT: 168 条
-    %% 8. D-GOVERNANCE -> D-GOV_AUDIT: 140 条
-    %% 9. D-AUTONOMY_PERM -> D_SECURITY: 138 条
-    %% 10. D-GOVERNANCE -> D_INFRA_RUNTIME: 125 条
+    %% 1. D_GOVERNANCE -> D_OPS: 385 条
+    %% 2. D_GOVERNANCE -> D_INTEGRATION: 237 条
+    %% 3. D_GOVERNANCE -> D_TRADING: 226 条
+    %% 4. D_GOVERNANCE -> D_AUTONOMY_CORE: 213 条
+    %% 5. D_GOVERNANCE -> D_SECURITY: 207 条
+    %% 6. D_GOVERNANCE -> D_SHARED: 185 条
+    %% 7. D_GOVERNANCE -> D_GOV_ENFORCEMENT: 168 条
+    %% 8. D_GOVERNANCE -> D_GOV_AUDIT: 140 条
+    %% 9. D_AUTONOMY_PERM -> D_SECURITY: 138 条
+    %% 10. D_GOVERNANCE -> D_INFRA_RUNTIME: 125 条
 
 ```

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-L04-001
-title: D-RISK 域索引
+title: D_RISK 域索引
 doc_type: index
 status: Active
 layer: domain
@@ -9,9 +9,9 @@ version: "2.0.0"
 ttl: permanent
 ---
 
-# D-RISK — 风险管理域索引
+# D_RISK — 风险管理域索引
 
-> **架构裁定**：D19/D21 — 14层降级为域属性，D-RISK 为唯一分类。
+> **架构裁定**：D19/D21 — 14层降级为域属性，D_RISK 为唯一分类。
 > **命名规范**：统一下划线（snake_case）。
 
 ## 模块清单

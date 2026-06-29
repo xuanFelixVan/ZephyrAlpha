@@ -12,8 +12,8 @@ version: 0.4.0
 created: '2026-05-16'
 last_updated: '2026-06-25'
 # 裁定#201: 补写 D-SIGNAL_ASHARE/FUNDAMENTAL/QUALITY registry 条目
-# 裁定#202: 补写 D-GOV_RULE registry 条目
-# 裁定#204: D-SIGNAL* 4 域改名（D-SIGNAL_ASHARE→D-ASHARE_SIGNAL, D-SIGNAL_FUNDAMENTAL→D-FUNDAMENTAL_SIGNAL, D-SIGNAL_QUALITY→D-SIGQC, D-SIGNAL→D-SIGLEGACY）
+# 裁定#202: 补写 D_GOV_RULE registry 条目
+# 裁定#204: D-SIGNAL* 4 域改名（D-SIGNAL_ASHARE→D_ASHARE_SIGNAL, D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL, D-SIGNAL_QUALITY→D_SIGQC, D-SIGNAL→D_SIGLEGACY）
 unique_key:
 - domain
 - subdomain
@@ -27,7 +27,7 @@ entry_schema:
   stability: str
   ai_autonomy: str
 entries:
-- domain: D-GOV_ENFORCEMENT
+- domain: D_GOV_ENFORCEMENT
   subdomain: rule_enforcement
   ssot_module: MOD-GATE_ENGINE
   ssot_path: src/zephyr/governance/rule_enforcement/
@@ -54,7 +54,7 @@ entries:
   - integration gate
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOV_SCRIPTS
+- domain: D_GOV_SCRIPTS
   subdomain: script_governance
   ssot_module: MOD-INF-005
   ssot_path: src/zephyr/governance/script_governance/
@@ -73,7 +73,7 @@ entries:
   - 治理自动化
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-GOV_DRIFT
+- domain: D_GOV_DRIFT
   subdomain: drift_detection
   ssot_module: MOD-INF-023
   ssot_path: src/zephyr/governance/drift_detection/
@@ -116,7 +116,7 @@ entries:
   - chaos injection
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOVERNANCE
+- domain: D_GOVERNANCE
   subdomain: registry_management
   ssot_module: MOD-INF-037
   ssot_path: src/zephyr/governance/registry_management/
@@ -134,7 +134,7 @@ entries:
   - 登记表管理
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOVERNANCE
+- domain: D_GOVERNANCE
   subdomain: orphan_judgment
   ssot_module: MOD-INF-029
   ssot_path: src/zephyr/governance/orphan_judgment/
@@ -158,7 +158,7 @@ entries:
   - 自动补全
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOV_AUDIT
+- domain: D_GOV_AUDIT
   subdomain: audit_orchestration
   ssot_module: MOD-INF-027
   ssot_path: src/zephyr/governance/audit_orchestration/
@@ -172,7 +172,7 @@ entries:
   - audit orchestrator
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOV_AUDIT
+- domain: D_GOV_AUDIT
   subdomain: semantic_audit
   ssot_module: MOD-INF-028
   ssot_path: src/zephyr/governance/semantic_audit/
@@ -350,7 +350,7 @@ entries:
   - 冷启动
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-INTELLIGENCE
+- domain: D_INTELLIGENCE
   subdomain: context_management
   ssot_module: MOD-CONTEXT_ENGINE
   ssot_path: src/zephyr/intelligence/
@@ -379,7 +379,7 @@ entries:
   - prompt optimization
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOV-REPAIR
+- domain: D_GOV_REPAIR
   subdomain: rollback
   ssot_module: MOD-INF-021
   ssot_path: src/zephyr/governance/
@@ -401,7 +401,7 @@ entries:
   - kill switch
   stability: stable
   ai_autonomy: human_gated
-- domain: D-AUTONOMY_PERM
+- domain: D_AUTONOMY_PERM
   subdomain: budget_enforcement
   ssot_module: MOD-INF-024
   ssot_path: src/zephyr/autonomy_perm/
@@ -423,7 +423,7 @@ entries:
   - token budget
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-AUTONOMY_PERM
+- domain: D_AUTONOMY_PERM
   subdomain: escalation
   ssot_module: MOD-INF-022
   ssot_path: src/zephyr/autonomy_perm/
@@ -461,7 +461,7 @@ entries:
   - rule automation
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOV_AUDIT
+- domain: D_GOV_AUDIT
   subdomain: audit-trail
   ssot_module: MOD-INF-020
   ssot_path: src/zephyr/governance/audit_trail/
@@ -602,7 +602,7 @@ entries:
   - 数据安全
   stability: stable
   ai_autonomy: human_gated
-- domain: D-KNOWLEDGE
+- domain: D_KNOWLEDGE
   subdomain: vector_storage
   ssot_module: MOD-INF-011
   ssot_path: src/zephyr/knowledge/
@@ -629,7 +629,7 @@ entries:
   - embedding model
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-KNOWLEDGE
+- domain: D_KNOWLEDGE
   subdomain: knowledge_management
   ssot_module: MOD-KB-001
   ssot_path: src/zephyr/knowledge/
@@ -650,7 +650,7 @@ entries:
   - 知识管理
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-ML_TRAIN
+- domain: D_ML_TRAIN
   subdomain: model_evaluation
   ssot_module: MOD-INF-036
   ssot_path: src/zephyr/intelligence/model_evaluation/
@@ -666,7 +666,7 @@ entries:
   - model capability
   stability: evolving
   ai_autonomy: human_gated
-- domain: D-ML_TRAIN
+- domain: D_ML_TRAIN
   subdomain: model_profiling
   ssot_module: MOD-INF-034
   ssot_path: src/zephyr/intelligence/model_profiling/
@@ -780,7 +780,7 @@ entries:
   - 工具服务器
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOVERNANCE
+- domain: D_GOVERNANCE
   subdomain: task_management
   ssot_module: MOD-TASK_SYSTEM
   ssot_path: src/zephyr/governance/
@@ -796,7 +796,7 @@ entries:
   - task card
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOVERNANCE
+- domain: D_GOVERNANCE
   subdomain: lifecycle_management
   ssot_module: MOD-INF-016
   ssot_path: src/zephyr/governance/
@@ -811,7 +811,7 @@ entries:
   - 模块生命周期
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-GOV_SCRIPTS
+- domain: D_GOV_SCRIPTS
   subdomain: code_dedup
   ssot_module: MOD-INF-017
   ssot_path: src/zephyr/governance/
@@ -903,7 +903,7 @@ entries:
   - 可观测性
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-AUDITTEST
+- domain: D_AUDITTEST
   subdomain: audit_test_suite
   ssot_module: MOD-INF-027
   ssot_path: tests/
@@ -921,7 +921,7 @@ entries:
   - 单元测试
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOV_DOCS
+- domain: D_GOV_DOCS
   subdomain: architecture_docs
   ssot_module: MOD-INF-037
   ssot_path: docs/02_enterprise_architecture/
@@ -940,7 +940,7 @@ entries:
   - 规则文档
   stability: stable
   ai_autonomy: human_gated
-- domain: D-ASHARE_SIGNAL
+- domain: D_ASHARE_SIGNAL
   subdomain: ashare_signal
   ssot_module: MOD-INF-038
   ssot_path: src/zephyr/signal_ashare/
@@ -954,7 +954,7 @@ entries:
   - 信号-A股
   stability: planned
   ai_autonomy: ai_modifiable
-- domain: D-FUNDAMENTAL_SIGNAL
+- domain: D_FUNDAMENTAL_SIGNAL
   subdomain: fundamental_signal
   ssot_module: MOD-INF-039
   ssot_path: src/zephyr/signal_fundamental/
@@ -972,7 +972,7 @@ entries:
   - 信号-基本面
   stability: stable
   ai_autonomy: human_gated
-- domain: D-SIGQC
+- domain: D_SIGQC
   subdomain: signal_quality
   ssot_module: MOD-INF-040
   ssot_path: src/zephyr/signal_quality/
@@ -987,7 +987,7 @@ entries:
   - 信号-质量
   stability: planned
   ai_autonomy: ai_modifiable
-- domain: D-SIGLEGACY
+- domain: D_SIGLEGACY
   subdomain: siglegacy
   ssot_module: MOD-INF-038
   ssot_path: ''
@@ -998,7 +998,7 @@ entries:
   - 信号遗留
   stability: deprecated
   ai_autonomy: human_gated
-- domain: D-GOV_RULE
+- domain: D_GOV_RULE
   subdomain: rule_governance
   ssot_module: MOD-INF-041
   ssot_path: src/zephyr/gov_rule/
