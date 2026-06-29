@@ -1,0 +1,334 @@
+# [A_config] module_id=CFG-directory_contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# ============================================================
+# ZephyrAlpha 目录契约（Directory Contract）
+# ============================================================
+#
+# 用途：目录维度约束的唯一真源——合并原先分散在三个文件的目录规则：
+#   1. 目录→扩展名映射（原 trae_047 §gov_eng_002_directory_mapping，已迁入）
+#   2. 目录→ttl 默认值（原 ttl_vocabulary.yaml decision_tree Q3，已迁入）
+#   3. doc_type→目录交叉验证（指针引用 doc_type_vocabulary.yaml，不复制）
+#
+# 治本动机（消除三维同步成本）：
+#   - 原先 trae_047 directory_mapping（散文式）、ttl_vocabulary Q3（criteria 列表）、
+#     doc_type_vocabulary allowed_directories（per-value 字段）三处定义目录约束
+#   - AI 不可能同步三份；GitCommitGateway 硬编码 _PERMANENT_ZONE_DIRS 是第四份
+#   - 本契约收敛目录维度到一处，词表维度保留在各自 vocabulary.yaml
+#
+# 消费者：
+#   - check_directory_contract.py（Phase 4 创建）—— pre-commit/CI 目录校验
+#   - GitCommitGateway._PERMANENT_ZONE_DIRS（Phase 2.3 改为从本契约动态加载）
+#   - check_frontmatter_metadata.py（ttl 校验从本契约读取永久区路径）
+#
+# 对标标准：
+#   - OpenAPI 3.1：契约先行（先定义规则，再验证合规）
+#   - Linux FHS：每个目录有明确职责声明和允许的文件类型
+#   - Terraform Provider Registry：Schema → Validate → Pass/Fail
+#
+# 依赖（本契约引用的真源文件）：
+#   - vocabularies/doc_type_vocabulary.yaml → doc_type 19 值及其 allowed/forbidden_directories
+#   - vocabularies/ttl_vocabulary.yaml → ttl 2 值（permanent/task_bound）
+#   - rules/trae_047_engineering_file_header.yaml → header 格式规则（directory_mapping 已迁出）
+# ============================================================
+
+schema_version: "1.0.0"
+doc_type: contract
+module_id: PS-CTR-002
+version: "1.0.0"
+title: "Directory Contract"
+status: active
+ttl: permanent
+contract_version: "1.0.0"
+last_updated: "2026-06-29"
+
+# ============================================================
+# 0. 真源溯源（三维来源声明）
+# ============================================================
+# 每个维度标明原真源文件、是否已迁入本契约、迁移后的原文件处理方式。
+# migrated=true 的维度：原文件的对应内容应改为指针引用本契约（Phase 2.1/2.2 执行）。
+# migrated=false 的维度：保留在原文件（doc_type 属性，不拆出）。
+
+sources:
+  - dimension: directory_extensions
+    target: "trae_047_engineering_file_header.yaml §gov_eng_002_directory_mapping"
+    path: "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
+    migrated: true
+    migration_note: "原 §gov_eng_002_directory_mapping 的 actions 散文式步骤已结构化为下方 directory_extensions。trae_047 改为指针引用本契约（Phase 2.1）"
+
+  - dimension: directory_ttl
+    target: "ttl_vocabulary.yaml decision_tree Q3"
+    path: "docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml"
+    migrated: true
+    migration_note: "原 Q3 永久区路径判定已结构化为下方 directory_zones.permanent.paths。ttl_vocabulary 保留 ttl 值定义和 Q1/Q2 内容判定（Phase 2.2）"
+
+  - dimension: doc_type_directory
+    target: "doc_type_vocabulary.yaml values[].allowed_directories/forbidden_directories"
+    path: "docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml"
+    migrated: false
+    migration_note: "doc_type→目录映射是 doc_type 的内在属性，保留在 doc_type_vocabulary.yaml。本契约通过 doc_type_directory_crosscheck 提供目录侧交叉验证规则（不复制值）"
+
+# ============================================================
+# 1. 目录分区（Directory Zones）
+# 来源：ttl_vocabulary.yaml decision_tree Q3（永久区路径）+ GitCommitGateway _PERMANENT_ZONE_DIRS
+# ============================================================
+# 每个目录归属于唯一 zone。zone 决定：
+#   - default_ttl：该目录下文件的默认 ttl 值
+#   - gate：新文件准入门禁类型
+#   - parent_zone：子目录继承父目录的 zone（除非显式声明）
+
+directory_zones:
+  permanent:
+    description: "永久区——核心治理/架构/模块/知识文件。新文件需 --allow-promote 门禁批准"
+    paths:
+      - "docs/01_policies_and_standards/"
+      - "docs/02_enterprise_architecture/"
+      - "docs/03_modules/"
+      - "docs/08_knowledge/"
+    default_ttl: permanent
+    gate: allow_promote_required
+    # 永久区子目录中，以下路径豁免晋升门禁（生成器专用）
+    # 真源：capability_canonical_file_registry.yaml outputs 字段
+    exempt_subdirs:
+      - "docs/02_enterprise_architecture/00_overview_entry/"
+      - "docs/02_enterprise_architecture/01_global_architecture_diagram/"
+      - "docs/02_enterprise_architecture/02_domain_architecture_docs/"
+      - "docs/02_enterprise_architecture/03_governance_reports/"
+
+  temporary:
+    description: "临时工作区——过程性文档，post-commit reconciler 自动归档"
+    paths:
+      - "docs/_working/"
+    default_ttl: task_bound
+    gate: auto_archive
+    # 临时区子目录（过程性，ttl=task_bound）
+    process_subdirs:
+      - "changes/"
+      - "delivery/"
+      - "reports/"
+      - "_archive/"
+      - "audit/"
+      - "decomposition/"
+      - "ttl_content_audit/"
+
+  neutral:
+    description: "中性区——代码/脚本/配置/测试/数据，无 ttl 门禁（代码文件无 ttl 字段）"
+    paths:
+      - "src/"
+      - "scripts/"
+      - "tests/"
+      - "config/"
+      - "data/"
+      - ".runtime/"
+      - ".trae/"
+    default_ttl: null
+    gate: none
+
+# ============================================================
+# 2. 目录→扩展名规则（Directory Extensions）
+# 来源：trae_047 §gov_eng_002_directory_mapping actions（已结构化迁入）
+# ============================================================
+# 每个目录允许/禁止的文件扩展名。check_directory_contract.py 消费此结构。
+# 约束层级：
+#   - forbidden = 硬约束（GATE 门禁强制拦截，违反即阻断提交）
+#   - allowed = 白名单（仅列出的扩展名可存在）
+#   - allowed_exceptions = 子目录级例外（覆盖父目录的 allowed）
+
+directory_extensions:
+  # --- 永久区 ---
+  - path: "docs/01_policies_and_standards/"
+    allowed: [".md", ".yaml"]
+    allowed_exceptions:
+      - subdir: "_registry/schemas/"
+        extensions: [".json"]
+    forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+
+  - path: "docs/02_enterprise_architecture/"
+    allowed: [".md", ".mmd", ".yaml"]
+    forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+
+  - path: "docs/03_modules/"
+    allowed: [".md", ".yaml"]
+    forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+
+  - path: "docs/08_knowledge/"
+    allowed: [".md"]
+    forbidden: [".py", ".csv", ".jsonl", ".yaml", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+    # 注：04_archived/ 已于 2026-06-29 删除（archive-cleanup-1399），raw_intake 为唯一真源
+
+  # --- 代码区（中性区）---
+  - path: "src/zephyr/"
+    allowed: [".py", ".yaml"]
+    forbidden: [".bak", ".baseline", ".md"]
+    zone: neutral
+
+  - path: "scripts/"
+    allowed: [".py", ".sh", ".ps1", ".yaml", ".json"]
+    forbidden: [".bak", ".baseline", ".md"]
+    zone: neutral
+
+  - path: "config/"
+    allowed: [".yaml", ".json"]
+    forbidden: [".py", ".md"]
+    zone: neutral
+
+  - path: "tests/"
+    allowed: [".py", ".yaml", ".json", ".txt"]
+    forbidden: [".bak", ".baseline"]
+    zone: neutral
+
+  # --- 临时区 ---
+  - path: "docs/_working/"
+    allowed: [".md", ".csv", ".yaml"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: temporary
+
+  - path: "docs/_working/audit/"
+    allowed: [".md"]
+    forbidden: [".csv", ".yaml", ".json"]
+    zone: temporary
+    overrides_parent: true
+
+  - path: "docs/_working/research_notes/"
+    allowed: [".md", ".txt", ".yaml"]
+    forbidden: [".py", ".sh", ".ps1"]
+    zone: temporary
+    overrides_parent: true
+
+  - path: "docs/_working/ttl_content_audit/"
+    allowed: [".csv"]
+    forbidden: [".md", ".yaml", ".json"]
+    zone: temporary
+    overrides_parent: true
+
+# ============================================================
+# 3. 根目录白名单（Root Directory Whitelist）
+# 来源：trae_047 §gov_eng_002_directory_mapping actions step 3
+# ============================================================
+# 根目录只允许以下文件存在，禁止白名单外的任何文件。
+# 唯一豁免：docker-compose.yml/docker-compose.yaml（Docker 外部约定）
+
+root_directory_whitelist:
+  description: "根目录文件白名单——禁止白名单外的任何文件出现在项目根目录"
+  files:
+    - ".gitignore"
+    - ".gitattributes"
+    - ".editorconfig"
+    - ".traeignore"
+    - ".env.example"
+    - ".importlinter"
+    - ".pre-commit-config.yaml"
+    - "pyproject.toml"
+    - "py.ini"
+    - "requirements.txt"
+    - "requirements-dev.txt"
+    - "requirements-demo.txt"
+    - "sitecustomize.py"
+    - "Dockerfile"
+    - "docker-compose.yml"
+    - "docker-compose.yaml"
+    - "AGENTS.md"
+    - "CONTRIBUTING.md"
+    - "README.md"
+    - "SECURITY.md"
+    - "LICENSE"
+
+# ============================================================
+# 4. doc_type→目录交叉验证（Cross-Validation）
+# 来源：doc_type_vocabulary.yaml values[].allowed_directories/forbidden_directories
+# ============================================================
+# doc_type→目录映射是 doc_type 的内在属性，保留在 doc_type_vocabulary.yaml。
+# 本节不复制映射值，仅定义交叉验证规则。
+# check_directory_contract.py 同时读取本契约和 doc_type_vocabulary.yaml 执行验证。
+
+doc_type_directory_crosscheck:
+  derived_from: "doc_type_vocabulary.yaml values[]"
+  description: "doc_type 的 allowed_directories/forbidden_directories 由 doc_type_vocabulary.yaml 定义。本节提供目录侧交叉验证规则——文件所在目录必须与其 doc_type 的目录约束一致"
+
+  validation_rules:
+    - id: DCR-001
+      name: "文件 doc_type 的 allowed_directories 包含文件所在目录"
+      check: "file.doc_type.allowed_directories contains file.directory OR file.directory in temporary_zone"
+      severity: error
+      note: "临时区（docs/_working/）豁免此规则——临时区可存放任意非禁止的 doc_type 文件"
+
+    - id: DCR-002
+      name: "文件 doc_type 的 forbidden_directories 不包含文件所在目录"
+      check: "file.doc_type.forbidden_directories not contains file.directory"
+      severity: error
+
+    - id: DCR-003
+      name: "永久区文件 ttl 必须=permanent"
+      check: "if file.directory in directory_zones.permanent.paths then file.ttl == permanent"
+      severity: error
+      note: "与 ttl_vocabulary.yaml decision_tree Q3 一致——永久区路径→permanent"
+
+    - id: DCR-004
+      name: "临时区文件 ttl=task_bound"
+      check: "if file.directory in directory_zones.temporary.paths then file.ttl == task_bound"
+      severity: warning
+      note: "警告而非阻断——临时区可能有正在迁移的永久文件"
+
+    - id: DCR-005
+      name: "文件扩展名在所在目录的 allowed 清单内"
+      check: "file.extension in directory_extensions[path].allowed OR file.extension in directory_extensions[path].allowed_exceptions"
+      severity: error
+
+    - id: DCR-006
+      name: "文件扩展名不在所在目录的 forbidden 清单内"
+      check: "file.extension not in directory_extensions[path].forbidden"
+      severity: error
+
+    - id: DCR-007
+      name: "根目录文件在白名单内"
+      check: "if file.directory == project_root then file.name in root_directory_whitelist.files"
+      severity: error
+
+# ============================================================
+# 5. 生成器豁免规则（Generator Exemption）
+# 来源：GitCommitGateway _GENERATOR_EXEMPT_SUBDIRS + capability_canonical_file_registry.yaml
+# ============================================================
+# 以下路径是生成器专用，跳过永久区晋升门禁（PROMOTION_BLOCKED）。
+# 生成器是这些路径的唯一合法修改源（约定，非技术强制）。
+# 真源：capability_canonical_file_registry.yaml outputs 字段 + AGENTS.md §generator-exempt-zones
+
+generator_exempt_paths:
+  - "docs/02_enterprise_architecture/00_overview_entry/"
+  - "docs/02_enterprise_architecture/01_global_architecture_diagram/"
+  - "docs/02_enterprise_architecture/02_domain_architecture_docs/"
+  - "docs/02_enterprise_architecture/03_governance_reports/"
+  # 注：不含 taskcards/ 子目录（手工任务卡）和 04_architecture_principles_decisions/（手工架构决策）
+
+# ============================================================
+# 6. 禁止规则（全局禁止）
+# 来源：trae_047 §gov_eng_002_directory_mapping actions step 4
+# ============================================================
+# 这些规则全局生效，不分目录。
+
+global_forbidden:
+  - rule: "docs/01~03~/08~ 下禁止 .py 文件"
+    check: "no .py file under docs/01_policies_and_standards/ or docs/02_enterprise_architecture/ or docs/03_modules/ or docs/08_knowledge/"
+    severity: error
+
+  - rule: "docs/08_knowledge/ 下禁止非 .md 文件"
+    check: "no non-.md file under docs/08_knowledge/"
+    severity: error
+
+  - rule: "src/ 下禁止 .bak/.baseline 等备份文件"
+    check: "no .bak/.baseline file under src/"
+    severity: error
+
+  - rule: "永久区下禁止 .csv/.jsonl"
+    check: "no .csv/.jsonl file in permanent zone"
+    severity: error
+    exception: "docs/_working/ttl_content_audit/ 除外（临时区）"

@@ -1,0 +1,71 @@
+# [A_config] module_id=CFG-header_format_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# header_format 受控词表
+# 文件表头格式枚举唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-29
+#
+# 本词表定义 header_format 字段的所有合法值（7 种）。
+# 原先内联在 trae_047 §gov_eng_002_enum_definitions HEADER-FORMAT-ENUM，已迁出为独立词表。
+# 校验器从本文件动态加载合法值。
+#
+# 每种格式对应不同的文件类型和字段数（见 details 字段）。
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-030
+version: "1.0.0"
+title: "header_format 受控词表"
+status: active
+ttl: permanent
+owner: ZephyrAlpha-Owner
+vocabulary_name: header_format
+total_values: 7
+depends_on:
+  - target: trae_047_engineering_file_header.yaml
+    at: "§gov_eng_002_enum_definitions HEADER-FORMAT-ENUM（原内联定义，已迁出）"
+    why: "header_format 枚举定义原真源——本词表从此迁出为独立词表"
+
+values:
+  - value: A_full
+    definition: "Python 模块完整表头（14 字段）"
+    details: "适用: src/zephyr/**/*.py 模块文件 | 字段数: 14"
+    ai_keywords: ["A_full", "Python", "模块", "14字段"]
+
+  - value: A_test
+    definition: "Python 测试简化表头（7 字段）"
+    details: "适用: test | 字段数: 7"
+    ai_keywords: ["A_test", "Python", "测试", "7字段"]
+
+  - value: B_yaml
+    definition: "YAML 6 字段注释块"
+    details: "适用: gate, registry, contract(yaml), config, data | 字段数: 6"
+    ai_keywords: ["B_yaml", "YAML", "6字段", "gate", "registry", "contract"]
+
+  - value: C_json
+    definition: "JSON _meta 字段"
+    details: "适用: contract(json), schema(json) | 字段数: 6"
+    ai_keywords: ["C_json", "JSON", "_meta", "schema"]
+
+  - value: D_md
+    definition: "Markdown YAML frontmatter"
+    details: "适用: doc | 引用 REG-FRONTMATTER-001"
+    ai_keywords: ["D_md", "Markdown", "frontmatter", "doc"]
+
+  - value: E_shell
+    definition: "Shell/Mermaid 注释头部"
+    details: "适用: infra(.sh/.ps1/.mmd) | 字段数: 5"
+    ai_keywords: ["E_shell", "Shell", "Mermaid", "infra", "5字段"]
+
+  - value: exempt
+    definition: "豁免表头——无表头格式要求"
+    details: "适用: 特殊文件（如 .gitignore 等配置文件）"
+    ai_keywords: ["exempt", "豁免", "无表头"]

@@ -1,0 +1,62 @@
+# [A_config] module_id=CFG-startup_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# startup 受控词表
+# 文件头 [STARTUP] 字段唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-29
+#
+# 本词表定义 startup 字段的所有合法值（4 种）。
+# 原先内联在 trae_047 §gov_eng_002_enum_definitions STARTUP-ENUM，已迁出为独立词表。
+# 校验器从本文件动态加载合法值。
+#
+# 禁止值：scheduled（定时调度）——见 trae_060 §3 事件驱动全自动原则
+# 设计依据：强制 AI 声明文件触发方式；scheduled 禁止使用因进程内定时触发
+#           等于要人指令触发未达自动（见 trae_060 §3）
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-029
+version: "1.0.0"
+title: "startup 受控词表"
+status: active
+ttl: permanent
+owner: ZephyrAlpha-Owner
+vocabulary_name: startup
+total_values: 4
+depends_on:
+  - target: trae_047_engineering_file_header.yaml
+    at: "§gov_eng_002_enum_definitions STARTUP-ENUM（原内联定义，已迁出）"
+    why: "startup 枚举定义原真源——本词表从此迁出为独立词表"
+  - target: trae_060_generator_automation.yaml
+    at: "§3 事件驱动全自动"
+    why: "scheduled 禁止使用的依据"
+
+values:
+  - value: auto_start
+    definition: "自动启动——系统启动时自动运行"
+    ai_keywords: ["自动启动", "auto_start", "开机即运行"]
+
+  - value: event_driven
+    definition: "事件驱动——由特定事件触发运行"
+    ai_keywords: ["事件驱动", "event_driven", "触发", "事件"]
+
+  - value: manual
+    definition: "手动触发——仅限一次性运维/诊断/迁移操作"
+    ai_keywords: ["手动", "manual", "一次性", "运维", "诊断", "迁移"]
+
+  - value: imported
+    definition: "被动导入——不主动启动，被其他模块导入使用"
+    ai_keywords: ["导入", "imported", "被动", "不主动启动"]
+
+deprecated_values:
+  - value: scheduled
+    deprecated_in: "1.0.0"
+    reason: "定时调度禁止使用——进程内定时触发等于要人指令触发，未达自动（见 trae_060 §3）"

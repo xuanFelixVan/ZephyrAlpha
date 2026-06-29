@@ -1,0 +1,74 @@
+# [A_config] module_id=CFG-file_category_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# file_category 受控词表
+# 文件分类枚举唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-29
+#
+# 本词表定义 file_category 字段的所有合法值（10 种）。
+# 原先内联在 trae_047 §gov_eng_002_enum_definitions FILE-CATEGORY-ENUM，已迁出为独立词表。
+# 校验器从本文件动态加载合法值。
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-031
+version: "1.0.0"
+title: "file_category 受控词表"
+status: active
+ttl: permanent
+owner: ZephyrAlpha-Owner
+vocabulary_name: file_category
+total_values: 10
+depends_on:
+  - target: trae_047_engineering_file_header.yaml
+    at: "§gov_eng_002_enum_definitions FILE-CATEGORY-ENUM（原内联定义，已迁出）"
+    why: "file_category 枚举定义原真源——本词表从此迁出为独立词表"
+
+values:
+  - value: code
+    definition: "代码——业务逻辑实现文件"
+    ai_keywords: ["代码", "code", "业务逻辑", "实现"]
+
+  - value: script
+    definition: "脚本——运维/治理/工具脚本"
+    ai_keywords: ["脚本", "script", "运维", "工具", "治理"]
+
+  - value: gate
+    definition: "门禁——pre-commit/CI 校验脚本"
+    ai_keywords: ["门禁", "gate", "pre-commit", "校验", "CI"]
+
+  - value: registry
+    definition: "注册表——结构化数据清单"
+    ai_keywords: ["注册表", "registry", "清单", "索引"]
+
+  - value: contract
+    definition: "契约——验证规则定义"
+    ai_keywords: ["契约", "contract", "验证", "VR"]
+
+  - value: config
+    definition: "配置——运行时参数定义"
+    ai_keywords: ["配置", "config", "参数", "settings"]
+
+  - value: data
+    definition: "数据——结构化数据文件"
+    ai_keywords: ["数据", "data", "结构化"]
+
+  - value: doc
+    definition: "文档——Markdown 文档"
+    ai_keywords: ["文档", "doc", "Markdown", "说明"]
+
+  - value: test
+    definition: "测试——单元/集成/E2E 测试"
+    ai_keywords: ["测试", "test", "单元", "集成", "E2E"]
+
+  - value: infra
+    definition: "基础设施——Docker/Shell/Mermaid 等"
+    ai_keywords: ["基础设施", "infra", "Docker", "Shell", "Mermaid"]

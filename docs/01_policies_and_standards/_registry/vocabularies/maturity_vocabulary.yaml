@@ -1,0 +1,53 @@
+# [A_config] module_id=CFG-maturity_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# maturity 受控词表
+# 文件头 [MATURITY] 字段唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-29
+#
+# 本词表定义 maturity 字段的所有合法值（4 种）。
+# 原先内联在 trae_047 §gov_eng_002_enum_definitions MATURITY-ENUM，已迁出为独立词表。
+# 校验器从本文件动态加载合法值。
+#
+# 对标标准：
+#   - depgraph.db nodes.design_maturity 字段（与本词表值完全一致，零冲突）
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-028
+version: "1.0.0"
+title: "maturity 受控词表"
+status: active
+ttl: permanent
+owner: ZephyrAlpha-Owner
+vocabulary_name: maturity
+total_values: 4
+depends_on:
+  - target: trae_047_engineering_file_header.yaml
+    at: "§gov_eng_002_enum_definitions MATURITY-ENUM（原内联定义，已迁出）"
+    why: "maturity 枚举定义原真源——本词表从此迁出为独立词表"
+
+values:
+  - value: design
+    definition: "设计态——仅有蓝图无代码"
+    ai_keywords: ["设计", "design", "蓝图", "无代码"]
+
+  - value: prototype
+    definition: "运营态——快速原型无测试"
+    ai_keywords: ["原型", "prototype", "快速", "无测试"]
+
+  - value: production
+    definition: "运营态——生产级有测试"
+    ai_keywords: ["生产", "production", "有测试", "生产级"]
+
+  - value: legacy
+    definition: "运营态——设计过时待重构"
+    ai_keywords: ["遗留", "legacy", "过时", "待重构"]
