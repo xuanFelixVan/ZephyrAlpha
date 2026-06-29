@@ -89,7 +89,7 @@ class TestActivateGate:
         assert len(result.violations) > 0
 
     def test_activate_high_score_auto(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, ai_value_score=9.5)
         result = gate.activate(source_path=source)
         assert result.passed is True
@@ -97,7 +97,7 @@ class TestActivateGate:
         assert result.ke_id == "KE-001"
 
     def test_activate_low_score_needs_approval(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, ai_value_score=5.0)
         result = gate.activate(source_path=source)
         assert result.passed is False
@@ -105,27 +105,27 @@ class TestActivateGate:
         assert result.proposal is not None
 
     def test_activate_force_bypasses_score(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, ai_value_score=1.0)
         result = gate.activate(source_path=source, force=True)
         assert result.passed is True
         assert result.auto_activated is True
 
     def test_activate_target_path_invalid(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, ai_value_score=9.5, target_path="invalid/path.md")
         result = gate.activate(source_path=source)
         assert result.passed is False
         assert any("目标路径不符合规范" in v for v in result.violations)
 
     def test_activate_target_path_valid(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, ai_value_score=9.5, target_path="docs/08_knowledge/some-module/ke-001-test.md")
         result = gate.activate(source_path=source)
         assert result.passed is True
 
     def test_activate_writes_to_active_dir_for_p0(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, priority="P0")
         result = gate.activate(source_path=source)
         assert result.passed is True
@@ -134,14 +134,14 @@ class TestActivateGate:
         assert result.target_path.exists()
 
     def test_activate_writes_to_future_dir_for_low_priority(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = _make_ke_file(tmp_path, priority="P3", classification="GENERAL")
         result = gate.activate(source_path=source)
         assert result.passed is True
         assert result.target_dir == FUTURE_DIR_NAME
 
     def test_activate_no_frontmatter(self, tmp_path):
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=None)
+        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock())
         source = tmp_path / "source" / "no_fm.md"
         source.parent.mkdir(parents=True, exist_ok=True)
         source.write_text("Just plain text without frontmatter.", encoding="utf-8")
@@ -162,22 +162,3 @@ class TestActivateGate:
 
     def test_auto_activate_threshold_constant(self):
         assert AUTO_ACTIVATE_THRESHOLD == 9.0
-
-
-class TestActivateGateDependencies:
-    def test_missing_dependencies_blocks(self, tmp_path):
-        mock_repo = MagicMock()
-        mock_repo.get.return_value = None
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=mock_repo)
-        source = _make_ke_file(tmp_path, ai_value_score=9.5, depends_on=["KE-999"])
-        result = gate.activate(source_path=source)
-        assert result.passed is False
-        assert any("依赖未就绪" in v for v in result.violations)
-
-    def test_missing_dependencies_force_bypasses(self, tmp_path):
-        mock_repo = MagicMock()
-        mock_repo.get.return_value = None
-        gate = ActivateGate(kb_root=tmp_path, gate_engine=MagicMock(), kb_repo=mock_repo)
-        source = _make_ke_file(tmp_path, ai_value_score=9.5, depends_on=["KE-999"])
-        result = gate.activate(source_path=source, force=True)
-        assert result.passed is True

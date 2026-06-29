@@ -33,7 +33,7 @@ def _make_triage_gate(tmp_path: Path) -> TriageGate:
     mock_result.passed = True
     mock_result.violations = []
     mock_engine.evaluate.return_value = mock_result
-    return TriageGate(kb_root=tmp_path, gate_engine=mock_engine, kb_repo=None)
+    return TriageGate(kb_root=tmp_path, gate_engine=mock_engine)
 
 
 def _write_ke(directory: Path, name: str, frontmatter: str, body: str = "Some content here.") -> Path:
@@ -107,7 +107,7 @@ class TestTriageGate:
         mock_violation.message = "gate failed"
         mock_result.violations = [mock_violation]
         mock_engine.evaluate.return_value = mock_result
-        gate = TriageGate(kb_root=tmp_path, gate_engine=mock_engine, kb_repo=None)
+        gate = TriageGate(kb_root=tmp_path, gate_engine=mock_engine)
         src = _write_ke(
             tmp_path / "raw",
             "KE-005",
