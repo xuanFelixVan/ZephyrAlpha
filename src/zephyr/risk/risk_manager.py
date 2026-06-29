@@ -25,7 +25,7 @@
 ZephyrAlpha — L04 Risk Management Layer — 风控管理器接口
 
 Phase B 骨架——定义风控层的公共接口。
-跨层数据结构 MUST 仅来自 ``zephyr.integration.shared_08.contracts``（SSoT）。
+跨层数据结构 MUST 仅来自 ``zephyr.shared.contracts``（SSoT）。
 
 跨层契约：
   CTR-003  RiskLimits                  → L05（生产者——风险限额约束）

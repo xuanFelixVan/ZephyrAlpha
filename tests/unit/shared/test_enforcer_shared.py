@@ -38,7 +38,7 @@ from decimal import Decimal
 
 import pytest
 
-from zephyr.integration.shared_08.contracts.core.enforcer import (
+from zephyr.shared.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,
     enforce,

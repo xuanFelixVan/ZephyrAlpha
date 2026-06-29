@@ -159,7 +159,7 @@ class TestGetSchemaRegistry:
 
 class TestSchemaRegistryError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = SchemaRegistryError("fail", details={"schema": "X"})
         assert isinstance(err, ZephyrBaseError)

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit.tamper_proof_audit
 # [DOMAIN] D_BEHAVIORAL_AUDIT
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols
+# [DEPENDENCIES] zephyr.shared.contracts.protocols
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
 # [MATURITY] production

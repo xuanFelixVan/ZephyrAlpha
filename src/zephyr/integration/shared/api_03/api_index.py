@@ -47,7 +47,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # paths.py — 项目路径常量 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.io.paths import ...
+# from zephyr.shared.io.paths import ...
 #
 # ┌──────────────────────┬──────────────────────────────────────────────────┐
 # │ 符号                  │ 用途                                            │
@@ -67,7 +67,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # time_utils.py — 时间工具函数 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.utils.time_utils import ...
+# from zephyr.shared.utils.time_utils import ...
 #
 # ┌──────────────────────┬──────────────────────────────────────────────────┐
 # │ 符号                  │ 用途                                            │
@@ -81,7 +81,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # frontmatter_utils.py — Markdown/YAML frontmatter 解析 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.io.frontmatter_utils import ...
+# from zephyr.shared.io.frontmatter_utils import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -108,7 +108,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # content_fingerprint.py — 内容指纹 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.io.content_fingerprint import ...
+# from zephyr.shared.io.content_fingerprint import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -136,7 +136,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # capability.py — 能力管控 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.security.capability import ...
+# from zephyr.shared.security.capability import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -150,7 +150,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # ssot_guard.py — SSoT 守卫 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.security.ssot_guard import ...
+# from zephyr.shared.security.ssot_guard import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -200,7 +200,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # errors.py — 统一错误层次（Phase 1 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.foundation.errors import ...
+# from zephyr.shared.foundation.errors import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -224,7 +224,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # constants.py — 共享枚举集中 re-export（Phase 1 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.foundation.constants import ...
+# from zephyr.shared.foundation.constants import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -257,7 +257,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # resilience/retry.py — 重试策略（Phase 2 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.resilience import async_retry, RetryConfig
+# from zephyr.shared.resilience import async_retry, RetryConfig
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -271,7 +271,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # resilience/circuit_breaker.py — 熔断器（Phase 2 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.resilience import CircuitBreaker, CircuitOpenError
+# from zephyr.shared.resilience import CircuitBreaker, CircuitOpenError
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -285,7 +285,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # resilience/fallback.py — 降级策略（Phase 2 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.resilience import FallbackChain, fallback
+# from zephyr.shared.resilience import FallbackChain, fallback
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -298,7 +298,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # lifecycle/hooks.py — 模块生命周期（Phase 2 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.lifecycle import LifecycleAware, LifecycleManager
+# from zephyr.shared.lifecycle import LifecycleAware, LifecycleManager
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -313,7 +313,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # flags.py — FeatureFlag 开关（Phase 2 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.foundation.flags import global_flag_registry, FeatureFlag
+# from zephyr.shared.foundation.flags import global_flag_registry, FeatureFlag
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -328,7 +328,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # types.py — 语义化类型别名（Phase 3 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.foundation.types import TaskId, ModuleId, FilePath, SessionId
+# from zephyr.shared.foundation.types import TaskId, ModuleId, FilePath, SessionId
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -345,7 +345,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # diff_utils.py — diff/patch 工具（Phase 3 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.utils.diff_utils import compute_diff, apply_patch
+# from zephyr.shared.utils.diff_utils import compute_diff, apply_patch
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -361,7 +361,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # file_utils.py — 安全文件操作（Phase 3 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.io.file_utils import atomic_write, backup_and_rollback
+# from zephyr.shared.io.file_utils import atomic_write, backup_and_rollback
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -427,7 +427,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # testing.py — 测试夹具/工厂（Phase 5 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.utils.testing import make_valid_task, make_p0_task, make_completed_task
+# from zephyr.shared.utils.testing import make_valid_task, make_p0_task, make_completed_task
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -445,7 +445,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # migration.py — Schema 版本化迁移（Phase 5 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.utils.migration import migrate_task, downgrade_task, latest_schema_version
+# from zephyr.shared.utils.migration import migrate_task, downgrade_task, latest_schema_version
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -461,7 +461,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # deprecation.py — API 废弃策略（Phase 5 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.foundation.deprecation import deprecated, set_deprecation_mode, DeprecationMode
+# from zephyr.shared.foundation.deprecation import deprecated, set_deprecation_mode, DeprecationMode
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -491,7 +491,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # __version__.py — 版本协商（Phase 6 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.integration.shared_08.__version__ import __version__, check_shared_version
+# from zephyr.shared.__version__ import __version__, check_shared_version
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.limiter
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
+# [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -47,7 +47,7 @@ import logging
 import time
 from dataclasses import dataclass
 
-from zephyr.shared.foundation.errors import ZephyrBaseError  # P3治本: 改引同层真源, 消除shared→integration→shared循环依赖(原: zephyr.integration.shared_08.foundation.errors)
+from zephyr.shared.foundation.errors import ZephyrBaseError  # P3治本: 改引同层真源, 消除shared→integration→shared循环依赖(原: zephyr.shared.foundation.errors)
 
 __all__ = [
     "RateLimitError",

@@ -8,7 +8,7 @@
 # [TTL] task_bound
 import pytest
 
-from zephyr.integration.shared_08.kg_interface import (
+from zephyr.shared.kg_interface import (
     InMemoryKnowledgeGraph,
     KGEntity,
     KGRelation,

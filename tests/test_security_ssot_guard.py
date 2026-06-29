@@ -20,7 +20,7 @@
 # [TESTS] pytest tests/test_security_ssot_guard.py -q
 # [TTL] task_bound
 
-from zephyr.integration.shared_08.security.ssot_guard import (
+from zephyr.shared.security.ssot_guard import (
     REGISTRY_REL_PATH,
     WATCHED_EXTENSIONS,
     WATCHED_PREFIXES,
@@ -146,7 +146,7 @@ class TestSsotViolation:
         assert issubclass(SsotViolation, SsotError)
 
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         assert issubclass(SsotViolation, ZephyrBaseError)
 

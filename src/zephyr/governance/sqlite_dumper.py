@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.sqlite_dumper
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.time_utils; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.shared.utils.time_utils; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -52,7 +52,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "DumpResult",

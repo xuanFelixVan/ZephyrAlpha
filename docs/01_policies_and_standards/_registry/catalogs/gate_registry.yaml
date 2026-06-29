@@ -1,8 +1,9 @@
 module_id: PS-REG-014
 doc_type: register
+ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-06-29T11:17:00Z'
+generated_at: '2026-06-29T11:21:08Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml

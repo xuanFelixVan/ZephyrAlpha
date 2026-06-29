@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.scheduler_act
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.__init__; zephyr.integration.shared_08.event_bus
+# [DEPENDENCIES] zephyr.ops.__init__; zephyr.governance.__init__; zephyr.shared.event_bus
 # [CONSUMERS] zephyr.observability.feedback_loop.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype

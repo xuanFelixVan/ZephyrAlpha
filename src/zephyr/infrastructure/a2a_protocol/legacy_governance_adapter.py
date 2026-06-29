@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.a2a_protocol.legacy_governance_adapter
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.security.security_decision
+# [DEPENDENCIES] zephyr.shared.contracts.security.security_decision
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol
 # [STARTUP] imported
 # [MATURITY] prototype

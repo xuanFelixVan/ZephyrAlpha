@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.shared.config.loader
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
+# [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -48,7 +48,7 @@ from typing import Any, TypeVar
 
 import yaml
 
-from zephyr.integration.shared_08.foundation.errors import ConfigError
+from zephyr.shared.foundation.errors import ConfigError
 
 __all__ = [
     "ConfigLoadError",

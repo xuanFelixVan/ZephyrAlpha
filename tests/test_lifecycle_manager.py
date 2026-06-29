@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.integration.shared_08.contracts.runtime_types import RuntimeConfig
+from zephyr.shared.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.dream_cycle import DreamCycle
 from zephyr.trading.feedback_loop import FeedbackLoop

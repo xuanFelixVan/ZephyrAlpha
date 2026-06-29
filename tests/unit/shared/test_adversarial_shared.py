@@ -51,17 +51,17 @@ from zephyr.infrastructure.a2a_protocol.multi_agent import (
     AgentRole,
     TaskDispatch,
 )
-from zephyr.integration.shared_08.durable_execution import (
+from zephyr.shared.durable_execution import (
     SimpleActivity,
     WorkflowManager,
 )
-from zephyr.integration.shared_08.evals import (
+from zephyr.shared.evals import (
     EvalCase,
     EvalResult,
     EvalRubric,
     EvalRunner,
 )
-from zephyr.integration.shared_08.version_negotiation import (
+from zephyr.shared.version_negotiation import (
     SchemaName,
     VersionNegotiator,
     VersionSegment,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.cost_budget
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.integration.shared_08.errors; zephyr.shared.observability_02.metrics
+# [DEPENDENCIES] zephyr.shared.errors; zephyr.shared.observability_02.metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -38,7 +38,7 @@ from __future__ import annotations
 import threading
 from dataclasses import dataclass, field
 
-from zephyr.integration.shared_08.errors import ZephyrBaseError
+from zephyr.shared.errors import ZephyrBaseError
 from zephyr.shared.observability_02.metrics import COUNT_LLM_CALLS, get_registry
 
 

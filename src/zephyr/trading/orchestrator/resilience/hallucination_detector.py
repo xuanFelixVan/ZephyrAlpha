@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.resilience.hallucination_detector
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -89,7 +89,7 @@ from typing import (
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
-from zephyr.integration.shared_08.utils.time_utils import default_now
+from zephyr.shared.utils.time_utils import default_now
 
 __all__ = [
     "KEYWORD_HALLU_RULES",

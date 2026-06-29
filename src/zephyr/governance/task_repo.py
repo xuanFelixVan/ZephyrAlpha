@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.governance.task_repo
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.sqlite_schema; zephyr.governance.event_store; zephyr.governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared_08.utils.time_utils; zephyr.governance.ops_governance.event_hook
+# [DEPENDENCIES] zephyr.shared.task_types; zephyr.governance.sqlite_schema; zephyr.governance.event_store; zephyr.governance.projection_engine; zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.integration.shared.schema.severity_types; zephyr.shared.utils.time_utils; zephyr.governance.ops_governance.event_hook
 # [CONSUMERS] zephyr.infrastructure.shared_services.blueprint_decomposer; zephyr.infrastructure.task_manager_server; zephyr.trading.boot_hooks; scripts/governance/*; scripts/lock_files.py (cleanup_terminal_tasks)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -86,7 +86,7 @@ from zephyr.governance.rule_enforcement.gate_engine import (
 from zephyr.governance.sqlite_schema import DB_PATH, get_db_connection, init_db
 from zephyr.integration.shared.schema.severity_types import Priority
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
-from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.utils.time_utils import now_iso
 from zephyr.shared.task_types import Task, TaskCard, TaskNamespace, TaskStatus
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 

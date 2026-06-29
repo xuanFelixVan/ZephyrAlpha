@@ -77,9 +77,9 @@ class TestParseImports:
 
     def test_parse_from_import(self, tmp_path):
         py = tmp_path / "mod.py"
-        py.write_text("from zephyr.integration.shared_08.contracts import Foo\n", encoding="utf-8")
+        py.write_text("from zephyr.shared.contracts import Foo\n", encoding="utf-8")
         result = _parse_imports(py)
-        assert "zephyr.integration.shared_08.contracts" in result
+        assert "zephyr.shared.contracts" in result
 
     def test_parse_mixed_imports(self, tmp_path):
         py = tmp_path / "mod.py"
@@ -128,7 +128,7 @@ class TestParseImports:
 
 class TestResolveToModule:
     def test_exact_match(self):
-        assert _resolve_to_module("zephyr.integration.shared_08.contracts") == SHARED_MODULE
+        assert _resolve_to_module("zephyr.shared.contracts") == SHARED_MODULE
 
     def test_prefix_match(self):
         result = _resolve_to_module("zephyr.infrastructure.submod")
@@ -155,7 +155,7 @@ class TestConstants:
         assert isinstance(LAYER_MODULE_NAMES, list)
 
     def test_shared_module_value(self):
-        assert SHARED_MODULE == "zephyr.integration.shared_08.contracts"
+        assert SHARED_MODULE == "zephyr.shared.contracts"
 
     def test_all_modules_includes_shared(self):
         assert SHARED_MODULE in ALL_MODULES

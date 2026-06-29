@@ -17,7 +17,7 @@ sys.path.insert(0, "src")
 
 import time
 
-from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+from zephyr.shared.contracts.identity.agent_identity import (
     AgentIdentity,
     AgentRole,
     IDESource,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.shared.contracts.errors.execution_rejection_error
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
+# [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] zephyr.integration.shared.contracts.errors.__init__
 # [STARTUP] imported
 # [MATURITY] prototype

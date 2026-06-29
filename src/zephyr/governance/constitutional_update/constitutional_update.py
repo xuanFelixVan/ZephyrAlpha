@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-025 | docs/03_modules/_domain-governance/blueprint.md
 # [MODULE] zephyr.governance.constitutional_update
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.integration.shared_08.file_utils; zephyr.shared.session_audit
+# [DEPENDENCIES] zephyr.shared.file_utils; zephyr.shared.session_audit
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -42,7 +42,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.integration.shared_08.file_utils import atomic_write, backup_and_rollback
+from zephyr.shared.file_utils import atomic_write, backup_and_rollback
 from zephyr.shared.session_audit import SessionAuditTrail
 
 

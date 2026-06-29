@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.foundation import env as env_mod
+from zephyr.shared.foundation import env as env_mod
 
 
 @pytest.fixture(autouse=True)

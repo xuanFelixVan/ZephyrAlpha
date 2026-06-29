@@ -24,7 +24,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from zephyr.integration.shared_08.time_utils import (
+from zephyr.shared.time_utils import (
     format_iso,
     freeze_time,
     now_iso,

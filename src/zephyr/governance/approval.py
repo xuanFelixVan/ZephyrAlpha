@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance.approval
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.approval_types
+# [DEPENDENCIES] zephyr.shared.contracts.approval_types
 # [CONSUMERS] zephyr.governance.adapter
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -21,4 +21,4 @@ G-CT-004 — Backward-compat re-export of ApprovalRequest from shared.contracts.
 
 from __future__ import annotations
 
-from zephyr.integration.shared_08.contracts.approval_types import ApprovalRequest  # noqa: F401 — re-export
+from zephyr.shared.contracts.approval_types import ApprovalRequest  # noqa: F401 — re-export

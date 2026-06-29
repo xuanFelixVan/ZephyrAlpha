@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [MODULE] zephyr.integration.backpressure_types
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
+# [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] pipeline.backpressure_manager; shared.contracts.backpressure (re-export)
 # [STARTUP] imported
 # [MATURITY] prototype

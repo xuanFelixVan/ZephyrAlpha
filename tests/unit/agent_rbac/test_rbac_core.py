@@ -11,7 +11,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.contracts.identity.agent_identity import (
+from zephyr.shared.contracts.identity.agent_identity import (
     MATURITY_AUTO_GUARD_TIMEOUT,
     MATURITY_TLB_LIMITS,
     ROLE_DEFAULT_PERMISSIONS,
@@ -20,7 +20,7 @@ from zephyr.integration.shared_08.contracts.identity.agent_identity import (
     IDESource,
     MaturityLevel,
 )
-from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision, GuardResult
+from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
 from zephyr.security.access_control.abac_guard import ABACContext, ABACGuard, SensitivityLabel, TemporalCategory
 from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation
 from zephyr.security.access_control.exceptions import (

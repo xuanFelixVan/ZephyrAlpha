@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §[MODULE] zephyr.infrastructure.resource_provider
 # [MODULE] zephyr.infrastructure.resource_provider
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared_08.io.paths
+# [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -25,7 +25,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from zephyr.integration.shared_08.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = ["ResourceDefinition", "ResourceProvider"]
 

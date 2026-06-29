@@ -1214,7 +1214,11 @@ def check_new_files_full(
             return False
         return os.path.normcase(rel_path) not in tracked_set
 
-    # 1. N-16 唯一性检查（仅新增文件，全库覆盖 scopes=None）
+    # 1. N-16 唯一性检查（仅新增文件）
+    #    新文件范围：tests/+docs/（N-16 设计：src/ 包隔离不覆盖，见 §n16_config 注释）
+    #    基线范围：全库（scopes=None → git ls-files 全库，含 src/ 已跟踪文件——跨域同名检测）
+    #    避免跨包合法同名误报（如 ops/protocols.py vs shared/contracts/protocols.py）
+    _N16_NEW_FILE_SCOPES = ("tests/", "docs/")
     added_files_for_n16: list[str] = []
     for f in new_files:
         p = Path(f)
@@ -1224,7 +1228,7 @@ def check_new_files_full(
             rel = p.resolve().relative_to(project_root.resolve()).as_posix()
         except ValueError:
             continue
-        if _is_new_file(rel):
+        if _is_new_file(rel) and rel.startswith(_N16_NEW_FILE_SCOPES):
             added_files_for_n16.append(f)
     if added_files_for_n16:
         violations.extend(check_new_files_naming(

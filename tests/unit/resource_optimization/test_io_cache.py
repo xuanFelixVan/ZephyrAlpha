@@ -21,7 +21,7 @@ import time
 
 import pytest
 
-from zephyr.integration.shared_08.io.io_cache import FileCache
+from zephyr.shared.io.io_cache import FileCache
 
 
 class TestFileCacheBasic:

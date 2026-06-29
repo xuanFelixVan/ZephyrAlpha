@@ -37,7 +37,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 def test_00_imports():
     """测试所有核心模块能否正常导入"""
     modules = [
-        ("shared.schemas", "zephyr.integration.shared_08.schemas"),
+        ("shared.schemas", "zephyr.shared.schemas"),
         ("core.models", "zephyr.shared.models"),
         ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
         ("db.task_repo", "zephyr.data.persistence.task_repo"),

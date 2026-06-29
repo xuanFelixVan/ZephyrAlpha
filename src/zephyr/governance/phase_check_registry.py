@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.integration.shared_08.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.integration.shared_08.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_orchestrator.query; zephyr.integration.shared_08.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.persistence.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_orchestrator.query; zephyr.shared.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.persistence.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
 # [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -227,7 +227,7 @@ def check_precommit_config() -> GateResult:
 
 def check_sys_master_compliance() -> GateResult:
     try:
-        from zephyr.integration.shared_08.contracts.sys_master_compliance import SysMasterCompliance
+        from zephyr.shared.contracts.sys_master_compliance import SysMasterCompliance
 
         checker = SysMasterCompliance()
         if checker.passed:
@@ -476,7 +476,7 @@ def check_mcp_servers_health() -> GateResult:
 def check_escalation_protocol() -> GateResult:
     try:
         from zephyr.governance.self_test import HealthLevel, run_self_test
-        from zephyr.integration.shared_08.contracts.protocols import SelfTestableProtocol
+        from zephyr.shared.contracts.protocols import SelfTestableProtocol
 
         report = run_self_test()
         if report.overall == HealthLevel.CRITICAL:

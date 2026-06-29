@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.cache
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
+# [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -49,7 +49,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Protocol, TypeVar
 
-from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
+from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
     "TTL_EXPIRED_DEFAULT_SECONDS",

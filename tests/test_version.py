@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.__version__ import (
+from zephyr.shared.__version__ import (
     MIN_COMPATIBLE_SHARED_VERSION,
     VersionMismatchError,
     __version__,

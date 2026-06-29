@@ -47,7 +47,7 @@ from zephyr.integration.layer_router import (
     handle_layer_onboarding,
     reset_layer_router,
 )
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+from zephyr.shared.contracts.core.trace_context import TraceContext
 from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,

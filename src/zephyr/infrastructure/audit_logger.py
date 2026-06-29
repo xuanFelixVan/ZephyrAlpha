@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.audit_logger
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared_08.io.paths; zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.governance.audit_trail.writer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -35,7 +35,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from zephyr.integration.shared_08.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 _CORE_AUDIT_AVAILABLE = False
 try:

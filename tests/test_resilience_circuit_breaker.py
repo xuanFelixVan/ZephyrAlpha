@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.resilience.circuit_breaker import (
+from zephyr.shared.resilience.circuit_breaker import (
     CircuitBreaker,
     CircuitOpenError,
     CircuitState,
@@ -141,7 +141,7 @@ class TestCircuitBreakerCall:
 
 class TestCircuitOpenError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = CircuitOpenError("test_cb")
         assert isinstance(err, ZephyrBaseError)

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.shared.contracts.errors.signal_degradation_warning
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.trace_context
+# [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
 # [CONSUMERS] zephyr.integration.shared.contracts.errors.__init__; tests.test_signal_generation
 # [STARTUP] imported
 # [MATURITY] production

@@ -1,7 +1,7 @@
 # [A_test] module_id: SRC-TST-1500 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_runtime_config
-# [INVARIANTS] RuntimeConfig真源在zephyr.integration.shared_08.contracts.runtime_types;本测试验证re-export+模型字段
+# [INVARIANTS] RuntimeConfig真源在zephyr.shared.contracts.runtime_types;本测试验证re-export+模型字段
 # [MODIFY-GUARD] src/zephyr/runtime/runtime_config.py
 # [CONSUMERS] pytest
 # [STABILITY] evolving

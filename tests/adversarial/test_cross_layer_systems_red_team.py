@@ -109,10 +109,10 @@ def test_00_import_shared_core():
     modules = [
         ("shared", "zephyr.shared"),
         ("shared.schemas", "zephyr.integration.shared.schema.schemas"),
-        ("shared.errors", "zephyr.integration.shared_08.errors"),
+        ("shared.errors", "zephyr.shared.errors"),
         ("shared.event_bus", "zephyr.shared.event_bus"),
-        ("shared.ssot_guard", "zephyr.integration.shared_08.ssot_guard"),
-        ("shared.resilience", "zephyr.integration.shared_08.resilience"),
+        ("shared.ssot_guard", "zephyr.shared.ssot_guard"),
+        ("shared.resilience", "zephyr.shared.resilience"),
         ("core.models", "zephyr.shared.models"),
         ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
     ]
@@ -534,7 +534,7 @@ class TestSharedCoreAdversarial:
         assert evt.priority == EventPriority.LOW
 
     def test_ssot_guard_instantiate(self):
-        from zephyr.integration.shared_08.ssot_guard import SsotGuard
+        from zephyr.shared.ssot_guard import SsotGuard
 
         guard = SsotGuard()
         assert guard is not None
@@ -576,7 +576,7 @@ class TestSharedCoreAdversarial:
         assert decomposer is not None
 
     def test_resilience_circuit_breaker(self):
-        from zephyr.integration.shared_08.resilience import CircuitBreaker
+        from zephyr.shared.resilience import CircuitBreaker
 
         cb = CircuitBreaker("test_cb", failure_threshold=3)
         assert cb.name == "test_cb"

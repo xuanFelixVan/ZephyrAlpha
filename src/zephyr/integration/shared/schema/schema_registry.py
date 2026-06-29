@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.schema.schema_registry
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.__version__; zephyr.integration.shared_08.foundation.errors
+# [DEPENDENCIES] zephyr.shared.__version__; zephyr.shared.foundation.errors
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -45,8 +45,8 @@ Version: 0.1.0
 from dataclasses import dataclass, field
 from enum import Enum, unique
 
-from zephyr.integration.shared_08.__version__ import version_compatible
-from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
+from zephyr.shared.__version__ import version_compatible
+from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
     "SchemaEntry",
@@ -134,7 +134,7 @@ class SchemaRegistry:
         if versions is None:
             return None
 
-        from zephyr.integration.shared_08.__version__ import _parse_semver
+        from zephyr.shared.__version__ import _parse_semver
 
         return max(versions.values(), key=lambda e: _parse_semver(e.version))
 
@@ -143,7 +143,7 @@ class SchemaRegistry:
         if versions is None:
             return []
 
-        from zephyr.integration.shared_08.__version__ import _parse_semver
+        from zephyr.shared.__version__ import _parse_semver
 
         return sorted(versions.values(), key=lambda e: _parse_semver(e.version))
 

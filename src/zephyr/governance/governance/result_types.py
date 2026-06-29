@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.governance.result_types
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.rollback_types
+# [DEPENDENCIES] zephyr.shared.contracts.rollback_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -16,10 +16,10 @@
 # [TTL] task_bound
 
 """G-CT-003 — RollbackResult backward-compat re-export facade.
-Canonical home is now: zephyr.integration.shared_08.contracts.rollback_types
+Canonical home is now: zephyr.shared.contracts.rollback_types
 """
 
-from zephyr.integration.shared_08.contracts.rollback_types import (
+from zephyr.shared.contracts.rollback_types import (
     RollbackResult,
     RollbackStatus,
     ValidationResult,

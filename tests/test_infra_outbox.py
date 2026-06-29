@@ -136,7 +136,7 @@ class TestOutboxPublisher:
 
 class TestOutboxError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = OutboxError("fail", details={"entry_id": "x"})
         assert isinstance(err, ZephyrBaseError)

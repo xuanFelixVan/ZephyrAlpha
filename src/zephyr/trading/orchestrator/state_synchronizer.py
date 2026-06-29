@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.state_synchronizer
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.integration.shared_08.io.paths; zephyr.integration.shared_08.utils.time_utils; zephyr.trading.__init__
+# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.trading.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -48,9 +48,9 @@ from typing import Any
 
 import yaml
 
-from zephyr.integration.shared_08.io.paths import REPO_ROOT
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
-from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "GhostTask",

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.system_snapshot
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared_08.io.paths
+# [DEPENDENCIES] zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -56,10 +56,10 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.integration.shared_08.io.paths import (
+from zephyr.shared.io.paths import (
     DB_PATH as DB_PATH_DEFAULT,
 )
-from zephyr.integration.shared_08.io.paths import (
+from zephyr.shared.io.paths import (
     GATES_DIR,
     REPO_ROOT,
     SNAPSHOTS_DIR,
@@ -75,7 +75,7 @@ _MODULE_MANIFESTS: dict[str, str] = {
     "zephyr.autonomy_core.system_snapshot": "v1.0.0",
     "zephyr.autonomy_core.doc_compressor": "v1.0.0",
     "zephyr.autonomy_core.context_budget_tracker": "v1.0.0",
-    "zephyr.integration.shared_08.capability": "v1.0.0",
+    "zephyr.shared.capability": "v1.0.0",
     "zephyr.security.llm_defense.llm_security.process_sandbox": "v1.0.0",
     "zephyr.data.persistence.sqlite_schema": "v1.0.0",
 }

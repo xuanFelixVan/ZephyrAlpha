@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INTEGRATION
 # [MODULE] zephyr.integration.contracts.model_serving_response
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.model_serving_response
+# [DEPENDENCIES] zephyr.shared.contracts.model_serving_response
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
-from zephyr.integration.shared_08.contracts.model_serving_response import ModelServingResponse
+from zephyr.shared.contracts.model_serving_response import ModelServingResponse
 
 __all__ = ["ModelServingResponse"]

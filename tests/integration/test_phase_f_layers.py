@@ -59,14 +59,14 @@ from zephyr.integration.backpressure_manager import (
     emit_resume,
     emit_throttle,
 )
-from zephyr.integration.shared_08.contracts.core.system_configuration import SystemConfiguration
-from zephyr.integration.shared_08.contracts.core.telemetry_emitter import TelemetryEmitter
-from zephyr.integration.shared_08.contracts.experiment_result import ExperimentResult
-from zephyr.integration.shared_08.contracts.factor_monitor_report import FactorMonitorReport
-from zephyr.integration.shared_08.contracts.macro_factor_signal import MacroFactorSignal
-from zephyr.integration.shared_08.contracts.model_serving_response import ModelServingResponse
-from zephyr.integration.shared_08.contracts.performance_attribution_report import PerformanceAttributionReport
-from zephyr.integration.shared_08.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
+from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.shared.contracts.experiment_result import ExperimentResult
+from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport
+from zephyr.shared.contracts.macro_factor_signal import MacroFactorSignal
+from zephyr.shared.contracts.model_serving_response import ModelServingResponse
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
 from zephyr.intelligence.model_evaluation.inference_base import (
     InferenceEngineBase,
@@ -542,7 +542,7 @@ class TestPhaseFBackpressure:
         mgr = BackpressureManager()
         state = mgr.handle_pause(
             __import__(
-                "zephyr.integration.shared_08.contracts.backpressure.pause", fromlist=["BackpressurePause"]
+                "zephyr.shared.contracts.backpressure.pause", fromlist=["BackpressurePause"]
             ).BackpressurePause(
                 signal_id="bp-001",
                 symbol="600519",

@@ -59,7 +59,7 @@ LAYER_MODULE_NAMES = [
     "zephyr.intelligence.model_profiling",
 ]
 
-SHARED_MODULE = "zephyr.integration.shared_08.contracts"
+SHARED_MODULE = "zephyr.shared.contracts"
 
 ALL_MODULES = [*LAYER_MODULE_NAMES, SHARED_MODULE]
 

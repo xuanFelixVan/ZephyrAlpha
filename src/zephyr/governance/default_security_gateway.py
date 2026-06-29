@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain-compliance/compliance-core/blueprint.md
 # [MODULE] zephyr.governance.default_security_gateway
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.security_gateway_base; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.governance.aisg_sandbox; zephyr.security.llm_defense.llm_security.gateway; zephyr.integration.shared_08.contracts.security.security_decision
+# [DEPENDENCIES] zephyr.governance.security_gateway_base; zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.governance.aisg_sandbox; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.security_decision
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

@@ -3,7 +3,7 @@
 # [DOMAIN]
 # [DEPENDENCIES]
 # [CONSUMERS]
-# [STARTUP] manual
+# [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]

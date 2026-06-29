@@ -24,7 +24,7 @@ SecurityResult = protocol_mod.SecurityResult
 LLMSecurityProtocol = protocol_mod.LLMSecurityProtocol
 
 security_decision_mod = pytest.importorskip(
-    "zephyr.integration.shared_08.contracts.security.security_decision", reason="security_decision not available"
+    "zephyr.shared.contracts.security.security_decision", reason="security_decision not available"
 )
 SecurityDecision = security_decision_mod.SecurityDecision
 

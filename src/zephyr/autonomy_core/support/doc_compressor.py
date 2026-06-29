@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.support.doc_compressor
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared_08.security.capability
+# [DEPENDENCIES] zephyr.shared.security.capability
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -67,7 +67,7 @@ from typing import Any, Self
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from zephyr.integration.shared_08.security.capability import capability_check
+from zephyr.shared.security.capability import capability_check
 
 __all__ = [
     "DEFAULT_POLICY",
@@ -336,7 +336,7 @@ class DocCompressor:
         ----
         CompressionInvariantError
             任一不变量被违反时抛出。
-        CapabilityDenied（来自 zephyr.integration.shared_08.capability）
+        CapabilityDenied（来自 zephyr.shared.capability）
             target_path 不在 CBAC allow 列表时抛出。
         """
         return self.compress_with_provenance(text, target_path=target_path, session_id=session_id).compressed_text

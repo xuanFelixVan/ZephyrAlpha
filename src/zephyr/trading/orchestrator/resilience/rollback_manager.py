@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.resilience.rollback_manager
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.integration.shared_08.utils.time_utils
+# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -40,8 +40,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
-from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "Checkpoint",

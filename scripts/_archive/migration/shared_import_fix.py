@@ -12,7 +12,7 @@
 
 策略:
   1. 扫描 integration/shared_08/ 和 integration/shared/ 下的所有 .py 文件
-  2. 推导旧模块路径 (zephyr.shared.xxx) 和新模块路径 (zephyr.integration.shared_08.xxx)
+  2. 推导旧模块路径 (zephyr.shared.xxx) 和新模块路径 (zephyr.shared.xxx)
   3. 版本后缀映射: shared_08->shared, api_03->api, observability_02->observability, etc.
   4. 最长前缀优先匹配替换
 
@@ -54,7 +54,7 @@ def _build_shared_mapping() -> dict[str, str]:
             if not parts:
                 continue
 
-            new_module = "zephyr.integration.shared_08." + ".".join(parts)
+            new_module = "zephyr.shared." + ".".join(parts)
             old_parts = []
             for p in parts:
                 m = VERSION_SUFFIX_RE.match(p)

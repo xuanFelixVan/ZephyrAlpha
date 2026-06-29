@@ -117,7 +117,7 @@ class TestPreExecuteCheck:
         mock_result.reason = "not allowed"
         mock_result.audit_context = {"info": "test"}
 
-        from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision
+        from zephyr.shared.contracts.identity.permission import GuardDecision
 
         mock_result.decision = GuardDecision.BLOCKED
 
@@ -133,7 +133,7 @@ class TestPreExecuteCheck:
 
     @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_auto_guard_result(self):
-        from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision
+        from zephyr.shared.contracts.identity.permission import GuardDecision
 
         mock_result = MagicMock()
         mock_result.decision = GuardDecision.AUTO_GUARD
@@ -154,7 +154,7 @@ class TestPreExecuteCheck:
 
     @patch("zephyr.governance.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_allow_result(self):
-        from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision
+        from zephyr.shared.contracts.identity.permission import GuardDecision
 
         mock_result = MagicMock()
         mock_result.decision = GuardDecision.ALLOW

@@ -39,8 +39,8 @@ def _load(name, file_path):
 
 _ensure_stub("zephyr", _ZEPHYR)
 _ensure_stub("zephyr.shared", _ZEPHYR / "shared")
-_ensure_stub("zephyr.integration.shared_08.contracts", _ZEPHYR / "shared" / "contracts")
-_ensure_stub("zephyr.integration.shared_08.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
+_ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
+_ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
 _ensure_stub("zephyr.drift_detector", _ZEPHYR / "drift-detector")
 
 _load("zephyr.behavioral_audit.drift_models", _ZEPHYR / "drift-detector" / "drift_models.py")

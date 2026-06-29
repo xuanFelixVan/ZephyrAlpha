@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.core.wave_generator
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils
+# [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -38,7 +38,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
     "Wave",

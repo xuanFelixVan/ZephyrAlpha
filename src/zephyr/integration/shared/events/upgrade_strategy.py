@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.events.upgrade_strategy
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.observer
+# [DEPENDENCIES] zephyr.shared.observer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -271,7 +271,7 @@ class EventBusUpgrade:
             result["issues"].append("EventStore 不可用——升级未完成")
 
         try:
-            from zephyr.integration.shared_08.observer import Observer as ObserverAlias
+            from zephyr.shared.observer import Observer as ObserverAlias
 
             result["event_bus_available"] = True
         except ImportError:

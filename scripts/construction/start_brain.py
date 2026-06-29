@@ -37,7 +37,7 @@ import sys
 import time
 from pathlib import Path
 
-from zephyr.integration.shared_08.contracts.runtime_types import RuntimeConfig
+from zephyr.shared.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 from zephyr.trading.auto_task_generator import AutoTaskGenerator
 

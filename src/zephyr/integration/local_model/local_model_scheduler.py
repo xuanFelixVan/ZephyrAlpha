@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.local_model_scheduler
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.resource_optimization_engine; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat
+# [DEPENDENCIES] zephyr.shared.lifecycle.resource_optimization_engine; zephyr.integration.local_model.embedding_router; zephyr.integration.local_model.ollama_chat
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -169,7 +169,7 @@ class LocalModelScheduler:
         self._running = True
         self._thread = threading.Thread(target=self._run, daemon=True, name="LocalModelScheduler")
         self._thread.start()
-        from zephyr.integration.shared_08.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
 
         try:
             ResourceOptimizationEngine().register_daemon(

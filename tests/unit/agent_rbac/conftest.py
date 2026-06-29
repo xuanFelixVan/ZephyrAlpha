@@ -39,16 +39,16 @@ def _load(name, file_path):
 
 _ensure_stub("zephyr", _ZEPHYR)
 _ensure_stub("zephyr.shared", _ZEPHYR / "shared")
-_ensure_stub("zephyr.integration.shared_08.contracts", _ZEPHYR / "shared" / "contracts")
-_ensure_stub("zephyr.integration.shared_08.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
+_ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
+_ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
 _ensure_stub("zephyr.security.access_control", _ZEPHYR / "agent-rbac")
 
 _load(
-    "zephyr.integration.shared_08.contracts.identity.agent_identity",
+    "zephyr.shared.contracts.identity.agent_identity",
     _ZEPHYR / "shared" / "contracts" / "identity" / "agent_identity.py",
 )
 _load(
-    "zephyr.integration.shared_08.contracts.identity.permission",
+    "zephyr.shared.contracts.identity.permission",
     _ZEPHYR / "shared" / "contracts" / "identity" / "permission.py",
 )
 _load("zephyr.security.access_control.immutable_core", _ZEPHYR / "agent-rbac" / "immutable_core.py")

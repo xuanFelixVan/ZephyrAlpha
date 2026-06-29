@@ -119,7 +119,7 @@ class TestMemoryLock:
 
 class TestLockError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = LockError("locked", details={"name": "r1"})
         assert isinstance(err, ZephyrBaseError)

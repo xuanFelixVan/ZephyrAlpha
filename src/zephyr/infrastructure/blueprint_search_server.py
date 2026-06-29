@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.blueprint_search_server
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.integration.shared_08.io.paths
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -62,7 +62,7 @@ from typing import Any
 import yaml
 
 from zephyr.infrastructure._base_server import BaseMCPServer
-from zephyr.integration.shared_08.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = ["BlueprintSearchServer", "main"]
 

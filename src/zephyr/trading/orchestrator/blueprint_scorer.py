@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.orchestrator.blueprint_scorer
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.orchestrator.__init__
-# [CONSUMERS] zephyr.trading.orchestrator.trigger_router; zephyr.trading.orchestrator.core.trigger_router; zephyr.integration.shared_08.utils.blueprint_scorer (re-export); zephyr.integration.shared_08.blueprint_scorer (re-export)
+# [CONSUMERS] zephyr.trading.orchestrator.trigger_router; zephyr.trading.orchestrator.core.trigger_router; zephyr.shared.utils.blueprint_scorer (re-export); zephyr.shared.blueprint_scorer (re-export)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none

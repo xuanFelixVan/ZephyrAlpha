@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.pattern_library
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -46,7 +46,7 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
-from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "DangerousPattern",

@@ -86,7 +86,7 @@ routes:
     blueprint_level: module
     path_patterns:
       - "src/zephyr/orchestration/runtime_core/orchestrator/capacity_budget.py"
-      - "src/zephyr/integration/shared_08/contracts/backpressure/throttle.py"
+      - "src/zephyr/shared/contracts/backpressure/throttle.py"
       - "src/zephyr/autonomy_perm/budget_enforcer/**"
       - "scripts/governance/d10_performance/**"
     task_keywords:
@@ -767,7 +767,7 @@ routes:
       - "src/zephyr/shared/io/io_cache.py"
       - "src/zephyr/shared/io/streaming_reader.py"
       - "src/zephyr/shared/infra/process_pool.py"
-      - "src/zephyr/integration/shared_08/lifecycle/lazy_loader.py"
+      - "src/zephyr/shared/lifecycle/lazy_loader.py"
       - "config/resource_optimization.yaml"
     task_keywords:
       - "资源优化"

@@ -24,7 +24,7 @@ import warnings
 
 import pytest
 
-from zephyr.integration.shared_08.security.capability import (
+from zephyr.shared.security.capability import (
     Capability,
     CapabilityDenied,
     CapabilityRegistry,

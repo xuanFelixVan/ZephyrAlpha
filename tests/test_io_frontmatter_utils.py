@@ -20,7 +20,7 @@
 # [TESTS] pytest tests/test_io_frontmatter_utils.py -q
 # [TTL] task_bound
 
-from zephyr.integration.shared_08.frontmatter_utils import (
+from zephyr.shared.frontmatter_utils import (
     extract_body,
     parse_frontmatter,
     parse_frontmatter_from_file,

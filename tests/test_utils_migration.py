@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.migration import (
+from zephyr.shared.migration import (
     MIGRATIONS,
     MigrationError,
     _find_path,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.gate_engine
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.governance.rule_enforcement.gate_types; zephyr.governance.rule_enforcement.risk_ssot; zephyr.governance.rule_enforcement.task_types; zephyr.shared.io.io_cache; zephyr.shared.blueprint_code_auditor; zephyr.shared.code_economy_analyzer; zephyr.shared.combinatorial_gate; zephyr.shared.core_integrity_guard; zephyr.shared.slo_review_assistant; zephyr.governance.rule_enforcement.circuit_breaker; zephyr.behavioral_audit.drift_infrastructure; zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency; zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator; zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility; zephyr.governance.rule_enforcement.invariants.zero_residue_check; zephyr.integration.shared_08.contracts.protocols; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.governance.rule_enforcement.gate_types; zephyr.governance.rule_enforcement.risk_ssot; zephyr.governance.rule_enforcement.task_types; zephyr.shared.io.io_cache; zephyr.shared.blueprint_code_auditor; zephyr.shared.code_economy_analyzer; zephyr.shared.combinatorial_gate; zephyr.shared.core_integrity_guard; zephyr.shared.slo_review_assistant; zephyr.governance.rule_enforcement.circuit_breaker; zephyr.behavioral_audit.drift_infrastructure; zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency; zephyr.governance.rule_enforcement.invariants.en_002_enforcement_validator; zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility; zephyr.governance.rule_enforcement.invariants.zero_residue_check; zephyr.shared.contracts.protocols; zephyr.governance.__init__
 # [CONSUMERS] zephyr.governance.task_repo; zephyr.data.persistence.transition; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.autonomy_core.skill_executor
 # [STARTUP] imported
 # [MATURITY] production
@@ -86,7 +86,7 @@ from zephyr.governance.rule_enforcement.gate_types import (
 )
 from zephyr.governance.rule_enforcement.risk_ssot import load_risk_params_ssot
 from zephyr.governance.rule_enforcement.task_types import Task
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
 from zephyr.shared.io.io_cache import FileCache
 
 __all__ = [

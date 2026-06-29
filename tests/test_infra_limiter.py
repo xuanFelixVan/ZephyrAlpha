@@ -24,7 +24,7 @@ import asyncio
 
 import pytest
 
-from zephyr.integration.shared_08.limiter import (
+from zephyr.shared.limiter import (
     RateLimitError,
     RateLimiterStats,
     TokenBucketLimiter,
@@ -119,7 +119,7 @@ class TestAsyncLimited:
 
 class TestRateLimitError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = RateLimitError("exceeded", details={"wait": 5.0})
         assert isinstance(err, ZephyrBaseError)

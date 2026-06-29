@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.circuit_breaker
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils; zephyr.integration.shared_08.security.capability
+# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.shared.security.capability
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -65,8 +65,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, TypeVar
 
-from zephyr.integration.shared_08.security.capability import capability_check
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection, init_db
+from zephyr.shared.security.capability import capability_check
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection, init_db
 
 __all__ = [
     "DEFAULT_THRESHOLD",

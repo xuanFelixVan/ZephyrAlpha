@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.api_03.api_client
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors; zephyr.integration.shared_08.resilience.circuit_breaker; zephyr.integration.shared_08.resilience.retry; zephyr.integration.shared_08.io.serialization
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.resilience.circuit_breaker; zephyr.shared.resilience.retry; zephyr.shared.io.serialization
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -51,10 +51,10 @@ from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any, Protocol, Self
 
-from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
-from zephyr.integration.shared_08.io.serialization import to_dict
-from zephyr.integration.shared_08.resilience.circuit_breaker import CircuitBreaker
-from zephyr.integration.shared_08.resilience.retry import RetryConfig, async_retry
+from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.io.serialization import to_dict
+from zephyr.shared.resilience.circuit_breaker import CircuitBreaker
+from zephyr.shared.resilience.retry import RetryConfig, async_retry
 
 __all__ = [
     "AioHttpProvider",

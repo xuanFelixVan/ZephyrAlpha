@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.resilience.retry import (
+from zephyr.shared.resilience.retry import (
     RetryConfig,
     RetryExhaustedError,
     async_retry,
@@ -138,7 +138,7 @@ class TestAsyncRetry:
 
 class TestRetryExhaustedError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = RetryExhaustedError("exhausted", details={"max_attempts": 3})
         assert isinstance(err, ZephyrBaseError)

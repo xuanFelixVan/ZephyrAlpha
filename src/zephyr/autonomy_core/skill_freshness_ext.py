@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §3.2
 # [MODULE] zephyr.autonomy_core.skill_freshness_ext
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared_08.event_bus
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.event_bus
 # [CONSUMERS] auto_runtime_core.py, event_bus subscribers
 # [STARTUP] imported
 # [MATURITY] prototype

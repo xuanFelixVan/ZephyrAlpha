@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.diff_utils import (
+from zephyr.shared.diff_utils import (
     PatchConflictError,
     apply_patch,
     compute_diff,

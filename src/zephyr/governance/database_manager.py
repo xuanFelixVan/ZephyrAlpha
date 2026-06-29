@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.database_manager
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.integration.shared_08.io.paths; zephyr.governance.persistence.audit_schema; zephyr.governance.persistence.query_metrics
+# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths; zephyr.governance.persistence.audit_schema; zephyr.governance.persistence.query_metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -58,7 +58,7 @@ from zephyr.governance.persistence.sqlite_schema import (
     init_db,
     schema_version,
 )
-from zephyr.integration.shared_08.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT
 
 __all__ = [
     "DatabaseHealthStatus",

@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.pagination import (
+from zephyr.shared.pagination import (
     CursorPage,
     CursorPagination,
     OffsetPagination,

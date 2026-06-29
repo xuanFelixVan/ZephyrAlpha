@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.doc_guard_server
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.infrastructure.__init__; zephyr.integration.shared_08.utils.time_utils
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.infrastructure.__init__; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -44,7 +44,7 @@ from typing import Any
 
 from zephyr.infrastructure._base_server import BaseMCPServer, MCPError
 from zephyr.integration.shared.schema.schemas import Priority
-from zephyr.integration.shared_08.utils.time_utils import now_iso
+from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = ["DocGuardServer", "create_server"]
 

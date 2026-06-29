@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [MODULE] zephyr.governance.contracts
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.rollback_types; zephyr.shared.contracts.escalation.budget_alert
+# [DEPENDENCIES] zephyr.shared.contracts.rollback_types; zephyr.shared.contracts.escalation.budget_alert
 # [CONSUMERS] zephyr.infrastructure.rollback;zephyr.governance.adapter
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from zephyr.integration.shared_08.contracts.rollback_types import RollbackResult
+from zephyr.shared.contracts.rollback_types import RollbackResult
 
 
 class EscalationContracts:

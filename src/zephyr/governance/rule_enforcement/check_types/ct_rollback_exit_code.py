@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3-§7
 # [MODULE] zephyr.governance.rule_enforcement.check_types.ct_rollback_exit_code
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types; zephyr.integration.shared_08.contracts.protocols; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.check_types.check_type_registry; zephyr.governance.rule_enforcement.task_types; zephyr.shared.contracts.protocols; zephyr.governance.__init__
 # [CONSUMERS] blueprint.md §0; zephyr.governance.rule_enforcement 内部模块; zephyr.trading.orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype

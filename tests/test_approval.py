@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 
 from zephyr.governance.approval import ApprovalRequest
-from zephyr.integration.shared_08.contracts.approval_types import ApprovalRequest as DirectApprovalRequest
+from zephyr.shared.contracts.approval_types import ApprovalRequest as DirectApprovalRequest
 
 
 class TestApprovalRequestInstantiation:

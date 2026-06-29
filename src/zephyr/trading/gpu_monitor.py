@@ -2,7 +2,7 @@
 # [MODULE] zephyr.trading.gpu_monitor
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS] zephyr.trading.resource_optimization; zephyr.integration.shared_08.lifecycle.daemon_registry
+# [CONSUMERS] zephyr.trading.resource_optimization; zephyr.shared.lifecycle.daemon_registry
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] collect_gpu_stats 必须在 nvidia-smi 不可用时优雅降级返回 available=False

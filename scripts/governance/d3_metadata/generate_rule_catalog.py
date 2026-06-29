@@ -3,7 +3,7 @@
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d3_metadata.__init__
 # [CONSUMERS]
-# [STARTUP] manual
+# [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS] 输出文件名必须为 rule_catalog_registry.yaml（snake_case 硬约束）
 # [MODIFY-GUARD]
@@ -20,7 +20,7 @@ Parses Markdown/YAML frontmatter (and YAML comment headers where applicable).
 
 CLI::
 
-    python generate_rule_catalog.py [--scan-dir DIR] [--output FILE] [--compare FILE]
+    python generate_rule_catalog.py [--scan-dir DIR] [--output FILE]
 """
 
 # Governance script manifest (YAML fragment for tooling/consumers; not evaluated as code).
@@ -217,7 +217,9 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         "schema_version": "1.0.0",
         "module_id": "PS-REG-018",
         "doc_type": "register",
-        "title": "规则路径目录",
+        # title 含「唯一真源(SSoT)」声明：让新AI第一眼识别这是规则索引真源
+        # （向内收4原则之"新AI可发现性"——无歧义标记真源性质）
+        "title": "规则路径目录（唯一真源 SSoT）",
         "status": "active",
         "generated_at": gen_ts,
         "generated_by": "scripts/governance/d3_metadata/generate_rule_catalog.py",
@@ -244,76 +246,6 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         except OSError:
             pass
     print(f"Generated catalog with {len(entries)} entries -> {output_path}", file=sys.stderr)
-
-
-def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> int:
-    """Compare auto-generated catalog with existing registry (drift detection)."""
-    reg_path = Path(registry_path)
-    if not reg_path.exists():
-        print(f"WARNING: Registry file not found: {registry_path}", file=sys.stderr)
-        return EXIT_PASS
-
-    with open(reg_path, encoding="utf-8") as f:
-        registry = yaml.safe_load(f)
-
-    reg_list = registry.get("files") or registry.get("rules") or []
-    if not reg_list:
-        print(
-            "WARNING: Registry has no 'files' or 'rules' list (skipped compare)",
-            file=sys.stderr,
-        )
-        return EXIT_PASS
-
-    reg_entries = {r.get("path", ""): r for r in reg_list}
-    cat_entries = {e["path"]: e for e in catalog_entries}
-
-    only_in_catalog = set(cat_entries.keys()) - set(reg_entries.keys())
-    only_in_registry = set(reg_entries.keys()) - set(cat_entries.keys())
-    common = set(cat_entries.keys()) & set(reg_entries.keys())
-
-    differences: list[dict] = []
-    for path in sorted(common):
-        cat = cat_entries[path]
-        reg = reg_entries[path]
-        for field in ("module_id", "doc_type", "status", "version", "rule_form"):
-            cat_val = str(cat.get(field, "")).lower()
-            reg_val = str(reg.get(field, "")).lower()
-            if cat_val != reg_val and cat_val and reg_val:
-                differences.append(
-                    {
-                        "path": path,
-                        "field": field,
-                        "catalog_value": cat_val,
-                        "registry_value": reg_val,
-                    }
-                )
-
-    print(f"  Only in catalog:  {len(only_in_catalog)}", file=sys.stderr)
-    print(f"  Only in registry: {len(only_in_registry)}", file=sys.stderr)
-    print(f"  Field differences: {len(differences)}", file=sys.stderr)
-
-    if only_in_catalog:
-        print("\n  Files only in catalog:", file=sys.stderr)
-        for p in sorted(only_in_catalog)[:10]:
-            print(f"    + {p}", file=sys.stderr)
-
-    if only_in_registry:
-        print("\n  Files only in registry:", file=sys.stderr)
-        for p in sorted(only_in_registry)[:10]:
-            print(f"    - {p}", file=sys.stderr)
-
-    if differences:
-        print("\n  Field differences:", file=sys.stderr)
-        for d in differences[:20]:
-            print(
-                f"    {d['path']} [{d['field']}]: catalog={d['catalog_value']} vs registry={d['registry_value']}",
-                file=sys.stderr,
-            )
-
-    if not only_in_catalog and not only_in_registry and not differences:    if not only_in_catalog and not only_in_registry and not differences:
-        print("\n  \u2705 100% match! Auto-generated catalog is identical to registry.", file=sys.stderr)
-
-    return len(only_in_catalog) + len(differences)
 
 
 def main() -> None:

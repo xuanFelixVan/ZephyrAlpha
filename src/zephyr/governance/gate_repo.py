@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.data.persistence.gate_repo
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.utils.db_utils
+# [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -35,7 +35,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [
     "GateRepo",

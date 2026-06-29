@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.governance_server
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.behavioral_audit.cold_start; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.drift_infrastructure; zephyr.integration.shared_08.contracts.identity.agent_identity; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_orchestrator.writer; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.behavioral_audit.cold_start; zephyr.behavioral_audit.drift_engine; zephyr.behavioral_audit.drift_models; zephyr.behavioral_audit.drift_infrastructure; zephyr.shared.contracts.identity.agent_identity; zephyr.shared.contracts.skill_protocol; zephyr.governance.audit_orchestrator.writer; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype

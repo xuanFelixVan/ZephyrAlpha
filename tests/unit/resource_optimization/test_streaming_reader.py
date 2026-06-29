@@ -18,7 +18,7 @@ TASK-INF-0140 Phase 2 verification.
 
 import json
 
-from zephyr.integration.shared_08.io.streaming_reader import stream_jsonl, tail_jsonl
+from zephyr.shared.io.streaming_reader import stream_jsonl, tail_jsonl
 
 
 def _write_jsonl(path, records: list[dict]) -> None:

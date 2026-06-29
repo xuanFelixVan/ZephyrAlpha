@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.engine
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared_08.contracts.protocols; zephyr.governance.audit_trail.writer
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.contracts.protocols; zephyr.governance.audit_trail.writer
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -42,7 +42,7 @@ from zephyr.autonomy_core.trigger_router import TriggerRouter
 _AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter
-    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
+    from zephyr.shared.contracts.protocols import AuditWriterProtocol
 
     _AUDIT_AVAILABLE = True
 except ImportError:

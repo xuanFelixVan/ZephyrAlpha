@@ -1,8 +1,8 @@
-# 自动生成于 2026-06-29T11:17:01Z
+# 自动生成于 2026-06-29T11:24:59Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-06-29T11:17:01Z'
+generated_at: '2026-06-29T11:24:59Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 21
@@ -160,12 +160,12 @@ registries:
   entry_count: 22
   status: active
 - registry_id: PS-REG-018
-  name: 规则路径目录
+  name: 规则路径目录（唯一真源 SSoT）
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 139
+  entry_count: 140
   status: active
 - registry_id: PS-REG-017
   name: 任务卡元层登记表

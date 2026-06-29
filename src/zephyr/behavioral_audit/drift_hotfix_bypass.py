@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit.drift_hotfix_bypass
 # [DOMAIN] D_BEHAVIORAL_AUDIT
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols
+# [DEPENDENCIES] zephyr.shared.contracts.protocols
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
 # [MATURITY] production
@@ -45,7 +45,7 @@ _CORE_AUDIT_AVAILABLE = False
 
 
 try:
-    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
+    from zephyr.shared.contracts.protocols import AuditWriterProtocol
 
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:

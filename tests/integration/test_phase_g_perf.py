@@ -53,7 +53,7 @@ from zephyr.governance.compliance_gate_a6.default_security_gateway import Defaul
 from zephyr.governance.memory_provider import MemoryProvider
 from zephyr.infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector
 from zephyr.integration.backpressure_manager import BackpressureManager, emit_pause, emit_resume
-from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
+from zephyr.shared.contracts.core.trace_context import TraceContext
 from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
 from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,

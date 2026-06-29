@@ -73,7 +73,7 @@ _LAZY_IMPORTS: dict[str, dict[str, str]] = {
     "GateHealth": {"module": "zephyr.governance.rule_enforcement.gate_health", "attr": "GateHealth"},
     "GateOverride": {"module": "zephyr.governance.rule_enforcement.gate_override", "attr": "GateOverride"},
     "SysMasterCompliance": {
-        "module": "zephyr.integration.shared_08.contracts.sys_master_compliance",
+        "module": "zephyr.shared.contracts.sys_master_compliance",
         "attr": "SysMasterCompliance",
     },
     "trigger_recovery": {"module": "zephyr.governance.rule_enforcement.drift_detector", "attr": "trigger_recovery"},

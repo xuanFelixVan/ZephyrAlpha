@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.core.agent_orchestrator
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils; zephyr.autonomy_core.token_budget
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -31,7 +31,7 @@ safety_level: H
 ---------------------
 名称含 *Orchestrator* 常与「TaskCard 生命周期编排」混淆。**本模块真源为
 Agent / MCP 工具调用链**，**不读写** ``TaskCard.status``。**任务十态与合法迁移**
-见 ``zephyr.integration.shared_08.schemas.TaskStatus`` 与 ``zephyr.data.persistence.task_repo.TaskRepository``。
+见 ``zephyr.shared.schemas.TaskStatus`` 与 ``zephyr.data.persistence.task_repo.TaskRepository``。
 
 本模块职责
 ----------
@@ -87,7 +87,7 @@ from typing import (
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
-from zephyr.integration.shared_08.utils.time_utils import default_now
+from zephyr.shared.utils.time_utils import default_now
 from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 

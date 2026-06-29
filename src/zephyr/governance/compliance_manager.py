@@ -25,7 +25,7 @@
 ZephyrAlpha — L10 Compliance Layer — 合规规则管理器接口
 
 Phase B 骨架——定义合规层的公共接口。
-ComplianceRule（CTR-P1-012）SSoT：``zephyr.integration.shared_08.contracts.compliance_rule``。
+ComplianceRule（CTR-P1-012）SSoT：``zephyr.shared.contracts.compliance_rule``。
 
 跨层契约：
   CTR-P1-012  ComplianceRule         → L04, L06, L10（生产者——合规规则定义）

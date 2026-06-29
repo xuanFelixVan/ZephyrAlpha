@@ -206,7 +206,7 @@ class TestRunCheck:
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_matching_fields_passes(self, mock_strip, mock_fields, mock_load):
-        mock_strip.return_value = ("zephyr.integration.shared_08.contracts.foo", "Foo")
+        mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str", "value": "int"}
         mock_load.return_value = {
             "contracts": [
@@ -228,7 +228,7 @@ class TestRunCheck:
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_missing_field_in_code_fails(self, mock_strip, mock_fields, mock_load):
-        mock_strip.return_value = ("zephyr.integration.shared_08.contracts.foo", "Foo")
+        mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str"}
         mock_load.return_value = {
             "contracts": [
@@ -250,7 +250,7 @@ class TestRunCheck:
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_extra_field_in_code_fails(self, mock_strip, mock_fields, mock_load):
-        mock_strip.return_value = ("zephyr.integration.shared_08.contracts.foo", "Foo")
+        mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str", "value": "int", "extra": "float"}
         mock_load.return_value = {
             "contracts": [
@@ -287,7 +287,7 @@ class TestRunCheck:
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
     @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_type_mismatch_fails(self, mock_strip, mock_fields, mock_load):
-        mock_strip.return_value = ("zephyr.integration.shared_08.contracts.foo", "Foo")
+        mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "int"}
         mock_load.return_value = {
             "contracts": [

@@ -22,7 +22,7 @@
 
 from pathlib import Path
 
-from zephyr.integration.shared_08.paths import (
+from zephyr.shared.paths import (
     DB_DIR,
     DB_PATH,
     GATES_DIR,

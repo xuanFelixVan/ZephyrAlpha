@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.integration.shared_08.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
+from zephyr.shared.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
 
 
 class TestEnsureSchema:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
 # [MODULE] zephyr.governance.audit_trail.bridges.spec_auditor
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.protocols
+# [DEPENDENCIES] zephyr.shared.contracts.protocols
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -20,7 +20,7 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from zephyr.integration.shared_08.contracts.protocols import AgentCapability
+from zephyr.shared.contracts.protocols import AgentCapability
 
 
 def record_agent_spec(capability: AgentCapability) -> dict[str, Any]:

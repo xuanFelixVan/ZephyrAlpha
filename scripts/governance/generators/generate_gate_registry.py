@@ -130,6 +130,7 @@ def generate(entry_count: int | None = None) -> dict:
     return {
         "module_id": "PS-REG-014",
         "doc_type": "register",
+        "ttl": "permanent",
         "title": "GATE 门禁登记表",
         "status": "active",
         "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -164,9 +165,14 @@ def main() -> None:
     tmp_path = f"{args.output}.{os.getpid()}.tmp"
     try:
         with open(tmp_path, "w", encoding="utf-8") as f:
-            # frontmatter 字段已在 output dict 中（module_id/doc_type/generated_by/maintenance 等）
-            # 原 # 注释头冗余已删除（治本 2026-06-29：与 frontmatter 字段重复）
-            yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+            # .md 文件用 --- frontmatter 格式（GATE-15 要求 .md 必须有 frontmatter）
+            # .yaml 文件用纯 YAML（yaml.load 直接加载）
+            if args.output.endswith(".md"):
+                f.write("---\n")
+                yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+                f.write("---\n")
+            else:
+                yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
         os.replace(tmp_path, args.output)
     except PermissionError:

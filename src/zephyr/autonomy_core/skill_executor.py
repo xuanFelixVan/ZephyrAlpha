@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.skill_executor
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared_08.contracts.protocols; zephyr.governance.audit_trail.writer; zephyr.governance.rule_enforcement.gate_engine
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.contracts.protocols; zephyr.governance.audit_trail.writer; zephyr.governance.rule_enforcement.gate_engine
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -24,7 +24,7 @@ from zephyr.autonomy_core.skill_loader import SkillLoader
 _CORE_AUDIT_AVAILABLE = False
 try:
     from zephyr.governance.audit_trail.writer import AuditWriter as _CoreAuditWriter
-    from zephyr.integration.shared_08.contracts.protocols import AuditWriterProtocol
+    from zephyr.shared.contracts.protocols import AuditWriterProtocol
 
     _CORE_AUDIT_AVAILABLE = True
 except ImportError:

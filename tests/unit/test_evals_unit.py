@@ -12,7 +12,7 @@ Unit tests for evals.py
 
 import pytest
 
-from zephyr.integration.shared_08.evals import (
+from zephyr.shared.evals import (
     DimensionScore,
     EvalCase,
     EvalDimension,

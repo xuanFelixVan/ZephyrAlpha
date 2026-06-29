@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.observability_02.health
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.hooks
+# [DEPENDENCIES] zephyr.shared.lifecycle.hooks
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -44,7 +44,7 @@ from datetime import UTC, datetime
 from enum import Enum, unique
 from typing import Any
 
-from zephyr.integration.shared_08.lifecycle.hooks import (
+from zephyr.shared.lifecycle.hooks import (
     LifecycleAware,
     LifecycleManager,
     LifecycleState,

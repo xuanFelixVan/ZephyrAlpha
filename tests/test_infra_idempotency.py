@@ -148,7 +148,7 @@ class TestBuildIdempotencyKey:
 
 class TestIdempotencyError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = IdempotencyError("conflict", details={"key": "k"})
         assert isinstance(err, ZephyrBaseError)

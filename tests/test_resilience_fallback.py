@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared_08.resilience.fallback import (
+from zephyr.shared.resilience.fallback import (
     FallbackChain,
     FallbackExhaustedError,
     FallbackStep,
@@ -203,7 +203,7 @@ class TestFallbackDecorator:
 
 class TestFallbackExhaustedError:
     def test_inherits_zephyr_base_error(self):
-        from zephyr.integration.shared_08.errors import ZephyrBaseError
+        from zephyr.shared.errors import ZephyrBaseError
 
         err = FallbackExhaustedError("exhausted", details={"step_count": 3})
         assert isinstance(err, ZephyrBaseError)

@@ -35,7 +35,7 @@
 Safety: HIGH（版本协商是 Schema 演进安全的根基）
 """
 
-from zephyr.integration.shared_08.version_negotiation import (
+from zephyr.shared.version_negotiation import (
     ChangeType,
     DeprecationRecord,
     NegotiationResult,

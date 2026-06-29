@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §2.10
 # [MODULE] zephyr.infrastructure.shared_services.infra_06.process_lifecycle_gateway
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared_08.lifecycle.daemon_registry; zephyr.shared.infra.process_pool
+# [DEPENDENCIES] zephyr.shared.lifecycle.daemon_registry; zephyr.shared.infra.process_pool
 # [CONSUMERS] zephyr.trading.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Server DAG)
 # [STARTUP] imported
 # [MATURITY] production
@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import logging
 
-from zephyr.integration.shared_08.lifecycle.daemon_registry import DaemonRegistry
+from zephyr.shared.lifecycle.daemon_registry import DaemonRegistry
 from zephyr.shared.infra.process_pool import MCPProcessPool, PooledProcess
 
 __all__ = ["ProcessLifecycleGateway"]
