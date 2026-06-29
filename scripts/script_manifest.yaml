@@ -654,8 +654,8 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_verify_commit_l1.py
-  path: governance/_tmp_verify_commit_l1.py
+- name: governance/_tmp_commit_cleanup.py
+  path: governance/_tmp_commit_cleanup.py
   description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
