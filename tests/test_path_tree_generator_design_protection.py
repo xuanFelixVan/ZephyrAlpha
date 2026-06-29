@@ -12,7 +12,8 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # 注：depgraph 已迁移到 PostgreSQL（P2迁移），DB_PATH 路径常量已移除
-# 生成器 cmd_write_db 仅打印 db_path 参数，实际连接通过 get_depgraph_pg_connection() 走 PG
+# 治本（2026-06-29）：原 --output-db 路径（cmd_write_db）已删除（损坏死代码，递归键名不匹配）。
+# 改用 --write 路径验证 _write_tree_to_db 的设计态保护（走 cmd_write 完整流程：磁盘扫描+合并+写PG）。
 GENERATOR_SCRIPT = REPO_ROOT / "scripts" / "governance" / "generate_project_path_tree.py"
 
 
@@ -50,7 +51,7 @@ def red_team_tests():
     # 2. 运行路径树生成器（红方攻击）
     print("\n[红方] 运行路径树生成器（尝试覆盖设计态）...")
     result = subprocess.run(
-        [sys.executable, str(GENERATOR_SCRIPT), "--output-db", "depgraph-pg"],
+        [sys.executable, str(GENERATOR_SCRIPT), "--write"],
         capture_output=True,
         text=True,
         timeout=300,
@@ -92,7 +93,7 @@ def red_team_tests():
     print("\n[红方] 连续运行生成器10次...")
     for i in range(10):
         result = subprocess.run(
-            [sys.executable, str(GENERATOR_SCRIPT), "--output-db", "depgraph-pg"],
+            [sys.executable, str(GENERATOR_SCRIPT), "--write"],
             capture_output=True,
             text=True,
             timeout=300,

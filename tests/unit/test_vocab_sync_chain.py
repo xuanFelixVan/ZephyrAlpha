@@ -287,89 +287,106 @@ class TestBugCDEFGenerateDerivedCheck:
 
 
 # ===========================================================================
-# Bug G 回归：sync_yaml_to_depgraph.py 跨进程锁保护
+# Bug G 回归：sync_yaml_to_depgraph.py 锁机制（P2 PG 迁移后语义反转）
 # ===========================================================================
 
 class TestBugGLockProtection:
-    """Bug G 回归——sync 必须引入 lock_files.py 跨进程锁。
+    """Bug G 回归——P2 PG 迁移后，sync 必须删除文件锁（PG MVCC 替代）。
 
-    根因回顾：sync 仅依赖 sqlite3 事务 + 临时 DROP 只读触发器，
-    无跨进程文件锁，与 apply_depgraph.py / generate_project_depgraph.py
-    并发可能竞争 DB 写入。是治理脚本中唯一缺锁的 DB 写入者。
+    根因回顾（Bug G 原意图）：SQLite 时代 sync 仅依赖 sqlite3 事务 + 临时 DROP
+    只读触发器，无跨进程文件锁，与 apply_depgraph.py / generate_project_depgraph.py
+    并发可能竞争 DB 写入。修复方式是引入 lock_files.py 跨进程文件锁。
+
+    P2 PG 迁移治本（2026-06）：depgraph 迁至 PostgreSQL，PG MVCC 事务
+    （autocommit=False）提供原子性 + 行级锁，文件锁对 PG 写无保护作用
+    （锁键指向往已归档 .db 文件，语义悬空）。治本方向：删除文件锁调用，
+    与 apply_depgraph.py / generate_project_depgraph.py 对齐。
+
+    本类保护"锁删除是治本成果，不得回退重新引入文件锁"。
     """
 
-    def test_sync_imports_lock_files(self) -> None:
-        """sync_yaml_to_depgraph.py 必须导入 lock_files 模块。"""
+    def test_sync_does_not_import_lock_files(self) -> None:
+        """sync_yaml_to_depgraph.py 不得导入 lock_files 模块（P2 PG 迁移治本）。"""
         src = _SYNC_SCRIPT.read_text(encoding="utf-8")
-        assert "lock_files" in src, (
-            "sync_yaml_to_depgraph.py 未导入 lock_files 模块（Bug G 回归）"
-        )
+        # 治本后 lock_files 仅在删除注释中出现，不应有 import 语句
+        for line in src.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("import ") or stripped.startswith("from "):
+                assert "lock_files" not in stripped, (
+                    f"sync_yaml_to_depgraph.py 仍导入 lock_files（P2 治本回退）: {stripped}"
+                )
 
-    def test_sync_uses_acquire_release(self) -> None:
-        """sync_all() 必须调用 cmd_acquire / cmd_release。"""
+    def test_sync_does_not_call_acquire_release(self) -> None:
+        """sync_all() 不得调用 cmd_acquire / cmd_release（P2 PG 迁移治本）。"""
         src = _SYNC_SCRIPT.read_text(encoding="utf-8")
-        assert "cmd_acquire" in src, (
-            "sync_yaml_to_depgraph.py 未调用 cmd_acquire（Bug G 回归）"
-        )
-        assert "cmd_release" in src, (
-            "sync_yaml_to_depgraph.py 未调用 cmd_release（Bug G 回归）"
-        )
+        # 治本后 cmd_acquire/cmd_release 仅在删除注释中出现，不应有调用语句
+        for line in src.splitlines():
+            stripped = line.strip()
+            # 跳过注释行
+            if stripped.startswith("#"):
+                continue
+            # 跳过 docstring/字符串字面量行（粗略）
+            if stripped.startswith('"""') or stripped.startswith("'''"):
+                continue
+            assert "cmd_acquire(" not in stripped, (
+                f"sync_yaml_to_depgraph.py 仍调用 cmd_acquire（P2 治本回退）: {stripped}"
+            )
+            assert "cmd_release(" not in stripped, (
+                f"sync_yaml_to_depgraph.py 仍调用 cmd_release（P2 治本回退）: {stripped}"
+            )
 
-    def test_sync_all_releases_lock_on_failure(self) -> None:
-        """sync_all() 必须在 finally 中释放锁（异常时也释放）。"""
+    def test_sync_all_uses_pg_transaction_not_file_lock(self) -> None:
+        """sync_all() 必须用 PG 事务（get_depgraph_pg_connection），不得用文件锁。"""
         src = _SYNC_SCRIPT.read_text(encoding="utf-8")
-        # 锁释放必须在 finally 块中，避免异常时死锁
-        # 提取 sync_all 函数体做粗略检查
+        # 提取 sync_all 函数体
         sync_all_start = src.find("def sync_all(")
         assert sync_all_start != -1, "sync_all() 函数未找到"
-        # sync_all 之后的代码段
         sync_all_body = src[sync_all_start:]
-        # 截断到下一个顶层 def
         next_def = sync_all_body.find("\ndef ", 1)
         if next_def != -1:
             sync_all_body = sync_all_body[:next_def]
-        assert "finally" in sync_all_body, (
-            "sync_all() 缺少 finally 块（锁可能在异常时未释放）"
-        )
-        assert "cmd_release" in sync_all_body, (
-            "sync_all() 的 finally 中未调用 cmd_release（Bug G 回归）"
+        # 治本后应通过 get_depgraph_pg_connection 获取 PG 连接
+        assert "get_depgraph_pg_connection" in sync_all_body, (
+            "sync_all() 未使用 get_depgraph_pg_connection（P2 迁移回归）"
         )
 
 
 # ===========================================================================
-# Bug H 回归（2026-06-27 反转语义）：constants.py 禁止 DEPGRAPH_DB_PATH + sync 禁止引用
+# Bug H 回归：constants.py DEPGRAPH_DB_PATH（P0/P1 治本后语义反转）
 # ===========================================================================
 
 class TestBugHDepgraphDbPath:
-    """Bug H 回归——DEPGRAPH_DB_PATH 路径污染源根除 + P2 PG 迁移成果保护。
+    """Bug H 回归——P0/P1 治本后 DEPGRAPH_DB_PATH 常量已删除 + PG 入口为真源。
 
-    根因回顾：_shared/constants.py 只定义了 governance.db 的 DB_PATH，
+    根因回顾（Bug H 原意图）：_shared/constants.py 只定义了 governance.db 的 DB_PATH，
     sync_yaml_to_depgraph.py 硬编码 `D:\\ZephyrAlpha\\data\\databases\\depgraph.db`，
-    两个 DB_PATH 指向不同 DB，是潜在不一致点，且违反可移植性。
+    两个 DB_PATH 指向不同 DB，是潜在不一致点。修复方式是统一引入 DEPGRAPH_DB_PATH 常量。
 
-    治本（2026-06-27）：P2 PG 迁移后 depgraph 已迁至 PostgreSQL，DEPGRAPH_DB_PATH
-    常量沦为路径污染源（指向往已归档的 .db 文件，AI 可能误用）。本类反转原 Bug H
-    测试语义，从"要求存在"改为"禁止存在"，保护治本成果不被回退：
-    1. _shared/constants.py 禁止定义 DEPGRAPH_DB_PATH 常量（路径污染源）
-    2. P2 迁移成果——get_depgraph_pg_connection 入口必须存在
-    3. sync_yaml_to_depgraph.py 禁止引用 DEPGRAPH_DB_PATH（改用 PG 连接）
-    4. sync_yaml_to_depgraph.py 必须通过 get_depgraph_pg_connection 连 PG
+    P0/P1 治本（2026-06）：depgraph 已迁至 PostgreSQL，DEPGRAPH_DB_PATH 常量指向往已归档
+    .db 文件，是路径污染源。治本方向：删除 DEPGRAPH_DB_PATH 常量，连接入口统一为
+    get_depgraph_pg_connection()，禁止任何形式 .db 路径常量回退。
+
+    本类保护"常量删除是治本成果，不得回退重新引入 .db 路径常量"。
     """
 
     def test_constants_does_not_define_depgraph_db_path(self) -> None:
-        """_shared/constants.py 禁止定义 DEPGRAPH_DB_PATH 常量（路径污染源，治本2026-06-27）。
+        """_shared/constants.py 不得定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本成果）。"""
+        import ast
 
-        原 Bug H 测试要求"必须定义"，P2 PG 迁移治本后反转：常量指向往已归档的 .db 文件，
-        是路径污染源，AI 可能误用。删除常量后由 get_depgraph_pg_connection() 统一连接。
-        """
         src = _CONSTANTS_MODULE.read_text(encoding="utf-8")
-        for line in src.splitlines():
-            stripped = line.lstrip()
-            if stripped.startswith("#"):
-                continue
-            assert not (stripped.startswith("DEPGRAPH_DB_PATH") and "=" in stripped), (
-                "_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（路径污染源，治本2026-06-27 删除）"
-            )
+        tree = ast.parse(src)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == "DEPGRAPH_DB_PATH":
+                        raise AssertionError(
+                            "_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本回退）"
+                        )
+            if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+                if node.target.id == "DEPGRAPH_DB_PATH":
+                    raise AssertionError(
+                        "_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（P0/P1 治本回退）"
+                    )
 
     def test_constants_defines_pg_connection_entry(self) -> None:
         """P2 迁移后 _shared/constants.py 必须定义 get_depgraph_pg_connection 入口。"""
@@ -378,35 +395,27 @@ class TestBugHDepgraphDbPath:
             "_shared/constants.py 未定义 get_depgraph_pg_connection（P2 迁移回归）"
         )
 
-    def test_depgraph_db_path_not_importable_from_constants(self) -> None:
-        """禁止从 _shared.constants 导入 DEPGRAPH_DB_PATH（治本2026-06-27：路径污染源根除）。
+    def test_depgraph_db_path_import_fails(self) -> None:
+        """DEPGRAPH_DB_PATH 常量已删除，import 必失败（P0/P1 治本成果）。"""
+        import pytest
 
-        原 Bug H 测试要求"必须可导入且指向 depgraph.db"，治本后反转：
-        P2 PG 迁移后无文件路径概念，常量已删除，import 必须失败。
-        """
-        try:
-            from _shared.constants import DEPGRAPH_DB_PATH  # noqa: PLC0415, F401
-            raise AssertionError(
-                "_shared.constants 仍可导出 DEPGRAPH_DB_PATH（路径污染源，治本2026-06-27 删除）"
-            )
-        except ImportError:
-            pass  # 预期：常量已删除，import 失败
+        with pytest.raises(ImportError):
+            from _shared.constants import DEPGRAPH_DB_PATH  # noqa: F401,PLC0415
 
     def test_sync_does_not_reference_depgraph_db_path(self) -> None:
-        """sync_yaml_to_depgraph.py 禁止引用 DEPGRAPH_DB_PATH（治本2026-06-27：路径污染源根除）。
-
-        原 Bug H 测试要求"必须引用 DEPGRAPH_DB_PATH"，治本后反转：
-        P2 PG 迁移后无文件路径概念，sync 应直接用 get_depgraph_pg_connection()。
-        """
+        """sync_yaml_to_depgraph.py 不得引用 DEPGRAPH_DB_PATH（P0/P1 治本成果）。"""
         src = _SYNC_SCRIPT.read_text(encoding="utf-8")
+        # 治本后 DEPGRAPH_DB_PATH 仅在删除注释中出现，不应有实际引用
         for line in src.splitlines():
-            stripped = line.lstrip()
+            stripped = line.strip()
             if stripped.startswith("#"):
                 continue
+            if stripped.startswith('"""') or stripped.startswith("'''"):
+                continue
             assert "DEPGRAPH_DB_PATH" not in stripped, (
-                "sync_yaml_to_depgraph.py 仍引用 DEPGRAPH_DB_PATH（路径污染源，治本2026-06-27 删除）"
+                f"sync_yaml_to_depgraph.py 仍引用 DEPGRAPH_DB_PATH（P0/P1 治本回退）: {stripped}"
             )
-        # 不应再出现硬编码的绝对路径字符串（Bug H 的根因）
+        # 不应再出现硬编码的绝对路径字符串（Bug H 原根因）
         assert r'"D:\ZephyrAlpha\data\databases\depgraph.db"' not in src, (
             "sync_yaml_to_depgraph.py 仍含硬编码绝对路径 DB_PATH（Bug H 回归）"
         )

@@ -1,7 +1,7 @@
 # [A_test] module_id: SRC-TST-1750 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/verify_schema_health.py | §test
 # [MODULE] tests.test_verify_schema_health
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 漂移必拦截; 只读触发器必齐全; 版本必一致
 # [MODIFY-GUARD] scripts/governance/verify_schema_health.py
 # [CONSUMERS] pytest
@@ -429,9 +429,10 @@ class TestMainExitCodes:
         assert result.returncode == 1
         assert "VERSION-DRIFT" in result.stdout
 
-    def test_no_args_uses_default_db_path(self):
-        # 不传 --db，应使用 DEPGRAPH_DB_PATH（生产库），生产库应健康 exit 0
-        # 若生产库不存在则 exit 2——两种都接受，只要不崩溃
+    def test_no_args_connects_pg(self):
+        # 治本（2026-06-29）：测试名+注释语义修正（原 test_no_args_uses_default_db_path 过时）。
+        # P2 PG 迁移后 --db 参数已废弃，脚本经 get_depgraph_pg_connection() 连 PostgreSQL depgraph。
+        # PG 健康则 exit 0；PG 不可达则 exit 2——两种都接受，只要不崩溃。
         result = subprocess.run(
             [sys.executable, str(_GOV_DIR / "verify_schema_health.py")],
             capture_output=True,
