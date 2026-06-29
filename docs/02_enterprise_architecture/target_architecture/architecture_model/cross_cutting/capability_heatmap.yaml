@@ -7,17 +7,18 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# v3.0.0: §2.1裁定对齐——52域×10能力域矩阵，14层降级为域属性
+# v3.0.1: 53域×10能力域矩阵（depgraph.db派生）
 module_id: MOD-GOVERNANCE
 schema_version: '3.0'
 partition:
   id: cross-cutting-capability-heatmap
   name: Capability Maturity Heatmap
+  data_source: depgraph_db
   description: >
-    能力成熟度热力图（§2.1裁定后重写：52域×10能力域矩阵）。
+    能力成熟度热力图（53域×10能力域矩阵）。
     五档成熟度：L0 Missing / L1 Designed / L2 Drafted / L3 Usable / L4 Production / L5 Leading。
-    结构化数据从depgraph.db派生。
-  source_view: 04ter-capability_heatmap.md
+    结构化数据从depgraph.db派生（PostgreSQL INFRA-DB-003）。
+  source_view: capability_heatmap.md
   related_kb_ref:
   - KBG-0012
   baseline_date: '2026-06-23'
@@ -25,10 +26,10 @@ partition:
   overall_maturity_score: 1.12
   overall_maturity_level: L1
   score_calculation_method: >
-    加权平均法：52域×10能力域（C1~C7业务域 + CC1~CC3横切域）。
+    加权平均法：53域×10能力域（C1~C7业务域 + CC1~CC3横切域）。
     每域成熟度由depgraph.db派生。
   overall_assessment: >
-    架构蓝图已95%锁定，代码施工刚起步。§2.1裁定后从14层迁移到52域体系。
+    架构蓝图已95%锁定，代码施工刚起步。
 maturity_scale:
   L0:
     name: Missing
@@ -69,7 +70,7 @@ capability_domains:
   - D-ALT_DATA
   - D-DATA_ENG
   investment_intensity: Critical
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: C2
   name: 因子&信号能力
   description: Alpha factor / sentiment / signal extraction / factor registry / IC-IR
@@ -80,14 +81,14 @@ capability_domains:
   - D-ASHARE_SIGNAL
   - D-SIGQC
   investment_intensity: Critical
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: C3
   name: 风控能力
   description: Pre-trade / at-trade / post-trade / VaR-CVaR / limits / stop-loss
   primary_domains:
   - D-RISK
   investment_intensity: Critical
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: C4
   name: 组合构建能力
   description: Optimization / rebalancing / backtest / strategic allocation / meta-router
@@ -96,7 +97,7 @@ capability_domains:
   - D-PF_ALLOC
   - D-CROSS_ASSET
   investment_intensity: Critical
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: C5
   name: 执行&交易后能力
   description: OMS / SOR / execution / attribution / TCA / review
@@ -106,7 +107,7 @@ capability_domains:
   - D-TRADING
   - D-POSITION
   investment_intensity: High
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: C6
   name: ML/AI平台能力
   description: Model lifecycle / training / serving / scout / experimentation
@@ -114,7 +115,7 @@ capability_domains:
   - D-ML_TRAIN
   - D-ML_SERVE
   investment_intensity: High
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: C7
   name: 治理&合规能力
   description: Compliance runtime / governance three-layer / AISG / audit trail
@@ -125,7 +126,7 @@ capability_domains:
   - D-GOV_AUDIT
   - D-GOV_DRIFT
   investment_intensity: Low
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: CC1
   name: 人机交互&研究
   description: Human-AI interface / research notebooks / CLI
@@ -133,7 +134,7 @@ capability_domains:
   - D-FRONTEND
   type: cross_cutting
   investment_intensity: High
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: CC2
   name: 可观测性
   description: Metrics / logs / traces / ai_behavior
@@ -141,7 +142,7 @@ capability_domains:
   - D-OPS
   type: cross_cutting
   investment_intensity: Medium
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 - id: CC3
   name: AI自治
   description: D家族系统 / ai_operator预留口子 / decision engine
@@ -150,7 +151,7 @@ capability_domains:
   - D-AUTONOMY_PERM
   type: cross_cutting
   investment_intensity: High
-  investment_rationale: '§2.1裁定后从14层迁移到52域体系'
+  investment_rationale: ''
 capabilities:
 - id: CAP-001
   name: D-MKT_DATA × C1
@@ -429,4 +430,4 @@ summary:
   - date: '2026-06-23'
     version: v3.0.0
     reviewer: session-20260623-001
-    note: §2.1裁定对齐——从14层迁移到52域×10能力域矩阵
+    note: v3.0.1 基线对齐 depgraph.db（53域×10能力域矩阵）

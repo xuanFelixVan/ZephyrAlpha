@@ -7,7 +7,7 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# v3.0.0: §2.1裁定对齐——52域唯一物理分类体系，14层降级为域属性
+# v3.0.1: 53域物理分类 + 14层（L00-L13）layer_id 属性枚举
 module_id: MOD-GOVERNANCE
 schema_version: '3.0.0'
 system:
@@ -16,18 +16,17 @@ system:
   architecture_style: domain_driven_event_driven_polyglot
 
 # === 分区管理约定（Partition Management Convention）===
-# §2.1裁定（2026-06-22）：52域是唯一物理分类体系，14层（L00-L13）降级为域的layer_id属性。
-# 物理分类由depgraph.db的domains表（52域）定义，AI找模块只有一条路：按域找。
-# 旧的layers/l00-l13-*.yaml文件已废弃，信息合并入depgraph.db域定义。
+# 53域是唯一物理分类体系（depgraph.db domains表），14层（L00-L13）是域的layer_id属性枚举。
+# AI找模块只有一条路：按域找。
 
 partitions:
-# === 52域索引（物理分类唯一真源：depgraph.db domains表）===
+# === 53域索引（物理分类唯一真源：depgraph.db domains表）===
 - id: domains
   path: ../../../../data/databases/depgraph.db
   description: >
-    52域物理分类唯一真源（§2.1裁定）。
+    53域物理分类唯一真源。
     查询命令: python scripts/governance/extract_depgraph.py --summary
-    14层（L00-L13）降级为域的layer_id属性，不再作为并行分类体系。
+    14层（L00-L13）是域的layer_id属性枚举。
 
 # === 横切关注点分区（非业务分类，保留）===
 - id: shared
@@ -61,7 +60,7 @@ partitions:
   path: infra/shared_infra.yaml
   description: 跨域共享基础设施
 
-# === 52域清单（从depgraph.db派生，禁止手工编辑）===
+# === 53域清单（从depgraph.db派生，禁止手工编辑）===
 domains:
 - id: D-ALT_DATA
   name: 另类数据
@@ -227,24 +226,24 @@ global_stats:
   total_domains: 53
   total_partitions: 11
   notes: >
-    §2.1裁定（2026-06-22）：52域唯一物理分类体系，14层降级为域属性。
+    53域唯一物理分类体系，14层是域的layer_id属性枚举。
     结构化数据从depgraph.db派生，禁止在MD中硬编码会变化的数字。
   last_updated: '2026-06-23'
 query_hints:
 - question: 系统有哪些域？
-  answer: 52域，见domains列表，真源为depgraph.db domains表
+  answer: 53域，见domains列表，真源为depgraph.db domains表
 - question: 某域有哪些模块？
   answer: 查询depgraph.db: python scripts/governance/extract_depgraph.py --domains <域ID>
 - question: 模块间的依赖关系？
   answer: 查询depgraph.db: python scripts/governance/extract_depgraph.py --paths
 - question: 为什么这样分域？
-  answer: 读architecture_upgrade_discussion.md §2.1唯一分类体系裁定
+  answer: 读architecture_upgrade_discussion.md（域分类体系背景）
 - question: 不变量/安全红线？
   answer: 读cross-cutting/invariants.yaml
 - question: 运行平面分布？
   answer: 读cross-cutting/runtime_planes.yaml
 - question: 系统能力成熟度？
-  answer: 读cross-cutting/capability_heatmap.yaml（52域×10能力域矩阵）
+  answer: 读cross-cutting/capability_heatmap.yaml（53域×10能力域矩阵）
 - question: 前端有哪些模块？
   answer: 读frontend/frontend_model.yaml
 - question: 治理/审计脚本有哪些？
@@ -274,4 +273,4 @@ id_conventions:
   - prefix: D-{CATEGORY}-{NAME}
     scope: depgraph.db domains表
     example: D-MKT_DATA
-    note: "§2.1裁定后域ID为唯一物理分类标识"
+    note: "域ID是唯一物理分类标识"
