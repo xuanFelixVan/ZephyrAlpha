@@ -202,10 +202,10 @@ directory_extensions:
     zone: neutral
 
   - path: "session_logs/"
-    allowed: [".yaml", ".md"]
-    forbidden: [".py", ".csv", ".jsonl", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    allowed: [".yaml", ".md", ".json"]
+    forbidden: [".py", ".csv", ".jsonl", ".sh", ".ps1", ".bak", ".baseline"]
     zone: neutral
-    note: "会话日志区——audit_report 的合法目录（doc_type_vocabulary.yaml 已声明）。.yaml 为日志数据，.md 为审计报告"
+    note: "会话日志区——audit_report 的合法目录（doc_type_vocabulary.yaml 已声明）。.yaml 为日志数据，.md 为审计报告，.json 为历史格式（个别文件）"
 
   - path: "tools/"
     allowed: [".py", ".sh", ".ps1", ".yaml", ".json"]
