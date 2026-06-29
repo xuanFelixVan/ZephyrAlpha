@@ -241,6 +241,25 @@ repos:
         files: "^(AGENTS\\.md|scripts/governance/)"
         description: "C 层兜底：校验 RULES_MANIFEST 受保护文件 golden hash（A 层 gateway AST 锚点为主防线）"
 
+      # ── GATE-DOC-REF: 文档引用完整性校验（断链/幽灵引用检测）──
+      # 治本背景（2026-06-29）：调研发现 AI 在 .md/.csv/.yaml 中编造虚假文件引用
+      # （如 dom_gov_001 虚假审计闭环：index.md 列 22 张不存在的任务卡，
+      #   move_plan.csv 引用 4 个不存在的文件，形成自审自闭环）
+      # 检测范围：staged 的 .md/.csv/.yaml/.yml/.json 文件
+      # 检测内容：markdown 链接 [text](target) + 纯文本路径 + CSV 列值 + YAML 值
+      # 路径解析：先相对于文件目录，再相对于项目根（双重尝试）
+      # 过渡期：--warn-only 模式（存量断链 117 条，待清理后转 --ci 硬阻断）
+      # 真源：scripts/governance/d2_links/audit_broken_links.py
+      - id: gate-doc-ref
+        name: "GATE-DOC-REF: 文档引用完整性（断链/幽灵引用）"
+        entry: python scripts/governance/d2_links/audit_broken_links.py
+        args: ["--warn-only"]
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^.*\\.(md|csv|yaml|yml|json)$"
+        description: "检测 staged 文件中的断链与幽灵引用（markdown 链接 + 纯文本路径 + CSV/YAML），过渡期 warn-only"
+
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
@@ -854,13 +873,14 @@ repos:
         always_run: true
         description: "stash 堆积治理——检查 stash 数量，超过5个WARNING，超过10个建议清理。对标GitHub/Linux实践：stash是临时栈非备份"
 
-      # ── GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513 治本）──
+      # ── GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513 治本，RB-6 修复 2026-06-29）──
       # 权威依据：OPS-2026062513——多 AI session 共享 git index 导致幽灵提交
       # 检测范围：每次提交时触发（always_run=true）
-      # 检测内容：环境变量 ZEPHYR_COMMIT_GATEWAY=1 或 commit message 含 [GW:...] 标记
+      # 检测逻辑：hook 运行本身=裸 commit（gateway 用 --no-verify 不触发 hook）→ 阻断；合并提交放行
       # 模式：硬阻断（exit=1），强制所有 commit 走 GitCommitGateway
-      # 工作原理：GitCommitGateway 用 --no-verify 绕过本门禁（fast path）；
-      #          裸 git commit 触发本门禁 → env var 未设置 → 阻断
+      # 工作原理：GitCommitGateway 用 --no-verify 绕过本门禁（gateway 路径）；
+      #          裸 git commit 触发本门禁 → hook 运行=非 gateway=阻断
+      # 红蓝修复：废除 env var 检查（RB-2 持久化漏洞）和 marker 检查（RB-6 伪造绕过）
       - id: gate-commit-gw
         name: "GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513）"
         entry: python scripts/governance/d11_compliance/validate_commit_gateway.py
