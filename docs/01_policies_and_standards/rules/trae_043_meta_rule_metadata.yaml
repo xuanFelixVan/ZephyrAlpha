@@ -680,9 +680,6 @@ sections:
     body_templates:
       adr: 上下文/决策/理由/后果/否决方案
       blueprint: 设计背景/架构决策/模块边界/接口契约/约束/依赖/风险
-      design: 视图概述/架构元素/关系交互/视图映射/约束原则
-      plan: 任务目标/分解/依赖/验收/风险
-      roadmap: 当前目标/未来方向/里程碑/假设/对接
       register: 说明/条目表/变更记录
     taskbook_symbols:
       not_started: '[ ]'
@@ -703,9 +700,6 @@ sections:
     naming_conventions:
       adr: 'adr-{NNNN}-{title}.md'
       blueprint: '{module-name}-blueprint.md'
-      design: '{topic}-design.md'
-      plan: 'taskbook-{intent}.md'
-      roadmap: 'roadmap-{scope}-{YYYYMM}.md'
       register: '{topic}-registry.yaml或{topic}-register.md'
       audit_report: '{scan-type}-report-{YYYYMMDD}.md'
     prohibitions:

@@ -596,7 +596,6 @@ fields:
   - code_file
   - register
   - gate
-  - schema
   description: 文件表头格式——7 值。GOV-ENG-002 §9.4 定义。用于 validate_file_headers.py 路由校验逻辑
   source: GOV-ENG-002 §9.4
   note: 与 file_category 联合使用——file_category 决定适用格式，header_format 声明实际格式
@@ -609,7 +608,6 @@ fields:
   - code_file
   - register
   - gate
-  - schema
   description: 文件治理分类——10 值。GOV-ENG-002 §9.5 定义。决定文件应使用哪种 header_format
   source: GOV-ENG-002 §9.5
   note: file_category → header_format 映射见 GOV-ENG-002 §2

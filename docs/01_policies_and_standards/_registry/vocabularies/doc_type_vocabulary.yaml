@@ -191,7 +191,7 @@ values:
 #
 # 【常见误解纠正】
 #   ✗ "在 governance/ 下的文件 doc_type 必须是 policy"
-#   ✓ governance/ 下可有 policy/standard/protocol/index 等多种 doc_type
+#   ✓ governance/ 下可有 policy/index/gate 等多种 doc_type
 #      （见各值的 allowed_directories 列表，governance/ 出现于多个值）
 #   ✗ "doc_type 决定了文件只能在某个目录"
 #   ✓ doc_type 的 allowed_directories 是多值列表（一个 doc_type 可在多个目录）
@@ -206,9 +206,8 @@ values:
 #     → 规则（声明式）  → 看 Q2
 #     → 操作步骤（过程式）→ 必须用 operational_rule，放 operational/
 #
-# Q2: 你的规则约束"行为"还是"技术"？
-#     → 行为约束（必须做/禁止做）→ 用 policy
-#     → 技术规范（格式/接口/度量）→ 用 standard
+# Q2: 你的规则约束什么？
+#     → 行为约束或技术规范（必须做/禁止做/格式/接口/度量）→ 用 policy
 #
 # Q3: 你的文件是"导航入口"、"数据结构"还是"结构骨架"？
 #     → 目录级导航入口  → 用 index
@@ -216,10 +215,9 @@ values:
 #     → 可复用的结构骨架 → 用 template
 #
 # Q4（项目级类型）: 你的文件不在 01_policies_and_standards/ 下吗？
-#     → 蓝图/架构 → blueprint / construction_plan / architecture_view / service_spec
-#     → 知识库     → knowledge_entry
-#     → 审计       → audit_report
-#     → 日志       → log
+#     → 蓝图/架构   → blueprint / architecture_view
+#     → 知识库/词表 → vocabulary
+#     → 审计/日志   → audit_report
 
 # ============================================================
 # 文件名与 doc_type 的强制映射（便捷参考——canonical 规则见 PS-STD-001 §3.4）
@@ -228,15 +226,18 @@ values:
 # 做到"看名字就知道这个文件是什么类型的规则"——这是零记忆重启标准的基础。
 #
 # doc_type → 文件名后缀映射（v3.0.0，10 值）：
-#   policy           → {subject}-policy.md
-#   standard         → {subject}-standard.md
+#   policy           → {subject}-policy.md / {subject}-rules.yaml
 #   operational_rule → {subject}-runbook.md / -playbook.md / -procedure.md / -checklist.md
 #                       注：这些后缀均属过程式操作范畴，是 operational_rule 的合法表达
-#   register         → {subject}-registry.md / -register.md
+#   register         → {subject}-registry.yaml / -registry.md / -register.md
 #   index            → index.md（固定，不可变）
 #   template         → {subject}-template.md（templates/ 目录下模板文件）
 #                       注：模板文件的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint）
-#   terminology      → 术语特定命名（如 _registry/vocabularies/glossary.yaml、_registry/vocabularies/terminology_mapping.yaml）
+#   vocabulary       → {subject}-vocabulary.yaml（如 doc_type_vocabulary.yaml）
+#   blueprint        → {subject}-blueprint.md
+#   audit_report     → {subject}-report.md
+#   architecture_view → {subject}-spec.md / {subject}-view.md
+#   gate             → {subject}-gate.yaml / {subject}-contract.yaml（历史命名保留）
 #
 # 历史修正：v1.1.0 允许"文件名描述业务场景、doc_type 定义文档结构，两者不需要一致"，该条款已废除。
 # 原因：运行三个月后发现它导致文件名误导 AI 和人类，增加审计负担。
