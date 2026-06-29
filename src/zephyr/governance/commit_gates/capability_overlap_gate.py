@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML 读取/解析异常降级为静默跳过（不阻断 commit，不误报警）
-# [TESTS] tests/test_capability_overlap_gate.py
+# [TESTS] TODO tests/test_capability_overlap_gate.py（warn-only gate，测试优先级低）
 # [A_module] module_id=MOD-GOV-capability_overlap_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）
