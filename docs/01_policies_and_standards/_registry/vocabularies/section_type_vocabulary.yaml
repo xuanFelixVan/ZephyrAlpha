@@ -1,0 +1,191 @@
+# [A_config] module_id=CFG-section_type_vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# section_type 受控词表
+# ZephyrAlpha 2.0 规则文件 sections.section_type 字段唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-06-29
+#
+# 本词表定义规则文件（trae_*.yaml）中 sections.<section_name>.section_type 字段的
+# 所有合法值（17 种）。校验器从此文件动态加载合法值。
+# 新增/删除 section_type 值只需修改本文件，校验器自动同步。
+#
+# 创建背景（#ARCH-024 治本）：
+#   section_type 字段有 17 个实际使用值（1032+ 处引用），但此前无独立词表文件，
+#   不符合项目其他 31 个受控词表的标准模式。本文件归一为独立词表，消除散布。
+#
+# 对标标准：
+#   - doc_type_vocabulary.yaml（doc_type 受控词表结构范例）
+#   - ttl_vocabulary.yaml（简洁词表结构范例）
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-032
+version: "1.0.0"
+title: "section_type 受控词表"
+status: active
+owner: ZephyrAlpha-Owner
+vocabulary_name: section_type
+total_values: 17
+source: "trae_*.yaml sections.<section_name>.section_type 字段实际使用值归纳（#ARCH-024 治本：归一为独立词表）"
+depends_on:
+  - target: trae_043
+    at: "§sections.<section_name>.section_type"
+    why: "section_type 字段定义与使用真源"
+
+values:
+  - value: rule
+    definition: "规则定义——声明式规则，定义'必须/禁止/条件'，不定义'如何做'"
+    ai_keywords: ["必须", "禁止", "红线", "不得", "强制", "rule"]
+    usage_note: "最高频值（398 次）。规则文件的主体内容，定义约束边界。"
+
+  - value: context
+    definition: "上下文——背景信息、范围说明、相关上下文，帮助 AI 理解规则的适用场景"
+    ai_keywords: ["背景", "上下文", "范围", "context", "适用场景"]
+    usage_note: "第二高频值（237 次）。非约束性内容，提供理解的脚手架。"
+
+  - value: examples
+    definition: "示例——具体示例、变更记录、修订历史，提供可参照的实例"
+    ai_keywords: ["示例", "例子", "变更记录", "修订历史", "examples"]
+    usage_note: "第三高频值（117 次）。包括 change_history 等。"
+
+  - value: procedure
+    definition: "操作规程——步骤化的操作流程，定义'如何做'的步骤、检查清单"
+    ai_keywords: ["步骤", "流程", "操作规程", "procedure", "Step"]
+    usage_note: "第四高频值（100 次）。过程式内容，可执行。"
+
+  - value: verification
+    definition: "验证——验证规则、检测规则、违规检测，定义如何检查规则是否被遵守"
+    ai_keywords: ["验证", "检测", "违规", "verification", "check"]
+    usage_note: "56 次。通常包含自动检测项和人工审查项。"
+
+  - value: decision_tree
+    definition: "决策树——分叉判断的决策流程，根据条件选择不同路径"
+    ai_keywords: ["决策树", "判断", "分叉", "decision_tree", "tree"]
+    usage_note: "40 次。机器可读的决策结构。"
+
+  - value: principles
+    definition: "原则——指导性原则、设计原则，提供价值导向而非具体操作"
+    ai_keywords: ["原则", "指导", "设计原则", "principles", "principle"]
+    usage_note: "23 次。高于具体规则的抽象层。"
+
+  - value: information
+    definition: "信息——补充信息、说明信息，非约束性的事实陈述"
+    ai_keywords: ["信息", "说明", "补充", "information", "info"]
+    usage_note: "17 次。区别于 context（背景），information 是事实补充。"
+
+  - value: governance
+    definition: "治理——关于标准本身的治理元内容（代码级规则、推荐做法、违反处理、SSoT声明、消费者注册表、废弃流程、审查周期、修改条件等）"
+    ai_keywords: ["治理", "元治理", "governance", "标准治理", "废弃流程"]
+    usage_note: "9 次。主要用于 PS-STD-003 等标准的元治理章节。区别于 rule（具体规则），governance 是关于规则如何被治理的元内容。"
+
+  - value: escalation
+    definition: "升级——升级路径、升级流程，定义问题无法解决时如何上报"
+    ai_keywords: ["升级", "上报", "escalation", "升级路径"]
+    usage_note: "7 次。通常用于运维和事件处理规则。"
+
+  - value: rollback
+    definition: "回滚——回滚方案、回滚流程，定义变更失败时如何恢复"
+    ai_keywords: ["回滚", "恢复", "rollback", "回退"]
+    usage_note: "6 次。变更治理的必要组成部分。"
+
+  - value: reference
+    definition: "参考——参考资料、引用说明、相关标准的关系"
+    ai_keywords: ["参考", "引用", "reference", "相关"]
+    usage_note: "5 次。区别于 context（背景），reference 是外部资源指向。"
+
+  - value: incident_response
+    definition: "事件响应——事件处理流程，定义 incident 发生时的响应步骤"
+    ai_keywords: ["事件响应", "incident", "事件处理", "应急"]
+    usage_note: "4 次。运维和安全的交叉领域。"
+
+  - value: metadata
+    definition: "元数据——元数据信息、元数据声明，关于数据的数据"
+    ai_keywords: ["元数据", "metadata", "元信息", "声明"]
+    usage_note: "4 次。区别于 context（背景），metadata 是结构化元信息。"
+
+  - value: symptom_mapping
+    definition: "症状映射——症状到根因的映射，帮助从现象定位到问题"
+    ai_keywords: ["症状", "映射", "symptom", "symptom_mapping", "现象"]
+    usage_note: "4 次。诊断类规则的核心结构。"
+
+  - value: error_patterns
+    definition: "错误模式——反模式、已知限制、异常处理模式，定义常见错误和应对"
+    ai_keywords: ["错误模式", "反模式", "异常", "error_patterns", "anti-pattern"]
+    usage_note: "3 次。包括反模式、已知限制与缓解、异常处理。"
+
+  - value: root_cause_analysis
+    definition: "根因分析——根因分析方法论和实例，定义如何从现象追溯到根本原因"
+    ai_keywords: ["根因", "根因分析", "root_cause", "root_cause_analysis", "RCA"]
+    usage_note: "2 次。诊断方法论的深度内容。"
+
+# ── section_type 语义边界说明（防漂移）──
+# 三个易混淆值的区别：
+#   rule       = 定义"必须/禁止"（约束性）
+#   context    = 提供"为什么/什么时候"适用（背景性）
+#   information= 陈述"是什么"的事实（事实性）
+#
+# 三个治理类值的区别：
+#   rule       = 具体规则（约束行为）
+#   governance = 关于规则的治理（约束规则的规则，元层）
+#   principles = 指导原则（价值导向，非具体约束）
+#
+# 三个诊断类值的区别：
+#   symptom_mapping     = 症状→根因的映射表（静态查表）
+#   error_patterns      = 常见错误模式（反模式集合）
+#   root_cause_analysis = 根因分析方法论（动态分析过程）
+#
+# 三个文档辅助值的区别：
+#   context    = 背景信息（帮助理解）
+#   reference  = 外部引用（指向其他资源）
+#   metadata   = 结构化元信息（关于数据的数据）
+
+# ── 新增 section_type 值的判定树（AI 创建 section 时 MUST 按此树判定）──
+# Q1: 你的 section 是定义"约束"还是提供"信息"？
+#     → 约束（必须/禁止）→ rule
+#     → 信息 → 看 Q2
+#
+# Q2: 你的信息是"背景"、"事实"还是"外部引用"？
+#     → 背景（为什么/什么时候适用）→ context
+#     → 事实（是什么）→ information
+#     → 外部引用（指向其他资源）→ reference
+#
+# Q3: 你的约束是"具体规则"还是"关于规则的治理"？
+#     → 具体规则 → rule
+#     → 关于规则的治理（元层）→ governance
+#     → 价值导向（非具体）→ principles
+#
+# Q4: 你的内容是"过程"还是"验证"？
+#     → 过程（如何做）→ procedure
+#     → 验证（如何检查）→ verification
+#     → 决策（如何判断）→ decision_tree
+#
+# Q5: 你的内容是"诊断"类吗？
+#     → 症状→根因映射表 → symptom_mapping
+#     → 常见错误模式 → error_patterns
+#     → 根因分析方法论 → root_cause_analysis
+#
+# Q6: 你的内容是"运维"类吗？
+#     → 升级路径 → escalation
+#     → 回滚方案 → rollback
+#     → 事件响应 → incident_response
+
+deprecated_values: []  # v1.0.0 首次创建，无废弃值
+
+# ── 与 doc_type 的正交关系（防漂移文档）──
+# section_type（本词表）：规则文件内部 section 的语义类型——section 是什么。
+# doc_type（doc_type_vocabulary.yaml）：文件整体的语义类型——文件是什么。
+#
+# 两者正交：
+#   - 一个 doc_type=policy 的文件，内部可有 rule/context/examples/principles 等多种 section_type
+#   - section_type 描述文件内部结构，doc_type 描述文件整体归属
+#   - 文件级用 doc_type，section 级用 section_type，不可混用
+#
+# 设计依据：与 doc_type_vocabulary.yaml 的正交性原则一致（类型即位置 vs 类型即内容）

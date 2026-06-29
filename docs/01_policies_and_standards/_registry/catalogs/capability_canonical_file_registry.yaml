@@ -491,6 +491,21 @@ capabilities:
         generators: [generate_design_vs_production.py, generate_constraint_violations.py, generate_capacity_report.py]
 
   # --------------------------------------------------------------------------
+  - capability_id: rule_catalog_generation
+    aliases:
+      - generate_rule_catalog
+      - rule_catalog_registry
+      - GATE-RULE-CATALOG
+      - rule_catalog_generator
+    description: >-
+      规则元数据目录自动生成器。扫描 docs/01_policies_and_standards/ 下所有
+      .md/.yaml 文件的 frontmatter，聚合为 _registry/catalogs/rule_catalog_registry.yaml。
+      GATE-RULE-CATALOG reconciler 在 commit rules/ 下 .yaml/.yml/.md 变更后
+      自动触发重生成。canonical = scripts/governance/d3_metadata/generate_rule_catalog.py
+      （basename 自动匹配 capability_id，auto 派生）。
+      #ARCH-024 治本：原 rules/_index.yaml 手工索引已删除，catalog 由本生成器自动派生。
+
+  # --------------------------------------------------------------------------
   - capability_id: capability_lookup
     aliases:
       - CapabilityLookup

@@ -112,8 +112,8 @@ verifiability: manual
 
 | 子目录 | 职责 | 管辖文件数 | 索引入口 |
 |--------|------|:---------:|---------|
-| `rules/` | 规则文件唯一真源——60 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 61 | [rules/_index.yaml](rules/_index.yaml) |
-| `_registry/` | 注册表+契约+Schema+词表——4 个子目录 | 55 | [_registry/index.md](_registry/index.md) |
+| `rules/` | 规则文件唯一真源——60 个 trae_*.yaml（涵盖文件操作/防幻觉/架构/行为/方法论/文档/任务/运维/域策略） | 60 | [rule_catalog_registry.yaml](_registry/catalogs/rule_catalog_registry.yaml) |
+| `_registry/` | 注册表+契约+Schema+词表——4 个子目录 | 56 | [_registry/index.md](_registry/index.md) |
 | `templates/` | 文档模板——9 个标准模板 + index.md | 10 | [templates/index.md](templates/index.md) |
 
 > **合计**：3 个子目录，115 个文件。
