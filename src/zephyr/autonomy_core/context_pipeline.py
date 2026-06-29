@@ -35,7 +35,7 @@ context_pipeline — Context Engine **四段流水线组合根**
 - **validate**：``ContextAssembler.validate``（G3）。
 - **inject**（可选）：``ContextInjector`` —— KB 检索，与 manifest 拼装结果用分隔符合并。
 
-inject 省略时仍可完成前三段闭环；KB 不可用则不要传 ``kb_repo``。
+inject 省略时仍可完成前三段闭环；KB refactor Step 2.1 移除 kb_repo 后 inject 返回空上下文。
 """
 
 from __future__ import annotations
@@ -87,7 +87,6 @@ def run_context_four_stage(
     require_absolute_manifest_paths: bool = True,
     inject_mode: InjectMode = "none",
     inject_query: str = "",
-    kb_repo: Any | None = None,
     assembler: ContextAssembler | None = None,
     injector: ContextInjector | None = None,
     include_architecture_context: bool = False,
@@ -101,7 +100,7 @@ def run_context_four_stage(
     manifest
         ``TaskCard.context_assembly_manifest`` 形态。
     inject_mode / inject_query
-        ``inject_mode != "none"`` 时需 ``inject_query`` 非空且提供 ``kb_repo``。
+        ``inject_mode != "none"`` 时需 ``inject_query`` 非空（KB refactor 后 inject 返回空上下文）。
     include_architecture_context
         为 True 时尝试加载 ``architecture-context.json`` 并前置到 ``final_context``。
     architecture_context_path
@@ -136,10 +135,8 @@ def run_context_four_stage(
     if inject_mode != "none":
         if not inject_query.strip():
             warnings.append("inject: inject_mode≠none 但 inject_query 为空，已跳过 inject")
-        elif kb_repo is None:
-            warnings.append("inject: 缺少 kb_repo，已跳过 inject")
         else:
-            inj = injector or ContextInjector(kb_repo, token_budget=token_budget)
+            inj = injector or ContextInjector(token_budget=token_budget)
             try:
                 if inject_mode == "task_id":
                     injected = inj.inject_by_task_id(inject_query.strip())

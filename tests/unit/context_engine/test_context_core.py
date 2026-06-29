@@ -146,7 +146,7 @@ class TestRunContextFourStage:
         )
         assert result.injected is None
 
-    def test_inject_without_kb_repo_warns(self, tmp_dir):
+    def test_inject_without_kb_repo_returns_empty(self, tmp_dir):
         test_file = os.path.join(tmp_dir, "docs", "test_doc.md")
         result = run_context_four_stage(
             [{"path": test_file, "role": "reference"}],
@@ -154,9 +154,9 @@ class TestRunContextFourStage:
             require_absolute_manifest_paths=False,
             inject_mode="keyword",
             inject_query="test",
-            kb_repo=None,
         )
-        assert any("kb_repo" in w for w in result.pipeline_warnings)
+        assert result.injected is not None
+        assert result.injected.context == ""
 
     def test_inject_with_empty_query_warns(self, tmp_dir):
         test_file = os.path.join(tmp_dir, "docs", "test_doc.md")

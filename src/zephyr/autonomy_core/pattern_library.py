@@ -17,17 +17,17 @@
 
 # AI-generated: T-3-21 Pattern Library
 """
-PatternLibrary · 成功模式库（被 kb_repo 索引为 patterns Collection）
+PatternLibrary · 成功模式库（KB refactor 后独立运行，无外部索引）
 =====================================================================
 
 Task ID     : T-3-21
-Depends     : T-2-11-A（kb_repo.py）、T-2-10（chromadb_init.py）
+Depends     : T-2-10（chromadb_init.py, 已移除）
 safety_level: M
 
 核心职责
 --------
 1. **模式类型**：success_pattern / failure_pattern / anti_pattern
-2. **与 kb_repo.py 集成**：模式自动索引到 ChromaDB patterns Collection
+2. **独立运行**：KB refactor 后不再依赖 kb_repo.py 索引
 3. **模式检索**：按 domain / layer / pattern_type 查询
 4. **CRUD 操作**：创建、读取、查询、删除模式
 

@@ -117,7 +117,7 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
             "SQLite Integrity",
             CheckStatus.FAIL,
             f"integrity_check: {result}",
-            "数据库损坏。运行 kb_repo 的 startup_integrity_check() 尝试自动恢复",
+            "数据库损坏。运行 VMS 后端的健康检查 尝试自动恢复",
         )
     except Exception as e:
         return CheckResult(

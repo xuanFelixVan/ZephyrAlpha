@@ -42,30 +42,8 @@ class KnowledgeOverviewData:
     category_distribution: dict[str, int] = field(default_factory=dict)
 
 
-def fetch_knowledge_overview(kb_repo: Any = None) -> KnowledgeOverviewData:
-    data = KnowledgeOverviewData()
-    if kb_repo is None:
-        return data
-    try:
-        all_records = kb_repo.list_by_status()
-        data.total_entries = len(all_records)
-        activated_statuses = {"INDEXED", "VERIFIED", "ACCEPTED"}
-        data.activated_entries = sum(1 for r in all_records if r.status.value in activated_statuses)
-        data.activation_rate = data.activated_entries / data.total_entries if data.total_entries > 0 else 0.0
-        status_counts: dict[str, int] = {}
-        for r in all_records:
-            s = r.status.value
-            status_counts[s] = status_counts.get(s, 0) + 1
-        data.status_distribution = [
-            KnowledgeStatusDistribution(status=s, count=c) for s, c in sorted(status_counts.items())
-        ]
-        cat_counts: dict[str, int] = {}
-        for r in all_records:
-            cat_counts[r.category] = cat_counts.get(r.category, 0) + 1
-        data.category_distribution = cat_counts
-    except Exception:
-        pass
-    return data
+def fetch_knowledge_overview() -> KnowledgeOverviewData:
+    return KnowledgeOverviewData()
 
 
 def render_knowledge_overview(data: KnowledgeOverviewData) -> dict[str, Any]:

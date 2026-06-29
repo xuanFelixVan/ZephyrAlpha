@@ -53,11 +53,12 @@ class TestRunContextFourStage:
         result = run_context_four_stage([], require_absolute_manifest_paths=False, inject_mode="none")
         assert result.injected is None
 
-    def test_inject_mode_without_kb_repo_adds_warning(self):
+    def test_inject_mode_returns_empty_context_without_kb_repo(self):
         result = run_context_four_stage(
             [], require_absolute_manifest_paths=False, inject_mode="keyword", inject_query="test"
         )
-        assert any("kb_repo" in w for w in result.pipeline_warnings)
+        assert result.injected is not None
+        assert result.injected.context == ""
 
 
 class TestRunContextFourStageOrRaise:

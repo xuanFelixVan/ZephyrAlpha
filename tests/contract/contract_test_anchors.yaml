@@ -26,7 +26,7 @@ anchors:
   CT-ORC-CE-001: tests/unit/test_context_pipeline.py
   CT-ORC-VMS-001: tests/unit/test_unified_memory_api.py
   CT-CE-VMS-001: tests/unit/test_unified_memory_api.py
-  CT-KB-VMS-001: tests/unit/test_kb_repo.py
+  CT-KB-VMS-001: tests/unit/test_unified_memory_api.py
   CT-FLE-DB-001: tests/integration/test_evolution_e2e.py
   CT-RBK-GATE-001: tests/integration/test_gate_e2e.py
   CTR-P1-001: tests/integration/test_phase_f_layers.py

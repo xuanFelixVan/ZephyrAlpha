@@ -52,7 +52,7 @@ Collection: ``unified_memory``
 不依赖关系
 ----------
 - 不直接 import M1 / M3 / M4 模块（避免循环依赖）
-- 通过 ``get_chroma_client()`` 复用 ChromaDB 单例（与 kb_repo 共享）
+- 通过 ``get_chroma_client()`` 复用 ChromaDB 单例
 """
 
 from __future__ import annotations

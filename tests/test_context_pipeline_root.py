@@ -96,7 +96,8 @@ class TestRunContextFourStage:
             inject_query="test",
             require_absolute_manifest_paths=False,
         )
-        assert any("kb_repo" in w for w in result.pipeline_warnings)
+        assert result.injected is not None
+        assert result.injected.context == ""
 
     def test_inject_mode_empty_query_warns(self, tmp_path):
         f = tmp_path / "inject_empty.txt"

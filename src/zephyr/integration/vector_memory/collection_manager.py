@@ -456,7 +456,7 @@ class CollectionManager:
         import uuid
         from datetime import UTC, datetime
 
-        # 确定性业务 id 优先（治本幂等缺陷，对齐 kb_repo._upsert_vector 范式）；
+        # 确定性业务 id 优先（治本幂等缺陷，向量 upsert 范式）；
         # 无 id 时回退 uuid+timestamp（向后兼容，旧调用方不 break）
         if doc_id is None:
             doc_id = f"{collection_name}::{datetime.now(UTC).strftime('%Y%m%dT%H%M%S')}::{uuid.uuid4().hex[:12]}"

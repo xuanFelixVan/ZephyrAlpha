@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.governance.triage
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__; zephyr.governance.kb.kb_repo
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

@@ -111,7 +111,6 @@ class KnowledgeBaseServer(BaseMCPServer):
         self._entries: dict[str, dict[str, Any]] = {}
         self._vms: InProcessVectorMemory | None = None
         self._vms_lock = threading.Lock()
-        self._kb_repo: Any = None
         self._kb_api: UnifiedMemoryAPI | None = None
         self._backend_mode: str = "unknown"
 

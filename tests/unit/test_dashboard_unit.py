@@ -77,7 +77,7 @@ class TestTaskProgressComponent:
 
 class TestKnowledgeOverviewComponent:
     def test_fetch_without_repo(self) -> None:
-        data = fetch_knowledge_overview(kb_repo=None)
+        data = fetch_knowledge_overview()
         assert data.total_entries == 0
         assert data.activation_rate == 0.0
 

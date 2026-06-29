@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.app
 # [DOMAIN] D_INFRA_OPS
-# [DEPENDENCIES] zephyr.infra_ops.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.infra_ops.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -47,8 +47,8 @@ try:
 except ImportError:
     st = None
 
-from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.sqlite_schema import init_db
+from zephyr.governance.task_repo import TaskRepository
 from zephyr.infra_ops.dashboard.components.fitness_functions import (
     FitnessDashboardData,
     fetch_fitness_data,
@@ -88,8 +88,6 @@ class DashboardApp:
     ----------
     task_repo : Any | None
         TaskRepo 实例。
-    kb_repo : Any | None
-        KbRepo 实例（deprecated, KB refactor Step 2.1 移除了 kb_repo.py, 始终传 None）。
     olap_engine : Any | None
         OLAPEngine 实例。
     """
@@ -97,18 +95,16 @@ class DashboardApp:
     def __init__(
         self,
         task_repo: Any | None = None,
-        kb_repo: Any | None = None,
         olap_engine: Any | None = None,
     ) -> None:
         self._task_repo = task_repo
-        self._kb_repo = kb_repo
         self._olap_engine = olap_engine
 
     def get_task_progress(self) -> TaskProgressData:
         return fetch_task_progress(self._task_repo)
 
     def get_knowledge_overview(self) -> KnowledgeOverviewData:
-        return fetch_knowledge_overview(self._kb_repo)
+        return fetch_knowledge_overview()
 
     def get_gate_statistics(self) -> GateStatisticsData:
         return fetch_gate_statistics(self._olap_engine)
@@ -141,10 +137,9 @@ class DashboardApp:
 
 def create_app(
     task_repo: Any | None = None,
-    kb_repo: Any | None = None,
     olap_engine: Any | None = None,
 ) -> DashboardApp:
-    return DashboardApp(task_repo=task_repo, kb_repo=kb_repo, olap_engine=olap_engine)
+    return DashboardApp(task_repo=task_repo, olap_engine=olap_engine)
 
 
 def main() -> None:
