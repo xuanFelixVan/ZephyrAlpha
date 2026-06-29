@@ -110,6 +110,10 @@ def main() -> int:
         return 1
 
     # 校验文件存在（允许已跟踪但工作区已删除的文件，用于 rename/delete 场景）
+    # 覆盖两种删除场景：
+    #   (A) unstaged delete: 文件仍在 index，`git ls-files --error-unmatch` 命中
+    #   (B) staged delete (git rm): 文件已从 index 移除但仍在 HEAD，
+    #       `git ls-files` 失败，需回退 `git ls-tree HEAD` 校验
     missing = [f for f in files if not os.path.isfile(f)]
     if missing:
         import subprocess as _sp
@@ -124,7 +128,15 @@ def main() -> int:
                 capture_output=True, cwd=args.project_root,
             )
             if chk.returncode != 0:
-                truly_missing.append(f)
+                # 场景 B: staged delete (git rm) — 文件已从 index 移除，
+                # 回退检查 HEAD 是否仍跟踪该文件
+                chk2 = _sp.run(
+                    ["git", "ls-files", "--error-unmatch", "--with-tree=HEAD",
+                     "--", f":(icase){rel}"],
+                    capture_output=True, cwd=args.project_root,
+                )
+                if chk2.returncode != 0:
+                    truly_missing.append(f)
         if truly_missing:
             print(f"ERROR: 文件不存在且未被 git 跟踪: {truly_missing}", file=sys.stderr)
             return 1
