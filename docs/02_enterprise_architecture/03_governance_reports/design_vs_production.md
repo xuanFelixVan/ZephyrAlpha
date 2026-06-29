@@ -5,7 +5,7 @@ version: "1.0"
 status: active
 date: auto-generated
 owner: auto-generator
-ttl: permanent
+ttl: task_bound
 ---
 
 # 设计态vs运营态统计报告

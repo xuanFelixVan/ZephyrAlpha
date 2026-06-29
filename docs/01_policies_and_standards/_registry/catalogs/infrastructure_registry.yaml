@@ -33,10 +33,10 @@ module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
-version: "1.0.3"
+version: "1.0.4"
 status: active
 created: "2026-05-02"
-last_updated: "2026-06-27"
+last_updated: "2026-06-28"
 ai_autonomy: human_gated
 ttl: permanent
 total_registered: 13
@@ -264,21 +264,21 @@ infrastructure:
     provisioned_at: null
     note: "MOD-RESOURCE_OPTIMIZATION_ENGINE 资源优化引擎——I/O 缓存 + 流式读取 + 懒加载"
 
-  # --- 依赖架构图库（depgraph.db，P2迁移目标）---
+  # --- 依赖架构图库（depgraph，PostgreSQL 16，P2迁移已完成 2026-06-28）---
   - infra_id: "INFRA-DB-003"
     name: "zephyr-depgraph-db"
     type: relational_db
-    description: "依赖架构图库——存储 nodes/edges/domains/infrastructure_components 等20+表，架构治理真源"
+    description: "依赖架构图库——存储 nodes/edges/domains/infrastructure_components 等28表，架构治理真源（PostgreSQL 16）"
     runtime_plane: hot
-    host: "data/databases/depgraph.db"
+    host: "localhost:5432/depgraph"
     health_check: query
     dependency_of:
       - "MOD-INF-012B"
       - "MOD-GOVERNANCE"
-    sla: "ACID, < 30ms read p50"
-    status: planned
-    provisioned_at: null
-    note: "P2迁移目标：SQLite→PostgreSQL 16，迁移后 host 改为 localhost:5432，status 改为 connected"
+    sla: "ACID, MVCC, < 30ms read p50"
+    status: connected
+    provisioned_at: "2026-06-28"
+    note: "P2迁移已完成（2026-06-28闭环）：SQLite→PostgreSQL 16；连接配置 config/.env.postgres；统一入口 get_depgraph_pg_connection()；DEPGRAPH_DB_PATH 常量仅保留作历史路径引用"
 
   # --- OLAP 分析引擎（DuckDB 内存模式）---
   - infra_id: "INFRA-DB-004"
@@ -317,8 +317,8 @@ summary:
     warm: 4
     cold: 4
   by_status:
-    planned: 12
-    connected: 1
+    planned: 11
+    connected: 2
   dependency_map:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
     MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
@@ -344,6 +344,16 @@ summary:
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.0.4"
+    date: "2026-06-28"
+    author: "AI-GLM-5.2"
+    changes:
+      - "回填 INFRA-DB-003 P2迁移完成状态：host data/databases/depgraph.db→localhost:5432/depgraph，status planned→connected，provisioned_at null→2026-06-28"
+      - "更新 INFRA-DB-003 description：20+表→28表（PostgreSQL public schema 实测），新增 PostgreSQL 16 标注"
+      - "更新 INFRA-DB-003 sla：新增 MVCC 标注"
+      - "更新 INFRA-DB-003 note：从'P2迁移目标'改为'P2迁移已完成'，记录连接配置路径与统一入口函数"
+      - "更新 summary.by_status：planned 12→11，connected 1→2"
+      - "证据链：P2审查闭环报告(2026-06-28) + constants.py psycopg2切换 + config/.env.postgres + PG实例实测28表"
   - version: "1.0.3"
     date: "2026-06-27"
     author: "AI-GLM-5.2"

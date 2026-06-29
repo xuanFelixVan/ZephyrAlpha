@@ -16,7 +16,7 @@ category: documentation
 ﻿---
 module_id: AUDIT-04-REPORT
 status: Active
-doc_type: report
+doc_type: audit_report
 title: "AUDIT-04：企业架构 + architecture_model 全量审计报告"
 version: "1.1.0"
 date: "2026-05-06"

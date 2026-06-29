@@ -46,7 +46,7 @@ values:
     definition: "声明式规则——定义'是什么/必须/禁止'，不定义'如何做'"
     ai_consumption: "AI 读取并遵守，不执行步骤"
     examples: ["ABS-001: 所有数据源连接必须认证", "COND-001: P0 模块额外条件"]
-    doc_types: ["policy", "standard", "index", "gate", "roadmap", "readme", "service_spec", "architecture_view"]
+    doc_types: ["policy", "standard", "index", "gate", "readme", "service_spec", "architecture_view", "blueprint", "construction_plan"]
 
   - value: procedural
     definition: "过程式规则——定义'如何做'的步骤、检查清单、回滚方案"
@@ -64,7 +64,7 @@ values:
     definition: "结构类规则——定义文档/文件的结构骨架"
     ai_consumption: "AI 按模板生成文档"
     examples: ["blueprint-construction-template.md", "session-log-schema.yaml"]
-    doc_types: ["template", "blueprint", "construction_plan"]
+    doc_types: ["template"]  # v2.0.0: blueprint/construction_plan 的 rule_form 为 declarative（真源: doc_type_vocabulary.yaml）
 
 # ============================================================
 # AI 决策辅助：选择 rule_form 的判断标准
@@ -73,10 +73,10 @@ values:
 # 规则：每种 doc_type 强制绑定一种 rule_form（PS-STD-001 §2.6）。
 #
 # | 如果你的文件 doc_type 是... | rule_form 自动等于... |
-# | policy / standard / adr / index / gate / roadmap / readme / service_spec / architecture_view | declarative |
+# | policy / standard / index / gate / readme / service_spec / architecture_view / blueprint / construction_plan | declarative |
 # | operational_rule               | procedural            |
 # | register / vocabulary / contract / terminology / log / knowledge_entry / audit_report / config | data                  |
-# | template / blueprint / construction_plan | structural            |
+# | template                        | structural            |
 # ============================================================
 
 deprecated_values: []
@@ -86,8 +86,6 @@ mapping_rules:
   - rule: "doc_type: policy → rule_form: declarative"
     exceptions: []
   - rule: "doc_type: standard → rule_form: declarative"
-    exceptions: []
-  - rule: "doc_type: adr → rule_form: declarative"
     exceptions: []
   - rule: "doc_type: index → rule_form: declarative"
     exceptions: []
@@ -105,11 +103,9 @@ mapping_rules:
     exceptions: []
   - rule: "doc_type: gate → rule_form: declarative"
     exceptions: []
-  - rule: "doc_type: blueprint → rule_form: structural"
+  - rule: "doc_type: blueprint → rule_form: declarative"
     exceptions: []
-  - rule: "doc_type: construction_plan → rule_form: structural"
-    exceptions: []
-  - rule: "doc_type: roadmap → rule_form: declarative"
+  - rule: "doc_type: construction_plan → rule_form: declarative"
     exceptions: []
   - rule: "doc_type: readme → rule_form: declarative"
     exceptions: []

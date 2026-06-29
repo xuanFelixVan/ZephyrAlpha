@@ -24,7 +24,7 @@ ttl: permanent
 <!--
 COMPLIANCE_CHECKLIST — 机器可解析合规清单
 路线图模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
-脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template roadmap
+检查器：check_template_compliance.py 已于 2026-06-22 归档（见 scripts/_archive/retirement_log_20260622_055519.md），如需恢复按归档日志指引操作
 -->
 <!--
 REQUIRED_SECTIONS:
