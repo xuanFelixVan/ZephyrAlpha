@@ -51,6 +51,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from zephyr.shared.infra.observer import EventType, Observer
+from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "DeadLetter",

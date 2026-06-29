@@ -67,7 +67,7 @@ import duckdb
 import structlog
 
 from zephyr.governance.sqlite_schema import DB_PATH, init_db
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [
     "OLAPEngine",

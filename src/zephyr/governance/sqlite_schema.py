@@ -65,16 +65,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-
-def _find_repo_root() -> Path:
-    current = Path(__file__).resolve()
-    for parent in current.parents:
-        if (parent / "src" / "zephyr" / "__init__.py").exists():
-            return parent
-    raise FileNotFoundError(f"Cannot find project root from {current}")
-
-
-DB_PATH: Path = _find_repo_root() / "data" / "databases" / "governance.db"
+from zephyr.shared.io.paths import DB_PATH
 
 # ---------------------------------------------------------------------------
 # DDL — tasks 表

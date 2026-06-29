@@ -36,6 +36,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
+from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "GateRepo",

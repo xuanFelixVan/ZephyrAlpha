@@ -54,6 +54,7 @@ from pathlib import Path
 from typing import Any, TypeVar
 
 from zephyr.governance.sqlite_schema import DB_PATH
+from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "QueryMetrics",

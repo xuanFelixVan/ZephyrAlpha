@@ -58,7 +58,7 @@ from zephyr.governance.sqlite_schema import (
     init_db,
     schema_version,
 )
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [
     "DatabaseHealthStatus",

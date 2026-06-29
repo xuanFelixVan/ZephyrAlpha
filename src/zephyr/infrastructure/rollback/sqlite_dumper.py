@@ -53,6 +53,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.utils.time_utils import now_iso
+from zephyr.shared.io.paths import DB_PATH
 
 __all__ = [
     "DumpResult",

@@ -139,8 +139,6 @@ if __name__ == "__main__":
 from pydantic import BaseModel as _PydanticBaseModel
 
 
-
-from zephyr.shared.io.paths import REPO_ROOT
 class KnowledgeTransferRecord(_PydanticBaseModel):
     transferred_at: datetime
     health_score: str = "A"

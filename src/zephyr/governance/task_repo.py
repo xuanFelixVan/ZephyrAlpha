@@ -88,7 +88,7 @@ from zephyr.integration.shared.schema.severity_types import Priority
 from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolationError
 from zephyr.shared.utils.time_utils import now_iso
 from zephyr.shared.task_types import Task, TaskCard, TaskNamespace, TaskStatus
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 
 __all__ = [
     "CIRCULAR_ACCEPTANCE_ROUNDS",

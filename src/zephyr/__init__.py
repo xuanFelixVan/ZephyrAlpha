@@ -31,7 +31,9 @@ from typing import Any, Optional
 
 
 def _load_dotenv() -> None:
-    env_path = Path(__file__).resolve().parents[2] / ".env"
+    from zephyr.shared.io.paths import REPO_ROOT
+
+    env_path = REPO_ROOT / ".env"
     if not env_path.exists():
         return
     try:

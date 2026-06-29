@@ -77,7 +77,7 @@ from typing import Any, ClassVar
 
 import yaml
 
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from zephyr.governance.rule_enforcement.gate_types import (
     GateEngineError,
     GateResult,

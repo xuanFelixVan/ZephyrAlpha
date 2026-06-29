@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
 

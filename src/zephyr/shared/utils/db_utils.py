@@ -27,6 +27,7 @@ db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governance.sqlite_schema�
 from __future__ import annotations
 
 import importlib as _il
+from zephyr.shared.io.paths import DB_PATH
 
 _mod = _il.import_module("zephyr.governance.sqlite_schema")
 DB_PATH = _mod.DB_PATH
