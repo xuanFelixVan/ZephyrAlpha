@@ -26,7 +26,7 @@ audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整�
   D1 幽灵文件    —— 磁盘存在但未在任何 index.md 中注册的文件
   D2 ID 冲突     —— 两个以上文件声明相同 module_id
   D3 索引对账    —— index.md 声称文件数 vs 磁盘实际文件数
-  D4 命名规范    —— 文件名后缀是否匹配 doc_type（-policy.md / -standard.md / -protocol.md 等）
+  D4 命名规范    —— 文件名后缀是否匹配 doc_type（-policy.md / -blueprint.md / -gate.md 等）
   D5 登记缺漏    —— 有 index.md 的目录下，文件是否都在 index.md §2 中有对应条目
 
 Usage:

@@ -60,7 +60,6 @@ depgraph:
   excluded_node_types:
     - doc          # 文档文件(0 import edges)
     - policy       # 政策文档(0 import edges)
-    - standard     # 标准文档(0 import edges)
     - template     # 模板文档(0 import edges)
     - diagram      # mermaid 图表(0 import edges)
     - data         # 数据文件(0 import edges)
@@ -78,7 +77,6 @@ depgraph:
       - docs/01_policies_and_standards/governance/
       - docs/01_policies_and_standards/domains/
       - docs/01_policies_and_standards/operational/
-    standard:
       - docs/01_policies_and_standards/rules/
     template:
       - docs/01_policies_and_standards/templates/

@@ -15,7 +15,7 @@ horizon_end: YYYY-MM-DD
 summary: 一段话说清本路线图覆盖的时间范围、主题焦点与核心里程碑。
 completeness: "unknown"
 
-template_for: roadmap
+template_for: blueprint
 
 date: '2026-04-22'
 ttl: permanent

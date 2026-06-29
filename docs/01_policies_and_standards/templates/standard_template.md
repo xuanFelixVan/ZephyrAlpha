@@ -15,9 +15,9 @@ rule_form: declarative
 scope: global
 stability: evolving
 status: Draft
-summary: 标准文档创建模板——声明式规范，定义度量/格式/接口，新建 standard 类文档时使用此模板
+summary: 标准文档创建模板——声明式规范，定义度量/格式/接口，新建 policy 类文档时使用此模板
 tags: []
-template_for: standard
+template_for: policy
 title: Standard Template
 ttl: permanent
 verifiability: manual

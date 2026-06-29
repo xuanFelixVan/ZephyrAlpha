@@ -23,7 +23,7 @@ deep_content_scanner.py — 深度内容扫描器
 检测内容：
 - 启发式检测 doc_type 与正文关键词不匹配
 - 如 doc_type=policy 但正文含"Step 1→N"（应为 operational_rule）
-- 如 doc_type=standard 但正文含"如果…那么…"条件句（应为 policy）
+- 如 doc_type=policy 但正文含步骤性内容（应为 operational_rule）
 - 结果需人工复核
 
 exit codes: 0=pass, 1=findings, 2=error

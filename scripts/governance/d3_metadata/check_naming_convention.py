@@ -598,7 +598,7 @@ _DOC_TYPE_RE = re.compile(r"^doc_type:\s*(\S+)", re.MULTILINE)
 
 def _check_n11_doctype_suffix(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
     """01_policies_and_standards/ 下文件名后缀必须匹配 frontmatter doc_type。
-    强化: 扩展 doc_type 映射表(terminology/blueprint/catalog/guide/reference/log/report);
+    强化: 扩展 doc_type 映射表(vocabulary/blueprint/register/architecture_view/audit_report);
           YAML 文件也检查 doc_type 与后缀一致性;
           支持路径型后缀(如 _registry/vocabularies/glossary.yaml)
     """

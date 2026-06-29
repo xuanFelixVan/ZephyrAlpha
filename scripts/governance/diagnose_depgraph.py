@@ -23,7 +23,6 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 # 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源，未使用）。
 # P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
 
@@ -32,7 +31,9 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+
+PROJECT_ROOT = REPO_ROOT
 
 LAYER_MAP = {
     "L00": 0,
@@ -53,7 +54,7 @@ LAYER_MAP = {
 
 LAYER_KEYS_SORTED = sorted(LAYER_MAP.keys(), key=lambda x: -len(x))
 
-ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "standard", "template", "schema", "data", "config"}
+ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "template", "schema", "data", "config"}
 
 
 def load_depgraph():

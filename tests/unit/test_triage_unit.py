@@ -53,7 +53,7 @@ def _make_rich_md(
     )
     content = (
         f"---\nmodule_id: {module_id}\ntitle: {title}\ncategory: {category}\n"
-        f"classification: {classification}\ndoc_type: design\ndomain: infra_ops\n---\n\n{body}"
+        f"classification: {classification}\ndoc_type: blueprint\ndomain: infra_ops\nlayer: shared\n---\n\n{body}"
     )
     p = tmp_path / name
     p.write_text(content, encoding="utf-8", newline="\n")

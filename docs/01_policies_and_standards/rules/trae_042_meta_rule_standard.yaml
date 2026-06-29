@@ -39,7 +39,7 @@ sections:
       fail: 层级与章节不匹配
     actions:
     - type: mandatory
-      step: L1治理模板(policy/standard/ai_governance)使用MUST/SHOULD/MAY；L2设计模板(blueprint/design/service_spec)使用SHOULD/MAY禁止MUST；L3基础模板(adr等)禁止规范性语言
+      step: L1治理模板(policy/register)使用MUST/SHOULD/MAY；L2设计模板(blueprint/architecture_view)使用SHOULD/MAY禁止MUST；L3基础模板禁止规范性语言
     prohibitions:
     - L3文档使用MUST/SHOULD
     - L2文档使用MUST
@@ -802,7 +802,7 @@ sections:
     - PS-STD-002 §1
     summary: ZephyrAlpha标准文档的元标准——定义三层模板体系(L1/L2/L3)确保标准文档可追溯/可同步/可仲裁/可验证
     applies_to:
-    - 所有policy/standard/ai_governance/blueprint/design/service_spec/adr类文档
+    - 所有policy/register/blueprint/architecture_view类文档
     responsibility_scope:
     - 标准文档的章节结构——L1/L2/L3三层模板体系
     - 标准文档的治理机制——SSoT声明消费者注册表变更同步规则
@@ -819,7 +819,7 @@ sections:
       description: 三层模板体系(对标ISO/IEC Directives Part 2、IETF RFC 7841、IEEE SA Operations Manual、W3C Process Document的分层做法)
       layers:
       - layer: L1治理模板
-        applicable_doc_types: policy/standard/ai_governance
+        applicable_doc_types: policy/register
         benchmark_organizations: ISO IS / IETF Standards Track / IEEE Standard / W3C REC
         normative_language: MUST/SHOULD/MAY
         note: 含4种标准子类型(§3.2)——行为规则型/数据注册表型/宪法原则型/格式定义型——不同子类型适用不同章节集合
@@ -827,9 +827,9 @@ sections:
         applicable_doc_types: blueprint/architecture_view
         benchmark_organizations: ISO TS / IETF BCP / IEEE RecPractice
         normative_language: SHOULD/MAY
-        note: 'construction_plan原为独立L2模板，已于2026-05-02合并入blueprint(§2施工指引)。对历史文档doc_type: construction_plan仍保留'
+        note: 'construction_plan原为独立L2模板，已于2026-05-02合并入blueprint(§2施工指引)。历史文档已迁移，新建文档禁止使用 construction_plan'
       - layer: L3基础模板(轻量5章)
-        applicable_doc_types: adr及其他所有doc_type
+        applicable_doc_types: 其他所有doc_type
         benchmark_organizations: ISO TR / IETF Informational / IEEE Guide / W3C Note
         normative_language: 禁止MUST/SHOULD
       core_distinction: 规范性语言是分层的核心——L1允许最高级规范性语言(MUST)，L2降级为SHOULD，L3完全禁止规范性语言。信息性文档使用MUST会导致读者误以为有强制约束力
@@ -853,7 +853,7 @@ sections:
     summary: SSoT——frontmatter模板的唯一真源是templates/目录下的骨架文件AI创建新文件时从templates/复制frontmatter字段定义以PS-STD-001为准
     conditions:
     - type: trigger
-      check: 创建policy/standard文档时
+      check: 创建policy文档时
       pass: frontmatter从templates/目录对应骨架文件复制
       fail: 手写frontmatter导致字段缺失或格式错误
     optional_fields:
@@ -1303,7 +1303,7 @@ sections:
       dependency: frontmatter必填字段校验(以metadata_registry.yaml为准间接依赖本模板的章节定义)
       sync_requirement: 间接依赖
     tier_2_consumers:
-    - file: 所有doc_type policy或doc_type standard文档
+    - file: 所有doc_type policy文档
       reference: 按§3章节清单编写
     - file: docs/01_policies_and_standards/templates/blueprint-construction-template.md
       reference: 参考本模板的治理章节设计
@@ -1324,7 +1324,7 @@ sections:
     sync_matrix:
     - change_type: 新增必须章节
       tier_1: 更新GATE-15校验逻辑
-      tier_2: 所有policy/standard文档补上新章节
+      tier_2: 所有policy文档补上新章节
       tier_3: 无需操作
     - change_type: 修改章节格式
       tier_1: 无需操作
@@ -1332,7 +1332,7 @@ sections:
       tier_3: 无需操作
     - change_type: 新增frontmatter字段
       tier_1: 同commit更新校验脚本
-      tier_2: 所有policy/standard文档补上新字段
+      tier_2: 所有policy文档补上新字段
       tier_3: 同commit更新PS-STD-001
     actions:
     - type: mandatory
@@ -1365,7 +1365,7 @@ sections:
     - PS-STD-002 §20
     summary: pre-commit hook应报告的格式违规情况清单
     violation_types:
-    - policy/standard文档缺少§3规定的必须章节
+    - policy文档缺少§3规定的必须章节
     - frontmatter缺少§2规定的必填字段
     - 文件名包含大写字母
     - 文件名包含版本号后缀

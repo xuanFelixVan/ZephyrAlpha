@@ -120,12 +120,12 @@ sections:
     - value: L1
       meaning: 治理层——最高权威，可使用MUST
       normative_language: MUST/SHOULD/MAY
-      doc_types: policy, standard, ai_governance
+      doc_types: policy, register
       chapters: 6~15章(按子类型，见PS-STD-002 §3.2)
     - value: L2
       meaning: 设计层——中等权威，禁止MUST
       normative_language: SHOULD/MAY
-      doc_types: blueprint, construction_plan, adr, design, service_spec
+      doc_types: blueprint, architecture_view
       chapters: 10章
     - value: L3
       meaning: 基础层——信息性，禁止规范性语言
@@ -666,11 +666,6 @@ sections:
       v2: 每次修改
       v3: 每月
       v4: 每年
-    - rule_type: doc_type standard
-      v1: 每次修改
-      v2: 每次修改
-      v3: 每季度
-      v4: 每年
     - rule_type: doc_type operational_rule
       v1: 每次执行
       v2: 每次提交
@@ -793,7 +788,7 @@ sections:
     - step: Step2内容读取(人工/AI深度审查对应V5)
       operations:
       - 对Step1通过的文件逐文件打开并阅读正文内容
-      - 声明式规则(policy/standard/protocol)正文应是"什么必须/禁止/推荐"不是"怎么做"
+      - 声明式规则(policy)正文应是"什么必须/禁止/推荐"不是"怎么做"
       - 过程式规则(operational_rule)正文应是"Step 1→N操作步骤"不是声明式禁令
       - 注册表(register)正文应是结构化数据清单不是叙事散文
       - 索引入口(index)正文应只是目录导航不含规则文本
@@ -844,7 +839,7 @@ sections:
       verdict: 标签+位置均错误
       action: 搬到session_logs/
     - content: 声明式规则
-      doc_type_claimed: policy/standard/protocol
+      doc_type_claimed: policy
       actual_content: 确实是规则
       verdict: 正确
       action: 原地不动

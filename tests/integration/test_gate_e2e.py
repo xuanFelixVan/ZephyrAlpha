@@ -102,7 +102,7 @@ def _write_valid_file(directory: Path, name: str) -> Path:
     path = directory / name
     frontmatter = (
         "---\n"
-        "doc_type: best_practice\n"
+        "doc_type: policy\n"
         "title: 测试文件\n"
         "version: 1.0.0\n"
         "status: active\n"
@@ -279,7 +279,7 @@ class TestGateDegradation:
         crlf_file = tmp_path / "crlf_output.md"
         frontmatter = (
             "---\r\n"
-            "doc_type: best_practice\r\n"
+            "doc_type: policy\r\n"
             "title: T\r\nversion: 1.0.0\r\nstatus: active\r\n"
             "date: 2026-01-01\r\nowner: X\r\nttl: permanent\r\n"
             "---\r\n"

@@ -139,7 +139,7 @@ valid_values:
 violation_severity: P1  # 无效状态值
 
 adr_status_mapping: |
-  KB 决策记录（doc_type: adr）使用独立生命周期：proposed → accepted → superseded → deprecated → skipped/reserved。
+  KB 决策记录（doc_type: audit_report）使用独立生命周期：proposed → accepted → superseded → deprecated → skipped/reserved。
   在 KB 决策记录 frontmatter 中，status: active 语义等价于 accepted（已批准且为当前决策依据），允许混用。
   推荐：新 KB 决策记录使用 accepted，已存在的 active 声明无需批量迁移。
 

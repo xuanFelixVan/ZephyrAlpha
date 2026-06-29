@@ -36,10 +36,10 @@ import yaml
 _GOV_DIR = str(Path(__file__).resolve().parent)
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
 import psycopg2  # noqa: E402
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 # === 扫描排除配置（从 YAML 配置文件加载，真源: depgraph_scan_exclusions.yaml）===
 # 规则定义: docs/01_policies_and_standards/rules/trae_058_depgraph_scan_exclusions.yaml
@@ -102,8 +102,8 @@ _FALLBACK_TYPE_PREFIXES = {
         "docs/01_policies_and_standards/governance/",
         "docs/01_policies_and_standards/domains/",
         "docs/01_policies_and_standards/operational/",
+        "docs/01_policies_and_standards/rules/",
     ],
-    "standard": ["docs/01_policies_and_standards/rules/"],
     "template": ["docs/01_policies_and_standards/templates/"],
     "registry": [
         "docs/01_policies_and_standards/_registry/catalogs/",
@@ -126,7 +126,6 @@ NODE_TYPES_FILE = [
     "doc",
     "blueprint",
     "policy",
-    "standard",
     "template",
     "diagram",
 ]
@@ -156,7 +155,7 @@ EDGE_TYPES = [
 
 CODE_TYPES = {"module", "script", "test"}
 CONFIG_TYPES = {"config", "registry", "contract", "schema", "gate"}
-DOC_TYPES = {"doc", "blueprint", "policy", "standard", "template", "diagram"}
+DOC_TYPES = {"doc", "blueprint", "policy", "template", "diagram"}
 DOMAIN_TYPES = set(NODE_TYPES_DOMAIN)
 
 EXEMPT_DIRS = set(_DEPGRAPH_CONFIG.get("exempt_dirs", list(_FALLBACK_EXEMPT_DIRS)))
@@ -912,7 +911,6 @@ def count_header_completeness(filepath) -> int:
 # Type classification prefixes — loaded from depgraph_scan_exclusions.yaml
 _type_prefixes_cfg = _DEPGRAPH_CONFIG.get("type_prefixes", {})
 POLICY_PREFIXES = _type_prefixes_cfg.get("policy", _FALLBACK_TYPE_PREFIXES["policy"])
-STANDARD_PREFIXES = _type_prefixes_cfg.get("standard", _FALLBACK_TYPE_PREFIXES["standard"])
 TEMPLATE_PREFIXES = _type_prefixes_cfg.get("template", _FALLBACK_TYPE_PREFIXES["template"])
 REGISTRY_PREFIXES = _type_prefixes_cfg.get("registry", _FALLBACK_TYPE_PREFIXES["registry"])
 CONTRACT_PREFIXES = _type_prefixes_cfg.get("contract", _FALLBACK_TYPE_PREFIXES["contract"])
@@ -1164,8 +1162,6 @@ def classify_file(rel_path: str) -> str:
             return "blueprint"
         if any(rp.startswith(p) for p in TEMPLATE_PREFIXES):
             return "template"
-        if any(rp.startswith(p) for p in STANDARD_PREFIXES):
-            return "standard"
         if any(rp.startswith(p) for p in POLICY_PREFIXES):
             return "policy"
         if any(rp.startswith(p) for p in SCHEMA_PREFIXES):
@@ -1420,7 +1416,6 @@ def build_depgraph(
             "schema": 8,
             "gate": 9,
             "policy": 10,
-            "standard": 11,
             "template": 12,
             "diagram": 13,
             "data": 14,
@@ -1886,7 +1881,7 @@ def build_depgraph(
     type_groups = [
         ("internal_modules", {"module"}),
         ("external_libraries", set()),
-        ("docs", {"doc", "blueprint", "policy", "standard", "template", "diagram"}),
+        ("docs", {"doc", "blueprint", "policy", "template", "diagram"}),
         ("scripts", {"script"}),
         ("gates", {"gate"}),
         ("data_assets", {"data", "config", "registry", "contract", "schema"}),
@@ -3245,12 +3240,12 @@ def derive_stability_fallback(node_type: str, path: str) -> str:
     """G3修复：根据节点类型和路径推导合理的stability默认值
 
     替代无脑fallback='evolving'：
-    - gate/policy/standard → frozen（治理规则不可变）
+    - gate/policy → frozen（治理规则不可变）
     - config/registry → stable（配置相对稳定）
     - test → evolving（测试可变）
     - module/script → evolving（默认开发中）
     """
-    if node_type in ("gate", "policy", "standard"):
+    if node_type in ("gate", "policy"):
         return "frozen"
     if node_type in ("config", "registry", "schema", "contract"):
         return "stable"
@@ -3263,11 +3258,11 @@ def derive_autonomy_fallback(node_type: str, path: str) -> str:
     """G4修复：根据节点类型和路径推导合理的ai_autonomy默认值
 
     替代无脑fallback='ai_modifiable'：
-    - gate/policy/standard → immutable_core（治理规则AI不可改）
+    - gate/policy → immutable_core（治理规则AI不可改）
     - config/registry/schema → human_gated（配置需人工审批）
     - module/script/test → ai_modifiable（代码AI可改）
     """
-    if node_type in ("gate", "policy", "standard"):
+    if node_type in ("gate", "policy"):
         return "immutable_core"
     if node_type in ("config", "registry", "schema", "contract"):
         return "human_gated"
