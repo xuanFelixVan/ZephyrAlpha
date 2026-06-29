@@ -3,10 +3,10 @@
 # [MODULE] scripts.governance.d1_structure.check_directory_contract
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] _shared.constants; _shared.frontmatter; _shared.walk
-# [CONSUMERS] .pre-commit-config.yaml GATE-DIRECTORY-CONTRACT (planned, Phase 4)
-# [STARTUP] manual
-# [MATURITY] prototype
-# [INVARIANTS] 真源为 directory_contract.yaml；DCR-001/002 待 doc_type_vocabulary.yaml 路径对齐后启用（Phase 2.2）；只读校验不修改文件
+# [CONSUMERS] .pre-commit-config.yaml GATE-DIRECTORY-CONTRACT (pre-commit hook，已启用)
+# [STARTUP] auto_pre_commit
+# [MATURITY] production
+# [INVARIANTS] 真源为 directory_contract.yaml + doc_type_vocabulary.yaml；DCR-001~007 全部已启用；只读校验不修改文件
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -28,7 +28,7 @@ Implemented checks (DCR-001~007):
   DCR-006: file extension not in directory_extensions.forbidden (error)
   DCR-007: root directory file in root_directory_whitelist  (error)
 
-DCR-001/002 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）
+DCR-001/002 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）、.trae/（IDE 工具区）、docs/01_policies_and_standards/templates/（模板区 TMP-EX-001）
 DCR-001/002 真源：doc_type_vocabulary.yaml values[].allowed_directories/forbidden_directories
 
 Modes:

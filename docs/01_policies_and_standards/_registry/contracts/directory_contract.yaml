@@ -23,9 +23,10 @@
 #   - 本契约收敛目录维度到一处，词表维度保留在各自 vocabulary.yaml
 #
 # 消费者：
-#   - check_directory_contract.py（Phase 4 创建）—— pre-commit/CI 目录校验
-#   - GitCommitGateway._PERMANENT_ZONE_DIRS（Phase 2.3 改为从本契约动态加载）
-#   - check_frontmatter_metadata.py（ttl 校验从本契约读取永久区路径）
+#   - check_directory_contract.py（已创建）—— pre-commit/CI 目录校验，DCR-001~007 全部启用
+#   - GitCommitGateway._PERMANENT_ZONE_DIRS（已改为从本契约动态加载，git_commit_gateway.py:140-144）
+#   - backfill_ttl_metadata.py（路径→ttl 推断，经 ttl_vocabulary.yaml decision_tree Q3 的 criteria_source 间接读取本契约永久区路径）
+#   - check_src_no_data.py（从本契约 global_forbidden[].forbidden_prefix 动态加载 forbidden 前缀）
 #
 # 对标标准：
 #   - OpenAPI 3.1：契约先行（先定义规则，再验证合规）
@@ -52,7 +53,7 @@ last_updated: "2026-06-29"
 # 0. 真源溯源（三维来源声明）
 # ============================================================
 # 每个维度标明原真源文件、是否已迁入本契约、迁移后的原文件处理方式。
-# migrated=true 的维度：原文件的对应内容应改为指针引用本契约（Phase 2.1/2.2 执行）。
+# migrated=true 的维度：原文件的对应内容已改为指针引用本契约。
 # migrated=false 的维度：保留在原文件（doc_type 属性，不拆出）。
 
 sources:
@@ -60,13 +61,13 @@ sources:
     target: "trae_047_engineering_file_header.yaml §gov_eng_002_directory_mapping"
     path: "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
     migrated: true
-    migration_note: "原 §gov_eng_002_directory_mapping 的 actions 散文式步骤已结构化为下方 directory_extensions。trae_047 改为指针引用本契约（Phase 2.1）"
+    migration_note: "原 §gov_eng_002_directory_mapping 的 actions 散文式步骤已结构化为下方 directory_extensions。trae_047 已改为指针引用本契约"
 
   - dimension: directory_ttl
     target: "ttl_vocabulary.yaml decision_tree Q3"
     path: "docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml"
     migrated: true
-    migration_note: "原 Q3 永久区路径判定已结构化为下方 directory_zones.permanent.paths。ttl_vocabulary 保留 ttl 值定义和 Q1/Q2 内容判定（Phase 2.2）"
+    migration_note: "原 Q3 永久区路径判定已结构化为下方 directory_zones.permanent.paths。ttl_vocabulary 保留 ttl 值定义和 Q1/Q2 内容判定"
 
   - dimension: doc_type_directory
     target: "doc_type_vocabulary.yaml values[].allowed_directories/forbidden_directories"

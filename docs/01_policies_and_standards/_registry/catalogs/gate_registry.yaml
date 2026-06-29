@@ -162,10 +162,10 @@ gates:
   category: unknown
   status: active
 - gate_id: GATE-DIRECTORY-CONTRACT
-  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-003~007，真源 directory_contract.yaml）'
+  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml + doc_type_vocabulary.yaml）'
   entry: python scripts/governance/d1_structure/check_directory_contract.py
-  description: 目录契约校验——消费 directory_contract.yaml（三维目录约束唯一真源），校验 staged 文件的扩展名/ttl/根目录白名单合规性。DCR-001/002
-    待 Phase 2.2 doc_type_vocabulary 路径对齐后启用
+  description: 目录契约校验——消费 directory_contract.yaml + doc_type_vocabulary.yaml，校验 staged 文件的 doc_type 目录归属/扩展名/ttl/根目录白名单合规性。DCR-001~007
+    全部已启用
   files_trigger: ''
   always_run: false
   category: unknown
