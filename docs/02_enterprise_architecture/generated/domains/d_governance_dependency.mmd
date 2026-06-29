@@ -1,5 +1,5 @@
 %% D-GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 2813, 依赖边数: 3558
 
@@ -331,35 +331,6 @@ graph TD
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance___init___py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    %% D-INFRA_A2A -> D-GOVERNANCE (2 条)
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    %% D-INFRA_OPS -> D-GOVERNANCE (8 条)
-    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_OPS[D-INFRA_OPS] -->|test_depends| src_zephyr_governance___init___py
-    D_INFRA_OPS[D-INFRA_OPS] -->|test_depends| src_zephyr_governance___init___py
-    D_INFRA_OPS[D-INFRA_OPS] -->|test_depends| src_zephyr_governance___init___py
-    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| src_zephyr_governance___init___py
-    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| src_zephyr_governance___init___py
-    D_INFRA_OPS[D-INFRA_OPS] -->|config_depends| src_zephyr_governance___init___py
-    %% D-INFRA_RECOVERY -> D-GOVERNANCE (4 条)
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance___init___py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance___init___py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    %% D-INFRA_RUNTIME -> D-GOVERNANCE (9 条)
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    %% D-INFRA_TELEMETRY -> D-GOVERNANCE (1 条)
-    D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_governance___init___py
     %% D-INTEGRATION -> D-GOVERNANCE (11 条)
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance___init___py
@@ -478,6 +449,35 @@ graph TD
     D_TRADING[D-TRADING] -->|runtime| docs_03_modules__cross_layer_mcp_servers_blueprint_md
     D_TRADING[D-TRADING] -->|runtime| docs_03_modules__domain_autono___udget_enforcer_blueprint_md
     D_TRADING[D-TRADING] -->|contract| docs_03_modules__domain_autono___ore_agent_spec_blueprint_md
+    %% D_INFRA_A2A -> D-GOVERNANCE (2 条)
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    %% D_INFRA_OPS -> D-GOVERNANCE (8 条)
+    D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_OPS[D_INFRA_OPS] -->|test_depends| src_zephyr_governance___init___py
+    D_INFRA_OPS[D_INFRA_OPS] -->|test_depends| src_zephyr_governance___init___py
+    D_INFRA_OPS[D_INFRA_OPS] -->|test_depends| src_zephyr_governance___init___py
+    D_INFRA_OPS[D_INFRA_OPS] -->|config_depends| src_zephyr_governance___init___py
+    D_INFRA_OPS[D_INFRA_OPS] -->|config_depends| src_zephyr_governance___init___py
+    D_INFRA_OPS[D_INFRA_OPS] -->|config_depends| src_zephyr_governance___init___py
+    %% D_INFRA_RECOVERY -> D-GOVERNANCE (4 条)
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    %% D_INFRA_RUNTIME -> D-GOVERNANCE (9 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    %% D_INFRA_TELEMETRY -> D-GOVERNANCE (1 条)
+    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_governance___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-GOVERNANCE -> D-AUTONOMY_CORE (214 条)
@@ -691,44 +691,6 @@ graph TD
     tests_unit_governance_test_val___print_overlap_governance_py -->|test_depends| D_GOV_SCRIPTS[D-GOV_SCRIPTS]
     tests_unit_governance_test_val___ource_cascade_governance_py -->|test_depends| D_GOV_SCRIPTS[D-GOV_SCRIPTS]
     tests_unit_governance_test_validate_ssot_governance_py -->|test_depends| D_GOV_SCRIPTS[D-GOV_SCRIPTS]
-    %% D-GOVERNANCE -> D-INFRA_A2A (6 条)
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    %% D-GOVERNANCE -> D-INFRA_RUNTIME (124 条)
-    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_a2a____ocol_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_card_registry_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_governance_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_negotiation_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_layer1_discovery_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_saga_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_state_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_schemas_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_voting_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_a2a_work_steal_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_arbitrator_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_auto_diagnostics_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_cascade_guard_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_classifier_root_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_conflict_detector_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_config_validator_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_contract_tester_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_cost_tracker_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_dashboard_root_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_deadlock_guard_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_dependency_root_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_dry_run_simulator_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_event_bus_upgrade_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_event_store_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_file_watcher_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_finding_task_bridge_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    tests_test_index_generator_root_py -->|test_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     %% D-GOVERNANCE -> D-INTEGRATION (230 条)
     src_zephyr_governance_approval_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_governance_base_repo_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -976,6 +938,44 @@ graph TD
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D-TRADING]
+    %% D-GOVERNANCE -> D_INFRA_A2A (6 条)
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    %% D-GOVERNANCE -> D_INFRA_RUNTIME (124 条)
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_governance_server_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_a2a____ocol_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_card_registry_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_governance_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_negotiation_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_layer1_discovery_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_saga_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_state_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_schemas_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_voting_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_a2a_work_steal_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_arbitrator_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_auto_diagnostics_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_cascade_guard_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_classifier_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_conflict_detector_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_config_validator_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_contract_tester_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_cost_tracker_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_dashboard_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_deadlock_guard_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_dependency_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_dry_run_simulator_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_event_bus_upgrade_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_event_store_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_file_watcher_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_finding_task_bridge_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_test_index_generator_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 1168 条

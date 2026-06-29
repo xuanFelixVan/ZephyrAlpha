@@ -1,5 +1,5 @@
-%% D-INFRA_RECOVERY 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% D_INFRA_RECOVERY 域全景依赖图
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 107, 依赖边数: 130
 
@@ -194,12 +194,12 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-INFRA_RECOVERY -> D-GOVERNANCE (4 条)
+    %% D_INFRA_RECOVERY -> D-GOVERNANCE (4 条)
     src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-INFRA_RECOVERY -> D-GOV_AUDIT (7 条)
+    %% D_INFRA_RECOVERY -> D-GOV_AUDIT (7 条)
     src_zephyr_infrastructure_rollback_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_infrastructure_rollback_contracts_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
@@ -207,46 +207,46 @@ graph TD
     src_zephyr_infrastructure_roll____rollback_abuse_detector_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-INFRA_RECOVERY -> D-INFRA_RUNTIME (33 条)
-    src_zephyr_infrastructure_auto____engine_alignment_syncer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto___engine_dep_version_fixer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto____engine_fix_health_check_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto___engine_fix_pattern_miner_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto____engine_shadow_workspace_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto___ngine_scaffold_registrar_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_auto_fix_engine___main___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_reliability___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    %% D-INFRA_RECOVERY -> D-INTEGRATION (2 条)
+    %% D_INFRA_RECOVERY -> D-INTEGRATION (2 条)
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
-    %% D-INFRA_RECOVERY -> D-SHARED (5 条)
+    %% D_INFRA_RECOVERY -> D-SHARED (5 条)
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_infrastructure_auto_fix_engine_state_machine_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D_INFRA_RECOVERY -> D_INFRA_RUNTIME (33 条)
+    src_zephyr_infrastructure_auto____engine_alignment_syncer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto___ngine_compliance_auditor_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto___engine_dep_version_fixer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto___engine_escalation_bridge_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto____engine_fix_health_check_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto___engine_fix_pattern_miner_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto____engine_shadow_workspace_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto___ngine_scaffold_registrar_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_auto_fix_engine___main___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_reliability___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_infrastructure_rollback_phase_manager_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 79 条

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D-INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -911,8 +911,8 @@ graph TD
 | D-TRADING | 49 | event,import_depends |
 | D-AUTONOMY_CORE | 24 | import_depends |
 | D_INFRA_RUNTIME | 20 | import_depends |
-| D-GOV_SCRIPTS | 13 | import_depends |
 | D-GOV_ENFORCEMENT | 13 | import_depends |
+| D-GOV_SCRIPTS | 13 | import_depends |
 | D-GOV_DOCS | 11 | import_depends |
 | D-SHARED | 7 | import_depends |
 | D-OPS | 6 | import_depends,runtime |
@@ -920,11 +920,11 @@ graph TD
 | D-GOV_AUDIT | 5 | import_depends |
 | D-BEHAVIORAL_AUDIT | 3 | import_depends |
 | D-SECURITY | 2 | import_depends |
-| D_INFRA_RECOVERY | 2 | import_depends |
 | D-SIMULATION | 2 | import_depends |
 | D-AUTONOMY_PERM | 2 | test_depends |
-| D-KNOWLEDGE | 1 | test_depends |
+| D_INFRA_RECOVERY | 2 | import_depends |
 | D_INFRA_A2A | 1 | import_depends |
+| D-KNOWLEDGE | 1 | test_depends |
 | D-GOV_RULE | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview

@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D-KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -62,13 +62,13 @@ graph TD
         tests_unit_vector_memory_init_py["tests/unit/vector_memory/__init__.py prototype"]
         tests_unit_vector_memory_test_vector_memory_py["tests/unit/vector_memory/test_vector_memory.py prototype"]
     end
-    D_GOVERNANCE["D-GOVERNANCE design"]
-    docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_skill_knowledge_base_py -.->|test_depends| D_AUTONOMY_CORE
+    D_GOVERNANCE["D-GOVERNANCE production"]
+    tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
     D_INTEGRATION["D-INTEGRATION production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_INTEGRATION
-    tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
+    docs_03_modules_domain_knowledge_vector_memory_blueprint_md -.->|runtime| D_GOVERNANCE
     D_GOVERNANCE -.->|contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -76,8 +76,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class architecture_model_layers_b_vector_memory_yaml production
     class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,src_zephyr_knowledge_init_py,src_zephyr_knowledge_extensions_init_py,src_zephyr_knowledge_api_init_py,src_zephyr_knowledge_core_init_py,src_zephyr_knowledge_infrastructure_init_py,src_zephyr_knowledge_models_init_py,src_zephyr_knowledge_services_init_py,tests_test_skill_knowledge_base_py,tests_test_vector_memory_root_py,tests_unit_vector_memory_init_py,tests_unit_vector_memory_test_vector_memory_py design
-    class D_AUTONOMY_CORE,D_INTEGRATION external_prod
-    class D_GOVERNANCE external_design
+    class D_AUTONOMY_CORE,D_GOVERNANCE,D_INTEGRATION external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

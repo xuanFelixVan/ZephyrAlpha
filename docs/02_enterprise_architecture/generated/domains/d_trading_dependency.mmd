@@ -1,5 +1,5 @@
 %% D-TRADING 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 159, 依赖边数: 567
 
@@ -350,10 +350,6 @@ graph TD
     src_zephyr_trading_orchestrator_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     src_zephyr_trading_orchestrator_core_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     src_zephyr_trading_ide_health_daemon_py -->|contract| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-TRADING -> D-INFRA_RUNTIME (3 条)
-    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_trading_orchestrator_script_runner_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_trading_ide_health_daemon_py -->|contract| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     %% D-TRADING -> D-INTEGRATION (49 条)
     src_zephyr_trading_ai_audit_logger_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -434,6 +430,10 @@ graph TD
     src_zephyr_trading_orchestrator_batch_orchestrator_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_contract_registry_py -->|import_depends| D_SHARED[D-SHARED]
     src_zephyr_trading_orchestrator_chaos_hooks_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-TRADING -> D_INFRA_RUNTIME (3 条)
+    src_zephyr_trading_resource_optimization_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_trading_orchestrator_script_runner_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_trading_ide_health_daemon_py -->|contract| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 138 条

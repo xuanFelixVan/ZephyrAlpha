@@ -1,5 +1,5 @@
 %% D-INTEGRATION 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 280, 依赖边数: 794
 
@@ -305,32 +305,6 @@ graph TD
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_integration___init___py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_integration___init___py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_integration___init___py
-    %% D-INFRA_A2A -> D-INTEGRATION (1 条)
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_integration_shared_08_foundation_constants_py
-    %% D-INFRA_RECOVERY -> D-INTEGRATION (2 条)
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
-    %% D-INFRA_RUNTIME -> D-INTEGRATION (20 条)
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_foundation_errors_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_foundation_errors_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared____ifecycle_daemon_registry_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_io_cache_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_streaming_reader_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_session_audit_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_mcp___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_vector_memory_embedding_router_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     %% D-INTELLIGENCE -> D-INTEGRATION (6 条)
     D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_integration_shared_08_contracts_gate___init___py
     D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -392,6 +366,32 @@ graph TD
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
+    %% D_INFRA_A2A -> D-INTEGRATION (1 条)
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_integration_shared_08_foundation_constants_py
+    %% D_INFRA_RECOVERY -> D-INTEGRATION (2 条)
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
+    %% D_INFRA_RUNTIME -> D-INTEGRATION (20 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_foundation_errors_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_foundation_errors_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared____ifecycle_daemon_registry_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_io_cache_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_io_streaming_reader_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_08_session_audit_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_mcp___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_vector_memory_embedding_router_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-INTEGRATION -> D-AUTONOMY_CORE (2 条)

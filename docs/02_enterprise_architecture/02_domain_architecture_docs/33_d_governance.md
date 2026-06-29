@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 生命周期管理（D-GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -595,19 +595,19 @@ graph TD
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
-    D_EX_CORE["D-EX_CORE prototype"]
-    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
-    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_init_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_init_py
+    D_EX_CORE["D-EX_CORE prototype"]
+    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
+    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     D_FACTOR["D-FACTOR prototype"]
     D_FACTOR -.->|import_depends| src_zephyr_governance_init_py
     D_FACTOR -.->|import_depends| src_zephyr_governance_init_py
     D_OPS -.->|import_depends| src_zephyr_governance_init_py
+    D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_governance_init_py
     D_OPS -.->|import_depends| src_zephyr_governance_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_init_py
@@ -621,7 +621,7 @@ graph TD
     class src_zephyr_governance_init_py production
     class src_zephyr_data_governance_extensions_init_py,src_zephyr_data_governance_api_init_py,src_zephyr_data_governance_core_init_py,src_zephyr_data_governance_infrastructure_init_py,src_zephyr_data_governance_models_init_py,src_zephyr_data_governance_services_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py,src_zephyr_governance_main_py,src_zephyr_governance_analysis_py,src_zephyr_governance_cli_and_tools_py,src_zephyr_governance_core_py,src_zephyr_governance_delegation_py,src_zephyr_governance_detection_py,src_zephyr_governance_extensions_init_py,src_zephyr_governance_fix_and_lifecycle_py,src_zephyr_governance_infrastructure_py,src_zephyr_governance_manifest_py,src_zephyr_governance_monitoring_py,src_zephyr_governance_safety_py,src_zephyr_governance_service_registration_py,src_zephyr_governance_a2a_failure_py,src_zephyr_governance_account_isolator_py,src_zephyr_governance_action_history_py,src_zephyr_governance_adapter_py,src_zephyr_governance_adapters_init_py,src_zephyr_governance_adapters_risk_validation_bridge_py,src_zephyr_governance_adapters_simulation_broker_py,src_zephyr_governance_adversarial_tester_py design
     class D_SHARED,D_TRADING,D_GOV_RULE,D_GOV_AUDIT,D_GOV_DRIFT external_prod
-    class D_OPS,D_EX_CORE,D_AUTONOMY_CORE,D_FACTOR external_design
+    class D_OPS,D_AUTONOMY_CORE,D_EX_CORE,D_FACTOR external_design
 ```
 
 ### 第 10 页 / 共 94 页 / Page 10 of 94
@@ -6269,17 +6269,17 @@ graph TD
 | D-FUNDAMENTAL_SIGNAL | 8 | test_depends |
 | D-FRONTEND | 8 | test_depends |
 | D-GOV_RULE | 7 | import_depends,test_depends |
-| D-EX_CORE | 6 | test_depends |
-| D_INFRA_A2A | 6 | import_depends |
 | D-PF_CORE | 6 | test_depends |
-| D-FACTOR | 4 | test_depends |
+| D_INFRA_A2A | 6 | import_depends |
+| D-EX_CORE | 6 | test_depends |
 | D-AUTONOMY_PERM | 4 | contract,runtime |
-| D-CROSS_ASSET | 2 | test_depends |
+| D-FACTOR | 4 | test_depends |
 | D-REPORTING | 2 | import_depends |
+| D-CROSS_ASSET | 2 | test_depends |
+| D-PF_ALLOC | 1 | import_depends |
 | D-ML_TRAIN | 1 | data |
 | D-KNOWLEDGE | 1 | contract |
 | D-GOV_DOCS | 1 | runtime |
-| D-PF_ALLOC | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -6292,31 +6292,31 @@ graph TD
 | D-GOV_AUDIT | 21 | config_depends,contract,import_depends,runtime |
 | D-PF_CORE | 12 | contract,import_depends |
 | D-INTEGRATION | 11 | config_depends,import_depends |
-| D-COMPLIANCE | 10 | import_depends |
 | D-GOV_DRIFT | 10 | config_depends,import_depends,runtime,test_depends |
+| D-COMPLIANCE | 10 | import_depends |
 | D_INFRA_RUNTIME | 9 | import_depends |
 | D_INFRA_OPS | 8 | config_depends,import_depends,test_depends |
 | D-EX_CORE | 8 | config_depends,import_depends |
 | D-INTELLIGENCE | 6 | config_depends,import_depends |
 | D-REPORTING | 5 | import_depends |
-| D_INFRA_RECOVERY | 4 | import_depends |
-| D-FRONTEND | 4 | import_depends |
 | D-SECURITY | 4 | import_depends |
-| D-SHARED | 3 | import_depends |
-| D-GOV_ENFORCEMENT | 3 | import_depends |
-| D-FACTOR | 3 | config_depends,import_depends |
+| D-FRONTEND | 4 | import_depends |
+| D_INFRA_RECOVERY | 4 | import_depends |
 | D-AUTONOMY_PERM | 3 | config_depends,test_depends |
+| D-FACTOR | 3 | config_depends,import_depends |
+| D-GOV_ENFORCEMENT | 3 | import_depends |
+| D-SHARED | 3 | import_depends |
 | D-AUTONOMY_CORE | 2 | import_depends |
+| D-BEHAVIORAL_AUDIT | 2 | import_depends |
 | D-KNOWLEDGE | 2 | runtime,test_depends |
 | D-MKT_DATA | 2 | config_depends |
 | D-PF_ALLOC | 2 | config_depends,import_depends |
-| D-BEHAVIORAL_AUDIT | 2 | import_depends |
 | D_INFRA_A2A | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
-| D-RISK | 1 | config_depends |
+| D-POSITION | 1 | config_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D-DATA_SEC | 1 | import_depends |
-| D-POSITION | 1 | config_depends |
+| D-RISK | 1 | config_depends |
 
 ## 架构全景图 / Architecture Overview
 

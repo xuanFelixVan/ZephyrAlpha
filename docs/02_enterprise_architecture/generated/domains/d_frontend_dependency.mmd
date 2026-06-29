@@ -1,5 +1,5 @@
 %% D-FRONTEND 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 23, 依赖边数: 29
 
@@ -64,13 +64,13 @@ graph TD
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-FRONTEND -> D-INFRA_OPS (1 条)
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_INFRA_OPS[D-INFRA_OPS]
     %% D-FRONTEND -> D-OPS (2 条)
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
     %% D-FRONTEND -> D-SHARED (1 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D-FRONTEND -> D_INFRA_OPS (1 条)
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_INFRA_OPS[D_INFRA_OPS]
 
     %% 统计
     %% 域内依赖: 13 条

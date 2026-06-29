@@ -1,5 +1,5 @@
 %% D-GOV_AUDIT 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 183, 依赖边数: 482
 
@@ -270,24 +270,6 @@ graph TD
     %% D-GOV_SCRIPTS -> D-GOV_AUDIT (2 条)
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_audit_trail___init___py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_audit_trail_indexer_py
-    %% D-INFRA_A2A -> D-GOV_AUDIT (1 条)
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
-    %% D-INFRA_OPS -> D-GOV_AUDIT (2 条)
-    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
-    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridges_anomaly_py
-    %% D-INFRA_RECOVERY -> D-GOV_AUDIT (7 条)
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    %% D-INFRA_RUNTIME -> D-GOV_AUDIT (4 条)
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_orchestrator_bridge_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     %% D-INTEGRATION -> D-GOV_AUDIT (2 条)
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
@@ -310,6 +292,24 @@ graph TD
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_models_py
     D_TRADING[D-TRADING] -->|contract| docs_03_modules__domain_governance_audit_trail_blueprint_md
+    %% D_INFRA_A2A -> D-GOV_AUDIT (1 条)
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
+    %% D_INFRA_OPS -> D-GOV_AUDIT (2 条)
+    D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
+    D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridges_anomaly_py
+    %% D_INFRA_RECOVERY -> D-GOV_AUDIT (7 条)
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_query_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_query_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    %% D_INFRA_RUNTIME -> D-GOV_AUDIT (4 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_orchestrator_bridge_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-GOV_AUDIT -> D-BEHAVIORAL_AUDIT (2 条)
@@ -357,12 +357,6 @@ graph TD
     src_zephyr_governance_audit_or___tion_core_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-GOV_AUDIT -> D-INFRA_RUNTIME (5 条)
-    src_zephyr_governance_audit_orchestration_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_governance_audit_orchestration_finding_bridge_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_governance_audit_orchestration_trigger_router_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_governance_audit_or___silience_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_governance_audit_trail_bridges_trust_bridge_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     %% D-GOV_AUDIT -> D-INTEGRATION (5 条)
     src_zephyr_governance_audit_orchestrator_pipeline_runner_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_governance_audit_or____text_to_finding_adapter_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -413,6 +407,12 @@ graph TD
     %% D-GOV_AUDIT -> D-TRADING (2 条)
     src_zephyr_governance_audit_orchestrator_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
     src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
+    %% D-GOV_AUDIT -> D_INFRA_RUNTIME (5 条)
+    src_zephyr_governance_audit_orchestration_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_audit_orchestration_finding_bridge_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_audit_orchestration_trigger_router_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_audit_or___silience_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_audit_trail_bridges_trust_bridge_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 178 条

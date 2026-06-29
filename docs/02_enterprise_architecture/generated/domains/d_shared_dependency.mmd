@@ -1,5 +1,5 @@
 %% D-SHARED 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 294, 依赖边数: 664
 
@@ -306,68 +306,6 @@ graph TD
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_shared_services_models_py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_shared__cross_layer___init___py
     D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_shared_shared_services_models_py
-    %% D-INFRA_A2A -> D-SHARED (18 条)
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a___init___py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_event_bus_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_shared_services_models_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_schema_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_events_dlq_bridge_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_schema_schemas_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared_shared_services_models_py
-    D_INFRA_A2A[D-INFRA_A2A] -->|import_depends| src_zephyr_shared___init___py
-    %% D-INFRA_OPS -> D-SHARED (1 条)
-    D_INFRA_OPS[D-INFRA_OPS] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    %% D-INFRA_RECOVERY -> D-SHARED (5 条)
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_state_machine_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_shared_services_session_continuity_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
-    D_INFRA_RECOVERY[D-INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D-INFRA_RUNTIME -> D-SHARED (34 条)
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_blueprint_decomposer_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_blueprint_decomposer_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_alert_manager_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_alert_precision_tracker_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_dual_channel_alert_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_error_budget_tracker_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_heartbeat_server_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_longevity_monitor_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_task_heartbeat_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_ttl_cleanup_engine_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_slo_review_assistant_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_config_loader_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_utils_db_utils_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_utils_db_utils_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_schema_severity_types_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
-    D_INFRA_RUNTIME[D-INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
-    %% D-INFRA_TELEMETRY -> D-SHARED (3 条)
-    D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_shared_services_session_continuity_py
-    D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
-    D_INFRA_TELEMETRY[D-INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared___init___py
     %% D-INTEGRATION -> D-SHARED (69 条)
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_shared_services_models_py
     D_INTEGRATION[D-INTEGRATION] -->|import_depends| src_zephyr_shared_contracts_security___init___py
@@ -461,6 +399,68 @@ graph TD
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_shared_services_models_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_core_registry_py
     D_TRADING[D-TRADING] -->|import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
+    %% D_INFRA_A2A -> D-SHARED (18 条)
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a___init___py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_event_bus_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_shared_services_models_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_events_dlq_bridge_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_schema_schemas_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared_shared_services_models_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_shared___init___py
+    %% D_INFRA_OPS -> D-SHARED (1 条)
+    D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    %% D_INFRA_RECOVERY -> D-SHARED (5 条)
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_state_machine_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_shared_services_session_continuity_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_shared_utils_time_utils_py
+    %% D_INFRA_RUNTIME -> D-SHARED (34 条)
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_events_upgrade_strategy_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_blueprint_decomposer_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_blueprint_decomposer_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_alert_manager_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_alert_precision_tracker_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_dual_channel_alert_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_error_budget_tracker_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_heartbeat_server_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_longevity_monitor_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_task_heartbeat_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_ttl_cleanup_engine_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_slo_review_assistant_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_config_loader_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_utils_db_utils_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_schema_severity_types_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared___init___py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_shared_services_models_py
+    %% D_INFRA_TELEMETRY -> D-SHARED (3 条)
+    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_shared_services_session_continuity_py
+    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
+    D_INFRA_TELEMETRY[D_INFRA_TELEMETRY] -->|import_depends| src_zephyr_shared___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D-SHARED -> D-GOVERNANCE (3 条)
@@ -469,15 +469,6 @@ graph TD
     src_zephyr_shared_protocols_a2___r3_coordination___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     %% D-SHARED -> D-GOV_AUDIT (1 条)
     src_zephyr_shared_session_audit_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-SHARED -> D-INFRA_A2A (1 条)
-    src_zephyr_shared_shared_services_queue_task_queue_py -->|import_depends| D_INFRA_A2A[D-INFRA_A2A]
-    %% D-SHARED -> D-INFRA_RUNTIME (6 条)
-    src_zephyr_shared_healthcheck_service_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_shared_infra_process_pool_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_shared_io_io_cache_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_shared_shared_servi___ifecycle_daemon_registry_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    src_zephyr_shared_shared_servi___e_task_lifecycle_manager_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     %% D-SHARED -> D-INTEGRATION (7 条)
     src_zephyr_shared_blueprint_decomposer_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     src_zephyr_shared_blueprint_decomposer_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -498,6 +489,15 @@ graph TD
     src_zephyr_shared_shared_servi___rvability_02_token_utils_py -->|import_depends| D_OPS[D-OPS]
     %% D-SHARED -> D-SIMULATION (1 条)
     src_zephyr_shared__cross_layer_ml_experiment_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
+    %% D-SHARED -> D_INFRA_A2A (1 条)
+    src_zephyr_shared_shared_services_queue_task_queue_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    %% D-SHARED -> D_INFRA_RUNTIME (6 条)
+    src_zephyr_shared_healthcheck_service_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_infra_process_pool_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_io_io_cache_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_shared_servi___ifecycle_daemon_registry_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_shared_shared_servi___e_task_lifecycle_manager_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 184 条

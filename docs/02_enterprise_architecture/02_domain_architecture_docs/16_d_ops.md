@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 反馈循环（D-OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -110,9 +110,7 @@ graph TD
     src_zephyr_governance_meta_observability_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_governance_observability_dashboard_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_governance_token_budget_py -.->|config_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME -->|import_depends| src_zephyr_ops_init_py
-    D_FRONTEND["D-FRONTEND production"]
-    D_FRONTEND -->|import_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
@@ -120,23 +118,22 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
-    D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
-    D_INFRA_OPS["D_INFRA_OPS prototype"]
-    D_INFRA_OPS -.->|import_depends| src_zephyr_ops_init_py
-    D_INTEGRATION -.->|import_depends| src_zephyr_ops_init_py
-    D_TRADING["D-TRADING production"]
-    D_TRADING -->|import_depends| src_zephyr_ops_init_py
-    D_TRADING -.->|import_depends| src_zephyr_ops_init_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
-    D_GOV_SCRIPTS -.->|import_depends| src_zephyr_ops_init_py
+    D_FRONTEND["D-FRONTEND prototype"]
+    D_FRONTEND -.->|import_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
+    D_GOVERNANCE -.->|test_depends| src_zephyr_ops_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class architecture_model_layers_system_telemetry_yaml,config_capacity_token_budget_yaml,scripts_ops_auto_fix_cron_py,scripts_ops_upgrade_headers_to_14fields_py,src_zephyr_governance_observability_governance_observability_dashboard_py,src_zephyr_ops_init_py production
     class docs_03_modules_domain_infra_ops_system_telemetry_blueprint_md,src_zephyr_governance_budget_engine_py,src_zephyr_governance_budget_handler_py,src_zephyr_governance_budget_models_py,src_zephyr_governance_budget_profile_manager_py,src_zephyr_governance_budget_tracker_py,src_zephyr_governance_cost_budget_py,src_zephyr_governance_meta_observability_py,src_zephyr_governance_observability_dashboard_py,src_zephyr_governance_observability_governance_init_py,src_zephyr_governance_observability_governance_benchmark_integrity_py,src_zephyr_governance_observability_governance_performance_baseline_py,src_zephyr_governance_observability_governance_provenance_tracker_py,src_zephyr_governance_token_budget_py,src_zephyr_ops_init_from_obs_py,src_zephyr_ops_budget_telemetry_bridge_py,src_zephyr_ops_circuit_breaker_py,src_zephyr_ops_extensions_init_py,src_zephyr_ops_gen_inherited_py,src_zephyr_ops_trace_bridge_py,src_zephyr_ops_actors_init_py,src_zephyr_ops_actors_action_selector_py,src_zephyr_ops_actors_agent_lifecycle_py,src_zephyr_ops_actors_alert_router_py design
-    class D_BEHAVIORAL_AUDIT,D_SHARED,D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME,D_FRONTEND,D_TRADING external_prod
-    class D_INFRA_OPS,D_GOV_SCRIPTS external_design
+    class D_BEHAVIORAL_AUDIT,D_SHARED,D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME external_prod
+    class D_FRONTEND external_design
 ```
 
 ### 第 2 页 / 共 15 页 / Page 2 of 15
@@ -975,12 +972,12 @@ graph TD
 | D-FRONTEND | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
-| D_INFRA_OPS | 1 | import_depends |
-| D-DATA_SEC | 1 | import_depends |
-| D-AUDITTEST | 1 | test_depends |
-| D_INFRA_RUNTIME | 1 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
+| D-DATA_SEC | 1 | import_depends |
 | D-INTEGRATION | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
+| D_INFRA_RUNTIME | 1 | import_depends |
+| D-AUDITTEST | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

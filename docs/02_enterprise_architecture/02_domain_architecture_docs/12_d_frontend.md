@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D-FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -86,13 +86,13 @@ graph TD
     src_zephyr_frontend_dashboard_components_task_progress_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     D_OPS["D-OPS production"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -->|import_depends| D_OPS
-    D_INFRA_OPS["D_INFRA_OPS prototype"]
-    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_INFRA_OPS
-    D_SHARED["D-SHARED prototype"]
-    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_SHARED
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_frontend_dashboard_app_py_1 -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py_1 -->|import_depends| D_GOVERNANCE
+    D_SHARED["D-SHARED prototype"]
+    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_SHARED
+    D_INFRA_OPS["D_INFRA_OPS prototype"]
+    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_INFRA_OPS
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -.->|import_depends| D_OPS
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_GOVERNANCE
@@ -111,7 +111,7 @@ graph TD
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_components_fitness_functions_py_1,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py_1,src_zephyr_frontend_dashboard_components_task_progress_py_1,src_zephyr_frontend_interface_base_py_1 production
     class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_app_py_1,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py_1,src_zephyr_frontend_dashboard_components_knowledge_overview_py_1,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_interface_base_py,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py design
     class D_OPS,D_GOVERNANCE external_prod
-    class D_INFRA_OPS,D_SHARED external_design
+    class D_SHARED,D_INFRA_OPS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -122,8 +122,8 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 4 | import_depends |
 | D-OPS | 2 | import_depends |
-| D_INFRA_OPS | 1 | import_depends |
 | D-SHARED | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

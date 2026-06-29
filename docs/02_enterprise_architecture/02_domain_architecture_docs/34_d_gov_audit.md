@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计追踪（D-GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -575,9 +575,9 @@ graph TD
 | D-GOV_ENFORCEMENT | 5 | import_depends,runtime |
 | D_INFRA_RUNTIME | 5 | import_depends |
 | D-INTEGRATION | 5 | import_depends |
-| D-TRADING | 2 | import_depends |
 | D-OPS | 2 | import_depends |
 | D-BEHAVIORAL_AUDIT | 2 | import_depends |
+| D-TRADING | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -587,20 +587,20 @@ graph TD
 | D-COMPLIANCE | 11 | import_depends |
 | D-TRADING | 8 | contract,import_depends |
 | D-AUDITTEST | 7 | test_depends |
-| D-GOV_DRIFT | 7 | import_depends,runtime |
 | D_INFRA_RECOVERY | 7 | import_depends |
+| D-GOV_DRIFT | 7 | import_depends,runtime |
 | D-SECURITY | 5 | import_depends |
 | D_INFRA_RUNTIME | 4 | import_depends |
 | D-GOV_ENFORCEMENT | 4 | import_depends |
 | D-AUTONOMY_CORE | 3 | import_depends |
-| D-INTEGRATION | 2 | import_depends |
-| D-BEHAVIORAL_AUDIT | 2 | import_depends |
-| D_INFRA_OPS | 2 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
-| D-AUTONOMY_PERM | 1 | test_depends |
+| D-BEHAVIORAL_AUDIT | 2 | import_depends |
+| D-INTEGRATION | 2 | import_depends |
+| D_INFRA_OPS | 2 | import_depends |
 | D_INFRA_A2A | 1 | import_depends |
 | D-OPS | 1 | test_depends |
 | D-SHARED | 1 | import_depends |
+| D-AUTONOMY_PERM | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

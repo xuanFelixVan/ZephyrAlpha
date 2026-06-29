@@ -1,5 +1,5 @@
-%% D-INFRA_OPS 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% D_INFRA_OPS 域全景依赖图
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 34, 依赖边数: 23
 
@@ -55,11 +55,11 @@ graph TD
     src_zephyr_infrastructure_roll____governance_result_types_py -->|config_depends| src_zephyr_infrastructure_rollback_governance___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-FRONTEND -> D-INFRA_OPS (1 条)
+    %% D-FRONTEND -> D_INFRA_OPS (1 条)
     D_FRONTEND[D-FRONTEND] -->|import_depends| src_zephyr_infra_ops___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-INFRA_OPS -> D-GOVERNANCE (8 条)
+    %% D_INFRA_OPS -> D-GOVERNANCE (8 条)
     src_zephyr_infra_ops_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_infra_ops_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
     tests_test_auto_rollback_trigger_py -->|test_depends| D_GOVERNANCE[D-GOVERNANCE]
@@ -68,15 +68,15 @@ graph TD
     src_zephyr_governance_auto_rollback_trigger_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_rollback_simulator_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
     src_zephyr_governance_rollback_wal_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-INFRA_OPS -> D-GOV_AUDIT (2 条)
+    %% D_INFRA_OPS -> D-GOV_AUDIT (2 条)
     src_zephyr_infrastructure_rollback_governance_auditor_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
     src_zephyr_infrastructure_rollback_governance_contracts_py -->|import_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-INFRA_OPS -> D-INFRA_RUNTIME (1 条)
-    src_zephyr_infrastructure_rollback_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    %% D-INFRA_OPS -> D-OPS (1 条)
+    %% D_INFRA_OPS -> D-OPS (1 条)
     src_zephyr_infra_ops_dashboard___onents_fitness_functions_py -->|import_depends| D_OPS[D-OPS]
-    %% D-INFRA_OPS -> D-SHARED (1 条)
+    %% D_INFRA_OPS -> D-SHARED (1 条)
     src_zephyr_infra_ops_dashboard_app_py -->|import_depends| D_SHARED[D-SHARED]
+    %% D_INFRA_OPS -> D_INFRA_RUNTIME (1 条)
+    src_zephyr_infrastructure_rollback_governance___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 9 条

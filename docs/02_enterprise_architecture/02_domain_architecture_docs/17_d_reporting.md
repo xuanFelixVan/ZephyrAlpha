@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 报告（D-REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 15:00:44
+> 最后更新: 2026-06-29 16:06:28
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -65,15 +65,15 @@ graph TD
     src_zephyr_reporting_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_reporting_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
+    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_reporting_analytics_base_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
-    src_zephyr_reporting_analytics_base_py -.->|import_depends| D_TRADING
     D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_reporting_analytics_base_py
     D_PF_CORE["D-PF_CORE production"]

@@ -1,5 +1,5 @@
 %% D-GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-06-29 15:00:46
+%% 生成时间: 2026-06-29 16:06:30
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 411, 依赖边数: 407
 
@@ -259,18 +259,6 @@ graph TD
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-GOV_SCRIPTS -> D-INFRA_RUNTIME (11 条)
-    scripts_a2a_full_verification_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_rollback_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_scaffold_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_construction_local_layer_daemon_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_construction_start_brain_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_governance_analyze_change_impact_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_governance_run_all_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_governance__e2e_verify_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_governance_meta_finding_state_machine_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
-    scripts_governance__shared_base_py -->|import_depends| D_INFRA_RUNTIME[D-INFRA_RUNTIME]
     %% D-GOV_SCRIPTS -> D-INTEGRATION (13 条)
     scripts_a2a_full_verification_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
     scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTEGRATION[D-INTEGRATION]
@@ -305,6 +293,18 @@ graph TD
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_SHARED[D-SHARED]
     %% D-GOV_SCRIPTS -> D-SIMULATION (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SIMULATION[D-SIMULATION]
+    %% D-GOV_SCRIPTS -> D_INFRA_RUNTIME (11 条)
+    scripts_a2a_full_verification_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_rollback_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_scaffold_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_construction_local_layer_daemon_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_construction_start_brain_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_governance_analyze_change_impact_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_governance_run_all_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_governance__e2e_verify_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_governance_meta_finding_state_machine_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    scripts_governance__shared_base_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
     %% 域内依赖: 314 条
