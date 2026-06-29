@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:07
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_MKT_DATA | Domain ID | D_MKT_DATA |
 | 域名称 | 行情数据 | Domain Name | 行情数据 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 9 | Module Count | 9 |
+| 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 17 | Cross-domain Incoming | 17 |
 | 跨域出边 | 2 | Cross-domain Outgoing | 2 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 8 | Prototype Modules | 8 |
+| 原型态模块 | 2 | Prototype Modules | 2 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 | Description | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 |
@@ -48,14 +48,8 @@ ttl: permanent
 graph TD
     subgraph D_MKT_DATA["D_MKT_DATA 行情数据"]
         src_zephyr_market_data_init_py["src/zephyr/market_data/__init__.py production"]
-        src_zephyr_market_data_extensions_init_py["src/zephyr/market_data/_extensions/__init__.py prototype"]
-        src_zephyr_market_data_api_init_py["src/zephyr/market_data/api/__init__.py prototype"]
-        src_zephyr_market_data_core_init_py["src/zephyr/market_data/core/__init__.py prototype"]
-        src_zephyr_market_data_infrastructure_init_py["src/zephyr/market_data/infrastructure/__init__.py prototype"]
         src_zephyr_market_data_market_data_py["src/zephyr/market_data/market_data.py prototype"]
         src_zephyr_market_data_market_data_pipeline_py["src/zephyr/market_data/market_data_pipeline.py prototype"]
-        src_zephyr_market_data_models_init_py["src/zephyr/market_data/models/__init__.py prototype"]
-        src_zephyr_market_data_services_init_py["src/zephyr/market_data/services/__init__.py prototype"]
     end
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_market_data_market_data_py -.->|config_depends| D_GOVERNANCE
@@ -81,7 +75,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_market_data_init_py production
-    class src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_market_data_py,src_zephyr_market_data_market_data_pipeline_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
+    class src_zephyr_market_data_market_data_py,src_zephyr_market_data_market_data_pipeline_py design
     class D_GOVERNANCE external_prod
     class D_GOV_SCRIPTS external_design
 ```
@@ -103,7 +97,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 行情数据（D_MKT_DATA）的模块分布。共 9 个模块 / 9 modules。
+> 按 architecture_layer 分层显示 行情数据（D_MKT_DATA）的模块分布。共 3 个模块 / 3 modules。
 
 ```
 
@@ -116,22 +110,16 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (7 modules)               │
+│               L2 领域层 / Domain Layer (1 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/market_data/__init__.py  [production]               │
-│   src/zephyr/market_data/_extensions/__init__.py  [prototype]    │
-│   src/zephyr/market_data/api/__init__.py  [prototype]            │
-│   src/zephyr/market_data/core/__init__.py  [prototype]           │
-│   src/zephyr/market_data/infrastructure/__init__.py  [prototype] │
-│   src/zephyr/market_data/models/__init__.py  [prototype]         │
-│   src/zephyr/market_data/services/__init__.py  [prototype]       │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
+> 按 architecture_layer 分组的模块清单（共 3 个模块 / 3 modules）。
 
 ### L1 基础层 / Foundation Layer (2 modules)
 
@@ -140,17 +128,11 @@ graph TD
 | 1 | src/zephyr/market_data/market_data.py | src/zephyr/market_data/market_data.py | prototype | generated |
 | 2 | src/zephyr/market_data/market_data_pipeline.py | src/zephyr/market_data/market_data_pi... | prototype | generated |
 
-### L2 领域层 / Domain Layer (7 modules)
+### L2 领域层 / Domain Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/market_data/__init__.py | src/zephyr/market_data/__init__.py | production | generated |
-| 2 | src/zephyr/market_data/_extensions/__init__.py | src/zephyr/market_data/_extensions/__... | prototype | deprecated |
-| 3 | src/zephyr/market_data/api/__init__.py | src/zephyr/market_data/api/__init__.py | prototype | deprecated |
-| 4 | src/zephyr/market_data/core/__init__.py | src/zephyr/market_data/core/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/market_data/infrastructure/__init__.py | src/zephyr/market_data/infrastructure... | prototype | deprecated |
-| 6 | src/zephyr/market_data/models/__init__.py | src/zephyr/market_data/models/__init_... | prototype | deprecated |
-| 7 | src/zephyr/market_data/services/__init__.py | src/zephyr/market_data/services/__ini... | prototype | deprecated |
 
 ## 依赖关系图 / Dependency Graph
 

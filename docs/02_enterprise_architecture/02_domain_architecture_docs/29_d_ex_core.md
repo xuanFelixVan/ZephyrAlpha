@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_EX_CORE | Domain ID | D_EX_CORE |
 | 域名称 | 执行核心 | Domain Name | 执行核心 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 14 | Module Count | 14 |
+| 模块数 | 9 | Module Count | 9 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 7 | Cross-domain Incoming | 7 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 11 | Prototype Modules | 11 |
+| 原型态模块 | 6 | Prototype Modules | 6 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行质量分析。 | Description | 执行核心域。负责订单执行核心引擎，包括订单拆分、执行算法(VWAP/TWAP/Iceberg)、执行质量分析。 |
@@ -48,34 +48,29 @@ ttl: permanent
 graph TD
     subgraph D_EX_CORE["D_EX_CORE 执行核心"]
         src_zephyr_ex_core_init_py["src/zephyr/ex_core/__init__.py production"]
-        src_zephyr_ex_core_extensions_init_py["src/zephyr/ex_core/_extensions/__init__.py prototype"]
         src_zephyr_ex_core_adapters_init_py["src/zephyr/ex_core/adapters/__init__.py prototype"]
         src_zephyr_ex_core_adapters_broker_interface_py["src/zephyr/ex_core/adapters/broker_interface.py production"]
         src_zephyr_ex_core_adapters_risk_validation_bridge_py["src/zephyr/ex_core/adapters/risk_validation_bri... prototype"]
         src_zephyr_ex_core_adapters_simulation_broker_py["src/zephyr/ex_core/adapters/simulation_broker.py production"]
-        src_zephyr_ex_core_api_init_py["src/zephyr/ex_core/api/__init__.py prototype"]
         src_zephyr_ex_core_broker_interface_py["src/zephyr/ex_core/broker_interface.py prototype"]
-        src_zephyr_ex_core_core_init_py["src/zephyr/ex_core/core/__init__.py prototype"]
         src_zephyr_ex_core_execution_engine_py["src/zephyr/ex_core/execution_engine.py prototype"]
-        src_zephyr_ex_core_infrastructure_init_py["src/zephyr/ex_core/infrastructure/__init__.py prototype"]
         src_zephyr_ex_core_order_manager_py["src/zephyr/ex_core/order_manager.py prototype"]
         src_zephyr_ex_core_order_state_escalator_py["src/zephyr/ex_core/order_state_escalator.py prototype"]
-        src_zephyr_ex_core_services_init_py["src/zephyr/ex_core/services/__init__.py prototype"]
     end
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| src_zephyr_ex_core_order_manager_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
-    src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_simulation_broker_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D_TRADING production"]
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_TRADING
-    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_order_state_escalator_py -.->|config_depends| D_GOVERNANCE
+    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_ex_core_order_manager_py -.->|import_depends| D_GOVERNANCE
     D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_ex_core_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
@@ -89,7 +84,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_init_py,src_zephyr_ex_core_adapters_broker_interface_py,src_zephyr_ex_core_adapters_simulation_broker_py production
-    class src_zephyr_ex_core_extensions_init_py,src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_api_init_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_core_init_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_infrastructure_init_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_order_state_escalator_py,src_zephyr_ex_core_services_init_py design
+    class src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_risk_validation_bridge_py,src_zephyr_ex_core_broker_interface_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_order_state_escalator_py design
     class D_TRADING external_prod
     class D_GOVERNANCE,D_GOV_SCRIPTS external_design
 ```
@@ -112,7 +107,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 执行核心（D_EX_CORE）的模块分布。共 14 个模块 / 14 modules。
+> 按 architecture_layer 分层显示 执行核心（D_EX_CORE）的模块分布。共 9 个模块 / 9 modules。
 
 ```
 
@@ -126,26 +121,21 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (11 modules)               │
+│               L2 领域层 / Domain Layer (6 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/ex_core/__init__.py  [production]                   │
-│   src/zephyr/ex_core/_extensions/__init__.py  [prototype]        │
 │   src/zephyr/ex_core/adapters/__init__.py  [prototype]           │
 │   src/zephyr/ex_core/adapters/broker_interface.py  [production]  │
 │   src/zephyr/ex_core/adapters/risk_validation_bridge.py  [pro... │
 │   src/zephyr/ex_core/adapters/simulation_broker.py  [production] │
-│   src/zephyr/ex_core/api/__init__.py  [prototype]                │
 │   src/zephyr/ex_core/broker_interface.py  [prototype]            │
-│   src/zephyr/ex_core/core/__init__.py  [prototype]               │
-│   src/zephyr/ex_core/infrastructure/__init__.py  [prototype]     │
-│   src/zephyr/ex_core/services/__init__.py  [prototype]           │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 14 个模块 / 14 modules）。
+> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
 
 ### L1 基础层 / Foundation Layer (3 modules)
 
@@ -155,21 +145,16 @@ graph TD
 | 2 | src/zephyr/ex_core/order_manager.py | src/zephyr/ex_core/order_manager.py | prototype | generated |
 | 3 | src/zephyr/ex_core/order_state_escalator.py | src/zephyr/ex_core/order_state_escala... | prototype | generated |
 
-### L2 领域层 / Domain Layer (11 modules)
+### L2 领域层 / Domain Layer (6 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/ex_core/__init__.py | src/zephyr/ex_core/__init__.py | production | generated |
-| 2 | src/zephyr/ex_core/_extensions/__init__.py | src/zephyr/ex_core/_extensions/__init... | prototype | deprecated |
-| 3 | src/zephyr/ex_core/adapters/__init__.py | src/zephyr/ex_core/adapters/__init__.py | prototype | generated |
-| 4 | src/zephyr/ex_core/adapters/broker_interface.py | src/zephyr/ex_core/adapters/broker_in... | production | generated |
-| 5 | src/zephyr/ex_core/adapters/risk_validation_bridge.py | src/zephyr/ex_core/adapters/risk_vali... | prototype | generated |
-| 6 | src/zephyr/ex_core/adapters/simulation_broker.py | src/zephyr/ex_core/adapters/simulatio... | production | generated |
-| 7 | src/zephyr/ex_core/api/__init__.py | src/zephyr/ex_core/api/__init__.py | prototype | deprecated |
-| 8 | src/zephyr/ex_core/broker_interface.py | src/zephyr/ex_core/broker_interface.py | prototype | generated |
-| 9 | src/zephyr/ex_core/core/__init__.py | src/zephyr/ex_core/core/__init__.py | prototype | deprecated |
-| 10 | src/zephyr/ex_core/infrastructure/__init__.py | src/zephyr/ex_core/infrastructure/__i... | prototype | deprecated |
-| 11 | src/zephyr/ex_core/services/__init__.py | src/zephyr/ex_core/services/__init__.py | prototype | deprecated |
+| 2 | src/zephyr/ex_core/adapters/__init__.py | src/zephyr/ex_core/adapters/__init__.py | prototype | generated |
+| 3 | src/zephyr/ex_core/adapters/broker_interface.py | src/zephyr/ex_core/adapters/broker_in... | production | generated |
+| 4 | src/zephyr/ex_core/adapters/risk_validation_bridge.py | src/zephyr/ex_core/adapters/risk_vali... | prototype | generated |
+| 5 | src/zephyr/ex_core/adapters/simulation_broker.py | src/zephyr/ex_core/adapters/simulatio... | production | generated |
+| 6 | src/zephyr/ex_core/broker_interface.py | src/zephyr/ex_core/broker_interface.py | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

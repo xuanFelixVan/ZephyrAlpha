@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数据安全与契约（D_DATA_SEC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_DATA_SEC | Domain ID | D_DATA_SEC |
 | 域名称 | 数据安全与契约 | Domain Name | 数据安全与契约 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 10 | Module Count | 10 |
+| 模块数 | 3 | Module Count | 3 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 2 | Cross-domain Outgoing | 2 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 10 | Prototype Modules | 10 |
+| 原型态模块 | 3 | Prototype Modules | 3 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验证。拆分自原D-DATA域。 | Description | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验证。拆分自原D-DATA域。 |
@@ -50,13 +50,6 @@ graph TD
         src_zephyr_data_persistence_init_py["src/zephyr/data/persistence/__init__.py prototype"]
         src_zephyr_data_persistence_circuit_breaker_types_py["src/zephyr/data/persistence/circuit_breaker_typ... prototype"]
         src_zephyr_data_persistence_sqlite_schema_py["src/zephyr/data/persistence/sqlite_schema.py prototype"]
-        src_zephyr_data_security_init_py["src/zephyr/data_security/__init__.py prototype"]
-        src_zephyr_data_security_extensions_init_py["src/zephyr/data_security/_extensions/__init__.py prototype"]
-        src_zephyr_data_security_api_init_py["src/zephyr/data_security/api/__init__.py prototype"]
-        src_zephyr_data_security_core_init_py["src/zephyr/data_security/core/__init__.py prototype"]
-        src_zephyr_data_security_infrastructure_init_py["src/zephyr/data_security/infrastructure/__init_... prototype"]
-        src_zephyr_data_security_models_init_py["src/zephyr/data_security/models/__init__.py prototype"]
-        src_zephyr_data_security_services_init_py["src/zephyr/data_security/services/__init__.py prototype"]
     end
     src_zephyr_data_persistence_init_py -.->|config_depends| src_zephyr_data_persistence_sqlite_schema_py
     D_GOVERNANCE["D_GOVERNANCE prototype"]
@@ -67,7 +60,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_data_persistence_init_py,src_zephyr_data_persistence_circuit_breaker_types_py,src_zephyr_data_persistence_sqlite_schema_py,src_zephyr_data_security_init_py,src_zephyr_data_security_extensions_init_py,src_zephyr_data_security_api_init_py,src_zephyr_data_security_core_init_py,src_zephyr_data_security_infrastructure_init_py,src_zephyr_data_security_models_init_py,src_zephyr_data_security_services_init_py design
+    class src_zephyr_data_persistence_init_py,src_zephyr_data_persistence_circuit_breaker_types_py,src_zephyr_data_persistence_sqlite_schema_py design
     class D_GOVERNANCE,D_OPS external_design
 ```
 
@@ -86,45 +79,31 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数据安全与契约（D_DATA_SEC）的模块分布。共 10 个模块 / 10 modules。
+> 按 architecture_layer 分层显示 数据安全与契约（D_DATA_SEC）的模块分布。共 3 个模块 / 3 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (10 modules)               │
+│               L2 领域层 / Domain Layer (3 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/data/persistence/__init__.py  [prototype]           │
 │   src/zephyr/data/persistence/circuit_breaker_types.py  [prot... │
 │   src/zephyr/data/persistence/sqlite_schema.py  [prototype]      │
-│   src/zephyr/data_security/__init__.py  [prototype]              │
-│   src/zephyr/data_security/_extensions/__init__.py  [prototype]  │
-│   src/zephyr/data_security/api/__init__.py  [prototype]          │
-│   src/zephyr/data_security/core/__init__.py  [prototype]         │
-│   src/zephyr/data_security/infrastructure/__init__.py  [proto... │
-│   src/zephyr/data_security/models/__init__.py  [prototype]       │
-│   src/zephyr/data_security/services/__init__.py  [prototype]     │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 10 个模块 / 10 modules）。
+> 按 architecture_layer 分组的模块清单（共 3 个模块 / 3 modules）。
 
-### L2 领域层 / Domain Layer (10 modules)
+### L2 领域层 / Domain Layer (3 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/data/persistence/__init__.py | src/zephyr/data/persistence/__init__.py | prototype | generated |
 | 2 | src/zephyr/data/persistence/circuit_breaker_types.py | src/zephyr/data/persistence/circuit_b... | prototype | generated |
 | 3 | src/zephyr/data/persistence/sqlite_schema.py | src/zephyr/data/persistence/sqlite_sc... | prototype | generated |
-| 4 | src/zephyr/data_security/__init__.py | src/zephyr/data_security/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/data_security/_extensions/__init__.py | src/zephyr/data_security/_extensions/... | prototype | deprecated |
-| 6 | src/zephyr/data_security/api/__init__.py | src/zephyr/data_security/api/__init__.py | prototype | deprecated |
-| 7 | src/zephyr/data_security/core/__init__.py | src/zephyr/data_security/core/__init_... | prototype | deprecated |
-| 8 | src/zephyr/data_security/infrastructure/__init__.py | src/zephyr/data_security/infrastructu... | prototype | deprecated |
-| 9 | src/zephyr/data_security/models/__init__.py | src/zephyr/data_security/models/__ini... | prototype | deprecated |
-| 10 | src/zephyr/data_security/services/__init__.py | src/zephyr/data_security/services/__i... | prototype | deprecated |
 
 ## 依赖关系图 / Dependency Graph
 

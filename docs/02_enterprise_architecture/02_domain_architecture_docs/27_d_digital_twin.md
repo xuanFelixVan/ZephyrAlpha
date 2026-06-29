@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数字孪生（D_DIGITAL_TWIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_DIGITAL_TWIN | Domain ID | D_DIGITAL_TWIN |
 | 域名称 | 数字孪生 | Domain Name | 数字孪生 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 8 | Module Count | 8 |
+| 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 7 | Prototype Modules | 7 |
+| 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 数字孪生与虚拟市场仿真 | Description | 数字孪生与虚拟市场仿真 |
@@ -48,19 +48,12 @@ ttl: permanent
 graph TD
     subgraph D_DIGITAL_TWIN["D_DIGITAL_TWIN 数字孪生"]
         src_zephyr_digital_twin["数字孪生域 design"]
-        src_zephyr_digital_twin_init_py["src/zephyr/digital_twin/__init__.py prototype"]
-        src_zephyr_digital_twin_extensions_init_py["src/zephyr/digital_twin/_extensions/__init__.py prototype"]
-        src_zephyr_digital_twin_api_init_py["src/zephyr/digital_twin/api/__init__.py prototype"]
-        src_zephyr_digital_twin_core_init_py["src/zephyr/digital_twin/core/__init__.py prototype"]
-        src_zephyr_digital_twin_infrastructure_init_py["src/zephyr/digital_twin/infrastructure/__init__.py prototype"]
-        src_zephyr_digital_twin_models_init_py["src/zephyr/digital_twin/models/__init__.py prototype"]
-        src_zephyr_digital_twin_services_init_py["src/zephyr/digital_twin/services/__init__.py prototype"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_digital_twin,src_zephyr_digital_twin_init_py,src_zephyr_digital_twin_extensions_init_py,src_zephyr_digital_twin_api_init_py,src_zephyr_digital_twin_core_init_py,src_zephyr_digital_twin_infrastructure_init_py,src_zephyr_digital_twin_models_init_py,src_zephyr_digital_twin_services_init_py design
+    class src_zephyr_digital_twin design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -75,41 +68,27 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数字孪生（D_DIGITAL_TWIN）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 数字孪生（D_DIGITAL_TWIN）的模块分布。共 1 个模块 / 1 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│               L2 领域层 / Domain Layer (8 modules)               │
+│               L2 领域层 / Domain Layer (1 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   数字孪生域  [design]                                           │
-│   src/zephyr/digital_twin/__init__.py  [prototype]               │
-│   src/zephyr/digital_twin/_extensions/__init__.py  [prototype]   │
-│   src/zephyr/digital_twin/api/__init__.py  [prototype]           │
-│   src/zephyr/digital_twin/core/__init__.py  [prototype]          │
-│   src/zephyr/digital_twin/infrastructure/__init__.py  [protot... │
-│   src/zephyr/digital_twin/models/__init__.py  [prototype]        │
-│   src/zephyr/digital_twin/services/__init__.py  [prototype]      │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 8 个模块 / 8 modules）。
+> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
 
-### L2 领域层 / Domain Layer (8 modules)
+### L2 领域层 / Domain Layer (1 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/digital_twin/ | 数字孪生域 | design | planned |
-| 2 | src/zephyr/digital_twin/__init__.py | src/zephyr/digital_twin/__init__.py | prototype | deprecated |
-| 3 | src/zephyr/digital_twin/_extensions/__init__.py | src/zephyr/digital_twin/_extensions/_... | prototype | deprecated |
-| 4 | src/zephyr/digital_twin/api/__init__.py | src/zephyr/digital_twin/api/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/digital_twin/core/__init__.py | src/zephyr/digital_twin/core/__init__.py | prototype | deprecated |
-| 6 | src/zephyr/digital_twin/infrastructure/__init__.py | src/zephyr/digital_twin/infrastructur... | prototype | deprecated |
-| 7 | src/zephyr/digital_twin/models/__init__.py | src/zephyr/digital_twin/models/__init... | prototype | deprecated |
-| 8 | src/zephyr/digital_twin/services/__init__.py | src/zephyr/digital_twin/services/__in... | prototype | deprecated |
 
 ## 依赖关系图 / Dependency Graph
 

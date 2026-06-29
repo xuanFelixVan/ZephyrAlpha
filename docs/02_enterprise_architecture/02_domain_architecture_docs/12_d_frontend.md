@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_FRONTEND | Domain ID | D_FRONTEND |
 | 域名称 | 前端 | Domain Name | 前端 |
 | 层级 | L1_foundation | Layer | L1_foundation |
-| 模块数 | 23 | Module Count | 23 |
+| 模块数 | 17 | Module Count | 17 |
 | 域内依赖 | 13 | Internal Dependencies | 13 |
 | 跨域入边 | 8 | Cross-domain Incoming | 8 |
 | 跨域出边 | 8 | Cross-domain Outgoing | 8 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 16 | Prototype Modules | 16 |
+| 原型态模块 | 10 | Prototype Modules | 10 |
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | Web界面、可视化看板、交互组件。人机交互入口。 | Description | Web界面、可视化看板、交互组件。人机交互入口。 |
@@ -48,42 +48,36 @@ ttl: permanent
 graph TD
     subgraph D_FRONTEND["D_FRONTEND 前端"]
         src_zephyr_frontend_init_py["src/zephyr/frontend/__init__.py prototype"]
-        src_zephyr_frontend_extensions_init_py["src/zephyr/frontend/_extensions/__init__.py prototype"]
-        src_zephyr_frontend_api_init_py["src/zephyr/frontend/api/__init__.py prototype"]
-        src_zephyr_frontend_core_init_py["src/zephyr/frontend/core/__init__.py prototype"]
         src_zephyr_frontend_dashboard_init_py["src/zephyr/frontend/dashboard/__init__.py prototype"]
         src_zephyr_frontend_dashboard_app_py["src/zephyr/frontend/dashboard/app.py production"]
         src_zephyr_frontend_dashboard_app_py_1["src/zephyr/frontend/dashboard/app.py prototype"]
         src_zephyr_frontend_dashboard_components_init_py["src/zephyr/frontend/dashboard/components/__init... prototype"]
-        src_zephyr_frontend_dashboard_components_fitness_functions_py["src/zephyr/frontend/dashboard/components/fitnes... prototype"]
-        src_zephyr_frontend_dashboard_components_fitness_functions_py_1["src/zephyr/frontend/dashboard/components/fitnes... production"]
-        src_zephyr_frontend_dashboard_components_gate_statistics_py["src/zephyr/frontend/dashboard/components/gate_s... prototype"]
-        src_zephyr_frontend_dashboard_components_gate_statistics_py_1["src/zephyr/frontend/dashboard/components/gate_s... production"]
-        src_zephyr_frontend_dashboard_components_knowledge_overview_py["src/zephyr/frontend/dashboard/components/knowle... production"]
-        src_zephyr_frontend_dashboard_components_knowledge_overview_py_1["src/zephyr/frontend/dashboard/components/knowle... prototype"]
+        src_zephyr_frontend_dashboard_components_fitness_functions_py["src/zephyr/frontend/dashboard/components/fitnes... production"]
+        src_zephyr_frontend_dashboard_components_fitness_functions_py_1["src/zephyr/frontend/dashboard/components/fitnes... prototype"]
+        src_zephyr_frontend_dashboard_components_gate_statistics_py["src/zephyr/frontend/dashboard/components/gate_s... production"]
+        src_zephyr_frontend_dashboard_components_gate_statistics_py_1["src/zephyr/frontend/dashboard/components/gate_s... prototype"]
+        src_zephyr_frontend_dashboard_components_knowledge_overview_py["src/zephyr/frontend/dashboard/components/knowle... prototype"]
+        src_zephyr_frontend_dashboard_components_knowledge_overview_py_1["src/zephyr/frontend/dashboard/components/knowle... production"]
         src_zephyr_frontend_dashboard_components_olap_trend_py["src/zephyr/frontend/dashboard/components/olap_t... production"]
         src_zephyr_frontend_dashboard_components_olap_trend_py_1["src/zephyr/frontend/dashboard/components/olap_t... prototype"]
         src_zephyr_frontend_dashboard_components_task_progress_py["src/zephyr/frontend/dashboard/components/task_p... production"]
         src_zephyr_frontend_dashboard_components_task_progress_py_1["src/zephyr/frontend/dashboard/components/task_p... prototype"]
-        src_zephyr_frontend_infrastructure_init_py["src/zephyr/frontend/infrastructure/__init__.py prototype"]
-        src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py production"]
-        src_zephyr_frontend_interface_base_py_1["src/zephyr/frontend/interface_base.py prototype"]
-        src_zephyr_frontend_models_init_py["src/zephyr/frontend/models/__init__.py prototype"]
-        src_zephyr_frontend_services_init_py["src/zephyr/frontend/services/__init__.py prototype"]
+        src_zephyr_frontend_interface_base_py["src/zephyr/frontend/interface_base.py prototype"]
+        src_zephyr_frontend_interface_base_py_1["src/zephyr/frontend/interface_base.py production"]
     end
-    src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py
+    src_zephyr_frontend_init_py -.->|config_depends| src_zephyr_frontend_interface_base_py_1
     src_zephyr_frontend_dashboard_init_py -.->|config_depends| src_zephyr_frontend_dashboard_app_py
-    src_zephyr_frontend_dashboard_components_init_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
-    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
-    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
-    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py_1
+    src_zephyr_frontend_dashboard_components_init_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py_1
+    src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
-    src_zephyr_frontend_dashboard_components_knowledge_overview_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_components_olap_trend_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_interface_base_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_components_gate_statistics_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_components_task_progress_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    src_zephyr_frontend_dashboard_components_knowledge_overview_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
+    src_zephyr_frontend_dashboard_components_olap_trend_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
+    src_zephyr_frontend_interface_base_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
+    src_zephyr_frontend_dashboard_components_gate_statistics_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
+    src_zephyr_frontend_dashboard_components_task_progress_py_1 -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py_1
     D_OPS["D_OPS production"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -->|import_depends| D_OPS
     D_INFRA_OPS["D_INFRA_OPS prototype"]
@@ -108,8 +102,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_components_fitness_functions_py_1,src_zephyr_frontend_dashboard_components_gate_statistics_py_1,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_interface_base_py production
-    class src_zephyr_frontend_init_py,src_zephyr_frontend_extensions_init_py,src_zephyr_frontend_api_init_py,src_zephyr_frontend_core_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_app_py_1,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py_1,src_zephyr_frontend_dashboard_components_olap_trend_py_1,src_zephyr_frontend_dashboard_components_task_progress_py_1,src_zephyr_frontend_infrastructure_init_py,src_zephyr_frontend_interface_base_py_1,src_zephyr_frontend_models_init_py,src_zephyr_frontend_services_init_py design
+    class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_gate_statistics_py,src_zephyr_frontend_dashboard_components_knowledge_overview_py_1,src_zephyr_frontend_dashboard_components_olap_trend_py,src_zephyr_frontend_dashboard_components_task_progress_py,src_zephyr_frontend_interface_base_py_1 production
+    class src_zephyr_frontend_init_py,src_zephyr_frontend_dashboard_init_py,src_zephyr_frontend_dashboard_app_py_1,src_zephyr_frontend_dashboard_components_init_py,src_zephyr_frontend_dashboard_components_fitness_functions_py_1,src_zephyr_frontend_dashboard_components_gate_statistics_py_1,src_zephyr_frontend_dashboard_components_knowledge_overview_py,src_zephyr_frontend_dashboard_components_olap_trend_py_1,src_zephyr_frontend_dashboard_components_task_progress_py_1,src_zephyr_frontend_interface_base_py design
     class D_OPS,D_GOVERNANCE external_prod
     class D_INFRA_OPS,D_SHARED external_design
 ```
@@ -133,7 +127,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 前端（D_FRONTEND）的模块分布。共 23 个模块 / 23 modules。
+> 按 architecture_layer 分层显示 前端（D_FRONTEND）的模块分布。共 17 个模块 / 17 modules。
 
 ```
 
@@ -151,12 +145,9 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (16 modules)             │
+│            L1 基础层 / Foundation Layer (10 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/frontend/__init__.py  [prototype]                   │
-│   src/zephyr/frontend/_extensions/__init__.py  [prototype]       │
-│   src/zephyr/frontend/api/__init__.py  [prototype]               │
-│   src/zephyr/frontend/core/__init__.py  [prototype]              │
 │   src/zephyr/frontend/dashboard/__init__.py  [prototype]         │
 │   src/zephyr/frontend/dashboard/app.py  [production]             │
 │   src/zephyr/frontend/dashboard/components/__init__.py  [prot... │
@@ -165,17 +156,14 @@ graph TD
 │   src/zephyr/frontend/dashboard/components/knowledge_overview... │
 │   src/zephyr/frontend/dashboard/components/olap_trend.py  [pr... │
 │   src/zephyr/frontend/dashboard/components/task_progress.py  ... │
-│   src/zephyr/frontend/infrastructure/__init__.py  [prototype]    │
 │   src/zephyr/frontend/interface_base.py  [production]            │
-│   src/zephyr/frontend/models/__init__.py  [prototype]            │
-│   src/zephyr/frontend/services/__init__.py  [prototype]          │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 23 个模块 / 23 modules）。
+> 按 architecture_layer 分组的模块清单（共 17 个模块 / 17 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (7 modules)
 
@@ -189,26 +177,20 @@ graph TD
 | 6 | src/zephyr/frontend/dashboard/components/task_progress.py | src/zephyr/frontend/dashboard/compone... | prototype | generated |
 | 7 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | prototype | generated |
 
-### L1 基础层 / Foundation Layer (16 modules)
+### L1 基础层 / Foundation Layer (10 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/frontend/__init__.py | src/zephyr/frontend/__init__.py | prototype | generated |
-| 2 | src/zephyr/frontend/_extensions/__init__.py | src/zephyr/frontend/_extensions/__ini... | prototype | deprecated |
-| 3 | src/zephyr/frontend/api/__init__.py | src/zephyr/frontend/api/__init__.py | prototype | deprecated |
-| 4 | src/zephyr/frontend/core/__init__.py | src/zephyr/frontend/core/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/frontend/dashboard/__init__.py | src/zephyr/frontend/dashboard/__init_... | prototype | generated |
-| 6 | src/zephyr/frontend/dashboard/app.py | src/zephyr/frontend/dashboard/app.py | production | generated |
-| 7 | src/zephyr/frontend/dashboard/components/__init__.py | src/zephyr/frontend/dashboard/compone... | prototype | generated |
-| 8 | src/zephyr/frontend/dashboard/components/fitness_function... | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 9 | src/zephyr/frontend/dashboard/components/gate_statistics.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 10 | src/zephyr/frontend/dashboard/components/knowledge_overvi... | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 11 | src/zephyr/frontend/dashboard/components/olap_trend.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 12 | src/zephyr/frontend/dashboard/components/task_progress.py | src/zephyr/frontend/dashboard/compone... | production | generated |
-| 13 | src/zephyr/frontend/infrastructure/__init__.py | src/zephyr/frontend/infrastructure/__... | prototype | deprecated |
-| 14 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | production | generated |
-| 15 | src/zephyr/frontend/models/__init__.py | src/zephyr/frontend/models/__init__.py | prototype | deprecated |
-| 16 | src/zephyr/frontend/services/__init__.py | src/zephyr/frontend/services/__init__.py | prototype | deprecated |
+| 2 | src/zephyr/frontend/dashboard/__init__.py | src/zephyr/frontend/dashboard/__init_... | prototype | generated |
+| 3 | src/zephyr/frontend/dashboard/app.py | src/zephyr/frontend/dashboard/app.py | production | generated |
+| 4 | src/zephyr/frontend/dashboard/components/__init__.py | src/zephyr/frontend/dashboard/compone... | prototype | generated |
+| 5 | src/zephyr/frontend/dashboard/components/fitness_function... | src/zephyr/frontend/dashboard/compone... | production | generated |
+| 6 | src/zephyr/frontend/dashboard/components/gate_statistics.py | src/zephyr/frontend/dashboard/compone... | production | generated |
+| 7 | src/zephyr/frontend/dashboard/components/knowledge_overvi... | src/zephyr/frontend/dashboard/compone... | production | generated |
+| 8 | src/zephyr/frontend/dashboard/components/olap_trend.py | src/zephyr/frontend/dashboard/compone... | production | generated |
+| 9 | src/zephyr/frontend/dashboard/components/task_progress.py | src/zephyr/frontend/dashboard/compone... | production | generated |
+| 10 | src/zephyr/frontend/interface_base.py | src/zephyr/frontend/interface_base.py | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

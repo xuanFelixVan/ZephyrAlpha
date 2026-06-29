@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
-| 模块数 | 34 | Module Count | 34 |
+| 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 9 | Internal Dependencies | 9 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 13 | Cross-domain Outgoing | 13 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 26 | Prototype Modules | 26 |
-| 生产态模块 | 7 | Production Modules | 7 |
+| 原型态模块 | 20 | Prototype Modules | 20 |
+| 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 资源优化引擎 | Description | 资源优化引擎 |
 
@@ -44,14 +44,9 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 设计态依赖**（计划中的依赖关系）
 
-### 第 1 页 / 共 2 页 / Page 1 of 2
-
 ```mermaid
 graph TD
     subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
-        config_infra_grafana_dashboards_provider_yml["config/infra/grafana/dashboards/provider.yml production"]
-        config_infra_grafana_datasources_prometheus_yml["config/infra/grafana/datasources/prometheus.yml production"]
-        config_infra_prometheus_prometheus_yml["config/infra/prometheus/prometheus.yml production"]
         scripts_construction_test_deepseek_api_py["scripts/construction/test_deepseek_api.py production"]
         scripts_ide_health_service_py["scripts/ide_health_service.py production"]
         src_zephyr_governance_auto_rollback_trigger_py["src/zephyr/governance/auto_rollback_trigger.py prototype"]
@@ -59,9 +54,6 @@ graph TD
         src_zephyr_governance_rollback_wal_py["src/zephyr/governance/rollback_wal.py prototype"]
         src_zephyr_infra_ops["基础设施运维域 design"]
         src_zephyr_infra_ops_init_py["src/zephyr/infra_ops/__init__.py prototype"]
-        src_zephyr_infra_ops_extensions_init_py["src/zephyr/infra_ops/_extensions/__init__.py prototype"]
-        src_zephyr_infra_ops_api_init_py["src/zephyr/infra_ops/api/__init__.py prototype"]
-        src_zephyr_infra_ops_core_init_py["src/zephyr/infra_ops/core/__init__.py prototype"]
         src_zephyr_infra_ops_dashboard_init_py["src/zephyr/infra_ops/dashboard/__init__.py production"]
         src_zephyr_infra_ops_dashboard_app_py["src/zephyr/infra_ops/dashboard/app.py prototype"]
         src_zephyr_infra_ops_dashboard_components_init_py["src/zephyr/infra_ops/dashboard/components/__ini... production"]
@@ -70,15 +62,16 @@ graph TD
         src_zephyr_infra_ops_dashboard_components_knowledge_overview_py["src/zephyr/infra_ops/dashboard/components/knowl... prototype"]
         src_zephyr_infra_ops_dashboard_components_olap_trend_py["src/zephyr/infra_ops/dashboard/components/olap_... prototype"]
         src_zephyr_infra_ops_dashboard_components_task_progress_py["src/zephyr/infra_ops/dashboard/components/task_... prototype"]
-        src_zephyr_infra_ops_infrastructure_init_py["src/zephyr/infra_ops/infrastructure/__init__.py prototype"]
         src_zephyr_infra_ops_interface_base_py["src/zephyr/infra_ops/interface_base.py prototype"]
-        src_zephyr_infra_ops_models_init_py["src/zephyr/infra_ops/models/__init__.py prototype"]
-        src_zephyr_infra_ops_services_init_py["src/zephyr/infra_ops/services/__init__.py prototype"]
         src_zephyr_infrastructure_rollback_governance_init_py["src/zephyr/infrastructure/rollback/governance/_... prototype"]
         src_zephyr_infrastructure_rollback_governance_auditor_py["src/zephyr/infrastructure/rollback/governance/a... prototype"]
         src_zephyr_infrastructure_rollback_governance_budget_tracker_py["src/zephyr/infrastructure/rollback/governance/b... prototype"]
         src_zephyr_infrastructure_rollback_governance_contracts_py["src/zephyr/infrastructure/rollback/governance/c... prototype"]
         src_zephyr_infrastructure_rollback_governance_drift_fix_py["src/zephyr/infrastructure/rollback/governance/d... prototype"]
+        src_zephyr_infrastructure_rollback_governance_result_types_py["src/zephyr/infrastructure/rollback/governance/r... prototype"]
+        tests_test_auto_rollback_trigger_py["tests/test_auto_rollback_trigger.py prototype"]
+        tests_test_rollback_simulator_py["tests/test_rollback_simulator.py prototype"]
+        tests_test_rollback_wal_py["tests/test_rollback_wal.py prototype"]
     end
     src_zephyr_infra_ops_interface_base_py -.->|config_depends| src_zephyr_infra_ops_init_py
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| src_zephyr_infra_ops_init_py
@@ -88,11 +81,15 @@ graph TD
     src_zephyr_infra_ops_dashboard_components_olap_trend_py -.->|config_depends| src_zephyr_infra_ops_dashboard_components_gate_statistics_py
     src_zephyr_infrastructure_rollback_governance_budget_tracker_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     src_zephyr_infrastructure_rollback_governance_drift_fix_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
+    src_zephyr_infrastructure_rollback_governance_result_types_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
+    D_GOVERNANCE["D_GOVERNANCE production"]
+    tests_test_auto_rollback_trigger_py -.->|test_depends| D_GOVERNANCE
+    tests_test_rollback_simulator_py -.->|test_depends| D_GOVERNANCE
+    tests_test_rollback_wal_py -.->|test_depends| D_GOVERNANCE
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     D_OPS["D_OPS production"]
     src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
@@ -109,32 +106,10 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class config_infra_grafana_dashboards_provider_yml,config_infra_grafana_datasources_prometheus_yml,config_infra_prometheus_prometheus_yml,scripts_construction_test_deepseek_api_py,scripts_ide_health_service_py,src_zephyr_infra_ops_dashboard_init_py,src_zephyr_infra_ops_dashboard_components_init_py production
-    class src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py,src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_extensions_init_py,src_zephyr_infra_ops_api_init_py,src_zephyr_infra_ops_core_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_infrastructure_init_py,src_zephyr_infra_ops_interface_base_py,src_zephyr_infra_ops_models_init_py,src_zephyr_infra_ops_services_init_py,src_zephyr_infrastructure_rollback_governance_init_py,src_zephyr_infrastructure_rollback_governance_auditor_py,src_zephyr_infrastructure_rollback_governance_budget_tracker_py,src_zephyr_infrastructure_rollback_governance_contracts_py,src_zephyr_infrastructure_rollback_governance_drift_fix_py design
+    class scripts_construction_test_deepseek_api_py,scripts_ide_health_service_py,src_zephyr_infra_ops_dashboard_init_py,src_zephyr_infra_ops_dashboard_components_init_py production
+    class src_zephyr_governance_auto_rollback_trigger_py,src_zephyr_governance_rollback_simulator_py,src_zephyr_governance_rollback_wal_py,src_zephyr_infra_ops,src_zephyr_infra_ops_init_py,src_zephyr_infra_ops_dashboard_app_py,src_zephyr_infra_ops_dashboard_components_fitness_functions_py,src_zephyr_infra_ops_dashboard_components_gate_statistics_py,src_zephyr_infra_ops_dashboard_components_knowledge_overview_py,src_zephyr_infra_ops_dashboard_components_olap_trend_py,src_zephyr_infra_ops_dashboard_components_task_progress_py,src_zephyr_infra_ops_interface_base_py,src_zephyr_infrastructure_rollback_governance_init_py,src_zephyr_infrastructure_rollback_governance_auditor_py,src_zephyr_infrastructure_rollback_governance_budget_tracker_py,src_zephyr_infrastructure_rollback_governance_contracts_py,src_zephyr_infrastructure_rollback_governance_drift_fix_py,src_zephyr_infrastructure_rollback_governance_result_types_py,tests_test_auto_rollback_trigger_py,tests_test_rollback_simulator_py,tests_test_rollback_wal_py design
     class D_GOVERNANCE,D_OPS,D_INFRA_RUNTIME,D_FRONTEND external_prod
     class D_SHARED,D_GOV_AUDIT external_design
-```
-
-### 第 2 页 / 共 2 页 / Page 2 of 2
-
-```mermaid
-graph TD
-    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
-        src_zephyr_infrastructure_rollback_governance_result_types_py["src/zephyr/infrastructure/rollback/governance/r... prototype"]
-        tests_test_auto_rollback_trigger_py["tests/test_auto_rollback_trigger.py prototype"]
-        tests_test_rollback_simulator_py["tests/test_rollback_simulator.py prototype"]
-        tests_test_rollback_wal_py["tests/test_rollback_wal.py prototype"]
-    end
-    D_GOVERNANCE["D_GOVERNANCE production"]
-    tests_test_auto_rollback_trigger_py -.->|test_depends| D_GOVERNANCE
-    tests_test_rollback_simulator_py -.->|test_depends| D_GOVERNANCE
-    tests_test_rollback_wal_py -.->|test_depends| D_GOVERNANCE
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_rollback_governance_result_types_py,tests_test_auto_rollback_trigger_py,tests_test_rollback_simulator_py,tests_test_rollback_wal_py design
-    class D_GOVERNANCE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -157,7 +132,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 34 个模块 / 34 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 25 个模块 / 25 modules。
 
 ```
 
@@ -169,27 +144,28 @@ graph TD
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (29 modules)             │
+│            L1 基础层 / Foundation Layer (20 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
-│   config/infra/grafana/dashboards/provider.yml  [production]     │
-│   config/infra/grafana/datasources/prometheus.yml  [production]  │
-│   config/infra/prometheus/prometheus.yml  [production]           │
 │   src/zephyr/governance/auto_rollback_trigger.py  [prototype]    │
 │   src/zephyr/governance/rollback_simulator.py  [prototype]       │
 │   src/zephyr/governance/rollback_wal.py  [prototype]             │
 │   src/zephyr/infra_ops/__init__.py  [prototype]                  │
-│   src/zephyr/infra_ops/_extensions/__init__.py  [prototype]      │
-│   src/zephyr/infra_ops/api/__init__.py  [prototype]              │
-│   src/zephyr/infra_ops/core/__init__.py  [prototype]             │
 │   src/zephyr/infra_ops/dashboard/app.py  [prototype]             │
 │   src/zephyr/infra_ops/dashboard/components/fitness_functions... │
 │   src/zephyr/infra_ops/dashboard/components/gate_statistics.p... │
 │   src/zephyr/infra_ops/dashboard/components/knowledge_overvie... │
 │   src/zephyr/infra_ops/dashboard/components/olap_trend.py  [p... │
 │   src/zephyr/infra_ops/dashboard/components/task_progress.py ... │
-│   src/zephyr/infra_ops/infrastructure/__init__.py  [prototype]   │
 │   src/zephyr/infra_ops/interface_base.py  [prototype]            │
-│   ...还有 11 个模块 / 11 more modules                            │
+│   src/zephyr/infrastructure/rollback/governance/__init__.py  ... │
+│   src/zephyr/infrastructure/rollback/governance/auditor.py  [... │
+│   src/zephyr/infrastructure/rollback/governance/budget_tracke... │
+│   src/zephyr/infrastructure/rollback/governance/contracts.py ... │
+│   src/zephyr/infrastructure/rollback/governance/drift_fix.py ... │
+│   src/zephyr/infrastructure/rollback/governance/result_types.... │
+│   tests/test_auto_rollback_trigger.py  [prototype]               │
+│   tests/test_rollback_simulator.py  [prototype]                  │
+│   tests/test_rollback_wal.py  [prototype]                        │
 └──────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
@@ -206,7 +182,7 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 34 个模块 / 34 modules）。
+> 按 architecture_layer 分组的模块清单（共 25 个模块 / 25 modules）。
 
 ### L0 基础设施层 / Infrastructure Layer (1 modules)
 
@@ -214,39 +190,30 @@ graph TD
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/infra_ops/ | 基础设施运维域 | design | planned |
 
-### L1 基础层 / Foundation Layer (29 modules)
+### L1 基础层 / Foundation Layer (20 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 | config/infra/grafana/dashboards/provider.yml | config/infra/grafana/dashboards/provi... | production | deprecated |
-| 2 | config/infra/grafana/datasources/prometheus.yml | config/infra/grafana/datasources/prom... | production | deprecated |
-| 3 | config/infra/prometheus/prometheus.yml | config/infra/prometheus/prometheus.yml | production | deprecated |
-| 4 | src/zephyr/governance/auto_rollback_trigger.py | src/zephyr/governance/auto_rollback_t... | prototype | generated |
-| 5 | src/zephyr/governance/rollback_simulator.py | src/zephyr/governance/rollback_simula... | prototype | generated |
-| 6 | src/zephyr/governance/rollback_wal.py | src/zephyr/governance/rollback_wal.py | prototype | generated |
-| 7 | src/zephyr/infra_ops/__init__.py | src/zephyr/infra_ops/__init__.py | prototype | generated |
-| 8 | src/zephyr/infra_ops/_extensions/__init__.py | src/zephyr/infra_ops/_extensions/__in... | prototype | deprecated |
-| 9 | src/zephyr/infra_ops/api/__init__.py | src/zephyr/infra_ops/api/__init__.py | prototype | deprecated |
-| 10 | src/zephyr/infra_ops/core/__init__.py | src/zephyr/infra_ops/core/__init__.py | prototype | deprecated |
-| 11 | src/zephyr/infra_ops/dashboard/app.py | src/zephyr/infra_ops/dashboard/app.py | prototype | generated |
-| 12 | src/zephyr/infra_ops/dashboard/components/fitness_functio... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 13 | src/zephyr/infra_ops/dashboard/components/gate_statistics.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 14 | src/zephyr/infra_ops/dashboard/components/knowledge_overv... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 15 | src/zephyr/infra_ops/dashboard/components/olap_trend.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 16 | src/zephyr/infra_ops/dashboard/components/task_progress.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
-| 17 | src/zephyr/infra_ops/infrastructure/__init__.py | src/zephyr/infra_ops/infrastructure/_... | prototype | deprecated |
-| 18 | src/zephyr/infra_ops/interface_base.py | src/zephyr/infra_ops/interface_base.py | prototype | generated |
-| 19 | src/zephyr/infra_ops/models/__init__.py | src/zephyr/infra_ops/models/__init__.py | prototype | deprecated |
-| 20 | src/zephyr/infra_ops/services/__init__.py | src/zephyr/infra_ops/services/__init_... | prototype | deprecated |
-| 21 | src/zephyr/infrastructure/rollback/governance/__init__.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 22 | src/zephyr/infrastructure/rollback/governance/auditor.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 23 | src/zephyr/infrastructure/rollback/governance/budget_trac... | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 24 | src/zephyr/infrastructure/rollback/governance/contracts.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 25 | src/zephyr/infrastructure/rollback/governance/drift_fix.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 26 | src/zephyr/infrastructure/rollback/governance/result_type... | src/zephyr/infrastructure/rollback/go... | prototype | generated |
-| 27 | tests/test_auto_rollback_trigger.py | tests/test_auto_rollback_trigger.py | prototype | generated |
-| 28 | tests/test_rollback_simulator.py | tests/test_rollback_simulator.py | prototype | generated |
-| 29 | tests/test_rollback_wal.py | tests/test_rollback_wal.py | prototype | generated |
+| 1 | src/zephyr/governance/auto_rollback_trigger.py | src/zephyr/governance/auto_rollback_t... | prototype | generated |
+| 2 | src/zephyr/governance/rollback_simulator.py | src/zephyr/governance/rollback_simula... | prototype | generated |
+| 3 | src/zephyr/governance/rollback_wal.py | src/zephyr/governance/rollback_wal.py | prototype | generated |
+| 4 | src/zephyr/infra_ops/__init__.py | src/zephyr/infra_ops/__init__.py | prototype | generated |
+| 5 | src/zephyr/infra_ops/dashboard/app.py | src/zephyr/infra_ops/dashboard/app.py | prototype | generated |
+| 6 | src/zephyr/infra_ops/dashboard/components/fitness_functio... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 7 | src/zephyr/infra_ops/dashboard/components/gate_statistics.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 8 | src/zephyr/infra_ops/dashboard/components/knowledge_overv... | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 9 | src/zephyr/infra_ops/dashboard/components/olap_trend.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 10 | src/zephyr/infra_ops/dashboard/components/task_progress.py | src/zephyr/infra_ops/dashboard/compon... | prototype | generated |
+| 11 | src/zephyr/infra_ops/interface_base.py | src/zephyr/infra_ops/interface_base.py | prototype | generated |
+| 12 | src/zephyr/infrastructure/rollback/governance/__init__.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
+| 13 | src/zephyr/infrastructure/rollback/governance/auditor.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
+| 14 | src/zephyr/infrastructure/rollback/governance/budget_trac... | src/zephyr/infrastructure/rollback/go... | prototype | generated |
+| 15 | src/zephyr/infrastructure/rollback/governance/contracts.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
+| 16 | src/zephyr/infrastructure/rollback/governance/drift_fix.py | src/zephyr/infrastructure/rollback/go... | prototype | generated |
+| 17 | src/zephyr/infrastructure/rollback/governance/result_type... | src/zephyr/infrastructure/rollback/go... | prototype | generated |
+| 18 | tests/test_auto_rollback_trigger.py | tests/test_auto_rollback_trigger.py | prototype | generated |
+| 19 | tests/test_rollback_simulator.py | tests/test_rollback_simulator.py | prototype | generated |
+| 20 | tests/test_rollback_wal.py | tests/test_rollback_wal.py | prototype | generated |
 
 ### 未分类 / Unclassified (4 modules)
 

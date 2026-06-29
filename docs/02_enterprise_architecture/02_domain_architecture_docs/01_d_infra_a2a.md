@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 A2A通信（D_INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,8 +26,8 @@ ttl: permanent
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 101 | Module Count | 101 |
 | 域内依赖 | 73 | Internal Dependencies | 73 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
-| 跨域出边 | 35 | Cross-domain Outgoing | 35 |
+| 跨域入边 | 6 | Cross-domain Incoming | 6 |
+| 跨域出边 | 33 | Cross-domain Outgoing | 33 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 101 | Production Modules | 101 |
@@ -235,10 +235,10 @@ graph TD
     src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_cost_tracker_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_pipeline_dead_letter_queue_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_dead_letter_queue_py -->|import_depends| D_INFRA_RUNTIME
+    src_zephyr_infrastructure_pipeline_layer_consumer_registry_py -->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_spec_sync_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -270,7 +270,6 @@ graph TD
     src_zephyr_infrastructure_queue_init_py -->|import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_pipeline_models_py -.->|import_depends| D_SHARED
-    src_zephyr_infrastructure_pipeline_model_router_py -->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_INFRA_RUNTIME
@@ -278,7 +277,6 @@ graph TD
     D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|import_depends| D_INFRA_RUNTIME
-    D_SHARED -.->|import_depends| src_zephyr_infrastructure_queue_task_queue_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -294,7 +292,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D_SHARED | 18 | import_depends |
+| D_SHARED | 16 | import_depends |
 | D_INFRA_RUNTIME | 13 | import_depends |
 | D_GOVERNANCE | 2 | import_depends |
 | D_GOV_AUDIT | 1 | import_depends |
@@ -305,7 +303,6 @@ graph TD
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_GOVERNANCE | 6 | import_depends |
-| D_SHARED | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

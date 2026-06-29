@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_FUNDAMENTAL_SIGNAL | Domain ID | D_FUNDAMENTAL_SIGNAL |
 | 域名称 | 基本面信号 | Domain Name | 基本面信号 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 25 | Module Count | 25 |
+| 模块数 | 19 | Module Count | 19 |
 | 域内依赖 | 20 | Internal Dependencies | 20 |
 | 跨域入边 | 10 | Cross-domain Incoming | 10 |
 | 跨域出边 | 18 | Cross-domain Outgoing | 18 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 21 | Prototype Modules | 21 |
+| 原型态模块 | 15 | Prototype Modules | 15 |
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 4/150 (正常) | Capacity | 4/150 (正常) |
 | 描述 | 财务指标信号 | Description | 财务指标信号 |
@@ -48,8 +48,6 @@ ttl: permanent
 graph TD
     subgraph D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL 基本面信号"]
         src_zephyr_signal_fundamental_init_py["src/zephyr/signal_fundamental/__init__.py prototype"]
-        src_zephyr_signal_fundamental_extensions_init_py["src/zephyr/signal_fundamental/_extensions/__ini... prototype"]
-        src_zephyr_signal_fundamental_api_init_py["src/zephyr/signal_fundamental/api/__init__.py prototype"]
         src_zephyr_signal_fundamental_capital_init_py["src/zephyr/signal_fundamental/capital/__init__.py prototype"]
         src_zephyr_signal_fundamental_capital_capital_allocation_result_py["src/zephyr/signal_fundamental/capital/capital_a... prototype"]
         src_zephyr_signal_fundamental_capital_capital_allocator_py["src/zephyr/signal_fundamental/capital/capital_a... prototype"]
@@ -57,15 +55,11 @@ graph TD
         src_zephyr_signal_fundamental_combiner_init_py["src/zephyr/signal_fundamental/combiner/__init__.py prototype"]
         src_zephyr_signal_fundamental_combiner_impl_init_py["src/zephyr/signal_fundamental/combiner/impl/__i... prototype"]
         src_zephyr_signal_fundamental_combiner_synthesized_signal_py["src/zephyr/signal_fundamental/combiner/synthesi... prototype"]
-        src_zephyr_signal_fundamental_core_init_py["src/zephyr/signal_fundamental/core/__init__.py prototype"]
         src_zephyr_signal_fundamental_gen_init_py["src/zephyr/signal_fundamental/gen/__init__.py prototype"]
         src_zephyr_signal_fundamental_gen_aggregator_base_py["src/zephyr/signal_fundamental/gen/aggregator_ba... prototype"]
         src_zephyr_signal_fundamental_gen_implementations_init_py["src/zephyr/signal_fundamental/gen/implementatio... prototype"]
         src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py["src/zephyr/signal_fundamental/gen/implementatio... production"]
-        src_zephyr_signal_fundamental_infrastructure_init_py["src/zephyr/signal_fundamental/infrastructure/__... prototype"]
-        src_zephyr_signal_fundamental_models_init_py["src/zephyr/signal_fundamental/models/__init__.py prototype"]
         src_zephyr_signal_fundamental_pipeline_py["src/zephyr/signal_fundamental/pipeline.py production"]
-        src_zephyr_signal_fundamental_services_init_py["src/zephyr/signal_fundamental/services/__init__.py prototype"]
         src_zephyr_signal_fundamental_strategy_init_py["src/zephyr/signal_fundamental/strategy/__init__.py prototype"]
         src_zephyr_signal_fundamental_strategy_capital_allocator_py["src/zephyr/signal_fundamental/strategy/capital_... prototype"]
         src_zephyr_signal_fundamental_strategy_implementations_init_py["src/zephyr/signal_fundamental/strategy/implemen... prototype"]
@@ -127,7 +121,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
-    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_extensions_init_py,src_zephyr_signal_fundamental_api_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_combiner_synthesized_signal_py,src_zephyr_signal_fundamental_core_init_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_infrastructure_init_py,src_zephyr_signal_fundamental_models_init_py,src_zephyr_signal_fundamental_services_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
+    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_combiner_synthesized_signal_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
     class D_GOVERNANCE,D_TRADING external_prod
     class D_FACTOR,D_GOV_SCRIPTS external_design
 ```
@@ -151,16 +145,14 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基本面信号（D_FUNDAMENTAL_SIGNAL）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 基本面信号（D_FUNDAMENTAL_SIGNAL）的模块分布。共 19 个模块 / 19 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (25 modules)               │
+│              L2 领域层 / Domain Layer (19 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/signal_fundamental/__init__.py  [prototype]         │
-│   src/zephyr/signal_fundamental/_extensions/__init__.py  [pro... │
-│   src/zephyr/signal_fundamental/api/__init__.py  [prototype]     │
 │   src/zephyr/signal_fundamental/capital/__init__.py  [prototype] │
 │   src/zephyr/signal_fundamental/capital/capital_allocation_re... │
 │   src/zephyr/signal_fundamental/capital/capital_allocator.py ... │
@@ -168,52 +160,48 @@ graph TD
 │   src/zephyr/signal_fundamental/combiner/__init__.py  [protot... │
 │   src/zephyr/signal_fundamental/combiner/impl/__init__.py  [p... │
 │   src/zephyr/signal_fundamental/combiner/synthesized_signal.p... │
-│   src/zephyr/signal_fundamental/core/__init__.py  [prototype]    │
 │   src/zephyr/signal_fundamental/gen/__init__.py  [prototype]     │
 │   src/zephyr/signal_fundamental/gen/aggregator_base.py  [prot... │
 │   src/zephyr/signal_fundamental/gen/implementations/__init__.... │
 │   src/zephyr/signal_fundamental/gen/implementations/default_s... │
-│   src/zephyr/signal_fundamental/infrastructure/__init__.py  [... │
-│   src/zephyr/signal_fundamental/models/__init__.py  [prototype]  │
 │   src/zephyr/signal_fundamental/pipeline.py  [production]        │
-│   ...还有 7 个模块 / 7 more modules                              │
+│   src/zephyr/signal_fundamental/strategy/__init__.py  [protot... │
+│   src/zephyr/signal_fundamental/strategy/capital_allocator.py... │
+│   src/zephyr/signal_fundamental/strategy/implementations/__in... │
+│   src/zephyr/signal_fundamental/strategy/implementations/defa... │
+│   src/zephyr/signal_fundamental/synth/__init__.py  [prototype]   │
+│   src/zephyr/signal_fundamental/synth/signal_synthesizer.py  ... │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 25 个模块 / 25 modules）。
+> 按 architecture_layer 分组的模块清单（共 19 个模块 / 19 modules）。
 
-### L2 领域层 / Domain Layer (25 modules)
+### L2 领域层 / Domain Layer (19 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/signal_fundamental/__init__.py | src/zephyr/signal_fundamental/__init_... | prototype | generated |
-| 2 | src/zephyr/signal_fundamental/_extensions/__init__.py | src/zephyr/signal_fundamental/_extens... | prototype | deprecated |
-| 3 | src/zephyr/signal_fundamental/api/__init__.py | src/zephyr/signal_fundamental/api/__i... | prototype | deprecated |
-| 4 | src/zephyr/signal_fundamental/capital/__init__.py | src/zephyr/signal_fundamental/capital... | prototype | generated |
-| 5 | src/zephyr/signal_fundamental/capital/capital_allocation_... | src/zephyr/signal_fundamental/capital... | prototype | generated |
-| 6 | src/zephyr/signal_fundamental/capital/capital_allocator.py | src/zephyr/signal_fundamental/capital... | prototype | generated |
-| 7 | src/zephyr/signal_fundamental/capital/default_capital_all... | src/zephyr/signal_fundamental/capital... | prototype | generated |
-| 8 | src/zephyr/signal_fundamental/combiner/__init__.py | src/zephyr/signal_fundamental/combine... | prototype | generated |
-| 9 | src/zephyr/signal_fundamental/combiner/impl/__init__.py | src/zephyr/signal_fundamental/combine... | prototype | generated |
-| 10 | src/zephyr/signal_fundamental/combiner/synthesized_signal.py | src/zephyr/signal_fundamental/combine... | prototype | generated |
-| 11 | src/zephyr/signal_fundamental/core/__init__.py | src/zephyr/signal_fundamental/core/__... | prototype | deprecated |
-| 12 | src/zephyr/signal_fundamental/gen/__init__.py | src/zephyr/signal_fundamental/gen/__i... | prototype | generated |
-| 13 | src/zephyr/signal_fundamental/gen/aggregator_base.py | src/zephyr/signal_fundamental/gen/agg... | prototype | generated |
-| 14 | src/zephyr/signal_fundamental/gen/implementations/__init_... | src/zephyr/signal_fundamental/gen/imp... | prototype | generated |
-| 15 | src/zephyr/signal_fundamental/gen/implementations/default... | src/zephyr/signal_fundamental/gen/imp... | production | generated |
-| 16 | src/zephyr/signal_fundamental/infrastructure/__init__.py | src/zephyr/signal_fundamental/infrast... | prototype | deprecated |
-| 17 | src/zephyr/signal_fundamental/models/__init__.py | src/zephyr/signal_fundamental/models/... | prototype | deprecated |
-| 18 | src/zephyr/signal_fundamental/pipeline.py | src/zephyr/signal_fundamental/pipelin... | production | generated |
-| 19 | src/zephyr/signal_fundamental/services/__init__.py | src/zephyr/signal_fundamental/service... | prototype | deprecated |
-| 20 | src/zephyr/signal_fundamental/strategy/__init__.py | src/zephyr/signal_fundamental/strateg... | prototype | generated |
-| 21 | src/zephyr/signal_fundamental/strategy/capital_allocator.py | src/zephyr/signal_fundamental/strateg... | prototype | generated |
-| 22 | src/zephyr/signal_fundamental/strategy/implementations/__... | src/zephyr/signal_fundamental/strateg... | prototype | generated |
-| 23 | src/zephyr/signal_fundamental/strategy/implementations/de... | src/zephyr/signal_fundamental/strateg... | production | generated |
-| 24 | src/zephyr/signal_fundamental/synth/__init__.py | src/zephyr/signal_fundamental/synth/_... | prototype | generated |
-| 25 | src/zephyr/signal_fundamental/synth/signal_synthesizer.py | src/zephyr/signal_fundamental/synth/s... | production | generated |
+| 2 | src/zephyr/signal_fundamental/capital/__init__.py | src/zephyr/signal_fundamental/capital... | prototype | generated |
+| 3 | src/zephyr/signal_fundamental/capital/capital_allocation_... | src/zephyr/signal_fundamental/capital... | prototype | generated |
+| 4 | src/zephyr/signal_fundamental/capital/capital_allocator.py | src/zephyr/signal_fundamental/capital... | prototype | generated |
+| 5 | src/zephyr/signal_fundamental/capital/default_capital_all... | src/zephyr/signal_fundamental/capital... | prototype | generated |
+| 6 | src/zephyr/signal_fundamental/combiner/__init__.py | src/zephyr/signal_fundamental/combine... | prototype | generated |
+| 7 | src/zephyr/signal_fundamental/combiner/impl/__init__.py | src/zephyr/signal_fundamental/combine... | prototype | generated |
+| 8 | src/zephyr/signal_fundamental/combiner/synthesized_signal.py | src/zephyr/signal_fundamental/combine... | prototype | generated |
+| 9 | src/zephyr/signal_fundamental/gen/__init__.py | src/zephyr/signal_fundamental/gen/__i... | prototype | generated |
+| 10 | src/zephyr/signal_fundamental/gen/aggregator_base.py | src/zephyr/signal_fundamental/gen/agg... | prototype | generated |
+| 11 | src/zephyr/signal_fundamental/gen/implementations/__init_... | src/zephyr/signal_fundamental/gen/imp... | prototype | generated |
+| 12 | src/zephyr/signal_fundamental/gen/implementations/default... | src/zephyr/signal_fundamental/gen/imp... | production | generated |
+| 13 | src/zephyr/signal_fundamental/pipeline.py | src/zephyr/signal_fundamental/pipelin... | production | generated |
+| 14 | src/zephyr/signal_fundamental/strategy/__init__.py | src/zephyr/signal_fundamental/strateg... | prototype | generated |
+| 15 | src/zephyr/signal_fundamental/strategy/capital_allocator.py | src/zephyr/signal_fundamental/strateg... | prototype | generated |
+| 16 | src/zephyr/signal_fundamental/strategy/implementations/__... | src/zephyr/signal_fundamental/strateg... | prototype | generated |
+| 17 | src/zephyr/signal_fundamental/strategy/implementations/de... | src/zephyr/signal_fundamental/strateg... | production | generated |
+| 18 | src/zephyr/signal_fundamental/synth/__init__.py | src/zephyr/signal_fundamental/synth/_... | prototype | generated |
+| 19 | src/zephyr/signal_fundamental/synth/signal_synthesizer.py | src/zephyr/signal_fundamental/synth/s... | production | generated |
 
 ## 依赖关系图 / Dependency Graph
 

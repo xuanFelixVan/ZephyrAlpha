@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 模块数 | 107 | Module Count | 107 |
 | 域内依赖 | 79 | Internal Dependencies | 79 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 51 | Cross-domain Outgoing | 51 |
+| 跨域出边 | 50 | Cross-domain Outgoing | 50 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 107 | Production Modules | 107 |
@@ -231,11 +231,10 @@ graph TD
         src_zephyr_infrastructure_rollback_rollback_target_staleness_py["src/zephyr/infrastructure/rollback/rollback_tar... production"]
         src_zephyr_infrastructure_rollback_rollback_verifier_py["src/zephyr/infrastructure/rollback/rollback_ver... production"]
     end
-    D_SHARED["D_SHARED production"]
-    src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
+    D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_SHARED
     D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
@@ -256,8 +255,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py,src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_llm_impact_analyzer_py,src_zephyr_infrastructure_rollback_model_drift_detector_py,src_zephyr_infrastructure_rollback_owner_absent_py,src_zephyr_infrastructure_rollback_paper_live_transition_py,src_zephyr_infrastructure_rollback_phase_check_registry_py,src_zephyr_infrastructure_rollback_phase_manager_py,src_zephyr_infrastructure_rollback_post_live_verification_py,src_zephyr_infrastructure_rollback_result_types_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py production
-    class D_SHARED,D_GOVERNANCE,D_INFRA_RUNTIME external_prod
-    class D_INTEGRATION,D_GOV_AUDIT external_design
+    class D_GOVERNANCE,D_INFRA_RUNTIME external_prod
+    class D_INTEGRATION,D_SHARED,D_GOV_AUDIT external_design
 ```
 
 ### 第 4 页 / 共 4 页 / Page 4 of 4
@@ -304,8 +303,8 @@ graph TD
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 33 | import_depends |
 | D_GOV_AUDIT | 7 | import_depends |
-| D_SHARED | 5 | import_depends |
 | D_GOVERNANCE | 4 | import_depends |
+| D_SHARED | 4 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

@@ -104,13 +104,13 @@ def get_domain_info(conn: PgConnExecuteWrapper, domain_id: str) -> dict | None:
 
 
 def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询指定域的所有节点。"""
+    """查询指定域的所有节点（排除 deprecated 已废弃节点）。"""
     cur = conn.execute(
         "SELECT n.node_id, n.path, n.blueprint_id, n.design_maturity, n.build_status, n.node_name, "
         "(SELECT COUNT(*) FROM edges WHERE to_node_id=n.node_id) AS in_degree, "
         "(SELECT COUNT(*) FROM edges WHERE from_node_id=n.node_id) AS out_degree, "
         "n.architecture_layer, n.file_path "
-        "FROM nodes n WHERE n.domain_id=%s ORDER BY n.path",
+        "FROM nodes n WHERE n.domain_id=%s AND n.build_status != 'deprecated' ORDER BY n.path",
         (domain_id,),
     )
     rows = []
@@ -133,7 +133,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
 
 
 def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
-    """查询域内依赖边（from_node 和 to_node 都在本域）。
+    """查询域内依赖边（from_node 和 to_node 都在本域，排除 deprecated 节点的边）。
 
     返回每条边的两端节点路径、名称、设计成熟度，供 Mermaid 图和 ASCII 依赖图使用。
     """
@@ -146,6 +146,7 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
            WHERE n1.domain_id=%s AND n2.domain_id=%s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
            ORDER BY e.from_node_id, e.to_node_id""",
         (domain_id, domain_id),
     )
@@ -169,7 +170,7 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
 
 
 def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[list[dict], list[dict]]:
-    """查询跨域依赖（聚合统计）。
+    """查询跨域依赖（聚合统计，排除 deprecated 节点的边）。
 
     返回: (本域依赖的其他域列表, 依赖本域的其他域列表)
     """
@@ -181,6 +182,7 @@ def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[l
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
            WHERE n1.domain_id=%s AND n2.domain_id != %s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
            GROUP BY n2.domain_id
            ORDER BY cnt DESC""",
         (domain_id, domain_id),
@@ -197,6 +199,7 @@ def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[l
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
            WHERE n2.domain_id=%s AND n1.domain_id != %s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
            GROUP BY n1.domain_id
            ORDER BY cnt DESC""",
         (domain_id, domain_id),
@@ -211,7 +214,7 @@ def get_cross_domain_deps(conn: PgConnExecuteWrapper, domain_id: str) -> tuple[l
 def get_cross_domain_edges_detail(
     conn: PgConnExecuteWrapper, domain_id: str, internal_node_ids: list[int]
 ) -> tuple[list[dict], list[dict]]:
-    """查询跨域边的详细信息（涉及指定内部节点的），供 Mermaid 图绘制外部节点和边。
+    """查询跨域边的详细信息（涉及指定内部节点的，排除 deprecated 节点的边），供 Mermaid 图绘制外部节点和边。
 
     返回: (出边列表, 入边列表)，每条含 from_path/to_path/成熟度/外部域ID。
     """
@@ -233,6 +236,7 @@ def get_cross_domain_edges_detail(
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
            WHERE n1.domain_id=%s AND n2.domain_id != %s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
              AND e.from_node_id IN ({placeholders})
            LIMIT 15""",
         params_out,
@@ -261,6 +265,7 @@ def get_cross_domain_edges_detail(
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
            WHERE n2.domain_id=%s AND n1.domain_id != %s
+             AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
              AND e.to_node_id IN ({placeholders})
            LIMIT 15""",
         params_out,

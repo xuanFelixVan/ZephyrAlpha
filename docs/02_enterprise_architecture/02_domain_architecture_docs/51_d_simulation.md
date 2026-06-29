@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:51
+> 最后更新: 2026-06-29 18:08:07
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
 | 域名称 | 仿真 | Domain Name | 仿真 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 19 | Module Count | 19 |
+| 模块数 | 13 | Module Count | 13 |
 | 域内依赖 | 10 | Internal Dependencies | 10 |
 | 跨域入边 | 17 | Cross-domain Incoming | 17 |
 | 跨域出边 | 2 | Cross-domain Outgoing | 2 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 14 | Prototype Modules | 14 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 4 | Production Modules | 4 |
 | 容量 | 4/150 (正常) | Capacity | 4/150 (正常) |
 | 描述 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 | Description | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
@@ -50,22 +50,16 @@ graph TD
         src_zephyr_simulation["仿真核心域 design"]
         src_zephyr_simulation_init_py["src/zephyr/simulation/__init__.py prototype"]
         src_zephyr_simulation_init_from_resear_py["src/zephyr/simulation/__init___from_resear.py prototype"]
-        src_zephyr_simulation_extensions_init_py["src/zephyr/simulation/_extensions/__init__.py prototype"]
-        src_zephyr_simulation_api_init_py["src/zephyr/simulation/api/__init__.py prototype"]
         src_zephyr_simulation_backtest_base_py["src/zephyr/simulation/backtest_base.py production"]
         src_zephyr_simulation_backtest_base_from_resear_py["src/zephyr/simulation/backtest_base_from_resear.py prototype"]
-        src_zephyr_simulation_core_init_py["src/zephyr/simulation/core/__init__.py prototype"]
         src_zephyr_simulation_default_backtest_engine_py["src/zephyr/simulation/default_backtest_engine.py production"]
         src_zephyr_simulation_default_backtest_engine_from_resear_py["src/zephyr/simulation/default_backtest_engine_f... prototype"]
         src_zephyr_simulation_implementations_init_py["src/zephyr/simulation/implementations/__init__.py prototype"]
         src_zephyr_simulation_implementations_init_from_resear_py["src/zephyr/simulation/implementations/__init___... prototype"]
         src_zephyr_simulation_implementations_default_experiment_pipeline_py["src/zephyr/simulation/implementations/default_e... production"]
         src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py["src/zephyr/simulation/implementations/default_e... prototype"]
-        src_zephyr_simulation_infrastructure_init_py["src/zephyr/simulation/infrastructure/__init__.py prototype"]
-        src_zephyr_simulation_models_init_py["src/zephyr/simulation/models/__init__.py prototype"]
         src_zephyr_simulation_pipeline_base_py["src/zephyr/simulation/pipeline_base.py production"]
         src_zephyr_simulation_pipeline_base_from_resear_py["src/zephyr/simulation/pipeline_base_from_resear.py prototype"]
-        src_zephyr_simulation_services_init_py["src/zephyr/simulation/services/__init__.py prototype"]
     end
     src_zephyr_simulation_default_backtest_engine_py -.->|import_depends| src_zephyr_simulation_init_py
     src_zephyr_simulation_backtest_base_from_resear_py -.->|config_depends| src_zephyr_simulation_init_py
@@ -104,7 +98,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_backtest_base_py,src_zephyr_simulation_default_backtest_engine_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
-    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_init_from_resear_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_backtest_base_from_resear_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_default_backtest_engine_from_resear_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_init_from_resear_py,src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_pipeline_base_from_resear_py,src_zephyr_simulation_services_init_py design
+    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_init_from_resear_py,src_zephyr_simulation_backtest_base_from_resear_py,src_zephyr_simulation_default_backtest_engine_from_resear_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_init_from_resear_py,src_zephyr_simulation_implementations_default_experiment_pipeline_from_resear_py,src_zephyr_simulation_pipeline_base_from_resear_py design
     class D_INTEGRATION,D_INTELLIGENCE,D_SHARED,D_GOV_SCRIPTS,D_GOVERNANCE external_design
 ```
 
@@ -127,63 +121,51 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 仿真（D_SIMULATION）的模块分布。共 19 个模块 / 19 modules。
+> 按 architecture_layer 分层显示 仿真（D_SIMULATION）的模块分布。共 13 个模块 / 13 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (19 modules)               │
+│              L2 领域层 / Domain Layer (13 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   仿真核心域  [design]                                           │
 │   src/zephyr/simulation/__init__.py  [prototype]                 │
 │   src/zephyr/simulation/__init___from_resear.py  [prototype]     │
-│   src/zephyr/simulation/_extensions/__init__.py  [prototype]     │
-│   src/zephyr/simulation/api/__init__.py  [prototype]             │
 │   src/zephyr/simulation/backtest_base.py  [production]           │
 │   src/zephyr/simulation/backtest_base_from_resear.py  [protot... │
-│   src/zephyr/simulation/core/__init__.py  [prototype]            │
 │   src/zephyr/simulation/default_backtest_engine.py  [production] │
 │   src/zephyr/simulation/default_backtest_engine_from_resear.p... │
 │   src/zephyr/simulation/implementations/__init__.py  [prototype] │
 │   src/zephyr/simulation/implementations/__init___from_resear.... │
 │   src/zephyr/simulation/implementations/default_experiment_pi... │
 │   src/zephyr/simulation/implementations/default_experiment_pi... │
-│   src/zephyr/simulation/infrastructure/__init__.py  [prototype]  │
-│   src/zephyr/simulation/models/__init__.py  [prototype]          │
 │   src/zephyr/simulation/pipeline_base.py  [production]           │
 │   src/zephyr/simulation/pipeline_base_from_resear.py  [protot... │
-│   src/zephyr/simulation/services/__init__.py  [prototype]        │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 19 个模块 / 19 modules）。
+> 按 architecture_layer 分组的模块清单（共 13 个模块 / 13 modules）。
 
-### L2 领域层 / Domain Layer (19 modules)
+### L2 领域层 / Domain Layer (13 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/simulation/ | 仿真核心域 | design | planned |
 | 2 | src/zephyr/simulation/__init__.py | src/zephyr/simulation/__init__.py | prototype | generated |
 | 3 | src/zephyr/simulation/__init___from_resear.py | src/zephyr/simulation/__init___from_r... | prototype | generated |
-| 4 | src/zephyr/simulation/_extensions/__init__.py | src/zephyr/simulation/_extensions/__i... | prototype | deprecated |
-| 5 | src/zephyr/simulation/api/__init__.py | src/zephyr/simulation/api/__init__.py | prototype | deprecated |
-| 6 | src/zephyr/simulation/backtest_base.py | src/zephyr/simulation/backtest_base.py | production | generated |
-| 7 | src/zephyr/simulation/backtest_base_from_resear.py | src/zephyr/simulation/backtest_base_f... | prototype | generated |
-| 8 | src/zephyr/simulation/core/__init__.py | src/zephyr/simulation/core/__init__.py | prototype | deprecated |
-| 9 | src/zephyr/simulation/default_backtest_engine.py | src/zephyr/simulation/default_backtes... | production | generated |
-| 10 | src/zephyr/simulation/default_backtest_engine_from_resear.py | src/zephyr/simulation/default_backtes... | prototype | generated |
-| 11 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | prototype | generated |
-| 12 | src/zephyr/simulation/implementations/__init___from_resea... | src/zephyr/simulation/implementations... | prototype | generated |
-| 13 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | production | generated |
-| 14 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | prototype | generated |
-| 15 | src/zephyr/simulation/infrastructure/__init__.py | src/zephyr/simulation/infrastructure/... | prototype | deprecated |
-| 16 | src/zephyr/simulation/models/__init__.py | src/zephyr/simulation/models/__init__.py | prototype | deprecated |
-| 17 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | production | generated |
-| 18 | src/zephyr/simulation/pipeline_base_from_resear.py | src/zephyr/simulation/pipeline_base_f... | prototype | generated |
-| 19 | src/zephyr/simulation/services/__init__.py | src/zephyr/simulation/services/__init... | prototype | deprecated |
+| 4 | src/zephyr/simulation/backtest_base.py | src/zephyr/simulation/backtest_base.py | production | generated |
+| 5 | src/zephyr/simulation/backtest_base_from_resear.py | src/zephyr/simulation/backtest_base_f... | prototype | generated |
+| 6 | src/zephyr/simulation/default_backtest_engine.py | src/zephyr/simulation/default_backtes... | production | generated |
+| 7 | src/zephyr/simulation/default_backtest_engine_from_resear.py | src/zephyr/simulation/default_backtes... | prototype | generated |
+| 8 | src/zephyr/simulation/implementations/__init__.py | src/zephyr/simulation/implementations... | prototype | generated |
+| 9 | src/zephyr/simulation/implementations/__init___from_resea... | src/zephyr/simulation/implementations... | prototype | generated |
+| 10 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | production | generated |
+| 11 | src/zephyr/simulation/implementations/default_experiment_... | src/zephyr/simulation/implementations... | prototype | generated |
+| 12 | src/zephyr/simulation/pipeline_base.py | src/zephyr/simulation/pipeline_base.py | production | generated |
+| 13 | src/zephyr/simulation/pipeline_base_from_resear.py | src/zephyr/simulation/pipeline_base_f... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

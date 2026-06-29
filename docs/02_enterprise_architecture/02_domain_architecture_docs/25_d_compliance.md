@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_COMPLIANCE | Domain ID | D_COMPLIANCE |
 | 域名称 | 合规 | Domain Name | 合规 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 25 | Module Count | 25 |
+| 模块数 | 19 | Module Count | 19 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 23 | Cross-domain Outgoing | 23 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 25 | Prototype Modules | 25 |
+| 原型态模块 | 19 | Prototype Modules | 19 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 合规规则、交易限制、报告合规、监管对接。合规监管防线。 | Description | 合规规则、交易限制、报告合规、监管对接。合规监管防线。 |
@@ -48,9 +48,7 @@ ttl: permanent
 graph TD
     subgraph D_COMPLIANCE["D_COMPLIANCE 合规"]
         src_zephyr_compliance_init_py["src/zephyr/compliance/__init__.py prototype"]
-        src_zephyr_compliance_extensions_init_py["src/zephyr/compliance/_extensions/__init__.py prototype"]
         src_zephyr_compliance_aisg_sandbox_py["src/zephyr/compliance/aisg_sandbox.py prototype"]
-        src_zephyr_compliance_api_init_py["src/zephyr/compliance/api/__init__.py prototype"]
         src_zephyr_compliance_artifact_scanner_py["src/zephyr/compliance/artifact_scanner.py prototype"]
         src_zephyr_compliance_audit_orchestrator_init_py["src/zephyr/compliance/audit_orchestrator/__init... prototype"]
         src_zephyr_compliance_audit_trail_init_py["src/zephyr/compliance/audit_trail/__init__.py prototype"]
@@ -59,18 +57,14 @@ graph TD
         src_zephyr_compliance_behavioral_auditor_init_py["src/zephyr/compliance/behavioral_auditor/__init... prototype"]
         src_zephyr_compliance_compliance_gate_a6_init_py["src/zephyr/compliance/compliance_gate_a6/__init... prototype"]
         src_zephyr_compliance_compliance_manager_py["src/zephyr/compliance/compliance_manager.py prototype"]
-        src_zephyr_compliance_core_init_py["src/zephyr/compliance/core/__init__.py prototype"]
         src_zephyr_compliance_default_security_gateway_py["src/zephyr/compliance/default_security_gateway.py prototype"]
         src_zephyr_compliance_evidence_pack_py["src/zephyr/compliance/evidence_pack.py prototype"]
         src_zephyr_compliance_financial_compliance_py["src/zephyr/compliance/financial_compliance.py prototype"]
         src_zephyr_compliance_implementations_init_py["src/zephyr/compliance/implementations/__init__.py prototype"]
-        src_zephyr_compliance_infrastructure_init_py["src/zephyr/compliance/infrastructure/__init__.py prototype"]
         src_zephyr_compliance_integrity_py["src/zephyr/compliance/integrity.py prototype"]
         src_zephyr_compliance_merkle_hourly_py["src/zephyr/compliance/merkle_hourly.py prototype"]
-        src_zephyr_compliance_models_init_py["src/zephyr/compliance/models/__init__.py prototype"]
         src_zephyr_compliance_security_gateway_base_py["src/zephyr/compliance/security_gateway_base.py prototype"]
         src_zephyr_compliance_semantic_auditor_init_py["src/zephyr/compliance/semantic_auditor/__init__.py prototype"]
-        src_zephyr_compliance_services_init_py["src/zephyr/compliance/services/__init__.py prototype"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["src/zephyr/compliance/zero_knowledge_audit_stub... prototype"]
     end
     src_zephyr_compliance_init_py -.->|config_depends| src_zephyr_compliance_artifact_scanner_py
@@ -97,7 +91,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_semantic_auditor_init_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
+    class src_zephyr_compliance_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_merkle_hourly_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_semantic_auditor_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_DRIFT,D_GOV_AUDIT external_prod
     class D_GOVERNANCE external_design
 ```
@@ -118,17 +112,15 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 合规（D_COMPLIANCE）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 合规（D_COMPLIANCE）的模块分布。共 19 个模块 / 19 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (25 modules)               │
+│              L2 领域层 / Domain Layer (19 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   src/zephyr/compliance/__init__.py  [prototype]                 │
-│   src/zephyr/compliance/_extensions/__init__.py  [prototype]     │
 │   src/zephyr/compliance/aisg_sandbox.py  [prototype]             │
-│   src/zephyr/compliance/api/__init__.py  [prototype]             │
 │   src/zephyr/compliance/artifact_scanner.py  [prototype]         │
 │   src/zephyr/compliance/audit_orchestrator/__init__.py  [prot... │
 │   src/zephyr/compliance/audit_trail/__init__.py  [prototype]     │
@@ -137,50 +129,46 @@ graph TD
 │   src/zephyr/compliance/behavioral_auditor/__init__.py  [prot... │
 │   src/zephyr/compliance/compliance_gate_a6/__init__.py  [prot... │
 │   src/zephyr/compliance/compliance_manager.py  [prototype]       │
-│   src/zephyr/compliance/core/__init__.py  [prototype]            │
 │   src/zephyr/compliance/default_security_gateway.py  [prototype] │
 │   src/zephyr/compliance/evidence_pack.py  [prototype]            │
 │   src/zephyr/compliance/financial_compliance.py  [prototype]     │
 │   src/zephyr/compliance/implementations/__init__.py  [prototype] │
-│   src/zephyr/compliance/infrastructure/__init__.py  [prototype]  │
-│   ...还有 7 个模块 / 7 more modules                              │
+│   src/zephyr/compliance/integrity.py  [prototype]                │
+│   src/zephyr/compliance/merkle_hourly.py  [prototype]            │
+│   src/zephyr/compliance/security_gateway_base.py  [prototype]    │
+│   src/zephyr/compliance/semantic_auditor/__init__.py  [protot... │
+│   src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py... │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 25 个模块 / 25 modules）。
+> 按 architecture_layer 分组的模块清单（共 19 个模块 / 19 modules）。
 
-### L2 领域层 / Domain Layer (25 modules)
+### L2 领域层 / Domain Layer (19 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/compliance/__init__.py | src/zephyr/compliance/__init__.py | prototype | generated |
-| 2 | src/zephyr/compliance/_extensions/__init__.py | src/zephyr/compliance/_extensions/__i... | prototype | deprecated |
-| 3 | src/zephyr/compliance/aisg_sandbox.py | src/zephyr/compliance/aisg_sandbox.py | prototype | generated |
-| 4 | src/zephyr/compliance/api/__init__.py | src/zephyr/compliance/api/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/compliance/artifact_scanner.py | src/zephyr/compliance/artifact_scanne... | prototype | generated |
-| 6 | src/zephyr/compliance/audit_orchestrator/__init__.py | src/zephyr/compliance/audit_orchestra... | prototype | generated |
-| 7 | src/zephyr/compliance/audit_trail/__init__.py | src/zephyr/compliance/audit_trail/__i... | prototype | generated |
-| 8 | src/zephyr/compliance/audit_trail/bridges/__init__.py | src/zephyr/compliance/audit_trail/bri... | prototype | generated |
-| 9 | src/zephyr/compliance/behavioral_admission/__init__.py | src/zephyr/compliance/behavioral_admi... | prototype | generated |
-| 10 | src/zephyr/compliance/behavioral_auditor/__init__.py | src/zephyr/compliance/behavioral_audi... | prototype | generated |
-| 11 | src/zephyr/compliance/compliance_gate_a6/__init__.py | src/zephyr/compliance/compliance_gate... | prototype | generated |
-| 12 | src/zephyr/compliance/compliance_manager.py | src/zephyr/compliance/compliance_mana... | prototype | generated |
-| 13 | src/zephyr/compliance/core/__init__.py | src/zephyr/compliance/core/__init__.py | prototype | deprecated |
-| 14 | src/zephyr/compliance/default_security_gateway.py | src/zephyr/compliance/default_securit... | prototype | generated |
-| 15 | src/zephyr/compliance/evidence_pack.py | src/zephyr/compliance/evidence_pack.py | prototype | generated |
-| 16 | src/zephyr/compliance/financial_compliance.py | src/zephyr/compliance/financial_compl... | prototype | generated |
-| 17 | src/zephyr/compliance/implementations/__init__.py | src/zephyr/compliance/implementations... | prototype | generated |
-| 18 | src/zephyr/compliance/infrastructure/__init__.py | src/zephyr/compliance/infrastructure/... | prototype | deprecated |
-| 19 | src/zephyr/compliance/integrity.py | src/zephyr/compliance/integrity.py | prototype | generated |
-| 20 | src/zephyr/compliance/merkle_hourly.py | src/zephyr/compliance/merkle_hourly.py | prototype | generated |
-| 21 | src/zephyr/compliance/models/__init__.py | src/zephyr/compliance/models/__init__.py | prototype | deprecated |
-| 22 | src/zephyr/compliance/security_gateway_base.py | src/zephyr/compliance/security_gatewa... | prototype | generated |
-| 23 | src/zephyr/compliance/semantic_auditor/__init__.py | src/zephyr/compliance/semantic_audito... | prototype | generated |
-| 24 | src/zephyr/compliance/services/__init__.py | src/zephyr/compliance/services/__init... | prototype | deprecated |
-| 25 | src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py | src/zephyr/compliance/zero_knowledge_... | prototype | generated |
+| 2 | src/zephyr/compliance/aisg_sandbox.py | src/zephyr/compliance/aisg_sandbox.py | prototype | generated |
+| 3 | src/zephyr/compliance/artifact_scanner.py | src/zephyr/compliance/artifact_scanne... | prototype | generated |
+| 4 | src/zephyr/compliance/audit_orchestrator/__init__.py | src/zephyr/compliance/audit_orchestra... | prototype | generated |
+| 5 | src/zephyr/compliance/audit_trail/__init__.py | src/zephyr/compliance/audit_trail/__i... | prototype | generated |
+| 6 | src/zephyr/compliance/audit_trail/bridges/__init__.py | src/zephyr/compliance/audit_trail/bri... | prototype | generated |
+| 7 | src/zephyr/compliance/behavioral_admission/__init__.py | src/zephyr/compliance/behavioral_admi... | prototype | generated |
+| 8 | src/zephyr/compliance/behavioral_auditor/__init__.py | src/zephyr/compliance/behavioral_audi... | prototype | generated |
+| 9 | src/zephyr/compliance/compliance_gate_a6/__init__.py | src/zephyr/compliance/compliance_gate... | prototype | generated |
+| 10 | src/zephyr/compliance/compliance_manager.py | src/zephyr/compliance/compliance_mana... | prototype | generated |
+| 11 | src/zephyr/compliance/default_security_gateway.py | src/zephyr/compliance/default_securit... | prototype | generated |
+| 12 | src/zephyr/compliance/evidence_pack.py | src/zephyr/compliance/evidence_pack.py | prototype | generated |
+| 13 | src/zephyr/compliance/financial_compliance.py | src/zephyr/compliance/financial_compl... | prototype | generated |
+| 14 | src/zephyr/compliance/implementations/__init__.py | src/zephyr/compliance/implementations... | prototype | generated |
+| 15 | src/zephyr/compliance/integrity.py | src/zephyr/compliance/integrity.py | prototype | generated |
+| 16 | src/zephyr/compliance/merkle_hourly.py | src/zephyr/compliance/merkle_hourly.py | prototype | generated |
+| 17 | src/zephyr/compliance/security_gateway_base.py | src/zephyr/compliance/security_gatewa... | prototype | generated |
+| 18 | src/zephyr/compliance/semantic_auditor/__init__.py | src/zephyr/compliance/semantic_audito... | prototype | generated |
+| 19 | src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py | src/zephyr/compliance/zero_knowledge_... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

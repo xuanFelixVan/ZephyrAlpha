@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,13 +24,13 @@ ttl: permanent
 | 域ID | D_GOV_DRIFT | Domain ID | D_GOV_DRIFT |
 | 域名称 | 漂移检测 | Domain Name | 漂移检测 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 24 | Module Count | 24 |
+| 模块数 | 23 | Module Count | 23 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
 | 跨域入边 | 45 | Cross-domain Incoming | 45 |
 | 跨域出边 | 29 | Cross-domain Outgoing | 29 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 14 | Prototype Modules | 14 |
-| 生产态模块 | 9 | Production Modules | 9 |
+| 生产态模块 | 8 | Production Modules | 8 |
 | 容量 | 9/150 (正常) | Capacity | 9/150 (正常) |
 | 描述 | 39个漂移检测器注册与调度 | Description | 39个漂移检测器注册与调度 |
 
@@ -56,7 +56,6 @@ graph TD
         src_zephyr_governance_audit_trail_self_monitor_py["src/zephyr/governance/audit_trail/self_monitor.py production"]
         src_zephyr_governance_drift_detection_baseline_manager_py["src/zephyr/governance/drift_detection/baseline_... prototype"]
         src_zephyr_governance_drift_detection_chaos_injector_py["src/zephyr/governance/drift_detection/chaos_inj... prototype"]
-        src_zephyr_governance_drift_detection_migration_plan_yaml["src/zephyr/governance/drift_detection/migration... production"]
         src_zephyr_governance_drift_detector_py["src/zephyr/governance/drift_detector.py prototype"]
         src_zephyr_governance_integrity_py["src/zephyr/governance/integrity.py production"]
         src_zephyr_governance_red_blue_validator_ai_self_diagnosis_py["src/zephyr/governance/red_blue_validator/ai_sel... production"]
@@ -114,7 +113,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_governance_artifact_scanner_py,src_zephyr_governance_audit_orchestrator_integrity_py,src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_drift_detection_migration_plan_yaml,src_zephyr_governance_integrity_py,src_zephyr_governance_red_blue_validator_ai_self_diagnosis_py production
+    class scripts_governance_d5_architecture_validators_validate_authority_registry_py,scripts_governance_d5_architecture_validators_validate_ssot_py,src_zephyr_governance_artifact_scanner_py,src_zephyr_governance_audit_orchestrator_integrity_py,src_zephyr_governance_audit_trail_drift_bridge_py,src_zephyr_governance_audit_trail_self_monitor_py,src_zephyr_governance_integrity_py,src_zephyr_governance_red_blue_validator_ai_self_diagnosis_py production
     class docs_03_modules_domain_governance_drift_detector_blueprint_md,src_zephyr_governance_drift_detection_baseline_manager_py,src_zephyr_governance_drift_detection_chaos_injector_py,src_zephyr_governance_drift_detector_py,tests_test_ba_chaos_injector_py,tests_test_baseline_manager_py,tests_test_chaos_injector_py,tests_test_context_drift_detector_py,tests_test_contract_drift_detector_py,tests_test_drift_detector_ee_py,tests_test_drift_detector_gate_py,tests_test_model_drift_detector_py,tests_unit_drift_detector_init_py,tests_unit_drift_detector_conftest_py,tests_unit_drift_detector_test_drift_core_py design
     class D_GOV_AUDIT,D_GOVERNANCE,D_GOV_SCRIPTS,D_BEHAVIORAL_AUDIT,D_SECURITY external_prod
     class D_COMPLIANCE external_design
@@ -147,12 +146,12 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 24 个模块 / 24 modules。
+> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 23 个模块 / 23 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│            L1 基础层 / Foundation Layer (24 modules)             │
+│            L1 基础层 / Foundation Layer (23 modules)             │
 ├──────────────────────────────────────────────────────────────────┤
 │   docs__03_modules___domain_governance__drift_detector__bluep... │
 │   scripts/governance/d5_architecture/validators/validate_auth... │
@@ -163,7 +162,6 @@ graph TD
 │   src/zephyr/governance/audit_trail/self_monitor.py  [product... │
 │   src/zephyr/governance/drift_detection/baseline_manager.py  ... │
 │   src/zephyr/governance/drift_detection/chaos_injector.py  [p... │
-│   src/zephyr/governance/drift_detection/migration_plan.yaml  ... │
 │   src/zephyr/governance/drift_detector.py  [prototype]           │
 │   src/zephyr/governance/integrity.py  [production]               │
 │   src/zephyr/governance/red_blue_validator/ai_self_diagnosis.... │
@@ -172,16 +170,17 @@ graph TD
 │   tests/test_chaos_injector.py  [prototype]                      │
 │   tests/test_context_drift_detector.py  [prototype]              │
 │   tests/test_contract_drift_detector.py  [prototype]             │
-│   ...还有 6 个模块 / 6 more modules                              │
+│   tests/test_drift_detector_ee.py  [prototype]                   │
+│   ...还有 5 个模块 / 5 more modules                              │
 └──────────────────────────────────────────────────────────────────┘
 
 ```
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 24 个模块 / 24 modules）。
+> 按 architecture_layer 分组的模块清单（共 23 个模块 / 23 modules）。
 
-### L1 基础层 / Foundation Layer (24 modules)
+### L1 基础层 / Foundation Layer (23 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
@@ -194,21 +193,20 @@ graph TD
 | 7 | src/zephyr/governance/audit_trail/self_monitor.py | src/zephyr/governance/audit_trail/sel... | production | generated |
 | 8 | src/zephyr/governance/drift_detection/baseline_manager.py | src/zephyr/governance/drift_detection... | prototype | generated |
 | 9 | src/zephyr/governance/drift_detection/chaos_injector.py | src/zephyr/governance/drift_detection... | prototype | generated |
-| 10 | src/zephyr/governance/drift_detection/migration_plan.yaml | src/zephyr/governance/drift_detection... | production | deprecated |
-| 11 | src/zephyr/governance/drift_detector.py | src/zephyr/governance/drift_detector.py | prototype | generated |
-| 12 | src/zephyr/governance/integrity.py | src/zephyr/governance/integrity.py | production | generated |
-| 13 | src/zephyr/governance/red_blue_validator/ai_self_diagnosi... | src/zephyr/governance/red_blue_valida... | production | generated |
-| 14 | tests/test_ba_chaos_injector.py | tests/test_ba_chaos_injector.py | prototype | generated |
-| 15 | tests/test_baseline_manager.py | tests/test_baseline_manager.py | prototype | generated |
-| 16 | tests/test_chaos_injector.py | tests/test_chaos_injector.py | prototype | generated |
-| 17 | tests/test_context_drift_detector.py | tests/test_context_drift_detector.py | prototype | generated |
-| 18 | tests/test_contract_drift_detector.py | tests/test_contract_drift_detector.py | prototype | generated |
-| 19 | tests/test_drift_detector_ee.py | tests/test_drift_detector_ee.py | prototype | generated |
-| 20 | tests/test_drift_detector_gate.py | tests/test_drift_detector_gate.py | prototype | generated |
-| 21 | tests/test_model_drift_detector.py | tests/test_model_drift_detector.py | prototype | generated |
-| 22 | tests/unit/drift_detector/__init__.py | tests/unit/drift_detector/__init__.py | prototype | generated |
-| 23 | tests/unit/drift_detector/conftest.py | tests/unit/drift_detector/conftest.py | prototype | generated |
-| 24 | tests/unit/drift_detector/test_drift_core.py | tests/unit/drift_detector/test_drift_... | prototype | generated |
+| 10 | src/zephyr/governance/drift_detector.py | src/zephyr/governance/drift_detector.py | prototype | generated |
+| 11 | src/zephyr/governance/integrity.py | src/zephyr/governance/integrity.py | production | generated |
+| 12 | src/zephyr/governance/red_blue_validator/ai_self_diagnosi... | src/zephyr/governance/red_blue_valida... | production | generated |
+| 13 | tests/test_ba_chaos_injector.py | tests/test_ba_chaos_injector.py | prototype | generated |
+| 14 | tests/test_baseline_manager.py | tests/test_baseline_manager.py | prototype | generated |
+| 15 | tests/test_chaos_injector.py | tests/test_chaos_injector.py | prototype | generated |
+| 16 | tests/test_context_drift_detector.py | tests/test_context_drift_detector.py | prototype | generated |
+| 17 | tests/test_contract_drift_detector.py | tests/test_contract_drift_detector.py | prototype | generated |
+| 18 | tests/test_drift_detector_ee.py | tests/test_drift_detector_ee.py | prototype | generated |
+| 19 | tests/test_drift_detector_gate.py | tests/test_drift_detector_gate.py | prototype | generated |
+| 20 | tests/test_model_drift_detector.py | tests/test_model_drift_detector.py | prototype | generated |
+| 21 | tests/unit/drift_detector/__init__.py | tests/unit/drift_detector/__init__.py | prototype | generated |
+| 22 | tests/unit/drift_detector/conftest.py | tests/unit/drift_detector/conftest.py | prototype | generated |
+| 23 | tests/unit/drift_detector/test_drift_core.py | tests/unit/drift_detector/test_drift_... | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 

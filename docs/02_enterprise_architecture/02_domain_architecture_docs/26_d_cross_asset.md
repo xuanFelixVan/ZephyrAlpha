@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 跨资产（D_CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:50:50
+> 最后更新: 2026-06-29 18:08:06
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -24,12 +24,12 @@ ttl: permanent
 | 域ID | D_CROSS_ASSET | Domain ID | D_CROSS_ASSET |
 | 域名称 | 跨资产 | Domain Name | 跨资产 |
 | 层级 | L2_domain | Layer | L2_domain |
-| 模块数 | 11 | Module Count | 11 |
+| 模块数 | 5 | Module Count | 5 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 9 | Prototype Modules | 9 |
+| 原型态模块 | 3 | Prototype Modules | 3 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 跨资产策略与配置 | Description | 跨资产策略与配置 |
@@ -49,25 +49,19 @@ graph TD
     subgraph D_CROSS_ASSET["D_CROSS_ASSET 跨资产"]
         src_zephyr_cross_asset["跨资产域 design"]
         src_zephyr_cross_asset_init_py["src/zephyr/cross_asset/__init__.py prototype"]
-        src_zephyr_cross_asset_extensions_init_py["src/zephyr/cross_asset/_extensions/__init__.py prototype"]
-        src_zephyr_cross_asset_api_init_py["src/zephyr/cross_asset/api/__init__.py prototype"]
-        src_zephyr_cross_asset_core_init_py["src/zephyr/cross_asset/core/__init__.py prototype"]
-        src_zephyr_cross_asset_infrastructure_init_py["src/zephyr/cross_asset/infrastructure/__init__.py prototype"]
-        src_zephyr_cross_asset_models_init_py["src/zephyr/cross_asset/models/__init__.py prototype"]
-        src_zephyr_cross_asset_services_init_py["src/zephyr/cross_asset/services/__init__.py prototype"]
         src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py["src/zephyr/risk/cross_asset/cross_market_data_a... production"]
         src_zephyr_risk_risk_manager_py["src/zephyr/risk/risk_manager.py prototype"]
         src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py prototype"]
     end
     src_zephyr_risk_risk_manager_base_py -.->|config_depends| src_zephyr_cross_asset_init_py
-    D_TRADING["D_TRADING production"]
-    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
-    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    D_TRADING["D_TRADING prototype"]
+    src_zephyr_cross_asset -.->|contract| D_TRADING
     D_SHARED["D_SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
-    src_zephyr_cross_asset -.->|contract| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
+    src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
@@ -76,9 +70,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py production
-    class src_zephyr_cross_asset,src_zephyr_cross_asset_init_py,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py design
-    class D_TRADING external_prod
-    class D_SHARED,D_GOVERNANCE external_design
+    class src_zephyr_cross_asset,src_zephyr_cross_asset_init_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py design
+    class D_TRADING,D_SHARED,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -98,21 +91,15 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 跨资产（D_CROSS_ASSET）的模块分布。共 11 个模块 / 11 modules。
+> 按 architecture_layer 分层显示 跨资产（D_CROSS_ASSET）的模块分布。共 5 个模块 / 5 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
-│              L2 领域层 / Domain Layer (11 modules)               │
+│               L2 领域层 / Domain Layer (5 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
 │   跨资产域  [design]                                             │
 │   src/zephyr/cross_asset/__init__.py  [prototype]                │
-│   src/zephyr/cross_asset/_extensions/__init__.py  [prototype]    │
-│   src/zephyr/cross_asset/api/__init__.py  [prototype]            │
-│   src/zephyr/cross_asset/core/__init__.py  [prototype]           │
-│   src/zephyr/cross_asset/infrastructure/__init__.py  [prototype] │
-│   src/zephyr/cross_asset/models/__init__.py  [prototype]         │
-│   src/zephyr/cross_asset/services/__init__.py  [prototype]       │
 │   src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_ex... │
 │   src/zephyr/risk/risk_manager.py  [prototype]                   │
 │   src/zephyr/risk/risk_manager_base.py  [prototype]              │
@@ -122,23 +109,17 @@ graph TD
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
+> 按 architecture_layer 分组的模块清单（共 5 个模块 / 5 modules）。
 
-### L2 领域层 / Domain Layer (11 modules)
+### L2 领域层 / Domain Layer (5 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/cross_asset/ | 跨资产域 | design | planned |
 | 2 | src/zephyr/cross_asset/__init__.py | src/zephyr/cross_asset/__init__.py | prototype | generated |
-| 3 | src/zephyr/cross_asset/_extensions/__init__.py | src/zephyr/cross_asset/_extensions/__... | prototype | deprecated |
-| 4 | src/zephyr/cross_asset/api/__init__.py | src/zephyr/cross_asset/api/__init__.py | prototype | deprecated |
-| 5 | src/zephyr/cross_asset/core/__init__.py | src/zephyr/cross_asset/core/__init__.py | prototype | deprecated |
-| 6 | src/zephyr/cross_asset/infrastructure/__init__.py | src/zephyr/cross_asset/infrastructure... | prototype | deprecated |
-| 7 | src/zephyr/cross_asset/models/__init__.py | src/zephyr/cross_asset/models/__init_... | prototype | deprecated |
-| 8 | src/zephyr/cross_asset/services/__init__.py | src/zephyr/cross_asset/services/__ini... | prototype | deprecated |
-| 9 | src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_... | src/zephyr/risk/cross_asset/cross_mar... | production | generated |
-| 10 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | prototype | generated |
-| 11 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | prototype | generated |
+| 3 | src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_... | src/zephyr/risk/cross_asset/cross_mar... | production | generated |
+| 4 | src/zephyr/risk/risk_manager.py | src/zephyr/risk/risk_manager.py | prototype | generated |
+| 5 | src/zephyr/risk/risk_manager_base.py | src/zephyr/risk/risk_manager_base.py | prototype | generated |
 
 ## 依赖关系图 / Dependency Graph
 
