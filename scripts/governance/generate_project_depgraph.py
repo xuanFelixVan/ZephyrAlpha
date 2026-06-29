@@ -227,7 +227,8 @@ def _build_scan_dirs() -> list:
 
 SCAN_DIRS = _build_scan_dirs()
 
-DEPGRAPH_DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DEPGRAPH_DB_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 
 CROSS_MODULE_REGISTRY_PATH = (
     PROJECT_ROOT
@@ -634,17 +635,18 @@ def load_panorama():
         domain_derivation: [(path_prefix, domain_id, subdomain_id, architecture_layer)]
         Sorted by path_prefix length (longest first) for best prefix match.
     """
-    if not DEPGRAPH_DB_PATH.exists():
-        return None, [], []
+    # 治本（2026-06-27）：删除 if not DEPGRAPH_DB_PATH.exists() 守卫（latent bug）。
+    # P2 迁移后 .db 文件不存在，守卫必然触发导致函数永远返回 None（broken 状态）。
+    # PG 模式下直接查询 PG，连接失败由下方 try/except 捕获并 fail-soft 返回空。
     try:
-        data = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+        data = _load_panorama_from_db(None)
     except Exception:
         return None, [], []
     if not data:
         return None, [], []
 
     # ARCH-CAP-005: 动态加载域映射（替代硬编码 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP）
-    domain_id_to_layer, non_src_mappings, unregistered_src_mappings = _load_domain_mappings_from_db(DEPGRAPH_DB_PATH)
+    domain_id_to_layer, non_src_mappings, unregistered_src_mappings = _load_domain_mappings_from_db(None)
 
     domain_derivation = []
     functional_domains = []

@@ -82,6 +82,7 @@ __all__ = [
     "make_rules_integrity_reconciler",
     "make_vocab_change_reconciler",
     "make_commit_gateway_audit_reconciler",
+    "make_deprecated_directory_reconciler",
     "scan_and_archive_working_docs",
 ]
 
@@ -1601,4 +1602,85 @@ def make_commit_gateway_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=800,  # 最后执行（审计非阻断，低优先级）
+    )
+
+
+def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-DEPRECATED-DIR post-commit reconciler（09_audit 治本加固）。
+
+    扫描 docs/ 下是否存在已废弃目录（如 09_audit/），存在则告警。
+    双层防御：GitCommitGateway._check_deprecated_directories 阻断提交 +
+    post-commit reconciler 兜底 mkdir 但未提交的场景（如脚本 mkdir 后未 commit）。
+
+    设计裁定（非阻断）：
+    post-commit 无法回滚已提交内容；废弃目录可能是脚本 mkdir 的副作用（未 commit），
+    仅告警记录到 ``.runtime/reconcile_reports/deprecated_directory_<ts>.json``。
+
+    trigger 裁定：always True（废弃目录可能由任何脚本 mkdir 重建，与 commit 文件无关）。
+
+    向内收设计：
+    - 复用 ReconciliationRegistry 框架，不新建兜底系统
+    - 废弃目录清单复用 GitCommitGateway._DEPRECATED_DIRS（通过 gateway 引用，不复制）
+    - 复用 _write_reconcile_report 报告落盘
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _DEPRECATED_DIRS）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-DEPRECATED-DIR", priority=600)。
+    """
+    project_root = gateway.project_root
+    # 复用 gateway 的废弃目录清单（真源唯一，不复制）
+    deprecated_dirs: dict[str, str] = getattr(gateway, "_DEPRECATED_DIRS", {})
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 始终检测：脚本可能 mkdir 但未 commit（如 session_continuity 的 handoff 写入）
+        return True
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        violations: list[dict] = []
+        for dep_dir, reason in deprecated_dirs.items():
+            dep_path = project_root / dep_dir
+            if dep_path.exists() and dep_path.is_dir():
+                items = [p for p in dep_path.rglob("*")]
+                violations.append({
+                    "deprecated_dir": dep_dir,
+                    "reason": reason,
+                    "item_count": len(items),
+                    "sample_items": [
+                        str(p.relative_to(project_root)).replace("\\", "/")
+                        for p in items[:5]
+                    ],
+                })
+
+        report = {
+            "gate_id": "GATE-DEPRECATED-DIR",
+            "session_id": session_id,
+            "violations_count": len(violations),
+            "violations": violations,
+        }
+        report_path, write_err = _write_reconcile_report(
+            project_root, "deprecated_directory", report
+        )
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=f"scan done ({len(violations)} violations) but report write failed: {write_err}",
+            )
+
+        if not violations:
+            return ReconcileResult(
+                action="clean",
+                detail=f"no deprecated directories found, report={report_path.name}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"detected {len(violations)} deprecated directories, report={report_path.name}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-DEPRECATED-DIR",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=600,  # 中等优先级（非阻断，但需要及时发现）
     )

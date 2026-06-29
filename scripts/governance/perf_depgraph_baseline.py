@@ -50,7 +50,8 @@ from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源，未使用）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
 _THIS_FILE = Path(__file__).resolve()
@@ -272,7 +273,7 @@ def main() -> None:
         print("ERROR: --runs must be >= 1", file=sys.stderr)
         sys.exit(3)
 
-    result = run_baseline(DEPGRAPH_PATH, args.runs)
+    result = run_baseline(None, args.runs)
 
     content = json.dumps(result, ensure_ascii=False, indent=2)
     if args.output:

@@ -192,12 +192,14 @@ MANIFEST_PATH: Path = SCRIPTS_DIR / "script_manifest.yaml"
 DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
 
 # depgraph.db 路径——供 sync_yaml_to_depgraph.py 等治理脚本引用（裁定#206 / Bug H 修复）
+# 治本（2026-06-27）：删除 DEPGRAPH_DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"。
 # 历史：sync_yaml_to_depgraph.py 曾硬编码 r"D:\ZephyrAlpha\..." 绝对路径，违反可移植性；
 #       统一到此处常量后，所有治理脚本通过 _shared.constants 单一引用点获取路径。
-# P2 迁移后语义变化（2026-06）：depgraph 已迁至 PostgreSQL，实际 DB 连接通过
-#       get_depgraph_pg_connection() 获取；此常量仅保留作日志标识/历史路径引用，
-#       不再作为实际连接目标。保留是为了避免破坏多个脚本的 import 语句。
-DEPGRAPH_DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# P2 迁移后（2026-06）：depgraph 已迁至 PostgreSQL，实际 DB 连接通过
+#       get_depgraph_pg_connection() 获取，此常量沦为路径污染源（指向往已归档的 .db 文件）。
+# 治本删除理由：常量指向往已归档的 .db 文件，AI 可能误用导致路径污染；
+#       经 grep 确认无任何脚本 import 此常量（generate_project_path_tree.py 自定义本地常量，P1 范围待治本）；
+#       测试 test_vocab_sync_chain.py::TestBugHDepgraphDbPath 已反转语义保护此治本成果。
 
 EXIT_PASS: int = 0
 EXIT_FINDINGS: int = 1

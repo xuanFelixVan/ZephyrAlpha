@@ -337,29 +337,39 @@ class TestBugGLockProtection:
 
 
 # ===========================================================================
-# Bug H 回归：constants.py DEPGRAPH_DB_PATH + sync 引用
+# Bug H 回归（2026-06-27 反转语义）：constants.py 禁止 DEPGRAPH_DB_PATH + sync 禁止引用
 # ===========================================================================
 
 class TestBugHDepgraphDbPath:
-    """Bug H 回归——DEPGRAPH_DB_PATH 常量统一 + sync 引用 + P2 PG 迁移。
+    """Bug H 回归——DEPGRAPH_DB_PATH 路径污染源根除 + P2 PG 迁移成果保护。
 
     根因回顾：_shared/constants.py 只定义了 governance.db 的 DB_PATH，
     sync_yaml_to_depgraph.py 硬编码 `D:\\ZephyrAlpha\\data\\databases\\depgraph.db`，
     两个 DB_PATH 指向不同 DB，是潜在不一致点，且违反可移植性。
 
-    P2 迁移后（2026-06）：depgraph 已迁至 PostgreSQL，实际 DB 连接通过
-    get_depgraph_pg_connection() 获取；DEPGRAPH_DB_PATH 常量保留作日志标识/
-    历史路径引用，不再作为实际连接目标。本类同时保护：
-    1. Bug H 原意图——DEPGRAPH_DB_PATH 统一引用点不被破坏
+    治本（2026-06-27）：P2 PG 迁移后 depgraph 已迁至 PostgreSQL，DEPGRAPH_DB_PATH
+    常量沦为路径污染源（指向往已归档的 .db 文件，AI 可能误用）。本类反转原 Bug H
+    测试语义，从"要求存在"改为"禁止存在"，保护治本成果不被回退：
+    1. _shared/constants.py 禁止定义 DEPGRAPH_DB_PATH 常量（路径污染源）
     2. P2 迁移成果——get_depgraph_pg_connection 入口必须存在
+    3. sync_yaml_to_depgraph.py 禁止引用 DEPGRAPH_DB_PATH（改用 PG 连接）
+    4. sync_yaml_to_depgraph.py 必须通过 get_depgraph_pg_connection 连 PG
     """
 
-    def test_constants_defines_depgraph_db_path(self) -> None:
-        """_shared/constants.py 必须定义 DEPGRAPH_DB_PATH 常量（Bug H 统一引用点）。"""
+    def test_constants_does_not_define_depgraph_db_path(self) -> None:
+        """_shared/constants.py 禁止定义 DEPGRAPH_DB_PATH 常量（路径污染源，治本2026-06-27）。
+
+        原 Bug H 测试要求"必须定义"，P2 PG 迁移治本后反转：常量指向往已归档的 .db 文件，
+        是路径污染源，AI 可能误用。删除常量后由 get_depgraph_pg_connection() 统一连接。
+        """
         src = _CONSTANTS_MODULE.read_text(encoding="utf-8")
-        assert "DEPGRAPH_DB_PATH" in src, (
-            "_shared/constants.py 未定义 DEPGRAPH_DB_PATH 常量（Bug H 回归）"
-        )
+        for line in src.splitlines():
+            stripped = line.lstrip()
+            if stripped.startswith("#"):
+                continue
+            assert not (stripped.startswith("DEPGRAPH_DB_PATH") and "=" in stripped), (
+                "_shared/constants.py 仍定义 DEPGRAPH_DB_PATH 常量（路径污染源，治本2026-06-27 删除）"
+            )
 
     def test_constants_defines_pg_connection_entry(self) -> None:
         """P2 迁移后 _shared/constants.py 必须定义 get_depgraph_pg_connection 入口。"""
@@ -368,24 +378,34 @@ class TestBugHDepgraphDbPath:
             "_shared/constants.py 未定义 get_depgraph_pg_connection（P2 迁移回归）"
         )
 
-    def test_depgraph_db_path_points_to_correct_file(self) -> None:
-        """DEPGRAPH_DB_PATH 必须指向 data/databases/depgraph.db（历史路径标识，P2 后仅作日志用）。"""
-        from _shared.constants import DEPGRAPH_DB_PATH  # noqa: PLC0415
+    def test_depgraph_db_path_not_importable_from_constants(self) -> None:
+        """禁止从 _shared.constants 导入 DEPGRAPH_DB_PATH（治本2026-06-27：路径污染源根除）。
 
-        assert DEPGRAPH_DB_PATH.name == "depgraph.db", (
-            f"DEPGRAPH_DB_PATH 文件名非 depgraph.db: {DEPGRAPH_DB_PATH.name}"
-        )
-        assert "databases" in DEPGRAPH_DB_PATH.parts, (
-            f"DEPGRAPH_DB_PATH 路径不含 databases/: {DEPGRAPH_DB_PATH}"
-        )
+        原 Bug H 测试要求"必须可导入且指向 depgraph.db"，治本后反转：
+        P2 PG 迁移后无文件路径概念，常量已删除，import 必须失败。
+        """
+        try:
+            from _shared.constants import DEPGRAPH_DB_PATH  # noqa: PLC0415, F401
+            raise AssertionError(
+                "_shared.constants 仍可导出 DEPGRAPH_DB_PATH（路径污染源，治本2026-06-27 删除）"
+            )
+        except ImportError:
+            pass  # 预期：常量已删除，import 失败
 
-    def test_sync_db_path_references_constants(self) -> None:
-        """sync_yaml_to_depgraph.py 的 DB_PATH 必须引用 DEPGRAPH_DB_PATH（非硬编码）。"""
+    def test_sync_does_not_reference_depgraph_db_path(self) -> None:
+        """sync_yaml_to_depgraph.py 禁止引用 DEPGRAPH_DB_PATH（治本2026-06-27：路径污染源根除）。
+
+        原 Bug H 测试要求"必须引用 DEPGRAPH_DB_PATH"，治本后反转：
+        P2 PG 迁移后无文件路径概念，sync 应直接用 get_depgraph_pg_connection()。
+        """
         src = _SYNC_SCRIPT.read_text(encoding="utf-8")
-        # 修复后 DB_PATH 应来自 _shared.constants 的 DEPGRAPH_DB_PATH
-        assert "DEPGRAPH_DB_PATH" in src, (
-            "sync_yaml_to_depgraph.py 未引用 DEPGRAPH_DB_PATH（Bug H 回归）"
-        )
+        for line in src.splitlines():
+            stripped = line.lstrip()
+            if stripped.startswith("#"):
+                continue
+            assert "DEPGRAPH_DB_PATH" not in stripped, (
+                "sync_yaml_to_depgraph.py 仍引用 DEPGRAPH_DB_PATH（路径污染源，治本2026-06-27 删除）"
+            )
         # 不应再出现硬编码的绝对路径字符串（Bug H 的根因）
         assert r'"D:\ZephyrAlpha\data\databases\depgraph.db"' not in src, (
             "sync_yaml_to_depgraph.py 仍含硬编码绝对路径 DB_PATH（Bug H 回归）"
