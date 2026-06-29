@@ -176,9 +176,6 @@ DIR_TTL_MAP: list[tuple[str, str, str]] = [
     ("/_archive/",                "task_bound", "归档子目录（过程性历史，如 02/_archive/）"),
     # 02_enterprise_architecture 下的治理报告（过程性，即使路径在永久区——目录实际存在）
     ("docs/02_enterprise_architecture/03_governance_reports/", "task_bound", "治理报告目录（过程性：容量/调研/清理审查）"),
-    # ── permanent 特例（KE 归档：文件永久保留供审计追溯，见 ttl_vocabulary.yaml 注释）──
-    # 04_archived 与 _archive 不同：KE 即使 ARCHIVED 仍 permanent，供审计
-    ("docs/08_knowledge/04_archived/", "permanent", "KE 归档目录（KE 文件永久保留供审计，非过程性）"),
     # ── permanent 目录（永久区核心内容）──
     ("docs/01_policies_and_standards/", "permanent", "政策与标准永久区（规则/注册表/模板）"),
     ("docs/02_enterprise_architecture/", "permanent", "企业架构永久区（TOGAF 视图+架构模型）"),

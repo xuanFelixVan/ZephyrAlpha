@@ -70,7 +70,7 @@ EXCLUDE_DIRS: set[str] = {
     ".mypy_cache", ".pytest_cache", "node_modules", ".venv", "venv",
     ".tox", ".eggs", ".idea", ".vscode", ".trae",
     "session_logs",  # 历史日志不改
-    "_archive", "04_archived",
+    "_archive",
 }
 
 # 排除路径前缀
@@ -80,7 +80,6 @@ EXCLUDE_PREFIXES: list[str] = [
     "data/classified/",
     "data/security_baselines/",
     "docs/08_knowledge/01_raw_intake/",
-    "docs/08_knowledge/04_archived/",
     "docs/_working/audit/research_notes/",  # 施工方案文档记录旧名→新名映射，不应替换
     "scripts/_archive/",
 ]
