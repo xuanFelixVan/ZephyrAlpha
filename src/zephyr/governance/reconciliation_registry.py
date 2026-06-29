@@ -816,8 +816,14 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
     # - 纯文本路径：含路径分隔符的文件路径（覆盖 .py/.ps1/.sh/.toml/.txt/.csv 等全扩展名）
     _MD_LINK_RE = re.compile(r"\]\(([^)]+\.(?:py|yaml|yml|md))\)", re.IGNORECASE)
     _BACKTICK_RE = re.compile(r"`([^`]+\.(?:py|yaml|yml|md))`", re.IGNORECASE)
+    # 纯文本路径正则（治本 GAP-5 + 中文前缀防误捕）：
+    # - lookbehind 用 [a-zA-Z0-9/] 而非 \w：中文是 \w，用 \w 会阻挡中文后的路径起点，
+    #   导致"删除architecture_model/foo.yaml"中"删除"被吞入匹配；
+    #   用 ASCII 集合则中文不阻挡，路径从 ASCII 字母处正确起match。
+    # - 首字符限 [a-zA-Z]：路径必以 ASCII 字母起（docs/scripts/src/architecture_model/），
+    #   杜绝中文前缀（删除/修订）被 [\w] 捕获为路径首字符。
     _TEXT_PATH_RE = re.compile(
-        r"(?<![\w/])([\w][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))\b"
+        r"(?<![a-zA-Z0-9/])([a-zA-Z][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))\b"
     )
 
     def _looks_like_path(ref: str) -> bool:
