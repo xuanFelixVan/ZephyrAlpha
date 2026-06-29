@@ -14,6 +14,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: _tmp_enum_replace.py
+  path: _tmp_enum_replace.py
+  description: import re
+  domain: _tmp_enum_replace.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _tmp_yaml_check.py
+  path: _tmp_yaml_check.py
+  description: import yaml
+  domain: _tmp_yaml_check.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: a2a_full_verification.py
   path: a2a_full_verification.py
   description: import sys
@@ -654,25 +670,9 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_inspect_residue_v2.py
-  path: governance/_tmp_inspect_residue_v2.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_migrate_variant_residue.py
-  path: governance/_tmp_migrate_variant_residue.py
-  description: 处理两类残留：
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_verify_final.py
-  path: governance/_tmp_verify_final.py
-  description: 验证项：
+- name: governance/_tmp_commit_variant.py
+  path: governance/_tmp_commit_variant.py
+  description: 注意：data/asset_index/archive/* 和 .runtime/working_archive/* 在 .gitignore 中
   domain: governance
   execution_plane: warm-path
   status: registered
