@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-29T11:33:28Z'
+generated_at: '2026-06-29T15:35:59Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 139
+total_files: 138
 total_rules: 60
 tier_distribution:
   L0: 20
@@ -1481,7 +1481,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
   module_id: PS-REG-021
   title: 能力→真源文件反查注册表
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 1.1.1
   rule_form: ''
@@ -1598,21 +1598,6 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
-  module_id: PS-REG-012
-  title: Frontmatter 字段定义登记表
-  doc_type: register
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
   module_id: REG-FUNC-DOMAIN-001
   title: 功能域注册表
@@ -1721,7 +1706,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   module_id: PS-REG-016
   title: 登记表的登记表 — 跨登记表一致性契约
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 1.2.0
   rule_form: ''
@@ -1781,7 +1766,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
   module_id: PS-CTR-001
   title: Architecture Compliance Contract
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 1.2.0
   rule_form: ''
@@ -1811,7 +1796,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
   module_id: PS-CTR-002
   title: Directory Contract
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 1.0.0
   rule_form: ''
@@ -1841,7 +1826,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
   module_id: GOV-AI-006
   title: AI 模型能力矩阵契约
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 1.2.0
   rule_form: data
@@ -1871,7 +1856,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml
   module_id: GOV-AI-007
   title: Session Log 标准 Schema
-  doc_type: contract
+  doc_type: gate
   status: active
   version: 2.2.0
   rule_form: data
@@ -2038,7 +2023,7 @@ files:
   title: doc_type 受控词表
   doc_type: vocabulary
   status: active
-  version: 2.0.0
+  version: 3.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2351,7 +2336,7 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml
   module_id: META-TERM-001
   title: 术语映射表（大白话 ↔ 行业术语）
-  doc_type: terminology
+  doc_type: vocabulary
   status: active
   version: 1.0.1
   rule_form: data
