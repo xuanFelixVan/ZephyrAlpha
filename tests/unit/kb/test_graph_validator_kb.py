@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.governance.kb.graph_validator import GraphValidator, ValidationSeverity
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.sqlite_schema import init_db
 
 
 @pytest.fixture

@@ -92,6 +92,7 @@ directory_zones:
       - "docs/03_modules/"
       - "docs/08_knowledge/"
       - "docs/_archive/"
+      - "architecture_model/"
     default_ttl: permanent
     gate: allow_promote_required
     # 永久区子目录中，以下路径豁免晋升门禁（生成器专用）
@@ -118,13 +119,15 @@ directory_zones:
       - "ttl_content_audit/"
 
   neutral:
-    description: "中性区——代码/脚本/配置/测试/数据，无 ttl 门禁（代码文件无 ttl 字段）"
+    description: "中性区——代码/脚本/配置/测试/数据/日志/工具，无 ttl 门禁（代码文件无 ttl 字段）"
     paths:
       - "src/"
       - "scripts/"
       - "tests/"
       - "config/"
       - "data/"
+      - "session_logs/"
+      - "tools/"
       - ".runtime/"
       - ".trae/"
     default_ttl: null
@@ -171,6 +174,12 @@ directory_extensions:
     forbidden: [".py", ".csv", ".jsonl", ".yaml", ".json", ".sh", ".ps1", ".bak", ".baseline"]
     zone: permanent
 
+  - path: "architecture_model/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".csv", ".jsonl", ".md", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
+    note: "架构模型机读边界声明（canonical SSoT，与 docs/02_enterprise_architecture/target_architecture/architecture_model/ 配对）。纯 YAML 数据树，不允许 .md（人读视图在 docs/ 树）"
+
   # --- 代码区（中性区）---
   - path: "src/zephyr/"
     allowed: [".py", ".yaml"]
@@ -191,6 +200,24 @@ directory_extensions:
     allowed: [".py", ".yaml", ".json", ".txt"]
     forbidden: [".bak", ".baseline"]
     zone: neutral
+
+  - path: "session_logs/"
+    allowed: [".yaml", ".md"]
+    forbidden: [".py", ".csv", ".jsonl", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: neutral
+    note: "会话日志区——audit_report 的合法目录（doc_type_vocabulary.yaml 已声明）。.yaml 为日志数据，.md 为审计报告"
+
+  - path: "tools/"
+    allowed: [".py", ".sh", ".ps1", ".yaml", ".json"]
+    forbidden: [".bak", ".baseline", ".md"]
+    zone: neutral
+    note: "工具脚本区——与 scripts/ 同级语义，放一次性工具/生成器脚本"
+
+  - path: "src/config/"
+    allowed: [".yaml", ".json"]
+    forbidden: [".py", ".md", ".bak", ".baseline"]
+    zone: neutral
+    note: "src/ 下的配置子树——与根 config/ 同级语义。src/zephyr/ 规则不覆盖此子目录（longest-prefix match 独立）"
 
   # --- 临时区 ---
   - path: "docs/_working/"

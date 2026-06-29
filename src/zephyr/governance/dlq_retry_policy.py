@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.dlq_retry_policy
+# [MODULE] zephyr.governance.dlq_retry_policy
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.data.persistence.dead_letter_queue; AutoRuntime Core retry phase
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
+# [CONSUMERS] zephyr.infrastructure.pipeline.dead_letter_queue; AutoRuntime Core retry phase
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 指数退避1/2/4/8/16min; 5次后PERMANENT_FAIL; ThreadPoolExecutor并行
@@ -38,7 +38,7 @@ class RetryResult:
 class DLQRetryPolicy:
     def retry_pending(self) -> RetryResult:
         try:
-            from zephyr.governance.persistence.sqlite_schema import get_db_connection
+            from zephyr.governance.sqlite_schema import get_db_connection
 
             conn = get_db_connection()
             rows = conn.execute("SELECT COUNT(*) FROM dlq_messages").fetchone()

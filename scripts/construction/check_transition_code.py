@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/check_transition_code.py | §
 # [MODULE] scripts.construction.check_transition_code
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] zephyr.governance.task_repo
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 import inspect
 
-from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.task_repo import TaskRepository
 
 src = inspect.getsource(TaskRepository.transition)
 if "DEBUG" in src:

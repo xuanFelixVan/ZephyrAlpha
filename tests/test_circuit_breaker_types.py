@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-cbt_mod = pytest.importorskip("zephyr.data.persistence.circuit_breaker_types")
+cbt_mod = pytest.importorskip("zephyr.ops.circuit_breaker_types")
 CircuitBreakerState = cbt_mod.CircuitBreakerState
 
 

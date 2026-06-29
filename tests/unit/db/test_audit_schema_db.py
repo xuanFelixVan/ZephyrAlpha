@@ -23,7 +23,7 @@ Task: MOD-INF-012 | Safety: M
 
 import pytest
 
-from zephyr.governance.persistence.audit_schema import AuditQuery
+from zephyr.governance.audit_schema import AuditQuery
 
 
 @pytest.fixture

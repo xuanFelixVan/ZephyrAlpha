@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.finding_bridge
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.shared.models
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -36,7 +36,7 @@ AuditFinding = _bridge_mod.AuditFinding
 BridgeResult = _bridge_mod.BridgeResult
 FindingTaskBridge = _bridge_mod.FindingTaskBridge
 SEVERITY_TO_PRIORITY = _bridge_mod.SEVERITY_TO_PRIORITY
-from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.task_repo import TaskRepository
 from zephyr.shared.models import TaskNamespace
 
 _logger = logging.getLogger(__name__)

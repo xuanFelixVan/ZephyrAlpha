@@ -28,7 +28,7 @@ SQLite 原子 claim（UPDATE ... RETURNING）+ DAG 依赖感知 + 超时回收�
 
 Usage（每个 TRAE AI 对话侧）::
 
-    from zephyr.governance.persistence.task_repo import TaskRepository
+    from zephyr.governance.task_repo import TaskRepository
     from zephyr.governance.audit_orchestration.batch_orchestrator import BatchOrchestrator
 
     repo = TaskRepository(DB_PATH)

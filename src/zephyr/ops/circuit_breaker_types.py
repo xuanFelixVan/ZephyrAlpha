@@ -20,7 +20,7 @@ circuit_breaker_types.py - CircuitBreakerState enum for db package
 ===================================================================
 
 Moved from shared.schema.severity_types.
-Canonical location is now zephyr.data.persistence.circuit_breaker_types.
+Canonical location is now zephyr.ops.circuit_breaker_types.
 """
 
 from __future__ import annotations

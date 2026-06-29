@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.audit_schema
+# [MODULE] zephyr.governance.audit_schema
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -38,7 +38,7 @@ Safety     : M（只读查询，不修改数据）
 
 用法
 ----
-    from zephyr.governance.persistence.audit_schema import AuditQuery
+    from zephyr.governance.audit_schema import AuditQuery
 
     aq = AuditQuery(db_path="data/databases/governance.db")
     trail = aq.query_audit_for_session("session-20260501")
@@ -50,7 +50,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH, init_db, schema_version
+from zephyr.governance.sqlite_schema import DB_PATH, init_db, schema_version
 
 __all__ = [
     "AuditQuery",

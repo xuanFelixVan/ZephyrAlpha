@@ -33,7 +33,7 @@ from threading import Thread
 
 import pytest
 
-from zephyr.governance.persistence.task_repo import (
+from zephyr.governance.task_repo import (
     InvalidTransitionError,
     TaskNotFoundError,
     TaskRepository,
@@ -93,7 +93,7 @@ def repo(tmp_path: Path) -> TaskRepository:
 
 class TestSchemaInit:
     def test_tables_created(self, tmp_path: Path) -> None:
-        from zephyr.governance.persistence.sqlite_schema import init_db, table_names, view_names
+        from zephyr.governance.sqlite_schema import init_db, table_names, view_names
 
         db = tmp_path / "meta.db"
         init_db(db)
@@ -105,7 +105,7 @@ class TestSchemaInit:
         assert "v_active_tasks" in views
 
     def test_init_is_idempotent(self, tmp_path: Path) -> None:
-        from zephyr.governance.persistence.sqlite_schema import init_db
+        from zephyr.governance.sqlite_schema import init_db
 
         db = tmp_path / "meta2.db"
         init_db(db)

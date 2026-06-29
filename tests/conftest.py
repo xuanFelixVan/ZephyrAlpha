@@ -42,7 +42,7 @@ def tmp_db(tmp_path):
     使用 zephyr.data_governance_governance.persistence.sqlite_schema.init_db 初始化，
     适用于所有需要数据库的测试（task_repo、circuit_breaker、olap_engine 等）。
     """
-    from zephyr.governance.persistence.sqlite_schema import init_db
+    from zephyr.governance.sqlite_schema import init_db
 
     db_path = tmp_path / "test_zalpha.db"
     init_db(db_path)

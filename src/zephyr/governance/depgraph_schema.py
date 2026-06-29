@@ -1,5 +1,5 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §depgraph
-# [MODULE] zephyr.data.persistence.depgraph_schema
+# [MODULE] zephyr.governance.depgraph_schema
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
@@ -61,7 +61,7 @@ P2 迁移后 schema 真源（重要）
 
 用法
 ----
-    from zephyr.governance.persistence.depgraph_schema import init_db, get_depgraph_pg_connection
+    from zephyr.governance.depgraph_schema import init_db, get_depgraph_pg_connection
 
     init_db()              # 幂等，验证 PG schema 健康性
     conn = get_depgraph_pg_connection()   # 返回 PostgreSQL 连接（psycopg2）

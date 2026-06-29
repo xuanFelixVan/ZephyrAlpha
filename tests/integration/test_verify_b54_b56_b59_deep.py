@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.persistence.task_repo import (
+from zephyr.governance.task_repo import (
     P0InflationFrozenError,
     TaskRepository,
 )

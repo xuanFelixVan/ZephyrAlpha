@@ -1,8 +1,8 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
-# [MODULE] zephyr.data.persistence.snapshot_manager
+# [MODULE] zephyr.governance.snapshot_manager
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.data.persistence.projection_engine; zephyr.data.persistence.event_store
+# [DEPENDENCIES] zephyr.governance.event_store; zephyr.governance.sqlite_schema
+# [CONSUMERS] zephyr.governance.projection_engine; zephyr.governance.event_store
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] snapshot_json is valid JSON; last_event_timestamp tracks replay cutoff; create_snapshot is atomic
@@ -36,8 +36,8 @@ import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.persistence.event_store import EventRecord, EventStore
-from zephyr.governance.persistence.sqlite_schema import DB_PATH, SchemaManager, get_db_connection
+from zephyr.governance.event_store import EventRecord, EventStore
+from zephyr.governance.sqlite_schema import DB_PATH, SchemaManager, get_db_connection
 
 logger = logging.getLogger(__name__)
 

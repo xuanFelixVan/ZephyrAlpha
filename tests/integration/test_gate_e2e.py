@@ -31,8 +31,8 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.governance.persistence.task_repo import (
+from zephyr.governance.sqlite_schema import init_db
+from zephyr.governance.task_repo import (
     GateViolationError,
     TaskRepository,
 )

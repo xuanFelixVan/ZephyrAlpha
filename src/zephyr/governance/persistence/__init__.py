@@ -1,15 +1,9 @@
-# zephyr.governance.persistence 包（代理）
+# zephyr.governance.persistence 包
+#
+# 本包仅保留 olap_engine.py 真源（DuckDB OLAP 分析引擎）。
+# 其他原代理模块已删除，真源统一在 zephyr.governance.* 或 zephyr.ops.* 下。
+# 详见 commit 消息（代理层消除）。
 
 __all__ = [
-    "atomic_transaction_manager",
-    "audit_schema",
-    "base_repo",
-    "circuit_breaker_types",
-    "database_manager",
-    "depgraph_schema",
-    "event_store",
     "olap_engine",
-    "query_metrics",
-    "sqlite_schema",
-    "task_repo",
 ]

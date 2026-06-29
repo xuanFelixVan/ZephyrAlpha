@@ -17,7 +17,7 @@ import sqlite3
 
 import pytest
 
-schema_mod = pytest.importorskip("zephyr.data.persistence.sqlite_schema")
+schema_mod = pytest.importorskip("zephyr.governance.sqlite_schema")
 init_db = schema_mod.init_db
 get_db_connection = schema_mod.get_db_connection
 table_names = schema_mod.table_names

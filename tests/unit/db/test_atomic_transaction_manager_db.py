@@ -85,7 +85,7 @@ infra_mock.SanitizationError = FakeSanitizationError
 sys.modules["infra"] = infra_mock
 sys.modules["infra.input_sanitizer"] = infra_mock
 
-from zephyr.governance.persistence.atomic_transaction_manager import (
+from zephyr.governance.atomic_transaction_manager import (
     AtomicTransactionManager,
     TransactionError,
     _new_tx_id,

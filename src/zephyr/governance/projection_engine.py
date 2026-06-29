@@ -1,8 +1,8 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
-# [MODULE] zephyr.data.persistence.projection_engine
+# [MODULE] zephyr.governance.projection_engine
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.data.persistence.task_repo; zephyr.data.persistence.snapshot_manager
+# [DEPENDENCIES] zephyr.governance.event_store; zephyr.governance.sqlite_schema
+# [CONSUMERS] zephyr.governance.task_repo; zephyr.governance.snapshot_manager
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] fold_to_current_state returns deterministic state for same event sequence; unknown event_types are no-op
@@ -36,8 +36,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.persistence.event_store import EventStore
-from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.event_store import EventStore
+from zephyr.governance.sqlite_schema import DB_PATH
 
 logger = logging.getLogger(__name__)
 

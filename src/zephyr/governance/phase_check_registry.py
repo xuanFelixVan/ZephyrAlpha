@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_orchestrator.query; zephyr.shared.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.persistence.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.shared.contracts.sys_master_compliance; zephyr.governance.__init__; zephyr.trading.__init__; zephyr.shared.contracts.identity.agent_identity; zephyr.security.access_control.immutable_core; zephyr.security.access_control.permission_guard; zephyr.governance.integrity; zephyr.governance.audit_orchestrator.query; zephyr.shared.contracts.protocols; zephyr.behavioral_audit.chaos_injector; zephyr.autonomy_core.__init__; zephyr.security.access_control.dependency_auditor; zephyr.governance.task_repo; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner
 # [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -760,7 +760,7 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.governance.task_repo import TaskRepository
         from zephyr.trading.orchestrator.batch_orchestrator import BatchOrchestrator
 
         return GateResult.GREEN

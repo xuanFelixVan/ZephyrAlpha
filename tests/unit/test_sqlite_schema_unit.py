@@ -40,7 +40,7 @@ import sqlite3
 
 import pytest
 
-from zephyr.governance.persistence.sqlite_schema import (
+from zephyr.governance.sqlite_schema import (
     get_db_connection,
     init_db,
     table_names,

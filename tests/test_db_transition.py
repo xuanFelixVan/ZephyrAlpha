@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.governance.persistence.task_repo import TaskNotFoundError
+from zephyr.governance.task_repo import TaskNotFoundError
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
 from zephyr.governance.transition import TransitionMixin
 
@@ -64,14 +64,14 @@ class TestTaskStatusEnum:
 
 class TestTransitionMixinViaTaskRepo:
     def test_transition_nonexistent_raises(self):
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.governance.task_repo import TaskRepository
 
         repo = TaskRepository(enable_gate=False)
         with pytest.raises(TaskNotFoundError):
             repo.transition("NONEXISTENT-99999", TaskStatus.IN_PROGRESS)
 
     def test_transition_invalid_status_raises(self):
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.governance.task_repo import TaskRepository
 
         repo = TaskRepository(enable_gate=False)
         with pytest.raises((ValueError, TaskNotFoundError)):

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.event_bus; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -274,7 +274,7 @@ def register_boot_hooks() -> None:
 
         def _on_task_completed(event: object) -> None:
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
+                from zephyr.governance.task_repo import TaskRepository
 
                 tr = TaskRepository()
                 completed_id = getattr(event, "task_id", "")
@@ -295,7 +295,7 @@ def register_boot_hooks() -> None:
 
         def _on_task_failed(event: object) -> None:
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
+                from zephyr.governance.task_repo import TaskRepository
 
                 tr = TaskRepository()
                 task_id = getattr(event, "task_id", "")
@@ -319,7 +319,7 @@ def register_boot_hooks() -> None:
                 task_id = getattr(event, "task_id", "")
                 source_bp = ""
                 try:
-                    from zephyr.governance.persistence.task_repo import TaskRepository
+                    from zephyr.governance.task_repo import TaskRepository
 
                     tr = TaskRepository()
                     task = tr.get(task_id)
@@ -360,7 +360,7 @@ def register_boot_hooks() -> None:
                 to_status = getattr(event, "to_status", "")
                 if to_status.upper() != "COMPLETED":
                     return
-                from zephyr.governance.persistence.task_repo import TaskRepository
+                from zephyr.governance.task_repo import TaskRepository
                 from zephyr.trading.orchestrator.memory_writer import archive_to_vms
 
                 tr = TaskRepository()
@@ -412,7 +412,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "BLOCKED":
                 return
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
+                from zephyr.governance.task_repo import TaskRepository
 
                 TaskRepository().check_escalation(getattr(event, "task_id", ""))
             except Exception as exc:
@@ -423,7 +423,7 @@ def register_boot_hooks() -> None:
             if to_status.upper() != "IN_PROGRESS":
                 return
             try:
-                from zephyr.governance.persistence.task_repo import TaskRepository
+                from zephyr.governance.task_repo import TaskRepository
 
                 TaskRepository().check_task_timeout(getattr(event, "task_id", ""))
             except Exception as exc:

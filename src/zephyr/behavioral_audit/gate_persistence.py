@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
 # [MODULE] zephyr.behavioral_audit.gate_persistence
 # [DOMAIN] D_BEHAVIORAL_AUDIT
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
 # [CONSUMERS] drift_engine;detector_dispatcher;alert_router
 # [STARTUP] imported
 # [MATURITY] production
@@ -39,7 +39,7 @@ import sqlite3
 import uuid
 from datetime import UTC, datetime
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.sqlite_schema import DB_PATH
 
 
 class GatePersistence:

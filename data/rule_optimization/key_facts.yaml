@@ -166,7 +166,7 @@ path_facts:
       - "AGENTS.md"
     must_not_appear_as:
       - file: ".trae/rules/project_rules.md"
-        pattern: "zephyr.data.persistence.task_repo"
+        pattern: "zephyr.governance.task_repo"
         reason: "project_rules.md 错误路径"
       - file: "AGENTS.md"
         pattern: "zephyr.autonomy_core.db.task_repo"

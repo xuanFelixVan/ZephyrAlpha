@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-194 | docs/03_modules/_cross_layer/database/blueprint.md | §conductor
 # [MODULE] zephyr.trading.conductor
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] zephyr.shared.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo
 # [CONSUMERS] AI session conductor loop (replaces manual AutoPilot.run_cycle + serial execution)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -68,7 +68,7 @@ class Conductor:
     @property
     def repo(self):
         if self._repo is None:
-            from zephyr.governance.persistence.task_repo import TaskRepository
+            from zephyr.governance.task_repo import TaskRepository
 
             self._repo = TaskRepository(self._db_path, enable_gate=False)
         return self._repo

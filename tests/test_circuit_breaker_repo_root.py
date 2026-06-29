@@ -18,10 +18,10 @@ from unittest.mock import patch
 
 import pytest
 
-cbt_mod = pytest.importorskip("zephyr.data.persistence.circuit_breaker_types")
+cbt_mod = pytest.importorskip("zephyr.ops.circuit_breaker_types")
 CircuitBreakerState = cbt_mod.CircuitBreakerState
 
-repo_mod = pytest.importorskip("zephyr.data.persistence.circuit_breaker_repo")
+repo_mod = pytest.importorskip("zephyr.ops.circuit_breaker_repo")
 CircuitBreakerRecord = repo_mod.CircuitBreakerRecord
 CircuitBreakerRepo = repo_mod.CircuitBreakerRepo
 
@@ -61,8 +61,8 @@ def repo(db_path):
     mock_conn.execute("PRAGMA journal_mode = WAL")
     mock_conn.execute("PRAGMA foreign_keys = ON")
 
-    with patch("zephyr.data.persistence.circuit_breaker_repo.get_db_connection", return_value=mock_conn):
-        with patch("zephyr.data.persistence.circuit_breaker_repo.DB_PATH", db_path):
+    with patch("zephyr.governance.circuit_breaker_repo.get_db_connection", return_value=mock_conn):
+        with patch("zephyr.governance.circuit_breaker_repo.DB_PATH", db_path):
             r = CircuitBreakerRepo(db_path=db_path)
             r._conn = mock_conn
             yield r

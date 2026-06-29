@@ -134,7 +134,7 @@ class TestSessionShutdownHook:
         mock_registry.register.side_effect = _capture
 
         hook_path = "zephyr.governance.ops_governance.event_hook.hook_registry"
-        task_repo_path = "zephyr.governance.persistence.task_repo.TaskRepository"
+        task_repo_path = "zephyr.governance.task_repo.TaskRepository"
 
         with patch(hook_path, mock_registry), patch(task_repo_path, create=True):
             from zephyr.trading.boot_hooks import register_boot_hooks
@@ -157,7 +157,7 @@ class TestSessionShutdownHook:
         mock_registry.register.side_effect = _capture
 
         hook_path = "zephyr.governance.ops_governance.event_hook.hook_registry"
-        task_repo_path = "zephyr.governance.persistence.task_repo.TaskRepository"
+        task_repo_path = "zephyr.governance.task_repo.TaskRepository"
 
         with patch(hook_path, mock_registry), patch(task_repo_path, create=True):
             from zephyr.trading.boot_hooks import register_boot_hooks
@@ -189,7 +189,7 @@ class TestSessionShutdownHook:
         mock_registry.register.side_effect = _capture
 
         hook_path = "zephyr.governance.ops_governance.event_hook.hook_registry"
-        task_repo_path = "zephyr.governance.persistence.task_repo.TaskRepository"
+        task_repo_path = "zephyr.governance.task_repo.TaskRepository"
 
         with patch(hook_path, mock_registry), patch(task_repo_path, create=True):
             from zephyr.trading.boot_hooks import register_boot_hooks

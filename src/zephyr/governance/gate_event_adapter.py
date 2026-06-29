@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
-# [MODULE] zephyr.data.persistence.gate_event_adapter
+# [MODULE] zephyr.governance.gate_event_adapter
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.event_store; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.event_store; zephyr.governance.sqlite_schema
 # [CONSUMERS] zephyr.governance.rule_enforcement.gate_engine
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -31,8 +31,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from zephyr.governance.persistence.event_store import EventStore
-from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.event_store import EventStore
+from zephyr.governance.sqlite_schema import DB_PATH
 
 logger = logging.getLogger(__name__)
 

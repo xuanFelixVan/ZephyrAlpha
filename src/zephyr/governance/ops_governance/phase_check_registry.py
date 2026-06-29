@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-060 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.phase_check_registry
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.governance.audit_orchestration.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.governance.audit_orchestration.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.governance.audit_orchestration.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.governance.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.governance.audit_orchestration.contract_registry; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.drift_detection.chaos_injector; zephyr.governance.audit_orchestration.chaos_engine; zephyr.governance.task_repo; zephyr.governance.audit_orchestration.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -852,7 +852,7 @@ def check_code_dedup() -> GateResult:
 def check_task_system() -> GateResult:
     try:
         from zephyr.governance.audit_orchestration.batch_orchestrator import BatchOrchestrator
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.governance.task_repo import TaskRepository
 
         return GateResult.GREEN
     except ImportError:

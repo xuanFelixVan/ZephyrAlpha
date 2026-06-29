@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.query
+# [MODULE] zephyr.governance.query
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.base_repo; zephyr.shared.__init__
+# [DEPENDENCIES] zephyr.governance.base_repo; zephyr.shared.__init__
 # [CONSUMERS] task_repo;pipeline;audit
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -37,7 +37,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from zephyr.governance.persistence.base_repo import _row_to_taskcard
+from zephyr.governance.base_repo import _row_to_taskcard
 from zephyr.shared.task_types import TaskNamespace, TaskStatus
 
 __all__ = ["QueryMixin"]
@@ -77,7 +77,7 @@ class QueryMixin:
     def get_or_raise(self, task_id: str):
         """按 task_id 查询，不存在抛 TaskNotFoundError。"""
 
-        from zephyr.governance.persistence.base_repo import TaskNotFoundError
+        from zephyr.governance.base_repo import TaskNotFoundError
 
         task = self.get(task_id)
 

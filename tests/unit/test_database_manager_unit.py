@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.persistence.database_manager import (
+from zephyr.governance.database_manager import (
     DatabaseHealthStatus,
     DatabaseManager,
     DatabaseManagerError,

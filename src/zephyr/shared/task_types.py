@@ -2,7 +2,7 @@
 # [MODULE] zephyr.infrastructure.shared_core.task_types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.data.persistence; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)
+# [CONSUMERS] zephyr.governance; zephyr.infrastructure; zephyr.trading (replaces shared_services.models imports)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] TaskCard = Task (PURE ALIAS — SSoT: governance.rule_enforcement.task_types.Task); 本模块禁止添加字段

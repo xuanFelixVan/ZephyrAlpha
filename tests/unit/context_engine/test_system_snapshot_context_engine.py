@@ -32,7 +32,7 @@ from zephyr.autonomy_core.system_snapshot import (
     SystemSnapshot,
     SystemSnapshotter,
 )
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.sqlite_schema import init_db
 
 # ---------------------------------------------------------------------------
 # Fixture

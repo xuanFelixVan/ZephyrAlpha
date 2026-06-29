@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.sqlite_schema import init_db
 from zephyr.governance.rule_enforcement.circuit_breaker import (
     DEFAULT_THRESHOLD,
     CBGManager,

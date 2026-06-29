@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.query_metrics
+# [MODULE] zephyr.governance.query_metrics
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -53,7 +53,7 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any, TypeVar
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.sqlite_schema import DB_PATH
 
 __all__ = [
     "QueryMetrics",
@@ -187,7 +187,7 @@ class QueryMetrics:
         params_preview = str(params)[:200] if params is not None else None
         explain_rows = []
         try:
-            from zephyr.governance.persistence.sqlite_schema import DB_PATH as schema_db_path
+            from zephyr.governance.sqlite_schema import DB_PATH as schema_db_path
 
             explain_conn = sqlite3.connect(str(schema_db_path))
             try:

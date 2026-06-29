@@ -1,5 +1,5 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.gate_repo
+# [MODULE] zephyr.governance.gate_repo
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] zephyr.governance.drift_detection.trend_analyzer
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -31,7 +31,7 @@ import sqlite3
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
-from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.sqlite_schema import DB_PATH
 
 
 @dataclass

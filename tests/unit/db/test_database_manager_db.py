@@ -31,10 +31,10 @@ Task: MOD-INF-012 | Safety: M
 
 import pytest
 
-from zephyr.governance.persistence.database_manager import (
+from zephyr.governance.database_manager import (
     DatabaseHealthStatus as DatabaseHealthStatus,
 )
-from zephyr.governance.persistence.database_manager import (
+from zephyr.governance.database_manager import (
     DatabaseManager,
     DatabaseManagerError,
 )

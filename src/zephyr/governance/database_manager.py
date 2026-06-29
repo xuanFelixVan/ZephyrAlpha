@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.database_manager
+# [MODULE] zephyr.governance.database_manager
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths; zephyr.governance.persistence.audit_schema; zephyr.governance.persistence.query_metrics
+# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.shared.io.paths; zephyr.governance.audit_schema; zephyr.governance.query_metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -34,7 +34,7 @@ Depends    : sqlite_schema.py
 
 用法
 ----
-    from zephyr.governance.persistence.database_manager import DatabaseManager
+    from zephyr.governance.database_manager import DatabaseManager
 
     dm = DatabaseManager()
     conn = dm.get_connection()
@@ -52,7 +52,7 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.governance.persistence.sqlite_schema import (
+from zephyr.governance.sqlite_schema import (
     DB_PATH,
     get_db_connection,
     init_db,
@@ -728,7 +728,7 @@ class DatabaseManager:
 
         聚合 health_check + stats + schema_drift + query_performance。
         """
-        from zephyr.governance.persistence.audit_schema import AuditQuery
+        from zephyr.governance.audit_schema import AuditQuery
         from zephyr.governance.query_metrics import query_metrics
 
         health = self.health_check()

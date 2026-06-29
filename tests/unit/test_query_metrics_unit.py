@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.sqlite_schema import init_db
 from zephyr.governance.query_metrics import PercentileTracker, QueryMetrics
 
 
@@ -37,7 +37,7 @@ def tmp_db_path():
 
 @pytest.fixture
 def qm(tmp_db_path, monkeypatch):
-    monkeypatch.setattr("zephyr.data.persistence.query_metrics.DB_PATH", tmp_db_path)
+    monkeypatch.setattr("zephyr.governance.query_metrics.DB_PATH", tmp_db_path)
     init_db(tmp_db_path)
     metrics = QueryMetrics(db_path=tmp_db_path)
     yield metrics

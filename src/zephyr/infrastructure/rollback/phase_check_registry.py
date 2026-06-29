@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.phase_check_registry
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.shared.contracts.identity.agent_identity; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.shared.contracts.identity.agent_identity; zephyr.governance.audit_trail.integrity; zephyr.governance.audit_trail.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.governance.task_repo
 # [CONSUMERS] MOD-INF-020;MOD-GATE_ENGINE;MOD-INF-022
 # [STARTUP] imported
 # [MATURITY] production
@@ -765,7 +765,7 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.governance.task_repo import TaskRepository
 
         _mod = importlib.import_module("zephyr.governance.audit_orchestration.batch_orchestrator")
         BatchOrchestrator = _mod.BatchOrchestrator

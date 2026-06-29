@@ -1,5 +1,5 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
-# [MODULE] zephyr.data.persistence.sqlite_schema
+# [MODULE] zephyr.governance.sqlite_schema
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
@@ -54,7 +54,7 @@ PRAGMA 基线（KBG-0030 §4.3）
 
 用法
 ----
-    from zephyr.governance.persistence.sqlite_schema import init_db, get_db_connection, DB_PATH
+    from zephyr.governance.sqlite_schema import init_db, get_db_connection, DB_PATH
 
     init_db()              # 幂等，可重复调用
     conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
@@ -1223,10 +1223,10 @@ def __getattr__(name: str):
         import logging
 
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.data.persistence.sqlite_schema",
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.governance.sqlite_schema",
             name,
         )
-    raise AttributeError(f"module 'zephyr.data.persistence.sqlite_schema' has no attribute {name!r}")
+    raise AttributeError(f"module 'zephyr.governance.sqlite_schema' has no attribute {name!r}")
 
 
 if __name__ == "__main__":

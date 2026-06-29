@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-FLE-ORC-001
 # [MODULE] zephyr.observability.feedback_loop.alert_dispatcher
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.trading.__init__
+# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.trading.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.alert_handler
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -129,7 +129,7 @@ class AlertDispatcher:
 
 def _block_related_tasks(event: AlertEvent) -> list[str]:
     try:
-        from zephyr.governance.persistence.sqlite_schema import get_db_connection
+        from zephyr.governance.sqlite_schema import get_db_connection
     except ImportError:
         return []
 

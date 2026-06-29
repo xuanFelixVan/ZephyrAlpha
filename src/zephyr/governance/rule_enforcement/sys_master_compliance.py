@@ -349,7 +349,7 @@ def check_sli_data_sources() -> list[dict]:
         ("SLI-07", "Script 执行错误率", "zephyr.infrastructure.rollback.phase_check_registry", "PhaseCheckRegistry"),
         ("SLI-08", "契约漂移检出率", "zephyr.governance.drift_detection.drift_engine", "AIConstructionDetectors"),
         ("SLI-09", "Token 预算利用率", "zephyr.infrastructure.budget_enforcement", "BudgetEngine"),
-        ("SLI-10", "SQLite WAL 深度", "zephyr.data.persistence.database_manager", "DatabaseManager"),
+        ("SLI-10", "SQLite WAL 深度", "zephyr.governance.database_manager", "DatabaseManager"),
         (
             "SLI-11",
             "Session 锁争用率",

@@ -42,7 +42,7 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.sqlite_schema import init_db
 from zephyr.governance.task_repo import TaskRepository
 
 

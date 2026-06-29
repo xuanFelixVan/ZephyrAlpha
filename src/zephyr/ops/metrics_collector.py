@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.observability.feedback_loop.metrics_collector
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -193,7 +193,7 @@ class MetricsCollector:
         ----
         dict: {by_source: {source: [MetricPoint dict]}, window_aggregates: {avg, p99, count}}
         """
-        from zephyr.governance.persistence.sqlite_schema import get_db_connection
+        from zephyr.governance.sqlite_schema import get_db_connection
 
         conn = get_db_connection()
         try:

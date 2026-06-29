@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 
-from zephyr.governance.persistence.task_repo import (
+from zephyr.governance.task_repo import (
     P0InflationFrozenError,
     TaskRepository,
 )

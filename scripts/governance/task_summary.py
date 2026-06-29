@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/task_summary.py | §
 # [MODULE] scripts.governance.task_summary
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.governance.task_repo; zephyr.governance.sqlite_schema
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -55,8 +55,8 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.sqlite_schema import init_db
+from zephyr.governance.task_repo import TaskRepository
 
 _STATUS_ICON: dict[str, str] = {
     "pending": "⬜",

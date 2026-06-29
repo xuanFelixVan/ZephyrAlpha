@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.data._service_registration
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.task_repo; zephyr.governance.sqlite_schema; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading.boot_hooks (startup); zephyr.__init__ (eager registration)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -43,7 +43,7 @@ def register_services() -> None:
 
     # task_repo — TaskRepository 实例
     def _make_task_repo() -> Any:
-        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.governance.task_repo import TaskRepository
 
         return TaskRepository()
 
@@ -51,7 +51,7 @@ def register_services() -> None:
 
     # db_connection — sqlite3.Connection
     def _make_db_connection() -> Any:
-        from zephyr.governance.persistence.sqlite_schema import get_db_connection
+        from zephyr.governance.sqlite_schema import get_db_connection
 
         return get_db_connection()
 
@@ -59,7 +59,7 @@ def register_services() -> None:
 
     # db_path — Path
     def _make_db_path() -> Any:
-        from zephyr.governance.persistence.sqlite_schema import DB_PATH
+        from zephyr.governance.sqlite_schema import DB_PATH
 
         return DB_PATH
 

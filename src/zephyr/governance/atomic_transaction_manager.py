@@ -1,5 +1,5 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.atomic_transaction_manager
+# [MODULE] zephyr.governance.atomic_transaction_manager
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
@@ -47,7 +47,7 @@ References :
 
 Usage::
 
-    from zephyr.governance.persistence.atomic_transaction_manager import AtomicTransactionManager
+    from zephyr.governance.atomic_transaction_manager import AtomicTransactionManager
 
     atm = AtomicTransactionManager(
         db_path="data/databases/governance.db",

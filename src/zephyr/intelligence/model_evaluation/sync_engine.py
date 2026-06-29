@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.sync_engine
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__; zephyr.autonomy_core.__init__
+# [DEPENDENCIES] zephyr.governance.sqlite_schema; zephyr.governance.__init__; zephyr.autonomy_core.__init__
 # [CONSUMERS] zephyr.knowledge.kb.scheduler; AutoRuntime Core sync phase
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ class SyncEngine:
     def sync_to_vms(self, since: datetime | None = None) -> SyncResult:
         try:
             from zephyr.autonomy_core.vector_bridge import VectorBridge
-            from zephyr.governance.persistence.sqlite_schema import get_db_connection
+            from zephyr.governance.sqlite_schema import get_db_connection
             from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
 
             conn = get_db_connection()

@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
-# [MODULE] zephyr.data.persistence.circuit_breaker_repo
+# [MODULE] zephyr.ops.circuit_breaker_repo
 # [DOMAIN] D_OPS
-# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.governance.persistence.circuit_breaker_types
+# [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.ops.circuit_breaker_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -29,7 +29,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.governance.persistence.circuit_breaker_types import CircuitBreakerState
+from zephyr.ops.circuit_breaker_types import CircuitBreakerState
 from zephyr.shared.utils.db_utils import DB_PATH, get_db_connection
 
 __all__ = [

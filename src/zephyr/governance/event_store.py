@@ -1,8 +1,8 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §event-sourcing
-# [MODULE] zephyr.data.persistence.event_store
+# [MODULE] zephyr.governance.event_store
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] zephyr.data.persistence.projection_engine; zephyr.data.persistence.snapshot_manager; zephyr.data.persistence.task_repo
+# [DEPENDENCIES] zephyr.governance.sqlite_schema
+# [CONSUMERS] zephyr.governance.projection_engine; zephyr.governance.snapshot_manager; zephyr.governance.task_repo
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] event_id is UUID4; timestamp is UTC ISO 8601; append_event is atomic within BEGIN IMMEDIATE

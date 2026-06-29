@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from datetime import UTC, datetime
 
-from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.task_repo import TaskRepository
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.models import TaskCard, TaskNamespace, TaskStatus
