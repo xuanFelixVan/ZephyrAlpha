@@ -156,7 +156,6 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
         # - docs/01_policies_and_standards/rules/: 规则文件描述禁止行为时引用禁止内容
         # - docs/01_policies_and_standards/_registry/contracts/: 配置文件声明 forbidden_paths
         # - docs/01_policies_and_standards/_registry/catalogs/: 登记表注册废弃目录为 status:deprecated 条目
-        # - docs/02_enterprise_architecture/_archive/: 归档历史文档
         # - docs/08_knowledge/: 知识库条目记录废弃路径作为知识
         # - docs/_working/: 过程性文档（research_notes 等）
         # - scripts/governance/: 治理脚本本身检测废弃路径，必然引用
@@ -166,7 +165,6 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
             "docs/01_policies_and_standards/rules/",
             "docs/01_policies_and_standards/_registry/contracts/",
             "docs/01_policies_and_standards/_registry/catalogs/",
-            "docs/02_enterprise_architecture/_archive/",
             "docs/08_knowledge/",
             "docs/_working/",
             "scripts/governance/",
