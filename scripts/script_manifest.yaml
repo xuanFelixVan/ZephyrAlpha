@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-06-29'
-total_scripts: 575
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -649,30 +649,6 @@ scripts:
 - name: governance/_resource_guard.py
   path: governance/_resource_guard.py
   description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_commit_l2.py
-  path: governance/_tmp_commit_l2.py
-  description: from __future__ import annotations
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_commit_migration.py
-  path: governance/_tmp_commit_migration.py
-  description: import os
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/_tmp_commit_step3.py
-  path: governance/_tmp_commit_step3.py
-  description: 提交内容：
   domain: governance
   execution_plane: warm-path
   status: registered
