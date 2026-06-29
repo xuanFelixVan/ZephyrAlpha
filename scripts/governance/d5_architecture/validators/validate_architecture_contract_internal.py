@@ -128,6 +128,9 @@ def check_dim2_doc_type_consistency(contract) -> list[dict]:
             break
     if fms_doc_type is None:
         return ("FAIL", "doc_type field not found in frontmatter_schema required_fields")
+    # dynamic_from_ssot sentinel: values loaded at runtime from vocabulary, skip static comparison
+    if fms_doc_type.get("allowed_values") == "dynamic_from_ssot":
+        return ("PASS", "doc_type uses dynamic_from_ssot sentinel - values loaded from vocabulary at runtime")
     fms_values = set(fms_doc_type.get("allowed_values", []))
     vr002_check = vr002.get("check", "")
     vr002_values = set()
@@ -225,6 +228,9 @@ def check_dim7_doc_type_subset(contract) -> list[dict]:
             break
     if fms_doc_type is None:
         return ("FAIL", "doc_type not in required_fields")
+    # dynamic_from_ssot sentinel: values loaded at runtime from vocabulary, trivially a subset
+    if fms_doc_type.get("allowed_values") == "dynamic_from_ssot":
+        return ("PASS", "doc_type uses dynamic_from_ssot sentinel - values are vocabulary values at runtime")
     fms_values = set(fms_doc_type.get("allowed_values", []))
     not_in_vocab = fms_values - vocab_values
     if not_in_vocab:

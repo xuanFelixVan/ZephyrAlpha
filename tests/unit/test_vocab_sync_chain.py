@@ -472,7 +472,7 @@ class TestDerivedFileConsistency:
         for field in registry.get("fields", []):
             if (field.get("field_name") or field.get("name")) != "layer":
                 continue
-            # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，不参与子集断言
+            # dynamic_from_ssot 标志：值集由词表单一维护，不参与子集断言
             ev_raw = field.get("enum_values") or field.get("allowed_values")
             if isinstance(ev_raw, str):
                 break
