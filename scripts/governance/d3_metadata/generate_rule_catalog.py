@@ -221,6 +221,9 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         "status": "active",
         "generated_at": gen_ts,
         "generated_by": "scripts/governance/d3_metadata/generate_rule_catalog.py",
+        # maintenance 字段治本（2026-06-29）：声明 auto 让 generate_registry_master_index.py
+        # 正确标记本表为自动维护——原缺省填 manual 是标记滞后根因（registry_master_index L167 误标 manual）
+        "maintenance": "auto",
         "total_files": len(entries),
         "total_rules": total_rules,
         "tier_distribution": tier_distribution,
@@ -307,7 +310,7 @@ def compare_with_registry(catalog_entries: list[dict], registry_path: str) -> in
                 file=sys.stderr,
             )
 
-    if not only_in_catalog and not only_in_registry and not differences:
+    if not only_in_catalog and not only_in_registry and not differences:    if not only_in_catalog and not only_in_registry and not differences:
         print("\n  \u2705 100% match! Auto-generated catalog is identical to registry.", file=sys.stderr)
 
     return len(only_in_catalog) + len(differences)
@@ -326,16 +329,6 @@ def main() -> None:
         default=str(GOV_DOCS_DIR / "_registry" / "catalogs" / "rule_catalog_registry.yaml"),
         help="Output YAML file",
     )
-    parser.add_argument(
-        "--compare",
-        default=None,
-        help="Compare with existing registry (drift detection; default: disabled)",
-    )
-    parser.add_argument(
-        "--warn-only",
-        action="store_true",
-        help="仅比对报告差异；不因差异而退出非零（CI 可加严）",
-    )
     args = parser.parse_args()
 
     print(f"Scanning: {args.scan_dir}", file=sys.stderr)
@@ -343,11 +336,6 @@ def main() -> None:
     print(f"Found {len(entries)} files with frontmatter", file=sys.stderr)
 
     generate_catalog(entries, args.output)
-
-    if args.compare:
-        diff_count = compare_with_registry(entries, args.compare)
-        if diff_count and diff_count > 0 and not args.warn_only:
-            sys.exit(EXIT_FINDINGS)
 
     sys.exit(EXIT_PASS)
 

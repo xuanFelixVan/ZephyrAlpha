@@ -44,7 +44,7 @@ ttl: permanent
 | `ai_session_registry.yaml` | 登记表 | AI Session摘要记录 | semi_auto |
 | `frontmatter_field_registry.yaml` | 登记表 | frontmatter 字段的类型/必填性/枚举值 | manual |
 | `directory_registry.yaml` | 登记表 | 目录——职责声明/轨道归属/index.md 存在性 | manual |
-| `gate_registry.yaml` | 登记表 | 门禁（以 `total_gates` 为准）——pre-commit / 架构 / 元数据 等 | manual |
+| `gate_registry.yaml` | 登记表 | 门禁（以 `total_gates` 为准）——pre-commit / 架构 / 元数据 等 | auto |
 | `declarative_contract_tracker_registry.yaml` | 登记表 | 声明式契约跟踪（config 与蓝图承诺 vs 实现） | manual |
 | `frontier_llm_benchmark_ranking.yaml` | 登记表 | 前沿 LLM 基准排名——模型能力/价格/延迟对比 | manual |
 | `registry_consistency_contract.yaml` | 契约 | 登记表的登记表——跨登记表共享字段一致性契约 | manual |

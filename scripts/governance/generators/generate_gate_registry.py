@@ -16,7 +16,7 @@
 """
 generate_gate_registry.py — 门禁登记表自动生成器
 
-从 .pre_commit-config.yaml 自动派生 gate-registry.md。
+从 .pre-commit-config.yaml 自动派生 gate-registry.md。
 对标 §6.16 静态清单自动生成铁律——手工维护的 gate-registry 将被此脚本替代。
 
 Usage:
@@ -50,12 +50,12 @@ args:
   - {flag: --output, type: str, description: "输出路径"}
 warn_only: false
 description: >
-  从 .pre_commit-config.yaml 自动派生 gate-registry.md。
+  从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。
   对标 §6.16 静态清单自动生成铁律。
 """
 
-PRE_COMMIT_PATH = REPO_ROOT / ".pre_commit-config.yaml"
-DEFAULT_OUTPUT = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate-registry.md"
+PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
+DEFAULT_OUTPUT = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate_registry.yaml"
 
 CATEGORY_MAP = {
     "01": "architecture_reachability",
@@ -134,7 +134,10 @@ def generate(entry_count: int | None = None) -> dict:
         "status": "active",
         "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_by": "scripts/governance/generators/generate_gate_registry.py",
-        "source": ".pre_commit-config.yaml",
+        # maintenance 字段治本（2026-06-29）：声明 auto 让 generate_registry_master_index.py
+        # 正确标记本表为自动维护——原缺省填 manual 是标记滞后根因（catalogs/index.md L47 误标 manual）
+        "maintenance": "auto",
+        "source": ".pre-commit-config.yaml",
         "total_gates": len(gates),
         "gates": gates,
     }
@@ -143,7 +146,7 @@ def generate(entry_count: int | None = None) -> dict:
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     ensure_utf8_stdout()
-    parser = argparse.ArgumentParser(description="自动生成 gate-registry.md")
+    parser = argparse.ArgumentParser(description="自动生成 gate_registry.yaml")
     parser.add_argument("--check", action="store_true", help="仅检测漂移，不写文件")
     parser.add_argument("--output", type=str, default=str(DEFAULT_OUTPUT), help="输出路径")
     args = parser.parse_args()
@@ -155,17 +158,14 @@ def main() -> None:
         if existing.get("total_gates") != output["total_gates"]:
             print(f"DRIFT: 磁盘 {existing.get('total_gates', 0)} 门禁 ≠ 生成 {output['total_gates']} 门禁")
             sys.exit(EXIT_FINDINGS)
-        print("OK: 门禁登记表与 .pre_commit-config.yaml 一致")
+        print("OK: 门禁登记表与 .pre-commit-config.yaml 一致")
         return
 
     tmp_path = f"{args.output}.{os.getpid()}.tmp"
     try:
-        with open(tmp_path, encoding="utf-8") as f:
-            f.write("# module_id: PS-REG-014\n")
-            f.write("# doc_type: register\n")
-            f.write(f"# 自动生成于 {output['generated_at']}\n")
-            f.write(f"# 来源: {PRE_COMMIT_PATH}\n")
-            f.write("# 手工编辑无效——修改请通过 .pre_commit-config.yaml\n\n")
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            # frontmatter 字段已在 output dict 中（module_id/doc_type/generated_by/maintenance 等）
+            # 原 # 注释头冗余已删除（治本 2026-06-29：与 frontmatter 字段重复）
             yaml.dump(output, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
 
         os.replace(tmp_path, args.output)
