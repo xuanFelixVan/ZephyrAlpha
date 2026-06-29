@@ -30,7 +30,6 @@ title: "evolution_policy 受控词表"
 status: active
 vocabulary_name: evolution_policy
 total_values: 3
-source: "PS-STD-001 §10.11"
 depends_on:
   - target: PS-STD-001
     at: "§10.11"

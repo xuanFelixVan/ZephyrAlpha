@@ -34,7 +34,6 @@ title: "compliance_tags 受控词表"
 status: active
 vocabulary_name: compliance_tags
 total_values: 6
-source: "PS-STD-001 §10.13"
 depends_on:
   - target: PS-STD-001
     at: "§10.13"

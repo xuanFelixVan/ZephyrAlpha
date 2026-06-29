@@ -30,7 +30,6 @@ title: "module_lifecycle_status 受控词表"
 status: active
 vocabulary_name: module_lifecycle_status
 total_values: 8
-source: "GOV-MOD-003 MLC-001/002/003（模块8阶段状态机）"
 depends_on:
   - target: GOV-MOD-003
     at: "MLC-001/002/003"

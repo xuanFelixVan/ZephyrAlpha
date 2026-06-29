@@ -16,7 +16,6 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: language
 total_values: 3
-source: "PS-STD-001 §2.4 + architecture_contract.yaml frontmatter_schema"
 derived_from:
   - source: "PS-STD-001"
     relationship: "language 合法值定义"

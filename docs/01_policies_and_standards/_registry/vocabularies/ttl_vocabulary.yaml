@@ -39,7 +39,6 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: ttl
 total_values: 2
-source: "PS-STD-001 §2.1 + §4.7（TTL 保留期定义真源）"
 depends_on:
   - target: PS-STD-001
     at: "§2.1 + §4.7"

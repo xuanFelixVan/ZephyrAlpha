@@ -33,15 +33,13 @@ title: "doc_type 受控词表"
 status: active
 vocabulary_name: doc_type
 total_values: 19
-source: "PS-STD-001 §3.2 + §3.2.1（v2.0.0 精简至 19 值：移除 design/plan/schema/reference/protocol/declaration）"
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1 + §3.2"
     why: "doc_type 受控词表定义真源"
-derived_from:
-  - source: "_registry/vocabularies/rule_form_vocabulary.yaml"
-    relationship: "每个 doc_type 值绑定一种 rule_form——rule_form 枚举由 rule_form_vocabulary.yaml 唯一定义"
-    fields: ["rule_form"]
+  - target: rule_form_vocabulary.yaml
+    at: "_registry/vocabularies/rule_form_vocabulary.yaml"
+    why: "每个 doc_type 值的 rule_form 字段值由 rule_form_vocabulary.yaml 唯一定义（单向引用，非派生——doc_type 值独立定义）"
 
 values:
   - value: policy

@@ -47,29 +47,9 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values:
-  - value: policy
-    description: 策略——定义'必须/禁止'的声明式规则，AI 不可修改
-  - value: standard
-    description: 标准——定义度量/格式/接口的声明式规范
-  - value: operational_rule
-    description: 操作规则——定义'如何做'的步骤化流程
-  - value: register
-    description: 注册表——结构化数据清单，AI 可修改
-  - value: index
-    description: 索引入口——目录级导航文件
-  - value: template
-    description: 模板——可复用的文档结构骨架
-  - value: terminology
-    description: 术语——定义项目专有名词的统一含义
-  - value: vocabulary
-    description: 词表——受控枚举值的权威来源
-  - value: contract
-    description: 契约——声明式接口/行为约束，代码可消费
-  - value: gate
-    description: 闸门——CI/质量门禁定义
+  enum_values: dynamic_from_ssot
   applicable_docs: []
-  description: 文档品种——01_policies_and_standards/ 目录下 13 种
+  description: "文档品种——01_policies_and_standards/ 目录下 19 种（v2.0.0，canonical SSoT: doc_type_vocabulary.yaml）"
   source: PS-STD-001 §3.2.1 + doc_type_vocabulary.yaml
   derived_from: _registry/vocabularies/doc_type_vocabulary.yaml
   note: ''
@@ -77,13 +57,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values:
-  - value: draft
-    description: 草稿，正在编写中
-  - value: active
-    description: 已生效，当前有效
-  - value: deprecated
-    description: 已废弃，有替代品或已合并
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 文档状态——DocStatus 仅 3 值
   source: PS-STD-001 §4.1 + status_vocabulary.yaml
@@ -123,7 +97,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values: DYNAMIC_FROM_SSOT
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: '架构层归属——16 值（canonical SSoT: layer_vocabulary.yaml）'
   source: layer_vocabulary.yaml + architecture_model/layers/
@@ -133,13 +107,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values:
-  - value: public
-    description: 公开——可对外分享
-  - value: internal
-    description: 内部——仅项目成员可见
-  - value: confidential
-    description: 保密——仅团队内部使用
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 机密等级——三分法
   source: PS-STD-001 §4.6
@@ -149,13 +117,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values:
-  - value: zh
-    description: 中文
-  - value: en
-    description: 英文
-  - value: zh_en
-    description: 中英双语
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 主语言
   source: PS-STD-001 §4.3
@@ -165,13 +127,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values:
-  - value: human
-    description: 人类独立创建
-  - value: agent
-    description: AI Agent 独立生成
-  - value: human_plus_agent
-    description: 人机协作创建
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 创建者类型
   source: PS-STD-001 §4.4
@@ -192,11 +148,7 @@ fields:
   required: always
   stage: null
   derived_from: _registry/vocabularies/ttl_vocabulary.yaml
-  enum_values:
-  - value: permanent
-    description: 永久保留
-  - value: task_bound
-    description: 任务绑定——任务完成即可清理。过程性文档默认落 docs/_working/
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 文档保留期
   source: PS-STD-001 §6
@@ -217,12 +169,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - complete
-  - incomplete
-  - incomplete_first_party_only
-  - incomplete_third_party_only
-  - unknown
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - template
   description: 完整性声明——模板自身的完整程度。对标 CycloneDX Compositions
@@ -243,15 +190,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: declarative
-    description: 声明式——定义'是什么'
-  - value: procedural
-    description: 过程式——定义操作步骤
-  - value: data
-    description: 数据式——结构化数据清单
-  - value: structural
-    description: 结构式——定义格式/骨架
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - policy
   - standard
@@ -267,15 +206,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: global
-    description: 全局——适用整个项目
-  - value: domain
-    description: 领域级——适用特定业务域
-  - value: layer
-    description: 层级——适用特定架构层
-  - value: module
-    description: 模块级——适用特定功能模块
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - policy
   - standard
@@ -289,15 +220,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: frozen
-    description: 冻结——不可变更
-  - value: stable
-    description: 稳定——通过变更门控可修改
-  - value: evolving
-    description: 演进中——可频繁修改
-  - value: volatile
-    description: 易变——AI 可自主调整
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - policy
   - standard
@@ -311,13 +234,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: automated
-    description: 自动化验证——CI/脚本可 100% 验证
-  - value: manual
-    description: 人工验证——需人类判断
-  - value: inspection
-    description: 审查验证——需资深人员审查
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - policy
   - standard
@@ -331,31 +248,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: policy
-    description: 策略文档模板
-  - value: standard
-    description: 标准文档模板
-  - value: operational_rule
-    description: 操作规则文档模板
-  - value: register
-    description: 注册表文档模板
-  - value: protocol
-    description: 协议文档模板
-  - value: blueprint
-    description: 蓝图文档模板
-  - value: task-card
-    description: 任务卡模板
-  - value: risk-register
-    description: 风险登记簿模板
-  - value: roadmap
-    description: 路线图模板
-  - value: ke
-    description: 知识条目模板
-  - value: ko
-    description: 知识观察模板
-  - value: dependency-graph
-    description: 依赖图模板
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - template
   description: 模板用于创建什么类型的文档——AI 按目标 doc_type 搜索模板时的路由键。枚举值复用 doc_type 受控词表（去掉 template
@@ -394,13 +287,7 @@ fields:
   type: array
   required: optional
   stage: null
-  enum_values:
-  - value: synthesized
-    description: 综合——多来源知识综合而成
-  - value: referenced
-    description: 引用——直接引用外部知识
-  - value: transformed
-    description: 转化——从外部知识转化适配
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 横向知识来源——[{path, relationship, sections}]
   source: PS-STD-001 §10.17
@@ -419,13 +306,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: immutable_core
-    description: 不可变核心——AI 只能读，不能改
-  - value: human_gated
-    description: 人工闸门——AI 可提议，需 Owner 批准
-  - value: ai_modifiable
-    description: AI 可修改——AI 可直接编辑
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - policy
   - standard
@@ -440,13 +321,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values:
-  - value: H
-    description: 高风险——涉及资金/安全关键路径
-  - value: M
-    description: 中风险——影响系统稳定性
-  - value: L
-    description: 低风险——辅助功能
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 安全风险等级
   source: PS-STD-001 §10.10
@@ -465,15 +340,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values:
-  - value: A
-    description: 家族 A——策略/标准类规则
-  - value: B
-    description: 家族 B——操作性流程类规则
-  - value: C
-    description: 家族 C——Schema/契约类规则
-  - value: D
-    description: 家族 D——模板/骨架类规则
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - policy
   - standard
@@ -487,15 +354,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values:
-  - value: planned
-    description: 已规划——尚未实现
-  - value: reserved
-    description: 已预留——架构中留位
-  - value: active
-    description: 已激活——当前在用
-  - value: none
-    description: 无——不需要 AI 能力槽位
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: AI 能力槽位状态
   source: PS-STD-001 §10.7
@@ -505,15 +364,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values:
-  - value: l0
-    description: L0 无自治
-  - value: l1
-    description: L1 低自治——写操作需审批
-  - value: l2
-    description: L2 中自治——关键操作需审批
-  - value: l3
-    description: L3 高自治——全权自主
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 规划的 AI 自治等级
   source: PS-STD-001 §10.7
@@ -534,15 +385,7 @@ fields:
   type: enum
   required: optional
   stage: planned
-  enum_values:
-  - value: unreviewed
-    description: 未审核
-  - value: reviewed
-    description: 已审核
-  - value: approved
-    description: 已批准
-  - value: rejected
-    description: 已驳回
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 审核状态
   source: PS-STD-001 §10.16
@@ -561,13 +404,7 @@ fields:
   type: array
   required: optional
   stage: planned
-  enum_values:
-  - value: active
-    description: 当前有效——蓝图正在使用中
-  - value: draft
-    description: 草稿——蓝图尚未批准
-  - value: deprecated
-    description: 已废弃——蓝图已被替代
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 施工图引用的蓝图列表——[{path, status, decisions_used}]
   source: PS-STD-001 §10.12
@@ -577,19 +414,7 @@ fields:
   type: array
   required: optional
   stage: planned
-  enum_values:
-  - value: SR-11-7
-    description: 中国证监会《证券期货业数据安全管理与保护指引》
-  - value: EU-AI-Act-Art12
-    description: 欧盟 AI 法案第 12 条——记录保存
-  - value: EU-AI-Act-Art14
-    description: 欧盟 AI 法案第 14 条——人工监督
-  - value: GDPR-Art22
-    description: GDPR 第 22 条——自动化决策的限制
-  - value: PCI-DSS
-    description: 支付卡行业数据安全标准
-  - value: MiFID-II
-    description: 欧盟金融工具市场指令 II
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 合规标签——金融监管法规映射（6 值）
   source: PS-STD-001 §10.13
@@ -599,13 +424,7 @@ fields:
   type: object
   required: optional
   stage: planned
-  enum_values:
-  - value: pass
-    description: 通过——审计链验证通过
-  - value: fail
-    description: 失败——审计链验证失败
-  - value: conditional
-    description: 有条件——审计链部分通过
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 溯源信息——{origin_drafts[], audit_chain[], arbitration}
   source: PS-STD-001 §10.3
@@ -615,13 +434,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values:
-  - value: frozen
-    description: 冻结——不可演进
-  - value: extendable
-    description: 可扩展——可新增，不删改
-  - value: rewritable
-    description: 可重写——可增删改任意内容
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 文件演进策略
   source: PS-STD-001 §10.11
@@ -665,13 +478,7 @@ fields:
   type: enum
   required: optional
   stage: null
-  enum_values:
-  - value: system
-    description: System 级——Level 0 全系统总蓝图
-  - value: domain
-    description: Domain 级——Level 1 功能域集成蓝图
-  - value: module
-    description: Module 级——Level 2 单模块蓝图
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 蓝图层级——PS-STD-005 三级金字塔中的位置
   source: PS-STD-005 §8.1
@@ -742,15 +549,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values:
-  - value: frozen
-    description: 冻结——不可变更
-  - value: stable
-    description: 稳定——通过变更门控可修改
-  - value: evolving
-    description: 演进中——可频繁修改
-  - value: volatile
-    description: 易变——AI 可自主调整
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - code_file
   description: 代码文件头部——文件稳定性。枚举值与 frontmatter stability 字段完全一致
@@ -761,13 +560,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values:
-  - value: H
-    description: 高风险——涉及安全关键路径
-  - value: M
-    description: 中风险——影响系统稳定性
-  - value: L
-    description: 低风险——辅助功能
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - code_file
   description: 代码文件头部——安全风险等级。枚举值与 frontmatter safety_level 字段完全一致
@@ -778,13 +571,7 @@ fields:
   type: enum
   required: always
   stage: null
-  enum_values:
-  - value: immutable_core
-    description: 不可变核心——AI 只能读，不能改
-  - value: human_gated
-    description: 人工闸门——AI 可提议，需 Owner 批准
-  - value: ai_modifiable
-    description: AI 可修改——AI 可直接编辑
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - code_file
   description: 代码文件头部——AI 自治权限。枚举值与 frontmatter ai_autonomy 字段完全一致
@@ -815,21 +602,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: A_full
-    description: .py 十字段完整版——code, script 文件
-  - value: A_test
-    description: .py 六字段简化版——test 文件
-  - value: B_yaml
-    description: YAML 5 字段注释块——gate, registry, contract(yaml), config, data
-  - value: C_json
-    description: JSON _meta 字段——contract(json), schema(json)
-  - value: D_md
-    description: .md YAML frontmatter——doc 文件
-  - value: E_shell
-    description: Shell/Mermaid 注释头部——infra 文件
-  - value: exempt
-    description: 豁免——不需要表头
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - code_file
   - register
@@ -843,27 +616,7 @@ fields:
   type: enum
   required: conditional
   stage: phase0
-  enum_values:
-  - value: code
-    description: 生产代码——src/zephyr/**/*.py
-  - value: script
-    description: 治理/工具脚本——scripts/**/*.py
-  - value: gate
-    description: 门禁定义——src/zephyr/gates/*.yaml
-  - value: registry
-    description: 注册表——*_registry.yaml, *manifest.yaml
-  - value: contract
-    description: 契约定义——shared/contracts/*.py, contracts/*.yaml
-  - value: config
-    description: 配置文件——config/*.yaml
-  - value: data
-    description: 运行时数据——data/**/*.yaml
-  - value: doc
-    description: 文档——docs/**/*.md
-  - value: test
-    description: 测试——tests/**/*.py
-  - value: infra
-    description: 基础设施——.sh, .ps1, .mmd
+  enum_values: dynamic_from_ssot
   applicable_docs:
   - code_file
   - register
@@ -877,27 +630,7 @@ fields:
   type: enum
   required: conditional
   stage: phase2
-  enum_values:
-  - value: blueprint_decision
-    description: 蓝图决策
-  - value: strategy
-    description: 策略——交易/投资策略
-  - value: factor
-    description: 因子——Alpha 因子
-  - value: best_practice
-    description: 最佳实践
-  - value: lesson_learned
-    description: 经验教训
-  - value: architecture
-    description: 架构——系统设计
-  - value: risk_control
-    description: 风控
-  - value: data_governance
-    description: 数据治理
-  - value: operations
-    description: 运维
-  - value: compliance
-    description: 合规
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 知识条目内容类型——10 值
   source: PS-STD-001 §9.1
@@ -907,27 +640,7 @@ fields:
   type: enum
   required: conditional
   stage: phase2
-  enum_values:
-  - value: data
-    description: 数据
-  - value: feature
-    description: 特征
-  - value: model
-    description: 模型
-  - value: signal
-    description: 信号
-  - value: execution
-    description: 执行
-  - value: risk
-    description: 风险
-  - value: portfolio
-    description: 组合
-  - value: reporting
-    description: 报告
-  - value: infrastructure
-    description: 基础设施
-  - value: other
-    description: 其他
+  enum_values: dynamic_from_ssot
   applicable_docs: []
   description: 知识条目业务领域——10 值
   source: PS-STD-001 §9.2

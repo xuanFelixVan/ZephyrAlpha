@@ -30,7 +30,6 @@ title: "ai_autonomy 受控词表"
 status: active
 vocabulary_name: ai_autonomy
 total_values: 3
-source: "PS-STD-001 §4.5 + ai_autonomy_authority_registry.yaml"
 depends_on:
   - target: PS-STD-001
     at: "§4.5"

@@ -16,7 +16,6 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: verifiability
 total_values: 3
-source: "PS-STD-001 §2.4 + architecture_contract.yaml frontmatter_schema"
 derived_from:
   - source: "_registry/vocabularies/rule_form_vocabulary.yaml"
     relationship: "verifiability 字段定义与 rule_form 体系对齐"

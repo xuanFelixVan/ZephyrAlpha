@@ -31,15 +31,13 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: rule_form
 total_values: 4
-source: "PS-STD-001 §2.5（受控词表速查：4 值）+ §2.6（一致性约束：doc_type → rule_form 映射）"
 depends_on:
   - target: PS-STD-001
     at: "§2.5 + §2.6 + §2.8 #1"
     why: "rule_form 受控词表定义真源 + 一致性约束真源"
-derived_from:
-  - source: "_registry/vocabularies/doc_type_vocabulary.yaml"
-    relationship: "mapping_rules 中引用的 doc_type 值由 doc_type_vocabulary.yaml 唯一定义"
-    fields: ["mapping_rules.rule"]
+  - target: doc_type_vocabulary.yaml
+    at: "_registry/vocabularies/doc_type_vocabulary.yaml"
+    why: "mapping_rules 中引用的 doc_type 值由 doc_type_vocabulary.yaml 唯一定义（单向引用，非派生——rule_form 值独立定义）"
 
 values:
   - value: declarative

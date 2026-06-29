@@ -17,7 +17,6 @@ status: active
 owner: ZephyrAlpha-Owner
 vocabulary_name: scope
 total_values: 4
-source: "PS-STD-001 §2.4 + architecture_contract.yaml frontmatter_schema"
 derived_from:
   - source: "PS-STD-001"
     relationship: "scope 合法值定义"

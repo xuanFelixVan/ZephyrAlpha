@@ -30,7 +30,6 @@ title: "safety_level 受控词表"
 status: active
 vocabulary_name: safety_level
 total_values: 3
-source: "PS-STD-001 §10.10"
 depends_on:
   - target: PS-STD-001
     at: "§10.10"

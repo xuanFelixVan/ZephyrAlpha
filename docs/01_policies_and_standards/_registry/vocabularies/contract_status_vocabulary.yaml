@@ -31,7 +31,6 @@ title: "contract_status 受控词表"
 status: active
 vocabulary_name: contract_status
 total_values: 3
-source: "validate_interface_contracts.py 契约生命周期定义"
 depends_on: []
 
 values:

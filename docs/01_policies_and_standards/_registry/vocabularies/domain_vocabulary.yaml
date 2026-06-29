@@ -30,7 +30,6 @@ title: "domain 受控词表"
 status: active
 vocabulary_name: domain
 total_values: 10
-source: "PS-STD-001 §9.2"
 depends_on:
   - target: PS-STD-001
     at: "§9.2"

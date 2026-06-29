@@ -157,8 +157,13 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         if fname != field_name:
             continue
 
-        # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，派生同步应跳过
-        if field.get("allowed_values") == "DYNAMIC_FROM_SSOT" or field.get("enum_values") == "DYNAMIC_FROM_SSOT":
+        # dynamic_from_ssot 标志：值集由词表单一维护，派生同步应跳过
+        # 大小写不敏感——YAML 中可能写作 dynamic_from_ssot 或 DYNAMIC_FROM_SSOT
+        _av = field.get("allowed_values")
+        _ev = field.get("enum_values")
+        if (isinstance(_av, str) and _av.lower() == "dynamic_from_ssot") or (
+            isinstance(_ev, str) and _ev.lower() == "dynamic_from_ssot"
+        ):
             continue
 
         current_values: set[str] = set()
@@ -225,8 +230,10 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         fname = field.get("name", "")
         if fname != field_name:
             continue
-        # DYNAMIC_FROM_SSOT 标志：值集由词表单一维护，派生同步应跳过
-        if field.get("allowed_values") == "DYNAMIC_FROM_SSOT":
+        # dynamic_from_ssot 标志：值集由词表单一维护，派生同步应跳过
+        # 大小写不敏感——YAML 中可能写作 dynamic_from_ssot 或 DYNAMIC_FROM_SSOT
+        _av = field.get("allowed_values")
+        if isinstance(_av, str) and _av.lower() == "dynamic_from_ssot":
             continue
         current = field.get("allowed_values", [])
         current_set = set(str(v) for v in current)

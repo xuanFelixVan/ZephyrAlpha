@@ -30,7 +30,6 @@ title: "status 受控词表"
 status: active
 vocabulary_name: status
 total_values: 3
-source: "PS-STD-001 §4.1（DocStatus：3 值，archived 已否决——归档是文件操作，不是文档状态）"
 depends_on:
   - target: PS-STD-001
     at: "§4.1"

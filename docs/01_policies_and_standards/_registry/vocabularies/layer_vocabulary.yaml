@@ -42,7 +42,6 @@ title: "layer 受控词表"
 status: active
 vocabulary_name: layer
 total_values: 16
-source: "docs/03_modules/_domain-*/blueprint.md（新35域架构SSoT）+ PS-STD-001 §9.5"
 depends_on:
   - target: docs/03_modules/_domain-*
     at: "blueprint.md"

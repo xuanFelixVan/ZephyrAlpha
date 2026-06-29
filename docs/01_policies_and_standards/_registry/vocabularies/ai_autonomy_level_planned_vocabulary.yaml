@@ -30,7 +30,6 @@ title: "ai_autonomy_level_planned 受控词表"
 status: active
 vocabulary_name: ai_autonomy_level_planned
 total_values: 4
-source: "PS-STD-001 §10.7"
 depends_on:
   - target: PS-STD-001
     at: "§10.7"

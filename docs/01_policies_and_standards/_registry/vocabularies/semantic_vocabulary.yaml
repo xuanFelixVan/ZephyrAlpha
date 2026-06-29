@@ -29,7 +29,6 @@ title: "semantic_type 受控词表"
 status: active
 vocabulary_name: semantic_type
 total_values: 4
-source: "PS-REG-007 _schema（depgraph 边 semantic_type 枚举）"
 depends_on:
   - target: PS-REG-007
     at: "_schema"
