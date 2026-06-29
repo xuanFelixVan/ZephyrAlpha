@@ -3,7 +3,7 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-06-29T11:22:16Z'
+generated_at: '2026-06-29T11:29:55Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 140
@@ -1765,7 +1765,7 @@ files:
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   module_id: PS-REG-018
-  title: 规则路径目录
+  title: 规则路径目录（唯一真源 SSoT）
   doc_type: register
   status: active
   version: ''
