@@ -936,13 +936,16 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
     1. 验证节点存在
     2. 验证当前 build_status 不是已 deprecated（幂等保护）
     3. 检查边引用，有则警告（不阻断）
-    4. 软删除（build_status='deprecated'）
+    4. 诊断警告（P2 治本 2026-06-29，不阻断）：
+       a. 物理文件存在性——文件仍存在则警告（可能误废弃）
+       b. path/file_path 一致性——不一致则警告（可能漂移）
+    5. 软删除（build_status='deprecated'）
     """
     with _db_write_lock(db_path=db_path, task="deprecate_node"):
         conn = get_depgraph_pg_connection(autocommit=False)
         try:
             row = conn.execute(
-                "SELECT node_id, file_path, design_maturity, build_status FROM nodes WHERE node_id=%s",
+                "SELECT node_id, path, file_path, design_maturity, build_status FROM nodes WHERE node_id=%s",
                 (node_id,),
             ).fetchone()
             if not row:
@@ -958,6 +961,26 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
             ).fetchone()["count"]
             if edge_count > 0:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用（软废弃不删边）", file=sys.stderr)
+
+            # 诊断警告（P2 治本 2026-06-29）：物理文件存在性 + path/file_path 一致性
+            # 不阻断——deprecate_node 的预期场景就是孤儿清理（文件已删除），
+            # 但若文件仍存在或 path/file_path 漂移，应提示操作者核查（防误废弃 + 防漂移隐藏）
+            _fp = row.get("file_path") or ""
+            _pth = row.get("path") or ""
+            if _fp:
+                _phys = REPO_ROOT / _fp
+                if _phys.exists():
+                    print(
+                        f"WARNING: node_id={node_id} 物理文件仍存在: {_phys} —— "
+                        f"确认是否真要废弃（孤儿清理预期文件已删除）",
+                        file=sys.stderr,
+                    )
+            if _pth and _fp and _pth != _fp:
+                print(
+                    f"WARNING: node_id={node_id} path({_pth}) != file_path({_fp}) —— "
+                    f"不一致（可能漂移，cmd_update_path 已治本同步，此节点为历史遗留）",
+                    file=sys.stderr,
+                )
 
             conn.execute("UPDATE nodes SET build_status='deprecated' WHERE node_id=%s", (node_id,))
             conn.commit()
