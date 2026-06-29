@@ -424,6 +424,43 @@ capabilities:
       - _check_src_no_data         # src/data/路径门禁(删则src/下可放数据→双真源漂移,GATE-SRC-NO-DATA等效校验)
       - _should_use_no_pathspec    # no-pathspec决策(staged delete保护核心,删则gitignored staged delete静默丢失,commit 32ead90e教训)
 
+  # --------------------------------------------------------------------------
+  - capability_id: git_commit_cli_staged_delete
+    canonical_override: scripts/git_commit.py
+    aliases:
+      - git_commit_cli
+      - git_commit
+      - staged_delete_fallback
+      - _check_staged_delete_fallback
+    description: >-
+      GitCommitGateway CLI 封装的 staged delete 回退校验。git_commit.py 是全项目
+      唯一合法 git commit CLI 入口（[INVARIANTS] L8）。_check_staged_delete_fallback
+      函数覆盖两种删除场景：(A) unstaged delete（git ls-files --error-unmatch 命中）
+      (B) staged delete/git rm（回退 git ls-files --with-tree=HEAD 校验）。commit
+      05e7510f 治本：原内联代码无函数封装无法注册 integrity_anchors，新AI可能误判
+      为冗余删除。封装为函数后注册锚点保护。canonical 在 scripts/ 下（非 src/zephyr/），
+      无法 auto 派生，故用 canonical_override 显式声明。
+    integrity_anchors:
+      - _check_staged_delete_fallback  # staged delete回退校验(删则git rm提交被误拦,commit 05e7510f治本)
+
+  # --------------------------------------------------------------------------
+  - capability_id: directory_contract_checker
+    canonical_override: scripts/governance/d1_structure/check_directory_contract.py
+    aliases:
+      - check_directory_contract
+      - GATE-DIRECTORY-CONTRACT
+      - GATE-DIR-CONTRACT
+      - directory_contract_validation
+      - DCR_checker
+    description: >-
+      目录契约校验门禁（GATE-DIRECTORY-CONTRACT）。消费 directory_contract.yaml（目录维度
+      约束唯一真源），校验 DCR-001~007 规则：doc_type 允许/禁止目录、permanent/temporary
+      区 ttl 一致性、扩展名白名单/黑名单、根目录白名单。合并原先分散在 trae_047
+      directory_mapping / ttl_vocabulary Q3 / doc_type_vocabulary crosscheck 三维来源。
+      Modes: --staged（pre-commit）/ --all-files（全量扫描）/ --warn-only（仅打印不阻断）。
+      canonical 在 scripts/governance/ 下（非 src/zephyr/），无法 auto 派生，故用
+      canonical_override 显式声明。对标 directory_contract.yaml 真源 + 向内收原则2.2。
+
 # --------------------------------------------------------------------------
   - capability_id: process_liveness_detection
     canonical_override: src/zephyr/shared/infra/process_pool.py

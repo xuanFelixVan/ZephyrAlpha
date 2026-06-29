@@ -62,6 +62,56 @@ def _parse_files(files_arg: str) -> list[str]:
     return [os.path.abspath(f) for f in parts]
 
 
+def _check_staged_delete_fallback(
+    files: list[str], project_root: str
+) -> tuple[list[str], list[str]]:
+    """校验文件存在性，允许 staged delete（git rm）场景回退校验。
+
+    覆盖两种删除场景：
+      (A) unstaged delete: 文件仍在 index，``git ls-files --error-unmatch`` 命中
+      (B) staged delete (git rm): 文件已从 index 移除但仍在 HEAD，
+          ``git ls-files`` 失败，需回退 ``git ls-files --with-tree=HEAD`` 校验
+
+    integrity_anchors: 本函数含 staged delete 回退校验（--with-tree=HEAD），
+    禁止删除回退逻辑，否则 staged delete 提交会被误拦（commit 05e7510f 治本）。
+
+    Args:
+        files: 待提交文件绝对路径列表
+        project_root: 项目根目录
+
+    Returns:
+        (truly_missing, tracked_but_deleted) 元组：
+        - truly_missing: 文件不存在且未被 git 跟踪（应阻断）
+        - tracked_but_deleted: 文件不存在但被 git 跟踪（staged delete，应放行）
+    """
+    missing = [f for f in files if not os.path.isfile(f)]
+    if not missing:
+        return [], []
+
+    import subprocess as _sp
+    truly_missing: list[str] = []
+    for f in missing:
+        rel = os.path.relpath(f, project_root)
+        # :(icase) 与 GitCommitGateway._is_git_tracked 保持一致——
+        # Windows 文件系统大小写不敏感但 git pathspec 默认大小写敏感，
+        # 不加 :(icase) 会导致 on-disk 路径大小写与 git index 不一致时误报"未跟踪"
+        chk = _sp.run(
+            ["git", "ls-files", "--error-unmatch", "--", f":(icase){rel}"],
+            capture_output=True, cwd=project_root,
+        )
+        if chk.returncode != 0:
+            # 场景 B: staged delete (git rm) — 文件已从 index 移除，
+            # 回退检查 HEAD 是否仍跟踪该文件
+            chk2 = _sp.run(
+                ["git", "ls-files", "--error-unmatch", "--with-tree=HEAD",
+                 "--", f":(icase){rel}"],
+                capture_output=True, cwd=project_root,
+            )
+            if chk2.returncode != 0:
+                truly_missing.append(f)
+    return truly_missing, missing
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="git_commit.py",
@@ -109,38 +159,15 @@ def main() -> int:
         print("ERROR: --files 不能为空", file=sys.stderr)
         return 1
 
-    # 校验文件存在（允许已跟踪但工作区已删除的文件，用于 rename/delete 场景）
-    # 覆盖两种删除场景：
-    #   (A) unstaged delete: 文件仍在 index，`git ls-files --error-unmatch` 命中
-    #   (B) staged delete (git rm): 文件已从 index 移除但仍在 HEAD，
-    #       `git ls-files` 失败，需回退 `git ls-tree HEAD` 校验
-    missing = [f for f in files if not os.path.isfile(f)]
-    if missing:
-        import subprocess as _sp
-        truly_missing = []
-        for f in missing:
-            rel = os.path.relpath(f, args.project_root)
-            # :(icase) 与 GitCommitGateway._is_git_tracked 保持一致——
-            # Windows 文件系统大小写不敏感但 git pathspec 默认大小写敏感，
-            # 不加 :(icase) 会导致 on-disk 路径大小写与 git index 不一致时误报"未跟踪"
-            chk = _sp.run(
-                ["git", "ls-files", "--error-unmatch", "--", f":(icase){rel}"],
-                capture_output=True, cwd=args.project_root,
-            )
-            if chk.returncode != 0:
-                # 场景 B: staged delete (git rm) — 文件已从 index 移除，
-                # 回退检查 HEAD 是否仍跟踪该文件
-                chk2 = _sp.run(
-                    ["git", "ls-files", "--error-unmatch", "--with-tree=HEAD",
-                     "--", f":(icase){rel}"],
-                    capture_output=True, cwd=args.project_root,
-                )
-                if chk2.returncode != 0:
-                    truly_missing.append(f)
-        if truly_missing:
-            print(f"ERROR: 文件不存在且未被 git 跟踪: {truly_missing}", file=sys.stderr)
-            return 1
-        logger.info("以下文件已跟踪但工作区已删除（将作为删除提交）: %s", missing)
+    # 校验文件存在性（允许 staged delete 回退——见 _check_staged_delete_fallback）
+    truly_missing, tracked_but_deleted = _check_staged_delete_fallback(
+        files, args.project_root
+    )
+    if truly_missing:
+        print(f"ERROR: 文件不存在且未被 git 跟踪: {truly_missing}", file=sys.stderr)
+        return 1
+    if tracked_but_deleted:
+        logger.info("以下文件已跟踪但工作区已删除（将作为删除提交）: %s", tracked_but_deleted)
 
     try:
         gw = GitCommitGateway(project_root=args.project_root)

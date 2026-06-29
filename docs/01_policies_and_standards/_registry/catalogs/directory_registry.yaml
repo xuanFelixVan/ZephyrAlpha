@@ -427,7 +427,7 @@ directories:
 
   - path: "docs/_archive/"
 
-    responsibility: "统一归档区——所有永久区(01/02/03/08)deprecated文件归此;ttl=permanent"
+    responsibility: "统一归档区——所有永久区(01/02/03/08)deprecated文件归此（ttl 真源见 directory_contract.yaml permanent.paths）"
 
     parent: "docs/"
 
