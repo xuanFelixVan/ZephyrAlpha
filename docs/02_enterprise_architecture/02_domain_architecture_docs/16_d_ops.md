@@ -101,7 +101,7 @@ graph TD
     src_zephyr_governance_cost_budget_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_cost_budget_py -.->|import_depends| D_SHARED
     src_zephyr_ops_circuit_breaker_py -.->|import_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_budget_telemetry_bridge_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_trace_bridge_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_init_from_obs_py -.->|import_depends| D_SHARED
@@ -121,7 +121,7 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_budget_engine_py
-    D_INFRA_OPS["D-INFRA_OPS prototype"]
+    D_INFRA_OPS["D_INFRA_OPS prototype"]
     D_INFRA_OPS -.->|import_depends| src_zephyr_ops_init_py
     D_INTEGRATION -.->|import_depends| src_zephyr_ops_init_py
     D_TRADING["D-TRADING production"]
@@ -189,7 +189,7 @@ graph TD
     src_zephyr_ops_alert_dispatcher_py -.->|import_depends| D_GOVERNANCE
     D_TRADING["D-TRADING production"]
     src_zephyr_ops_alert_dispatcher_py -.->|import_depends| D_TRADING
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_auto_bootstrap_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_ops_analytics_base_py -.->|import_depends| D_TRADING
@@ -266,7 +266,7 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_ops_db_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ops_db_writer_py -.->|import_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_db_writer_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_contract_metrics_py -.->|import_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -566,7 +566,7 @@ graph TD
     src_zephyr_ops_forensic_init_py -.->|import_depends| src_zephyr_ops_forensic_self_modification_audit_py
     src_zephyr_ops_forensic_init_py -.->|import_depends| src_zephyr_ops_forensic_worm_write_integrity_py
     src_zephyr_ops_forensic_init_py -.->|import_depends| src_zephyr_ops_forensic_toctou_guard_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_facade_py -.->|import_depends| D_INFRA_RUNTIME
     D_SECURITY["D-SECURITY production"]
     src_zephyr_ops_evolution_engine_py -.->|import_depends| D_SECURITY
@@ -669,7 +669,7 @@ graph TD
     end
     src_zephyr_ops_observability_cli_summary_py -.->|config_depends| src_zephyr_ops_observability_init_py
     src_zephyr_ops_observability_cost_tracker_py -.->|config_depends| src_zephyr_ops_observability_init_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_health_aggregator_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_health_probes_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D-GOVERNANCE production"]
@@ -745,7 +745,7 @@ graph TD
     src_zephyr_ops_scheduler_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     D_SECURITY["D-SECURITY prototype"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_SECURITY
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     src_zephyr_ops_scheduler_py -.->|import_depends| D_AUTONOMY_CORE
@@ -757,7 +757,7 @@ graph TD
     src_zephyr_ops_observability_health_py -.->|import_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED prototype"]
     src_zephyr_ops_observability_session_audit_py -.->|import_depends| D_SHARED
-    D_INFRA_TELEMETRY["D-INFRA_TELEMETRY production"]
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     D_INFRA_TELEMETRY -.->|import_depends| src_zephyr_ops_observability_health_discovery_py
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_health_py
     D_SHARED -.->|import_depends| src_zephyr_ops_observability_logging_py
@@ -825,7 +825,7 @@ graph TD
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_digital_twin_sandbox_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_cross_session_knowledge_integrity_py
     src_zephyr_ops_verifiers_init_py -.->|import_depends| src_zephyr_ops_verifiers_cross_module_integration_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_telemetry_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_ops_traces_span_stub_py -.->|import_depends| D_INFRA_RUNTIME
@@ -876,7 +876,7 @@ graph TD
         tests_test_observability_tracing_py["tests/test_observability_tracing.py prototype"]
         tests_test_per_task_token_budget_py["tests/test_per_task_token_budget.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_ops_watchdog_py -.->|import_depends| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_agent_observability_py -.->|test_depends| D_AUTONOMY_CORE
@@ -929,7 +929,7 @@ graph TD
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_skill_observability_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_skill_telemetry_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_telemetry_py_1 -.->|test_depends| D_INFRA_RUNTIME
     tests_test_token_budget_root_py -.->|test_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["D-GOVERNANCE production"]
@@ -954,7 +954,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INFRA_RUNTIME | 33 | import_depends,test_depends |
+| D_INFRA_RUNTIME | 33 | import_depends,test_depends |
 | D-GOVERNANCE | 29 | config_depends,import_depends,runtime,test_depends |
 | D-SHARED | 14 | import_depends,test_depends |
 | D-AUTONOMY_CORE | 8 | import_depends,runtime,test_depends |
@@ -975,11 +975,11 @@ graph TD
 | D-FRONTEND | 2 | import_depends |
 | D-GOV_AUDIT | 2 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
-| D-INFRA_OPS | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
 | D-DATA_SEC | 1 | import_depends |
 | D-AUDITTEST | 1 | test_depends |
-| D-INFRA_RUNTIME | 1 | import_depends |
-| D-INFRA_TELEMETRY | 1 | import_depends |
+| D_INFRA_RUNTIME | 1 | import_depends |
+| D_INFRA_TELEMETRY | 1 | import_depends |
 | D-INTEGRATION | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview

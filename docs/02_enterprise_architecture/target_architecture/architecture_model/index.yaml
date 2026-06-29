@@ -143,19 +143,19 @@ domains:
 - id: D-GOV_RULE
   name: 规则治理
   layer_id: L2_domain
-- id: D-INFRA_A2A
+- id: D_INFRA_A2A
   name: a2a_communication
   layer_id: L0_infrastructure
-- id: D-INFRA_OPS
+- id: D_INFRA_OPS
   name: resource_optimization
   layer_id: L0_infrastructure
-- id: D-INFRA_RECOVERY
+- id: D_INFRA_RECOVERY
   name: rollback_recovery
   layer_id: L0_infrastructure
-- id: D-INFRA_RUNTIME
+- id: D_INFRA_RUNTIME
   name: runtime_integration
   layer_id: L0_infrastructure
-- id: D-INFRA_TELEMETRY
+- id: D_INFRA_TELEMETRY
   name: observability_profiling
   layer_id: L0_infrastructure
 - id: D-INTEGRATION

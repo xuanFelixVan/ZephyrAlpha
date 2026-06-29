@@ -330,7 +330,7 @@ graph TD
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INTEGRATION
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED production"]
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
@@ -531,7 +531,7 @@ graph TD
 | D-SECURITY | 7 | import_depends |
 | D-GOV_ENFORCEMENT | 6 | contract,import_depends |
 | D-INTELLIGENCE | 5 | import_depends |
-| D-INFRA_RUNTIME | 3 | contract,import_depends |
+| D_INFRA_RUNTIME | 3 | contract,import_depends |
 | D-GOV_DRIFT | 3 | import_depends,runtime |
 | D-AUTONOMY_CORE | 3 | import_depends |
 | D-OPS | 3 | import_depends,runtime |

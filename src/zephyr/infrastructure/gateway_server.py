@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.gateway_server
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.protocols.a2a.a2a_protocol
 # [CONSUMERS]
 # [STARTUP] manual

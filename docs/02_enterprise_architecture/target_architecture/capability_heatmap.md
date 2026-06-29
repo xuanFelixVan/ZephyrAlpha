@@ -114,7 +114,7 @@ ttl: permanent
 | ML平台 | 业务 | D-ML_TRAIN, D-ML_SERVE |
 | 治理（横切） | 横切 | D-GOVERNANCE, D-GOV_RULE, D-GOV_AUDIT, D-GOV_DRIFT, D-GOV_ENFORCEMENT, D-GOV_REPAIR, D-GOV_SCRIPTS |
 | 安全（横切） | 横切 | D-SECURITY, D-SECURITY_LLM, D-BEHAVIORAL_AUDIT, D-DATA_SEC, D-AUTONOMY_PERM |
-| 基础设施（横切） | 横切 | D-INFRA_OPS, D-INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION_GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS |
+| 基础设施（横切） | 横切 | D_INFRA_OPS, D_INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION_GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS |
 
 
 ### 3.2 域成熟度快照（53域）
@@ -124,11 +124,11 @@ ttl: permanent
 | 域ID | 域名称 | layer_id | 节点数 | production | design | prototype | 成熟度评级 |
 |------|--------|----------|:---:|:---:|:---:|:---:|:---:|
 | `D-GOV-REPAIR` | rollback | `N/A` | 0 | 0 | 0 | 0 | L0 |
-| `D-INFRA_A2A` | a2a_communication | `L0_infrastructure` | 114 | 114 | 0 | 0 | L3+ |
-| `D-INFRA_OPS` | resource_optimization | `L0_infrastructure` | 34 | 7 | 1 | 26 | L3+ |
-| `D-INFRA_RECOVERY` | rollback_recovery | `L0_infrastructure` | 107 | 107 | 0 | 0 | L3+ |
-| `D-INFRA_RUNTIME` | runtime_integration | `L0_infrastructure` | 145 | 139 | 0 | 6 | L3+ |
-| `D-INFRA_TELEMETRY` | observability_profiling | `L0_infrastructure` | 51 | 51 | 0 | 0 | L3+ |
+| `D_INFRA_A2A` | a2a_communication | `L0_infrastructure` | 114 | 114 | 0 | 0 | L3+ |
+| `D_INFRA_OPS` | resource_optimization | `L0_infrastructure` | 34 | 7 | 1 | 26 | L3+ |
+| `D_INFRA_RECOVERY` | rollback_recovery | `L0_infrastructure` | 107 | 107 | 0 | 0 | L3+ |
+| `D_INFRA_RUNTIME` | runtime_integration | `L0_infrastructure` | 145 | 139 | 0 | 6 | L3+ |
+| `D_INFRA_TELEMETRY` | observability_profiling | `L0_infrastructure` | 51 | 51 | 0 | 0 | L3+ |
 | `D-ALT_DATA` | 另类数据 | `L1_foundation` | 8 | 1 | 0 | 7 | L3+ |
 | `D-AUTONOMY_CORE` | agent_communication | `L1_foundation` | 176 | 2 | 0 | 174 | L3+ |
 | `D-BEHAVIORAL_AUDIT` | 行为审计 | `L1_foundation` | 79 | 79 | 0 | 0 | L3+ |

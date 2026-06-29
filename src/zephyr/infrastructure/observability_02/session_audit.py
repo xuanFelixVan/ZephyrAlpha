@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.observability_02.session_audit
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared_08.session_audit
 # [CONSUMERS] zephyr.infrastructure.shared_services.observability_02
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md
 # [MODULE] zephyr.infrastructure.script_system.finding
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported

@@ -39,7 +39,7 @@ ttl: permanent
 | 数据管理 | 行情数据、持仓数据 | D-DATA_ENG |
 | 合规报告 | 合规检查、监管报告 | D-COMPLIANCE |
 | 投资组合 | 组合管理、再平衡 | D-PORTFOLIO |
-| 基础设施 | 运行时、部署、监控 | D-INFRA_OPS |
+| 基础设施 | 运行时、部署、监控 | D_INFRA_OPS |
 | 治理 | 规则、审计、质量 | D-GOVERNANCE |
 
 ---

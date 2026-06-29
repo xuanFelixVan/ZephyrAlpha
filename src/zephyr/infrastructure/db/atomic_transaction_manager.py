@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.atomic_transaction_manager
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.db.__init__
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.infrastructure.dry_run_simulator
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] imported

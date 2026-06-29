@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_RUNTIME 运行时集成架构文档
+title: D_INFRA_RUNTIME 运行时集成架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 04_d_infra_runtime / 运行时集成
 
-> **文档作用 / Purpose**: 展示 运行时集成（D-INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 15:00:44
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 04 | Number | 04 |
-| 域ID | D-INFRA_RUNTIME | Domain ID | D-INFRA_RUNTIME |
+| 域ID | D_INFRA_RUNTIME | Domain ID | D_INFRA_RUNTIME |
 | 域名称 | 运行时集成 | Domain Name | 运行时集成 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 144 | Module Count | 144 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RUNTIME["D-INFRA_RUNTIME 运行时集成"]
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_init_py["src/zephyr/__init__.py production"]
         src_zephyr_autonomy_core_pipeline_orchestrator_py["src/zephyr/autonomy_core/pipeline_orchestrator.py production"]
         src_zephyr_infrastructure_init_py["src/zephyr/infrastructure/__init__.py production"]
@@ -132,10 +132,10 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -->|import_depends| src_zephyr_infrastructure_init_py
     D_INFRA_A2A -->|import_depends| src_zephyr_infrastructure_init_py
-    D_INFRA_RECOVERY["D-INFRA_RECOVERY production"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_infrastructure_init_py
@@ -154,7 +154,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RUNTIME["D-INFRA_RUNTIME 运行时集成"]
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py["src/zephyr/infrastructure/capacity_assurance/co... production"]
         src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py["src/zephyr/infrastructure/capacity_assurance/co... production"]
         src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py["src/zephyr/infrastructure/capacity_assurance/cr... production"]
@@ -237,7 +237,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RUNTIME["D-INFRA_RUNTIME 运行时集成"]
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_config_shared_config_init_py["src/zephyr/infrastructure/config/shared/config/... production"]
         src_zephyr_infrastructure_config_shared_config_loader_py["src/zephyr/infrastructure/config/shared/config/... production"]
         src_zephyr_infrastructure_config_validator_py["src/zephyr/infrastructure/config_validator.py production"]
@@ -303,7 +303,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RUNTIME["D-INFRA_RUNTIME 运行时集成"]
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_finding_task_bridge_py["src/zephyr/infrastructure/finding_task_bridge.py production"]
         src_zephyr_infrastructure_gate_engine_server_py["src/zephyr/infrastructure/gate_engine_server.py production"]
         src_zephyr_infrastructure_gateway_server_py["src/zephyr/infrastructure/gateway_server.py production"]
@@ -375,7 +375,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RUNTIME["D-INFRA_RUNTIME 运行时集成"]
+    subgraph D_INFRA_RUNTIME["D_INFRA_RUNTIME 运行时集成"]
         src_zephyr_infrastructure_rate_limiter_py["src/zephyr/infrastructure/rate_limiter.py production"]
         src_zephyr_infrastructure_resource_provider_py["src/zephyr/infrastructure/resource_provider.py production"]
         src_zephyr_infrastructure_runtime_init_py["src/zephyr/infrastructure/runtime/__init__.py production"]
@@ -453,19 +453,19 @@ graph TD
 |------|:---:|---------|
 | D-GOVERNANCE | 124 | config_depends,import_depends,runtime,test_depends |
 | D-OPS | 33 | import_depends,test_depends |
-| D-INFRA_RECOVERY | 33 | import_depends |
-| D-INFRA_A2A | 13 | import_depends |
-| D-INFRA_TELEMETRY | 12 | import_depends |
+| D_INFRA_RECOVERY | 33 | import_depends |
+| D_INFRA_A2A | 13 | import_depends |
+| D_INFRA_TELEMETRY | 12 | import_depends |
 | D-GOV_SCRIPTS | 11 | import_depends |
 | D-SHARED | 6 | import_depends |
 | D-GOV_AUDIT | 5 | import_depends |
 | D-TRADING | 3 | contract,import_depends |
-| D-INFRA_OPS | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
 | D-AUTONOMY_PERM | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 运行时集成（D-INFRA_RUNTIME）的模块分布。共 144 个模块 / 144 modules。
+> 按 architecture_layer 分层显示 运行时集成（D_INFRA_RUNTIME）的模块分布。共 144 个模块 / 144 modules。
 
 ```
 

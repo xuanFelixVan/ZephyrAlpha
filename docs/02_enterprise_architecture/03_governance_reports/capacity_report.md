@@ -30,7 +30,7 @@ ttl: task_bound
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |
 |------|--------|:---:|:---:|:---:|
 | D-AUDITTEST | audit_test_suite | 142 | 150 | 94.7% |
-| D-INFRA_RUNTIME | 运行时集成 | 139 | 150 | 92.7% |
+| D_INFRA_RUNTIME | 运行时集成 | 139 | 150 | 92.7% |
 | D-SECURITY | 对抗验证 | 132 | 150 | 88.0% |
 
 ## 空域清单（0模块，待开发）
@@ -88,11 +88,11 @@ ttl: task_bound
 | D-GOV_ENFORCEMENT | rule_enforcement | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D-GOV_RULE | 规则治理 | L2_domain | 11 | 150 | 7.3% | 正常 |
 | D-GOV_SCRIPTS | code_dedup | L2_domain | 26 | 150 | 17.3% | 正常 |
-| D-INFRA_A2A | a2a_communication | L0_infrastructure | 114 | 150 | 76.0% | 正常 |
-| D-INFRA_OPS | 基础设施运维 | L0_infrastructure | 7 | 150 | 4.7% | 正常 |
-| D-INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 107 | 150 | 71.3% | 正常 |
-| D-INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 139 | 150 | 92.7% | 接近超容 |
-| D-INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 51 | 150 | 34.0% | 正常 |
+| D_INFRA_A2A | a2a_communication | L0_infrastructure | 114 | 150 | 76.0% | 正常 |
+| D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 7 | 150 | 4.7% | 正常 |
+| D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 107 | 150 | 71.3% | 正常 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 139 | 150 | 92.7% | 接近超容 |
+| D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 51 | 150 | 34.0% | 正常 |
 | D-INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D-INTEGRATION_GATEWAY | mcp_servers | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D-INTELLIGENCE | 上下文管理 | L2_domain | 18 | 150 | 12.0% | 正常 |

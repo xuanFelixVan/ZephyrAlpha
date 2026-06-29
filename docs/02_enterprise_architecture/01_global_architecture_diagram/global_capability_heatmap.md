@@ -52,7 +52,7 @@ ttl: permanent
 | C7 | 回测仿真 | Backtest & Simulation | 业务 | 4 | D-BACKTEST, D-SIMULATION, D-EXEC_SIM, D-DIGITAL_TWIN |
 | CC1 | 治理合规 | Governance & Compliance | 横切 | 7 | D-GOVERNANCE, D-GOV_RULE, D-GOV_AUDIT, D-GOV_DRIFT, D-GOV_ENFORCEMENT, D-GOV_REPAIR, D-GOV_SCRIPTS |
 | CC2 | 安全防护 | Security | 横切 | 5 | D-SECURITY, D-SECURITY_LLM, D-BEHAVIORAL_AUDIT, D-DATA_SEC, D-AUTONOMY_PERM |
-| CC3 | 基础设施 | Infrastructure | 横切 | 11 | D-INFRA_OPS, D-INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION_GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS |
+| CC3 | 基础设施 | Infrastructure | 横切 | 11 | D_INFRA_OPS, D_INFRA_RUNTIME, D-INTEGRATION, D-INTEGRATION_GATEWAY, D-SHARED, D-FRONTEND, D-REPORTING, D-KNOWLEDGE, D-INTELLIGENCE, D-AUTONOMY_CORE, D-OPS |
 
 ## 能力热力图矩阵 / Capability Heatmap Matrix
 
@@ -101,8 +101,8 @@ ttl: permanent
 | D-SECURITY_LLM | llm_defense | — | — | — | — | — | — | — | — | ⚪ | — | L0 |
 | D-AUTONOMY_CORE | 自治核心 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
 | D-FRONTEND | 前端 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D-INFRA_OPS | 基础设施运维 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D-INFRA_RUNTIME | 运行时集成 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
+| D_INFRA_OPS | 基础设施运维 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
+| D_INFRA_RUNTIME | 运行时集成 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
 | D-INTEGRATION | 管线路由 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
 | D-INTEGRATION_GATEWAY | mcp_servers | — | — | — | — | — | — | — | — | — | ⚪ | L0 |
 | D-INTELLIGENCE | 上下文管理 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
@@ -113,9 +113,9 @@ ttl: permanent
 | D-AUDITTEST | audit_test_suite | — | — | — | — | — | — | — | — | — | — | L2 |
 | D-DATA_GOV | 数据治理 | — | — | — | — | — | — | — | — | — | — | L0 |
 | D-GOV_DOCS | architecture_docs | — | — | — | — | — | — | — | — | — | — | L2 |
-| D-INFRA_A2A | a2a_communication | — | — | — | — | — | — | — | — | — | — | L2 |
-| D-INFRA_RECOVERY | rollback_recovery | — | — | — | — | — | — | — | — | — | — | L2 |
-| D-INFRA_TELEMETRY | observability_profiling | — | — | — | — | — | — | — | — | — | — | L2 |
+| D_INFRA_A2A | a2a_communication | — | — | — | — | — | — | — | — | — | — | L2 |
+| D_INFRA_RECOVERY | rollback_recovery | — | — | — | — | — | — | — | — | — | — | L2 |
+| D_INFRA_TELEMETRY | observability_profiling | — | — | — | — | — | — | — | — | — | — | L2 |
 
 ## 能力域成熟度汇总 / Capability Domain Maturity Summary
 
@@ -174,8 +174,8 @@ ttl: permanent
 | D-SECURITY_LLM | llm_defense | CC2 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D-AUTONOMY_CORE | 自治核心 | CC3 | L1_foundation | 176 | 2 | 0 | 174 | 0 | L2 🟡 | 🟡 |
 | D-FRONTEND | 前端 | CC3 | L1_foundation | 23 | 7 | 0 | 16 | 0 | L2 🟡 | 🟡 |
-| D-INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 34 | 7 | 1 | 26 | 0 | L2 🟡 | 🟡 |
-| D-INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 145 | 139 | 0 | 6 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 34 | 7 | 1 | 26 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 145 | 139 | 0 | 6 | 0 | L2 🟡 | 🟡 |
 | D-INTEGRATION | 管线路由 | CC3 | L1_foundation | 296 | 70 | 0 | 226 | 0 | L2 🟡 | 🟡 |
 | D-INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D-INTELLIGENCE | 上下文管理 | CC3 | L2_domain | 56 | 18 | 0 | 38 | 0 | L2 🟡 | 🟡 |
@@ -186,9 +186,9 @@ ttl: permanent
 | D-AUDITTEST | audit_test_suite | — | L2_domain | 152 | 142 | 0 | 10 | 0 | L2 🟡 | 🟡 |
 | D-DATA_GOV | 数据治理 | — | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D-GOV_DOCS | architecture_docs | — | L2_domain | 127 | 78 | 0 | 49 | 0 | L2 🟡 | 🟡 |
-| D-INFRA_A2A | a2a_communication | — | L0_infrastructure | 114 | 114 | 0 | 0 | 0 | L2 🟡 | 🟡 |
-| D-INFRA_RECOVERY | rollback_recovery | — | L0_infrastructure | 107 | 107 | 0 | 0 | 0 | L2 🟡 | 🟡 |
-| D-INFRA_TELEMETRY | observability_profiling | — | L0_infrastructure | 51 | 51 | 0 | 0 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_A2A | a2a_communication | — | L0_infrastructure | 114 | 114 | 0 | 0 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_RECOVERY | rollback_recovery | — | L0_infrastructure | 107 | 107 | 0 | 0 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_TELEMETRY | observability_profiling | — | L0_infrastructure | 51 | 51 | 0 | 0 | 0 | L2 🟡 | 🟡 |
 
 ## 差距分析 / Gap Analysis
 
@@ -241,8 +241,8 @@ ttl: permanent
 | D-SECURITY | 对抗验证 | CC2 | L2 | 244 |
 | D-AUTONOMY_CORE | 自治核心 | CC3 | L2 | 176 |
 | D-FRONTEND | 前端 | CC3 | L2 | 23 |
-| D-INFRA_OPS | 基础设施运维 | CC3 | L2 | 34 |
-| D-INFRA_RUNTIME | 运行时集成 | CC3 | L2 | 145 |
+| D_INFRA_OPS | 基础设施运维 | CC3 | L2 | 34 |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L2 | 145 |
 | D-INTEGRATION | 管线路由 | CC3 | L2 | 296 |
 | D-INTELLIGENCE | 上下文管理 | CC3 | L2 | 56 |
 | D-KNOWLEDGE | 知识管理 | CC3 | L2 | 41 |
@@ -251,9 +251,9 @@ ttl: permanent
 | D-SHARED | 共享服务 | CC3 | L2 | 296 |
 | D-AUDITTEST | audit_test_suite | — | L2 | 152 |
 | D-GOV_DOCS | architecture_docs | — | L2 | 127 |
-| D-INFRA_A2A | a2a_communication | — | L2 | 114 |
-| D-INFRA_RECOVERY | rollback_recovery | — | L2 | 107 |
-| D-INFRA_TELEMETRY | observability_profiling | — | L2 | 51 |
+| D_INFRA_A2A | a2a_communication | — | L2 | 114 |
+| D_INFRA_RECOVERY | rollback_recovery | — | L2 | 107 |
+| D_INFRA_TELEMETRY | observability_profiling | — | L2 | 51 |
 
 ### 已就绪（L3，生产已验证）/ Ready (L3, verified)
 
@@ -271,6 +271,6 @@ ttl: permanent
 | D-AUDITTEST | audit_test_suite | L2_domain | 152 | L2 |
 | D-DATA_GOV | 数据治理 | L1_foundation | 0 | L0 |
 | D-GOV_DOCS | architecture_docs | L2_domain | 127 | L2 |
-| D-INFRA_A2A | a2a_communication | L0_infrastructure | 114 | L2 |
-| D-INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 107 | L2 |
-| D-INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 51 | L2 |
+| D_INFRA_A2A | a2a_communication | L0_infrastructure | 114 | L2 |
+| D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | 107 | L2 |
+| D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | 51 | L2 |

@@ -148,7 +148,7 @@ graph TD
     scripts_archive_migration_verify_batch_py -.->|config_depends| scripts_archive_migration_check_coverage_py
     scripts_archive_migration_verify_migration_alignment_py -.->|config_depends| scripts_archive_migration_check_coverage_py
     scripts_archive_migration_update_non_import_refs_py -.->|config_depends| scripts_archive_migration_check_coverage_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D-INTEGRATION production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_INTEGRATION
@@ -361,7 +361,7 @@ graph TD
     scripts_governance_sync_check_p0_status_py -.->|config_depends| scripts_governance_sync_cleanup_p0_auto_bridged_py
     scripts_governance_sync_cleanup_p0_ops_pending_py -.->|config_depends| scripts_governance_sync_check_p0_status_py
     scripts_governance_sync_fix_orphan_deps_py -.->|config_depends| scripts_governance_sync_check_p0_status_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_analyze_change_impact_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     scripts_governance_adversarial_sys_master_test_py -.->|import_depends| D_GOV_ENFORCEMENT
@@ -744,7 +744,7 @@ graph TD
         scripts_governance_meta_validate_dependency_chain_py["scripts/governance/meta/validate_dependency_cha... prototype"]
         scripts_governance_meta_validate_emergency_bypass_log_py["scripts/governance/meta/validate_emergency_bypa... prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_meta_finding_state_machine_py -.->|import_depends| D_INFRA_RUNTIME
     scripts_governance_meta_validate_emergency_bypass_log_py -.->|import_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -797,7 +797,7 @@ graph TD
     scripts_governance_pre_write_gate_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     scripts_governance_rebuild_audit_index_py -.->|import_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_run_all_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     scripts_governance_session_startup_check_py -.->|import_depends| D_GOVERNANCE
@@ -907,7 +907,7 @@ graph TD
     scripts_mcp_generate_ide_config_py -.->|config_depends| scripts_mcp_status_all_py
     D_GOVERNANCE["D-GOVERNANCE production"]
     scripts_rollback_py -.->|import_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_rollback_py -.->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D-INTEGRATION production"]
     scripts_run_deepseek_v4_exam_py -.->|import_depends| D_INTEGRATION
@@ -932,7 +932,7 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 29 | import_depends |
 | D-INTEGRATION | 13 | import_depends |
-| D-INFRA_RUNTIME | 11 | import_depends |
+| D_INFRA_RUNTIME | 11 | import_depends |
 | D-GOV_ENFORCEMENT | 10 | import_depends |
 | D-RISK | 3 | import_depends |
 | D-SHARED | 3 | import_depends |

@@ -36,11 +36,11 @@ if _GOV_DIR not in sys.path:
 # 域ID → 中文名称映射（fallback：db 不可用时使用；新增域应通过 apply_depgraph.py 同步到 db）
 DOMAIN_NAME_ZH = {
     # L0 基础设施层
-    "D-INFRA_A2A": "A2A通信",
-    "D-INFRA_OPS": "基础设施运维",
-    "D-INFRA_RECOVERY": "回滚恢复",
-    "D-INFRA_RUNTIME": "运行时集成",
-    "D-INFRA_TELEMETRY": "可观测性",
+    "D_INFRA_A2A": "A2A通信",
+    "D_INFRA_OPS": "基础设施运维",
+    "D_INFRA_RECOVERY": "回滚恢复",
+    "D_INFRA_RUNTIME": "运行时集成",
+    "D_INFRA_TELEMETRY": "可观测性",
 
     # L1 基础平台层
     "D-ALT_DATA": "另类数据",

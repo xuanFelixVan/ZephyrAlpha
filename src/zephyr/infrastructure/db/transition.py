@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.infrastructure.db.transition
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.rule_enforcement.gate_types.__init__
 # [CONSUMERS] task_repo;pipeline
 # [STARTUP] imported

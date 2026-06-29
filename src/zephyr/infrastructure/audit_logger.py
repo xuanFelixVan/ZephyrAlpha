@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.audit_logger
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared_08.io.paths; zephyr.governance.audit_trail.writer
 # [CONSUMERS]
 # [STARTUP] imported

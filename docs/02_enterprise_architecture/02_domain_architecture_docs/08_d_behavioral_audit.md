@@ -107,7 +107,7 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_drift_models_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
-    D_INFRA_TELEMETRY["D-INFRA_TELEMETRY production"]
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     D_INFRA_TELEMETRY -->|import_depends| src_zephyr_behavioral_audit_contract_drift_detector_py
     D_OPS -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     D_SECURITY["D-SECURITY prototype"]
@@ -238,7 +238,7 @@ graph TD
 | D-GOV_ENFORCEMENT | 5 | import_depends |
 | D-OPS | 3 | import_depends,runtime |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-INFRA_TELEMETRY | 1 | import_depends |
+| D_INFRA_TELEMETRY | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

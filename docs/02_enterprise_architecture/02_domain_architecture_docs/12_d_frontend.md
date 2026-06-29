@@ -86,7 +86,7 @@ graph TD
     src_zephyr_frontend_dashboard_components_task_progress_py -.->|config_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     D_OPS["D-OPS production"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -->|import_depends| D_OPS
-    D_INFRA_OPS["D-INFRA_OPS prototype"]
+    D_INFRA_OPS["D_INFRA_OPS prototype"]
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_INFRA_OPS
     D_SHARED["D-SHARED prototype"]
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_SHARED
@@ -122,7 +122,7 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 4 | import_depends |
 | D-OPS | 2 | import_depends |
-| D-INFRA_OPS | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
 | D-SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

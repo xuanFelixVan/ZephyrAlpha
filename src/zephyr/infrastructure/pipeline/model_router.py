@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.model_router
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported

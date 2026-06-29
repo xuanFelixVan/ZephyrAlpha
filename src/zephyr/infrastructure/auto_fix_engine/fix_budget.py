@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §5
 # [MODULE] zephyr.infrastructure.auto_fix_engine.fix_budget
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] engine.py;llm_fix_adapter.py;batch_fixer.py
 # [STARTUP] imported

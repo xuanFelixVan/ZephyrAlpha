@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.trading_kill_switch
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-022;MOD-INF-020;shared/kill_switch.py
 # [STARTUP] imported

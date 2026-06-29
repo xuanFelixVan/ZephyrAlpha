@@ -1,6 +1,6 @@
 """[A_module] module_id=MOD-INFRA_RUNTIME | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable"""
 
-# D-INFRA_RUNTIME Domain Package
+# D_INFRA_RUNTIME Domain Package
 # This package unifies runtime orchestration, lifecycle management,
 # event routing, and infrastructure services.
 

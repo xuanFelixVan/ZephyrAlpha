@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain-infra_ops/capacity-assurance/blueprint.md
 # [MODULE] zephyr.infrastructure.capacity_assurance.cross_module_integration
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.capacity_assurance.__init__
 # [CONSUMERS]
 # [STARTUP] imported

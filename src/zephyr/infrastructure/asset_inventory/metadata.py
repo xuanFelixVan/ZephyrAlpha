@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md
 # [MODULE] zephyr.infrastructure.asset_inventory.metadata
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.asset_inventory.__init__
 # [CONSUMERS]
 # [STARTUP] imported

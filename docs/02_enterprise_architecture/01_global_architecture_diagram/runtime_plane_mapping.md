@@ -74,11 +74,11 @@ ttl: permanent
 | D-GOV_AUDIT_TESTS | audit_test_suite | L2_domain | - | - | 10 | 142 | 152 |
 | D-GOV_DRIFT | 漂移检测 | L2_domain | - | 13 | 11 | 1 | 25 |
 | D-GOV_RULE | 规则治理 | L2_domain | - | 2 | 9 | 1 | 12 |
-| D-INFRA_A2A | a2a_communication | L0_infrastructure | - | 114 | - | - | 114 |
-| D-INFRA_OPS | 基础设施运维 | L0_infrastructure | - | 10 | 24 | 12 | 46 |
-| D-INFRA_RECOVERY | rollback_recovery | L0_infrastructure | - | 105 | - | 2 | 107 |
-| D-INFRA_RUNTIME | 运行时集成 | L0_infrastructure | - | 135 | 13 | - | 148 |
-| D-INFRA_TELEMETRY | observability_profiling | L0_infrastructure | - | 51 | - | - | 51 |
+| D_INFRA_A2A | a2a_communication | L0_infrastructure | - | 114 | - | - | 114 |
+| D_INFRA_OPS | 基础设施运维 | L0_infrastructure | - | 10 | 24 | 12 | 46 |
+| D_INFRA_RECOVERY | rollback_recovery | L0_infrastructure | - | 105 | - | 2 | 107 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | - | 135 | 13 | - | 148 |
+| D_INFRA_TELEMETRY | observability_profiling | L0_infrastructure | - | 51 | - | - | 51 |
 | D-INTEGRATION | 管线路由 | L1_foundation | 36 | 1 | 266 | 11 | 314 |
 | D-INTELLIGENCE | 上下文管理 | L2_domain | 2 | 1 | 53 | 1 | 57 |
 | D-KNOWLEDGE | 知识管理 | L2_domain | 12 | 28 | 10 | - | 50 |
@@ -138,17 +138,17 @@ ttl: permanent
 | D-GOVERNANCE | 生命周期管理 | 790 | 38.4% |
 | D-GOV-SCRIPTS | code_dedup | 308 | 15.0% |
 | D-GOV_AUDIT | 审计追踪 | 187 | 9.1% |
-| D-INFRA_RUNTIME | 运行时集成 | 135 | 6.6% |
-| D-INFRA_A2A | a2a_communication | 114 | 5.5% |
+| D_INFRA_RUNTIME | 运行时集成 | 135 | 6.6% |
+| D_INFRA_A2A | a2a_communication | 114 | 5.5% |
 | D-GOV-ENFORCEMENT | rule_enforcement | 107 | 5.2% |
-| D-INFRA_RECOVERY | rollback_recovery | 105 | 5.1% |
+| D_INFRA_RECOVERY | rollback_recovery | 105 | 5.1% |
 | D-TRADING | 交易运营 | 92 | 4.5% |
 | D-GOV-DOCS | architecture_docs | 55 | 2.7% |
-| D-INFRA_TELEMETRY | observability_profiling | 51 | 2.5% |
+| D_INFRA_TELEMETRY | observability_profiling | 51 | 2.5% |
 | D-KNOWLEDGE | 知识管理 | 28 | 1.4% |
 | D-OPS | 反馈循环 | 15 | 0.7% |
 | D-GOV_DRIFT | 漂移检测 | 13 | 0.6% |
-| D-INFRA_OPS | 基础设施运维 | 10 | 0.5% |
+| D_INFRA_OPS | 基础设施运维 | 10 | 0.5% |
 | D-AUTONOMY_PERM | 自治保护 | 8 | 0.4% |
 | D-AUTONOMY_CORE | 自治核心 | 5 | 0.2% |
 | D-SHARED | 共享服务 | 3 | 0.1% |
@@ -207,12 +207,12 @@ ttl: permanent
 | D-COMPLIANCE | 合规 | 29 | 0.7% |
 | D-ASHARE_SIGNAL | A股特色信号 | 26 | 0.6% |
 | D-FUNDAMENTAL_SIGNAL | 基本面信号 | 24 | 0.6% |
-| D-INFRA_OPS | 基础设施运维 | 24 | 0.6% |
+| D_INFRA_OPS | 基础设施运维 | 24 | 0.6% |
 | D-REPORTING | 报告 | 17 | 0.4% |
 | D-SIGQC | 信号质量控制 | 16 | 0.4% |
 | D-PF_ALLOC | 组合分配 | 14 | 0.3% |
 | D-CROSS_ASSET | 跨资产 | 13 | 0.3% |
-| D-INFRA_RUNTIME | 运行时集成 | 13 | 0.3% |
+| D_INFRA_RUNTIME | 运行时集成 | 13 | 0.3% |
 | D-EX_CORE | 执行核心 | 12 | 0.3% |
 | D-DIGITAL_TWIN | 数字孪生 | 11 | 0.3% |
 | D-GOV_DRIFT | 漂移检测 | 11 | 0.3% |
@@ -241,12 +241,12 @@ ttl: permanent
 | D-OPS | 反馈循环 | 22 | 7.1% |
 | D-BEHAVIORAL_AUDIT | 行为审计 | 19 | 6.2% |
 | D-SHARED | 共享服务 | 19 | 6.2% |
-| D-INFRA_OPS | 基础设施运维 | 12 | 3.9% |
+| D_INFRA_OPS | 基础设施运维 | 12 | 3.9% |
 | D-INTEGRATION | 管线路由 | 11 | 3.6% |
 | D-TRADING | 交易运营 | 6 | 1.9% |
 | D-AUTONOMY_CORE | 自治核心 | 4 | 1.3% |
 | D-SECURITY | 对抗验证 | 4 | 1.3% |
-| D-INFRA_RECOVERY | rollback_recovery | 2 | 0.6% |
+| D_INFRA_RECOVERY | rollback_recovery | 2 | 0.6% |
 | D-ALT_DATA | 另类数据 | 1 | 0.3% |
 | D-GOV_AUDIT | 审计追踪 | 1 | 0.3% |
 | D-GOV_DRIFT | 漂移检测 | 1 | 0.3% |

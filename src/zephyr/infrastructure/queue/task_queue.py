@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-130 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.queue.task_queue
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

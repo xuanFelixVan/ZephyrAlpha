@@ -66,11 +66,11 @@ ttl: task_bound
 | D-GOV_ENFORCEMENT | rule_enforcement | 107 | 69 | 0 | 38 | 0 | 64.5% |
 | D-GOV_RULE | 规则治理 | 11 | 11 | 0 | 0 | 0 | 100.0% |
 | D-GOV_SCRIPTS | code_dedup | 413 | 26 | 0 | 387 | 0 | 6.3% |
-| D-INFRA_A2A | a2a_communication | 101 | 101 | 0 | 0 | 0 | 100.0% |
-| D-INFRA_OPS | 基础设施运维 | 34 | 7 | 1 | 26 | 0 | 20.6% |
-| D-INFRA_RECOVERY | rollback_recovery | 107 | 107 | 0 | 0 | 0 | 100.0% |
-| D-INFRA_RUNTIME | 运行时集成 | 145 | 139 | 0 | 6 | 0 | 95.9% |
-| D-INFRA_TELEMETRY | observability_profiling | 37 | 37 | 0 | 0 | 0 | 100.0% |
+| D_INFRA_A2A | a2a_communication | 101 | 101 | 0 | 0 | 0 | 100.0% |
+| D_INFRA_OPS | 基础设施运维 | 34 | 7 | 1 | 26 | 0 | 20.6% |
+| D_INFRA_RECOVERY | rollback_recovery | 107 | 107 | 0 | 0 | 0 | 100.0% |
+| D_INFRA_RUNTIME | 运行时集成 | 145 | 139 | 0 | 6 | 0 | 95.9% |
+| D_INFRA_TELEMETRY | observability_profiling | 37 | 37 | 0 | 0 | 0 | 100.0% |
 | D-INTEGRATION | 管线路由 | 282 | 70 | 0 | 212 | 0 | 24.8% |
 | D-INTEGRATION_GATEWAY | mcp_servers | 0 | 0 | 0 | 0 | 0 | N/A |
 | D-INTELLIGENCE | 上下文管理 | 42 | 17 | 0 | 25 | 0 | 40.5% |

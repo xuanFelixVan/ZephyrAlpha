@@ -153,7 +153,7 @@ def worker_t1(worker_id):
         node_id = ad.add_design_node(
             path="src/test_rb_t1_same/",
             blueprint_id="PLACEHOLDER-T1",
-            domain_id="D-INFRA_OPS",
+            domain_id="D_INFRA_OPS",
             build_status="unbuilt",
             db_path=_test_db_path(),
         )

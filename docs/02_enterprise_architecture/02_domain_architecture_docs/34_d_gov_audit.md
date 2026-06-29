@@ -173,7 +173,7 @@ graph TD
     src_zephyr_governance_audit_orchestration_resilience_init_py -.->|import_depends| src_zephyr_governance_audit_orchestration_resilience_failure_matcher_py
     D_SHARED["D-SHARED prototype"]
     src_zephyr_governance_audit_orchestration_deferred_queue_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_audit_orchestration_failure_matcher_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_governance_audit_orchestration_file_task_mapper_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_orchestration_file_task_mapper_py -.->|import_depends| D_SHARED
@@ -243,7 +243,7 @@ graph TD
     D_SHARED["D-SHARED prototype"]
     src_zephyr_governance_audit_orchestration_rollback_manager_py -.->|import_depends| D_SHARED
     src_zephyr_governance_audit_orchestration_rollback_manager_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_audit_orchestration_trigger_router_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT prototype"]
     src_zephyr_governance_audit_orchestration_trigger_router_py -.->|import_depends| D_GOV_ENFORCEMENT
@@ -349,9 +349,9 @@ graph TD
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_orchestrator_writer_py
-    D_INFRA_RECOVERY["D-INFRA_RECOVERY production"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
-    D_INFRA_OPS["D-INFRA_OPS prototype"]
+    D_INFRA_OPS["D_INFRA_OPS prototype"]
     D_INFRA_OPS -.->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -420,7 +420,7 @@ graph TD
     src_zephyr_governance_audit_trail_bridges_drift_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_audit_trail_bridges_drift_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_audit_trail_bridges_spec_auditor_py -.->|import_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_audit_trail_bridges_trust_bridge_py -.->|import_depends| D_INFRA_RUNTIME
     D_COMPLIANCE["D-COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_audit_trail_bridges_drift_bridge_py
@@ -432,9 +432,9 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_indexer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_contracts_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
-    D_INFRA_RECOVERY["D-INFRA_RECOVERY production"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_governance_audit_trail_integrity_py
     D_SECURITY -.->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
@@ -573,7 +573,7 @@ graph TD
 | D-GOV_DRIFT | 13 | import_depends,runtime |
 | D-SECURITY | 6 | import_depends |
 | D-GOV_ENFORCEMENT | 5 | import_depends,runtime |
-| D-INFRA_RUNTIME | 5 | import_depends |
+| D_INFRA_RUNTIME | 5 | import_depends |
 | D-INTEGRATION | 5 | import_depends |
 | D-TRADING | 2 | import_depends |
 | D-OPS | 2 | import_depends |
@@ -588,17 +588,17 @@ graph TD
 | D-TRADING | 8 | contract,import_depends |
 | D-AUDITTEST | 7 | test_depends |
 | D-GOV_DRIFT | 7 | import_depends,runtime |
-| D-INFRA_RECOVERY | 7 | import_depends |
+| D_INFRA_RECOVERY | 7 | import_depends |
 | D-SECURITY | 5 | import_depends |
-| D-INFRA_RUNTIME | 4 | import_depends |
+| D_INFRA_RUNTIME | 4 | import_depends |
 | D-GOV_ENFORCEMENT | 4 | import_depends |
 | D-AUTONOMY_CORE | 3 | import_depends |
 | D-INTEGRATION | 2 | import_depends |
 | D-BEHAVIORAL_AUDIT | 2 | import_depends |
-| D-INFRA_OPS | 2 | import_depends |
+| D_INFRA_OPS | 2 | import_depends |
 | D-GOV_SCRIPTS | 2 | import_depends |
 | D-AUTONOMY_PERM | 1 | test_depends |
-| D-INFRA_A2A | 1 | import_depends |
+| D_INFRA_A2A | 1 | import_depends |
 | D-OPS | 1 | test_depends |
 | D-SHARED | 1 | import_depends |
 

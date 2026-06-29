@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_OPS 基础设施运维架构文档
+title: D_INFRA_OPS 基础设施运维架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 02_d_infra_ops / 基础设施运维
 
-> **文档作用 / Purpose**: 展示 基础设施运维（D-INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 15:00:44
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 02 | Number | 02 |
-| 域ID | D-INFRA_OPS | Domain ID | D-INFRA_OPS |
+| 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | 基础设施运维 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 34 | Module Count | 34 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_OPS["D-INFRA_OPS 基础设施运维"]
+    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
         config_infra_grafana_dashboards_provider_yml["config/infra/grafana/dashboards/provider.yml production"]
         config_infra_grafana_datasources_prometheus_yml["config/infra/grafana/datasources/prometheus.yml production"]
         config_infra_prometheus_prometheus_yml["config/infra/prometheus/prometheus.yml production"]
@@ -101,7 +101,7 @@ graph TD
     D_GOV_AUDIT["D-GOV_AUDIT prototype"]
     src_zephyr_infrastructure_rollback_governance_auditor_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_governance_contracts_py -.->|import_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
     D_FRONTEND["D-FRONTEND production"]
     D_FRONTEND -.->|import_depends| src_zephyr_infra_ops_init_py
@@ -119,7 +119,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_OPS["D-INFRA_OPS 基础设施运维"]
+    subgraph D_INFRA_OPS["D_INFRA_OPS 基础设施运维"]
         src_zephyr_infrastructure_rollback_governance_result_types_py["src/zephyr/infrastructure/rollback/governance/r... prototype"]
         tests_test_auto_rollback_trigger_py["tests/test_auto_rollback_trigger.py prototype"]
         tests_test_rollback_simulator_py["tests/test_rollback_simulator.py prototype"]
@@ -145,7 +145,7 @@ graph TD
 |--------|:---:|---------|
 | D-GOVERNANCE | 8 | config_depends,import_depends,test_depends |
 | D-GOV_AUDIT | 2 | import_depends |
-| D-INFRA_RUNTIME | 1 | import_depends |
+| D_INFRA_RUNTIME | 1 | import_depends |
 | D-OPS | 1 | import_depends |
 | D-SHARED | 1 | import_depends |
 
@@ -157,7 +157,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基础设施运维（D-INFRA_OPS）的模块分布。共 34 个模块 / 34 modules。
+> 按 architecture_layer 分层显示 基础设施运维（D_INFRA_OPS）的模块分布。共 34 个模块 / 34 modules。
 
 ```
 

@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] zephyr.infrastructure.db.task_repo
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.task_repo
 # [CONSUMERS] Backward-compatible import path for legacy consumers
 # [STARTUP] imported

@@ -54,10 +54,10 @@ ttl: task_bound
 | CONSTRAINT_D-GOV-RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D-GOVERNANCE |  | hard | gate | 稳定性约束：rule_enforcement |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D-GOVERNANCE |  | hard | gate | 稳定性约束：script_governance |
 | CONSTRAINT_D-GOV-SEMANTIC_AUDIT | semantic_audit稳定性约束 | stability | D-GOVERNANCE |  | hard | gate | 稳定性约束：semantic_audit |
-| CONSTRAINT_D-INFRA-LIFECYCLE_MANAGEMENT | lifecycle_management稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | gate | 稳定性约束：lifecycle_management |
-| CONSTRAINT_D-INFRA-RESOURCE_OPTIMIZATION | resource_optimization稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | gate | 稳定性约束：resource_optimization |
-| CONSTRAINT_D-INFRA-RUNTIME_INTEGRATION | runtime_integration稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | gate | 稳定性约束：runtime_integration |
-| CONSTRAINT_D-INFRA-SHARED_SERVICES | shared_services稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | gate | 稳定性约束：shared_services |
+| CONSTRAINT_D-INFRA-LIFECYCLE_MANAGEMENT | lifecycle_management稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | gate | 稳定性约束：lifecycle_management |
+| CONSTRAINT_D-INFRA-RESOURCE_OPTIMIZATION | resource_optimization稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | gate | 稳定性约束：resource_optimization |
+| CONSTRAINT_D-INFRA-RUNTIME_INTEGRATION | runtime_integration稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | gate | 稳定性约束：runtime_integration |
+| CONSTRAINT_D-INFRA-SHARED_SERVICES | shared_services稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | gate | 稳定性约束：shared_services |
 | CONSTRAINT_D-INTEL-MODEL_PROFILING | model_profiling稳定性约束 | stability | D-INTELLIGENCE |  | hard | gate | 稳定性约束：model_profiling |
 | CONSTRAINT_D-OBS-AUDIT_TRAIL | audit_trail稳定性约束 | stability | D-OPS |  | hard | gate | 稳定性约束：audit_trail |
 | CONSTRAINT_D-OBS-TELEMETRY | telemetry稳定性约束 | stability | D-OPS |  | hard | gate | 稳定性约束：telemetry |
@@ -82,8 +82,8 @@ ttl: task_bound
 | F1-CAPACITY-D-FRONTEND | 容量超限告警: D-FRONTEND | capacity_limit | D-FRONTEND |  | hard | gate | 域D-FRONTEND(前端)当前278模块超过上限60，需拆分或提升上限 |
 | F1-CAPACITY-D-GOVERNANCE | 容量超限告警: D-GOVERNANCE | capacity_limit | D-GOVERNANCE |  | hard | gate | 域D-GOVERNANCE(治理)当前2881模块超过上限750，需拆分或提升上限 |
 | F1-CAPACITY-D-GOV_SCRIPTS | 容量超限告警: D-GOV_SCRIPTS | capacity_limit | D-GOVERNANCE |  | hard | gate | 域D-GOV_SCRIPTS(治理脚本)当前359模块超过上限340，需拆分或提升上限 |
-| F1-CAPACITY-D-INFRA_OPS | 容量超限告警: D-INFRA_OPS | capacity_limit | D-INFRA_OPS |  | hard | gate | 域D-INFRA_OPS(基础设施运维)当前409模块超过上限40，需拆分或提升上限 |
-| F1-CAPACITY-D-INFRA_RUNTIME | 容量超限告警: D-INFRA_RUNTIME | capacity_limit | D-INFRA_RUNTIME |  | hard | gate | 域D-INFRA_RUNTIME(运行时基础设施)当前892模块超过上限480，需拆分或提升上限 |
+| F1-CAPACITY-D_INFRA_OPS | 容量超限告警: D_INFRA_OPS | capacity_limit | D_INFRA_OPS |  | hard | gate | 域D_INFRA_OPS(基础设施运维)当前409模块超过上限40，需拆分或提升上限 |
+| F1-CAPACITY-D_INFRA_RUNTIME | 容量超限告警: D_INFRA_RUNTIME | capacity_limit | D_INFRA_RUNTIME |  | hard | gate | 域D_INFRA_RUNTIME(运行时基础设施)当前892模块超过上限480，需拆分或提升上限 |
 | F1-CAPACITY-D-INTEGRATION | 容量超限告警: D-INTEGRATION | capacity_limit | D-INTEGRATION |  | hard | gate | 域D-INTEGRATION(集成)当前314模块超过上限220，需拆分或提升上限 |
 | F1-CAPACITY-D-INTELLIGENCE | 容量超限告警: D-INTELLIGENCE | capacity_limit | D-INTELLIGENCE |  | hard | gate | 域D-INTELLIGENCE(智能)当前322模块超过上限80，需拆分或提升上限 |
 | F1-CAPACITY-D-KNOWLEDGE | 容量超限告警: D-KNOWLEDGE | capacity_limit | D-KNOWLEDGE |  | hard | gate | 域D-KNOWLEDGE(知识)当前209模块超过上限60，需拆分或提升上限 |
@@ -118,10 +118,10 @@ ttl: task_bound
 | CONSTRAINT_D-GOV-RULE_ENFORCEMENT | rule_enforcement稳定性约束 | stability | D-GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SCRIPT_GOVERNANCE | script_governance稳定性约束 | stability | D-GOVERNANCE |  | hard | open |
 | CONSTRAINT_D-GOV-SEMANTIC_AUDIT | semantic_audit稳定性约束 | stability | D-GOVERNANCE |  | hard | open |
-| CONSTRAINT_D-INFRA-LIFECYCLE_MANAGEMENT | lifecycle_management稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | open |
-| CONSTRAINT_D-INFRA-RESOURCE_OPTIMIZATION | resource_optimization稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | open |
-| CONSTRAINT_D-INFRA-RUNTIME_INTEGRATION | runtime_integration稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | open |
-| CONSTRAINT_D-INFRA-SHARED_SERVICES | shared_services稳定性约束 | stability | D-INFRA_RUNTIME |  | hard | open |
+| CONSTRAINT_D-INFRA-LIFECYCLE_MANAGEMENT | lifecycle_management稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | open |
+| CONSTRAINT_D-INFRA-RESOURCE_OPTIMIZATION | resource_optimization稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | open |
+| CONSTRAINT_D-INFRA-RUNTIME_INTEGRATION | runtime_integration稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | open |
+| CONSTRAINT_D-INFRA-SHARED_SERVICES | shared_services稳定性约束 | stability | D_INFRA_RUNTIME |  | hard | open |
 | CONSTRAINT_D-INTEL-MODEL_PROFILING | model_profiling稳定性约束 | stability | D-INTELLIGENCE |  | hard | open |
 | CONSTRAINT_D-OBS-AUDIT_TRAIL | audit_trail稳定性约束 | stability | D-OPS |  | hard | open |
 | CONSTRAINT_D-OBS-TELEMETRY | telemetry稳定性约束 | stability | D-OPS |  | hard | open |
@@ -146,8 +146,8 @@ ttl: task_bound
 | F1-CAPACITY-D-FRONTEND | 容量超限告警: D-FRONTEND | capacity_limit | D-FRONTEND |  | hard | open |
 | F1-CAPACITY-D-GOVERNANCE | 容量超限告警: D-GOVERNANCE | capacity_limit | D-GOVERNANCE |  | hard | open |
 | F1-CAPACITY-D-GOV_SCRIPTS | 容量超限告警: D-GOV_SCRIPTS | capacity_limit | D-GOVERNANCE |  | hard | open |
-| F1-CAPACITY-D-INFRA_OPS | 容量超限告警: D-INFRA_OPS | capacity_limit | D-INFRA_OPS |  | hard | open |
-| F1-CAPACITY-D-INFRA_RUNTIME | 容量超限告警: D-INFRA_RUNTIME | capacity_limit | D-INFRA_RUNTIME |  | hard | open |
+| F1-CAPACITY-D_INFRA_OPS | 容量超限告警: D_INFRA_OPS | capacity_limit | D_INFRA_OPS |  | hard | open |
+| F1-CAPACITY-D_INFRA_RUNTIME | 容量超限告警: D_INFRA_RUNTIME | capacity_limit | D_INFRA_RUNTIME |  | hard | open |
 | F1-CAPACITY-D-INTEGRATION | 容量超限告警: D-INTEGRATION | capacity_limit | D-INTEGRATION |  | hard | open |
 | F1-CAPACITY-D-INTELLIGENCE | 容量超限告警: D-INTELLIGENCE | capacity_limit | D-INTELLIGENCE |  | hard | open |
 | F1-CAPACITY-D-KNOWLEDGE | 容量超限告警: D-KNOWLEDGE | capacity_limit | D-KNOWLEDGE |  | hard | open |

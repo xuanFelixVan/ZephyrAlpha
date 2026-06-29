@@ -22,8 +22,8 @@ ttl: permanent
 graph LR
     %% 按层分组显示域节点 / Group domains by layer
     subgraph L0["基础设施层 / Infrastructure"]
-        infra_ops["D-INFRA_OPS<br/>基础设施运维"]
-        infra_runtime["D-INFRA_RUNTIME<br/>运行时集成"]
+        infra_ops["D_INFRA_OPS<br/>基础设施运维"]
+        infra_runtime["D_INFRA_RUNTIME<br/>运行时集成"]
     end
 
     subgraph L1_foundation["基础层 / Foundation"]

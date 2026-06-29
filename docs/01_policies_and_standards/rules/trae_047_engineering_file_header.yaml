@@ -151,7 +151,7 @@ sections:
     - type: mandatory
       step: 永久区目录允许格式——docs/01_policies_and_standards/(.md/.yaml/.json仅限schemas子目录); docs/02_enterprise_architecture/(.md/.mmd/.yaml); docs/03_modules/(.md/.yaml); docs/08_knowledge/(仅.md); src/zephyr/(.py/.yaml); scripts/(.py/.sh/.ps1/.yaml/.json); config/(.yaml/.json); architecture_model/(.yaml)
     - type: mandatory
-      step: 临时区目录允许格式——docs/_working/(.md/.csv/.yaml); docs/_working/archive/(.md); docs/_working/audit/(.md); docs/_working/research_notes/(.md/.txt/.yaml); docs/_working/decomposition/(.md); docs/_working/ttl_content_audit/(.csv)
+      step: 临时区目录允许格式——docs/_working/(.md/.csv/.yaml); docs/_working/audit/(.md); docs/_working/research_notes/(.md/.txt/.yaml); docs/_working/decomposition/(.md); docs/_working/ttl_content_audit/(.csv)
     - type: mandatory
       step: 根目录白名单(20个)——.gitignore/.gitattributes/.editorconfig/.traeignore/.env.example/.importlinter/.pre-commit-config.yaml/pyproject.toml/py.ini/requirements.txt/requirements-dev.txt/requirements-demo.txt/sitecustomize.py/Dockerfile/docker-compose.yml/AGENTS.md/CONTRIBUTING.md/README.md/SECURITY.md/LICENSE;根目录禁止出现白名单外的任何文件
     - type: mandatory

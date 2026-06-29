@@ -218,7 +218,7 @@ graph TD
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_GOV_DRIFT
     D_SECURITY["D-SECURITY production"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|contract| D_SECURITY
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_GOV_AUDIT
@@ -283,7 +283,7 @@ graph TD
         scripts_governance_check_vs_py["scripts/governance/_check_vs.py production"]
     end
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     docs_03_modules_domain_infra_runtime_runtime_integration_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
@@ -1425,7 +1425,7 @@ graph TD
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INFRA_RUNTIME
     D_GOV_DRIFT["D-GOV_DRIFT prototype"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_DRIFT
@@ -1528,10 +1528,10 @@ graph TD
     D_FRONTEND -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_FRONTEND -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_INFRA_OPS["D-INFRA_OPS prototype"]
+    D_INFRA_OPS["D_INFRA_OPS prototype"]
     D_INFRA_OPS -.->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_OPS -.->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -1539,9 +1539,9 @@ graph TD
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_INFRA_RECOVERY["D-INFRA_RECOVERY production"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RECOVERY -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1946,7 +1946,7 @@ graph TD
     src_zephyr_governance_triage_py -.->|import_depends| D_INTELLIGENCE
     D_SHARED["D-SHARED prototype"]
     src_zephyr_governance_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_a2a_protocol_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
     D_COMPLIANCE["D-COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_zero_knowledge_audit_stub_init_py
@@ -2001,7 +2001,7 @@ graph TD
     src_zephyr_integration_governance_data_source_router_init_py -.->|config_depends| src_zephyr_integration_governance_data_source_router_embedding_router_py
     D_INTEGRATION["D-INTEGRATION prototype"]
     src_zephyr_infrastructure_db_olap_engine_py_1 -.->|import_depends| D_INTEGRATION
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_INFRA_RUNTIME
     D_SECURITY["D-SECURITY prototype"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_SECURITY
@@ -2018,7 +2018,7 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_governance_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py -.->|import_depends| D_INTEGRATION
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -.->|import_depends| D_INFRA_A2A
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -.->|import_depends| D_INFRA_A2A
     D_INFRA_A2A -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py
@@ -2081,7 +2081,7 @@ graph TD
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_adversarial_test_agent_spec_e2e_py -.->|test_depends| D_AUTONOMY_CORE
     tests_adversarial_test_agent_spec_adversarial_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_INFRA_RUNTIME
     tests_adversarial_test_cross_layer_systems_red_team_py -.->|test_depends| D_AUTONOMY_CORE
     D_SECURITY["D-SECURITY production"]
@@ -2149,7 +2149,7 @@ graph TD
     tests_contract_contract_test_anchors_yaml -.->|config_depends| tests_contract_init_py
     D_SECURITY["D-SECURITY production"]
     tests_conftest_py -.->|test_depends| D_SECURITY
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_asset_inventory_test_models_asset_inventory_py -.->|test_depends| D_INFRA_RUNTIME
     tests_asset_inventory_test_knowledge_transfer_py -.->|test_depends| D_INFRA_RUNTIME
     tests_asset_inventory_test_index_generator_asset_inventory_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2277,7 +2277,7 @@ graph TD
         tests_infrastructure_test_registry_governance_infrastructure_py["tests/infrastructure/test_registry_governance_i... prototype"]
         tests_integration_init_py["tests/integration/__init__.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_governance_test_gct_integration_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED production"]
     tests_governance_test_gct_integration_py -.->|test_depends| D_SHARED
@@ -2358,7 +2358,7 @@ graph TD
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_integration_test_beta_e2e_py -.->|test_depends| D_AUTONOMY_CORE
     tests_integration_test_beta_e2e_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_integration_test_beta_e2e_py -.->|test_depends| D_INFRA_RUNTIME
     tests_integration_test_beta_e2e_py -.->|test_depends| D_TRADING
     tests_integration_test_evolution_e2e_py -.->|test_depends| D_OPS
@@ -2413,7 +2413,7 @@ graph TD
     tests_ml_experiment_test_adversarial_ml_experiment_py -.->|config_depends| tests_ml_experiment_init_py
     tests_semantic_auditor_test_blast_radius_py -.->|config_depends| tests_semantic_auditor_init_py
     tests_semantic_auditor_test_blast_radius_red_team_py -.->|config_depends| tests_semantic_auditor_init_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_a2a_card_registry_py -.->|test_depends| D_INFRA_RUNTIME
     D_SECURITY["D-SECURITY production"]
     tests_test_a2a_check_py -.->|test_depends| D_SECURITY
@@ -2474,7 +2474,7 @@ graph TD
         tests_test_a2a_state_py["tests/test_a2a_state.py prototype"]
         tests_test_a2a_temporal_admission_py["tests/test_a2a_temporal_admission.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_a2a_governance_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_a2a_negotiation_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_a2a_layer1_discovery_py -.->|test_depends| D_INFRA_RUNTIME
@@ -2525,7 +2525,7 @@ graph TD
         tests_test_adversarial_validation_gate_py["tests/test_adversarial_validation_gate.py prototype"]
         tests_test_agent_cooldown_py["tests/test_agent_cooldown.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_a2a_voting_py -.->|test_depends| D_INFRA_RUNTIME
     D_OPS["D-OPS production"]
     tests_test_ab_test_py -.->|test_depends| D_OPS
@@ -2999,7 +2999,7 @@ graph TD
     tests_test_capability_registry_py -.->|test_depends| D_TRADING
     tests_test_capacity_forecast_py -.->|test_depends| D_OPS
     tests_test_capacity_aware_repair_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_cascade_guard_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_capacity_budget_root_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -3066,7 +3066,7 @@ graph TD
     tests_test_cli_summary_py -.->|test_depends| D_SHARED
     tests_test_circuit_breaker_root_py -.->|test_depends| D_SHARED
     tests_test_ci_cd_pre_scanner_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_classifier_root_py -.->|test_depends| D_INFRA_RUNTIME
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     tests_test_cli_py -.->|test_depends| D_INTELLIGENCE
@@ -3183,7 +3183,7 @@ graph TD
     tests_test_config_manager_py -.->|test_depends| D_TRADING
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_config_safety_guard_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_conflict_detector_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_config_validator_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_conflict_arbitration_py -.->|test_depends| D_OPS
@@ -3258,7 +3258,7 @@ graph TD
     tests_test_contracts_py -.->|test_depends| D_SECURITY
     D_TRADING["D-TRADING production"]
     tests_test_contract_registry_root_py -.->|test_depends| D_TRADING
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_contract_tester_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_contract_router_root_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -3305,7 +3305,7 @@ graph TD
         tests_test_ct_circular_dependency_scan_py["tests/test_ct_circular_dependency_scan.py prototype"]
         tests_test_ct_classification_py["tests/test_ct_classification.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_cost_tracker_py -.->|test_depends| D_INFRA_RUNTIME
     D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
     tests_test_credibility_engine_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -3434,7 +3434,7 @@ graph TD
     end
     D_SECURITY["D-SECURITY production"]
     tests_test_cybersec_2026_guard_py -.->|test_depends| D_SECURITY
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_dashboard_root_py -.->|test_depends| D_INFRA_RUNTIME
     D_BEHAVIORAL_AUDIT["D-BEHAVIORAL_AUDIT production"]
     tests_test_data_classification_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -3635,7 +3635,7 @@ graph TD
     tests_test_dry_run_sandbox_py -.->|test_depends| D_OPS
     D_SECURITY["D-SECURITY production"]
     tests_test_dry_run_root_py -.->|test_depends| D_SECURITY
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_dry_run_simulator_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_drift_training_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_e2e_integration_health_py -.->|test_depends| D_OPS
@@ -3769,7 +3769,7 @@ graph TD
     tests_test_escalation_handler_py -.->|test_depends| D_SECURITY
     tests_test_event_bus_py -.->|test_depends| D_SHARED
     tests_test_eval_harness_root_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_event_bus_upgrade_py -.->|test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -3893,7 +3893,7 @@ graph TD
     tests_test_file_autoregister_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_feedback_self_audit_py -.->|test_depends| D_GOV_AUDIT
     tests_test_file_autorregister_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_file_watcher_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_finalizer_py -.->|test_depends| D_TRADING
     tests_test_file_task_mapper_root_py -.->|test_depends| D_TRADING
@@ -4317,7 +4317,7 @@ graph TD
         tests_test_io_serialization_py["tests/test_io_serialization.py prototype"]
         tests_test_ipi_defense_py["tests/test_ipi_defense.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_infrastructure_base_py -.->|test_depends| D_INFRA_RUNTIME
     D_SECURITY["D-SECURITY production"]
     tests_test_input_guard_root_py -.->|test_depends| D_SECURITY
@@ -4526,7 +4526,7 @@ graph TD
     tests_test_llm_impact_analyzer_py -.->|test_depends| D_SHARED
     tests_test_llm_provider_integrity_py -.->|test_depends| D_OPS
     tests_test_log_anomaly_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_local_first_arch_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_maintenance_coordinator_py -.->|test_depends| D_OPS
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
@@ -4582,7 +4582,7 @@ graph TD
         tests_test_models_root_py["tests/test_models_root.py prototype"]
         tests_test_module_onboarding_scanner_py["tests/test_module_onboarding_scanner.py prototype"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_message_router_py -.->|test_depends| D_INFRA_RUNTIME
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_test_merkle_hourly_py -.->|test_depends| D_GOV_AUDIT
@@ -4654,7 +4654,7 @@ graph TD
     tests_test_multi_agent_collusion_detector_py -.->|test_depends| D_SECURITY
     tests_test_multi_agent_orchestrator_py -.->|test_depends| D_OPS
     tests_test_multi_instance_coord_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_multi_agent_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_multi_signal_correlator_py -.->|test_depends| D_OPS
     tests_test_multi_model_consensus_py -.->|test_depends| D_INFRA_RUNTIME
@@ -4857,7 +4857,7 @@ graph TD
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     tests_test_profiler_py -.->|test_depends| D_INTELLIGENCE
     tests_test_profiler_py -.->|test_depends| D_INTELLIGENCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_prompt_lifecycle_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_prompt_self_optimization_loop_py -.->|test_depends| D_OPS
     tests_test_prompt_sanitizer_py -.->|test_depends| D_OPS
@@ -4913,7 +4913,7 @@ graph TD
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_pydantic_v2_migrator_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED production"]
     tests_test_quality_monitor_py -.->|test_depends| D_SHARED
@@ -5112,7 +5112,7 @@ graph TD
     tests_test_scheduler_act_py -.->|test_depends| D_OPS
     tests_test_scheduler_health_py -.->|test_depends| D_OPS
     tests_test_scheduler_collect_detect_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_scanner_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_scheduler_safety_py -.->|test_depends| D_OPS
     D_TRADING["D-TRADING production"]
@@ -5435,7 +5435,7 @@ graph TD
     tests_test_status_dashboard_py -.->|test_depends| D_TRADING
     tests_test_stochastic_diagnosis_verifier_py -.->|test_depends| D_OPS
     tests_test_stop_gate_py -.->|test_depends| D_TRADING
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_streaming_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_stochastic_diagnosis_verifier_v2_py -.->|test_depends| D_OPS
     tests_test_supervisor_py -.->|test_depends| D_INFRA_RUNTIME
@@ -5570,7 +5570,7 @@ graph TD
     D_SHARED["D-SHARED production"]
     tests_test_trace_decorator_py -.->|test_depends| D_SHARED
     tests_test_training_data_gov_py -.->|test_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_trigger_monitor_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_trend_cycle_separator_py -.->|test_depends| D_OPS
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
@@ -5642,7 +5642,7 @@ graph TD
     tests_test_vibe_coding_guard_py -.->|test_depends| D_SECURITY
     tests_test_vibe_coding_enforcer_py -.->|test_depends| D_GOV_AUDIT
     tests_test_version_manifest_py -.->|test_depends| D_TRADING
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_warm_hot_gate_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_wireheading_prevention_py -.->|test_depends| D_OPS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -6025,7 +6025,7 @@ graph TD
     tests_unit_test_artifact_scanner_py -.->|test_depends| D_GOV_DRIFT
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     tests_unit_test_audit_schema_unit_py -.->|test_depends| D_GOV_AUDIT
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_unit_test_blueprint_search_mcp_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D-SHARED production"]
     tests_unit_test_blueprint_decomposer_depends_unit_py -.->|test_depends| D_SHARED
@@ -6165,7 +6165,7 @@ graph TD
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     tests_unit_test_knowledge_activation_rate_unit_py -.->|test_depends| D_INTELLIGENCE
     tests_unit_test_kb_repo_unit_py -.->|test_depends| D_INTELLIGENCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_unit_test_mcp_gateway_py -.->|test_depends| D_INFRA_RUNTIME
     tests_unit_test_mcp_servers_py -.->|test_depends| D_INFRA_RUNTIME
     D_TRADING["D-TRADING production"]
@@ -6258,7 +6258,7 @@ graph TD
 | D-SHARED | 181 | import_depends,test_depends |
 | D-GOV_ENFORCEMENT | 168 | import_depends,runtime,test_depends |
 | D-GOV_AUDIT | 140 | contract,import_depends,runtime,test_depends |
-| D-INFRA_RUNTIME | 124 | config_depends,import_depends,runtime,test_depends |
+| D_INFRA_RUNTIME | 124 | config_depends,import_depends,runtime,test_depends |
 | D-BEHAVIORAL_AUDIT | 88 | import_depends,test_depends |
 | D-INTELLIGENCE | 49 | import_depends,test_depends |
 | D-GOV_DRIFT | 25 | config_depends,contract,import_depends,runtime,test_depends |
@@ -6270,7 +6270,7 @@ graph TD
 | D-FRONTEND | 8 | test_depends |
 | D-GOV_RULE | 7 | import_depends,test_depends |
 | D-EX_CORE | 6 | test_depends |
-| D-INFRA_A2A | 6 | import_depends |
+| D_INFRA_A2A | 6 | import_depends |
 | D-PF_CORE | 6 | test_depends |
 | D-FACTOR | 4 | test_depends |
 | D-AUTONOMY_PERM | 4 | contract,runtime |
@@ -6294,12 +6294,12 @@ graph TD
 | D-INTEGRATION | 11 | config_depends,import_depends |
 | D-COMPLIANCE | 10 | import_depends |
 | D-GOV_DRIFT | 10 | config_depends,import_depends,runtime,test_depends |
-| D-INFRA_RUNTIME | 9 | import_depends |
-| D-INFRA_OPS | 8 | config_depends,import_depends,test_depends |
+| D_INFRA_RUNTIME | 9 | import_depends |
+| D_INFRA_OPS | 8 | config_depends,import_depends,test_depends |
 | D-EX_CORE | 8 | config_depends,import_depends |
 | D-INTELLIGENCE | 6 | config_depends,import_depends |
 | D-REPORTING | 5 | import_depends |
-| D-INFRA_RECOVERY | 4 | import_depends |
+| D_INFRA_RECOVERY | 4 | import_depends |
 | D-FRONTEND | 4 | import_depends |
 | D-SECURITY | 4 | import_depends |
 | D-SHARED | 3 | import_depends |
@@ -6311,8 +6311,8 @@ graph TD
 | D-MKT_DATA | 2 | config_depends |
 | D-PF_ALLOC | 2 | config_depends,import_depends |
 | D-BEHAVIORAL_AUDIT | 2 | import_depends |
-| D-INFRA_A2A | 2 | import_depends |
-| D-INFRA_TELEMETRY | 1 | import_depends |
+| D_INFRA_A2A | 2 | import_depends |
+| D_INFRA_TELEMETRY | 1 | import_depends |
 | D-RISK | 1 | config_depends |
 | D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D-DATA_SEC | 1 | import_depends |

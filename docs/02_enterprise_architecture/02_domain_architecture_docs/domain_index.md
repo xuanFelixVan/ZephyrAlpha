@@ -32,11 +32,11 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D-INFRA_A2A | a2a_communication | 101 | 101 | 0 | 0 | 101/150 (OK) | [d_infra_a2a.md](domains/d_infra_a2a.md) |
-| D-INFRA_OPS | 基础设施运维 | 34 | 7 | 1 | 26 | 34/150 (OK) | [d_infra_ops.md](domains/d_infra_ops.md) |
-| D-INFRA_RECOVERY | rollback_recovery | 107 | 107 | 0 | 0 | 107/150 (OK) | [d_infra_recovery.md](domains/d_infra_recovery.md) |
-| D-INFRA_RUNTIME | 运行时集成 | 145 | 139 | 0 | 6 | 145/150 (OK) | [d_infra_runtime.md](domains/d_infra_runtime.md) |
-| D-INFRA_TELEMETRY | observability_profiling | 37 | 37 | 0 | 0 | 37/150 (OK) | [d_infra_telemetry.md](domains/d_infra_telemetry.md) |
+| D_INFRA_A2A | a2a_communication | 101 | 101 | 0 | 0 | 101/150 (OK) | [d_infra_a2a.md](domains/d_infra_a2a.md) |
+| D_INFRA_OPS | 基础设施运维 | 34 | 7 | 1 | 26 | 34/150 (OK) | [d_infra_ops.md](domains/d_infra_ops.md) |
+| D_INFRA_RECOVERY | rollback_recovery | 107 | 107 | 0 | 0 | 107/150 (OK) | [d_infra_recovery.md](domains/d_infra_recovery.md) |
+| D_INFRA_RUNTIME | 运行时集成 | 145 | 139 | 0 | 6 | 145/150 (OK) | [d_infra_runtime.md](domains/d_infra_runtime.md) |
+| D_INFRA_TELEMETRY | observability_profiling | 37 | 37 | 0 | 0 | 37/150 (OK) | [d_infra_telemetry.md](domains/d_infra_telemetry.md) |
 
 ### L1_foundation (15 个域)
 

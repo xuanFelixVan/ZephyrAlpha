@@ -125,8 +125,8 @@ CAPABILITY_DOMAINS: list[dict] = [
         "name_en": "Infrastructure",
         "type": "横切",
         "domains": [
-            "D-INFRA_OPS",
-            "D-INFRA_RUNTIME",
+            "D_INFRA_OPS",
+            "D_INFRA_RUNTIME",
             "D-INTEGRATION",
             "D-INTEGRATION_GATEWAY",
             "D-SHARED",

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.lifecycle.daemon_registry
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

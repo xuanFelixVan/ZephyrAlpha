@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer2_communication.message_router
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_schemas
 # [CONSUMERS]
 # [STARTUP] imported

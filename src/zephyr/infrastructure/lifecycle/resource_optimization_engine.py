@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-111 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.lifecycle.__init__; zephyr.integration.shared_08.io.io_cache; zephyr.integration.shared_08.io.streaming_reader; zephyr.shared.infra.process_pool; zephyr.infrastructure.lifecycle.lazy_loader; zephyr.integration.shared_08.event_bus; zephyr.governance.audit_orchestrator.bridge
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 # [STARTUP] imported

@@ -203,7 +203,7 @@ graph TD
     D_SECURITY["D-SECURITY production"]
     tests_test_kill_switch_root_py -.->|test_depends| D_SECURITY
     tests_test_kill_switch_root_py -.->|test_depends| D_SECURITY
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_kill_switch_sim_py -.->|test_depends| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D-AUTONOMY_CORE production"]
     tests_test_skill_kill_switch_py -.->|test_depends| D_AUTONOMY_CORE
@@ -236,7 +236,7 @@ graph TD
 | D-INTEGRATION | 2 | test_depends |
 | D-AUTONOMY_CORE | 1 | test_depends |
 | D-GOV_AUDIT | 1 | test_depends |
-| D-INFRA_RUNTIME | 1 | test_depends |
+| D_INFRA_RUNTIME | 1 | test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

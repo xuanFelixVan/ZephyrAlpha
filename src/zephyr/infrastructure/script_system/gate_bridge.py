@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-SCRIPT-GATE-001
 # [MODULE] zephyr.infrastructure.script_system.gate_bridge
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.script_system.__init__
 # [CONSUMERS] zephyr.trading.orchestrator.script_runner; AutoRuntime Core post-scan phase
 # [STARTUP] imported

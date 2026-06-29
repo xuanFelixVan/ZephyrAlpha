@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.infrastructure.rollback.rollback_audit_nexus
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.audit_trail.writer
 # [CONSUMERS]
 # [STARTUP] imported

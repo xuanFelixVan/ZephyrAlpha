@@ -336,7 +336,7 @@ D-MKT_DATA 行情数据 → D-FACTOR 因子 → D-SIGLEGACY 信号 → D-RISK �
 | 域 | CPU (core·h/日) | Memory 峰值 (GB) | Storage 年增 (GB) | IOPS 峰值 |
 |----|:-----:|:------:|:------:|:----:|
 | D-MKT_DATA 行情数据 | 2 | 1.5 | 20 | 300 |
-| D-INFRA_RUNTIME 基础设施 | 0.5 | 0.5 | 1 | 50 |
+| D_INFRA_RUNTIME 基础设施 | 0.5 | 0.5 | 1 | 50 |
 | D-FACTOR 因子 | 6 | 3 | 15 | 500 |
 | D-SIGLEGACY 信号 | 3 | 1 | 5 | 100 |
 | D-RISK 风控 | 1 | 0.5 | 2 | 150 |

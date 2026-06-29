@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.drift_fix
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS] rollback_executor;auto_rollback_trigger
 # [STARTUP] imported

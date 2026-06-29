@@ -165,8 +165,8 @@ capabilities:
   t1_target: L4
   gap_to_t1: 2
 - id: CAP-002
-  name: D-INFRA_RUNTIME × C1
-  domain: D-INFRA_RUNTIME
+  name: D_INFRA_RUNTIME × C1
+  domain: D_INFRA_RUNTIME
   capability: C1
   maturity: L1
   maturity_symbol: 🔵

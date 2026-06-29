@@ -74,7 +74,7 @@ domain_architecture:
   after: 43
   operations:
   - 删除11个连字符空壳域
-  - D-INFRASTRUCTURE+D-INFRA-RUNTIME→D-INFRA_RUNTIME
+  - D-INFRASTRUCTURE+D-INFRA-RUNTIME→D_INFRA_RUNTIME
   - D-GOV_DRIFT保留(22节点)
   - D-TEST不创建(D77已废止)
   - 61个孤儿模块DB路径修复

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.lifecycle.resource_optimization_engine
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.lifecycle.__init__
 # [CONSUMERS]
 # [STARTUP] imported

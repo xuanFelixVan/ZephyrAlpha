@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-121 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.observability
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.observability.__init__; zephyr.infrastructure.observability.notifier; zephyr.infrastructure.observability.trace_decorator
 # [CONSUMERS]
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
 # [MODULE] zephyr.infrastructure.sandbox_server
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] manual

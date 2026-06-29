@@ -107,7 +107,7 @@ graph TD
     D_GOV_DOCS -.->|import_depends| src_zephyr_shared_init_py
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_blueprint_code_auditor_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_init_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_init_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_init_py
@@ -183,11 +183,11 @@ graph TD
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_combinatorial_gate_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_shared_contracts_core_enforcer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_core_factories_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_config_loader_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -.->|import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    D_INFRA_TELEMETRY["D-INFRA_TELEMETRY production"]
+    D_INFRA_TELEMETRY["D_INFRA_TELEMETRY production"]
     D_INFRA_TELEMETRY -.->|import_depends| src_zephyr_shared_contracts_core_timestamp_py
     D_INTEGRATION["D-INTEGRATION prototype"]
     D_INTEGRATION -.->|import_depends| src_zephyr_shared_config_init_py
@@ -274,9 +274,9 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_INFRA_RECOVERY["D-INFRA_RECOVERY production"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
     D_INTEGRATION["D-INTEGRATION prototype"]
@@ -353,7 +353,7 @@ graph TD
     D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_shared_core_integrity_guard_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
-    D_INFRA_OPS["D-INFRA_OPS prototype"]
+    D_INFRA_OPS["D_INFRA_OPS prototype"]
     D_INFRA_OPS -.->|import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_shared_contracts_skill_protocol_py
     D_INTEGRATION["D-INTEGRATION prototype"]
@@ -416,7 +416,7 @@ graph TD
     src_zephyr_shared_event_bus_py -->|import_depends| src_zephyr_shared_events_event_bus_py
     D_OPS["D-OPS prototype"]
     src_zephyr_shared_health_py -.->|import_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_shared_healthcheck_service_py -->|import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_shared_foundation_constants_py -.->|import_depends| D_GOVERNANCE
@@ -426,7 +426,7 @@ graph TD
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_dual_channel_alert_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_error_budget_tracker_py
     D_INFRA_RUNTIME -->|import_depends| src_zephyr_shared_heartbeat_server_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -->|import_depends| src_zephyr_shared_event_bus_py_1
     D_INFRA_A2A -.->|import_depends| src_zephyr_shared_events_dlq_bridge_py
     D_OPS -.->|import_depends| src_zephyr_shared_dual_channel_alert_py
@@ -493,7 +493,7 @@ graph TD
     src_zephyr_shared_knowledge_kms_interface_py -.->|config_depends| src_zephyr_shared_knowledge_ke_linker_py
     D_INTEGRATION["D-INTEGRATION prototype"]
     src_zephyr_shared_infra_06_lock_py -.->|import_depends| D_INTEGRATION
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_infra_process_pool_py -.->|import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_infra_06_idempotency_py -.->|import_depends| D_INTEGRATION
@@ -582,9 +582,9 @@ graph TD
     D_GOVERNANCE["D-GOVERNANCE prototype"]
     src_zephyr_shared_protocols_a2a_init_py -.->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -->|import_depends| src_zephyr_shared_module_birth_registry_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_protocol_py
     D_INFRA_A2A -.->|import_depends| src_zephyr_shared_protocols_a2a_a2a_coordination_py
     D_INFRA_A2A -.->|import_depends| src_zephyr_shared_protocols_a2a_init_py
@@ -725,10 +725,10 @@ graph TD
     src_zephyr_shared_session_audit_py -.->|import_depends| D_GOV_AUDIT
     D_OPS["D-OPS prototype"]
     src_zephyr_shared_shared_services_observability_02_token_utils_py_2 -.->|import_depends| D_OPS
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_shared_shared_services_lifecycle_daemon_registry_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_shared_services_lifecycle_task_lifecycle_manager_py -->|import_depends| D_INFRA_RUNTIME
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     src_zephyr_shared_shared_services_queue_task_queue_py -.->|import_depends| D_INFRA_A2A
     D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_shared_shared_services_infra_06_observer_py
@@ -828,11 +828,11 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-INTEGRATION | 7 | import_depends |
-| D-INFRA_RUNTIME | 6 | import_depends |
+| D_INFRA_RUNTIME | 6 | import_depends |
 | D-OPS | 6 | import_depends |
 | D-GOVERNANCE | 3 | import_depends |
 | D-ML_TRAIN | 2 | import_depends |
-| D-INFRA_A2A | 1 | import_depends |
+| D_INFRA_A2A | 1 | import_depends |
 | D-GOV_AUDIT | 1 | import_depends |
 | D-SIMULATION | 1 | import_depends |
 
@@ -844,19 +844,19 @@ graph TD
 | D-INTEGRATION | 69 | import_depends |
 | D-TRADING | 41 | contract,import_depends |
 | D-GOV_AUDIT | 35 | import_depends |
-| D-INFRA_RUNTIME | 34 | import_depends |
+| D_INFRA_RUNTIME | 34 | import_depends |
 | D-GOV_DOCS | 19 | import_depends |
-| D-INFRA_A2A | 18 | import_depends |
+| D_INFRA_A2A | 18 | import_depends |
 | D-OPS | 14 | import_depends,test_depends |
 | D-GOV_ENFORCEMENT | 8 | import_depends |
 | D-AUTONOMY_CORE | 6 | import_depends |
 | D-SECURITY | 5 | import_depends |
-| D-INFRA_RECOVERY | 5 | import_depends |
+| D_INFRA_RECOVERY | 5 | import_depends |
 | D-GOV_SCRIPTS | 3 | import_depends |
-| D-INFRA_TELEMETRY | 3 | import_depends |
+| D_INFRA_TELEMETRY | 3 | import_depends |
 | D-PF_ALLOC | 2 | contract,import_depends |
 | D-ML_TRAIN | 2 | import_depends |
-| D-INFRA_OPS | 1 | import_depends |
+| D_INFRA_OPS | 1 | import_depends |
 | D-CROSS_ASSET | 1 | import_depends |
 | D-FACTOR | 1 | import_depends |
 | D-FRONTEND | 1 | import_depends |

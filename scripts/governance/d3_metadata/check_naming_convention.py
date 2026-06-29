@@ -1363,9 +1363,10 @@ def _check_n17_blueprint_domain_consistency(filepath: str, abspath: Path | None 
         bp_domain_fragment = bp_domain_fragment[4:]
     bp_domain_fragment = re.sub(r"-\d+$", "", bp_domain_fragment)
 
-    # 提取 domain_id 的域片段：去掉 D- 前缀
+    # 提取 domain_id 的域片段：去掉 D- 或 D_ 前缀
+    # （D_ 为域ID连字符→下划线迁移后的新格式，两种格式都需支持）
     dom_domain_fragment = domain_id
-    if dom_domain_fragment.startswith("D-"):
+    if dom_domain_fragment.startswith(("D-", "D_")):
         dom_domain_fragment = dom_domain_fragment[2:]
 
     # token 化（按 _ 和 - 分割），过滤短 token（长度<3，避免 L06/EX 等层代码误匹配）

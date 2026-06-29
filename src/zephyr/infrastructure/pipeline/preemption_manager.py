@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.preemption_manager
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.__init__; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported

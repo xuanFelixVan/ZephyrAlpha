@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain-infra_ops/asset-inventory/blueprint.md
 # [MODULE] zephyr.infrastructure.asset_inventory.lifecycle
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.audit_trail.writer
 # [CONSUMERS]
 # [STARTUP] manual

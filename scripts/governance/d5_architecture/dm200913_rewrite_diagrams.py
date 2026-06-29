@@ -521,7 +521,7 @@ def write_capability_heatmap_visual(stats):
         ("ML平台", ["D-ML_TRAIN", "D-ML_SERVE"]),
         ("治理(横切)", ["D-GOVERNANCE", "D-GOV_RULE", "D-GOV_AUDIT", "D-GOV_DRIFT"]),
         ("安全(横切)", ["D-SECURITY", "D-BEHAVIORAL_AUDIT", "D-DATA_SEC", "D-AUTONOMY_PERM"]),
-        ("基础设施(横切)", ["D-INFRA_OPS", "D-INFRA_RUNTIME", "D-INTEGRATION", "D-SHARED", "D-FRONTEND", "D-REPORTING", "D-KNOWLEDGE", "D-INTELLIGENCE", "D-AUTONOMY_CORE", "D-OPS"]),
+        ("基础设施(横切)", ["D_INFRA_OPS", "D_INFRA_RUNTIME", "D-INTEGRATION", "D-SHARED", "D-FRONTEND", "D-REPORTING", "D-KNOWLEDGE", "D-INTELLIGENCE", "D-AUTONOMY_CORE", "D-OPS"]),
     ]
 
     def maturity_label(did):

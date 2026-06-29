@@ -879,7 +879,7 @@ contracts:
     name: "SystemConfiguration / 系统配置"
     priority: P1
     frozen: true
-    source_domain: D-INFRA_OPS
+    source_domain: D_INFRA_OPS
     target_domains: [D-FACTOR, D-SIGLEGACY, D-RISK, D-PF_CORE, D-EX_CORE, D-TRADING, D-FRONTEND, D-SIMULATION, D-COMPLIANCE, D-ML_TRAIN, D-OPS]
     flow: "L01 Configuration Management → 全系统"
     physical_path: src/zephyr/shared/contracts/system_configuration.py
@@ -1022,7 +1022,7 @@ contracts:
     priority: P1
     frozen: true
     source_domain: D-OPS
-    target_domains: [D-INFRA_OPS, D-RISK, D-EX_CORE, D-TRADING, D-COMPLIANCE, D-OPS]
+    target_domains: [D_INFRA_OPS, D-RISK, D-EX_CORE, D-TRADING, D-COMPLIANCE, D-OPS]
     flow: "L12 Metrics → 全系统"
     physical_path: src/zephyr/shared/contracts/telemetry_emitter.py
     stability: upgradable
@@ -1133,7 +1133,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D-OPS
-    target_domains: [D-INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-001: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/contract_metrics.py (MOD-INF-015)
     stability: evolving
@@ -1155,7 +1155,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D-OPS
-    target_domains: [D-INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-002: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/logs/ (MOD-INF-015)
     stability: evolving
@@ -1178,7 +1178,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D-OPS
-    target_domains: [D-INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-003: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/traces/ (MOD-INF-015)
     stability: evolving
@@ -1201,7 +1201,7 @@ contracts:
     priority: P1
     frozen: false
     source_domain: D-OPS
-    target_domains: [D-INFRA_OPS, D-EX_CORE]
+    target_domains: [D_INFRA_OPS, D-EX_CORE]
     flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
     physical_path: null  # CT-TEL-004: 停止 codegen，手工实现真源为 src/zephyr/infrastructure/system_telemetry/health_probes.py (MOD-INF-015)
     stability: evolving

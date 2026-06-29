@@ -22,11 +22,11 @@ graph LR
 
     %% 功能域节点（按架构层分组）
     subgraph L0_infrastructure[L0_infrastructure]
-        D_INFRA_A2A["D-INFRA_A2A<br/>a2a_communication<br/>(0模块)"]
-        D_INFRA_OPS["D-INFRA_OPS<br/>基础设施运维<br/>(418模块)"]
-        D_INFRA_RECOVERY["D-INFRA_RECOVERY<br/>rollback_recovery<br/>(0模块)"]
-        D_INFRA_RUNTIME["D-INFRA_RUNTIME<br/>运行时集成<br/>(726模块)"]
-        D_INFRA_TELEMETRY["D-INFRA_TELEMETRY<br/>observability_profiling<br/>(0模块)"]
+        D_INFRA_A2A["D_INFRA_A2A<br/>a2a_communication<br/>(0模块)"]
+        D_INFRA_OPS["D_INFRA_OPS<br/>基础设施运维<br/>(418模块)"]
+        D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>rollback_recovery<br/>(0模块)"]
+        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(726模块)"]
+        D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>observability_profiling<br/>(0模块)"]
     end
     subgraph L1_foundation[L1_foundation]
         D_ALT_DATA["D-ALT_DATA<br/>另类数据<br/>(68模块)"]
@@ -201,6 +201,6 @@ graph LR
     %% 7. D-GOVERNANCE -> D-GOV-ENFORCEMENT: 168 条
     %% 8. D-GOVERNANCE -> D-GOV_AUDIT: 140 条
     %% 9. D-AUTONOMY_PERM -> D-SECURITY: 138 条
-    %% 10. D-GOVERNANCE -> D-INFRA_RUNTIME: 125 条
+    %% 10. D-GOVERNANCE -> D_INFRA_RUNTIME: 125 条
 
 ```

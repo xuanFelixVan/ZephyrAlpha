@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.contracts
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.audit_trail.anomaly
 # [CONSUMERS] rollback包内所有模块
 # [STARTUP] imported

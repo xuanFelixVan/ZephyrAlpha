@@ -48,7 +48,7 @@ domain_count:
     - D-BEHAVIORAL_AUDIT (60模块, D-SECURITY拆分追认)
     - D-GOV_DRIFT (22模块, D48拆分保留)
   renamed_domains:
-    - D-INFRASTRUCTURE + D-INFRA-RUNTIME 合并为 D-INFRA_RUNTIME
+    - D-INFRASTRUCTURE + D-INFRA-RUNTIME 合并为 D_INFRA_RUNTIME
   deleted_domains:
     - 11个连字符空壳域 (0模块)
   d77_status: revoked

@@ -1913,7 +1913,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 #### 裁定#199：4 个超限域拆分作为后续任务
 
 - **4 个超限域**（production_nodes > 150）：
-  - D-INFRA_RUNTIME：412（超限 262，2.7x）
+  - D_INFRA_RUNTIME：412（超限 262，2.7x）
   - D-GOV_AUDIT：230（超限 80，1.5x）
   - D-GOVERNANCE：185（超限 35，1.2x）
   - D-GOV_RULE：177（超限 27，1.2x）
@@ -1940,10 +1940,10 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 
 | 原域 | 原 prod 数 | → | 拆分后域 | prod 数 | 说明 |
 |------|--------:|---|---------|------:|------|
-| D-INFRA_RUNTIME (411) | | → | D-INFRA_RUNTIME (保留) | 139 | 运行时核心 |
-| | | → | **D-INFRA_A2A** (新建) | 114 | A2A 通信与管线 |
-| | | → | **D-INFRA_RECOVERY** (新建) | 107 | 回滚与自愈 |
-| | | → | **D-INFRA_TELEMETRY** (新建) | 51 | 可观测与画像 |
+| D_INFRA_RUNTIME (411) | | → | D_INFRA_RUNTIME (保留) | 139 | 运行时核心 |
+| | | → | **D_INFRA_A2A** (新建) | 114 | A2A 通信与管线 |
+| | | → | **D_INFRA_RECOVERY** (新建) | 107 | 回滚与自愈 |
+| | | → | **D_INFRA_TELEMETRY** (新建) | 51 | 可观测与画像 |
 | D-GOV_AUDIT (228) | | → | D-GOV_AUDIT (保留) | 54 | 审计核心 |
 | | | → | D-BEHAVIORAL_AUDIT (扩充) | 79 | 红蓝对抗测试 |
 | | | → | **D-GOV_AUDIT_TESTS** (新建) | 142 | 审计测试套件 |
@@ -1954,7 +1954,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | | | → | D-GOV-DOCS (共享) | (计入上方) | 规则文档 |
 | | | → | D-GOV-ENFORCEMENT (扩充) | 69 | 规则执行代码 |
 
-**新建域**: 5 个（D-INFRA_A2A, D-INFRA_RECOVERY, D-INFRA_TELEMETRY, D-GOV_AUDIT_TESTS, D-GOV-DOCS）
+**新建域**: 5 个（D_INFRA_A2A, D_INFRA_RECOVERY, D_INFRA_TELEMETRY, D-GOV_AUDIT_TESTS, D-GOV-DOCS）
 **扩充域**: 3 个（D-BEHAVIORAL_AUDIT, D-GOV-SCRIPTS, D-GOV-ENFORCEMENT）
 
 **工具扩展**（apply_depgraph.py）:
@@ -1972,7 +1972,7 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 阶段0.5 | 扩展 apply_depgraph.py（3 个新功能） | d8be4eade3 |
 | 阶段1 | 修正 674 个错位节点 | 681cab37b3 |
 | 阶段2 | 拆分 D-GOV_AUDIT（171 测试节点） | 7b3a9b1655, edce73646f |
-| 阶段3 | 拆分 D-INFRA_RUNTIME（411 节点→4 域） | cd85c37b10 |
+| 阶段3 | 拆分 D_INFRA_RUNTIME（411 节点→4 域） | cd85c37b10 |
 | 阶段4 | 刷新 15 域缓存 + 文档同步 | 02b3903ea6 |
 
 #### 裁定#201：D-SIGLEGACY 拆分补裁定（追溯正式记录）
@@ -2004,9 +2004,9 @@ design edge和active edge可以同时存在。design edge是规划记录，activ
 | 域 | 问题 | 修复 |
 |----|------|------|
 | D-GOV_RULE | panorama 有 4 条裁定（#174/#194/#199/#200），但 registry 无条目 | 补写 registry 条目 |
-| D-INFRA_OPS | registry 有 3 条（asset-inventory/capacity-assurance/resource_optimization），但 panorama 无直接裁定 | 补写 panorama 裁定记录 |
+| D_INFRA_OPS | registry 有 3 条（asset-inventory/capacity-assurance/resource_optimization），但 panorama 无直接裁定 | 补写 panorama 裁定记录 |
 
-**D-INFRA_OPS 补记**: D-INFRA_OPS 在 domain_split_plan 附录 C.1 作为跨域共享 blueprint_id 引用域出现，但未作为拆分主体被裁定。该域有 7 个 production 节点，ssot_path=`src/zephyr/infra_ops/`，lifecycle=design_only，build_status=planned（已修正）。本裁定追溯确认其合法地位。
+**D_INFRA_OPS 补记**: D_INFRA_OPS 在 domain_split_plan 附录 C.1 作为跨域共享 blueprint_id 引用域出现，但未作为拆分主体被裁定。该域有 7 个 production 节点，ssot_path=`src/zephyr/infra_ops/`，lifecycle=design_only，build_status=planned（已修正）。本裁定追溯确认其合法地位。
 
 #### 裁定#203：合并 6a3c179e 会话发现的 3 项预存 DB 问题裁定
 

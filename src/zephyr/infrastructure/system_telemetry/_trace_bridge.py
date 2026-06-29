@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry._trace_bridge
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.system_telemetry.__init__
 # [CONSUMERS]
 # [STARTUP] imported

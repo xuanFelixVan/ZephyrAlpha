@@ -316,7 +316,7 @@ def normalize_domain_id(domain_id: str) -> str:
     """归一化域ID: 保留 D- 前缀,将其余连字符替换为下划线。
 
     D-AUTONOMY-CORE → D-AUTONOMY_CORE
-    D-INFRA-OPS    → D-INFRA_OPS
+    D-INFRA-OPS    → D_INFRA_OPS
     D-AUTONOMY_CORE → D-AUTONOMY_CORE (无变化)
     """
     if not domain_id.startswith("D-"):

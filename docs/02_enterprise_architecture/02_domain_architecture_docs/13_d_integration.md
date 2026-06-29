@@ -235,7 +235,7 @@ graph TD
     src_zephyr_integration_mcp_gate_engine_server_py -.->|import_depends| D_SHARED
     D_AUTONOMY_CORE["D-AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_local_model_embedding_router_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_mcp_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_embedding_router_py
@@ -653,11 +653,11 @@ graph TD
     D_GOV_DOCS["D-GOV_DOCS prototype"]
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_INFRA_A2A["D-INFRA_A2A production"]
+    D_INFRA_A2A["D_INFRA_A2A production"]
     D_INFRA_A2A -.->|import_depends| src_zephyr_integration_shared_08_foundation_constants_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_foundation_errors_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_foundation_errors_py
@@ -736,7 +736,7 @@ graph TD
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_integration_shared_08_security_capability_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_integration_shared_08_schemas_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_session_audit_py
     D_INTELLIGENCE["D-INTELLIGENCE production"]
     D_INTELLIGENCE -->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
@@ -837,11 +837,11 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_vector_memory_embedding_router_py
-    D_INFRA_RECOVERY["D-INFRA_RECOVERY production"]
+    D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     D_INTELLIGENCE["D-INTELLIGENCE production"]
@@ -910,7 +910,7 @@ graph TD
 | D-GOVERNANCE | 230 | import_depends,test_depends |
 | D-TRADING | 49 | event,import_depends |
 | D-AUTONOMY_CORE | 24 | import_depends |
-| D-INFRA_RUNTIME | 20 | import_depends |
+| D_INFRA_RUNTIME | 20 | import_depends |
 | D-GOV_SCRIPTS | 13 | import_depends |
 | D-GOV_ENFORCEMENT | 13 | import_depends |
 | D-GOV_DOCS | 11 | import_depends |
@@ -920,11 +920,11 @@ graph TD
 | D-GOV_AUDIT | 5 | import_depends |
 | D-BEHAVIORAL_AUDIT | 3 | import_depends |
 | D-SECURITY | 2 | import_depends |
-| D-INFRA_RECOVERY | 2 | import_depends |
+| D_INFRA_RECOVERY | 2 | import_depends |
 | D-SIMULATION | 2 | import_depends |
 | D-AUTONOMY_PERM | 2 | test_depends |
 | D-KNOWLEDGE | 1 | test_depends |
-| D-INFRA_A2A | 1 | import_depends |
+| D_INFRA_A2A | 1 | import_depends |
 | D-GOV_RULE | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview

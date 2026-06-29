@@ -322,7 +322,7 @@ domains_13 = [
     "D-COMPLIANCE",
     "D-FACTOR",
     "D-SIGLEGACY",
-    "D-INFRA_RUNTIME",
+    "D_INFRA_RUNTIME",
 ]
 
 

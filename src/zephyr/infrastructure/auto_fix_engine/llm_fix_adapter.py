@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.auto_fix_engine.llm_fix_adapter
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.contracts.llm_gateway_protocol
 # [CONSUMERS] engine.py;MOD-INF-028(semantic-auditor)
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.auto_fix_engine.engine
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] MOD-INF-027(audit-orchestrator);MOD-INF-023(drift-detector);MOD-INF-029(orphan-judge);__main__.py
 # [STARTUP] imported

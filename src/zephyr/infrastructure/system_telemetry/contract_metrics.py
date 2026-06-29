@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.contract_metrics
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.behavioral_audit.contract_drift_detector
 # [CONSUMERS] zephyr.security.access_control
 # [STARTUP] imported

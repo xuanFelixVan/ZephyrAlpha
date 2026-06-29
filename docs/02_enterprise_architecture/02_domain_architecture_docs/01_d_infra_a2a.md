@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_A2A A2A通信架构文档
+title: D_INFRA_A2A A2A通信架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 01_d_infra_a2a / A2A通信
 
-> **文档作用 / Purpose**: 展示 A2A通信（D-INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 A2A通信（D_INFRA_A2A）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 15:00:44
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 01 | Number | 01 |
-| 域ID | D-INFRA_A2A | Domain ID | D-INFRA_A2A |
+| 域ID | D_INFRA_A2A | Domain ID | D_INFRA_A2A |
 | 域名称 | A2A通信 | Domain Name | A2A通信 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 101 | Module Count | 101 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
+    subgraph D_INFRA_A2A["D_INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_a2a_protocol_init_py["src/zephyr/infrastructure/a2a_protocol/__init__.py production"]
         src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["src/zephyr/infrastructure/a2a_protocol/a2a_card... production"]
         src_zephyr_infrastructure_a2a_protocol_layer1_discovery_init_py["src/zephyr/infrastructure/a2a_protocol/layer1_d... production"]
@@ -117,7 +117,7 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_init_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_init_py -->|import_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -132,7 +132,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
+    subgraph D_INFRA_A2A["D_INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_cross_agent_semantic_flow_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_dashboard_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_debate_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
@@ -164,7 +164,7 @@ graph TD
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
     end
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D-INTEGRATION prototype"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py -.->|import_depends| D_INTEGRATION
@@ -187,7 +187,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
+    subgraph D_INFRA_A2A["D_INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... production"]
@@ -226,7 +226,7 @@ graph TD
     D_SHARED["D-SHARED prototype"]
     src_zephyr_infrastructure_a2a_protocol_legacy_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py -.->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_events_init_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_events_event_store_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_backpressure_types_py -.->|import_depends| D_SHARED
@@ -254,7 +254,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_A2A["D-INFRA_A2A A2A通信"]
+    subgraph D_INFRA_A2A["D_INFRA_A2A A2A通信"]
         src_zephyr_infrastructure_pipeline_llm_gateway_py["src/zephyr/infrastructure/pipeline/llm_gateway.py production"]
         src_zephyr_infrastructure_pipeline_model_router_py["src/zephyr/infrastructure/pipeline/model_router.py production"]
         src_zephyr_infrastructure_pipeline_models_py["src/zephyr/infrastructure/pipeline/models.py production"]
@@ -271,7 +271,7 @@ graph TD
     D_SHARED["D-SHARED prototype"]
     src_zephyr_infrastructure_pipeline_models_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_pipeline_model_router_py -->|import_depends| D_SHARED
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_pipeline_preemption_manager_py -->|import_depends| D_SHARED
@@ -295,7 +295,7 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D-SHARED | 18 | import_depends |
-| D-INFRA_RUNTIME | 13 | import_depends |
+| D_INFRA_RUNTIME | 13 | import_depends |
 | D-GOVERNANCE | 2 | import_depends |
 | D-GOV_AUDIT | 1 | import_depends |
 | D-INTEGRATION | 1 | import_depends |
@@ -309,7 +309,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 A2A通信（D-INFRA_A2A）的模块分布。共 101 个模块 / 101 modules。
+> 按 architecture_layer 分层显示 A2A通信（D_INFRA_A2A）的模块分布。共 101 个模块 / 101 modules。
 
 ```
 

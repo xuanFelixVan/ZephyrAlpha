@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_sys-master/blueprint.md
 # [MODULE] zephyr.infrastructure.health_monitor.health_aggregator
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.health_monitor.__init__
 # [CONSUMERS] AutoRuntime Core health check phase
 # [STARTUP] imported

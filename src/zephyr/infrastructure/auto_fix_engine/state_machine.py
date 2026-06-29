@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.auto_fix_engine.state_machine
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.state_machine
 # [CONSUMERS] engine.py;fix_reliability.py;fix_health_check.py
 # [STARTUP] imported

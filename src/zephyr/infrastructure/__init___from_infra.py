@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INFRA_RUNTIME
 # [MODULE] zephyr.infrastructure.__init___from_infra
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS]
 # [STARTUP] imported

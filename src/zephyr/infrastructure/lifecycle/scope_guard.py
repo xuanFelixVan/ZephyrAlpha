@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-113 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.scope_guard
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

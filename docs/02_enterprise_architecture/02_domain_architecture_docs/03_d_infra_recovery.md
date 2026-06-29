@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INFRA_RECOVERY 回滚恢复架构文档
+title: D_INFRA_RECOVERY 回滚恢复架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 03_d_infra_recovery / 回滚恢复
 
-> **文档作用 / Purpose**: 展示 回滚恢复（D-INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
 > 最后更新: 2026-06-29 15:00:44
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 03 | Number | 03 |
-| 域ID | D-INFRA_RECOVERY | Domain ID | D-INFRA_RECOVERY |
+| 域ID | D_INFRA_RECOVERY | Domain ID | D_INFRA_RECOVERY |
 | 域名称 | 回滚恢复 | Domain Name | 回滚恢复 |
 | 层级 | L0_infrastructure | Layer | L0_infrastructure |
 | 模块数 | 107 | Module Count | 107 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
+    subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_auto_fix_engine_init_py["src/zephyr/infrastructure/auto_fix_engine/__ini... production"]
         src_zephyr_infrastructure_auto_fix_engine_main_py["src/zephyr/infrastructure/auto_fix_engine/__mai... production"]
         src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["src/zephyr/infrastructure/auto_fix_engine/align... production"]
@@ -94,7 +94,7 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_init_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py
     src_zephyr_infrastructure_auto_fix_engine_init_py -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py -->|import_depends| D_INFRA_RUNTIME
@@ -123,7 +123,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
+    subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_reliability_init_py["src/zephyr/infrastructure/reliability/__init__.py production"]
         src_zephyr_infrastructure_reliability_circuit_breaker_py["src/zephyr/infrastructure/reliability/circuit_b... production"]
         src_zephyr_infrastructure_reliability_context_guard_py["src/zephyr/infrastructure/reliability/context_g... production"]
@@ -181,7 +181,7 @@ graph TD
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_env_watcher_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_fsm_verifier_py
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_reliability_init_py -->|import_depends| D_INFRA_RUNTIME
     D_GOV_AUDIT["D-GOV_AUDIT production"]
     src_zephyr_infrastructure_rollback_auditor_py -->|import_depends| D_GOV_AUDIT
@@ -199,7 +199,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
+    subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_rollback_hallucination_guard_py["src/zephyr/infrastructure/rollback/hallucinatio... production"]
         src_zephyr_infrastructure_rollback_intent_archiver_py["src/zephyr/infrastructure/rollback/intent_archi... production"]
         src_zephyr_infrastructure_rollback_kill_switch_py["src/zephyr/infrastructure/rollback/kill_switch.py production"]
@@ -242,7 +242,7 @@ graph TD
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOV_AUDIT
     D_GOVERNANCE["D-GOVERNANCE production"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE
-    D_INFRA_RUNTIME["D-INFRA_RUNTIME production"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_rollback_rollback_abuse_detector_py -->|import_depends| D_GOV_AUDIT
@@ -264,7 +264,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRA_RECOVERY["D-INFRA_RECOVERY 回滚恢复"]
+    subgraph D_INFRA_RECOVERY["D_INFRA_RECOVERY 回滚恢复"]
         src_zephyr_infrastructure_rollback_rollback_wal_py["src/zephyr/infrastructure/rollback/rollback_wal.py production"]
         src_zephyr_infrastructure_rollback_runbook_generator_py["src/zephyr/infrastructure/rollback/runbook_gene... production"]
         src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py["src/zephyr/infrastructure/rollback/s3_snapshot_... production"]
@@ -302,7 +302,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-INFRA_RUNTIME | 33 | import_depends |
+| D_INFRA_RUNTIME | 33 | import_depends |
 | D-GOV_AUDIT | 7 | import_depends |
 | D-SHARED | 5 | import_depends |
 | D-GOVERNANCE | 4 | import_depends |
@@ -314,7 +314,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 回滚恢复（D-INFRA_RECOVERY）的模块分布。共 107 个模块 / 107 modules。
+> 按 architecture_layer 分层显示 回滚恢复（D_INFRA_RECOVERY）的模块分布。共 107 个模块 / 107 modules。
 
 ```
 

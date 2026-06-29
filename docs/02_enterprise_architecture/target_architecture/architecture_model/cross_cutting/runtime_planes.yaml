@@ -103,19 +103,19 @@ planes:
         submodule: cache/
         note: 数据缓存
       - id: l01-config
-        domain: D-INFRA_OPS
+        domain: D_INFRA_OPS
         submodule: config/
         note: 配置管理（跨平面共享，自身属 Warm）
       - id: l01-logging
-        domain: D-INFRA_OPS
+        domain: D_INFRA_OPS
         submodule: logging/
         note: 日志基础设施
       - id: l01-exceptions
-        domain: D-INFRA_OPS
+        domain: D_INFRA_OPS
         submodule: exceptions/
         note: 异常框架
       - id: l01-runtime
-        domain: D-INFRA_OPS
+        domain: D_INFRA_OPS
         submodule: runtime/
         note: 基础运行时
       - id: l02-factors-online

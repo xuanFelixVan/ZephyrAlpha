@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.fitness_functions
-# [DOMAIN] D-INFRA_OPS
+# [DOMAIN] D_INFRA_OPS
 # [DEPENDENCIES] zephyr.ops.__init__
 # [CONSUMERS]
 # [STARTUP] imported

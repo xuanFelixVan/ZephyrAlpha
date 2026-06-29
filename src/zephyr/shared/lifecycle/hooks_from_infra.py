@@ -1,6 +1,6 @@
 # [BLUEPRINT] SRC-109 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.lifecycle.hooks
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.lifecycle.__init__
 # [CONSUMERS] zephyr.trading; zephyr.integration; zephyr.autonomy_core
 # [STARTUP] imported

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.shared.config.loader
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.integration.shared_08.foundation.errors
 # [CONSUMERS]
 # [STARTUP] imported

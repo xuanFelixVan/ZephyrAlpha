@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-MASTER_BLUEPRINT | docs/03_modules/_master_blueprint/blueprint_baseline.md | CT-TELE-FLE-001
 # [MODULE] zephyr.infrastructure.system_telemetry.metrics_bridge
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.__init__
 # [CONSUMERS] zephyr.observability.feedback_loop.metrics_collector; zephyr.trading.health_monitor
 # [STARTUP] imported

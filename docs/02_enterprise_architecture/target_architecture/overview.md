@@ -78,7 +78,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 | layer_id | 域数量 | 说明 |
 |----------|:---:|------|
-| `L0_infrastructure` | 5 | D-INFRA_A2A, D-INFRA_OPS, D-INFRA_RECOVERY, D-INFRA_RUNTIME, D-INFRA_TELEMETRY |
+| `L0_infrastructure` | 5 | D_INFRA_A2A, D_INFRA_OPS, D_INFRA_RECOVERY, D_INFRA_RUNTIME, D_INFRA_TELEMETRY |
 | `L1_foundation` | 15 | D-ALT_DATA, D-AUTONOMY_CORE, D-BEHAVIORAL_AUDIT, D-DATA_ENG, D-DATA_GOV... |
 | `L2_domain` | 32 | D-ASHARE_SIGNAL, D-AUDITTEST, D-AUTONOMY_PERM, D-BACKTEST, D-COMPLIANCE... |
 | `unassigned` | 1 | D-GOV-REPAIR |

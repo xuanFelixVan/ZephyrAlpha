@@ -116,7 +116,7 @@ invariants:
   - id: INV-008
     category: boundary_integrity
     statement: "跨层依赖方向：低层不�?import 高层（L00 不得 import L04+），依赖只能向上"
-    owner: D-INFRA_OPS
+    owner: D_INFRA_OPS
     sub_owner: shared-contracts
     enforcement: arch_guard
     fitness_function_path: scripts/arch_guard/import_linter/layer_boundary_check.py

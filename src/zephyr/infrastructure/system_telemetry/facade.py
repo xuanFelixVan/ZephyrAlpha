@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.facade
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
 # [CONSUMERS] auto_bootstrap.py; zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported

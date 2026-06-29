@@ -60,7 +60,7 @@ depends_on:
 | [_domain_compliance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_compliance/index.md) | D-COMPLIANCE | 合规 | 活跃 |
 | [_domain_governance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_governance/index.md) | D-GOVERNANCE | 治理 | 活跃 |
 | [_domain_infra_ops/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_ops/index.md) | D-INFRA-OPS | 基础设施运维 | 活跃 |
-| [_domain_infra_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_runtime/l01_infrastructure_index.md) | D-INFRA_RUNTIME | 基础设施运行时 | 活跃 |
+| [_domain_infra_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infra_runtime/l01_infrastructure_index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
 | [_domain_integration/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_integration/local_model/blueprint.md) | D-INTEGRATION | 集成 | 活跃 |
 | [_domain_autonomy_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_rbac/blueprint.md) | D-AUTONOMY-CORE | 自治核心 | 活跃 |
 | [_domain_autonomy_perm/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) | D-AUTONOMY-PERM | 自治权限 | 活跃 |

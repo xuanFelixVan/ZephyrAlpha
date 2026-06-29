@@ -679,16 +679,16 @@ docs/  (1 files: .yaml(1))
 │   │   ├── integration_topology.md  — Integration topology  
 │   │   └── runtime_plane_mapping.md  — Runtime plane mapping  
 │   ├── 02_domain_architecture_docs/  — Domain architecture docs: per-domain design  (107 files: .md(107))  
-│   │   ├── 01_d_infra_a2a.md  — D-INFRA_A2A a2a_communication架构文档  
-│   │   ├── 01_d_infra_a2a_architecture.md  — D-INFRA_A2A a2a_communication架构图  
+│   │   ├── 01_d_infra_a2a.md  — D_INFRA_A2A a2a_communication架构文档  
+│   │   ├── 01_d_infra_a2a_architecture.md  — D_INFRA_A2A a2a_communication架构图  
 │   │   ├── 02_d_infra_ops.md  — 基础设施运维  
 │   │   ├── 02_d_infra_ops_architecture.md  — 基础设施运维 architecture  
-│   │   ├── 03_d_infra_recovery.md  — D-INFRA_RECOVERY  
-│   │   ├── 03_d_infra_recovery_architecture.md  — D-INFRA_RECOVERY architecture  
+│   │   ├── 03_d_infra_recovery.md  — D_INFRA_RECOVERY  
+│   │   ├── 03_d_infra_recovery_architecture.md  — D_INFRA_RECOVERY architecture  
 │   │   ├── 04_d_infra_runtime.md  — 运行时集成  
 │   │   ├── 04_d_infra_runtime_architecture.md  — 运行时集成 architecture  
-│   │   ├── 05_d_infra_telemetry.md  — D-INFRA_TELEMETRY  
-│   │   ├── 05_d_infra_telemetry_architecture.md  — D-INFRA_TELEMETRY architecture  
+│   │   ├── 05_d_infra_telemetry.md  — D_INFRA_TELEMETRY  
+│   │   ├── 05_d_infra_telemetry_architecture.md  — D_INFRA_TELEMETRY architecture  
 │   │   ├── 06_d_alt_data.md  — 另类数据  
 │   │   ├── 06_d_alt_data_architecture.md  — 另类数据 architecture  
 │   │   ├── 07_d_autonomy_core.md  — 自治核心  

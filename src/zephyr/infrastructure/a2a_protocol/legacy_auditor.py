@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infra_ops/a2a_protocol/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.a2a_protocol.legacy_auditor
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.audit_trail.contracts
 # [CONSUMERS] zephyr.infrastructure.a2a_protocol
 # [STARTUP] imported

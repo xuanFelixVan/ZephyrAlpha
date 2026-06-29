@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.gate_repo
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.utils.db_utils
 # [CONSUMERS]
 # [STARTUP] imported

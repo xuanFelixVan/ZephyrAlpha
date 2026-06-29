@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
 # [MODULE] zephyr.infrastructure.db.olap_engine
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported

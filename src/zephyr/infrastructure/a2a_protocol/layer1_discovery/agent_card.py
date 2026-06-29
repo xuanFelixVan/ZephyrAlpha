@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
 # [MODULE] zephyr.infrastructure.a2a_protocol.layer1_discovery.agent_card
-# [DOMAIN] D-INFRA_RUNTIME
+# [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_registry
 # [CONSUMERS]
 # [STARTUP] imported
