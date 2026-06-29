@@ -51,7 +51,7 @@ from dataclasses import dataclass, field
 from enum import Enum, unique
 from typing import Any
 
-from zephyr.integration.shared_08.foundation.errors import ZephyrBaseError
+from zephyr.shared.foundation.errors import ZephyrBaseError  # P3治本: 改引同层真源, 消除shared→integration→shared循环依赖(原: zephyr.integration.shared_08.foundation.errors)
 
 __all__ = [
     "IdempotencyError",

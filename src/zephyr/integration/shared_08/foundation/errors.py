@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.foundation.errors
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.foundation.errors
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -15,33 +15,38 @@
 # [A_module] module_id=MOD-INT_errors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
-"""
-errors.py —— ZephyrAlpha 统一错误层次（Traditional Exception Hierarchy）
+"""errors.py —— re-export shim（真源：zephyr.shared.foundation.errors）
 
-补全 ssot_guard.py:L103 标记的「尚未完成的 ZephyrBaseError 体系」。
+P3 治本（2026-06-29）：本文件原为 zephyr.shared.foundation.errors 的漂移副本
+（两份 class ZephyrBaseError 定义字节级一致，仅头部元数据不同），违反真源唯一原则。
+现改为 re-export shim，从 shared 层真源导入全部 13 个 Error 类。
 
-上下文：
-  - contracts/errors/ 目录下是 dataclass 值对象（非 Exception），用于契约层的结构化错误传递
-  - money.py / timestamp.py / ssot_guard.py 各自定义了独立的 Exception 子类
-  - 本文件提供统一的 Exception 继承树，作为所有模块 throw/catch 的唯一根
+理由：
+  1. 真源唯一——shared.foundation.errors 是 ZephyrBaseError 体系唯一真源
+  2. 消除 breaking change——两个路径指向同一类对象，消费者 `except ZephyrBaseError`
+     无论从哪个路径获取都能捕获子类异常
+  3. 消除循环依赖——shared.infra_06 改引 shared.foundation.errors 后不再触发
+     integration→shared→integration 循环链
 
-设计原则：
-  - 每个子类携带明确的模块归属——AI 看到错误类名就知道问题出在哪个子系统
-  - 所有错误接受 message: str + details: dict | None ——details 用于附加结构化上下文
-  - frozen dataclass 风格的 __repr__ 让 AI 眼读日志效率最高
-
-AI 施工约定：
-  - 新增业务模块时，MUST 在此文件中登记对应 Error 子类
-  - 禁止在模块内自定义 Exception 基类——全部统一从此继承
-  - catch 时从具体到抽象：先 catch TaskError，再 catch ZephyrBaseError
-
-SSoT: MOD-INF-016 §2.3 shared-errors
-Version: 0.1.0
+新 AI 引导：新增 Error 子类时，改 zephyr.shared.foundation.errors（真源），
+本 shim 自动 re-export，无需同步维护两份。
 """
 
-from __future__ import annotations
-
-from typing import Any
+from zephyr.shared.foundation.errors import (  # noqa: F401 (re-export)
+    ConfigError,
+    ContextError,
+    ContractError,
+    DataError,
+    FeedbackError,
+    GateError,
+    IOError,
+    PipelineError,
+    SecurityError,
+    TaskError,
+    UnimplementedError,
+    ValidationError,
+    ZephyrBaseError,
+)
 
 __all__ = [
     "ConfigError",
@@ -58,73 +63,3 @@ __all__ = [
     "ValidationError",
     "ZephyrBaseError",
 ]
-
-
-class ZephyrBaseError(Exception):
-    """ZephyrAlpha 所有业务异常的根。
-
-    Attributes:
-        message: 人类可读错误描述。
-        details: 可选附加结构化上下文（模块名、参数名、触发值等）。
-    """
-
-    def __init__(self, message: str, *, details: dict[str, Any] | None = None) -> None:
-        super().__init__(message)
-        self.message: str = message
-        self.details: dict[str, Any] = details or {}
-
-    def __repr__(self) -> str:
-        if self.details:
-            return f"{type(self).__name__}(message={self.message!r}, details={self.details!r})"
-        return f"{type(self).__name__}(message={self.message!r})"
-
-    def __str__(self) -> str:
-        return self.message
-
-
-class ConfigError(ZephyrBaseError):
-    """配置系统错误——YAML 解析失败、Schema 校验失败、路径无效等。"""
-
-
-class ContractError(ZephyrBaseError):
-    """数据契约错误——跨层契约不匹配、版本冲突、类型不兼容。"""
-
-
-class SecurityError(ZephyrBaseError):
-    """安全相关错误——权限拒绝、Token 无效、沙箱逃逸检测。"""
-
-
-class ValidationError(ZephyrBaseError):
-    """输入校验错误——字段缺失、类型错误、值域越界。"""
-
-
-class TaskError(ZephyrBaseError):
-    """任务系统错误——Task 状态机非法跳转、Task 构造非法、dependency 死锁。"""
-
-
-class PipelineError(ZephyrBaseError):
-    """管线错误——管线装配失败、步骤执行异常、路由错误。"""
-
-
-class GateError(ZephyrBaseError):
-    """门禁错误——门禁判决异常、熔断器触发、contract-template 找不到。"""
-
-
-class ContextError(ZephyrBaseError):
-    """上下文引擎错误——上下文装配失败、Token 预算溢出、evict 异常。"""
-
-
-class FeedbackError(ZephyrBaseError):
-    """反馈循环错误——自进化引擎异常、metrics 采集失败、pattern 分析异常。"""
-
-
-class DataError(ZephyrBaseError):
-    """数据层错误——数据库连接失败、查询异常、迁移失败。"""
-
-
-class IOError(ZephyrBaseError):
-    """I/O 错误——文件读写失败、路径不存在、编码异常。"""
-
-
-class UnimplementedError(ZephyrBaseError):
-    """施工占位——标记尚未实现但已规划的功能入口。"""
