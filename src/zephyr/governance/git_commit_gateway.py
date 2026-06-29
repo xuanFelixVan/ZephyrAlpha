@@ -148,6 +148,16 @@ _GENERATOR_EXEMPT_SUBDIRS: tuple[str, ...] = tuple(
     _CONTRACT_CACHE.get("generator_exempt_paths", []) or []
 )
 
+# src/ 下禁止的路径前缀（大小写不敏感比较）
+# 真源（治本 2026-06-29）：directory_contract.yaml global_forbidden[].forbidden_prefix
+# 原硬编码 "src/data/" 已删除——前缀变更只需改契约一处
+# 消费者：_check_src_no_data（弥补 --no-verify 绕过 pre-commit 的副作用）
+_SRC_FORBIDDEN_PREFIXES: tuple[str, ...] = tuple(
+    r.get("forbidden_prefix")
+    for r in (_CONTRACT_CACHE.get("global_forbidden") or [])
+    if isinstance(r, dict) and r.get("forbidden_prefix")
+)
+
 
 class CommitStatus(str, Enum):
     """commit 结果状态。"""
@@ -1550,10 +1560,11 @@ class GitCommitGateway:
     def _check_src_no_data(self, files: list[str]) -> tuple[bool, str]:
         """GATE-SRC-NO-DATA 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用。
 
-        真源：trae_047 §gov_eng_002_directory_mapping 禁止规则
-              "src/下禁止data/子目录(数据真源唯一位置为data/目录)"
+        真源（治本 2026-06-29）：directory_contract.yaml global_forbidden[].forbidden_prefix
+              原硬编码 "src/data/" 已删除，前缀从 _SRC_FORBIDDEN_PREFIXES 动态加载
+              （与 _PERMANENT_ZONE_DIRS / _GENERATOR_EXEMPT_SUBDIRS 同源 _CONTRACT_CACHE）。
 
-        检测：files 中是否有 src/data/ 路径前缀（大小写不敏感）。
+        检测：files 中是否有 _SRC_FORBIDDEN_PREFIXES 任一前缀（大小写不敏感）。
         原因：GitCommitGateway 使用 --no-verify 提交，pre-commit 钩子 gate-src-no-data
               被跳过，故在 gateway 内部做等效校验（对标 GATE-15 等效校验模式）。
 
@@ -1566,8 +1577,11 @@ class GitCommitGateway:
         violations: list[str] = []
         for f in files:
             rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-            if rel.lower().startswith("src/data/"):
-                violations.append(rel)
+            rel_lower = rel.lower()
+            for prefix in _SRC_FORBIDDEN_PREFIXES:
+                if rel_lower.startswith(prefix.lower()):
+                    violations.append(rel)
+                    break
         if violations:
             return (
                 False,
