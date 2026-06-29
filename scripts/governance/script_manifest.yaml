@@ -1703,8 +1703,8 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
-- name: d5_architecture/generators/auto_generate_index.py
-  owner: governance:d5_architecture
+- name: d3_metadata/auto_generate_index.py
+  owner: governance:d3_metadata
   dimensions:
   - D3
   - D4
