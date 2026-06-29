@@ -63,13 +63,18 @@ MD_LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 
 # 纯文本文件路径：匹配 path/to/file.ext 格式（要求含 / 分隔符 + 有扩展名）
 # 注意：不要求以 docs/ 开头，因为相对路径也可能是 ./file.md 或 subdir/file.yaml
+# 中文前缀防误捕（与 reconciliation_registry.py 一致）：
+#   lookbehind 用 [a-zA-Z0-9/] 而非 \w（中文是 \w，会阻挡中文后的路径起点，
+#   导致"删除architecture_model/foo.yaml"中"删除"被吞入匹配）；
+#   首字符限 [a-zA-Z]（路径必以 ASCII 字母起，杜绝中文前缀被捕获）。
 TEXT_PATH_RE = re.compile(
-    r"(?<![\w/])([\w][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))\b"
+    r"(?<![a-zA-Z0-9/])([a-zA-Z][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))\b"
 )
 
 # YAML 值中的文件路径：value: path/to/file.ext
+# 同样用 [a-zA-Z] 首字符防中文前缀误捕
 YAML_PATH_RE = re.compile(
-    r":\s*[\"']?([\w][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))[\"']?\s*$",
+    r":\s*[\"']?([a-zA-Z][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))[\"']?\s*$",
     re.MULTILINE,
 )
 
@@ -79,18 +84,41 @@ SUPPORTED_EXTENSIONS = frozenset({".md", ".csv", ".yaml", ".yml", ".json"})
 # 跳过的 URL 前缀
 URL_PREFIXES = ("http://", "https://", "ftp://", "mailto:", "#", "data:")
 
+# basename 全局搜索缓存（lazy 初始化，策略3 兜底用）
+# 作用：markdown 链接 [text](blueprint.md) 常用裸文件名，策略1/2 解析失败但文件实际
+# 存在于项目其他目录。构建全项目 basename→路径集合，O(1) 查找消除大量误报。
+_BASENAME_CACHE: set[str] | None = None
+
 
 def _is_url(target: str) -> bool:
     """判断是否为 URL 或锚点（应跳过）。"""
     return any(target.startswith(p) for p in URL_PREFIXES)
 
 
+def _get_basename_cache() -> set[str]:
+    """获取（lazy 构建）全项目 basename 集合。
+
+    扫描 REPO_ROOT 下所有文件（排除 .git/__pycache__/.runtime/.venv/node_modules），
+    收集 basename 到 set 中。一次构建多次复用（模块级缓存）。
+    """
+    global _BASENAME_CACHE
+    if _BASENAME_CACHE is not None:
+        return _BASENAME_CACHE
+    _BASENAME_CACHE = set()
+    _skip_dirs = frozenset({".git", "__pycache__", ".runtime", ".venv", "node_modules", ".pytest_cache"})
+    for p in REPO_ROOT.rglob("*"):
+        if p.is_file() and not any(part in _skip_dirs for part in p.parts):
+            _BASENAME_CACHE.add(p.name)
+    return _BASENAME_CACHE
+
+
 def _resolve_and_check(ref: str, source: Path) -> str | None:
     """解析引用路径并检查文件是否存在。
 
-    路径解析策略（双重尝试，治本 GAP-1）：
+    路径解析策略（三重尝试，治本 GAP-1 + 裸文件名兜底）：
       1. 先相对于 source.parent 解析（markdown 链接习惯）
       2. 如果不存在，尝试相对于 REPO_ROOT 解析（CSV/YAML 项目根相对路径）
+      3. 如果仍不存在，检查 basename 是否在全项目中存在（裸文件名兜底）
 
     :param ref: 引用路径（相对或绝对）
     :param source: 引用所在文件
@@ -119,6 +147,11 @@ def _resolve_and_check(ref: str, source: Path) -> str | None:
             return None
     except (OSError, ValueError):
         pass
+
+    # 策略3：basename 全局搜索兜底（裸文件名如 blueprint.md 在项目其他目录存在）
+    basename = ref.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+    if basename in _get_basename_cache():
+        return None
 
     return f"断链: {ref} ← {source.name}"
 
