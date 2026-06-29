@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-PF_CORE 组合核心架构文档
+title: D_PF_CORE 组合核心架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 45_d_pf_core / 组合核心
 
-> **文档作用 / Purpose**: 展示 组合核心（D-PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 45 | Number | 45 |
-| 域ID | D-PF_CORE | Domain ID | D-PF_CORE |
+| 域ID | D_PF_CORE | Domain ID | D_PF_CORE |
 | 域名称 | 组合核心 | Domain Name | 组合核心 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 44 | Module Count | 44 |
@@ -48,22 +48,26 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_PF_CORE["D-PF_CORE 组合核心"]
-        MT_04["MT-04 design"]
+    subgraph D_PF_CORE["D_PF_CORE 组合核心"]
+        A_001["A-001 design"]
         D_ALT_DATA_06["D-ALT-DATA-06 design"]
         D_ALT_DATA_07["D-ALT-DATA-07 design"]
         MS_02["MS-02 design"]
         MT_02["MT-02 design"]
+        MT_05["MT-05 design"]
+        D_ALT_DATA_09["D-ALT-DATA-09 design"]
+        D_ALT_DATA_10["D-ALT-DATA-10 design"]
         MS_04["MS-04 design"]
+        AP_07["AP-07 design"]
+        AP_09["AP-09 design"]
+        RK_10["RK-10 design"]
+        PA_01["PA-01 design"]
         MT_03["MT-03 design"]
         MS_03["MS-03 design"]
         MS_05["MS-05 design"]
-        MT_05["MT-05 design"]
-        A_001["A-001 design"]
+        MT_04["MT-04 design"]
         D_ALT_DATA_03["D-ALT-DATA-03 design"]
         D_ALT_DATA_11["D-ALT-DATA-11 design"]
-        D_ALT_DATA_09["D-ALT-DATA-09 design"]
-        D_ALT_DATA_10["D-ALT-DATA-10 design"]
         D_ALT_DATA_13["D-ALT-DATA-13 design"]
         D_ALT_DATA_15["D-ALT-DATA-15 design"]
         D_ALT_DATA_17["D-ALT-DATA-17 design"]
@@ -71,10 +75,6 @@ graph TD
         D_ALT_DATA_14["D-ALT-DATA-14 design"]
         D_CROSS_ASSET_03["D-CROSS-ASSET-03 design"]
         D_CROSS_ASSET_13["D-CROSS-ASSET-13 design"]
-        AP_07["AP-07 design"]
-        AP_09["AP-09 design"]
-        RK_10["RK-10 design"]
-        PA_01["PA-01 design"]
         src_zephyr_pf_core_init_py["src/zephyr/pf_core/__init__.py prototype"]
         src_zephyr_pf_core_extensions_init_py["src/zephyr/pf_core/_extensions/__init__.py prototype"]
         src_zephyr_pf_core_analytics_base_py["src/zephyr/pf_core/analytics_base.py production"]
@@ -82,14 +82,14 @@ graph TD
     end
     D_REPORTING["D_REPORTING prototype"]
     src_zephyr_pf_core_analytics_base_py -.->|import_depends| D_REPORTING
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_analytics_base_py production
-    class MT_04,D_ALT_DATA_06,D_ALT_DATA_07,MS_02,MT_02,MS_04,MT_03,MS_03,MS_05,MT_05,A_001,D_ALT_DATA_03,D_ALT_DATA_11,D_ALT_DATA_09,D_ALT_DATA_10,D_ALT_DATA_13,D_ALT_DATA_15,D_ALT_DATA_17,D_ALT_DATA_06_1,D_ALT_DATA_14,D_CROSS_ASSET_03,D_CROSS_ASSET_13,AP_07,AP_09,RK_10,PA_01,src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py design
+    class A_001,D_ALT_DATA_06,D_ALT_DATA_07,MS_02,MT_02,MT_05,D_ALT_DATA_09,D_ALT_DATA_10,MS_04,AP_07,AP_09,RK_10,PA_01,MT_03,MS_03,MS_05,MT_04,D_ALT_DATA_03,D_ALT_DATA_11,D_ALT_DATA_13,D_ALT_DATA_15,D_ALT_DATA_17,D_ALT_DATA_06_1,D_ALT_DATA_14,D_CROSS_ASSET_03,D_CROSS_ASSET_13,src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py design
     class D_REPORTING,D_GOVERNANCE external_design
 ```
 
@@ -97,7 +97,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_PF_CORE["D-PF_CORE 组合核心"]
+    subgraph D_PF_CORE["D_PF_CORE 组合核心"]
         src_zephyr_pf_core_compliance_rule_py["src/zephyr/pf_core/compliance_rule.py production"]
         src_zephyr_pf_core_core_init_py["src/zephyr/pf_core/core/__init__.py prototype"]
         src_zephyr_pf_core_default_attribution_engine_py["src/zephyr/pf_core/default_attribution_engine.py production"]
@@ -113,19 +113,19 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["src/zephyr/pf_core/strategy_engine/__init__.py prototype"]
         src_zephyr_pf_core_strategy_registry_py["src/zephyr/pf_core/strategy_registry.py prototype"]
     end
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
+    src_zephyr_pf_core_performance_attribution_engine_init_py -.->|import_depends| D_GOVERNANCE
+    D_TRADING["D_TRADING production"]
+    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
+    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_performance_attribution_report_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_default_tca_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_default_attribution_engine_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_compliance_rule_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_risk_limits_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_performance_attribution_report_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_base_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_registry_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_performance_attribution_engine_init_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D-TRADING production"]
-    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
-    src_zephyr_pf_core_strategies_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_strategy_engine_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategies_init_py -.->|import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_pf_core_default_tca_engine_py
@@ -148,43 +148,43 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 12 | contract,import_depends |
-| D-TRADING | 1 | import_depends |
+| D_GOVERNANCE | 12 | contract,import_depends |
 | D_REPORTING | 1 | import_depends |
+| D_TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 6 | test_depends |
+| D_GOVERNANCE | 6 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合核心（D-PF_CORE）的模块分布。共 44 个模块 / 44 modules。
+> 按 architecture_layer 分层显示 组合核心（D_PF_CORE）的模块分布。共 44 个模块 / 44 modules。
 
 ```
 
 ┌──────────────────────────────────────────────────────────────────┐
 │              L2 领域层 / Domain Layer (44 modules)               │
 ├──────────────────────────────────────────────────────────────────┤
-│   MT-04  [design]                                                │
+│   A-001  [design]                                                │
 │   D-ALT-DATA-06  [design]                                        │
 │   D-ALT-DATA-07  [design]                                        │
 │   MS-02  [design]                                                │
 │   MT-02  [design]                                                │
+│   MT-05  [design]                                                │
+│   D-ALT-DATA-09  [design]                                        │
+│   D-ALT-DATA-10  [design]                                        │
 │   MS-04  [design]                                                │
+│   AP-07  [design]                                                │
+│   AP-09  [design]                                                │
+│   RK-10  [design]                                                │
+│   PA-01  [design]                                                │
 │   MT-03  [design]                                                │
 │   MS-03  [design]                                                │
 │   MS-05  [design]                                                │
-│   MT-05  [design]                                                │
-│   A-001  [design]                                                │
+│   MT-04  [design]                                                │
 │   D-ALT-DATA-03  [design]                                        │
-│   D-ALT-DATA-11  [design]                                        │
-│   D-ALT-DATA-09  [design]                                        │
-│   D-ALT-DATA-10  [design]                                        │
-│   D-ALT-DATA-13  [design]                                        │
-│   D-ALT-DATA-15  [design]                                        │
-│   D-ALT-DATA-17  [design]                                        │
 │   ...还有 26 个模块 / 26 more modules                            │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -198,32 +198,32 @@ graph TD
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name | 成熟度 / Maturity | 构建状态 / Build Status |
 |:--:|---------|---------|:---:|:---:|
-| 1 |  | MT-04 | design | generated |
+| 1 |  | A-001 | design | stable |
 | 2 |  | D-ALT-DATA-06 | design | generated |
 | 3 |  | D-ALT-DATA-07 | design | generated |
 | 4 |  | MS-02 | design | generated |
 | 5 |  | MT-02 | design | generated |
-| 6 |  | MS-04 | design | generated |
-| 7 |  | MT-03 | design | generated |
-| 8 |  | MS-03 | design | generated |
-| 9 |  | MS-05 | design | generated |
-| 10 |  | MT-05 | design | generated |
-| 11 |  | A-001 | design | stable |
-| 12 |  | D-ALT-DATA-03 | design | generated |
-| 13 |  | D-ALT-DATA-11 | design | generated |
-| 14 |  | D-ALT-DATA-09 | design | generated |
-| 15 |  | D-ALT-DATA-10 | design | generated |
-| 16 |  | D-ALT-DATA-13 | design | generated |
-| 17 |  | D-ALT-DATA-15 | design | generated |
-| 18 |  | D-ALT-DATA-17 | design | generated |
-| 19 |  | D-ALT-DATA-06扩展 | design | generated |
-| 20 |  | D-ALT-DATA-14 | design | generated |
-| 21 |  | D-CROSS-ASSET-03 | design | generated |
-| 22 |  | D-CROSS-ASSET-13 | design | generated |
-| 23 |  | AP-07 | design | generated |
-| 24 |  | AP-09 | design | generated |
-| 25 |  | RK-10 | design | generated |
-| 26 |  | PA-01 | design | generated |
+| 6 |  | MT-05 | design | generated |
+| 7 |  | D-ALT-DATA-09 | design | generated |
+| 8 |  | D-ALT-DATA-10 | design | generated |
+| 9 |  | MS-04 | design | generated |
+| 10 |  | AP-07 | design | generated |
+| 11 |  | AP-09 | design | generated |
+| 12 |  | RK-10 | design | generated |
+| 13 |  | PA-01 | design | generated |
+| 14 |  | MT-03 | design | generated |
+| 15 |  | MS-03 | design | generated |
+| 16 |  | MS-05 | design | generated |
+| 17 |  | MT-04 | design | generated |
+| 18 |  | D-ALT-DATA-03 | design | generated |
+| 19 |  | D-ALT-DATA-11 | design | generated |
+| 20 |  | D-ALT-DATA-13 | design | generated |
+| 21 |  | D-ALT-DATA-15 | design | generated |
+| 22 |  | D-ALT-DATA-17 | design | generated |
+| 23 |  | D-ALT-DATA-06扩展 | design | generated |
+| 24 |  | D-ALT-DATA-14 | design | generated |
+| 25 |  | D-CROSS-ASSET-03 | design | generated |
+| 26 |  | D-CROSS-ASSET-13 | design | generated |
 | 27 | src/zephyr/pf_core/__init__.py | src/zephyr/pf_core/__init__.py | prototype | generated |
 | 28 | src/zephyr/pf_core/_extensions/__init__.py | src/zephyr/pf_core/_extensions/__init... | prototype | deprecated |
 | 29 | src/zephyr/pf_core/analytics_base.py | src/zephyr/pf_core/analytics_base.py | production | generated |

@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV-REPAIR 治理修复架构文档
+title: D_GOV_REPAIR 治理修复架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 53_d_gov_repair / 治理修复
 
-> **文档作用 / Purpose**: 展示 治理修复（D-GOV-REPAIR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 治理修复（D_GOV_REPAIR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 53 | Number | 53 |
-| 域ID | D-GOV-REPAIR | Domain ID | D-GOV-REPAIR |
+| 域ID | D_GOV_REPAIR | Domain ID | D_GOV_REPAIR |
 | 域名称 | 治理修复 | Domain Name | 治理修复 |
 | 层级 |  | Layer |  |
 | 模块数 | 0 | Module Count | 0 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_REPAIR["D-GOV-REPAIR 治理修复"]
+    subgraph D_GOV_REPAIR["D_GOV_REPAIR 治理修复"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -66,7 +66,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 治理修复（D-GOV-REPAIR）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 治理修复（D_GOV_REPAIR）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 

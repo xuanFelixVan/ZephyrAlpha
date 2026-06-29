@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_RULE 规则治理架构文档
+title: D_GOV_RULE 规则治理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 38_d_gov_rule / 规则治理
 
-> **文档作用 / Purpose**: 展示 规则治理（D-GOV_RULE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 规则治理（D_GOV_RULE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 38 | Number | 38 |
-| 域ID | D-GOV_RULE | Domain ID | D-GOV_RULE |
+| 域ID | D_GOV_RULE | Domain ID | D_GOV_RULE |
 | 域名称 | 规则治理 | Domain Name | 规则治理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 11 | Module Count | 11 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_RULE["D-GOV_RULE 规则治理"]
+    subgraph D_GOV_RULE["D_GOV_RULE 规则治理"]
         config_alert_rules_yaml["config/alert_rules.yaml production"]
         config_budget_policy_yaml["config/budget_policy.yaml production"]
         config_capacity_ai_context_policy_yaml["config/capacity/ai_context_policy.yaml production"]
@@ -63,7 +63,7 @@ graph TD
     src_zephyr_governance_constitutional_update_constitutional_update_py -->|import_depends| D_INTEGRATION
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_constitutional_update_constitutional_update_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     D_GOVERNANCE -->|import_depends| src_zephyr_governance_rule_engine_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_constitutional_update_constitutional_update_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_governance_rule_engine_py
@@ -92,11 +92,11 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 7 | import_depends,test_depends |
+| D_GOVERNANCE | 7 | import_depends,test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 规则治理（D-GOV_RULE）的模块分布。共 11 个模块 / 11 modules。
+> 按 architecture_layer 分层显示 规则治理（D_GOV_RULE）的模块分布。共 11 个模块 / 11 modules。
 
 ```
 

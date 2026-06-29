@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -88,17 +88,17 @@ graph TD
     src_zephyr_behavioral_audit_drift_infrastructure_py -->|import_depends| src_zephyr_behavioral_audit_drift_models_py
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_behavioral_audit_brain_integration_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_behavioral_audit_drift_engine_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_behavioral_audit_drift_engine_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_behavioral_audit_drift_hotfix_bypass_py -.->|import_depends| D_INTEGRATION
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_behavioral_audit_drift_infrastructure_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_chaos_injector_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT prototype"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_drift_hotfix_bypass_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_drift_engine_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_cascade_detector_py
@@ -157,7 +157,7 @@ graph TD
         src_zephyr_behavioral_audit_trend_analyzer_py["src/zephyr/behavioral_audit/trend_analyzer.py production"]
         tests_adversarial_test_f3_extreme_py["tests/adversarial/test_f3_extreme.py production"]
     end
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_behavioral_audit_gate_persistence_py -->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_behavioral_audit_tamper_proof_audit_py -.->|import_depends| D_INTEGRATION
@@ -225,19 +225,19 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_INTEGRATION | 3 | import_depends |
-| D-GOVERNANCE | 2 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
+| D_GOVERNANCE | 2 | import_depends |
+| D_GOV_AUDIT | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 88 | import_depends,test_depends |
+| D_GOVERNANCE | 88 | import_depends,test_depends |
 | D_SECURITY | 51 | import_depends |
-| D-GOV_DRIFT | 8 | test_depends |
-| D-GOV_ENFORCEMENT | 5 | import_depends |
+| D_GOV_DRIFT | 8 | test_depends |
+| D_GOV_ENFORCEMENT | 5 | import_depends |
 | D_OPS | 3 | import_depends,runtime |
-| D-GOV_AUDIT | 2 | import_depends |
+| D_GOV_AUDIT | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview

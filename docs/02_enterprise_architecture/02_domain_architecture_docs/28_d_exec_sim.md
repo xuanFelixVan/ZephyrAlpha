@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-EXEC_SIM 执行仿真架构文档
+title: D_EXEC_SIM 执行仿真架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 28_d_exec_sim / 执行仿真
 
-> **文档作用 / Purpose**: 展示 执行仿真（D-EXEC_SIM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 执行仿真（D_EXEC_SIM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 28 | Number | 28 |
-| 域ID | D-EXEC_SIM | Domain ID | D-EXEC_SIM |
+| 域ID | D_EXEC_SIM | Domain ID | D_EXEC_SIM |
 | 域名称 | 执行仿真 | Domain Name | 执行仿真 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 7 | Module Count | 7 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_EXEC_SIM["D-EXEC_SIM 执行仿真"]
+    subgraph D_EXEC_SIM["D_EXEC_SIM 执行仿真"]
         src_zephyr_execution_simulation_init_py["src/zephyr/execution_simulation/__init__.py prototype"]
         src_zephyr_execution_simulation_extensions_init_py["src/zephyr/execution_simulation/_extensions/__i... prototype"]
         src_zephyr_execution_simulation_api_init_py["src/zephyr/execution_simulation/api/__init__.py prototype"]
@@ -74,7 +74,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 执行仿真（D-EXEC_SIM）的模块分布。共 7 个模块 / 7 modules。
+> 按 architecture_layer 分层显示 执行仿真（D_EXEC_SIM）的模块分布。共 7 个模块 / 7 modules。
 
 ```
 

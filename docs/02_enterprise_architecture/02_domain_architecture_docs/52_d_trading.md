@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-TRADING 交易运营架构文档
+title: D_TRADING 交易运营架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 52_d_trading / 交易运营
 
-> **文档作用 / Purpose**: 展示 交易运营（D-TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 52 | Number | 52 |
-| 域ID | D-TRADING | Domain ID | D-TRADING |
+| 域ID | D_TRADING | Domain ID | D_TRADING |
 | 域名称 | 交易运营 | Domain Name | 交易运营 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 159 | Module Count | 159 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_init_py["src/zephyr/trading/__init__.py production"]
         src_zephyr_trading_main_py["src/zephyr/trading/__main__.py prototype"]
         src_zephyr_trading_extensions_init_py["src/zephyr/trading/_extensions/__init__.py prototype"]
@@ -100,7 +100,7 @@ graph TD
     src_zephyr_trading_main_py -.->|import_depends| src_zephyr_trading_init_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_trading_auto_dispatcher_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_trading_auto_dispatcher_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_trading_ai_audit_logger_py -.->|import_depends| D_INTEGRATION
@@ -113,13 +113,13 @@ graph TD
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_INTEGRATION
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_GOVERNANCE
     src_zephyr_trading_auto_runtime_core_py -.->|import_depends| D_INTEGRATION
-    D_INTELLIGENCE["D-INTELLIGENCE prototype"]
+    D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     src_zephyr_trading_auto_runtime_core_py -.->|import_depends| D_INTELLIGENCE
     D_OPS["D_OPS production"]
     src_zephyr_trading_auto_runtime_core_py -->|import_depends| D_OPS
     src_zephyr_trading_auto_runtime_core_py -.->|import_depends| D_SHARED
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_init_py
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_trading_init_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_trading_init_py
     D_INTEGRATION -->|import_depends| src_zephyr_trading_init_py
@@ -149,7 +149,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_module_onboarding_scanner_py["src/zephyr/trading/module_onboarding_scanner.py prototype"]
         src_zephyr_trading_night_shift_queue_py["src/zephyr/trading/night_shift_queue.py prototype"]
         src_zephyr_trading_orchestrator_init_py["src/zephyr/trading/orchestrator/__init__.py prototype"]
@@ -207,7 +207,7 @@ graph TD
     src_zephyr_trading_orchestrator_alert_handler_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_orchestrator_alert_handler_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_orchestrator_alert_handler_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_trading_orchestrator_alert_handler_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_orchestrator_alert_handler_py -.->|import_depends| D_GOVERNANCE
     D_SECURITY["D_SECURITY production"]
@@ -227,7 +227,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_orchestrator_deferred_queue_py["src/zephyr/trading/orchestrator/deferred_queue.py prototype"]
         src_zephyr_trading_orchestrator_degrade_cascade_py["src/zephyr/trading/orchestrator/degrade_cascade.py prototype"]
         src_zephyr_trading_orchestrator_dependency_lock_py["src/zephyr/trading/orchestrator/dependency_lock.py prototype"]
@@ -263,7 +263,7 @@ graph TD
     src_zephyr_trading_orchestrator_resilience_init_py -.->|import_depends| src_zephyr_trading_orchestrator_resilience_failure_matcher_py
     D_SHARED["D_SHARED production"]
     src_zephyr_trading_orchestrator_deferred_queue_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_trading_orchestrator_failure_matcher_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_trading_orchestrator_file_task_mapper_py -.->|import_depends| D_INTEGRATION
@@ -292,7 +292,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_orchestrator_rollback_manager_py["src/zephyr/trading/orchestrator/rollback_manage... prototype"]
         src_zephyr_trading_orchestrator_rolling_upgrade_py["src/zephyr/trading/orchestrator/rolling_upgrade.py prototype"]
         src_zephyr_trading_orchestrator_schema_migration_py["src/zephyr/trading/orchestrator/schema_migratio... prototype"]
@@ -336,11 +336,11 @@ graph TD
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_trading_resource_optimization_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_trading_runtime_config_py -.->|import_depends| D_INTEGRATION
     src_zephyr_trading_orchestrator_rollback_manager_py -.->|import_depends| D_INTEGRATION
@@ -359,7 +359,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_staging_area_py["src/zephyr/trading/staging_area.py prototype"]
         src_zephyr_trading_status_dashboard_py["src/zephyr/trading/status_dashboard.py prototype"]
         src_zephyr_trading_stop_gate_py["src/zephyr/trading/stop_gate.py prototype"]
@@ -433,9 +433,9 @@ graph TD
     src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py -.->|config_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_init_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_trading_task_gate_py -.->|import_depends| D_INTELLIGENCE
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_trading_trading_contracts_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_trading_contracts_init_py -.->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
@@ -444,7 +444,7 @@ graph TD
     src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
     src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_trading_trading_contracts_risk_init_py -.->|import_depends| D_GOVERNANCE
-    D_CROSS_ASSET["D-CROSS_ASSET prototype"]
+    D_CROSS_ASSET["D_CROSS_ASSET prototype"]
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
@@ -453,12 +453,12 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
-    D_PF_ALLOC["D-PF_ALLOC prototype"]
+    D_PF_ALLOC["D_PF_ALLOC prototype"]
     D_PF_ALLOC -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    D_EX_CORE["D-EX_CORE prototype"]
+    D_EX_CORE["D_EX_CORE prototype"]
     D_EX_CORE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_EX_CORE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_EX_CORE -.->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -476,7 +476,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_TRADING["D-TRADING 交易运营"]
+    subgraph D_TRADING["D_TRADING 交易运营"]
         src_zephyr_trading_trading_contracts_risk_risk_limits_py["src/zephyr/trading/trading_contracts/risk/risk_... production"]
         src_zephyr_trading_trading_contracts_risk_risk_metrics_py["src/zephyr/trading/trading_contracts/risk/risk_... production"]
         src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["src/zephyr/trading/trading_contracts/risk/risk_... production"]
@@ -487,20 +487,20 @@ graph TD
         src_zephyr_trading_zombie_scanner_py["src/zephyr/trading/zombie_scanner.py prototype"]
         tests_trading_runtime_test_async_runtime_py["tests/trading/runtime/test_async_runtime.py production"]
     end
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_trading_verdict_engine_py -.->|import_depends| D_GOV_AUDIT
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_trading_work_dag_py -.->|import_depends| D_INTEGRATION
-    D_CROSS_ASSET["D-CROSS_ASSET prototype"]
+    D_CROSS_ASSET["D_CROSS_ASSET prototype"]
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_CROSS_ASSET -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
-    D_RISK["D-RISK production"]
+    D_RISK["D_RISK production"]
     D_RISK -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_RISK -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     D_RISK -.->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
@@ -526,39 +526,39 @@ graph TD
 |--------|:---:|---------|
 | D_INTEGRATION | 49 | event,import_depends |
 | D_SHARED | 41 | contract,import_depends |
-| D-GOVERNANCE | 27 | contract,import_depends,runtime |
-| D-GOV_AUDIT | 8 | contract,import_depends |
+| D_GOVERNANCE | 27 | contract,import_depends,runtime |
+| D_GOV_AUDIT | 8 | contract,import_depends |
 | D_SECURITY | 7 | import_depends |
-| D-GOV_ENFORCEMENT | 6 | contract,import_depends |
-| D-INTELLIGENCE | 5 | import_depends |
+| D_GOV_ENFORCEMENT | 6 | contract,import_depends |
+| D_INTELLIGENCE | 5 | import_depends |
 | D_INFRA_RUNTIME | 3 | contract,import_depends |
+| D_GOV_DRIFT | 3 | import_depends,runtime |
 | D_AUTONOMY_CORE | 3 | import_depends |
-| D-GOV_DRIFT | 3 | import_depends,runtime |
 | D_OPS | 3 | import_depends,runtime |
-| D-GOV_DOCS | 1 | runtime |
+| D_GOV_DOCS | 1 | runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 217 | import_depends,test_depends |
-| D-FUNDAMENTAL_SIGNAL | 17 | import_depends |
-| D-RISK | 10 | import_depends |
+| D_GOVERNANCE | 217 | import_depends,test_depends |
+| D_FUNDAMENTAL_SIGNAL | 17 | import_depends |
+| D_RISK | 10 | import_depends |
 | D_REPORTING | 6 | import_depends |
-| D-CROSS_ASSET | 5 | contract,import_depends |
+| D_CROSS_ASSET | 5 | contract,import_depends |
 | D_OPS | 4 | import_depends |
-| D-EX_CORE | 3 | import_depends |
+| D_EX_CORE | 3 | import_depends |
 | D_SECURITY | 2 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
-| D-ML_TRAIN | 2 | import_depends |
+| D_GOV_AUDIT | 2 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
-| D-PF_CORE | 1 | import_depends |
-| D-PF_ALLOC | 1 | import_depends |
-| D-INTELLIGENCE | 1 | import_depends |
+| D_ML_TRAIN | 2 | import_depends |
+| D_PF_CORE | 1 | import_depends |
+| D_PF_ALLOC | 1 | import_depends |
+| D_INTELLIGENCE | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 交易运营（D-TRADING）的模块分布。共 159 个模块 / 159 modules。
+> 按 architecture_layer 分层显示 交易运营（D_TRADING）的模块分布。共 159 个模块 / 159 modules。
 
 ```
 

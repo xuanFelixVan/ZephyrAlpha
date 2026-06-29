@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数据安全与契约（D_DATA_SEC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -59,7 +59,7 @@ graph TD
         src_zephyr_data_security_services_init_py["src/zephyr/data_security/services/__init__.py prototype"]
     end
     src_zephyr_data_persistence_init_py -.->|config_depends| src_zephyr_data_persistence_sqlite_schema_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_data_persistence_sqlite_schema_py -.->|import_depends| D_GOVERNANCE
     D_OPS["D_OPS prototype"]
     src_zephyr_data_persistence_circuit_breaker_types_py -.->|import_depends| D_OPS
@@ -77,7 +77,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 1 | import_depends |
+| D_GOVERNANCE | 1 | import_depends |
 | D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

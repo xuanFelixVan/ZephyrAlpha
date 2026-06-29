@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -97,7 +97,7 @@ graph TD
     src_zephyr_integration_layer2_communication_init_py -.->|import_depends| src_zephyr_integration_layer2_communication_streaming_py
     D_SHARED["D_SHARED production"]
     src_zephyr_integration_ct_pipe_routing_py -.->|import_depends| D_SHARED
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_integration_behavioral_admission_admission_response_py -->|import_depends| D_TRADING
     src_zephyr_integration_layer1_discovery_a2a_registry_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer1_discovery_agent_card_py -.->|import_depends| D_SHARED
@@ -111,15 +111,15 @@ graph TD
     src_zephyr_integration_layer2_communication_init_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer2_communication_push_notifier_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer2_communication_streaming_py -.->|import_depends| D_SHARED
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -->|import_depends| src_zephyr_integration_init_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_integration_init_py
-    D_SIMULATION["D-SIMULATION prototype"]
+    D_SIMULATION["D_SIMULATION prototype"]
     D_SIMULATION -.->|import_depends| src_zephyr_integration_contracts_experiment_result_py
     D_SIMULATION -.->|import_depends| src_zephyr_integration_contracts_experiment_result_py
     D_TRADING -->|import_depends| src_zephyr_integration_init_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_integration_init_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_integration_init_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_integration_init_py
@@ -220,11 +220,11 @@ graph TD
     src_zephyr_integration_llm_gateway_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer2_communication_trigger_monitor_py -.->|import_depends| D_SHARED
     src_zephyr_integration_layer3_coordination_init_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_integration_local_model_ollama_chat_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_integration_mcp_blueprint_search_server_py -.->|import_depends| D_SHARED
     src_zephyr_integration_mcp_audit_logger_py -.->|import_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_integration_mcp_audit_logger_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_integration_mcp_doc_guard_server_py -.->|import_depends| D_SHARED
     src_zephyr_integration_mcp_doc_guard_server_py -.->|import_depends| D_SHARED
@@ -240,12 +240,12 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_mcp_base_server_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     D_TRADING -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_TRADING -.->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_integration_mcp_init_py
-    D_KNOWLEDGE["D-KNOWLEDGE prototype"]
+    D_KNOWLEDGE["D_KNOWLEDGE prototype"]
     D_KNOWLEDGE -.->|test_depends| src_zephyr_integration_local_model_embedding_router_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -309,11 +309,11 @@ graph TD
     src_zephyr_integration_model_router_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_SHARED
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_INTELLIGENCE
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_GOV_AUDIT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_AUTONOMY_CORE
@@ -328,7 +328,7 @@ graph TD
     src_zephyr_integration_pipeline_orchestrator_py -.->|import_depends| D_INTELLIGENCE
     D_GOVERNANCE -.->|test_depends| src_zephyr_integration_shared_api_03_dos_launcher_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_integration_shared_api_03_dos_launcher_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|event| src_zephyr_integration_pipeline_orchestrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -398,7 +398,7 @@ graph TD
     src_zephyr_integration_shared_08_contracts_init_py -.->|import_depends| src_zephyr_integration_shared_08_contracts_approval_types_py
     src_zephyr_integration_shared_08_contracts_init_py -.->|import_depends| src_zephyr_integration_shared_08_contracts_backpressure_init_py
     src_zephyr_integration_shared_08_contracts_backpressure_init_py -.->|import_depends| src_zephyr_integration_shared_08_contracts_backpressure_pause_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_integration_shared_schema_schemas_py -->|import_depends| D_GOV_ENFORCEMENT
     D_SHARED["D_SHARED production"]
     src_zephyr_integration_shared_08_cache_py -.->|import_depends| D_SHARED
@@ -487,15 +487,15 @@ graph TD
     src_zephyr_integration_shared_08_contracts_external_init_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_contracts_external_init_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_contracts_external_init_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
-    D_GOV_DOCS["D-GOV_DOCS prototype"]
+    D_GOV_DOCS["D_GOV_DOCS prototype"]
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_gate_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_integration_shared_08_contracts_backpressure_resume_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_integration_shared_08_contracts_backpressure_throttle_py
@@ -555,14 +555,14 @@ graph TD
     src_zephyr_integration_shared_08_contracts_identity_init_py -.->|import_depends| src_zephyr_integration_shared_08_contracts_identity_agent_identity_py
     src_zephyr_integration_shared_08_contracts_identity_init_py -.->|import_depends| src_zephyr_integration_shared_08_contracts_identity_permission_py
     src_zephyr_integration_shared_08_contracts_security_init_py -.->|config_depends| src_zephyr_integration_shared_08_contracts_security_security_decision_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_integration_shared_08_contracts_sys_master_compliance_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_SHARED["D_SHARED prototype"]
     src_zephyr_integration_shared_08_contracts_order_py -.->|import_depends| D_SHARED
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_contracts_protocols_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_contracts_protocols_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_rollback_types_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_integration_shared_08_errors_py
@@ -573,7 +573,7 @@ graph TD
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_rollback_types_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_protocols_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_protocols_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_integration_shared_08_contracts_security_security_decision_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_rollback_types_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_contracts_identity_agent_identity_py
@@ -640,17 +640,17 @@ graph TD
     src_zephyr_integration_shared_08_limiter_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_lock_py -.->|import_depends| D_SHARED
     src_zephyr_integration_shared_08_foundation_constants_py -.->|import_depends| D_SHARED
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_integration_shared_08_lifecycle_daemon_registry_py -.->|import_depends| D_TRADING
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
-    D_GOV_RULE["D-GOV_RULE production"]
+    D_GOV_RULE["D_GOV_RULE production"]
     D_GOV_RULE -->|import_depends| src_zephyr_integration_shared_08_file_utils_py
-    D_GOV_DOCS["D-GOV_DOCS prototype"]
+    D_GOV_DOCS["D_GOV_DOCS prototype"]
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_io_paths_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -727,21 +727,21 @@ graph TD
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_integration_shared_08_security_capability_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
-    D_GOV_DOCS["D-GOV_DOCS prototype"]
+    D_GOV_DOCS["D_GOV_DOCS prototype"]
     D_GOV_DOCS -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_GOV_ENFORCEMENT -->|import_depends| src_zephyr_integration_shared_08_security_capability_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_integration_shared_08_schemas_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     D_INFRA_RUNTIME -.->|import_depends| src_zephyr_integration_shared_08_session_audit_py
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_INTELLIGENCE -->|import_depends| src_zephyr_integration_shared_08_security_capability_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_TRADING -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
     D_TRADING -.->|import_depends| src_zephyr_integration_shared_08_utils_db_utils_py
@@ -821,7 +821,7 @@ graph TD
     src_zephyr_integration_vector_memory_chunk_strategy_router_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_collection_manager_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_collection_schemas_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_integration_vector_memory_delegated_vector_memory_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_integration_vector_memory_faiss_collection_manager_py -.->|import_depends| D_SHARED
     src_zephyr_integration_vector_memory_index_health_monitor_py -.->|import_depends| D_SHARED
@@ -844,9 +844,9 @@ graph TD
     D_INFRA_RECOVERY["D_INFRA_RECOVERY production"]
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     D_INFRA_RECOVERY -.->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     D_TRADING -.->|import_depends| src_zephyr_integration_shared_08_utils_time_utils_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -894,38 +894,38 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_SHARED | 69 | import_depends |
-| D-GOVERNANCE | 11 | config_depends,import_depends |
+| D_GOVERNANCE | 11 | config_depends,import_depends |
 | D_SECURITY | 4 | import_depends |
-| D-GOV_ENFORCEMENT | 3 | import_depends |
-| D-INTELLIGENCE | 3 | import_depends |
+| D_GOV_ENFORCEMENT | 3 | import_depends |
+| D_INTELLIGENCE | 3 | import_depends |
+| D_TRADING | 2 | import_depends |
+| D_GOV_AUDIT | 2 | import_depends |
 | D_AUTONOMY_CORE | 2 | import_depends |
-| D-TRADING | 2 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
 | D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 230 | import_depends,test_depends |
-| D-TRADING | 49 | event,import_depends |
+| D_GOVERNANCE | 230 | import_depends,test_depends |
+| D_TRADING | 49 | event,import_depends |
 | D_AUTONOMY_CORE | 24 | import_depends |
 | D_INFRA_RUNTIME | 20 | import_depends |
-| D-GOV_SCRIPTS | 13 | import_depends |
-| D-GOV_ENFORCEMENT | 13 | import_depends |
-| D-GOV_DOCS | 11 | import_depends |
+| D_GOV_SCRIPTS | 13 | import_depends |
+| D_GOV_ENFORCEMENT | 13 | import_depends |
+| D_GOV_DOCS | 11 | import_depends |
 | D_SHARED | 7 | import_depends |
-| D-INTELLIGENCE | 6 | import_depends |
 | D_OPS | 6 | import_depends,runtime |
-| D-GOV_AUDIT | 5 | import_depends |
+| D_INTELLIGENCE | 6 | import_depends |
+| D_GOV_AUDIT | 5 | import_depends |
 | D_BEHAVIORAL_AUDIT | 3 | import_depends |
-| D-SIMULATION | 2 | import_depends |
-| D-AUTONOMY_PERM | 2 | test_depends |
-| D_INFRA_RECOVERY | 2 | import_depends |
 | D_SECURITY | 2 | import_depends |
-| D-KNOWLEDGE | 1 | test_depends |
-| D-GOV_RULE | 1 | import_depends |
+| D_INFRA_RECOVERY | 2 | import_depends |
+| D_SIMULATION | 2 | import_depends |
+| D_AUTONOMY_PERM | 2 | test_depends |
+| D_KNOWLEDGE | 1 | test_depends |
 | D_INFRA_A2A | 1 | import_depends |
+| D_GOV_RULE | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

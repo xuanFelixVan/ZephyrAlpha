@@ -1,5 +1,5 @@
-%% D-GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-06-29 16:21:52
+%% D_GOV_DOCS 域全景依赖图
+%% 生成时间: 2026-06-29 17:05:05
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 127, 依赖边数: 86
 
@@ -129,54 +129,51 @@ graph TD
     src_zephyr_governance_kb_suppl___in_graph_engine___init___py -->|config_depends| src_zephyr_governance_kb_suppl___h_engine_graph_validator_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D-GOV_DOCS (1 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|runtime| src_zephyr_governance_kb_pipeline_activate_py
-    %% D-TRADING -> D-GOV_DOCS (1 条)
-    D_TRADING[D-TRADING] -->|runtime| src_zephyr_governance_kb_pipeline_activate_py
+    %% D_GOVERNANCE -> D_GOV_DOCS (1 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_governance_kb_pipeline_activate_py
+    %% D_TRADING -> D_GOV_DOCS (1 条)
+    D_TRADING[D_TRADING] -->|runtime| src_zephyr_governance_kb_pipeline_activate_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-GOV_DOCS -> D-GOVERNANCE (26 条)
-    src_zephyr_governance_kb_batch_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_bootstrap_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_kb_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_self_test_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_kb_engine_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_migration_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_batch_ingest_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_storage_kb_repo_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_storage_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_storage_graph_validator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_kb_pipeline_activate_py -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-GOV_DOCS -> D-GOV_ENFORCEMENT (10 条)
-    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-GOV_DOCS -> D-INTELLIGENCE (2 条)
-    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
-    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_INTELLIGENCE[D-INTELLIGENCE]
-    %% D-GOV_DOCS -> D_INTEGRATION (11 条)
+    %% D_GOV_DOCS -> D_GOVERNANCE (26 条)
+    src_zephyr_governance_kb_batch_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_bootstrap_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_kb_repo_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_self_test_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_vms_memory_backend_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_kb_engine_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_migration_embedding_migrate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_pipeline_batch_ingest_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_storage_kb_repo_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_storage_unified_memory_api_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_storage_graph_validator_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_kb_pipeline_activate_py -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_DOCS -> D_GOV_ENFORCEMENT (10 条)
+    src_zephyr_governance_kb_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_activate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_extract_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_pipeline_ingest_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_DOCS -> D_INTEGRATION (11 条)
     src_zephyr_governance_kb_chromadb_init_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_kb_chromadb_init_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_kb_embedding_migrate_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
@@ -188,7 +185,10 @@ graph TD
     src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_kb_suppl___h_engine_graph_validator_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    %% D-GOV_DOCS -> D_SHARED (19 条)
+    %% D_GOV_DOCS -> D_INTELLIGENCE (2 条)
+    src_zephyr_governance_kb_filing_nlp_engine_extract_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    src_zephyr_governance_kb_sentiment_engine_analyze_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    %% D_GOV_DOCS -> D_SHARED (19 条)
     src_zephyr_governance_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]

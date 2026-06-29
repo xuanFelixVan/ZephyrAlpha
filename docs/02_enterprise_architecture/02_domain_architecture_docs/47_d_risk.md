@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-RISK 风控架构文档
+title: D_RISK 风控架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 47_d_risk / 风控
 
-> **文档作用 / Purpose**: 展示 风控（D-RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 47 | Number | 47 |
-| 域ID | D-RISK | Domain ID | D-RISK |
+| 域ID | D_RISK | Domain ID | D_RISK |
 | 域名称 | 风控 | Domain Name | 风控 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 25 | Module Count | 25 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_RISK["D-RISK 风控"]
+    subgraph D_RISK["D_RISK 风控"]
         src_zephyr_risk_init_py["src/zephyr/risk/__init__.py prototype"]
         src_zephyr_risk_extensions_init_py["src/zephyr/risk/_extensions/__init__.py prototype"]
         src_zephyr_risk_api_init_py["src/zephyr/risk/api/__init__.py prototype"]
@@ -89,7 +89,7 @@ graph TD
     src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_init_py -.->|config_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|import_depends| D_TRADING
@@ -102,9 +102,9 @@ graph TD
     D_SHARED["D_SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|import_depends| D_TRADING
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_risk_oms_risk_engine_py -.->|config_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_init_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_risk_manager_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_risk_stop_loss_py
@@ -136,20 +136,20 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-TRADING | 10 | import_depends |
-| D-GOVERNANCE | 1 | config_depends |
+| D_TRADING | 10 | import_depends |
+| D_GOVERNANCE | 1 | config_depends |
 | D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 14 | test_depends |
-| D-GOV_SCRIPTS | 3 | import_depends |
+| D_GOVERNANCE | 14 | test_depends |
+| D_GOV_SCRIPTS | 3 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 风控（D-RISK）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 风控（D_RISK）的模块分布。共 25 个模块 / 25 modules。
 
 ```
 

@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_DRIFT 漂移检测架构文档
+title: D_GOV_DRIFT 漂移检测架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 36_d_gov_drift / 漂移检测
 
-> **文档作用 / Purpose**: 展示 漂移检测（D-GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 36 | Number | 36 |
-| 域ID | D-GOV_DRIFT | Domain ID | D-GOV_DRIFT |
+| 域ID | D_GOV_DRIFT | Domain ID | D_GOV_DRIFT |
 | 域名称 | 漂移检测 | Domain Name | 漂移检测 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 24 | Module Count | 24 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DRIFT["D-GOV_DRIFT 漂移检测"]
+    subgraph D_GOV_DRIFT["D_GOV_DRIFT 漂移检测"]
         docs_03_modules_domain_governance_drift_detector_blueprint_md["docs__03_modules___domain_governance__drift_det... design"]
         scripts_governance_d5_architecture_validators_validate_authority_registry_py["scripts/governance/d5_architecture/validators/v... production"]
         scripts_governance_d5_architecture_validators_validate_ssot_py["scripts/governance/d5_architecture/validators/v... production"]
@@ -74,17 +74,17 @@ graph TD
     end
     src_zephyr_governance_audit_trail_self_monitor_py -->|import_depends| src_zephyr_governance_audit_trail_drift_bridge_py
     tests_unit_drift_detector_conftest_py -.->|config_depends| tests_unit_drift_detector_init_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_audit_orchestrator_integrity_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_audit_orchestrator_integrity_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_audit_orchestrator_integrity_py -->|import_depends| D_GOV_AUDIT
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_governance_audit_trail_drift_bridge_py -->|import_depends| D_GOVERNANCE
     src_zephyr_governance_drift_detection_chaos_injector_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS production"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS production"]
     scripts_governance_d5_architecture_validators_validate_ssot_py -->|import_depends| D_GOV_SCRIPTS
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_baseline_manager_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -94,7 +94,7 @@ graph TD
     tests_test_context_drift_detector_py -.->|test_depends| D_SECURITY
     tests_test_contract_drift_detector_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_drift_detector_gate_py -.->|test_depends| D_GOVERNANCE
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_artifact_scanner_py
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_integrity_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_governance_integrity_py
@@ -126,28 +126,28 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 10 | config_depends,import_depends,runtime,test_depends |
+| D_GOVERNANCE | 10 | config_depends,import_depends,runtime,test_depends |
 | D_BEHAVIORAL_AUDIT | 8 | test_depends |
-| D-GOV_AUDIT | 7 | import_depends,runtime |
+| D_GOV_AUDIT | 7 | import_depends,runtime |
+| D_AUTONOMY_PERM | 1 | runtime |
+| D_GOV_ENFORCEMENT | 1 | runtime |
+| D_GOV_SCRIPTS | 1 | import_depends |
 | D_SECURITY | 1 | test_depends |
-| D-GOV_ENFORCEMENT | 1 | runtime |
-| D-AUTONOMY_PERM | 1 | runtime |
-| D-GOV_SCRIPTS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 25 | config_depends,contract,import_depends,runtime,test_depends |
-| D-GOV_AUDIT | 13 | import_depends,runtime |
-| D-TRADING | 3 | import_depends,runtime |
-| D-COMPLIANCE | 2 | import_depends |
-| D-AUDITTEST | 1 | test_depends |
+| D_GOVERNANCE | 25 | config_depends,contract,import_depends,runtime,test_depends |
+| D_GOV_AUDIT | 13 | import_depends,runtime |
+| D_TRADING | 3 | import_depends,runtime |
+| D_COMPLIANCE | 2 | import_depends |
+| D_AUDITTEST | 1 | test_depends |
 | D_OPS | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 漂移检测（D-GOV_DRIFT）的模块分布。共 24 个模块 / 24 modules。
+> 按 architecture_layer 分层显示 漂移检测（D_GOV_DRIFT）的模块分布。共 24 个模块 / 24 modules。
 
 ```
 

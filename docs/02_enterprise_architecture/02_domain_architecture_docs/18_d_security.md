@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 对抗验证（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -106,16 +106,16 @@ graph TD
     src_zephyr_behavioral_audit_analysis_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_behavioral_audit_analysis_py -.->|import_depends| D_BEHAVIORAL_AUDIT
     src_zephyr_behavioral_audit_analysis_py -.->|import_depends| D_BEHAVIORAL_AUDIT
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_events_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_events_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT prototype"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_reconciler_py
     D_GOV_ENFORCEMENT -.->|import_depends| src_zephyr_behavioral_audit_events_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_behavioral_audit_cold_start_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_init_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_security_access_control_a2a_check_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_a2a_check_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_abac_guard_py
@@ -210,14 +210,14 @@ graph TD
     src_zephyr_security_access_control_auto_fix_engine_03_self_heal_agent_py -->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_models_py
     src_zephyr_security_access_control_auto_fix_engine_03_shadow_workspace_py -->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_models_py
     src_zephyr_security_access_control_auto_fix_engine_03_zombie_cleaner_py -->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_models_py
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_security_access_control_auto_fix_engine_03_engine_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_security_access_control_auto_fix_engine_03_engine_py -->|import_depends| D_GOV_AUDIT
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_security_access_control_auto_fix_engine_03_escalation_bridge_py -->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_security_access_control_auto_fix_engine_03_llm_fix_adapter_py -.->|import_depends| D_SHARED
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_security_access_control_auto_fix_engine_03_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_auto_maintenance_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_auto_fix_engine_03_state_machine_py
@@ -279,7 +279,7 @@ graph TD
         src_zephyr_security_access_control_genesis_bootstrap_py["src/zephyr/security/access_control/genesis_boot... production"]
         src_zephyr_security_access_control_guard_layers_py["src/zephyr/security/access_control/guard_layers.py production"]
     end
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_access_control_dependency_auditor_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_bootstrap_superadmin_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_bootstrap_verifier_py
@@ -289,7 +289,7 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_cascading_failure_isolator_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_cold_start_lock_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_compliance_matrix_py
-    D_GOV_DRIFT["D-GOV_DRIFT prototype"]
+    D_GOV_DRIFT["D_GOV_DRIFT prototype"]
     D_GOV_DRIFT -.->|test_depends| src_zephyr_security_access_control_context_drift_detector_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_continuous_verifier_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_contracts_py
@@ -347,12 +347,12 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_decision_table_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_main_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_security_access_control_orphan_judge_db_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py -.->|import_depends| D_TRADING
     src_zephyr_security_access_control_orphan_judge_escalation_bridge_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT prototype"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     src_zephyr_security_access_control_orphan_judge_drift_bridge_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_access_control_immutable_core_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py
@@ -366,9 +366,9 @@ graph TD
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_integrity_self_check_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_intent_binder_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_key_hierarchy_py
-    D_AUTONOMY_PERM["D-AUTONOMY_PERM prototype"]
+    D_AUTONOMY_PERM["D_AUTONOMY_PERM prototype"]
     D_AUTONOMY_PERM -.->|test_depends| src_zephyr_security_access_control_kill_switch_py
-    D_AUDITTEST["D-AUDITTEST prototype"]
+    D_AUDITTEST["D_AUDITTEST prototype"]
     D_AUDITTEST -.->|test_depends| src_zephyr_security_access_control_legal_audit_chain_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_access_control_memory_guard_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -427,16 +427,16 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_swid_tag_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_orphan_judge_unique_analyzer_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py -.->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_security_access_control_orphan_judge_judge_py -->|import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_security_access_control_orphan_judge_mcp_integration_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|import_depends| D_TRADING
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_security_access_control_orphan_judge_kb_bridge_py -.->|import_depends| D_INTELLIGENCE
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_access_control_permission_guard_py
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_access_control_permission_guard_py
@@ -556,16 +556,16 @@ graph TD
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
     src_zephyr_security_adversarial_validation_validator_py -.->|import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_main_py -.->|import_depends| src_zephyr_security_adversarial_validation_cli_py
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_GOV_AUDIT
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|import_depends| D_INTEGRATION
     src_zephyr_security_adversarial_validation_constitution_guard_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_AUTONOMY_PERM["D-AUTONOMY_PERM prototype"]
+    D_AUTONOMY_PERM["D_AUTONOMY_PERM prototype"]
     D_AUTONOMY_PERM -.->|import_depends| src_zephyr_security_adversarial_validation_attack_registry_py
     D_AUTONOMY_PERM -.->|import_depends| src_zephyr_security_adversarial_validation_convergence_checker_py
     D_AUTONOMY_PERM -.->|import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
@@ -654,7 +654,7 @@ graph TD
     src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py -.->|config_depends| src_zephyr_security_llm_defense_llm_security_layers_init_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -.->|import_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_security_llm_defense_llm_security_protocol_py -.->|import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py -->|import_depends| D_SHARED
@@ -662,7 +662,7 @@ graph TD
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
@@ -734,13 +734,13 @@ graph TD
     src_zephyr_security_llm_defense_llm_security_01_self_protection_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py
     src_zephyr_security_llm_defense_llm_security_01_self_protection_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py
     src_zephyr_security_llm_defense_llm_security_01_self_protection_init_py -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py -->|import_depends| D_GOV_AUDIT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_01_context_scanner_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_security_llm_defense_llm_security_01_context_scanner_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py
@@ -780,29 +780,29 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_BEHAVIORAL_AUDIT | 51 | import_depends |
-| D-GOV_AUDIT | 5 | import_depends |
-| D-GOV_ENFORCEMENT | 5 | import_depends |
 | D_SHARED | 5 | import_depends |
-| D-GOVERNANCE | 4 | import_depends |
-| D-TRADING | 2 | import_depends |
+| D_GOV_AUDIT | 5 | import_depends |
+| D_GOV_ENFORCEMENT | 5 | import_depends |
+| D_GOVERNANCE | 4 | import_depends |
+| D_TRADING | 2 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
-| D-INTELLIGENCE | 1 | import_depends |
+| D_INTELLIGENCE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 206 | contract,import_depends,runtime,test_depends |
-| D-AUTONOMY_PERM | 137 | import_depends,test_depends |
-| D-TRADING | 7 | import_depends |
-| D-GOV_AUDIT | 6 | import_depends |
+| D_GOVERNANCE | 206 | contract,import_depends,runtime,test_depends |
+| D_AUTONOMY_PERM | 137 | import_depends,test_depends |
+| D_TRADING | 7 | import_depends |
+| D_GOV_AUDIT | 6 | import_depends |
 | D_OPS | 5 | import_depends,test_depends |
 | D_INTEGRATION | 4 | import_depends |
-| D-AUDITTEST | 3 | test_depends |
+| D_AUDITTEST | 3 | test_depends |
 | D_AUTONOMY_CORE | 3 | import_depends |
-| D-GOV_ENFORCEMENT | 2 | import_depends |
-| D-GOV_SCRIPTS | 2 | import_depends |
-| D-GOV_DRIFT | 1 | test_depends |
+| D_GOV_SCRIPTS | 2 | import_depends |
+| D_GOV_ENFORCEMENT | 2 | import_depends |
+| D_GOV_DRIFT | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

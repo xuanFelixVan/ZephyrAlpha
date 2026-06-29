@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-SIMULATION 仿真架构文档
+title: D_SIMULATION 仿真架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 51_d_simulation / 仿真
 
-> **文档作用 / Purpose**: 展示 仿真（D-SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 51 | Number | 51 |
-| 域ID | D-SIMULATION | Domain ID | D-SIMULATION |
+| 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
 | 域名称 | 仿真 | Domain Name | 仿真 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 19 | Module Count | 19 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_SIMULATION["D-SIMULATION 仿真"]
+    subgraph D_SIMULATION["D_SIMULATION 仿真"]
         src_zephyr_simulation["仿真核心域 design"]
         src_zephyr_simulation_init_py["src/zephyr/simulation/__init__.py prototype"]
         src_zephyr_simulation_init_from_resear_py["src/zephyr/simulation/__init___from_resear.py prototype"]
@@ -80,15 +80,15 @@ graph TD
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_simulation_pipeline_base_from_resear_py -.->|import_depends| D_INTEGRATION
     src_zephyr_simulation_pipeline_base_py -.->|import_depends| D_INTEGRATION
-    D_INTELLIGENCE["D-INTELLIGENCE prototype"]
+    D_INTELLIGENCE["D_INTELLIGENCE prototype"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_simulation_init_py
     D_SHARED["D_SHARED prototype"]
     D_SHARED -.->|import_depends| src_zephyr_simulation_init_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_simulation_init_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_pipeline_base_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_default_backtest_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
@@ -120,14 +120,14 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 12 | test_depends |
-| D-INTELLIGENCE | 3 | import_depends |
-| D-GOV_SCRIPTS | 1 | import_depends |
+| D_GOVERNANCE | 12 | test_depends |
+| D_INTELLIGENCE | 3 | import_depends |
+| D_GOV_SCRIPTS | 1 | import_depends |
 | D_SHARED | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 仿真（D-SIMULATION）的模块分布。共 19 个模块 / 19 modules。
+> 按 architecture_layer 分层显示 仿真（D_SIMULATION）的模块分布。共 19 个模块 / 19 modules。
 
 ```
 

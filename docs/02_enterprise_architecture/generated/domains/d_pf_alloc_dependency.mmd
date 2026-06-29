@@ -1,5 +1,5 @@
-%% D-PF_ALLOC 域全景依赖图
-%% 生成时间: 2026-06-29 16:21:52
+%% D_PF_ALLOC 域全景依赖图
+%% 生成时间: 2026-06-29 17:05:06
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 11, 依赖边数: 6
 
@@ -23,18 +23,18 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D-PF_ALLOC (1 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    %% D_GOVERNANCE -> D_PF_ALLOC (1 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_pf_core_default_equity_strategy_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-PF_ALLOC -> D-GOVERNANCE (2 条)
-    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_pf_core_strategy_portfolio_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-PF_ALLOC -> D-TRADING (1 条)
-    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_TRADING[D-TRADING]
-    %% D-PF_ALLOC -> D_SHARED (2 条)
+    %% D_PF_ALLOC -> D_GOVERNANCE (2 条)
+    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_pf_core_strategy_portfolio_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_PF_ALLOC -> D_SHARED (2 条)
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_pf_alloc_ -->|contract| D_SHARED[D_SHARED]
+    %% D_PF_ALLOC -> D_TRADING (1 条)
+    src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 0 条

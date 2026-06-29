@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治核心（D_AUTONOMY_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -109,10 +109,10 @@ graph TD
     src_zephyr_autonomy_core_assembly_context_pipeline_py -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTEGRATION
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
     src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_INTELLIGENCE
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_autonomy_core_context_assembler_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_assembly_context_assembler_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_assembly_context_injector_py -.->|import_depends| D_INTEGRATION
@@ -124,7 +124,7 @@ graph TD
     D_INTELLIGENCE -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_autonomy_core_init_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
     D_TRADING -.->|import_depends| src_zephyr_autonomy_core_init_py
@@ -191,7 +191,7 @@ graph TD
     src_zephyr_autonomy_core_context_injector_py -.->|import_depends| D_SECURITY
     src_zephyr_autonomy_core_doc_compressor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_engine_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_autonomy_core_engine_py -.->|import_depends| D_GOV_AUDIT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -307,7 +307,7 @@ graph TD
     src_zephyr_autonomy_core_security_filter_py -.->|import_depends| D_SECURITY
     D_OPS["D_OPS prototype"]
     D_OPS -.->|runtime| src_zephyr_autonomy_core_self_evolution_fidelity_gate_py
-    D_GOVERNANCE["D-GOVERNANCE design"]
+    D_GOVERNANCE["D_GOVERNANCE design"]
     D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_security_filter_py
     D_GOVERNANCE -.->|contract| src_zephyr_autonomy_core_security_filter_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -357,9 +357,9 @@ graph TD
     end
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_GOV_AUDIT
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_autonomy_core_skill_executor_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_autonomy_core_skill_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_skill_router_py -.->|import_depends| D_INTEGRATION
@@ -410,7 +410,7 @@ graph TD
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_autonomy_core_system_snapshot_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_task_context_builder_py -.->|import_depends| D_INTEGRATION
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_autonomy_core_vector_writer_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_autonomy_core_support_doc_compressor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_autonomy_core_support_prompt_registry_py -.->|import_depends| D_INTEGRATION
@@ -432,23 +432,23 @@ graph TD
 |--------|:---:|---------|
 | D_INTEGRATION | 24 | import_depends |
 | D_SHARED | 6 | import_depends |
+| D_GOV_AUDIT | 3 | import_depends |
 | D_SECURITY | 3 | import_depends |
-| D-GOV_AUDIT | 3 | import_depends |
-| D-INTELLIGENCE | 2 | import_depends |
-| D-GOVERNANCE | 2 | import_depends |
-| D-GOV_ENFORCEMENT | 1 | import_depends |
+| D_GOVERNANCE | 2 | import_depends |
+| D_INTELLIGENCE | 2 | import_depends |
+| D_GOV_ENFORCEMENT | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 214 | contract,import_depends,runtime,test_depends |
+| D_GOVERNANCE | 214 | contract,import_depends,runtime,test_depends |
 | D_OPS | 8 | import_depends,runtime,test_depends |
-| D-TRADING | 3 | import_depends |
+| D_TRADING | 3 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
-| D-KNOWLEDGE | 1 | test_depends |
-| D-INTELLIGENCE | 1 | import_depends |
-| D-AUTONOMY_PERM | 1 | test_depends |
+| D_INTELLIGENCE | 1 | import_depends |
+| D_AUTONOMY_PERM | 1 | test_depends |
+| D_KNOWLEDGE | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

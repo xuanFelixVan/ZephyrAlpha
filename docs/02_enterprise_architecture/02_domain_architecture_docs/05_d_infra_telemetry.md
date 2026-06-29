@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 可观测性（D_INFRA_TELEMETRY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -95,7 +95,7 @@ graph TD
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_INFRA_RUNTIME
     D_SHARED["D_SHARED production"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|import_depends| D_INFRA_RUNTIME
     D_OPS["D_OPS prototype"]
@@ -149,8 +149,8 @@ graph TD
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 12 | import_depends |
 | D_SHARED | 3 | import_depends |
-| D-GOVERNANCE | 1 | import_depends |
 | D_BEHAVIORAL_AUDIT | 1 | import_depends |
+| D_GOVERNANCE | 1 | import_depends |
 | D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

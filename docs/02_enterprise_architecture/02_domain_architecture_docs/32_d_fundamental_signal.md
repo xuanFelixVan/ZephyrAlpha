@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-FUNDAMENTAL_SIGNAL 基本面信号架构文档
+title: D_FUNDAMENTAL_SIGNAL 基本面信号架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 32_d_fundamental_signal / 基本面信号
 
-> **文档作用 / Purpose**: 展示 基本面信号（D-FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 32 | Number | 32 |
-| 域ID | D-FUNDAMENTAL_SIGNAL | Domain ID | D-FUNDAMENTAL_SIGNAL |
+| 域ID | D_FUNDAMENTAL_SIGNAL | Domain ID | D_FUNDAMENTAL_SIGNAL |
 | 域名称 | 基本面信号 | Domain Name | 基本面信号 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 25 | Module Count | 25 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_FUNDAMENTAL_SIGNAL["D-FUNDAMENTAL_SIGNAL 基本面信号"]
+    subgraph D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL 基本面信号"]
         src_zephyr_signal_fundamental_init_py["src/zephyr/signal_fundamental/__init__.py prototype"]
         src_zephyr_signal_fundamental_extensions_init_py["src/zephyr/signal_fundamental/_extensions/__ini... prototype"]
         src_zephyr_signal_fundamental_api_init_py["src/zephyr/signal_fundamental/api/__init__.py prototype"]
@@ -93,9 +93,9 @@ graph TD
     src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -.->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_synth_init_py -.->|import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_GOVERNANCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_TRADING
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_TRADING
     src_zephyr_signal_fundamental_capital_capital_allocator_py -.->|import_depends| D_TRADING
@@ -110,9 +110,9 @@ graph TD
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|import_depends| D_TRADING
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|import_depends| D_TRADING
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|import_depends| D_TRADING
-    D_FACTOR["D-FACTOR prototype"]
+    D_FACTOR["D_FACTOR prototype"]
     D_FACTOR -.->|import_depends| src_zephyr_signal_fundamental_pipeline_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_signal_fundamental_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_pipeline_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
@@ -138,20 +138,20 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-TRADING | 17 | import_depends |
-| D-GOVERNANCE | 1 | import_depends |
+| D_TRADING | 17 | import_depends |
+| D_GOVERNANCE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 8 | test_depends |
-| D-FACTOR | 1 | import_depends |
-| D-GOV_SCRIPTS | 1 | import_depends |
+| D_GOVERNANCE | 8 | test_depends |
+| D_FACTOR | 1 | import_depends |
+| D_GOV_SCRIPTS | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 基本面信号（D-FUNDAMENTAL_SIGNAL）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 基本面信号（D_FUNDAMENTAL_SIGNAL）的模块分布。共 25 个模块 / 25 modules。
 
 ```
 

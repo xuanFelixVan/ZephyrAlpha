@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -90,12 +90,12 @@ graph TD
     src_zephyr_infrastructure_rollback_governance_drift_fix_py -.->|config_depends| src_zephyr_infrastructure_rollback_governance_init_py
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_infra_ops_dashboard_app_py -.->|import_depends| D_GOVERNANCE
     D_OPS["D_OPS production"]
     src_zephyr_infra_ops_dashboard_components_fitness_functions_py -.->|import_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_infrastructure_rollback_governance_auditor_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_governance_contracts_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -125,7 +125,7 @@ graph TD
         tests_test_rollback_simulator_py["tests/test_rollback_simulator.py prototype"]
         tests_test_rollback_wal_py["tests/test_rollback_wal.py prototype"]
     end
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     tests_test_auto_rollback_trigger_py -.->|test_depends| D_GOVERNANCE
     tests_test_rollback_simulator_py -.->|test_depends| D_GOVERNANCE
     tests_test_rollback_wal_py -.->|test_depends| D_GOVERNANCE
@@ -143,8 +143,8 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 8 | config_depends,import_depends,test_depends |
-| D-GOV_AUDIT | 2 | import_depends |
+| D_GOVERNANCE | 8 | config_depends,import_depends,test_depends |
+| D_GOV_AUDIT | 2 | import_depends |
 | D_INFRA_RUNTIME | 1 | import_depends |
 | D_OPS | 1 | import_depends |
 | D_SHARED | 1 | import_depends |

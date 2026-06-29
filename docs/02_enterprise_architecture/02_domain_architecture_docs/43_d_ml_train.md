@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-ML_TRAIN 训练架构文档
+title: D_ML_TRAIN 训练架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 43_d_ml_train / 训练
 
-> **文档作用 / Purpose**: 展示 训练（D-ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 43 | Number | 43 |
-| 域ID | D-ML_TRAIN | Domain ID | D-ML_TRAIN |
+| 域ID | D_ML_TRAIN | Domain ID | D_ML_TRAIN |
 | 域名称 | 训练 | Domain Name | 训练 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 12 | Module Count | 12 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_ML_TRAIN["D-ML_TRAIN 训练"]
+    subgraph D_ML_TRAIN["D_ML_TRAIN 训练"]
         docs_03_modules_cross_layer_model_profiler_blueprint_md["docs__03_modules___cross_layer__model_profiler_... design"]
         src_zephyr_ml_train_init_py["src/zephyr/ml_train/__init__.py prototype"]
         src_zephyr_ml_train_extensions_init_py["src/zephyr/ml_train/_extensions/__init__.py prototype"]
@@ -65,20 +65,20 @@ graph TD
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_init_py -.->|import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_TRADING
     D_SHARED["D_SHARED prototype"]
     src_zephyr_ml_train_inference_base_py -.->|import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|import_depends| D_SHARED
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -.->|import_depends| src_zephyr_ml_train_trainer_base_py
-    D_GOVERNANCE["D-GOVERNANCE design"]
+    D_GOVERNANCE["D_GOVERNANCE design"]
     D_GOVERNANCE -.->|data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -95,20 +95,20 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-TRADING | 2 | import_depends |
 | D_SHARED | 2 | import_depends |
+| D_TRADING | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-INTELLIGENCE | 4 | import_depends |
+| D_INTELLIGENCE | 4 | import_depends |
 | D_SHARED | 2 | import_depends |
-| D-GOVERNANCE | 1 | data |
+| D_GOVERNANCE | 1 | data |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 训练（D-ML_TRAIN）的模块分布。共 12 个模块 / 12 modules。
+> 按 architecture_layer 分层显示 训练（D_ML_TRAIN）的模块分布。共 12 个模块 / 12 modules。
 
 ```
 

@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-EX_CORE 执行核心架构文档
+title: D_EX_CORE 执行核心架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 29_d_ex_core / 执行核心
 
-> **文档作用 / Purpose**: 展示 执行核心（D-EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 29 | Number | 29 |
-| 域ID | D-EX_CORE | Domain ID | D-EX_CORE |
+| 域ID | D_EX_CORE | Domain ID | D_EX_CORE |
 | 域名称 | 执行核心 | Domain Name | 执行核心 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 14 | Module Count | 14 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_EX_CORE["D-EX_CORE 执行核心"]
+    subgraph D_EX_CORE["D_EX_CORE 执行核心"]
         src_zephyr_ex_core_init_py["src/zephyr/ex_core/__init__.py production"]
         src_zephyr_ex_core_extensions_init_py["src/zephyr/ex_core/_extensions/__init__.py prototype"]
         src_zephyr_ex_core_adapters_init_py["src/zephyr/ex_core/adapters/__init__.py prototype"]
@@ -63,20 +63,20 @@ graph TD
         src_zephyr_ex_core_services_init_py["src/zephyr/ex_core/services/__init__.py prototype"]
     end
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| src_zephyr_ex_core_order_manager_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_ex_core_broker_interface_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_simulation_broker_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_ex_core_execution_engine_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_order_manager_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_order_manager_py -.->|import_depends| D_TRADING
     src_zephyr_ex_core_order_state_escalator_py -.->|config_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_ex_core_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
@@ -100,19 +100,19 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 8 | config_depends,import_depends |
-| D-TRADING | 3 | import_depends |
+| D_GOVERNANCE | 8 | config_depends,import_depends |
+| D_TRADING | 3 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 6 | test_depends |
-| D-GOV_SCRIPTS | 1 | import_depends |
+| D_GOVERNANCE | 6 | test_depends |
+| D_GOV_SCRIPTS | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 执行核心（D-EX_CORE）的模块分布。共 14 个模块 / 14 modules。
+> 按 architecture_layer 分层显示 执行核心（D_EX_CORE）的模块分布。共 14 个模块 / 14 modules。
 
 ```
 

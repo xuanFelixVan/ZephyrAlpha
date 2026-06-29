@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-BACKTEST 回测架构文档
+title: D_BACKTEST 回测架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 24_d_backtest / 回测
 
-> **文档作用 / Purpose**: 展示 回测（D-BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 24 | Number | 24 |
-| 域ID | D-BACKTEST | Domain ID | D-BACKTEST |
+| 域ID | D_BACKTEST | Domain ID | D_BACKTEST |
 | 域名称 | 回测 | Domain Name | 回测 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 7 | Module Count | 7 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_BACKTEST["D-BACKTEST 回测"]
+    subgraph D_BACKTEST["D_BACKTEST 回测"]
         src_zephyr_backtest_init_py["src/zephyr/backtest/__init__.py prototype"]
         src_zephyr_backtest_extensions_init_py["src/zephyr/backtest/_extensions/__init__.py prototype"]
         src_zephyr_backtest_api_init_py["src/zephyr/backtest/api/__init__.py prototype"]
@@ -74,7 +74,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 回测（D-BACKTEST）的模块分布。共 7 个模块 / 7 modules。
+> 按 architecture_layer 分层显示 回测（D_BACKTEST）的模块分布。共 7 个模块 / 7 modules。
 
 ```
 

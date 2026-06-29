@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运行时集成（D_INFRA_RUNTIME）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -107,10 +107,10 @@ graph TD
     src_zephyr_init_py -->|import_depends| D_OPS
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_infrastructure_audit_logger_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_infrastructure_audit_logger_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_blueprint_search_server_py -.->|import_depends| D_INTEGRATION
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_base_server_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|import_depends| D_GOV_AUDIT
     D_SHARED["D_SHARED production"]
@@ -217,7 +217,7 @@ graph TD
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_capacity_assurance_modules_init_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_config_init_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE design"]
+    D_GOVERNANCE["D_GOVERNANCE design"]
     D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
     D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
     D_GOVERNANCE -.->|runtime| src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py
@@ -282,7 +282,7 @@ graph TD
     src_zephyr_infrastructure_config_shared_config_loader_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_db_circuit_breaker_repo_py -.->|import_depends| D_SHARED
     src_zephyr_infrastructure_db_gate_repo_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_db_audit_schema_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_db_olap_engine_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_db_olap_engine_py -.->|import_depends| D_SHARED
@@ -357,7 +357,7 @@ graph TD
     src_zephyr_infrastructure_infra_06_init_py -->|import_depends| D_SHARED
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_infrastructure_lifecycle_resource_optimization_engine_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_observability_02_session_audit_py -.->|import_depends| D_INTEGRATION
     D_SHARED -->|import_depends| src_zephyr_infrastructure_lifecycle_task_lifecycle_manager_py
@@ -423,7 +423,7 @@ graph TD
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_shared_lifecycle_hooks_py
     D_SHARED -->|import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_shared_lifecycle_lazy_loader_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -443,25 +443,25 @@ graph TD
 |--------|:---:|---------|
 | D_SHARED | 34 | import_depends |
 | D_INTEGRATION | 20 | import_depends |
-| D-GOVERNANCE | 9 | import_depends |
-| D-GOV_AUDIT | 4 | import_depends |
+| D_GOVERNANCE | 9 | import_depends |
+| D_GOV_AUDIT | 4 | import_depends |
 | D_OPS | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 124 | config_depends,import_depends,runtime,test_depends |
-| D_INFRA_RECOVERY | 33 | import_depends |
+| D_GOVERNANCE | 124 | config_depends,import_depends,runtime,test_depends |
 | D_OPS | 33 | import_depends,test_depends |
+| D_INFRA_RECOVERY | 33 | import_depends |
 | D_INFRA_A2A | 13 | import_depends |
 | D_INFRA_TELEMETRY | 12 | import_depends |
-| D-GOV_SCRIPTS | 11 | import_depends |
+| D_GOV_SCRIPTS | 11 | import_depends |
 | D_SHARED | 6 | import_depends |
-| D-GOV_AUDIT | 5 | import_depends |
-| D-TRADING | 3 | contract,import_depends |
+| D_GOV_AUDIT | 5 | import_depends |
+| D_TRADING | 3 | contract,import_depends |
 | D_INFRA_OPS | 1 | import_depends |
-| D-AUTONOMY_PERM | 1 | test_depends |
+| D_AUTONOMY_PERM | 1 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

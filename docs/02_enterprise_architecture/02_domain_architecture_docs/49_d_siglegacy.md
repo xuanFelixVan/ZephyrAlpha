@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-SIGLEGACY 信号遗留设计态架构文档
+title: D_SIGLEGACY 信号遗留设计态架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 49_d_siglegacy / 信号遗留设计态
 
-> **文档作用 / Purpose**: 展示 信号遗留设计态（D-SIGLEGACY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 信号遗留设计态（D_SIGLEGACY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 49 | Number | 49 |
-| 域ID | D-SIGLEGACY | Domain ID | D-SIGLEGACY |
+| 域ID | D_SIGLEGACY | Domain ID | D_SIGLEGACY |
 | 域名称 | 信号遗留设计态 | Domain Name | 信号遗留设计态 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 0 | Module Count | 0 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_SIGLEGACY["D-SIGLEGACY 信号遗留设计态"]
+    subgraph D_SIGLEGACY["D_SIGLEGACY 信号遗留设计态"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -66,7 +66,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 信号遗留设计态（D-SIGLEGACY）的模块分布。共 0 个模块 / 0 modules。
+> 按 architecture_layer 分层显示 信号遗留设计态（D_SIGLEGACY）的模块分布。共 0 个模块 / 0 modules。
 
 （无模块 / No modules）
 

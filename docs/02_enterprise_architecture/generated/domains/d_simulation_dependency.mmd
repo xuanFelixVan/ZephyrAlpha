@@ -1,5 +1,5 @@
-%% D-SIMULATION 域全景依赖图
-%% 生成时间: 2026-06-29 16:21:52
+%% D_SIMULATION 域全景依赖图
+%% 生成时间: 2026-06-29 17:05:06
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 19, 依赖边数: 29
 
@@ -41,30 +41,30 @@ graph TD
     src_zephyr_simulation_implemen___ons___init___from_resear_py -->|config_depends| src_zephyr_simulation_implementations___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D-SIMULATION (12 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
-    %% D-GOV_SCRIPTS -> D-SIMULATION (1 条)
-    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_simulation___init___py
-    %% D-INTELLIGENCE -> D-SIMULATION (3 条)
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
-    D_INTELLIGENCE[D-INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
-    %% D_SHARED -> D-SIMULATION (1 条)
+    %% D_GOVERNANCE -> D_SIMULATION (12 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_backtest_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_default_backtest_engine_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    %% D_GOV_SCRIPTS -> D_SIMULATION (1 条)
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_simulation___init___py
+    %% D_INTELLIGENCE -> D_SIMULATION (3 条)
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_simulation___init___py
+    %% D_SHARED -> D_SIMULATION (1 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_simulation___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-SIMULATION -> D_INTEGRATION (2 条)
+    %% D_SIMULATION -> D_INTEGRATION (2 条)
     src_zephyr_simulation_pipeline_base_from_resear_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_simulation_pipeline_base_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
 

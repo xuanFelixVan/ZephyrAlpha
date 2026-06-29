@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -57,10 +57,10 @@ graph TD
         src_zephyr_market_data_models_init_py["src/zephyr/market_data/models/__init__.py prototype"]
         src_zephyr_market_data_services_init_py["src/zephyr/market_data/services/__init__.py prototype"]
     end
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_market_data_market_data_py -.->|config_depends| D_GOVERNANCE
     src_zephyr_market_data_market_data_pipeline_py -.->|config_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_market_data_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_market_data_init_py
@@ -92,14 +92,14 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 2 | config_depends |
+| D_GOVERNANCE | 2 | config_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 16 | test_depends |
-| D-GOV_SCRIPTS | 1 | import_depends |
+| D_GOVERNANCE | 16 | test_depends |
+| D_GOV_SCRIPTS | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 

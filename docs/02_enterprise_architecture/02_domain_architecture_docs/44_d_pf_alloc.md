@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-PF_ALLOC 组合分配架构文档
+title: D_PF_ALLOC 组合分配架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 44_d_pf_alloc / 组合分配
 
-> **文档作用 / Purpose**: 展示 组合分配（D-PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 44 | Number | 44 |
-| 域ID | D-PF_ALLOC | Domain ID | D-PF_ALLOC |
+| 域ID | D_PF_ALLOC | Domain ID | D_PF_ALLOC |
 | 域名称 | 组合分配 | Domain Name | 组合分配 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 11 | Module Count | 11 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_PF_ALLOC["D-PF_ALLOC 组合分配"]
+    subgraph D_PF_ALLOC["D_PF_ALLOC 组合分配"]
         src_zephyr_pf_alloc["组合分配域 design"]
         src_zephyr_pf_alloc_init_py["src/zephyr/pf_alloc/__init__.py prototype"]
         src_zephyr_pf_alloc_extensions_init_py["src/zephyr/pf_alloc/_extensions/__init__.py prototype"]
@@ -59,9 +59,9 @@ graph TD
         src_zephyr_pf_core_default_equity_strategy_py["src/zephyr/pf_core/default_equity_strategy.py prototype"]
         src_zephyr_pf_core_strategy_portfolio_py["src/zephyr/pf_core/strategy_portfolio.py prototype"]
     end
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_GOVERNANCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|import_depends| D_TRADING
     D_SHARED["D_SHARED prototype"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
@@ -83,19 +83,19 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 2 | config_depends,import_depends |
+| D_GOVERNANCE | 2 | config_depends,import_depends |
 | D_SHARED | 2 | contract,import_depends |
-| D-TRADING | 1 | import_depends |
+| D_TRADING | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 1 | import_depends |
+| D_GOVERNANCE | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 组合分配（D-PF_ALLOC）的模块分布。共 11 个模块 / 11 modules。
+> 按 architecture_layer 分层显示 组合分配（D_PF_ALLOC）的模块分布。共 11 个模块 / 11 modules。
 
 ```
 

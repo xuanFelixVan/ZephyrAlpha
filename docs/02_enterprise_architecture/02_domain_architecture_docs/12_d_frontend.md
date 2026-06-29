@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -90,7 +90,7 @@ graph TD
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_INFRA_OPS
     D_SHARED["D_SHARED prototype"]
     src_zephyr_frontend_dashboard_app_py_1 -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_frontend_dashboard_app_py_1 -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_py_1 -->|import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_components_fitness_functions_py_1 -.->|import_depends| D_OPS
@@ -120,7 +120,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 4 | import_depends |
+| D_GOVERNANCE | 4 | import_depends |
 | D_OPS | 2 | import_depends |
 | D_INFRA_OPS | 1 | import_depends |
 | D_SHARED | 1 | import_depends |
@@ -129,7 +129,7 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 8 | test_depends |
+| D_GOVERNANCE | 8 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 

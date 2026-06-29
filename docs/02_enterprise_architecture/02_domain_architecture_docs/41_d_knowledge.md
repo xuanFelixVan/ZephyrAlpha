@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-KNOWLEDGE 知识管理架构文档
+title: D_KNOWLEDGE 知识管理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 41_d_knowledge / 知识管理
 
-> **文档作用 / Purpose**: 展示 知识管理（D-KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 41 | Number | 41 |
-| 域ID | D-KNOWLEDGE | Domain ID | D-KNOWLEDGE |
+| 域ID | D_KNOWLEDGE | Domain ID | D_KNOWLEDGE |
 | 域名称 | 知识管理 | Domain Name | 知识管理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 14 | Module Count | 14 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_KNOWLEDGE["D-KNOWLEDGE 知识管理"]
+    subgraph D_KNOWLEDGE["D_KNOWLEDGE 知识管理"]
         architecture_model_layers_b_vector_memory_yaml["architecture_model/layers/b_vector_memory.yaml production"]
         docs_03_modules_domain_knowledge_knowledge_base_blueprint_md["docs__03_modules___domain_knowledge__knowledge_... design"]
         docs_03_modules_domain_knowledge_vector_memory_blueprint_md["docs__03_modules___domain_knowledge__vector_mem... design"]
@@ -64,7 +64,7 @@ graph TD
     end
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_skill_knowledge_base_py -.->|test_depends| D_AUTONOMY_CORE
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_vector_memory_test_vector_memory_py -.->|test_depends| D_INTEGRATION
@@ -85,7 +85,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 2 | runtime,test_depends |
+| D_GOVERNANCE | 2 | runtime,test_depends |
 | D_AUTONOMY_CORE | 1 | test_depends |
 | D_INTEGRATION | 1 | test_depends |
 
@@ -93,11 +93,11 @@ graph TD
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 1 | contract |
+| D_GOVERNANCE | 1 | contract |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 知识管理（D-KNOWLEDGE）的模块分布。共 14 个模块 / 14 modules。
+> 按 architecture_layer 分层显示 知识管理（D_KNOWLEDGE）的模块分布。共 14 个模块 / 14 modules。
 
 ```
 

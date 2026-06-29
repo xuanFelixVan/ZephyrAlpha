@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -103,7 +103,7 @@ graph TD
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_auto_fix_engine_engine_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|import_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|import_depends| D_GOVERNANCE
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|import_depends| D_INFRA_RUNTIME
@@ -183,7 +183,7 @@ graph TD
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_reliability_init_py -->|import_depends| D_INFRA_RUNTIME
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_infrastructure_rollback_auditor_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_contracts_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_init_py -->|import_depends| D_INFRA_RUNTIME
@@ -237,10 +237,10 @@ graph TD
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOV_AUDIT
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_rollback_phase_check_registry_py -->|import_depends| D_INFRA_RUNTIME
@@ -285,7 +285,7 @@ graph TD
     end
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -303,9 +303,9 @@ graph TD
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
 | D_INFRA_RUNTIME | 33 | import_depends |
-| D-GOV_AUDIT | 7 | import_depends |
+| D_GOV_AUDIT | 7 | import_depends |
 | D_SHARED | 5 | import_depends |
-| D-GOVERNANCE | 4 | import_depends |
+| D_GOVERNANCE | 4 | import_depends |
 | D_INTEGRATION | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

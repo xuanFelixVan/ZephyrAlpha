@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOVERNANCE 生命周期管理架构文档
+title: D_GOVERNANCE 生命周期管理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 33_d_governance / 生命周期管理
 
-> **文档作用 / Purpose**: 展示 生命周期管理（D-GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 生命周期管理（D_GOVERNANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 33 | Number | 33 |
-| 域ID | D-GOVERNANCE | Domain ID | D-GOVERNANCE |
+| 域ID | D_GOVERNANCE | Domain ID | D_GOVERNANCE |
 | 域名称 | 生命周期管理 | Domain Name | 生命周期管理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 2813 | Module Count | 2813 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         architecture_model_architecture_lock_yaml["architecture_model/architecture_lock.yaml production"]
         architecture_model_index_yaml["architecture_model/index.yaml production"]
         architecture_model_layers_b_context_engine_yaml["architecture_model/layers/b_context_engine.yaml production"]
@@ -95,7 +95,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         config_metrics_schema_yaml["config/metrics_schema.yaml production"]
         config_model_pricing_yaml["config/model_pricing.yaml production"]
         config_nav_table_mapping_yaml["config/nav_table_mapping.yaml production"]
@@ -155,7 +155,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         data_asset_index_archive_migration_scripts_shared_import_fix_py["data/asset_index/archive/migration_scripts/shar... prototype"]
         data_asset_index_archive_migration_scripts_test_import_fix_py["data/asset_index/archive/migration_scripts/test... prototype"]
         data_asset_index_archive_migration_scripts_unnest_from_mcp_server_py["data/asset_index/archive/migration_scripts/unne... prototype"]
@@ -202,11 +202,11 @@ graph TD
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| docs_03_modules_cross_layer_mcp_servers_blueprint_md
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
     docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md -.->|contract| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
-    D_GOV_AUDIT["D-GOV_AUDIT design"]
+    D_GOV_AUDIT["D_GOV_AUDIT design"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract| D_GOV_AUDIT
-    D_AUTONOMY_PERM["D-AUTONOMY_PERM design"]
+    D_AUTONOMY_PERM["D_AUTONOMY_PERM design"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime| D_AUTONOMY_PERM
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract| D_AUTONOMY_CORE
@@ -214,7 +214,7 @@ graph TD
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|contract| D_GOV_AUDIT
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|contract| D_AUTONOMY_PERM
-    D_GOV_DRIFT["D-GOV_DRIFT design"]
+    D_GOV_DRIFT["D_GOV_DRIFT design"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|runtime| D_GOV_DRIFT
     D_SECURITY["D_SECURITY production"]
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md -.->|contract| D_SECURITY
@@ -224,18 +224,18 @@ graph TD
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime| D_GOV_AUDIT
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| D_SECURITY
     docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract| D_GOV_DRIFT
-    D_PF_CORE["D-PF_CORE design"]
+    D_PF_CORE["D_PF_CORE design"]
     D_PF_CORE -.->|contract| docs_03_modules_alpha_signal_domain_blueprint_md
     D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     D_GOV_DRIFT -.->|runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
     D_GOV_AUDIT -.->|runtime| docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|runtime| docs_03_modules_cross_layer_mcp_servers_blueprint_md
     D_TRADING -.->|runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
     D_TRADING -.->|contract| docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md
-    D_KNOWLEDGE["D-KNOWLEDGE design"]
+    D_KNOWLEDGE["D_KNOWLEDGE design"]
     D_KNOWLEDGE -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
-    D_GOV_DOCS["D-GOV_DOCS prototype"]
+    D_GOV_DOCS["D_GOV_DOCS prototype"]
     D_GOV_DOCS -.->|runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -250,7 +250,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         docs_03_modules_domain_compliance_compliance_core_blueprint_md["docs__03_modules___domain_compliance__complianc... design"]
         docs_03_modules_domain_data_datasource_core_blueprint_md["docs__03_modules___domain_data__datasource_core... design"]
         docs_03_modules_domain_factor_alpha_factor_core_blueprint_md["docs__03_modules___domain_factor__alpha_factor_... design"]
@@ -288,7 +288,7 @@ graph TD
     docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime| D_INFRA_RUNTIME
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     docs_03_modules_sys_master_blueprint_md -.->|contract| D_AUTONOMY_CORE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime| D_GOV_ENFORCEMENT
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract| D_AUTONOMY_CORE
     D_OPS["D_OPS prototype"]
@@ -307,7 +307,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         scripts_governance_list_gate_ids_py["scripts/governance/_list_gate_ids.py production"]
         scripts_governance_verify_gate_loading_py["scripts/governance/_verify_gate_loading.py production"]
         scripts_governance_analyze_orphan_consumers_py["scripts/governance/analyze_orphan_consumers.py production"]
@@ -375,7 +375,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         scripts_governance_d5_architecture_detectors_detect_depends_on_cycles_py["scripts/governance/d5_architecture/detectors/de... prototype"]
         scripts_governance_d5_architecture_detectors_detect_deprecated_adr_references_py["scripts/governance/d5_architecture/detectors/de... prototype"]
         scripts_governance_d5_architecture_dm200912_query_domains_py["scripts/governance/d5_architecture/dm200912_que... production"]
@@ -425,7 +425,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         scripts_governance_d5_architecture_validators_blueprint_init_py["scripts/governance/d5_architecture/validators/b... prototype"]
         scripts_governance_d5_architecture_validators_blueprint_validate_blueprint_code_sync_py["scripts/governance/d5_architecture/validators/b... prototype"]
         scripts_governance_d5_architecture_validators_blueprint_validate_blueprint_implementation_docs_py["scripts/governance/d5_architecture/validators/b... prototype"]
@@ -478,7 +478,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         scripts_governance_d5_architecture_validators_validate_layer_consistency_py["scripts/governance/d5_architecture/validators/v... prototype"]
         scripts_governance_d5_architecture_validators_validate_layer_deps_py["scripts/governance/d5_architecture/validators/v... prototype"]
         scripts_governance_d5_architecture_validators_validate_load_path_integrity_py["scripts/governance/d5_architecture/validators/v... prototype"]
@@ -525,7 +525,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_data_governance_extensions_init_py["src/zephyr/data_governance/_extensions/__init__.py prototype"]
         src_zephyr_data_governance_api_init_py["src/zephyr/data_governance/api/__init__.py prototype"]
         src_zephyr_data_governance_core_init_py["src/zephyr/data_governance/core/__init__.py prototype"]
@@ -583,13 +583,13 @@ graph TD
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_service_registration_py -.->|import_depends| D_SHARED
     src_zephyr_governance_service_registration_py -.->|import_depends| D_SHARED
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
     src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
     src_zephyr_governance_adapters_simulation_broker_py -.->|import_depends| D_TRADING
-    D_GOV_RULE["D-GOV_RULE production"]
+    D_GOV_RULE["D_GOV_RULE production"]
     src_zephyr_governance_init_py -->|import_depends| D_GOV_RULE
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_init_py -->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
     src_zephyr_governance_init_py -->|import_depends| D_SHARED
@@ -598,12 +598,12 @@ graph TD
     D_AUTONOMY_CORE["D_AUTONOMY_CORE prototype"]
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_init_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_governance_init_py
-    D_EX_CORE["D-EX_CORE prototype"]
+    D_EX_CORE["D_EX_CORE prototype"]
     D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
-    D_FACTOR["D-FACTOR prototype"]
+    D_FACTOR["D_FACTOR prototype"]
     D_FACTOR -.->|import_depends| src_zephyr_governance_init_py
     D_FACTOR -.->|import_depends| src_zephyr_governance_init_py
     D_OPS -.->|import_depends| src_zephyr_governance_init_py
@@ -612,7 +612,7 @@ graph TD
     D_OPS -.->|import_depends| src_zephyr_governance_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_init_py
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     D_GOV_DRIFT -->|import_depends| src_zephyr_governance_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -628,7 +628,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_agent_cooldown_py["src/zephyr/governance/agent_cooldown.py prototype"]
         src_zephyr_governance_agent_spec_init_py["src/zephyr/governance/agent_spec/__init__.py prototype"]
         src_zephyr_governance_agent_spec_registry_py["src/zephyr/governance/agent_spec/registry.py prototype"]
@@ -668,7 +668,7 @@ graph TD
     src_zephyr_governance_architecture_governance_dependency_manager_py -.->|config_depends| src_zephyr_governance_architecture_governance_init_py
     src_zephyr_governance_architecture_governance_local_first_arch_py -.->|config_depends| src_zephyr_governance_architecture_governance_init_py
     src_zephyr_governance_architecture_governance_system_topology_py -.->|config_depends| src_zephyr_governance_architecture_governance_init_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_governance_analytics_base_py -.->|import_depends| D_TRADING
     src_zephyr_governance_analytics_base_py -.->|import_depends| D_TRADING
@@ -676,10 +676,10 @@ graph TD
     src_zephyr_governance_alerts_py -.->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_approval_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_DRIFT
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
@@ -688,7 +688,7 @@ graph TD
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_audit_trail_orchestrator_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_agent_spec_registry_py -.->|import_depends| D_SHARED
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_aisg_sandbox_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_agent_spec_registry_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_agent_spec_registry_py
@@ -699,7 +699,7 @@ graph TD
     D_REPORTING -.->|import_depends| src_zephyr_governance_analytics_base_py
     D_REPORTING -.->|import_depends| src_zephyr_governance_analytics_base_py
     D_REPORTING -.->|import_depends| src_zephyr_governance_analytics_base_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_architecture_governance_path_resolver_py
     D_GOV_DRIFT -.->|runtime| src_zephyr_governance_atomic_transaction_manager_py
     D_GOV_AUDIT -.->|runtime| src_zephyr_governance_atomic_transaction_manager_py
@@ -717,7 +717,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_audit_write_failure_protector_py["src/zephyr/governance/audit_write_failure_prote... prototype"]
         src_zephyr_governance_auditor_py["src/zephyr/governance/auditor.py prototype"]
         src_zephyr_governance_auto_fixer_py["src/zephyr/governance/auto_fixer.py prototype"]
@@ -759,7 +759,7 @@ graph TD
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_protection_index_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_verdict_engine_py
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| src_zephyr_governance_behavioral_admission_session_lifecycle_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_audit_write_failure_protector_py -.->|import_depends| D_GOV_AUDIT
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_base_repo_py -.->|import_depends| D_SHARED
@@ -769,7 +769,7 @@ graph TD
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_behavioral_admission_init_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_behavioral_admission_verdict_engine_py -.->|import_depends| D_GOV_AUDIT
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_behavioral_admission_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -785,7 +785,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_bridges_init_py["src/zephyr/governance/bridges/__init__.py prototype"]
         src_zephyr_governance_bridges_alerts_py["src/zephyr/governance/bridges/alerts.py prototype"]
         src_zephyr_governance_bridges_rbac_bridge_py["src/zephyr/governance/bridges/rbac_bridge.py prototype"]
@@ -819,29 +819,29 @@ graph TD
     end
     src_zephyr_governance_compliance_manager_py -.->|import_depends| src_zephyr_governance_compliance_rule_py
     src_zephyr_governance_bridges_rbac_bridge_py -.->|config_depends| src_zephyr_governance_bridges_init_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_broker_interface_py -.->|import_depends| D_TRADING
     src_zephyr_governance_broker_interface_py -.->|import_depends| D_TRADING
     src_zephyr_governance_broker_interface_py -.->|import_depends| D_TRADING
     D_OPS["D_OPS prototype"]
     src_zephyr_governance_burn_rate_monitor_py -.->|import_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_compliance_map_py -.->|import_depends| D_GOV_AUDIT
     D_SHARED["D_SHARED production"]
     src_zephyr_governance_bridges_alerts_py -.->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_bridges_spec_auditor_py -.->|import_depends| D_INTEGRATION
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_compliance_manager_py
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_compliance_gate_a6_init_py
-    D_EX_CORE["D-EX_CORE prototype"]
+    D_EX_CORE["D_EX_CORE prototype"]
     D_EX_CORE -.->|import_depends| src_zephyr_governance_broker_interface_py
     D_EX_CORE -.->|import_depends| src_zephyr_governance_broker_interface_py
-    D_PF_CORE["D-PF_CORE production"]
+    D_PF_CORE["D_PF_CORE production"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_compliance_rule_py
     D_TRADING -.->|import_depends| src_zephyr_governance_compliance_rule_py
     D_TRADING -.->|import_depends| src_zephyr_governance_compliance_rule_py
-    D_GOV_DRIFT["D-GOV_DRIFT design"]
+    D_GOV_DRIFT["D_GOV_DRIFT design"]
     D_GOV_DRIFT -.->|runtime| src_zephyr_governance_compliance_rule_py
     D_GOV_AUDIT -.->|contract| src_zephyr_governance_compliance_rule_py
     D_TRADING -.->|runtime| src_zephyr_governance_compliance_rule_py
@@ -859,7 +859,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_confidence_quantifier_py["src/zephyr/governance/confidence_quantifier.py prototype"]
         src_zephyr_governance_config_py["src/zephyr/governance/config.py prototype"]
         src_zephyr_governance_config_scanner_py["src/zephyr/governance/config_scanner.py prototype"]
@@ -902,9 +902,9 @@ graph TD
     src_zephyr_governance_contracts_py -.->|import_depends| D_SHARED
     D_OPS["D_OPS prototype"]
     src_zephyr_governance_cost_attributor_py -.->|import_depends| D_OPS
-    D_GOV_RULE["D-GOV_RULE production"]
+    D_GOV_RULE["D_GOV_RULE production"]
     src_zephyr_governance_constitutional_update_init_py -.->|import_depends| D_GOV_RULE
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_core_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -919,7 +919,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_cross_assistant_adapter_py["src/zephyr/governance/cross_assistant_adapter.py prototype"]
         src_zephyr_governance_cross_boundary_detector_py["src/zephyr/governance/cross_boundary_detector.py prototype"]
         src_zephyr_governance_cross_platform_shell_py["src/zephyr/governance/cross_platform_shell.py prototype"]
@@ -958,7 +958,7 @@ graph TD
     src_zephyr_governance_data_governance_data_source_reliability_py -.->|config_depends| src_zephyr_governance_data_governance_init_py
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_database_manager_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_database_manager_py -.->|import_depends| D_GOV_AUDIT
     D_REPORTING["D_REPORTING prototype"]
     src_zephyr_governance_default_attribution_engine_py -.->|import_depends| D_REPORTING
@@ -967,7 +967,7 @@ graph TD
     src_zephyr_governance_default_security_gateway_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_default_security_gateway_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_REPORTING
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_TRADING
     src_zephyr_governance_default_tca_engine_py -.->|import_depends| D_TRADING
@@ -976,9 +976,9 @@ graph TD
     src_zephyr_governance_delegation_engine_py -.->|import_depends| D_SECURITY
     D_OPS["D_OPS prototype"]
     src_zephyr_governance_degradation_manager_py -.->|import_depends| D_OPS
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_default_security_gateway_py
-    D_PF_CORE["D-PF_CORE production"]
+    D_PF_CORE["D_PF_CORE production"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_default_attribution_engine_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_default_tca_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -994,7 +994,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_depgraph_reader_py["src/zephyr/governance/depgraph_reader.py prototype"]
         src_zephyr_governance_depgraph_schema_py["src/zephyr/governance/depgraph_schema.py prototype"]
         src_zephyr_governance_diff_detector_py["src/zephyr/governance/diff_detector.py prototype"]
@@ -1048,11 +1048,11 @@ graph TD
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_ai_construction_detectors_py
     src_zephyr_governance_drift_detection_bridges_init_py -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     src_zephyr_governance_drift_detection_bridges_events_py -.->|config_depends| src_zephyr_governance_drift_detection_bridges_init_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT prototype"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT prototype"]
     src_zephyr_governance_drift_detection_brain_integration_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_drift_detection_drift_hotfix_bypass_py -.->|import_depends| D_GOV_AUDIT
-    D_GOV_DRIFT["D-GOV_DRIFT prototype"]
+    D_GOV_DRIFT["D_GOV_DRIFT prototype"]
     src_zephyr_governance_drift_detection_init_py -.->|import_depends| D_GOV_DRIFT
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
     D_GOV_DRIFT -.->|import_depends| src_zephyr_governance_drift_detection_drift_engine_py
@@ -1069,7 +1069,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_drift_detection_drift_infrastructure_py["src/zephyr/governance/drift_detection/drift_inf... prototype"]
         src_zephyr_governance_drift_detection_drift_models_py["src/zephyr/governance/drift_detection/drift_mod... prototype"]
         src_zephyr_governance_drift_detection_drift_result_types_py["src/zephyr/governance/drift_detection/drift_res... prototype"]
@@ -1113,7 +1113,7 @@ graph TD
     src_zephyr_governance_drift_fix_py -.->|import_depends| D_SECURITY
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_drift_detection_state_machine_py -.->|import_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_drift_detection_tamper_proof_audit_py -.->|import_depends| D_GOV_AUDIT
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_drift_detection_drift_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1129,7 +1129,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_engine_sandbox_py["src/zephyr/governance/engine_sandbox.py prototype"]
         src_zephyr_governance_env_watcher_py["src/zephyr/governance/env_watcher.py prototype"]
         src_zephyr_governance_error_budget_burst_limiter_py["src/zephyr/governance/error_budget_burst_limite... prototype"]
@@ -1165,9 +1165,9 @@ graph TD
     src_zephyr_governance_financial_governance_financial_compliance_py -.->|config_depends| src_zephyr_governance_financial_governance_init_py
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_escalation_engine_py -.->|import_depends| D_SECURITY
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_evidence_pack_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_evidence_pack_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -1183,7 +1183,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_financial_governance_market_data_pipeline_py["src/zephyr/governance/financial_governance/mark... prototype"]
         src_zephyr_governance_financial_governance_microstructure_defense_py["src/zephyr/governance/financial_governance/micr... prototype"]
         src_zephyr_governance_financial_governance_oms_risk_engine_py["src/zephyr/governance/financial_governance/oms_... prototype"]
@@ -1220,7 +1220,7 @@ graph TD
     src_zephyr_governance_governance_budget_tracker_py -.->|config_depends| src_zephyr_governance_governance_init_py
     src_zephyr_governance_governance_init_py -.->|import_depends| src_zephyr_governance_governance_a2a_failure_py
     src_zephyr_governance_governance_init_py -.->|import_depends| src_zephyr_governance_governance_budget_handler_py
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_governance_finding_ingest_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_finding_ingest_py -.->|import_depends| D_GOV_AUDIT
     D_INTEGRATION["D_INTEGRATION production"]
@@ -1242,7 +1242,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_governance_data_quality_py["src/zephyr/governance/governance/data_quality.py prototype"]
         src_zephyr_governance_governance_drift_fix_py["src/zephyr/governance/governance/drift_fix.py prototype"]
         src_zephyr_governance_governance_rbac_bridge_py["src/zephyr/governance/governance/rbac_bridge.py prototype"]
@@ -1277,7 +1277,7 @@ graph TD
     src_zephyr_governance_intelligence_governance_init_py -.->|config_depends| src_zephyr_governance_intelligence_governance_knowledge_engine_py
     src_zephyr_governance_intelligence_governance_ai_self_diagnosis_py -.->|config_depends| src_zephyr_governance_intelligence_governance_init_py
     src_zephyr_governance_intelligence_governance_model_drift_monitor_py -.->|config_depends| src_zephyr_governance_intelligence_governance_init_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_ingest_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_ingest_py -.->|import_depends| D_INTEGRATION
@@ -1291,9 +1291,9 @@ graph TD
     src_zephyr_governance_implementations_default_security_gateway_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_implementations_default_security_gateway_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_governance_result_types_py -.->|import_depends| D_INTEGRATION
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_implementations_init_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_governance_instrument_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -1309,7 +1309,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_intelligence_governance_multi_model_consensus_py["src/zephyr/governance/intelligence_governance/m... prototype"]
         src_zephyr_governance_intent_archiver_py["src/zephyr/governance/intent_archiver.py prototype"]
         src_zephyr_governance_interrupt_handler_py["src/zephyr/governance/interrupt_handler.py prototype"]
@@ -1344,16 +1344,16 @@ graph TD
     src_zephyr_governance_lifecycle_governance_migration_strategy_py -.->|config_depends| src_zephyr_governance_lifecycle_governance_init_py
     src_zephyr_governance_lifecycle_governance_paper_live_transition_py -.->|config_depends| src_zephyr_governance_lifecycle_governance_init_py
     src_zephyr_governance_lifecycle_governance_post_live_verification_py -.->|config_depends| src_zephyr_governance_lifecycle_governance_init_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_kb_gate_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_lifecycle_py -.->|import_depends| D_GOV_AUDIT
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_llm_impact_analyzer_py -.->|import_depends| D_SECURITY
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_governance_merkle_audit_py -.->|import_depends| D_GOV_DRIFT
     D_OPS["D_OPS prototype"]
     src_zephyr_governance_model_router_py -.->|import_depends| D_OPS
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_governance_model_router_py -.->|import_depends| D_INTELLIGENCE
     src_zephyr_governance_model_router_py -.->|import_depends| D_INTELLIGENCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1370,7 +1370,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_mvep_orchestrator_py["src/zephyr/governance/mvep_orchestrator.py prototype"]
         src_zephyr_governance_objective_tracker_py["src/zephyr/governance/objective_tracker.py prototype"]
         src_zephyr_governance_observation_window_guard_py["src/zephyr/governance/observation_window_guard.py prototype"]
@@ -1414,20 +1414,20 @@ graph TD
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_performance_attribution_report_py -.->|import_depends| D_SHARED
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_INFRA_RUNTIME
-    D_GOV_DRIFT["D-GOV_DRIFT prototype"]
+    D_GOV_DRIFT["D_GOV_DRIFT prototype"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_DRIFT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_ops_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
@@ -1435,19 +1435,19 @@ graph TD
     src_zephyr_governance_persistence_circuit_breaker_types_py -.->|import_depends| D_OPS
     D_OPS -.->|import_depends| src_zephyr_governance_persistence_circuit_breaker_types_py
     D_OPS -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
-    D_PF_CORE["D-PF_CORE production"]
+    D_PF_CORE["D_PF_CORE production"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_performance_attribution_engine_init_py
     D_REPORTING["D_REPORTING prototype"]
     D_REPORTING -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_REPORTING -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_TRADING -.->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_TRADING -.->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_TRADING -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
     D_TRADING -.->|import_depends| src_zephyr_governance_performance_attribution_report_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_ops_governance_phase_manager_py
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1464,7 +1464,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_persistence_database_manager_py["src/zephyr/governance/persistence/database_mana... production"]
         src_zephyr_governance_persistence_depgraph_schema_py["src/zephyr/governance/persistence/depgraph_sche... prototype"]
         src_zephyr_governance_persistence_event_store_py["src/zephyr/governance/persistence/event_store.py production"]
@@ -1505,15 +1505,15 @@ graph TD
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_TRADING
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_SECURITY
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_GOV_DRIFT
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_phase_check_registry_py -.->|import_depends| D_INTEGRATION
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
@@ -1558,7 +1558,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_question_tracker_py["src/zephyr/governance/question_tracker.py prototype"]
         src_zephyr_governance_rbac_bridge_py["src/zephyr/governance/rbac_bridge.py prototype"]
         src_zephyr_governance_realtime_streaming_py["src/zephyr/governance/realtime_streaming.py prototype"]
@@ -1600,12 +1600,12 @@ graph TD
     src_zephyr_governance_resilience_governance_spof_checker_py -.->|config_depends| src_zephyr_governance_resilience_governance_init_py
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_governance_result_types_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_rollback_audit_nexus_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_rollback_abuse_detector_py -.->|import_depends| D_GOV_AUDIT
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_governance_red_blue_validator_init_py -.->|config_depends| D_GOV_DRIFT
-    D_PF_CORE["D-PF_CORE prototype"]
+    D_PF_CORE["D_PF_CORE prototype"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_risk_limits_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -1620,7 +1620,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_rollback_context_restorer_py["src/zephyr/governance/rollback_context_restorer.py prototype"]
         src_zephyr_governance_rollback_dashboard_py["src/zephyr/governance/rollback_dashboard.py prototype"]
         src_zephyr_governance_rollback_drill_py["src/zephyr/governance/rollback_drill.py prototype"]
@@ -1653,11 +1653,11 @@ graph TD
         src_zephyr_governance_self_benchmark_py["src/zephyr/governance/self_benchmark.py prototype"]
     end
     src_zephyr_governance_security_governance_init_py -.->|config_depends| src_zephyr_governance_security_governance_supply_chain_security_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_rollback_executor_py -.->|import_depends| D_GOV_AUDIT
     D_SECURITY["D_SECURITY production"]
     src_zephyr_governance_rollback_executor_py -.->|import_depends| D_SECURITY
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_security_gateway_base_py
     D_GOV_AUDIT -->|import_depends| src_zephyr_governance_security_gateway_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1674,7 +1674,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_self_budget_tracker_py["src/zephyr/governance/self_budget_tracker.py prototype"]
         src_zephyr_governance_self_scanner_py["src/zephyr/governance/self_scanner.py prototype"]
         src_zephyr_governance_self_test_py["src/zephyr/governance/self_test.py prototype"]
@@ -1724,14 +1724,14 @@ graph TD
     src_zephyr_governance_semantic_auditor_init_py -.->|import_depends| src_zephyr_governance_semantic_auditor_compliance_map_py
     src_zephyr_governance_semantic_auditor_init_py -.->|import_depends| src_zephyr_governance_semantic_auditor_kb_gate_py
     src_zephyr_governance_semantic_auditor_init_py -.->|import_depends| src_zephyr_governance_semantic_auditor_spec_auditor_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_semantic_audit_compliance_map_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_semantic_audit_kb_gate_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_semantic_audit_supply_chain_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_semantic_auditor_supply_chain_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_semantic_auditor_compliance_map_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_semantic_auditor_kb_gate_py -.->|import_depends| D_GOV_AUDIT
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_semantic_auditor_init_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_semantic_audit_kb_gate_py
     D_GOV_AUDIT -.->|import_depends| src_zephyr_governance_semantic_audit_models_py
@@ -1750,7 +1750,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_sensitivity_sweeper_py["src/zephyr/governance/sensitivity_sweeper.py prototype"]
         src_zephyr_governance_services_init_py["src/zephyr/governance/services/__init__.py prototype"]
         src_zephyr_governance_shadow_trust_validator_py["src/zephyr/governance/shadow_trust_validator.py prototype"]
@@ -1788,14 +1788,14 @@ graph TD
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_spec_auditor_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_sqlite_dumper_py -.->|import_depends| D_INTEGRATION
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_strategies_default_equity_strategy_py -.->|import_depends| D_TRADING
-    D_PF_ALLOC["D-PF_ALLOC prototype"]
+    D_PF_ALLOC["D_PF_ALLOC prototype"]
     src_zephyr_governance_strategy_engine_init_py -.->|import_depends| D_PF_ALLOC
     D_DATA_SEC["D_DATA_SEC prototype"]
     D_DATA_SEC -.->|import_depends| src_zephyr_governance_sqlite_schema_py
     D_PF_ALLOC -.->|import_depends| src_zephyr_governance_strategy_base_py
-    D_PF_CORE["D-PF_CORE production"]
+    D_PF_CORE["D_PF_CORE production"]
     D_PF_CORE -.->|import_depends| src_zephyr_governance_strategy_base_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_strategy_registry_py
     D_PF_CORE -.->|import_depends| src_zephyr_governance_strategy_base_py
@@ -1814,7 +1814,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_supply_chain_py["src/zephyr/governance/supply_chain.py prototype"]
         src_zephyr_governance_supply_chain_security_py["src/zephyr/governance/supply_chain_security.py prototype"]
         src_zephyr_governance_symbol_index_py["src/zephyr/governance/symbol_index.py prototype"]
@@ -1859,18 +1859,18 @@ graph TD
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_instrument_py
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_macro_factor_signal_py
     src_zephyr_governance_trading_contracts_market_init_py -.->|import_depends| src_zephyr_governance_trading_contracts_market_signal_degradation_warning_py
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_governance_tamper_evident_log_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_governance_supply_chain_py -.->|import_depends| D_GOV_AUDIT
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_task_repo_py -.->|import_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_task_repo_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_task_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_task_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_task_repo_py -.->|import_depends| D_INTEGRATION
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|import_depends| D_TRADING
@@ -1892,7 +1892,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_governance_trading_contracts_market_synthesized_signal_py["src/zephyr/governance/trading_contracts/market/... prototype"]
         src_zephyr_governance_trading_contracts_portfolio_contracts_init_py["src/zephyr/governance/trading_contracts/portfol... prototype"]
         src_zephyr_governance_trading_contracts_portfolio_contracts_money_py["src/zephyr/governance/trading_contracts/portfol... prototype"]
@@ -1936,19 +1936,19 @@ graph TD
     src_zephyr_infrastructure_a2a_protocol_governance_auditor_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     src_zephyr_infrastructure_a2a_protocol_governance_audit_logger_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
     src_zephyr_infrastructure_a2a_protocol_governance_base_server_py -.->|config_depends| src_zephyr_infrastructure_a2a_protocol_governance_init_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_transition_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_governance_transition_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_triage_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_triage_py -.->|import_depends| D_INTEGRATION
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     src_zephyr_governance_triage_py -.->|import_depends| D_INTELLIGENCE
     D_SHARED["D_SHARED prototype"]
     src_zephyr_governance_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|import_depends| D_SHARED
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     src_zephyr_infrastructure_a2a_protocol_governance_init_py -.->|import_depends| D_INFRA_RUNTIME
-    D_COMPLIANCE["D-COMPLIANCE prototype"]
+    D_COMPLIANCE["D_COMPLIANCE prototype"]
     D_COMPLIANCE -.->|import_depends| src_zephyr_governance_zero_knowledge_audit_stub_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -1963,7 +1963,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py["src/zephyr/infrastructure/a2a_protocol/governan... prototype"]
         src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py["src/zephyr/infrastructure/a2a_protocol/governan... prototype"]
         src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py["src/zephyr/infrastructure/a2a_protocol/governan... prototype"]
@@ -1975,8 +1975,8 @@ graph TD
         src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py["src/zephyr/infrastructure/a2a_protocol/layer3_c... prototype"]
         src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py["src/zephyr/infrastructure/a2a_protocol/legacy_g... prototype"]
         src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py["src/zephyr/infrastructure/capacity_assurance/co... prototype"]
-        src_zephyr_infrastructure_db_olap_engine_py["src/zephyr/infrastructure/db/olap_engine.py production"]
-        src_zephyr_infrastructure_db_olap_engine_py_1["src/zephyr/infrastructure/db/olap_engine.py prototype"]
+        src_zephyr_infrastructure_db_olap_engine_py["src/zephyr/infrastructure/db/olap_engine.py prototype"]
+        src_zephyr_infrastructure_db_olap_engine_py_1["src/zephyr/infrastructure/db/olap_engine.py production"]
         src_zephyr_infrastructure_governance_server_py["src/zephyr/infrastructure/governance_server.py prototype"]
         src_zephyr_infrastructure_registry_governance_py["src/zephyr/infrastructure/registry_governance.py prototype"]
         src_zephyr_integration_governance_init_py["src/zephyr/integration/governance/__init__.py prototype"]
@@ -1995,7 +1995,7 @@ graph TD
         src_zephyr_service_layer_owners_yaml["src/zephyr/service_layer_owners.yaml production"]
         src_zephyr_shared_capacity_governance_loop_py["src/zephyr/shared/capacity_governance_loop.py production"]
     end
-    src_zephyr_infrastructure_db_olap_engine_py -.->|import_depends| src_zephyr_infrastructure_db_olap_engine_py_1
+    src_zephyr_infrastructure_db_olap_engine_py_1 -.->|import_depends| src_zephyr_infrastructure_db_olap_engine_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -.->|import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py
     src_zephyr_integration_governance_data_source_reliability_py -.->|config_depends| src_zephyr_integration_governance_init_py
     src_zephyr_integration_governance_data_source_router_init_py -.->|config_depends| src_zephyr_integration_governance_data_source_router_embedding_router_py
@@ -2012,7 +2012,7 @@ graph TD
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_INTEGRATION
     D_SHARED["D_SHARED prototype"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT prototype"]
+    D_GOV_AUDIT["D_GOV_AUDIT prototype"]
     src_zephyr_infrastructure_governance_server_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py -.->|import_depends| D_INTEGRATION
     src_zephyr_infrastructure_a2a_protocol_governance_protocol_py -.->|import_depends| D_SHARED
@@ -2026,14 +2026,14 @@ graph TD
     D_INTEGRATION -.->|import_depends| src_zephyr_integration_mcp_governance_server_py
     D_OPS["D_OPS prototype"]
     D_OPS -.->|import_depends| src_zephyr_ops_evolution_prompt_factory_governance_py
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|import_depends| src_zephyr_shared_capacity_governance_loop_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_infrastructure_db_olap_engine_py,src_zephyr_service_layer_owners_yaml,src_zephyr_shared_capacity_governance_loop_py production
-    class src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py,src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py,src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py,src_zephyr_infrastructure_a2a_protocol_governance_policy_engine_py,src_zephyr_infrastructure_a2a_protocol_governance_protocol_py,src_zephyr_infrastructure_a2a_protocol_governance_rate_limiter_py,src_zephyr_infrastructure_a2a_protocol_governance_session_manager_py,src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py,src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py,src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py,src_zephyr_infrastructure_db_olap_engine_py_1,src_zephyr_infrastructure_governance_server_py,src_zephyr_infrastructure_registry_governance_py,src_zephyr_integration_governance_init_py,src_zephyr_integration_governance_auditor_py,src_zephyr_integration_governance_data_source_reliability_py,src_zephyr_integration_governance_data_source_router_init_py,src_zephyr_integration_governance_data_source_router_embedding_router_py,src_zephyr_integration_governance_embedding_router_py,src_zephyr_integration_governance_governance_adapter_py,src_zephyr_integration_governance_phase_hold_py,src_zephyr_integration_governance_protocol_py,src_zephyr_integration_mcp_governance_server_py,src_zephyr_ops_evolution_prompt_factory_governance_py,src_zephyr_ops_gates_governance_gates_py,src_zephyr_ops_gates_config_governance_py design
+    class src_zephyr_infrastructure_db_olap_engine_py_1,src_zephyr_service_layer_owners_yaml,src_zephyr_shared_capacity_governance_loop_py production
+    class src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py,src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py,src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py,src_zephyr_infrastructure_a2a_protocol_governance_policy_engine_py,src_zephyr_infrastructure_a2a_protocol_governance_protocol_py,src_zephyr_infrastructure_a2a_protocol_governance_rate_limiter_py,src_zephyr_infrastructure_a2a_protocol_governance_session_manager_py,src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py,src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py,src_zephyr_infrastructure_a2a_protocol_legacy_governance_adapter_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py,src_zephyr_infrastructure_db_olap_engine_py,src_zephyr_infrastructure_governance_server_py,src_zephyr_infrastructure_registry_governance_py,src_zephyr_integration_governance_init_py,src_zephyr_integration_governance_auditor_py,src_zephyr_integration_governance_data_source_reliability_py,src_zephyr_integration_governance_data_source_router_init_py,src_zephyr_integration_governance_data_source_router_embedding_router_py,src_zephyr_integration_governance_embedding_router_py,src_zephyr_integration_governance_governance_adapter_py,src_zephyr_integration_governance_phase_hold_py,src_zephyr_integration_governance_protocol_py,src_zephyr_integration_mcp_governance_server_py,src_zephyr_ops_evolution_prompt_factory_governance_py,src_zephyr_ops_gates_governance_gates_py,src_zephyr_ops_gates_config_governance_py design
     class D_INFRA_RUNTIME,D_BEHAVIORAL_AUDIT,D_INFRA_A2A external_prod
     class D_INTEGRATION,D_SECURITY,D_SHARED,D_GOV_AUDIT,D_OPS,D_TRADING external_design
 ```
@@ -2042,7 +2042,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         src_zephyr_shared_protocols_a2a_a2a_governance_py["src/zephyr/shared/protocols/a2a/a2a_governance.py prototype"]
         tests_stress_test_staging_concurrent_py["tests/_stress_test_staging_concurrent.py prototype"]
         tests_adversarial_init_py["tests/adversarial/__init__.py prototype"]
@@ -2112,7 +2112,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_asset_inventory_test_index_generator_asset_inventory_py["tests/asset_inventory/test_index_generator_asse... prototype"]
         tests_asset_inventory_test_knowledge_transfer_py["tests/asset_inventory/test_knowledge_transfer.py prototype"]
         tests_asset_inventory_test_lifecycle_asset_inventory_py["tests/asset_inventory/test_lifecycle_asset_inve... prototype"]
@@ -2163,7 +2163,7 @@ graph TD
     tests_asset_inventory_test_trust_anchor_asset_inventory_py -.->|test_depends| D_INFRA_RUNTIME
     tests_asset_inventory_test_security_enforcer_py -.->|test_depends| D_INFRA_RUNTIME
     tests_chaos_test_mcp_chaos_py -.->|test_depends| D_INFRA_RUNTIME
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_contract_test_schema_stability_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2178,7 +2178,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_contracts_test_ct_orc_gate_001_py["tests/contracts/test_ct_orc_gate_001.py prototype"]
         tests_contracts_test_ct_orc_script_001_py["tests/contracts/test_ct_orc_script_001.py prototype"]
         tests_contracts_test_ct_orc_vms_001_py["tests/contracts/test_ct_orc_vms_001.py prototype"]
@@ -2213,7 +2213,7 @@ graph TD
     tests_governance_conftest_py -.->|config_depends| tests_governance_init_py
     tests_e2e_test_naming_e2e_py -.->|config_depends| tests_e2e_init_py
     tests_governance_test_all_scripts_py -.->|config_depends| tests_governance_init_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_contracts_test_ct_orc_gate_001_py -.->|test_depends| D_TRADING
     tests_contracts_test_ct_rbk_gate_001_py -.->|test_depends| D_TRADING
     tests_contracts_test_ct_script_gate_001_py -.->|test_depends| D_TRADING
@@ -2227,7 +2227,7 @@ graph TD
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_SECURITY
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_SECURITY
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_SECURITY
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_GOV_AUDIT
     tests_governance_test_adversarial_contract_attacks_py -.->|test_depends| D_GOV_AUDIT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
@@ -2245,7 +2245,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_governance_test_gct_024_hard_checks_py["tests/governance/test_gct_024_hard_checks.py prototype"]
         tests_governance_test_gct_integration_py["tests/governance/test_gct_integration.py prototype"]
         tests_governance_test_gov_5system_integration_py["tests/governance/test_gov_5system_integration.py prototype"]
@@ -2288,7 +2288,7 @@ graph TD
     tests_governance_test_gct_integration_py -.->|test_depends| D_SECURITY
     tests_governance_test_gov_5system_integration_py -.->|test_depends| D_INFRA_RUNTIME
     tests_governance_test_p0_i2_construction_order_py -.->|test_depends| D_SECURITY
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_governance_test_p0_i2_construction_order_py -.->|test_depends| D_GOV_AUDIT
     tests_governance_test_p0_u1_contract_smoke_py -.->|test_depends| D_SECURITY
     tests_governance_test_p0_u1_contract_smoke_py -.->|test_depends| D_GOV_AUDIT
@@ -2309,7 +2309,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_integration_test_agent_e2e_py["tests/integration/test_agent_e2e.py prototype"]
         tests_integration_test_akshare_real_data_py["tests/integration/test_akshare_real_data.py prototype"]
         tests_integration_test_audit08_service_layer_wiring_py["tests/integration/test_audit08_service_layer_wi... prototype"]
@@ -2343,14 +2343,14 @@ graph TD
     end
     D_MKT_DATA["D_MKT_DATA production"]
     tests_integration_test_akshare_real_data_py -.->|test_depends| D_MKT_DATA
-    D_RISK["D-RISK production"]
+    D_RISK["D_RISK production"]
     tests_integration_test_akshare_real_data_py -.->|test_depends| D_RISK
     tests_integration_test_akshare_real_data_py -.->|test_depends| D_RISK
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_integration_test_agent_e2e_py -.->|test_depends| D_TRADING
     D_OPS["D_OPS production"]
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_OPS
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_INTELLIGENCE
     D_INTEGRATION["D_INTEGRATION production"]
     tests_integration_test_audit08_service_layer_wiring_py -.->|test_depends| D_INTEGRATION
@@ -2362,7 +2362,7 @@ graph TD
     tests_integration_test_beta_e2e_py -.->|test_depends| D_INFRA_RUNTIME
     tests_integration_test_beta_e2e_py -.->|test_depends| D_TRADING
     tests_integration_test_evolution_e2e_py -.->|test_depends| D_OPS
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_integration_test_gate_e2e_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_SHARED["D_SHARED production"]
     tests_integration_test_gate_e2e_py -.->|test_depends| D_SHARED
@@ -2378,7 +2378,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_llm_security_test_l2a_process_sandbox_py["tests/llm_security/test_l2a_process_sandbox.py prototype"]
         tests_llm_security_test_l3_output_security_py["tests/llm_security/test_l3_output_security.py prototype"]
         tests_llm_security_test_l4_agent_security_py["tests/llm_security/test_l4_agent_security.py prototype"]
@@ -2442,7 +2442,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_a2a_context_rot_py["tests/test_a2a_context_rot.py prototype"]
         tests_test_a2a_cross_agent_semantic_flow_py["tests/test_a2a_cross_agent_semantic_flow.py prototype"]
         tests_test_a2a_dashboard_py["tests/test_a2a_dashboard.py prototype"]
@@ -2493,7 +2493,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_a2a_tracing_py["tests/test_a2a_tracing.py prototype"]
         tests_test_a2a_vector_reputation_py["tests/test_a2a_vector_reputation.py prototype"]
         tests_test_a2a_voting_py["tests/test_a2a_voting.py prototype"]
@@ -2537,7 +2537,7 @@ graph TD
     tests_test_abac_guard_root_py -.->|test_depends| D_INTEGRATION
     tests_test_a2a_work_steal_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_action_composition_health_monitor_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_action_dispatcher_py -.->|test_depends| D_TRADING
     tests_test_action_explainability_py -.->|test_depends| D_OPS
     tests_test_action_interaction_detector_py -.->|test_depends| D_OPS
@@ -2558,7 +2558,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_agent_creation_policy_py["tests/test_agent_creation_policy.py prototype"]
         tests_test_agent_debate_py["tests/test_agent_debate.py prototype"]
         tests_test_agent_dispatch_py["tests/test_agent_dispatch.py prototype"]
@@ -2594,7 +2594,7 @@ graph TD
     tests_test_agent_creation_policy_py -.->|test_depends| D_SECURITY
     D_OPS["D_OPS production"]
     tests_test_agent_lifecycle_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_agent_health_monitor_root_py -.->|test_depends| D_TRADING
     tests_test_agent_orchestrator_root_py -.->|test_depends| D_TRADING
     tests_test_agent_skill_guard_py -.->|test_depends| D_OPS
@@ -2602,11 +2602,11 @@ graph TD
     tests_test_agent_spec_main_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_agent_quality_py -.->|test_depends| D_TRADING
     tests_test_agent_spec_registry_py -.->|test_depends| D_AUTONOMY_CORE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_ai_capability_guard_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_ai_audit_logger_py -.->|test_depends| D_TRADING
     tests_test_ai_comment_veracity_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_ai_code_standards_py -.->|test_depends| D_GOV_AUDIT
     tests_test_agent_trajectory_anomaly_detector_py -.->|test_depends| D_OPS
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
@@ -2624,7 +2624,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_annotations_py["tests/test_annotations.py prototype"]
         tests_test_anomaly_py["tests/test_anomaly.py prototype"]
         tests_test_anomaly_clustering_py["tests/test_anomaly_clustering.py prototype"]
@@ -2660,7 +2660,7 @@ graph TD
     tests_test_anomaly_detector_py -.->|test_depends| D_SECURITY
     D_OPS["D_OPS production"]
     tests_test_anomaly_clustering_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_anomaly_py -.->|test_depends| D_GOV_AUDIT
     tests_test_anomaly_py -.->|test_depends| D_GOV_AUDIT
     tests_test_api_dependency_metrics_py -.->|test_depends| D_OPS
@@ -2689,7 +2689,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_audit_cli_py["tests/test_audit_cli.py prototype"]
         tests_test_audit_contracts_py["tests/test_audit_contracts.py prototype"]
         tests_test_audit_dim_d1_d4_e2e_py["tests/test_audit_dim_d1_d4_e2e.py prototype"]
@@ -2721,7 +2721,7 @@ graph TD
         tests_test_auto_maintenance_py["tests/test_auto_maintenance.py prototype"]
         tests_test_auto_reward_py["tests/test_auto_reward.py prototype"]
     end
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_audit_contracts_py -.->|test_depends| D_GOV_AUDIT
     tests_test_audit_cli_py -.->|test_depends| D_GOV_AUDIT
     tests_test_audit_dim_d1_d4_e2e_py -.->|test_depends| D_GOV_AUDIT
@@ -2737,7 +2737,7 @@ graph TD
     tests_test_audit_orphan_judge_e2e_py -.->|test_depends| D_SECURITY
     tests_test_audit_orphan_judge_e2e_py -.->|test_depends| D_SECURITY
     tests_test_audit_log_guard_py -.->|test_depends| D_SECURITY
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_audit_red_blue_e2e_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -2751,7 +2751,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_auto_rollback_py["tests/test_auto_rollback.py prototype"]
         tests_test_auto_runtime_core_py["tests/test_auto_runtime_core.py prototype"]
         tests_test_auto_split_py["tests/test_auto_split.py prototype"]
@@ -2786,13 +2786,13 @@ graph TD
     D_OPS["D_OPS production"]
     tests_test_automated_rca_postmortem_generator_py -.->|test_depends| D_OPS
     tests_test_autonomy_credit_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_autonomy_guard_py -.->|test_depends| D_TRADING
     tests_test_autonomy_maturity_py -.->|test_depends| D_OPS
     tests_test_autopilot_py -.->|test_depends| D_TRADING
     D_SHARED["D_SHARED production"]
     tests_test_autopilot_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_autopilot_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_autopilot_py -.->|test_depends| D_INTEGRATION
@@ -2815,7 +2815,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_bare_repo_scanner_py["tests/test_bare_repo_scanner.py prototype"]
         tests_test_base_repo_py["tests/test_base_repo.py prototype"]
         tests_test_baseline_poisoning_guard_py["tests/test_baseline_poisoning_guard.py prototype"]
@@ -2849,9 +2849,9 @@ graph TD
     end
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_baseline_poisoning_guard_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_base_repo_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_batch_orchestrator_py -.->|test_depends| D_TRADING
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_behavioral_auditor_main_py -.->|test_depends| D_AUTONOMY_CORE
@@ -2859,7 +2859,7 @@ graph TD
     tests_test_blast_radius_budget_py -.->|test_depends| D_OPS
     tests_test_benchmark_integrity_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_benchmark_runner_py -.->|test_depends| D_TRADING
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_benchmark_suite_py -.->|test_depends| D_INTELLIGENCE
     tests_test_blast_radius_detector_py -.->|test_depends| D_OPS
     tests_test_blind_spot_closure_py -.->|test_depends| D_TRADING
@@ -2882,7 +2882,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_boot_cron_jobs_py["tests/test_boot_cron_jobs.py prototype"]
         tests_test_boot_hooks_py["tests/test_boot_hooks.py prototype"]
         tests_test_boot_hooks_unlock_py["tests/test_boot_hooks_unlock.py prototype"]
@@ -2914,7 +2914,7 @@ graph TD
         tests_test_bulkhead_manager_py["tests/test_bulkhead_manager.py prototype"]
         tests_test_burn_rate_alerter_py["tests/test_burn_rate_alerter.py prototype"]
     end
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_boot_cron_jobs_py -.->|test_depends| D_TRADING
     D_SECURITY["D_SECURITY production"]
     tests_test_bootstrap_superadmin_py -.->|test_depends| D_SECURITY
@@ -2925,10 +2925,10 @@ graph TD
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
     tests_test_boot_hooks_unlock_py -.->|test_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_bridge_py -.->|test_depends| D_GOV_AUDIT
     tests_test_boot_hooks_py -.->|test_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_breaking_change_detector_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_OPS["D_OPS production"]
     tests_test_boot_integrity_attestation_py -.->|test_depends| D_OPS
@@ -2949,7 +2949,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_burn_rate_monitor_py["tests/test_burn_rate_monitor.py prototype"]
         tests_test_burnout_alarm_py["tests/test_burnout_alarm.py prototype"]
         tests_test_bus_factor_defense_py["tests/test_bus_factor_defense.py prototype"]
@@ -2986,7 +2986,7 @@ graph TD
     D_OPS["D_OPS production"]
     tests_test_burnout_alarm_py -.->|test_depends| D_OPS
     tests_test_canary_repair_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_canary_manager_py -.->|test_depends| D_TRADING
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_canary_controller_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -3014,7 +3014,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_ce_vibe_shortcuts_py["tests/test_ce_vibe_shortcuts.py prototype"]
         tests_test_changelog_manager_py["tests/test_changelog_manager.py prototype"]
         tests_test_chaos_engine_py["tests/test_chaos_engine.py prototype"]
@@ -3046,17 +3046,17 @@ graph TD
         tests_test_code_dedup_engine_test_self_scan_integrity_py["tests/test_code_dedup_engine/test_self_scan_int... prototype"]
         tests_test_code_review_ai_py["tests/test_code_review_ai.py prototype"]
     end
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_changelog_manager_py -.->|test_depends| D_GOV_AUDIT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_ce_vibe_shortcuts_py -.->|test_depends| D_AUTONOMY_CORE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_chaos_hooks_py -.->|test_depends| D_TRADING
     D_OPS["D_OPS production"]
     tests_test_chaos_engineering_py -.->|test_depends| D_OPS
     tests_test_chaos_engine_py -.->|test_depends| D_TRADING
     tests_test_chaos_engine_ops_py -.->|test_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_check_type_registry_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_checkpoint_manager_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_citation_walker_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3068,7 +3068,7 @@ graph TD
     tests_test_ci_cd_pre_scanner_py -.->|test_depends| D_OPS
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_classifier_root_py -.->|test_depends| D_INFRA_RUNTIME
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_cli_py -.->|test_depends| D_INTELLIGENCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -3082,7 +3082,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_code_simulator_py["tests/test_code_simulator.py prototype"]
         tests_test_cognitive_load_py["tests/test_cognitive_load.py prototype"]
         tests_test_cognitive_load_budget_py["tests/test_cognitive_load_budget.py prototype"]
@@ -3120,7 +3120,7 @@ graph TD
     D_SECURITY["D_SECURITY production"]
     tests_test_cold_start_lock_py -.->|test_depends| D_SECURITY
     tests_test_cold_start_lock_py -.->|test_depends| D_SECURITY
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_cold_start_py -.->|test_depends| D_GOV_AUDIT
     tests_test_cold_start_conservative_mode_py -.->|test_depends| D_OPS
     tests_test_collaborative_learning_py -.->|test_depends| D_OPS
@@ -3145,7 +3145,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_config_hot_reload_guard_py["tests/test_config_hot_reload_guard.py prototype"]
         tests_test_config_manager_py["tests/test_config_manager.py prototype"]
         tests_test_config_reload_semantic_py["tests/test_config_reload_semantic.py prototype"]
@@ -3179,7 +3179,7 @@ graph TD
     end
     D_OPS["D_OPS production"]
     tests_test_config_hot_reload_guard_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_config_manager_py -.->|test_depends| D_TRADING
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_config_safety_guard_py -.->|test_depends| D_AUTONOMY_CORE
@@ -3209,7 +3209,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_context_outcome_tracker_py["tests/test_context_outcome_tracker.py prototype"]
         tests_test_context_package_py["tests/test_context_package.py prototype"]
         tests_test_context_pipeline_root_py["tests/test_context_pipeline_root.py prototype"]
@@ -3256,7 +3256,7 @@ graph TD
     tests_test_continuous_verifier_py -.->|test_depends| D_SECURITY
     tests_test_context_window_pressure_manager_py -.->|test_depends| D_OPS
     tests_test_contracts_py -.->|test_depends| D_SECURITY
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_contract_registry_root_py -.->|test_depends| D_TRADING
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_contract_tester_py -.->|test_depends| D_INFRA_RUNTIME
@@ -3273,7 +3273,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_cost_router_py["tests/test_cost_router.py prototype"]
         tests_test_cost_tracker_py["tests/test_cost_tracker.py prototype"]
         tests_test_counterfactual_py["tests/test_counterfactual.py prototype"]
@@ -3317,11 +3317,11 @@ graph TD
     tests_test_cross_module_integration_root_py -.->|test_depends| D_OPS
     tests_test_cross_env_consistency_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_cross_guard_conflict_detector_py -.->|test_depends| D_OPS
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_cross_layer_py -.->|test_depends| D_INTELLIGENCE
-    D_SIMULATION["D-SIMULATION production"]
+    D_SIMULATION["D_SIMULATION production"]
     tests_test_cross_layer_py -.->|test_depends| D_SIMULATION
-    D_FUNDAMENTAL_SIGNAL["D-FUNDAMENTAL_SIGNAL production"]
+    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     tests_test_cross_layer_py -.->|test_depends| D_FUNDAMENTAL_SIGNAL
     tests_test_cross_gen_validation_py -.->|test_depends| D_OPS
     tests_test_cross_module_score_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -3339,7 +3339,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_ct_content_length_py["tests/test_ct_content_length.py prototype"]
         tests_test_ct_content_quality_py["tests/test_ct_content_quality.py prototype"]
         tests_test_ct_contract_compatibility_check_py["tests/test_ct_contract_compatibility_check.py prototype"]
@@ -3371,7 +3371,7 @@ graph TD
         tests_test_curation_loop_root_py["tests/test_curation_loop_root.py prototype"]
         tests_test_cve_scanner_py["tests/test_cve_scanner.py prototype"]
     end
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_ct_content_quality_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
@@ -3400,7 +3400,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_cybersec_2026_guard_py["tests/test_cybersec_2026_guard.py prototype"]
         tests_test_daemon_registry_py["tests/test_daemon_registry.py prototype"]
         tests_test_daily_ops_py["tests/test_daily_ops.py prototype"]
@@ -3441,7 +3441,7 @@ graph TD
     tests_test_data_lifecycle_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     D_SHARED["D_SHARED production"]
     tests_test_daemon_registry_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_db_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_db_py -.->|test_depends| D_INTEGRATION
@@ -3466,7 +3466,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_decision_provenance_py["tests/test_decision_provenance.py prototype"]
         tests_test_decision_registry_py["tests/test_decision_registry.py prototype"]
         tests_test_dedup_extractor_py["tests/test_dedup_extractor.py prototype"]
@@ -3502,15 +3502,15 @@ graph TD
     tests_test_decision_provenance_py -.->|test_depends| D_OPS
     D_SECURITY["D_SECURITY production"]
     tests_test_decision_registry_py -.->|test_depends| D_SECURITY
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_deferred_queue_py -.->|test_depends| D_TRADING
     D_SHARED["D_SHARED production"]
     tests_test_deferred_queue_py -.->|test_depends| D_SHARED
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_deepseek_v4_chat_py -.->|test_depends| D_INTELLIGENCE
     tests_test_defense_depth_py -.->|test_depends| D_SECURITY
     tests_test_degrade_cascade_py -.->|test_depends| D_TRADING
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_delegation_auditor_py -.->|test_depends| D_GOV_AUDIT
     tests_test_delegation_bridge_py -.->|test_depends| D_GOV_AUDIT
     tests_test_dependency_auditor_py -.->|test_depends| D_SECURITY
@@ -3533,7 +3533,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_diagnosis_engine_py["tests/test_diagnosis_engine.py prototype"]
         tests_test_diagnosis_kpi_py["tests/test_diagnosis_kpi.py prototype"]
         tests_test_diff_detector_py["tests/test_diff_detector.py prototype"]
@@ -3574,7 +3574,7 @@ graph TD
     tests_test_diminishing_returns_detector_py -.->|test_depends| D_OPS
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_diff_injector_py -.->|test_depends| D_AUTONOMY_CORE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_disk_guard_py -.->|test_depends| D_TRADING
     tests_test_diversity_constraint_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_dlq_manager_root_py -.->|test_depends| D_TRADING
@@ -3583,7 +3583,7 @@ graph TD
     tests_test_dogfooding_py -.->|test_depends| D_SHARED
     tests_test_doc_compressor_root_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_domain_decay_config_py -.->|test_depends| D_AUTONOMY_CORE
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_dora_metrics_py -.->|test_depends| D_GOV_AUDIT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -3597,7 +3597,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_drift_result_types_py["tests/test_drift_result_types.py prototype"]
         tests_test_drift_training_py["tests/test_drift_training.py prototype"]
         tests_test_dry_run_root_py["tests/test_dry_run_root.py prototype"]
@@ -3656,7 +3656,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_e_identity_verifier_py["tests/test_e_identity_verifier.py prototype"]
         tests_test_e_integrity_verifier_py["tests/test_e_integrity_verifier.py prototype"]
         tests_test_e_interrupt_handler_py["tests/test_e_interrupt_handler.py prototype"]
@@ -3697,7 +3697,7 @@ graph TD
     tests_test_emergency_takeover_py -.->|test_depends| D_OPS
     tests_test_engine_root_py -.->|test_depends| D_SECURITY
     tests_test_engine_root_py -.->|test_depends| D_SECURITY
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_end_to_end_walkthrough_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_emergent_behavior_detector_py -.->|test_depends| D_OPS
     tests_test_engine_degradation_root_py -.->|test_depends| D_SECURITY
@@ -3719,7 +3719,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_ensemble_drift_py["tests/test_ensemble_drift.py prototype"]
         tests_test_env_watcher_py["tests/test_env_watcher.py prototype"]
         tests_test_environment_manager_py["tests/test_environment_manager.py prototype"]
@@ -3783,7 +3783,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_events_ba_py["tests/test_events_ba.py prototype"]
         tests_test_evidence_pack_py["tests/test_evidence_pack.py prototype"]
         tests_test_evolution_engine_root_py["tests/test_evolution_engine_root.py prototype"]
@@ -3817,13 +3817,13 @@ graph TD
     end
     D_SHARED["D_SHARED production"]
     tests_test_events_ba_py -.->|test_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_evidence_pack_py -.->|test_depends| D_GOV_AUDIT
     D_OPS["D_OPS production"]
     tests_test_evolution_engine_root_py -.->|test_depends| D_OPS
     tests_test_evolution_init_py -.->|test_depends| D_OPS
     tests_test_ewc_kb_review_py -.->|test_depends| D_OPS
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_exam_orchestrator_py -.->|test_depends| D_INTELLIGENCE
     tests_test_exam_orchestrator_py -.->|test_depends| D_INTELLIGENCE
     tests_test_exam_orchestrator_py -.->|test_depends| D_INTELLIGENCE
@@ -3847,7 +3847,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_feedback_bridge_py["tests/test_feedback_bridge.py prototype"]
         tests_test_feedback_collector_root_py["tests/test_feedback_collector_root.py prototype"]
         tests_test_feedback_delay_compensator_py["tests/test_feedback_delay_compensator.py prototype"]
@@ -3879,9 +3879,9 @@ graph TD
         tests_test_fl_adversarial_validation_py["tests/test_fl_adversarial_validation.py prototype"]
         tests_test_fl_agent_lifecycle_py["tests/test_fl_agent_lifecycle.py prototype"]
     end
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_feedback_loop_py -.->|test_depends| D_TRADING
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_feedback_bridge_py -.->|test_depends| D_GOV_AUDIT
     D_OPS["D_OPS production"]
     tests_test_feedback_delay_compensator_py -.->|test_depends| D_OPS
@@ -3897,7 +3897,7 @@ graph TD
     tests_test_file_watcher_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_finalizer_py -.->|test_depends| D_TRADING
     tests_test_file_task_mapper_root_py -.->|test_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_file_task_mapper_root_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_finding_bridge_py -.->|test_depends| D_TRADING
     tests_test_finding_task_bridge_py -.->|test_depends| D_INFRA_RUNTIME
@@ -3913,7 +3913,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_fl_alert_router_py["tests/test_fl_alert_router.py prototype"]
         tests_test_fl_anomaly_detector_py["tests/test_fl_anomaly_detector.py prototype"]
         tests_test_fl_api_version_contract_py["tests/test_fl_api_version_contract.py prototype"]
@@ -3973,7 +3973,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_fl_exceptions_py["tests/test_fl_exceptions.py prototype"]
         tests_test_fl_federated_security_py["tests/test_fl_federated_security.py prototype"]
         tests_test_fl_financial_stratification_py["tests/test_fl_financial_stratification.py prototype"]
@@ -4033,7 +4033,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_flag_lifecycle_py["tests/test_flag_lifecycle.py prototype"]
         tests_test_flag_lifecycle_manager_py["tests/test_flag_lifecycle_manager.py prototype"]
         tests_test_flapping_detector_py["tests/test_flapping_detector.py prototype"]
@@ -4093,7 +4093,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_gamification_py["tests/test_gamification.py prototype"]
         tests_test_gap_analyzer_py["tests/test_gap_analyzer.py prototype"]
         tests_test_gate_context_py["tests/test_gate_context.py prototype"]
@@ -4127,7 +4127,7 @@ graph TD
     end
     D_OPS["D_OPS production"]
     tests_test_gamification_py -.->|test_depends| D_OPS
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_gate_health_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_override_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_gate_types_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -4143,7 +4143,7 @@ graph TD
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_gate_persistence_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_gen_inherited_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_genesis_py -.->|test_depends| D_GOV_AUDIT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -4157,7 +4157,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_governance_auditor_py["tests/test_governance_auditor.py prototype"]
         tests_test_governance_bootstrap_superadmin_py["tests/test_governance_bootstrap_superadmin.py prototype"]
         tests_test_governance_budget_tracker_py["tests/test_governance_budget_tracker.py prototype"]
@@ -4197,7 +4197,7 @@ graph TD
     tests_test_governance_capability_check_py -.->|test_depends| D_AUTONOMY_CORE
     D_SHARED["D_SHARED production"]
     tests_test_governance_drift_fix_py -.->|test_depends| D_SHARED
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_gpu_consensus_scheduler_py -.->|test_depends| D_TRADING
     D_OPS["D_OPS production"]
     tests_test_gradual_poisoning_detector_py -.->|test_depends| D_OPS
@@ -4221,7 +4221,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_heisenbug_detector_py["tests/test_heisenbug_detector.py prototype"]
         tests_test_hook_dispatcher_py["tests/test_hook_dispatcher.py prototype"]
         tests_test_hooks_py["tests/test_hooks.py prototype"]
@@ -4261,7 +4261,7 @@ graph TD
     tests_test_hook_dispatcher_py -.->|test_depends| D_SHARED
     tests_test_hook_dispatcher_py -.->|test_depends| D_SHARED
     tests_test_hooks_py -.->|test_depends| D_SHARED
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_housekeeping_py -.->|test_depends| D_TRADING
     tests_test_human_anomaly_flood_detector_py -.->|test_depends| D_OPS
     D_SECURITY["D_SECURITY production"]
@@ -4285,7 +4285,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_infra_outbox_py["tests/test_infra_outbox.py prototype"]
         tests_test_infrastructure_base_py["tests/test_infrastructure_base.py prototype"]
         tests_test_input_guard_root_py["tests/test_input_guard_root.py prototype"]
@@ -4327,11 +4327,11 @@ graph TD
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_infra_outbox_py -.->|test_depends| D_INTEGRATION
     tests_test_integration_root_py -.->|test_depends| D_SECURITY
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_integration_test_runner_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_integration_registry_py -.->|test_depends| D_TRADING
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     tests_test_integrity_root_py -.->|test_depends| D_GOV_DRIFT
     D_OPS["D_OPS production"]
     tests_test_integration_test_pipeline_py -.->|test_depends| D_OPS
@@ -4353,7 +4353,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_kb_activate_py["tests/test_kb_activate.py prototype"]
         tests_test_kb_analyze_py["tests/test_kb_analyze.py prototype"]
         tests_test_kb_batch_ingest_py["tests/test_kb_batch_ingest.py prototype"]
@@ -4385,9 +4385,9 @@ graph TD
         tests_test_ke_tombstone_py["tests/test_ke_tombstone.py prototype"]
         tests_test_key_hierarchy_py["tests/test_key_hierarchy.py prototype"]
     end
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_kb_activate_py -.->|test_depends| D_INTELLIGENCE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_kb_activate_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_kb_activate_py -.->|test_depends| D_INTELLIGENCE
     tests_test_kb_analyze_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -4395,10 +4395,10 @@ graph TD
     D_MKT_DATA["D_MKT_DATA production"]
     tests_test_kb_chromadb_init_py -.->|test_depends| D_MKT_DATA
     tests_test_kb_extract_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_kb_gate_py -.->|test_depends| D_GOV_AUDIT
     tests_test_kb_pipeline_activate_py -.->|test_depends| D_INTELLIGENCE
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     tests_test_kb_integrity_py -.->|test_depends| D_GOV_DRIFT
     tests_test_kb_ingest_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_kb_migration_gate_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -4417,7 +4417,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_kiss_enforcer_py["tests/test_kiss_enforcer.py prototype"]
         tests_test_kms_interface_py["tests/test_kms_interface.py prototype"]
         tests_test_knowledge_bus_factor_monitor_py["tests/test_knowledge_bus_factor_monitor.py prototype"]
@@ -4451,7 +4451,7 @@ graph TD
     end
     D_SHARED["D_SHARED production"]
     tests_test_kms_interface_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_kiss_enforcer_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_OPS["D_OPS production"]
     tests_test_knowledge_capture_py -.->|test_depends| D_OPS
@@ -4461,7 +4461,7 @@ graph TD
     tests_test_knowledge_distillation_py -.->|test_depends| D_OPS
     D_MKT_DATA["D_MKT_DATA production"]
     tests_test_knowledge_engine_py -.->|test_depends| D_MKT_DATA
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_knowledge_freshness_py -.->|test_depends| D_TRADING
     tests_test_knowledge_injection_py -.->|test_depends| D_OPS
     tests_test_knowledge_injection_pre_flight_verifier_py -.->|test_depends| D_OPS
@@ -4483,7 +4483,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_llm_fix_adapter_py["tests/test_llm_fix_adapter.py prototype"]
         tests_test_llm_gateway_py["tests/test_llm_gateway.py prototype"]
         tests_test_llm_impact_analyzer_py["tests/test_llm_impact_analyzer.py prototype"]
@@ -4531,7 +4531,7 @@ graph TD
     tests_test_maintenance_coordinator_py -.->|test_depends| D_OPS
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_lsg_pattern_tracker_py -.->|test_depends| D_AUTONOMY_CORE
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_log_rotation_py -.->|test_depends| D_GOV_AUDIT
     tests_test_market_calendar_py -.->|test_depends| D_OPS
     D_MKT_DATA["D_MKT_DATA production"]
@@ -4550,7 +4550,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_merkle_hourly_py["tests/test_merkle_hourly.py prototype"]
         tests_test_message_router_py["tests/test_message_router.py prototype"]
         tests_test_meta_confidence_py["tests/test_meta_confidence.py prototype"]
@@ -4584,7 +4584,7 @@ graph TD
     end
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_message_router_py -.->|test_depends| D_INFRA_RUNTIME
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_merkle_hourly_py -.->|test_depends| D_GOV_AUDIT
     tests_test_metadata_py -.->|test_depends| D_INFRA_RUNTIME
     D_OPS["D_OPS production"]
@@ -4615,7 +4615,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_monoculture_guard_py["tests/test_monoculture_guard.py prototype"]
         tests_test_monotonic_clock_py["tests/test_monotonic_clock.py prototype"]
         tests_test_mtti_tracker_py["tests/test_mtti_tracker.py prototype"]
@@ -4661,7 +4661,7 @@ graph TD
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_naming_magic_checker_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_native_api_guard_py -.->|test_depends| D_SECURITY
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_network_partition_py -.->|test_depends| D_TRADING
     tests_test_night_shift_queue_py -.->|test_depends| D_TRADING
     tests_test_nonstationary_effectiveness_py -.->|test_depends| D_OPS
@@ -4680,7 +4680,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_online_feature_importance_py["tests/test_online_feature_importance.py prototype"]
         tests_test_openfeature_py["tests/test_openfeature.py prototype"]
         tests_test_operational_seasonality_py["tests/test_operational_seasonality.py prototype"]
@@ -4716,10 +4716,10 @@ graph TD
     tests_test_openfeature_py -.->|test_depends| D_OPS
     tests_test_operational_seasonality_py -.->|test_depends| D_OPS
     tests_test_online_feature_importance_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_orchestrator_data_lifecycle_py -.->|test_depends| D_TRADING
     tests_test_orchestrator_failure_matcher_py -.->|test_depends| D_TRADING
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_orchestrator_py -.->|test_depends| D_GOV_AUDIT
     tests_test_orchestrator_model_registry_py -.->|test_depends| D_TRADING
     tests_test_orchestrator_hallucination_detector_py -.->|test_depends| D_TRADING
@@ -4744,7 +4744,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_path_index_py["tests/test_path_index.py prototype"]
         tests_test_path_index_validator_py["tests/test_path_index_validator.py prototype"]
         tests_test_path_resolver_py["tests/test_path_resolver.py prototype"]
@@ -4776,7 +4776,7 @@ graph TD
         tests_test_position_reconciler_py["tests/test_position_reconciler.py prototype"]
         tests_test_positive_feedback_defense_py["tests/test_positive_feedback_defense.py prototype"]
     end
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_path_index_py -.->|test_depends| D_TRADING
     D_SECURITY["D_SECURITY production"]
     tests_test_permission_hooks_py -.->|test_depends| D_SECURITY
@@ -4808,7 +4808,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_post_action_verifier_py["tests/test_post_action_verifier.py prototype"]
         tests_test_post_live_verification_py["tests/test_post_live_verification.py prototype"]
         tests_test_post_process_root_py["tests/test_post_process_root.py prototype"]
@@ -4842,19 +4842,19 @@ graph TD
     end
     D_SECURITY["D_SECURITY production"]
     tests_test_post_action_verifier_py -.->|test_depends| D_SECURITY
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_post_process_root_py -.->|test_depends| D_GOV_AUDIT
     D_OPS["D_OPS production"]
     tests_test_preventive_repair_py -.->|test_depends| D_OPS
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_preemption_manager_py -.->|test_depends| D_INTEGRATION
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_preemption_manager_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_prompt_factory_governance_py -.->|test_depends| D_OPS
     tests_test_pre_flight_simulator_py -.->|test_depends| D_OPS
     tests_test_prompt_fingerprint_py -.->|test_depends| D_OPS
     tests_test_privacy_py -.->|test_depends| D_GOV_AUDIT
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_profiler_py -.->|test_depends| D_INTELLIGENCE
     tests_test_profiler_py -.->|test_depends| D_INTELLIGENCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -4875,7 +4875,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_pydantic_v2_migrator_py["tests/test_pydantic_v2_migrator.py prototype"]
         tests_test_python_compat_py["tests/test_python_compat.py prototype"]
         tests_test_quality_monitor_py["tests/test_quality_monitor.py prototype"]
@@ -4909,7 +4909,7 @@ graph TD
     end
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_python_compat_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
     tests_test_query_py -.->|test_depends| D_GOV_AUDIT
@@ -4927,7 +4927,7 @@ graph TD
     tests_test_reconciler_root_py -.->|test_depends| D_INFRA_RUNTIME
     D_MKT_DATA["D_MKT_DATA production"]
     tests_test_realtime_streaming_py -.->|test_depends| D_MKT_DATA
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_reconciliation_loop_py -.->|test_depends| D_TRADING
     D_OPS["D_OPS production"]
     tests_test_recovery_time_stats_py -.->|test_depends| D_OPS
@@ -4944,7 +4944,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_resolution_tracker_py["tests/test_resolution_tracker.py prototype"]
         tests_test_resource_guard_py["tests/test_resource_guard.py prototype"]
         tests_test_resource_optimization_py["tests/test_resource_optimization.py prototype"]
@@ -4984,19 +4984,19 @@ graph TD
     tests_test_resource_optimization_models_py -.->|test_depends| D_SHARED
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_resource_guard_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_resource_optimization_py -.->|test_depends| D_TRADING
     tests_test_resource_optimization_py -.->|test_depends| D_SHARED
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_results_writer_py -.->|test_depends| D_INTELLIGENCE
     tests_test_results_writer_py -.->|test_depends| D_INTELLIGENCE
     tests_test_resource_starvation_aware_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_retention_py -.->|test_depends| D_GOV_AUDIT
     tests_test_retry_handler_py -.->|test_depends| D_SHARED
     tests_test_retirement_planner_py -.->|test_depends| D_OPS
     tests_test_risk_registry_root_py -.->|test_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_risk_ssot_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -5010,7 +5010,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_rollback_integration_py["tests/test_rollback_integration.py prototype"]
         tests_test_rollback_integrity_py["tests/test_rollback_integrity.py prototype"]
         tests_test_rollback_lock_py["tests/test_rollback_lock.py prototype"]
@@ -5048,9 +5048,9 @@ graph TD
     tests_test_rollback_sandbox_py -.->|test_depends| D_SECURITY
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_routing_plugins_py -.->|test_depends| D_INTEGRATION
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_rolling_upgrade_py -.->|test_depends| D_TRADING
-    D_GOV_RULE["D-GOV_RULE production"]
+    D_GOV_RULE["D_GOV_RULE production"]
     tests_test_rule_e2e_py -.->|test_depends| D_GOV_RULE
     tests_test_rule_injection_guard_py -.->|test_depends| D_SECURITY
     tests_test_rule_integration_py -.->|test_depends| D_GOV_RULE
@@ -5058,7 +5058,7 @@ graph TD
     tests_test_rumor_noise_filter_py -.->|test_depends| D_OPS
     tests_test_runtime_config_py -.->|test_depends| D_TRADING
     tests_test_safety_gate_l1_l27_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_sbom_generator_py -.->|test_depends| D_GOV_AUDIT
     tests_test_sbom_generator_py -.->|test_depends| D_GOV_AUDIT
     D_SHARED["D_SHARED production"]
@@ -5076,7 +5076,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_scanner_root_py["tests/test_scanner_root.py prototype"]
         tests_test_scheduler_act_py["tests/test_scheduler_act.py prototype"]
         tests_test_scheduler_collect_detect_py["tests/test_scheduler_collect_detect.py prototype"]
@@ -5115,7 +5115,7 @@ graph TD
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_scanner_root_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_scheduler_safety_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_schema_migration_py -.->|test_depends| D_TRADING
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_schema_schemas_py -.->|test_depends| D_INTEGRATION
@@ -5125,7 +5125,7 @@ graph TD
     tests_test_schema_schema_registry_py -.->|test_depends| D_INTEGRATION
     tests_test_scope_creep_monitor_py -.->|test_depends| D_OPS
     tests_test_secondary_alert_channel_py -.->|test_depends| D_OPS
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_secrets_guard_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_SHARED["D_SHARED production"]
     tests_test_scope_guard_py -.->|test_depends| D_SHARED
@@ -5141,7 +5141,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_self_ha_py["tests/test_self_ha.py prototype"]
         tests_test_self_modification_audit_py["tests/test_self_modification_audit.py prototype"]
         tests_test_self_modification_rate_limiter_py["tests/test_self_modification_rate_limiter.py prototype"]
@@ -5180,10 +5180,10 @@ graph TD
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_self_test_verifier_py -.->|test_depends| D_BEHAVIORAL_AUDIT
     tests_test_self_reflection_py -.->|test_depends| D_OPS
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     tests_test_self_monitor_py -.->|test_depends| D_GOV_DRIFT
     tests_test_self_upgrade_canary_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_semantic_auditor_py -.->|test_depends| D_GOV_AUDIT
     tests_test_semantic_intent_preservation_guard_py -.->|test_depends| D_OPS
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
@@ -5192,7 +5192,7 @@ graph TD
     tests_test_sequence_guard_root_py -.->|test_depends| D_SECURITY
     tests_test_session_concurrency_py -.->|test_depends| D_SECURITY
     tests_test_serialization_format_tracker_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_session_conflict_py -.->|test_depends| D_TRADING
     D_SHARED["D_SHARED production"]
     tests_test_session_boundary_py -.->|test_depends| D_SHARED
@@ -5208,7 +5208,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_shadow_canary_py["tests/test_shadow_canary.py prototype"]
         tests_test_shadow_trust_validator_py["tests/test_shadow_trust_validator.py prototype"]
         tests_test_shadow_verifier_py["tests/test_shadow_verifier.py prototype"]
@@ -5270,7 +5270,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_skill_executor_py["tests/test_skill_executor.py prototype"]
         tests_test_skill_explain_py["tests/test_skill_explain.py prototype"]
         tests_test_skill_factory_py["tests/test_skill_factory.py prototype"]
@@ -5330,7 +5330,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_skill_silent_failure_py["tests/test_skill_silent_failure.py prototype"]
         tests_test_skill_team_optimizer_py["tests/test_skill_team_optimizer.py prototype"]
         tests_test_skill_temperature_py["tests/test_skill_temperature.py prototype"]
@@ -5376,10 +5376,10 @@ graph TD
     tests_test_solo_dev_safety_net_py -.->|test_depends| D_AUTONOMY_CORE
     tests_test_slo_manager_root_py -.->|test_depends| D_OPS
     tests_test_socratic_questions_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_spec_auditor_py -.->|test_depends| D_GOV_AUDIT
     tests_test_spec_auditor_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_staging_area_py -.->|test_depends| D_TRADING
     tests_test_stability_guard_py -.->|test_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -5394,7 +5394,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_state_migration_validator_py["tests/test_state_migration_validator.py prototype"]
         tests_test_state_propagation_root_py["tests/test_state_propagation_root.py prototype"]
         tests_test_state_synchronizer_root_py["tests/test_state_synchronizer_root.py prototype"]
@@ -5426,7 +5426,7 @@ graph TD
         tests_test_synthetic_anomaly_generator_py["tests/test_synthetic_anomaly_generator.py prototype"]
         tests_test_system_entropy_monitor_py["tests/test_system_entropy_monitor.py prototype"]
     end
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_state_propagation_root_py -.->|test_depends| D_TRADING
     D_OPS["D_OPS production"]
     tests_test_state_migration_validator_py -.->|test_depends| D_OPS
@@ -5440,7 +5440,7 @@ graph TD
     tests_test_stochastic_diagnosis_verifier_v2_py -.->|test_depends| D_OPS
     tests_test_supervisor_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_sub_agent_collusion_py -.->|test_depends| D_OPS
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_supply_chain_py -.->|test_depends| D_GOV_AUDIT
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_test_support_system_snapshot_py -.->|test_depends| D_AUTONOMY_CORE
@@ -5458,7 +5458,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_system_snapshot_root_py["tests/test_system_snapshot_root.py prototype"]
         tests_test_system_topology_py["tests/test_system_topology.py prototype"]
         tests_test_system_transfer_py["tests/test_system_transfer.py prototype"]
@@ -5494,9 +5494,9 @@ graph TD
     tests_test_system_snapshot_root_py -.->|test_depends| D_AUTONOMY_CORE
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_system_topology_py -.->|test_depends| D_BEHAVIORAL_AUDIT
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_test_task_gate_py -.->|test_depends| D_INTELLIGENCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_task_gate_py -.->|test_depends| D_TRADING
     tests_test_system_transfer_py -.->|test_depends| D_TRADING
     tests_test_tamper_proof_audit_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -5505,7 +5505,7 @@ graph TD
     tests_test_task_model_learner_py -.->|test_depends| D_INTELLIGENCE
     tests_test_task_scheduler_py -.->|test_depends| D_SHARED
     tests_test_task_queue_py -.->|test_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_task_types_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     tests_test_task_types_py -.->|test_depends| D_INTEGRATION
@@ -5525,7 +5525,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_toctou_guard_root_py["tests/test_toctou_guard_root.py prototype"]
         tests_test_toctou_revalidation_py["tests/test_toctou_revalidation.py prototype"]
         tests_test_toil_quantification_py["tests/test_toil_quantification.py prototype"]
@@ -5573,7 +5573,7 @@ graph TD
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_test_trigger_monitor_py -.->|test_depends| D_INFRA_RUNTIME
     tests_test_trend_cycle_separator_py -.->|test_depends| D_OPS
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_triple_alignment_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_BEHAVIORAL_AUDIT["D_BEHAVIORAL_AUDIT production"]
     tests_test_trend_analyzer_py -.->|test_depends| D_BEHAVIORAL_AUDIT
@@ -5591,7 +5591,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_validator_py["tests/test_validator.py prototype"]
         tests_test_value_added_baseline_py["tests/test_value_added_baseline.py prototype"]
         tests_test_vector_bridge_py["tests/test_vector_bridge.py prototype"]
@@ -5629,9 +5629,9 @@ graph TD
     tests_test_value_added_baseline_py -.->|test_depends| D_OPS
     tests_test_validator_py -.->|test_depends| D_OPS
     tests_test_verification_engine_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_test_verdict_engine_py -.->|test_depends| D_TRADING
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_verdict_engine_py -.->|test_depends| D_GOV_AUDIT
     tests_test_version_migrator_py -.->|test_depends| D_OPS
     tests_test_verify_paths_py -.->|test_depends| D_AUTONOMY_CORE
@@ -5657,7 +5657,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_test_writer_py["tests/test_writer.py prototype"]
         tests_test_zero_config_py["tests/test_zero_config.py prototype"]
         tests_test_zero_residue_check_py["tests/test_zero_residue_check.py prototype"]
@@ -5692,12 +5692,12 @@ graph TD
     tests_unit_arch_guard_test_arch_guard_fitness_py -.->|config_depends| tests_unit_arch_guard_init_py
     D_SHARED["D_SHARED production"]
     tests_test_zero_config_py -.->|test_depends| D_SHARED
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_test_writer_py -.->|test_depends| D_GOV_AUDIT
     D_SECURITY["D_SECURITY production"]
     tests_test_zombie_cleaner_py -.->|test_depends| D_SECURITY
     tests_test_zombie_cleaner_py -.->|test_depends| D_SECURITY
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_zero_residue_check_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_OPS["D_OPS production"]
     tests_test_zombie_fle_detector_py -.->|test_depends| D_OPS
@@ -5710,7 +5710,7 @@ graph TD
     tests_unit_context_engine_test_context_assembler_context_engine_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_context_engine_test_context_core_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_context_engine_test_context_injector_context_engine_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_unit_context_engine_test_context_injector_context_engine_py -.->|test_depends| D_INTELLIGENCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -5724,7 +5724,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_core_init_py["tests/unit/core/__init__.py prototype"]
         tests_unit_core_test_blindspot_coverage_py["tests/unit/core/test_blindspot_coverage.py prototype"]
         tests_unit_core_test_blueprint_decomposer_depends_core_py["tests/unit/core/test_blueprint_decomposer_depen... prototype"]
@@ -5765,12 +5765,12 @@ graph TD
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_db_test_circuit_breaker_repo_db_py -.->|test_depends| D_INTEGRATION
     tests_unit_db_test_circuit_breaker_repo_db_py -.->|test_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_unit_db_test_audit_schema_db_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_db_test_gate_repo_py -.->|test_depends| D_INTEGRATION
     tests_unit_db_test_gate_repo_py -.->|test_depends| D_INTEGRATION
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_INTEGRATION
     tests_unit_db_test_task_repo_db_py -.->|test_depends| D_INTEGRATION
@@ -5791,7 +5791,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_feedback_loop_test_protocols_py["tests/unit/feedback_loop/test_protocols.py prototype"]
         tests_unit_gates_init_py["tests/unit/gates/__init__.py prototype"]
         tests_unit_gates_test_circuit_breaker_gates_py["tests/unit/gates/test_circuit_breaker_gates.py prototype"]
@@ -5827,7 +5827,7 @@ graph TD
     tests_unit_governance_conftest_py -.->|config_depends| tests_unit_governance_init_py
     D_OPS["D_OPS production"]
     tests_unit_feedback_loop_test_protocols_py -.->|test_depends| D_OPS
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_unit_gates_test_circuit_breaker_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_contract_template_manager_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_gate_check_types_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -5843,7 +5843,7 @@ graph TD
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_SHARED
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_gates_test_gate_engine_gates_py -.->|test_depends| D_INTEGRATION
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS production"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS production"]
     tests_unit_governance_test_drafts_zone_archiver_governance_py -.->|test_depends| D_GOV_SCRIPTS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -5857,7 +5857,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_llm_security_test_ai_behavior_audit_logger_llm_security_py["tests/unit/llm_security/test_ai_behavior_audit_... prototype"]
         tests_unit_llm_security_test_input_sanitizer_unit_llm_security_py["tests/unit/llm_security/test_input_sanitizer_un... prototype"]
         tests_unit_llm_security_test_process_sandbox_unit_llm_security_py["tests/unit/llm_security/test_process_sandbox_un... prototype"]
@@ -5892,7 +5892,7 @@ graph TD
     tests_unit_rollback_conftest_py -.->|config_depends| tests_unit_rollback_init_py
     D_SECURITY["D_SECURITY production"]
     tests_unit_llm_security_test_ai_behavior_audit_logger_llm_security_py -.->|test_depends| D_SECURITY
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_unit_orchestrator_test_agent_orchestrator_py -.->|test_depends| D_TRADING
     tests_unit_orchestrator_test_agent_orchestrator_py -.->|test_depends| D_SECURITY
     tests_unit_llm_security_test_process_sandbox_unit_llm_security_py -.->|test_depends| D_SECURITY
@@ -5900,7 +5900,7 @@ graph TD
     tests_unit_llm_security_test_input_sanitizer_unit_llm_security_py -.->|test_depends| D_SECURITY
     tests_unit_orchestrator_test_state_synchronizer_orchestrator_py -.->|test_depends| D_TRADING
     tests_unit_orchestrator_test_file_task_mapper_orchestrator_py -.->|test_depends| D_TRADING
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_unit_orchestrator_test_file_task_mapper_orchestrator_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_orchestrator_test_trigger_router_orchestrator_py -.->|test_depends| D_TRADING
     tests_unit_orchestrator_test_orchestrator_core_py -.->|test_depends| D_TRADING
@@ -5920,7 +5920,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_shared_test_adversarial_shared_py["tests/unit/shared/test_adversarial_shared.py prototype"]
         tests_unit_shared_test_capability_shared_py["tests/unit/shared/test_capability_shared.py prototype"]
         tests_unit_shared_test_constitutional_update_shared_py["tests/unit/shared/test_constitutional_update_sh... prototype"]
@@ -5952,9 +5952,9 @@ graph TD
         tests_unit_test_analyze_unit_py["tests/unit/test_analyze_unit.py prototype"]
         tests_unit_test_anti_pattern_guard_unit_py["tests/unit/test_anti_pattern_guard_unit.py prototype"]
     end
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_unit_test_activate_unit_py -.->|test_depends| D_INTELLIGENCE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_unit_test_agent_orchestrator_unit_py -.->|test_depends| D_TRADING
     D_SECURITY["D_SECURITY production"]
     tests_unit_test_agent_orchestrator_unit_py -.->|test_depends| D_SECURITY
@@ -5963,18 +5963,18 @@ graph TD
     tests_unit_test_agent_health_monitor_unit_py -.->|test_depends| D_TRADING
     tests_unit_test_agent_spec_backlog_phase2_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_ai_behavior_audit_logger_unit_py -.->|test_depends| D_SECURITY
-    D_PF_CORE["D-PF_CORE production"]
+    D_PF_CORE["D_PF_CORE production"]
     tests_unit_test_analytics_base_contract_py -.->|test_depends| D_PF_CORE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_unit_test_anti_pattern_guard_unit_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_AUTONOMY_CORE
     D_SHARED["D_SHARED production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_SHARED
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_GOV_AUDIT
-    D_GOV_RULE["D-GOV_RULE production"]
+    D_GOV_RULE["D_GOV_RULE production"]
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_GOV_RULE
     tests_unit_shared_test_adversarial_shared_py -.->|test_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -5989,7 +5989,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_test_app_config_yaml_py["tests/unit/test_app_config_yaml.py prototype"]
         tests_unit_test_artifact_scanner_py["tests/unit/test_artifact_scanner.py prototype"]
         tests_unit_test_atomic_transaction_manager_unit_py["tests/unit/test_atomic_transaction_manager_unit.py prototype"]
@@ -6021,15 +6021,15 @@ graph TD
         tests_unit_test_contract_template_manager_unit_py["tests/unit/test_contract_template_manager_unit.py prototype"]
         tests_unit_test_ct_pipe_routing_unit_py["tests/unit/test_ct_pipe_routing_unit.py prototype"]
     end
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     tests_unit_test_artifact_scanner_py -.->|test_depends| D_GOV_DRIFT
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_unit_test_audit_schema_unit_py -.->|test_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_unit_test_blueprint_search_mcp_py -.->|test_depends| D_INFRA_RUNTIME
     D_SHARED["D_SHARED production"]
     tests_unit_test_blueprint_decomposer_depends_unit_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_unit_test_can_i_deploy_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_test_capability_unit_py -.->|test_depends| D_INTEGRATION
@@ -6037,13 +6037,13 @@ graph TD
     tests_unit_test_capability_checker_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_OPS["D_OPS production"]
     tests_unit_test_auto_evolution_unit_py -.->|test_depends| D_OPS
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_unit_test_capacity_budget_unit_py -.->|test_depends| D_TRADING
     tests_unit_test_cbac_matrix_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_test_cbac_matrix_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_test_cdc_broker_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_test_circuit_breaker_unit_py -.->|test_depends| D_GOV_ENFORCEMENT
-    D_GOV_RULE["D-GOV_RULE production"]
+    D_GOV_RULE["D_GOV_RULE production"]
     tests_unit_test_constitutional_update_unit_py -.->|test_depends| D_GOV_RULE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -6057,7 +6057,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_test_dashboard_unit_py["tests/unit/test_dashboard_unit.py prototype"]
         tests_unit_test_database_manager_unit_py["tests/unit/test_database_manager_unit.py prototype"]
         tests_unit_test_demo_e2e_pipeline_smoke_py["tests/unit/test_demo_e2e_pipeline_smoke.py prototype"]
@@ -6100,13 +6100,13 @@ graph TD
     tests_unit_test_dashboard_unit_py -.->|test_depends| D_FRONTEND
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_test_dispatch_table_unit_py -.->|test_depends| D_AUTONOMY_CORE
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_unit_test_design_decisions_unit_py -.->|test_depends| D_TRADING
     D_INTEGRATION["D_INTEGRATION production"]
     tests_unit_test_dos_launcher_unit_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_durable_execution_unit_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_doc_compressor_unit_py -.->|test_depends| D_AUTONOMY_CORE
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS production"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS production"]
     tests_unit_test_drafts_zone_archiver_unit_py -.->|test_depends| D_GOV_SCRIPTS
     tests_unit_test_drafts_zone_archiver_unit_py -.->|test_depends| D_GOV_SCRIPTS
     tests_unit_test_enforcer_unit_py -.->|test_depends| D_INTEGRATION
@@ -6122,7 +6122,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_test_instrument_unit_py["tests/unit/test_instrument_unit.py prototype"]
         tests_unit_test_intent_accuracy_unit_py["tests/unit/test_intent_accuracy_unit.py prototype"]
         tests_unit_test_intent_keyword_mapper_unit_py["tests/unit/test_intent_keyword_mapper_unit.py prototype"]
@@ -6162,18 +6162,18 @@ graph TD
     tests_unit_test_kg_interface_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_intent_parser_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_intent_accuracy_unit_py -.->|test_depends| D_AUTONOMY_CORE
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     tests_unit_test_knowledge_activation_rate_unit_py -.->|test_depends| D_INTELLIGENCE
     tests_unit_test_kb_repo_unit_py -.->|test_depends| D_INTELLIGENCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     tests_unit_test_mcp_gateway_py -.->|test_depends| D_INFRA_RUNTIME
     tests_unit_test_mcp_servers_py -.->|test_depends| D_INFRA_RUNTIME
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_unit_test_money_unit_py -.->|test_depends| D_TRADING
     tests_unit_test_multi_agent_unit_py -.->|test_depends| D_INFRA_RUNTIME
     tests_unit_test_pattern_library_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_phase_executor_unit_py -.->|test_depends| D_TRADING
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_unit_test_post_process_unit_py -.->|test_depends| D_GOV_AUDIT
     D_SHARED["D_SHARED production"]
     tests_unit_test_pipeline_orchestrator_unit_py -.->|test_depends| D_SHARED
@@ -6189,7 +6189,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOVERNANCE["D-GOVERNANCE 生命周期管理"]
+    subgraph D_GOVERNANCE["D_GOVERNANCE 生命周期管理"]
         tests_unit_test_skill_registry_unit_py["tests/unit/test_skill_registry_unit.py prototype"]
         tests_unit_test_slo_manager_unit_py["tests/unit/test_slo_manager_unit.py prototype"]
         tests_unit_test_sqlite_schema_unit_py["tests/unit/test_sqlite_schema_unit.py prototype"]
@@ -6216,7 +6216,7 @@ graph TD
     end
     D_SHARED["D_SHARED production"]
     tests_verify_b54_b56_b59_deep_py -.->|test_depends| D_SHARED
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_verify_b54_b56_b59_deep_py -.->|test_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     tests_verify_b54_b56_b59_deep_py -.->|test_depends| D_INTEGRATION
@@ -6225,7 +6225,7 @@ graph TD
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     tests_unit_test_skill_registry_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_ssot_guard_unit_py -.->|test_depends| D_INTEGRATION
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     tests_unit_test_state_propagation_unit_py -.->|test_depends| D_TRADING
     tests_unit_test_system_snapshot_unit_py -.->|test_depends| D_AUTONOMY_CORE
     tests_unit_test_task_completion_gate_unit_py -.->|test_depends| D_GOV_ENFORCEMENT
@@ -6234,7 +6234,7 @@ graph TD
     tests_unit_test_task_repo_unit_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_unit_test_task_repo_unit_py -.->|test_depends| D_INTEGRATION
     tests_unit_test_task_repo_unit_py -.->|test_depends| D_INTEGRATION
-    D_RISK["D-RISK production"]
+    D_RISK["D_RISK production"]
     tests_unit_test_stop_loss_py -.->|test_depends| D_RISK
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -6252,75 +6252,75 @@ graph TD
 |--------|:---:|---------|
 | D_OPS | 385 | config_depends,import_depends,runtime,test_depends |
 | D_INTEGRATION | 230 | import_depends,test_depends |
-| D-TRADING | 217 | import_depends,test_depends |
+| D_TRADING | 217 | import_depends,test_depends |
 | D_AUTONOMY_CORE | 214 | contract,import_depends,runtime,test_depends |
 | D_SECURITY | 206 | contract,import_depends,runtime,test_depends |
 | D_SHARED | 181 | import_depends,test_depends |
-| D-GOV_ENFORCEMENT | 168 | import_depends,runtime,test_depends |
-| D-GOV_AUDIT | 140 | contract,import_depends,runtime,test_depends |
+| D_GOV_ENFORCEMENT | 168 | import_depends,runtime,test_depends |
+| D_GOV_AUDIT | 140 | contract,import_depends,runtime,test_depends |
 | D_INFRA_RUNTIME | 124 | config_depends,import_depends,runtime,test_depends |
 | D_BEHAVIORAL_AUDIT | 88 | import_depends,test_depends |
-| D-INTELLIGENCE | 49 | import_depends,test_depends |
-| D-GOV_DRIFT | 25 | config_depends,contract,import_depends,runtime,test_depends |
+| D_INTELLIGENCE | 49 | import_depends,test_depends |
+| D_GOV_DRIFT | 25 | config_depends,contract,import_depends,runtime,test_depends |
 | D_MKT_DATA | 16 | test_depends |
-| D-RISK | 14 | test_depends |
-| D-SIMULATION | 12 | test_depends |
-| D-GOV_SCRIPTS | 12 | test_depends |
+| D_RISK | 14 | test_depends |
+| D_GOV_SCRIPTS | 12 | test_depends |
+| D_SIMULATION | 12 | test_depends |
+| D_FUNDAMENTAL_SIGNAL | 8 | test_depends |
 | D_FRONTEND | 8 | test_depends |
-| D-FUNDAMENTAL_SIGNAL | 8 | test_depends |
-| D-GOV_RULE | 7 | import_depends,test_depends |
-| D-PF_CORE | 6 | test_depends |
-| D-EX_CORE | 6 | test_depends |
+| D_GOV_RULE | 7 | import_depends,test_depends |
+| D_EX_CORE | 6 | test_depends |
 | D_INFRA_A2A | 6 | import_depends |
-| D-FACTOR | 4 | test_depends |
-| D-AUTONOMY_PERM | 4 | contract,runtime |
-| D-CROSS_ASSET | 2 | test_depends |
+| D_PF_CORE | 6 | test_depends |
+| D_FACTOR | 4 | test_depends |
+| D_AUTONOMY_PERM | 4 | contract,runtime |
+| D_CROSS_ASSET | 2 | test_depends |
 | D_REPORTING | 2 | import_depends |
-| D-GOV_DOCS | 1 | runtime |
-| D-PF_ALLOC | 1 | import_depends |
-| D-ML_TRAIN | 1 | data |
-| D-KNOWLEDGE | 1 | contract |
+| D_ML_TRAIN | 1 | data |
+| D_KNOWLEDGE | 1 | contract |
+| D_GOV_DOCS | 1 | runtime |
+| D_PF_ALLOC | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
 | D_OPS | 29 | config_depends,import_depends,runtime,test_depends |
-| D-GOV_SCRIPTS | 29 | import_depends |
-| D-TRADING | 27 | contract,import_depends,runtime |
-| D-GOV_DOCS | 26 | import_depends,runtime |
-| D-GOV_AUDIT | 21 | config_depends,contract,import_depends,runtime |
-| D-PF_CORE | 12 | contract,import_depends |
+| D_GOV_SCRIPTS | 29 | import_depends |
+| D_TRADING | 27 | contract,import_depends,runtime |
+| D_GOV_DOCS | 26 | import_depends,runtime |
+| D_GOV_AUDIT | 21 | config_depends,contract,import_depends,runtime |
+| D_PF_CORE | 12 | contract,import_depends |
 | D_INTEGRATION | 11 | config_depends,import_depends |
-| D-GOV_DRIFT | 10 | config_depends,import_depends,runtime,test_depends |
-| D-COMPLIANCE | 10 | import_depends |
+| D_COMPLIANCE | 10 | import_depends |
+| D_GOV_DRIFT | 10 | config_depends,import_depends,runtime,test_depends |
 | D_INFRA_RUNTIME | 9 | import_depends |
-| D-EX_CORE | 8 | config_depends,import_depends |
 | D_INFRA_OPS | 8 | config_depends,import_depends,test_depends |
-| D-INTELLIGENCE | 6 | config_depends,import_depends |
+| D_EX_CORE | 8 | config_depends,import_depends |
+| D_INTELLIGENCE | 6 | config_depends,import_depends |
 | D_REPORTING | 5 | import_depends |
 | D_INFRA_RECOVERY | 4 | import_depends |
-| D_SECURITY | 4 | import_depends |
 | D_FRONTEND | 4 | import_depends |
+| D_SECURITY | 4 | import_depends |
 | D_SHARED | 3 | import_depends |
-| D-FACTOR | 3 | config_depends,import_depends |
-| D-GOV_ENFORCEMENT | 3 | import_depends |
-| D-AUTONOMY_PERM | 3 | config_depends,test_depends |
-| D_MKT_DATA | 2 | config_depends |
-| D-PF_ALLOC | 2 | config_depends,import_depends |
-| D-KNOWLEDGE | 2 | runtime,test_depends |
+| D_GOV_ENFORCEMENT | 3 | import_depends |
+| D_FACTOR | 3 | config_depends,import_depends |
+| D_AUTONOMY_PERM | 3 | config_depends,test_depends |
 | D_AUTONOMY_CORE | 2 | import_depends |
-| D_INFRA_A2A | 2 | import_depends |
+| D_KNOWLEDGE | 2 | runtime,test_depends |
+| D_MKT_DATA | 2 | config_depends |
+| D_PF_ALLOC | 2 | config_depends,import_depends |
 | D_BEHAVIORAL_AUDIT | 2 | import_depends |
-| D_DATA_SEC | 1 | import_depends |
-| D-RISK | 1 | config_depends |
+| D_INFRA_A2A | 2 | import_depends |
 | D_INFRA_TELEMETRY | 1 | import_depends |
-| D-POSITION | 1 | config_depends |
-| D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_RISK | 1 | config_depends |
+| D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_DATA_SEC | 1 | import_depends |
+| D_POSITION | 1 | config_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 生命周期管理（D-GOVERNANCE）的模块分布。共 2813 个模块 / 2813 modules。
+> 按 architecture_layer 分层显示 生命周期管理（D_GOVERNANCE）的模块分布。共 2813 个模块 / 2813 modules。
 
 ```
 

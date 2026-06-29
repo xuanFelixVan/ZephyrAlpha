@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-POSITION 仓位管理架构文档
+title: D_POSITION 仓位管理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 46_d_position / 仓位管理
 
-> **文档作用 / Purpose**: 展示 仓位管理（D-POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 46 | Number | 46 |
-| 域ID | D-POSITION | Domain ID | D-POSITION |
+| 域ID | D_POSITION | Domain ID | D_POSITION |
 | 域名称 | 仓位管理 | Domain Name | 仓位管理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 8 | Module Count | 8 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_POSITION["D-POSITION 仓位管理"]
+    subgraph D_POSITION["D_POSITION 仓位管理"]
         src_zephyr_position_init_py["src/zephyr/position/__init__.py prototype"]
         src_zephyr_position_extensions_init_py["src/zephyr/position/_extensions/__init__.py prototype"]
         src_zephyr_position_api_init_py["src/zephyr/position/api/__init__.py prototype"]
@@ -56,7 +56,7 @@ graph TD
         src_zephyr_position_position_reconciler_py["src/zephyr/position/position_reconciler.py prototype"]
         src_zephyr_position_services_init_py["src/zephyr/position/services/__init__.py prototype"]
     end
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_position_position_reconciler_py -.->|config_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -72,7 +72,7 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 1 | config_depends |
+| D_GOVERNANCE | 1 | config_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -80,7 +80,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 仓位管理（D-POSITION）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 仓位管理（D_POSITION）的模块分布。共 8 个模块 / 8 modules。
 
 ```
 

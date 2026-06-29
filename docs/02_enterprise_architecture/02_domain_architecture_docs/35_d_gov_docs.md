@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_DOCS 架构文档治理架构文档
+title: D_GOV_DOCS 架构文档治理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 35_d_gov_docs / 架构文档治理
 
-> **文档作用 / Purpose**: 展示 架构文档治理（D-GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 35 | Number | 35 |
-| 域ID | D-GOV_DOCS | Domain ID | D-GOV_DOCS |
+| 域ID | D_GOV_DOCS | Domain ID | D_GOV_DOCS |
 | 域名称 | 架构文档治理 | Domain Name | 架构文档治理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 127 | Module Count | 127 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
+    subgraph D_GOV_DOCS["D_GOV_DOCS 架构文档治理"]
         docs_01_policies_and_standards_registry_schemas_session_log_schema_yaml["docs/01_policies_and_standards/_registry/schema... production"]
         docs_01_policies_and_standards_rules_index_yaml["docs/01_policies_and_standards/rules/_index.yaml production"]
         docs_01_policies_and_standards_rules_trae_001_file_operation_security_yaml["docs/01_policies_and_standards/rules/trae_001_f... production"]
@@ -91,7 +91,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
+    subgraph D_GOV_DOCS["D_GOV_DOCS 架构文档治理"]
         docs_01_policies_and_standards_rules_trae_029_doc_operation_security_yaml["docs/01_policies_and_standards/rules/trae_029_d... production"]
         docs_01_policies_and_standards_rules_trae_030_doc_numbering_metadata_yaml["docs/01_policies_and_standards/rules/trae_030_d... production"]
         docs_01_policies_and_standards_rules_trae_031_security_key_access_yaml["docs/01_policies_and_standards/rules/trae_031_s... production"]
@@ -134,7 +134,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
+    subgraph D_GOV_DOCS["D_GOV_DOCS 架构文档治理"]
         docs_02_enterprise_architecture_target_architecture_architecture_model_events_domain_events_yaml["docs/02_enterprise_architecture/target_architec... production"]
         docs_02_enterprise_architecture_target_architecture_architecture_model_index_yaml["docs/02_enterprise_architecture/target_architec... production"]
         docs_02_enterprise_architecture_target_architecture_architecture_model_technology_technology_landscape_yaml["docs/02_enterprise_architecture/target_architec... production"]
@@ -169,9 +169,9 @@ graph TD
     src_zephyr_governance_kb_freeze_py -.->|config_depends| src_zephyr_governance_kb_init_py
     src_zephyr_governance_kb_backend_protocol_py -.->|config_depends| src_zephyr_governance_kb_init_py
     src_zephyr_governance_kb_filing_nlp_engine_init_py -.->|config_depends| src_zephyr_governance_kb_filing_nlp_engine_extract_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_governance_kb_batch_ingest_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_kb_analyze_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_kb_analyze_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_activate_py -.->|import_depends| D_GOV_ENFORCEMENT
@@ -201,7 +201,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
+    subgraph D_GOV_DOCS["D_GOV_DOCS 架构文档治理"]
         src_zephyr_governance_kb_graph_validator_py["src/zephyr/governance/kb/graph_validator.py prototype"]
         src_zephyr_governance_kb_ingest_py["src/zephyr/governance/kb/ingest.py prototype"]
         src_zephyr_governance_kb_integrity_py["src/zephyr/governance/kb/integrity.py prototype"]
@@ -244,9 +244,9 @@ graph TD
     src_zephyr_governance_kb_kb_gate_task_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_governance_kb_graph_validator_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     src_zephyr_governance_kb_ingest_py -.->|import_depends| D_GOV_ENFORCEMENT
     src_zephyr_governance_kb_ingest_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_kb_repo_py -.->|import_depends| D_SHARED
@@ -257,7 +257,7 @@ graph TD
     src_zephyr_governance_kb_kb_engine_embedding_migrate_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_kb_engine_embedding_migrate_py -.->|import_depends| D_INTEGRATION
     src_zephyr_governance_kb_kb_engine_kb_gate_task_py -.->|import_depends| D_SHARED
-    D_TRADING["D-TRADING prototype"]
+    D_TRADING["D_TRADING prototype"]
     D_TRADING -.->|runtime| src_zephyr_governance_kb_pipeline_activate_py
     D_GOVERNANCE -.->|runtime| src_zephyr_governance_kb_pipeline_activate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -273,7 +273,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_DOCS["D-GOV_DOCS 架构文档治理"]
+    subgraph D_GOV_DOCS["D_GOV_DOCS 架构文档治理"]
         src_zephyr_governance_kb_storage_kb_repo_py["src/zephyr/governance/kb/storage/kb_repo.py prototype"]
         src_zephyr_governance_kb_storage_unified_memory_api_py["src/zephyr/governance/kb/storage/unified_memory... prototype"]
         src_zephyr_governance_kb_supply_chain_graph_engine_init_py["src/zephyr/governance/kb/supply_chain_graph_eng... prototype"]
@@ -283,7 +283,7 @@ graph TD
         src_zephyr_governance_kb_vms_memory_backend_py["src/zephyr/governance/kb/vms_memory_backend.py prototype"]
     end
     src_zephyr_governance_kb_supply_chain_graph_engine_init_py -.->|config_depends| src_zephyr_governance_kb_supply_chain_graph_engine_graph_validator_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_governance_kb_unified_memory_api_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_governance_kb_vms_memory_backend_py -.->|import_depends| D_GOVERNANCE
     D_SHARED["D_SHARED prototype"]
@@ -312,22 +312,22 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 26 | import_depends,runtime |
+| D_GOVERNANCE | 26 | import_depends,runtime |
 | D_SHARED | 19 | import_depends |
 | D_INTEGRATION | 11 | import_depends |
-| D-GOV_ENFORCEMENT | 10 | import_depends |
-| D-INTELLIGENCE | 2 | import_depends |
+| D_GOV_ENFORCEMENT | 10 | import_depends |
+| D_INTELLIGENCE | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 1 | runtime |
-| D-TRADING | 1 | runtime |
+| D_GOVERNANCE | 1 | runtime |
+| D_TRADING | 1 | runtime |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 架构文档治理（D-GOV_DOCS）的模块分布。共 127 个模块 / 127 modules。
+> 按 architecture_layer 分层显示 架构文档治理（D_GOV_DOCS）的模块分布。共 127 个模块 / 127 modules。
 
 ```
 

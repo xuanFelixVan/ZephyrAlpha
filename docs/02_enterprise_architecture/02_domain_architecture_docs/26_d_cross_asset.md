@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-CROSS_ASSET 跨资产架构文档
+title: D_CROSS_ASSET 跨资产架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 26_d_cross_asset / 跨资产
 
-> **文档作用 / Purpose**: 展示 跨资产（D-CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 跨资产（D_CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 26 | Number | 26 |
-| 域ID | D-CROSS_ASSET | Domain ID | D-CROSS_ASSET |
+| 域ID | D_CROSS_ASSET | Domain ID | D_CROSS_ASSET |
 | 域名称 | 跨资产 | Domain Name | 跨资产 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 11 | Module Count | 11 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_CROSS_ASSET["D-CROSS_ASSET 跨资产"]
+    subgraph D_CROSS_ASSET["D_CROSS_ASSET 跨资产"]
         src_zephyr_cross_asset["跨资产域 design"]
         src_zephyr_cross_asset_init_py["src/zephyr/cross_asset/__init__.py prototype"]
         src_zephyr_cross_asset_extensions_init_py["src/zephyr/cross_asset/_extensions/__init__.py prototype"]
@@ -60,7 +60,7 @@ graph TD
         src_zephyr_risk_risk_manager_base_py["src/zephyr/risk/risk_manager_base.py prototype"]
     end
     src_zephyr_risk_risk_manager_base_py -.->|config_depends| src_zephyr_cross_asset_init_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -.->|import_depends| D_TRADING
@@ -68,7 +68,7 @@ graph TD
     D_SHARED["D_SHARED prototype"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|import_depends| D_SHARED
     src_zephyr_cross_asset -.->|contract| D_TRADING
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -87,18 +87,18 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-TRADING | 5 | contract,import_depends |
+| D_TRADING | 5 | contract,import_depends |
 | D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 2 | test_depends |
+| D_GOVERNANCE | 2 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 跨资产（D-CROSS_ASSET）的模块分布。共 11 个模块 / 11 modules。
+> 按 architecture_layer 分层显示 跨资产（D_CROSS_ASSET）的模块分布。共 11 个模块 / 11 modules。
 
 ```
 

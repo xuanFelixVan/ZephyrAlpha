@@ -1,5 +1,5 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-06-29 16:21:52
+%% 生成时间: 2026-06-29 17:05:05
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 23, 依赖边数: 29
 
@@ -48,22 +48,22 @@ graph TD
     src_zephyr_frontend_dashboard_components_task_progress_py -->|config_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-GOVERNANCE -> D_FRONTEND (8 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
+    %% D_GOVERNANCE -> D_FRONTEND (8 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_interface_base_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_app_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_FRONTEND -> D-GOVERNANCE (4 条)
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
+    %% D_FRONTEND -> D_GOVERNANCE (4 条)
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_frontend_dashboard_app_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_FRONTEND -> D_INFRA_OPS (1 条)
     src_zephyr_frontend_dashboard_app_py -->|import_depends| D_INFRA_OPS[D_INFRA_OPS]
     %% D_FRONTEND -> D_OPS (2 条)

@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-GOV_SCRIPTS 脚本治理架构文档
+title: D_GOV_SCRIPTS 脚本治理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 39_d_gov_scripts / 脚本治理
 
-> **文档作用 / Purpose**: 展示 脚本治理（D-GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 脚本治理（D_GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 39 | Number | 39 |
-| 域ID | D-GOV_SCRIPTS | Domain ID | D-GOV_SCRIPTS |
+| 域ID | D_GOV_SCRIPTS | Domain ID | D_GOV_SCRIPTS |
 | 域名称 | 脚本治理 | Domain Name | 脚本治理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 411 | Module Count | 411 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_init_py["scripts/__init__.py prototype"]
         scripts_archive_construction_create_db_alignment_tasks_py["scripts/_archive/construction/create_db_alignme... prototype"]
         scripts_archive_construction_create_dm_phase9_tasks_py["scripts/_archive/construction/create_dm_phase9_... prototype"]
@@ -91,7 +91,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_archive_migration_check_coverage_py["scripts/_archive/migration/check_coverage.py prototype"]
         scripts_archive_migration_comprehensive_import_fix_py["scripts/_archive/migration/comprehensive_import... prototype"]
         scripts_archive_migration_create_target_dirs_py["scripts/_archive/migration/create_target_dirs.py prototype"]
@@ -152,7 +152,7 @@ graph TD
     scripts_a2a_full_verification_py -.->|import_depends| D_INFRA_RUNTIME
     D_INTEGRATION["D_INTEGRATION production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_INTEGRATION
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_GOV_AUDIT
     D_SECURITY["D_SECURITY production"]
     scripts_a2a_full_verification_py -.->|import_depends| D_SECURITY
@@ -168,7 +168,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_arch_guard_check_cross_plane_communication_py["scripts/arch_guard/check_cross_plane_communicat... prototype"]
         scripts_arch_guard_check_fe_acl_boundary_py["scripts/arch_guard/check_fe_acl_boundary.py prototype"]
         scripts_arch_guard_check_hot_path_purity_py["scripts/arch_guard/check_hot_path_purity.py prototype"]
@@ -219,7 +219,7 @@ graph TD
     scripts_arch_guard_fitness_functions_check_warm_cold_async_py -.->|config_depends| scripts_arch_guard_fitness_functions_init_py
     scripts_construction_e2e_check_py -.->|config_depends| scripts_construction_check_statuses_py
     scripts_construction_e2e_deep_py -.->|config_depends| scripts_construction_check_statuses_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_construction_check_statuses_py -.->|import_depends| D_GOVERNANCE
     scripts_construction_check_statuses_py -.->|import_depends| D_GOVERNANCE
     scripts_construction_check_transition_code_py -.->|import_depends| D_GOVERNANCE
@@ -241,7 +241,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_construction_demo_a2a_chat_py["scripts/construction/demo_a2a_chat.py prototype"]
         scripts_construction_demo_a2a_coordination_py["scripts/construction/demo_a2a_coordination.py prototype"]
         scripts_construction_demo_e2e_pipeline_py["scripts/construction/demo_e2e_pipeline.py prototype"]
@@ -285,27 +285,27 @@ graph TD
     scripts_construction_demo_a2a_coordination_py -.->|import_depends| D_INTEGRATION
     D_MKT_DATA["D_MKT_DATA production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_MKT_DATA
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_GOVERNANCE
-    D_FUNDAMENTAL_SIGNAL["D-FUNDAMENTAL_SIGNAL prototype"]
+    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTEGRATION
-    D_RISK["D-RISK prototype"]
+    D_RISK["D_RISK prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_RISK
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_GOVERNANCE
-    D_EX_CORE["D-EX_CORE production"]
+    D_EX_CORE["D_EX_CORE production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_EX_CORE
-    D_SIMULATION["D-SIMULATION prototype"]
+    D_SIMULATION["D_SIMULATION prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_SIMULATION
     D_SECURITY["D_SECURITY prototype"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_SECURITY
-    D_INTELLIGENCE["D-INTELLIGENCE production"]
+    D_INTELLIGENCE["D_INTELLIGENCE production"]
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTELLIGENCE
     scripts_construction_demo_e2e_pipeline_py -.->|import_depends| D_INTEGRATION
     scripts_construction_local_layer_daemon_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     D_GOV_DRIFT -->|import_depends| scripts_governance_shared_frontmatter_py
     D_GOVERNANCE -.->|test_depends| scripts_governance_shared_frontmatter_py
     D_GOVERNANCE -.->|test_depends| scripts_governance_shared_frontmatter_py
@@ -326,7 +326,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_shared_walk_py["scripts/governance/_shared/walk.py prototype"]
         scripts_governance_shared_yaml_utils_py["scripts/governance/_shared/yaml_utils.py prototype"]
         scripts_governance_sync_check_p0_status_py["scripts/governance/_sync/check_p0_status.py prototype"]
@@ -363,9 +363,9 @@ graph TD
     scripts_governance_sync_fix_orphan_deps_py -.->|config_depends| scripts_governance_sync_check_p0_status_py
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_analyze_change_impact_py -.->|import_depends| D_INFRA_RUNTIME
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_adversarial_sys_master_test_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_governance_construction_gate_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_create_alignment_tasks_py -.->|import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -380,7 +380,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_d10_performance_init_py["scripts/governance/d10_performance/__init__.py prototype"]
         scripts_governance_d10_performance_collect_system_threads_py["scripts/governance/d10_performance/collect_syst... prototype"]
         scripts_governance_d11_compliance_init_py["scripts/governance/d11_compliance/__init__.py prototype"]
@@ -434,9 +434,9 @@ graph TD
     scripts_governance_d1_structure_batch_create_index_md_py -.->|config_depends| scripts_governance_d1_structure_init_py
     scripts_governance_d1_structure_check_index_integrity_py -.->|config_depends| scripts_governance_d1_structure_init_py
     scripts_governance_d1_structure_detect_orphan_py_py -.->|config_depends| scripts_governance_d1_structure_init_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_d1_structure_cbg_reset_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| scripts_governance_d1_structure_archive_drafts_zone_py
     D_GOVERNANCE -.->|test_depends| scripts_governance_d11_compliance_validate_blueprint_overlap_py
     D_GOVERNANCE -.->|test_depends| scripts_governance_d11_compliance_validate_truth_source_cascade_py
@@ -457,7 +457,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_d1_structure_detect_residual_files_py["scripts/governance/d1_structure/detect_residual... prototype"]
         scripts_governance_d1_structure_detect_temp_files_py["scripts/governance/d1_structure/detect_temp_fil... prototype"]
         scripts_governance_d1_structure_drafts_zone_archiver_py["scripts/governance/d1_structure/drafts_zone_arc... prototype"]
@@ -502,7 +502,7 @@ graph TD
     scripts_governance_d4_paths_detect_ruins_references_py -.->|config_depends| scripts_governance_d4_paths_init_py
     scripts_governance_d4_paths_detect_excessive_file_moves_py -.->|config_depends| scripts_governance_d4_paths_init_py
     scripts_governance_d4_paths_detect_deprecated_path_writes_py -.->|config_depends| scripts_governance_d4_paths_init_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_d1_structure_reset_cbg_py -.->|import_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -516,7 +516,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_d4_paths_detect_split_delete_ref_commit_py["scripts/governance/d4_paths/detect_split_delete... prototype"]
         scripts_governance_d6_security_init_py["scripts/governance/d6_security/__init__.py prototype"]
         scripts_governance_d6_security_check_protected_paths_py["scripts/governance/d6_security/check_protected_... prototype"]
@@ -584,7 +584,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_d7_code_validate_fle_action_metadata_py["scripts/governance/d7_code/validate_fle_action_... prototype"]
         scripts_governance_d7_code_validate_fle_imports_py["scripts/governance/d7_code/validate_fle_imports.py prototype"]
         scripts_governance_d7_code_validate_import_style_py["scripts/governance/d7_code/validate_import_styl... prototype"]
@@ -622,10 +622,10 @@ graph TD
     scripts_governance_d8_doc_sync_validate_document_lifecycle_py -.->|config_depends| scripts_governance_d8_doc_sync_init_py
     scripts_governance_d9_knowledge_detect_duplicated_normative_language_py -.->|config_depends| scripts_governance_d9_knowledge_init_py
     scripts_governance_d9_knowledge_detect_orphan_documents_py -.->|config_depends| scripts_governance_d9_knowledge_init_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_gate_engine_selfcheck_py -.->|import_depends| D_GOV_ENFORCEMENT
     scripts_governance_gate_engine_selfcheck_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|test_depends| scripts_governance_dependency_graph_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -641,7 +641,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_generate_path_ownership_map_py["scripts/governance/generate_path_ownership_map.py prototype"]
         scripts_governance_generate_project_depgraph_py["scripts/governance/generate_project_depgraph.py prototype"]
         scripts_governance_generate_project_path_tree_py["scripts/governance/generate_project_path_tree.py prototype"]
@@ -690,9 +690,9 @@ graph TD
     scripts_governance_meta_detect_script_rot_py -.->|config_depends| scripts_governance_meta_init_py
     scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py -.->|config_depends| scripts_governance_meta_benchmark_test_fixtures_bad_imports_py
     scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py -.->|config_depends| scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_GOV_ENFORCEMENT
     D_INTEGRATION["D_INTEGRATION production"]
     scripts_governance_meta_create_task_from_finding_py -.->|import_depends| D_INTEGRATION
@@ -712,7 +712,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_meta_false_negative_cases_init_py["scripts/governance/meta/false_negative_cases/__... prototype"]
         scripts_governance_meta_false_negative_cases_architecture_cases_yaml["scripts/governance/meta/false_negative_cases/ar... production"]
         scripts_governance_meta_false_negative_cases_data_quality_cases_yaml["scripts/governance/meta/false_negative_cases/da... production"]
@@ -760,7 +760,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_meta_validate_end_to_end_benchmark_py["scripts/governance/meta/validate_end_to_end_ben... prototype"]
         scripts_governance_meta_validate_environment_health_py["scripts/governance/meta/validate_environment_he... prototype"]
         scripts_governance_meta_validate_false_negatives_py["scripts/governance/meta/validate_false_negative... prototype"]
@@ -793,13 +793,13 @@ graph TD
         scripts_governance_session_startup_check_py["scripts/governance/session_startup_check.py prototype"]
     end
     scripts_governance_observability_init_py -.->|config_depends| scripts_governance_observability_gate_cache_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     scripts_governance_pre_write_gate_py -.->|import_depends| D_GOV_ENFORCEMENT
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     scripts_governance_rebuild_audit_index_py -.->|import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_governance_run_all_py -.->|import_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     scripts_governance_session_startup_check_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_session_startup_check_py -.->|import_depends| D_GOVERNANCE
     D_OPS["D_OPS production"]
@@ -821,7 +821,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_governance_status_py["scripts/governance/status.py prototype"]
         scripts_governance_sync_blueprint_status_py["scripts/governance/sync_blueprint_status.py prototype"]
         scripts_governance_sync_progress_py["scripts/governance/sync_progress.py prototype"]
@@ -855,7 +855,7 @@ graph TD
     end
     scripts_hooks_auto_handoff_log_py -.->|config_depends| scripts_hooks_git_secrets_setup_sh
     scripts_hooks_contract_fingerprint_hook_sh -.->|config_depends| scripts_hooks_auto_handoff_log_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_governance_task_self_check_py -.->|import_depends| D_GOVERNANCE
     scripts_governance_task_self_check_py -.->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION production"]
@@ -878,7 +878,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_GOV_SCRIPTS["D-GOV_SCRIPTS 脚本治理"]
+    subgraph D_GOV_SCRIPTS["D_GOV_SCRIPTS 脚本治理"]
         scripts_lock_files_py["scripts/lock_files.py prototype"]
         scripts_mcp_generate_ide_config_py["scripts/mcp/generate_ide_config.py prototype"]
         scripts_mcp_launcher_py["scripts/mcp/launcher.py prototype"]
@@ -905,7 +905,7 @@ graph TD
     scripts_mcp_stop_all_py -.->|config_depends| scripts_mcp_status_all_py
     scripts_migration_dm311_autonomy_core_split_py -.->|config_depends| scripts_migration_dm314_infra_ops_split_py
     scripts_mcp_generate_ide_config_py -.->|config_depends| scripts_mcp_status_all_py
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     scripts_rollback_py -.->|import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
     scripts_rollback_py -.->|import_depends| D_INFRA_RUNTIME
@@ -930,31 +930,31 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 29 | import_depends |
+| D_GOVERNANCE | 29 | import_depends |
 | D_INTEGRATION | 13 | import_depends |
 | D_INFRA_RUNTIME | 11 | import_depends |
-| D-GOV_ENFORCEMENT | 10 | import_depends |
+| D_GOV_ENFORCEMENT | 10 | import_depends |
+| D_RISK | 3 | import_depends |
 | D_SHARED | 3 | import_depends |
-| D-RISK | 3 | import_depends |
+| D_GOV_AUDIT | 2 | import_depends |
 | D_SECURITY | 2 | import_depends |
 | D_OPS | 2 | import_depends |
-| D-GOV_AUDIT | 2 | import_depends |
-| D-SIMULATION | 1 | import_depends |
-| D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
-| D-INTELLIGENCE | 1 | import_depends |
-| D-EX_CORE | 1 | import_depends |
+| D_SIMULATION | 1 | import_depends |
+| D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_INTELLIGENCE | 1 | import_depends |
 | D_MKT_DATA | 1 | import_depends |
+| D_EX_CORE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 12 | test_depends |
-| D-GOV_DRIFT | 1 | import_depends |
+| D_GOVERNANCE | 12 | test_depends |
+| D_GOV_DRIFT | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 脚本治理（D-GOV_SCRIPTS）的模块分布。共 411 个模块 / 411 modules。
+> 按 architecture_layer 分层显示 脚本治理（D_GOV_SCRIPTS）的模块分布。共 411 个模块 / 411 modules。
 
 ```
 

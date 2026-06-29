@@ -62,41 +62,41 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D-ASHARE_SIGNAL | A股特色信号 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ashare_signal.md](domains/d_ashare_signal.md) |
-| D-AUDITTEST | audit_test_suite | 152 | 142 | 0 | 10 | 152/150 (超容) | [d_audittest.md](domains/d_audittest.md) |
-| D-AUTONOMY_PERM | 自治保护 | 70 | 2 | 1 | 67 | 70/150 (OK) | [d_autonomy_perm.md](domains/d_autonomy_perm.md) |
-| D-BACKTEST | 回测 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_backtest.md](domains/d_backtest.md) |
-| D-COMPLIANCE | 合规 | 25 | 0 | 0 | 25 | 25/150 (OK) | [d_compliance.md](domains/d_compliance.md) |
-| D-CROSS_ASSET | 跨资产 | 11 | 1 | 1 | 9 | 11/150 (OK) | [d_cross_asset.md](domains/d_cross_asset.md) |
-| D-DIGITAL_TWIN | 数字孪生 | 8 | 0 | 1 | 7 | 8/150 (OK) | [d_digital_twin.md](domains/d_digital_twin.md) |
-| D-EXEC_SIM | 执行仿真 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_exec_sim.md](domains/d_exec_sim.md) |
-| D-EX_CORE | 执行核心 | 14 | 3 | 0 | 11 | 14/150 (OK) | [d_ex_core.md](domains/d_ex_core.md) |
-| D-EX_SOR | 执行路由 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ex_sor.md](domains/d_ex_sor.md) |
-| D-FACTOR | 因子 | 17 | 2 | 0 | 15 | 17/150 (OK) | [d_factor.md](domains/d_factor.md) |
-| D-FUNDAMENTAL_SIGNAL | 基本面信号 | 25 | 4 | 0 | 21 | 25/150 (OK) | [d_fundamental_signal.md](domains/d_fundamental_signal.md) |
-| D-GOVERNANCE | 生命周期管理 | 2825 | 117 | 50 | 2658 | 2825/150 (超容) | [d_governance.md](domains/d_governance.md) |
-| D-GOV_AUDIT | 审计追踪 | 185 | 54 | 2 | 129 | 185/150 (超容) | [d_gov_audit.md](domains/d_gov_audit.md) |
-| D-GOV_DOCS | architecture_docs | 127 | 78 | 0 | 49 | 127/150 (OK) | [d_gov_docs.md](domains/d_gov_docs.md) |
-| D-GOV_DRIFT | 漂移检测 | 24 | 9 | 1 | 14 | 24/150 (OK) | [d_gov_drift.md](domains/d_gov_drift.md) |
-| D-GOV_ENFORCEMENT | rule_enforcement | 107 | 69 | 0 | 38 | 107/150 (OK) | [d_gov_enforcement.md](domains/d_gov_enforcement.md) |
-| D-GOV_RULE | 规则治理 | 11 | 11 | 0 | 0 | 11/150 (OK) | [d_gov_rule.md](domains/d_gov_rule.md) |
-| D-GOV_SCRIPTS | code_dedup | 413 | 26 | 0 | 387 | 413/150 (超容) | [d_gov_scripts.md](domains/d_gov_scripts.md) |
-| D-INTELLIGENCE | 上下文管理 | 42 | 17 | 0 | 25 | 42/150 (OK) | [d_intelligence.md](domains/d_intelligence.md) |
-| D-KNOWLEDGE | 知识管理 | 40 | 1 | 2 | 37 | 40/150 (OK) | [d_knowledge.md](domains/d_knowledge.md) |
-| D-ML_SERVE | 推理 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ml_serve.md](domains/d_ml_serve.md) |
-| D-ML_TRAIN | 训练 | 12 | 0 | 1 | 11 | 12/150 (OK) | [d_ml_train.md](domains/d_ml_train.md) |
-| D-PF_ALLOC | 组合分配 | 11 | 0 | 1 | 10 | 11/150 (OK) | [d_pf_alloc.md](domains/d_pf_alloc.md) |
-| D-PF_CORE | 组合核心 | 44 | 6 | 26 | 12 | 44/150 (OK) | [d_pf_core.md](domains/d_pf_core.md) |
-| D-POSITION | 仓位管理 | 8 | 0 | 0 | 8 | 8/150 (OK) | [d_position.md](domains/d_position.md) |
-| D-RISK | 风控 | 25 | 9 | 0 | 16 | 25/150 (OK) | [d_risk.md](domains/d_risk.md) |
-| D-SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_sell_decision.md](domains/d_sell_decision.md) |
-| D-SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_siglegacy.md](domains/d_siglegacy.md) |
-| D-SIGQC | 信号质量控制 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_sigqc.md](domains/d_sigqc.md) |
-| D-SIMULATION | 仿真 | 19 | 4 | 1 | 14 | 19/150 (OK) | [d_simulation.md](domains/d_simulation.md) |
-| D-TRADING | 交易运营 | 161 | 20 | 0 | 141 | 161/150 (超容) | [d_trading.md](domains/d_trading.md) |
+| D_ASHARE_SIGNAL | A股特色信号 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ashare_signal.md](domains/d_ashare_signal.md) |
+| D_AUDITTEST | audit_test_suite | 152 | 142 | 0 | 10 | 152/150 (超容) | [d_audittest.md](domains/d_audittest.md) |
+| D_AUTONOMY_PERM | 自治保护 | 70 | 2 | 1 | 67 | 70/150 (OK) | [d_autonomy_perm.md](domains/d_autonomy_perm.md) |
+| D_BACKTEST | 回测 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_backtest.md](domains/d_backtest.md) |
+| D_COMPLIANCE | 合规 | 25 | 0 | 0 | 25 | 25/150 (OK) | [d_compliance.md](domains/d_compliance.md) |
+| D_CROSS_ASSET | 跨资产 | 11 | 1 | 1 | 9 | 11/150 (OK) | [d_cross_asset.md](domains/d_cross_asset.md) |
+| D_DIGITAL_TWIN | 数字孪生 | 8 | 0 | 1 | 7 | 8/150 (OK) | [d_digital_twin.md](domains/d_digital_twin.md) |
+| D_EXEC_SIM | 执行仿真 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_exec_sim.md](domains/d_exec_sim.md) |
+| D_EX_CORE | 执行核心 | 14 | 3 | 0 | 11 | 14/150 (OK) | [d_ex_core.md](domains/d_ex_core.md) |
+| D_EX_SOR | 执行路由 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ex_sor.md](domains/d_ex_sor.md) |
+| D_FACTOR | 因子 | 17 | 2 | 0 | 15 | 17/150 (OK) | [d_factor.md](domains/d_factor.md) |
+| D_FUNDAMENTAL_SIGNAL | 基本面信号 | 25 | 4 | 0 | 21 | 25/150 (OK) | [d_fundamental_signal.md](domains/d_fundamental_signal.md) |
+| D_GOVERNANCE | 生命周期管理 | 2825 | 117 | 50 | 2658 | 2825/150 (超容) | [d_governance.md](domains/d_governance.md) |
+| D_GOV_AUDIT | 审计追踪 | 185 | 54 | 2 | 129 | 185/150 (超容) | [d_gov_audit.md](domains/d_gov_audit.md) |
+| D_GOV_DOCS | architecture_docs | 127 | 78 | 0 | 49 | 127/150 (OK) | [d_gov_docs.md](domains/d_gov_docs.md) |
+| D_GOV_DRIFT | 漂移检测 | 24 | 9 | 1 | 14 | 24/150 (OK) | [d_gov_drift.md](domains/d_gov_drift.md) |
+| D_GOV_ENFORCEMENT | rule_enforcement | 107 | 69 | 0 | 38 | 107/150 (OK) | [d_gov_enforcement.md](domains/d_gov_enforcement.md) |
+| D_GOV_RULE | 规则治理 | 11 | 11 | 0 | 0 | 11/150 (OK) | [d_gov_rule.md](domains/d_gov_rule.md) |
+| D_GOV_SCRIPTS | code_dedup | 413 | 26 | 0 | 387 | 413/150 (超容) | [d_gov_scripts.md](domains/d_gov_scripts.md) |
+| D_INTELLIGENCE | 上下文管理 | 42 | 17 | 0 | 25 | 42/150 (OK) | [d_intelligence.md](domains/d_intelligence.md) |
+| D_KNOWLEDGE | 知识管理 | 40 | 1 | 2 | 37 | 40/150 (OK) | [d_knowledge.md](domains/d_knowledge.md) |
+| D_ML_SERVE | 推理 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_ml_serve.md](domains/d_ml_serve.md) |
+| D_ML_TRAIN | 训练 | 12 | 0 | 1 | 11 | 12/150 (OK) | [d_ml_train.md](domains/d_ml_train.md) |
+| D_PF_ALLOC | 组合分配 | 11 | 0 | 1 | 10 | 11/150 (OK) | [d_pf_alloc.md](domains/d_pf_alloc.md) |
+| D_PF_CORE | 组合核心 | 44 | 6 | 26 | 12 | 44/150 (OK) | [d_pf_core.md](domains/d_pf_core.md) |
+| D_POSITION | 仓位管理 | 8 | 0 | 0 | 8 | 8/150 (OK) | [d_position.md](domains/d_position.md) |
+| D_RISK | 风控 | 25 | 9 | 0 | 16 | 25/150 (OK) | [d_risk.md](domains/d_risk.md) |
+| D_SELL_DECISION | 卖出决策 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_sell_decision.md](domains/d_sell_decision.md) |
+| D_SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_siglegacy.md](domains/d_siglegacy.md) |
+| D_SIGQC | 信号质量控制 | 7 | 0 | 0 | 7 | 7/150 (OK) | [d_sigqc.md](domains/d_sigqc.md) |
+| D_SIMULATION | 仿真 | 19 | 4 | 1 | 14 | 19/150 (OK) | [d_simulation.md](domains/d_simulation.md) |
+| D_TRADING | 交易运营 | 161 | 20 | 0 | 141 | 161/150 (超容) | [d_trading.md](domains/d_trading.md) |
 
 ### 未分类 (1 个域)
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D-GOV-REPAIR | rollback | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_gov_repair.md](domains/d_gov_repair.md) |
+| D_GOV_REPAIR | rollback | 0 | 0 | 0 | 0 | 0/150 (OK) | [d_gov_repair.md](domains/d_gov_repair.md) |

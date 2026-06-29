@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-FACTOR 因子架构文档
+title: D_FACTOR 因子架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 31_d_factor / 因子
 
-> **文档作用 / Purpose**: 展示 因子（D-FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 31 | Number | 31 |
-| 域ID | D-FACTOR | Domain ID | D-FACTOR |
+| 域ID | D_FACTOR | Domain ID | D_FACTOR |
 | 域名称 | 因子 | Domain Name | 因子 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 14 | Module Count | 14 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_FACTOR["D-FACTOR 因子"]
+    subgraph D_FACTOR["D_FACTOR 因子"]
         src_zephyr_factor_init_py["src/zephyr/factor/__init__.py prototype"]
         src_zephyr_factor_extensions_init_py["src/zephyr/factor/_extensions/__init__.py prototype"]
         src_zephyr_factor_alpha_signal_pipeline_py["src/zephyr/factor/alpha_signal_pipeline.py prototype"]
@@ -63,11 +63,11 @@ graph TD
         src_zephyr_factor_value_factor_py["src/zephyr/factor/value_factor.py prototype"]
     end
     src_zephyr_factor_init_py -.->|config_depends| src_zephyr_factor_alpha_signal_pipeline_py
-    D_FUNDAMENTAL_SIGNAL["D-FUNDAMENTAL_SIGNAL production"]
+    D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL production"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|import_depends| D_FUNDAMENTAL_SIGNAL
     D_SHARED["D_SHARED prototype"]
     src_zephyr_factor_factor_base_py -.->|import_depends| D_SHARED
-    D_GOVERNANCE["D-GOVERNANCE production"]
+    D_GOVERNANCE["D_GOVERNANCE production"]
     src_zephyr_factor_value_factor_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_factor_momentum_factor_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_factor_bus_factor_defense_py -.->|config_depends| D_GOVERNANCE
@@ -91,19 +91,19 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOVERNANCE | 3 | config_depends,import_depends |
-| D-FUNDAMENTAL_SIGNAL | 1 | import_depends |
+| D_GOVERNANCE | 3 | config_depends,import_depends |
+| D_FUNDAMENTAL_SIGNAL | 1 | import_depends |
 | D_SHARED | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 4 | test_depends |
+| D_GOVERNANCE | 4 | test_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 因子（D-FACTOR）的模块分布。共 14 个模块 / 14 modules。
+> 按 architecture_layer 分层显示 因子（D_FACTOR）的模块分布。共 14 个模块 / 14 modules。
 
 ```
 

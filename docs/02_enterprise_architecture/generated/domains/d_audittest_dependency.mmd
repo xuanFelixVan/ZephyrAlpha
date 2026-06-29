@@ -1,5 +1,5 @@
-%% D-AUDITTEST 域全景依赖图
-%% 生成时间: 2026-06-29 16:21:52
+%% D_AUDITTEST 域全景依赖图
+%% 生成时间: 2026-06-29 17:05:05
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 151, 依赖边数: 15
 
@@ -115,26 +115,26 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-AUDITTEST -> D-GOV_AUDIT (7 条)
-    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    tests_unit_audit_trail_test_audit_core_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    tests_unit_audit_trail_test_audit_core_py -->|test_depends| D_GOV_AUDIT[D-GOV_AUDIT]
-    %% D-AUDITTEST -> D-GOV_DRIFT (1 条)
-    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    %% D-AUDITTEST -> D-GOV_ENFORCEMENT (2 条)
-    tests_test_audit_chain_verifier_py -->|test_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    tests_test_audit_chain_verifier_py -->|test_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-AUDITTEST -> D_OPS (1 条)
+    %% D_AUDITTEST -> D_GOV_AUDIT (7 条)
+    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_unit_audit_trail_test_audit_core_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_unit_audit_trail_test_audit_core_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_AUDITTEST -> D_GOV_DRIFT (1 条)
+    tests_unit_audit_trail_test_import_smoke_audit_trail_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_AUDITTEST -> D_GOV_ENFORCEMENT (2 条)
+    tests_test_audit_chain_verifier_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_test_audit_chain_verifier_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_AUDITTEST -> D_OPS (1 条)
     tests_test_self_health_monitor_py -->|test_depends| D_OPS[D_OPS]
-    %% D-AUDITTEST -> D_SECURITY (3 条)
+    %% D_AUDITTEST -> D_SECURITY (3 条)
     tests_test_legal_audit_chain_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_test_self_heal_agent_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_test_self_heal_agent_py -->|test_depends| D_SECURITY[D_SECURITY]
-    %% D-AUDITTEST -> D_SHARED (1 条)
+    %% D_AUDITTEST -> D_SHARED (1 条)
     tests_unit_resource_optimization_test_self_healing_py -->|test_depends| D_SHARED[D_SHARED]
 
     %% 统计

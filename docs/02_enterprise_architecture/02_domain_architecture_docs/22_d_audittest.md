@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-AUDITTEST 审计测试套件架构文档
+title: D_AUDITTEST 审计测试套件架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 22_d_audittest / 审计测试套件
 
-> **文档作用 / Purpose**: 展示 审计测试套件（D-AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 审计测试套件（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 22 | Number | 22 |
-| 域ID | D-AUDITTEST | Domain ID | D-AUDITTEST |
+| 域ID | D_AUDITTEST | Domain ID | D_AUDITTEST |
 | 域名称 | 审计测试套件 | Domain Name | 审计测试套件 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 151 | Module Count | 151 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_AUDITTEST["D-AUDITTEST 审计测试套件"]
+    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         tests_agent_rbac_test_rbac_auto_lifecycle_py["tests/agent_rbac/test_rbac_auto_lifecycle.py production"]
         tests_e2e_test_mcp_full_lifecycle_e2e_py["tests/e2e/test_mcp_full_lifecycle_e2e.py production"]
         tests_test_adversarial_extreme_py["tests/test_adversarial_extreme.py production"]
@@ -80,7 +80,7 @@ graph TD
         tests_test_f5_red_team_extreme_py["tests/test_f5_red_team_extreme.py production"]
         tests_test_fl_safety_gate_l28_l29_py["tests/test_fl_safety_gate_l28_l29.py production"]
     end
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
     tests_test_audit_chain_verifier_py -.->|test_depends| D_GOV_ENFORCEMENT
     tests_test_audit_chain_verifier_py -.->|test_depends| D_GOV_ENFORCEMENT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -96,7 +96,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUDITTEST["D-AUDITTEST 审计测试套件"]
+    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         tests_test_fl_safety_gate_l36_l37_py["tests/test_fl_safety_gate_l36_l37.py production"]
         tests_test_fl_safety_gate_l38_l39_py["tests/test_fl_safety_gate_l38_l39.py production"]
         tests_test_fl_safety_gate_l40_l41_py["tests/test_fl_safety_gate_l40_l41.py production"]
@@ -139,7 +139,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUDITTEST["D-AUDITTEST 审计测试套件"]
+    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         tests_test_g_trae_022_py["tests/test_g_trae_022.py production"]
         tests_test_g_trae_023_py["tests/test_g_trae_023.py production"]
         tests_test_g_trae_024_py["tests/test_g_trae_024.py production"]
@@ -182,7 +182,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUDITTEST["D-AUDITTEST 审计测试套件"]
+    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         tests_test_g_trae_052_py["tests/test_g_trae_052.py production"]
         tests_test_g_trae_053_py["tests/test_g_trae_053.py production"]
         tests_test_g_trae_054_py["tests/test_g_trae_054.py production"]
@@ -229,7 +229,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUDITTEST["D-AUDITTEST 审计测试套件"]
+    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         tests_test_safety_gate_l46_l47_py["tests/test_safety_gate_l46_l47.py production"]
         tests_test_safety_gate_l48_l49_py["tests/test_safety_gate_l48_l49.py production"]
         tests_test_safety_gate_l50_l51_py["tests/test_safety_gate_l50_l51.py production"]
@@ -266,11 +266,11 @@ graph TD
     D_SECURITY["D_SECURITY production"]
     tests_test_self_heal_agent_py -.->|test_depends| D_SECURITY
     tests_test_self_heal_agent_py -.->|test_depends| D_SECURITY
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_DRIFT
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
     tests_unit_audit_trail_test_import_smoke_audit_trail_py -.->|test_depends| D_GOV_AUDIT
@@ -291,7 +291,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_AUDITTEST["D-AUDITTEST 审计测试套件"]
+    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         tests_unit_vector_memory_test_vms_lifecycle_py["tests/unit/vector_memory/test_vms_lifecycle.py production"]
     end
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -307,10 +307,10 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOV_AUDIT | 7 | test_depends |
+| D_GOV_AUDIT | 7 | test_depends |
 | D_SECURITY | 3 | test_depends |
-| D-GOV_ENFORCEMENT | 2 | test_depends |
-| D-GOV_DRIFT | 1 | test_depends |
+| D_GOV_ENFORCEMENT | 2 | test_depends |
+| D_GOV_DRIFT | 1 | test_depends |
 | D_OPS | 1 | test_depends |
 | D_SHARED | 1 | test_depends |
 
@@ -320,7 +320,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 审计测试套件（D-AUDITTEST）的模块分布。共 151 个模块 / 151 modules。
+> 按 architecture_layer 分层显示 审计测试套件（D_AUDITTEST）的模块分布。共 151 个模块 / 151 modules。
 
 ```
 

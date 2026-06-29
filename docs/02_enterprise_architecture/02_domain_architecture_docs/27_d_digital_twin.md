@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-DIGITAL_TWIN 数字孪生架构文档
+title: D_DIGITAL_TWIN 数字孪生架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 27_d_digital_twin / 数字孪生
 
-> **文档作用 / Purpose**: 展示 数字孪生（D-DIGITAL_TWIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 数字孪生（D_DIGITAL_TWIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 27 | Number | 27 |
-| 域ID | D-DIGITAL_TWIN | Domain ID | D-DIGITAL_TWIN |
+| 域ID | D_DIGITAL_TWIN | Domain ID | D_DIGITAL_TWIN |
 | 域名称 | 数字孪生 | Domain Name | 数字孪生 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 8 | Module Count | 8 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_DIGITAL_TWIN["D-DIGITAL_TWIN 数字孪生"]
+    subgraph D_DIGITAL_TWIN["D_DIGITAL_TWIN 数字孪生"]
         src_zephyr_digital_twin["数字孪生域 design"]
         src_zephyr_digital_twin_init_py["src/zephyr/digital_twin/__init__.py prototype"]
         src_zephyr_digital_twin_extensions_init_py["src/zephyr/digital_twin/_extensions/__init__.py prototype"]
@@ -75,7 +75,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 数字孪生（D-DIGITAL_TWIN）的模块分布。共 8 个模块 / 8 modules。
+> 按 architecture_layer 分层显示 数字孪生（D_DIGITAL_TWIN）的模块分布。共 8 个模块 / 8 modules。
 
 ```
 

@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-INTELLIGENCE 上下文管理架构文档
+title: D_INTELLIGENCE 上下文管理架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 40_d_intelligence / 上下文管理
 
-> **文档作用 / Purpose**: 展示 上下文管理（D-INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 上下文管理（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 40 | Number | 40 |
-| 域ID | D-INTELLIGENCE | Domain ID | D-INTELLIGENCE |
+| 域ID | D_INTELLIGENCE | Domain ID | D_INTELLIGENCE |
 | 域名称 | 上下文管理 | Domain Name | 上下文管理 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 42 | Module Count | 42 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INTELLIGENCE["D-INTELLIGENCE 上下文管理"]
+    subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
         src_zephyr_intelligence_init_py["src/zephyr/intelligence/__init__.py prototype"]
         src_zephyr_intelligence_extensions_init_py["src/zephyr/intelligence/_extensions/__init__.py prototype"]
         src_zephyr_intelligence_api_init_py["src/zephyr/intelligence/api/__init__.py prototype"]
@@ -90,41 +90,40 @@ graph TD
     src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    D_GOV_ENFORCEMENT["D-GOV_ENFORCEMENT production"]
-    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
+    D_GOVERNANCE["D_GOVERNANCE production"]
+    src_zephyr_intelligence_model_drift_detector_py -.->|config_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT production"]
+    src_zephyr_intelligence_infrastructure_init_py -.->|contract| D_GOV_ENFORCEMENT
+    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE
     D_INTEGRATION["D_INTEGRATION prototype"]
     src_zephyr_intelligence_model_evaluation_activate_py -.->|import_depends| D_INTEGRATION
-    D_GOVERNANCE["D-GOVERNANCE production"]
-    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOVERNANCE
+    src_zephyr_intelligence_model_evaluation_activate_py -->|import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_GOVERNANCE
     src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_evaluation_kb_repo_py -.->|import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_INTEGRATION
-    src_zephyr_intelligence_model_evaluation_kb_repo_py -->|import_depends| D_GOVERNANCE
-    D_ML_TRAIN["D-ML_TRAIN prototype"]
+    D_ML_TRAIN["D_ML_TRAIN prototype"]
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_INTEGRATION
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|import_depends| D_GOVERNANCE
     D_AUTONOMY_CORE["D_AUTONOMY_CORE production"]
     src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_AUTONOMY_CORE
-    D_SIMULATION["D-SIMULATION prototype"]
-    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|import_depends| D_SIMULATION
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|import_depends| D_GOVERNANCE
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
     D_AUTONOMY_CORE -.->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_evaluation_kb_repo_py
-    D_GOV_DOCS["D-GOV_DOCS prototype"]
+    D_GOV_DOCS["D_GOV_DOCS prototype"]
     D_GOV_DOCS -.->|import_depends| src_zephyr_intelligence_model_evaluation_kb_repo_py
     D_GOV_DOCS -.->|import_depends| src_zephyr_intelligence_model_evaluation_kb_repo_py
     D_INTEGRATION -.->|import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_SECURITY["D_SECURITY prototype"]
     D_SECURITY -.->|import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_init_py
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOV_SCRIPTS["D-GOV_SCRIPTS prototype"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS prototype"]
     D_GOV_SCRIPTS -.->|import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_cli_py
@@ -136,15 +135,15 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_kb_repo_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py production
     class src_zephyr_intelligence_init_py,src_zephyr_intelligence_extensions_init_py,src_zephyr_intelligence_api_init_py,src_zephyr_intelligence_core_init_py,src_zephyr_intelligence_infrastructure_init_py,src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_init_py,src_zephyr_intelligence_model_evaluation_backtest_base_py,src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py,src_zephyr_intelligence_model_evaluation_implementations_init_py,src_zephyr_intelligence_model_evaluation_implementations_default_backtest_engine_py,src_zephyr_intelligence_model_evaluation_notebook_integration_init_py,src_zephyr_intelligence_model_evaluation_sync_engine_py,src_zephyr_intelligence_model_evaluation_target_lib_init_py,src_zephyr_intelligence_model_profiling_init_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_init_py design
-    class D_GOV_ENFORCEMENT,D_GOVERNANCE,D_AUTONOMY_CORE,D_TRADING external_prod
-    class D_INTEGRATION,D_ML_TRAIN,D_SIMULATION,D_GOV_DOCS,D_SECURITY,D_GOV_SCRIPTS external_design
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE,D_TRADING external_prod
+    class D_INTEGRATION,D_ML_TRAIN,D_GOV_DOCS,D_SECURITY,D_GOV_SCRIPTS external_design
 ```
 
 ### 第 2 页 / 共 2 页 / Page 2 of 2
 
 ```mermaid
 graph TD
-    subgraph D_INTELLIGENCE["D-INTELLIGENCE 上下文管理"]
+    subgraph D_INTELLIGENCE["D_INTELLIGENCE 上下文管理"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["src/zephyr/intelligence/model_profiling/pipelin... prototype"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_deepseek_v4_chat_py["src/zephyr/intelligence/model_profiling/pipelin... prototype"]
         src_zephyr_intelligence_model_profiling_pipeline_routing_model_discovery_py["src/zephyr/intelligence/model_profiling/pipelin... production"]
@@ -167,9 +166,9 @@ graph TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
     D_INTEGRATION["D_INTEGRATION production"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|import_depends| D_INTEGRATION
-    D_TRADING["D-TRADING production"]
+    D_TRADING["D_TRADING production"]
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     D_GOVERNANCE -.->|import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
     D_TRADING -.->|import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
     D_GOVERNANCE -.->|test_depends| src_zephyr_intelligence_model_profiling_provider_data_py
@@ -197,30 +196,30 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
+| D_GOVERNANCE | 6 | config_depends,import_depends |
 | D_INTEGRATION | 6 | import_depends |
-| D-GOVERNANCE | 6 | config_depends,import_depends |
-| D-ML_TRAIN | 4 | import_depends |
-| D-SIMULATION | 3 | import_depends |
-| D-GOV_ENFORCEMENT | 2 | contract,import_depends |
+| D_ML_TRAIN | 4 | import_depends |
+| D_SIMULATION | 3 | import_depends |
+| D_GOV_ENFORCEMENT | 2 | contract,import_depends |
+| D_TRADING | 1 | import_depends |
 | D_SHARED | 1 | import_depends |
-| D-TRADING | 1 | import_depends |
 | D_AUTONOMY_CORE | 1 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | 源域 / Source Domain | 依赖数 / Count | 依赖类型 / Type |
 |------|:---:|---------|
-| D-GOVERNANCE | 49 | import_depends,test_depends |
-| D-TRADING | 5 | import_depends |
+| D_GOVERNANCE | 49 | import_depends,test_depends |
+| D_TRADING | 5 | import_depends |
 | D_INTEGRATION | 3 | import_depends |
-| D-GOV_DOCS | 2 | import_depends |
+| D_GOV_DOCS | 2 | import_depends |
 | D_AUTONOMY_CORE | 2 | import_depends |
-| D-GOV_SCRIPTS | 1 | import_depends |
+| D_GOV_SCRIPTS | 1 | import_depends |
 | D_SECURITY | 1 | import_depends |
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 上下文管理（D-INTELLIGENCE）的模块分布。共 42 个模块 / 42 modules。
+> 按 architecture_layer 分层显示 上下文管理（D_INTELLIGENCE）的模块分布。共 42 个模块 / 42 modules。
 
 ```
 

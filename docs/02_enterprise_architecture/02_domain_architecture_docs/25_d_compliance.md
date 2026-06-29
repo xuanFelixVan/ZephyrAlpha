@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D-COMPLIANCE 合规架构文档
+title: D_COMPLIANCE 合规架构文档
 version: "1.0"
 status: active
 date: 2026-06-29
@@ -10,10 +10,10 @@ ttl: permanent
 
 # 25_d_compliance / 合规
 
-> **文档作用 / Purpose**: 展示 合规（D-COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 16:21:50
+> 最后更新: 2026-06-29 17:05:04
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -21,7 +21,7 @@ ttl: permanent
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 编号 | 25 | Number | 25 |
-| 域ID | D-COMPLIANCE | Domain ID | D-COMPLIANCE |
+| 域ID | D_COMPLIANCE | Domain ID | D_COMPLIANCE |
 | 域名称 | 合规 | Domain Name | 合规 |
 | 层级 | L2_domain | Layer | L2_domain |
 | 模块数 | 25 | Module Count | 25 |
@@ -46,7 +46,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_COMPLIANCE["D-COMPLIANCE 合规"]
+    subgraph D_COMPLIANCE["D_COMPLIANCE 合规"]
         src_zephyr_compliance_init_py["src/zephyr/compliance/__init__.py prototype"]
         src_zephyr_compliance_extensions_init_py["src/zephyr/compliance/_extensions/__init__.py prototype"]
         src_zephyr_compliance_aisg_sandbox_py["src/zephyr/compliance/aisg_sandbox.py prototype"]
@@ -75,14 +75,14 @@ graph TD
     end
     src_zephyr_compliance_init_py -.->|config_depends| src_zephyr_compliance_artifact_scanner_py
     src_zephyr_compliance_audit_trail_bridges_init_py -.->|import_depends| src_zephyr_compliance_audit_trail_init_py
-    D_GOV_DRIFT["D-GOV_DRIFT production"]
+    D_GOV_DRIFT["D_GOV_DRIFT production"]
     src_zephyr_compliance_artifact_scanner_py -.->|import_depends| D_GOV_DRIFT
-    D_GOVERNANCE["D-GOVERNANCE prototype"]
+    D_GOVERNANCE["D_GOVERNANCE prototype"]
     src_zephyr_compliance_evidence_pack_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_aisg_sandbox_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_compliance_manager_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_default_security_gateway_py -.->|import_depends| D_GOVERNANCE
-    D_GOV_AUDIT["D-GOV_AUDIT production"]
+    D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_compliance_financial_compliance_py -.->|import_depends| D_GOV_AUDIT
     src_zephyr_compliance_security_gateway_base_py -.->|import_depends| D_GOVERNANCE
     src_zephyr_compliance_merkle_hourly_py -.->|import_depends| D_GOV_AUDIT
@@ -108,9 +108,9 @@ graph TD
 
 | 目标域 / Target Domain | 依赖数 / Count | 依赖类型 / Type |
 |--------|:---:|---------|
-| D-GOV_AUDIT | 11 | import_depends |
-| D-GOVERNANCE | 10 | import_depends |
-| D-GOV_DRIFT | 2 | import_depends |
+| D_GOV_AUDIT | 11 | import_depends |
+| D_GOVERNANCE | 10 | import_depends |
+| D_GOV_DRIFT | 2 | import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -118,7 +118,7 @@ graph TD
 
 ## 架构全景图 / Architecture Overview
 
-> 按 architecture_layer 分层显示 合规（D-COMPLIANCE）的模块分布。共 25 个模块 / 25 modules。
+> 按 architecture_layer 分层显示 合规（D_COMPLIANCE）的模块分布。共 25 个模块 / 25 modules。
 
 ```
 

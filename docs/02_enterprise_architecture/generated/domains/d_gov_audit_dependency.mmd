@@ -1,5 +1,5 @@
-%% D-GOV_AUDIT 域全景依赖图
-%% 生成时间: 2026-06-29 16:21:52
+%% D_GOV_AUDIT 域全景依赖图
+%% 生成时间: 2026-06-29 17:05:05
 %% 数据源: depgraph.db nodes表 + edges表
 %% 模块数: 183, 依赖边数: 482
 
@@ -194,97 +194,88 @@ graph TD
     %% ... 还有 98 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D-AUDITTEST -> D-GOV_AUDIT (7 条)
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail___init___py
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_models_py
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_writer_py
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_agent_signer_py
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_query_py
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_models_py
-    D_AUDITTEST[D-AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_writer_py
-    %% D-AUTONOMY_PERM -> D-GOV_AUDIT (1 条)
-    D_AUTONOMY_PERM[D-AUTONOMY_PERM] -->|test_depends| src_zephyr_governance_audit_trail_agent_signer_py
-    %% D-COMPLIANCE -> D-GOV_AUDIT (11 条)
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_financial_compliance_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_merkle_hourly_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_orchestrator___init___py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail___init___py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_anomaly_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_drift_bridge_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___es_tiered_storage_bridge_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_trust_bridge_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_feedback_bridge_py
-    D_COMPLIANCE[D-COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___ridges_delegation_bridge_py
-    %% D-GOVERNANCE -> D-GOV_AUDIT (140 条)
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_persistence_audit_schema_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_indexer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_orchestrator_query_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___dmission_mcp_result_push_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___dmission_mcp_result_push_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_behavioral_admission_post_process_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___ion_vibe_coding_enforcer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_or___ration_contract_registry_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
-    D_GOVERNANCE[D-GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
-    %% D-GOV_DRIFT -> D-GOV_AUDIT (7 条)
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_merkle_hourly_py
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_trust_bridge_py
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_orchestrator_merkle_hourly_py
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_trust_bridge_py
-    D_GOV_DRIFT[D-GOV_DRIFT] -->|runtime| docs_03_modules__domain_governance_audit_trail_blueprint_md
-    %% D-GOV_ENFORCEMENT -> D-GOV_AUDIT (4 条)
-    D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    %% D-GOV_SCRIPTS -> D-GOV_AUDIT (2 条)
-    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_audit_trail___init___py
-    D_GOV_SCRIPTS[D-GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_audit_trail_indexer_py
-    %% D-TRADING -> D-GOV_AUDIT (8 条)
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_merkle_hourly_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_log_rotation_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_retention_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_tiered_storage_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_semantic_audit_self_healer_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    D_TRADING[D-TRADING] -->|import_depends| src_zephyr_governance_audit_trail_models_py
-    D_TRADING[D-TRADING] -->|contract| docs_03_modules__domain_governance_audit_trail_blueprint_md
-    %% D_AUTONOMY_CORE -> D-GOV_AUDIT (3 条)
+    %% D_AUDITTEST -> D_GOV_AUDIT (7 条)
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail___init___py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_writer_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_agent_signer_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_query_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_models_py
+    D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_audit_trail_writer_py
+    %% D_AUTONOMY_CORE -> D_GOV_AUDIT (3 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    %% D_BEHAVIORAL_AUDIT -> D-GOV_AUDIT (2 条)
+    %% D_AUTONOMY_PERM -> D_GOV_AUDIT (1 条)
+    D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|test_depends| src_zephyr_governance_audit_trail_agent_signer_py
+    %% D_BEHAVIORAL_AUDIT -> D_GOV_AUDIT (2 条)
     D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT] -->|import_depends| src_zephyr_governance_audit_trail___init___py
-    %% D_INFRA_A2A -> D-GOV_AUDIT (1 条)
+    %% D_COMPLIANCE -> D_GOV_AUDIT (11 条)
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_financial_compliance_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_merkle_hourly_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_orchestrator___init___py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail___init___py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_anomaly_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_drift_bridge_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___es_tiered_storage_bridge_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_trust_bridge_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridges_feedback_bridge_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_audit_tr___ridges_delegation_bridge_py
+    %% D_GOVERNANCE -> D_GOV_AUDIT (140 条)
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_persistence_audit_schema_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_indexer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_orchestrator_query_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___dmission_mcp_result_push_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___dmission_mcp_result_push_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_behavioral_admission_post_process_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_behavior___ion_vibe_coding_enforcer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_or___ration_contract_registry_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_audit_trail_query_py
+    %% D_GOV_DRIFT -> D_GOV_AUDIT (7 条)
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_merkle_hourly_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_trust_bridge_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_orchestrator_merkle_hourly_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_audit_trail_trust_bridge_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__domain_governance_audit_trail_blueprint_md
+    %% D_GOV_ENFORCEMENT -> D_GOV_AUDIT (4 条)
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    %% D_GOV_SCRIPTS -> D_GOV_AUDIT (2 条)
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_audit_trail___init___py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_audit_trail_indexer_py
+    %% D_INFRA_A2A -> D_GOV_AUDIT (1 条)
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
-    %% D_INFRA_OPS -> D-GOV_AUDIT (2 条)
+    %% D_INFRA_OPS -> D_GOV_AUDIT (2 条)
     D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridges_contracts_py
     D_INFRA_OPS[D_INFRA_OPS] -->|import_depends| src_zephyr_governance_audit_trail_bridges_anomaly_py
-    %% D_INFRA_RECOVERY -> D-GOV_AUDIT (7 条)
+    %% D_INFRA_RECOVERY -> D_GOV_AUDIT (7 条)
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_contracts_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_anomaly_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_integrity_py
@@ -292,97 +283,103 @@ graph TD
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_query_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INFRA_RECOVERY[D_INFRA_RECOVERY] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    %% D_INFRA_RUNTIME -> D-GOV_AUDIT (4 条)
+    %% D_INFRA_RUNTIME -> D_GOV_AUDIT (4 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_orchestrator_bridge_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    %% D_INTEGRATION -> D-GOV_AUDIT (2 条)
+    %% D_INTEGRATION -> D_GOV_AUDIT (2 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
-    %% D_OPS -> D-GOV_AUDIT (1 条)
+    %% D_OPS -> D_GOV_AUDIT (1 条)
     D_OPS[D_OPS] -->|test_depends| src_zephyr_governance_audit_trail_observability_dashboard_py
-    %% D_SECURITY -> D-GOV_AUDIT (5 条)
+    %% D_SECURITY -> D_GOV_AUDIT (5 条)
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_audit_trail___init___py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_finding_model_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
-    %% D_SHARED -> D-GOV_AUDIT (1 条)
+    %% D_SHARED -> D_GOV_AUDIT (1 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_governance_audit_trail_writer_py
+    %% D_TRADING -> D_GOV_AUDIT (8 条)
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_merkle_hourly_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_audit_trail_log_rotation_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_audit_trail_retention_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_audit_trail_tiered_storage_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_semantic_audit_self_healer_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_audit_trail_bridge_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_audit_trail_models_py
+    D_TRADING[D_TRADING] -->|contract| docs_03_modules__domain_governance_audit_trail_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D-GOV_AUDIT -> D-GOVERNANCE (21 条)
-    src_zephyr_governance_merkle_hourly_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_orchestration_finding_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_orchestrator_drift_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_or___trator_delegation_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail_delegation_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail_spec_auditor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail_bridges_drift_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail_bridges_drift_bridge_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_audit_trail_bridges_spec_auditor_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_persistence_audit_schema_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_semantic_audit_self_health_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_semantic_audit_self_health_py -->|import_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_self_healer_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    src_zephyr_governance_self_health_py -->|config_depends| D_GOVERNANCE[D-GOVERNANCE]
-    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
-    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|contract| D_GOVERNANCE[D-GOVERNANCE]
-    docs_03_modules__cross_layer_audit_orchestrator_blueprint_md -->|runtime| D_GOVERNANCE[D-GOVERNANCE]
-    %% D-GOV_AUDIT -> D-GOV_DRIFT (13 条)
-    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_orchestrator_self_monitor_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_trail_bridge_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOV_DRIFT[D-GOV_DRIFT]
-    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOV_DRIFT[D-GOV_DRIFT]
-    %% D-GOV_AUDIT -> D-GOV_ENFORCEMENT (5 条)
-    src_zephyr_governance_audit_or___tration_file_task_mapper_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_audit_orchestration_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_audit_or___tion_core_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D-GOV_ENFORCEMENT]
-    %% D-GOV_AUDIT -> D-TRADING (2 条)
-    src_zephyr_governance_audit_orchestrator_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
-    src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_TRADING[D-TRADING]
-    %% D-GOV_AUDIT -> D_BEHAVIORAL_AUDIT (2 条)
+    %% D_GOV_AUDIT -> D_BEHAVIORAL_AUDIT (2 条)
     src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
     src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_BEHAVIORAL_AUDIT[D_BEHAVIORAL_AUDIT]
-    %% D-GOV_AUDIT -> D_INFRA_RUNTIME (5 条)
+    %% D_GOV_AUDIT -> D_GOVERNANCE (21 条)
+    src_zephyr_governance_merkle_hourly_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_orchestration_finding_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_orchestrator_drift_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_or___trator_delegation_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail_delegation_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail_spec_auditor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail_bridges_drift_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail_bridges_drift_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_audit_trail_bridges_spec_auditor_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_persistence_audit_schema_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_semantic_audit_self_health_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_semantic_audit_self_health_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_self_healer_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance_self_health_py -->|config_depends| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|contract| D_GOVERNANCE[D_GOVERNANCE]
+    docs_03_modules__cross_layer_audit_orchestrator_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_AUDIT -> D_GOV_DRIFT (13 条)
+    src_zephyr_governance_audit_orchestrator_bridge_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator_self_monitor_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_orchestrator___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_trail_bridge_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_trail_orchestrator_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    src_zephyr_governance_audit_trail___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_GOV_AUDIT -> D_GOV_ENFORCEMENT (5 条)
+    src_zephyr_governance_audit_or___tration_file_task_mapper_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_audit_orchestration_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_audit_or___tion_core_trigger_router_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    docs_03_modules__domain_governance_audit_trail_blueprint_md -->|runtime| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_AUDIT -> D_INFRA_RUNTIME (5 条)
     src_zephyr_governance_audit_orchestration_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_governance_audit_orchestration_finding_bridge_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_governance_audit_orchestration_trigger_router_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_governance_audit_or___silience_failure_matcher_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_governance_audit_trail_bridges_trust_bridge_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    %% D-GOV_AUDIT -> D_INTEGRATION (5 条)
+    %% D_GOV_AUDIT -> D_INTEGRATION (5 条)
     src_zephyr_governance_audit_orchestrator_pipeline_runner_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_audit_or____text_to_finding_adapter_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_audit_trail_finding_model_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_audit_trail_pipeline_runner_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    %% D-GOV_AUDIT -> D_OPS (2 条)
+    %% D_GOV_AUDIT -> D_OPS (2 条)
     src_zephyr_governance_audit_or___ation_agent_orchestrator_py -->|import_depends| D_OPS[D_OPS]
     src_zephyr_governance_audit_or____core_agent_orchestrator_py -->|import_depends| D_OPS[D_OPS]
-    %% D-GOV_AUDIT -> D_SECURITY (6 条)
+    %% D_GOV_AUDIT -> D_SECURITY (6 条)
     src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_audit_orchestrator_cli_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_audit_trail_cli_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_complian___default_security_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
-    %% D-GOV_AUDIT -> D_SHARED (35 条)
+    %% D_GOV_AUDIT -> D_SHARED (35 条)
     src_zephyr_governance_audit_or___ion_agent_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_audit_or___ion_agent_health_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_audit_or___ation_batch_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
@@ -413,6 +410,9 @@ graph TD
     src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_audit_or___n_state_file_task_mapper_py -->|import_depends| D_SHARED[D_SHARED]
+    %% D_GOV_AUDIT -> D_TRADING (2 条)
+    src_zephyr_governance_audit_orchestrator_feedback_bridge_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_governance_audit_trail_feedback_bridge_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 178 条
