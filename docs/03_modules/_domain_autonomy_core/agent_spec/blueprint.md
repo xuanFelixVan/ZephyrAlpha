@@ -96,7 +96,7 @@ references: []
 
 ### §0.1 代码文件清单
 
-> **架构归属SSoT**：`data/databases/depgraph.db`
+> **架构归属SSoT**：PostgreSQL `depgraph` 数据库（`get_depgraph_pg_connection()`）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > 存在性：未实现/已实现/已阻塞（MUST注明原因）/已废弃（MUST在§5.3说明）

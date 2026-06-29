@@ -77,7 +77,7 @@ references:
 
 ### §0.1 代码文件清单
 
-> **架构归属SSoT**：`data/databases/depgraph.db`
+> **架构归属SSoT**：PostgreSQL `depgraph` 数据库（`get_depgraph_pg_connection()`）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-L06-001`

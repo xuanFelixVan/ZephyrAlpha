@@ -1,6 +1,6 @@
 rule_id: TRAE-001
 title: 文件操作安全协议
-version: 1.0.0
+version: 1.5.0
 layer: compliance
 module_id: TRAE-001
 depends_on: []
@@ -32,6 +32,7 @@ triggers:
 - operation: file_write
 - operation: file_create
 - operation: file_delete
+- operation: db_write
 - gate_id: G0
 sections:
   file_lock_protocol:
@@ -73,6 +74,26 @@ sections:
     - 脚本中 open(fixed_path, 'w') 直接写最终文件
     - Path.write_text(fixed_path) 直接写
     - 新写脚本跳过原子写入模式
+  db_write_protocol:
+    section_type: procedure
+    title: 数据库写入协议（文件写/DB 写区分，P2 PG 迁移治本 2026-06-29）
+    original_rules: []
+    conditions:
+    - type: pre_condition
+      check: 写入目标是 PostgreSQL 数据库（depgraph/governance 等）？
+      pass: 适用 DB 写协议（PG 事务保护，禁用文件锁）
+      fail: 回退文件锁协议（file_lock_protocol）
+    actions:
+    - type: mandatory
+      step: 'DB 写入通过 PG MVCC 事务保护（BEGIN/COMMIT/ROLLBACK），禁止调用 lock_files.py。连接入口：depgraph 用 get_depgraph_pg_connection()，governance 用 get_governance_connection()。真源指针：trae_054 §mandatory "depgraph 写入禁用 lock_files.py"'
+    - type: mandatory
+      step: '批量 DB 写入用 apply_depgraph.py --batch（内置事务回滚）。脚本中直接写 DB 须用 with 事务块：with conn: cursor.execute(...)（异常自动 ROLLBACK）'
+    prohibitions:
+    - 在 DB 写入路径调用 lock_files.py（PG MVCC 替代文件锁，文件锁对 PG 写无保护作用）
+    - 硬编码 sqlite3.connect("绝对路径.db")（GitCommitGateway _check_repo_root_usage 模式5 检测阻断）
+    - 在 DB 写入脚本中 import lock_files（sync_yaml_to_depgraph.py 已删除 lock_files import 治本，commit a466cf455a）
+    exceptions:
+      file_write_fallback: '若写入目标是文件（非 DB），回退 file_lock_protocol + atomic_write 双重保护 ✅'
   delete_confirmation:
     section_type: procedure
     title: 删除前置确认
@@ -185,6 +206,9 @@ sections:
     section_type: examples
     title: 文件操作安全协议修订记录
     items:
+    - version: '1.5.0'
+      date: '2026-06-29'
+      change: 'P3 门禁防复发——新增 db_write 触发器 + db_write_protocol section，区分文件写（file_lock_protocol + atomic_write）与 DB 写（PG MVCC 事务）。禁止在 DB 写入路径调用 lock_files.py。真源指针：trae_054 §mandatory "depgraph 写入禁用 lock_files.py"；GitCommitGateway _check_repo_root_usage 模式5 检测 sqlite3.connect 硬编码'
     - version: '1.4.0'
       date: '2026-06-21'
       change: 'std_009/std_011审查修复：references.scripts补充scripts/governance/pre_write_gate.py（enforcement.executors引用但references.scripts缺失，RQ-04引用完整性）'

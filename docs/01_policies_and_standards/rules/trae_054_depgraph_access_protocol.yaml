@@ -1,6 +1,6 @@
 rule_id: TRAE-054
 title: depgraph 程序化访问协议
-version: 1.4.0
+version: 1.5.0
 layer: compliance
 module_id: TRAE-054
 depends_on: []
@@ -59,12 +59,15 @@ sections:
       step: '变更 JSON 格式: [{"op":"update","module_id":"D-FACTOR-01","field":"blueprint_status","value":"has_blueprint"}] / [{"op":"add_physical_file","module_id":"D-FACTOR-01","path":"src/zephyr/factor/new_file.py"}] / [{"op":"remove_physical_file",...}] / [{"op":"set_physical_files","module_id":"D-FACTOR-01","files":["path1.py","path2.py"]}]'
     - type: mandatory
       step: 'build_status 合法值约束（裁定#178-183，OPS-2026062505 已添加 DB CHECK 约束）: nodes.build_status 字段只允许 5 种合法值——planned(设计态未实现)/generated(代码已生成)/testing(测试中)/stable(生产稳定)/deprecated(废弃态)。状态机为单调推进: planned→generated→testing→stable→deprecated。DB 层 CHECK 约束已生效，INSERT 非法值（如 draft/inactive/unbuilt/production/active 等）会被 psycopg2.IntegrityError 拒绝。design_maturity 字段只允许 3 种合法值: design/production/prototype。module_lifecycle_state 字段已删除（v11 迁移归档到 nodes_archive_module_lifecycle 表）'
+    - type: mandatory
+      step: 'depgraph 写入禁用 lock_files.py（P2 PG 迁移治本，2026-06-29）: depgraph 已迁移到 PostgreSQL，写入通过 PG MVCC 事务保护（apply_depgraph.py 内置事务回滚），文件锁（lock_files.py cmd_acquire/cmd_release）对 PG 写无保护作用。禁止在 depgraph 写入路径调用 lock_files.py。真源指针：sync_yaml_to_depgraph.py 已删除 lock_files import（commit a466cf455a）；GitCommitGateway _check_repo_root_usage 模式5 检测 sqlite3.connect 硬编码'
     prohibitions:
     - 用 Read 工具读取 depgraph 文件（大文件加载 → OOM 崩溃 → IDE 重启）
     - 用 Write 工具直接写 depgraph 文件（大文件写入 → OOM 崩溃 + 可能损坏文件）
     - 用任何方式将 depgraph 内容注入 AI 上下文（token 数远超模型 context 上限 → 内存溢出）
     - 拆分 depgraph 为多个域文件（跨域关系丢失 → 漂移和幻觉）
     - 绕过提取脚本自己写 Python 代码直接读 depgraph（AI 上下文不能装下）
+    - 在 depgraph 写入路径调用 lock_files.py（P2 PG 迁移后文件锁对 PG 写无保护作用，改用 PG MVCC 事务）
     exceptions:
       read_first_20_lines: 'Read(limit=20) 仅看文件头警告 ✅'
       generate_depgraph: '运行 generate_project_depgraph.py 生成/更新（治本后允许，需先执行OPS-2026062502-506，生成器已修复build_status推导和白名单准入）✅'
@@ -100,6 +103,10 @@ sections:
       date: '2026-06-27'
       by: session-p2-pg-migration
       changes: 'P2 PostgreSQL迁移同步更新——depgraph.db 从 SQLite 迁移到 PostgreSQL 16。更新数据源描述、备份机制（pg_dump替代git文件备份）、错误类型（psycopg2.IntegrityError替代sqlite3.IntegrityError）。STEP0备份流程适配PG事务回滚'
+    - version: '1.5.0'
+      date: '2026-06-29'
+      by: session-p1-path-pollution
+      changes: 'P3 门禁防复发——新增 mandatory step 明确 depgraph 写入禁用 lock_files.py（PG MVCC 事务替代文件锁）；同步新增 prohibition 条款。真源指针：sync_yaml_to_depgraph.py 已删除 lock_files import（commit a466cf455a）；GitCommitGateway _check_repo_root_usage 模式5 检测 sqlite3.connect 硬编码'
 references:
   rule_ids: []
   scripts:
