@@ -81,15 +81,25 @@ from _shared.constants import REPO_ROOT
 # 规则真源见 AGENTS.md §11.2 遗留项-3 VMS SSoT 声明，此处为校验执行逻辑非第二真源
 FORBIDDEN_PREFIX = "src/zephyr/governance/vector_memory/"
 
-# 检测2/3：已删除方法名清单（AST 检测，防重建）
-# 方法名 → 删除原因（用于违规提示），规则真源见 AGENTS.md §11.2 遗留项-3/4
+# 检测2：全局死代码方法名（全目录无真源同名方法，安全全局扫描）
+# 方法名 → 删除原因（用于违规提示），规则真源见 AGENTS.md §11.2 遗留项-4
 DEAD_METHOD_NAMES = {
     # 遗留项-4：snapshot 整体删除治本（30GB 递归自复制 + 零消费方 + R4 被 ChromaDB ACID+WAL 覆盖）
     "snapshot_backup": "snapshot 整体删除治本（遗留项-4，30GB 递归自复制）",
     "cleanup_snapshots": "snapshot 整体删除治本（遗留项-4）",
     "_cleanup_old_snapshots": "snapshot 整体删除治本（遗留项-4）",
+}
+
+# 检测3：文件级死代码方法名（真源目录有同名方法，必须限定文件名检测）
+# 方法名 → {file: 只在该文件中是死代码, reason: 删除原因}
+# 治本(F2-defect): write_with_provenance 在 collection_manager.py 是真源，在 faiss_collection_manager.py 是死代码，
+#   全局扫描会误报真源——改为文件级检测，只阻断 faiss_collection_manager.py 重建
+DEAD_METHOD_FILE_SCOPE = {
     # 遗留项-3：faiss write_with_provenance 死代码删除（零调用方，FAISS 启用时按 CollectionManager 真源签名重新实现）
-    "write_with_provenance": "faiss dead code 删除（遗留项-3，零调用方）",
+    "write_with_provenance": {
+        "file": "src/zephyr/integration/vector_memory/faiss_collection_manager.py",
+        "reason": "faiss dead code 删除（遗留项-3，零调用方）",
+    },
 }
 
 # 检测2/3：AST 扫描范围——仅 VMS 真源目录的 .py 文件（治本范围限定，不误报其他模块）
@@ -129,12 +139,14 @@ def check_dead_method_rebuild(files):
     """检测2/3：VMS 真源目录 .py 文件是否重建已删除的方法（AST 检测）
 
     扫描 src/zephyr/integration/vector_memory/ 下 staged 的 .py 文件，
-    用 ast.walk 检测 FunctionDef/AsyncFunctionDef 节点名字是否命中 DEAD_METHOD_NAMES。
-    无论方法体是否实现，命中方法名即阻断（防空桩绕过 / 伪装重建）。
+    用 ast.walk 检测 FunctionDef/AsyncFunctionDef 节点名字。
 
-    涵盖两类已删除方法：
-      - snapshot 三方法（遗留项-4，30GB 递归自复制灾难根因）
-      - faiss write_with_provenance（遗留项-3，零调用方死代码）
+    两类检测：
+      - 检测2·全局：DEAD_METHOD_NAMES（snapshot 三方法，全目录无真源同名方法）
+      - 检测3·文件级：DEAD_METHOD_FILE_SCOPE（write_with_provenance，只在 faiss_collection_manager.py
+        是死代码，collection_manager.py 是真源——全局扫描会误报，必须限定文件名检测）
+
+    无论方法体是否实现，命中方法名即阻断（防空桩绕过 / 伪装重建）。
     """
     violations = []
     for f in files:
@@ -152,8 +164,14 @@ def check_dead_method_rebuild(files):
             continue
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                # 检测2·全局：snapshot 三方法（全目录无真源同名方法）
                 if node.name in DEAD_METHOD_NAMES:
                     violations.append((f, node.name, node.lineno, DEAD_METHOD_NAMES[node.name]))
+                # 检测3·文件级：write_with_provenance 只在 faiss_collection_manager.py 阻断
+                # 治本(F2-defect): collection_manager.py 是真源，全局扫描会误报
+                scope = DEAD_METHOD_FILE_SCOPE.get(node.name)
+                if scope is not None and f.lower() == scope["file"].lower():
+                    violations.append((f, node.name, node.lineno, scope["reason"]))
     return violations
 
 
