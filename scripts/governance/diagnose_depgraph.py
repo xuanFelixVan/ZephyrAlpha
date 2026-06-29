@@ -327,6 +327,12 @@ def find_orphan_nodes(nodes, adjacency_forward, adjacency_reverse, project_root=
         has_in = len(rev_neighbors) > 0
         if not has_out and not has_in:
             node = nodes[nid]
+            # 治本（2026-06-29）：跳过已 deprecated 的孤儿节点。
+            # deprecate_node 专用于孤儿清理（文件已删除的残留节点），
+            # deprecated 节点是"已知废弃"，不应再报告为 ghost/orphan，
+            # 避免 commit 噪音，让 ghost_count 聚焦未处理的漂移。
+            if node.get("build_status") == "deprecated":
+                continue
             path = node.get("path", nid)
             entry = {"path": path, "type": ntype, "blueprint_id": node.get("blueprint_id", "")}
             # P1-DEP: 对称漂移检测——磁盘不存在的 node 标记为 ghost
