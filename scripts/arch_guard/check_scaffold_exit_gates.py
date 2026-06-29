@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查
 
-对标 architecture_endgame_locked.md §6 + 06-security_architecture.md §10.2。
+对标 security_architecture.md §10.2。
 4 条安全门禁：
 
   G1: git-secrets pre_commit hook 已部署 (06-SEC SG-1)
@@ -83,38 +83,38 @@ def check_audit_db() -> tuple[bool, str]:
 
 
 SEC_VIEW_PATH = (
-    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "06-security_architecture.md"
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "security_architecture.md"
 )
-OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "00-overview.md"
+OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target_architecture" / "overview.md"
 
 
 def check_security_view_active() -> tuple[bool, str]:
     if not SEC_VIEW_PATH.exists():
-        return False, "06-security_architecture.md 不存在"
+        return False, "security_architecture.md 不存在"
     try:
         sec_content = SEC_VIEW_PATH.read_text(encoding="utf-8", errors="ignore")
     except Exception as e:
-        return False, f"无法读取 06-SEC: {e}"
+        return False, f"无法读取 security_architecture.md: {e}"
     if "status: active" not in sec_content:
-        return False, "06-SEC 视图 status != active"
+        return False, "security_architecture.md status != active"
     if not OVERVIEW_PATH.exists():
-        return False, "00-overview.md 不存在"
+        return False, "overview.md 不存在"
     try:
         ov_content = OVERVIEW_PATH.read_text(encoding="utf-8", errors="ignore")
     except Exception as e:
-        return False, f"无法读取 00-overview: {e}"
-    sec_refs = ["06-security", "安全架构", "Security Architecture"]
+        return False, f"无法读取 overview.md: {e}"
+    sec_refs = ["security_architecture", "安全架构", "Security Architecture"]
     found = [r for r in sec_refs if r in ov_content]
     if not found:
-        return False, "00-overview.md 未引用 06-SEC 视图"
-    return True, f"06-SEC status=active + 00-overview 引用 ({', '.join(found[:2])})"
+        return False, "overview.md 未引用 security_architecture 视图"
+    return True, f"SEC status=active + overview 引用 ({', '.join(found[:2])})"
 
 
 GATES = [
     ("G1", "git-secrets hook", check_git_secrets_hook),
     ("G2", "secret 泄漏扫描", check_scan_secret_leak),
     ("G3", "audit.db 创建", check_audit_db),
-    ("G4", "06-SEC 视图治理", check_security_view_active),
+    ("G4", "SEC 视图治理", check_security_view_active),
 ]
 
 

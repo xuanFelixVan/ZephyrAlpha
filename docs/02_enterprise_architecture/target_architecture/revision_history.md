@@ -10,15 +10,15 @@ classification: confidential
 language: zh
 created_by: agent
 valid_from: 2026-04-17
-summary: index.md §8 修订记录的完整归档。活跃修订见 index.md §8。
-ttl: task_bound
+summary: index.md §10 修订记录的完整归档。活跃修订见 index.md §10。
+ttl: permanent
 ---
 
 # 02_enterprise_architecture/target_architecture/ — 完整修订历史
 
-> 本文档是 `index.md` §8 修订记录的完整归档。`index.md` 仅保留最近 3 次修订条目。
+> 本文档是 `index.md` §10 修订记录的完整归档。`index.md` 仅保留最近 3 次修订条目。
 >
-> 当前活跃修订见 `index.md` §8。
+> 当前活跃修订见 `index.md` §10。
 
 | Date / 日期 | Description / 说明 |
 |------------|-------------------|

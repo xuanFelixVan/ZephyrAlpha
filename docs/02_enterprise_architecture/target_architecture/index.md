@@ -142,9 +142,11 @@ This is the **canonical Architecture Description Set** for ZephyrAlpha 2.0.
 | operations_architecture.md | OPS 运维架构视图 |
 | governance_architecture.md | GOV 治理架构视图 |
 | frontend_architecture.md | FE 前端架构视图 |
-| dimension_audit_matrix.md | 12维架构质量评分矩阵 |
-| session_carryover_schema.md | AI会话接续Schema |
-| revision_history.md | 完整修订历史归档 |
+| architecture_principles.md | 架构原则 SSoT（R1-R4 安全红线 + BvB + 准入铁律）|
+| architecture_endgame_locked.md | 架构终局锁定声明（Draft 占位，beta 完成后激活）|
+| dimension_audit_matrix.md | 12维架构质量评分矩阵（score_architecture.py 真源）|
+| session_carryover_schema.md | AI会话接续Schema（contract 类型，暂放 target_architecture）|
+| revision_history.md | 完整修订历史归档（index.md §10 完整版）|
 
 ---
 

@@ -66,7 +66,7 @@ ttl: permanent
 | governance_d2b_loop.mmd | 治理 Design-to-Build 闭环（Policy→Factory→Runtime→Audit）|
 | governance_three_layers.mmd | 治理三层边界拓扑（被治理者 + Policy/Factory/Runtime）|
 | governance_activation_gantt.mmd | 治理架构激活甘特图（Sprint 9/10/11/T4 方案B）|
-| capability_heatmap_visual.mmd | 能力成熟度热力图可视化（14层 × 7能力域 L0-L5）|
+| capability_heatmap_visual.mmd | 能力成熟度热力图可视化（53域 × 10能力域 L0-L5）|
 
 ## 排除规则
 
