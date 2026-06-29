@@ -3,7 +3,7 @@ doc_type: audit_report
 status: active
 title: "P2 PostgreSQL 迁移影响查询手册——动态查询 + 关键治本清单"
 module_id: "MOD-DB_DEPGRAPH_PG"
-version: "3.0.0"
+version: "3.1.0"
 created: "2026-06-29"
 ttl: task_bound
 completes_when: "所有因迁移暂停的并发 AI 通过本手册恢复工作"
@@ -148,7 +148,7 @@ P2 PostgreSQL 迁移工作分为 4 个阶段：
 
 | 文件 | 关键变化 |
 |------|---------|
-| [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) | §11.4 新增「数据库连接函数真源冲突治本」+ F2/F3 SQLite 同名合并遗留项；L385 新增 `test_vms_full_e2e.py` 治本记录；另：新增 **GATE-COMMIT-GW 裸 commit 检测门禁**文档（独立任务·命名规则补全 C级，双层防御：pre-commit 阻断 + post-commit 审计 reconciler） |
+| [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) | §11.4 新增「数据库连接函数真源冲突治本」+ F2/F3 SQLite 同名合并遗留项；L385 新增 `test_vms_full_e2e.py` 治本记录；另：新增 **GATE-COMMIT-GW 裸 commit 检测门禁**文档（独立任务·命名规则补全 C级，双层防御：pre-commit 阻断 + post-commit 审计 reconciler）；另：**L209-211 新增 GATE-ZR 硬约束**（commit `a96f0973`）——临时文件 severity 策略修正（runtime_cache=warning/temp_file=error）+ EXCLUDE_DIRS 仓库遍历硬约束（禁止 rglob 遍历全仓库）+ ZR-005 审计追踪降级策略 |
 | [.pre-commit-config.yaml](file:///d:/ZephyrAlpha/.pre-commit-config.yaml) | 新增 `GATE-VMS-SSOT` 钩子注册；另：新增 `gate-commit-gw` 钩子注册（独立任务·命名规则补全 C级，阻断裸 `git commit`） |
 | [.trae/rules/onboarding_detail.md](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md) | 规则同步 |
 | [.trae/rules/project_rules.md](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) | 规则同步 |
@@ -159,7 +159,7 @@ P2 PostgreSQL 迁移工作分为 4 个阶段：
 | 文件 | 关键变化 |
 |------|---------|
 | [src/zephyr/governance/depgraph_schema.py](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) | **F1 真源改名**：`get_db_connection` → `get_depgraph_pg_connection`（保留 deprecation 别名） |
-| [scripts/governance/_shared/constants.py](file:///d:/ZephyrAlpha/scripts/governance/_shared/constants.py) | **F4 无限递归治本**：import 别名 `_get_depgraph_pg_connection_from_depgraph_schema` |
+| [scripts/governance/_shared/constants.py](file:///d:/ZephyrAlpha/scripts/governance/_shared/constants.py) | **F4 无限递归治本**：import 别名 `_get_depgraph_pg_connection_from_depgraph_schema`；另：**EXCLUDE_DIRS 扩展**（GATE-ZR 治本，commit `a96f0973`）——新增 `vector_db`/`models` 到 `EXCLUDE_DIRS` frozenset（根因：`data/vector_db/` 52 万文件导致 `rglob` 遍历 47s 超时） |
 | [scripts/governance/d3_metadata/check_naming_convention.py](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_naming_convention.py) | **N-17 BOM 治本**：抽取 `_read_text_bom_safe` 公共函数，6 处 .py 读取统一替换；另：**命名规则补全**（独立任务）——A级 全库覆盖（`check_new_files_naming` scopes=None，不再限定 tests/docs/src/scripts）+ B级 修改文件历史豁免（`check_new_files_full` step2：HEAD vs 工作区 `check_file` 差集，只阻断本次修改新引入的违规，HEAD 中已有历史违规不阻断） |
 | [src/zephyr/governance/rule_engine.py](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_engine.py) | 适配 F1 改名（N-17 触发文件） |
 | [src/zephyr/governance/database_service.py](file:///d:/ZephyrAlpha/src/zephyr/governance/database_service.py) | 适配 F1 改名 |
@@ -185,6 +185,18 @@ P2 PostgreSQL 迁移工作分为 4 个阶段：
 | [docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) | P2 迁移施工蓝图 |
 | [docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md) | 蓝图同步 |
 | [docs/03_modules/_domain_knowledge/vector_memory/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain_knowledge/vector_memory/blueprint.md) | VMS 真源路径更新 |
+
+### 4.5 GATE-ZR 治本（4 个，commit `a96f0973`，必读）
+
+> 硬约束真源在 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) L209-211（临时文件 severity 策略 + EXCLUDE_DIRS 仓库遍历硬约束 + ZR-005 审计追踪降级）。本节是指针，不摘抄。
+
+| 文件 | 关键变化 |
+|------|---------|
+| [scripts/governance/_shared/constants.py](file:///d:/ZephyrAlpha/scripts/governance/_shared/constants.py) | `EXCLUDE_DIRS` 新增 `vector_db`/`models`（52 万文件目录排除，扫描 47s→0.03s） |
+| [scripts/governance/d1_structure/detect_temp_files.py](file:///d:/ZephyrAlpha/scripts/governance/d1_structure/detect_temp_files.py) | `rglob`→`os.walk+prune`（避免遍历大目录超时）；`TEMP_FILE_PATTERNS` 正则修复（`-vN` 只匹配代码/配置扩展名，避免误判 `ke-1337-v1.md` 知识库条目） |
+| [scripts/governance/d4_paths/detect_ruins_references.py](file:///d:/ZephyrAlpha/scripts/governance/d4_paths/detect_ruins_references.py) | 新增 9 个路径前缀排除（`rules/`/`_registry/contracts/`/`_registry/catalogs/`/`_archive/`/`docs/08_knowledge/`/`docs/_working/`/`scripts/governance/`/`tests/`/`data/backups/`）；`.py` 文件跳过"路径双重嵌套"检测；context 扩展到完整行（让扫描器看到同行审计标记） |
+| [src/zephyr/governance/rule_enforcement/invariants/zero_residue_check.py](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/invariants/zero_residue_check.py) | ZR-001：`__pycache__`/`.pytest_cache` 等运行时缓存降为 `warning`（已被 `.gitignore`）；ZR-005：审计追踪信息（含"废弃"/"迁移"/"v2.0"）降为 `warning` |
+| [tests/test_zero_residue_check.py](file:///d:/ZephyrAlpha/tests/test_zero_residue_check.py) | 10 个测试更新匹配当前 API（`_scan_*` 返回 list，不再接收 report 参数）；ZR-004 warning 级别断言修正 |
 
 ## 五、并发 AI 接续工作时必须遵守的硬约束
 
@@ -222,6 +234,15 @@ P2 PostgreSQL 迁移工作分为 4 个阶段：
 - **F2/F3 SQLite 同名合并**：83 调用点，事务行为差异（F2=autocommit vs F3=deferred），需独立任务卡
 - **F4 wrapper 消除（方案 C）**：长期应让 F1 直接返回带 execute 方法的对象，消除 wrapper 过渡期产物
 
+### 5.6 GATE-ZR 硬约束（commit `a96f0973`）
+
+> 硬约束真源在 [AGENTS.md](file:///d:/ZephyrAlpha/AGENTS.md) L209-211。本节是指针，不摘抄。
+
+- **EXCLUDE_DIRS 仓库遍历**：所有治理脚本遍历仓库 MUST 使用 `iter_files`（`_shared/walk.py`）或 `os.walk+prune`——**禁止 `Path.rglob()` 遍历全仓库**（`data/vector_db/` 52 万文件导致 47s 超时）。`EXCLUDE_DIRS` 真源：`scripts/governance/_shared/constants.py`
+- **ZR-001 severity 策略**：`__pycache__`/`.pytest_cache`/`.mypy_cache`/`.ruff_cache` = `warning`（Python 运行时产物，已被 `.gitignore`）；`_tmp_`/`_debug_`/`.bak`/`.baseline` = `error`（开发者临时产物，硬阻断）
+- **ZR-005 severity 策略**：审计追踪文档（含"废弃"/"迁移"/"v2.0"上下文）= `warning`（合理内容）；真正的废弃路径引用 = `error`（硬阻断）。`detect_ruins_references.py` 排除 9 个路径前缀（规则/登记表/归档/知识库/过程文档/治理脚本/测试/备份）
+- **验证命令**：`python -c "from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; r = ZeroResidueScanner().scan(); print('is_clean=', r.is_clean, 'errors=', len([f for f in r.findings if f.severity=='error']))"`
+
 ## 六、AI 接续工作检查清单
 
 并发 AI 恢复工作前，建议执行以下检查：
@@ -242,7 +263,10 @@ python -c "from zephyr.governance.capability_lookup import CapabilityLookup; r =
 # 5. 跑防回归测试
 python -m pytest tests/unit/test_vocab_sync_chain.py::test_f4_wrapper_no_infinite_recursion -v
 
-# 6. 查询本次迁移对自己关心的目录的影响
+# 6. 确认 GATE-ZR is_clean=True（ZR-001/ZR-005 硬约束已治本）
+python -c "from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; r = ZeroResidueScanner().scan(); print('is_clean=', r.is_clean, 'errors=', len([f for f in r.findings if f.severity=='error']))"
+
+# 7. 查询本次迁移对自己关心的目录的影响
 git diff --name-status 0a948902db^..HEAD -- <你关心的目录路径>
 ```
 
