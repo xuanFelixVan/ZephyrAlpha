@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A 红蓝审核 v2：_commit_with_file_message 内置 rename 检测真源唯一，pathspec 为默认多 session 安全，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP；_commit_locked 和 _commit_auto 无需重复调用，reconciler 路径自动获得 rename 保护）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；选择性 stash 非本次 files（治本 2026-06-29：仅无 pathspec commit 时 stash——gitignored/rename 场景；pathspec commit 天然隔离无需 stash，消除巨型 stash pop 冲突堆积）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；stash pop 失败保留 stash 不丢数据；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；session 隔离 stash（已注册 session 只 stash 其 held_files 中的非目标文件，未注册回退原逻辑）；feature flag ZEPHYR_SESSION_AWARE_STASH=0 强制禁用；rename fallback（方案 A 红蓝审核 v2：_commit_with_file_message 内置 rename 检测真源唯一，pathspec 为默认多 session 安全，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件，防误提交其他 session WIP；_commit_locked 和 _commit_auto 无需重复调用，reconciler 路径自动获得 rename 保护）；_collect_non_target_rel 正确解析 rename 格式 "R old -> new" 提取新路径
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -1779,17 +1779,29 @@ class GitCommitGateway:
                 # normal_files 为空（全部 gitignored）→ 跳过 git add
                 # （gitignored 已由 _stage_gitignored_tracked 暂存）
                 if add_ok:
-                    # 4. session 隔离 stash 非目标 unstaged 变更
-                    #    _stash_other_files 内部按 session held 过滤候选：
-                    #    - feature 禁用/未注册 → 回退 stash 全部非目标
-                    #      （等效原 --keep-index 语义：目标已 staged，非目标被 stash）
-                    #    - session 隔离生效 → 只 stash 当前 session held 的非目标
-                    #    - 候选为空 → 跳过 stash（其他 session WIP 留工作区）
-                    #    目标文件已通过 git add --pathspec-from-file 全量 staged，
-                    #    故 stash 非目标（显式 pathspec）不影响 staged 目标。
-                    stashed, stash_ref = self._stash_other_files(session_id, files)
+                    # 4. 判断是否需要无 pathspec commit（决定是否需要 stash 隔离）
+                    #    治本（stash 堆积修复 2026-06-29）：原设计对所有 commit 都执行
+                    #    _stash_other_files，当工作树有大量其他 session WIP（5858+ 文件）
+                    #    时，巨型 stash pop 冲突导致 stash 堆积（7+ 个 stash 无法 pop）。
+                    #    根因分析：stash 只在无 pathspec commit 时必要——无 pathspec
+                    #    commit 提交 ALL staged 文件，需 stash 隔离其他 session WIP 防
+                    #    幽灵提交。pathspec commit 天然只提交目标文件，stash 冗余。
+                    #    无 pathspec commit 触发条件（两选一）：
+                    #    a. 目标含 gitignored 文件（_should_use_no_pathspec）
+                    #    b. 目标含 staged rename（_has_staged_renames，pathspec 会拆分
+                    #       rename 为 add+delete 破坏 rename）
+                    has_gitignored = self._should_use_no_pathspec(files, normal_files)
+                    has_rename = self._has_staged_renames(files)
+                    needs_no_pathspec = has_gitignored or has_rename
 
-                    # 5. 检查 staged 变更（全量检查，保守策略：不误判 NOTHING_TO_COMMIT）
+                    # 5. 仅无 pathspec commit 需要 stash 隔离其他 session staged WIP
+                    #    pathspec commit 跳过 stash——pathspec 天然限定只提交目标文件，
+                    #    其他 session 的 staged/unstaged 文件不会被提交（无幽灵提交风险）。
+                    #    _commit_auto（reconciler 路径）已证明跳过 stash 是可行的。
+                    if needs_no_pathspec:
+                        stashed, stash_ref = self._stash_other_files(session_id, files)
+
+                    # 6. 检查 staged 变更（全量检查，保守策略：不误判 NOTHING_TO_COMMIT）
                     diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
                     if diff_result.returncode == 0:
                         logger.info(
@@ -1800,7 +1812,7 @@ class GitCommitGateway:
                             message="no staged changes in files_in_scope",
                         )
                     else:
-                        # 6. commit（rename/gitignored 检测内置到 _commit_with_file_message）
+                        # 7. commit（rename 检测内置到 _commit_with_file_message）
                         #
                         # 治本（gitignored staged delete 修复）：当目标含 gitignored 文件
                         # 时，必须用无 pathspec commit。根因：``git commit -- <pathspec>``
@@ -1808,7 +1820,8 @@ class GitCommitGateway:
                         # 工作区状态无法被 stage（gitignore 阻止），staged delete 被静默
                         # 跳过。无 pathspec 模式提交所有 staged 变更，staged delete 正确
                         # 包含。_verify_staged_is_clean 确保只提交目标文件。
-                        has_gitignored = self._should_use_no_pathspec(files, normal_files)
+                        #    rename 检测在 _commit_with_file_message 内部二次确认，与步骤
+                        #    4 预检一致（stash 不影响目标文件的 staged rename 状态）。
                         pathspec_for_commit = None if has_gitignored else pathspec_file
                         commit_hash, commit_err = self._commit_with_file_message(
                             full_message, pathspec_for_commit, files

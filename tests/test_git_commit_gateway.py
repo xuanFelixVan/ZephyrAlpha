@@ -344,6 +344,12 @@ class TestStashIsolation:
 class TestSessionAwareStash:
     """session 隔离 stash 测试——已注册 session 只 stash 自己 held 的非目标文件。
 
+    治本（2026-06-29）：stash 只在无 pathspec commit 时执行（gitignored/rename）。
+    pathspec commit 跳过 stash，session 注册状态不影响 stash 决策。
+    以下 *_pathspec_skips_stash 测试验证 pathspec commit 不 stash。
+    session 隔离 fallback 行为只在 no-pathspec commit 时才生效
+    （见 TestGitignoredTrackedDeleted 系列的 gitignored 场景）。
+
     mutation oracle: test_other_session_held_file_not_stashed 是锚点——
     若 _get_session_held_non_target 被还原为恒返回 (False, all)（原 stash-all 逻辑），
     则 b.py 会出现在 stash pathspec 中，测试失败（证伪）。
@@ -431,8 +437,13 @@ class TestSessionAwareStash:
         assert "a.py" in committed
         assert "b.py" not in committed
 
-    def test_unregistered_session_falls_back(self, tmp_path: Path) -> None:
-        """未注册 session → 回退原逻辑，b.py 被 stash 后 pop 恢复。"""
+    def test_unregistered_session_pathspec_skips_stash(self, tmp_path: Path) -> None:
+        """pathspec commit 跳过 stash——未注册 session 也不 stash，b.py 留工作区。
+
+        治本（2026-06-29）：stash 只在无 pathspec commit 时执行（gitignored/rename）。
+        pathspec commit 天然隔离，无需 stash。session 隔离 fallback 行为只在
+        no-pathspec commit 时才生效（见 TestGitignoredTrackedDeleted 系列）。
+        """
         f_a, f_b = self._commit_two_files(tmp_path)
         f_a.write_text("x = 10\n", encoding="utf-8")
         f_b.write_text("y = 20\n", encoding="utf-8")
@@ -444,13 +455,16 @@ class TestSessionAwareStash:
         result = gw.commit(session_id="s1", files=[str(f_a)], message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
-        # 回退原逻辑：b.py 被 stash
-        assert "b.py" in recorded, f"未注册 session 应回退原逻辑 stash b.py，pathspec={recorded}"
-        # b.py 修改应被 pop 恢复
-        assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应恢复"
+        # pathspec commit 不 stash——b.py 留在工作区
+        assert recorded == [], f"pathspec commit 不应 stash，pathspec={recorded}"
+        assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应留在工作区"
 
-    def test_empty_held_files_falls_back(self, tmp_path: Path) -> None:
-        """已注册 session 但 held_files=[] → 回退原逻辑。"""
+    def test_empty_held_files_pathspec_skips_stash(self, tmp_path: Path) -> None:
+        """pathspec commit 跳过 stash——已注册 session held_files=[] 也不 stash。
+
+        治本（2026-06-29）：同 test_unregistered_session_pathspec_skips_stash，
+        pathspec commit 天然隔离，session 注册状态不影响 stash 决策。
+        """
         f_a, f_b = self._commit_two_files(tmp_path)
         f_a.write_text("x = 10\n", encoding="utf-8")
         f_b.write_text("y = 20\n", encoding="utf-8")
@@ -463,14 +477,18 @@ class TestSessionAwareStash:
         result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
-        # held 为空 → 回退原逻辑：b.py 被 stash
-        assert "b.py" in recorded, f"held 空应回退原逻辑 stash b.py，pathspec={recorded}"
-        assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应恢复"
+        # pathspec commit 不 stash
+        assert recorded == [], f"pathspec commit 不应 stash，pathspec={recorded}"
+        assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应留在工作区"
 
-    def test_feature_flag_disabled_falls_back(
+    def test_feature_flag_disabled_pathspec_skips_stash(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """ZEPHYR_SESSION_AWARE_STASH=0 → 即使注册也回退原逻辑。"""
+        """pathspec commit 跳过 stash——feature flag 禁用也不 stash。
+
+        治本（2026-06-29）：pathspec commit 天然隔离，feature flag 状态不影响
+        stash 决策。flag 禁用的 fallback 行为只在 no-pathspec commit 时才生效。
+        """
         f_a, f_b = self._commit_two_files(tmp_path)
         f_a.write_text("x = 10\n", encoding="utf-8")
         f_b.write_text("y = 20\n", encoding="utf-8")
@@ -485,9 +503,9 @@ class TestSessionAwareStash:
         result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
-        # flag 禁用 → 回退原逻辑：b.py 被 stash
-        assert "b.py" in recorded, f"flag 禁用应回退原逻辑 stash b.py，pathspec={recorded}"
-        assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应恢复"
+        # pathspec commit 不 stash
+        assert recorded == [], f"pathspec commit 不应 stash，pathspec={recorded}"
+        assert f_b.read_text(encoding="utf-8") == "y = 20\n", "b.py 修改应留在工作区"
 
     def test_session_held_only_target_skips_stash(self, tmp_path: Path) -> None:
         """session held 只含 target 文件 → 候选为空，跳过 stash，b.py 留在工作区。"""
@@ -643,14 +661,13 @@ class TestRenameFallback:
             files=[str(tmp_path / "a.txt")],
             message="feat: only a",
         )
-        # _stash_other_files 会 stash b.txt，staged 区变干净后 commit 成功
-        # 或如果 stash 未生效，_verify_staged_is_clean 会阻断
-        # 正确行为：b.txt 被 stash，commit a.txt 成功，stash pop 恢复 b.txt
+        # pathspec commit 只提交 a.txt，b.txt 留在 staged 区不被提交
+        # 治本（2026-06-29）：pathspec commit 不 stash，天然隔离非目标文件
         assert result.status == CommitStatus.OK, \
-            f"stash 隔离后应成功: {result.status} {result.message}"
-        # b.txt 修改应恢复（stash pop）
+            f"pathspec commit 应成功: {result.status} {result.message}"
+        # b.txt 修改留在工作区（pathspec commit 不 stash）
         assert (tmp_path / "b.txt").read_text(encoding="utf-8") == "b modified\n", \
-            "b.txt 修改应通过 stash pop 恢复"
+            "b.txt 修改应留在工作区"
 
 
 class TestGitignoredTrackedDeleted:
