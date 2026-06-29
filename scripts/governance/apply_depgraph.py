@@ -270,6 +270,118 @@ def _apply_node_op(dep: dict, change: dict, index: int) -> None:
         print(f"Set {len(module['physical_files'])} physical_files for {module_id}", file=sys.stderr)
 
 
+# ---------------------------------------------------------------------------
+# cmd_batch op 注册表——op 清单真源唯一（从此处 keys() 自动派生）
+# 对标 capability_lookup.py 运行时派生模式（§6.16 静态清单自动生成铁律）
+# 加 op 只需：1)写 _handle_xxx 函数 2)加入 _DOMAIN_OPS 字典——docstring/AGENTS.md 自动派生
+# 禁止在 docstring/AGENTS.md 手工列 op 清单（同步副本会漂移）
+# ---------------------------------------------------------------------------
+def _handle_insert_domain(change: dict, dry_run: bool, conn=None) -> bool:
+    return cmd_insert_domain(
+        domain_id=change.get("domain_id", ""),
+        domain_name=change.get("domain_name", ""),
+        domain_group=change.get("domain_group", ""),
+        layer_id=change.get("layer_id", ""),
+        ssot_path=change.get("ssot_path", ""),
+        max_modules=change.get("max_modules", 200),
+        description=change.get("description", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+
+
+def _handle_update_domain_id(change: dict, dry_run: bool, conn=None) -> bool:
+    count = cmd_update_domain_id(
+        module_id=change.get("module_id", ""),
+        new_domain_id=change.get("new_domain_id", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+    return count >= 0
+
+
+def _handle_update_path(change: dict, dry_run: bool, conn=None) -> bool:
+    count = cmd_update_path(
+        module_id=change.get("module_id", ""),
+        new_path=change.get("new_path", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+    return count >= 0
+
+
+def _handle_migrate_dependencies(change: dict, dry_run: bool, conn=None) -> bool:
+    count = cmd_migrate_dependencies(
+        from_domain=change.get("from_domain", ""),
+        to_domain=change.get("to_domain", ""),
+        new_from_domain=change.get("new_from_domain", ""),
+        new_to_domain=change.get("new_to_domain", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+    return count >= 0
+
+
+def _handle_update_domain_layer(change: dict, dry_run: bool, conn=None) -> bool:
+    return cmd_update_domain_layer(
+        domain_id=change.get("domain_id", ""),
+        layer_id=change.get("layer_id", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+
+
+def _handle_migrate_nodes(change: dict, dry_run: bool, conn=None) -> bool:
+    count = cmd_migrate_nodes(
+        node_ids=change.get("node_ids", []),
+        new_domain_id=change.get("new_domain_id", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+    return count >= 0
+
+
+def _handle_update_domain_ssot_path(change: dict, dry_run: bool, conn=None) -> bool:
+    return cmd_update_domain_ssot_path(
+        domain_id=change.get("domain_id", ""),
+        ssot_path=change.get("ssot_path", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+
+
+def _handle_rename_domain(change: dict, dry_run: bool, conn=None) -> bool:
+    count = cmd_rename_domain(
+        old_id=change.get("old_id", ""),
+        new_id=change.get("new_id", ""),
+        dry_run=dry_run,
+        conn=conn,
+    )
+    return count >= 0
+
+
+# op 注册表——op 清单真源唯一（从此处 keys() 自动派生，禁止手工同步到 docstring/AGENTS.md）
+# 节点级 op（经 dep dict + _atomic_write，不直接写 DB）
+_NODE_OPS: set[str] = {"update", "add_physical_file", "remove_physical_file", "set_physical_files"}
+
+# 域级 op（直接 SQL，ARCH-CAP-005）
+_DOMAIN_OPS: dict[str, object] = {
+    "insert_domain": _handle_insert_domain,
+    "update_domain_id": _handle_update_domain_id,
+    "update_path": _handle_update_path,
+    "migrate_dependencies": _handle_migrate_dependencies,
+    "update_domain_layer": _handle_update_domain_layer,
+    "migrate_nodes": _handle_migrate_nodes,
+    "update_domain_ssot_path": _handle_update_domain_ssot_path,
+    "rename_domain": _handle_rename_domain,
+}
+
+
+def _get_supported_ops() -> list[str]:
+    """返回 cmd_batch 支持的所有 op（从注册表自动派生，真源唯一）。"""
+    return sorted(_NODE_OPS | set(_DOMAIN_OPS.keys()))
+
+
 def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
     """批量处理变更（统一事务管理，消除部分提交风险）。
 
@@ -277,20 +389,13 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
     - 全部成功 → 一次commit
     - 任一失败 → 全部rollback（消除P2-002部分提交风险）
 
-    支持的 op 类型（共 12 种：4 节点级 + 8 域级）：
-    - 节点级（经 dep dict + _atomic_write）：update, add_physical_file, remove_physical_file, set_physical_files
-    - 域级（直接 SQL，ARCH-CAP-005）：
-      * insert_domain            — 新增域（domain_id/domain_name/domain_group/layer_id/ssot_path/max_modules/description）
-      * update_domain_id          — 改域 ID（module_id/new_domain_id）
-      * update_path               — 改节点路径（module_id/new_path）
-      * migrate_dependencies      — 迁移依赖（from_domain/to_domain/new_from_domain/new_to_domain）
-      * update_domain_layer       — 改域层级（domain_id/layer_id）
-      * migrate_nodes             — 迁移节点（node_ids/new_domain_id）
-      * update_domain_ssot_path    — 改域 SSOT 路径（domain_id/ssot_path）
-      * rename_domain             — 重命名域 ID（old_id/new_id，17步 UPDATE 覆盖 11 张表）
+    支持的 op 清单：运行 `apply_depgraph.py --list-ops` 查看（从 _NODE_OPS/_DOMAIN_OPS
+    注册表自动派生，真源唯一——对标 capability_lookup.py 运行时派生模式，§6.16 铁律）。
+    禁止手工在 docstring/AGENTS.md 列 op 清单（同步副本会漂移）。
 
     用法示例::
 
+        python scripts/governance/apply_depgraph.py --list-ops
         python scripts/governance/apply_depgraph.py --batch changes.json --dry-run
         python scripts/governance/apply_depgraph.py --batch changes.json
 
@@ -298,7 +403,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
         [
           {"op": "rename_domain", "old_id": "D-SIGNAL_ASHARE", "new_id": "D_ASHARE_SIGNAL"},
-          {"op": "rename_domain", "old_id": "D-SIGNAL", "new_id": "D_SIGLEGACY"}
+          {"op": "insert_domain", "domain_id": "D_ASHARE_SIGNAL", "domain_name": "...", ...}
         ]
 
     注意：rename_domain 必须最后执行（LIKE 模式匹配会误伤同前缀子域名，见裁定#204）。
@@ -306,82 +411,24 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
     if isinstance(changes, str):
         changes = json.loads(changes)
 
-    print(f"Processing {len(changes)} changes...", file=sys.stderr)
+    all_ops = _NODE_OPS | set(_DOMAIN_OPS.keys())
+    print(f"Processing {len(changes)} changes... (supported ops: {len(all_ops)})", file=sys.stderr)
 
     if dry_run:
         # Dry-run: 域级 op 各自打印预览，节点级 op 修改 dep dict（不写 DB）
         domain_op_count = 0
         for i, change in enumerate(changes):
             op = change.get("op", "update")
-            if op == "insert_domain":
-                ok = cmd_insert_domain(
-                    domain_id=change.get("domain_id", ""),
-                    domain_name=change.get("domain_name", ""),
-                    domain_group=change.get("domain_group", ""),
-                    layer_id=change.get("layer_id", ""),
-                    ssot_path=change.get("ssot_path", ""),
-                    max_modules=change.get("max_modules", 200),
-                    description=change.get("description", ""),
-                    dry_run=True,
-                )
+            if op in _DOMAIN_OPS:
+                ok = _DOMAIN_OPS[op](change, dry_run=True)
                 if ok:
                     domain_op_count += 1
-            elif op == "update_domain_id":
-                count = cmd_update_domain_id(
-                    module_id=change.get("module_id", ""), new_domain_id=change.get("new_domain_id", ""), dry_run=True
-                )
-                if count >= 0:
-                    domain_op_count += 1
-            elif op == "update_path":
-                count = cmd_update_path(
-                    module_id=change.get("module_id", ""), new_path=change.get("new_path", ""), dry_run=True
-                )
-                if count >= 0:
-                    domain_op_count += 1
-            elif op == "migrate_dependencies":
-                count = cmd_migrate_dependencies(
-                    from_domain=change.get("from_domain", ""),
-                    to_domain=change.get("to_domain", ""),
-                    new_from_domain=change.get("new_from_domain", ""),
-                    new_to_domain=change.get("new_to_domain", ""),
-                    dry_run=True,
-                )
-                if count >= 0:
-                    domain_op_count += 1
-            elif op == "update_domain_layer":
-                ok = cmd_update_domain_layer(
-                    domain_id=change.get("domain_id", ""), layer_id=change.get("layer_id", ""), dry_run=True
-                )
-                if ok:
-                    domain_op_count += 1
-            elif op == "migrate_nodes":
-                count = cmd_migrate_nodes(
-                    node_ids=change.get("node_ids", []),
-                    new_domain_id=change.get("new_domain_id", ""),
-                    dry_run=True,
-                )
-                if count >= 0:
-                    domain_op_count += 1
-            elif op == "update_domain_ssot_path":
-                ok = cmd_update_domain_ssot_path(
-                    domain_id=change.get("domain_id", ""),
-                    ssot_path=change.get("ssot_path", ""),
-                    dry_run=True,
-                )
-                if ok:
-                    domain_op_count += 1
-            elif op == "rename_domain":
-                count = cmd_rename_domain(
-                    old_id=change.get("old_id", ""),
-                    new_id=change.get("new_id", ""),
-                    dry_run=True,
-                )
-                if count >= 0:
-                    domain_op_count += 1
-            elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
+            elif op in _NODE_OPS:
                 _apply_node_op(dep, change, i)
             else:
-                print(f"WARNING: Unknown op '{op}' for change #{i}", file=sys.stderr)
+                raise ValueError(
+                    f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}"
+                )
         print(f"DRY RUN - no changes written (domain_ops={domain_op_count})", file=sys.stderr)
         return
 
@@ -392,95 +439,17 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
         try:
             for i, change in enumerate(changes):
                 op = change.get("op", "update")
-                if op == "insert_domain":
-                    ok = cmd_insert_domain(
-                        domain_id=change.get("domain_id", ""),
-                        domain_name=change.get("domain_name", ""),
-                        domain_group=change.get("domain_group", ""),
-                        layer_id=change.get("layer_id", ""),
-                        ssot_path=change.get("ssot_path", ""),
-                        max_modules=change.get("max_modules", 200),
-                        description=change.get("description", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
+                if op in _DOMAIN_OPS:
+                    ok = _DOMAIN_OPS[op](change, dry_run=False, conn=conn)
                     if not ok:
-                        raise RuntimeError(f"change #{i}: insert_domain failed")
+                        raise RuntimeError(f"change #{i}: {op} failed")
                     domain_op_count += 1
-                elif op == "update_domain_id":
-                    count = cmd_update_domain_id(
-                        module_id=change.get("module_id", ""),
-                        new_domain_id=change.get("new_domain_id", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if count < 0:
-                        raise RuntimeError(f"change #{i}: update_domain_id failed")
-                    domain_op_count += 1
-                elif op == "update_path":
-                    count = cmd_update_path(
-                        module_id=change.get("module_id", ""),
-                        new_path=change.get("new_path", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if count < 0:
-                        raise RuntimeError(f"change #{i}: update_path failed")
-                    domain_op_count += 1
-                elif op == "migrate_dependencies":
-                    count = cmd_migrate_dependencies(
-                        from_domain=change.get("from_domain", ""),
-                        to_domain=change.get("to_domain", ""),
-                        new_from_domain=change.get("new_from_domain", ""),
-                        new_to_domain=change.get("new_to_domain", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if count < 0:
-                        raise RuntimeError(f"change #{i}: migrate_dependencies failed")
-                    domain_op_count += 1
-                elif op == "update_domain_layer":
-                    ok = cmd_update_domain_layer(
-                        domain_id=change.get("domain_id", ""),
-                        layer_id=change.get("layer_id", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if not ok:
-                        raise RuntimeError(f"change #{i}: update_domain_layer failed")
-                    domain_op_count += 1
-                elif op == "migrate_nodes":
-                    count = cmd_migrate_nodes(
-                        node_ids=change.get("node_ids", []),
-                        new_domain_id=change.get("new_domain_id", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if count >= 0:
-                        domain_op_count += 1
-                elif op == "update_domain_ssot_path":
-                    ok = cmd_update_domain_ssot_path(
-                        domain_id=change.get("domain_id", ""),
-                        ssot_path=change.get("ssot_path", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if ok:
-                        domain_op_count += 1
-                elif op == "rename_domain":
-                    count = cmd_rename_domain(
-                        old_id=change.get("old_id", ""),
-                        new_id=change.get("new_id", ""),
-                        dry_run=False,
-                        conn=conn,
-                    )
-                    if count < 0:
-                        raise RuntimeError(f"change #{i}: rename_domain failed")
-                    domain_op_count += 1
-                elif op in ("update", "add_physical_file", "remove_physical_file", "set_physical_files"):
+                elif op in _NODE_OPS:
                     _apply_node_op(dep, change, i)
                 else:
-                    print(f"WARNING: Unknown op '{op}' for change #{i}", file=sys.stderr)
+                    raise ValueError(
+                        f"change #{i}: unknown op '{op}', supported: {sorted(all_ops)}"
+                    )
 
             # 节点级变更通过共享连接写入（不单独commit）
             _atomic_write(dep, conn=conn)
@@ -2821,6 +2790,11 @@ def main() -> None:
     )
     parser.add_argument("--batch", type=str, help="批量变更 JSON 文件路径")
     parser.add_argument("--dry-run", action="store_true", help="仅验证，不写入")
+    parser.add_argument(
+        "--list-ops",
+        action="store_true",
+        help="列出 cmd_batch 支持的所有 op（从 _DOMAIN_OPS/_NODE_OPS 注册表自动派生，真源唯一）",
+    )
     # P0-2 新增4命令
     parser.add_argument(
         "--add-design-node",
@@ -3337,6 +3311,15 @@ def main() -> None:
     if args.cleanup_orphan_nodes:
         count = cmd_cleanup_orphan_nodes(dry_run=args.dry_run)
         sys.exit(0 if count >= 0 else 4)
+
+    if args.list_ops:
+        # op 清单从注册表自动派生（§6.16 铁律：禁止手工同步到 docstring/AGENTS.md）
+        ops = _get_supported_ops()
+        print(f"cmd_batch 支持的 op（共 {len(ops)} 个，从 _DOMAIN_OPS/_NODE_OPS 注册表自动派生）:")
+        for op in ops:
+            kind = "节点级(经 dep dict)" if op in _NODE_OPS else "域级(直接 SQL)"
+            print(f"  {op:30s} ({kind})")
+        sys.exit(0)
 
     if not args.update_module and not args.batch:
         parser.print_help()

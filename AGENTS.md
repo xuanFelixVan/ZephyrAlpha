@@ -331,7 +331,7 @@ result = await gateway.full_scan(user_text, llm_response)
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
 - **改 DB 节点/路径** → `python scripts/governance/apply_depgraph.py --help`（35+ 子命令）
-- **批量改 DB（多 op 原子事务）** → `python scripts/governance/apply_depgraph.py --batch changes.json`（先 `--dry-run` 预览）。支持 12 种 op（4 节点级 + 8 域级含 `rename_domain`），真源清单见 [`cmd_batch` docstring](file:///d:/ZephyrAlpha/scripts/governance/apply_depgraph.py)；所有 op 共享单一 PostgreSQL 事务，全部成功才 commit，任一失败全部 rollback。批量重命名域 ID 时**禁止**手写 `_tmp_batch_rename.py` 调 `--rename-domain` 单命令循环（失去原子性，部分失败留半成品数据）。
+- **批量改 DB（多 op 原子事务）** → `python scripts/governance/apply_depgraph.py --batch changes.json`（先 `--dry-run` 预览）。op 清单运行 `--list-ops` 查看（从 `_DOMAIN_OPS`/`_NODE_OPS` 注册表自动派生，真源唯一——禁止手工同步到 docstring/AGENTS.md，§6.16 铁律）；所有 op 共享单一 PostgreSQL 事务，全部成功才 commit，任一失败全部 rollback。批量重命名域 ID 时**禁止**手写 `_tmp_batch_rename.py` 调 `--rename-domain` 单命令循环（失去原子性，部分失败留半成品数据）。
 - **查哪些表不能手写** → `python scripts/governance/sync_yaml_to_depgraph.py --list-readonly-tables`
 - **文件结构变更后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-PATH-TREE reconciler，无需手动）
 - **DB 变更后重生域文档** → 自动完成（GitCommitGateway post-commit GATE-DOMAIN-DOC reconciler，无需手动）
