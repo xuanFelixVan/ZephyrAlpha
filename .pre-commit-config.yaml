@@ -247,18 +247,20 @@ repos:
       #   move_plan.csv 引用 4 个不存在的文件，形成自审自闭环）
       # 检测范围：staged 的 .md/.csv/.yaml/.yml/.json 文件
       # 检测内容：markdown 链接 [text](target) + 纯文本路径 + CSV 列值 + YAML 值
-      # 路径解析：先相对于文件目录，再相对于项目根（双重尝试）
-      # 过渡期：--warn-only 模式（存量断链 117 条，待清理后转 --ci 硬阻断）
+      #           + GAP-2 frontmatter blueprint_id + GAP-3 index.md 清单 + GAP-4 audit_report 审计对象
+      # 路径解析：三重尝试（文件相对 + 项目根相对 + basename 全局兜底）
+      #           GAP-3 index.md 禁 basename 兜底（本目录契约语义）
+      # 模式：--ci 硬阻断 + --check-new 历史豁免（仅阻断新引入断链，参考 N-16 模式）
       # 真源：scripts/governance/d2_links/audit_broken_links.py
       - id: gate-doc-ref
         name: "GATE-DOC-REF: 文档引用完整性（断链/幽灵引用）"
         entry: python scripts/governance/d2_links/audit_broken_links.py
-        args: ["--warn-only"]
+        args: ["--ci", "--check-new"]
         language: system
         pass_filenames: true
         always_run: false
         files: "^.*\\.(md|csv|yaml|yml|json)$"
-        description: "检测 staged 文件中的断链与幽灵引用（markdown 链接 + 纯文本路径 + CSV/YAML），过渡期 warn-only"
+        description: "检测 staged 文件中的断链与幽灵引用（markdown 链接 + 纯文本路径 + CSV/YAML + GAP-2/3/4 语义引用），--ci 硬阻断 + --check-new 历史豁免（仅阻断新引入断链）"
 
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
       # 权威依据：metadata_registry.md §10.3（provenance 字段格式）

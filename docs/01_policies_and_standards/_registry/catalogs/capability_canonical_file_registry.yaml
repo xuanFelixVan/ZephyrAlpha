@@ -756,7 +756,7 @@ capabilities:
       五防护缺口治本：GAP-1(非.md路径引用)+GAP-2(blueprint_id存在性)+GAP-3(index.md
       清单严格本地解析,禁basename兜底)+GAP-4(audit_report审计对象)+GAP-5(跨目录闭环reconciler)。
       pre-commit 事件驱动（.md/.csv/.yaml/.json 变更时触发，非 manual）。
-      过渡期 --warn-only 模式（存量断链待清理后转 --ci 硬阻断）。
+      --ci 硬阻断 + --check-new 历史豁免（仅阻断新引入断链，对比 HEAD 版本，参考 N-16 模式）。
       canonical 在 scripts/ 下（非 src/zephyr/），basename audit_broken_links
       不匹配任何 alias，无法 auto 派生，故用 canonical_override 显式声明。
       解决发现性：新 AI 搜 "断链/ghost ref/phantom reference/doc ref" 可定位真源。
@@ -765,6 +765,7 @@ capabilities:
     integrity_anchors:
       - _resolve_and_check       # 路径解析+存在性检查(篡改即检测失效,三重解析逻辑真源)
       - audit_file               # 单文件审计(提取器选择逻辑真源)
+      - _audit_content           # 内容审计核心(被audit_file和audit_file_check_new共用,删则逻辑分裂)
       - _extract_csv_paths       # CSV路径提取(治本GAP-1,删则CSV虚假引用漏检)
       - _extract_text_paths      # 纯文本路径提取(治本GAP-1,删则非markdown语法引用漏检)
       - _get_basename_cache      # basename全局搜索缓存(策略3兜底,删则裸文件名误报暴增)
@@ -773,6 +774,8 @@ capabilities:
       - _check_blueprint_id_exists # GAP-2:blueprint_id存在性校验(删则frontmatter幻觉漏检)
       - _check_index_md_inventory # GAP-3:index.md清单严格本地解析(删则本目录契约幻觉漏检)
       - _check_audit_report_objects # GAP-4:audit_report审计对象校验(删则审计报告幻觉漏检)
+      - _get_head_content        # HEAD版本内容获取(--check-new历史豁免,删则存量违规误判为新引入)
+      - audit_file_check_new     # 历史豁免审计(对比HEAD,仅报新引入断链,删则--ci阻断存量文件)
       - SUPPORTED_EXTENSIONS     # 支持的文件扩展名集合(篡改即检测范围改变)
 
 # ============================================================================

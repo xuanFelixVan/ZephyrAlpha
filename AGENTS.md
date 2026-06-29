@@ -142,7 +142,32 @@ result = await gateway.full_scan(user_text, llm_response)
 - `data/audit_logs/`: AI 行为审计日志
 - `data/capability_cards/`: 能力卡片定义
 - `data/work_dags/`: 工作 DAG 定义（待创建）
-- `architecture_model/`（施工分区树）+ `docs/02_enterprise_architecture/target_architecture/architecture_model/`（EA 企业架构树）: 双树**职责有意分离**（见 [`ssot_authority_map.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/ssot_authority_map.md) §一 与 [`scope.yaml`](file:///d:/ZephyrAlpha/architecture_model/scope.yaml)）；施工树管 C/B 分区+代码对齐+`layers/*` 施工视图，EA 树管契约/不变量/层枚举权威/`module_id_registry`；**禁止假定字节级一致**；52域是唯一物理分类（depgraph.db），14层（L00-L13）是域的 `layer_id` 属性枚举
+- `architecture_model/`（施工分区树）+ `docs/02_enterprise_architecture/target_architecture/architecture_model/`（EA 企业架构树）: 双树**职责有意分离**（见 [`ssot_authority_map.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/ssot_authority_map.md) §一 与 [`scope.yaml`](file:///d:/ZephyrAlpha/architecture_model/scope.yaml)）；施工树管 C/B 分区+代码对齐+`layers/*` 施工视图，EA 树管契约/不变量/层枚举权威/`module_id_registry`；**禁止假定字节级一致**；53域是唯一物理分类（depgraph.db），14层（L00-L13）是域的 `layer_id` 属性枚举
+
+### 6.1 target_architecture 目录读写规则
+
+[`docs/02_enterprise_architecture/target_architecture/`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/index.md) 是 TOGAF 架构视图集 + EA YAML 模型真源区。新 AI 进入此目录前 MUST 读 [`index.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/target_architecture/index.md) 责任声明。
+
+**分区与真源映射**（违反 = 漂移源）：
+
+| 子目录/文件 | doc_type | 数据流方向 | 治本铁律 |
+|------------|---------|-----------|----------|
+| `overview.md` ~ `frontend_architecture.md` (14 视图) | architecture_view | 手工撰写 | 视图解释 why；结构化数据 MUST 引用 YAML/depgraph.db，禁止硬编码会变数字（如域数）|
+| `architecture_principles.md` | architecture_view | 手工撰写 SSoT | 架构原则唯一真源（R1-R4 安全红线 + BvB + 准入铁律），其他文件引用只读 |
+| `architecture_endgame_locked.md` | architecture_view | 手工撰写（status: Draft 占位）| 终局验收标准 + Emergency Change Board 协议；激活需 Owner 手动转 Active |
+| `dimension_audit_matrix.md` | audit_report | 手工撰写 + 脚本消费 | 12 维架构评分矩阵；[`score_architecture.py`](file:///d:/ZephyrAlpha/scripts/governance/score_architecture.py) `AUDIT_MATRIX_PATH` 真源，禁止删/移位 |
+| `session_carryover_schema.md` | contract | 手工撰写（placement_note 标注暂放）| Context Engine 子接口契约；doc_type=contract 与位置不一致是已知折中，14 个引用点不支持迁移 |
+| `revision_history.md` | log | 手工撰写（永久归档）| `index.md §10` 完整版归档；§10 仅保留最近 3 条 |
+| `architecture_model/` | - | YAML SSoT | 结构化数据真源；53域清单/契约/事件/能力热力图等，禁止手编 MD 同步副本 |
+| `architecture_model/cross_cutting/capability_heatmap.yaml` | - | depgraph.db 派生 | `data_source: depgraph_db`；53域×10能力域矩阵，禁止手编 |
+| `diagrams/` | - | Mermaid 图源 | 仅 .mmd；非 Mermaid 图表不入库；`index.md` 文件清单登记 |
+
+**新 AI 防漂移 5 条**：
+1. **找文件先读 `index.md` §3 文件清单**——target_architecture 下所有文件 MUST 在 index.md §3 登记；新文件创建 MUST 同步登记。
+2. **结构化数据从 `architecture_model/` YAML 或 `depgraph.db` 派生**——禁止在 .md 视图中硬编码会变化的数字（如 53域、模块数、节点数）。
+3. **`generated/` 目录是派生视图**——由 [`generators/`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/) 自动生成，禁止手编；depgraph.db 变更后由 reconciler 自动重生。
+4. **`architecture_model/index.yaml` 的 `domains` 列表是 depgraph.db 派生**——禁止手编；改 depgraph.db 后由生成器自动同步。
+5. **删除/迁移文件前 MUST `Grep` 全库引用**——target_architecture 下文件被多个脚本/文档活跃引用（如 `score_architecture.py` 真源 `dimension_audit_matrix.md`，[`check_scaffold_exit_gates.py`](file:///d:/ZephyrAlpha/scripts/arch_guard/check_scaffold_exit_gates.py) 真源 `security_architecture.md` §10.2），强删会导致脚本断裂。
 
 ## 7. 代码规范
 
@@ -200,7 +225,7 @@ result = await gateway.full_scan(user_text, llm_response)
     - **capability 反查**：`integrity_anchors` 字段在 `precommit_id_uniqueness_check` 能力条目下声明。新增受保护脚本时：①YAML 加 `integrity_anchors` + `canonical_override` ②gateway `_load_protected_scripts` 回退硬编码同步更新 ③`validate_rules_integrity.py` `RULES_MANIFEST` 加条目。
 
 - **文档引用完整性门禁**（GATE-DOC-REF）→ 调研发现 AI 在 .md/.csv/.yaml 中编造虚假文件引用（如 dom_gov_001 虚假审计闭环：index.md 列 22 张不存在的任务卡，move_plan.csv 引用 4 个不存在的文件）。已加自动化门禁防止未来 AI 再造虚假引用：
-  - **pre-commit 阻断层**：[`.pre-commit-config.yaml` L244-261](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L244-L261) `id: gate-doc-ref`，staged 的 .md/.csv/.yaml/.json 文件触发 [`audit_broken_links.py`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 扫描 markdown 链接 + 纯文本路径 + CSV 列值 + YAML 值 + frontmatter blueprint_id + index.md 清单 + audit_report 审计对象，断链 → warn-only（过渡期，存量清零后转 --ci 硬阻断）。
+  - **pre-commit 阻断层**：[`.pre-commit-config.yaml` L244-261](file:///d:/ZephyrAlpha/.pre-commit-config.yaml#L244-L261) `id: gate-doc-ref`，staged 的 .md/.csv/.yaml/.json 文件触发 [`audit_broken_links.py`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 扫描 markdown 链接 + 纯文本路径 + CSV 列值 + YAML 值 + frontmatter blueprint_id + index.md 清单 + audit_report 审计对象，`--ci` 硬阻断 + `--check-new` 历史豁免（仅阻断本次修改新引入的断链，对比 HEAD 版本，参考 N-16 模式）。
   - **检测范围**：.md（markdown 链接 + 纯文本路径 + frontmatter blueprint_id + index.md 清单 + audit_report 审计对象）/ .csv（列值路径）/ .yaml/.yml（值路径 + 纯文本）/ .json（纯文本路径）。跳过 http/https/ftp/mailto 锚点 URL。
   - **路径解析**：三重尝试——①先相对于文件目录（markdown 链接习惯）②再相对于项目根（CSV/YAML 项目根相对路径）③basename 全局搜索兜底（裸文件名如 blueprint.md 在项目其他目录存在）。注意：index.md 清单检测**禁用 basename 兜底**（本目录契约语义，兜底会掩盖幻觉）。
   - **capability 反查**已登记 `broken_link_detector`（canonical = `scripts/governance/d2_links/audit_broken_links.py`）。新 AI 想做"断链检测/ghost ref/phantom reference"前，CapabilityLookup 会反查到本脚本，提示"扩展本脚本（加提取器函数），勿新建 checker"。

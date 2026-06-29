@@ -457,6 +457,51 @@ def _check_audit_report_objects(content: str, source: Path) -> list[str]:
     return broken
 
 
+def _audit_content(content: str, file_path: Path) -> list[str]:
+    """审计文件内容，返回断链列表（不读磁盘）。
+
+    被 audit_file 和 audit_file_check_new 共用，避免逻辑重复（向内收）。
+    提取器选择 + GAP-2/3/4 检测 + 通用路径解析全在此函数。
+    """
+    broken: list[str] = []
+
+    # 根据扩展名选择提取器
+    refs: list[str] = []
+    ext = file_path.suffix.lower()
+    if ext == ".md":
+        refs.extend(_extract_md_links(content))
+        refs.extend(_extract_text_paths(content))
+        # GAP-2: frontmatter.blueprint_id 存在性检测
+        bp_id = _frontmatter_field(content, "blueprint_id")
+        if bp_id:
+            result = _check_blueprint_id_exists(bp_id, file_path, gap_tag="GAP-2")
+            if result:
+                broken.append(result)
+        # GAP-3: index.md 文件清单严格本地解析（禁 basename 兜底）
+        broken.extend(_check_index_md_inventory(content, file_path))
+        # GAP-4: audit_report 审计对象存在性
+        broken.extend(_check_audit_report_objects(content, file_path))
+    elif ext == ".csv":
+        refs.extend(_extract_csv_paths(content))
+    elif ext in (".yaml", ".yml"):
+        refs.extend(_extract_yaml_paths(content))
+        refs.extend(_extract_text_paths(content))
+    elif ext == ".json":
+        refs.extend(_extract_text_paths(content))
+
+    # 去重并检查（通用路径引用，含 basename 兜底）
+    seen: set[str] = set()
+    for ref in refs:
+        if ref in seen:
+            continue
+        seen.add(ref)
+        result = _resolve_and_check(ref, file_path)
+        if result:
+            broken.append(result)
+
+    return broken
+
+
 def audit_file(file_path: str | Path) -> tuple[bool, list[str]]:
     """审计单个文件的断链与幽灵引用。
 
@@ -474,43 +519,69 @@ def audit_file(file_path: str | Path) -> tuple[bool, list[str]]:
     except (OSError, PermissionError) as exc:
         return False, [f"读取失败: {p} ({exc})"]
 
-    broken: list[str] = []
-
-    # 根据扩展名选择提取器
-    refs: list[str] = []
-    ext = p.suffix.lower()
-    if ext == ".md":
-        refs.extend(_extract_md_links(content))
-        refs.extend(_extract_text_paths(content))
-        # GAP-2: frontmatter.blueprint_id 存在性检测
-        bp_id = _frontmatter_field(content, "blueprint_id")
-        if bp_id:
-            result = _check_blueprint_id_exists(bp_id, p, gap_tag="GAP-2")
-            if result:
-                broken.append(result)
-        # GAP-3: index.md 文件清单严格本地解析（禁 basename 兜底）
-        broken.extend(_check_index_md_inventory(content, p))
-        # GAP-4: audit_report 审计对象存在性
-        broken.extend(_check_audit_report_objects(content, p))
-    elif ext == ".csv":
-        refs.extend(_extract_csv_paths(content))
-    elif ext in (".yaml", ".yml"):
-        refs.extend(_extract_yaml_paths(content))
-        refs.extend(_extract_text_paths(content))
-    elif ext == ".json":
-        refs.extend(_extract_text_paths(content))
-
-    # 去重并检查（通用路径引用，含 basename 兜底）
-    seen: set[str] = set()
-    for ref in refs:
-        if ref in seen:
-            continue
-        seen.add(ref)
-        result = _resolve_and_check(ref, p)
-        if result:
-            broken.append(result)
-
+    broken = _audit_content(content, p)
     return len(broken) == 0, broken
+
+
+# --- 历史豁免模式（--check-new，参考 N-16 模式）---
+def _get_head_content(file_path: Path) -> str | None:
+    """获取文件在 HEAD 版本的内容（用于历史豁免对比）。
+
+    :return: HEAD 版本内容，或 None（文件不在 git 历史中，即新文件）
+    """
+    import subprocess
+    try:
+        abs_path = file_path.resolve()
+        rel = abs_path.relative_to(REPO_ROOT)
+    except (ValueError, OSError):
+        return None
+    rel_str = str(rel).replace("\\", "/")
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{rel_str}"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if result.returncode != 0:
+        return None  # 新文件或 git 错误
+    return result.stdout
+
+
+def audit_file_check_new(file_path: str | Path) -> tuple[bool, list[str]]:
+    """审计文件，仅报告本次修改新引入的断链（历史豁免）。
+
+    对比 HEAD 版本和工作区版本：
+    - 新文件（不在 HEAD）：报告所有断链（全部是新引入的）
+    - 修改文件：仅报告 HEAD 中不存在的断链（新引入的）
+    - 删除文件：跳过（无内容可检查）
+
+    设计参考：check_naming_convention.py --check-new（N-16 历史豁免模式）。
+    用于 pre-commit --ci 硬阻断：仅阻断新引入的断链，不阻断历史存量。
+
+    :return: (是否通过, 新断链列表)
+    """
+    p = Path(file_path)
+    if not p.exists():
+        return True, []  # 删除文件不检查
+    if p.suffix.lower() not in SUPPORTED_EXTENSIONS:
+        return True, []
+    try:
+        new_content = p.read_text(encoding="utf-8", errors="replace")
+    except (OSError, PermissionError):
+        return True, []  # 读取失败不阻断
+
+    new_broken = set(_audit_content(new_content, p))
+
+    head_content = _get_head_content(p)
+    if head_content is None:
+        # 新文件：所有断链都是新引入的
+        return len(new_broken) == 0, sorted(new_broken)
+
+    # 修改文件：仅报告 HEAD 中不存在的断链（新引入的）
+    old_broken = set(_audit_content(head_content, p))
+    new_violations = new_broken - old_broken
+    return len(new_violations) == 0, sorted(new_violations)
 
 
 def audit_directory(dir_path: str | Path) -> tuple[bool, list[str]]:
@@ -552,16 +623,37 @@ def main() -> int:
         action="store_true",
         help="只警告模式：发现断链时仅打印，exit 0（用于过渡期巡检）",
     )
+    parser.add_argument(
+        "--check-new",
+        action="store_true",
+        help="历史豁免模式：仅报告本次修改新引入的断链（对比 HEAD 版本，参考 N-16 模式）",
+    )
     args = parser.parse_args()
 
     all_broken: list[str] = []
     for path_str in args.path:
         p = Path(path_str)
         if p.is_dir():
-            ok, broken = audit_directory(p)
+            if args.check_new:
+                # 目录模式 + 历史豁免：逐文件 check-new
+                for ext in SUPPORTED_EXTENSIONS:
+                    for fp in p.rglob(f"*{ext}"):
+                        if any(
+                            part in (".git", "node_modules", "__pycache__", ".runtime", ".venv")
+                            for part in fp.parts
+                        ):
+                            continue
+                        ok, broken = audit_file_check_new(fp)
+                        all_broken.extend(broken)
+            else:
+                ok, broken = audit_directory(p)
+                all_broken.extend(broken)
         else:
-            ok, broken = audit_file(p)
-        all_broken.extend(broken)
+            if args.check_new:
+                ok, broken = audit_file_check_new(p)
+            else:
+                ok, broken = audit_file(p)
+            all_broken.extend(broken)
 
     if not all_broken:
         print("✅ 无断链")
