@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.data.knowledge_management.kb.load_bearing
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.kb.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -124,7 +124,7 @@ class LoadBearingWall:
         if not self.know_dir.exists():
             return entries
 
-        for ke_file in sorted(self.know_dir.glob("KE-*.md")):
+        for ke_file in sorted(self.know_dir.glob("ke-*.md")):
             try:
                 content = ke_file.read_text(encoding="utf-8", errors="replace")
                 source_hash = _sha256(content)
@@ -151,7 +151,7 @@ class LoadBearingWall:
         return entries
 
     def register(self, ke_id: str, force: bool = False) -> LBEntry:
-        for ke_file in self.know_dir.glob("KE-*.md"):
+        for ke_file in self.know_dir.glob("ke-*.md"):
             content = ke_file.read_text(encoding="utf-8", errors="replace")
             fm = _parse_frontmatter(content)
             fid = fm.get("module_id") or fm.get("ke_id") or ke_file.stem
@@ -175,7 +175,7 @@ class LoadBearingWall:
         raise FileNotFoundError(f"KE {ke_id} not found in {self.know_dir}")
 
     def deregister(self, ke_id: str) -> None:
-        for ke_file in self.know_dir.glob("KE-*.md"):
+        for ke_file in self.know_dir.glob("ke-*.md"):
             content = ke_file.read_text(encoding="utf-8", errors="replace")
             fm = _parse_frontmatter(content)
             fid = fm.get("module_id") or fm.get("ke_id") or ke_file.stem
@@ -196,7 +196,7 @@ class LoadBearingWall:
         for entry in entries:
             issues.extend(self._check_one(entry, now))
 
-        all_kes = list(self.know_dir.glob("KE-*.md")) if self.know_dir.exists() else []
+        all_kes = list(self.know_dir.glob("ke-*.md")) if self.know_dir.exists() else []
         cat_count = self._count_categories()
         if cat_count > 0 and len(entries) / max(cat_count, 1) < self._COVERAGE_TARGET:
             issues.append(f"Coverage ratio {len(entries) / max(cat_count, 1):.0%} < {self._COVERAGE_TARGET:.0%} target")
@@ -254,7 +254,7 @@ class LoadBearingWall:
         if not self.know_dir.exists():
             return 0
         cats: set[str] = set()
-        for ke_file in self.know_dir.glob("KE-*.md"):
+        for ke_file in self.know_dir.glob("ke-*.md"):
             try:
                 content = ke_file.read_text(encoding="utf-8", errors="replace")
                 fm = _parse_frontmatter(content)

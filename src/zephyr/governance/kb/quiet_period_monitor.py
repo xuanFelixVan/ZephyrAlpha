@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.data.knowledge_management.kb.quiet_period_monitor
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.kb.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -94,7 +94,7 @@ class QuietPeriodMonitor:
                 diagnostics=["KE directory does not exist"],
             )
 
-        ke_files = list(self.know_dir.glob("KE-*.md"))
+        ke_files = list(self.know_dir.glob("ke-*.md"))
         total = len(ke_files)
 
         if total == 0:

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.self_test
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -158,7 +158,7 @@ def _check_ke_count(root: Path) -> CheckResult:
             return CheckResult(
                 3, "KE Count (MVKB)", CheckStatus.WARN, "docs/08_knowledge/ 目录不存在", "运行 bootstrap 自动创建"
             )
-        ke_files = list(know_dir.glob("KE-*.md"))
+        ke_files = list(know_dir.glob("ke-*.md"))
         count = len(ke_files)
         if count >= 10:
             return CheckResult(3, "KE Count (MVKB)", CheckStatus.PASS, f"{count} KEs (>= 10)")
@@ -180,7 +180,7 @@ def _check_category_coverage(root: Path) -> CheckResult:
         if not know_dir.exists():
             return CheckResult(4, "Category Coverage", CheckStatus.SKIP, "KE目录不存在")
         categories: set[str] = set()
-        for ke_file in know_dir.glob("KE-*.md"):
+        for ke_file in know_dir.glob("ke-*.md"):
             try:
                 text = ke_file.read_text(encoding="utf-8", errors="replace")
                 if text.startswith("---"):
@@ -215,7 +215,7 @@ def _check_load_bearing_kes(root: Path) -> CheckResult:
         load_bearing: list[str] = []
         expired_lb: list[str] = []
         now = datetime.now(UTC)
-        for ke_file in know_dir.glob("KE-*.md"):
+        for ke_file in know_dir.glob("ke-*.md"):
             try:
                 text = ke_file.read_text(encoding="utf-8", errors="replace")
                 if text.startswith("---"):
@@ -262,7 +262,7 @@ def _check_ghost_scan(root: Path) -> CheckResult:
         if not know_dir.exists():
             return CheckResult(6, "Ghost Scan", CheckStatus.SKIP, "KE目录不存在")
         md_ids: set[str] = set()
-        for ke_file in know_dir.glob("KE-*.md"):
+        for ke_file in know_dir.glob("ke-*.md"):
             md_ids.add(ke_file.stem)
         md_count = len(md_ids)
         chroma_count = 0
@@ -412,7 +412,7 @@ def _check_silent_period(root: Path) -> CheckResult:
         know_dir = root / "docs" / "08_knowledge" / "01_raw_intake"
         if not know_dir.exists():
             return CheckResult(11, "Silent Period", CheckStatus.SKIP, "KE directory not found")
-        ke_files = list(know_dir.glob("KE-*.md"))
+        ke_files = list(know_dir.glob("ke-*.md"))
         if not ke_files:
             return CheckResult(11, "Silent Period", CheckStatus.SKIP, "No KEs")
         recent_cutoff = datetime.now().timestamp() - (7 * 24 * 3600)

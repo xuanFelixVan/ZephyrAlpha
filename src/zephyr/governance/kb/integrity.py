@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.integrity
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.kb.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -21,8 +21,8 @@
 任务: KB-INF-0049
 
 三层完整性:
-  L1-KE文件   — 每个KE-*.md的SHA256 (manifest)
-  L2-KB源码   — 每个src/zephyr/kb/*.py的SHA256
+  L1-KE文件   — 每个ke-*.md的SHA256 (manifest)
+  L2-KB源码   — 每个src/zephyr/governance/kb/*.py的SHA256
   L3-全局     — 整个kb包的aggregate hash
 
 CI检查:
@@ -88,7 +88,7 @@ def _get_project_root() -> Path:
 class IntegrityGuard:
     _MANIFEST_FILE = "kb-integrity-manifest.json"
     _KE_DIR = "docs/08_knowledge/01_raw_intake"
-    _KB_SRC_DIR = "src/zephyr/kb"
+    _KB_SRC_DIR = "src/zephyr/governance/kb"
 
     def __init__(self, project_root: Path | None = None):
         self._root = project_root or _get_project_root()
@@ -108,7 +108,7 @@ class IntegrityGuard:
         return self._root / self._KB_SRC_DIR
 
     def generate(self) -> Manifest:
-        kes = self._hash_directory(self.ke_dir, "KE-*.md")
+        kes = self._hash_directory(self.ke_dir, "ke-*.md")
         sources = self._hash_directory(self.kb_src_dir, "*.py")
         all_hashes = sorted([e.sha256 for e in kes] + [e.sha256 for e in sources])
         aggregate = hashlib.sha256("".join(all_hashes).encode("utf-8")).hexdigest()
@@ -169,7 +169,7 @@ class IntegrityGuard:
         removed: list[str] = []
 
         if layer in (1, 3):
-            stored_map = self._verify_layer(stored.layer1_kes, self.ke_dir, "KE-*.md")
+            stored_map = self._verify_layer(stored.layer1_kes, self.ke_dir, "ke-*.md")
             mismatches.extend(stored_map["mismatches"])
             added.extend([f"ke:{a}" for a in stored_map["added"]])
             removed.extend([f"ke:{r}" for r in stored_map["removed"]])

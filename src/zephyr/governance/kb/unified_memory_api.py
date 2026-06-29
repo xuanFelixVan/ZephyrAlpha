@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] zephyr.data.knowledge_management.kb.unified_memory_api
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
@@ -22,7 +22,7 @@ SRC-0042: Re-export shim → 真源在 kb/storage/unified_memory_api.py
 所有外部调用方（context_engine, bootstrap, mcp, vector-memory 等）无需修改 import 路径。
 
 创建日期 : 2026-05-10
-真源      : src/zephyr/kb/storage/unified_memory_api.py
+真源      : src/zephyr/governance/kb/storage/unified_memory_api.py
 """
 
 from zephyr.governance.kb.storage.unified_memory_api import (
