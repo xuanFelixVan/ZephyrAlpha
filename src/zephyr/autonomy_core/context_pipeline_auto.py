@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §automation
 # [MODULE] zephyr.autonomy_core.context_pipeline_auto
-# [DOMAIN] D-ORC
+# [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES]
 # [CONSUMERS] zephyr.trading.boot_hooks; tests/unit/test_context_pipeline_auto
 # [STARTUP] imported
