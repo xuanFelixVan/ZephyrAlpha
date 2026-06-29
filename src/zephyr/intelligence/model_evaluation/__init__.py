@@ -22,8 +22,8 @@ from __future__ import annotations
 def __getattr__(name):
     """Lazy imports to avoid triggering circular import chains at package load time."""
     _lazy = {
-        "KbRepo": ".kb_repo",
-        "KeStatus": ".kb_repo",
+        "KbRepo": "zephyr.governance.kb.kb_repo",
+        "KeStatus": "zephyr.governance.kb.kb_repo",
         "UnifiedMemoryAPI": ".unified_memory_api",
         "Reranker": ".reranker",
         "ActivateGate": ".activate",
@@ -60,7 +60,6 @@ __all__ = [
     "activate",
     "backtest_base",
     "inference_base",
-    "kb_repo",
     "model_evaluation",
     "reranker",
     "sync_engine",

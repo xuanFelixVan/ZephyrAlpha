@@ -220,7 +220,7 @@ class KnowledgeBaseServer(BaseMCPServer):
 
     def _init_backends(self) -> None:
         try:
-            _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
+            _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
             KbRepo = _mod.KbRepo
             self._kb_repo = KbRepo()
             self._backend_mode = "kb_repo"
@@ -353,7 +353,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                         source_git_deleted=source_git_deleted,
                     )
                 else:
-                    _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
+                    _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
                     KeStatus = _mod.KeStatus
                     if existing.status in (KeStatus.DRAFT, KeStatus.REJECTED):
                         self._kb_repo.create(
@@ -442,7 +442,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         """按 category 筛选并分页列出知识条目。"""
         if self._kb_repo is not None:
             try:
-                _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
+                _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
                 KeStatus = _mod.KeStatus
                 records = self._kb_repo.list_by_status()
                 if category:

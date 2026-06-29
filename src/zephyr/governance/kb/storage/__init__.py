@@ -5,8 +5,6 @@
 
 __all__ = [
     "_backend_protocol",
-    "chromadb_init",
     "graph_validator",
-    "kb_repo",
     "unified_memory_api",
 ]

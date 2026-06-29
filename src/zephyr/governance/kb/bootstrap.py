@@ -59,7 +59,7 @@ _INTELLIGENCE_UMA_NAMES = {
 
 def __getattr__(name):
     if name in _INTELLIGENCE_KB_REPO_NAMES:
-        _mod = importlib.import_module("zephyr.intelligence.model_evaluation.kb_repo")
+        _mod = importlib.import_module("zephyr.governance.kb.kb_repo")
         _val = getattr(_mod, name)
         globals()[name] = _val
         return _val
