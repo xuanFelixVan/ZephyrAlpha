@@ -3,9 +3,9 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-29T07:04:54Z'
+generated_at: '2026-06-29T08:06:22Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
-total_files: 85
+total_files: 90
 total_rules: 12
 tier_distribution:
   L1: 7
@@ -286,7 +286,7 @@ files:
   - STD-004
   - STD-005
   - GOV-024
-  section_count: 45
+  section_count: 44
 - path: docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml
   module_id: TRAE-045
   title: 数据治理-质量与血缘
@@ -878,6 +878,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
+  module_id: PS-CTR-002
+  title: Directory Contract
+  doc_type: contract
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/contracts/index.md
   module_id: GOV-004
   title: _registry/contracts/ 目录索引
@@ -1133,9 +1148,39 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/file_category_vocabulary.yaml
+  module_id: PS-VOC-031
+  title: file_category 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/governance_family_vocabulary.yaml
   module_id: PS-VOC-017
   title: governance_family 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/header_format_vocabulary.yaml
+  module_id: PS-VOC-030
+  title: header_format 受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0
@@ -1184,6 +1229,21 @@ files:
   doc_type: vocabulary
   status: active
   version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/maturity_vocabulary.yaml
+  module_id: PS-VOC-028
+  title: maturity 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: evolving
@@ -1301,6 +1361,21 @@ files:
 - path: docs/01_policies_and_standards/_registry/vocabularies/stability_vocabulary.yaml
   module_id: PS-VOC-010
   title: stability 受控词表
+  doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: evolving
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/startup_vocabulary.yaml
+  module_id: PS-VOC-029
+  title: startup 受控词表
   doc_type: vocabulary
   status: active
   version: 1.0.0
