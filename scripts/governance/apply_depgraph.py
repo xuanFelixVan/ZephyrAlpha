@@ -2401,7 +2401,8 @@ def cmd_update_path(
                 return len(rows)
 
             cur = conn.execute(
-                "UPDATE nodes SET path=%s WHERE belongs_to=%s OR blueprint_id=%s", (new_path, module_id, module_id)
+                "UPDATE nodes SET path=%s, file_path=%s WHERE belongs_to=%s OR blueprint_id=%s",
+                (new_path, new_path, module_id, module_id),
             )
             if own_conn:
                 conn.commit()
