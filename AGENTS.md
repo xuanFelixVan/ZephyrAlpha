@@ -142,7 +142,7 @@ result = await gateway.full_scan(user_text, llm_response)
 - `data/audit_logs/`: AI 行为审计日志
 - `data/capability_cards/`: 能力卡片定义
 - `data/work_dags/`: 工作 DAG 定义（待创建）
-- `architecture_model/`: 全部蓝图 YAML
+- `architecture_model/`（施工分区树）+ `docs/02_enterprise_architecture/target_architecture/architecture_model/`（EA 企业架构树）: 双树**职责有意分离**（见 [`ssot_authority_map.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/ssot_authority_map.md) §一 与 [`scope.yaml`](file:///d:/ZephyrAlpha/architecture_model/scope.yaml)）；施工树管 C/B 分区+代码对齐+`layers/*` 施工视图，EA 树管契约/不变量/层枚举权威/`module_id_registry`；**禁止假定字节级一致**；52域是唯一物理分类（depgraph.db），14层（L00-L13）是域的 `layer_id` 属性枚举
 
 ## 7. 代码规范
 
