@@ -1115,7 +1115,9 @@ def check_new_files_naming(
         basename = os.path.basename(rel_path)
         if basename in exempt:
             continue
-        tracked_basename_to_paths[basename].append(rel_path.replace("\\", "/"))
+        # normcase 归一 basename 作 key：Windows 下 on-disk 与 git index 大小写不一致时
+        # 确保同名文件正确匹配（治本·与 _is_new_file 一致性归一）
+        tracked_basename_to_paths[os.path.normcase(basename)].append(rel_path.replace("\\", "/"))
 
     violations: list[NamingViolation] = []
     committed_basenames: dict[str, str] = {}  # basename → committed_rel_path
@@ -1125,9 +1127,14 @@ def check_new_files_naming(
         if basename in exempt:
             continue
 
+        # normcase 归一比较：防止 on-disk vs git index 大小写不一致导致修改文件
+        # 被误判为新增后无法自排除自身 git-index 条目（治本·大小写一致性）
+        nc_rel = os.path.normcase(rel)
+        nc_basename = os.path.normcase(basename)
+
         # 冲突检测 1：与已跟踪文件冲突
-        if basename in tracked_basename_to_paths:
-            existing = [p for p in tracked_basename_to_paths[basename] if p != rel]
+        if nc_basename in tracked_basename_to_paths:
+            existing = [p for p in tracked_basename_to_paths[nc_basename] if os.path.normcase(p) != nc_rel]
             if existing:
                 violations.append(NamingViolation(
                     rule="N-16",
@@ -1192,15 +1199,20 @@ def check_new_files_full(
             capture_output=True, text=True, check=True,
             cwd=str(project_root),
         )
-        tracked_set = {f.replace("\\", "/") for f in tracked_result.stdout.strip().splitlines() if f}
+        tracked_set = {os.path.normcase(f.replace("\\", "/")) for f in tracked_result.stdout.strip().splitlines() if f}
     except (subprocess.CalledProcessError, FileNotFoundError):
         tracked_set = None  # fail-open: git 不可用时不阻断
 
     def _is_new_file(rel_path: str) -> bool:
-        """文件是否为新增（未被 git 跟踪）。fail-open: git 不可用时返回 False（不阻断）。"""
+        """文件是否为新增（未被 git 跟踪）。fail-open: git 不可用时返回 False（不阻断）。
+
+        大小写归一：Windows 下 on-disk 物理大小写与 git index 大小写可能不一致，
+        用 os.path.normcase() 归一后比较，与 GitCommitGateway._is_git_tracked 的
+        :(icase) 模式一致（治本·一致性归一，修复 N-16 对修改文件误报历史冲突）。
+        """
         if tracked_set is None:
             return False
-        return rel_path not in tracked_set
+        return os.path.normcase(rel_path) not in tracked_set
 
     # 1. N-16 唯一性检查（仅新增文件，全库覆盖 scopes=None）
     added_files_for_n16: list[str] = []
