@@ -41,7 +41,7 @@ from zephyr.governance.rule_enforcement.gate_engine import (
 )
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 
 # ---------------------------------------------------------------------------
 # Fixtures

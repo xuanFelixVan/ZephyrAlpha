@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.core.agent_orchestrator
 # [DOMAIN] D-TRADING
-# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils; zephyr.shared.shared_services.observability_02.token_utils
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.integration.shared.schema.schemas; zephyr.integration.shared_08.utils.time_utils; zephyr.autonomy_core.token_budget
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -89,7 +89,7 @@ from pydantic import BaseModel, Field, field_validator
 from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 from zephyr.integration.shared_08.utils.time_utils import default_now
 from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
-from zephyr.shared.shared_services.observability_02.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET
+from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
 
 __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",

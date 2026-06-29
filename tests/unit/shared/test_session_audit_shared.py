@@ -34,7 +34,7 @@
 Safety: HIGH（审计记录是不可变安全证据）
 """
 
-from zephyr.shared.shared_services.observability_02.session_audit import (
+from zephyr.shared.session_audit import (
     CostRecord,
     DecisionRecord,
     ErrorRecord,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.batch_orchestrator
 # [DOMAIN] D-GOV_AUDIT
-# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.shared.shared_services.models
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -57,7 +57,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 
 @dataclass

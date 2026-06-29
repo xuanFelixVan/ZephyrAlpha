@@ -24,7 +24,7 @@ import logging
 
 import pytest
 
-from zephyr.shared.shared_services.observability_02.logging import (
+from zephyr.shared.observability_02.logging import (
     LogLevel,
     TraceContext,
     ZephyrLogger,

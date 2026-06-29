@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.cache
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.shared.shared_services.infra_06.cache
+# [DEPENDENCIES] zephyr.shared.infra.cache
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -24,4 +24,4 @@ cache.py —— Re-export wrapper → canonical: zephyr.infrastructure.shared_se
 
 # STUB: from .infra.cache import *
 # Reason: shared_08/infra/ subpackage does not exist; canonical is infrastructure.shared_services.infra_06.cache
-from zephyr.shared.shared_services.infra_06.cache import *  # noqa: F403
+from zephyr.shared.infra.cache import *  # noqa: F403

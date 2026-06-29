@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §4.2
 # [MODULE] zephyr.infrastructure.task_manager_server
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.shared_services.blueprint_decomposer; zephyr.shared.shared_services.models; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.models; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.schemas
 # [CONSUMERS] zephyr.infrastructure.mcp_server; AI sessions via MCP protocol
 # [STARTUP] imported
 # [MATURITY] production
@@ -37,8 +37,8 @@ from mcp.server import FastMCP
 from zephyr.shared.io.paths import REPO_ROOT
 
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
-from zephyr.shared.shared_services.models import (
+from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,

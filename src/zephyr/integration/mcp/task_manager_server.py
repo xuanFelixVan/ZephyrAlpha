@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.task_manager_server
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.shared.shared_services.blueprint_decomposer; zephyr.shared.shared_services.models; zephyr.governance.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver
+# [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.models; zephyr.governance.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.schemas; zephyr.governance.architecture_governance.path_resolver
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -35,8 +35,8 @@ from mcp.server import FastMCP
 
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, normalize_execution_model
 from zephyr.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
-from zephyr.shared.shared_services.models import (
+from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,

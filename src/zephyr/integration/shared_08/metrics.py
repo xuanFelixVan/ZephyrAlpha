@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.metrics
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.shared.shared_services.observability_02.metrics
+# [DEPENDENCIES] zephyr.shared.observability_02.metrics
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -22,4 +22,4 @@ metrics.py —— Re-export wrapper → canonical: zephyr.infrastructure.shared_
 修改指标收集逻辑请编辑 observability/metrics.py，不要编辑本文件。
 """
 
-from zephyr.shared.shared_services.observability_02.metrics import *  # noqa: F403
+from zephyr.shared.observability_02.metrics import *  # noqa: F403

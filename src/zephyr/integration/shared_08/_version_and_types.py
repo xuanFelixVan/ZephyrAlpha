@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08._version_and_types
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.__version__; zephyr.integration.shared_08.types; zephyr.integration.shared_08.io.paths; zephyr.integration.shared.schema.schemas; zephyr.shared.shared_services.observability_02.token_utils; zephyr.integration.shared_08.time_utils; zephyr.integration.shared_08.env
+# [DEPENDENCIES] zephyr.integration.shared_08.__version__; zephyr.integration.shared_08.types; zephyr.integration.shared_08.io.paths; zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.token_budget; zephyr.integration.shared_08.time_utils; zephyr.integration.shared_08.env
 # [CONSUMERS] zephyr.shared.__init__
 # [STARTUP] imported
 # [MATURITY] prototype

@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.infrastructure.db.base_repo
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.shared.__init__; zephyr.shared.schema.severity_types
+# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.shared.schema.severity_types
 # [CONSUMERS] task_repo;query;transition
 # [STARTUP] imported
 # [MATURITY] production
@@ -46,7 +46,7 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 from zephyr.shared.task_types import TaskStatus
 
 logger = logging.getLogger(__name__)

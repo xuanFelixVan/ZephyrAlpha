@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.governance.rule_enforcement.task_completion_gate
 # [DOMAIN] D-GOV_RULE
-# [DEPENDENCIES] zephyr.shared.shared_services.lifecycle.task_lifecycle_manager
+# [DEPENDENCIES] zephyr.infrastructure.lifecycle.task_lifecycle_manager
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

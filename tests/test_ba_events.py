@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.shared.shared_services.events import (
+from zephyr.behavioral_audit.events import (
     DriftEvent,
     DriftState,
     DriftType,

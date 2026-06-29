@@ -39,7 +39,7 @@ from zephyr.autonomy_core.prompt_registry import (
     _compare_semver,
     _semver_tuple,
 )
-from zephyr.shared.shared_services.observability_02.token_utils import estimate_tokens
+from zephyr.autonomy_core.token_budget import estimate_tokens
 
 # ---------------------------------------------------------------------------
 # 工具函数测试

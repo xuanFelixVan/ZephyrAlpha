@@ -66,7 +66,7 @@ from zephyr.integration.shared_08.version_negotiation import (
     VersionNegotiator,
     VersionSegment,
 )
-from zephyr.shared.shared_services.observability_02.session_audit import SessionAuditTrail, SessionRecord
+from zephyr.shared.session_audit import SessionAuditTrail, SessionRecord
 
 
 class TestA1_EconomicAttacks:

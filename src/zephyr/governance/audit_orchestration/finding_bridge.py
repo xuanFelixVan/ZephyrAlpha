@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] zephyr.governance.audit_orchestration.finding_bridge
 # [DOMAIN] D-GOV_AUDIT
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.shared_services.models
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.governance.persistence.task_repo; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -36,7 +36,7 @@ from zephyr.infrastructure.finding_task_bridge import (
     BridgeResult,
     FindingTaskBridge,
 )
-from zephyr.shared.shared_services.models import TaskNamespace
+from zephyr.shared.models import TaskNamespace
 
 _logger = logging.getLogger(__name__)
 

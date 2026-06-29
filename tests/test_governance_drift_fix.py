@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from zephyr.governance.drift_fix import DriftFixHandler
-from zephyr.shared.shared_services.events import DriftEvent, DriftState, DriftType
+from zephyr.behavioral_audit.events import DriftEvent, DriftState, DriftType
 
 
 class TestDriftFixHandlerInstantiation:

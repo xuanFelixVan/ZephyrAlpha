@@ -22,7 +22,7 @@ try:
         ContextBudgetLevel,
         ContextBudgetTracker,
     )
-    from zephyr.shared.shared_services.infra_06.observer import Observer
+    from zephyr.shared.infra_06.observer import Observer
 except Exception as _exc:
     pytest.skip(f"cannot import context_budget_tracker: {_exc}", allow_module_level=True)
 

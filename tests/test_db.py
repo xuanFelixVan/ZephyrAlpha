@@ -40,7 +40,7 @@ try:
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
     from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
     HAS_TASK_TYPES = True
 except Exception:

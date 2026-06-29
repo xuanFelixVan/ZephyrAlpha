@@ -85,6 +85,18 @@ class GateCheckResult(BaseModel):
     checked_at: str = Field(default_factory=lambda: datetime.now().isoformat())
 
 
+# 治本: 显式触发 lazy 加载并注入 globals, 使 pydantic forward reference 能被 model_rebuild() 解析。
+# 原 shared_services proxy 通过 dir()+getattr() 循环无意中触发, 删除 proxy 后需在此显式补全。
+# task_types.py 不依赖本模块 (import 链: integration.shared.schema.*), 无循环 import 风险。
+TaskCard = _lazy_import_governance("Task")
+Task = _lazy_import_governance("Task")
+TaskStatus = _lazy_import_governance("TaskStatus")
+TaskNamespace = _lazy_import_governance("TaskNamespace")
+GateLevel = _lazy_import_governance("GateLevel")
+TaskAuditFinding = _lazy_import_governance("TaskAuditFinding")
+DecompositionResult.model_rebuild()
+GateCheckResult.model_rebuild()
+
 _STABILITY_FROZEN = True
 _FROZEN_PUBLIC_API = frozenset(__all__)
 

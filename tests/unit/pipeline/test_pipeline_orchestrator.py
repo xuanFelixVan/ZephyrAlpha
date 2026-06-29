@@ -19,7 +19,7 @@ from zephyr.integration.pipeline_routing import (
     PipelineOrchestrator,
     PipelineStatus,
 )
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:

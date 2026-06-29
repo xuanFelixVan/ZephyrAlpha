@@ -23,7 +23,7 @@
 import asyncio
 import time
 
-from zephyr.shared.shared_services.infra_06.cache import (
+from zephyr.shared.infra.cache import (
     CacheError,
     CacheStats,
     MemoryCache,

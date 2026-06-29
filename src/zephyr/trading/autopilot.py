@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-193 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] zephyr.trading.autopilot
 # [DOMAIN] D-TRADING
-# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] zephyr.trading.__init__; zephyr.trading.conductor
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 logger = logging.getLogger(__name__)
 

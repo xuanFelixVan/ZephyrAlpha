@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.infrastructure.file_watcher
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.shared_services.blueprint_decomposer; zephyr.shared.__init__
+# [DEPENDENCIES] zephyr.shared.blueprint_decomposer; zephyr.shared.__init__
 # [CONSUMERS] auto_runtime_core.py; blueprint_decomposer.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -225,7 +225,7 @@ class BlueprintWatcher:
     def _trigger_decompose(blueprint_path: Path) -> None:
         try:
             from zephyr.shared.registry import ServiceRegistry
-            from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
+            from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
 
             task_repo = ServiceRegistry.get("task_repo")
             decomposer = BlueprintDecomposer(task_repo=task_repo)

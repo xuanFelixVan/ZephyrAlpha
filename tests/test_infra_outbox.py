@@ -22,7 +22,7 @@
 
 import asyncio
 
-from zephyr.shared.shared_services.infra_06.outbox import (
+from zephyr.shared.infra_06.outbox import (
     MemoryOutboxStore,
     OutboxEntry,
     OutboxError,

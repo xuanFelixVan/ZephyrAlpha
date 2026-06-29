@@ -96,7 +96,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # token_utils.py — Token 估算 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.shared_services.observability_02.token_utils import ...
+# from zephyr.autonomy_core.token_budget import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -178,7 +178,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # observer.py — 观察者模式 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.shared_services.infra_06.observer import ...
+# from zephyr.shared.infra_06.observer import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -391,7 +391,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # logging.py — 结构化日志系统（Phase 4 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.shared_services.observability_02.logging import get_logger, TraceContext, configure_root_logger
+# from zephyr.shared.observability_02.logging import get_logger, TraceContext, configure_root_logger
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -507,7 +507,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # health.py — 聚合健康检查（Phase 6 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.shared_services.observability_02.health import AggregateHealth, collect_health
+# from zephyr.shared.observability_02.health import AggregateHealth, collect_health
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │

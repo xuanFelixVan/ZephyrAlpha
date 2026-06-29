@@ -17,8 +17,8 @@ import pytest
 
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.infrastructure.task_manager_server import TaskManagerMCP
-from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
-from zephyr.shared.shared_services.models import DecompositionResult
+from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.models import DecompositionResult
 
 
 @pytest.fixture()

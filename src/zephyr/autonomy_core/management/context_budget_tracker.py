@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.management.context_budget_tracker
 # [DOMAIN] D-AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.shared.shared_services.infra_06.observer; zephyr.autonomy_core.__init__
+# [DEPENDENCIES] zephyr.shared.infra_06.observer; zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ from threading import RLock
 from typing import TYPE_CHECKING, Any
 
 from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
-from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
+from zephyr.shared.infra_06.observer import EventType, Observer
 
 if TYPE_CHECKING:
     from zephyr.autonomy_core.support.doc_compressor import DocCompressor

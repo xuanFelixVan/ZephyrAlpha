@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared_08.foundation.constants
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.runtime_plane_tag; zephyr.shared.shared_services.infra_06.observer; zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.integration.shared_08.contracts.core.runtime_plane_tag; zephyr.shared.infra_06.observer; zephyr.integration.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -61,7 +61,7 @@ from zephyr.shared.contracts.core.runtime_plane_tag import (
     WARM_PATH_LATENCY_BUDGET_MS,
     RuntimePlane,
 )
-from zephyr.shared.shared_services.infra_06.observer import EventType
+from zephyr.shared.infra_06.observer import EventType
 
 _mod = _il.import_module("zephyr.governance.escalation_models")
 EscalationLevel = _mod.EscalationLevel

@@ -12,7 +12,7 @@ Unit tests for session_audit.py
 
 import tempfile
 
-from zephyr.shared.shared_services.observability_02.session_audit import (
+from zephyr.shared.session_audit import (
     CostRecord,
     DecisionRecord,
     ErrorRecord,

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.auto_bootstrap
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.shared_services.session_continuity; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.infrastructure.__init__; zephyr.shared.session_continuity; zephyr.governance.__init__
 # [CONSUMERS] zephyr.trading; zephyr.autonomy_core
 # [STARTUP] imported
 # [MATURITY] production

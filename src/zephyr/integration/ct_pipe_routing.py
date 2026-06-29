@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [MODULE] zephyr.integration.ct_pipe_routing
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.__init__; zephyr.integration.shared.schema.schemas; zephyr.shared.shared_services.models
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.integration.shared.schema.schemas; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -40,7 +40,7 @@ from typing import TYPE_CHECKING, Literal
 from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 from zephyr.integration.models import (
     AFFINITY_CONSTRAINTS,

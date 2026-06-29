@@ -113,8 +113,8 @@ def test_00_import_shared_core():
         ("shared.event_bus", "zephyr.shared.event_bus"),
         ("shared.ssot_guard", "zephyr.integration.shared_08.ssot_guard"),
         ("shared.resilience", "zephyr.integration.shared_08.resilience"),
-        ("core.models", "zephyr.infrastructure.shared_services.models"),
-        ("core.blueprint_decomposer", "zephyr.infrastructure.shared_services.blueprint_decomposer"),
+        ("core.models", "zephyr.shared.models"),
+        ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
     ]
     errors = []
     for name, import_path in modules:
@@ -475,7 +475,7 @@ class TestSharedCoreAdversarial:
             TaskNamespace,
             TaskStatus,
         )
-        from zephyr.shared.shared_services.models import TaskCard
+        from zephyr.shared.models import TaskCard
 
         now = datetime.now(UTC)
         task = TaskCard(
@@ -501,7 +501,7 @@ class TestSharedCoreAdversarial:
 
     def test_task_invalid_status_rejected(self):
         from zephyr.integration.shared.schema.schemas import Classification, ExecutionModel, SafetyLevel, TaskNamespace
-        from zephyr.shared.shared_services.models import TaskCard
+        from zephyr.shared.models import TaskCard
 
         now = datetime.now(UTC)
         try:
@@ -547,7 +547,7 @@ class TestSharedCoreAdversarial:
             TaskNamespace,
             TaskStatus,
         )
-        from zephyr.shared.shared_services.models import TaskCard
+        from zephyr.shared.models import TaskCard
 
         now = datetime.now(UTC)
         card = TaskCard(
@@ -570,7 +570,7 @@ class TestSharedCoreAdversarial:
         assert card.phase == 0
 
     def test_blueprint_decomposer_instantiate(self):
-        from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
+        from zephyr.shared.blueprint_decomposer import BlueprintDecomposer
 
         decomposer = BlueprintDecomposer()
         assert decomposer is not None

@@ -24,7 +24,7 @@ from zephyr.autonomy_core.context_injector import (
 from zephyr.governance.kb.chromadb_init import init_chromadb
 from zephyr.governance.persistence.sqlite_schema import init_db
 from zephyr.intelligence.model_evaluation.kb_repo import KbRepo
-from zephyr.shared.shared_services.observability_02.token_utils import estimate_tokens
+from zephyr.autonomy_core.token_budget import estimate_tokens
 
 
 @pytest.fixture

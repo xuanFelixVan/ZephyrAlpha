@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.trading.orchestrator.batch_orchestrator
 # [DOMAIN] D-TRADING
-# [DEPENDENCIES] zephyr.shared.contracts.orchestration_protocol; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.shared_services.models
+# [DEPENDENCIES] zephyr.shared.contracts.orchestration_protocol; zephyr.shared.contracts.task_repository_protocol; zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -58,7 +58,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 from zephyr.shared.contracts.orchestration_protocol import BatchOrchestratorProtocol
 

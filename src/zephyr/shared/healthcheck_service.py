@@ -78,8 +78,8 @@ class HealthcheckService:
     def check_dependencies(self) -> HealthStatus:
         t0 = time.time()
         try:
-            import zephyr.infrastructure.shared_services.blueprint_decomposer
-            import zephyr.infrastructure.shared_services.models
+            import zephyr.shared.blueprint_decomposer
+            import zephyr.shared.models
 
             return HealthStatus(
                 component="dependencies",

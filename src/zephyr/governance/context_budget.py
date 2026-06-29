@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
 # [MODULE] zephyr.infrastructure.budget_enforcement.context_budget
 # [DOMAIN] D-GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.shared_services.observability_02.token_utils
+# [DEPENDENCIES] zephyr.autonomy_core.token_budget
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -44,7 +44,7 @@ import threading
 from dataclasses import dataclass, field
 from enum import Enum, unique
 
-from zephyr.shared.shared_services.observability_02.token_utils import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
+from zephyr.autonomy_core.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
 
 
 @unique

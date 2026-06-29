@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
+from zephyr.shared.infra_06.observer import EventType, Observer
 from zephyr.trading.orchestrator.deferred_queue import DeferredQueue, DeferredTaskStatus
 
 

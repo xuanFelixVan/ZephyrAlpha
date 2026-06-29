@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.shared.shared_services.infra_06.idempotency import (
+from zephyr.shared.infra_06.idempotency import (
     IdempotencyError,
     IdempotencyRecord,
     IdempotencyStatus,

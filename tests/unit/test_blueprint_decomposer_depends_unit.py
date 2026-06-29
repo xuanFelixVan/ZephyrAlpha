@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer, _split_desc_and_depends
+from zephyr.shared.blueprint_decomposer import BlueprintDecomposer, _split_desc_and_depends
 
 
 def test_split_desc_and_depends() -> None:

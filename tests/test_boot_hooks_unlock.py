@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.shared_services.models import TaskCard, TaskNamespace, TaskStatus
+from zephyr.shared.models import TaskCard, TaskNamespace, TaskStatus
 
 DB_PATH = Path(__file__).resolve().parents[1] / "data" / "databases" / "governance.db"
 

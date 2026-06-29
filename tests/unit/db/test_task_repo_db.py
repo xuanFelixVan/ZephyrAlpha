@@ -43,7 +43,7 @@ from zephyr.governance.persistence.task_repo import (
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 
 _UTC = UTC
 

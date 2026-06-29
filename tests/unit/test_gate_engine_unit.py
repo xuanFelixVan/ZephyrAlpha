@@ -40,7 +40,7 @@ from zephyr.governance.rule_enforcement.gate_engine import (
     _check_path_blacklist,
 )
 from zephyr.governance.rule_enforcement.task_types import TaskStatus
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 
 # ---------------------------------------------------------------------------
 # Fixtures

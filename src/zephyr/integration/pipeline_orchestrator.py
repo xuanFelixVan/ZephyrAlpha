@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §4.1
 # [MODULE] zephyr.integration.pipeline_orchestrator
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.integration.shared_08.contracts.protocols; zephyr.shared.shared_services.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.shared_services.infra_06.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.integration.shared_08.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.governance.audit_trail.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra_06.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -48,7 +48,7 @@ v0.3.2 集成：PipelineOrchestrator ↔ TaskRepository 修桥
   - task_repo 可选——为 None 时跳过状态流转（向后兼容测试场景）
 
 使用：
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
     from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
 from zephyr.integration.models import PipelineOrchestratorConfig
 
@@ -75,7 +75,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
     from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 from zephyr.integration.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.integration.cost_tracker import CostTracker
@@ -1529,7 +1529,7 @@ class PipelineOrchestrator:
         """LifecycleManager 回调：初始化后注册 Pipeline 组件。"""
         self._lifecycle_mgr = lifecycle_mgr
         try:
-            from zephyr.shared.shared_services.infra_06.observer import Observer
+            from zephyr.shared.infra_06.observer import Observer
 
             self._observer = lifecycle_mgr.resolve("observer", Observer)
         except Exception:

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.model_router
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.shared_services.models
+# [DEPENDENCIES] zephyr.shared.models
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -41,7 +41,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 __all__ = ["ModelRouter"]
 

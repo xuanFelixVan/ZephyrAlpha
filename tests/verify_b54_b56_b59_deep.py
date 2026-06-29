@@ -20,7 +20,7 @@ from zephyr.governance.persistence.task_repo import (
 )
 from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.severity_types import Priority as P
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 DB = REPO_ROOT / "data" / "databases" / "governance.db"

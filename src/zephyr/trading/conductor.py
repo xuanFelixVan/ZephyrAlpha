@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-194 | docs/03_modules/_cross_layer/database/blueprint.md | §conductor
 # [MODULE] zephyr.trading.conductor
 # [DOMAIN] D-TRADING
-# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
+# [DEPENDENCIES] zephyr.shared.models; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo
 # [CONSUMERS] AI session conductor loop (replaces manual AutoPilot.run_cycle + serial execution)
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -35,7 +35,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.shared.models import TaskCard
 
 logger = logging.getLogger(__name__)
 

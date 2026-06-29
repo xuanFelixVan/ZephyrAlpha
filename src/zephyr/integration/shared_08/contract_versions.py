@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-152 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared_08.contract_versions
 # [DOMAIN] D-INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.shared_services.infra_06.observer
+# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.shared.infra_06.observer
 # [CONSUMERS] zephyr.integration.shared_08.contracts.__init__; zephyr.integration.shared_08._contracts
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -250,7 +250,7 @@ class ContractRegistry:
         )
 
         try:
-            from zephyr.shared.shared_services.infra_06.observer import EventType, Observer
+            from zephyr.shared.infra_06.observer import EventType, Observer
 
             bus = Observer()
             bus.emit(

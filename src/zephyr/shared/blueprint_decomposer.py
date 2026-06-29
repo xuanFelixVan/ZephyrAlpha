@@ -1,7 +1,7 @@
 # [BLUEPRINT] SRC-086 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.shared_services.blueprint_decomposer
 # [DOMAIN] D-SHARED
-# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.integration.shared.schema.execution_model; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
+# [DEPENDENCIES] zephyr.shared.models; zephyr.integration.shared.schema.execution_model; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -44,7 +44,7 @@ import yaml
 
 from zephyr.integration.shared.schema.execution_model import ExecutionModel
 from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.shared.shared_services.models import (
+from zephyr.shared.models import (
     DecompositionResult,
     GateLevel,
     TaskCard,

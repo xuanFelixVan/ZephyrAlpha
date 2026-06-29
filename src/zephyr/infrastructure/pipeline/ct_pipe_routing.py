@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.infrastructure.pipeline.ct_pipe_routing
 # [DOMAIN] D-INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.shared_services.models; zephyr.infrastructure.__init__; zephyr.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.models; zephyr.infrastructure.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -46,7 +46,7 @@ from zephyr.infrastructure.pipeline.models import (
     PipelineRouteDecision,
 )
 from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
-from zephyr.shared.shared_services.models import TaskCard
+from zephyr.shared.models import TaskCard
 
 __all__ = [
     "CtPipeRoutingHints",
