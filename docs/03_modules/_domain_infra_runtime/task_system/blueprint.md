@@ -80,7 +80,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 
 ### §0.1 代码文件清单
 
-> **架构归属SSoT**：PostgreSQL `depgraph` 数据库（`get_depgraph_pg_connection()`）
+> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > **存在性状态受控词表**：`未实现` / `已实现` / `已阻塞` / `已废弃`

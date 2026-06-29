@@ -129,7 +129,7 @@ tags:
 
 ### §0.1 代码文件清单
 
-> **架构归属SSoT**：PostgreSQL `depgraph` 数据库（`get_depgraph_pg_connection()`）
+> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
 > 68 个 .py 全部已实现。

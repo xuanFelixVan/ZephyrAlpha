@@ -148,7 +148,7 @@ tags:
 | 6 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败、导入错误 |
 | 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4） | 双源漂移 |
 
-> **架构归属SSoT**：PostgreSQL `depgraph` 数据库（`get_depgraph_pg_connection()`）
+> **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-MASTER_BLUEPRINT`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 | 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案等临时内容一旦执行完毕即从蓝图删除 | 蓝图膨胀 |

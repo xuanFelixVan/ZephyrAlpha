@@ -91,7 +91,7 @@ sections:
     prohibitions:
     - 在 DB 写入路径调用 lock_files.py（PG MVCC 替代文件锁，文件锁对 PG 写无保护作用）
     - 硬编码 sqlite3.connect("绝对路径.db")（GitCommitGateway _check_repo_root_usage 模式5 检测阻断）
-    - 在 DB 写入脚本中 import lock_files（sync_yaml_to_depgraph.py 已删除 lock_files import 治本，commit a466cf455a）
+    - 在 DB 写入脚本中 import lock_files（sync_yaml_to_depgraph.py 已删除 lock_files import 治本，禁止恢复）
     exceptions:
       file_write_fallback: '若写入目标是文件（非 DB），回退 file_lock_protocol + atomic_write 双重保护 ✅'
   delete_confirmation:
