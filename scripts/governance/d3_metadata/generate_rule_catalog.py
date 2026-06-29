@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan_dir 不存在 → stderr 警告并返回空列表
 # [TESTS]
-# [TTL] permanent
+# [TTL] task_bound
 #!/usr/bin/env python3
 """Scan docs/01_policies_and_standards and emit _registry/catalogs/rule_catalog_registry.yaml.
 
@@ -99,12 +99,38 @@ def extract_yaml_header(content: str) -> dict | None:
                             "owner",
                             "ttl",
                             "superseded_by",
+                            # 以下字段用于派生 _index.yaml 独有的规则元数据
+                            # （#ARCH-024 治本：catalog 扩展为唯一规则索引）
+                            "severity",
+                            "tags",
+                            "aliases",
+                            "sections",
                         )
                     }
                 )
         except yaml.YAMLError:
             pass
     return fields if fields else None
+
+
+def _extract_tier_from_tags(tags) -> str:
+    """从 tags 列表中提取 tier（L0/L1/L2），无则返回空串。
+
+    tier 真源为规则文件 frontmatter 的 tags 字段中的 Lx 元素（#ARCH-024 治本）。
+    """
+    if not isinstance(tags, list):
+        return ""
+    for tag in tags:
+        if isinstance(tag, str) and re.match(r"^L[0-2]$", tag):
+            return tag
+    return ""
+
+
+def _count_sections(sections) -> int:
+    """计算 sections 字典的 section 数量。"""
+    if isinstance(sections, dict):
+        return len(sections)
+    return 0
 
 
 def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
@@ -155,6 +181,11 @@ def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
             "stability": fm.get("stability", ""),
             "layer": fm.get("layer", ""),
             "superseded_by": fm.get("superseded_by", ""),
+            # 以下4字段原由 rules/_index.yaml 手工维护（#ARCH-024 治本：改为自动派生）
+            "severity": fm.get("severity", ""),
+            "tier": _extract_tier_from_tags(fm.get("tags", [])),
+            "aliases": fm.get("aliases", []),
+            "section_count": _count_sections(fm.get("sections", {})),
         }
         results.append(entry)
 
@@ -165,6 +196,16 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
     """Write rule_catalog_registry.yaml（原子写入：tmp + os.replace）."""
     gen_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    # 派生 tier_distribution 和 total_rules（仅统计有 tier 的规则文件）
+    # #ARCH-024 治本：原由 rules/_index.yaml 手工维护，现从 entries 自动派生
+    tier_distribution: dict[str, int] = {}
+    total_rules = 0
+    for e in entries:
+        tier = e.get("tier", "")
+        if tier:
+            tier_distribution[tier] = tier_distribution.get(tier, 0) + 1
+            total_rules += 1
+
     catalog = {
         "schema_version": "1.0.0",
         "module_id": "PS-REG-018",
@@ -174,6 +215,8 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         "generated_at": gen_ts,
         "generated_by": "scripts/governance/d3_metadata/generate_rule_catalog.py",
         "total_files": len(entries),
+        "total_rules": total_rules,
+        "tier_distribution": tier_distribution,
         "files": entries,
     }
 

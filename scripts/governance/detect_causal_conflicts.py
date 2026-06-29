@@ -27,7 +27,9 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+
+# 治本（2026-06-27）：删除 DEFAULT_DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
 _THIS_FILE = Path(__file__).resolve()
@@ -81,7 +83,7 @@ class ConflictEntry:
 
 class CausalConflictDetector:
     def __init__(self, depgraph_path: str | None = None):
-        self._depgraph_path = Path(depgraph_path) if depgraph_path else DEFAULT_DEPGRAPH_PATH
+        # depgraph_path 参数保留向后兼容（PG模式下忽略，治本2026-06-27删除DEFAULT_DEPGRAPH_PATH常量）
         self._depgraph: dict[str, Any] = {}
         self._adj_forward: dict[str, list[str]] = defaultdict(list)
         self._adj_reverse: dict[str, list[str]] = defaultdict(list)
@@ -93,11 +95,10 @@ class CausalConflictDetector:
     def _load_depgraph(self) -> None:
         if self._loaded:
             return
-        if not self._depgraph_path.exists():
-            self._loaded = True
-            return
+        # 治本（2026-06-27）：删除 if not self._depgraph_path.exists(): self._loaded=True; return 守卫（latent bug）。
+        # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常（不静默漏报冲突）。
         try:
-            self._depgraph = _load_depgraph_from_db(self._depgraph_path)
+            self._depgraph = _load_depgraph_from_db(None)
         except Exception:
             self._depgraph = {}
         nodes = self._depgraph.get("nodes", {})

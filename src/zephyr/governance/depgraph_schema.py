@@ -61,10 +61,17 @@ P2 迁移后 schema 真源（重要）
 
 用法
 ----
-    from zephyr.governance.persistence.depgraph_schema import init_db, get_depgraph_pg_connection, DB_PATH
+    from zephyr.governance.persistence.depgraph_schema import init_db, get_depgraph_pg_connection
 
     init_db()              # 幂等，验证 PG schema 健康性
     conn = get_depgraph_pg_connection()   # 返回 PostgreSQL 连接（psycopg2）
+
+P2 迁移后路径真源（2026-06-27 治本）
+-----------------------------------
+  物理文件 data/databases/depgraph.db 已删除归档，逻辑库迁移至 PostgreSQL (localhost:5432/depgraph)。
+  禁止定义 DB_PATH = .../depgraph.db 常量（路径污染源）。
+  PG 连接入口唯一真源：get_depgraph_pg_connection()（本模块定义）。
+  PG 连接配置真源：config/.env.postgres（_PG_ENV_PATH）。
 """
 
 from __future__ import annotations
@@ -77,10 +84,6 @@ import psycopg2
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-
-# depgraph.db 物理路径（P2迁移后已迁移到 PostgreSQL，此路径保留作为 SQLite 备份路径参考）
-# P2迁移真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
-DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 # PostgreSQL 连接配置文件路径（P2迁移真源：MOD-DB_DEPGRAPH_PG）
 _PG_ENV_PATH: Path = REPO_ROOT / "config" / ".env.postgres"
@@ -1122,16 +1125,16 @@ def init_db(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
     *,
     echo: bool = False,
-) -> Path:
+) -> None:
     """验证 PostgreSQL depgraph schema 健康性（幂等）。
 
     P2迁移后：PG schema 由 scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql 创建。
-    本函数不再执行 DDL/migration，仅验证核心表存在并返回 DB_PATH（参考路径）。
+    本函数不再执行 DDL/migration，仅验证核心表存在。
 
     若核心表不存在，请运行:
         psql -U postgres -d depgraph -f scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql
 
-    :return: DB_PATH（SQLite 备份路径参考，PG 模式下不再使用此路径）
+    :return: None（PG 模式下无文件路径返回）
     """
     conn = get_depgraph_pg_connection()
     try:
@@ -1157,8 +1160,6 @@ def init_db(
                 print(f"[depgraph_schema] PG schema healthy: {count} tables, version=v{ver}")
     finally:
         conn.close()
-
-    return DB_PATH
 
 
 # ---------------------------------------------------------------------------
@@ -1235,7 +1236,6 @@ def schema_version(db_path: Path | str | None = None) -> int:
 
 
 __all__ = [
-    "DB_PATH",
     "get_depgraph_pg_connection",
     "get_db_connection",  # DEPRECATED 别名，向后兼容
     "init_db",
@@ -1247,10 +1247,10 @@ __all__ = [
 if __name__ == "__main__":
     import sys
 
-    db = init_db(echo=True)
-    tables = table_names(db)
-    ver = schema_version(db)
-    print(f"\n  depgraph.db initialized: {db}")
+    init_db(echo=True)
+    tables = table_names()
+    ver = schema_version()
+    print(f"\n  PostgreSQL depgraph schema verified")
     print(f"  Schema version: v{ver}")
     print(f"  Tables ({len(tables)}): {', '.join(tables)}")
     sys.exit(0)

@@ -89,7 +89,7 @@ def _infer_doctype(rel_path: str, filename: str) -> str | None:
     if "_registry/vocabularies/" in rel_path:
         return "vocabulary"
     if "_registry/schemas/" in rel_path:
-        return "schema"
+        return "contract"  # v2.0.0: schema 已废弃，合并到 contract
     if "_registry/contracts/" in rel_path:
         return "contract"
 

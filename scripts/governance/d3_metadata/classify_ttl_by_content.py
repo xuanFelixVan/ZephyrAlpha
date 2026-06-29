@@ -149,16 +149,17 @@ AMBIGUOUS_SIGNALS: list[str] = [
 PROCESS_DOC_TYPES = {"log", "audit_report", "operational_rule", "construction_plan"}
 
 # ── 永久性 doc_type（辅助判定 → permanent）──
+# v2.0.0: 已移除废弃值 protocol/schema/reference/declaration/roadmap（合并到 policy/contract/register+architecture_view+audit_report+contract+config/policy）
 PERMANENT_DOC_TYPES = {
-    "policy", "standard", "protocol", "blueprint", "schema",
-    "vocabulary", "register", "template", "index", "reference",
-    "terminology", "contract", "gate", "config", "declaration",
+    "policy", "standard", "blueprint",
+    "vocabulary", "register", "template", "index",
+    "terminology", "contract", "gate", "config",
     "architecture_view", "knowledge_entry", "service_spec",
-    "readme", "roadmap",
+    "readme",
 }
 
 # ── 模糊 doc_type（不加入任何集合 → 标题无信号时进 pending）──
-# plan / design / log 等需结合标题内容判定，不单独靠 doc_type 判定
+# log 等需结合标题内容判定，不单独靠 doc_type 判定
 
 # ════════════════════════════════════════════════════════════════════════════
 # 目录语义维度（目录路径本身即强信号）

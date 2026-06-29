@@ -47,9 +47,6 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
-from zephyr.shared.io.paths import REPO_ROOT
-
-DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
 
 
 class _PgConnExecuteWrapper:
@@ -76,7 +73,7 @@ class DepgraphReader:
 
     def __init__(self, db_path: str | Path | None = None):
         # db_path 参数保留向后兼容（P2迁移后 PG 连接配置由 depgraph_schema.get_depgraph_pg_connection 管理）
-        self._db_path = Path(db_path) if db_path else DB_PATH
+        # 治本（2026-06-27）：不再保存 DB_PATH 常量，防止路径污染
         self._conn: _PgConnExecuteWrapper | None = None
 
     def _get_conn(self) -> _PgConnExecuteWrapper:

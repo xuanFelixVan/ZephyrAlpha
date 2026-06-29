@@ -14,7 +14,6 @@ __all__ = [
     "check_frontmatter_metadata",
     "check_naming_convention",
     "check_registry_consistency",
-    "check_template_compliance",
     "deep_content_scanner",
     "detect_deprecated_overdue",
     "detect_skip_active_status",

@@ -34,9 +34,11 @@ def _find_project_root() -> Path:
 
 PROJECT_ROOT = _find_project_root()
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
-DB_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 BLUEPRINTS_DIR = PROJECT_ROOT / "docs" / "03_modules"
+
+# 治本（2026-06-27）：删除 DB_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
 _THIS_FILE = Path(__file__).resolve()
@@ -63,8 +65,8 @@ def _load_all_yaml_rules() -> dict[str, dict[str, Any]]:
 
 
 def _get_db_rule_ids() -> set[str]:
-    if not DB_PATH.exists():
-        return set()
+    # 治本（2026-06-27）：删除 if not DB_PATH.exists(): return set() 守卫（latent bug）。
+    # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常（不静默吞数据）。
     try:
         conn = get_depgraph_pg_connection(autocommit=True)
         cursor = conn.execute("SELECT DISTINCT node_id FROM nodes WHERE node_type = 'rule'")

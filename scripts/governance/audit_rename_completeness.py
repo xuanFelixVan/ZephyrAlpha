@@ -61,7 +61,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import DEPGRAPH_DB_PATH, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -321,8 +321,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--db-path",
-        default=str(DEPGRAPH_DB_PATH),
-        help="depgraph.db 路径（P2迁移后已废弃，保留仅为向后兼容；实际连接由 PostgreSQL 配置决定）",
+        default=None,
+        help="depgraph 路径（P2迁移后已废弃，PG 连接由 get_depgraph_pg_connection 统一管理；保留仅为向后兼容）",
     )
     parser.add_argument(
         "--check-files",

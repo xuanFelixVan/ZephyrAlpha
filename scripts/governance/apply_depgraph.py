@@ -50,12 +50,11 @@ depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   python scripts/governance/apply_depgraph.py --rename-domain D-SIGNAL D-SIGLEGACY  # 必须最后执行
   python scripts/governance/apply_depgraph.py --update-domain-name D-SIGLEGACY "信号遗留设计态"
 
-GIT 备份门禁（project_memory 强制规则）：
-  修改 depgraph.db 前必须先 git 备份当前状态，以便回滚：
-    git add data/databases/depgraph.db
-    git commit -m "backup: depgraph before <操作描述>"
-  如果 DB 有未提交修改（未备份），写入被阻断（exit 4）。
-  强制跳过（不推荐）: ZEPHYR_SKIP_BACKUP_CHECK=1
+GIT 备份门禁（P2 迁移后治本 2026-06-27）：
+  PG 模式下 depgraph 已迁至 PostgreSQL，无文件路径概念。
+  原 SQLite 文件备份门禁（_check_git_backup + _create_physical_backup）已删除——
+  PG 用 MVCC 事务 rollback 提供原子性，无需文件备份。
+  事务失败时 conn.rollback() 自动回滚（已实现）。
 """
 
 from __future__ import annotations
@@ -66,7 +65,6 @@ import datetime
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -75,122 +73,10 @@ import psycopg2
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
-
-# 跳过 git 备份检查的环境变量（自动化场景）
-SKIP_BACKUP_CHECK_ENV = "ZEPHYR_SKIP_BACKUP_CHECK"
-
-
-def _check_git_backup(db_path: Path = DEPGRAPH_PATH) -> bool:
-    """检查 depgraph.db 修改前是否有 git 备份。
-
-    规则（project_memory）：修改全景图前必须先 git 备份当前状态：
-      git add data/databases/depgraph.db
-      git commit -m "backup: depgraph before <操作描述>"
-
-    检查逻辑：
-      1. ZEPHYR_SKIP_BACKUP_CHECK=1 → 跳过（自动化场景）
-      2. depgraph.db 未纳入 git 跟踪 → 跳过（无法备份）
-      3. depgraph.db 有未提交修改 → 阻断（当前状态未备份，无法回滚）
-
-    返回：True=已备份（允许写入），False=未备份（阻断写入）
-    """
-    # 1. 跳过检查的环境变量
-    if os.environ.get(SKIP_BACKUP_CHECK_ENV) == "1":
-        return True
-
-    # 2. 检查 depgraph.db 是否已纳入 git 跟踪
-    try:
-        result = subprocess.run(
-            ["git", "ls-files", "--error-unmatch", str(db_path)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            # DB 未纳入 git 跟踪，无法备份，跳过检查
-            return True
-    except Exception:
-        # git 命令执行失败，安全起见跳过检查（避免误阻断）
-        return True
-
-    # 3. 检查 depgraph.db 是否有未提交修改
-    try:
-        result = subprocess.run(
-            ["git", "diff", "--quiet", "HEAD", "--", str(db_path)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        # exit 0 = 无修改（已备份），exit 1 = 有修改（未备份）
-        if result.returncode == 1:
-            print("", file=sys.stderr)
-            print("=" * 70, file=sys.stderr)
-            print("[GIT-BACKUP GATE] depgraph.db 写入被阻断——缺少 git 备份", file=sys.stderr)
-            print(f"  DB 路径: {db_path}", file=sys.stderr)
-            print("", file=sys.stderr)
-            print("  规则：修改 depgraph.db 前必须先 git 备份当前状态（project_memory）", file=sys.stderr)
-            print("", file=sys.stderr)
-            print("  解决方案:", file=sys.stderr)
-            print("    1. 创建备份:", file=sys.stderr)
-            print("       git add data/databases/depgraph.db", file=sys.stderr)
-            print('       git commit -m "backup: depgraph before <操作描述>"', file=sys.stderr)
-            print("    2. 验证备份:", file=sys.stderr)
-            print("       git log -1 --oneline -- data/databases/depgraph.db", file=sys.stderr)
-            print("    3. 重新执行本命令", file=sys.stderr)
-            print("", file=sys.stderr)
-            print(f"  强制跳过（不推荐）: {SKIP_BACKUP_CHECK_ENV}=1", file=sys.stderr)
-            print("=" * 70, file=sys.stderr)
-            return False
-    except Exception:
-        # 检查失败，安全起见允许（避免误阻断）
-        return True
-
-    return True
-
-
-_BACKUP_DIR = DEPGRAPH_PATH.parent / "backups"
-_BACKUP_KEEP = 10  # 普通备份保留数量（里程碑备份不受此限制）
-
-
-def _create_physical_backup(db_path: Path = DEPGRAPH_PATH, tag: str = "auto") -> Path | None:
-    """创建数据库的物理备份到 data/databases/backups/ 目录。
-
-    规则（trae_054 STEP0 物理备份补充）：每次 apply_depgraph.py 写操作前自动创建物理备份。
-    命名格式: {db_name}.backup.{YYYYMMDD_HHMMSS}_{tag}.db
-    保留策略: 最多保留 10 个最新 + 所有 *_milestone.db（版本里程碑）
-
-    返回：备份文件路径，None=跳过（环境变量跳过）
-    """
-    if os.environ.get(SKIP_BACKUP_CHECK_ENV) == "1":
-        return None
-
-    _BACKUP_DIR.mkdir(exist_ok=True)
-
-    ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    db_name = db_path.stem  # "depgraph" 或 "governance"
-    backup_name = f"{db_name}.backup.{ts}_{tag}.db"
-    backup_path = _BACKUP_DIR / backup_name
-
-    shutil.copy2(str(db_path), str(backup_path))
-    print(f"[PHYSICAL BACKUP] {db_path.name} -> backups/{backup_name}", file=sys.stderr)
-
-    _cleanup_old_backups(db_name)
-    return backup_path
-
-
-def _cleanup_old_backups(db_name: str, keep: int = _BACKUP_KEEP) -> None:
-    """清理旧备份：保留最新 N 个普通备份 + 所有里程碑备份。"""
-    pattern = f"{db_name}.backup.*.db"
-    backups = sorted(_BACKUP_DIR.glob(pattern), key=lambda f: f.stat().st_mtime, reverse=True)
-
-    milestones = [f for f in backups if "milestone" in f.name]
-    regular = [f for f in backups if "milestone" not in f.name]
-
-    for f in regular[keep:]:
-        f.unlink()
-        print(f"[BACKUP CLEANUP] 删除旧备份: {f.name}", file=sys.stderr)
-
+# 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
+# 原 SQLite 文件备份门禁（_check_git_backup + _create_physical_backup）已删除——
+# PG 用 MVCC 事务 rollback 提供原子性，无需文件备份。
 
 # P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
 _GOV_DIR = Path(__file__).resolve().parent
@@ -204,8 +90,9 @@ from validate_module_id_naming import is_valid_module_id as _validate_bp_id_form
 from validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
 from validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
 
-# P2 PG 迁移：文件锁已删除（PG 用 MVCC）。_db_write_lock 保留为 no-op 上下文管理器，
-# 维持原 with 结构避免大规模重新缩进；git 备份/物理备份门禁保留（project_memory 规则）。
+# P2 PG 迁移治本（2026-06-27）：_db_write_lock 简化为纯 no-op 上下文管理器。
+# PG 用 MVCC 事务 rollback 提供原子性，无需文件锁/备份门禁。
+# 保留 with 结构避免大规模重新缩进。
 @contextlib.contextmanager
 def _db_write_lock(
     owner_id: str | None = None,
@@ -214,17 +101,13 @@ def _db_write_lock(
     max_retries: int = 30,
     retry_interval: float = 1.0,
 ):
-    """depgraph 写入上下文管理器（P2 PG 迁移后：无锁，仅保留 git/物理备份门禁）。"""
-    _check_db_path = Path(db_path) if db_path is not None else DEPGRAPH_PATH
-    if not _check_git_backup(_check_db_path):
-        sys.exit(4)
-    _create_physical_backup(_check_db_path, tag=task)
+    """depgraph 写入上下文管理器（P2 PG 迁移治本后：纯 no-op，PG MVCC 提供原子性）。"""
     yield
 
 
 @contextlib.contextmanager
 def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Path | str | None = None):
-    """当 own_conn=True 时进入写入上下文（P2 后无锁，仅备份门禁）。"""
+    """当 own_conn=True 时进入写入上下文（P2 后 no-op，PG MVCC 提供原子性）。"""
     if own_conn:
         with _db_write_lock(task=task, db_path=db_path):
             yield
@@ -232,8 +115,11 @@ def _optional_db_lock(own_conn: bool, task: str = "depgraph write", db_path: Pat
         yield
 
 
-def _load_depgraph_from_db(db_path: Path) -> dict:
-    """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
+def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
+    """从 PostgreSQL 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。
+
+    db_path 参数保留向后兼容（治本2026-06-27：默认 None，PG 模式下忽略）。
+    """
     conn = get_depgraph_pg_connection(autocommit=False)
     # P2 PG: row_factory 由 wrapper 处理（RealDictCursor）
     data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
@@ -259,13 +145,12 @@ def _load_depgraph_from_db(db_path: Path) -> dict:
 
 
 def _load_depgraph() -> dict:
-    if not DEPGRAPH_PATH.exists():
-        print(f"ERROR: depgraph not found at {DEPGRAPH_PATH}", file=sys.stderr)
-        sys.exit(1)
+    # 治本（2026-06-27）：删除 if not DEPGRAPH_PATH.exists(): sys.exit(1) 守卫（latent bug）。
+    # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常。
     try:
-        return _load_depgraph_from_db(DEPGRAPH_PATH)
+        return _load_depgraph_from_db()
     except Exception as e:
-        print(f"ERROR: Failed to load depgraph from DB: {e}", file=sys.stderr)
+        print(f"ERROR: Failed to load depgraph from PostgreSQL: {e}", file=sys.stderr)
         sys.exit(2)
 
 
@@ -574,7 +459,7 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 
 
 def add_design_node(
-    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned", db_path: str = str(DEPGRAPH_PATH)
+    path: str, blueprint_id: str, domain_id: str, build_status: str = "planned", db_path: str = None
 ) -> int:
     """
     新增设计态节点（功能级，目录 path）。
@@ -648,7 +533,7 @@ def add_design_node(
             conn.close()
 
 
-def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = str(DEPGRAPH_PATH)) -> int:
+def add_file_node(path: str, blueprint_id: str, domain_id: str, db_path: str = None) -> int:
     """
     新增文件级 production 节点（补注册孤儿文件）。
     返回：新分配的 node_id
@@ -729,7 +614,7 @@ def add_design_edge(
     data_transfer_description: str = "",
     relationship_type: str = "",
     resource_impact: str = "low",
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
 ) -> int:
     """
     新增设计态边（规划依赖）。
@@ -848,7 +733,7 @@ def add_edge(
     data_transfer_description: str = "",
     relationship_type: str = "",
     resource_impact: str = "low",
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
 ) -> int:
     """
     新增边（通用，不限 design_maturity，支持 production/prototype 节点）。
@@ -943,7 +828,7 @@ def add_edge(
             conn.close()
 
 
-def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def transition_build_status(node_id: int, to: str, db_path: str = None) -> bool:
     """
     转换 build_status 状态（5态单调推进）。
     返回：True=成功，False=失败
@@ -986,7 +871,7 @@ def transition_build_status(node_id: int, to: str, db_path: str = str(DEPGRAPH_P
             conn.close()
 
 
-def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def remove_design_node(node_id: int, db_path: str = None) -> bool:
     """
     删除设计态节点（软删除）。
     返回：True=成功，False=失败
@@ -1035,7 +920,7 @@ def remove_design_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
             conn.close()
 
 
-def deprecate_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def deprecate_node(node_id: int, db_path: str = None) -> bool:
     """
     软废弃任意节点（含 production）——专用于孤儿节点清理。
 
@@ -1090,7 +975,7 @@ def deprecate_node(node_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
             conn.close()
 
 
-def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) -> bool:
     """
     裁定#208 B5: 将指定 blueprint_id 标记为 invalid（软标记，不删除节点，保留可追溯链）。
 
@@ -1129,7 +1014,7 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = str(DE
             conn.close()
 
 
-def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def delete_design_edge(edge_id: int, db_path: str = None) -> bool:
     """
     删除设计态边（硬删除，因边无软删除语义）。
     返回：True=成功，False=失败
@@ -1167,7 +1052,7 @@ def delete_design_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
             conn.close()
 
 
-def delete_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def delete_edge(edge_id: int, db_path: str = None) -> bool:
     """
     删除边（通用，不限 dep_maturity，支持删除任意边）。
     返回：True=成功，False=失败
@@ -1199,7 +1084,7 @@ def delete_edge(edge_id: int, db_path: str = str(DEPGRAPH_PATH)) -> bool:
             conn.close()
 
 
-def delete_blueprint_link(blueprint_id: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def delete_blueprint_link(blueprint_id: str, db_path: str = None) -> bool:
     """
     删除 blueprint_links 表中的记录（用于清理悬空引用）。
     返回：True=成功，False=失败
@@ -1227,7 +1112,7 @@ def delete_blueprint_link(blueprint_id: str, db_path: str = str(DEPGRAPH_PATH)) 
             conn.close()
 
 
-def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH)) -> int:
+def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
     """
     清理幽灵节点：删除 nodes 表中 path 在磁盘上不存在的 node（对称漂移修复，P1-DEP）。
     对标 cmd_cleanup_orphan_edges（清理孤儿边）。
@@ -1285,7 +1170,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = str(DEPGRAPH_
             conn.close()
 
 
-def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH)) -> int:
+def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = None) -> int:
     """
     清理孤儿边：删除 edges 表中引用了不存在 node 的边（from_node_id 或 to_node_id 在 nodes 表中不存在）。
     返回：删除的边数，-1=失败
@@ -1334,7 +1219,7 @@ def cmd_cleanup_orphan_edges(dry_run: bool = False, db_path: str = str(DEPGRAPH_
             conn.close()
 
 
-def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = str(DEPGRAPH_PATH)) -> bool:
+def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = None) -> bool:
     """
     修改边的 dep_type（依赖类型）。
     返回：True=成功，False=失败
@@ -1391,7 +1276,7 @@ def update_edge_type(edge_id: int, new_dep_type: str, db_path: str = str(DEPGRAP
 def _validate_domain_naming(
     domain_id: str,
     domain_name: str,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
 ) -> tuple[list[str], list[str]]:
     """建域门禁：校验域ID是否符合 domain_naming_rules 表中的命名规则。
 
@@ -1467,7 +1352,7 @@ def cmd_insert_domain(
     max_modules: int = 150,
     description: str = "",
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> bool:
     """INSERT 新域到 domains 表（ARCH-CAP-005 抽屉式扩展）。
@@ -1524,7 +1409,7 @@ def cmd_update_domain_id(
     module_id: str,
     new_domain_id: str,
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
     force_cross_domain: bool = False,
 ) -> int:
@@ -1668,7 +1553,7 @@ def cmd_rename_domain(
     old_id: str,
     new_id: str,
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """重命名域ID——18步UPDATE覆盖11表（裁定#204，方案§4.2）。
@@ -1848,7 +1733,7 @@ def _post_rename_residual_check(old_id: str, db_path: str) -> None:
 def cmd_fix_rename_residual(
     rename_map: dict[str, str],
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """修复存量改名残留（裁定#207 R1 B5）。
@@ -1922,7 +1807,7 @@ def _restore_blueprint_links_readonly_trigger(c) -> None:
 def cmd_propagate_rename(
     rename_map: dict[str, str],
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """blueprint_id 派生标识符传播（裁定#206 B-5/B-6 + 裁定#207 R1 B2）。
@@ -2170,7 +2055,7 @@ def cmd_rename_blueprint_id(
     old_bp_id: str,
     new_bp_id: str,
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """blueprint_id 独立重命名（裁定#208 阶段D2：跨域共享模块 SH-* 改名专用）。
@@ -2274,7 +2159,7 @@ def cmd_propagate_node_paths(
     path_mapping: dict[str, str],
     bl_mapping: dict[str, str] | None = None,
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """节点路径改名传播（裁定#206 节点路径派生 + 裁定#207 R1 阶段D）。
@@ -2397,7 +2282,7 @@ def cmd_update_domain_name(
     domain_id: str,
     new_name: str,
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """更新 domains.domain_name（裁定#204 配套）。返回受影响行数，-1=失败。"""
@@ -2441,7 +2326,7 @@ def cmd_update_domain_name(
 
 def cmd_migrate_nodes(
     node_ids: list[int], new_domain_id: str, dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH), conn=None
+    db_path: str = None, conn=None
 ) -> int:
     """按 node_id 列表精确迁移 domain_id（不依赖 blueprint_id/belongs_to 匹配）。
     解决跨域共享 blueprint_id 误迁问题（附录D裁定1）。
@@ -2490,7 +2375,7 @@ def cmd_migrate_nodes(
 
 
 def cmd_update_path(
-    module_id: str, new_path: str, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
+    module_id: str, new_path: str, dry_run: bool = False, db_path: str = None, conn=None
 ) -> int:
     """UPDATE 模块的 path（物理路径迁移，ARCH-CAP-004 路径平铺）。
 
@@ -2538,7 +2423,7 @@ def cmd_migrate_dependencies(
     new_from_domain: str = "",
     new_to_domain: str = "",
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> int:
     """UPDATE domain_dependencies 表迁移跨域依赖。
@@ -2629,7 +2514,7 @@ def cmd_migrate_dependencies(
 
 
 def cmd_update_domain_capacity(
-    domain_id: str, field: str, value: int, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
+    domain_id: str, field: str, value: int, dry_run: bool = False, db_path: str = None, conn=None
 ) -> bool:
     """UPDATE domains 表的容量字段（current_modules/max_modules）。
 
@@ -2685,7 +2570,7 @@ def cmd_update_domain_capacity(
 
 
 def cmd_update_domain_layer(
-    domain_id: str, layer_id: str, dry_run: bool = False, db_path: str = str(DEPGRAPH_PATH), conn=None
+    domain_id: str, layer_id: str, dry_run: bool = False, db_path: str = None, conn=None
 ) -> bool:
     """UPDATE domains 表的 layer_id 字段（架构层级迁移）。
 
@@ -2740,7 +2625,7 @@ def cmd_update_domain_layer(
 
 def cmd_update_domain_ssot_path(
     domain_id: str, ssot_path: str, dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH), conn=None
+    db_path: str = None, conn=None
 ) -> bool:
     """UPDATE domains 表的 ssot_path 字段（附录D裁定2）。
     解决已存在域无法修正 ssot_path 的工具设计遗漏。
@@ -2788,7 +2673,7 @@ def cmd_insert_domain_mapping(
     mapped_by: str = "",
     note: str = "",
     dry_run: bool = False,
-    db_path: str = str(DEPGRAPH_PATH),
+    db_path: str = None,
     conn=None,
 ) -> bool:
     """INSERT 路径前缀→域映射到 domain_mapping 表（schema 盲区修复）。
@@ -3322,7 +3207,7 @@ def main() -> None:
         # 事件驱动——改名完成事件自动触发残留扫描，无需手工触发
         # 失败不 sys.exit（改名已成功），仅 WARNING 提示人工复核
         if not args.dry_run:
-            _post_rename_residual_check(old_id, str(DEPGRAPH_PATH))
+            _post_rename_residual_check(old_id, None)
         return
 
     if args.update_domain_name:

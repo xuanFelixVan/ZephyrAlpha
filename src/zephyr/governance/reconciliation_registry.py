@@ -80,6 +80,7 @@ __all__ = [
     "make_domain_doc_reconciler",
     "make_precommit_id_uniqueness_reconciler",
     "make_rules_integrity_reconciler",
+    "make_vocab_change_reconciler",
     "make_commit_gateway_audit_reconciler",
     "scan_and_archive_working_docs",
 ]
@@ -632,7 +633,10 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 同步磁盘→DB（generate_project_path_tree.py --write 幂等）
+        # 治本（2026-06-27）：删除 depgraph.db git diff/add/commit 死代码。
+        # P2 PG 迁移后 depgraph 已迁至 PostgreSQL，generate_project_path_tree.py --write
+        # 直接写入 PG（不产生 .db 文件变更），原 git diff/add/commit depgraph.db 逻辑
+        # 永远不会命中（diff 永远为空），属于路径污染残留死代码。
         sync_result = subprocess.run(
             [sys.executable, "scripts/governance/generate_project_path_tree.py", "--write"],
             cwd=str(project_root),
@@ -647,39 +651,9 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="warn",
                 detail=f"path_tree sync failed: {sync_result.stderr.strip()[:200]}",
             )
-
-        # 2. 检测 depgraph.db 变更
-        diff_result = gateway._run_git(
-            ["git", "diff", "--name-only", "--", "data/databases/depgraph.db"]
-        )
-        if diff_result.returncode == 0 and not diff_result.stdout.strip():
-            return ReconcileResult(action="clean", detail="arch_directory_tree up to date")
-
-        # 3. 变更 → 自动提交
-        add_result = gateway._run_git(["git", "add", "data/databases/depgraph.db"])
-        if add_result.returncode != 0:
-            return ReconcileResult(
-                action="warn",
-                detail=f"git add depgraph.db failed: {add_result.stderr.strip()[:200]}",
-            )
-
-        auto_msg = (
-            f"chore(depgraph): auto-sync arch_directory_tree by GitCommitGateway post-commit "
-            f"[GW:{session_id}:auto]"
-        )
-        commit_result = gateway._run_git(
-            ["git", "commit", "--no-verify", "-m", auto_msg,
-             "--", "data/databases/depgraph.db"]
-        )
-        if commit_result.returncode == 0:
-            return ReconcileResult(
-                action="auto_committed",
-                detail="arch_directory_tree drift detected and auto-reconciled",
-            )
         return ReconcileResult(
-            action="warn",
-            detail=f"arch_directory_tree drift detected, auto-commit failed: "
-                   f"{commit_result.stderr.strip()[:200]}",
+            action="clean",
+            detail="arch_directory_tree synced to PostgreSQL",
         )
 
     return ReconcilerSpec(
@@ -785,22 +759,28 @@ def make_rule_catalog_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False) -> dict:
-    """扫描 docs/_working/*.md 的幽灵引用并归档有幽灵引用的文档。
+    """递归扫描 docs/_working/ 下工作文档的幽灵引用并归档有幽灵引用的文档。
 
     真源函数：``make_working_docs_reconciler`` 与一次性归档（S5/CLI）共用此逻辑
     （向内收——扫描+归档逻辑唯一真源在此，两处复用，不另建脚本）。
 
-    扫描 docs/_working/*.md（排除 README.md permanent 定位说明），提取每个文档
-    引用的项目内文件路径（.py/.yaml/.yml/.md），检测引用路径是否仍存在于磁盘。
-    有幽灵引用的文档移动到 .runtime/working_archive/<ts>/<name>（可恢复，且
-    .runtime/ 已 .gitignore 不入库）。
+    递归扫描 docs/_working/ 下的工作文档（.md/.csv/.yaml/.yml/.json，排除
+    README.md permanent 定位说明），提取每个文档引用的项目内文件路径，检测
+    引用路径是否仍存在于磁盘。有幽灵引用的文档移动到
+    .runtime/working_archive/<ts>/<name>（可恢复，且 .runtime/ 已 .gitignore 不入库）。
 
-    路径引用提取（v1 保守，宁漏勿误）：
+    路径引用提取（v2 扩展，治本 GAP-5：覆盖纯文本/CSV/YAML 路径）：
     - markdown 链接 ``](path)`` → 提取 path
     - 反引号代码 ``` `path` ``` → 提取 path
+    - 纯文本路径（CSV 单元格值、YAML 值、正文裸路径 docs/foo/bar.md）
+    - CSV 专用：逐单元格精确提取（避免正则误匹配 CSV 结构）
     - file:/// 绝对路径 → 转项目相对路径
     - 排除 http(s):// / mailto: / # 锚点等外部引用
-    - 不扫描裸文本路径（避免代码示例误判）
+
+    双重路径解析（治本 GAP-1，与 audit_broken_links.py 一致）：
+    - 先相对于文档所在目录解析（markdown 链接习惯，嵌套子目录正确）
+    - 若不存在，尝试相对于 project_root 解析（CSV/YAML 项目根相对路径）
+    - 两者任一存在即判定非幽灵
 
     Args:
         project_root: 项目根路径（Path 或 str）。
@@ -817,6 +797,7 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
               "archive_dir": str | None,
             }
     """
+    import csv
     import re
     import shutil
     import time
@@ -827,9 +808,17 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
     if not working_dir.is_dir():
         return {"scanned": 0, "archived": [], "clean": [], "details": {}, "archive_dir": None}
 
-    # 路径引用正则：markdown 链接 ](path) 与反引号 `path`（保守，只匹配明确引用语法）
+    # 支持的工作文档扩展名（治本 GAP-5：.md only → 多类型）
+    _SUPPORTED_EXT = frozenset({".md", ".csv", ".yaml", ".yml", ".json"})
+
+    # 路径引用正则（与 audit_broken_links.py 保持一致，向内收复用模式）：
+    # - markdown 链接 ](path) 与反引号 `path`（保守，明确引用语法）
+    # - 纯文本路径：含路径分隔符的文件路径（覆盖 .py/.ps1/.sh/.toml/.txt/.csv 等全扩展名）
     _MD_LINK_RE = re.compile(r"\]\(([^)]+\.(?:py|yaml|yml|md))\)", re.IGNORECASE)
     _BACKTICK_RE = re.compile(r"`([^`]+\.(?:py|yaml|yml|md))`", re.IGNORECASE)
+    _TEXT_PATH_RE = re.compile(
+        r"(?<![\w/])([\w][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))\b"
+    )
 
     def _looks_like_path(ref: str) -> bool:
         """过滤非路径引用：必须含路径分隔符，不含空格/通配符/括号。
@@ -846,8 +835,16 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
             return False  # 省略写法（如 docs/.../foo.md），跳过
         return True
 
-    def _extract_refs(content: str) -> list[str]:
+    def _extract_refs(content: str, source_ext: str) -> list[str]:
+        """提取文档中引用的项目内文件路径。
+
+        根据 source_ext 选择提取策略：
+        - .md: markdown 链接 + 反引号 + 纯文本路径
+        - .csv: markdown 链接 + 反引号 + 纯文本路径 + CSV 逐单元格精确提取
+        - .yaml/.yml/.json: markdown 链接 + 反引号 + 纯文本路径
+        """
         refs: list[str] = []
+        # markdown 链接与反引号（所有文本类型都扫，.csv/.yaml 也可能含 markdown）
         for m in _MD_LINK_RE.finditer(content):
             r = m.group(1).replace("\\", "/")
             if _looks_like_path(r):
@@ -856,6 +853,22 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
             r = m.group(1).replace("\\", "/")
             if _looks_like_path(r):
                 refs.append(r)
+        # 纯文本路径（治本 GAP-5：覆盖 CSV/YAML/JSON 中的裸路径）
+        for m in _TEXT_PATH_RE.finditer(content):
+            r = m.group(1).replace("\\", "/")
+            if _looks_like_path(r):
+                refs.append(r)
+        # CSV 专用：逐单元格提取（更精确，避免正则误匹配 CSV 结构）
+        if source_ext == ".csv":
+            try:
+                reader = csv.reader(content.splitlines())
+                for row in reader:
+                    for cell in row:
+                        cell = cell.strip().strip('"').strip("'")
+                        if "/" in cell and "." in cell and _looks_like_path(cell):
+                            refs.append(cell)
+            except Exception:
+                pass  # CSV 解析失败回退到正则结果
         # 去重保序
         seen: set[str] = set()
         unique: list[str] = []
@@ -868,53 +881,74 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
     def _is_external(ref: str) -> bool:
         return ref.startswith(("http://", "https://", "mailto:", "#"))
 
-    def _is_ghost(ref: str) -> bool:
+    def _is_ghost(ref: str, source: Path) -> bool:
+        """双重路径解析判定幽灵引用（治本 GAP-1，与 audit_broken_links.py 一致）。
+
+        先相对于文档所在目录解析（markdown 链接习惯，嵌套子目录正确）；
+        若不存在，尝试相对于 project_root 解析（CSV/YAML 项目根相对路径）。
+        两者任一存在即判定非幽灵。
+        """
         if _is_external(ref):
+            return False
+        ref = ref.split("#")[0].strip()  # 剥离锚点（如 foo.md#section → foo.md）
+        if not ref:
             return False
         # file:/// 绝对路径 → 直接作为绝对路径检查（不拼 project_root，避免前导/解析 bug）
         if ref.startswith("file:///"):
             abs_path = ref[len("file:///"):]
             return not Path(abs_path).exists()
-        # 相对于 project_root
-        if (project_root / ref).exists():
-            return False
-        # 相对于 _working/（处理 ../ 相对路径，resolve 兜底 .. 折叠）
-        if (working_dir / ref).resolve().exists():
-            return False
+        # 策略1：相对于文档所在目录解析（markdown 链接习惯，嵌套子目录正确）
+        try:
+            if (source.parent / ref).resolve().exists():
+                return False
+        except (OSError, ValueError):
+            pass
+        # 策略2：相对于 project_root 解析（CSV/YAML 项目根相对路径）
+        try:
+            if (project_root / ref).exists():
+                return False
+        except (OSError, ValueError):
+            pass
         return True
 
-    md_files = [f for f in working_dir.glob("*.md") if f.name != "README.md"]
+    # 递归扫描多类型工作文档（治本 GAP-5：glob("*.md") → rglob 多扩展名）
+    working_files = [
+        f for f in working_dir.rglob("*")
+        if f.is_file()
+        and f.suffix.lower() in _SUPPORTED_EXT
+        and f.name != "README.md"
+    ]
     archived: list[str] = []
     clean: list[str] = []
     details: dict = {}
     archive_dir = None
 
-    for md in md_files:
+    for doc in working_files:
         try:
-            content = md.read_text(encoding="utf-8", errors="replace")
+            content = doc.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
-        refs = _extract_refs(content)
-        ghosts = [r for r in refs if _is_ghost(r)]
+        refs = _extract_refs(content, doc.suffix.lower())
+        ghosts = [r for r in refs if _is_ghost(r, doc)]
         if ghosts:
-            details[md.name] = {"ghost_refs": ghosts}
+            details[doc.name] = {"ghost_refs": ghosts}
             if not dry_run:
                 if archive_dir is None:
                     archive_dir = project_root / ".runtime" / "working_archive" / str(int(time.time()))
                     archive_dir.mkdir(parents=True, exist_ok=True)
-                dest = archive_dir / md.name
+                dest = archive_dir / doc.name
                 try:
-                    shutil.move(str(md), str(dest))
-                    archived.append(md.name)
+                    shutil.move(str(doc), str(dest))
+                    archived.append(doc.name)
                 except OSError as e:
-                    details[md.name]["archive_error"] = str(e)
+                    details[doc.name]["archive_error"] = str(e)
             else:
-                archived.append(md.name)  # dry_run 计入候选供审阅
+                archived.append(doc.name)  # dry_run 计入候选供审阅
         else:
-            clean.append(md.name)
+            clean.append(doc.name)
 
     return {
-        "scanned": len(md_files),
+        "scanned": len(working_files),
         "archived": archived,
         "clean": clean,
         "details": details,
@@ -1036,14 +1070,19 @@ def make_working_docs_reconciler(gateway: "object") -> ReconcilerSpec:
 def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造域文档制品 post-commit 自动重生 reconciler。
 
-    commit depgraph.db 后，域文档制品（.md/.mmd）可能过时（DB 变了但制品未重生）。
+    治本（2026-06-27）：原 trigger 匹配 ``data/databases/depgraph.db`` commit 事件，
+    P2 PG 迁移后 depgraph 已迁至 PostgreSQL，无 .db 文件 commit 路径，trigger 永不命中，
+    reconciler 沦为死代码。现改为匹配 PG 写入脚本 commit（apply_depgraph.py /
+    sync_yaml_to_depgraph.py / generate_project_path_tree.py），这三者是 PG depgraph
+    的唯一写入入口，其变更即代表 DB 内容可能漂移，需重生域制品。
+
     本 reconciler 在 post-commit 跑 generate_domain_doc.py --all +
     generate_domain_dependency_diagram.py --all 重生所有域制品，如有变更自动提交。
 
     治本修复2a/2b：消除"DB 变更→制品漂移"窗口（红蓝对抗严重2 治本延伸）。
     之前手工运行生成器（违反逻辑2.2 自动触发原则），现改为 post-commit 事件驱动。
 
-    循环安全：trigger 只匹配 depgraph.db，制品 auto-commit 的 committed_files
+    循环安全：trigger 只匹配 PG 写入脚本（.py），制品 auto-commit 的 committed_files
     是 .md/.mmd，不命中 trigger，不会递归触发。
 
     Args:
@@ -1057,7 +1096,13 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
     import sys
 
     project_root = gateway.project_root
-    _DEPGRAPH_DB_REL = "data/databases/depgraph.db"
+    # 治本（2026-06-27）：PG 写入脚本真源列表（替代 depgraph.db trigger）。
+    # 这三脚本是 PostgreSQL depgraph 的唯一写入入口，其 commit 即代表 DB 变更。
+    _PG_WRITE_SCRIPTS = (
+        "scripts/governance/apply_depgraph.py",
+        "scripts/governance/sync_yaml_to_depgraph.py",
+        "scripts/governance/generate_project_path_tree.py",
+    )
     _GEN_DIR = "scripts/governance/d5_architecture/generators"
     _DOC_DIRS = (
         "docs/02_enterprise_architecture/02_domain_architecture_docs",
@@ -1067,7 +1112,7 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel == _DEPGRAPH_DB_REL:
+            if rel in _PG_WRITE_SCRIPTS:
                 return True
         return False
 

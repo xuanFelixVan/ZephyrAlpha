@@ -87,7 +87,7 @@ def main() -> int:
             if in_frontmatter and stripped.startswith("doc_type:"):
                 doc_type = stripped.split(":", 1)[1].strip()
 
-        if doc_type and doc_type == "governance":
+        if doc_type and doc_type in ("policy", "standard"):  # v2.0.0: governance 幽灵值修复为有效值
             parent = fpath.parent.name
             if parent.startswith("operational"):
                 rel = fpath.relative_to(REPO_ROOT)

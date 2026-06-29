@@ -105,8 +105,6 @@ def scan_deprecated_adr_refs() -> list[dict]:
         docs_dir = REPO_ROOT / "docs"
     for filepath in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD):
         fm = parse_frontmatter_from_file(filepath)
-        if fm and fm.get("doc_type") == "adr":
-            continue
         try:
             content = filepath.read_text(encoding="utf-8", errors="replace")
         except (OSError, UnicodeDecodeError):

@@ -57,7 +57,6 @@ def _find_project_root() -> Path:
 
 _PROJECT_ROOT = _find_project_root()
 _DEFAULT_RULES_DIR = _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
-_DEFAULT_DB_PATH = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 _GOVERNANCE_DB = _PROJECT_ROOT / "data" / "databases" / "governance.db"
 _SYNC_SCRIPT = _PROJECT_ROOT / "scripts" / "governance" / "sync_rule_registry.py"
 _VERIFY_SCRIPT = _PROJECT_ROOT / "scripts" / "governance" / "verify_rule_yaml_migration.py"
@@ -69,11 +68,10 @@ class RuleWatcher:
     def __init__(
         self,
         rules_dir: str | Path | None = None,
-        db_path: str | Path | None = None,
+        db_path: str | Path | None = None,  # 保留向后兼容（PG模式下忽略，治本2026-06-27删除_DEFAULT_DB_PATH常量）
         poll_interval: float = 5.0,
     ):
         self._rules_dir = Path(rules_dir) if rules_dir else _DEFAULT_RULES_DIR
-        self._db_path = Path(db_path) if db_path else _DEFAULT_DB_PATH
         self._poll_interval = poll_interval
         self._baseline: dict[str, float] = {}
         self._stop_event = threading.Event()

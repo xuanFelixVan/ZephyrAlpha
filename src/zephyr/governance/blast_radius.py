@@ -43,9 +43,9 @@ __all__ = ["BlastRadiusAnalyzer", "BlastRadiusReport"]
 
 logger = logging.getLogger(__name__)
 
-# depgraph.db 物理路径（P2迁移后已迁移到 PostgreSQL，此路径保留作为参考）
-# 真源：zephyr.shared.io.paths.REPO_ROOT（禁止 Path("D:/ZephyrAlpha") 硬编码）
-_DEPGRAPH_DEFAULT_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 _DEPGRAPH_DEFAULT_PATH 常量（路径污染源）。
+# blast_radius 读取的是 depgraph YAML 文件（非 SQLite/PG），调用方必须显式传入 depgraph_path。
+# 历史默认指向 depgraph.db 是 latent bug（db 文件不能用 yaml.safe_load 读取）。
 
 
 class DepgraphLoadError(RuntimeError):
@@ -113,16 +113,22 @@ class BlastRadiusAnalyzer:
         """初始化分析器.
 
         Args:
-            depgraph_path: depgraph YAML 文件路径。None 使用默认路径。
+            depgraph_path: depgraph YAML 文件路径。必传（治本2026-06-27：删除默认路径常量，
+                防止路径污染）。调用方应从 extract_depgraph.py 导出 YAML 后传入。
             max_depth: 传递依赖最大搜索深度，必须 >= 1。
 
         Raises:
-            ValueError: max_depth < 1 时抛出。
+            ValueError: max_depth < 1 或 depgraph_path 为 None 时抛出。
             DepgraphLoadError: depgraph 文件不存在或格式无效时抛出。
         """
         if max_depth < 1:
             raise ValueError(f"max_depth must be >= 1, got {max_depth}")
-        self._depgraph_path = Path(depgraph_path) if depgraph_path else _DEPGRAPH_DEFAULT_PATH
+        if depgraph_path is None:
+            raise ValueError(
+                "depgraph_path 必须显式传入（治本2026-06-27：删除默认路径常量防止污染）。"
+                "请从 extract_depgraph.py 导出 YAML 后传入。"
+            )
+        self._depgraph_path = Path(depgraph_path)
         self._max_depth = max_depth
         self._reverse_deps: dict[str, list[str]] = {}
         self._path_to_id: dict[str, str] = {}

@@ -5,12 +5,12 @@
 # [CONSUMERS] .pre-commit-config.yaml (GATE-COMMIT-GW hook)
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 检测裸 git commit（未经 GitCommitGateway）；经 gateway 的 commit 用 --no-verify 绕过本门禁；裸 commit 被阻断 exit 1
-# [MODIFY-GUARD] 检测逻辑：环境变量 ZEPHYR_COMMIT_GATEWAY=1 或 commit message 含 [GW:...] 标记
+# [INVARIANTS] hook 运行=裸 git commit→阻断 exit 1；gateway 用 --no-verify 绕过 hook；合并提交放行
+# [MODIFY-GUARD] 阻断逻辑：hook 运行本身即说明是裸 commit（gateway 用 --no-verify 不触发 hook）；合并提交检测（.git/MERGE_HEAD）
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=经gateway放行; exit 1=裸commit阻断; exit 2=脚本错误
+# [ERROR_CONTRACT] exit 0=合并提交放行; exit 1=裸commit阻断; exit 2=脚本错误
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-validate_commit_gateway | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
@@ -18,20 +18,29 @@
 
 检测裸 git commit，强制走 GitCommitGateway（根治幽灵提交）。
 
-检测逻辑（任一满足即放行）:
-1. 环境变量 ZEPHYR_COMMIT_GATEWAY=1（GitCommitGateway.commit() 设置）
-2. commit message 含 [GW:<session_id>] 标记（GitCommitGateway 自动追加）
+红蓝修复 RB-6（2026-06-29）:
+  旧逻辑（已废除）: env var ZEPHYR_COMMIT_GATEWAY=1 或 commit message 含 [GW:...] 标记 → 放行
+  漏洞: env var 在 shell 中持久存在（RB-2），伪造 [GW:fake] 标记可绕过（RB-6）
+  新逻辑: hook 运行本身即说明是裸 commit（gateway 用 --no-verify 不触发 hook）→ 阻断
 
 工作原理:
 - GitCommitGateway.commit() 用 git commit --no-verify 绕过 pre-commit hooks
-  → 本门禁对 gateway commit 不触发（fast path）
+  → 本 hook 对 gateway commit 不触发（gateway 路径）
 - 裸 git commit（无 --no-verify）会触发 pre-commit hooks
-  → 本门禁检测到 env var 未设置 → 阻断 exit 1
+  → 本 hook 运行 = 非 gateway commit = 阻断 exit 1
+- 合并提交（.git/MERGE_HEAD 存在）放行（merge 不经 gateway，属正常操作）
+- 唯一合法绕过: git commit --no-verify（conscious bypass，由 GATE-COMMIT-GW-AUDIT 审计 reconciler 追踪）
+
+威胁模型:
+  pre-commit hook 是本地防线，可被 --no-verify 绕过。纵深防御:
+  1. 本 hook: 拦截无意的裸 commit（覆盖所有非 --no-verify 路径）
+  2. GATE-COMMIT-GW-AUDIT reconciler: post-commit 审计最近 20 个 commit，标记无 [GW:] 的裸 commit
+  3. 过程纪律: code review + AGENTS.md 规范
 
 对标: validate_commit_message.py（Conventional Commits 校验，commit-msg stage）
 区别: 本脚本检测 commit 路径（是否经 gateway），非 message 格式
 
-exit codes: 0=经gateway放行, 1=裸commit阻断, 2=脚本错误
+exit codes: 0=合并提交放行, 1=裸commit阻断, 2=脚本错误
 """
 
 from __future__ import annotations
@@ -39,7 +48,7 @@ from __future__ import annotations
 __manifest__ = """
 args:
 - --commit-msg-file
-description: GATE-COMMIT-GW门禁——检测裸git commit，强制走GitCommitGateway（环境变量或GW标记）
+description: GATE-COMMIT-GW门禁——hook运行=裸commit=阻断（gateway用--no-verify不触发hook）；合并提交放行
 dimensions:
 - D11
 priority: P1
@@ -47,8 +56,7 @@ timeout_seconds: 5
 warn_only: false
 """
 
-import os
-import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -60,30 +68,24 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
-_GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
-_GW_MARKER_PATTERN = re.compile(r"\[GW:[^\]]+\]")
 
+def _is_merge_commit() -> bool:
+    """检测当前是否为合并提交（.git/MERGE_HEAD 存在）。
 
-def _check_env_var() -> bool:
-    """检测环境变量 ZEPHYR_COMMIT_GATEWAY=1。"""
-    return os.environ.get(_GATEWAY_ENV) == "1"
-
-
-def _check_commit_message(msg_file: str | None) -> bool:
-    """检测 commit message 是否含 [GW:...] 标记。
-
-    Args:
-        msg_file: commit-msg 文件路径（commit-msg stage 传入），None 则跳过。
-
-    Returns:
-        True=含 GW 标记, False=不含或无法读取。
+    merge 是正常 git 操作，不经 gateway，属合法放行场景。
     """
-    if not msg_file:
-        return False
     try:
-        content = Path(msg_file).read_text(encoding="utf-8", errors="replace")
-        return bool(_GW_MARKER_PATTERN.search(content))
-    except OSError:
+        result = subprocess.run(
+            ["git", "rev-parse", "--git-dir"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode != 0:
+            return False
+        git_dir = Path(result.stdout.strip())
+        return (git_dir / "MERGE_HEAD").exists()
+    except Exception:
         return False
 
 
@@ -96,7 +98,7 @@ def main() -> int:
     parser.add_argument(
         "--commit-msg-file",
         default=None,
-        help="commit-msg 文件路径（commit-msg stage 传入，可选）",
+        help="commit-msg 文件路径（commit-msg stage 传入，兼容用，本门禁不依赖）",
     )
     parser.add_argument(
         "filenames",
@@ -105,17 +107,15 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    # 检测 1: 环境变量
-    if _check_env_var():
-        print("GATE-COMMIT-GW: PASS (ZEPHYR_COMMIT_GATEWAY=1)")
+    # 合并提交放行（merge 不经 gateway，属正常操作）
+    if _is_merge_commit():
+        print("GATE-COMMIT-GW: SKIP (merge commit)")
         return EXIT_PASS
 
-    # 检测 2: commit message GW 标记
-    if _check_commit_message(args.commit_msg_file):
-        print("GATE-COMMIT-GW: PASS (commit message 含 [GW:...] 标记)")
-        return EXIT_PASS
-
-    # 阻断：裸 commit
+    # hook 运行 = 非 gateway commit = 阻断
+    # 原理：GitCommitGateway 用 --no-verify 绕过所有 pre-commit hooks
+    # 所以本 hook 运行本身就说明是裸 git commit
+    # 唯一合法绕过：git commit --no-verify（conscious bypass，由 post-commit 审计 reconciler 追踪）
     print(
         "GATE-COMMIT-GW: BLOCKED — 检测到裸 git commit（未经 GitCommitGateway）\n"
         "  根因: 多 AI session 共享 git index，裸 commit 会导致幽灵提交\n"
@@ -125,7 +125,8 @@ def main() -> int:
         "  或代码调用:\n"
         "    from zephyr.governance.git_commit_gateway import GitCommitGateway\n"
         "    GitCommitGateway().commit(session_id, files, message)\n"
-        "  如确需绕过（如修复历史）: git commit --no-verify（ consciously bypass）",
+        "  如确需绕过（如修复历史）: git commit --no-verify（conscious bypass，"
+        "由 GATE-COMMIT-GW-AUDIT 审计 reconciler 追踪）",
         file=sys.stderr,
     )
     return EXIT_FINDINGS

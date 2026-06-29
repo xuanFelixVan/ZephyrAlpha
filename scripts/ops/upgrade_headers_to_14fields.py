@@ -65,9 +65,8 @@ from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 # PROJECT_ROOT 作为 REPO_ROOT 的向后兼容别名，供本文件现有代码引用（最小改动）。
 PROJECT_ROOT = REPO_ROOT
-# P2迁移后：DB_PATH 保留作为 SQLite 备份路径参考，实际连接通过 get_depgraph_pg_connection() 走 PostgreSQL。
-# 同模式见 src/zephyr/governance/depgraph_schema.py:72
-DB_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DB_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 
 # Canonical 14-field order per TRAE-047 v1.1.0
 CANONICAL_FIELDS = [
@@ -186,10 +185,13 @@ class UpgradeResult:
 
 
 class DepgraphLoader:
-    """Load node info and edges from depgraph.db into memory lookups."""
+    """Load node info and edges from PostgreSQL depgraph into memory lookups.
 
-    def __init__(self, db_path: Path) -> None:
-        self.db_path = db_path
+    治本（2026-06-27）：删除 db_path 实例属性（路径污染源，P2 PG 迁移后无文件路径概念）。
+    """
+
+    def __init__(self, db_path: Path | None = None) -> None:
+        # db_path 参数保留仅为向后兼容签名，PG 模式下不使用。
         self.nodes_by_path: dict[str, NodeInfo] = {}
         self.node_id_to_path: dict[str, str] = {}
         self.edges_from: dict[str, list[str]] = {}  # from_node_id -> [to_path, ...]
@@ -676,7 +678,7 @@ def main() -> None:
     print(f"[UPGRADE] loaded {len(_BLUEPRINT_REGISTRY)} blueprint paths from registry")
 
     # Load depgraph data
-    loader = DepgraphLoader(DB_PATH)
+    loader = DepgraphLoader()
 
     # Collect files
     py_files = collect_py_files(args.dir)

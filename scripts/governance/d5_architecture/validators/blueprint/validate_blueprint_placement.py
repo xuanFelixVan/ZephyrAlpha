@@ -194,8 +194,8 @@ def main() -> int:
             matched = any(p.startswith(prefix) for p in path_parts)
             if not matched:
                 doc_type = fm.get("doc_type", "")
-                if doc_type == "placeholder":
-                    continue
+                if not doc_type:
+                    continue  # 跳过无 doc_type 的文件（v2.0.0: placeholder 幽灵值修复）
                 if _is_domain_owned(fm, path_parts):
                     continue  # 判据(c) 域归属豁免
                 violations_p0.append(

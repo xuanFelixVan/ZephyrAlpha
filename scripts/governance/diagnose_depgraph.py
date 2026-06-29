@@ -24,7 +24,8 @@ from collections import defaultdict
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源，未使用）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接。
 _THIS_FILE = Path(__file__).resolve()

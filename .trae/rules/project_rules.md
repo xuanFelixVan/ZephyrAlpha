@@ -289,7 +289,7 @@ except PermissionError:
 | ❌ | 新增 gate 只写名字不写实现 | 假门禁 |
 | ❌ | 完成任务卡后不检查"下游有没有人用" | 孤儿功能 |
 | ❌ | 创建 `.md` 文档但 frontmatter 不含 `ttl` 字段 | 文档无保留期，无法识别过期/清理。判定方法见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` 二元判定树 |
-| ❌ | 过程性文档直接放永久区或根目录 | 永久区污染 / 根目录孤儿。**默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/readme.md)**（ttl=task_bound）；仅永久区路径（`01_policies_and_standards/`、`02_enterprise_architecture/`、`03_modules/`、`08_knowledge/`）经用户批准方可晋升（ttl=permanent） |
+| ❌ | 过程性文档直接放永久区或根目录 | 永久区污染 / 根目录孤儿。**默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/index.md)**（ttl=task_bound）；仅永久区路径（`01_policies_and_standards/`、`02_enterprise_architecture/`、`03_modules/`、`08_knowledge/`）经用户批准方可晋升（ttl=permanent） |
 
 ---
 
@@ -1109,7 +1109,8 @@ DeepSeek V4 RPO 1M context ≈ 1M tokens。depgraph 需要 ~55M tokens。差距 
 | 允许 | 示例 |
 |------|------|
 | `python <脚本>.py <参数>` | `python scripts/lock_files.py check <file>` |
-| `python scripts/git_guard.py <git子命令>` | `python scripts/git_guard.py add -A`（❌ 禁止裸 `git xxx`，Trae 硬编码审查会弹窗） |
+| `python scripts/git_guard.py <git子命令>` | `python scripts/git_guard.py add <file>`（❌ 禁止裸 `git xxx`，Trae 硬编码审查会弹窗。注意：`commit` 子命令是裸透传不走 gateway，会被 GATE-COMMIT-GW 阻断） |
+| `python scripts/git_commit.py --session <id> --files <f> --message <msg>` | 唯一合法 commit 入口（经 GitCommitGateway，详见 RULE-TWENTY） |
 | `python -m pytest <path>` | `python -m pytest tests/` |
 | `python -m zephyr.<mod>` | `python -m zephyr.governance.task_repo` |
 
@@ -1296,6 +1297,8 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 
 **核心**：AI 完成文件修改后 MUST 在 session 结束前 git commit。未提交的代码 = 不存在 = 会被 git reset/checkout 冲掉。
 
+> **GATE-COMMIT-GW 门禁（OPS-2026062513 治本）**：全项目禁止裸 `git commit`。pre-commit hook [validate_commit_gateway.py](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_commit_gateway.py) 会阻断所有非 `--no-verify` 的 commit（hook 运行=裸 commit=阻断 exit 1）。所有 commit MUST 经 [GitCommitGateway](file:///d:/ZephyrAlpha/src/zephyr/governance/git_commit_gateway.py)（串行锁+stash 隔离+GW 标记），CLI 入口为 `python scripts/git_commit.py`。`git_guard.py commit` 是裸透传（不走 gateway），会被门禁阻断——勿用 `git_guard.py commit`。
+
 ### 触发条件
 
 任何文件修改完成后——包括代码、配置、规则、测试文件。
@@ -1305,22 +1308,23 @@ STEP 3  连续两次零问题判定 → 通过 → 可声明完成
 | 时机 | 动作 |
 |------|------|
 | 文件修改完成 | `python scripts/git_guard.py add <具体文件>`（禁止 `python scripts/git_guard.py add -A`） |
-| 任务卡 transition(COMPLETED) | 自动 `python scripts/git_guard.py add files_in_scope` + `python scripts/git_guard.py commit`（DM-202918 实现） |
+| commit 提交 | `python scripts/git_commit.py --session <session_id> --files <f1,f2> --message "type(scope): desc"`（全项目唯一合法 commit 入口） |
+| 任务卡 transition(COMPLETED) | 自动 `python scripts/git_commit.py --session <id> --files <files> --message <msg>`（DM-202918 实现） |
 | 释放文件锁前 | 检查 `python scripts/git_guard.py status`，有未提交修改则 WARNING（DM-202919 实现） |
 | session 结束前 | 确认 `python scripts/git_guard.py status` 干净（无未提交修改） |
 
-### commit message 格式（裁定2：2026-06-25）
+### commit message 格式（裁定2：2026-06-25，2026-06-29 更新为 git_commit.py）
 
-PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规则选择提交方式：
+`git_commit.py --message` 接受字符串参数，内部自动写入临时文件并用 `git commit -F` 提交（绕过 PowerShell 解析风险）。MUST 按以下规则选择提交方式：
 
 | 场景 | 命令 | 理由 |
 |------|------|------|
-| 单行、无特殊字符 | `python scripts/git_guard.py commit -m "type(scope): desc"` | 简单快捷 |
-| 多行、含特殊字符、含中文括号 | `python scripts/git_guard.py commit -F <file>` | 避免 PowerShell 解析风险 |
+| 单行、无特殊字符 | `python scripts/git_commit.py --session <id> --files <f> --message "type(scope): desc"` | 简单快捷 |
+| 多行、含特殊字符、含中文括号 | `$msg = @"<newline>type(scope): desc<newline><newline>Body<newline>"@; python scripts/git_commit.py --session <id> --files <f> --message $msg` | PowerShell here-string 传递多行消息，git_commit.py 内部用 `-F` 文件提交 |
 
-**流程**：写消息到临时文件 → `python scripts/git_guard.py commit -F <file>` → 删除临时文件（RULE-FIVE）。
+**流程**：`git_guard.py add <文件>` → `git_commit.py --session <id> --files <f> --message <msg>` → 确认 exit 0。
 
-**根因**：2026-06-25 排查 `git commit -m "fix: clean test domain pollution..."` 在 PowerShell 中因特殊字符解析失败。`-F` 文件方式绕过 shell 解析，是跨平台安全方案。
+**根因**：2026-06-25 排查 `git commit -m "fix: clean test domain pollution..."` 在 PowerShell 中因特殊字符解析失败。`git_commit.py` 内部用 `-F` 文件方式绕过 shell 解析，是跨平台安全方案。
 
 ### 绝对禁止
 
@@ -1329,10 +1333,11 @@ PowerShell 对 `;` `()` `*` 等特殊字符有解析风险。MUST 按以下规�
 | ❌ | 写完代码不提交，留到"下次再说" | git 操作冲掉工作区，代码丢失 |
 | ❌ | 用 `python scripts/git_guard.py add -A` 或 `python scripts/git_guard.py add .` 批量添加 | 混入敏感文件或无关变更 |
 | ❌ | 释放文件锁前不检查 git status | 锁释放后忘记提交 |
+| ❌ | 裸 `git commit` 或 `python scripts/git_guard.py commit`（不经 GitCommitGateway） | GATE-COMMIT-GW 门禁阻断 exit 1；绕过用 `--no-verify` 会被 post-commit 审计 reconciler 标记 |
 
 ### 根因
 
-2026-06-23 调查：AI session 写完代码不提交 git，另一 session 做 git reset 时工作区未提交修改丢失。6 个现有机制（文件锁/StagingArea/transition/规则/定时器/worktree）均不防 git 层丢失。
+2026-06-23 调查：AI session 写完代码不提交 git，另一 session 做 git reset 时工作区未提交修改丢失。6 个现有机制（文件锁/StagingArea/transition/规则/定时器/worktree）均不防 git 层丢失。2026-06-29 红蓝对抗修复：GATE-COMMIT-GW 门禁 + git_commit.py CLI 强制所有 commit 走 GitCommitGateway。
 
 ---
 

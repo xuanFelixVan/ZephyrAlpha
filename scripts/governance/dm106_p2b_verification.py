@@ -46,7 +46,8 @@ from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 PROJECT_ROOT = REPO_ROOT  # alias 真源
-DEPGRAPH_DB_PATH = PROJECT_ROOT / "data/databases/depgraph.db"
+# 治本（2026-06-27）：删除 DEPGRAPH_DB_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，通过 _shared.constants 获取 PG 连接
 _THIS_FILE = Path(__file__).resolve()
@@ -282,7 +283,7 @@ def run_verification():
     # ========== 加载数据 ==========
     print("[1/10] 加载 depgraph...")
     try:
-        depgraph = _load_from_db(DEPGRAPH_DB_PATH)
+        depgraph = _load_from_db(None)
     except Exception as e:
         print(f"FATAL: 无法加载 depgraph: {e}")
         sys.exit(2)
@@ -308,7 +309,7 @@ def run_verification():
 
     print("[4/10] 加载 architecture-panorama...")
     try:
-        panorama_data = _load_from_db(DEPGRAPH_DB_PATH)
+        panorama_data = _load_from_db(None)
     except Exception as e:
         print(f"WARN: 无法加载 panorama: {e}")
         panorama_data = None
@@ -734,7 +735,7 @@ def run_verification():
     # ========== 更新 depgraph 元数据 ==========
     print("\n更新 depgraph 元数据...")
     _update_db_metadata(
-        DEPGRAPH_DB_PATH,
+        None,
         {
             "version_num": 4,
             "version": "3.2.0",

@@ -28,7 +28,8 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DEFAULT_DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 
 # ── _shared 模块 import bootstrap（P2迁移：复用 get_depgraph_pg_connection）──
 _THIS_FILE = Path(__file__).resolve()
@@ -101,15 +102,14 @@ class ChangeImpactAnalyzer:
     def _load_depgraph(self) -> None:
         if self._loaded:
             return
-        # P2迁移后：depgraph 已迁移到 PostgreSQL，不再依赖文件路径存在性检查。
-        # 连接由 get_depgraph_pg_connection 统一管理，连接失败由下方 try/except 捕获。
-        depgraph_path = DEFAULT_DEPGRAPH_PATH
+        # 治本（2026-06-27）：depgraph 已迁至 PostgreSQL，连接由 get_depgraph_pg_connection
+        # 统一管理，无文件路径概念；连接失败由下方 try/except 捕获并 fail-loud 抛错。
         try:
-            self._depgraph = _load_depgraph_from_db(depgraph_path)
+            self._depgraph = _load_depgraph_from_db(None)
         except Exception as exc:
             raise DependencyGraphError(
-                f"Failed to load depgraph: {exc}",
-                str(depgraph_path),
+                f"Failed to load depgraph from PostgreSQL: {exc}",
+                "",
             )
         self._build_adjacency()
         self._loaded = True

@@ -53,11 +53,11 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 # P2 PG 迁移：删除 lock_files 文件锁（PG 用 MVCC）；导入 PG 连接入口
-from _shared.constants import DEPGRAPH_DB_PATH, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 import psycopg2  # noqa: E402
 
-# 绝对路径（RULE-EIGHT）——DB_PATH 通过 _shared.constants 统一引用（Bug H 修复）
-DB_PATH = str(DEPGRAPH_DB_PATH)
+# 治本（2026-06-27）：删除 DB_PATH = str(DEPGRAPH_DB_PATH)（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 RULES_DIR = r"D:\ZephyrAlpha\docs\01_policies_and_standards"
 
 # V5.0 裁定：9 张表全部保护（与 P0-6 创建触发器列表一致）
@@ -703,7 +703,7 @@ def sync_rule_catalog_registry(cur):
     if not data:
         return
 
-    rules = data.get("rules", [])
+    rules = data.get("files", [])  # #ARCH-024 修复：catalog 顶层键是 files，不是 rules
     synced = 0
     for rule in rules:
         path = rule.get("path", "")
@@ -1036,7 +1036,7 @@ def sync_all() -> bool:
 
     print("=" * 60)
     print("=== YAML→DB 同步开始 ===")
-    print(f"DB: {DB_PATH}")
+    print("DB: PostgreSQL (localhost:5432/depgraph)")
     print(f"RULES_DIR: {RULES_DIR}")
     print("=" * 60)
 

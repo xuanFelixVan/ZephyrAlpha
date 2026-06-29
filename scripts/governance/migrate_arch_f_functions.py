@@ -23,13 +23,14 @@ from __future__ import annotations
 
 import argparse
 import os
-import sqlite3
 import sys
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-DEPGRAPH_PATH = REPO_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源，未使用）+
+# 删除 import sqlite3（P2 迁移后无 sqlite 调用，残留 import）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()。
 
 # 导入 apply_depgraph 的写入锁（含 git 备份门禁 + 物理备份 + 文件锁）
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent

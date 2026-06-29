@@ -398,7 +398,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 | 4 | 禁止 Trae + Cursor 同时打开同一文件 |
 | 5 | 扫描器大量报错 → 先检查扫描器本身的逻辑 |
 | 6 | `.db` 文件存在性判断禁止用 LS/Glob（工具过滤 `.db` 扩展名会漏显示）。MUST 用 `python -c "import os; print(os.path.isfile(r'绝对路径'))"` 确认 |
-| 7 | **git commit 免确认技巧**——RunCommand 直接调用 `git commit` 会触发 Trae 确认弹窗。用 Python subprocess 包装可绕过：写临时 `.py` 脚本 `subprocess.run(["git", "commit", "--no-verify", "-m", "msg"], cwd=r"d:\ZephyrAlpha")` → RunCommand 跑 `python xxx.py` |
+| 7 | **git commit 免确认技巧**——RunCommand 直接调用 `git commit` 会触发 Trae 确认弹窗 + 被 GATE-COMMIT-GW 门禁阻断。正确方式：用 `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（封装 GitCommitGateway，内部用 subprocess 调 git，绕过 Trae 弹窗 + 经串行锁+stash 隔离+GW 标记）。**禁止**写临时 .py 脚本裸调 `subprocess.run(["git", "commit", "--no-verify"])`——这绕过 GitCommitGateway，会被 post-commit 审计 reconciler 标记为违规 |
 
 ---
 
@@ -582,7 +582,7 @@ STEP 6  — **AutoPilot 自动驾驶**: 初始化 AutoPilot → status_report() 
 
 | 不可删 | 举例 |
 |--------|------|
-| frontmatter 字段 | module_id, title, version, layer, depends_on, tags, **ttl（必填，2 值：permanent/task_bound）**。过程文档默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/readme.md)（task_bound）；判定见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` |
+| frontmatter 字段 | module_id, title, version, layer, depends_on, tags, **ttl（必填，2 值：permanent/task_bound）**。过程文档默认落 [`docs/_working/`](file:///d:/ZephyrAlpha/docs/_working/index.md)（task_bound）；判定见 [`ttl_vocabulary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml) 的 `decision_tree` |
 | 路径 | 绝对路径 `d:/ZephyrAlpha/...` 和相对路径 |
 | module_id 引用 | MOD-INF-XXX, PS-STD-XXX |
 | 命令和代码模板 | `python scripts/...`、代码块 |

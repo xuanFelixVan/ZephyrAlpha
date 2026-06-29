@@ -49,7 +49,8 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import get_depgraph_pg_connection  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT  # alias 真源
-DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+# 治本（2026-06-27）：删除 DEPGRAPH_PATH = .../depgraph.db 常量（路径污染源）。
+# P2 迁移后 depgraph 已迁至 PostgreSQL，连接入口 get_depgraph_pg_connection()，无文件路径概念。
 CSV_PATH = PROJECT_ROOT / "data/asset_index/module_domain_matching.csv"
 BP_MAPPING_PATH = PROJECT_ROOT / "data/asset_index/blueprint-domain-mapping.yaml"
 
@@ -422,7 +423,7 @@ def main():
         bp_mapping = {}
 
     try:
-        depgraph = load_depgraph(DEPGRAPH_PATH)
+        depgraph = load_depgraph(None)
         nodes = depgraph.get("nodes", {})
         if nodes is None:
             nodes = {}
@@ -679,7 +680,7 @@ def main():
     # ==========================================
     if not args.dry_run:
         print("  写入 depgraph...")
-        save_depgraph(depgraph, DEPGRAPH_PATH)
+        save_depgraph(depgraph, None)
         print("  写入完成")
     else:
         print("  [DRY RUN] 跳过写入")
@@ -692,7 +693,7 @@ def main():
 
     # 验证: 重新加载检查
     if not args.dry_run:
-        verify_graph = load_depgraph(DEPGRAPH_PATH)
+        verify_graph = load_depgraph(None)
         verify_nodes = verify_graph.get("nodes", {})
         if verify_nodes is None:
             verify_nodes = {}

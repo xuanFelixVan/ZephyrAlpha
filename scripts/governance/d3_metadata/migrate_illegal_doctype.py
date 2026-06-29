@@ -89,13 +89,13 @@ ILLEGAL_MAP: dict[str, str] = {
     "registry_of_registries": "register",
     # 去前缀（1 个）
     "architecture_construction_plan": "construction_plan",
-    # 设计类（1 个）
-    "architecture_design": "design",
-    # 参考数据（3+1=4 个）
-    "runtime_plane_mapping": "reference",
-    "cross_domain_matrix": "reference",
-    "capability_heatmap": "reference",
-    "architecture_tree_scope": "reference",
+    # 设计类（1 个）——v2.0.0: design 已废弃，合并到 blueprint
+    "architecture_design": "blueprint",
+    # 参考数据（3+1=4 个）——v2.0.0: reference 已废弃，按文件实际内容拆分
+    "runtime_plane_mapping": "register",
+    "cross_domain_matrix": "architecture_view",
+    "capability_heatmap": "register",
+    "architecture_tree_scope": "register",
     # 记录类（1 个）
     "delivery_record": "log",
     # 索引类（1+1+2=4 个）
@@ -104,7 +104,7 @@ ILLEGAL_MAP: dict[str, str] = {
     "task_card_index": "index",
     # 其他单例
     "governance_readme": "readme",
-    "red_team_corpus": "reference",
+    "red_team_corpus": "config",  # v2.0.0: reference 已废弃，red_team_corpus 是配置文件
     "handoff_instruction": "operational_rule",
 }
 

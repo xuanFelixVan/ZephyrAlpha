@@ -51,7 +51,6 @@ def _find_project_root() -> Path:
 
 
 _PROJECT_ROOT = _find_project_root()
-_DB_PATH = _PROJECT_ROOT / "data" / "databases" / "depgraph.db"  # 保留参考，PG模式下忽略
 _RULES_DIR = _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
 
 
@@ -88,10 +87,9 @@ class RuleLoader:
 
     def __init__(
         self,
-        db_path: str | Path | None = None,  # 保留向后兼容（PG模式下忽略）
+        db_path: str | Path | None = None,  # 保留向后兼容（PG模式下忽略，治本2026-06-27删除_DB_PATH常量）
         rules_dir: str | Path | None = None,
     ):
-        self._db_path = Path(db_path) if db_path else _DB_PATH
         self._rules_dir = Path(rules_dir) if rules_dir else _RULES_DIR
         self._cache: dict[str, dict[str, Any]] = {}
         self._db_available: bool | None = None

@@ -34,7 +34,6 @@ verifiability: manual
 ```
 01_policies_and_standards/
 ├── rules/                       ← 规则文件唯一真源（60 个 trae_*.yaml）
-│   ├── _index.yaml              ← 规则索引
 │   ├── trae_001_file_operation_security.yaml       ← 文件操作安全（RULE-ZERO~FOUR）
 │   ├── trae_002_anti_orphan_search_first.yaml      ← 搜索先行（RULE-EIGHT）
 │   ├── trae_003_task_granularity_threshold.yaml    ← 任务粒度（RULE-SIX）
