@@ -6,6 +6,7 @@ module_id: KE-267---
 module_id: ke-documentat-3-2-1--01-policies-and-standar-005
 title: 3.2.1 `01_policies_and_standards/` 子集（13 值）
 category: documentation
+ttl: permanent
 ---
 
 # 3.2.1 `01_policies_and_standards/` 子集（13 值）

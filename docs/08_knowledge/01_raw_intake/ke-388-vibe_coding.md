@@ -6,6 +6,7 @@ module_id: KE-352---
 module_id: ke-documentat-4-3-vibe-coding-004
 title: 4.3 Vibe Coding 条件禁止
 category: documentation
+ttl: permanent
 ---
 
 # 4.3 Vibe Coding 条件禁止

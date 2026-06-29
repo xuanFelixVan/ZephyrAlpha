@@ -6,6 +6,7 @@ module_id: KE-968---
 module_id: ke-governance-6--ai---ai-005
 title: 6. AI 域（AI 治理规则）
 category: governance_rule
+ttl: permanent
 ---
 
 # 6. AI 域（AI 治理规则）
