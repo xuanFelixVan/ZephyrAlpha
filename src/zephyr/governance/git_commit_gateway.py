@@ -176,6 +176,7 @@ class CommitStatus(str, Enum):
     SCRIPT_INTEGRITY_VIOLATION = "SCRIPT_INTEGRITY_VIOLATION"  # 受保护脚本完整性锚点缺失（自篡改纵深防御）
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"  # .py 文件使用 parents[N] 反模式而非 REPO_ROOT（SSoT 绕过）
     PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"  # 规则文档含过渡文本（GOV-DOC-016 纯陈述原则）
+    PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"  # 纯 re-export shim 文件（GATE-NO-PURE-SHIM --no-verify 补偿）
 
 
 class GatewayError(RuntimeError):
@@ -667,6 +668,16 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.PURE_ASSERTION_VIOLATION,
                 message=f"GOV-DOC-016 纯陈述违规: {pure_detail}",
+            )
+
+        # GATE-NO-PURE-SHIM 等效校验：弥补 --no-verify 绕过 pre-commit 的副作用
+        # 检测逻辑真源：scripts/governance/d7_code/check_pure_shim.py is_pure_reexport_shim()
+        # 通过 subprocess 调用复用真源，避免在 gateway 内复制检测逻辑导致真源分裂
+        shim_passed, shim_detail = self._check_pure_shim(existing)
+        if not shim_passed:
+            return CommitResult(
+                status=CommitStatus.PURE_SHIM_VIOLATION,
+                message=f"GATE-NO-PURE-SHIM 纯 re-export shim 违规: {shim_detail}",
             )
 
         # 追加 GW 标记
@@ -1827,6 +1838,62 @@ class GitCommitGateway:
             return False, "\n  ".join(violations)
         return True, "pure assertion check passed (no transition text)"
 
+    def _check_pure_shim(self, files: list[str]) -> tuple[bool, str]:
+        """GATE-NO-PURE-SHIM 等效校验：纯 re-export shim 文件检测（--no-verify 补偿）。
+
+        检测逻辑真源：scripts/governance/d7_code/check_pure_shim.py 的
+        is_pure_reexport_shim() 函数。通过 subprocess 调用复用真源，
+        避免在 gateway 内复制检测逻辑导致真源分裂。
+
+        检测范围：src/zephyr/**/*.py（与 pre-commit 钩子 files 匹配范围一致）。
+
+        Args:
+            files: 绝对路径列表。
+
+        Returns:
+            (passed, detail) — passed=True 表示通过；passed=False 时 detail 含违规详情。
+        """
+        # 筛选 src/zephyr/ 下的 .py 文件（与 pre-commit 钩子范围一致）
+        shim_scope_files: list[str] = []
+        for f in files:
+            if not f.endswith(".py"):
+                continue
+            rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+            if rel.startswith("src/zephyr/"):
+                shim_scope_files.append(f)
+        if not shim_scope_files:
+            return True, "pure shim check skipped (no src/zephyr/ .py files)"
+
+        checker = (
+            self.project_root
+            / "scripts"
+            / "governance"
+            / "d7_code"
+            / "check_pure_shim.py"
+        )
+        if not checker.is_file():
+            # check_pure_shim.py 不存在——fail-open（不阻断 commit），
+            # 但记录告警（检测器缺失不应阻断业务 commit）
+            logger.warning("_check_pure_shim: checker not found at %s", checker)
+            return True, "pure shim check skipped (checker not found)"
+
+        try:
+            result = subprocess.run(
+                [sys.executable, str(checker), "--ci"] + shim_scope_files,
+                capture_output=True,
+                cwd=str(self.project_root),
+                timeout=30,
+            )
+        except (subprocess.TimeoutExpired, OSError) as e:
+            # 检测器执行失败——fail-open（不阻断 commit），记录告警
+            logger.warning("_check_pure_shim: checker execution failed: %s", e)
+            return True, f"pure shim check skipped (checker error: {e})"
+
+        if result.returncode == 0:
+            return True, "pure shim check passed"
+        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        return False, detail
+
     # ------------------------------------------------------------------
     # 内部实现
     # ------------------------------------------------------------------
@@ -2384,6 +2451,14 @@ class GitCommitGateway:
             return CommitResult(
                 status=CommitStatus.PURE_ASSERTION_VIOLATION,
                 message=f"GOV-DOC-016 纯陈述违规（auto-commit）: {pure_detail}",
+            )
+
+        # GATE-NO-PURE-SHIM 等效校验（auto-commit 同样拦截，--no-verify 补偿）
+        shim_passed, shim_detail = self._check_pure_shim(existing)
+        if not shim_passed:
+            return CommitResult(
+                status=CommitStatus.PURE_SHIM_VIOLATION,
+                message=f"GATE-NO-PURE-SHIM 纯 re-export shim 违规（auto-commit）: {shim_detail}",
             )
 
         # 追加 GW auto 标记

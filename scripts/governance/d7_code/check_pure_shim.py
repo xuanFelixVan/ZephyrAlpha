@@ -2,10 +2,10 @@
 # [MODULE] scripts.governance.d7_code.check_pure_shim
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
-# [CONSUMERS] GATE-NO-PURE-SHIM pre-commit hook
+# [CONSUMERS] GATE-NO-PURE-SHIM pre-commit hook; GitCommitGateway._check_pure_shim（--no-verify 补偿校验）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 纯 re-export shim 检测器——防止新 AI 创建纯跨包 re-export shim 文件（重蹈 shared_08 覆辙）
+# [INVARIANTS] 纯 re-export shim 检测器——防止新 AI 创建纯 re-export shim 文件（star import + 无实质代码，重蹈 shared_08 覆辙）
 # [MODIFY-GUARD] 检测逻辑变更无需改 AGENTS.md（AGENTS.md 是指针式描述，指向本文件 is_pure_reexport_shim() 为唯一真源，文档不复制技术细节）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -16,14 +16,14 @@
 """
 check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）
 
-防止新 AI 创建纯 re-export shim 文件（`from zephyr.shared.* import *` 无实质代码），
+防止新 AI 创建纯 re-export shim 文件（star import + 无实质代码），
 重蹈 shared_08 冗余 proxy 层覆辙（commit 98c990141c 删除 144 文件治本）。
 
 判定标准（全部满足才阻断）：
   1. 文件不是 __init__.py（包聚合豁免）
-  2. 文件头部无 `# [TTL] task_bound` + `# [DEPRECATED]` 标记（临时过渡豁免）
-  3. AST 白名单分析（代码 is_pure_reexport_shim() 为唯一真源）：
-     - 有至少一个 ImportFrom，module 以 "zephyr.shared." 开头（跨包 re-export）
+  2. AST 白名单分析（代码 is_pure_reexport_shim() 为唯一真源）：
+     - 有至少一个 ImportFrom 且 names 含 star import（`import *`）—— re-export 信号
+       覆盖所有形式：绝对 import / 相对 import / 任意包（zephyr.shared.* / zephyr.infra_runtime.* / 等）
      - 无实质代码——白名单方式：仅允许以下节点不算实质代码
        * ImportFrom / Import（导入语句）
        * Assign 且 target 是 __all__ / __version__（包元数据赋值）
@@ -35,8 +35,13 @@ check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）
 
 合法 re-export 场景（不阻断）：
   - __init__.py 包聚合（`from . import sub1, sub2` + `__all__`）
-  - TTL=task_bound + # [DEPRECATED] 标记的临时过渡 shim
   - 含实质代码的文件（class/function/非 __all__ 赋值/if 等任意语句）
+  - 具名导入（`from zephyr.shared.foo import bar`）—— 正常使用，非 re-export
+
+红蓝对抗修复记录（2026-06-30）：
+  - 漏洞C：删除 TTL=task_bound + DEPRECATED 豁免（无自动清理机制，永久后门）
+  - 漏洞D：原只检 module.startswith("zephyr.shared.")，漏检相对 import（from ..shared.*）
+  - 漏洞E：原只检 zephyr.shared.*，漏检其他包跨包 re-export
 
 真源：本文件 is_pure_reexport_shim() 函数（判定逻辑唯一真源）
 规则：AGENTS.md「禁止纯 re-export shim」规则段落（描述"做什么"，不描述"怎么做"）
@@ -63,7 +68,7 @@ __manifest__ = """
 args:
 - --ci
 - --warn-only
-description: GATE-NO-PURE-SHIM - 检测纯 re-export shim 文件（跨包 from zephyr.shared.* import + 无实质代码）
+description: GATE-NO-PURE-SHIM - 检测纯 re-export shim 文件（star import + 无实质代码）
 dimensions:
 - D7
 priority: P1
@@ -79,31 +84,28 @@ def is_pure_reexport_shim(filepath: Path, content: str) -> tuple[bool, str]:
 
     返回 (is_shim, reason)。
     """
-    # 例外1: __init__.py 包聚合豁免
+    # 例外: __init__.py 包聚合豁免
     if filepath.name == "__init__.py":
         return False, "__init__.py 包聚合豁免"
-
-    # 例外2: TTL=task_bound + DEPRECATED 标记豁免（临时过渡 shim）
-    if "# [TTL] task_bound" in content and "# [DEPRECATED]" in content:
-        return False, "临时过渡 shim（TTL=task_bound + DEPRECATED 标记）"
 
     try:
         tree = ast.parse(content, filename=str(filepath))
     except SyntaxError:
         return False, "语法错误，跳过检测"
 
-    has_cross_pkg_reexport = False
+    has_star_reexport = False
     has_substantial_code = False
 
     # 白名单方式：只允许特定的非实质节点，其他都算实质代码（防绕过）
     # 红蓝对抗发现：原黑名单方式漏检 ast.Pass（pass 语句）导致绕过
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.ImportFrom):
-            module = node.module or ""
-            # 跨包 re-export：from zephyr.shared.* import
-            if module.startswith("zephyr.shared."):
-                has_cross_pkg_reexport = True
-            # ImportFrom 本身不算实质代码（无论是否跨包）
+            # star import（import *）是 re-export 信号——覆盖绝对/相对/所有包
+            # 红蓝对抗修复（漏洞D+E）：原逻辑只检 module.startswith("zephyr.shared.")，
+            # 漏检相对 import（from ..shared.* import *）和其他包（from zephyr.infra_runtime.* import *）
+            if any(alias.name == "*" for alias in node.names):
+                has_star_reexport = True
+            # ImportFrom 本身不算实质代码（无论是否 star import）
 
         elif isinstance(node, ast.Import):
             # 普通 import 不算实质代码，也不算跨包 re-export
@@ -143,8 +145,8 @@ def is_pure_reexport_shim(filepath: Path, content: str) -> tuple[bool, str]:
             has_substantial_code = True
             break
 
-    if has_cross_pkg_reexport and not has_substantial_code:
-        return True, "纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码）"
+    if has_star_reexport and not has_substantial_code:
+        return True, "纯 re-export shim（star import + 无实质代码）"
 
     return False, "非 shim"
 
@@ -180,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
         if is_shim:
             findings.append(f"  BLOCKED: {f}\n    原因: {reason}")
             findings.append(
-                "    治本: 删除此文件，消费者改引 canonical 路径（zephyr.shared.*）"
+                "    治本: 删除此文件，消费者改引 canonical 路径"
             )
             findings.append(
                 "    规则: AGENTS.md「禁止纯 re-export shim」"
@@ -189,20 +191,20 @@ def main(argv: list[str] | None = None) -> int:
     if findings:
         print("GATE-NO-PURE-SHIM: 检测到纯 re-export shim 文件", file=sys.stderr)
         print(
-            "纯 re-export shim（跨包 from zephyr.shared.* import + 无实质代码）被禁止。",
+            "纯 re-export shim（star import + 无实质代码）被禁止。",
             file=sys.stderr,
         )
         print(
             "理由：真源分裂温床，AI 无法确定真源产生漂移（shared_08 案例 commit 98c990141c）。",
             file=sys.stderr,
         )
-        print("例外：__init__.py 包聚合 / TTL=task_bound + # [DEPRECATED] 临时过渡", file=sys.stderr)
+        print("例外：__init__.py 包聚合", file=sys.stderr)
         print("-" * 60, file=sys.stderr)
         for line in findings:
             print(line, file=sys.stderr)
         print("-" * 60, file=sys.stderr)
         print(
-            "修复：删除 shim 文件，消费者改引 canonical 路径；或添加 # [TTL] task_bound + # [DEPRECATED] 标记作为临时过渡。",
+            "修复：删除 shim 文件，消费者改引 canonical 路径。",
             file=sys.stderr,
         )
         if warn_only:

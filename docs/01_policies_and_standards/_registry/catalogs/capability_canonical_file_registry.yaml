@@ -269,6 +269,26 @@ capabilities:
       canonical_override 显式声明。Session 20260626 合并自 validate_llm_security_gateway.py。
 
   # --------------------------------------------------------------------------
+  - capability_id: pure_shim_detector
+    canonical_override: scripts/governance/d7_code/check_pure_shim.py
+    aliases:
+      - GATE-NO-PURE-SHIM
+      - check_pure_shim
+      - pure_shim
+      - is_pure_reexport_shim
+      - reexport_shim_detector
+    description: >-
+      GATE-NO-PURE-SHIM 纯 re-export shim 文件检测门禁（治本漏洞1，2026-06-29）。
+      防止新 AI 创建纯 re-export shim 文件（star import + 无实质代码），重蹈 shared_08
+      冗余 proxy 层覆辙（commit 98c990141c 删除 144 文件治本）。双层防御：① pre-commit
+      钩子（.pre-commit-config.yaml gate-no-pure-shim），commit src/zephyr/**/*.py 时
+      自动检测；② GitCommitGateway._check_pure_shim Python 层补偿校验（subprocess 复用
+      本检测器真源，--no-verify 绕不过）。检测逻辑真源：is_pure_reexport_shim() 函数
+      （AST 白名单分析，覆盖绝对/相对/任意包 star import）。合法例外：__init__.py 包聚合。
+      canonical 在 scripts/ 下（非 src/zephyr/），无法 auto 派生，故用 canonical_override
+      显式声明。
+
+  # --------------------------------------------------------------------------
   - capability_id: runtime_llm_call_interceptor
     canonical_override: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
     aliases:
