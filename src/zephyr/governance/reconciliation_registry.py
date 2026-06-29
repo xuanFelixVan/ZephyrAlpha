@@ -1275,6 +1275,112 @@ def make_domain_doc_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
+def make_arch_model_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 EA 树 architecture_model/index.yaml post-commit 自动重生 reconciler。
+
+    治本（2026-06-30）：dm200916_write_direct.py 当前 ``[STARTUP] manual``，EA 树
+    index.yaml 的 domains 部分在 depgraph 域变更后不会自动重生，与 GATE-DOMAIN-DOC
+    （priority=600，重生域文档）形成缺口——DB 域变更（新增/删除/重命名域）后，EA 树
+    index.yaml 的 domains 列表漂移。本 reconciler 在 PG 写入脚本 commit 后触发
+    dm200916 重生 EA 树 index.yaml。
+
+    派生范围：index.yaml 的 domains 列表 + global_stats.total_domains（从 PG depgraph
+    domains 表派生）。不派生：partitions/query_hints/id_conventions（手工模板）、
+    index.md、capability_heatmap.yaml（含手工评估数据）。
+
+    循环安全：trigger 只匹配 PG 写入脚本（.py），制品 auto-commit 的 committed_files
+    是 index.yaml，不命中 trigger，不会递归触发。dm200916 不修改 PG depgraph（只读
+    domains 表）。
+
+    priority=610（在 GATE-DOMAIN-DOC 600 之后，确保域文档先生成再重生架构模型索引）。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-ARCH-MODEL", priority=610)。
+    """
+    import os
+    import subprocess
+    import sys
+
+    project_root = gateway.project_root
+    # PG 写入脚本真源列表（与 GATE-DOMAIN-DOC 一致，DB 变更即代表域可能漂移）
+    _PG_WRITE_SCRIPTS = (
+        "scripts/governance/apply_depgraph.py",
+        "scripts/governance/sync_yaml_to_depgraph.py",
+        "scripts/governance/generate_project_path_tree.py",
+    )
+    _GEN_SCRIPT = "scripts/governance/d5_architecture/dm200916_write_direct.py"
+    _ARCH_MODEL_INDEX = (
+        "docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml",
+    )
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel in _PG_WRITE_SCRIPTS:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重生 EA 树 index.yaml（dm200916 从 PG depgraph domains 表派生）
+        gen_result = subprocess.run(
+            [sys.executable, _GEN_SCRIPT],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"dm200916_write_direct.py failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 index.yaml 变更
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", *_ARCH_MODEL_INDEX]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="EA tree index.yaml up to date")
+
+        # 3. 变更 → 自动提交
+        add_result = gateway._run_git(["git", "add", "--", *_ARCH_MODEL_INDEX])
+        if add_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"git add EA tree index.yaml failed: {add_result.stderr.strip()[:200]}",
+            )
+
+        auto_msg = (
+            f"chore(arch_model): auto-regenerate EA tree index.yaml by GitCommitGateway post-commit "
+            f"[GW:{session_id}:auto]"
+        )
+        commit_result = gateway._run_git(
+            ["git", "commit", "--no-verify", "-m", auto_msg, "--", *_ARCH_MODEL_INDEX]
+        )
+        if commit_result.returncode == 0:
+            return ReconcileResult(
+                action="auto_committed",
+                detail="EA tree index.yaml drift detected and auto-regenerated",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"EA tree index.yaml drift detected, auto-commit failed: "
+                   f"{commit_result.stderr.strip()[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-ARCH-MODEL",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=610,
+    )
+
+
 def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-ID-UNIQ post-commit 兜底 reconciler（治本改进点2）。
 

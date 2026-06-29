@@ -87,6 +87,7 @@ from zephyr.governance.reconciliation_registry import (
     make_registry_index_reconciler,
     make_working_docs_reconciler,
     make_domain_doc_reconciler,
+    make_arch_model_reconciler,
     make_precommit_id_uniqueness_reconciler,
     make_rules_integrity_reconciler,
     make_vocab_change_reconciler,
@@ -495,6 +496,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_ghost_reconciler(self))
         self._reconciliation_registry.register(make_working_docs_reconciler(self))
         self._reconciliation_registry.register(make_domain_doc_reconciler(self))
+        self._reconciliation_registry.register(make_arch_model_reconciler(self))  # GATE-ARCH-MODEL: post-commit 重生 EA 树 index.yaml（dm200916 从 PG depgraph 派生 domains 列表，治 EA树域漂移缺口）
         self._reconciliation_registry.register(make_commit_gateway_audit_reconciler(self))  # GATE-COMMIT-GW-AUDIT 缺口4接线：裸commit post-compensation 审计
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))  # GATE-DEPRECATED-DIR 09_audit 治本加固：post-commit 检测废弃目录重建
 
@@ -1496,6 +1498,7 @@ class GitCommitGateway:
           - 模式3: AST 检测使用 REPO_ROOT/DB_PATH 但未 import，或 import 顺序错误
           - 模式4: ``Path("D:\\ZephyrAlpha...")`` 硬编码路径字面量（阶段C 治本：防新 AI 硬编码）
           - 模式5: ``sqlite3.connect("绝对路径.db")`` 硬编码数据库连接（应改用 DB_PATH/PG 连接）
+          - 模式6: DB 写入脚本中 import lock_files（违反 trae_001 §db_write_protocol，PG MVCC 替代文件锁）
 
         真源：``zephyr.shared.io.paths.REPO_ROOT`` 是仓库根常量唯一真源；
               ``_shared.constants.DB_PATH`` 是 governance.db 路径真源；
@@ -1650,6 +1653,49 @@ class GitCommitGateway:
                             f"{rel}:{_node.lineno} — sqlite3.connect(\"{_db}\") "
                             f"硬编码绝对路径，应改用 `from _shared.constants import DB_PATH` "
                             f"或 `get_depgraph_pg_connection()`"
+                        )
+
+                # 模式6: DB 写入脚本中 import lock_files（P3 门禁防复发，2026-06-29）
+                # 真源: trae_001 §db_write_protocol prohibition + trae_054 §mandatory
+                # 检测: 同一文件内同时有 DB 写入信号 + lock_files import 信号 → 违规
+                # DB 写入信号: import psycopg2 / get_depgraph_pg_connection / get_governance_connection
+                # lock_files 信号: import lock_files (任何形式：import / from import)
+                # 理由: PG MVCC 事务替代文件锁，文件锁对 PG 写无保护作用（向内收原则2.2 全自动）
+                _DB_WRITE_SIGNALS = {
+                    "psycopg2",  # PG 驱动
+                    "get_depgraph_pg_connection",  # depgraph PG 连接入口
+                    "get_governance_connection",   # governance DB 连接入口
+                }
+                _has_db_write_signal = False
+                _lock_files_imports: list[int] = []  # 行号列表
+                for _node in _ast.walk(_tree):
+                    if isinstance(_node, _ast.Import):
+                        for _a in _node.names:
+                            # lock_files 信号（import lock_files / import lock_files.xxx）
+                            if _a.name == "lock_files" or _a.name.startswith("lock_files."):
+                                _lock_files_imports.append(_node.lineno)
+                            # DB 写入信号（import psycopg2 / import psycopg2.xxx）
+                            if _a.name == "psycopg2" or _a.name.startswith("psycopg2."):
+                                _has_db_write_signal = True
+                    elif isinstance(_node, _ast.ImportFrom):
+                        _mod = _node.module or ""
+                        # lock_files 信号（from lock_files import / from xxx.lock_files import / from xxx import lock_files）
+                        if _mod == "lock_files" or _mod.endswith(".lock_files"):
+                            _lock_files_imports.append(_node.lineno)
+                        else:
+                            for _a in _node.names:
+                                if _a.name == "lock_files":
+                                    _lock_files_imports.append(_node.lineno)
+                        # DB 写入信号（from xxx import get_depgraph_pg_connection 等）
+                        for _a in _node.names:
+                            if _a.name in _DB_WRITE_SIGNALS:
+                                _has_db_write_signal = True
+                if _has_db_write_signal and _lock_files_imports:
+                    for _line in _lock_files_imports:
+                        violations.append(
+                            f"{rel}:{_line} — DB 写入脚本中 import lock_files，"
+                            f"违反 trae_001 §db_write_protocol（PG MVCC 事务替代文件锁，"
+                            f"文件锁对 PG 写无保护作用）"
                         )
 
         if violations:
