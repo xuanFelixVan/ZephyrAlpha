@@ -39,7 +39,7 @@
 # ============================================================
 
 schema_version: "1.0.0"
-doc_type: contract
+doc_type: gate
 module_id: PS-CTR-002
 version: "1.0.0"
 title: "Directory Contract"
@@ -165,6 +165,11 @@ directory_extensions:
     forbidden: [".py", ".csv", ".jsonl", ".yaml", ".json", ".sh", ".ps1", ".bak", ".baseline"]
     zone: permanent
     # 注：04_archived/ 已于 2026-06-29 删除（archive-cleanup-1399），raw_intake 为唯一真源
+
+  - path: "docs/_archive/"
+    allowed: [".md"]
+    forbidden: [".py", ".csv", ".jsonl", ".yaml", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: permanent
 
   # --- 代码区（中性区）---
   - path: "src/zephyr/"
