@@ -33,7 +33,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from zephyr.governance.persistence.sqlite_schema import init_db
-from zephyr.intelligence.model_evaluation.kb_repo import KbRepo
+from zephyr.governance.kb.kb_repo import KbRepo
 
 # ---------------------------------------------------------------------------
 # 10 条标准查询（命中率基准集）

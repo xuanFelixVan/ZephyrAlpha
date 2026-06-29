@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.governance.triage
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__; zephyr.intelligence.model_evaluation.kb_repo
+# [DEPENDENCIES] zephyr.governance.rule_enforcement.gate_engine; zephyr.governance.rule_enforcement.gate_types.__init__; zephyr.governance.__init__; zephyr.governance.kb.kb_repo
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -46,7 +46,7 @@ from zephyr.governance.ingest import COLLOQUIAL_PATTERNS
 from zephyr.governance.kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.governance.rule_enforcement.gate_engine import GATES_DIR, GateEngine
 from zephyr.governance.rule_enforcement.gate_types import GateResult
-from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 __all__ = [

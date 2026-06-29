@@ -20,7 +20,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from zephyr.intelligence.model_evaluation.kb_repo import (
+from zephyr.governance.kb.kb_repo import (
     KbRepo,
     KeRecord,
     KeStatus,

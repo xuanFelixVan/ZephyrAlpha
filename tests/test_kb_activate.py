@@ -25,7 +25,7 @@ from zephyr.intelligence.model_evaluation.activate import (
     ActivateGate,
     ActivateResult,
 )
-from zephyr.intelligence.model_evaluation.kb_repo import KeStatus
+from zephyr.governance.kb.kb_repo import KeStatus
 
 
 def _make_frontmatter(**kwargs: object) -> str:

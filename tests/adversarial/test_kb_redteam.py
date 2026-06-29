@@ -142,7 +142,7 @@ class TestRedTeamStateMachine:
     def test_R5_invalid_state_transition(self):
         """攻击: 尝试将KE从 draft 直接跳到 verified 跳过 reviewed。"""
         try:
-            from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+            from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 
             repo = KbRepo()
 
@@ -154,7 +154,7 @@ class TestRedTeamStateMachine:
     def test_R5_self_to_self_transition(self):
         """攻击: 尝试标记 KE 状态为自身（无意义操作）。"""
         try:
-            from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+            from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 
             repo = KbRepo()
 
@@ -167,7 +167,7 @@ class TestRedTeamStateMachine:
     def test_R5_backwards_transition_rejected(self):
         """攻击: 尝试将KE从 reviewed 回退到 draft。"""
         try:
-            from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
+            from zephyr.governance.kb.kb_repo import KbRepo, KeStatus
 
             repo = KbRepo()
 
