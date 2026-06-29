@@ -654,17 +654,17 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_bulk_commit.py
-  path: governance/_tmp_bulk_commit.py
-  description: 'python scripts/governance/_tmp_bulk_commit.py --dry-run  # 预览'
+- name: governance/_tmp_commit_l2.py
+  path: governance/_tmp_commit_l2.py
+  description: from __future__ import annotations
   domain: governance
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_commit_l2.py
-  path: governance/_tmp_commit_l2.py
-  description: from __future__ import annotations
+- name: governance/_tmp_commit_migration.py
+  path: governance/_tmp_commit_migration.py
+  description: import os
   domain: governance
   execution_plane: warm-path
   status: registered
