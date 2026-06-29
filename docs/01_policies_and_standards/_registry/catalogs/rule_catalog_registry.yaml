@@ -3,9 +3,14 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录
 status: active
-generated_at: '2026-06-29T06:47:52Z'
+generated_at: '2026-06-29T07:00:37Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
-total_files: 86
+total_files: 85
+total_rules: 12
+tier_distribution:
+  L1: 7
+  L0: 2
+  L2: 3
 files:
 - path: docs/01_policies_and_standards/index.md
   module_id: PS-IDX-001
@@ -18,6 +23,10 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md
   module_id: POL-PARALLEL-SESSION-001
   title: Parallel Session Coordination Policy / 并行 Session 协作策略
@@ -29,17 +38,10 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: null
-- path: docs/01_policies_and_standards/rules/_index.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: ''
-  version: 2.3.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/rules/index.md
   module_id: ''
   title: rules — 目录索引
@@ -51,6 +53,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/rules/trae_011_code_type_import.yaml
   module_id: TRAE-011
   title: 代码构建-类型与导入
@@ -62,6 +68,13 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - CODE-005
+  - CODE-006
+  - CODE-007
+  section_count: 10
 - path: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml
   module_id: TRAE-021
   title: 行为边界-其余绝对禁止
@@ -73,6 +86,38 @@ files:
   stability: frozen
   layer: compliance
   superseded_by: ''
+  severity: critical
+  tier: L0
+  aliases:
+  - ABS-25
+  - ABS-26
+  - ABS-27
+  - ABS-28
+  - ABS-29
+  - ABS-30
+  - ABS-31
+  - ABS-32
+  - ABS-33
+  - ABS-34
+  - ABS-35
+  - ABS-36
+  - ABS-37
+  - ABS-38
+  - ABS-39
+  - ABS-40
+  - ABS-41
+  - ABS-42
+  - ABS-43
+  - ABS-44
+  - ABS-45
+  - ABS-46
+  - ABS-47
+  - ABS-48
+  - ABS-49
+  - ABS-50
+  - ABS-51
+  - ABS-52
+  section_count: 57
 - path: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml
   module_id: TRAE-028
   title: 文档治理-结构与命名
@@ -84,6 +129,17 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - DOC-001
+  - DOC-002
+  - DOC-003
+  - DOC-004
+  - DOC-005
+  - DOC-006
+  - DOC-008
+  section_count: 35
 - path: docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml
   module_id: TRAE-030
   title: 文档治理-编号与元数据
@@ -95,6 +151,17 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - DOC-011
+  - DOC-012
+  - DOC-013
+  - DOC-014
+  - DOC-015
+  - DOC-016
+  - DOC-017
+  section_count: 20
 - path: docs/01_policies_and_standards/rules/trae_031_security_key_access.yaml
   module_id: TRAE-031
   title: 安全治理-密钥与访问控制
@@ -106,6 +173,25 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - SEC-001
+  - SEC-002
+  - SEC-003
+  - ACS-001
+  - ACS-002
+  - ACS-003
+  - ACS-004
+  - ACS-005
+  - SEC-004
+  - SEC-005
+  - SEC-006
+  - SIR-001
+  - SIR-002
+  - SIR-003
+  - SIR-004
+  section_count: 38
 - path: docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml
   module_id: TRAE-032
   title: 模块治理-准入与生命周期
@@ -117,6 +203,15 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - MOD-ALPHA_SIGNAL_DOMAIN
+  - MOD-002
+  - MOD-003
+  - MOD-004
+  - MOD-005
+  section_count: 5
 - path: docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml
   module_id: TRAE-036
   title: 架构治理-门禁与过渡
@@ -128,6 +223,13 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - GOV-ARCH-002
+  - GOV-ARCH-005
+  - GOV-ARCH-006
+  section_count: 31
 - path: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
   module_id: TRAE-041
   title: 元规则-规则分类与裁决
@@ -139,6 +241,14 @@ files:
   stability: evolving
   layer: compliance
   superseded_by: ''
+  severity: warning
+  tier: L2
+  aliases:
+  - PS-STD-004
+  - PS-STD-012
+  - STD-007
+  - STD-008
+  section_count: 48
 - path: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
   module_id: TRAE-042
   title: 元规则-标准体系与模板
@@ -150,6 +260,14 @@ files:
   stability: evolving
   layer: compliance
   superseded_by: ''
+  severity: warning
+  tier: L2
+  aliases:
+  - PS-STD-000
+  - PS-STD-002
+  - PS-STD-005
+  - PS-STD-009
+  section_count: 65
 - path: docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml
   module_id: TRAE-043
   title: 元规则-元数据与度量
@@ -161,6 +279,14 @@ files:
   stability: evolving
   layer: compliance
   superseded_by: ''
+  severity: warning
+  tier: L2
+  aliases:
+  - PS-STD-001
+  - STD-004
+  - STD-005
+  - GOV-024
+  section_count: 45
 - path: docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml
   module_id: TRAE-045
   title: 数据治理-质量与血缘
@@ -172,6 +298,13 @@ files:
   stability: stable
   layer: compliance
   superseded_by: ''
+  severity: error
+  tier: L1
+  aliases:
+  - GOV-DATA-001
+  - GOV-DATA-002
+  - GOV-DATA-003
+  section_count: 16
 - path: docs/01_policies_and_standards/rules/trae_059_schema_version_write_protection.yaml
   module_id: TRAE-059
   title: _schema_version 写入保护规范
@@ -183,6 +316,13 @@ files:
   stability: frozen
   layer: compliance
   superseded_by: ''
+  severity: critical
+  tier: L0
+  aliases:
+  - RULE-SCHEMA-VERSION-PROTECTION
+  - schema_version只读保护
+  - 迁移框架写入独占
+  section_count: 1
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
   title: Blueprint Construction Template
@@ -194,6 +334,10 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/dependency_graph_template.md
   module_id: GOV-029
   title: 依赖图统一模板
@@ -205,6 +349,10 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/index.md
   module_id: GOV-030
   title: 文档模板目录索引
@@ -216,6 +364,10 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/playbook_runbook.md
   module_id: OPS-007
   title: Playbook Template
@@ -227,6 +379,10 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/policy_template.md
   module_id: PSP-010
   title: Policy Template
@@ -238,6 +394,10 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/register_template.md
   module_id: GOV-032
   title: Register Template
@@ -249,6 +409,10 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/risk_register_template.md
   module_id: GOV-033
   title: <主题> 风险登记簿
@@ -260,6 +424,10 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/roadmap_template.md
   module_id: GOV-034
   title: <季度或主题> 路线图
@@ -271,6 +439,10 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/runbook_template.md
   module_id: OPS-008
   title: Runbook Template
@@ -282,6 +454,10 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/standard_template.md
   module_id: STD-009
   title: Standard Template
@@ -293,6 +469,10 @@ files:
   stability: evolving
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/index.md
   module_id: GOV-005
   title: 登记表体系目录索引
@@ -304,6 +484,10 @@ files:
   stability: stable
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/_index.yaml
   module_id: ''
   title: ''
@@ -315,6 +499,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml
   module_id: CFG-ai-risk-register
   title: AI 风险登记簿
@@ -326,6 +514,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml
   module_id: CFG-ai-session-registry
   title: AI Session/Agent 登记表
@@ -337,6 +529,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
   module_id: CFG-business-streams
   title: 业务流定义登记表
@@ -348,6 +544,10 @@ files:
   stability: stable
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
   module_id: PS-REG-021
   title: 能力→真源文件反查注册表
@@ -359,6 +559,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
   module_id: PS-REG-007
   title: 跨模块依赖登记表
@@ -370,6 +574,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml
   module_id: PS-REG-019
   title: 声明式契约跟踪登记表
@@ -381,6 +589,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/depgraph_scan_exclusions.yaml
   module_id: ''
   title: ''
@@ -392,6 +604,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml
   module_id: REG-DERIVED-ID-001
   title: 派生标识符关系表
@@ -403,6 +619,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
   module_id: PS-REG-013
   title: 项目目录登记?
@@ -414,6 +634,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
   module_id: REG-DOMAIN-NAMING-001
   title: 域命名规则表
@@ -425,6 +649,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
   module_id: GOV-001
   title: 前沿大模型综合能力排名登记表
@@ -436,6 +664,10 @@ files:
   stability: ''
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
   module_id: PS-REG-012
   title: Frontmatter 字段定义登记表
@@ -447,6 +679,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
   module_id: REG-FUNC-DOMAIN-001
   title: 功能域注册表
@@ -458,6 +694,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   module_id: PS-REG-014
   title: GATE 门禁登记?
@@ -469,6 +709,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml
   module_id: CFG-hard-boundaries
   title: 硬边界登记表
@@ -480,6 +724,10 @@ files:
   stability: frozen
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/index.md
   module_id: GOV-002
   title: 登记表集中存储目录索引
@@ -491,6 +739,10 @@ files:
   stability: stable
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
   module_id: CFG-infrastructure-registry
   title: 运行时基础设施登记表
@@ -502,6 +754,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
   module_id: CFG-knowledge-article-registry
   title: 知识条目登记表
@@ -513,6 +769,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/master_document_inventory_registry.yaml
   module_id: PS-REG-020
   title: 主文档清单（Master Document Inventory）
@@ -524,6 +784,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   module_id: PS-REG-016
   title: 登记表的登记表 — 跨登记表一致性契约
@@ -535,6 +799,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml
   module_id: ''
   title: ''
@@ -546,6 +814,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   module_id: PS-REG-018
   title: 规则路径目录
@@ -557,6 +829,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml
   module_id: PS-REG-017
   title: 任务卡元层登记表
@@ -568,6 +844,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
   module_id: PS-CTR-001
   title: Architecture Compliance Contract
@@ -579,6 +859,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/contracts/contract_mapping_table.yaml
   module_id: MOD-GOVERNANCE
   title: ''
@@ -590,6 +874,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/contracts/index.md
   module_id: GOV-004
   title: _registry/contracts/ 目录索引
@@ -601,6 +889,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
   module_id: GOV-AI-006
   title: AI 模型能力矩阵契约
@@ -612,6 +904,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/schemas/index.md
   module_id: GOV-006
   title: _registry/schemas/ 目录索引
@@ -623,6 +919,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/schemas/session_log_schema.yaml
   module_id: GOV-AI-007
   title: Session Log 标准 Schema
@@ -634,6 +934,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_level_planned_vocabulary.yaml
   module_id: PS-VOC-021
   title: ai_autonomy_level_planned 受控词表
@@ -645,6 +949,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_vocabulary.yaml
   module_id: PS-VOC-012
   title: ai_autonomy 受控词表
@@ -656,6 +964,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/ai_capability_slot_vocabulary.yaml
   module_id: PS-VOC-020
   title: ai_capability_slot 受控词表
@@ -667,6 +979,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/blueprint_refs_status_vocabulary.yaml
   module_id: PS-VOC-022
   title: blueprint_refs.status 受控词表
@@ -678,6 +994,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/category_vocabulary.yaml
   module_id: PS-VOC-013
   title: category 受控词表
@@ -689,6 +1009,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/classification_vocabulary.yaml
   module_id: PS-VOC-006
   title: classification 受控词表
@@ -700,6 +1024,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/compliance_tags_vocabulary.yaml
   module_id: PS-VOC-014
   title: compliance_tags 受控词表
@@ -711,6 +1039,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/contract_status_vocabulary.yaml
   module_id: PS-VOC-026
   title: contract_status 受控词表
@@ -722,6 +1054,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/created_by_vocabulary.yaml
   module_id: PS-VOC-008
   title: created_by 受控词表
@@ -733,6 +1069,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/derived_from_relationship_vocabulary.yaml
   module_id: PS-VOC-023
   title: derived_from.relationship 受控词表
@@ -744,6 +1084,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
   module_id: PS-VOC-001
   title: doc_type 受控词表
@@ -755,6 +1099,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/domain_vocabulary.yaml
   module_id: PS-VOC-015
   title: domain 受控词表
@@ -766,6 +1114,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/evolution_policy_vocabulary.yaml
   module_id: PS-VOC-016
   title: evolution_policy 受控词表
@@ -777,6 +1129,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/governance_family_vocabulary.yaml
   module_id: PS-VOC-017
   title: governance_family 受控词表
@@ -788,6 +1144,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/index.md
   module_id: GOV-007
   title: _registry/vocabularies/ 目录索引
@@ -799,6 +1159,10 @@ files:
   stability: ''
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/language_vocabulary.yaml
   module_id: PS-VOC-007
   title: language 受控词表
@@ -810,6 +1174,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
   module_id: PS-VOC-005
   title: layer 受控词表
@@ -821,6 +1189,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml
   module_id: PS-VOC-027
   title: module_lifecycle_status 受控词表
@@ -832,6 +1204,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/provenance_audit_chain_verdict_vocabulary.yaml
   module_id: PS-VOC-024
   title: provenance.audit_chain.verdict 受控词表
@@ -843,6 +1219,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/review_status_vocabulary.yaml
   module_id: PS-VOC-018
   title: review_status 受控词表
@@ -854,6 +1234,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/rule_form_vocabulary.yaml
   module_id: PS-VOC-002
   title: rule_form 受控词表
@@ -865,6 +1249,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/safety_level_vocabulary.yaml
   module_id: PS-VOC-019
   title: safety_level 受控词表
@@ -876,6 +1264,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/scope_vocabulary.yaml
   module_id: PS-VOC-009
   title: scope 受控词表
@@ -887,6 +1279,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/semantic_vocabulary.yaml
   module_id: PS-VOC-025
   title: semantic_type 受控词表
@@ -898,6 +1294,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/stability_vocabulary.yaml
   module_id: PS-VOC-010
   title: stability 受控词表
@@ -909,6 +1309,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/status_vocabulary.yaml
   module_id: PS-VOC-003
   title: status 受控词表
@@ -920,6 +1324,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml
   module_id: META-TERM-001
   title: 术语映射表（大白话 ↔ 行业术语）
@@ -931,6 +1339,10 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
   module_id: PS-VOC-004
   title: ttl 受控词表
@@ -942,6 +1354,10 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/verifiability_vocabulary.yaml
   module_id: PS-VOC-011
   title: verifiability 受控词表
@@ -953,3 +1369,7 @@ files:
   stability: evolving
   layer: ''
   superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
