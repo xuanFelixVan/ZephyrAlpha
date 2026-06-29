@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_rule_catalog.py | §
 # [MODULE] scripts.governance.d3_metadata.generate_rule_catalog
-# [DOMAIN] D-GOVERNANCE
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d3_metadata.__init__
 # [CONSUMERS]
 # [STARTUP] manual
@@ -68,48 +68,55 @@ ensure_utf8_stdout()
 
 
 def extract_yaml_header(content: str) -> dict | None:
-    """Extract header fields from a .yaml file (comment-based header)."""
+    """Extract header fields from a .yaml file.
+
+    #ARCH-024 治本修复：原逻辑依赖 schema_version/doc_type 关键字判断是否
+    调用 yaml.safe_load，导致 48 个无此字段的 trae_*.yaml 规则文件被跳过
+    （只扫到 12/60）。修复：始终尝试 yaml.safe_load，注释头解析作为回退。
+    """
     fields: dict = {}
-    for line in content.split("\n"):
-        if not line.startswith("#") and line.strip() != "":
-            break
-        if line.startswith("#"):
-            m = re.match(r"#\s*(\w+)[\uff1a:]\s*(.+)", line)
-            if m:
-                fields[m.group(1)] = m.group(2).strip()
-    if "schema_version" in content or "doc_type" in content:
-        try:
-            full_yaml = yaml.safe_load(content)
-            if isinstance(full_yaml, dict):
-                fields.update(
-                    {
-                        k: v
-                        for k, v in full_yaml.items()
-                        if k
-                        in (
-                            "module_id",
-                            "doc_type",
-                            "status",
-                            "version",
-                            "title",
-                            "rule_form",
-                            "scope",
-                            "stability",
-                            "layer",
-                            "owner",
-                            "ttl",
-                            "superseded_by",
-                            # 以下字段用于派生 _index.yaml 独有的规则元数据
-                            # （#ARCH-024 治本：catalog 扩展为唯一规则索引）
-                            "severity",
-                            "tags",
-                            "aliases",
-                            "sections",
-                        )
-                    }
-                )
-        except yaml.YAMLError:
-            pass
+    # 1. 始终尝试 yaml.safe_load（#ARCH-024 修复：不依赖关键字判断）
+    try:
+        full_yaml = yaml.safe_load(content)
+        if isinstance(full_yaml, dict):
+            fields.update(
+                {
+                    k: v
+                    for k, v in full_yaml.items()
+                    if k
+                    in (
+                        "module_id",
+                        "doc_type",
+                        "status",
+                        "version",
+                        "title",
+                        "rule_form",
+                        "scope",
+                        "stability",
+                        "layer",
+                        "owner",
+                        "ttl",
+                        "superseded_by",
+                        # 以下字段用于派生 _index.yaml 独有的规则元数据
+                        # （#ARCH-024 治本：catalog 扩展为唯一规则索引）
+                        "severity",
+                        "tags",
+                        "aliases",
+                        "sections",
+                    )
+                }
+            )
+    except yaml.YAMLError:
+        pass
+    # 2. 回退：注释头解析（覆盖纯注释头文件，如脚本头部 BLUEPRINT 注释）
+    if not fields:
+        for line in content.split("\n"):
+            if not line.startswith("#") and line.strip() != "":
+                break
+            if line.startswith("#"):
+                m = re.match(r"#\s*(\w+)[\uff1a:]\s*(.+)", line)
+                if m:
+                    fields[m.group(1)] = m.group(2).strip()
     return fields if fields else None
 
 
