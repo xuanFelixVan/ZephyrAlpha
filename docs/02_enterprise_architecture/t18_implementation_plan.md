@@ -640,7 +640,7 @@ python -c "from zephyr.governance.depgraph_schema import get_db_connection; c=ge
 | scripts/governance/export_design_state_to_yaml.py | 新增 | export脚本 |
 | scripts/governance/validate_design_state_yaml.py | 新增 | validate脚本 |
 | .trae/rules/onboarding_detail.md | 修改 | 真源声明 |
-| docs/_working/archive/architecture_decisions_pending.md | 修改 | T18状态 |
+| docs/_archive/architecture_decisions_pending.md | 修改 | T18状态 |
 | data/asset_index/design_state/*.yaml | 新增 | 设计态YAML文件 |
 
 ### 9.2 受影响流程
@@ -738,7 +738,7 @@ STEP 1 (Schema核实) → STEP 2 (数据导出) → STEP 3 (Sync脚本)
 
 | 文件 | 路径 | 用途 |
 |------|------|------|
-| T18决策文档 | docs/_working/archive/architecture_decisions_pending.md | T18裁定原文（含暂缓结论） |
+| T18决策文档 | docs/_archive/architecture_decisions_pending.md | T18裁定原文（含暂缓结论） |
 | ~~T18评估报告~~ | ~~已删除~~ | 数据过时（边数预估230 vs 实际15295），实际数据见本文档§1 |
 | 本施工方案 | docs/02_enterprise_architecture/T18_implementation_plan.md | 本文档（暂缓，保留作未来参考） |
 | Schema DDL | src/zephyr/governance/depgraph_schema.py | DB schema定义（需更新） |

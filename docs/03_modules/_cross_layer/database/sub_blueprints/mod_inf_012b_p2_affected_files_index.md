@@ -694,8 +694,8 @@ references:
 
 | # | 文件路径 | 说明 |
 |---|---------|------|
-| 185 | `docs/_working/archive/phase4b_cleanup_construction_plan.md` | 归档施工方案 |
-| 186 | `docs/_working/archive/architecture_decisions_pending.md` | 归档决策文档 |
+| 185 | `docs/_archive/phase4b_cleanup_construction_plan.md` | 归档施工方案 |
+| 186 | `docs/_archive/architecture_decisions_pending.md` | 归档决策文档 |
 | 192 | `docs/_working/decomposition/tasks/DM-100255.md` | 历史任务卡 |
 | 193 | `docs/_working/decomposition/tasks/DM-100254.md` | 同上 |
 | 194 | `docs/_working/decomposition/tasks/DM-100253.md` | 同上 |
