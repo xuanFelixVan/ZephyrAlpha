@@ -78,7 +78,7 @@ sections:
         path: _registry/catalogs/directory-registry.md
       - code: GATE
         name: 门禁
-        path: _registry/catalogs/gate-registry.md
+        path: _registry/catalogs/gate_registry.yaml
       - code: FIELD
         name: frontmatter字段
         path: _registry/catalogs/frontmatter_field_registry.yaml

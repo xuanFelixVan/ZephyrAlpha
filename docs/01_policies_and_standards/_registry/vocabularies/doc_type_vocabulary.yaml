@@ -227,7 +227,7 @@ values:
     forbidden_directories: ["operational/"]
     required_fields: ["valid_from"]
     ai_keywords: ["门禁", "gate", "阻断", "检查", "准入"]
-    usage_note: "门禁文件的 doc_type。Gate YAML 登记表（_registry/catalogs/gate-registry.md）使用 register 而非 gate——gate 用于规则文档"
+    usage_note: "门禁文件的 doc_type。Gate YAML 登记表（_registry/catalogs/gate_registry.yaml）使用 register 而非 gate——gate 用于规则文档"
     examples: []
 
   - value: config
