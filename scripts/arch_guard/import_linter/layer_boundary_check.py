@@ -39,8 +39,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
@@ -70,13 +73,11 @@ SHARED_MODULES = {
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "docs", "shared", "gates"}
 
-
 def extract_layer_number(dir_name: str) -> int | None:
     m = LAYER_NUM_RE.match(dir_name)
     if m:
         return int(m.group(1))
     return None
-
 
 def check_file(file_path: Path, source_layer: int) -> list[str]:
     violations = []
@@ -100,7 +101,6 @@ def check_file(file_path: Path, source_layer: int) -> list[str]:
                 )
                 break
     return violations
-
 
 def main() -> int:
     if not SRC_ROOT.exists():
@@ -142,7 +142,6 @@ def main() -> int:
 
     print(f"✅ INV-008 层依赖方向 —— 无违反（已检查 {checked} 个层文件）")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

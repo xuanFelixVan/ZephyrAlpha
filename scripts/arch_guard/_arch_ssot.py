@@ -18,11 +18,16 @@
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
 ARCH_GUARD_ROOT = Path(__file__).resolve().parent
-REPO_ROOT = ARCH_GUARD_ROOT.parent.parent
+_GOV_DIR = ARCH_GUARD_ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
+
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 CAPACITY_SLO_PATH = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
 INVARIANTS_PATH = REPO_ROOT / (

@@ -31,8 +31,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
@@ -57,11 +60,9 @@ EXEMPT_PATHS = [
     "conftest.py",
 ]
 
-
 def _is_exempt_path(path: Path) -> bool:
     name = path.name
     return any(e in name for e in EXEMPT_PATHS)
-
 
 def _scan_file(path: Path) -> list[tuple[int, str]]:
     findings = []
@@ -89,7 +90,6 @@ def _scan_file(path: Path) -> list[tuple[int, str]]:
                 break
 
     return findings
-
 
 def main() -> int:
     if not SRC_ROOT.exists():
@@ -122,7 +122,6 @@ def main() -> int:
 
     print("\n[OK] 未发现日志 secret 泄漏")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

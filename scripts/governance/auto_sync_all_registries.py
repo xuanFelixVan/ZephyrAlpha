@@ -39,11 +39,11 @@ import re
 import sys
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 REGISTRIES = {
     "module": PROJECT_ROOT / "docs/03_modules/module-registry.yaml",

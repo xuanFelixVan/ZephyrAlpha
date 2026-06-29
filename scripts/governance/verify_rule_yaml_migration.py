@@ -36,8 +36,9 @@ import sys
 from pathlib import Path
 
 import yaml
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 DEFAULT_SOURCE_DIR = "docs/01_policies_and_standards/"
 DEFAULT_TARGET_DIR = "docs/01_policies_and_standards/rules/"
 MANIFEST_PATH = PROJECT_ROOT / "data" / "databases" / "governance_metadata" / "extraction_manifest.json"

@@ -33,8 +33,9 @@ from pathlib import Path
 
 import pytest
 import yaml
+from zephyr.shared.io.paths import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 
 def _ke_dir() -> Path:

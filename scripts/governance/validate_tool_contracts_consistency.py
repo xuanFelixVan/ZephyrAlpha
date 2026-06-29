@@ -39,9 +39,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CONTRACTS_PATH = REPO_ROOT / "src/zephyr/mcp/tool-contracts.yaml"
 MCP_DIR = REPO_ROOT / "src/zephyr/mcp"
 

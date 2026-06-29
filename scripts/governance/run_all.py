@@ -79,7 +79,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, MANIFEST_PATH, REPO_ROOT, SCRIPTS_DIR, DB_PATH
 
 DEFAULT_OUTPUT = SCRIPTS_DIR / "reports" / "findings.jsonl"
 

@@ -31,8 +31,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 FE_EXTS = {".tsx", ".ts", ".jsx", ".js", ".vue"}
 _SKIP_DIRS = {"node_modules", ".git", "dist", "build", "coverage", "__pycache__"}
@@ -42,7 +45,6 @@ _BAD_FETCH = re.compile(
     r"fetch\s*\(\s*['\"](https?://(127\.0\.0\.1|localhost):\d{2,5}/[^'\"]*)['\"]",
     re.IGNORECASE,
 )
-
 
 def main() -> int:
     fe_files: list[Path] = []
@@ -74,7 +76,6 @@ def main() -> int:
 
     print(f"OK: 已扫描 {len(fe_files)} 个前端文件，未发现典型内网裸连 fetch")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

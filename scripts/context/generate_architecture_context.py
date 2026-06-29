@@ -37,13 +37,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPTS_DIR.parents[1] / ""
-
+from _shared.constants import REPO_ROOT
 if not REPO_ROOT.exists():
     REPO_ROOT = Path.cwd()
 
 import yaml
-
 CONTRACTS_YAML = REPO_ROOT / (
     "docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml"
 )

@@ -29,10 +29,13 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+_THIS_DIR = Path(__file__).resolve().parent
+_GOV_DIR = str(_THIS_DIR.parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPTS_DIR.parent.parent
-
 SERVER_SCRIPTS: list[tuple[str, str]] = [
     ("knowledge_base", "src/zephyr/mcp/knowledge_base_server.py"),
     ("gate_engine", "src/zephyr/mcp/gate_engine_server.py"),

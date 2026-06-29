@@ -24,8 +24,9 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 DIR_TO_BLUEPRINT = {
     "src/zephyr/agent-rbac": (

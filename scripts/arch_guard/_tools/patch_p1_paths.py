@@ -26,8 +26,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 YAML_PATH = (
     REPO_ROOT
@@ -50,7 +53,6 @@ PATH_MAP: dict[str, str] = {
     "CTR-P1-008": "src/zephyr/shared/contracts/risk_dashboard_snapshot.py",
     "CTR-P1-009": "src/zephyr/shared/contracts/performance_attribution_report.py",
 }
-
 
 def main() -> int:
     if not YAML_PATH.exists():
@@ -88,7 +90,6 @@ def main() -> int:
             pass
     print(f"✅ 已为 {replaced} 个 P1 契约补齐 physical_path。")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

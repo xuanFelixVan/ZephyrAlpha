@@ -57,6 +57,8 @@ _SRC_DIR = str(PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
+from _shared.constants import DB_PATH
+
 import sqlite3
 
 from zephyr.governance.sqlite_schema import DB_PATH

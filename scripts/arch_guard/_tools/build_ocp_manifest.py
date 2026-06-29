@@ -26,10 +26,15 @@ from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_ROOT))
-from _arch_ssot import CONTRACTS_PATH, REPO_ROOT  # noqa: E402
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
+
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+from _arch_ssot import CONTRACTS_PATH  # noqa: E402
 
 MANIFEST_REL = Path("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
-
 
 def main() -> int:
     import yaml
@@ -74,7 +79,6 @@ def main() -> int:
             pass
     print(f"OK: wrote {len(fingerprints)} fingerprints → {MANIFEST_REL}")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

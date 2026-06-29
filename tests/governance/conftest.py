@@ -13,13 +13,14 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from zephyr.shared.io.paths import REPO_ROOT
 
 _SMOKE_TEST = "governance/d1_structure/run_script_smoke_test.py"
 
 
 @pytest.fixture(scope="session")
 def repo_root() -> Path:
-    return Path(__file__).resolve().parent.parent.parent
+    return REPO_ROOT
 
 
 @pytest.fixture(scope="session")

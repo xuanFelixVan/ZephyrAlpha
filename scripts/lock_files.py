@@ -63,8 +63,9 @@ import time
 from pathlib import Path
 from typing import Any
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+from _shared.constants import REPO_ROOT
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "governance" / "d3_metadata"))
+
 from check_naming_convention import check_file as _check_naming  # noqa: E402
 
 LOCK_ROOT = REPO_ROOT / ".ailocks"

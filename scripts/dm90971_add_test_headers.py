@@ -38,9 +38,10 @@ import os
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
 _MAX_WORKERS = 8
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = REPO_ROOT
 TESTS_DIR = PROJECT_ROOT / "tests"
 
 # ---------------------------------------------------------------------------

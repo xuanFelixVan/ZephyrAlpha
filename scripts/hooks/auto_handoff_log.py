@@ -41,13 +41,16 @@ import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+_THIS_DIR = Path(__file__).resolve().parent
+_GOV_DIR = str(_THIS_DIR.parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT
 
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent.parent
-
 # ---------------------------------------------------------------------------
 # 常量
 # ---------------------------------------------------------------------------

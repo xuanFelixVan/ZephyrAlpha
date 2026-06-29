@@ -27,6 +27,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
 from typing import Any
+from _shared.constants import REPO_ROOT
 
 try:
     import resource as _resource_mod
@@ -36,7 +37,7 @@ except ImportError:
     _resource_mod = None
     _HAS_RESOURCE = False
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 
 class ResourceLimitExceededError(Exception):

@@ -39,7 +39,13 @@ from typing import Any
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+_MCP_DIR = Path(__file__).resolve().parent
+_GOV_DIR = _MCP_DIR.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
+
+from _shared.constants import REPO_ROOT  # noqa: E402
+
 SRC_ROOT = REPO_ROOT / "src"
 B_MCP = REPO_ROOT / "architecture_model" / "layers" / "b_mcp.yaml"
 

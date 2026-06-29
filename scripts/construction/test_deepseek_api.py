@@ -19,9 +19,14 @@ import sys
 import time
 import json
 from pathlib import Path
+_THIS_DIR = Path(__file__).resolve().parent
+_GOV_DIR = str(_THIS_DIR.parent / "governance")
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import REPO_ROOT
 
 # 加载 .env
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+env_path = REPO_ROOT / ".env"
 if env_path.exists():
     for line in env_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()

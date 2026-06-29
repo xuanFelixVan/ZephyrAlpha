@@ -39,8 +39,11 @@ import yaml
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 CONTRACTS_YAML = (
     REPO_ROOT
@@ -53,7 +56,6 @@ CONTRACTS_YAML = (
 )
 
 CONTRACT_TYPES_TO_CHECK = ["P0", "P1"]
-
 
 def main() -> int:
     if not CONTRACTS_YAML.exists():
@@ -92,7 +94,6 @@ def main() -> int:
 
     print("✅ INV-007 幂等 Key —— 所有 P0/P1 契约均包含 idempotency_key 字段")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

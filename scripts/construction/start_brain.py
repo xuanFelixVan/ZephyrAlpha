@@ -40,8 +40,9 @@ from pathlib import Path
 from zephyr.shared.contracts.runtime_types import RuntimeConfig
 from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 from zephyr.trading.auto_task_generator import AutoTaskGenerator
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 
 def main() -> None:

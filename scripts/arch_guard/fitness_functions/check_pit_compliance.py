@@ -41,8 +41,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 L02_DIR = REPO_ROOT / "src" / "zephyr" / "factor"
 
@@ -65,7 +68,6 @@ PIT_SUSPECT_PATTERNS = [
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "docs"}
 
-
 def check_file(file_path: Path) -> list[str]:
     warnings_found = []
     try:
@@ -83,7 +85,6 @@ def check_file(file_path: Path) -> list[str]:
                 warnings_found.append(f'  {file_path.relative_to(REPO_ROOT)}:{i}: {explanation} — "{stripped[:120]}"')
                 break
     return warnings_found
-
 
 def main() -> int:
     if not L02_DIR.exists():
@@ -110,7 +111,6 @@ def main() -> int:
     print("✅ INV-004 PIT 铁律 —— 无可疑模式")
     print(f"   已扫描 {L02_DIR.relative_to(REPO_ROOT)}/ 下所有 .py 文件。")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

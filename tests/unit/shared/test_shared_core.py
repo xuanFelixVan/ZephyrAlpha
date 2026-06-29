@@ -30,7 +30,7 @@ from zephyr.integration.shared.schema.schemas import (
     TaskStatus,
 )
 from zephyr.integration.shared.schema.severity_types import SafetyLevel
-from zephyr.shared.paths import (
+from zephyr.shared.io.paths import (
     DB_DIR,
     GATES_DIR,
     REPO_ROOT,

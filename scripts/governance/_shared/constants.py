@@ -39,7 +39,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 # find_repo_root / REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
 # 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
-from zephyr.shared.io.paths import REPO_ROOT, find_repo_root  # noqa: E402
+from zephyr.shared.io.paths import REPO_ROOT, find_repo_root, DB_PATH  # noqa: E402
 
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，所有治理脚本通过此入口获取 PG 连接。
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md

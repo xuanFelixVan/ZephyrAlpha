@@ -50,12 +50,11 @@ from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 SSOT_PATHS = {
     "total_scripts": REPO_ROOT / "scripts" / "governance" / "script_manifest.yaml",

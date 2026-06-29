@@ -31,8 +31,13 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT, RISK_PARAMS_PATH, load_yaml  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+from _arch_ssot import RISK_PARAMS_PATH, load_yaml  # noqa: E402
 
 # INV-002: 单一持仓 ≤ 5% NAV
 _EXPECTED_NAV = 0.05
@@ -43,7 +48,6 @@ _REF_PATTERNS = [
     re.compile(r"max_single_position"),
     re.compile(r"risk_params"),
 ]
-
 
 def main() -> int:
     if not RISK_PARAMS_PATH.is_file():
@@ -83,7 +87,6 @@ def main() -> int:
         print(f"OK: risk_params 真源存在；发现 {hits} 个源码文件含风险参数 / 契约引用")
 
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

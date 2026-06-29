@@ -37,8 +37,9 @@ import sys
 from pathlib import Path
 
 import yaml
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 KEY_FACTS_PATH = PROJECT_ROOT / "data" / "rule_optimization" / "key_facts.yaml"
 
 

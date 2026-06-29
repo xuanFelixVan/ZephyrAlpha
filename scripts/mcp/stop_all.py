@@ -27,7 +27,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-_PID_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "mcp_pids"
+_MCP_DIR = Path(__file__).resolve().parent
+_GOV_DIR = _MCP_DIR.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
+
+from _shared.constants import REPO_ROOT  # noqa: E402
+
+_PID_DIR = REPO_ROOT / "data" / "mcp_pids"
 
 
 def _stop_by_pid_files() -> int:

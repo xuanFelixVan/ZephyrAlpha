@@ -40,7 +40,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+from zephyr.shared.io.paths import REPO_ROOT
 sys.path.insert(0, str(REPO_ROOT / "src"))
 sys.path.insert(0, str(REPO_ROOT))
 

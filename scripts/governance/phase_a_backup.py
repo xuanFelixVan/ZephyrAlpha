@@ -52,13 +52,12 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
 _MAX_WORKERS = 8
 
 # Determine repo root
 _SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = _SCRIPT_DIR.parents[1]
-
 BACKUP_BASE = Path("D:/临时工作区/_backups/phase-A")
 
 # ============================================================

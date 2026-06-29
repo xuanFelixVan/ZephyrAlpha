@@ -41,8 +41,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 L06_ROOT = SRC_ROOT / "ex_core"
@@ -75,7 +78,6 @@ BROKER_PATTERNS = [
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "shared", "gates", "mcp", "pipeline"}
 
-
 def is_allowed(file_path: Path) -> bool:
     resolved = file_path.resolve()
     if resolved in {p.resolve() for p in L06_SDK_EXEMPT_FILES}:
@@ -85,7 +87,6 @@ def is_allowed(file_path: Path) -> bool:
         return True
     except ValueError:
         return False
-
 
 def check_file(file_path: Path) -> list[str]:
     violations = []
@@ -104,7 +105,6 @@ def check_file(file_path: Path) -> list[str]:
                 violations.append(f'  {file_path.relative_to(REPO_ROOT)}:{i}: {description} — "{stripped[:120]}"')
                 break
     return violations
-
 
 def main() -> int:
     if not SRC_ROOT.exists():
@@ -132,7 +132,6 @@ def main() -> int:
     print("[OK] INV-005 Broker ACL 边界 —— 无违反")
     print(f"   已扫描 src/zephyr/ 下所有 .py 文件，Broker API 调用均位于 {ADAPTERS_DIR.relative_to(REPO_ROOT)}/。")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -18,6 +18,7 @@ from zephyr.infrastructure.asset_inventory.dependency import (
     build_dependency_graph,
     priority_from_dependency,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 _SIMPLE_IMPORTS = """\
 import os

@@ -38,9 +38,8 @@ import sys
 import threading
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 LOCK_SCRIPT = str(REPO_ROOT / "scripts" / "lock_files.py")
 TEST_SCRIPT = str(REPO_ROOT / "scripts" / "governance" / "d3_metadata" / "generate_derived_files.py")
 

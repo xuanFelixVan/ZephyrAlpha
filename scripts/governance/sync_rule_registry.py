@@ -33,7 +33,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -53,7 +53,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent.parent
+ROOT = REPO_ROOT
 PROJECT_RULES = ROOT / ".trae" / "rules" / "project_rules.md"
 RULE_REGISTRY = ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "_index.yaml"
 

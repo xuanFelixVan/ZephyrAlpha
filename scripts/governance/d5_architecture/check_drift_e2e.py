@@ -24,8 +24,9 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 
 def run_pytest(test_module: str) -> bool:

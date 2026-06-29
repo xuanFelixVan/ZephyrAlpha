@@ -18,6 +18,7 @@ from zephyr.security.llm_defense.llm_security.process_sandbox import (
     SandboxTimeout,
     SandboxViolation,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class TestL2aSandboxInit:
@@ -26,34 +27,34 @@ class TestL2aSandboxInit:
         assert sandbox._repo_root is not None
 
     def test_custom_repo_root(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
-        assert str(sandbox._repo_root) == "D:\\ZephyrAlpha"
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
+        assert str(sandbox._repo_root) == str(REPO_ROOT)
 
     def test_repo_root_is_path(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         assert isinstance(sandbox._repo_root, Path)
 
 
 class TestCWDValidation:
     def test_src_zephyr_cwd_allowed(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         sandbox._validate_cwd(sandbox._repo_root / "src" / "zephyr")
 
     def test_scripts_cwd_allowed(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         sandbox._validate_cwd(sandbox._repo_root / "scripts")
 
     def test_docs_cwd_allowed(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         sandbox._validate_cwd(sandbox._repo_root / "docs")
 
     def test_random_cwd_blocked(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         with pytest.raises(SandboxViolation):
             sandbox._validate_cwd(sandbox._repo_root / "etc" / "shadow")
 
     def test_repo_root_allowed(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         sandbox._validate_cwd(sandbox._repo_root)
 
 
@@ -83,7 +84,7 @@ class TestEnvBuilding:
 
 class TestSandboxRun:
     def test_run_python_version(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         result = sandbox.run(
             cmd=["python", "--version"],
             cwd="src/zephyr",
@@ -93,7 +94,7 @@ class TestSandboxRun:
         assert result.returncode == 0
 
     def test_run_with_timeout_raises(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         with pytest.raises(SandboxTimeout):
             sandbox.run(
                 cmd=["python", "-c", "import time; time.sleep(60)"],
@@ -102,7 +103,7 @@ class TestSandboxRun:
             )
 
     def test_run_invalid_cwd_raises(self):
-        sandbox = L2aSandbox(repo_root=Path("D:\\ZephyrAlpha"))
+        sandbox = L2aSandbox(repo_root=REPO_ROOT)
         with pytest.raises(SandboxViolation):
             sandbox.run(
                 cmd=["python", "--version"],

@@ -38,11 +38,13 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 LEDGER_RELATIVE = "data/ledger/policy_decision_ledger.jsonl"
-
 
 def main() -> int:
     ledger_path = REPO_ROOT / LEDGER_RELATIVE
@@ -65,7 +67,6 @@ def main() -> int:
     print("   append-only 属性通过 JSONL 格式保证（每行一条独立记录）。")
     print("   完整篡改检测需集成 Git hook / CI pipeline 哈希校验。")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

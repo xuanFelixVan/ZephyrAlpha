@@ -31,13 +31,15 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 MUTABLE_TYPES = {"dict", "list", "set", "deque", "defaultdict", "OrderedDict"}
-
 
 def _scan_file(path: Path) -> list[tuple[int, str]]:
     findings = []
@@ -58,7 +60,6 @@ def _scan_file(path: Path) -> list[tuple[int, str]]:
                     elif isinstance(node.value, (ast.Dict, ast.List, ast.Set)):
                         findings.append((node.lineno, f"global mutable: {target.id} = literal"))
     return findings
-
 
 def main() -> int:
     print("INV-020 跨平面共享可变状态检查\n")
@@ -85,7 +86,6 @@ def main() -> int:
 
     print("[OK] 未发现全局可变状态声明")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -29,9 +29,13 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import CAPACITY_SLO_PATH, REPO_ROOT, load_yaml  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
+from _arch_ssot import CAPACITY_SLO_PATH, load_yaml  # noqa: E402
 
 def main() -> int:
     slo = load_yaml(CAPACITY_SLO_PATH)
@@ -66,7 +70,6 @@ def main() -> int:
 
     print("OK: Hot 路径扫描根目录下无 asyncio 用法")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

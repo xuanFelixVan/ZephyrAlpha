@@ -33,12 +33,11 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.shared.io.paths import REPO_ROOT
 _REPO_ROOT = REPO_ROOT
 _SRC_DIR = _REPO_ROOT / "src"
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
-
-from _shared.constants import REPO_ROOT
 
 schema_mod = pytest.importorskip("zephyr.governance.depgraph_schema")
 

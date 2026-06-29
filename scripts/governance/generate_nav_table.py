@@ -41,7 +41,7 @@ if _GOV_DIR not in sys.path:
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 
 __manifest__ = """
 args: []
@@ -62,7 +62,7 @@ from pathlib import Path
 
 from _shared.yaml_utils import load_yaml
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 MAPPING_FILE = PROJECT_ROOT / "config" / "nav_table_mapping.yaml"
 AGENTS_FILE = PROJECT_ROOT.parent / "AGENTS.md"
 DOC_META_INDEX = (

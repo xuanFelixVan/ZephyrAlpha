@@ -22,11 +22,10 @@ from pathlib import Path
 import pytest
 
 # 配置 sys.path（tests/unit/ 无 conftest，自行 insert）
+from zephyr.shared.io.paths import REPO_ROOT
 _GOV_DIR = str(REPO_ROOT / "scripts" / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-
-from _shared.constants import REPO_ROOT
 
 # 测试库不需要 git 备份（隔离生产库）
 os.environ.setdefault("ZEPHYR_SKIP_BACKUP_CHECK", "1")

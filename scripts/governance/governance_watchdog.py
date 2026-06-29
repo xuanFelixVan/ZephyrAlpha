@@ -29,8 +29,9 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 
 
 class ServiceUnrecoverableError(Exception):

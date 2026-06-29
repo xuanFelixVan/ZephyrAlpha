@@ -28,6 +28,7 @@ from zephyr.behavioral_audit.drift_engine import (
 )
 from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
 from zephyr.behavioral_audit.self_test_verifier import SelfTestVerifier
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 def _setup_project(tmp: str) -> list[Path]:
@@ -174,7 +175,7 @@ def test_e2e_gate_engine_drift_budget():
         severity="P0",
         params={"target_module": "MOD-INF-023"},
     )
-    project_root = Path(__file__).resolve().parent.parent.parent
+    project_root = REPO_ROOT
 
     violations = _run_check(check, task, project_root)
     assert len(violations) == 0, f"Expected 0 violations, got {len(violations)}: {[v.message for v in violations]}"

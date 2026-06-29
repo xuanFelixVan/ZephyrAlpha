@@ -26,8 +26,9 @@ from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 DEFAULT_MANIFEST_PATH = PROJECT_ROOT / "scripts" / "script_manifest.yaml"
 
 

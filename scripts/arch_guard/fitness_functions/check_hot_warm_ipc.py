@@ -30,14 +30,16 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 HOT_MODULES = {"risk", "ex_core"}
 WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}
-
 
 def main() -> int:
     print("INV-018 Hot↔Warm IPC 协议检查\n")
@@ -70,7 +72,6 @@ def main() -> int:
 
     print("[OK] Hot↔Warm 无直接 import 违规")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

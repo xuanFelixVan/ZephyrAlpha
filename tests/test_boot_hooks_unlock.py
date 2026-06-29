@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from _shared.constants import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT, DB_PATH
 
 from datetime import UTC, datetime
 

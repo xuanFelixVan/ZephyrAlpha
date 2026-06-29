@@ -33,8 +33,8 @@ import json
 import re
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 BLUEPRINT_PATH = (
     REPO_ROOT / "docs" / "03_modules" / "infrastructure_runtime_integration" / "budget-enforcer" / "blueprint.md"
 )

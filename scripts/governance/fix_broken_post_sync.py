@@ -48,6 +48,8 @@ _SRC_DIR = str(_SCRIPT_DIR.parents[2] / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
+from _shared.constants import DB_PATH
+
 from zephyr.governance.sqlite_schema import DB_PATH
 from zephyr.governance.task_repo import PostSyncValidationError, TaskRepository
 

@@ -34,8 +34,9 @@ import os
 import re
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = REPO_ROOT
 MODULES_DIR = PROJECT_ROOT / "docs" / "03_modules"
 REGISTRY_FILE = MODULES_DIR / "system-pathway-registry.yaml"
 BLUEPRINT_PATTERN = "**/blueprint.md"

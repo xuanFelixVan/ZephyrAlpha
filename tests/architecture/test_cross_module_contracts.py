@@ -18,8 +18,8 @@ from pathlib import Path
 
 import pytest
 import yaml
+from zephyr.shared.io.paths import REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 REQUIRED_DEPENDENCIES = [
     "MOD-INF-006",

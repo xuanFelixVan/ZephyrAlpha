@@ -31,9 +31,13 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+_GOV_DIR = _ROOT.parent / "governance"
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 
-from _arch_ssot import REPO_ROOT, RISK_PARAMS_PATH, load_yaml  # noqa: E402
+from _shared.constants import REPO_ROOT  # noqa: E402
 
+from _arch_ssot import RISK_PARAMS_PATH, load_yaml  # noqa: E402
 
 def main() -> int:
     if not RISK_PARAMS_PATH.is_file():
@@ -67,7 +71,6 @@ def main() -> int:
 
     print(f"OK: INV-002 单一持仓限制 — max_single_position_nav_ratio={limit_ratio}（≤ 5% NAV）")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

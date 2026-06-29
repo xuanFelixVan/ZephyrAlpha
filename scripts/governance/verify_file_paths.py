@@ -19,8 +19,8 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 EXPECTED_FILES: list[str] = [
     # §5.1 源码文件（路径迁移: src/zephyr/mcp/ → src/zephyr/integration/mcp/）

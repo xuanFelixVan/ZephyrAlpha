@@ -39,13 +39,14 @@ import pytest
 import yaml
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.shared.io.paths import REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
 _SCRIPTS_GOV = _PROJECT_ROOT / "scripts" / "governance"
 if str(_SCRIPTS_GOV) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_GOV))
 
-from _shared.constants import GOV_DOCS_DIR, REPO_ROOT  # noqa: E402
+from _shared.constants import GOV_DOCS_DIR  # noqa: E402
 
 _VOCAB_DIR = GOV_DOCS_DIR / "_registry" / "vocabularies"
 _CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"

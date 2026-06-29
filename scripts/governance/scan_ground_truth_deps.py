@@ -26,8 +26,9 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC
 from pathlib import Path
+from _shared.constants import REPO_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = REPO_ROOT
 ZEPHYR_ROOT = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_ROOT = PROJECT_ROOT / "scripts"
 

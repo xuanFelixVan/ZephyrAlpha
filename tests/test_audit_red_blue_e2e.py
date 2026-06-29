@@ -17,6 +17,7 @@ import time
 from pathlib import Path
 
 import pytest
+from zephyr.shared.io.paths import REPO_ROOT
 
 models_mod = pytest.importorskip("zephyr.security.adversarial_validation.models")
 dr_mod = pytest.importorskip("zephyr.security.adversarial_validation.defense_runner")
@@ -150,7 +151,7 @@ class TestDefenseRunnerE2E:
 class TestConstitutionGuardE2E:
     def test_load_constitution(self):
         registry_path = (
-            Path(__file__).resolve().parent.parent
+            REPO_ROOT
             / "src"
             / "zephyr"
             / "red-blue-validator"
@@ -170,7 +171,7 @@ class TestConstitutionGuardE2E:
         if GateEngine is None:
             pytest.skip("GateEngine not available")
         registry_path = (
-            Path(__file__).resolve().parent.parent
+            REPO_ROOT
             / "src"
             / "zephyr"
             / "red-blue-validator"
@@ -187,7 +188,7 @@ class TestConstitutionGuardE2E:
 
     def test_validate_constitution_fallback(self):
         registry_path = (
-            Path(__file__).resolve().parent.parent
+            REPO_ROOT
             / "src"
             / "zephyr"
             / "red-blue-validator"
@@ -242,7 +243,7 @@ class TestConstitutionGuardE2E:
 
     def test_guard_attack(self):
         registry_path = (
-            Path(__file__).resolve().parent.parent
+            REPO_ROOT
             / "src"
             / "zephyr"
             / "red-blue-validator"

@@ -17,12 +17,13 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 from zephyr.autonomy_core.ide_watcher import IDEWatcher
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class TestIDEWatcherInit:
     def test_default_skills_dir(self):
         watcher = IDEWatcher()
-        expected = Path(__file__).resolve().parent.parent / "src" / "zephyr" / "agent-spec" / "skills"
+        expected = REPO_ROOT / "src" / "zephyr" / "agent-spec" / "skills"
         assert watcher.skills_dir == expected or isinstance(watcher.skills_dir, Path)
 
     def test_custom_skills_dir(self, tmp_path):
