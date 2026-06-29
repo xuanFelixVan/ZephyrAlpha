@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md | §
-# [MODULE] zephyr.infrastructure.db.olap_engine
-# [DOMAIN] D_INFRA_RUNTIME
+# [MODULE] zephyr.governance.persistence.olap_engine
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.shared.io.paths
 # [CONSUMERS]
 # [STARTUP] imported
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF_olap_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_olap_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 # AI-generated: DuckDB OLAP 分析引擎（T-4-05, B18）
@@ -46,7 +46,7 @@ SQL 注入防护
 
 用法
 ----
-    from zephyr.infrastructure.db.olap_engine import OLAPEngine
+    from zephyr.governance.persistence.olap_engine import OLAPEngine
     from zephyr.governance.persistence.sqlite_schema import DB_PATH
 
     engine = OLAPEngine(sqlite_path=DB_PATH)

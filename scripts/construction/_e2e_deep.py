@@ -23,7 +23,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 tests = [
     ("MOD-INF-016", "zephyr.shared", ["AiAuditLogger", "PermissionGuard", "IdempotencyStore"]),
-    ("MOD-DATABASE", "zephyr.infrastructure.db", ["TaskRepository", "ScriptManifestDB"]),
+    ("MOD-DATABASE", "zephyr.governance.persistence", ["TaskRepository", "ScriptManifestDB"]),
     ("MOD-INF-035", "zephyr.trading", ["AutoRuntimeCore"]),
     ("MOD-INF-002", "zephyr.shared._cross_layer", []),
     ("MOD-INF-013", "zephyr.integration.mcp", []),
