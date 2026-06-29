@@ -22,7 +22,8 @@ KnowledgeBaseServer: 知识库语义检索 MCP Server
 Task ID  : T-3-04 (B15)
 Server   : knowledge_base (tool-contracts.yaml §Server 2)
 Protocol :  传输、JSON-RPC 2.0）
-Backend  : knowledge_indexer.py ( ChromaDB) + SQLite knowledge 表
+Backend  : UnifiedMemoryAPI (zephyr.governance.kb.storage.unified_memory_api) + InProcessVectorMemory
+           KB refactor 已移除 SQLite knowledge 表 + ChromaDB 中间层
 
 实现工具
 --------
@@ -98,8 +99,10 @@ _VALID_CATEGORIES = frozenset(
 class KnowledgeBaseServer(BaseMCPServer):
     """knowledge_base MCP Server 实现。
 
-    持久化后端：KbRepo (SQLite + ChromaDB) + UnifiedMemoryAPI (RI-02 三件套)。
-    降级策略：KbRepo 不可用时回退到内存字典。
+    持久化后端：UnifiedMemoryAPI (RI-02 三件套，真源:
+    zephyr.governance.kb.storage.unified_memory_api) + InProcessVectorMemory。
+    KB refactor 已移除 KbRepo (SQLite + ChromaDB) 中间层，禁止重建。
+    降级策略：UnifiedMemoryAPI 不可用时回退到内存字典。
     """
 
     SERVER_ID = "knowledge_base"
@@ -204,7 +207,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         )
         self.register_tool(
             name="knowledge_base.health_check",
-            description="健康检查——返回 SQLite + ChromaDB 连通性",
+            description="健康检查——返回 UnifiedMemoryAPI + VMS 连通性",
             input_schema={
                 "type": "object",
                 "additionalProperties": False,
@@ -373,7 +376,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         raise MCPError(-32001, f"ZA-KB-0005: ke_id not found: {ke_id!r}")
 
     def _rebuild_index(self, collection: str, force: bool = False) -> dict[str, Any]:
-        """重建向量索引（骨架层；生产中替换为 ChromaDB 重建调用）。"""
+        """重建向量索引（骨架层；生产中由 InProcessVectorMemory 重建）。"""
         targets = list(_VALID_COLLECTIONS) if collection == "ALL" else [collection]
         for col in targets:
             if col not in _VALID_COLLECTIONS:

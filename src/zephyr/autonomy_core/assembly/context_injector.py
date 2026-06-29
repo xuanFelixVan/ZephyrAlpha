@@ -27,9 +27,10 @@ prompt construction. Supports three retrieval modes:
   2. By module_id — find KEs belonging to a module
   3. By keyword  — semantic/keyword search
 
-KB refactor Step 2.1 removed kb_repo.py SQLite layer;
+KB refactor (Phase 1-3 done): removed kb_repo.py SQLite layer.
 inject_by_* methods return empty InjectedContext (no data source).
-KB refactor Phase 3 will migrate consumers to VMS-backed retrieval.
+KB retrieval is handled by UnifiedMemoryAPI
+(see zephyr.governance.kb.storage.unified_memory_api).
 
 Respects token budget limits from ContextBudgetTracker.
 """
@@ -71,7 +72,9 @@ class InjectedContext(BaseModel):
 class ContextInjector:
     """Retrieve and inject knowledge context.
 
-    KB refactor Step 2.1 removed kb_repo.py; inject_by_* return empty context.
+    KB refactor (Phase 1-3 done): removed kb_repo.py; inject_by_* return empty.
+    KB retrieval is handled by UnifiedMemoryAPI
+    (zephyr.governance.kb.storage.unified_memory_api).
 
     Parameters
     ----------
