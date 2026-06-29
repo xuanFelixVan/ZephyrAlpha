@@ -1,6 +1,6 @@
 rule_id: TRAE-001
 title: 文件操作安全协议
-version: 1.5.0
+version: 1.6.0
 layer: compliance
 module_id: TRAE-001
 depends_on: []
@@ -91,7 +91,7 @@ sections:
     prohibitions:
     - 在 DB 写入路径调用 lock_files.py（PG MVCC 替代文件锁，文件锁对 PG 写无保护作用）
     - 硬编码 sqlite3.connect("绝对路径.db")（GitCommitGateway _check_repo_root_usage 模式5 检测阻断）
-    - 在 DB 写入脚本中 import lock_files（sync_yaml_to_depgraph.py 已删除 lock_files import 治本，禁止恢复）
+    - 在 DB 写入脚本中 import lock_files（GitCommitGateway _check_repo_root_usage 模式6 AST 检测阻断：同一文件内 DB 写入信号 + lock_files import 信号 → 返回 REPO_ROOT_VIOLATION，--no-verify 绕不过）
     exceptions:
       file_write_fallback: '若写入目标是文件（非 DB），回退 file_lock_protocol + atomic_write 双重保护 ✅'
   delete_confirmation:
@@ -206,6 +206,9 @@ sections:
     section_type: examples
     title: 文件操作安全协议修订记录
     items:
+    - version: '1.6.0'
+      date: '2026-06-29'
+      change: 'P3 防复发门禁闭环——db_write_protocol §prohibitions 第3条 import lock_files 禁令明确指向 GitCommitGateway _check_repo_root_usage 模式6 AST 检测（DB 写入信号 + lock_files import 信号 → REPO_ROOT_VIOLATION），建立规则→代码双向引用'
     - version: '1.5.0'
       date: '2026-06-29'
       change: 'P3 门禁防复发——新增 db_write 触发器 + db_write_protocol section，区分文件写（file_lock_protocol + atomic_write）与 DB 写（PG MVCC 事务）。禁止在 DB 写入路径调用 lock_files.py。真源指针：trae_054 §mandatory "depgraph 写入禁用 lock_files.py"；GitCommitGateway _check_repo_root_usage 模式5 检测 sqlite3.connect 硬编码'
