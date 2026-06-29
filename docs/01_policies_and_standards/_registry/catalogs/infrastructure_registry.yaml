@@ -33,13 +33,13 @@ module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
-version: "1.0.4"
+version: "1.0.5"
 status: active
 created: "2026-05-02"
-last_updated: "2026-06-28"
+last_updated: "2026-06-29"
 ai_autonomy: human_gated
 ttl: permanent
-total_registered: 13
+total_registered: 14
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -141,20 +141,23 @@ infrastructure:
     provisioned_at: null
     note: "Schema 源：task-system/blueprint.md §2.1；迁移路径见 task-card-meta-registry.md"
 
-  # --- 向量数据库（ChromaDB）---
+  # --- 向量数据库（ChromaDB，VMS 双后端过渡期）---
   - infra_id: "INFRA-DB-002"
     name: "zephyr-chroma-vector-db"
     type: vector_db
-    description: "ChromaDB 向量检索与 KMS 语义检索"
+    description: "向量检索与 KMS 语义检索——VMS (MOD-INF-011) 主向量后端，ChromaDB→FAISS 迁移过渡期"
     runtime_plane: cold
-    host: null
-    health_check: http
+    host: "data/vector_db/"
+    health_check: query
     dependency_of:
+      - "MOD-INF-011"
+      - "MOD-CONTEXT_ENGINE"
+      - "MOD-KB-001"
       - "MOD-TASK_SYSTEM"
     sla: "< 200ms retrieval p95, index rebuild < 10 min"
-    status: planned
-    provisioned_at: null
-    note: "KBG-0031：ChromaDB 选型。vibe-coding-pipelines M2 模块"
+    status: provisioned
+    provisioned_at: "2026-05-05"
+    note: "KBG-0031：ChromaDB 选型。实际部署 2026-05-05；PersistentClient 本地持久化 data/vector_db/（ARCH-LOCK-002 锁定）。8 Collection（5×1024d BGE-M3 + 3×512d bge-small-zh-v1.5）。ARCH-LOCK-003 锁定目标后端为 FAISS HNSW + SQLite WAL，当前处于 ChromaDB→FAISS 迁移过渡期，chroma.sqlite3（旧）与 vms_metadata.db+.index（新）共存；migrate_chroma_to_faiss.py 为迁移脚本。P3-T1 pgvector 处于 Suspended（消费方为零）"
 
   # --- 缓存（Redis）---
   - infra_id: "INFRA-CACHE-001"
@@ -297,15 +300,31 @@ infrastructure:
     provisioned_at: null
     note: "olap_engine.py L131 默认 :memory: 模式，ATTACH governance.db 只读分析；不迁移，P2后保持不变"
 
+  # --- 业务时序数据库（DuckDB 持久化）---
+  - infra_id: "INFRA-DB-005"
+    name: "zephyr-market-duckdb"
+    type: relational_db
+    description: "DuckDB 业务时序库——行情 tick/k线3s/订单/持仓/回测结果/回测成交/风险快照/因子值持久化（8 表）"
+    runtime_plane: hot
+    host: "data/databases/market.duckdb"
+    health_check: query
+    dependency_of:
+      - "MOD-TRADING"
+      - "MOD-BACKTEST"
+    sla: "持久化, ACID, < 50ms write p95, < 200ms OLAP query p95"
+    status: provisioned
+    provisioned_at: "2026-06-12"
+    note: "DM-100018 端到端测试覆盖 8 表（tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades）。由 DatabaseService（database_service.py）统一连接管理，独立于治理体系——不参与 depgraph/governance 数据流。写并发由 _market_write_lock 串行化（WRITE_LOCK_TIMEOUT=5.0s）"
+
 # ============================================================================
 # 汇总统计
 # ============================================================================
 summary:
-  total: 13
+  total: 14
   by_type:
     event_bus: 1
     message_queue: 1
-    relational_db: 2
+    relational_db: 3
     vector_db: 1
     cache: 4
     object_storage: 1
@@ -313,18 +332,22 @@ summary:
     service_registry: 1
     ci_pipeline: 1
   by_plane:
-    hot: 5
+    hot: 6
     warm: 4
     cold: 4
   by_status:
-    planned: 11
+    planned: 10
+    provisioned: 2
     connected: 2
   dependency_map:
     MOD-INF-001: [INFRA-EVT-001, INFRA-CACHE-001]
     MOD-INF-002: [INFRA-EVT-001, INFRA-CFG-001, INFRA-SVC-001]
     MOD-INF-005: [INFRA-MQ-001, INFRA-DB-001, INFRA-STORE-001]
+    MOD-INF-011: [INFRA-DB-002]
     MOD-INF-012A: [INFRA-DB-004]
     MOD-INF-012B: [INFRA-DB-003]
+    MOD-CONTEXT_ENGINE: [INFRA-DB-002]
+    MOD-KB-001: [INFRA-DB-002]
     MOD-TASK_SYSTEM:
       - INFRA-MQ-001
       - INFRA-DB-001
@@ -336,6 +359,8 @@ summary:
       - INFRA-CI-001
     MOD-GOVERNANCE: [INFRA-DB-003]
     MOD-FEEDBACK_LOOP: [INFRA-DB-004]
+    MOD-TRADING: [INFRA-DB-005]
+    MOD-BACKTEST: [INFRA-DB-005]
     MOD-RESOURCE_OPTIMIZATION_ENGINE:
       - INFRA-PROC-001
       - INFRA-CACHE-002
@@ -344,6 +369,15 @@ summary:
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.0.5"
+    date: "2026-06-29"
+    author: "AI-GLM-5.2"
+    changes:
+      - "回填 INFRA-DB-002 ChromaDB 状态：host null→data/vector_db/，health_check http→query，status planned→provisioned，provisioned_at null→2026-05-05，dependency_of 补充 MOD-INF-011/MOD-CONTEXT_ENGINE/MOD-KB-001，note 补充双后端过渡期说明（ChromaDB→FAISS，ARCH-LOCK-003 锁定目标）"
+      - "登记 INFRA-DB-005：zephyr-market-duckdb（relational_db）——DuckDB 业务时序库，8 表（tick_data/kline_3s/orders/positions/risk_snapshots/factor_values/backtest_results/backtest_trades），依赖 MOD-TRADING/MOD-BACKTEST，由 DatabaseService 统一连接管理"
+      - "更新 summary：total 13→14，relational_db 2→3，hot 5→6，planned 11→10，新增 provisioned: 2"
+      - "更新 dependency_map：新增 MOD-INF-011/MOD-CONTEXT_ENGINE/MOD-KB-001→INFRA-DB-002，MOD-TRADING/MOD-BACKTEST→INFRA-DB-005"
+      - "证据链：data/vector_db/chroma.sqlite3 存在 + 2026-05-26 健康检查 healthy + collection_manager.py:52 VMS_PERSIST_DIR + database_service.py:63 market_db 路径 + test_market_duckdb.py DM-100018 8 表覆盖"
   - version: "1.0.4"
     date: "2026-06-28"
     author: "AI-GLM-5.2"

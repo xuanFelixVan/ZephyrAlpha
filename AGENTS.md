@@ -312,7 +312,28 @@ result = await gateway.full_scan(user_text, llm_response)
 
 ## 11. depgraph 使用指引（唯一全景真源）
 
-> depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_db_connection()`。遇到 depgraph 相关问题，直接问工具：
+### 11.0 数据库清单真源指针（新 AI 进入项目先读此段）
+
+> **唯一真源**：[`docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) 的 `infrastructure:` 段（`type` 含 `*_db` 的条目）。
+>
+> **铁律**：禁止在任何其它文档（蓝图/规则/onboarding/副本）同步数据库清单——所有引用 MUST 用纯指针指向上方真源，禁止摘抄数据库条目作为同步副本。新增/废弃数据库 MUST 先改 infrastructure_registry.yaml，再由 reconciler 派生，禁止反向。违反此铁律会导致 17+ 副本漂移重演（历史教训）。
+
+**项目当前数据库清单**（一句话职责导航，详情/最新状态以真源为准）：
+
+| infra_id | 类型 | 一句话职责 | 连接入口 |
+|----------|------|-----------|---------|
+| INFRA-DB-001 | SQLite | governance.db——TaskCard/状态迁移/Audit Trail 治理任务库 | `zephyr.shared.utils.db_utils.get_db_connection()` |
+| INFRA-DB-002 | ChromaDB | 向量检索/KMS 语义检索（VMS 双后端过渡期，ChromaDB→FAISS） | `zephyr.governance.vector_memory` 集成层 |
+| INFRA-DB-003 | PostgreSQL 16 | depgraph 全景图——nodes/edges/domains 等 28 表，架构治理真源 | `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()` |
+| INFRA-DB-004 | DuckDB :memory: | OLAP 分析引擎——只读挂载 governance.db，输出 Parquet 归档 | `zephyr.infrastructure.db.olap_engine` |
+| INFRA-DB-005 | DuckDB 持久化 | market.duckdb——业务时序库（行情/订单/持仓/回测 8 表，独立于治理体系） | `zephyr.governance.database_service.DatabaseService` |
+
+**新 AI 发现路径**：
+1. 想知道"项目有几个数据库/各负责什么" → 直接读 infrastructure_registry.yaml 的 `infrastructure:` 段，禁止凭记忆或其它文档推断。
+2. 准备改 DB 连接/新增 DB → 先查真源确认当前状态，再按下方 §11 depgraph 流程或对应模块蓝图施工。
+3. 写文档需要提"数据库清单" → 一律用纯指针引用真源，禁止复制条目。
+
+> depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
 - **改 DB 节点/路径** → `python scripts/governance/apply_depgraph.py --help`（35+ 子命令）

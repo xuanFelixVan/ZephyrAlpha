@@ -596,6 +596,10 @@ git checkout -- scripts/governance/sync_yaml_to_depgraph.py
 | 对应文档 | P2方案§六.6.5 |
 | 预计Token | 12000 |
 | 超时 | 90分钟 |
+| 完成状态 | completed |
+| 完成日期 | 2026-06-29 |
+| 验收结果 | 4/4 通过（#1 sqlite3.connect无残留 #2 lock_files仅YAML分支保留符合约束 #3 sqlite_master已迁移information_schema.tables #4 --help正常输出） |
+| 治本记录 | L230/L638/L3309/L3414 注释标记删除点：DEPGRAPH_DB_PATH常量+os.path.exists守卫+db_path_for_design幽灵完成+latent bug 均已清除 |
 
 **可修改文件白名单**：
 - `scripts/governance/generate_project_depgraph.py`（高复杂度：5处get_db_connection+3处lock_files删除）
@@ -676,6 +680,10 @@ git checkout -- scripts/governance/extract_depgraph.py
 | 对应文档 | P2方案§六.6.6 |
 | 预计Token | 5000 |
 | 超时 | 30分钟 |
+| 完成状态 | completed |
+| 完成日期 | 2026-06-29 |
+| 验收结果 | 4/4 通过（#1 sqlite3.connect无残留 #2 lock_files无残留 #3 INSERT OR IGNORE无残留 #4 --help正常输出） |
+| 治本记录 | L204 注释标记删除点：DEPGRAPH_DB_PATH常量+lock_files锁剧场（acquire/release）均已清除，DB读写层已切PG |
 
 **可修改文件白名单**：
 - `scripts/governance/generate_project_path_tree.py`（中复杂度：3处连接+2处lock_files subprocess+2处INSERT OR IGNORE+占位符）
