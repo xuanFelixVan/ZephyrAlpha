@@ -20,7 +20,6 @@ import pytest
 mod = pytest.importorskip("zephyr.ops.capacity_assurance.risk_mitigation", reason="risk_mitigation not available")
 enable_wal_mode = mod.enable_wal_mode
 perform_wal_checkpoint = mod.perform_wal_checkpoint
-backup_checkpoint = mod.backup_checkpoint
 DeadlockDetector = mod.DeadlockDetector
 AlertLinkIsolator = mod.AlertLinkIsolator
 SchemaVersionGuard = mod.SchemaVersionGuard
@@ -65,23 +64,7 @@ class TestPerformWalCheckpoint:
         assert result is True
 
 
-class TestBackupCheckpoint:
-    def test_backup_creates_file(self, tmp_path):
-        db_path = str(tmp_path / "test_backup.db")
-        backup_path = str(tmp_path / "test_backup_copy.db")
-        conn = sqlite3.connect(db_path)
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("CREATE TABLE t (id INTEGER)")
-        conn.commit()
-        conn.close()
-        result = backup_checkpoint(db_path, backup_path)
-        assert result is True
-
-    def test_backup_deep_path_sqlite_creates(self, tmp_path):
-        db_path = str(tmp_path / "deep" / "nested" / "db.sqlite")
-        backup_path = str(tmp_path / "backup.db")
-        result = backup_checkpoint(db_path, backup_path)
-        assert isinstance(result, bool)
+# 治本（2026-06-29 阶段A+）：删除 TestBackupCheckpoint 类（测已删除的 backup_checkpoint 函数）。
 
 
 class TestDeadlockDetector:

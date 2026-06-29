@@ -544,14 +544,18 @@ class DatabaseManager:
     # 生命周期
     # ------------------------------------------------------------------
 
-    def close(self, *, backup_before_close: bool = True) -> None:
+    def close(self, *, backup_before_close: bool = False) -> None:
         """
         优雅关闭：WAL checkpoint + 可选备份 + 关闭连接池。
 
         参数
         ----
         backup_before_close
-            True 时在关闭前自动备份（默认 True）。
+            True 时在关闭前自动备份（默认 False）。
+            治本（2026-06-29 阶段A+）：默认改为 False，消灭每次 close 自动创建
+            zalpha_metadata_*.db 备份的源头（118 个 .db 残留的 85% 来源）。
+            需要备份时显式传 backup_before_close=True，或显式调用 backup()。
+            备份唯一真源：本类 backup() 方法（显式调用）。
         """
         if self._closed:
             return

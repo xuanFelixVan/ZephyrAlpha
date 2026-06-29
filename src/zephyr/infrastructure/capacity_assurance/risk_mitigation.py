@@ -55,19 +55,9 @@ def perform_wal_checkpoint(db_path: str, mode: str = "PASSIVE") -> bool:
         return False
 
 
-def backup_checkpoint(db_path: str, backup_path: str) -> bool:
-    """R1: 备份前强制执行 checkpoint."""
-    if perform_wal_checkpoint(db_path, "FULL"):
-        try:
-            src = sqlite3.connect(db_path)
-            dst = sqlite3.connect(backup_path)
-            src.backup(dst)
-            src.close()
-            dst.close()
-            return True
-        except sqlite3.Error as e:
-            logger.error(f"Backup failed: {e}")
-    return False
+# 治本（2026-06-29 阶段A+）：删除 backup_checkpoint() 函数。
+# 原函数无生产调用者（仅 tests/test_risk_mitigation_root.py 测试），是死代码。
+# 备份唯一真源：governance/database_manager.py 的 DatabaseManager.backup()（显式调用）。
 
 
 class DeadlockDetector:

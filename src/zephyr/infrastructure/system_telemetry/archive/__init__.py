@@ -18,7 +18,6 @@ from zephyr.infrastructure.system_telemetry.archive.cold_stub import (
     compress_dir,
     configure,
     cost_status,
-    daily_backup_sqlite,
     next_archive_batch_id,
     rotate_by_ttl,
 )
@@ -30,7 +29,6 @@ __all__ = [
     "compress_dir",
     "configure",
     "cost_status",
-    "daily_backup_sqlite",
     "next_archive_batch_id",
     "rotate_by_ttl",
 ]

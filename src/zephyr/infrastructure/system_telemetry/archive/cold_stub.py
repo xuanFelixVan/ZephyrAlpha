@@ -130,27 +130,10 @@ def rotate_by_ttl(base_dir: Path, max_age_days: int) -> int:
     return removed
 
 
-def daily_backup_sqlite(db_path: Path | None = None) -> Path | None:
-    src = db_path or _DB_PATH
-    if not src.exists():
-        return None
-
-    _BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-    date_str = datetime.now(UTC).strftime("%Y%m%d")
-    dst = _BACKUP_DIR / f"telemetry_{date_str}.db"
-
-    try:
-        with _archive_lock:
-            conn = sqlite3.connect(str(src))
-            try:
-                bkp = sqlite3.connect(str(dst))
-                conn.backup(bkp)
-            finally:
-                bkp.close()
-                conn.close()
-        return dst
-    except Exception:
-        return None
+# 治本（2026-06-29 阶段A+）：删除 daily_backup_sqlite() 函数。
+# 原函数被 facade.py 的 archive_check 定时任务（每 5 分钟）调用，自动创建 telemetry_*.db 备份。
+# 这是 118 个 .db 残留的来源之一，且定时触发违反"事件驱动"原则。
+# 备份唯一真源：governance/database_manager.py 的 DatabaseManager.backup()（显式调用）。
 
 
 def cost_status() -> dict[str, Any]:

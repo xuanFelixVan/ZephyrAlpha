@@ -438,11 +438,12 @@ class Telemetry:
         elif task == "watchdog_check":
             self._watchdog_tick()
         elif task == "archive_check":
+            # 治本（2026-06-29 阶段A+）：删除 daily_backup_sqlite() 调用（定时备份违反
+            # 事件驱动原则，且是 .db 残留来源）。保留 rotate_by_ttl()（TTL 清理，非备份）。
             try:
-                from zephyr.infrastructure.system_telemetry.archive import daily_backup_sqlite, rotate_by_ttl
+                from zephyr.infrastructure.system_telemetry.archive import rotate_by_ttl
 
                 rotate_by_ttl()
-                daily_backup_sqlite()
             except Exception:
                 _logger.debug("archive_check failed", exc_info=True)
         elif task == "health_aggregator":

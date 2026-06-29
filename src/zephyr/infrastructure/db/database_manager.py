@@ -544,14 +544,17 @@ class DatabaseManager:
     # 生命周期
     # ------------------------------------------------------------------
 
-    def close(self, *, backup_before_close: bool = True) -> None:
+    def close(self, *, backup_before_close: bool = False) -> None:
         """
         优雅关闭：WAL checkpoint + 可选备份 + 关闭连接池。
 
         参数
         ----
         backup_before_close
-            True 时在关闭前自动备份（默认 True）。
+            True 时在关闭前自动备份（默认 False）。
+            治本（2026-06-29 阶段A+）：默认改为 False，消灭自动备份源头。
+            备份唯一真源：governance/database_manager.py 的 DatabaseManager.backup()。
+            本文件是漂移副本（阶段B 待整文件删除）。
         """
         if self._closed:
             return
