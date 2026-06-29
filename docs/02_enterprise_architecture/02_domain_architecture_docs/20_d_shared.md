@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构全景图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph.db 自动生成
-> 最后更新: 2026-06-29 17:21:55
+> 最后更新: 2026-06-29 17:29:57
 > 数据源: depgraph.db nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -408,12 +408,12 @@ graph TD
     src_zephyr_shared_env_py -.->|import_depends| src_zephyr_shared_foundation_env_py
     src_zephyr_shared_flags_py -.->|import_depends| src_zephyr_shared_foundation_flags_py
     src_zephyr_shared_events_dlq_bridge_py -.->|import_depends| src_zephyr_shared_events_dlq_py
-    src_zephyr_shared_events_event_reactor_py -.->|import_depends| src_zephyr_shared_event_bus_py_1
+    src_zephyr_shared_events_event_reactor_py -.->|import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_events_init_py -.->|import_depends| src_zephyr_shared_events_dlq_bridge_py
     src_zephyr_shared_foundation_flags_py -.->|import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_events_hook_dispatcher_py -.->|import_depends| src_zephyr_shared_event_bus_py_1
+    src_zephyr_shared_events_hook_dispatcher_py -.->|import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_foundation_init_py -.->|config_depends| src_zephyr_shared_foundation_constants_py
-    src_zephyr_shared_event_bus_py_1 -->|import_depends| src_zephyr_shared_events_event_bus_py
+    src_zephyr_shared_event_bus_py -->|import_depends| src_zephyr_shared_events_event_bus_py
     D_OPS["D_OPS prototype"]
     src_zephyr_shared_health_py -.->|import_depends| D_OPS
     D_INFRA_RUNTIME["D_INFRA_RUNTIME production"]
@@ -710,8 +710,8 @@ graph TD
         src_zephyr_shared_shared_services_observability_02_metrics_py["src/zephyr/shared/shared_services/observability... production"]
         src_zephyr_shared_shared_services_observability_02_session_audit_py["src/zephyr/shared/shared_services/observability... production"]
         src_zephyr_shared_shared_services_observability_02_token_utils_py["src/zephyr/shared/shared_services/observability... prototype"]
-        src_zephyr_shared_shared_services_observability_02_token_utils_py_1["src/zephyr/shared/shared_services/observability... prototype"]
-        src_zephyr_shared_shared_services_observability_02_token_utils_py_2["src/zephyr/shared/shared_services/observability... production"]
+        src_zephyr_shared_shared_services_observability_02_token_utils_py_1["src/zephyr/shared/shared_services/observability... production"]
+        src_zephyr_shared_shared_services_observability_02_token_utils_py_2["src/zephyr/shared/shared_services/observability... prototype"]
         src_zephyr_shared_shared_services_observability_02_tracing_py["src/zephyr/shared/shared_services/observability... production"]
         src_zephyr_shared_shared_services_queue_init_py["src/zephyr/shared/shared_services/queue/__init_... production"]
         src_zephyr_shared_shared_services_queue_task_queue_py["src/zephyr/shared/shared_services/queue/task_qu... prototype"]
@@ -720,7 +720,7 @@ graph TD
     src_zephyr_shared_shared_services_session_continuity_py -.->|import_depends| src_zephyr_shared_session_continuity_py
     src_zephyr_shared_shared_services_infra_06_init_py -.->|config_depends| src_zephyr_shared_shared_services_infra_06_cache_py
     src_zephyr_shared_shared_services_observability_02_session_audit_py -.->|import_depends| src_zephyr_shared_session_audit_py
-    src_zephyr_shared_shared_services_observability_02_token_utils_py_2 -.->|import_depends| src_zephyr_shared_shared_services_observability_02_token_utils_py
+    src_zephyr_shared_shared_services_observability_02_token_utils_py_1 -.->|import_depends| src_zephyr_shared_shared_services_observability_02_token_utils_py_2
     D_GOV_AUDIT["D_GOV_AUDIT production"]
     src_zephyr_shared_session_audit_py -.->|import_depends| D_GOV_AUDIT
     D_OPS["D_OPS prototype"]
@@ -753,8 +753,8 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_shared_session_init_py,src_zephyr_shared_shared_services_init_py,src_zephyr_shared_shared_services_blueprint_decomposer_py,src_zephyr_shared_shared_services_events_init_py,src_zephyr_shared_shared_services_infra_06_cache_py,src_zephyr_shared_shared_services_infra_06_idempotency_py,src_zephyr_shared_shared_services_infra_06_lock_py,src_zephyr_shared_shared_services_infra_06_observer_py,src_zephyr_shared_shared_services_infra_06_outbox_py,src_zephyr_shared_shared_services_lifecycle_init_py,src_zephyr_shared_shared_services_lifecycle_daemon_registry_py,src_zephyr_shared_shared_services_lifecycle_task_lifecycle_manager_py,src_zephyr_shared_shared_services_models_py,src_zephyr_shared_shared_services_observability_02_health_py,src_zephyr_shared_shared_services_observability_02_logging_py,src_zephyr_shared_shared_services_observability_02_metrics_py,src_zephyr_shared_shared_services_observability_02_session_audit_py,src_zephyr_shared_shared_services_observability_02_token_utils_py_2,src_zephyr_shared_shared_services_observability_02_tracing_py,src_zephyr_shared_shared_services_queue_init_py,src_zephyr_shared_shared_services_session_continuity_py production
-    class src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_audit_py,src_zephyr_shared_session_continuity_py,src_zephyr_shared_shared_services_infra_06_init_py,src_zephyr_shared_shared_services_infra_06_limiter_py,src_zephyr_shared_shared_services_observability_02_init_py,src_zephyr_shared_shared_services_observability_02_token_utils_py,src_zephyr_shared_shared_services_observability_02_token_utils_py_1,src_zephyr_shared_shared_services_queue_task_queue_py design
+    class src_zephyr_shared_session_init_py,src_zephyr_shared_shared_services_init_py,src_zephyr_shared_shared_services_blueprint_decomposer_py,src_zephyr_shared_shared_services_events_init_py,src_zephyr_shared_shared_services_infra_06_cache_py,src_zephyr_shared_shared_services_infra_06_idempotency_py,src_zephyr_shared_shared_services_infra_06_lock_py,src_zephyr_shared_shared_services_infra_06_observer_py,src_zephyr_shared_shared_services_infra_06_outbox_py,src_zephyr_shared_shared_services_lifecycle_init_py,src_zephyr_shared_shared_services_lifecycle_daemon_registry_py,src_zephyr_shared_shared_services_lifecycle_task_lifecycle_manager_py,src_zephyr_shared_shared_services_models_py,src_zephyr_shared_shared_services_observability_02_health_py,src_zephyr_shared_shared_services_observability_02_logging_py,src_zephyr_shared_shared_services_observability_02_metrics_py,src_zephyr_shared_shared_services_observability_02_session_audit_py,src_zephyr_shared_shared_services_observability_02_token_utils_py_1,src_zephyr_shared_shared_services_observability_02_tracing_py,src_zephyr_shared_shared_services_queue_init_py,src_zephyr_shared_shared_services_session_continuity_py production
+    class src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_audit_py,src_zephyr_shared_session_continuity_py,src_zephyr_shared_shared_services_infra_06_init_py,src_zephyr_shared_shared_services_infra_06_limiter_py,src_zephyr_shared_shared_services_observability_02_init_py,src_zephyr_shared_shared_services_observability_02_token_utils_py,src_zephyr_shared_shared_services_observability_02_token_utils_py_2,src_zephyr_shared_shared_services_queue_task_queue_py design
     class D_GOV_AUDIT,D_INFRA_RUNTIME,D_INFRA_A2A,D_GOV_RULE,D_GOV_ENFORCEMENT external_prod
     class D_OPS,D_AUTONOMY_CORE,D_GOVERNANCE external_design
 ```
@@ -1085,8 +1085,8 @@ graph TD
 | 50 | src/zephyr/shared/env.py | src/zephyr/shared/env.py | prototype | generated |
 | 51 | src/zephyr/shared/error_budget_tracker.py | src/zephyr/shared/error_budget_tracke... | production | generated |
 | 52 | src/zephyr/shared/errors.py | src/zephyr/shared/errors.py | prototype | generated |
-| 53 | src/zephyr/shared/event_bus.py | src/zephyr/shared/event_bus.py | production | stable |
-| 54 | src/zephyr/shared/event_bus.py | src/zephyr/shared/event_bus.py | production | generated |
+| 53 | src/zephyr/shared/event_bus.py | src/zephyr/shared/event_bus.py | production | generated |
+| 54 | src/zephyr/shared/event_bus.py | src/zephyr/shared/event_bus.py | production | stable |
 | 55 | src/zephyr/shared/events/__init__.py | src/zephyr/shared/events/__init__.py | prototype | generated |
 | 56 | src/zephyr/shared/events/dlq.py | src/zephyr/shared/events/dlq.py | prototype | generated |
 | 57 | src/zephyr/shared/events/dlq_bridge.py | src/zephyr/shared/events/dlq_bridge.py | prototype | generated |
@@ -1212,9 +1212,9 @@ graph TD
 | 177 | src/zephyr/shared/shared_services/observability_02/loggin... | src/zephyr/shared/shared_services/obs... | production | deprecated |
 | 178 | src/zephyr/shared/shared_services/observability_02/metric... | src/zephyr/shared/shared_services/obs... | production | deprecated |
 | 179 | src/zephyr/shared/shared_services/observability_02/sessio... | src/zephyr/shared/shared_services/obs... | production | deprecated |
-| 180 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | generated |
-| 181 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | generated |
-| 182 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | production | deprecated |
+| 180 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | deprecated |
+| 181 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | production | deprecated |
+| 182 | src/zephyr/shared/shared_services/observability_02/token_... | src/zephyr/shared/shared_services/obs... | prototype | deprecated |
 | 183 | src/zephyr/shared/shared_services/observability_02/tracin... | src/zephyr/shared/shared_services/obs... | production | deprecated |
 | 184 | src/zephyr/shared/shared_services/queue/__init__.py | src/zephyr/shared/shared_services/que... | production | deprecated |
 | 185 | src/zephyr/shared/shared_services/queue/task_queue.py | src/zephyr/shared/shared_services/que... | prototype | deprecated |
