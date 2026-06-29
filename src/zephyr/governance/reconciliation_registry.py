@@ -1638,20 +1638,71 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
         return True
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        """自动修复：迁移废弃目录内容到合规目录 + 删除空目录。
+
+        治本策略（非 warn-only）：
+        - 空目录 → 直接 rmdir → action=clean
+        - 非空目录 → shutil.move 迁移到 docs/_working/audit/（不覆盖已有文件）
+          → rmdir 空目录 → action=warn（迁移的文件需人工 commit）
+        - 部分失败 → action=warn
+
+        消灭"只告警不消除"——无论脚本如何 mkdir，下一次 commit 后自动清理。
+        """
+        import shutil  # 局部导入（避免模块级依赖膨胀）
+
+        # 合规目标目录：docs/09_audit/ → docs/_working/audit/
+        _COMPLIANT_MAP: dict[str, str] = {
+            "docs/09_audit": "docs/_working/audit",
+        }
+
         violations: list[dict] = []
         for dep_dir, reason in deprecated_dirs.items():
             dep_path = project_root / dep_dir
-            if dep_path.exists() and dep_path.is_dir():
-                items = [p for p in dep_path.rglob("*")]
-                violations.append({
-                    "deprecated_dir": dep_dir,
-                    "reason": reason,
-                    "item_count": len(items),
-                    "sample_items": [
-                        str(p.relative_to(project_root)).replace("\\", "/")
-                        for p in items[:5]
-                    ],
-                })
+            if not (dep_path.exists() and dep_path.is_dir()):
+                continue
+
+            # 收集所有文件（不含目录本身）
+            items = [p for p in dep_path.rglob("*") if p.is_file()]
+
+            # 自动迁移：将文件迁移到合规目录（不覆盖已有文件）
+            target_base_rel = _COMPLIANT_MAP.get(dep_dir, dep_dir.replace("09_audit", "_working/audit"))
+            target_base = project_root / target_base_rel
+            migrated: list[dict] = []
+            for item in items:
+                rel_to_dep = item.relative_to(dep_path)
+                target = target_base / rel_to_dep
+                src_rel = str(item.relative_to(project_root)).replace("\\", "/")
+                dst_rel = str(target.relative_to(project_root)).replace("\\", "/")
+                if target.exists():
+                    migrated.append({"src": src_rel, "dst": dst_rel, "status": "skipped_exists"})
+                else:
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(str(item), str(target))
+                    migrated.append({"src": src_rel, "dst": dst_rel, "status": "moved"})
+
+            # 删除空目录（从最深层开始，bottom-up）
+            removed_dirs: list[str] = []
+            for root, _dirs, _files in os.walk(dep_path, topdown=False):
+                try:
+                    if not os.listdir(root):
+                        os.rmdir(root)
+                        removed_dirs.append(
+                            str(Path(root).relative_to(project_root)).replace("\\", "/")
+                        )
+                except OSError:
+                    pass  # 目录非空或权限不足，跳过
+
+            still_exists = dep_path.exists()
+            moved_count = sum(1 for m in migrated if m["status"] == "moved")
+            violations.append({
+                "deprecated_dir": dep_dir,
+                "reason": reason,
+                "item_count": len(items),
+                "migrated": migrated,
+                "moved_count": moved_count,
+                "removed_dirs": removed_dirs,
+                "dir_removed": not still_exists,
+            })
 
         report = {
             "gate_id": "GATE-DEPRECATED-DIR",
@@ -1673,10 +1724,27 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="clean",
                 detail=f"no deprecated directories found, report={report_path.name}",
             )
-        return ReconcileResult(
-            action="warn",
-            detail=f"detected {len(violations)} deprecated directories, report={report_path.name}",
-        )
+
+        all_removed = all(v.get("dir_removed") for v in violations)
+        total_moved = sum(v.get("moved_count", 0) for v in violations)
+
+        if all_removed and total_moved == 0:
+            # 空目录已自动删除——彻底消灭
+            return ReconcileResult(
+                action="clean",
+                detail=f"auto-removed {len(violations)} empty deprecated directories, report={report_path.name}",
+            )
+        elif all_removed and total_moved > 0:
+            # 文件已迁移 + 目录已删除，迁移的文件待 commit
+            return ReconcileResult(
+                action="warn",
+                detail=f"auto-migrated {total_moved} files to docs/_working/audit/ and removed deprecated dirs (commit migrated files), report={report_path.name}",
+            )
+        else:
+            return ReconcileResult(
+                action="warn",
+                detail=f"partial remediation ({len(violations)} violations, some dirs remain), report={report_path.name}",
+            )
 
     return ReconcilerSpec(
         gate_id="GATE-DEPRECATED-DIR",
