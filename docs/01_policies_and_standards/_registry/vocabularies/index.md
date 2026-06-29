@@ -28,7 +28,7 @@ generated: '2026-06-26'
 | contract_status_vocabulary.yaml | contract_status 受控词表（3 值） |
 | created_by_vocabulary.yaml | created_by 受控词表（3 值） |
 | derived_from_relationship_vocabulary.yaml | derived_from.relationship 受控词表（3 值） |
-| doc_type_vocabulary.yaml | doc_type 受控词表（19 值） |
+| doc_type_vocabulary.yaml | doc_type 受控词表（10 值） |
 | domain_vocabulary.yaml | domain 受控词表（10 值） |
 | evolution_policy_vocabulary.yaml | evolution_policy 受控词表（3 值） |
 | file_category_vocabulary.yaml | file_category 受控词表（10 值） |
